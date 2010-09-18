@@ -272,7 +272,7 @@ class xmldb_index extends xmldb_object {
     }
 }
 
-/// TODO: Delete for 2.1 (deeprecated in 2.0).
+/// TODO: Delete for 2.1 (deprecated in 2.0).
 /// Deprecated API starts here
 class XMLDBIndex extends xmldb_index {
 

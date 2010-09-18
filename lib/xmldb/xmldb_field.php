@@ -787,7 +787,7 @@ class xmldb_field extends xmldb_object {
     }
 }
 
-/// TODO: Delete for 2.1 (deeprecated in 2.0).
+/// TODO: Delete for 2.1 (deprecated in 2.0).
 /// Deprecated API starts here
 class XMLDBField extends xmldb_field {
 
