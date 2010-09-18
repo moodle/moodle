@@ -213,7 +213,7 @@ class portfolio_exporter {
         }
         if (!$this->alreadystolen[$stage] && $url = $this->instance->steal_control($stage)) {
             $this->save();
-            redirect($url); // does not return
+            redirect($url);
         } else {
             $this->save();
         }
