@@ -740,7 +740,7 @@ function survey_reset_course_form_defaults($course) {
 }
 
 /**
- * Actual implementation of the reset courses functionality, delete all the
+ * Actual implementation of the reset course functionality, delete all the
  * survey responses for course $data->courseid.
  *
  * @global object

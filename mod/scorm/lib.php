@@ -728,7 +728,7 @@ function scorm_reset_gradebook($courseid, $type='') {
 }
 
 /**
- * Actual implementation of the reset courses functionality, delete all the
+ * Actual implementation of the reset course functionality, delete all the
  * scorm attempts for course $data->courseid.
  *
  * @global stdClass

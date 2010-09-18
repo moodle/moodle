@@ -2340,7 +2340,7 @@ function glossary_reset_gradebook($courseid, $type='') {
     }
 }
 /**
- * Actual implementation of the reset courses functionality, delete all the
+ * Actual implementation of the reset course functionality, delete all the
  * glossary responses for course $data->courseid.
  *
  * @global object

@@ -1378,7 +1378,7 @@ function quiz_reset_gradebook($courseid, $type='') {
 }
 
 /**
- * Actual implementation of the reset courses functionality, delete all the
+ * Actual implementation of the reset course functionality, delete all the
  * quiz attempts for course $data->courseid, if $data->reset_quiz_attempts is
  * set and true.
  *
