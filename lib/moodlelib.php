@@ -3051,7 +3051,7 @@ function &get_fast_modinfo(&$course, $userid=0) {
         $cm->icon             = isset($mod->icon) ? $mod->icon : '';
         $cm->iconcomponent    = isset($mod->iconcomponent) ? $mod->iconcomponent : '';
         $cm->uservisible      = true;
-        if(!empty($CFG->enableavailability)) {
+        if (!empty($CFG->enableavailability)) {
             // We must have completion information from modinfo. If it's not
             // there, cache needs rebuilding
             if(!isset($mod->availablefrom)) {
@@ -3059,7 +3059,7 @@ function &get_fast_modinfo(&$course, $userid=0) {
                     'cache for course '.$course->id);
                 rebuild_course_cache($course->id,true);
                 // Re-enter this routine to do it all properly
-                return get_fast_modinfo($course,$userid);
+                return get_fast_modinfo($course, $userid);
             }
             $cm->availablefrom    = $mod->availablefrom;
             $cm->availableuntil   = $mod->availableuntil;
@@ -3078,13 +3078,13 @@ function &get_fast_modinfo(&$course, $userid=0) {
         $cm->modplural = $modlurals[$cm->modname];
         $modcontext = get_context_instance(CONTEXT_MODULE,$cm->id);
 
-        if(!empty($CFG->enableavailability)) {
+        if (!empty($CFG->enableavailability)) {
             // Unfortunately the next call really wants to call
             // get_fast_modinfo, but that would be recursive, so we fake up a
             // modinfo for it already
-            if(empty($minimalmodinfo)) {
-                $minimalmodinfo=new stdClass();
-                $minimalmodinfo->cms=array();
+            if (empty($minimalmodinfo)) { //TODO: this is suspicious (skodak)
+                $minimalmodinfo = new stdClass();
+                $minimalmodinfo->cms = array();
                 foreach($info as $mod) {
                     if (empty($mod->name)) {
                         // something is wrong here
@@ -3099,9 +3099,9 @@ function &get_fast_modinfo(&$course, $userid=0) {
 
             // Get availability information
             $ci = new condition_info($cm);
-            $cm->available=$ci->is_available($cm->availableinfo, true, $userid, $minimalmodinfo);
+            $cm->available = $ci->is_available($cm->availableinfo, true, $userid, $minimalmodinfo);
         } else {
-            $cm->available=true;
+            $cm->available = true;
         }
         if ((!$cm->visible or !$cm->available) and !has_capability('moodle/course:viewhiddenactivities', $modcontext, $userid)) {
             $cm->uservisible = false;
