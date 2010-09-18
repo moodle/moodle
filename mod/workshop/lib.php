@@ -1141,7 +1141,7 @@ function workshop_get_file_areas($course, $cm, $context) {
  * @return void this should never return to the caller
  */
 function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload) {
-    global $DB;
+    global $DB, $CFG;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
