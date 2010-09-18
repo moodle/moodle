@@ -82,7 +82,7 @@ function page_get_post_actions() {
  * Add page instance.
  * @param object $data
  * @param object $mform
- * @return int new resoruce instance id
+ * @return int new page instance id
  */
 function page_add_instance($data, $mform) {
     global $CFG, $DB;
