@@ -36,7 +36,7 @@ M.core_question_flags = {
             input.set('value', 1 - input.get('value'));
             M.core_question_flags.update_flag(input, this);
             var postdata = this.previous('input.questionflagpostdata').get('value') +
-                    input.get('value')
+                    input.get('value');
 
             e.halt();
             Y.io(M.core_question_flags.actionurl , {method: 'POST', 'data': postdata});
