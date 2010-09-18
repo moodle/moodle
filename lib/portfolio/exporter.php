@@ -213,7 +213,7 @@ class portfolio_exporter {
         }
         if (!$this->alreadystolen[$stage] && $url = $this->instance->steal_control($stage)) {
             $this->save();
-            redirect($url);
+            redirect($url); // does not return
         } else {
             $this->save();
         }
@@ -858,7 +858,7 @@ class portfolio_exporter {
 
     public static function print_cleaned_export($log, $instance=null) {
         global $CFG, $OUTPUT, $PAGE;
-        if (empty($instance) || !$instance instanceof portfolio_plugin) {
+        if (empty($instance) || !$instance instanceof portfolio_plugin_base) {
             $instance = portfolio_instance($log->portfolio);
         }
         $title = get_string('exportalreadyfinished', 'portfolio');
