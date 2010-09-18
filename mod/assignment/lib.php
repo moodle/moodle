@@ -33,9 +33,9 @@ require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
 
 /** ASSIGNMENT_COUNT_WORDS = 1 */
-DEFINE ('ASSIGNMENT_COUNT_WORDS', 1);
+define('ASSIGNMENT_COUNT_WORDS', 1);
 /** ASSIGNMENT_COUNT_LETTERS = 2 */
-DEFINE ('ASSIGNMENT_COUNT_LETTERS', 2);
+define('ASSIGNMENT_COUNT_LETTERS', 2);
 
 /**
  * Standard base class for all assignment submodules (assignment types).
@@ -2532,7 +2532,7 @@ function assignment_cron () {
             echo "Processing assignment submission $submission->id\n";
 
             if (! $user = $DB->get_record("user", array("id"=>$submission->userid))) {
-                echo "Could not find user $post->userid\n";
+                echo "Could not find user $user->id\n";
                 continue;
             }
 
@@ -3080,7 +3080,7 @@ function assignment_get_recent_mod_activity(&$activities, &$index, $timestart, $
             $usersgroups = groups_get_all_groups($course->id, $cm->userid, $cm->groupingid);
             if (is_array($usersgroups)) {
                 $usersgroups = array_keys($usersgroups);
-                $interset = array_intersect($usersgroups, $modinfo->groups[$cm->id]);
+                $intersect = array_intersect($usersgroups, $modinfo->groups[$cm->id]);
                 if (empty($intersect)) {
                     continue;
                 }
