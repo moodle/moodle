@@ -53,8 +53,6 @@ class file_info_context_course extends file_info {
      * @param $filename
      */
     public function get_file_info($component, $filearea, $itemid, $filepath, $filename) {
-        global $DB;
-
         if (!$this->course->visible and !has_capability('moodle/course:viewhiddencourses', $this->context)) {
             return null;
         }
@@ -396,7 +394,7 @@ class file_info_area_course_section extends file_info {
      * @return string
      */
     public function get_visible_name() {
-        $format = $this->course->format;
+        //$format = $this->course->format;
         $sectionsname = get_string("coursesectionsummaries");
 
         return $sectionsname;
@@ -495,10 +493,7 @@ class file_info_area_backup_section extends file_info {
      * @return string
      */
     public function get_visible_name() {
-        $format = $this->course->format;
-        $sectionsname = get_string('sectionbackup', 'repository');
-
-        return $sectionsname;
+        return get_string('sectionbackup', 'repository');
     }
 
     /**

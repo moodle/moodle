@@ -151,7 +151,7 @@ class file_browser {
      * @return file_info instance or null if not found or access not allowed
      */
     private function get_file_info_context_coursecat($context, $component, $filearea, $itemid, $filepath, $filename) {
-        global $DB, $CFG;
+        global $DB;
 
         if (!$category = $DB->get_record('course_categories', array('id'=>$context->instanceid))) {
             return null;

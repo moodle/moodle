@@ -86,7 +86,7 @@ class file_info_context_user extends file_info {
 
         if (is_null($itemid)) {
             // go to parent, we do not use itemids here in private area
-            return $this;;
+            return $this;
         }
 
         $fs = get_file_storage();
@@ -111,7 +111,7 @@ class file_info_context_user extends file_info {
     }
 
     protected function get_area_user_profile($itemid, $filepath, $filename) {
-        global $USER, $CFG;
+        global $CFG;
 
         if (!has_capability('moodle/user:update', $this->context)) {
             // the idea here is that only admins should be able to list/modify files in user profile, the rest has to use profile page
@@ -229,8 +229,6 @@ class file_info_context_user extends file_info {
      * @return array of file_info instances
      */
     public function get_children() {
-        global $USER, $CFG;
-
         $children = array();
 
         if ($child = $this->get_area_user_private(0, '/', '.')) {

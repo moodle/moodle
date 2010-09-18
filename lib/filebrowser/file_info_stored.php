@@ -417,7 +417,7 @@ class file_info_stored extends file_info {
      * Create new file from stored file - make sure
      * params are valid.
      * @param string $newfilename name of new file
-     * @param mixed dile id or stored_file of file
+     * @param mixed file id or stored_file of file
      * @param int id of author, default $USER->id
      * @return file_info new file
      */

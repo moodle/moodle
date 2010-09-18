@@ -42,7 +42,7 @@ class file_info_context_module extends file_info {
     protected $areas;
 
     public function __construct($browser, $context, $course, $cm, $modname) {
-        global $DB, $CFG;
+        global $CFG;
 
         parent::__construct($browser, $context);
         $this->course  = $course;
@@ -75,8 +75,6 @@ class file_info_context_module extends file_info {
      * @param $filename
      */
     public function get_file_info($component, $filearea, $itemid, $filepath, $filename) {
-        global $USER;
-
         if (!is_enrolled($this->context) and !is_viewing($this->context)) {
             // no peaking here if not enrolled or inspector
             return null;
