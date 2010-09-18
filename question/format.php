@@ -231,7 +231,7 @@ class qformat_default {
         global $USER, $DB, $OUTPUT;
 
        // reset the timer in case file upload was slow
-       @set_time_limit();
+       @set_time_limit(0);
 
        // STAGE 1: Parse the file
        echo $OUTPUT->notification( get_string('parsingquestions','quiz') );
@@ -300,7 +300,7 @@ class qformat_default {
         foreach ($questions as $question) {   // Process and store each question
 
             // reset the php timeout
-            @set_time_limit();
+            @set_time_limit(0);
 
             // check for category modifiers
             if ($question->qtype=='category') {
