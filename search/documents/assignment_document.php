@@ -23,7 +23,7 @@ require_once($CFG->dirroot.'/mod/assignment/lib.php');
 
 /**
 * a class for representing searchable information
-* 
+*
 */
 class AssignmentSearchDocument extends SearchDocument {
 
@@ -40,19 +40,19 @@ class AssignmentSearchDocument extends SearchDocument {
         // we cannot call userdate with relevant locale at indexing time.
         $doc->title         = "{$itemtype}: {$assignmentitem['name']}";
         $doc->date          = $assignmentitem['date'];
-        
+
         //remove '(ip.ip.ip.ip)' from chat author list
         $doc->author        = $assignmentitem['authors'];
         $doc->contents      = $assignmentitem['description'];
         $doc->url           = assignment_make_link($assignment_module_id, $itemtype, $owner_id);
-        
+
         // module specific information; optional
         $data->assignment         = $assignment_module_id;
         $data->assignmenttype         = $assignmentitem['assignmenttype'];
-        
+
         // construct the parent class
         parent::__construct($doc, $data, $course_id, 0, 0, 'mod/'.SEARCH_TYPE_ASSIGNMENT);
-    } 
+    }
 }
 
 
@@ -78,7 +78,7 @@ function assignment_make_link($cm_id, $itemtype, $owner) {
 */
 function assignment_iterator() {
     global $DB;
-    
+
     if ($assignments = $DB->get_records('assignment'))
         return $assignments;
     else
@@ -92,7 +92,7 @@ function assignment_iterator() {
 */
 function assignment_get_content_for_index(&$assignment) {
     global $CFG, $DB;
-    
+
     $documents = array();
     $course = $DB->get_record('course', array('id' => $assignment->course));
     $coursemodule = $DB->get_field('modules', 'id', array('name' => 'assignment'));
@@ -103,7 +103,7 @@ function assignment_get_content_for_index(&$assignment) {
         $assignment->authors = '';
         $assignment->date = $assignment->timemodified;
         $documents[] = new AssignmentSearchDocument(get_object_vars($assignment), $cm->id, 'description', $assignment->course, null, $context->id);
-            
+
         $submissions = assignment_get_all_submissions($assignment);
         if ($submissions){
             foreach($submissions as $submission){
@@ -126,7 +126,7 @@ function assignment_get_content_for_index(&$assignment) {
                             $submitted->data = $submission->data1;
                         }
                         break;
-                        case 'uploadsingle' : 
+                        case 'uploadsingle' :
                         case 'upload' : {
                             $submitted->source = 'files';
                             $submitted->data = "{$assignment->course}/moddata/assignment/{$assignment->id}/{$submission->userid}";
@@ -141,16 +141,16 @@ function assignment_get_content_for_index(&$assignment) {
                     $submission->description = $submitted->data;
                     $submission->description = preg_replace("/<[^>]*>/", '', $submission->description); // stip all tags
                     $documents[] = new AssignmentSearchDocument(get_object_vars($submission), $cm->id, 'submission', $assignment->course, $submission->userid, $context->id);
-                    mtrace("finished online submission for {$submission->authors} in assignement {$assignment->name}");
+                    mtrace("finished online submission for {$submission->authors} in assignment {$assignment->name}");
                 } elseif ($submitted->source = 'files'){
                     $SUBMITTED = opendir($submitted->path);
                     while($entry = readdir($SUBMITTED)){
-                        if (preg_match("/^\./", $entry)) continue; // exclude hidden and dirs . and .. 
+                        if (preg_match("/^\./", $entry)) continue; // exclude hidden and dirs . and ..
                         $path = "{$submitted->path}/{$entry}";
                         $documents[] = assignment_get_physical_file($submission, $assignment, $cm, $path, $context_id, $documents);
-                        mtrace("finished attachement $path for {$submission->authors} in assignement {$assignment->name}");
-                    } 
-                    closedir($submission->path);                            
+                        mtrace("finished attachement $path for {$submission->authors} in assignment {$assignment->name}");
+                    }
+                    closedir($submission->path);
                 }
             }
         }
@@ -161,7 +161,7 @@ function assignment_get_content_for_index(&$assignment) {
 }
 
 /**
-* get text from a physical file in an assignment submission 
+* get text from a physical file in an assignment submission
 * @uses $CFG, $DB
 * @param object $submission a submission for which to fetch some representative text
 * @param object $assignment the relevant assignment as a context
@@ -173,14 +173,14 @@ function assignment_get_content_for_index(&$assignment) {
 */
 function assignment_get_physical_file(&$submission, &$assignment, &$cm, $path, $context_id, &$documents = null){
     global $CFG, $DB;
-    
+
     $fileparts = pathinfo($path);
     // cannot index unknown or masked types
     if (empty($fileparts['extension'])) {
         mtrace("Cannot index without explicit extension.");
         return false;
     }
-        
+
     $ext = strtolower($fileparts['extension']);
 
     // cannot index unallowed or unhandled types
@@ -192,14 +192,14 @@ function assignment_get_physical_file(&$submission, &$assignment, &$cm, $path, $
         include_once($CFG->dirroot.'/search/documents/physical_'.$ext.'.php');
         $function_name = 'get_text_for_indexing_'.$ext;
         $submission->description = $function_name(null, $path);
-        
+
         // get authors
         $user = $DB->get_record('user', array('id' => $submission->userid));
         $submission->authors = fullname($user);
-        
+
         // we need a real id on file
         $submission->id = "{$submission->id}/{$path}";
-        
+
         if (!empty($submission->description)){
             if ($getsingle){
                 $single = new AssignmentSearchDocument(get_object_vars($submission), $cm->id, 'submitted', $assignment->course, $submission->userid, $context_id);
@@ -243,7 +243,7 @@ function assignment_single_document($id, $itemtype) {
     $cm = $DB->get_record('course_modules', array('course' => $course->id, 'module' => $coursemodule, 'instance' => $assignment->id));
     if ($cm){
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+
         // should be only one
         if ($itemtype == 'description'){
             $document = new AssignmentSearchDocument(get_object_vars($assignment), $cm->id, 'description', $assignment->course, null, $context->id);
@@ -270,7 +270,7 @@ function assignment_delete($info, $itemtype) {
 
 /**
 * returns the var names needed to build a sql query for addition/deletions
-* // TODO chat indexable records are virtual. Should proceed in a special way 
+* // TODO chat indexable records are virtual. Should proceed in a special way
 */
 function assignment_db_names() {
     //[primary id], [table name], [time created field name], [time modified field name]
@@ -281,16 +281,16 @@ function assignment_db_names() {
 }
 
 /**
-* this function handles the access policy to contents indexed as searchable documents. If this 
+* this function handles the access policy to contents indexed as searchable documents. If this
 * function does not exist, the search engine assumes access is allowed.
-* When this point is reached, we already know that : 
+* When this point is reached, we already know that :
 * - user is legitimate in the surrounding context
 * - user may be guest and guest access is allowed to the module
 * - the function may perform local checks within the module information logic
 * @uses $CFG, $USER, $DB
 * @param string $path the access path to the module script code
 * @param string $itemtype the information subclassing (usefull for complex modules, defaults to 'standard')
-* @param int $this_id the item id within the information class denoted by entry_type. In chats, this id 
+* @param int $this_id the item id within the information class denoted by entry_type. In chats, this id
 * points out a session history which is a close sequence of messages.
 * @param int $user the user record denoting the user who searches
 * @param int $group_id the current group used by the user when searching
@@ -298,7 +298,7 @@ function assignment_db_names() {
 */
 function assignment_check_text_access($path, $itemtype, $this_id, $user, $group_id, $context_id){
     global $CFG, $USER, $DB;
-    
+
     include_once("{$CFG->dirroot}/{$path}/lib.php");
 
     // get the chat session and all related stuff
@@ -317,13 +317,13 @@ function assignment_check_text_access($path, $itemtype, $this_id, $user, $group_
         if (!empty($CFG->search_access_debug)) echo "search reject : hidden assignment ";
         return false;
     }
-    
+
     /*
     group consistency check : checks the following situations about groups
     // trap if user is not same group and groups are separated
     $current_group = get_current_group($course->id);
     $course = get_record('course', 'id', $assignment->course);
-    if ((groupmode($course, $cm) == SEPARATEGROUPS) && !ismember($group_id) && !has_capability('moodle/site:accessallgroups', $context)){ 
+    if ((groupmode($course, $cm) == SEPARATEGROUPS) && !ismember($group_id) && !has_capability('moodle/site:accessallgroups', $context)){
         if (!empty($CFG->search_access_debug)) echo "search reject : assignment element is in separated group ";
         return false;
     }
@@ -331,7 +331,7 @@ function assignment_check_text_access($path, $itemtype, $this_id, $user, $group_
 
     //user ownership check :
     // trap if user is not owner of the resource and the ressource is a submission/attachement
-    if ($itemtype == 'submitted' && $USER->id != $submission->userid && !has_capability('mod/assignment:view', $context)){ 
+    if ($itemtype == 'submitted' && $USER->id != $submission->userid && !has_capability('mod/assignment:view', $context)){
         if (!empty($CFG->search_access_debug)) echo "search reject : i'm not owner of this assignment ";
         return false;
     }
@@ -349,7 +349,7 @@ function assignment_check_text_access($path, $itemtype, $this_id, $user, $group_
         if (!empty($CFG->search_access_debug)) echo "search reject : cannot read past sessions ";
         return false;
     }
-        
+
     return true;
 }
 
@@ -367,7 +367,7 @@ function assignment_link_post_processing($title){
      }
 
     $title = preg_replace_callback('/^(description|submitted)/', 'search_assignment_getstring', $title);
-    
+
     if ($CFG->block_search_utf8dir){
         return mb_convert_encoding($title, 'UTF-8', 'auto');
     }

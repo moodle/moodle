@@ -70,7 +70,7 @@ class restore_assignment_activity_structure_step extends restore_activity_struct
 
         // insert the assignment record
         $newitemid = $DB->insert_record('assignment', $data);
-        // inmediately after inserting "activity" record, call this
+        // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
 
@@ -95,7 +95,7 @@ class restore_assignment_activity_structure_step extends restore_activity_struct
     protected function after_execute() {
         // Add assignment related files, no need to match by itemname (just internally handled context)
         $this->add_related_files('mod_assignment', 'intro', null);
-        // Add assignment submission files, maching by assignment_submission itemname
+        // Add assignment submission files, matching by assignment_submission itemname
         $this->add_related_files('mod_assignment', 'submission', 'assignment_submission');
         $this->add_related_files('mod_assignment', 'online_submission', 'assignment_submission'); // Until MDL-23683 gets decided/implemented
         $this->add_related_files('mod_assignment', 'response', 'assignment_submission');

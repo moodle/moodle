@@ -1120,7 +1120,7 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
         $contextlists = get_related_contexts_string($context);
 
-        // everyone who has a role assignement in this course or higher
+        // everyone who has a role assignment in this course or higher
         $params = array($USER->id, "%$searchtext%");
         $users = $DB->get_records_sql("SELECT $ufields,
                                          FROM {user} u, mc.id as contactlistid, mc.blocked

@@ -28,7 +28,7 @@
  *
  * Note: Offline assignments really haven't any special subplugin
  * information to backup/restore, hence code below is skipped (return false)
- * but it's a good example of sublugins supported at different
+ * but it's a good example of subplugins supported at different
  * elements (assignment and submission)
  */
 class restore_assignment_offline_subplugin extends restore_subplugin {
@@ -66,7 +66,7 @@ class restore_assignment_offline_subplugin extends restore_subplugin {
     }
 
     /**
-     * This method processes the config element inside one offline assignement (see offline subplugin backup)
+     * This method processes the config element inside one offline assignment (see offline subplugin backup)
      */
     public function process_assignment_offline_config($data) {
         $data = (object)$data;
@@ -86,7 +86,7 @@ class restore_assignment_offline_subplugin extends restore_subplugin {
     }
 
     /**
-     * This method processes the submission_config element inside one offline assignement (see offline subplugin backup)
+     * This method processes the submission_config element inside one offline assignment (see offline subplugin backup)
      */
     public function process_assignment_offline_submission_config($data) {
         $data = (object)$data;

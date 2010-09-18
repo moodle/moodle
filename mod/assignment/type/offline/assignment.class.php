@@ -86,7 +86,7 @@ class assignment_offline extends assignment_base {
 
             $DB->update_record('assignment_submissions', $submission);
 
-            // triger grade event
+            // trigger grade event
             $this->update_grade($submission);
 
             add_to_log($this->course->id, 'assignment', 'update grades',

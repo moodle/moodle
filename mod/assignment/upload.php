@@ -28,7 +28,7 @@ if ($id) {
         print_error('invalidid', 'assignment');
     }
     if (! $cm = get_coursemodule_from_instance("assignment", $assignment->id, $course->id)) {
-        print_error('invalidcoursemodule', 'assignement');
+        print_error('invalidcoursemodule', 'assignment');
     }
     $url->param('a', $a);
 }

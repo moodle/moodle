@@ -25,7 +25,7 @@ if ($id) {
         print_error('invalidcoursemodule');
     }
     if (! $course = $DB->get_record('course', array('id'=>$assignment->course))) {
-        print_error('coursemisconf', 'assignement');
+        print_error('coursemisconf', 'assignment');
     }
     if (! $cm = get_coursemodule_from_instance('assignment', $assignment->id, $course->id)) {
         print_error('invalidcoursemodule');

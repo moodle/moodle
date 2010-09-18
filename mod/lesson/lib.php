@@ -695,7 +695,7 @@ function lesson_reset_gradebook($courseid, $type='') {
 }
 
 /**
- * Actual implementation of the rest coures functionality, delete all the
+ * Actual implementation of the reset courses functionality, delete all the
  * lesson attempts for course $data->courseid.
  *
  * @global stdClass

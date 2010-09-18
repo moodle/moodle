@@ -728,7 +728,7 @@ function scorm_reset_gradebook($courseid, $type='') {
 }
 
 /**
- * Actual implementation of the rest coures functionality, delete all the
+ * Actual implementation of the reset courses functionality, delete all the
  * scorm attempts for course $data->courseid.
  *
  * @global stdClass
@@ -949,7 +949,7 @@ function scorm_extend_navigation($navigation, $course, $module, $cm) {
  *
  * @param string $type - type of log(aicc,scorm12,scorm13) used as prefix for filename
  * @param integer $scoid - scoid of object this log entry is for
- * @return string The filename as an absolute path 
+ * @return string The filename as an absolute path
 */
 function scorm_debug_log_filename($type, $scoid) {
     global $CFG, $USER;
@@ -1030,7 +1030,7 @@ function scorm_print_overview($courses, &$htmlarray) {
     }
 
     if(empty($scormids)){
-        // no assigments to look at - we're done
+        // no scorms to look at - we're done
         return true;
     }
     $strscorm   = get_string('modulename', 'scorm');

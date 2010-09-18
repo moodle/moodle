@@ -2340,7 +2340,7 @@ function data_reset_gradebook($courseid, $type='') {
 }
 
 /**
- * Actual implementation of the rest coures functionality, delete all the
+ * Actual implementation of the reset courses functionality, delete all the
  * data responses for course $data->courseid.
  *
  * @global object

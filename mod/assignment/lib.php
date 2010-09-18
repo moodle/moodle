@@ -272,7 +272,7 @@ class assignment_base {
         }
         // Check the user can submit
         $cansubmit = has_capability('mod/assignment:submit', $this->context, $USER->id, false);
-        // If not then check if ther user still has the view cap and has a previous submission
+        // If not then check if the user still has the view cap and has a previous submission
         $cansubmit = $cansubmit || (!empty($submission) && has_capability('mod/assignment:view', $this->context, $USER->id, false));
 
         if (!$cansubmit) {
@@ -716,7 +716,7 @@ class assignment_base {
                             $DB->update_record('assignment_submissions', $submission);
                         }
 
-                        // triger grade event
+                        // trigger grade event
                         $this->update_grade($submission);
 
                         //add to log only if updating
@@ -2024,7 +2024,7 @@ class assignment_base {
      * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
      *
      * @param $coursemodule object The coursemodule object (record).
-     * @return object An object on information that the coures will know about (most noticeably, an icon).
+     * @return object An object on information that the courses will know about (most noticeably, an icon).
      *
      */
     function get_coursemodule_info($coursemodule) {
@@ -3207,7 +3207,7 @@ function assignment_get_unmailed_submissions($starttime, $endtime) {
 /**
  * Counts all real assignment submissions by ENROLLED students (not empty ones)
  *
- * There are also assignment type methods count_real_submissions() wich in the default
+ * There are also assignment type methods count_real_submissions() which in the default
  * implementation simply call this function.
  * @param $groupid int optional If nonzero then count is restricted to this group
  * @return int The number of submissions
@@ -3264,7 +3264,7 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
         $sort = "a.$sort $dir";
     }
 
-    /* not sure this is needed at all since assignmenet already has a course define, so this join?
+    /* not sure this is needed at all since assignment already has a course define, so this join?
     $select = "s.course = '$assignment->course' AND";
     if ($assignment->course == SITEID) {
         $select = '';
@@ -3286,7 +3286,7 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
  * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
  *
  * @param $coursemodule object The coursemodule object (record).
- * @return object An object on information that the coures will know about (most noticeably, an icon).
+ * @return object An object on information that the courses will know about (most noticeably, an icon).
  *
  */
 function assignment_get_coursemodule_info($coursemodule) {
@@ -3371,7 +3371,7 @@ function assignment_print_overview($courses, &$htmlarray) {
     }
 
     if (empty($assignmentids)){
-        // no assigments to look at - we're done
+        // no assignments to look at - we're done
         return true;
     }
 
@@ -3389,8 +3389,8 @@ function assignment_print_overview($courses, &$htmlarray) {
     //
     list($sqlassignmentids, $assignmentidparams) = $DB->get_in_or_equal($assignmentids);
 
-    // build up and array of unmarked submissions indexed by assigment id/ userid
-    // for use where the user has grading rights on assigment
+    // build up and array of unmarked submissions indexed by assignment id/ userid
+    // for use where the user has grading rights on assignment
     $rs = $DB->get_recordset_sql("SELECT id, assignment, userid
                             FROM {assignment_submissions}
                             WHERE teacher = 0 AND timemarked = 0
@@ -3403,7 +3403,7 @@ function assignment_print_overview($courses, &$htmlarray) {
     $rs->close();
 
 
-    // get all user submissions, indexed by assigment id
+    // get all user submissions, indexed by assignment id
     $mysubmissions = $DB->get_records_sql("SELECT assignment, timemarked, teacher, grade
                                       FROM {assignment_submissions}
                                       WHERE userid = ? AND

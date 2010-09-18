@@ -665,7 +665,7 @@ function choice_reset_course_form_defaults($course) {
 }
 
 /**
- * Actual implementation of the rest coures functionality, delete all the
+ * Actual implementation of the reset courses functionality, delete all the
  * choice responses for course $data->courseid.
  *
  * @global object

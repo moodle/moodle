@@ -582,10 +582,10 @@ function survey_print_multi($question) {
                 $hiddentext = get_accesshide($options[$i-1]);
                 $id = "q$P" . $q->id . "_$i";
                 echo "<td><label for=\"$id\"><input type=\"radio\" name=\"q$P$q->id\" id=\"$id\" value=\"$i\" />$hiddentext</label></td>";
-            }            
-            $checklist["q$P$q->id"] = 0; 
+            }
+            $checklist["q$P$q->id"] = 0;
 
-        } else { 
+        } else {
             // yu : fix for MDL-7501, possibly need to use user flag as this is quite ugly.
             echo "<th scope=\"row\" class=\"optioncell\">";
             echo "<b class=\"qnumtopcell\">$qnum</b> &nbsp; ";
@@ -612,13 +612,13 @@ function survey_print_multi($question) {
 
             $default = get_accesshide($strdefault);
             echo '<td class="whitecell"><label for="q'. $q->id .'"><input type="radio" name="q'.$q->id. '" id="q'. $q->id .'" value="0" checked="checked" />'.$default.'</label></td>';
-          
+
             for ($i=1;$i<=$numoptions;$i++) {
                 $hiddentext = get_accesshide($options[$i-1]);
                 $id = "q" . $q->id . "_$i";
                 echo "<td><label for=\"$id\"><input type=\"radio\" name=\"q$q->id\" id=\"$id\" value=\"$i\" />$hiddentext</label></td>";
             }
-            
+
             $checklist["qP$q->id"] = 0;
             $checklist["q$q->id"] = 0;
         }
@@ -740,7 +740,7 @@ function survey_reset_course_form_defaults($course) {
 }
 
 /**
- * Actual implementation of the rest coures functionality, delete all the
+ * Actual implementation of the reset courses functionality, delete all the
  * survey responses for course $data->courseid.
  *
  * @global object
