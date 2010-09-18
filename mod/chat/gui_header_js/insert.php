@@ -70,7 +70,7 @@ if ($chatuser->version == 'header_js') {
         'name'      => 'mod_chat_header',
         'fullpath'  => '/mod/chat/gui_header_js/module.js'
     );
-    $PAGE->requires->js_init_call('M.mod_chat_header.init_insert_nojsupdated', null, array($forcerefreshasap), $module);
+    $PAGE->requires->js_init_call('M.mod_chat_header.init_insert_nojsupdated', array($forcerefreshasap), true, $module);
 }
 
 redirect('../empty.php');
