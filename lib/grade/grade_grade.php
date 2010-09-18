@@ -159,7 +159,7 @@ class grade_grade extends grade_object {
      * @param bool $include_missing include grades that do not exist yet
      * @return array userid=>grade_grade array
      */
-    public function fetch_users_grades($grade_item, $userids, $include_missing=true) {
+    public static function fetch_users_grades($grade_item, $userids, $include_missing=true) {
         global $DB;
 
         // hmm, there might be a problem with length of sql query

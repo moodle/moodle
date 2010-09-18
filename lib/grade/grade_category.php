@@ -168,7 +168,7 @@ class grade_category extends grade_object {
      * @return int The depth of this category (2 means there is one parent)
      * @static
      */
-    public function build_path($grade_category) {
+    public static function build_path($grade_category) {
         global $DB;
 
         if (empty($grade_category->parent)) {
@@ -520,7 +520,7 @@ class grade_category extends grade_object {
      * @param array  $items Grade items
      * @param array  $grade_values Array of grade values
      * @param object $oldgrade Old grade
-     * @param bool   $excluded Excluded
+     * @param array  $excluded Excluded
      *
      * @return boolean (just plain return;)
      * @todo Document correctly
@@ -819,11 +819,11 @@ class grade_category extends grade_object {
     /**
      * internal function for category grades summing
      *
-     * @param grade_item &$grade The grade item
+     * @param grade_grade &$grade The grade item
      * @param float      $oldfinalgrade Old Final grade?
      * @param array      $items Grade items
      * @param array      $grade_values Grade values
-     * @param bool       $excluded Excluded
+     * @param array      $excluded Excluded
      *
      * @return boolean (just plain return;)
      */
@@ -1196,7 +1196,7 @@ class grade_category extends grade_object {
      *
      * @return array
      */
-    private function _get_children_recursion($category) {
+    private static function _get_children_recursion($category) {
 
         $children_array = array();
         foreach ($category->children as $sortorder=>$child) {
@@ -1437,7 +1437,7 @@ class grade_category extends grade_object {
      * @return object grade_category instance for course grade
      * @static
      */
-    public function fetch_course_category($courseid) {
+    public static function fetch_course_category($courseid) {
         if (empty($courseid)) {
             debugging('Missing course id!');
             return false;

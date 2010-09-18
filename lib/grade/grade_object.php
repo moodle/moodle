@@ -101,7 +101,7 @@ abstract class grade_object {
     public function load_optional_fields() {
         global $DB;
         foreach ($this->optional_fields as $field=>$default) {
-            if (array_key_exists($field, $this)) {
+            if (property_exists($this, $field)) {
                 continue;
             }
             if (empty($this->id)) {

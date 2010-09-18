@@ -438,7 +438,6 @@ class grade_item extends grade_object {
                 $this->idnumber = $idnumber;
                 return $this->update();
             }
-            return false;
 
         } else {
             $this->idnumber = $idnumber;
@@ -944,7 +943,7 @@ class grade_item extends grade_object {
      * @param int $courseid
      * @return course item object
      */
-    public function fetch_course_item($courseid) {
+    public static function fetch_course_item($courseid) {
         if ($course_item = grade_item::fetch(array('courseid'=>$courseid, 'itemtype'=>'course'))) {
             return $course_item;
         }
