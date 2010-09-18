@@ -339,7 +339,7 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
  * @param string $itemtype 'mod', 'block'
  * @param string $itemmodule 'forum, 'quiz', etc.
  * @param int $iteminstance id of the item module
- * @param int $userid_or_ids optional id of the graded user or array of ids; if userid not used, returns only information about grade_item
+ * @param array|int $userid_or_ids optional id of the graded user or array of ids; if userid not used, returns only information about grade_item
  * @return array Array of grade information objects (scaleid, name, grade and locked status, etc.) indexed with itemnumbers
  */
 function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $userid_or_ids=null) {
