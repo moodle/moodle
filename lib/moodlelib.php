@@ -9572,6 +9572,8 @@ function set_mnet_remote_client($client) {
  * @param stdclass $user the user to get the idp url for
  */
 function mnet_get_idp_jump_url($user) {
+    global $CFG;
+
     static $mnetjumps = array();
     if (!array_key_exists($user->mnethostid, $mnetjumps)) {
         $idp = mnet_get_peer_host($user->mnethostid);
