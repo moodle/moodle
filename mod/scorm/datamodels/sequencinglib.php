@@ -795,7 +795,7 @@ function scorm_seq_rollup_rule_check ($sco,$userid,$action){
                         if($itm === true){
                             $cont++;
                         }
-                        if($cont >= $roullprule->minimumcount){
+                        if($cont >= $rolluprule->minimumcount){
                             $change = true;
                         }
                     }
@@ -807,7 +807,7 @@ function scorm_seq_rollup_rule_check ($sco,$userid,$action){
                         if($itm === true){
                             $cont++;
                         }
-                        if($cont >= $roullprule->minimumcount){
+                        if($cont >= $rolluprule->minimumcount){
                             $change = true;
                         }
                     }
@@ -819,7 +819,7 @@ function scorm_seq_rollup_rule_check ($sco,$userid,$action){
                         if($itm === true){
                             $cont++;
                         }
-                        if(($cont/sizeof($childrenbag)) >= $roullprule->minimumcount){
+                        if(($cont/sizeof($childrenbag)) >= $rolluprule->minimumcount){
                             $change = true;
                         }
                     }
