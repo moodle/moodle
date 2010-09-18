@@ -74,8 +74,8 @@
 
     $answers = array();
 
-    foreach ($formdata as $key => $val) {        
-        if ($key <> "userid" && $key <> "id") { 
+    foreach ($formdata as $key => $val) {
+        if ($key <> "userid" && $key <> "id") {
             if ( substr($key,0,1) == "q") {
                 $key = clean_param(substr($key,1), PARAM_ALPHANUM);   // keep everything but the 'q', number or Pnumber
             }
@@ -94,6 +94,7 @@
     $timenow = time();
     foreach ($answers as $key => $val) {
         if ($key != 'sesskey') {
+            $newdata = new object();
             $newdata->time = $timenow;
             $newdata->userid = $USER->id;
             $newdata->survey = $survey->id;
