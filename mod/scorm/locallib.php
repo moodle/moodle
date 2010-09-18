@@ -422,6 +422,7 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
         }
     }
     if ($tracks = $DB->get_records('scorm_scoes_track', array('userid'=>$userid, 'scoid'=>$scoid, 'attempt'=>$attempt),'element ASC')) {
+        $usertrack = new object();
         $usertrack->userid = $userid;
         $usertrack->scoid = $scoid;
         // Defined in order to unify scorm1.2 and scorm2004
