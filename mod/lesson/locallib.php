@@ -70,7 +70,7 @@ define("LESSON_MAX_EVENT_LENGTH", "432000");
  * This function is only executed when a teacher is
  * checking the navigation for a lesson.
  *
- * @param int $lesson Id of the lesson that is to be checked.
+ * @param stdClass $lesson Id of the lesson that is to be checked.
  * @return boolean True or false.
  **/
 function lesson_display_teacher_warning($lesson) {
@@ -941,6 +941,8 @@ class lesson extends lesson_base {
      * @return lesson
      */
     public static function load($lessonid) {
+        global $DB;
+
         if (!$lesson = $DB->get_record('lesson', array('id' => $lessonid))) {
             print_error('invalidcoursemodule');
         }
@@ -1114,7 +1116,7 @@ class lesson extends lesson_base {
      * @return bool
      */
     public function get_next_page($nextpageid) {
-        global $USER;
+        global $USER, $DB;
         $allpages = $this->load_all_pages();
         if ($this->properties->nextpagedefault) {
             // in Flash Card mode...first get number of retakes
