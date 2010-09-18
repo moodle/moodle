@@ -99,7 +99,7 @@ class lesson_page_type_multichoice extends lesson_page {
     }
 
     public function check_answer() {
-        global $DB, $CFG;
+        global $DB, $CFG, $PAGE;
         $result = parent::check_answer();
 
         $formattextdefoptions = new object();

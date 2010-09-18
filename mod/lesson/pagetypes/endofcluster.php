@@ -106,6 +106,7 @@ class lesson_page_type_endofcluster extends lesson_page {
         return true;
     }
     public function override_next_page() {
+        global $DB;
         $jump = $DB->get_field("lesson_answers", "jumpto", array("pageid" => $this->properties->id, "lessonid" => $this->lesson->id));
         if ($jump == LESSON_NEXTPAGE) {
             if ($this->properties->nextpageid == 0) {

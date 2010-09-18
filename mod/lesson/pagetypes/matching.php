@@ -132,7 +132,7 @@ class lesson_page_type_matching extends lesson_page {
     }
 
     public function check_answer() {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $formattextdefoptions = new object();
         $formattextdefoptions->noclean = true;
