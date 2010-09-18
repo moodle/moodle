@@ -4995,6 +4995,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
         $currentgroup = groups_get_activity_group($cm);
     }
 
+    $groups = array(); //cache
+
 // If the user can post discussions, then this is a good place to put the
 // button for it. We do not show the button if we are showing site news
 // and the current user is a guest.
