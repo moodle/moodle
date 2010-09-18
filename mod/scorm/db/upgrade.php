@@ -40,11 +40,9 @@ function xmldb_scorm_upgrade($oldversion) {
             if (empty($whatgradefixed)) {
                 /// fix bad usage of whatgrade/grading method.
                 $scorms = $DB->get_records('scorm');
-                if (!empty($scorm)) {
-                    foreach ($scorms as $scorm) {
-                        $scorm->whatgrade = $scorm->grademethod/10;
-                        $DB->update_record('scorm', $scorm);
-                    }
+                foreach ($scorms as $scorm) {
+                    $scorm->whatgrade = $scorm->grademethod/10;
+                    $DB->update_record('scorm', $scorm);
                 }
             }
         } else {
