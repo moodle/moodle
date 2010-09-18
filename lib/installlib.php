@@ -255,7 +255,7 @@ function install_print_help_page($help) {
             print_string($help, 'install', phpversion());
             break;
         case 'memorylimithelp':
-            print_string($help, 'install', get_memory_limit());
+            print_string($help, 'install', @ini_get('memory_limit'));
             break;
         default:
             print_string($help, 'install');
