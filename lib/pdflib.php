@@ -106,7 +106,7 @@ class pdf extends TCPDF {
             $fontfiles = $this->_getfontfiles(PDF_CUSTOM_FONT_PATH);
 
             if (count($fontfiles) == 1) {
-                $autofontname = substr($fontfile[0], 0, -4);
+                $autofontname = substr($fontfiles[0], 0, -4);
                 $this->AddFont($autofontname, '', $autofontname.'.php');
                 $this->SetFont($autofontname);
             } else if (count($fontfiles == 0)) {
