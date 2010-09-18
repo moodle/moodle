@@ -2745,7 +2745,7 @@ function print_single_button($link, $options, $label='OK', $method='get', $notus
     // Cast $options to array
     $options = (array) $options;
 
-    $button = new single_button(new moodle_url($link, $options), $label, $method, array('disabled'=>$disabled, 'title'=>$tooltip, 'id'=>$id));
+    $button = new single_button(new moodle_url($link, $options), $label, $method, array('disabled'=>$disabled, 'title'=>$tooltip, 'id'=>$formid));
 
     if ($jsconfirmmessage) {
         $button->button->add_confirm_action($jsconfirmmessage);
@@ -3547,7 +3547,7 @@ function print_checkbox($name, $value, $checked = true, $label = '', $alt = '', 
 function print_textfield($name, $value, $alt = '', $size=50, $maxlength=0, $return=false) {
     debugging('print_textfield() has been deprecated. Please use mforms or html_writer.');
 
-    if ($al === '') {
+    if ($alt === '') {
         $alt = null;
     }
 
@@ -3619,6 +3619,7 @@ function update_mymoodle_icon() {
  * @return string
  */
 function update_tag_button($tagid) {
+    global $OUTPUT;
     debugging('update_tag_button() has been deprecated. Please change your code to use $OUTPUT->edit_button(moodle_url).');
     return $OUTPUT->edit_button(new moodle_url('/tag/index.php', array('id' => $tagid)));
 }
