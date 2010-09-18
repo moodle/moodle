@@ -9,7 +9,7 @@ require_once($CFG->libdir.'/formslib.php');
 class question_context_move_question_form extends moodleform {
 
     function definition() {
-        global $CFG;
+        global $CFG, $OUTPUT;
         $mform    =& $this->_form;
 
 //--------------------------------------------------------------------------------

@@ -1666,7 +1666,7 @@ $QUESTION_EDITTABCAPS = question_edit_contexts::$CAPS;
  * Make sure user is logged in as required in this context.
  */
 function require_login_in_context($contextorid = null){
-    global $DB;
+    global $DB, $CFG;
     if (!is_object($contextorid)){
         $context = get_context_instance_by_id($contextorid);
     } else {

@@ -1009,6 +1009,7 @@ class question_calculated_qtype extends default_questiontype {
 
 
     function update_dataset_options($datasetdefs, $form) {
+        global $OUTPUT;
         // Do we have informatin about new options???
         if (empty($form->definition) || empty($form->calcmin)
             || empty($form->calcmax) || empty($form->calclength)
