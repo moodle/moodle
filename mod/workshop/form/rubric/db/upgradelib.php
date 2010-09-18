@@ -229,7 +229,7 @@ function workshopform_rubric_upgrade_legacy_rubric() {
  *
  * This is used during Criterion 1.9 -> Rubric 2.0 conversion
  *
- * @param stdclass $old legacy record from workshop_elements_old
+ * @param stdClass $old legacy record from workshop_elements_old
  * @param int $newdimensionid id of the new workshopform_rubric dimension record to be linked to
  * @return stdclass to be saved in workshopform_rubric_levels
  */
@@ -247,7 +247,7 @@ function workshopform_rubric_upgrade_criterion_level(stdclass $old, $newdimensio
  *
  * This is used during Rubric 1.9 -> Rubric 2.0 conversion
  *
- * @param stdclass $old legacy record from joined workshop_elements_old + workshop_rubrics_old
+ * @param stdClass $old legacy record from joined workshop_elements_old + workshop_rubrics_old
  * @param int $newdimensionid id of the new workshopform_rubric dimension record to be linked to
  * @return stdclass to be saved in workshopform_rubric_levels
  */

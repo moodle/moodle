@@ -87,7 +87,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         // fixture set-up
         $this->strategy->dimensions = array();
         $grades = array();
-        // excercise SUT
+        // exercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
         // validate
         $this->assertNull($suggested);
@@ -97,7 +97,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         // fixture set-up
         $this->strategy->dimensions[1003] = (object)array('grade' => '20', 'weight' => '1');
         $grades[] = (object)array('dimensionid' => 1003, 'grade' => '5.00000');
-        // excercise SUT
+        // exercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
         // validate
         $this->assertEqual(grade_floatval(5/20 * 100), $suggested);
@@ -108,7 +108,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $this->strategy->dimensions[1003] = (object)array('grade' => '20', 'weight' => '-1');
         $grades[] = (object)array('dimensionid' => 1003, 'grade' => '20');
         $this->expectException('coding_exception');
-        // excercise SUT
+        // exercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
     }
 
@@ -116,7 +116,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         // fixture set-up
         $this->strategy->dimensions[1003] = (object)array('grade' => '20', 'weight' => '3');
         $grades[] = (object)array('dimensionid' => '1003', 'grade' => '5');
-        // excercise SUT
+        // exercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
         // validate
         $this->assertEqual(grade_floatval(5/20 * 100), $suggested);
@@ -132,7 +132,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $grades[] = (object)array('dimensionid' => 1004, 'grade' => '87.00000');
         $grades[] = (object)array('dimensionid' => 1005, 'grade' => '10.00000');
 
-        // excercise SUT
+        // exercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
 
         // validate
@@ -149,7 +149,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $grades[] = (object)array('dimensionid' => 1004, 'grade' => '66.00000');
         $grades[] = (object)array('dimensionid' => 1005, 'grade' => '4.00000');
 
-        // excercise SUT
+        // exercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
 
         // validate
@@ -166,7 +166,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $DB->expectOnce('get_field', array('scale', 'scale', array('id' => 10), MUST_EXIST));
         $DB->setReturnValue('get_field', $mockscale);
 
-        // excercise SUT
+        // exercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
 
         // validate
@@ -181,7 +181,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $grades[] = (object)array('dimensionid' => 1008, 'grade' => '1.00000');
         $DB->expectNever('get_field', array('scale', 'scale', array('id' => 10), MUST_EXIST)); // cached
 
-        // excercise SUT
+        // exercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
 
         // validate
@@ -207,7 +207,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $DB->expectAt(1, 'get_field', array('scale', 'scale', array('id' => 17), MUST_EXIST));
         $DB->setReturnValueAt(1, 'get_field', $mockscale17);
 
-        // excercise SUT
+        // exercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
 
         // validate
@@ -224,7 +224,7 @@ class workshop_accumulative_strategy_test extends UnitTestCase {
         $grades[] = (object)array('dimensionid' => 1012, 'grade' => '4.00000'); // exceeds the number of scale items
         $this->expectException('coding_exception');
 
-        // excercise SUT
+        // exercise SUT
         $suggested = $this->strategy->calculate_peer_grade($grades);
     }
 }

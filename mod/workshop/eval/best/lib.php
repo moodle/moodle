@@ -58,7 +58,7 @@ class workshop_best_evaluation implements workshop_evaluation {
      * This function relies on the grading strategy subplugin providing get_assessments_recordset() method.
      * {@see self::process_assessments()} for the required structure of the recordset.
      *
-     * @param stdclass $settings       The settings for this round of evaluation
+     * @param stdClass $settings       The settings for this round of evaluation
      * @param null|int|array $restrict If null, update all reviewers, otherwise update just grades for the given reviewers(s)
      *
      * @return void
@@ -95,7 +95,7 @@ class workshop_best_evaluation implements workshop_evaluation {
             if ($current->submissionid == $previous->submissionid) {
                 $batch[] = $current;
             } else {
-                // process all the assessments of a sigle submission
+                // process all the assessments of a single submission
                 $this->process_assessments($batch, $diminfo, $settings);
                 // start with a new batch to be processed
                 $batch = array($current);
@@ -146,7 +146,7 @@ class workshop_best_evaluation implements workshop_evaluation {
      *
      * @param array $assessments of stdclass (->assessmentid ->assessmentweight ->reviewerid ->gradinggrade ->submissionid ->dimensionid ->grade)
      * @param array $diminfo of stdclass (->id ->weight ->max ->min)
-     * @param stdclass grading evaluation settings
+     * @param stdClass grading evaluation settings
      * @return void
      */
     protected function process_assessments(array $assessments, array $diminfo, stdclass $settings) {
@@ -230,7 +230,7 @@ class workshop_best_evaluation implements workshop_evaluation {
     protected function prepare_data_from_recordset($assessments) {
         $data = array();    // to be returned
         foreach ($assessments as $a) {
-            $id = $a->assessmentid; // just an abbrevation
+            $id = $a->assessmentid; // just an abbreviation
             if (!isset($data[$id])) {
                 $data[$id] = new stdclass();
                 $data[$id]->assessmentid = $a->assessmentid;
@@ -248,7 +248,7 @@ class workshop_best_evaluation implements workshop_evaluation {
     /**
      * Normalizes the dimension grades to the interval 0.00000 - 100.00000
      *
-     * Note: this heavily relies on PHP5 way of handling references in array of stdclasses. Hopefuly
+     * Note: this heavily relies on PHP5 way of handling references in array of stdclasses. Hopefully
      * it will not change again soon.
      *
      * @param array $assessments of stdclass as returned by {@see self::prepare_data_from_recordset()}
@@ -276,7 +276,7 @@ class workshop_best_evaluation implements workshop_evaluation {
      * The passed structure must be array of assessments objects with ->weight and ->dimgrades properties.
      *
      * @param array $assessments as prepared by {@link self::prepare_data_from_recordset()}
-     * @return null|stdclass
+     * @return null|stdClass
      */
     protected function average_assessment(array $assessments) {
         $sumdimgrades = array();
@@ -332,7 +332,7 @@ class workshop_best_evaluation implements workshop_evaluation {
             $sumweight = 0;
             foreach ($asids as $asid) {
                 $x = $assessments[$asid]->dimgrades[$dimid];    // value (data point)
-                $weight = $assessments[$asid]->weight;          // the values's weight
+                $weight = $assessments[$asid]->weight;          // the values' weight
                 if ($weight == 0) {
                     continue;
                 }
@@ -371,10 +371,10 @@ class workshop_best_evaluation implements workshop_evaluation {
      * Returned value is rounded to 4 valid decimals to prevent some rounding issues - see the unit test
      * for an example.
      *
-     * @param stdclass $assessment the assessment being measured
-     * @param stdclass $referential assessment
+     * @param stdClass $assessment the assessment being measured
+     * @param stdClass $referential assessment
      * @param array $diminfo of stdclass(->weight ->min ->max ->variance) indexed by dimension id
-     * @param stdclass $settings
+     * @param stdClass $settings
      * @return float|null rounded to 4 valid decimals
      */
     protected function assessments_distance(stdclass $assessment, stdclass $referential, array $diminfo, stdclass $settings) {

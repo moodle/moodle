@@ -87,7 +87,7 @@ class backup_workshopform_rubric_subplugin extends backup_subplugin {
     /**
      * Returns the structure of dimension grades
      *
-     * @param string forst parameter of {@link backup_nested_element} constructor
+     * @param string first parameter of {@link backup_nested_element} constructor
      */
     private function dimension_grades_structure($elementname) {
 

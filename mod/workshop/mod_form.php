@@ -169,7 +169,7 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', 'assessmentend', $label, array('optional' => true));
         $mform->setAdvanced('assessmentend');
 
-        // Common module settinga, Restrict availability, Activity completion etc. ----
+        // Common module settings, Restrict availability, Activity completion etc. ----
         $features = array('groups'=>true, 'groupings'=>true, 'groupmembersonly'=>true,
                 'outcomes'=>true, 'gradecat'=>false, 'idnumber'=>false);
 

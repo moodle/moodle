@@ -33,7 +33,7 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
     /**
      * Display the table of all current allocations and widgets to modify them
      *
-     * @param stdclass $data to be displayed - see the top of the function for the list of needed properties
+     * @param stdClass $data to be displayed - see the top of the function for the list of needed properties
      * @return string html code
      */
     public function display_allocations(stdclass $data) {

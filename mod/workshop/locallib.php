@@ -163,10 +163,10 @@ class workshop {
      * Makes deep copy of all passed records properties. Replaces integer $course attribute
      * with a full database record (course should not be stored in instances table anyway).
      *
-     * @param stdclass $dbrecord Workshop instance data from {workshop} table
-     * @param stdclass $cm       Course module record as returned by {@link get_coursemodule_from_id()}
-     * @param stdclass $course   Course record from {course} table
-     * @param stdclass $context  The context of the workshop instance
+     * @param stdClass $dbrecord Workshop instance data from {workshop} table
+     * @param stdClass $cm       Course module record as returned by {@link get_coursemodule_from_id()}
+     * @param stdClass $course   Course record from {course} table
+     * @param stdClass $context  The context of the workshop instance
      */
     public function __construct(stdclass $dbrecord, stdclass $cm, stdclass $course, stdclass $context=null) {
         foreach ($dbrecord as $field => $value) {
@@ -213,7 +213,7 @@ class workshop {
     /**
      * Returns an array of options for the editors that are used for submitting and assessing instructions
      *
-     * @param stdclass $context
+     * @param stdClass $context
      * @return array
      */
     public static function instruction_editors_options(stdclass $context) {
@@ -631,7 +631,7 @@ class workshop {
     /**
      * Prepares component containing summary of given example to be rendered
      *
-     * @param stdclass $example as returned by {@link workshop::get_examples_for_manager()} or {@link workshop::get_examples_for_reviewer()}
+     * @param stdClass $example as returned by {@link workshop::get_examples_for_manager()} or {@link workshop::get_examples_for_reviewer()}
      * @return stdclass component to be rendered
      */
     public function prepare_example_summary(stdclass $example) {
@@ -659,7 +659,7 @@ class workshop {
     /**
      * Removes the submission and all relevant data
      *
-     * @param stdclass $submission record to delete
+     * @param stdClass $submission record to delete
      * @return void
      */
     public function delete_submission(stdclass $submission) {
@@ -792,7 +792,7 @@ class workshop {
     /**
      * Allocate a submission to a user for review
      *
-     * @param stdclass $submission Submission object with at least id property
+     * @param stdClass $submission Submission object with at least id property
      * @param int $reviewerid User ID
      * @param int $weight of the new assessment, from 0 to 16
      * @param bool $bulk repeated inserts into DB expected
@@ -1681,7 +1681,7 @@ class workshop {
      * Returns the mform the teachers use to put a feedback for the reviewer
      *
      * @param moodle_url $actionurl
-     * @param stdclass $assessment
+     * @param stdClass $assessment
      * @param array $options editable, editableweight, overridablegradinggrade
      * @return workshop_feedbackreviewer_form
      */
@@ -1717,7 +1717,7 @@ class workshop {
      * Returns the mform the teachers use to put a feedback for the author on their submission
      *
      * @param moodle_url $actionurl
-     * @param stdclass $submission
+     * @param stdClass $submission
      * @param array $options editable
      * @return workshop_feedbackauthor_form
      */
@@ -1838,7 +1838,7 @@ class workshop {
                 $current = $assessment->aggregatedgrade;
             }
             if (!is_null($assessment->gradinggradeover)) {
-                // the grading grade for this assessment is overriden by a teacher
+                // the grading grade for this assessment is overridden by a teacher
                 $sumgrades += $assessment->gradinggradeover;
                 $count++;
             } else {
@@ -2270,7 +2270,7 @@ class workshop_user_plan implements renderable {
             }
         }
 
-        // Add phase swithing actions
+        // Add phase switching actions
         if (has_capability('mod/workshop:switchphase', $workshop->context, $userid)) {
             foreach ($this->phases as $phasecode => $phase) {
                 if (! $phase->active) {

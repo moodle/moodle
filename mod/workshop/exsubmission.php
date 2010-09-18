@@ -168,7 +168,7 @@ if ($edit) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($workshop->name), 2);
 
-// show instructions for submitting as thay may contain some list of questions and we need to know them
+// show instructions for submitting as they may contain some list of questions and we need to know them
 // while reading the submitted answer
 if (trim($workshop->instructauthors)) {
     $instructions = file_rewrite_pluginfile_urls($workshop->instructauthors, 'pluginfile.php', $PAGE->context->id,

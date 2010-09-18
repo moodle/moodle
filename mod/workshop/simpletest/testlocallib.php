@@ -82,7 +82,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch = array();   // batch of a submission's assessments
         $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'weight' => 1, 'grade' => null);
         $DB->expectNever('update_record');
-        // excercise SUT
+        // exercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
 
@@ -94,7 +94,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'weight' => 1, 'grade' => 10.12345);
         $expected = 10.12345;
         $DB->expectOnce('update_record');
-        // excercise SUT
+        // exercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
 
@@ -107,7 +107,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'weight' => 1, 'grade' => null);
         $expected = 45.54321;
         $DB->expectOnce('update_record');
-        // excercise SUT
+        // exercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
 
@@ -119,7 +119,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('submissionid' => 12, 'submissiongrade' => null, 'weight' => 4, 'grade' => 14.00012);
         $expected = 14.00012;
         $DB->expectOnce('update_record');
-        // excercise SUT
+        // exercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
 
@@ -134,7 +134,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'weight' => 1, 'grade' => 0.00000);
         $expected = 19.67750;
         $DB->expectOnce('update_record');
-        // excercise SUT
+        // exercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
 
@@ -149,7 +149,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 12.57750, 'weight' => 1, 'grade' => 0.00000);
         $expected = 19.67750;
         $DB->expectOnce('update_record');
-        // excercise SUT
+        // exercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
 
@@ -163,7 +163,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 19.67750, 'weight' => 1, 'grade' => 10.00000);
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => 19.67750, 'weight' => 1, 'grade' => 0.00000);
         $DB->expectNever('update_record');
-        // excercise SUT
+        // exercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
 
@@ -177,7 +177,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'weight' => 1, 'grade' => 1.00000);
         $expected = 2.33333;
         $DB->expectOnce('update_record');
-        // excercise SUT
+        // exercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
 
@@ -192,7 +192,7 @@ class workshop_internal_api_test extends UnitTestCase {
         $batch[] = (object)array('submissionid' => 45, 'submissiongrade' => null, 'weight' => 0, 'grade' => 1000.00000);
         $expected = 17.66667;
         $DB->expectOnce('update_record');
-        // excercise SUT
+        // exercise SUT
         $this->workshop->aggregate_submission_grades_process($batch);
     }
 
@@ -357,7 +357,7 @@ class workshop_internal_api_test extends UnitTestCase {
     }
 
     public function test_lcm() {
-        // fixture setup + excercise SUT + verify in one step
+        // fixture setup + exercise SUT + verify in one step
         $this->assertEqual(workshop::lcm(1,4), 4);
         $this->assertEqual(workshop::lcm(2,4), 4);
         $this->assertEqual(workshop::lcm(4,2), 4);

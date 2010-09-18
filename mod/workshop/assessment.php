@@ -166,7 +166,7 @@ $wsoutput = $PAGE->get_renderer('mod_workshop');      // workshop renderer
 $submission = $workshop->get_submission_by_id($submission->id);     // reload so can be passed to the renderer
 echo $wsoutput->submission_full($submission, has_capability('mod/workshop:viewauthornames', $workshop->context));
 
-// show instructions for assessing as thay may contain important information
+// show instructions for assessing as they may contain important information
 // for evaluating the assessment
 if (trim($workshop->instructreviewers)) {
     $instructions = file_rewrite_pluginfile_urls($workshop->instructreviewers, 'pluginfile.php', $PAGE->context->id,

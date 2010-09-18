@@ -147,7 +147,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
      * The passed data object are the raw data returned by the get_data().
      *
      * @uses $DB
-     * @param stdclass $data Raw data returned by the dimension editor form
+     * @param stdClass $data Raw data returned by the dimension editor form
      * @return void
      */
     public function save_edit_strategy_form(stdclass $data) {
@@ -219,7 +219,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
      *
      * @param moodle_url $actionurl URL of form handler, defaults to auto detect the current url
      * @param string $mode          Mode to open the form in: preview/assessment
-     * @param stdclass $assessment
+     * @param stdClass $assessment
      * @param bool $editable
      * @param array $options
      */
@@ -272,8 +272,8 @@ class workshop_numerrors_strategy implements workshop_strategy {
      *
      * This method processes data submitted using the form returned by {@link get_assessment_form()}
      *
-     * @param stdclass $assessment Assessment being filled
-     * @param stdclass $data       Raw data as returned by the assessment form
+     * @param stdClass $assessment Assessment being filled
+     * @param stdClass $data       Raw data as returned by the assessment form
      * @return float|null          Raw grade (from 0.00000 to 100.00000) for submission as suggested by the peer
      */
     public function save_assessment(stdclass $assessment, stdclass $data) {
@@ -473,7 +473,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
      * Called internally from {@link save_edit_strategy_form()} only. Could be private but
      * keeping protected for unit testing purposes.
      *
-     * @param stdclass $raw Raw data returned by mform
+     * @param stdClass $raw Raw data returned by mform
      * @return array Array of objects to be inserted/updated in DB
      */
     protected function prepare_database_fields(stdclass $raw) {
@@ -510,7 +510,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
     /**
      * Returns the list of current grades filled by the reviewer
      *
-     * @param stdclass $assessment Assessment record
+     * @param stdClass $assessment Assessment record
      * @return array of filtered records from the table workshop_grades
      */
     protected function get_current_assessment_data(stdclass $assessment) {
@@ -533,7 +533,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
     /**
      * Aggregates the assessment form data and sets the grade for the submission given by the peer
      *
-     * @param stdclass $assessment Assessment record
+     * @param stdClass $assessment Assessment record
      * @return float|null          Raw grade (0.00000 to 100.00000) for submission as suggested by the peer
      */
     protected function update_peer_grade(stdclass $assessment) {

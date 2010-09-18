@@ -86,7 +86,7 @@ $capabilities = array(
     ),
 
 
-    // Ability to submit and referentialy assess the examples and to see all other
+    // Ability to submit and referentially assess the examples and to see all other
     // assessments of these examples
     'mod/workshop:manageexamples' => array(
         'captype' => 'write',
@@ -181,7 +181,7 @@ $capabilities = array(
         )
     ),
 
-    // Ability to override grade for submission or the calcaluted grades for assessment
+    // Ability to override grade for submission or the calculated grades for assessment
     // and to run aggregation tasks that computes the total grade
     'mod/workshop:overridegrades' => array(
         'captype' => 'write',

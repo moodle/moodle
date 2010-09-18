@@ -370,7 +370,7 @@ class workshop_random_allocator implements workshop_allocator {
      * @param array    $authors      structure of grouped authors
      * @param resource $reviewers    structure of grouped reviewers
      * @param array    $assessments  currently assigned assessments to be kept
-     * @param mixed    $numofreviews number of reviewes to be allocated to each circle
+     * @param mixed    $numofreviews number of reviews to be allocated to each circle
      * @param mixed    $numper       what user type the circles represent
      * @param array    $o            reference to an array of log messages
      * @return array                 array of (reviewerid => authorid) pairs

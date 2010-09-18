@@ -103,7 +103,7 @@ class workshop_best_evaluation_test extends UnitTestCase {
                 3 => (object)array('min' => 1, 'max' => 3),
                 4 => (object)array('min' => 0, 'max' => 20),
             );
-        // excersise SUT
+        // exercise SUT
         $norm = $this->evaluator->normalize_grades($assessments, $diminfo);
         // validate
         $this->assertIsA($norm, 'array');
@@ -126,7 +126,7 @@ class workshop_best_evaluation_test extends UnitTestCase {
         $diminfo = array(
                 3 => (object)array('min' => 100, 'max' => 100),
             );
-        // excersise SUT
+        // exercise SUT
         $norm = $this->evaluator->normalize_grades($assessments, $diminfo);
         // validate
         $this->assertIsA($norm, 'array');
@@ -144,7 +144,7 @@ class workshop_best_evaluation_test extends UnitTestCase {
                 'weight'        => 1,
                 'dimgrades'     => array(1 => 0, 2 => 66.66667),
             );
-        // excersise SUT
+        // exercise SUT
         $average = $this->evaluator->average_assessment($assessments);
         // validate
         $this->assertIsA($average->dimgrades, 'array');
@@ -167,7 +167,7 @@ class workshop_best_evaluation_test extends UnitTestCase {
                 'weight'        => 1,
                 'dimgrades'     => array(3 => 11.0, 4 => 8.1, 5 => 88.0),
             );
-        // excersise SUT
+        // exercise SUT
         $average = $this->evaluator->average_assessment($assessments);
         // validate
         $this->assertIsA($average->dimgrades, 'array');
@@ -187,7 +187,7 @@ class workshop_best_evaluation_test extends UnitTestCase {
                 'weight'        => 0,
                 'dimgrades'     => array(3 => 11.0, 4 => 8.1, 5 => 88.0),
             );
-        // excersise SUT
+        // exercise SUT
         $average = $this->evaluator->average_assessment($assessments);
         // validate
         $this->assertNull($average);
@@ -215,7 +215,7 @@ class workshop_best_evaluation_test extends UnitTestCase {
                 'weight'        => 1,
                 'dimgrades'     => array(3 => 11, 4 => 9),
             );
-        // excersise SUT
+        // exercise SUT
         $variance = $this->evaluator->weighted_variance($assessments);
         // validate
         // dimension [3] have all the grades equal to 11
@@ -233,7 +233,7 @@ class workshop_best_evaluation_test extends UnitTestCase {
         $assessment1 = (object)array('dimgrades' => array(3 => 15, 4 => 2));
         $assessment2 = (object)array('dimgrades' => array(3 => 15, 4 => 2));
         $settings = (object)array('comparison' => 5);
-        // excersise SUT and validate
+        // exercise SUT and validate
         $this->assertEqual($this->evaluator->assessments_distance($assessment1, $assessment2, $diminfo, $settings), 0);
     }
 
@@ -248,7 +248,7 @@ class workshop_best_evaluation_test extends UnitTestCase {
         $assessment2 = (object)array('dimgrades' => array(3 => 75, 4 => 2));
         $referential = (object)array('dimgrades' => array(3 => 50, 4 => 3));
         $settings = (object)array('comparison' => 5);
-        // excersise SUT and validate
+        // exercise SUT and validate
         $this->assertEqual($this->evaluator->assessments_distance($assessment1, $referential, $diminfo, $settings),
                            $this->evaluator->assessments_distance($assessment2, $referential, $diminfo, $settings));
         */
@@ -261,7 +261,7 @@ class workshop_best_evaluation_test extends UnitTestCase {
         $assessment2 = (object)array('dimgrades' => array(1 => 50, 2 => 33.33333));
         $referential = (object)array('dimgrades' => array(1 => 25, 2 => 50));
         $settings = (object)array('comparison' => 9);
-        // excersise SUT and validate
+        // exercise SUT and validate
         $this->assertEqual($this->evaluator->assessments_distance($assessment1, $referential, $diminfo, $settings),
                            $this->evaluator->assessments_distance($assessment2, $referential, $diminfo, $settings));
 

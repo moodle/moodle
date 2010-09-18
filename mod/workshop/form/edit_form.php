@@ -84,7 +84,7 @@ class workshop_edit_strategy_form extends moodleform {
     /**
      * Add any strategy specific form fields.
      *
-     * @param stdclass $mform the form being built.
+     * @param stdClass $mform the form being built.
      */
     protected function definition_inner(&$mform) {
         // By default, do nothing.
