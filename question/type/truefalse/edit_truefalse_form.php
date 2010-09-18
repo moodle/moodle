@@ -83,7 +83,6 @@ class question_edit_truefalse_form extends question_edit_form {
             $answerid = $question->options->falseanswer;
             $text = $falseanswer->feedback;
 
-            $question->correctanswer = ($falseanswer->fraction != 0);
             $question->feedbackfalse = array();
             $question->feedbackfalse['text'] = $falseanswer->feedback;
             $question->feedbackfalse['format'] = $falseanswer->feedbackformat;
