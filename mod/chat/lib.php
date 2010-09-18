@@ -244,7 +244,7 @@ function chat_user_complete($course, $user, $mod, $chat) {
  * @global object
  * @global object
  * @param object $course
- * @param array $viewfullnames
+ * @param bool $viewfullnames
  * @param int|string $timestart Timestamp
  * @return bool
  */
