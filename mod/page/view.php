@@ -33,14 +33,12 @@ $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
 
 if ($p) {
     if (!$page = $DB->get_record('page', array('id'=>$p))) {
-        page_redirect_if_migrated($r, 0);
         print_error('invalidaccessparameter');
     }
     $cm = get_coursemodule_from_instance('page', $page->id, $page->course, false, MUST_EXIST);
 
 } else {
     if (!$cm = get_coursemodule_from_id('page', $id)) {
-        page_redirect_if_migrated(0, $id);
         print_error('invalidcoursemodule');
     }
     $page = $DB->get_record('page', array('id'=>$cm->instance), '*', MUST_EXIST);
