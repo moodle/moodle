@@ -1405,7 +1405,7 @@ class js_writer {
      * @param int $delay execution delay in seconds
      * @return string JS code fragment
      */
-    public function function_call($function, array $arguments = null, $delay=0) {
+    public static function function_call($function, array $arguments = null, $delay=0) {
         if ($arguments) {
             $arguments = array_map('json_encode', $arguments);
             $arguments = implode(', ', $arguments);
@@ -1427,7 +1427,7 @@ class js_writer {
      * @param array $extraarguments
      * @return string
      */
-    public function function_call_with_Y($function, array $extraarguments = null) {
+    public static function function_call_with_Y($function, array $extraarguments = null) {
         if ($extraarguments) {
             $extraarguments = array_map('json_encode', $extraarguments);
             $arguments = 'Y, ' . implode(', ', $extraarguments);
@@ -1446,7 +1446,7 @@ class js_writer {
      * @param int $delay
      * @return string
      */
-    public function object_init($var, $class, array $arguments = null, array $requirements = null, $delay=0) {
+    public static function object_init($var, $class, array $arguments = null, array $requirements = null, $delay=0) {
         if (is_array($arguments)) {
             $arguments = array_map('json_encode', $arguments);
             $arguments = implode(', ', $arguments);
@@ -1479,7 +1479,7 @@ class js_writer {
      * @param bool $usevar add var definition, ignored for nested properties
      * @return string JS code fragment
      */
-    public function set_variable($name, $value, $usevar=true) {
+    public static function set_variable($name, $value, $usevar=true) {
         $output = '';
 
         if ($usevar) {
@@ -1503,7 +1503,7 @@ class js_writer {
      * @param array  $arguments An optional array of argument parameters to pass to the function
      * @return string JS code fragment
      */
-    public function event_handler($selector, $event, $function, array $arguments = null) {
+    public static function event_handler($selector, $event, $function, array $arguments = null) {
         $selector = json_encode($selector);
         $output = "Y.on('$event', $function, $selector, null";
         if (!empty($arguments)) {
