@@ -1333,7 +1333,7 @@ class table_sql extends flexible_table{
             list($wsql, $wparams) = $this->get_sql_where();
             if ($wsql) {
                 $this->countsql .= ' AND '.$wsql;
-                $this->countparams = arry_merge($this->countparams, $wparams);
+                $this->countparams = array_merge($this->countparams, $wparams);
 
                 $this->sql->where .= ' AND '.$wsql;
                 $this->sql->params = array_merge($this->sql->params, $wparams);
