@@ -474,7 +474,7 @@ class MoodleODSFormat {
      * @param string $location alignment for the cell ('left', 'right', etc...)
      */
     function set_h_align($location) {
-        set_align($location);
+        $this->set_align($location);
     }
 
     /* Set the cell vertical alignment of the format
