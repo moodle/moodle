@@ -3045,11 +3045,9 @@ function data_presets_export($course, $cm, $data, $tostorage=false) {
     $exportfile = $exportdir.'.zip';
     file_exists($exportfile) && unlink($exportfile);
 
-    $fp = get_file_packer();
-    $fp->archive_to_pathname($files, $archivefile);
+    $fp = get_file_packer('application/zip');
+    $fp->archive_to_pathname($filelist, $exportfile);
 
-    $status = zip_files($filelist, $exportfile);
-    // ToDo: status check
     foreach ($filelist as $file) {
         unlink($file);
     }
