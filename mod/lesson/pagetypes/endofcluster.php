@@ -95,7 +95,7 @@ class lesson_page_type_endofcluster extends lesson_page {
         if (isset($properties->jumpto[0])) {
             $answer->jumpto = $properties->jumpto[0];
         }
-        if (isset($form->score[0])) {
+        if (isset($properties->score[0])) {
             $answer->score = $properties->score[0];
         }
         if (!empty($answer->id)) {
