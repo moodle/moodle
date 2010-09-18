@@ -272,7 +272,7 @@ class grade_outcome extends grade_object {
     }
 
     /**
-     * Returns the formatted grade description with URL's converted
+     * Returns the formatted grade description with URLs converted
      * @return string
      */
     public function get_description() {

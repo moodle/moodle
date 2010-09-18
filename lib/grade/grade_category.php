@@ -765,7 +765,7 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Some aggregation tpyes may update max grade
+     * Some aggregation types may update max grade
      * @param array $items sub items
      * @return void
      */
@@ -832,7 +832,7 @@ class grade_category extends grade_object {
             return null;
         }
 
-        // ungraded and exluded items are not used in aggregation
+        // ungraded and excluded items are not used in aggregation
         foreach ($grade_values as $itemid=>$v) {
 
             if (is_null($v)) {
@@ -1519,7 +1519,7 @@ class grade_category extends grade_object {
 
         parent::set_properties($instance, $params);
 
-        //if theyve changed aggregation type we made need to do some fiddling to provide appropriate defaults
+        //if they've changed aggregation type we made need to do some fiddling to provide appropriate defaults
         if (!empty($params->aggregation)) {
 
             //weight and extra credit share a column :( Would like a default of 1 for weight and 0 for extra credit
