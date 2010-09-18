@@ -561,11 +561,11 @@ function enrol_get_course_description_texts($course) {
     $instances = enrol_get_instances($course->id, true);
     $plugins = enrol_get_plugins(true);
     foreach ($instances as $instance) {
-        if (!isset($plugins[$instance->name])) {
+        if (!isset($plugins[$instance->enrol])) {
             //weird
             continue;
         }
-        $plugin = $plugins[$enrol->name];
+        $plugin = $plugins[$instance->enrol];
         $text = $plugin->get_description_text($instance);
         if ($text !== NULL) {
             $lines[] = $text;
