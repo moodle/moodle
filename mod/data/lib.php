@@ -1847,6 +1847,8 @@ function data_get_available_presets($context) {
  * @return array An array of presets
  */
 function data_get_available_site_presets($context, array $presets=array()) {
+    global $USER;
+
     $fs = get_file_storage();
     $files = $fs->get_area_files(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA);
     $canviewall = has_capability('mod/data:viewalluserpresets', $context);
