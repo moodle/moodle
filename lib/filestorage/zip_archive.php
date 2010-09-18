@@ -111,7 +111,7 @@ class zip_archive extends file_archive {
     /**
      * Returns file stream for reading of content
      * @param int $index of file
-     * @return stream or false if error
+     * @return resource or false if error
      */
     public function get_stream($index) {
         if (!isset($this->za)) {

@@ -614,7 +614,7 @@ class file_storage {
 
         try {
             $newrecord->id = $DB->insert_record('files', $newrecord);
-        } catch (database_exception $e) {
+        } catch (dml_exception $e) {
             $newrecord->id = false;
         }
 
@@ -758,7 +758,7 @@ class file_storage {
 
         try {
             $newrecord->id = $DB->insert_record('files', $newrecord);
-        } catch (database_exception $e) {
+        } catch (dml_exception $e) {
             $newrecord->id = false;
         }
 
@@ -851,7 +851,7 @@ class file_storage {
 
         try {
             $newrecord->id = $DB->insert_record('files', $newrecord);
-        } catch (database_exception $e) {
+        } catch (dml_exception $e) {
             $newrecord->id = false;
         }
 

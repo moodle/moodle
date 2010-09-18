@@ -116,7 +116,7 @@ abstract class file_archive implements Iterator {
     /**
      * Tries to convert $localname into another encoding,
      * please note that it may fail really badly.
-     * @param strin $localname in utf-8 encoding
+     * @param string $localname in utf-8 encoding
      * @return string
      */
     protected function mangle_pathname($localname) {
