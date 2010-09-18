@@ -1686,7 +1686,7 @@ function create_context($contextlevel, $instanceid, $strictness=IGNORE_MISSING) 
     global $CFG, $DB;
 
     if ($contextlevel == CONTEXT_SYSTEM) {
-        return create_system_context();
+        return get_system_context();
     }
 
     $context = new object();
