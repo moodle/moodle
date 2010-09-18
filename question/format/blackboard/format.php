@@ -66,7 +66,7 @@ function process_essay($xml, &$questions ) {
 
         // put questiontext in question object
         if ($ishtml) {
-            $question->questiontext = html_entity_decode_php4(trim($essayquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+            $question->questiontext = html_entity_decode(trim($essayquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
         }
 
         // put name in question object
