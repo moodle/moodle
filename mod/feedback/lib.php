@@ -2314,7 +2314,7 @@ function feedback_is_course_in_sitecourse_map($feedbackid, $courseid) {
  * @return boolean
  */
 function feedback_is_feedback_in_sitecourse_map($feedbackid) {
-    global $Db;
+    global $DB;
     return $DB->record_exists('feedback_sitecourse_map', array('feedbackid'=>$feedbackid));
 }
 
