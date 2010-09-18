@@ -1321,7 +1321,7 @@ function get_course_mods($courseid) {
  * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
  *                        IGNORE_MULTIPLE means return first, ignore multiple records found(not recommended);
  *                        MUST_EXIST means throw exception if no record or multiple records found
- * @return array Array of results
+ * @return stdClass
  */
 function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=false, $strictness=IGNORE_MISSING) {
     global $DB;
@@ -1375,7 +1375,7 @@ function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=f
  * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
  *                        IGNORE_MULTIPLE means return first, ignore multiple records found(not recommended);
  *                        MUST_EXIST means throw exception if no record or multiple records found
- * @return array Array of results
+ * @return stdClass
  */
 function get_coursemodule_from_instance($modulename, $instance, $courseid=0, $sectionnum=false, $strictness=IGNORE_MISSING) {
     global $DB;
