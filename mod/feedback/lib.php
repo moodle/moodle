@@ -348,7 +348,7 @@ function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, 
                     continue;
                 }
                 $usersgroups = array_keys($usersgroups);
-                $interset = array_intersect($usersgroups, $modinfo->groups[$cm->id]);
+                $intersect = array_intersect($usersgroups, $modinfo->groups[$cm->id]);
                 if (empty($intersect)) {
                     continue;
                 }
