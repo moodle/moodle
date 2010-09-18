@@ -1083,15 +1083,14 @@ function scorm_seq_sequencing ($scoid,$userid,$seq) {
     switch ($seq->sequencing) {
 
         case 'start':
-        //TODO: undefined $sco!
-             $seq = scorm_seq_start_sequencing($sco,$userid,$seq); //We'll see the parameters we have to send, this should update delivery and end
+            $seq = scorm_seq_start_sequencing($scoid,$userid,$seq); //We'll see the parameters we have to send, this should update delivery and end
             $seq->sequencing = true;
 
 
             break;
 
         case 'resumeall':
-            $seq = scorm_seq_resume_sequencing($sco,$userid,$seq); //We'll see the parameters we have to send, this should update delivery and end
+            $seq = scorm_seq_resume_sequencing($scoid,$userid,$seq); //We'll see the parameters we have to send, this should update delivery and end
             $seq->sequencing = true;
 
 
@@ -1099,7 +1098,7 @@ function scorm_seq_sequencing ($scoid,$userid,$seq) {
             break;
 
         case 'exit':
-             $seq = scorm_seq_exit_sequencing($sco,$userid,$seq); //We'll see the parameters we have to send, this should update delivery and end
+             $seq = scorm_seq_exit_sequencing($scoid,$userid,$seq); //We'll see the parameters we have to send, this should update delivery and end
             $seq->sequencing = true;
 
 
@@ -1107,21 +1106,21 @@ function scorm_seq_sequencing ($scoid,$userid,$seq) {
             break;
 
         case 'retry':
-            $seq = scorm_seq_retry_sequencing($sco,$userid,$seq); //We'll see the parameters we have to send, this should update delivery and end
+            $seq = scorm_seq_retry_sequencing($scoid,$userid,$seq); //We'll see the parameters we have to send, this should update delivery and end
             $seq->sequencing = true;
 
 
             break;
 
         case 'previous':
-            $seq = scorm_seq_previous_sequencing($sco,$userid,$seq);// We'll see the parameters we have to send, this should update delivery and end
+            $seq = scorm_seq_previous_sequencing($scoid,$userid,$seq);// We'll see the parameters we have to send, this should update delivery and end
             $seq->sequencing = true;
 
 
             break;
 
         case 'choice':
-            $seq = scorm_seq_choice_sequencing($sco,$userid,$seq);// We'll see the parameters we have to send, this should update delivery and end
+            $seq = scorm_seq_choice_sequencing($scoid,$userid,$seq);// We'll see the parameters we have to send, this should update delivery and end
              $seq->sequencing = true;
 
 
