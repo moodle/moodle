@@ -95,12 +95,10 @@ function message_send($eventdata) {
         }
     }
 
-    // if we are suposed to do something with this message
+    // if we are supposed to do something with this message
     // No processor for this message, mark it as read
     if ($processor == "") {  //this user cleared all the preferences
         $savemessage->timeread = time();
-        $messageid = $message->id;
-        unset($message->id);
         $DB->insert_record('message_read', $savemessage);
 
     } else {                        // Process the message
