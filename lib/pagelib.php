@@ -771,7 +771,10 @@ class moodle_page {
     /**
      * The course module that this page belongs to (if it does belong to one).
      *
-     * @param objcet $cm a full cm object obtained from get_coursemodule_from_id or get_coursemodule_from_instance.
+     * @param stdClass $cm a full cm object obtained from get_coursemodule_from_id or get_coursemodule_from_instance.
+     * @param stdClass $course
+     * @param stdClass $module
+     * @return void
      */
     public function set_cm($cm, $course = null, $module = null) {
         global $DB;
