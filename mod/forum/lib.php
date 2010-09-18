@@ -2056,7 +2056,8 @@ function forum_get_ratings($context, $postid, $sort="u.firstname ASC") {
     $options->itemid = $postid;
     $options->sort = "ORDER BY $sort";
 
-    get_all_ratings_for_item($options);
+    $rm = new rating_manager();
+    $rm->get_all_ratings_for_item($options);
 }
 
 /**
