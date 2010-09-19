@@ -1188,7 +1188,7 @@ abstract class sql_generator {
      * @return array of reserved words
      */
     public static function getReservedWords() {
-        return array();
+        throw new coding_exception('getReservedWords() method needs to be overridden in each subclass of sql_generator');
     }
 
     /**

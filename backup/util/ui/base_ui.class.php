@@ -212,7 +212,9 @@ abstract class base_ui {
      * Loads the backup controller if we are tracking one
      * @return backup_controller|false
      */
-    abstract public static function load_controller($uniqueid=false);
+    public static function load_controller($uniqueid=false) {
+        throw new coding_exception('load_controller() method needs to be overridden in each subclass of base_ui');
+    }
     /**
      * Gets an array of progress bar items that can be displayed through the backup renderer.
      * @return array Array of items for the progress bar

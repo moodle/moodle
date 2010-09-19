@@ -274,6 +274,8 @@ abstract class backup_activity_task extends backup_task {
      * Code the transformations to perform in the activity in
      * order to get transportable (encoded) links
      */
-    abstract static public function encode_content_links($content);
+    static public function encode_content_links($content) {
+        throw new coding_exception('encode_content_links() method needs to be overridden in each subclass of backup_activity_task');
+    }
 
 }

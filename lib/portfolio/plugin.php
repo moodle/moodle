@@ -153,7 +153,9 @@ abstract class portfolio_plugin_base {
      *
      * @return string
      */
-    public static abstract function get_name();
+    public static function get_name() {
+        throw new coding_exception('get_name() method needs to be overridden in each subclass of portfolio_plugin_base');
+    }
 
     /**
     * check sanity of plugin

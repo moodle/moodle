@@ -104,15 +104,19 @@ abstract class data_object {
      * @param array $params associative arrays varname=>value
      * @return object data_object instance or false if none found.
      */
-    public static abstract function fetch($params);
+    public static function fetch($params) {
+        throw new coding_exception('fetch() method needs to be overridden in each subclass of data_object');
+    }
 
     /**
      * Finds and returns all data_object instances based on params.
      *
      * @param array $params associative arrays varname=>value
-     * @return array array of data_object insatnces or false if none found.
+     * @return array array of data_object instances or false if none found.
      */
-    public static function fetch_all($params) {}
+    public static function fetch_all($params) {
+        throw new coding_exception('fetch_all() method needs to be overridden in each subclass of data_object');
+    }
 
     /**
      * Factory method - uses the parameters to retrieve matching instance from the DB.

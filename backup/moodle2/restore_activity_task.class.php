@@ -216,13 +216,17 @@ abstract class restore_activity_task extends restore_task {
      * Define the contents in the activity that must be
      * processed by the link decoder
      */
-    abstract static public function define_decode_contents();
+    static public function define_decode_contents() {
+        throw new coding_exception('define_decode_contents() method needs to be overridden in each subclass of restore_activity_task');
+    }
 
     /**
      * Define the decoding rules for links belonging
      * to the activity to be executed by the link decoder
      */
-    abstract static public function define_decode_rules();
+    static public function define_decode_rules() {
+        throw new coding_exception('define_decode_rules() method needs to be overridden in each subclass of restore_activity_task');
+    }
 
 // Protected API starts here
 

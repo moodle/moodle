@@ -39,14 +39,18 @@ abstract class portfolio_format {
     /**
      * array of mimetypes this format supports
      */
-    public static abstract function mimetypes();
+    public static function mimetypes() {
+        throw new coding_exception('mimetypes() method needs to be overridden in each subclass of portfolio_format');
+    }
 
     /**
      * for multipart formats, eg html with attachments,
      * we need to have a directory to place associated files in
      * inside the zip file. this is the name of that directory
      */
-    public static abstract function get_file_directory();
+    public static function get_file_directory() {
+        throw new coding_exception('get_file_directory() method needs to be overridden in each subclass of portfolio_format');
+    }
 
     /**
      * given a file, return a snippet of markup in whatever format
@@ -62,7 +66,9 @@ abstract class portfolio_format {
      *
      * @return string some html or xml or whatever
      */
-    public static abstract function file_output($file, $options=null);
+    public static function file_output($file, $options=null) {
+        throw new coding_exception('file_output() method needs to be overridden in each subclass of portfolio_format');
+    }
 
     public static function make_tag($file, $path, $attributes) {
         $srcattr = 'href';

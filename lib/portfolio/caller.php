@@ -334,7 +334,9 @@ abstract class portfolio_caller_base {
         return portfolio_most_specific_formats($specific, $basic);
     }
 
-    public abstract static function base_supported_formats();
+    public static function base_supported_formats() {
+        throw new coding_exception('base_supported_formats() method needs to be overridden in each subclass of portfolio_caller_base');
+    }
 
     /**
     * this is the "return to where you were" url
@@ -352,7 +354,9 @@ abstract class portfolio_caller_base {
     /**
     * nice name to display to the user about this caller location
     */
-    public abstract static function display_name();
+    public static function display_name() {
+        throw new coding_exception('display_name() method needs to be overridden in each subclass of portfolio_caller_base');
+    }
 
     /**
     * return a string to put at the header summarising this export
@@ -475,7 +479,9 @@ abstract class portfolio_caller_base {
      *
      * @return array
      */
-    public static abstract function expected_callbackargs();
+    public static function expected_callbackargs() {
+        throw new coding_exception('expected_callbackargs() method needs to be overridden in each subclass of portfolio_caller_base');
+    }
 
 
     /**

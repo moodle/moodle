@@ -42,12 +42,14 @@ require_once($CFG->libdir.'/filelib.php');
  * @copyright Dan Poltawski <talktodan@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class google_auth_request extends curl{
+abstract class google_auth_request extends curl {
     protected $token = '';
     private $persistantheaders = array();
 
-    // Must be overriden with the authorization header name
-    public abstract static function get_auth_header_name();
+    // Must be overridden with the authorization header name
+    public static function get_auth_header_name() {
+        throw new coding_exception('get_auth_header_name() method needs to be overridden in each subclass of google_auth_request');
+    }
 
     protected function request($url, $options = array()){
         if($this->token){
