@@ -739,7 +739,7 @@ function has_coursecontact_role($userid) {
     $sql = "SELECT 1
               FROM {role_assignments}
              WHERE userid = :userid AND roleid IN ($CFG->coursecontact)";
-    return $DB->record_exists($sql, array('userid'=>$userid));
+    return $DB->record_exists_sql($sql, array('userid'=>$userid));
 }
 
 /**
