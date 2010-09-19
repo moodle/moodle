@@ -1333,7 +1333,7 @@ class core_renderer extends renderer_base {
      * Render icon
      * @param string $pix short pix name
      * @param string $alt mandatory alt attribute
-     * @param strin $component standard compoennt name like 'moodle', 'mod_form', etc.
+     * @param strin $component standard compoennt name like 'moodle', 'mod_forum', etc.
      * @param array $attributes htm lattributes
      * @return string HTML fragment
      */
