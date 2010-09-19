@@ -5,11 +5,9 @@
 
     // extra whitespace test - intentionally breaks cookieless mode
     $extraws = '';
-    while (true) {
+    while (ob_get_level()) {
         $extraws .= ob_get_contents();
-        if (!@ob_end_clean()) {
-            break;
-        }
+        ob_end_clean();
     }
 
     require_once($CFG->libdir.'/adminlib.php');
