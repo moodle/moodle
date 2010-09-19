@@ -4127,6 +4127,9 @@ function remove_course_contents($courseid, $showfeedback = true) {
            'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
            array($courseid));
 
+    // Delete course blocks - they may depend on modules so delete them first
+    blocks_delete_all_for_context($context->id);
+
     // Delete every instance of every module
     if ($allmods = $DB->get_records('modules') ) {
         foreach ($allmods as $mod) {
@@ -4152,12 +4155,13 @@ function remove_course_contents($courseid, $showfeedback = true) {
                             }
                             if ($cm) {
                                 // delete cm and its context in correct order
+                                delete_context(CONTEXT_MODULE, $cm->id); // some callbacks may try to fetch context, better delete first
                                 $DB->delete_records('course_modules', array('id'=>$cm->id));
-                                delete_context(CONTEXT_MODULE, $cm->id);
                             }
                         }
                     }
                 } else {
+                    //note: we should probably delete these anyway
                     echo $OUTPUT->notification('Function '.$moddelete.'() doesn\'t exist!');
                 }
 
@@ -4170,9 +4174,6 @@ function remove_course_contents($courseid, $showfeedback = true) {
             }
         }
     }
-
-    // Delete course blocks
-    blocks_delete_all_for_context($context->id);
 
     // Delete any groups, removing members and grouping/course links first.
     groups_delete_groupings($course->id, $showfeedback);
