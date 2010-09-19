@@ -100,6 +100,7 @@ header('Content-Disposition: attachment; filename="moodleearth-'.$d.'-'.$rid.'-'
 echo data_latlong_kml_top();
 
 if($rid) { // List one single item
+    $pm = new object();
     $pm->name = data_latlong_kml_get_item_name($content, $field);
     $pm->description = "&lt;a href='$CFG->wwwroot/mod/data/view.php?d=$d&amp;rid=$rid'&gt;Item #$rid&lt;/a&gt; in Moodle data activity";
     $pm->long = $content->content1;
@@ -161,6 +162,8 @@ function data_latlong_kml_bottom() {
 }
 
 function data_latlong_kml_get_item_name($content, $field) {
+    global $DB;
+
     // $field->param2 contains the user-specified labelling method
 
     $name = '';
