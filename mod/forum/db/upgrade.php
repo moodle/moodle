@@ -298,6 +298,23 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010070800, 'forum');
     }
 
+    if ($oldversion < 2010091900) {
+        // rename files from borked upgrade in 2.0dev
+        $fs = get_file_storage();
+        $rs = $DB->get_recordset('files', array('component'=>'mod_form'));
+        foreach ($rs as $oldrecord) {
+            $file = $fs->get_file_instance($oldrecord);
+            $newrecord = array('component'=>'mod_forum');
+            if (!$fs->file_exists($oldrecord->contextid, 'mod_forum', $oldrecord->filearea, $oldrecord->itemid, $oldrecord->filepath, $oldrecord->filename)) {
+                $fs->create_file_from_storedfile($newrecord, $file);
+            }
+            $file->delete();
+        }
+        $rs->close();
+        upgrade_mod_savepoint(true, 2010091900, 'forum');
+    }
+
+
     return true;
 }
 
