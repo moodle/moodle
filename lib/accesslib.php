@@ -1895,36 +1895,43 @@ function get_system_context($cache=true) {
  *
  * @param int $level
  * @param int $instanceid
+ * @param bool $deleterecord false means keep record for now
  * @return bool returns true or throws an exception
  */
-function delete_context($contextlevel, $instanceid) {
+function delete_context($contextlevel, $instanceid, $deleterecord = true) {
     global $DB, $ACCESSLIB_PRIVATE, $CFG;
 
     // do not use get_context_instance(), because the related object might not exist,
     // or the context does not exist yet and it would be created now
     if ($context = $DB->get_record('context', array('contextlevel'=>$contextlevel, 'instanceid'=>$instanceid))) {
-        $DB->delete_records('role_assignments', array('contextid'=>$context->id));
-        $DB->delete_records('role_capabilities', array('contextid'=>$context->id));
-        $DB->delete_records('context', array('id'=>$context->id));
-        $DB->delete_records('role_names', array('contextid'=>$context->id));
+        // delete these first because they might fetch the context and try to recreate it!
+        blocks_delete_all_for_context($context->id);
+        filter_delete_all_for_context($context->id);
+        require_once($CFG->dirroot . '/comment/lib.php');
+        comment::delete_comments(array('contextid'=>$context->id));
 
         // delete all files attached to this context
         $fs = get_file_storage();
         $fs->delete_area_files($context->id);
 
+        // now delete stuff from role related tables, role_unassign_all
+        // and unenrol should be called earlier to do proper cleanup
+        $DB->delete_records('role_assignments', array('contextid'=>$context->id));
+        $DB->delete_records('role_capabilities', array('contextid'=>$context->id));
+        $DB->delete_records('role_names', array('contextid'=>$context->id));
+
+        // and finally it is time to delete the context record if requested
+        if ($deleterecord) {
+            $DB->delete_records('context', array('id'=>$context->id));
+            // purge static context cache if entry present
+            unset($ACCESSLIB_PRIVATE->contexts[$contextlevel][$instanceid]);
+            unset($ACCESSLIB_PRIVATE->contextsbyid[$context->id]);
+        }
+
         // do not mark dirty contexts if parents unknown
         if (!is_null($context->path) and $context->depth > 0) {
             mark_context_dirty($context->path);
         }
-
-        // purge static context cache if entry present
-        unset($ACCESSLIB_PRIVATE->contexts[$contextlevel][$instanceid]);
-        unset($ACCESSLIB_PRIVATE->contextsbyid[$context->id]);
-
-        blocks_delete_all_for_context($context->id);
-        filter_delete_all_for_context($context->id);
-        require_once($CFG->dirroot . '/comment/lib.php');
-        comment::delete_comments(array('contextid'=>$context->id));
     }
 
     return true;

@@ -704,6 +704,28 @@ function enrol_user_delete($user) {
 }
 
 /**
+ * Called when course is about to be deleted.
+ * @param stdClass $object
+ * @return void
+ */
+function enrol_course_delete($course) {
+    global $DB;
+
+    $instances = enrol_get_instances($course->id, false);
+    $plugins = enrol_get_plugins(true);
+    foreach ($instances as $instance) {
+        if (isset($plugins[$instance->enrol])) {
+            $plugins[$instance->enrol]->delete_instance($instance);
+        }
+        // low level delete in case plugin did not do it
+        $DB->delete_records('user_enrolments', array('enrolid'=>$instance->id));
+        $DB->delete_records('role_assignments', array('itemid'=>$instance->id, 'component'=>'enrol_'.$instance->enrol));
+        $DB->delete_records('user_enrolments', array('enrolid'=>$instance->id));
+        $DB->delete_records('enrol', array('id'=>$instance->id));
+    }
+}
+
+/**
  * Try to enrol user via default internal auth plugin.
  *
  * For now this is always using the manual enrol plugin...

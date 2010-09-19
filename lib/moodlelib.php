@@ -4017,7 +4017,7 @@ function set_login_session_preferences() {
 
 /**
  * Delete a course, including all related data from the database,
- * and any associated files from the moodledata folder.
+ * and any associated files.
  *
  * @global object
  * @global object
@@ -4028,7 +4028,7 @@ function set_login_session_preferences() {
  *             failed, but you have no way of knowing which.
  */
 function delete_course($courseorid, $showfeedback = true) {
-    global $CFG, $DB, $OUTPUT;
+    global $DB;
 
     if (is_object($courseorid)) {
         $courseid = $courseorid->id;
@@ -4039,20 +4039,22 @@ function delete_course($courseorid, $showfeedback = true) {
             return false;
         }
     }
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
     // frontpage course can not be deleted!!
     if ($courseid == SITEID) {
         return false;
     }
 
+    // make the course completely empty
     remove_course_contents($courseid, $showfeedback);
 
+    // delete the course and related context instance
+    delete_context(CONTEXT_COURSE, $courseid);
     $DB->delete_records("course", array("id"=>$courseid));
 
-    // Delete all roles and overiddes in the course context
-    delete_context(CONTEXT_COURSE, $courseid);
-
     //trigger events
+    $course->context = $context; // you can not fetch context in the event because it was already deleted
     events_trigger('course_deleted', $course);
 
     return true;
@@ -4060,27 +4062,40 @@ function delete_course($courseorid, $showfeedback = true) {
 
 /**
  * Clear a course out completely, deleting all content
- * but don't delete the course itself
+ * but don't delete the course itself.
+ * This function does not verify any permissions.
  *
- * @global object
- * @global object
+ * Please note this function also deletes all user enrolments,
+ * enrolment instances and role assignments.
+ *
  * @param int $courseid The id of the course that is being deleted
  * @param bool $showfeedback Whether to display notifications of each action the function performs.
  * @return bool true if all the removals succeeded. false if there were any failures. If this
  *             method returns false, some of the removals will probably have succeeded, and others
  *             failed, but you have no way of knowing which.
  */
-function remove_course_contents($courseid, $showfeedback=true) {
+function remove_course_contents($courseid, $showfeedback = true) {
     global $CFG, $DB, $OUTPUT;
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->dirroot.'/group/lib.php');
+    require_once($CFG->dirroot.'/tag/coursetagslib.php');
 
     $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
     $context = get_context_instance(CONTEXT_COURSE, $courseid, MUST_EXIST);
 
     $strdeleted = get_string('deleted');
 
-/// Clean up course formats (iterate through all formats in the even the course format was ever changed)
+    // Delete course completion information,
+    // this has to be done before grades and enrols
+    $cc = new completion_info($course);
+    $cc->clear_criteria();
+
+    // remove roles and enrolments
+    role_unassign_all(array('contextid'=>$context->id), true);
+    enrol_course_delete($course);
+
+    // Clean up course formats (iterate through all formats in the even the course format was ever changed)
     $formats = get_plugin_list('format');
     foreach ($formats as $format=>$formatdir) {
         $formatdelete = 'format_'.$format.'_delete_course';
@@ -4096,15 +4111,15 @@ function remove_course_contents($courseid, $showfeedback=true) {
         }
     }
 
-/// Remove all data from gradebook - this needs to be done before course modules
-/// because while deleting this information, the system may need to reference
-/// the course modules that own the grades.
+    // Remove all data from gradebook - this needs to be done before course modules
+    // because while deleting this information, the system may need to reference
+    // the course modules that own the grades.
     remove_course_grades($courseid, $showfeedback);
     remove_grade_letters($context, $showfeedback);
 
-/// Remove all data from availability and completion tables that is associated
-/// with course-modules belonging to this course. Note this is done even if the
-/// features are not enabled now, in case they were enabled previously
+    // Remove all data from availability and completion tables that is associated
+    // with course-modules belonging to this course. Note this is done even if the
+    // features are not enabled now, in case they were enabled previously
     $DB->delete_records_select('course_modules_completion',
            'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
            array($courseid));
@@ -4112,8 +4127,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
            'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
            array($courseid));
 
-/// Delete every instance of every module
-
+    // Delete every instance of every module
     if ($allmods = $DB->get_records('modules') ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
@@ -4157,18 +4171,35 @@ function remove_course_contents($courseid, $showfeedback=true) {
         }
     }
 
-/// Delete course blocks
+    // Delete course blocks
     blocks_delete_all_for_context($context->id);
 
-/// Delete any groups, removing members and grouping/course links first.
-    require_once($CFG->dirroot.'/group/lib.php');
-    groups_delete_groupings($courseid, $showfeedback);
-    groups_delete_groups($courseid, $showfeedback);
+    // Delete any groups, removing members and grouping/course links first.
+    groups_delete_groupings($course->id, $showfeedback);
+    groups_delete_groups($course->id, $showfeedback);
 
-/// Delete all related records in other tables that may have a courseid
-/// This array stores the tables that need to be cleared, as
-/// table_name => column_name that contains the course id.
+    // Delete questions and question categories
+    question_delete_course($course, $showfeedback);
 
+    // Delete course tags
+    coursetag_delete_course_tags($course->id, $showfeedback);
+
+    // Delete legacy files (just in case some files are still left there after conversion to new file api)
+    fulldelete($CFG->dataroot.'/'.$course->id);
+
+    // cleanup course record - remove links to delted stuff
+    $oldcourse = new object();
+    $oldcourse->id                = $course->id;
+    $oldcourse->summary           = '';
+    $oldcourse->modinfo           = NULL;
+    $oldcourse->legacyfiles       = 0;
+    $oldcourse->defaultgroupingid = 0;
+    $oldcourse->enablecompletion  = 0;
+    $DB->update_record('course', $oldcourse);
+
+    // Delete all related records in other tables that may have a courseid
+    // This array stores the tables that need to be cleared, as
+    // table_name => column_name that contains the course id.
     $tablestoclear = array(
         'event' => 'courseid', // Delete events
         'log' => 'course', // Delete logs
@@ -4183,21 +4214,13 @@ function remove_course_contents($courseid, $showfeedback=true) {
         $DB->delete_records($table, array($col=>$course->id));
     }
 
-/// Delete questions and question categories
-    question_delete_course($course, $showfeedback);
-
-/// Delete course tags
-    require_once($CFG->dirroot.'/tag/coursetagslib.php');
-    coursetag_delete_course_tags($course->id, $showfeedback);
-
-    // Delete course completion information
-    $cc = new completion_info($course);
-    $cc->clear_criteria();
-
-    // Delete legacy files
-    fulldelete($CFG->dataroot.'/'.$courseid);
+    // Delete all remaining stuff linked to context,
+    // such as remaining roles, files, comments, etc.
+    // Keep the context record for now.
+    delete_context(CONTEXT_COURSE, $course->id, false);
 
     //trigger events
+    $course->context = $context; // you can not access context in cron event later after course is deleted
     events_trigger('course_content_removed', $course);
 
     return true;
