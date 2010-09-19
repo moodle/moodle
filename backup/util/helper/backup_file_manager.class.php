@@ -72,7 +72,7 @@ class backup_file_manager {
         }
 
         $fs = get_file_storage();
-        $file = new stored_file($fs, $filerecorid);
+        $file = $fs->get_file_instance($filerecorid);
 
         // Calculate source and target paths (use same subdirs strategy for both)
         $targetfilepath = self::get_backup_storage_base_dir($backupid) . '/' .

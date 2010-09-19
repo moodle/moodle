@@ -44,16 +44,20 @@ class stored_file {
     private $fs;
     /** @var object record from the files table */
     private $file_record;
+    /** @var string location of content files */
+    private $filedir;
 
     /**
      * Constructor, this constructor should be called ONLY from the file_storage class!
      *
      * @param file_storage $fs file  storage instance
      * @param object $file_record description of file
+     * @param string $filepool location of file directory with sh1 named content files
      */
-    public function __construct(file_storage $fs, stdClass $file_record) {
+    public function __construct(file_storage $fs, stdClass $file_record, $filedir) {
         $this->fs          = $fs;
         $this->file_record = clone($file_record); // prevent modifications
+        $this->filedir     = $filedir; // keep secret, do not expose!
     }
 
     /**
@@ -93,11 +97,10 @@ class stored_file {
      * @return string full path to pool file with file content
      **/
     protected function get_content_file_location() {
-        $filedir = $this->fs->get_filedir();
         $contenthash = $this->file_record->contenthash;
         $l1 = $contenthash[0].$contenthash[1];
         $l2 = $contenthash[2].$contenthash[3];
-        return "$filedir/$l1/$l2/$contenthash";
+        return "$this->filedir/$l1/$l2/$contenthash";
     }
 
     /**
