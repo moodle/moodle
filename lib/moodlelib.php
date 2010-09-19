@@ -4174,6 +4174,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
         'log' => 'course', // Delete logs
         'course_sections' => 'course', // Delete any course stuff
         'course_modules' => 'course',
+        'course_display' => 'course',
         'backup_courses' => 'courseid', // Delete scheduled backup stuff
         'user_lastaccess' => 'courseid',
         'backup_log' => 'courseid'
