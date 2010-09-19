@@ -133,7 +133,7 @@ function xmldb_forum_upgrade($oldversion) {
                     continue;
                 }
                 if (!$fs->file_exists($context->id, 'mod_form', $filearea, $post->id, '/', $filename)) {
-                    $file_record = array('contextid'=>$context->id, 'component'=>'mod_form', 'filearea'=>$filearea, 'itemid'=>$post->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$post->userid);
+                    $file_record = array('contextid'=>$context->id, 'component'=>'mod_forum', 'filearea'=>$filearea, 'itemid'=>$post->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$post->userid);
                     if ($fs->create_file_from_pathname($file_record, $filepath)) {
                         $post->attachment = '1';
                         $DB->update_record('forum_posts', $post);
