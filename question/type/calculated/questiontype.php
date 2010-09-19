@@ -27,6 +27,7 @@ class question_calculated_qtype extends default_questiontype {
     // Used by the function custom_generator_tools:
     public $calcgenerateidhasbeenadded = false;
     public $virtualqtype = false;
+    public $wizard_pages_number = 3 ;
 
     function name() {
         return 'calculated';
@@ -462,6 +463,9 @@ class question_calculated_qtype extends default_questiontype {
     function finished_edit_wizard(&$form) {
         return isset($form->backtoquiz);
     }
+    function wizard_pages_number() {
+        return 3 ;
+    }
     // This gets called by editquestion.php after the standard question is saved
     function print_next_wizard_page(&$question, &$form, $course) {
         global $CFG, $USER, $SESSION, $COURSE;
@@ -646,6 +650,11 @@ class question_calculated_qtype extends default_questiontype {
      */
     function save_question($question, $form, $course) {
         global $DB;
+        if ($this->wizard_pages_number() == 1 ){
+                $question = parent::save_question($question, $form, $course);
+            return $question ;
+        }
+
         $wizardnow =  optional_param('wizardnow', '', PARAM_ALPHA);
         $id = optional_param('id', 0, PARAM_INT); // question id
         // in case 'question'

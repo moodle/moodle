@@ -26,6 +26,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
     // Used by the function custom_generator_tools:
     public $calcgenerateidhasbeenadded = false;
     public $virtualqtype = false;
+    public $wizard_pages_number = 1 ;
 
     function name() {
         return 'calculatedsimple';
@@ -208,30 +209,10 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
     function finished_edit_wizard(&$form) {
         return true ; //isset($form->backtoquiz);
     }
-
-    /**
-     * this version save the available data at the different steps of the question editing process
-     * without using global $SESSION as storage between steps
-     * at the first step $wizardnow = 'question'
-     *  when creating a new question
-     *  when modifying a question
-     *  when copying as a new question
-     *  the general parameters and answers are saved using parent::save_question
-     *  then the datasets are prepared and saved
-     * at the second step $wizardnow = 'datasetdefinitions'
-     *  the datadefs final type are defined as private, category or not a datadef
-     * at the third step $wizardnow = 'datasetitems'
-     *  the datadefs parameters and the data items are created or defined
-     *
-     * @param object question
-     * @param object $form
-     * @param int $course
-     * @param PARAM_ALPHA $wizardnow should be added as we are coming from question2.php
-     */
-    function save_question($question, $form, $course) {
-        $question = default_questiontype::save_question($question, $form, $course);
-        return $question;
+    function wizard_pages_number() {
+        return 1 ;
     }
+
 
     function custom_generator_tools_part(&$mform, $idx, $j){
 
