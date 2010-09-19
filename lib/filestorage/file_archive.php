@@ -161,7 +161,7 @@ abstract class file_archive implements Iterator {
      * please note that it may fail really badly.
      * The resulting file name is cleaned.
      *
-     * @param strin $localname in another encoding
+     * @param string $localname in another encoding
      * @return string in utf-8
      */
     protected function unmangle_pathname($localname) {

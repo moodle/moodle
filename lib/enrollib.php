@@ -416,7 +416,7 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
  *   so name the fields you really need, which will
  *   be added and uniq'd
  *
- * @param strin|array $fields
+ * @param string|array $fields
  * @param string $sort
  * @param int $limit max number of courses
  * @return array
@@ -583,7 +583,7 @@ function enrol_get_course_description_texts($course) {
  *
  * @param int $userid
  * @param bool $onlyactive return only active enrolments in courses user may see
- * @param strin|array $fields
+ * @param string|array $fields
  * @param string $sort
  * @return array
  */
