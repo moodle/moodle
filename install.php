@@ -370,11 +370,6 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
             }
         }
     }
-    // switch the string_manager instance to stop using install/lang/
-    $CFG->early_install_lang = false;
-    $CFG->langotherroot      = $CFG->dataroot.'/lang';
-    $CFG->langlocalroot      = $CFG->dataroot.'/lang';
-    get_string_manager(true);
 
     if ($downloaderror !== '') {
         install_print_header($config, get_string('language'), get_string('langdownloaderror', 'install', $CFG->lang), $downloaderror);
@@ -387,6 +382,12 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
             $config->stage = INSTALL_DATABASE;
         }
     }
+
+    // switch the string_manager instance to stop using install/lang/
+    $CFG->early_install_lang = false;
+    $CFG->langotherroot      = $CFG->dataroot.'/lang';
+    $CFG->langlocalroot      = $CFG->dataroot.'/lang';
+    get_string_manager(true);
 }
 
 
