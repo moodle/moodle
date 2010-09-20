@@ -1,106 +1,107 @@
-<map version="0.8.1">
-<!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->
-<node CREATED="1228443713170" ID="Freemind_Link_1016958583" MODIFIED="1228360017495" TEXT="Root">
-<node CREATED="1228443713170" MODIFIED="1228443713170" POSITION="right" TEXT="image">
-<node CREATED="1228443713170" MODIFIED="1228443713170" TEXT="web_image">
-<node CREATED="1228443713170" ID="Freemind_Link_750128103" MODIFIED="1228360048650" TEXT=".jpg"/>
-<node CREATED="1228443713170" ID="Freemind_Link_1840944189" MODIFIED="1228360051100" TEXT=".png"/>
-<node CREATED="1228443713170" ID="Freemind_Link_1710862996" MODIFIED="1228360052949" TEXT=".gif"/>
+<map version="0.7.1">
+<node ID="_Freemind_Link_1016958583" TEXT="Root">
+<node TEXT="image" POSITION="right">
+<node TEXT="web_image">
+<node ID="_Freemind_Link_750128103" TEXT=".jpg"/>
+<node ID="_Freemind_Link_1840944189" TEXT=".png"/>
+<node ID="_Freemind_Link_1710862996" TEXT=".gif"/>
 </node>
-<node CREATED="1228443713170" MODIFIED="1228443713170" TEXT="non_web_image">
-<node CREATED="1228443713171" ID="Freemind_Link_481322493" MODIFIED="1228360054120" TEXT=".bmp"/>
-<node CREATED="1228443713171" ID="Freemind_Link_1948466853" MODIFIED="1228360055879" TEXT=".svg"/>
-<node CREATED="1228443713171" ID="Freemind_Link_82277447" MODIFIED="1228360058609" TEXT=".psd"/>
-</node>
-</node>
-<node CREATED="1228443713172" MODIFIED="1228443713172" POSITION="left" TEXT="audio">
-<node CREATED="1228443713172" ID="Freemind_Link_606456130" MODIFIED="1228444641257" TEXT="web_audio">
-<node CREATED="1228443713172" ID="Freemind_Link_59286792" MODIFIED="1228360024405" TEXT=".wav"/>
-<node CREATED="1228443713172" ID="Freemind_Link_618796935" MODIFIED="1228360026345" TEXT=".mp3"/>
-<node CREATED="1228443713172" ID="Freemind_Link_313976796" MODIFIED="1228360027884" TEXT=".ra"/>
-<node CREATED="1278653459728" ID="Freemind_Link_709595453" MODIFIED="1278653462003" TEXT=".wma"/>
-</node>
-<node CREATED="1228443713172" ID="Freemind_Link_1800832653" MODIFIED="1228444710126" TEXT="non_web_audio">
-<node CREATED="1228443713172" ID="Freemind_Link_1772266185" MODIFIED="1228360029556" TEXT=".ape"/>
-<node CREATED="1278653424877" ID="Freemind_Link_964578090" MODIFIED="1278653427194" TEXT=".au"/>
-<node CREATED="1278653500298" ID="Freemind_Link_1295244579" MODIFIED="1278653502718" TEXT=".mid"/>
+<node TEXT="non_web_image">
+<node ID="_Freemind_Link_481322493" TEXT=".bmp"/>
+<node ID="_Freemind_Link_1948466853" TEXT=".svg"/>
+<node ID="_Freemind_Link_82277447" TEXT=".psd"/>
 </node>
 </node>
-<node CREATED="1228443713171" ID="Freemind_Link_70165685" MODIFIED="1228443713171" POSITION="right" TEXT="video">
-<node CREATED="1228443713171" ID="Freemind_Link_164412832" MODIFIED="1228444732485" TEXT="web_video">
-<node CREATED="1228443713171" ID="Freemind_Link_1674188247" MODIFIED="1228360059808" TEXT=".flv"/>
-<node CREATED="1228443713171" ID="Freemind_Link_1109951130" MODIFIED="1228360062108" TEXT=".swf"/>
-<node CREATED="1228444776020" ID="Freemind_Link_441200481" MODIFIED="1228360063599" TEXT=".mov"/>
-<node CREATED="1228443713171" ID="Freemind_Link_1073677924" MODIFIED="1228360067059" TEXT=".rm"/>
-<node CREATED="1284371299850" ID="Freemind_Link_810187762" MODIFIED="1284371303151" TEXT=".wmv"/>
-<node CREATED="1284371308695" ID="Freemind_Link_763870397" MODIFIED="1284371311440" TEXT=".asf"/>
+<node TEXT="audio" POSITION="left">
+<node ID="_Freemind_Link_606456130" TEXT="web_audio">
+<node ID="_Freemind_Link_59286792" TEXT=".wav"/>
+<node ID="_Freemind_Link_618796935" TEXT=".mp3"/>
+<node ID="_Freemind_Link_313976796" TEXT=".ra"/>
+<node ID="_Freemind_Link_709595453" TEXT=".wma"/>
+<node TEXT=".ogg"/>
 </node>
-<node CREATED="1228443713171" ID="Freemind_Link_1019644700" MODIFIED="1228444740884" TEXT="non_web_video">
-<node CREATED="1228443713171" ID="Freemind_Link_190589975" MODIFIED="1228360068448" TEXT=".avi"/>
-<node CREATED="1228444761093" ID="Freemind_Link_1728963308" MODIFIED="1228360070547" TEXT=".mpg"/>
-<node CREATED="1280716374302" ID="Freemind_Link_761274675" MODIFIED="1280716376777" TEXT=".mp4"/>
-</node>
-</node>
-<node CREATED="1228443713171" ID="Freemind_Link_1159259702" MODIFIED="1228443713171" POSITION="left" TEXT="document">
-<node CREATED="1228443713171" ID="Freemind_Link_395227081" MODIFIED="1228443713171" TEXT="msoffice">
-<node CREATED="1228443713171" ID="Freemind_Link_1480546733" MODIFIED="1228360031084" TEXT=".doc"/>
-<node CREATED="1228443713171" ID="Freemind_Link_983591781" MODIFIED="1228360032344" TEXT=".ppt"/>
-<node CREATED="1228444842809" ID="Freemind_Link_922920573" MODIFIED="1228360034493" TEXT=".xls"/>
-</node>
-<node CREATED="1228443713171" MODIFIED="1228443713171" TEXT="openoffice">
-<node CREATED="1228443713171" ID="Freemind_Link_368708997" MODIFIED="1228360035753" TEXT=".odt"/>
-<node CREATED="1228443713171" ID="Freemind_Link_725490871" MODIFIED="1228360037712" TEXT=".odp"/>
-</node>
-<node CREATED="1228445046926" ID="Freemind_Link_1253224142" MODIFIED="1228445305915" TEXT="other">
-<node CREATED="1228445331815" ID="Freemind_Link_1202332406" MODIFIED="1228360039820" TEXT=".pdf"/>
-<node CREATED="1228445541872" ID="Freemind_Link_1229438606" MODIFIED="1228445547473" TEXT=".ps"/>
+<node ID="_Freemind_Link_1800832653" TEXT="non_web_audio">
+<node ID="_Freemind_Link_1772266185" TEXT=".ape"/>
+<node ID="_Freemind_Link_964578090" TEXT=".au"/>
+<node ID="_Freemind_Link_1295244579" TEXT=".mid"/>
 </node>
 </node>
-<node CREATED="1228443713171" ID="Freemind_Link_525709024" MODIFIED="1228444608956" POSITION="right" TEXT="text">
-<node CREATED="1228443713171" ID="Freemind_Link_1252355401" MODIFIED="1228444954730" TEXT="source">
-<node CREATED="1228443713171" ID="Freemind_Link_1783454794" MODIFIED="1228360071977" TEXT=".c"/>
-<node CREATED="1228443713171" ID="Freemind_Link_603295666" MODIFIED="1228360073187" TEXT=".cpp"/>
-<node CREATED="1228443713171" ID="Freemind_Link_1939719884" MODIFIED="1228360075564" TEXT=".java"/>
+<node ID="_Freemind_Link_70165685" TEXT="video" POSITION="right">
+<node ID="_Freemind_Link_164412832" TEXT="web_video">
+<node ID="_Freemind_Link_1674188247" TEXT=".flv"/>
+<node ID="_Freemind_Link_1109951130" TEXT=".swf"/>
+<node ID="_Freemind_Link_441200481" TEXT=".mov"/>
+<node ID="_Freemind_Link_1073677924" TEXT=".rm"/>
+<node ID="_Freemind_Link_810187762" TEXT=".wmv"/>
+<node ID="_Freemind_Link_763870397" TEXT=".asf"/>
+<node TEXT=".ogv"/>
 </node>
-<node CREATED="1228443713171" MODIFIED="1228443713171" TEXT="script">
-<node CREATED="1228443713171" ID="Freemind_Link_567551283" MODIFIED="1228360078936" TEXT=".php"/>
-<node CREATED="1228443713171" ID="Freemind_Link_829963573" MODIFIED="1228360081186" TEXT=".py"/>
-<node CREATED="1228443713171" ID="Freemind_Link_699741325" MODIFIED="1228360082595" TEXT=".lua"/>
-<node CREATED="1228443713171" ID="Freemind_Link_841176112" MODIFIED="1228360083825" TEXT=".rb"/>
-</node>
-<node CREATED="1228443713171" ID="Freemind_Link_466282865" MODIFIED="1228443713171" TEXT="markup">
-<node CREATED="1228443713171" ID="Freemind_Link_776860364" MODIFIED="1228360085205" TEXT=".xml"/>
-<node CREATED="1228443713171" ID="Freemind_Link_428374654" MODIFIED="1228360086825" TEXT=".html"/>
-<node CREATED="1228443713171" ID="Freemind_Link_1636201602" MODIFIED="1228360088364" TEXT=".xhtml"/>
-</node>
-<node CREATED="1228443713171" MODIFIED="1228443713171" TEXT="plaintext">
-<node CREATED="1228443713171" ID="Freemind_Link_304679617" MODIFIED="1228360090384" TEXT=".txt"/>
-<node CREATED="1228443713171" ID="Freemind_Link_988584709" MODIFIED="1228360091764" TEXT=".log"/>
-<node CREATED="1228443713171" ID="Freemind_Link_778232964" MODIFIED="1228360093272" TEXT=".csv"/>
+<node ID="_Freemind_Link_1019644700" TEXT="non_web_video">
+<node ID="_Freemind_Link_190589975" TEXT=".avi"/>
+<node ID="_Freemind_Link_1728963308" TEXT=".mpg"/>
+<node ID="_Freemind_Link_761274675" TEXT=".mp4"/>
 </node>
 </node>
-<node CREATED="1228444010861" ID="Freemind_Link_329759178" MODIFIED="1228444605452" POSITION="left" TEXT="moodle">
-<node CREATED="1228444424511" ID="Freemind_Link_864349088" MODIFIED="1228444427093" TEXT=".mb.zip"/>
-<node CREATED="1228444437566" ID="Freemind_Link_1509389480" MODIFIED="1228444447148" TEXT=".ld.zip"/>
+<node ID="_Freemind_Link_1159259702" TEXT="document" POSITION="left">
+<node ID="_Freemind_Link_395227081" TEXT="msoffice">
+<node ID="_Freemind_Link_1480546733" TEXT=".doc"/>
+<node ID="_Freemind_Link_983591781" TEXT=".ppt"/>
+<node ID="_Freemind_Link_922920573" TEXT=".xls"/>
 </node>
-<node CREATED="1228443713172" ID="Freemind_Link_907467024" MODIFIED="1228443933119" POSITION="right" TEXT="archive">
-<node CREATED="1228443713172" ID="Freemind_Link_637157755" MODIFIED="1228360096144" TEXT=".rar"/>
-<node CREATED="1228443713172" ID="Freemind_Link_628673054" MODIFIED="1228360097913" TEXT=".cab"/>
-<node CREATED="1228443713172" ID="Freemind_Link_1141513740" MODIFIED="1228360100154" TEXT=".iso"/>
-<node CREATED="1228443713172" ID="Freemind_Link_1269400334" MODIFIED="1228360101353" TEXT=".img"/>
-<node CREATED="1228443713172" ID="Freemind_Link_1973736841" MODIFIED="1228360102583" TEXT=".tar.gz"/>
-<node CREATED="1228444535473" ID="Freemind_Link_1525022758" MODIFIED="1228360105150" TEXT=".zip"/>
+<node TEXT="openoffice">
+<node ID="_Freemind_Link_368708997" TEXT=".odt"/>
+<node ID="_Freemind_Link_725490871" TEXT=".odp"/>
 </node>
-<node CREATED="1228443713172" ID="Freemind_Link_1332471247" MODIFIED="1228443713172" POSITION="left" TEXT="application">
-<node CREATED="1228443713172" MODIFIED="1228443713172" TEXT="windows">
-<node CREATED="1228443713172" ID="Freemind_Link_1154060414" MODIFIED="1228360041512" TEXT=".exe"/>
-<node CREATED="1228443713172" ID="Freemind_Link_1578063867" MODIFIED="1228360043052" TEXT=".dll"/>
+<node ID="_Freemind_Link_1253224142" TEXT="other">
+<node ID="_Freemind_Link_1202332406" TEXT=".pdf"/>
+<node ID="_Freemind_Link_1229438606" TEXT=".ps"/>
 </node>
-<node CREATED="1228443713172" MODIFIED="1228443713172" TEXT="linux">
-<node CREATED="1228443713172" ID="Freemind_Link_68848485" MODIFIED="1228360045021" TEXT=".bin"/>
 </node>
-<node CREATED="1228443713172" ID="Freemind_Link_317684862" MODIFIED="1228443713172" TEXT="mac">
-<node CREATED="1228443920469" ID="_" MODIFIED="1228443922520" TEXT=".app"/>
+<node ID="_Freemind_Link_525709024" TEXT="text" POSITION="right">
+<node ID="_Freemind_Link_1252355401" TEXT="source">
+<node ID="_Freemind_Link_1783454794" TEXT=".c"/>
+<node ID="_Freemind_Link_603295666" TEXT=".cpp"/>
+<node ID="_Freemind_Link_1939719884" TEXT=".java"/>
+</node>
+<node TEXT="script">
+<node ID="_Freemind_Link_567551283" TEXT=".php"/>
+<node ID="_Freemind_Link_829963573" TEXT=".py"/>
+<node ID="_Freemind_Link_699741325" TEXT=".lua"/>
+<node ID="_Freemind_Link_841176112" TEXT=".rb"/>
+</node>
+<node ID="_Freemind_Link_466282865" TEXT="markup">
+<node ID="_Freemind_Link_776860364" TEXT=".xml"/>
+<node ID="_Freemind_Link_428374654" TEXT=".html"/>
+<node ID="_Freemind_Link_1636201602" TEXT=".xhtml"/>
+</node>
+<node TEXT="plaintext">
+<node ID="_Freemind_Link_304679617" TEXT=".txt"/>
+<node ID="_Freemind_Link_988584709" TEXT=".log"/>
+<node ID="_Freemind_Link_778232964" TEXT=".csv"/>
+</node>
+</node>
+<node ID="_Freemind_Link_329759178" TEXT="moodle" POSITION="left">
+<node ID="_Freemind_Link_864349088" TEXT=".mb.zip"/>
+<node ID="_Freemind_Link_1509389480" TEXT=".ld.zip"/>
+</node>
+<node ID="_Freemind_Link_907467024" TEXT="archive" POSITION="right">
+<node ID="_Freemind_Link_637157755" TEXT=".rar"/>
+<node ID="_Freemind_Link_628673054" TEXT=".cab"/>
+<node ID="_Freemind_Link_1141513740" TEXT=".iso"/>
+<node ID="_Freemind_Link_1269400334" TEXT=".img"/>
+<node ID="_Freemind_Link_1973736841" TEXT=".tar.gz"/>
+<node ID="_Freemind_Link_1525022758" TEXT=".zip"/>
+</node>
+<node ID="_Freemind_Link_1332471247" TEXT="application" POSITION="left">
+<node TEXT="windows">
+<node ID="_Freemind_Link_1154060414" TEXT=".exe"/>
+<node ID="_Freemind_Link_1578063867" TEXT=".dll"/>
+</node>
+<node TEXT="linux">
+<node ID="_Freemind_Link_68848485" TEXT=".bin"/>
+</node>
+<node ID="_Freemind_Link_317684862" TEXT="mac">
+<node ID="_" TEXT=".app"/>
 </node>
 </node>
 </node>

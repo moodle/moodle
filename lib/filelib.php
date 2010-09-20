@@ -1193,6 +1193,8 @@ function get_mimetypes_array() {
         'odf'  => array ('type'=>'application/vnd.oasis.opendocument.formula', 'icon'=>'odf'),
         'odb'  => array ('type'=>'application/vnd.oasis.opendocument.database', 'icon'=>'odb'),
         'odi'  => array ('type'=>'application/vnd.oasis.opendocument.image', 'icon'=>'odi'),
+        'ogg'  => array ('type'=>'audio/ogg', 'icon'=>'audio'),
+        'ogv'  => array ('type'=>'video/ogg', 'icon'=>'video'),
 
         'pct'  => array ('type'=>'image/pict', 'icon'=>'image'),
         'pdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),

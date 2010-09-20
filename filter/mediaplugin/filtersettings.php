@@ -26,5 +26,9 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('filter_mediaplugin_enable_youtube', get_string('mediapluginyoutube','admin'), '', 1));
 
+    $settings->add(new admin_setting_configcheckbox('filter_mediaplugin_enable_ogg', get_string('mediapluginogg','admin'), '', 1));
+
+    $settings->add(new admin_setting_configcheckbox('filter_mediaplugin_enable_ogv', get_string('mediapluginogv','admin'), '', 1));
+
     $settings->add(new admin_setting_configcheckbox('filter_mediaplugin_enable_img', get_string('mediapluginimg','admin'), '', 1));
 }

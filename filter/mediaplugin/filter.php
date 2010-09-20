@@ -53,6 +53,16 @@ class filter_mediaplugin extends moodle_text_filter {
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_mp3_callback', $newtext);
         }
 
+        if ($CFG->filter_mediaplugin_enable_ogg) {
+            $search =   '/<a[^>]*?href="([^<]+\.ogg)"[^>]*>.*?<\/a>/is';
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_ogg_callback', $newtext);
+        }
+
+        if ($CFG->filter_mediaplugin_enable_ogv) {
+            $search =   '/<a[^>]*?href="([^<]+\.ogv)"[^>]*>.*?<\/a>/is';
+            $newtext = preg_replace_callback($search, 'filter_mediaplugin_ogv_callback', $newtext);
+        }
+        
         if ($CFG->filter_mediaplugin_enable_swf) {
             $search = '/<a[^>]*?href="([^<]+\.swf)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_swf_callback', $newtext);
@@ -191,6 +201,44 @@ OET;
 
     $jsoutput = create_flowplayer($id, $url, 'mp3', $playercolors);
     $output .= $jsoutput;
+
+    return $output;
+}
+
+function filter_mediaplugin_ogg_callback($link) {
+    global $CFG, $OUTPUT, $PAGE;
+
+    static $count = 0;
+    $count++;
+    $id = 'filter_ogg_'.time().$count; //we need something unique because it might be stored in text cache
+
+    $url = addslashes_js($link[1]);
+    $printlink = html_writer::link($url, get_string('oggaudio', 'filter_mediaplugin'));
+    $unsupportedplugins = get_string('unsupportedplugins', 'filter_mediaplugin', $printlink);
+    $output = <<<OET
+    <audio id="$id" src="$url" controls="true" width="100">
+        $unsupportedplugins 
+    </audio>
+OET;
+     
+    return $output;
+}
+
+function filter_mediaplugin_ogv_callback($link) {
+    global $CFG, $OUTPUT, $PAGE;
+
+    static $count = 0;
+    $count++;
+    $id = 'filter_ogv_'.time().$count; //we need something unique because it might be stored in text cache
+
+    $url = addslashes_js($link[1]);
+    $printlink = html_writer::link($url, get_string('ogvvideo', 'filter_mediaplugin'));
+    $unsupportedplugins = get_string('unsupportedplugins', 'filter_mediaplugin', $printlink);
+    $output = <<<OET
+    <video id="$id" src="$url" controls="true" width="600" >
+        $unsupportedplugins 
+    </video>
+OET;
 
     return $output;
 }
