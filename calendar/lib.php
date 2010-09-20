@@ -1222,6 +1222,12 @@ function calendar_session_vars($course=null) {
     }
     if ($course !== null) {
         // speedup hack for calendar related blocks
+        if(isset($course->coursenode)) {
+            // coursenode has been set up, which seems to break things further down the line.
+            // Use a clone of $course with coursenode removed.
+            $course = clone $course;
+            unset($course->coursenode);
+        }
         $SESSION->cal_courses_shown = array($course->id => $course);
     } else {
         $SESSION->cal_courses_shown = calendar_get_default_courses(true);
