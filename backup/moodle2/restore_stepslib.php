@@ -1593,7 +1593,7 @@ class restore_block_instance_structure_step extends restore_structure_step {
     }
 
     public function process_block($data) {
-        global $DB;
+        global $DB, $CFG;
 
         $data = (object)$data; // Handy
         $oldcontextid = $data->contextid;
@@ -1605,15 +1605,30 @@ class restore_block_instance_structure_step extends restore_structure_step {
             throw new restore_step_exception('restore_block_missing_parent_ctx', $data->parentcontextid);
         }
 
+        // get instance of block object, we need to query it
+        $data->blockname = clean_param($data->blockname, PARAM_SAFEDIR);
+        $blockfile = $CFG->dirroot.'/blocks/'.$data->blockname.'/block_'.$data->blockname.'.php';
+        if (!file_exists($blockfile)) {
+            return false;
+        }
+        include_once($blockfile);
+        $classname = 'block_'.$data->blockname;
+        if (!class_exists($classname)) {
+            return false;
+        }
+        $blockobject = new $classname();
+
+        //TODO: it would be nice to use standard plugin supports instead of this instance_allow_multiple()
         // If there is already one block of that type in the parent context
         // and the block is not multiple, stop processing
-        if ($DB->record_exists_sql("SELECT bi.id
-                                      FROM {block_instances} bi
-                                      JOIN {block} b ON b.name = bi.blockname
-                                     WHERE bi.parentcontextid = ?
-                                       AND bi.blockname = ?
-                                       AND b.multiple = 0", array($data->parentcontextid, $data->blockname))) {
-            return false;
+        if (!$blockobject->instance_allow_multiple()) {
+            if ($DB->record_exists_sql("SELECT bi.id
+                                          FROM {block_instances} bi
+                                          JOIN {block} b ON b.name = bi.blockname
+                                         WHERE bi.parentcontextid = ?
+                                           AND bi.blockname = ?", array($data->parentcontextid, $data->blockname))) {
+                return false;
+            }
         }
 
         // If there is already one block of that type in the parent context
