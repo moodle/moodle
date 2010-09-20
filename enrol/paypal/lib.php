@@ -34,6 +34,21 @@ defined('MOODLE_INTERNAL') || die();
  */
 class enrol_paypal_plugin extends enrol_plugin {
 
+    /**
+     * Returns optional enrolment information icons.
+     *
+     * This is used in course list for quick overview of enrolment options.
+     *
+     * We are not using single instance parameter because sometimes
+     * we might want to prevent icon repetition when multiple instances
+     * of one type exist. One instance may also produce several icons.
+     *
+     * @param array $instances all enrol instances of this type in one course
+     * @return array of pix_icon
+     */
+    public function get_info_icons(array $instances) {
+        return array(new pix_icon('icon', get_string('pluginname', 'enrol_paypal'), 'enrol_paypal'));
+    }
 
     public function roles_protected() {
         // users with role assign cap may tweak the roles later
