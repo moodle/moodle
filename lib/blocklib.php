@@ -1632,6 +1632,7 @@ function blocks_delete_instance($instance, $nolongerused = false, $skipblockstab
     if (!$skipblockstables) {
         $DB->delete_records('block_positions', array('blockinstanceid' => $instance->id));
         $DB->delete_records('block_instances', array('id' => $instance->id));
+        $DB->delete_records_list('user_preferences', 'name', array('block'.$instance->id.'hidden','docked_block_instance_'.$instance->id));
     }
 }
 
