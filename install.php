@@ -315,6 +315,10 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
                 $config->stage = INSTALL_PATHS;
             }
         }
+
+    } else if (!install_init_dataroot($CFG->dataroot, $CFG->directorypermissions)) {
+        $hint_dataroot = get_string('pathserrcreatedataroot', 'install', $a);
+        $config->stage = INSTALL_PATHS;
     }
 
     if (empty($hint_dataroot) and !is_writable($CFG->dataroot)) {
