@@ -31,9 +31,26 @@ defined('MOODLE_INTERNAL') || die();
 
 class enrol_guest_plugin extends enrol_plugin {
 
+    /**
+     * Returns optional enrolment information icons.
+     *
+     * This is used in course list for quick overview of enrolment options.
+     *
+     * We are not using single instance parameter because sometimes
+     * we might want to prevent icon repetition when multiple instances
+     * of one type exist. One instance may also produce several icons.
+     *
+     * @param array $instances all enrol instances of this type in one course
+     * @return array of pix_icon
+     */
     public function get_info_icons(array $instances) {
-        //TODO: we need two different guest icons - with and without password
-        return array(new pix_icon('i/guest', get_string('allowguests', 'enrol_guest')));
+        foreach ($instances as $instance) {
+            if ($instance->password) {
+                return array(new pix_icon('withoutpassword', get_string('pluginname', 'enrol_guest'), 'enrol_guest'));
+            } else {
+                return array(new pix_icon('withpassword', get_string('pluginname', 'enrol_guest'), 'enrol_guest'));
+            }
+        }
     }
 
     public function enrol_user(stdClass $instance, $userid, $roleid = null, $timestart = 0, $timeend = 0) {
