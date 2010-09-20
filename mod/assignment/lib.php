@@ -3565,8 +3565,7 @@ function assignment_reset_userdata($data) {
     global $CFG;
 
     $status = array();
-
-    foreach (get_plugin_list('mod/assignment/type') as $type=>$dir) {
+    foreach (get_plugin_list('assignment') as $type=>$dir) {
         require_once("$dir/assignment.class.php");
         $assignmentclass = "assignment_$type";
         $ass = new $assignmentclass();
