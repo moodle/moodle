@@ -202,8 +202,12 @@ class repository_coursefiles extends repository {
     }
 
     public function get_name() {
-        global $COURSE; //TODO: this is deprecated (skodak)
-        return $COURSE->fullname;
+        list($context, $course, $cm) = get_context_info_array($this->context->id);
+        if (!empty($course)) {
+            return get_string('courselegacyfiles') . $course->shortname;
+        } else {
+            return get_string('courselegacyfiles');
+        }
     }
 
     public function supported_returntypes() {

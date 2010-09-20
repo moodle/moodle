@@ -130,18 +130,27 @@ class repository_dropbox extends repository {
         } else {
             $path = file_correct_filepath($path);
         }
-        $result = $this->dropbox->get_listing($path, $this->access_key, $this->access_secret);
-        $current_path = file_correct_filepath($result->path);
-        if (empty($result->path)) {
-            $current_path = '/';
-        }
 
         $list = array();
         $list['list'] = array();
+        $list['manage'] = false;
+        $list['dynload'] = true;
+        $list['nosearch'] = true;
         // process breacrumb trail
         $list['path'] = array(
-            array('name'=>'Dropbox Sandbox', 'path'=>'/')
+            array('name'=>get_string('sandbox', 'repository_dropbox'), 'path'=>'/')
         );
+
+        $result = $this->dropbox->get_listing($path, $this->access_key, $this->access_secret);
+        if (!is_object($result) || empty($result)) {
+            return $list;
+        }
+        if (empty($result->path)) {
+            $current_path = '/';
+        } else {
+            $current_path = file_correct_filepath($result->path);
+        }
+
         $trail = '';
         if (!empty($path)) {
             $parts = explode('/', $path);
@@ -156,11 +165,11 @@ class repository_dropbox extends repository {
                 $list['path'][] = array('name'=>$path, 'path'=>$path);
             }
         }
-        $list['manage'] = false;
-        $list['dynload'] = true;
-        $list['nosearch'] = true;
 
         $files = $result->contents;
+        if (!is_array($files) || empty($files)) {
+            return $list;
+        }
         foreach ($files as $file) {
             if ($file->is_dir) {
                 $list['list'][] = array(
