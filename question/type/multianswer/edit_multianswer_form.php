@@ -56,6 +56,7 @@ class question_edit_multianswer_form extends question_edit_form {
 
     function definition_inner(&$mform) {
         $mform->addElement('hidden', 'reload', 1);
+   //     $mform->addElement('hidden', 'generalfeedback','');
         $mform->setType('reload', PARAM_INT);
         $question_type_names = question_type_menu();
 
@@ -65,6 +66,7 @@ class question_edit_multianswer_form extends question_edit_form {
 
         // display the questions from questiontext;
         if  (  "" != optional_param('questiontext','', PARAM_RAW)) {
+                //   echo "<p> optional_param('questiontext' <pre>";print_r(optional_param('questiontext','', PARAM_RAW));echo "</pre></p>";
 
             $this->questiondisplay = fullclone(qtype_multianswer_extract_question(optional_param('questiontext','', PARAM_RAW))) ;
 
@@ -111,8 +113,8 @@ class question_edit_multianswer_form extends question_edit_form {
         }else{
             $countsubquestions =$countsavedsubquestions ;
         }
-        //           echo "<p> saved question $countsavedsubquestions <pre>";print_r($this->savedquestiondisplay);echo "</pre></p>";
-        //            echo "<p> saved question $countsubquestions <pre>";print_r($this->questiondisplay);echo "</pre></p>";
+                 //  echo "<p> count subquestion $countsubquestions <pre>";print_r($this->savedquestiondisplay);echo "</pre></p>";
+        //       //     echo "<p> saved question $countsubquestions <pre>";print_r($this->questiondisplay);echo "</pre></p>";
 
 
         $mform->addElement('submit', 'analyzequestion', get_string('decodeverifyquestiontext','qtype_multianswer'));
@@ -141,7 +143,7 @@ class question_edit_multianswer_form extends question_edit_form {
                 $mform->addElement('static', 'sub_'.$sub."_".'questiontext', get_string('questiondefinition','qtype_multianswer'),array('cols'=>60, 'rows'=>3));
 
                 if (isset ( $this->questiondisplay->options->questions[$sub]->questiontext)) {
-                    $mform->setDefault('sub_'.$sub."_".'questiontext', $this->questiondisplay->options->questions[$sub]->questiontext);
+                    $mform->setDefault('sub_'.$sub."_".'questiontext', $this->questiondisplay->options->questions[$sub]->questiontext['text']);
                 }
 
                 $mform->addElement('static', 'sub_'.$sub."_".'defaultgrade', get_string('defaultgrade', 'quiz'));
@@ -328,7 +330,7 @@ class question_edit_multianswer_form extends question_edit_form {
                         }
                         foreach ($subquestion->feedback as $key=>$answer) {
 
-                            $default_values[$prefix.'feedback['.$key.']']  = htmlspecialchars ($answer);
+                            $default_values[$prefix.'feedback['.$key.']']  = htmlspecialchars ($answer['text']);
                         }
                         foreach ( $subquestion->fraction as $key=>$answer) {
                             $default_values[$prefix.'fraction['.$key.']']  = $answer;
@@ -351,7 +353,8 @@ class question_edit_multianswer_form extends question_edit_form {
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        $questiondisplay = qtype_multianswer_extract_question($data['questiontext']['text']);
+        $questiondisplay = qtype_multianswer_extract_question($data['questiontext']);
+//                   echo "<p> questiondisplay ".$data['questiontext']['text']." <pre>";print_r($questiondisplay);echo "</pre></p>";
 
         if (isset($questiondisplay->options->questions)) {
             $subquestions = fullclone($questiondisplay->options->questions) ;
