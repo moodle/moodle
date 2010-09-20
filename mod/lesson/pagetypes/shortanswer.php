@@ -96,7 +96,7 @@ class lesson_page_type_shortanswer extends lesson_page {
                 $expectedanswer = str_replace('#####', '.*', $expectedanswer);
             }
             // see if user typed in any of the correct answers
-            if ((!$this->lesson->custom && $this->lesson->jumpto_is_correct($pageid, $answer->jumpto)) or ($this->lesson->custom && $answer->score > 0) ) {
+            if ((!$this->lesson->custom && $this->lesson->jumpto_is_correct($this->properties->id, $answer->jumpto)) or ($this->lesson->custom && $answer->score > 0) ) {
                 if (!$useregexp) { // we are using 'normal analysis', which ignores case
                     if (preg_match('/^'.$expectedanswer.'$/i',$studentanswer)) {
                         $ismatch = true;

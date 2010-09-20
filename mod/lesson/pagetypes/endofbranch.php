@@ -68,7 +68,7 @@ class lesson_page_type_endofbranch extends lesson_page {
         } elseif ($jumpto == LESSON_CLUSTERJUMP) {
 
             if (!$canmanage) {
-                $jumpto = $this->lesson->cluster_jump($pageid);
+                $jumpto = $this->lesson->cluster_jump($this->properties->id);
             } else {
                 if ($this->properties->nextpageid == 0) {
                     $jumpto = LESSON_EOL;
