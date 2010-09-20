@@ -585,7 +585,6 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
         }
 
         $block->name     = $blockname;   // The name MUST match the directory
-        $block->multiple = $blockobj->instance_allow_multiple() ? 1 : 0;
 
         if (empty($block->version)) {
             throw new plugin_defective_exception($component, 'Missing block version.');
@@ -614,8 +613,6 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
         }
 
         if (empty($currblock->version)) { // block not installed yet, so install it
-            // If it allows multiples, start with it enabled
-
             $conflictblock = array_search($blocktitle, $blocktitles);
             if ($conflictblock !== false) {
                 // Duplicate block titles are not allowed, they confuse people

@@ -5251,6 +5251,23 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010091700);
     }
 
+    if ($oldversion < 2010092000) {
+        // drop multiple field again because it was still in install.xml in 2.0dev
+
+        // Define field multiple to be dropped from block
+        $table = new xmldb_table('block');
+        $field = new xmldb_field('multiple');
+
+        // Conditionally launch drop field multiple
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010092000);
+    }
+
+
     return true;
 }
 
