@@ -303,9 +303,9 @@ if ($data->addtemplate){
         $patterns[]="[[".$field->field->name."#id]]";
         $replacements[] = 'field_'.$field->field->id;
     }
-    $newtext = str_ireplace($patterns, $replacements, $data->{$mode});    
+    $newtext = str_ireplace($patterns, $replacements, $data->{$mode});
 
-} else {    //if the add template is not yet defined, print the default form!    
+} else {    //if the add template is not yet defined, print the default form!
     echo data_generate_default_template($data, 'addtemplate', $rid, true, false);
     $newtext = '';
 }
@@ -317,7 +317,9 @@ echo '<div class="mdl-align"><input type="submit" name="saveandview" value="'.ge
 if ($rid) {
     echo '&nbsp;<input type="submit" name="cancel" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
 } else {
-    echo '<input type="submit" value="'.get_string('saveandadd','data').'" />';
+    if ( (!$data->maxentries) || (data_numentries($data)<($data->maxentries-1)) ) {
+        echo '&nbsp;<input type="submit" value="'.get_string('saveandadd','data').'" />';
+    }
 }
 echo '</div>';
 echo $OUTPUT->box_end();
