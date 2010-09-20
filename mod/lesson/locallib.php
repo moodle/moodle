@@ -1120,6 +1120,7 @@ class lesson extends lesson_base {
         $allpages = $this->load_all_pages();
         if ($this->properties->nextpagedefault) {
             // in Flash Card mode...first get number of retakes
+            $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$this->properties->id, "userid"=>$USER->id));
             shuffle($allpages);
             $found = false;
             if ($this->properties->nextpagedefault == LESSON_UNSEENPAGE) {
@@ -1140,7 +1141,6 @@ class lesson extends lesson_base {
             if ($found) {
                 if ($this->properties->maxpages) {
                     // check number of pages viewed (in the lesson)
-                    $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$this->properties->id, "userid"=>$USER->id));
                     if ($DB->count_records("lesson_attempts", array("lessonid"=>$this->properties->id, "userid"=>$USER->id, "retry"=>$nretakes)) >= $this->properties->maxpages) {
                         return false;
                     }
