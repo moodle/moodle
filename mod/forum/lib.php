@@ -169,6 +169,8 @@ function forum_update_instance($forum, $mform) {
                 $discussion->mailnow         = false;
                 $discussion->groupid         = -1;
 
+                $message = '';
+
                 forum_add_discussion($discussion, null, $message);
 
                 if (! $discussion = $DB->get_record('forum_discussions', array('forum'=>$forum->id))) {
@@ -3973,7 +3975,6 @@ function forum_add_attachment($post, $forum, $cm, $mform=null, &$message=null) {
 function forum_add_new_post($post, $mform, &$message) {
     global $USER, $CFG, $DB;
 
-    $message = $post->message;
     $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion));
     $forum      = $DB->get_record('forum', array('id' => $discussion->forum));
     $cm         = get_coursemodule_from_instance('forum', $forum->id);
@@ -3985,8 +3986,8 @@ function forum_add_new_post($post, $mform, &$message) {
     $post->attachment = "";
 
     $post->id = $DB->insert_record("forum_posts", $post);
-    $message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id, array('subdirs'=>true), $message);
-    $DB->set_field('forum_posts', 'message', $message, array('id'=>$post->id));
+    $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id, array('subdirs'=>true), $post->message);
+    $DB->set_field('forum_posts', 'message', $post->message, array('id'=>$post->id));
     forum_add_attachment($post, $forum, $cm, $mform, $message);
 
     // Update discussion modified date
