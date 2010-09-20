@@ -353,24 +353,23 @@ class core_calendar_renderer extends plugin_renderer_base {
         global $CALENDARDAYS;
 
         $date = usergetdate(time());
-        list($d, $m, $y) = array($date['mday'], $date['mon'], $date['year']); // This is what we want to display
 
         $display = new stdClass;
         $display->minwday = get_user_preferences('calendar_startwday', calendar_get_starting_weekday());
         $display->maxwday = $display->minwday + 6;
-        $display->thismonth = true;
-        $display->maxdays = calendar_days_in_month($m, $y);
+        $display->thismonth = ($date['mon'] == $calendar->month);
+        $display->maxdays = calendar_days_in_month($calendar->month, $calendar->year);
 
         $startwday = 0;
         if (get_user_timezone_offset() < 99) {
             // We 'll keep these values as GMT here, and offset them when the time comes to query the db
-            $display->tstart = gmmktime(0, 0, 0, $m, 1, $y); // This is GMT
-            $display->tend = gmmktime(23, 59, 59, $m, $display->maxdays, $y); // GMT
+            $display->tstart = gmmktime(0, 0, 0, $calendar->month, 1, $calendar->year); // This is GMT
+            $display->tend = gmmktime(23, 59, 59, $calendar->month, $display->maxdays, $calendar->year); // GMT
             $startwday = gmdate('w', $display->tstart); // $display->tstart is already GMT, so don't use date(): messes with server's TZ
         } else {
             // no timezone info specified
-            $display->tstart = mktime(0, 0, 0, $m, 1, $y);
-            $display->tend = mktime(23, 59, 59, $m, $display->maxdays, $y);
+            $display->tstart = mktime(0, 0, 0, $calendar->month, 1, $calendar->year);
+            $display->tend = mktime(23, 59, 59, $calendar->month, $display->maxdays, $calendar->year);
             $startwday = date('w', $display->tstart); // $display->tstart not necessarily GMT, so use date()
         }
 
@@ -394,7 +393,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         }
 
         // Extract information: events vs. time
-        calendar_events_by_day($events, $m, $y, $eventsbyday, $durationbyday, $typesbyday, $calendar->courses);
+        calendar_events_by_day($events, $calendar->month, $calendar->year, $eventsbyday, $durationbyday, $typesbyday, $calendar->courses);
 
         $output  = html_writer::start_tag('div', array('class'=>'header'));
         if(!isguestuser() && isloggedin() && calendar_user_can_add_event()) {
@@ -444,7 +443,7 @@ class core_calendar_renderer extends plugin_renderer_base {
 
             // Reset vars
             $cell = new html_table_cell();
-            $dayhref = calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;course='.$calendar->courseid.'&amp;', $calendar->day, $m, $y);
+            $dayhref = calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;course='.$calendar->courseid.'&amp;', $calendar->day, $calendar->month, $calendar->year);
 
             $cellclasses = array();
 
@@ -482,7 +481,7 @@ class core_calendar_renderer extends plugin_renderer_base {
             }
 
             // Special visual fx for today
-            if($display->thismonth && $calendar->day == $d) {
+            if($display->thismonth && $calendar->day == $calendar->day) {
                 $cellclasses[] = 'today';
             } else {
                 $cellclasses[] = 'nottoday';
