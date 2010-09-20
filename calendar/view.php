@@ -93,9 +93,9 @@ $pagetitle = '';
 
 $strcalendar = get_string('calendar', 'calendar');
 
-$link = calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$courseid.'&amp;',
+$link = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', array('view'=>'upcoming', 'course'=>$courseid)),
                                $now['mday'], $now['mon'], $now['year']);
-$PAGE->navbar->add($strcalendar, new moodle_url($link));
+$PAGE->navbar->add($strcalendar, $link);
 
 if(!checkdate($mon, $day, $yr)) {
     $day = intval($now['mday']);

@@ -123,9 +123,8 @@ $strcalendar = get_string('calendar', 'calendar');
 $prefsbutton = calendar_preferences_button();
 
 // Print title and header
-$link = calendar_get_link_href(CALENDAR_URL.'view.php?view=upcoming&amp;course='.$calendar->courseid.'&amp;',
-                                   $now['mday'], $now['mon'], $now['year']);
-$PAGE->navbar->add(get_string('calendar', 'calendar'), new moodle_url($link));
+$link = new moodle_url(CALENDAR_URL.'view.php', array('view'=>'upcoming', 'course'=>$calendar->courseid));
+$PAGE->navbar->add(get_string('calendar', 'calendar'), calendar_get_link_href($link, $now['mday'], $now['mon'], $now['year']));
 $PAGE->navbar->add($pagetitle);
 
 $PAGE->set_title($site->shortname.': '.$strcalendar.': '.$pagetitle);

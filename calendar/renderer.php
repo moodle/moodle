@@ -241,7 +241,7 @@ class core_calendar_renderer extends plugin_renderer_base {
                 $event = new calendar_event($event);
                 $event->calendarcourseid = $calendar->courseid;
                 if ($event->timestart >= $calendar->timestamp_today() && $event->timestart <= $calendar->timestamp_tomorrow()-1) {  // Print it now
-                    $event->time = calendar_format_event_time($event, time(), '', false, $calendar->timestamp_today());
+                    $event->time = calendar_format_event_time($event, time(), null, false, $calendar->timestamp_today());
                     $output .= $this->event($event);
                 } else {                                                                 // Save this for later
                     $underway[] = $event;
@@ -252,7 +252,7 @@ class core_calendar_renderer extends plugin_renderer_base {
             if (!empty($underway)) {
                 $output .= $this->output->heading(get_string('spanningevents', 'calendar'), 3);
                 foreach ($underway as $event) {
-                    $event->time = calendar_format_event_time($event, time(), '', false, $calendar->timestamp_today());
+                    $event->time = calendar_format_event_time($event, time(), null, false, $calendar->timestamp_today());
                     $output .= $this->event($event);
                 }
             }
@@ -273,7 +273,7 @@ class core_calendar_renderer extends plugin_renderer_base {
     public function event(calendar_event $event, $showactions=true) {
         $event = calendar_add_event_metadata($event);
 
-        $output  = html_writer::tag('a', '', array('name'=>'event_'.$event->id));
+        $anchor  = html_writer::tag('a', '', array('name'=>'event_'.$event->id));
 
         $table = new html_table();
         $table->attributes = array('class'=>'event', 'cellspacing'=>'0');
@@ -283,9 +283,9 @@ class core_calendar_renderer extends plugin_renderer_base {
         );
 
         if (!empty($event->icon)) {
-            $table->data[0]->cells[0] = new html_table_cell($event->icon);
+            $table->data[0]->cells[0] = new html_table_cell($anchor.$event->icon);
         } else {
-            $table->data[0]->cells[0] = new html_table_cell($this->output->spacer(array('height'=>16, 'width'=>16, 'br'=>true)));
+            $table->data[0]->cells[0] = new html_table_cell($anchor.$this->output->spacer(array('height'=>16, 'width'=>16, 'br'=>true)));
         }
         $table->data[0]->cells[0]->attributes['class'] .= ' picture';
 
@@ -443,7 +443,7 @@ class core_calendar_renderer extends plugin_renderer_base {
 
             // Reset vars
             $cell = new html_table_cell();
-            $dayhref = calendar_get_link_href(CALENDAR_URL.'view.php?view=day&amp;course='.$calendar->courseid.'&amp;', $calendar->day, $calendar->month, $calendar->year);
+            $dayhref = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', array('view'=>'day', 'course'=>$calendar->courseid)), $calendar->day, $calendar->month, $calendar->year);
 
             $cellclasses = array();
 
@@ -496,7 +496,8 @@ class core_calendar_renderer extends plugin_renderer_base {
                     if (!empty($events[$eventindex]->class)) {
                         $attributes['class'] = $events[$eventindex]->class;
                     }
-                    $link = html_writer::link($dayhref.'#event_'.$events[$eventindex]->id, format_string($events[$eventindex]->name, true));
+                    $dayhref->set_anchor('event_'.$events[$eventindex]->id);
+                    $link = html_writer::link($dayhref, format_string($events[$eventindex]->name, true));
                     $cell->text .= html_writer::tag('li', $link, $attributes);
                 }
                 $cell->text .= html_writer::end_tag('ul');

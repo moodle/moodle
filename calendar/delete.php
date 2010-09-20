@@ -120,7 +120,7 @@ echo $OUTPUT->box($buttons, 'buttons');
 echo $OUTPUT->box_end();
 
 // Print the event so that people can visually confirm they have the correct event
-$event->time = calendar_format_event_time($event, time(), '', false);
+$event->time = calendar_format_event_time($event, time(), null, false);
 calendar_print_event($event, false);
 
 echo $OUTPUT->box_end();

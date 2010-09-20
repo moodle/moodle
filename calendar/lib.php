@@ -83,6 +83,16 @@ function calendar_get_starting_weekday() {
     }
 }
 
+/**
+ *
+ * @global core_renderer $OUTPUT
+ * @param <type> $courses
+ * @param <type> $groups
+ * @param <type> $users
+ * @param <type> $cal_month
+ * @param <type> $cal_year
+ * @return string
+ */
 function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_year = false) {
     global $CFG, $USER, $OUTPUT;
 
@@ -172,11 +182,11 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     // will also set the $SESSION->cal_courses_shown variable to that one course. Otherwise, we 'd need to add extra
     // arguments to this function.
 
-    $morehref = '';
+    $hrefparams = array();
     if(!empty($courses)) {
         $courses = array_diff($courses, array(SITEID));
         if(count($courses) == 1) {
-            $morehref = '&amp;course='.reset($courses);
+            $hrefparams['course'] = reset($courses);
         }
     }
 
@@ -234,7 +244,8 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
         // Special visual fx if an event is defined
         if(isset($eventsbyday[$day])) {
             $class .= ' hasevent';
-            $dayhref = calendar_get_link_href(CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $day, $m, $y);
+            $hrefparams['view'] = 'day';
+            $dayhref = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', $hrefparams), $day, $m, $y);
 
             // OverLib popup
             $popupcontent = '';
@@ -243,24 +254,28 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                     continue;
                 }
                 $event = $events[$eventid];
+                $popupalt  = '';
+                $component = 'moodle';
                 if(!empty($event->modulename)) {
-                    $popupicon = $OUTPUT->pix_url('icon', $event->modulename) . '';
+                    $popupicon = 'icon';
                     $popupalt  = $event->modulename;
-
+                    $component = $event->modulename;
                 } else if ($event->courseid == SITEID) {                                // Site event
-                    $popupicon = $OUTPUT->pix_url('c/site');
-                    $popupalt  = '';
+                    $popupicon = 'c/site';
                 } else if ($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {      // Course event
-                    $popupicon = $OUTPUT->pix_url('c/course');
-                    $popupalt  = '';
+                    $popupicon = 'c/course';
                 } else if ($event->groupid) {                                      // Group event
-                    $popupicon = $OUTPUT->pix_url('c/group');
-                    $popupalt  = '';
+                    $popupicon = 'c/group';
                 } else if ($event->userid) {                                       // User event
-                    $popupicon = $OUTPUT->pix_url('c/user');
-                    $popupalt  = '';
+                    $popupicon = 'c/user';
                 }
-                $popupcontent .= '<div><img class="icon" src="'.$popupicon.'" alt="'.$popupalt.'" /><a href="'.$dayhref.'#event_'.$event->id.'">'.format_string($event->name, true).'</a></div>';
+                
+                $dayhref->set_anchor('event_'.$event->id);
+                
+                $popupcontent .= html_writer::start_tag('div');
+                $popupcontent .= $OUTPUT->pix_icon($popupicon, $popupalt);
+                $popupcontent .= html_writer::link($dayhref, format_string($event->name, true));
+                $popupcontent .= html_writer::end_tag('div');
             }
 
             //Accessibility: functionality moved to calendar_get_popup.
@@ -280,7 +295,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             } else if(isset($typesbyday[$day]['startuser'])) {
                 $class .= ' calendar_event_user';
             }
-            $cell = '<a href="'.$dayhref.'" '.$popup.'>'.$day.'</a>';
+            $cell = '<a href="'.(string)$dayhref.'" '.$popup.'>'.$day.'</a>';
         } else {
             $cell = $day;
         }
@@ -413,11 +428,11 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     // will also set the $SESSION->cal_courses_shown variable to that one course. Otherwise, we 'd need to add extra
     // arguments to this function.
 
-    $morehref = '';
+    $hrefparams = array();
     if(!empty($courses)) {
         $courses = array_diff($courses, array(SITEID));
         if(count($courses) == 1) {
-            $morehref = '&amp;course='.reset($courses);
+            $hrefparams['course'] = reset($courses);
         }
     }
 
@@ -473,7 +488,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 break;
             }
 
-            $event->time = calendar_format_event_time($event, $now, $morehref);
+            $event->time = calendar_format_event_time($event, $now, $hrefparams);
             $output[] = $event;
             ++$processed;
         }
@@ -682,70 +697,116 @@ function calendar_top_controls($type, $data) {
             $nextlink = calendar_get_link_next(get_string('monthnext', 'access'), 'index.php?', 0, $nextmonth, $nextyear, $accesshide=true);
             $prevlink = calendar_get_link_previous(get_string('monthprev', 'access'), 'index.php?', 0, $prevmonth, $prevyear, true);
 
-            if (right_to_left()) {
-                $content .= "\n".'<div class="calendar-controls">'. $nextlink;
-                $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month'.$courseid.'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
-                $content .= '<span class="hide"> | </span>'. $prevlink ."\n";
-                $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
-            } else {
-                $content .= "\n".'<div class="calendar-controls">'. $prevlink;
-                $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month'.$courseid.'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
-                $content .= '<span class="hide"> | </span>'. $nextlink ."\n";
-                $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
+            $calendarlink = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', array('view'=>'month')), 1, $data['m'], $data['y']);
+            if (!empty($data['id'])) {
+                $calendarlink->param('course', $data['id']);
             }
 
-        break;
+            if (right_to_left()) {
+                $left = $nextlink;
+                $right = $prevlink;
+            } else {
+                $left = $prevlink;
+                $right = $nextlink;
+            }
+
+            $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
+            $content .= $left.'<span class="hide"> | </span>';
+            $content .= html_writer::tag('span', html_writer::link($calendarlink, userdate($time, get_string('strftimemonthyear'))), array('class'=>'current'));
+            $content .= '<span class="hide"> | </span>'. $right;
+            $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
+            $content .= html_writer::end_tag('div');
+
+            break;
         case 'course':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
             $nextlink = calendar_get_link_next(get_string('monthnext', 'access'), 'view.php?id='.$data['id'].'&amp;', 0, $nextmonth, $nextyear, $accesshide=true);
             $prevlink = calendar_get_link_previous(get_string('monthprev', 'access'), 'view.php?id='.$data['id'].'&amp;', 0, $prevmonth, $prevyear, true);
-            $content .= "\n".'<div class="calendar-controls">'. $prevlink;
-            $content .= '<span class="hide"> | </span><span class="current"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month'.$courseid.'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear')).'</a></span>';
-            $content .= '<span class="hide"> | </span>'. $nextlink ."\n";
-            $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
-        break;
+
+            $calendarlink = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', array('view'=>'month')), 1, $data['m'], $data['y']);
+            if (!empty($data['id'])) {
+                $calendarlink->param('course', $data['id']);
+            }
+
+            if (right_to_left()) {
+                $left = $nextlink;
+                $right = $prevlink;
+            } else {
+                $left = $prevlink;
+                $right = $nextlink;
+            }
+
+            $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
+            $content .= $left.'<span class="hide"> | </span>';
+            $content .= html_writer::tag('span', html_writer::link($calendarlink, userdate($time, get_string('strftimemonthyear')), array('class'=>'current')));
+            $content .= '<span class="hide"> | </span>'. $right;
+            $content .= "<span class=\"clearer\"><!-- --></span>";
+            $content .= html_writer::end_tag('div');
+            break;
         case 'upcoming':
-            $content .= '<div style="text-align: center;"><a href="'.CALENDAR_URL.'view.php?view=upcoming"'.$courseid.'>'.userdate($time, get_string('strftimemonthyear'))."</a></div>\n";
-        break;
+            $calendarlink = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', array('view'=>'upcoming')), 1, $data['m'], $data['y']);
+            if (!empty($data['id'])) {
+                $calendarlink->param('course', $data['id']);
+            }
+            $calendarlink = html_writer::link($calendarlink, userdate($time, get_string('strftimemonthyear')));
+            $content .= html_writer::tag('div', $calendarlink, array('class'=>'centered'));
+            break;
         case 'display':
-            $content .= '<h3><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month'.$courseid.'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear'))."</a></h3>\n";
-        break;
+            $calendarlink = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', array('view'=>'month')), 1, $data['m'], $data['y']);
+            if (!empty($data['id'])) {
+                $calendarlink->param('course', $data['id']);
+            }
+            $calendarlink = html_writer::link($calendarlink, userdate($time, get_string('strftimemonthyear')));
+            $content .= html_writer::tag('h3', $calendarlink);
+            break;
         case 'month':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);
             list($nextmonth, $nextyear) = calendar_add_month($data['m'], $data['y']);
             $prevdate = make_timestamp($prevyear, $prevmonth, 1);
             $nextdate = make_timestamp($nextyear, $nextmonth, 1);
-            $content .= "\n".'<div class="calendar-controls">';
-            $content .= calendar_get_link_previous(userdate($prevdate, get_string('strftimemonthyear')), 'view.php?view=month'.$courseid.'&amp;', 1, $prevmonth, $prevyear);
-            $content .= '<span class="hide"> | </span><h1 class="current">'.userdate($time, get_string('strftimemonthyear'))."</h1>\n";
-            $content .= '<span class="hide"> | </span>'.calendar_get_link_next(userdate($nextdate, get_string('strftimemonthyear')), 'view.php?view=month'.$courseid.'&amp;', 1, $nextmonth, $nextyear);
-            $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
-        break;
+            $prevlink = calendar_get_link_previous(userdate($prevdate, get_string('strftimemonthyear')), 'view.php?view=month'.$courseid.'&amp;', 1, $prevmonth, $prevyear);
+            $nextlink = calendar_get_link_next(userdate($nextdate, get_string('strftimemonthyear')), 'view.php?view=month'.$courseid.'&amp;', 1, $nextmonth, $nextyear);
+
+            if (right_to_left()) {
+                $left = $nextlink;
+                $right = $prevlink;
+            } else {
+                $left = $prevlink;
+                $right = $nextlink;
+            }
+
+            $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
+            $content .= $left . '<span class="hide"> | </span><h1 class="current">'.userdate($time, get_string('strftimemonthyear'))."</h1>";
+            $content .= '<span class="hide"> | </span>' . $right;
+            $content .= '<span class="clearer"><!-- --></span>';
+            $content .= html_writer::end_tag('div')."\n";
+            break;
         case 'day':
             $data['d'] = $date['mday']; // Just for convenience
             $prevdate = usergetdate(make_timestamp($data['y'], $data['m'], $data['d'] - 1));
             $nextdate = usergetdate(make_timestamp($data['y'], $data['m'], $data['d'] + 1));
             $prevname = calendar_wday_name($CALENDARDAYS[$prevdate['wday']]);
             $nextname = calendar_wday_name($CALENDARDAYS[$nextdate['wday']]);
-            $content .= "\n".'<div class="calendar-controls">';
-            $content .= calendar_get_link_previous($prevname, 'view.php?view=day'.$courseid.'&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year']);
+            $prevlink = calendar_get_link_previous($prevname, 'view.php?view=day'.$courseid.'&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year']);
+            $nextlink = calendar_get_link_next($nextname, 'view.php?view=day'.$courseid.'&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']);
 
-            // Get the format string
-            $text = get_string('strftimedaydate');
-            /*
-            // Regexp hackery to make a link out of the month/year part
-            $text = preg_replace('/(%B.+%Y|%Y.+%B|%Y.+%m[^ ]+)/', '<a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $data['m'], $data['y']).'">\\1</a>', $text);
-            $text = preg_replace('/(F.+Y|Y.+F|Y.+m[^ ]+)/', '<a href="'.calendar_get_link_href('view.php?view=month&amp;', 1, $data['m'], $data['y']).'">\\1</a>', $text);
-            */
-            // Replace with actual values and lose any day leading zero
-            $text = userdate($time, $text);
-            // Print the actual thing
-            $content .= '<span class="hide"> | </span><span class="current">'.$text.'</span>';
+            if (right_to_left()) {
+                $left = $nextlink;
+                $right = $prevlink;
+            } else {
+                $left = $prevlink;
+                $right = $nextlink;
+            }
 
-            $content .= '<span class="hide"> | </span>'. calendar_get_link_next($nextname, 'view.php?view=day'.$courseid.'&amp;', $nextdate['mday'], $nextdate['mon'], $nextdate['year']);
-            $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
-        break;
+            $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
+            $content .= $left;
+            $content .= '<span class="hide"> | </span><span class="current">'.userdate($time, get_string('strftimedaydate')).'</span>';
+            $content .= '<span class="hide"> | </span>'. $right;
+            $content .= "<span class=\"clearer\"><!-- --></span>";
+            $content .= html_writer::end_tag('div')."\n";
+
+            break;
     }
     return $content;
 }
@@ -891,22 +952,43 @@ function calendar_time_representation($time) {
  * TODO document
  */
 function calendar_get_link_href($linkbase, $d, $m, $y) {
-    if(empty($linkbase)) return '';
-    $paramstr = '';
-    if(!empty($d)) $paramstr .= '&amp;cal_d='.$d;
-    if(!empty($m)) $paramstr .= '&amp;cal_m='.$m;
-    if(!empty($y)) $paramstr .= '&amp;cal_y='.$y;
-    if(!empty($paramstr)) $paramstr = substr($paramstr, 5);
-    return $linkbase.$paramstr;
+    if (empty($linkbase)) {
+        return '';
+    }
+    if (!($linkbase instanceof moodle_url)) {
+        $linkbase = new moodle_url();
+    }
+    if (!empty($d)) {
+        $linkbase->param('cal_d', $d);
+    }
+    if (!empty($m)) {
+        $linkbase->param('cal_m', $m);
+    }
+    if (!empty($y)) {
+        $linkbase->param('cal_y', $y);
+    }
+    return $linkbase;
 }
 
 /**
- * TODO document
+ * This function has been deprecated as of Moodle 2.0... DO NOT USE!!!!!
+ *
+ * @deprecated
+ * @since 2.0
+ *
+ * @param string $text
+ * @param string|moodle_url $linkbase
+ * @param int|null $d
+ * @param int|null $m
+ * @param int|null $y
+ * @return string HTML link
  */
 function calendar_get_link_tag($text, $linkbase, $d, $m, $y) {
-    $href = calendar_get_link_href($linkbase, $d, $m, $y);
-    if(empty($href)) return $text;
-    return '<a href="'.$href.'">'.$text.'</a>';
+    $url = calendar_get_link_href(new moodle_url($linkbase), $d, $m, $y);
+    if (empty($url)) {
+        return $text;
+    }
+    return html_writer::link($url, $text);
 }
 
 /**
@@ -918,9 +1000,11 @@ function calendar_get_link_tag($text, $linkbase, $d, $m, $y) {
  * @return string HTML string.
  */
 function calendar_get_link_previous($text, $linkbase, $d, $m, $y, $accesshide=false) {
-    $href = calendar_get_link_href($linkbase, $d, $m, $y);
-    if(empty($href)) return $text;
-    return link_arrow_left($text, $href, $accesshide, 'previous');
+    $href = calendar_get_link_href(new moodle_url($linkbase), $d, $m, $y);
+    if (empty($href)) {
+        return $text;
+    }
+    return link_arrow_left($text, (string)$href, $accesshide, 'previous');
 }
 
 /**
@@ -932,10 +1016,11 @@ function calendar_get_link_previous($text, $linkbase, $d, $m, $y, $accesshide=fa
  * @return string HTML string.
  */
 function calendar_get_link_next($text, $linkbase, $d, $m, $y, $accesshide=false) {
-    $href = calendar_get_link_href($linkbase, $d, $m, $y);
-    if(empty($href)) return $text;
-
-    return link_arrow_right($text, $href, $accesshide, 'next');
+    $href = calendar_get_link_href(new moodle_url($linkbase), $d, $m, $y);
+    if (empty($href)) {
+        return $text;
+    }
+    return link_arrow_right($text, (string)$href, $accesshide, 'next');
 }
 
 function calendar_wday_name($englishname) {
@@ -965,8 +1050,9 @@ function calendar_get_block_upcoming($events, $linkhref = NULL) {
         } else {
             if(!empty($linkhref)) {
                 $ed = usergetdate($events[$i]->timestart);
-                $href = calendar_get_link_href(CALENDAR_URL.$linkhref, $ed['mday'], $ed['mon'], $ed['year']);
-                $content .= '<a href="'.$href.'#event_'.$events[$i]->id.'">'.$events[$i]->name.'</a>';
+                $href = calendar_get_link_href(new moodle_url(CALENDAR_URL.$linkhref), $ed['mday'], $ed['mon'], $ed['year']);
+                $href->set_anchor('event_'.$events[$i]->id);
+                $content .= html_writer::link($href, $events[$i]->name);
             }
             else {
                 $content .= $events[$i]->name;
@@ -1386,7 +1472,7 @@ function calendar_preferences_button() {
            "<div><input type=\"submit\" value=\"".get_string("preferences", "calendar")." ...\" /></div></form>";
 }
 
-function calendar_format_event_time($event, $now, $morehref, $usecommonwords = true, $showtime=0) {
+function calendar_format_event_time($event, $now, $linkparams = null, $usecommonwords = true, $showtime=0) {
     $startdate = usergetdate($event->timestart);
     $enddate = usergetdate($event->timestart + $event->timeduration);
     $usermidnightstart = usergetmidnight($event->timestart);
@@ -1398,6 +1484,11 @@ function calendar_format_event_time($event, $now, $morehref, $usecommonwords = t
     else {
         $usermidnightend = $usermidnightstart;
     }
+
+    if (empty($linkparams) || !is_array($linkparams)) {
+        $linkparams = array();
+    }
+    $linkparams['view'] = 'day';
 
     // OK, now to get a meaningful display...
     // First of all we have to construct a human-readable date/time representation
@@ -1419,7 +1510,8 @@ function calendar_format_event_time($event, $now, $morehref, $usecommonwords = t
             // Set printable representation
             if (!$showtime) {
                 $day = calendar_day_representation($event->timestart, $now, $usecommonwords);
-                $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).', '.$time;
+                $url = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', $linkparams), $enddate['mday'], $enddate['mon'], $enddate['year']);
+                $eventtime = html_writer::link($url, $day).', '.$time;
             } else {
                 $eventtime = $time;
             }
@@ -1438,12 +1530,14 @@ function calendar_format_event_time($event, $now, $morehref, $usecommonwords = t
 
             // Set printable representation
             if ($now >= $usermidnightstart && $now < ($usermidnightstart + 86400)) {
-                $eventtime = $timestart.' <strong>&raquo;</strong> '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
-                $timeend;
+                $url = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', $linkparams), $enddate['mday'], $enddate['mon'], $enddate['year']);
+                $eventtime = $timestart.' <strong>&raquo;</strong> '.html_writer::link($url, $dayend).$timeend;
             } else {
-                $eventtime = calendar_get_link_tag($daystart, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).
-                $timestart.' <strong>&raquo;</strong> '.calendar_get_link_tag($dayend, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $enddate['mday'], $enddate['mon'], $enddate['year']).
-                $timeend;
+                $url = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', $linkparams), $enddate['mday'], $enddate['mon'], $enddate['year']);
+                $eventtime  = html_writer::link($url, $daystart).$timestart.' <strong>&raquo;</strong> ';
+                
+                $url = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', $linkparams), $startdate['mday'], $startdate['mon'], $startdate['year']);
+                $eventtime .= html_writer::link($url, $dayend).$timeend;
             }
         }
     } else {
@@ -1452,7 +1546,8 @@ function calendar_format_event_time($event, $now, $morehref, $usecommonwords = t
         // Set printable representation
         if (!$showtime) {
             $day = calendar_day_representation($event->timestart, $now, $usecommonwords);
-            $eventtime = calendar_get_link_tag($day, CALENDAR_URL.'view.php?view=day'.$morehref.'&amp;', $startdate['mday'], $startdate['mon'], $startdate['year']).trim($time);
+            $url = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', $linkparams), $startdate['mday'], $startdate['mon'], $startdate['year']);
+            $eventtime = html_writer::link($url, $day).trim($time);
         } else {
             $eventtime = $time;
         }
@@ -1876,7 +1971,6 @@ class calendar_event {
                         break;
                     case 'group':
                         $this->editorcontext = get_context_instance(CONTEXT_COURSE, $this->properties->courseid);
-                        $this->properties->groupid = 0;
                         $this->properties->userid = $USER->id;
                         break;
                     default:
