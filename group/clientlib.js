@@ -201,27 +201,35 @@ var removeLoaderImgs = function (elClass, parentId) {
     }
 };
 
+/**
+ * Updates the current groups information shown about a user when a user is selected.
+ *
+ * @global {Array} userSummaries
+ *      userSummaries is added to the page via /user/selector/lib.php - group_non_members_selector::print_user_summaries()
+ *      as a global that can be used by this function.
+ */
 function updateUserSummary() {
-     var selectEl = document.getElementById('addselect');
-     var summaryDiv = document.getElementById('group-usersummary');
-     var length = selectEl.length;
-     var selectCnt = 0;
-     var selectIdx = -1;
+    var selectEl = document.getElementById('addselect'),
+        summaryDiv = document.getElementById('group-usersummary'),
+        length = selectEl.length,
+        selectCnt = 0,
+        selectIdx = -1,
+        i;
 
-     for(i=0;i<length;i++) {
-         if (selectEl.options[i].selected) {
-                 selectCnt++;
-             selectIdx = i;
-         }
-     }
+    for (i = 0; i < length; i++) {
+        if (selectEl.options[i].selected) {
+            selectCnt++;
+            selectIdx = i;
+        }
+    }
 
-     if (selectCnt == 1 && userSummaries[selectIdx]) {
-         summaryDiv.innerHTML = userSummaries[selectIdx];
-     } else {
-         summaryDiv.innerHTML = '';
-     }
+    if (selectCnt == 1 && userSummaries[selectIdx]) {
+        summaryDiv.innerHTML = userSummaries[selectIdx];
+    } else {
+        summaryDiv.innerHTML = '';
+    }
 
-     return(true);
+    return true;
 }
 
 function init_add_remove_members_page(Y) {
