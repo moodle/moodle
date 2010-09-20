@@ -1907,8 +1907,15 @@ function delete_context($contextlevel, $instanceid, $deleterecord = true) {
         // delete these first because they might fetch the context and try to recreate it!
         blocks_delete_all_for_context($context->id);
         filter_delete_all_for_context($context->id);
+
         require_once($CFG->dirroot . '/comment/lib.php');
         comment::delete_comments(array('contextid'=>$context->id));
+
+        require_once($CFG->dirroot.'/rating/lib.php');
+        $delopt = new stdclass();
+        $delopt->contextid = $context->id;
+        $rm = new rating_manager();
+        $rm->delete_ratings($delopt);
 
         // delete all files attached to this context
         $fs = get_file_storage();

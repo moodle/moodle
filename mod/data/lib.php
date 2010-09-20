@@ -909,14 +909,6 @@ function data_delete_instance($id) {    // takes the dataid
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'mod_data');
 
-    // Delete ratings
-    //delete ratings
-    require_once($CFG->dirroot.'/rating/lib.php');
-    $delopt = new stdclass();
-    $delopt->contextid = $context->id;
-    $rm = new rating_manager();
-    $rm->delete_ratings($delopt);
-
     // get all the records in this data
     $sql = "SELECT r.id
               FROM {data_records} r

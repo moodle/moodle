@@ -198,12 +198,6 @@ function glossary_delete_instance($id) {
     // delete all files
     $fs->delete_area_files($context->id);
 
-    //delete ratings
-    $rm = new rating_manager();
-    $ratingdeloptions = new stdclass();
-    $ratingdeloptions->contextid = $context->id;
-    $rm->delete_ratings($ratingdeloptions);
-
     glossary_grade_item_delete($glossary);
 
     return $DB->delete_records('glossary', array('id'=>$id));
