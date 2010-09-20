@@ -598,6 +598,7 @@ function scorm_upgrade_grades() {
  */
 function scorm_grade_item_update($scorm, $grades=NULL) {
     global $CFG, $DB;
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');
     }
