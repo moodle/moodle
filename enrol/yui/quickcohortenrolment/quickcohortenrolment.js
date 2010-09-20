@@ -8,6 +8,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
         USERS = 'users',
         COURSEID = 'courseid',
         ASSIGNABLEROLES = 'assignableRoles',
+        DEFAULTCOHORTROLE = 'defaultCohortRole',
         COHORTS = 'cohorts',
         PANELID = 'qce-panel-',
         URL = 'url',
@@ -33,14 +34,15 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
     var CONTROLLER = function(config) {
         CONTROLLER.superclass.constructor.apply(this, arguments);
     };
-    Y.extend(CONTROLLER, Y.Base, {
+    CONTROLLER.prototype = {
         _preformingAction : false,
         initializer : function(config) {
             COUNT ++;
-            this.publish('assignablerolesloaded');
+            this.publish('assignablerolesloaded', {fireOnce:true});
             this.publish('cohortsloaded');
             this.publish('performingaction');
             this.publish('actioncomplete');
+            this.publish('defaultcohortroleloaded', {fireOnce:true});
 
             var close = Y.Node.create('<div class="close"></div>');
             var panel = new Y.Overlay({
@@ -66,6 +68,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
             }, panel);
             this.on('assignablerolesloaded', this.updateContent, this, panel);
             this.on('cohortsloaded', this.updateContent, this, panel);
+            this.on('defaultcohortroleloaded', this.updateContent, this, panel);
             close.on('click', this.hide, this);
 
             Y.all('.enrolcohortbutton input').each(function(node){
@@ -91,7 +94,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
                     .append(Y.Node.create('<div class="'+CSS.PANELCOHORTS+'"><div class="'+CSS.COHORT+' headings"><div class="'+CSS.COHORTBUTTON+'"></div><div class="'+CSS.COHORTNAME+'">'+M.str.cohort.cohort+'</div><div class="'+CSS.COHORTUSERS+'">'+M.str.moodle.users+'</div></div></div>'))
                     .append(Y.Node.create('<div class="'+CSS.PANELROLES+'"></div>')));
             }
-            var content, i, roles, cohorts, count=0, supportmanual = this.get(MANUALENROLMENT);
+            var content, i, roles, cohorts, count=0, supportmanual = this.get(MANUALENROLMENT), defaultrole;
             switch (e.type.replace(/^[^:]+:/, '')) {
                 case 'cohortsloaded' :
                     cohorts = this.get(COHORTS);
@@ -114,6 +117,16 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
                         content.append(Y.Node.create('<option value="'+i+'">'+roles[i]+'</option>'));
                     }
                     panel.get('contentBox').one('.'+CSS.PANELROLES).setContent(Y.Node.create('<div>'+M.str.role.assignroles+': </div>').append(content));
+
+                    this.getDefaultCohortRole();
+                    break;
+                case 'defaultcohortroleloaded':
+                    defaultrole = this.get(DEFAULTCOHORTROLE);
+                    panel.get('contentBox').one('.'+CSS.PANELROLES).all('option').each(function(){
+                        if (this.get('value')==defaultrole) {
+                            this.setAttribute('selected', true);
+                        }
+                    });
                     break;
             }
         },
@@ -173,6 +186,24 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
                 context:this
             });
         },
+        getDefaultCohortRole : function() {
+            Y.io(M.cfg.wwwroot+this.get(AJAXURL), {
+                method:'POST',
+                data:'id='+this.get(COURSEID)+'&action=getdefaultcohortrole&sesskey='+M.cfg.sesskey,
+                on: {
+                    complete: function(tid, outcome, args) {
+                        try {
+                            var roles = Y.JSON.parse(outcome.responseText);
+                            this.set(DEFAULTCOHORTROLE, roles.response);
+                        } catch (e) {
+                            return new M.core.exception(e);
+                        }
+                        this.fire('defaultcohortroleloaded');
+                    }
+                },
+                context:this
+            });
+        },
         enrolCohort : function(e, cohort, node, usersonly) {
             if (this._preformingAction) {
                 return true;
@@ -223,7 +254,8 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
             });
             return true;
         }
-    }, {
+    };
+    Y.extend(CONTROLLER, Y.Base, CONTROLLER.prototype, {
         NAME : CONTROLLERNAME,
         ATTRS : {
             url : {
@@ -244,6 +276,9 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
             },
             manualEnrolment : {
                 value : false
+            },
+            defaultCohortRole : {
+                value : null
             }
         }
     });
