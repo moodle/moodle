@@ -84,13 +84,14 @@ function calendar_get_starting_weekday() {
 }
 
 /**
+ * Generates the HTML for a miniature calendar
  *
  * @global core_renderer $OUTPUT
- * @param <type> $courses
- * @param <type> $groups
- * @param <type> $users
- * @param <type> $cal_month
- * @param <type> $cal_year
+ * @param array $courses
+ * @param array $groups
+ * @param array $users
+ * @param int $cal_month
+ * @param int $cal_year
  * @return string
  */
 function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_year = false) {
@@ -949,7 +950,13 @@ function calendar_time_representation($time) {
 }
 
 /**
- * TODO document
+ * Adds day, month, year arguments to a URL and returns a moodle_url object.
+ *
+ * @param string|moodle_url $linkbase
+ * @param int $d
+ * @param int $m
+ * @param int $y
+ * @return moodle_url 
  */
 function calendar_get_link_href($linkbase, $d, $m, $y) {
     if (empty($linkbase)) {
@@ -993,8 +1000,9 @@ function calendar_get_link_tag($text, $linkbase, $d, $m, $y) {
 
 /**
  * Build and return a previous month HTML link, with an arrow.
+ *
  * @param string $text The text label.
- * @param string $linkbase The URL stub.
+ * @param string|moodle_url $linkbase The URL stub.
  * @param int $d $m $y Day of month, month and year numbers.
  * @param bool $accesshide Default visible, or hide from all except screenreaders.
  * @return string HTML string.
@@ -1009,8 +1017,9 @@ function calendar_get_link_previous($text, $linkbase, $d, $m, $y, $accesshide=fa
 
 /**
  * Build and return a next month HTML link, with an arrow.
+ * 
  * @param string $text The text label.
- * @param string $linkbase The URL stub.
+ * @param string|moodle_url $linkbase The URL stub.
  * @param int $d $m $y Day of month, month and year numbers.
  * @param bool $accesshide Default visible, or hide from all except screenreaders.
  * @return string HTML string.
