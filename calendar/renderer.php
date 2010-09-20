@@ -402,7 +402,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $output .= get_string('detailedmonthview', 'calendar').': '.$this->course_filter_selector(array('from'=>'month', 'cal_d'=>$calendar->day, 'cal_m'=>$calendar->month, 'cal_y'=>$calendar->year));
         $output .= html_writer::end_tag('div', array('class'=>'header'));
         // Controls
-        $output .= html_writer::tag('div', calendar_top_controls('day', array('id' => $calendar->courseid, 'm' => $calendar->month, 'y' => $calendar->year)), array('class'=>'controls'));
+        $output .= html_writer::tag('div', calendar_top_controls('month', array('id' => $calendar->courseid, 'm' => $calendar->month, 'y' => $calendar->year)), array('class'=>'controls'));
 
         $table = new html_table();
         $table->attributes = array('class'=>'calendarmonth calendartable');
