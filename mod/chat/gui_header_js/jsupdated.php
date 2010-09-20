@@ -84,6 +84,7 @@ $stylesheetshtml = '';
     $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
 }*/
 
+$refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdated.php?chat_sid=$chat_sid&chat_lasttime=$chat_lasttime&chat_lastrow=$chat_newrow&chat_lastid=$chat_lastid";
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -111,8 +112,8 @@ $stylesheetshtml = '';
         }
         //]]>
         </script>
-   </head>
-   <body>
+    </head>
+    <body>
 
 <?php
 
