@@ -214,6 +214,17 @@ class community_hub_search_form extends moodleform {
             $mform->setDefault('language', 'all');
             $mform->addHelpButton('language', 'language', 'block_community');
 
+            $mform->addElement('radio', 'orderby', get_string('orderby', 'block_community'),
+                    get_string('orderbynewest', 'block_community'), 'newest');
+            $mform->addElement('radio', 'orderby', null,
+                    get_string('orderbyeldest', 'block_community'), 'eldest');
+            $mform->addElement('radio', 'orderby', null,
+                    get_string('orderbyname', 'block_community'), 'fullname');
+            $mform->addElement('radio', 'orderby', null,
+                    get_string('orderbypublisher', 'block_community'), 'publisher');
+            $mform->setDefault('orderby', 'newest');
+            $mform->setType('orderby', PARAM_ALPHA);
+
             $mform->addElement('text', 'search', get_string('keywords', 'block_community'));
             $mform->addHelpButton('search', 'keywords', 'block_community');
 

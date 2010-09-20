@@ -149,6 +149,8 @@ if (!empty($fromform)) {
         $options->language = $fromform->language;
     }
 
+    $options->orderby = $fromform->orderby;
+
     //check if the selected hub is from the registered list (in this case we use the private token)
     $token = 'publichub';
     $registrationmanager = new registration_manager();
