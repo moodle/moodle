@@ -713,7 +713,7 @@ function calendar_top_controls($type, $data) {
 
             $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
             $content .= $left.'<span class="hide"> | </span>';
-            $content .= html_writer::tag('span', html_writer::link($calendarlink, userdate($time, get_string('strftimemonthyear'))), array('class'=>'current'));
+            $content .= html_writer::tag('span', html_writer::link($calendarlink, userdate($time, get_string('strftimemonthyear')), array('title'=>get_string('monththis','calendar'))), array('class'=>'current'));
             $content .= '<span class="hide"> | </span>'. $right;
             $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
             $content .= html_writer::end_tag('div');
@@ -740,7 +740,7 @@ function calendar_top_controls($type, $data) {
 
             $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
             $content .= $left.'<span class="hide"> | </span>';
-            $content .= html_writer::tag('span', html_writer::link($calendarlink, userdate($time, get_string('strftimemonthyear')), array('class'=>'current')));
+            $content .= html_writer::tag('span', html_writer::link($calendarlink, userdate($time, get_string('strftimemonthyear')), array('title'=>get_string('monththis','calendar'))), array('class'=>'current'));
             $content .= '<span class="hide"> | </span>'. $right;
             $content .= "<span class=\"clearer\"><!-- --></span>";
             $content .= html_writer::end_tag('div');
