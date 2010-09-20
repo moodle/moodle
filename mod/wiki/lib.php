@@ -141,6 +141,45 @@ function wiki_delete_instance($id) {
     return $result;
 }
 
+function wiki_reset_userdata($data) {
+    global $CFG,$DB;
+    require_once($CFG->dirroot . '/mod/wiki/pagelib.php');
+    require_once($CFG->dirroot . '/tag/lib.php');
+
+    $componentstr = get_string('modulenameplural', 'wiki');
+    $status = array();
+
+    //get the wiki(s) in this course.
+    if (!$wikis = $DB->get_records('wiki', array('course' => $data->courseid))) {
+        return false;
+    }
+    $errors = false;
+    foreach ($wikis as $wiki) {
+        # Get subwiki information #
+        $subwikis = $DB->get_records('wiki_subwikis', array('wikiid' => $wiki->id));
+
+        foreach ($subwikis as $subwiki) {
+            if ($pages = $DB->get_records('wiki_pages', array('subwikiid' => $subwiki->id))) {
+                foreach ($pages as $page) {
+                    $tags = tag_get_tags_array('wiki_page', $page->id);
+                    foreach ($tags as $tagid => $tagname) {
+                        // Delete the related tag_instances related to the wiki page.
+                        $errors = tag_delete_instance('wiki_page', $page->id, $tagid);
+                        $status[] = array('component' => $componentstr, 'item' => get_string('tagsdeleted', 'wiki'), 'error' => $errors);
+                    }
+                }
+            }
+        }
+    }
+    return $status;
+}
+
+
+function wiki_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'wikiheader', get_string('modulenameplural', 'wiki'));
+    $mform->addElement('advcheckbox', 'reset_wiki_tags', get_string('removeallwikitags','wiki'));
+}
+
 /**
  * Return a small object with summary information about what a
  * user has done with a given particular instance of this module
