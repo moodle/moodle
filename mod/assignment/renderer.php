@@ -80,6 +80,8 @@ class assignment_files implements renderable {
     public $context;
     public $dir;
     public $portfolioform;
+    public $cm;
+    public $course;
     public function __construct($context, $itemid, $filearea='submission') {
         global $USER, $CFG;
         require_once($CFG->libdir . '/portfoliolib.php');
