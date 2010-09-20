@@ -150,7 +150,6 @@ if ($mform->is_cancelled()) {
 
     echo 'URL: '.s($serverurl);
     echo $OUTPUT->box_start();
-    echo '<code>';
 
     try {
         $response = $testclient->simpletest($serverurl, $function, $params);
@@ -160,7 +159,6 @@ if ($mform->is_cancelled()) {
         echo str_replace("\n", '<br />', s($ex));
     }
 
-    echo '</code>';
     echo $OUTPUT->box_end();
     $mform->display();
     echo $OUTPUT->footer();
