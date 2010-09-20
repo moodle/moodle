@@ -31,9 +31,36 @@
  */
 class enrol_self_plugin extends enrol_plugin {
 
+    /**
+     * Returns optional enrolment information icons.
+     *
+     * This is used in course list for quick overview of enrolment options.
+     *
+     * We are not using single instance parameter because sometimes
+     * we might want to prevent icon repetition when multiple instances
+     * of one type exist. One instance may also produce several icons.
+     *
+     * @param array $instances all enrol instances of this type in one course
+     * @return array of pix_icon
+     */
     public function get_info_icons(array $instances) {
-        //TODO: we need two different self enrol icons - with and without key
-        return array();
+        $key = false;
+        $nokey = false;
+        foreach ($instances as $instance) {
+            if ($instance->password or $instance->customint1) {
+                $key = true;
+            } else {
+                $nokey = true;
+            }
+        }
+        $icons = array();
+        if ($nokey) {
+            $icons[] = new pix_icon('withoutkey', get_string('pluginname', 'enrol_self'), 'enrol_self');
+        }
+        if ($key) {
+            $icons[] = new pix_icon('withkey', get_string('pluginname', 'enrol_self'), 'enrol_self');
+        }
+        return $icons;
     }
 
     /**
@@ -223,8 +250,6 @@ class enrol_self_plugin extends enrol_plugin {
      * @return int id of new instance
      */
     public function add_default_instance($course) {
-        global $DB;
-
         $fields = array('customint1'  => $this->get_config('groupkey'),
                         'customint2'  => $this->get_config('longtimenosee'),
                         'customint3'  => $this->get_config('maxenrolled'),
