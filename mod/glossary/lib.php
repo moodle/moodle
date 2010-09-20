@@ -2376,6 +2376,7 @@ function glossary_reset_userdata($data) {
 
         $params[] = 'glossary_entry';
         $DB->delete_records_select('comments', "itemid IN ($allentriessql) AND commentarea=?", $params);
+        $DB->delete_records_select('glossary_alias',    "entryid IN ($allentriessql)", $params);
         $DB->delete_records_select('glossary_entries', "glossaryid IN ($allglossariessql)", $params);
 
         // now get rid of all attachments
