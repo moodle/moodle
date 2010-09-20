@@ -79,7 +79,7 @@ class assignment_online extends assignment_base {
         if ($editmode) {
             $this->view_header(get_string('editmysubmission', 'assignment'));
         } else {
-            $this->view_header(get_string('viewsubmissions', 'assignment'));
+            $this->view_header();
         }
 
         $this->view_intro();
