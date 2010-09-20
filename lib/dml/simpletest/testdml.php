@@ -1585,6 +1585,20 @@ class dml_test extends UnitTestCase {
         $this->assertEqual($newblob, $record->onebinary, 'Test "small" BLOB insert (full contents output disabled)');
         $this->assertEqual(false, $rs->key()); // Ensure recordset key() method to be working ok after closing
 
+        // And "diagnostic" LOBs too, just in case
+        $newclob = '\'"\\;/ěščřžýáíé';
+        $newblob = '\'"\\;/ěščřžýáíé';
+        $record = new object();
+        $record->onetext = $newclob;
+        $record->onebinary = $newblob;
+        $recid = $DB->insert_record($tablename, $record);
+        $rs = $DB->get_recordset($tablename, array('id' => $recid));
+        $record = $rs->current();
+        $rs->close();
+        $this->assertIdentical($newclob, $record->onetext);
+        $this->assertIdentical($newblob, $record->onebinary);
+        $this->assertEqual(false, $rs->key()); // Ensure recordset key() method to be working ok after closing
+
         // test data is not modified
         $record = new object();
         $record->id     = -1; // has to be ignored
