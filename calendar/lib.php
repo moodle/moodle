@@ -1643,7 +1643,7 @@ class calendar_event {
     protected $editoroptions = array(
             'subdirs'=>false,
             'forcehttps'=>false,
-            'maxfiles'=>EDITOR_UNLIMITED_FILES,
+            'maxfiles'=>-1,
             'maxbytes'=>null,
             'trusttext'=>false);
     /**
