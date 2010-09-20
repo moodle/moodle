@@ -673,39 +673,6 @@ class embedded_cloze_qtype extends default_questiontype {
         return $totalfraction / count($question->options->questions);
     }
 
-/// BACKUP FUNCTIONS ////////////////////////////
-
-    /*
-     * Backup the data in the question
-     *
-     * This is used in question/backuplib.php
-     */
-    function backup($bf,$preferences,$question,$level=6) {
-        global $DB;
-        $status = true;
-
-        $multianswers = $DB->get_records("question_multianswer",array("question" => $question),"id");
-        //If there are multianswers
-        if ($multianswers) {
-            //Print multianswers header
-            $status = fwrite ($bf,start_tag("MULTIANSWERS",$level,true));
-            //Iterate over each multianswer
-            foreach ($multianswers as $multianswer) {
-                $status = fwrite ($bf,start_tag("MULTIANSWER",$level+1,true));
-                //Print multianswer contents
-                fwrite ($bf,full_tag("ID",$level+2,false,$multianswer->id));
-                fwrite ($bf,full_tag("QUESTION",$level+2,false,$multianswer->question));
-                fwrite ($bf,full_tag("SEQUENCE",$level+2,false,$multianswer->sequence));
-                $status = fwrite ($bf,end_tag("MULTIANSWER",$level+1,true));
-            }
-            //Print multianswers footer
-            $status = fwrite ($bf,end_tag("MULTIANSWERS",$level,true));
-            //Now print question_answers
-            $status = question_backup_answers($bf,$preferences,$question);
-        }
-        return $status;
-    }
-
 /// RESTORE FUNCTIONS /////////////////
 
     /*

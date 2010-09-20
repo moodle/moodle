@@ -292,35 +292,6 @@ class question_truefalse_qtype extends default_questiontype {
         return 0.5;
     }
 
-/// BACKUP FUNCTIONS ////////////////////////////
-
-    /*
-     * Backup the data in a truefalse question
-     *
-     * This is used in question/backuplib.php
-     */
-    function backup($bf,$preferences,$question,$level=6) {
-        global $DB;
-
-        $status = true;
-
-        $truefalses = $DB->get_records("question_truefalse",array("question" => $question),"id");
-        //If there are truefalses
-        if ($truefalses) {
-            //Iterate over each truefalse
-            foreach ($truefalses as $truefalse) {
-                $status = fwrite ($bf,start_tag("TRUEFALSE",$level,true));
-                //Print truefalse contents
-                fwrite ($bf,full_tag("TRUEANSWER",$level+1,false,$truefalse->trueanswer));
-                fwrite ($bf,full_tag("FALSEANSWER",$level+1,false,$truefalse->falseanswer));
-                $status = fwrite ($bf,end_tag("TRUEFALSE",$level,true));
-            }
-            //Now print question_answers
-            $status = question_backup_answers($bf,$preferences,$question);
-        }
-        return $status;
-    }
-
 /// RESTORE FUNCTIONS /////////////////
 
     /*

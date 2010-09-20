@@ -339,31 +339,6 @@ class question_randomsamatch_qtype extends question_match_qtype {
     function get_random_guess_score($question) {
         return 1/$question->options->choose;
     }
-/// BACKUP FUNCTIONS ////////////////////////////
-
-    /*
-     * Backup the data in the question
-     *
-     * This is used in question/backuplib.php
-     */
-    function backup($bf,$preferences,$question,$level=6) {
-        global $DB;
-
-        $status = true;
-
-        $randomsamatchs = $DB->get_records("question_randomsamatch",array("question" => $question),"id");
-        //If there are randomsamatchs
-        if ($randomsamatchs) {
-            //Iterate over each randomsamatch
-            foreach ($randomsamatchs as $randomsamatch) {
-                $status = fwrite ($bf,start_tag("RANDOMSAMATCH",6,true));
-                //Print randomsamatch contents
-                fwrite ($bf,full_tag("CHOOSE",7,false,$randomsamatch->choose));
-                $status = fwrite ($bf,end_tag("RANDOMSAMATCH",6,true));
-            }
-        }
-        return $status;
-    }
 
 /// RESTORE FUNCTIONS /////////////////
 
