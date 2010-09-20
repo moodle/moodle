@@ -207,6 +207,7 @@ class assignment_base {
         echo $OUTPUT->box_start('generalbox boxaligncenter', 'intro');
         echo format_module_intro('assignment', $this->assignment, $this->cm->id);
         echo $OUTPUT->box_end();
+        plagiarism_print_disclosure($this->cm->id);
     }
 
     /**
@@ -1096,6 +1097,7 @@ class assignment_base {
                         self::FILTER_REQUIRE_GRADING => get_string('requiregrading', 'assignment'));
 
         $updatepref = optional_param('updatepref', 0, PARAM_INT);
+        plagiarism_update_status($this->course, $this->cm);
 
         if (isset($_POST['updatepref'])){
             $perpage = optional_param('perpage', 10, PARAM_INT);
@@ -1873,6 +1875,8 @@ class assignment_base {
                     $button->set_format_by_file($file);
                     $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                 }
+                $output .= plagiarism_get_links(array('userid'=>$userid, 'file'=>$file, 'cmid'=>$this->cm->id, 'course'=>$this->course, 'assignment'=>$this->assignment));
+                $output .= '<br />';
             }
             if (count($files) > 1  && $this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                 $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/locallib.php');

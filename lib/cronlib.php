@@ -116,6 +116,10 @@ function cron_run() {
     }
     mtrace('Finished blocks');
 
+    //now do plagiarism checks
+    require_once($CFG->libdir.'/plagiarismlib.php');
+    plagiarism_cron();
+
     mtrace("Starting quiz reports");
     if ($reports = $DB->get_records_select('quiz_report', "cron > 0 AND ((? - lastcron) > cron)", array($timenow))) {
         foreach ($reports as $report) {

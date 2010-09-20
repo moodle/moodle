@@ -1025,6 +1025,8 @@ class assignment_upload extends assignment_base {
         $mform->addHelpButton('var4', 'trackdrafts', 'assignment');
         $mform->setDefault('var4', 1);
 
+        $course_context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        plagiarism_get_form_elements_module($mform, $course_context);
     }
 
     function portfolio_exportable() {

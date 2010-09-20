@@ -6917,6 +6917,7 @@ function get_core_subsystems() {
             'notes'       => 'notes',
             'pagetype'    => NULL,
             'pix'         => NULL,
+            'plagiarism'  => 'plagiarism',
             'portfolio'   => 'portfolio',
             'publish'     => 'course/publish',
             'question'    => 'question',
@@ -6973,6 +6974,7 @@ function get_plugin_types($fullpaths=true) {
                       'portfolio'     => 'portfolio',
                       'qtype'         => 'question/type',
                       'qformat'       => 'question/format',
+                      'plagiarism'    => 'plagiarism',
                       'theme'         => 'theme'); // this is a bit hacky, themes may be in dataroot too
 
         $mods = get_plugin_list('mod');

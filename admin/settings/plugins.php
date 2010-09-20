@@ -376,7 +376,17 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
         }
     }
 }
-
+if ($hassiteconfig && !empty($CFG->enableplagiarism)) {
+    $ADMIN->add('modules', new admin_category('plagiarism', get_string('plagiarism', 'plagiarism')));
+    $temp = new admin_settingpage('plagiarismsettings', get_string('plagiarismsettings', 'plagiarism'));
+    $temp->add(new admin_setting_manageplagiarism());
+    $ADMIN->add('plagiarism', $temp);
+    foreach (get_plugin_list('plagiarism') as $plugin => $plugindir) {
+        if (file_exists($plugindir.'/settings.php')) {
+            $ADMIN->add('plagiarism', new admin_externalpage('plagiarism'.$plugin, get_string($plugin, 'plagiarism_'.$plugin), "$CFG->wwwroot/plagiarism/$plugin/settings.php", 'moodle/site:config'));
+        }
+    }
+}
 $ADMIN->add('reports', new admin_externalpage('comments', get_string('comments'), $CFG->wwwroot.'/comment/', 'moodle/site:viewreports'));
 /// Now add reports
 
