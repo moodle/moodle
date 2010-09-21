@@ -1204,39 +1204,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         return false;
     }
 
-    /// BACKUP FUNCTIONS ////////////////////////////
-
-    /**
-     * Backup the data in the question
-     *
-     * This is used in question/backuplib.php
-     */
-    function backup($bf,$preferences,$question,$level=6) {
-        global $DB;
-
-        $status = true;
-
-        $numericals = $DB->get_records('question_numerical', array('question' =>  $question), 'id ASC');
-        //If there are numericals
-        if ($numericals) {
-            //Iterate over each numerical
-            foreach ($numericals as $numerical) {
-                $status = fwrite ($bf,start_tag("NUMERICAL",$level,true));
-                //Print numerical contents
-                fwrite ($bf,full_tag("ANSWER",$level+1,false,$numerical->answer));
-                fwrite ($bf,full_tag("TOLERANCE",$level+1,false,$numerical->tolerance));
-                //Now backup numerical_units
-                $status = question_backup_numerical_units($bf,$preferences,$question,7);
-                $status = fwrite ($bf,end_tag("NUMERICAL",$level,true));
-            }
-            $status = question_backup_numerical_options($bf,$preferences,$question,$level);
-
-            //Now print question_answers
-            $status = question_backup_answers($bf,$preferences,$question);
-        }
-        return $status;
-    }
-
     /// RESTORE FUNCTIONS /////////////////
 
     /**
