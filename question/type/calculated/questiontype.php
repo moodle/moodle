@@ -2043,59 +2043,6 @@ class question_calculated_qtype extends default_questiontype {
         return $this->virtualqtype;
     }
 
-
-    /// BACKUP FUNCTIONS ////////////////////////////
-
-    /*
-     * Backup the data in the question
-     *
-     * This is used in question/backuplib.php
-     */
-    function backup($bf,$preferences,$question,$level=6) {
-        global $DB;
-        $status = true;
-
-        $calculateds = $DB->get_records("question_calculated",array("question" =>$question,"id"));
-        //If there are calculated-s
-        if ($calculateds) {
-            //Iterate over each calculateds
-            foreach ($calculateds as $calculated) {
-                $status = $status &&fwrite ($bf,start_tag("CALCULATED",$level,true));
-                //Print calculated contents
-                fwrite ($bf,full_tag("ANSWER",$level+1,false,$calculated->answer));
-                fwrite ($bf,full_tag("TOLERANCE",$level+1,false,$calculated->tolerance));
-                fwrite ($bf,full_tag("TOLERANCETYPE",$level+1,false,$calculated->tolerancetype));
-                fwrite ($bf,full_tag("CORRECTANSWERLENGTH",$level+1,false,$calculated->correctanswerlength));
-                fwrite ($bf,full_tag("CORRECTANSWERFORMAT",$level+1,false,$calculated->correctanswerformat));
-                //Now backup numerical_units
-                $status = question_backup_numerical_units($bf,$preferences,$question,7);
-                //Now backup required dataset definitions and items...
-                $status = question_backup_datasets($bf,$preferences,$question,7);
-                //End calculated data
-                $status = $status &&fwrite ($bf,end_tag("CALCULATED",$level,true));
-            }
-            $calculated_options = $DB->get_records("question_calculated_options",array("questionid" => $question),"id");
-            if ($calculated_options) {
-                //Iterate over each calculated_option
-                foreach ($calculated_options as $calculated_option) {
-                    $status = fwrite ($bf,start_tag("CALCULATED_OPTIONS",$level,true));
-                    //Print calculated_option contents
-                    fwrite ($bf,full_tag("SYNCHRONIZE",$level+1,false,$calculated_option->synchronize));
-                    fwrite ($bf,full_tag("SINGLE",$level+1,false,$calculated_option->single));
-                    fwrite ($bf,full_tag("SHUFFLEANSWERS",$level+1,false,$calculated_option->shuffleanswers));
-                    fwrite ($bf,full_tag("CORRECTFEEDBACK",$level+1,false,$calculated_option->correctfeedback));
-                    fwrite ($bf,full_tag("PARTIALLYCORRECTFEEDBACK",$level+1,false,$calculated_option->partiallycorrectfeedback));
-                    fwrite ($bf,full_tag("INCORRECTFEEDBACK",$level+1,false,$calculated_option->incorrectfeedback));
-                    fwrite ($bf,full_tag("ANSWERNUMBERING",$level+1,false,$calculated_option->answernumbering));
-                    $status = fwrite ($bf,end_tag("CALCULATED_OPTIONS",$level,true));
-                }
-            }
-            $status = question_backup_numerical_options($bf,$preferences,$question,$level);
-
-        }
-        return $status;
-    }
-
     /// RESTORE FUNCTIONS /////////////////
 
     /*
