@@ -157,7 +157,7 @@ class blog_entry {
         $topiccell->text .= $OUTPUT->container_start('author');
 
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $PAGE->course->id)));
-        $by = new object();
+        $by = new stdClass();
         $by->name =  html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $PAGE->course->id)), $fullname);
         $by->date = $template['created'];
 
