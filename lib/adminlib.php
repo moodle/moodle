@@ -6303,16 +6303,43 @@ class admin_setting_managerepository extends admin_setting {
                         $params['onlyvisible'] = false;
                         $params['type'] = $typename;
                         $admininstancenumber = count(repository::static_function($typename, 'get_instances', $params));
-                        $admininstancenumbertext =   " <br/> ". $admininstancenumber . " " . get_string('instancesforadmin', 'repository');
+                        // site instances
+                        $admininstancenumbertext = get_string('instancesforsite', 'repository', $admininstancenumber);
                         $params['context'] = array();
-                        $instancenumber =  count(repository::static_function($typename, 'get_instances', $params)) - $admininstancenumber;
-                        $instancenumbertext =  "<br/>" . $instancenumber . " " . get_string('instancesforothers', 'repository');
+                        $instances = repository::static_function($typename, 'get_instances', $params);
+                        $courseinstances = array();
+                        $userinstances = array();
+
+                        foreach ($instances as $instance) {
+                            if ($instance->context->contextlevel == CONTEXT_COURSE) {
+                                $courseinstances[] = $instance;
+                            } else if ($instance->context->contextlevel == CONTEXT_USER) {
+                                $userinstances[] = $instance;
+                            }
+                        }
+                        // course instances
+                        $instancenumber = count($courseinstances);
+                        $courseinstancenumbertext = get_string('instancesforcourses', 'repository', $instancenumber);
+
+                        // user private instances
+                        $instancenumber =  count($userinstances);
+                        $userinstancenumbertext = get_string('instancesforusers', 'repository', $instancenumber);
                     } else {
                         $admininstancenumbertext = "";
-                        $instancenumbertext = "";
+                        $courseinstancenumbertext = "";
+                        $userinstancenumbertext = "";
                     }
 
-                    $settings .= '<a href="' . $this->baseurl . '&amp;action=edit&amp;repos=' . $typename . '">' . $settingsstr .'</a>' . $admininstancenumbertext . $instancenumbertext . "\n";
+                    $settings .= '<a href="' . $this->baseurl . '&amp;action=edit&amp;repos=' . $typename . '">' . $settingsstr .'</a>';
+
+                    $settings .= $OUTPUT->container_start('mdl-left');
+                    $settings .= '<br/>';
+                    $settings .= $admininstancenumbertext;
+                    $settings .= '<br/>';
+                    $settings .= $courseinstancenumbertext;
+                    $settings .= '<br/>';
+                    $settings .= $userinstancenumbertext;
+                    $settings .= $OUTPUT->container_end();
                 }
                 // Get the current visibility
                 if ($i->get_visible()) {
