@@ -16,7 +16,7 @@ class block_site_main_menu extends block_list {
             return $this->content;
         }
 
-        $this->content = new object();
+        $this->content = new stdClass();
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';
@@ -133,7 +133,7 @@ class block_site_main_menu extends block_list {
                         //Accessibility: incidental image - should be empty Alt text
                         $icon = '<img src="'.$icon.'" class="icon" alt="" />&nbsp;';
                         $this->content->items[] = '<a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
-                            ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.$icon.$instancename.'</a>'.$editbuttons;                        
+                            ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.$icon.$instancename.'</a>'.$editbuttons;
                     }
                 }
             }

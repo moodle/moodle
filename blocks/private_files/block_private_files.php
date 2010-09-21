@@ -54,7 +54,7 @@ class block_private_files extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
         if (isloggedin() && !isguestuser()) {   // Show the block
-            $this->content = new object();
+            $this->content = new stdClass();
 
             //TODO: add capability check here!
 

@@ -14,7 +14,7 @@ class block_participants extends block_list {
             return $this->content;
         }
 
-        $this->content = new object();
+        $this->content = new stdClass();
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';

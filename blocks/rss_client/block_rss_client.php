@@ -249,7 +249,7 @@
 
                 $description = break_up_long_words($description, 30);
 
-                $formatoptions = new object;
+                $formatoptions = new stdClass();
                 $formatoptions->para = false;
 
                 $r.= html_writer::start_tag('div',array('class'=>'description'));

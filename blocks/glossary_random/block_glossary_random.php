@@ -82,7 +82,7 @@ class block_glossary_random extends block_base {
                     $text = "<h3>".format_string($entry->concept,true)."</h3>";
                 }
 
-                $options = new object;
+                $options = new stdClass();
                 $options->trusted = $entry->definitiontrust;
                 $text .= format_text($entry->definition, $entry->definitionformat, $options);
 
