@@ -45,7 +45,7 @@
         print_error('globalsearchdisabled', 'search');
     }
 
-    $adv = new Object();
+    $adv = new stdClass();
 
 /// check for php5, but don't die yet (see line 52)
 
