@@ -451,7 +451,7 @@ function get_exception_info($ex) {
         }
     }
 
-    $info = new object();
+    $info = new stdClass();
     $info->message     = $message;
     $info->errorcode   = $errorcode;
     $info->backtrace   = $backtrace;
@@ -719,7 +719,7 @@ function init_performance_info() {
 
     global $PERF, $CFG, $USER;
 
-    $PERF = new object();
+    $PERF = new stdClass();
     $PERF->logwrites = 0;
     if (function_exists('microtime')) {
         $PERF->starttime = microtime();

@@ -1689,7 +1689,7 @@ function create_context($contextlevel, $instanceid, $strictness=IGNORE_MISSING) 
         return get_system_context();
     }
 
-    $context = new object();
+    $context = new stdClass();
     $context->contextlevel = $contextlevel;
     $context->instanceid = $instanceid;
 
@@ -1843,7 +1843,7 @@ function get_system_context($cache=true) {
     global $DB, $ACCESSLIB_PRIVATE;
     if ($cache and defined('SYSCONTEXTID')) {
         if (is_null($ACCESSLIB_PRIVATE->systemcontext)) {
-            $ACCESSLIB_PRIVATE->systemcontext = new object();
+            $ACCESSLIB_PRIVATE->systemcontext = new stdClass();
             $ACCESSLIB_PRIVATE->systemcontext->id           = SYSCONTEXTID;
             $ACCESSLIB_PRIVATE->systemcontext->contextlevel = CONTEXT_SYSTEM;
             $ACCESSLIB_PRIVATE->systemcontext->instanceid   = 0;
@@ -1860,7 +1860,7 @@ function get_system_context($cache=true) {
     }
 
     if (!$context) {
-        $context = new object();
+        $context = new stdClass();
         $context->contextlevel = CONTEXT_SYSTEM;
         $context->instanceid   = 0;
         $context->depth        = 1;
@@ -2350,7 +2350,7 @@ function create_role($name, $shortname, $description, $archetype='') {
     $context = get_context_instance(CONTEXT_SYSTEM);
 
     // Insert the role record.
-    $role = new object();
+    $role = new stdClass();
     $role->name        = $name;
     $role->shortname   = $shortname;
     $role->description = $description;
@@ -2424,7 +2424,7 @@ function assign_capability($capability, $permission, $roleid, $contextid, $overw
         return true;
     }
 
-    $cap = new object;
+    $cap = new stdClass();
     $cap->contextid = $contextid;
     $cap->roleid = $roleid;
     $cap->capability = $capability;
@@ -2581,7 +2581,7 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
     }
 
     // Create a new entry
-    $ra = new object();
+    $ra = new stdClass();
     $ra->roleid       = $roleid;
     $ra->contextid    = $context->id;
     $ra->userid       = $userid;
@@ -3265,13 +3265,13 @@ function update_capabilities($component='moodle') {
                     $filecaps[$cachedcap->name]['riskbitmask'] = 0; // no risk if not specified
                 }
                 if ($cachedcap->captype != $filecaps[$cachedcap->name]['captype']) {
-                    $updatecap = new object();
+                    $updatecap = new stdClass();
                     $updatecap->id = $cachedcap->id;
                     $updatecap->captype = $filecaps[$cachedcap->name]['captype'];
                     $DB->update_record('capabilities', $updatecap);
                 }
                 if ($cachedcap->riskbitmask != $filecaps[$cachedcap->name]['riskbitmask']) {
-                    $updatecap = new object();
+                    $updatecap = new stdClass();
                     $updatecap->id = $cachedcap->id;
                     $updatecap->riskbitmask = $filecaps[$cachedcap->name]['riskbitmask'];
                     $DB->update_record('capabilities', $updatecap);
@@ -3281,7 +3281,7 @@ function update_capabilities($component='moodle') {
                     $filecaps[$cachedcap->name]['contextlevel'] = 0; // no context level defined
                 }
                 if ($cachedcap->contextlevel != $filecaps[$cachedcap->name]['contextlevel']) {
-                    $updatecap = new object();
+                    $updatecap = new stdClass();
                     $updatecap->id = $cachedcap->id;
                     $updatecap->contextlevel = $filecaps[$cachedcap->name]['contextlevel'];
                     $DB->update_record('capabilities', $updatecap);
@@ -3304,7 +3304,7 @@ function update_capabilities($component='moodle') {
     }
     // Add new capabilities to the stored definition.
     foreach ($newcaps as $capname => $capdef) {
-        $capability = new object();
+        $capability = new stdClass();
         $capability->name = $capname;
         $capability->captype = $capdef['captype'];
         $capability->contextlevel = $capdef['contextlevel'];
@@ -4315,7 +4315,7 @@ function get_user_roles($context, $userid=0, $checkparentcontexts=true, $order='
 function allow_override($sroleid, $troleid) {
     global $DB;
 
-    $record = new object();
+    $record = new stdClass();
     $record->roleid        = $sroleid;
     $record->allowoverride = $troleid;
     $DB->insert_record('role_allow_override', $record);
@@ -4332,7 +4332,7 @@ function allow_override($sroleid, $troleid) {
 function allow_assign($fromroleid, $targetroleid) {
     global $DB;
 
-    $record = new object();
+    $record = new stdClass();
     $record->roleid      = $fromroleid;
     $record->allowassign = $targetroleid;
     $DB->insert_record('role_allow_assign', $record);
@@ -4349,7 +4349,7 @@ function allow_assign($fromroleid, $targetroleid) {
 function allow_switch($fromroleid, $targetroleid) {
     global $DB;
 
-    $record = new object();
+    $record = new stdClass();
     $record->roleid      = $fromroleid;
     $record->allowswitch = $targetroleid;
     $DB->insert_record('role_allow_switch', $record);
@@ -5796,7 +5796,7 @@ function context_instance_preload(stdClass $rec) {
     }
 
     // note: in PHP5 the objects are passed by reference, no need to return $rec
-    $context = new object();
+    $context = new stdClass();
     $context->id           = $rec->ctxid;       unset($rec->ctxid);
     $context->path         = $rec->ctxpath;     unset($rec->ctxpath);
     $context->depth        = $rec->ctxdepth;    unset($rec->ctxdepth);
@@ -5876,7 +5876,7 @@ function fix_role_sortorder($allroles) {
     foreach ($allroles as $role) {
         $rolesort[$i] = $role->id;
         if ($role->sortorder != $i) {
-            $r = new object();
+            $r = new stdClass();
             $r->id = $role->id;
             $r->sortorder = $i;
             $DB->update_record('role', $r);

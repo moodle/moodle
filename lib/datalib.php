@@ -918,7 +918,7 @@ function get_course_category($catid=0) {
             $category = reset($category);
 
         } else {
-            $cat = new object();
+            $cat = new stdClass();
             $cat->name         = get_string('miscellaneous');
             $cat->depth        = 1;
             $cat->sortorder    = MAX_COURSES_IN_CATEGORY;
@@ -1727,7 +1727,7 @@ function user_accesstime_log($courseid=0) {
     /// Update $USER->lastaccess for next checks
         $USER->lastaccess = $timenow;
 
-        $last = new object();
+        $last = new stdClass();
         $last->id         = $USER->id;
         $last->lastip     = getremoteaddr();
         $last->lastaccess = $timenow;
@@ -1749,7 +1749,7 @@ function user_accesstime_log($courseid=0) {
             // Update course lastaccess for next checks
             $USER->currentcourseaccess[$courseid] = $timenow;
 
-            $last = new object();
+            $last = new stdClass();
             $last->userid     = $USER->id;
             $last->courseid   = $courseid;
             $last->timeaccess = $timenow;
@@ -1892,7 +1892,7 @@ function count_login_failures($mode, $username, $lastlogin) {
     $params = array('mode'=>$mode, 'username'=>$username, 'lastlogin'=>$lastlogin);
     $select = "module='login' AND action='error' AND time > :lastlogin";
 
-    $count = new object();
+    $count = new stdClass();
 
     if (is_siteadmin()) {
         if ($count->attempts = $DB->count_records_select('log', $select, $params)) {

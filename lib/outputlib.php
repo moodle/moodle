@@ -361,7 +361,7 @@ class theme_config {
             $settings = get_config('theme_'.$themename);
         } catch (dml_exception $e) {
             // most probably moodle tables not created yet
-            $settings = new object();
+            $settings = new stdClass();
         }
 
         if ($config = theme_config::find_theme_config($themename, $settings)) {
@@ -1016,7 +1016,7 @@ class theme_config {
             return null;
         }
 
-        $THEME = new object();
+        $THEME = new stdClass();
         $THEME->name     = $themename;
         $THEME->dir      = $dir;
         $THEME->settings = $settings;

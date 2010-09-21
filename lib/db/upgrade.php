@@ -1788,7 +1788,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             if (!isset($blocks[$stickyblock->blockid]) || empty($blocks[$stickyblock->blockid]->name)) {
                 continue;
             }
-            $newblock = new object();
+            $newblock = new stdClass();
             $newblock->blockname = $blocks[$stickyblock->blockid]->name;
             $newblock->contextid = $syscontext->id;
             $newblock->showinsubcontexts = 1;
@@ -3034,7 +3034,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $existingrolecontextlevels->close();
 
         // Put the data into the database.
-        $rcl = new object();
+        $rcl = new stdClass();
         foreach ($rolecontextlevels as $roleid => $contextlevels) {
             $rcl->roleid = $roleid;
             foreach ($contextlevels as $level) {
@@ -3593,7 +3593,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
     /// Add two lines of data into this new table.  These are the default pages.
-        $mypage = new object();
+        $mypage = new stdClass();
         $mypage->userid = NULL;
         $mypage->name = '__default';
         $mypage->private = 0;

@@ -964,7 +964,7 @@ function set_config($name, $value, $plugin=NULL) {
             }
         } else {
             if ($value !== null) {
-                $config = new object();
+                $config = new stdClass();
                 $config->name  = $name;
                 $config->value = $value;
                 $DB->insert_record('config', $config, false);
@@ -980,7 +980,7 @@ function set_config($name, $value, $plugin=NULL) {
             }
         } else {
             if ($value !== null) {
-                $config = new object();
+                $config = new stdClass();
                 $config->plugin = $plugin;
                 $config->name   = $name;
                 $config->value  = $value;
@@ -1245,7 +1245,7 @@ function set_cache_flag($type, $name, $value, $expiry=NULL) {
         $f->timemodified = $timemodified;
         $DB->update_record('cache_flags', $f);
     } else {
-        $f = new object();
+        $f = new stdClass();
         $f->flagtype     = $type;
         $f->name         = $name;
         $f->value        = $value;
@@ -1383,7 +1383,7 @@ function set_user_preference($name, $value, $otheruserid=NULL) {
         $DB->set_field('user_preferences', 'value', (string)$value, array('id'=>$preference->id));
 
     } else {
-        $preference = new object();
+        $preference = new stdClass();
         $preference->userid = $userid;
         $preference->name   = $name;
         $preference->value  = (string)$value;
@@ -2736,7 +2736,7 @@ function require_user_key_login($script, $instance=null) {
 function create_user_key($script, $userid, $instance=null, $iprestriction=null, $validuntil=null) {
     global $DB;
 
-    $key = new object();
+    $key = new stdClass();
     $key->script        = $script;
     $key->userid        = $userid;
     $key->instance      = $instance;
@@ -2801,7 +2801,7 @@ function get_user_key($script, $userid, $instance=null, $iprestriction=null, $va
 function update_user_login_times() {
     global $USER, $DB;
 
-    $user = new object();
+    $user = new stdClass();
     $USER->lastlogin = $user->lastlogin = $USER->currentlogin;
     $USER->currentlogin = $user->lastaccess = $user->currentlogin = time();
 
@@ -2882,7 +2882,7 @@ function set_send_count($user,$reset=false) {
     }
     else if (!empty($reset)) { // if it's not there and we're resetting, don't bother.
         // make a new one
-        $pref = new object();
+        $pref = new stdClass();
         $pref->name   = 'email_send_count';
         $pref->value  = 1;
         $pref->userid = $user->id;
@@ -2906,7 +2906,7 @@ function set_bounce_count($user,$reset=false) {
     }
     else if (!empty($reset)) { // if it's not there and we're resetting, don't bother.
         // make a new one
-        $pref = new object();
+        $pref = new stdClass();
         $pref->name   = 'email_bounce_count';
         $pref->value  = 1;
         $pref->userid = $user->id;
@@ -2990,7 +2990,7 @@ function &get_fast_modinfo(&$course, $userid=0) {
         $course->modinfo = $DB->get_field('course', 'modinfo', array('id'=>$course->id));
     }
 
-    $modinfo = new object();
+    $modinfo = new stdClass();
     $modinfo->courseid  = $course->id;
     $modinfo->userid    = $userid;
     $modinfo->sections  = array();
@@ -3033,7 +3033,7 @@ function &get_fast_modinfo(&$course, $userid=0) {
             continue;
         }
         // reconstruct minimalistic $cm
-        $cm = new object();
+        $cm = new stdClass();
         $cm->id               = $mod->cm;
         $cm->instance         = $mod->id;
         $cm->course           = $course->id;
@@ -3381,7 +3381,7 @@ function create_user_record($username, $password, $auth='manual') {
 
     $authplugin = get_auth_plugin($auth);
 
-    $newuser = new object();
+    $newuser = new stdClass();
 
     if ($newinfo = $authplugin->get_userinfo($username)) {
         $newinfo = truncate_userinfo($newinfo);
@@ -3558,7 +3558,7 @@ function delete_user($user) {
     }
 
     // mark internal user record as "deleted"
-    $updateuser = new object();
+    $updateuser = new stdClass();
     $updateuser->id           = $user->id;
     $updateuser->deleted      = 1;
     $updateuser->username     = $delname;            // Remember it just in case
@@ -3644,7 +3644,7 @@ function authenticate_user_login($username, $password) {
         }
 
         $auths = $authsenabled;
-        $user = new object();
+        $user = new stdClass();
         $user->id = 0;     // User does not exist
     }
 
@@ -4189,7 +4189,7 @@ function remove_course_contents($courseid, $showfeedback = true) {
     fulldelete($CFG->dataroot.'/'.$course->id);
 
     // cleanup course record - remove links to delted stuff
-    $oldcourse = new object();
+    $oldcourse = new stdClass();
     $oldcourse->id                = $course->id;
     $oldcourse->summary           = '';
     $oldcourse->modinfo           = NULL;
@@ -4894,7 +4894,7 @@ function generate_email_supportuser() {
         return $supportuser;
     }
 
-    $supportuser = new object;
+    $supportuser = new stdClass();
     $supportuser->email = $CFG->supportemail ? $CFG->supportemail : $CFG->noreplyaddress;
     $supportuser->firstname = $CFG->supportname ? $CFG->supportname : get_string('noreplyname');
     $supportuser->lastname = '';
@@ -4924,7 +4924,7 @@ function setnew_password_and_mail($user) {
 
     $DB->set_field('user', 'password', hash_internal_user_password($newpassword), array('id'=>$user->id));
 
-    $a = new object();
+    $a = new stdClass();
     $a->firstname   = fullname($user, true);
     $a->sitename    = format_string($site->fullname);
     $a->username    = $user->username;
@@ -4966,7 +4966,7 @@ function reset_password_and_mail($user) {
         print_error("cannotsetpassword");
     }
 
-    $a = new object();
+    $a = new stdClass();
     $a->firstname   = $user->firstname;
     $a->lastname    = $user->lastname;
     $a->sitename    = format_string($site->fullname);
@@ -4997,7 +4997,7 @@ function reset_password_and_mail($user) {
     $site = get_site();
     $supportuser = generate_email_supportuser();
 
-    $data = new object();
+    $data = new stdClass();
     $data->firstname = fullname($user);
     $data->sitename  = format_string($site->fullname);
     $data->admin     = generate_email_signoff();
@@ -5028,7 +5028,7 @@ function send_password_change_confirmation_email($user) {
     $site = get_site();
     $supportuser = generate_email_supportuser();
 
-    $data = new object();
+    $data = new stdClass();
     $data->firstname = $user->firstname;
     $data->lastname  = $user->lastname;
     $data->sitename  = format_string($site->fullname);
@@ -5057,7 +5057,7 @@ function send_password_change_info($user) {
     $supportuser = generate_email_supportuser();
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
-    $data = new object();
+    $data = new stdClass();
     $data->firstname = $user->firstname;
     $data->lastname  = $user->lastname;
     $data->sitename  = format_string($site->fullname);
@@ -7503,7 +7503,7 @@ function moodle_needs_upgrading() {
         if ($mod === 'NEWMODULE') {   // Someone has unzipped the template, ignore it
             continue;
         }
-        $module = new object();
+        $module = new stdClass();
         if (!is_readable($fullmod.'/version.php')) {
             continue;
         }
@@ -7527,7 +7527,7 @@ function moodle_needs_upgrading() {
         if (!is_readable($fullblock.'/version.php')) {
             continue;
         }
-        $plugin = new object();
+        $plugin = new stdClass();
         $plugin->version = NULL;
         include($fullblock.'/version.php');
         if (empty($installed[$blockname])) {
@@ -7549,7 +7549,7 @@ function moodle_needs_upgrading() {
             if (!is_readable($fullplug.'/version.php')) {
                 continue;
             }
-            $plugin = new object();
+            $plugin = new stdClass();
             include($fullplug.'/version.php');  // defines $plugin with version etc
             $installedversion = get_config($component, 'version');
             if (empty($installedversion)) { // new installation

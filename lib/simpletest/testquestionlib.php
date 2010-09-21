@@ -71,7 +71,7 @@ class questionlib_test extends UnitTestCase {
     }
 
     function test_question_state_is_closed() {
-        $state = new object();
+        $state = new stdClass();
         $state->event = QUESTION_EVENTOPEN;
         $this->assertFalse(question_state_is_closed($state));
 
@@ -104,7 +104,7 @@ class questionlib_test extends UnitTestCase {
 
     }
     function test_question_state_is_graded() {
-        $state = new object();
+        $state = new stdClass();
         $state->event = QUESTION_EVENTOPEN;
         $this->assertFalse(question_state_is_graded($state));
 

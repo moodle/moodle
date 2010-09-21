@@ -398,7 +398,7 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
         parent::generateReport($data);
 
         // head data
-        $data = new object();
+        $data = new stdClass();
         $data->time   = time();
         $data->title  = $this->heading;
         $data->output = $this->outputDir;
@@ -484,7 +484,7 @@ class moodle_coverage_reporter extends HtmlCoverageReporter {
         $serfilepath = $CFG->dataroot . '/codecoverage/' . $type . '/codecoverage.ser';
         if (file_exists($serfilepath) && is_readable($serfilepath)) {
             if ($data = unserialize(file_get_contents($serfilepath))) {
-                $info = new object();
+                $info = new stdClass();
                 $info->date       = userdate($data->time);
                 $info->files      = format_float($data->totalfiles, 0);
                 $info->percentage = format_float($data->totalpercentage, 2) . '%';

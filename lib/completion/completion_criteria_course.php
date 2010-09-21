@@ -205,7 +205,7 @@ class completion_criteria_course extends completion_criteria {
         global $CFG, $DB;
 
         // Get completion info
-        $course = new object();
+        $course = new stdClass();
         $course->id = $completion->course;
         $info = new completion_info($course);
 

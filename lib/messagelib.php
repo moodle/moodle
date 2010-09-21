@@ -68,7 +68,7 @@ function message_send($eventdata) {
     }
 
     // Create the message object
-    $savemessage = new object();
+    $savemessage = new stdClass();
     $savemessage->useridfrom        = $eventdata->userfrom->id;
     $savemessage->useridto          = $eventdata->userto->id;
     $savemessage->subject           = $eventdata->subject;
@@ -167,7 +167,7 @@ function message_update_providers($component='moodle') {
                 continue;
 
             } else {                                // Update existing one
-                $provider = new object();
+                $provider = new stdClass();
                 $provider->id         = $dbproviders[$messagename]->id;
                 $provider->capability = $fileprovider['capability'];
                 $DB->update_record('message_providers', $provider);
@@ -177,7 +177,7 @@ function message_update_providers($component='moodle') {
 
         } else {             // New message provider, add it
 
-            $provider = new object();
+            $provider = new stdClass();
             $provider->name       = $messagename;
             $provider->component  = $component;
             $provider->capability = $fileprovider['capability'];

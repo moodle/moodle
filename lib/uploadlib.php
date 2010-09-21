@@ -136,7 +136,7 @@ class upload_manager {
                 }
                 if (!$this->status) {
                     if (!$this->config->recoverifmultiple && count($this->files) > 1) {
-                        $a = new object();
+                        $a = new stdClass();
                         $a->name    = $this->files[$name]['originalname'];
                         $a->problem = $this->files[$name]['uploadlog'];
                         if (!$this->config->silent) {
@@ -162,7 +162,7 @@ class upload_manager {
                 else {
                     $newname = clean_filename($this->files[$name]['name']);
                     if ($newname != $this->files[$name]['name']) {
-                        $a = new object();
+                        $a = new stdClass();
                         $a->oldname = $this->files[$name]['name'];
                         $a->newname = $newname;
                         $this->files[$name]['uploadlog'] .= get_string('uploadrenamedchars','moodle', $a);
@@ -347,7 +347,7 @@ class upload_manager {
         while (!$this->check_before_renaming($destination, $name.'_'.$i.$extension, $file)) {
             $i++;
         }
-        $a = new object();
+        $a = new stdClass();
         $a->oldname = $file['name'];
         $file['name'] = $name.'_'.$i.$extension;
         $a->newname = $file['name'];
@@ -648,7 +648,7 @@ function clam_scan_moodle_file(&$file, $course) {
     case 0: // glee! we're ok.
         return 1; // translate clam return code into reasonable return code consistent with everything else.
     case 1:  // bad wicked evil, we have a virus.
-        $info = new object();
+        $info = new stdClass();
         if (!empty($course)) {
             $info->course = $course->fullname;
         }
@@ -696,7 +696,7 @@ function clam_message_admins($notice) {
     $subject = get_string('clamemailsubject', 'moodle', format_string($site->fullname));
     $admins = get_admins();
     foreach ($admins as $admin) {
-        $eventdata = new object();
+        $eventdata = new stdClass();
         $eventdata->modulename        = 'moodle';
         $eventdata->userfrom          = get_admin();
         $eventdata->userto            = $admin;

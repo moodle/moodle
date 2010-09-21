@@ -1813,7 +1813,7 @@ function validate_' . $this->_formName . '(frm) {
         foreach ($this->_rules as $field => $rulesarr){
             foreach ($rulesarr as $key => $rule){
                 if ($rule['message']===null){
-                    $a=new object();
+                    $a=new stdClass();
                     $a->format=$rule['format'];
                     $str=get_string('err_'.$rule['type'], 'form', $a);
                     if (strpos($str, '[[')!==0){

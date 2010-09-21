@@ -249,7 +249,7 @@ class completion_criteria_activity extends completion_criteria {
         global $DB, $CFG;
 
         // Get completion info
-        $course = new object();
+        $course = new stdClass();
         $course->id = $completion->course;
         $info = new completion_info($course);
 

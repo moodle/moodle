@@ -339,7 +339,7 @@ function environment_get_errors($environment_results) {
         $status = $environment_result->getStatus();
         $error_code = $environment_result->getErrorCode();
 
-        $a = new object();
+        $a = new stdClass();
         if ($error_code) {
             $a->error_code = $error_code;
             $errors[] = array($info, get_string('environmentxmlerror', 'admin', $a));
@@ -367,7 +367,7 @@ function environment_get_errors($environment_results) {
         }
 
         // We are comparing versions
-        $rec = new object();
+        $rec = new stdClass();
         if ($rec->needed = $environment_result->getNeededVersion()) {
             $rec->current = $environment_result->getCurrentVersion();
             if ($environment_result->getLevel() == 'required') {

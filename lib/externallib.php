@@ -421,7 +421,7 @@ function external_generate_token($tokentype, $serviceorid, $userid, $contextorid
             throw new moodle_exception('tokengenerationfailed');
         }
     } while ($DB->record_exists('external_tokens', array('token'=>$generatedtoken)));
-    $newtoken = new object();
+    $newtoken = new stdClass();
     $newtoken->token = $generatedtoken;
     if (!is_object($serviceorid)){
         $service = $DB->get_record('external_services', array('id' => $serviceorid));

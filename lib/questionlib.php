@@ -775,7 +775,7 @@ function question_save_from_deletion($questionids, $newcontextid, $oldplace, $ne
 
     // Make a category in the parent context to move the questions to.
     if (is_null($newcategory)) {
-        $newcategory = new object();
+        $newcategory = new stdClass();
         $newcategory->parent = 0;
         $newcategory->contextid = $newcontextid;
         $newcategory->name = get_string('questionsrescuedfrom', 'question', $oldplace);
@@ -1116,7 +1116,7 @@ function question_load_states(&$questions, &$states, $cmoptions, $attempt, $last
                 unset($states[$qid]->id);
             } else {
                 // create a new empty state
-                $states[$qid] = new object;
+                $states[$qid] = new stdClass();
                 $states[$qid]->question = $qid;
                 $states[$qid]->responses = array('' => '');
                 $states[$qid]->raw_grade = 0;
@@ -1601,7 +1601,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             }
         }
         if ($changed){
-            $toinsert = new object();
+            $toinsert = new stdClass();
             $toinsert->oldgrade = round((float)$states[count($states)-1]->grade, 5);
             $toinsert->newgrade = round((float)$replaystate->grade, 5);
             $toinsert->attemptid = $attempt->uniqueid;
@@ -2548,7 +2548,7 @@ function question_add_context_in_key($categories){
 function question_add_tops($categories, $pcontexts){
     $topcats = array();
     foreach ($pcontexts as $context){
-        $newcat = new object();
+        $newcat = new stdClass();
         $newcat->id = "0,$context";
         $newcat->name = get_string('top');
         $newcat->parent = -1;

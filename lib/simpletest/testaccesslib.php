@@ -51,7 +51,7 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         accesslib_clear_all_caches_for_unit_testing();
         $this->switch_to_test_db();
 
-        $course = new object();
+        $course = new stdClass();
         $course->category = 0;
         $this->testdb->insert_record('course', $course);
         $syscontext = get_system_context(false);

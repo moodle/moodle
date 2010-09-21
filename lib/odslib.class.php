@@ -151,7 +151,7 @@ class MoodleODSWorksheet {
         if (!array_key_exists($row, $this->data)) {
             $this->data[$row] = array();
         }
-        $this->data[$row][$col] = new object();
+        $this->data[$row][$col] = new stdClass();
         $this->data[$row][$col]->value = $str;
         $this->data[$row][$col]->type = 'string';
         $this->data[$row][$col]->format = $format;
@@ -167,7 +167,7 @@ class MoodleODSWorksheet {
         if (!array_key_exists($row, $this->data)) {
             $this->data[$row] = array();
         }
-        $this->data[$row][$col] = new object();
+        $this->data[$row][$col] = new stdClass();
         $this->data[$row][$col]->value = $num;
         $this->data[$row][$col]->type = 'float';
         $this->data[$row][$col]->format = $format;
@@ -183,7 +183,7 @@ class MoodleODSWorksheet {
         if (!array_key_exists($row, $this->data)) {
             $this->data[$row] = array();
         }
-        $this->data[$row][$col] = new object();
+        $this->data[$row][$col] = new stdClass();
         $this->data[$row][$col]->value = $url;
         $this->data[$row][$col]->type = 'string';
         $this->data[$row][$col]->format = $format;
@@ -199,7 +199,7 @@ class MoodleODSWorksheet {
         if (!array_key_exists($row, $this->data)) {
             $this->data[$row] = array();
         }
-        $this->data[$row][$col] = new object();
+        $this->data[$row][$col] = new stdClass();
         $this->data[$row][$col]->value = $date;
         $this->data[$row][$col]->type = 'date';
         $this->data[$row][$col]->format = $format;
@@ -273,7 +273,7 @@ class MoodleODSWorksheet {
      * @param integer $level  The optional outline level (0-7)
      */
     function set_row($row, $height, $format = 0, $hidden = false, $level = 0) {
-        $this->rows[$row] = new object();
+        $this->rows[$row] = new stdClass();
         $this->rows[$row]->height = $height;
         //$this->rows[$row]->format = $format; // TODO: fix and enable
         $this->rows[$row]->hidden = $hidden;
@@ -289,7 +289,7 @@ class MoodleODSWorksheet {
      */
     function set_column($firstcol, $lastcol, $width, $format = 0, $hidden = false, $level = 0) {
         for($i=$firstcol; $i<=$lastcol; $i++) {
-            $this->columns[$i] = new object();
+            $this->columns[$i] = new stdClass();
             $this->columns[$i]->width = $width;
             //$this->columns[$i]->format = $format; // TODO: fix and enable
             $this->columns[$i]->hidden = $hidden;

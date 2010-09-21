@@ -153,7 +153,7 @@ function events_update_definition($component='moodle') {
 
             } else {
                 // same event name matches, this event has been updated, update the datebase
-                $handler = new object();
+                $handler = new stdClass();
                 $handler->id              = $cachedhandlers[$eventname]['id'];
                 $handler->handlerfile     = $filehandler['handlerfile'];
                 $handler->handlerfunction = serialize($filehandler['handlerfunction']); // static class methods stored as array
@@ -169,7 +169,7 @@ function events_update_definition($component='moodle') {
         } else {
             // if we are here, this event handler is not present in db (new)
             // add it
-            $handler = new object();
+            $handler = new stdClass();
             $handler->eventname       = $eventname;
             $handler->component       = $component;
             $handler->handlerfile     = $filehandler['handlerfile'];
@@ -251,7 +251,7 @@ function events_queue_handler($handler, $event, $errormessage) {
     }
 
     // make a new queue handler
-    $qhandler = new object();
+    $qhandler = new stdClass();
     $qhandler->queuedeventid  = $event->id;
     $qhandler->handlerid      = $handler->id;
     $qhandler->errormessage   = $errormessage;
@@ -349,7 +349,7 @@ function events_process_queued_handler($qhandler) {
     }
 
     //dispatching failed
-    $qh = new object();
+    $qh = new stdClass();
     $qh->id           = $qhandler->id;
     $qh->errormessage = $errormessage;
     $qh->timemodified = time();
@@ -542,7 +542,7 @@ function events_trigger($eventname, $eventdata) {
             }
 
             // if even type is not instant, or dispatch asked for retry, queue it
-            $event = new object();
+            $event = new stdClass();
             $event->userid      = $USER->id;
             $event->eventdata   = base64_encode(serialize($eventdata));
             $event->timecreated = time();

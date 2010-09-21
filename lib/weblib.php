@@ -1100,7 +1100,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
             return $text;
         }
 
-        $newcacheitem = new object();
+        $newcacheitem = new stdClass();
         $newcacheitem->md5key = $md5key;
         $newcacheitem->formattedtext = $text;
         $newcacheitem->timemodified = time();

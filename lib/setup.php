@@ -458,7 +458,7 @@ try {
          */
         define('SITEID', 1);
         // And the 'default' course
-        $COURSE = new object();  // no site created yet
+        $COURSE = new stdClass();  // no site created yet
         $COURSE->id = 1;
     } else {
         throw $e;

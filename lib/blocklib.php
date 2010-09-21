@@ -1413,7 +1413,7 @@ function block_method_result($blockname, $method, $param = NULL) {
 }
 
 /**
- * Creates a new object of the specified block class.
+ * Creates a new instance of the specified block class.
  *
  * @param string $blockname the name of the block.
  * @param $instance block_instances DB table row (optional).

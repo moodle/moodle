@@ -269,7 +269,7 @@ class portfolio_add_button {
         $url = new moodle_url('/portfolio/add.php');
         foreach ($this->callbackargs as $key => $value) {
             if (!empty($value) && !is_string($value) && !is_numeric($value)) {
-                $a = new object();
+                $a = new stdClass();
                 $a->key = $key;
                 $a->value = print_r($value, true);
                 debugging(get_string('nonprimative', 'portfolio', $a));
@@ -1103,7 +1103,7 @@ function portfolio_insane_notify_admins($insane, $instances=false) {
     $smallbody = get_string('insanebodysmall', 'portfolio', $a);
 
     foreach ($admins as $admin) {
-        $eventdata = new object();
+        $eventdata = new stdClass();
         $eventdata->modulename = 'portfolio';
         $eventdata->component = 'portfolio';
         $eventdata->name = 'notices';

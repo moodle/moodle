@@ -1063,7 +1063,7 @@ class admin_externalpage implements part_of_admin_tree {
                 $found = true;
             }
         if ($found) {
-            $result = new object();
+            $result = new stdClass();
             $result->page     = $this;
             $result->settings = array();
             return array($this->name => $result);
@@ -1146,7 +1146,7 @@ class admin_settingpage implements part_of_admin_tree {
      *      if you specify something other than system or front page. Defaults to system.
      */
     public function __construct($name, $visiblename, $req_capability='moodle/site:config', $hidden=false, $context=NULL) {
-        $this->settings    = new object();
+        $this->settings    = new stdClass();
         $this->name        = $name;
         $this->visiblename = $visiblename;
         if (is_array($req_capability)) {
@@ -1194,7 +1194,7 @@ class admin_settingpage implements part_of_admin_tree {
         }
 
         if ($found) {
-            $result = new object();
+            $result = new stdClass();
             $result->page     = $this;
             $result->settings = $found;
             return array($this->name => $result);
@@ -1209,7 +1209,7 @@ class admin_settingpage implements part_of_admin_tree {
                 $found = true;
             }
         if ($found) {
-            $result = new object();
+            $result = new stdClass();
             $result->page     = $this;
             $result->settings = array();
             return array($this->name => $result);
@@ -1437,7 +1437,7 @@ abstract class admin_setting {
         set_config($name, $value, $this->plugin);
 
         // log change
-        $log = new object();
+        $log = new stdClass();
         $log->userid       = during_initial_install() ? 0 :$USER->id; // 0 as user id during install
         $log->timemodified = time();
         $log->plugin       = $this->plugin;
@@ -3076,7 +3076,7 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
      */
     public function write_setting($data) {
         global $DB, $SITE;
-        $record = new object();
+        $record = new stdClass();
         $record->id            = SITEID;
         $record->{$this->name} = ($data == '1' ? 1 : 0);
         $record->timemodified  = time();
@@ -3135,7 +3135,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
             return $validated;
         }
 
-        $record = new object();
+        $record = new stdClass();
         $record->id            = SITEID;
         $record->{$this->name} = $data;
         $record->timemodified  = time();
@@ -3176,7 +3176,7 @@ class admin_setting_special_frontpagedesc extends admin_setting {
      */
     public function write_setting($data) {
         global $DB, $SITE;
-        $record = new object();
+        $record = new stdClass();
         $record->id            = SITEID;
         $record->{$this->name} = $data;
         $record->timemodified  = time();
@@ -4442,7 +4442,7 @@ class admin_page_managemods extends admin_externalpage {
             }
         }
         if ($found) {
-            $result = new object();
+            $result = new stdClass();
             $result->page     = $this;
             $result->settings = array();
             return array($this->name => $result);
@@ -4695,7 +4695,7 @@ class admin_page_manageblocks extends admin_externalpage {
             }
         }
         if ($found) {
-            $result = new object();
+            $result = new stdClass();
             $result->page     = $this;
             $result->settings = array();
             return array($this->name => $result);
@@ -4742,7 +4742,7 @@ class admin_page_manageqtypes extends admin_externalpage {
             }
         }
         if ($found) {
-            $result = new object();
+            $result = new stdClass();
             $result->page     = $this;
             $result->settings = array();
             return array($this->name => $result);
@@ -5651,7 +5651,7 @@ function admin_write_settings($formdata) {
         $original = serialize($setting->get_setting()); // comparison must work for arrays too
         $error = $setting->write_setting($data[$fullname]);
         if ($error !== '') {
-            $adminroot->errors[$fullname] = new object();
+            $adminroot->errors[$fullname] = new stdClass();
             $adminroot->errors[$fullname]->data  = $data[$fullname];
             $adminroot->errors[$fullname]->id    = $setting->get_id();
             $adminroot->errors[$fullname]->error = $error;
@@ -7022,7 +7022,7 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
         foreach ($protocols_available as $protocol => $location) {
             $name = get_string('pluginname', 'webservice_'.$protocol);
 
-            $plugin = new object();
+            $plugin = new stdClass();
             if (file_exists($CFG->dirroot.'/webservice/'.$protocol.'/version.php')) {
                 include($CFG->dirroot.'/webservice/'.$protocol.'/version.php');
             }

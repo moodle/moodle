@@ -328,7 +328,7 @@ function rss_geterrorxmlfile($errortype = 'rsserror') {
 
     //XML item
     if ($return) {
-        $item = new object();
+        $item = new stdClass();
         $item->title       = "RSS Error";
         $item->link        = $CFG->wwwroot;
         $item->pubdate     = time();

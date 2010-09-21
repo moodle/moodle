@@ -37,7 +37,7 @@ function xmldb_main_install() {
 
 
     /// create site course
-    $newsite = new object();
+    $newsite = new stdClass();
     $newsite->fullname     = '';
     $newsite->shortname    = '';
     $newsite->summary      = NULL;
@@ -82,7 +82,7 @@ function xmldb_main_install() {
 
 
     /// bootstrap mnet
-    $mnethost = new object();
+    $mnethost = new stdClass();
     $mnethost->wwwroot    = $CFG->wwwroot;
     $mnethost->name       = '';
     $mnethost->name       = '';
@@ -106,7 +106,7 @@ function xmldb_main_install() {
     set_config('mnet_localhost_id', $mnetid);
 
     // Initial insert of mnet applications info
-    $mnet_app = new object();
+    $mnet_app = new stdClass();
     $mnet_app->name              = 'moodle';
     $mnet_app->display_name      = 'Moodle';
     $mnet_app->xmlrpc_server_url = '/mnet/xmlrpc/server.php';
@@ -114,7 +114,7 @@ function xmldb_main_install() {
     $mnet_app->sso_jump_url      = '/auth/mnet/jump.php';
     $moodleapplicationid = $DB->insert_record('mnet_application', $mnet_app);
 
-    $mnet_app = new object();
+    $mnet_app = new stdClass();
     $mnet_app->name              = 'mahara';
     $mnet_app->display_name      = 'Mahara';
     $mnet_app->xmlrpc_server_url = '/api/xmlrpc/server.php';
@@ -123,7 +123,7 @@ function xmldb_main_install() {
     $DB->insert_record('mnet_application', $mnet_app);
 
     // Set up the probably-to-be-removed-soon 'All hosts' record
-    $mnetallhosts                     = new object();
+    $mnetallhosts                     = new stdClass();
     $mnetallhosts->wwwroot            = '';
     $mnetallhosts->ip_address         = '';
     $mnetallhosts->public_key         = '';
@@ -137,7 +137,7 @@ function xmldb_main_install() {
     set_config('mnet_all_hosts_id', $mnetallhosts->id);
 
     /// Create guest record - do not assign any role, guest user get's the default guest role automatically on the fly
-    $guest = new object();
+    $guest = new stdClass();
     $guest->auth        = 'manual';
     $guest->username    = 'guest';
     $guest->password    = hash_internal_user_password('guest');
@@ -158,7 +158,7 @@ function xmldb_main_install() {
 
 
     /// Now create admin user
-    $admin = new object();
+    $admin = new stdClass();
     $admin->auth         = 'manual';
     $admin->firstname    = get_string('admin');
     $admin->lastname     = get_string('user');
@@ -264,7 +264,7 @@ function xmldb_main_install() {
     license_manager::install_licenses();
 
     /// Add two lines of data into this new table
-    $mypage = new object();
+    $mypage = new stdClass();
     $mypage->userid = NULL;
     $mypage->name = '__default';
     $mypage->private = 0;

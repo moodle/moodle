@@ -345,7 +345,7 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
 function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $userid_or_ids=null) {
     global $CFG;
 
-    $return = new object();
+    $return = new stdClass();
     $return->items    = array();
     $return->outcomes = array();
 
@@ -364,7 +364,7 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
 
             if (empty($grade_item->outcomeid)) {
                 // prepare information about grade item
-                $item = new object();
+                $item = new stdClass();
                 $item->itemnumber = $grade_item->itemnumber;
                 $item->scaleid    = $grade_item->scaleid;
                 $item->name       = $grade_item->get_name();
@@ -406,7 +406,7 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
                     foreach ($userids as $userid) {
                         $grade_grades[$userid]->grade_item =& $grade_item;
 
-                        $grade = new object();
+                        $grade = new stdClass();
                         $grade->grade          = $grade_grades[$userid]->finalgrade;
                         $grade->locked         = $grade_grades[$userid]->is_locked();
                         $grade->hidden         = $grade_grades[$userid]->is_hidden();
@@ -437,7 +437,7 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
                             if ($grade_item->gradetype == GRADE_TYPE_SCALE or $grade_item->get_displaytype() != GRADE_DISPLAY_TYPE_REAL) {
                                 $grade->str_long_grade = $grade->str_grade;
                             } else {
-                                $a = new object();
+                                $a = new stdClass();
                                 $a->grade = $grade->str_grade;
                                 $a->max   = grade_format_gradevalue($grade_item->grademax, $grade_item);
                                 $grade->str_long_grade = get_string('gradelong', 'grades', $a);
@@ -463,7 +463,7 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
                 }
 
                 // outcome info
-                $outcome = new object();
+                $outcome = new stdClass();
                 $outcome->itemnumber = $grade_item->itemnumber;
                 $outcome->scaleid    = $grade_outcome->scaleid;
                 $outcome->name       = $grade_outcome->get_name();
@@ -483,7 +483,7 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
                     foreach ($userids as $userid) {
                         $grade_grades[$userid]->grade_item =& $grade_item;
 
-                        $grade = new object();
+                        $grade = new stdClass();
                         $grade->grade          = $grade_grades[$userid]->finalgrade;
                         $grade->locked         = $grade_grades[$userid]->is_locked();
                         $grade->hidden         = $grade_grades[$userid]->is_hidden();
@@ -600,7 +600,7 @@ function grade_get_setting($courseid, $name, $default=null, $resetcache=false) {
 function grade_get_settings($courseid) {
     global $DB;
 
-     $settings = new object();
+     $settings = new stdClass();
      $settings->id = $courseid;
 
     if ($records = $DB->get_records('grade_settings', array('courseid'=>$courseid))) {
@@ -628,14 +628,14 @@ function grade_set_setting($courseid, $name, $value) {
         $DB->delete_records('grade_settings', array('courseid'=>$courseid, 'name'=>$name));
 
     } else if (!$existing = $DB->get_record('grade_settings', array('courseid'=>$courseid, 'name'=>$name))) {
-        $data = new object();
+        $data = new stdClass();
         $data->courseid = $courseid;
         $data->name     = $name;
         $data->value    = $value;
         $DB->insert_record('grade_settings', $data);
 
     } else {
-        $data = new object();
+        $data = new stdClass();
         $data->id       = $existing->id;
         $data->value    = $value;
         $DB->update_record('grade_settings', $data);

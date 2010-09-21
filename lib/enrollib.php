@@ -829,7 +829,7 @@ abstract class enrol_plugin {
         if (!isset($this->config)) {
             $name = $this->get_name();
             if (!$config = get_config("enrol_$name")) {
-                $config = new object();
+                $config = new stdClass();
             }
             $this->config = $config;
         }
@@ -981,7 +981,7 @@ abstract class enrol_plugin {
                 $DB->update_record('user_enrolments', $ue);
             }
         } else {
-            $ue = new object();
+            $ue = new stdClass();
             $ue->enrolid      = $instance->id;
             $ue->status       = ENROL_USER_ACTIVE;
             $ue->userid       = $userid;
@@ -1286,7 +1286,7 @@ abstract class enrol_plugin {
             throw new coding_exception('Invalid request to add enrol instance to frontpage.');
         }
 
-        $instance = new object();
+        $instance = new stdClass();
         $instance->enrol          = $this->get_name();
         $instance->status         = ENROL_INSTANCE_ENABLED;
         $instance->courseid       = $course->id;
@@ -1391,7 +1391,7 @@ abstract class enrol_plugin {
 
         $name = $this->get_name();
         $versionfile = "$CFG->dirroot/enrol/$name/version.php";
-        $plugin = new object();
+        $plugin = new stdClass();
         include($versionfile);
         if (empty($plugin->cron)) {
             return false;

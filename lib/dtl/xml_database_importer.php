@@ -84,7 +84,7 @@ abstract class xml_database_importer extends database_importer {
                 if (isset($this->current_row) || !isset($this->current_table)) {
                     throw new dbtransfer_exception('malformedxmlexception');
                 }
-                $this->current_row = new object();
+                $this->current_row = new stdClass();
                 break;
             case 'field' :
                 if (isset($this->current_field) || !isset($this->current_row)) {

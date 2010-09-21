@@ -2821,7 +2821,7 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
 
     if (!is_object($user)) {
         $userid = $user;
-        $user = new object();
+        $user = new stdClass();
         $user->id = $userid;
     }
 

@@ -1104,7 +1104,7 @@ class flexible_table {
                         $lsortorder = get_string('asc');
                     }
 
-                    $override = new object();
+                    $override = new stdClass();
                     $override->firstname = 'firstname';
                     $override->lastname = 'lastname';
                     $fullnamelanguage = get_string('fullnamedisplay', '', $override);
@@ -1305,7 +1305,7 @@ class table_sql extends flexible_table{
      * appropriate clause of the query.
      */
     function set_sql($fields, $from, $where, array $params = NULL){
-        $this->sql = new object();
+        $this->sql = new stdClass();
         $this->sql->fields = $fields;
         $this->sql->from = $from;
         $this->sql->where = $where;

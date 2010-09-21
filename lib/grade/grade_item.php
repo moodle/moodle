@@ -1438,7 +1438,7 @@ class grade_item extends grade_object {
             return false;
         }
 
-        $oldgrade = new object();
+        $oldgrade = new stdClass();
         $oldgrade->finalgrade     = $grade->finalgrade;
         $oldgrade->overridden     = $grade->overridden;
         $oldgrade->feedback       = $grade->feedback;
@@ -1555,7 +1555,7 @@ class grade_item extends grade_object {
             return false;
         }
 
-        $oldgrade = new object();
+        $oldgrade = new stdClass();
         $oldgrade->finalgrade     = $grade->finalgrade;
         $oldgrade->rawgrade       = $grade->rawgrade;
         $oldgrade->rawgrademin    = $grade->rawgrademin;

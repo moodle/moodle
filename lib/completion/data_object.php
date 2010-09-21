@@ -230,7 +230,7 @@ abstract class data_object {
      * Returns object with fields and values that are defined in database
      */
     public function get_record_data() {
-        $data = new object();
+        $data = new stdClass();
 
         foreach ($this as $var=>$value) {
             if (in_array($var, $this->required_fields) or array_key_exists($var, $this->optional_fields)) {
