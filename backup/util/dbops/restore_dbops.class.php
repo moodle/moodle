@@ -920,7 +920,12 @@ abstract class restore_dbops {
         $course->timemodified = $course->timecreated;
         $course->visible = $category->visible;
 
-        return $DB->insert_record('course', $course);
+        $courseid = $DB->insert_record('course', $course);
+
+        $category->coursecount++;
+        $DB->update_record('course_categories', $category);
+
+        return $courseid;
     }
 
     /**
