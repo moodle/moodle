@@ -62,11 +62,18 @@ require_login($course);
 require_capability('moodle/restore:restorecourse', $context);
 
 $browser = get_file_browser();
+
+// check if tmp dir exists
+$tmpdir = $CFG->dataroot . '/temp/backup';
+if (!check_dir_exists($tmpdir, true, true)) {
+    throw new restore_controller_exception('cannot_create_backup_temp_dir');
+}
+
 // choose the backup file from backup files tree
 if ($action == 'choosebackupfile') {
     if ($fileinfo = $browser->get_file_info($filecontext, $component, $filearea, $itemid, $filepath, $filename)) {
         $filename = restore_controller::get_tempdir_name($course->id, $USER->id);
-        $pathname = "$CFG->dataroot/temp/backup/".$filename;
+        $pathname = $tmpdir . '/' . $filename;
         $fileinfo->copy_to_pathname($pathname);
         $restore_url = new moodle_url('/backup/restore.php', array('contextid'=>$contextid, 'filename'=>$filename));
         redirect($restore_url);
@@ -86,7 +93,7 @@ $form = new course_restore_form(null, array('contextid'=>$contextid));
 $data = $form->get_data();
 if ($data && has_capability('moodle/restore:uploadfile', $context)) {
     $filename = restore_controller::get_tempdir_name($course->id, $USER->id);
-    $pathname = "$CFG->dataroot/temp/backup/".$filename;
+    $pathname = $tmpdir . '/' . $filename;
     $form->save_file('backupfile', $pathname);
     $restore_url = new moodle_url('/backup/restore.php', array('contextid'=>$contextid, 'filename'=>$filename));
     redirect($restore_url);
