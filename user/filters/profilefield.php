@@ -188,7 +188,7 @@ class user_filter_profilefield extends user_filter_type {
             return '';
         }
 
-        $a = new object();
+        $a = new stdClass();
         $a->label    = $this->_label;
         $a->value    = $value;
         $a->profile  = $profile_fields[$profile];

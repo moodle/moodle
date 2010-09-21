@@ -55,7 +55,7 @@ if (empty($CFG->enablenotes)) {
 }
 
 if (!empty($users) && !empty($content) && confirm_sesskey()) {
-    $note = new object();
+    $note = new stdClass();
     $note->courseid = $id;
     $note->format = FORMAT_PLAIN;
     $note->content = $content;

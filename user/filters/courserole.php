@@ -127,7 +127,7 @@ class user_filter_courserole extends user_filter_type {
         $roleid     = $data['roleid'];
         $categoryid = $data['categoryid'];
 
-        $a = new object();
+        $a = new stdClass();
         $a->label = $this->_label;
 
         if ($roleid) {

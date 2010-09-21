@@ -60,7 +60,7 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
 if ($id == -1) {
     // creating new user
-    $user = new object();
+    $user = new stdClass();
     $user->id = -1;
     $user->auth = 'manual';
     $user->confirmed = 1;

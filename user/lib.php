@@ -120,7 +120,7 @@ function user_delete_user($user) {
     }
 
     // mark internal user record as "deleted"
-    $updateuser = new object();
+    $updateuser = new stdClass();
     $updateuser->id           = $user->id;
     $updateuser->deleted      = 1;
     $updateuser->username     = $delname;            // Remember it just in case

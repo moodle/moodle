@@ -89,7 +89,7 @@ echo $OUTPUT->heading(get_string('profilefields', 'admin'));
 
 /// Check that we have at least one category defined
 if ($DB->count_records('user_info_category') == 0) {
-    $defaultcategory = new object();
+    $defaultcategory = new stdClass();
     $defaultcategory->name = $strdefaultcategory;
     $defaultcategory->sortorder = 1;
     $DB->insert_record('user_info_category', $defaultcategory);

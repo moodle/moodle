@@ -81,7 +81,7 @@ class user_filter_globalrole extends user_filter_type {
 
         $rolename = $DB->get_field('role', 'name', array('id'=>$data['value']));
 
-        $a = new object();
+        $a = new stdClass();
         $a->label = $this->_label;
         $a->value = '"'.format_string($rolename).'"';
 

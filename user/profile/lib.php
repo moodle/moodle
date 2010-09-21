@@ -54,7 +54,7 @@ class profile_field_base {
      * Display the data for this field
      */
     function display_data() {
-        $options = new object();
+        $options = new stdClass();
         $options->para = false;
         return format_text($this->data, FORMAT_MOODLE, $options);
     }
@@ -105,7 +105,7 @@ class profile_field_base {
             return;
         }
 
-        $data = new object();
+        $data = new stdClass();
 
         $usernew->{$this->inputname} = $this->edit_save_data_preprocess($usernew->{$this->inputname}, $data);
 
@@ -471,7 +471,7 @@ function profile_signup_fields(&$mform) {
 function profile_user_record($userid) {
     global $CFG, $DB;
 
-    $usercustomfields = new object();
+    $usercustomfields = new stdClass();
 
     if ($fields = $DB->get_records('user_info_field')) {
         foreach ($fields as $field) {

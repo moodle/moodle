@@ -52,7 +52,7 @@ if (!empty($users) && confirm_sesskey()) {
         print_error('invalidformdata', '', $CFG->wwwroot.'/user/index.php?id='.$id);
     }
 
-    $note = new object();
+    $note = new stdClass();
     $note->courseid = $id;
     $note->format = FORMAT_PLAIN;
     foreach ($users as $k => $v) {

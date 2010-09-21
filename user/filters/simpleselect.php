@@ -80,7 +80,7 @@ class user_filter_simpleselect extends user_filter_type {
     function get_label($data) {
         $value = $data['value'];
 
-        $a = new object();
+        $a = new stdClass();
         $a->label    = $this->_label;
         $a->value    = '"'.s($this->_options[$value]).'"';
         $a->operator = get_string('isequalto','filters');

@@ -55,7 +55,7 @@ $PAGE->set_heading($title);
 $PAGE->set_pagelayout('mydashboard');
 $PAGE->set_pagetype('user-files');
 
-$data = new object();
+$data = new stdClass();
 $data->returnurl = $returnurl;
 $options = array('subdirs'=>1, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
 file_prepare_standard_filemanager($data, 'files', $options, $context, 'user', 'private', 0);

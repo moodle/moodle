@@ -198,7 +198,7 @@ function profile_reorder_fields() {
             $i = 1;
             if ($fields = $DB->get_records('user_info_field', array('categoryid'=>$category->id), 'sortorder ASC')) {
                 foreach ($fields as $field) {
-                    $f = new object();
+                    $f = new stdClass();
                     $f->id = $field->id;
                     $f->sortorder = $i++;
                     $DB->update_record('user_info_field', $f);
@@ -218,7 +218,7 @@ function profile_reorder_categories() {
     $i = 1;
     if ($categories = $DB->get_records('user_info_category', null, 'sortorder ASC')) {
         foreach ($categories as $cat) {
-            $c = new object();
+            $c = new stdClass();
             $c->id = $cat->id;
             $c->sortorder = $i++;
             $DB->update_record('user_info_category', $c);
@@ -263,7 +263,7 @@ function profile_delete_category($id) {
 
         if ($fields = $DB->get_records('user_info_field', array('categoryid'=>$category->id), 'sortorder ASC')) {
             foreach ($fields as $field) {
-                $f = new object();
+                $f = new stdClass();
                 $f->id = $field->id;
                 $f->sortorder = $sortorder++;
                 $f->categoryid = $newcategory->id;
@@ -453,7 +453,7 @@ function profile_edit_field($id, $datatype, $redirect) {
     global $CFG, $DB, $OUTPUT, $PAGE;
 
     if (!$field = $DB->get_record('user_info_field', array('id'=>$id))) {
-        $field = new object();
+        $field = new stdClass();
         $field->datatype = $datatype;
         $field->description = '';
         $field->descriptionformat = FORMAT_HTML;

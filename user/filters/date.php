@@ -134,7 +134,7 @@ class user_filter_date extends user_filter_type {
         $never = $data['never'];
         $field  = $this->_field;
 
-        $a = new object();
+        $a = new stdClass();
         $a->label  = $this->_label;
         $a->after  = userdate($after);
         $a->before = userdate($before);
