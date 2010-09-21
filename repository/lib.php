@@ -1311,7 +1311,7 @@ abstract class repository {
         global $DB;
 
         if (!empty($options['name'])) {
-            $r = new object();
+            $r = new stdClass();
             $r->id   = $this->id;
             $r->name = $options['name'];
             $DB->update_record('repository_instances', $r);
@@ -1321,7 +1321,7 @@ abstract class repository {
             if ($id = $DB->get_field('repository_instance_config', 'id', array('name'=>$name, 'instanceid'=>$this->id))) {
                 $DB->set_field('repository_instance_config', 'value', $value, array('id'=>$id));
             } else {
-                $config = new object();
+                $config = new stdClass();
                 $config->instanceid = $this->id;
                 $config->name   = $name;
                 $config->value  = $value;

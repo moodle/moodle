@@ -125,7 +125,7 @@ switch ($action) {
             //bad luck, we can not rename!
             echo json_encode(false);
         } else if ($file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename)) {
-            $return = new object();
+            $return = new stdClass();
             $newfile = $fs->create_file_from_storedfile(array('filename'=>$newfilename), $file);
             $file->delete();
             $return->filepath = $newfile->get_filepath();
@@ -181,7 +181,7 @@ switch ($action) {
             $file->delete();
         }
 
-        $return = new object();
+        $return = new stdClass();
         if ($action === 'renamedir') {
             $return->filepath = $parent;
         } else {
@@ -200,7 +200,7 @@ switch ($action) {
             //bad luck, we can not rename!
             echo json_encode(false);
         } else if ($file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename)) {
-            $return = new object();
+            $return = new stdClass();
             $newfile = $fs->create_file_from_storedfile(array('filepath'=>$newfilepath), $file);
             $file->delete();
             $return->filepath = $newfile->get_filepath();
