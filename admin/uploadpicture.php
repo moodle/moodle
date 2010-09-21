@@ -209,7 +209,7 @@ function process_file ($file, $userfield, $overwrite) {
 
     // userfield names are safe, so don't quote them.
     if (!($user = $DB->get_record('user', array ($userfield => $uservalue, 'deleted' => 0)))) {
-        $a = new Object();
+        $a = new stdClass();
         $a->userfield = clean_param($userfield, PARAM_CLEANHTML);
         $a->uservalue = clean_param($uservalue, PARAM_CLEANHTML);
         echo $OUTPUT->notification(get_string('uploadpicture_usernotfound', 'admin', $a));
