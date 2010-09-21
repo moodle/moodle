@@ -44,7 +44,7 @@ if ($id) {
     if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
         print_error('invalidcourseid');
     }
-    $group = new object();
+    $group = new stdClass();
     $group->courseid = $course->id;
 }
 

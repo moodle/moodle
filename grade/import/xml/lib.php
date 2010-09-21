@@ -75,7 +75,7 @@ function import_xml_grades($text, $course, &$error) {
                 }
             }
 
-            $newgrade = new object();
+            $newgrade = new stdClass();
             $newgrade->itemid     = $grade_item->id;
             $newgrade->userid     = $user->id;
             $newgrade->importcode = $importcode;

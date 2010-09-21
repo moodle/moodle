@@ -83,7 +83,7 @@ switch ($action) {
 
                 if ($errorstr) {
                     $user = $DB->get_record('user', array('id' => $userid), 'id, firstname, lastname');
-                    $gradestr = new object();
+                    $gradestr = new stdClass();
                     $gradestr->username = fullname($user);
                     $gradestr->itemname = $grade_item->get_name();
                     $json_object->message = get_string($errorstr, 'grades', $gradestr);

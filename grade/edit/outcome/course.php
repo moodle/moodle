@@ -56,7 +56,7 @@ foreach ($courseused as $oid) {
 foreach($co_custom as $oid=>$outcome) {
     if (!in_array($oid, $courseused)) {
         $courseused[$oid] = $oid;
-        $goc = new object();
+        $goc = new stdClass();
         $goc->courseid = $courseid;
         $goc->outcomeid = $oid;
         $DB->insert_record('grade_outcomes_courses', $goc);
@@ -78,7 +78,7 @@ if ($realused = $DB->get_records_sql($sql, $params)) {
 
             if (!in_array($oid, $courseused)) {
                 $courseused[$oid] = $oid;
-                $goc = new object();
+                $goc = new stdClass();
                 $goc->courseid = $courseid;
                 $goc->outcomeid = $oid;
                 $DB->insert_record('grade_outcomes_courses', $goc);
@@ -106,7 +106,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
             if (!array_key_exists($add, $standardoutcomes)) {
                 continue;
             }
-            $goc = new object();
+            $goc = new stdClass();
             $goc->courseid = $courseid;
             $goc->outcomeid = $add;
             $DB->insert_record('grade_outcomes_courses', $goc);

@@ -30,7 +30,7 @@ function grade_get_course_grades($courseid, $userid_or_ids=null) {
         grade_regrade_final_grades($courseid);
     }
 
-    $item = new object();
+    $item = new stdClass();
     $item->scaleid    = $grade_item->scaleid;
     $item->name       = $grade_item->get_name();
     $item->grademin   = $grade_item->grademin;
@@ -71,7 +71,7 @@ function grade_get_course_grades($courseid, $userid_or_ids=null) {
         foreach ($userids as $userid) {
             $grade_grades[$userid]->grade_item =& $grade_item;
 
-            $grade = new object();
+            $grade = new stdClass();
             $grade->grade          = $grade_grades[$userid]->finalgrade;
             $grade->locked         = $grade_grades[$userid]->is_locked();
             $grade->hidden         = $grade_grades[$userid]->is_hidden();
@@ -96,7 +96,7 @@ function grade_get_course_grades($courseid, $userid_or_ids=null) {
                 if ($grade_item->gradetype == GRADE_TYPE_SCALE or $grade_item->get_displaytype() != GRADE_DISPLAY_TYPE_REAL) {
                     $grade->str_long_grade = $grade->str_grade;
                 } else {
-                    $a = new object();
+                    $a = new stdClass();
                     $a->grade = $grade->str_grade;
                     $a->max   = grade_format_gradevalue($grade_item->grademax, $grade_item);
                     $grade->str_long_grade = get_string('gradelong', 'grades', $a);
@@ -157,7 +157,7 @@ function grade_get_course_grade($userid, $courseid_or_ids=null) {
             grade_regrade_final_grades($courseid);
         }
 
-        $item = new object();
+        $item = new stdClass();
         $item->scaleid    = $grade_item->scaleid;
         $item->name       = $grade_item->get_name();
         $item->grademin   = $grade_item->grademin;
@@ -184,7 +184,7 @@ function grade_get_course_grade($userid, $courseid_or_ids=null) {
         $grade_grade = new grade_grade(array('userid'=>$userid, 'itemid'=>$grade_item->id));
         $grade_grade->grade_item =& $grade_item;
 
-        $grade = new object();
+        $grade = new stdClass();
         $grade->grade          = $grade_grade->finalgrade;
         $grade->locked         = $grade_grade->is_locked();
         $grade->hidden         = $grade_grade->is_hidden();
@@ -210,7 +210,7 @@ function grade_get_course_grade($userid, $courseid_or_ids=null) {
             if ($grade_item->gradetype == GRADE_TYPE_SCALE or $grade_item->get_displaytype() != GRADE_DISPLAY_TYPE_REAL) {
                 $grade->str_long_grade = $grade->str_grade;
             } else {
-                $a = new object();
+                $a = new stdClass();
                 $a->grade = $grade->str_grade;
                 $a->max   = grade_format_gradevalue($grade_item->grademax, $grade_item);
                 $grade->str_long_grade = get_string('gradelong', 'grades', $a);

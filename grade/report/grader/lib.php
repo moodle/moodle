@@ -229,7 +229,7 @@ class grade_report_grader extends grade_report {
                 }
                 if ($errorstr) {
                     $user = $DB->get_record('user', array('id' => $userid), 'id, firstname, lastname');
-                    $gradestr = new object();
+                    $gradestr = new stdClass();
                     $gradestr->username = fullname($user);
                     $gradestr->itemname = $gradeitem->get_name();
                     $warnings[] = get_string($errorstr, 'grades', $gradestr);
@@ -617,7 +617,7 @@ class grade_report_grader extends grade_report {
                 $userreportcell = new html_table_cell();
                 $userreportcell->attributes['class'] = 'userreport';
                 $userreportcell->header = true;
-                $a = new object();
+                $a = new stdClass();
                 $a->user = fullname($user);
                 $strgradesforuser = get_string('gradesforuser', 'grades', $a);
                 $url = new moodle_url('/grade/report/'.$CFG->grade_profilereport.'/index.php', array('userid' => $user->id, 'id' => $this->course->id));

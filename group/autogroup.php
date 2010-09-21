@@ -174,7 +174,7 @@ if ($editform->is_cancelled()) {
         if (!empty($data->grouping)) {
             $groupingname = trim($data->groupingname);
             if ($data->grouping < 0) {
-                $grouping = new object();
+                $grouping = new stdClass();
                 $grouping->courseid = $COURSE->id;
                 $grouping->name     = $groupingname;
                 $grouping->id = groups_create_grouping($grouping);
@@ -191,7 +191,7 @@ if ($editform->is_cancelled()) {
                 $failed = true;
                 break;
             }
-            $newgroup = new object();
+            $newgroup = new stdClass();
             $newgroup->courseid = $data->courseid;
             $newgroup->name     = $group['name'];
             $groupid = groups_create_group($newgroup);

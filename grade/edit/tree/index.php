@@ -106,7 +106,7 @@ if (!is_null($category) && !is_null($aggregationtype) && confirm_sesskey()) {
         print_error('invalidcategoryid');
     }
 
-    $data = new object();
+    $data = new stdClass();
     $data->aggregation = $aggregationtype;
     grade_category::set_properties($grade_category, $data);
     $grade_category->update();

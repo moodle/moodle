@@ -217,7 +217,7 @@ class graded_users_iterator {
             }
         }
 
-        $result = new object();
+        $result = new stdClass();
         $result->user      = $user;
         $result->grades    = $grades;
         $result->feedbacks = $feedbacks;
@@ -1096,7 +1096,7 @@ class grade_structure {
         if ($withlink and $itemtype=='mod' and $iteminstance and $itemmodule) {
             if ($cm = get_coursemodule_from_instance($itemmodule, $iteminstance, $this->courseid)) {
 
-                $a = new object();
+                $a = new stdClass();
                 $a->name = get_string('modulename', $element['object']->itemmodule);
                 $title = get_string('linktoactivity', 'grades', $a);
                 $dir = $CFG->dirroot.'/mod/'.$itemmodule;

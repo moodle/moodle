@@ -111,7 +111,7 @@ if (!$edit) {
 } else { //else we're editing
     require_once('edit_form.php');
 
-    $data = new object();
+    $data = new stdClass();
     $data->id = $context->id;
 
     $i = 1;
@@ -158,7 +158,7 @@ if (!$edit) {
         }
 
         foreach($letters as $boundary=>$letter) {
-            $record = new object();
+            $record = new stdClass();
             $record->letter        = $letter;
             $record->lowerboundary = $boundary;
             $record->contextid     = $context->id;

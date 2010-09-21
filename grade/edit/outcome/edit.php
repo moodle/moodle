@@ -82,7 +82,7 @@ if ($id) {
     require_capability('moodle/grade:manage', $context);
     navigation_node::override_active_url(new moodle_url('/grade/edit/outcome/course.php', array('id'=>$courseid)));
 
-    $outcome_rec = new object();
+    $outcome_rec = new stdClass();
     $outcome_rec->standard = 0;
     $outcome_rec->courseid = $courseid;
 } else {
@@ -90,7 +90,7 @@ if ($id) {
     require_capability('moodle/grade:manage', $systemcontext);
 
     /// adding new outcome from admin section
-    $outcome_rec = new object();
+    $outcome_rec = new stdClass();
     $outcome_rec->standard = 1;
     $outcome_rec->courseid = 0;
 }

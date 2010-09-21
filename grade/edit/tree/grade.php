@@ -103,7 +103,7 @@ if ($grade = $DB->get_record('grade_grades', array('itemid' => $grade_item->id, 
         if (empty($grade->feedback)) {
             $grade->feedback  = '';
         } else {
-            $options = new object();
+            $options = new stdClass();
             $options->smiley  = false;
             $options->filter  = false;
             $options->noclean = false;

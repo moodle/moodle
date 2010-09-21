@@ -64,7 +64,7 @@ if ($id) {
     if (!$course = $DB->get_record('course', array('id' => $courseid))) {
         print_error('nocourseid');
     }
-    $scale_rec = new object();
+    $scale_rec = new stdClass();
     $scale_rec->standard = 0;
     $scale_rec->courseid = $courseid;
     require_login($course);
@@ -73,7 +73,7 @@ if ($id) {
 
 } else {
     /// adding new scale from admin section
-    $scale_rec = new object();
+    $scale_rec = new stdClass();
     $scale_rec->standard = 1;
     $scale_rec->courseid = 0;
     require_login();

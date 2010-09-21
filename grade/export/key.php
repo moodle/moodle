@@ -53,7 +53,7 @@ if ($id) {
     if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
         print_error('invalidcourseid');
     }
-    $key = new object();
+    $key = new stdClass();
 }
 
 $key->courseid = $course->id;
@@ -98,7 +98,7 @@ if ($editform->is_cancelled()) {
 } elseif ($data = $editform->get_data()) {
 
     if ($data->id) {
-        $record = new object();
+        $record = new stdClass();
         $record->id            = $data->id;
         $record->iprestriction = $data->iprestriction;
         $record->validuntil    = $data->validuntil;

@@ -304,7 +304,7 @@ if ($formdata = $mform->get_data()) {
 
                         if (empty($newgradeitems[$key])) {
 
-                            $newgradeitem = new object();
+                            $newgradeitem = new stdClass();
                             $newgradeitem->itemname = $header[$key];
                             $newgradeitem->importcode = $importcode;
                             $newgradeitem->importer   = $USER->id;
@@ -314,7 +314,7 @@ if ($formdata = $mform->get_data()) {
                             // add this to grade_import_newitem table
                             // add the new id to $newgradeitem[$key]
                         }
-                        $newgrade = new object();
+                        $newgrade = new stdClass();
                         $newgrade->newgradeitem = $newgradeitems[$key];
                         $newgrade->finalgrade   = $value;
                         $newgrades[] = $newgrade;
@@ -336,7 +336,7 @@ if ($formdata = $mform->get_data()) {
                             }
 
                             // t1 is the id of the grade item
-                            $feedback = new object();
+                            $feedback = new stdClass();
                             $feedback->itemid   = $t1;
                             $feedback->feedback = $value;
                             $newfeedbacks[] = $feedback;
@@ -364,7 +364,7 @@ if ($formdata = $mform->get_data()) {
                                 break 3;
                             }
 
-                            $newgrade = new object();
+                            $newgrade = new stdClass();
                             $newgrade->itemid     = $gradeitem->id;
                             if ($gradeitem->gradetype == GRADE_TYPE_SCALE and $verbosescales) {
                                 if ($value === '' or $value == '-') {

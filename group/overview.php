@@ -81,7 +81,7 @@ $sql = "SELECT g.id AS groupid, gg.groupingid, u.id AS userid, u.firstname, u.la
 
 if ($rs = $DB->get_recordset_sql($sql, $params)) {
     foreach ($rs as $row) {
-        $user = new object();
+        $user = new stdClass();
         $user->id        = $row->userid;
         $user->firstname = $row->firstname;
         $user->lastname  = $row->lastname;

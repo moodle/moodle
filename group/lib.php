@@ -48,7 +48,7 @@ function groups_add_member($grouporid, $userorid) {
         return true;
     }
 
-    $member = new object();
+    $member = new stdClass();
     $member->groupid   = $groupid;
     $member->userid    = $userid;
     $member->timeadded = time();
@@ -59,7 +59,7 @@ function groups_add_member($grouporid, $userorid) {
     $DB->set_field('groups', 'timemodified', $member->timeadded, array('id'=>$groupid));
 
     //trigger groups events
-    $eventdata = new object();
+    $eventdata = new stdClass();
     $eventdata->groupid = $groupid;
     $eventdata->userid  = $userid;
     events_trigger('groups_member_added', $eventdata);
@@ -102,7 +102,7 @@ function groups_remove_member($grouporid, $userorid) {
     $DB->set_field('groups', 'timemodified', time(), array('id'=>$groupid));
 
     //trigger groups events
-    $eventdata = new object();
+    $eventdata = new stdClass();
     $eventdata->groupid = $groupid;
     $eventdata->userid  = $userid;
     events_trigger('groups_member_removed', $eventdata);
@@ -137,7 +137,7 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
     if ($editform and $editoroptions) {
         // Update description from editor with fixed files
         $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $context, 'group', 'description', $data->id);
-        $upd = new object();
+        $upd = new stdClass();
         $upd->id                = $data->id;
         $upd->description       = $data->description;
         $upd->descriptionformat = $data->descriptionformat;
@@ -383,7 +383,7 @@ function groups_delete_group_members($courseid, $userid=0, $showfeedback=false) 
     $DB->delete_records_select('groups_members', "groupid IN ($groupssql) $usersql", $params);
 
     //trigger groups events
-    $eventdata = new object();
+    $eventdata = new stdClass();
     $eventdata->courseid = $courseid;
     $eventdata->userid   = $userid;
     events_trigger('groups_members_removed', $eventdata);
@@ -590,7 +590,7 @@ function groups_assign_grouping($groupingid, $groupid) {
     if ($DB->record_exists('groupings_groups', array('groupingid'=>$groupingid, 'groupid'=>$groupid))) {
         return true;
     }
-    $assign = new object();
+    $assign = new stdClass();
     $assign->groupingid = $groupingid;
     $assign->groupid    = $groupid;
     $assign->timeadded  = time();
@@ -702,7 +702,7 @@ function groups_calculate_role_people($rs, $context) {
         if (!is_null($rec->roleid)) {
             // Create information about role if this is a new one
             if (!array_key_exists($rec->roleid,$roles)) {
-                $roledata = new object();
+                $roledata = new stdClass();
                 $roledata->id        = $rec->roleid;
                 $roledata->shortname = $rec->roleshortname;
                 if (array_key_exists($rec->roleid, $aliasnames)) {
@@ -725,7 +725,7 @@ function groups_calculate_role_people($rs, $context) {
     }
 
     // Add pseudo-role for multiple roles
-    $roledata = new object();
+    $roledata = new stdClass();
     $roledata->name = get_string('multipleroles','role');
     $roledata->users = array();
     $roles['*'] = $roledata;
