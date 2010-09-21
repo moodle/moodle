@@ -158,7 +158,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                                    array('userid'=>$USER->id, 'mnethostid'=>$mnethostid,
                                    'useragent'=>sha1($_SERVER['HTTP_USER_AGENT'])));
         if ($mnet_session == false) {
-            $mnet_session = new object();
+            $mnet_session = new stdClass();
             $mnet_session->mnethostid = $mnethostid;
             $mnet_session->userid = $USER->id;
             $mnet_session->username = $USER->username;
@@ -422,7 +422,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         if (!$mnet_session = $DB->get_record('mnet_session',
                                    array('userid'=>$user->id, 'mnethostid'=>$remotepeer->id,
                                    'useragent'=>sha1($_SERVER['HTTP_USER_AGENT'])))) {
-            $mnet_session = new object();
+            $mnet_session = new stdClass();
             $mnet_session->mnethostid = $remotepeer->id;
             $mnet_session->userid = $user->id;
             $mnet_session->username = $user->username;

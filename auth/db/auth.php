@@ -260,7 +260,7 @@ class auth_plugin_db extends auth_plugin_base {
                             echo "\t"; print_string('auth_dbdeleteusererror', 'auth_db', $user->username); echo "\n";
                         }
                     } else if ($this->config->removeuser == AUTH_REMOVEUSER_SUSPEND) {
-                        $updateuser = new object();
+                        $updateuser = new stdClass();
                         $updateuser->id   = $user->id;
                         $updateuser->auth = 'nologin';
                         $DB->update_record('user', $updateuser);
@@ -435,7 +435,7 @@ class auth_plugin_db extends auth_plugin_base {
      */
     function get_userinfo_asobj($username) {
         $user_array = truncate_userinfo($this->get_userinfo($username));
-        $user = new object();
+        $user = new stdClass();
         foreach($user_array as $key=>$value) {
             $user->{$key} = $value;
         }

@@ -274,7 +274,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             return false; //error or not found
         }
         $user_array = truncate_userinfo($user_array);
-        $user = new object();
+        $user = new stdClass();
         foreach ($user_array as $key=>$value) {
             $user->{$key} = $value;
         }
@@ -708,7 +708,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                             echo "\t"; print_string('auth_dbdeleteusererror', 'auth_db', $user->username); echo "\n";
                         }
                     } else if ($this->config->removeuser == AUTH_REMOVEUSER_SUSPEND) {
-                        $updateuser = new object();
+                        $updateuser = new stdClass();
                         $updateuser->id = $user->id;
                         $updateuser->auth = 'nologin';
                         $DB->update_record('user', $updateuser);
@@ -733,7 +733,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 print_string('userentriestorevive', 'auth_ldap', count($revive_users));
 
                 foreach ($revive_users as $user) {
-                    $updateuser = new object();
+                    $updateuser = new stdClass();
                     $updateuser->id = $user->id;
                     $updateuser->auth = $this->authtype;
                     $DB->update_record('user', $updateuser);
