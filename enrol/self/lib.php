@@ -277,7 +277,7 @@ class enrol_self_plugin extends enrol_plugin {
 
         $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
 
-        $a = new object();
+        $a = new stdClass();
         $a->coursename = format_string($course->fullname);
         $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
 

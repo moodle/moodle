@@ -242,7 +242,7 @@ function authorize_process_csv($filename) {
     if (!empty($ignoredlines)) {
         $admin = get_admin();
 
-        $eventdata = new object();
+        $eventdata = new stdClass();
         $eventdata->modulename        = 'moodle';
         $eventdata->component         = 'enrol_authorize';
         $eventdata->name              = 'authorize_enrolment';

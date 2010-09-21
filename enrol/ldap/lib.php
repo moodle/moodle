@@ -193,7 +193,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                          WHERE c.id = :courseid";
                 $params = array('courseid'=>$course->id);
                 if (!($course_instance = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE))) {
-                    $course_instance = new object();
+                    $course_instance = new stdClass();
                     $course_instance->id = $course->id;
                     $course_instance->visible = $course->visible;
                     $course_instance->enrolid = $this->add_instance($course_instance);
@@ -501,7 +501,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                                  WHERE c.id = :courseid";
                         $params = array('courseid'=>$course_obj->id);
                         if (!($course_instance = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE))) {
-                            $course_instance = new object();
+                            $course_instance = new stdClass();
                             $course_instance->id = $course_obj->id;
                             $course_instance->visible = $course_obj->visible;
                             $course_instance->enrolid = $this->add_instance($course_instance);
@@ -875,7 +875,7 @@ class enrol_ldap_plugin extends enrol_plugin {
         require_once("$CFG->dirroot/course/lib.php");
 
         // Override defaults with template course
-        $course = new object();
+        $course = new stdClass();
         if ($this->get_config('template')) {
             if($template = $DB->get_record('course', array('shortname'=>$this->get_config('template')))) {
                 unset($template->id); // So we are clear to reinsert the record

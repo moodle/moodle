@@ -300,7 +300,7 @@ class enrol_database_plugin extends enrol_plugin {
                     if (!empty($mapping) and !isset($existing[$mapping])) {
                         $params['mapping'] = $mapping;
                         if ($course = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE)) {
-                            $new = new object();
+                            $new = new stdClass();
                             $new->id      = $course->id;
                             $new->visible = $course->visible;
                             $new->mapping = $mapping;
@@ -519,7 +519,7 @@ class enrol_database_plugin extends enrol_plugin {
                         // invalid category id, better to skip
                         continue;
                     }
-                    $course = new object();
+                    $course = new stdClass();
                     $course->fullname  = $fields[$fullname];
                     $course->shortname = $fields[$shortname];
                     $course->idnumber  = $idnumber ? $fields[$idnumber] : NULL;
@@ -546,10 +546,10 @@ class enrol_database_plugin extends enrol_plugin {
                     unset($template->shortname);
                     unset($template->idnumber);
                 } else {
-                    $template = new object();
+                    $template = new stdClass();
                 }
             } else {
-                $template = new object();
+                $template = new stdClass();
             }
             if (!$DB->record_exists('course_categories', array('id'=>$defaultcategory))) {
                 $categories = $DB->get_records('course_categories', array(), 'sortorder', 'id', 0, 1);

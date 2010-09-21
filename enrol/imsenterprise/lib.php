@@ -231,7 +231,7 @@ function cron() {
             $msg .= "Logging is currently not active.";
         }
 
-        $eventdata = new object();
+        $eventdata = new stdClass();
         $eventdata->modulename        = 'moodle';
         $eventdata->component         = 'imsenterprise';
         $eventdata->name              = 'imsenterprise_enrolment';
@@ -311,7 +311,7 @@ function process_group_tag($tagcontents){
     $createnewcategories    = $this->get_config('createnewcategories');
 
     // Process tag contents
-    $group = new object();
+    $group = new stdClass();
     if(preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)){
         $group->coursecode = trim($matches[1]);
     }
@@ -356,7 +356,7 @@ function process_group_tag($tagcontents){
                   $this->log_line("Course $coursecode not found in Moodle's course idnumbers.");
               } else {
                 // Create the (hidden) course(s) if not found
-                $course = new object();
+                $course = new stdClass();
                 $course->fullname = $group->description;
                 $course->shortname = $coursecode;
                 $course->idnumber = $coursecode;
@@ -372,7 +372,7 @@ function process_group_tag($tagcontents){
                         $course->category = $catid;
                     } elseif($createnewcategories) {
                         // Else if we're allowed to create new categories, let's create this one
-                        $newcat = new object();
+                        $newcat = new stdClass();
                         $newcat->name = $group->category;
                         $newcat->visible = 0;
                         $catid = $DB->insert_record('course_categories', $newcat);
@@ -398,7 +398,7 @@ function process_group_tag($tagcontents){
                 $course = $DB->get_record('course', array('id' => $courseid));
                 blocks_add_default_course_blocks($course);
 
-                $section = new object();
+                $section = new stdClass();
                 $section->course = $course->id;   // Create a default section.
                 $section->section = 0;
                 $section->summaryformat = FORMAT_HTML;
@@ -430,7 +430,7 @@ function process_person_tag($tagcontents){
     $imsdeleteusers         = $this->get_config('imsdeleteusers');
     $createnewusers         = $this->get_config('createnewusers');
 
-    $person = new object();
+    $person = new stdClass();
     if(preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)){
         $person->idnumber = trim($matches[1]);
     }

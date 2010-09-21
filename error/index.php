@@ -15,14 +15,14 @@
             print_error('cannotfindadmin', 'debug');
         }
 
-        $supportuser = new object;
+        $supportuser = new stdClass();
         $supportuser->email = $CFG->supportemail ? $CFG->supportemail : $admin->email;
         $supportuser->firstname = $CFG->supportname ? $CFG->supportname : $admin->firstname;
         $supportuser->lastname = $CFG->supportname ? '' : $admin->lastname;
         $supportuser->maildisplay = true;
 
     /// Send the message and redirect
-        $eventdata = new object();
+        $eventdata = new stdClass();
         $eventdata->modulename        = 'moodle';
         $eventdata->userfrom          = $USER;
         $eventdata->userto            = $supportuser;

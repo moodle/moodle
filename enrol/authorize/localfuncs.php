@@ -163,7 +163,7 @@ function message_to_admin($subject, $data) {
 
     $emailmessage = "$SITE->fullname: Transaction failed.\n\n$subject\n\n";
     $emailmessage .= print_r($data, true);
-    $eventdata = new object();
+    $eventdata = new stdClass();
     $eventdata->modulename        = 'moodle';
     $eventdata->component         = 'enrol_authorize';
     $eventdata->name              = 'authorize_enrolment';
@@ -231,7 +231,7 @@ function send_welcome_messages($orderdata) {
                 $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$lastuserid";
                 $emailmessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
 
-                $eventdata = new object();
+                $eventdata = new stdClass();
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'enrol_authorize';
                 $eventdata->name              = 'authorize_enrolment';

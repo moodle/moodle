@@ -149,7 +149,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
             } // end of if(file_open)
 
             if(! @unlink($filename)) {
-                $eventdata = new object();
+                $eventdata = new stdClass();
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'course';
                 $eventdata->name              = 'flatfile_enrolment';
@@ -167,7 +167,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
             if (!empty($mailadmins)) {
 
                 // Send mail to admin
-                $eventdata = new object();
+                $eventdata = new stdClass();
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'course';
                 $eventdata->name              = 'flatfile_enrolment';
@@ -213,7 +213,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
         if ($timestart > time()) {
             if ($store_to_buffer) {
                 // populate into enrol_flatfile table as a future role to be assigned by cron.
-                $future_en = new object();
+                $future_en = new stdClass();
                 $future_en->action = $action;
                 $future_en->roleid = $roleid;
                 $future_en->userid = $user->id;
@@ -273,11 +273,11 @@ class enrol_flatfile_plugin extends enrol_plugin {
 
             if (!empty($mailstudents)) {
                 // Send mail to students
-                $a = new object();
+                $a = new stdClass();
                 $a->coursename = "$course->fullname";
                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id";
 
-                $eventdata = new object();
+                $eventdata = new stdClass();
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'course';
                 $eventdata->name              = 'flatfile_enrolment';
@@ -295,11 +295,11 @@ class enrol_flatfile_plugin extends enrol_plugin {
 
                 // Send mail to teachers
                 foreach($teachers as $teacher) {
-                    $a = new object();
+                    $a = new stdClass();
                     $a->course = "$course->fullname";
                     $a->user = fullname($user);
 
-                    $eventdata = new object();
+                    $eventdata = new stdClass();
                     $eventdata->modulename        = 'moodle';
                     $eventdata->component         = 'course';
                     $eventdata->name              = 'flatfile_enrolment';

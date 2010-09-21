@@ -58,7 +58,7 @@ if ($instances = $DB->get_records('enrol', array('courseid'=>$course->id, 'enrol
     require_capability('moodle/course:enrolconfig', $context);
     // no instance yet, we have to add new instance
     navigation_node::override_active_url(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
-    $instance = new object();
+    $instance = new stdClass();
     $instance->id       = null;
     $instance->courseid = $course->id;
 }

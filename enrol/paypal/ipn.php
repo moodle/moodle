@@ -48,7 +48,7 @@ if (empty($_POST) or !empty($_GET)) {
 
 $req = 'cmd=_notify-validate';
 
-$data = new object();
+$data = new stdClass();
 
 foreach ($_POST as $key => $value) {
     $req .= "&$key=".urlencode($value);
@@ -135,7 +135,7 @@ while (!feof($fp)) {
         // Email user to let them know. Email admin.
 
         if ($data->payment_status == "Pending" and $data->pending_reason != "echeck") {
-            $eventdata = new object();
+            $eventdata = new stdClass();
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_paypal';
             $eventdata->name              = 'paypal_enrolment';
@@ -233,7 +233,7 @@ while (!feof($fp)) {
             $a->coursename = $course->fullname;
             $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
 
-            $eventdata = new object();
+            $eventdata = new stdClass();
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_paypal';
             $eventdata->name              = 'paypal_enrolment';
@@ -252,7 +252,7 @@ while (!feof($fp)) {
             $a->course = $course->fullname;
             $a->user = fullname($user);
 
-            $eventdata = new object();
+            $eventdata = new stdClass();
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_paypal';
             $eventdata->name              = 'paypal_enrolment';
@@ -271,7 +271,7 @@ while (!feof($fp)) {
             $a->user = fullname($user);
             $admins = get_admins();
             foreach ($admins as $admin) {
-                $eventdata = new object();
+                $eventdata = new stdClass();
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'enrol_paypal';
                 $eventdata->name              = 'paypal_enrolment';
@@ -310,7 +310,7 @@ function message_paypal_error_to_admin($subject, $data) {
         $message .= "$key => $value\n";
     }
 
-    $eventdata = new object();
+    $eventdata = new stdClass();
     $eventdata->modulename        = 'moodle';
     $eventdata->component         = 'enrol_paypal';
     $eventdata->name              = 'paypal_enrolment';
