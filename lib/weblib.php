@@ -1514,6 +1514,7 @@ function purify_html($text) {
         if (!empty($CFG->allowobjectembed)) {
             $config->set('HTML.SafeObject', true);
             $config->set('Output.FlashCompat', true);
+            $config->set('HTML.SafeEmbed', true);
         }
 
         $def = $config->getHTMLDefinition(true);
