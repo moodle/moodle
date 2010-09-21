@@ -50,7 +50,7 @@ $PAGE->set_heading(get_string('managefiles', 'backup'));
 $PAGE->set_pagelayout('admin');
 $browser = get_file_browser();
 
-$data = new object();
+$data = new stdClass();
 $options = array('subdirs'=>0, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
 file_prepare_standard_filemanager($data, 'files', $options, $filecontext, $component, $filearea, 0);
 $form = new backup_files_edit_form(null, array('data'=>$data, 'contextid'=>$contextid, 'currentcontext'=>$currentcontext, 'filearea'=>$filearea, 'component'=>$component, 'returnurl'=>$returnurl));

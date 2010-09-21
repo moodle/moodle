@@ -232,7 +232,7 @@
                 //Check it isn't backupdata_dir
                 if (strpos($dir,$backupdata_dir)!==0) {
                     //Insert them into backup_files
-                    $file = new object();
+                    $file = new stdClass();
                     $file->backup_code = $backup_unique_code;
                     $file->file_type   = 'course';
                     $file->path        = $dir;

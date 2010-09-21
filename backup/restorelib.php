@@ -191,7 +191,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     $data = backup_getid($restore->backup_unique_code,'grade_letters',$rec->old_id);
                     if ($data) {
                         $info = $data->info;
-                        $dbrec = new object();
+                        $dbrec = new stdClass();
                         $dbrec->contextid     = $context->id;
                         $dbrec->lowerboundary = backup_todb($info['GRADE_LETTER']['#']['LOWERBOUNDARY']['0']['#']);
                         $dbrec->letter        = backup_todb($info['GRADE_LETTER']['#']['LETTER']['0']['#']);
@@ -315,7 +315,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 continue;
                             }
 
-                            $dbrec = new object();
+                            $dbrec = new stdClass();
 
                             $dbrec->courseid      = $restore->course_id;
                             $dbrec->itemtype      = backup_todb($info['GRADE_ITEM']['#']['ITEMTYPE']['0']['#'], false);
@@ -939,7 +939,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                         //print_object ($GLOBALS['traverse_array']);         //Debug
                                         //$GLOBALS['traverse_array']="";                     //Debug
                                         //Now build the MESSAGE record structure
-                                        $dbrec = new object();
+                                        $dbrec = new stdClass();
                                         $dbrec->useridfrom = backup_todb($info['MESSAGE']['#']['USERIDFROM']['0']['#']);
                                         $dbrec->useridto = backup_todb($info['MESSAGE']['#']['USERIDTO']['0']['#']);
                                         $dbrec->message = backup_todb($info['MESSAGE']['#']['MESSAGE']['0']['#']);
@@ -1163,7 +1163,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                         //print_object ($GLOBALS['traverse_array']);         //Debug
                                         //$GLOBALS['traverse_array']="";                     //Debug
                                         //Now build the BLOG record structure
-                                        $dbrec = new object();
+                                        $dbrec = new stdClass();
                                         $dbrec->module = backup_todb($info['BLOG']['#']['MODULE']['0']['#']);
                                         $dbrec->userid = backup_todb($info['BLOG']['#']['USERID']['0']['#']);
                                         $dbrec->courseid = backup_todb($info['BLOG']['#']['COURSEID']['0']['#']);
@@ -1451,7 +1451,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
                             //$GLOBALS['traverse_array']="";                                                              //Debug
                             //Now build the LOG record structure
-                            $dblog = new object();
+                            $dblog = new stdClass();
                             $dblog->time = backup_todb($info['LOG']['#']['TIME']['0']['#']);
                             $dblog->userid = backup_todb($info['LOG']['#']['USERID']['0']['#']);
                             $dblog->ip = backup_todb($info['LOG']['#']['IP']['0']['#']);
@@ -1957,7 +1957,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         //We compare Moodle's versions
         if ($status && $CFG->version < $info->backup_moodle_version) {
-            $message = new object();
+            $message = new stdClass();
             $message->serverversion = $CFG->version;
             $message->serverrelease = $CFG->release;
             $message->backupversion = $info->backup_moodle_version;

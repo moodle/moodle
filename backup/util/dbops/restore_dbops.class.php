@@ -434,7 +434,7 @@ abstract class restore_dbops {
                     if ($udata->field_data) {
                         if ($field = $DB->get_record('user_info_field', array('shortname'=>$udata->field_name, 'datatype'=>$udata->field_type))) {
                         /// Insert the user_custom_profile_field
-                            $rec = new object();
+                            $rec = new stdClass();
                             $rec->userid  = $newuserid;
                             $rec->fieldid = $field->id;
                             $rec->data    = $udata->field_data;

@@ -201,7 +201,7 @@ function schedule_backup_cron() {
         $subject = $prefix.get_string("scheduledbackupstatus");
 
         //Send the message
-        $eventdata = new object();
+        $eventdata = new stdClass();
         $eventdata->modulename        = 'moodle';
         $eventdata->userfrom          = $admin;
         $eventdata->userto            = $admin;
