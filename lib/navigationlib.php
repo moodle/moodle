@@ -1431,7 +1431,7 @@ class global_navigation extends navigation_node {
                 $icon = new pix_icon('icon', get_string('modulename', $cm->modname), $cm->modname);
             }
             $url = new moodle_url('/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id));
-            $activitynode = $sectionnode->add($cm->name, $url, navigation_node::TYPE_ACTIVITY, $cm->name, $cm->id, $icon);
+            $activitynode = $sectionnode->add(format_string($cm->name), $url, navigation_node::TYPE_ACTIVITY, null, $cm->id, $icon);
             $activitynode->title(get_string('modulename', $cm->modname));
             $activitynode->hidden = (!$cm->visible);
             if ($cm->modname == 'label') {
