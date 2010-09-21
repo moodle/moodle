@@ -687,6 +687,7 @@ class pgsql_native_moodle_database extends moodle_database {
                 $id = reset($row);
                 if ($blobs) {
                     foreach ($blobs as $blob) {
+                        // note: in PostgreSQL 9.0 the returned blobs are hexencoded by default - see http://www.postgresql.org/docs/9.0/static/runtime-config-client.html#GUC-BYTEA-OUTPUT
                         $row[$blob] = $row[$blob] !== null ? pg_unescape_bytea($row[$blob]) : null;
                     }
                 }
