@@ -48,6 +48,8 @@ class htmlpurifier_test extends UnitTestCase {
         $text = '<lang lang="de_DU">xxxxxx</lang>';
         $this->assertIdentical($text, purify_html($text));
 
+        $text = "\n\raa\rsss\nsss\r";
+        $this->assertIdentical($text, purify_html($text));
     }
 
 }
