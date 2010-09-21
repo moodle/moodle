@@ -36,7 +36,7 @@ class assignment_online extends assignment_base {
             // prepare form and process submitted data
             $editoroptions = array('noclean'=>false, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$this->course->maxbytes);
 
-            $data = new object();
+            $data = new stdClass();
             $data->id         = $this->cm->id;
             $data->edit       = 1;
             if ($submission) {
@@ -174,7 +174,7 @@ class assignment_online extends assignment_base {
 
         $submission = $this->get_submission($USER->id, true);
 
-        $update = new object();
+        $update = new stdClass();
         $update->id           = $submission->id;
         $update->data1        = $data->text;
         $update->data2        = $data->textformat;

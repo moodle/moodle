@@ -82,7 +82,7 @@ function page_20_migrate_candidate($candidate, $fs, $format) {
         $introformat = FORMAT_MOODLE;
     }
 
-    $page = new object();
+    $page = new stdClass();
     $page->course        = $candidate->course;
     $page->name          = $candidate->name;
     $page->intro         = $intro;

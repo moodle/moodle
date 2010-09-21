@@ -59,7 +59,7 @@ if ($id) { // if entry is specified
 } else { // new entry
     require_capability('mod/glossary:write', $context);
     // note: guest user does not have any write capability
-    $entry = new object();
+    $entry = new stdClass();
     $entry->id = null;
 }
 
@@ -145,7 +145,7 @@ if ($mform->is_cancelled()){
     // TODO: this deletes cats from both both main and secondary glossary :-(
     if (!empty($categories) and array_search(0, $categories) === false) {
         foreach ($categories as $catid) {
-            $newcategory = new object();
+            $newcategory = new stdClass();
             $newcategory->entryid    = $entry->id;
             $newcategory->categoryid = $catid;
             $DB->insert_record('glossary_entries_categories', $newcategory, false);
@@ -159,7 +159,7 @@ if ($mform->is_cancelled()){
         foreach ($aliases as $alias) {
             $alias = trim($alias);
             if ($alias !== '') {
-                $newalias = new object();
+                $newalias = new stdClass();
                 $newalias->entryid = $entry->id;
                 $newalias->alias   = $alias;
                 $DB->insert_record('glossary_alias', $newalias, false);

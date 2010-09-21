@@ -49,7 +49,7 @@ require_capability('mod/feedback:viewreports', $context);
 //buffering any output
 //this prevents some output before the excel-header will be send
 ob_start();
-$fstring = new object();
+$fstring = new stdClass();
 $fstring->bold = get_string('bold', 'feedback');
 $fstring->page = get_string('page', 'feedback');
 $fstring->of = get_string('of', 'feedback');
@@ -84,7 +84,7 @@ $workbook->send($filename);
 // $workbook->setVersion(8);
 
 //creating the needed formats
-$xlsFormats = new object();
+$xlsFormats = new stdClass();
 $xlsFormats->head1 = $workbook->add_format(array(
                         'bold'=>1,
                         'size'=>12));

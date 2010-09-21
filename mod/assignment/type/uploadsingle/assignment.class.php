@@ -128,7 +128,7 @@ class assignment_uploadsingle extends assignment_base {
         }
         echo $output;
     }
-    
+
     function can_manage_responsefiles() {
         if (has_capability('mod/assignment:grade', $this->context)) {
             return true;
@@ -196,7 +196,7 @@ class assignment_uploadsingle extends assignment_base {
                     $file = $mform->save_stored_file('assignment_file', $this->context->id, 'mod_assignment', 'submission',
                         $submission->id, '/', $newfilename);
 
-                    $updates = new object(); //just enough data for updating the submission
+                    $updates = new stdClass(); //just enough data for updating the submission
                     $updates->timemodified = time();
                     $updates->numfiles     = 1;
                     $updates->id     = $submission->id;
@@ -206,7 +206,7 @@ class assignment_uploadsingle extends assignment_base {
                     $this->email_teachers($submission);
 
                     // Let Moodle know that an assessable file was uploaded (eg for plagiarism detection)
-                    $eventdata = new object();
+                    $eventdata = new stdClass();
                     $eventdata->modulename   = 'assignment';
                     $eventdata->cmid         = $this->cm->id;
                     $eventdata->itemid       = $submission->id;
@@ -294,7 +294,7 @@ class assignment_uploadsingle extends assignment_base {
         if ($USER->id != $submission->userid and !has_capability('mod/assignment:grade', $this->context)) {
             return false;
         }
-        
+
         $relativepath = implode('/', $args);
         $fullpath = '/'.$this->context->id.'/mod_assignment/'.$filearea.'/'.$submissionid.'/'.$relativepath;
 

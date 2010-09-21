@@ -125,7 +125,7 @@ if (!$search || $showform) {
     $PAGE->navbar->add(get_string('advancedsearch', 'forum'));
 
     $PAGE->set_title($strsearch);
-    $PAGE->set_heading($course->fullname);    
+    $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
 
     forum_print_big_search_form($course);
@@ -144,7 +144,7 @@ $PAGE->navbar->add($strsearch, new moodle_url('/mod/forum/search.php', array('id
 $PAGE->navbar->add(s($search, true));
 if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
     $PAGE->set_title($strsearchresults);
-    $PAGE->set_heading($course->fullname);   
+    $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string("nopostscontaining", "forum", $search));
 
@@ -232,7 +232,7 @@ foreach ($posts as $post) {
     // will do it for us later.
     $missing_terms = "";
 
-    $options = new object();
+    $options = new stdClass();
     $options->trusted = $post->messagetrust;
     $message = highlight($strippedsearch,
                     format_text($post->message, $post->messageformat, $options, $course->id),

@@ -128,7 +128,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         if (empty($this->data->id)) {
             echo $OUTPUT->notification('Programmer error: dataid not defined in field class');
         }
-        $this->field = new object;
+        $this->field = new stdClass();
         $this->field->id = 0;
         $this->field->dataid = $this->data->id;
         $this->field->type   = $this->type;
@@ -305,7 +305,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
         if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
             if (isset($content->content)) {
-                $options = new object();
+                $options = new stdClass();
                 if ($this->field->param1 == '1') {  // We are autolinking this field, so disable linking within us
                     //$content->content = '<span class="nolink">'.$content->content.'</span>';
                     //$content->content1 = FORMAT_HTML;
@@ -332,7 +332,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     function update_content($recordid, $value, $name=''){
         global $DB;
 
-        $content = new object();
+        $content = new stdClass();
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
         $content->content = clean_param($value, PARAM_NOTAGS);
@@ -546,7 +546,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
         }
 
         if ($update) {
-            $newdata = new object();
+            $newdata = new stdClass();
             $newdata->id = $data->id;
             $newdata->{$template} = $str;
             $DB->update_record('data', $newdata);
@@ -583,7 +583,7 @@ function data_replace_field_in_templates($data, $searchfieldname, $newfieldname)
         $idpart = '';
     }
 
-    $newdata = new object();
+    $newdata = new stdClass();
     $newdata->id = $data->id;
     $newdata->singletemplate = str_ireplace('[['.$searchfieldname.']]',
             $prestring.$newfieldname.$poststring, $data->singletemplate);
@@ -614,7 +614,7 @@ function data_replace_field_in_templates($data, $searchfieldname, $newfieldname)
 function data_append_new_field_to_templates($data, $newfieldname) {
     global $DB;
 
-    $newdata = new object();
+    $newdata = new stdClass();
     $newdata->id = $data->id;
     $change = false;
 
@@ -788,7 +788,7 @@ function data_add_record($data, $groupid=0){
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    $record = new object();
+    $record = new stdClass();
     $record->userid = $USER->id;
     $record->dataid = $data->id;
     $record->groupid = $groupid;
@@ -952,7 +952,7 @@ function data_user_outline($course, $user, $mod, $data) {
 
 
     if ($countrecords = $DB->count_records('data_records', array('dataid'=>$data->id, 'userid'=>$user->id))) {
-        $result = new object();
+        $result = new stdClass();
         $result->info = get_string('numrecords', 'data', $countrecords);
         $lastrecord   = $DB->get_record_sql('SELECT id,timemodified FROM {data_records}
                                               WHERE dataid = ? AND userid = ?
@@ -963,7 +963,7 @@ function data_user_outline($course, $user, $mod, $data) {
         }
         return $result;
     } else if ($grade) {
-        $result = new object();
+        $result = new stdClass();
         $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
         $result->time = $grade->dategraded;
         return $result;
@@ -1045,7 +1045,7 @@ function data_update_grades($data, $userid=0, $nullifnone=true) {
         data_grade_item_update($data, $grades);
 
     } else if ($userid and $nullifnone) {
-        $grade = new object();
+        $grade = new stdClass();
         $grade->userid   = $userid;
         $grade->rawgrade = NULL;
         data_grade_item_update($data, $grade);
@@ -1545,7 +1545,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     // actual replacement of the tags
     $newtext = preg_replace($patterns, $replacement, $data->asearchtemplate);
 
-    $options = new object();
+    $options = new stdClass();
     $options->para=false;
     $options->noclean=true;
     echo '<tr><td>';
@@ -1810,7 +1810,7 @@ function data_get_available_presets($context) {
         foreach ($dirs as $dir) {
             $fulldir = $CFG->dirroot.'/mod/data/preset/'.$dir;
             if (is_directory_a_preset($fulldir)) {
-                $preset = new object;
+                $preset = new stdClass();
                 $preset->path = $fulldir;
                 $preset->userid = 0;
                 $preset->shortname = $dir;

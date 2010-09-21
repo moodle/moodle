@@ -46,7 +46,7 @@ class feedback_edit_use_template_form extends moodleform {
     var $feedbackdata;
 
     function definition() {
-        $this->feedbackdata = new object();
+        $this->feedbackdata = new stdClass();
         //this function can not be called, because not all data are available at this time
         //I use set_form_elements instead
     }
@@ -133,7 +133,7 @@ class feedback_edit_create_template_form extends moodleform {
 
         $elementgroup[] =& $mform->createElement('static', 'templatenamelabel', get_string('name', 'feedback'));
         $elementgroup[] =& $mform->createElement('text', 'templatename', get_string('name', 'feedback'), array('size'=>'40', 'maxlength'=>'200'));
-        
+
         //public templates are currently deactivated
         // if(has_capability('mod/feedback:createpublictemplate', $this->feedbackdata->context)) {
             // $elementgroup[] =& $mform->createElement('checkbox', 'ispublic', get_string('public', 'feedback'), get_string('public', 'feedback'));

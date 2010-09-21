@@ -61,7 +61,7 @@ function resource_20_migrate() {
             // public site files
             $path = $matches[2];
 
-            $resource = new object();
+            $resource = new stdClass();
             $resource->id           = $candidate->oldid;
             $resource->tobemigrated = 0;
             $resource->mainfile     = $path;
@@ -83,7 +83,7 @@ function resource_20_migrate() {
             // current course files
             $path = $matches[2];
 
-            $resource = new object();
+            $resource = new stdClass();
             $resource->id           = $candidate->oldid;
             $resource->tobemigrated = 0;
             $resource->mainfile     = $path;
@@ -117,7 +117,7 @@ function resource_20_migrate() {
             preg_match("/^[^?#]+/", $path, $matches);
             $parts = $matches[0];
 
-            $resource = new object();
+            $resource = new stdClass();
             $resource->id           = $candidate->oldid;
             $resource->tobemigrated = 0;
             $resource->mainfile     = $path;

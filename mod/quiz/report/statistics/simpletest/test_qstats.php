@@ -88,7 +88,7 @@ class quiz_report_qstats_test extends UnitTestCase {
         while (NULL !== ($line = array_shift($filecontents))) {
             $data = $this->get_fields_from_csv($line);
             $arraykey = reset($data);
-            $object = new object();
+            $object = new stdClass();
             foreach ($keys as $key) {
                 $value = array_shift($data);
                 if ($value !== NULL){

@@ -66,7 +66,7 @@ function imscp_20_migrate() {
             $introformat = FORMAT_MOODLE;
         }
 
-        $imscp = new object();
+        $imscp = new stdClass();
         $imscp->course       = $candidate->course;
         $imscp->name         = $candidate->name;
         $imscp->intro        = $intro;

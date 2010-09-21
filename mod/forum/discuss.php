@@ -181,7 +181,7 @@
     }
 
     $searchform = forum_search_form($course);
-    
+
     if ($parent != $discussion->firstpost) {
         $PAGE->navbar->add(format_string($post->subject));
     }
@@ -216,8 +216,8 @@
         require_once($CFG->libdir.'/portfoliolib.php');
         $button = new portfolio_add_button();
         $button->set_callback_options('forum_portfolio_caller', array('discussionid' => $discussion->id), '/mod/forum/locallib.php');
-        $button->render();        
-        echo '</div>';        
+        $button->render();
+        echo '</div>';
     }
 
     if ($forum->type != 'single'
@@ -259,7 +259,7 @@
     echo "</div>";
 
     if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
-        $a = new object();
+        $a = new stdClass();
         $a->blockafter  = $forum->blockafter;
         $a->blockperiod = get_string('secondstotime'.$forum->blockperiod);
         echo $OUTPUT->notification(get_string('thisforumisthrottled','forum',$a));

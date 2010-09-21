@@ -263,7 +263,7 @@ class quiz_statistics_report extends quiz_default_report {
                     uasort($responses[$subqid][$aid], array('quiz_statistics_report', 'sort_answers'));
                 }
                 if (isset($responses[$subqid]['0'])){
-                    $wildcardresponse = new object();
+                    $wildcardresponse = new stdClass();
                     $wildcardresponse->answer = '*';
                     $wildcardresponse->credit = 0;
                     $teacherresponses[$subqid][0] = $wildcardresponse;
@@ -279,7 +279,7 @@ class quiz_statistics_report extends quiz_default_report {
                 }
                 uasort($tresponsesforsubq, array('quiz_statistics_report', 'sort_response_details'));
                 foreach ($tresponsesforsubq as $aid => $teacherresponse){
-                    $teacherresponserow = new object();
+                    $teacherresponserow = new stdClass();
                     $teacherresponserow->response = $teacherresponse->answer;
                     $teacherresponserow->rcount = 0;
                     $teacherresponserow->subq = $subq;
@@ -405,7 +405,7 @@ class quiz_statistics_report extends quiz_default_report {
                 $sql = 'SELECT COUNT(1) ' .
                     'FROM ' .$fromqa.' '.
                     'WHERE ' .$whereqa.' AND qa.timefinish > :time';
-                $a = new object();
+                $a = new stdClass();
                 $a->lastcalculated = format_time(time() - $quizstats->timemodified);
                 if (!$a->count = $DB->count_records_sql($sql, array('time'=>$quizstats->timemodified)+$qaparams)){
                     $a->count = 0;
@@ -464,7 +464,7 @@ class quiz_statistics_report extends quiz_default_report {
                 $usingattemptsstring = '';
             } else {
                 $firstattempt = $attempttotals[1];
-                $allattempts = new object();
+                $allattempts = new stdClass();
                 $allattempts->countrecs = $firstattempt->countrecs +
                                 (isset($attempttotals[0])?$attempttotals[0]->countrecs:0);
                 $allattempts->total = $firstattempt->total +
@@ -485,7 +485,7 @@ class quiz_statistics_report extends quiz_default_report {
         } else {
             $s = 0;
         }
-        $quizstats = new object();
+        $quizstats = new stdClass();
         if ($s == 0){
             $quizstats->firstattemptscount = 0;
             $quizstats->allattemptscount = 0;

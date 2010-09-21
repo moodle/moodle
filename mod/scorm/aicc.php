@@ -353,7 +353,7 @@
                                 $track->timemodified = time();
                                 $DB->update_record('scorm_scoes_track',$track);
                             } else {
-                                $track = new object();
+                                $track = new stdClass();
                                 $track->userid = $USER->id;
                                 $track->scormid = $scorm->id;
                                 $track->scoid = $sco->id;

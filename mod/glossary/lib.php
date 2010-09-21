@@ -166,7 +166,7 @@ function glossary_delete_instance($id) {
                 $newcontext = get_context_instance(CONTEXT_MODULE, $entry->sourcecmid);
                 if ($oldfiles = $fs->get_area_files($context->id, 'mod_glossary', 'attachment', $entry->id)) {
                     foreach ($oldfiles as $oldfile) {
-                        $file_record = new object();
+                        $file_record = new stdClass();
                         $file_record->contextid = $newcontext->id;
                         $fs->create_file_from_storedfile($file_record, $oldfile);
                     }
@@ -228,7 +228,7 @@ function glossary_user_outline($course, $user, $mod, $glossary) {
     }
 
     if ($entries = glossary_get_user_entries($glossary->id, $user->id)) {
-        $result = new object();
+        $result = new stdClass();
         $result->info = count($entries) . ' ' . get_string("entries", "glossary");
 
         $lastentry = array_pop($entries);
@@ -239,7 +239,7 @@ function glossary_user_outline($course, $user, $mod, $glossary) {
         }
         return $result;
     } else if ($grade) {
-        $result = new object();
+        $result = new stdClass();
         $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
         $result->time = $grade->dategraded;
         return $result;
@@ -492,7 +492,7 @@ function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
         glossary_grade_item_update($glossary, $grades);
 
     } else if ($userid and $nullifnone) {
-        $grade = new object();
+        $grade = new stdClass();
         $grade->userid   = $userid;
         $grade->rawgrade = NULL;
         glossary_grade_item_update($glossary, $grade);
@@ -670,7 +670,7 @@ function glossary_get_available_formats() {
                 //If the format doesn't exist in the table
                 if (!$rec = $DB->get_record('glossary_formats', array('name'=>$format))) {
                     //Insert the record in glossary_formats
-                    $gf = new object();
+                    $gf = new stdClass();
                     $gf->name = $format;
                     $gf->popupformatname = $format;
                     $gf->visible = 1;
@@ -842,7 +842,7 @@ function glossary_print_entry_default ($entry, $glossary, $cm) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $definition = file_rewrite_pluginfile_urls($definition, 'pluginfile.php', $context->id, 'mod_glossary', 'entry', $entry->id);
 
-    $options = new object();
+    $options = new stdClass();
     $options->para = false;
     $options->trusted = $entry->definitiontrust;
     $definition = format_text($definition, $entry->definitionformat, $options);
@@ -856,7 +856,7 @@ function glossary_print_entry_default ($entry, $glossary, $cm) {
  */
 function  glossary_print_entry_concept($entry, $return=false) {
     global $OUTPUT;
-    $options = new object();
+    $options = new stdClass();
     $options->para = false;
     $text = format_text($OUTPUT->heading('<span class="nolink">' . $entry->concept . '</span>', 3, 'nolink'), FORMAT_MOODLE, $options);
     if (!empty($entry->highlight)) {
@@ -895,7 +895,7 @@ function glossary_print_entry_definition($entry, $glossary, $cm) {
         }
     }
 
-    $options = new object();
+    $options = new stdClass();
     $options->para = false;
     $options->trusted = $entry->definitiontrust;
 

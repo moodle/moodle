@@ -6,7 +6,7 @@
 function xmldb_quiz_statistics_install() {
     global $DB;
 
-    $record = new object();
+    $record = new stdClass();
     $record->name         = 'statistics';
     $record->displayorder = 8000;
     $record->cron         = 18000;

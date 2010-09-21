@@ -92,7 +92,7 @@ if (!empty($refresh) and data_submitted()) {
 } else if (empty($refresh) and data_submitted() and confirm_sesskey()) {
 
     if ($message!='') {
-        $newmessage = new object();
+        $newmessage = new stdClass();
         $newmessage->chatid = $chat->id;
         $newmessage->userid = $USER->id;
         $newmessage->groupid = $groupid;
@@ -154,7 +154,7 @@ echo '<div id="messages">';
 echo '<h2>'.get_string('messages', 'chat').'</h2>';
 
 $allmessages = array();
-$options = new object();
+$options = new stdClass();
 $options->para = false;
 $options->newlines = true;
 

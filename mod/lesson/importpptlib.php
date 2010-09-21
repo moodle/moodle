@@ -137,7 +137,7 @@ function lesson_create_objects($pageobjects, $lessonid) {
     $branchtable = new stdClass;
 
     // all pages have this info
-    $page = new object();
+    $page = new stdClass();
     $page->lessonid = $lessonid;
     $page->prevpageid = 0;
     $page->nextpageid = 0;
@@ -149,7 +149,7 @@ function lesson_create_objects($pageobjects, $lessonid) {
     $page->timemodified = 0;
 
     // all answers are the same
-    $answer = new object();
+    $answer = new stdClass();
     $answer->lessonid = $lessonid;
     $answer->jumpto = LESSON_NEXTPAGE;
     $answer->grade = 0;

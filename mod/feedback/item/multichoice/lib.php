@@ -13,7 +13,7 @@ class feedback_item_multichoice extends feedback_item_base {
     var $commonparams;
     var $item_form;
     var $item;
-    
+
     function init() {
 
     }
@@ -35,13 +35,13 @@ class feedback_item_multichoice extends feedback_item_base {
         }
         //the elements for position dropdownlist
         $positionlist = array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true);
-        
+
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
         $info = $this->get_info($item);
 
         $item->ignoreempty = $this->ignoreempty($item);
         $item->hidenoselect = $this->hidenoselect($item);
-        
+
         //all items for dependitem
         $feedbackitems = feedback_get_depend_candidates_for_item($feedback, $item);
         $commonparams = array('cmid'=>$cm->id,
@@ -58,7 +58,7 @@ class feedback_item_multichoice extends feedback_item_base {
     function show_editform() {
         $this->item_form->display();
     }
-    
+
     function is_cancelled() {
         return $this->item_form->is_cancelled();
     }
@@ -72,17 +72,17 @@ class feedback_item_multichoice extends feedback_item_base {
 
     function save_item() {
         global $DB;
-        
+
         if(!$item = $this->item_form->get_data()) {
             return false;
         }
-        
+
         if(isset($item->clone_item) AND $item->clone_item) {
             $item->id = ''; //to clone this item
             $item->position++;
         }
-        
-        $this->set_ignoreempty($item, $item->ignoreempty);        
+
+        $this->set_ignoreempty($item, $item->ignoreempty);
         $this->set_hidenoselect($item, $item->hidenoselect);
 
         $item->hasvalue = $this->get_hasvalue();
@@ -91,7 +91,7 @@ class feedback_item_multichoice extends feedback_item_base {
         }else {
             $DB->update_record('feedback_item', $item);
         }
-        
+
         return $DB->get_record('feedback_item', array('id'=>$item->id));
     }
 
@@ -247,8 +247,8 @@ class feedback_item_multichoice extends feedback_item_base {
         $rowOffset +=3 ;
         return $rowOffset;
     }
-    
-    /**     
+
+    /**
      * print the item at the edit-page of feedback
      *
      * @global object
@@ -266,7 +266,7 @@ class feedback_item_multichoice extends feedback_item_base {
         //test if required and no value is set so we have to mark this item
         //we have to differ check and the other subtypes
         $requiredmark =  ($item->required == 1) ? '<span class="feedback_required_mark">*</span>' : '';
-        
+
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
         echo '('.$item->label.') ';
@@ -277,7 +277,7 @@ class feedback_item_multichoice extends feedback_item_base {
             }
         }
         echo '</div>';
-        
+
         //print the presentation
         echo '<div class="feedback_item_presentation_'.$align.'">';
         $index = 1;
@@ -288,7 +288,7 @@ class feedback_item_multichoice extends feedback_item_base {
         }else {
             $hv = 'v';
         }
-        
+
         if($info->subtype == 'r' AND !$this->hidenoselect($item)) {
         //print the "not_selected" item on radiobuttons
         ?>
@@ -317,8 +317,8 @@ class feedback_item_multichoice extends feedback_item_base {
         echo '</ul>';
         echo '</div>';
     }
-    
-    /**     
+
+    /**
      * print the item at the complete-page of feedback
      *
      * @global object
@@ -365,7 +365,7 @@ class feedback_item_multichoice extends feedback_item_base {
 
         //print the presentation
         echo '<div class="feedback_item_presentation_'.$align.$highlight.'">';
-        
+
         echo '<ul>';
         if($info->horizontal) {
             $hv = 'h';
@@ -401,7 +401,7 @@ class feedback_item_multichoice extends feedback_item_base {
         echo '</div>';
     }
 
-    /**     
+    /**
      * print the item at the complete-page of feedback
      *
      * @global object
@@ -429,13 +429,13 @@ class feedback_item_multichoice extends feedback_item_base {
         }else {
             $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
         }
-        
+
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
         echo '('.$item->label.') ';
         echo format_text($item->name . $requiredmark, true, false, false);
         echo '</div>';
-        
+
         //print the presentation
         echo '<div class="feedback_item_presentation_'.$align.'">';
         $index = 1;
@@ -490,7 +490,7 @@ class feedback_item_multichoice extends feedback_item_base {
         $vallist = $data;
         return trim($this->item_arrayToString($vallist));
     }
-    
+
     //compares the dbvalue with the dependvalue
     //dbvalue is the number of one selection
     //dependvalue is the presentation of one selection
@@ -501,7 +501,7 @@ class feedback_item_multichoice extends feedback_item_base {
         }else {
             $dbvalues = explode(FEEDBACK_MULTICHOICE_LINE_SEP, $dbvalue);
         }
-        
+
         $info = $this->get_info($item);
         $presentation = explode (FEEDBACK_MULTICHOICE_LINE_SEP, $info->presentation);
         $index = 1;
@@ -515,7 +515,7 @@ class feedback_item_multichoice extends feedback_item_base {
         }
         return false;
     }
-    
+
     function get_presentation($data) {
         $present = str_replace("\n", FEEDBACK_MULTICHOICE_LINE_SEP, trim($data->itemvalues));
         if(!isset($data->subtype)) {
@@ -536,7 +536,7 @@ class feedback_item_multichoice extends feedback_item_base {
     function get_info($item) {
         $presentation = empty($item->presentation) ? '' : $item->presentation;
 
-        $info = new object();
+        $info = new stdClass();
         //check the subtype of the multichoice
         //it can be check(c), radio(r) or dropdown(d)
         $info->subtype = '';
@@ -576,7 +576,7 @@ class feedback_item_multichoice extends feedback_item_base {
     function print_item_radio($presentation, $item, $value, $info, $align) {
         $index = 1;
         $checked = '';
-        
+
         if($info->horizontal) {
             $hv = 'h';
         }else {
@@ -612,7 +612,7 @@ class feedback_item_multichoice extends feedback_item_base {
         }else {
             $values = explode(FEEDBACK_MULTICHOICE_LINE_SEP, $value);
         }
-        
+
         if($info->horizontal) {
             $hv = 'h';
         }else {
@@ -652,7 +652,7 @@ class feedback_item_multichoice extends feedback_item_base {
         }else {
             $hv = 'v';
         }
-        
+
         ?>
         <li class="feedback_item_select_<?php echo $hv.'_'.$align;?>">
             <select name="<?php echo $item->typ .'_' . $item->id;?>" size="1">
@@ -676,36 +676,36 @@ class feedback_item_multichoice extends feedback_item_base {
         </li>
         <?php
     }
-    
+
     function set_ignoreempty($item, $ignoreempty=true) {
         $item->options = str_replace(FEEDBACK_MULTICHOICE_IGNOREEMPTY, '', $item->options);
         if($ignoreempty) {
             $item->options .= FEEDBACK_MULTICHOICE_IGNOREEMPTY;
         }
     }
-    
+
     function ignoreempty($item) {
         if(strstr($item->options, FEEDBACK_MULTICHOICE_IGNOREEMPTY)) {
             return true;
         }
         return false;
     }
-    
+
     function set_hidenoselect($item, $hidenoselect=true) {
         $item->options = str_replace(FEEDBACK_MULTICHOICE_HIDENOSELECT, '', $item->options);
         if($hidenoselect) {
             $item->options .= FEEDBACK_MULTICHOICE_HIDENOSELECT;
         }
     }
-    
+
     function hidenoselect($item) {
         if(strstr($item->options, FEEDBACK_MULTICHOICE_HIDENOSELECT)) {
             return true;
         }
         return false;
     }
-    
-    
+
+
     function can_switch_require() {
         return true;
     }

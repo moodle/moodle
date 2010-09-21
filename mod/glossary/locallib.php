@@ -375,7 +375,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
         global $OUTPUT, $DB;
         $entry = clone $entry;
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $options = new object();
+        $options = new stdClass();
         $options->para = false;
         $options->trusted = $entry->definitiontrust;
         $options->context = $context;

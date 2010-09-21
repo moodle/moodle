@@ -94,7 +94,7 @@
     $timenow = time();
     foreach ($answers as $key => $val) {
         if ($key != 'sesskey') {
-            $newdata = new object();
+            $newdata = new stdClass();
             $newdata->time = $timenow;
             $newdata->userid = $USER->id;
             $newdata->survey = $survey->id;

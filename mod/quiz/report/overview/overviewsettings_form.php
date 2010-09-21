@@ -11,7 +11,7 @@ class mod_quiz_report_overview_settings extends moodleform {
         if (!$this->_customdata['currentgroup']){
             $studentsstring = get_string('participants');
         } else {
-            $a = new object();
+            $a = new stdClass();
             $a->coursestudent = get_string('participants');
             $a->groupname = groups_get_group_name($this->_customdata['currentgroup']);
             if (20 < strlen($a->groupname)){

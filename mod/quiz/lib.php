@@ -578,7 +578,7 @@ function quiz_update_grades($quiz, $userid=0, $nullifnone=true) {
         quiz_grade_item_update($quiz, $grades);
 
     } else if ($userid and $nullifnone) {
-        $grade = new object();
+        $grade = new stdClass();
         $grade->userid   = $userid;
         $grade->rawgrade = NULL;
         quiz_grade_item_update($quiz, $grade);

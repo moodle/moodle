@@ -86,7 +86,7 @@ if ($overrideid) {
 }
 else {
     // new override
-    $data = new object();
+    $data = new stdClass();
 }
 
 // merge quiz defaults with data

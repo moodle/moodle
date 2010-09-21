@@ -429,7 +429,7 @@ if ($pageid != LESSON_EOL) {
             $a->total = $lesson->grade;
             $lessoncontent .= $lessonoutput->paragraph(get_string("yourcurrentgradeisoutof", "lesson", $a), 'center');
 
-            $grade = new object();
+            $grade = new stdClass();
             $grade->lessonid = $lesson->id;
             $grade->userid = $USER->id;
             $grade->grade = $gradeinfo->grade;
@@ -451,7 +451,7 @@ if ($pageid != LESSON_EOL) {
         } else {
             if ($lesson->timed) {
                 if ($outoftime == 'normal') {
-                    $grade = new object();;
+                    $grade = new stdClass();;
                     $grade->lessonid = $lesson->id;
                     $grade->userid = $USER->id;
                     $grade->grade = 0;

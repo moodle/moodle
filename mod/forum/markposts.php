@@ -71,7 +71,7 @@ if (isguestuser()) {   // Guests can't change forum
     exit;
 }
 
-$info = new object();
+$info = new stdClass();
 $info->name  = fullname($user);
 $info->forum = format_string($forum->name);
 

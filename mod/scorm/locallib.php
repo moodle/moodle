@@ -422,7 +422,7 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
         }
     }
     if ($tracks = $DB->get_records('scorm_scoes_track', array('userid'=>$userid, 'scoid'=>$scoid, 'attempt'=>$attempt),'element ASC')) {
-        $usertrack = new object();
+        $usertrack = new stdClass();
         $usertrack->userid = $userid;
         $usertrack->scoid = $scoid;
         // Defined in order to unify scorm1.2 and scorm2004
@@ -483,7 +483,7 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
 function scorm_get_sco_runtime($scormid, $scoid, $userid, $attempt=1) {
     global $DB;
 
-    $timedata = new object();
+    $timedata = new stdClass();
     $sql = !empty($scoid) ? "userid=$userid AND scormid=$scormid AND scoid=$scoid AND attempt=$attempt" : "userid=$userid AND scormid=$scormid AND attempt=$attempt";
     $tracks = $DB->get_records_select('scorm_scoes_track',"$sql ORDER BY timemodified ASC");
     if ($tracks) {

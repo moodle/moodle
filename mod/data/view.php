@@ -169,7 +169,7 @@
                     }
                 }
                 if (!empty($val)) {
-                    $search_array[$field->id] = new object();
+                    $search_array[$field->id] = new stdClass();
                     list($search_array[$field->id]->sql, $search_array[$field->id]->params) = $searchfield->generate_sql('c'.$field->id, $val);
                     $search_array[$field->id]->data = $val;
                     $vals[] = $val;
@@ -189,7 +189,7 @@
             $ln = isset($search_array[DATA_LASTNAME]) ? $search_array[DATA_LASTNAME]->data : '';
         }
         if (!empty($fn)) {
-            $search_array[DATA_FIRSTNAME] = new object();
+            $search_array[DATA_FIRSTNAME] = new stdClass();
             $search_array[DATA_FIRSTNAME]->sql    = '';
             $search_array[DATA_FIRSTNAME]->params = array();
             $search_array[DATA_FIRSTNAME]->field  = 'u.firstname';
@@ -199,7 +199,7 @@
             unset($search_array[DATA_FIRSTNAME]);
         }
         if (!empty($ln)) {
-            $search_array[DATA_LASTNAME] = new object();
+            $search_array[DATA_LASTNAME] = new stdClass();
             $search_array[DATA_LASTNAME]->sql     = '';
             $search_array[DATA_FIRSTNAME]->params = array();
             $search_array[DATA_LASTNAME]->field   = 'u.lastname';
@@ -323,7 +323,7 @@
     }*/
 
     if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
-        $options = new object();
+        $options = new stdClass();
         $options->noclean = true;
         echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
     }
@@ -405,7 +405,7 @@ if ($showactivity) {
         if ($approve && confirm_sesskey() && $approvecap) {
             if ($approverecord = $DB->get_record('data_records', array('id'=>$approve))) {   // Need to check this is valid
                 if ($approverecord->dataid == $data->id) {                       // Must be from this database
-                    $newrecord = new object();
+                    $newrecord = new stdClass();
                     $newrecord->id = $approverecord->id;
                     $newrecord->approved = 1;
                     $DB->update_record('data_records', $newrecord);
@@ -619,7 +619,7 @@ if ($showactivity) {
 
         if (empty($records)) {
             if ($maxcount){
-                $a = new object();
+                $a = new stdClass();
                 $a->max = $maxcount;
                 $a->reseturl = "view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=0";
                 echo $OUTPUT->notification(get_string('foundnorecords','data', $a));
@@ -630,7 +630,7 @@ if ($showactivity) {
         } else { //  We have some records to print
 
             if ($maxcount != $totalcount) {
-                $a = new object();
+                $a = new stdClass();
                 $a->num = $totalcount;
                 $a->max = $maxcount;
                 $a->reseturl = "view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=0";

@@ -102,7 +102,7 @@ class lesson_page_type_multichoice extends lesson_page {
         global $DB, $CFG, $PAGE;
         $result = parent::check_answer();
 
-        $formattextdefoptions = new object();
+        $formattextdefoptions = new stdClass();
         $formattextdefoptions->noclean = true;
         $formattextdefoptions->para = false;
 

@@ -200,7 +200,7 @@ function url_user_outline($course, $user, $mod, $url) {
         $numviews = count($logs);
         $lastlog = array_pop($logs);
 
-        $result = new object();
+        $result = new stdClass();
         $result->info = get_string('numviews', '', $numviews);
         $result->time = $lastlog->time;
 
@@ -262,7 +262,7 @@ function url_get_coursemodule_info($coursemodule) {
         return NULL;
     }
 
-    $info = new object();
+    $info = new stdClass();
     $info->name = $url->name;
 
     //note: there should be a way to differentiate links from normal resources

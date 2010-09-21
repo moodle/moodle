@@ -155,7 +155,7 @@ function xmldb_data_upgrade($oldversion) {
                                                       AND (d.requiredentries > 0 OR d.requiredentriestoview > 0)
                                              ORDER BY c.fullname, d.name");
             if (!empty($databases)) {
-                $a = new object();
+                $a = new stdClass();
                 $a->text = '';
                 foreach($databases as $database) {
                     $a->text .= $database->fullname." - " .$database->name. " (course id: ".$database->course." - database id: ".$database->id.")<br/>";

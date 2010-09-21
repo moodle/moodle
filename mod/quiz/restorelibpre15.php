@@ -170,7 +170,7 @@
 
         //Iterate over questions
         for($i = 0; $i < sizeof($questions); $i++) {
-            $question = new object;
+            $question = new stdClass();
             $que_info = $questions[$i];
             //traverse_xmlize($que_info);                                                                 //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
@@ -974,7 +974,7 @@
             $multianswer->answers = implode(",",$ansarr);
 
             //Build the new question structure
-            $question = new object;
+            $question = new stdClass();
             $question->category           = $parentquestion->category;
             $question->parent             = $parentquestion->id;
             $question->name               = $parentquestion->name;
@@ -1034,7 +1034,7 @@
         if ($status) {
             ksort($createdquestions);
 
-            $multianswerdb = new object;
+            $multianswerdb = new stdClass();
             $multianswerdb->question = $parentquestion->id;
             $multianswerdb->sequence = implode(",",$createdquestions);
             $mid = $DB->insert_record('question_multianswer', $multianswerdb);

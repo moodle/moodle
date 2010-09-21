@@ -19,7 +19,7 @@ class assignment_offline extends assignment_base {
     }
 
     function prepare_new_submission($userid) {
-        $submission = new Object;
+        $submission = new stdClass();
         $submission->assignment   = $this->assignment->id;
         $submission->userid       = $userid;
         $submission->timecreated  = time(); // needed for offline assignments

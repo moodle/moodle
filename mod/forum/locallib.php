@@ -293,7 +293,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         $post->author = $users[$post->userid];
         $viewfullnames = true;
         // format the post body
-        $options = new object();
+        $options = new stdClass();
         $options->para = true;
         $format = $this->get('exporter')->get('format');
         $formattedtext = format_text($post->message, $post->messageformat, $options, $this->get('course')->id);
@@ -312,7 +312,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         $output .= '<div class="subject">'.format_string($post->subject).'</div>';
 
         $fullname = fullname($users[$post->userid], $viewfullnames);
-        $by = new object();
+        $by = new stdClass();
         $by->name = $fullname;
         $by->date = userdate($post->modified, '', $this->user->timezone);
         $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';

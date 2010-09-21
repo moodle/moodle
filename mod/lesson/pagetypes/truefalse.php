@@ -63,7 +63,7 @@ class lesson_page_type_truefalse extends lesson_page {
     }
     public function check_answer() {
         global $DB, $CFG;
-        $formattextdefoptions = new object();
+        $formattextdefoptions = new stdClass();
         $formattextdefoptions->noclean = true;
         $formattextdefoptions->para = false;
 
@@ -101,7 +101,7 @@ class lesson_page_type_truefalse extends lesson_page {
 
     public function display_answers(html_table $table) {
         $answers = $this->get_answers();
-        $options = new object();
+        $options = new stdClass();
         $options->noclean = true;
         $options->para = false;
         $i = 1;
@@ -177,7 +177,7 @@ class lesson_page_type_truefalse extends lesson_page {
 
     public function report_answers($answerpage, $answerdata, $useranswer, $pagestats, &$i, &$n) {
         $answers = $this->get_answers();
-        $formattextdefoptions = new object(); //I'll use it widely in this page
+        $formattextdefoptions = new stdClass(); //I'll use it widely in this page
         $formattextdefoptions->para = false;
         $formattextdefoptions->noclean = true;
         foreach ($answers as $answer) {
@@ -301,7 +301,7 @@ class lesson_display_answer_form_truefalse extends moodleform {
 
         $mform->addElement('header', 'pageheader', $OUTPUT->box($contents, 'contents'));
 
-        $options = new object();
+        $options = new stdClass();
         $options->para = false;
         $options->noclean = true;
 

@@ -160,7 +160,7 @@ function lesson_user_outline($course, $user, $mod, $lesson) {
     require_once("$CFG->libdir/gradelib.php");
     $grades = grade_get_grades($course->id, 'mod', 'lesson', $lesson->id, $user->id);
 
-    $return = new object();
+    $return = new stdClass();
     if (empty($grades->items[0]->grades)) {
         $return->info = get_string("no")." ".get_string("attempts", "lesson");
     } else {
@@ -403,7 +403,7 @@ function lesson_update_grades($lesson, $userid=0, $nullifnone=true) {
         lesson_grade_item_update($lesson, $grades);
 
     } else if ($userid and $nullifnone) {
-        $grade = new object();
+        $grade = new stdClass();
         $grade->userid   = $userid;
         $grade->rawgrade = NULL;
         lesson_grade_item_update($lesson, $grade);

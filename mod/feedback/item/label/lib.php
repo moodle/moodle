@@ -188,7 +188,7 @@ class feedback_item_label extends feedback_item_base {
     function get_presentation($data) {
         // $context = get_context_instance(CONTEXT_MODULE, $data->cmid);
 
-        // $presentation = new object();
+        // $presentation = new stdClass();
         // $presentation->id = null;
         // $presentation->definition = '';
         // $presentation->format = FORMAT_HTML;
@@ -206,7 +206,7 @@ class feedback_item_label extends feedback_item_base {
         $context = get_context_instance(CONTEXT_MODULE, $item->cmid);
         $item = file_postupdate_standard_editor($item, 'presentation', $this->presentationoptions, $context, 'mod_feedback', 'item', $item->id);
 
-        // $item = new object();
+        // $item = new stdClass();
         // $item->id = $data->id
         $DB->update_record('feedback_item', $item);
         return $item->id;

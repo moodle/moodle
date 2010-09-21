@@ -84,7 +84,7 @@ if ( $hook >0 ) {
     if ( $action == "edit" ) {
         if ( $confirm ) {
             $action = "";
-            $cat = new object();
+            $cat = new stdClass();
             $cat->id = $hook;
             $cat->name = $name;
             $cat->usedynalink = $usedynalink;
@@ -170,7 +170,7 @@ if ( $hook >0 ) {
 
         } else {
             $action = "";
-            $cat = new object();
+            $cat = new stdClass();
             $cat->name = $name;
             $cat->usedynalink = $usedynalink;
             $cat->glossaryid = $glossary->id;

@@ -55,7 +55,7 @@ if (!forum_tp_can_track_forums($forum)) {
     redirect($returnto);
 }
 
-$info = new object();
+$info = new stdClass();
 $info->name  = fullname($USER);
 $info->forum = format_string($forum->name);
 if (forum_tp_is_tracked($forum) ) {

@@ -49,22 +49,22 @@ function xmldb_quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2008062001) {
-        $reporttoinsert = new object();
+        $reporttoinsert = new stdClass();
         $reporttoinsert->name = 'overview';
         $reporttoinsert->displayorder = 10000;
         $DB->insert_record('quiz_report', $reporttoinsert);
 
-        $reporttoinsert = new object();
+        $reporttoinsert = new stdClass();
         $reporttoinsert->name = 'responses';
         $reporttoinsert->displayorder = 9000;
         $DB->insert_record('quiz_report', $reporttoinsert);
 
-        $reporttoinsert = new object();
+        $reporttoinsert = new stdClass();
         $reporttoinsert->name = 'regrade';
         $reporttoinsert->displayorder = 7000;
         $DB->insert_record('quiz_report', $reporttoinsert);
 
-        $reporttoinsert = new object();
+        $reporttoinsert = new stdClass();
         $reporttoinsert->name = 'grading';
         $reporttoinsert->displayorder = 6000;
         $DB->insert_record('quiz_report', $reporttoinsert);

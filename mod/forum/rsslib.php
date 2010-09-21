@@ -282,11 +282,11 @@ function forum_rss_feed_contents($forum, $sql) {
             $isdiscussion = false;
     }
 
-    $formatoptions = new object;
+    $formatoptions = new stdClass();
     $items = array();
     foreach ($recs as $rec) {
-            $item = new object();
-            $user = new object();
+            $item = new stdClass();
+            $user = new stdClass();
             $item->title = format_string($rec->discussionname);
             $user->firstname = $rec->userfirstname;
             $user->lastname = $rec->userlastname;

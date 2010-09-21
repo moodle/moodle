@@ -926,7 +926,7 @@ class quiz_attempt extends quiz {
 
     /// Work out a nice title.
         $student = $DB->get_record('user', array('id' => $this->get_userid()));
-        $a = new object();
+        $a = new stdClass();
         $a->fullname = fullname($student, true);
         $a->attempt = $this->get_attempt_number();
 

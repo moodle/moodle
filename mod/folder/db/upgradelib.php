@@ -68,7 +68,7 @@ function folder_20_migrate() {
             $introformat = FORMAT_MOODLE;
         }
 
-        $folder = new object();
+        $folder = new stdClass();
         $folder->course       = $candidate->course;
         $folder->name         = $candidate->name;
         $folder->intro        = $intro;

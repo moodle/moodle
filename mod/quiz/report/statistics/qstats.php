@@ -21,7 +21,7 @@ class qstats{
         $this->questions = $questions;
     }
     function stats_init_object(){
-        $statsinit = new object();
+        $statsinit = new stdClass();
         $statsinit->s = 0;
         $statsinit->totalgrades = 0;
         $statsinit->totalothergrades = 0;

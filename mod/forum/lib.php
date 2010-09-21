@@ -74,7 +74,7 @@ function forum_add_instance($forum, $mform) {
     $modcontext = get_context_instance(CONTEXT_MODULE, $forum->coursemodule);
 
     if ($forum->type == 'single') {  // Create related discussion.
-        $discussion = new object();
+        $discussion = new stdClass();
         $discussion->course        = $forum->course;
         $discussion->forum         = $forum->id;
         $discussion->name          = $forum->name;
@@ -158,7 +158,7 @@ function forum_update_instance($forum, $mform) {
                 $discussion = array_pop($discussions);
             } else {
                 // try to recover by creating initial discussion - MDL-16262
-                $discussion = new object();
+                $discussion = new stdClass();
                 $discussion->course          = $forum->course;
                 $discussion->forum           = $forum->id;
                 $discussion->name            = $forum->name;
@@ -507,7 +507,7 @@ function forum_cron() {
 
             // reset the caches
             foreach ($coursemodules as $forumid=>$unused) {
-                $coursemodules[$forumid]->cache       = new object();
+                $coursemodules[$forumid]->cache       = new stdClass();
                 $coursemodules[$forumid]->cache->caps = array();
                 unset($coursemodules[$forumid]->uservisible);
             }
@@ -590,7 +590,7 @@ function forum_cron() {
                 // Does the user want this post in a digest?  If so postpone it for now.
                 if ($userto->maildigest > 0) {
                     // This user wants the mails to be in digest form
-                    $queue = new object();
+                    $queue = new stdClass();
                     $queue->userid       = $userto->id;
                     $queue->discussionid = $discussion->id;
                     $queue->postid       = $post->id;
@@ -626,7 +626,7 @@ function forum_cron() {
 
                 mtrace('Sending ', '');
 
-                $eventdata = new object();
+                $eventdata = new stdClass();
                 $eventdata->component        = 'mod_forum';
                 $eventdata->name             = 'posts';
                 $eventdata->userfrom         = $userfrom;
@@ -800,7 +800,7 @@ function forum_cron() {
 
                 $postsubject = get_string('digestmailsubject', 'forum', format_string($site->shortname, true));
 
-                $headerdata = new object();
+                $headerdata = new stdClass();
                 $headerdata->sitename = format_string($site->fullname, true);
                 $headerdata->userprefs = $CFG->wwwroot.'/user/edit.php?id='.$userid.'&amp;course='.$site->id;
 
@@ -889,7 +889,7 @@ function forum_cron() {
 
                         if ($userto->maildigest == 2) {
                             // Subjects only
-                            $by = new object();
+                            $by = new stdClass();
                             $by->name = fullname($userfrom);
                             $by->date = userdate($post->modified);
                             $posttext .= "\n".format_string($post->subject,true).' '.get_string("bynameondate", "forum", $by);
@@ -1127,7 +1127,7 @@ function forum_user_outline($course, $user, $mod, $forum) {
     $count = forum_count_user_posts($forum->id, $user->id);
 
     if ($count && $count->postcount > 0) {
-        $result = new object();
+        $result = new stdClass();
         $result->info = get_string("numposts", "forum", $count->postcount);
         $result->time = $count->lastpost;
         if ($grade) {
@@ -1135,7 +1135,7 @@ function forum_user_outline($course, $user, $mod, $forum) {
         }
         return $result;
     } else if ($grade) {
-        $result = new object();
+        $result = new stdClass();
         $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
         $result->time = $grade->dategraded;
         return $result;
@@ -1485,7 +1485,7 @@ function forum_update_grades($forum, $userid=0, $nullifnone=true) {
         forum_grade_item_update($forum, $grades);
 
     } else if ($userid and $nullifnone) {
-        $grade = new object();
+        $grade = new stdClass();
         $grade->userid   = $userid;
         $grade->rawgrade = NULL;
         forum_grade_item_update($forum, $grade);
@@ -2934,7 +2934,7 @@ function forum_get_course_forum($courseid, $type) {
         echo $OUTPUT->notification("Could not find forum module!!");
         return false;
     }
-    $mod = new object();
+    $mod = new stdClass();
     $mod->course = $courseid;
     $mod->module = $module->id;
     $mod->instance = $forum->id;
@@ -2991,7 +2991,7 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
     }
 
     // format the post body
-    $options = new object();
+    $options = new stdClass();
     $options->para = true;
     $formattedtext = format_text($post->message, $post->messageformat, $options, $course->id);
 
@@ -3009,7 +3009,7 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
     $output .= '<div class="subject">'.format_string($post->subject).'</div>';
 
     $fullname = fullname($userfrom, $viewfullnames);
-    $by = new object();
+    $by = new stdClass();
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$userfrom->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified, '', $userto->timezone);
     $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
@@ -3125,7 +3125,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
     // caching
     if (!isset($cm->cache)) {
-        $cm->cache = new object();
+        $cm->cache = new stdClass();
     }
 
     if (!isset($cm->cache->caps)) {
@@ -3208,7 +3208,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     echo '<table cellspacing="0" class="forumpost'.$read_style.'">';
 
     // Picture
-    $postuser = new object();
+    $postuser = new stdClass();
     $postuser->id        = $post->userid;
     $postuser->firstname = $post->firstname;
     $postuser->lastname  = $post->lastname;
@@ -3234,7 +3234,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
     echo '<div class="author">';
     $fullname = fullname($postuser, $cm->cache->caps['moodle/site:viewfullnames']);
-    $by = new object();
+    $by = new stdClass();
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
                 $post->userid.'&amp;course='.$course->id.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified);
@@ -3271,7 +3271,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         echo '</div>';
     }
 
-    $options = new object();
+    $options = new stdClass();
     $options->para    = false;
     $options->trusted = $post->messagetrust;
     if ($link and (strlen(strip_tags($post->message)) > $CFG->forum_longpost)) {
@@ -3486,7 +3486,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     echo "</td>\n";
 
     // Picture
-    $postuser = new object;
+    $postuser = new stdClass();
     $postuser->id = $post->userid;
     $postuser->firstname = $post->firstname;
     $postuser->lastname = $post->lastname;
@@ -3554,7 +3554,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     echo '<td class="lastpost">';
     $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
     $parenturl = (empty($post->lastpostid)) ? '' : '&amp;parent='.$post->lastpostid;
-    $usermodified = new object();
+    $usermodified = new stdClass();
     $usermodified->id        = $post->usermodified;
     $usermodified->firstname = $post->umfirstname;
     $usermodified->lastname  = $post->umlastname;
@@ -3737,7 +3737,7 @@ function forum_move_attachments($discussion, $forumfrom, $forumto) {
         foreach ($posts as $post) {
             if ($oldfiles = $fs->get_area_files($oldcontext->id, 'mod_forum', 'attachment', $post->id, "id", false)) {
                 foreach ($oldfiles as $oldfile) {
-                    $file_record = new object();
+                    $file_record = new stdClass();
                     $file_record->contextid = $newcontext->id;
                     $fs->create_file_from_storedfile($file_record, $oldfile);
                 }
@@ -4074,7 +4074,7 @@ function forum_add_discussion($discussion, $mform=null, &$message=null, $userid=
     $forum = $DB->get_record('forum', array('id'=>$discussion->forum));
     $cm    = get_coursemodule_from_instance('forum', $forum->id);
 
-    $post = new object();
+    $post = new stdClass();
     $post->discussion    = 0;
     $post->parent        = 0;
     $post->userid        = $userid;
@@ -4342,7 +4342,7 @@ function forum_subscribe($userid, $forumid) {
         return true;
     }
 
-    $sub = new object();
+    $sub = new stdClass();
     $sub->userid  = $userid;
     $sub->forum = $forumid;
 
@@ -4403,7 +4403,7 @@ function forum_post_subscription($post, $forum) {
         }
     }
 
-    $info = new object();
+    $info = new stdClass();
     $info->name  = fullname($USER);
     $info->forum = format_string($forum->name);
 
@@ -5242,7 +5242,7 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
     }
 
     // $cm holds general cache for forum functions
-    $cm->cache = new object();
+    $cm->cache = new stdClass();
     $cm->cache->groups      = groups_get_all_groups($course->id, 0, $cm->groupingid);
     $cm->cache->usersgroups = array();
 
@@ -5400,7 +5400,7 @@ function forum_print_posts_threaded($course, &$cm, $forum, $discussion, $parent,
                     echo "</div>\n";
                     continue;
                 }
-                $by = new object();
+                $by = new stdClass();
                 $by->name = fullname($post, $canviewfullnames);
                 $by->date = userdate($post->modified);
 
@@ -5557,7 +5557,7 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
     $aname = format_string($cm->name,true);
 
     foreach ($printposts as $post) {
-        $tmpactivity = new object();
+        $tmpactivity = new stdClass();
 
         $tmpactivity->type         = 'forum';
         $tmpactivity->cmid         = $cm->id;
@@ -5565,13 +5565,13 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
         $tmpactivity->sectionnum   = $cm->sectionnum;
         $tmpactivity->timestamp    = $post->modified;
 
-        $tmpactivity->content = new object();
+        $tmpactivity->content = new stdClass();
         $tmpactivity->content->id         = $post->id;
         $tmpactivity->content->discussion = $post->discussion;
         $tmpactivity->content->subject    = format_string($post->subject);
         $tmpactivity->content->parent     = $post->parent;
 
-        $tmpactivity->user = new object();
+        $tmpactivity->user = new stdClass();
         $tmpactivity->user->id        = $post->userid;
         $tmpactivity->user->firstname = $post->firstname;
         $tmpactivity->user->lastname  = $post->lastname;
@@ -6692,7 +6692,7 @@ function forum_tp_stop_tracking($forumid, $userid=false) {
     }
 
     if (!$DB->record_exists('forum_track_prefs', array('userid' => $userid, 'forumid' => $forumid))) {
-        $track_prefs = new object();
+        $track_prefs = new stdClass();
         $track_prefs->userid = $userid;
         $track_prefs->forumid = $forumid;
         $DB->insert_record('forum_track_prefs', $track_prefs);
@@ -6760,7 +6760,7 @@ function forum_discussion_update_last_post($discussionid) {
 // Lets go find the last post
     if (($lastposts = $DB->get_records_sql($sql, array($discussionid), 0, 1))) {
         $lastpost = reset($lastposts);
-        $discussionobject = new Object;
+        $discussionobject = new stdClass();
         $discussionobject->id           = $discussionid;
         $discussionobject->usermodified = $lastpost->userid;
         $discussionobject->timemodified = $lastpost->modified;
@@ -6855,7 +6855,7 @@ function forum_check_throttling($forum, $cm=null) {
                                       .' ON p.discussion = d.id WHERE d.forum = ?'
                                       .' AND p.userid = ? AND p.created > ?', array($forum->id, $USER->id, $timeafter));
 
-    $a = new object();
+    $a = new stdClass();
     $a->blockafter = $forum->blockafter;
     $a->numposts = $numposts;
     $a->blockperiod = get_string('secondstotime'.$forum->blockperiod);
@@ -7128,7 +7128,7 @@ function forum_convert_to_roles($forum, $forummodid, $teacherroles=array(),
         } else {
             // Create a course module for the forum and assign it to
             // section 0 in the course.
-            $mod = new object;
+            $mod = new stdClass();
             $mod->course = $forum->course;
             $mod->module = $forummodid;
             $mod->instance = $forum->id;

@@ -134,7 +134,7 @@ class data_field_checkbox extends data_field_base {
     function update_content($recordid, $value, $name='') {
         global $DB;
 
-        $content = new object();
+        $content = new stdClass();
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
         $content->content = $this->format_data_field_checkbox_content($value);

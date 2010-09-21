@@ -231,7 +231,7 @@
                     feedback_send_email_anonym($cm, $feedback, $course, $userid);
                 }
                 //tracking the submit
-                $tracking = new object();
+                $tracking = new stdClass();
                 $tracking->userid = $USER->id;
                 $tracking->feedback = $feedback->id;
                 $tracking->completed = $new_completed_id;
@@ -386,7 +386,7 @@
                 $itemnr = $DB->count_records_select('feedback_item', 'feedback = ? AND hasvalue = 1 AND position < ?', array($feedback->id, $startposition));
                 $lastbreakposition = 0;
                 $align = right_to_left() ? 'right' : 'left';
-                
+
                 foreach($feedbackitems as $feedbackitem){
                     if(!isset($startitem)) {
                         //avoid showing double pagebreaks
@@ -395,7 +395,7 @@
                         }
                         $startitem = $feedbackitem;
                     }
-                    
+
                     if($feedbackitem->dependitem > 0) {
                         //chech if the conditions are ok
                         if(!isset($feedbackcompletedtmp->id) OR !feedback_compare_item_value($feedbackcompletedtmp->id, $feedbackitem->dependitem, $feedbackitem->dependvalue, true)) {
@@ -404,13 +404,13 @@
                             continue;
                         }
                     }
-                    
+
                     if($feedbackitem->dependitem > 0) {
                         $dependstyle = ' feedback_complete_depend';
                     }else {
                         $dependstyle = '';
                     }
-                    
+
                     echo $OUTPUT->box_start('feedback_item_box_'.$align.$dependstyle);
                         $value = '';
                         //get the value
@@ -467,7 +467,7 @@
                 echo '</fieldset>';
                 echo '</form>';
                 echo $OUTPUT->box_end();
-                
+
                 echo $OUTPUT->box_start('feedback_complete_cancel');
                 if($courseid) {
                     echo '<form action="'.$CFG->wwwroot.'/course/view.php?id='.$courseid.'" method="post" onsubmit=" ">';

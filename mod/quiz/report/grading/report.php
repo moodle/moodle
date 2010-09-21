@@ -170,7 +170,7 @@ class quiz_grading_report extends quiz_default_report {
         }
         $qmenu = array();
         foreach ($gradeableqs as $qid => $questionformenu){
-            $a= new object();
+            $a= new stdClass();
             $a->number = $gradeableqs[$qid]->number;
             $a->name = $gradeableqs[$qid]->name;
             $a->gradedattempts =$qattempts[$qid]->gradedattempts;
@@ -188,7 +188,7 @@ class quiz_grading_report extends quiz_default_report {
         if (!$questionid){
             return true;
         }
-        $a= new object();
+        $a= new stdClass();
         $a->number = $question->number;
         $a->name = $question->name;
         $a->gradedattempts =$qattempts[$question->id]->gradedattempts;
@@ -356,7 +356,7 @@ class quiz_grading_report extends quiz_default_report {
             } else if ($userid){
                 echo $OUTPUT->heading(get_string('gradinguser','quiz_grading', $fullname), 3);
             } else if ($attemptid){
-                $a = new object();
+                $a = new stdClass();
                 $a->fullname = $fullname;
                 $a->attempt = $firstattempt->attempt;
                 echo $OUTPUT->heading(get_string('gradingattempt','quiz_grading', $a), 3);
@@ -391,7 +391,7 @@ class quiz_grading_report extends quiz_default_report {
                     $gradedclass = 'main';
                     $gradedstring = '';
                 }
-                $a = new object();
+                $a = new stdClass();
                 $a->fullname = fullname($attempt, true);
                 $a->attempt = $attempt->attempt;
 

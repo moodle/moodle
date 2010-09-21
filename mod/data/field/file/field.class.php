@@ -156,7 +156,7 @@ class data_field_file extends data_field_base {
         if (!$content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
 
         // Quickly make one now!
-            $content = new object();
+            $content = new stdClass();
             $content->fieldid  = $this->field->id;
             $content->recordid = $recordid;
             $id = $DB->insert_record('data_content', $content);

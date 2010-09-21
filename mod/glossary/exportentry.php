@@ -108,7 +108,7 @@ if (!data_submitted() or !$confirm or !confirm_sesskey()) {
 
     if ($oldfiles = $fs->get_area_files($context->id, 'mod_glossary', 'attachment', $entry->id)) {
         foreach ($oldfiles as $oldfile) {
-            $file_record = new object();
+            $file_record = new stdClass();
             $file_record->contextid = $maincontext->id;
             $fs->create_file_from_storedfile($file_record, $oldfile);
         }

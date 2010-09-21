@@ -142,7 +142,7 @@ function label_get_coursemodule_info($coursemodule) {
             $label->name = "label{$label->id}";
             $DB->set_field('label', 'name', $label->name, array('id'=>$label->id));
         }
-        $info = new object();
+        $info = new stdClass();
         // no filtering hre because this info is cached and filtered later
         $info->extra = format_module_intro('label', $label, $coursemodule->id, false);
         $info->name  = $label->name;

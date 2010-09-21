@@ -196,7 +196,7 @@ $accessmanager = $attemptobj->get_access_manager($timenow);
 $accessmanager->clear_password_access();
 
 /// Trigger event
-$eventdata = new object();
+$eventdata = new stdClass();
 $eventdata->component  = 'mod_quiz';
 $eventdata->course     = $attemptobj->get_courseid();
 $eventdata->quiz       = $attemptobj->get_quizid();

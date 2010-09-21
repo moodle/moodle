@@ -156,7 +156,7 @@ if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $pe
         $ratings = null;
         if ($forum->assessed) {
             if ($scale = make_grades_menu($forum->scale)) {
-                $ratings =new object();
+                $ratings =new stdClass();
                 $ratings->scale = $scale;
                 $ratings->assesstimestart = $forum->assesstimestart;
                 $ratings->assesstimefinish = $forum->assesstimefinish;

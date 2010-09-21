@@ -75,7 +75,7 @@ class quiz_report_responses_table extends table_sql {
 
     function col_picture($attempt){
         global $COURSE, $OUTPUT;
-        $user = new object();
+        $user = new stdClass();
         $user->id = $attempt->userid;
         $user->lastname = $attempt->lastname;
         $user->firstname = $attempt->firstname;

@@ -22,7 +22,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/glossary:approve', $context);
 
 if (!$entry->approved and confirm_sesskey()) {
-    $newentry = new object();
+    $newentry = new stdClass();
     $newentry->id           = $entry->id;
     $newentry->approved     = 1;
     $newentry->timemodified = time(); // wee need this date here to speed up recent activity, TODO: use timestamp in approved field instead in 2.0

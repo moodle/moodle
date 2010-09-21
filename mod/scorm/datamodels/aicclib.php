@@ -59,7 +59,7 @@ function scorm_add_time($a, $b) {
 */
 function scorm_get_aicc_columns($row,$mastername='system_id') {
     $tok = strtok(strtolower($row),"\",\n\r");
-    $result = new object();
+    $result = new stdClass();
     $result->columns = array();
     $i=0;
     while ($tok) {
@@ -225,7 +225,7 @@ function scorm_parse_aicc($scorm) {
     $launch = 0;
     if (isset($courses)) {
         foreach ($courses as $course) {
-            $sco = new object();
+            $sco = new stdClass();
             $sco->identifier = $course->id;
             $sco->scorm = $scorm->id;
             $sco->organization = '';
@@ -275,7 +275,7 @@ function scorm_parse_aicc($scorm) {
                             $id = $DB->insert_record('scorm_scoes',$sco);
                         }
                         if (!empty($id)) {
-                            $scodata = new object();
+                            $scodata = new stdClass();
                             $scodata->scoid = $id;
                             if (isset($element->web_launch)) {
                                 $scodata->name = 'parameters';

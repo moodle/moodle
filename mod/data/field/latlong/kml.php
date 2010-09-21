@@ -100,7 +100,7 @@ header('Content-Disposition: attachment; filename="moodleearth-'.$d.'-'.$rid.'-'
 echo data_latlong_kml_top();
 
 if($rid) { // List one single item
-    $pm = new object();
+    $pm = new stdClass();
     $pm->name = data_latlong_kml_get_item_name($content, $field);
     $pm->description = "&lt;a href='$CFG->wwwroot/mod/data/view.php?d=$d&amp;rid=$rid'&gt;Item #$rid&lt;/a&gt; in Moodle data activity";
     $pm->long = $content->content1;

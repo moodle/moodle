@@ -19,7 +19,7 @@ class question_reportlib_test extends UnitTestCase {
     public static $includecoverage = array('mod/quiz/report/reportlib.php');
     function test_quiz_report_index_by_keys() {
         $datum = array();
-        $object = new object();
+        $object = new stdClass();
         $object->qid = 3;
         $object->aid = 101;
         $object->response = '';

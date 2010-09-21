@@ -74,7 +74,7 @@
         if(is_array($messageuser)) {
             foreach ($messageuser as $userid) {
                 $senduser = $DB->get_record('user', array('id'=>$userid));
-                $eventdata = new object();
+                $eventdata = new stdClass();
                 $eventdata->name             = 'feedback';
                 $eventdata->component        = 'mod';
                 $eventdata->userfrom         = $USER;

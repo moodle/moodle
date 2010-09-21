@@ -49,7 +49,7 @@ class mod_data_export_form extends moodleform {
                 $mform->addElement('advcheckbox', 'field_'.$field->field->id, '<div title="' . s($field->field->description) . '">' . $field->field->name . '</div>', ' (' . $field->name() . ')', array('group'=>1));
                 $mform->setDefault('field_'.$field->field->id, 1);
             } else {
-                $a = new object;
+                $a = new stdClass();
                 $a->fieldtype = $field->name();
                 $mform->addElement('static', 'unsupported'.$field->field->id, $field->field->name, get_string('unsupportedexport', 'data', $a));
             }

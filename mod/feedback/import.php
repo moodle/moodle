@@ -37,7 +37,7 @@
     if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
         print_error('invalidcoursemodule');
     }
-    
+
     if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
         print_error('badcontext');
     }
@@ -92,11 +92,11 @@
     /// Print the page header
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
-   
+
     $PAGE->set_heading(format_string($course->fullname));
     $PAGE->set_title(format_string($feedback->name));
     echo $OUTPUT->header();
-    
+
     /// print the tabs
     include('tabs.php');
 
@@ -113,9 +113,9 @@
         }
         echo $OUTPUT->box_end();
     }
-    
+
     $mform->display();
-    
+
     // echo $OUTPUT->container_start('mdl-align');
     // echo $OUTPUT->single_button(new moodle_url('edit.php', array('id'=>$id, 'do_show'=>'templates')), get_string('cancel'));
     // echo $OUTPUT->container_end();
@@ -140,10 +140,10 @@
         global $CFG, $DB;
 
         feedback_load_feedback_items();
-    
+
         $deleteolditems = optional_param('deleteolditems', 0, PARAM_INT);
 
-        $error = new object();
+        $error = new stdClass();
         $error->stat = true;
         $error->msg = array();
 
@@ -204,7 +204,7 @@
             }
             $itemobj = new $itemclass();
 
-            $newitem = new object();
+            $newitem = new stdClass();
             $newitem->feedback = $feedbackid;
             $newitem->template = 0;
             $newitem->typ = $typ;
@@ -230,7 +230,7 @@
                     $newitem->presentation = 'd>>>>>'.$newitem->presentation;
                     break;
             }
-            
+
             if(isset($item['#']['DEPENDITEM'][0]['#'])) {
                 $newitem->dependitem = intval($item['#']['DEPENDITEM'][0]['#']);
             }else {
@@ -242,7 +242,7 @@
                 $newitem->dependvalue = '';
             }
             $olditemid = intval($item['#']['ITEMID'][0]['#']);
-            
+
             if($typ != 'pagebreak') {
                 $newitem->hasvalue = $itemobj->get_hasvalue();
             }else {
@@ -251,7 +251,7 @@
             $newitem->required = intval($item['@']['REQUIRED']);
             $newitem->position = $position;
             $newid = $DB->insert_record('feedback_item', $newitem);
-            
+
             $itembackup[$olditemid] = $newid;
             if($newitem->dependitem) {
                 $dependitemsmap[$newid] = $newitem->dependitem;
@@ -263,8 +263,8 @@
             $newitem = $DB->get_record('feedback_item', array('id'=>$key));
             $newitem->dependitem = $itembackup[$newitem->dependitem];
             $DB->update_record('feedback_item', $newitem);
-        }    
-        
+        }
+
         return $error;
     }
 

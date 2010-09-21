@@ -94,7 +94,7 @@ class feedback_item_info extends feedback_item_base {
         $values = feedback_get_group_values($item, $groupid, $courseid);
         if($values) {
             $data = array();
-            $datavalue = new object();
+            $datavalue = new stdClass();
             foreach($values as $value) {
 
                 switch($presentation) {

@@ -57,7 +57,7 @@ function lesson_save_question_options($question, $lesson) {
     $manager = lesson_page_type_manager::get($lesson);
 
     $timenow = time();
-    $result = new object();
+    $result = new stdClass();
     switch ($question->qtype) {
         case LESSON_PAGE_SHORTANSWER:
 

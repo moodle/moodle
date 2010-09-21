@@ -105,7 +105,7 @@ switch ($mode) {
             $gradeinfo = lesson_grade($lesson, $attempt->retry, $attempt->userid);
 
             // Set and update
-            $updategrade = new object();
+            $updategrade = new stdClass();
             $updategrade->id = $grade->id;
             $updategrade->grade = $gradeinfo->grade;
             $DB->update_record('lesson_grades', $updategrade);
@@ -202,7 +202,7 @@ switch ($mode) {
                 // Subject
                 $subject = get_string('essayemailsubject', 'lesson', format_string($pages[$attempt->pageid]->title,true));
 
-                $eventdata = new object();
+                $eventdata = new stdClass();
                 $eventdata->modulename       = 'lesson';
                 $eventdata->userfrom         = $USER;
                 $eventdata->userto           = $users[$attempt->userid];

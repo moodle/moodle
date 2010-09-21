@@ -134,7 +134,7 @@ class lesson_page_type_matching extends lesson_page {
     public function check_answer() {
         global $CFG, $PAGE;
 
-        $formattextdefoptions = new object();
+        $formattextdefoptions = new stdClass();
         $formattextdefoptions->noclean = true;
         $formattextdefoptions->para = false;
 

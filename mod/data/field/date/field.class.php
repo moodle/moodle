@@ -94,7 +94,7 @@ class data_field_date extends data_field_base {
 
         if ($this->day and $this->month and $this->year) {  // All of them have been collected now
 
-            $content = new object;
+            $content = new stdClass();
             $content->fieldid = $this->field->id;
             $content->recordid = $recordid;
             $content->content = make_timestamp($this->year, $this->month, $this->day, 12, 0, 0, 0, false);

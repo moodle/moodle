@@ -44,7 +44,7 @@ $chat_message = clean_text($chat_message, FORMAT_MOODLE);  // Strip bad tags
 
 if (!empty($chat_message)) {
 
-    $message = new object();
+    $message = new stdClass();
     $message->chatid = $chatuser->chatid;
     $message->userid = $chatuser->userid;
     $message->groupid = $chatuser->groupid;

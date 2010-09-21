@@ -70,7 +70,7 @@ $CHOICE_DISPLAY = array (CHOICE_DISPLAY_HORIZONTAL   => get_string('displayhoriz
 function choice_user_outline($course, $user, $mod, $choice) {
     global $DB;
     if ($answer = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $user->id))) {
-        $result = new object();
+        $result = new stdClass();
         $result->info = "'".format_string(choice_get_option_text($choice, $answer->optionid))."'";
         $result->time = $answer->timemodified;
         return $result;
@@ -89,7 +89,7 @@ function choice_user_outline($course, $user, $mod, $choice) {
 function choice_user_complete($course, $user, $mod, $choice) {
     global $DB;
     if ($answer = $DB->get_record('choice_answers', array("choiceid" => $choice->id, "userid" => $user->id))) {
-        $result = new object();
+        $result = new stdClass();
         $result->info = "'".format_string(choice_get_option_text($choice, $answer->optionid))."'";
         $result->time = $answer->timemodified;
         echo get_string("answered", "choice").": $result->info. ".get_string("updated", '', userdate($result->time));
@@ -123,7 +123,7 @@ function choice_add_instance($choice) {
     foreach ($choice->option as $key => $value) {
         $value = trim($value);
         if (isset($value) && $value <> '') {
-            $option = new object();
+            $option = new stdClass();
             $option->text = $value;
             $option->choiceid = $choice->id;
             if (isset($choice->limit[$key])) {
@@ -161,7 +161,7 @@ function choice_update_instance($choice) {
     //update, delete or insert answers
     foreach ($choice->option as $key => $value) {
         $value = trim($value);
-        $option = new object();
+        $option = new stdClass();
         $option->text = $value;
         $option->choiceid = $choice->id;
         if (isset($choice->limit[$key])) {

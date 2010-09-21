@@ -1016,7 +1016,7 @@ function quiz_send_confirmation($a) {
     $body = get_string('emailconfirmbody', 'quiz', $a);
 
     // send email and analyse result
-    $eventdata = new object();
+    $eventdata = new stdClass();
     $eventdata->modulename        = 'quiz';
     $eventdata->userfrom          = get_admin();
     $eventdata->userto            = $USER;
@@ -1050,7 +1050,7 @@ function quiz_send_notification($recipient, $a) {
     $body = get_string('emailnotifybody', 'quiz', $a);
 
     // send email and analyse result
-    $eventdata = new object();
+    $eventdata = new stdClass();
     $eventdata->modulename        = 'quiz';
     $eventdata->userfrom          = $USER;
     $eventdata->userto            = $recipient;

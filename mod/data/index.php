@@ -84,7 +84,7 @@ if ($rss) {
     array_push($table->align, 'center');
 }
 
-$options = new object();
+$options = new stdClass();
 $options->noclean = true;
 
 $currentsection = "";

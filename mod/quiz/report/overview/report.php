@@ -198,7 +198,7 @@ class quiz_overview_report extends quiz_default_report {
                 echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
             }
         }
-        
+
         if (!$nostudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)) {
 
             // Construct the SQL
@@ -250,7 +250,7 @@ class quiz_overview_report extends quiz_default_report {
 
             $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
 
-            $sqlobject = new object;
+            $sqlobject = new stdClass();
             $sqlobject->from = $from;
             $sqlobject->where = $where;
             $sqlobject->params = $params;
@@ -274,7 +274,7 @@ class quiz_overview_report extends quiz_default_report {
                 if (has_capability('mod/quiz:regrade', $this->context)) {
                     $countregradeneeded = $this->count_regrade_all_needed($quiz, $groupstudents);
                     if ($currentgroup) {
-                        $a= new object();
+                        $a= new stdClass();
                         $a->groupname = groups_get_group_name($currentgroup);
                         $a->coursestudents = get_string('participants');
                         $a->countregradeneeded = $countregradeneeded;
@@ -467,14 +467,14 @@ class quiz_overview_report extends quiz_default_report {
                 $changed = regrade_question_in_attempt($question, $attempt, $quiz, true, $dry);
 
                 $attemptsdone++;
-                $a = new object();
+                $a = new stdClass();
                 $a->done = $attemptsdone;
                 $a->todo = $attemptstodo;
                 $apb->update($attemptsdone, $attemptstodo, get_string('attemptprogress', 'quiz_overview', $a));
             }
             $qsdone++;
             if (isset($qpb)) {
-                $a = new object();
+                $a = new stdClass();
                 $a->done = $qsdone;
                 $a->todo = $qstodo;
                 $qpb->update($qsdone, $qstodo, get_string('qprogress', 'quiz_overview', $a));
@@ -545,7 +545,7 @@ class quiz_overview_report extends quiz_default_report {
             }
             if (!empty($apb)) {
                 $attemptsdone++;
-                $a = new object();
+                $a = new stdClass();
                 $a->done = $attemptsdone;
                 $a->todo = $attemptstodo;
                 $apb->update($attemptsdone, $attemptstodo, get_string('attemptprogress', 'quiz_overview', $a));

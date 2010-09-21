@@ -152,7 +152,7 @@ function survey_user_outline($course, $user, $mod, $survey) {
     if ($answers = $DB->get_records("survey_answers", array('survey'=>$survey->id, 'userid'=>$user->id))) {
         $lastanswer = array_pop($answers);
 
-        $result = new object();
+        $result = new stdClass();
         $result->info = get_string("done", "survey");
         $result->time = $lastanswer->time;
         return $result;
@@ -430,7 +430,7 @@ function survey_get_user_answer($surveyid, $questionid, $userid) {
 function survey_add_analysis($survey, $user, $notes) {
     global $DB;
 
-    $record = new object();
+    $record = new stdClass();
     $record->survey = $survey;
     $record->userid = $user;
     $record->notes = $notes;

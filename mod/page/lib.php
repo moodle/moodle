@@ -194,7 +194,7 @@ function page_user_outline($course, $user, $mod, $page) {
         $numviews = count($logs);
         $lastlog = array_pop($logs);
 
-        $result = new object();
+        $result = new stdClass();
         $result->info = get_string('numviews', '', $numviews);
         $result->time = $lastlog->time;
 
@@ -256,7 +256,7 @@ function page_get_coursemodule_info($coursemodule) {
         return NULL;
     }
 
-    $info = new object();
+    $info = new stdClass();
     $info->name = $page->name;
 
     if ($page->display != RESOURCELIB_DISPLAY_POPUP) {

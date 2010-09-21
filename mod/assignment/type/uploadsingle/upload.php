@@ -30,7 +30,7 @@ require_once("$CFG->dirroot/repository/lib.php");
 $contextid = required_param('contextid', PARAM_INT);
 $id = optional_param('id', null, PARAM_INT);
 
-$formdata = new object();
+$formdata = new stdClass();
 $formdata->userid = required_param('userid', PARAM_INT);
 $formdata->offset = optional_param('offset', null, PARAM_INT);
 $formdata->forcerefresh = optional_param('forcerefresh', null, PARAM_INT);

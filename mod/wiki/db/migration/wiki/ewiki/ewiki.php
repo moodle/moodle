@@ -1590,7 +1590,7 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
      $usehtmleditor = can_use_html_editor();
      echo '<table><tr><td>';
      if ($usehtmleditor) { //clean and convert before editing
-         $options = new object();
+         $options = new stdClass();
          $options->smiley = false;
          $options->filter = false;
          $oldtext = format_text(ewiki_format($data["content"]), $moodle_format, $options);

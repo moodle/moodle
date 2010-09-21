@@ -17,7 +17,7 @@ class feedback_choose_group_form extends moodleform {
     var $feedbackdata;
 
     function definition() {
-        $this->feedbackdata = new object();
+        $this->feedbackdata = new stdClass();
         //this function can not be called, because not all data are available at this time
         //I use set_form_elements instead
     }

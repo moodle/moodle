@@ -355,7 +355,7 @@ function feedback_get_recent_mod_activity(&$activities, &$index, $timemodified, 
             }
        }
 
-        $tmpactivity = new object();
+        $tmpactivity = new stdClass();
 
         $tmpactivity->type      = 'feedback';
         $tmpactivity->cmid      = $cm->id;
@@ -903,7 +903,7 @@ function feedback_get_receivemail_users($cmid, $groups = false) {
 function feedback_create_template($courseid, $name, $ispublic = 0) {
     global $DB;
 
-    $templ = new object();
+    $templ = new stdClass();
     $templ->course   = $courseid;
     $templ->name     = $name;
     $templ->ispublic = $ispublic;
@@ -959,7 +959,7 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
         //copy all included files to the feedback_template filearea
         if ($itemfiles = $fs->get_area_files($f_context->id, 'mod_feedback', 'item', $item->id, "id", false)) {
             foreach($itemfiles as $ifile) {
-                $file_record = new object();
+                $file_record = new stdClass();
                 $file_record->contextid = $c_context->id;
                 $file_record->component = 'mod_feedback';
                 $file_record->filearea = 'template';
@@ -1077,7 +1077,7 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
         //TODO: moving the files to the new items
         if ($templatefiles = $fs->get_area_files($c_context->id, 'mod_feedback', 'template', $t_item->id, "id", false)) {
             foreach($templatefiles as $tfile) {
-                $file_record = new object();
+                $file_record = new stdClass();
                 $file_record->contextid = $f_context->id;
                 $file_record->component = 'mod_feedback';
                 $file_record->filearea = 'item';
@@ -1228,7 +1228,7 @@ function feedback_get_depend_candidates_for_item($feedback, $item) {
 function feedback_create_item($data) {
     global $DB;
 
-    $item = new object;
+    $item = new stdClass();
     $item->feedback = $data->feedbackid;
 
     $item->template=0;
@@ -1547,7 +1547,7 @@ function feedback_set_tmp_values($feedbackcompleted) {
     global $DB;
 
     //first we create a completedtmp
-    $tmpcpl = new object();
+    $tmpcpl = new stdClass();
     foreach($feedbackcompleted as $key => $value) {
         $tmpcpl->{$key} = $value;
     }
@@ -1657,7 +1657,7 @@ function feedback_create_pagebreak($feedbackid) {
         return false;
     }
 
-    $item = new object();
+    $item = new stdClass();
     $item->feedback = $feedbackid;
 
     $item->template=0;
@@ -1930,7 +1930,7 @@ function feedback_create_values($usrid, $timemodified, $tmp = false, $guestid = 
 
     $tmpstr = $tmp ? 'tmp' : '';
     //first we create a new completed record
-    $completed = new object();
+    $completed = new stdClass();
     $completed->feedback           = $feedbackid;
     $completed->userid             = $usrid;
     $completed->guestid            = $guestid;
@@ -1954,7 +1954,7 @@ function feedback_create_values($usrid, $timemodified, $tmp = false, $guestid = 
         if(is_null($itemvalue)) {
             continue;
         }
-        $value = new object();
+        $value = new stdClass();
         $value->item = $item->id;
         $value->completed = $completed->id;
         $value->course_id = $courseid;
@@ -2000,7 +2000,7 @@ function feedback_update_values($completed, $tmp = false) {
             continue;
         }
 
-        $newvalue = new object();
+        $newvalue = new stdClass();
         $newvalue->item = $item->id;
         $newvalue->completed = $completed->id;
         $newvalue->course_id = $courseid;
@@ -2488,7 +2488,7 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
         $printusername = $feedback->anonymous == FEEDBACK_ANONYMOUS_NO ? fullname($user) : get_string('anonymous_user', 'feedback');
 
         foreach ($teachers as $teacher) {
-            $info = new object();
+            $info = new stdClass();
             $info->username = $printusername;
             $info->feedback = format_string($feedback->name,true);
             $info->url = $CFG->wwwroot.'/mod/feedback/show_entries.php?id='.$cm->id.'&userid='.$userid.'&do_show=showentries';
@@ -2498,7 +2498,7 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
             $posthtml = ($teacher->mailformat == 1) ? feedback_send_email_html($info, $course, $cm) : '';
 
             if($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
-                $eventdata = new object();
+                $eventdata = new stdClass();
                 $eventdata->name             = 'feedback';
                 $eventdata->component        = 'mod';
                 $eventdata->userfrom         = $user;
@@ -2510,7 +2510,7 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
                 $eventdata->smallmessage     = '';
                 message_send($eventdata);
             }else {
-                $eventdata = new object();
+                $eventdata = new stdClass();
                 $eventdata->name             = 'feedback';
                 $eventdata->component        = 'mod';
                 $eventdata->userfrom         = $teacher;
@@ -2553,7 +2553,7 @@ function feedback_send_email_anonym($cm, $feedback, $course) {
         $printusername = get_string('anonymous_user', 'feedback');
 
         foreach ($teachers as $teacher) {
-            $info = new object();
+            $info = new stdClass();
             $info->username = $printusername;
             $info->feedback = format_string($feedback->name,true);
             $info->url = $CFG->wwwroot.'/mod/feedback/show_entries_anonym.php?id='.$cm->id;
@@ -2562,7 +2562,7 @@ function feedback_send_email_anonym($cm, $feedback, $course) {
             $posttext = feedback_send_email_text($info, $course);
             $posthtml = ($teacher->mailformat == 1) ? feedback_send_email_html($info, $course, $cm) : '';
 
-            $eventdata = new object();
+            $eventdata = new stdClass();
             $eventdata->name             = 'feedback';
             $eventdata->component        = 'mod';
             $eventdata->userfrom         = $teacher;
@@ -2693,7 +2693,7 @@ function feedback_init_feedback_session() {
     global $SESSION;
     if (!empty($SESSION)) {
         if (!isset($SESSION->feedback) OR !is_object($SESSION->feedback)) {
-            $SESSION->feedback = new object();
+            $SESSION->feedback = new stdClass();
         }
     }
 }

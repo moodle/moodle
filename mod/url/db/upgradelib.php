@@ -82,7 +82,7 @@ function url_20_migrate() {
             $introformat = FORMAT_MOODLE;
         }
 
-        $url = new object();
+        $url = new stdClass();
         $url->course       = $candidate->course;
         $url->name         = $candidate->name;
         $url->intro        = $intro;

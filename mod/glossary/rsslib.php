@@ -44,19 +44,19 @@
             }
 
             $items = array();
-            
-            $formatoptions = new object;
+
+            $formatoptions = new stdClass();
             $formatoptions->trusttext = true;
 
             foreach ($recs as $rec) {
-                $item = new object();
-                $user = new object();
+                $item = new stdClass();
+                $user = new stdClass();
                 $item->title = $rec->entryconcept;
 
                 if ($glossary->rsstype == 1) {//With author
                     $user->firstname = $rec->userfirstname;
                     $user->lastname = $rec->userlastname;
-                    
+
                     $item->author = fullname($user);
                 }
 

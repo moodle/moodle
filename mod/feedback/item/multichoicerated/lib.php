@@ -18,7 +18,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
     var $commonparams;
     var $item_form;
     var $item;
-    
+
     function init() {
 
     }
@@ -40,10 +40,10 @@ class feedback_item_multichoicerated extends feedback_item_base {
         }
         //the elements for position dropdownlist
         $positionlist = array_slice(range(0,$i_formselect_last),1,$i_formselect_last,true);
-        
+
         $item->presentation = empty($item->presentation) ? '' : $item->presentation;
         $info = $this->get_info($item);
-        
+
         $item->ignoreempty = $this->ignoreempty($item);
         $item->hidenoselect = $this->hidenoselect($item);
 
@@ -63,7 +63,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
     function show_editform() {
         $this->item_form->display();
     }
-    
+
     function is_cancelled() {
         return $this->item_form->is_cancelled();
     }
@@ -77,26 +77,26 @@ class feedback_item_multichoicerated extends feedback_item_base {
 
     function save_item() {
         global $DB;
-        
+
         if(!$item = $this->item_form->get_data()) {
             return false;
         }
-        
+
         if(isset($item->clone_item) AND $item->clone_item) {
             $item->id = ''; //to clone this item
             $item->position++;
         }
-        
-        $this->set_ignoreempty($item, $item->ignoreempty);        
+
+        $this->set_ignoreempty($item, $item->ignoreempty);
         $this->set_hidenoselect($item, $item->hidenoselect);
-        
+
         $item->hasvalue = $this->get_hasvalue();
         if(!$item->id) {
             $item->id = $DB->insert_record('feedback_item', $item);
         }else {
             $DB->update_record('feedback_item', $item);
         }
-        
+
         return $DB->get_record('feedback_item', array('id'=>$item->id));
     }
 
@@ -237,8 +237,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $rowOffset +=2 ;
         return $rowOffset;
     }
-    
-    /**     
+
+    /**
      * print the item at the edit-page of feedback
      *
      * @global object
@@ -247,7 +247,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
      */
     function print_item_preview($item) {
         global $OUTPUT, $DB;
-        
+
         $align = right_to_left() ? 'right' : 'left';
         $info = $this->get_info($item);
 
@@ -263,7 +263,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
             }
         }
         echo '</div>';
-        
+
         //print the presentation
         echo '<div class="feedback_item_presentation_'.$align.'">';
         switch($info->subtype) {
@@ -276,8 +276,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
         }
         echo '</div>';
     }
-    
-    /**     
+
+    /**
      * print the item at the complete-page of feedback
      *
      * @global object
@@ -298,12 +298,12 @@ class feedback_item_multichoicerated extends feedback_item_base {
         }else {
             $highlight = '';
         }
-        
+
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.$highlight.'">';
             echo format_text($item->name.$requiredmark, true, false, false);
         echo '</div>';
-        
+
         //print the presentation
         echo '<div class="feedback_item_presentation_'.$align.$highlight.'">';
         switch($info->subtype) {
@@ -317,7 +317,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         echo '</div>';
     }
 
-    /**     
+    /**
      * print the item at the complete-page of feedback
      *
      * @global object
@@ -332,13 +332,13 @@ class feedback_item_multichoicerated extends feedback_item_base {
 
         $lines = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
         $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
-        
+
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
             echo '('.$item->label.') ';
             echo format_text($item->name . $requiredmark, true, false, false);
         echo '</div>';
-        
+
         //print the presentation
         echo '<div class="feedback_item_presentation_'.$align.'">';
         $index = 1;
@@ -376,7 +376,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         }else {
             $dbvalues = explode(FEEDBACK_MULTICHOICERATED_LINE_SEP, $dbvalue);
         }
-        
+
         $info = $this->get_info($item);
         $presentation = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
         $index = 1;
@@ -414,13 +414,13 @@ class feedback_item_multichoicerated extends feedback_item_base {
     function get_info($item) {
         $presentation = empty($item->presentation) ? '' : $item->presentation;
 
-        $info = new object();
+        $info = new stdClass();
         //check the subtype of the multichoice
         //it can be check(c), radio(r) or dropdown(d)
         $info->subtype = '';
         $info->presentation = '';
         $info->horizontal = false;
-        
+
         @list($info->subtype, $info->presentation) = explode(FEEDBACK_MULTICHOICERATED_TYPE_SEP, $item->presentation);
 
         if(!isset($info->subtype)) {
@@ -445,7 +445,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
     function print_item_radio($item, $value, $info, $align, $showrating, $lines) {
         $index = 1;
         $checked = '';
-        
+
         if($info->horizontal) {
             $hv = 'h';
         }else {
@@ -473,7 +473,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
             $radio_value = explode(FEEDBACK_MULTICHOICERATED_VALUE_SEP, $line);
             $inputname = $item->typ . '_' . $item->id;
             $inputid = $inputname.'_'.$index;
-        ?>            
+        ?>
             <li class="feedback_item_radio_<?php echo $hv.'_'.$align;?>">
                 <span class="feedback_item_radio_<?php echo $hv.'_'.$align;?>">
                     <input type="radio" name="<?php echo $inputname;?>" id="<?php echo $inputid;?>" value="<?php echo $index;?>" <?php echo $checked;?> />
@@ -565,28 +565,28 @@ class feedback_item_multichoicerated extends feedback_item_base {
             $item->options .= FEEDBACK_MULTICHOICERATED_IGNOREEMPTY;
         }
     }
-    
+
     function ignoreempty($item) {
         if(strstr($item->options, FEEDBACK_MULTICHOICERATED_IGNOREEMPTY)) {
             return true;
         }
         return false;
     }
-    
+
     function set_hidenoselect($item, $hidenoselect=true) {
         $item->options = str_replace(FEEDBACK_MULTICHOICERATED_HIDENOSELECT, '', $item->options);
         if($hidenoselect) {
             $item->options .= FEEDBACK_MULTICHOICERATED_HIDENOSELECT;
         }
     }
-    
+
     function hidenoselect($item) {
         if(strstr($item->options, FEEDBACK_MULTICHOICERATED_HIDENOSELECT)) {
             return true;
         }
         return false;
     }
-    
+
     function can_switch_require() {
         return true;
     }

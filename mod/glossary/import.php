@@ -247,7 +247,7 @@ if ($xml = glossary_read_imported_file($result)) {
                 $aliasname = $xmlalias['#']['NAME'][0]['#'];
 
                 if (!empty($aliasname)) {
-                    $newalias = new object();
+                    $newalias = new stdClass();
                     $newalias->entryid = $newentry->id;
                     $newalias->alias = trim($aliasname);
                     $newalias->id = $DB->insert_record("glossary_alias",$newalias);
@@ -260,12 +260,12 @@ if ($xml = glossary_read_imported_file($result)) {
                 for($k = 0; $k < sizeof($xmlcats); $k++) {
                     $xmlcat = $xmlcats[$k];
 
-                    $newcat = new object();
+                    $newcat = new stdClass();
                     $newcat->name = $xmlcat['#']['NAME'][0]['#'];
                     $newcat->usedynalink = $xmlcat['#']['USEDYNALINK'][0]['#'];
                     if ( !$category = $DB->get_record("glossary_categories", array("glossaryid"=>$glossary->id,"name"=>$newcat->name))) {
                         // Create the category if it does not exist
-                        $category = new object();
+                        $category = new stdClass();
                         $category->name = $newcat->name;
                         $category->glossaryid = $glossary->id;
                         $category->id = $DB->insert_record("glossary_categories",$category);
@@ -273,7 +273,7 @@ if ($xml = glossary_read_imported_file($result)) {
                     }
                     if ( $category ) {
                         // inserting the new relation
-                        $entrycat = new object();
+                        $entrycat = new stdClass();
                         $entrycat->entryid    = $newentry->id;
                         $entrycat->categoryid = $category->id;
                         $DB->insert_record("glossary_entries_categories",$entrycat);

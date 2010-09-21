@@ -212,7 +212,7 @@ function imscp_user_outline($course, $user, $mod, $imscp) {
         $numviews = count($logs);
         $lastlog = array_pop($logs);
 
-        $result = new object();
+        $result = new stdClass();
         $result->info = get_string('numviews', '', $numviews);
         $result->time = $lastlog->time;
 
