@@ -1591,28 +1591,31 @@ function data_get_post_actions() {
 }
 
 /**
- * @global object
- * @global object
  * @param string $name
  * @param int $dataid
  * @param int $fieldid
  * @return bool
  */
-function data_fieldname_exists($name, $dataid, $fieldid=0) {
-    global $CFG, $DB;
+function data_fieldname_exists($name, $dataid, $fieldid = 0) {
+    global $DB;
 
-    if(!is_numeric($name)) {
-        $like = $DB->sql_like('df.name', $name, false);
+    if (!is_numeric($name)) {
+        $like = $DB->sql_like('df.name', ':name', false);
     } else {
-        $like = "df.name = $name";
+        $like = "df.name = :name";
     }
+    $params = array('name'=>$name);
     if ($fieldid) {
+        $params['dataid']   = $dataid;
+        $params['fieldid1'] = $fieldid;
+        $params['fieldid2'] = $fieldid;
         return $DB->record_exists_sql("SELECT * FROM {data_fields} df
-                                        WHERE ".$like." AND df.dataid = ?
-                                              AND ((df.id < ?) OR (df.id > ?))", array($dataid, $fieldid, $fieldid));
+                                        WHERE $like AND df.dataid = :dataid
+                                              AND ((df.id < :fieldid1) OR (df.id > :fieldid2))", $params);
     } else {
+        $params['dataid']   = $dataid;
         return $DB->record_exists_sql("SELECT * FROM {data_fields} df
-                                        WHERE ".$like." AND df.dataid = ?", array($dataid));
+                                        WHERE $like AND df.dataid = :dataid", $params);
     }
 }
 
