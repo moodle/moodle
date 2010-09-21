@@ -56,8 +56,8 @@ class core_files_renderer extends plugin_renderer_base {
 
         $html .= $this->output->box_start();
         $table = new html_table();
-        $table->head = array(get_string('filename', 'backup'), get_string('time'), get_string('size'));
-        $table->align = array('left', 'left', 'left');
+        $table->head = array(get_string('filename', 'backup'), get_string('size'), get_string('modified'));
+        $table->align = array('left', 'right', 'right');
         $table->width = '100%';
         $table->data = array();
 
@@ -65,14 +65,14 @@ class core_files_renderer extends plugin_renderer_base {
             if (!empty($file['isdir'])) {
                 $table->data[] = array(
                     html_writer::link($file['url'], $this->output->pix_icon('f/folder', 'icon') . ' ' . $file['filename']),
-                    $file['filedate'],
                     '',
+                    $file['filedate'],
                     );
             } else {
                 $table->data[] = array(
                     html_writer::link($file['url'], $this->output->pix_icon('f/'.mimeinfo('icon', $file['filename']), get_string('icon')) . ' ' . $file['filename']),
+                    $file['filesize'],
                     $file['filedate'],
-                    display_size($file['filesize']),
                     );
             }
         }
