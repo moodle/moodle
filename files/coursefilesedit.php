@@ -45,7 +45,7 @@ $PAGE->set_title($heading);
 $PAGE->set_heading($heading);
 $PAGE->set_pagelayout('course');
 
-$data = new object();
+$data = new stdClass();
 $options = array('subdirs'=>1, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
 file_prepare_standard_filemanager($data, 'files', $options, $context, $component, $filearea, $itemid);
 $form = new coursefiles_edit_form(null, array('data'=>$data, 'contextid'=>$contextid));
