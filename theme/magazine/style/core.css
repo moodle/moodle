@@ -110,6 +110,11 @@ div.thetitle {
 	padding-left: 3px;
 	margin-top: 40px;
 	}
+	
+#nologo.nomenu {
+	width: 100%;
+}	
+
 #nologo a, #nologo {
 	font-size: 35px;
 	font-style: italic;

@@ -63,7 +63,9 @@ echo $OUTPUT->doctype() ?>
 				</div>
 			</div>
 		<?php } else { ?>
-			<div id="nologo">
+			
+			
+			<div id="nologo" <?php if(!$hascustommenu) {echo "class='nomenu'";} ?>>
 				<a href="<?php echo $CFG->wwwroot; ?>" title="Home"><?php echo $PAGE->heading ?></a>
 			</div>
 			<?php } ?>
