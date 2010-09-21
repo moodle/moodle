@@ -462,7 +462,7 @@ class oci_native_moodle_database extends moodle_database {
         foreach ($records as $rawcolumn) {
             $rawcolumn = (object)$rawcolumn;
 
-            $info = new object();
+            $info = new stdClass();
             $info->name = strtolower($rawcolumn->CNAME);
             $matches = null;
 

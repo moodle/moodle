@@ -517,7 +517,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
 
             $rawcolumn = (object)$rawcolumn;
 
-            $info = new object();
+            $info = new stdClass();
             $info->name = $rawcolumn->name;
             $info->type = $rawcolumn->type;
             $info->meta_type = $this->sqlsrvtype2moodletype($info->type);

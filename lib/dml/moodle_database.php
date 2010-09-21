@@ -423,7 +423,7 @@ abstract class moodle_database {
                     //remove query_end()
                     array_shift($backtrace);
                 }
-                $log = new object();
+                $log = new stdClass();
                 $log->qtype      = $this->last_type;
                 $log->sqltext    = $this->last_sql;
                 $log->sqlparams  = var_export((array)$this->last_params, true);

@@ -365,7 +365,7 @@ class pgsql_native_moodle_database extends moodle_database {
         }
         while ($rawcolumn = pg_fetch_object($result)) {
 
-            $info = new object();
+            $info = new stdClass();
             $info->name = $rawcolumn->field;
             $matches = null;
 

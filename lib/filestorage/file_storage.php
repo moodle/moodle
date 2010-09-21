@@ -492,7 +492,7 @@ class file_storage {
 
         $now = time();
 
-        $dir_record = new object();
+        $dir_record = new stdClass();
         $dir_record->contextid = $contextid;
         $dir_record->component = $component;
         $dir_record->filearea  = $filearea;
@@ -729,7 +729,7 @@ class file_storage {
 
         $now = time();
 
-        $newrecord = new object();
+        $newrecord = new stdClass();
 
         $newrecord->contextid = $file_record->contextid;
         $newrecord->component = $file_record->component;
@@ -822,7 +822,7 @@ class file_storage {
 
         $now = time();
 
-        $newrecord = new object();
+        $newrecord = new stdClass();
 
         $newrecord->contextid = $file_record->contextid;
         $newrecord->component = $file_record->component;

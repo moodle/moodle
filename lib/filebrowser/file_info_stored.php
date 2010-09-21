@@ -343,7 +343,7 @@ class file_info_stored extends file_info {
 
         $now = time();
 
-        $newrecord = new object();
+        $newrecord = new stdClass();
         $newrecord->contextid = $this->lf->get_contextid();
         $newrecord->component = $this->lf->get_component();
         $newrecord->filearea  = $this->lf->get_filearea();
@@ -389,7 +389,7 @@ class file_info_stored extends file_info {
 
         $now = time();
 
-        $newrecord = new object();
+        $newrecord = new stdClass();
         $newrecord->contextid = $this->lf->get_contextid();
         $newrecord->component = $this->lf->get_component();
         $newrecord->filearea  = $this->lf->get_filearea();
@@ -435,7 +435,7 @@ class file_info_stored extends file_info {
 
         $now = time();
 
-        $newrecord = new object();
+        $newrecord = new stdClass();
         $newrecord->contextid = $this->lf->get_contextid();
         $newrecord->component = $this->lf->get_component();
         $newrecord->filearea  = $this->lf->get_filearea();

@@ -67,7 +67,7 @@ class zip_packer extends file_packer {
                     return false;
                 }
             }
-            $file_record = new object();
+            $file_record = new stdClass();
             $file_record->contextid = $contextid;
             $file_record->component = $component;
             $file_record->filearea  = $filearea;
@@ -342,7 +342,7 @@ class zip_packer extends file_packer {
                         continue;
                     }
                 }
-                $file_record = new object();
+                $file_record = new stdClass();
                 $file_record->contextid = $contextid;
                 $file_record->component = $component;
                 $file_record->filearea  = $filearea;
@@ -391,7 +391,7 @@ class zip_packer extends file_packer {
                         continue;
                     }
                 }
-                $file_record = new object();
+                $file_record = new stdClass();
                 $file_record->contextid = $contextid;
                 $file_record->component = $component;
                 $file_record->filearea  = $filearea;

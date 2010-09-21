@@ -413,7 +413,7 @@ class mysqli_native_moodle_database extends moodle_database {
         while ($rawcolumn = $result->fetch_assoc()) {
             $rawcolumn = (object)array_change_key_case($rawcolumn, CASE_LOWER);
 
-            $info = new object();
+            $info = new stdClass();
             $info->name = $rawcolumn->field;
             $matches = null;
 

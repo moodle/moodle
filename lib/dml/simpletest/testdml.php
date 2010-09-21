@@ -1438,7 +1438,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(99, $record->course);
 
         // Check nulls are set properly for all types
-        $record = new object();
+        $record = new stdClass();
         $record->oneint = null;
         $record->onenum = null;
         $record->onechar = null;
@@ -1454,7 +1454,7 @@ class dml_test extends UnitTestCase {
         $this->assertNull($record->onebinary);
 
         // Check zeros are set properly for all types
-        $record = new object();
+        $record = new stdClass();
         $record->oneint = 0;
         $record->onenum = 0;
         $recid = $DB->insert_record($tablename, $record);
@@ -1463,7 +1463,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(0, $record->onenum);
 
         // Check booleans are set properly for all types
-        $record = new object();
+        $record = new stdClass();
         $record->oneint = true; // trues
         $record->onenum = true;
         $record->onechar = true;
@@ -1475,7 +1475,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1, $record->onechar);
         $this->assertEqual(1, $record->onetext);
 
-        $record = new object();
+        $record = new stdClass();
         $record->oneint = false; // falses
         $record->onenum = false;
         $record->onechar = false;
@@ -1488,7 +1488,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(0, $record->onetext);
 
         // Check string data causes exception in numeric types
-        $record = new object();
+        $record = new stdClass();
         $record->oneint = 'onestring';
         $record->onenum = 0;
         try {
@@ -1497,7 +1497,7 @@ class dml_test extends UnitTestCase {
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
         }
-        $record = new object();
+        $record = new stdClass();
         $record->oneint = 0;
         $record->onenum = 'onestring';
         try {
@@ -1508,14 +1508,14 @@ class dml_test extends UnitTestCase {
         }
 
         // Check empty string data is stored as 0 in numeric datatypes
-        $record = new object();
+        $record = new stdClass();
         $record->oneint = ''; // empty string
         $record->onenum = 0;
         $recid = $DB->insert_record($tablename, $record);
         $record = $DB->get_record($tablename, array('id' => $recid));
         $this->assertTrue(is_numeric($record->oneint) && $record->oneint == 0);
 
-        $record = new object();
+        $record = new stdClass();
         $record->oneint = 0;
         $record->onenum = ''; // empty string
         $recid = $DB->insert_record($tablename, $record);
@@ -1523,7 +1523,7 @@ class dml_test extends UnitTestCase {
         $this->assertTrue(is_numeric($record->onenum) && $record->onenum == 0);
 
         // Check empty strings are set properly in string types
-        $record = new object();
+        $record = new stdClass();
         $record->oneint = 0;
         $record->onenum = 0;
         $record->onechar = '';
@@ -1534,7 +1534,7 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($record->onetext === '');
 
         // Check operation ((210.10 + 39.92) - 150.02) against numeric types
-        $record = new object();
+        $record = new stdClass();
         $record->oneint = ((210.10 + 39.92) - 150.02);
         $record->onenum = ((210.10 + 39.92) - 150.02);
         $recid = $DB->insert_record($tablename, $record);
@@ -1549,7 +1549,7 @@ class dml_test extends UnitTestCase {
             'backslashes and quotes sequences (even): \\"\\" \\\'\\\'',
             'backslashes and quotes sequences (odd): \\"\\"\\" \\\'\\\'\\\'');
         foreach ($teststrings as $teststring) {
-            $record = new object();
+            $record = new stdClass();
             $record->onechar = $teststring;
             $record->onetext = $teststring;
             $recid = $DB->insert_record($tablename, $record);
@@ -1561,7 +1561,7 @@ class dml_test extends UnitTestCase {
         // Check LOBs in text/binary columns
         $clob = file_get_contents(dirname(__FILE__).'/fixtures/clob.txt');
         $blob = file_get_contents(dirname(__FILE__).'/fixtures/randombinary');
-        $record = new object();
+        $record = new stdClass();
         $record->onetext = $clob;
         $record->onebinary = $blob;
         $recid = $DB->insert_record($tablename, $record);
@@ -1574,7 +1574,7 @@ class dml_test extends UnitTestCase {
         // And "small" LOBs too, just in case
         $newclob = substr($clob, 0, 500);
         $newblob = substr($blob, 0, 250);
-        $record = new object();
+        $record = new stdClass();
         $record->onetext = $newclob;
         $record->onebinary = $newblob;
         $recid = $DB->insert_record($tablename, $record);
@@ -1588,7 +1588,7 @@ class dml_test extends UnitTestCase {
         // And "diagnostic" LOBs too, just in case
         $newclob = '\'"\\;/ěščřžýáíé';
         $newblob = '\'"\\;/ěščřžýáíé';
-        $record = new object();
+        $record = new stdClass();
         $record->onetext = $newclob;
         $record->onebinary = $newblob;
         $recid = $DB->insert_record($tablename, $record);
@@ -1600,7 +1600,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(false, $rs->key()); // Ensure recordset key() method to be working ok after closing
 
         // test data is not modified
-        $record = new object();
+        $record = new stdClass();
         $record->id     = -1; // has to be ignored
         $record->course = 3;
         $record->lalala = 'lalal'; // unused
@@ -1658,7 +1658,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(2, $records[13]->course);
 
         // Check nulls are set properly for all types
-        $record = new object();
+        $record = new stdClass();
         $record->id = 20;
         $record->oneint = null;
         $record->onenum = null;
@@ -1675,7 +1675,7 @@ class dml_test extends UnitTestCase {
         $this->assertNull($record->onebinary);
 
         // Check zeros are set properly for all types
-        $record = new object();
+        $record = new stdClass();
         $record->id = 23;
         $record->oneint = 0;
         $record->onenum = 0;
@@ -1685,7 +1685,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(0, $record->onenum);
 
         // Check string data causes exception in numeric types
-        $record = new object();
+        $record = new stdClass();
         $record->id = 32;
         $record->oneint = 'onestring';
         $record->onenum = 0;
@@ -1695,7 +1695,7 @@ class dml_test extends UnitTestCase {
         } catch (exception $e) {
             $this->assertTrue($e instanceof dml_exception);
         }
-        $record = new object();
+        $record = new stdClass();
         $record->id = 35;
         $record->oneint = 0;
         $record->onenum = 'onestring';
@@ -1707,7 +1707,7 @@ class dml_test extends UnitTestCase {
         }
 
         // Check empty strings are set properly in string types
-        $record = new object();
+        $record = new stdClass();
         $record->id = 44;
         $record->oneint = 0;
         $record->onenum = 0;
@@ -1719,7 +1719,7 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($record->onetext === '');
 
         // Check operation ((210.10 + 39.92) - 150.02) against numeric types
-        $record = new object();
+        $record = new stdClass();
         $record->id = 47;
         $record->oneint = ((210.10 + 39.92) - 150.02);
         $record->onenum = ((210.10 + 39.92) - 150.02);
@@ -1736,7 +1736,7 @@ class dml_test extends UnitTestCase {
             'backslashes and quotes sequences (even): \\"\\" \\\'\\\'',
             'backslashes and quotes sequences (odd): \\"\\"\\" \\\'\\\'\\\'');
         foreach ($teststrings as $teststring) {
-            $record = new object();
+            $record = new stdClass();
             $record->id = $i;
             $record->onechar = $teststring;
             $record->onetext = $teststring;
@@ -1749,7 +1749,7 @@ class dml_test extends UnitTestCase {
 
         // Check LOBs in text/binary columns
         $clob = file_get_contents(dirname(__FILE__).'/fixtures/clob.txt');
-        $record = new object();
+        $record = new stdClass();
         $record->id = 70;
         $record->onetext = $clob;
         $record->onebinary = '';
@@ -1760,7 +1760,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual($clob, $record->onetext, 'Test CLOB insert (full contents output disabled)');
 
         $blob = file_get_contents(dirname(__FILE__).'/fixtures/randombinary');
-        $record = new object();
+        $record = new stdClass();
         $record->id = 71;
         $record->onetext = '';
         $record->onebinary = $blob;
@@ -1773,7 +1773,7 @@ class dml_test extends UnitTestCase {
         // And "small" LOBs too, just in case
         $newclob = substr($clob, 0, 500);
         $newblob = substr($blob, 0, 250);
-        $record = new object();
+        $record = new stdClass();
         $record->id = 73;
         $record->onetext = $newclob;
         $record->onebinary = $newblob;

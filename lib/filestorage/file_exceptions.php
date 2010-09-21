@@ -50,7 +50,7 @@ class file_exception extends moodle_exception {
  */
 class stored_file_creation_exception extends file_exception {
     function __construct($contextid, $component, $filearea, $itemid, $filepath, $filename, $debuginfo = NULL) {
-        $a = new object();
+        $a = new stdClass();
         $a->contextid = $contextid;
         $a->component = $component;
         $a->filearea  = $filearea;

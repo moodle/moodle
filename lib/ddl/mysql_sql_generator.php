@@ -340,7 +340,7 @@ class mysql_sql_generator extends sql_generator {
             }
             $column = ($columns[$filter]);
             if (!empty($column->enums)) {
-                $result = new object;
+                $result = new stdClass();
                 $result->name = $filter;
                 $result->description = implode(', ', $column->enums);
                 return array($result);
@@ -354,7 +354,7 @@ class mysql_sql_generator extends sql_generator {
             foreach ($columns as $key => $column) {
             /// Enum found, let's add it to the constraints list
                 if (!empty($column->enums)) {
-                    $result = new object;
+                    $result = new stdClass();
                     $result->name = $key;
                     $result->description = implode(', ', $column->enums);
                     $results[$key] = $result;

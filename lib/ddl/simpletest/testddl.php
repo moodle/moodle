@@ -654,7 +654,7 @@ class ddl_test extends UnitTestCase {
         $table->add_index('onenumber', XMLDB_INDEX_NOTUNIQUE, array('onenumber'));
         $dbman->create_table($table);
 
-        $record = new object();
+        $record = new stdClass();
         $record->onenumber = 2;
         $record->anothernumber = 4;
         $recoriginal = $DB->insert_record('test_table_cust0', $record);
@@ -701,7 +701,7 @@ class ddl_test extends UnitTestCase {
         //TODO: check the rest of attributes
 
         // insert one string value and try to convert to integer. Must throw exception
-        $record = new object();
+        $record = new stdClass();
         $record->onenumber = 7;
         $record->anothernumber = 'string value';
         $rectodrop = $DB->insert_record('test_table_cust0', $record);
@@ -866,7 +866,7 @@ class ddl_test extends UnitTestCase {
         //TODO: check the rest of attributes
 
         // insert one record with 6-digit field
-        $record = new object();
+        $record = new stdClass();
         $record->course = 10;
         $record->secondname  = 'third record';
         $record->intro  = 'third record';
@@ -925,7 +925,7 @@ class ddl_test extends UnitTestCase {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        $record = new object();
+        $record = new stdClass();
         $record->name = NULL;
 
         ob_start(); // hide debug warning
@@ -977,7 +977,7 @@ class ddl_test extends UnitTestCase {
         $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, 'Moodle2');
         $dbman->change_field_default($table, $field);
 
-        $record = new object();
+        $record = new stdClass();
         $record->onenumber = 666;
         $id = $DB->insert_record('test_table_cust0', $record);
 
@@ -989,7 +989,7 @@ class ddl_test extends UnitTestCase {
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 666);
         $dbman->change_field_default($table, $field);
 
-        $record = new object();
+        $record = new stdClass();
         $record->name = 'something';
         $id = $DB->insert_record('test_table_cust0', $record);
 
@@ -1010,7 +1010,7 @@ class ddl_test extends UnitTestCase {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        $record = new object();
+        $record = new stdClass();
         $record->onenumber = 666;
         $record->name = 'something';
         $DB->insert_record('test_table_cust0', $record, false);
@@ -1182,7 +1182,7 @@ class ddl_test extends UnitTestCase {
         ob_end_clean();
 
         // Insert some info
-        $record = new object();
+        $record = new stdClass();
         $record->course = 666;
         $record->type = 'qanda';
         $this->assertTrue($DB->insert_record('test_table_cust0', $record, false));

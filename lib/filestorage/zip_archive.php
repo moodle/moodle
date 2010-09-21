@@ -146,7 +146,7 @@ class zip_archive extends file_archive {
             return false;
         }
 
-        $info = new object();
+        $info = new stdClass();
         $info->index             = $index;
         $info->original_pathname = $result['name'];
         $info->pathname          = $this->unmangle_pathname($result['name']);
