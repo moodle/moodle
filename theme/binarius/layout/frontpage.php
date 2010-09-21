@@ -83,21 +83,24 @@ echo $OUTPUT->doctype() ?>
                     </div>
                 </div>
             </div>
+            <div class="myclear"></div>
+
         </div>
+       
 
 <!-- END OF CONTENT -->
     <div class="myclear"></div>
-    </div> <!-- END #wrapper -->
+       </div> <!-- END #wrapper -->
 
 <!-- START OF FOOTER -->
-    <div id="page-footer" class="wrapper clearfix">
+   <div id="footer" class="myclear">
            <p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
         <?php
                echo $OUTPUT->login_info();
                echo $OUTPUT->home_link();
             echo $OUTPUT->standard_footer_html();
            ?>
-       </div>
+     </div>
 
 <!-- END OF FOOTER -->
 
