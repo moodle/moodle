@@ -1511,6 +1511,11 @@ function purify_html($text) {
         $config->set('URI.AllowedSchemes', array('http'=>true, 'https'=>true, 'ftp'=>true, 'irc'=>true, 'nntp'=>true, 'news'=>true, 'rtsp'=>true, 'teamspeak'=>true, 'gopher'=>true, 'mms'=>true));
         $config->set('Attr.AllowedFrameTargets', array('_blank'));
 
+        if (!empty($CFG->allowobjectembed)) {
+            $config->set('HTML.SafeObject', true);
+            $config->set('Output.FlashCompat', true);
+        }
+
         $def = $config->getHTMLDefinition(true);
         $def->addElement('nolink', 'Block', 'Flow', array());                       // skip our filters inside
         $def->addElement('tex', 'Inline', 'Inline', array());                       // tex syntax, equivalent to $$xx$$
