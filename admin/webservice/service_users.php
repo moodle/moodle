@@ -53,7 +53,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     $userstoassign = $potentialuserselector->get_selected_users();
     if (!empty($userstoassign)) {
         foreach ($userstoassign as $adduser) {
-            $serviceuser = new object();
+            $serviceuser = new stdClass();
             $serviceuser->externalserviceid = $id;
             $serviceuser->userid = $adduser->id;
             $webservicemanager->add_ws_authorised_user($serviceuser);

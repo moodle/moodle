@@ -58,7 +58,7 @@ if (!$sm->string_exists($identifier.'_help', $component)) {
 }
 
 if ($sm->string_exists($identifier.'_help', $component)) {
-    $options = new object;
+    $options = new stdClass();
     $options->trusted = false;
     $options->noclean = false;
     $options->smiley = false;

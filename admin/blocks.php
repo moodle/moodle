@@ -126,11 +126,11 @@
         if (!file_exists("$CFG->dirroot/blocks/$blockname/block_$blockname.php")) {
             $blockobject  = false;
             $strblockname = '<span class="notifyproblem">'.$blockname.' ('.get_string('missingfromdisk').')</span>';
-            $plugin = new object();
+            $plugin = new stdClass();
             $plugin->version = $block->version;
 
         } else {
-            $plugin = new object();
+            $plugin = new stdClass();
             $plugin->version = '???';
             if (file_exists("$CFG->dirroot/blocks/$blockname/version.php")) {
                 include("$CFG->dirroot/blocks/$blockname/version.php");

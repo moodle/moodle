@@ -20,7 +20,7 @@ admin_externalpage_setup('reportdbtest');
 echo $OUTPUT->header();
 
 global $UNITTEST;
-$UNITTEST = new object();
+$UNITTEST = new stdClass();
 
 if (!data_submitted()) {
     $selected = array();

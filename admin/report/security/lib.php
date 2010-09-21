@@ -83,7 +83,7 @@ function report_security_doc_link($issue, $name) {
  * @return object result
  */
 function report_security_check_globals($detailed=false) {
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_globals';
     $result->name    = get_string('check_globals_name', 'report_security');
     $result->info    = null;
@@ -114,7 +114,7 @@ function report_security_check_globals($detailed=false) {
 function report_security_check_noauth($detailed=false) {
     global $CFG;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_noauth';
     $result->name    = get_string('check_noauth_name', 'report_security');
     $result->info    = null;
@@ -146,7 +146,7 @@ function report_security_check_noauth($detailed=false) {
 function report_security_check_passwordpolicy($detailed=false) {
     global $CFG;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_passwordpolicy';
     $result->name    = get_string('check_passwordpolicy_name', 'report_security');
     $result->info    = null;
@@ -177,7 +177,7 @@ function report_security_check_passwordpolicy($detailed=false) {
 function report_security_check_embed($detailed=false) {
     global $CFG;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_embed';
     $result->name    = get_string('check_embed_name', 'report_security');
     $result->info    = null;
@@ -208,7 +208,7 @@ function report_security_check_embed($detailed=false) {
 function report_security_check_mediafilterswf($detailed=false) {
     global $CFG;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_mediafilterswf';
     $result->name    = get_string('check_mediafilterswf_name', 'report_security');
     $result->info    = null;
@@ -241,7 +241,7 @@ function report_security_check_mediafilterswf($detailed=false) {
 function report_security_check_unsecuredataroot($detailed=false) {
     global $CFG;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_unsecuredataroot';
     $result->name    = get_string('check_unsecuredataroot_name', 'report_security');
     $result->info    = null;
@@ -278,7 +278,7 @@ function report_security_check_unsecuredataroot($detailed=false) {
  * @return object result
  */
 function report_security_check_displayerrors($detailed=false) {
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_displayerrors';
     $result->name    = get_string('check_displayerrors_name', 'report_security');
     $result->info    = null;
@@ -309,7 +309,7 @@ function report_security_check_displayerrors($detailed=false) {
 function report_security_check_openprofiles($detailed=false) {
     global $CFG;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_openprofiles';
     $result->name    = get_string('check_openprofiles_name', 'report_security');
     $result->info    = null;
@@ -341,7 +341,7 @@ function report_security_check_openprofiles($detailed=false) {
 function report_security_check_google($detailed=false) {
     global $CFG;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_google';
     $result->name    = get_string('check_google_name', 'report_security');
     $result->info    = null;
@@ -375,7 +375,7 @@ function report_security_check_google($detailed=false) {
 function report_security_check_emailchangeconfirmation($detailed=false) {
     global $CFG;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_emailchangeconfirmation';
     $result->name    = get_string('check_emailchangeconfirmation_name', 'report_security');
     $result->info    = null;
@@ -416,7 +416,7 @@ function report_security_check_cookiesecure($detailed=false) {
         return null;
     }
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_cookiesecure';
     $result->name    = get_string('check_cookiesecure_name', 'report_security');
     $result->info    = null;
@@ -448,7 +448,7 @@ function report_security_check_cookiesecure($detailed=false) {
 function report_security_check_configrw($detailed=false) {
     global $CFG;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_configrw';
     $result->name    = get_string('check_configrw_name', 'report_security');
     $result->info    = null;
@@ -474,7 +474,7 @@ function report_security_check_configrw($detailed=false) {
 function report_security_check_passwordsaltmain($detailed=false) {
     global $CFG;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_passwordsaltmain';
     $result->name    = get_string('check_passwordsaltmain_name', 'report_security');
     $result->info    = null;
@@ -510,7 +510,7 @@ function report_security_check_passwordsaltmain($detailed=false) {
 function report_security_check_riskxss($detailed=false) {
     global $DB;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_riskxss';
     $result->name    = get_string('check_riskxss_name', 'report_security');
     $result->info    = null;
@@ -557,7 +557,7 @@ function report_security_check_riskxss($detailed=false) {
 function report_security_check_defaultuserrole($detailed=false) {
     global $DB, $CFG;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_defaultuserrole';
     $result->name    = get_string('check_defaultuserrole_name', 'report_security');
     $result->info    = null;
@@ -615,7 +615,7 @@ function report_security_check_defaultuserrole($detailed=false) {
 function report_security_check_guestrole($detailed=false) {
     global $DB, $CFG;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_guestrole';
     $result->name    = get_string('check_guestrole_name', 'report_security');
     $result->info    = null;
@@ -673,7 +673,7 @@ function report_security_check_guestrole($detailed=false) {
 function report_security_check_frontpagerole($detailed=false) {
     global $DB, $CFG;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_frontpagerole';
     $result->name    = get_string('check_frontpagerole_name', 'report_security');
     $result->info    = null;
@@ -732,7 +732,7 @@ function report_security_check_frontpagerole($detailed=false) {
 function report_security_check_riskadmin($detailed=false) {
     global $DB, $CFG;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_riskadmin';
     $result->name    = get_string('check_riskadmin_name', 'report_security');
     $result->info    = null;
@@ -773,7 +773,7 @@ function report_security_check_riskadmin($detailed=false) {
 function report_security_check_riskbackup($detailed=false) {
     global $CFG, $DB;
 
-    $result = new object();
+    $result = new stdClass();
     $result->issue   = 'report_security_check_riskbackup';
     $result->name    = get_string('check_riskbackup_name', 'report_security');
     $result->info    = null;

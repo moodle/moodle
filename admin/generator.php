@@ -749,7 +749,7 @@ class generator {
 
                     require_once($CFG->dirroot.'/mod/forum/lib.php');
 
-                    $discussion = new object();
+                    $discussion = new stdClass();
                     $discussion->course        = $forum->course;
                     $discussion->forum         = $forum->id;
                     $discussion->name          = 'Test discussion';

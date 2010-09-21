@@ -31,7 +31,7 @@ admin_externalpage_setup('reportsimpletest', '', array('showpasses'=>$showpasses
 $unittest = true;
 
 global $UNITTEST;
-$UNITTEST = new object();
+$UNITTEST = new stdClass();
 
 // Print the header.
 $strtitle = get_string('unittests', 'simpletest');

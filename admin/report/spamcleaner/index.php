@@ -235,7 +235,7 @@ function print_user_entry($user, $keywords, $count) {
 
     global $SESSION, $CFG;
 
-    $smalluserobject = new object;      // All we need to delete them later
+    $smalluserobject = new stdClass();      // All we need to delete them later
     $smalluserobject->id = $user->id;
     $smalluserobject->email = $user->email;
     $smalluserobject->auth = $user->auth;

@@ -43,7 +43,7 @@ if ($CFG->bloglevel == BLOG_COURSE_LEVEL || $CFG->bloglevel == BLOG_GROUP_LEVEL)
     $bloggers = $DB->get_records_sql("SELECT userid FROM {post} WHERE module = 'blog' GROUP BY userid");
     require_once($CFG->dirroot.'/mod/forum/lib.php');
 
-    $a = new object();
+    $a = new stdClass();
     $a->userscount = 0;
     $a->blogcount = 0;
 
@@ -107,7 +107,7 @@ function bloglevelupgrade_entries($blogentries, $forum, $cm, $groupid=-1) {
 
         if (!empty($files)) {
             foreach ($files as $storedfile) {
-                $newfile = new object();
+                $newfile = new stdClass();
                 $newfile->component = 'mod_forum';
                 $newfile->filearea = 'attachment';
                 $newfile->itemid = $discussion->firstpost;
@@ -120,7 +120,7 @@ function bloglevelupgrade_entries($blogentries, $forum, $cm, $groupid=-1) {
 
         if (!empty($files)) {
             foreach ($files as $storedfile) {
-                $newfile = new object();
+                $newfile = new stdClass();
                 $newfile->component = 'mod_forum';
                 $newfile->filearea = 'post';
                 $newfile->itemid = $discussion->firstpost;

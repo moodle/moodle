@@ -93,7 +93,7 @@ class check_bigints extends XMLDBCheckAction {
                 if ($metacolumn->type != $this->correct_type || ($this->dbfamily == 'mysql' && $xmldb_field->getUnsigned() && !$metacolumn->unsigned)) {
                     $o.='<font color="red">' . $this->str['wrong'] . '</font>';
                 /// Add the wrong field to the list
-                    $obj = new object;
+                    $obj = new stdClass();
                     $obj->table = $xmldb_table;
                     $obj->field = $xmldb_field;
                     $wrong_fields[] = $obj;

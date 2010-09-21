@@ -55,7 +55,7 @@ foreach ($columns as $column=>$strcolumn) {
 $baseurl = new moodle_url('index.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 echo $OUTPUT->paging_bar($changescount, $page, $perpage, $baseurl);
 
-$override = new object();
+$override = new stdClass();
 $override->firstname = 'firstname';
 $override->lastname = 'lastname';
 $fullnamelanguage = get_string('fullnamedisplay', '', $override);

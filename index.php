@@ -115,7 +115,7 @@
 
             $context = get_context_instance(CONTEXT_COURSE, SITEID);
             $summarytext = file_rewrite_pluginfile_urls($section->summary, 'pluginfile.php', $context->id, 'course', 'section', $section->id);
-            $summaryformatoptions = new object();
+            $summaryformatoptions = new stdClass();
             $summaryformatoptions->noclean = true;
 
             echo format_text($summarytext, $section->summaryformat, $summaryformatoptions);

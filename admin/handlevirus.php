@@ -61,7 +61,7 @@ function notify_user($user,$subject,$a) {
     }
     $body = get_string('virusfoundlater','moodle',$a);
 
-    $eventdata = new object();
+    $eventdata = new stdClass();
     $eventdata->modulename        = 'moodle';
     $eventdata->userfrom          = get_admin();
     $eventdata->userto            = $user;
@@ -80,7 +80,7 @@ function notify_admins($user,$subject,$a) {
 
     $body = get_string('virusfoundlateradmin','moodle',$a);
     foreach ($admins as $admin) {
-        $eventdata = new object();
+        $eventdata = new stdClass();
         $eventdata->modulename        = 'moodle';
         $eventdata->userfrom          = $admin;
         $eventdata->userto            = $admin;
@@ -101,7 +101,7 @@ function notify_admins_unknown($file,$a) {
     $subject = get_string('virusfoundsubject','moodle',format_string($site->fullname));
     $body = get_string('virusfoundlateradminnolog','moodle',$a);
     foreach ($admins as $admin) {
-        $eventdata = new object();
+        $eventdata = new stdClass();
         $eventdata->modulename        = 'moodle';
         $eventdata->userfrom          = $admin;
         $eventdata->userto            = $admin;

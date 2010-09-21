@@ -80,7 +80,7 @@ if (($mode == INSTALLATION_OF_SELECTED_LANG) and confirm_sesskey() and !empty($p
             switch ($status) {
             case COMPONENT_ERROR:
                 if ($cd->get_error() == 'remotedownloaderror') {
-                    $a = new object();
+                    $a = new stdClass();
                     $a->url = 'http://download.moodle.org/langpack/'.$thisversion.'/'.$pack.'.zip';
                     $a->dest = $CFG->dataroot.'/lang';
                     print_error($cd->get_error(), 'error', 'langimport.php', $a);
@@ -274,7 +274,7 @@ if ($notice_error) {
 
 if ($missingparents) {
     foreach ($missingparents as $l=>$parent) {
-        $a = new object();
+        $a = new stdClass();
         $a->lang   = $installedlangs[$l];
         $a->parent = $parent;
         foreach ($availablelangs as $alang) {

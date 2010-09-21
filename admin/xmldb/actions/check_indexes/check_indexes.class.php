@@ -92,7 +92,7 @@ class check_indexes extends XMLDBCheckAction {
                     } else {
                         $o.='<font color="red">' . $this->str['missing'] . '</font>';
                     /// Add the missing index to the list
-                        $obj = new object;
+                        $obj = new stdClass();
                         $obj->table = $xmldb_table;
                         $obj->index = $xmldb_index;
                         $missing_indexes[] = $obj;
@@ -113,7 +113,7 @@ class check_indexes extends XMLDBCheckAction {
                 } else {
                     $o.='<font color="red">' . $this->str['missing'] . '</font>';
                 /// Add the missing index to the list
-                    $obj = new object;
+                    $obj = new stdClass();
                     $obj->table = $xmldb_table;
                     $obj->index = $xmldb_index;
                     $missing_indexes[] = $obj;

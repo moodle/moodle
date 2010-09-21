@@ -196,13 +196,13 @@ ini_set('include_path', $CFG->libdir.'/zend' . PATH_SEPARATOR . ini_get('include
 require('version.php');
 $CFG->target_release = $release;
 
-$SESSION = new object();
+$SESSION = new stdClass();
 $SESSION->lang = $CFG->lang;
 
-$USER = new object();
+$USER = new stdClass();
 $USER->id = 0;
 
-$COURSE = new object();
+$COURSE = new stdClass();
 $COURSE->id = 0;
 
 $SITE = $COURSE;

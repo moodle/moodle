@@ -99,7 +99,7 @@
         }
         $aclrecord = $DB->get_record('mnet_sso_access_control', array('username'=>$user->username, 'mnet_host_id'=>$user->mnethostid));
         if (empty($aclrecord)) {
-            $aclrecord = new object();
+            $aclrecord = new stdClass();
             $aclrecord->mnet_host_id = $user->mnethostid;
             $aclrecord->username = $user->username;
             $aclrecord->accessctrl = $accessctrl;
@@ -195,7 +195,7 @@
             $users = $nusers;
         }
 
-        $override = new object();
+        $override = new stdClass();
         $override->firstname = 'firstname';
         $override->lastname = 'lastname';
         $fullnamelanguage = get_string('fullnamedisplay', '', $override);

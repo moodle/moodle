@@ -90,7 +90,7 @@ class check_defaults extends XMLDBCheckAction {
                     " '$physicaldefault')";
                     $o.='<font color="red">' . $this->str['wrong'] . " $info</font>";
                 /// Add the wrong field to the list
-                    $obj = new object;
+                    $obj = new stdClass();
                     $obj->table = $xmldb_table;
                     $obj->field = $xmldb_field;
                     $obj->physicaldefault = $physicaldefault;
