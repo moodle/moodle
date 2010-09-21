@@ -109,8 +109,8 @@ abstract class session_stub implements moodle_session {
             $CFG->usesid = 0;
 
             $_SESSION = array();
-            $_SESSION['SESSION'] = new object();
-            $_SESSION['USER']    = new object();
+            $_SESSION['SESSION'] = new stdClass();
+            $_SESSION['USER']    = new stdClass();
 
         } else {
             $this->prepare_cookies();
@@ -129,13 +129,13 @@ abstract class session_stub implements moodle_session {
             session_set_cookie_params(0, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
             session_start();
             if (!isset($_SESSION['SESSION'])) {
-                $_SESSION['SESSION'] = new object();
+                $_SESSION['SESSION'] = new stdClass();
                 if (!$newsession and !$this->justloggedout) {
                     $_SESSION['SESSION']->has_timed_out = true;
                 }
             }
             if (!isset($_SESSION['USER'])) {
-                $_SESSION['USER'] = new object();
+                $_SESSION['USER'] = new stdClass();
             }
         }
 
@@ -162,8 +162,8 @@ abstract class session_stub implements moodle_session {
 
         // Initialize variable to pass-by-reference to headers_sent(&$file, &$line)
         $_SESSION = array();
-        $_SESSION['SESSION'] = new object();
-        $_SESSION['USER']    = new object();
+        $_SESSION['SESSION'] = new stdClass();
+        $_SESSION['USER']    = new stdClass();
         $_SESSION['USER']->id = 0;
         if (isset($CFG->mnet_localhost_id)) {
             $_SESSION['USER']->mnethostid = $CFG->mnet_localhost_id;
@@ -241,7 +241,7 @@ abstract class session_stub implements moodle_session {
         }
 
         if (!$user) {
-            $user = new object();
+            $user = new stdClass();
             $user->id = 0; // to enable proper function of $CFG->notloggedinroleid hack
             if (isset($CFG->mnet_localhost_id)) {
                 $user->mnethostid = $CFG->mnet_localhost_id;
@@ -456,7 +456,7 @@ class database_session extends session_stub {
                 $this->database->get_session_lock($record->id);
 
             } else {
-                $record = new object();
+                $record = new stdClass();
                 $record->state        = 0;
                 $record->sid          = $sid;
                 $record->sessdata     = null;
@@ -535,7 +535,7 @@ class database_session extends session_stub {
         }
 
         if (isset($this->record->id)) {
-            $record = new object();
+            $record = new stdClass();
             $record->state              = 0;
             $record->sid                = $sid;                         // might be regenerating sid
             $this->record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
@@ -563,7 +563,7 @@ class database_session extends session_stub {
 
         } else {
             // session already destroyed
-            $record = new object();
+            $record = new stdClass();
             $record->state        = 0;
             $record->sid          = $sid;
             $record->sessdata     = base64_encode($session_data); // there might be some binary mess :-(
@@ -867,7 +867,7 @@ function get_moodle_cookie() {
  * Setup $USER object - called during login, loginas, etc.
  * Preloads capabilities and checks enrolment plugins
  *
- * @param object $user full user record object
+ * @param stdClass $user full user record object
  * @return void
  */
 function session_set_user($user) {
@@ -891,7 +891,7 @@ function session_is_loggedinas() {
 
 /**
  * Returns the $USER object ignoring current login-as session
- * @return object user object
+ * @return stdClass user object
  */
 function session_get_realuser() {
     if (session_is_loggedinas()) {
@@ -904,7 +904,7 @@ function session_get_realuser() {
 /**
  * Login as another user - no security checks here.
  * @param int $userid
- * @param object $context
+ * @param stdClass $context
  * @return void
  */
 function session_loginas($userid, $context) {
@@ -914,7 +914,7 @@ function session_loginas($userid, $context) {
 
     // switch to fresh new $SESSION
     $_SESSION['REALSESSION'] = $_SESSION['SESSION'];
-    $_SESSION['SESSION']     = new object();
+    $_SESSION['SESSION']     = new stdClass();
 
     /// Create the new $USER object with all details and reload needed capabilities
     $_SESSION['REALUSER'] = $_SESSION['USER'];
@@ -928,7 +928,7 @@ function session_loginas($userid, $context) {
  * Sets up current user and course environment (lang, etc.) in cron.
  * Do not use outside of cron script!
  *
- * @param object $user full user object, null means default cron user (admin)
+ * @param stdClass $user full user object, null means default cron user (admin)
  * @param $course full course record, null means $SITE
  * @return void
  */
@@ -946,7 +946,7 @@ function cron_setup_user($user = NULL, $course = NULL) {
         $cronuser->theme    = '';
         unset($cronuser->description);
 
-        $cronsession = new object();
+        $cronsession = new stdClass();
     }
 
     if (!$user) {
@@ -958,7 +958,7 @@ function cron_setup_user($user = NULL, $course = NULL) {
         // emulate real user session - needed for caps in cron
         if ($_SESSION['USER']->id != $user->id) {
             session_set_user($user);
-            $_SESSION['SESSION'] = new object();
+            $_SESSION['SESSION'] = new stdClass();
         }
     }
 
