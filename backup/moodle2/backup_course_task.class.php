@@ -78,6 +78,9 @@ class backup_course_task extends backup_task {
         // Annotate the groups used in already annotated groupings
         $this->add_step(new backup_annotate_groups_from_groupings('annotate_groups'));
 
+        // Annotate the question_categories belonging to the course context
+        $this->add_step(new backup_calculate_question_categories('course_question_categories'));
+
         // Generate the roles file (optionally role assignments and always role overrides)
         $this->add_step(new backup_roles_structure_step('course_roles', 'roles.xml'));
 

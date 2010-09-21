@@ -1605,23 +1605,11 @@ class restore_block_instance_structure_step extends restore_structure_step {
             throw new restore_step_exception('restore_block_missing_parent_ctx', $data->parentcontextid);
         }
 
-        // get instance of block object, we need to query it
-        $data->blockname = clean_param($data->blockname, PARAM_SAFEDIR);
-        $blockfile = $CFG->dirroot.'/blocks/'.$data->blockname.'/block_'.$data->blockname.'.php';
-        if (!file_exists($blockfile)) {
-            return false;
-        }
-        include_once($blockfile);
-        $classname = 'block_'.$data->blockname;
-        if (!class_exists($classname)) {
-            return false;
-        }
-        $blockobject = new $classname();
-
-        //TODO: it would be nice to use standard plugin supports instead of this instance_allow_multiple()
+        // TODO: it would be nice to use standard plugin supports instead of this instance_allow_multiple()
         // If there is already one block of that type in the parent context
         // and the block is not multiple, stop processing
-        if (!$blockobject->instance_allow_multiple()) {
+        // Use blockslib loader / method executor
+        if (!block_method_result($data->blockname, 'instance_allow_multiple')) {
             if ($DB->record_exists_sql("SELECT bi.id
                                           FROM {block_instances} bi
                                           JOIN {block} b ON b.name = bi.blockname

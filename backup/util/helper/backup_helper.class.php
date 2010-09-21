@@ -287,7 +287,7 @@ abstract class backup_helper {
      * inforef.xml files. Used both by backup and restore
      */
     public static function get_inforef_itemnames() {
-        return array('user', 'grouping', 'group', 'role', 'file', 'scale', 'outcome', 'grade_item');
+        return array('user', 'grouping', 'group', 'role', 'file', 'scale', 'outcome', 'grade_item', 'question_category');
     }
 }
 

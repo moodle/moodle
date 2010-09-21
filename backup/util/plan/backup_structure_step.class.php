@@ -101,6 +101,43 @@ abstract class backup_structure_step extends backup_step {
 // Protected API starts here
 
     /**
+     * Add plugin structure to any element in the activity backup tree
+     *
+     * @param string $plugintype type of plugin as defined by get_plugin_types()
+     * @param backup_nested_element $element element in the activity backup tree that
+     *                                       we are going to add plugin information to
+     * @param bool $multiple to define if multiple plugins can produce information
+     *                       for each instance of $element (true) or no (false)
+     */
+    protected function add_plugin_structure($plugintype, $element, $multiple) {
+
+        global $CFG;
+
+        // Check the requested plugintype is a valid one
+        if (!array_key_exists($plugintype, get_plugin_types($plugintype))) {
+             throw new backup_step_exception('incorrect_plugin_type', $plugintype);
+        }
+
+        // Arrived here, plugin is correct, let's create the optigroup
+        $optigroupname = $plugintype . '_' . $element->get_name() . '_plugin';
+        $optigroup = new backup_optigroup($optigroupname, null, $multiple);
+        $element->add_child($optigroup); // Add optigroup to stay connected since beginning
+
+        // Get all the optigroup_elements, looking across all the plugin dirs
+        $pluginsdirs = get_plugin_list($plugintype);
+        foreach ($pluginsdirs as $name => $plugindir) {
+            $classname = 'backup_' . $plugintype . '_' . $name . '_plugin';
+            $backupfile = $plugindir . '/backup/moodle2/' . $classname . '.class.php';
+            if (file_exists($backupfile)) {
+                require_once($backupfile);
+                $backupplugin = new $classname($plugintype, $name, $optigroup);
+                // Add plugin returned structure to optigroup
+                $backupplugin->define_plugin_structure($element->get_name());
+            }
+        }
+    }
+
+    /**
      * To conditionally decide if one step will be executed or no
      *
      * For steps needing to be executed conditionally, based in dynamic

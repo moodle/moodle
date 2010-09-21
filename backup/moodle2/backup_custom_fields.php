@@ -103,6 +103,12 @@ class file_nested_element extends backup_nested_element {
 }
 
 /**
+ * Implementation of backup_optigroup_element to be used by plugins stuff.
+ * Split just for better separation and future specialisation
+ */
+class backup_plugin_element extends backup_optigroup_element { }
+
+/**
  * Implementation of backup_optigroup_element to be used by subplugins stuff.
  * Split just for better separation and future specialisation
  */

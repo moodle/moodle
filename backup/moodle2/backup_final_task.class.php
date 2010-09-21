@@ -48,6 +48,16 @@ class backup_final_task extends backup_task {
         // including membership based on setting
         $this->add_step(new backup_groups_structure_step('groups', 'groups.xml'));
 
+        // Annotate all the question files for the already annotated question
+        // categories (this is performed here and not in the structure step because
+        // it involves multiple contexts and as far as we are always backup-ing
+        // complete question banks we don't need to restrict at all and can be
+        // done in a single pass
+        $this->add_step(new backup_annotate_all_question_files('question_files'));
+
+        // Generate the questions file with the final annotated question_categories
+        $this->add_step(new backup_questions_structure_step('questions', 'questions.xml'));
+
         // Annotate all the user files (conditionally) (private, profile and icon files)
         // Because each user has its own context, we need a separate/specialised step here
         // This step also ensures that the contexts for all the users exist, so next
