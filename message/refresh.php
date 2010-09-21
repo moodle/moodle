@@ -57,7 +57,7 @@ if ($messages ) {
     foreach ($messages as $message) {
         $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
 
-        $options = new object();
+        $options = new stdClass();
         $options->para = false;
         $options->newlines = true;
         $printmessage = format_text($message->fullmessage, $message->fullmessageformat, $options, 0);

@@ -5,7 +5,7 @@ function xmldb_message_popup_install() {
 
     $result = true;
 
-    $provider = new object();
+    $provider = new stdClass();
     $provider->name  = 'popup';
     $DB->insert_record('message_processors', $provider);
     return $result;

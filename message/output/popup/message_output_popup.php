@@ -41,9 +41,9 @@ class message_output_popup extends message_output{
 
         //do we want to prevent users from messaging themselves?
         //if ($message->useridfrom==$message->useridto) {
-            
+
         $processor = $DB->get_record('message_processors', array('name'=>'popup'));
-        $procmessage = new object();
+        $procmessage = new stdClass();
         $procmessage->unreadmessageid = $message->id;
         $procmessage->processorid     = $processor->id;
 

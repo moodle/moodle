@@ -140,7 +140,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
 }
 
 /// Load preferences
-$preferences = new object();
+$preferences = new stdClass();
 
 /// Get providers preferences
 $providers = message_get_my_providers();

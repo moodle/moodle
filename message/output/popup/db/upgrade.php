@@ -37,7 +37,7 @@ function xmldb_message_popup_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2008072401) {
-        $processor = new object();
+        $processor = new stdClass();
         $processor->name  = 'popup';
         if (! $DB->record_exists('message_processors', array('name' => $processor->name))){
             $DB->insert_record('message_processors', $processor);

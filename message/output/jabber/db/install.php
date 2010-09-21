@@ -4,7 +4,7 @@ function xmldb_message_jabber_install(){
 
     $result = true;
 
-    $provider = new object();
+    $provider = new stdClass();
     $provider->name  = 'jabber';
     $DB->insert_record('message_processors', $provider);
     return $result;

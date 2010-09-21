@@ -92,7 +92,7 @@ if ($p_secret !== false) {
         reset_login_count();
 
         $changepasswordurl = "{$CFG->httpswwwroot}/login/change_password.php";
-        $a = new object();
+        $a = new stdClass();
         $a->email = $user->email;
         $a->link = $changepasswordurl;
 

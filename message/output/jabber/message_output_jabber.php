@@ -115,7 +115,7 @@ class message_output_jabber extends message_output {
         fclose($f);
 
 
-$savemessage = new object();
+$savemessage = new stdClass();
     $savemessage->useridfrom        = 3;
     $savemessage->useridto          = 2;
     $savemessage->subject           = 'IM';

@@ -1452,7 +1452,7 @@ function message_print_message_history($user1,$user2,$search='',$messagelimit=0,
     if ($messages = message_get_history($user1, $user2, $messagelimit)) {
         $tablecontents = '';
 
-        $current = new object();
+        $current = new stdClass();
         $current->mday = '';
         $current->month = '';
         $current->year = '';
@@ -1493,7 +1493,7 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
         }
     }
     $time = userdate($message->timecreated, $dateformat);
-    $options = new object();
+    $options = new stdClass();
     $options->para = false;
     $messagetext = format_text($message->fullmessage, $message->fullmessageformat, $options);
     if ($keywords) {
@@ -1510,7 +1510,7 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
 function message_post_message($userfrom, $userto, $message, $format, $messagetype) {
     global $CFG, $SITE, $USER, $DB;
 
-    $eventdata = new object();
+    $eventdata = new stdClass();
     $eventdata->component        = 'moodle';
     $eventdata->name             = 'instantmessage';
     $eventdata->userfrom         = $userfrom;

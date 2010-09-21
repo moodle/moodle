@@ -228,7 +228,7 @@
 
     $allmessages = array();
     $playbeep = false;
-    $options = new object();
+    $options = new stdClass();
     $options->para = false;
     $options->newlines = true;
 
