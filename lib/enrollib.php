@@ -48,6 +48,15 @@ define('ENROL_EXT_REMOVED_UNENROL', 0);
 /** When user disappears from external source, the enrolment is kept as is - one way sync */
 define('ENROL_EXT_REMOVED_KEEP', 1);
 
+/** enrol plugin feature describing requested restore type */
+define('ENROL_RESTORE_TYPE', 'enrolrestore');
+/** User custom backup/restore class  stored in backup/moodle2/ subdirectory */
+define('ENROL_RESTORE_CLASS', 'class');
+/** Restore all custom fields from enrol table without any changes and all user_enrolments records */
+define('ENROL_RESTORE_EXACT', 'exact');
+/** Restore enrol record like ENROL_RESTORE_EXACT, but no user enrolments */
+define('ENROL_RESTORE_NOUSERS', 'nousers');
+
 /**
  * When user disappears from external source, user enrolment is suspended, roles are kept as is.
  * In some cases user needs a role with some capability to be visible in UI - suc has in gradebook,
@@ -954,9 +963,10 @@ abstract class enrol_plugin {
      * @param int $roleid optional role id
      * @param int $timestart 0 means unknown
      * @param int $timeend 0 means forever
+     * @param int $status default to ENROL_USER_ACTIVE for new enrolments, no change by default in updates
      * @return void
      */
-    public function enrol_user(stdClass $instance, $userid, $roleid = null, $timestart = 0, $timeend = 0) {
+    public function enrol_user(stdClass $instance, $userid, $roleid = NULL, $timestart = 0, $timeend = 0, $status = NULL) {
         global $DB, $USER, $CFG; // CFG necessary!!!
 
         if ($instance->courseid == SITEID) {

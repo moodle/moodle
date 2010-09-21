@@ -1027,20 +1027,51 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
         return $paths;
     }
 
+    /**
+     * Assign roles
+     *
+     * This has to be called after enrolments processing.
+     *
+     * @param mixed $data
+     * @return void
+     */
     public function process_assignment($data) {
         global $DB;
 
         $data = (object)$data;
 
         // Check roleid, userid are one of the mapped ones
-        $newroleid = $this->get_mappingid('role', $data->roleid);
-        $newuserid = $this->get_mappingid('user', $data->userid);
-        // If newroleid and newuserid and component is empty and context valid assign via API (handles dupes and friends)
-        if ($newroleid && $newuserid && empty($data->component) && $this->task->get_contextid()) {
+        if (!$newroleid = $this->get_mappingid('role', $data->roleid)) {
+            return;
+        }
+        if (!$newuserid = $this->get_mappingid('user', $data->userid)) {
+            return;
+        }
+        if (!$DB->record_exists('user', array('id' => $newuserid, 'deleted' => 0))) {
             // Only assign roles to not deleted users
-            if ($DB->record_exists('user', array('id' => $newuserid, 'deleted' => 0))) {
-                // TODO: role_assign() needs one userid param to be able to specify our restore userid
-                role_assign($newroleid, $newuserid, $this->task->get_contextid());
+            return;
+        }
+        if (!$contextid = $this->task->get_contextid()) {
+            return;
+        }
+
+        if (empty($data->component)) {
+            // assign standard manual roles
+            // TODO: role_assign() needs one userid param to be able to specify our restore userid
+            role_assign($newroleid, $newuserid, $contextid);
+
+        } else if ((strpos($data->component, 'enrol_') === 0)) {
+            // Deal with enrolment roles
+            if ($enrolid = $this->get_mappingid('enrol', $data->itemid)) {
+                if ($component = $DB->get_field('enrol', 'component', array('id'=>$enrolid))) {
+                    //note: we have to verify component because it might have changed
+                    if ($component === 'enrol_manual') {
+                        // manual is a special case, we do not use components - this owudl happen when converting from other plugin
+                        role_assign($newroleid, $newuserid, $contextid); //TODO: do we need modifierid?
+                    } else {
+                        role_assign($newroleid, $newuserid, $contextid, $component, $enrolid); //TODO: do we need modifierid?
+                    }
+                }
             }
         }
     }
@@ -1075,48 +1106,81 @@ class restore_enrolments_structure_step extends restore_structure_step {
         return $paths;
     }
 
+    /**
+     * Create enrolment instances.
+     *
+     * This has to be called after creation of roles
+     * and before adding of role assignments.
+     *
+     * @param mixed $data
+     * @return void
+     */
     public function process_enrol($data) {
         global $DB;
 
         $data = (object)$data;
         $oldid = $data->id; // We'll need this later
 
-        // TODO: Just one quick process of manual enrol_plugin. Add the rest (complex ones) and fix this
-        if ($data->enrol !== 'manual') {
-            debugging("Skipping '{$data->enrol}' enrolment plugin. Must be implemented", DEBUG_DEVELOPER);
+        $restoretype = plugin_supports('enrol', $data->enrol, ENROL_RESTORE_TYPE, null);
+
+        if ($restoretype !== ENROL_RESTORE_EXACT and $restoretype !== ENROL_RESTORE_NOUSERS) {
+            // TODO: add complex restore support via custom class
+            debugging("Skipping '{$data->enrol}' enrolment plugin. Will be implemented before 2.0 release", DEBUG_DEVELOPER);
+            $this->set_mapping('enrol', $oldid, 0);
             return;
         }
 
         // Perform various checks to decide what to do with the enrol plugin
-        $installed = array_key_exists($data->enrol, enrol_get_plugins(false));
-        $enabled   = enrol_is_enabled($data->enrol);
-        $exists    = 0;
-        $roleid    = $this->get_mappingid('role', $data->roleid);
-        if ($rec = $DB->get_record('enrol', array('courseid' => $this->get_courseid(), 'enrol' => $data->enrol))) {
-            $exists = $rec->id;
+        if (!array_key_exists($data->enrol, enrol_get_plugins(false))) {
+            // TODO: decide if we want to switch to manual enrol - we need UI for this
+            debugging("Enrol plugin data can not be restored because it is not installed");
+            $this->set_mapping('enrol', $oldid, 0);
+            return;
+
         }
-        // If installed and enabled, continue processing
-        if ($installed && $enabled) {
-            // If not exists in course and we have a target role mapping
-            if (!$exists && $roleid) {
-                $data->roleid = $roleid;
-                $enrol = enrol_get_plugin($data->enrol);
-                $courserec = $DB->get_record('course', array('id' => $this->get_courseid())); // Requires object, uses only id!!
-                $newitemid = $enrol->add_instance($courserec, array($data));
+        if (!enrol_is_enabled($data->enrol)) {
+            // TODO: decide if we want to switch to manual enrol - we need UI for this
+            debugging("Enrol plugin data can not be restored because it is not enabled");
+            $this->set_mapping('enrol', $oldid, 0);
+            return;
+        }
 
-            // Already exists, user it for enrolments
-            } else {
-                $newitemid = $exists;
-            }
+        // map standard fields - plugin has to process custom fields from own restore class
+        $data->roleid = $this->get_mappingid('role', $data->roleid);
+        //TODO: should we move the enrol start and end date here?
 
-        // Not installed and enabled, map to 0
+        // always add instance, if the course does not support multiple instances it just returns NULL
+        $enrol = enrol_get_plugin($data->enrol);
+        $courserec = $DB->get_record('course', array('id' => $this->get_courseid())); // Requires object, uses only id!!
+        if ($newitemid = $enrol->add_instance($courserec, (array)$data)) {
+            // ok
         } else {
+            if ($instances = $DB->get_records('enrol', array('courseid'=>$courserec->id, 'enrol'=>$data->enrol))) {
+                // most probably plugin that supports only one instance
+                $newitemid = key($instances);
+            } else {
+                debugging('Can not create new enrol instance or reuse existing');
+                $newitemid = 0;
+            }
+        }
+
+        if ($restoretype === ENROL_RESTORE_NOUSERS) {
+            // plugin requests to prevent restore of any users
             $newitemid = 0;
         }
-        // Perform the simple mapping and done
+
         $this->set_mapping('enrol', $oldid, $newitemid);
     }
 
+    /**
+     * Create user enrolments
+     *
+     * This has to be called after creation of enrolment instances
+     * and before adding of role assignments.
+     *
+     * @param mixed $data
+     * @return void
+     */
     public function process_enrolment($data) {
         global $DB;
 
@@ -1124,21 +1188,13 @@ class restore_enrolments_structure_step extends restore_structure_step {
 
         // Process only if parent instance have been mapped
         if ($enrolid = $this->get_new_parentid('enrol')) {
-            // And only if user is a mapped one
-            if ($userid = $this->get_mappingid('user', $data->userid)) {
-                // TODO: Surely need to use API (enrol_user) here, instead of the current low-level impl
-                // TODO: Note enrol_user() sticks to $USER->id (need to add userid param)
-                $enrolment = new stdclass();
-                $enrolment->enrolid = $enrolid;
-                $enrolment->userid  = $userid;
-                if (!$DB->record_exists('user_enrolments', (array)$enrolment)) {
-                    $enrolment->status = $data->status;
-                    $enrolment->timestart = $data->timestart;
-                    $enrolment->timeend = $data->timeend;
-                    $enrolment->modifierid = $this->task->get_userid();
-                    $enrolment->timecreated = time();
-                    $enrolment->timemodified = 0;
-                    $DB->insert_record('user_enrolments', $enrolment);
+            if ($instance = $DB->get_record('enrol', array('id'=>$enrolid))) {
+                // And only if user is a mapped one
+                if ($userid = $this->get_mappingid('user', $data->userid)) {
+                    $enrol = enrol_get_plugin($instance->enrol);
+                    //TODO: do we need specify modifierid?
+                    $enrol->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
+                    //note: roles are assigned in restore_ras_and_caps_structure_step::process_assignment() processing above
                 }
             }
         }

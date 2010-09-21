@@ -358,4 +358,16 @@ class enrol_self_plugin extends enrol_plugin {
     }
 }
 
+/**
+ * Indicates API features that the enrol plugin supports.
+ *
+ * @param string $feature
+ * @return mixed True if yes (some features may use other values)
+ */
+function enrol_self_supports($feature) {
+    switch($feature) {
+        case ENROL_RESTORE_TYPE: return ENROL_RESTORE_EXACT;
 
+        default: return null;
+    }
+}

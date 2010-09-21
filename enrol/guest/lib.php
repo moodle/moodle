@@ -53,7 +53,7 @@ class enrol_guest_plugin extends enrol_plugin {
         }
     }
 
-    public function enrol_user(stdClass $instance, $userid, $roleid = null, $timestart = 0, $timeend = 0) {
+    public function enrol_user(stdClass $instance, $userid, $roleid = NULL, $timestart = 0, $timeend = 0, $status = NULL) {
         // no real enrolments here!
         return;
     }
@@ -316,3 +316,16 @@ class enrol_guest_plugin extends enrol_plugin {
 
 }
 
+/**
+ * Indicates API features that the enrol plugin supports.
+ *
+ * @param string $feature
+ * @return mixed True if yes (some features may use other values)
+ */
+function enrol_guest_supports($feature) {
+    switch($feature) {
+        case ENROL_RESTORE_TYPE: return ENROL_RESTORE_NOUSERS;
+
+        default: return null;
+    }
+}
