@@ -281,9 +281,7 @@ class ddl_test extends UnitTestCase {
         $table->add_field('rid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        // this is a sloppy workaround for borked prev/next processing in xmldb table
-        $key = new xmldb_key('primary', XMLDB_KEY_PRIMARY, array('rid'));
-        $table->addKey($key, 'id');
+        $table->add_key('primaryx', XMLDB_KEY_PRIMARY, array('id'));
         $table->setComment("This is a test'n drop table. You can drop it safely");
 
         $this->tables[$table->getName()] = $table;
