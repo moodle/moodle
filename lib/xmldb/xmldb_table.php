@@ -48,6 +48,11 @@ class xmldb_table extends xmldb_object {
      */
     function addField(&$field, $after=NULL) {
 
+    /// Detect duplicates first
+        if ($this->getField($field->getName())) {
+            throw new coding_exception('Duplicate field '.$field->getName().' specified in table '.$this->getName());
+        }
+
     /// Calculate the previous and next fields
         $prevfield = NULL;
         $nextfield = NULL;
@@ -95,6 +100,11 @@ class xmldb_table extends xmldb_object {
      */
     function addKey(&$key, $after=NULL) {
 
+    /// Detect duplicates first
+        if ($this->getKey($key->getName())) {
+            throw new coding_exception('Duplicate key '.$key->getName().' specified in table '.$this->getName());
+        }
+
     /// Calculate the previous and next keys
         $prevkey = NULL;
         $nextkey = NULL;
@@ -139,6 +149,11 @@ class xmldb_table extends xmldb_object {
      * If it's not specified, then the index is added at the end
      */
     function addIndex(&$index, $after=NULL) {
+
+    /// Detect duplicates first
+        if ($this->getIndex($index->getName())) {
+            throw new coding_exception('Duplicate index '.$index->getName().' specified in table '.$this->getName());
+        }
 
     /// Calculate the previous and next indexes
         $previndex = NULL;
