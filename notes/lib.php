@@ -173,7 +173,7 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
     $context = get_context_instance(CONTEXT_COURSE, $note->courseid);
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
-    $authoring = new object();
+    $authoring = new stdClass();
     $authoring->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$author->id.'&amp;course='.$note->courseid.'">'.fullname($author).'</a>';
     $authoring->date = userdate($note->lastmodified);
 

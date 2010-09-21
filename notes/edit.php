@@ -22,7 +22,7 @@ if ($noteid) {
     $userid   = required_param('userid', PARAM_INT);
     $state    = optional_param('publishstate', NOTES_STATE_PUBLIC, PARAM_ALPHA);
 
-    $note = new object();
+    $note = new stdClass();
     $note->courseid     = $courseid;
     $note->userid       = $userid;
     $note->publishstate = $state;
