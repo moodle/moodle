@@ -339,7 +339,7 @@
 
     } else {
         if (!empty($search)) {
-            echo $OUTPUT->heading(get_string("nocoursesfound", s($search)));
+            echo $OUTPUT->heading(get_string("nocoursesfound",'', s($search)));
         }
         else {
             echo $OUTPUT->heading( $strnovalidcourses );
