@@ -34,7 +34,7 @@
         }
         $contextto = $toparent->contextid;
     } else {
-        $toparent = new object();
+        $toparent = new stdClass();
         $toparent->id = 0;
         $toparent->contextid = $contextto;
     }
@@ -174,7 +174,7 @@
             $sortorder++;
         }
         //now move category
-        $cat = new object();
+        $cat = new stdClass();
         $cat->id = $cattomove->id;
         $cat->parent = $toparent->id;
         //set context of category we are moving and all children also!

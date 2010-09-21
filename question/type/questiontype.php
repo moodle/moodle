@@ -475,7 +475,7 @@ class default_questiontype {
         global $CFG, $DB, $OUTPUT;
 
         if (!isset($question->options)) {
-            $question->options = new object;
+            $question->options = new stdClass();
         }
 
         $extra_question_fields = $this->extra_question_fields();
@@ -782,7 +782,7 @@ class default_questiontype {
         $teacherresponses = $this->get_possible_responses($question, $state);
         //only one response
         list($tsubqid, $tresponses) = each($teacherresponses);
-        $responsedetail = new object();
+        $responsedetail = new stdClass();
         $responsedetail->subqid = $tsubqid;
         $responsedetail->response = $response;
         if ($aid = $this->check_response($question, $state)){
@@ -1813,7 +1813,7 @@ class default_questiontype {
                     if ($newcategory->contextid == $question->contextid) {
                         continue;
                     }
-                    $newfile = new object();
+                    $newfile = new stdClass();
                     // only contextid changed
                     $newfile->contextid = (int)$newcategory->contextid;
                     $fs->create_file_from_storedfile($newfile, $storedfile);

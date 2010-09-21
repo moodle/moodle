@@ -245,7 +245,7 @@
             foreach ($categories as $category) {
                 $restoredcategory = $DB->get_record('question_categories', array('id'=>$category->new_id));
                 if ($restoredcategory && $restoredcategory->parent != 0) {
-                    $updateobj = new object();
+                    $updateobj = new stdClass();
                     $updateobj->id = $restoredcategory->id;
                     $idcat = backup_getid($restore->backup_unique_code,'question_categories',$restoredcategory->parent);
                     if ($idcat->new_id) {
@@ -288,7 +288,7 @@
             }
             //now finally do the changes to parent field.
             foreach ($toupdate as  $id => $parent){
-                $updateobj = new object();
+                $updateobj = new stdClass();
                 $updateobj->id = $id;
                 $updateobj->parent = $parent;
                 $DB->update_record('question_categories', $updateobj);
@@ -321,7 +321,7 @@
             $oldid = backup_todb($que_info['#']['ID']['0']['#']);
 
             //Now, build the question record structure
-            $question = new object;
+            $question = new stdClass();
             $question->parent = backup_todb($que_info['#']['PARENT']['0']['#']);
             $question->name = backup_todb($que_info['#']['NAME']['0']['#']);
             $question->questiontext = backup_todb($que_info['#']['QUESTIONTEXT']['0']['#']);
@@ -443,7 +443,7 @@
             $newid = $restored_questions[$i]->newid;
             $oldid = $restored_questions[$i]->oldid;
 
-            $question = new object;
+            $question = new stdClass();
             $question->qtype = $restored_questions[$i]->qtype;
             $question->parent = $restored_questions[$i]->parent;
 

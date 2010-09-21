@@ -57,12 +57,12 @@ class question_edit_randomsamatch_form extends question_edit_form {
         $saquestions = $QTYPES['randomsamatch']->get_sa_candidates($category);
         $numberavailable = count($saquestions);
         if ($saquestions === false){
-            $a = new object();
+            $a = new stdClass();
             $a->catname = $DB->get_field('question_categories', 'name', array('id' => $category));
             $errors['choose'] = get_string('nosaincategory', 'qtype_randomsamatch', $a);
 
         } elseif ($numberavailable < $data['choose']){
-            $a = new object();
+            $a = new stdClass();
             $a->catname = $DB->get_field('question_categories', 'name', array('id' => $category));
             $a->nosaquestions = $numberavailable;
             $errors['choose'] = get_string('notenoughsaincategory', 'qtype_randomsamatch', $a);

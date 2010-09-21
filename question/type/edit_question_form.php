@@ -174,7 +174,7 @@ class question_edit_form extends moodleform {
 
         if (!empty($this->question->id)){
             $mform->addElement('header', 'createdmodifiedheader', get_string('createdmodifiedheader', 'question'));
-            $a = new object();
+            $a = new stdClass();
             if (!empty($this->question->createdby)){
                 $a->time = userdate($this->question->timecreated);
                 $a->user = fullname($DB->get_record('user', array('id' => $this->question->createdby)));
@@ -184,7 +184,7 @@ class question_edit_form extends moodleform {
             }
             $mform->addElement('static', 'created', get_string('created', 'question'), get_string('byandon', 'question', $a));
             if (!empty($this->question->modifiedby)){
-                $a = new object();
+                $a = new stdClass();
                 $a->time = userdate($this->question->timemodified);
                 $a->user = fullname($DB->get_record('user', array('id' => $this->question->modifiedby)));
                 $mform->addElement('static', 'modified', get_string('modified', 'question'), get_string('byandon', 'question', $a));

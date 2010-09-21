@@ -411,7 +411,7 @@ class qformat_default {
             } else {
                 require_capability('moodle/question:managecategory', $context);
                 // create the new category
-                $category = new object;
+                $category = new stdClass();
                 $category->contextid = $context->id;
                 $category->name = $catname;
                 $category->info = '';
@@ -705,7 +705,7 @@ class qformat_default {
                     $categoryname = $this->get_category_path($trackcategory, $this->contexttofile);
 
                     // create 'dummy' question for category export
-                    $dummyquestion = new object;
+                    $dummyquestion = new stdClass();
                     $dummyquestion->qtype = 'category';
                     $dummyquestion->category = $categoryname;
                     $dummyquestion->name = 'Switch category to ' . $categoryname;

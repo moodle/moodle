@@ -409,7 +409,7 @@ class question_truefalse_qtype extends default_questiontype {
             $files = $fs->get_area_files($question->contextid, $component, $filearea, $answer->id);
             foreach ($files as $storedfile) {
                 if (!$storedfile->is_directory()) {
-                    $newfile = new object();
+                    $newfile = new stdClass();
                     $newfile->contextid = (int)$newcategory->contextid;
                     $fs->create_file_from_storedfile($newfile, $storedfile);
                     $storedfile->delete();

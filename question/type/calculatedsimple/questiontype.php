@@ -349,7 +349,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
             $files = $fs->get_area_files($question->contextid, $component, $filearea, $answer->id);
             foreach ($files as $storedfile) {
                 if (!$storedfile->is_directory()) {
-                    $newfile = new object();
+                    $newfile = new stdClass();
                     $newfile->contextid = (int)$newcategory->contextid;
                     $fs->create_file_from_storedfile($newfile, $storedfile);
                     $storedfile->delete();
@@ -362,7 +362,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
         $files = $fs->get_area_files($question->contextid, $component, $filearea, $question->id);
         foreach ($files as $storedfile) {
             if (!$storedfile->is_directory()) {
-                $newfile = new object();
+                $newfile = new stdClass();
                 $newfile->contextid = (int)$newcategory->contextid;
                 $fs->create_file_from_storedfile($newfile, $storedfile);
                 $storedfile->delete();

@@ -401,7 +401,7 @@ class question_category_object {
             }
         }
 
-        $cat = new object();
+        $cat = new stdClass();
         $cat->parent = $parentid;
         $cat->contextid = $contextid;
         $cat->name = $newcategory;

@@ -452,7 +452,7 @@ class question_match_qtype extends default_questiontype {
         //only one response
         $responsedetails =array();
         foreach ($responses as $tsubqid => $response){
-            $responsedetail = new object();
+            $responsedetail = new stdClass();
             $responsedetail->subqid = $tsubqid;
             $responsedetail->response = $response;
             foreach ($teacherresponses[$tsubqid] as $aid => $tresponse){
@@ -761,7 +761,7 @@ class question_match_qtype extends default_questiontype {
             $files = $fs->get_area_files($question->contextid, $component, $filearea, $sub->id);
             foreach ($files as $storedfile) {
                 if (!$storedfile->is_directory()) {
-                    $newfile = new object();
+                    $newfile = new stdClass();
                     $newfile->contextid = (int)$newcategory->contextid;
                     $fs->create_file_from_storedfile($newfile, $storedfile);
                     $storedfile->delete();
