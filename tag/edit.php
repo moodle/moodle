@@ -64,7 +64,7 @@ $tagname = tag_display_name($tag);
 $tag->relatedtags = tag_get_related_tags_csv(tag_get_related_tags($tag->id, TAG_RELATED_MANUAL), TAG_RETURN_TEXT);
 
 if (can_use_html_editor()) {
-    $options = new object();
+    $options = new stdClass();
     $options->smiley = false;
     $options->filter = false;
 

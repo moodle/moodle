@@ -820,7 +820,7 @@ function tag_compute_correlations($min_correlation=2) {
         return;
     }
 
-    $tag_correlation_obj = new object();
+    $tag_correlation_obj = new stdClass();
     foreach($all_tags as $tag) {
 
         // query that counts how many times any tag appears together in items
