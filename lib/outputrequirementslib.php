@@ -418,7 +418,8 @@ class page_requirements_manager {
                     break;
                 case 'core_role':
                     $module = array('name'     => 'core_role',
-                                    'fullpath' => '/admin/roles/module.js');
+                                    'fullpath' => '/admin/roles/module.js',
+                                    'requires' => array('node', 'cookie'));
                     break;
                 case 'core_completion':
                     $module = array('name'     => 'core_completion',

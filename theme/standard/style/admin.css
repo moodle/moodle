@@ -56,6 +56,7 @@
 #page-admin-uploaduser table#uuresults {font-size: 0.9em;}
 #page-admin-auth_config .required {background-color:#DDDDDD;}
 #page-admin-report-unittest-index .sep {color:#AAAAAA;}
+.path-admin-roles .capabilitysearchui {text-align:center;margin:0.5em;}
 
 .path-admin .rolecap .cap-name,
 .path-admin .rolecap .note {color: #888;font-size: 0.75em;}
