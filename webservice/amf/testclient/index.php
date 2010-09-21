@@ -3,13 +3,13 @@ require "../../../config.php";
 
 $PAGE->set_url('/webservice/amf/testclient/index.php');
 
-$flashvars = new object();
+$flashvars = new stdClass();
 $flashvars->rooturl =$CFG->wwwroot;
 
 
 $PAGE->requires->js('/lib/swfobject/swfobject.js', true);
 
-$PAGE->requires->js_function_call('swfobject.embedSWF', 
+$PAGE->requires->js_function_call('swfobject.embedSWF',
                 array($CFG->wwwroot.'/webservice/amf/testclient/AMFTester.swf', //movie
                     'moodletestclient', // div id
                     '100%', // width

@@ -149,7 +149,7 @@ class webservice {
             foreach ($serviceidlist as $serviceid) {
                 if (!in_array($serviceid, $tokenizedservice)) {
                     //create the token for this service
-                    $newtoken = new object();
+                    $newtoken = new stdClass();
                     $newtoken->token = md5(uniqid(rand(),1));
                     //check that the user has capability on this service
                     $newtoken->tokentype = EXTERNAL_TOKEN_PERMANENT;
@@ -408,7 +408,7 @@ class webservice {
      */
     public function add_external_function_to_service($functionname, $serviceid) {
         global $DB;
-        $addedfunction = new object();
+        $addedfunction = new stdClass();
         $addedfunction->externalserviceid = $serviceid;
         $addedfunction->functionname = $functionname;
         $DB->insert_record('external_services_functions', $addedfunction);
