@@ -96,7 +96,7 @@
 .course_category_tree .category_label {padding-left:13px;}
 .course_category_tree .category_link {display:block;margin:5px;font-size:120%;font-weight:bold;}
 .course_category_tree .category .courses {background-color:inherit;}
-.course_category_tree .category .courses .course_link {margin:5px;}
+.course_category_tree .category .courses .course_link {margin:5px;margin-right:100px;}
 .course_category_tree .category .course {border:1px solid #f9f9f9;border-bottom-color: #eee;border-right-width:0;}
 .course_category_tree .category .course:last-child {border-bottom-color:#f6f6f6;}
 .course_category_tree .category .course.even {background-color:#f6f6f6;border-color:#eee;border-top-color: #f9f9f9;}

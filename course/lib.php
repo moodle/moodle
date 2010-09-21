@@ -2195,16 +2195,16 @@ function print_courses($category) {
     }
 
     if ($courses) {
-        echo '<ul class="unlist">';
+        echo html_writer::start_tag('ul', array('class'=>'unlist'));
         foreach ($courses as $course) {
             $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
             if ($course->visible == 1 || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
-                echo '<li>';
+                echo html_writer::start_tag('li');
                 print_course($course);
-                echo "</li>\n";
+                echo html_writer::end_tag('li');
             }
         }
-        echo "</ul>\n";
+        echo html_writer::end_tag('ul');
     } else {
         echo $OUTPUT->heading(get_string("nocoursesyet"));
         $context = get_context_instance(CONTEXT_SYSTEM);
@@ -2215,9 +2215,9 @@ function print_courses($category) {
             } else {
                 $options['category'] = $CFG->defaultrequestcategory;
             }
-            echo '<div class="addcoursebutton">';
+            echo html_writer::start_tag('div', array('class'=>'addcoursebutton'));
             echo $OUTPUT->single_button(new moodle_url('/course/edit.php', $options), get_string("addnewcourse"));
-            echo '</div>';
+            echo html_writer::end_tag('div');
         }
     }
 }
@@ -2236,16 +2236,20 @@ function print_course($course, $highlightterms = '') {
     // Rewrite file URLs so that they are correct
     $course->summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary', NULL);
 
-    $linkcss = $course->visible ? '' : ' class="dimmed" ';
+    echo html_writer::start_tag('div', array('class'=>'coursebox clearfix'));
+    echo html_writer::start_tag('div', array('class'=>'info'));
+    echo html_writer::start_tag('h3', array('class'=>'name'));
 
-    echo '<div class="coursebox clearfix">';
-    echo '<div class="info">';
-    echo '<h3 class="name"><a title="'.get_string('entercourse').'"'.
-         $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
-         highlight($highlightterms, format_string($course->fullname)).'</a></h3>';
+    $linkhref = new moodle_url('/course/view.php', array('id'=>$course->id));
+    $linktext = highlight($highlightterms, format_string($course->fullname));
+    $linkparams = array('title'=>get_string('entercourse'));
+    if (empty($course->visible)) {
+        $linkparams['class'] = 'dimmed';
+    }
+    echo html_writer::link($linkhref, $linktext, $linkparams);
+    echo html_writer::end_tag('h3');
 
     /// first find all roles that are supposed to be displayed
-
     if (!empty($CFG->coursecontact)) {
         $managerroles = explode(',', $CFG->coursecontact);
         $namesarray = array();
@@ -2275,9 +2279,8 @@ function print_course($course, $highlightterms = '') {
                         $ra->rolename = $aliasnames[$ra->roleid]->name;
                     }
 
-                    $namesarray[] = format_string($ra->rolename)
-                        . ': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$ra->user->id.'&amp;course='.SITEID.'">'
-                        . $fullname . '</a>';
+                    $namesarray[] = format_string($ra->rolename).': '.
+                                    html_writer::link(new moodle_url('/user/view.php', array('id'=>$ra->user->id, 'course'=>SITEID)), $fullname);
                 }
             }
         } else {
@@ -2299,23 +2302,23 @@ function print_course($course, $highlightterms = '') {
                         $teacher->rolename = $aliasnames[$teacher->roleid]->name;
                     }
 
-                    $namesarray[] = format_string($teacher->rolename)
-                        . ': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.'&amp;course='.SITEID.'">'
-                        . $fullname . '</a>';
+                    $namesarray[] = format_string($teacher->rolename).': '.
+                                    html_writer::link(new moodle_url('/user/view.php', array('id'=>$teacher->id, 'course'=>SITEID)), $fullname);
                 }
             }
         }
 
         if (!empty($namesarray)) {
-            echo "<ul class=\"teachers\">\n<li>";
-            echo implode('</li><li>', $namesarray);
-            echo "</li></ul>";
+            echo html_writer::start_tag('ul', array('class'=>'teachers'));
+            foreach ($namesarray as $name) {
+                echo html_writer::tag('li', $name);
+            }
+            echo html_writer::end_tag('ul');
         }
     }
+    echo html_writer::end_tag('div'); // End of info div
 
-    // TODO: print some enrol icons
-
-    echo '</div><div class="summary">';
+    echo html_writer::start_tag('div', array('class'=>'summary'));
     $options = NULL;
     $options->noclean = true;
     $options->para = false;
@@ -2323,8 +2326,15 @@ function print_course($course, $highlightterms = '') {
         $course->summaryformat = FORMAT_MOODLE;
     }
     echo highlight($highlightterms, format_text($course->summary, $course->summaryformat, $options,  $course->id));
-    echo '</div>';
-    echo '</div>';
+    if ((!isloggedin() || is_siteadmin()) && $icons = enrol_get_course_info_icons($course)) {
+        echo html_writer::start_tag('div', array('class'=>'enrolmenticons'));
+        foreach ($icons as $icon) {
+            echo $OUTPUT->render($icon);
+        }
+        echo html_writer::end_tag('div'); // End of enrolmenticons div
+    }
+    echo html_writer::end_tag('div'); // End of summary div
+    echo html_writer::end_tag('div'); // End of coursebox div
 }
 
 /**
