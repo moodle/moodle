@@ -161,7 +161,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
                 $draftitemid = $this->_values['itemid'];
             }
 
-            $args = new stdclass;
+            $args = new stdClass();
             // need these three to filter repositories list
             $args->accepted_types = array('image');
             $args->return_types = (FILE_INTERNAL | FILE_EXTERNAL);

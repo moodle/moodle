@@ -208,7 +208,7 @@ case 'movefile':
     echo html_writer::link($home_url, get_string('back', 'repository'));
     echo $OUTPUT->container_end();
 
-    $data = new stdclass;
+    $data = new stdClass();
     $home_url->param('action', 'movefile');
     $home_url->param('draftpath', $draftpath);
     $home_url->param('filename', $filename);

@@ -50,7 +50,7 @@ echo $OUTPUT->header(); // send headers
 
 switch ($action) {
     case 'dir':
-        $data = new stdclass;
+        $data = new stdClass();
         file_get_drafarea_folders($draftid, $filepath, $data);
         echo json_encode($data);
         die;
@@ -68,7 +68,7 @@ switch ($action) {
 
         $fs = get_file_storage();
         $fs->create_directory($user_context->id, 'user', 'draft', $draftid, file_correct_filepath(file_correct_filepath($filepath).$newdirname));
-        $return = new stdclass;
+        $return = new stdClass();
         $return->filepath = $filepath;
         echo json_encode($return);
         die;
@@ -79,7 +79,7 @@ switch ($action) {
 
         $fs = get_file_storage();
         $filepath = file_correct_filepath($filepath);
-        $return = new stdclass;
+        $return = new stdClass();
         if ($stored_file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename)) {
             $parent_path = $stored_file->get_parent_directory()->get_filepath();
             if ($stored_file->is_directory()) {
@@ -221,7 +221,7 @@ switch ($action) {
         $parent_path = $file->get_parent_directory()->get_filepath();
 
         if ($newfile = $zipper->archive_to_storage(array($file), $user_context->id, 'user', 'draft', $draftid, $parent_path, $filepath.'.zip', $USER->id)) {
-            $return = new stdclass;
+            $return = new stdClass();
             $return->filepath = $parent_path;
             echo json_encode($return);
         } else {
@@ -252,7 +252,7 @@ switch ($action) {
         // archive compressed file to an unused draft area
         $newdraftitemid = file_get_unused_draft_itemid();
         if ($newfile = $zipper->archive_to_storage(array($stored_file), $user_context->id, 'user', 'draft', $newdraftitemid, '/', $filename, $USER->id)) {
-            $return = new stdclass;
+            $return = new stdClass();
             $return->fileurl  = moodle_url::make_draftfile_url($newdraftitemid, '/', $filename)->out();
             $return->filepath = $parent_path;
             echo json_encode($return);
@@ -272,7 +272,7 @@ switch ($action) {
         $file = $fs->get_file($user_context->id, 'user', 'draft', $draftid, $filepath, $filename);
 
         if ($newfile = $file->extract_to_storage($zipper, $user_context->id, 'user', 'draft', $draftid, $filepath, $USER->id)) {
-            $return = new stdclass;
+            $return = new stdClass();
             $return->filepath = $filepath;
             echo json_encode($return);
         } else {

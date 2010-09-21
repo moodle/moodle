@@ -126,7 +126,7 @@ case 'update':
     $send_user_list = false;
     if ($messages && ($chat_lasttime != $chat_newlasttime)) {
         foreach ($messages as $n => &$message) {
-            $tmp = new stdclass;
+            $tmp = new stdClass();
             // when somebody enter room, user list will be updated
             if (!empty($message->system)){
                 $send_user_list = true;

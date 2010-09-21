@@ -38,7 +38,7 @@ class block_comments extends block_base {
         $this->content->footer = '';
         $this->content->text = '';
         list($context, $course, $cm) = get_context_info_array($PAGE->context->id);
-        $args = new stdclass;
+        $args = new stdClass();
         $args->context   = $PAGE->context;
         $args->course    = $course;
         $args->area      = 'page_comments';
@@ -50,7 +50,7 @@ class block_comments extends block_base {
         $comment = new comment($args);
         $comment->set_view_permission(true);
 
-        $this->content = new stdClass;
+        $this->content = new stdClass();
         $this->content->text = $comment->output(true);
         $this->content->footer = '';
         return $this->content;

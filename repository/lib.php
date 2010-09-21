@@ -226,7 +226,7 @@ class repository_type {
         $existingtype = $DB->get_record('repository', array('type'=>$this->_typename));
         if (!$existingtype) {
             //create the type
-            $newtype = new stdclass;
+            $newtype = new stdClass();
             $newtype->type = $this->_typename;
             $newtype->visible = $this->_visible;
             $newtype->sortorder = $this->_sortorder;
@@ -1204,7 +1204,7 @@ abstract class repository {
     final public function get_meta() {
         global $CFG, $OUTPUT;
         $ft = new filetype_parser;
-        $meta = new stdclass;
+        $meta = new stdClass();
         $meta->id   = $this->id;
         $meta->name = $this->get_name();
         $meta->type = $this->options['type'];
@@ -1231,7 +1231,7 @@ abstract class repository {
         require_once($CFG->dirroot . '/repository/'. $type . '/lib.php');
         $classname = 'repository_' . $type;
         if ($repo = $DB->get_record('repository', array('type'=>$type))) {
-            $record = new stdclass;
+            $record = new stdClass();
             $record->name = $params['name'];
             $record->typeid = $repo->id;
             $record->timecreated  = time();
@@ -1767,12 +1767,12 @@ function initialise_filepicker($args) {
     global $CFG, $USER, $PAGE, $OUTPUT;
     require_once($CFG->libdir . '/licenselib.php');
 
-    $return = new stdclass;
+    $return = new stdClass();
     $licenses = array();
     if (!empty($CFG->licenses)) {
         $array = explode(',', $CFG->licenses);
         foreach ($array as $license) {
-            $l = new stdclass;
+            $l = new stdClass();
             $l->shortname = $license;
             $l->fullname = get_string($license, 'license');
             $licenses[] = $l;

@@ -1128,7 +1128,7 @@ function wiki_delete_comment($idcomment, $context, $pageid) {
     require_once($CFG->dirroot . '/comment/lib.php');
 
     list($context, $course, $cm) = get_context_info_array($context->id);
-    $cmt = new stdclass;
+    $cmt = new stdClass();
     $cmt->context = $context;
     $cmt->itemid = $pageid;
     $cmt->area = 'wiki_page';

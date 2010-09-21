@@ -54,7 +54,7 @@ echo $OUTPUT->header(); // send headers
 
 // initilising comment object
 if (!empty($client_id)) {
-    $args = new stdclass;
+    $args = new stdClass();
     $args->context   = $context;
     $args->course    = $course;
     $args->cm        = $cm;

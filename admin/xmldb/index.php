@@ -112,7 +112,7 @@
                 print_error('xmldberror');
             }
         } else {
-            $a = new stdclass;
+            $a = new stdClass();
             $a->action = $action;
             $a->actionclass = $actionclass;
             print_error('cannotinstantiateclass', 'xmldb', '', $a);

@@ -1,5 +1,5 @@
 <?php
-$chattheme_cfg = new stdclass;
+$chattheme_cfg = new stdClass();
 $chattheme_cfg->avatar = false;
 $chattheme_cfg->align  = false;
 $chattheme_cfg->event_message = <<<TEMPLATE

@@ -143,7 +143,7 @@ class repository_flickr extends repository {
     public function print_login() {
         if ($this->options['ajax']) {
             $ret = array();
-            $popup_btn = new stdclass;
+            $popup_btn = new stdClass();
             $popup_btn->type = 'popup';
             $popup_btn->url = $this->flickr->auth();
             $ret['login'] = array($popup_btn);

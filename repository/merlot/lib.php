@@ -101,12 +101,12 @@ class repository_merlot extends repository {
      */
     public function print_login(){
         $ret = array();
-        $search = new stdclass;
+        $search = new stdClass();
         $search->type = 'text';
         $search->id   = 'merlog_search';
         $search->name = 'merlot_keyword';
         $search->label = get_string('search').': ';
-        $author = new stdclass;
+        $author = new stdClass();
         $author->type = 'text';
         $author->id   = 'merlog_author';
         $author->name = 'merlot_author';

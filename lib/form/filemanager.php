@@ -135,7 +135,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
         $client_id = uniqid();
 
         // filemanager options
-        $options = new stdclass;
+        $options = new stdClass();
         $options->mainfile  = $this->_options['mainfile'];
         $options->maxbytes  = $this->_options['maxbytes'];
         $options->maxfiles  = $this->getMaxfiles();
@@ -207,7 +207,7 @@ class form_filemanaer_x {
         }
 
         // building file picker options
-        $params = new stdclass;
+        $params = new stdClass();
         $params->accepted_types = $options->accepted_types;
         $params->return_types = $options->return_types;
         $params->context = $options->context;

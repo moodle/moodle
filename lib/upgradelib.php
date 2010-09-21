@@ -1428,7 +1428,7 @@ function upgrade_plugin_mnet_functions($component) {
         $f = $data['filename'];
         $c = $data['classname'];
         foreach ($data['methods'] as $method) {
-            $dataobject = new stdclass;
+            $dataobject = new stdClass();
             $dataobject->plugintype  = $type;
             $dataobject->pluginname  = $plugin;
             $dataobject->enabled     = 1;

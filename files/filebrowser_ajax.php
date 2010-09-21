@@ -36,7 +36,7 @@ require_login();
 
 echo $OUTPUT->header(); // send headers
 
-$err = new stdclass;
+$err = new stdClass();
 if (isguestuser()) {
     $err->error = get_string('noguest');
     die(json_encode($err));

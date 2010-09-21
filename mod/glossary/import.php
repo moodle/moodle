@@ -57,7 +57,7 @@ $form = new mod_glossary_import_form();
 if ( !$data = $form->get_data() ) {
     echo $OUTPUT->box_start('glossarydisplay generalbox');
     // display upload form
-    $data = new stdclass;
+    $data = new stdClass();
     $data->id = $id;
     $form->set_data($data);
     $form->display();

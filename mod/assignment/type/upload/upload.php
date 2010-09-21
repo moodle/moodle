@@ -74,7 +74,7 @@ echo $OUTPUT->header();
 
 echo $OUTPUT->box_start('generalbox');
 if ($instance->can_upload_file($submission) && ($id==null)) {
-    $data = new stdclass;
+    $data = new stdClass();
     // move submission files to user draft area
     $data = file_prepare_standard_filemanager($data, 'files', $filemanager_options, $context, 'mod_assignment', 'submission', $submission->id);
     // set file manager itemid, so it will find the files in draft area

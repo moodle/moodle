@@ -1293,7 +1293,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
             if (!empty($CFG->usecomments)) {
                 require_once($CFG->dirroot  . '/comment/lib.php');
                 list($context, $course, $cm) = get_context_info_array($context->id);
-                $cmt = new stdclass;
+                $cmt = new stdClass();
                 $cmt->context = $context;
                 $cmt->course  = $course;
                 $cmt->cm      = $cm;
@@ -1332,7 +1332,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
                 if (!empty($CFG->usecomments)) {
                     require_once($CFG->dirroot . '/comment/lib.php');
                     list($context, $course, $cm) = get_context_info_array($context->id);
-                    $cmt = new stdclass;
+                    $cmt = new stdClass();
                     $cmt->context = $context;
                     $cmt->course  = $course;
                     $cmt->cm      = $cm;

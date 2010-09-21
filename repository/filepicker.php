@@ -247,7 +247,7 @@ case 'download':
         print_error('maxbytes');
     }
     if (!empty($thefile)) {
-        $record = new stdclass;
+        $record = new stdClass();
         $record->filepath = $savepath;
         $record->filename = $filename;
         $record->component = 'user';

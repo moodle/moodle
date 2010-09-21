@@ -228,7 +228,7 @@ function xmldb_data_upgrade($oldversion) {
                         $lastdataid = $res->dataid;
                         $lastcourseid = $res->courseid;
                     }
-                    $cmt = new stdclass;
+                    $cmt = new stdClass();
                     $cmt->contextid   = $modcontext->id;
                     $cmt->commentarea = 'database_entry';
                     $cmt->itemid      = $res->itemid;

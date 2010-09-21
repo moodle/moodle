@@ -66,7 +66,7 @@ class repository_googledocs extends repository {
         global $CFG;
         if($ajax){
             $ret = array();
-            $popup_btn = new stdclass;
+            $popup_btn = new stdClass();
             $popup_btn->type = 'popup';
             $returnurl = $CFG->wwwroot.'/repository/repository_callback.php?callback=yes&repo_id='.$this->id;
             $popup_btn->url = google_authsub::login_url($returnurl, google_docs::REALM);

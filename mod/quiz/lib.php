@@ -260,7 +260,7 @@ function quiz_update_effective_access($quiz, $userid) {
     $override = $DB->get_record('quiz_overrides', array('quiz' => $quiz->id, 'userid' => $userid));
 
     if (!$override) {
-        $override = new stdclass;
+        $override = new stdClass();
         $override->timeopen = null;
         $override->timeclose = null;
         $override->timelimit = null;

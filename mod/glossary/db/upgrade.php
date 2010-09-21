@@ -250,7 +250,7 @@ function xmldb_glossary_upgrade($oldversion) {
                         $lastglossaryid = $res->glossaryid;
                         $lastcourseid   = $res->courseid;
                     }
-                    $cmt = new stdclass;
+                    $cmt = new stdClass();
                     $cmt->contextid     = $modcontext->id;
                     $cmt->commentarea   = 'glossary_entry';
                     $cmt->itemid        = $res->itemid;

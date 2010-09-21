@@ -87,7 +87,7 @@ class repository_youtube extends repository {
 
     public function print_login($ajax = true) {
         $ret = array();
-        $search = new stdclass;
+        $search = new stdClass();
         $search->type = 'text';
         $search->id   = 'youtube_search';
         $search->name = 'youtube_keyword';

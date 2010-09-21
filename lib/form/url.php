@@ -62,7 +62,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
 $straddlink
 </button>
 EOD;
-        $args = new stdclass;
+        $args = new stdClass();
         $args->accepted_types = '*';
         $args->return_types = FILE_EXTERNAL;
         $args->context = $PAGE->context;

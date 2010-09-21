@@ -35,7 +35,7 @@ $itemid    = optional_param('itemid',    '',     PARAM_INT);
 $returnurl = optional_param('returnurl', '',     PARAM_URL);
 $component = optional_param('component', '', PARAM_ALPHAEXT);
 
-$cmt = new stdclass;
+$cmt = new stdClass();
 $cmt->contextid = $contextid;
 $cmt->courseid  = $course->id;
 $cmt->area      = $area;

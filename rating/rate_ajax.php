@@ -86,7 +86,7 @@ if (!$pluginrateallowed || !has_capability('moodle/rating:rate',$context)) {
 $PAGE->set_url('/lib/rate.php', array('contextid'=>$context->id));
 
 //rating options used to update the rating then retrieve the aggregate
-$ratingoptions = new stdclass;
+$ratingoptions = new stdClass();
 $ratingoptions->context = $context;
 $ratingoptions->itemid  = $itemid;
 $ratingoptions->scaleid = $scaleid;

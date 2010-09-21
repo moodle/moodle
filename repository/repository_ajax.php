@@ -32,7 +32,7 @@ require_once(dirname(dirname(__FILE__)).'/config.php');
 require_once(dirname(dirname(__FILE__)).'/lib/filelib.php');
 require_once(dirname(__FILE__).'/lib.php');
 
-$err = new stdclass;
+$err = new stdClass();
 
 /// Parameters
 $action    = optional_param('action', '', PARAM_ALPHA);
@@ -219,7 +219,7 @@ switch ($action) {
                 throw new file_exception('maxbytes');
             }
 
-            $record = new stdclass;
+            $record = new stdClass();
             $record->filepath = $saveas_path;
             $record->filename = $saveas_filename;
             $record->component = 'user';

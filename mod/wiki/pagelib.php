@@ -926,7 +926,7 @@ class page_wiki_create extends page_wiki {
 
         // @TODO: Change this to has_capability and show an alternative interface.
         require_capability('mod/wiki:createpage', $context, NULL, true, 'nocreatepermission', 'wiki');
-        $data = new stdclass;
+        $data = new stdClass();
         if (!empty($pagetitle)) {
             $data->pagetitle = $pagetitle;
         }
@@ -1037,7 +1037,7 @@ class page_wiki_diff extends page_wiki {
         parent::print_header();
 
         $this->print_pagetitle();
-        $vstring = new stdclass;
+        $vstring = new stdClass();
         $vstring->old = $this->compare;
         $vstring->new = $this->comparewith;
         echo $OUTPUT->heading(get_string('comparewith', 'wiki', $vstring));

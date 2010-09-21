@@ -67,7 +67,7 @@ class repository_url extends repository {
         $strname     = get_string('rename', 'repository_url');
         $strurl      = get_string('url', 'repository_url');
         if ($this->options['ajax']) {
-            $url = new stdclass;
+            $url = new stdClass();
             $url->label = $strurl.': ';
             $url->id   = 'fileurl';
             $url->type = 'text';

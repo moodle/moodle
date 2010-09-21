@@ -279,7 +279,7 @@ class workshop_manual_allocator implements workshop_allocator {
         $allocations = array();
 
         foreach ($participants as $participant) {
-            $allocations[$participant->id] = new stdclass;
+            $allocations[$participant->id] = new stdClass();
             $allocations[$participant->id]->userid = $participant->id;
             $allocations[$participant->id]->submissionid = null;
             $allocations[$participant->id]->reviewedby = array();

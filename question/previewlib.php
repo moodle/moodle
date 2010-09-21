@@ -75,7 +75,7 @@ function question_preview_question_pluginfile($course, $context, $component,
 
     // Build fake attempt
     $timenow = time();
-    $attempt = new stdclass;
+    $attempt = new stdClass();
     $attempt->quiz = $quiz->id;
     $attempt->userid = $USER->id;
     $attempt->attempt = 0;

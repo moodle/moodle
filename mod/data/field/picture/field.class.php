@@ -72,7 +72,7 @@ class data_field_picture extends data_field_base {
             $str .= '<img width="'.s($this->previewwidth).'" height="'.s($this->previewheight).'" src="'.$src.'" alt="" />';
         }
 
-        $options = new stdclass;
+        $options = new stdClass();
         $options->maxbytes  = $this->field->param3;
         $options->itemid    = $itemid;
         $options->accepted_types = array('image');

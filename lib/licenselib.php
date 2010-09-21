@@ -140,7 +140,7 @@ class license_manager {
     static public function install_licenses() {
         $active_licenses = array();
 
-        $license = new stdclass;
+        $license = new stdClass();
 
         $license->shortname = 'unknown';
         $license->fullname = 'Unknown license';

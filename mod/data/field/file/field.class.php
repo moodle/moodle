@@ -70,7 +70,7 @@ class data_field_file extends data_field_base {
         // itemid element
         $html .= '<input type="hidden" name="field_'.$this->field->id.'_file" value="'.$itemid.'" />';
 
-        $options = new stdclass;
+        $options = new stdClass();
         $options->maxbytes  = $this->field->param3;
         $options->itemid    = $itemid;
         $options->accepted_types = '*';

@@ -69,7 +69,7 @@ class repository_picasa extends repository {
         $authurl = google_authsub::login_url($returnurl, google_picasa::REALM);
         if($this->options['ajax']){
             $ret = array();
-            $popup_btn = new stdclass;
+            $popup_btn = new stdClass();
             $popup_btn->type = 'popup';
             $popup_btn->url = $authurl;
             $ret['login'] = array($popup_btn);

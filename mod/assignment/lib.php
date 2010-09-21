@@ -1001,7 +1001,7 @@ class assignment_base {
 
         $this->preprocess_submission($submission);
 
-        $mformdata = new stdclass;
+        $mformdata = new stdClass();
         $mformdata->context = $this->context;
         $mformdata->maxbytes = $this->course->maxbytes;
         $mformdata->courseid = $this->course->id;

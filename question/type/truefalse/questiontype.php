@@ -54,7 +54,7 @@ class question_truefalse_qtype extends default_questiontype {
             $DB->update_record("question_answers", $true);
         } else {
             unset($true);
-            $true = new stdclass;
+            $true = new stdClass();
             $true->answer   = get_string("true", "quiz");
             $true->question = $question->id;
             $true->fraction = $question->correctanswer;
@@ -78,7 +78,7 @@ class question_truefalse_qtype extends default_questiontype {
             $DB->update_record("question_answers", $false);
         } else {
             unset($false);
-            $false = new stdclass;
+            $false = new stdClass();
             $false->answer   = get_string("false", "quiz");
             $false->question = $question->id;
             $false->fraction = 1 - (int)$question->correctanswer;

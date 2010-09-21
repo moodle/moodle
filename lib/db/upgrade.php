@@ -2639,7 +2639,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
         $active_licenses = array();
 
-        $license = new stdclass;
+        $license = new stdClass();
 
         // add unknown license
         $license->shortname = 'unknown';

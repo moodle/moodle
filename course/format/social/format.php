@@ -13,7 +13,7 @@
 
     /// Print forum intro above posts  MDL-18483
         if (trim($forum->intro) != '') {
-            $options = new stdclass;
+            $options = new stdClass();
             $options->para = false;
             $introcontent = format_module_intro('forum', $forum, $cm->id);
 

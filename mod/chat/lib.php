@@ -1076,7 +1076,7 @@ function chat_format_userlist($users, $course) {
  */
 function chat_print_error($level, $msg) {
     header('Content-Length: ' . ob_get_length() );
-    $error = new stdclass;
+    $error = new stdClass();
     $error->level = $level;
     $error->msg   = $msg;
     $response['error'] = $error;

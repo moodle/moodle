@@ -53,7 +53,7 @@ class repository_upload extends repository {
             }
         }
 
-        $record = new stdclass;
+        $record = new stdClass();
         $record->filearea = 'draft';
         $record->component = 'user';
         $record->filepath = optional_param('savepath', '/', PARAM_PATH);

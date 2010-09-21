@@ -475,7 +475,7 @@ function file_get_drafarea_folders($draftitemid, $filepath, &$data) {
     if ($files = $fs->get_directory_files($context->id, 'user', 'draft', $draftitemid, $filepath, false)) {
         foreach ($files as $file) {
             if ($file->is_directory()) {
-                $item = new stdclass;
+                $item = new stdClass();
                 $item->sortorder = $file->get_sortorder();
                 $item->filepath = $file->get_filepath();
 
@@ -505,7 +505,7 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
     $context = get_context_instance(CONTEXT_USER, $USER->id);
     $fs = get_file_storage();
 
-    $data = new stdclass;
+    $data = new stdClass();
     $data->path = array();
     $data->path[] = array('name'=>get_string('files'), 'path'=>'/');
 
@@ -526,7 +526,7 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
     $maxlength = 12;
     if ($files = $fs->get_directory_files($context->id, 'user', 'draft', $draftitemid, $filepath, false)) {
         foreach ($files as $file) {
-            $item = new stdclass;
+            $item = new stdClass();
             $item->filename = $file->get_filename();
             $item->filepath = $file->get_filepath();
             $item->fullname = trim($item->filename, '/');

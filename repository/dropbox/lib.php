@@ -95,7 +95,7 @@ class repository_dropbox extends repository {
         $url = $result['authorize_url'];
         if ($this->options['ajax']) {
             $ret = array();
-            $popup_btn = new stdclass;
+            $popup_btn = new stdClass();
             $popup_btn->type = 'popup';
             $popup_btn->url = $url;
             $ret['login'] = array($popup_btn);
