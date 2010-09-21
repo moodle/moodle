@@ -1207,7 +1207,7 @@ function course_set_display($courseid, $display=0) {
     } else if ($DB->record_exists("course_display", array("userid" => $USER->id, "course"=>$courseid))) {
         $DB->set_field("course_display", "display", $display, array("userid"=>$USER->id, "course"=>$courseid));
     } else {
-        $record = new object();
+        $record = new stdClass();
         $record->userid = $USER->id;
         $record->course = $courseid;
         $record->display = $display;
@@ -1270,7 +1270,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
         $initialised = true;
     }
 
-    $labelformatoptions = new object();
+    $labelformatoptions = new stdClass();
     $labelformatoptions->noclean = true;
 
 /// Casting $course->modinfo to string prevents one notice when the field is null
@@ -2514,7 +2514,7 @@ function get_course_section($section, $courseid) {
     if ($cw = $DB->get_record("course_sections", array("section"=>$section, "course"=>$courseid))) {
         return $cw;
     }
-    $cw = new object();
+    $cw = new stdClass();
     $cw->course   = $courseid;
     $cw->section  = $section;
     $cw->summary  = "";
@@ -3062,7 +3062,7 @@ function update_restricted_mods($course, $mods) {
         if ($mod == 0) {
             continue; // this is the 'allow none' option
         }
-        $am = new object();
+        $am = new stdClass();
         $am->course = $course->id;
         $am->module = $mod;
         $DB->insert_record('course_allowed_modules',$am);
@@ -3519,7 +3519,7 @@ function create_course($data, $editoroptions = NULL) {
     // Setup the blocks
     blocks_add_default_course_blocks($course);
 
-    $section = new object();
+    $section = new stdClass();
     $section->course        = $course->id;   // Create a default section.
     $section->section       = 0;
     $section->summaryformat = FORMAT_HTML;
@@ -3920,7 +3920,7 @@ class course_request {
 
         $this->delete();
 
-        $a = new object();
+        $a = new stdClass();
         $a->name = $course->fullname;
         $a->url = $CFG->wwwroot.'/course/view.php?id=' . $course->id;
         $this->notify($user, $USER, 'courserequestapproved', get_string('courseapprovedsubject'), get_string('courseapprovedemail2', 'moodle', $a));
@@ -3961,7 +3961,7 @@ class course_request {
      * @param string $message
      */
     protected function notify($touser, $fromuser, $name='courserequested', $subject, $message) {
-        $eventdata = new object();
+        $eventdata = new stdClass();
         $eventdata->modulename        = 'moodle';
         $eventdata->component         = 'course';
         $eventdata->name              = $name;

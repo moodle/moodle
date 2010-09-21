@@ -617,7 +617,7 @@ foreach ($progress as $user) {
 
         $describe = get_string('completion-alt-auto-'.$completiontype, 'completion');
 
-        $a = new Object();
+        $a = new stdClass();
         $a->state    = $describe;
         $a->date     = $is_complete ? userdate($criteria_completion->timecompleted) : '';
         $a->user     = fullname($user);

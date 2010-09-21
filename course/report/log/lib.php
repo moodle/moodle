@@ -257,7 +257,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' ('.get_string('site').') ' : '');
         echo html_writer::select($courses,"id",$course->id, false);
         if (has_capability('coursereport/log:view', $sitecontext)) {
-            $a = new object();
+            $a = new stdClass();
             $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
                 ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showcourses=1&showusers=$showusers";
             print_string('logtoomanycourses','moodle',$a);
@@ -470,7 +470,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
         $courses[$course->id] = $course->fullname . (($course->id == SITEID) ? ' ('.get_string('site').') ' : '');
         echo html_writer::select($courses,"id",$course->id, false);
         if (has_capability('coursereport/log:view', $sitecontext)) {
-            $a = new object();
+            $a = new stdClass();
             $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
                 ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showcourses=1&showusers=$showusers";
             print_string('logtoomanycourses','moodle',$a);
@@ -502,7 +502,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
             $users[0] = get_string('allparticipants');
         }
         echo html_writer::select($users, "user", $selecteduser, false);
-        $a = new object();
+        $a = new stdClass();
         $a->url = "$CFG->wwwroot/course/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
             ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
         print_string('logtoomanyusers','moodle',$a);

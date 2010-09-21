@@ -46,7 +46,7 @@ if ($id) {
     if ($context->contextlevel != CONTEXT_COURSECAT and $context->contextlevel != CONTEXT_SYSTEM) {
         print_error('invalidcontext');
     }
-    $cohort = new object();
+    $cohort = new stdClass();
     $cohort->id          = 0;
     $cohort->contextid   = $context->id;
     $cohort->name        = '';

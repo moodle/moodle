@@ -76,7 +76,7 @@ abstract class moodleform_mod extends moodleform {
     protected function init_features() {
         global $CFG;
 
-        $this->_features = new object();
+        $this->_features = new stdClass();
         $this->_features->groups            = plugin_supports('mod', $this->_modname, FEATURE_GROUPS, true);
         $this->_features->groupings         = plugin_supports('mod', $this->_modname, FEATURE_GROUPINGS, false);
         $this->_features->groupmembersonly  = (!empty($CFG->enablegroupmembersonly) and plugin_supports('mod', $this->_modname, FEATURE_GROUPMEMBERSONLY, false));

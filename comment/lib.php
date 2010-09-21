@@ -412,7 +412,7 @@ EOD;
         $candelete = has_capability('moodle/comment:delete', $this->context);
         $rs = $DB->get_recordset_sql($sql, $params, $start, $CFG->commentsperpage);
         foreach ($rs as $u) {
-            $c = new object();
+            $c = new stdClass();
             $c->id          = $u->cid;
             $c->content     = $u->ccontent;
             $c->format      = $u->cformat;

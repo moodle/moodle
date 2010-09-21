@@ -148,7 +148,7 @@ if (!empty($add)) {
     }
 
     // Trigger a mod_deleted event with information about this module.
-    $eventdata = new object();
+    $eventdata = new stdClass();
     $eventdata->modulename = $cm->modname;
     $eventdata->cmid       = $cm->id;
     $eventdata->courseid   = $course->id;

@@ -103,7 +103,7 @@ if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing())
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
     $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course', 'section', $thissection->id);
-    $summaryformatoptions = new object();
+    $summaryformatoptions = new stdClass();
     $summaryformatoptions->noclean = true;
     echo format_text($summarytext, $thissection->summaryformat, $summaryformatoptions);
 
@@ -225,7 +225,7 @@ while ($section <= $course->numsections) {
             if ($thissection->summary) {
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course', 'section', $thissection->id);
-                $summaryformatoptions = new object();
+                $summaryformatoptions = new stdClass();
                 $summaryformatoptions->noclean = true;
                 echo format_text($summarytext, $thissection->summaryformat, $summaryformatoptions);
             } else {

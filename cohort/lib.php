@@ -132,7 +132,7 @@ function cohort_delete_category($category) {
  */
 function cohort_add_member($cohortid, $userid) {
     global $DB;
-    $record = new object();
+    $record = new stdClass();
     $record->cohortid  = $cohortid;
     $record->userid    = $userid;
     $record->timeadded = time();

@@ -48,7 +48,7 @@ if (!isguestuser() and !empty($USER->lastcourseaccess[$COURSE->id])) {
     }
 }
 
-$param = new object();
+$param = new stdClass();
 $param->user   = 0;
 $param->modid  = 'all';
 $param->group  = 0;
@@ -130,7 +130,7 @@ $index = 0;
 
 foreach ($sections as $section) {
 
-    $activity = new object();
+    $activity = new stdClass();
     $activity->type = 'section';
     if ($section->section > 0) {
         $activity->name = get_section_name($course, $section);
@@ -169,7 +169,7 @@ foreach ($sections as $section) {
             $get_recent_mod_activity = $cm->modname."_get_recent_mod_activity";
 
             if (function_exists($get_recent_mod_activity)) {
-                $activity = new object();
+                $activity = new stdClass();
                 $activity->type    = 'activity';
                 $activity->cmid    = $cmid;
                 $activities[$index++] = $activity;

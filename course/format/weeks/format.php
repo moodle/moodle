@@ -96,7 +96,7 @@
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course', 'section', $thissection->id);
-        $summaryformatoptions = new object();
+        $summaryformatoptions = new stdClass();
         $summaryformatoptions->noclean = true;
         echo format_text($summarytext, $thissection->summaryformat, $summaryformatoptions);
 
@@ -227,7 +227,7 @@
                 echo '<div class="summary">';
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course', 'section', $thissection->id);
-                $summaryformatoptions = new object();
+                $summaryformatoptions = new stdClass();
                 $summaryformatoptions->noclean = true;
                 echo format_text($summarytext, $thissection->summaryformat, $summaryformatoptions);
 

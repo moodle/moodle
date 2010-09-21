@@ -171,7 +171,7 @@ if (!empty($delete) and confirm_sesskey()) {
 /// Create a default category if necessary
 if (!$categories = get_categories()) {    /// No category yet!
     // Try and make one
-    $tempcat = new object();
+    $tempcat = new stdClass();
     $tempcat->name = get_string('miscellaneous');
     $tempcat->id = $DB->insert_record('course_categories', $tempcat);
     $tempcat->context = get_context_instance(CONTEXT_COURSECAT, $tempcat->id);
