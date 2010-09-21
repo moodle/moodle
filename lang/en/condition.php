@@ -26,8 +26,8 @@
 $string['addcompletions'] = 'Add {no} activity conditions to form';
 $string['addgrades'] = 'Add {no} grade conditions to form';
 $string['availabilityconditions'] = 'Restrict availability';
-$string['availablefrom'] = 'Only available from';
-$string['availableuntil'] = 'Only available until';
+$string['availablefrom'] = 'Accessible from';
+$string['availableuntil'] = 'Accessible until';
 $string['badavailabledates'] = 'Invalid dates. If you set both dates, the \'available from\' date should be before the \'until\' date.';
 $string['completion_complete'] = 'must be marked complete';
 $string['completioncondition'] = 'Activity completion condition';
