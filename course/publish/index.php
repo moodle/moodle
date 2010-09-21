@@ -74,7 +74,8 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
             $serverurl = $hub->huburl."/local/hub/webservice/webservices.php";
             require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
             $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $hub->token);
-            $sitecourses = $xmlrpcclient->call($function, $params);
+            $result = $xmlrpcclient->call($function, $params);
+            $sitecourses = $result['courses'];
 
             //update status for all these course
             foreach ($sitecourses as $sitecourse) {

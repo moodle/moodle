@@ -120,36 +120,50 @@ if ($remove != -1 and !empty($communityid) and confirm_sesskey()) {
                     'notifysuccess');
 }
 
-//forms
-$hubselectorform = new community_hub_search_form('',
-                array('search' => $search, 'courseid' => $courseid));
-$fromform = $hubselectorform->get_data();
-$courses = null;
+//Get form default/current values
+$fromformdata['coverage'] = optional_param('coverage', 'all', PARAM_TEXT);
+$fromformdata['licence'] = optional_param('licence', 'all', PARAM_ALPHANUMEXT);
+$fromformdata['subject'] = optional_param('subject', 'all', PARAM_ALPHANUMEXT);
+$fromformdata['audience'] = optional_param('audience', 'all', PARAM_ALPHANUMEXT);
+$fromformdata['language'] = optional_param('language', 'all', PARAM_ALPHANUMEXT);
+$fromformdata['educationallevel'] = optional_param('educationallevel', 'all', PARAM_ALPHANUMEXT);
+$fromformdata['downloadable'] = optional_param('downloadable', 0, PARAM_ALPHANUM);
+$fromformdata['orderby'] = optional_param('orderby', 'newest', PARAM_ALPHA);
+$fromformdata['huburl'] = optional_param('huburl', HUB_MOODLEORGHUBURL, PARAM_URL);
+$fromformdata['search'] = $search;
+$fromformdata['courseid'] = $courseid;
+$hubselectorform = new community_hub_search_form('', $fromformdata);
+$hubselectorform->set_data($fromformdata);
+
 //Retrieve courses by web service
-if (!empty($fromform)) {
+$courses = null;
+if (optional_param('executesearch', 0, PARAM_INTEGER) and confirm_sesskey()) {
     $downloadable = optional_param('downloadable', false, PARAM_INTEGER);
 
     $options = new stdClass();
-    if (!empty($fromform->coverage)) {
-        $options->coverage = $fromform->coverage;
+    if (!empty($fromformdata['coverage'])) {
+        $options->coverage = $fromformdata['coverage'];
     }
-    if ($fromform->licence != 'all') {
-        $options->licenceshortname = $fromform->licence;
+    if ($fromformdata['licence'] != 'all') {
+        $options->licenceshortname = $fromformdata['licence'];
     }
-    if ($fromform->subject != 'all') {
-        $options->subject = $fromform->subject;
+    if ($fromformdata['subject'] != 'all') {
+        $options->subject = $fromformdata['subject'];
     }
-    if ($fromform->audience != 'all') {
-        $options->audience = $fromform->audience;
+    if ($fromformdata['audience'] != 'all') {
+        $options->audience = $fromformdata['audience'];
     }
-    if ($fromform->educationallevel != 'all') {
-        $options->educationallevel = $fromform->educationallevel;
+    if ($fromformdata['educationallevel'] != 'all') {
+        $options->educationallevel = $fromformdata['educationallevel'];
     }
-    if ($fromform->language != 'all') {
-        $options->language = $fromform->language;
+    if ($fromformdata['language'] != 'all') {
+        $options->language = $fromformdata['language'];
     }
 
-    $options->orderby = $fromform->orderby;
+    $options->orderby = $fromformdata['orderby'];
+
+    //the range of course requested
+    $options->givememore = optional_param('givememore', 0, PARAM_INTEGER);
 
     //check if the selected hub is from the registered list (in this case we use the private token)
     $token = 'publichub';
@@ -168,7 +182,9 @@ if (!empty($fromform)) {
     require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
     $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $token);
     try {
-        $courses = $xmlrpcclient->call($function, $params);
+        $result = $xmlrpcclient->call($function, $params);
+        $courses = $result['courses'];
+        $coursetotal = $result['coursetotal'];
     } catch (Exception $e) {
         $errormessage = $OUTPUT->notification(
                         get_string('errorcourselisting', 'block_community', $e->getMessage()));
@@ -199,4 +215,15 @@ $PAGE->requires->yui_module('moodle-block_community-comments', 'M.blocks_communi
         array(array('commentids' => $courseids)));
 
 echo highlight($search, $renderer->course_list($courses, $huburl, $courseid));
+
+//display givememore/Next link if more course can be displayed
+if (!empty($courses)) {
+    if (($options->givememore + count($courses)) < $coursetotal) {
+        $fromformdata['givememore'] = count($courses) + $options->givememore;
+        $fromformdata['executesearch'] = true;
+        $fromformdata['sesskey'] = sesskey();
+        echo $renderer->next_button($fromformdata);
+    }
+}
+
 echo $OUTPUT->footer();

@@ -46,6 +46,17 @@ class block_community_renderer extends plugin_renderer_base {
     }
 
     /**
+     * The 'Next'/'more course result' link for a courses search
+     * @param array $data - the form parameter to execute the search on more result
+     * @return string html code
+     */
+    public function next_button($data) {
+        $nextlink = html_writer::tag('a', get_string('next', 'block_community'),
+                array('href' => new moodle_url('', $data)));
+        return html_writer::tag('div', $nextlink, array( 'class' => 'nextlink'));
+    }
+
+    /**
      * Display a list of courses
      * @param array $courses
      * @param boolean $withwriteaccess

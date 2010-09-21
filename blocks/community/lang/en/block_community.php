@@ -71,6 +71,7 @@ $string['licence'] = 'License';
 $string['licence_help'] = 'You can search for courses that are licensed in a particular way.';
 $string['moredetails'] = 'More details';
 $string['mycommunities'] = 'My communities:';
+$string['next'] = 'Next >>>';
 $string['nocomments'] = 'No comments';
 $string['nocourse'] = 'No courses found';
 $string['noratings'] = 'No ratings';

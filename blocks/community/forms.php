@@ -40,11 +40,60 @@ class community_hub_search_form extends moodleform {
         global $CFG, $USER, $OUTPUT;
         $strrequired = get_string('required');
         $mform = & $this->_form;
+
+        //set default value
         $search = $this->_customdata['search'];
+        if (isset($this->_customdata['coverage'])) {
+            $coverage = $this->_customdata['coverage'];
+        } else {
+            $coverage = 'all';
+        }
+        if (isset($this->_customdata['licence'])) {
+            $licence = $this->_customdata['licence'];
+        } else {
+            $licence = 'all';
+        }
+        if (isset($this->_customdata['subject'])) {
+            $subject = $this->_customdata['subject'];
+        } else {
+            $subject = 'all';
+        }
+        if (isset($this->_customdata['audience'])) {
+            $audience = $this->_customdata['audience'];
+        } else {
+            $audience = 'all';
+        }
+        if (isset($this->_customdata['language'])) {
+            $language = $this->_customdata['language'];
+        } else {
+            $language = 'all';
+        }
+        if (isset($this->_customdata['educationallevel'])) {
+            $educationallevel = $this->_customdata['educationallevel'];
+        } else {
+            $educationallevel = 'all';
+        }
+        if (isset($this->_customdata['downloadable'])) {
+            $downloadable = $this->_customdata['downloadable'];
+        } else {
+            $downloadable = 0;
+        }
+        if (isset($this->_customdata['orderby'])) {
+            $orderby = $this->_customdata['orderby'];
+        } else {
+            $orderby = 'newest';
+        }
+        if (isset($this->_customdata['huburl'])) {
+            $huburl = $this->_customdata['huburl'];
+        } else {
+            $huburl = HUB_MOODLEORGHUBURL;
+        }
+
         $mform->addElement('header', 'site', get_string('search', 'block_community'));
 
         //add the course id (of the context)
         $mform->addElement('hidden', 'courseid', $this->_customdata['courseid']);
+        $mform->addElement('hidden', 'executesearch', 1);
 
         //retrieve the hub list on the hub directory by web service
         $function = 'hubdirectory_get_hubs';
@@ -130,7 +179,7 @@ class community_hub_search_form extends moodleform {
                 if (empty($firsthub)) {
                     $mform->addElement('radio', 'huburl', get_string('selecthub', 'block_community'),
                             $hubdescription, $hub['url']);
-                    $mform->setDefault('huburl', HUB_MOODLEORGHUBURL);
+                    $mform->setDefault('huburl', $huburl);
                     $firsthub = true;
                 } else {
                     $mform->addElement('radio', 'huburl', '', $hubdescription, $hub['url']);
@@ -155,7 +204,7 @@ class community_hub_search_form extends moodleform {
             $options[HUB_AUDIENCE_STUDENTS] = get_string('audiencestudents', 'hub');
             $options[HUB_AUDIENCE_ADMINS] = get_string('audienceadmins', 'hub');
             $mform->addElement('select', 'audience', get_string('audience', 'block_community'), $options);
-            $mform->setDefault('audience', 'all');
+            $mform->setDefault('audience', $audience);
             unset($options);
             $mform->addHelpButton('audience', 'audience', 'block_community');
 
@@ -170,7 +219,7 @@ class community_hub_search_form extends moodleform {
             $options[HUB_EDULEVEL_OTHER] = get_string('edulevelother', 'hub');
             $mform->addElement('select', 'educationallevel',
                     get_string('educationallevel', 'block_community'), $options);
-            $mform->setDefault('educationallevel', 'all');
+            $mform->setDefault('educationallevel', $educationallevel);
             unset($options);
             $mform->addHelpButton('educationallevel', 'educationallevel', 'block_community');
 
@@ -187,7 +236,7 @@ class community_hub_search_form extends moodleform {
             $options = array_merge(array('all' => get_string('any')), $options);
             $mform->addElement('select', 'subject', get_string('subject', 'block_community'),
                     $options, array('id' => 'communitysubject'));
-            $mform->setDefault('subject', 'all');
+            $mform->setDefault('subject', $subject);
             unset($options);
             $mform->addHelpButton('subject', 'subject', 'block_community');
             $this->init_javascript_enhancement('subject', 'smartselect',
@@ -202,16 +251,15 @@ class community_hub_search_form extends moodleform {
                 $options[$license->shortname] = get_string($license->shortname, 'license');
             }
             $mform->addElement('select', 'licence', get_string('licence', 'block_community'), $options);
-            $mform->setDefault('licence', 'cc');
             unset($options);
             $mform->addHelpButton('licence', 'licence', 'block_community');
-            $mform->setDefault('licence', 'all');
+            $mform->setDefault('licence', $licence);
 
             $languages = get_string_manager()->get_list_of_languages();
             textlib_get_instance()->asort($languages);
             $languages = array_merge(array('all' => get_string('any')), $languages);
             $mform->addElement('select', 'language', get_string('language'), $languages);
-            $mform->setDefault('language', 'all');
+            $mform->setDefault('language', $language);
             $mform->addHelpButton('language', 'language', 'block_community');
 
             $mform->addElement('radio', 'orderby', get_string('orderby', 'block_community'),
@@ -222,7 +270,7 @@ class community_hub_search_form extends moodleform {
                     get_string('orderbyname', 'block_community'), 'fullname');
             $mform->addElement('radio', 'orderby', null,
                     get_string('orderbypublisher', 'block_community'), 'publisher');
-            $mform->setDefault('orderby', 'newest');
+            $mform->setDefault('orderby', $orderby);
             $mform->setType('orderby', PARAM_ALPHA);
 
             $mform->addElement('text', 'search', get_string('keywords', 'block_community'));
