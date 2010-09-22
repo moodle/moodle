@@ -71,10 +71,10 @@
             $userdata->$key = addslashes_js($value);
         }
     } else {
-        error('Sco not found');
+        print_error('cannotfindsco', 'scorm');
     }
     if (!$sco = scorm_get_sco($scoid)) {
-        error('Sco not found');
+        print_error('cannotfindsco', 'scorm');
     }
     $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe
     if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php')) {
