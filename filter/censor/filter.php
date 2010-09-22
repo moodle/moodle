@@ -71,7 +71,7 @@ class filter_censor extends moodle_text_filter {
             foreach ($badwords as $badword) {
                 $badword = trim($badword);
                 if($this->_canseecensor()){
-                    $words[] = new filterobject($badword, '<span title="'.$badword.'">', '</span>',
+                    $words[] = new filterobject($badword, '<span class="censoredtexthighlight" title="'.$badword.'">', '</span>',
                         false, false, $badword);
                 } else {
                     $words[] = new filterobject($badword, '<span class="censoredtext" title="'.$badword.'">',

@@ -83,6 +83,7 @@ table.formtable tbody th {background-color: transparent;background-image: none;}
 .unread {background: #FFD991;}
 
 .censoredtext {color:#000000;background:#000000;}
+.censoredtexthighlight {color:#000000;background:#B0B0B0;}
 
 .navigation select {background-color:#FFFFFF;}
 .navigation optgroup {background-color:#EEEEEE;}
