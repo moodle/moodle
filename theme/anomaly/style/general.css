@@ -14,34 +14,34 @@ html, body {background-color:#C8C9C7;}
 
 #page-header .navbar {background-color:#697F55;width:100%;}
 #page-header .navbar {color:#000;}
-#page-header .navbar a:link {color:#fff;}
+#page-header .navbar a:link,
 #page-header .navbar a:visited {color:#fff;}
-#page-header .navbar .breadcrumb {margin:5px 1em;float:left;}
-#page-header .navbar .navbutton {float:right;margin:5px 1em;}
+#page-header .navbar .breadcrumb,
+#page-header .navbar .navbutton {margin:5px 1em;}
 
 /** General **/
 .generalbox {border: 1px solid #DDDDDD;}
-.generaltable td {border-width:0px;}
-.sitetopic {border-width:0px;}
+.generaltable td {border-width:0;}
+.sitetopic {border-width:0;}
 .headingblock {margin-bottom:10px;border-bottom:1px solid #697F55;background-color:#E3E3E3;padding:4px 5px;}
 
 .coursebox {width:100%;margin:10px 0px;border-bottom:1px solid #E3E3E3;overflow:hidden;padding-bottom:10px;}
 .coursebox .info {width:35%;float:left;}
 .coursebox .summary {width:60%;float:right;}
 
-.course-content ul {margin:0px;}
-.course-content .headingblock.outline {margin-top:0px;}
+.course-content ul {margin:0;}
+.course-content .headingblock.outline {margin-top:0;}
 .course-content .section.main {border:1px solid #E3E3E3;margin-bottom:10px;}
 .course-content .section.main .left.side {float:left;width:20px;padding:5px;}
 .course-content .section.main .right.side {float:right;width:20px;padding:5px;}
-.course-content .section.main .content {margin:0px 30px 10px 30px;background-color:#FFF;}
+.course-content .section.main .content {margin:0 30px 10px 30px;background-color:#FFF;}
 .course-content .section.main .content .section_add_menus {text-align:right;}
 
-#course-user .section {border:1px solid #DDD;margin:0px 5% 1.5em 5%;}
+#course-user .section {border:1px solid #DDD;margin:0 5% 1.5em 5%;}
 
 #course-user .section h2,
 #course-user .section .content {margin:5px 1em;}
-#course-user .section table td {border:0px;}
+#course-user .section table td {border:0;}
 
 .generaltable {border:1px solid #DDD;}
 .generaltable .cell {background-color:#FFF;border:1px solid #EEE;border-collapse: collapse;}
