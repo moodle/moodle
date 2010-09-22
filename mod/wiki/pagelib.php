@@ -1229,7 +1229,7 @@ class page_wiki_history extends page_wiki {
                 $versionid = wiki_get_version($row->id);
                 $versionlink = new moodle_url('/mod/wiki/viewversion.php', array('pageid' => $pageid, 'versionid' => $versionid->id));
                 $userlink = new moodle_url('/user/view.php', array('id' => $username->id));
-                $contents[] = array('', html_writer::link($versionlink->out(false), $row->version), $picture . html_writer::link($userlink->out(false), fullname($username)), $time, print_container($date, false, 'wiki_histdate', '', true));
+                $contents[] = array('', html_writer::link($versionlink->out(false), $row->version), $picture . html_writer::link($userlink->out(false), fullname($username)), $time, $OUTPUT->container($date, 'wiki_histdate'));
 
                 $table = new html_table();
                 $table->head = array('', get_string('version'), get_string('user'), get_string('modified'), '');
@@ -1264,7 +1264,7 @@ class page_wiki_history extends page_wiki {
                         $viewlink = $version->version;
                     }
                     $userlink = new moodle_url('/user/view.php', array('id' => $version->userid));
-                    $contents[] = array($this->choose_from_radio(array($version->version  => null), 'compare', 'M.mod_wiki.history()', $checked - 1, true) . $this->choose_from_radio(array($version->version  => null), 'comparewith', 'M.mod_wiki.history()', $checked, true), $viewlink, $picture . html_writer::link($userlink->out(false), fullname($user)), $time, print_container($date, false, 'wiki_histdate', '', true));
+                    $contents[] = array($this->choose_from_radio(array($version->version  => null), 'compare', 'M.mod_wiki.history()', $checked - 1, true) . $this->choose_from_radio(array($version->version  => null), 'comparewith', 'M.mod_wiki.history()', $checked, true), $viewlink, $picture . html_writer::link($userlink->out(false), fullname($user)), $time, $OUTPUT->container($date, 'wiki_histdate'));
                 }
 
                 $table = new html_table();

@@ -24,11 +24,10 @@ function wiki_print_editor_html($pageid, $content, $version = -1, $section = nul
         $action .= "&section=".urlencode($section);
     }
 
-    print_container_start(false, 'mdl-align');
+    echo $OUTPUT->container_start('mdl-align');
     echo '<form method="post" action="'.$action.'">';
-    print_container(print_textarea(true, 20, 100, 0, 0, "newcontent", $content, 0, true, '', 'form-textarea-advanced'), false, 'wiki_editor');
+    echo $OUTPUT->container(print_textarea(true, 20, 100, 0, 0, "newcontent", $content, 0, true, '', 'form-textarea-advanced'), 'wiki_editor');
     wiki_print_edit_form_default_fields('html', $pageid, $version, $upload, $deleteuploads);
     echo '</form>';
-
-    print_container_end();
+    echo $OUTPUT->container_end();
 }
