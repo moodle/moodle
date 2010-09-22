@@ -489,9 +489,9 @@
         }
         echo $OUTPUT->heading($heading, 3);
     } else {
-        if ($course->id != SITEID && has_capability('moodle/role:assign', $context)) {
-            $editlink  = ' <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">';
-            $editlink .= '<img src="'.$OUTPUT->pix_url('i/edit') . '" class="icon" alt="" /></a>';
+        if ($course->id != SITEID && has_capability('moodle/course:enrolreview', $context)) {
+            $editlink = $OUTPUT->action_icon(new moodle_url('/enrol/users.php', array('id' => $course->id)),
+                                             new pix_icon('i/edit', get_string('edit')));
         } else {
             $editlink = '';
         }
