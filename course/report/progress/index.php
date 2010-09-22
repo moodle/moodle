@@ -98,11 +98,11 @@ $grandtotal = $completion->get_num_tracked_users('', array(), $group);
 
 // If no users in this course what-so-ever
 if (!$grandtotal) {
-    print_box_start('errorbox errorboxcontent boxaligncenter boxwidthnormal');
-    print '<p class="nousers">'.get_string('err_nousers','completion').'</p>';
-    print '<p><a href="'.$CFG->wwwroot.'/course/report.php?id='.$course->id.'">'.get_string('continue').'</a></p>';
-    print_box_end();
-    print_footer($course);
+    echo $OUTPUT->box_start('errorbox errorboxcontent boxaligncenter boxwidthnormal');
+    echo '<p class="nousers">'.get_string('err_nousers','completion').'</p>';
+    echo '<p><a href="'.$CFG->wwwroot.'/course/report.php?id='.$course->id.'">'.get_string('continue').'</a></p>';
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->footer();
     exit;
 }
 
@@ -239,8 +239,8 @@ if(!$csv) {
     print $pagingbar;
 
     if (!$total) {
-        print_heading(get_string('nothingtodisplay'));
-        print_footer($course);
+        echo $OUTPUT->heading(get_string('nothingtodisplay'));
+        echo $OUTPUT->footer();
         exit;
     }
 
