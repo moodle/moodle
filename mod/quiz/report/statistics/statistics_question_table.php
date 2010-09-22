@@ -60,9 +60,9 @@ class quiz_report_statistics_question_table extends flexible_table {
     function col_response($response){
         global $QTYPES;
         if (!$this->is_downloading() || $this->is_downloading() == 'xhtml'){
-            return $QTYPES[$this->question->qtype]->format_response($response->response, $this->question->questiontextformat);
+            return $response->indent . $QTYPES[$this->question->qtype]->format_response($response->response, $this->question->questiontextformat);
         } else {
-            return $response->response;
+            return $response->indent . $response->response;
         }
     }
 

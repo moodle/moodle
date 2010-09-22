@@ -281,6 +281,7 @@ class quiz_statistics_report extends quiz_default_report {
                 foreach ($tresponsesforsubq as $aid => $teacherresponse){
                     $teacherresponserow = new stdClass();
                     $teacherresponserow->response = $teacherresponse->answer;
+                    $teacherresponserow->indent = '';
                     $teacherresponserow->rcount = 0;
                     $teacherresponserow->subq = $subq;
                     $teacherresponserow->credit = $teacherresponse->credit;
@@ -303,7 +304,8 @@ class quiz_statistics_report extends quiz_default_report {
                                 } else {
                                     $indent = '    ';
                                 }
-                                $response->response = ($qhaswildcards?$indent:'').$response->response;
+                                $response->response = $response->response;
+                                $response->indent = $qhaswildcards ? $indent : '';
                                 $response->subq = $subq;
                                 if ((count($responses[$subqid][$aid])<2) || ($response->rcount > ($teacherresponserow->rcount / 10))){
                                     $this->qtable->add_data_keyed($this->qtable->format_row($response));
