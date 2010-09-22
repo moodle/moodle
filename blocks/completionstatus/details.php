@@ -43,11 +43,9 @@ $course = $DB->get_record('course', array('id' => $id));
 
 // Load user
 if ($userid) {
-    if (!$user = $DB->get_record('user', array('id' => $userid))) {
-        error('User ID incorrect');
-    }
+    $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 } else {
-    $user =& $USER;
+    $user = $USER;
 }
 
 
@@ -74,13 +72,13 @@ elseif (has_capability('coursereport/completion:view', $personalcontext)) {
 }
 
 if (!$can_view) {
-    error('You do not have permissions to view this report');
+    print_error('cannotviewreport');
 }
 
 
 // Don't display if completion isn't enabled!
 if (!$course->enablecompletion) {
-    error('completion not enabled');
+    print_error('completionnotenabled', 'block_completionstatus');
 }
 
 // Load criteria to display
@@ -89,12 +87,12 @@ $completions = $info->get_completions($user->id);
 
 // Check if this course has any criteria
 if (empty($completions)) {
-    error('no criteria');
+    print_error('nocriteria', 'block_completionstatus');
 }
 
 // Check this user is enroled
 if (!$info->is_tracked_user($user->id)) {
-    error(get_string('notenroled', 'completion'));
+    print_error('notenroled', 'completion');
 }
 
 
@@ -106,9 +104,8 @@ if (!$info->is_tracked_user($user->id)) {
 $page = get_string('completionprogressdetails', 'block_completionstatus');
 $title = format_string($course->fullname) . ': ' . $page;
 
-$navlinks[] = array('name' => $page, 'link' => null, 'type' => 'misc');
-$navigation = build_navigation($navlinks);
-
+$PAGE->navbar->add($page);
+$PAGE->set_pagelayout('standard');
 $PAGE->set_url('/blocks/completionstatus/details.php', array('course' => $course->id));
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($title);
