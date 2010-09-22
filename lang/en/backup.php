@@ -43,6 +43,7 @@ $string['backupstage4action'] = 'Perform backup';
 $string['backupstage8action'] = 'Continue';
 $string['backupstage16action'] = 'Continue';
 $string['backuptype'] = 'Type';
+$string['backuptypeactivity'] = 'Activity';
 $string['backuptypecourse'] = 'Course';
 $string['backupversion'] = 'Backup version';
 $string['cannotfindassignablerole'] = 'The {$a} role in the backup file cannot be mapped to any of the roles that you are allowed to assign.';
