@@ -76,7 +76,7 @@ if ($file_info) {
     //$options['visible_areas'] = array('backup'=>array('section', 'course'), 'course'=>array('legacy'), 'user'=>array('backup'));
     echo $output->files_tree_viewer($file_info, $options);
 } else {
-    notify(get_string('nofilesavailable', 'repository'));
+    echo $output->notification(get_string('nofilesavailable', 'repository'));
 }
 
 echo $output->box_end();
