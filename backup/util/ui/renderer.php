@@ -102,52 +102,54 @@ class core_backup_renderer extends plugin_renderer_base {
         }
         $html .= html_writer::end_tag('div');
 
-        $html .= html_writer::start_tag('div', array('class'=>'backup-section'));
-        $html .= $this->output->heading(get_string('backupcoursedetails', 'backup'), 2, array('class'=>'header'));
-        $html .= $this->backup_detail_pair(get_string('coursetitle', 'backup'), $details->course->title);
-        $html .= $this->backup_detail_pair(get_string('courseid', 'backup'), $details->course->courseid);
+        if ($details->type === 'course') {
+            $html .= html_writer::start_tag('div', array('class'=>'backup-section'));
+            $html .= $this->output->heading(get_string('backupcoursedetails', 'backup'), 2, array('class'=>'header'));
+            $html .= $this->backup_detail_pair(get_string('coursetitle', 'backup'), $details->course->title);
+            $html .= $this->backup_detail_pair(get_string('courseid', 'backup'), $details->course->courseid);
 
-        $html .= html_writer::start_tag('div', array('class'=>'backup-sub-section'));
-        $html .= $this->output->heading(get_string('backupcoursesections', 'backup'), 3, array('class'=>'subheader'));
-        foreach ($details->sections as $key=>$section) {
-            $included = $key.'_included';
-            $userinfo = $key.'_userinfo';
-            if ($section->settings[$included] && $section->settings[$userinfo]) {
-                $value = get_string('sectionincanduser','backup');
-            } else if ($section->settings[$included]) {
-                $value = get_string('sectioninc','backup');
-            } else {
-                continue;
-            }
-            $html .= $this->backup_detail_pair(get_string('backupcoursesection', 'backup', $section->title), $value);
-            $table = null;
-            foreach ($details->activities as $activitykey=>$activity) {
-                if ($activity->sectionid != $section->sectionid) {
+            $html .= html_writer::start_tag('div', array('class'=>'backup-sub-section'));
+            $html .= $this->output->heading(get_string('backupcoursesections', 'backup'), 3, array('class'=>'subheader'));
+            foreach ($details->sections as $key=>$section) {
+                $included = $key.'_included';
+                $userinfo = $key.'_userinfo';
+                if ($section->settings[$included] && $section->settings[$userinfo]) {
+                    $value = get_string('sectionincanduser','backup');
+                } else if ($section->settings[$included]) {
+                    $value = get_string('sectioninc','backup');
+                } else {
                     continue;
                 }
-                if (empty($table)) {
-                    $table = new html_table();
-                    $table->head = array('Module', 'Title', 'Userinfo');
-                    $table->colclasses = array('modulename', 'moduletitle', 'userinfoincluded');
-                    $table->align = array('left','left', 'center');
-                    $table->attributes = array('class'=>'activitytable generaltable');
-                    $table->data = array();
+                $html .= $this->backup_detail_pair(get_string('backupcoursesection', 'backup', $section->title), $value);
+                $table = null;
+                foreach ($details->activities as $activitykey=>$activity) {
+                    if ($activity->sectionid != $section->sectionid) {
+                        continue;
+                    }
+                    if (empty($table)) {
+                        $table = new html_table();
+                        $table->head = array('Module', 'Title', 'Userinfo');
+                        $table->colclasses = array('modulename', 'moduletitle', 'userinfoincluded');
+                        $table->align = array('left','left', 'center');
+                        $table->attributes = array('class'=>'activitytable generaltable');
+                        $table->data = array();
+                    }
+                    $name = get_string('pluginname', $activity->modulename);
+                    $icon = new pix_icon('icon', $name, $activity->modulename);
+                    $table->data[] = array(
+                        $this->output->render($icon).'&nbsp;'.$name,
+                        $activity->title,
+                        ($activity->settings[$activitykey.'_userinfo'])?$yestick:$notick,
+                    );
                 }
-                $name = get_string('pluginname', $activity->modulename);
-                $icon = new pix_icon('icon', $name, $activity->modulename);
-                $table->data[] = array(
-                    $this->output->render($icon).'&nbsp;'.$name,
-                    $activity->title,
-                    ($activity->settings[$activitykey.'_userinfo'])?$yestick:$notick,
-                );
-            }
-            if (!empty($table)) {
-                $html .= $this->backup_detail_pair(get_string('sectionactivities','backup'), html_writer::table($table));
-            }
+                if (!empty($table)) {
+                    $html .= $this->backup_detail_pair(get_string('sectionactivities','backup'), html_writer::table($table));
+                }
 
+            }
+            $html .= html_writer::end_tag('div');
+            $html .= html_writer::end_tag('div');
         }
-        $html .= html_writer::end_tag('div');
-        $html .= html_writer::end_tag('div');
 
         $html .= $this->output->single_button($nextstageurl, get_string('continue'), 'post');
         $html .= html_writer::end_tag('div');
