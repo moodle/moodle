@@ -2000,8 +2000,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
             else {
                 if (empty($noredirect)) {
-                    print_continue($CFG->wwwroot.'/backup/restore.php?backup_unique_code='.$backup_unique_code.'&launch=form&file='.$file.'&id='.$id.'&sesskey='.sesskey());
-                    print_footer();
+                    echo $OUTPUT->continue_button(new moodle_url('/backup/restore.php', array('backup_unique_code'=>$backup_unique_code, 'launch'=>'form', 'file'=>$file, 'id'=>$id, 'sesskey'=>sesskey())));
+                    echo $OUTPUT->footer();
                     die;
 
                 } else {

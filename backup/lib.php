@@ -577,7 +577,7 @@
         $restore->rolesmapping = array();
         if (isset($info->roles) && is_array($info->roles)) {
             foreach ($info->roles as $id => $info) {
-                if ($newroleid = get_field('role', 'id', 'shortname', $info->shortname)) {
+                if ($newroleid = $DB->get_field('role', 'id', array('shortname' => $info->shortname))) {
                     $restore->rolesmapping[$id] = $newroleid;
                 }
             }

@@ -92,7 +92,7 @@ foreach ($rs as $problem) {
 $rs->close();
 
 if (!$problems) {
-    notify(get_string('noprolbems', 'report_unsuproles'), 'notifysuccess');
+    echo $OUTPUT->notification(get_string('noprolbems', 'report_unsuproles'), 'notifysuccess');
 } else {
     $roles = get_all_roles();
     $data = array();

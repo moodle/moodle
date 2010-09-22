@@ -82,7 +82,9 @@ if ($formdata = $mform->get_data()) {
             echo $OUTPUT->notification(get_string('uploadpicture_cannotmovezip','admin'));
             @remove_dir($zipdir);
         } else {
-            if (!unzip_file($dstfile, $zipdir, false)) {
+            $fp = get_file_packer('application/zip');
+            $unzipresult = $fp->extract_to_pathname($dstfile, $zipdir);
+            if (!$unzipresult) {
                 echo $OUTPUT->notification(get_string('uploadpicture_cannotunzip','admin'));
                 @remove_dir($zipdir);
             } else {
