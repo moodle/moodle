@@ -1788,7 +1788,7 @@ class backup_course_completion_structure_step extends backup_structure_step {
         $cc->add_child($aggregatemethod);
 
         // We need to get the courseinstances shortname rather than an ID for restore
-        $criteria->set_source_sql("SELECT ccc.*, c.shortname courseinstanceshortname
+        $criteria->set_source_sql("SELECT ccc.*, c.shortname AS courseinstanceshortname
                                    FROM {course_completion_criteria} ccc
                                    LEFT JOIN {course} c ON c.id = ccc.courseinstance
                                    WHERE ccc.course = ?", array(backup::VAR_COURSEID));
