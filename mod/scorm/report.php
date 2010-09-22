@@ -165,7 +165,7 @@
                 if (empty($currentgroup)) {
                     // all users who can attempt scoes
                     if (!$students = get_users_by_capability($contextmodule, 'mod/scorm:savetrack','','','','','','',false)){
-                        notify(get_string('nostudentsyet'));
+                        echo $OUTPUT->notification(get_string('nostudentsyet'));
                         $nostudents = true;
                         $allowedlist = '';
                     } else {
@@ -174,7 +174,7 @@
                 } else {
                     // all users who can attempt scoes and who are in the currently selected group
                     if (!$groupstudents = get_users_by_capability($context, 'mod/scorm:savetrack','','','','',$currentgroup,'',false)){
-                        notify(get_string('nostudentsingroup'));
+                        echo $OUTPUT->notification(get_string('nostudentsingroup'));
                         $nostudents = true;
                         $groupstudents = array();
                     }
