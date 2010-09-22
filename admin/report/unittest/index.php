@@ -37,6 +37,9 @@ $UNITTEST = new stdClass();
 $strtitle = get_string('unittests', 'simpletest');
 
 if (!is_null($path)) {
+    //trim so user doesn't get an error if they include a space on the end of the path (ie by pasting path)
+    $path = trim($path);
+
     // Turn off xmlstrictheaders during the unit test run.
     $origxmlstrictheaders = !empty($CFG->xmlstrictheaders);
     $CFG->xmlstrictheaders = false;
