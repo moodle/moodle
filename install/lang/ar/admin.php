@@ -28,5 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['cliincorrectvalueerror'] = 'خطأ، القيمة "{$a->value}" غير صحيحة من أجل "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'قيمة غير صحيحة، حاول مرة أخرى';
 $string['environmentrequireinstall'] = 'مطلوب تثبيته/تمكينه';
 $string['environmentrequireversion'] = 'مطلوب الأصدار {$a->needed} ، وانت تستخدم الأصدار {$a->current}';
