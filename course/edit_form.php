@@ -163,6 +163,10 @@ class course_edit_form extends moodleform {
             }
             $mform->addElement('select', 'legacyfiles', get_string('courselegacyfiles'), $choices);
             $mform->addHelpButton('legacyfiles', 'courselegacyfiles');
+            if (!isset($courseconfig->legacyfiles)) {
+                // in case this was not initialised properly due to switching of $CFG->legacyfilesinnewcourses
+                $courseconfig->legacyfiles = 0;
+            }
             $mform->setDefault('legacyfiles', $courseconfig->legacyfiles);
         }
 
