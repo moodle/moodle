@@ -1536,32 +1536,52 @@ class table_ods_export_format extends table_spreadsheet_export_format_parent{
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class table_text_export_format_parent extends table_default_export_format_parent{
-    var $seperator = "\t";
-    function start_document($filename){
-        $this->filename = $filename.".txt";
-        header("Content-Type: application/download\n");
-        header("Content-Disposition: attachment; filename=\"{$filename}.txt\"");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
-        header("Pragma: public");
+class table_text_export_format_parent extends table_default_export_format_parent {
+    protected $seperator = "\t";
+    protected $mimetype = 'text/tab-separated-values';
+    protected $ext = '.txt';
+
+    public function start_document($filename) {
+        $this->filename = $filename . $this->ext;
+        header('Content-Type: ' . $this->mimetype . '; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="' . $this->filename . '"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
+        header('Pragma: public');
         $this->documentstarted = true;
     }
-    function start_table($sheettitle){
+
+    public function start_table($sheettitle) {
         //nothing to do here
     }
-    function output_headers($headers){
-        echo implode($this->seperator, $headers)."\n";
+
+    public function output_headers($headers) {
+        echo $this->format_row($headers);
     }
-    function add_data($row){
-        echo implode($this->seperator, $row)."\n";
+
+    public function add_data($row) {
+        echo $this->format_row($row);
         return true;
     }
-    function finish_table(){
+
+    public function finish_table() {
         echo "\n\n";
     }
-    function finish_document(){
+
+    public function finish_document() {
         exit;
+    }
+
+    /**
+     * Format a row of data.
+     * @param array $data
+     */
+    protected function format_row($data) {
+        $escapeddata = array();
+        foreach ($data as $value) {
+            $escapeddata[] = '"' . str_replace('"', '""', $value) . '"';
+        }
+        return implode($this->seperator, $escapeddata) . "\n";
     }
 }
 
@@ -1571,8 +1591,9 @@ class table_text_export_format_parent extends table_default_export_format_parent
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class table_tsv_export_format extends table_text_export_format_parent{
-    var $seperator = "\t";
-
+    protected $seperator = "\t";
+    protected $mimetype = 'text/tab-separated-values';
+    protected $ext = '.txt';
 }
 
 /**
@@ -1581,8 +1602,9 @@ class table_tsv_export_format extends table_text_export_format_parent{
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class table_csv_export_format extends table_text_export_format_parent{
-    var $seperator = ",";
-
+    protected $seperator = ",";
+    protected $mimetype = 'text/csv';
+    protected $ext = '.csv';
 }
 
 /**
