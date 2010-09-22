@@ -1094,15 +1094,20 @@ class assignment_upload extends assignment_base {
         require_once($CFG->libdir.'/filelib.php');
         $submissions = $this->get_submissions('','');
         if (empty($submissions)) {
-            error("there are no submissions to download");
+            print_error('errornosubmissions', 'assignment');
         }
         $filesforzipping = array();
         $fs = get_file_storage();
 
-        $groupmode = groupmode($this->course,$this->cm);
+        if (isset($this->cm->groupmode) && empty($this->course->groupmodeforce)) {
+            $groupmode = $this->cm->groupmode;
+        } else {
+            $groupmode = $this->course->groupmode;
+        }
+        
         $groupid = 0;   // All users
         $groupname = '';
-        if($groupmode) {
+        if ($groupmode) {
             $group = get_current_group($this->course->id, true);
             $groupid = $group->id;
             $groupname = $group->name.'-';
