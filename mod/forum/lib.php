@@ -3278,12 +3278,12 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         // Print shortened version
         echo format_text(forum_shorten_post($post->message), $post->messageformat, $options, $course->id);
         $numwords = count_words(strip_tags($post->message));
-        echo '<div class="posting"><a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'">';
+        echo '<div class="posting shortenedpost"><a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'">';
         echo get_string('readtherest', 'forum');
         echo '</a> ('.get_string('numwords', '', $numwords).')...</div>';
     } else {
         // Print whole message
-        echo '<div class="posting">';
+        echo '<div class="posting fullpost">';
         if ($highlight) {
             echo highlight($highlight, format_text($post->message, $post->messageformat, $options, $course->id));
         } else {
