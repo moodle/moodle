@@ -265,9 +265,15 @@
 
 
         $replycount = forum_count_replies($post);
-
+        
         if (!empty($confirm) && confirm_sesskey()) {    // User has confirmed the delete
-
+            //check user capability to delete post.
+            $timepassed = time() - $post->created;
+            if (($timepassed > $CFG->maxeditingtime) && !has_capability('mod/forum:deleteanypost', $modcontext)) {
+                print_error("cannotdeletepost", "forum",
+                          forum_go_back_to("discuss.php?d=$post->discussion"));
+            }
+            
             if ($post->totalscore) {
                 notice(get_string("couldnotdeleteratings", "forum"),
                         forum_go_back_to("discuss.php?d=$post->discussion"));

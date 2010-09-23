@@ -31,6 +31,7 @@ $string['bynameondate'] = 'by $a->name - $a->date';
 $string['cannotviewpostyet'] = 'You cannot read other students questions in this discussion yet because you haven\'t posted';
 $string['cannotadddiscussion'] = 'Adding discussions to this forum requires group membership.';
 $string['cannotadddiscussionall'] = 'You do not have permission to add a new discussion topic for all participants.';
+$string['cannotdeletepost'] = 'You can\'t delete this post!';
 $string['cleanreadtime'] = 'Mark old posts as read hour';
 $string['configajaxrating'] = 'AJAX rating is a forum rating usability improvement. If enabled, users can rate forum posts almost instantly without needing to scroll to the bottom of the page and click the \'Send in my latest ratings\' button. This setting also requires AJAX to be enabled for the site and in user profiles.';
 $string['configcleanreadtime'] = 'The hour of the day to clean old posts from the \'read\' table.';
