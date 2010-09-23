@@ -338,7 +338,10 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
         }
     }
 
-    if ($orgs = $DB->get_records('scorm_scoes', array('scorm'=>$scorm->id, 'organization'=>'', 'launch'=>''),'id','id,identifier,title')) {
+    if ($orgs = $DB->get_records_select('scorm_scoes', 'scorm = ? AND '.
+                                         $DB->sql_isempty('scorm_scoes', 'launch', false, true).' AND '.
+                                         $DB->sql_isempty('scorm_scoes', 'organization', false, false),
+                                         array($scorm->id),'id','id,identifier,title')) {
         if (count($orgs) <= 1) {
             unset($orgs);
             $orgs[]->identifier = '';
@@ -609,7 +612,7 @@ function scorm_grade_item_update($scorm, $grades=NULL) {
     }
 
     if ($scorm->grademethod == GRADESCOES) {
-        if ($maxgrade = $DB->count_records_select('scorm_scoes', 'scorm = ? AND launch <> ?', array($scorm->id, $DB->sql_empty()))) {
+        if ($maxgrade = $DB->count_records_select('scorm_scoes', 'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true), array($scorm->id))) {
             $params['gradetype'] = GRADE_TYPE_VALUE;
             $params['grademax']  = $maxgrade;
             $params['grademin']  = 0;

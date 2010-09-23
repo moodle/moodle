@@ -621,8 +621,7 @@ function scorm_count_launchable($scormid,$organization='') {
         $sqlorganization = " AND organization=?";
         $params[] = $organization;
     }
-    $params []= ''; // empty launch
-    return $DB->count_records_select('scorm_scoes',"scorm = ? $sqlorganization AND launch <> ?", $params);
+    return $DB->count_records_select('scorm_scoes',"scorm = ? $sqlorganization AND ".$DB->sql_isnotempty('scorm_scoes', 'launch', false, true), $params);
 }
 
 function scorm_get_last_attempt($scormid, $userid) {
@@ -724,7 +723,10 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     if (empty($organization)) {
         $organization = $scorm->launch;
     }
-    if ($orgs = $DB->get_records_menu('scorm_scoes', array('scorm'=>$scorm->id, 'organization'=>'', 'launch'=>''), 'id', 'id,title')) {
+    if ($orgs = $DB->get_records_select('scorm_scoes', 'scorm = ? AND '.
+                                         $DB->sql_isempty('scorm_scoes', 'launch', false, true).' AND '.
+                                         $DB->sql_isempty('scorm_scoes', 'organization', false, false),
+                                         array($scorm->id),'id','id,title')) {
         if (count($orgs) > 1) {
             $select = new single_select(new moodle_url($action), 'organization', $orgs, $organization, null);
             $select->lable = get_string('organizations','scorm');
@@ -817,7 +819,7 @@ function scorm_simple_play($scorm,$user, $context) {
         return $result;
     }
 
-    $scoes = $DB->get_records_select('scorm_scoes', 'scorm = ? AND launch <> ?', array($scorm->id, $DB->sql_empty()), 'id', 'id');
+    $scoes = $DB->get_records_select('scorm_scoes', 'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true), array($scorm->id), 'id', 'id');
 
     if ($scoes) {
         if ($scorm->skipview >= 1) {
