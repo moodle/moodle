@@ -273,6 +273,10 @@ class feedback_item_info extends feedback_item_base {
         $presentation = $item->presentation;
         $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
 
+        if($presentation == 1) {
+            $value = $value ? UserDate($value) : '&nbsp;';
+        }
+
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
             echo '('.$item->label.') ';
@@ -281,7 +285,7 @@ class feedback_item_info extends feedback_item_base {
 
         //print the presentation
         echo $OUTPUT->box_start('generalbox boxalign'.$align);
-        echo $value ? UserDate($value):'&nbsp;';
+        echo $value;
         echo $OUTPUT->box_end();
     }
 
