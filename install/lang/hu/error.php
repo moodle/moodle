@@ -42,5 +42,5 @@ $string['invalidmd5'] = 'Az ellenőrző változó hibás volt – próbálkozzé
 $string['missingrequiredfield'] = 'Egy szükséges mező hiányzik.';
 $string['remotedownloaderror'] = 'Az összetevőt nem lehet szerverére letölteni, ellenőrizze a proxy beállításait. Ajánlatos a PHP cURL-kiterjesztés használata. A(z) <a href="{$a->url}">{$a->url}</a> állományt töltse le kézzel, másolja át szerverén a(z) "{$a->dest}" célkönyvtárba, és csomagolja ki ott.';
 $string['wrongdestpath'] = 'Hibás célútvonal.';
-$string['wrongsourcebase'] = 'Hibás URL-forrás.';
+$string['wrongsourcebase'] = 'Hibás forrás-URL.';
 $string['wrongzipfilename'] = 'Hibás a tömörített állomány neve.';

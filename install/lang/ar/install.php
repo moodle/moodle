@@ -31,6 +31,9 @@
 $string['admindirname'] = 'مجلد الإدارة';
 $string['availablelangs'] = 'حزم اللغة المتوفره';
 $string['chooselanguagehead'] = 'اختر اللغة';
+$string['chooselanguagesub'] = 'الرجاء حدد لغة للتثبيت. هذه اللغة ستستخدم أيضاً كاللغة الافتراضية للموقع، لكن يمكنك تغييرها لاحقا.';
+$string['clialreadyinstalled'] = 'الملف config.php موجود مسبقاً، يرجى استخدام admin/cli/upgrade.php إن كنت تريد تحديث موقعك.';
+$string['databasename'] = 'اسم قاعدة البيانات';
 $string['dataroot'] = 'دليل البيانات';
 $string['dbprefix'] = 'مقدمة الجداول';
 $string['dirroot'] = 'دليل مودل';

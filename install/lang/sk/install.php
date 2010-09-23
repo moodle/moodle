@@ -55,6 +55,12 @@ $string['memorylimithelp'] = '<p>PHP limit pamäte pre Váš server je momentál
 Na niektorých PHP serveroch, si môžete vytvoriť súbor .htaccess v Adresári Moodle, ktorý bude obsahovať tento riadok: <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Avšak, na niektorých serveroch bude toto brániť <b>všetkým</b> PHP stránkam v práci (budete vidieť chyby, keď sa pozriete na stránky), takže budete musieť odstrániť súbor .htaccess.</p></li>
 </ol>';
+$string['paths'] = 'Cesty';
+$string['pathserrcreatedataroot'] = 'Adresár súborov ({$a->dataroot}) nie je možné vytvoriť. ';
+$string['pathshead'] = 'Vytvoriť cesty';
+$string['pathsrodataroot'] = 'Kmeňový adresár nie je zapisovateľný';
+$string['pathssubdataroot'] = 'Potrebujete adresár, kam Moodle bude ukladať nahrané súbory. Adresár by mal povoliť čítanie a zapisovanie údajov používateľom web serveru, ale nesmie byť prístupný priamo cez web rozhranie. Pokiaľ ešte neexistuje, inštalácia sa pokúsi o jeho vytvorenie. ';
+$string['pathssubdirroot'] = 'Plná cesta adresára moodle inštalácie';
 $string['pathsunsecuredataroot'] = 'Umiestnenie dátového adresára nie je bezpečné';
 $string['pathswrongadmindir'] = 'Administrátorský adresár neexistuje';
 $string['phpextension'] = 'Rozšírenie PHP {$a}';
