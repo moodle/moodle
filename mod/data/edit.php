@@ -80,16 +80,24 @@
         }
     }
 
+/// Check to see if groups are being used here
+    groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/data/edit.php?d='.$data->id);
+    $currentgroup = groups_get_activity_group($cm);
+    $groupmode = groups_get_activity_groupmode($cm);
+
     if ($rid) {    // So do you have access?
         if (!(has_capability('mod/data:manageentries', $context) or data_isowner($rid)) or !confirm_sesskey() ) {
             print_error('noaccess','data');
+        }
+    } else {
+        if (!data_user_can_add_entry($data, $currentgroup, $groupmode) || data_atmaxentries($data)) { // took out participation list here!
+            redirect('view.php?d='.$data->id, get_string('noaccess','data'));
         }
     }
 
     if ($cancel) {
         redirect('view.php?d='.$data->id);
     }
-
 
 /// RSS and CSS and JS meta
     $meta = '';
@@ -113,11 +121,6 @@
     print_header_simple($data->name, '', $navigation,
                         '', $meta, true, update_module_button($cm->id, $course->id, get_string('modulename', 'data')),
                         navmenu($course, $cm), '', '');
-
-/// Check to see if groups are being used here
-    groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/data/edit.php?d='.$data->id);
-    $currentgroup = groups_get_activity_group($cm);
-    $groupmode = groups_get_activity_groupmode($cm);
 
     print_heading(format_string($data->name));
 
