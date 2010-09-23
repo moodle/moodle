@@ -487,6 +487,22 @@ function xmldb_scorm_upgrade($oldversion) {
     /// scorm savepoint reached
         upgrade_mod_savepoint(true, 2010070800, 'scorm');
     }
+    if ($oldversion < 2010092400) {
+        $count = $DB->count_records('scorm', array('scormtype'=>'external'));
+        if (!empty($count)) {
+            set_config('allowtypeexternal', '1', 'scorm');
+        }
+        $count = $DB->count_records('scorm', array('scormtype'=>'localsync'));
+        if (!empty($count)) {
+            set_config('allowtypelocalsync', '1', 'scorm');
+        }
+        $count = $DB->count_records('scorm', array('scormtype'=>'imsrepository'));
+        if (!empty($count)) {
+            set_config('allowtypeimsrepository', '1', 'scorm');
+        }
+        /// scorm savepoint reached
+        upgrade_mod_savepoint(true, 2010092400, 'scorm');
+    }
     return true;
 }
 
