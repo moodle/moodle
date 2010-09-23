@@ -3019,7 +3019,7 @@ function data_presets_export($course, $cm, $data, $tostorage=false) {
         print_error('generateerror', 'data');
     }
 
-    $filelist = array(
+    $filenames = array(
         'preset.xml',
         'singletemplate.html',
         'listtemplateheader.html',
@@ -3033,8 +3033,9 @@ function data_presets_export($course, $cm, $data, $tostorage=false) {
         'asearchtemplate.html'
     );
 
-    foreach ($filelist as $key => $file) {
-        $filelist[$key] = $exportdir . '/' . $filelist[$key];
+    $filelist = array();
+    foreach ($filenames as $filename) {
+        $filelist[$filename] = $exportdir . '/' . $filename;
     }
 
     $exportfile = $exportdir.'.zip';
