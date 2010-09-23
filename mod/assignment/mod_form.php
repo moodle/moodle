@@ -58,10 +58,10 @@ class mod_assignment_mod_form extends moodleform_mod {
         $mform->addElement('select', 'preventlate', get_string('preventlate', 'assignment'), $ynoptions);
         $mform->setDefault('preventlate', 0);
 
-        $typetitle = get_string('type'.$type, 'assignment');
-
         // hack to support pluggable assignment type titles
-        if ($typetitle === '[[type'.$type.']]') {
+        if (get_string_manager()->string_exists('type'.$type, 'assignment')) {
+            $typetitle = get_string('type'.$type, 'assignment');
+        } else {
             $typetitle  = get_string('type'.$type, 'assignment_'.$type);
         }
 
