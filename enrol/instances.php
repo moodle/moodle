@@ -45,6 +45,7 @@ $canconfig = has_capability('moodle/course:enrolconfig', $context);
 $PAGE->set_url('/enrol/instances.php', array('id'=>$course->id));
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title(get_string('enrolmentinstances', 'enrol'));
+$PAGE->set_heading($course->fullname);
 
 $instances = enrol_get_instances($course->id, false);
 $plugins   = enrol_get_plugins(false);
