@@ -270,6 +270,8 @@ class community_hub_search_form extends moodleform {
                     get_string('orderbyname', 'block_community'), 'fullname');
             $mform->addElement('radio', 'orderby', null,
                     get_string('orderbypublisher', 'block_community'), 'publisher');
+            $mform->addElement('radio', 'orderby', null,
+                    get_string('orderbyratingaverage', 'block_community'), 'ratingaverage');
             $mform->setDefault('orderby', $orderby);
             $mform->setType('orderby', PARAM_ALPHA);
 

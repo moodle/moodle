@@ -82,6 +82,7 @@ $string['orderbynewest'] = 'Newest';
 $string['orderbyeldest'] = 'Eldest';
 $string['orderbyname'] = 'Name';
 $string['orderbypublisher'] = 'Publisher';
+$string['orderbyratingaverage'] = 'Rating';
 $string['outcomes'] = 'Outcomes: {$a}';
 $string['pluginname'] = 'Community';
 $string['rateandcomment'] = 'Rate and comment';
