@@ -304,7 +304,13 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     $replycount = forum_count_replies($post);
 
     if (!empty($confirm) && confirm_sesskey()) {    // User has confirmed the delete
-
+        //check user capability to delete post.
+        $timepassed = time() - $post->created;
+        if (($timepassed > $CFG->maxeditingtime) && !has_capability('mod/forum:deleteanypost', $modcontext)) {
+            print_error("cannotdeletepost", "forum",
+                      forum_go_back_to("discuss.php?d=$post->discussion"));
+        }
+        
         if ($post->totalscore) {
             notice(get_string('couldnotdeleteratings', 'rating'),
                     forum_go_back_to("discuss.php?d=$post->discussion"));
@@ -353,12 +359,6 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $PAGE->navbar->add(get_string('delete', 'forum'));
         $PAGE->set_title($course->shortname);
         $PAGE->set_heading($course->fullname);
-
-        $timepassed = time() - $post->created;
-        if (($timepassed > $CFG->maxeditingtime) && !has_capability('mod/forum:deleteanypost', $modcontext)) {
-            print_error("cannotdeletepost", "forum",
-                      forum_go_back_to("discuss.php?d=$post->discussion"));
-        }
 
         if ($replycount) {
             if (!has_capability('mod/forum:deleteanypost', $modcontext)) {
