@@ -353,6 +353,13 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $PAGE->navbar->add(get_string('delete', 'forum'));
         $PAGE->set_title($course->shortname);
         $PAGE->set_heading($course->fullname);
+
+        $timepassed = time() - $post->created;
+        if (($timepassed > $CFG->maxeditingtime) && !has_capability('mod/forum:deleteanypost', $modcontext)) {
+            print_error("cannotdeletepost", "forum",
+                      forum_go_back_to("discuss.php?d=$post->discussion"));
+        }
+
         if ($replycount) {
             if (!has_capability('mod/forum:deleteanypost', $modcontext)) {
                 print_error("couldnotdeletereplies", "forum",
