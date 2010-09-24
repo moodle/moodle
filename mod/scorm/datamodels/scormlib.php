@@ -701,13 +701,23 @@ function scorm_get_siblings($sco) {
     }
     return null;
 }
-
+//get an array that contains all the parent scos for this sco.
 function scorm_get_ancestors($sco) {
-    if ($sco->parent != '/') {
-        return array_push(scorm_get_ancestors(scorm_get_parent($sco)));
-    } else {
-        return $sco;
+    $ancestors = array();
+    $continue = true;
+    While ($continue) {
+        $ancestor = scorm_get_parent($sco);
+        if (!empty($ancestor) && $ancestor->id !== $sco->id) {
+            $sco = $ancestor;
+            $ancestors[] = $ancestor;
+            if ($sco->parent == '/') {
+                $continue = false;
+            }
+        } else {
+            $continue = false;
+        }
     }
+    return $ancestors;
 }
 
 function scorm_get_preorder($preorder=array(),$sco) {
