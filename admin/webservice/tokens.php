@@ -69,7 +69,7 @@ switch ($action) {
             if ($selectedservice->restrictedusers) {
                 $restricteduser = $webservicemanager->get_ws_authorised_user($data->service, $data->user);
                 if (empty($restricteduser)) {
-                    $allowuserurl = new moodle_url('/admin/webservice/service_users.php',
+                    $allowuserurl = new moodle_url('/' . $CFG->admin . '/webservice/service_users.php',
                             array('id' => $selectedservice->id));
                     $allowuserlink = html_writer::tag('a', $selectedservice->name , array('href' => $allowuserurl));
                     $errormsg = $OUTPUT->notification(get_string('usernotallowed', 'webservice', $allowuserlink));
