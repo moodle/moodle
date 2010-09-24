@@ -88,9 +88,6 @@ class assignment_upload extends assignment_base {
 
             if (has_capability('mod/assignment:submit', $this->context)) {
                 $this->view_upload_form();
-                debugging('yes mod/assignment:submit');
-            } else {
-                debugging('no mod/assignment:submit');
             }
 
             if ($this->notes_allowed()) {
@@ -190,12 +187,10 @@ class assignment_upload extends assignment_base {
 
         if ($this->is_finalized($submission)) {
             // no uploading
-            debugging('finalized');
             return;
         }
 
         if ($this->can_upload_file($submission)) {
-            debugging('can upload');
             $fs = get_file_storage();
             // edit files in another page
             if ($submission) {
@@ -208,8 +203,6 @@ class assignment_upload extends assignment_base {
                 $str = get_string('uploadfiles', 'assignment');
             }
             echo $OUTPUT->single_button(new moodle_url('/mod/assignment/type/upload/upload.php', array('contextid'=>$this->context->id, 'userid'=>$USER->id)), $str, 'get');
-        } else {
-            debugging('cant upload');
         }
     }
 
