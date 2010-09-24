@@ -100,7 +100,7 @@
 
     if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
         echo '<tr id="section-0" class="section main">';
-        echo '<td class="left side">&nbsp;</td>';
+        echo '<td id="sectionblock-0" class="left side">&nbsp;</td>';
         echo '<td class="content">';
         
         echo '<div class="summary">';
@@ -187,7 +187,7 @@
             }
 
             echo '<tr id="section-'.$section.'" class="section main'.$sectionstyle.'">';
-            echo '<td class="left side">&nbsp;'.$currenttext.'</td>';
+            echo '<td id="sectionblock-'.$section.'" class="left side">&nbsp;'.$currenttext.'</td>';
 
             $weekperiod = $weekday.' - '.$endweekday;
 
