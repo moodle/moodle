@@ -80,7 +80,7 @@ class block_community_manager {
      */
     public function block_community_download_course_backup($course) {
         global $CFG, $USER;
-        require_once($CFG->dirroot. "/lib/filelib.php");
+        require_once($CFG->libdir . "/filelib.php");
         require_once($CFG->dirroot. "/course/publish/lib.php");
 
         $params['courseid'] = $course->id;

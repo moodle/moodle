@@ -27,8 +27,8 @@
 */
 
 require('../../config.php');
-require_once($CFG->dirroot.'/admin/registration/lib.php');
-require_once($CFG->dirroot.'/course/publish/lib.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
+require_once($CFG->dirroot . '/course/publish/lib.php');
 
 $id = optional_param('id', 0, PARAM_INT);
 $hubname = optional_param('hubname', 0, PARAM_TEXT);
@@ -45,7 +45,7 @@ $PAGE->set_heading($course->fullname);
 
 //check that the PHP xmlrpc extension is enabled
 if (!extension_loaded('xmlrpc')) {
-    $notificationerror = $OUTPUT->doc_link('admin/environment/php_extension/xmlrpc', '');
+    $notificationerror = $OUTPUT->doc_link($CFG->admin . '/environment/php_extension/xmlrpc', '');
     $notificationerror .= get_string('xmlrpcdisabledpublish', 'hub');
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('publishcourse', 'hub', $course->shortname), 3, 'main');

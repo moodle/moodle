@@ -28,7 +28,7 @@
 require('../../config.php');
 
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/admin/registration/forms.php');
+require_once($CFG->dirroot.'/' . $CFG->admin . '/registration/forms.php');
 
 admin_externalpage_setup('registrationselector');
 
@@ -55,7 +55,7 @@ if (!empty($huburl) and confirm_sesskey()) {
     $hubname = optional_param(clean_param($huburl, PARAM_ALPHANUMEXT), '', PARAM_TEXT);
     $params = array('sesskey' => sesskey(), 'huburl' => $huburl,
             'password' => $password, 'hubname' => $hubname);
-    redirect(new moodle_url($CFG->wwwroot."/admin/registration/register.php",
+    redirect(new moodle_url($CFG->wwwroot."/" . $CFG->admin . "/registration/register.php",
             $params));
 }
 

@@ -31,8 +31,8 @@
  */
 
 
-require_once($CFG->dirroot . '/lib/formslib.php');
-require_once($CFG->dirroot . '/admin/registration/lib.php');
+require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
 
 /**
  * This form display a unregistration form.

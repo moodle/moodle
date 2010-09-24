@@ -159,7 +159,7 @@ class block_community_renderer extends plugin_renderer_base {
                     $course->lang = '';
                 }
                 //licence
-                require_once($CFG->dirroot . "/lib/licenselib.php");
+                require_once($CFG->libdir . "/licenselib.php");
                 $licensemanager = new license_manager();
                 $licenses = $licensemanager->get_licenses();
                 foreach ($licenses as $license) {

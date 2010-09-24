@@ -31,8 +31,8 @@
  */
 
 
-require_once($CFG->dirroot . '/lib/formslib.php');
-require_once($CFG->dirroot . "/admin/registration/lib.php");
+require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->dirroot . "/" . $CFG->admin . "/registration/lib.php");
 require_once($CFG->dirroot . "/course/publish/lib.php");
 
 /*
@@ -261,7 +261,7 @@ class course_publication_form extends moodleform {
 
 
 
-        require_once($CFG->dirroot . "/lib/licenselib.php");
+        require_once($CFG->libdir . "/licenselib.php");
         $licensemanager = new license_manager();
         $licences = $licensemanager->get_licenses();
         $options = array();

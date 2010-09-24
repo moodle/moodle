@@ -29,8 +29,8 @@
 require('../../config.php');
 
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->dirroot . '/admin/registration/lib.php');
-require_once($CFG->dirroot . '/admin/registration/forms.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/forms.php');
 require_once($CFG->dirroot . '/course/publish/lib.php');
 require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
 
@@ -155,7 +155,7 @@ if (empty($cancel) and $unregistration and !$confirm) {
             echo $renderer->registeredonhublisting($hubs);
         }
     } else { //display notice about xmlrpc
-        $xmlrpcnotification = $OUTPUT->doc_link('admin/environment/php_extension/xmlrpc', '');
+        $xmlrpcnotification = $OUTPUT->doc_link($CFG->admin . '/environment/php_extension/xmlrpc', '');
         $xmlrpcnotification .= get_string('xmlrpcdisabledregistration', 'hub');
         echo $OUTPUT->notification($xmlrpcnotification);
     }
