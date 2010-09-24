@@ -1373,6 +1373,8 @@ class html_writer {
         $text = trim($text);
         $label = self::tag('label', $text, $attributes);
 
+        /*
+        // TODO $colonize disabled for now yet - see MDL-12192 for details
         if (!empty($text) and $colonize) {
             // the $text may end with the colon already, though it is bad string definition style
             $colon = get_string('labelsep', 'langconfig');
@@ -1386,6 +1388,7 @@ class html_writer {
                 }
             }
         }
+        */
 
         return $label;
     }
