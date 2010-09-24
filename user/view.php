@@ -292,9 +292,11 @@ if (!isset($hiddenfields['mycourses'])) {
 
 echo "</table></div></div>";
 
-echo '<div class="fullprofilelink">';
-echo html_writer::link($CFG->wwwroot.'/user/profile.php?id='.$id, get_string('fullprofile'));
-echo '</div>';
+if ($currentuser || has_capability('moodle/user:viewdetails', $usercontext) || has_coursecontact_role($id)) {
+    echo '<div class="fullprofilelink">';
+    echo html_writer::link($CFG->wwwroot.'/user/profile.php?id='.$id, get_string('fullprofile'));
+    echo '</div>';
+}
 
 /// TODO Add more useful overview info for teachers here, see below
 
