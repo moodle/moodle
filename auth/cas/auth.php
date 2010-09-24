@@ -631,6 +631,12 @@ if ( !is_object($PHPCAS_CLIENT) ) {
      */
     function sync_users ($bulk_insert_records = 1000, $do_updates = true) {
         global $CFG;
+
+        if(empty($this->config->host_url)) {
+            echo "No LDAP server configured for CAS! Syncing disabled.\n";
+            return;
+        }
+
         $textlib = textlib_get_instance();
         $droptablesql = array(); /// sql commands to drop the table (because session scope could be a problem for
                                  /// some persistent drivers like ODBTP (mssql) or if this function is invoked
@@ -979,7 +985,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
      * @return boolean result
      */
     function iscreator($username) {
-        if ((empty($this->config->attrcreators) && empty($this->config->groupecreators)) or empty($this->config->memberattribute)) {
+        if (empty($this->config->host_url) or (empty($this->config->attrcreators) && empty($this->config->groupecreators)) or empty($this->config->memberattribute)) {
             return null;
         }
         $textlib = textlib_get_instance();
