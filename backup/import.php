@@ -90,17 +90,19 @@ if ($backup->get_stage() == backup_ui::STAGE_CONFIRMATION) {
 if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     // First execute the backup
     $backup->execute();
-
+    $results = $backup->get_controller()->get_results();
+    
     // Check whether the backup directory still exists and if it doesn't extract the
     // backup file so that we have it
     $tempdestination = $CFG->dataroot . '/temp/backup/' . $backupid;
     if (!file_exists($tempdestination) || !is_dir($tempdestination)) {
-        $results = $backup->get_controller()->get_results();
         $file = $results['backup_destination'];
         $file->extract_to_pathname(get_file_packer('application/zip'), $tempdestination);
     }
-    // Delete the backup file, we only want the directory
-    $results['backup_destination']->delete();
+    if (!empty($results['backup_destination'])) {
+        // Delete the backup file, we only want the directory
+        $results['backup_destination']->delete();
+    }
 
     // Prepare the restore controller. We don't need a UI here as we will just use what
     // ever the restore has (the user has just chosen).
@@ -124,6 +126,9 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
             die();
         }
     } else {
+        if ($restoretarget == backup::TARGET_CURRENT_DELETING || $restoretarget == backup::TARGET_EXISTING_DELETING) {
+            restore_dbops::delete_course_content($course->id);
+        }
         // Execute the restore
         $rc->execute_plan();
     }
