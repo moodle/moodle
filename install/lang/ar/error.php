@@ -30,8 +30,8 @@
 
 $string['cannotcreatelangdir'] = 'لم يتم أنشاء دليل اللغة';
 $string['cannotcreatetempdir'] = 'لم يتم أنشاء الدليل المؤقت';
-$string['cannotdownloadcomponents'] = 'لم يتم تنزيل بعض العناصر';
-$string['cannotdownloadzipfile'] = 'لم يتم تنزيل بعض الملف المضغوط';
+$string['cannotdownloadcomponents'] = 'لم يتم تحميل العناصر';
+$string['cannotdownloadzipfile'] = 'لم يتم تحميل الملف المضغوط';
 $string['cannotfindcomponent'] = 'لم يتم العثور على العنصر';
 $string['cannotsavemd5file'] = 'لم يتم حفظ ملف  md5';
 $string['cannotsavezipfile'] = 'لم يتم حفظ الملف المضغوط';
