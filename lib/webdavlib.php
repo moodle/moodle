@@ -1,33 +1,22 @@
 <?php
 
-// webdav_client v0.1.5, a php based webdav client class.
-// Copyright (C) 2003 Christian Juerges
+// This file is part of Moodle - http://moodle.org/
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// This library is distributed in the hope that it will be useful,
+// Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * webdav_client v0.1.5, a php based webdav client class.
- *
- * @package moodlecore
- * @author Christian Juerges <christian.juerges@xwave.ch>, Xwave GmbH, Josefstr. 92, 8005 Zuerich - Switzerland
- * @copyright (C) 2003/2004, Christian Juerges
- * @license http://opensource.org/licenses/lgpl-license.php GNU Lesser General Public License
- * @version 0.1.5
- */
-
-/**
  * class webdav client. a php based nearly RFC 2518 conforming client.
  *
  * This class implements methods to get access to an webdav server.
@@ -37,11 +26,13 @@
  * Please notice that all Filenames coming from or going to the webdav server should be UTF-8 encoded (see RFC 2518).
  * This class tries to convert all you filenames into utf-8 when it's needed.
  *
+ * @package moodlecore
  * @author Christian Juerges <christian.juerges@xwave.ch>, Xwave GmbH, Josefstr. 92, 8005 Zuerich - Switzerland
  * @copyright (C) 2003/2004, Christian Juerges
  * @license http://opensource.org/licenses/lgpl-license.php GNU Lesser General Public License
- * @package webdav_client
+ * @version 0.1.5
  */
+
 class webdav_client {
 
     /**#@+
@@ -49,17 +40,19 @@ class webdav_client {
      * @var string
      */
     private $_debug = false;
-    private $_fp;
+    private $sock;
     private $_server;
+    private $_protocol = 'HTTP/1.1';
     private $_port = 80;
     private $_path ='/';
+    private $_auth = false;
     private $_user;
-    private $_protocol = 'HTTP/1.0';
     private $_pass;
+
     private $_socket_timeout = 5;
     private $_errno;
     private $_errstr;
-    private $_user_agent = 'WebDav for PHP/MoodleBot';
+    private $_user_agent = 'Moodle WebDav Client';
     private $_crlf = "\r\n";
     private $_req;
     private $_resp_status;
@@ -84,51 +77,21 @@ class webdav_client {
     /**#@-*/
 
     /**
-     * Constructor - does nothing...
+     * Constructor - Initialise class variables
      */
-    function __construct() {
-        // do nothing here
+    function __construct($server = '', $user = '', $pass = '', $auth = false) {
+        if (!empty($server)) {
+            $this->_server = $server;
+        }
+        if (!empty($user) && !empty($pass)) {
+            $this->user = $user;
+            $this->pass = $pass;
+        }
+        $this->_auth = $auth;
     }
-
-    /**
-     * Set webdav server. FQN or IP address.
-     * @param string server
-     */
-    function set_server($server) {
-        $this->_server = $server;
-    }
-
-    /**
-     * Set tcp port of webdav server. Default is 80.
-     * @param int port
-     */
-    function set_port($port) {
-        $this->_port = $port;
-    }
-
-    /**
-     * set user name for authentification
-     * @param string user
-     */
-    function set_user($user) {
-        $this->_user = $user;
-    }
-
-    /**
-     * Set password for authentification
-     * @param string pass
-     */
-    function set_pass($pass) {
-        $this->_pass = $pass;
-    }
-
-    /**
-     * set debug on (1) or off (0).
-     * produces a lot of debug messages in webservers error log if set to on (1).
-     * @param bool debug
-     */
-    function set_debug($debug) {
-        $this->_debug = $debug;
+    public function __set($key, $value) {
+        $property = '_' . $key;
+        $this->$property = $value;
     }
 
     /**
@@ -143,8 +106,6 @@ class webdav_client {
         } else {
             $this->_protocol = 'HTTP/1.0';
         }
-        $this->_error_log('HTTP Protocol was set to ' . $this->_protocol);
-
     }
 
     /**
@@ -193,12 +154,12 @@ class webdav_client {
     function open() {
         // let's try to open a socket
         $this->_error_log('open a socket connection');
-        $this->_fp = @fsockopen ($this->_server, $this->_port, $this->_errno, $this->_errstr, $this->_socket_timeout);
+        $this->sock = @fsockopen ($this->_server, $this->_port, $this->_errno, $this->_errstr, $this->_socket_timeout);
         set_time_limit(30);
-        if (is_resource($this->_fp)) {
-            socket_set_blocking($this->_fp, true);
+        if (is_resource($this->sock)) {
+            socket_set_blocking($this->sock, true);
             $this->_connection_closed = false;
-            $this->_error_log('socket is open: ' . $this->_fp);
+            $this->_error_log('socket is open: ' . $this->sock);
             return true;
         } else {
             $this->_error_log("$this->_errstr ($this->_errno)\n");
@@ -210,9 +171,9 @@ class webdav_client {
      * Closes an open socket.
      */
     function close() {
-        $this->_error_log('closing socket ' . $this->_fp);
+        $this->_error_log('closing socket ' . $this->sock);
         $this->_connection_closed = true;
-        fclose($this->_fp);
+        fclose($this->sock);
     }
 
     /**
@@ -241,11 +202,11 @@ class webdav_client {
      * @return array with all header fields returned from webdav server. false if server does not speak http.
      */
     function options() {
-        $this->_header_unset();
-        $this->_create_basic_request('OPTIONS');
-        $this->_send_request();
-        $this->_get_respond();
-        $response = $this->_process_respond();
+        $this->header_unset();
+        $this->create_basic_request('OPTIONS');
+        $this->send_request();
+        $this->get_respond();
+        $response = $this->process_respond();
         // validate the response ...
         // check http-version
         if ($response['status']['http-version'] == 'HTTP/1.1' ||
@@ -265,29 +226,32 @@ class webdav_client {
      * @return int status code received as reponse from webdav server (see rfc 2518)
      */
     function mkcol($path) {
-        $this->_path = $this->_translate_uri($path);
-        $this->_header_unset();
-        $this->_create_basic_request('MKCOL');
-        $this->_send_request();
-        $this->_get_respond();
-        $response = $this->_process_respond();
+        $this->_path = $this->translate_uri($path);
+        $this->header_unset();
+        $this->create_basic_request('MKCOL');
+        $this->send_request();
+        $this->get_respond();
+        $response = $this->process_respond();
         // validate the response ...
         // check http-version
-        if ($response['status']['http-version'] == 'HTTP/1.1' ||
-            $response['status']['http-version'] == 'HTTP/1.0') {
-            /* seems to be http ... proceed
-                just return what server gave us
-                rfc 2518 says:
-                201 (Created) - The collection or structured resource was created in its entirety.
-                403 (Forbidden) - This indicates at least one of two conditions: 1) the server does not allow the creation of collections at the given
-                                                 location in its namespace, or 2) the parent collection of the Request-URI exists but cannot accept members.
-                405 (Method Not Allowed) - MKCOL can only be executed on a deleted/non-existent resource.
-                409 (Conflict) - A collection cannot be made at the Request-URI until one or more intermediate collections have been created.
-                415 (Unsupported Media Type)- The server does not support the request type of the body.
-                507 (Insufficient Storage) - The resource does not have sufficient space to record the state of the resource after the execution of this method.
+        $http_version = $response['status']['http-version'];
+        if ($http_version == 'HTTP/1.1' || $http_version == 'HTTP/1.0') {
+            /** seems to be http ... proceed
+             * just return what server gave us
+             * rfc 2518 says:
+             * 201 (Created) - The collection or structured resource was created in its entirety.
+             * 403 (Forbidden) - This indicates at least one of two conditions:
+             *    1) the server does not allow the creation of collections at the given location in its namespace, or
+             *    2) the parent collection of the Request-URI exists but cannot accept members.
+             * 405 (Method Not Allowed) - MKCOL can only be executed on a deleted/non-existent resource.
+             * 409 (Conflict) - A collection cannot be made at the Request-URI until one or more intermediate
+             *                  collections have been created.
+             * 415 (Unsupported Media Type)- The server does not support the request type of the body.
+             * 507 (Insufficient Storage) - The resource does not have sufficient space to record the state of the
+             *                              resource after the execution of this method.
              */
-                return $response['status']['status-code'];
-            }
+            return $response['status']['status-code'];
+        }
 
     }
 
@@ -299,17 +263,17 @@ class webdav_client {
      * @return status code and &$buffer (by reference) with response data from server on success. False on error.
      */
     function get($path, &$buffer) {
-        $this->_path = $this->_translate_uri($path);
-        $this->_header_unset();
-        $this->_create_basic_request('GET');
-        $this->_send_request();
-        $this->_get_respond();
-        $response = $this->_process_respond();
+        $this->_path = $this->translate_uri($path);
+        $this->header_unset();
+        $this->create_basic_request('GET');
+        $this->send_request();
+        $this->get_respond();
+        $response = $this->process_respond();
 
+        $http_version = $response['status']['http-version'];
         // validate the response
         // check http-version
-        if ($response['status']['http-version'] == 'HTTP/1.1' ||
-            $response['status']['http-version'] == 'HTTP/1.0') {
+        if ($http_version == 'HTTP/1.1' || $http_version == 'HTTP/1.0') {
                 // seems to be http ... proceed
                 // We expect a 200 code
                 if ($response['status']['status-code'] == 200 ) {
@@ -331,18 +295,18 @@ class webdav_client {
      * @return int status-code read from webdavserver. False on error.
      */
     function put($path, $data ) {
-        $this->_path = $this->_translate_uri($path);
-        $this->_header_unset();
-        $this->_create_basic_request('PUT');
+        $this->_path = $this->translate_uri($path);
+        $this->header_unset();
+        $this->create_basic_request('PUT');
         // add more needed header information ...
-        $this->_header_add('Content-length: ' . strlen($data));
-        $this->_header_add('Content-type: application/octet-stream');
+        $this->header_add('Content-length: ' . strlen($data));
+        $this->header_add('Content-type: application/octet-stream');
         // send header
-        $this->_send_request();
+        $this->send_request();
         // send the rest (data)
-        fputs($this->_fp, $data);
-        $this->_get_respond();
-        $response = $this->_process_respond();
+        fputs($this->sock, $data);
+        $this->get_respond();
+        $response = $this->process_respond();
 
         // validate the response
         // check http-version
@@ -376,21 +340,21 @@ class webdav_client {
         $handle = @fopen ($filename, 'r');
 
         if ($handle) {
-            // $this->_fp = pfsockopen ($this->_server, $this->_port, $this->_errno, $this->_errstr, $this->_socket_timeout);
-            $this->_path = $this->_translate_uri($path);
-            $this->_header_unset();
-            $this->_create_basic_request('PUT');
+            // $this->sock = pfsockopen ($this->_server, $this->_port, $this->_errno, $this->_errstr, $this->_socket_timeout);
+            $this->_path = $this->translate_uri($path);
+            $this->header_unset();
+            $this->create_basic_request('PUT');
             // add more needed header information ...
-            $this->_header_add('Content-length: ' . filesize($filename));
-            $this->_header_add('Content-type: application/octet-stream');
+            $this->header_add('Content-length: ' . filesize($filename));
+            $this->header_add('Content-type: application/octet-stream');
             // send header
-            $this->_send_request();
+            $this->send_request();
             while (!feof($handle)) {
-                fputs($this->_fp,fgets($handle,4096));
+                fputs($this->sock,fgets($handle,4096));
             }
             fclose($handle);
-            $this->_get_respond();
-            $response = $this->_process_respond();
+            $this->get_respond();
+            $response = $this->process_respond();
 
             // validate the response
             // check http-version
@@ -425,7 +389,7 @@ class webdav_client {
         if ($this->get($srcpath, $buffer)) {
             // convert utf-8 filename to iso-8859-1
 
-            $localpath = $this->_utf_decode_path($localpath);
+            $localpath = $this->utf_decode_path($localpath);
 
             $handle = fopen ($localpath, 'w');
             if ($handle) {
@@ -453,19 +417,19 @@ class webdav_client {
      * @return int status code (look at rfc 2518). false on error.
      */
     function copy_file($src_path, $dst_path, $overwrite) {
-        $this->_path = $this->_translate_uri($src_path);
-        $this->_header_unset();
-        $this->_create_basic_request('COPY');
-        $this->_header_add(sprintf('Destination: http://%s%s', $this->_server, $this->_translate_uri($dst_path)));
+        $this->_path = $this->translate_uri($src_path);
+        $this->header_unset();
+        $this->create_basic_request('COPY');
+        $this->header_add(sprintf('Destination: http://%s%s', $this->_server, $this->translate_uri($dst_path)));
         if ($overwrite) {
-            $this->_header_add('Overwrite: T');
+            $this->header_add('Overwrite: T');
         } else {
-            $this->_header_add('Overwrite: F');
+            $this->header_add('Overwrite: F');
         }
-        $this->_header_add('');
-        $this->_send_request();
-        $this->_get_respond();
-        $response = $this->_process_respond();
+        $this->header_add('');
+        $this->send_request();
+        $this->get_respond();
+        $response = $this->process_respond();
         // validate the response ...
         // check http-version
         if ($response['status']['http-version'] == 'HTTP/1.1' ||
@@ -501,24 +465,24 @@ class webdav_client {
      * @return int status code (look at rfc 2518). false on error.
      */
     function copy_coll($src_path, $dst_path, $overwrite) {
-        $this->_path = $this->_translate_uri($src_path);
-        $this->_header_unset();
-        $this->_create_basic_request('COPY');
-        $this->_header_add(sprintf('Destination: http://%s%s', $this->_server, $this->_translate_uri($dst_path)));
-        $this->_header_add('Depth: Infinity');
+        $this->_path = $this->translate_uri($src_path);
+        $this->header_unset();
+        $this->create_basic_request('COPY');
+        $this->header_add(sprintf('Destination: http://%s%s', $this->_server, $this->translate_uri($dst_path)));
+        $this->header_add('Depth: Infinity');
 
         $xml  = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\r\n";
         $xml .= "<d:propertybehavior xmlns:d=\"DAV:\">\r\n";
         $xml .= "  <d:keepalive>*</d:keepalive>\r\n";
         $xml .= "</d:propertybehavior>\r\n";
 
-        $this->_header_add('Content-length: ' . strlen($xml));
-        $this->_header_add('Content-type: application/xml');
-        $this->_send_request();
+        $this->header_add('Content-length: ' . strlen($xml));
+        $this->header_add('Content-type: application/xml');
+        $this->send_request();
         // send also xml
-        fputs($this->_fp, $xml);
-        $this->_get_respond();
-        $response = $this->_process_respond();
+        fputs($this->sock, $xml);
+        $this->get_respond();
+        $response = $this->process_respond();
         // validate the response ...
         // check http-version
         if ($response['status']['http-version'] == 'HTTP/1.1' ||
@@ -556,21 +520,21 @@ class webdav_client {
     // move/rename a file/collection on webdav server
     function move($src_path,$dst_path, $overwrite) {
 
-        $this->_path = $this->_translate_uri($src_path);
-        $this->_header_unset();
+        $this->_path = $this->translate_uri($src_path);
+        $this->header_unset();
 
-        $this->_create_basic_request('MOVE');
-        $this->_header_add(sprintf('Destination: http://%s%s', $this->_server, $this->_translate_uri($dst_path)));
+        $this->create_basic_request('MOVE');
+        $this->header_add(sprintf('Destination: http://%s%s', $this->_server, $this->translate_uri($dst_path)));
         if ($overwrite) {
-            $this->_header_add('Overwrite: T');
+            $this->header_add('Overwrite: T');
         } else {
-            $this->_header_add('Overwrite: F');
+            $this->header_add('Overwrite: F');
         }
-        $this->_header_add('');
+        $this->header_add('');
 
-        $this->_send_request();
-        $this->_get_respond();
-        $response = $this->_process_respond();
+        $this->send_request();
+        $this->get_respond();
+        $response = $this->process_respond();
         // validate the response ...
         // check http-version
         if ($response['status']['http-version'] == 'HTTP/1.1' ||
@@ -610,11 +574,11 @@ class webdav_client {
      * @return int status code (look at rfc 2518). false on error.
      */
     function lock($path) {
-        $this->_path = $this->_translate_uri($path);
-        $this->_header_unset();
-        $this->_create_basic_request('LOCK');
-        $this->_header_add('Timeout: Infinite');
-        $this->_header_add('Content-type: text/xml');
+        $this->_path = $this->translate_uri($path);
+        $this->header_unset();
+        $this->create_basic_request('LOCK');
+        $this->header_add('Timeout: Infinite');
+        $this->header_add('Content-type: text/xml');
         // create the xml request ...
         $xml =  "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\r\n";
         $xml .= "<D:lockinfo xmlns:D='DAV:'\r\n>";
@@ -624,12 +588,12 @@ class webdav_client {
         $xml .= "    <D:href>".($this->_user)."</D:href>\r\n";
         $xml .= "  </D:owner>\r\n";
         $xml .= "</D:lockinfo>\r\n";
-        $this->_header_add('Content-length: ' . strlen($xml));
-        $this->_send_request();
+        $this->header_add('Content-length: ' . strlen($xml));
+        $this->send_request();
         // send also xml
-        fputs($this->_fp, $xml);
-        $this->_get_respond();
-        $response = $this->_process_respond();
+        fputs($this->sock, $xml);
+        $this->get_respond();
+        $response = $this->process_respond();
         // validate the response ... (only basic validation)
         // check http-version
         if ($response['status']['http-version'] == 'HTTP/1.1' ||
@@ -695,13 +659,13 @@ class webdav_client {
      * @return int status code (look at rfc 2518). false on error.
      */
     function unlock($path, $locktoken) {
-        $this->_path = $this->_translate_uri($path);
-        $this->_header_unset();
-        $this->_create_basic_request('UNLOCK');
-        $this->_header_add(sprintf('Lock-Token: <%s>', $locktoken));
-        $this->_send_request();
-        $this->_get_respond();
-        $response = $this->_process_respond();
+        $this->_path = $this->translate_uri($path);
+        $this->header_unset();
+        $this->create_basic_request('UNLOCK');
+        $this->header_add(sprintf('Lock-Token: <%s>', $locktoken));
+        $this->send_request();
+        $this->get_respond();
+        $response = $this->process_respond();
         if ($response['status']['http-version'] == 'HTTP/1.1' ||
             $response['status']['http-version'] == 'HTTP/1.0') {
             /* seems to be http ... proceed
@@ -721,14 +685,14 @@ class webdav_client {
      * @return int status code (look at rfc 2518). false on error.
      */
     function delete($path) {
-        $this->_path = $this->_translate_uri($path);
-        $this->_header_unset();
-        $this->_create_basic_request('DELETE');
-        /* $this->_header_add('Content-Length: 0'); */
-        $this->_header_add('');
-        $this->_send_request();
-        $this->_get_respond();
-        $response = $this->_process_respond();
+        $this->_path = $this->translate_uri($path);
+        $this->header_unset();
+        $this->create_basic_request('DELETE');
+        /* $this->header_add('Content-Length: 0'); */
+        $this->header_add('');
+        $this->send_request();
+        $this->get_respond();
+        $response = $this->process_respond();
 
         // validate the response ...
         // check http-version
@@ -799,12 +763,12 @@ class webdav_client {
             $this->_error_log('Missing a path in method ls');
             return false;
         }
-        $this->_path = $this->_translate_uri($path);
+        $this->_path = $this->translate_uri($path);
 
-        $this->_header_unset();
-        $this->_create_basic_request('PROPFIND');
-        $this->_header_add('Depth: 1');
-        $this->_header_add('Content-type: application/xml');
+        $this->header_unset();
+        $this->create_basic_request('PROPFIND');
+        $this->header_add('Depth: 1');
+        $this->header_add('Content-type: application/xml');
         // create profind xml request...
         $xml  = <<<EOD
 <?xml version="1.0" encoding="utf-8"?>
@@ -817,12 +781,13 @@ class webdav_client {
 <checked-out xmlns="DAV:"/>
 </prop></propfind>
 EOD;
-        $this->_header_add('Content-length: ' . strlen($xml));
-        $this->_send_request();
+        $this->header_add('Content-length: ' . strlen($xml));
+        $this->send_request();
         $this->_error_log($xml);
-        fputs($this->_fp, $xml);
-        $this->_get_respond();
-        $response = $this->_process_respond();
+        fputs($this->sock, $xml);
+        $this->get_respond();
+        $response = $this->process_respond();
+        echo_fb($response);
         // validate the response ... (only basic validation)
         // check http-version
         if ($response['status']['http-version'] == 'HTTP/1.1' ||
@@ -1297,71 +1262,73 @@ EOD;
 
 
     /**
-     * Private method _header_add
+     * Private method header_add
      *
      * extends class var array _req
      * @param string string
      * @access private
      */
-    private function _header_add($string) {
+    private function header_add($string) {
         $this->_req[] = $string;
     }
 
     /**
-     * Private method _header_unset
+     * Private method header_unset
      *
      * unsets class var array _req
      * @access private
      */
 
-    private function _header_unset() {
+    private function header_unset() {
         unset($this->_req);
     }
 
     /**
-     * Private method _create_basic_request
+     * Private method create_basic_request
      *
-     * creates by using private method _header_add an general request header.
+     * creates by using private method header_add an general request header.
      * @param string method
      * @access private
      */
-    private function _create_basic_request($method) {
+    private function create_basic_request($method) {
         $request = '';
-        $this->_header_add(sprintf('%s %s %s', $method, $this->_path, $this->_protocol));
-        $this->_header_add(sprintf('Host: %s:%s', $this->_server, $this->_port));
+        $this->header_add(sprintf('%s %s %s', $method, $this->_path, $this->_protocol));
+        $this->header_add(sprintf('Host: %s:%s', $this->_server, $this->_port));
         //$request .= sprintf('Connection: Keep-Alive');
-        $this->_header_add(sprintf('User-Agent: %s', $this->_user_agent));
-        $this->_header_add('Connection: TE');
-        $this->_header_add('TE: Trailers');
-        //$this->_header_add(sprintf('Authorization: Basic %s', base64_encode("$this->_user:$this->_pass")));
+        $this->header_add(sprintf('User-Agent: %s', $this->_user_agent));
+        $this->header_add('Connection: TE');
+        $this->header_add('TE: Trailers');
+        if ($this->_auth == 'basic') {
+            $this->header_add(sprintf('Authorization: Basic %s', base64_encode("$this->_user:$this->_pass")));
+        }
     }
 
     /**
-     * Private method _send_request
+     * Private method send_request
      *
      * Sends a ready formed http/webdav request to webdav server.
      *
      * @access private
      */
-    private function _send_request() {
+    private function send_request() {
         // check if stream is declared to be open
         // only logical check we are not sure if socket is really still open ...
         if ($this->_connection_closed) {
             // reopen it
             // be sure to close the open socket.
             $this->close();
-            $this->_reopen();
+            $this->reopen();
         }
 
         // convert array to string
         $buffer = implode("\r\n", $this->_req);
         $buffer .= "\r\n\r\n";
         $this->_error_log($buffer);
-        fputs($this->_fp, $buffer);
+        fputs($this->sock, $buffer);
     }
 
     /**
-     * Private method _get_respond
+     * Private method get_respond
      *
      * Reads the reponse from the webdav server.
      *
@@ -1371,29 +1338,29 @@ EOD;
      * If the stream is blocked for some reason php is blocked as well.
      * @access private
      */
-    private function _get_respond() {
-        $this->_error_log('_get_respond()');
+    private function get_respond() {
+        $this->_error_log('get_respond()');
         // init vars (good coding style ;-)
         $buffer = '';
         $header = '';
         // attention: do not make max_chunk_size to big....
         $max_chunk_size = 8192;
         // be sure we got a open ressource
-        if (! $this->_fp) {
+        if (! $this->sock) {
             $this->_error_log('socket is not open. Can not process response');
             return false;
         }
 
         // following code maybe helps to improve socket behaviour ... more testing needed
         // disabled at the moment ...
-        // socket_set_timeout($this->_fp,1 );
-        // $socket_state = socket_get_status($this->_fp);
+        // socket_set_timeout($this->sock,1 );
+        // $socket_state = socket_get_status($this->sock);
 
         // read stream one byte by another until http header ends
         $i = 0;
         $matches = array();
         do {
-            $header.=fread($this->_fp,1);
+            $header.=fread($this->sock, 1);
             $i++;
         } while (!preg_match('/\\r\\n\\r\\n$/',$header, $matches) && $i < $this->_maxheaderlenth);
 
@@ -1416,19 +1383,19 @@ EOD;
                 $chunk_size='';
                 do {
                     $chunk_size.=$byte;
-                    $byte=fread($this->_fp,1);
+                    $byte=fread($this->sock,1);
                     // check what happens while reading, because I do not really understand how php reads the socketstream...
                     // but so far - it seems to work here - tested with php v4.3.1 on apache 1.3.27 and Debian Linux 3.0 ...
                     if (strlen($byte) == 0) {
-                        $this->_error_log('_get_respond: warning --> read zero bytes');
+                        $this->_error_log('get_respond: warning --> read zero bytes');
                     }
                 } while ($byte!="\r" and strlen($byte)>0);      // till we match the Carriage Return
-                fread($this->_fp, 1);                           // also drop off the Line Feed
+                fread($this->sock, 1);                           // also drop off the Line Feed
                 $chunk_size=hexdec($chunk_size);                // convert to a number in decimal system
                 if ($chunk_size > 0) {
-                    $buffer .= fread($this->_fp,$chunk_size);
+                    $buffer .= fread($this->sock,$chunk_size);
                 }
-                fread($this->_fp,2);                            // ditch the CRLF that trails the chunk
+                fread($this->sock, 2);                            // ditch the CRLF that trails the chunk
             } while ($chunk_size);                            // till we reach the 0 length chunk (end marker)
             break;
 
@@ -1439,7 +1406,7 @@ EOD;
             if ($matches[1] <= $max_chunk_size ) {
                 // only read something if Content-Length is bigger than 0
                 if ($matches[1] > 0 ) {
-                    $buffer = fread($this->_fp, $matches[1]);
+                    $buffer = fread($this->sock, $matches[1]);
                 } else {
                     $buffer = '';
                 }
@@ -1448,7 +1415,7 @@ EOD;
                 do {
                     $mod = $max_chunk_size % ($matches[1] - strlen($buffer));
                     $chunk_size = ($mod == $max_chunk_size ? $max_chunk_size : $matches[1] - strlen($buffer));
-                    $buffer .= fread($this->_fp, $chunk_size);
+                    $buffer .= fread($this->sock, $chunk_size);
                     $this->_error_log('mod: ' . $mod . ' chunk: ' . $chunk_size . ' total: ' . strlen($buffer));
                 } while ($mod == $max_chunk_size);
             }
@@ -1464,12 +1431,12 @@ EOD;
         default:
             // just get the data until foef appears...
             $this->_error_log('reading until feof...' . $header);
-            socket_set_timeout($this->_fp, 0, 0);
-            while (!feof($this->_fp)) {
-                $buffer .= fread($this->_fp, 4096);
+            socket_set_timeout($this->sock, 0, 0);
+            while (!feof($this->sock)) {
+                $buffer .= fread($this->sock, 4096);
             }
             // renew the socket timeout...does it do something ???? Is it needed. More debugging needed...
-            socket_set_timeout($this->_fp, $this->_socket_timeout, 0);
+            socket_set_timeout($this->sock, $this->_socket_timeout, 0);
         }
 
         $this->_header = $header;
@@ -1481,14 +1448,14 @@ EOD;
 
 
     /**
-     * Private method _process_respond
+     * Private method process_respond
      *
      * Processes the webdav server respond and detects its components (header, body).
      * and returns data array structure.
      * @return array ret_struct
      * @access private
      */
-    private function _process_respond() {
+    private function process_respond() {
         $lines = explode("\r\n", $this->_header);
         $header_done = false;
         // $this->_error_log($this->_buffer);
@@ -1525,42 +1492,28 @@ EOD;
         // print 'string len of response_body:'. strlen($response_body);
         // print '[' . htmlentities($response_body) . ']';
         $ret_struct['body'] = $this->_body;
-        $this->_error_log('_process_respond: ' . var_export($ret_struct,true));
+        $this->_error_log('process_respond: ' . var_export($ret_struct,true));
         return $ret_struct;
 
     }
 
     /**
-     * Private method _reopen
+     * Private method reopen
      *
      * Reopens a socket, if 'connection: closed'-header was received from server.
      *
      * Uses public method open.
      * @access private
      */
-    private function _reopen() {
+    private function reopen() {
         // let's try to reopen a socket
         $this->_error_log('reopen a socket connection');
         return $this->open();
-        /*
-        $this->_fp = @fsockopen ($this->_server, $this->_port, $this->_errno, $this->_errstr, 5);
-        set_time_limit(180);
-        socket_set_blocking($this->_fp, true);
-        socket_set_timeout($this->_fp,5 );
-        if (!$this->_fp) {
-            $this->_error_log("$this->_errstr ($this->_errno)\n");
-            return false;
-        } else {
-            $this->_connection_closed = false;
-            $this->_error_log('reopen ok...' . $this->_fp);
-            return true;
-        }
-         */
     }
 
 
     /**
-     * Private method _translate_uri
+     * Private method translate_uri
      *
      * translates an uri to raw url encoded string.
      * Removes any html entity in uri
@@ -1568,7 +1521,7 @@ EOD;
      * @return string translated_uri
      * @access private
      */
-    private function _translate_uri($uri) {
+    private function translate_uri($uri) {
         // remove all html entities...
         $native_path = html_entity_decode($uri);
         $parts = explode('/', $native_path);
@@ -1584,13 +1537,13 @@ EOD;
     }
 
     /**
-     * Private method _utf_decode_path
+     * Private method utf_decode_path
      *
      * decodes a UTF-8 encoded string
      * @return string decodedstring
      * @access private
      */
-    private function _utf_decode_path($path) {
+    private function utf_decode_path($path) {
         $fullpath = $path;
         if (iconv('UTF-8', 'UTF-8', $fullpath) == $fullpath) {
             $this->_error_log("filename is utf-8. Needs conversion...");
@@ -1612,4 +1565,3 @@ EOD;
         }
     }
 }
-?>
