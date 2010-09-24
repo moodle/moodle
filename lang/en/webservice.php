@@ -174,6 +174,7 @@ $string['updateusersettings'] = 'Update';
 $string['userasclients'] = 'Users as clients with token';
 $string['userasclientsdescription'] = 'The following steps help you to set up the Moodle web service for users as clients. These steps also help to set up the recommended token (security keys) authentication method. In this use case, the user will generate his token from his <strong>Security keys</strong> profile page.';
 $string['usermissingcaps'] = 'Missing capabilities: {$a}.';
+$string['usernotallowed'] = 'The user is not allowed for this service. First you need to allow this user on the {$a}\'s allowed users administration page.';
 $string['usersettingssaved'] = 'User settings saved';
 $string['validuntil'] = 'Valid until';
 $string['validuntil_help'] = 'If set, the service will be inactivated after this date for this user.';

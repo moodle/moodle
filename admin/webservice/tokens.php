@@ -51,6 +51,9 @@ require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 $tokenlisturl = new moodle_url("/" . $CFG->admin . "/settings.php", array('section' => 'webservicetokens'));
 
+require_once($CFG->dirroot . "/webservice/lib.php");
+$webservicemanager = new webservice();
+
 switch ($action) {
 
     case 'create':
@@ -60,26 +63,43 @@ switch ($action) {
             redirect($tokenlisturl);
         } else if ($data and confirm_sesskey()) {
             ignore_user_abort(true);
-            //TODO improvement: either move this function from externallib.php to webservice/lib.php
-            // either move most of webservicelib.php functions into externallib.php
-            // (create externalmanager class) MDL-23523
-            external_generate_token(EXTERNAL_TOKEN_PERMANENT, $data->service,
-                    $data->user, get_context_instance(CONTEXT_SYSTEM),
-                    $data->validuntil, $data->iprestriction);
-            redirect($tokenlisturl);
+
+            //check the the user is allowed for the service
+            $selectedservice = $webservicemanager->get_external_service_by_id($data->service);
+            if ($selectedservice->restrictedusers) {
+                $restricteduser = $webservicemanager->get_ws_authorised_user($data->service, $data->user);
+                if (empty($restricteduser)) {
+                    $allowuserurl = new moodle_url('/admin/webservice/service_users.php',
+                            array('id' => $selectedservice->id));
+                    $allowuserlink = html_writer::tag('a', $selectedservice->name , array('href' => $allowuserurl));
+                    $errormsg = $OUTPUT->notification(get_string('usernotallowed', 'webservice', $allowuserlink));
+                }
+            }
+
+            //process the creation
+            if (empty($errormsg)) {
+                //TODO improvement: either move this function from externallib.php to webservice/lib.php
+                // either move most of webservicelib.php functions into externallib.php
+                // (create externalmanager class) MDL-23523
+                external_generate_token(EXTERNAL_TOKEN_PERMANENT, $data->service,
+                        $data->user, get_context_instance(CONTEXT_SYSTEM),
+                        $data->validuntil, $data->iprestriction);
+                redirect($tokenlisturl);
+            }
         }
 
         //OUTPUT: create token form
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('createtoken', 'webservice'));
+        if (!empty($errormsg)) {
+            echo $errormsg;
+        }
         $mform->display();
         echo $OUTPUT->footer();
         die;
         break;
 
-    case 'delete':
-        require_once($CFG->dirroot . "/webservice/lib.php");
-        $webservicemanager = new webservice();
+    case 'delete':        
         $token = $webservicemanager->get_created_by_user_ws_token($USER->id, $tokenid);
 
         //Delete the token
