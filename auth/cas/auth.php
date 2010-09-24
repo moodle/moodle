@@ -488,6 +488,9 @@ if ( !is_object($PHPCAS_CLIENT) ) {
             if (!empty($this->config->version)) {
                 ldap_set_option($connresult, LDAP_OPT_PROTOCOL_VERSION, $this->config->version);
             }
+            if ($this->config->user_type == 'ad') {
+                 ldap_set_option($connresult, LDAP_OPT_REFERRALS, 0);
+            }
             if (!empty($binddn)) {
                 //bind with search-user
                 //$debuginfo .= 'Using bind user'.$binddn.'and password:'.$bindpwd;
