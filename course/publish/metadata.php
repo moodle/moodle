@@ -55,7 +55,7 @@ $PAGE->set_heading($course->fullname);
 
 //check that the PHP xmlrpc extension is enabled
 if (!extension_loaded('xmlrpc')) {
-    $errornotification = $OUTPUT->doc_link($CFG->admin . '/environment/php_extension/xmlrpc', '');
+    $errornotification = $OUTPUT->doc_link('admin/environment/php_extension/xmlrpc', '');
     $errornotification .= get_string('xmlrpcdisabledpublish', 'hub');
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('publishcourse', 'hub', $course->shortname), 3, 'main');

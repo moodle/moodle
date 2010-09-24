@@ -53,7 +53,7 @@ $usercandownload = has_capability('moodle/community:download', $context);
 if (empty($usercansearch)) {
     $notificationerror = get_string('cannotsearchcommunity', 'hub');
 } else if (!extension_loaded('xmlrpc')) {
-    $notificationerror = $OUTPUT->doc_link($CFG->admin . '/environment/php_extension/xmlrpc', '');
+    $notificationerror = $OUTPUT->doc_link('admin/environment/php_extension/xmlrpc', '');
     $notificationerror .= get_string('xmlrpcdisabledcommunity', 'hub');
 }
 if (!empty($notificationerror)) {

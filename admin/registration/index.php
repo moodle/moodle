@@ -155,7 +155,7 @@ if (empty($cancel) and $unregistration and !$confirm) {
             echo $renderer->registeredonhublisting($hubs);
         }
     } else { //display notice about xmlrpc
-        $xmlrpcnotification = $OUTPUT->doc_link($CFG->admin . '/environment/php_extension/xmlrpc', '');
+        $xmlrpcnotification = $OUTPUT->doc_link('admin/environment/php_extension/xmlrpc', '');
         $xmlrpcnotification .= get_string('xmlrpcdisabledregistration', 'hub');
         echo $OUTPUT->notification($xmlrpcnotification);
     }
