@@ -25,29 +25,26 @@
 require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
-require_once($CFG->dirroot . '/admin/webservice/forms.php');
-
+require_once($CFG->dirroot . '/' . $CFG->admin . '/webservice/forms.php');
 
 $serviceid = required_param('serviceid', PARAM_INT);
 $userid = required_param('userid', PARAM_INT);
 
-$PAGE->set_url('/admin/webservice/service_user_settings.php', array('id' => $serviceid, 'userid'  => $userid));
+$PAGE->set_url('/' . $CFG->admin . '/webservice/service_user_settings.php', array('id' => $serviceid, 'userid'  => $userid));
 $PAGE->navbar->ignore_active(true);
 $PAGE->navbar->add(get_string('administrationsite'));
 $PAGE->navbar->add(get_string('plugins', 'admin'));
 $PAGE->navbar->add(get_string('webservices', 'webservice'));
 $PAGE->navbar->add(get_string('externalservices', 'webservice'),
-        new moodle_url('/admin/settings.php?section=externalservices'));
+        new moodle_url('/' . $CFG->admin . '/settings.php?section=externalservices'));
 $PAGE->navbar->add(get_string('serviceusers', 'webservice'), 
-        new moodle_url('/admin/webservice/service_users.php', array('id' => $serviceid)));
+        new moodle_url('/' . $CFG->admin . '/webservice/service_users.php', array('id' => $serviceid)));
 $PAGE->navbar->add(get_string('serviceusersettings', 'webservice'));
-
-//$PAGE->requires->js('/admin/webservice/script.js');
 
 admin_externalpage_setup('externalserviceusersettings');
 
 $formaction = new moodle_url('', array('id' => $serviceid, 'userid' => $userid));
-$returnurl = new moodle_url('/admin/webservice/service_users.php', array('id' => $serviceid));
+$returnurl = new moodle_url('/' . $CFG->admin . '/webservice/service_users.php', array('id' => $serviceid));
 
 $webservicemanager = new webservice();
 $serviceuser = $webservicemanager->get_ws_authorised_user($serviceid, $userid);

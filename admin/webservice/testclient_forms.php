@@ -1,6 +1,6 @@
 <?php
 
-require_once($CFG->dirroot.'/lib/formslib.php');
+require_once($CFG->libdir.'/formslib.php');
 
 
 class webservice_test_client_form extends moodleform {

@@ -24,18 +24,18 @@
  */
 require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->dirroot . '/admin/webservice/lib.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/webservice/lib.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 
 $id = required_param('id', PARAM_INT);
 
-$PAGE->set_url('/admin/webservice/service_users.php', array('id' => $id));
+$PAGE->set_url('/' . $CFG->admin . '/webservice/service_users.php', array('id' => $id));
 $PAGE->navbar->ignore_active(true);
 $PAGE->navbar->add(get_string('administrationsite'));
 $PAGE->navbar->add(get_string('plugins', 'admin'));
 $PAGE->navbar->add(get_string('webservices', 'webservice'));
 $PAGE->navbar->add(get_string('externalservices', 'webservice'),
-        new moodle_url('/admin/settings.php?section=externalservices'));
+        new moodle_url('/' . $CFG->admin . '/settings.php?section=externalservices'));
 $PAGE->navbar->add(get_string('serviceusers', 'webservice'));
 
 admin_externalpage_setup('externalserviceusers');

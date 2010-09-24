@@ -35,6 +35,7 @@ class core_webservice_renderer extends plugin_renderer_base {
      * @return string html
      */
     public function admin_authorised_user_selector(&$options) {
+        global $CFG;
         $formcontent = html_writer::empty_tag('input',
                         array('name' => 'sesskey', 'value' => sesskey(), 'type' => 'hidden'));
 
@@ -81,7 +82,7 @@ class core_webservice_renderer extends plugin_renderer_base {
 
         $formcontent = html_writer::tag('div', $formcontent);
 
-        $actionurl = new moodle_url('/admin/webservice/service_users.php',
+        $actionurl = new moodle_url('/' . $CFG->admin . '/webservice/service_users.php',
                         array('id' => $options->serviceid));
         $html = html_writer::tag('form', $formcontent,
                         array('id' => 'assignform', 'action' => $actionurl, 'method' => 'post'));
@@ -94,9 +95,10 @@ class core_webservice_renderer extends plugin_renderer_base {
      * @return string $html
      */
     public function admin_authorised_user_list($users, $serviceid) {
+        global $CFG;
         $html = $this->output->box_start('generalbox', 'alloweduserlist');
         foreach ($users as $user) {
-            $modifiedauthoriseduserurl = new moodle_url('/admin/webservice/service_user_settings.php',
+            $modifiedauthoriseduserurl = new moodle_url('/' . $CFG->admin . '/webservice/service_user_settings.php',
                             array('userid' => $user->id, 'serviceid' => $serviceid));
             $html .= html_writer::tag('a', $user->firstname . " "
                             . $user->lastname . ", " . $user->email,
@@ -160,14 +162,15 @@ class core_webservice_renderer extends plugin_renderer_base {
      * @return string html
      */
     public function admin_delete_token_confirmation($token) {
+        global $CFG;
         $optionsyes = array('tokenid' => $token->id, 'action' => 'delete',
             'confirm' => 1, 'sesskey' => sesskey());
         $optionsno = array('section' => 'webservicetokens', 'sesskey' => sesskey());
         $formcontinue = new single_button(
-                        new moodle_url('/admin/webservice/tokens.php', $optionsyes),
+                        new moodle_url('/' . $CFG->admin . '/webservice/tokens.php', $optionsyes),
                         get_string('delete'));
         $formcancel = new single_button(
-                        new moodle_url('/admin/settings.php', $optionsno),
+                        new moodle_url('/' . $CFG->admin . '/settings.php', $optionsno),
                         get_string('cancel'), 'get');
         return $this->output->confirm(get_string('deletetokenconfirm', 'webservice',
                         (object) array('user' => $token->firstname . " "
@@ -183,6 +186,7 @@ class core_webservice_renderer extends plugin_renderer_base {
      * @return string the table html + add operation html
      */
     public function admin_service_function_list($functions, $service) {
+        global $CFG;
         if (!empty($functions)) {
             $table = new html_table();
             $table->head = array(get_string('function', 'webservice'),
@@ -208,7 +212,7 @@ class core_webservice_renderer extends plugin_renderer_base {
                                 array('class' => 'functiondesc'));
                 //display remove function operation (except for build-in service)
                 if (empty($service->component)) {
-                    $removeurl = new moodle_url('/admin/webservice/service_functions.php',
+                    $removeurl = new moodle_url('/' . $CFG->admin . '/webservice/service_functions.php',
                                     array('sesskey' => sesskey(), 'fid' => $function->id,
                                         'id' => $service->id,
                                         'action' => 'delete'));
@@ -228,7 +232,7 @@ class core_webservice_renderer extends plugin_renderer_base {
 
         //display add function operation (except for build-in service)
         if (empty($service->component)) {
-            $addurl = new moodle_url('/admin/webservice/service_functions.php',
+            $addurl = new moodle_url('/' . $CFG->admin . '/webservice/service_functions.php',
                             array('sesskey' => sesskey(), 'id' => $service->id, 'action' => 'add'));
             $html .= html_writer::tag('a', get_string('addfunctions', 'webservice'), array('href' => $addurl));
         }

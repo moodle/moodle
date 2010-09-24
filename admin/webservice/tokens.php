@@ -25,20 +25,20 @@
  */
 require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->dirroot . '/admin/webservice/forms.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/webservice/forms.php');
 require_once($CFG->libdir . '/externallib.php');
 
 $action = optional_param('action', '', PARAM_ACTION);
 $tokenid = optional_param('tokenid', '', PARAM_SAFEDIR);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-$PAGE->set_url('/admin/webservice/tokens.php');
+$PAGE->set_url('/' . $CFG->admin . '/webservice/tokens.php');
 $PAGE->navbar->ignore_active(true);
 $PAGE->navbar->add(get_string('administrationsite'));
 $PAGE->navbar->add(get_string('plugins', 'admin'));
 $PAGE->navbar->add(get_string('webservices', 'webservice'));
 $PAGE->navbar->add(get_string('managetokens', 'webservice'),
-        new moodle_url('/admin/settings.php?section=webservicetokens'));
+        new moodle_url('/' . $CFG->admin . '/settings.php?section=webservicetokens'));
 if ($action == "delete") {
     $PAGE->navbar->add(get_string('delete'));
 } else {
@@ -49,7 +49,7 @@ admin_externalpage_setup('addwebservicetoken');
 
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
-$tokenlisturl = new moodle_url("/admin/settings.php", array('section' => 'webservicetokens'));
+$tokenlisturl = new moodle_url("/" . $CFG->admin . "/settings.php", array('section' => 'webservicetokens'));
 
 switch ($action) {
 

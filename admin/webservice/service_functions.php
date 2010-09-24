@@ -36,20 +36,20 @@ $confirm = optional_param('confirm', 0, PARAM_BOOL);
 admin_externalpage_setup('externalservicefunctions');
 
 //define nav bar
-$PAGE->set_url('/admin/websevice/service_functions.php', array('id' => $serviceid));
+$PAGE->set_url('/' . $CFG->admin . '/websevice/service_functions.php', array('id' => $serviceid));
 $PAGE->navbar->ignore_active(true);
 $PAGE->navbar->add(get_string('administrationsite'));
 $PAGE->navbar->add(get_string('plugins', 'admin'));
 $PAGE->navbar->add(get_string('webservices', 'webservice'));
 $PAGE->navbar->add(get_string('externalservices', 'webservice'),
-        new moodle_url('/admin/settings.php?section=externalservices'));
+        new moodle_url('/' . $CFG->admin . '/settings.php?section=externalservices'));
 $PAGE->navbar->add(get_string('functions', 'webservice'),
-        new moodle_url('/admin/webservice/service_functions.php?id=' . $serviceid));
+        new moodle_url('/' . $CFG->admin . '/webservice/service_functions.php?id=' . $serviceid));
 
 $service = $DB->get_record('external_services', array('id' => $serviceid), '*', MUST_EXIST);
 $webservicemanager = new webservice();
 $renderer = $PAGE->get_renderer('core', 'webservice');
-$functionlisturl = new moodle_url('/admin/webservice/service_functions.php',
+$functionlisturl = new moodle_url('/' . $CFG->admin . '/webservice/service_functions.php',
         array('id' => $serviceid));
 
 // Add or Delete operations

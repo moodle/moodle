@@ -27,13 +27,13 @@ require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
 
-$PAGE->set_url('/admin/webservice/protocols.php');
+$PAGE->set_url('/' . $CFG->admin . '/webservice/protocols.php');
 //TODO: disable the blocks here or better make the page layout default to no blocks!
 
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
-$returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=webserviceprotocols";
+$returnurl = $CFG->wwwroot . "/" . $CFG->admin . "/settings.php?section=webserviceprotocols";
 
 $action     = optional_param('action', '', PARAM_ACTION);
 $webservice = optional_param('webservice', '', PARAM_SAFEDIR);
