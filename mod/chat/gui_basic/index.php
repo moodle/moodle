@@ -109,14 +109,18 @@ if (!empty($refresh) and data_submitted()) {
 
     chat_delete_old_users();
 
-    redirect('index.php?id='.$id.'&amp;newonly='.$newonly.'&amp;last='.$last);
+    $url = new moodle_url('/mod/chat/gui_basic/index.php', array('id'=>$id, 'newonly'=>$newonly, 'last'=>$last));
+    redirect($url);
 }
 
 $PAGE->set_title("$strchat: $course->shortname: ".format_string($chat->name,true)."$groupname");
 echo $OUTPUT->header();
-echo '<div id="page-mod-chat-gui_basic">';
-echo '<h2>'.get_string('participants').'</h2>';
-echo '<div id="participants"><ul>';
+echo '<div id="">';
+echo $OUTPUT->container_start(null, 'page-mod-chat-gui_basic');
+echo $OUTPUT->heading(get_string('participants'), 2, 'mdl-left');
+
+echo $OUTPUT->box_start('generalbox', 'participants');
+echo '<ul>';
 foreach($chatusers as $chu) {
     echo '<li class="clearfix">';
     echo $OUTPUT->user_picture($chu, array('size'=>24, 'courseid'=>$course->id));
@@ -130,11 +134,11 @@ foreach($chatusers as $chu) {
     echo '</div>';
     echo '</li>';
 }
-echo '</ul></div>';
+echo '</ul>';
+echo $OUTPUT->box_end();
 echo '<div id="send">';
 echo '<form id="editing" method="post" action="index.php">';
 
-$usehtmleditor = can_use_html_editor();
 echo '<h2><label for="message">'.get_string('sendmessage', 'message').'</label></h2>';
 echo '<div>';
 echo '<input type="text" id="message" name="message" value="'.s($refreshedmessage, true).'" size="60" />';
@@ -151,7 +155,7 @@ echo '</form>';
 echo '</div>';
 
 echo '<div id="messages">';
-echo '<h2>'.get_string('messages', 'chat').'</h2>';
+echo $OUTPUT->heading(get_string('messages', 'chat'), 2, 'mdl-left');
 
 $allmessages = array();
 $options = new stdClass();
@@ -186,6 +190,6 @@ if (empty($allmessages)) {
     }
 }
 
-echo '</div></div>';
+echo '</div>';
+echo $OUTPUT->container_end();
 echo $OUTPUT->footer();
-
