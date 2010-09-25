@@ -29,4 +29,4 @@
  */
 
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'English';
+$string['thislanguage'] = 'English - United States';
