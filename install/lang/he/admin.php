@@ -28,5 +28,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'y';
+$string['cliincorrectvalueretry'] = 'ערך שגוי, נסה שנית';
+$string['cliyesnoprompt'] = 'רשום y (שפרושו כן) או n (שפרושו לא)';
 $string['environmentrequireinstall'] = 'נדרש להתקין/לאפשר זאת';
 $string['environmentrequireversion'] = 'גירסת {$a->needed} נדרשת ואתה מריץ {$a->current}';
