@@ -583,9 +583,14 @@ function initialise_fullme() {
     // $CFG->sslproxy specifies if external SSL appliance is used
     // (That is, the Moodle server uses http, with an external box translating everything to https).
     if (empty($CFG->sslproxy)) {
-        if ($rurl['scheme'] == 'http' and $wwwroot['scheme'] == 'https') {
+        if ($rurl['scheme'] === 'http' and $wwwroot['scheme'] === 'https') {
             print_error('sslonlyaccess', 'error');
         }
+    } else {
+        if ($wwwroot['scheme'] !== 'https') {
+            throw new coding_exception('Must use https address in wwwroot when ssl proxy enabled!');
+        }
+        $rurl['scheme'] === 'https'; // make moodle believe it runs on https, squid or something else it doing it
     }
 
     // $CFG->reverseproxy specifies if reverse proxy server used.
