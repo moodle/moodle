@@ -212,6 +212,7 @@ $string['errorcreatingfile'] = 'Error creating file "{$a}"';
 $string['errorcreatingrole'] = 'Error creating role';
 $string['errorfetchingrssfeed'] = 'Error fetching RSS feed.';
 $string['erroronline'] = 'Error on line {$a}';
+$string['errorparsingxml'] = 'Error parsing XML: {$a->errorstring} at line {$a->errorline}, char {$a->errorchar}';
 $string['errorreadingfile'] = 'Error reading file "{$a}"';
 $string['errorsavingrequest'] = 'An error occurred when trying to save your request.';
 $string['errorsettinguserpref'] = 'Error setting user preference';

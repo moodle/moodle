@@ -9,7 +9,8 @@
  * on my part is to blame for the credit these people aren't receiving.
  * None of the code was copyrighted, though.
  *
- * @package moodlecore
+ * @package core
+ * @subpackage lib
  * @author Hans Anderson
  * @version This is a stable release, 1.0.  I don't foresee any changes, but you
  * might check {@link http://www.hansanderson.com/php/xml/} to see
@@ -18,9 +19,32 @@
  */
 
 /**
- * Create xml formatted output from an array.
+ * Exception thrown when there is an error parsing an XML file.
  *
- * usage:<br>
+ * @copyright 2010 The Open University
+ */
+class xml_format_exception extends moodle_exception {
+    /** @var string */
+    public $errorstring;
+    public $line;
+    public $char;
+    function __construct($errorstring, $line, $char, $link = '') {
+        $this->errorstring = $errorstring;
+        $this->line = $line;
+        $this->char = $char;
+
+        $a = new stdClass();
+        $a->errorstring = $errorstring;
+        $a->errorline = $line;
+        $a->errorchar = $char;
+        parent::__construct('errorparsingxml', 'error', $link, $a);
+    }
+}
+
+/**
+ * Create an array structure from an XML string.
+ *
+ * Usage:<br>
  * <code>
  * $xml = xmlize($array);
  * </code>
@@ -38,40 +62,50 @@
  * {@link http://bugs.php.net/bug.php?id=29711}
  * Ciao, Eloy :-)
  *
- *
- * @author Hans Anderson
- * @param array $data The array to be converted
- * @param int $WHITE  If set to 1 allows the parser to skip "space" characters in xml document. Default is 1
+ * @param string $data The XML source to parse.
+ * @param int $whitespace  If set to 1 allows the parser to skip "space" characters in xml document. Default is 1
  * @param string $encoding Specify an OUTPUT encoding. If not specified, it defaults to UTF-8.
- * @return array
+ * @param bool $reporterrors if set to true, then a {@link xml_format_exception}
+ *      exception will be thrown if the XML is not well-formed. Otherwise errors are ignored.
+ * @return array representation of the parsed XML.
  */
-function xmlize($data, $WHITE=1, $encoding='UTF-8') {
+function xmlize($data, $whitespace = 1, $encoding = 'UTF-8', $reporterrors = false) {
 
     $data = trim($data);
-    $vals = $index = $array = array();
+    $vals = array();
     $parser = xml_parser_create($encoding);
     xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
-    xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, $WHITE);
-    xml_parse_into_struct($parser, $data, $vals, $index);
+    xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, $whitespace);
+    xml_parse_into_struct($parser, $data, $vals);
+
+    // Error handling when the xml file is not well-formed
+    if ($reporterrors) {
+        $errorcode = xml_get_error_code($parser);
+        if ($errorcode) {
+            $exception = new xml_format_exception(xml_error_string($errorcode),
+                    xml_get_current_line_number($parser),
+                    xml_get_current_column_number($parser));
+            xml_parser_free($parser);
+            throw $exception;
+        }
+    }
     xml_parser_free($parser);
 
     $i = 0;
-    
     if (empty($vals)) {
         // XML file is invalid or empty, return false
         return false;
     }
 
+    $array = array();
     $tagname = $vals[$i]['tag'];
-    if ( isset ($vals[$i]['attributes'] ) )
-    {
+    if (isset($vals[$i]['attributes'])) {
         $array[$tagname]['@'] = $vals[$i]['attributes'];
     } else {
         $array[$tagname]['@'] = array();
     }
 
     $array[$tagname]["#"] = xml_depth($vals, $i);
-
 
     return $array;
 }
@@ -192,5 +226,3 @@ function traverse_xmlize($array, $arrName = 'array', $level = 0) {
     return 1;
 
 }
-
-?>
