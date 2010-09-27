@@ -41,7 +41,10 @@ if (version_compare(phpversion(), '5.2.0') < 0) {
 // try to flush everything all the time
 @ob_implicit_flush(true);
 while(ob_get_level()) {
-    ob_end_clean(); // ob_end_flush prevents sending of headers
+    if (!ob_end_clean()) {
+        // prevent infinite loop
+        break;
+    }
 }
 
 require('../config.php');

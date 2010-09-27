@@ -77,7 +77,10 @@ if (check_browser_version('MSIE')) {
 // no more headers and buffers
 @ob_implicit_flush(true);
 while(ob_get_level()) {
-    ob_end_clean();
+    if (!ob_end_clean()) {
+        // prevent infinite loop
+        break;
+    }
 }
 
 // execute the cron
