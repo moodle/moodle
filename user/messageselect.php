@@ -58,6 +58,7 @@ if ($deluser !== 0) {
     $url->param('deluser', $deluser);
 }
 $PAGE->set_url($url);
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');
