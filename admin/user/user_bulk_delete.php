@@ -33,7 +33,7 @@ if ($confirm and confirm_sesskey()) {
                 echo $OUTPUT->notification(get_string('deletednot', '', fullname($user, true)));
             }
         }
-        $rs->close;
+        $rs->close();
     }
     session_gc(); // remove stale sessions
     redirect($return, get_string('changessaved'));
@@ -44,7 +44,7 @@ if ($confirm and confirm_sesskey()) {
     $usernames = implode(', ', $userlist);
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
     $formcontinue = new single_button(new moodle_url('user_bulk_delete.php', array('confirm' => 1)), get_string('yes'));
-    $formcancel = new single_button('user_bulk.php', get_string('no'), 'get');
+    $formcancel = new single_button(new moodle_url('user_bulk.php'), get_string('no'), 'get');
     echo $OUTPUT->confirm(get_string('deletecheckfull', '', $usernames), $formcontinue, $formcancel);
 }
 
