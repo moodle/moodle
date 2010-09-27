@@ -231,23 +231,25 @@ class auth_plugin_db extends auth_plugin_base {
 
 /// list external users
         $userlist = $this->get_userlist();
-        $quoteduserlist = implode("', '", $userlist);
-        $quoteduserlist = "'$quoteduserlist'";
 
 /// delete obsolete internal users
         if (!empty($this->config->removeuser)) {
 
             // find obsolete users
             if (count($userlist)) {
-                $sql = "SELECT u.id, u.username, u.email, u.auth
-                        FROM {user} u
-                        WHERE u.auth='{$this->authtype}' AND u.deleted=0 AND u.username NOT IN ($quoteduserlist)";
+        		list($notin_sql, $params) = $DB->get_in_or_equal($userlist, SQL_PARAMS_NAMED, 'u0000', false);
+        		$params['authtype'] = $this->authtype;
+            	$sql = "SELECT u.id, u.username, u.email, u.auth
+                          FROM {user} u
+                         WHERE u.auth=:authtype AND u.deleted=0 AND u.username $notin_sql";
             } else {
                 $sql = "SELECT u.id, u.username, u.email, u.auth
-                        FROM {user} u
-                        WHERE u.auth='{$this->authtype}' AND u.deleted=0";
+                          FROM {user} u
+                         WHERE u.auth=:authtype AND u.deleted=0";
+                $params = array();
+        		$params['authtype'] = $this->authtype;
             }
-            $remove_users = $DB->get_records_sql($sql);
+            $remove_users = $DB->get_records_sql($sql, $params);
 
             if (!empty($remove_users)) {
                 print_string('auth_dbuserstoremove','auth_db', count($remove_users)); echo "\n";
@@ -297,10 +299,12 @@ class auth_plugin_db extends auth_plugin_base {
             // only go ahead if we actually
             // have fields to update locally
             if (!empty($updatekeys)) {
-                $sql = 'SELECT u.id, u.username
-                        FROM {user} u
-                        WHERE u.auth=\'' . $this->authtype . '\' AND u.deleted=\'0\' AND u.username IN (' . $quoteduserlist . ')';
-                if ($update_users = $DB->get_records_sql($sql)) {
+            	list($in_sql, $params) = $DB->get_in_or_equal($userlist, SQL_PARAMS_NAMED, 'u0000', true);
+                $params['authtype'] = $this->authtype;
+                $sql = "SELECT u.id, u.username
+                          FROM {user} u
+                         WHERE u.auth=:authtype AND u.deleted=0 AND u.username {$in_sql}";
+                if ($update_users = $DB->get_records_sql($sql, $params)) {
                     print "User entries to update: ". count($update_users). "\n";
 
                     foreach ($update_users as $user) {
@@ -484,7 +488,7 @@ class auth_plugin_db extends auth_plugin_base {
                 }
 
                 if (!empty($this->config->{'field_updatelocal_' . $key})) {
-                    if ($user->{$key} != $value) { // only update if it's changed
+                    if (isset($user->{$key}) and $user->{$key} != $value) { // only update if it's changed
                         $DB->set_field('user', $key, $value, array('id'=>$userid));
                     }
                 }
