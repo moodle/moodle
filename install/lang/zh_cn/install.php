@@ -32,10 +32,17 @@ $string['admindirname'] = '管理目录';
 $string['availablelangs'] = '可用的语言包';
 $string['chooselanguagehead'] = '选择一种语言';
 $string['chooselanguagesub'] = '请选择在安装过程中使用的语言。这个语言也会成为网站的缺省语言，不过以后可以随时更改。';
+$string['clialreadyinstalled'] = '文件config.php已存在。如果您想升级网站，请使用admin/cli/upgrade.php';
+$string['cliinstallheader'] = 'Moodle {$a}命令行安装程序';
+$string['databasehost'] = '数据库主机';
+$string['databasename'] = '数据库名';
+$string['databasetypehead'] = '选择数据库驱动';
 $string['dataroot'] = '数据目录';
 $string['dbprefix'] = '表格名称前缀';
 $string['dirroot'] = 'Moodle目录';
 $string['environmenthead'] = '检测您的运行环境...';
+$string['environmentsub2'] = '每个Moodle的发行版都有一些对PHP版本的最低要求和几个必须安装的PHP扩展。在每次安装和升级前会做完整的环境检查。如果您不知道如何安装新版或启用PHP扩展，请与服务器管理员联系。';
+$string['errorsinenvironment'] = '环境检查失败！';
 $string['installation'] = '安装';
 $string['langdownloaderror'] = '很不幸，无法下载“{$a}”语言包。安装过程将以英文继续。';
 $string['memorylimithelp'] = '<p>您的服务器的PHP内存限制是${a}。</p>
@@ -53,7 +60,9 @@ $string['memorylimithelp'] = '<p>您的服务器的PHP内存限制是${a}。</p>
 $string['phpversion'] = 'PHP版本';
 $string['phpversionhelp'] = '<p>Moodle需要PHP 4.3.0或5.1.0（5.0.x有若干已知的问题）以上的版本。</p>
 <p>您当前使用的是{$a}</p>
-<p>您必须升级PHP或者转移到一个有新版PHP的服务器上!</p>';
+<p>您必须升级PHP或者转移到一个有新版PHP的服务器上！<br />
+（如果正使用5.0.x，您也可以降级到4.4.x版）</p>
+';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = '您看到这个页面表明您已经成功地在您的计算机上安装了<strong>{$a->packname} {$a->packversion}</strong>。恭喜您！';
 $string['welcomep30'] = '<strong>{$a->installername}</strong>包含了可以创建<strong>Moodle</strong>运行环境的应用程序：';
