@@ -98,6 +98,9 @@ class core_course_renderer extends plugin_renderer_base {
         if ($category->parent != 0) {
             $classes[] = 'subcategory';
         }
+        if (empty($category->visible)) {
+            $classes[] = 'dimmed_category';
+        }
         if ($hassubcategories || $hascourses) {
             $classes[] = 'with_children';
             if ($depth > 1) {

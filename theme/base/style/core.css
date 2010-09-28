@@ -22,7 +22,9 @@ abbr {cursor: help;}
 a.dimmed,
 a.dimmed_text,
 .dimmed_text,
-.dimmed_text a {color:#AAAAAA;}
+.dimmed_text a,
+.dimmed_category,
+.dimmed_category a {color:#AAAAAA;}
 
 .unlist,
 .unlist li,
