@@ -144,6 +144,14 @@ class progressive_parser {
         $this->xml_parser = null;
     }
 
+    /**
+     * Provides one cross-platform dirname function for
+     * handling parser paths, see MDL-24381
+     */
+    public static function dirname($path) {
+        return str_replace('\\', '/', dirname($path));
+    }
+
 // Protected API starts here
 
     protected function parse($data, $eof) {
@@ -204,7 +212,7 @@ class progressive_parser {
 
         // If not set, build to push common header
         if (empty($this->topush)) {
-            $this->topush['path']  = dirname($this->path);
+            $this->topush['path']  = progressive_parser::dirname($this->path);
             $this->topush['level'] = $this->level;
             $this->topush['tags']  = array();
         }
@@ -246,7 +254,7 @@ class progressive_parser {
 
         // Normal update of parser internals
         $this->level--;
-        $this->path = dirname($this->path);
+        $this->path = progressive_parser::dirname($this->path);
     }
 
     protected function char_data($parser, $data) {

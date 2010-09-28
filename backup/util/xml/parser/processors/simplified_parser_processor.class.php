@@ -55,7 +55,7 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
 
     public function add_path($path) {
         $this->paths[] = $path;
-        $this->parentpaths[] = dirname($path);
+        $this->parentpaths[] = progressive_parser::dirname($path);
     }
 
     /**
@@ -71,7 +71,7 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
     public function process_chunk($data) {
         // Precalculate some vars for readability
         $path = $data['path'];
-        $parentpath = dirname($path);
+        $parentpath = progressive_parser::dirname($path);
         $tag = basename($path);
 
         // If the path is a registered parent one, store all its tags

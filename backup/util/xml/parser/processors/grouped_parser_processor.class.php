@@ -117,12 +117,12 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
      * false if not
      */
     protected function processed_parent_exists($path) {
-        $parentpath = dirname($path);
+        $parentpath = progressive_parser::dirname($path);
         while ($parentpath != '/') {
             if ($this->path_is_selected($parentpath)) {
                 return $parentpath;
             }
-            $parentpath = dirname($parentpath);
+            $parentpath = progressive_parser::dirname($parentpath);
         }
         return false;
     }
@@ -134,12 +134,12 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
      * false if not
      */
     protected function grouped_parent_exists($path) {
-        $parentpath = dirname($path);
+        $parentpath = progressive_parser::dirname($path);
         while ($parentpath != '/') {
             if ($this->path_is_grouped($parentpath)) {
                 return $parentpath;
             }
-            $parentpath = dirname($parentpath);
+            $parentpath = progressive_parser::dirname($parentpath);
         }
         return false;
     }
