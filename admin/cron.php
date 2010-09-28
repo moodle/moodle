@@ -45,6 +45,19 @@ require('../config.php');
 require_once($CFG->libdir.'/clilib.php');
 require_once($CFG->libdir.'/cronlib.php');
 
+// disable compression, it would prevent closing of buffers
+if (ini_get('zlib.output_compression')) {
+    ini_set('zlib.output_compression', 'Off');
+}
+// no more headers and buffers
+ob_implicit_flush(true);
+while(ob_get_level()) {
+    if (!ob_end_clean()) {
+        // prevent infinite loop
+        break;
+    }
+}
+
 // extra safety
 session_get_instance()->write_close();
 
@@ -72,15 +85,6 @@ if (check_browser_version('MSIE')) {
 } else {
     //send proper plaintext header
     @header('Content-Type: text/plain; charset=utf-8');
-}
-
-// no more headers and buffers
-@ob_implicit_flush(true);
-while(ob_get_level()) {
-    if (!ob_end_clean()) {
-        // prevent infinite loop
-        break;
-    }
 }
 
 // execute the cron
