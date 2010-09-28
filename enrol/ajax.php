@@ -195,6 +195,5 @@ switch ($action) {
         throw new enrol_ajax_exception('unknowajaxaction');
 }
 
-header('Content-type: application/json');
 echo json_encode($outcome);
 die();
