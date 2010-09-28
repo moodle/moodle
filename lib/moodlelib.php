@@ -2088,7 +2088,11 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
                     print_header_simple('', '',
                             build_navigation(array(array('name' => $strloggedinasguest, 'link' => null, 'type' => 'misc'))));
                     if (empty($USER->access['rsw'][$COURSE->context->path])) {  // Normal guest
-                        notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), "$CFG->wwwroot/login/index.php");
+                            $loginurl = "$CFG->wwwroot/login/index.php";
+                            if (!empty($CFG->loginhttps)) {
+                                $loginurl = str_replace('http:','https:', $loginurl);
+                            }
+                        notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), $loginurl);
                     } else {
                         notify(get_string('guestsnotallowed', '', format_string($COURSE->fullname)));
                         echo '<div class="notifyproblem">'.switchroles_form($COURSE->id).'</div>';
