@@ -2428,7 +2428,22 @@ class calendar_information {
      * @param int $month
      * @param int $year
      */
-    public function __construct($day, $month, $year) {
+    public function __construct($day=0, $month=0, $year=0) {
+
+        $date = usergetdate(time());
+
+        if (empty($day)) {
+            $day = $date['mday'];
+        }
+
+        if (empty($month)) {
+            $month = $date['mon'];
+        }
+
+        if (empty($year)) {
+            $year =  $date['year'];
+        }
+
         $this->day = $day;
         $this->month = $month;
         $this->year = $year;
