@@ -24,10 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (isset($_SERVER['REMOTE_ADDR'])) { // this script is accessed only via command line
-    die;
-}
-
+define('CLI_SCRIPT', true);
 require_once dirname(dirname(dirname(dirname(dirname(dirname(__FILE__)))))).'/config.php';
 
 if (!debugging('', DEBUG_DEVELOPER)) {
@@ -96,9 +93,10 @@ $header = <<<EOT
 /**
  * Strings for component 'editor_tinymce', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   editor_tinymce
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    editor
+ * @subpackage tinymce
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 EOT;

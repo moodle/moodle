@@ -1,37 +1,31 @@
-Description of TinyMCE v3.3.8 library integration in Moodle
+Description of TinyMCE v3.3.9.1 library integration in Moodle
 =========================================================================================
 
 Copyright: (c) 2004-2010, Moxiecode Systems AB, All rights reserved.
 License: GNU LESSER GENERAL PUBLIC LICENSE Version 2.1, February 1999
 
-Moodle maintainer: Petr Skoda (skodak)
+Moodle maintainer: Petr Skoda (skodak) 
 
 =========================================================================================
 Upgrade procedure:
- 1/ Download latest dev package from http://tinymce.moxiecode.com/download.php
- 2/ copy TinyMCE files to tiny_mce/version/
- 3/ copy extra dragmath, moodlenolink, spellchecker, moodlemedia
- 4/ copy tinymce/jscripts/tiny_mce/classes/Popup.js to Popup.js
- 5/ apply strings & form_utils.js & tinymce_plugin_advimage patches
- 6/ copy yuicompressor.jar from dev package into extra/tools/, use shell
-    script extra/tools/compress.sh to compress modified files
- 7/ download all TinyMCE lang files (extra/tools/download_langs.sh)
- 8/ update moodle lang string files (extra/tools/update_lang_files.php)
+ 1/ clone http://github.com/skodak/tinymce
+ 2/ clone http://github.com/skodak/tinymce_spellchecker_php
+ 3/ merge new changes in MOODLE_20_STABLE branches in these těo repos
+ 4/ tweak paths in build script in moodle_build.sh and execute
+ 5/ fix line endings 
+ 6/ download all TinyMCE lang files (extra/tools/download_langs.sh)
+ 7/ update moodle lang string files (extra/tools/update_lang_files.php)
 
 =========================================================================================
 Added:
- * added Popup.js, copy of tinymce/jscripts/tiny_mce/classes/Popup.js from dev package 
  * plugins/gragmath/*
  * plugins/moodlenolink/*
  * plugins/moodlemedia/*
- * plugins/spellchecker/*
 
 Modified:
- * Popup.js --> compressed into tiny_mce_popup.js (extra/patches/tinymce_strings.patch)
- * tiny_mce_src.js --> compressed into tiny_mce.js (extra/patches/tinymce_strings.patch)
-
-Removed:
- *
+ * image integration - file picker integration
+ * string processing - uses our lang framework
+ * form hacks
 
  TODO:
  * update strings to integrate with AMOS
