@@ -105,14 +105,20 @@ class backup_final_task extends backup_task {
         // to the backup, settings, license, versions and other useful information
         $this->add_step(new backup_main_structure_step('mainfile', 'moodle_backup.xml'));
 
-        // Generate the zip file (mbz extension)
-        $this->add_step(new backup_zip_contents('zip_contents'));
+        // On backup::MODE_IMPORT, we don't have to zip nor store the the file, skip these steps
+        if ($this->plan->get_mode() != backup::MODE_IMPORT) {
+            // Generate the zip file (mbz extension)
+            $this->add_step(new backup_zip_contents('zip_contents'));
 
-        // Copy the generated zip (.mbz) file to final destination
-        $this->add_step(new backup_store_backup_file('save_backupfile'));
+            // Copy the generated zip (.mbz) file to final destination
+            $this->add_step(new backup_store_backup_file('save_backupfile'));
+        }
 
-        // Clean the temp dir (conditionally) and drop temp table
-        $this->add_step(new drop_and_clean_temp_stuff('drop_and_clean_temp_stuff'));
+        // Clean the temp dir (conditionally) and drop temp tables
+        $cleanstep = new drop_and_clean_temp_stuff('drop_and_clean_temp_stuff');
+        // Decide about to delete the temp dir (based on backup::MODE_IMPORT)
+        $cleanstep->skip_cleaning_temp_dir($this->plan->get_mode() == backup::MODE_IMPORT);
+        $this->add_step($cleanstep);
 
         $this->built = true;
     }

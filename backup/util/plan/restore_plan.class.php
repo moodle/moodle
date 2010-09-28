@@ -73,6 +73,10 @@ class restore_plan extends base_plan implements loggable {
         return $this->controller->get_courseid();
     }
 
+    public function get_mode() {
+        return $this->controller->get_mode();
+    }
+
     public function get_basepath() {
         return $this->basepath;
     }

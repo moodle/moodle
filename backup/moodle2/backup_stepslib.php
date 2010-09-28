@@ -49,13 +49,23 @@ class create_and_clean_temp_stuff extends backup_execution_step {
  */
 class drop_and_clean_temp_stuff extends backup_execution_step {
 
+    protected $skipcleaningtempdir = false;
+
     protected function define_execution() {
         global $CFG;
+
         backup_controller_dbops::drop_backup_ids_temp_table($this->get_backupid()); // Drop ids temp table
         backup_helper::delete_old_backup_dirs(time() - (4 * 60 * 60));              // Delete > 4 hours temp dirs
-        if (empty($CFG->keeptempdirectoriesonbackup)) { // Conditionally
+        // Delete temp dir conditionally:
+        // 1) If $CFG->keeptempdirectoriesonbackup is not enabled
+        // 2) If backup temp dir deletion has been marked to be avoided
+        if (empty($CFG->keeptempdirectoriesonbackup) && !$this->skipcleaningtempdir) {
             backup_helper::delete_backup_dir($this->get_backupid()); // Empty backup dir
         }
+    }
+
+    public function skip_cleaning_temp_dir($skip) {
+        $this->skipcleaningtempdir = $skip;
     }
 }
 

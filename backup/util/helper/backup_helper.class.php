@@ -173,7 +173,7 @@ abstract class backup_helper {
 
     /**
      * Given one backupid and the (FS) final generated file, perform its final storage
-     * into Moodle file storage
+     * into Moodle file storage. For stored files it returns the complete file_info object
      */
     static public function store_backup_file($backupid, $filepath) {
 
@@ -191,15 +191,14 @@ abstract class backup_helper {
         $courseid  = $dinfo[0]->courseid;              // Id of the course
 
         // Quick hack. If for any reason, filename is blank, fix it here.
-        // This hack will be out once MDL-22142 - P26 gets fixed
+        // TODO: This hack will be out once MDL-22142 - P26 gets fixed
         if (empty($filename)) {
             $filename = backup_plan_dbops::get_default_backup_filename('moodle2', $backuptype, $id, $hasusers, $isannon);
         }
 
-
         // Backups of type IMPORT aren't stored ever
         if ($backupmode == backup::MODE_IMPORT) {
-            return true;
+            return false;
         }
 
         // Calculate file storage options of id being backup
