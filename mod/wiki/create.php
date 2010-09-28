@@ -73,6 +73,7 @@ $wikipage = new page_wiki_create($wiki, $subwiki, $cm);
 if (!empty($swid)) {
     $wikipage->set_gid($subwiki->groupid);
     $wikipage->set_uid($subwiki->userid);
+    $wikipage->set_swid($swid);
 } else {
     $wikipage->set_gid($gid);
     $wikipage->set_uid($uid);
