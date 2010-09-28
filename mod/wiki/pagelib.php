@@ -865,6 +865,7 @@ class page_wiki_create extends page_wiki {
 
     private $format;
     private $swid;
+    private $wid;
     private $action;
     private $mform;
 
@@ -880,6 +881,7 @@ class page_wiki_create extends page_wiki {
         if ($this->action == 'new') {
             $params['action'] = 'new';
             $params['swid'] = $this->swid;
+            $params['wid'] = $this->wid;
             if ($this->title != get_string('newpage', 'wiki')) {
                 $params['title'] = $this->title;
             }
@@ -893,6 +895,10 @@ class page_wiki_create extends page_wiki {
 
     function set_format($format) {
         $this->format = $format;
+    }
+
+    function set_wid($wid) {
+        $this->wid = $wid;
     }
 
     function set_swid($swid) {

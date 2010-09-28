@@ -75,6 +75,7 @@ if (!empty($swid)) {
     $wikipage->set_uid($subwiki->userid);
     $wikipage->set_swid($swid);
 } else {
+    $wikipage->set_wid($wid);
     $wikipage->set_gid($gid);
     $wikipage->set_uid($uid);
 }
