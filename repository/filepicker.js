@@ -1006,6 +1006,8 @@ M.core_filepicker.init = function(Y, options) {
             str += '<tr><td class="mdl-right">';
             str += '<label for="'+id+'_file">'+data.upload.label+': </label></td>';
             str += '<td class="mdl-left"><input type="file" id="'+id+'_file" name="repo_upload_file" />';
+            str += '<tr><td class="mdl-right"><label for="newname-'+client_id+'">'+M.str.repository.saveas+':</label></td>';
+            str += '<td class="mdl-left"><input type="text" name="title" id="newname-'+client_id+'" value="" /></td></tr>';
             str += '<input type="hidden" name="itemid" value="'+this.options.itemid+'" />';
             for (var i in types) {
                 str += '<input type="hidden" name="accepted_types[]" value="'+types[i]+'" />';

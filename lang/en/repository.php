@@ -91,6 +91,7 @@ $string['errornotyourfile'] = 'You cannot pick file which is not added by your';
 $string['erroruniquename'] = 'Repository instance name should be unique';
 $string['existingrepository'] = 'This repository already exists';
 $string['federatedsearch'] = 'Federated search';
+$string['fileexists'] = 'File name already being used, please use another name';
 $string['filename'] = 'Filename';
 $string['filenotnull'] = 'You must select a file to upload.';
 $string['filesaved'] = 'The file has been saved';

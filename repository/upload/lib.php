@@ -41,7 +41,7 @@ class repository_upload extends repository {
      * Process uploaded file
      * @return array|bool
      */
-    public function upload() {
+    public function upload($saveas_filename) {
         global $USER, $CFG;
 
         $types = optional_param('accepted_types', '*', PARAM_RAW);
@@ -79,8 +79,10 @@ class repository_upload extends repository {
             throw new moodle_exception('maxbytes');
         }
 
-        if (empty($record->filename)) {
+        if (empty($saveas_filename)) {
             $record->filename = clean_param($_FILES[$elname]['name'], PARAM_FILE);
+        } else {
+            $record->filename = $saveas_filename;
         }
 
         if ($this->mimetypes != '*') {
@@ -99,11 +101,13 @@ class repository_upload extends repository {
         }
 
         if ($file = $fs->get_file($context->id, $record->component, $record->filearea, $record->itemid, $record->filepath, $record->filename)) {
-            return array(
-                'url'=>moodle_url::make_draftfile_url($file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(),
-                'id'=>$file->get_itemid(),
-                'file'=>$file->get_filename()
-            );
+            throw new moodle_exception('fileexists', 'repository');
+            //$record->filename = ;
+            //return array(
+                //'url'=>moodle_url::make_draftfile_url($file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(),
+                //'id'=>$file->get_itemid(),
+                //'file'=>$file->get_filename()
+            //);
         }
 
         $record->contextid = $context->id;
