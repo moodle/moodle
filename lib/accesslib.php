@@ -5701,12 +5701,14 @@ function build_context_path($force=false) {
     $DB->execute($sql);
 
     // Blocks
+    // pctx.path IS NOT NULL prevents fatal problems with broken block instances that point to invalid context parent
     $sql = "INSERT INTO {context_temp} (id, path, depth)
             SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
               FROM {context} ctx
               JOIN {block_instances} bi ON ctx.instanceid = bi.id
               JOIN {context} pctx ON bi.parentcontextid = pctx.id
              WHERE ctx.contextlevel=".CONTEXT_BLOCK."
+                   AND pctx.path IS NOT NULL
                    AND NOT EXISTS (SELECT 'x'
                                    FROM {context_temp} temp
                                    WHERE temp.id = ctx.id)
