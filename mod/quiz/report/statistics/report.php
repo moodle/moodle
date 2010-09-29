@@ -129,7 +129,7 @@ class quiz_statistics_report extends quiz_default_report {
                 if ($s > 1){
                     $imageurl = $CFG->wwwroot.'/mod/quiz/report/statistics/statistics_graph.php?id='.$quizstats->id;
                     echo $OUTPUT->heading(get_string('statisticsreportgraph', 'quiz_statistics'));
-                    echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.get_string('statisticsreportgraph', 'quiz_statistics').'" /></div>';
+                    echo '<div class="graph flexible-wrap"><img src="'.$imageurl.'" alt="'.get_string('statisticsreportgraph', 'quiz_statistics').'" /></div>';
                 }
             }
             if ($this->table->is_downloading()){

@@ -202,6 +202,15 @@ class quiz_report_statistics_table extends flexible_table {
             return '';
         }
     }
-
+    public function  wrap_html_start() {
+        if (!$this->is_downloading()) {
+            echo html_writer::start_tag('div', array('id'=>'tablecontainer', 'class'=>'statistics-tablecontainer'));
+        }
+    }
+    public function wrap_html_finish() {
+        if (!$this->is_downloading()) {
+            echo html_writer::end_tag('div'); // Opened in this::wrap_html_start
+        }
+    }
 }
 
