@@ -2519,7 +2519,9 @@ function redirect($url, $message='', $delay=-1) {
     }
 
     // prevent debug errors - make sure context is properly initialised
-    $PAGE->set_context(null);
+    if ($PAGE) {
+        $PAGE->set_context(null);
+    }
 
     if ($url instanceof moodle_url) {
         $url = $url->out(false);
