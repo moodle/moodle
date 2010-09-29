@@ -16,17 +16,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    workshopform
+ * @subpackage accumulative
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * restore subplugin class that provides the necessary information
- * needed to restore one workshopform->accumulative subplugin.
+ * needed to restore one workshopform_accumulative subplugin.
  */
 class restore_workshopform_accumulative_subplugin extends restore_subplugin {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // mappings of XML paths to the processable methods
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * Returns the paths to be handled by the subplugin at workshop level
@@ -35,7 +41,7 @@ class restore_workshopform_accumulative_subplugin extends restore_subplugin {
 
         $paths = array();
 
-        $elename = $this->get_namefor('workshopform_accumulative_dimension');
+        $elename = $this->get_namefor('dimension');
         $elepath = $this->get_pathfor('/workshopform_accumulative_dimension'); // we used get_recommended_name() so this works
         $paths[] = new restore_path_element($elename, $elepath);
 
@@ -49,7 +55,7 @@ class restore_workshopform_accumulative_subplugin extends restore_subplugin {
 
         $paths = array();
 
-        $elename = $this->get_namefor('workshopform_accumulative_referencegrade');
+        $elename = $this->get_namefor('referencegrade');
         $elepath = $this->get_pathfor('/workshopform_accumulative_referencegrade'); // we used get_recommended_name() so this works
         $paths[] = new restore_path_element($elename, $elepath);
 
@@ -63,7 +69,7 @@ class restore_workshopform_accumulative_subplugin extends restore_subplugin {
 
         $paths = array();
 
-        $elename = $this->get_namefor('workshopform_accumulative_examplegrade');
+        $elename = $this->get_namefor('examplegrade');
         $elepath = $this->get_pathfor('/workshopform_accumulative_examplegrade'); // we used get_recommended_name() so this works
         $paths[] = new restore_path_element($elename, $elepath);
 
@@ -77,18 +83,21 @@ class restore_workshopform_accumulative_subplugin extends restore_subplugin {
 
         $paths = array();
 
-        $elename = $this->get_namefor('workshopform_accumulative_grade');
+        $elename = $this->get_namefor('grade');
         $elepath = $this->get_pathfor('/workshopform_accumulative_grade'); // we used get_recommended_name() so this works
         $paths[] = new restore_path_element($elename, $elepath);
 
         return $paths; // And we return the interesting paths
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // defined path elements are dispatched to the following methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
-     * This method processes the workshopform_accumulative_dimension  element
-     * inside one accumulative workshopform (see accumulative subplugin backup)
+     * Processes the workshopform_accumulative_dimension element
      */
-    public function process_workshopform_accumulative_workshopform_accumulative_dimension($data) {
+    public function process_workshopform_accumulative_dimension($data) {
         global $DB;
 
         $data = (object)$data;
@@ -107,53 +116,49 @@ class restore_workshopform_accumulative_subplugin extends restore_subplugin {
     }
 
     /**
-     * This method processes the workshopform_accumulative_referencegrade element
-     * inside one accumulative workshopform (see accumulative subplugin backup)
+     * Processes the workshopform_accumulative_referencegrade element
      */
-    public function process_workshopform_accumulative_workshopform_accumulative_referencegrade($data) {
-        global $DB;
-
-        $data = (object)$data;
-        $oldid = $data->id;
-
-        $data->assessmentid = $this->get_new_parentid('workshop_referenceassessment');
-        $data->strategy = 'accumulative';
-        $data->dimensionid = $this->get_mappingid('workshopform_accumulative', $data->dimensionid);
-
-        $newitemid = $DB->insert_record('workshop_grades', $data);
+    public function process_workshopform_accumulative_referencegrade($data) {
+        $this->process_dimension_grades_structure('workshop_referenceassessment', $data);
     }
 
     /**
-     * This method processes the workshopform_accumulative_examplegrade  element
-     * inside one accumulative workshopform (see accumulative subplugin backup)
+     * Processes the workshopform_accumulative_examplegrade element
      */
-    public function process_workshopform_accumulative_workshopform_accumulative_examplegrade($data) {
-        global $DB;
-
-        $data = (object)$data;
-        $oldid = $data->id;
-
-        $data->assessmentid = $this->get_new_parentid('workshop_exampleassessment');
-        $data->strategy = 'accumulative';
-        $data->dimensionid = $this->get_mappingid('workshopform_accumulative', $data->dimensionid);
-
-        $newitemid = $DB->insert_record('workshop_grades', $data);
+    public function process_workshopform_accumulative_examplegrade($data) {
+        $this->process_dimension_grades_structure('workshop_exampleassessment', $data);
     }
 
     /**
-     * This method processes the workshopform_accumulative_grade  element
-     * inside one accumulative workshopform (see accumulative subplugin backup)
+     * Processes the workshopform_accumulative_grade element
      */
-    public function process_workshopform_accumulative_workshopform_accumulative_grade($data) {
+    public function process_workshopform_accumulative_grade($data) {
+        $this->process_dimension_grades_structure('workshop_assessment', $data);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // internal private methods
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Process the dimension grades linked with the given type of assessment
+     *
+     * Populates the workshop_grades table with new records mapped to the restored
+     * instances of assessments.
+     *
+     * @param mixed $elementname the name of the assessment element
+     * @param array $data parsed xml data
+     */
+    private function process_dimension_grades_structure($elementname, $data) {
         global $DB;
 
         $data = (object)$data;
         $oldid = $data->id;
 
-        $data->assessmentid = $this->get_new_parentid('workshop_assessment');
+        $data->assessmentid = $this->get_new_parentid($elementname);
         $data->strategy = 'accumulative';
         $data->dimensionid = $this->get_mappingid('workshopform_accumulative', $data->dimensionid);
 
-        $newitemid = $DB->insert_record('workshop_grades', $data);
+        $DB->insert_record('workshop_grades', $data);
     }
 }
