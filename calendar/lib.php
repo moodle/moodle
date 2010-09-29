@@ -248,7 +248,6 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             $hrefparams['view'] = 'day';
             $dayhref = calendar_get_link_href(new moodle_url(CALENDAR_URL.'view.php', $hrefparams), $day, $m, $y);
 
-            // OverLib popup
             $popupcontent = '';
             foreach($eventsbyday[$day] as $eventid) {
                 if (!isset($events[$eventid])) {
