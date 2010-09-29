@@ -305,7 +305,6 @@
             $atlastpage = true;
         }
 
-        $spacer = $OUTPUT->spacer().' ';
         foreach ($courses as $acourse) {
             $coursecontext = get_context_instance(CONTEXT_COURSE, $acourse->id);
 
@@ -319,77 +318,62 @@
             if ($editingon) {
                 echo '<td>';
                 if (has_capability('moodle/course:update', $coursecontext)) {
-                    $url = new moodle_url($CFG->wwwroot.'/course/edit.php' , array('id'=>$acourse->id, 'category'=>$id,'returnto'=>'category'));
-                    echo '<a title="'.$strsettings.'" href="'.$url->out(true). '">'.
-                            '<img src="'.$OUTPUT->pix_url('t/edit') . '" class="iconsmall" alt="'.$stredit.'" /></a> ';
-                } else {
-                    echo $spacer;
+                    echo $OUTPUT->action_icon(new moodle_url('/course/edit.php',
+                            array('id' => $acourse->id, 'category' => $id, 'returnto' => 'category')),
+                            new pix_icon('t/edit', $strsettings));
                 }
 
                 // role assignment link
                 if (has_capability('moodle/course:enrolreview', $coursecontext)) {
-                    echo '<a title="'.get_string('enrolledusers', 'enrol').'" href="'.$CFG->wwwroot.'/enrol/users.php?id='.$acourse->id.'">'.
-                            '<img src="'.$OUTPUT->pix_url('i/users') . '" class="iconsmall" alt="'.get_string('enrolledusers', 'enrol').'" /></a> ';
-                } else {
-                    echo $spacer;
+                    echo $OUTPUT->action_icon(new moodle_url('/enrol/users.php', array('id' => $acourse->id)),
+                            new pix_icon('i/users', get_string('enrolledusers', 'enrol')));
                 }
 
                 if (can_delete_course($acourse->id)) {
-                    echo '<a title="'.$strdelete.'" href="delete.php?id='.$acourse->id.'">'.
-                            '<img src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" alt="'.$strdelete.'" /></a> ';
-                } else {
-                    echo $spacer;
+                    echo $OUTPUT->action_icon(new moodle_url('/course/delete.php', array('id' => $acourse->id)),
+                            new pix_icon('t/delete', $strdelete));
                 }
 
                 // MDL-8885, users with no capability to view hidden courses, should not be able to lock themselves out
                 if (has_capability('moodle/course:visibility', $coursecontext) && has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
                     if (!empty($acourse->visible)) {
-                        echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                            '&amp;perpage='.$perpage.'&amp;hide='.$acourse->id.'&amp;sesskey='.sesskey().'">'.
-                            '<img src="'.$OUTPUT->pix_url('t/hide') . '" class="iconsmall" alt="'.$strhide.'" /></a> ';
+                        echo $OUTPUT->action_icon(new moodle_url('/course/category.php',
+                                array('id' => $category->id, 'page' => $page, 'perpage' => $perpage,
+                                        'hide' => $acourse->id, 'sesskey' => sesskey())),
+                                new pix_icon('t/hide', $strhide));
                     } else {
-                        echo '<a title="'.$strshow.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                            '&amp;perpage='.$perpage.'&amp;show='.$acourse->id.'&amp;sesskey='.sesskey().'">'.
-                            '<img src="'.$OUTPUT->pix_url('t/show') . '" class="iconsmall" alt="'.$strshow.'" /></a> ';
+                        echo $OUTPUT->action_icon(new moodle_url('/course/category.php',
+                                array('id' => $category->id, 'page' => $page, 'perpage' => $perpage,
+                                        'show' => $acourse->id, 'sesskey' => sesskey())),
+                                new pix_icon('t/show', $strshow));
                     }
-                } else {
-                    echo $spacer;
                 }
 
                 if (has_capability('moodle/backup:backupcourse', $coursecontext)) {
-                    echo '<a title="'.$strbackup.'" href="../backup/backup.php?id='.$acourse->id.'">'.
-                            '<img src="'.$OUTPUT->pix_url('t/backup') . '" class="iconsmall" alt="'.$strbackup.'" /></a> ';
-                } else {
-                    echo $spacer;
+                    echo $OUTPUT->action_icon(new moodle_url('/backup/backup.php', array('id' => $acourse->id)),
+                            new pix_icon('t/backup', $strbackup));
                 }
 
                 if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
-                    echo '<a title="'.$strrestore.'" href="../files/index.php?id='.$acourse->id.
-                         '&amp;wdir=/backupdata">'.
-                         '<img src="'.$OUTPUT->pix_url('t/restore') . '" class="iconsmall" alt="'.$strrestore.'" /></a> ';
-                } else {
-                    echo $spacer;
+                    echo $OUTPUT->action_icon(new moodle_url('/backup/restorefile.php', array('contextid' => $coursecontext->id)),
+                            new pix_icon('t/restore', $strrestore));
                 }
 
                 if (has_capability('moodle/category:manage', $context)) {
                     if ($up) {
-                        echo '<a title="'.$strmoveup.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                             '&amp;perpage='.$perpage.'&amp;moveup='.$acourse->id.'&amp;sesskey='.sesskey().'">'.
-                             '<img src="'.$OUTPUT->pix_url('t/up') . '" class="iconsmall" alt="'.$strmoveup.'" /></a> ';
-                    } else {
-                        echo $spacer;
+                        echo $OUTPUT->action_icon(new moodle_url('/course/category.php',
+                                array('id' => $category->id, 'page' => $page, 'perpage' => $perpage,
+                                        'moveup' => $acourse->id, 'sesskey' => sesskey())),
+                                new pix_icon('t/up', $strmoveup));
                     }
 
                     if ($down) {
-                        echo '<a title="'.$strmovedown.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                             '&amp;perpage='.$perpage.'&amp;movedown='.$acourse->id.'&amp;sesskey='.sesskey().'">'.
-                             '<img src="'.$OUTPUT->pix_url('t/down') . '" class="iconsmall" alt="'.$strmovedown.'" /></a> ';
-                    } else {
-                        echo $spacer;
+                        echo $OUTPUT->action_icon(new moodle_url('/course/category.php',
+                                array('id' => $category->id, 'page' => $page, 'perpage' => $perpage,
+                                        'movedown' => $acourse->id, 'sesskey' => sesskey())),
+                                new pix_icon('t/down', $strmovedown));
                     }
                     $abletomovecourses = true;
-                } else {
-                    echo $spacer, $spacer;
                 }
 
                 echo '</td>';
