@@ -5325,19 +5325,20 @@ function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
         return array();
     }
 
-    $filesize[$maxsize] = display_size($maxsize);
+    $filesize[intval($maxsize)] = display_size($maxsize);
 
     $sizelist = array(10240, 51200, 102400, 512000, 1048576, 2097152,
                       5242880, 10485760, 20971520, 52428800, 104857600);
 
     // Allow maxbytes to be selected if it falls outside the above boundaries
-    if( isset($CFG->maxbytes) && !in_array($CFG->maxbytes, $sizelist) ){
-            $sizelist[] = $CFG->maxbytes;
+    if (isset($CFG->maxbytes) && !in_array(get_real_size($CFG->maxbytes), $sizelist)) {
+        // note: get_real_size() is used in order to prevent problems with invalid values
+        $sizelist[] = get_real_size($CFG->maxbytes);
     }
 
     foreach ($sizelist as $sizebytes) {
        if ($sizebytes < $maxsize) {
-           $filesize[$sizebytes] = display_size($sizebytes);
+           $filesize[intval($sizebytes)] = display_size($sizebytes);
        }
     }
 
@@ -5492,7 +5493,7 @@ function display_size($size) {
     } else if ($size >= 1024) {
         $size = round($size / 1024 * 10) / 10 . $kb;
     } else {
-        $size = $size .' '. $b;
+        $size = intval($size) .' '. $b; // file sizes over 2GB can not work in 32bit PHP anyway
     }
     return $size;
 }
