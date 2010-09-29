@@ -13,7 +13,7 @@ require_once("lib.php");
 require_once("$CFG->libdir/tablelib.php");
 
 $id = required_param('id', PARAM_INT); // Course Module ID, or
-$searchcourse = optional_param('searchcourse', '', PARAM_ALPHANUM);
+$searchcourse = optional_param('searchcourse', '', PARAM_NOTAGS);
 $coursefilter = optional_param('coursefilter', '', PARAM_INT);
 $courseid = optional_param('courseid', false, PARAM_INT);
 
