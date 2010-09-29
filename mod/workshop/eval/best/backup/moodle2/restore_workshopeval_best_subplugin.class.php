@@ -16,17 +16,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    workshopeval
+ * @subpackage best
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * restore subplugin class that provides the necessary information
- * needed to restore one workshopeval->best subplugin.
+ * needed to restore one workshopeval_best subplugin.
  */
 class restore_workshopeval_best_subplugin extends restore_subplugin {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // mappings of XML paths to the processable methods
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * Returns the paths to be handled by the subplugin at workshop level
@@ -35,24 +39,25 @@ class restore_workshopeval_best_subplugin extends restore_subplugin {
 
         $paths = array();
 
-        $elename = $this->get_namefor('workshopeval_best_setting');
+        $elename = $this->get_namefor('setting');
         $elepath = $this->get_pathfor('/workshopeval_best_settings'); // we used get_recommended_name() so this works
         $paths[] = new restore_path_element($elename, $elepath);
 
         return $paths; // And we return the interesting paths
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // defined path elements are dispatched to the following methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
-     * This method processes the workshopeval_best_setting  element
-     * inside one accumulative workshopeval (see best subplugin backup)
+     * Processes one workshopeval_best_settings element
      */
-    public function process_workshopeval_best_workshopeval_best_setting($data) {
+    public function process_workshopeval_best_setting($data) {
         global $DB;
 
         $data = (object)$data;
-
         $data->workshopid = $this->get_new_parentid('workshop');
-
-        $newitemid = $DB->insert_record('workshopeval_best_settings', $data);
+        $DB->insert_record('workshopeval_best_settings', $data);
     }
 }
