@@ -40,6 +40,10 @@ class mod_forum_post_form extends moodleform {
         $modcontext    = $this->_customdata['modcontext'];
         $forum         = $this->_customdata['forum'];
         $post          = $this->_customdata['post'];
+        // if $forum->maxbytes == '0' means we should use $course->maxbytes
+        if ($forum->maxbytes == '0') {
+            $forum->maxbytes = $course->maxbytes;
+        }
         // TODO: add max files and max size support
         $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'trusttext'=>true, 'context'=>$modcontext);
 

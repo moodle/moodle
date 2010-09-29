@@ -251,7 +251,7 @@ switch ($action) {
         // see MDL-23407
         try {
             // TODO: add file scanning MDL-19380 into each plugin
-            $result = $repo->upload($saveas_filename);
+            $result = $repo->upload($saveas_filename, $maxbytes);
             echo json_encode($result);
         } catch (Exception $e) {
             $err->error = $e->getMessage();
