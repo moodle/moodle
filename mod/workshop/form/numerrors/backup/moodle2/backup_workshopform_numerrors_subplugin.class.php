@@ -16,11 +16,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    workshopform_numerrors
- * @subpackage backup-moodle2
- * @copyright  2010 David Mudrak <david@moodle.com>
+ * @package    workshopform
+ * @subpackage numerrors
+ * @copyright  2010 onwards David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
