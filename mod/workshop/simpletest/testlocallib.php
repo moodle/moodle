@@ -18,9 +18,10 @@
 /**
  * Unit tests for workshop api class defined in mod/workshop/locallib.php
  *
- * @package   mod-workshop
- * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage workshop
+ * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();

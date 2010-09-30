@@ -23,9 +23,10 @@
  * workshop_something() taking the workshop instance as the first
  * parameter, we use a class workshop that provides all methods.
  *
- * @package   mod-workshop
- * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage workshop
+ * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();

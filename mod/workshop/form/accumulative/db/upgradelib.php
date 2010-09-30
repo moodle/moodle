@@ -18,9 +18,10 @@
 /**
  * Functions used by some stages of accumulative grading upgrade
  *
- * @package   mod-workshopform-accumulative
- * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    workshopform
+ * @subpackage accumulative
+ * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**

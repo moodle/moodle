@@ -18,9 +18,10 @@
 /**
  * Functions used by some stages of comments-only grading upgrade
  *
- * @package   workshopform_comments
- * @copyright 2010 David Mudrak <david.mudrak@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    workshopform
+ * @subpackage comments
+ * @copyright  2010 David Mudrak <david.mudrak@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**

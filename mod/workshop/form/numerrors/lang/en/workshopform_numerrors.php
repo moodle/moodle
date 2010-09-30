@@ -18,9 +18,10 @@
 /**
  * Strings for component 'workshopform_numerrors', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   workshopform_numerrors
- * @copyright 2009 David Mudrak <david@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    workshopform
+ * @subpackage numerrors
+ * @copyright  2009 David Mudrak <david@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['addmoredimensions'] = 'Blanks for {$a} more assertions';

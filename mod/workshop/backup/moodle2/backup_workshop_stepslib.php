@@ -18,8 +18,8 @@
 /**
  * Defines all the backup steps that will be used by {@link backup_workshop_activity_task}
  *
- * @package    mod_workshop
- * @subpackage backup-moodle2
+ * @package    mod
+ * @subpackage workshop
  * @copyright  2010 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

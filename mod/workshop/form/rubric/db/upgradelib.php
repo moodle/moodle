@@ -18,9 +18,10 @@
 /**
  * Functions used by some stages of rubric grading upgrade
  *
- * @package   workshopform_rubric
- * @copyright 2010 David Mudrak <david.mudrak@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    workshopform
+ * @subpackage rubric
+ * @copyright  2010 David Mudrak <david.mudrak@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**

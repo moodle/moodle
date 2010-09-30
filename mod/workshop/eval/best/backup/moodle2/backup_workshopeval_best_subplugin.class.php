@@ -16,8 +16,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    workshopeval_best
- * @subpackage backup-moodle2
+ * @package    workshopeval
+ * @subpackage best
  * @copyright  2010 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

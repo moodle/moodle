@@ -18,9 +18,10 @@
 /**
  * Strings for component 'workshopallocation_manual', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   workshopallocation_manual
- * @copyright 2009 David Mudrak <david@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    workshopallocation
+ * @subpackage manual
+ * @copyright  2009 David Mudrak <david@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['addreviewee'] = 'Add reviewee';

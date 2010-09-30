@@ -19,9 +19,10 @@
  * Contains logic class and interface for the grading evaluation plugin "Comparison
  * with the best assessment".
  *
- * @package   mod-workshop
- * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    workshopeval
+ * @subpackage best
+ * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();

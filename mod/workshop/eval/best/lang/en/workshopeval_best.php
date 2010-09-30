@@ -18,9 +18,10 @@
 /**
  * Strings for component 'workshopeval_best', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   workshopeval_best
- * @copyright 2009 David Mudrak <david@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    workshopeval
+ * @subpackage best
+ * @copyright  2009 David Mudrak <david@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['comparison'] = 'Comparison of assessments';

@@ -18,9 +18,10 @@
 /**
  * Strings for component 'workshopallocation_random', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   workshopallocation_random
- * @copyright 2009 David Mudrak <david@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    workshopallocation
+ * @subpackage random
+ * @copyright  2009 David Mudrak <david@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['addselfassessment'] = 'Add self-assessments';

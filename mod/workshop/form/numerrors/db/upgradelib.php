@@ -18,9 +18,10 @@
 /**
  * Functions used by some stages of number of errors grading upgrade
  *
- * @package   workshopform_numerrors
- * @copyright 2010 David Mudrak <david.mudrak@gmail.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    workshopform
+ * @subpackage numerrors
+ * @copyright  2010 David Mudrak <david.mudrak@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once($CFG->libdir.'/gradelib.php'); // grade_floatval() called here
