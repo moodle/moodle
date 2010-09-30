@@ -1914,7 +1914,12 @@ class core_renderer extends renderer_base {
         if (empty($currentfile)) {
             $currentfile = get_string('nofilesattached', 'repository');
         }
-        $maxsize = get_string('maxfilesize', 'moodle', display_size(get_max_upload_file_size()));
+        if ($options->maxbytes) {
+            $size = $options->maxbytes;
+        } else {
+            $size = get_max_upload_file_size();
+        }
+        $maxsize = get_string('maxfilesize', 'moodle', display_size($size));
         $html = <<<EOD
 <div class="filemanager-loading mdl-align" id='filepicker-loading-{$client_id}'>
 $icon_progress
