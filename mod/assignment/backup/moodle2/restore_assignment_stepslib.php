@@ -97,7 +97,6 @@ class restore_assignment_activity_structure_step extends restore_activity_struct
         $this->add_related_files('mod_assignment', 'intro', null);
         // Add assignment submission files, matching by assignment_submission itemname
         $this->add_related_files('mod_assignment', 'submission', 'assignment_submission');
-        $this->add_related_files('mod_assignment', 'online_submission', 'assignment_submission'); // Until MDL-23683 gets decided/implemented
         $this->add_related_files('mod_assignment', 'response', 'assignment_submission');
     }
 }
