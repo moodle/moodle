@@ -2108,7 +2108,7 @@ abstract class data_preset_importer {
      * @return bool
      */
     function import($overwritesettings) {
-        global $DB;
+        global $DB, $CFG;
 
         $params = $this->get_preset_settings();
         $settings = $params->settings;
