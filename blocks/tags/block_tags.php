@@ -237,6 +237,7 @@ class block_tags extends block_base {
                         <form action="{$CFG->wwwroot}/tag/coursetags_add.php" method="post" id="coursetag"
                                 onsubmit="return ctags_checkinput(this.coursetag_new_tag.value)">
                             <div style="display: none;">
+                                <input type="hidden" name="returnurl" value="{$this->page->url}" />
                                 <input type="hidden" name="entryid" value="$COURSE->id" />
                                 <input type="hidden" name="userid" value="$USER->id" />
                                 <input type="hidden" name="sesskey" value="$sesskey" />
@@ -273,8 +274,9 @@ EOT;
 
                 // Navigation elements at the bottom of the block
                 // show the alternative displays options if available
+                $elementid = 'coursetagslinks_'.$this->instance->id;
                 if ($mytags or $officialtags or $commtags or $coursetags) {
-                    $this->content->footer .= '<div id="coursetagslinks"></div>';
+                    $this->content->footer .= '<div id="'.$elementid.'"></div>';
                 }
                 // This section sets the order of the links
                 $coursetagslinks = array();
@@ -304,7 +306,7 @@ EOT;
                                                     'onclick'=>'f_coursetags',
                                                     'text'=>get_string('coursetags1', $tagslang));
                 }
-                coursetag_get_jscript_links($coursetagslinks);
+                coursetag_get_jscript_links($elementid, $coursetagslinks);
 
             } else {
                 //if not logged in

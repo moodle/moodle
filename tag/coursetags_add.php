@@ -15,6 +15,7 @@ if (empty($CFG->usetags)) {
     print_error('tagsaredisabled', 'tag');
 }
 
+$returnurl = optional_param('returnurl', null, PARAM_TEXT);
 $keyword = optional_param('coursetag_new_tag', '', PARAM_TEXT);
 $courseid = optional_param('entryid', 0, PARAM_INT);
 $userid = optional_param('userid', 0, PARAM_INT);
@@ -32,8 +33,8 @@ if ($keyword and confirm_sesskey()) {
 }
 
 // send back to originating page, where the new tag will be visible in the block
-if ($courseid > 0) {
-    $myurl = $CFG->wwwroot.'/course/view.php?id='.$courseid;
+if ($returnurl) {
+    redirect($returnurl);
 } else {
     $myurl = $CFG->wwwroot.'/';
 }

@@ -264,12 +264,12 @@ function coursetag_get_jscript($coursetagdivs = '') {
 /**
  * Returns javascript to create the links in the tag block footer.
  */
-function coursetag_get_jscript_links($coursetagslinks) {
+function coursetag_get_jscript_links($elementid, $coursetagslinks) {
     global $PAGE;
 
     if (!empty($coursetagslinks)) {
         foreach ($coursetagslinks as $a) {
-            $PAGE->requires->js_function_call('add_tag_footer_link', array('coursetagslinks', $a['title'], $a['onclick'], $a['text']), true);
+            $PAGE->requires->js_function_call('add_tag_footer_link', array($elementid, $a['title'], $a['onclick'], $a['text']), true);
         }
     }
 
