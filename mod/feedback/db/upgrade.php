@@ -143,7 +143,7 @@ function xmldb_feedback_upgrade($oldversion) {
     }
 
     if ($oldversion < 2008042400) { //New version in version.php
-        if ($all_nonanonymous_feedbacks = $DB->get_records('feedback', 'anonymous', 2)) {
+        if ($all_nonanonymous_feedbacks = $DB->get_records('feedback', array('anonymous'=>2))) {
             $update_sql = 'UPDATE {feedback_completed} SET anonymous_response = 2 WHERE feedback = ';
             foreach ($all_nonanonymous_feedbacks as $fb) {
                 $DB->execute($update_sql.$fb->id);
