@@ -106,7 +106,7 @@ class restore_workshopform_comments_subplugin extends restore_subplugin {
         $data->workshopid = $this->get_new_parentid('workshop');
 
         $newitemid = $DB->insert_record('workshopform_comments', $data);
-        $this->set_mapping('workshopform_comments', $oldid, $newitemid, true);
+        $this->set_mapping($this->get_namefor('dimension'), $oldid, $newitemid, true);
 
         // Process files for this workshopform_comments->id only
         $this->add_related_files('workshopform_comments', 'description', 'workshopform_comments', null, $oldid);
@@ -155,7 +155,7 @@ class restore_workshopform_comments_subplugin extends restore_subplugin {
         $data->assessmentid = $this->get_new_parentid($elementname);
         $data->strategy = 'comments';
         $data->grade = 100.00000;
-        $data->dimensionid = $this->get_mappingid('workshopform_comments', $data->dimensionid);
+        $data->dimensionid = $this->get_mappingid($this->get_namefor('dimension'), $data->dimensionid);
 
         $DB->insert_record('workshop_grades', $data);
     }

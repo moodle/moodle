@@ -109,7 +109,7 @@ class restore_workshopform_accumulative_subplugin extends restore_subplugin {
         }
 
         $newitemid = $DB->insert_record('workshopform_accumulative', $data);
-        $this->set_mapping('workshopform_accumulative', $oldid, $newitemid, true);
+        $this->set_mapping($this->get_namefor('dimension'), $oldid, $newitemid, true);
 
         // Process files for this workshopform_accumulative->id only
         $this->add_related_files('workshopform_accumulative', 'description', 'workshopform_accumulative', null, $oldid);
@@ -157,7 +157,7 @@ class restore_workshopform_accumulative_subplugin extends restore_subplugin {
 
         $data->assessmentid = $this->get_new_parentid($elementname);
         $data->strategy = 'accumulative';
-        $data->dimensionid = $this->get_mappingid('workshopform_accumulative', $data->dimensionid);
+        $data->dimensionid = $this->get_mappingid($this->get_namefor('dimension'), $data->dimensionid);
 
         $DB->insert_record('workshop_grades', $data);
     }

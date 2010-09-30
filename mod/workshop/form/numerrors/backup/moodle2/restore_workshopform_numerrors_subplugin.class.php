@@ -121,7 +121,7 @@ class restore_workshopform_numerrors_subplugin extends restore_subplugin {
         $data->workshopid = $this->get_new_parentid('workshop');
 
         $newitemid = $DB->insert_record('workshopform_numerrors', $data);
-        $this->set_mapping('workshopform_numerrors', $oldid, $newitemid, true);
+        $this->set_mapping($this->get_namefor('dimension'), $oldid, $newitemid, true);
 
         // Process files for this workshopform_numerrors->id only
         $this->add_related_files('workshopform_numerrors', 'description', 'workshopform_numerrors', null, $oldid);
@@ -169,7 +169,7 @@ class restore_workshopform_numerrors_subplugin extends restore_subplugin {
 
         $data->assessmentid = $this->get_new_parentid($elementname);
         $data->strategy = 'numerrors';
-        $data->dimensionid = $this->get_mappingid('workshopform_numerrors', $data->dimensionid);
+        $data->dimensionid = $this->get_mappingid($this->get_namefor('dimension'), $data->dimensionid);
 
         $DB->insert_record('workshop_grades', $data);
     }
