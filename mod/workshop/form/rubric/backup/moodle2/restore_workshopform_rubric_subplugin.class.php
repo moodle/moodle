@@ -184,7 +184,7 @@ class restore_workshopform_rubric_subplugin extends restore_subplugin {
 
         $data->assessmentid = $this->get_new_parentid($elementname);
         $data->strategy = 'rubric';
-        $data->dimensionid = $this->get_mappingid('workshopform_rubric', $data->dimensionid);
+        $data->dimensionid = $this->get_mappingid($this->get_namefor('dimension'), $data->dimensionid);
 
         $DB->insert_record('workshop_grades', $data);
     }
