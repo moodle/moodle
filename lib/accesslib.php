@@ -2465,49 +2465,47 @@ function unassign_capability($capability, $roleid, $contextid=NULL) {
 
 /**
  * Get the roles that have a given capability assigned to it
- * Get the roles that have a given capability assigned to it. This function
- * does not resolve the actual permission of the capability. It just checks
- * for assignment only. Use get_roles_with_cap_in_context() if resolution is required.
  *
- * @global object
- * @global object
+ * This function does not resolve the actual permission of the capability.
+ * It just checks for permissions and overrides.
+ * Use get_roles_with_cap_in_context() if resolution is required.
+ *
  * @param string $capability - capability name (string)
  * @param string $permission - optional, the permission defined for this capability
- *                      either CAP_ALLOW, CAP_PREVENT or CAP_PROHIBIT. Defaults to NULL
- * @param object $contect
- * @return mixed array or role objects
+ *                      either CAP_ALLOW, CAP_PREVENT or CAP_PROHIBIT. Defaults to null which means any.
+ * @param stdClass $context, null means any
+ * @return array of role objects
  */
-function get_roles_with_capability($capability, $permission=NULL, $context=NULL) {
-    global $CFG, $DB;
-
-    $params = array();
+function get_roles_with_capability($capability, $permission = null, $context = null) {
+    global $DB;
 
     if ($context) {
-        if ($contexts = get_parent_contexts($context)) {
-            $listofcontexts = '('.implode(',', $contexts).')';
-        } else {
-            $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-            $listofcontexts = '('.$sitecontext->id.')'; // must be site
-        }
-        $contextstr = "AND (rc.contextid = ? OR  rc.contextid IN $listofcontexts)";
-        $params[] = $context->id;
+        $contexts = get_parent_contexts($context, true);
+        list($insql, $params) = $DB->get_in_or_equal($contexts, SQL_PARAMS_NAMED, 'ctx000');
+        $contextsql = "AND rc.contextid $insql";
     } else {
-        $contextstr = '';
+        $params = array();
+        $contextsql = '';
     }
 
-    $selectroles = "SELECT r.*
-                      FROM {role} r,
-                           {role_capabilities} rc
-                     WHERE rc.capability = ?
-                           AND rc.roleid = r.id $contextstr";
-
-    array_unshift($params, $capability);
-
-    if (isset($permission)) {
-        $selectroles .= " AND rc.permission = ?";
-        $params[] = $permission;
+    if ($permission) {
+        $permissionsql = " AND rc.permission = :permission";
+        $params['permission'] = $permission;
+    } else {
+        $permissionsql = '';
     }
-    return $DB->get_records_sql($selectroles, $params);
+
+    $sql = "SELECT r.*
+              FROM {role} r
+             WHERE r.id IN (SELECT rc.roleid
+                              FROM {role_capabilities} rc
+                             WHERE rc.capability = :capname
+                                   $contextsql
+                                   $permissionsql)";
+    $params['capname'] = $capability;
+
+
+    return $DB->get_records_sql($sql, $params);
 }
 
 
