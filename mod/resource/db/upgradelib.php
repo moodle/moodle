@@ -202,8 +202,10 @@ function resource_20_prepare_migration() {
         return true;
     }
 
-    // fix invalid NULL popup data in old mysql databases
+    // fix invalid NULL popup and options data in old mysql databases
     $sql = "UPDATE {resource} SET popup = ? WHERE popup IS NULL";
+    $DB->execute($sql, array($DB->sql_empty()));
+    $sql = "UPDATE {resource} SET options = ? WHERE options IS NULL";
     $DB->execute($sql, array($DB->sql_empty()));
 
     // Adding fields to table resource_old
