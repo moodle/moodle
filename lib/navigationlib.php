@@ -3106,7 +3106,7 @@ class settings_navigation extends navigation_node {
 
         // Add a backup link
         $featuresfunc = $this->page->activityname.'_supports';
-        if ($featuresfunc(FEATURE_BACKUP_MOODLE2) && has_capability('moodle/backup:backupactivity', $this->page->cm->context)) {
+        if (function_exists($featuresfunc) && $featuresfunc(FEATURE_BACKUP_MOODLE2) && has_capability('moodle/backup:backupactivity', $this->page->cm->context)) {
             $url = new moodle_url('/backup/backup.php', array('id'=>$this->page->cm->course, 'cm'=>$this->page->cm->id));
             $modulenode->add(get_string('backup'), $url, self::TYPE_SETTING);
         }
