@@ -60,7 +60,7 @@ class data_field_menu extends data_field_base {
         $usedoptions = array();
         $sql = "SELECT DISTINCT content
                   FROM {data_content}
-                 WHERE fieldid=: AND content IS NOT NULL";
+                 WHERE fieldid=? AND content IS NOT NULL";
         if ($used = $DB->get_records_sql($sql, array($this->field->id))) {
             foreach ($used as $data) {
                 $value = $data->content;
