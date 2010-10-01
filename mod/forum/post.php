@@ -310,7 +310,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
             print_error("cannotdeletepost", "forum",
                       forum_go_back_to("discuss.php?d=$post->discussion"));
         }
-        
+
         if ($post->totalscore) {
             notice(get_string('couldnotdeleteratings', 'rating'),
                     forum_go_back_to("discuss.php?d=$post->discussion"));
@@ -813,7 +813,6 @@ if ($edit) {
 
 $PAGE->set_title("$course->shortname: $strdiscussionname ".format_string($toppost->subject));
 $PAGE->set_heading($course->fullname);
-$PAGE->set_focuscontrol($mform_post->focus($forcefocus));
 
 echo $OUTPUT->header();
 
