@@ -58,7 +58,11 @@ if (!$css = file_get_contents($candidatesheet)) {
 
 $css = unserialize($css);
 
-if ($type === 'ie') {
+if ($type === 'editor') {
+    if (isset($css['editor'])) {
+        send_uncached_css(implode("\n\n", $css['editor']));
+    }
+} else if ($type === 'ie') {
     // IE is a sloppy browser with weird limits, sorry
     if ($subtype === 'plugins') {
         $sendcss = implode("\n\n", $css['plugins']);
@@ -100,7 +104,7 @@ if ($type === 'ie') {
 
 } else if ($type === 'parent') {
     if (isset($css['parents'][$subtype][$sheet])) {
-        send_uncached_css($css['parents'][$subtype][$sheet], 30); // parent sheets are not supposed to change much, right?
+        send_uncached_css($css['parents'][$subtype][$sheet]);
     }
 
 } else if ($type === 'theme') {

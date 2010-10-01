@@ -77,8 +77,8 @@ require_once('Minify.php');
 $theme = theme_config::load($themename);
 
 if ($type === 'editor') {
-    $css = $theme->editor_css_content();
-    store_css($theme, $candidatesheet, $css);
+    $files = $theme->editor_css_files();
+    store_css($theme, $candidatesheet, $files);
 } else {
     $css = $theme->css_files();
     $allfiles = array();

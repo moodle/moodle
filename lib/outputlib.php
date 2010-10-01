@@ -558,17 +558,17 @@ class theme_config {
      * Returns the content of the CSS to be used in editor content
      * @return string
      */
-    public function editor_css_content() {
+    public function editor_css_files() {
         global $CFG;
 
-        $css = '';
+        $files = array();
 
         // first editor plugins
         $plugins = get_plugin_list('editor');
         foreach ($plugins as $plugin=>$fulldir) {
             $sheetfile = "$fulldir/editor_styles.css";
             if (is_readable($sheetfile)) {
-                $css .= "/*** Editor $plugin content CSS ***/\n\n" . file_get_contents($sheetfile) . "\n\n";
+                $files['plugin_'.$plugin] = $sheetfile;
             }
         }
         // then parent themes
@@ -579,21 +579,21 @@ class theme_config {
             foreach ($parent_config->editor_sheets as $sheet) {
                 $sheetfile = "$parent_config->dir/$sheet.css";
                 if (is_readable($sheetfile)) {
-                    $css .= "/*** Parent theme {$parent_config->name}/$sheet ***/\n\n" . file_get_contents($sheetfile) . "\n\n";
+                    $files['parent_'.$parent_config->name.'_'.$sheet] = $sheetfile;
                 }
             }
         }
         // finally this theme
         if (!empty($this->editor_sheets)) {
             foreach ($this->editor_sheets as $sheet) {
-                $sheetfile = "$this->dir/$sheet.css";
+                $sheetfile = "$this->dir/style/$sheet.css";
                 if (is_readable($sheetfile)) {
-                    $css .= "/*** Theme $sheet ***/\n\n" . file_get_contents($sheetfile) . "\n\n";
+                    $files['theme_'.$sheet] = $sheetfile;
                 }
             }
         }
 
-        return $this->post_process($css);
+        return $files;
     }
 
     /**
@@ -648,12 +648,12 @@ class theme_config {
 
             if (check_browser_version('MSIE', 5)) {
                 // lalala, IE does not allow more than 31 linked CSS files from main document
-                $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'plugins'));
+                $urls[] = new moodle_url($baseurl, array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'plugins'));
                 foreach ($css['parents'] as $parent=>$sheets) {
                     // We need to serve parents individually otherwise we may easily exceed the style limit IE imposes (4096)
-                    $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', array('theme'=>$this->name,'type'=>'ie', 'subtype'=>'parents', 'sheet'=>$parent));
+                    $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'ie', 'subtype'=>'parents', 'sheet'=>$parent));
                 }
-                $urls[] = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php', array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'theme'));
+                $urls[] = new moodle_url($baseurl, array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'theme'));
 
             } else {
                 foreach ($css['plugins'] as $plugin=>$unused) {
@@ -746,7 +746,8 @@ class theme_config {
      * @return string
      */
     public function css_content() {
-        $css = $this->css_files_get_contents($this->css_files(), array());
+        $files = array_merge($this->css_files(), array('editor'=>$this->editor_css_files()));
+        $css = $this->css_files_get_contents($files, array());
         return $css;
     }
 

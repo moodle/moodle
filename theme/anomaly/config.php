@@ -37,8 +37,6 @@ $THEME->filter_mediaplugin_colors =
  'waitForPlay=yes';
 /// ...And this controls the small embedded player
 
-$THEME->editor_sheets = array('styles_tinymce');
-
 $THEME->layouts = array(
     // Most pages - if we encounter an unknown or a missing page type, this one is used.
     'base' => array(
