@@ -1926,7 +1926,7 @@ $icon_progress
 </div>
 <div id="filepicker-wrapper-{$client_id}" class="mdl-left" style="display:none">
     <div>
-        <button id="filepicker-button-{$client_id}">$straddfile</button>
+        <input type="button" id="filepicker-button-{$client_id}" value="{$straddfile}" />
         <span> $maxsize </span>
     </div>
 EOD;
