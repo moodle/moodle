@@ -2017,6 +2017,27 @@ abstract class data_preset_importer {
     public function get_directory() {
         return basename($this->directory);
     }
+
+    /**
+     * Retreive the contents of a file. That file may either be in a conventional directory of the Moodle file storage
+     * @param file_storage $filestorage. should be null if using a conventional directory
+     * @param stored_file $fileobj the directory to look in. null if using a conventional directory
+     * @param string $dir the directory to look in. null if using the Moodle file storage
+     * @param string $filename the name of the file we want
+     * @return string the contents of the file
+     */
+    public function data_preset_get_file_contents(&$filestorage, &$fileobj, $dir, $filename) {
+        if(empty($filestorage) || empty($fileobj)) {
+            if (substr($dir, -1)!='/') {
+                $dir .= '/';
+            }
+            return file_get_contents($dir.$filename);
+        } else {
+            $file = $filestorage->get_file(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA, 0, $fileobj->get_filepath(), $filename);
+            return $file->get_content();
+        }
+
+    }
     /**
      * Gets the preset settings
      * @global moodle_database $DB
@@ -2025,8 +2046,27 @@ abstract class data_preset_importer {
     public function get_preset_settings() {
         global $DB;
 
+        $fs = $fileobj = null;
         if (!is_directory_a_preset($this->directory)) {
-            print_error('invalidpreset', 'data', '', $this->directory);
+            //maybe the user requested a preset stored in the Moodle file storage
+            
+            $fs = get_file_storage();
+            $files = $fs->get_area_files(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA);
+
+            foreach ($files as $file) {
+                if (($file->is_directory() && $file->get_filepath()=='/') || !$file->is_directory()) {
+                    continue;
+                }
+                $presetname = trim($file->get_filepath(), '/');
+                if ($presetname==$this->module->name) {
+                    $this->directory = $presetname;
+                    $fileobj = $file;
+                }
+            }
+
+            if (empty($fileobj)) {
+                print_error('invalidpreset', 'data', '', $this->directory);
+            }
         }
 
         $allowed_settings = array(
@@ -2050,7 +2090,7 @@ abstract class data_preset_importer {
 
 
         /* Grab XML */
-        $presetxml = file_get_contents($this->directory.'/preset.xml');
+        $presetxml = $this->data_preset_get_file_contents($fs, $fileobj, $this->directory,'preset.xml');
         $parsedxml = xmlize($presetxml, 0);
 
         /* First, do settings. Put in user friendly array. */
@@ -2082,19 +2122,19 @@ abstract class data_preset_importer {
             $result->importfields[] = $f;
         }
         /* Now add the HTML templates to the settings array so we can update d */
-        $result->settings->singletemplate     = file_get_contents($this->directory."/singletemplate.html");
-        $result->settings->listtemplate       = file_get_contents($this->directory."/listtemplate.html");
-        $result->settings->listtemplateheader = file_get_contents($this->directory."/listtemplateheader.html");
-        $result->settings->listtemplatefooter = file_get_contents($this->directory."/listtemplatefooter.html");
-        $result->settings->addtemplate        = file_get_contents($this->directory."/addtemplate.html");
-        $result->settings->rsstemplate        = file_get_contents($this->directory."/rsstemplate.html");
-        $result->settings->rsstitletemplate   = file_get_contents($this->directory."/rsstitletemplate.html");
-        $result->settings->csstemplate        = file_get_contents($this->directory."/csstemplate.css");
-        $result->settings->jstemplate         = file_get_contents($this->directory."/jstemplate.js");
+        $result->settings->singletemplate     = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"singletemplate.html");
+        $result->settings->listtemplate       = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"listtemplate.html");
+        $result->settings->listtemplateheader = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"listtemplateheader.html");
+        $result->settings->listtemplatefooter = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"listtemplatefooter.html");
+        $result->settings->addtemplate        = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"addtemplate.html");
+        $result->settings->rsstemplate        = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"rsstemplate.html");
+        $result->settings->rsstitletemplate   = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"rsstitletemplate.html");
+        $result->settings->csstemplate        = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"csstemplate.css");
+        $result->settings->jstemplate         = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"jstemplate.js");
 
         //optional
         if (file_exists($this->directory."/asearchtemplate.html")) {
-            $result->settings->asearchtemplate = file_get_contents($this->directory."/asearchtemplate.html");
+            $result->settings->asearchtemplate = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"asearchtemplate.html");
         } else {
             $result->settings->asearchtemplate = NULL;
         }
@@ -2275,15 +2315,16 @@ function data_preset_path($course, $userid, $shortname) {
 
     $userid = (int)$userid;
 
+    $path = null;
     if ($userid > 0 && ($userid == $USER->id || has_capability('mod/data:viewalluserpresets', $context))) {
-        return $CFG->dataroot.'/data/preset/'.$userid.'/'.$shortname;
+        $path = $CFG->dataroot.'/data/preset/'.$userid.'/'.$shortname;
     } else if ($userid == 0) {
-        return $CFG->dirroot.'/mod/data/preset/'.$shortname;
+        $path = $CFG->dirroot.'/mod/data/preset/'.$shortname;
     } else if ($userid < 0) {
-        return $CFG->dataroot.'/temp/data/'.-$userid.'/'.$shortname;
+        $path = $CFG->dataroot.'/temp/data/'.-$userid.'/'.$shortname;
     }
 
-    return 'Does it disturb you that this code will never run?';
+    return $path;
 }
 
 /**
