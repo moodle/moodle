@@ -229,8 +229,6 @@ if ($current_view != '') {
     }
 }
 
-print_grade_page_head($courseid, 'edittree', $current_view, get_string('categoriesedit', 'grades') . ': ' . $current_view_str);
-
 //if we go straight to the db to update an element we need to recreate the tree as
 // $grade_edit_tree has already been constructed.
 //Ideally we could do the updates through $grade_edit_tree to avoid recreating it
@@ -319,6 +317,8 @@ if ($data = data_submitted() and confirm_sesskey()) {
         }
     }
 }
+
+print_grade_page_head($courseid, 'edittree', $current_view, get_string('categoriesedit', 'grades') . ': ' . $current_view_str);
 
 // Print Table of categories and items
 echo $OUTPUT->box_start('gradetreebox generalbox');
