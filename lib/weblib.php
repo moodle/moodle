@@ -65,11 +65,6 @@ define('FORMAT_WIKI',     '3');   // Wiki-formatted text
 define('FORMAT_MARKDOWN', '4');   // Markdown-formatted text http://daringfireball.net/projects/markdown/
 
 /**
- * TRUSTTEXT marker - if present in text, text cleaning should be bypassed
- */
-define('TRUSTTEXT', '#####TRUSTTEXT#####');
-
-/**
  * A moodle_url comparison using this flag will return true if the base URLs match, params are ignored
  */
 define('URL_MATCH_BASE', 0);
@@ -1371,12 +1366,10 @@ function format_module_intro($module, $activity, $cmid, $filter=true) {
  * Legacy function, used for cleaning of old forum and glossary text only.
  *
  * @global object
- * @param string $text text that may contain TRUSTTEXT marker
- * @return text without any TRUSTTEXT marker
+ * @param string $text text that may contain legacy TRUSTTEXT marker
+ * @return text without legacy TRUSTTEXT marker
  */
 function trusttext_strip($text) {
-    global $CFG;
-
     while (true) { //removing nested TRUSTTEXT
         $orig = $text;
         $text = str_replace('#####TRUSTTEXT#####', '', $text);

@@ -154,13 +154,13 @@ function xmldb_glossary_upgrade($oldversion) {
 
     if ($oldversion < 2009042004) {
         $trustmark = '#####TRUSTTEXT#####';
-        $rs = $DB->get_recordset_sql("SELECT * FROM {glossary_entries} WHERE definition LIKE '$trustmark%'");
+        $rs = $DB->get_recordset_sql("SELECT * FROM {glossary_entries} WHERE definition LIKE ?", array($trustmark.'%'));
         foreach ($rs as $entry) {
             if (strpos($entry->definition, $trustmark) !== 0) {
                 // probably lowercase in some DBs
                 continue;
             }
-            $entry->definition      = trusttext_strip($entry->definition);
+            $entry->definition      = str_replace($trustmark, '', $entry->definition);
             $entry->definitiontrust = 1;
             $DB->update_record('glossary_entries', $entry);
         }
@@ -172,13 +172,13 @@ function xmldb_glossary_upgrade($oldversion) {
 
     if ($oldversion < 2009042005) {
         $trustmark = '#####TRUSTTEXT#####';
-        $rs = $DB->get_recordset_sql("SELECT * FROM {glossary_comments} WHERE entrycomment LIKE '$trustmark%'");
+        $rs = $DB->get_recordset_sql("SELECT * FROM {glossary_comments} WHERE entrycomment LIKE ?", array($trustmark.'%'));
         foreach ($rs as $comment) {
             if (strpos($comment->entrycomment, $trustmark) !== 0) {
                 // probably lowercase in some DBs
                 continue;
             }
-            $comment->entrycomment      = trusttext_strip($comment->entrycomment);
+            $comment->entrycomment      = str_replace($trustmark, '', $comment->entrycomment);
             $comment->entrycommenttrust = 1;
             $DB->update_record('glossary_comments', $comment);
         }

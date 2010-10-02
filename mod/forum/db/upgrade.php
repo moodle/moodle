@@ -195,13 +195,13 @@ function xmldb_forum_upgrade($oldversion) {
 
     if ($oldversion < 2009042002) {
         $trustmark = '#####TRUSTTEXT#####';
-        $rs = $DB->get_recordset_sql("SELECT * FROM {forum_posts} WHERE message LIKE '$trustmark%'");
+        $rs = $DB->get_recordset_sql("SELECT * FROM {forum_posts} WHERE message LIKE ?", array($trustmark.'%'));
         foreach ($rs as $post) {
-            if (strpos($post->entrycomment, $trustmark) !== 0) {
-                // probably lowercase in some DBs
+            if (strpos($post->message, $trustmark) !== 0) {
+                // probably lowercase in some DBs?
                 continue;
             }
-            $post->message      = trusttext_strip($post->message);
+            $post->message      = str_replace($trustmark, '', $post->message);
             $post->messagetrust = 1;
             $DB->update_record('forum_posts', $post);
         }
