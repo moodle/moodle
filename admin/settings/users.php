@@ -98,7 +98,7 @@ if ($hassiteconfig
             $temp->add(new admin_setting_configselect('notloggedinroleid', get_string('notloggedinroleid', 'admin'),
                           get_string('confignotloggedinroleid', 'admin'), $defaultguestid, ($guestroles + $generalroles)));
             $temp->add(new admin_setting_configselect('guestroleid', get_string('guestroleid', 'admin'),
-                          get_string('configguestroleid', 'admin'), $defaultguestid, ($guestroles + $generalroles)));
+                          get_string('guestroleid_help', 'admin'), $defaultguestid, ($guestroles + $generalroles)));
             $temp->add(new admin_setting_configselect('defaultuserroleid', get_string('defaultuserroleid', 'admin'),
                           get_string('configdefaultuserroleid', 'admin'), $defaultuserid, ($userroles + $generalroles)));
         }

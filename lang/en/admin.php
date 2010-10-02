@@ -226,7 +226,6 @@ $string['configgetremoteaddrconf'] = 'If your server is behind a reverse proxy, 
 $string['configgooglemapkey'] = 'You need to enter a special key to use Google Maps for IP address lookup visualization. You can obtain the key free of charge at <a href="http://code.google.com/apis/maps/signup.html" >http://code.google.com/apis/maps/signup.html</a>.<br />Your web site URL is: {$a}';
 $string['configgradebookroles'] = 'This setting allows you to control who appears on the gradebook.  Users need to have at least one of these roles in a course to be shown in the gradebook for that course.';
 $string['configgradeexport'] = 'Choose which gradebook export formats are your primary methods for exporting grades.  Chosen plugins will then set and use a "last exported" field for every grade.  For example, this might result in exported records being identified as being "new" or "updated".  If you are not sure about this then leave everything unchecked.';
-$string['configguestroleid'] = 'This role is automatically assigned to the guest user. It is also temporarily assigned to not enrolled users when they enter course that allows guests without password.';
 $string['confighiddenuserfields'] = 'Select which user information fields you wish to hide from other users other than course teachers/admins. This will increase student privacy. Hold CTRL key to select multiple fields.';
 $string['configidnumber'] = 'This option specifies whether (a) Users are not be asked for an ID number at all, (b) Users are asked for an ID number but can leave it blank or (c) Users are asked for an ID Number and cannot leave it blank. If given the User\'s ID number is displayed in their Profile.';
 $string['configintcachemax'] = 'For internal cache only. Maximum number of records to keep in the cache. Recommended value: 50. Use lower values to reduce memory usage.';
@@ -549,6 +548,7 @@ $string['gradebook'] = 'Gradebook';
 $string['gradebookroles'] = 'Graded roles';
 $string['gradeexport'] = 'Primary grade export methods';
 $string['guestroleid'] = 'Role for guest';
+$string['guestroleid_help'] = 'This role is automatically assigned to the guest user. It is also temporarily assigned to not enrolled users that enter the course via guest enrolment plugin.';
 $string['helpadminseesall'] = 'Do admins see all calendar events or just those that apply to themselves?';
 $string['helpcalendarsettings'] = 'Configure various calendar and date/time-related aspects of Moodle';
 $string['helpforcetimezone'] = 'You can allow users to individually select their timezone, or force a timezone for everyone.';
