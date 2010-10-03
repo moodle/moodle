@@ -2389,6 +2389,12 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     if ($oldversion < 2009110401) {
         $table = new xmldb_table('user');
+
+        // Change the precision of the description field first up.
+        // This may grow!
+        $field = new xmldb_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null, 'url');
+        $dbman->change_field_precision($table, $field);
+
         $field = new xmldb_field('descriptionformat', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'description');
         // Check that the field doesn't already exists
         if (!$dbman->field_exists($table, $field)) {
