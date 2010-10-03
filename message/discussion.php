@@ -27,6 +27,7 @@
     require('lib.php');
 
     require_login();
+    $PAGE->set_context(get_system_context());
 
     if (isguestuser()) {
         redirect($CFG->wwwroot);
