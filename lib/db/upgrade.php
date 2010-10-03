@@ -3616,7 +3616,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                 // No default exist there yet, let's put a few into My Moodle so it's useful.
 
                 $blockinstance = new stdClass;
-                $blockinstance->parentcontextid = SITEID;
+                $blockinstance->parentcontextid = SYSCONTEXTID;
                 $blockinstance->showinsubcontexts = 0;
                 $blockinstance->pagetypepattern = 'my-index';
                 $blockinstance->subpagepattern = $mypage->id;
