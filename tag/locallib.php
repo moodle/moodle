@@ -335,13 +335,7 @@ function tag_print_user_box($user, $return=false) {
         $alt = $fullname;
     }
 
-    //print user image - if image is only content of link it needs ALT text!
-    if ($user->picture) {
-        $output .= '<img alt="'. $alt .'" class="user-image" src="'. $CFG->wwwroot .'/user/pix.php/'. $user->id .'/f1.jpg" />';
-    } else {
-        $output .= '<img alt="'. $alt .'" class="user-image" src="'. $CFG->wwwroot .'/pix/u/f1.png" />';
-    }
-
+    $output .= $OUTPUT->user_picture($user, array('size'=>100));
     $output .= '<br />';
 
     if (!empty($profilelink)) {
