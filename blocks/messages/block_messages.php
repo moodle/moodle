@@ -49,10 +49,10 @@ class block_messages extends block_base {
                 $this->content->text .= $OUTPUT->user_picture($user, array('courseid'=>SITEID)); //TODO: user might not have capability to view frontpage profile :-(
                 $this->content->text .= fullname($user).'</a></div>';
 
-                $link = '/message/discussion.php?id='.$user->id;
+                $link = '/message/index.php?usergroup=unread&id='.$user->id;
                 $anchortagcontents = '<img class="iconsmall" src="'.$OUTPUT->pix_url('t/message') . '" alt="" />&nbsp;'.$user->count;
 
-                $action = new popup_action('click', $link, 'message_'.$user->id);
+                $action = null; // popup is gone now
                 $anchortag = $OUTPUT->action_link($link, $anchortagcontents, $action);
 
                 $this->content->text .= '<div class="message">'.$anchortag.'</div></li>';
