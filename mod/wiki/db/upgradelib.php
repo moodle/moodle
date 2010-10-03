@@ -201,7 +201,7 @@ function wiki_upgrade_install_20_tables() {
  * Migrating wiki pages history
  */
 function wiki_upgrade_migrate_versions() {
-    global $DB, $CFG;
+    global $DB, $CFG, $OUTPUT;
     upgrade_set_timeout();
     require_once($CFG->dirroot . '/mod/wiki/db/migration/lib.php');
     $sql = "SELECT po.id as oldpage_id, po.pagename as oldpage_pagename, po.version, po.flags, po.content, po.author, po.userid as oldpage_userid, po.created, po.lastmodified, po.refs, po.meta, po.hits, po.wiki,
