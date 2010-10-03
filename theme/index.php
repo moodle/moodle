@@ -100,6 +100,7 @@ foreach ($themes as $themename => $themedir) {
         // designer mode is switched off we will respect that decision.
         continue;
     }
+    $strthemename = get_string('pluginname', 'theme_'.$themename);
 
     // Build the table row, and also a list of items to go in the second cell.
     $row = array();
@@ -122,10 +123,10 @@ foreach ($themes as $themename => $themedir) {
     // link to the screenshot, now mandatory - the image path is hardcoded because we need image from other themes, not the current one
     $screenshotpath = new moodle_url('/theme/image.php', array('theme'=>$themename, 'image'=>'screenshot','component'=>'theme'));
     // Contents of the first screenshot/preview cell.
-    $row[] = html_writer::empty_tag('img', array('src'=>$screenshotpath, 'alt'=>$themename));
+    $row[] = html_writer::empty_tag('img', array('src'=>$screenshotpath, 'alt'=>$strthemename));
 
     // Contents of the second cell.
-    $infocell = $OUTPUT->heading($themename, 3);
+    $infocell = $OUTPUT->heading($strthemename, 3);
 
     // Button to choose this as the main theme
     $maintheme = new single_button(new moodle_url('/theme/index.php', array('choose' => $themename, 'sesskey' => sesskey())), get_string('useformaintheme'), 'get');
@@ -136,9 +137,9 @@ foreach ($themes as $themename => $themedir) {
     $legacytheme = new single_button(new moodle_url('/theme/index.php', array('chooselegacy' => $themename, 'sesskey' => sesskey())), get_string('useforlegacytheme'), 'get');
     $legacytheme->disabled = $ischosenlegacytheme;
     $infocell .= $OUTPUT->render($legacytheme);
-    
+
     $row[] = $infocell;
-    
+
     $table->data[$themename] = $row;
     $table->rowclasses[$themename] = join(' ', $rowclasses);
 }
