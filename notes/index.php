@@ -34,6 +34,10 @@ switch($filtertype) {
         break;
 }
 
+if (empty($courseid)) {
+    $courseid = SITEID;
+}
+
 /// locate course information
 $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 
