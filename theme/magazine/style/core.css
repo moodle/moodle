@@ -522,7 +522,7 @@ div.yui3-menu.custom_menu_submenu div.yui3-menu.custom_menu_submenu {
 div.yui3-menu.custom_menu_submenu div.yui3-menu-content {
 	background: #fff;
 	z-index: 99999;
-	width: 200px;
+	min-width: 200px;
 	padding-top: 0 !important;
 	padding-bottom: 0 !important;
 	margin: 20px 0px 0px -40px;
@@ -533,8 +533,7 @@ div.yui3-menu.custom_menu_submenu div.yui3-menu-content {
 div.yui3-menu.custom_menu_submenu div.yui3-menu-content div.yui3-menu.custom_menu_submenu div.yui3-menu-content {
 	margin-left: -400px !important;
 	/** double the width of the menu item **/
-	width: 200px;
-	position: relative;
+	position: absolute;
 	top: -15px;
 }
 
