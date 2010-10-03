@@ -190,7 +190,7 @@ if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $pe
         $fulllink = "<a href=\"discuss.php?d=$post->discussion#p$post->id\">".
             get_string("postincontext", "forum")."</a>";
 
-        forum_print_post($post, $discussion, $forum, $cms[$forum->id], $course, false, false, false, $ratings, $fulllink);
+        forum_print_post($post, $discussion, $forum, $cms[$forum->id], $course, false, false, false, $fulllink);
         echo "<br />";
     }
 
