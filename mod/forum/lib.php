@@ -7381,6 +7381,8 @@ function forum_get_extra_capabilities() {
  * @param stdClass $module
  * @param stdClass $cm
  */
+/******
+ * Removing temporarily
 function forum_extend_navigation($navref, $course, $module, $cm) {
     global $CFG, $OUTPUT, $USER;
 
@@ -7430,6 +7432,7 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
         }
     }
 }
+***********/
 
 /**
  * Adds module specific settings to the settings block
