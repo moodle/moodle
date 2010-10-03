@@ -2049,7 +2049,7 @@ abstract class data_preset_importer {
         $fs = $fileobj = null;
         if (!is_directory_a_preset($this->directory)) {
             //maybe the user requested a preset stored in the Moodle file storage
-            
+
             $fs = get_file_storage();
             $files = $fs->get_area_files(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA);
 
@@ -2731,7 +2731,7 @@ function data_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
         return false;
     }
 
-    require_login($course, false, $cm);
+    require_course_login($course, true, $cm);
 
     if ($filearea === 'content') {
         $contentid = (int)array_shift($args);
