@@ -43,7 +43,7 @@ function forum_rss_get_feed($context, $args) {
         return null;
     }
 
-    $forumid = $args[3];
+    $forumid  = clean_param($args[3], PARAM_INT);
 
     $uservalidated = false;
 
