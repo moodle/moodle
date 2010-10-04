@@ -58,7 +58,7 @@ if (count($args) < 5) {
 }
 
 $contextid   = (int)$args[0];
-$token  = $args[1];
+$token  = clean_param($args[1], PARAM_ALPHANUM);
 $componentname = clean_param($args[2], PARAM_FILE);
 
 
