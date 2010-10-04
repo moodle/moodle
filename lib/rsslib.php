@@ -346,7 +346,8 @@ function rss_geterrorxmlfile($errortype = 'rsserror') {
 
 function rss_get_userid_from_token($token) {
     global $DB;
-    $record = $DB->get_record('user_private_key', array('script'=>'rss','value' => $token), 'userid', IGNORE_MISSING);
+    //using strval() to make sure the token is a string not an int. Otherwise passing in numbers like 1 can cause lots of rows to match
+    $record = $DB->get_record('user_private_key', array('script'=>'rss','value' => strval($token)), 'userid', IGNORE_MISSING);
     if ($record) {
         return $record->userid;
     }
