@@ -1016,10 +1016,9 @@ class grade_category extends grade_object {
         $course_category = grade_category::fetch_course_category($courseid);
         $category_array = array('object'=>$course_category, 'type'=>'category', 'depth'=>1,
                                 'children'=>$course_category->get_children($include_category_items));
-        $sortorder = 1;
-        $course_category->set_sortorder($sortorder);
-        $course_category->sortorder = $sortorder;
-        return grade_category::_fetch_course_tree_recursion($category_array, $sortorder);
+
+        $course_category->sortorder = $course_category->get_sortorder();
+        return grade_category::_fetch_course_tree_recursion($category_array, $course_category->get_sortorder());
     }
 
     /**
@@ -1034,9 +1033,10 @@ class grade_category extends grade_object {
      */
     static private function _fetch_course_tree_recursion($category_array, &$sortorder) {
         // update the sortorder in db if needed
-        if ($category_array['object']->sortorder != $sortorder) {
-            $category_array['object']->set_sortorder($sortorder);
-        }
+        //NOTE: This leads to us resetting sort orders every time the categories and items page is viewed :(
+        //if ($category_array['object']->sortorder != $sortorder) {
+            //$category_array['object']->set_sortorder($sortorder);
+        //}
 
         if (isset($category_array['object']->gradetype) && $category_array['object']->gradetype==GRADE_TYPE_NONE) {
             return null;
