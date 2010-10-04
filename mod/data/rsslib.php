@@ -16,7 +16,7 @@
             return null;
         }
 
-        $dataid = $args[3];
+        $dataid = clean_param($args[3], PARAM_INT);
         $data = $DB->get_record('data', array('id' => $dataid), '*', MUST_EXIST);
 
         if (!rss_enabled_for_mod('data', $data, false, true)) {

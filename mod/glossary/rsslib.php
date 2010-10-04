@@ -19,7 +19,7 @@
             return null;
         }
 
-        $glossaryid = $args[3];
+        $glossaryid  = clean_param($args[3], PARAM_INT);
         $glossary = $DB->get_record('glossary', array('id' => $glossaryid), '*', MUST_EXIST);
 
         if (!rss_enabled_for_mod('glossary', $glossary)) {
