@@ -28,8 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['cannotcreatelangdir'] = 'لم يتم أنشاء دليل اللغة';
-$string['cannotcreatetempdir'] = 'لم يتم أنشاء الدليل المؤقت';
+$string['cannotcreatelangdir'] = 'لا يمكن إنشاء مجلد اللغة';
+$string['cannotcreatetempdir'] = 'لا يمكن إنشاء المجلد المؤقت';
 $string['cannotdownloadcomponents'] = 'لم يتم تحميل العناصر';
 $string['cannotdownloadzipfile'] = 'لم يتم تحميل الملف المضغوط';
 $string['cannotfindcomponent'] = 'لم يتم العثور على العنصر';
