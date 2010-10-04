@@ -1920,7 +1920,7 @@ class core_renderer extends renderer_base {
             $size = get_max_upload_file_size();
         }
         if ($size == -1) {
-            $maxsize = get_string('maxfilesize', 'moodle', 'unlimited');
+            $maxsize = '';
         } else {
             $maxsize = get_string('maxfilesize', 'moodle', display_size($size));
         }
