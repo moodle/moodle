@@ -3056,6 +3056,9 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(count($DB->get_records_sql($sql, array("1"))), 1);
         $this->assertEqual(count($DB->get_records_sql($sql, array(10))), 0);
         $this->assertEqual(count($DB->get_records_sql($sql, array("10"))), 0);
+        $DB->insert_record($tablename, array('course' => 7, 'content' => 'xx', 'name'=>'1abc'));
+        $this->assertEqual(count($DB->get_records_sql($sql, array(1))), 1);
+        $this->assertEqual(count($DB->get_records_sql($sql, array("1"))), 1);
     }
 
     function test_onelevel_commit() {
