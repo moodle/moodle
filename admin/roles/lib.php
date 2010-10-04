@@ -1519,6 +1519,14 @@ class admins_potential_selector extends user_selector_base {
         $order = ' ORDER BY lastname ASC, firstname ASC';
         $params['localmnet'] = $CFG->mnet_localhost_id; // it could be dangerous to make remote users admins and also this could lead to other problems
 
+        // Check to see if there are too many to show sensibly.
+        if (!$this->is_validating()) {
+            $potentialcount = $DB->count_records_sql($countfields . $sql, $params);
+            if ($potentialcount > 100) {
+                return $this->too_many_results($search, $potentialcount);
+            }
+        }
+
         $availableusers = $DB->get_records_sql($fields . $sql . $order, $params);
 
         if (empty($availableusers)) {
