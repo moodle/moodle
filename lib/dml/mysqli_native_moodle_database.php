@@ -610,8 +610,8 @@ class mysqli_native_moodle_database extends moodle_database {
                 $return .= (int)$param;
             } else if (is_null($param)) {
                 $return .= 'NULL';
-            } else if (is_number($param)) { // we can not use is_numeric() because it eats leading zeros from strings like 0045646
-                $return .= $param;
+            } else if (is_number($param)) {
+                $return .= "'".$param."'"; // we have to always use strings because mysql is using weird automatic int casting
             } else if (is_float($param)) {
                 $return .= $param;
             } else {
