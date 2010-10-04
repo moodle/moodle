@@ -1919,7 +1919,11 @@ class core_renderer extends renderer_base {
         } else {
             $size = get_max_upload_file_size();
         }
-        $maxsize = get_string('maxfilesize', 'moodle', display_size($size));
+        if ($size == -1) {
+            $maxsize = get_string('maxfilesize', 'moodle', 'unlimited');
+        } else {
+            $maxsize = get_string('maxfilesize', 'moodle', display_size($size));
+        }
         $html = <<<EOD
 <div class="filemanager-loading mdl-align" id='filepicker-loading-{$client_id}'>
 $icon_progress

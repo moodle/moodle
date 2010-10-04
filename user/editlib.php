@@ -246,7 +246,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $mform->addElement('checkbox', 'deletepicture', get_string('delete'));
         $mform->setDefault('deletepicture', 0);
 
-        $mform->addElement('filepicker', 'imagefile', get_string('newpicture'));
+        $mform->addElement('filepicker', 'imagefile', get_string('newpicture'), '', array('maxbytes'=>get_max_upload_file_size($CFG->maxbytes)));
         $mform->addHelpButton('imagefile', 'newpicture');
 
         $mform->addElement('text', 'imagealt', get_string('imagealt'), 'maxlength="100" size="30"');
