@@ -114,12 +114,12 @@ function blog_rss_get_feed($context, $args) {
         return null;
     }
 
-    $type = $args[3];
-    $id = (int) $args[4];  // could be groupid / courseid  / userid  depending on $type
+    $type  = clean_param($args[3], PARAM_ALPHA);
+    $id = clean_param($args[4], PARAM_INT);  // could be groupid / courseid  / userid  depending on $type
 
     $tagid=0;
     if ($args[5] != 'rss.xml') {
-        $tagid = (int) $args[5];
+        $tagid = clean_param($args[5], PARAM_INT);
     } else {
         $tagid = 0;
     }
