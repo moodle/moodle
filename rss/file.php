@@ -71,14 +71,22 @@ if (!$userid) {
 $user = get_complete_user_data('id', $userid);
 session_set_user($user); //for login and capability checks
 
-
 // Check the context actually exists
-$context = get_context_instance_by_id($contextid);
+list($context, $course, $cm) = get_context_info_array($contextid);
+
 if (!$context) {
     rss_error();
 }
 $PAGE->set_context($context);
 
+try {
+    $autologinguest = true;
+    $setwantsurltome = true;
+    $preventredirect = true;
+    require_login($course, $autologinguest, $cm, $setwantsurltome, $preventredirect);
+} catch (Exception $e) {
+    rss_error('rsserrorauth');
+}
 
 // Work out which component in Moodle we want (from the frankenstyle name)
 $componentdir = get_component_directory($componentname);
