@@ -3027,6 +3027,8 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('course' => 3, 'content' => 'world'));
         $DB->insert_record($tablename, array('course' => 5, 'content' => 'hello'));
         $DB->insert_record($tablename, array('course' => 2, 'content' => 'universe'));
+        $DB->insert_record($tablename, array('course' => 7, 'content' => '1'));
+        $DB->insert_record($tablename, array('course' => 7, 'content' => '2'));
 
         // we have sql like this in moodle, this syntax breaks on older versions of sqlite for example..
         $sql = "SELECT a.id AS id, a.course AS course
@@ -3034,7 +3036,7 @@ class dml_test extends UnitTestCase {
                   JOIN (SELECT * FROM {{$tablename}}) b ON a.id = b.id
                  WHERE a.course = ?";
 
-        $this->assertTrue($records = $DB->get_records_sql($sql, array(3)));
+        $records = $DB->get_records_sql($sql, array(3));
         $this->assertEqual(2, count($records));
         $this->assertEqual(1, reset($records)->id);
         $this->assertEqual(2, next($records)->id);
@@ -3042,6 +3044,14 @@ class dml_test extends UnitTestCase {
         // do NOT try embedding sql_xxxx() helper functions in conditions array of count_records(), they don't break params/binding!
         $count = $DB->count_records_select($tablename, "course = :course AND ".$DB->sql_compare_text('content')." = :content", array('course' => 3, 'content' => 'hello'));
         $this->assertEqual(1, $count);
+
+        // test int x string comparison
+        $sql = "SELECT *
+                  FROM {{$tablename}} c
+                 WHERE content = ?";
+        $records1 = $DB->get_records_sql($sql, array(1));
+        $records2 = $DB->get_records_sql($sql, array("1"));
+        $this->assertEqual(count($records1), count($records2));
     }
 
     function test_onelevel_commit() {
