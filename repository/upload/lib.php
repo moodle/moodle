@@ -80,7 +80,7 @@ class repository_upload extends repository {
         }
 
         if (empty($saveas_filename)) {
-            $record->filename = clean_param($_FILES[$elname]['name'], PARAM_FILE);
+            $record->filename = clean_param(urldecode($_FILES[$elname]['name']), PARAM_FILE);
         } else {
             $record->filename = $saveas_filename;
         }
