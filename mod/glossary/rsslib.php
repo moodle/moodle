@@ -15,7 +15,7 @@
 
         //check capabilities
         //glossary module doesn't require any capabilities to view glossary entries (aside from being logged in)
-        if (!is_enrolled($context)) {
+        if (!is_enrolled($context) && !isguestuser()) {
             return null;
         }
 

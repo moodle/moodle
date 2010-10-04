@@ -12,7 +12,7 @@
             return null;
         }
 
-        if (!is_enrolled($context, null, 'mod/data:managetemplates')) {
+        if (!is_enrolled($context, null, 'mod/data:managetemplates') && !isguestuser()) {
             return null;
         }
 
