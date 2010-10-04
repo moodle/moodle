@@ -251,9 +251,6 @@ function form_filemanager_render($options) {
     $strdownload = get_string('downloadfolder', 'repository');
     $strloading  = get_string('loading', 'repository');
 
-    $icon_add_file = $OUTPUT->pix_icon('t/addfile', $straddfile).'';
-    $icon_add_folder = $OUTPUT->pix_icon('t/adddir', $strmakedir).'';
-    $icon_download = $OUTPUT->pix_icon('t/download', $strdownload).'';
     $icon_progress = $OUTPUT->pix_icon('i/loading_small', $strloading).'';
 
     $client_id = $options->client_id;
@@ -283,9 +280,9 @@ $icon_progress
 <div id="filemanager-wrapper-{$client_id}" style="display:none">
     <div class="fm-breadcrumb" id="fm-path-{$client_id}"></div>
     <div class="filemanager-toolbar">
-        <button id="btnadd-{$client_id}" onclick="return false">{$icon_add_file} $straddfile</button>
-        <button id="btncrt-{$client_id}" onclick="return false">{$icon_add_folder} $strmakedir</button>
-        <button id="btndwn-{$client_id}" onclick="return false" {$extra}>{$icon_download} $strdownload</button>
+        <input type="button" class="fm-btn-add" id="btnadd-{$client_id}" onclick="return false" value=" {$straddfile}" />
+        <input type="button" class="fm-btn-mkdir" id="btncrt-{$client_id}" onclick="return false" value=" $strmakedir" />
+        <input type="button" class="fm-btn-download" id="btndwn-{$client_id}" onclick="return false" {$extra} value=" $strdownload" />
         <span> $maxsize </span>
     </div>
     <div class="filemanager-container" id="filemanager-{$client_id}">
