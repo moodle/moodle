@@ -1398,6 +1398,7 @@ $string['rss'] = 'RSS';
 $string['rssarticles'] = 'Number of RSS recent articles';
 $string['rsserror'] = 'Error reading RSS data';
 $string['rsserrorauth'] = 'Your RSS link does not contain a valid authentication token.';
+$string['rsserrorguest'] = 'This feed uses guest access to access the data, but guest does not have permission to read the data. Visit the original location that this feed comes from (URL) as a valid user and get a new RSS link from there.';
 $string['rsstype'] = 'RSS feed for this activity';
 $string['saveandnext'] = 'Save and show next';
 $string['savedat'] = 'Saved at:';
