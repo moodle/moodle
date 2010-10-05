@@ -1069,6 +1069,15 @@ h2.headingblock {
     background-color:#4E6632;
 }
 
+.yui3-skin-sam .yui3-menu-label-active,
+.yui3-skin-sam .yui3-menu-label-menuvisible,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-active,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {
+ 	background-color:#4E6632;
+    
+}
+
+
 #custommenu .yui3-menu-horizontal .yui3-menu-content li a {
     cursor:pointer;
 }
