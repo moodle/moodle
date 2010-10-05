@@ -66,6 +66,12 @@ class restore_data_activity_structure_step extends restore_activity_structure_st
             $data->scale = -($this->get_mappingid('scale', abs($data->scale)));
         }
 
+        // Some old backups can arrive with data->notification = null (MDL-24470)
+        // convert them to proper column default (zero)
+        if (is_null($data->notification)) {
+            $data->notification = 0;
+        }
+
         // insert the data record
         $newitemid = $DB->insert_record('data', $data);
         $this->apply_activity_instance($newitemid);
