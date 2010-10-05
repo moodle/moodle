@@ -132,6 +132,20 @@ function xmldb_data_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion <  2007101515) {
+        // Upgrade all the data->notification currently being
+        // NULL to 0
+        $sql = "UPDATE {$CFG->prefix}data SET notification=0 WHERE notification IS NULL";
+        $result = execute_sql($sql);
+        $table = new XMLDBTable('data');
+        $field = new XMLDBField('notification');
+        // First step, Set NOT NULL
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'editany');
+        $result = $result && change_field_notnull($table, $field);
+        // Second step, Set default to 0
+        $result = $result && change_field_default($table, $field);
+    }
+
     return $result;
 }
 

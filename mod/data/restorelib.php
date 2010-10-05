@@ -97,6 +97,12 @@ function data_restore_mods($mod,$restore) {
         $database->defaultsortdir = backup_todb($info['MOD']['#']['DEFAULTSORTDIR']['0']['#']);
         $database->editany = backup_todb($info['MOD']['#']['EDITANY']['0']['#']);
         $database->notification = backup_todb($info['MOD']['#']['NOTIFICATION']['0']['#']);
+        
+        //fix related to MDL-24470: if someone restore a backup previous to this fix it would fail
+        //if notification = NULL as the column can not be NULL anymore
+        if (empty($database->notification)) {
+            $database->notification = 0;
+        }
 
         // We have to recode the scale field if it's <0 (positive is a grade, not a scale)
         if ($database->scale < 0) {
