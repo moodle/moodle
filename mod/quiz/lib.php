@@ -895,7 +895,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
             $tmpactivity->content->maxgrade  = null;
         }
 
-        $tmpactivity->user->id   = $attempt->id;
+        $tmpactivity->user->id        = $attempt->userid;
         $tmpactivity->user->firstname = $attempt->firstname;
         $tmpactivity->user->lastname = $attempt->lastname;
         $tmpactivity->user->fullname = fullname($attempt, $viewfullnames);
