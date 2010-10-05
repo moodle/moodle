@@ -2851,9 +2851,16 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $role->archetype = substr($role->capability, $substart);
             unset($role->capability);
             if ($role->archetype === 'admin') {
+                $i = '';
+                if ($DB->record_exists('role', array('shortname'=>'manager'))) {
+                    $i = 2;
+                    while($DB->record_exists('role', array('shortname'=>'manager'.$i))) {
+                        $i++;
+                    }
+                }
                 $role->archetype = 'manager';
                 if ($role->shortname === 'admin') {
-                    $role->shortname   = 'manager';
+                    $role->shortname   = 'manager'.$i;
                     $role->name        = get_string('manager', 'role');
                     $role->description = get_string('managerdescription', 'role');
                 }
