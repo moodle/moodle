@@ -28,5 +28,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 's';
+$string['cliincorrectvalueerror'] = 'Erro, valor incorreto "{$a->value}" para "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Valor incorreto, por favor tente novamente';
 $string['environmentrequireinstall'] = 'deve ser instalado/habilitado';
 $string['environmentrequireversion'] = 'a versão {$a->needed} é necessária e você está usando a versão {$a->current}';
