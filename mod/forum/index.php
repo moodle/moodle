@@ -90,7 +90,8 @@ if ($usetracking = forum_tp_can_track_forums()) {
 
 $subscribed_forums = forum_get_subscribed_forums($course);
 
-if ($can_subscribe = (!is_enrolled($coursecontext))) {
+$can_subscribe = is_enrolled($coursecontext);
+if ($can_subscribe) {
     $generaltable->head[] = $strsubscribed;
     $generaltable->align[] = 'center';
 }
