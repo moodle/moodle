@@ -51,7 +51,7 @@ define('VIEW_CONTACTS','contacts');
 define('VIEW_BLOCKED','blockedusers');
 define('VIEW_COURSE','course_');
 
-define('SHOW_ACTION_LINKS_IN_CONTACT_LIST', false);
+define('SHOW_ACTION_LINKS_IN_CONTACT_LIST', true);
 
 define('MESSAGE_SEARCH_MAX_RESULTS', 200);
 
@@ -1508,21 +1508,18 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
  * via other means if appropriate.
  */
 function message_post_message($userfrom, $userto, $message, $format, $messagetype) {
-    global $CFG, $SITE, $USER, $DB;
-
     $eventdata = new stdClass();
     $eventdata->component        = 'moodle';
     $eventdata->name             = 'instantmessage';
     $eventdata->userfrom         = $userfrom;
     $eventdata->userto           = $userto;
-    $eventdata->subject          = "IM";
+    $eventdata->subject          = get_string('unreadnewmessage', 'message', fullname($userfrom));
     $eventdata->fullmessage      = $message;
     $eventdata->fullmessageformat = $format;
     $eventdata->fullmessagehtml  = '';
     $eventdata->smallmessage     = '';
     $eventdata->timecreated     = time();
     return message_send($eventdata);
-
 }
 
 
