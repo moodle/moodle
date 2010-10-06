@@ -175,7 +175,7 @@ class repository_recent extends repository {
                 throw new moodle_exception('errornotyourfile', 'repository');
             }
             $file_record = array('contextid'=>$user_context->id, 'component'=>'user', 'filearea'=>'draft',
-                'itemid'=>$draftitemid, 'filepath'=>$new_filepath, 'filename'=>$new_filename);
+                'itemid'=>$draftitemid, 'filepath'=>$new_filepath, 'filename'=>$new_filename, 'sortorder'=>0);
             if ($file = $fs->get_file($user_context->id, 'user', 'draft', $draftitemid, $new_filepath, $new_filename)) {
                 $info = array();
                 $info['title']  = $file->get_filename();
