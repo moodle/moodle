@@ -2605,8 +2605,10 @@ class admin_setting_users_with_capability extends admin_setting_configmultiselec
             '$@NONE@$' => get_string('nobody'),
             '$@ALL@$' => get_string('everyonewhocan', 'admin', get_capability_string($this->capability)),
         );
-        foreach ($users as $user) {
-            $this->choices[$user->username] = fullname($user);
+        if (is_array($users)) {
+            foreach ($users as $user) {
+                $this->choices[$user->username] = fullname($user);
+            }
         }
         return true;
     }

@@ -2683,7 +2683,6 @@ function ismoving($courseid) {
  * @param bool $override If true then the name will be first name followed by last name rather than adhering to fullnamedisplay setting.
  */
 function fullname($user, $override=false) {
-
     global $CFG, $SESSION;
 
     if (!isset($user->firstname) and !isset($user->lastname)) {
@@ -2703,7 +2702,7 @@ function fullname($user, $override=false) {
         $CFG->fullnamedisplay = $SESSION->fullnamedisplay;
     }
 
-    if ($CFG->fullnamedisplay == 'firstname lastname') {
+    if (!isset($CFG->fullnamedisplay) or $CFG->fullnamedisplay === 'firstname lastname') {
         return $user->firstname .' '. $user->lastname;
 
     } else if ($CFG->fullnamedisplay == 'lastname firstname') {
