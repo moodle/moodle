@@ -187,12 +187,16 @@ $countunread = 0; //count of unread messages from $user2
 $countunreadtotal = 0; //count of unread messages from all users
 
 //we're dealing with unread messages early so the contact list will accurately reflect what is read/unread
+$viewingnewmessages = false;
 if (!empty($user2)) {
     //are there any unread messages from $user2
     $countunread = message_count_unread_messages($user1, $user2);
     if ($countunread>0) {
         //mark the messages we're going to display as read
         message_mark_messages_read($user1->id, $user2->id);
+         if($usergroup==VIEW_UNREAD_MESSAGES) {
+             $viewingnewmessages = true;
+         }
     }
 }
 $countunreadtotal = message_count_unread_messages($user1);
@@ -209,13 +213,19 @@ echo html_writer::start_tag('div', array('class'=>'messagearea mdl-align'));
 
         echo html_writer::start_tag('div', array('class'=>'mdl-left messagehistory'));
 
-            $historyclass = 'visible';
-            $recentclass = 'hiddenelement';//cant just use hidden as mform adds that class to its fieldset
+            $visible = 'visible';
+            $hidden = 'hiddenelement'; //cant just use hidden as mform adds that class to its fieldset for something else
+
+            $recentlinkclass = $recentlabelclass = $historylinkclass = $historylabelclass = $visible;
             if ($history==MESSAGE_HISTORY_ALL) {
                 $displaycount = 0;
 
-                $historyclass = 'hiddenelement';
-                $recentclass = 'visible';
+                $recentlabelclass = $historylinkclass = $hidden;
+            } else if($viewingnewmessages) {
+                //if user is viewing new messages only show them the new messages
+                $displaycount = $countunread;
+
+                $recentlabelclass = $historylabelclass = $hidden;
             } else {
                 //default to only showing a few messages unless explicitly told not to
                 $displaycount = MESSAGE_SHORTVIEW_LIMIT;
@@ -223,24 +233,32 @@ echo html_writer::start_tag('div', array('class'=>'messagearea mdl-align'));
                 if ($countunread>MESSAGE_SHORTVIEW_LIMIT) {
                     $displaycount = $countunread;
                 }
+
+                $recentlinkclass = $historylabelclass = $hidden;
             }
 
             $messagehistorylink =  html_writer::start_tag('div', array('class'=>'mdl-align messagehistorytype'));
                 $messagehistorylink .= html_writer::link($PAGE->url->out(false).'&history='.MESSAGE_HISTORY_ALL,
                     get_string('messagehistoryfull','message'),
-                    array('class'=>$historyclass));
+                    array('class'=>$historylinkclass));
 
-                $messagehistorylink .=  html_writer::start_tag('span', array('class'=>$recentclass));
+                $messagehistorylink .=  html_writer::start_tag('span', array('class'=>$historylabelclass));
                     $messagehistorylink .= get_string('messagehistoryfull','message');
                 $messagehistorylink .= html_writer::end_tag('span');
 
                 $messagehistorylink .= '&nbsp;|&nbsp;'.html_writer::link($PAGE->url->out(false).'&history='.MESSAGE_HISTORY_SHORT,
                     get_string('mostrecent','message'),
-                    array('class'=>$recentclass));
+                    array('class'=>$recentlinkclass));
 
-                $messagehistorylink .=  html_writer::start_tag('span', array('class'=>$historyclass));
+                $messagehistorylink .=  html_writer::start_tag('span', array('class'=>$recentlabelclass));
                     $messagehistorylink .= get_string('mostrecent','message');
                 $messagehistorylink .= html_writer::end_tag('span');
+
+                if ($viewingnewmessages) {
+                    $messagehistorylink .=  '&nbsp;|&nbsp;'.html_writer::start_tag('span');//, array('class'=>$historyclass)
+                        $messagehistorylink .= get_string('unreadnewmessage','message',fullname($user2));
+                    $messagehistorylink .= html_writer::end_tag('span');
+                }
 
             $messagehistorylink .= html_writer::end_tag('div');
 
