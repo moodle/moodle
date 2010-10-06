@@ -6,9 +6,9 @@
 
     if (has_capability('coursereport/completion:view', $context)) {
         $completion = new completion_info($course);
-        if ($completion->is_enabled()) {
+        if ($completion->is_enabled() && $completion->has_criteria()) {
             echo '<p>';
-            echo '<a href="'.$CFG->wwwroot.'/course/report/completion/index.php?course='.$course->id.'">'.get_string('coursecompletionreport','completion').'</a>';
+            echo '<a href="'.$CFG->wwwroot.'/course/report/completion/index.php?coursetest='.$course->id.'">'.get_string('coursecompletionreport','completion').'</a>';
             echo '</p>';
         }
     }
