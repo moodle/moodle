@@ -3385,7 +3385,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
 // Ratings
     if (!empty($post->rating)) {
-        echo $OUTPUT->render($post->rating);
+        echo html_writer::tag('div', $OUTPUT->render($post->rating), array('class'=>'forum-post-rating'));
     }
 
 // Link to post if required
