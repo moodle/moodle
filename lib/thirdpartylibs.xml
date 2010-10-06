@@ -109,7 +109,7 @@
     <location>pear/Console/Getopt.php</location>
     <name>Pear_Console_Getopt</name>
     <license>PHP</license>
-    <version>1.0</version>
+    <version>1.2.3</version>
     <licenseversion>3.0</licenseversion>
   </library>
   <library>
