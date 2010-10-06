@@ -524,7 +524,7 @@ if ($component === 'blog') {
         send_file_not_found();
     }
 
-    require_login($course);
+    require_course_login($course, true);
 
     $groupid = (int)array_shift($args);
 
@@ -534,6 +534,9 @@ if ($component === 'blog') {
     }
 
     if ($filearea === 'description') {
+
+        require_login($course);
+
         $filename = array_pop($args);
         $filepath = $args ? '/'.implode('/', $args).'/' : '/';
         if (!$file = $fs->get_file($context->id, 'group', 'description', $group->id, $filepath, $filename) or $file->is_directory()) {
