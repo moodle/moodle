@@ -44,6 +44,13 @@ $unblockcontact = optional_param('unblockcontact', 0, PARAM_INT); // unblocking 
 $advancedsearch = optional_param('advanced', 0, PARAM_INT);
 $usergroup = optional_param('usergroup', VIEW_UNREAD_MESSAGES, PARAM_ALPHANUMEXT);
 
+//id will be supplied if they've clicked on someone in their contact list
+//if they have redirect to recent messages exchanged with that user
+$user2 = optional_param('id', 0, PARAM_INT);
+if (!empty($user2)) {
+    redirect('index.php?id='.$user2);
+}
+
 $url = new moodle_url('/message/contacts.php');
 /*if ($addcontact !== 0) {
     $url->param('addcontact', $addcontact);
