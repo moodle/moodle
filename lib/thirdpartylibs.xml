@@ -190,13 +190,6 @@
     <licenseversion>2.1</licenseversion>
   </library>
   <library>
-    <location>phpxml</location>
-    <name>XML Library</name>
-    <license>http://keithdevens.com/software/license</license>
-    <version>1.2b</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
     <location>simplepie</location>
     <name>SimplePie</name>
     <license>BSD</license>
