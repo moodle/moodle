@@ -34,6 +34,7 @@ $string['backupformat'] = 'Format';
 $string['backupformatmoodle2'] = 'Moodle 2';
 $string['backupmode'] = 'Mode';
 $string['backupmode10'] = 'General';
+$string['backupmode30'] = 'Hub';
 $string['backupsection'] = 'Backup course section: {$a}';
 $string['backupsettings'] = 'Backup settings';
 $string['backupsitedetails'] = 'Site details';
