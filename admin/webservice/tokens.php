@@ -32,20 +32,15 @@ $action = optional_param('action', '', PARAM_ACTION);
 $tokenid = optional_param('tokenid', '', PARAM_SAFEDIR);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-$PAGE->set_url('/' . $CFG->admin . '/webservice/tokens.php');
-$PAGE->navbar->ignore_active(true);
-$PAGE->navbar->add(get_string('administrationsite'));
-$PAGE->navbar->add(get_string('plugins', 'admin'));
-$PAGE->navbar->add(get_string('webservices', 'webservice'));
-$PAGE->navbar->add(get_string('managetokens', 'webservice'),
-        new moodle_url('/' . $CFG->admin . '/settings.php?section=webservicetokens'));
-if ($action == "delete") {
-    $PAGE->navbar->add(get_string('delete'));
-} else {
-    $PAGE->navbar->add(get_string('createtoken', 'webservice'));
-}
-
 admin_externalpage_setup('addwebservicetoken');
+
+//Deactivate the second 'Manage token' navigation node, and use the main 'Manage token' navigation node
+$node = $PAGE->settingsnav->find('addwebservicetoken', navigation_node::TYPE_SETTING);
+$newnode = $PAGE->settingsnav->find('webservicetokens', navigation_node::TYPE_SETTING);
+if ($node && $newnode) {
+    $node->display = false;
+    $newnode->make_active();
+}
 
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
