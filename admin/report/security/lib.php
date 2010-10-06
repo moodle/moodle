@@ -784,7 +784,7 @@ function report_security_check_riskbackup($detailed=false) {
     $syscontext = get_context_instance(CONTEXT_SYSTEM);
 
     $params = array('capability'=>'moodle/backup:userinfo', 'permission'=>CAP_ALLOW, 'contextid'=>$syscontext->id);
-    $sql = "SELECT DISTINCT r.*
+    $sql = "SELECT DISTINCT r.id, r.name, r.shortname, r.sortorder, r.archetype
               FROM {role} r
               JOIN {role_capabilities} rc ON rc.roleid = r.id
              WHERE rc.capability = :capability
@@ -793,7 +793,7 @@ function report_security_check_riskbackup($detailed=false) {
     $systemroles = $DB->get_records_sql($sql, $params);
 
     $params = array('capability'=>'moodle/backup:userinfo', 'permission'=>CAP_ALLOW, 'contextid'=>$syscontext->id);
-    $sql = "SELECT DISTINCT r.*, rc.contextid
+    $sql = "SELECT DISTINCT r.id, r.name, r.shortname, r.sortorder, r.archetype, rc.contextid
               FROM {role} r
               JOIN {role_capabilities} rc ON rc.roleid = r.id
              WHERE rc.capability = :capability
