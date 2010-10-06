@@ -1235,7 +1235,7 @@ M.core_filepicker.init = function(Y, options) {
             var r = this.active_repo;
             var str = '';
             var action = '';
-            if(r.pages) {
+            if(r.pages > 1) {
                 str += '<div class="fp-paging" id="paging-'+html_id+'-'+client_id+'">';
                 str += this.get_page_button(1)+'1</a> ';
 
