@@ -3055,9 +3055,10 @@ function truncate_userinfo($info) {
                     );
 
     // apply where needed
+    $textlib = textlib_get_instance();
     foreach (array_keys($info) as $key) {
         if (!empty($limit[$key])) {
-            $info[$key] = trim(substr($info[$key],0, $limit[$key]));
+            $info[$key] = trim($textlib->substr($info[$key],0, $limit[$key]));
         }
     }
 
