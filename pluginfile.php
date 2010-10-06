@@ -524,7 +524,7 @@ if ($component === 'blog') {
         send_file_not_found();
     }
 
-    require_course_login($course, true);
+    require_course_login($course, true, null, false);
 
     $groupid = (int)array_shift($args);
 
