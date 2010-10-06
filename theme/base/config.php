@@ -51,7 +51,7 @@ $THEME->sheets = array(
     'user'
 );
 
-$THEME->editor_sheets = array();
+$THEME->editor_sheets = array('editor');
 
 $THEME->layouts = array(
     // Most backwards compatible layout without the blocks - this is the layout used by default

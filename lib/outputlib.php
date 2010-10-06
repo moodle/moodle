@@ -577,7 +577,7 @@ class theme_config {
                 continue;
             }
             foreach ($parent_config->editor_sheets as $sheet) {
-                $sheetfile = "$parent_config->dir/$sheet.css";
+                $sheetfile = "$parent_config->dir/style/$sheet.css";
                 if (is_readable($sheetfile)) {
                     $files['parent_'.$parent_config->name.'_'.$sheet] = $sheetfile;
                 }
