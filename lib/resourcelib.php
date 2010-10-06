@@ -474,8 +474,9 @@ EOT;
   </object>
 </div>
 EOT;
-        $PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
     }
+
+    $PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
 
     return $code;
 }
