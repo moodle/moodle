@@ -227,7 +227,8 @@ function url_print_workaround($url, $cm, $course) {
 function url_display_embed($url, $cm, $course) {
     global $CFG, $PAGE, $OUTPUT;
 
-    $clicktoopen = get_string('clicktoopen', 'url', $url->externalurl);
+    $link = html_writer::tag('a', $url->externalurl, array('href'=>$url->externalurl));
+    $clicktoopen = get_string('clicktoopen', 'url', $link);
 
     $mimetype = resourcelib_guess_url_mimetype($url->externalurl);
     $fullurl  = url_get_full_url($url, $cm, $course);
