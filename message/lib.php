@@ -119,7 +119,7 @@ function message_print_contact_selector($countunreadtotal, $usergroup, $user1, $
                 if ($usergroup == VIEW_CONTACTS) {
                     $managebuttonclass = 'visible';
                 }
-                $strmanagecontacts = get_string('managecontacts','message');
+                $strmanagecontacts = get_string('search','message');
                 echo html_writer::empty_tag('input', array('type'=>'submit','value'=>$strmanagecontacts,'class'=>$managebuttonclass));
             echo html_writer::end_tag('fieldset');
         echo html_writer::end_tag('form');
