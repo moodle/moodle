@@ -38,6 +38,8 @@ class qformat_blackboard_six extends qformat_default {
     }
 
     function clean_temp_dir($dir='') {
+        global $CFG;
+
         // for now we will just say everything happened okay note
         // that a mess may be piling up in $CFG->dataroot/temp/bbquiz_import
         // TODO return true at top of the function renders all the following code useless
@@ -53,7 +55,7 @@ class qformat_blackboard_six extends qformat_default {
         $dir_subdirs    = array();
 
         // Make sure we can delete it
-        chmod($dir, 0777);
+        chmod($dir, $CFG->directorypermissions);
 
         if ((($handle = opendir($dir))) == FALSE) {
             // The directory could not be opened
@@ -72,7 +74,7 @@ class qformat_blackboard_six extends qformat_default {
 
         // Delete all files in the curent directory return false and halt if a file cannot be removed
         for($i=0; $i<count($dir_files); $i++) {
-            chmod($dir_files[$i], 0777);
+            chmod($dir_files[$i], $CFG->directorypermissions);
             if (((unlink($dir_files[$i]))) == FALSE) {
                 return false;
             }
@@ -80,7 +82,7 @@ class qformat_blackboard_six extends qformat_default {
 
         // Empty sub directories and then remove the directory
         for($i=0; $i<count($dir_subdirs); $i++) {
-            chmod($dir_subdirs[$i], 0777);
+            chmod($dir_subdirs[$i], $CFG->directorypermissions);
             if ($this->clean_temp_dir($dir_subdirs[$i]) == FALSE) {
                 return false;
             }

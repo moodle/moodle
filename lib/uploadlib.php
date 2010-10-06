@@ -639,7 +639,7 @@ function clam_scan_moodle_file(&$file, $course) {
     $cmd = $CFG->pathtoclam .' '. $fullpath ." 2>&1";
 
     // before we do anything we need to change perms so that clamscan can read the file (clamdscan won't work otherwise)
-    chmod($fullpath,0644);
+    chmod($fullpath, $CFG->directorypermissions);
 
     exec($cmd, $output, $return);
 

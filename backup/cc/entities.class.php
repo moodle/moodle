@@ -159,6 +159,7 @@ class entities {
     }
 
     public function move_files ($files, $destination_folder) {
+        global $CFG;
 
         if (!empty($files)) {
 
@@ -174,7 +175,7 @@ class entities {
                 //echo 'Copy the file: ' . $source . ' to ' . $destination . '<br>';
 
                 if (!file_exists($destination_directory)) {
-                    mkdir($destination_directory, 0777, true);
+                    mkdir($destination_directory, $CFG->directorypermissions, true);
                 }
 
                 $copy_success = @copy($source, $destination);
