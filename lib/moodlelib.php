@@ -2146,7 +2146,7 @@ function find_day_in_month($startday, $weekday, $month, $year) {
     if($startday < 1) {
 
         $startday = abs($startday);
-        $lastmonthweekday  = strftime('%w', mktime(12, 0, 0, $month, $daysinmonth, $year, 0));
+        $lastmonthweekday  = strftime('%w', mktime(12, 0, 0, $month, $daysinmonth, $year));
 
         // This is the last such weekday of the month
         $lastinmonth = $daysinmonth + $weekday - $lastmonthweekday;
@@ -2164,7 +2164,7 @@ function find_day_in_month($startday, $weekday, $month, $year) {
     }
     else {
 
-        $indexweekday = strftime('%w', mktime(12, 0, 0, $month, $startday, $year, 0));
+        $indexweekday = strftime('%w', mktime(12, 0, 0, $month, $startday, $year));
 
         $diff = $weekday - $indexweekday;
         if($diff < 0) {
@@ -2187,7 +2187,7 @@ function find_day_in_month($startday, $weekday, $month, $year) {
  * @return int
  */
 function days_in_month($month, $year) {
-   return intval(date('t', mktime(12, 0, 0, $month, 1, $year, 0)));
+   return intval(date('t', mktime(12, 0, 0, $month, 1, $year)));
 }
 
 /**
