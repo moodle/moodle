@@ -1,8 +1,8 @@
-Description of ADODB V5.10 library import into Moodle
+Description of ADODB V5.11 library import into Moodle
 
 This library will be probably removed in Moodle 2.1,
 it is now used only in enrol and auth db plugins.
-The core DML drivers are not using ADODB any more. 
+The core DML drivers are not using ADODB any more.
 
 Removed:
  * contrib/
@@ -12,6 +12,7 @@ Removed:
  * session/
  * tests/
  * server.php
+ * lang/* except en (because they were not in utf8)
 
 Added:
  * index.html - prevent directory browsing on misconfigured servers

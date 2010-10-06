@@ -14,7 +14,7 @@
 /**
 	\mainpage
 	
-	 @version V5.10 10 Nov 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
+	 @version V5.11 5 May 2010   (c) 2000-2010 John Lim (jlim#natsoft.com). All rights reserved.
 
 	Released under both BSD license and Lesser GPL library license. You can choose which license
 	you prefer.
@@ -177,7 +177,7 @@
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'V5.10 10 Nov 2009  (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved. Released BSD & LGPL.';
+		$ADODB_vers = 'V5.11 5 May 2010  (c) 2000-2010 John Lim (jlim#natsoft.com). All rights reserved. Released BSD & LGPL.';
 	
 		/**
 		 * Determines whether recordset->RecordCount() is used. 
@@ -403,6 +403,7 @@
 	var $fetchMode=false;
 	
 	var $null2null = 'null'; // in autoexecute/getinsertsql/getupdatesql, this value will be converted to a null
+	var $bulkBind = false; // enable 2D Execute array
 	 //
 	 // PRIVATE VARS
 	 //
@@ -435,7 +436,9 @@
 	{
 	global $ADODB_vers;
 	
-		return (float) substr($ADODB_vers,1);
+		$ok = preg_match( '/^[Vv]([0-9\.]+)/', $ADODB_vers, $matches );
+		if (!$ok) return (float) substr($ADODB_vers,1);
+		else return $matches[1];
 	}
 	
 	/**
@@ -511,15 +514,15 @@
 	{
 		if ($argHostname != "") $this->host = $argHostname;
 		if ($argUsername != "") $this->user = $argUsername;
-		if ($argPassword != "") $this->password = $argPassword; // not stored for security reasons
+		if ($argPassword != "") $this->password = 'not stored'; // not stored for security reasons
 		if ($argDatabaseName != "") $this->database = $argDatabaseName;		
 		
 		$this->_isPersistentConnection = false;	
 			
 		if ($forceNew) {
-			if ($rez=$this->_nconnect($this->host, $this->user, $this->password, $this->database)) return true;
+			if ($rez=$this->_nconnect($this->host, $this->user, $argPassword, $this->database)) return true;
 		} else {
-			 if ($rez=$this->_connect($this->host, $this->user, $this->password, $this->database)) return true;
+			 if ($rez=$this->_connect($this->host, $this->user, $argPassword, $this->database)) return true;
 		}
 		if (isset($rez)) {
 			$err = $this->ErrorMsg();
@@ -577,12 +580,12 @@
 		
 		if ($argHostname != "") $this->host = $argHostname;
 		if ($argUsername != "") $this->user = $argUsername;
-		if ($argPassword != "") $this->password = $argPassword;
+		if ($argPassword != "") $this->password = 'not stored';
 		if ($argDatabaseName != "") $this->database = $argDatabaseName;		
 			
 		$this->_isPersistentConnection = true;	
 		
-		if ($rez = $this->_pconnect($this->host, $this->user, $this->password, $this->database)) return true;
+		if ($rez = $this->_pconnect($this->host, $this->user, $argPassword, $this->database)) return true;
 		if (isset($rez)) {
 			$err = $this->ErrorMsg();
 			if (empty($err)) $err = "Connection error to server '$argHostname' with user '$argUsername'";
@@ -716,7 +719,7 @@
 	*  @param $table	name of table to lock
 	*  @param $where	where clause to use, eg: "WHERE row=12". If left empty, will escalate to table lock
 	*/
-	function RowLock($table,$where,$col='1 as ignore')
+	function RowLock($table,$where,$col='1 as adodbignore')
 	{
 		return false;
 	}
@@ -950,7 +953,7 @@
 			
 			$element0 = reset($inputarr);
 			# is_object check because oci8 descriptors can be passed in
-			$array_2d = is_array($element0) && !is_object(reset($element0));
+			$array_2d = $this->bulkBind && is_array($element0) && !is_object(reset($element0));
 			//remove extra memory copy of input -mikefedyk
 			unset($element0);
 			
@@ -4149,11 +4152,25 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 				// special handling of oracle, which might not have host
 				$fakedsn = str_replace('@/','@adodb-fakehost/',$fakedsn);
 			}
+			
+			 if ((strpos($origdsn, 'sqlite')) !== FALSE) {
+             // special handling for SQLite, it only might have the path to the database file.
+             // If you try to connect to a SQLite database using a dsn like 'sqlite:///path/to/database', the 'parse_url' php function
+             // will throw you an exception with a message such as "unable to parse url"
+                list($scheme, $path) = explode('://', $origdsn);
+                $dsna['scheme'] = $scheme;
+				if ($qmark = strpos($path,'?')) {
+					$dsn['query'] = substr($path,$qmark+1);
+					$path = substr($path,0,$qmark);
+				}
+            	$dsna['path'] = '/' . urlencode($path);
+			} else
 				$dsna = @parse_url($fakedsn);
+				
 			if (!$dsna) {
 				return $false;
 			}
-				$dsna['scheme'] = substr($origdsn,0,$at);
+			$dsna['scheme'] = substr($origdsn,0,$at);
 			if ($at2 !== FALSE) {
 				$dsna['host'] = '';
 			}

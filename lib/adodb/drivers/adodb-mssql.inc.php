@@ -1,6 +1,6 @@
 <?php
 /* 
-V5.10 10 Nov 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
+V5.11 5 May 2010   (c) 2000-2010 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -366,8 +366,9 @@ class ADODB_mssql extends ADOConnection {
 		
 		See http://www.swynk.com/friends/achigrik/SQL70Locks.asp
 	*/
-	function RowLock($tables,$where,$col='top 1 null as ignore') 
+	function RowLock($tables,$where,$col='1 as adodbignore') 
 	{
+		if ($col == '1 as adodbignore') $col = 'top 1 null as ignore';
 		if (!$this->transCnt) $this->BeginTrans();
 		return $this->GetOne("select $col from $tables with (ROWLOCK,HOLDLOCK) where $where");
 	}
@@ -476,7 +477,7 @@ order by constraint_name, referenced_table_name, keyno";
 
 	// "Stein-Aksel Basma" <basma@accelero.no>
 	// tested with MSSQL 2000
-	function MetaPrimaryKeys($table)
+	function MetaPrimaryKeys($table, $owner=false)
 	{
 	global $ADODB_FETCH_MODE;
 	
@@ -591,7 +592,7 @@ order by constraint_name, referenced_table_name, keyno";
 		return array($sql,$this->qstr($sql2),$max,$sql2);
 	}
 	
-	function PrepareSP($sql)
+	function PrepareSP($sql,$param=true)
 	{
 		if (!$this->_has_mssql_init) {
 			ADOConnection::outp( "PrepareSP: mssql_init only available since PHP 4.1.0");
@@ -911,11 +912,19 @@ class ADORecordset_mssql extends ADORecordSet {
 			if (is_array($this->fields)) {
 				if (ADODB_ASSOC_CASE == 0) {
 					foreach($this->fields as $k=>$v) {
-						$this->fields[strtolower($k)] = $v;
+						$kn = strtolower($k);
+						if ($kn <> $k) {
+							unset($this->fields[$k]);
+							$this->fields[$kn] = $v;
+						}
 					}
 				} else if (ADODB_ASSOC_CASE == 1) {
 					foreach($this->fields as $k=>$v) {
-						$this->fields[strtoupper($k)] = $v;
+						$kn = strtoupper($k);
+						if ($kn <> $k) {
+							unset($this->fields[$k]);
+							$this->fields[$kn] = $v;
+						}
 					}
 				}
 			}
@@ -956,11 +965,19 @@ class ADORecordset_mssql extends ADORecordSet {
 			if (!$this->fields) {
 			} else if (ADODB_ASSOC_CASE == 0) {
 				foreach($this->fields as $k=>$v) {
-					$this->fields[strtolower($k)] = $v;
+					$kn = strtolower($k);
+					if ($kn <> $k) {
+						unset($this->fields[$k]);
+						$this->fields[$kn] = $v;
+					}
 				}
 			} else if (ADODB_ASSOC_CASE == 1) {
 				foreach($this->fields as $k=>$v) {
-					$this->fields[strtoupper($k)] = $v;
+					$kn = strtoupper($k);
+					if ($kn <> $k) {
+						unset($this->fields[$k]);
+						$this->fields[$kn] = $v;
+					}
 				}
 			}
 		} else {

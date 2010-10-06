@@ -1074,6 +1074,9 @@ global $ADODB_DATETIME_CLASS;
 	*/
 	for ($i=0; $i < $max; $i++) {
 		switch($fmt[$i]) {
+		case 'e':
+			$dates .= date('e');
+			break;
 		case 'T': 
 			if ($ADODB_DATETIME_CLASS) {
 				$dt = new DateTime();

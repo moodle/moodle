@@ -1,6 +1,6 @@
 <?php
 /* 
-V5.10 10 Nov 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
+V5.11 5 May 2010   (c) 2000-2010 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. See License.txt. 
@@ -81,12 +81,21 @@ AND    b.name = 'sorts (memory)'",
 			'' ),			
 	
 	'Memory Pools',
+		'Mem Max Target (11g+)' => array( 'DATAC',
+		"select value from v\$parameter where name = 'memory_max_target'",
+			'The memory_max_size is the maximum value to which memory_target can be set.' ),
+	'Memory target (11g+)' => array( 'DATAC',
+		"select value from v\$parameter where name = 'memory_target'",
+			'If memory_target is defined then SGA and PGA targets are consolidated into one memory_target.' ),
 		'SGA Max Size' => array( 'DATAC',
-		"select value from v\$parameter where name = 'sga_max_size'",
+		"select nvl(value,0)/1024.0/1024 || 'M' from v\$parameter where name = 'sga_max_size'",
 			'The sga_max_size is the maximum value to which sga_target can be set.' ),
 	'SGA target' => array( 'DATAC',
-		"select value from v\$parameter where name = 'sga_target'",
+		"select nvl(value,0)/1024.0/1024 || 'M'  from v\$parameter where name = 'sga_target'",
 			'If sga_target is defined then data cache, shared, java and large pool size can be 0. This is because all these pools are consolidated into one sga_target.' ),
+	'PGA aggr target' => array( 'DATAC',
+		"select value from v\$parameter where name = 'pga_aggregate_target'",
+			'If pga_aggregate_target is defined then this is the maximum memory that can be allocated for cursor operations such as sorts, group by, joins, merges. When in doubt, set it to 20% of sga_target.' ),
 	'data cache size' => array('DATAC',
 			"select value from v\$parameter where name = 'db_cache_size'",
 			'db_cache_size' ),
@@ -104,6 +113,7 @@ AND    b.name = 'sorts (memory)'",
 			"select value from v\$parameter where name='pga_aggregate_target'",
 			'program global area is private memory for sorting, and hash and bitmap merges - since oracle 9i (pga_aggregate_target)' ),
 
+		'dynamic memory usage' => array('CACHE', "select '-' from dual", '=DynMemoryUsage'),
 		
 		'Connections',
 		'current connections' => array('SESS',
@@ -184,8 +194,15 @@ having count(*) > 100)",'These are sql statements that should be using bind vari
 		'Archive Log Dest' => array('BACKUP', "SELECT NVL(v1.value,v2.value) 
 FROM v\$parameter v1, v\$parameter v2 WHERE v1.name='log_archive_dest' AND v2.name='log_archive_dest_10'", ''),
 	
-	'Flashback Area' => array('BACKUP', "select nvl(value,'Flashback Area not used') from v\$parameter where name=lower('DB_RECOVERY_FILE_DEST')", 'Flashback area is a folder where all backup data and logs can be stored and managed by Oracle. If Error: message displayed, then it is not in use.'),
+		'Flashback Area' => array('BACKUP', "select nvl(value,'Flashback Area not used') from v\$parameter where name=lower('DB_RECOVERY_FILE_DEST')", 'Flashback area is a folder where all backup data and logs can be stored and managed by Oracle. If Error: message displayed, then it is not in use.'),
+	
+		'Flashback Usage' => array('BACKUP', "select nvl('-','Flashback Area not used') from v\$parameter where name=lower('DB_RECOVERY_FILE_DEST')", '=FlashUsage', 'Flashback area usage.'),
+		
 		'Control File Keep Time' => array('BACKUP', "select value from v\$parameter where name='control_file_record_keep_time'",'No of days to keep RMAN info in control file. I recommend it be set to x2 or x3 times the frequency of your full backup.'),
+		'Recent RMAN Jobs' => array('BACKUP', "select '-' from dual", "=RMAN"),
+		
+		//		'Control File Keep Time' => array('BACKUP', "select value from v\$parameter where name='control_file_record_keep_time'",'No of days to keep RMAN info in control file. I recommend it be set to x2 or x3 times the frequency of your full backup.'),
+
 		false
 		
 	);
@@ -197,6 +214,35 @@ FROM v\$parameter v1, v\$parameter v2 WHERE v1.name='log_archive_dest' AND v2.na
 		$this->version = $conn->ServerInfo();
 		$conn->LogSQL($savelog);	
 		$this->conn = $conn;
+	}
+	
+	function RMAN()
+	{
+		$rs = $this->conn->Execute("select * from (select start_time, end_time, operation, status, mbytes_processed, output_device_type  
+			from V\$RMAN_STATUS order by start_time desc) where rownum <=10");
+		
+		$ret = rs2html($rs,false,false,false,false);		
+		return "&nbsp;<p>".$ret."&nbsp;</p>";
+		
+	}
+	function DynMemoryUsage()
+	{
+		if (@$this->version['version'] >= 11) {
+			$rs = $this->conn->Execute("select component, current_size/1024./1024 as \"CurrSize (M)\" from  V\$MEMORY_DYNAMIC_COMPONENTS");
+
+		} else
+			$rs = $this->conn->Execute("select name, round(bytes/1024./1024,2) as \"CurrSize (M)\" from  V\$sgainfo");
+
+			
+		$ret = rs2html($rs,false,false,false,false);		
+		return "&nbsp;<p>".$ret."&nbsp;</p>";
+	}
+	
+	function FlashUsage()
+	{
+        $rs = $this->conn->Execute("select * from  V\$FLASH_RECOVERY_AREA_USAGE");
+		$ret = rs2html($rs,false,false,false,false);		
+		return "&nbsp;<p>".$ret."&nbsp;</p>";
 	}
 	
 	function WarnPageCost($val)
@@ -222,10 +268,10 @@ FROM v\$parameter v1, v\$parameter v2 WHERE v1.name='log_archive_dest' AND v2.na
 		if ($this->version['version'] < 9) return 'Oracle 9i or later required';
 		
 		$rs = $this->conn->Execute("select a.mb,a.targ as pga_size_pct,a.pct from 
-	   (select round(pga_target_for_estimate/1024.0/1024.0,0) Mb,
+	   (select round(pga_target_for_estimate/1024.0/1024.0,0) MB,
 	   	   pga_target_factor targ,estd_pga_cache_hit_percentage pct,rownum as r 
 	   	   from v\$pga_target_advice) a left join
-	   (select round(pga_target_for_estimate/1024.0/1024.0,0) Mb,
+	   (select round(pga_target_for_estimate/1024.0/1024.0,0) MB,
 	   	   pga_target_factor targ,estd_pga_cache_hit_percentage pct,rownum as r 
 	   	   from v\$pga_target_advice) b on 
 	  a.r = b.r+1 where 
@@ -322,15 +368,17 @@ CONNECT BY prior id=parent_id and statement_id='$id'");
 		if ($this->version['version'] < 9) return 'Oracle 9i or later required';
 		
 		 $rs = $this->conn->Execute("
-select  a.size_for_estimate as cache_mb_estimate,
-	case when a.size_factor=1 then 
-   		'&lt;&lt;= current'
-	 when a.estd_physical_read_factor-b.estd_physical_read_factor > 0 and a.estd_physical_read_factor<1 then
-		'- BETTER - '
-	else ' ' end as currsize, 
-   a.estd_physical_read_factor-b.estd_physical_read_factor as best_when_0
-   from (select size_for_estimate,size_factor,estd_physical_read_factor,rownum  r from v\$db_cache_advice) a , 
-   (select size_for_estimate,size_factor,estd_physical_read_factor,rownum r from v\$db_cache_advice) b where a.r = b.r-1");
+select  b.size_for_estimate as cache_mb_estimate, 
+	case when b.size_factor=1 then 
+   		'&lt;&lt;= Current'
+	 when a.estd_physical_read_factor-b.estd_physical_read_factor > 0.001 and b.estd_physical_read_factor<1 then
+		'- BETTER than current by ' || round((1-b.estd_physical_read_factor)/b.estd_physical_read_factor*100,2) || '%'
+	else ' ' end as RATING, 
+   b.estd_physical_read_factor \"Phys. Reads Factor\",
+   round((a.estd_physical_read_factor-b.estd_physical_read_factor)/b.estd_physical_read_factor*100,2) as \"% Improve\"
+   from (select size_for_estimate,size_factor,estd_physical_read_factor,rownum  r from v\$db_cache_advice order by 1) a , 
+   (select size_for_estimate,size_factor,estd_physical_read_factor,rownum r from v\$db_cache_advice order by 1) b where a.r = b.r-1
+  ");
 		if (!$rs) return false;
 		
 		/*
@@ -340,7 +388,7 @@ select  a.size_for_estimate as cache_mb_estimate,
 		if ($rs->EOF) {
 			$s .= "<p>Cache that is 50% of current size is still too big</p>";
 		} else {
-			$s .= "Ideal size of Data Cache is when \"best_when_0\" changes from a positive number and becomes zero.";
+			$s .= "Ideal size of Data Cache is when %Improve gets close to zero.";
 			$s .= rs2html($rs,false,false,false,false);
 		}
 		return $s;

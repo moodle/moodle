@@ -1,6 +1,6 @@
 <?php
 /*
-  V5.10 10 Nov 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
+  V5.11 5 May 2010   (c) 2000-2010 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence. See License.txt.
@@ -172,7 +172,10 @@ class ADODB_odbtp extends ADOConnection{
 	//if uid & pwd can be separate
     function _connect($HostOrInterface, $UserOrDSN='', $argPassword='', $argDatabase='')
 	{
-		$this->_connectionID = odbtp_connect($HostOrInterface,$UserOrDSN,$argPassword,$argDatabase);
+		if ($argPassword && stripos($UserOrDSN,'DRIVER=') !== false) {
+			$this->_connectionID = odbtp_connect($HostOrInterface,$UserOrDSN.';PWD='.$argPassword);
+		} else
+			$this->_connectionID = odbtp_connect($HostOrInterface,$UserOrDSN,$argPassword,$argDatabase);
 		if ($this->_connectionID === false) {
 			$this->_errorMsg = $this->ErrorMsg() ;
 			return false;
@@ -551,7 +554,7 @@ class ADODB_odbtp extends ADOConnection{
 		}
 	}
 	
-	function MetaIndexes_mssql($table,$primary=false)
+	function MetaIndexes_mssql($table,$primary=false, $owner = false)
 	{
 		$table = strtolower($this->qstr($table));
 

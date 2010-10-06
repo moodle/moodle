@@ -1,7 +1,7 @@
 <?php
 /*
 
-@version V5.10 10 Nov 2009   (c) 2000-2009 John Lim (jlim#natsoft.com). All rights reserved.
+@version V5.11 5 May 2010   (c) 2000-2010 John Lim (jlim#natsoft.com). All rights reserved.
   Latest version is available at http://adodb.sourceforge.net
  
   Released under both BSD license and Lesser GPL library license. 
@@ -345,8 +345,8 @@ class ADODB_Active_Record {
 		$tableat = $this->_tableat;
 		if (!$forceUpdate && !empty($tables[$tableat])) {
 
-			$tobj = $tables[$tableat];
-			foreach($tobj->flds as $name => $fld) {
+			$acttab = $tables[$tableat];
+			foreach($acttab->flds as $name => $fld) {
 			if ($ADODB_ACTIVE_DEFVALS && isset($fld->default_value)) 
 				$this->$name = $fld->default_value;
 			else
@@ -364,6 +364,14 @@ class ADODB_Active_Record {
 			if ($acttab->_created + $ADODB_ACTIVE_CACHESECS - (abs(rand()) % 16) > time()) { 
 				// abs(rand()) randomizes deletion, reducing contention to delete/refresh file
 				// ideally, you should cache at least 32 secs
+				
+				foreach($acttab->flds as $name => $fld) {
+					if ($ADODB_ACTIVE_DEFVALS && isset($fld->default_value)) 
+						$this->$name = $fld->default_value;
+					else
+						$this->$name = null;
+				}
+	
 				$activedb->tables[$table] = $acttab;
 				
 				//if ($db->debug) ADOConnection::outp("Reading cached active record file: $fname");
@@ -621,11 +629,13 @@ class ADODB_Active_Record {
 	function doquote(&$db, $val,$t)
 	{
 		switch($t) {
-		case 'D':
+		case 'L':
+			if (strpos($db->databaseType,'postgres') !== false) return $db->qstr($val);
+		case 'D':	
 		case 'T':
 			if (empty($val)) return 'null';
 		
-		case 'B':
+		case 'B':	
 		case 'N':
 		case 'C':
 		case 'X':
@@ -889,10 +899,10 @@ class ADODB_Active_Record {
 					}
 				}
 			}
-			
-			if (isset($this->_original[$i]) && $val == $this->_original[$i]) {
+
+			if (isset($this->_original[$i]) && strcmp($val,$this->_original[$i]) == 0) {
 				continue;
-			}			
+			}
 			$valarr[] = $val;
 			$pairs[] = $this->_QName($name,$db).'='.$db->Param($cnt);
 			$cnt += 1;
