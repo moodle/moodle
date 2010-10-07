@@ -5,7 +5,7 @@ define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
 function get_file_url($path, $options=null, $type='coursefile') {
     global $CFG, $HTTPSPAGEREQUIRED;
 
-    $path = str_replace('//', '/', $path);  
+    $path = str_replace('//', '/', $path);
     $path = trim($path, '/'); // no leading and trailing slashes
 
     // type of file
@@ -175,11 +175,10 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers2);
     }
 
-        
     if ($skipcertverify) {
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     }
-    
+
     // use POST if requested
     if (is_array($postdata)) {
         foreach ($postdata as $k=>$v) {
@@ -404,6 +403,8 @@ function get_mimetypes_array() {
         'odf'  => array ('type'=>'application/vnd.oasis.opendocument.formula', 'icon'=>'odf.gif'),
         'odb'  => array ('type'=>'application/vnd.oasis.opendocument.database', 'icon'=>'odb.gif'),
         'odi'  => array ('type'=>'application/vnd.oasis.opendocument.image', 'icon'=>'odi.gif'),
+        'ogg'  => array ('type'=>'audio/ogg', 'icon'=>'audio.gif'),
+        'ogv'  => array ('type'=>'video/ogg', 'icon'=>'video.gif'),
 
         'pct'  => array ('type'=>'image/pict', 'icon'=>'image.gif'),
         'pdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf.gif'),
@@ -676,7 +677,7 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
         $requiredplayerversion = explode('.', $CFG->excludeoldflashclients);
         if (($userplayerversion[0] <  $requiredplayerversion[0]) ||
             ($userplayerversion[0] == $requiredplayerversion[0] && $userplayerversion[1] < $requiredplayerversion[1]) ||
-            ($userplayerversion[0] == $requiredplayerversion[0] && $userplayerversion[1] == $requiredplayerversion[1] 
+            ($userplayerversion[0] == $requiredplayerversion[0] && $userplayerversion[1] == $requiredplayerversion[1]
              && $userplayerversion[2] < $requiredplayerversion[2])) {
             $path = $CFG->dirroot."/lib/flashdetect/flashupgrade.swf";  // Alternate content asking user to upgrade Flash
             $filename = "flashupgrade.swf";

@@ -1680,7 +1680,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table = new XMLDBTable('groups');
         $field = new XMLDBField('password');
 
-        if (field_exists($table, $field)) { 
+        if (field_exists($table, $field)) {
     /// 1.7.*/1.6.*/1.5.* - create 'groupings' and 'groupings_groups' + rename password to enrolmentkey
     /// or second run after fixing structure broken from 1.8.x
             $result = $result && upgrade_17_groups();
@@ -1694,7 +1694,7 @@ function xmldb_main_upgrade($oldversion=0) {
             upgrade_18_broken_groups();
             notify('Warning: failed groups upgrade detected! Unfortunately this problem '.
                    'can not be fixed automatically. Mapping of groups to courses was lost, '.
-                   'you can either revert to backup from 1.7.x and run ugprade again or '. 
+                   'you can either revert to backup from 1.7.x and run ugprade again or '.
                    'continue and fill in the missing course ids into groups table manually.');
             $result = false;
         }
@@ -2355,7 +2355,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
 
     /*
-     * Note: mysql can not create indexes on text fields larger than 333 chars! 
+     * Note: mysql can not create indexes on text fields larger than 333 chars!
      */
 
     /// Adding indexes to table cache_flags
@@ -2400,7 +2400,7 @@ function xmldb_main_upgrade($oldversion=0) {
         if (index_exists($table, $index)) {
             $result = $result && drop_index($table, $index);
         }
-        
+
         $table = new XMLDBTable('cache_flags');
         $index = new XMLDBIndex('flagtype');
         $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('flagtype'));
@@ -2562,7 +2562,7 @@ function xmldb_main_upgrade($oldversion=0) {
                   FROM {$CFG->prefix}user_lastaccess
                  WHERE NOT EXISTS (SELECT 'x'
                                     FROM {$CFG->prefix}course c
-                                   WHERE c.id = {$CFG->prefix}user_lastaccess.courseid)"; 
+                                   WHERE c.id = {$CFG->prefix}user_lastaccess.courseid)";
         execute_sql($sql);
 
         upgrade_main_savepoint($result, 2007100902);
@@ -2585,16 +2585,16 @@ function xmldb_main_upgrade($oldversion=0) {
 
         upgrade_main_savepoint($result, 2007100903);
     }
-    
+
     if ($result && $oldversion < 2007101500 && !file_exists($CFG->dataroot . '/user')) {
         // Get list of users by browsing moodledata/user
         $oldusersdir = $CFG->dataroot . '/users';
         $folders = get_directory_list($oldusersdir, '', false, true, false);
-        
+
         foreach ($folders as $userid) {
             $olddir = $oldusersdir . '/' . $userid;
             $files = get_directory_list($olddir);
-            
+
             if (empty($files)) {
                 continue;
             }
@@ -2621,7 +2621,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $readmefilename = $oldusersdir . '/README.txt';
         if ($handle = fopen($readmefilename, 'w+b')) {
             if (!fwrite($handle, get_string('olduserdirectory'))) {
-                // Could not write to the readme file. No cause for huge concern 
+                // Could not write to the readme file. No cause for huge concern
                 notify("Could not write to the README.txt file in $readmefilename.");
             }
             fclose($handle);
@@ -2629,22 +2629,22 @@ function xmldb_main_upgrade($oldversion=0) {
             // Could not create the readme file. No cause for huge concern
             notify("Could not create the README.txt file in $readmefilename.");
         }
-    }    
+    }
 
     if ($result && $oldversion < 2007101502) {
 
     /// try to remove duplicate entries
-    
+
         $SQL = "SELECT userid, itemid, COUNT(*)
                FROM {$CFG->prefix}grade_grades
                GROUP BY userid, itemid
                HAVING COUNT( * ) >1";
         // duplicates found
-        
+
         if ($rs = get_recordset_sql($SQL)) {
             if ($rs && $rs->RecordCount() > 0) {
                 while ($dup = rs_fetch_next_record($rs)) {
-                    if ($thisdups = get_records_sql("SELECT id FROM {$CFG->prefix}grade_grades 
+                    if ($thisdups = get_records_sql("SELECT id FROM {$CFG->prefix}grade_grades
                                                     WHERE itemid = $dup->itemid AND userid = $dup->userid
                                                     ORDER BY timemodified DESC")) {
 
@@ -2702,7 +2702,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $sql = "DELETE
                   FROM {$CFG->prefix}context
                  WHERE contextlevel=20";
- 
+
         execute_sql($sql);
 
     /// Main savepoint reached
@@ -2864,7 +2864,7 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2007101508.04) {
-        set_field('tag_instance', 'itemtype', 'post', 'itemtype', 'blog'); 
+        set_field('tag_instance', 'itemtype', 'post', 'itemtype', 'blog');
         upgrade_main_savepoint($result, 2007101508.04);
     }
 
@@ -2941,7 +2941,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch add field name
         $result = $result && add_field($table, $field);
- 
+
     /// Copy data from old field to new field
         $result = $result && execute_sql('UPDATE '.$CFG->prefix.'role_names SET name = text');
 
@@ -3345,6 +3345,12 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101571.05);
     }
 
+    if ($result && $oldversion < 2007101590.01) {
+        // add media plugins config for ogg and ogv files
+        set_config('filter_mediaplugin_enable_ogv', 1);
+        set_config('filter_mediaplugin_enable_ogg', 1);
+        upgrade_main_savepoint($result, 2007101590.01);
+    }
     return $result;
 }
 

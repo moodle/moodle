@@ -40,6 +40,16 @@ function mediaplugin_filter($courseid, $text) {
         $newtext = preg_replace_callback($search, 'mediaplugin_filter_mp3_callback', $newtext);
     }
 
+    if ($CFG->filter_mediaplugin_enable_ogg) {
+        $search =   '/<a[^>]*?href="([^<]+\.ogg)"[^>]*>.*?<\/a>/is';
+        $newtext = preg_replace_callback($search, 'filter_mediaplugin_ogg_callback', $newtext);
+    }
+
+    if ($CFG->filter_mediaplugin_enable_ogv) {
+        $search =   '/<a[^>]*?href="([^<]+\.ogv)"[^>]*>.*?<\/a>/is';
+        $newtext = preg_replace_callback($search, 'filter_mediaplugin_ogv_callback', $newtext);
+    }
+
     if ($CFG->filter_mediaplugin_enable_swf) {
         $search = '/<a.*?href="([^<]+\.swf)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
         $newtext = preg_replace_callback($search, 'mediaplugin_filter_swf_callback', $newtext);
@@ -147,6 +157,44 @@ function mediaplugin_filter_mp3_callback($link) {
 </script>';
 }
 
+function filter_mediaplugin_ogg_callback($link) {
+    global $CFG, $OUTPUT, $PAGE;
+
+    static $count = 0;
+    $count++;
+    $id = 'filter_ogg_'.time().$count; //we need something unique because it might be stored in text cache
+
+    $url = addslashes_js($link[1]);
+    $printlink = html_writer::link($url, get_string('oggaudio', 'filter_mediaplugin'));
+    $unsupportedplugins = get_string('unsupportedplugins', 'filter_mediaplugin', $printlink);
+    $output = <<<OET
+    <audio id="$id" src="$url" controls="true" width="100">
+        $unsupportedplugins
+    </audio>
+OET;
+
+    return $output;
+}
+
+function filter_mediaplugin_ogv_callback($link) {
+    global $CFG, $OUTPUT, $PAGE;
+
+    static $count = 0;
+    $count++;
+    $id = 'filter_ogv_'.time().$count; //we need something unique because it might be stored in text cache
+
+    $url = addslashes_js($link[1]);
+    $printlink = html_writer::link($url, get_string('ogvvideo', 'filter_mediaplugin'));
+    $unsupportedplugins = get_string('unsupportedplugins', 'filter_mediaplugin', $printlink);
+    $output = <<<OET
+    <video id="$id" src="$url" controls="true" width="600" >
+        $unsupportedplugins
+    </video>
+OET;
+
+    return $output;
+}
+
 function mediaplugin_filter_swf_callback($link) {
     static $count = 0;
     $count++;
@@ -228,8 +276,8 @@ function mediaplugin_filter_youtube_callback($link, $autostart=false) {
     $url = addslashes_js($link[2]);
     $info = addslashes_js($link[3]);
 
-    return '<object title="'.$info.'" 
-                    class="mediaplugin mediaplugin_youtube" type="application/x-shockwave-flash" 
+    return '<object title="'.$info.'"
+                    class="mediaplugin mediaplugin_youtube" type="application/x-shockwave-flash"
                     data="'.$site.'youtube.com/v/'.$url.'&amp;fs=1&amp;rel=0" width="425" height="344">'.
            '<param name="movie" value="'.$site.'youtube.com/v/'.$url.'&amp;fs=1&amp;rel=0" />'.
            '<param name="FlashVars" value="playerMode=embedded" />'.
