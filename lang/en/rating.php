@@ -43,6 +43,7 @@ $string['allowratings'] = 'Allow items to be rated?';
 $string['capabilitychecknotavailable'] = 'Capability check not available until activity is saved';
 $string['couldnotdeleteratings'] = 'Sorry, that cannot be deleted as people have already rated it';
 $string['norate'] = 'Rating of items not allowed!';
+$string['noratings'] = 'No ratings submitted';
 $string['noviewanyrate'] = 'You can only look at results for items that you made';
 $string['noviewrate'] = 'You do not have the capability to view item ratings';
 $string['rate'] = 'Rate';
