@@ -56,6 +56,7 @@ if (empty($tag)) {
 $PAGE->set_url('/tag/index.php', array('id' => $tag->id));
 $PAGE->set_subpage($tag->id);
 $PAGE->set_context($systemcontext);
+$PAGE->set_pagelayout('standard');
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
 
 if (($edit != -1) and $PAGE->user_allowed_editing()) {
