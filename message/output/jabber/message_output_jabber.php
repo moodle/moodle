@@ -35,6 +35,7 @@
 define("JABBER_SERVER","jabber80.com");
 define("JABBER_USERNAME","");
 define("JABBER_PASSWORD","");
+define("JABBER_PORT",5222);
 
 define("RUN_TIME",15);  // set a maximum run time of 15 seconds
 
@@ -54,7 +55,7 @@ class message_output_jabber extends message_output {
         if (!$userfrom = $DB->get_record('user', array('id' => $message->useridfrom))) {
             return false;
         }
-        if (!$userto = $DB->get_record('user', array('id' => $this->message->useridto))) {
+        if (!$userto = $DB->get_record('user', array('id' => $message->useridto))) {
             return false;
         }
         if (!$jabberaddress = get_user_preferences('message_processor_jabber_jabberid', $userto->email, $userto->id)) {
@@ -62,7 +63,7 @@ class message_output_jabber extends message_output {
         }
         $jabbermessage = fullname($userfrom).': '.$message->fullmessage;
 
-        $conn = new XMPPHP_XMPP(JABBER_SERVER, 5222, JABBER_USERNAME, JABBER_PASSWORD, 'moodle', JABBER_SERVER);
+        $conn = new XMPPHP_XMPP(JABBER_SERVER, JABBER_PORT, JABBER_USERNAME, JABBER_PASSWORD, 'moodle', JABBER_SERVER);
 
         try {
             $conn->connect();
@@ -82,7 +83,7 @@ class message_output_jabber extends message_output {
      * @param object $mform preferences form class
      */
     function config_form($preferences){
-        return get_string('pluginname', 'message_jabber').': <input size="30" name="jabber_jabberid" value="'.$preferences->jabber_jabberid.'" />';
+        return get_string('jabberid', 'message_jabber').': <input size="30" name="jabber_jabberid" value="'.$preferences->jabber_jabberid.'" />';
     }
 
     /**
