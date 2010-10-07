@@ -685,6 +685,7 @@ class resource_file extends resource_base {
 
         if (isset($defaults['options']) and $defaults['options'] === 'forcedownload') {
             $defaults['forcedownload'] = 1;
+            $defaults['windowpopup'] = 0;
 
         } else if (!isset($defaults['popup'])) {
             // use form defaults
