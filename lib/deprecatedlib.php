@@ -511,6 +511,17 @@ function print_simple_box_end($return=false) {
 }
 
 /**
+ * Given some text this function converted any URLs it found into HTML links
+ *
+ * This core function has been replaced with filter_urltolink since Moodle 2.0
+ *
+ * @param string $text Passed in by reference. The string to be searched for urls.
+ */
+function convert_urls_into_links($text) {
+    debugging('convert_urls_into_links() has been deprecated and replaced by a new filter');
+}
+
+/**
  * deprecated - use clean_param($string, PARAM_FILE); instead
  * Check for bad characters ?
  *
