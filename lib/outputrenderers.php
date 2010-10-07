@@ -1314,7 +1314,7 @@ class core_renderer extends renderer_base {
      * @param string $text The text to be displayed for the link
      * @return string
      */
-    public function doc_link($path, $text) {
+    public function doc_link($path, $text = '') {
         global $CFG;
 
         $icon = $this->pix_icon('docs', $text, 'moodle', array('class'=>'iconhelp'));
