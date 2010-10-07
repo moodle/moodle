@@ -243,6 +243,7 @@ $string['closewindow'] = 'Close this window';
 $string['collapseall'] = 'Collapse all';
 $string['commentincontext'] = 'Find this comment in context';
 $string['comments'] = 'Comments';
+$string['commentsrequirelogin'] = 'You need to login to view the comments';
 $string['comparelanguage'] = 'Compare and edit current language';
 $string['complete'] = 'Complete';
 $string['completereport'] = 'Complete report';
@@ -312,9 +313,9 @@ $string['courseinfo'] = 'Course info';
 $string['coursemessage'] = 'Message course users';
 $string['coursenotaccessible'] = 'This course does not allow public access';
 $string['courselegacyfiles'] = 'Legacy course files';
-$string['courselegacyfiles_help'] = 'The Course Files area provides some backward compatibility with Moodle 1.9 and earlier.  All files in this area are always accessible to all participants in the course (whether you link to them or not) and there is no way to know where any of these files are being used in Moodle. 
+$string['courselegacyfiles_help'] = 'The Course Files area provides some backward compatibility with Moodle 1.9 and earlier.  All files in this area are always accessible to all participants in the course (whether you link to them or not) and there is no way to know where any of these files are being used in Moodle.
 
-If you use this area to store course files, you can expose yourself to a number of privacy and security issues, as well as experiencing missing files in backups, course imports and any time content is shared or re-used.  It is therefore recommended that you do not use this area unless you really know what you are doing.  
+If you use this area to store course files, you can expose yourself to a number of privacy and security issues, as well as experiencing missing files in backups, course imports and any time content is shared or re-used.  It is therefore recommended that you do not use this area unless you really know what you are doing.
 
 The link below provides more information about all this and will show you some better ways to manage files in Moodle 2.';
 $string['courselegacyfiles_link'] = 'coursefiles2';

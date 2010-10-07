@@ -29,18 +29,31 @@ list($context, $course, $cm) = get_context_info_array($contextid);
 $PAGE->set_context($context);
 $PAGE->set_url('/comment/comment_ajax.php');
 
-$action    = optional_param('action',    '', PARAM_ALPHA);
+$action = optional_param('action', '', PARAM_ALPHA);
 
-// XXX: display comments in frontpage without login
-if ($context->id != get_context_instance(CONTEXT_COURSE, SITEID)->id
-    or $action == 'add'
-    or $action == 'delete') {
-    $ignore_permission = false;
-    require_login($course, true, $cm);
-} else {
-    $ignore_permission = true;
+if (!confirm_sesskey()) {
+    $error = array('error'=>get_string('invalidsesskey'));
+    die(json_encode($error));
 }
-require_sesskey();
+
+if (!isloggedin()) {
+    // display comments on front page without permission check
+    if ($action == 'get') {
+        if ($context->id == get_context_instance(CONTEXT_COURSE, SITEID)->id) {
+            $ignore_permission = true;
+        } else {
+            // tell user to log in to view comments
+            $ignore_permission = false;
+            echo json_encode(array('error'=>'require_login'));
+            die;
+        }
+    } else {
+        // ignore request
+        die;
+    }
+} else {
+    $ignore_permission = false;
+}
 
 $area      = optional_param('area',      '', PARAM_ALPHAEXT);
 $client_id = optional_param('client_id', '', PARAM_RAW);

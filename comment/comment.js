@@ -138,6 +138,10 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                             }
                             var data = Y.JSON.parse(o.responseText);
                             if (data.error) {
+                                if (data.error == 'require_login') {
+                                    args.callback(id,data,p);
+                                    return true;
+                                }
                                 alert(data.error);
                                 return false;
                             } else {
@@ -193,6 +197,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                 var scope = this;
                 var container = Y.one('#comment-ctrl-'+this.client_id);
                 var params = {
+                    'action': 'get',
                     'page': page
                 };
                 this.request({
@@ -200,7 +205,9 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                     params: params,
                     callback: function(id, ret, args) {
                         var linktext = Y.one('#comment-link-text-'+scope.client_id);
-                        linktext.set('innerHTML', M.str.moodle.comments + ' ('+ret.count+')');
+                        if (ret.count) {
+                            linktext.set('innerHTML', M.str.moodle.comments + ' ('+ret.count+')');
+                        }
                         var container = Y.one('#comment-list-'+scope.client_id);
                         var pagination = Y.one('#comment-pagination-'+scope.client_id);
                         if (ret.pagination) {
@@ -209,7 +216,12 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                             //empty paging bar
                             pagination.set('innerHTML', '');
                         }
-                        var result = scope.render(ret.list);
+                        if (ret.error == 'require_login') {
+                            var result = {};
+                            result.html = M.str.moodle.commentsrequirelogin;
+                        } else {
+                            var result = scope.render(ret.list);
+                        }
                         container.set('innerHTML', result.html);
                         var img = Y.one('#comment-img-'+scope.client_id);
                         img.set('src', M.util.image_url('t/expanded', 'core'));

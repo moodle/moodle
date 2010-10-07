@@ -225,6 +225,7 @@ EOD;
         $PAGE->requires->string_for_js('addcomment', 'moodle');
         $PAGE->requires->string_for_js('deletecomment', 'moodle');
         $PAGE->requires->string_for_js('comments', 'moodle');
+        $PAGE->requires->string_for_js('commentsrequirelogin', 'moodle');
     }
 
     public function set_component($component) {
