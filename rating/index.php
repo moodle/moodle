@@ -79,7 +79,8 @@ $ratingoptions->sort = $sqlsort;
 $rm = new rating_manager();
 $ratings = $rm->get_all_ratings_for_item($ratingoptions);
 if (!$ratings) {
-    print_error('noresult', 'forum', '', format_string($itemid));
+    $msg = get_string('noratings','rating');
+    echo html_writer::tag('div', $msg, array('class'=>'mdl-align'));
 } else {
     $sortargs = "contextid=$contextid&amp;itemid=$itemid&amp;scaleid=$scaleid";
     if($popup) {
