@@ -98,6 +98,11 @@ foreach ($parts as $part) {
             // search for all images in gallery module CSS and serve them through the yui_image.php script
             $filecontent = preg_replace('/([a-z_-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/'.$bits[0].'/'.$bits[1].'/$1.$2', $filecontent);
         } else {
+            // First we need to remove relative paths to images. These are used by YUI modules to make use of global assets.
+            // I've added this as a separate regex so it can be easily removed once
+            // YUI standardise there CSS methods
+            $filecontent = preg_replace('#(\.\./\.\./\.\./\.\./assets/skins/sam/)?([a-z_-]+)\.(png|gif)#', '$2.$3', $filecontent);
+
             // search for all images in yui2 CSS and serve them through the yui_image.php script
             $filecontent = preg_replace('/([a-z_-]+)\.(png|gif)/', 'yui_image.php?file='.$version.'/$1.$2', $filecontent);
         }
