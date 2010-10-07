@@ -40,7 +40,7 @@ defined('MOODLE_INTERNAL') || die();
 //   <span lang="XX" class="multilang">one lang</span><span lang="YY" class="multilang">another language</span>
 
 class filter_multilang extends moodle_text_filter {
-    function filter($text) {
+    function filter($text, array $options = array()) {
         global $CFG;
 
         // [pj] I don't know about you but I find this new implementation funny :P

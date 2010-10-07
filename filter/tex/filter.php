@@ -105,7 +105,7 @@ function filter_text_image($imagefile, $tex= "", $height="", $width="", $align="
 }
 
 class filter_tex extends moodle_text_filter {
-    function filter ($text) {
+    function filter ($text, array $options = array()) {
 
         global $CFG, $DB;
 

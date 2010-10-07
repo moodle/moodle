@@ -92,7 +92,7 @@ function filter_algebra_image($imagefile, $tex= "", $height="", $width="", $alig
 }
 
 class filter_algebra extends moodle_text_filter {
-    function filter($text){
+    function filter($text, array $options = array()){
         global $CFG, $DB;
 
         /// Do a quick check using stripos to avoid unnecessary wor

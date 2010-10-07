@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
 // values are, see http://php.net/manual/en/function.tidy-get-config.php.
 
 class filter_tidy extends moodle_text_filter {
-    function filter($text) {
+    function filter($text, array $options = array()) {
 
     /// Configuration for tidy. Feel free to tune for your needs, e.g. to allow
     /// proprietary markup.

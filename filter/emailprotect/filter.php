@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * hides them using the Moodle obfuscate_text function.
  */
 class filter_emailprotect extends moodle_text_filter {
-    function filter($text) {
+    function filter($text, array $options = array()) {
     /// Do a quick check using stripos to avoid unnecessary work
         if (strpos($text, '@') === false) {
             return $text;

@@ -33,7 +33,7 @@ require_once($CFG->libdir.'/filelib.php');
 
 class filter_mediaplugin extends moodle_text_filter {
     private $eolas_fix_applied = false;
-    function filter($text) {
+    function filter($text, array $options = array()) {
         global $CFG, $PAGE;
         // You should never modify parameters passed to a method or function, it's BAD practice. Create a copy instead.
         // The reason is that you must always be able to refer to the original parameter that was passed.

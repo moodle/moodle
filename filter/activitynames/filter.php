@@ -35,7 +35,7 @@ class filter_activitynames extends moodle_text_filter {
     static $activitylist = null;
     static $cachedcourseid;
 
-    function filter($text) {
+    function filter($text, array $options = array()) {
         global $CFG, $COURSE, $DB;
 
         if (!$courseid = get_courseid_from_context($this->context)) {

@@ -52,7 +52,7 @@ class filter_censor extends moodle_text_filter {
         return $cap;
     }
 
-    function filter($text){
+    function filter($text, array $options = array()){
         static $words;
         global $CFG;
 

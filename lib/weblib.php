@@ -1036,7 +1036,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
             if (!$options['noclean']) {
                 $text = clean_text($text, FORMAT_HTML);
             }
-            $text = $filtermanager->filter_text($text, $context);
+            $text = $filtermanager->filter_text($text, $context, array('originalformat' => FORMAT_HTML));
             break;
 
         case FORMAT_PLAIN:
@@ -1062,7 +1062,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
             if (!$options['noclean']) {
                 $text = clean_text($text, FORMAT_HTML);
             }
-            $text = $filtermanager->filter_text($text, $context);
+            $text = $filtermanager->filter_text($text, $context, array('originalformat' => FORMAT_MARKDOWN));
             break;
 
         default:  // FORMAT_MOODLE or anything else
@@ -1070,7 +1070,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
             if (!$options['noclean']) {
                 $text = clean_text($text, FORMAT_HTML);
             }
-            $text = $filtermanager->filter_text($text, $context);
+            $text = $filtermanager->filter_text($text, $context, array('originalformat' => $format));
             break;
     }
 

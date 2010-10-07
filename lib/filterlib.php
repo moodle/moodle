@@ -148,11 +148,12 @@ class filter_manager {
      * @todo Document this function
      * @param string $text
      * @param array $filterchain
+     * @param array $options options passed to the filters
      * @return string $text
      */
-    protected function apply_filter_chain($text, $filterchain) {
+    protected function apply_filter_chain($text, $filterchain, array $options = array()) {
         foreach ($filterchain as $filter) {
-            $text = $filter->filter($text);
+            $text = $filter->filter($text, $options);
         }
         return $text;
     }
@@ -186,10 +187,11 @@ class filter_manager {
      *
      * @param string $text The text to filter
      * @param object $context
+     * @param array $options options passed to the filters
      * @return string resulting text
      */
-    public function filter_text($text, $context) {
-        $text = $this->apply_filter_chain($text, $this->get_text_filters($context));
+    public function filter_text($text, $context, array $options = array()) {
+        $text = $this->apply_filter_chain($text, $this->get_text_filters($context), $options);
         /// <nolink> tags removed for XHTML compatibility
         $text = str_replace(array('<nolink>', '</nolink>'), '', $text);
         return $text;
@@ -236,7 +238,7 @@ class null_filter_manager {
     /**
      * @return string
      */
-    public function filter_text($text, $context) {
+    public function filter_text($text, $context, $options) {
         return $text;
     }
 
@@ -285,11 +287,12 @@ class performance_measuring_filter_manager extends filter_manager {
     /**
      * @param string $text
      * @param object $context
+     * @param array $options options passed to the filters
      * @return mixed
      */
-    public function filter_text($text, $context) {
+    public function filter_text($text, $context, array $options = array()) {
         $this->textsfiltered++;
-        return parent::filter_text($text, $context);
+        return parent::filter_text($text, $context, $options);
     }
 
     /**
@@ -332,7 +335,7 @@ class performance_measuring_filter_manager extends filter_manager {
 abstract class moodle_text_filter {
     /** @var object The context we are in. */
     protected $context;
-    /** @var object Any local configuration for this filter in this context. */
+    /** @var array Any local configuration for this filter in this context. */
     protected $localconfig;
 
     /**
@@ -357,9 +360,10 @@ abstract class moodle_text_filter {
      * Override this function to actually implement the filtering.
      *
      * @param $text some HTML content.
+     * @param array $options options passed to the filters
      * @return the HTML content after the filtering has been applied.
      */
-    public abstract function filter($text);
+    public abstract function filter($text, array $options = array());
 }
 
 /**
@@ -391,9 +395,10 @@ class legacy_filter extends moodle_text_filter {
 
     /**
      * @param string $text
+     * @param array $options options - not supported for legacy filters
      * @return mixed
      */
-    public function filter($text) {
+    public function filter($text, array $options = array()) {
         if ($this->courseid) {
             // old filters are called only when inside courses
             return call_user_func($this->filterfunction, $this->courseid, $text);
