@@ -46,7 +46,9 @@ class filter_urltolink extends moodle_text_filter {
      */
     public function filter($text, array $options = array()) {
         if (!isset($options['originalformat'])) {
-            debugging('filter_urltolink requires originalformat option to be provided', DEBUG_DEVELOPER);
+            // if the format is not specified, we are probably called by {@see format_string()}
+            // in that case, it would be dangerous to replace URL with the link because it could
+            // be stripped. therefore, we do nothing
             return $text;
         }
         if (in_array($options['originalformat'], explode(',', $this->get_global_config('formats')))) {
