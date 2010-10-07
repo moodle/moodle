@@ -132,11 +132,15 @@ function message_send($eventdata) {
             $messageid = $savemessage->id;
             unset($savemessage->id);
 
+            //MDLSITE-1042 only the popup processor adds rows to message_working
+            //if the popup processor isnt selected messages will be marked read now and may not be seen
+            //For example, if the receiver has an incorrect email address configured or all processors deselected
+            //
             //if there is no more processors that want to process this we can move message to message_read
-            if ( $DB->count_records('message_working', array('unreadmessageid' => $messageid)) == 0){
-                $DB->insert_record('message_read', $savemessage);
-                $DB->delete_records('message', array('id' => $messageid));
-            }
+            //if ( $DB->count_records('message_working', array('unreadmessageid' => $messageid)) == 0){
+                //$DB->insert_record('message_read', $savemessage);
+                //$DB->delete_records('message', array('id' => $messageid));
+            //}
     }
 
     return true;
