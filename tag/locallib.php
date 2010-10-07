@@ -1,6 +1,7 @@
 <?php
 
-require_once('lib.php');
+require_once($CFG->dirroot.'/tag/lib.php');
+require_once($CFG->libdir.'/filelib.php');
 
 /**
  * locallib.php - moodle tag local library - output functions
