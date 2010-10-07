@@ -6040,7 +6040,8 @@ function print_plugin_tables() {
         'mediaplugin',
         'multilang',
         'tex',
-        'tidy');
+        'tidy',
+        'urltolink');
 
     $plugins_installed = array();
     $installed_mods = $DB->get_records('modules', null, 'name');
