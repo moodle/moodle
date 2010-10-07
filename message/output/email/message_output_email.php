@@ -38,7 +38,7 @@ class message_output_email extends message_output {
      * @param object $message the message to be sent
      */
     function send_message($message) {
-        global $DB;
+        global $DB, $SITE;
 
         $userto = $DB->get_record('user', array('id' => $message->useridto));
         $userfrom = $DB->get_record('user', array('id' => $message->useridfrom));
@@ -50,12 +50,20 @@ class message_output_email extends message_output {
             $userto->email = $usertoemailaddress;
         }
 
+        $emailtagline = get_string('emailtagline', 'message', $SITE->shortname);
+        if (!empty($message->fullmessage)) {
+            $message->fullmessage .= "\n\n---------------------------------------------------------------------\n".$emailtagline;
+        }
+        if (!empty($message->fullmessagehtml)) {
+            //$message->fullmessagehtml .= "<br /><br />---------------------------------------------------------------------<br />".$emailtagline;
+        }
+
         $result = email_to_user($userto, $userfrom,
             $message->subject, $message->fullmessage,
             $message->fullmessagehtml);
 
-        //return $result===true; //email_to_user() can return true, false or "emailstop"
-        return true;//do we want to report an error if email sending fails?
+        return $result===true; //email_to_user() can return true, false or "emailstop"
+        //return true;//do we want to report an error if email sending fails?
     }
 
     /**
