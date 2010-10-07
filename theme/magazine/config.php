@@ -35,6 +35,8 @@ $THEME->enable_dock = true;
 // Do you want to use the new navigation dock?
 ////////////////////////////////////////////////////
 
+$THEME->editor_sheets = array('editor');
+
 ////////////////////////////////////////////////////
 // An array of stylesheets to include within the
 // body of the editor.

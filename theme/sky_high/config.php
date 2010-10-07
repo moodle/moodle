@@ -79,7 +79,7 @@ $THEME->enable_dock = true;
 ////////////////////////////////////////////////////
 
 
-// $THEME->editor_sheets
+$THEME->editor_sheets = array('editor');
 
 ////////////////////////////////////////////////////
 // An array of stylesheets to include within the

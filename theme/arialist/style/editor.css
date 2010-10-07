@@ -1,0 +1,10 @@
+body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {
+    font-family: arial, verdana, sans-serif;
+    line-height: 1.5;
+    color: #333;
+}
+
+h2,h3,h4,h5,h6 {
+    color: #999;
+    font-weight: normal;
+}

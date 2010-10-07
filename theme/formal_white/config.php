@@ -166,3 +166,5 @@ $THEME->javascripts_footer = array('navigation');
  * Sets the function that will replace our settings within the CSS
  */
 $THEME->csspostprocess = 'formalwhite_process_css';
+
+$THEME->editor_sheets = array('editor');

@@ -161,3 +161,5 @@ $THEME->csspostprocess = 'splash_process_css';
 // Splash Theme Specific settings for Administrators to customise
 // css.
 ///////////////////////////////////////////////////////////////
+
+$THEME->editor_sheets = array('editor');
