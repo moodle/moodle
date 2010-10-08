@@ -269,7 +269,7 @@ class core_webservice_renderer extends plugin_renderer_base {
      * @return string html code
      */
     public function user_webservice_tokens_box($tokens, $userid, $documentation = false) {
-        global $CFG;
+        global $CFG, $DB;
 
         // display strings
         $stroperation = get_string('operation', 'webservice');
@@ -305,9 +305,7 @@ class core_webservice_renderer extends plugin_renderer_base {
                     $creator = $token->firstname . " " . $token->lastname;
                 } else {
                     //retrieve administrator name
-                    require_once($CFG->dirroot . '/user/lib.php');
-                    $creators = user_get_users_by_id(array($token->creatorid));
-                    $admincreator = $creators[$token->creatorid];
+                    $admincreator = $DB->get_record('user', array('id'=>$token->creatorid));
                     $creator = $admincreator->firstname . " " . $admincreator->lastname;
                     $reset = '';
                 }
@@ -325,13 +323,13 @@ class core_webservice_renderer extends plugin_renderer_base {
                 $row = array($token->token, $token->name, $validuntil, $creatoratag, $reset);
 
                 if ($documentation) {
-                    $doclink = new moodle_url('/webservice/wsdoc.php', 
+                    $doclink = new moodle_url('/webservice/wsdoc.php',
                             array('id' => $token->id, 'sesskey' => sesskey()));
                     $row[] = html_writer::tag('a', get_string('doc', 'webservice'),
                             array('href' => $doclink));
                 }
 
-                $table->data[] = $row;           
+                $table->data[] = $row;
             }
             $return .= html_writer::table($table);
         } else {
