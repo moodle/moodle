@@ -331,9 +331,9 @@ if ($hassiteconfig) {
     if (empty($CFG->enablewebservices)) {
         $temp->add(new admin_setting_heading('webservicesaredisabled', '', get_string('disabledwarning', 'webservice')));
     }
-    $url = new moodle_url('/webservice/wsdoc.php');
-    $atag =html_writer::start_tag('a', array('href' => $url)).get_string('documentation', 'webservice').html_writer::end_tag('a');
-    $temp->add(new admin_setting_configcheckbox('enablewsdocumentation', get_string('enablewsdocumentation', 'admin'), get_string('configenablewsdocumentation', 'admin', $atag), false));
+    $wsdoclink = $OUTPUT->doc_link('How_to_get_a_security_key');
+    $temp->add(new admin_setting_configcheckbox('enablewsdocumentation', get_string('enablewsdocumentation',
+                        'admin'), get_string('configenablewsdocumentation', 'admin', $wsdoclink), false));
     $ADMIN->add('webservicesettings', $temp);
     /// links to protocol pages
     $webservices_available = get_plugin_list('webservice');

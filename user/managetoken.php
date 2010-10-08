@@ -35,14 +35,13 @@ $PAGE->set_context($usercontext);
 $PAGE->set_url('/user/managetoken.php');
 $PAGE->set_title(get_string('securitykeys', 'webservice'));
 $PAGE->set_heading(get_string('securitykeys', 'webservice'));
-$PAGE->set_context(get_system_context());
 $PAGE->set_pagelayout('standard');
 
 $rsstokenboxhtml = $webservicetokenboxhtml = '';
 /// Manage user web service tokens
 if ( !is_siteadmin($USER->id)
     && !empty($CFG->enablewebservices)
-    && has_capability('moodle/webservice:createtoken', get_system_context() )) {
+    && has_capability('moodle/webservice:createtoken', $usercontext )) {
     require($CFG->dirroot.'/webservice/lib.php');
 
     $action  = optional_param('action', '', PARAM_ACTION);
@@ -67,7 +66,8 @@ if ( !is_siteadmin($USER->id)
     if (empty($resetconfirmation)) {
         $webservice->generate_user_ws_tokens($USER->id); //generate all token that need to be generated
         $tokens = $webservice->get_user_ws_tokens($USER->id);
-        $webservicetokenboxhtml =  $wsrenderer->user_webservice_tokens_box($tokens, $USER->id); //display the box for web service token
+        $webservicetokenboxhtml =  $wsrenderer->user_webservice_tokens_box($tokens, $USER->id, 
+                $CFG->enablewsdocumentation); //display the box for web service token
     }
 }
 

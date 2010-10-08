@@ -66,6 +66,7 @@ class external_service_form extends moodleform {
         $mform->addElement('advcheckbox', 'enabled', get_string('enabled', 'webservice'));
         $mform->addElement('advcheckbox', 'restrictedusers',
                 get_string('restrictedusers', 'webservice'));
+        $mform->addHelpButton('restrictedusers', 'restrictedusers', 'webservice');
 
         /// needed to select automatically the 'No required capability" option
         $currentcapabilityexist = false;

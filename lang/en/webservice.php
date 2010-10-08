@@ -57,6 +57,8 @@ $string['deleteservice'] = 'Delete the service: {$a->name} (id: {$a->id})';
 $string['deleteserviceconfirm'] = 'Deleting a service will also delete the tokens related to this service. Do you really want to delete external service "{$a}"?';
 $string['deletetokenconfirm'] = 'Do you really want to delete this web service token for <strong>{$a->user}</strong> on the service <strong>{$a->service}</strong>?';
 $string['disabledwarning'] = 'All web service protocols are disabled.  The "Enable web services" setting can be found in Advanced features.';
+$string['doc'] = 'Documentation';
+$string['docaccessrefused'] = 'You are not allowed to see the documentation for this token';
 $string['documentation'] = 'web service documentation';
 $string['editaservice'] = 'Edit service';
 $string['editservice'] = 'Edit the service: {$a->name} (id: {$a->id})';
@@ -111,7 +113,7 @@ $string['manageprotocols'] = 'Manage protocols';
 $string['managetokens'] = 'Manage tokens';
 $string['missingcaps'] = 'Missing capabilities.';
 $string['missingcaps_help'] = 'List of capabilities that the service functions require but that the user hasn\'t. You need to add these capabilities to this user in order to use the service.
-<br/><br/>Note: in rare case some of these "required" capabilities could depend of a function use case. For example \'moodle_role_get_enrolled_users\' function requires \'moodle/site:viewparticipants\' capability only for a site-wide request.';
+Note: in some cases, some of these "required" capabilities could depend of a use case. For example: moodle_role_get_enrolled_users() function requires \'moodle/site:viewparticipants\' capability only for a site-wide request.';
 $string['missingpassword'] = 'Missing password';
 $string['missingusername'] = 'Missing username';
 $string['nofunctions'] = 'This service has no functions.';
@@ -142,6 +144,8 @@ $string['restcode'] = 'REST';
 $string['restexception'] = 'REST';
 $string['restparam'] = 'REST (POST parameters)';
 $string['restrictedusers'] = 'Authorised users only';
+$string['restrictedusers_help'] = 'If this settings is disabled, any users with the \'moodle/webservice:createtoken\' capability will be able to generate a token for this service in their \'Security keys\' page.
+If this settings is enabled, you will choose which users can access this service. These users still need the \'moodle/webservice:createtoken\' capability to generate their own token in their \'Security keys\' page.';
 $string['securitykey'] = 'Security key (token)';
 $string['securitykeys'] = 'Security keys';
 $string['selectauthorisedusers'] = 'Select authorised users';
@@ -188,7 +192,7 @@ $string['wsauthnotenabled'] = 'The web service authentication plugin is disabled
 $string['wsclientdoc'] = 'Moodle web service client documentation';
 $string['wsdocumentation'] = 'Web service documentation';
 $string['wsdocumentationdisable'] = 'Web service documentation is disabled.';
-$string['wsdocumentationintro'] = 'Following is a listing of web service functions available for the username <b>{$a->username}</b>.<br/>To create a client we advise you to read the {$a->doclink}';
+$string['wsdocumentationintro'] = 'To create a client we advise you to read the {$a->doclink}';
 $string['wsdocumentationlogin'] = 'or enter your web service username and password:';
 $string['wspassword'] = 'Web service password';
 $string['wsusername'] = 'Web service username';

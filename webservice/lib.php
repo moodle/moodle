@@ -214,6 +214,16 @@ class webservice {
     }
 
     /**
+     * Return a token for a given id
+     * @param integer $tokenid
+     * @return object token
+     */
+    public function get_token_by_id($tokenid) {
+        global $DB;
+        return $DB->get_record('external_tokens', array('id' => $tokenid));
+    }
+
+    /**
      * Delete a user token
      * @param int $tokenid
      */

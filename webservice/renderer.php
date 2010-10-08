@@ -174,7 +174,7 @@ class core_webservice_renderer extends plugin_renderer_base {
                         get_string('cancel'), 'get');
         return $this->output->confirm(get_string('deletetokenconfirm', 'webservice',
                         (object) array('user' => $token->firstname . " "
-                    . $token->lastname, 'service' => $token->name)),
+                            . $token->lastname, 'service' => $token->name)),
                 $formcontinue, $formcancel);
     }
 
@@ -257,7 +257,7 @@ class core_webservice_renderer extends plugin_renderer_base {
                         get_string('cancel'), 'get');
         $html = $this->output->confirm(get_string('resettokenconfirm', 'webservice',
                                 (object) array('user' => $token->firstname . " " .
-                            $token->lastname, 'service' => $token->name)),
+                                    $token->lastname, 'service' => $token->name)),
                         $formcontinue, $formcancel);
         return $html;
     }
@@ -268,7 +268,7 @@ class core_webservice_renderer extends plugin_renderer_base {
      * @param int $userid
      * @return string html code
      */
-    public function user_webservice_tokens_box($tokens, $userid) {
+    public function user_webservice_tokens_box($tokens, $userid, $documentation = false) {
         global $CFG;
 
         // display strings
@@ -290,9 +290,13 @@ class core_webservice_renderer extends plugin_renderer_base {
         $table->width = '100%';
         $table->data = array();
 
+        if ($documentation) {
+            $table->head[] = get_string('doc', 'webservice');
+            $table->align[] = 'center';
+        }
+
         if (!empty($tokens)) {
             foreach ($tokens as $token) {
-                //TODO: retrieve context
 
                 if ($token->creatorid == $userid) {
                     $reset = "<a href=\"" . $CFG->wwwroot . "/user/managetoken.php?sesskey="
@@ -300,7 +304,7 @@ class core_webservice_renderer extends plugin_renderer_base {
                     $reset .= get_string('reset') . "</a>";
                     $creator = $token->firstname . " " . $token->lastname;
                 } else {
-                    //retrive administrator name
+                    //retrieve administrator name
                     require_once($CFG->dirroot . '/user/lib.php');
                     $creators = user_get_users_by_id(array($token->creatorid));
                     $admincreator = $creators[$token->creatorid];
@@ -318,7 +322,16 @@ class core_webservice_renderer extends plugin_renderer_base {
                     $validuntil = date("F j, Y"); //TODO: language support (look for moodle function)
                 }
 
-                $table->data[] = array($token->token, $token->name, $validuntil, $creatoratag, $reset);
+                $row = array($token->token, $token->name, $validuntil, $creatoratag, $reset);
+
+                if ($documentation) {
+                    $doclink = new moodle_url('/webservice/wsdoc.php', 
+                            array('id' => $token->id, 'sesskey' => sesskey()));
+                    $row[] = html_writer::tag('a', get_string('doc', 'webservice'),
+                            array('href' => $doclink));
+                }
+
+                $table->data[] = $row;           
             }
             $return .= html_writer::table($table);
         } else {
@@ -521,7 +534,7 @@ EOF;
      */
     public function colored_box_with_pre_tag($title, $content, $rgb = 'FEEBE5') {
         //TODO: this tag removes xhtml strict error but cause warning
-        $coloredbox = html_writer::start_tag('ins', array()); 
+        $coloredbox = html_writer::start_tag('ins', array());
         $coloredbox .= html_writer::start_tag('div',
                         array('style' => "border:solid 1px #DEDEDE;background:#" . $rgb
                             . ";color:#222222;padding:4px;"));
@@ -584,12 +597,15 @@ EOF;
     /**
      * This display all the documentation
      * @param array $functions contains all decription objects
-     * @param array $authparam keys are either 'username'/'password' or 'token'
+     * @param array $authparam keys contains 'tokenid'
      * @param boolean $printableformat true if we want to display the documentation in a printable format
      * @param array $activatedprotocol
      * @return string the html to diplay
      */
     public function documentation_html($functions, $printableformat, $activatedprotocol, $authparams) {
+
+        $documentationhtml = $this->output->heading(get_string('documentation', 'webservice'));
+
         $br = html_writer::empty_tag('br', array());
         $brakeline = <<<EOF
 
@@ -597,11 +613,10 @@ EOF;
 EOF;
         /// Some general information
         $docinfo = new stdClass();
-        $docinfo->username = $authparams['wsusername'];
         $docurl = new moodle_url('http://docs.moodle.org/en/Development:Creating_a_web_service_client');
         $docinfo->doclink = html_writer::tag('a',
                         get_string('wsclientdoc', 'webservice'), array('href' => $docurl));
-        $documentationhtml = html_writer::start_tag('table',
+        $documentationhtml .= html_writer::start_tag('table',
                         array('style' => "margin-left:auto; margin-right:auto;"));
         $documentationhtml .= html_writer::start_tag('tr', array());
         $documentationhtml .= html_writer::start_tag('td', array());
@@ -776,52 +791,6 @@ EOF;
         $documentationhtml .= html_writer::end_tag('table');
 
         return $documentationhtml;
-    }
-
-    /**
-     * Return the login page html
-     * @param string $errormessage - the error message to display
-     * @return string the html to diplay
-     */
-    public function login_page_html($errormessage) {
-        $br = html_writer::empty_tag('br', array());
-
-        $htmlloginpage = html_writer::start_tag('table',
-                        array('style' => "margin-left:auto; margin-right:auto;"));
-        $htmlloginpage .= html_writer::start_tag('tr', array());
-        $htmlloginpage .= html_writer::start_tag('td', array());
-
-        //login form - we cannot use moodle form as we don't have sessionkey
-        $target = new moodle_url('/webservice/wsdoc.php', array()); // Required
-
-        $contents = get_string('entertoken', 'webservice');
-        $contents .= $br . $br;
-        $contents .= html_writer::empty_tag('input',
-                        array('type' => 'text', 'name' => 'token', 'style' => 'width: 30em;'));
-
-        $contents .= $br . $br;
-        $contents .= get_string('wsdocumentationlogin', 'webservice');
-        $contents .= $br . $br;
-        $contents .= html_writer::empty_tag('input',
-                        array('type' => 'text', 'name' => 'wsusername', 'style' => 'width: 30em;',
-                            'value' => get_string('wsusername', 'webservice')));
-        $contents .= $br . $br;
-        $contents .= html_writer::empty_tag('input',
-                        array('type' => 'text', 'name' => 'wspassword', 'style' => 'width: 30em;',
-                            'value' => get_string('wspassword', 'webservice')));
-        $contents .= $br . $br;
-        $contents .= html_writer::empty_tag('input',
-                        array('type' => 'submit', 'name' => 'submit',
-                            'value' => get_string('wsdocumentation', 'webservice')));
-
-        $htmlloginpage .= html_writer::tag('form', "<div>$contents</div>",
-                        array('method' => 'post', 'target' => $target));
-
-        $htmlloginpage .= html_writer::end_tag('td');
-        $htmlloginpage .= html_writer::end_tag('tr');
-        $htmlloginpage .= html_writer::end_tag('table');
-
-        return $htmlloginpage;
     }
 
 }
