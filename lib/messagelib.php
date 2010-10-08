@@ -76,6 +76,8 @@ function message_send($eventdata) {
     $savemessage->fullmessageformat = $eventdata->fullmessageformat;
     $savemessage->fullmessagehtml   = $eventdata->fullmessagehtml;
     $savemessage->smallmessage      = $eventdata->smallmessage;
+    $savemessage->footer            = $eventdata->footer;
+    $savemessage->footerhtml        = $eventdata->footerhtml;
     $savemessage->timecreated       = time();
 
     // Find out what processors are defined currently
@@ -95,17 +97,13 @@ function message_send($eventdata) {
         }
     }
 
-    // if we are supposed to do something with this message
-    // No processor for this message, mark it as read
-    if ($processor == "") {  //this user cleared all the preferences
-        $savemessage->timeread = time();
-        $DB->insert_record('message_read', $savemessage);
-
+    if ($processor == "") {
+        //if the have deselected all processors just leave the message unread
     } else {                        // Process the message
-    /// Store unread message just in case we can not send it
+        // Store unread message just in case we can not send it
         $savemessage->id = $DB->insert_record('message', $savemessage);
 
-    /// Try to deliver the message to each processor
+        // Try to deliver the message to each processor
         $processorlist = explode(',', $processor);
         foreach ($processorlist as $procname) {
             $processorfile = $CFG->dirroot. '/message/output/'.$procname.'/message_output_'.$procname.'.php';
@@ -128,19 +126,15 @@ function message_send($eventdata) {
             }
         }
 
-            $savemessage->timeread = time();
-            $messageid = $savemessage->id;
-            unset($savemessage->id);
+        //$messageid = $savemessage->id;
+        //unset($savemessage->id);
 
-            //MDLSITE-1042 only the popup processor adds rows to message_working
-            //if the popup processor isnt selected messages will be marked read now and may not be seen
-            //For example, if the receiver has an incorrect email address configured or all processors deselected
-            //
-            //if there is no more processors that want to process this we can move message to message_read
-            //if ( $DB->count_records('message_working', array('unreadmessageid' => $messageid)) == 0){
-                //$DB->insert_record('message_read', $savemessage);
-                //$DB->delete_records('message', array('id' => $messageid));
-            //}
+        //if there is no more processors that want to process this we can move message to message_read
+        if ( $DB->count_records('message_working', array('unreadmessageid' => $savemessage->id)) == 0){
+            //$DB->insert_record('message_read', $savemessage);
+            //$DB->delete_records('message', array('id' => $messageid));
+            message_mark_message_read($savemessage, time(), true);
+        }
     }
 
     return true;
