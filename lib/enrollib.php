@@ -1431,11 +1431,11 @@ abstract class enrol_plugin {
 
         $sql = "SELECT e.*
                   FROM {enrol} e
-                  JOIN {user_enrolments} ue ON (ue.courseid = e.courseid)
-                 WHERE e.enrol = :meta AND ue.userid = :userid";
+                  JOIN {user_enrolments} ue ON (ue.enrolid = e.id)
+                 WHERE e.enrol = :name AND ue.userid = :userid";
         $params = array('name'=>$this->get_name(), 'userid'=>$user->id);
 
-        $rs = $DB->get_records_recordset($sql, $params);
+        $rs = $DB->get_recordset_sql($sql, $params);
         foreach($rs as $instance) {
             $this->unenrol_user($instance, $user->id);
         }

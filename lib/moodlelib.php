@@ -3521,12 +3521,26 @@ function delete_user($user) {
     require_once($CFG->libdir.'/grouplib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/message/lib.php');
+    require_once($CFG->dirroot.'/tag/lib.php');
 
     // delete all grades - backup is kept in grade_grades_history table
     grade_user_delete($user->id);
 
     //move unread messages from this user to read
     message_move_userfrom_unread2read($user->id);
+
+    // TODO: remove from cohorts using standard API here
+
+    // remove user tags
+    tag_set('user', $user->id, array());
+
+    // unconditionally unenrol from all courses
+    enrol_user_delete($user);
+
+    // unenrol from all roles in all contexts
+    role_unassign_all(array('userid'=>$user->id)); // this might be slow but it is really needed - modules might do some extra cleanup!
+
+    //now do a brute force cleanup
 
     // remove from all cohorts
     $DB->delete_records('cohort_members', array('userid'=>$user->id));
@@ -3546,11 +3560,8 @@ function delete_user($user) {
     // last course access not necessary either
     $DB->delete_records('user_lastaccess', array('userid'=>$user->id));
 
-    // final accesslib cleanup - removes all role assignments in user context and context itself, files, etc.
+    // now do a final accesslib cleanup - removes all role assignments in user context and context itself
     delete_context(CONTEXT_USER, $user->id);
-
-    require_once($CFG->dirroot.'/tag/lib.php');
-    tag_set('user', $user->id, array());
 
     // workaround for bulk deletes of users with the same email address
     $delname = "$user->email.".time();
