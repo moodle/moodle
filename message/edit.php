@@ -207,7 +207,7 @@ foreach ( $providers as $providerid => $provider){
 
     echo '<tr><th align="right">'.$providername.'</th><td colspan="'.$number_procs.'"></td></tr>'."\n";
     foreach (array('loggedin', 'loggedoff') as $state){
-        $state_res = get_string($state, 'message');
+        $state_res = get_string($state.'description', 'message');
         echo '<tr><td align="right">'.$state_res.'</td>'."\n";
         foreach ( $processors as $processorid => $processor) {
             if (!isset($preferences->{$provider->component.'_'.$provider->name.'_'.$state})) {
