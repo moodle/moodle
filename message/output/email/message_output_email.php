@@ -50,17 +50,19 @@ class message_output_email extends message_output {
             $userto->email = $usertoemailaddress;
         }
 
-        $emailtagline = get_string('emailtagline', 'message', $SITE->shortname);
+        //concatenating the footer on here so that it appears on emails but not within the saved message
+        $messagetosend = null;
         if (!empty($message->fullmessage)) {
-            $message->fullmessage .= "\n\n---------------------------------------------------------------------\n".$emailtagline;
+            $messagetosend = $message->fullmessage.$message->footer;
         }
+
+        $messagetosendhtml = null;
         if (!empty($message->fullmessagehtml)) {
-            //$message->fullmessagehtml .= "<br /><br />---------------------------------------------------------------------<br />".$emailtagline;
+            $messagetosendhtml = $message->fullmessagehtml.$message->footerhtml;
         }
 
         $result = email_to_user($userto, $userfrom,
-            $message->subject, $message->fullmessage,
-            $message->fullmessagehtml);
+            $message->subject, $messagetosend, $messagetosendhtml);
 
         return $result===true; //email_to_user() can return true, false or "emailstop"
         //return true;//do we want to report an error if email sending fails?

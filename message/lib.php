@@ -1508,6 +1508,8 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
  * via other means if appropriate.
  */
 function message_post_message($userfrom, $userto, $message, $format, $messagetype) {
+    global $SITE, $CFG, $USER;
+    
     $eventdata = new stdClass();
     $eventdata->component        = 'moodle';
     $eventdata->name             = 'instantmessage';
@@ -1518,6 +1520,15 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     $eventdata->fullmessageformat = $format;
     $eventdata->fullmessagehtml  = '';
     $eventdata->smallmessage     = '';
+
+    $s = new stdClass();
+    $s->sitename = $SITE->shortname;
+    $s->url = $CFG->wwwroot.'/message/index.php?id='.$userfrom->id;//.'&user='.$userto->id;
+
+    $emailtagline = get_string('emailtagline', 'message', $s);
+    $eventdata->footer = "\n\n---------------------------------------------------------------------\n".$emailtagline;
+    $eventdata->footerhtml = "<br /><br />---------------------------------------------------------------------<br />".$emailtagline;
+    
     $eventdata->timecreated     = time();
     return message_send($eventdata);
 }

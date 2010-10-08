@@ -73,25 +73,6 @@ if ($unblockcontact !== 0) {
 
 $PAGE->set_url($url);
 
-/// Process any contact maintenance requests there may be
-if ($addcontact and confirm_sesskey()) {
-    add_to_log(SITEID, 'message', 'add contact', 'history.php?user1='.$addcontact.'&amp;user2='.$USER->id, $addcontact);
-    message_add_contact($addcontact);
-    redirect($CFG->wwwroot . '/message/index.php?usergroup=contacts&id='.$addcontact);
-}
-if ($removecontact and confirm_sesskey()) {
-    add_to_log(SITEID, 'message', 'remove contact', 'history.php?user1='.$removecontact.'&amp;user2='.$USER->id, $removecontact);
-    message_remove_contact($removecontact);
-}
-if ($blockcontact and confirm_sesskey()) {
-    add_to_log(SITEID, 'message', 'block contact', 'history.php?user1='.$blockcontact.'&amp;user2='.$USER->id, $blockcontact);
-    message_block_contact($blockcontact);
-}
-if ($unblockcontact and confirm_sesskey()) {
-    add_to_log(SITEID, 'message', 'unblock contact', 'history.php?user1='.$unblockcontact.'&amp;user2='.$USER->id, $unblockcontact);
-    message_unblock_contact($unblockcontact);
-}
-
 $PAGE->set_context(get_context_instance(CONTEXT_USER, $USER->id));
 $PAGE->navigation->extend_for_user($USER);
 $PAGE->set_pagelayout('course');
@@ -121,6 +102,30 @@ if (!empty($user2id)) {
     }
 }
 unset($user2id);
+
+//the current user isnt involved in this discussion at all
+if ($user1->id!=$USER->id && $user2->id!=$USER->id && !has_capability('moodle/site:readallmessages', $context)) {
+    print_error('accessdenied','admin');
+}
+
+/// Process any contact maintenance requests there may be
+if ($addcontact and confirm_sesskey()) {
+    add_to_log(SITEID, 'message', 'add contact', 'history.php?user1='.$addcontact.'&amp;user2='.$USER->id, $addcontact);
+    message_add_contact($addcontact);
+    redirect($CFG->wwwroot . '/message/index.php?usergroup=contacts&id='.$addcontact);
+}
+if ($removecontact and confirm_sesskey()) {
+    add_to_log(SITEID, 'message', 'remove contact', 'history.php?user1='.$removecontact.'&amp;user2='.$USER->id, $removecontact);
+    message_remove_contact($removecontact);
+}
+if ($blockcontact and confirm_sesskey()) {
+    add_to_log(SITEID, 'message', 'block contact', 'history.php?user1='.$blockcontact.'&amp;user2='.$USER->id, $blockcontact);
+    message_block_contact($blockcontact);
+}
+if ($unblockcontact and confirm_sesskey()) {
+    add_to_log(SITEID, 'message', 'unblock contact', 'history.php?user1='.$unblockcontact.'&amp;user2='.$USER->id, $unblockcontact);
+    message_unblock_contact($unblockcontact);
+}
 
 //was a message sent? Do NOT allow someone looking at someone else's messages to send them.
 $messageerror = null;
