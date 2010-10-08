@@ -76,9 +76,20 @@ function message_send($eventdata) {
     $savemessage->fullmessageformat = $eventdata->fullmessageformat;
     $savemessage->fullmessagehtml   = $eventdata->fullmessagehtml;
     $savemessage->smallmessage      = $eventdata->smallmessage;
-    $savemessage->footer            = $eventdata->footer;
-    $savemessage->footerhtml        = $eventdata->footerhtml;
-    $savemessage->timecreated       = time();
+
+    if (!empty($eventdata->footer)) {
+        $savemessage->footer = $eventdata->footer;
+    } else {
+        $savemessage->footer = null;
+    }
+
+    if (!empty($eventdata->footerhtml)) {
+        $savemessage->footerhtml = $eventdata->footerhtml;
+    } else {
+        $savemessage->footerhtml = null;
+    }
+    
+    $savemessage->timecreated = time();
 
     // Find out what processors are defined currently
     // When a user doesn't have settings none gets return, if he doesn't want contact "" gets returned
@@ -131,8 +142,7 @@ function message_send($eventdata) {
 
         //if there is no more processors that want to process this we can move message to message_read
         if ( $DB->count_records('message_working', array('unreadmessageid' => $savemessage->id)) == 0){
-            //$DB->insert_record('message_read', $savemessage);
-            //$DB->delete_records('message', array('id' => $messageid));
+            require_once($CFG->dirroot.'/message/lib.php');
             message_mark_message_read($savemessage, time(), true);
         }
     }
