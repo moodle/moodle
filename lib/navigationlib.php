@@ -2924,7 +2924,7 @@ class settings_navigation extends navigation_node {
             $availableroles = get_switchable_roles($coursecontext);
             if (is_array($availableroles)) {
                 foreach ($availableroles as $key=>$role) {
-                    if ($key == $CFG->guestroleid || $assumedrole===(int)$key) {
+                    if ($assumedrole===(int)$key) {
                         continue;
                     }
                     $roles[$key] = $role;
