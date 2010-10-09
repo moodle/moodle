@@ -2360,12 +2360,18 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
         return;
     }
 
-    // Check that the user has agreed to a site policy if there is one
-    if (!empty($CFG->sitepolicy)) {
-        if ($preventredirect) {
-            throw new require_login_exception('Policy not agreed');
-        }
-        if (!$USER->policyagreed) {
+    // Check that the user has agreed to a site policy if there is one - do not test in case of admins
+    if (!$USER->policyagreed and !is_siteadmin()) {
+        if (!empty($CFG->sitepolicy) and !isguestuser()) {
+            if ($preventredirect) {
+                throw new require_login_exception('Policy not agreed');
+            }
+            $SESSION->wantsurl = $FULLME;
+            redirect($CFG->wwwroot .'/user/policy.php');
+        } else if (!empty($CFG->sitepolicyguest) and isguestuser()) {
+            if ($preventredirect) {
+                throw new require_login_exception('Policy not agreed');
+            }
             $SESSION->wantsurl = $FULLME;
             redirect($CFG->wwwroot .'/user/policy.php');
         }
