@@ -246,12 +246,23 @@ if ($rolestring = get_user_roles_in_course($id, $course->id)) {
 
 // Show groups this user is in
 if (!isset($hiddenfields['groups'])) {
-    if ($course->groupmode != SEPARATEGROUPS or has_capability('moodle/site:accessallgroups', $coursecontext)) {
-        if ($usergroups = groups_get_all_groups($course->id, $user->id)) {
-            $groupstr = '';
-            foreach ($usergroups as $group){
-                $groupstr .= ' <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$group->id.'">'.format_string($group->name).'</a>,';
+    $accessallgroups = has_capability('moodle/site:accessallgroups', $coursecontext);
+    if ($usergroups = groups_get_all_groups($course->id, $user->id)) {
+        $groupstr = '';
+        foreach ($usergroups as $group){
+            if ($course->groupmode == SEPARATEGROUPS and !$accessallgroups and $user->id != $USER->id) {
+                if (!groups_is_member($group->id, $user->id)) {
+                    continue;
+                }
             }
+
+            if ($course->groupmode != NOGROUPS) {
+                $groupstr .= ' <a href="'.$CFG->wwwroot.'/user/index.php?id='.$course->id.'&amp;group='.$group->id.'">'.format_string($group->name).'</a>,';
+            } else {
+                $groupstr .= ' '.format_string($group->name); // the user/index.php shows groups only when course in group mode
+            }
+        }
+        if ($groupstr !== '') {
             print_row(get_string("group").":", rtrim($groupstr, ', '));
         }
     }
