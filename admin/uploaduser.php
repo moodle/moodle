@@ -499,6 +499,8 @@ if ($formdata = $mform->is_cancelled()) {
                 $usersupdated++;
                 // save custom profile fields data from csv file
                 profile_save_data($existinguser);
+
+                events_trigger('user_updated', $existinguser);
             }
 
             if ($bulk == 2 or $bulk == 3) {
@@ -563,6 +565,8 @@ if ($formdata = $mform->is_cancelled()) {
 
             // make sure user context exists
             get_context_instance(CONTEXT_USER, $user->id);
+
+            events_trigger('user_created', $user);
 
             if ($bulk == 1 or $bulk == 3) {
                 if (!in_array($user->id, $SESSION->bulk_users)) {
