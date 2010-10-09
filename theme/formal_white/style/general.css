@@ -19,8 +19,8 @@ img.iconhelp {vertical-align:middle;}
 #page-header .navbar a:visited {color:#fff;}
 #page-header .navbar .breadcrumb {margin:6px 1em;float:left;}
 #page-header .navbar .navbutton {float:right;margin:5px 1em;}
-
-#region-pre .region-content {background-color: #E3DFD4;}
+#region-pre .region-content{background-color:#E3DFD4;border-top:6px #E3DFD4 solid;}
+#region-pre {margin-top:-6px;}
 /*#region-post .region-content {background-color: #E3DFD4;}*/
 #region-post-box {background-color: #E3DFD4;}
 

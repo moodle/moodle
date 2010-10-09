@@ -99,6 +99,7 @@ body {
 	width: auto;
 	margin-right: 17px;
 	margin-left: 17px;
+    background-color: #FFF;
 }
 
 .shrinker { /* To keep content off of the background image */
