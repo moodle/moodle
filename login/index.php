@@ -29,6 +29,11 @@ require('../config.php');
 redirect_if_major_upgrade_required();
 
 $testcookies = optional_param('testcookies', 0, PARAM_BOOL); // request cookie test
+$cancel      = optional_param('cancel', 0, PARAM_BOOL);      // redirect to frontpage, needed for loginhttps
+
+if ($cancel) {
+    redirect(new moodle_url('/'));
+}
 
 //HTTPS is potentially required in this page
 httpsrequired();
@@ -306,13 +311,21 @@ foreach($authsequence as $authname) {
 $PAGE->set_title("$site->fullname: $loginsite");
 $PAGE->set_heading("$site->fullname");
 
+// make sure we are on the https page when https login required
+if (empty($CFG->sslproxy) and !empty($CFG->loginhttps)) {
+    if (strpos($FULLME, 'https:') !== 0) {
+        // this may lead to infinite redirect on misconfigured sites, in that case use $CFG->loginhttps=0; in /config.php 
+        redirect(get_login_url());
+    }
+}
+
 echo $OUTPUT->header();
 
 if (isloggedin() and !isguestuser()) {
     // prevent logging when already logged in, we do not want them to relogin by accident because sesskey would be changed
     echo $OUTPUT->box_start();
-    $logout = new single_button(new moodle_url('/login/logout.php', array('sesskey'=>sesskey(),'loginpage'=>1)), get_string('logout'), 'post');
-    $continue = new single_button(new moodle_url('/', array()), get_string('cancel'), 'get');
+    $logout = new single_button(new moodle_url($CFG->httpswwwroot.'/login/logout.php', array('sesskey'=>sesskey(),'loginpage'=>1)), get_string('logout'), 'post');
+    $continue = new single_button(new moodle_url($CFG->httpswwwroot.'/login/index.php', array('cancel'=>1)), get_string('cancel'), 'get');
     echo $OUTPUT->confirm(get_string('alreadyloggedin', 'error', fullname($USER)), $logout, $continue);
     echo $OUTPUT->box_end();
 } else {
