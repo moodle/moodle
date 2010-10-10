@@ -172,8 +172,9 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
             die;
         }
 
-        if ($frm->password == 'changeme') {
-            //force the change
+        if ($user->auth === 'manual' and $frm->password === 'changeme') {
+            // force the change - this is deprecated and it makes sense only for manual auth,
+            // because most other plugins can not change password easily
             set_user_preference('auth_forcepasswordchange', true, $user->id);
         }
 
