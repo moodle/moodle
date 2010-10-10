@@ -1380,7 +1380,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             }
 
             if ($mod->modname == "label") {
-                echo "<span class=\"";
+                echo "<div class=\"";
                 if (!$mod->visible) {
                     echo 'dimmed_text';
                 } else {
@@ -1388,7 +1388,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
                 echo '">';
                 echo format_text($extra, FORMAT_HTML, $labelformatoptions);
-                echo "</span>";
+                echo "</div>";
                 if (!empty($CFG->enablegroupings) && !empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
                     if (!isset($groupings)) {
                         $groupings = groups_get_all_groupings($course->id);
