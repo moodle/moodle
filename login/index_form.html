@@ -11,7 +11,7 @@ if ($show_instructions) {
   if (($CFG->registerauth == 'email') || !empty($CFG->registerauth)) { ?>
       <div class="skiplinks"><a class="skip" href="signup.php"><?php print_string("tocreatenewaccount"); ?></a></div>
 <?php
-  } ?>       
+  } ?>
     <h2><?php print_string("returningtosite") ?></h2>
       <div class="subcontent loginsub">
         <div class="desc">
@@ -42,7 +42,6 @@ if ($show_instructions) {
             <div class="form-input">
               <input type="password" name="password" id="password" size="15" value="" />
               <input type="submit" id="loginbtn" value="<?php print_string("login") ?>" />
-              <input type="hidden" name="testcookies" value="1" />
               <div class="forgetpass"><a href="forgot_password.php"><?php print_string("forgotten") ?></a></div>
             </div>
             <div class="clearer"><!-- --></div>
@@ -59,7 +58,6 @@ if ($show_instructions) {
           <div class="guestform">
             <input type="hidden" name="username" value="guest" />
             <input type="hidden" name="password" value="guest" />
-            <input type="hidden" name="testcookies" value="1" />
             <input type="submit" value="<?php print_string("loginguest") ?>" />
           </div>
         </form>

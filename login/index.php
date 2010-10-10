@@ -28,7 +28,7 @@ require('../config.php');
 
 redirect_if_major_upgrade_required();
 
-$testcookies = optional_param('testcookies', 0, PARAM_BOOL); // request cookie test
+$testsession = optional_param('testsession', 0, PARAM_INT); // test session works properly
 $cancel      = optional_param('cancel', 0, PARAM_BOOL);      // redirect to frontpage, needed for loginhttps
 
 if ($cancel) {
@@ -46,6 +46,23 @@ $PAGE->set_pagelayout('login');
 /// Initialize variables
 $errormsg = '';
 $errorcode = 0;
+
+// login page requested session test
+if ($testsession) {
+    if ($testsession == $USER->id) {
+        if (isset($SESSION->wantsurl)) {
+            $urltogo = $SESSION->wantsurl;
+        } else {
+            $urltogo = $CFG->wwwroot.'/';
+        }
+        unset($SESSION->wantsurl);
+        redirect($urltogo);
+    } else {
+        // TODO: try to find out what is the exact reason why sessions do not work
+        $errormsg = get_string("cookiesnotenabled");
+        $errorcode = 1;
+    }
+}
 
 /// Check for timed out sessions
 if (!empty($SESSION->has_timed_out)) {
@@ -94,12 +111,7 @@ if ($user !== false or $frm !== false or $errormsg !== '') {
 
 /// Check if the user has actually submitted login data to us
 
-if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    // Login without cookie when test requested
-
-    $errormsg = get_string("cookiesnotenabled");
-    $errorcode = 1;
-
-} else if ($frm and isset($frm->username)) {                             // Login WITH cookies
+if ($frm and isset($frm->username)) {                             // Login WITH cookies
 
     $frm->username = trim(moodle_strtolower($frm->username));
 
@@ -168,7 +180,7 @@ if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    /
     /// Let's get them all set up.
         add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID,
                    $user->id, 0, $user->id);
-        complete_user_login($user);
+        complete_user_login($user, true); // sets the username cookie
 
     /// Prepare redirection
         if (user_not_fully_set_up($USER)) {
@@ -223,9 +235,9 @@ if (empty($CFG->usesid) and $testcookies and (get_moodle_cookie() == '')) {    /
 
         reset_login_count();
 
-        redirect($urltogo);
-
-        exit;
+        // test the session actually works by redirecting to self
+        $SESSION->wantsurl = $urltogo;
+        redirect(new moodle_url(get_login_url(), array('testsession'=>$USER->id)));
 
     } else {
         if (empty($errormsg)) {
@@ -277,10 +289,6 @@ if (!empty($CFG->alternateloginurl)) {
 $PAGE->verify_https_required();
 
 /// Generate the login page with forms
-
-if (get_moodle_cookie() == '') {
-    set_moodle_cookie('nobody');   // To help search for cookies
-}
 
 if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 5184
     if (!empty($_GET["username"])) {

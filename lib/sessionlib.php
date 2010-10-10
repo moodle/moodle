@@ -812,38 +812,38 @@ function require_sesskey() {
 }
 
 /**
- * Sets a moodle cookie with a weakly encrypted string
+ * Sets a moodle cookie with a weakly encrypted username
  *
- * @uses $CFG
- * @uses DAYSECS
- * @uses HOURSECS
- * @param string $thing The string to encrypt and place in a cookie
+ * @param string $username to encrypt and place in a cookie, '' means delete current cookie
+ * @return void
  */
-function set_moodle_cookie($thing) {
+function set_moodle_cookie($username) {
     global $CFG;
 
     if (NO_MOODLE_COOKIES) {
         return;
     }
 
-    if ($thing == 'guest') {  // Ignore guest account
+    if ($username === 'guest') {
+        // keep previous cookie in case of guest account login
         return;
     }
 
     $cookiename = 'MOODLEID_'.$CFG->sessioncookie;
 
-    $days = 60;
-    $seconds = DAYSECS*$days;
-
+    // delete old cookie
     setcookie($cookiename, '', time() - HOURSECS, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
-    setcookie($cookiename, rc4encrypt($thing), time()+$seconds, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
+
+    if ($username !== '') {
+        // set username cookie for 60 days
+        setcookie($cookiename, rc4encrypt($username), time()+(DAYSECS*60), $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
+    }
 }
 
 /**
- * Gets a moodle cookie with a weakly encrypted string
+ * Gets a moodle cookie with a weakly encrypted username
  *
- * @uses $CFG
- * @return string
+ * @return string username
  */
 function get_moodle_cookie() {
     global $CFG;
@@ -857,8 +857,12 @@ function get_moodle_cookie() {
     if (empty($_COOKIE[$cookiename])) {
         return '';
     } else {
-        $thing = rc4decrypt($_COOKIE[$cookiename]);
-        return ($thing == 'guest') ? '': $thing;  // Ignore guest account
+        $username = rc4decrypt($_COOKIE[$cookiename]);
+        if ($username === 'guest' or $username === 'nobody') {
+            // backwards compatibility - we do not set these cookies any more
+            return '';
+        }
+        return $username;
     }
 }
 

@@ -3764,7 +3764,7 @@ function complete_user_login($user, $setcookie=true) {
             // do not store last logged in user in cookie
             // auth plugins can temporarily override this from loginpage_hook()
             // do not save $CFG->nolastloggedin in database!
-            set_moodle_cookie('nobody');
+            set_moodle_cookie('');
         }
     }
 

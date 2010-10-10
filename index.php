@@ -63,10 +63,6 @@
         }
     }
 
-    if (get_moodle_cookie() == '') {
-        set_moodle_cookie('nobody');   // To help search for cookies on login page
-    }
-
     if (isloggedin()) {
         add_to_log(SITEID, 'course', 'view', 'view.php?id='.SITEID, SITEID);
     }
