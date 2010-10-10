@@ -75,6 +75,19 @@ function filter_text($text, $courseid = NULL) {
 }
 
 /**
+ * This function indicates that current page requires the https
+ * when $CFG->loginhttps enabled.
+ *
+ * By using this function properly, we can ensure 100% https-ized pages
+ * at our entire discretion (login, forgot_password, change_password)
+ * @deprecated use $PAGE->https_required() instead
+ */
+function httpsrequired() {
+    global $PAGE;
+    $PAGE->https_required();
+}
+
+/**
  * Given a physical path to a file, returns the URL through which it can be reached in Moodle.
  *
  * @deprecated use moodle_url factory methods instead
@@ -85,7 +98,7 @@ function filter_text($text, $courseid = NULL) {
  * @return string URL to file
  */
 function get_file_url($path, $options=null, $type='coursefile') {
-    global $CFG, $HTTPSPAGEREQUIRED;
+    global $CFG;
 
     $path = str_replace('//', '/', $path);
     $path = trim($path, '/'); // no leading and trailing slashes

@@ -15,8 +15,8 @@
     }
 
 
-//HTTPS is potentially required in this page
-httpsrequired();
+//HTTPS is required in this page when $CFG->loginhttps enabled
+$PAGE->https_required();
 
 /// Define variables used in page
     $site = get_site();
@@ -69,7 +69,7 @@ httpsrequired();
     $PAGE->set_url('/auth/shibboleth/login.php');
     $PAGE->navbar->add($loginsite);
     $PAGE->set_title("$site->fullname: $loginsite");
-    $PAGE->set_heading($site->fullname);   
+    $PAGE->set_heading($site->fullname);
 
     echo $OUTPUT->header();
     include("index_form.html");

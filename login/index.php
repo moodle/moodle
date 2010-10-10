@@ -35,8 +35,8 @@ if ($cancel) {
     redirect(new moodle_url('/'));
 }
 
-//HTTPS is potentially required in this page
-httpsrequired();
+//HTTPS is required in this page when $CFG->loginhttps enabled
+$PAGE->https_required();
 
 $context = get_context_instance(CONTEXT_SYSTEM);
 $PAGE->set_url("$CFG->httpswwwroot/login/index.php");
@@ -273,6 +273,8 @@ if (!empty($CFG->alternateloginurl)) {
     redirect($loginurl);
 }
 
+// make sure we really are on the https page when https login required
+$PAGE->verify_https_required();
 
 /// Generate the login page with forms
 
@@ -310,14 +312,6 @@ foreach($authsequence as $authname) {
 
 $PAGE->set_title("$site->fullname: $loginsite");
 $PAGE->set_heading("$site->fullname");
-
-// make sure we are on the https page when https login required
-if (empty($CFG->sslproxy) and !empty($CFG->loginhttps)) {
-    if (strpos($FULLME, 'https:') !== 0) {
-        // this may lead to infinite redirect on misconfigured sites, in that case use $CFG->loginhttps=0; in /config.php 
-        redirect(get_login_url());
-    }
-}
 
 echo $OUTPUT->header();
 

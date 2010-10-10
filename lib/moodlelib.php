@@ -8622,19 +8622,6 @@ function address_in_subnet($addr, $subnetstr) {
 }
 
 /**
- * This function sets the $HTTPSPAGEREQUIRED global
- * (used in some parts of moodle to change some links)
- * and calculate the proper wwwroot to be used
- *
- * By using this function properly, we can ensure 100% https-ized pages
- * at our entire discretion (login, forgot_password, change_password)
- */
-function httpsrequired() {
-    global $PAGE;
-    $PAGE->https_required();
-}
-
-/**
  * For outputting debugging info
  *
  * @uses STDOUT

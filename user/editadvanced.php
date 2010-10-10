@@ -30,16 +30,13 @@ require_once($CFG->dirroot.'/user/editadvanced_form.php');
 require_once($CFG->dirroot.'/user/editlib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
 
-httpsrequired();
+//HTTPS is required in this page when $CFG->loginhttps enabled
+$PAGE->https_required();
 
 $id     = optional_param('id', $USER->id, PARAM_INT);    // user id; -1 if creating new user
 $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 
-$url = new moodle_url('/user/editadvanced.php', array('course'=>$course));
-if ($id !== $USER->id) {
-    $url->param('id', $id);
-}
-$PAGE->set_url($url);
+$PAGE->set_url('/user/editadvanced.php', array('course'=>$course, 'id'=>$id));
 
 $course = $DB->get_record('course', array('id'=>$course), '*', MUST_EXIST);
 
@@ -234,6 +231,9 @@ if ($usernew = $userform->get_data()) {
     }
     //never reached
 }
+
+// make sure we really are on the https page when https login required
+$PAGE->verify_https_required();
 
 
 /// Display page header

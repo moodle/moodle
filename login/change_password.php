@@ -29,17 +29,18 @@ require_once('change_password_form.php');
 
 $id = optional_param('id', SITEID, PARAM_INT); // current course
 
-$url = new moodle_url('/login/change_password.php');
+//HTTPS is required in this page when $CFG->loginhttps enabled
+$PAGE->https_required();
+
+$uparams = array();
 if ($id != SITEID) {
-    $url->param('id', $id);
+    $uparams['id'] = $id;
 }
-$PAGE->set_url($url);
+$PAGE->set_url('/login/change_password.php', $uparams);
+
 $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
 $strparticipants = get_string('participants');
-
-//HTTPS is potentially required in this page
-httpsrequired();
 
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
@@ -127,6 +128,8 @@ if ($mform->is_cancelled()) {
     exit;
 }
 
+// make sure we really are on the https page when https login required
+$PAGE->verify_https_required();
 
 $strchangepassword = get_string('changepassword');
 

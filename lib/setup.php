@@ -273,17 +273,6 @@ global $OUTPUT;
 global $MCACHE;
 
 /**
- * A global to define if the page being displayed must run under HTTPS.
- *
- * Its primary goal is to allow 100% HTTPS pages when $CFG->loginhttps is enabled. Default to false.
- * Its enabled only by the $PAGE->https_required() function and used in some pages to update some URLs
- *
- * @global bool $HTTPSPAGEREQUIRED
- * @name $HTTPSPAGEREQUIRED
- */
-global $HTTPSPAGEREQUIRED;
-
-/**
  * Full script path including all params, slash arguments, scheme and host.
  * @global string $FULLME
  * @name $FULLME

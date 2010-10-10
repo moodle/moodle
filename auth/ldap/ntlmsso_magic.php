@@ -8,8 +8,9 @@ define('NO_MOODLE_COOKIES', true);
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 
-// HTTPS is potentially required in this page
-httpsrequired();
+//HTTPS is required in this page when $CFG->loginhttps enabled
+$PAGE->https_required();
+
 $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
 $authsequence = get_enabled_auth_plugins(true); // auths, in sequence

@@ -32,10 +32,11 @@ require_once('forgot_password_form.php');
 $p_secret   = optional_param('p', false, PARAM_RAW);
 $p_username = optional_param('s', false, PARAM_RAW);
 
-httpsrequired();
+//HTTPS is required in this page when $CFG->loginhttps enabled
+$PAGE->https_required();
 
-$systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $PAGE->set_url('/login/forgot_password.php');
+$systemcontext = get_context_instance(CONTEXT_SYSTEM);
 $PAGE->set_context($systemcontext);
 
 // setup text strings
@@ -169,6 +170,9 @@ if ($mform->is_cancelled()) {
 
     die; // never reached
 }
+
+// make sure we really are on the https page when https login required
+$PAGE->verify_https_required();
 
 
 /// DISPLAY FORM
