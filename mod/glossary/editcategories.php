@@ -110,7 +110,6 @@ if ( $hook >0 ) {
             echo $OUTPUT->box_start('generalbox boxaligncenter errorboxcontent boxwidthnarrow');
             echo "<div>" . get_string("categorydeleted","glossary") ."</div>";
             echo $OUTPUT->box_end();
-            echo $OUTPUT->footer();
 
             add_to_log($course->id, "glossary", "delete category", "editcategories.php?id=$cm->id", $hook,$cm->id);
 
