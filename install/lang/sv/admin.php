@@ -28,5 +28,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'y';
+$string['cliincorrectvalueretry'] = 'Felaktigt värde, var snäll och försök igen';
+$string['clitypevalue'] = 'Värde för typ';
 $string['environmentrequireinstall'] = 'är nödvändig att installera/aktivera';
 $string['environmentrequireversion'] = 'version {$a->needed} är nödvändig och Du använder {$a->current}';
