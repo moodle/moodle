@@ -307,5 +307,16 @@ $PAGE->set_title("$site->fullname: $loginsite");
 $PAGE->set_heading("$site->fullname");
 
 echo $OUTPUT->header();
-include("index_form.html");
+
+if (isloggedin() and !isguestuser()) {
+    // prevent logging when already logged in, we do not want them to relogin by accident because sesskey would be changed
+    echo $OUTPUT->box_start();
+    $logout = new single_button(new moodle_url('/login/logout.php', array('sesskey'=>sesskey(),'loginpage'=>1)), get_string('logout'), 'post');
+    $continue = new single_button(new moodle_url('/', array()), get_string('cancel'), 'get');
+    echo $OUTPUT->confirm(get_string('alreadyloggedin', 'error', fullname($USER)), $logout, $continue);
+    echo $OUTPUT->box_end();
+} else {
+    include("index_form.html");
+}
+
 echo $OUTPUT->footer();
