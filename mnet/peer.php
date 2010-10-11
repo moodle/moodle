@@ -8,6 +8,8 @@
  * @package mnet
  */
 
+require_once($CFG->libdir . '/filelib.php'); // download_file_content() used here
+
 class mnet_peer {
 
     var $id                 = 0;
