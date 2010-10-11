@@ -32,5 +32,7 @@ $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
 $string['cliincorrectvalueretry'] = 'Felaktigt värde, var snäll och försök igen';
 $string['clitypevalue'] = 'Värde för typ';
+$string['cliunknowoption'] = 'Ej identifierade alternativ: {$a} Var snäll och använd alternativet Hjälp.';
+$string['cliyesnoprompt'] = 'skriv in y (betyder ja) eller n (betyder nej)';
 $string['environmentrequireinstall'] = 'är nödvändig att installera/aktivera';
 $string['environmentrequireversion'] = 'version {$a->needed} är nödvändig och Du använder {$a->current}';
