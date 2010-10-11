@@ -814,8 +814,11 @@ class assignment_base {
         /// Get all ppl that can submit assignments
 
         $currentgroup = groups_get_activity_group($cm);
-
-        $gradebookroles = explode(",", $CFG->gradebookroles);
+        if (!empty($CFG->gradebookroles)) {
+            $gradebookroles = explode(",", $CFG->gradebookroles);
+        } else {
+            $gradebookroles = '';
+        }
         $users = get_role_users($gradebookroles, $context, true, '', 'u.lastname ASC', true, $currentgroup);
         if ($users) {
             $users = array_keys($users);
@@ -1073,8 +1076,11 @@ class assignment_base {
         $groupmode = groups_get_activity_groupmode($cm);
         $currentgroup = groups_get_activity_group($cm, true);
         groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/assignment/submissions.php?id=' . $this->cm->id);
-
-        $gradebookroles = explode(",", $CFG->gradebookroles);
+        if (!empty($CFG->gradebookroles)) {
+            $gradebookroles = explode(",", $CFG->gradebookroles);
+        } else {
+            $gradebookroles = '';
+        }
         $users = get_role_users($gradebookroles, $context, true, '', 'u.lastname ASC', true, $currentgroup);
         if ($users) {
             $users = array_keys($users);
@@ -2783,7 +2789,11 @@ function assignment_count_real_submissions($cm, $groupid=0) {
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    $gradebookroles = explode(",", $CFG->gradebookroles);
+    if (!empty($CFG->gradebookroles)) {
+        $gradebookroles = explode(",", $CFG->gradebookroles);
+    } else {
+        $gradebookroles = '';
+    }
     $users = get_role_users($gradebookroles, $context, true, '', 'u.lastname ASC', true, $groupid);
     if ($users) {
         $users = array_keys($users);
@@ -3013,7 +3023,11 @@ function assignment_print_overview($courses, &$htmlarray) {
 
             // count how many people can submit
             $submissions = 0; // init
-            $gradebookroles = explode(",", $CFG->gradebookroles);
+            if (!empty($CFG->gradebookroles)) {
+                $gradebookroles = explode(",", $CFG->gradebookroles);
+            } else {
+                $gradebookroles = '';
+            }
             $students = get_role_users($gradebookroles, $context, true);
             if ($students) {
                 foreach($students as $student){
