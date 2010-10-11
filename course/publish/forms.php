@@ -156,7 +156,7 @@ class course_publication_form extends moodleform {
         } else {
             $defaultfullname = $course->fullname;
             $defaultshortname = $course->shortname;
-            $defaultsummary = $course->summary;
+            $defaultsummary = clean_param($course->summary, PARAM_TEXT);
             if (empty($course->lang)) {
                 $language = get_site()->lang;
                 if (empty($language)) {
