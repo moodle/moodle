@@ -35,9 +35,9 @@ function message_print_contacts() {
     $strangers       = array();
 
 
-    // get all in our contactlist who are not blocked in our contact list 
+    // get all in our contactlist who are not blocked in our contact list
     // and count messages we have waiting from each of them
-    $contactsql = "SELECT u.id, u.firstname, u.lastname, u.picture, 
+    $contactsql = "SELECT u.id, u.firstname, u.lastname, u.picture,
                           u.imagealt, u.lastaccess, count(m.id) as messagecount
                    FROM {$CFG->prefix}message_contacts mc
                    JOIN {$CFG->prefix}user u
@@ -46,7 +46,7 @@ function message_print_contacts() {
                       ON m.useridfrom = mc.contactid
                       AND m.useridto = {$USER->id}
                    WHERE mc.userid = {$USER->id}
-                         AND mc.blocked = 0 
+                         AND mc.blocked = 0
                    GROUP BY u.id, u.firstname, u.lastname, u.picture,
                             u.imagealt, u.lastaccess
                    ORDER BY u.firstname ASC";
@@ -68,15 +68,15 @@ function message_print_contacts() {
 
     // get messages from anyone who isn't in our contact list and count the number
     // of messages we have from each of them
-    $strangersql = "SELECT u.id, u.firstname, u.lastname, u.picture, 
+    $strangersql = "SELECT u.id, u.firstname, u.lastname, u.picture,
                            u.imagealt, u.lastaccess, count(m.id) as messagecount
                     FROM {$CFG->prefix}message m
-                    JOIN {$CFG->prefix}user u 
+                    JOIN {$CFG->prefix}user u
                         ON u.id = m.useridfrom
                     LEFT OUTER JOIN {$CFG->prefix}message_contacts mc
-                        ON mc.contactid = m.useridfrom AND 
+                        ON mc.contactid = m.useridfrom AND
                            mc.userid = m.useridto
-                    WHERE mc.id IS NULL AND m.useridto = {$USER->id} 
+                    WHERE mc.id IS NULL AND m.useridto = {$USER->id}
                     GROUP BY u.id, u.firstname, u.lastname, u.picture,
                              u.imagealt, u.lastaccess
                     ORDER BY u.firstname ASC";
@@ -462,8 +462,13 @@ function message_print_search_results($frm) {
                 echo '</td>';
                 echo '<td class="summary">'.message_get_fragment($message->message, $keywords);
                 echo '<br /><div class="link">';
-                message_history_link($message->useridto, $message->useridfrom, false,
-                                     $keywordstring, 'm'.$message->id, $strcontext);
+                if ($message->useridfrom == $USER->id) {
+                    message_history_link($message->useridto, $message->useridfrom, false,
+                                         $keywordstring, 'm'.$message->id, $strcontext);
+                } else {
+                    message_history_link($message->useridfrom, $message->useridto, false,
+                                         $keywordstring, 'm'.$message->id, $strcontext);
+                }
                 echo '</div>';
                 echo '</td>';
                 echo '<td class="date">'.userdate($message->timecreated, $dateformat).'</td>';
@@ -535,7 +540,7 @@ function message_contact_link($userid, $linktype='add', $return=false, $script="
 
     $command = $linktype.'contact';
     $string  = $str->{$command};
-    $alttext = $text ? '' : $string; 
+    $alttext = $text ? '' : $string;
     $text = $text ? '&nbsp;'.$string : '';
 
     switch ($linktype) {
@@ -652,7 +657,7 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
         return get_records_sql("SELECT $fields
                       FROM {$CFG->prefix}user u
                       LEFT OUTER JOIN {$CFG->prefix}message_contacts mc
-                      ON mc.contactid = u.id AND mc.userid = {$USER->id} 
+                      ON mc.contactid = u.id AND mc.userid = {$USER->id}
                       WHERE $select
                           AND ($fullname $LIKE '%$searchtext%')
                           $except $order");
@@ -667,7 +672,7 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
                                  JOIN {$CFG->prefix}role_assignments ra
                                  ON ra.userid = u.id
                                  LEFT OUTER JOIN {$CFG->prefix}message_contacts mc
-                                 ON mc.contactid = u.id AND mc.userid = {$USER->id} 
+                                 ON mc.contactid = u.id AND mc.userid = {$USER->id}
                                  WHERE $select
                                        AND ra.contextid $contextlists
                                        AND ($fullname $LIKE '%$searchtext%')
@@ -932,7 +937,7 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
 
 /// Set up current language to suit the receiver of the message
     $savelang = $USER->lang;
-    
+
     if (!empty($userto->lang)) {
         $USER->lang = $userto->lang;
     }
@@ -954,7 +959,7 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
         $emailforced = false;
     } else { // $CFG->messaging is not on, we need to force sending of emails
         $emailforced = true;
-        $savemessage->id = true; 
+        $savemessage->id = true;
     }
 
 /// Check to see if anything else needs to be done with it
@@ -1025,7 +1030,7 @@ function message_get_participants() {
 }
 
 /**
- * Print a row of contactlist displaying user picture, messages waiting and 
+ * Print a row of contactlist displaying user picture, messages waiting and
  * block links etc
  * @param $contact contact object containing all fields required for print_user_picture()
  * @param $incontactlist is the user a contact of ours?

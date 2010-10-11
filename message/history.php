@@ -1,12 +1,12 @@
 <?php // $Id$
       // For listing message histories between any two users
-      
+
     require('../config.php');
     require('lib.php');
 
     require_login();
 
-    if (isguest()) {
+    if (isguestuser()) {
         redirect($CFG->wwwroot);
     }
 
@@ -14,35 +14,40 @@
         error("Messaging is disabled on this site");
     }
 
-/// Script parameters
+    // We expect 2 users and by default user2 is the current user
     $userid1 = required_param('user1', PARAM_INT);
-    if (! $user1 = get_record("user", "id", $userid1)) {  // Check it's correct
+    $userid2 = optional_param('user2', $USER->id, PARAM_INT);
+    $search = optional_param('search', '', PARAM_CLEAN);
+
+    // Check if user1 is the current user, this should not occur but just incase
+    if ($userid1 == $USER->id) {
+        // user1 is the current user :(
+        $user1 = $USER;
+    } else if ($userid2 == $USER->id) {
+        // user2 is the current user
+        $user2 = $USER;
+    } else {
+        // Neither user is the current user, so check the user has the readallmessages
+        // capability
+        require_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM));
+    }
+    // Load user1 if it wasn't set above (only set if user1 is the current user)
+    if (!isset($user1) && !($user1 = get_record("user", "id", $userid1))) {
         error("User ID 1 was incorrect");
     }
+    // Load user2 if it wasn't set above (only set if user2 is the current user)
+    if (!isset($user2) && !($user2 = get_record("user", "id", $userid2))) {
+        error("User ID 2 was incorrect");
+    }
 
-    if ($user1->deleted) {
+    // If either user has been deleted then print a page that details that information
+    // we can't use print_error because this is in a popup and the continue button
+    // would cause mayhem
+    if ($user1->deleted || $user2->deleted) {
         print_header();
-        print_heading(get_string('userdeleted').': '.$userid1);
+        print_heading(get_string('userdeleted', 'moodle'));
         print_footer();
-        die;
     }
-
-    if (has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {             // Able to see any discussion
-        $userid2 = optional_param('user2', $USER->id, PARAM_INT);
-        if (! $user2 = get_record("user", "id", $userid2)) {  // Check
-            error("User ID 2 was incorrect");
-        }
-        if ($user2->deleted) {
-            print_header();
-            print_heading(get_string('userdeleted').': '.$userid2);
-            print_footer();
-            die;
-        }
-    } else {
-        $userid2 = $USER->id;    // Can only see messages involving yourself
-        $user2 = $USER; 
-    }
-    $search = optional_param('search', '', PARAM_CLEAN);
 
     add_to_log(SITEID, 'message', 'history', 'history.php?user1='.$userid1.'&amp;user2='.$userid2, $userid1);
 
