@@ -948,7 +948,6 @@ class assignment_base {
         /// Get all ppl that can submit assignments
 
         $currentgroup = groups_get_activity_group($cm);
-        $gradebookroles = explode(",", $CFG->gradebookroles);
         $users = get_enrolled_users($context, 'mod/assignment:view', $currentgroup, 'u.id');
         if ($users) {
             $users = array_keys($users);
