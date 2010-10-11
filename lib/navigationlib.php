@@ -979,11 +979,18 @@ class global_navigation extends navigation_node {
                 // Load the course associated with the page into the navigation
                 $course = $this->page->course;
                 $coursenode = $this->load_course($course);
+
+                // If the course wasn't added then don't try going any further.
+                if (!$coursenode) {
+                    $canviewcourseprofile = false;
+                    break;
+                }
+
                 // If the user is not enrolled then we only want to show the
                 // course node and not populate it.
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 // Not enrolled, can't view, and hasn't switched roles
-                if (!is_enrolled($coursecontext) && !has_capability('moodle/course:view', $coursecontext) && !is_role_switched($course->id)) {
+                if ((!is_enrolled($coursecontext) && !has_capability('moodle/course:view', $coursecontext) && !is_role_switched($course->id))) {
                     $coursenode->make_active();
                     $canviewcourseprofile = false;
                     break;
