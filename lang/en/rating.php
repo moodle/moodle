@@ -40,6 +40,7 @@ $string['aggregatetype_help'] = 'The aggregate type defines how ratings are comb
 
 If "No ratings" is selected, then the activity will not appear in the gradebook.';
 $string['allowratings'] = 'Allow items to be rated?';
+$string['allratingsforitem'] = 'All submitted ratings';
 $string['capabilitychecknotavailable'] = 'Capability check not available until activity is saved';
 $string['couldnotdeleteratings'] = 'Sorry, that cannot be deleted as people have already rated it';
 $string['norate'] = 'Rating of items not allowed!';
