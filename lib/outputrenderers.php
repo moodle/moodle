@@ -1704,7 +1704,9 @@ class core_renderer extends renderer_base {
 
         $icon = $this->pix_icon('help', get_string('scales'), 'moodle', array('class'=>'iconhelp'));
 
-        $link = new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scale->id));
+        $scaleid = abs($scale->id);
+
+        $link = new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => true, 'scaleid' => $scaleid));
         $action = new popup_action('click', $link, 'ratingscale');
 
         return html_writer::tag('span', $this->action_link($link, $icon, $action), array('class' => 'helplink'));
