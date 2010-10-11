@@ -34,33 +34,26 @@ $mode    = optional_param('mode', 'posts', PARAM_ALPHA);
 $page    = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 5, PARAM_INT);
 
-$url = new moodle_url('/mod/forum/user.php', array('course'=>$course));
+$url = new moodle_url('/mod/forum/user.php');
+if ($course !== SITEID) {
+    $url->param('course', $course);
+}
 if ($id !== 0) {
     $url->param('id', $id);
 }
 if ($mode !== 'posts') {
     $url->param('mode', $mode);
 }
-if ($page !== 0) {
-    $url->param('page', $page);
-}
-if ($perpage !== 5) {
-    $url->param('perpage', $perpage);
-}
 $PAGE->set_url($url);
+$PAGE->set_pagelayout('standard');
 
 if (empty($id)) {         // See your own profile by default
     require_login();
     $id = $USER->id;
 }
 
-if (! $user = $DB->get_record("user", array("id" => $id))) {
-    print_error('invaliduserid');
-}
-
-if (! $course = $DB->get_record("course", array("id" => $course))) {
-    print_error('invalidcourseid');
-}
+$user = $DB->get_record("user", array("id" => $id), '*', MUST_EXIST);
+$course = $DB->get_record("course", array("id" => $course), '*', MUST_EXIST);
 
 $syscontext = get_context_instance(CONTEXT_SYSTEM);
 $usercontext   = get_context_instance(CONTEXT_USER, $id);
@@ -68,6 +61,8 @@ $usercontext   = get_context_instance(CONTEXT_USER, $id);
 // do not force parents to enrol
 if (!$DB->get_record('role_assignments', array('userid' => $USER->id, 'contextid' => $usercontext->id))) {
     require_course_login($course);
+} else {
+    $PAGE->set_course($course);
 }
 
 if ($user->deleted) {
@@ -123,8 +118,7 @@ if ($course->id == SITEID) {
 }
 
 // Get the posts.
-if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $perpage,
-            $totalcount, $extrasql)) {
+if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $perpage, $totalcount, $extrasql)) {
 
     $baseurl = new moodle_url('user.php', array('id' => $user->id, 'course' => $course->id, 'mode' => $mode, 'perpage' => $perpage));
     echo $OUTPUT->paging_bar($totalcount, $page, $perpage, $baseurl);
@@ -165,9 +159,7 @@ if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $pe
         }
 
         if (!isset($cms[$forum->id])) {
-            if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
-                print_error('invalidcoursemodule');
-            }
+            $cm = get_coursemodule_from_instance('forum', $forum->id, 0, false, MUST_EXIST);
             $cms[$forum->id] = $cm;
             unset($cm); // do not use cm directly, it would break caching
         }
