@@ -36,12 +36,17 @@ if ($scaleid !== 0) {
 }
 $PAGE->set_url($url);
 
-if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error("invalidcourseid");
+$context = null;
+if ($course = $DB->get_record('course', array('id'=>$id))) {
+    require_login($course);
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+} else {
+    //$id will be 0 for site level scales
+    require_login();
+    $context = get_context_instance(CONTEXT_SYSTEM);
 }
 
-require_login($course);
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$PAGE->set_context($context);
 require_capability('moodle/course:viewscales', $context);
 
 $strscales = get_string("scales");
@@ -49,7 +54,11 @@ $strcustomscales = get_string("scalescustom");
 $strstandardscales = get_string("scalesstandard");
 
 $PAGE->set_title($strscales);
-$PAGE->set_heading($course->fullname);
+if (!empty($course)) {
+    $PAGE->set_heading($course->fullname);
+} else {
+    $PAGE->set_heading($SITE->fullname);
+}
 echo $OUTPUT->header();
 
 if ($scaleid) {
