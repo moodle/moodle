@@ -62,13 +62,11 @@ switch ($sort) {
 
 $scalemenu = make_grades_menu($scaleid);
 
-$strratings = get_string('ratings', 'rating');
 $strrating  = get_string('rating', 'rating');
 $strname    = get_string('name');
 $strtime    = get_string('time');
 
-//Is there something more meaningful we can put in the title? It used to be forum post title
-$PAGE->set_title("$strratings: ".format_string($itemid));
+$PAGE->set_title(get_string('allratingsforitem','rating'));
 echo $OUTPUT->header();
 
 $ratingoptions = new stdclass();
