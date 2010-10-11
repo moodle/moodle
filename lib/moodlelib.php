@@ -3629,18 +3629,18 @@ function guest_user() {
  * log that the user has logged in, and call complete_user_login() to set
  * the session up.
  *
- * @global object
- * @global object
+ * Note: this function works only with non-mnet accounts!
+ *
  * @param string $username  User's username
  * @param string $password  User's password
  * @return user|flase A {@link $USER} object or false if error
  */
 function authenticate_user_login($username, $password) {
-    global $CFG, $DB, $OUTPUT;
+    global $CFG, $DB;
 
     $authsenabled = get_enabled_auth_plugins();
 
-    if ($user = get_complete_user_data('username', $username)) {
+    if ($user = get_complete_user_data('username', $username, $CFG->mnet_localhost_id)) {
         $auth = empty($user->auth) ? 'manual' : $user->auth;  // use manual if auth not set
         if (!empty($user->suspended)) {
             add_to_log(0, 'login', 'error', 'index.php', $username);
@@ -3657,13 +3657,14 @@ function authenticate_user_login($username, $password) {
     } else {
         // check if there's a deleted record (cheaply)
         if ($DB->get_field('user', 'id', array('username'=>$username, 'deleted'=>1))) {
-            error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Deleted Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Deleted Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
         }
 
+        // User does not exist
         $auths = $authsenabled;
         $user = new stdClass();
-        $user->id = 0;     // User does not exist
+        $user->id = 0;
     }
 
     foreach ($auths as $auth) {
@@ -3732,15 +3733,12 @@ function authenticate_user_login($username, $password) {
  * NOTE:
  * - It will NOT log anything -- up to the caller to decide what to log.
  *
- * @global object
- * @global object
- * @global object
  * @param object $user
  * @param bool $setcookie
  * @return object A {@link $USER} object - BC only, do not use
  */
 function complete_user_login($user, $setcookie=true) {
-    global $CFG, $USER, $SESSION;
+    global $CFG, $USER;
 
     // regenerate session id and delete old session,
     // this helps prevent session fixation attacks from the same domain
@@ -3748,6 +3746,9 @@ function complete_user_login($user, $setcookie=true) {
 
     // check enrolments, load caps and setup $USER object
     session_set_user($user);
+
+    // clear the preferences and invalidate caches too
+    unset($USER->preference);
 
     update_user_login_times();
     set_login_session_preferences();
