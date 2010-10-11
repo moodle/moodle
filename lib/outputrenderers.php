@@ -1823,7 +1823,7 @@ class core_renderer extends renderer_base {
             $src = $this->pix_url('u/' . $file);
         }
 
-        $attributes = array('src'=>$src, 'alt'=>$alt, 'class'=>$class, 'width'=>$size, 'height'=>$size);
+        $attributes = array('src'=>$src, 'alt'=>$alt, 'title'=>$alt, 'class'=>$class, 'width'=>$size, 'height'=>$size);
 
         // get the image html output fisrt
         $output = html_writer::empty_tag('img', $attributes);;
