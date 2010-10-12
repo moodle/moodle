@@ -65,6 +65,7 @@ $agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
 // Check some PHP server settings
 
 $PAGE->set_url('/admin/index.php');
+$PAGE->set_pagelayout('admin'); // Set a default pagelayout
 
 $documentationlink = '<a href="http://docs.moodle.org/en/Installation">Installation docs</a>';
 
