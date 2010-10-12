@@ -229,7 +229,7 @@ class ContainsTagWithAttribute extends XMLStructureExpectation {
         $list = $parser->getElementsByTagName($this->tag);
 
         foreach ($list as $node) {
-            if ($node->attributes->getNamedItem($this->attribute)->nodeValue == $this->value) {
+            if ($node->attributes->getNamedItem($this->attribute)->nodeValue === (string) $this->value) {
                 return true;
             }
         }
@@ -291,11 +291,11 @@ class ContainsTagWithAttributes extends XMLStructureExpectation {
             $allattributesmatch = true;
 
             foreach ($this->expectedvalues as $expectedattribute => $expectedvalue) {
-                if (!$node->getAttribute($expectedattribute) && $expectedvalue != '') {
+                if ($node->getAttribute($expectedattribute) === '' && $expectedvalue !== '') {
                     $this->failurereason = 'nomatch';
                     continue 2; // Skip this tag, it doesn't have all the expected attributes
                 }
-                if ($node->getAttribute($expectedattribute) != $expectedvalue) {
+                if ($node->getAttribute($expectedattribute) !== (string) $expectedvalue) {
                     $allattributesmatch = false;
                     $this->failurereason = 'nomatch';
                 }
@@ -308,7 +308,7 @@ class ContainsTagWithAttributes extends XMLStructureExpectation {
                 $nodeattrlist = $node->attributes;
 
                 foreach ($nodeattrlist as $domattrname => $domattr) {
-                    if (array_key_exists($domattrname, $this->forbiddenvalues) && $node->getAttribute($domattrname) == $this->forbiddenvalues[$domattrname]) {
+                    if (array_key_exists($domattrname, $this->forbiddenvalues) && $node->getAttribute($domattrname) === (string) $this->forbiddenvalues[$domattrname]) {
                         $this->failurereason = "forbiddenmatch:$domattrname:" . $node->getAttribute($domattrname);
                         $foundamatch = false;
                     }
