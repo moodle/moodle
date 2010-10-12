@@ -677,7 +677,7 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
             }
             // unchanged file or directory - we keep it as is
             unset($newhashes[$oldhash]);
-            if (!$file->is_directory()) {
+            if (!$oldfile->is_directory()) {
                 $filecount++;
             }
         }
