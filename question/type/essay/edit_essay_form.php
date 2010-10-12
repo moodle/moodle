@@ -61,7 +61,6 @@ class question_edit_essay_form extends question_edit_form {
                 $this->fileoptions,    // options
                 $answer->feedback      // text
             );
-            $question->feedback['text'] = $answer->feedback;
             $question->feedback['format'] = $answer->feedbackformat;
             $question->feedback['itemid'] = $draftid;
         }
