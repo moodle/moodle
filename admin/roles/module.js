@@ -45,7 +45,11 @@ M.core_role.init_cap_table_filter = function(Y, tableid, contextid) {
             this.table = Y.one('#'+this.tableid);
 
             // Create a div to hold the search UI.
-            this.div = Y.Node.create('<div class="capabilitysearchui"></div>').setStyle('width', this.table.get('offsetWidth'));
+            this.div = Y.Node.create('<div class="capabilitysearchui"></div>').setStyles({
+                width : this.table.get('offsetWidth'),
+                marginLeft : 'auto',
+                marginRight : 'auto'
+            });
             // Create the capability search input.
             this.input = Y.Node.create('<input type="text" id="'+this.table.get('id')+'capabilitysearch" value="'+filtervalue+'" />');
             // Create a label for the search input.
@@ -89,7 +93,7 @@ M.core_role.init_cap_table_filter = function(Y, tableid, contextid) {
          */
         getFilterCookieValue : function() {
             var cookie = Y.Cookie.getSubs('captblflt');
-            if (cookie.fltcontext && cookie.fltcontext == this.context && parseInt(cookie.flttime) > new Date().getTime()-(60*60*1000)) {
+            if (cookie!=null && cookie.fltcontext && cookie.fltcontext == this.context && parseInt(cookie.flttime) > new Date().getTime()-(60*60*1000)) {
                 return cookie.fltvalue;
             }
             return '';
