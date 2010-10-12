@@ -6867,6 +6867,11 @@ function normalize_component($component) {
 
     } else {
         list($type, $plugin) = explode('_', $component, 2);
+        $plugintypes = get_plugin_types(false);
+        if ($type !== 'core' and !array_key_exists($type, $plugintypes)) {
+            $type   = 'mod';
+            $plugin = $component;
+        }
     }
 
     return array($type, $plugin);

@@ -483,4 +483,39 @@ class moodlelib_test extends UnitTestCase {
         //set the timezone back to what it was
         $USER->timezone = $userstimezone;
     }
+
+    public function test_normalize_component() {
+
+        // moodle core
+        $this->assertEqual(normalize_component('moodle'), array('core', null));
+        $this->assertEqual(normalize_component('core'), array('core', null));
+
+        // moodle core subsystems
+        $this->assertEqual(normalize_component('admin'), array('core', 'admin'));
+        $this->assertEqual(normalize_component('core_admin'), array('core', 'admin'));
+
+        // activity modules and their subplugins
+        $this->assertEqual(normalize_component('workshop'), array('mod', 'workshop'));
+        $this->assertEqual(normalize_component('mod_workshop'), array('mod', 'workshop'));
+        $this->assertEqual(normalize_component('workshopform_accumulative'), array('workshopform', 'accumulative'));
+        $this->assertEqual(normalize_component('quiz'), array('mod', 'quiz'));
+        $this->assertEqual(normalize_component('quiz_grading'), array('quiz', 'grading'));
+        $this->assertEqual(normalize_component('data'), array('mod', 'data'));
+        $this->assertEqual(normalize_component('datafield_checkbox'), array('datafield', 'checkbox'));
+
+        // other plugin types
+        $this->assertEqual(normalize_component('auth_mnet'), array('auth', 'mnet'));
+        $this->assertEqual(normalize_component('enrol_self'), array('enrol', 'self'));
+        $this->assertEqual(normalize_component('block_html'), array('block', 'html'));
+        $this->assertEqual(normalize_component('block_mnet_hosts'), array('block', 'mnet_hosts'));
+        $this->assertEqual(normalize_component('local_amos'), array('local', 'amos'));
+
+        // unknown components are supposed to be activity modules
+        $this->assertEqual(normalize_component('whothefuckwouldcomewithsuchastupidnameofcomponent'),
+                array('mod', 'whothefuckwouldcomewithsuchastupidnameofcomponent'));
+        $this->assertEqual(normalize_component('whothefuck_wouldcomewithsuchastupidnameofcomponent'),
+                array('mod', 'whothefuck_wouldcomewithsuchastupidnameofcomponent'));
+        $this->assertEqual(normalize_component('whothefuck_would_come_withsuchastupidnameofcomponent'),
+                array('mod', 'whothefuck_would_come_withsuchastupidnameofcomponent'));
+    }
 }
