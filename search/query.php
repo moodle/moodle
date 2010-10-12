@@ -165,7 +165,7 @@
 
     // print the header
     $site = get_site();
-
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
     $PAGE->navbar->add($strsearch, new moodle_url('/search/index.php'));
     $PAGE->navbar->add($strquery, new moodle_url('/search/stats.php'));
     $PAGE->set_title($strsearch);
