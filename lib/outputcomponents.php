@@ -2194,6 +2194,30 @@ class custom_menu_item implements renderable {
     public function has_children() {
         return (count($this->children) > 0);
     }
+
+    /**
+     * Sets the text for the node
+     * @param string $text
+     */
+    public function set_text($text) {
+        $this->text = (string)$text;
+    }
+
+    /**
+     * Sets the title for the node
+     * @param string $title
+     */
+    public function set_title($title) {
+        $this->title = (string)$title;
+    }
+
+    /**
+     * Sets the url for the node
+     * @param moodle_url $url
+     */
+    public function set_url(moodle_url $url) {
+        $this->url = $url;
+    }
 }
 
 /**
