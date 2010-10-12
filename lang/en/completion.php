@@ -123,6 +123,7 @@ $string['manualselfcompletion']='Manual self completion';
 $string['markcomplete']='Mark complete';
 $string['markedcompleteby']='Marked complete by {$a}';
 $string['markingyourselfcomplete']='Marking yourself complete';
+$string['moredetails']='More details';
 $string['notenroled']='You are not enroled as a student in this course';
 $string['notyetstarted']='Not yet started';
 $string['overallcriteriaaggregation']='Overall criteria type aggregation';
