@@ -89,11 +89,12 @@ $ALLOWED_TAGS =
 /**
  * Allowed protocols - array of protocols that are safe to use in links and so on
  * @global string $ALLOWED_PROTOCOLS
- * @name $ALLOWED_PROTOCOLS
  */
 $ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'teamspeak', 'gopher', 'mms',
                            'color', 'callto', 'cursor', 'text-align', 'font-size', 'font-weight', 'font-style', 'font-family',
-                           'border', 'margin', 'padding', 'background', 'background-color', 'text-decoration');   // CSS as well to get through kses
+                           'border', 'border-bottom', 'border-left', 'border-top', 'border-right', 'margin', 'margin-bottom', 'margin-left', 'margin-top', 'margin-right',
+                           'padding', 'padding-bottom', 'padding-left', 'padding-top', 'padding-right', 'vertical-align',
+                           'background', 'background-color', 'text-decoration');   // CSS as well to get through kses
 
 
 /// Functions
