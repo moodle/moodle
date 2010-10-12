@@ -462,8 +462,8 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual($mon,12);
         $this->assertEqual($year,2009);
         $this->assertEqual($yday,357);
-        $this->assertEqual($weekday,'Wednesday');
-        $this->assertEqual($month,'December');
+        $this->assertEqual($weekday,'Středa');
+        $this->assertEqual($month,'prosinec');
 
         $arr = usergetdate($ts);//gets the timezone from the $USER object
         $arr = array_values($arr);
@@ -477,8 +477,8 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual($mon,12);
         $this->assertEqual($year,2009);
         $this->assertEqual($yday,357);
-        $this->assertEqual($weekday,'Wednesday');
-        $this->assertEqual($month,'December');
+        $this->assertEqual($weekday,'Středa');
+        $this->assertEqual($month,'prosinec');
 
         //set the timezone back to what it was
         $USER->timezone = $userstimezone;
