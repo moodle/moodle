@@ -1015,7 +1015,7 @@ function get_user_access_sitewide($userid) {
             if (!isset($accessdata['ra'][$ra->path])) {
                 $accessdata['ra'][$ra->path] = array();
             }
-            array_push($accessdata['ra'][$ra->path], $ra->roleid);
+            $accessdata['ra'][$ra->path][$ra->roleid] = $ra->roleid;
 
             // Concatenate as string the whole path (all related context)
             // for this role. This is damn faster than using array_merge()
@@ -1179,7 +1179,7 @@ function load_subcontext($userid, $context, &$accessdata) {
             // (this check is cheaper than in_array())
             if ($lastseen !== $ra->path.':'.$ra->roleid) {
                 $lastseen = $ra->path.':'.$ra->roleid;
-                array_push($accessdata['ra'][$ra->path], $ra->roleid);
+                $accessdata['ra'][$ra->path][$ra->roleid] = $ra->roleid;
                 array_push($localroles,           $ra->roleid);
             }
         }
@@ -1331,10 +1331,9 @@ function load_user_accessdata($userid) {
     if (!empty($CFG->defaultuserroleid)) {
         $accessdata = get_role_access($CFG->defaultuserroleid, $accessdata);
         if (!isset($accessdata['ra'][$base])) {
-            $accessdata['ra'][$base] = array($CFG->defaultuserroleid);
-        } else {
-            array_push($accessdata['ra'][$base], $CFG->defaultuserroleid);
+            $accessdata['ra'][$base] = array();
         }
+        $accessdata['ra'][$base][$CFG->defaultuserroleid] = $CFG->defaultuserroleid;
         $accessdata['dr'] = $CFG->defaultuserroleid;
     }
 
@@ -1345,10 +1344,9 @@ function load_user_accessdata($userid) {
         $base = '/'. SYSCONTEXTID .'/'. $frontpagecontext->id;
         $accessdata = get_default_frontpage_role_access($CFG->defaultfrontpageroleid, $accessdata);
         if (!isset($accessdata['ra'][$base])) {
-            $accessdata['ra'][$base] = array($CFG->defaultfrontpageroleid);
-        } else {
-            array_push($accessdata['ra'][$base], $CFG->defaultfrontpageroleid);
+            $accessdata['ra'][$base] = array();
         }
+        $accessdata['ra'][$base][$CFG->defaultfrontpageroleid] = $CFG->defaultfrontpageroleid;
     }
     // for dirty timestamps in cron
     $accessdata['time'] = time();
@@ -1408,7 +1406,7 @@ function load_all_capabilities() {
         // Load the rdefs
         $_SESSION['USER']->access = get_role_access($guest->id);
         // Put the ghost enrolment in place...
-        $_SESSION['USER']->access['ra'][$base] = array($guest->id);
+        $_SESSION['USER']->access['ra'][$base] = array($guest->id => $guest->id);
 
 
     } else if (!empty($_SESSION['USER']->id)) { // can not use isloggedin() yet
@@ -1421,10 +1419,9 @@ function load_all_capabilities() {
         if (!empty($CFG->defaultuserroleid)) {
             $accessdata = get_role_access($CFG->defaultuserroleid, $accessdata);
             if (!isset($accessdata['ra'][$base])) {
-                $accessdata['ra'][$base] = array($CFG->defaultuserroleid);
-            } else {
-                array_push($accessdata['ra'][$base], $CFG->defaultuserroleid);
+                $accessdata['ra'][$base] = array();
             }
+            $accessdata['ra'][$base][$CFG->defaultuserroleid] = $CFG->defaultuserroleid;
             $accessdata['dr'] = $CFG->defaultuserroleid;
         }
 
@@ -1437,16 +1434,15 @@ function load_all_capabilities() {
             $base = '/'. SYSCONTEXTID .'/'. $frontpagecontext->id;
             $accessdata = get_default_frontpage_role_access($CFG->defaultfrontpageroleid, $accessdata);
             if (!isset($accessdata['ra'][$base])) {
-                $accessdata['ra'][$base] = array($CFG->defaultfrontpageroleid);
-            } else {
-                array_push($accessdata['ra'][$base], $CFG->defaultfrontpageroleid);
+                $accessdata['ra'][$base] = array();
             }
+            $accessdata['ra'][$base][$CFG->defaultfrontpageroleid] = $CFG->defaultfrontpageroleid;
         }
         $_SESSION['USER']->access = $accessdata;
 
     } else if (!empty($CFG->notloggedinroleid)) {
         $_SESSION['USER']->access = get_role_access($CFG->notloggedinroleid);
-        $_SESSION['USER']->access['ra'][$base] = array($CFG->notloggedinroleid);
+        $_SESSION['USER']->access['ra'][$base] = array($CFG->notloggedinroleid => $CFG->notloggedinroleid);
     }
 
     // Timestamp to read dirty context timestamps later
@@ -1546,17 +1542,16 @@ function load_temp_role($context, $roleid, array $accessdata) {
     //
     // Add the ghost RA
     //
-    if (isset($accessdata['ra'][$context->path])) {
-        array_push($accessdata['ra'][$context->path], $roleid);
-    } else {
-        $accessdata['ra'][$context->path] = array($roleid);
+    if (!isset($accessdata['ra'][$context->path])) {
+        $accessdata['ra'][$context->path] = array();
     }
+    $accessdata['ra'][$context->path][$roleid] = $roleid;
 
     return $accessdata;
 }
 
 /**
- * Removes any extra guest roels from accessdata
+ * Removes any extra guest roles from accessdata
  * @param object $context
  * @param array $accessdata
  * @return array access data
@@ -1568,7 +1563,7 @@ function remove_temp_roles($context, array $accessdata) {
              WHERE ra.contextid = :contextid AND ra.userid = :userid";
     $ras = $DB->get_records_sql($sql, array('contextid'=>$context->id, 'userid'=>$USER->id));
 
-    $accessdata['ra'][$context->path] = array_keys($ras);
+    $accessdata['ra'][$context->path] = array_combine(array_keys($ras), array_keys($ras));
     return $accessdata;
 }
 
