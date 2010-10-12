@@ -172,6 +172,16 @@ class grade_test extends UnitTestCaseUsingDatabase {
 
     /**
      * Load grade_category data into the database, and adds the corresponding objects to this class' variable.
+     * category structure:
+                              course category
+                                    |
+                           +--------+-------------+
+                           |                      |
+             unittestcategory1               level1category
+                  |
+         +--------+-------------+
+         |                      |
+        unittestcategory2  unittestcategory3
      */
     function load_grade_categories() {
         global $DB;
