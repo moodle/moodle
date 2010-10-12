@@ -94,16 +94,28 @@ $huburl = optional_param('huburl', false, PARAM_URL);
 $download = optional_param('download', -1, PARAM_INTEGER);
 $downloadcourseid = optional_param('downloadcourseid', '', PARAM_INTEGER);
 $coursefullname = optional_param('coursefullname', '', PARAM_ALPHANUMEXT);
+$backupsize = optional_param('backupsize', 0, PARAM_INT);
 if ($usercandownload and $download != -1 and !empty($downloadcourseid) and confirm_sesskey()) {
     $course = new stdClass();
     $course->fullname = $coursefullname;
     $course->id = $downloadcourseid;
     $course->huburl = $huburl;
-    $filenames = $communitymanager->block_community_download_course_backup($course);
 
     //OUTPUT: display restore choice page
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('restorecourse', 'block_community'), 3, 'main');
+    echo $OUTPUT->heading(get_string('downloadingcourse', 'block_community'), 3, 'main');
+    echo html_writer::tag('div', get_string('downloading', 'block_community'),
+            array('class' => 'textinfo'));
+    $sizeinfo = new stdClass();
+    $sizeinfo->total = $backupsize / 1000000;
+    $sizeinfo->modem = (int) ($backupsize / 5000);
+    $sizeinfo->dsl = (int) $sizeinfo->total;
+    echo html_writer::tag('div', get_string('downloadingsize', 'block_community', $sizeinfo),
+            array('class' => 'textinfo'));
+    flush();
+    echo html_writer::tag('div', get_string('downloaded', 'block_community'),
+            array('class' => 'textinfo'));
+    $filenames = $communitymanager->block_community_download_course_backup($course);
     echo $OUTPUT->notification(get_string('downloadconfirmed', 'block_community',
                     '/downloaded_backup/' . $filenames['privatefile']), 'notifysuccess');
     echo $renderer->restore_confirmation_box($filenames['tmpfile'], $context);

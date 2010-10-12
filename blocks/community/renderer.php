@@ -242,7 +242,7 @@ class block_community_renderer extends plugin_renderer_base {
                     $params = array('sesskey' => sesskey(), 'download' => 1, 'confirmed' => 1,
                         'remotemoodleurl' => $CFG->wwwroot, 'courseid' => $contextcourseid,
                         'downloadcourseid' => $course->id, 'huburl' => $huburl,
-                        'coursefullname' => $course->fullname);
+                        'coursefullname' => $course->fullname, 'backupsize' => $course->backupsize);
                     $downloadurl = new moodle_url("/blocks/community/communitycourse.php", $params);
                     $downloadbuttonhtml = html_writer::tag('a', get_string('download', 'block_community'),
                                     array('href' => $downloadurl, 'class' => 'centeredbutton, hubcoursedownload'));
