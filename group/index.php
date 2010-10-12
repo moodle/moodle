@@ -100,6 +100,10 @@ switch ($action) {
         redirect(new moodle_url('/group/autogroup.php', array('courseid'=>$courseid)));
         break;
 
+    case 'showimportgroups':
+        redirect(new moodle_url('/group/import.php', array('id'=>$courseid)));
+        break;
+
     case 'showgroupsettingsform':
         redirect(new moodle_url('/group/group.php', array('courseid'=>$courseid, 'id'=>$groupids[0])));
         break;
@@ -209,6 +213,9 @@ echo '<p><input type="submit" name="act_showcreateorphangroupform" id="showcreat
 
 echo '<p><input type="submit" name="act_showautocreategroupsform" id="showautocreategroupsform" value="'
         . get_string('autocreategroups', 'group') . '" /></p>'."\n";
+
+echo '<p><input type="submit" name="act_showimportgroups" id="showimportgroups" value="'
+        . get_string('importgroups') . '" /></p>'."\n";
 
 echo '</td>'."\n";
 echo '<td>'."\n";

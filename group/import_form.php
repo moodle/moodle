@@ -6,13 +6,11 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir.'/formslib.php');
 
-class course_import_groups_form extends moodleform {
+class groups_import_form extends moodleform {
 
     function definition() {
-        global $CFG, $USER;
         $mform =& $this->_form;
-        $strimportgroups = get_string('importgroups');
-        $maxsize = get_max_upload_file_size();
+        $data  = $this->_customdata;
 
         //fill in the data depending on page params
         //later using set_data
@@ -20,10 +18,14 @@ class course_import_groups_form extends moodleform {
 
         $filepickeroptions = array();
         $filepickeroptions['filetypes'] = '*';
-        $filepickeroptions['maxbytes'] = $maxsize;
+        $filepickeroptions['maxbytes'] = get_max_upload_file_size();
         $mform->addElement('filepicker', 'userfile', get_string('import'), null, $filepickeroptions);
 
-        $this->add_action_buttons(false, $strimportgroups);
+        $mform->addElement('hidden', 'id');
+
+        $this->add_action_buttons(true, get_string('importgroups'));
+
+        $this->set_data($data);
     }
 }
 
