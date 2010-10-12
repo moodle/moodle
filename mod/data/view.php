@@ -201,7 +201,7 @@
         if (!empty($ln)) {
             $search_array[DATA_LASTNAME] = new stdClass();
             $search_array[DATA_LASTNAME]->sql     = '';
-            $search_array[DATA_FIRSTNAME]->params = array();
+            $search_array[DATA_LASTNAME]->params = array();
             $search_array[DATA_LASTNAME]->field   = 'u.lastname';
             $search_array[DATA_LASTNAME]->data    = $ln;
             $vals[] = $ln;
