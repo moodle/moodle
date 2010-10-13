@@ -331,7 +331,7 @@ FMHTML;
         ));
 
     $html .= '<noscript>';
-    $html .= "<object type='text/html' data='$filemanagerurl' height='160' width='600' style='border:1px solid #000'></object>";
+    $html .= "<div><object type='text/html' data='$filemanagerurl' height='160' width='600' style='border:1px solid #000'></object></div>";
     $html .= '</noscript>';
 
 

@@ -13,7 +13,7 @@ class MoodleQuickForm_submitlink extends MoodleQuickForm_submit {
         $onmouseover = "window.status=\'" . $text . "\';";
         $onmouseout = "window.status=\'\';";
 
-        return "<noscript>" . parent::toHtml() . '</noscript><script type="text/javascript">' . $this->_js . "\n"
+        return "<noscript><div>" . parent::toHtml() . '</div></noscript><script type="text/javascript">' . $this->_js . "\n"
              . 'document.write(\'<a href="#" onclick="' . $this->_onclick . '" onmouseover="' . $onmouseover . '" onmouseout="' . $onmouseout . '">'
              . $text . "</a>');\n</script>";
     }

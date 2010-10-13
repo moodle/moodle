@@ -102,7 +102,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
 
         // non js file picker
         $html .= '<noscript>';
-        $html .= "<object type='text/html' data='$nonjsfilepicker' height='160' width='600' style='border:1px solid #000'></object>";
+        $html .= "<div><object type='text/html' data='$nonjsfilepicker' height='160' width='600' style='border:1px solid #000'></object></div>";
         $html .= '</noscript>';
 
         return $html;
