@@ -234,7 +234,7 @@ class registration_manager {
             $modulenumberaverage = average_number_of_courses_modules();
         }
         $siteinfo['modulenumberaverage'] = $modulenumberaverage;
-        $siteinfo['language'] = current_language();
+        $siteinfo['language'] = get_config('hub', 'site_language_' . $cleanhuburl);
         $siteinfo['moodleversion'] = $CFG->version;
         $siteinfo['moodlerelease'] = $CFG->release;
         $siteinfo['url'] = $CFG->wwwroot;

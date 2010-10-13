@@ -86,6 +86,7 @@ if (!empty($fromform) and confirm_sesskey()) {
     set_config('site_address_' . $cleanhuburl, $fromform->address, 'hub');
     set_config('site_region_' . $cleanhuburl, $fromform->regioncode, 'hub');
     set_config('site_country_' . $cleanhuburl, $fromform->countrycode, 'hub');
+    set_config('site_language_' . $cleanhuburl, $fromform->language, 'hub');
     set_config('site_geolocation_' . $cleanhuburl, $fromform->geolocation, 'hub');
     set_config('site_contactable_' . $cleanhuburl, $fromform->contactable, 'hub');
     set_config('site_emailalert_' . $cleanhuburl, $fromform->emailalert, 'hub');

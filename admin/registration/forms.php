@@ -227,6 +227,10 @@ class site_registration_form extends moodleform {
         if ($country === false) {
             $country = $admin->country;
         }
+        $language = get_config('hub', 'site_language_' . $cleanhuburl);
+        if ($language === false) {
+            $language = current_language();
+        }
         $geolocation = get_config('hub', 'site_geolocation_' . $cleanhuburl);
         $contactable = get_config('hub', 'site_contactable_' . $cleanhuburl);
         $emailalert = get_config('hub', 'site_emailalert_' . $cleanhuburl);
@@ -277,10 +281,12 @@ class site_registration_form extends moodleform {
         $mform->addHelpButton('urlstring', 'siteurl', 'hub');
 
         $languages = get_string_manager()->get_list_of_languages();
-        $mform->addElement('static', 'langstring', get_string('sitelang', 'hub'), $languages[current_language()]);
-        $mform->addElement('hidden', 'language', current_language());
+        textlib_get_instance()->asort($languages);
+        $mform->addElement('select', 'language', get_string('sitelang', 'hub'),
+                $languages);
         $mform->setType('language', PARAM_ALPHANUMEXT);
-        $mform->addHelpButton('langstring', 'sitelang', 'hub');
+        $mform->addHelpButton('language', 'sitelang', 'hub');
+        $mform->setDefault('language', $language);
 
         $mform->addElement('static', 'versionstring', get_string('siteversion', 'hub'), $CFG->version);
         $mform->addElement('hidden', 'moodleversion', $CFG->version);

@@ -5280,6 +5280,20 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010092000);
     }
 
+    if ($oldversion < 2010101300) {
+        // Fix MDL-24641 : the registered language should not be empty otherwise cron will fail
+        $registeredhubs = $DB->get_records('registration_hubs', array('confirmed' => 1));
+        if (!empty($registeredhubs)) {
+            foreach ($registeredhubs as $hub) {
+                $cleanhuburl = clean_param($hub->huburl, PARAM_ALPHANUMEXT);
+                $sitelanguage = get_config('hub', 'site_language_' . $cleanhuburl);
+                if (empty($sitelanguage)) {
+                    set_config('site_language_' . $cleanhuburl, current_language(), 'hub');
+                }
+            }
+        }
+        upgrade_main_savepoint(true, 2010101300);
+    }
 
     return true;
 }
