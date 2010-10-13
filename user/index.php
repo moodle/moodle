@@ -774,7 +774,7 @@
 
         echo '<input type="hidden" name="id" value="'.$course->id.'" />';
         echo '<noscript style="display:inline">';
-        echo '<input type="submit" value="'.get_string('ok').'" />';
+        echo '<div><input type="submit" value="'.get_string('ok').'" /></div>';
         echo '</noscript>';
         echo '</div></div>';
         echo '</form>';
