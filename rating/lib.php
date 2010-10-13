@@ -503,12 +503,14 @@ class rating_manager {
             $singleuserwhere = "AND i.{$itemtableusercolumn} = :userid1";
         }
 
-        //note: r.contextid will be null for users who haven't been rated yet
+        //MDL-24648 The where line used to be "WHERE (r.contextid is null or r.contextid=:contextid)"
+        //r.contextid will be null for users who haven't been rated yet
+        //no longer including users who haven't been rated to reduce memory requirements
         $sql = "SELECT u.id as id, u.id AS userid, $aggregationstring(r.rating) AS rawgrade
                 FROM {user} u
                 LEFT JOIN {{$itemtable}} i ON u.id=i.{$itemtableusercolumn}
                 LEFT JOIN {rating} r ON r.itemid=i.id
-                WHERE (r.contextid is null or r.contextid=:contextid)
+                WHERE r.contextid=:contextid
                 $singleuserwhere
                 GROUP BY u.id";
 
