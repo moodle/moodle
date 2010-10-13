@@ -195,8 +195,8 @@ function filter_mediaplugin_mp3_callback($link) {
                                            "clip":{"url":"$url",
                                                    "autoPlay": false},
                                            "content":{"url":"$playerpath"}}}' />
-    </div></object>
-    </noscript>
+    </object>
+    </div></noscript>
 OET;
 
     $jsoutput = create_flowplayer($id, $url, 'mp3', $playercolors);
@@ -292,8 +292,8 @@ function filter_mediaplugin_flv_callback($link) {
     <param name="flashvars" value='config={"clip":{"url":"$url",
                                                    "autoPlay": false},
                                            "content":{"url":"$playerpath"}}}' />
-    </div></object>
-  </noscript>
+    </object>
+    </div></noscript>
 EOT;
 
     $jsoutput = create_flowplayer($id, $url, 'flv');
