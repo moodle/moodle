@@ -45,7 +45,7 @@ if ($confirm and confirm_sesskey()) {
     $usernames = implode(', ', $userlist);
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
     $formcontinue = new single_button(new moodle_url('user_bulk_confirm.php', array('confirm' => 1)), get_string('yes'));
-    $formcancel = new single_button('user_bulk.php', get_string('no'), 'get');
+    $formcancel = new single_button(new moodle_url('user_bulk.php'), get_string('no'), 'get');
     echo $OUTPUT->confirm(get_string('confirmcheckfull', '', $usernames), $formcontinue, $formcancel);
 }
 

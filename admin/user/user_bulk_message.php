@@ -55,7 +55,7 @@ if ($msgform->is_cancelled()) {
     echo $OUTPUT->box($msg, 'boxwidthnarrow boxaligncenter generalbox', 'preview'); //TODO: clean once we start using proper text formats here
 
     $formcontinue = new single_button(new moodle_url('user_bulk_message.php', array('confirm' => 1, 'msg' => $msg)), get_string('yes')); //TODO: clean once we start using proper text formats here
-    $formcancel = new single_button('user_bulk.php', get_string('no'), 'get');
+    $formcancel = new single_button(new moodle_url('user_bulk.php'), get_string('no'), 'get');
     echo $OUTPUT->confirm(get_string('confirmmessage', 'bulkusers', $usernames), $formcontinue, $formcancel);
     echo $OUTPUT->footer();
     die;
