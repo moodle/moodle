@@ -230,7 +230,7 @@
         $downloadoptions[] = html_writer::tag('li', $button, array('class'=>'reportoption'));
 
         $options["download"] = "xls";
-        $buttons = $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadexcel"));
+        $button = $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadexcel"));
         $downloadoptions[] = html_writer::tag('li', $button, array('class'=>'reportoption'));
 
         $options["download"] = "txt";
