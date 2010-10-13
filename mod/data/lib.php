@@ -2736,12 +2736,6 @@ function data_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
     if ($filearea === 'content') {
         $contentid = (int)array_shift($args);
 
-        if (!$cm = get_coursemodule_from_instance('data', $cm->instance, $course->id)) {
-            return false;
-        }
-
-        require_course_login($course, true, $cm);
-
         if (!$content = $DB->get_record('data_content', array('id'=>$contentid))) {
             return false;
         }
@@ -2758,8 +2752,13 @@ function data_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
             return false;
         }
 
+        if ($data->id != $cm->instance) {
+            // hacker attempt - context does not match the contentid
+            return false;
+        }
+
         //check if approved
-        if (!$record->approved and !data_isowner($record) and !has_capability('mod/data:approve', $context)) {
+        if ($data->approval and !$record->approved and !data_isowner($record) and !has_capability('mod/data:approve', $context)) {
             return false;
         }
 
