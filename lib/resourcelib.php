@@ -197,7 +197,7 @@ function resourcelib_embed_mp3($fullurl, $title, $clicktoopen) {
     $code = <<<OET
 <div class="resourcecontent resourcemp3">
   <span class="resourcemediaplugin resourcemediaplugin_mp3" id="$id"></span>
-  <noscript>
+  <noscript><div>
     <object width="251" height="25" id="nonjsmp3plugin" name="undefined" data="$playerpath" type="application/x-shockwave-flash">
     <param name="movie" value="$playerpath" />
     <param name="allowfullscreen" value="false" />
@@ -212,7 +212,7 @@ function resourcelib_embed_mp3($fullurl, $title, $clicktoopen) {
                                                    "autoPlay": false},
                                            "content":{"url":"$playerpath"}}}' />
     </object>
-  </noscript>
+  </div></noscript>
 </div>
 OET;
     $PAGE->requires->js('/lib/flowplayer.js');
@@ -238,7 +238,7 @@ function resourcelib_embed_flashvideo($fullurl, $title, $clicktoopen) {
     $code = <<<EOT
 <div class="resourcecontent resourceflv">
   <span class="mediaplugin mediaplugin_flv" id="$id"></span>
-  <noscript>
+  <noscript><div>
     <object width="800" height="600" id="undefined" name="undefined" data="$playerpath" type="application/x-shockwave-flash">
     <param name="movie" value="$playerpath" />
     <param name="allowfullscreen" value="true" />
@@ -247,7 +247,7 @@ function resourcelib_embed_flashvideo($fullurl, $title, $clicktoopen) {
                                                    "autoPlay": false},
                                            "content":{"url":"$playerpath"}}}' />
     </object>
-  </noscript>
+  </div></noscript>
 </div>
 EOT;
 
