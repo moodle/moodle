@@ -1034,17 +1034,29 @@ class global_navigation extends navigation_node {
                     }
 
                     // Load all of the section activities for the section the cm belongs to.
-                    $activities = $this->load_section_activities($sections[$cm->sectionnumber]->sectionnode, $cm->sectionnumber, get_fast_modinfo($course));
+                    if (isset($cm->sectionnumber) and !empty($sections[$cm->sectionnumber])) {
+                        $activities = $this->load_section_activities($sections[$cm->sectionnumber]->sectionnode, $cm->sectionnumber, get_fast_modinfo($course));
+                    } else {
+                        $activities = array();
+                        if ($activity = $this->load_stealth_activity($coursenode, get_fast_modinfo($course))) {
+                            // "stealth" activity from unavailable section
+                            $activities[$cm->id] = $activity;
+                        }
+                    }
                 } else {
                     $activities = array();
                     $activities[$cm->id] = $coursenode->get($cm->id, navigation_node::TYPE_ACTIVITY);
                 }
-                // Finally load the cm specific navigaton information
-                $this->load_activity($cm, $course, $activities[$cm->id]);
-                // Check if we have an active ndoe
-                if (!$activities[$cm->id]->contains_active_node() && !$activities[$cm->id]->search_for_active_node()) {
-                    // And make the activity node active.
-                    $activities[$cm->id]->make_active();
+                if (!empty($activities[$cm->id])) {
+                    // Finally load the cm specific navigaton information
+                    $this->load_activity($cm, $course, $activities[$cm->id]);
+                    // Check if we have an active ndoe
+                    if (!$activities[$cm->id]->contains_active_node() && !$activities[$cm->id]->search_for_active_node()) {
+                        // And make the activity node active.
+                        $activities[$cm->id]->make_active();
+                    }
+                } else {
+                    //TODO: something is wrong, what to do? (Skodak)
                 }
                 break;
             case CONTEXT_USER :
@@ -1424,12 +1436,11 @@ class global_navigation extends navigation_node {
             return true;
         }
 
-        $viewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $this->page->context);
         $activities = array();
 
         foreach ($modinfo->sections[$sectionnumber] as $cmid) {
             $cm = $modinfo->cms[$cmid];
-            if (!$viewhiddenactivities && !$cm->visible) {
+            if (!$cm->uservisible) {
                 continue;
             }
             if ($cm->icon) {
@@ -1450,6 +1461,36 @@ class global_navigation extends navigation_node {
         }
 
         return $activities;
+    }
+    /**
+     * Loads a stealth module from unavailable section
+     * @param navigation_node $coursenode
+     * @param stdClass $modinfo
+     * @return navigation_node or null if not accessible
+     */
+    protected function load_stealth_activity(navigation_node $coursenode, $modinfo) {
+        if (empty($modinfo->cms[$this->page->cm->id])) {
+            return null;
+        }
+        $cm = $modinfo->cms[$this->page->cm->id];
+        if (!$cm->uservisible) {
+            return null;
+        }
+        if ($cm->icon) {
+            $icon = new pix_icon($cm->icon, get_string('modulename', $cm->modname), $cm->iconcomponent);
+        } else {
+            $icon = new pix_icon('icon', get_string('modulename', $cm->modname), $cm->modname);
+        }
+        $url = new moodle_url('/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id));
+        $activitynode = $coursenode->add(format_string($cm->name), $url, navigation_node::TYPE_ACTIVITY, null, $cm->id, $icon);
+        $activitynode->title(get_string('modulename', $cm->modname));
+        $activitynode->hidden = (!$cm->visible);
+        if ($cm->modname == 'label') {
+            $activitynode->display = false;
+        } else if ($this->module_extends_navigation($cm->modname)) {
+            $activitynode->nodetype = navigation_node::NODETYPE_BRANCH;
+        }
+        return $activitynode;
     }
     /**
      * Loads the navigation structure for the given activity into the activities node.
