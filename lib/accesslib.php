@@ -1563,7 +1563,12 @@ function remove_temp_roles($context, array $accessdata) {
              WHERE ra.contextid = :contextid AND ra.userid = :userid";
     $ras = $DB->get_records_sql($sql, array('contextid'=>$context->id, 'userid'=>$USER->id));
 
-    $accessdata['ra'][$context->path] = array_combine(array_keys($ras), array_keys($ras));
+    if ($ras) {
+        $accessdata['ra'][$context->path] = array_combine(array_keys($ras), array_keys($ras));
+    } else {
+        $accessdata['ra'][$context->path] = array();
+    }
+
     return $accessdata;
 }
 
