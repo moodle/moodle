@@ -322,7 +322,7 @@ EOD;
             $html .= <<<EOD
 <div class="mdl-left">
 <noscript>
-<a href="{$this->link}">{$strshowcomments}</a>
+<div><a href="{$this->link}">{$strshowcomments}</a></div>
 </noscript>
 <a id="comment-link-{$this->cid}" class="comment-link" href="#">
     <img id="comment-img-{$this->cid}" src="$icon" alt="{$this->linktext}" title="{$this->linktext}" />
