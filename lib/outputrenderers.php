@@ -1431,7 +1431,7 @@ class core_renderer extends renderer_base {
                     $aggregatestr .= round($rating->aggregate,1);
                 }
             } else {
-                $aggregatestr = ' - ';
+                $aggregatestr = '';
             }
 
             $countstr = html_writer::start_tag('span', array('id'=>"ratingcount{$rating->itemid}"));
