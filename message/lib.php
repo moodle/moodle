@@ -1008,7 +1008,7 @@ function message_contact_link($userid, $linktype='add', $return=false, $script=n
 
     $output = '<span class="'.$linktype.'contact">'.
               '<a href="'.$script.'&amp;'.$command.'='.$userid.
-              '&amp;sesskey='.sesskey().'" title="'.$safestring.'">'.
+              '&amp;sesskey='.sesskey().'" title="'.$safealttext.'">'.
               $img.
               $safestring.'</a></span>';
 
