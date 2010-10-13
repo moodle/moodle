@@ -906,7 +906,6 @@ class question_calculated_qtype extends default_questiontype {
             $numericalquestion->options->answers[$key] = clone($answer);
         }
         foreach ($numericalquestion->options->answers as $key => $answer) {
-            $answer = &$numericalquestion->options->answers[$key]; // for PHP 4.x
             $answer->answer = $this->substitute_variables_and_eval($answer->answer,
                 $state->options->dataset);
         }
