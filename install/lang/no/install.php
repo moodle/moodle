@@ -32,12 +32,17 @@ $string['admindirname'] = 'Adminmappe';
 $string['availablelangs'] = 'Tilgjengelige språkpakker';
 $string['chooselanguagehead'] = 'Velg et språk';
 $string['chooselanguagesub'] = 'Velg språk (bare for INSTALLASJONEN). Du vil kunne velge språk for nettsted og bruker på et skjermbilde senere.';
+$string['clialreadyinstalled'] = 'Filen config.php eksisterer allerede, vær vennlig å bruk admin/cli/upgrade.php hvis du vil oppgradere nettstedet ditt.';
+$string['cliinstallheader'] = 'Moodle {$a} kommandolinje installasjonsprogram';
 $string['databasehost'] = 'Databasevert';
 $string['databasename'] = 'Databasenavn';
+$string['databasetypehead'] = 'Velg databasedriver';
 $string['dataroot'] = 'Datamappe';
 $string['dbprefix'] = 'Tabellprefix';
 $string['dirroot'] = 'Moodlemappe';
 $string['environmenthead'] = 'Sjekker "omgivelsene" dine...';
+$string['environmentsub2'] = 'Hver Moodle-utgivelse har minimumskrav til PHP versjon og et sett med obligatoriske PHP-tillegg. En full sjekk av omgivelser gjøres før hver installering og oppgradering. Vær vennlig å kontakte serveradministrator hvis du ikke vet hvordan du skal installere nye versjoner eller slå på PHP-tillegg.';
+$string['errorsinenvironment'] = 'Omgivelseskontroll feilet!';
 $string['installation'] = 'Installasjon';
 $string['langdownloaderror'] = 'Beklageligvis ble ikke språkpakken "{$a}" installert. Installasjonsprosessen vil fortsette på Engelsk.';
 $string['memorylimithelp'] = '<p>PHP minnegrensen for serveren din er nå satt til {$a}.</p>
@@ -51,6 +56,14 @@ Dette vil tillate Moodle å sette minnegrensen selv.</li>
 <p><blockquote>php_value memory_limit 40M</blockquote></p>
     <p>Uansett, på noen servere kan dette forhindre <b>alle</b> PHP sider fra å virke (du vil se feilmeldinger når du ser på sider) og da må du fjerne .htaccess fila.</p></li>
 </ol>';
+$string['paths'] = 'Stier';
+$string['pathserrcreatedataroot'] = 'Datakatalog ({$a->dataroot}) kan ikke lages av installasjonsprosessen.';
+$string['pathshead'] = 'Bekreft stier';
+$string['pathsrodataroot'] = 'Dataroot katalog er ikke skrivbar.';
+$string['pathsroparentdataroot'] = 'Overordnet katalog ({$a->parent}) er ikke skrivbar. Datakatalogen ({$a->dataroot}) kan ikke lages av installasjonsprosessen.';
+$string['pathsunsecuredataroot'] = 'Dataroot plassering er ikke sikker';
+$string['pathswrongadmindir'] = 'Adminkatalog finnes ikke';
+$string['phpextension'] = '{$a} PHP etternavn';
 $string['phpversion'] = 'PHP versjon';
 $string['phpversionhelp'] = '<p>Moodle trenger en PHP versjon minst 4.3.0 eller 5.1.0 (5.0.x har rekke kjente problem).</p>
 <Du kjører nå versjon {$a}</p>
