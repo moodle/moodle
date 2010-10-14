@@ -91,6 +91,7 @@ $string['any']='Any';
 $string['approval']='Approval';
 $string['completionenabled']='Enabled, control via completion and activity settings';
 $string['completionmenuitem']='Completion';
+$string['completiononunenrolment']='Completion on unenrolment';
 $string['completionsettingslocked']='Completion settings locked';
 $string['completionstartonenrol']='Completion tracking begins on enrolment';
 $string['completionstartonenrolhelp']='Begin tracking a student\'s progress in course completion after course enrolment';
