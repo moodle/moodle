@@ -26,6 +26,7 @@
 
 $string['contentheader'] = 'Content';
 $string['folder:managefiles'] = 'Manage files in folder module';
+$string['folder:view'] = 'View folder content';
 $string['foldercontent'] = 'Files and subfolders';
 $string['modulename'] = 'Folder';
 $string['modulenameplural'] = 'Folders';

@@ -289,6 +289,9 @@ function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
     }
 
     require_course_login($course, true, $cm);
+    if (!has_capability('mod/folder:view', $context)) {
+        return false;
+    }
 
     if ($filearea !== 'content') {
         // intro is handled automatically in pluginfile.php
