@@ -154,7 +154,7 @@ switch ($action) {
     case 'search':
         $search_result = $repo->search($search_text, (int)$page);
         $search_result['repo_id'] = $repo_id;
-        $search_result['search_result'] = true;
+        $search_result['issearchresult'] = true;
         echo json_encode($search_result);
         break;
     case 'download':

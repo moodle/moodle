@@ -1405,7 +1405,7 @@ abstract class repository {
      *           perpage, items per page
      *           page
      *           pages, total pages
-     *           search_result, is it a search result?
+     *           issearchresult, is it a search result?
      *           list, file list
      *           path, current path and parent path
      */

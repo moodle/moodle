@@ -115,7 +115,7 @@ case 'search':
     echo '<div><a href="' . $home_url->out() . '">'.get_string('back', 'repository')."</a></div>";
     try {
         $search_result = $repo->search($search_text);
-        $search_result['search_result'] = true;
+        $search_result['issearchresult'] = true;
         $search_result['repo_id'] = $repo_id;
 
         // TODO: need a better solution
