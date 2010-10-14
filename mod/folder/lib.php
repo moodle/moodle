@@ -244,6 +244,9 @@ function folder_get_file_info($browser, $areas, $course, $cm, $context, $fileare
 
 
     if ($filearea === 'content') {
+        if (!has_capability('mod/folder:view', $context)) {
+            return NULL;
+        }
         $fs = get_file_storage();
 
         $filepath = is_null($filepath) ? '/' : $filepath;
