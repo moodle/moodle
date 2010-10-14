@@ -338,6 +338,9 @@ function imscp_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
     require_login($course, true, $cm);
 
     if ($filearea === 'content') {
+        if (!has_capability('mod/imscp:view', $context)) {
+            return false;
+        }
         $revision = array_shift($args);
         $fs = get_file_storage();
         $relativepath = implode('/', $args);
