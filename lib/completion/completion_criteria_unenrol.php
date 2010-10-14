@@ -51,7 +51,7 @@ class completion_criteria_unenrol extends completion_criteria {
      * @return  void
      */
     public function config_form_display(&$mform, $data = null) {
-        $mform->addElement('checkbox', 'criteria_unenrol', 'Completion on unenrolment');
+        $mform->addElement('checkbox', 'criteria_unenrol', get_string('completiononunenrolment','completion'));
 
         if ($this->id) {
             $mform->setDefault('criteria_unenrol', 1);
