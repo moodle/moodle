@@ -665,6 +665,9 @@ class assignment_base {
         $output .= '<script type="text/javascript">'."\n<!--\n";
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['submissioncomment'])) {
             if ($quickgrade){
+                //remove carriage return
+                $submission->submissioncomment = str_replace(array("\r\n", "\n"), '', $submission->submissioncomment);
+
                 $output.= 'opener.document.getElementById("submissioncomment'.$submission->userid.'").value="'
                 .trim($submission->submissioncomment).'";'."\n";
              } else {
@@ -2805,7 +2808,7 @@ function assignment_count_real_submissions($cm, $groupid=0) {
             }
         }
     }
-    
+
     if (empty($users)) {
         return 0;
     }
@@ -2919,9 +2922,9 @@ function assignment_types() {
         $types[$name] = get_string('type'.$name, 'assignment');
 
         // ugly hack to support pluggable assignment type titles..
-        if ($types[$name] == '[[type'.$name.']]') { 
+        if ($types[$name] == '[[type'.$name.']]') {
             $types[$name] = get_string('type'.$name, 'assignment_'.$name);
-        } 
+        }
     }
     asort($types);
     return $types;
@@ -2985,11 +2988,11 @@ function assignment_print_overview($courses, &$htmlarray) {
     $strreviewed = get_string('reviewed','assignment');
 
 
-    // NOTE: we do all possible database work here *outside* of the loop to ensure this scales 
-    
+    // NOTE: we do all possible database work here *outside* of the loop to ensure this scales
+
     // build up and array of unmarked submissions indexed by assigment id/ userid
     // for use where the user has grading rights on assigment
-    $rs = get_recordset_sql("SELECT id, assignment, userid 
+    $rs = get_recordset_sql("SELECT id, assignment, userid
                             FROM {$CFG->prefix}assignment_submissions
                             WHERE teacher = 0 AND timemarked = 0
                             AND assignment IN (". implode(',', $assignmentids).")");
@@ -3003,8 +3006,8 @@ function assignment_print_overview($courses, &$htmlarray) {
 
     // get all user submissions, indexed by assigment id
     $mysubmissions = get_records_sql("SELECT assignment, timemarked, teacher, grade
-                                      FROM {$CFG->prefix}assignment_submissions 
-                                      WHERE userid = {$USER->id} AND 
+                                      FROM {$CFG->prefix}assignment_submissions
+                                      WHERE userid = {$USER->id} AND
                                       assignment IN (".implode(',', $assignmentids).")");
 
     foreach ($assignments as $assignment) {
