@@ -321,15 +321,21 @@ EOD;
             $icon = $OUTPUT->pix_url('t/collapsed');
             $html .= <<<EOD
 <div class="mdl-left">
-<noscript>
-<div><a href="{$this->link}">{$strshowcomments}</a></div>
-</noscript>
+<a class="showcommentsnonjs" href="{$this->link}">{$strshowcomments}</a>
+EOD;
+            if ($this->env != 'block_comments') {
+                $html .= <<<EOD
 <a id="comment-link-{$this->cid}" class="comment-link" href="#">
     <img id="comment-img-{$this->cid}" src="$icon" alt="{$this->linktext}" title="{$this->linktext}" />
     <span id="comment-link-text-{$this->cid}">{$this->linktext} {$this->count}</span>
 </a>
+EOD;
+            }
+
+            $html .= <<<EOD
 <div id="comment-ctrl-{$this->cid}" class="comment-ctrl">
     <ul id="comment-list-{$this->cid}" class="comment-list">
+        <li class="first"></li>
 EOD;
             // in comments block, we print comments list right away
             if ($this->env == 'block_comments') {
@@ -348,19 +354,15 @@ EOD;
                 $html .= <<<EOD
 <div class='comment-area'>
     <div class="bd">
-        <textarea name="content" rows="2" id="dlg-content-{$this->cid}"></textarea>
+        <textarea name="content" rows="2" cols="20" id="dlg-content-{$this->cid}"></textarea>
     </div>
     <div class="fd" id="comment-action-{$this->cid}">
         <a href="#" id="comment-action-post-{$this->cid}"> {$strsubmit} </a>
 EOD;
-        if ($this->env != 'block_comments') {
-            $html .= <<<EOD
-        <span> | </span>
-        <a href="#" id="comment-action-cancel-{$this->cid}"> {$strcancel} </a>
-EOD;
-        }
-
-        $html .= <<<EOD
+                if ($this->env != 'block_comments') {
+                    $html .= "<span> | </span><a href=\"#\" id=\"comment-action-cancel-{$this->cid}\"> {$strcancel} </a>";
+                }
+                $html .= <<<EOD
     </div>
 </div>
 <div class="clearer"></div>
@@ -637,7 +639,7 @@ EOD;
         $replacements = array();
 
         if (!empty($cmt->delete) && empty($nonjs)) {
-            $cmt->content = '<div class="comment-delete"><a href="#" id ="comment-delete-'.$this->cid.'-'.$cmt->id.'"><img src="'.$OUTPUT->pix_url('t/delete').'" /></a></div>' . $cmt->content;
+            $cmt->content = '<div class="comment-delete"><a href="#" id ="comment-delete-'.$this->cid.'-'.$cmt->id.'"><img src="'.$OUTPUT->pix_url('t/delete').'" alt="'.get_string('delete').'" /></a></div>' . $cmt->content;
             // add the button
         }
         $patterns[] = '___picture___';

@@ -45,13 +45,13 @@ M.core_comment = {
                 if (args.autostart) {
                     this.view(args.page);
                 }
-                // hide toggle link
-                if (args.notoggle) {
-                    Y.one('#comment-link-'+this.client_id).setStyle('display', 'none');
-                }
                 // load comments
                 var handle = Y.one('#comment-link-'+this.client_id);
+                // hide toggle link
                 if (handle) {
+                    if (args.notoggle) {
+                        handle.setStyle('display', 'none');
+                    }
                     handle.on('click', function(e) {
                         e.preventDefault();
                         this.view(0);
@@ -85,7 +85,9 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                             container.appendChild(newcomment);
                             var ids = result.ids;
                             var linktext = Y.one('#comment-link-text-'+cid);
-                            linktext.set('innerHTML', M.str.moodle.comments + ' ('+obj.count+')');
+                            if (linktext) {
+                                linktext.set('innerHTML', M.str.moodle.comments + ' ('+obj.count+')');
+                            }
                             for(var i in ids) {
                                 var attributes = {
                                     color: { to: '#06e' },
@@ -205,7 +207,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                     params: params,
                     callback: function(id, ret, args) {
                         var linktext = Y.one('#comment-link-text-'+scope.client_id);
-                        if (ret.count) {
+                        if (ret.count && linktext) {
                             linktext.set('innerHTML', M.str.moodle.comments + ' ('+ret.count+')');
                         }
                         var container = Y.one('#comment-list-'+scope.client_id);
@@ -350,7 +352,9 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                         this.register_pagination();
                     }
                     container.setStyle('display', 'block');
-                    img.set('src', M.util.image_url('t/expanded', 'core'));
+                    if (img) {
+                        img.set('src', M.util.image_url('t/expanded', 'core'));
+                    }
                 } else {
                     // hide
                     container.setStyle('display', 'none');
