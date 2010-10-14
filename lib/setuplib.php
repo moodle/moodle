@@ -146,7 +146,14 @@ class webservice_parameter_exception extends moodle_exception {
 class required_capability_exception extends moodle_exception {
     function __construct($context, $capability, $errormessage, $stringfile) {
         $capabilityname = get_capability_string($capability);
-        parent::__construct($errormessage, $stringfile, get_context_url($context), $capabilityname);
+        if ($context->contextlevel == CONTEXT_MODULE and preg_match('/:view$/', $capability)) {
+            // we can not go to mod/xx/view.php because we most probably do not have cap to view it, let's go to course instead
+            $paranetcontext = get_context_instance_by_id(get_parent_contextid($context));
+            $link = get_context_url($paranetcontext);
+        } else {
+            $link = get_context_url($context);
+        }
+        parent::__construct($errormessage, $stringfile, $link, $capabilityname);
     }
 }
 
