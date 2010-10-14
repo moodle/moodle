@@ -7516,13 +7516,18 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
     }
 
     if ($enrolled && forum_tp_can_track_forums($forumobject)) {
-        if (forum_tp_is_tracked($forumobject)) {
-            $linktext = get_string('notrackforum', 'forum');
+        if ($forumobject->trackingtype != FORUM_TRACKING_OPTIONAL) {
+            //tracking forced on or off in forum settings so dont provide a link here to change it
+            //could add unclickable text like for forced subscription but not sure this justifies adding another menu item
         } else {
-            $linktext = get_string('trackforum', 'forum');
+            if (forum_tp_is_tracked($forumobject)) {
+                $linktext = get_string('notrackforum', 'forum');
+            } else {
+                $linktext = get_string('trackforum', 'forum');
+            }
+            $url = new moodle_url('/mod/forum/settracking.php', array('id'=>$forumobject->id));
+            $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
         }
-        $url = new moodle_url('/mod/forum/settracking.php', array('id'=>$forumobject->id));
-        $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
     }
 
     if ($enrolled && !empty($CFG->enablerssfeeds) && !empty($CFG->forum_enablerssfeeds) && $forumobject->rsstype && $forumobject->rssarticles) {
