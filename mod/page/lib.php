@@ -351,6 +351,9 @@ function page_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
     }
 
     require_course_login($course, true, $cm);
+    if (!has_capability('mod/page:view', $context)) {
+        return false;
+    }
 
     if ($filearea !== 'content') {
         // intro is handled automatically in pluginfile.php

@@ -37,6 +37,7 @@ $string['modulename_help'] = 'A page enables a web page to be displayed and edit
 $string['modulenameplural'] = 'Pages';
 $string['neverseen'] = 'Never seen';
 $string['optionsheader'] = 'Options';
+$string['page:view'] = 'View page content';
 $string['pluginadministration'] = 'Page module administration';
 $string['pluginname'] = 'Page';
 $string['popupheight'] = 'Popup height (in pixels)';

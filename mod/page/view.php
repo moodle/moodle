@@ -48,6 +48,7 @@ $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('mod/page:view', $context);
 
 add_to_log($course->id, 'page', 'view', 'view.php?id='.$cm->id, $page->id, $cm->id);
 
