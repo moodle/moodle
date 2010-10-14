@@ -264,18 +264,15 @@ defined('MOODLE_INTERNAL') || die();
                 continue;
             }
 
-            $strstealth = 'Invisible week'; //TODO: MDL-24316 to be localised after we decide how to call this (skodak)
-
             echo '<li id="section-'.$section.'" class="section main clearfix stealth hidden">'; //'<div class="left side">&nbsp;</div>';
 
             echo '<div class="left side">';
-            echo $strstealth;
             echo '</div>';
             // Note, 'right side' is BEFORE content.
             echo '<div class="right side">';
-            echo $strstealth;
             echo '</div>';
             echo '<div class="content">';
+            echo $OUTPUT->heading(get_string('orphanedactivities'), 3, 'sectionname');
             print_section($course, $thissection, $mods, $modnamesused);
             echo '</div>';
             echo "</li>\n";
