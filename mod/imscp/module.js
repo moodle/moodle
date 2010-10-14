@@ -202,11 +202,13 @@ M.mod_imscp.init = function(Y) {
         // TOC tree
         var tree = new YAHOO.widget.TreeView('imscp_tree');
         tree.singleNodeHighlight = true;
-        tree.subscribe('labelClick', function(node) {
-            imscp_activate_item(node);
-            if (node.children.length) {
+        tree.subscribe('clickEvent', function(oArgs) {
+            imscp_activate_item(oArgs.node);
+            if (oArgs.node.children.length) {
                 imscp_bloody_labelclick = true;
             }
+            YAHOO.util.Event.preventDefault(oArgs.event);
+            return false;
         });
         tree.subscribe('collapse', function(node) {
             if (imscp_bloody_labelclick) {
