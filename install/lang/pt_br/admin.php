@@ -32,5 +32,11 @@ $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 's';
 $string['cliincorrectvalueerror'] = 'Erro, valor incorreto "{$a->value}" para "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'Valor incorreto, por favor tente novamente';
+$string['clitypevalue'] = 'Digite o valor';
+$string['clitypevaluedefault'] = 'digite o valor, pressione Enter para utilizar o valor padrão ({$a})';
+$string['cliunknowoption'] = 'Opções não reconhecidas:
+  {$a}
+Por favor use a opção --help.';
+$string['cliyesnoprompt'] = 'digite y (sim) ou n (não)';
 $string['environmentrequireinstall'] = 'deve ser instalado/habilitado';
 $string['environmentrequireversion'] = 'a versão {$a->needed} é necessária e você está usando a versão {$a->current}';
