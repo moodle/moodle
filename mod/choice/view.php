@@ -38,6 +38,12 @@
     if ($action == 'delchoice' and confirm_sesskey() and is_enrolled($context, NULL, 'mod/choice:choose') and $choice->allowupdate) {
         if ($answer = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) {
             $DB->delete_records('choice_answers', array('id' => $answer->id));
+
+            // Update completion state
+            $completion = new completion_info($course);
+            if ($completion->is_enabled($cm) && $choice->completionsubmit) {
+                $completion->update_state($cm, COMPLETION_INCOMPLETE);
+            }
         }
     }
 
@@ -49,7 +55,7 @@
         $timenow = time();
         if (has_capability('mod/choice:deleteresponses', $context)) {
             if ($action == 'delete') { //some responses need to be deleted
-                choice_delete_responses($attemptids, $choice->id); //delete responses.
+                choice_delete_responses($attemptids, $choice, $cm, $course); //delete responses.
                 redirect("view.php?id=$cm->id");
             }
         }
@@ -58,7 +64,7 @@
         if (empty($answer)) {
             redirect("view.php?id=$cm->id", get_string('mustchooseone', 'choice'));
         } else {
-            choice_user_submit_response($answer, $choice, $USER->id, $course->id, $cm);
+            choice_user_submit_response($answer, $choice, $USER->id, $course, $cm);
         }
         echo $OUTPUT->header();
         echo $OUTPUT->notification(get_string('choicesaved', 'choice'),'notifysuccess');

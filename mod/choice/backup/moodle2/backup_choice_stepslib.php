@@ -40,7 +40,8 @@ class backup_choice_activity_structure_step extends backup_activity_structure_st
         $choice = new backup_nested_element('choice', array('id'), array(
             'name', 'intro', 'introformat', 'publish',
             'showresults', 'display', 'allowupdate', 'allowunanswered',
-            'limitanswers', 'timeopen', 'timeclose', 'timemodified'));
+            'limitanswers', 'timeopen', 'timeclose', 'timemodified',
+            'completionsubmit'));
 
         $options = new backup_nested_element('options');
 

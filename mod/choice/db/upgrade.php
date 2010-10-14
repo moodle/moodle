@@ -53,6 +53,21 @@ function xmldb_choice_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2009042001, 'choice');
     }
 
+    if ($oldversion < 2010101300) {
+
+        // Define field completionsubmit to be added to choice
+        $table = new xmldb_table('choice');
+        $field = new xmldb_field('completionsubmit', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'timemodified');
+
+        // Conditionally launch add field completionsubmit
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // choice savepoint reached
+        upgrade_mod_savepoint(true, 2010101300, 'choice');
+    }
+
     return true;
 }
 
