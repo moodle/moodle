@@ -277,10 +277,6 @@ defined('MOODLE_INTERNAL') || die();
             echo '</div>';
             echo '<div class="content">';
             print_section($course, $thissection, $mods, $modnamesused);
-            echo '<br />';
-            if ($PAGE->user_is_editing()) {
-                print_section_add_menus($course, $section, $modnames);
-            }
             echo '</div>';
             echo "</li>\n";
         }
