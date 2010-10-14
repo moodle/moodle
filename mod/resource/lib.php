@@ -373,6 +373,9 @@ function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
     }
 
     require_course_login($course, true, $cm);
+    if (!has_capability('mod/resource:view', $context)) {
+        return false;
+    }
 
     if ($filearea !== 'content') {
         // intro is handled automatically in pluginfile.php
