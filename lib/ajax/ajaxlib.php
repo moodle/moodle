@@ -118,7 +118,7 @@ class jsportal {
      * Prints the JavaScript code needed to set up AJAX for the course.
      */
     function print_javascript($courseid, $return=false) {
-        global $CFG, $USER, $OUTPUT, $COURSE;
+        global $CFG, $USER, $OUTPUT, $COURSE, $DB;
 
         $blocksoutput = $output = '';
         for ($i=0; $i<count($this->blocks); $i++) {
@@ -138,6 +138,7 @@ class jsportal {
         $output .= "    main.portal.strings['marker']='".get_string('markthistopic', '', '_var_')."';\n";
         $output .= "    main.portal.strings['marked']='".get_string('markedthistopic', '', '_var_')."';\n";
         $output .= "    main.portal.numsections = ".$COURSE->numsections.";\n";
+        $output .= "    main.portal.lastsection = ".$DB->get_field_sql("SELECT MAX(section) FROM {course_sections} WHERE course = ?", array($courseid)).";\n"; // needed for orphaned activities in unavailable sections
         $output .= "    main.portal.strings['hide']='".get_string('hide')."';\n";
         $output .= "    main.portal.strings['hidesection']='".get_string('hidesection', '', '_var_')."';\n";
         $output .= "    main.portal.strings['show']='".get_string('show')."';\n";
