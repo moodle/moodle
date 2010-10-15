@@ -282,7 +282,9 @@ function message_set_default_message_preferences($user) {
     $providers = $DB->get_records('message_providers');
     $preferences = array();
     foreach ($providers as $providerid => $provider) {
-        $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedin'] = 'popup';
+        //use both email and popup when online
+        $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedin'] = 'email,popup';
+        //just email when offline
         $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedoff'] = 'email';
     }
     return set_user_preferences($preferences, $user->id);
