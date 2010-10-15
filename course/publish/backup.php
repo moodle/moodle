@@ -98,6 +98,13 @@ $backupfile = $backupfile['backup_destination'];
 $registrationmanager = new registration_manager();
 $registeredhub = $registrationmanager->get_registeredhub($huburl);
 
+//display the sending file page
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('sendingcourse', 'hub'), 3, 'main');
+$renderer = $PAGE->get_renderer('core', 'publish');
+echo $renderer->sendingbackupinfo($backupfile);
+flush();
+
 //send backup file to the hub
 $curl = new curl();
 $params = array();
@@ -110,8 +117,7 @@ $curl->post($huburl . "/local/hub/webservice/upload.php", $params);
 //delete the temp backup file from user_tohub aera
 $backupfile->delete();
 
-//redirect to the index publication page
-redirect(new moodle_url('/course/publish/index.php',
-                array('sesskey' => sesskey(), 'id' => $id, 
-                    'published' => true, 'huburl' => $huburl, 'hubname' => $hubname)));
-?>
+//Output sending success
+echo $renderer->sentbackupinfo($id, $huburl, $hubname);
+
+echo $OUTPUT->footer();
