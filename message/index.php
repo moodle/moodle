@@ -165,12 +165,6 @@ if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', 
         }
     }
 }
-if (!empty($messageerror)) {
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading($messageerror, 1);
-    echo $OUTPUT->footer();
-    exit;
-}
 
 $strmessages = get_string('messages', 'message');
 if (!empty($user2)) {
@@ -273,13 +267,17 @@ echo html_writer::start_tag('div', array('class'=>'messagearea mdl-align'));
         //send message form
         if ($currentuser && has_capability('moodle/site:sendmessage', $context)) {
             echo html_writer::start_tag('div', array('class'=>'mdl-align messagesend'));
-                $mform = new send_form();
-                $defaultmessage = new stdClass;
-                $defaultmessage->id = $user2->id;
-                $defaultmessage->message = '';
-                //$defaultmessage->messageformat = FORMAT_MOODLE;
-                $mform->set_data($defaultmessage);
-                $mform->display();
+                if (!empty($messageerror)) {
+                    echo $OUTPUT->heading($messageerror, 3);
+                } else {
+                    $mform = new send_form();
+                    $defaultmessage = new stdClass;
+                    $defaultmessage->id = $user2->id;
+                    $defaultmessage->message = '';
+                    //$defaultmessage->messageformat = FORMAT_MOODLE;
+                    $mform->set_data($defaultmessage);
+                    $mform->display();
+                }
             echo html_writer::end_tag('div');
         }
     }
