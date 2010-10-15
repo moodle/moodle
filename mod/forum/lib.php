@@ -1674,6 +1674,8 @@ function forum_get_readable_forums($userid, $courseid=0) {
             }
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             $forum = $courseforums[$forumid];
+            $forum->context = $context;
+            $forum->cm = $cm;
 
             if (!has_capability('mod/forum:viewdiscussion', $context)) {
                 continue;
@@ -1764,8 +1766,8 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
             $select[] = "(d.userid = {$USER->id} OR (d.timestart < $now AND (d.timeend = 0 OR d.timeend > $now)))";
         }
 
-        $cm = get_coursemodule_from_instance('forum', $forumid);
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $cm = $forum->cm;
+        $context = $forum->context;
 
         if ($forum->type == 'qanda'
             && !has_capability('mod/forum:viewqandawithoutposting', $context)) {
