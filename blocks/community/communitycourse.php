@@ -113,9 +113,9 @@ if ($usercandownload and $download != -1 and !empty($downloadcourseid) and confi
     echo html_writer::tag('div', get_string('downloadingsize', 'block_community', $sizeinfo),
             array('class' => 'textinfo'));
     flush();
+    $filenames = $communitymanager->block_community_download_course_backup($course);
     echo html_writer::tag('div', get_string('downloaded', 'block_community'),
             array('class' => 'textinfo'));
-    $filenames = $communitymanager->block_community_download_course_backup($course);
     echo $OUTPUT->notification(get_string('downloadconfirmed', 'block_community',
                     '/downloaded_backup/' . $filenames['privatefile']), 'notifysuccess');
     echo $renderer->restore_confirmation_box($filenames['tmpfile'], $context);
