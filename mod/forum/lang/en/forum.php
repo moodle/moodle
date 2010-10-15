@@ -283,7 +283,7 @@ $string['postaddedtimeleft'] = 'You have {$a} to edit it if you want to make any
 $string['postincontext'] = 'See this post in context';
 $string['postmailinfo'] = 'This is a copy of a message posted on the {$a} website.
 
-To add your reply via the website, click on this link:';
+To reply click on this link:';
 $string['postmailnow'] = '<p>This post will be mailed out immediately to all forum subscribers.</p>';
 $string['postrating1'] = 'Mostly Separate Knowing';
 $string['postrating2'] = 'Separate and Connected';
@@ -336,6 +336,7 @@ $string['seeallposts'] = 'See all posts made by this user';
 $string['shortpost'] = 'Short post';
 $string['showsubscribers'] = 'Show/edit current subscribers';
 $string['singleforum'] = 'A single simple discussion';
+$string['smallmessage'] = '{$a->user} posted in {$a->forumname}<br />To view: {$a->replylink}';
 $string['startedby'] = 'Started by';
 $string['subject'] = 'Subject';
 $string['subscribe'] = 'Subscribe to this forum';

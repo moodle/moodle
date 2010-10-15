@@ -39,16 +39,16 @@ class message_output_popup extends message_output{
     public function send_message($message) {
         global $DB;
 
-        //do we want to prevent users from messaging themselves?
-        //if ($message->useridfrom==$message->useridto) {
+        //prevent users from getting popup notifications of messages to themselves (happens with forum notifications)
+        if ($message->useridfrom!=$message->useridto) {
+            $processor = $DB->get_record('message_processors', array('name'=>'popup'));
+            $procmessage = new stdClass();
+            $procmessage->unreadmessageid = $message->id;
+            $procmessage->processorid     = $processor->id;
 
-        $processor = $DB->get_record('message_processors', array('name'=>'popup'));
-        $procmessage = new stdClass();
-        $procmessage->unreadmessageid = $message->id;
-        $procmessage->processorid     = $processor->id;
-
-        //save this message for later delivery
-        $DB->insert_record('message_working', $procmessage);
+            //save this message for later delivery
+            $DB->insert_record('message_working', $procmessage);
+        }
 
         return true;
     }

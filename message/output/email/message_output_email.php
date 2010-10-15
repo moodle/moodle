@@ -50,19 +50,8 @@ class message_output_email extends message_output {
             $userto->email = $usertoemailaddress;
         }
 
-        //concatenating the footer on here so that it appears on emails but not within the saved message
-        $messagetosend = null;
-        if (!empty($message->fullmessage)) {
-            $messagetosend = $message->fullmessage.$message->footer;
-        }
-
-        $messagetosendhtml = null;
-        if (!empty($message->fullmessagehtml)) {
-            $messagetosendhtml = $message->fullmessagehtml.$message->footerhtml;
-        }
-
         $result = email_to_user($userto, $userfrom,
-            $message->subject, $messagetosend, $messagetosendhtml);
+            $message->subject, $message->fullmessage, $message->fullmessagehtml);
 
         return $result===true; //email_to_user() can return true, false or "emailstop"
         //return true;//do we want to report an error if email sending fails?

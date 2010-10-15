@@ -8920,23 +8920,20 @@ function message_popup_window() {
 
     $message_users = null;
 
-    $sql = "SELECT m.id, u.firstname, u.lastname FROM {message} m
+    $messagesql = "SELECT m.id, m.smallmessage, u.firstname, u.lastname FROM {message} m
 JOIN {message_working} mw ON m.id=mw.unreadmessageid
 JOIN {message_processors} p ON mw.processorid=p.id
 JOIN {user} u ON m.useridfrom=u.id
-WHERE m.useridto = :userid AND m.timecreated > :ts AND p.name='popup'";
+WHERE m.useridto = :userid AND p.name='popup'";
+
+    $sql = $messagesql.' AND m.timecreated > :ts';
     $message_users = $DB->get_records_sql($sql, array('userid'=>$USER->id, 'ts'=>$USER->message_lastpopup));
     if (empty($message_users)) {
 
         //if the user was last notified over an hour ago remind them of any new messages regardless of when they were sent
         $canrenotify = (time() - $USER->message_lastpopup) > 3600;
         if ($canrenotify) {
-            $sql = "SELECT m.id, u.firstname, u.lastname FROM {message} m
-JOIN {message_working} mw ON m.id=mw.unreadmessageid
-JOIN {message_processors} p ON mw.processorid=p.id
-JOIN {user} u ON m.useridfrom=u.id
-WHERE m.useridto = :userid AND p.name='popup'";
-            $message_users = $DB->get_records_sql($sql, array('userid'=>$USER->id));
+            $message_users = $DB->get_records_sql($messagesql, array('userid'=>$USER->id));
         }
     }
 
@@ -8947,7 +8944,19 @@ WHERE m.useridto = :userid AND p.name='popup'";
         if (count($message_users)>1) {
             $strmessages = get_string('unreadnewmessages', 'message', count($message_users));
         } else {
-            $strmessages = get_string('unreadnewmessage', 'message', fullname(reset($message_users)) );
+            $message_users = reset($message_users);
+            $strmessages = get_string('unreadnewmessage', 'message', fullname($message_users) );
+
+            if (!empty($message_users->smallmessage)) {
+                //display the first 200 chars of the message in the popup
+                $smallmessage = null;
+                if (strlen($message_users->smallmessage>200)) {
+                    $smallmessage = substr($message_users->smallmessage,0,200).'...';
+                } else {
+                    $smallmessage = $message_users->smallmessage;
+                }
+                $strmessages .= '<div id="usermessage">'.$smallmessage.'</div>';
+            }
         }
 
         $strgomessage = get_string('gotomessages', 'message');

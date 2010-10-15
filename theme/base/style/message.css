@@ -52,4 +52,5 @@ table.message .searchresults td {padding:5px;}
 .messagesearchresults td span {white-space:nowrap;}
 
 #newmessageoverlay {background-color:LightGrey;padding:20px;position:fixed;bottom:0;right:0;}
+#newmessageoverlay #usermessage {padding:10px;font-weight:bold;}
 .ie6 #newmessageoverlay {position:static;}

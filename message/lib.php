@@ -1495,7 +1495,14 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
     $time = userdate($message->timecreated, $dateformat);
     $options = new stdClass();
     $options->para = false;
-    $messagetext = format_text($message->fullmessage, $message->fullmessageformat, $options);
+
+    //if supplied display small messages as fullmessage may contain boilerplate text that shouldnt appear in the messaging UI
+    if (!empty($message->smallmessage)) {
+        $messagetext = format_text($message->smallmessage, null, $options);
+    } else {
+        $messagetext = format_text($message->fullmessage, $message->fullmessageformat, $options);
+    }
+
     if ($keywords) {
         $messagetext = highlight($keywords, $messagetext);
     }
@@ -1519,15 +1526,21 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     $eventdata->fullmessage      = $message;
     $eventdata->fullmessageformat = $format;
     $eventdata->fullmessagehtml  = '';
-    $eventdata->smallmessage     = '';
+    $eventdata->smallmessage     = $message;
 
     $s = new stdClass();
     $s->sitename = $SITE->shortname;
     $s->url = $CFG->wwwroot.'/message/index.php?id='.$userfrom->id;//.'&user='.$userto->id;
 
     $emailtagline = get_string('emailtagline', 'message', $s);
-    $eventdata->footer = "\n\n---------------------------------------------------------------------\n".$emailtagline;
-    $eventdata->footerhtml = "<br /><br />---------------------------------------------------------------------<br />".$emailtagline;
+    //$eventdata->footer = "\n\n---------------------------------------------------------------------\n".$emailtagline;
+    if (!empty($eventdata->fullmessage)) {
+        $eventdata->fullmessage .= "\n\n---------------------------------------------------------------------\n".$emailtagline;
+    }
+    //$eventdata->footerhtml = "<br /><br />---------------------------------------------------------------------<br />".$emailtagline;
+    if (!empty($eventdata->fullmessagehtml)) {
+        $eventdata->fullmessagehtml .= "<br /><br />---------------------------------------------------------------------<br />".$emailtagline;
+    }
     
     $eventdata->timecreated     = time();
     return message_send($eventdata);
