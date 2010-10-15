@@ -331,7 +331,12 @@ if ($hassiteconfig) {
     if (empty($CFG->enablewebservices)) {
         $temp->add(new admin_setting_heading('webservicesaredisabled', '', get_string('disabledwarning', 'webservice')));
     }
-    $wsdoclink = $OUTPUT->doc_link('How_to_get_a_security_key');
+
+    // We cannot use $OUTPUT this early, doing so means that we lose the ability
+    // to set the page layout on all admin pages.
+    // $wsdoclink = $OUTPUT->doc_link('How_to_get_a_security_key');
+    $url = new moodle_url(get_docs_url('How_to_get_a_security_key'));
+    $wsdoclink = html_writer::tag('a', get_string('supplyinfo'),array('href'=>$url));
     $temp->add(new admin_setting_configcheckbox('enablewsdocumentation', get_string('enablewsdocumentation',
                         'admin'), get_string('configenablewsdocumentation', 'admin', $wsdoclink), false));
     $ADMIN->add('webservicesettings', $temp);
