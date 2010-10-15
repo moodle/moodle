@@ -82,7 +82,7 @@ class block_community_manager {
         global $CFG, $USER;
         require_once($CFG->libdir . "/filelib.php");
         require_once($CFG->dirroot. "/course/publish/lib.php");
-
+             
         $params['courseid'] = $course->id;
         $params['filetype'] = HUB_BACKUP_FILE_TYPE;
 
@@ -93,8 +93,19 @@ class block_community_manager {
         $url  = new moodle_url($course->huburl.'/local/hub/webservice/download.php', $params);
         $path = $CFG->dataroot.'/temp/backup/'.$filename.".mbz";
         $fp = fopen($path, 'w');
-        $ch = curl_init($course->huburl.'/local/hub/webservice/download.php?filetype='
-                .HUB_BACKUP_FILE_TYPE.'&courseid='.$course->id);
+        $curlurl = $course->huburl.'/local/hub/webservice/download.php?filetype='
+                .HUB_BACKUP_FILE_TYPE.'&courseid='.$course->id;
+
+        //send an identification token if the site is registered on the hub
+        require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
+        $registrationmanager = new registration_manager();
+        $registeredhub = $registrationmanager->get_registeredhub($course->huburl);
+        if (!empty($registeredhub)) {
+            $token = $registeredhub->token;
+            $curlurl .= '&token='.$token;
+        }
+        
+        $ch = curl_init($curlurl);
         curl_setopt($ch, CURLOPT_FILE, $fp);
         $data = curl_exec($ch);
         curl_close($ch);
