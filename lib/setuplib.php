@@ -597,7 +597,7 @@ function initialise_fullme() {
         if ($wwwroot['scheme'] !== 'https') {
             throw new coding_exception('Must use https address in wwwroot when ssl proxy enabled!');
         }
-        $rurl['scheme'] === 'https'; // make moodle believe it runs on https, squid or something else it doing it
+        $rurl['scheme'] = 'https'; // make moodle believe it runs on https, squid or something else it doing it
     }
 
     // $CFG->reverseproxy specifies if reverse proxy server used.
