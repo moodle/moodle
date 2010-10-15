@@ -30,7 +30,6 @@ M.mod_imscp.init = function(Y) {
     var imscp_current_node;
     var imscp_buttons = [];
     var imscp_bloody_labelclick = false;
-    var imscp_nav_panel;
 
     Y.use('yui2-resize', 'yui2-dragdrop', 'yui2-container', 'yui2-button', 'yui2-layout', 'yui2-treeview', 'yui2-json', 'yui2-event', function(Y) {
 
@@ -96,24 +95,16 @@ M.mod_imscp.init = function(Y) {
                 left.set('width', (maxwidth - 10));
             }
 
-            var pageheight = imscp_get_htmlelement_size('page', 'height');
-            var layoutheight = imscp_get_htmlelement_size(imscp_layout_widget, 'height');
-            var newheight = layoutheight + parseInt(YAHOO.util.Dom.getViewportHeight()) - pageheight - 20;
-            if (newheight > 400) {
-                if (newheight > 768) {
-                    imscp_layout_widget.setStyle('height', '768px');
-                }
-                else {
-                    imscp_layout_widget.setStyle('height', newheight+'px');
-                }
+            var headerheight = imscp_get_htmlelement_size('page-header', 'height');
+            var footerheight = imscp_get_htmlelement_size('page-footer', 'height');
+            var newheight = parseInt(YAHOO.util.Dom.getViewportHeight()) - footerheight - headerheight - 20;
+            if (newheight < 400) {
+                newheight = 400;
             }
+            imscp_layout_widget.setStyle('height', newheight+'px');
 
             imscp_layout_widget.render();
             imscp_resize_frame();
-
-            if (imscp_nav_panel) {
-                imscp_nav_panel.align('bl', 'bl');
-            }
         };
 
         var imscp_get_htmlelement_size = function(el, prop) {
@@ -254,14 +245,10 @@ M.mod_imscp.init = function(Y) {
         tree.expandAll();
         tree.render();
 
-        // navigation
-        imscp_nav_panel = new YAHOO.widget.Panel('imscp_navpanel', { visible:true, draggable:true, close:false,
-                                                               context: ['page', 'bl', 'bl', ["windowScroll", "textResize", "windowResize"]], constraintoviewport:true} );
-        imscp_nav_panel.setHeader(M.str.imscp.navigation);
+        var navbar = YAHOO.util.Dom.get('imscp_nav');
+        navbar.style.display = 'block';
 
-        //TODO: make some better&accessible buttons
-        imscp_nav_panel.setBody('<span id="imscp_nav"><button id="nav_skipprev">&lt;&lt;</button><button id="nav_prev">&lt;</button><button id="nav_up">^</button><button id="nav_next">&gt;</button><button id="nav_skipnext">&gt;&gt;</button></span>');
-        imscp_nav_panel.render();
+        // navigation
         imscp_buttons[0] = new YAHOO.widget.Button('nav_skipprev');
         imscp_buttons[1] = new YAHOO.widget.Button('nav_prev');
         imscp_buttons[2] = new YAHOO.widget.Button('nav_up');
@@ -282,7 +269,6 @@ M.mod_imscp.init = function(Y) {
         imscp_buttons[4].on('click', function(ev) {
             imscp_activate_item(imscp_skipnext(imscp_current_node));
         });
-        imscp_nav_panel.render();
 
         // finally activate the first item
         imscp_activate_item(tree.getRoot().children[0]);

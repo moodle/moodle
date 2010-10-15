@@ -46,9 +46,10 @@ function imscp_print_content($imscp, $cm, $course) {
     foreach ($items as $item) {
         echo imscp_htmllize_item($item, $imscp, $cm);
     }
-    echo '</ul></div></div>';
+    echo '</ul></div>';
+    echo '<div id="imscp_nav" style="display:none"><button id="nav_skipprev">&lt;&lt;</button><button id="nav_prev">&lt;</button><button id="nav_up">^</button><button id="nav_next">&gt;</button><button id="nav_skipnext">&gt;&gt;</button></div>';
     echo '</div>';
-    echo '<div id="imscp_navpanel"></div>';
+    echo '</div>';
 
     $PAGE->requires->js_init_call('M.mod_imscp.init');
     return;
