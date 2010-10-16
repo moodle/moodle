@@ -300,6 +300,8 @@
           <ON_CHECK message="intlrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
+      <PHP_EXTENSION name="json" level="required">
+      </PHP_EXTENSION>
     </PHP_EXTENSIONS>
     <PHP_SETTINGS>
       <PHP_SETTING name="memory_limit" value="40M" level="required">
