@@ -394,6 +394,7 @@ class core_renderer extends renderer_base {
             return '';
         }
 
+        $loginapge = ((string)$this->page->url === get_login_url());
         $course = $this->page->course;
 
         if (session_is_loggedinas()) {
@@ -419,8 +420,10 @@ class core_renderer extends renderer_base {
                 $username .= " from <a href=\"{$idprovider->wwwroot}\">{$idprovider->name}</a>";
             }
             if (isguestuser()) {
-                $loggedinas = $realuserinfo.get_string('loggedinasguest').
-                          " (<a href=\"$loginurl\">".get_string('login').'</a>)';
+                $loggedinas = $realuserinfo.get_string('loggedinasguest');
+                if (!$loginapge) {
+                    $loggedinas .= " (<a href=\"$loginurl\">".get_string('login').'</a>)';
+                }
             } else if (is_role_switched($course->id)) { // Has switched roles
                 $rolename = '';
                 if ($role = $DB->get_record('role', array('id'=>$USER->access['rsw'][$context->path]))) {
@@ -433,8 +436,10 @@ class core_renderer extends renderer_base {
                           " (<a href=\"$CFG->wwwroot/login/logout.php?sesskey=".sesskey()."\">".get_string('logout').'</a>)';
             }
         } else {
-            $loggedinas = get_string('loggedinnot', 'moodle').
-                          " (<a href=\"$loginurl\">".get_string('login').'</a>)';
+            $loggedinas = get_string('loggedinnot', 'moodle');
+            if (!$loginapge) {
+                $loggedinas .= " (<a href=\"$loginurl\">".get_string('login').'</a>)';
+            }
         }
 
         $loggedinas = '<div class="logininfo">'.$loggedinas.'</div>';
