@@ -184,7 +184,8 @@ class course_publication_form extends moodleform {
         //the input parameters
         $mform->addElement('header', 'moodle', get_string('publicationinfo', 'hub'));
 
-        $mform->addElement('text', 'name', get_string('coursename', 'hub'));
+        $mform->addElement('text', 'name', get_string('coursename', 'hub'),
+                array('class' => 'metadatatext'));
         $mform->addRule('name', $strrequired, 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
         $mform->setDefault('name', $defaultfullname);
@@ -197,7 +198,8 @@ class course_publication_form extends moodleform {
 
             $mform->addElement('hidden', 'share', $share);
 
-            $mform->addElement('text', 'demourl', get_string('demourl', 'hub'));
+            $mform->addElement('text', 'demourl', get_string('demourl', 'hub'),
+                array('class' => 'metadatatext'));
             $mform->setType('demourl', PARAM_URL);
             $mform->setDefault('demourl', new moodle_url("/course/view.php?id=" . $course->id));
             $mform->addHelpButton('demourl', 'demourl', 'hub');
@@ -216,12 +218,13 @@ class course_publication_form extends moodleform {
             $mform->addHelpButton('courseurlstring', 'courseurl', 'hub');
         }
 
-        $mform->addElement('text', 'courseshortname', get_string('courseshortname', 'hub'));
+        $mform->addElement('text', 'courseshortname', get_string('courseshortname', 'hub'),
+                array('class' => 'metadatatext'));
         $mform->setDefault('courseshortname', $defaultshortname);
         $mform->addHelpButton('courseshortname', 'courseshortname', 'hub');
 
         $mform->addElement('textarea', 'description', get_string('description'), array('rows' => 10,
-            'cols' => 20));
+            'cols' => 57));
         $mform->addRule('description', $strrequired, 'required', null, 'client');
         $mform->setDefault('description', $defaultsummary);
         $mform->setType('description', PARAM_TEXT);
@@ -234,27 +237,32 @@ class course_publication_form extends moodleform {
         $mform->addHelpButton('language', 'language', 'hub');
 
 
-        $mform->addElement('text', 'publishername', get_string('publishername', 'hub'));
+        $mform->addElement('text', 'publishername', get_string('publishername', 'hub'),
+                array('class' => 'metadatatext'));
         $mform->setDefault('publishername', $defaultpublishername);
         $mform->addRule('publishername', $strrequired, 'required', null, 'client');
         $mform->addHelpButton('publishername', 'publishername', 'hub');
 
-        $mform->addElement('text', 'publisheremail', get_string('publisheremail', 'hub'));
+        $mform->addElement('text', 'publisheremail', get_string('publisheremail', 'hub'),
+                array('class' => 'metadatatext'));
         $mform->setDefault('publisheremail', $defaultpublisheremail);
         $mform->addRule('publisheremail', $strrequired, 'required', null, 'client');
         $mform->addHelpButton('publisheremail', 'publisheremail', 'hub');
 
-        $mform->addElement('text', 'creatorname', get_string('creatorname', 'hub'));
+        $mform->addElement('text', 'creatorname', get_string('creatorname', 'hub'),
+                array('class' => 'metadatatext'));
         $mform->addRule('creatorname', $strrequired, 'required', null, 'client');
         $mform->setType('creatorname', PARAM_TEXT);
         $mform->setDefault('creatorname', $defaultcreatorname);
         $mform->addHelpButton('creatorname', 'creatorname', 'hub');
 
-        $mform->addElement('text', 'contributornames', get_string('contributornames', 'hub'));
+        $mform->addElement('text', 'contributornames', get_string('contributornames', 'hub'),
+                array('class' => 'metadatatext'));
         $mform->setDefault('contributornames', $defaultcontributornames);
         $mform->addHelpButton('contributornames', 'contributornames', 'hub');
 
-        $mform->addElement('text', 'coverage', get_string('tags', 'hub'));
+        $mform->addElement('text', 'coverage', get_string('tags', 'hub'),
+                array('class' => 'metadatatext'));
         $mform->setType('coverage', PARAM_TEXT);
         $mform->setDefault('coverage', $defaultcoverage);
         $mform->addHelpButton('coverage', 'tags', 'hub');

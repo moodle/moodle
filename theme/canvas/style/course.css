@@ -118,3 +118,6 @@
 #page-course-reset .generalbox {
 	margin-bottom: 1em;
 }
+
+/* Publication */
+#page-course-publish-metadata .metadatatext {width: 400px;}

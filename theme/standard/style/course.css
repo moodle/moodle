@@ -102,3 +102,6 @@
 .course_category_tree .category .course.even {background-color:#f6f6f6;border-color:#eee;border-top-color: #f9f9f9;}
 .course_category_tree .category .course_info {right:3px;top:3px;}
 .course_category_tree .category .course:hover {background-color:#eee;}
+
+/* Publication */
+#page-course-publish-metadata .metadatatext {width: 400px;}
