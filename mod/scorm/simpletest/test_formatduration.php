@@ -3,12 +3,12 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.'); //  It must be included from a Moodle page
 }
 
-// Unit tests for scorm_formatdatetime function from locallib.php
+// Unit tests for scorm_formatduration function from locallib.php
 
 // Make sure the code being tested is accessible.
 require_once($CFG->dirroot . '/mod/scorm/locallib.php'); // Include the code to test
  
-class scorm_formatdatetime_test extends UnitTestCase {
+class scorm_formatduration_test extends UnitTestCase {
     function test_scorm2004_format() {
         $stryears = get_string('years');
         $strmonths = trim(get_string('nummonths'));
