@@ -74,10 +74,23 @@ function resourcelib_try_file_migration($filepath, $cmid, $courseid, $component,
         return false;
     }
 
-    $pathnamehash = sha1("/$coursecontext->id/course/legacy/0".$filepath);
-    if (!$file = $fs->get_file_by_hash($pathnamehash)) {
-        return false;
-    }
+    $fullpath = rtrim("/$coursecontext->id/course/legacy/0".$filepath, '/');
+    do {
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath))) {
+            if ($file = $fs->get_file_by_hash(sha1("$fullpath/.")) and $file->is_directory()) {
+                if ($file = $fs->get_file_by_hash(sha1("$fullpath/index.htm"))) {
+                    break;
+                }
+                if ($file = $fs->get_file_by_hash(sha1("$fullpath/index.html"))) {
+                    break;
+                }
+                if ($file = $fs->get_file_by_hash(sha1("$fullpath/Default.htm"))) {
+                    break;
+                }
+            }
+            return false;
+        }
+    } while (false);
 
     // copy and keep the same path, name, etc.
     $file_record = array('contextid'=>$context->id, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid);
