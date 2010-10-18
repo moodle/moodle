@@ -386,19 +386,32 @@ function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
 
     $fs = get_file_storage();
     $relativepath = implode('/', $args);
-    $fullpath = "/$context->id/mod_resource/$filearea/0/$relativepath";
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-        $resource = $DB->get_record('resource', array('id'=>$cm->instance), 'id, legacyfiles', MUST_EXIST);
-        if ($resource->legacyfiles != RESOURCELIB_LEGACYFILES_ACTIVE) {
-            return false;
+    $fullpath = rtrim("/$context->id/mod_resource/$filearea/0/$relativepath", '/');
+    do {
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath))) {
+            if ($file = $fs->get_file_by_hash(sha1("$fullpath/.")) and $file->is_directory()) {
+                if ($file = $fs->get_file_by_hash(sha1("$fullpath/index.htm"))) {
+                    break;
+                }
+                if ($file = $fs->get_file_by_hash(sha1("$fullpath/index.html"))) {
+                    break;
+                }
+                if ($file = $fs->get_file_by_hash(sha1("$fullpath/Default.htm"))) {
+                    break;
+                }
+            }
+            $resource = $DB->get_record('resource', array('id'=>$cm->instance), 'id, legacyfiles', MUST_EXIST);
+            if ($resource->legacyfiles != RESOURCELIB_LEGACYFILES_ACTIVE) {
+                return false;
+            }
+            if (!$file = resourcelib_try_file_migration('/'.$relativepath, $cm->id, $cm->course, 'mod_resource', 'content', 0)) {
+                return false;
+            }
+            // file migrate - update flag
+            $resource->legacyfileslast = time();
+            $DB->update_record('resource', $resource);
         }
-        if (!$file = resourcelib_try_file_migration('/'.$relativepath, $cm->id, $cm->course, 'mod_resource', 'content', 0)) {
-            return false;
-        }
-        // file migrate - update flag
-        $resource->legacyfileslast = time();
-        $DB->update_record('resource', $resource);
-    }
+    } while (false);
 
     // should we apply filters?
     $mimetype = $file->get_mimetype();
