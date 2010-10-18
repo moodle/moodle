@@ -159,7 +159,7 @@ if ($csv) {
 
 } else {
     // Navigation and header
-    $strcompletion = get_string('completionreport','completion');
+    $strcompletion = get_string('coursecompletion');
 
     $PAGE->set_title($strcompletion);
     $PAGE->set_heading($course->fullname);

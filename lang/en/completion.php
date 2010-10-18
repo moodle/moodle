@@ -45,7 +45,7 @@ $string['completion-alt-manual-y'] = 'Completed; select to mark as not complete'
 $string['completion_automatic'] = 'Show activity as complete when conditions are met';
 $string['completiondisabled'] = 'Disabled, not shown in activity settings';
 $string['completionexpected'] = 'Expect completed on';
-$string['completionexpected_help']='This setting specifies the date when the activity is expected to be completed. The date is not shown to students and is only displayed in the progress report.';
+$string['completionexpected_help']='This setting specifies the date when the activity is expected to be completed. The date is not shown to students and is only displayed in the activity completion report.';
 $string['completionicons'] = 'Completion tick boxes';
 $string['completionicons_help'] = 'A tick next an activity name may be used to indicate when the activity is complete.
 
@@ -54,7 +54,6 @@ If a dotted tick is shown, you can click it to tick the box when you think you h
 If a blank tick box is shown, a tick will appear automatically when you have completed the activity according to conditions set by the teacher.';
 $string['completion_manual'] = 'Students can manually mark the activity as completed';
 $string['completion_none'] = 'Do not indicate activity completion';
-$string['completionreport'] = 'Completion progress report';
 $string['completion-title-manual-n'] = 'Mark as complete';
 $string['completion-title-manual-y'] = 'Mark as not complete';
 $string['completionusegrade'] = 'Require grade';
@@ -82,7 +81,6 @@ $string['yourprogress'] = 'Your progress';
 $string['achievinggrade']='Achieving grade';
 $string['activities']='Activities';
 $string['activitiescompleted']='Activities completed';
-$string['activitycompletionreport']='Activity completion progress report';
 $string['addcourseprerequisite']='Add course prerequisite';
 $string['afterspecifieddate']='After specified date';
 $string['aggregationmethod']='Aggregation method';
@@ -96,9 +94,8 @@ $string['completionsettingslocked']='Completion settings locked';
 $string['completionstartonenrol']='Completion tracking begins on enrolment';
 $string['completionstartonenrolhelp']='Begin tracking a student\'s progress in course completion after course enrolment';
 $string['confirmselfcompletion']='Confirm self completion';
-$string['coursecomplete']='Course Complete';
-$string['coursecompleted']='Course Completed';
-$string['coursecompletionreport']='Course completion progress report';
+$string['coursecomplete']='Course complete';
+$string['coursecompleted']='Course completed';
 $string['coursegrade']='Course grade';
 $string['courseprerequisites']='Course prerequisites';
 $string['coursesavailable']='Courses available';

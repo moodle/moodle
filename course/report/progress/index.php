@@ -140,7 +140,7 @@ if($csv) {
 
     // Navigation and header
     $strreports = get_string("reports");
-    $strcompletion = get_string('completionreport','completion');
+    $strcompletion = get_string('activitycompletion', 'completion');
 
     $PAGE->set_title($strcompletion);
     $PAGE->set_heading($course->fullname);
