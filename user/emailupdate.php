@@ -31,6 +31,7 @@ $key = required_param('key', PARAM_ALPHANUM);
 $id  = required_param('id', PARAM_INT);
 
 $PAGE->set_url('/user/emailupdate.php', array('id'=>$id, 'key'=>$key));
+$PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
 
 if (!$user = $DB->get_record('user', array('id' => $id))) {
     print_error('invaliduserid');
