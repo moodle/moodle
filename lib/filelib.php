@@ -1783,6 +1783,14 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
 function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, $filename=null, $dontdie=false) {
     global $CFG, $COURSE, $SESSION;
 
+    if (!$stored_file or $stored_file->is_directory()) {
+        // nothing to serve
+        if ($dontdie) {
+            return;
+        }
+        die;
+    }
+
     if ($dontdie) {
         ignore_user_abort(true);
     }
