@@ -31,14 +31,6 @@
  * @package
  */
 
-
-define("JABBER_SERVER","jabber80.com");
-define("JABBER_USERNAME","");
-define("JABBER_PASSWORD","");
-define("JABBER_PORT",5222);
-
-define("RUN_TIME",15);  // set a maximum run time of 15 seconds
-
 require_once($CFG->dirroot.'/message/output/lib.php');
 require_once($CFG->libdir.'/jabber/XMPP/XMPP.php');
 
@@ -50,7 +42,7 @@ class message_output_jabber extends message_output {
      * @return true if ok, false if error
      */
     function send_message($message){
-        global $DB;
+        global $DB, $CFG;
 
         if (!$userfrom = $DB->get_record('user', array('id' => $message->useridfrom))) {
             return false;
@@ -61,11 +53,12 @@ class message_output_jabber extends message_output {
         if (!$jabberaddress = get_user_preferences('message_processor_jabber_jabberid', $userto->email, $userto->id)) {
             $jabberaddress = $userto->email;
         }
-        $jabbermessage = fullname($userfrom).': '.$message->fullmessage;
+        $jabbermessage = fullname($userfrom).': '.$message->smallmessage;
 
-        $conn = new XMPPHP_XMPP(JABBER_SERVER, JABBER_PORT, JABBER_USERNAME, JABBER_PASSWORD, 'moodle', JABBER_SERVER);
+        $conn = new XMPPHP_XMPP($CFG->jabberhost,$CFG->jabberport,$CFG->jabberusername,$CFG->jabberpassword,'moodle',$CFG->jabberserver);
 
         try {
+            //$conn->useEncryption(false);
             $conn->connect();
             $conn->processUntil('session_start');
             $conn->presence();

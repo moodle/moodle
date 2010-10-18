@@ -72,6 +72,16 @@ $temp->add(new admin_setting_configtext('supportpage', get_string('supportpage',
 $ADMIN->add('server', $temp);
 
 
+// Jabber settingpage
+$temp = new admin_settingpage('jabber', get_string('jabber', 'admin'));
+$temp->add(new admin_setting_configtext('jabberhost', get_string('jabberhost', 'admin'), get_string('configjabberhost', 'admin'), '', PARAM_RAW));
+$temp->add(new admin_setting_configtext('jabberserver', get_string('jabberserver', 'admin'), get_string('configjabberserver', 'admin'), '', PARAM_RAW));
+$temp->add(new admin_setting_configtext('jabberusername', get_string('jabberusername', 'admin'), get_string('configjabberusername', 'admin'), '', PARAM_RAW));
+$temp->add(new admin_setting_configpasswordunmask('jabberpassword', get_string('jabberpassword', 'admin'), get_string('configjabberpassword', 'admin'), ''));
+$temp->add(new admin_setting_configtext('jabberport', get_string('jabberport', 'admin'), get_string('configjabberport', 'admin'), 5222, PARAM_INT));
+$ADMIN->add('server', $temp);
+
+
 
 // "sessionhandling" settingpage
 $temp = new admin_settingpage('sessionhandling', get_string('sessionhandling', 'admin'));
