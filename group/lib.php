@@ -542,8 +542,8 @@ function groups_get_potential_members($courseid, $roleid = null, $cohortid = nul
     }
 
     if ($cohortid) {
-        $cohortjoin = "JOIN {cohort_members} cm ON cm.userid = u.id
-                       JOIN {cohort} c ON c.id = cm.cohortid";
+        $cohortjoin = "JOIN {cohort_members} cm ON (cm.userid = u.id AND cm.cohortid = :cohortid)";
+        $params['cohortid'] = $cohortid;
     } else {
         $cohortjoin = "";
     }
