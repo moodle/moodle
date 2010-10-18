@@ -72,6 +72,7 @@ class message_output_jabber extends message_output {
             $conn->message($jabberaddress, $jabbermessage);
             $conn->disconnect();
         } catch(XMPPHP_Exception $e) {
+            debugging($e->getMessage());
             return false;
         }
 
