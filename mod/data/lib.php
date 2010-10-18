@@ -2053,12 +2053,16 @@ abstract class data_preset_importer {
             $fs = get_file_storage();
             $files = $fs->get_area_files(DATA_PRESET_CONTEXT, DATA_PRESET_COMPONENT, DATA_PRESET_FILEAREA);
 
+            //preset name to find will be the final element of the directory
+            $presettofind = end(explode('/',$this->directory));
+
+            //now go through the available files available and see if we can find it
             foreach ($files as $file) {
                 if (($file->is_directory() && $file->get_filepath()=='/') || !$file->is_directory()) {
                     continue;
                 }
                 $presetname = trim($file->get_filepath(), '/');
-                if ($presetname==$this->module->name) {
+                if ($presetname==$presettofind) {
                     $this->directory = $presetname;
                     $fileobj = $file;
                 }
