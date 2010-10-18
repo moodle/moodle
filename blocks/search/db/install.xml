@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/search/db" VERSION="20070811" COMMENT="XMLDB file for Moodle search engine"
+<XMLDB PATH="blocks/search/db" VERSION="20101012" COMMENT="XMLDB file for Moodle search engine"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -12,8 +12,8 @@
         <FIELD NAME="itemtype" TYPE="char" LENGTH="32" NOTNULL="true" DEFAULT="standard" SEQUENCE="false" PREVIOUS="doctype" NEXT="title"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="itemtype" NEXT="url"/>
         <FIELD NAME="url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="title" NEXT="docdate"/>
-        <FIELD NAME="docdate" TYPE="datetime" NOTNULL="true" SEQUENCE="false" PREVIOUS="url" NEXT="updated"/>
-        <FIELD NAME="updated" TYPE="datetime" NOTNULL="true" SEQUENCE="false" PREVIOUS="docdate" NEXT="courseid"/>
+        <FIELD NAME="docdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="url" NEXT="updated"/>
+        <FIELD NAME="updated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="docdate" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="updated" NEXT="groupid"/>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid"/>
       </FIELDS>
