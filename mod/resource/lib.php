@@ -362,7 +362,7 @@ function resource_get_file_info($browser, $areas, $course, $cm, $context, $filea
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
- * @return bool false if file not found, does not return if found - justsend the file
+ * @return bool false if file not found, does not return if found - just send the file
  */
 function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG, $DB;
@@ -402,7 +402,7 @@ function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
 
     // should we apply filters?
     $mimetype = $file->get_mimetype();
-    if ($mimetype = 'text/html' or $mimetype = 'text/plain') {
+    if ($mimetype === 'text/html' or $mimetype === 'text/plain') {
         $filter = $DB->get_field('resource', 'filterfiles', array('id'=>$cm->instance));
         $CFG->embeddedsoforcelinktarget = true;
     } else {
