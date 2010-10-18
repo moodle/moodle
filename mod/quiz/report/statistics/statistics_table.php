@@ -91,7 +91,7 @@ class quiz_report_statistics_table extends flexible_table {
         if (!$this->is_downloading()){
             if ($question->qtype!='random'){
                 $tooltip = get_string('detailedanalysis', 'quiz_statistics');
-                $url = $this->baseurl .'&amp;qid='.$question->id;
+                $url = $this->baseurl .'qid='.$question->id;
                 $html = "<a title=\"$tooltip\" href=\"$url\">".$question->name."</a>";
             } else {
                 $html = $question->name;
@@ -132,7 +132,11 @@ class quiz_report_statistics_table extends flexible_table {
         }
     }
     function col_actions($question){
-        return quiz_question_action_icons($this->quiz, $this->cmid, $question, $this->baseurl);
+        global $CFG;
+        $editreturnurl = str_replace($CFG->wwwroot, '', $this->baseurl);
+        $editreturnurl = str_replace('&amp;', '&', $editreturnurl);
+        $editreturnurl = preg_replace('/&$/', '', $editreturnurl);
+        return quiz_question_action_icons($this->quiz, $this->cmid, $question, $editreturnurl);
     }
     function col_qtype($question){
         return get_string($question->qtype,'quiz');
