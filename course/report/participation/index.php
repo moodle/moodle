@@ -170,29 +170,29 @@
 
         switch ($action) {
             case 'view':
-                $actionsql = 'l.action IN (\''.implode('\',\'', $viewnames).'\' )';
+                $actionsql = 'action IN (\''.implode('\',\'', $viewnames).'\' )';
                 break;
             case 'post':
-                $actionsql = 'l.action IN (\''.implode('\',\'', $postnames).'\' )';
+                $actionsql = 'action IN (\''.implode('\',\'', $postnames).'\' )';
                 break;
             default:
                 // some modules have stuff we want to hide, ie mail blocked etc so do actually need to limit here.
-                $actionsql = 'l.action IN (\''.implode('\',\'', array_merge($viewnames, $postnames)).'\' )';
+                $actionsql = 'action IN (\''.implode('\',\'', array_merge($viewnames, $postnames)).'\' )';
         }
 
         $relatedcontexts = get_related_contexts_string($context);
 
-        $sql = "SELECT ra.userid, u.firstname, u.lastname, u.idnumber, COUNT(l.action) AS count
-                  FROM {$CFG->prefix}role_assignments ra
-                       JOIN {$CFG->prefix}user u           ON u.id = ra.userid
-                       LEFT OUTER JOIN {$CFG->prefix}log l ON (l.userid = ra.userid AND l.cmid = $instanceid AND l.time > $timefrom AND $actionsql)
-                 WHERE ra.contextid $relatedcontexts AND ra.roleid = $roleid";
+        $sql = "SELECT ra.userid, u.firstname, u.lastname, u.idnumber, l.actioncount AS count
+                FROM (SELECT * FROM {$CFG->prefix}role_assignments WHERE contextid $relatedcontexts AND roleid = $roleid ) ra
+                JOIN {$CFG->prefix}user u ON u.id = ra.userid
+                LEFT JOIN (
+                    SELECT userid, COUNT(action) actioncount FROM {$CFG->prefix}log WHERE cmid = $instanceid AND time > $timefrom AND $actionsql GROUP BY userid
+                ) l ON (l.userid = ra.userid)";
+
 
         if ($table->get_sql_where()) {
-            $sql .= ' AND '.$table->get_sql_where(); //initial bar
+            $sql .= ' WHERE '.$table->get_sql_where(); //initial bar
         }
-
-        $sql .= " GROUP BY ra.userid, u.firstname, u.lastname, u.idnumber";
 
         if ($table->get_sql_sort()) {
             $sql .= ' ORDER BY '.$table->get_sql_sort();
@@ -200,8 +200,6 @@
 
         $countsql = "SELECT COUNT(DISTINCT(ra.userid))
                        FROM {$CFG->prefix}role_assignments ra
-                            JOIN {$CFG->prefix}user u           ON u.id = ra.userid
-                            LEFT OUTER JOIN {$CFG->prefix}log l ON (l.userid = ra.userid AND l.cmid = $instanceid AND l.time > $timefrom AND $actionsql)
                       WHERE ra.contextid $relatedcontexts AND ra.roleid = $roleid";
 
         $totalcount = count_records_sql($countsql);
