@@ -59,12 +59,15 @@ if ($inpopup !== 0) {
 }
 $PAGE->set_url($url);
 
-if ($originalreturnurl && $wizardnow == '') {
-    $returnurl = $CFG->wwwroot . '/' . $originalreturnurl;
-} else if ($originalreturnurl && $wizardnow !== ''){
-    $returnurl = $originalreturnurl;
-}else {
-    $returnurl = "{$CFG->wwwroot}/question/edit.php?courseid={$COURSE->id}";
+if ($originalreturnurl) {
+    if (strpos($originalreturnurl, '/') !== 0) {
+        throw new coding_exception("returnurl must be a local URL starting with '/'. $originalreturnurl was given.");
+    }
+    $returnurl = new moodle_url($originalreturnurl);
+} else if ($cmid) {
+    $returnurl = new moodle_url('/question/edit.php', array('cmid' => $cmid));
+} else {
+    $returnurl = new moodle_url('/question/edit.php', array('courseid' => $courseid));
 }
 
 if ($movecontext && !$id){
@@ -236,10 +239,7 @@ if ($mform->is_cancelled()){
     }
 
     /// Ensure we redirect back to the category the question is being saved into.
-    $returnurl = new moodle_url($returnurl);
     $returnurl->param('category', $fromform->category);
-    // TODO: it is sloppy to pass arounf full URLs through page parameters and some servers do not like that
-    $returnurl = $returnurl->out(false);
 
     /// Call the appropriate method.
     if ($movecontext) {
@@ -247,14 +247,14 @@ if ($mform->is_cancelled()){
         $tocontext = get_context_instance_by_id($tocontextid);
         require_capability('moodle/question:add', $tocontext);
         if (get_filesdir_from_context($categorycontext) != get_filesdir_from_context($tocontext)){
-            $movecontexturl  = new moodle_url('/question/contextmoveq.php',
-                                            array('returnurl' => $returnurl,
-                                                    'ids'=>$question->id,
-                                                    'tocatid'=> $tocatid));
+            $movecontexturl  = new moodle_url('/question/contextmoveq.php', array(
+                    'returnurl' => str_replace($CFG->wwwroot, '', $returnurl->out(false)),
+                    'ids' => $question->id,
+                    'tocatid' => $tocatid));
             if ($cmid){
                 $movecontexturl->param('cmid', $cmid);
             } else {
-                $movecontexturl->param('courseid', $COURSE->id);
+                $movecontexturl->param('courseid', $courseid);
             }
             redirect($movecontexturl);
         }
@@ -272,21 +272,25 @@ if ($mform->is_cancelled()){
             echo $OUTPUT->notification(get_string('changessaved'), '');
             close_window(3);
         } else {
-            $nexturl = new moodle_url($returnurl);
-            $nexturl->param('lastchanged', $question->id);
-            if($appendqnumstring) {
-                $nexturl->params(array($appendqnumstring=>($question->id), "sesskey"=>sesskey(), "cmid"=>$cmid));
+            $returnurl->param('lastchanged', $question->id);
+            if ($appendqnumstring) {
+                $returnurl->param($appendqnumstring, $question->id);
+                $returnurl->param('sesskey', sesskey());
+                $returnurl->param('cmid', $cmid);
             }
-            redirect($nexturl);
+            redirect($returnurl);
         }
     } else {
-        $nexturlparams = array('returnurl'=>$returnurl, 'appendqnumstring'=>$appendqnumstring);
+        $nexturlparams = array(
+                'returnurl' => $originalreturnurl,
+                'appendqnumstring' => $appendqnumstring);
         if (isset($fromform->nextpageparam) && is_array($fromform->nextpageparam)){
-            $nexturlparams += $fromform->nextpageparam;//useful for passing data to the next page which is not saved in the database
+            //useful for passing data to the next page which is not saved in the database.
+            $nexturlparams += $fromform->nextpageparam;
         }
         $nexturlparams['id'] = $question->id;
         $nexturlparams['wizardnow'] = $fromform->wizard;
-        $nexturl = new moodle_url('question.php', $nexturlparams);
+        $nexturl = new moodle_url('/question/question.php', $nexturlparams);
         if ($cmid){
             $nexturl->param('cmid', $cmid);
         } else {

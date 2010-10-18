@@ -82,8 +82,8 @@ $PAGE->set_url('/question/addquestion.php', $hiddenparams);
 $chooseqtype = get_string('chooseqtypetoadd', 'question');
 $PAGE->set_heading($COURSE->fullname);
 if ($cm !== null) {
-    if (stripos($returnurl, "$CFG->wwwroot/mod/{$cm->modname}/view.php")!== 0) {
-        //don't need this link if returnurl returns to view.php
+    // Nasty hack, but we don't want this link if returnurl returns to view.php
+    if (stripos($returnurl, "/mod/{$cm->modname}/view.php")!== 0) {
         $PAGE->navbar->add(get_string('editinga', 'moodle', get_string('modulename', $cm->modname)),$returnurl);
     }
     $PAGE->navbar->add($chooseqtype);

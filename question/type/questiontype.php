@@ -1063,30 +1063,29 @@ class default_questiontype {
         }
 
     /// Work out the right URL.
-        $linkurl = '/question/question.php?id=' . $question->id;
+        $url = new moodle_url('/question/question.php', array('id' => $question->id));
         if (!empty($cmoptions->cmid)) {
-            $linkurl .= '&amp;cmid=' . $cmoptions->cmid;
+            $url->param('cmid', $cmoptions->cmid);
         } else if (!empty($cmoptions->course)) {
-            $linkurl .= '&amp;courseid=' . $cmoptions->course;
+            $url->param('courseid', $cmoptions->course);
         } else {
             print_error('missingcourseorcmidtolink', 'question');
         }
 
-    /// Work out the contents of the link.
-        $stredit = get_string('edit');
-        $linktext = '<img src="' . $OUTPUT->pix_url('t/edit') . '" alt="' . $stredit . '" />';
+        $icon = new pix_icon('t/edit', get_string('edit'));
 
+        $action = null;
         if (!empty($cmoptions->thispageurl)) {
-        /// The module allow editing in the same window, print an ordinary link.
-            return '<a href="' . $CFG->wwwroot . $linkurl . '&amp;returnurl=' .
-                    urlencode($cmoptions->thispageurl . '#q' . $question->id) .
-                    '" title="' . $stredit . '">' . $linktext . '</a>';
+            // The module allow editing in the same window, print an ordinary
+            // link with a returnurl.
+            $url->param('returnurl', $cmoptions->thispageurl);
         } else {
-        /// We have to edit in a pop-up.
-            $link = new moodle_url($linkurl . '&inpopup=1');
+            // We have to edit in a pop-up.
+            $url->param('inpopup', 1);
             $action = new popup_action('click', $link, 'editquestion');
-            return $OUTPUT->action_link($link, $linktext, $action ,array('title'=>$stredit));
         }
+
+        return $OUTPUT->action_icon($url, $icon, $action);
     }
 
     /**

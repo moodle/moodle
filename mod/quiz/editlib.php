@@ -392,7 +392,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
 
     $pageopen = false;
 
-    $returnurl = $pageurl->out();
+    $returnurl = str_replace($CFG->wwwroot, '', $pageurl->out(false));
     $questiontotalcount = count($order);
 
     foreach ($order as $i => $qnum) {
@@ -436,9 +436,11 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
 
             if ($qnum != 0) {
                 $question = $questions[$qnum];
-                $questionparams = array('returnurl' => $returnurl,
-                        'cmid' => $quiz->cmid, 'id' => $question->id);
-                $questionurl = new moodle_url("$CFG->wwwroot/question/question.php",
+                $questionparams = array(
+                        'returnurl' => $returnurl,
+                        'cmid' => $quiz->cmid,
+                        'id' => $question->id);
+                $questionurl = new moodle_url('/question/question.php',
                         $questionparams);
                 $questioncount++;
                 //this is an actual question
@@ -644,7 +646,7 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts) {
     $returnurladdtoquiz = new moodle_url($pageurl, array('addonpage' => $page));
 
     // Print a button linking to the choose question type page.
-    $returnurladdtoquiz = str_replace($CFG->wwwroot . '/', '', $returnurladdtoquiz->out(false));
+    $returnurladdtoquiz = str_replace($CFG->wwwroot, '', $returnurladdtoquiz->out(false));
     $newquestionparams = array('returnurl' => $returnurladdtoquiz,
             'cmid' => $quiz->cmid, 'appendqnumstring' => 'addquestion');
     create_new_question_button($defaultcategory->id, $newquestionparams, get_string('addaquestion', 'quiz'),
