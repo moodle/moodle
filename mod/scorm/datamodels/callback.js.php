@@ -4,6 +4,7 @@
         success: function(o) {
             scorm_tree_node = YAHOO.widget.TreeView.getTree('scorm_tree');
             if (o.responseText !== undefined) {
+                    //alert('got a response: ' + o.responseText);
                     if (scorm_tree_node && o.responseText) {
                         var hnode = scorm_tree_node.getHighlightedNode();
                         var hidx = null;
@@ -29,7 +30,13 @@
                     el_new_tree.style.display = 'none';
                     pagecontent.appendChild(el_new_tree)
                     // ignore the first level element as this is the title
-                    scorm_tree_node.buildTreeFromMarkup(el_new_tree.firstChild.firstChild);
+                    var startNode = el_new_tree.firstChild.firstChild;
+                    if (startNode.tagName == 'LI') {
+                        // go back to the beginning
+                        startNode = el_new_tree;
+                    }
+                    //var sXML = new XMLSerializer().serializeToString(startNode);
+                    scorm_tree_node.buildTreeFromMarkup(startNode);
                     var el = document.getElementById('scormtree123');
                     el.parentNode.removeChild(el);
                     scorm_tree_node.expandAll();
