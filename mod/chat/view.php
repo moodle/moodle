@@ -173,4 +173,7 @@ if ($chatusers = chat_get_users($chat->id, $currentgroup, $cm->groupingid)) {
     echo $OUTPUT->box_end();
 }
 
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+
 echo $OUTPUT->footer();

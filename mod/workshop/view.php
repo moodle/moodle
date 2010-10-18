@@ -500,4 +500,7 @@ case workshop::PHASE_CLOSED:
 default:
 }
 
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+
 echo $output->footer();
