@@ -547,6 +547,7 @@
                             }
                         }
                         if (!$download) {
+                            $table->finish_output();
                             if ($candelete) {
                                 echo '<table id="commands">';
                                 echo '<tr><td>';
