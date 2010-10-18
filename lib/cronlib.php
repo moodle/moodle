@@ -32,6 +32,11 @@ function cron_run() {
         exit(1);
     }
 
+    if (moodle_needs_upgrading()) {
+        echo "Moodle upgrade pending, cron execution suspended.\n";
+        exit(1);
+    }
+
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/gradelib.php');
 
