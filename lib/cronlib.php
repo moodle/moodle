@@ -27,6 +27,11 @@
 function cron_run() {
     global $DB, $CFG, $OUTPUT;
 
+    if (CLI_MAINTENANCE) {
+        echo "CLI maintenance mode active, cron execution suspended.\n";
+        exit(1);
+    }
+
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/gradelib.php');
 
