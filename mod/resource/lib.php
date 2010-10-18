@@ -389,7 +389,7 @@ function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
     $fullpath = rtrim("/$context->id/mod_resource/$filearea/0/$relativepath", '/');
     do {
         if (!$file = $fs->get_file_by_hash(sha1($fullpath))) {
-            if ($file = $fs->get_file_by_hash(sha1("$fullpath/.")) and $file->is_directory()) {
+            if ($fs->get_file_by_hash(sha1("$fullpath/."))) {
                 if ($file = $fs->get_file_by_hash(sha1("$fullpath/index.htm"))) {
                     break;
                 }
