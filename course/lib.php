@@ -3634,21 +3634,69 @@ function update_course($data, $editoroptions = NULL) {
 }
 
 /**
- * TODO: Average number of participants (in non-empty courses)
+ * Average number of participants
  * @return integer
  */
 function average_number_of_participants() {
-    global $DB;
-    return 0;
+    global $DB, $SITE;
+
+    //count total of enrolments for visible course (except front page)
+    $sql = 'SELECT COUNT(*) FROM (
+        SELECT DISTINCT ue.userid, e.courseid
+        FROM {user_enrolments} ue, {enrol} e, {course} c
+        WHERE ue.enrolid = e.id 
+            AND e.courseid <> :siteid
+            AND c.id = e.courseid
+            AND c.visible = 1) as total';
+    $params = array('siteid' => $SITE->id);
+    $enrolmenttotal = $DB->count_records_sql($sql, $params);
+
+
+    //count total of visible courses (minus front page)
+    $coursetotal = $DB->count_records('course', array('visible' => 1));
+    $coursetotal = $coursetotal - 1 ;
+
+    //average of enrolment
+    if (empty($coursetotal)) {
+        $participantaverage = 0;
+    } else {
+        $participantaverage = $enrolmenttotal / $coursetotal;
+    }
+
+    return $participantaverage;
 }
 
 /**
- * TODO: Average number of course modules (in non-empty courses)
+ * Average number of course modules
  * @return integer
  */
 function average_number_of_courses_modules() {
-    global $DB;
-    return 0;
+    global $DB, $SITE;
+
+    //count total of visible course module (except front page)
+    $sql = 'SELECT COUNT(*) FROM (
+        SELECT cm.course, cm.module
+        FROM {course} c, {course_modules} cm
+        WHERE c.id = cm.course 
+            AND c.id <> :siteid
+            AND cm.visible = 1
+            AND c.visible = 1) as total';
+    $params = array('siteid' => $SITE->id);
+    $moduletotal = $DB->count_records_sql($sql, $params);
+
+
+    //count total of visible courses (minus front page)
+    $coursetotal = $DB->count_records('course', array('visible' => 1));
+    $coursetotal = $coursetotal - 1 ;
+
+    //average of course module
+    if (empty($coursetotal)) {
+        $coursemoduleaverage = 0;
+    } else {
+        $coursemoduleaverage = $moduletotal / $coursetotal;
+    }
+
+    return $coursemoduleaverage;
 }
 
 /**
