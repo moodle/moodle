@@ -18,7 +18,7 @@ require_once('ex_reporter.php');
 // Always run the unit tests in developer debug mode.
 $CFG->debug = DEBUG_DEVELOPER;
 error_reporting($CFG->debug);
-raise_memory_limit('256M');
+raise_memory_limit(MEMORY_EXTRA);
 
 // page parameters
 $path         = optional_param('path', null, PARAM_PATH);

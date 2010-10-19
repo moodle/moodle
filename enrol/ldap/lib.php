@@ -138,7 +138,7 @@ class enrol_ldap_plugin extends enrol_plugin {
 
         // We may need a lot of memory here
         @set_time_limit(0);
-        @raise_memory_limit("512M");
+        raise_memory_limit(MEMORY_HUGE);
 
         // Get enrolments for each type of role.
         $roles = get_all_roles();
@@ -297,7 +297,7 @@ class enrol_ldap_plugin extends enrol_plugin {
 
         // we may need a lot of memory here
         @set_time_limit(0);
-        @raise_memory_limit("512M");
+        raise_memory_limit(MEMORY_HUGE);
 
         // Get enrolments for each type of role.
         $roles = get_all_roles();

@@ -701,7 +701,7 @@ abstract class webservice_zend_server extends webservice_server {
      */
     public function run() {
         // we will probably need a lot of memory in some functions
-        @raise_memory_limit('128M');
+        raise_memory_limit(MEMORY_EXTRA);
 
         // set some longer timeout, this script is not sending any output,
         // this means we need to manually extend the timeout operations
@@ -1141,7 +1141,7 @@ abstract class webservice_base_server extends webservice_server {
      */
     public function run() {
         // we will probably need a lot of memory in some functions
-        @raise_memory_limit('128M');
+        raise_memory_limit(MEMORY_EXTRA);
 
         // set some longer timeout, this script is not sending any output,
         // this means we need to manually extend the timeout operations

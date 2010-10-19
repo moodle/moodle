@@ -556,11 +556,7 @@
             return false;
         }
         @ini_set("max_execution_time","3000");
-        if (empty($CFG->extramemorylimit)) {
-            raise_memory_limit('128M');
-        } else {
-            raise_memory_limit($CFG->extramemorylimit);
-        }
+        raise_memory_limit(MEMORY_EXTRA);
 
         if (!$backup_unique_code = restore_precheck($destinationcourse,$pathtofile,$errorstr,true)) {
             mtrace($debuginfo.'Failed restore_precheck (error was '.$errorstr.')');

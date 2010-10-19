@@ -107,7 +107,7 @@ if (!$formdata = $form->get_data()) {
     // that we'll take longer, and that the process should be recycled soon
     // to free up memory.
     @set_time_limit(0);
-    @raise_memory_limit("96M");
+    raise_memory_limit(MEMORY_EXTRA);
 
     $iid = csv_import_reader::get_new_iid('moddata');
     $cir = new csv_import_reader($iid, 'moddata');

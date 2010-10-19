@@ -100,7 +100,7 @@ if ($formdata = $mform->get_data()) {
     // that we'll take longer, and that the process should be recycled soon
     // to free up memory.
     @set_time_limit(0);
-    @raise_memory_limit("192M");
+    raise_memory_limit(MEMORY_EXTRA);
 
     // use current (non-conflicting) time stamp
     $importcode = get_new_importcode();
@@ -205,7 +205,7 @@ if ($formdata = $mform->get_data()) {
     // that we'll take longer, and that the process should be recycled soon
     // to free up memory.
     @set_time_limit(0);
-    @raise_memory_limit("192M");
+    raise_memory_limit(MEMORY_EXTRA);
 
     // we only operate if file is readable
     if ($fp = fopen($filename, "r")) {

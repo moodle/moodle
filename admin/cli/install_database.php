@@ -85,7 +85,7 @@ if ($DB->get_tables() ) {
 $CFG->early_install_lang = true;
 get_string_manager(true);
 
-@raise_memory_limit('128M');
+raise_memory_limit(MEMORY_EXTRA);
 
 // now get cli options
 list($options, $unrecognized) = cli_get_params(

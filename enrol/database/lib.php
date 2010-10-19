@@ -244,7 +244,7 @@ class enrol_database_plugin extends enrol_plugin {
 
         // we may need a lot of memory here
         @set_time_limit(0);
-        @raise_memory_limit("512M");
+        raise_memory_limit(MEMORY_HUGE);
 
         $extdb = $this->db_init();
 
@@ -477,7 +477,7 @@ class enrol_database_plugin extends enrol_plugin {
 
         // we may need a lot of memory here
         @set_time_limit(0);
-        @raise_memory_limit("512M");
+        raise_memory_limit(MEMORY_HUGE);
 
         $extdb = $this->db_init();
 

@@ -48,7 +48,7 @@ if ($data = $mform->get_data()) {
     // that we'll take longer, and that the process should be recycled soon
     // to free up memory.
     @set_time_limit(0);
-    @raise_memory_limit("256M");
+    raise_memory_limit(MEMORY_EXTRA);
 
     if ($text = $mform->get_file_content('userfile')) {
         print_grade_page_head($COURSE->id, 'import', 'xml', get_string('importxml', 'grades'));

@@ -385,7 +385,7 @@ class assignment_online extends assignment_base {
     public function download_submissions() {
         global $CFG, $DB;
 
-        @raise_memory_limit('256M');
+        raise_memory_limit(MEMORY_EXTRA);
 
         $submissions = $this->get_submissions('','');
         if (empty($submissions)) {
@@ -403,7 +403,7 @@ class assignment_online extends assignment_base {
         } else {
             $groupmode = $this->course->groupmode;
         }
-        
+
         $groupid = 0;   // All users
         $groupname = '';
         if ($groupmode) {

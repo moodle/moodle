@@ -39,7 +39,7 @@ if (array_search($issue, $issues, true) === false) {
 }
 
 // we may need a bit more memory and this may take a long time to process
-@raise_memory_limit('128M');
+raise_memory_limit(MEMORY_EXTRA);
 @set_time_limit(0);
 
 // Print the header.

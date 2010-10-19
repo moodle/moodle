@@ -52,7 +52,7 @@ function cron_run() {
     $starttime = microtime();
 
 /// increase memory limit (PHP 5.2 does different calculation, we need more memory now)
-    @raise_memory_limit('128M');
+    raise_memory_limit(MEMORY_EXTRA);
 
 /// emulate normal session
     cron_setup_user();
@@ -333,7 +333,7 @@ function cron_run() {
         //Execute backup's cron
         //Perhaps a long time and memory could help in large sites
         @set_time_limit(0);
-        @raise_memory_limit("192M");
+        raise_memory_limit(MEMORY_EXTRA);
         if (file_exists("$CFG->dirroot/backup/backup_scheduled.php") and
             file_exists("$CFG->dirroot/backup/backuplib.php") and
             file_exists("$CFG->dirroot/backup/lib.php") and
