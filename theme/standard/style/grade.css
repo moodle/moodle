@@ -15,6 +15,7 @@ td.grade div.overridden {background-color: #DDDDDD;}
 .path-grade-report-grader table#user-grades td.cell span.gradepass {background-color: #C2EBBD;}
 .path-grade-report-grader table#user-grades td.cell span.gradefail {background-color: #EBC4BD;}
 .path-grade-report-grader table#user-grades td.clickable {cursor: pointer;}
+.path-grade-report-grader .graderreportoverlay {background-color:#EEEEEE;border:1px solid black;padding:10px;}
 
 .path-grade-edit-tree .moving {background-color: #E8EEF7;}
 .path-grade-edit-tree .gradetreebox {width:70%;padding-bottom:15px;overflow-x:auto;overflow-y:hidden;}
