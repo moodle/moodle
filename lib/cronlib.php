@@ -51,7 +51,7 @@ function cron_run() {
     set_time_limit(0);
     $starttime = microtime();
 
-/// increase memory limit (PHP 5.2 does different calculation, we need more memory now)
+/// increase memory limit
     raise_memory_limit(MEMORY_EXTRA);
 
 /// emulate normal session

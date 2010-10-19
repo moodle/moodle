@@ -1278,6 +1278,8 @@ function install_core($version, $verbose) {
 function upgrade_core($version, $verbose) {
     global $CFG;
 
+    raise_memory_limit(MEMORY_EXTRA);
+
     require_once($CFG->libdir.'/db/upgrade.php');    // Defines upgrades
 
     try {
@@ -1340,6 +1342,8 @@ function upgrade_core($version, $verbose) {
  */
 function upgrade_noncore($verbose) {
     global $CFG;
+
+    raise_memory_limit(MEMORY_EXTRA);
 
     // upgrade all plugins types
     try {
