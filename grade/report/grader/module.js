@@ -55,10 +55,12 @@ M.gradereport_grader = {
                     return;
                 }
 
-                var content  = '<div class="fullname">'+properties.username+'</div><div class="itemname">'+properties.itemname+'</div>';
+                var content = '<div class="graderreportoverlay">';
+                content += '<div class="fullname">'+properties.username+'</div><div class="itemname">'+properties.itemname+'</div>';
                 if (properties.feedback) {
                     content += '<div class="feedback">'+properties.feedback+'</div>';
                 }
+                content += '</div>';
 
                 properties.cell.on('mouseleave', this.hide, this, properties.cell);
                 properties.cell.addClass('tooltipactive');
