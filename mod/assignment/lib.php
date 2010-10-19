@@ -1743,6 +1743,10 @@ class assignment_base {
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml  = $posthtml;
                 $eventdata->smallmessage     = '';
+
+                $eventdata->name       = 'assignment_submitted';
+                $eventdata->component       = 'mod_assignment';
+                
                 message_send($eventdata);
             }
         }
