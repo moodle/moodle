@@ -142,9 +142,6 @@
             break;
 
         case 'reset':
-            if (isset($undeletableroles[$roleid])) {
-                print_error('cannotresetthisrole', '', $baseurl);
-            }
             if (!$confirmed) {
                 // show confirmation
                 echo $OUTPUT->header();
@@ -167,10 +164,12 @@
                 die;
             }
 
-            // Do the reset.
+            // Reset context levels for standard archetypes
             if ($roles[$roleid]->archetype) {
                 set_role_contextlevels($roleid, get_default_contextlevels($roles[$roleid]->archetype));
             }
+
+            //reset or delete the capabilities
             reset_role_capabilities($roleid);
 
             // Mark context dirty, log and redirect.
