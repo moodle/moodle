@@ -57,7 +57,7 @@ if ($action == 'delete' and confirm_sesskey() and $service and empty($service->c
     }
     //The user has confirmed the deletion, delete and redirect
     $webservicemanager->delete_service($service->id);
-    add_to_log(1, 'webservice', 'delete', $returnurl, get_string('deleteservice', 'webservice', $service));
+    add_to_log(SITEID, 'webservice', 'delete', $returnurl, get_string('deleteservice', 'webservice', $service));
     redirect($returnurl);
 }
 
@@ -74,7 +74,7 @@ if ($mform->is_cancelled()) {
     //create operation
     if (empty($servicedata->id)) {
         $servicedata->id = $webservicemanager->add_external_service($servicedata);
-        add_to_log(1, 'webservice', 'add', $returnurl, get_string('addservice', 'webservice', $servicedata));
+        add_to_log(SITEID, 'webservice', 'add', $returnurl, get_string('addservice', 'webservice', $servicedata));
 
         //redirect to the 'add functions to service' page
         $addfunctionpage = new moodle_url(
@@ -84,7 +84,7 @@ if ($mform->is_cancelled()) {
     } else {
         //update operation
         $webservicemanager->update_external_service($servicedata);
-        add_to_log(1, 'webservice', 'edit', $returnurl, get_string('editservice', 'webservice', $servicedata));
+        add_to_log(SITEID, 'webservice', 'edit', $returnurl, get_string('editservice', 'webservice', $servicedata));
     }
 
     redirect($returnurl);
