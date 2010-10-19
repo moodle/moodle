@@ -165,10 +165,14 @@ if (file_exists("$CFG->dataroot/climaintenance.html")) {
         readfile("$CFG->dataroot/climaintenance.html");
         die;
     } else {
-        define('CLI_MAINTENANCE', true);
+        if (!defined('CLI_MAINTENANCE')) {
+            define('CLI_MAINTENANCE', true);
+        }
     }
 } else {
-    define('CLI_MAINTENANCE', false);
+    if (!defined('CLI_MAINTENANCE')) {
+        define('CLI_MAINTENANCE', false);
+    }
 }
 
 // Detect ajax scripts - they are similar to CLI because we can not redirect, output html, etc.
