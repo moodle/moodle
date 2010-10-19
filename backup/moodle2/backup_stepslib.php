@@ -781,7 +781,7 @@ class backup_gradebook_structure_step extends backup_structure_step {
                 //'courseid', 
                 'parent', 'depth', 'path', 'fullname', 'aggregation', 'keephigh',
                 'dropload', 'aggregateonlygraded', 'aggregateoutcomes', 'aggregatesubcats',
-                'timecreated', 'timemodified'));
+                'timecreated', 'timemodified', 'hidden'));
 
         $letters = new backup_nested_element('grade_letters');
         $letter = new backup_nested_element('grade_letter', 'id', array(
