@@ -3643,12 +3643,12 @@ function authenticate_user_login($username, $password) {
     if ($user = get_complete_user_data('username', $username, $CFG->mnet_localhost_id)) {
         $auth = empty($user->auth) ? 'manual' : $user->auth;  // use manual if auth not set
         if (!empty($user->suspended)) {
-            add_to_log(0, 'login', 'error', 'index.php', $username);
+            add_to_log(SITEID, 'login', 'error', 'index.php', $username);
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Suspended Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
         }
         if ($auth=='nologin' or !is_enabled_auth($auth)) {
-            add_to_log(0, 'login', 'error', 'index.php', $username);
+            add_to_log(SITEID, 'login', 'error', 'index.php', $username);
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Disabled Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
         }
@@ -3709,7 +3709,7 @@ function authenticate_user_login($username, $password) {
 
         if (!empty($user->suspended)) {
             // just in case some auth plugin suspended account
-            add_to_log(0, 'login', 'error', 'index.php', $username);
+            add_to_log(SITEID, 'login', 'error', 'index.php', $username);
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Suspended Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
         }
@@ -3718,7 +3718,7 @@ function authenticate_user_login($username, $password) {
     }
 
     // failed if all the plugins have failed
-    add_to_log(0, 'login', 'error', 'index.php', $username);
+    add_to_log(SITEID, 'login', 'error', 'index.php', $username);
     if (debugging('', DEBUG_ALL)) {
         error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
     }
