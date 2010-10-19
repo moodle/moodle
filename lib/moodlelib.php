@@ -8855,8 +8855,7 @@ function fullclone($thing) {
 function moodle_request_shutdown() {
     global $CFG;
 
-    // initially, we are only ever called under apache
-    // but check just in case
+    // help apache server if possible
     if (function_exists('apache_child_terminate')
         && function_exists('memory_get_usage')
         && ini_get_bool('child_terminate')) {
@@ -8868,6 +8867,8 @@ function moodle_request_shutdown() {
             @apache_child_terminate();
         }
     }
+
+    // deal with perf logging
     if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
         if (defined('MDL_PERFTOLOG')) {
             $perf = get_performance_info();
