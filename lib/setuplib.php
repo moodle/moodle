@@ -31,15 +31,27 @@ defined('MOODLE_INTERNAL') || die();
 
 /// Debug levels ///
 /** no warnings at all */
-define ('DEBUG_NONE', 0);
+define('DEBUG_NONE', 0);
 /** E_ERROR | E_PARSE */
-define ('DEBUG_MINIMAL', 5);
+define('DEBUG_MINIMAL', 5);
 /** E_ERROR | E_PARSE | E_WARNING | E_NOTICE */
-define ('DEBUG_NORMAL', 15);
+define('DEBUG_NORMAL', 15);
 /** E_ALL without E_STRICT for now, do show recoverable fatal errors */
-define ('DEBUG_ALL', 6143);
+define('DEBUG_ALL', 6143);
 /** DEBUG_ALL with extra Moodle debug messages - (DEBUG_ALL | 32768) */
-define ('DEBUG_DEVELOPER', 38911);
+define('DEBUG_DEVELOPER', 38911);
+
+/** Remove any memory limits */
+define('MEMORY_UNLIMITED', -1);
+/** Standard memory limit for given platform */
+define('MEMORY_STANDARD', -2);
+/**
+ * Large memory limit for given platform - used in cron, upgrade, and other places that need a lot of memory.
+ * Can be overridden with $CFG->extramemorylimit setting.
+ */
+define('MEMORY_EXTRA', -3);
+/** Extremely large memory limit - not recommended for standard scripts */
+define('MEMORY_HUGE', -4);
 
 /**
  * Simple class. It is usually used instead of stdClass because it looks
@@ -773,16 +785,43 @@ function during_initial_install() {
  * Function to raise the memory limit to a new value.
  * Will respect the memory limit if it is higher, thus allowing
  * settings in php.ini, apache conf or command line switches
- * to override it
+ * to override it.
  *
- * The memory limit should be expressed with a string (eg:'64M')
+ * The memory limit should be expressed with a constant
+ * MEMORY_STANDARD, MEMORY_EXTRA or MEMORY_HUGE.
+ * It is possible to use strings or integers too (eg:'128M').
  *
- * @param string $newlimit the new memory limit
- * @return bool
+ * @param mixed $newlimit the new memory limit
+ * @return bool success
  */
 function raise_memory_limit($newlimit) {
+    global $CFG;
 
-    if (empty($newlimit)) {
+    if ($newlimit == MEMORY_UNLIMITED) {
+        ini_set('memory_limit', -1);
+        return true;
+
+    } else if ($newlimit == MEMORY_STANDARD) {
+        $newlimit = get_real_size('96M');
+
+    } else if ($newlimit == MEMORY_EXTRA) {
+        $newlimit = get_real_size('256M');
+        if (empty($CFG->extramemorylimit)) {
+            $extra = get_real_size($CFG->extramemorylimit);
+            if ($extra > $newlimit) {
+                $newlimit = $extra;
+            }
+        }
+
+    } else if ($newlimit == MEMORY_HUGE) {
+        $newlimit = get_real_size('2G');
+
+    } else {
+        $newlimit = get_real_size($newlimit);
+    }
+
+    if ($newlimit <= 0) {
+        debugging('Invalid memory limit specified.');
         return false;
     }
 
@@ -790,16 +829,15 @@ function raise_memory_limit($newlimit) {
     if (empty($cur)) {
         // if php is compiled without --enable-memory-limits
         // apparently memory_limit is set to ''
-        $cur=0;
+        $cur = 0;
     } else {
         if ($cur == -1){
             return true; // unlimited mem!
         }
-      $cur = get_real_size($cur);
+        $cur = get_real_size($cur);
     }
 
-    $new = get_real_size($newlimit);
-    if ($new > $cur) {
+    if ($newlimit > $cur) {
         ini_set('memory_limit', $newlimit);
         return true;
     }
@@ -825,7 +863,7 @@ function reduce_memory_limit($newlimit) {
     if (empty($cur)) {
         // if php is compiled without --enable-memory-limits
         // apparently memory_limit is set to ''
-        $cur=0;
+        $cur = 0;
     } else {
         if ($cur == -1){
             return true; // unlimited mem!
@@ -845,14 +883,17 @@ function reduce_memory_limit($newlimit) {
 /**
  * Converts numbers like 10M into bytes.
  *
- * @param mixed $size The size to be converted
- * @return mixed
+ * @param string $size The size to be converted
+ * @return int
  */
-function get_real_size($size=0) {
+function get_real_size($size = 0) {
     if (!$size) {
         return 0;
     }
     $scan = array();
+    $scan['GB'] = 1073741824;
+    $scan['Gb'] = 1073741824;
+    $scan['G'] = 1073741824;
     $scan['MB'] = 1048576;
     $scan['Mb'] = 1048576;
     $scan['M'] = 1048576;

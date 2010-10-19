@@ -337,6 +337,9 @@ $CFG->httpswwwroot = $CFG->wwwroot;
 
 require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first
 
+// Increase memory limits if possible
+raise_memory_limit(MEMORY_STANDARD);
+
 // Time to start counting
 init_performance_info();
 
@@ -402,9 +405,6 @@ require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
 
 // make sure PHP is not severly misconfigured
 setup_validate_php_configuration();
-
-// Increase memory limits if possible
-raise_memory_limit('96M');    // We should never NEED this much but just in case...
 
 // Connect to the database
 setup_DB();
