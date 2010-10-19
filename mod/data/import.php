@@ -108,9 +108,6 @@ if (!$formdata = $form->get_data()) {
     // to free up memory.
     @set_time_limit(0);
     @raise_memory_limit("96M");
-    if (function_exists('apache_child_terminate')) {
-        @apache_child_terminate();
-    }
 
     $iid = csv_import_reader::get_new_iid('moddata');
     $cir = new csv_import_reader($iid, 'moddata');

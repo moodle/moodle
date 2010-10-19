@@ -448,7 +448,7 @@ if (function_exists('gc_enable')) {
     gc_enable();
 }
 
-// For now, only needed under apache (and probably unstable in other contexts)
+// Register default shutdown tasks - such as Apache memory release helper, perf logging, etc.
 if (function_exists('register_shutdown_function')) {
     register_shutdown_function('moodle_request_shutdown');
 }

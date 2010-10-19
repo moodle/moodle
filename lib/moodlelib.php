@@ -8847,29 +8847,28 @@ function fullclone($thing) {
  * should be set via register_shutdown_function()
  * in lib/setup.php .
  *
- * Right now we do it only if we are under apache, to
- * make sure apache children that hog too much mem are
- * killed.
  * @return void
  */
 function moodle_request_shutdown() {
     global $CFG;
 
     // help apache server if possible
-    if (function_exists('apache_child_terminate')
-        && function_exists('memory_get_usage')
-        && ini_get_bool('child_terminate')) {
-        if (empty($CFG->apachemaxmem)) {
-            $CFG->apachemaxmem = 64*1024; // default 64MB
-        }
-        if (memory_get_usage() > (int)$CFG->apachemaxmem) {
-            trigger_error('Mem usage over $CFG->apachemaxmem: marking child for reaping.');
+    $apachereleasemem = false;
+    if (function_exists('apache_child_terminate') && function_exists('memory_get_usage')
+            && ini_get_bool('child_terminate')) {
+
+        $limit = (empty($CFG->apachemaxmem) ? 64*1024*1024 : $CFG->apachemaxmem); //64MB default
+        if (memory_get_usage() > get_real_size($limit)) {
+            $apachereleasemem = $limit;
             @apache_child_terminate();
         }
     }
 
     // deal with perf logging
     if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
+        if ($apachereleasemem) {
+            error_log('Mem usage over '.$apachereleasemem.': marking Apache child for reaping.');
+        }
         if (defined('MDL_PERFTOLOG')) {
             $perf = get_performance_info();
             error_log("PERF: " . $perf['txt']);

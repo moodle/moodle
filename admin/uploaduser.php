@@ -25,13 +25,7 @@ $choices = array(UU_ADDNEW    => get_string('uuoptype_addnew', 'admin'),
                  UU_UPDATE     => get_string('uuoptype_update', 'admin'));
 
 @set_time_limit(3600); // 1 hour should be enough
-@raise_memory_limit('256M');
-if (function_exists('apache_child_terminate')) {
-    // if we are running from Apache, give httpd a hint that
-    // it can recycle the process after it's done. Apache's
-    // memory management is truly awful but we can help it.
-    @apache_child_terminate();
-}
+raise_memory_limit(MEMORY_EXTRA);
 
 require_login();
 admin_externalpage_setup('uploadusers');

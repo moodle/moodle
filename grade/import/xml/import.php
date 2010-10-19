@@ -45,9 +45,6 @@ require_capability('gradeimport/xml:view', $context);
 // to free up memory.
 @set_time_limit(0);
 @raise_memory_limit("256M");
-if (function_exists('apache_child_terminate')) {
-    @apache_child_terminate();
-}
 
 $text = download_file_content($url);
 if ($text === false) {

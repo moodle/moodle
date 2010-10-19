@@ -101,9 +101,6 @@ if ($formdata = $mform->get_data()) {
     // to free up memory.
     @set_time_limit(0);
     @raise_memory_limit("192M");
-    if (function_exists('apache_child_terminate')) {
-        @apache_child_terminate();
-    }
 
     // use current (non-conflicting) time stamp
     $importcode = get_new_importcode();
@@ -209,9 +206,6 @@ if ($formdata = $mform->get_data()) {
     // to free up memory.
     @set_time_limit(0);
     @raise_memory_limit("192M");
-    if (function_exists('apache_child_terminate')) {
-        @apache_child_terminate();
-    }
 
     // we only operate if file is readable
     if ($fp = fopen($filename, "r")) {
