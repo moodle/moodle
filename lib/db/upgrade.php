@@ -5295,6 +5295,19 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010101300);
     }
 
+    //MDL-24721 -add hidden column to grade_categories. This was done previously but it wasn't included in
+    //install.xml so there are 2.0 sites that are missing it.
+    if ($oldversion < 2010101900) {
+        $table = new xmldb_table('grade_categories');
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2010101900);
+    }
+
     return true;
 }
 
