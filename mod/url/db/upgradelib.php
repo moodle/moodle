@@ -63,13 +63,13 @@ function url_20_migrate() {
             continue;
         } else if (!strpos($path, '://')) {
             // not URL
-            return;
+            continue;
         } else if (preg_match("|$CFG->wwwroot/file.php(\?file=)?/$siteid(/[^\s'\"&\?#]+)|", $path, $matches)) {
             // handled by resource module
-            return;
+            continue;
         } else if (preg_match("|$CFG->wwwroot/file.php(\?file=)?/$candidate->course(/[^\s'\"&\?#]+)|", $path, $matches)) {
             // handled by resource module
-            return;
+            continue;
         }
 
         upgrade_set_timeout();
