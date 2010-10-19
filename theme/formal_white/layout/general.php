@@ -60,7 +60,7 @@ echo $OUTPUT->doctype() ?>
                             <?php echo '<div id="logo"><img class="sitelogo" src="'.$logourl.'" alt="Custom logo here" /></div>';
                             echo '<div class="headermenu">';
                                 echo $OUTPUT->login_info();
-                                if (!empty($PAGE->layout_options['langmenu'])) {
+                                if (!empty($PAGE->theme->settings->alwayslangmenu)) {
                                     echo $OUTPUT->lang_menu();
                                 }
                                 echo $PAGE->headingmenu;

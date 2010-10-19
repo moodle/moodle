@@ -33,6 +33,13 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $settings->add($setting);
 
+    // alwayslangmenu setting
+    $name = 'theme_formal_white/alwayslangmenu';
+    $title = get_string('alwayslangmenu','theme_formal_white');
+    $description = get_string('alwayslangmenudesc', 'theme_formal_white');
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
+    $settings->add($setting);
+
     // Foot note setting
     $name = 'theme_formal_white/footnote';
     $title = get_string('footnote','theme_formal_white');

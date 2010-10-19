@@ -41,3 +41,5 @@ $string['logo'] = 'Logo';
 $string['logodesc'] = 'Enter the URL to an image to use as the logo for this site. Should be http://www.yoursite.com/path/to/logo.png<br />Preferred picture height is 100 pixels';
 $string['regionwidth'] = 'Column width';
 $string['regionwidthdesc'] = 'This sets the width of the two block regions that form the left and right columns.';
+$string['alwayslangmenu'] = 'Display languages menu';
+$string['alwayslangmenudesc'] = 'Select this option to ALWAYS display lang menu. Take care that lang menu will be shown only if your site managess more than a single language.';
