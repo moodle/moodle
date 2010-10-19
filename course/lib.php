@@ -244,7 +244,7 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
     }
 
     $joins = array();
-    $oarams = array();
+    $params = array();
 
     if ($course->id != SITEID || $modid != 0) {
         $joins[] = "l.course = :courseid";
