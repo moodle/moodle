@@ -8850,8 +8850,7 @@ function fullclone($thing) {
  * Right now we do it only if we are under apache, to
  * make sure apache children that hog too much mem are
  * killed.
- *
- * @global object
+ * @return void
  */
 function moodle_request_shutdown() {
     global $CFG;
@@ -8862,7 +8861,7 @@ function moodle_request_shutdown() {
         && function_exists('memory_get_usage')
         && ini_get_bool('child_terminate')) {
         if (empty($CFG->apachemaxmem)) {
-            $CFG->apachemaxmem = 25000000; // default 25MiB
+            $CFG->apachemaxmem = 64*1024; // default 64MB
         }
         if (memory_get_usage() > (int)$CFG->apachemaxmem) {
             trigger_error('Mem usage over $CFG->apachemaxmem: marking child for reaping.');
