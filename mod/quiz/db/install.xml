@@ -35,7 +35,8 @@
         <FIELD NAME="popup" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Force the quiz to be attempted in a full-screen pop-up window with some evil JavaScript that attempts to prevent copying and pasting, etc." PREVIOUS="subnet" NEXT="delay1"/>
         <FIELD NAME="delay1" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Enforced delay between the first and second attempts, in seconds." PREVIOUS="popup" NEXT="delay2"/>
         <FIELD NAME="delay2" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Enforced delay between the second and subsequent attempts, in seconds." PREVIOUS="delay1" NEXT="showuserpicture"/>
-        <FIELD NAME="showuserpicture" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Option to show the user's picture during the attempt and on the review page." PREVIOUS="delay2"/>
+        <FIELD NAME="showuserpicture" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Option to show the user's picture during the attempt and on the review page." PREVIOUS="delay2" NEXT="showblocks"/>
+        <FIELD NAME="showblocks" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Whether blocks should be shown on the attempt.php and review.php pages." PREVIOUS="showuserpicture"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
