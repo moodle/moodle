@@ -1093,6 +1093,27 @@ class workshop {
     }
 
     /**
+     * Workshop wrapper around {@see add_to_log()}
+     *
+     * @param string $action to be logged
+     * @param moodle_url $url absolute url as returned by {@see workshop::submission_url()} and friends
+     * @param mixed $info additional info, usually id in a table
+     */
+    public function log($action, moodle_url $url = null, $info = null) {
+
+        if (is_null($url)) {
+            $url = $this->view_url();
+        }
+
+        if (is_null($info)) {
+            $info = $this->id;
+        }
+
+        $logurl = $this->log_convert_url($url);
+        add_to_log($this->course->id, 'workshop', $action, $logurl, $info, $this->cm->id);
+    }
+
+    /**
      * Are users allowed to create their submissions?
      *
      * @return bool
@@ -1961,6 +1982,22 @@ class workshop {
         );
     }
 
+    /**
+     * Converts absolute URL to relative URL needed by {@see add_to_log()}
+     *
+     * @param moodle_url $url absolute URL
+     * @return string
+     */
+    protected function log_convert_url(moodle_url $fullurl) {
+        static $baseurl;
+
+        if (!isset($baseurl)) {
+            $baseurl = new moodle_url('/mod/workshop/');
+            $baseurl = $baseurl->out();
+        }
+
+        return substr($fullurl->out(), strlen($baseurl));
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

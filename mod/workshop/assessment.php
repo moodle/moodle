@@ -120,6 +120,11 @@ if (is_null($assessment->grade) and !$assessmenteditable) {
     if ($mform->is_cancelled()) {
         redirect($workshop->view_url());
     } elseif ($assessmenteditable and ($data = $mform->get_data())) {
+        if (is_null($assessment->grade)) {
+            $workshop->log('add assessment', $workshop->assess_url($assessment->id), $assessment->submissionid);
+        } else {
+            $workshop->log('update assessment', $workshop->assess_url($assessment->id), $assessment->submissionid);
+        }
         $rawgrade = $strategy->save_assessment($assessment, $data);
         if (isset($data->weight) and $cansetassessmentweight) {
             $DB->set_field('workshop_assessments', 'weight', $data->weight, array('id' => $assessment->id));

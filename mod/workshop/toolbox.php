@@ -41,14 +41,14 @@ require_sesskey();
 switch ($tool) {
 case 'clearaggregatedgrades':
     require_capability('mod/workshop:overridegrades', $workshop->context);
-    add_to_log($course->id, 'workshop', $tool, 'view.php?id=' . $cm->id, $workshop->name, $cm->id);
+    $workshop->log('update clear aggregated grades');
     $workshop->clear_submission_grades();
     $workshop->clear_grading_grades();
     break;
 
 case 'clearassessments':
     require_capability('mod/workshop:overridegrades', $workshop->context);
-    add_to_log($course->id, 'workshop', $tool, 'view.php?id=' . $cm->id, $workshop->name, $cm->id);
+    $workshop->log('update clear assessments');
     $workshop->clear_assessments();
     break;
 }

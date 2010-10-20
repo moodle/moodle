@@ -28,7 +28,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
 $cmid       = required_param('cmid', PARAM_INT);            // course module
-$phase      = required_param('phase', PARAM_INT);           // the code of the new page
+$phase      = required_param('phase', PARAM_INT);           // the code of the new phase
 $confirm    = optional_param('confirm', false, PARAM_BOOL); // confirmation
 
 $cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
@@ -48,6 +48,7 @@ if ($confirm) {
     if (!$workshop->switch_phase($phase)) {
         print_error('errorswitchingphase', 'workshop', $workshop->view_url());
     }
+    $workshop->log('update switch phase', $workshop->view_url(), $workshop->phase);
     redirect($workshop->view_url());
 }
 

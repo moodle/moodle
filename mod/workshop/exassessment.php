@@ -70,6 +70,19 @@ $mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, $
 if ($mform->is_cancelled()) {
     redirect($workshop->view_url());
 } elseif ($assessmenteditable and ($data = $mform->get_data())) {
+    if ($canmanage) {
+        if (is_null($assessment->grade)) {
+            $workshop->log('add reference assessment', $workshop->exassess_url($assessment->id), $assessment->submissionid);
+        } else {
+            $workshop->log('update reference assessment', $workshop->exassess_url($assessment->id), $assessment->submissionid);
+        }
+    } else {
+        if (is_null($assessment->grade)) {
+            $workshop->log('add example assessment', $workshop->exassess_url($assessment->id), $assessment->submissionid);
+        } else {
+            $workshop->log('update example assessment', $workshop->exassess_url($assessment->id), $assessment->submissionid);
+        }
+    }
     $rawgrade = $strategy->save_assessment($assessment, $data);
     if ($canmanage) {
         // remember the last one who edited the reference assessment

@@ -47,6 +47,8 @@ $PAGE->set_url($workshop->submission_url(), array('cmid' => $cmid, 'id' => $id, 
 
 if ($id) { // submission is specified
     $submission = $workshop->get_submission_by_id($id);
+    $workshop->log('view submission', $workshop->submission_url($submission->id), $submission->id);
+
 } else { // no submission specified
     if (!$submission = $workshop->get_submission_by_author($USER->id)) {
         $submission = new stdclass();
@@ -152,8 +154,9 @@ if ($edit) {
         }
         if (is_null($submission->id)) {
             $submission->id = $formdata->id = $DB->insert_record('workshop_submissions', $formdata);
-            // todo add to log
+            $workshop->log('add submission', $workshop->submission_url($submission->id), $submission->id);
         } else {
+            $workshop->log('update submission', $workshop->submission_url($submission->id), $submission->id);
             if (empty($formdata->id) or empty($submission->id) or ($formdata->id != $submission->id)) {
                 throw new moodle_exception('err_submissionid', 'workshop');
             }
