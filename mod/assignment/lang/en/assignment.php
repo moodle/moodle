@@ -77,13 +77,13 @@ $string['editthisfile'] = 'Update this file';
 $string['addsubmission'] = 'Add submission';
 $string['emailstudents'] = 'Email alerts to students';
 $string['emailteachermail'] = '{$a->username} has updated their assignment submission
-for \'{$a->assignment}\'
+for \'{$a->assignment}\' at {$a->timeupdated}
 
 It is available here:
 
     {$a->url}';
 $string['emailteachermailhtml'] = '{$a->username} has updated their assignment submission
-for <i>\'{$a->assignment}\'</i><br /><br />
+for <i>\'{$a->assignment}\'  at {$a->timeupdated}</i><br /><br />
 It is <a href="{$a->url}">available on the web site</a>.';
 $string['emailteachers'] = 'Email alerts to teachers';
 $string['emailteachers_help'] = 'If enabled, teachers receive email notification whenever students add or update an assignment submission.
