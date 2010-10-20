@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * All workshop module renderers are defined here
+ * Workshop module renderering methods are defined here
  *
  * @package    mod
  * @subpackage workshop
@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
 class mod_workshop_renderer extends plugin_renderer_base {
 
     ////////////////////////////////////////////////////////////////////////////
-    // Methods to render workshop renderable components
+    // External API - methods to render workshop renderable components
     ////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -342,8 +342,157 @@ class mod_workshop_renderer extends plugin_renderer_base {
         return $o;
     }
 
+    /**
+     * Renders the workshop grading report
+     *
+     * @param workshop_grading_report $gradingreport
+     * @return string html code
+     */
+    protected function render_workshop_grading_report(workshop_grading_report $gradingreport) {
+
+        $data       = $gradingreport->get_data();
+        $options    = $gradingreport->get_options();
+        $grades     = $data->grades;
+        $userinfo   = $data->userinfo;
+
+        if (empty($grades)) {
+            return '';
+        }
+
+        $table = new html_table();
+        $table->attributes['class'] = 'grading-report';
+
+        $sortbyfirstname = $this->helper_sortable_heading(get_string('firstname'), 'firstname', $options->sortby, $options->sorthow);
+        $sortbylastname = $this->helper_sortable_heading(get_string('lastname'), 'lastname', $options->sortby, $options->sorthow);
+        if (self::fullname_format() == 'lf') {
+            $sortbyname = $sortbylastname . ' / ' . $sortbyfirstname;
+        } else {
+            $sortbyname = $sortbyfirstname . ' / ' . $sortbylastname;
+        }
+
+        $table->head = array();
+        $table->head[] = $sortbyname;
+        $table->head[] = $this->helper_sortable_heading(get_string('submission', 'workshop'), 'submissiontitle',
+                $options->sortby, $options->sorthow);
+        $table->head[] = $this->helper_sortable_heading(get_string('receivedgrades', 'workshop'));
+        if ($options->showsubmissiongrade) {
+            $table->head[] = $this->helper_sortable_heading(get_string('submissiongradeof', 'workshop', $data->maxgrade),
+                    'submissiongrade', $options->sortby, $options->sorthow);
+        }
+        $table->head[] = $this->helper_sortable_heading(get_string('givengrades', 'workshop'));
+        if ($options->showgradinggrade) {
+            $table->head[] = $this->helper_sortable_heading(get_string('gradinggradeof', 'workshop', $data->maxgradinggrade),
+                    'gradinggrade', $options->sortby, $options->sorthow);
+        }
+
+        $table->rowclasses  = array();
+        $table->colclasses  = array();
+        $table->data        = array();
+
+        foreach ($grades as $participant) {
+            $numofreceived  = count($participant->reviewedby);
+            $numofgiven     = count($participant->reviewerof);
+            $published      = $participant->submissionpublished;
+
+            // compute the number of <tr> table rows needed to display this participant
+            if ($numofreceived > 0 and $numofgiven > 0) {
+                $numoftrs       = workshop::lcm($numofreceived, $numofgiven);
+                $spanreceived   = $numoftrs / $numofreceived;
+                $spangiven      = $numoftrs / $numofgiven;
+            } elseif ($numofreceived == 0 and $numofgiven > 0) {
+                $numoftrs       = $numofgiven;
+                $spanreceived   = $numoftrs;
+                $spangiven      = $numoftrs / $numofgiven;
+            } elseif ($numofreceived > 0 and $numofgiven == 0) {
+                $numoftrs       = $numofreceived;
+                $spanreceived   = $numoftrs / $numofreceived;
+                $spangiven      = $numoftrs;
+            } else {
+                $numoftrs       = 1;
+                $spanreceived   = 1;
+                $spangiven      = 1;
+            }
+
+            for ($tr = 0; $tr < $numoftrs; $tr++) {
+                $row = new html_table_row();
+                if ($published) {
+                    $row->attributes['class'] = 'published';
+                }
+                // column #1 - participant - spans over all rows
+                if ($tr == 0) {
+                    $cell = new html_table_cell();
+                    $cell->text = $this->helper_grading_report_participant($participant, $userinfo);
+                    $cell->rowspan = $numoftrs;
+                    $cell->attributes['class'] = 'participant';
+                    $row->cells[] = $cell;
+                }
+                // column #2 - submission - spans over all rows
+                if ($tr == 0) {
+                    $cell = new html_table_cell();
+                    $cell->text = $this->helper_grading_report_submission($participant);
+                    $cell->rowspan = $numoftrs;
+                    $cell->attributes['class'] = 'submission';
+                    $row->cells[] = $cell;
+                }
+                // column #3 - received grades
+                if ($tr % $spanreceived == 0) {
+                    $idx = intval($tr / $spanreceived);
+                    $assessment = self::array_nth($participant->reviewedby, $idx);
+                    $cell = new html_table_cell();
+                    $cell->text = $this->helper_grading_report_assessment($assessment, $options->showreviewernames, $userinfo,
+                            get_string('gradereceivedfrom', 'workshop'));
+                    $cell->rowspan = $spanreceived;
+                    $cell->attributes['class'] = 'receivedgrade';
+                    if (is_null($assessment) or is_null($assessment->grade)) {
+                        $cell->attributes['class'] .= ' null';
+                    } else {
+                        $cell->attributes['class'] .= ' notnull';
+                    }
+                    $row->cells[] = $cell;
+                }
+                // column #4 - total grade for submission
+                if ($options->showsubmissiongrade and $tr == 0) {
+                    $cell = new html_table_cell();
+                    $cell->text = $this->helper_grading_report_grade($participant->submissiongrade, $participant->submissiongradeover);
+                    $cell->rowspan = $numoftrs;
+                    $cell->attributes['class'] = 'submissiongrade';
+                    $row->cells[] = $cell;
+                }
+                // column #5 - given grades
+                if ($tr % $spangiven == 0) {
+                    $idx = intval($tr / $spangiven);
+                    $assessment = self::array_nth($participant->reviewerof, $idx);
+                    $cell = new html_table_cell();
+                    $cell->text = $this->helper_grading_report_assessment($assessment, $options->showauthornames, $userinfo,
+                            get_string('gradegivento', 'workshop'));
+                    $cell->rowspan = $spangiven;
+                    $cell->attributes['class'] = 'givengrade';
+                    if (is_null($assessment) or is_null($assessment->grade)) {
+                        $cell->attributes['class'] .= ' null';
+                    } else {
+                        $cell->attributes['class'] .= ' notnull';
+                    }
+                    $row->cells[] = $cell;
+                }
+                // column #6 - total grade for assessment
+                if ($options->showgradinggrade and $tr == 0) {
+                    $cell = new html_table_cell();
+                    $cell->text = $this->helper_grading_report_grade($participant->gradinggrade);
+                    $cell->rowspan = $numoftrs;
+                    $cell->attributes['class'] = 'gradinggrade';
+                    $row->cells[] = $cell;
+                }
+
+                $table->data[] = $row;
+            }
+        }
+
+        return html_writer::table($table);
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////
-    // Rendering helper methods
+    // Internal rendering helper methods
     ////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -447,161 +596,6 @@ class mod_workshop_renderer extends plugin_renderer_base {
         return $out;
     }
 
-
-    ////////////////////////////////////////////////////////////////////////////
-    // TODO Obsolete
-    //
-
-    /**
-     * Renders the workshop grading report
-     *
-     * Grades must be already rounded to the set number of decimals or must be null (in which later case,
-     * the [[nullgrade]] string shall be displayed).
-     *
-     * @param stdClass $data prepared by {@link workshop::prepare_grading_report()}
-     * @param stdClass $options display options object with properties ->showauthornames ->showreviewernames ->sortby ->sorthow
-     *          ->showsubmissiongrade ->showgradinggrade
-     * @return string html code
-     */
-    public function grading_report(stdclass $data, stdclass $options) {
-        $grades             = $data->grades;
-        $userinfo           = $data->userinfo;
-
-        if (empty($grades)) {
-            return '';
-        }
-
-        $table = new html_table();
-        $table->attributes['class'] = 'grading-report';
-
-        $sortbyfirstname = $this->sortable_heading(get_string('firstname'), 'firstname', $options->sortby, $options->sorthow);
-        $sortbylastname = $this->sortable_heading(get_string('lastname'), 'lastname', $options->sortby, $options->sorthow);
-        if (self::fullname_format() == 'lf') {
-            $sortbyname = $sortbylastname . ' / ' . $sortbyfirstname;
-        } else {
-            $sortbyname = $sortbyfirstname . ' / ' . $sortbylastname;
-        }
-
-        $table->head = array();
-        $table->head[] = $sortbyname;
-        $table->head[] = $this->sortable_heading(get_string('submission', 'workshop'), 'submissiontitle',
-                $options->sortby, $options->sorthow);
-        $table->head[] = $this->sortable_heading(get_string('receivedgrades', 'workshop'));
-        if ($options->showsubmissiongrade) {
-            $table->head[] = $this->sortable_heading(get_string('submissiongradeof', 'workshop', $data->maxgrade),
-                    'submissiongrade', $options->sortby, $options->sorthow);
-        }
-        $table->head[] = $this->sortable_heading(get_string('givengrades', 'workshop'));
-        if ($options->showgradinggrade) {
-            $table->head[] = $this->sortable_heading(get_string('gradinggradeof', 'workshop', $data->maxgradinggrade),
-                    'gradinggrade', $options->sortby, $options->sorthow);
-        }
-
-        $table->rowclasses  = array();
-        $table->colclasses  = array();
-        $table->data        = array();
-
-        foreach ($grades as $participant) {
-            $numofreceived  = count($participant->reviewedby);
-            $numofgiven     = count($participant->reviewerof);
-            $published      = $participant->submissionpublished;
-
-            // compute the number of <tr> table rows needed to display this participant
-            if ($numofreceived > 0 and $numofgiven > 0) {
-                $numoftrs       = workshop::lcm($numofreceived, $numofgiven);
-                $spanreceived   = $numoftrs / $numofreceived;
-                $spangiven      = $numoftrs / $numofgiven;
-            } elseif ($numofreceived == 0 and $numofgiven > 0) {
-                $numoftrs       = $numofgiven;
-                $spanreceived   = $numoftrs;
-                $spangiven      = $numoftrs / $numofgiven;
-            } elseif ($numofreceived > 0 and $numofgiven == 0) {
-                $numoftrs       = $numofreceived;
-                $spanreceived   = $numoftrs / $numofreceived;
-                $spangiven      = $numoftrs;
-            } else {
-                $numoftrs       = 1;
-                $spanreceived   = 1;
-                $spangiven      = 1;
-            }
-
-            for ($tr = 0; $tr < $numoftrs; $tr++) {
-                $row = new html_table_row();
-                if ($published) {
-                    $row->attributes['class'] = 'published';
-                }
-                // column #1 - participant - spans over all rows
-                if ($tr == 0) {
-                    $cell = new html_table_cell();
-                    $cell->text = $this->grading_report_participant($participant, $userinfo);
-                    $cell->rowspan = $numoftrs;
-                    $cell->attributes['class'] = 'participant';
-                    $row->cells[] = $cell;
-                }
-                // column #2 - submission - spans over all rows
-                if ($tr == 0) {
-                    $cell = new html_table_cell();
-                    $cell->text = $this->grading_report_submission($participant);
-                    $cell->rowspan = $numoftrs;
-                    $cell->attributes['class'] = 'submission';
-                    $row->cells[] = $cell;
-                }
-                // column #3 - received grades
-                if ($tr % $spanreceived == 0) {
-                    $idx = intval($tr / $spanreceived);
-                    $assessment = self::array_nth($participant->reviewedby, $idx);
-                    $cell = new html_table_cell();
-                    $cell->text = $this->grading_report_assessment($assessment, $options->showreviewernames, $userinfo,
-                            get_string('gradereceivedfrom', 'workshop'));
-                    $cell->rowspan = $spanreceived;
-                    $cell->attributes['class'] = 'receivedgrade';
-                    if (is_null($assessment) or is_null($assessment->grade)) {
-                        $cell->attributes['class'] .= ' null';
-                    } else {
-                        $cell->attributes['class'] .= ' notnull';
-                    }
-                    $row->cells[] = $cell;
-                }
-                // column #4 - total grade for submission
-                if ($options->showsubmissiongrade and $tr == 0) {
-                    $cell = new html_table_cell();
-                    $cell->text = $this->grading_report_grade($participant->submissiongrade, $participant->submissiongradeover);
-                    $cell->rowspan = $numoftrs;
-                    $cell->attributes['class'] = 'submissiongrade';
-                    $row->cells[] = $cell;
-                }
-                // column #5 - given grades
-                if ($tr % $spangiven == 0) {
-                    $idx = intval($tr / $spangiven);
-                    $assessment = self::array_nth($participant->reviewerof, $idx);
-                    $cell = new html_table_cell();
-                    $cell->text = $this->grading_report_assessment($assessment, $options->showauthornames, $userinfo,
-                            get_string('gradegivento', 'workshop'));
-                    $cell->rowspan = $spangiven;
-                    $cell->attributes['class'] = 'givengrade';
-                    if (is_null($assessment) or is_null($assessment->grade)) {
-                        $cell->attributes['class'] .= ' null';
-                    } else {
-                        $cell->attributes['class'] .= ' notnull';
-                    }
-                    $row->cells[] = $cell;
-                }
-                // column #6 - total grade for assessment
-                if ($options->showgradinggrade and $tr == 0) {
-                    $cell = new html_table_cell();
-                    $cell->text = $this->grading_report_grade($participant->gradinggrade);
-                    $cell->rowspan = $numoftrs;
-                    $cell->attributes['class'] = 'gradinggrade';
-                    $row->cells[] = $cell;
-                }
-
-                $table->data[] = $row;
-            }
-        }
-
-        return html_writer::table($table);
-    }
-
     /**
      * Renders a text with icons to sort by the given column
      *
@@ -614,7 +608,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
      *
      * @return string
      */
-    protected function sortable_heading($text, $sortid=null, $sortby=null, $sorthow=null) {
+    protected function helper_sortable_heading($text, $sortid=null, $sortby=null, $sorthow=null) {
         global $PAGE;
 
         $out = html_writer::tag('span', $text, array('class'=>'text'));
@@ -639,7 +633,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * @param array $userinfo
      * @return string
      */
-    protected function grading_report_participant(stdclass $participant, array $userinfo) {
+    protected function helper_grading_report_participant(stdclass $participant, array $userinfo) {
         $userid = $participant->userid;
         $out  = $this->output->user_picture($userinfo[$userid], array('courseid' => $this->page->course->id, 'size' => 35));
         $out .= html_writer::tag('span', fullname($userinfo[$userid]));
@@ -651,7 +645,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * @param stdClass $participant
      * @return string
      */
-    protected function grading_report_submission(stdclass $participant) {
+    protected function helper_grading_report_submission(stdclass $participant) {
         global $CFG;
 
         if (is_null($participant->submissionid)) {
@@ -672,7 +666,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * @param string $separator between the grade and the reviewer/author
      * @return string
      */
-    protected function grading_report_assessment($assessment, $shownames, array $userinfo, $separator) {
+    protected function helper_grading_report_assessment($assessment, $shownames, array $userinfo, $separator) {
         global $CFG;
 
         if (is_null($assessment)) {
@@ -716,7 +710,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
     /**
      * Formats the aggreagated grades
      */
-    protected function grading_report_grade($grade, $over=null) {
+    protected function helper_grading_report_grade($grade, $over=null) {
         $a = new stdclass();
         $a->grade = is_null($grade) ? get_string('nullgrade', 'workshop') : $grade;
         if (is_null($over)) {
@@ -729,7 +723,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Helper methods                                                         //
+    // Static helpers
     ////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -764,5 +758,4 @@ class mod_workshop_renderer extends plugin_renderer_base {
             return 'fl';
         }
     }
-
 }

@@ -215,7 +215,7 @@ case workshop::PHASE_ASSESSMENT:
         $perpage    = 10;           // todo let the user modify this
         $groups     = '';           // todo let the user choose the group
         $PAGE->set_url($PAGE->url, compact('sortby', 'sorthow', 'page')); // TODO: this is suspicious
-        $data = $workshop->prepare_grading_report($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
+        $data = $workshop->prepare_grading_report_data($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
         if ($data) {
             $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
             $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
@@ -233,7 +233,7 @@ case workshop::PHASE_ASSESSMENT:
             $reportopts->showgradinggrade       = false;
 
             echo $output->render($pagingbar);
-            echo $output->grading_report($data, $reportopts);
+            echo $output->render(new workshop_grading_report($data, $reportopts));
             echo $output->render($pagingbar);
         }
     }
@@ -347,7 +347,7 @@ case workshop::PHASE_EVALUATION:
         $perpage    = 10;           // todo let the user modify this
         $groups     = '';           // todo let the user choose the group
         $PAGE->set_url($PAGE->url, compact('sortby', 'sorthow', 'page')); // TODO: this is suspicious
-        $data = $workshop->prepare_grading_report($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
+        $data = $workshop->prepare_grading_report_data($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
         if ($data) {
             $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
             $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
@@ -373,7 +373,7 @@ case workshop::PHASE_EVALUATION:
             $reportopts->showgradinggrade       = true;
 
             echo $output->render($pagingbar);
-            echo $output->grading_report($data, $reportopts);
+            echo $output->render(new workshop_grading_report($data, $reportopts));
             echo $output->render($pagingbar);
         }
     }
@@ -455,7 +455,7 @@ case workshop::PHASE_CLOSED:
         $perpage    = 10;           // todo let the user modify this
         $groups     = '';           // todo let the user choose the group
         $PAGE->set_url($PAGE->url, compact('sortby', 'sorthow', 'page')); // TODO: this is suspicious
-        $data = $workshop->prepare_grading_report($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
+        $data = $workshop->prepare_grading_report_data($USER->id, $groups, $page, $perpage, $sortby, $sorthow);
         if ($data) {
             $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
             $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
@@ -474,7 +474,7 @@ case workshop::PHASE_CLOSED:
 
             print_collapsible_region_start('', 'workshop-viewlet-gradereport', get_string('gradesreport', 'workshop'));
             echo $output->render($pagingbar);
-            echo $output->grading_report($data, $reportopts);
+            echo $output->render(new workshop_grading_report($data, $reportopts));
             echo $output->render($pagingbar);
             print_collapsible_region_end();
         }
