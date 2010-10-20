@@ -154,7 +154,8 @@
 
     $PAGE->set_button($exitlink);
 
-    $PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,'cheight'=>$scorm->height), true);
+    $PAGE->requires->data_for_js('scormplayerdata', Array('cwidth'=>$scorm->width,'cheight'=>$scorm->height,
+                                                          'popupoptions' => $scorm->options), true);
     $PAGE->requires->js('/mod/scorm/request.js', true);
     $PAGE->requires->js('/lib/cookies.js', true);
     //$PAGE->requires->js('/mod/scorm/loaddatamodel.php?id='.$cm->id.$scoidstr.$modestr.$attemptstr, true);

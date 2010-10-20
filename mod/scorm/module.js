@@ -112,17 +112,25 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
                 if (!window_name && node.title != null) {
                     obj.setAttribute('data', url_prefix + node.title);
                 }
-                    if (window_name) {
-                        var mine = window.open('','','width=1,height=1,left=0,top=0,scrollbars=no');
-                        if(! mine) {
-                             alert(M.str.scorm.popupsblocked);
-                        }
-                        mine.close()
+                if (window_name) {
+                    var mine = window.open('','','width=1,height=1,left=0,top=0,scrollbars=no');
+                    if(! mine) {
+                         alert(M.str.scorm.popupsblocked);
                     }
+                    mine.close()
+                }
             }
             var old = YAHOO.util.Dom.get('scorm_object');
             if (old) {
-                content.replaceChild(obj, old);
+                if(window_name) { 
+                    var cwidth = scormplayerdata.cwidth;
+                    var cheight = scormplayerdata.cheight;
+                    var poptions = scormplayerdata.popupoptions;
+                    scorm_openpopup("loadSCO.php?" + node.title, window_name, poptions, cwidth, cheight);
+                }
+                else { 
+                    content.replaceChild(obj, old); 
+                }
             } else {
                 content.appendChild(obj);
             }
