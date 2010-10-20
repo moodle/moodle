@@ -157,28 +157,29 @@ class workshop_random_allocator implements workshop_allocator {
      * Returns the HTML code to print the user interface
      */
     public function ui() {
-        global $OUTPUT, $PAGE;
+        global $PAGE;
+
+        $output = $PAGE->get_renderer('mod_workshop');
 
         $m = optional_param('m', null, PARAM_INT);  // status message code
-        $msg = new stdclass();
+        $message = new workshop_message();
         if ($m == self::MSG_SUCCESS) {
-            $msg = (object)array('text' => get_string('randomallocationdone', 'workshopallocation_random'), 'sty' => 'ok');
+            $message->set_text(get_string('randomallocationdone', 'workshopallocation_random'));
+            $message->set_type(workshop_message::TYPE_OK);
         }
 
-        $out = '';
-        $out .= $OUTPUT->container_start('random-allocator');
-        $wsoutput = $PAGE->get_renderer('mod_workshop');
-        $out .= $wsoutput->status_message($msg);
+        $out  = $output->container_start('random-allocator');
+        $out .= $output->render($message);
         // the nasty hack follows to bypass the sad fact that moodle quickforms do not allow to actually
         // return the HTML content, just to display it
         ob_start();
         $this->mform->display();
         $out .= ob_get_contents();
         ob_end_clean();
-        $out .= $OUTPUT->container_end();
+        $out .= $output->container_end();
 
-        $out .= $OUTPUT->heading(get_string('stats', 'workshopallocation_random'));
-        // TODO
+        // TODO $out .= $output->heading(get_string('stats', 'workshopallocation_random'));
+
         return $out;
     }
 

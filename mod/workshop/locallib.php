@@ -2547,3 +2547,161 @@ class workshop_example_submission extends workshop_example_submission_summary im
      */
     protected $fields = array('id', 'title', 'content', 'contentformat', 'contenttrust', 'attachment');
 }
+
+/**
+ * Renderable message to be displayed to the user
+ *
+ * Message can contain an optional action link with a label that is supposed to be rendered
+ * as a button or a link.
+ *
+ * @see workshop::renderer::render_workshop_message()
+ */
+class workshop_message implements renderable {
+
+    const TYPE_INFO     = 10;
+    const TYPE_OK       = 20;
+    const TYPE_ERROR    = 30;
+
+    /** @var string */
+    protected $text = '';
+    /** @var int */
+    protected $type = self::TYPE_INFO;
+    /** @var moodle_url */
+    protected $actionurl = null;
+    /** @var string */
+    protected $actionlabel = '';
+
+    /**
+     * @param string $text short text to be displayed
+     * @param string $type optional message type info|ok|error
+     */
+    public function __construct($text = null, $type = self::TYPE_INFO) {
+        $this->set_text($text);
+        $this->set_type($type);
+    }
+
+    /**
+     * Sets the message text
+     *
+     * @param string $text short text to be displayed
+     */
+    public function set_text($text) {
+        $this->text = $text;
+    }
+
+    /**
+     * Sets the message type
+     *
+     * @param int $type
+     */
+    public function set_type($type = self::TYPE_INFO) {
+        if (in_array($type, array(self::TYPE_OK, self::TYPE_ERROR, self::TYPE_INFO))) {
+            $this->type = $type;
+        } else {
+            throw new coding_exception('Unknown message type.');
+        }
+    }
+
+    /**
+     * Sets the optional message action
+     *
+     * @param moodle_url $url to follow on action
+     * @param string $label action label
+     */
+    public function set_action(moodle_url $url, $label) {
+        $this->actionurl    = $url;
+        $this->actionlabel  = $label;
+    }
+
+    /**
+     * Returns message text with HTML tags quoted
+     *
+     * @return string
+     */
+    public function get_message() {
+        return s($this->text);
+    }
+
+    /**
+     * Returns message type
+     *
+     * @return int
+     */
+    public function get_type() {
+        return $this->type;
+    }
+
+    /**
+     * Returns action URL
+     *
+     * @return moodle_url|null
+     */
+    public function get_action_url() {
+        return $this->actionurl;
+    }
+
+    /**
+     * Returns action label
+     *
+     * @return string
+     */
+    public function get_action_label() {
+        return $this->actionlabel;
+    }
+}
+
+/**
+ * Renderable output of submissions allocation process
+ */
+class workshop_allocation_init_result implements renderable {
+
+    /** @var workshop_message */
+    protected $message;
+    /** @var array of steps */
+    protected $info = array();
+    /** @var moodle_url */
+    protected $continue;
+
+    /**
+     * Supplied argument can be either integer status code or an array of string messages. Messages
+     * in a array can have optional prefix or prefixes, using '::' as delimiter. Prefixes determine
+     * the type of the message and may influence its visualisation.
+     *
+     * @param mixed $result int|array returned by {@see workshop_allocator::init()}
+     * @param moodle_url to continue
+     */
+    public function __construct($result, moodle_url $continue) {
+
+        if ($result === workshop::ALLOCATION_ERROR) {
+            $this->message = new workshop_message(get_string('allocationerror', 'workshop'), workshop_message::TYPE_ERROR);
+        } else {
+            $this->message = new workshop_message(get_string('allocationdone', 'workshop'), workshop_message::TYPE_OK);
+            if (is_array($result)) {
+                $this->info = $result;
+            }
+        }
+
+        $this->continue = $continue;
+    }
+
+    /**
+     * @return workshop_message instance to render
+     */
+    public function get_message() {
+        return $this->message;
+    }
+
+    /**
+     * @return array of strings with allocation process details
+     */
+    public function get_info() {
+        return $this->info;
+    }
+
+    /**
+     * @return moodle_url where the user shoudl continue
+     */
+    public function get_continue_url() {
+        return $this->continue;
+    }
+}

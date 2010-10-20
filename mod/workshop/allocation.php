@@ -55,8 +55,8 @@ $initresult = $allocator->init();
 //
 // Output starts here
 //
-$wsoutput = $PAGE->get_renderer('mod_workshop');
-echo $OUTPUT->header();
+$output = $PAGE->get_renderer('mod_workshop');
+echo $output->header();
 
 $allocators = workshop::installed_allocators();
 if (!empty($allocators)) {
@@ -75,12 +75,12 @@ $tabs[] = $row;
 print_tabs($tabs, $currenttab, $inactive, $activated);
 
 if (!empty($initresult)) {
-    echo $OUTPUT->container_start('allocator-init-results');
-    echo $wsoutput->allocation_init_result($initresult);
-    echo $OUTPUT->container_end();
+    echo $output->container_start('allocator-init-results');
+    echo $output->render(new workshop_allocation_init_result($initresult, $workshop->allocation_url($method)));
+    echo $output->container_end();
 } else {
-    echo $OUTPUT->container_start('allocator-ui');
+    echo $output->container_start('allocator-ui');
     echo $allocator->ui();
-    echo $OUTPUT->container_end();
+    echo $output->container_end();
 }
-echo $OUTPUT->footer();
+echo $output->footer();

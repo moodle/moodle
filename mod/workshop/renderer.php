@@ -39,6 +39,43 @@ class mod_workshop_renderer extends plugin_renderer_base {
     ////////////////////////////////////////////////////////////////////////////
 
     /**
+     * Renders workshop message
+     *
+     * @param workshop_message $message to display
+     * @return string html code
+     */
+    protected function render_workshop_message(workshop_message $message) {
+
+        $text   = $message->get_message();
+        $url    = $message->get_action_url();
+        $label  = $message->get_action_label();
+
+        if (empty($text) and empty($label)) {
+            return '';
+        }
+
+        switch ($message->get_type()) {
+        case workshop_message::TYPE_OK:
+            $sty = 'ok';
+            break;
+        case workshop_message::TYPE_ERROR:
+            $sty = 'error';
+            break;
+        default:
+            $sty = 'info';
+        }
+
+        $o = html_writer::tag('span', $message->get_message());
+
+        if (!is_null($url) and !is_null($label)) {
+            $o .= $this->output->single_button($url, $label, 'get');
+        }
+
+        return $this->output->container($o, array('message', $sty));
+    }
+
+
+    /**
      * Renders full workshop submission
      *
      * @param workshop_submission $submission
@@ -272,6 +309,39 @@ class mod_workshop_renderer extends plugin_renderer_base {
         return html_writer::table($table);
     }
 
+    /**
+     * Renders the result of the submissions allocation process
+     *
+     * @param workshop_allocation_init_result
+     * @return string html to be echoed
+     */
+    protected function render_workshop_allocation_init_result(workshop_allocation_init_result $result) {
+
+        // start with the message
+        $o = $this->render($result->get_message());
+
+        // display the details about the process if available
+        $info = $result->get_info();
+        if (is_array($info) and !empty($info)) {
+            $o .= html_writer::start_tag('ul', array('class' => 'allocation-init-results'));
+            foreach ($info as $message) {
+                $parts  = explode('::', $message);
+                $text   = array_pop($parts);
+                $class  = implode(' ', $parts);
+                if (in_array('debug', $parts) && !debugging('', DEBUG_DEVELOPER)) {
+                    // do not display allocation debugging messages
+                    continue;
+                }
+                $o .= html_writer::tag('li', $text, array('class' => $class)) . "\n";
+            }
+            $o .= html_writer::end_tag('ul');
+        }
+
+        $o .= $this->output->continue_button($result->get_continue_url());
+
+        return $o;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // Rendering helper methods
     ////////////////////////////////////////////////////////////////////////////
@@ -381,63 +451,6 @@ class mod_workshop_renderer extends plugin_renderer_base {
     ////////////////////////////////////////////////////////////////////////////
     // TODO Obsolete
     //
-
-    /**
-     * Returns html code for a status message
-     *
-     * This should be replaced by a core system of displaying messages, as for example Mahara has.
-     *
-     * @param string $message to display
-     * @return string html
-     */
-    public function status_message(stdclass $message) {
-        if (empty($message->text)) {
-            return '';
-        }
-        $sty = empty($message->sty) ? 'info' : $message->sty;
-
-        $o = html_writer::tag('span', $message->text);
-        if (isset($message->extra)) {
-            $o .= $message->extra;
-        }
-        return $this->output->container($o, array('status-message', $sty));
-    }
-
-    /**
-     * Wraps html code returned by the allocator init() method
-     *
-     * Supplied argument can be either integer status code or an array of string messages. Messages
-     * in a array can have optional prefix or prefixes, using '::' as delimiter. Prefixes determine
-     * the type of the message and may influence its visualisation.
-     *
-     * @param mixed $result int|array returned by init()
-     * @return string html to be echoed
-     */
-    public function allocation_init_result($result='') {
-        $msg = new stdclass();
-        if ($result === workshop::ALLOCATION_ERROR) {
-            $msg = (object)array('text' => get_string('allocationerror', 'workshop'), 'sty' => 'error');
-        } else {
-            $msg = (object)array('text' => get_string('allocationdone', 'workshop'), 'sty' => 'ok');
-        }
-        $o = $this->status_message($msg);
-        if (is_array($result)) {
-            $o .= html_writer::start_tag('ul', array('class' => 'allocation-init-results'));
-            foreach ($result as $message) {
-                $parts  = explode('::', $message);
-                $text   = array_pop($parts);
-                $class  = implode(' ', $parts);
-                if (in_array('debug', $parts) && !debugging('', DEBUG_DEVELOPER)) {
-                    // do not display allocation debugging messages
-                    continue;
-                }
-                $o .= html_writer::tag('li', $text, array('class' => $class)) . "\n";
-            }
-            $o .= html_writer::end_tag('ul');
-            $o .= $this->output->continue_button($this->page->url->out());
-        }
-        return $o;
-    }
 
     /**
      * Renders the workshop grading report

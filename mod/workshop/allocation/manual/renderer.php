@@ -29,15 +29,19 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Manual allocation renderer class
  */
-class workshopallocation_manual_renderer extends plugin_renderer_base  {
+class workshopallocation_manual_renderer extends mod_workshop_renderer  {
+
+    ////////////////////////////////////////////////////////////////////////////
+    // External rendering API
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * Display the table of all current allocations and widgets to modify them
      *
-     * @param stdClass $data to be displayed - see the top of the function for the list of needed properties
+     * @param workshopallocation_manual_allocations $data to be displayed
      * @return string html code
      */
-    public function display_allocations(stdclass $data) {
+    protected function render_workshopallocation_manual_allocations(workshopallocation_manual_allocations $data) {
         $allocations        = $data->allocations;       // array prepared array of all allocations data
         $userinfo           = $data->userinfo;          // names and pictures of all required users
         $authors            = $data->authors;           // array potential reviewees
@@ -64,9 +68,9 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
         $table->data        = array();
         foreach ($allocations as $allocation) {
             $row = array();
-            $row[] = $this->reviewers_of_participant($allocation, $userinfo, $reviewers, $selfassessment);
-            $row[] = $this->participant($allocation, $userinfo);
-            $row[] = $this->reviewees_of_participant($allocation, $userinfo, $authors, $selfassessment);
+            $row[] = $this->helper_reviewers_of_participant($allocation, $userinfo, $reviewers, $selfassessment);
+            $row[] = $this->helper_participant($allocation, $userinfo);
+            $row[] = $this->helper_reviewees_of_participant($allocation, $userinfo, $authors, $selfassessment);
             $thisrowclasses = array();
             if ($allocation->userid == $hlauthorid) {
                 $thisrowclasses[] = 'highlightreviewedby';
@@ -81,12 +85,16 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
         return $this->output->container(html_writer::table($table), 'manual-allocator');
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Internal helper methods
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
      * Returns information about the workshop participant
      *
      * @return string HTML code
      */
-    protected function participant(stdclass $allocation, array $userinfo) {
+    protected function helper_participant(stdclass $allocation, array $userinfo) {
         $o  = $this->output->user_picture($userinfo[$allocation->userid], array('courseid' => $this->page->course->id));
         $o .= fullname($userinfo[$allocation->userid]);
         $o .= $this->output->container_start(array('submission'));
@@ -109,7 +117,7 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
      *
      * @return string html code
      */
-    protected function reviewers_of_participant(stdclass $allocation, array $userinfo, array $reviewers, $selfassessment) {
+    protected function helper_reviewers_of_participant(stdclass $allocation, array $userinfo, array $reviewers, $selfassessment) {
         $o = '';
         if (is_null($allocation->submissionid)) {
             $o .= $this->output->container(get_string('nothingtoreview', 'workshop'), 'info');
@@ -135,7 +143,7 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
 
             // delete icon
             $handler = new moodle_url($this->page->url, array('mode' => 'del', 'what' => $assessmentid, 'sesskey' => sesskey()));
-            $o .= $this->remove_allocation_icon($handler);
+            $o .= $this->helper_remove_allocation_icon($handler);
 
             $o .= html_writer::end_tag('li');
         }
@@ -148,7 +156,7 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
      *
      * @return string html code
      */
-    protected function reviewees_of_participant(stdclass $allocation, array $userinfo, array $authors, $selfassessment) {
+    protected function helper_reviewees_of_participant(stdclass $allocation, array $userinfo, array $authors, $selfassessment) {
         $o = '';
         if (is_null($allocation->submissionid)) {
             $o .= $this->output->container(get_string('withoutsubmission', 'workshop'), 'info');
@@ -176,7 +184,7 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
 
             // delete icon
             $handler = new moodle_url($this->page->url, array('mode' => 'del', 'what' => $assessmentid, 'sesskey' => sesskey()));
-            $o .= $this->remove_allocation_icon($handler);
+            $o .= $this->helper_remove_allocation_icon($handler);
 
             $o .= html_writer::end_tag('li');
         }
@@ -190,7 +198,7 @@ class workshopallocation_manual_renderer extends plugin_renderer_base  {
      * @param moodle_url $link to the action
      * @return html code to be displayed
      */
-    protected function remove_allocation_icon($link) {
+    protected function helper_remove_allocation_icon($link) {
         return $this->output->action_icon($link, new pix_icon('t/delete', 'X'));
     }
 }
