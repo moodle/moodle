@@ -154,7 +154,7 @@ class webdav_client {
     function open() {
         // let's try to open a socket
         $this->_error_log('open a socket connection');
-        $this->sock = @fsockopen ($this->_server, $this->_port, $this->_errno, $this->_errstr, $this->_socket_timeout);
+        $this->sock = fsockopen($this->_server, $this->_port, $this->_errno, $this->_errstr, $this->_socket_timeout);
         set_time_limit(30);
         if (is_resource($this->sock)) {
             socket_set_blocking($this->sock, true);
@@ -787,7 +787,6 @@ EOD;
         fputs($this->sock, $xml);
         $this->get_respond();
         $response = $this->process_respond();
-        echo_fb($response);
         // validate the response ... (only basic validation)
         // check http-version
         if ($response['status']['http-version'] == 'HTTP/1.1' ||

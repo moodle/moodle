@@ -61,14 +61,15 @@ class repository_webdav extends repository {
     public function check_login() {
         return true;
     }
-    public function get_file($url, $title) {
+    public function get_file($path, $title) {
         global $CFG;
+        $path = urldecode($path);
         $path = $this->prepare_file($title);
         $buffer = '';
         if (!$this->dav->open()) {
             return false;
         }
-        $this->dav->get($url, $buffer);
+        $this->dav->get($path, $buffer);
         $fp = fopen($path, 'wb');
         fwrite($fp, $buffer);
         return array('path'=>$path);
@@ -96,6 +97,7 @@ class repository_webdav extends repository {
             }
             $dir = $this->dav->ls($path);
         } else {
+            $path = urldecode($path);
             if (empty($this->options['webdav_type'])) {
                 $partern = '#http://'.$this->webdav_host.'/#';
             } else {
@@ -125,8 +127,8 @@ class repository_webdav extends repository {
                         $title = urldecode($v['href']);
                     }
                     $ret['list'][] = array(
-                        'title'=>$title,
-                        'thumbnail'=>$OUTPUT->pix_url('f/folder-32').out(false),
+                        'title'=>urldecode(basename($title)),
+                        'thumbnail'=>$OUTPUT->pix_url('f/folder-32')->out(false),
                         'children'=>array(),
                         'date'=>$filedate,
                         'size'=>0,
@@ -136,6 +138,7 @@ class repository_webdav extends repository {
             }else{
                 // a file
                 $title = urldecode(substr($v['href'], strpos($v['href'], $path)+strlen($path)));
+                $title = basename($title);
                 $size = !empty($v['getcontentlength'])? $v['getcontentlength']:'';
                 $ret['list'][] = array(
                     'title'=>$title,
