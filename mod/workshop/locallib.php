@@ -599,7 +599,7 @@ class workshop {
         global $DB;
 
         $sql = 'SELECT s.id, s.title,
-                       a.id AS assessmentid, a.weight, a.grade, a.gradinggrade
+                       a.id AS assessmentid, a.grade, a.gradinggrade
                   FROM {workshop_submissions} s
              LEFT JOIN {workshop_assessments} a ON (a.submissionid = s.id AND a.weight = 1)
                  WHERE s.example = 1 AND s.workshopid = :workshopid
@@ -621,7 +621,7 @@ class workshop {
             return false;
         }
         $sql = 'SELECT s.id, s.title,
-                       a.id AS assessmentid, a.weight, a.grade, a.gradinggrade
+                       a.id AS assessmentid, a.grade, a.gradinggrade
                   FROM {workshop_submissions} s
              LEFT JOIN {workshop_assessments} a ON (a.submissionid = s.id AND a.reviewerid = :reviewerid AND a.weight = 0)
                  WHERE s.example = 1 AND s.workshopid = :workshopid
@@ -630,29 +630,75 @@ class workshop {
     }
 
     /**
-     * Prepares component containing summary of given example to be rendered
+     * Prepares renderable submission component
+     *
+     * @param stdClass $record required by {@see workshop_submission}
+     * @param bool $showauthor show the author-related information
+     * @return workshop_submission
+     */
+    public function prepare_submission(stdClass $record, $showauthor = false) {
+
+        $submission         = new workshop_submission($record, $showauthor);
+        $submission->url    = $this->submission_url($record->id);
+
+        return $submission;
+    }
+
+    /**
+     * Prepares renderable submission summary component
+     *
+     * @param stdClass $record required by {@see workshop_submission_summary}
+     * @param bool $showauthor show the author-related information
+     * @return workshop_submission_summary
+     */
+    public function prepare_submission_summary(stdClass $record, $showauthor = false) {
+
+        $summary        = new workshop_submission_summary($record, $showauthor);
+        $summary->url   = $this->submission_url($record->id);
+
+        return $summary;
+    }
+
+    /**
+     * Prepares renderable example submission component
+     *
+     * @param stdClass $record required by {@see workshop_example_submission}
+     * @return workshop_example_submission
+     */
+    public function prepare_example_submission(stdClass $record) {
+
+        $example = new workshop_example_submission($record);
+
+        return $example;
+    }
+
+    /**
+     * Prepares renderable example submission summary component
+     *
+     * If the example is editable, the caller must set the 'editable' flag explicitly.
      *
      * @param stdClass $example as returned by {@link workshop::get_examples_for_manager()} or {@link workshop::get_examples_for_reviewer()}
-     * @return stdclass component to be rendered
+     * @return workshop_example_submission_summary to be rendered
      */
-    public function prepare_example_summary(stdclass $example) {
+    public function prepare_example_summary(stdClass $example) {
 
-        $summary = new stdclass();
-        $summary->example = $example;
+        $summary = new workshop_example_submission_summary($example);
+
         if (is_null($example->grade)) {
-            $summary->status   = 'notgraded';
-            $buttontext = get_string('assess', 'workshop');
+            $summary->status = 'notgraded';
+            $summary->assesslabel = get_string('assess', 'workshop');
         } else {
-            $summary->status   = 'graded';
-            $buttontext = get_string('reassess', 'workshop');
+            $summary->status = 'graded';
+            $summary->assesslabel = get_string('reassess', 'workshop');
         }
 
         $summary->gradeinfo           = new stdclass();
         $summary->gradeinfo->received = $this->real_grade($example->grade);
         $summary->gradeinfo->max      = $this->real_grade(100);
 
-        $aurl = new moodle_url($this->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey()));
-        $summary->btnform = new single_button($aurl, $buttontext, 'get');
+        $summary->url       = new moodle_url($this->exsubmission_url($example->id));
+        $summary->editurl   = new moodle_url($this->exsubmission_url($example->id), array('edit' => 'on'));
+        $summary->assessurl = new moodle_url($this->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey()));
 
         return $summary;
     }
@@ -1917,6 +1963,10 @@ class workshop {
 
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Renderable components
+////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Represents the user planner tool
  *
@@ -2298,4 +2348,202 @@ class workshop_user_plan implements renderable {
         }
         return $this->examples;
     }
+}
+
+/**
+ * Common base class for submissions and example submissions rendering
+ *
+ * Subclasses of this class convert raw submission record from
+ * workshop_submissions table (as returned by {@see workshop::get_submission_by_id()}
+ * for example) into renderable objects.
+ */
+abstract class workshop_submission_base {
+
+    /** @var bool is the submission anonymous (ie contains author information) */
+    protected $anonymous;
+
+    /* @var array of columns from workshop_submissions that are assigned as properties */
+    protected $fields = array();
+
+    /**
+     * Copies the properties of the given database record into properties of $this instance
+     *
+     * @param stdClass $submission full record
+     * @param bool $showauthor show the author-related information
+     * @param array $options additional properties
+     */
+    public function __construct(stdClass $submission, $showauthor = false) {
+
+        foreach ($this->fields as $field) {
+            if (!property_exists($submission, $field)) {
+                throw new coding_exception('Submission record must provide public property ' . $field);
+            }
+            if (!property_exists($this, $field)) {
+                throw new coding_exception('Renderable component must accept public property ' . $field);
+            }
+            $this->{$field} = $submission->{$field};
+        }
+
+        if ($showauthor) {
+            $this->anonymous = false;
+        } else {
+            $this->anonymize();
+        }
+    }
+
+    /**
+     * Unsets all author-related properties so that the renderer does not have access to them
+     *
+     * Usually this is called by the contructor but can be called explicitely, too.
+     */
+    public function anonymize() {
+        foreach (array('authorid', 'authorfirstname', 'authorlastname',
+               'authorpicture', 'authorimagealt', 'authoremail') as $field) {
+            unset($this->{$field});
+        }
+        $this->anonymous = true;
+    }
+
+    /**
+     * Does the submission object contain author-related information?
+     *
+     * @return null|boolean
+     */
+    public function is_anonymous() {
+        return $this->anonymous;
+    }
+}
+
+/**
+ * Renderable object containing a basic set of information needed to display the submission summary
+ *
+ * @see workshop_renderer::render_workshop_submission_summary
+ */
+class workshop_submission_summary extends workshop_submission_base implements renderable {
+
+    /** @var int */
+    public $id;
+    /** @var string */
+    public $title;
+    /** @var string graded|notgraded */
+    public $status;
+    /** @var int */
+    public $timecreated;
+    /** @var int */
+    public $timemodified;
+    /** @var int */
+    public $authorid;
+    /** @var string */
+    public $authorfirstname;
+    /** @var string */
+    public $authorlastname;
+    /** @var int */
+    public $authorpicture;
+    /** @var string */
+    public $authorimagealt;
+    /** @var string */
+    public $authoremail;
+    /** @var moodle_url to display submission */
+    public $url;
+
+    /**
+     * @var array of columns from workshop_submissions that are assigned as properties
+     * of instances of this class
+     */
+    protected $fields = array(
+        'id', 'title', 'timecreated', 'timemodified',
+        'authorid', 'authorfirstname', 'authorlastname', 'authorpicture',
+        'authorimagealt', 'authoremail');
+}
+
+/**
+ * Renderable object containing all the information needed to display the submission
+ *
+ * @see workshop_renderer::render_workshop_submission()
+ */
+class workshop_submission extends workshop_submission_summary implements renderable {
+
+    /** @var string */
+    public $content;
+    /** @var int */
+    public $contentformat;
+    /** @var bool */
+    public $contenttrust;
+    /** @var array */
+    public $attachment;
+
+    /**
+     * @var array of columns from workshop_submissions that are assigned as properties
+     * of instances of this class
+     */
+    protected $fields = array(
+        'id', 'title', 'timecreated', 'timemodified', 'content', 'contentformat', 'contenttrust',
+        'attachment', 'authorid', 'authorfirstname', 'authorlastname', 'authorpicture',
+        'authorimagealt', 'authoremail');
+}
+
+/**
+ * Renderable object containing a basic set of information needed to display the example submission summary
+ *
+ * @see workshop::prepare_example_summary()
+ * @see workshop_renderer::render_workshop_example_submission_summary()
+ */
+class workshop_example_submission_summary extends workshop_submission_base implements renderable {
+
+    /** @var int */
+    public $id;
+    /** @var string */
+    public $title;
+    /** @var string graded|notgraded */
+    public $status;
+    /** @var stdClass */
+    public $gradeinfo;
+    /** @var moodle_url */
+    public $url;
+    /** @var moodle_url */
+    public $editurl;
+    /** @var string */
+    public $assesslabel;
+    /** @var moodle_url */
+    public $assessurl;
+    /** @var bool must be set explicitly by the caller */
+    public $editable = false;
+
+    /**
+     * @var array of columns from workshop_submissions that are assigned as properties
+     * of instances of this class
+     */
+    protected $fields = array('id', 'title');
+
+    /**
+     * Example submissions are always anonymous
+     *
+     * @return true
+     */
+    public function is_anonymous() {
+        return true;
+    }
+}
+
+/**
+ * Renderable object containing all the information needed to display the example submission
+ *
+ * @see workshop_renderer::render_workshop_example_submission()
+ */
+class workshop_example_submission extends workshop_example_submission_summary implements renderable {
+
+    /** @var string */
+    public $content;
+    /** @var int */
+    public $contentformat;
+    /** @var bool */
+    public $contenttrust;
+    /** @var array */
+    public $attachment;
+
+    /**
+     * @var array of columns from workshop_submissions that are assigned as properties
+     * of instances of this class
+     */
+    protected $fields = array('id', 'title', 'content', 'contentformat', 'contenttrust', 'attachment');
 }

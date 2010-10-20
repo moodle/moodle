@@ -210,8 +210,9 @@ if ($edit) {
 }
 
 // Output starts here
-echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($workshop->name), 2);
+$output = $PAGE->get_renderer('mod_workshop');
+echo $output->header();
+echo $output->heading(format_string($workshop->name), 2);
 
 // show instructions for submitting as thay may contain some list of questions and we need to know them
 // while reading the submitted answer
@@ -219,7 +220,7 @@ if (trim($workshop->instructauthors)) {
     $instructions = file_rewrite_pluginfile_urls($workshop->instructauthors, 'pluginfile.php', $PAGE->context->id,
         'mod_workshop', 'instructauthors', 0, workshop::instruction_editors_options($PAGE->context));
     print_collapsible_region_start('', 'workshop-viewlet-instructauthors', get_string('instructauthors', 'workshop'));
-    echo $OUTPUT->box(format_text($instructions, $workshop->instructauthorsformat), array('generalbox', 'instructions'));
+    echo $output->box(format_text($instructions, $workshop->instructauthorsformat), array('generalbox', 'instructions'));
     print_collapsible_region_end();
 }
 
@@ -227,17 +228,16 @@ if (trim($workshop->instructauthors)) {
 
 if ($edit) {
     $mform->display();
-    echo $OUTPUT->footer();
+    echo $output->footer();
     die();
 }
 
 // else display the submission
 
 if ($submission->id) {
-    $wsoutput = $PAGE->get_renderer('mod_workshop');
-    echo $wsoutput->submission_full($submission, has_capability('mod/workshop:viewauthornames', $workshop->context));
+    echo $output->render($workshop->prepare_submission($submission, has_capability('mod/workshop:viewauthornames', $workshop->context)));
 } else {
-    echo $OUTPUT->box(get_string('noyoursubmission', 'workshop'));
+    echo $output->box(get_string('noyoursubmission', 'workshop'));
 }
 
 if ($editable) {
@@ -248,12 +248,12 @@ if ($editable) {
         $btnurl = new moodle_url($PAGE->url, array('edit' => 'on'));
         $btntxt = get_string('createsubmission', 'workshop');
     }
-    echo $OUTPUT->single_button($btnurl, $btntxt, 'get');
+    echo $output->single_button($btnurl, $btntxt, 'get');
 }
 
 if ($submission->id and !$edit and !$isreviewer and $canallocate and $workshop->assessing_allowed()) {
     $url = new moodle_url($PAGE->url, array('assess' => 1));
-    echo $OUTPUT->single_button($url, get_string('assess', 'workshop'), 'post');
+    echo $output->single_button($url, get_string('assess', 'workshop'), 'post');
 }
 
 // and possibly display the submission's review(s)
@@ -261,24 +261,24 @@ if ($submission->id and !$edit and !$isreviewer and $canallocate and $workshop->
 if ($isreviewer) {
     $strategy = $workshop->grading_strategy_instance();
     $mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $userassessment, false);
-    echo $OUTPUT->heading(get_string('assessmentbyyourself', 'workshop'), 2);
+    echo $output->heading(get_string('assessmentbyyourself', 'workshop'), 2);
     // reviewers can always see the grades they gave even they are not available yet
     if (is_null($userassessment->grade)) {
-        echo $OUTPUT->heading(get_string('notassessed', 'workshop'), 3);
+        echo $output->heading(get_string('notassessed', 'workshop'), 3);
         if ($workshop->assessing_allowed()) {
-            echo $OUTPUT->container($OUTPUT->single_button($workshop->assess_url($userassessment->id), get_string('assess', 'workshop'), 'get'),
+            echo $output->container($output->single_button($workshop->assess_url($userassessment->id), get_string('assess', 'workshop'), 'get'),
                     array('class' => 'buttonsbar'));
         }
     } else {
         $a = new stdclass();
         $a->max = $workshop->real_grade(100);
         $a->received = $workshop->real_grade($userassessment->grade);
-        echo $OUTPUT->heading(get_string('gradeinfo', 'workshop', $a), 3);
+        echo $output->heading(get_string('gradeinfo', 'workshop', $a), 3);
         if ($userassessment->weight != 1) {
-            echo $OUTPUT->heading(get_string('weightinfo', 'workshop', $userassessment->weight), 3);
+            echo $output->heading(get_string('weightinfo', 'workshop', $userassessment->weight), 3);
         }
         if ($workshop->assessing_allowed()) {
-            echo $OUTPUT->container($OUTPUT->single_button($workshop->assess_url($userassessment->id), get_string('reassess', 'workshop'), 'get'),
+            echo $output->container($output->single_button($workshop->assess_url($userassessment->id), get_string('reassess', 'workshop'), 'get'),
                     array('class' => 'buttonsbar'));
         }
         $mform->display();
@@ -302,19 +302,19 @@ if (has_capability('mod/workshop:viewallassessments', $workshop->context) or ($o
             $reviewer = new stdclass();
             $reviewer->firstname = $assessment->reviewerfirstname;
             $reviewer->lastname = $assessment->reviewerlastname;
-            echo $OUTPUT->heading(get_string('assessmentbyknown', 'workshop', fullname($reviewer)), 2);
+            echo $output->heading(get_string('assessmentbyknown', 'workshop', fullname($reviewer)), 2);
         } else {
-            echo $OUTPUT->heading(get_string('assessmentbyunknown', 'workshop'), 2);
+            echo $output->heading(get_string('assessmentbyunknown', 'workshop'), 2);
         }
         $a = new stdclass();
         $a->max = $workshop->real_grade(100);
         $a->received = $workshop->real_grade($assessment->grade);
-        echo $OUTPUT->heading(get_string('gradeinfo', 'workshop', $a), 3);
+        echo $output->heading(get_string('gradeinfo', 'workshop', $a), 3);
         if ($assessment->weight != 1) {
-            echo $OUTPUT->heading(get_string('weightinfo', 'workshop', $assessment->weight), 3);
+            echo $output->heading(get_string('weightinfo', 'workshop', $assessment->weight), 3);
         }
         if (has_capability('mod/workshop:overridegrades', $workshop->context)) {
-            echo $OUTPUT->container($OUTPUT->single_button($workshop->assess_url($assessment->id), get_string('assessmentsettings', 'workshop'), 'get'),
+            echo $output->container($output->single_button($workshop->assess_url($assessment->id), get_string('assessmentsettings', 'workshop'), 'get'),
                     array('class' => 'buttonsbar'));
         }
         $mform = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, false);
@@ -327,4 +327,4 @@ if (!$edit and $canoverride) {
     $feedbackform->display();
 }
 
-echo $OUTPUT->footer();
+echo $output->footer();

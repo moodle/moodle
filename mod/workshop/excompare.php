@@ -70,41 +70,41 @@ if ($canmanage) {
 $PAGE->set_title($workshop->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add(get_string('examplecomparing', 'workshop'));
-$wsoutput = $PAGE->get_renderer('mod_workshop');
 
 // Output starts here
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('assessedexample', 'workshop'), 2);
+$output = $PAGE->get_renderer('mod_workshop');
+echo $output->header();
+echo $output->heading(get_string('assessedexample', 'workshop'), 2);
 
-echo $wsoutput->example_full($example, true);
+echo $output->render($workshop->prepare_example_submission($example));
 
 if (!empty($mformreference)) {
-    echo $OUTPUT->heading(get_string('assessmentreference', 'workshop'), 2);
+    echo $output->heading(get_string('assessmentreference', 'workshop'), 2);
     $a = new stdclass();
     $a->received = $workshop->real_grade($reference->grade);
     $a->max = $workshop->real_grade(100);
-    echo $OUTPUT->heading(get_string('gradeinfo', 'workshop' , $a), 3);
+    echo $output->heading(get_string('gradeinfo', 'workshop' , $a), 3);
     $mformreference->display();
 }
 
 if ($isreviewer) {
-    echo $OUTPUT->heading(get_string('assessmentbyyourself', 'workshop'), 2);
+    echo $output->heading(get_string('assessmentbyyourself', 'workshop'), 2);
 } elseif ($canmanage) {
     $reviewer   = new stdclass();
     $reviewer->firstname = $assessment->reviewerfirstname;
     $reviewer->lastname = $assessment->reviewerlastname;
-    echo $OUTPUT->heading(get_string('assessmentbyknown', 'workshop', fullname($reviewer)), 2);
+    echo $output->heading(get_string('assessmentbyknown', 'workshop', fullname($reviewer)), 2);
 }
 $a = new stdclass();
 $a->received = $workshop->real_grade($assessment->grade);
 $a->max = $workshop->real_grade(100);
-echo $OUTPUT->heading(get_string('gradeinfo', 'workshop' , $a), 3);
+echo $output->heading(get_string('gradeinfo', 'workshop' , $a), 3);
 $mformassessment->display();
-echo $OUTPUT->container_start('buttonsbar');
+echo $output->container_start('buttonsbar');
 if ($isreviewer and $workshop->assessing_examples_allowed()) {
     $aurl = new moodle_url($workshop->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey()));
-    echo $OUTPUT->single_button($aurl, get_string('reassess', 'workshop'), 'get');
+    echo $output->single_button($aurl, get_string('reassess', 'workshop'), 'get');
 }
-echo $OUTPUT->container_end(); // buttonsbar
+echo $output->container_end(); // buttonsbar
 
-echo $OUTPUT->footer();
+echo $output->footer();

@@ -166,8 +166,9 @@ if ($edit) {
 }
 
 // Output starts here
-echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($workshop->name), 2);
+$output = $PAGE->get_renderer('mod_workshop');
+echo $output->header();
+echo $output->heading(format_string($workshop->name), 2);
 
 // show instructions for submitting as they may contain some list of questions and we need to know them
 // while reading the submitted answer
@@ -175,47 +176,46 @@ if (trim($workshop->instructauthors)) {
     $instructions = file_rewrite_pluginfile_urls($workshop->instructauthors, 'pluginfile.php', $PAGE->context->id,
         'mod_workshop', 'instructauthors', 0, workshop::instruction_editors_options($PAGE->context));
     print_collapsible_region_start('', 'workshop-viewlet-instructauthors', get_string('instructauthors', 'workshop'));
-    echo $OUTPUT->box(format_text($instructions, $workshop->instructauthorsformat), array('generalbox', 'instructions'));
+    echo $output->box(format_text($instructions, $workshop->instructauthorsformat), array('generalbox', 'instructions'));
     print_collapsible_region_end();
 }
 
 // if in edit mode, display the form to edit the example
 if ($edit and $canmanage) {
     $mform->display();
-    echo $OUTPUT->footer();
+    echo $output->footer();
     die();
 }
 
 // else display the example...
 if ($example->id) {
     if ($canmanage and $delete) {
-    echo $OUTPUT->confirm(get_string('exampledeleteconfirm', 'workshop'),
+    echo $output->confirm(get_string('exampledeleteconfirm', 'workshop'),
             new moodle_url($PAGE->url, array('delete' => 1, 'confirm' => 1)), $workshop->view_url());
     }
     if ($canmanage and !$delete and !$DB->record_exists_select('workshop_assessments',
             'grade IS NOT NULL AND weight=1 AND submissionid = ?', array($example->id))) {
-        echo $OUTPUT->confirm(get_string('assessmentreferenceneeded', 'workshop'),
+        echo $output->confirm(get_string('assessmentreferenceneeded', 'workshop'),
                 new moodle_url($PAGE->url, array('assess' => 1)), $workshop->view_url());
     }
-    $wsoutput = $PAGE->get_renderer('mod_workshop');
-    echo $wsoutput->example_full($example, true);
+    echo $output->render($workshop->prepare_example_submission($example));
 }
 // ...with an option to edit or remove it
-echo $OUTPUT->container_start('buttonsbar');
+echo $output->container_start('buttonsbar');
 if ($canmanage) {
     if (empty($edit) and empty($delete)) {
         $aurl = new moodle_url($workshop->exsubmission_url($example->id), array('edit' => 'on'));
-        echo $OUTPUT->single_button($aurl, get_string('exampleedit', 'workshop'), 'get');
+        echo $output->single_button($aurl, get_string('exampleedit', 'workshop'), 'get');
 
         $aurl = new moodle_url($workshop->exsubmission_url($example->id), array('delete' => 'on'));
-        echo $OUTPUT->single_button($aurl, get_string('exampledelete', 'workshop'), 'get');
+        echo $output->single_button($aurl, get_string('exampledelete', 'workshop'), 'get');
     }
 }
 // ...and optionally assess it
 if ($canassess or ($canmanage and empty($edit) and empty($delete))) {
     $aurl = new moodle_url($workshop->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey()));
-    echo $OUTPUT->single_button($aurl, get_string('exampleassess', 'workshop'), 'get');
+    echo $output->single_button($aurl, get_string('exampleassess', 'workshop'), 'get');
 }
-echo $OUTPUT->container_end(); // buttonsbar
+echo $output->container_end(); // buttonsbar
 // and possibly display the example's review(s) - todo
-echo $OUTPUT->footer();
+echo $output->footer();

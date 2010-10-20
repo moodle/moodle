@@ -91,6 +91,7 @@
 
 .path-mod-workshop .submission-full .header .userdate.modified {
     padding-left: 10px;
+    margin-left: 0px;
     border-left: 1px solid #000;
 }
 
@@ -130,8 +131,11 @@
 /**
  * Example submission - full display
  */
-.path-mod-workshop .submission-full.example .header .title,
-.path-mod-workshop .submission-full.example .header .userdate {
+.path-mod-workshop .submission-full.example .header {
+    min-height: 0px;
+}
+
+.path-mod-workshop .submission-full.example .header .title {
     margin: 0px 0px 0px 0px;
 }
 

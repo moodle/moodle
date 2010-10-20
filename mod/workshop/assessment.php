@@ -89,18 +89,18 @@ if ($assessmenteditable and $workshop->useexamples and $workshop->examplesmode =
     if (!$reviewersubmission) {
         // no money, no love
         $assessmenteditable = false;
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('exampleneedsubmission', 'workshop'), 2);
-        echo $OUTPUT->footer();
+        echo $output->header();
+        echo $output->heading(get_string('exampleneedsubmission', 'workshop'), 2);
+        echo $output->footer();
         exit;
     } else {
         $examples = $workshop->get_examples_for_reviewer($assessment->reviewerid);
         foreach ($examples as $exampleid => $example) {
             if (is_null($example->grade)) {
                 $assessmenteditable = false;
-                echo $OUTPUT->header();
-                echo $OUTPUT->heading(get_string('exampleneedassessed', 'workshop'), 2);
-                echo $OUTPUT->footer();
+                echo $output->header();
+                echo $output->heading(get_string('exampleneedassessed', 'workshop'), 2);
+                echo $output->footer();
                 exit;
             }
         }
@@ -160,12 +160,12 @@ if ($canoverridegrades or $cansetassessmentweight) {
 }
 
 // output starts here
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('assessedsubmission', 'workshop'), 2);
+$output = $PAGE->get_renderer('mod_workshop');      // workshop renderer
+echo $output->header();
+echo $output->heading(get_string('assessedsubmission', 'workshop'), 2);
 
-$wsoutput = $PAGE->get_renderer('mod_workshop');      // workshop renderer
 $submission = $workshop->get_submission_by_id($submission->id);     // reload so can be passed to the renderer
-echo $wsoutput->submission_full($submission, has_capability('mod/workshop:viewauthornames', $workshop->context));
+echo $output->render($workshop->prepare_submission($submission, has_capability('mod/workshop:viewauthornames', $workshop->context)));
 
 // show instructions for assessing as they may contain important information
 // for evaluating the assessment
@@ -173,28 +173,28 @@ if (trim($workshop->instructreviewers)) {
     $instructions = file_rewrite_pluginfile_urls($workshop->instructreviewers, 'pluginfile.php', $PAGE->context->id,
         'mod_workshop', 'instructreviewers', 0, workshop::instruction_editors_options($PAGE->context));
     print_collapsible_region_start('', 'workshop-viewlet-instructreviewers', get_string('instructreviewers', 'workshop'));
-    echo $OUTPUT->box(format_text($instructions, $workshop->instructreviewersformat), array('generalbox', 'instructions'));
+    echo $output->box(format_text($instructions, $workshop->instructreviewersformat), array('generalbox', 'instructions'));
     print_collapsible_region_end();
 }
 
 if ($isreviewer) {
-    echo $OUTPUT->heading(get_string('assessmentbyyourself', 'workshop'), 2);
+    echo $output->heading(get_string('assessmentbyyourself', 'workshop'), 2);
 } elseif (has_capability('mod/workshop:viewreviewernames', $workshop->context)) {
     $assessment = $workshop->get_assessment_by_id($assessment->id); // extend the current record with user details
     $reviewer   = new stdclass();
     $reviewer->firstname = $assessment->reviewerfirstname;
     $reviewer->lastname = $assessment->reviewerlastname;
-    echo $OUTPUT->heading(get_string('assessmentbyknown', 'workshop', fullname($reviewer)), 2);
+    echo $output->heading(get_string('assessmentbyknown', 'workshop', fullname($reviewer)), 2);
 } else {
-    echo $OUTPUT->heading(get_string('assessmentbyunknown', 'workshop'), 2);
+    echo $output->heading(get_string('assessmentbyunknown', 'workshop'), 2);
 }
 
 if ($mform) {
     $mform->display();
 } else {
-    echo $OUTPUT->heading(get_string('notassessed', 'workshop'));
+    echo $output->heading(get_string('notassessed', 'workshop'));
 }
 if ($canoverridegrades) {
     $feedbackform->display();
 }
-echo $OUTPUT->footer();
+echo $output->footer();
