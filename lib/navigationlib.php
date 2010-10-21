@@ -1409,7 +1409,8 @@ class global_navigation extends navigation_node {
                 } else {
                     $sectionname = get_string('section').' '.$section->section;
                 }
-                $url = new moodle_url('/course/view.php', array('id'=>$course->id));
+                //$url = new moodle_url('/course/view.php', array('id'=>$course->id));
+                $url = null;
                 $sectionnode = $coursenode->add($sectionname, $url, navigation_node::TYPE_SECTION, null, $section->id);
                 $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
                 $sectionnode->hidden = (!$section->visible);
