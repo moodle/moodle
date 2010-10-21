@@ -55,6 +55,8 @@ define('SHOW_ACTION_LINKS_IN_CONTACT_LIST', true);
 
 define('MESSAGE_SEARCH_MAX_RESULTS', 200);
 
+define('MESSAGE_CONTACTS_PER_PAGE',10);
+
 if (!isset($CFG->message_contacts_refresh)) {  // Refresh the contacts list every 60 seconds
     $CFG->message_contacts_refresh = 60;
 }
@@ -65,7 +67,7 @@ if (!isset($CFG->message_offline_time)) {
     $CFG->message_offline_time = 300;
 }
 
-function message_print_contact_selector($countunreadtotal, $usergroup, $user1, $user2, $blockedusers, $onlinecontacts, $offlinecontacts, $strangers, $showcontactactionlinks) {
+function message_print_contact_selector($countunreadtotal, $usergroup, $user1, $user2, $blockedusers, $onlinecontacts, $offlinecontacts, $strangers, $showcontactactionlinks, $page=0) {
     global $PAGE;
 
     echo html_writer::start_tag('div', array('class'=>'contactselector mdl-align'));
@@ -106,7 +108,7 @@ function message_print_contact_selector($countunreadtotal, $usergroup, $user1, $
                 && array_key_exists($courseidtoshow, $coursecontexts)
                 && has_capability('moodle/course:viewparticipants', $coursecontexts[$courseidtoshow])) {
 
-                message_print_participants($coursecontexts[$courseidtoshow], $courseidtoshow, $PAGE->url, $showcontactactionlinks);
+                message_print_participants($coursecontexts[$courseidtoshow], $courseidtoshow, $PAGE->url, $showcontactactionlinks, null, $page);
             } else {
                 //shouldn't get here. User trying to access a course they're not in perhaps.
                 add_to_log(SITEID, 'message', 'view', 'index.php', $usergroup);
@@ -126,10 +128,14 @@ function message_print_contact_selector($countunreadtotal, $usergroup, $user1, $
     echo html_writer::end_tag('div');
 }
 
-function message_print_participants($context, $courseid, $contactselecturl=null, $showactionlinks=true, $titletodisplay=null) {
-    global $DB, $USER;
+function message_print_participants($context, $courseid, $contactselecturl=null, $showactionlinks=true, $titletodisplay=null, $page=0) {
+    global $DB, $USER, $PAGE, $OUTPUT;
 
-    $participants = get_enrolled_users($context);
+    $countparticipants = count_enrolled_users($context);
+    $participants = get_enrolled_users($context, '', 0, 'u.*', '', $page*MESSAGE_CONTACTS_PER_PAGE, MESSAGE_CONTACTS_PER_PAGE);
+    
+    $pagingbar = new paging_bar($countparticipants, $page, MESSAGE_CONTACTS_PER_PAGE, $PAGE->url, 'page');
+    echo $OUTPUT->render($pagingbar);
 
     echo '<table id="message_participants" class="boxaligncenter" cellspacing="2" cellpadding="0" border="0">';
 
@@ -1533,11 +1539,9 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     $s->url = $CFG->wwwroot.'/message/index.php?id='.$userfrom->id;//.'&user='.$userto->id;
 
     $emailtagline = get_string('emailtagline', 'message', $s);
-    //$eventdata->footer = "\n\n---------------------------------------------------------------------\n".$emailtagline;
     if (!empty($eventdata->fullmessage)) {
         $eventdata->fullmessage .= "\n\n---------------------------------------------------------------------\n".$emailtagline;
     }
-    //$eventdata->footerhtml = "<br /><br />---------------------------------------------------------------------<br />".$emailtagline;
     if (!empty($eventdata->fullmessagehtml)) {
         $eventdata->fullmessagehtml .= "<br /><br />---------------------------------------------------------------------<br />".$emailtagline;
     }
