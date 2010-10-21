@@ -43,6 +43,7 @@ $blockcontact   = optional_param('blockcontact',   0, PARAM_INT); // blocking a 
 $unblockcontact = optional_param('unblockcontact', 0, PARAM_INT); // unblocking a contact
 $advancedsearch = optional_param('advanced', 0, PARAM_INT);
 $usergroup = optional_param('usergroup', VIEW_UNREAD_MESSAGES, PARAM_ALPHANUMEXT);
+$page = optional_param('page', 0, PARAM_INT); //if they have numerous contacts we might need to page through them
 
 //id will be supplied if they've clicked on someone in their contact list
 //if they have redirect to recent messages exchanged with that user
@@ -120,7 +121,7 @@ $countunreadtotal = message_count_unread_messages($user1);
 $blockedusers = message_get_blocked_users($user1, $user2);
 list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts($user1, $user2);
 $showcontactactionlinks = true;
-message_print_contact_selector($countunreadtotal, $usergroup, $user1, $user2, $blockedusers, $onlinecontacts, $offlinecontacts, $strangers, $showcontactactionlinks);
+message_print_contact_selector($countunreadtotal, $usergroup, $user1, $user2, $blockedusers, $onlinecontacts, $offlinecontacts, $strangers, $showcontactactionlinks, $page);
 
 echo html_writer::start_tag('div', array('class'=>'messagearea mdl-align'));
     message_print_search($advancedsearch, $user1);
