@@ -49,6 +49,9 @@ $removecontact  = optional_param('removecontact',  0, PARAM_INT); // removing a 
 $blockcontact   = optional_param('blockcontact',   0, PARAM_INT); // blocking a contact
 $unblockcontact = optional_param('unblockcontact', 0, PARAM_INT); // unblocking a contact
 
+//if they have numerous contacts or are viewing course participants we might need to page through them
+$page = optional_param('page', 0, PARAM_INT);
+
 $url = new moodle_url('/message/index.php');
 
 if ($usergroup !== 0) {
@@ -151,13 +154,13 @@ if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', 
         $defaultmessage->id = $user2->id;
         $defaultmessage->message = '';
 
+        //Check if the current user has sent a message
         $data = $mform->get_data();
-        if (!empty($data) && !empty($data->message)) {   /// Current user has just sent a message
+        if (!empty($data) && !empty($data->message)) {
             if (!confirm_sesskey()) {
                 print_error('invalidsesskey');
             }
 
-            /// Save it to the database...
             $messageid = message_post_message($user1, $user2, $data->message, FORMAT_PLAIN, 'direct');
             if (!empty($messageid)) {
                 redirect($CFG->wwwroot . '/message/index.php?usergroup='.$usergroup.'&id='.$user2->id);
@@ -205,7 +208,7 @@ $countblocked = count($blockedusers);
 
 list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts($user1, $user2);
 
-message_print_contact_selector($countunreadtotal, $usergroup, $user1, $user2, $blockedusers, $onlinecontacts, $offlinecontacts, $strangers, $showcontactactionlinks);
+message_print_contact_selector($countunreadtotal, $usergroup, $user1, $user2, $blockedusers, $onlinecontacts, $offlinecontacts, $strangers, $showcontactactionlinks, $page);
 
 echo html_writer::start_tag('div', array('class'=>'messagearea mdl-align'));
     if (!empty($user2)) {
@@ -226,7 +229,7 @@ echo html_writer::start_tag('div', array('class'=>'messagearea mdl-align'));
 
                 $recentlabelclass = $historylabelclass = $hidden;
             } else {
-                //default to only showing a few messages unless explicitly told not to
+                //default to only showing the last few messages
                 $displaycount = MESSAGE_SHORTVIEW_LIMIT;
 
                 if ($countunread>MESSAGE_SHORTVIEW_LIMIT) {
