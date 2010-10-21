@@ -210,6 +210,5 @@ class PGTStorage
 
 // include specific PGT storage classes
 include_once(dirname(__FILE__).'/pgt-file.php'); 
-include_once(dirname(__FILE__).'/pgt-db.php');
   
 ?>

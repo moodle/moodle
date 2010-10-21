@@ -223,19 +223,23 @@ class PGTStorageFile extends PGTStorage
    * @public
    */
   function write($pgt,$pgt_iou)
-    {
-      phpCAS::traceBegin();
-      $fname = $this->getPGTIouFilename($pgt_iou);
-      if ( $f=fopen($fname,"w") ) {
-	if ( fputs($f,$pgt) === FALSE ) {
-	  phpCAS::error('could not write PGT to `'.$fname.'\'');
-	}
-	fclose($f);
-      } else {
-	phpCAS::error('could not open `'.$fname.'\'');
-      }
-      phpCAS::traceEnd();      
-    }
+	  {
+	  phpCAS::traceBegin();
+	  $fname = $this->getPGTIouFilename($pgt_iou);
+	  if(!file_exists($fname)){
+		  if ( $f=fopen($fname,"w") ) {
+			  if ( fputs($f,$pgt) === FALSE ) {
+				  phpCAS::error('could not write PGT to `'.$fname.'\'');
+			  }
+			  fclose($f);
+		  } else {
+			  phpCAS::error('could not open `'.$fname.'\'');
+		  }
+	  }else{
+		  phpCAS::error('File exists: `'.$fname.'\'');
+	  }
+	  phpCAS::traceEnd();      
+	  }
 
   /**
    * This method reads a PGT corresponding to a PGT Iou and deletes the 
@@ -248,25 +252,28 @@ class PGTStorageFile extends PGTStorage
    * @public
    */
   function read($pgt_iou)
-    {
-      phpCAS::traceBegin();
-      $pgt = FALSE;
-      $fname = $this->getPGTIouFilename($pgt_iou);
-      if ( !($f=fopen($fname,"r")) ) {
-	phpCAS::trace('could not open `'.$fname.'\'');
-      } else {
-	if ( ($pgt=fgets($f)) === FALSE ) {
-	  phpCAS::trace('could not read PGT from `'.$fname.'\'');
-	} 
-	fclose($f);
-      }
-
-      // delete the PGT file
-      @unlink($fname);
-
-      phpCAS::traceEnd($pgt);
-      return $pgt;
-    }
+	  {
+	  phpCAS::traceBegin();
+	  $pgt = FALSE;
+	  $fname = $this->getPGTIouFilename($pgt_iou);
+	  if (file_exists($fname)){
+		  if ( !($f=fopen($fname,"r")) ) {
+			  phpCAS::trace('could not open `'.$fname.'\'');
+		  } else {
+			  if ( ($pgt=fgets($f)) === FALSE ) {
+				  phpCAS::trace('could not read PGT from `'.$fname.'\'');
+			  } 
+			  fclose($f);
+		  }
+		  
+		  // delete the PGT file
+		  @unlink($fname);
+	  }else{
+		  phpCAS::trace('No such file `'.$fname.'\'');
+	  }
+	  phpCAS::traceEnd($pgt);
+	  return $pgt;
+	  }
   
   /** @} */
   

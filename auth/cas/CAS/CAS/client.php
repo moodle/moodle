@@ -330,15 +330,16 @@ class CASClient
 	 */
 	function getServerBaseURL()
 		{ 
-		// the URL is build only when needed
-		if ( empty($this->_server['base_url']) ) {
-			$this->_server['base_url'] = 'https://'
-				.$this->getServerHostname()
-				.':'
-				.$this->getServerPort()
-				.$this->getServerURI();
-		}
-		return $this->_server['base_url']; 
+			// the URL is build only when needed
+			if ( empty($this->_server['base_url']) ) {
+				$this->_server['base_url'] = 'https://' . $this->getServerHostname();
+				if ($this->getServerPort()!=443) {
+					$this->_server['base_url'] .= ':'
+					.$this->getServerPort();
+				}
+				$this->_server['base_url'] .= $this->getServerURI();
+			}
+			return $this->_server['base_url'];
 		}
 	
 	/**
@@ -587,7 +588,7 @@ class CASClient
 		}
 		$this->_start_session = $start_session;
 
-		if ($this->_start_session && session_id())
+		if ($this->_start_session && session_id() !== "")
 		{
 			phpCAS :: error("Another session was started before phpcas. Either disable the session" .
 				" handling for phpcas in the client() call or modify your application to leave" .
@@ -976,12 +977,14 @@ class CASClient
 				phpCAS::trace('ticket was present and will be discarded, use renewAuthenticate()');
 				header('Location: '.$this->getURL());
 				phpCAS::log( "Prepare redirect to remove ticket: ".$this->getURL() );
+				phpCAS::traceExit();
+				exit();
 			}else{
 				// the user has already (previously during the session) been
 				// authenticated, nothing to be done.
 				phpCAS::trace('user was already authenticated, no need to look for tickets');
+				$res = TRUE;
 			}
-			$res = TRUE;
 		}
 		else {
 			if ( $this->hasST() ) {
@@ -1026,8 +1029,11 @@ class CASClient
 			if ($res) {
 				// if called with a ticket parameter, we need to redirect to the app without the ticket so that CAS-ification is transparent to the browser (for later POSTS)
 				// most of the checks and errors should have been made now, so we're safe for redirect without masking error messages.
+				// remove the ticket as a security precaution to prevent a ticket in the HTTP_REFERRER
 				header('Location: '.$this->getURL());
 				phpCAS::log( "Prepare redirect to : ".$this->getURL() );
+				phpCAS::traceExit();
+				exit();
 			}
 		}
 		
@@ -1232,7 +1238,7 @@ class CASClient
 		phpCAS::log("Session id: ".$session_id);
 		
 		// destroy a possible application session created before phpcas
-		if(session_id()){
+		if(session_id()  !== ""){
 			session_unset();
 			session_destroy();
 		}
@@ -1835,13 +1841,21 @@ class CASClient
 	function callback()
 		{
 		phpCAS::traceBegin();
-		$this->printHTMLHeader('phpCAS callback');
-		$pgt_iou = $_GET['pgtIou'];
-		$pgt = $_GET['pgtId'];
-		phpCAS::trace('Storing PGT `'.$pgt.'\' (id=`'.$pgt_iou.'\')');
-		echo '<p>Storing PGT `'.$pgt.'\' (id=`'.$pgt_iou.'\').</p>';
-		$this->storePGT($pgt,$pgt_iou);
-		$this->printHTMLFooter();
+		if (preg_match('/PGTIOU-[\.\-\w]/', $_GET['pgtIou'])){
+			if(preg_match('/[PT]GT-[\.\-\w]/', $_GET['pgtId'])){
+				$this->printHTMLHeader('phpCAS callback');
+				$pgt_iou = $_GET['pgtIou'];
+				$pgt = $_GET['pgtId'];
+				phpCAS::trace('Storing PGT `'.$pgt.'\' (id=`'.$pgt_iou.'\')');
+				echo '<p>Storing PGT `'.$pgt.'\' (id=`'.$pgt_iou.'\').</p>';
+				$this->storePGT($pgt,$pgt_iou);
+				$this->printHTMLFooter();
+			}else{
+				phpCAS::error('PGT format invalid' . $_GET['pgtId']);
+			}
+		}else{
+			phpCAS::error('PGTiou format invalid' . $_GET['pgtIou']);
+		}
 		phpCAS::traceExit();
 		exit();
 		}
@@ -1937,43 +1951,6 @@ class CASClient
 		$this->_pgt_storage = new PGTStorageFile($this,$format,$path);
 		}
 	
-	/**
-	 * This method is used to tell phpCAS to store the response of the
-	 * CAS server to PGT requests into a database. 
-	 * @note The connection to the database is done only when needed. 
-	 * As a consequence, bad parameters are detected only when 
-	 * initializing PGT storage.
-	 *
-	 * @param $user the user to access the data with
-	 * @param $password the user's password
-	 * @param $database_type the type of the database hosting the data
-	 * @param $hostname the server hosting the database
-	 * @param $port the port the server is listening on
-	 * @param $database the name of the database
-	 * @param $table the name of the table storing the data
-	 *
-	 * @public
-	 */
-	function setPGTStorageDB($user,
-							 $password,
-							 $database_type,
-							 $hostname,
-							 $port,
-							 $database,
-							 $table)
-		{
-		// check that the storage has not already been set
-		if ( is_object($this->_pgt_storage) ) {
-			phpCAS::error('PGT storage already defined');
-		}
-		
-		// warn the user that he should use file storage...
-		trigger_error('PGT storage into database is an experimental feature, use at your own risk',E_USER_WARNING);
-		
-		// create the storage object
-		$this->_pgt_storage = new PGTStorageDB($this,$user,$password,$database_type,$hostname,$port,$database,$table);
-		}
-	
 	// ########################################################################
 	//  PGT VALIDATION
 	// ########################################################################
@@ -2005,16 +1982,26 @@ class CASClient
 		} else {
 			// PGT Iou transmitted, extract it
 			$pgt_iou = trim($arr[0]->get_content());
-			$pgt = $this->loadPGT($pgt_iou);
-			if ( $pgt == FALSE ) {
-				phpCAS::trace('could not load PGT');
-				$this->authError('PGT Iou was transmitted but PGT could not be retrieved',
+			if(preg_match('/PGTIOU-[\.\-\w]/',$pgt_iou)){ 
+				$pgt = $this->loadPGT($pgt_iou);
+				if ( $pgt == FALSE ) {
+					phpCAS::trace('could not load PGT');
+					$this->authError('PGT Iou was transmitted but PGT could not be retrieved',
+						$validate_url,
+						FALSE/*$no_response*/,
+						FALSE/*$bad_response*/,
+						$text_response);
+				}
+				$this->setPGT($pgt);
+			}else{
+				phpCAS::trace('PGTiou format error');
+				$this->authError('PGT Iou was transmitted but has wrong fromat',
 					$validate_url,
 					FALSE/*$no_response*/,
 					FALSE/*$bad_response*/,
 					$text_response);
 			}
-			$this->setPGT($pgt);
+			
 		}
 		// here, cannot use	phpCAS::traceEnd(TRUE); alongside domxml-php4-to-php5.php
 		phpCAS::log('end validatePGT()');
@@ -2284,7 +2271,6 @@ class CASClient
 	function serviceWeb($url,&$err_code,&$output)
 		{
 		phpCAS::traceBegin();
-		$cookies = array();
 		// at first retrieve a PT
 		$pt = $this->retrievePT($url,$err_code,$output);
 		
@@ -2297,12 +2283,7 @@ class CASClient
 			$res = FALSE;
 		} else {
 			// add cookies if necessary
-			if ( isset($_SESSION['phpCAS']['services'][$url]['cookies']) && 
-					is_array($_SESSION['phpCAS']['services'][$url]['cookies']) ) {
-				foreach ( $_SESSION['phpCAS']['services'][$url]['cookies'] as $name => $val ) { 
-					$cookies[] = $name.'='.$val;
-				}
-			}
+			$cookies = $this->getCookies($url);
 			
 			// build the URL including the PT
 			if ( strstr($url,'?') === FALSE ) {
@@ -2323,19 +2304,29 @@ class CASClient
 			} else {
 				// URL has been fetched, extract the cookies
 				phpCAS::trace('URL`'.$service_url.'\' has been read, storing cookies:');
-				foreach ( $headers as $header ) {
-					// test if the header is a cookie
-					if ( preg_match('/^Set-Cookie:/',$header) ) {
-						// the header is a cookie, remove the beginning
-						$header_val = preg_replace('/^Set-Cookie: */','',$header);
-						// extract interesting information
-						$name_val = strtok($header_val,'; ');
-						// extract the name and the value of the cookie
-						$cookie_name = strtok($name_val,'=');
-						$cookie_val = strtok('=');
-						// store the cookie 
-						$_SESSION['phpCAS']['services'][$url]['cookies'][$cookie_name] = $cookie_val;
-						phpCAS::trace($cookie_name.' -> '.$cookie_val);
+				$this->setCookies($headers,$url);
+				// Check for a possible redirect (phpCAS authenticiation redirect after ticket removal)
+				foreach($headers as $header){
+					if (preg_match('/(Location:|URI:)(.*?)\n/', $header, $matches))
+					{
+						$redirect_url = trim(array_pop($matches));
+						phpCAS :: trace('Found redirect:'.$redirect_url);
+						$cookies = $this->getCookies($redirect_url);
+						phpCAS::trace('reading URL`'.$redirect_url.'\'');
+						if ( !$this->readURL($redirect_url,$cookies,$headers,$output,$err_msg) ) {
+							phpCAS::trace('could not read URL`'.$redirect_url.'\'');
+							$err_code = PHPCAS_SERVICE_NOT_AVAILABLE;
+							// give an error message
+							$output = sprintf($this->getString(CAS_STR_SERVICE_UNAVAILABLE),
+								$service_url,
+								$err_msg);
+							$res = FALSE;
+						} else {
+							// URL has been fetched, extract the cookies
+							phpCAS::trace('URL`'.$redirect_url.'\' has been read, storing cookies:');
+							$this->setCookies($headers,$redirect_url);
+						}
+						break;
 					}
 				}
 			}
@@ -2344,6 +2335,47 @@ class CASClient
 		phpCAS::traceEnd($res);
 		return $res;
 		}
+	
+	/**
+	 * This method stores cookies from a HTTP Header in the session
+	 * @param $header HTTP Header
+	 * @param $url the url the Header is from
+	 */
+	
+	function setCookies($headers,$url){
+		phpCAS::traceBegin();
+		foreach ( $headers as $header ) {
+			// test if the header is a cookie
+			if ( preg_match('/^Set-Cookie:/',$header) ) {
+				// the header is a cookie, remove the beginning
+				$header_val = preg_replace('/^Set-Cookie: */','',$header);
+				// extract interesting information
+				$name_val = strtok($header_val,'; ');
+				// extract the name and the value of the cookie
+				$cookie_name = strtok($name_val,'=');
+				$cookie_val = strtok('=');
+				// store the cookie 
+				$_SESSION['phpCAS']['services'][$url]['cookies'][$cookie_name] = $cookie_val;
+				phpCAS::trace($cookie_name.' -> '.$cookie_val);
+			}
+		}
+		phpCAS::traceEnd();
+	}
+	
+	/**
+	 * This method get the cookies from the session
+	 */
+	 
+	function getCookies($url){
+		$cookies = array();
+		if ( isset($_SESSION['phpCAS']['services'][$url]['cookies']) && 
+				is_array($_SESSION['phpCAS']['services'][$url]['cookies']) ) {
+			foreach ( $_SESSION['phpCAS']['services'][$url]['cookies'] as $name => $val ) { 
+				$cookies[] = $name.'='.$val;
+			}
+		}
+		return $cookies;
+	}
 	
 	/**
 	 * This method is used to access an IMAP/POP3/NNTP service.
