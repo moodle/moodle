@@ -61,7 +61,7 @@ if (version_compare(PHP_VERSION, '5', '>=') && !(function_exists('domxml_new_doc
 /**
  * phpCAS version. accessible for the user by phpCAS::getVersion().
  */
-define('PHPCAS_VERSION', '1.1.2');
+define('PHPCAS_VERSION', '1.1.3');
 
 // ------------------------------------------------------------------------
 //  CAS VERSIONS
@@ -159,30 +159,6 @@ define("CAS_PGT_STORAGE_FILE_FORMAT_XML", 'xml');
  * Default format used when storing PGT's to file
  */
 define("CAS_PGT_STORAGE_FILE_DEFAULT_FORMAT", CAS_PGT_STORAGE_FILE_FORMAT_PLAIN);
-// ------------------------------------------------------------------------
-//  DATABASE PGT STORAGE
-// ------------------------------------------------------------------------
-/**
- * default database type when storing PGT's to database
- */
-define("CAS_PGT_STORAGE_DB_DEFAULT_DATABASE_TYPE", 'mysql');
-/**
- * default host when storing PGT's to database
- */
-define("CAS_PGT_STORAGE_DB_DEFAULT_HOSTNAME", 'localhost');
-/**
- * default port when storing PGT's to database
- */
-define("CAS_PGT_STORAGE_DB_DEFAULT_PORT", '');
-/**
- * default database when storing PGT's to database
- */
-define("CAS_PGT_STORAGE_DB_DEFAULT_DATABASE", 'phpCAS');
-/**
- * default table when storing PGT's to database
- */
-define("CAS_PGT_STORAGE_DB_DEFAULT_TABLE", 'pgt');
-
 /** @} */
 // ------------------------------------------------------------------------
 // SERVICE ACCESS ERRORS
@@ -750,58 +726,6 @@ class phpCAS {
 		phpCAS :: traceEnd();
 	}
 
-	/**
-	 * This method is used to tell phpCAS to store the response of the
-	 * CAS server to PGT requests into a database. 
-	 * @note The connection to the database is done only when needed. 
-	 * As a consequence, bad parameters are detected only when 
-	 * initializing PGT storage, except in debug mode.
-	 *
-	 * @param $user the user to access the data with
-	 * @param $password the user's password
-	 * @param $database_type the type of the database hosting the data
-	 * @param $hostname the server hosting the database
-	 * @param $port the port the server is listening on
-	 * @param $database the name of the database
-	 * @param $table the name of the table storing the data
-	 */
-	function setPGTStorageDB($user, $password, $database_type = '', $hostname = '', $port = 0, $database = '', $table = '') {
-		global $PHPCAS_CLIENT, $PHPCAS_AUTH_CHECK_CALL;
-
-		phpCAS :: traceBegin();
-		if (!is_object($PHPCAS_CLIENT)) {
-			phpCAS :: error('this method should only be called after ' . __CLASS__ . '::proxy()');
-		}
-		if (!$PHPCAS_CLIENT->isProxy()) {
-			phpCAS :: error('this method should only be called after ' . __CLASS__ . '::proxy()');
-		}
-		if ($PHPCAS_AUTH_CHECK_CALL['done']) {
-			phpCAS :: error('this method should only be called before ' . $PHPCAS_AUTH_CHECK_CALL['method'] . '() (called at ' . $PHPCAS_AUTH_CHECK_CALL['file'] . ':' . $PHPCAS_AUTH_CHECK_CALL['line'] . ')');
-		}
-		if (gettype($user) != 'string') {
-			phpCAS :: error('type mismatched for parameter $user (should be `string\')');
-		}
-		if (gettype($password) != 'string') {
-			phpCAS :: error('type mismatched for parameter $password (should be `string\')');
-		}
-		if (gettype($database_type) != 'string') {
-			phpCAS :: error('type mismatched for parameter $database_type (should be `string\')');
-		}
-		if (gettype($hostname) != 'string') {
-			phpCAS :: error('type mismatched for parameter $hostname (should be `string\')');
-		}
-		if (gettype($port) != 'integer') {
-			phpCAS :: error('type mismatched for parameter $port (should be `integer\')');
-		}
-		if (gettype($database) != 'string') {
-			phpCAS :: error('type mismatched for parameter $database (should be `string\')');
-		}
-		if (gettype($table) != 'string') {
-			phpCAS :: error('type mismatched for parameter $table (should be `string\')');
-		}
-		$PHPCAS_CLIENT->setPGTStorageDB($user, $password, $database_type, $hostname, $port, $database, $table);
-		phpCAS :: traceEnd();
-	}
 
 	/** @} */
 	// ########################################################################
@@ -1534,9 +1458,6 @@ class phpCAS {
 
 /** @defgroup internalPGTStorage PGT storage
  *  @ingroup internalProxy */
-
-/** @defgroup internalPGTStorageDB PGT storage in a database
- *  @ingroup internalPGTStorage */
 
 /** @defgroup internalPGTStorageFile PGT storage on the filesystem
  *  @ingroup internalPGTStorage */
