@@ -66,7 +66,7 @@ class hotpot_xml_template_default {
     function int_value($tags, $more_tags="[0]['#']") {
         return intval($this->parent->xml_value($tags, $more_tags));
     }
-    function js_value($tags, $more_tags="[0]['#']", $convert_to_unicode=false) {
+    function js_value($tags, $more_tags="[0]['#']", $convert_to_unicode=true) {
         return $this->js_safe($this->parent->xml_value($tags, $more_tags), $convert_to_unicode);
     }
     function js_safe($str, $convert_to_unicode=false) {
