@@ -268,7 +268,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $coursescorm = current($scorms);
 
         $draftitemid = file_get_submitted_draft_itemid('packagefile');
-        file_prepare_draft_area(&$draftitemid, $this->context->id, 'mod_scorm', 'package', 0);
+        file_prepare_draft_area($draftitemid, $this->context->id, 'mod_scorm', 'package', 0);
         $default_values['packagefile'] = $draftitemid;
 
         if (($COURSE->format == 'scorm') && ((count($scorms) == 0) || ($default_values['instance'] == $coursescorm->id))) {

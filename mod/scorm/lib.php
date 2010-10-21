@@ -79,47 +79,47 @@ function scorm_add_instance($scorm, $mform=null) {
     $DB->set_field('course_modules', 'instance', $id, array('id'=>$cmid));
 
 /// reload scorm instance
-    $scorm = $DB->get_record('scorm', array('id'=>$id));
+    $record = $DB->get_record('scorm', array('id'=>$id));
 
 /// store the package and verify
-    if ($scorm->scormtype === SCORM_TYPE_LOCAL) {
+    if ($record->scormtype === SCORM_TYPE_LOCAL) {
         if ($mform) {
             $filename = $mform->get_new_filename('packagefile');
             if ($filename !== false) {
                 $fs = get_file_storage();
                 $fs->delete_area_files($context->id, 'mod_scorm', 'package');
                 $mform->save_stored_file('packagefile', $context->id, 'mod_scorm', 'package', 0, '/', $filename);
-                $scorm->reference = $filename;
+                $record->reference = $filename;
             }
         }
 
-    } else if ($scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
-        $scorm->reference = $scorm->packageurl;
+    } else if ($record->scormtype === SCORM_TYPE_LOCALSYNC) {
+        $record->reference = $scorm->packageurl;
 
-    } else if ($scorm->scormtype === SCORM_TYPE_EXTERNAL) {
-        $scorm->reference = $scorm->packageurl;
+    } else if ($record->scormtype === SCORM_TYPE_EXTERNAL) {
+        $record->reference = $scorm->packageurl;
 
-    } else if ($scorm->scormtype === SCORM_TYPE_IMSREPOSITORY) {
-        $scorm->reference = $scorm->packageurl;
+    } else if ($record->scormtype === SCORM_TYPE_IMSREPOSITORY) {
+        $record->reference = $scorm->packageurl;
 
     } else {
         return false;
     }
 
     // save reference
-    $DB->update_record('scorm', $scorm);
+    $DB->update_record('scorm', $record);
 
 
 /// extra fields required in grade related functions
-    $scorm->course     = $courseid;
-    $scorm->cmidnumber = $cmidnumber;
-    $scorm->cmid       = $cmid;
+    $record->course     = $courseid;
+    $record->cmidnumber = $cmidnumber;
+    $record->cmid       = $cmid;
 
-    scorm_parse($scorm, true);
+    scorm_parse($record, true);
 
-    scorm_grade_item_update($scorm);
+    scorm_grade_item_update($record);
 
-    return $scorm->id;
+    return $record->id;
 }
 
 /**
