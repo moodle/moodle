@@ -65,6 +65,16 @@ class backup_controller extends backup implements loggable {
 
     protected $checksum; // Cache @checksumable results for lighter @is_checksum_correct() uses
 
+    /**
+     * Constructor for the backup controller class.
+     *
+     * @param int $type Type of the backup; One of backup::TYPE_1COURSE, TYPE_1SECTION, TYPE_1ACTIVITY
+     * @param int $id The ID of the item to backup; e.g the course id
+     * @param int $format The backup format to use; Most likely backup::FORMAT_MOODLE
+     * @param bool $interactive Whether this backup will require user interaction; backup::INTERACTIVE_YES or INTERACTIVE_NO
+     * @param int $mode One of backup::MODE_GENERAL, MODE_IMPORT, MODE_SAMESITE, MODE_HUB
+     * @param int $userid The id of the user making the backup
+     */
     public function __construct($type, $id, $format, $interactive, $mode, $userid){
         $this->type = $type;
         $this->id   = $id;
@@ -254,6 +264,10 @@ class backup_controller extends backup implements loggable {
         return $this->logger;
     }
 
+    /**
+     * Executes the backup
+     * @return void Throws and exception of completes
+     */
     public function execute_plan() {
         return $this->plan->execute();
     }
