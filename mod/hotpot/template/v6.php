@@ -68,8 +68,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->parent->xml_value('hotpot-config-file,global,check-caption');
     }
     function v6_expand_CorrectIndicator() {
-        $tags = 'hotpot-config-file,global,correct-indicator';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,global,correct-indicator');
     }
     function v6_expand_Back() {
         return $this->int_value('hotpot-config-file,global,include-back');
@@ -93,12 +92,10 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->parent->xml_value('hotpot-config-file,global,contents-caption');
     }
     function v6_expand_GuessCorrect() {
-        $tags = 'hotpot-config-file,'.$this->parent->quiztype.',guess-correct';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.',guess-correct');
     }
     function v6_expand_GuessIncorrect() {
-        $tags = 'hotpot-config-file,'.$this->parent->quiztype.',guess-incorrect';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.',guess-incorrect');
     }
     function v6_expand_Hint() {
         return $this->int_value('hotpot-config-file,'.$this->parent->quiztype.',include-hint');
@@ -107,19 +104,16 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->parent->xml_value('hotpot-config-file,global,hint-caption');
     }
     function v6_expand_IncorrectIndicator() {
-        $tags = 'hotpot-config-file,global,incorrect-indicator';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,global,incorrect-indicator');
     }
     function v6_expand_LastQCaption() {
         $caption = $this->parent->xml_value('hotpot-config-file,global,last-q-caption');
         return ($caption=='<=' ? '&lt;=' : $caption);
     }
     function v6_expand_NextCorrect() {
-        $tags = 'hotpot-config-file,'.$this->parent->quiztype.',next-correct-part';
-        $value = $this->js_value($tags, "[0]['#']", true);
+        $value = $this->js_value('hotpot-config-file,'.$this->parent->quiztype.',next-correct-part');
         if (empty($value)) { // jquiz
-            $tags = 'hotpot-config-file,'.$this->parent->quiztype.',next-correct-letter';
-            $value = $this->js_value($tags, "[0]['#']", true);
+            $value = $this->js_value('hotpot-config-file,'.$this->parent->quiztype.',next-correct-letter');
         }
         return $value;
     }
@@ -142,20 +136,16 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->parent->xml_value('hotpot-config-file,global,restart-caption');
     }
     function v6_expand_ShowAllQuestionsCaption() {
-        $tags = 'hotpot-config-file,global,show-all-questions-caption';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,global,show-all-questions-caption');
     }
     function v6_expand_ShowOneByOneCaption() {
-        $tags = 'hotpot-config-file,global,show-one-by-one-caption';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,global,show-one-by-one-caption');
     }
     function v6_expand_TheseAnswersToo() {
-        $tags = 'hotpot-config-file,'.$this->parent->quiztype.',also-correct';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.',also-correct');
     }
     function v6_expand_ThisMuch() {
-        $tags = 'hotpot-config-file,'.$this->parent->quiztype.',this-much-correct';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.',this-much-correct');
     }
     function v6_expand_Undo() {
         return $this->int_value('hotpot-config-file,'.$this->parent->quiztype.',include-undo');
@@ -164,8 +154,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->parent->xml_value('hotpot-config-file,global,undo-caption');
     }
     function v6_expand_YourScoreIs() {
-        $tags = 'hotpot-config-file,global,your-score-is';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,global,your-score-is');
     }
 
     // reading
@@ -211,8 +200,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->parent->xml_value('hotpot-config-file,global,email');
     }
     function v6_expand_NamePlease() {
-        $tags = 'hotpot-config-file,global,name-please';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,global,name-please');
     }
 
     // preload images
@@ -674,8 +662,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',remaining-words');
     }
     function v6_expand_TimesUp() {
-        $tags = 'hotpot-config-file,global,times-up';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,global,times-up');
     }
 
     // nav bar
@@ -842,7 +829,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
                     $a = 0;
                     $aa = 0;
                     while (($answer=$question."['answer'][$a]['#']") && $this->parent->xml_value($tags, $answer)) {
-                        $text = $this->js_value($tags,  $answer."['text'][0]['#']", true);
+                        $text = $this->js_value($tags,  $answer."['text'][0]['#']");
                         if (strlen($text)) {
                             if ($aa==0) { // first time only
                                 $str .= "\n";
@@ -857,7 +844,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
                     }
                     // add clue, if any answers were found
                     if ($aa) {
-                        $clue = $this->js_value($tags, $question."['clue'][0]['#']", true);
+                        $clue = $this->js_value($tags, $question."['clue'][0]['#']");
                         $str .= "I[$q][2] = '$clue';\n";
                     }
                     $q++;
@@ -870,15 +857,15 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 
                     $question_type = $this->int_value($tags, $question."['question-type'][0]['#']");
                     $weighting = $this->int_value($tags, $question."['weighting'][0]['#']");
-                    $clue = $this->js_value($tags, $question."['clue'][0]['#']", true);
+                    $clue = $this->js_value($tags, $question."['clue'][0]['#']");
 
                     $answers = $question."['answers'][0]['#']";
 
                     $a = 0;
                     $aa = 0;
                     while (($answer = $answers."['answer'][$a]['#']") && $this->parent->xml_value($tags, $answer)) {
-                        $text =     $this->js_value($tags,  $answer."['text'][0]['#']", true);
-                        $feedback = $this->js_value($tags,  $answer."['feedback'][0]['#']", true);
+                        $text =     $this->js_value($tags,  $answer."['text'][0]['#']");
+                        $feedback = $this->js_value($tags,  $answer."['feedback'][0]['#']");
                         $correct =  $this->int_value($tags, $answer."['correct'][0]['#']");
                         $percent =  $this->int_value($tags, $answer."['percent-correct'][0]['#']");
                         $include =  $this->int_value($tags, $answer."['include-in-mc-options'][0]['#']");
@@ -1082,8 +1069,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         } else {
             $tag = 'guess-correct';
         }
-        $tags = 'hotpot-config-file,'.$this->parent->quiztype.','.$tag;
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.','.$tag);
     }
     function v6_expand_Incorrect() {
         if ($this->parent->quiztype=='jcloze') {
@@ -1091,12 +1077,10 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         } else {
             $tag = 'guess-incorrect';
         }
-        $tags = 'hotpot-config-file,'.$this->parent->quiztype.','.$tag;
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.','.$tag);
     }
     function v6_expand_GiveHint() {
-        $tags = 'hotpot-config-file,'.$this->parent->quiztype.',next-correct-letter';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.',next-correct-letter');
     }
     function v6_expand_CaseSensitive() {
         return $this->bool_value('hotpot-config-file,'.$this->parent->quiztype.',case-sensitive');
@@ -1443,8 +1427,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $flag;
     }
     function v6_expand_CorrectFirstTime() {
-        $tags = 'hotpot-config-file,global,correct-first-time';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,global,correct-first-time');
     }
     function v6_expand_ContinuousScoring() {
         return $this->bool_value('hotpot-config-file,'.$this->parent->quiztype.',continuous-scoring');
@@ -1472,19 +1455,16 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
     // hp6checkshortanswers.js_ (JQuiz)
 
     function v6_expand_CorrectList() {
-        $tags = 'hotpot-config-file,'.$this->parent->quiztype.',correct-answers';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.',correct-answers');
     }
     function v6_expand_HybridTries() {
         return $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',short-answer-tries-on-hybrid-q');
     }
     function v6_expand_PleaseEnter() {
-        $tags = 'hotpot-config-file,'.$this->parent->quiztype.',enter-a-guess';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.',enter-a-guess');
     }
     function v6_expand_PartlyIncorrect() {
-        $tags = 'hotpot-config-file,'.$this->parent->quiztype.',partly-incorrect';
-        return $this->js_value($tags, "[0]['#']", true);
+        return $this->js_value('hotpot-config-file,'.$this->parent->quiztype.',partly-incorrect');
     }
     function v6_expand_ShowAnswerCaption() {
         return $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',show-answer-caption');
