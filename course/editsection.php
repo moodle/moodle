@@ -60,6 +60,7 @@ if ($mform->is_cancelled()){
     $section->summaryformat = $data->summaryformat;
     $DB->update_record('course_sections', $section);
     add_to_log($course->id, "course", "editsection", "editsection.php?id=$section->id", "$section->section");
+    $PAGE->navigation->clear_cache();
     redirect("view.php?id=$course->id");
 }
 
