@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -30,6 +29,7 @@
  */
 
 require_once($CFG->libdir.'/flickrlib.php');
+require_once(dirname(__FILE__) . '/image.php');
 
 class repository_flickr_public extends repository {
     private $flickr;
@@ -51,6 +51,7 @@ class repository_flickr_public extends repository {
         $this->api_key = $this->get_option('api_key');
         $this->flickr  = new phpFlickr($this->api_key);
         $this->flickr_account = $this->get_option('email_address');
+        $this->usewatermarks = $this->get_option('usewatermarks');
 
         $account  = optional_param('flickr_account', '', PARAM_RAW);
         $fulltext = optional_param('flickr_fulltext', '', PARAM_RAW);
@@ -413,6 +414,12 @@ class repository_flickr_public extends repository {
     public function get_file($photo_id, $file = '') {
         global $CFG;
         $info = $this->flickr->photos_getInfo($photo_id);
+        if ($info['owner']['realname']) {
+            $author = $info['owner']['realname'];
+        } else {
+            $author = $info['owner']['username'];
+        }
+        $copyright = get_string('author', 'repository') . ': ' . $author;
         $result = $this->flickr->photos_getSizes($photo_id);
         // download link
         $source = '';
@@ -432,6 +439,12 @@ class repository_flickr_public extends repository {
         $fp = fopen($path, 'w');
         $c = new curl;
         $c->download(array(array('url'=>$source, 'file'=>$fp)));
+        // must close file handler, otherwise gd lib will fail to process it
+        fclose($fp);
+        if (!empty($this->usewatermarks)) {
+            $img = new moodle_image($path);
+            $img->watermark($copyright, array(10,10), array('ttf'=>true, 'fontsize'=>12))->saveas($path);
+        }
 
         return array('path'=>$path, 'url'=>$url, 'author'=>$info['owner']['realname'], 'license'=>$this->license4moodle($info['license']));
     }
@@ -442,6 +455,7 @@ class repository_flickr_public extends repository {
      */
     public function instance_config_form($mform) {
         $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr_public'));
+        $mform->addElement('checkbox', 'usewatermarks', get_string('watermark', 'repository_flickr_public'));
         //$mform->addRule('email_address', get_string('required'), 'required', null, 'client');
     }
 
@@ -450,7 +464,7 @@ class repository_flickr_public extends repository {
      * @return array
      */
     public static function get_instance_option_names() {
-        return array('email_address');
+        return array('email_address', 'usewatermarks');
     }
 
     /**

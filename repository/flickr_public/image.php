@@ -32,6 +32,7 @@ class moodle_image {
     private $backup;
 
     function __construct($img) {
+        ini_set('gd.jpeg_ignore_warning', 1);
         if(!function_exists('imagecreatefrompng')
             and !function_exists('imagecreatefromjpeg')) {
             throw new moodle_exception('gdnotexist');
