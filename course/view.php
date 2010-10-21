@@ -129,6 +129,9 @@
                 if (!move_section($course, $section, $move)) {
                     echo $OUTPUT->notification('An error occurred while moving a section');
                 }
+                // Clear the navigation cache at this point so that the affects
+                // are seen immediatly on the navigation.
+                $PAGE->navigation->clear_cache();
             }
         }
     } else {
