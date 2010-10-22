@@ -813,8 +813,11 @@ class quiz_attempt extends quiz {
         } else {
             $options = $this->get_render_options($id);
         }
+        if ($thispageurl instanceof moodle_url) {
+            $thispageurl = $thispageurl->out(false);
+        }
         if ($thispageurl) {
-            $this->quiz->thispageurl = str_replace($CFG->wwwroot, '', $thispageurl->out(false));
+            $this->quiz->thispageurl = str_replace($CFG->wwwroot, '', $thispageurl);
         } else {
             unset($thispageurl);
         }
