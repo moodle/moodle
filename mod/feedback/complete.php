@@ -237,6 +237,12 @@
                 $tracking->completed = $new_completed_id;
                 $DB->insert_record('feedback_tracking', $tracking);
                 unset($SESSION->feedback->is_started);
+                
+                // Update completion state
+                $completion = new completion_info($course);
+                if ($completion->is_enabled($cm) && $feedback->completionsubmit) {
+                    $completion->update_state($cm, COMPLETION_COMPLETE);
+                }
 
             }else {
                 $savereturn = 'failed';
@@ -319,10 +325,6 @@
                     echo '</p>';
                 }
             }
-
-            // Mark activity viewed for completion-tracking
-            $completion=new completion_info($course);
-            $completion->set_module_viewed($cm);
 
             if($feedback->site_after_submit) {
                 echo $OUTPUT->continue_button(feedback_encode_target_url($feedback->site_after_submit));
@@ -499,6 +501,10 @@
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
+
+    // Mark activity viewed for completion-tracking
+    $completion=new completion_info($course);
+    $completion->set_module_viewed($cm);
 
     echo $OUTPUT->footer();
 

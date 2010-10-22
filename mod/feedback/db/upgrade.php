@@ -289,6 +289,21 @@ function xmldb_feedback_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010051601, 'feedback');
     }
 
+    if ($oldversion < 2010102300) {
+
+        // Define field completionsubmit to be added to feedback
+        $table = new xmldb_table('feedback');
+        $field = new xmldb_field('completionsubmit', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'timemodified');
+
+        // Conditionally launch add field completionsubmit
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // feedback savepoint reached
+        upgrade_mod_savepoint(true, 2010102300, 'feedback');
+    }
+    
     return true;
 }
 

@@ -48,6 +48,7 @@ $string['captchanotset'] = 'Captcha hasn\'t been set.';
 $string['completed'] = 'completed';
 $string['completed_feedbacks'] = 'Submitted answers';
 $string['complete_the_form'] = 'Answer the questions...';
+$string['completionsubmit'] = 'View as completed if the feedback is submitted';
 $string['configallowfullanonymous'] = 'If this option is set yes so the feedback can be completed without any preceding logon. It only affects feedbacks on the homepage.';
 $string['confirmdeleteentry'] = 'Are you sure you want to delete this entry?';
 $string['confirmdeleteitem'] = 'Are you sure you want to delete this element?';

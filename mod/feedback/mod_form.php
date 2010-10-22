@@ -119,7 +119,17 @@ class mod_feedback_mod_form extends moodleform_mod {
         if ($data) {
             $data->page_after_submitformat = $data->page_after_submit['format'];
             $data->page_after_submit = $data->page_after_submit['text'];
+        
+            // Turn off completion settings if the checkboxes aren't ticked
+            $autocompletion = !empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
+            if(empty($data->completion) || !$autocompletion) {
+                $data->completionsubmit=0;
+            }
+            if(empty($data->completionsubmit)) {
+                $data->completionsubmit=0;
+            }
         }
+        
         return $data;
     }
 
@@ -128,4 +138,14 @@ class mod_feedback_mod_form extends moodleform_mod {
         return $errors;
     }
 
+    function add_completion_rules() {
+        $mform =& $this->_form;
+
+        $mform->addElement('checkbox', 'completionsubmit', '', get_string('completionsubmit', 'feedback'));
+        return array('completionsubmit');
+    }
+
+    function completion_rule_enabled($data) {
+        return !empty($data['completionsubmit']);
+    }
 }
