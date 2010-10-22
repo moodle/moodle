@@ -62,7 +62,7 @@ class HTMLPurifier_VarParser_Flexible extends HTMLPurifier_VarParser
                         foreach ($var as $keypair) {
                             $c = explode(':', $keypair, 2);
                             if (!isset($c[1])) continue;
-                            $nvar[$c[0]] = $c[1];
+                            $nvar[trim($c[0])] = trim($c[1]);
                         }
                         $var = $nvar;
                     }
@@ -79,8 +79,15 @@ class HTMLPurifier_VarParser_Flexible extends HTMLPurifier_VarParser
                         return $new;
                     } else break;
                 }
+                if ($type === self::ALIST) {
+                    trigger_error("Array list did not have consecutive integer indexes", E_USER_WARNING);
+                    return array_values($var);
+                }
                 if ($type === self::LOOKUP) {
                     foreach ($var as $key => $value) {
+                        if ($value !== true) {
+                            trigger_error("Lookup array has non-true value at key '$key'; maybe your input array was not indexed numerically", E_USER_WARNING);
+                        }
                         $var[$key] = true;
                     }
                 }

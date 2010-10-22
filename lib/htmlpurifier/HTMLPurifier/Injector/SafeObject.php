@@ -22,6 +22,7 @@ class HTMLPurifier_Injector_SafeObject extends HTMLPurifier_Injector
         'movie' => true,
         'flashvars' => true,
         'src' => true,
+        'allowFullScreen' => true, // if omitted, assume to be 'false'
     );
 
     public function prepare($config, $context) {

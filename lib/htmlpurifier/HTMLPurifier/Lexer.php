@@ -231,6 +231,17 @@ class HTMLPurifier_Lexer
     }
 
     /**
+     * Special Internet Explorer conditional comments should be removed.
+     */
+    protected static function removeIEConditional($string) {
+        return preg_replace(
+            '#<!--\[if [^>]+\]>.*<!\[endif\]-->#si', // probably should generalize for all strings
+            '',
+            $string
+        );
+    }
+
+    /**
      * Callback function for escapeCDATA() that does the work.
      *
      * @warning Though this is public in order to let the callback happen,
@@ -252,7 +263,7 @@ class HTMLPurifier_Lexer
     public function normalize($html, $config, $context) {
 
         // normalize newlines to \n
-        if ($config->get('Output.Newline')!=="\n") {
+        if ($config->get('Core.NormalizeNewlines')) {
             $html = str_replace("\r\n", "\n", $html);
             $html = str_replace("\r", "\n", $html);
         }
@@ -261,6 +272,8 @@ class HTMLPurifier_Lexer
             // escape convoluted CDATA
             $html = $this->escapeCommentedCDATA($html);
         }
+
+        $html = $this->removeIEConditional($html);
 
         // escape CDATA
         $html = $this->escapeCDATA($html);
@@ -285,6 +298,11 @@ class HTMLPurifier_Lexer
         // to be done after entity expansion because the entities sometimes
         // represent non-SGML characters (horror, horror!)
         $html = HTMLPurifier_Encoder::cleanUTF8($html);
+
+        // if processing instructions are to removed, remove them now
+        if ($config->get('Core.RemoveProcessingInstructions')) {
+            $html = preg_replace('#<\?.+?\?>#s', '', $html);
+        }
 
         return $html;
     }

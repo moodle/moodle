@@ -109,6 +109,11 @@ class HTMLPurifier_DefinitionCache_Serializer extends
      */
     private function _prepareDir($config) {
         $directory = $this->generateDirectoryPath($config);
+        //$chmod = $config->get('Cache.SerializerPermissions'); // it would be nice to get this accepted in upstream
+        global $CFG; $chmod = $CFG->directorypermissions;
+        if (!$chmod) {
+            $chmod = 0755;
+        }
         if (!is_dir($directory)) {
             $base = $this->generateBaseDirectoryPath($config);
             if (!is_dir($base)) {
@@ -116,13 +121,13 @@ class HTMLPurifier_DefinitionCache_Serializer extends
                     please create or change using %Cache.SerializerPath',
                     E_USER_WARNING);
                 return false;
-            } elseif (!$this->_testPermissions($base)) {
+            } elseif (!$this->_testPermissions($base, $chmod)) {
                 return false;
             }
-            $old = umask(0022); // disable group and world writes
-            mkdir($directory);
+            $old = umask(0000);
+            mkdir($directory, $chmod);
             umask($old);
-        } elseif (!$this->_testPermissions($directory)) {
+        } elseif (!$this->_testPermissions($directory, $chmod)) {
             return false;
         }
         return true;
@@ -132,7 +137,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends
      * Tests permissions on a directory and throws out friendly
      * error messages and attempts to chmod it itself if possible
      */
-    private function _testPermissions($dir) {
+    private function _testPermissions($dir, $chmod) {
         // early abort, if it is writable, everything is hunky-dory
         if (is_writable($dir)) return true;
         if (!is_dir($dir)) {
@@ -146,17 +151,18 @@ class HTMLPurifier_DefinitionCache_Serializer extends
             // POSIX system, we can give more specific advice
             if (fileowner($dir) === posix_getuid()) {
                 // we can chmod it ourselves
-                chmod($dir, 0755);
+                $chmod = $chmod | 0700;
+                chmod($dir, $chmod);
                 return true;
             } elseif (filegroup($dir) === posix_getgid()) {
-                $chmod = '775';
+                $chmod = $chmod | 0007;
             } else {
                 // PHP's probably running as nobody, so we'll
                 // need to give global permissions
-                $chmod = '777';
+                $chmod = $chmod | 0777;
             }
             trigger_error('Directory '.$dir.' not writable, '.
-                'please chmod to ' . $chmod,
+                'please chmod to ' . decoct($chmod),
                 E_USER_WARNING);
         } else {
             // generic error message

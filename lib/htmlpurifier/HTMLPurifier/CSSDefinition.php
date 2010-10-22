@@ -272,17 +272,26 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
         // setup allowed elements
         $support = "(for information on implementing this, see the ".
                    "support forums) ";
-        $allowed_attributes = $config->get('CSS.AllowedProperties');
-        if ($allowed_attributes !== null) {
+        $allowed_properties = $config->get('CSS.AllowedProperties');
+        if ($allowed_properties !== null) {
             foreach ($this->info as $name => $d) {
-                if(!isset($allowed_attributes[$name])) unset($this->info[$name]);
-                unset($allowed_attributes[$name]);
+                if(!isset($allowed_properties[$name])) unset($this->info[$name]);
+                unset($allowed_properties[$name]);
             }
             // emit errors
-            foreach ($allowed_attributes as $name => $d) {
+            foreach ($allowed_properties as $name => $d) {
                 // :TODO: Is this htmlspecialchars() call really necessary?
                 $name = htmlspecialchars($name);
                 trigger_error("Style attribute '$name' is not supported $support", E_USER_WARNING);
+            }
+        }
+
+        $forbidden_properties = $config->get('CSS.ForbiddenProperties');
+        if ($forbidden_properties !== null) {
+            foreach ($this->info as $name => $d) {
+                if (isset($forbidden_properties[$name])) {
+                    unset($this->info[$name]);
+                }
             }
         }
 
