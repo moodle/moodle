@@ -1348,7 +1348,11 @@ abstract class repository {
             $ret[$entry->name] = $entry->value;
         }
         if (!empty($config)) {
+            if (isset($ret[$config])) {
                 return $ret[$config];
+            } else {
+                return null;
+            }
         } else {
             return $ret;
         }
