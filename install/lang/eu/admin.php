@@ -35,7 +35,7 @@ $string['cliincorrectvalueretry'] = 'Balore ezegokia, mesedez saiatu berriz';
 $string['clitypevalue'] = 'Sartu balorea';
 $string['clitypevaluedefault'] = 'sartu balorea, sakatu Enter-i berezko balorea erabiltzeko ({$a})';
 $string['cliunknowoption'] = 'Aukera ezezagunak:{$a}
-.Mesedez, erabili --laguntza aukera.';
+Mesedez, erabili --laguntza aukera.';
 $string['cliyesnoprompt'] = 'idatzi b(bai esateko) edo e (ez esateko)';
 $string['environmentrequireinstall'] = 'derrigorrezkoa da instalatuta etagaituta izatea';
 $string['environmentrequireversion'] = '{$a->needed} bertsioa beharrezkoa da eta zu {$a->current} ari zara egikaritzen';
