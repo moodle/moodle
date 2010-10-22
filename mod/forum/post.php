@@ -170,7 +170,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     }
 
     // Ensure lang, theme, etc. is set up properly. MDL-6926
-    $PAGE->set_course($course);
+    $PAGE->set_cm($cm, $course, $forum);
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
     $modcontext    = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -251,6 +251,9 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     } else {
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
+
+    $PAGE->set_cm($cm, $course, $forum);
+    
     if (!($forum->type == 'news' && !$post->parent && $discussion->timestart > time())) {
         if (((time() - $post->created) > $CFG->maxeditingtime) and
                     !has_capability('mod/forum:editanypost', $modcontext)) {
