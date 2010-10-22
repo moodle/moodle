@@ -1617,11 +1617,11 @@ class global_navigation extends navigation_node {
         }
 
         // Add nodes for forum posts and discussions if the user can view either or both
-        if ($iscurrentuser || has_capability('moodle/user:readuserposts', $usercontext)) {
-            $forumtab = $usernode->add(get_string('forumposts', 'forum'));
-            $forumtab->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php', $baseargs));
-            $forumtab->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php', array_merge($baseargs, array('mode'=>'discussions'))));
-        }
+        // There are no capability checks here as the content of the page is based
+        // purely on the forums the current user has access too.
+        $forumtab = $usernode->add(get_string('forumposts', 'forum'));
+        $forumtab->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php', $baseargs));
+        $forumtab->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php', array_merge($baseargs, array('mode'=>'discussions'))));
 
         // Add blog nodes
         if (!empty($CFG->bloglevel)) {
