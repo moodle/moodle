@@ -798,10 +798,11 @@ function tag_compute_correlations($min_correlation=2) {
         //var_dump($correlated);
 
         //saves correlation info in the caching table
-        if ($tag_correlation_obj = get_record('tag_correlation', 'tagid', $tag->id, '', '', '', '', 'tagid')) {
+        if ($tag_correlation_obj = get_record('tag_correlation', 'tagid', $tag->id, '', '', '', '', 'id')) {
             $tag_correlation_obj->correlatedtags = $correlated;
             update_record('tag_correlation', $tag_correlation_obj);
         } else {
+        	$tag_correlation_obj = new stdClass();
             $tag_correlation_obj->tagid          = $tag->id;
             $tag_correlation_obj->correlatedtags = $correlated;
             insert_record('tag_correlation', $tag_correlation_obj);
