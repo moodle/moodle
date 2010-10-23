@@ -95,10 +95,6 @@ class nwiki_parser extends wiki_markup_parser {
     );
     
     protected function after_parsing() {
-        if(function_exists('replace_smilies')) {
-            replace_smilies($this->string);
-        }
-        
         parent::after_parsing();
     }
       

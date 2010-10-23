@@ -957,9 +957,6 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
     if (!isset($options['nocache'])) {
         $options['nocache'] = false;
     }
-    if (!isset($options['smiley'])) {
-        $options['smiley'] = true;
-    }
     if (!isset($options['filter'])) {
         $options['filter'] = true;
     }
@@ -1003,7 +1000,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
 
     if (!empty($CFG->cachetext) and empty($options['nocache'])) {
         $hashstr = $text.'-'.$filtermanager->text_filtering_hash($context).'-'.$context->id.'-'.current_language().'-'.
-                (int)$format.(int)$options['trusted'].(int)$options['noclean'].(int)$options['smiley'].
+                (int)$format.(int)$options['trusted'].(int)$options['noclean'].
                 (int)$options['para'].(int)$options['newlines'];
 
         $time = time() - $CFG->cachetext;
@@ -1031,9 +1028,6 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
 
     switch ($format) {
         case FORMAT_HTML:
-            if ($options['smiley']) {
-                replace_smilies($text);
-            }
             if (!$options['noclean']) {
                 $text = clean_text($text, FORMAT_HTML);
             }
@@ -1057,9 +1051,6 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
 
         case FORMAT_MARKDOWN:
             $text = markdown_to_html($text);
-            if ($options['smiley']) {
-                replace_smilies($text);
-            }
             if (!$options['noclean']) {
                 $text = clean_text($text, FORMAT_HTML);
             }
@@ -1067,7 +1058,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
             break;
 
         default:  // FORMAT_MOODLE or anything else
-            $text = text_to_html($text, $options['smiley'], $options['para'], $options['newlines']);
+            $text = text_to_html($text, null, $options['para'], $options['newlines']);
             if (!$options['noclean']) {
                 $text = clean_text($text, FORMAT_HTML);
             }
@@ -1684,17 +1675,19 @@ function replace_smilies(&$text) {
  * Given plain text, makes it into HTML as nicely as possible.
  * May contain HTML tags already
  *
+ * Do not abuse this function. It is intended as lower level formatting feature used
+ * by {@see format_text()} to convert FORMAT_MOODLE to HTML. You are supposed
+ * to call format_text() in most of cases.
+ *
  * @global object
  * @param string $text The string to convert.
- * @param boolean $smiley Convert any smiley characters to smiley images?
+ * @param boolean $smiley_ignored Was used to determine if smiley characters should convert to smiley images, ignored now
  * @param boolean $para If true then the returned string will be wrapped in div tags
  * @param boolean $newlines If true then lines newline breaks will be converted to HTML newline breaks.
  * @return string
  */
 
-function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
-///
-
+function text_to_html($text, $smiley_ignored=null, $para=true, $newlines=true) {
     global $CFG;
 
 /// Remove any whitespace that may be between HTML tags
@@ -1707,11 +1700,6 @@ function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
 /// Make returns into HTML newlines.
     if ($newlines) {
         $text = nl2br($text);
-    }
-
-/// Turn smileys into images.
-    if ($smiley) {
-        replace_smilies($text);
     }
 
 /// Wrap the whole thing in a div if required
