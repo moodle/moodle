@@ -802,10 +802,18 @@ function raise_memory_limit($newlimit) {
         return true;
 
     } else if ($newlimit == MEMORY_STANDARD) {
-        $newlimit = get_real_size('96M');
+        if (PHP_INT_SIZE > 4) {
+            $newlimit = get_real_size('128M'); // 64bit needs more memory
+        } else {
+            $newlimit = get_real_size('96M');
+        }
 
     } else if ($newlimit == MEMORY_EXTRA) {
-        $newlimit = get_real_size('256M');
+        if (PHP_INT_SIZE > 4) {
+            $newlimit = get_real_size('384M'); // 64bit needs more memory
+        } else {
+            $newlimit = get_real_size('256M');
+        }
         if (empty($CFG->extramemorylimit)) {
             $extra = get_real_size($CFG->extramemorylimit);
             if ($extra > $newlimit) {
