@@ -535,6 +535,17 @@ function convert_urls_into_links($text) {
 }
 
 /**
+ * Used to be called from help.php to inject a list of smilies into the
+ * emoticons help file.
+ *
+ * @return string HTML
+ */
+function get_emoticons_list_for_help_file() {
+    debugging('get_emoticons_list_for_help_file() has been deprecated, see the new emoticon_manager API');
+    return '';
+}
+
+/**
  * deprecated - use clean_param($string, PARAM_FILE); instead
  * Check for bad characters ?
  *

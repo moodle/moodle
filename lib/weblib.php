@@ -1681,42 +1681,6 @@ function replace_smilies(&$text) {
 }
 
 /**
- * This code is called from help.php to inject a list of smilies into the
- * emoticons help file.
- *
- * @global object
- * @global object
- * @return string HTML for a list of smilies.
- */
-function get_emoticons_list_for_help_file() {
-    global $CFG, $SESSION, $PAGE, $OUTPUT;
-    if (empty($CFG->emoticons)) {
-        return '';
-    }
-
-    $items = explode('{;}', $CFG->emoticons);
-    $output = '<ul id="emoticonlist">';
-    foreach ($items as $item) {
-        $item = explode('{:}', $item);
-        $output .= '<li><img src="' . $OUTPUT->pix_url('s/' . $item[1]) . '" alt="' .
-                $item[0] . '" /><code>' . $item[0] . '</code></li>';
-    }
-    $output .= '</ul>';
-    if (!empty($SESSION->inserttextform)) {
-        $formname = $SESSION->inserttextform;
-        $fieldname = $SESSION->inserttextfield;
-    } else {
-        $formname = 'theform';
-        $fieldname = 'message';
-    }
-
-    $PAGE->requires->yui2_lib('event');
-    $PAGE->requires->js_function_call('emoticons_help.init', array($formname, $fieldname, 'emoticonlist'));
-    return $output;
-
-}
-
-/**
  * Given plain text, makes it into HTML as nicely as possible.
  * May contain HTML tags already
  *
