@@ -6708,9 +6708,52 @@ function get_emoticon_manager() {
  * Provides core support for plugins that have to deal with
  * emoticons (like HTML editor or emoticon filter).
  *
+ * Whenever this manager mentiones 'emoticon object', the following data
+ * structure is expected: stdClass with properties text, imagename, imagecomponent,
+ * altidentifier and altcomponent
+ *
  * @see admin_setting_emoticons
  */
 class emoticon_manager {
+
+    /**
+     * Returns the currently enabled emoticons
+     *
+     * @return array of emoticon objects
+     */
+    public function get_emoticons() {
+        global $CFG;
+
+        if (empty($CFG->emoticons)) {
+            return array();
+        }
+
+        $emoticons = $this->decode_stored_config($CFG->emoticons);
+
+        if (!is_array($emoticons)) {
+            // something is wrong with the format of stored setting
+            debugging('Invalid format of emoticons setting, please resave the emoticons settings form', DEBUG_NORMAL);
+            return array();
+        }
+
+        return $emoticons;
+    }
+
+    /**
+     * Converts emoticon object into renderable pix_emoticon object
+     *
+     * @param stdClass $emoticon emoticon object
+     * @return pix_emoticon
+     */
+    public function prepare_renderable_emoticon(stdClass $emoticon) {
+        $stringmanager = get_string_manager();
+        if ($stringmanager->string_exists($emoticon->altidentifier, $emoticon->altcomponent)) {
+            $alt = get_string($emoticon->altidentifier, $emoticon->altcomponent);
+        } else {
+            $alt = $emoticon->text;
+        }
+        return new pix_emoticon($emoticon->imagename, $alt, $emoticon->imagecomponent);
+    }
 
     /**
      * Encodes the array of emoticon objects into a string storable in config table

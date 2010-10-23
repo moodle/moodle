@@ -1629,38 +1629,28 @@ function cleanAttributes2($htmlArray){
  */
 function replace_smilies(&$text) {
     global $CFG, $OUTPUT;
+    static $emoticons = null;
+    static $e = array();    // array of emoticon texts like ':-)'
+    static $img = array();  // array of HTML to replace emoticon text with
 
-    if (empty($CFG->emoticons)) { /// No emoticons defined, nothing to process here
+    $manager = get_emoticon_manager();
+
+    if (is_null($emoticons)) {
+        $emoticons = $manager->get_emoticons();
+    }
+
+    if (empty($emoticons)) { /// No emoticons defined, nothing to process here
         return;
     }
 
     $lang = current_language();
-    $emoticonstring = $CFG->emoticons;
-    static $e = array();
-    static $img = array();
-    static $emoticons = null;
-
-    if (is_null($emoticons)) {
-        $emoticons = array();
-        if ($emoticonstring) {
-            $items = explode('{;}', $CFG->emoticons);
-            foreach ($items as $item) {
-               $item = explode('{:}', $item);
-              $emoticons[$item[0]] = $item[1];
-            }
-        }
-    }
 
     if (empty($img[$lang])) {  /// After the first time this is not run again
         $e[$lang] = array();
         $img[$lang] = array();
-        foreach ($emoticons as $emoticon => $image){
-            $alttext = get_string($image, 'pix');
-            if ($alttext === '') {
-                $alttext = $image;
-            }
-            $e[$lang][] = $emoticon;
-            $img[$lang][] = '<img alt="'. $alttext .'" width="15" height="15" src="'. $OUTPUT->pix_url('s/' . $image) . '" />';
+        foreach ($emoticons as $emoticon) {
+            $e[$lang][] = $emoticon->text;
+            $img[$lang][] = $OUTPUT->render($manager->prepare_renderable_emoticon($emoticon));
         }
     }
 
