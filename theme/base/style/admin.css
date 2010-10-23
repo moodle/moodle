@@ -147,6 +147,8 @@
 #adminsettings .form-item .form-description {display: block;margin: 0.5em 0 0em 14.25em;text-align: left;}
 #adminsettings .form-item .pathok,
 #adminsettings .form-item .patherror {margin-left: 0.5em;}
+#adminsettings #admin-emoticons table td input {width: 8em;}
+#adminsettings #admin-emoticons table td.c0 input {width: 4em;}
 
 #adminthemeselector .selectedtheme td.c0 {border:1px solid;border-right-width:0;}
 #adminthemeselector .selectedtheme td.c1 {border:1px solid;border-left-width:0;}

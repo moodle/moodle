@@ -3204,7 +3204,7 @@ class admin_setting_special_frontpagedesc extends admin_setting {
 }
 
 /**
- * Special settings for emoticons
+ * Administration interface for emoticon_manager settings.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3215,66 +3215,10 @@ class admin_setting_emoticons extends admin_setting {
  */
     public function __construct() {
         global $CFG;
-        $name = 'emoticons';
-        $visiblename = get_string('emoticons', 'admin');
-        $description = get_string('configemoticons', 'admin');
-        $defaults = array('k0' => ':-)',
-            'v0' => 'smiley',
-            'k1' => ':)',
-            'v1' => 'smiley',
-            'k2' => ':-D',
-            'v2' => 'biggrin',
-            'k3' => ';-)',
-            'v3' => 'wink',
-            'k4' => ':-/',
-            'v4' => 'mixed',
-            'k5' => 'V-.',
-            'v5' => 'thoughtful',
-            'k6' => ':-P',
-            'v6' => 'tongueout',
-            'k7' => 'B-)',
-            'v7' => 'cool',
-            'k8' => '^-)',
-            'v8' => 'approve',
-            'k9' => '8-)',
-            'v9' => 'wideeyes',
-            'k10' => ':o)',
-            'v10' => 'clown',
-            'k11' => ':-(',
-            'v11' => 'sad',
-            'k12' => ':(',
-            'v12' => 'sad',
-            'k13' => '8-.',
-            'v13' => 'shy',
-            'k14' => ':-I',
-            'v14' => 'blush',
-            'k15' => ':-X',
-            'v15' => 'kiss',
-            'k16' => '8-o',
-            'v16' => 'surprise',
-            'k17' => 'P-|',
-            'v17' => 'blackeye',
-            'k18' => '8-[',
-            'v18' => 'angry',
-            'k19' => 'xx-P',
-            'v19' => 'dead',
-            'k20' => '|-.',
-            'v20' => 'sleepy',
-            'k21' => '}-]',
-            'v21' => 'evil',
-            'k22' => '(h)',
-            'v22' => 'heart',
-            'k23' => '(heart)',
-            'v23' => 'heart',
-            'k24' => '(y)',
-            'v24' => 'yes',
-            'k25' => '(n)',
-            'v25' => 'no',
-            'k26' => '(martin)',
-            'v26' => 'martin',
-            'k27' => '( )',
-            'v27' => 'egg');
-        parent::__construct($name, $visiblename, $description, $defaults);
+
+        $manager = get_emoticon_manager();
+        $defaults = $this->prepare_form_data($manager->default_emoticons());
+        parent::__construct('emoticons', get_string('emoticons', 'admin'), get_string('emoticons_desc', 'admin'), $defaults);
     }
 
     /**
@@ -3284,20 +3228,15 @@ class admin_setting_emoticons extends admin_setting {
      */
     public function get_setting() {
         global $CFG;
-        $result = $this->config_read($this->name);
-        if (is_null($result)) {
-            return NULL;
+
+        $manager = get_emoticon_manager();
+        $config = $this->config_read($this->name);
+
+        if (is_null($config)) {
+            return null;
         }
-        $i = 0;
-        $currentsetting = array();
-        $items = explode('{;}', $result);
-        foreach ($items as $item) {
-            $item = explode('{:}', $item);
-            $currentsetting['k'.$i] = $item[0];
-            $currentsetting['v'.$i] = $item[1];
-            $i++;
-        }
-        return $currentsetting;
+
+        return $this->prepare_form_data($manager->decode_stored_config($config));
     }
 
     /**
@@ -3308,29 +3247,18 @@ class admin_setting_emoticons extends admin_setting {
      */
     public function write_setting($data) {
 
-    // there miiight be an easier way to do this :)
-    // if this is changed, make sure the $defaults array above is modified so that this
-    // function processes it correctly
+        $manager = get_emoticon_manager();
+        $emoticons = $this->process_form_data($data);
 
-        $keys = array();
-        $values = array();
-
-        foreach ($data as $key => $value) {
-            if (substr($key,0,1) == 'k') {
-                $keys[substr($key,1)] = $value;
-            } elseif (substr($key,0,1) == 'v') {
-                $values[substr($key,1)] = $value;
-            }
+        if ($emoticons === false) {
+            return false;
         }
 
-        $result = array();
-        for ($i = 0; $i < count($keys); $i++) {
-            if (($keys[$i] !== '') && ($values[$i] !== '')) {
-                $result[] = clean_param($keys[$i],PARAM_NOTAGS).'{:}'.clean_param($values[$i], PARAM_NOTAGS);
-            }
+        if ($this->config_write($this->name, $manager->encode_stored_config($emoticons))) {
+            return ''; // success
+        } else {
+            return get_string('errorsetting', 'admin') . $this->visiblename . html_writer::empty_tag('br');
         }
-
-        return ($this->config_write($this->name, implode('{;}', $result)) ? '' : get_string('errorsetting', 'admin').$this->visiblename.'<br />');
     }
 
     /**
@@ -3340,24 +3268,152 @@ class admin_setting_emoticons extends admin_setting {
      * @return string XHTML string for the fields and wrapping div(s)
      */
     public function output_html($data, $query='') {
-        $fullname = $this->get_full_name();
-        $return = '<div class="form-group">';
-        for ($i = 0; $i < count($data) / 2; $i++) {
-            $return .= '<input type="text" class="form-text" name="'.$fullname.'[k'.$i.']" value="'.$data['k'.$i].'" />';
-            $return .= '&nbsp;&nbsp;';
-            $return .= '<input type="text" class="form-text" name="'.$fullname.'[v'.$i.']" value="'.$data['v'.$i].'" /><br />';
-        }
-        $return .= '<input type="text" class="form-text" name="'.$fullname.'[k'.$i.']" value="" />';
-        $return .= '&nbsp;&nbsp;';
-        $return .= '<input type="text" class="form-text" name="'.$fullname.'[v'.$i.']" value="" /><br />';
-        $return .= '<input type="text" class="form-text" name="'.$fullname.'[k'.($i + 1).']" value="" />';
-        $return .= '&nbsp;&nbsp;';
-        $return .= '<input type="text" class="form-text" name="'.$fullname.'[v'.($i + 1).']" value="" />';
-        $return .= '</div>';
+        global $OUTPUT;
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', NULL, $query);
+        $out  = html_writer::start_tag('table', array('border' => 1, 'class' => 'generaltable'));
+        $out .= html_writer::start_tag('thead');
+        $out .= html_writer::start_tag('tr');
+        $out .= html_writer::tag('th', get_string('emoticontext', 'admin'));
+        $out .= html_writer::tag('th', get_string('emoticonimagename', 'admin'));
+        $out .= html_writer::tag('th', get_string('emoticoncomponent', 'admin'));
+        $out .= html_writer::tag('th', get_string('emoticonalt', 'admin'), array('colspan' => 2));
+        $out .= html_writer::tag('th', '');
+        $out .= html_writer::end_tag('tr');
+        $out .= html_writer::end_tag('thead');
+        $out .= html_writer::start_tag('tbody');
+        $i = 0;
+        foreach($data as $field => $value) {
+            switch ($i) {
+            case 0:
+                $out .= html_writer::start_tag('tr');
+                $current_text = $value;
+                $current_filename = '';
+                $current_imagecomponent = '';
+                $current_altidentifier = '';
+                $current_altcomponent = '';
+            case 1:
+                $current_filename = $value;
+            case 2:
+                $current_imagecomponent = $value;
+            case 3:
+                $current_altidentifier = $value;
+            case 4:
+                $current_altcomponent = $value;
+            }
+
+            $out .= html_writer::tag('td',
+                html_writer::empty_tag('input',
+                    array(
+                        'type'  => 'text',
+                        'class' => 'form-text',
+                        'name'  => $this->get_full_name().'['.$field.']',
+                        'value' => $value,
+                    )
+                ), array('class' => 'c'.$i)
+            );
+
+            if ($i == 4) {
+                if (get_string_manager()->string_exists($current_altidentifier, $current_altcomponent)) {
+                    $alt = get_string($current_altidentifier, $current_altcomponent);
+                } else {
+                    $alt = $current_text;
+                }
+                if ($current_filename) {
+                    $out .= html_writer::tag('td', $OUTPUT->render(new pix_emoticon($current_filename, $alt, $current_imagecomponent)));
+                } else {
+                    $out .= html_writer::tag('td', '');
+                }
+                $out .= html_writer::end_tag('tr');
+                $i = 0;
+            } else {
+                $i++;
+            }
+
+        }
+        $out .= html_writer::end_tag('tbody');
+        $out .= html_writer::end_tag('table');
+        $out  = html_writer::tag('div', $out, array('class' => 'form-group'));
+        $out .= html_writer::tag('div', html_writer::link(new moodle_url('/admin/resetemoticons.php'), get_string('emoticonsreset', 'admin')));
+
+        return format_admin_setting($this, $this->visiblename, $out, $this->description, false, '', NULL, $query);
     }
 
+    /**
+     * Converts the array of emoticon objects provided by {@see emoticon_manager} into admin settings form data
+     *
+     * @see self::process_form_data()
+     * @param array $emoticons array of emoticon objects as returned by {@see emoticon_manager}
+     * @return array of form fields and their values
+     */
+    protected function prepare_form_data(array $emoticons) {
+
+        $form = array();
+        $i = 0;
+        foreach ($emoticons as $emoticon) {
+            $form['text'.$i]            = $emoticon->text;
+            $form['imagename'.$i]       = $emoticon->imagename;
+            $form['imagecomponent'.$i]  = $emoticon->imagecomponent;
+            $form['altidentifier'.$i]   = $emoticon->altidentifier;
+            $form['altcomponent'.$i]    = $emoticon->altcomponent;
+            $i++;
+        }
+        // add one more blank field set for new object
+        $form['text'.$i]            = '';
+        $form['imagename'.$i]       = '';
+        $form['imagecomponent'.$i]  = '';
+        $form['altidentifier'.$i]   = '';
+        $form['altcomponent'.$i]    = '';
+
+        return $form;
+    }
+
+    /**
+     * Converts the data from admin settings form into an array of emoticon objects
+     *
+     * @see self::prepare_form_data()
+     * @param array $data array of admin form fields and values
+     * @return false|array of emoticon objects
+     */
+    protected function process_form_data(array $form) {
+
+        $count = count($form); // number of form field values
+
+        if ($count % 5) {
+            // we must get five fields per emoticon object
+            return false;
+        }
+
+        $emoticons = array();
+        for ($i = 0; $i < $count / 5; $i++) {
+            $emoticon                   = new stdClass();
+            $emoticon->text             = clean_param(trim($form['text'.$i]), PARAM_NOTAGS);
+            $emoticon->imagename        = clean_param(trim($form['imagename'.$i]), PARAM_PATH);
+            $emoticon->imagecomponent   = clean_param(trim($form['imagecomponent'.$i]), PARAM_SAFEDIR);
+            $emoticon->altidentifier    = clean_param(trim($form['altidentifier'.$i]), PARAM_STRINGID);
+            $emoticon->altcomponent     = clean_param(trim($form['altcomponent'.$i]), PARAM_SAFEDIR);
+
+            if (strpos($emoticon->text, ':/') !== false or strpos($emoticon->text, '//') !== false) {
+                // prevent from breaking http://url.addresses by accident
+                $emoticon->text = '';
+            }
+
+            if (strlen($emoticon->text) < 2) {
+                // do not allow single character emoticons
+                $emoticon->text = '';
+            }
+
+            if (preg_match('/^[a-zA-Z]+[a-zA-Z0-9]*$/', $emoticon->text)) {
+                // emoticon text must contain some non-alphanumeric character to prevent
+                // breaking HTML tags
+                $emoticon->text = '';
+            }
+
+            if ($emoticon->text !== '' and $emoticon->imagename !== '' and $emoticon->imagecomponent !== '') {
+                $emoticons[] = $emoticon;
+            }
+        }
+        return $emoticons;
+    }
 }
 
 /**

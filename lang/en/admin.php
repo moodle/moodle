@@ -188,7 +188,6 @@ $string['configdoctonewwindow'] = 'If you enable this, then links to Moodle Docs
 $string['configeditordictionary'] = 'This value will be used if aspell doesn\'t have dictionary for users own language.';
 $string['configeditorfontlist'] = 'Select the fonts that should appear in the editor\'s drop-down list.';
 $string['configemailchangeconfirmation'] = 'Require an email confirmation step when users change their email address in their profile.';
-$string['configemoticons'] = 'Change the code on the left that relates to the name of the emoticon on the right.  To add new emoticons, add a code and a name, then add an image as name.gif in /pix/s.';
 $string['configenableajax'] = 'This setting allows you to control the use of AJAX (advanced client/server interfaces using Javascript) across the whole site.  With this setting enabled users can still make a choice in their profile, otherwise AJAX is disabled for everybody.';
 $string['configenablecalendarexport'] = 'Enable exporting or subscribing to calendars.';
 $string['configenablecomments'] = 'Enable comments';
@@ -463,7 +462,18 @@ $string['editorspelling'] = 'Editor spelling';
 $string['editorspellinghelp'] = 'Enable or disable spell-checking. When enabled, <strong>aspell</strong> must be installed on the server.';
 $string['editstrings'] = 'Edit words or phrases';
 $string['emailchangeconfirmation'] = 'Email change confirmation';
+$string['emoticontext'] = 'Text';
+$string['emoticonimagename'] = 'Image name';
+$string['emoticonalt'] = 'Alternative text';
+$string['emoticoncomponent'] = 'Image component';
 $string['emoticons'] = 'Emoticons';
+$string['emoticons_desc'] = 'This form defines the emoticons (or smileys) used at your site. To remove a row from the table, save the form with an empty value in any of the required fields. To register a new emoticon, fill the fields in the last blank row. To reset all the fields into default values, follow the link above.
+
+* Text (required) - This text will be replaced with the emoticon image. It must be at least two characters long.
+* Image name (required) - The emoticon image file name without the extension, relative to the component pix folder.
+* Image component (required) - The component providing the icon.
+* Alternative text (optional) - String identifier and component of the alternative text of the emoticon.';
+$string['emoticonsreset'] = 'Reset emoticons setting to default values';
 $string['emptysettingvalue'] = 'Empty';
 $string['enableajax'] = 'Enable AJAX';
 $string['enablecalendarexport'] = 'Enable calendar export';
