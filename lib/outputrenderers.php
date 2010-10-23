@@ -1359,6 +1359,17 @@ class core_renderer extends renderer_base {
     }
 
     /**
+     * Render emoticon
+     * @param pix_emoticon $emoticon
+     * @return string HTML fragment
+     */
+    protected function render_pix_emoticon(pix_emoticon $emoticon) {
+        $attributes = $emoticon->attributes;
+        $attributes['src'] = $this->pix_url($emoticon->pix, $emoticon->component);
+        return html_writer::empty_tag('img', $attributes);
+    }
+
+    /**
     * Produces the html that represents this rating in the UI
     * @param $page the page object on which this rating will appear
     */

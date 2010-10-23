@@ -338,6 +338,23 @@ class pix_icon implements renderable {
     }
 }
 
+/**
+ * Data structure representing an emoticon image
+ *
+ * @since     Moodle 2.0
+ */
+class pix_emoticon extends pix_icon implements renderable {
+
+    /**
+     * Constructor
+     * @param string $pix short icon name
+     * @param string $component component name
+     */
+    public function __construct($pix, $alt, $component = 'moodle') {
+        $attributes = array('class' => 'emoticon');
+        parent::__construct($pix, $alt, $component, $attributes);
+    }
+}
 
 /**
  * Data structure representing a simple form with only one button.
