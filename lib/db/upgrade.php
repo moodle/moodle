@@ -4301,18 +4301,20 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $syscontext = get_context_instance(CONTEXT_SYSTEM);
         $params = array('syscontext'=>$syscontext->id, 'participate'=>'moodle/course:participate');
         $roles = $DB->get_fieldset_sql("SELECT DISTINCT roleid FROM {role_capabilities} WHERE contextid = :syscontext AND capability = :participate AND permission = 1", $params);
-        list($sqlroles, $params) = $DB->get_in_or_equal($roles, SQL_PARAMS_NAMED, 'r00');
+        if ($roles) {
+            list($sqlroles, $params) = $DB->get_in_or_equal($roles, SQL_PARAMS_NAMED, 'r00');
 
-        $sql = "INSERT INTO {user_enrolments} (status, enrolid, userid, timestart, timeend, modifierid, timecreated, timemodified)
+            $sql = "INSERT INTO {user_enrolments} (status, enrolid, userid, timestart, timeend, modifierid, timecreated, timemodified)
 
-                SELECT 0, e.id, ra.userid, MIN(ra.timestart), MIN(ra.timeend), 0, MIN(ra.timemodified), MAX(ra.timemodified)
-                  FROM {role_assignments} ra
-                  JOIN {context} c ON (c.id = ra.contextid AND c.contextlevel = 50)
-                  JOIN {enrol} e ON (e.enrol = ra.enrol AND e.courseid = c.instanceid)
-                  JOIN {user} u ON u.id = ra.userid
-                 WHERE u.deleted = 0 AND ra.roleid $sqlroles
-              GROUP BY e.id, ra.userid";
-        $DB->execute($sql, $params);
+                    SELECT 0, e.id, ra.userid, MIN(ra.timestart), MIN(ra.timeend), 0, MIN(ra.timemodified), MAX(ra.timemodified)
+                      FROM {role_assignments} ra
+                      JOIN {context} c ON (c.id = ra.contextid AND c.contextlevel = 50)
+                      JOIN {enrol} e ON (e.enrol = ra.enrol AND e.courseid = c.instanceid)
+                      JOIN {user} u ON u.id = ra.userid
+                     WHERE u.deleted = 0 AND ra.roleid $sqlroles
+                  GROUP BY e.id, ra.userid";
+            $DB->execute($sql, $params);
+        }
 
         upgrade_main_savepoint(true, 2010061900.20);
     }
