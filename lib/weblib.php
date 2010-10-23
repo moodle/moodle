@@ -933,7 +933,6 @@ function format_text_menu() {
  */
 function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_do_not_use = NULL) {
     global $CFG, $COURSE, $DB, $PAGE;
-
     static $croncache = array();
 
     if ($text === '') {
@@ -941,7 +940,6 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
     }
 
     $options = (array)$options; // detach object, we can not modify it
-
 
     if (!isset($options['trusted'])) {
         $options['trusted'] = false;
@@ -1606,69 +1604,6 @@ function cleanAttributes2($htmlArray){
         $xhtml_slash = ' /';
     }
     return '<'. $slash . $elem . $attStr . $xhtml_slash .'>';
-}
-
-/**
- * Replaces all known smileys in the text with image equivalents
- *
- * @global object
- * @staticvar array $e
- * @staticvar array $img
- * @staticvar array $emoticons
- * @param string $text Passed by reference. The string to search for smiley strings.
- * @return string
- */
-function replace_smilies(&$text) {
-    global $CFG, $OUTPUT;
-    static $emoticons = null;
-    static $e = array();    // array of emoticon texts like ':-)'
-    static $img = array();  // array of HTML to replace emoticon text with
-
-    $manager = get_emoticon_manager();
-
-    if (is_null($emoticons)) {
-        $emoticons = $manager->get_emoticons();
-    }
-
-    if (empty($emoticons)) { /// No emoticons defined, nothing to process here
-        return;
-    }
-
-    $lang = current_language();
-
-    if (empty($img[$lang])) {  /// After the first time this is not run again
-        $e[$lang] = array();
-        $img[$lang] = array();
-        foreach ($emoticons as $emoticon) {
-            $e[$lang][] = $emoticon->text;
-            $img[$lang][] = $OUTPUT->render($manager->prepare_renderable_emoticon($emoticon));
-        }
-    }
-
-    // Exclude from transformations all the code inside <script> tags
-    // Needed to solve Bug 1185. Thanks to jouse 2001 detecting it. :-)
-    // Based on code from glossary filter by Williams Castillo.
-    //       - Eloy
-
-    // Detect all the <script> zones to take out
-    $excludes = array();
-    preg_match_all('/<script language(.+?)<\/script>/is',$text,$list_of_excludes);
-
-    // Take out all the <script> zones from text
-    foreach (array_unique($list_of_excludes[0]) as $key=>$value) {
-        $excludes['<+'.$key.'+>'] = $value;
-    }
-    if ($excludes) {
-        $text = str_replace($excludes,array_keys($excludes),$text);
-    }
-
-/// this is the meat of the code - this is run every time
-    $text = str_replace($e[$lang], $img[$lang], $text);
-
-    // Recover all the <script> zones to text
-    if ($excludes) {
-        $text = str_replace(array_keys($excludes),$excludes,$text);
-    }
 }
 
 /**

@@ -546,6 +546,15 @@ function get_emoticons_list_for_help_file() {
 }
 
 /**
+ * Was used to replace all known smileys in the text with image equivalents
+ *
+ * This core function has been replaced with filter_emoticon since Moodle 2.0
+ */
+function replace_smilies(&$text) {
+    debugging('replace_smilies() has been deprecated and replaced with the new filter_emoticon');
+}
+
+/**
  * deprecated - use clean_param($string, PARAM_FILE); instead
  * Check for bad characters ?
  *

@@ -6092,6 +6092,7 @@ function print_plugin_tables() {
         'algebra',
         'censor',
         'emailprotect',
+        'emoticon',
         'filter',
         'mediaplugin',
         'multilang',
