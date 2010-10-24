@@ -10,12 +10,12 @@
 			require_once('domxml-php4-to-php5.php');
 	}
 
-	Version 1.20a, 2008-11-06, http://alexandre.alapetite.net/doc-alex/domxml-php4-php5/
+	Version 1.21.1a, 2009-03-13, http://alexandre.alapetite.fr/doc-alex/domxml-php4-php5/
 
 	------------------------------------------------------------------
-	Written by Alexandre Alapetite, http://alexandre.alapetite.net/cv/
+	Written by Alexandre Alapetite, http://alexandre.alapetite.fr/cv/
 
-	Copyright 2004-2008, GNU Lesser General Public License,
+	Copyright 2004-2009, GNU Lesser General Public License,
 	http://www.gnu.org/licenses/lgpl.html
 
 	This program is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@
 	   in order to improve this file for the benefit of everybody.
 
 	If you want to distribute this code, please do it as a link to:
-	http://alexandre.alapetite.net/doc-alex/domxml-php4-php5/
+	http://alexandre.alapetite.fr/doc-alex/domxml-php4-php5/
 */
 
 define('DOMXML_LOAD_PARSING',0);
@@ -179,6 +179,7 @@ class php4DOMDocument extends php4DOMNode
 	}
 	function html_dump_mem() {return $this->myDOMNode->saveHTML();}
 	function root() {return parent::_newDOMElement($this->myDOMNode->documentElement,$this);}
+	function xinclude() {return $this->myDOMNode->xinclude();}
 	function xpath_new_context() {return new php4DOMXPath($this);}
 }
 
@@ -262,7 +263,7 @@ class php4DOMNode
 				return false;
 		}
 	}
-	function add_child($newnode) {return append_child($newnode);}
+	function add_child($newnode) {return $this->append_child($newnode);}
 	function add_namespace($uri,$prefix) {return false;}
 	function append_child($newnode) {return self::_newDOMElement($this->myDOMNode->appendChild($this->_importNode($newnode)),$this->myOwnerDocument);}
 	function append_sibling($newnode) {return self::_newDOMElement($this->myDOMNode->parentNode->appendChild($this->_importNode($newnode)),$this->myOwnerDocument);}
@@ -458,8 +459,8 @@ class php4DOMXPath
 	}
 	function xpath_eval($eval_str,$contextnode=null)
 	{
-		if (method_exists($this->myDOMXPath,'evaluate')) $xp=isset($contextnode) ? $this->myDOMXPath->evaluate($eval_str,$contextnode->myDOMNode) : $this->myDOMXPath->evaluate($eval_str);
-		else $xp=isset($contextnode) ? $this->myDOMXPath->query($eval_str,$contextnode->myDOMNode) : $this->myDOMXPath->query($eval_str);
+		if (method_exists($this->myDOMXPath,'evaluate')) $xp=isset($contextnode->myDOMNode) ? $this->myDOMXPath->evaluate($eval_str,$contextnode->myDOMNode) : $this->myDOMXPath->evaluate($eval_str);
+		else $xp=isset($contextnode->myDOMNode) ? $this->myDOMXPath->query($eval_str,$contextnode->myDOMNode) : $this->myDOMXPath->query($eval_str);
 		$xp=new php4DOMNodelist($xp,$this->myOwnerDocument);
 		return ($xp->type===XPATH_UNDEFINED) ? false : $xp;
 	}
@@ -467,7 +468,7 @@ class php4DOMXPath
 }
 
 if (extension_loaded('xsl'))
-{//See also: http://alexandre.alapetite.net/doc-alex/xslt-php4-php5/
+{//See also: http://alexandre.alapetite.fr/doc-alex/xslt-php4-php5/
 	function domxml_xslt_stylesheet($xslstring) {return new php4DomXsltStylesheet(DOMDocument::loadXML($xslstring));}
 	function domxml_xslt_stylesheet_doc($dom_document) {return new php4DomXsltStylesheet($dom_document);}
 	function domxml_xslt_stylesheet_file($xslfile) {return new php4DomXsltStylesheet(DOMDocument::load($xslfile));}
