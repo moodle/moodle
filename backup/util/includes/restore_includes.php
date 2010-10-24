@@ -40,6 +40,7 @@ require_once($CFG->dirroot . '/backup/util/helper/restore_moodlexml_parser_proce
 require_once($CFG->dirroot . '/backup/util/helper/restore_inforef_parser_processor.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/restore_users_parser_processor.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/restore_roles_parser_processor.class.php');
+require_once($CFG->dirroot . '/backup/util/helper/restore_questions_parser_processor.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/restore_structure_parser_processor.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/restore_decode_rule.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/restore_decode_content.class.php');

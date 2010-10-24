@@ -1632,46 +1632,6 @@ class default_questiontype {
         }
     }
 
-/// RESTORE FUNCTIONS /////////////////
-
-    /*
-     * Restores the data in the question
-     *
-     * This is used in question/restorelib.php
-     */
-    function restore($old_question_id,$new_question_id,$info,$restore) {
-        global $DB;
-
-        $status = true;
-        $extraquestionfields = $this->extra_question_fields();
-
-        if (is_array($extraquestionfields)) {
-            $questionextensiontable = array_shift($extraquestionfields);
-            $tagname = strtoupper($this->name());
-            $recordinfo = $info['#'][$tagname][0];
-
-            $record = new stdClass;
-            $qidcolname = $this->questionid_column_name();
-            $record->$qidcolname = $new_question_id;
-            foreach ($extraquestionfields as $field) {
-                $record->$field = backup_todb($recordinfo['#'][strtoupper($field)]['0']['#']);
-            }
-            $DB->insert_record($questionextensiontable, $record);
-        }
-        //TODO restore extra data in answers
-        return $status;
-    }
-
-    function restore_map($old_question_id,$new_question_id,$info,$restore) {
-        // There is nothing to decode
-        return true;
-    }
-
-    function restore_recode_answer($state, $restore) {
-        // There is nothing to decode
-        return $state->answer;
-    }
-
 /// IMPORT/EXPORT FUNCTIONS /////////////////
 
     /*

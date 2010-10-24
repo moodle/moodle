@@ -98,8 +98,8 @@ abstract class restore_structure_step extends restore_step {
         // And process it, dispatch to target methods in step will start automatically
         $xmlparser->process();
 
-        // Have finished, call to the after_execute method
-        $this->after_execute();
+        // Have finished, launch the after_execute method of all the processing objects
+        $this->launch_after_execute_methods();
     }
 
     /**
@@ -238,7 +238,96 @@ abstract class restore_structure_step extends restore_step {
         return $value + $cache[$this->get_restoreid()];
     }
 
+    /**
+     * As far as restore structure steps are implementing restore_plugin stuff, they need to
+     * have the parent task available for wrapping purposes (get course/context....)
+     */
+    public function get_task() {
+        return $this->task;
+    }
+
 // Protected API starts here
+
+    /**
+     * Add plugin structure to any element in the structure restore tree
+     *
+     * @param string $plugintype type of plugin as defined by get_plugin_types()
+     * @param restore_path_element $element element in the structure restore tree that
+     *                                       we are going to add plugin information to
+     */
+    protected function add_plugin_structure($plugintype, $element) {
+
+        global $CFG;
+
+        // Check the requested plugintype is a valid one
+        if (!array_key_exists($plugintype, get_plugin_types($plugintype))) {
+             throw new restore_step_exception('incorrect_plugin_type', $plugintype);
+        }
+
+        // Get all the restore path elements, looking across all the plugin dirs
+        $pluginsdirs = get_plugin_list($plugintype);
+        foreach ($pluginsdirs as $name => $pluginsdir) {
+            // We need to add also backup plugin classes on restore, they may contain
+            // some stuff used both in backup & restore
+            $backupclassname = 'backup_' . $plugintype . '_' . $name . '_plugin';
+            $backupfile = $pluginsdir . '/backup/moodle2/' . $backupclassname . '.class.php';
+            if (file_exists($backupfile)) {
+                require_once($backupfile);
+            }
+            // Now add restore plugin classes and prepare stuff
+            $restoreclassname = 'restore_' . $plugintype . '_' . $name . '_plugin';
+            $restorefile = $pluginsdir . '/backup/moodle2/' . $restoreclassname . '.class.php';
+            if (file_exists($restorefile)) {
+                require_once($restorefile);
+                $restoreplugin = new $restoreclassname($plugintype, $name, $this);
+                // Add plugin paths to the step
+                $this->prepare_pathelements($restoreplugin->define_plugin_structure($element));
+            }
+        }
+    }
+
+    /**
+     * Launch all the after_execute methods present in all the processing objects
+     *
+     * This method will launch all the after_execute methods that can be defined
+     * both in restore_plugin and restore_structure_step classes
+     *
+     * For restore_plugin classes the name of the method to be executed will be
+     * "after_execute_" + connection point (as far as can be multiple connection
+     * points in the same class)
+     *
+     * For restore_structure_step classes is will be, simply, "after_execute". Note
+     * that this is executed *after* the plugin ones
+     */
+    protected function launch_after_execute_methods() {
+        $alreadylaunched = array(); // To avoid multiple executions
+        foreach ($this->pathelements as $key => $pathelement) {
+            // Get the processing object
+            $pobject = $pathelement->get_processing_object();
+            // Skip null processors (child of grouped ones for sure)
+            if (is_null($pobject)) {
+                continue;
+            }
+            // Skip restore structure step processors (this)
+            if ($pobject instanceof restore_structure_step) {
+                continue;
+            }
+            // Skip already launched processing objects
+            if (in_array($pobject, $alreadylaunched, true)) {
+                continue;
+            }
+            // Add processing object to array of launched ones
+            $alreadylaunched[] = $pobject;
+            // If the processing object has support for
+            // launching after_execute methods, use it
+            if (method_exists($pobject, 'launch_after_execute_methods')) {
+                $pobject->launch_after_execute_methods();
+            }
+        }
+        // Finally execute own (restore_structure_step) after_execute method
+        $this->after_execute();
+
+    }
 
     /**
      * This method will be executed after the whole structure step have been processed

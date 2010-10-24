@@ -280,52 +280,6 @@ class question_shortanswer_qtype extends default_questiontype {
         return 0;
     }
 
-/// RESTORE FUNCTIONS /////////////////
-
-    /*
-     * Restores the data in the question
-     *
-     * This is used in question/restorelib.php
-     */
-    function restore($old_question_id,$new_question_id,$info,$restore) {
-        global $DB;
-
-        $status = parent::restore($old_question_id, $new_question_id, $info, $restore);
-
-        if ($status) {
-            $extraquestionfields = $this->extra_question_fields();
-            $questionextensiontable = array_shift($extraquestionfields);
-
-            //We have to recode the answers field (a list of answers id)
-            $questionextradata = $DB->get_record($questionextensiontable, array($this->questionid_column_name() => $new_question_id));
-            if (isset($questionextradata->answers)) {
-                $answers_field = "";
-                $in_first = true;
-                $tok = strtok($questionextradata->answers, ",");
-                while ($tok) {
-                    // Get the answer from backup_ids
-                    $answer = backup_getid($restore->backup_unique_code,"question_answers",$tok);
-                    if ($answer) {
-                        if ($in_first) {
-                            $answers_field .= $answer->new_id;
-                            $in_first = false;
-                        } else {
-                            $answers_field .= ",".$answer->new_id;
-                        }
-                    }
-                    // Check for next
-                    $tok = strtok(",");
-                }
-                // We have the answers field recoded to its new ids
-                $questionextradata->answers = $answers_field;
-                // Update the question
-                $DB->update_record($questionextensiontable, $questionextradata);
-            }
-        }
-
-        return $status;
-    }
-
     /**
     * Prints the score obtained and maximum score available plus any penalty
     * information

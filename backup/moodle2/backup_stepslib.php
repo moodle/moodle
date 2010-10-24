@@ -160,7 +160,7 @@ abstract class backup_activity_structure_step extends backup_structure_step {
 
 /**
  * Abstract structure step, to be used by all the activities using core questions stuff
- * (namelu quiz module), supporting question plugins, states and sessions
+ * (namely quiz module), supporting question plugins, states and sessions
  */
 abstract class backup_questions_activity_structure_step extends backup_activity_structure_step {
 
@@ -1562,10 +1562,20 @@ class backup_annotate_all_question_files extends backup_execution_step {
                                         JOIN {backup_ids_temp} bi ON bi.itemid = qc.id
                                        WHERE bi.backupid = ?
                                          AND bi.itemname = 'question_categoryfinal'", array($this->get_backupid()));
+        // To know about qtype specific components/fileareas
+        $components = backup_qtype_plugin::get_components_and_fileareas();
+        // Let's loop
         foreach($rs as $record) {
             // We don't need to specify filearea nor itemid as far as by
             // component and context it's enough to annotate the whole bank files
+            // This backups "questiontext", "generalfeedback" and "answerfeedback" fileareas (all them
+            // belonging to the "question" component
             backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, 'question', null, null);
+            // Again, it is enough to pick files only by context and component
+            // Do it for qtype specific components
+            foreach ($components as $component => $fileareas) {
+                backup_structure_dbops::annotate_files($this->get_backupid(), $record->contextid, $component, null, null);
+            }
         }
         $rs->close();
     }
@@ -1620,6 +1630,7 @@ class backup_questions_structure_step extends backup_structure_step {
         $question->set_source_table('question', array('category' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
+        // (already done by {@link backup_annotate_all_question_files}
 
         return $qcategories;
     }

@@ -43,6 +43,7 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
             $paths[] = new restore_path_element('forum_rating', '/activity/forum/discussions/discussion/posts/post/ratings/rating');
             $paths[] = new restore_path_element('forum_subscription', '/activity/forum/subscriptions/subscription');
             $paths[] = new restore_path_element('forum_read', '/activity/forum/readposts/read');
+            $paths[] = new restore_path_element('forum_track', '/activity/forum/trackedprefs/track');
         }
 
         // Return the paths wrapped into standard activity structure
@@ -152,6 +153,18 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
         $data->userid = $this->get_mappingid('user', $data->userid);
 
         $newitemid = $DB->insert_record('forum_read', $data);
+    }
+
+    protected function process_forum_track($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->forumid = $this->get_new_parentid('forum');
+        $data->userid = $this->get_mappingid('user', $data->userid);
+
+        $newitemid = $DB->insert_record('forum_track_prefs', $data);
     }
 
     protected function after_execute() {

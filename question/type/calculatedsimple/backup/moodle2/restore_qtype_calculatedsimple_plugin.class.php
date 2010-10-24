@@ -23,9 +23,10 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/type/calculated/backup/moodle2/backup_qtype_calculated_plugin.class.php');
+require_once($CFG->dirroot . '/question/type/calculated/backup/moodle2/restore_qtype_calculated_plugin.class.php');
 
 /**
- * Provides the information to backup calculatedsimple questions
+ * restore plugin class that provides the necessary information
+ * needed to restore one calculatedsimple qtype plugin
  */
-class backup_qtype_calculatedsimple_plugin extends backup_qtype_calculated_plugin {}
+class restore_qtype_calculatedsimple_plugin extends restore_qtype_calculated_plugin {}

@@ -120,6 +120,14 @@ abstract class restore_prechecks_helper {
             $warnings = array_key_exists('warnings', $problems) ? array_merge($warnings, $problems['warnings']) : $warnings;
         }
 
+        // Check we are able to restore and the categories and questions
+        $file = $controller->get_plan()->get_basepath() . '/questions.xml';
+        restore_dbops::load_categories_and_questions_to_tempids($restoreid, $file);
+        if ($problems = restore_dbops::precheck_categories_and_questions($restoreid, $courseid, $userid, $samesite)) {
+            $errors = array_key_exists('errors', $problems) ? array_merge($errors, $problems['errors']) : $errors;
+            $warnings = array_key_exists('warnings', $problems) ? array_merge($warnings, $problems['warnings']) : $warnings;
+        }
+
         // Prepare results and return
         $results = array();
         if (!empty($errors)) {

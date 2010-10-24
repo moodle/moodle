@@ -143,7 +143,7 @@ abstract class backup_qtype_plugin extends backup_plugin {
         $items->add_child($item);
 
         // Set the sources
-        $definition->set_source_sql('SELECT *
+        $definition->set_source_sql('SELECT qdd.*
                                        FROM {question_dataset_definitions} qdd
                                        JOIN {question_datasets} qd ON qd.datasetdefinition = qdd.id
                                       WHERE qd.question = ?', array(backup::VAR_PARENTID));
@@ -154,5 +154,53 @@ abstract class backup_qtype_plugin extends backup_plugin {
         $item->set_source_alias('itemnumber', 'number');
 
         // don't need to annotate ids nor files
+    }
+
+    /**
+     * Returns all the components and fileareas used by all the installed qtypes
+     *
+     * The method introspects each qtype, asking it about fileareas used. Then,
+     * one 2-level array is returned. 1st level is the component name (qtype_xxxx)
+     * and 2nd level is one array of filearea => mappings to look
+     *
+     * Note that this function is used both in backup and restore, so it is important
+     * to use the same mapping names (usually, name of the table in singular) always
+     *
+     * TODO: Surely this can be promoted to backup_plugin easily and make it to
+     * work for ANY plugin, not only qtypes (but we don't need it for now)
+     */
+    public static function get_components_and_fileareas($filter = null) {
+        $components = array();
+        // Get all the plugins of this type
+        $qtypes = get_plugin_list('qtype');
+        foreach ($qtypes as $name => $path) {
+            // Apply filter if specified
+            if (!is_null($filter) && $filter != $name) {
+                continue;
+            }
+            // Calculate the componentname
+            $componentname = 'qtype_' . $name;
+            // Get the plugin fileareas (all them MUST belong to the same component)
+            $classname = 'backup_qtype_' . $name . '_plugin';
+            if (class_exists($classname)) {
+                $elements = call_user_func(array($classname, 'get_qtype_fileareas'));
+                if ($elements) {
+                    // If there are elements, add them to $components
+                    $components[$componentname] = $elements;
+                }
+            }
+        }
+        return $components;
+    }
+
+    /**
+     * Returns one array with filearea => mappingname elements for the qtype
+     *
+     * Used by {@link get_components_and_fileareas} to know about all the qtype
+     * files to be processed both in backup and restore.
+     */
+    public static function get_qtype_fileareas() {
+        // By default, return empty array, only qtypes having own fileareas will override this
+        return array();
     }
 }

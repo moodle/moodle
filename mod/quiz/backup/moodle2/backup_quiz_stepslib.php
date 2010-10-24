@@ -44,7 +44,8 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
             'review', 'questionsperpage', 'shufflequestions', 'shuffleanswers',
             'questions', 'sumgrades', 'grade', 'timecreated',
             'timemodified', 'timelimit', 'password', 'subnet',
-            'popup', 'delay1', 'delay2', 'showuserpicture'));
+            'popup', 'delay1', 'delay2', 'showuserpicture',
+            'showblocks'));
 
         $qinstances = new backup_nested_element('question_instances');
 
@@ -115,7 +116,6 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         if ($userinfo) {
             $grade->set_source_table('quiz_grades', array('quiz' => backup::VAR_PARENTID));
             $attempt->set_source_table('quiz_attempts', array('quiz' => backup::VAR_PARENTID));
-            // TODO: states and sessions go here
         }
 
         // Define source alias
@@ -128,7 +128,6 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $override->annotate_ids('group', 'groupid');
         $grade->annotate_ids('user', 'userid');
         $attempt->annotate_ids('user', 'userid');
-        // TODO: attempts, answers... anotations go here
 
         // Define file annotations
         $quiz->annotate_files('mod_quiz', 'intro', null); // This file area hasn't itemid

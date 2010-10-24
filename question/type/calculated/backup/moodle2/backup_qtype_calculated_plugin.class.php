@@ -28,17 +28,15 @@ defined('MOODLE_INTERNAL') || die();
  */
 class backup_qtype_calculated_plugin extends backup_qtype_plugin {
 
-    protected function get_qtype_name() {
-        return 'calculated';
-    }
-
     /**
      * Returns the qtype information to attach to question element
      */
     protected function define_question_plugin_structure() {
 
         // Define the virtual plugin element with the condition to fulfill
-        $plugin = $this->get_plugin_element(null, '../../qtype', $this->get_qtype_name());
+        // Note: we use $this->pluginname so for extended plugins this will work
+        // automatically: calculatedsimple and calculatedmulti
+        $plugin = $this->get_plugin_element(null, '../../qtype', $this->pluginname);
 
         // Create one standard named plugin element (the visible container)
         $pluginwrapper = new backup_nested_element($this->get_recommended_name());
@@ -85,5 +83,27 @@ class backup_qtype_calculated_plugin extends backup_qtype_plugin {
         // don't need to annotate ids nor files
 
         return $plugin;
+    }
+
+    /**
+     * Returns one array with filearea => mappingname elements for the qtype
+     *
+     * Used by {@link get_components_and_fileareas} to know about all the qtype
+     * files to be processed both in backup and restore.
+     */
+    public static function get_qtype_fileareas() {
+        // TODO: Discuss. Commented below are the "in theory" correct
+        // mappings for those fileareas. Instead we are using question for
+        // them, that will cause problems in the future if we want to change
+        // any of them to be 1..n (i.e. we should be always pointing to own id)
+        return array(
+            //'instruction' => 'question_numerical_option',
+            //'correctfeedback' => 'question_calculated_option',
+            //'partiallycorrectfeedback' => 'question_calculated_option',
+            //'incorrectfeedback' => 'question_calculated_option');
+            'instruction' => 'question_created',
+            'correctfeedback' => 'question_created',
+            'partiallycorrectfeedback' => 'question_created',
+            'incorrectfeedback' => 'question_created');
     }
 }

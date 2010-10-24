@@ -101,10 +101,10 @@ abstract class backup_structure_step extends backup_step {
 // Protected API starts here
 
     /**
-     * Add plugin structure to any element in the activity backup tree
+     * Add plugin structure to any element in the structure backup tree
      *
      * @param string $plugintype type of plugin as defined by get_plugin_types()
-     * @param backup_nested_element $element element in the activity backup tree that
+     * @param backup_nested_element $element element in the structure backup tree that
      *                                       we are going to add plugin information to
      * @param bool $multiple to define if multiple plugins can produce information
      *                       for each instance of $element (true) or no (false)

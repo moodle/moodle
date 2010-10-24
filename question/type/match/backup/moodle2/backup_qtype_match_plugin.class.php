@@ -64,4 +64,15 @@ class backup_qtype_match_plugin extends backup_qtype_plugin {
 
         return $plugin;
     }
+
+    /**
+     * Returns one array with filearea => mappingname elements for the qtype
+     *
+     * Used by {@link get_components_and_fileareas} to know about all the qtype
+     * files to be processed both in backup and restore.
+     */
+    public static function get_qtype_fileareas() {
+        return array(
+            'subquestion' => 'question_match_sub');
+    }
 }

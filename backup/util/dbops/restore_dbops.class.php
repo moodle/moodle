@@ -234,16 +234,420 @@ abstract class restore_dbops {
     }
 
     /**
+     * Load the needed questions.xml file to backup_ids table for future reference
+     */
+    public static function load_categories_and_questions_to_tempids($restoreid, $questionsfile) {
+
+        if (!file_exists($questionsfile)) { // Shouldn't happen ever, but...
+            throw new backup_helper_exception('missing_questions_xml_file', $questionsfile);
+        }
+        // Let's parse, custom processor will do its work, sending info to DB
+        $xmlparser = new progressive_parser();
+        $xmlparser->set_file($questionsfile);
+        $xmlprocessor = new restore_questions_parser_processor($restoreid);
+        $xmlparser->set_processor($xmlprocessor);
+        $xmlparser->process();
+    }
+
+    /**
+     * Check all the included categories and questions, deciding the action to perform
+     * for each one (mapping / creation) and returning one array of problems in case
+     * something is wrong.
+     *
+     * There are some basic rules that the method below will always try to enforce:
+     *
+     * Rule1: Targets will be, always, calculated for *whole* question banks (a.k.a. contexid source),
+     *     so, given 2 question categories belonging to the same bank, their target bank will be
+     *     always the same. If not, we can be incurring into "fragmentation", leading to random/cloze
+     *     problems (qtypes having "child" questions).
+     *
+     * Rule2: The 'moodle/question:managecategory' and 'moodle/question:add' capabilities will be
+     *     checked before creating any category/question respectively and, if the cap is not allowed
+     *     into upper contexts (system, coursecat)) but in lower ones (course), the *whole* question bank
+     *     will be created there.
+     *
+     * Rule3: Coursecat question banks not existing in the target site will be created as course
+     *     (lower ctx) question banks, never as "guessed" coursecat question banks base on depth or so.
+     *
+     * Rule4: System question banks will be created at system context if user has perms to do so. Else they
+     *     will created as course (lower ctx) question banks (similary to rule3). In other words, course ctx
+     *     if always a fallback for system and coursecat question banks.
+     *
+     * Also, there are some notes to clarify the scope of this method:
+     *
+     * Note1: This method won't create any question category nor question at all. It simply will calculate
+     *     which actions (create/map) must be performed for each element and where, validating that all those
+     *     actions are doable by the user executing the restore operation. Any problem found will be
+     *     returned in the problems array, causing the restore process to stop with error.
+     *
+     * Note2: To decide if one question bank (all its question categories and questions) is going to be remapped,
+     *     then all the categories and questions must exist in the same target bank. If able to do so, missing
+     *     qcats and qs will be created (rule2). But if, at the end, something is missing, the whole question bank
+     *     will be recreated at course ctx (rule1), no matter if that duplicates some categories/questions.
+     *
+     * Note3: We'll be using the newitemid column in the temp_ids table to store the action to be performed
+     *     with each question category and question. newitemid = 0 means the qcat/q needs to be created and
+     *     any other value means the qcat/q is mapped. Also, for qcats, parentitemid will contain the target
+     *     context where the categories have to be created (but for module contexts where we'll keep the old
+     *     one until the activity is created)
+     *
+     * Note4: All these "actions" will be "executed" later by {@link restore_create_categories_and_questions}
+     */
+    public static function precheck_categories_and_questions($restoreid, $courseid, $userid, $samesite) {
+
+        $problems = array();
+
+        // TODO: Check all qs, looking their qtypes are restorable
+
+        // Precheck all qcats and qs looking for target contexts / warnings / errors
+        list($syserr, $syswarn) = self::prechek_precheck_qbanks_by_level($restoreid, $courseid, $userid, $samesite, CONTEXT_SYSTEM);
+        list($caterr, $catwarn) = self::prechek_precheck_qbanks_by_level($restoreid, $courseid, $userid, $samesite, CONTEXT_COURSECAT);
+        list($couerr, $couwarn) = self::prechek_precheck_qbanks_by_level($restoreid, $courseid, $userid, $samesite, CONTEXT_COURSE);
+        list($moderr, $modwarn) = self::prechek_precheck_qbanks_by_level($restoreid, $courseid, $userid, $samesite, CONTEXT_MODULE);
+
+        // Acummulate and handle errors and warnings
+        $errors   = array_merge($syserr, $caterr, $couerr, $moderr);
+        $warnings = array_merge($syswarn, $catwarn, $couwarn, $modwarn);
+        if (!empty($errors)) {
+            $problems['errors'] = $errors;
+        }
+        if (!empty($warnings)) {
+            $problems['warnings'] = $warnings;
+        }
+        return $problems;
+    }
+
+    /**
+     * This function will process all the question banks present in restore
+     * at some contextlevel (from CONTEXT_SYSTEM to CONTEXT_MODULE), finding
+     * the target contexts where each bank will be restored and returning
+     * warnings/errors as needed.
+     *
+     * Some contextlevels (system, coursecat), will delegate process to
+     * course level if any problem is found (lack of permissions, non-matching
+     * target context...). Other contextlevels (course, module) will
+     * cause return error if some problem is found.
+     *
+     * At the end, if no errors were found, all the categories in backup_temp_ids
+     * will be pointing (parentitemid) to the target context where they must be
+     * created later in the restore process.
+     *
+     * Note: at the time these prechecks are executed, activities haven't been
+     * created yet so, for CONTEXT_MODULE banks, we keep the old contextid
+     * in the parentitemid field. Once the activity (and its context) has been
+     * created, we'll update that context in the required qcats
+     *
+     * Caller {@link precheck_categories_and_questions} will, simply, execute
+     * this function for all the contextlevels, acting as a simple controller
+     * of warnings and errors.
+     *
+     * The function returns 2 arrays, one containing errors and another containing
+     * warnings. Both empty if no errors/warnings are found.
+     */
+    public static function prechek_precheck_qbanks_by_level($restoreid, $courseid, $userid, $samesite, $contextlevel) {
+        global $CFG, $DB;
+
+        // To return any errors and warnings found
+        $errors   = array();
+        $warnings = array();
+
+        // Specify which fallbacks must be performed
+        $fallbacks = array(
+            CONTEXT_SYSTEM => CONTEXT_COURSE,
+            CONTEXT_COURSECAT => CONTEXT_COURSE);
+
+        // For any contextlevel, follow this process logic:
+        //
+        // 0) Iterate over each context (qbank)
+        // 1) Iterate over each qcat in the context, matching by stamp for the found target context
+        //     2a) No match, check if user can create qcat and q
+        //         3a) User can, mark the qcat and all dependent qs to be created in that target context
+        //         3b) User cannot, check if we are in some contextlevel with fallback
+        //             4a) There is fallback, move ALL the qcats to fallback, warn. End qcat loop
+        //             4b) No fallback, error. End qcat loop.
+        //     2b) Match, mark qcat to be mapped and iterate over each q, matching by stamp and version
+        //         5a) No match, check if user can add q
+        //             6a) User can, mark the q to be created
+        //             6b) User cannot, check if we are in some contextlevel with fallback
+        //                 7a) There is fallback, move ALL the qcats to fallback, warn. End qcat loop
+        //                 7b) No fallback, error. End qcat loop
+        //         5b) Match, mark q to be mapped
+
+        // Get all the contexts (question banks) in restore for the given contextlevel
+        $contexts = self::restore_get_question_banks($restoreid, $contextlevel);
+
+        // 0) Iterate over each context (qbank)
+        foreach ($contexts as $contextid => $contextlevel) {
+            // Init some perms
+            $canmanagecategory = false;
+            $canadd            = false;
+            // get categories in context (bank)
+            $categories = self::restore_get_question_categories($restoreid, $contextid);
+            // cache permissions if $targetcontext is found
+            if ($targetcontext = self::restore_find_best_target_context($categories, $courseid, $contextlevel)) {
+                $canmanagecategory = has_capability('moodle/question:managecategory', $targetcontext, $userid);
+                $canadd            = has_capability('moodle/question:add', $targetcontext, $userid);
+            }
+            // 1) Iterate over each qcat in the context, matching by stamp for the found target context
+            foreach ($categories as $category) {
+                $matchcat = false;
+                if ($targetcontext) {
+                    $matchcat = $DB->get_record('question_categories', array(
+                                    'contextid' => $targetcontext->id,
+                                    'stamp' => $category->stamp));
+                }
+                // 2a) No match, check if user can create qcat and q
+                if (!$matchcat) {
+                    // 3a) User can, mark the qcat and all dependent qs to be created in that target context
+                    if ($canmanagecategory && $canadd) {
+                        // Set parentitemid to targetcontext, BUT for CONTEXT_MODULE categories, where
+                        // we keep the source contextid unmodified (for easier matching later when the
+                        // activities are created)
+                        $parentitemid = $targetcontext->id;
+                        if ($contextlevel == CONTEXT_MODULE) {
+                            $parentitemid = null; // null means "not modify" a.k.a. leave original contextid
+                        }
+                        self::set_backup_ids_record($restoreid, 'question_category', $category->id, 0, $parentitemid);
+                        // Nothing else to mark, newitemid = 0 means create
+
+                    // 3b) User cannot, check if we are in some contextlevel with fallback
+                    } else {
+                        // 4a) There is fallback, move ALL the qcats to fallback, warn. End qcat loop
+                        if (array_key_exists($contextlevel, $fallbacks)) {
+                            foreach ($categories as $movedcat) {
+                                $movedcat->contextlevel = $fallbacks[$contextlevel];
+                                self::set_backup_ids_record($restoreid, 'question_category', $movedcat->id, 0, $contextid, $movedcat);
+                                // Warn about the performed fallback
+                                $warnings[] = get_string('qcategory2coursefallback', 'backup', $movedcat);
+                            }
+
+                        // 4b) No fallback, error. End qcat loop.
+                        } else {
+                            $errors[] = get_string('qcategorycannotberestored', 'backup', $category);
+                        }
+                        break; // out from qcat loop (both 4a and 4b), we have decided about ALL categories in context (bank)
+                    }
+
+                // 2b) Match, mark qcat to be mapped and iterate over each q, matching by stamp and version
+                } else {
+                    self::set_backup_ids_record($restoreid, 'question_category', $category->id, $matchcat->id, $targetcontext->id);
+                    $questions = self::restore_get_questions($restoreid, $category->id);
+                    foreach ($questions as $question) {
+                        $matchq = $DB->get_record('question', array(
+                                      'category' => $matchcat->id,
+                                      'stamp' => $question->stamp,
+                                      'version' => $question->version));
+                        // 5a) No match, check if user can add q
+                        if (!$matchq) {
+                            // 6a) User can, mark the q to be created
+                            if ($canadd) {
+                                // Nothing to mark, newitemid means create
+
+                             // 6b) User cannot, check if we are in some contextlevel with fallback
+                            } else {
+                                // 7a) There is fallback, move ALL the qcats to fallback, warn. End qcat loo
+                                if (array_key_exists($contextlevel, $fallbacks)) {
+                                    foreach ($categories as $movedcat) {
+                                        $movedcat->contextlevel = $fallbacks[$contextlevel];
+                                        self::set_backup_ids_record($restoreid, 'question_category', $movedcat->id, 0, $contextid, $movedcat);
+                                        // Warn about the performed fallback
+                                        $warnings[] = get_string('question2coursefallback', 'backup', $movedcat);
+                                    }
+
+                                // 7b) No fallback, error. End qcat loop
+                                } else {
+                                    $errors[] = get_string('questioncannotberestored', 'backup', $question);
+                                }
+                                break 2; // out from qcat loop (both 7a and 7b), we have decided about ALL categories in context (bank)
+                            }
+
+                        // 5b) Match, mark q to be mapped
+                        } else {
+                            self::set_backup_ids_record($restoreid, 'question', $question->id, $matchq->id);
+                        }
+                    }
+                }
+            }
+        }
+
+        return array($errors, $warnings);
+    }
+
+    /**
+     * Return one array of contextid => contextlevel pairs
+     * of question banks to be checked for one given restore operation
+     * ordered from CONTEXT_SYSTEM downto CONTEXT_MODULE
+     * If contextlevel is specified, then only banks corresponding to
+     * that level are returned
+     */
+    public static function restore_get_question_banks($restoreid, $contextlevel = null) {
+        global $DB;
+
+        $results = array();
+        $qcats = $DB->get_records_sql("SELECT itemid, parentitemid AS contextid
+                                         FROM {backup_ids_temp}
+                                       WHERE backupid = ?
+                                         AND itemname = 'question_category'", array($restoreid));
+        foreach ($qcats as $qcat) {
+            // If this qcat context haven't been acummulated yet, do that
+            if (!isset($results[$qcat->contextid])) {
+                $temprec = self::get_backup_ids_record($restoreid, 'question_category', $qcat->itemid);
+                // Filter by contextlevel if necessary
+                if (is_null($contextlevel) || $contextlevel == $temprec->info->contextlevel) {
+                    $results[$qcat->contextid] = $temprec->info->contextlevel;
+                }
+            }
+        }
+        // Sort by value (contextlevel from CONTEXT_SYSTEM downto CONTEXT_MODULE)
+        asort($results);
+        return $results;
+    }
+
+    /**
+     * Return one array of question_category records for
+     * a given restore operation and one restore context (question bank)
+     */
+    public static function restore_get_question_categories($restoreid, $contextid) {
+        global $DB;
+
+        $results = array();
+        $qcats = $DB->get_records_sql("SELECT itemid
+                                         FROM {backup_ids_temp}
+                                        WHERE backupid = ?
+                                          AND itemname = 'question_category'
+                                          AND parentitemid = ?", array($restoreid, $contextid));
+        foreach ($qcats as $qcat) {
+            $temprec = self::get_backup_ids_record($restoreid, 'question_category', $qcat->itemid);
+            $results[$qcat->itemid] = $temprec->info;
+        }
+        return $results;
+    }
+
+    /**
+     * Calculates the best context found to restore one collection of qcats,
+     * al them belonging to the same context (question bank), returning the
+     * target context found (object) or false
+     */
+    public static function restore_find_best_target_context($categories, $courseid, $contextlevel) {
+        global $DB;
+
+        $targetcontext = false;
+
+        // Depending of $contextlevel, we perform different actions
+        switch ($contextlevel) {
+             // For system is easy, the best context is the system context
+             case CONTEXT_SYSTEM:
+                 $targetcontext = get_context_instance(CONTEXT_SYSTEM);
+                 break;
+
+             // For coursecat, we are going to look for stamps in all the
+             // course categories between CONTEXT_SYSTEM and CONTEXT_COURSE
+             // (i.e. in all the course categories in the path)
+             //
+             // And only will return one "best" target context if all the
+             // matches belong to ONE and ONLY ONE context. If multiple
+             // matches are found, that means that there is some annoying
+             // qbank "fragmentation" in the categories, so we'll fallback
+             // to create the qbank at course level
+             case CONTEXT_COURSECAT:
+                 // Build the array of stamps we are going to match
+                 $stamps = array();
+                 foreach ($categories as $category) {
+                     $stamps[] = $category->stamp;
+                 }
+                 $contexts = array();
+                 // Build the array of contexts we are going to look
+                 $systemctx = get_context_instance(CONTEXT_SYSTEM);
+                 $coursectx = get_context_instance(CONTEXT_COURSE, $courseid);
+                 $parentctxs= get_parent_contexts($coursectx);
+                 foreach ($parentctxs as $parentctx) {
+                     // Exclude system context
+                     if ($parentctx == $systemctx->id) {
+                         continue;
+                     }
+                     $contexts[] = $parentctx;
+                 }
+                 if (!empty($stamps) && !empty($contexts)) {
+                     // Prepare the query
+                     list($stamp_sql, $stamp_params) = $DB->get_in_or_equal($stamps);
+                     list($context_sql, $context_params) = $DB->get_in_or_equal($contexts);
+                     $sql = "SELECT contextid
+                               FROM {question_categories}
+                              WHERE stamp $stamp_sql
+                                AND contextid $context_sql";
+                     $params = array_merge($stamp_params, $context_params);
+                     $matchingcontexts = $DB->get_records_sql($sql, $params);
+                     // Only if ONE and ONLY ONE context is found, use it as valid target
+                     if (count($matchingcontexts) == 1) {
+                         $targetcontext = get_context_instance_by_id(reset($matchingcontexts)->contextid);
+                     }
+                 }
+                 break;
+
+             // For course is easy, the best context is the course context
+             case CONTEXT_COURSE:
+                 $targetcontext = get_context_instance(CONTEXT_COURSE, $courseid);
+                 break;
+
+             // For module is easy, there is not best context, as far as the
+             // activity hasn't been created yet. So we return context course
+             // for them, so permission checks and friends will work. Note this
+             // case is handled by {@link prechek_precheck_qbanks_by_level}
+             // in an special way
+             case CONTEXT_MODULE:
+                 $targetcontext = get_context_instance(CONTEXT_COURSE, $courseid);
+                 break;
+        }
+        return $targetcontext;
+    }
+
+    /**
+     * Return one array of question records for
+     * a given restore operation and one question category
+     */
+    public static function restore_get_questions($restoreid, $qcatid) {
+        global $DB;
+
+        $results = array();
+        $qs = $DB->get_records_sql("SELECT itemid
+                                      FROM {backup_ids_temp}
+                                     WHERE backupid = ?
+                                       AND itemname = 'question'
+                                       AND parentitemid = ?", array($restoreid, $qcatid));
+        foreach ($qs as $q) {
+            $temprec = self::get_backup_ids_record($restoreid, 'question', $q->itemid);
+            $results[$q->itemid] = $temprec->info;
+        }
+        return $results;
+    }
+
+    /**
      * Given one component/filearea/context and
      * optionally one source itemname to match itemids
      * put the corresponding files in the pool
      */
-    public static function send_files_to_pool($basepath, $restoreid, $component, $filearea, $oldcontextid, $dfltuserid, $itemname = null, $olditemid = null) {
+    public static function send_files_to_pool($basepath, $restoreid, $component, $filearea, $oldcontextid, $dfltuserid, $itemname = null, $olditemid = null, $forcenewcontextid = null, $skipparentitemidctxmatch = false) {
         global $DB;
 
-        // Get new context, must exist or this will fail
-        if (!$newcontextid = self::get_backup_ids_record($restoreid, 'context', $oldcontextid)->newitemid) {
-            throw new restore_dbops_exception('unknown_context_mapping', $oldcontextid);
+        if ($forcenewcontextid) {
+            // Some components can have "forced" new contexts (example: questions can end belonging to non-standard context mappings,
+            // with questions originally at system/coursecat context in source being restored to course context in target). So we need
+            // to be able to force the new contextid
+            $newcontextid = $forcenewcontextid;
+        } else {
+            // Get new context, must exist or this will fail
+            if (!$newcontextid = self::get_backup_ids_record($restoreid, 'context', $oldcontextid)->newitemid) {
+                throw new restore_dbops_exception('unknown_context_mapping', $oldcontextid);
+            }
+        }
+
+        // Sometimes it's possible to have not the oldcontextids stored into backup_ids_temp->parentitemid
+        // columns (because we have used them to store other information). This happens usually with
+        // all the question related backup_ids_temp records. In that case, it's safe to ignore that
+        // matching as far as we are always restoring for well known oldcontexts and olditemids
+        $parentitemctxmatchsql = ' AND i.parentitemid = f.contextid ';
+        if ($skipparentitemidctxmatch) {
+            $parentitemctxmatchsql = '';
         }
 
         // Important: remember how files have been loaded to backup_files_temp
@@ -262,16 +666,16 @@ abstract class restore_dbops {
 
         // itemname not null, going to join with backup_ids to perform the old-new mapping of itemids
         } else {
-            $sql = 'SELECT f.contextid, f.component, f.filearea, f.itemid, i.newitemid, f.info
+            $sql = "SELECT f.contextid, f.component, f.filearea, f.itemid, i.newitemid, f.info
                       FROM {backup_files_temp} f
                       JOIN {backup_ids_temp} i ON i.backupid = f.backupid
-                                              AND i.parentitemid = f.contextid
+                                              $parentitemctxmatchsql
                                               AND i.itemid = f.itemid
                      WHERE f.backupid = ?
                        AND f.contextid = ?
                        AND f.component = ?
                        AND f.filearea = ?
-                       AND i.itemname = ?';
+                       AND i.itemname = ?";
             $params = array($restoreid, $oldcontextid, $component, $filearea, $itemname);
             if ($olditemid !== null) { // Just process ONE olditemid intead of the whole itemname
                 $sql .= ' AND i.itemid = ?';
@@ -760,11 +1164,11 @@ abstract class restore_dbops {
     }
 
     /**
-     * Process the needed users in order to create / map them
+     * Process the needed users in order to decide
+     * which action to perform with them (create/map)
      *
      * Just wrap over precheck_included_users(), returning
-     * exception if any problem is found or performing the
-     * required user creations if needed
+     * exception if any problem is found
      */
     public static function process_included_users($restoreid, $courseid, $userid, $samesite) {
         global $DB;
@@ -776,6 +1180,27 @@ abstract class restore_dbops {
         // executed, so be radical here.
         if (!empty($problems)) {
             throw new restore_dbops_exception('restore_problems_processing_users', null, implode(', ', $problems));
+        }
+    }
+
+    /**
+     * Process the needed question categories and questions
+     * to check all them, deciding about the action to perform
+     * (create/map) and target.
+     *
+     * Just wrap over precheck_categories_and_questions(), returning
+     * exception if any problem is found
+     */
+    public static function process_categories_and_questions($restoreid, $courseid, $userid, $samesite) {
+        global $DB;
+
+        // Just let precheck_included_users() to do all the hard work
+        $problems = self::precheck_categories_and_questions($restoreid, $courseid, $userid, $samesite);
+
+        // With problems of type error, throw exception, shouldn't happen if prechecks were originally
+        // executed, so be radical here.
+        if (array_key_exists('errors', $problems)) {
+            throw new restore_dbops_exception('restore_problems_processing_questions', null, implode(', ', $problems));
         }
     }
 

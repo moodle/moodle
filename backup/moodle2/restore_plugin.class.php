@@ -23,39 +23,39 @@
  */
 
 /**
- * Class implementing the subplugins support for moodle2 restore
+ * Class implementing the plugins support for moodle2 restore
  *
  * TODO: Finish phpdocs
  * TODO: Add support for declaring decode_contents (not decode_rules)
  */
-abstract class restore_subplugin {
+abstract class restore_plugin {
 
-    protected $subplugintype;
-    protected $subpluginname;
+    protected $plugintype;
+    protected $pluginname;
     protected $connectionpoint;
     protected $step;
     protected $task;
 
-    public function __construct($subplugintype, $subpluginname, $step) {
-        $this->subplugintype = $subplugintype;
-        $this->subpluginname = $subpluginname;
+    public function __construct($plugintype, $pluginname, $step) {
+        $this->plugintype = $plugintype;
+        $this->pluginname = $pluginname;
         $this->step          = $step;
         $this->task          = $step->get_task();
         $this->connectionpoint = '';
     }
 
-    public function define_subplugin_structure($connectionpoint) {
+    public function define_plugin_structure($connectionpoint) {
         if (!$connectionpoint instanceof restore_path_element) {
             throw new restore_step_exception('restore_path_element_required', $connectionpoint);
         }
 
         $paths = array();
         $this->connectionpoint = $connectionpoint;
-        $methodname = 'define_' . basename($this->connectionpoint->get_path()) . '_subplugin_structure';
+        $methodname = 'define_' . basename($this->connectionpoint->get_path()) . '_plugin_structure';
 
         if (method_exists($this, $methodname)) {
-            if ($subbluginpaths = $this->$methodname()) {
-                foreach ($subbluginpaths as $path) {
+            if ($bluginpaths = $this->$methodname()) {
+                foreach ($bluginpaths as $path) {
                     $path->set_processing_object($this);
                     $paths[] = $path;
                 }
@@ -65,11 +65,11 @@ abstract class restore_subplugin {
     }
 
     /**
-     * after_execute dispatcher for any restore_subplugin class
+     * after_execute dispatcher for any restore_plugin class
      *
      * This method will dispatch execution to the corresponding
      * after_execute_xxx() method when available, with xxx
-     * being the connection point of the instance, so subplugin
+     * being the connection point of the instance, so plugin
      * classes with multiple connection points will support
      * multiple after_execute methods, one for each connection point
      */
@@ -156,7 +156,7 @@ abstract class restore_subplugin {
      */
     protected function get_namefor($name = '') {
         $name = $name !== '' ? '_' . $name : '';
-        return $this->subplugintype . '_' . $this->subpluginname . $name;
+        return $this->plugintype . '_' . $this->pluginname . $name;
     }
 
     /**
@@ -166,7 +166,7 @@ abstract class restore_subplugin {
     protected function get_pathfor($path = '') {
         $path = trim($path, '/') !== '' ? '/' . trim($path, '/') : '';
         return $this->connectionpoint->get_path() . '/' .
-               'subplugin_' . $this->subplugintype . '_' .
-               $this->subpluginname . '_' . basename($this->connectionpoint->get_path()) . $path;
+               'plugin_' . $this->plugintype . '_' .
+               $this->pluginname . '_' . basename($this->connectionpoint->get_path()) . $path;
     }
 }

@@ -488,10 +488,13 @@ class restore_load_included_files extends restore_structure_step {
 
         // load it if needed:
         //   - it it is one of the annotated inforef files (course/section/activity/block)
-        //   - it is one "user", "group", "grouping" or "grade" component file (that aren't sent to inforef ever)
+        //   - it is one "user", "group", "grouping", "grade", "question" or "qtype_xxxx" component file (that aren't sent to inforef ever)
+        // TODO: qtype_xxx should be replaced by proper backup_qtype_plugin::get_components_and_fileareas() use,
+        //       but then we'll need to change it to load plugins itself (because this is executed too early in restore)
         $isfileref   = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'fileref', $data->id);
         $iscomponent = ($data->component == 'user' || $data->component == 'group' ||
-                        $data->component == 'grouping' || $data->component == 'grade');
+                        $data->component == 'grouping' || $data->component == 'grade' ||
+                        $data->component == 'question' || substr($data->component, 0, 5) == 'qtype');
         if ($isfileref || $iscomponent) {
             restore_dbops::set_backup_files_record($this->get_restoreid(), $data);
         }
@@ -830,6 +833,43 @@ class restore_outcomes_structure_step extends restore_structure_step {
     protected function after_execute() {
         // Add outcomes related files, matching with "outcome" mappings
         $this->add_related_files('grade', 'outcome', 'outcome', $this->task->get_old_system_contextid());
+    }
+}
+
+/**
+ * Execution step that, *conditionally* (if there isn't preloaded information
+ * will load all the question categories and questions (header info only)
+ * to backup_temp_ids. They will be stored with "question_category" and
+ * "question" itemnames and with their original contextid and question category
+ * id as paremitemids
+ */
+class restore_load_categories_and_questions extends restore_execution_step {
+
+    protected function define_execution() {
+
+        if ($this->task->get_preloaded_information()) { // if info is already preloaded, nothing to do
+            return;
+        }
+        $file = $this->get_basepath() . '/questions.xml';
+        restore_dbops::load_categories_and_questions_to_tempids($this->get_restoreid(), $file);
+    }
+}
+
+/**
+ * Execution step that, *conditionally* (if there isn't preloaded information)
+ * will process all the needed categories and questions
+ * in order to decide and perform any action with them (create / map / error)
+ * Note: Any error will cause exception, as far as this is the same processing
+ * than the one into restore prechecks (that should have stopped process earlier)
+ */
+class restore_process_categories_and_questions extends restore_execution_step {
+
+    protected function define_execution() {
+
+        if ($this->task->get_preloaded_information()) { // if info is already preloaded, nothing to do
+            return;
+        }
+        restore_dbops::process_categories_and_questions($this->get_restoreid(), $this->task->get_courseid(), $this->task->get_userid(), $this->task->is_samesite());
     }
 }
 
@@ -1987,5 +2027,368 @@ abstract class restore_activity_structure_step extends restore_structure_step {
         $modulename = $this->task->get_modulename();
         $oldid = $this->task->get_old_activityid();
         $this->set_mapping($modulename, $oldid, $newitemid, true);
+    }
+}
+
+/**
+ * Structure step in charge of creating/mapping all the qcats and qs
+ * by parsing the questions.xml file and checking it against the
+ * results calculated by {@link restore_process_categories_and_questions}
+ * and stored in backup_ids_temp
+ */
+class restore_create_categories_and_questions extends restore_structure_step {
+
+    protected function define_structure() {
+
+        $category = new restore_path_element('question_category', '/question_categories/question_category');
+        $question = new restore_path_element('question', '/question_categories/question_category/questions/question');
+
+        // Apply for 'qtype' plugins optional paths at question level
+        $this->add_plugin_structure('qtype', $question);
+
+        return array($category, $question);
+    }
+
+    protected function process_question_category($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        // Check we have one mapping for this category
+        if (!$mapping = $this->get_mapping('question_category', $oldid)) {
+            return; // No mapping = this category doesn't need to be created/mapped
+        }
+
+        // Check we have to create the category (newitemid = 0)
+        if ($mapping->newitemid) {
+            return; // newitemid != 0, this category is going to be mapped. Nothing to do
+        }
+
+        // Arrived here, newitemid = 0, we need to create the category
+        // we'll do it at parentitemid context, but for CONTEXT_MODULE
+        // categories, that will be created at CONTEXT_COURSE and moved
+        // to module context later when the activity is created
+        if ($mapping->info->contextlevel == CONTEXT_MODULE) {
+            $mapping->parentitemid = $this->get_mappingid('context', $this->task->get_old_contextid());
+        }
+        $data->contextid = $mapping->parentitemid;
+
+        // Let's create the question_category and save mapping
+        $newitemid = $DB->insert_record('question_categories', $data);
+        $this->set_mapping('question_category', $oldid, $newitemid);
+        // Also annotate them as question_category_created, we need
+        // that later when remapping parents
+        $this->set_mapping('question_category_created', $oldid, $newitemid, false, null, $data->contextid);
+    }
+
+    protected function process_question($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        // Check we have one mapping for this question
+        if (!$questionmapping = $this->get_mapping('question', $oldid)) {
+            return; // No mapping = this question doesn't need to be created/mapped
+        }
+
+        // Get the mapped category (cannot use get_new_parentid() because not
+        // all the categories have been created, so it is not always available
+        // Instead we get the mapping for the question->parentitemid because
+        // we have loaded qcatids there for all parsed questions
+        $data->category = $this->get_mappingid('question_category', $questionmapping->parentitemid);
+
+        $data->timecreated  = $this->apply_date_offset($data->timecreated);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
+
+        $userid = $this->get_mappingid('user', $data->createdby);
+        $data->createdby = $userid ? $userid : $this->task->get_userid();
+
+        $userid = $this->get_mappingid('user', $data->modifiedby);
+        $data->modifiedby = $userid ? $userid : $this->task->get_userid();
+
+        // With newitemid = 0, let's create the question
+        if (!$questionmapping->newitemid) {
+            $newitemid = $DB->insert_record('question', $data);
+            $this->set_mapping('question', $oldid, $newitemid);
+            // Also annotate them as question_created, we need
+            // that later when remapping parents (keeping the old categoryid as parentid)
+            $this->set_mapping('question_created', $oldid, $newitemid, false, null, $questionmapping->parentitemid);
+        } else {
+            // By performing this set_mapping() we make get_old/new_parentid() to work for all the
+            // children elements of the 'question' one (so qtype plugins will know the question they belong to)
+            $this->set_mapping('question', $oldid, $questionmapping->newitemid);
+        }
+
+        // Note, we don't restore any question files yet
+        // as far as the CONTEXT_MODULE categories still
+        // haven't their contexts to be restored to
+        // The {@link restore_create_question_files}, executed in the final step
+        // step will be in charge of restoring all the question files
+    }
+
+    protected function after_execute() {
+        global $DB;
+
+        // First of all, recode all the created question_categories->parent fields
+        $qcats = $DB->get_records('backup_ids_temp', array(
+                     'backupid' => $this->get_restoreid(),
+                     'itemname' => 'question_category_created'));
+        foreach ($qcats as $qcat) {
+            $newparent = 0;
+            $dbcat = $DB->get_record('question_categories', array('id' => $qcat->newitemid));
+            // Get new parent (mapped or created, so we look in quesiton_category mappings)
+            if ($newparent = $DB->get_field('backup_ids_temp', 'newitemid', array(
+                                 'backupid' => $this->get_restoreid(),
+                                 'itemname' => 'question_category',
+                                 'itemid'   => $dbcat->parent))) {
+                // contextids must match always, as far as we always include complete qbanks, just check it
+                $newparentctxid = $DB->get_field('question_categories', 'contextid', array('id' => $newparent));
+                if ($dbcat->contextid == $newparentctxid) {
+                    $DB->set_field('question_categories', 'parent', $newparent, array('id' => $dbcat->id));
+                } else {
+                    $newparent = 0; // No ctx match for both cats, no parent relationship
+                }
+            }
+            // Here with $newparent empty, problem with contexts or remapping, set it to top cat
+            if (!$newparent) {
+                $DB->set_field('question_categories', 'parent', 0, array('id' => $dbcat->id));
+            }
+        }
+
+        // Now, recode all the created question->parent fields
+        $qs = $DB->get_records('backup_ids_temp', array(
+                  'backupid' => $this->get_restoreid(),
+                  'itemname' => 'question_created'));
+        foreach ($qs as $q) {
+            $newparent = 0;
+            $dbq = $DB->get_record('question', array('id' => $q->newitemid));
+            // Get new parent (mapped or created, so we look in question mappings)
+            if ($newparent = $DB->get_field('backup_ids_temp', 'newitemid', array(
+                                 'backupid' => $this->get_restoreid(),
+                                 'itemname' => 'question',
+                                 'itemid'   => $dbq->parent))) {
+                $DB->set_field('question', 'parent', $newparent, array('id' => $dbq->id));
+            }
+        }
+
+        // Note, we don't restore any question files yet
+        // as far as the CONTEXT_MODULE categories still
+        // haven't their contexts to be restored to
+        // The {@link restore_create_question_files}, executed in the final step
+        // step will be in charge of restoring all the question files
+    }
+}
+
+/**
+ * Execution step that will move all the CONTEXT_MODULE question categories
+ * created at early stages of restore in course context (because modules weren't
+ * created yet) to their target module (matching by old-new-contextid mapping)
+ */
+class restore_move_module_questions_categories extends restore_execution_step {
+
+    protected function define_execution() {
+        global $DB;
+
+        $contexts = restore_dbops::restore_get_question_banks($this->get_restoreid(), CONTEXT_MODULE);
+        foreach ($contexts as $contextid => $contextlevel) {
+            // Only if context mapping exists (i.e. the module has been restored)
+            if ($newcontext = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'context', $contextid)) {
+                // Update all the qcats having their parentitemid set to the original contextid
+                $modulecats = $DB->get_records_sql("SELECT itemid, newitemid
+                                                      FROM {backup_ids_temp}
+                                                     WHERE backupid = ?
+                                                       AND itemname = 'question_category'
+                                                       AND parentitemid = ?", array($this->get_restoreid(), $contextid));
+                foreach ($modulecats as $modulecat) {
+                    $DB->set_field('question_categories', 'contextid', $newcontext->newitemid, array('id' => $modulecat->newitemid));
+                    // And set new contextid also in question_category mapping (will be
+                    // used by {@link restore_create_question_files} later
+                    restore_dbops::set_backup_ids_record($this->get_restoreid(), 'question_category', $modulecat->itemid, $modulecat->newitemid, $newcontext->newitemid);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Execution step that will create all the question/answers/qtype-specific files for the restored
+ * questions. It must be executed after {@link restore_move_module_questions_categories}
+ * because only then each question is in its final category and only then the
+ * context can be determined
+ *
+ * TODO: Improve this. Instead of looping over each question, it can be reduced to
+ *       be done by contexts (this will save a huge ammount of queries)
+ */
+class restore_create_question_files extends restore_execution_step {
+
+    protected function define_execution() {
+        global $DB;
+
+        // Let's process only created questions
+        $questionsrs = $DB->get_recordset_sql("SELECT bi.itemid, bi.newitemid, bi.parentitemid, q.qtype
+                                               FROM {backup_ids_temp} bi
+                                               JOIN {question} q ON q.id = bi.newitemid
+                                              WHERE bi.backupid = ?
+                                                AND bi.itemname = 'question_created'", array($this->get_restoreid()));
+        foreach ($questionsrs as $question) {
+            // Get question_category mapping, it contains the target context for the question
+            if (!$qcatmapping = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'question_category', $question->parentitemid)) {
+                // Something went really wrong, cannot find the question_category for the question
+                debugging('Error fetching target context for question', DEBUG_DEVELOPER);
+                continue;
+            }
+            // Calculate source and target contexts
+            $oldctxid = $qcatmapping->info->contextid;
+            $newctxid = $qcatmapping->parentitemid;
+
+            // Add common question files (question and question_answer ones)
+            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'questiontext',
+                                              $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true);
+            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'generalfeedback',
+                                              $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true);
+            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'answerfeedback',
+                                              $oldctxid, $this->task->get_userid(), 'question_answer', null, $newctxid, true);
+            // Add qtype dependent files
+            $components = backup_qtype_plugin::get_components_and_fileareas($question->qtype);
+            foreach ($components as $component => $fileareas) {
+                foreach ($fileareas as $filearea => $mapping) {
+                    // Use itemid only if mapping is question_created
+                    $itemid = ($mapping == 'question_created') ? $question->itemid : null;
+                    restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), $component, $filearea,
+                                                      $oldctxid, $this->task->get_userid(), $mapping, $itemid, $newctxid, true);
+                }
+            }
+        }
+        $questionsrs->close();
+    }
+}
+
+/**
+ * Abstract structure step, to be used by all the activities using core questions stuff
+ * (like the quiz module), to support qtype plugins, states and sessions
+ */
+abstract class restore_questions_activity_structure_step extends restore_activity_structure_step {
+
+    /**
+     * Attach below $element (usually attempts) the needed restore_path_elements
+     * to restore question_states
+     */
+    protected function add_question_attempts_states($element, &$paths) {
+        // Check $element is restore_path_element
+        if (! $element instanceof restore_path_element) {
+            throw new restore_step_exception('element_must_be_restore_path_element', $element);
+        }
+        // Check $paths is one array
+        if (!is_array($paths)) {
+            throw new restore_step_exception('paths_must_be_array', $paths);
+        }
+        $paths[] = new restore_path_element('question_state', $element->get_path() . '/states/state');
+    }
+
+    /**
+     * Attach below $element (usually attempts) the needed restore_path_elements
+     * to restore question_sessions
+     */
+    protected function add_question_attempts_sessions($element, &$paths) {
+        // Check $element is restore_path_element
+        if (! $element instanceof restore_path_element) {
+            throw new restore_step_exception('element_must_be_restore_path_element', $element);
+        }
+        // Check $paths is one array
+        if (!is_array($paths)) {
+            throw new restore_step_exception('paths_must_be_array', $paths);
+        }
+        $paths[] = new restore_path_element('question_session', $element->get_path() . '/sessions/session');
+    }
+
+    /**
+     * Process question_states
+     */
+    protected function process_question_state($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        // Get complete question mapping, we'll need info
+        $question = $this->get_mapping('question', $data->question);
+
+        // In the quiz_attempt mapping we are storing uniqueid
+        // and not id, so this gets the correct question_attempt to point to
+        $data->attempt  = $this->get_new_parentid('quiz_attempt');
+        $data->question = $question->newitemid;
+        $data->answer   = $this->restore_recode_answer($data, $question->info->qtype); // Delegate recoding of answer
+        $data->timestamp= $this->apply_date_offset($data->timestamp);
+
+        // Everything ready, insert and create mapping (needed by question_sessions)
+        $newitemid = $DB->insert_record('question_states', $data);
+        $this->set_mapping('question_state', $oldid, $newitemid);
+    }
+
+    /**
+     * Process question_sessions
+     */
+    protected function process_question_session($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        // In the quiz_attempt mapping we are storing uniqueid
+        // and not id, so this gets the correct question_attempt to point to
+        $data->attemptid  = $this->get_new_parentid('quiz_attempt');
+        $data->questionid = $this->get_mappingid('question', $data->questionid);
+        $data->newest     = $this->get_mappingid('question_state', $data->newest);
+        $data->newgraded  = $this->get_mappingid('question_state', $data->newgraded);
+
+        // Everything ready, insert (no mapping needed)
+        $newitemid = $DB->insert_record('question_sessions', $data);
+
+        // Note: question_sessions haven't files associated. On purpose manualcomment is lacking
+        // support for them, so we don't need to handle them here.
+    }
+
+    /**
+     * Given a list of question->ids, separated by commas, returns the
+     * recoded list, with all the restore question mappings applied.
+     * Note: Used by quiz->questions and quiz_attempts->layout
+     * Note: 0 = page break (unconverted)
+     */
+    protected function questions_recode_layout($layout) {
+        // Extracts question id from sequence
+        if ($questionids = explode(',', $layout)) {
+            foreach ($questionids as $id => $questionid) {
+                if ($questionid) { // If it is zero then this is a pagebreak, don't translate
+                    $newquestionid = $this->get_mappingid('question', $questionid);
+                    $questionids[$id] = $newquestionid;
+                }
+            }
+        }
+        return implode(',', $questionids);
+    }
+
+    /**
+     * Given one question_states record, return the answer
+     * recoded pointing to all the restored stuff
+     */
+    public function restore_recode_answer($state, $qtype) {
+        // Build one static cache to store {@link restore_qtype_plugin}
+        // while we are needing them, just to save zillions of instantiations
+        // or using static stuff that will break our nice API
+        static $qtypeplugins = array();
+
+        // If we haven't the corresponding restore_qtype_plugin for current qtype
+        // instantiate it and add to cache
+        if (!isset($qtypeplugins[$qtype])) {
+            $classname = 'restore_qtype_' . $qtype . '_plugin';
+            if (class_exists($classname)) {
+                $qtypeplugins[$qtype] = new $classname('qtype', $qtype, $this);
+            } else {
+                $qtypeplugins[$qtype] = false;
+            }
+        }
+        return !empty($qtypeplugins[$qtype]) ? $qtypeplugins[$qtype]->recode_state_answer($state) : $state->answer;
     }
 }

@@ -35,6 +35,14 @@ class restore_final_task extends restore_task {
      */
     public function build() {
 
+        // Move all the CONTEXT_MODULE question qcats to their
+        // final (newly created) module context
+        $this->add_step(new restore_move_module_questions_categories('move_module_question_categories'));
+
+        // Create all the question files now that every question is in place
+        // and every category has its final contextid associated
+        $this->add_step(new restore_create_question_files('create_question_files'));
+
         // Review all the block_position records in backup_ids in order
         // match them now that all the contexts are created populating DB
         // as needed. Only if we are restoring blocks.

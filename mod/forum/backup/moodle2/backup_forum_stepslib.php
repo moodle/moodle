@@ -76,6 +76,11 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
             'userid', 'discussionid', 'postid', 'firstread',
             'lastread'));
 
+        $trackedprefs = new backup_nested_element('trackedprefs');
+
+        $track = new backup_nested_element('track', array('id'), array(
+            'userid'));
+
         // Build the tree
 
         $forum->add_child($discussions);
@@ -86,6 +91,9 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
 
         $forum->add_child($readposts);
         $readposts->add_child($read);
+
+        $forum->add_child($trackedprefs);
+        $trackedprefs->add_child($track);
 
         $discussion->add_child($posts);
         $posts->add_child($post);
@@ -115,6 +123,8 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
 
             $read->set_source_table('forum_read', array('forumid' => backup::VAR_PARENTID));
 
+            $track->set_source_table('forum_track_prefs', array('forumid' => backup::VAR_PARENTID));
+
             $rating->set_source_table('rating', array('contextid' => backup::VAR_CONTEXTID,
                                                       'itemid'    => backup::VAR_PARENTID));
             $rating->set_source_alias('rating', 'value');
@@ -135,6 +145,8 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
         $subscription->annotate_ids('user', 'userid');
 
         $read->annotate_ids('user', 'userid');
+
+        $track->annotate_ids('user', 'userid');
 
         // Define file annotations
 

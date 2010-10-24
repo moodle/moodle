@@ -28,12 +28,4 @@ require_once($CFG->dirroot . '/question/type/calculated/backup/moodle2/backup_qt
 /**
  * Provides the information to backup calculatedmulti questions
  */
-class backup_qtype_calculatedmulti_plugin extends backup_qtype_calculated_plugin {
-
-    /**
-     * overwrite this with the current qtype
-     */
-    protected function get_qtype_name() {
-        return 'calculatedmulti';
-    }
-}
+class backup_qtype_calculatedmulti_plugin extends backup_qtype_calculated_plugin {}

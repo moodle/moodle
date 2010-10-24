@@ -1204,69 +1204,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         return false;
     }
 
-    /// RESTORE FUNCTIONS /////////////////
-
-    /**
-     * Restores the data in the question
-     *
-     * This is used in question/restorelib.php
-     */
-    function restore($old_question_id,$new_question_id,$info,$restore) {
-        global $DB;
-
-        $status = true;
-
-        //Get the numerical array
-        if (isset($info['#']['NUMERICAL'])) {
-            $numericals = $info['#']['NUMERICAL'];
-        } else {
-            $numericals = array();
-        }
-
-        //Iterate over numericals
-        for($i = 0; $i < sizeof($numericals); $i++) {
-            $num_info = $numericals[$i];
-
-            //Now, build the question_numerical record structure
-            $numerical = new stdClass;
-            $numerical->question = $new_question_id;
-            $numerical->answer = backup_todb($num_info['#']['ANSWER']['0']['#']);
-            $numerical->tolerance = backup_todb($num_info['#']['TOLERANCE']['0']['#']);
-
-            //We have to recode the answer field
-            $answer = backup_getid($restore->backup_unique_code,"question_answers",$numerical->answer);
-            if ($answer) {
-                $numerical->answer = $answer->new_id;
-            }
-
-            //The structure is equal to the db, so insert the question_numerical
-            $newid = $DB->insert_record ("question_numerical", $numerical);
-
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
-                }
-                backup_flush(300);
-            }
-
-            //Now restore numerical_units
-            $status = question_restore_numerical_units ($old_question_id,$new_question_id,$num_info,$restore);
-
-            //Now restore numerical_options
-            $status = question_restore_numerical_options ($old_question_id,$new_question_id,$num_info,$restore);
-
-            if (!$newid) {
-                $status = false;
-            }
-        }
-
-        return $status;
-    }
-
     /**
      * Runs all the code required to set up and save an essay question for testing purposes.
      * Alternate DB table prefix may be used to facilitate data deletion.
