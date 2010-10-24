@@ -127,6 +127,14 @@ class web_test extends UnitTestCase {
         $long = "Here is a long string, more than 75 characters long, since by default html_to_text wraps text at 75 chars.";
         $this->assertEqual($long, html_to_text($long, 0));
     }
+
+    public function test_clean_text() {
+        $text = "lala <applet>xx</applet>";
+        $this->assertEqual($text, clean_text($text, FORMAT_PLAIN));
+        $this->assertEqual('lala xx', clean_text($text, FORMAT_MARKDOWN));
+        $this->assertEqual('lala xx', clean_text($text, FORMAT_MOODLE));
+        $this->assertEqual('lala xx', clean_text($text, FORMAT_HTML));
+    }
 }
 
 

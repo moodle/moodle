@@ -1439,49 +1439,50 @@ function trusttext_active() {
  * Given raw text (eg typed in by a user), this function cleans it up
  * and removes any nasty tags that could mess up Moodle pages.
  *
- * @global string
- * @global object
+ * NOTE: the format parameter was deprecated because we can safely clean only HTML.
+ *
  * @param string $text The text to be cleaned
- * @param int $format Identifier of the text format to be used
- *            [FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_WIKI, FORMAT_MARKDOWN]
+ * @param int $format deprecated parameter, should always contain FORMAT_HTML or FORMAT_MOODLE
  * @return string The cleaned up text
  */
-function clean_text($text, $format = FORMAT_MOODLE) {
+function clean_text($text, $format = FORMAT_HTML) {
     global $ALLOWED_TAGS, $CFG;
 
     if (empty($text) or is_numeric($text)) {
        return (string)$text;
     }
 
-    switch ($format) {
-        case FORMAT_PLAIN:
-            return $text;
-
-        default:
-
-            if (!empty($CFG->enablehtmlpurifier)) {
-                $text = purify_html($text);
-            } else {
-            /// Fix non standard entity notations
-                $text = fix_non_standard_entities($text);
-
-            /// Remove tags that are not allowed
-                $text = strip_tags($text, $ALLOWED_TAGS);
-
-            /// Clean up embedded scripts and , using kses
-                $text = cleanAttributes($text);
-
-            /// Again remove tags that are not allowed
-                $text = strip_tags($text, $ALLOWED_TAGS);
-
-            }
-
-        /// Remove potential script events - some extra protection for undiscovered bugs in our code
-            $text = preg_replace("~([^a-z])language([[:space:]]*)=~i", "$1Xlanguage=", $text);
-            $text = preg_replace("~([^a-z])on([a-z]+)([[:space:]]*)=~i", "$1Xon$2=", $text);
-
-            return $text;
+    if ($format != FORMAT_HTML and $format != FORMAT_HTML) {
+        // TODO: we need to standardise cleanup of text when loading it into editor first
+        //debugging('clean_text() is designed to work only with html');
     }
+
+    if ($format == FORMAT_PLAIN) {
+        return $text;
+    }
+
+    if (!empty($CFG->enablehtmlpurifier)) {
+        $text = purify_html($text);
+    } else {
+    /// Fix non standard entity notations
+        $text = fix_non_standard_entities($text);
+
+    /// Remove tags that are not allowed
+        $text = strip_tags($text, $ALLOWED_TAGS);
+
+    /// Clean up embedded scripts and , using kses
+        $text = cleanAttributes($text);
+
+    /// Again remove tags that are not allowed
+        $text = strip_tags($text, $ALLOWED_TAGS);
+
+    }
+
+    // Remove potential script events - some extra protection for undiscovered bugs in our code
+    $text = preg_replace("~([^a-z])language([[:space:]]*)=~i", "$1Xlanguage=", $text);
+    $text = preg_replace("~([^a-z])on([a-z]+)([[:space:]]*)=~i", "$1Xon$2=", $text);
+
+    return $text;
 }
 
 /**
