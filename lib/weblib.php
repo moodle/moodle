@@ -885,15 +885,34 @@ function get_file_argument() {
 
     $relativepath = optional_param('file', FALSE, PARAM_PATH);
 
-    // then try extract file from PATH_INFO (slasharguments method)
-    if ($relativepath === false and isset($_SERVER['PATH_INFO']) and $_SERVER['PATH_INFO'] !== '') {
-        // check that PATH_INFO works == must not contain the script name
-        if (strpos($_SERVER['PATH_INFO'], $SCRIPT) === false) {
-            $relativepath = clean_param(urldecode($_SERVER['PATH_INFO']), PARAM_PATH);
+    if ($relativepath !== false and $relativepath !== '') {
+        return $relativepath;
+    }
+    $relativepath = false;
+
+    // then try extract file from the slasharguments
+    if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
+        // NOTE: ISS tends to convert all file paths to single byte DOS encoding,
+        //       we can not use other methods because they break unicode chars,
+        //       the only way is to use URL rewriting
+        if (isset($_SERVER['PATH_INFO']) and $_SERVER['PATH_INFO'] !== '') {
+            // check that PATH_INFO works == must not contain the script name
+            if (strpos($_SERVER['PATH_INFO'], $SCRIPT) === false) {
+                $relativepath = clean_param(urldecode($_SERVER['PATH_INFO']), PARAM_PATH);
+            }
+        }
+    } else {
+        // all other apache-like servers depend on PATH_INFO
+        if (isset($_SERVER['PATH_INFO'])) {
+            if (isset($_SERVER['SCRIPT_NAME']) and strpos($_SERVER['PATH_INFO'], $_SERVER['SCRIPT_NAME']) === 0) {
+                $relativepath = substr($_SERVER['PATH_INFO'], strlen($_SERVER['SCRIPT_NAME']));
+            } else {
+                $relativepath = $_SERVER['PATH_INFO'];
+            }
+            $relativepath = clean_param($relativepath, PARAM_PATH);
         }
     }
 
-    // note: we are not using any other way because they are not compatible with unicode file names ;-)
 
     return $relativepath;
 }
