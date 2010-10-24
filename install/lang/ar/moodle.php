@@ -31,3 +31,4 @@
 $string['language'] = 'اللغة';
 $string['next'] = 'التالي';
 $string['previous'] = 'السابق';
+$string['reload'] = 'إعادة تحميل';

@@ -31,20 +31,21 @@
 $string['admindirname'] = 'Rendszergazdakönyvtár';
 $string['availablelangs'] = 'Elérhető nyelvek listája';
 $string['chooselanguagehead'] = 'Nyelv kiválasztása';
-$string['chooselanguagesub'] = 'KIZÁRÓLAG a telepítéshez válasszon nyelvet! A portál és a felhasználó nyelvét egy későbbi képernyőn adhatja meg.';
+$string['chooselanguagesub'] = 'Válasszon nyelvet a telepítéshez! Ez lesz a portál alapbeállítás szerinti nyelve, de később módosíthatja.';
 $string['clialreadyinstalled'] = 'A config.php már létezik, a portál frissítéséhez használja az admin/cli/upgrade.php állományt.';
 $string['cliinstallheader'] = 'A Moodle {$a} parancssori telepítő programja';
-$string['databasehost'] = 'Az adatbázis gazdagépe:';
-$string['databasename'] = 'Az adatbázis neve:';
+$string['databasehost'] = 'Az adatbázis gazdagépe';
+$string['databasename'] = 'Az adatbázis neve';
 $string['databasetypehead'] = 'Adatbázismotor kiválasztása';
 $string['dataroot'] = 'Adatkönyvtár';
 $string['dbprefix'] = 'Táblázat előtagja';
 $string['dirroot'] = 'Moodle-könyvtár';
 $string['environmenthead'] = 'Környezetének ellenőrzése ...';
 $string['environmentsub2'] = 'Minden Moodle-változat valamilyen minimális verziójú PHP és szükséges számú PHP-kibővítés használatát írja elő. A telepítések és frissítések előtt teljes környezet-ellenőrzésre kerül sor. Ha nem tudja, hogyan kell egy új verziót telepíteni és a PHP-bővítéseket bekapcsolni, forduljon a rendszergazdához.';
-$string['errorsinenvironment'] = 'Hibák vannak a környezetben!';
+$string['errorsinenvironment'] = 'A környezet ellenőrzése nem sikerült!';
 $string['installation'] = 'Telepítés';
-$string['langdownloaderror'] = 'A(z) "{$a}" nyelv nincs telepítve. A telepítés angol nyelven folytatódik.';
+$string['langdownloaderror'] = 'A(z) "{$a}" nyelvet nem lehet letölteni. A telepítés angolul folytatódik.
+';
 $string['memorylimithelp'] = '<p>Szerverén a PHP memóriakorlátja jelenleg {$a}. </p><p>Ez a Moodle számára a későbbiekben gondot okozhat, különösen akkor, ha sok modulja és/vagy sok felhasználója van bekapcsolva.</p><p> Ha lehet, állítsa be a PHP-t magasabb korláttal, pl. 40M-tal. Többféleképpen próbálkozhat:</p><ol><li> Ha lehet, fordítsa újra a PHP-t <i>--enable-memory-limit</i>-tel. Így a Moodle maga állíthatja be a memóriakorlátot.</li><li>Ha elérhető a php.ini állomány, módosítsa a <b>memory_limit</b> beállítását pl. 40M-ra. Ha nem éri el az állományt, kérje meg a rendszergazdát a módosítás elvégzésére.</li><li>Egyes PHP-szervereken létrehozhat egy .htaccess állományt a Moodle-könyvtárban az alábbi sorral: <blockquote><div>php_value memory_limit 40M.</div></blockquote>    <p> Vannak szerverek, ahol ez az összes PHP-oldal működését megakadályozza (az oldalak hibát jeleznek), ezért el kell távolítania a .htaccess állományt.</p></li></ol>';
 $string['paths'] = 'Útvonalak';
 $string['pathserrcreatedataroot'] = 'A telepítő nem tudja létrehozni az adatkönyvtárat ({$a->dataroot}).';
@@ -53,13 +54,20 @@ $string['pathsrodataroot'] = 'Az adatok gyökérkönyvtára nem írható.';
 $string['pathsroparentdataroot'] = 'A felettes könyvtás ({$a->parent}) nem írható. A telepítő nem tudja létrehozni az adatkönyvtárat ({$a->dataroot}).';
 $string['pathssubadmindir'] = 'Egy pár webes gazdagép esetén az /admin speciális URL pl. a vezérlőpanel eléréséhez. Ez ütközik a Moodle admin oldalainak standard helyével. Javítás: a telepítésben nevezze át a rendszergazda könyvtárát, az új nevet pedig írja be ide. Például: <em>moodleadmin</em>. Ezzel helyrehozhatók a Moodle rendszergazdai ugrópontjai.';
 $string['pathssubdataroot'] = 'Szüksége van egy helyre, ahol a Moodle mentheti a feltöltött állományokat. Ez a könyvtár a webszerver felhasználója (általában \'nobody\' vagy \'apache\') számára legyen mind olvasható, MIND ÍRHATÓ. Ha nem létezik, a telepítő megpróbálja létrehozni.';
-$string['pathssubdirroot'] = 'Teljes útvonal a Moodle telepítéséhez. Csak akkor válassza, ha szimbolikus ugrópontokat kell használnia.';
-$string['pathssubwwwroot'] = 'A Moodle elérésére használandó teljes webcím. A Moodle egyszerre több címről nem érhető el. Ha portálja több címet használ, állandó átirányítás kell a jelen cím kivételével az összeshez beállítania. Ha portálja mind intranetről, mind az internetről elérhető, a nyilvános címet itt adja meg, a DNS-t pedig úgy állítsa be, hogy az intranetről a nyilvános cím is elérhető legyen.';
+$string['pathssubdirroot'] = 'Teljes útvonal a Moodle telepítéséhez. ';
+$string['pathssubwwwroot'] = 'A Moodle elérésére használandó teljes webcím. A Moodle egyszerre több 
+címről nem érhető el. Ha portálja több címet használ, a jelen cím kivételével az összeshez állandó 
+átirányítást kell beállítania. Ha portálja mind intranetről, mind az internetről elérhető, a nyilvános 
+címet itt adja meg, a DNS-t pedig úgy állítsa be, hogy az intranetről a 
+nyilvános cím is elérhető legyen. Ha a cím hibás, módosítsa böngészőjében az URL-t, hogy a telepítés egy másik értékkel induljon újra.';
 $string['pathsunsecuredataroot'] = 'Az adatok gyökérkönyvtára nem biztonságos.';
 $string['pathswrongadmindir'] = 'Nem létezik az admin könyvtár.';
 $string['phpextension'] = '{$a} PHP-kibővítés';
 $string['phpversion'] = 'PHP-verzió';
-$string['phpversionhelp'] = 'A Moodle használatához legalább a PHP 4.3.0 vagy 5.1.0 verziója szükséges (az 5.0.x több ismert gond miatt nem ajánlott). Az Ön által használt verzió {$a}. Frissítse a PHP-verziót, vagy térjen át újabb PHP-verziót működtető gazdagépre! (5.0.x esetén visszatérhet a 4.4.x verziójoz is)';
+$string['phpversionhelp'] = 'A Moodle használatához legalább a PHP 4.3.0 vagy 5.1.0 verziója szükséges
+ (az 5.0.x több ismert gond miatt nem ajánlott). Az Ön által használt 
+verzió {$a}. Frissítse a PHP-verziót, vagy térjen át újabb PHP-verziót 
+működtető gazdagépre! (5.0.x esetén visszatérhet a 4.4.x verzióhoz is)';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Azért látja ezt az oldalt, mert sikeresen telepítette és futtatja az {$a->packname} {$a->packversion} csomagot számítógépén. Gratulálunk!';
 $string['welcomep30'] = 'A {$a->installername} tartalmazza azokat az alkalmazásokat, amelyekkel a Moodle számára kialakítható a működési környezet, azaz:';
