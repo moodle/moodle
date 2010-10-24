@@ -88,7 +88,8 @@ require_once($CFG->dirroot . '/backup/util/ui/restore_moodleform.class.php');
 require_once($CFG->dirroot . '/backup/util/ui/restore_ui_components.php');
 
 // And some moodle stuff too
-require_once ($CFG->dirroot . '/tag/lib.php');
-require_once ($CFG->dirroot . '/lib/gradelib.php');
-require_once ($CFG->dirroot . '/course/lib.php');
+require_once($CFG->dirroot . '/tag/lib.php');
+require_once($CFG->dirroot . '/lib/gradelib.php');
+require_once($CFG->dirroot . '/lib//questionlib.php');
+require_once($CFG->dirroot . '/course/lib.php');
 require_once ($CFG->dirroot . '/blocks/moodleblock.class.php');
