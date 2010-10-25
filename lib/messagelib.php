@@ -77,73 +77,63 @@ function message_send($eventdata) {
     $savemessage->fullmessagehtml   = $eventdata->fullmessagehtml;
     $savemessage->smallmessage      = $eventdata->smallmessage;
 
-    if (!empty($eventdata->footer)) {
-        $savemessage->footer = $eventdata->footer;
+    if (!empty($eventdata->notification)) {
+        $savemessage->notification = $eventdata->notification;
     } else {
-        $savemessage->footer = null;
+        $savemessage->notification = 0;
     }
 
-    if (!empty($eventdata->footerhtml)) {
-        $savemessage->footerhtml = $eventdata->footerhtml;
-    } else {
-        $savemessage->footerhtml = null;
-    }
-    
     $savemessage->timecreated = time();
 
     // Find out what processors are defined currently
     // When a user doesn't have settings none gets return, if he doesn't want contact "" gets returned
     $preferencename = 'message_provider_'.$eventdata->component.'_'.$eventdata->name.'_'.$userstate;
-    $processor = get_user_preferences($preferencename, NULL, $eventdata->userto->id);
 
+    $processor = get_user_preferences($preferencename, null, $eventdata->userto->id);
     if ($processor == NULL) { //this user never had a preference, save default
         if (!message_set_default_message_preferences($eventdata->userto)) {
             print_error('cannotsavemessageprefs', 'message');
         }
-        if ($userstate == 'loggedin') {
-            $processor = 'popup';
-        }
-        if ($userstate == 'loggedoff') {
-            $processor = 'email';
-        }
+        $processor = get_user_preferences($preferencename, NULL, $eventdata->userto->id);
     }
 
-    if ($processor == "") {
-        //if the have deselected all processors just leave the message unread
+    if ($processor=='none' && $savemessage->notification) {
+        //if they have deselected all processors and its a notification mark it read. The user doesnt want to be bothered
+        $savemessage->timeread = $timeread;
+        $DB->insert_record('message_read', $savemessage);
     } else {                        // Process the message
         // Store unread message just in case we can not send it
         $savemessage->id = $DB->insert_record('message', $savemessage);
 
         // Try to deliver the message to each processor
-        $processorlist = explode(',', $processor);
-        foreach ($processorlist as $procname) {
-            $processorfile = $CFG->dirroot. '/message/output/'.$procname.'/message_output_'.$procname.'.php';
+        if ($processor!='none') {
+            $processorlist = explode(',', $processor);
+            foreach ($processorlist as $procname) {
+                $processorfile = $CFG->dirroot. '/message/output/'.$procname.'/message_output_'.$procname.'.php';
 
-            if (is_readable($processorfile)) {
-                include_once($processorfile);  // defines $module with version etc
-                $processclass = 'message_output_' . $procname;
+                if (is_readable($processorfile)) {
+                    include_once($processorfile);  // defines $module with version etc
+                    $processclass = 'message_output_' . $procname;
 
-                if (class_exists($processclass)) {
-                    $pclass = new $processclass();
+                    if (class_exists($processclass)) {
+                        $pclass = new $processclass();
 
-                    if (!$pclass->send_message($savemessage)) {
-                        debugging('Error calling message processor '.$procname);
-                        return false;
+                        if (!$pclass->send_message($savemessage)) {
+                            debugging('Error calling message processor '.$procname);
+                            return false;
+                        }
                     }
+                } else {
+                    debugging('Error calling message processor '.$procname);
+                    return false;
                 }
-            } else {
-                debugging('Error calling message processor '.$procname);
-                return false;
             }
-        }
 
-        //$messageid = $savemessage->id;
-        //unset($savemessage->id);
-
-        //if there is no more processors that want to process this we can move message to message_read
-        if ( $DB->count_records('message_working', array('unreadmessageid' => $savemessage->id)) == 0){
-            require_once($CFG->dirroot.'/message/lib.php');
-            message_mark_message_read($savemessage, time(), true);
+            //if there is no more processors that want to process this we can move message to message_read
+            if ( $DB->count_records('message_working', array('unreadmessageid' => $savemessage->id)) == 0){
+                require_once($CFG->dirroot.'/message/lib.php');
+                message_mark_message_read($savemessage, time(), true);
+            }
         }
     }
 
@@ -210,7 +200,7 @@ function message_get_my_providers() {
 
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
-    $providers = $DB->get_records('message_providers');
+    $providers = $DB->get_records('message_providers', null, 'name');
 
     // Remove all the providers we aren't allowed to see now
     foreach ($providers as $providerid => $provider) {
@@ -279,12 +269,17 @@ function message_uninstall($component) {
 function message_set_default_message_preferences($user) {
     global $DB;
 
+    $onlineprocessor = 'email';
+    //look for the pre-2.0 preference if it exists
+    $oldpreference = get_user_preferences('message_showmessagewindow', 0, $user->id);
+    if (!empty($oldpreference)) {
+        $onlineprocessor = 'popup';
+    }
+
     $providers = $DB->get_records('message_providers');
     $preferences = array();
     foreach ($providers as $providerid => $provider) {
-        //use both email and popup when online
-        $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedin'] = 'email,popup';
-        //just email when offline
+        $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedin'] = $onlineprocessor;
         $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedoff'] = 'email';
     }
     return set_user_preferences($preferences, $user->id);

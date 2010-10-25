@@ -5301,7 +5301,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     //install.xml so there are 2.0 sites that are missing it.
     if ($oldversion < 2010101900) {
         $table = new xmldb_table('grade_categories');
-        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
@@ -5315,6 +5315,23 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $DB->delete_records('config', array('name' => 'emoticons'));
         $DB->delete_records('cache_text'); // changed md5 hash calculation
         upgrade_main_savepoint(true, 2010102300);
+    }
+
+    //MDL-24771
+    if ($oldversion < 2010102500) {
+        $field = new xmldb_field('notification', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+
+        $table = new xmldb_table('message');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('message_read');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2010102500);
     }
 
     return true;

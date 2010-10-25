@@ -54,15 +54,12 @@ class message_output_popup extends message_output{
     }
 
     function config_form($preferences) {
-        return '<table>'.
-               '<tr><td align="right">'.get_string('blocknoncontacts', 'message').':</td><td><input type="checkbox" name="blocknoncontacts" '.($preferences->blocknoncontacts==1?" checked=\"checked\"":"").' /></td></tr>'.
-               '<tr><td align="right">'.get_string('beepnewmessage', 'message').':</td><td><input type="checkbox" name="beepnewmessage" '.($preferences->beepnewmessage==1?" checked=\"checked\"":"").' /></td></tr>'.
-               '</table>';
+        return null;
     }
 
     public function process_form($form, &$preferences) {
         $preferences['message_blocknoncontacts']  = !empty($form->blocknoncontacts)?1:0;
-        $preferences['message_beepnewmessage']    = !empty($form->beepnewmessage)?1:0;
+        //$preferences['message_beepnewmessage']    = !empty($form->beepnewmessage)?1:0;
 
         return true;
     }
@@ -70,7 +67,7 @@ class message_output_popup extends message_output{
         global $USER;
 
         $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontacts', '', $userid);
-        $preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $userid);
+        //$preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $userid);
 
         return true;
     }

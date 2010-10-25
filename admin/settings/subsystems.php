@@ -15,6 +15,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     $optionalsubsystems->add(new admin_setting_configcheckbox('messaging', get_string('messaging', 'admin'), get_string('configmessaging','admin'), 1));
 
+    $optionalsubsystems->add(new admin_setting_configcheckbox('messaginghidereadnotifications', get_string('messaginghidereadnotifications', 'admin'), get_string('configmessaginghidereadnotifications','admin'), 0));
+
     $optionalsubsystems->add(new admin_setting_configcheckbox('enablestats', get_string('enablestats', 'admin'), get_string('configenablestats', 'admin'), 0));
 
     $optionalsubsystems->add(new admin_setting_configcheckbox('enablerssfeeds', get_string('enablerssfeeds', 'admin'), get_string('configenablerssfeeds', 'admin'), 0));

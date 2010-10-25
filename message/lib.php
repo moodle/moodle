@@ -526,10 +526,11 @@ function message_print_search($advancedsearch = false, $user1=null) {
     if (!empty($frm->combinedsearch)) {
         $combinedsearchstring = $frm->combinedsearch;
     } else {
-        $combinedsearchstring = get_string('searchcombined','message').'...';
+        //$combinedsearchstring = get_string('searchcombined','message').'...';
+        $combinedsearchstring = '';
     }
 
-    $PAGE->requires->js_init_call('M.core_message.init_search_page', array($combinedsearchstring));
+    //$PAGE->requires->js_init_call('M.core_message.init_search_page', array($combinedsearchstring));
 
     if ($doingsearch) {
         if ($advancedsearch) {
@@ -803,7 +804,7 @@ function message_print_search_results($frm, $showicontext=false, $user1=null) {
             if ($countresults==MESSAGE_SEARCH_MAX_RESULTS) {
                 echo get_string('keywordssearchresultstoomany', 'message', $countresults).' ("'.s($messagesearchstring).'")';
             } else {
-                echo get_string('keywordssearchresults', 'message', $countresults).' ("'.s($messagesearchstring).'")';
+                echo get_string('keywordssearchresults', 'message', $countresults);
             }
             echo html_writer::end_tag('p');
 
@@ -919,7 +920,7 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false, $i
     if ($user === false) {
         echo $OUTPUT->user_picture($USER, array('size'=>20, 'courseid'=>SITEID));
     } else {
-        echo $OUTPUT->user_picture($USER, array('size'=>20, 'courseid'=>SITEID));
+        echo $OUTPUT->user_picture($user, array('size'=>20, 'courseid'=>SITEID));
         echo '&nbsp;';
 
         $return = false;
@@ -1378,8 +1379,8 @@ function message_get_fragment($message, $keywords) {
 }
 
 //retrieve the messages between two users
-function message_get_history($user1, $user2, $limitnum=0) {
-    global $DB;
+function message_get_history($user1, $user2, $limitnum=0, $viewingnewmessages=false) {
+    global $DB, $CFG;
 
     $messages = array();
 
@@ -1390,8 +1391,14 @@ function message_get_history($user1, $user2, $limitnum=0) {
         $sort = 'desc';
     }
 
-    if ($messages_read = $DB->get_records_select('message_read', "(useridto = ? AND useridfrom = ?) OR
-                                                    (useridto = ? AND useridfrom = ?)", array($user1->id, $user2->id, $user2->id, $user1->id),
+    $notificationswhere = null;
+    //we have just moved new messages to read. If theyre here to see new messages dont hide notifications
+    if (!$viewingnewmessages && $CFG->messaginghidereadnotifications) {
+        $notificationswhere = 'AND notification=0';
+    }
+
+    if ($messages_read = $DB->get_records_select('message_read', "((useridto = ? AND useridfrom = ?) OR
+                                                    (useridto = ? AND useridfrom = ?)) $notificationswhere", array($user1->id, $user2->id, $user2->id, $user1->id),
                                                     "timecreated $sort", '*', 0, $limitnum)) {
         foreach ($messages_read as $message) {
             $messages[$message->timecreated] = $message;
@@ -1414,7 +1421,7 @@ function message_get_history($user1, $user2, $limitnum=0) {
     return $messages;
 }
 
-function message_print_message_history($user1,$user2,$search='',$messagelimit=0, $messagehistorylink=false) {
+function message_print_message_history($user1,$user2,$search='',$messagelimit=0, $messagehistorylink=false, $viewingnewmessages=false) {
     global $CFG, $OUTPUT;
 
     echo $OUTPUT->box_start('center');
@@ -1455,7 +1462,7 @@ function message_print_message_history($user1,$user2,$search='',$messagelimit=0,
     }
 
     /// Get all the messages and print them
-    if ($messages = message_get_history($user1, $user2, $messagelimit)) {
+    if ($messages = message_get_history($user1, $user2, $messagelimit, $viewingnewmessages)) {
         $tablecontents = '';
 
         $current = new stdClass();
@@ -1465,6 +1472,11 @@ function message_print_message_history($user1,$user2,$search='',$messagelimit=0,
         $messagedate = get_string('strftimetime');
         $blockdate   = get_string('strftimedaydate');
         foreach ($messages as $message) {
+            if ($message->notification) {
+                $notificationclass = ' notification';
+            } else {
+                $notificationclass = null;
+            }
             $date = usergetdate($message->timecreated);
             if ($current->mday != $date['mday'] | $current->month != $date['month'] | $current->year != $date['year']) {
                 $current->mday = $date['mday'];
@@ -1475,9 +1487,9 @@ function message_print_message_history($user1,$user2,$search='',$messagelimit=0,
                 $tablecontents .= $OUTPUT->heading(userdate($message->timecreated, $blockdate), 4, 'center').'</div>';
             }
             if ($message->useridfrom == $user1->id) {
-                $tablecontents .= '<div class="mdl-left left">'.message_format_message($message, $user1, $messagedate, $search, 'me').'</div><br />';
+                $tablecontents .= "<div class='mdl-left left $notificationclass'>".message_format_message($message, $user1, $messagedate, $search, 'me').'</div><br />';
             } else {
-                $tablecontents .= '<div class="mdl-left right">'.message_format_message($message, $user2, $messagedate, $search, 'other').'</div><br />';
+                $tablecontents .= "<div class='mdl-left right $notificationclass'>".message_format_message($message, $user2, $messagedate, $search, 'other').'</div><br />';
             }
         }
 

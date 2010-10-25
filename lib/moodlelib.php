@@ -9072,7 +9072,7 @@ function message_popup_window() {
 
     $message_users = null;
 
-    $messagesql = "SELECT m.id, m.smallmessage, u.firstname, u.lastname FROM {message} m
+    $messagesql = "SELECT m.id, m.smallmessage, m.notification, u.firstname, u.lastname FROM {message} m
 JOIN {message_working} mw ON m.id=mw.unreadmessageid
 JOIN {message_processors} p ON mw.processorid=p.id
 JOIN {user} u ON m.useridfrom=u.id
@@ -9097,7 +9097,9 @@ WHERE m.useridto = :userid AND p.name='popup'";
             $strmessages = get_string('unreadnewmessages', 'message', count($message_users));
         } else {
             $message_users = reset($message_users);
+            if (!$message_users->notification) {
             $strmessages = get_string('unreadnewmessage', 'message', fullname($message_users) );
+            }
 
             if (!empty($message_users->smallmessage)) {
                 //display the first 200 chars of the message in the popup

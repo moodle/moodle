@@ -97,8 +97,9 @@ if (($form = data_submitted()) && confirm_sesskey()) {
 
 /// Set all the preferences for all the message providers
     $providers = message_get_my_providers();
+    $possiblestates = array('loggedin', 'loggedoff');
     foreach ( $providers as $providerid => $provider){
-        foreach (array('loggedin', 'loggedoff') as $state){
+        foreach ($possiblestates as $state){
             $linepref = '';
             $componentproviderstate = $provider->component.'_'.$provider->name.'_'.$state;
             if (array_key_exists($componentproviderstate, $form)) {
@@ -111,6 +112,14 @@ if (($form = data_submitted()) && confirm_sesskey()) {
                 }
             }
             $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_'.$state] = $linepref;
+        }
+    }
+    foreach ( $providers as $providerid => $provider){
+        foreach ($possiblestates as $state){
+            $preferencekey = 'message_provider_'.$provider->component.'_'.$provider->name.'_'.$state;
+            if (empty($preferences[$preferencekey])) {
+                $preferences[$preferencekey] = 'none';
+            }
         }
     }
 
@@ -194,7 +203,7 @@ echo '<form class="mform" method="post" action="'.$CFG->wwwroot.'/message/edit.p
 echo '<fieldset id="providers" class="clearfix">';
 echo '<legend class="ftoggler">'.get_string('providers_config', 'message').'</legend>';
 $providers = message_get_my_providers();
-$processors = $DB->get_records('message_processors');
+$processors = $DB->get_records('message_processors', null, 'name DESC');
 $number_procs = count($processors);
 echo '<table cellpadding="2"><tr><td>&nbsp;</td>'."\n";
 foreach ( $processors as $processorid => $processor){
@@ -228,6 +237,7 @@ echo '</fieldset>';
 /// Show all the message processors
 $processors = $DB->get_records('message_processors');
 
+$processorconfigform = null;
 foreach ($processors as $processorid => $processor) {
     $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';
     if (is_readable($processorfile)) {
@@ -236,18 +246,29 @@ foreach ($processors as $processorid => $processor) {
 
         if (class_exists($processclass)) {
             $pclass = new $processclass();
+            $processorconfigform = $pclass->config_form($preferences);
+
+            if (!empty($processorconfigform)) {
             echo '<fieldset id="messageprocessor_'.$processor->name.'" class="clearfix">';
             echo '<legend class="ftoggler">'.get_string('pluginname', 'message_'.$processor->name).'</legend>';
 
-            echo $pclass->config_form($preferences);
+            echo $processorconfigform;
 
             echo '</fieldset>';
-
+            }
         } else{
             print_error('errorcallingprocessor', 'message');
         }
     }
 }
+
+echo '<fieldset id="messageprocessor_general" class="clearfix">';
+echo '<legend class="ftoggler">'.get_string('generalsettings','admin').'</legend>';
+    echo '<table>'.
+    '<tr><td align="right">'.get_string('blocknoncontacts', 'message').':</td><td><input type="checkbox" name="blocknoncontacts" '.($preferences->blocknoncontacts==1?" checked=\"checked\"":"").' /></td></tr>'.
+    //'<tr><td align="right">'.get_string('beepnewmessage', 'message').':</td><td><input type="checkbox" name="beepnewmessage" '.($preferences->beepnewmessage==1?" checked=\"checked\"":"").' /></td></tr>'.
+    '</table>';
+echo '</fieldset>';
 
 echo '<div><input type="hidden" name="sesskey" value="'.sesskey().'" /></div>';
 echo '<div style="text-align:center"><input name="submit" value="'. get_string('updatemyprofile') .'" type="submit" /></div>';

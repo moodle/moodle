@@ -639,9 +639,10 @@ function forum_cron() {
                 $smallmessagestrings = new stdClass();
                 $smallmessagestrings->user = fullname($userfrom);
                 $smallmessagestrings->forumname = "{$course->shortname}->".format_string($forum->name,true);
-                $smallmessagestrings->replylink = "$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id#p$post->id";
+                $smallmessagestrings->replylink = "<a href='{$CFG->wwwroot}/mod/forum/discuss.php?d={$discussion->id}#p{$post->id}'>{$discussion->name}</a>";
                 $smallmessagestrings->message = $post->message;
                 $eventdata->smallmessage = get_string('smallmessage', 'forum', $smallmessagestrings);
+                $eventdata->notification = 1;
 
                 $mailresult = message_send($eventdata);
                 if (!$mailresult){

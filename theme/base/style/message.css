@@ -40,6 +40,7 @@ table.message .searchresults td {padding:5px;}
 .message .messagearea .messagehistory .heading {width:100%;clear:both;}
 .message .messagearea .messagehistory .left {padding-bottom:10px;width:50%;float:left;clear:both;}
 .message .messagearea .messagehistory .right {padding-bottom:10px;width:50%;float:right;clear:both;}
+.message .messagearea .messagehistory .notification {padding:10px;background-color:#EEEEEE;margin-top:5px;}
 .message .messagearea .messagesend {padding-top:20px;float:center;clear:both;}
 .message .messagearea .messagesend .messagesendbox {width:100%}
 .message .messagearea .messagesend fieldset {padding:0px;margin:0;} /** bring the message send button closer to the message box */
@@ -51,6 +52,6 @@ table.message .searchresults td {padding:5px;}
 .messagesearchresults td {padding:0px 10px 0px 20px;}
 .messagesearchresults td span {white-space:nowrap;}
 
-#newmessageoverlay {background-color:LightGrey;padding:20px;position:fixed;bottom:0;right:0;}
-#newmessageoverlay #usermessage {padding:10px;font-weight:bold;}
+#newmessageoverlay {background-color:LightGrey;border:1px solid black;padding:20px;position:fixed;bottom:0;right:0;}
+#newmessageoverlay #usermessage {padding:10px;}
 .ie6 #newmessageoverlay {position:static;}

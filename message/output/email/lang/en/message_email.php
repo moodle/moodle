@@ -24,3 +24,4 @@
  */
 
 $string['pluginname'] = 'Email';
+$string['email'] = 'Send email notifications to';

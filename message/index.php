@@ -258,13 +258,13 @@ echo html_writer::start_tag('div', array('class'=>'messagearea mdl-align'));
 
                 if ($viewingnewmessages) {
                     $messagehistorylink .=  '&nbsp;|&nbsp;'.html_writer::start_tag('span');//, array('class'=>$historyclass)
-                        $messagehistorylink .= get_string('unreadnewmessage','message',fullname($user2));
+                        $messagehistorylink .= get_string('unreadnewmessages','message',$displaycount);
                     $messagehistorylink .= html_writer::end_tag('span');
                 }
 
             $messagehistorylink .= html_writer::end_tag('div');
 
-            message_print_message_history($user1, $user2, $search, $displaycount, $messagehistorylink);
+            message_print_message_history($user1, $user2, $search, $displaycount, $messagehistorylink, $viewingnewmessages);
         echo html_writer::end_tag('div');
 
         //send message form

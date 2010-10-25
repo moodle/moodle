@@ -28,13 +28,13 @@ M.core_message.init_refresh_page = function(Y, delay, url) {
 	setTimeout(delay_callback, delay);
 };
 
-M.core_message.init_search_page = function(Y, defaultsearchterm) {
+/*M.core_message.init_search_page = function(Y, defaultsearchterm) {
     this.Y = Y;
     this.defaultsearchterm = defaultsearchterm;
 
     var combinedsearchbox = this.Y.one('#combinedsearch');
     combinedsearchbox.on('focus', this.combinedsearchgotfocus, this);
-};
+};*/
 
 
 M.core_message.combinedsearchgotfocus = function(e) {
