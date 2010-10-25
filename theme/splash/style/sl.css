@@ -636,6 +636,9 @@ ul.topics li#section-0, ul.weeks li#section-0 {
     text-align: right;
 }
 
+.pagelayout-redirect {background-position:0 0;border-top:1px solid #853650;}
+.pagelayout-redirect #content {margin-top:150px;}
+
 /* Splash Theme Specific settings for Administrators to customise css.
 ---------------------------*/
 [[setting:customcss]]

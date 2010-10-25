@@ -318,3 +318,6 @@ clear: both;
 #custommenu .yui3-menu-horizontal .yui3-menu-content li a {
     cursor:pointer;
 }
+
+.pagelayout-redirect #content p,
+.pagelayout-redirect #content div {color:#FFF;}

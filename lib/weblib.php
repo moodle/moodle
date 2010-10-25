@@ -2460,7 +2460,7 @@ function redirect($url, $message='', $delay=-1) {
     }
 
     // Include a redirect message, even with a HTTP redirect, because that is recommended practice.
-    $PAGE->set_pagelayout('embedded');  // No header and footer needed
+    $PAGE->set_pagelayout('redirect');  // No header and footer needed
     $CFG->docroot = false; // to prevent the link to moodle docs from being displayed on redirect page.
     echo $OUTPUT->redirect_message($encodedurl, $message, $delay, $debugdisableredirect);
     exit;

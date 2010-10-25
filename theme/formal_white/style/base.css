@@ -33,3 +33,5 @@ h1.main, h2.main, h3.main, h4.main, h5.main, h6.main {text-align:center;}
 .groupmanagementtable {width:90%;}
 .groupmanagementtable td {vertical-align:top;border-width:0px;}
 .groupmanagementtable td p {margin:0px;}
+
+.pagelayout-redirect #page {background-image:none;}

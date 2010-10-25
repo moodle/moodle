@@ -677,3 +677,8 @@ padding: 0
 
 /* Registration */
 #page-admin-registration-hubselector .registration_textfield {width: 400px;}
+
+/**
+ * Redirect
+ */
+.pagelayout-redirect #content {text-align:center;margin-top:10%;margin-bottom:10%;}
