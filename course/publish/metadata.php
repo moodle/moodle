@@ -79,7 +79,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
     $coursepublicationform = new course_publication_form('',
                     array('huburl' => $huburl, 'hubname' => $hubname, 'sesskey' => sesskey(),
                         'course' => $course, 'advertise' => $advertise, 'share' => $share,
-                        'id' => $id));
+                        'id' => $id, 'page' => $PAGE));
     $fromform = $coursepublicationform->get_data();
 
     if (!empty($fromform)) {

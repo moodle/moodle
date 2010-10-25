@@ -99,6 +99,7 @@ class course_publication_form extends moodleform {
         $course = $this->_customdata['course'];
         $advertise = $this->_customdata['advertise'];
         $share = $this->_customdata['share'];
+        $page = $this->_customdata['page'];
         $site = get_site();
 
         //hidden parameters
@@ -153,6 +154,12 @@ class course_publication_form extends moodleform {
             $defaultcreatornotes = $publishedcourse['creatornotes'];
             $screenshotsnumber = $publishedcourse['screenshots'];
             $privacy = $publishedcourse['privacy'];
+
+            $page->requires->yui_module('moodle-block_community-imagegallery',
+                    'M.blocks_community.init_imagegallery',
+                    array(array('imageids' => array($hubcourseid),
+                            'imagenumbers' => array($screenshotsnumber),
+                            'huburl' => $huburl)));
         } else {
             $defaultfullname = $course->fullname;
             $defaultshortname = $course->shortname;
@@ -199,7 +206,7 @@ class course_publication_form extends moodleform {
             $mform->addElement('hidden', 'share', $share);
 
             $mform->addElement('text', 'demourl', get_string('demourl', 'hub'),
-                array('class' => 'metadatatext'));
+                    array('class' => 'metadatatext'));
             $mform->setType('demourl', PARAM_URL);
             $mform->setDefault('demourl', new moodle_url("/course/view.php?id=" . $course->id));
             $mform->addHelpButton('demourl', 'demourl', 'hub');
@@ -333,20 +340,13 @@ class course_publication_form extends moodleform {
         if (!empty($screenshotsnumber)) {
 
             if (!empty($privacy)) {
-                $images = array();
-                $baseurl = new moodle_url($huburl . '/local/hub/webservice/download.php', array('courseid' => $hubcourseid, 'filetype' => HUB_SCREENSHOT_FILE_TYPE));
-                for ($i = 1; $i <= $screenshotsnumber; $i = $i + 1) {
-                    $params['screenshotnumber'] = $i;
-                    $images[] = array(
-                        'thumburl' => new moodle_url($baseurl, array('screenshotnumber' => $i)),
-                        'imageurl' => new moodle_url($baseurl, array('screenshotnumber' => $i, 'imagewidth' => 'original')),
-                        'title' => $defaultfullname,
-                        'alt' => $defaultfullname
-                    );
-                }
-                $imagegallery = new image_gallery($images, $defaultshortname);
-                $imagegallery->displayfirstimageonly = true;
-                $screenshothtml = $OUTPUT->render($imagegallery);
+                $baseurl = new moodle_url($huburl . '/local/hub/webservice/download.php',
+                                array('courseid' => $hubcourseid, 'filetype' => HUB_SCREENSHOT_FILE_TYPE));
+                $screenshothtml = html_writer::empty_tag('img',
+                                array('src' => $baseurl, 'alt' => $defaultfullname));
+                $screenshothtml = html_writer::tag('div', $screenshothtml,
+                                array('class' => 'coursescreenshot',
+                                    'id' => 'image-' . $hubcourseid));
             } else {
                 $screenshothtml = get_string('existingscreenshotnumber', 'hub', $screenshotsnumber);
             }
@@ -380,4 +380,4 @@ class course_publication_form extends moodleform {
     }
 
 }
-?>
+

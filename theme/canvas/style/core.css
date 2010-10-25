@@ -674,3 +674,6 @@ padding: 0
 .path-enrol .enrolcohortbutton {float:left;}
 .path-enrol .enrolusersbutton.instance1,
 .path-enrol .enrolcohortbutton.instance1 {float:right;}
+
+/* Registration */
+#page-admin-registration-hubselector .registration_textfield {width: 400px;}

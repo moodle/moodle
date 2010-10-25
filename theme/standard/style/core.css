@@ -430,3 +430,6 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
 .path-enrol .enrolusersbutton.instance1,
 .path-enrol .enrolcohortbutton.instance1,
 .path-enrol .assignuserrole.instance1 {float:right;}
+
+/* Registration */
+#page-admin-registration-hubselector .registration_textfield {width: 400px;}

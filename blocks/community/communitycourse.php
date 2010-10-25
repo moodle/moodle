@@ -215,16 +215,23 @@ if (!empty($errormessage)) {
 }
 
 //load javascript
-$courseids = array();
+$commentedcourseids = array(); //result courses with comments only
+$courseids = array(); //all result courses
+$courseimagenumbers = array(); //number of screenshots of all courses (must be exact same order than $courseids)
 if (!empty($courses)) {
     foreach ($courses as $course) {
         if (!empty($course['comments'])) {
-            $courseids[] = $course['id'];
+            $commentedcourseids[] = $course['id'];
         }
+        $courseids[] = $course['id'];
+        $courseimagenumbers[] = $course['screenshots'];
     }
 }
 $PAGE->requires->yui_module('moodle-block_community-comments', 'M.blocks_community.init_comments',
-        array(array('commentids' => $courseids)));
+        array(array('commentids' => $commentedcourseids)));
+$PAGE->requires->yui_module('moodle-block_community-imagegallery', 'M.blocks_community.init_imagegallery',
+        array(array('imageids' => $courseids, 'imagenumbers' => $courseimagenumbers,
+                'huburl' => $huburl)));
 
 echo highlight($search, $renderer->course_list($courses, $huburl, $courseid));
 

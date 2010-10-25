@@ -21,7 +21,7 @@
 /* COURSES RESULT */
 #page-blocks-community-communitycourse .additionaldesc {font-size: 80%; color: #8B8989;}
 #page-blocks-community-communitycourse .comment-link {font-size: 80%; color: #555555;}
-#page-blocks-community-communitycourse .coursescreenshot {text-align:center;}
+#page-blocks-community-communitycourse .coursescreenshot {text-align:center;cursor: pointer;}
 #page-blocks-community-communitycourse .hubcourseinfo {margin-left: 15px;}
 #page-blocks-community-communitycourse .coursesitelink {}
 #page-blocks-community-communitycourse .pagingbar {text-align: center;}
@@ -33,6 +33,7 @@
 #page-blocks-community-communitycourse .hubcourserating { padding-top: 3px; font-size: 80%; color: #555555;}
 #page-blocks-community-communitycourse .coursedescription {width: 70%; float: left;}
 #page-blocks-community-communitycourse .fullhubcourse {margin-bottom: 20px;}
+#page-blocks-community-communitycourse .hubcoursetitlepanel {margin-bottom: 6px;}
 #page-blocks-community-communitycourse .hubcourseresult {
     background:none repeat scroll 0 0 #FFFFFF;
     clear:both;
@@ -153,3 +154,30 @@
 #page-blocks-community-communitycourse .hubcourseoutcomes {}
 #page-blocks-community-communitycourse .nextlink {text-align: center;margin-top: 6px;}
 #page-blocks-community-communitycourse .textinfo {}
+
+#ss-mask {
+    z-index: 10;
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+    opacity:0.35;
+    filter:alpha(opacity:35);
+    background:#000;
+}
+
+.hiddenoverlay {
+    display: none;
+    text-align: center;
+}
+
+.imagearrow {
+    font-size: 120%;
+    display: inline;
+    cursor: pointer;
+}
+.imagetitle {
+    display: inline;
+    cursor: pointer;
+}

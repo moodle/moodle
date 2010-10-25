@@ -154,8 +154,10 @@ class hub_selector_form extends moodleform {
         $mform->addElement('static', 'or', '', get_string('orenterprivatehub', 'hub'));
 
         //Private hub
-        $mform->addElement('text', 'unlistedurl', get_string('privatehuburl', 'hub'));
-        $mform->addElement('text', 'password', get_string('password'));
+        $mform->addElement('text', 'unlistedurl', get_string('privatehuburl', 'hub'),
+                array('class' => 'registration_textfield'));
+        $mform->addElement('text', 'password', get_string('password'),
+                array('class' => 'registration_textfield'));
 
         $this->add_action_buttons(false, get_string('selecthub', 'hub'));
     }
