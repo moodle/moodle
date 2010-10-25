@@ -1462,7 +1462,7 @@ function scorm_seq_flow_tree_traversal ($activity,$direction,$childrenflag,$prev
                  }
              }
              if ($children[0]->id == $activity->id){
-                $seq = scorm_seq_flow_tree_traversal ($parent, 'backward', false, null, $seq);
+                $seq = scorm_seq_flow_tree_traversal ($parent, 'backward', false, null, $seq, $userid);
                 return $seq;
              }
              else{
