@@ -887,7 +887,7 @@ class core_renderer extends renderer_base {
             $lis[] = $item;
             $row = 1 - $row; // Flip even/odd.
         }
-        return html_writer::tag('ul', implode("\n", $lis), array('class' => 'list'));
+        return html_writer::tag('ul', implode("\n", $lis), array('class' => 'unlist'));
     }
 
     /**
