@@ -111,7 +111,6 @@ class data_field_file extends data_field_base {
             $oldcontent = new object;
             $oldcontent->fieldid = $this->field->id;
             $oldcontent->recordid = $recordid;
-            print_object('here');
             if (!$oldcontent->id = insert_record('data_content', $oldcontent)) {
                 error('Could not make an empty record!');
             }
