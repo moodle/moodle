@@ -397,6 +397,7 @@ class moodle_user_external extends external_api {
                 $userarray['timezone'] = $user->timezone;
                 $userarray['mailformat'] = $user->mailformat;
                 $userarray['description'] = $user->description;
+                $userarray['descriptionformat'] = $user->descriptionformat;
                 $userarray['city'] = $user->city;
                 $userarray['country'] = $user->country;
                 $userarray['customfields'] = array();
@@ -434,7 +435,8 @@ class moodle_user_external extends external_api {
                     'theme'       => new external_value(PARAM_SAFEDIR, 'Theme name such as "standard", must exist on server'),
                     'timezone'    => new external_value(PARAM_ALPHANUMEXT, 'Timezone code such as Australia/Perth, or 99 for default'),
                     'mailformat'  => new external_value(PARAM_INTEGER, 'Mail format code is 0 for plain text, 1 for HTML etc'),
-                    'description' => new external_value(PARAM_TEXT, 'User profile description, as HTML'),
+                    'description' => new external_value(PARAM_RAW, 'User profile description'),
+                    'descriptionformat' => new external_value(PARAM_INT, 'User profile description format'),
                     'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user'),
                     'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ'),
                     'customfields' => new external_multiple_structure(
