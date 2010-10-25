@@ -111,6 +111,7 @@ $CFG->xmlstrictheaders = false;
 
 if (!core_tables_exist()) {
     $PAGE->set_pagelayout('maintenance');
+    define('MESSAGE_WINDOW', true);
 
     // fake some settings
     $CFG->docroot = 'http://docs.moodle.org';
@@ -193,6 +194,7 @@ if (empty($CFG->version)) {
 
 if ($version > $CFG->version) {  // upgrade
     $PAGE->set_pagelayout('maintenance');
+    define('MESSAGE_WINDOW', true);
 
     $a->oldversion = "$CFG->release ($CFG->version)";
     $a->newversion = "$release ($version)";
@@ -276,6 +278,7 @@ if (moodle_needs_upgrading()) {
         // means core upgrade or installation was not already done
         if (!$confirmplugins) {
             $PAGE->set_pagelayout('maintenance');
+            define('MESSAGE_WINDOW', true);
             $strplugincheck = get_string('plugincheck');
             $PAGE->navbar->add($strplugincheck);
             $PAGE->set_title($strplugincheck);
