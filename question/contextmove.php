@@ -194,7 +194,7 @@
     $PAGE->set_url($thispageurl->out());
     $PAGE->navbar->add($streditingcategories, $thispageurl->out());
     $PAGE->navbar->add(get_string('movingcategory', 'question'));
-    $PAGE->set_header($COURSE->fullname);
+    $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
 
     //parameter for get_string
