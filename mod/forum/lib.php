@@ -452,7 +452,7 @@ function forum_cron() {
                 if ($cm = get_coursemodule_from_instance('forum', $forumid, $courseid)) {
                     $coursemodules[$forumid] = $cm;
                 } else {
-                    mtrace('Could not course module for forum '.$forumid);
+                    mtrace('Could not find course module for forum '.$forumid);
                     unset($posts[$pid]);
                     continue;
                 }
