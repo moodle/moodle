@@ -1236,7 +1236,7 @@ function set_cache_flag($type, $name, $value, $expiry=NULL) {
         return true;
     }
 
-    if ($f = $DB->get_record('cache_flags', array('name'=>$name, 'flagtype'=>$type), '*', IGNORE_MULTIPLE)) { // this is a potentail problem in DEBUG_DEVELOPER
+    if ($f = $DB->get_record('cache_flags', array('name'=>$name, 'flagtype'=>$type), '*', IGNORE_MULTIPLE)) { // this is a potential problem in DEBUG_DEVELOPER
         if ($f->value == $value and $f->expiry == $expiry and $f->timemodified == $timemodified) {
             return true; //no need to update; helps rcache too
         }
@@ -1284,118 +1284,138 @@ function gc_cache_flags() {
 /// FUNCTIONS FOR HANDLING USER PREFERENCES ////////////////////////////////////
 
 /**
- * Refresh current $USER session global variable with all their current preferences.
+ * Refresh user preference cache. This is used most often for $USER
+ * object that is stored in session, but it also helps with performance in cron script.
  *
- * @global object
- * @param mixed $time default null
+ * Preferences for each user are loaded on first use on every page, then again after the timeout expires.
+ *
+ * @param stdClass $user user object, preferences are preloaded into ->preference property
+ * @param int $cachelifetime cache life time on the current page (ins seconds)
  * @return void
  */
-function check_user_preferences_loaded($time = null) {
-    global $USER, $DB;
-    static $timenow = null; // Static cache, so we only check up-to-dateness once per request.
+function check_user_preferences_loaded(stdClass $user, $cachelifetime = 120) {
+    global $DB;
+    static $loadedusers = array(); // Static cache, we need to check on each page load, not only every 2 minutes.
 
-    if (!empty($USER->preference) && isset($USER->preference['_lastloaded'])) {
-        // Already loaded. Are we up to date?
+    if (!isset($user->id)) {
+        throw new coding_exception('Invalid $user parameter in check_user_preferences_loaded() call, missing id field');
+    }
 
-        if (is_null($timenow) || (!is_null($time) && $time != $timenow)) {
-            $timenow = time();
-            if (!get_cache_flag('userpreferenceschanged', $USER->id, $USER->preference['_lastloaded'])) {
-                // We are up-to-date.
-                return;
-            }
-        } else {
-            // Already checked for up-to-date-ness.
+    if (empty($user->id) or isguestuser($user->id)) {
+        // No permanent storage for not-logged-in users and guest
+        if (!isset($user->preference)) {
+            $user->preference = array();
+        }
+        return;
+    }
+
+    $timenow = time();
+
+    if (isset($loadedusers[$user->id]) and isset($user->preference) and isset($user->preference['_lastloaded'])) {
+        // Already loaded at least once on this page. Are we up to date?
+        if ($user->preference['_lastloaded'] + $cachelifetime > $timenow) {
+            // no need to reload - we are on the same page and we loaded prefs just a moment ago
+            return;
+
+        } else if (!get_cache_flag('userpreferenceschanged', $user->id, $user->preference['_lastloaded'])) {
+            // no change since the lastcheck on this page
+            $user->preference['_lastloaded'] = $timenow;
             return;
         }
     }
 
-    // OK, so we have to reload. Reset preference
-    $USER->preference = array();
-
-    if (!isloggedin() or isguestuser()) {
-        // No permanent storage for not-logged-in user and guest
-
-    } else if ($preferences = $DB->get_records('user_preferences', array('userid'=>$USER->id))) {
-        foreach ($preferences as $preference) {
-            $USER->preference[$preference->name] = $preference->value;
-        }
-    }
-
-    $USER->preference['_lastloaded'] = $timenow;
+    // OK, so we have to reload all preferences
+    $loadedusers[$user->id] = true;
+    $user->preference = $DB->get_records_menu('user_preferences', array('userid'=>$user->id), '', 'name,value'); // All values
+    $user->preference['_lastloaded'] = $timenow;
 }
 
 /**
- * Called from set/delete_user_preferences, so that the prefs can be correctly reloaded.
+ * Called from set/delete_user_preferences, so that the prefs can
+ * be correctly reloaded in different sessions.
  *
- * @global object
- * @global object
+ * NOTE: internal function, do not call from other code.
+ *
  * @param integer $userid the user whose prefs were changed.
+ * @return void
  */
 function mark_user_preferences_changed($userid) {
-    global $CFG, $USER;
-    if ($userid == $USER->id) {
-        check_user_preferences_loaded(time());
+    global $CFG;
+
+    if (empty($userid) or isguestuser($userid)) {
+        // no cache flags for guest and not-logged-in users
+        return;
     }
+
     set_cache_flag('userpreferenceschanged', $userid, 1, time() + $CFG->sessiontimeout);
 }
 
 /**
- * Sets a preference for the current user
+ * Sets a preference for the specified user.
  *
- * Optionally, can set a preference for a different user object
+ * If user object submitted, 'preference' property contains the preferences cache.
  *
- * @todo Add a better description and include usage examples. Add inline links to $USER and user functions in above line.
- *
- * @global object
- * @global object
  * @param string $name The key to set as preference for the specified user
- * @param string $value The value to set for the $name key in the specified user's record
- * @param int $otheruserid A moodle user ID, default null
- * @return bool
+ * @param string $value The value to set for the $name key in the specified user's record,
+ *                      null means delete current value
+ * @param stdClass|int $user A moodle user object or id, null means current user
+ * @return bool always true or exception
  */
-function set_user_preference($name, $value, $otheruserid=NULL) {
+function set_user_preference($name, $value, $user = null) {
     global $USER, $DB;
 
-    if (empty($name)) {
-        return false;
+    if (empty($name) or is_numeric($name) or $name === '_lastloaded') {
+        throw new coding_exception('Invalid preference name in set_user_preference() call');
     }
 
-    $nostore = false;
-    if (empty($otheruserid)){
-        if (!isloggedin() or isguestuser()) {
-            $nostore = true;
-        }
-        $userid = $USER->id;
+    if (is_null($value)) {
+        // null means delete current
+        return unset_user_preference($name, $user);
+    } else if (is_object($value)) {
+        throw new coding_exception('Invalid value in set_user_preference() call, objects are not allowed');
+    } else if (is_array($value)) {
+        throw new coding_exception('Invalid value in set_user_preference() call, arrays are not allowed');
+    }
+    $value = (string)$value;
+
+    if (is_null($user)) {
+        $user = $USER;
+    } else if (isset($user->id)) {
+        // $user is valid object
+    } else if (is_numeric($user)) {
+        $user = (object)array('id'=>(int)$user);
     } else {
-        if (isguestuser($otheruserid)) {
-            $nostore = true;
-        }
-        $userid = $otheruserid;
+        throw new coding_exception('Invalid $user parameter in set_user_preference() call');
     }
 
-    if ($nostore) {
-        // no permanent storage for not-logged-in user and guest
+    check_user_preferences_loaded($user);
 
-    } else if ($preference = $DB->get_record('user_preferences', array('userid'=>$userid, 'name'=>$name))) {
-        if ($preference->value === $value) {
+    if (empty($user->id) or isguestuser($user->id)) {
+        // no permanent storage for not-logged-in users and guest
+        $user->preference[$name] = $value;
+        return true;
+    }
+
+    if ($preference = $DB->get_record('user_preferences', array('userid'=>$user->id, 'name'=>$name))) {
+        if ($preference->value === $value and isset($user->preference[$name]) and $user->preference[$name] === $value) {
+            // preference already set to this value
             return true;
         }
-        $DB->set_field('user_preferences', 'value', (string)$value, array('id'=>$preference->id));
+        $DB->set_field('user_preferences', 'value', $value, array('id'=>$preference->id));
 
     } else {
         $preference = new stdClass();
-        $preference->userid = $userid;
+        $preference->userid = $user->id;
         $preference->name   = $name;
-        $preference->value  = (string)$value;
+        $preference->value  = $value;
         $DB->insert_record('user_preferences', $preference);
     }
 
-    mark_user_preferences_changed($userid);
-    // update value in USER session if needed
-    if ($userid == $USER->id) {
-        $USER->preference[$name] = (string)$value;
-        $USER->preference['_lastloaded'] = time();
-    }
+    // update value in cache
+    $user->preference[$name] = $value;
+
+    // set reload flag for other sessions
+    mark_user_preferences_changed($user->id);
 
     return true;
 }
@@ -1403,18 +1423,15 @@ function set_user_preference($name, $value, $otheruserid=NULL) {
 /**
  * Sets a whole array of preferences for the current user
  *
+ * If user object submitted, 'preference' property contains the preferences cache.
+ *
  * @param array $prefarray An array of key/value pairs to be set
- * @param int $otheruserid A moodle user ID
- * @return bool
+ * @param stdClass|int $user A moodle user object or id, null means current user
+ * @return bool always true or exception
  */
-function set_user_preferences($prefarray, $otheruserid=NULL) {
-
-    if (!is_array($prefarray) or empty($prefarray)) {
-        return false;
-    }
-
+function set_user_preferences(array $prefarray, $user = null) {
     foreach ($prefarray as $name => $value) {
-        set_user_preference($name, $value, $otheruserid);
+        set_user_preference($name, $value, $user);
     }
     return true;
 }
@@ -1422,31 +1439,45 @@ function set_user_preferences($prefarray, $otheruserid=NULL) {
 /**
  * Unsets a preference completely by deleting it from the database
  *
- * Optionally, can set a preference for a different user id
+ * If user object submitted, 'preference' property contains the preferences cache.
  *
- * @global object
  * @param string  $name The key to unset as preference for the specified user
- * @param int $otheruserid A moodle user ID
+ * @param stdClass|int $user A moodle user object or id, null means current user
+ * @return bool always true or exception
  */
-function unset_user_preference($name, $otheruserid=NULL) {
+function unset_user_preference($name, $user = null) {
     global $USER, $DB;
 
-    if (empty($otheruserid)){
-        $userid = $USER->id;
-        check_user_preferences_loaded();
+    if (empty($name) or is_numeric($name) or $name === '_lastloaded') {
+        throw new coding_exception('Invalid preference name in unset_user_preference() call');
+    }
+
+    if (is_null($user)) {
+        $user = $USER;
+    } else if (isset($user->id)) {
+        // $user is valid object
+    } else if (is_numeric($user)) {
+        $user = (object)array('id'=>(int)$user);
     } else {
-        $userid = $otheruserid;
+        throw new coding_exception('Invalid $user parameter in unset_user_preference() call');
     }
 
-    //Then from DB
-    $DB->delete_records('user_preferences', array('userid'=>$userid, 'name'=>$name));
+    check_user_preferences_loaded($user);
 
-    mark_user_preferences_changed($userid);
-    //Delete the preference from $USER if needed
-    if ($userid == $USER->id) {
-        unset($USER->preference[$name]);
-        $USER->preference['_lastloaded'] = time();
+    if (empty($user->id) or isguestuser($user->id)) {
+        // no permanent storage for not-logged-in user and guest
+        unset($user->preference[$name]);
+        return true;
     }
+
+    // delete from DB
+    $DB->delete_records('user_preferences', array('userid'=>$user->id, 'name'=>$name));
+
+    // delete the preference from cache
+    unset($user->preference[$name]);
+
+    // set reload flag for other sessions
+    mark_user_preferences_changed($user->id);
 
     return true;
 }
@@ -1462,35 +1493,40 @@ function unset_user_preference($name, $otheruserid=NULL) {
  * none is found, then the optional value $default is returned,
  * otherwise NULL.
  *
- * @global object
- * @global object
+ * If user object submitted, 'preference' property contains the preferences cache.
+ *
  * @param string $name Name of the key to use in finding a preference value
- * @param string $default Value to be returned if the $name key is not set in the user preferences
- * @param int $otheruserid A moodle user ID
- * @return string
+ * @param mixed $default Value to be returned if the $name key is not set in the user preferences
+ * @param stdClass|int $user A moodle user object or id, null means current user
+ * @return mixed string value or default
  */
-function get_user_preferences($name=NULL, $default=NULL, $otheruserid=NULL) {
-    global $USER, $DB;
+function get_user_preferences($name = null, $default = null, $user = null) {
+    global $USER;
 
-    if (empty($otheruserid) || (isloggedin() && ($USER->id == $otheruserid))){
-        check_user_preferences_loaded();
+    if (is_null($name)) {
+        // all prefs
+    } else if (is_numeric($name) or $name === '_lastloaded') {
+        throw new coding_exception('Invalid preference name in get_user_preferences() call');
+    }
 
-        if (empty($name)) {
-            return $USER->preference; // All values
-        } else if (array_key_exists($name, $USER->preference)) {
-            return $USER->preference[$name]; // The single value
-        } else {
-            return $default; // Default value (or NULL)
-        }
-
+    if (is_null($user)) {
+        $user = $USER;
+    } else if (isset($user->id)) {
+        // $user is valid object
+    } else if (is_numeric($user)) {
+        $user = (object)array('id'=>(int)$user);
     } else {
-        if (empty($name)) {
-            return $DB->get_records_menu('user_preferences', array('userid'=>$otheruserid), '', 'name,value'); // All values
-        } else if ($value = $DB->get_field('user_preferences', 'value', array('userid'=>$otheruserid, 'name'=>$name))) {
-            return $value; // The single value
-        } else {
-            return $default; // Default value (or NULL)
-        }
+        throw new coding_exception('Invalid $user parameter in get_user_preferences() call');
+    }
+
+    check_user_preferences_loaded($user);
+
+    if (empty($name)) {
+        return $user->preference; // All values
+    } else if (isset($user->preference[$name])) {
+        return $user->preference[$name]; // The single string value
+    } else {
+        return $default; // Default value (null if not specified)
     }
 }
 
@@ -3422,7 +3458,7 @@ function create_user_record($username, $password, $auth='manual') {
 
     $DB->insert_record('user', $newuser);
     $user = get_complete_user_data('username', $newuser->username);
-    if(!empty($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'})){
+    if (!empty($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'})){
         set_user_preference('auth_forcepasswordchange', 1, $user->id);
     }
     update_internal_user_password($user, $password);
@@ -3747,10 +3783,14 @@ function complete_user_login($user, $setcookie=true) {
     // check enrolments, load caps and setup $USER object
     session_set_user($user);
 
-    // clear the preferences and invalidate caches too
-    unset($USER->preference);
+    // reload preferences from DB
+    unset($user->preference);
+    check_user_preferences_loaded($user);
 
+    // update login times
     update_user_login_times();
+
+    // extra session prefs init
     set_login_session_preferences();
 
     if (isguestuser()) {
@@ -3875,15 +3915,12 @@ function update_internal_user_password(&$user, $password) {
  *
  * Intended for setting as $USER session variable
  *
- * @global object
- * @global object
- * @uses SITEID
  * @param string $field The user field to be checked for a given value.
  * @param string $value The value to match for $field.
  * @param int $mnethostid
  * @return mixed False, or A {@link $USER} object.
  */
-function get_complete_user_data($field, $value, $mnethostid=null) {
+function get_complete_user_data($field, $value, $mnethostid = null) {
     global $CFG, $DB;
 
     if (!$field || !$value) {
@@ -3921,9 +3958,10 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
         }
     }
 
-    $user->preference = get_user_preferences(null, null, $user->id);
-    $user->preference['_lastloaded'] = time();
+    // preload preference cache
+    check_user_preferences_loaded($user);
 
+    // load course enrolment related stuff
     $user->lastcourseaccess    = array(); // during last session
     $user->currentcourseaccess = array(); // during current session
     if ($lastaccesses = $DB->get_records('user_lastaccess', array('userid'=>$user->id))) {
