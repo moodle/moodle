@@ -134,7 +134,6 @@ class course_publication_form extends moodleform {
             }
         }
 
-
         if (!empty($publishedcourses)) {
             $publishedcourse = $publishedcourses[0];
             $hubcourseid = $publishedcourse['id'];
@@ -152,6 +151,7 @@ class course_publication_form extends moodleform {
             $defaultaudience = $publishedcourse['audience'];
             $defaulteducationallevel = $publishedcourse['educationallevel'];
             $defaultcreatornotes = $publishedcourse['creatornotes'];
+            $defaultcreatornotesformat = $publishedcourse['creatornotesformat'];
             $screenshotsnumber = $publishedcourse['screenshots'];
             $privacy = $publishedcourse['privacy'];
 
@@ -184,9 +184,9 @@ class course_publication_form extends moodleform {
             $defaultaudience = HUB_AUDIENCE_STUDENTS;
             $defaulteducationallevel = HUB_EDULEVEL_TERTIARY;
             $defaultcreatornotes = '';
+            $defaultcreatornotesformat = FORMAT_HTML;
             $screenshotsnumber = 0;
         }
-
 
         //the input parameters
         $mform->addElement('header', 'moodle', get_string('publicationinfo', 'hub'));
@@ -332,8 +332,7 @@ class course_publication_form extends moodleform {
 
         $editoroptions = array('maxfiles' => 0, 'maxbytes' => 0, 'trusttext' => false, 'forcehttps' => false);
         $mform->addElement('editor', 'creatornotes', get_string('creatornotes', 'hub'), '', $editoroptions);
-        $mform->addRule('creatornotes', $strrequired, 'required', null, 'client');
-        $mform->setDefault('creatornotes', $defaultcreatornotes);
+        $mform->addRule('creatornotes', $strrequired, 'required', null, 'client');  
         $mform->setType('creatornotes', PARAM_CLEANHTML);
         $mform->addHelpButton('creatornotes', 'creatornotes', 'hub');
 
@@ -365,6 +364,13 @@ class course_publication_form extends moodleform {
         $mform->addHelpButton('screenshots', 'screenshots', 'hub');
 
         $this->add_action_buttons(false, $buttonlabel);
+
+        //set default value for creatornotes editor
+        $data = new stdClass();
+        $data->creatornotes = array();
+        $data->creatornotes['text'] = $defaultcreatornotes;
+        $data->creatornotes['format'] = $defaultcreatornotesformat;
+        $this->set_data($data);
     }
 
     function validation($data, $files) {
