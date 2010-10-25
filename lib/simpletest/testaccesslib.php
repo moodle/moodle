@@ -43,13 +43,16 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
     }
 
     function test_get_users_by_capability() {
-        $tablenames = array('capabilities' , 'context', 'role', 'role_capabilities',
+        global $CFG;
+
+        $tablenames = array('capabilities', 'context', 'role', 'role_capabilities',
                 'role_allow_assign', 'role_allow_override', 'role_assignments', 'role_context_levels',
                 'user', 'groups_members', 'cache_flags', 'events_handlers', 'user_lastaccess', 'course');
         $this->create_test_tables($tablenames, 'lib');
 
         accesslib_clear_all_caches_for_unit_testing();
         $this->switch_to_test_db();
+        $this->switch_to_test_cfg();
 
         $course = new stdClass();
         $course->category = 0;
@@ -105,7 +108,6 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         ));
 
         // Get some of the standard roles.
-        $admin = $this->testdb->get_record('role', array('shortname' => 'admin'));
         $creator = $this->testdb->get_record('role', array('shortname' => 'coursecreator'));
         $teacher = $this->testdb->get_record('role', array('shortname' => 'editingteacher'));
         $student = $this->testdb->get_record('role', array('shortname' => 'student'));
@@ -114,12 +116,14 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         // And some role assignments.
         $ras = $this->load_test_data('role_assignments',
                 array('userid', 'roleid', 'contextid'), array(
-        'a' =>  array($users['a']->id, $admin->id, $contexts[0]->id),
         'cc' => array($users['cc']->id, $creator->id, $contexts[1]->id),
         't1' => array($users['t1']->id, $teacher->id, $contexts[2]->id),
         's1' => array($users['s1']->id, $student->id, $contexts[2]->id),
         's2' => array($users['s2']->id, $student->id, $contexts[2]->id),
         ));
+
+        // And make user a into admin
+        $CFG->siteadmins = $users['a']->id;
 
         // And some group memebership.
         $gms = $this->load_test_data('groups_members',
@@ -132,8 +136,9 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         // Test some simple cases - check that looking in coruse and module contextlevel gives the same answer.
         foreach (array(2, 3) as $conindex) {
             $results = get_users_by_capability($contexts[$conindex], 'mod/forum:replypost');
+            // note: admin accounts are never returned, so no admin return here
             $this->assert(new ArraysHaveSameValuesExpectation(
-                    array($users['a']->id, $users['t1']->id, $users['s1']->id, $users['s2']->id)),
+                    array($users['t1']->id, $users['s1']->id, $users['s2']->id)),
                     array_map(create_function('$o', 'return $o->id;'),
                     $results));
             // Paging.
@@ -141,7 +146,7 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
             $this->assertEqual(array($firstuser->id => $firstuser), get_users_by_capability($contexts[$conindex], 'mod/forum:replypost', '', '', 0, 1));
             $seconduser = next($results);
             $this->assertEqual(array($seconduser->id => $seconduser), get_users_by_capability($contexts[$conindex], 'mod/forum:replypost', '', '', 1, 1));
-            // $doanything = false
+            // $doanything = false (ignored now)
             $this->assert(new ArraysHaveSameValuesExpectation(
                     array($users['t1']->id, $users['s1']->id, $users['s2']->id)),
                     array_map(create_function('$o', 'return $o->id;'),
@@ -153,7 +158,7 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
                     get_users_by_capability($contexts[$conindex], 'mod/forum:replypost', '', '', '', '', 666)));
             // exceptions
             $this->assert(new ArraysHaveSameValuesExpectation(
-                    array($users['a']->id, $users['s1']->id, $users['s2']->id)),
+                    array($users['s1']->id, $users['s2']->id)),
                     array_map(create_function('$o', 'return $o->id;'),
                     get_users_by_capability($contexts[$conindex], 'mod/forum:replypost', '', '', '', '', '', array($users['t1']->id))));
             $this->assert(new ArraysHaveSameValuesExpectation(
@@ -167,7 +172,7 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
                     get_users_by_capability($contexts[$conindex], 'mod/forum:replypost', '', '', '', '', 667, '', false, false, true)));
             // More than one capability.
             $this->assert(new ArraysHaveSameValuesExpectation(
-                    array($users['a']->id, $users['s1']->id, $users['s2']->id)),
+                    array($users['s1']->id, $users['s2']->id)),
                     array_map(create_function('$o', 'return $o->id;'),
                     get_users_by_capability($contexts[$conindex], array('mod/quiz:attempt', 'mod/quiz:reviewmyattempts'))));
         }
@@ -191,7 +196,7 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         // Now test the overridden cases.
         // Students prevented at category level, with and without doanything.
         $this->assert(new ArraysHaveSameValuesExpectation(
-                array($users['a']->id, $users['t1']->id)),
+                array($users['t1']->id)),
                 array_map(create_function('$o', 'return $o->id;'),
                 get_users_by_capability($contexts[2], 'mod/forum:replypost')));
         $this->assert(new ArraysHaveSameValuesExpectation(
@@ -204,27 +209,27 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
                 array_map(create_function('$o', 'return $o->id;'),
                 get_users_by_capability($contexts[3], 'mod/forum:replypost', '', '', '', '', '', '', false)));
         $this->assert(new ArraysHaveSameValuesExpectation(
-                array($users['a']->id, $users['t1']->id, $users['s1']->id, $users['s2']->id)),
+                array($users['t1']->id, $users['s1']->id, $users['s2']->id)),
                 array_map(create_function('$o', 'return $o->id;'),
                 get_users_by_capability($contexts[3], 'mod/forum:replypost')));
         // Students prohibited at category level, re-allowed at module level should have no effect.
         $this->assert(new ArraysHaveSameValuesExpectation(
-                array($users['a']->id, $users['t1']->id)),
+                array($users['t1']->id)),
                 array_map(create_function('$o', 'return $o->id;'),
                 get_users_by_capability($contexts[2], 'mod/forum:startdiscussion')));
         $this->assert(new ArraysHaveSameValuesExpectation(
-                array($users['a']->id, $users['t1']->id)),
+                array($users['t1']->id)),
                 array_map(create_function('$o', 'return $o->id;'),
                 get_users_by_capability($contexts[3], 'mod/forum:startdiscussion')));
         // Prevent on logged-in user should be overridden by student allow.
         $this->assert(new ArraysHaveSameValuesExpectation(
-                array($users['a']->id, $users['t1']->id, $users['s1']->id, $users['s2']->id)),
+                array($users['t1']->id, $users['s1']->id, $users['s2']->id)),
                 array_map(create_function('$o', 'return $o->id;'),
                 get_users_by_capability($contexts[3], 'mod/forum:createattachment')));
 
         // Prohibit on logged-in user should trump student/teacher allow.
         $this->assert(new ArraysHaveSameValuesExpectation(
-                array($users['a']->id)),
+                array()),
                 array_map(create_function('$o', 'return $o->id;'),
                 get_users_by_capability($contexts[3], 'mod/forum:viewrating')));
 
@@ -243,6 +248,7 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         $this->create_test_tables($tablenames, 'lib');
 
         $this->switch_to_test_db();
+        $this->switch_to_test_cfg();
 
         // Ensure SYSCONTEXTID is set.
         get_context_instance(CONTEXT_SYSTEM);
@@ -263,18 +269,25 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
 
         $roles = $this->load_test_data('role',
                    array( 'name', 'shortname', 'description', 'sortorder'), array(
-        'admin' => array('admin',     'admin',    'not null',          1),
         'r1' =>    array(   'r1',        'r1',    'not null',          2),
         'r2' =>    array(   'r2',        'r2',    'not null',          3),
         'funny' => array('funny',     'funny',    'not null',          4)));
-        $adminid = $roles['admin']->id;
         $r1id = $roles['r1']->id;
         $r2id = $roles['r2']->id;
         $funnyid = $roles['funny']->id; // strange role
 
+        // Note that get_switchable_roles requires at least one capability for
+        // each role. I am not really clear why it was implemented that way
+        // but this makes the test work.
+        $roles = $this->load_test_data('role_capabilities',
+                array('roleid', 'capability'), array(
+                    array($r1id, 'moodle/say:hello'),
+                    array($r2id, 'moodle/say:hello'),
+                    array($funnyid, 'moodle/say:hello'),
+        ));
+
         $this->load_test_data('role_assignments',
                 array('userid', 'contextid',   'roleid'), array(
-                array(      1, SYSCONTEXTID,   $adminid),
                 array(      2, SYSCONTEXTID + 1 , $r1id),
                 array(      3, SYSCONTEXTID + 2 , $r2id)));
 
@@ -292,11 +305,14 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         $this->assert(new ArraysHaveSameValuesExpectation(array($r2id)), array_keys(get_switchable_roles($context)));
         $this->revert_global_user_id();
 
-        // The table says r2 should be able to switch to all of r1, r2 and funny, however, only r2 passes the tests on which roles can be returnd..
+        // The table says r2 should be able to switch to all of r1, r2 and funny;
+        // this used to be restricted further beyond the switch table (for example
+        // to prevent you switching to roles with doanything) but is not any more
+        // (for example because doanything does not exist).
         $this->switch_global_user_id(3);
         accesslib_clear_all_caches_for_unit_testing();
         $this->assert(new ArraysHaveSameValuesExpectation(array()), array_keys(get_switchable_roles($syscontext)));
-        $this->assert(new ArraysHaveSameValuesExpectation(array($r2id)), array_keys(get_switchable_roles($context)));
+        $this->assert(new ArraysHaveSameValuesExpectation(array($r2id, $r1id, $funnyid)), array_keys(get_switchable_roles($context)));
     }
 
 }
