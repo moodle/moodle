@@ -164,14 +164,10 @@ class core_publish_renderer extends plugin_renderer_base {
      * @return $html string
      */
     public function sendingbackupinfo($backupfile) {
-        $html = html_writer::tag('div', get_string('sending', 'hub'),
-                        array('class' => 'textinfo'));
         $sizeinfo = new stdClass();
-        $sizeinfo->total = $backupfile->get_filesize() / 1000000;
-        $sizeinfo->modem = (int) ($backupfile->get_filesize() / 5000);
-        $sizeinfo->dsl = (int) $sizeinfo->total;
-        $html .= html_writer::tag('div', get_string('sendingsize', 'hub', $sizeinfo),
-                        array('class' => 'textinfo'));
+        $sizeinfo->total = number_format($backupfile->get_filesize() / 1000000, 2);
+        $html = html_writer::tag('div', get_string('sendingsize', 'hub', $sizeinfo),
+                        array('class' => 'courseuploadtextinfo'));
         return $html;
     }
 
@@ -184,7 +180,7 @@ class core_publish_renderer extends plugin_renderer_base {
      */
     public function sentbackupinfo($id, $huburl, $hubname) {
         $html = html_writer::tag('div', get_string('sent', 'hub'),
-                        array('class' => 'textinfo'));
+                        array('class' => 'courseuploadtextinfo'));
         $publishindexurl = new moodle_url('/course/publish/index.php',
                         array('sesskey' => sesskey(), 'id' => $id,
                             'published' => true, 'huburl' => $huburl, 'hubname' => $hubname));

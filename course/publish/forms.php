@@ -154,12 +154,13 @@ class course_publication_form extends moodleform {
             $defaultcreatornotesformat = $publishedcourse['creatornotesformat'];
             $screenshotsnumber = $publishedcourse['screenshots'];
             $privacy = $publishedcourse['privacy'];
-
-            $page->requires->yui_module('moodle-block_community-imagegallery',
-                    'M.blocks_community.init_imagegallery',
-                    array(array('imageids' => array($hubcourseid),
-                            'imagenumbers' => array($screenshotsnumber),
-                            'huburl' => $huburl)));
+            if (($screenshotsnumber > 0) and !empty($privacy)) {
+                $page->requires->yui_module('moodle-block_community-imagegallery',
+                        'M.blocks_community.init_imagegallery',
+                        array(array('imageids' => array($hubcourseid),
+                                'imagenumbers' => array($screenshotsnumber),
+                                'huburl' => $huburl)));
+            }
         } else {
             $defaultfullname = $course->fullname;
             $defaultshortname = $course->shortname;
