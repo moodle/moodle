@@ -303,7 +303,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
                 if (function_exists($recover_install_function)) {
                     $startcallback($component, true, $verbose);
                     $recover_install_function();
-                    unset_config('installrunning', 'block_'.$plugin->fullname);
+                    unset_config('installrunning', $plugin->fullname);
                     update_capabilities($component);
                     log_update_descriptions($component);
                     external_update_descriptions($component);
@@ -330,10 +330,10 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
         /// execute post install file
             if (file_exists($fullplug.'/db/install.php')) {
                 require_once($fullplug.'/db/install.php');
-                set_config('installrunning', 1, 'block_'.$plugin->fullname);
-                $post_install_function = 'xmldb_'.$plugin->fullname.'_install';;
+                set_config('installrunning', 1, $plugin->fullname);
+                $post_install_function = 'xmldb_'.$plugin->fullname.'_install';
                 $post_install_function();
-                unset_config('installrunning', 'block_'.$plugin->fullname);
+                unset_config('installrunning', $plugin->fullname);
             }
 
         /// Install various components
