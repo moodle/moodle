@@ -287,7 +287,7 @@ function forum_rss_feed_contents($forum, $sql) {
     foreach ($recs as $rec) {
             $item = new stdClass();
             $user = new stdClass();
-            $item->title = format_string($rec->discussionname);
+            $item->title = format_string($rec->postsubject);
             $user->firstname = $rec->userfirstname;
             $user->lastname = $rec->userlastname;
             $item->author = fullname($user);
