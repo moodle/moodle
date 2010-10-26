@@ -124,6 +124,7 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
 
         // And make user a into admin
         $CFG->siteadmins = $users['a']->id;
+        $CFG->defaultuserroleid = $userrole;
 
         // And some group memebership.
         $gms = $this->load_test_data('groups_members',
