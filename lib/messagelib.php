@@ -40,6 +40,8 @@ defined('MOODLE_INTERNAL') || die();
  *  fullmessageformat  - the format if the full message (FORMAT_MOODLE, FORMAT_HTML, ..)
  *  fullmessagehtml  - the full version (the message processor will choose with one to use)
  *  smallmessage - the small version of the message
+ *  contexturl - if this is a notification then you can specify a url to view the event. For example the forum post the user is being notified of.
+ *  contexturlname - the display text for contexturl
  *
  * @param object $eventdata information about the message (modulename, userfrom, userto, ...)
  * @return boolean success
@@ -81,6 +83,18 @@ function message_send($eventdata) {
         $savemessage->notification = $eventdata->notification;
     } else {
         $savemessage->notification = 0;
+    }
+
+    if (!empty($eventdata->contexturl)) {
+        $savemessage->contexturl = $eventdata->contexturl;
+    } else {
+        $savemessage->contexturl = null;
+    }
+
+    if (!empty($eventdata->contexturlname)) {
+        $savemessage->contexturlname = $eventdata->contexturlname;
+    } else {
+        $savemessage->contexturlname = null;
     }
 
     $savemessage->timecreated = time();

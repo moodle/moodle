@@ -1521,10 +1521,22 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
         $messagetext = format_text($message->fullmessage, $message->fullmessageformat, $options);
     }
 
+    if (!empty($message->contexturl)) {
+        $displaytext = null;
+        if (!empty($message->contexturlname)) {
+            $displaytext= $message->contexturlname;
+        } else {
+            $displaytext= $message->contexturl;
+        }
+        $messagetext .= html_writer::start_tag('div',array('class'=>'messagecontext'));
+            $messagetext .= get_string('view').': '.html_writer::tag('a', $displaytext, array('href' => $message->contexturl));
+        $messagetext .= html_writer::end_tag('div');
+    }
+
     if ($keywords) {
         $messagetext = highlight($keywords, $messagetext);
     }
-    //return '<div class="message '.$class.'"><a name="m'.$message->id.'"></a><span class="author">'.s(fullname($user)).'</span> <span class="time">['.$time.']</span>: <span class="content">'.$messagetext.'</span></div>';
+
     return '<div class="message '.$class.'"><a name="m'.$message->id.'"></a> <span class="time">'.$time.'</span>: <span class="content">'.$messagetext.'</span></div>';
 }
 

@@ -5318,20 +5318,24 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
     //MDL-24771
-    if ($oldversion < 2010102500) {
-        $field = new xmldb_field('notification', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+    if ($oldversion < 2010102600) {
 
-        $table = new xmldb_table('message');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
+        $fieldnotification = new xmldb_field('notification', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'smallmessage');
+        $fieldcontexturl = new xmldb_field('contexturl', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'notification');
+        $fieldcontexturlname = new xmldb_field('contexturlname', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'contexturl');
+        $fieldstoadd = array($fieldnotification, $fieldcontexturl, $fieldcontexturlname);
+
+        $tablestomodify = array(new xmldb_table('message'), new xmldb_table('message_read'));
+
+        foreach($tablestomodify as $table) {
+            foreach($fieldstoadd as $field) {
+                if (!$dbman->field_exists($table, $field)) {
+                    $dbman->add_field($table, $field);
+                }
+            }
         }
 
-        $table = new xmldb_table('message_read');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        upgrade_main_savepoint(true, 2010102500);
+        upgrade_main_savepoint(true, 2010102600);
     }
 
     // MDL-24694 needs increasing size of user_preferences.name(varchar[50]) field due to
