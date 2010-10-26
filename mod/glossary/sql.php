@@ -230,7 +230,7 @@
             }
             if ($hook == 'SPECIAL') {
                 //Create appropiate IN contents
-                $alphabet = explode(",", get_string("alphabet"));
+                $alphabet = explode(",", get_string('alphabet', 'langconfig'));
                 list($nia, $aparams) = $DB->get_in_or_equal($alphabet, SQL_PARAMS_NAMED, $start='a0', false);
                 $params = array_merge($params, $aparams);
                 $where = "AND " . $DB->sql_substr("upper(concept)", 1, 1) . " $nia";
