@@ -814,7 +814,7 @@ function raise_memory_limit($newlimit) {
         } else {
             $newlimit = get_real_size('256M');
         }
-        if (empty($CFG->extramemorylimit)) {
+        if (!empty($CFG->extramemorylimit)) {
             $extra = get_real_size($CFG->extramemorylimit);
             if ($extra > $newlimit) {
                 $newlimit = $extra;
