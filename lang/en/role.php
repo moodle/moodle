@@ -224,6 +224,7 @@ $string['neededroles'] = 'Roles with permission';
 $string['nocapabilitiesincontext'] = 'No capabilities available in this context';
 $string['noneinthisx'] = 'None in this {$a}';
 $string['noneinthisxmatching'] = 'No users matching \'{$a->search}\' in this {$a->contexttype}';
+$string['noroles'] = 'No roles';
 $string['noroleassignments'] = 'This user does not have any role assignments anywhere in this site.';
 $string['notabletoassignroleshere'] = 'You are not able to assign any roles here';
 $string['notabletooverrideroleshere'] = 'You are not able to override the permissions on any roles here';

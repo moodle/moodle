@@ -751,7 +751,7 @@ class group_non_members_selector extends groups_user_selector_base {
         global $DB, $PAGE;
 
         $usersummaries = array();
-        
+
         // Get other groups user already belongs to
         $usergroups = array();
         $potentialmembersids = $this->potentialmembersids;
@@ -792,10 +792,12 @@ class group_non_members_selector extends groups_user_selector_base {
 
         // Get list of allowed roles.
         $context = get_context_instance(CONTEXT_COURSE, $this->courseid);
-        if (!$validroleids = groups_get_possible_roles($context)) {
-            return array();
+        if ($validroleids = groups_get_possible_roles($context)) {
+            list($roleids, $roleparams) = $DB->get_in_or_equal($validroleids, SQL_PARAMS_NAMED, 'r00');
+        } else {
+            $roleids = " = -1";
+            $roleparams = array();
         }
-        list($roleids, $roleparams) = $DB->get_in_or_equal($validroleids, SQL_PARAMS_NAMED, 'r00');
 
         // Get the search condition.
         list($searchcondition, $searchparams) = $this->search_sql($search, 'u');
@@ -810,11 +812,9 @@ class group_non_members_selector extends groups_user_selector_base {
                             WHERE igm.userid = u.id AND ig.courseid = :courseid) AS numgroups";
         $sql = "   FROM {user} u
                    JOIN ($enrolsql) e ON e.id = u.id
-                   JOIN {role_assignments} ra ON ra.userid = u.id
-                   JOIN {role} r ON r.id = ra.roleid
-                  WHERE ra.contextid " . get_related_contexts_string($context) . "
-                        AND u.deleted = 0
-                        AND ra.roleid $roleids
+              LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid " . get_related_contexts_string($context) . " AND ra.roleid $roleids)
+              LEFT JOIN {role} r ON r.id = ra.roleid
+                  WHERE u.deleted = 0
                         AND u.id NOT IN (SELECT userid
                                           FROM {groups_members}
                                          WHERE groupid = :groupid)

@@ -646,11 +646,10 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
                    u.id AS userid, $fields
               FROM {groups_members} gm
               JOIN {user} u ON u.id = gm.userid
-              JOIN {role_assignments} ra ON ra.userid = u.id
-              JOIN {role} r ON r.id = ra.roleid
+         LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid ".get_related_contexts_string($context).")
+         LEFT JOIN {role} r ON r.id = ra.roleid
              WHERE gm.groupid=:mgroupid
-                   AND ra.contextid ".get_related_contexts_string($context).
-                   $extrawheretest."
+                   ".$extrawheretest."
           ORDER BY r.sortorder, $sort";
     $whereparams['mgroupid'] = $groupid;
     $rs = $DB->get_recordset_sql($sql, $whereparams);
@@ -687,7 +686,7 @@ function groups_calculate_role_people($rs, $context) {
         if (!array_key_exists($rec->userid, $users)) {
             // User data includes all the optional fields, but not any of the
             // stuff we added to get the role details
-            $userdata=clone($rec);
+            $userdata = clone($rec);
             unset($userdata->roleid);
             unset($userdata->roleshortname);
             unset($userdata->rolename);
@@ -720,7 +719,7 @@ function groups_calculate_role_people($rs, $context) {
     $rs->close();
 
     // Return false if there weren't any users
-    if (count($users)==0) {
+    if (count($users) == 0) {
         return false;
     }
 
@@ -730,12 +729,18 @@ function groups_calculate_role_people($rs, $context) {
     $roledata->users = array();
     $roles['*'] = $roledata;
 
+    $roledata = new stdClass();
+    $roledata->name = get_string('noroles','role');
+    $roledata->users = array();
+    $roles[0] = $roledata;
+
     // Now we rearrange the data to store users by role
     foreach ($users as $userid=>$userdata) {
         $rolecount = count($userdata->roles);
-        if ($rolecount==0) {
-            debugging("Unexpected: user $userid is missing roles");
-        } else if($rolecount>1) {
+        if ($rolecount == 0) {
+            // does not have any roles
+            $roleid = 0;
+        } else if($rolecount > 1) {
             $roleid = '*';
         } else {
             $roleid = $userdata->roles[0]->id;
