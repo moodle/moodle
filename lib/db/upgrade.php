@@ -5334,6 +5334,35 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010102500);
     }
 
+    // MDL-24694 needs increasing size of user_preferences.name(varchar[50]) field due to
+    // long preferences names for messaging which need components parts within the name
+    // eg: 'message_provider_mod_assignment_assignments_loggedin'
+    if ($oldversion < 2010102600) {
+
+        // Define index userid-name (unique) to be dropped form user_preferences
+        $table = new xmldb_table('user_preferences');
+        $index = new xmldb_index('userid-name', XMLDB_INDEX_UNIQUE, array('userid', 'name'));
+
+        // Conditionally launch drop index userid-name
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Changing precision of field name on table user_preferences to (255)
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'userid');
+
+        // Launch change of precision for field name
+        $dbman->change_field_precision($table, $field);
+
+        // Conditionally launch add index userid-name
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010102600);
+    }
+
     return true;
 }
 

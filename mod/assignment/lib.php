@@ -1745,8 +1745,9 @@ class assignment_base {
                 $eventdata->fullmessagehtml  = $posthtml;
                 $eventdata->smallmessage     = '';
 
-                $eventdata->name       = 'assignment_submitted';
+                $eventdata->name            = 'assignment_updates';
                 $eventdata->component       = 'mod_assignment';
+                $eventdata->notification    = 1;
                 
                 message_send($eventdata);
             }

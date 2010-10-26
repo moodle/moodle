@@ -16,21 +16,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MOODLE VERSION INFORMATION
+ * Defines message providers (types of messages being sent)
  *
- * This file defines the current version of the core Moodle code being used.
- * This is compared against the values stored in the database to determine
- * whether upgrades should be performed (see lib/db/*.php)
- *
- * @package    core
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package mod-assignment
+ * @copyright  2010 onwards  Aparup Banerjee  http://moodle.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+$messageproviders = array (
 
-$version = 2010102600;  // YYYYMMDD   = date of the last version bump
-                        //         XX = daily increments
+/// Ordinary single forum posts
+    'assignment_updates' => array (
+    )
 
-$release = '2.0 RC1 (Build: 20101026)';  // Human-friendly version name
-
+);
