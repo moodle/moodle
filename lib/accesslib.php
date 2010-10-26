@@ -4849,7 +4849,11 @@ function get_users_by_capability($context, $capability, $fields = '', $sort = ''
                                         AND roleid IN (".implode(',', array_keys($needed[$cap])) .")";
                 }
             } else {
-                if (!empty($needed[$cap][$defaultuserroleid]) or ($isfrontpage and !empty($needed[$cap][$defaultfrontpageroleid]))) {
+                if (!empty($prohibited[$cap][$defaultuserroleid]) or ($isfrontpage and !empty($prohibited[$cap][$defaultfrontpageroleid]))) {
+                    // nobody can have this cap because it is prevented in default roles
+                    continue;
+
+                } else if (!empty($needed[$cap][$defaultuserroleid]) or ($isfrontpage and !empty($needed[$cap][$defaultfrontpageroleid]))) {
                     // everybody except the prohibitted - hiding does not matter
                     $unions[] = "SELECT id AS userid
                                    FROM {user}
@@ -4868,12 +4872,12 @@ function get_users_by_capability($context, $capability, $fields = '', $sort = ''
             }
         }
         if (!$everybody) {
-            if (count($unions) > 1) {
-                $unions = implode(' UNION ', $unions);
+            if ($unions) {
+                $joins[] = "JOIN (SELECT DISTINCT userid FROM ( ".implode(' UNION ', $unions)." ) us) ra ON ra.userid = u.id";
             } else {
-                $unions = reset($unions);
+                // only prohibits found - nobody can be matched
+                $wherecond[] = "1 = 2";
             }
-            $joins[] = "JOIN (SELECT DISTINCT userid FROM ( $unions ) us) ra ON ra.userid = u.id";
         }
     }
 
