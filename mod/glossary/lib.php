@@ -845,6 +845,7 @@ function glossary_print_entry_default ($entry, $glossary, $cm) {
     $options = new stdClass();
     $options->para = false;
     $options->trusted = $entry->definitiontrust;
+    $options->context = $context; 
     $definition = format_text($definition, $entry->definitionformat, $options);
     echo ($definition);
     echo '<br /><br />';
@@ -895,13 +896,13 @@ function glossary_print_entry_definition($entry, $glossary, $cm) {
         }
     }
 
-    $options = new stdClass();
-    $options->para = false;
-    $options->trusted = $entry->definitiontrust;
-
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $definition = file_rewrite_pluginfile_urls($definition, 'pluginfile.php', $context->id, 'mod_glossary', 'entry', $entry->id);
 
+    $options = new stdClass();
+    $options->para = false;
+    $options->trusted = $entry->definitiontrust;
+    $options->context = $context; 
     $text = format_text($definition, $entry->definitionformat, $options);
 
     // Stop excluding concepts from autolinking
