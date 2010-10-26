@@ -316,5 +316,67 @@ class accesslib_test extends UnitTestCaseUsingDatabase {
         $this->assert(new ArraysHaveSameValuesExpectation(array($r2id, $r1id, $funnyid)), array_keys(get_switchable_roles($context)));
     }
 
+    function test_context_cache() {
+        // Create cache, empty
+        $cache = new context_cache();
+        $this->assertEqual(0, $cache->get_approx_count());
+
+        // Put context in cache
+        $context = (object)array('id'=>37,'contextlevel'=>50,'instanceid'=>13);
+        $cache->add($context);
+        $this->assertEqual(1, $cache->get_approx_count());
+
+        // Get context out of cache
+        $this->assertEqual($context, $cache->get(50, 13));
+        $this->assertEqual($context, $cache->get_by_id(37));
+
+        // Try to get context that isn't there
+        $this->assertEqual(false, $cache->get(50, 99));
+        $this->assertEqual(false, $cache->get(99, 13));
+        $this->assertEqual(false, $cache->get_by_id(99));
+
+        // Remove context from cache
+        $cache->remove($context);
+        $this->assertEqual(0, $cache->get_approx_count());
+        $this->assertEqual(false, $cache->get(50, 13));
+        $this->assertEqual(false, $cache->get_by_id(37));
+
+        // Add a stack of contexts to cache
+        for($i=0; $i<context_cache::MAX_SIZE; $i++) {
+            $context = (object)array('id'=>$i, 'contextlevel'=>50,
+                    'instanceid'=>$i+1);
+            $cache->add($context);
+        }
+        $this->assertEqual(context_cache::MAX_SIZE, $cache->get_approx_count());
+
+        // Get a random sample from the middle
+        $sample = (object)array(
+                'id'=>174, 'contextlevel'=>50, 'instanceid'=>175);
+        $this->assertEqual($sample, $cache->get(50, 175));
+        $this->assertEqual($sample, $cache->get_by_id(174));
+
+        // Now add one more; should result in size being reduced
+        $context = (object)array('id'=>99999, 'contextlevel'=>50,
+                'instanceid'=>99999);
+        $cache->add($context);
+        $this->assertEqual(context_cache::MAX_SIZE - context_cache::REDUCE_SIZE + 1,
+                $cache->get_approx_count());
+
+        // Check that the first ones are no longer there
+        $this->assertEqual(false, $cache->get(50, 175));
+        $this->assertEqual(false, $cache->get_by_id(174));
+
+        // Check that the last ones are still there
+        $bigid = context_cache::MAX_SIZE - 10;
+        $sample = (object)array(
+                'id'=>$bigid, 'contextlevel'=>50, 'instanceid'=>$bigid+1);
+        $this->assertEqual($sample, $cache->get(50, $bigid+1));
+        $this->assertEqual($sample, $cache->get_by_id($bigid));
+
+        // Reset the cache
+        $cache->reset();
+        $this->assertEqual(0, $cache->get_approx_count());
+        $this->assertEqual(false, $cache->get(50, $bigid+1));
+    }
 }
 

@@ -174,9 +174,124 @@ define('ROLENAME_ALIAS_RAW', 4);
 /** rolename displays - the name is simply short role name*/
 define('ROLENAME_SHORT', 5);
 
-/** size limit for context cache */
-if (!defined('MAX_CONTEXT_CACHE_SIZE')) {
-    define('MAX_CONTEXT_CACHE_SIZE', 5000);
+/**
+ * Internal class provides a cache of context information. The cache is
+ * restricted in size.
+ *
+ * This cache should NOT be used outside accesslib.php!
+ *
+ * @private
+ * @author Sam Marshall
+ */
+class context_cache {
+    private $contextsbyid;
+    private $contexts;
+    private $count;
+
+    /**
+     * @var int Maximum number of contexts that will be cached.
+     */
+    const MAX_SIZE = 2500;
+    /**
+     * @var int Once contexts reach maximum number, this many will be removed from cache.
+     */
+    const REDUCE_SIZE = 1000;
+
+    /**
+     * Initialises (empty)
+     */
+    public function __construct() {
+        $this->reset();
+    }
+
+    /**
+     * Resets the cache to remove all data.
+     */
+    public function reset() {
+        $this->contexts     = array();
+        $this->contextsbyid = array();
+        $this->count        = 0;
+    }
+
+    /**
+     * Adds a context to the cache. If the cache is full, discards a batch of
+     * older entries.
+     * @param stdClass $context New context to add
+     */
+    public function add(stdClass $context) {
+        if ($this->count >= self::MAX_SIZE) {
+            for ($i=0; $i<self::REDUCE_SIZE; $i++) {
+                if ($first = reset($this->contextsbyid)) {
+                    unset($this->contextsbyid[$first->id]);
+                    unset($this->contexts[$first->contextlevel][$first->instanceid]);
+                }
+            }
+            $this->count -= self::REDUCE_SIZE;
+            if ($this->count < 0) {
+                // most probably caused by the drift, the reset() above
+                // might have returned false because there might not be any more elements
+                $this->count = 0;
+            }
+        }
+
+        $this->contexts[$context->contextlevel][$context->instanceid] = $context;
+        $this->contextsbyid[$context->id] = $context;
+
+        // Note the count may get out of synch slightly if you cache a context
+        // that is already cached, but it doesn't really matter much and I
+        // didn't think it was worth the performance hit.
+        $this->count++;
+    }
+
+    /**
+     * Removes a context from the cache.
+     * @param stdClass $context Context object to remove (must include fields
+     *   ->id, ->contextlevel, ->instanceid at least)
+     */
+    public function remove(stdClass $context) {
+        unset($this->contexts[$context->contextlevel][$context->instanceid]);
+        unset($this->contextsbyid[$context->id]);
+
+        // Again the count may get a bit out of synch if you remove things
+        // that don't exist
+        $this->count--;
+
+        if ($this->count < 0) {
+            $this->count = 0;
+        }
+    }
+
+    /**
+     * Gets a context from the cache.
+     * @param int $contextlevel Context level
+     * @param int $instance Instance ID
+     * @return stdClass|bool Context or false if not in cache
+     */
+    public function get($contextlevel, $instance) {
+        if (isset($this->contexts[$contextlevel][$instance])) {
+            return $this->contexts[$contextlevel][$instance];
+        }
+        return false;
+    }
+
+    /**
+     * Gets a context from the cache based on its id.
+     * @param int $id Context ID
+     * @return stdClass|bool Context or false if not in cache
+     */
+    public function get_by_id($id) {
+        if (isset($this->contextsbyid[$id])) {
+            return $this->contextsbyid[$id];
+        }
+        return false;
+    }
+
+    /**
+     * @return int Count of contexts in cache (approximately)
+     */
+    public function get_approx_count() {
+        return $this->count;
+    }
 }
 
 /**
@@ -192,8 +307,7 @@ if (!defined('MAX_CONTEXT_CACHE_SIZE')) {
  */
 global $ACCESSLIB_PRIVATE;
 $ACCESSLIB_PRIVATE = new stdClass();
-$ACCESSLIB_PRIVATE->contexts         = array(); // Cache of context objects by level and instance
-$ACCESSLIB_PRIVATE->contextsbyid     = array(); // Cache of context objects by id
+$ACCESSLIB_PRIVATE->contexcache      = new context_cache();
 $ACCESSLIB_PRIVATE->systemcontext    = null; // Used in get_system_context
 $ACCESSLIB_PRIVATE->dirtycontexts    = null; // Dirty contexts cache
 $ACCESSLIB_PRIVATE->accessdatabyuser = array(); // Holds the $accessdata structure for users other than $USER
@@ -214,8 +328,7 @@ function accesslib_clear_all_caches_for_unit_testing() {
     if (empty($UNITTEST->running)) {
         throw new coding_exception('You must not call clear_all_caches outside of unit tests.');
     }
-    $ACCESSLIB_PRIVATE->contexts         = array();
-    $ACCESSLIB_PRIVATE->contextsbyid     = array();
+    $ACCESSLIB_PRIVATE->contexcache      = new context_cache();
     $ACCESSLIB_PRIVATE->systemcontext    = null;
     $ACCESSLIB_PRIVATE->dirtycontexts    = null;
     $ACCESSLIB_PRIVATE->accessdatabyuser = array();
@@ -225,27 +338,6 @@ function accesslib_clear_all_caches_for_unit_testing() {
     $ACCESSLIB_PRIVATE->capabilities     = null;
 
     unset($USER->access);
-}
-
-/**
- * Private function. Add a context object to accesslib's caches.
- *
- * @param object $context
- * @return void
- */
-function cache_context($context) {
-    global $ACCESSLIB_PRIVATE;
-
-    // If there are too many items in the cache already, remove items until
-    // there is space
-    while (count($ACCESSLIB_PRIVATE->contextsbyid) >= MAX_CONTEXT_CACHE_SIZE) {
-        $first = reset($ACCESSLIB_PRIVATE->contextsbyid);
-        unset($ACCESSLIB_PRIVATE->contextsbyid[$first->id]);
-        unset($ACCESSLIB_PRIVATE->contexts[$first->contextlevel][$first->instanceid]);
-    }
-
-    $ACCESSLIB_PRIVATE->contexts[$context->contextlevel][$context->instanceid] = $context;
-    $ACCESSLIB_PRIVATE->contextsbyid[$context->id] = $context;
 }
 
 /**
@@ -1902,8 +1994,7 @@ function delete_context($contextlevel, $instanceid, $deleterecord = true) {
         if ($deleterecord) {
             $DB->delete_records('context', array('id'=>$context->id));
             // purge static context cache if entry present
-            unset($ACCESSLIB_PRIVATE->contexts[$contextlevel][$instanceid]);
-            unset($ACCESSLIB_PRIVATE->contextsbyid[$context->id]);
+            $ACCESSLIB_PRIVATE->contexcache->remove($context);
         }
 
         // do not mark dirty contexts if parents unknown
@@ -2083,7 +2174,7 @@ function preload_course_contexts($courseid) {
 
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $context) {
-        cache_context($context);
+        $ACCESSLIB_PRIVATE->contexcache->add($context);
     }
     $rs->close();
     $ACCESSLIB_PRIVATE->preloadedcourses[$courseid] = true;
@@ -2117,10 +2208,14 @@ function get_context_instance($contextlevel, $instance = 0, $strictness = IGNORE
         print_error('invalidcourselevel');
     }
 
+    // Various operations rely on context cache
+    $cache = $ACCESSLIB_PRIVATE->contexcache;
+
     if (!is_array($instance)) {
     /// Check the cache
-        if (isset($ACCESSLIB_PRIVATE->contexts[$contextlevel][$instance])) {  // Already cached
-            return $ACCESSLIB_PRIVATE->contexts[$contextlevel][$instance];
+        $context = $cache->get($contextlevel, $instance);
+        if ($context) {
+            return $context;
         }
 
     /// Get it from the database, or create it
@@ -2130,7 +2225,7 @@ function get_context_instance($contextlevel, $instance = 0, $strictness = IGNORE
 
     /// Only add to cache if context isn't empty.
         if (!empty($context)) {
-            cache_context($context);
+            $cache->add($context);
         }
 
         return $context;
@@ -2143,8 +2238,8 @@ function get_context_instance($contextlevel, $instance = 0, $strictness = IGNORE
 
     foreach ($instances as $key=>$instance) {
     /// Check the cache first
-        if (isset($ACCESSLIB_PRIVATE->contexts[$contextlevel][$instance])) {  // Already cached
-            $result[$instance] = $ACCESSLIB_PRIVATE->contexts[$contextlevel][$instance];
+        if ($context = $cache->get($contextlevel, $instance)) {  // Already cached
+            $result[$instance] = $context;
             unset($instances[$key]);
             continue;
         }
@@ -2169,7 +2264,7 @@ function get_context_instance($contextlevel, $instance = 0, $strictness = IGNORE
             }
 
             if (!empty($context)) {
-                cache_context($context);
+                $cache->add($context);
             }
 
             $result[$instance] = $context;
@@ -2195,12 +2290,13 @@ function get_context_instance_by_id($id, $strictness = IGNORE_MISSING) {
         return get_system_context();
     }
 
-    if (isset($ACCESSLIB_PRIVATE->contextsbyid[$id])) {  // Already cached
-        return $ACCESSLIB_PRIVATE->contextsbyid[$id];
+    $cache = $ACCESSLIB_PRIVATE->contexcache;
+    if ($context = $cache->get_by_id($id)) {
+        return $context;
     }
 
     if ($context = $DB->get_record('context', array('id'=>$id), '*', $strictness)) {
-        cache_context($context);
+        $cache->add($context);
         return $context;
     }
 
@@ -3842,6 +3938,7 @@ function get_child_contexts($context) {
     // soon after calling us ;-)
 
     $array = array();
+    $cache = $ACCESSLIB_PRIVATE->contexcache;
 
     switch ($context->contextlevel) {
 
@@ -3859,7 +3956,7 @@ function get_child_contexts($context) {
             $params = array("{$context->path}/%", $context->instanceid);
             $records = $DB->get_recordset_sql($sql, $params);
             foreach ($records as $rec) {
-                cache_context($rec);
+                $cache->add($rec);
                 $array[$rec->id] = $rec;
             }
             break;
@@ -3874,7 +3971,7 @@ function get_child_contexts($context) {
             $params = array("{$context->path}/%", $context->instanceid);
             $records = $DB->get_recordset_sql($sql, $params);
             foreach ($records as $rec) {
-                cache_context($rec);
+                $cache->add($rec);
                 $array[$rec->id] = $rec;
             }
         break;
@@ -3890,7 +3987,7 @@ function get_child_contexts($context) {
             $params = array("{$context->path}/%");
             $records = $DB->get_recordset_sql($sql, $params);
             foreach ($records as $rec) {
-                cache_context($rec);
+                $cache->add($rec);
                 $array[$rec->id] = $rec;
             }
         break;
@@ -3905,7 +4002,7 @@ function get_child_contexts($context) {
             $params = array("{$context->path}/%", $context->instanceid);
             $records = $DB->get_recordset_sql($sql, $params);
             foreach ($records as $rec) {
-                cache_context($rec);
+                $cache->add($rec);
                 $array[$rec->id] = $rec;
             }
             break;
@@ -5489,7 +5586,7 @@ function rebuild_contexts(array $fixcontexts) {
  * @param bool $force force a complete rebuild of the path and depth fields, defaults to false
  */
 function build_context_path($force = false) {
-    global $CFG, $DB;
+    global $CFG, $DB, $ACCESSLIB_PRIVATE;
 
     // System context
     $sitectx = get_system_context(!$force);
@@ -5649,9 +5746,7 @@ function build_context_path($force = false) {
     $DB->delete_records('context_temp');
 
     // reset static course cache - it might have incorrect cached data
-    global $ACCESSLIB_PRIVATE;
-    $ACCESSLIB_PRIVATE->contexts = array();
-    $ACCESSLIB_PRIVATE->contextsbyid = array();
+    $ACCESSLIB_PRIVATE->contexcache->reset();
 }
 
 /**
@@ -5722,6 +5817,7 @@ function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
  * @return void (modifies $rec)
  */
 function context_instance_preload(stdClass $rec) {
+    global $ACCESSLIB_PRIVATE;
     if (empty($rec->ctxid)) {
         // $rec does not have enough data, passed here repeatedly or context does not exist yet
         return;
@@ -5735,7 +5831,7 @@ function context_instance_preload(stdClass $rec) {
     $context->contextlevel = $rec->ctxlevel;    unset($rec->ctxlevel);
     $context->instanceid   = $rec->ctxinstance; unset($rec->ctxinstance);
 
-    cache_context($context);
+    $ACCESSLIB_PRIVATE->contexcache->add($context);
 }
 
 /**
