@@ -26,7 +26,7 @@
 
 $string['activities'] = 'Activities';
 $string['add'] = 'Add';
-$string['addtocommunityblock'] = 'Add to block';
+$string['addtocommunityblock'] = 'Save a link to this course';
 $string['addcommunitycourse'] = 'Add community course';
 $string['additionalcoursedesc'] = '{$a->lang} Creator: {$a->creatorname} - Publisher: {$a->publishername} - Subject: {$a->subject}
     - Audience: {$a->audience} - Educational level: {$a->educationallevel} - License: {$a->license}';
