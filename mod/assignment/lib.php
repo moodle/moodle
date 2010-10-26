@@ -1748,6 +1748,8 @@ class assignment_base {
                 $eventdata->name            = 'assignment_updates';
                 $eventdata->component       = 'mod_assignment';
                 $eventdata->notification    = 1;
+                $eventdata->contexturl      = $info->url;
+                $eventdata->contexturlname  = $info->assignment;
                 
                 message_send($eventdata);
             }
