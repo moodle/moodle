@@ -33,12 +33,17 @@ $id      = required_param('id', PARAM_INT);             // Course Module ID
 $pageid  = optional_param('pageid', NULL, PARAM_INT);   // Lesson Page ID
 $edit    = optional_param('edit', -1, PARAM_BOOL);
 $userpassword = optional_param('userpassword','',PARAM_RAW);
+$backtocourse = optional_param('backtocourse', false, PARAM_RAW);
 
 $cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);;
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
 
 require_login($course, false, $cm);
+
+if ($backtocourse) {
+    redirect(new moodle_url('/course/view.php', array('id'=>$course->id)));
+}
 
 $url = new moodle_url('/mod/lesson/view.php', array('id'=>$id));
 if ($pageid !== null) {

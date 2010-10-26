@@ -114,8 +114,8 @@ class mod_lesson_renderer extends plugin_renderer_base {
         }
         $output .= get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name)).'<br /><br />';
         $output .= get_string('enterpassword', 'lesson')." <input type=\"password\" name=\"userpassword\" /><br /><br />";
-        $output .= '<div class="lessonbutton standardbutton"><a href="'.$CFG->wwwroot.'/course/view.php?id='. $this->page->course->id .'">'. get_string('cancel', 'lesson') .'</a></div> ';
         $output .= "<div class='lessonbutton standardbutton submitbutton'><input type='submit' value='".get_string('continue', 'lesson')."' /></div>";
+        $output .= " <div class='lessonbutton standardbutton submitbutton'><input type='submit' name='backtocourse' value='".get_string('cancel', 'lesson')."' /></div>";
         $output .=  '</fieldset></form>';
         $output .=  $this->output->box_end();
         $output .=  $this->output->box_end();
