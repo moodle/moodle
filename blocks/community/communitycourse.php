@@ -104,12 +104,8 @@ if ($usercandownload and $download != -1 and !empty($downloadcourseid) and confi
     //OUTPUT: display restore choice page
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('downloadingcourse', 'block_community'), 3, 'main');
-    echo html_writer::tag('div', get_string('downloading', 'block_community'),
-            array('class' => 'textinfo'));
     $sizeinfo = new stdClass();
-    $sizeinfo->total = $backupsize / 1000000;
-    $sizeinfo->modem = (int) ($backupsize / 5000);
-    $sizeinfo->dsl = (int) $sizeinfo->total;
+    $sizeinfo->total = number_format($backupsize / 1000000, 2);
     echo html_writer::tag('div', get_string('downloadingsize', 'block_community', $sizeinfo),
             array('class' => 'textinfo'));
     flush();
