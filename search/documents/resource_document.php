@@ -83,19 +83,28 @@ function resource_iterator() {
 function resource_get_content_for_index(&$notneeded) {
     global $CFG, $DB;
 
+
     // starting with Moodle native resources
     $documents = array();
+
+    $dbman = $DB->get_manager();
+    if (!$dbman->table_exists('resource_old')) {
+        return $documents;
+    }
+
+    // the resources have been moved into modules of their own. indexing need to be created for these.
+    // for a temporary fix (until MDL-24856 is fixed) pointing this query to a table that is copy of the old resource table schema.
     $query = "
         SELECT 
             id as trueid,
             r.*
         FROM 
-            {resource} as r
-        WHERE 
-            alltext != '' AND 
-            alltext != ' ' AND 
-            alltext != '&nbsp;' AND 
-            type != 'file' 
+            {resource_old} as r
+        WHERE
+            alltext != '' AND
+            alltext != ' ' AND
+            alltext != '&nbsp;' AND
+            type != 'file'
     ";
     if ($resources = $DB->get_records_sql($query)){ 
         foreach($resources as $aResource){
@@ -127,7 +136,7 @@ function resource_get_content_for_index(&$notneeded) {
                r.type as type,
                r.timemodified as timemodified
             FROM 
-                {resource} as r,
+                {resource_old} as r,
                 {course_modules} as cm,
                 {modules} as m
             WHERE 

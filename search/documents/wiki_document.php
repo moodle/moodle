@@ -40,15 +40,15 @@ class WikiSearchDocument extends SearchDocument {
         $doc->itemtype      = 'standard';
         $doc->contextid     = $context_id;
 
-        $doc->title     = $page['pagename'];
-        $doc->date      = $page['lastmodified'];
+        $doc->title     = $page['title'];
+        $doc->date      = $page['timemodified'];
         //remove '(ip.ip.ip.ip)' from wiki author field
-        $doc->author    = preg_replace('/\(.*?\)/', '', $page['author']);
-        $doc->contents  = $page['content'];
-        $doc->url       = wiki_make_link($wiki_id, $page['pagename'], $page['version']);
+        $doc->author    = $page['author'];
+        $doc->contents  = $page['cachedcontent'];
+        $doc->url       = wiki_make_link($page['id']);
 
         // module specific information; optional
-        $data->version  = $page['version'];
+        //$data->version  = $page['version'];
         $data->wiki     = $wiki_id;
 
         // construct the parent class
@@ -72,10 +72,10 @@ function wiki_name_convert($str) {
 * @param int $version
 * @uses $CFG
 */
-function wiki_make_link($wikiId, $title, $version) {
+function wiki_make_link($pageid) {
     global $CFG;
 
-    return $CFG->wwwroot.'/mod/wiki/view.php?wid='.$wikiId.'&amp;page='.wiki_name_convert($title).'&amp;version='.$version;
+    return $CFG->wwwroot.'/mod/wiki/view.php?pageid='.$pageid;
 }
 
 /**
@@ -89,19 +89,21 @@ function wiki_make_link($wikiId, $title, $version) {
 function wiki_get_latest_page(&$entry, $pagename, $version = 0) {
     global $DB;
 
-    $pagename = $pagename;
+    $params = array('title' => $pagename, 'subwikiid' => $entry->id);
 
     if ($version > 0 && is_int($version)) {
         $versionclause = "AND ( version = :version )";
+        $sort   = 'version DESC';
+        $params['version'] = $version;
     } else {
         $versionclause = '';
+        $sort   = '';
     }
 
-    $select = "( pagename = ':pagename' ) AND wiki = :wikiid $versionclause ";
-    $sort   = 'version DESC';
+    $select = "( title = :title ) AND subwikiid = :subwikiid $versionclause ";
 
     //change this to recordset_select, as per http://docs.moodle.org/en/Datalib_Notes
-    if ($result_arr = $DB->get_records_select('wiki_pages', $select, array('pagename' => $pagename, 'wikiid' => $entry->id, 'version' => $version), $sort, '*', 0, 1)) {
+    if ($result_arr = $DB->get_records_select('wiki_pages', $select, $params, $sort, '*', 0, 1)) {
         foreach ($result_arr as $obj) {
             $result_obj = $obj;
         }
@@ -146,10 +148,10 @@ function wiki_get_latest_pages(&$entry) {
     $pages = array();
 
     //http://moodle.org/bugs/bug.php?op=show&bugid=5877&pos=0
-    if ($ids = $DB->get_records('wiki_pages', array('wiki' => $entry->id), '', 'distinct pagename')) {
-        if ($pagesets = $DB->get_records('wiki_pages', array('wiki' => $entry->id), '', 'distinct pagename')) {
+    if ($ids = $DB->get_records('wiki_pages', array('subwikiid' => $entry->id), '', 'distinct title')) {
+        if ($pagesets = $DB->get_records('wiki_pages', array('subwikiid' => $entry->id), '', 'distinct title')) {
             foreach ($pagesets as $aPageset) {
-                $pages[] = wiki_get_latest_page($entry, $aPageset->pagename);
+                $pages[] = wiki_get_latest_page($entry, $aPageset->title);
             }
         } else {
             return false;
@@ -177,10 +179,11 @@ function wiki_iterator() {
 * @return an array of searchable deocuments
 */
 function wiki_get_content_for_index(&$wiki) {
-    global $DB;
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/wiki/locallib.php');
 
     $documents = array();
-    $entries = wiki_get_entries($wiki);
+    $entries = wiki_get_subwikis($wiki->id);
     if ($entries){
         $coursemodule = $DB->get_field('modules', 'id', array('name' => 'wiki'));
         $cm = $DB->get_record('course_modules', array('course' => $wiki->course, 'module' => $coursemodule, 'instance' => $wiki->id));
@@ -194,8 +197,10 @@ function wiki_get_content_for_index(&$wiki) {
             $pages = wiki_get_latest_pages($entry);
             if (is_array($pages)) {
                 foreach($pages as $page) {
-                    if (strlen($page->content) > 0) {
-                        $documents[] = new WikiSearchDocument(get_object_vars($page), $entry->wikiid, $entry->course, $entry->groupid, $page->userid, $context->id);
+                    if (strlen($page->title) > 0) {
+                        $owner = $DB->get_record('user', array('id' => $page->userid));
+                        $page->author = fullname($owner);
+                        $documents[] = new WikiSearchDocument(get_object_vars($page), $entry->wikiid, $wiki->course, $entry->groupid, $page->userid, $context->id);
                     }
                 }
             }

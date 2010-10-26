@@ -39,7 +39,7 @@ class LabelSearchDocument extends SearchDocument {
         $doc->title     = strip_tags($label['name']);
         $doc->date      = $label['timemodified'];
         $doc->author    = '';
-        $doc->contents  = strip_tags($label['content']);
+        $doc->contents  = strip_tags($label['intro']);
         $doc->url       = label_make_link($label['course']);
         
         // module specific information; optional

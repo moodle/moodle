@@ -30,7 +30,7 @@ class AssignmentSearchDocument extends SearchDocument {
     /**
     * constructor
     */
-    public function __construct(&$assignmentitem, $assignment_module_id, $itemtype, $course_id, $owner_id, $context_id) {
+    public function __construct(&$assignmentitem, $assignment_module_id, $itemtype, $course_id, $owner_id, $context_id , $submissionoffset = null) {
         // generic information; required
         $doc->docid         = $assignmentitem['id'];
         $doc->documenttype  = SEARCH_TYPE_ASSIGNMENT;
@@ -43,8 +43,13 @@ class AssignmentSearchDocument extends SearchDocument {
 
         //remove '(ip.ip.ip.ip)' from chat author list
         $doc->author        = $assignmentitem['authors'];
-        $doc->contents      = $assignmentitem['description'];
-        $doc->url           = assignment_make_link($assignment_module_id, $itemtype, $owner_id);
+        if ($itemtype == 'intro') {
+            $doc->contents      = $assignmentitem['intro'];
+            $doc->url           = assignment_make_link($assignment_module_id, $itemtype, $owner_id);
+        } else {
+            $doc->contents      = $assignmentitem['data1'];
+            $doc->url           = assignment_make_link($assignment_module_id, $itemtype, $owner_id, $submissionoffset);
+        }
 
         // module specific information; optional
         $data->assignment         = $assignment_module_id;
@@ -64,11 +69,15 @@ class AssignmentSearchDocument extends SearchDocument {
 * @uses CFG
 * @return a well formed link to session display
 */
-function assignment_make_link($cm_id, $itemtype, $owner) {
+function assignment_make_link($cm_id, $itemtype, $owner, $submissionoffset=null) {
     global $CFG;
 
-    if ($itemtype == 'description')
+    if ($itemtype == 'intro') {
         return $CFG->wwwroot.'/mod/assignment/view.php?id='.$cm_id;
+    } else {
+        return $CFG->wwwroot.'/mod/assignment/submissions.php?id='.$cm_id.'&userid='.$owner.'&mode=single&offset='.$submissionoffset;
+        //?id=80&userid=4&mode=single&filter=0&offset=1
+    }
 }
 
 /**
@@ -102,11 +111,13 @@ function assignment_get_content_for_index(&$assignment) {
 
         $assignment->authors = '';
         $assignment->date = $assignment->timemodified;
-        $documents[] = new AssignmentSearchDocument(get_object_vars($assignment), $cm->id, 'description', $assignment->course, null, $context->id);
+        $documents[] = new AssignmentSearchDocument(get_object_vars($assignment), $cm->id, 'intro', $assignment->course, null, $context->id);
 
         $submissions = assignment_get_all_submissions($assignment);
         if ($submissions){
+            $submissionoffset=-1;
             foreach($submissions as $submission){
+                $submissionoffset++;
                 $owner = $DB->get_record('user', array('id' => $submission->userid));
                 $submission->authors = fullname($owner);
                 $submission->assignmenttype = $assignment->assignmenttype;
@@ -140,7 +151,7 @@ function assignment_get_content_for_index(&$assignment) {
                 if ($submitted->source = 'text'){
                     $submission->description = $submitted->data;
                     $submission->description = preg_replace("/<[^>]*>/", '', $submission->description); // stip all tags
-                    $documents[] = new AssignmentSearchDocument(get_object_vars($submission), $cm->id, 'submission', $assignment->course, $submission->userid, $context->id);
+                    $documents[] = new AssignmentSearchDocument(get_object_vars($submission), $cm->id, 'submission', $assignment->course, $submission->userid, $context->id, $submissionoffset);
                     mtrace("finished online submission for {$submission->authors} in assignment {$assignment->name}");
                 } elseif ($submitted->source = 'files'){
                     $SUBMITTED = opendir($submitted->path);

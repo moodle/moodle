@@ -74,19 +74,19 @@ class GlossaryCommentSearchDocument extends SearchDocument {
         global $DB;
         
         // generic information; required
-        $doc->docid     = $entry['id'];
+        $doc->docid     = $entry['itemid'];
         $doc->documenttype  = SEARCH_TYPE_GLOSSARY;
         $doc->itemtype      = 'comment';
         $doc->contextid     = $context_id;
 
         $doc->title     = get_string('commenton', 'search') . ' ' . $entry['concept'];
-        $doc->date      = $entry['timemodified'];
+        $doc->date      = $entry['timecreated'];
 
         if ($entry['userid'])
             $user = $DB->get_record('user', array('id' => $entry['userid']));
         $doc->author    = ($user ) ? $user->firstname.' '.$user->lastname : '' ;
-        $doc->contents  = strip_tags($entry['entrycomment']);
-        $doc->url       = glossary_make_link($entry['entryid']);
+        $doc->contents  = strip_tags($entry['content']);
+        $doc->url       = glossary_make_link($entry['itemid']);
         
         // module specific information; optional
         $data->glossary = $glossary_id;
@@ -104,6 +104,7 @@ class GlossaryCommentSearchDocument extends SearchDocument {
 */
 function glossary_make_link($entry_id) {
     global $CFG;
+    require_once($CFG->dirroot.'/search/querylib.php');
 
     //links directly to entry
     // return $CFG->wwwroot.'/mod/glossary/showentry.php?eid='.$entry_id;
@@ -158,7 +159,14 @@ function glossary_get_content_for_index(&$glossary) {
     
     // index comments
     if (count($entryIds)){
-        $comments = $DB->get_records_list('glossary_comments', 'entryid', $entryIds);
+        list($entryidssql, $params) = $DB->get_in_or_equal($entryIds, SQL_PARAMS_NAMED);
+        $params['ctxid'] = $context->id;
+        $sql = "SELECT *
+                  FROM {comments}
+                 WHERE contextid = :ctxid 
+                    AND itemid $entryidssql";
+        $comments = $DB->get_recordset_sql($sql, $params);
+
         if ($comments){
             foreach($comments as $comment) {
                 if (strlen($comment->entrycomment) > 0) {

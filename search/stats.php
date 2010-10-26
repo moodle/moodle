@@ -107,7 +107,8 @@ require_once($CFG->dirroot.'/search/lib.php');
         }
 
         echo html_writer::table($admin_table);
-        echo $OUTPUT->spacer(array('height'=>20, 'br'=>true)); // should be done with CSS instead
+        $spacer = array('height'=>20, 'br'=>true);
+        echo $OUTPUT->spacer($spacer); // should be done with CSS instead
         echo $OUTPUT->heading($solutionsstr);
 
         unset($admin_table->data);

@@ -26,16 +26,17 @@
 * to the 'dbid' field in the index
 * */
 
-//this'll take some time, set up the environment
-@set_time_limit(0);
-@ob_implicit_flush(true);
-@ob_end_flush();
 
 /**
 * includes and requires
 */
 require_once('../config.php');
 require_once($CFG->dirroot.'/search/lib.php');
+
+//this'll take some time, set up the environment
+@set_time_limit(0);
+@ob_implicit_flush(true);
+@ob_end_flush();
 
     ini_set('include_path', $CFG->dirroot.DIRECTORY_SEPARATOR.'search'.PATH_SEPARATOR.ini_get('include_path'));
 
@@ -157,7 +158,11 @@ require_once($CFG->dirroot.'/search/lib.php');
                             if ($documents){
                                 foreach($documents as $document) {
                                     $counter++;
-                                    
+
+                                    // temporary fix until MDL-24822 is resolved
+                                    if ($document->group_id == -1 and $mod->name ='forum') {
+                                        $document->group_id = 0;
+                                    }
                                     //object to insert into db
                                     $dbid = $dbcontrol->addDocument($document);
                                     
