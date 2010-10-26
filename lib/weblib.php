@@ -2786,7 +2786,11 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
  */
 function get_docs_url($path) {
     global $CFG;
-    return $CFG->docroot . '/' . current_language() . '/' . $path;
+    if (!empty($CFG->docroot)) {
+        return $CFG->docroot . '/' . current_language() . '/' . $path;
+    } else {
+        return 'http://docs.moodle.org/en/'.$path;
+    }
 }
 
 
