@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/wiki/db" VERSION="20100427" COMMENT="XMLDB file for Moodle mod/wiki"
+<XMLDB PATH="mod/wiki/db" VERSION="20101025" COMMENT="XMLDB file for Moodle mod/wiki"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -56,7 +56,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="subwikititleuser"/>
         <KEY NAME="subwikititleuser" TYPE="unique" FIELDS="subwikiid, title, userid" PREVIOUS="primary" NEXT="subwikifk"/>
-        <KEY NAME="subwikifk" TYPE="foreign" FIELDS="subwikiid" REFTABLE="wiki_subwiki" REFFIELDS="id" COMMENT="Foreign key to subwiki table" PREVIOUS="subwikititleuser"/>
+        <KEY NAME="subwikifk" TYPE="foreign" FIELDS="subwikiid" REFTABLE="wiki_subwikis" REFFIELDS="id" COMMENT="Foreign key to subwiki table" PREVIOUS="subwikititleuser"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="wiki_versions" COMMENT="Stores wiki page history" PREVIOUS="wiki_pages" NEXT="wiki_synonyms">
@@ -97,7 +97,7 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="frompageidfk"/>
         <KEY NAME="frompageidfk" TYPE="foreign" FIELDS="frompageid" REFTABLE="wiki_pages" REFFIELDS="id" COMMENT="Foreig key to wiki_pages" PREVIOUS="primary" NEXT="subwikifk"/>
-        <KEY NAME="subwikifk" TYPE="foreign" FIELDS="subwikiid" REFTABLE="wiki_subwiki" REFFIELDS="id" COMMENT="Foreign key to wiki_subwiki table" PREVIOUS="frompageidfk"/>
+        <KEY NAME="subwikifk" TYPE="foreign" FIELDS="subwikiid" REFTABLE="wiki_subwikis" REFFIELDS="id" COMMENT="Foreign key to wiki_subwiki table" PREVIOUS="frompageidfk"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="wiki_locks" COMMENT="Manages page locks" PREVIOUS="wiki_links">

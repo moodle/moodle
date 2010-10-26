@@ -330,6 +330,26 @@ function xmldb_wiki_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010080201, 'wiki');
     }
 
+    if ($oldversion < 2010102500) {
+
+        // Define key subwikifk (foreign) to be added to wiki_pages
+        $table = new xmldb_table('wiki_pages');
+        $key = new xmldb_key('subwikifk', XMLDB_KEY_FOREIGN, array('subwikiid'), 'wiki_subwikis', array('id'));
+
+        // Launch add key subwikifk
+        $dbman->add_key($table, $key);
+
+         // Define key subwikifk (foreign) to be added to wiki_links
+        $table = new xmldb_table('wiki_links');
+        $key = new xmldb_key('subwikifk', XMLDB_KEY_FOREIGN, array('subwikiid'), 'wiki_subwikis', array('id'));
+
+        // Launch add key subwikifk
+        $dbman->add_key($table, $key);
+
+        // wiki savepoint reached
+        upgrade_mod_savepoint(true, 2010102500, 'wiki');
+    }
+
 
 
     return true;
