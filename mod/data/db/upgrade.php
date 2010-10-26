@@ -84,7 +84,7 @@ function xmldb_data_upgrade($oldversion) {
                     JOIN {data} d            ON d.id = r.dataid
                     JOIN {modules} m         ON m.name = 'data'
                     JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = d.id)
-                   WHERE c.content <> '$empty' AND c.content IS NOT NULL
+                   WHERE ".$DB->sql_compare_text('c.content', 2)." <> '$empty' AND c.content IS NOT NULL
                          AND (f.type = 'file' OR f.type = 'picture')";
 
         $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
