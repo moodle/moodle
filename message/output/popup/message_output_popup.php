@@ -58,17 +58,10 @@ class message_output_popup extends message_output{
     }
 
     public function process_form($form, &$preferences) {
-        $preferences['message_blocknoncontacts']  = !empty($form->blocknoncontacts)?1:0;
-        //$preferences['message_beepnewmessage']    = !empty($form->beepnewmessage)?1:0;
-
         return true;
     }
     public function load_data(&$preferences, $userid) {
         global $USER;
-
-        $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontacts', '', $userid);
-        //$preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $userid);
-
         return true;
     }
 }

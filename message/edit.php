@@ -140,6 +140,10 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         }
     }
 
+    //process general messaging preferences
+    $preferences['message_blocknoncontacts']  = !empty($form->blocknoncontacts)?1:0;
+    //$preferences['message_beepnewmessage']    = !empty($form->beepnewmessage)?1:0;
+
 /// Save all the new preferences to the database
     if (!set_user_preferences( $preferences, $user->id ) ){
         print_error('cannotupdateusermsgpref');
@@ -182,6 +186,10 @@ foreach ( $processors as $processorid => $processor){
         }
     }
 }
+
+//load general messaging preferences
+$preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontacts', '', $user->id);
+//$preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $user->id);
 
 /// Display page header
 $streditmymessage = get_string('editmymessage', 'message');
