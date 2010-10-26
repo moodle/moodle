@@ -54,7 +54,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configtext('sitepolicy', get_string('sitepolicy', 'admin'), get_string('sitepolicy_help', 'admin'), '', PARAM_RAW));
     $temp->add(new admin_setting_configtext('sitepolicyguest', get_string('sitepolicyguest', 'admin'), get_string('sitepolicyguest_help', 'admin'), (isset($CFG->sitepolicy) ? $CFG->sitepolicy : ''), PARAM_RAW));
     $temp->add(new admin_setting_configcheckbox('extendedusernamechars', get_string('extendedusernamechars', 'admin'), get_string('configextendedusernamechars', 'admin'), 0));
-    $temp->add(new admin_setting_configcheckbox('usetags', get_string('usetags','admin'),get_string('configusetags', 'admin'),'1'));
     $temp->add(new admin_setting_configcheckbox('keeptagnamecase', get_string('keeptagnamecase','admin'),get_string('configkeeptagnamecase', 'admin'),'1'));
 
     $temp->add(new admin_setting_configcheckbox('profilesforenrolledusersonly', get_string('profilesforenrolledusersonly','admin'),get_string('configprofilesforenrolledusersonly', 'admin'),'1'));
