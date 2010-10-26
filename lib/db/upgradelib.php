@@ -287,6 +287,8 @@ function upgrade_migrate_files_course($context, $path, $delete) {
     $items = new DirectoryIterator($fullpathname);
     $fs = get_file_storage();
 
+    $textlib = textlib_get_instance();
+
     foreach ($items as $item) {
         if ($item->isDot()) {
             continue;
@@ -320,6 +322,11 @@ function upgrade_migrate_files_course($context, $path, $delete) {
 
             if ($filename === '') {
                 //unsupported chars, sorry
+                continue;
+            }
+
+            if ($textlib->strlen($filepath) > 255) {
+                echo $OUTPUT->notification(" File path longer than 255 chars, skipping: ".$fullpathname.$item->getFilename());
                 continue;
             }
 
