@@ -54,7 +54,7 @@ $contextid = null;//now we have a context object throw away the id from the user
 
 if (!confirm_sesskey() || $USER->id==$rateduserid) {
     echo $OUTPUT->header();
-    echo get_string('ratepermissiondenied', 'ratings');
+    echo get_string('ratepermissiondenied', 'rating');
     echo $OUTPUT->footer();
     die();
 }
@@ -78,7 +78,7 @@ if ($context->contextlevel==CONTEXT_MODULE) {
 }
 
 if (!$pluginrateallowed || !has_capability('moodle/rating:rate',$context)) {
-    $result->error = get_string('ratepermissiondenied', 'ratings');
+    $result->error = get_string('ratepermissiondenied', 'rating');
     echo json_encode($result);
     die();
 }
