@@ -5642,7 +5642,7 @@ function build_context_path($force = false) {
         $updatesql = "UPDATE {context}
                          SET path  = (SELECT path FROM {context_temp} WHERE id = {context}.id),
                              depth = (SELECT depth FROM {context_temp} WHERE id = {context}.id)
-                         WHERE id IN (SELECT id FROM mdl_context_temp)";
+                         WHERE id IN (SELECT id FROM {context_temp})";
     }
 
     // Top level categories
