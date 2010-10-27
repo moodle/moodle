@@ -9106,26 +9106,37 @@ function message_popup_window() {
 
     if (!isset($USER->message_lastpopup)) {
         $USER->message_lastpopup = 0;
+    } else if ($USER->message_lastpopup > (time()-120)) {
+        //dont run the query to check whether to display a popup if its been run in the last 2 minutes
+        return;
     }
 
-    $message_users = null;
+    //a quick query to check whether we need to display a popup
+    $messagechecksql = "SELECT count(m.id) FROM mdl_message m
+JOIN mdl_message_working mw ON m.id=mw.unreadmessageid
+JOIN mdl_message_processors p ON mw.processorid=p.id
+WHERE m.useridto = :userid AND p.name='popup'";
+    
+    $messagecount = $DB->count_records_sql($messagechecksql, array('userid'=>$USER->id));
+    if ($messagecount<1) {
+        return;
+    }
 
+    //got unread messages so now do another query that joins with the user table
     $messagesql = "SELECT m.id, m.smallmessage, m.notification, u.firstname, u.lastname FROM {message} m
 JOIN {message_working} mw ON m.id=mw.unreadmessageid
 JOIN {message_processors} p ON mw.processorid=p.id
 JOIN {user} u ON m.useridfrom=u.id
 WHERE m.useridto = :userid AND p.name='popup'";
 
-    $sql = $messagesql.' AND m.timecreated > :ts';
-    $message_users = $DB->get_records_sql($sql, array('userid'=>$USER->id, 'ts'=>$USER->message_lastpopup));
-    if (empty($message_users)) {
-
-        //if the user was last notified over an hour ago remind them of any new messages regardless of when they were sent
-        $canrenotify = (time() - $USER->message_lastpopup) > 3600;
-        if ($canrenotify) {
-            $message_users = $DB->get_records_sql($messagesql, array('userid'=>$USER->id));
-        }
+    //if the user was last notified over an hour ago we can renotify them of old messages
+    //so don't worry about when the new message was sent
+    $lastnotifiedlongago = $USER->message_lastpopup < (time()-3600);
+    if (!$lastnotifiedlongago) {
+        $messagesql .= 'AND m.timecreated > :lastpopuptime';
     }
+
+    $message_users = $DB->get_records_sql($messagesql, array('userid'=>$USER->id, 'lastpopuptime'=>$USER->message_lastpopup));
 
     //if we have new messages to notify the user about
     if (!empty($message_users)) {
