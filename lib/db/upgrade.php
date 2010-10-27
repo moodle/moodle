@@ -5367,6 +5367,16 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010102602);
     }
 
+    if ($oldversion < 2010102700) {
+
+        $table = new xmldb_table('post');
+        $field = new xmldb_field('uniquehash', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'content');
+        // Launch change of precision for field name
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010102700);
+    }
 
     return true;
 }
