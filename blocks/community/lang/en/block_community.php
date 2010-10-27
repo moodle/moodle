@@ -37,6 +37,7 @@ $string['blocks'] = 'Blocks';
 $string['cannotselecttopsubject'] = 'Cannot select a top subject level';
 $string['comments'] = 'Comments ({$a})';
 $string['contentinfo'] = 'Subject: {$a->subject} - Audience: {$a->audience} - Educational level: {$a->educationallevel}';
+$string['continue'] = 'Continue';
 $string['contributors'] = ' - Contributors: {$a}';
 $string['coursedesc'] = 'Description';
 $string['courselang'] = 'Language';

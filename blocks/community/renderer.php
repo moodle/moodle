@@ -46,6 +46,21 @@ class block_community_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Display remove community success message and a button to be redirected to te referer page
+     * @param moodle_url $url the page to be redirected to
+     * @return string html
+     */
+    public function remove_success(moodle_url $url) {
+        $html = $this->output->notification(get_string('communityremoved', 'hub'),
+                    'notifysuccess');
+        $continuebutton = new single_button($url,
+                        get_string('continue', 'block_community'));
+        $html .= html_writer::tag('div', $this->output->render($continuebutton),
+                array('class' => 'continuebutton'));
+        return $html;
+    }
+
+    /**
      * The 'Next'/'more course result' link for a courses search
      * @param array $data - the form parameter to execute the search on more result
      * @return string html code
