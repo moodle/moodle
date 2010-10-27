@@ -77,8 +77,11 @@ if ($add != -1 and $confirm and confirm_sesskey()) {
     $course->url = optional_param('courseurl', '', PARAM_URL);
     $course->imageurl = optional_param('courseimageurl', '', PARAM_URL);
     $communitymanager->block_community_add_course($course, $USER->id);
-    $notificationmessage = $OUTPUT->notification(get_string('addedtoblock', 'community_hub'),
-                    'notifysuccess');
+    echo $OUTPUT->header();
+    echo $renderer->save_link_success(
+            new moodle_url('/course/view.php', array('id' => $courseid)));
+    echo $OUTPUT->footer();
+    die();
 }
 
 /// Delete temp file when cancel restore
@@ -204,9 +207,6 @@ if (optional_param('executesearch', 0, PARAM_INTEGER) and confirm_sesskey()) {
 // OUTPUT
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('searchcommunitycourse', 'block_community'), 3, 'main');
-if (!empty($notificationmessage)) {
-    echo $notificationmessage;
-}
 $hubselectorform->display();
 if (!empty($errormessage)) {
     echo $errormessage;
