@@ -310,7 +310,7 @@ class PHPMailer {
   private   $to             = array();
   private   $cc             = array();
   private   $bcc            = array();
-  private   $ReplyTo        = array();
+  public   $ReplyTo        = array();
   private   $all_recipients = array();
   private   $attachment     = array();
   private   $CustomHeader   = array();
