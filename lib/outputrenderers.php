@@ -2615,12 +2615,14 @@ class core_renderer_cli extends core_renderer {
 
         if (debugging('', DEBUG_DEVELOPER)) {
             if (!empty($debuginfo)) {
-                $this->notification($debuginfo, 'notifytiny');
+                $output .= $this->notification($debuginfo, 'notifytiny');
             }
             if (!empty($backtrace)) {
-                $this->notification('Stack trace: ' . format_backtrace($backtrace, true), 'notifytiny');
+                $output .= $this->notification('Stack trace: ' . format_backtrace($backtrace, true), 'notifytiny');
             }
         }
+
+        return $output;
     }
 
     /**
