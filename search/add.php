@@ -90,7 +90,7 @@
                     $valuesArray = $db_names_function();
                     if ($valuesArray){
                         foreach($valuesArray as $values){
-                            $where = (isset($values[5])) ? 'AND ('.$values[5].')' : '';
+                            $where = (isset($values[5]) and $values[5]!='') ? 'AND ('.$values[5].')' : '';
                             $itemtypes = ($values[4] != '*' && $values[4] != 'any') ? " AND itemtype = '{$values[4]}' " : '' ;
 
                             //select records in MODULE table, but not in SEARCH_DATABASE_TABLE
@@ -108,14 +108,14 @@
                             $docIds = $DB->get_records_sql_menu($query, array($mod->name));
 
                             if (!empty($docIds)){
-                                list($usql, $params) = $DB->get_in_or_equal(array_keys('$docIds'), SQL_PARAMS_QM, 'param0000', false); // negative IN
+                                list($usql, $params) = $DB->get_in_or_equal(array_keys($docIds), SQL_PARAMS_QM, 'param0000', false); // negative IN
                                 $query =  "
                                     SELECT id,
                                         $values[0] as docid
                                     FROM
                                         {{$values[1]}}
                                     WHERE
-                                        id $uslq AND
+                                        id $usql AND
                                         $values[2] > $indexdate
                                         $where
                                 ";

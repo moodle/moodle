@@ -246,7 +246,7 @@ function chat_delete($info, $itemtype) {
 * // TODO chat indexable records are virtual. Should proceed in a special way
 */
 function chat_db_names() {
-    //[primary id], [table name], [time created field name], [time modified field name]
+    //[primary id], [table name], [time created field name], [time modified field name], [docsubtype], [additional where conditions for sql]
     return null;
 }
 

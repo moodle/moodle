@@ -227,7 +227,7 @@ function glossary_db_names() {
     //[primary id], [table name], [time created field name], [time modified field name]
     return array(
         array('id', 'glossary_entries', 'timecreated', 'timemodified', 'standard'),
-        array('id', 'glossary_comments', 'timemodified', 'timemodified', 'comment')
+        array('id', 'comments', 'timecreated', 'timecreated', 'comment')
     );
 }
 

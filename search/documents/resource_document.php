@@ -299,7 +299,7 @@ function resource_delete($info, $itemtype) {
 */
 function resource_db_names() {
     //[primary id], [table name], [time created field name], [time modified field name], [additional where conditions for sql]
-    return array(array('id', 'resource', 'timemodified', 'timemodified', 'any', " (alltext != '' AND alltext != ' ' AND alltext != '&nbsp;' AND TYPE != 'file') OR TYPE = 'file' "));
+    return array(array('id', 'resource_old', 'timemodified', 'timemodified', 'any', " (alltext != '' AND alltext != ' ' AND alltext != '&nbsp;' AND TYPE != 'file') OR TYPE = 'file' "));
 }
 
 /**

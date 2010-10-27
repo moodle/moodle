@@ -240,8 +240,8 @@ function wiki_delete($info, $itemtype) {
 
 //returns the var names needed to build a sql query for addition/deletions
 function wiki_db_names() {
-    //[primary id], [table name], [time created field name], [time modified field name]
-    return array(array('id', 'wiki_pages', 'created', 'lastmodified', 'standard'));
+    //[primary id], [table name], [time created field name], [time modified field name], [docsubtype], [additional where conditions for sql]
+    return array(array('id', 'wiki_pages', 'timecreated', 'lastmodified', 'standard'));
 }
 
 /**

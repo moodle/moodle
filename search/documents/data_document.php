@@ -318,10 +318,10 @@ function data_delete($info, $itemtype) {
 *
 */
 function data_db_names() {
-    //[primary id], [table name], [time created field name], [time modified field name]
+    //[primary id], [table name], [time created field name], [time modified field name], [docsubtype], [additional where conditions for sql]
     return array(
         array('id', 'data_records', 'timecreated', 'timemodified', 'record'),
-        array('id', 'data_comments', 'created', 'modified', 'comment')
+        array('id', 'comments', 'timecreated', 'timecreated', 'comment')
     );
 }
 

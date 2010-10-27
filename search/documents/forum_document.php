@@ -165,7 +165,7 @@ function forum_delete($info, $itemtype) {
 *
 */
 function forum_db_names() {
-    //[primary id], [table name], [time created field name], [time modified field name]
+    //[primary id], [table name], [time created field name], [time modified field name], [docsubtype], [additional where conditions for sql]
     return array(
         array('id', 'forum_posts', 'created', 'modified', 'head', 'parent = 0'),
         array('id', 'forum_posts', 'created', 'modified', 'post', 'parent != 0')
