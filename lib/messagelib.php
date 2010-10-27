@@ -283,18 +283,34 @@ function message_uninstall($component) {
 function message_set_default_message_preferences($user) {
     global $DB;
 
-    $onlineprocessor = 'email';
+    $defaultonlineprocessor = 'email';
+    $defaultofflineprocessor = 'email';
+    $offlineprocessortouse = $onlineprocessortouse = null;
+
     //look for the pre-2.0 preference if it exists
     $oldpreference = get_user_preferences('message_showmessagewindow', 0, $user->id);
     if (!empty($oldpreference)) {
-        $onlineprocessor = 'popup';
+        $defaultonlineprocessor = 'popup';
     }
 
     $providers = $DB->get_records('message_providers');
     $preferences = array();
+
     foreach ($providers as $providerid => $provider) {
-        $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedin'] = $onlineprocessor;
-        $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedoff'] = 'email';
+
+        //force some specific defaults for some types of message
+        if ($provider->name=='instantmessage') {
+            $onlineprocessortouse = 'popup';
+            $offlineprocessortouse = 'email,popup';
+        } else if ($provider->name=='posts') { //forum posts
+            $offlineprocessortouse = $onlineprocessortouse = 'email';
+        } else {
+            $onlineprocessortouse = $defaultonlineprocessor;
+            $offlineprocessortouse = $defaultofflineprocessor;
+        }
+        
+        $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedin'] = $onlineprocessortouse;
+        $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedoff'] = $offlineprocessortouse;
     }
     return set_user_preferences($preferences, $user->id);
 }
