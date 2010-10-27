@@ -581,4 +581,11 @@ function install_cli_database(array $options, $interactive) {
     admin_apply_default_settings(NULL, true);
     set_config('registerauth', '');
 
+    // set the site name
+    if (isset($options['shortname']) and $options['shortname'] !== '') {
+        $DB->set_field('course', 'shortname', $options['shortname'], array('format' => 'site'));
+    }
+    if (isset($options['fullname']) and $options['fullname'] !== '') {
+        $DB->set_field('course', 'fullname', $options['fullname'], array('format' => 'site'));
+    }
 }

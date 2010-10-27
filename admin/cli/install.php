@@ -61,6 +61,8 @@ Options:
 --dbpass=PASSWORD     Database password. Default is blank
 --dbsocket            Use database sockets. Available for some databases only.
 --prefix=STRING       Table prefix for above database tables. Default is mdl_
+--fullname=STRING     The fullname of the site
+--shortname=STRING    The shortname of the site
 --adminuser=USERNAME  Username for the moodle admin account. Default is admin
 --adminpass=PASSWORD  Password for the moodle admin account,
                       required in non-interactive mode.
@@ -185,6 +187,8 @@ list($options, $unrecognized) = cli_get_params(
         'dbpass'            => '',
         'dbsocket'          => false,
         'prefix'            => 'mdl_',
+        'fullname'          => '',
+        'shortname'         => '',
         'adminuser'         => 'admin',
         'adminpass'         => '',
         'non-interactive'   => false,
@@ -227,7 +231,7 @@ if ($interactive) {
     foreach ($languages as $key=>$lang) {
         $c++;
         $length = iconv_strlen($lang, 'UTF-8');
-        $padded = $lang.str_repeat(' ', 28-$length);
+        $padded = $lang.str_repeat(' ', 38-$length);
         $langlist .= $padded;
         if ($c % 3 == 0) {
             $langlist .= "\n";
@@ -504,6 +508,48 @@ if ($interactive) {
     $hint_database = install_db_validate($database, $CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, array('dbpersist'=>0, 'dbsocket'=>$options['dbsocket']));
     if ($hint_database !== '') {
         cli_error(get_string('dbconnectionerror', 'install'));
+    }
+}
+
+// ask for fullname
+if ($interactive) {
+    cli_separator();
+    cli_heading(get_string('fullsitename', 'moodle'));
+
+    if ($options['fullname'] !== '') {
+        $prompt = get_string('clitypevaluedefault', 'admin', $options['fullname']);
+    } else {
+        $prompt = get_string('clitypevalue', 'admin');
+    }
+
+    do {
+        $options['fullname'] = cli_input($prompt, $options['fullname']);
+    } while (empty($options['fullname']));
+} else {
+    if (empty($options['fullname'])) {
+        $a = (object)array('option'=>'fullname', 'value'=>$options['fullname']);
+        cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
+    }
+}
+
+// ask for shortname
+if ($interactive) {
+    cli_separator();
+    cli_heading(get_string('shortsitename', 'moodle'));
+
+    if ($options['shortname'] !== '') {
+        $prompt = get_string('clitypevaluedefault', 'admin', $options['shortname']);
+    } else {
+        $prompt = get_string('clitypevalue', 'admin');
+    }
+
+    do {
+        $options['shortname'] = cli_input($prompt, $options['shortname']);
+    } while (empty($options['shortname']));
+} else {
+    if (empty($options['shortname'])) {
+        $a = (object)array('option'=>'shortname', 'value'=>$options['shortname']);
+        cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
     }
 }
 
