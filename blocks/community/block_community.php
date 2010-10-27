@@ -87,7 +87,7 @@ class block_community extends block_list {
             foreach ($courses as $course) {
                 //delete link
                 $deleteicon = html_writer::empty_tag('img',
-                                array('src' => $OUTPUT->pix_url('i/cross_red_small'),
+                                array('src' => $OUTPUT->pix_url('t/delete'),
                                     'alt' => get_string('removecommunitycourse', 'block_community')));
                 $deleteurl = new moodle_url('/blocks/community/communitycourse.php',
                                 array('remove' => true,
@@ -97,7 +97,7 @@ class block_community extends block_list {
 
                 $courselink = html_writer::tag('a', $course->coursename,
                                 array('href' => $course->courseurl));
-                $this->content->items[] = $courselink . $deleteatag;
+                $this->content->items[] = $courselink . ' ' . $deleteatag;
                 $this->content->icons[] = '';
             }
         }
