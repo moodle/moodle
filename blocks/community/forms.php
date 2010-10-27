@@ -170,6 +170,7 @@ class community_hub_search_form extends moodleform {
                     $hubdescription = html_writer::tag('span',
                                     $hubdescription,
                                     array('class' => $hub['trusted'] ? 'hubtrusted' : 'hubnottrusted'));
+                     $hubdescription .= ' ' . $OUTPUT->doc_link('trusted_hubs');
                 } else {
                     $hubdescription = '&nbsp;&nbsp;';
                     $hubdescription .= html_writer::tag('a', $hub['name'],
