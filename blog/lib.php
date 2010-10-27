@@ -200,7 +200,7 @@ function blog_sync_external_entries($externalblog) {
         $newentry->lastmodified = $entry->get_date('U');
 
         $textlib = textlib_get_instance();
-        if ($textlib->strlen($text) > 255) {
+        if ($textlib->strlen($newentry->uniquehash) > 255) {
             // The URL for this item is too long for the field. Rather than add
             // the entry without the link we will skip straight over it.
             // RSS spec says recommended length 500, we use 255.
