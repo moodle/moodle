@@ -288,8 +288,11 @@ function message_set_default_message_preferences($user) {
     $offlineprocessortouse = $onlineprocessortouse = null;
 
     //look for the pre-2.0 preference if it exists
-    $oldpreference = get_user_preferences('message_showmessagewindow', 0, $user->id);
-    if (!empty($oldpreference)) {
+    $oldpreference = get_user_preferences('message_showmessagewindow', -1, $user->id);
+    //if they elected to see popups or the preference didnt exist
+    $usepopups = (intval($oldpreference)==1 || intval($oldpreference)==-1);
+
+    if ($usepopups) {
         $defaultonlineprocessor = 'popup';
     }
 
@@ -300,8 +303,11 @@ function message_set_default_message_preferences($user) {
 
         //force some specific defaults for some types of message
         if ($provider->name=='instantmessage') {
-            $onlineprocessortouse = 'popup';
-            $offlineprocessortouse = 'email,popup';
+            //if old popup preference was set to 1 or is missing use popups for IMs
+            if ($usepopups) {
+                $onlineprocessortouse = 'popup';
+                $offlineprocessortouse = 'email,popup';
+            }
         } else if ($provider->name=='posts') { //forum posts
             $offlineprocessortouse = $onlineprocessortouse = 'email';
         } else {
