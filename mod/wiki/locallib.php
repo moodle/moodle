@@ -1341,8 +1341,8 @@ function wiki_get_linked_pages($pageid) {
     global $DB;
 
     $sql = "SELECT p.id, p.title
-            FROM mdl_wiki_pages p
-            JOIN mdl_wiki_links l ON l.topageid = p.id
+            FROM {wiki_pages} p
+            JOIN {wiki_links} l ON l.topageid = p.id
             WHERE l.frompageid = ?
             ORDER BY p.title ASC";
     return $DB->get_records_sql($sql, array($pageid));
