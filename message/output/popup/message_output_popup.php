@@ -33,18 +33,24 @@ class message_output_popup extends message_output{
      * The popup doesn't send data only saves in the database for later use,
      * the popup_interface.php takes the message from the message table into
      * the message_read.
-     * @param object $message the message to be sent
+     * @param object $eventdata the event data submitted by the message sender plus $eventdata->savedmessageid
      * @return true if ok, false if error
      */
-    public function send_message($message) {
+    public function send_message($eventdata) {
         global $DB;
 
+        //hold onto the popup processor id because /admin/cron.php sends a lot of messages at once
+        static $processorid = null;
+
         //prevent users from getting popup notifications of messages to themselves (happens with forum notifications)
-        if ($message->useridfrom!=$message->useridto) {
-            $processor = $DB->get_record('message_processors', array('name'=>'popup'));
+        if ($eventdata->userfrom->id!=$eventdata->userto->id) {
+            if (empty($processorid)) {
+                $processor = $DB->get_record('message_processors', array('name'=>'popup'));
+                $processorid = $processor->id;
+            }
             $procmessage = new stdClass();
-            $procmessage->unreadmessageid = $message->id;
-            $procmessage->processorid     = $processor->id;
+            $procmessage->unreadmessageid = $eventdata->savedmessageid;
+            $procmessage->processorid     = $processorid;
 
             //save this message for later delivery
             $DB->insert_record('message_working', $procmessage);

@@ -33,9 +33,9 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Required parameter $eventdata structure:
  *  modulename     -
- *  userfrom
- *  userto
- *  subject
+ *  userfrom object the user sending the message
+ *  userto object the message recipient
+ *  subject string the message subject
  *  fullmessage - the full message in a given format
  *  fullmessageformat  - the format if the full message (FORMAT_MOODLE, FORMAT_HTML, ..)
  *  fullmessagehtml  - the full version (the message processor will choose with one to use)
@@ -54,6 +54,15 @@ function message_send($eventdata) {
 
     //TODO: we need to solve problems with database transactions here somehow, for now we just prevent transactions - sorry
     $DB->transactions_forbidden();
+
+    if (is_int($eventdata->userto)) {
+        mtrace('message_send() userto is a user ID when it should be a user object');
+        $eventdata->userto = $DB->get_record('user', array('id' => $eventdata->useridto));
+    }
+    if (is_int($eventdata->userfrom)) {
+        mtrace('message_send() userfrom is a user ID when it should be a user object');
+        $eventdata->userfrom = $DB->get_record('user', array('id' => $message->userfrom));
+    }
 
     //after how long inactive should the user be considered logged off?
     if (isset($CFG->block_online_users_timetosee)) {
@@ -118,6 +127,7 @@ function message_send($eventdata) {
     } else {                        // Process the message
         // Store unread message just in case we can not send it
         $savemessage->id = $DB->insert_record('message', $savemessage);
+        $eventdata->savedmessageid = $savemessage->id;
 
         // Try to deliver the message to each processor
         if ($processor!='none') {
@@ -132,7 +142,7 @@ function message_send($eventdata) {
                     if (class_exists($processclass)) {
                         $pclass = new $processclass();
 
-                        if (!$pclass->send_message($savemessage)) {
+                        if (!$pclass->send_message($eventdata)) {
                             debugging('Error calling message processor '.$procname);
                             return false;
                         }

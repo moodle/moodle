@@ -38,21 +38,20 @@ class message_output_jabber extends message_output {
 
     /**
      * Processes the message (sends using jabber).
-     * @param object $message the message to be sent
+     * @param object $eventdata the event data submitted by the message sender plus $eventdata->savedmessageid
      * @return true if ok, false if error
      */
-    function send_message($message){
-        global $DB, $CFG;
+    function send_message($eventdata){
+        global $CFG;
 
-        if (!$userfrom = $DB->get_record('user', array('id' => $message->useridfrom))) {
-            return false;
+        //hold onto jabber id preference because /admin/cron.php sends a lot of messages at once
+        static $jabberaddresses = array();
+
+        if (!array_key_exists($eventdata->userto->id, $jabberaddresses)) {
+            $jabberaddresses[$eventdata->userto->id] = get_user_preferences('message_processor_jabber_jabberid', $eventdata->userto->email, $eventdata->userto->id);
         }
-        if (!$userto = $DB->get_record('user', array('id' => $message->useridto))) {
-            return false;
-        }
-        if (!$jabberaddress = get_user_preferences('message_processor_jabber_jabberid', $userto->email, $userto->id)) {
-            $jabberaddress = $userto->email;
-        }
+        $jabberaddress = $jabberaddresses[$eventdata->userto->id];
+
         $jabbermessage = fullname($userfrom).': '.$message->smallmessage;
 
         $conn = new XMPPHP_XMPP($CFG->jabberhost,$CFG->jabberport,$CFG->jabberusername,$CFG->jabberpassword,'moodle',$CFG->jabberserver);
