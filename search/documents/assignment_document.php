@@ -109,8 +109,7 @@ function assignment_get_content_for_index(&$assignment) {
     if ($cm){
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-        $assignment->authors = '';
-        $assignment->date = $assignment->timemodified;
+        $assignment = assignment_add_document_fields($assignment);
         $documents[] = new AssignmentSearchDocument(get_object_vars($assignment), $cm->id, 'intro', $assignment->course, null, $context->id);
 
         $submissions = assignment_get_all_submissions($assignment);
@@ -118,11 +117,7 @@ function assignment_get_content_for_index(&$assignment) {
             $submissionoffset=-1;
             foreach($submissions as $submission){
                 $submissionoffset++;
-                $owner = $DB->get_record('user', array('id' => $submission->userid));
-                $submission->authors = fullname($owner);
-                $submission->assignmenttype = $assignment->assignmenttype;
-                $submission->date = $submission->timemodified;
-                $submission->name = "submission:";
+                $submission = assignment_submission_add_document_fields($assignment, $submission);
                 if (file_exists("{$CFG->dirroot}/mod/assignment/type/{$assignment->assignmenttype}/searchlib.php")){
                     include_once("{$CFG->dirroot}/mod/assignment/type/{$assignment->assignmenttype}/searchlib.php");
                     if (function_exists('assignment_get_submission_location')){
@@ -236,8 +231,8 @@ function assignment_get_physical_file(&$submission, &$assignment, &$cm, $path, $
 function assignment_single_document($id, $itemtype) {
     global $DB;
 
-    if ($itemtype == 'requirement'){
-        if (!$assignment = $DB->get_record('assignment', 'id', $id)){
+    if ($itemtype == 'intro') {
+        if (!$assignment = $DB->get_record('assignment', array('id' => $id))) {
             return null;
         }
     } elseif ($itemtype == 'submission') {
@@ -256,12 +251,15 @@ function assignment_single_document($id, $itemtype) {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         // should be only one
-        if ($itemtype == 'description'){
-            $document = new AssignmentSearchDocument(get_object_vars($assignment), $cm->id, 'description', $assignment->course, null, $context->id);
+        if ($itemtype == 'intro') {
+            $assignment = assignment_add_document_fields($assignment);
+            $document = new AssignmentSearchDocument(get_object_vars($assignment), $cm->id, 'intro', $assignment->course, null, $context->id);
             return $document;
         }
-        if ($itemtype == 'submittted'){
-            $document = new AssignmentSearchDocument(get_object_vars($submission), $cm->id, 'submitted', $assignment->course, null, $context->id);
+        if ($itemtype == 'submission') {
+            $submission = assignment_submission_add_document_fields($assignment, $submission);
+            var_dump($submission);
+            $document = new AssignmentSearchDocument(get_object_vars($submission), $cm->id, 'submission', $assignment->course, null, $context->id);
             return $document;
         }
     }
@@ -286,8 +284,8 @@ function assignment_delete($info, $itemtype) {
 function assignment_db_names() {
     //[primary id], [table name], [time created field name], [time modified field name], [docsubtype], [additional where conditions for sql]]
     return array(
-        array('id', 'assignment', 'timemodified', 'timemodified', 'description'),
-        array('id', 'assignment_submissions', 'timecreated', 'timemodified', 'submitted')
+        array('id', 'assignment', 'timemodified', 'timemodified', 'intro'),
+        array('id', 'assignment_submissions', 'timecreated', 'timemodified', 'submission')
     );
 }
 
@@ -383,5 +381,30 @@ function assignment_link_post_processing($title){
         return mb_convert_encoding($title, 'UTF-8', 'auto');
     }
     return mb_convert_encoding($title, 'auto', 'UTF-8');
+}
+/**
+ * This adds properties to a records from the submissions table to be a search document
+ * @global <type> $DB
+ * @param <type> $assignment
+ * @param <type> $submission
+ * @return <type>
+ */
+function assignment_submission_add_document_fields($assignment, $submission) {
+    global $DB;
+    
+    $owner = $DB->get_record('user', array('id' => $submission->userid));
+    $submission->authors = fullname($owner);
+    $submission->assignmenttype = $assignment->assignmenttype;
+    $submission->date = $submission->timemodified;
+    $submission->name = "submission:";
+
+    return $submission;
+}
+
+function assignment_add_document_fields($assignment) {
+    $assignment->authors = '';
+    $assignment->date = $assignment->timemodified;
+
+    return $assignment;
 }
 ?>
