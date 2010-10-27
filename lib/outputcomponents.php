@@ -348,10 +348,14 @@ class pix_emoticon extends pix_icon implements renderable {
     /**
      * Constructor
      * @param string $pix short icon name
-     * @param string $component component name
+     * @param string $alt alternative text
+     * @param string $component emoticon image provider
+     * @param array $attributes explicit HTML attributes
      */
-    public function __construct($pix, $alt, $component = 'moodle') {
-        $attributes = array('class' => 'emoticon');
+    public function __construct($pix, $alt, $component = 'moodle', array $attributes = array()) {
+        if (empty($attributes['class'])) {
+            $attributes['class'] = 'emoticon';
+        }
         parent::__construct($pix, $alt, $component, $attributes);
     }
 }

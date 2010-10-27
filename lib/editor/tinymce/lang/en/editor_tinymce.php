@@ -32,7 +32,8 @@ $string['dragmath:dragmath_desc'] = 'Insert equation';
 $string['dragmath:dragmath_javaneeded'] = 'To use this page you need a Java-enabled browser. Download the latest Java plug-in from {$a}.';
 $string['dragmath:dragmath_title'] = 'DragMath Equation Editor';
 $string['media_dlg:filename'] = 'Filename';
-$string['moodlenolink:desc'] = "Prevent automatic linking";
+$string['moodlenolink:desc'] = 'Prevent automatic linking';
+$string['moodleemoticon:desc'] = 'Insert emoticon';
 $string['pluginname'] = 'TinyMCE HTML editor';
 
 

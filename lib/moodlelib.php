@@ -6781,16 +6781,17 @@ class emoticon_manager {
      * Converts emoticon object into renderable pix_emoticon object
      *
      * @param stdClass $emoticon emoticon object
+     * @param array $attributes explicit HTML attributes to set
      * @return pix_emoticon
      */
-    public function prepare_renderable_emoticon(stdClass $emoticon) {
+    public function prepare_renderable_emoticon(stdClass $emoticon, array $attributes = array()) {
         $stringmanager = get_string_manager();
         if ($stringmanager->string_exists($emoticon->altidentifier, $emoticon->altcomponent)) {
             $alt = get_string($emoticon->altidentifier, $emoticon->altcomponent);
         } else {
-            $alt = $emoticon->text;
+            $alt = s($emoticon->text);
         }
-        return new pix_emoticon($emoticon->imagename, $alt, $emoticon->imagecomponent);
+        return new pix_emoticon($emoticon->imagename, $alt, $emoticon->imagecomponent, $attributes);
     }
 
     /**
