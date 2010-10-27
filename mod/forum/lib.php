@@ -5957,7 +5957,7 @@ function forum_remove_user_tracking($userid, $context) {
             if (!is_enrolled($context, $userid)) {
                  if ($course = $DB->get_record('course', array('id' => $context->instanceid), 'id')) {
                     // find all forums in which this user has reading tracked
-                    if ($forums = $DB->get_records_sql("SELECT f.id, cm.id as coursemodule
+                    if ($forums = $DB->get_records_sql("SELECT DISTINCT f.id, cm.id as coursemodule
                                                      FROM {forum} f,
                                                           {modules} m,
                                                           {course_modules} cm,
