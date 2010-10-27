@@ -9108,16 +9108,11 @@ function message_popup_window() {
         $USER->message_lastpopup = 0;
     } else if ($USER->message_lastpopup > (time()-120)) {
         //dont run the query to check whether to display a popup if its been run in the last 2 minutes
-        return;
+        //return;
     }
 
-    //a quick query to check whether we need to display a popup
-    $messagechecksql = "SELECT count(m.id) FROM mdl_message m
-JOIN mdl_message_working mw ON m.id=mw.unreadmessageid
-JOIN mdl_message_processors p ON mw.processorid=p.id
-WHERE m.useridto = :userid AND p.name='popup'";
-    
-    $messagecount = $DB->count_records_sql($messagechecksql, array('userid'=>$USER->id));
+    //a quick query to check whether the user has new messages
+    $messagecount = $DB->count_records('message', array('useridto' => $USER->id));
     if ($messagecount<1) {
         return;
     }
