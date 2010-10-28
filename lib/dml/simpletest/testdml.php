@@ -1030,6 +1030,24 @@ class dml_test extends UnitTestCase {
         $this->assertEqual($inskey4, reset($records)->id);
         $this->assertEqual($inskey5, end($records)->id);
 
+        // both limitfrom and limitnum in query having subqueris
+        // note the subquery skips records with course = 0 and 3
+        $sql = "SELECT * FROM {{$tablename}}
+                 WHERE course NOT IN (
+                     SELECT course FROM {{$tablename}}
+                      WHERE course IN (0, 3))
+                ORDER BY course";
+        $records = $DB->get_records_sql($sql, null, 0, 2); // Skip 0, get 2
+        $this->assertEqual(2, count($records));
+        $this->assertEqual($inskey6, reset($records)->id);
+        $this->assertEqual($inskey5, end($records)->id);
+        $records = $DB->get_records_sql($sql, null, 2, 2); // Skip 2, get 2
+        $this->assertEqual(2, count($records));
+        $this->assertEqual($inskey3, reset($records)->id);
+        $this->assertEqual($inskey2, end($records)->id);
+
+        // TODO: Test limits in queries having DISTINCT clauses
+
         // note: fetching nulls, empties, LOBs already tested by test_update_record() no needed here
     }
 
