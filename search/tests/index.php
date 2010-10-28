@@ -17,12 +17,12 @@
     * @version Moodle 2.0
     **/
 
-    @set_time_limit(0);
-    @ob_implicit_flush(true);
-    @ob_end_flush();
 
     require_once('../../config.php');
 
+    @set_time_limit(0);
+    @ob_implicit_flush(true);
+    @ob_end_flush();
 /// makes inclusions of the Zend Engine more reliable
     ini_set('include_path', $CFG->dirroot.DIRECTORY_SEPARATOR.'search'.PATH_SEPARATOR.ini_get('include_path'));
 
