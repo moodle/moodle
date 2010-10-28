@@ -7565,6 +7565,14 @@ function check_php_version($version='5.2.4') {
 
           break;
 
+      case 'Chrome':
+          if (preg_match("/Chrome\/(.*)[ ]+/i", $agent, $match)) {
+              if (version_compare($match[1], $version) >= 0) {
+                  return true;
+              }
+          }
+          break;
+
       case 'Safari iOS':  /// Safari on iPhone and iPad
           if (strpos($agent, 'iPhone')) {
               return true;
