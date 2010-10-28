@@ -766,6 +766,11 @@ function tag_cleanup() {
                         $delete = true;
                     }
                     break;
+                case 'wiki_page': // not relying on itemtype to be a table name here, itemtype is 'wiki_page' but table name is {wiki_pages}
+                    if ($DB->record_exists('wiki_pages', array('id'=>$instance->itemid))) {
+                        $delete = true;
+                    }
+                    break;
                 default: // anything else, if the instance is not there, delete.
                     if (!$DB->record_exists($instance->itemtype, array('id'=>$instance->itemid))) {
                         $delete = true;
