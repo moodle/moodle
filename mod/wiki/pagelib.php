@@ -553,7 +553,7 @@ class page_wiki_edit extends page_wiki {
         }
 
         if (!empty($CFG->usetags)) {
-            $params['tags'] = tag_get_tags_csv('wiki_page', $this->page->id, TAG_RETURN_TEXT);
+            $params['tags'] = tag_get_tags_csv('wiki_pages', $this->page->id, TAG_RETURN_TEXT);
         }
 
         $form = new mod_wiki_edit_form($url, $params);
@@ -1962,7 +1962,7 @@ class page_wiki_save extends page_wiki_edit {
                 $errors = $this->process_uploads($context);
             }
             if (!empty($CFG->usetags)) {
-                tag_set('wiki_page', $this->page->id, $data->tags);
+                tag_set('wiki_pages', $this->page->id, $data->tags);
             }
 
             $message = '<p>' . get_string('saving', 'wiki') . '</p>';

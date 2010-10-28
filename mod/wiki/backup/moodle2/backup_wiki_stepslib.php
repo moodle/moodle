@@ -105,7 +105,7 @@ class backup_wiki_activity_structure_step extends backup_activity_structure_step
                                     JOIN {tag_instance} ti ON ti.tagid = t.id
                                    WHERE ti.itemtype = ?
                                      AND ti.itemid = ?', array(
-                                         backup_helper::is_sqlparam('wiki_page'),
+                                         backup_helper::is_sqlparam('wiki_pages'),
                                          backup::VAR_PARENTID));
         }
 

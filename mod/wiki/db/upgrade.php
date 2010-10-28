@@ -350,7 +350,17 @@ function xmldb_wiki_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010102500, 'wiki');
     }
 
+    if ($oldversion < 2010102800) {
 
+        $sql = "UPDATE {tag_instance}
+                SET itemtype = 'wiki_pages'
+                WHERE itemtype = 'wiki_page'";
+        $DB->execute($sql);
+
+        echo $OUTPUT->notification('Updating tags itemtype', 'notifysuccess');
+
+        upgrade_mod_savepoint(true, 2010102800, 'wiki');
+    }
 
     return true;
 }

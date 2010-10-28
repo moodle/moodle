@@ -173,10 +173,10 @@ function wiki_reset_userdata($data) {
             foreach ($subwikis as $subwiki) {
                 if ($pages = $DB->get_records('wiki_pages', array('subwikiid' => $subwiki->id))) {
                     foreach ($pages as $page) {
-                        $tags = tag_get_tags_array('wiki_page', $page->id);
+                        $tags = tag_get_tags_array('wiki_pages', $page->id);
                         foreach ($tags as $tagid => $tagname) {
                             // Delete the related tag_instances related to the wiki page.
-                            $errors = tag_delete_instance('wiki_page', $page->id, $tagid);
+                            $errors = tag_delete_instance('wiki_pages', $page->id, $tagid);
                             $status[] = array('component' => $componentstr, 'item' => get_string('tagsdeleted', 'wiki'), 'error' => $errors);
                         }
                     }

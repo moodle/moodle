@@ -1194,7 +1194,7 @@ function wiki_print_page_content($page, $context, $subwikiid) {
     echo $OUTPUT->box($html);
 
     if (!empty($CFG->usetags)) {
-        $tags = tag_get_tags_array('wiki_page', $page->id);
+        $tags = tag_get_tags_array('wiki_pages', $page->id);
         echo '<p class="wiki-tags"><span>Tags: </span>' . join($tags, ", ") . '</p>';
     }
 
