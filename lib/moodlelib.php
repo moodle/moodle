@@ -6417,6 +6417,14 @@ function check_php_version($version='4.1.0') {
           }
           break;
 
+      case 'Chrome':
+          if (preg_match("/Chrome\/(.*)[ ]+/i", $agent, $match)) {
+              if (version_compare($match[1], $version) >= 0) {
+                  return true;
+              }
+          }
+          break;
+
       case 'Safari':  /// Safari
           // Look for AppleWebKit, excluding strings with OmniWeb, Shiira and SimbianOS
           if (strpos($agent, 'OmniWeb')) { // Reject OmniWeb

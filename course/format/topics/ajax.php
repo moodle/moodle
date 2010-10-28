@@ -5,6 +5,6 @@
 
 
 $CFG->ajaxcapable = true;
-$CFG->ajaxtestedbrowsers = array('MSIE' => 6.0, 'Gecko' => 20061111);
+$CFG->ajaxtestedbrowsers = array('MSIE' => 6.0, 'Gecko' => 20061111, 'Safari'=>531, 'Chrome'=>6.0);
 
 ?>
