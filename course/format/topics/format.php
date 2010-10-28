@@ -72,7 +72,6 @@ $completioninfo->print_help_icon();
 
 echo $OUTPUT->heading(get_string('topicoutline'), 2, 'headingblock header outline');
 
-echo "<span id='maincontent'></span>";
 // Note, an ordered list would confuse - "1" could be the clipboard or summary.
 echo "<ul class='topics'>\n";
 
@@ -219,7 +218,7 @@ while ($section <= $course->numsections) {
 
         echo '<div class="content">';
         if (!has_capability('moodle/course:viewhiddensections', $context) and !$thissection->visible) {   // Hidden for students
-            echo get_string('notavailable').'</div>';
+            echo get_string('notavailable');
         } else {
             if (!is_null($thissection->name)) {
                 echo $OUTPUT->heading($thissection->name, 3, 'sectionname');
