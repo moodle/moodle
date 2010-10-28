@@ -258,7 +258,6 @@ function assignment_single_document($id, $itemtype) {
         }
         if ($itemtype == 'submission') {
             $submission = assignment_submission_add_document_fields($assignment, $submission);
-            var_dump($submission);
             $document = new AssignmentSearchDocument(get_object_vars($submission), $cm->id, 'submission', $assignment->course, null, $context->id);
             return $document;
         }
