@@ -52,7 +52,7 @@ class message_output_jabber extends message_output {
         }
         $jabberaddress = $jabberaddresses[$eventdata->userto->id];
 
-        $jabbermessage = fullname($userfrom).': '.$message->smallmessage;
+        $jabbermessage = fullname($eventdata->userfrom).': '.$eventdata->smallmessage;
 
         $conn = new XMPPHP_XMPP($CFG->jabberhost,$CFG->jabberport,$CFG->jabberusername,$CFG->jabberpassword,'moodle',$CFG->jabberserver);
 
