@@ -354,12 +354,30 @@ class restore_decode_interlinks extends restore_execution_step {
 }
 
 /**
- * rebuid the course cache
+ * first, ensure that we have no gaps in section numbers
+ * and then, rebuid the course cache
  */
 class restore_rebuild_course_cache extends restore_execution_step {
 
     protected function define_execution() {
-        // Just that
+        global $DB;
+
+        // Although there is some sort of auto-recovery of missing sections
+        // present in course/formats... here we check that all the sections
+        // from 0 to MAX(section->section) exist, creating them if necessary
+        $maxsection = $DB->get_field('course_sections', 'MAX(section)', array('course' => $this->get_courseid()));
+        // Iterate over all sections
+        for ($i = 0; $i <= $maxsection; $i++) {
+            // If the section $i doesn't exist, create it
+            if (!$DB->record_exists('course_sections', array('course' => $this->get_courseid(), 'section' => $i))) {
+                $sectionrec = array(
+                    'course' => $this->get_courseid(),
+                    'section' => $i);
+                $DB->insert_record('course_sections', $sectionrec); // missing section created
+            }
+        }
+
+        // Rebuild cache now that all sections are in place
         rebuild_course_cache($this->get_courseid());
     }
 }
