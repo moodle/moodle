@@ -35,14 +35,14 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
 require_login();
 
 $courseid = optional_param('courseid', $SITE->id, PARAM_INT); //if no courseid is given
-$context = get_context_instance(CONTEXT_COURSE, $courseid);
+$parentcourse = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
-$PAGE->set_context($context);
+$context = get_context_instance(CONTEXT_COURSE, $courseid);
+$PAGE->set_course($parentcourse);
 $PAGE->set_url('/blocks/community/communitycourse.php');
 $PAGE->set_heading($SITE->fullname);
 $PAGE->set_pagelayout('course');
 $PAGE->set_title(get_string('searchcourse', 'block_community'));
-$PAGE->navbar->ignore_active(true);
 $PAGE->navbar->add(get_string('searchcourse', 'block_community'));
 
 $search = optional_param('search', null, PARAM_TEXT);

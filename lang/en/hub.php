@@ -24,7 +24,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addedtoblock'] = 'Course added to block';
 $string['addscreenshots'] = 'Add screenshots';
 $string['advertise'] = 'Advertise this course for people to join';
 $string['advertised'] = 'Advertised';
