@@ -103,12 +103,11 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
                 bodyContent:Y.one('#imageoverlay').get('innerHTML'),
                 visible: false, //by default it is not displayed
                 lightbox : false,
-                zIndex:100,
-                width: windowwidth - 100
+                zIndex:100
             });
             this.overlay.render();
             this.overlay.hide(); //show the overlay
-            this.overlay.set("centered", true);         
+            this.overlay.set("centered", true);
 
             e.halt(); // we are going to attach a new 'hide overlay' event to the body,
             // because javascript always propagate event to parent tag,
@@ -116,15 +115,24 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
             // otherwise the hide event will be call right away.
 
             //once the image is loaded, update display
-            this.imageloadingevent = Y.one('#imagetodisplay').on('load', function(e){
+            this.imageloadingevent = Y.one('#imagetodisplay').on('load', function(e, url){
                 //hide the loading image
                 Y.one('#hubloadingimage').setStyle('display', 'none');
 
                 //display the screenshot
+                var screenshot = new Image();
+                screenshot.src = url;
+
+                var overlaywidth = windowwidth - 100;
+                if(overlaywidth > screenshot.width) {
+                    overlaywidth = screenshot.width;
+                }
+                
+                this.overlay.set('width', overlaywidth);
                 this.overlay.set("centered", true);
                 this.overlay.show();
 
-            }, this);
+            }, this, url);
 
             var previousnumber = screennumber - 1;
             var nextnumber = screennumber + 1;

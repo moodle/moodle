@@ -182,3 +182,36 @@
     display: inline;
     cursor: pointer;
 }
+
+#page-blocks-community-communitycourse .moodle-dialogue-base .moodle-dialogue {
+-moz-border-radius:12px 12px 12px 12px;
+-moz-box-shadow:0 1px 3px rgba(0, 0, 0, 0.6);
+-webkit-border-radius:12px 12px 12px 12px;
+-webkit-box-shadow:0 1px 3px rgba(0, 0, 0, 0.6);
+border-width:0 0 0 0;
+}
+
+#page-blocks-community-communitycourse .moodle-dialogue-base .moodle-dialogue-wrap {
+-moz-border-radius:12px 12px 0px 0px;
+-webkit-border-radius:12px 12px 0px 0px;
+background-color:#FFFFFF;
+border:1px solid #555555;
+}
+
+#page-blocks-community-communitycourse .moodle-dialogue-base .moodle-dialogue-hd {
+-moz-border-radius:12px 12px 0 0;
+-webkit-border-radius:12px 12px 0 0;
+background-color:#F6F6F6;
+border:1px solid #CCCCCC;
+overflow: auto;
+}
+
+#page-blocks-community-communitycourse .moodle-dialogue-base .moodle-dialogue-bd {
+padding:0px;
+margin-bottom: -5px;
+}
+
+#page-blocks-community-communitycourse .moodle-dialogue-base .closebutton {
+margin-top:4px;
+width:30px;
+}
