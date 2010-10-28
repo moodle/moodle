@@ -122,7 +122,7 @@ function message_send($eventdata) {
 
     if ($processor=='none' && $savemessage->notification) {
         //if they have deselected all processors and its a notification mark it read. The user doesnt want to be bothered
-        $savemessage->timeread = $timeread;
+        $savemessage->timeread = time();
         $DB->insert_record('message_read', $savemessage);
     } else {                        // Process the message
         // Store unread message just in case we can not send it
