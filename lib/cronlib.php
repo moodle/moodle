@@ -324,6 +324,12 @@ function cron_run() {
         build_context_path();
         mtrace ('Built context paths');
 
+        if (!empty($CFG->messagingdeletereadnotificationsdelay)) {
+            $notificationdeletetime = time() - $CFG->messagingdeletereadnotificationsdelay; //604800; //1 week ago
+            $DB->delete_records_select('message_read', 'notification=1 AND timeread<:notificationdeletetime', array('notificationdeletetime'=>$notificationdeletetime));
+            mtrace('Cleaned up read notifications');
+        }
+
         mtrace("Finished clean-up tasks...");
 
     } // End of occasional clean-up tasks

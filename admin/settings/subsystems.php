@@ -17,6 +17,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     $optionalsubsystems->add(new admin_setting_configcheckbox('messaginghidereadnotifications', get_string('messaginghidereadnotifications', 'admin'), get_string('configmessaginghidereadnotifications','admin'), 0));
 
+    $options = array(DAYSECS=>get_string('secondstotime86400'), WEEKSECS=>get_string('secondstotime604800'), 2620800=>get_string('nummonths', 'moodle', 1), 15724800=>get_string('nummonths', 'moodle', 6),0=>get_string('never'));
+    $optionalsubsystems->add(new admin_setting_configselect('messagingdeletereadnotificationsdelay', get_string('messagingdeletereadnotificationsdelay', 'admin'), get_string('configmessagingdeletereadnotificationsdelay', 'admin'), 604800, $options));
+
     $optionalsubsystems->add(new admin_setting_configcheckbox('enablestats', get_string('enablestats', 'admin'), get_string('configenablestats', 'admin'), 0));
 
     $optionalsubsystems->add(new admin_setting_configcheckbox('enablerssfeeds', get_string('enablerssfeeds', 'admin'), get_string('configenablerssfeeds', 'admin'), 0));
