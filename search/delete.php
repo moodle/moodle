@@ -119,6 +119,8 @@
                         
                         foreach ($deletions as $delete) {
                             // find the specific document in the index, using it's docid and doctype as keys
+                            // change from default text only search to include numerals for this search.
+                            Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
                             $doc = $index->find("+docid:{$delete->id} +doctype:$mod->name +itemtype:{$delete->itemtype}");
                             
                             // get the record, should only be one
