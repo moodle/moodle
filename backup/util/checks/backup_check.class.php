@@ -188,8 +188,8 @@ abstract class backup_check {
         // Now, enforce 'moodle/backup:anonymise' to 'anonymise' setting, applying changes if allowed,
         // else throwing exception
         $anonsetting = $backup_controller->get_plan()->get_setting('anonymize');
-        $prevvalue   = $userssetting->get_value();
-        $prevstatus  = $userssetting->get_status();
+        $prevvalue   = $anonsetting->get_value();
+        $prevstatus  = $anonsetting->get_status();
         $hasanoncap  = has_capability('moodle/backup:anonymise', $coursectx, $userid);
 
         // If setting is enabled but user lacks permission
