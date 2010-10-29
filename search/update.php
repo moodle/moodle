@@ -56,8 +56,7 @@
     }
     $dbcontrol = new IndexDBControl();
     $update_count = 0;
-    $indexdate = 0 + @$CFG->search_indexer_update_date;
-    $startupdatedate = time();
+    $mainstartupdatedate = time();
 
 /// indexing changed resources
     
@@ -66,6 +65,13 @@
     if ($mods = search_collect_searchables(false, true)){
         
         foreach ($mods as $mod) {
+            $indexdate = 0;
+            $indexdatestring = 'search_indexer_update_date_'.$mod->name;
+            $startupdatedate = time();
+            if (isset($CFG->$indexdatestring)) {
+                $indexdate = $CFG->$indexdatestring;
+            }
+
             $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';
             $get_document_function = $mod->name.'_single_document';
             $delete_function = $mod->name.'_delete';
@@ -81,8 +87,7 @@
                     $valuesArray = $db_names_function();
                     if ($valuesArray){
                         foreach($valuesArray as $values){
-                        
-                            $where = (!empty($values[5])) ? 'AND ('.$values[5].')' : '';
+                            $where = (isset($values[5]) and $values[5]!='') ? 'AND ('.$values[5].')' : '';
                             $itemtypes = ($values[4] != '*' && $values[4] != 'any') ? " AND itemtype = '{$values[4]}' " : '' ;
     
                             //TODO: check 'in' syntax with other RDBMS' (add and update.php as well)
@@ -97,8 +102,7 @@
                                     doctype = ?
                                     $itemtypes
                             ";
-                            $docIds = $DB->get_records_sql_menu($query, array($values[1]));
-                            
+                            $docIds = $DB->get_records_sql_menu($query, array($mod->name));
                             if (!empty($docIds)){
                                 list($usql, $params) = $DB->get_in_or_equal(array_keys($docIds));
                                 $query = "
@@ -121,11 +125,13 @@
                                 $updates[] = $delete_function($record->docid, $docIds[$record->docid]);
                             } 
                         }
-                        
+
                         foreach ($updates as $update) {
                             ++$update_count;
                             
                             //delete old document
+                            // change from default text only search to include numerals for this search.
+                            Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
                             $doc = $index->find("+docid:{$update->id} +doctype:{$mod->name} +itemtype:{$update->itemtype}");
                             
                             //get the record, should only be one
@@ -140,7 +146,7 @@
                             
                             //object to insert into db
                             $dbid = $dbcontrol->addDocument($add);
-                            
+
                             //synchronise db with index
                             $add->addField(Zend_Search_Lucene_Field::Keyword('dbid', $dbid));
                             mtrace("  Add: $add->title (database id = $add->dbid, moodle instance id = $add->docid)");
@@ -150,6 +156,12 @@
                     else{
                         mtrace("No types to update.\n");
                     }
+                    //commit changes
+                    $index->commit();
+
+                    //update index date
+                    set_config($indexdatestring, $startupdatedate);
+
                     mtrace("Finished $mod->name.\n");
                 } 
             } 
@@ -158,10 +170,10 @@
     
     //commit changes
     $index->commit();
-    
+
     //update index date
-    set_config('search_indexer_update_date', $startupdatedate);
-    
+    set_config('search_indexer_update_date', $mainstartupdatedate);
+
     mtrace("Finished $update_count updates");
 
 ?>

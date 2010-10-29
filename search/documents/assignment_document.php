@@ -236,8 +236,8 @@ function assignment_single_document($id, $itemtype) {
             return null;
         }
     } elseif ($itemtype == 'submission') {
-        if ($submission = $DB->get_record('assignment_submissions', array('id' => $id))){
-            if (!$assignment = $DB->get_record('assignment', array('id' => $submission->assignment))){
+        if ($submission = $DB->get_record('assignment_submissions', array('id' => $id))) {
+            if (!$assignment = $DB->get_record('assignment', array('id' => $submission->assignment))) {
                 return null;
             }
         } else {

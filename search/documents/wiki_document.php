@@ -220,7 +220,7 @@ function wiki_single_document($id, $itemtype) {
     global $DB;
 
     $page = $DB->get_record('wiki_pages', array('id' => $id));
-    $entry = $DB->get_record('wiki_entries', array('id' => $page->wiki));
+    $entry = $DB->get_record('wiki_entries', array('id' => $page->subwikiid));
     $coursemodule = $DB->get_field('modules', 'id', array('name' => 'wiki'));
     $cm = $DB->get_record('course_modules', array('course' => $entry->course, 'module' => $coursemodule, 'instance' => $entry->wikiid));
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -241,7 +241,7 @@ function wiki_delete($info, $itemtype) {
 //returns the var names needed to build a sql query for addition/deletions
 function wiki_db_names() {
     //[primary id], [table name], [time created field name], [time modified field name], [docsubtype], [additional where conditions for sql]
-    return array(array('id', 'wiki_pages', 'timecreated', 'lastmodified', 'standard'));
+    return array(array('id', 'wiki_pages', 'timecreated', 'timemodified', 'standard'));
 }
 
 /**

@@ -274,7 +274,7 @@ function data_single_document($id, $itemtype) {
                 $content = @$content.' '.$aField;
             }
             unset($recordMetaData);
-            $recordMetaData = $DB->get_record('data_records', array('id' => $aRecordId));
+            $recordMetaData = $DB->get_record('data_records', array('id' => $id));
             $recordMetaData->title = $first;
             $recordMetaData->content = $content;
             return new DataSearchDocument(get_object_vars($recordMetaData), $record_course, $context->id);
