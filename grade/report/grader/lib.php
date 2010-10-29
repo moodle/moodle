@@ -78,6 +78,10 @@ class grade_report_grader extends grade_report {
      * */
     var $canviewhidden;
 
+    /** @var boolean, whether the current user is allowed to see the user report.
+     * This affects the table layout. */
+    var $canviewuserreport;
+
     var $preferences_page=false;
 
     /**
@@ -93,6 +97,7 @@ class grade_report_grader extends grade_report {
         parent::grade_report($courseid, $gpr, $context, $page);
 
         $this->canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $this->course->id));
+        $this->canviewuserreport = has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context);
 
         // load collapsed settings for this report
         if ($collapsed = get_user_preferences('grade_report_grader_collapsed_categories')) {
@@ -662,14 +667,15 @@ class grade_report_grader extends grade_report {
                     //The width of the table varies depending on fixedstudents.
                     // $fixedstudents == 0, students and grades display in the same table.
                     // $fixedstudents == 1, students and grades are display in separate table.
-                    if ($fixedstudents) {
+                    if ($fixedstudents || !$this->canviewuserreport) {
                         $incrementcellindex = '0';
                     } else {
                         $incrementcellindex = '1';
                     }
                     //MDL-21088 - IE 7 ignores nowraps on tds or ths so we this in a span with a nowrap on it.
-                    $headerhtml .= '<th class=" '.$columnclass.' '.$type.$catlevel.$hidden.'" scope="col" onclick="set_col(this.cellIndex,' . $incrementcellindex . ')"><span>'
-                                .shorten_text($headerlink) . $arrow;
+                    $headerhtml .= '<th class=" '.$columnclass.' '.$type.$catlevel.$hidden.
+                            '" scope="col" onclick="set_col(this.cellIndex,' . $incrementcellindex . ',' . (count($this->gtree->levels) - 1) .
+                            ')"><span>' . shorten_text($headerlink) . $arrow;
                     $headerhtml .= '</span></th>';
                 }
 
@@ -745,7 +751,7 @@ class grade_report_grader extends grade_report {
                 //we're either going to add a th or a colspan to keep things aligned
                 $userreportcell = '';
                 $userreportcellcolspan = '';
-                if (has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context)) {
+                if ($this->canviewuserreport) {
                     $a->user = fullname($user, $canviewfullname);
                     $strgradesforuser = get_string('gradesforuser', 'grades', $a);
                     $userreportcell = '<th class="header userreport"><a href="'.$CFG->wwwroot.'/grade/report/'.$CFG->grade_profilereport.'/index.php?id='.$this->courseid.'&amp;userid='.$user->id.'">'
@@ -1032,7 +1038,7 @@ class grade_report_grader extends grade_report {
                 //either add a th or a colspan to keep things aligned
                 $userreportcell = '';
                 $userreportcellcolspan = '';
-                if (has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context)) {
+                if ($this->canviewuserreport) {
                     $a->user = fullname($user, $canviewfullname);
                     $strgradesforuser = get_string('gradesforuser', 'grades', $a);
                     $userreportcell = '<th class="userreport"><a href="'.$CFG->wwwroot.'/grade/report/'.$CFG->grade_profilereport.'/index.php?id='.$this->courseid.'&amp;userid='.$user->id.'">'

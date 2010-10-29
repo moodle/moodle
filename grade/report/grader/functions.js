@@ -14,15 +14,15 @@ function set_row(idx) {
 }
 
 /** highlight/unset the column of a table **/
-function set_col(col,gradecelloffset) {
+function set_col(col,gradecelloffset,lastheaderrow) {
     var table = document.getElementById('user-grades');
 
     //highlight the column header
-    flip_vmarked(table,2,col);
+    flip_vmarked(table,lastheaderrow,col);
 
     //add any grade cell offset (due to colspans) then iterate down the table
     col += gradecelloffset;
-    for (var row = 3; row < table.rows.length; row++) {
+    for (var row = lastheaderrow + 1; row < table.rows.length; row++) {
         flip_vmarked(table,row,col);
     }
 }
