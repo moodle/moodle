@@ -369,7 +369,7 @@ class core_webservice_renderer extends plugin_renderer_base {
                     $params->default = "null";
                 }
                 $required = html_writer::start_tag('b', array()) .
-                        get_string('default', 'webservice', $params->default)
+                        get_string('default', 'webservice', print_r($params->default, true))
                         . html_writer::end_tag('b');
             }
             if ($params->required == VALUE_OPTIONAL) {
@@ -532,7 +532,7 @@ EOF;
      */
     public function colored_box_with_pre_tag($title, $content, $rgb = 'FEEBE5') {
         //TODO: this tag removes xhtml strict error but cause warning
-        $coloredbox = html_writer::start_tag('ins', array());
+        $coloredbox = html_writer::start_tag('div', array());
         $coloredbox .= html_writer::start_tag('div',
                         array('style' => "border:solid 1px #DEDEDE;background:#" . $rgb
                             . ";color:#222222;padding:4px;"));
@@ -544,7 +544,7 @@ EOF;
         $coloredbox .= "\n" . $content . "\n";
         $coloredbox .= html_writer::end_tag('pre', array());
         $coloredbox .= html_writer::end_tag('div', array());
-        $coloredbox .= html_writer::end_tag('ins', array());
+        $coloredbox .= html_writer::end_tag('div', array());
         return $coloredbox;
     }
 
@@ -672,7 +672,7 @@ EOF;
                     if ($paramdesc->default === null) {
                         $default = "null";
                     } else {
-                        $default = $paramdesc->default;
+                        $default = print_r($paramdesc->default, true);
                     }
                     $required = get_string('default', 'webservice', $default);
                 }
