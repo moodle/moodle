@@ -256,7 +256,7 @@ defined('MOODLE_INTERNAL') || die();
         $weekdate = $nextweekdate;
     }
 
-    if ($PAGE->user_is_editing() && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
+    if (!$displaysection and $PAGE->user_is_editing() and has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
         // print stealth sections if present
         $modinfo = get_fast_modinfo($course);
         foreach ($sections as $section=>$thissection) {
