@@ -243,7 +243,7 @@ class moodle_course_external extends external_api {
                             'defaultgroupingid' => new external_value(PARAM_INT, 'default grouping id',
                                     VALUE_DEFAULT, 0),
                             'enablecompletion' => new external_value(PARAM_INT,
-                                    'Enabled, control via completion and activity settings. Disbaled,
+                                    'Enabled, control via completion and activity settings. Disabled,
                                         not shown in activity settings.',
                                     VALUE_OPTIONAL),
                             'completionstartonenrol' => new external_value(PARAM_INT,
@@ -322,12 +322,13 @@ class moodle_course_external extends external_api {
             }
 
             //set default value for completion
+            $courseconfig = get_config('moodlecourse');
             if (completion_info::is_enabled_for_site()) {
                 if (!key_exists('enablecompletion', $course)) {
-                    $course['enablecompletion'] = $course->enablecompletion;
+                    $course['enablecompletion'] = $courseconfig->enablecompletion;
                 }
                 if (!key_exists('completionstartonenrol', $course)) {
-                    $course['completionstartonenrol'] = $course->completionstartonenrol;
+                    $course['completionstartonenrol'] = $courseconfig->completionstartonenrol;
                 }
             } else {
                 $course['enablecompletion'] = 0;
