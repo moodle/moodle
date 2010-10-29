@@ -287,7 +287,12 @@ function forum_rss_feed_contents($forum, $sql) {
     foreach ($recs as $rec) {
             $item = new stdClass();
             $user = new stdClass();
-            $item->title = format_string($rec->postsubject);
+            if (!empty($rec->postsubject)) {
+                $item->title = format_string($rec->postsubject);
+            } else {
+                //if the post has no subject for some reason then substitute something somewhat meaningful
+                $item->title = format_string($forum->name.' '.userdate($rec->postcreated,get_string('strftimedatetimeshort', 'langconfig')));
+            }
             $user->firstname = $rec->userfirstname;
             $user->lastname = $rec->userlastname;
             $item->author = fullname($user);
