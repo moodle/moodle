@@ -152,9 +152,15 @@ function message_send($eventdata) {
                     return false;
                 }
             }
-
-            //if there is no more processors that want to process this we can move message to message_read
-            if ( $DB->count_records('message_working', array('unreadmessageid' => $savemessage->id)) == 0){
+            
+            //if messaging is disabled and they previously had forum notifications handled by the popup processor
+            //or any processor that puts a row in message_working then the notification will remain forever
+            //unread. To prevent this mark the message read if messaging is disabled
+            if (empty($CFG->messaging)) {
+                require_once($CFG->dirroot.'/message/lib.php');
+                message_mark_message_read($savemessage, time());
+            } else if ( $DB->count_records('message_working', array('unreadmessageid' => $savemessage->id)) == 0){
+                //if there is no more processors that want to process this we can move message to message_read
                 require_once($CFG->dirroot.'/message/lib.php');
                 message_mark_message_read($savemessage, time(), true);
             }
