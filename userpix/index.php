@@ -13,10 +13,11 @@ $PAGE->set_url('/userpix/index.php');
 require_login();
 
 /// Remove the following three lines if you want everyone to access it
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+$syscontext = get_context_instance(CONTEXT_SYSTEM);
+require_capability('moodle/site:config', $syscontext);
 
 $title = get_string("users");
-
+$PAGE->set_context($syscontext);
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
@@ -27,7 +28,6 @@ foreach ($rs as $user) {
     $fullname = fullname($user);
     echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=1\" ".
          "title=\"$fullname\">";
-    require_once($CFG->libdir.'/filelib.php');
     echo $OUTPUT->user_picture($user);
     echo "</a> \n";
 }
