@@ -39,8 +39,8 @@ $stringmanager = get_string_manager();
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title><?php print_string('moodleemoticon:desc', 'editor_tinymce'); ?></title>
-    <script type="text/javascript" src="../../tiny_mce_popup.js?v={tinymce_version}"></script>
-    <script type="text/javascript" src="js/dialog.js?v={tinymce_version}"></script>
+    <script type="text/javascript" src="../../tiny_mce_popup.js?v=3.3.9.2"></script>
+    <script type="text/javascript" src="js/dialog.js?v=3.3.9.2&rev=6"></script>
 </head>
 <body>
 
@@ -57,7 +57,7 @@ $index = 0;
 foreach ($emoticons as $emoticon) {
     $txt = $emoticon->text;
     $img = $OUTPUT->render(
-        $emoticonmanager->prepare_renderable_emoticon($emoticon, array('class' => 'emoticon emoticon-index-'.$index++)));
+        $emoticonmanager->prepare_renderable_emoticon($emoticon, array('class' => 'emoticon emoticon-index-'.$index)));
     if ($stringmanager->string_exists($emoticon->altidentifier, $emoticon->altcomponent)) {
         $alt = get_string($emoticon->altidentifier, $emoticon->altcomponent);
     } else {
@@ -68,11 +68,10 @@ foreach ($emoticons as $emoticon) {
             html_writer::tag('td', s($txt), array('style' => 'width:40%;text-align:center;font-family:monospace;')) .
             html_writer::tag('td', $alt),
         array(
-            'onMouseOver' => 'this.style.backgroundColor="white"',
-            'onMouseOut'  => 'this.style.backgroundColor="transparent"',
-            'onClick'     => 'MoodleEmoticonDialog.insert(' . json_encode($img) . ')',
+            'class' => 'emoticoninfo emoticoninfo-index-'.$index,
         )
     );
+    $index++;
 }
 
 ?>
