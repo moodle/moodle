@@ -78,6 +78,7 @@ $string['newsearch'] = 'New search';
 $string['noframesjs'] = 'Use more accessible interface';
 $string['nomessages'] = 'No messages waiting';
 $string['nomessagesfound'] = 'No messages were found';
+$string['noreply'] = 'Do not reply to this message';
 $string['nosearchresults'] = 'There were no results from your search';
 $string['offline'] = 'Offline';
 $string['offlinecontacts'] = 'Offline contacts ({$a})';
