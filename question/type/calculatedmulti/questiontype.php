@@ -147,10 +147,6 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
                 $DB->delete_records('question_calculated', array('id' => $oo->id));
             }
         }
-        //  $result = $QTYPES['numerical']->save_numerical_options($question);
-        //  if (isset($result->error)) {
-        //      return $result;
-        //  }
 
 
         if( isset($question->import_process)&&$question->import_process){
