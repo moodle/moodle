@@ -86,15 +86,6 @@ class question_edit_numerical_form extends question_edit_form {
             }
             $QTYPES['numerical']->set_numerical_unit_data($this, $question, $default_values);
 
-          /*  if (isset($question->options->units)){
-                $units  = array_values($question->options->units);
-                if (!empty($units)) {
-                    foreach ($units as $key => $unit){
-                        $default_values['unit['.$key.']'] = $unit->unit;
-                        $default_values['multiplier['.$key.']'] = $unit->multiplier;
-                    }
-                }
-            }*/
             $question = (object)((array)$question + $default_values);
         }
         return $question;

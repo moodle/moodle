@@ -37,6 +37,7 @@ $string['errorrepeatedunit'] = 'You cannot have two units with the same name.';
 $string['instructions'] = 'Instructions ';
 $string['leftexample'] = 'LEFT as $1.00';
 $string['noneditableunittext'] = 'NON editable text of Unit No1';
+$string['nonvalidcharactersinnumber'] = 'NON valid characters in number';
 $string['notenoughanswers'] = 'You must enter at least one answer.';
 $string['nounitdisplay'] = 'No unit grading';
 $string['numerical'] = 'Numerical';
@@ -56,22 +57,62 @@ The first unit (Unit 1) has a default multiplier of 1. Thus if the correct numer
 If you add the unit kW with a multiplier of 0.001, this will add a correct response of 5.5 kW. This means that the answers 5500W or 5.5kW would be marked correct.
 
 Note that the accepted error is also multiplied, so an allowed error of 100W would become an error of 0.1kW.';
-$string['onlynumerical'] = 'Only NUMERICAL ANSWER will be graded';
+$string['manynumerical'] = 'Only the NUMERICAL ANSWER will be graded using optional units ';
+$string['onlynumerical'] = 'Only the NUMERICAL ANSWER will be graded, no units allowed';
+$string['oneunitshown'] = 'Only the NUMERICAL ANSWER will be graded, Unit1 will be shown';
 $string['rightexample'] = 'RIGHT as 1.00cm';
 $string['selectunits'] = 'Select units';
+$string['selectunit'] = 'Select one unit';
 $string['studentunitanswer'] = 'UNIT ANSWER displayed as a ';
 $string['unitchoice'] = 'Multichoice (radio elements)';
-$string['unitdisplay'] = 'Display Unit1';
+$string['unitdisplay'] = '<STRONG>Unit 1 displayed </STRONG>';
 $string['unitedit'] = 'Edit unit';
-$string['unitgraded'] = ' NUMERICAL  ANSWER and UNIT ANSWER will be graded ';
+$string['unitgraded'] = ' NUMERICAL ANSWER and UNIT ANSWER will be graded ';
 $string['unitgraded1'] = '<STRONG>UNIT GRADED</STRONG>';
+$string['unitsused'] = '<STRONG>UNIT USED</STRONG>';
 $string['unithdr'] = 'Unit {$a}';
+$string['unitmandatory'] = 'Mandatory';
+$string['unitmandatory_help'] = '
+
+* The response will be graded using the unit written.  
+
+* The unit penalty will be applied if the unit field is empty
+
+';
 $string['unitnotgraded'] = '<STRONG>UNIT NOT GRADED</STRONG>';
+$string['unitnotused'] = '<STRONG>UNIT NOT USED</STRONG>';
+$string['unitoptional'] = 'Optional unit';
+$string['unitoptional_help'] = '
+* If the unit field is not empty, the response will be graded using this unit.
+
+* If the unit is badly written or unknown, the response will be considered as non valid. 
+';
+$string['unitused'] = '<STRONG>UNIT USED</STRONG>';
+$string['unituses'] = 'Unit uses';
+$string['unituses_help'] = 'The unit(s) are uses as in pre 2,0 Moodle version
+
+* The student can answer using units predefined by the teacher
+* in which case the constant will be applied to the student value.
+* If the student does not add any unit, his numerical answer is used as is.';
 $string['unitnotvalid'] = ' Unit not valid with this numerical value';
 $string['unitunknown'] = ' Undefined unit ';
-$string['unitpenalty'] = 'Penalty for bad unit';
+$string['unitpenalty'] = 'Unit penalty';
+$string['unitpenalty_help'] = 'The penalty is applied if
+
+* An undefined unit name is put in the Unit answer element or
+* An unit name is put in the Number answer element ';
 $string['unitappliedpenalty'] = 'These marks include a penalty of {$a} for bad unit.';
 $string['unitposition'] = 'Unit position';
+$string['unitnotselected'] = 'No unit selected';
 $string['unitshandling'] = 'Units handling';
 $string['validnumberformats'] = 'Valid number formats';
+$string['validnumberformats_help'] = '
+* regular numbers  13500.67 : 13 500.67 : 13500,67: 13 500,67
+
+* if you use , as thousand separator *always* put the decimal . as in 
+ 13,500.67 : 13,500.
+ 
+* for exponent form, say 1.350067 * 10<sup>4</sup>, use  
+ 1.350067 E4 : 1.350067 E04 ';
+
 $string['validnumbers'] = ' 13500.67 : 13 500.67 : 13,500.67 : 13500,67: 13 500,67 : 1.350067 E4 : 1.350067 E04 ';
