@@ -98,6 +98,8 @@
 
     if(isset($CFG->feedback_allowfullanonymous)
                 AND $CFG->feedback_allowfullanonymous
+                AND $course->id == SITEID
+                AND (!$courseid OR $courseid == SITEID)
                 AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES ) {
         $feedback_complete_cap = true;
     }
