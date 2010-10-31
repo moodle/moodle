@@ -719,8 +719,17 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $answertotest = $state->responses['answer'];
             // values coming from  NUMERICALQUESTIONUNITTEXTINPUTDISPLAY
             // or NUMERICALQUESTIONUNITTEXTDISPLAY as unit hidden HTML element
+            
+            if($question->options->showunits == NUMERICALQUESTIONUNITTEXTINPUTDISPLAY ){
+                //
+                $testresponse = $this->extract_numerical_response($state->responses['answer']);
+                if($testresponse->unit != '' || $testresponse->number === false){
+                   return false;
+                }
+                $answertotest = $testresponse->number ;
+            }
             if(isset($state->responses['unit'])) {
-                $answertotest .= $state->responses['unit'] ;
+                $answertotest .= $state->responses['unit'] ;    
             }
           //  if ($question->options->showunits == NUMERICALQUESTIONUNITTEXTDISPLAY && isset($question->options->units[0])){ 
            //     $answertotest .= $question->options->units[0]->unit ;

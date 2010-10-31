@@ -59,11 +59,13 @@
                 }else { // unitgradingtype ==  1 
                     echo $OUTPUT->help_icon('unitmandatory', 'qtype_numerical', '');
                 }             
-                echo get_string('unit', 'quiz'); ?>
+                echo get_string('unit', 'quiz'); 
+                if ($state->responses['unit'] == '')$classunit = '';
+                ?>
          </legend>
     <input type="text" class="<?php echo $classunit; ?>" <?php echo "$readonly  $nameunit $valueunit"; //
     ?> size="<?php echo $textlength;?>"/>
-    <?php echo $feedbackimgunit; 
+    <?php if ($state->responses['unit'] != '') echo $feedbackimgunit; 
     if ($options->feedback &&  $question->options->unitgradingtype == 1 && ! $valid_numerical_unit && ! $answerasterisk ){
         if ( $empty_unit) {
             print_string('unitmandatory', 'qtype_numerical'); 
