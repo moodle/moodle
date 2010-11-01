@@ -59,6 +59,28 @@ abstract class base_nested_element extends base_final_element {
         $this->used[] = $name;
     }
 
+    /**
+     * Destroy all circular references. It helps PHP 5.2 a lot!
+     */
+    public function destroy() {
+        // Before reseting anything, call destroy recursively
+        foreach ($this->children as $child) {
+            $child->destroy();
+        }
+        foreach ($this->final_elements as $element) {
+            $element->destroy();
+        }
+        if ($this->optigroup) {
+            $this->optigroup->destroy();
+        }
+        // Everything has been destroyed recursively, now we can reset safely
+        $this->children = array();
+        $this->final_elements = array();
+        $this->optigroup = null;
+        // Delegate to parent to destroy other bits
+        parent::destroy();
+    }
+
     protected function get_used() {
         return $this->used;
     }

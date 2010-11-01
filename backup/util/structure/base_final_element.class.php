@@ -50,6 +50,15 @@ abstract class base_final_element extends base_atom {
         $this->parent = null;
     }
 
+    /**
+     * Destroy all circular references. It helps PHP 5.2 a lot!
+     */
+    public function destroy() {
+        // No need to destroy anything recursively here, direct reset
+        $this->attributes = array();
+        $this->parent = null;
+    }
+
     protected function set_parent($element) {
         if ($this->parent) {
             $info = new stdClass();

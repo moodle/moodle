@@ -96,6 +96,9 @@ abstract class backup_structure_step extends backup_step {
 
         // Close everything
         $xw->stop();
+
+        // Destroy the structure. It helps PHP 5.2 memory a lot!
+        $structure->destroy();
     }
 
 // Protected API starts here
