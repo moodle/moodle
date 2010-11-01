@@ -272,10 +272,8 @@ foreach ($processors as $processorid => $processor) {
 
 echo '<fieldset id="messageprocessor_general" class="clearfix">';
 echo '<legend class="ftoggler">'.get_string('generalsettings','admin').'</legend>';
-    echo '<table>'.
-    '<tr><td align="right">'.get_string('blocknoncontacts', 'message').':</td><td><input type="checkbox" name="blocknoncontacts" '.($preferences->blocknoncontacts==1?" checked=\"checked\"":"").' /></td></tr>'.
-    //'<tr><td align="right">'.get_string('beepnewmessage', 'message').':</td><td><input type="checkbox" name="beepnewmessage" '.($preferences->beepnewmessage==1?" checked=\"checked\"":"").' /></td></tr>'.
-    '</table>';
+echo get_string('blocknoncontacts', 'message').': <input type="checkbox" name="blocknoncontacts" '.($preferences->blocknoncontacts==1?' checked="checked"':'');
+//get_string('beepnewmessage', 'message').': <input type="checkbox" name="beepnewmessage" '.($preferences->beepnewmessage==1?" checked=\"checked\"":"").' />';
 echo '</fieldset>';
 
 echo '<div><input type="hidden" name="sesskey" value="'.sesskey().'" /></div>';
