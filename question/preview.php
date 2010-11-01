@@ -219,6 +219,8 @@
     }
     $number = 1;
     echo '<form method="post" action="'.$url->out_omit_querystring().'" enctype="multipart/form-data" id="responseform">', "\n";
+    $PAGE->requires->js_init_call('M.core_question_engine.init_form', array('#responseform'));
+
     print_question($questions[$id], $curstate, $number, $quiz, $options, $context);
 
     echo '<div class="controls">';

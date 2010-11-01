@@ -7,26 +7,12 @@
 M.mod_quiz = M.mod_quiz || {};
 
 M.mod_quiz.init_attempt_form = function(Y) {
-    Y.one('#responseform').setAttribute('autocomplete', 'off');
-    Y.on('key', function (e) {
-        if (!e.target.test('a') && !e.target.test('input[type=submit]') &&
-                !e.target.test('input[type=img]')) {
-            e.preventDefault();
-        }
-    }, '#responseform', 'press:13');
+    M.core_question_engine.init_form(Y, '#responseform');
     Y.on('submit', M.mod_quiz.timer.stop, '#responseform');
 };
 
 M.mod_quiz.init_review_form = function(Y) {
-    Y.all('.questionflagsavebutton').remove();
-
-    Y.on('key', function (e) {
-        if (!e.target.test('a') && !e.target.test('input[type=submit]') &&
-                !e.target.test('input[type=img]')) {
-            e.preventDefault();
-        }
-    }, '.questionflagsaveform', 'press:13');
-
+    M.core_question_engine.init_form(Y, '.questionflagsaveform');
     Y.on('submit', function(e) { e.halt(); }, '.questionflagsaveform');
 };
 

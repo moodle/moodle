@@ -445,6 +445,11 @@ class page_requirements_manager {
                                     'fullpath' => '/group/module.js',
                                     'requires' => array('node', 'overlay', 'event-mouseenter'));
                     break;
+                case 'core_question_engine':
+                    $module = array('name'     => 'core_question_engine',
+                                    'fullpath' => '/question/qengine.js',
+                                    'requires' => array('node', 'event'));
+                    break;
                 case 'core_rating':
                     $module = array('name'     => 'core_rating',
                                     'fullpath' => '/rating/module.js',

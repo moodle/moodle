@@ -1255,10 +1255,12 @@ function quiz_check_safe_browser() {
 }
 
 function quiz_get_js_module() {
+    global $PAGE;
+    $PAGE->requires->js_module('core_question_engine');
     return array(
         'name' => 'mod_quiz',
         'fullpath' => '/mod/quiz/module.js',
-        'requires' => array('base', 'dom', 'event-delegate', 'event-key'),
+        'requires' => array('base', 'dom', 'event-delegate', 'event-key', 'core_question_engine'),
         'strings' => array(
             array('timesup', 'quiz'),
             array('functiondisabledbysecuremode', 'quiz'),

@@ -1193,7 +1193,7 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
     protected function get_end_bits() {
         global $PAGE;
         $output = '';
-        $output .= '<a href="' . s($this->attemptobj->summary_url()) . '" class="endtestlink">' . get_string('endtest', 'quiz') . '</a>';
+        $output .= '<a href="' . s($this->attemptobj->summary_url()) . '" class="endtestlink">' . get_string('finishattemptdots', 'quiz') . '</a>';
         $output .= $this->attemptobj->get_timer_html();
         return $output;
     }
