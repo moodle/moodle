@@ -37,6 +37,14 @@
 
 #page-admin-report-unittest-index .exception pre {padding: 8px;}
 #page-admin-report-unittest-index .unittestsummary {padding: 8px;margin-top: 1em;}
+#page-admin-report-unittest-index span.notice {color: teal;}
+#page-admin-report-unittest-index b.pass {color: green;}
+#page-admin-report-unittest-index b.fail, b.exception {color: red;}
+#page-admin-report-unittest-index .exception, .exception pre {background-color: #FDD;}
+#page-admin-report-unittest-index .unittestsummary {color: white;}
+#page-admin-report-unittest-index .unittestsummary.failed {background-color: red;}
+#page-admin-report-unittest-index .unittestsummary.passed {background-color: green;}
+
 #page-admin-report-security-index .timewarninghidden {display:none;}
 #page-admin-report-security-index .statuswarning {background-color: #f0e000;}
 #page-admin-report-security-index .statusserious {background-color: #f07000;}

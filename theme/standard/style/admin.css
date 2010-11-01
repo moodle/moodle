@@ -94,13 +94,6 @@
 .path-admin .incompatibleblockstable td.c0 {color: #ff0000;}
 table.flexible  .r0 {background-color: #F0F0F0;}
 table.flexible .r1 {background-color: #FAFAFA;}
-#page-admin-report-unittest-index span.notice {color: teal;}
-#page-admin-report-unittest-index b.pass {color: green;}
-#page-admin-report-unittest-index b.fail, b.exception {color: red;}
-#page-admin-report-unittest-index .exception, .exception pre {background-color: #FDD;}
-#page-admin-report-unittest-index .unittestsummary {color: white;}
-#page-admin-report-unittest-index .unittestsummary.failed {background-color: red;}
-#page-admin-report-unittest-index .unittestsummary.passed {background-color: green;}
 #page-admin-report-security-index #timewarning {text-align:center;}
 
 #adminsettings fieldset {background-color: #EEE;border:1px solid #BBB;color: #000;}
