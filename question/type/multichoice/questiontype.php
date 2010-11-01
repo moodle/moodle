@@ -358,6 +358,23 @@ class question_multichoice_qtype extends default_questiontype {
         include("$CFG->dirroot/question/type/multichoice/display.html");
     }
 
+    function compare_responses($question, $state, $teststate) {
+        if ($question->options->single) {
+            if (!empty($state->responses[''])) {
+                return $state->responses[''] == $teststate->responses[''];
+            } else {
+                return empty($teststate->response['']);
+            }
+        } else {
+            foreach ($question->options->answers as $ansid => $notused) {
+                if (empty($state->responses[$ansid]) != empty($teststate->responses[$ansid])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
     function grade_responses(&$question, &$state, $cmoptions) {
         $state->raw_grade = 0;
         if($question->options->single) {

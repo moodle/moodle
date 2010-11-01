@@ -159,6 +159,7 @@ $string['categorynamecantbeblank'] = 'The category name cannot be blank.';
 $string['categorynoedit'] = 'You do not have editing privileges in the category \'{$a}\'.';
 $string['categoryupdated'] = 'The category was successfully updated';
 $string['close'] = 'Close window';
+$string['closed'] = 'Closed';
 $string['closebeforeopen'] = 'Could not update the quiz. You have specified a close date before the open date.';
 $string['closepreview'] = 'Close preview';
 $string['closereview'] = 'Close review';
