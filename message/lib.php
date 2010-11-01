@@ -401,11 +401,6 @@ function message_print_usergroup_selector($usergroup, &$courses, &$coursecontext
         $options[VIEW_UNREAD_MESSAGES] = $strunreadmessages;
     }
 
-    if ($countblocked>0) {
-        $strblockedusers = get_string('blockedusers','message', $countblocked);
-        $options[VIEW_BLOCKED] = $strblockedusers;
-    }
-
     $strcontacts = get_string('mycontacts', 'message');
     $options[VIEW_CONTACTS] = $strcontacts;
 
@@ -421,6 +416,11 @@ function message_print_usergroup_selector($usergroup, &$courses, &$coursecontext
         if (!empty($courses_options)) {
             $options[] = array(get_string('courses')=>$courses_options);
         }
+    }
+
+    if ($countblocked>0) {
+        $strblockedusers = get_string('blockedusers','message', $countblocked);
+        $options[VIEW_BLOCKED] = $strblockedusers;
     }
 
     echo html_writer::start_tag('form', array('id'=>'usergroupform','method'=>'get','action'=>''));
@@ -906,8 +906,8 @@ function message_print_search_results($frm, $showicontext=false, $user1=null) {
         echo $OUTPUT->notification(get_string('emptysearchstring', 'message'));
     }
 
-    echo '<br />';
-    echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('tab' => 'search')), get_string('newsearch', 'message'));
+    //echo '<br />';
+    //echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('tab' => 'search')), get_string('newsearch', 'message'));
 
     echo '</div>';
 }
