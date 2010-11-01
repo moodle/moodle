@@ -5312,6 +5312,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     // new format of the emoticons setting
     if ($oldversion < 2010102300) {
+        unset($CFG->emoticons);
         $DB->delete_records('config', array('name' => 'emoticons'));
         $DB->delete_records('cache_text'); // changed md5 hash calculation
         upgrade_main_savepoint(true, 2010102300);

@@ -3230,13 +3230,18 @@ class admin_setting_emoticons extends admin_setting {
         global $CFG;
 
         $manager = get_emoticon_manager();
-        $config = $this->config_read($this->name);
 
+        $config = $this->config_read($this->name);
         if (is_null($config)) {
             return null;
         }
 
-        return $this->prepare_form_data($manager->decode_stored_config($config));
+        $config = $manager->decode_stored_config($config);
+        if (is_null($config)) {
+            return null;
+        }
+
+        return $this->prepare_form_data($config);
     }
 
     /**
