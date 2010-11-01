@@ -325,7 +325,7 @@ function upgrade_migrate_files_course($context, $path, $delete) {
                 continue;
             }
 
-            if ($textlib->strlen($filepath) > 255) {
+            if ($textlib->strlen($filepath) > 255) {
                 echo $OUTPUT->notification(" File path longer than 255 chars, skipping: ".$fullpathname.$item->getFilename());
                 continue;
             }
