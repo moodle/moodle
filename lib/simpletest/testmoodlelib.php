@@ -448,6 +448,11 @@ class moodlelib_test extends UnitTestCase {
         $userstimezone = $USER->timezone;
         $USER->timezone = 2;//set the timezone to a known state
 
+        // The string version of date comes from server locale setting and does
+        // not respect user language, so it is necessary to reset that.
+        $oldlocale = setlocale(LC_TIME, '0');
+        setlocale(LC_TIME, 'en_AU.UTF-8'); 
+
         $ts = 1261540267; //the time this function was created
 
         $arr = usergetdate($ts,1);//specify the timezone as an argument
@@ -462,8 +467,8 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual($mon,12);
         $this->assertEqual($year,2009);
         $this->assertEqual($yday,357);
-        $this->assertEqual($weekday,'Středa');
-        $this->assertEqual($month,'prosinec');
+        $this->assertEqual($weekday, 'Wednesday');
+        $this->assertEqual($month, 'December');
 
         $arr = usergetdate($ts);//gets the timezone from the $USER object
         $arr = array_values($arr);
@@ -477,11 +482,12 @@ class moodlelib_test extends UnitTestCase {
         $this->assertEqual($mon,12);
         $this->assertEqual($year,2009);
         $this->assertEqual($yday,357);
-        $this->assertEqual($weekday,'Středa');
-        $this->assertEqual($month,'prosinec');
+        $this->assertEqual($weekday, 'Wednesday');
+        $this->assertEqual($month, 'December');
 
         //set the timezone back to what it was
         $USER->timezone = $userstimezone;
+        setlocale(LC_TIME, $oldlocale);
     }
 
     public function test_normalize_component() {
