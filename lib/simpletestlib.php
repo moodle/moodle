@@ -538,7 +538,7 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
      * have, display a rude message and clean it up for them.
      */
     private function automatic_clean_up() {
-        global $DB;
+        global $DB, $CFG;
         $cleanmore = false;
 
         // Drop any test tables that were created.
