@@ -128,12 +128,6 @@ class restore_decode_processor {
             }
         }
 
-        // Add the course format ones
-        // TODO: Same than blocks, need to know how courseformats are going to handle restore
-
-        // Add local encodes
-        // TODO: Any interest? 1.9 never had that.
-
         // We have all the tasks registered, let's iterate over them, getting
         // contents and rules and adding them to the processor
         foreach ($tasks as $classname) {
@@ -152,6 +146,19 @@ class restore_decode_processor {
             }
             foreach ($rules as $rule) {
                 $processor->add_rule($rule);
+            }
+        }
+
+        // Now process all the plugins contents (note plugins don't have support for rules)
+        // TODO: Add other plugin types (course formats, local...) here if we add them to backup/restore
+        $plugins = array('qtype');
+        foreach ($plugins as $plugin) {
+            $contents = restore_plugin::get_restore_decode_contents($plugin);
+            if (!is_array($contents)) {
+                throw new restore_decode_processor_exception('get_restore_decode_contents_not_array', $plugin);
+            }
+            foreach ($contents as $content) {
+                $processor->add_content($content);
             }
         }
     }

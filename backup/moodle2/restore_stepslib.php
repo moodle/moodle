@@ -348,8 +348,11 @@ class restore_gradebook_structure_step extends restore_structure_step {
 class restore_decode_interlinks extends restore_execution_step {
 
     protected function define_execution() {
-        // Just that
-        $this->task->get_decoder()->execute();
+        // Get the decoder (from the plan)
+        $decoder = $this->task->get_decoder();
+        restore_decode_processor::register_link_decoders($decoder); // Add decoder contents and rules
+        // And launch it, everything will be processed
+        $decoder->execute();
     }
 }
 

@@ -26,6 +26,7 @@
  * Class implementing the subplugins support for moodle2 restore
  *
  * TODO: Finish phpdocs
+ * TODO: Make this subclass of restore_plugin
  * TODO: Add support for declaring decode_contents (not decode_rules)
  */
 abstract class restore_subplugin {

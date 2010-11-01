@@ -483,39 +483,6 @@ class question_match_qtype extends default_questiontype {
         return 1 / count($question->options->subquestions);
     }
 
-    /**
-     * Decode links in question type specific tables.
-     * @return bool success or failure.
-     */
-    function decode_content_links_caller($questionids, $restore, &$i) {
-        global $DB;
-
-        $status = true;
-
-        // Decode links in the question_match_sub table.
-        if ($subquestions = $DB->get_records_list('question_match_sub', 'question', $questionids, '', 'id, questiontext')) {
-
-            foreach ($subquestions as $subquestion) {
-                $questiontext = restore_decode_content_links_worker($subquestion->questiontext, $restore);
-                if ($questiontext != $subquestion->questiontext) {
-                    $subquestion->questiontext = $questiontext;
-                    $DB->update_record('question_match_sub', $subquestion);
-                }
-
-                // Do some output.
-                if (++$i % 5 == 0 && !defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if ($i % 100 == 0) {
-                        echo "<br />";
-                    }
-                    backup_flush(300);
-                }
-            }
-        }
-
-        return $status;
-    }
-
     function find_file_links($question, $courseid){
         // find links in the question_match_sub table.
         $urls = array();

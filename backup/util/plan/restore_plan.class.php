@@ -61,7 +61,6 @@ class restore_plan extends base_plan implements loggable {
 
     public function build() {
         restore_plan_builder::build_plan($this->controller); // We are moodle2 always, go straight to builder
-        restore_decode_processor::register_link_decoders($this->decoder); // Add decoder contents and rules
         $this->built = true;
     }
 

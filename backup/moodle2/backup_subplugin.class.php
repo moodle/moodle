@@ -26,6 +26,7 @@
  * Class implementing the subplugins support for moodle2 backups
  *
  * TODO: Finish phpdocs
+ * TODO: Make this subclass of backup_plugin
  */
 abstract class backup_subplugin {
 

@@ -81,6 +81,59 @@ abstract class restore_plugin {
         }
     }
 
+    /**
+     * Returns one array with all the decode contents
+     * to be processed by the links decoder
+     *
+     * This method, given one plugin type, returns one
+     * array of {@link restore_decode_content} objects
+     * that will be added to the restore decoder in order
+     * to perform modifications under the plugin contents.
+     *
+     * The objects are retrieved by calling to the {@link define_decode_contents}
+     * method (when available), first in the main restore_xxxx_plugin class
+     * and later on each of the available subclasses
+     */
+    static public function get_restore_decode_contents($plugintype) {
+        $decodecontents = array();
+        // Check the requested plugintype is a valid one
+        if (!array_key_exists($plugintype, get_plugin_types($plugintype))) {
+             throw new backup_step_exception('incorrect_plugin_type', $plugintype);
+        }
+        // Check the base plugin class exists
+        $classname = 'restore_' . $plugintype . '_plugin';
+        if (!class_exists($classname)) {
+             throw new backup_step_exception('plugin_class_not_found', $classname);
+        }
+        // First, call to the define_plugin_decode_contents in the base plugin class
+        // (must exist by design in all the plugin base classes)
+        if (method_exists($classname, 'define_plugin_decode_contents')) {
+            $decodecontents = array_merge($decodecontents, call_user_func(array($classname, 'define_plugin_decode_contents')));
+        }
+        // Now, iterate over all the possible plugins available
+        // (only the needed ones have been loaded, so they will
+        // be the ones being asked here). Fetch their restore contents
+        // by calling (if exists) to their define_decode_contents() method
+        $plugins = get_plugin_list($plugintype);
+        foreach ($plugins as $plugin => $plugindir) {
+            $classname = 'restore_' . $plugintype . '_' . $plugin . '_plugin';
+            if (class_exists($classname)) {
+                if (method_exists($classname, 'define_decode_contents')) {
+                    $decodecontents = array_merge($decodecontents, call_user_func(array($classname, 'define_decode_contents')));
+                }
+            }
+        }
+        return $decodecontents;
+    }
+
+    /**
+     * Define the contents in the plugin that must be
+     * processed by the link decoder
+     */
+    static public function define_plugin_decode_contents() {
+        throw new coding_exception('define_plugin_decode_contents() method needs to be overridden in each subclass of restore_plugin');
+    }
+
 // Protected API starts here
 
 // restore_step/structure_step/task wrappers

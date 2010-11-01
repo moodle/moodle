@@ -421,46 +421,6 @@ class question_multichoice_qtype extends default_questiontype {
     }
 
     /**
-     * Decode links in question type specific tables.
-     * @return bool success or failure.
-     */
-    function decode_content_links_caller($questionids, $restore, &$i) {
-        global $DB;
-
-        $status = true;
-
-        // Decode links in the question_multichoice table.
-        if ($multichoices = $DB->get_records_list('question_multichoice', 'question',
-            $questionids, '', 'id, correctfeedback, partiallycorrectfeedback, incorrectfeedback')) {
-
-                foreach ($multichoices as $multichoice) {
-                    $correctfeedback = restore_decode_content_links_worker($multichoice->correctfeedback, $restore);
-                    $partiallycorrectfeedback = restore_decode_content_links_worker($multichoice->partiallycorrectfeedback, $restore);
-                    $incorrectfeedback = restore_decode_content_links_worker($multichoice->incorrectfeedback, $restore);
-                    if ($correctfeedback != $multichoice->correctfeedback ||
-                        $partiallycorrectfeedback != $multichoice->partiallycorrectfeedback ||
-                        $incorrectfeedback != $multichoice->incorrectfeedback) {
-                            $subquestion->correctfeedback = $correctfeedback;
-                            $subquestion->partiallycorrectfeedback = $partiallycorrectfeedback;
-                            $subquestion->incorrectfeedback = $incorrectfeedback;
-                            $DB->update_record('question_multichoice', $multichoice);
-                        }
-
-                    // Do some output.
-                    if (++$i % 5 == 0 && !defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if ($i % 100 == 0) {
-                            echo "<br />";
-                        }
-                        backup_flush(300);
-                    }
-                }
-            }
-
-        return $status;
-    }
-
-    /**
      * @return array of the numbering styles supported. For each one, there
      *      should be a lang string answernumberingxxx in teh qtype_multichoice
      *      language file, and a case in the switch statement in number_in_style,

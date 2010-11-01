@@ -168,4 +168,16 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
         }
         return implode(',', $resultarr);
     }
+
+    /**
+     * Return the contents of this qtype to be processed by the links decoder
+     */
+    static public function define_decode_contents() {
+
+        $contents = array();
+
+        $contents[] = new restore_decode_content('question_match_sub', array('questiontext'), 'question_match_sub');
+
+        return $contents;
+    }
 }
