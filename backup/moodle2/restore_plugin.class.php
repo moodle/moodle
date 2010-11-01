@@ -26,7 +26,6 @@
  * Class implementing the plugins support for moodle2 restore
  *
  * TODO: Finish phpdocs
- * TODO: Add support for declaring decode_contents (not decode_rules)
  */
 abstract class restore_plugin {
 
