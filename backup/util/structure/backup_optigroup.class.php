@@ -46,7 +46,9 @@ class backup_optigroup extends base_optigroup implements processable {
 
     public function add_child($element) {
         if (!($element instanceof backup_optigroup_element)) { // parameter must be backup_optigroup_element
-            if (!$found = get_class($element)) {
+            if (is_object($element)) {
+	            $found = get_class($element);
+            } else {
                 $found = 'non object';
             }
             throw new base_optigroup_exception('optigroup_element_incorrect', $found);

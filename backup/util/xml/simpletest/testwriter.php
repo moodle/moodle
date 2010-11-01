@@ -303,6 +303,9 @@ class xml_writer_test extends UnitTestCase {
         $xw->stop();
         $result = $xo->get_allcontents();
         $fcontents = file_get_contents($CFG->dirroot . '/backup/util/xml/simpletest/fixtures/test1.xml');
+
+        // Normalise carriage return characters.
+        $fcontents = str_replace("\r\n", "\n", $fcontents);
         $this->assertEqual(trim($result), trim($fcontents));
     }
 }
