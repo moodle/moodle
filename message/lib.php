@@ -722,7 +722,6 @@ function message_print_search_results($frm, $showicontext=false, $user1=null) {
                         'scrollbars' => true,
                         'resizable' => true);
 
-                //$link = new moodle_url("/message/discussion.php?id=$user->id");
                 $link = new moodle_url("/message/index.php?id=$user->id");
                 //$action = new popup_action('click', $link, "message_$user->id", $popupoptions);
                 $action = null;
@@ -947,7 +946,6 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false, $i
                 'scrollbars' => true,
                 'resizable' => true);
 
-        //$link = new moodle_url("/message/discussion.php?id=$user->id");
         $link = new moodle_url("/message/index.php?id=$user->id");
         //$action = new popup_action('click', $link, "message_$user->id", $popupoptions);
         $action = null;
@@ -1639,8 +1637,8 @@ function message_print_contactlist_user($contact, $incontactlist = true, $isbloc
     if (!empty($selectcontacturl)) {
         $link = new moodle_url($selectcontacturl.'&'.CONTACT_ID.'='.$contact->id);
     } else {
-        //I suspect this else clause can be removed and maybe the $selectcontacturl arg can be removed and hardcoded
-        $link = new moodle_url("/message/discussion.php?id=$contact->id");
+        //can $selectcontacturl be removed and maybe the be removed and hardcoded?
+        $link = new moodle_url("/message/index.php?id=$contact->id");
         $action = new popup_action('click', $link, "message_$contact->id", $popupoptions);
     }
     echo $OUTPUT->action_link($link, $fullnamelink, $action, array('title'=>get_string('sendmessageto', 'message', $fullname)));
