@@ -184,7 +184,7 @@
             if ($quiz->grade != $quiz->sumgrades) {
                 $a = new stdClass;
                 $a->grade = quiz_format_grade($quiz, $attempt->sumgrades);
-                $a->maxgrade = quiz_format_grade($quiz, $attempt->sumgrades);
+                $a->maxgrade = quiz_format_grade($quiz, $quiz->sumgrades);
                 $rows[] = '<tr><th scope="row" class="cell">' . get_string('marks', 'quiz') . '</th><td class="cell">' .
                         get_string('outofshort', 'quiz', $a) . '</td></tr>';
             }
