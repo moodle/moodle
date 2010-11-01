@@ -49,18 +49,33 @@ class portfolio_export_exception extends portfolio_exception {
     */
     public function __construct($exporter, $errorcode, $module=null, $continue=null, $a=null) {
         global $CFG;
+        // This static variable is necessary because sometimes the code below
+        // which tries to obtain a continue link can cause one of these
+        // exceptions to be thrown. This would create an infinite loop (until
+        // PHP hits its stack limit). Using this static lets us make the
+        // nested constructor finish immediately without attempting to call
+        // methods that might fail.
+        static $inconstructor = false;
 
-        if (!empty($exporter) && $exporter instanceof portfolio_exporter) {
-            if (empty($continue)) {
-                $caller = $exporter->get('caller');
-                if (!empty($caller) && $caller instanceof portfolio_caller_base) {
-                    $continue = $exporter->get('caller')->get_return_url();
+        if (!$inconstructor && !empty($exporter) &&
+                $exporter instanceof portfolio_exporter) {
+            $inconstructor = true;
+            try {
+                if (empty($continue)) {
+                    $caller = $exporter->get('caller');
+                    if (!empty($caller) && $caller instanceof portfolio_caller_base) {
+                        $continue = $exporter->get('caller')->get_return_url();
+                    }
                 }
+                // this was previously only called if we were in cron,
+                // but I think if there's always an exception, we should clean up
+                // rather than force the user to resolve the export later.
+                $exporter->process_stage_cleanup();
+            } catch(Exception $e) {
+                // Ooops, we had an exception trying to get caller
+                // information. Ignore it.
             }
-            // this was previously only called if we were in cron,
-            // but I think if there's always an exception, we should clean up
-            // rather than force the user to resolve the export later.
-            $exporter->process_stage_cleanup();
+            $inconstructor = false;
         }
         parent::__construct($errorcode, $module, $continue, $a);
     }

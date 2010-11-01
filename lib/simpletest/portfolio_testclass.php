@@ -192,10 +192,22 @@ foreach ($portfolio_plugins as $plugin) {
     Mock::generatePartial("portfolio_plugin_$plugin", "partialmock_plugin_$plugin", array('send_package'));
 }
 
-class portfoliolib_test extends FakeDBUnitTestCase {
+class portfoliolib_test extends UnitTestCaseUsingDatabase {
+    private $olduser;
 
     function setup() {
+        global $USER;
         parent::setup();
+
+        // It is necessary to store $USER object because some subclasses use generator
+        // stuff which breaks $USER
+        $this->olduser = $USER;
+    }
+
+    function tearDown() {
+        global $USER;
+        $USER = $this->olduser;
+        parent::tearDown();
     }
 
     function test_construct_dupe_instance() {
@@ -205,7 +217,7 @@ class portfoliolib_test extends FakeDBUnitTestCase {
             $plugin2 = portfolio_plugin_base::create_instance('download', 'download2', array());
             $test1 = new portfolio_plugin_download($plugin1->get('id'));
         } catch (portfolio_exception $e) {
-            $this->assertEqual('multipledisallowed', $e->errorcode);
+            $this->assertEqual('multipleinstancesdisallowed', $e->errorcode);
             $gotexception = true;
         }
         $this->assertTrue($gotexception);
