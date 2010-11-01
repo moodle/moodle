@@ -56,8 +56,17 @@ abstract class restore_prechecks_helper {
         $restoreid = $controller->get_restoreid();
         $courseid = $controller->get_courseid();
         $userid = $controller->get_userid();
-        $inforeffiles = restore_dbops::get_needed_inforef_files($restoreid); // Get all inforef files
         $rolemappings = $controller->get_info()->role_mappings;
+        // Load all the included tasks to look for inforef.xml files
+        $inforeffiles = array();
+        $tasks = restore_dbops::get_included_tasks($restoreid);
+        foreach ($tasks as $task) {
+            // Add the inforef.xml file if exists
+            $inforefpath = $task->get_taskbasepath() . '/inforef.xml';
+            if (file_exists($inforefpath)) {
+                $inforeffiles[] = $inforefpath;
+            }
+        }
 
         // Create temp tables
         restore_controller_dbops::create_restore_temp_tables($controller->get_restoreid());

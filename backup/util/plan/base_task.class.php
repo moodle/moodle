@@ -34,7 +34,8 @@ abstract class base_task implements checksumable, executable, loggable {
     protected $settings;  // One array of base_setting elements to define this task
     protected $steps;     // One array of base_task elements
 
-    protected $built;     // Flag to know if one plan has been built
+    protected $built;     // Flag to know if one task has been built
+    protected $executed;  // Flag to know if one task has been executed
 
     /**
      * Constructor - instantiates one object of this class
@@ -47,7 +48,8 @@ abstract class base_task implements checksumable, executable, loggable {
         $this->plan = $plan;
         $this->settings = array();
         $this->steps    = array();
-        $this->built = false;
+        $this->built    = false;
+        $this->executed = false;
         if (!is_null($plan)) { // Add the task to the plan if specified
             $plan->add_task($this);
         }
@@ -134,10 +136,14 @@ abstract class base_task implements checksumable, executable, loggable {
 
     /**
      * Function responsible for executing the steps of any task
+     * (setting the $executed property to  true)
      */
     public function execute() {
         if (!$this->built) {
             throw new base_task_exception('base_task_not_built', $this->name);
+        }
+        if ($this->executed) {
+            throw new base_task_exception('base_task_already_executed', $this->name);
         }
         foreach ($this->steps as $step) {
             $result = $step->execute();
@@ -146,6 +152,10 @@ abstract class base_task implements checksumable, executable, loggable {
             if (is_array($result) and !empty($result)) {
                 $this->plan->add_result($result);
             }
+        }
+        // Mark as executed if any step has been executed
+        if (!empty($this->steps)) {
+            $this->executed = true;
         }
     }
 

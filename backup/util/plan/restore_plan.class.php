@@ -147,6 +147,16 @@ class restore_plan extends base_plan implements loggable {
         parent::execute();
         $this->controller->set_status(backup::STATUS_FINISHED_OK);
     }
+
+    /**
+     * Execute the after_restore methods of all the executed tasks in the plan
+     */
+    public function execute_after_restore() {
+        // Simply iterate over each task in the plan and delegate to them the execution
+        foreach ($this->tasks as $task) {
+            $task->execute_after_restore();
+        }
+    }
 }
 
 /*

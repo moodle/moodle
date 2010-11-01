@@ -385,6 +385,21 @@ class restore_rebuild_course_cache extends restore_execution_step {
     }
 }
 
+/**
+ * Review all the tasks having one after_restore method
+ * executing it to perform some final adjustments of information
+ * not available when the task was executed.
+ */
+class restore_execute_after_restore extends restore_execution_step {
+
+    protected function define_execution() {
+
+        // Simply call to the execute_after_restore() method of the task
+        // that always is the restore_final_task
+        $this->task->launch_execute_after_restore();
+    }
+}
+
 
 /**
  * Review all the (pending) block positions in backup_ids, matching by
@@ -480,10 +495,14 @@ class restore_load_included_inforef_records extends restore_execution_step {
             return;
         }
 
-        // Get all the included inforef files
-        $files = restore_dbops::get_needed_inforef_files($this->get_restoreid());
-        foreach ($files as $file) {
-            restore_dbops::load_inforef_to_tempids($this->get_restoreid(), $file); // Load each inforef file to temp_ids
+        // Get all the included tasks
+        $tasks = restore_dbops::get_included_tasks($this->get_restoreid());
+        foreach ($tasks as $task) {
+            // Load the inforef.xml file if exists
+            $inforefpath = $task->get_taskbasepath() . '/inforef.xml';
+            if (file_exists($inforefpath)) {
+                restore_dbops::load_inforef_to_tempids($this->get_restoreid(), $inforefpath); // Load each inforef file to temp_ids
+            }
         }
     }
 }

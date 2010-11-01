@@ -30,15 +30,15 @@
 abstract class restore_dbops {
 
     /**
-     * Return all the inforef.xml files to be loaded into the temp_ids table
-     * We do that by loading the controller from DB, then iterating over all the
-     * included tasks and calculating all the inforef files for them
+     * Return one array containing all the tasks that have been included
+     * in the restore process. Note that these tasks aren't built (they
+     * haven't steps nor ids data available)
      */
-    public static function get_needed_inforef_files($restoreid) {
+    public static function get_included_tasks($restoreid) {
         $rc = restore_controller_dbops::load_controller($restoreid);
         $tasks = $rc->get_plan()->get_tasks();
-        $files = array();
-        foreach ($tasks as $task) {
+        $includedtasks = array();
+        foreach ($tasks as $key => $task) {
             // Calculate if the task is being included
             $included = false;
             // blocks, based in blocks setting and parent activity/course
@@ -67,15 +67,12 @@ abstract class restore_dbops {
                 $included = true;
             }
 
-            // If included and file exists, add it to results
+            // If included, add it
             if ($included) {
-                $inforefpath = $task->get_taskbasepath() . '/inforef.xml';
-                if (file_exists($inforefpath)) {
-                    $files[] = $inforefpath;
-                }
+                $includedtasks[] = $task;
             }
         }
-        return $files;
+        return $includedtasks;
     }
 
     /**

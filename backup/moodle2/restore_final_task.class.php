@@ -68,10 +68,25 @@ class restore_final_task extends restore_task {
         // Rebuild course cache to see results, whoah!
         $this->add_step(new restore_rebuild_course_cache('rebuild_course_cache'));
 
+        // Review all the executed tasks having one after_restore method
+        // executing it to perform some final adjustments of information
+        // not available when the task was executed.
+        // This step is always the last one before the one cleaning the temp stuff!
+        $this->add_step(new restore_execute_after_restore('executing_after_restore'));
+
         // Clean the temp dir (conditionally) and drop temp table
         $this->add_step(new restore_drop_and_clean_temp_stuff('drop_and_clean_temp_stuff'));
 
         $this->built = true;
+    }
+
+    /**
+     * Special method, only available in the restore_final_task, able to invoke the
+     * restore_plan execute_after_restore() method, so restore_execute_after_restore step
+     * will be able to launch all the after_restore() methods of the executed tasks
+     */
+    public function launch_execute_after_restore() {
+        $this->plan->execute_after_restore();
     }
 
 // Protected API starts here

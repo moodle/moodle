@@ -94,6 +94,16 @@ abstract class restore_task extends base_task {
     public function get_old_system_contextid() {
         return $this->plan->get_info()->original_system_contextid;
     }
+
+    /**
+     * If the task has been executed, launch its after_restore()
+     * method if available
+     */
+    public function execute_after_restore() {
+        if ($this->executed && method_exists($this, 'after_restore')) {
+            $this->after_restore();
+        }
+    }
 }
 
 /*
