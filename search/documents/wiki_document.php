@@ -220,11 +220,14 @@ function wiki_single_document($id, $itemtype) {
     global $DB;
 
     $page = $DB->get_record('wiki_pages', array('id' => $id));
-    $entry = $DB->get_record('wiki_entries', array('id' => $page->subwikiid));
+    $entry = $DB->get_record('wiki_subwikis', array('id' => $page->subwikiid));
+    $wiki = $DB->get_record('wiki', array('id' => $entry->wikiid));
     $coursemodule = $DB->get_field('modules', 'id', array('name' => 'wiki'));
-    $cm = $DB->get_record('course_modules', array('course' => $entry->course, 'module' => $coursemodule, 'instance' => $entry->wikiid));
+    $cm = $DB->get_record('course_modules', array('course' => $wiki->course, 'module' => $coursemodule, 'instance' => $entry->wikiid));
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    return new WikiSearchDocument(get_object_vars($page), $entry->wikiid, $entry->course, $entry->groupid, $page->userid, $context->id);
+    $user = $DB->get_record('user', array('id' => $page->userid));
+    $page->author = fullname($user);
+    return new WikiSearchDocument(get_object_vars($page), $entry->wikiid, $wiki->course, $entry->groupid, $page->userid, $context->id);
 }
 
 /**
