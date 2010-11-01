@@ -376,7 +376,7 @@ class quiz_overview_report extends quiz_default_report {
             // Set up the table
             $table->define_baseurl($reporturl->out(true, $displayoptions));
 
-            $table->collapsible(false);
+            $table->collapsible(true);
 
             $table->column_suppress('picture');
             $table->column_suppress('fullname');
