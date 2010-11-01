@@ -218,7 +218,7 @@ class backup_dbops_test extends UnitTestCase {
         }
 
         // save and load controller (by backupid). Then compare
-        $bc = new mock_backup_controller4dbops(backup::TYPE_1ACTIVITY, $this->sectionid, backup::FORMAT_MOODLE,
+        $bc = new mock_backup_controller4dbops(backup::TYPE_1ACTIVITY, $this->moduleid, backup::FORMAT_MOODLE,
                                     backup::INTERACTIVE_NO, backup::MODE_GENERAL, $this->userid);
         $checksum = $bc->calculate_checksum(); // Calculate checksum
         $backupid = $bc->get_backupid();
