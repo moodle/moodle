@@ -381,7 +381,7 @@ class global_navigation_test extends UnitTestCase {
     public function test_module_extends_navigation() {
         $this->cache->test1_extends_navigation = true;
         $this->cache->test2_extends_navigation = false;
-        $this->assertTrue($this->node->exposed_module_extends_navigation('forum'));
+        $this->assertTrue($this->node->exposed_module_extends_navigation('data'));
         $this->assertTrue($this->node->exposed_module_extends_navigation('test1'));
         $this->assertFalse($this->node->exposed_module_extends_navigation('test2'));
         $this->assertFalse($this->node->exposed_module_extends_navigation('test3'));
