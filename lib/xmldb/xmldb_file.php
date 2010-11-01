@@ -73,9 +73,6 @@ class xmldb_file extends xmldb_object {
      */
     function validateXMLStructure() {
 
-    /// Let's capture errors
-        libxml_use_internal_errors(true);
-
     /// Create and load XML file
         $parser = new DOMDocument();
         $contents = file_get_contents($this->path);
@@ -84,6 +81,13 @@ class xmldb_file extends xmldb_object {
             $contents = preg_replace('|<STATEMENTS>.*</STATEMENTS>|s', '', $contents);
         }
 
+        // Let's capture errors
+        $olderrormode = libxml_use_internal_errors(true);
+
+        // Clear XML error flag so that we don't incorrectly report failure
+        // when a previous xml parse failed
+        libxml_clear_errors();
+
         $parser->loadXML($contents);
     /// Only validate if we have a schema
         if (!empty($this->schema) && file_exists($this->schema)) {
@@ -91,6 +95,9 @@ class xmldb_file extends xmldb_object {
         }
     /// Check for errors
         $errors = libxml_get_errors();
+
+        // Stop capturing errors
+        libxml_use_internal_errors($olderrormode);
 
     /// Prepare errors
         if (!empty($errors)) {
