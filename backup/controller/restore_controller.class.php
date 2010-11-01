@@ -153,6 +153,8 @@ class restore_controller extends backup implements loggable {
         // TODO: Check it's a correct status
         $this->status = $status;
         // Ensure that, once set to backup::STATUS_AWAITING | STATUS_NEED_PRECHECK, controller is stored in DB
+        // Note: never save_controller() after STATUS_EXECUTING or the whole controller,
+        // containing all the steps will be sent to DB. 100% (monster) useless.
         if ($status == backup::STATUS_AWAITING || $status == backup::STATUS_NEED_PRECHECK) {
             $this->save_controller();
             $this->logger = self::load_controller($this->restoreid)->logger; // wakeup loggers
