@@ -62,11 +62,14 @@ class wikiparser_test extends UnitTestCase {
         if(!file_exists($this->test_directory."input/$markup/$num") || !file_exists($this->test_directory."output/$markup/$num")) {
             return false;
         }
-
         $input = file_get_contents($this->test_directory."input/$markup/$num");
         $output = file_get_contents($this->test_directory."output/$markup/$num");
 
         $result = wiki_parser_proxy::parse($input, $markup, array('pretty_print' => true));
+
+        //removes line breaks to avoid line break encoding causing tests to fail.
+        $result['parsed_text'] = ereg_replace("[\r\n]", '', $result['parsed_text']);
+        $output                = ereg_replace("[\r\n]", '', $output);
 
         $this->assertEqual($result['parsed_text'], $output);
         return true;
