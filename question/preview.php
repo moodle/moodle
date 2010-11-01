@@ -228,7 +228,7 @@
     echo '<input name="markall" type="submit" value="' . get_string('markall',
      'quiz') . "\" />\n";
     echo '<input name="finishattempt" type="submit" value="' .
-     get_string('finishattempt', 'quiz') . "\" />\n";
+     get_string('submitallandfinish', 'quiz') . "\" />\n";
     echo '<br />';
     echo '<br />';
     // Print the fill correct button (unless the question is in readonly mode)
