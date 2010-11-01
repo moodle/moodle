@@ -5563,7 +5563,6 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
     if (strpos($PAGE->pagetype, 'admin-') !== 0) {
         $PAGE->set_pagetype('admin-' . $PAGE->pagetype);
     }
-    $PAGE->set_pagelayout('admin');
 
     if (empty($SITE->fullname) || empty($SITE->shortname)) {
         // During initial install.
