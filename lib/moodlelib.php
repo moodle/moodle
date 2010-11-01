@@ -1046,7 +1046,11 @@ function get_config($plugin, $name = NULL) {
                 }
             }
         }
-        return (object)$localcfg;
+        if ($localcfg) {
+            return (object)$localcfg;
+        } else {
+            return null;
+        }
 
     } else {
         // this part is not really used any more, but anyway...
