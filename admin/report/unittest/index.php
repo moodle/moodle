@@ -33,6 +33,12 @@ $unittest = true;
 global $UNITTEST;
 $UNITTEST = new stdClass();
 
+// This limit is the time allowed per individual test function. Please do not
+// increase this value. If you get a PHP time limit when running unit tests,
+// find the unit test which is running slowly, and either make it faster,
+// split it into multiple tests, or call set_time_limit within that test.
+define('TIME_ALLOWED_PER_UNIT_TEST', 60);
+
 // Print the header.
 $strtitle = get_string('unittests', 'simpletest');
 
@@ -90,7 +96,6 @@ if (!is_null($path)) {
             $title = get_string('moodleunittests', 'simpletest', $displaypath);
         }
         echo $OUTPUT->heading($title);
-        set_time_limit(300); // 5 mins
         $test->run($reporter);
     }
 

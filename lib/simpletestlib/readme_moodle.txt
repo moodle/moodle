@@ -12,5 +12,8 @@ Changes:
  * modified run() in test_case.php - skipping tests that need fake db if prefix not set
  * search replace deprecated "=& new"
  * MDL-20876 - replaced deprecated split() with explode()
+ * test_case.php - added TIME_ALLOWED_PER_UNIT_TEST constant which
+   resets php time limit for each test function - MDL-24909. Marked with
+   comments (replace existing per-class hack in test_case.php).
 
-skodak, Tim
+skodak, Tim, sammarshall

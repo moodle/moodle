@@ -138,6 +138,11 @@ class SimpleTestCase {
                     $reporter->paintCaseStart($this->getLabel());
                     $started = true;
                 }
+//moodlefix begins
+                if (defined('TIME_ALLOWED_PER_UNIT_TEST')) {
+                    set_time_limit(TIME_ALLOWED_PER_UNIT_TEST);
+                }
+//moodlefix ends
                 $invoker = &$this->_reporter->createInvoker($this->createInvoker());
                 $invoker->before($method);
                 $invoker->invoke($method);
@@ -606,9 +611,6 @@ class TestSuite {
                     // Do not execute this test because $CFG->unittestprefix is not set, but it will be required.
                     $reporter->paintSkip("Unit test \"{$class}\" of type UnitTestCaseUsingDatabase skipped. Must define different, non-conflicting \$CFG->unittestprefix to be runnable.");
                     continue;
-                }
-                if ($currenttl = @ini_get('max_execution_time')) {
-                    @ini_set('max_execution_time', $currenttl);
                 }
                 // moodle hack end
                 $test = new $class();
