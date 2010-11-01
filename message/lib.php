@@ -1397,15 +1397,20 @@ function message_get_history($user1, $user2, $limitnum=0, $viewingnewmessages=fa
         $notificationswhere = 'AND notification=0';
     }
 
+    //prevent notifications of your own actions appearing in your own message history
+    $ownnotificationwhere = ' AND NOT (useridfrom=? AND notification=1)';
+
     if ($messages_read = $DB->get_records_select('message_read', "((useridto = ? AND useridfrom = ?) OR
-                                                    (useridto = ? AND useridfrom = ?)) $notificationswhere", array($user1->id, $user2->id, $user2->id, $user1->id),
+                                                    (useridto = ? AND useridfrom = ?)) $notificationswhere $ownnotificationwhere",
+                                                    array($user1->id, $user2->id, $user2->id, $user1->id, $user1->id),
                                                     "timecreated $sort", '*', 0, $limitnum)) {
         foreach ($messages_read as $message) {
             $messages[$message->timecreated] = $message;
         }
     }
-    if ($messages_new =  $DB->get_records_select('message', "(useridto = ? AND useridfrom = ?) OR
-                                                    (useridto = ? AND useridfrom = ?)", array($user1->id, $user2->id, $user2->id, $user1->id),
+    if ($messages_new =  $DB->get_records_select('message', "((useridto = ? AND useridfrom = ?) OR
+                                                    (useridto = ? AND useridfrom = ?)) $ownnotificationwhere",
+                                                    array($user1->id, $user2->id, $user2->id, $user1->id, $user1->id),
                                                     "timecreated $sort", '*', 0, $limitnum)) {
         foreach ($messages_new as $message) {
             $messages[$message->timecreated] = $message;
