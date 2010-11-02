@@ -580,9 +580,7 @@ class html2text
      */
     function _strtoupper($str)
     {
-        if (function_exists('mb_strtoupper'))
-            return mb_strtoupper($str);
-        else
-            return strtoupper($str);
+        $tl = textlib_get_instance();
+        return $tl->strtoupper($str);
     }
 }

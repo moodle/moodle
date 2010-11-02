@@ -128,6 +128,10 @@ class web_test extends UnitTestCase {
         $this->assertEqual($long, html_to_text($long, 0));
     }
 
+    public function test_html_to_text_dont_screw_up_utf8() {
+        $this->assertEqual("\n\nAll the WORLD’S a stage.", html_to_text('<p>All the <strong>world’s</strong> a stage.</p>'));
+    }
+
     public function test_clean_text() {
         $text = "lala <applet>xx</applet>";
         $this->assertEqual($text, clean_text($text, FORMAT_PLAIN));
