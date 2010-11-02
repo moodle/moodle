@@ -114,6 +114,9 @@ $quizobj->preload_questions();
 $quizobj->load_questions();
 
 /// Create initial states for all questions in this quiz.
+if (!$quiz->attemptonlast) {
+    $lastattemptid = false;
+}
 if (!$states = get_question_states($quizobj->get_questions(), $quizobj->get_quiz(), $attempt, $lastattemptid)) {
     print_error('cannotrestore', 'quiz');
 }
