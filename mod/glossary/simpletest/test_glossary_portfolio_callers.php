@@ -1,6 +1,7 @@
 <?php
 require_once("$CFG->libdir/simpletest/portfolio_testclass.php");
 require_once("$CFG->dirroot/mod/glossary/lib.php");
+require_once("$CFG->dirroot/mod/glossary/locallib.php");
 require_once("$CFG->dirroot/$CFG->admin/generator.php");
 
 Mock::generate('glossary_entry_portfolio_caller', 'mock_entry_caller');
