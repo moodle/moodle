@@ -144,6 +144,10 @@ function forum_single_document($id, $itemtype) {
     if ($cm){
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         $post->groupid = $discussion->groupid;
+        // temporary fix until MDL-24822 is resolved.
+        if ($post->groupid == -1) {
+            $post->groupid = 0;
+        }
         return new ForumSearchDocument(get_object_vars($post), $discussion->forum, $discussion->course, $itemtype, $context->id);
     }
     return null;
