@@ -8,7 +8,7 @@ global $DB;
 Mock::generate(get_class($DB), 'mock_database');
 
 Mock::generatePartial('completion_info','completion_cutdown',
-    array('delete_all_state','internal_get_tracked_users','update_state',
+    array('delete_all_state','get_tracked_users','update_state',
         'internal_get_grade_state','is_enabled','get_data','internal_get_state','internal_set_data'));
 Mock::generatePartial('completion_info','completion_cutdown2',
     array('is_enabled','get_data','internal_get_state','internal_set_data'));
@@ -124,7 +124,8 @@ class completionlib_test extends UnitTestCaseUsingDatabase {
         $this->assertEqual(COMPLETION_ENABLED,completion_info::is_enabled_for_site());
 
         // Course
-        $course=new stdClass;
+        //$course=new stdClass;
+        $course=(object)array('id'=>13);
         $c=new completion_info($course);
         $course->enablecompletion=COMPLETION_DISABLED;
         $this->assertEqual(COMPLETION_DISABLED,$c->is_enabled());
@@ -284,6 +285,7 @@ class completionlib_test extends UnitTestCaseUsingDatabase {
 
     function test_count_user_data() {
         global $DB;
+        $course=(object)array('id'=>13);
         $cm=(object)array('id'=>42);
         $DB->setReturnValue('get_field_sql',666);
         $DB->expectOnce('get_field_sql',array(new IgnoreWhitespaceExpectation("SELECT
@@ -292,7 +294,7 @@ FROM
     {course_modules_completion}
 WHERE
     coursemoduleid=? AND completionstate<>0"),array(42)));
-        $c=new completion_info(null);
+        $c=new completion_info($course);
         $this->assertEqual(666,$c->count_user_data($cm));
 
         $DB->tally();
@@ -340,8 +342,8 @@ WHERE
         $DB->expectOnce('get_recordset',array('course_modules_completion',
             array('coursemoduleid'=>13),'','userid'));
         $c->expectOnce('delete_all_state',array($cm));
-        $c->expectOnce('internal_get_tracked_users',array(false));
-        $c->setReturnValue('internal_get_tracked_users',array(
+        $c->expectOnce('get_tracked_users',array());
+        $c->setReturnValue('get_tracked_users',array(
             (object)array('id'=>100,'firstname'=>'Woot','lastname'=>'Plugh'),
             (object)array('id'=>201,'firstname'=>'Vroom','lastname'=>'Xyzzy'),
             ));
@@ -498,7 +500,7 @@ WHERE
         $DB->tally();
     }
 
-    // internal_get_tracked_users() cannot easily be tested because it uses
+    // get_tracked_users() cannot easily be tested because it uses
     // get_role_users, so skipping that
 
     function test_get_progress_all() {
@@ -508,8 +510,8 @@ WHERE
         $c->__construct((object)array('id'=>42));
 
         // 1) Basic usage
-        $c->expectAt(0,'internal_get_tracked_users',array(false,0));
-        $c->setReturnValueAt(0,'internal_get_tracked_users',array(
+        $c->expectAt(0,'get_tracked_users',array(false, array(), 0, '', '', ''));
+        $c->setReturnValueAt(0,'get_tracked_users',array(
             (object)array('id'=>100,'firstname'=>'Woot','lastname'=>'Plugh'),
             (object)array('id'=>201,'firstname'=>'Vroom','lastname'=>'Xyzzy'),
             ));
@@ -528,18 +530,16 @@ WHERE
         $DB->setReturnValueAt(0,'get_recordset_sql',new fake_recordset(array(
             $progress1,$progress2
         )));
+        $this->assertEqual(array(
 
-        $this->assertEqual((object)array(
-            'start'=>0,'total'=>2,
-            'users'=>array(
                 100 => (object)array('id'=>100,'firstname'=>'Woot','lastname'=>'Plugh',
                     'progress'=>array(13=>$progress1)),
                 201 => (object)array('id'=>201,'firstname'=>'Vroom','lastname'=>'Xyzzy',
                     'progress'=>array(14=>$progress2)),
-            )),$c->get_progress_all(false));
+            ),$c->get_progress_all(false));
 
         // 2) With more than 1,000 results
-        $c->expectAt(1,'internal_get_tracked_users',array(true,3));
+        $c->expectAt(1,'get_tracked_users',array(true, 3, 0, '', '', ''));
 
         $tracked=array();
         $ids=array();
@@ -550,7 +550,7 @@ WHERE
             $progress[]=(object)array('userid'=>$i,'coursemoduleid'=>13);
             $progress[]=(object)array('userid'=>$i,'coursemoduleid'=>14);
         }
-        $c->setReturnValueAt(1,'internal_get_tracked_users',$tracked);
+        $c->setReturnValueAt(1,'get_tracked_users',$tracked);
 
         $DB->expectAt(1,'get_in_or_equal',array(array_slice($ids,0,1000)));
         $DB->setReturnValueAt(1,'get_in_or_equal',array(' IN whatever',array()));
@@ -574,12 +574,11 @@ FROM
 WHERE
     cm.course=? AND cmc.userid IN whatever2"),array(42)));
         $DB->setReturnValueAt(2,'get_recordset_sql',new fake_recordset(array_slice($progress,1000)));
-
         $result=$c->get_progress_all(true,3);
-
         $resultok=true;
-        $resultok = $resultok && ($ids==array_keys($result->users));
-        foreach($result->users as $userid => $data) {
+        $resultok = $resultok && ($ids==array_keys($result));
+
+        foreach($result as $userid => $data) {
             $resultok = $resultok && $data->firstname=='frog';
             $resultok = $resultok && $data->lastname==$userid;
             $resultok = $resultok && $data->id==$userid;
