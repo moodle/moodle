@@ -967,13 +967,7 @@ function message_contact_link($userid, $linktype='add', $return=false, $script=n
 
     if (empty($script)) {
         //strip off previous action params like 'removecontact'
-        $theurl = message_remove_url_params($PAGE->url);
-
-        if (strpos($theurl, '?')===false) {
-            $script = $theurl.'?tab=contacts';
-        } else {
-            $script = $theurl.'&amp;tab=contacts';
-        }
+        $script = message_remove_url_params($PAGE->url);
     }
 
     if (empty($str->blockcontact)) {
