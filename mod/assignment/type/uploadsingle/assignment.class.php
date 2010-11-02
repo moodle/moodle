@@ -364,18 +364,12 @@ class assignment_uploadsingle extends assignment_base {
         $filesforzipping = array();
         $fs = get_file_storage();
 
-        if (isset($this->cm->groupmode) && empty($this->course->groupmodeforce)) {
-            $groupmode = $this->cm->groupmode;
-        } else {
-            $groupmode = $this->course->groupmode;
-        }
-        
+        $groupmode = groups_get_activity_groupmode($this->cm);
         $groupid = 0;   // All users
         $groupname = '';
         if ($groupmode) {
-            $group = get_current_group($this->course->id, true);
-            $groupid = $group->id;
-            $groupname = $group->name.'-';
+            $groupid = groups_get_activity_group($this->cm, true);
+            $groupname = groups_get_group_name($groupid).'-';
         }
         $filename = str_replace(' ', '_', clean_filename($this->course->shortname.'-'.$this->assignment->name.'-'.$groupname.$this->assignment->id.".zip")); //name of new zip file.
         foreach ($submissions as $submission) {
