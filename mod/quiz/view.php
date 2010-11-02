@@ -63,9 +63,6 @@
         $USER->editing = $edit;
     }
 
-    if ($accessmanager->securewindow_required($canpreview)) {
-        $PAGE->requires->js_function_call('popupchecker',array(get_string('popupblockerwarning', 'quiz')));
-    }
     $PAGE->requires->yui2_lib('event');
 
     // Note: MDL-19010 there will be further changes to printing header and blocks.
