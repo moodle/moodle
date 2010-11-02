@@ -10,7 +10,7 @@ class conditionlib_test extends UnitTestCaseUsingDatabase {
 
     public $conditionlib_tables = array(
                'lib' => array(
-                   'context', 'capabilities', 'role',
+                   'files','context', 'capabilities', 'role',
                    'role_capabilities', 'role_assignments',
                    'course_categories', 'course',
                    'modules',
@@ -287,11 +287,18 @@ class conditionlib_test extends UnitTestCaseUsingDatabase {
         $oldcm->completion=COMPLETION_TRACKING_MANUAL;
         $DB->update_record('course_modules',$oldcm);
 
+        // Need to reset modinfo after changing the options
+        rebuild_course_cache($courseid);
+        $reset = 'reset';
+        get_fast_modinfo($reset);
+
         $ci=new condition_info((object)array('id'=>$cmid),CONDITION_MISSING_EVERYTHING);
         $ci->add_completion_condition($oldid,COMPLETION_COMPLETE);
+        condition_info::wipe_session_cache();
+
         $this->assertFalse($ci->is_available($text,false));
         $this->assertEqual(get_string('requires_completion_1','condition','xxx'),$text);
-
+        completion_info::wipe_session_cache();
         $completion=new completion_info($DB->get_record('course',array('id'=>$courseid)));
         $completion->update_state($oldcm,COMPLETION_COMPLETE);
         completion_info::wipe_session_cache();

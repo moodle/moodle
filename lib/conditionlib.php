@@ -396,8 +396,8 @@ WHERE
                     $modinfo = get_fast_modinfo($course);
                 }
                 if (empty($modinfo->cms[$cmid])) {
-                    global $PAGE;
-                    if (isset($PAGE) && strpos($PAGE->pagetype, 'course-view-')===0) {
+                    global $PAGE, $UNITTEST;
+                    if (!empty($UNITTEST) || (isset($PAGE) && strpos($PAGE->pagetype, 'course-view-')===0)) {
                         debugging("Warning: activity {$this->cm->id} '{$this->cm->name}' has condition on deleted activity $cmid (to get rid of this message, edit the named activity)");
                     }
                     continue;
