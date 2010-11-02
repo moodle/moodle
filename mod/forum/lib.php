@@ -641,7 +641,8 @@ function forum_cron() {
                 $smallmessagestrings->user = fullname($userfrom);
                 $smallmessagestrings->forumname = "{$course->shortname}: ".format_string($forum->name,true).": ".$discussion->name;
                 $smallmessagestrings->message = $post->message;
-                $eventdata->smallmessage = get_string('smallmessage', 'forum', $smallmessagestrings);
+                //make sure strings are in message recipients language
+                $eventdata->smallmessage = get_string_manager()->get_string('smallmessage', 'forum', $smallmessagestrings, $userto->lang);
 
                 $eventdata->contexturl = "{$CFG->wwwroot}/mod/forum/discuss.php?d={$discussion->id}#p{$post->id}";
                 $eventdata->contexturlname = $discussion->name;

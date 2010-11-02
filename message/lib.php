@@ -1552,13 +1552,16 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
  */
 function message_post_message($userfrom, $userto, $message, $format, $messagetype) {
     global $SITE, $CFG, $USER;
-    
+
     $eventdata = new stdClass();
     $eventdata->component        = 'moodle';
     $eventdata->name             = 'instantmessage';
     $eventdata->userfrom         = $userfrom;
     $eventdata->userto           = $userto;
-    $eventdata->subject          = get_string('unreadnewmessage', 'message', fullname($userfrom));
+
+    //using string manager directly so that strings in the message will be in the message recipients language rather than the senders
+    $eventdata->subject          = get_string_manager()->get_string('unreadnewmessage', 'message', fullname($userfrom), $userto->lang);
+
     $eventdata->fullmessage      = $message;
     $eventdata->fullmessageformat = $format;
     $eventdata->fullmessagehtml  = '';
@@ -1568,7 +1571,7 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     $s->sitename = $SITE->shortname;
     $s->url = $CFG->wwwroot.'/message/index.php?id='.$userfrom->id;//.'&user='.$userto->id;
 
-    $emailtagline = get_string('emailtagline', 'message', $s);
+    $emailtagline = get_string_manager()->get_string('emailtagline', 'message', $s, $userto->lang);
     if (!empty($eventdata->fullmessage)) {
         $eventdata->fullmessage .= "\n\n---------------------------------------------------------------------\n".$emailtagline;
     }

@@ -49,9 +49,6 @@ defined('MOODLE_INTERNAL') || die();
 function message_send($eventdata) {
     global $CFG, $DB;
 
-    //TODO: this function is very slow and inefficient, it would be a major bottleneck in cron processing, this has to be improved in 2.0
-    //      probably we could add two parameters with user messaging preferences and we could somehow preload/cache them in cron
-
     //TODO: we need to solve problems with database transactions here somehow, for now we just prevent transactions - sorry
     $DB->transactions_forbidden();
 
