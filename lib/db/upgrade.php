@@ -5379,6 +5379,20 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010102700);
     }
 
+    if ($oldversion < 2010110200) {
+
+        // fix tags itemtype for wiki
+        $sql = "UPDATE {tag_instance}
+                SET itemtype = 'wiki_pages'
+                WHERE itemtype = 'wiki_page'";
+        $DB->execute($sql);
+
+        echo $OUTPUT->notification('Updating tags itemtype', 'notifysuccess');
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2010110200);
+    }
+
     return true;
 }
 
