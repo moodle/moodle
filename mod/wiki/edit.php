@@ -42,7 +42,6 @@ $contentformat = optional_param('contentformat', '', PARAM_ALPHA);
 $option = optional_param('editoption', '', PARAM_TEXT);
 $section = optional_param('section', "", PARAM_TEXT);
 $version = optional_param('version', -1, PARAM_INT);
-$newcontent = optional_param('newcontent', '', PARAM_CLEANHTML);
 $attachments = optional_param('attachments', 0, PARAM_INT);
 $deleteuploads = optional_param('deleteuploads', 0, PARAM_RAW);
 
@@ -90,7 +89,6 @@ if ($option == get_string('save', 'wiki')) {
         }
         $wikipage = new page_wiki_preview($wiki, $subwiki, $cm);
         $wikipage->set_page($page);
-        $wikipage->set_newcontent($newcontent);
     } else {
         if ($option == get_string('cancel')) {
             //delete lock
