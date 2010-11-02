@@ -729,14 +729,41 @@ class page_requirements_manager {
      * equivalent in the current language.
      *
      * The arguments to this function are just like the arguments to get_string
-     * except that $component is not optional, and there are limitations on how you
-     * use $a. Because each string is only stored once in the JavaScript (based
-     * on $identifier and $module) you cannot get the same string with two different
-     * values of $a. If you try, an exception will be thrown.
+     * except that $component is not optional, and there are some aspects to consider
+     * when the string contains {$a} placeholder.
      *
-     * If you do need the same string expanded with different $a values, then
-     * the solution is to put them in your own data structure (e.g. and array)
-     * that you pass to JavaScript with {@link data_for_js()}.
+     * If the string does not contain any {$a} placeholder, you can simply use
+     * M.str.component.identifier to obtain it. If you prefer, you can call
+     * M.util.get_string(identifier, component) to get the same result.
+     *
+     * If you need to use {$a} placeholders, there are two options. Either the
+     * placeholder should be substituted in PHP on server side or it should
+     * be substituted in Javascript at client side.
+     *
+     * To substitute the placeholder at server side, just provide the required
+     * value for the placeholder when you require the string. Because each string
+     * is only stored once in the JavaScript (based on $identifier and $module)
+     * you cannot get the same string with two different values of $a. If you try,
+     * an exception will be thrown. Once the placeholder is substituted, you can
+     * use M.str or M.util.get_string() as shown above:
+     *
+     *     // require the string in PHP and replace the placeholder
+     *     $PAGE->requires->string_for_js('fullnamedisplay', 'moodle', $USER);
+     *     // use the result of the substitution in Javascript
+     *     alert(M.str.moodle.fullnamedisplay);
+     *
+     * To substitute the placeholder at client side, use M.util.get_string()
+     * function. It implements the same logic as {@see get_string()}:
+     *
+     *     // require the string in PHP but keep {$a} as it is
+     *     $PAGE->requires->string_for_js('fullnamedisplay', 'moodle');
+     *     // provide the values on the fly in Javascript
+     *     user = { firstname : 'Harry', lastname : 'Potter' }
+     *     alert(M.util.get_string('fullnamedisplay', 'moodle', user);
+     *
+     * If you do need the same string expanded with different $a values in PHP
+     * on server side, then the solution is to put them in your own data structure
+     * (e.g. and array) that you pass to JavaScript with {@link data_for_js()}.
      *
      * @param string $identifier the desired string.
      * @param string $module the language file to look in.
