@@ -165,10 +165,10 @@ END;
                      //no link at all
                      'This is a story about moodle.coming to a cinema near you.'=>'This is a story about moodle.coming to a cinema near you.',
                      //URLs containing utf 8 characters
-                     'http://Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n.com?ï¿½=nï¿½ï¿½'=>'<a href="http://Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n.com?ï¿½=nï¿½ï¿½" target="_blank">http://Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n.com?ï¿½=nï¿½ï¿½</a>',
-                     'www.Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n.com?ï¿½=nï¿½ï¿½'=>'<a href="http://www.Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n.com?ï¿½=nï¿½ï¿½" target="_blank">www.Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n.com?ï¿½=nï¿½ï¿½</a>',
+                     'http://Iñtërnâtiônàlizætiøn.com?ô=nëø'=>'<a href="http://Iñtërnâtiônàlizætiøn.com?ô=nëø" target="_blank">http://Iñtërnâtiônàlizætiøn.com?ô=nëø</a>',
+                     'www.Iñtërnâtiônàlizætiøn.com?ô=nëø'=>'<a href="http://www.Iñtërnâtiônàlizætiøn.com?ô=nëø" target="_blank">www.Iñtërnâtiônàlizætiøn.com?ô=nëø</a>',
                      //text containing utf 8 characters outside of a url
-                     'Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n is important to http://moodle.org'=>'Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n is important to <a href="http://moodle.org" target="_blank">http://moodle.org</a>',
+                     'Iñtërnâtiônàlizætiøn is important to http://moodle.org'=>'Iñtërnâtiônàlizætiøn is important to <a href="http://moodle.org" target="_blank">http://moodle.org</a>',
                      //too hard to identify without additional regexs
                      'moodle.org' => 'moodle.org',
                      //some text with no link between related html tags
