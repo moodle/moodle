@@ -302,7 +302,7 @@ function message_get_contacts($user1=null, &$user2=null) {
     return array($onlinecontacts, $offlinecontacts, $strangers);
 }
 
-function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $refresh=true, $contactselecturl=null, $minmessages=0, $showactionlinks=true, $titletodisplay=null) {
+function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $refresh=true, $contactselecturl=null, $minmessages=0, $showactionlinks=true, $titletodisplay=null, $user2=null) {
     global $CFG, $PAGE, $OUTPUT;
 
     $countonlinecontacts  = count($onlinecontacts);
@@ -335,7 +335,7 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
 
         foreach ($onlinecontacts as $contact) {
             if ($minmessages==0 || $contact->messagecount>=$minmessages) {
-                message_print_contactlist_user($contact, IS_CONTACT, IS_NOT_BLOCKED, $contactselecturl, $showactionlinks);
+                message_print_contactlist_user($contact, IS_CONTACT, IS_NOT_BLOCKED, $contactselecturl, $showactionlinks, $user2);
             }
         }
     }
@@ -351,7 +351,7 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
 
         foreach ($offlinecontacts as $contact) {
             if ($minmessages==0 || $contact->messagecount>=$minmessages) {
-                message_print_contactlist_user($contact, IS_CONTACT, IS_NOT_BLOCKED, $contactselecturl, $showactionlinks);
+                message_print_contactlist_user($contact, IS_CONTACT, IS_NOT_BLOCKED, $contactselecturl, $showactionlinks, $user2);
             }
         }
         echo '<tr><td colspan="3">&nbsp;</td></tr>';
@@ -365,7 +365,7 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
 
         foreach ($strangers as $stranger) {
             if ($minmessages==0 || $stranger->messagecount>=$minmessages) {
-                message_print_contactlist_user($stranger, IS_NOT_CONTACT, IS_NOT_BLOCKED, $contactselecturl, $showactionlinks);
+                message_print_contactlist_user($stranger, IS_NOT_CONTACT, IS_NOT_BLOCKED, $contactselecturl, $showactionlinks, $user2);
             }
         }
     }
@@ -1601,10 +1601,15 @@ function message_get_participants() {
  * @param $incontactlist is the user a contact of ours?
  * @param $selectcontacturl string the url to send the user to when a contact's name is clicked
  */
-function message_print_contactlist_user($contact, $incontactlist = true, $isblocked = false, $selectcontacturl = null, $showactionlinks = true) {
+function message_print_contactlist_user($contact, $incontactlist = true, $isblocked = false, $selectcontacturl = null, $showactionlinks = true, $selecteduser=null) {
     global $OUTPUT, $USER;
     $fullname  = fullname($contact);
     $fullnamelink  = $fullname;
+
+    $linkclass = '';
+    if (!empty($selecteduser) && $contact->id==$selecteduser->id) {
+        $linkclass = 'messageselecteduser';
+    }
 
     /// are there any unread messages for this contact?
     if ($contact->messagecount > 0 ){
@@ -1641,7 +1646,7 @@ function message_print_contactlist_user($contact, $incontactlist = true, $isbloc
         $link = new moodle_url("/message/index.php?id=$contact->id");
         $action = new popup_action('click', $link, "message_$contact->id", $popupoptions);
     }
-    echo $OUTPUT->action_link($link, $fullnamelink, $action, array('title'=>get_string('sendmessageto', 'message', $fullname)));
+    echo $OUTPUT->action_link($link, $fullnamelink, $action, array('class'=>$linkclass,'title'=>get_string('sendmessageto', 'message', $fullname)));
 
     echo '</td>';
     echo '<td class="link">&nbsp;'.$strcontact.$strblock.'&nbsp;'.$strhistory.'</td>';
