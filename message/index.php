@@ -49,30 +49,25 @@ $removecontact  = optional_param('removecontact',  0, PARAM_INT); // removing a 
 $blockcontact   = optional_param('blockcontact',   0, PARAM_INT); // blocking a contact
 $unblockcontact = optional_param('unblockcontact', 0, PARAM_INT); // unblocking a contact
 
+//for search
+$advancedsearch = optional_param('advanced', 0, PARAM_INT);
+
 //if they have numerous contacts or are viewing course participants we might need to page through them
 $page = optional_param('page', 0, PARAM_INT);
 
 $url = new moodle_url('/message/index.php');
 
-if ($usergroup !== 0) {
-    $url->param('usergroup', $usergroup);
-}
 if ($user2id !== 0) {
     $url->param('id', $user2id);
 }
 
-/*if ($addcontact !== 0) {
-    $url->param('addcontact', $addcontact);
+if ($usergroup !== 0) {
+    if ($user2id !== 0 && $usergroup==VIEW_SEARCH) {
+        //if theyve searched and selected a user change the view back to contacts so the search button is displayed
+        $usergroup = VIEW_CONTACTS;
+    }
+    $url->param('usergroup', $usergroup);
 }
-if ($removecontact !== 0) {
-    $url->param('removecontact', $removecontact);
-}
-if ($blockcontact !== 0) {
-    $url->param('blockcontact', $blockcontact);
-}
-if ($unblockcontact !== 0) {
-    $url->param('unblockcontact', $unblockcontact);
-}*/
 
 $PAGE->set_url($url);
 
@@ -283,6 +278,8 @@ echo html_writer::start_tag('div', array('class'=>'messagearea mdl-align'));
                 }
             echo html_writer::end_tag('div');
         }
+    } else if ($usergroup==VIEW_SEARCH) {
+        message_print_search($advancedsearch, $user1);
     }
 echo html_writer::end_tag('div');
 

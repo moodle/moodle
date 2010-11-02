@@ -1,13 +1,11 @@
 <form id="personsearch" method="post">
-<div><input type="hidden" name="tab" value="search" /></div>
-
 <div id="combinedcontactssearchspan" class="mdl-left">
 <table cellpadding="5" class="message_form">
     <tr>
         <td colspan="3" class="message_heading mdl-left">
             <input type="text" name="combinedsearch" size="40" id="combinedsearch" value="<?php echo $combinedsearchstring; ?>" />
             <input type="submit" name="combinedsubmit" value="<?php print_string('searchcombined','message') ?>" />
-            <a href="contacts.php?advanced=1" id="advancedcontactsearchlink"><?php print_string('advanced') ?></a>
+            <a href="index.php?usergroup=<?php echo VIEW_SEARCH ?>&advanced=1" id="advancedcontactsearchlink"><?php print_string('advanced') ?></a>
         </td>
     </tr>
 </table>

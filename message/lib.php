@@ -50,6 +50,7 @@ define('VIEW_UNREAD_MESSAGES','unread');
 define('VIEW_CONTACTS','contacts');
 define('VIEW_BLOCKED','blockedusers');
 define('VIEW_COURSE','course_');
+define('VIEW_SEARCH','search');
 
 define('SHOW_ACTION_LINKS_IN_CONTACT_LIST', true);
 
@@ -97,7 +98,7 @@ function message_print_contact_selector($countunreadtotal, $usergroup, $user1, $
 
         if ($usergroup==VIEW_UNREAD_MESSAGES) {
             message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $refreshpage, $PAGE->url, 1, $showcontactactionlinks,$strunreadmessages, $user2);
-        } else if ($usergroup==VIEW_CONTACTS) {
+        } else if ($usergroup==VIEW_CONTACTS || $usergroup==VIEW_SEARCH) {
             message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $refreshpage, $PAGE->url, 0, $showcontactactionlinks, $strunreadmessages, $user2);
         } else if ($usergroup==VIEW_BLOCKED) {
             message_print_blocked_users($blockedusers, $PAGE->url, $showcontactactionlinks, null, $user2);
@@ -108,27 +109,29 @@ function message_print_contact_selector($countunreadtotal, $usergroup, $user1, $
                 && array_key_exists($courseidtoshow, $coursecontexts)
                 && has_capability('moodle/course:viewparticipants', $coursecontexts[$courseidtoshow])) {
 
-                message_print_participants($coursecontexts[$courseidtoshow], $courseidtoshow, $PAGE->url, $showcontactactionlinks, null, $page);
+                message_print_participants($coursecontexts[$courseidtoshow], $courseidtoshow, $PAGE->url, $showcontactactionlinks, null, $page, $user2);
             } else {
                 //shouldn't get here. User trying to access a course they're not in perhaps.
                 add_to_log(SITEID, 'message', 'view', 'index.php', $usergroup);
             }
         }
 
-        echo html_writer::start_tag('form', array('action'=>'contacts.php?advanced=1'));
+        echo html_writer::start_tag('form', array('action'=>'index.php','method'=>'GET'));
             echo html_writer::start_tag('fieldset');
-                $managebuttonclass = 'hiddenelement';
-                if ($usergroup == VIEW_CONTACTS) {
-                    $managebuttonclass = 'visible';
+                $managebuttonclass = 'visible';
+                if ($usergroup==VIEW_SEARCH) {
+                    $managebuttonclass = 'hiddenelement';
                 }
                 $strmanagecontacts = get_string('search','message');
+                echo html_writer::empty_tag('input', array('type'=>'hidden','name'=>'usergroup','value'=>VIEW_SEARCH));
                 echo html_writer::empty_tag('input', array('type'=>'submit','value'=>$strmanagecontacts,'class'=>$managebuttonclass));
             echo html_writer::end_tag('fieldset');
         echo html_writer::end_tag('form');
+
     echo html_writer::end_tag('div');
 }
 
-function message_print_participants($context, $courseid, $contactselecturl=null, $showactionlinks=true, $titletodisplay=null, $page=0) {
+function message_print_participants($context, $courseid, $contactselecturl=null, $showactionlinks=true, $titletodisplay=null, $page=0, $user2=null) {
     global $DB, $USER, $PAGE, $OUTPUT;
 
     $countparticipants = count_enrolled_users($context);
@@ -155,7 +158,7 @@ function message_print_participants($context, $courseid, $contactselecturl=null,
     foreach ($participants as $participant) {
         if ($participant->id != $USER->id) {
             $participant->messagecount = 0;//todo it would be nice if the course participant could report new messages
-            message_print_contactlist_user($participant, $iscontact, $isblocked, $contactselecturl, $showactionlinks);
+            message_print_contactlist_user($participant, $iscontact, $isblocked, $contactselecturl, $showactionlinks, $user2);
         }
     }
     //$participants->close();
@@ -200,7 +203,7 @@ function message_get_blocked_users($user1=null, &$user2=null) {
     return $blockedusers;
 }
 
-function message_print_blocked_users(&$blockedusers, $contactselecturl=null, $showactionlinks=true, $titletodisplay=null) {
+function message_print_blocked_users(&$blockedusers, $contactselecturl=null, $showactionlinks=true, $titletodisplay=null, $user2=null) {
     global $DB, $USER;
 
     $countblocked = count($blockedusers);
@@ -217,7 +220,7 @@ function message_print_blocked_users(&$blockedusers, $contactselecturl=null, $sh
         echo '</td></tr>';
 
         foreach ($blockedusers as $blockeduser) {
-            message_print_contactlist_user($blockeduser, IS_NOT_CONTACT, IS_BLOCKED, $contactselecturl, $showactionlinks);
+            message_print_contactlist_user($blockeduser, IS_NOT_CONTACT, IS_BLOCKED, $contactselecturl, $showactionlinks, $user2);
         }
     }
 
