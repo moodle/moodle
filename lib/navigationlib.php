@@ -3146,6 +3146,13 @@ class settings_navigation extends navigation_node {
             $modulenode->add(get_string('backup'), $url, self::TYPE_SETTING);
         }
 
+        // Restore this activity
+        $featuresfunc = $this->page->activityname.'_supports';
+        if (function_exists($featuresfunc) && $featuresfunc(FEATURE_BACKUP_MOODLE2) && has_capability('moodle/restore:restoreactivity', $this->page->cm->context)) {
+            $url = new moodle_url('/backup/restorefile.php', array('contextid'=>$this->page->cm->context->id));
+            $modulenode->add(get_string('restore'), $url, self::TYPE_SETTING);
+        }
+
         $function = $this->page->activityname.'_extend_settings_navigation';
         if (!function_exists($function)) {
             return $modulenode;

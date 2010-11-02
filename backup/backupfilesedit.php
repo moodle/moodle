@@ -40,7 +40,7 @@ $filecontext = get_context_instance_by_id($contextid);
 
 $url = new moodle_url('/backup/backupfilesedit.php', array('currentcontext'=>$currentcontext, 'contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea));
 
-require_login($course);
+require_login($course, false, $cm);
 require_capability('moodle/restore:uploadfile', $context);
 
 $PAGE->set_url($url);

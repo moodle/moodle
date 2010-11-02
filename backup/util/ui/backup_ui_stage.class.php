@@ -453,8 +453,20 @@ class backup_ui_stage_complete extends backup_ui_stage_final {
         global $OUTPUT;
 
         // Get the resulting stored_file record
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $this->get_ui()->get_controller()->get_courseid());
-        $restorerul = new moodle_url('/backup/restorefile.php', array('contextid'=>$coursecontext->id));
+        $type = $this->get_ui()->get_controller()->get_type();
+        $courseid = $this->get_ui()->get_controller()->get_courseid();
+        switch ($type) {
+        case 'activity':
+            $cmid = $this->get_ui()->get_controller()->get_id();
+            $cm = get_coursemodule_from_id(null, $cmid, $courseid);
+            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $restorerul = new moodle_url('/backup/restorefile.php', array('contextid'=>$modcontext->id));
+            break;
+        case 'course':
+        default:
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+            $restorerul = new moodle_url('/backup/restorefile.php', array('contextid'=>$coursecontext->id));
+        }
 
         echo $OUTPUT->box_start();
         echo $OUTPUT->notification(get_string('executionsuccess', 'backup'), 'notifysuccess');

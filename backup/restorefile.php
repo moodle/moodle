@@ -58,7 +58,7 @@ switch ($context->contextlevel) {
 }
 
 
-require_login($course);
+require_login($course, false, $cm);
 require_capability('moodle/restore:restorecourse', $context);
 
 $browser = get_file_browser();
@@ -112,6 +112,21 @@ if (has_capability('moodle/restore:uploadfile', $context)) {
     echo $OUTPUT->container_end();
 }
 
+if ($context->contextlevel == CONTEXT_MODULE) {
+    echo $OUTPUT->heading_with_help(get_string('choosefilefromactivitybackup', 'backup'), 'choosefilefromuserbackup', 'backup');
+    echo $OUTPUT->container_start();
+    $treeview_options = array();
+    $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+    $treeview_options['filecontext'] = $context;
+    $treeview_options['currentcontext'] = $context;
+    $treeview_options['component']   = 'backup';
+    $treeview_options['context']     = $context;
+    $treeview_options['filearea']    = 'activity';
+    $renderer = $PAGE->get_renderer('core', 'backup');
+    echo $renderer->backup_files_viewer($treeview_options);
+    echo $OUTPUT->container_end();
+}
+
 echo $OUTPUT->heading_with_help(get_string('choosefilefromcoursebackup', 'backup'), 'choosefilefromcoursebackup', 'backup');
 echo $OUTPUT->container_start();
 $treeview_options = array();
@@ -123,7 +138,6 @@ $treeview_options['filearea']    = 'course';
 $renderer = $PAGE->get_renderer('core', 'backup');
 echo $renderer->backup_files_viewer($treeview_options);
 echo $OUTPUT->container_end();
-
 
 echo $OUTPUT->heading_with_help(get_string('choosefilefromuserbackup', 'backup'), 'choosefilefromuserbackup', 'backup');
 echo $OUTPUT->container_start();
