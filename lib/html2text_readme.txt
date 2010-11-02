@@ -60,4 +60,25 @@ index b7e3e3e..96ef508 100644
          }
      }
 
- -- Tim Hunt 2010-08-04
+-- Tim Hunt 2010-08-04
+
+
+3- Use textlib, not crappy functions that break UTF-8, in the _strtoupper method.
+
+Index: lib/html2text.php
+--- lib/html2text.php   2 Sep 2010 12:49:29 -0000   1.16
++++ lib/html2text.php   2 Nov 2010 19:57:09 -0000
+@@ -580,9 +580,7 @@
+      */
+     function _strtoupper($str)
+     {
+-        if (function_exists('mb_strtoupper'))
+-            return mb_strtoupper($str);
+-        else
+-            return strtoupper($str);
++        $tl = textlib_get_instance();
++        return $tl->strtoupper($str);
+     }
+ }
+
+-- Tim Hunt 2010-11-02

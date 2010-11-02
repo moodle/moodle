@@ -165,10 +165,10 @@ END;
                      //no link at all
                      'This is a story about moodle.coming to a cinema near you.'=>'This is a story about moodle.coming to a cinema near you.',
                      //URLs containing utf 8 characters
-                     'http://Iñtërnâtiônàlizætiøn.com?ô=nëø'=>'<a href="http://Iñtërnâtiônàlizætiøn.com?ô=nëø" target="_blank">http://Iñtërnâtiônàlizætiøn.com?ô=nëø</a>',
-                     'www.Iñtërnâtiônàlizætiøn.com?ô=nëø'=>'<a href="http://www.Iñtërnâtiônàlizætiøn.com?ô=nëø" target="_blank">www.Iñtërnâtiônàlizætiøn.com?ô=nëø</a>',
+                     'http://Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n.com?ï¿½=nï¿½ï¿½'=>'<a href="http://Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n.com?ï¿½=nï¿½ï¿½" target="_blank">http://Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n.com?ï¿½=nï¿½ï¿½</a>',
+                     'www.Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n.com?ï¿½=nï¿½ï¿½'=>'<a href="http://www.Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n.com?ï¿½=nï¿½ï¿½" target="_blank">www.Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n.com?ï¿½=nï¿½ï¿½</a>',
                      //text containing utf 8 characters outside of a url
-                     'Iñtërnâtiônàlizætiøn is important to http://moodle.org'=>'Iñtërnâtiônàlizætiøn is important to <a href="http://moodle.org" target="_blank">http://moodle.org</a>',
+                     'Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n is important to http://moodle.org'=>'Iï¿½tï¿½rnï¿½tiï¿½nï¿½lizï¿½tiï¿½n is important to <a href="http://moodle.org" target="_blank">http://moodle.org</a>',
                      //too hard to identify without additional regexs
                      'moodle.org' => 'moodle.org',
                      //some text with no link between related html tags
@@ -250,6 +250,10 @@ END;
     public function test_html_to_text_nowrap() {
         $long = "Here is a long string, more than 75 characters long, since by default html_to_text wraps text at 75 chars.";
         $this->assertEqual($long, html_to_text($long, 0));
+    }
+
+    public function test_html_to_text_dont_screw_up_utf8() {
+        $this->assertEqual("\n\nAll the WORLD’S a stage.", html_to_text('<p>All the <strong>world’s</strong> a stage.</p>'));
     }
 }
 ?>
