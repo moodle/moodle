@@ -102,13 +102,13 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
         }
         // Map order
         foreach (explode(',', $lists[0]) as $id) {
-            if ($newid = $this->get_mappingid('question_answer', $id)) {
+            if (!empty($id) && $newid = $this->get_mappingid('question_answer', $id)) {
                 $orderarr[] = $newid;
             }
         }
         // Map responses
         foreach (explode(',', $lists[1]) as $id) {
-            if ($newid = $this->get_mappingid('question_answer', $id)) {
+            if (!empty($id) && $newid = $this->get_mappingid('question_answer', $id)) {
                 $responsesarr[] = $newid;
             }
         }
