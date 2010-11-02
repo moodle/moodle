@@ -3285,6 +3285,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $options = new stdClass();
     $options->para    = false;
     $options->trusted = $post->messagetrust;
+    $options->context = $modcontext;
     if ($link and (strlen(strip_tags($post->message)) > $CFG->forum_longpost)) {
         // Print shortened version
         echo format_text(forum_shorten_post($post->message), $post->messageformat, $options, $course->id);
