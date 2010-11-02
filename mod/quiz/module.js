@@ -135,7 +135,7 @@ M.mod_quiz.nav.init = function(Y) {
 
             var questionidmatch = this.get('href').match(/#q(\d+)/);
             if (questionidmatch) {
-                form.set(action, form.get(action) + '#q' + questionidmatch[1]);
+                form.set('action', form.get('action') + '#q' + questionidmatch[1]);
             }
 
             form.submit();
