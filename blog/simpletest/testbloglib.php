@@ -36,10 +36,12 @@ class bloglib_test extends UnitTestCaseUsingDatabase {
 
     private $courseid; // To store important ids to be used in tests
     private $groupid;
+    private $userid;
+    private $tagid;
 
     public function setUp() {
         parent::setUp();
-        $this->create_test_tables(array('course', 'groups', 'context'), 'lib');
+        $this->create_test_tables(array('course', 'groups', 'context', 'user', 'modules', 'course_modules', 'post', 'tag'), 'lib');
         $this->switch_to_test_db();
 
         // Create default course
@@ -67,9 +69,34 @@ class bloglib_test extends UnitTestCaseUsingDatabase {
             $this->testdb->insert_record('context', $context);
         }
 
+        // Create default user
+        $user = new stdClass();
+        $user->username = 'testuser';
+        $user->confirmed = 1;
+        $user->firstname = 'Jimmy';
+        $user->lastname = 'Kinnon';
+        $user->id = $this->testdb->insert_record('user', $user);
+
+        // Create default tag
+        $tag = new stdClass();
+        $tag->userid = $user->id;
+        $tag->name = 'testtagname';
+        $tag->rawname = 'Testtagname';
+        $tag->tagtype = 'official';
+        $tag->id = $this->testdb->insert_record('tag', $tag);
+
+        // Create default post
+        $post = new stdClass();
+        $post->userid = $user->id;
+        $post->groupid = $group->id;
+        $post->content = 'test post content text';
+        $post->id = $this->testdb->insert_record('post', $post);
+
         // Grab important ids
         $this->courseid = $course->id;
         $this->groupid  = $group->id;
+        $this->userid  = $user->id;
+        $this->tagid  = $tag->id;
     }
 
     public function tearDown() {
@@ -114,14 +141,29 @@ class bloglib_test extends UnitTestCaseUsingDatabase {
 
     }
 
-    /**
-     * Some user, course, module, group and blog sample data needs to be setup for this test
-     */
+    // The following series of 'test_blog..' functions correspond to the blog_get_headers() function within blog/lib.php.
+    // Some cases are omitted due to the optional_param variables used.
+
     public function test_blog_get_headers_case_1() {
         global $CFG, $PAGE, $OUTPUT;
-        $PAGE->url = new moodle_url('/blog/index.php', array('entryid' => 1));
         $blog_headers = blog_get_headers();
+        $this->assertEqual($blog_headers['heading'], get_string('siteblog', 'blog', 'ANON'));
+    }
 
-        $this->assertEqual($blog_headers['title'], '');
+    public function test_blog_get_headers_case_6() {
+        global $CFG, $PAGE, $OUTPUT;
+        $blog_headers = blog_get_headers($this->courseid, NULL, $this->userid);
+        $this->assertNotEqual($blog_headers['heading'], '');
+    }
+
+    public function test_blog_get_headers_case_7() {
+        global $CFG, $PAGE, $OUTPUT;
+        $blog_headers = blog_get_headers(NULL, 1);
+        $this->assertNotEqual($blog_headers['heading'], '');
+    }
+    public function test_blog_get_headers_case_10() {
+        global $CFG, $PAGE, $OUTPUT;
+        $blog_headers = blog_get_headers($this->courseid);
+        $this->assertNotEqual($blog_headers['heading'], '');
     }
 }
