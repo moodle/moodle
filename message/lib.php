@@ -897,7 +897,7 @@ function message_print_search_results($frm, $showicontext=false, $user1=null) {
             echo '</table>';
 
         } else {
-            echo '<p class="heading">'.get_string('keywordssearchresults', 'message', 0).' ("'.s($messagesearchstring).'")</p>';
+            echo '<p class="heading">'.get_string('keywordssearchresults', 'message', 0).'</p>';
         }
     }
 
