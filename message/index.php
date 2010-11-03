@@ -198,6 +198,11 @@ if (!empty($user2)) {
 }
 $countunreadtotal = message_count_unread_messages($user1);
 
+if ($countunreadtotal==0 && $usergroup==VIEW_UNREAD_MESSAGES && empty($user2)) {
+    //default to showing the search
+    $usergroup = VIEW_SEARCH;
+}
+
 $blockedusers = message_get_blocked_users($user1, $user2);
 $countblocked = count($blockedusers);
 
