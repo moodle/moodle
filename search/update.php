@@ -128,29 +128,50 @@
 
                         foreach ($updates as $update) {
                             ++$update_count;
-                            
-                            //delete old document
+                            $added_doc = false;
+
+                            //get old document for deletion later
                             // change from default text only search to include numerals for this search.
                             Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
                             $doc = $index->find("+docid:{$update->id} +doctype:{$mod->name} +itemtype:{$update->itemtype}");
                             
-                            //get the record, should only be one
-                            foreach ($doc as $thisdoc) {
-                                mtrace("  Delete: $thisdoc->title (database id = $thisdoc->dbid, index id = $thisdoc->id, moodle instance id = $thisdoc->docid)");
-                                $dbcontrol->delDocument($thisdoc);
-                                $index->delete($thisdoc->id);
-                            } 
-                            
-                            //add new modified document back into index
-                            $add = $get_document_function($update->id, $update->itemtype);
-                            
-                            //object to insert into db
-                            $dbid = $dbcontrol->addDocument($add);
+                            try {
+                                //add new modified document back into index
+                                $add = $get_document_function($update->id, $update->itemtype);
 
-                            //synchronise db with index
-                            $add->addField(Zend_Search_Lucene_Field::Keyword('dbid', $dbid));
-                            mtrace("  Add: $add->title (database id = $add->dbid, moodle instance id = $add->docid)");
-                            $index->addDocument($add);
+                                //object to insert into db
+                                $dbid = $dbcontrol->addDocument($add);
+
+                                //synchronise db with index
+                                $add->addField(Zend_Search_Lucene_Field::Keyword('dbid', $dbid));
+                                mtrace("  Add: $add->title (database id = $add->dbid, moodle instance id = $add->docid)");
+                                $index->addDocument($add);
+                                $added_doc = true;
+                            }
+
+                            catch (dml_write_exception $e) {
+                                mtrace(" Add: FAILED adding '$add->title' ,  moodle instance id = $add->docid , Error: $e->error ");
+                                mtrace($e);
+                                $added_doc = false;
+                            }
+
+                            if ($added_doc) {
+                                // ok we've successfully added the new document so far
+                                // delete single previous old document
+                                try {
+                                    //get the record, should only be one
+                                    foreach ($doc as $thisdoc) {
+                                        mtrace("  Delete: $thisdoc->title (database id = $thisdoc->dbid, index id = $thisdoc->id, moodle instance id = $thisdoc->docid)");
+                                        $dbcontrol->delDocument($thisdoc);
+                                        $index->delete($thisdoc->id);
+                                    }
+                                }
+
+                                catch (dml_write_exception $e) {
+                                    mtrace(" Delete: FAILED deleting '$thisdoc->title' ,  moodle instance id = $thisdoc->docid , Error: $e->error ");
+                                    mtrace($e);
+                                }
+                            }
                         } 
                     }
                     else{
