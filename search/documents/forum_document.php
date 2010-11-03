@@ -75,7 +75,7 @@ class ForumSearchDocument extends SearchDocument {
 function forum_make_link($discussion_id, $post_id) {
     global $CFG;
     
-    return $CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion_id.'#'.$post_id;
+    return $CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion_id.'#p'.$post_id;
 }
 
 /**
