@@ -90,12 +90,8 @@ class moodle_phpmailer extends PHPMailer {
     /**
      * Replaced function to fix tz bug:
      * http://tracker.moodle.org/browse/MDL-12596
-     *
-     * PLEASE NOTE: intentionally not declared this function public in 
-     * order that we keep compatibiltiy with previous versions of phpmailer 
-     * where it was declared private.
      */
-    static function RFCDate() {
+    public static function RFCDate() {
         $tz = date('Z');
         $tzs = ($tz < 0) ? '-' : '+';
         $tz = abs($tz);
