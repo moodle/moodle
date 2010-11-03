@@ -4639,7 +4639,6 @@ function get_mailer($action='get') {
         $mailer->CharSet   = 'UTF-8';
 
         // some MTAs may do double conversion of LF if CRLF used, CRLF is required line ending in RFC 822bis
-        // hmm, this is a bit hacky because LE should be private
         if (isset($CFG->mailnewline) and $CFG->mailnewline == 'CRLF') {
             $mailer->LE = "\r\n";
         } else {
