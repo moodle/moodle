@@ -4603,7 +4603,7 @@ function get_mailer($action='get') {
         $prevkeepalive = false;
 
         if (isset($mailer) and $mailer->Mailer == 'smtp') {
-            if ($counter < $CFG->smtpmaxbulk and empty($mailer->error_count)) {
+            if ($counter < $CFG->smtpmaxbulk and !$mailer->IsError()) {
                 $counter++;
                 // reset the mailer
                 $mailer->Priority         = 3;
@@ -4795,8 +4795,8 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         echo '<pre>' . "\n";
     }
 
-/// We are going to use textlib services here
-    $textlib = textlib_get_instance();
+    $temprecipients = array();
+    $tempreplyto = array();
 
     $supportuser = generate_email_supportuser();
 
@@ -4818,17 +4818,17 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         $mail->From     = $CFG->noreplyaddress;
         $mail->FromName = fullname($from);
         if (empty($replyto)) {
-            $mail->AddReplyTo($CFG->noreplyaddress,get_string('noreplyname'));
+            $tempreplyto[] = array($CFG->noreplyaddress, get_string('noreplyname'));
         }
     }
 
     if (!empty($replyto)) {
-        $mail->AddReplyTo($replyto,$replytoname);
+        $tempreplyto[] = array($replyto, $replytoname);
     }
 
     $mail->Subject = substr($subject, 0, 900);
 
-    $mail->AddAddress($user->email, fullname($user) );
+    $temprecipients[] = array($user->email, fullname($user));
 
     $mail->WordWrap = $wordwrapwidth;                   // set word wrap
 
@@ -4858,7 +4858,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     if ($attachment && $attachname) {
         if (preg_match( "~\\.\\.~" ,$attachment )) {    // Security check for ".." in dir path
-            $mail->AddAddress($supportuser->email, fullname($supportuser, true) );
+            $temprecipients[] = array($supportuser->email, fullname($supportuser, true));
             $mail->AddStringAttachment('Error in attachment.  User attempted to attach a filename with a unsafe name.', 'error.txt', '8bit', 'text/plain');
         } else {
             require_once($CFG->libdir.'/filelib.php');
@@ -4867,37 +4867,42 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         }
     }
 
-
-
-/// If we are running under Unicode and sitemailcharset or allowusermailcharset are set, convert the email
-/// encoding to the specified one
+    // Check if the email should be sent in an other charset then the default UTF-8
     if ((!empty($CFG->sitemailcharset) || !empty($CFG->allowusermailcharset))) {
-    /// Set it to site mail charset
+
+        // use the defined site mail charset or eventually the one preferred by the recipient
         $charset = $CFG->sitemailcharset;
-    /// Overwrite it with the user mail charset
         if (!empty($CFG->allowusermailcharset)) {
             if ($useremailcharset = get_user_preferences('mailcharset', '0', $user->id)) {
                 $charset = $useremailcharset;
             }
         }
-    /// If it has changed, convert all the necessary strings
+
+        // convert all the necessary strings if the charset is supported
         $charsets = get_list_of_charsets();
         unset($charsets['UTF-8']);
         if (in_array($charset, $charsets)) {
-        /// Save the new mail charset
-            $mail->CharSet = $charset;
-        /// And convert some strings
-            $mail->FromName = $textlib->convert($mail->FromName, 'utf-8', $mail->CharSet); //From Name
-            foreach ($mail->ReplyTo as $key => $rt) {                                      //ReplyTo Names
-                $mail->ReplyTo[$key][1] = $textlib->convert($rt[1], 'utf-8', $mail->CharSet);
+            $textlib = textlib_get_instance();
+            $mail->CharSet  = $charset;
+            $mail->FromName = $textlib->convert($mail->FromName, 'utf-8', strtolower($charset));
+            $mail->Subject  = $textlib->convert($mail->Subject, 'utf-8', strtolower($charset));
+            $mail->Body     = $textlib->convert($mail->Body, 'utf-8', strtolower($charset));
+            $mail->AltBody  = $textlib->convert($mail->AltBody, 'utf-8', strtolower($charset));
+
+            foreach ($temprecipients as $key => $values) {
+                $temprecipients[$key][1] = $textlib->convert($values[1], 'utf-8', strtolower($charset));
             }
-            $mail->Subject = $textlib->convert($mail->Subject, 'utf-8', $mail->CharSet);   //Subject
-            foreach ($mail->to as $key => $to) {
-                $mail->to[$key][1] = $textlib->convert($to[1], 'utf-8', $mail->CharSet);      //To Names
+            foreach ($tempreplyto as $key => $values) {
+                $tempreplyto[$key][1] = $textlib->convert($values[1], 'utf-8', strtolower($charset));
             }
-            $mail->Body = $textlib->convert($mail->Body, 'utf-8', $mail->CharSet);         //Body
-            $mail->AltBody = $textlib->convert($mail->AltBody, 'utf-8', $mail->CharSet);   //Subject
         }
+    }
+
+    foreach ($temprecipients as $values) {
+        $mail->AddAddress($values[0], $values[1]);
+    }
+    foreach ($tempreplyto as $values) {
+        $mail->AddReplyTo($values[0], $values[1]);
     }
 
     if ($mail->Send()) {
