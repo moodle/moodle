@@ -337,25 +337,27 @@ class course_publication_form extends moodleform {
         $mform->setType('creatornotes', PARAM_CLEANHTML);
         $mform->addHelpButton('creatornotes', 'creatornotes', 'hub');
 
-        if (!empty($screenshotsnumber)) {
+        if ($advertise) {
+            if (!empty($screenshotsnumber)) {
 
-            if (!empty($privacy)) {
-                $baseurl = new moodle_url($huburl . '/local/hub/webservice/download.php',
-                                array('courseid' => $hubcourseid, 'filetype' => HUB_SCREENSHOT_FILE_TYPE));
-                $screenshothtml = html_writer::empty_tag('img',
-                                array('src' => $baseurl, 'alt' => $defaultfullname));
-                $screenshothtml = html_writer::tag('div', $screenshothtml,
-                                array('class' => 'coursescreenshot',
-                                    'id' => 'image-' . $hubcourseid));
-            } else {
-                $screenshothtml = get_string('existingscreenshotnumber', 'hub', $screenshotsnumber);
+                if (!empty($privacy)) {
+                    $baseurl = new moodle_url($huburl . '/local/hub/webservice/download.php',
+                                    array('courseid' => $hubcourseid, 'filetype' => HUB_SCREENSHOT_FILE_TYPE));
+                    $screenshothtml = html_writer::empty_tag('img',
+                                    array('src' => $baseurl, 'alt' => $defaultfullname));
+                    $screenshothtml = html_writer::tag('div', $screenshothtml,
+                                    array('class' => 'coursescreenshot',
+                                        'id' => 'image-' . $hubcourseid));
+                } else {
+                    $screenshothtml = get_string('existingscreenshotnumber', 'hub', $screenshotsnumber);
+                }
+                $mform->addElement('static', 'existingscreenshots', get_string('existingscreenshots', 'hub'), $screenshothtml);
+                $mform->addHelpButton('existingscreenshots', 'deletescreenshots', 'hub');
+                $mform->addElement('checkbox', 'deletescreenshots', '', ' ' . get_string('deletescreenshots', 'hub'));
             }
-            $mform->addElement('static', 'existingscreenshots', get_string('existingscreenshots', 'hub'), $screenshothtml);
-            $mform->addHelpButton('existingscreenshots', 'deletescreenshots', 'hub');
-            $mform->addElement('checkbox', 'deletescreenshots', '', ' ' . get_string('deletescreenshots', 'hub'));
-        }
 
-        $mform->addElement('hidden', 'existingscreenshotnumber', $screenshotsnumber);
+            $mform->addElement('hidden', 'existingscreenshotnumber', $screenshotsnumber);
+        }
 
         $mform->addElement('filemanager', 'screenshots', get_string('addscreenshots', 'hub'), null,
                 array('subdirs' => 0,

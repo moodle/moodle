@@ -162,7 +162,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
 
         //save into screenshots field the references to the screenshot content hash
         //(it will be like a unique id from the hub perspective)
-        if (!empty($fromform->deletescreenshots)) {
+        if (!empty($fromform->deletescreenshots) or $share) {
             $courseinfo->screenshots = 0;
         } else {
             $courseinfo->screenshots = $fromform->existingscreenshotnumber;
@@ -214,7 +214,7 @@ if (has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE,
         // send screenshots
         if (!empty($fromform->screenshots)) {
 
-            if (!empty($fromform->deletescreenshots)) {
+            if (!empty($fromform->deletescreenshots) or $share) {
                 $screenshotnumber = 0;
             } else {
                 $screenshotnumber = $fromform->existingscreenshotnumber;
