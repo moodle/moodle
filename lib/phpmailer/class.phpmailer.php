@@ -310,7 +310,7 @@ class PHPMailer {
   private   $to             = array();
   private   $cc             = array();
   private   $bcc            = array();
-  public   $ReplyTo        = array();
+  private   $ReplyTo        = array();
   private   $all_recipients = array();
   private   $attachment     = array();
   private   $CustomHeader   = array();
@@ -1690,10 +1690,9 @@ class PHPMailer {
   * @author Marcus Bointon
   */
   public function EncodeQP($string, $line_max = 76, $space_conv = false) {
-    //MDL-23240 php's implementation causes problems for some users
-    //if (function_exists('quoted_printable_encode')) { //Use native function if it's available (>= PHP5.3)
-    //  return quoted_printable_encode($string);
-    //}
+    if (function_exists('quoted_printable_encode')) { //Use native function if it's available (>= PHP5.3)
+      return quoted_printable_encode($string);
+    }
     $filters = stream_get_filters();
     if (!in_array('convert.*', $filters)) { //Got convert stream filter?
       return $this->EncodeQPphp($string, $line_max, $space_conv); //Fall back to old implementation
