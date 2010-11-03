@@ -250,7 +250,7 @@ function feedback_convert_to_win($text) {
     $newtext = str_ireplace('<br />', "\n", $text);
     $newtext = str_ireplace('<br>', "\n", $newtext);
 
-    return $textlib->convert($newtext, 'UTF-8', $newwincharset);
+    return $textlib->convert($newtext, 'utf-8', $newwincharset);
 }
 
 
