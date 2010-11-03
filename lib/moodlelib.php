@@ -4733,8 +4733,7 @@ function get_mailer($action='get') {
  */
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $replyto='', $replytoname='', $wordwrapwidth=79) {
 
-    global $CFG, $FULLME, $MNETIDPJUMPURL;
-    static $mnetjumps = array();
+    global $CFG, $FULLME;
 
     if (empty($user) || empty($user->email)) {
         mtrace('Error: lib/moodlelib.php email_to_user(): User is null or has no email');
