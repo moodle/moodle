@@ -4587,9 +4587,9 @@ function moodle_process_email($modargs,$body) {
  *
  * @global object
  * @param string $action 'get', 'buffer', 'close' or 'flush'
- * @return object|null reference to mailer instance if 'get' used or nothing
+ * @return object|null mailer instance if 'get' used or nothing
  */
-function &get_mailer($action='get') {
+function get_mailer($action='get') {
     global $CFG;
 
     static $mailer  = null;
@@ -4676,7 +4676,7 @@ function &get_mailer($action='get') {
     if ($action == 'buffer') {
         if (!empty($CFG->smtpmaxbulk)) {
             get_mailer('flush');
-            $m =& get_mailer();
+            $m = get_mailer();
             if ($m->Mailer == 'smtp') {
                 $m->SMTPKeepAlive = true;
             }
@@ -4791,7 +4791,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
                 $callback,
                 $messagehtml);
     }
-    $mail =& get_mailer();
+    $mail = get_mailer();
 
     if (!empty($mail->SMTPDebug)) {
         echo '<pre>' . "\n";
