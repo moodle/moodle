@@ -55,6 +55,11 @@ class ForumSearchDocument extends SearchDocument {
         // module specific information
         $data->forum      = $forum_id;
         $data->discussion = $post['discussion'];
+
+        //temporary fix until MDL-24822 resolved
+        if (!isset($post['groupid']) || $post['groupid'] < 0) {
+            $post['groupid'] = 0;
+        }
         
         parent::__construct($doc, $data, $course_id, $post['groupid'], $post['userid'], 'mod/'.SEARCH_TYPE_FORUM);
     } 
@@ -111,8 +116,8 @@ function forum_get_content_for_index(&$forum) {
             if (!empty($aPost->message)) {
                 echo "*";
                 $documents[] = new ForumSearchDocument(get_object_vars($aPost), $forum->id, $forum->course, 'head', $context->id);
-            } 
-            if ($children = forum_get_child_posts_fast($aPost->id, $forum->id)) {
+            }
+            if ($children = forum_get_child_posts_fast_recurse($aPost->id, $forum->id)) {
                 foreach($children as $aChild) {
                     echo ".";
                     $aChild->itemtype = 'post';
@@ -241,6 +246,31 @@ function forum_get_discussions_fast($forum_id) {
 }
 
 /**
+ * recursively calls forum_get_child_posts_fast()
+ * @return array of whole generation of descendants of a parent post.
+ *
+ */
+function forum_get_child_posts_fast_recurse($parent_id, $forum_id, $recursing=false) {
+
+    $children = forum_get_child_posts_fast($parent_id, $forum_id);
+
+    // we have children to return, but
+    if (count($children) > 0) {
+        // first lets check if there are any children under them.
+        $foundchildren = array();
+        foreach($children as $child) {
+        $subchildren = forum_get_child_posts_fast_recurse($child->id, $forum_id , true);
+        $foundchildren = array_merge($foundchildren,$subchildren);
+    }
+        // merge found children into their parents.
+        $allchildren = array_merge($children, $foundchildren);
+        return $allchildren;
+    } else {
+        return array();
+    }
+}
+
+/**
 * reworked faster version from /mod/forum/lib.php
 * @param int $parent the id of the first post within the discussion
 * @param int $forum_id the forum identifier
@@ -249,7 +279,7 @@ function forum_get_discussions_fast($forum_id) {
 */
 function forum_get_child_posts_fast($parent, $forum_id) {
     global $CFG, $DB;
-    
+
     $query = "
         SELECT 
             p.id, 
