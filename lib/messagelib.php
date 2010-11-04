@@ -145,7 +145,7 @@ function message_send($eventdata) {
                         }
                     }
                 } else {
-                    debugging('Error calling message processor '.$procname);
+                    debugging('Error finding message processor '.$procname);
                     return false;
                 }
             }
