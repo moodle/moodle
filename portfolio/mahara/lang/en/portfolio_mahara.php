@@ -24,14 +24,14 @@
  */
 
 $string['enableleap2a'] = 'Enable Leap2a Portfolio support (requires Mahara 1.3)';
-$string['err_invalidhost'] = 'Invalid mnet host';
-$string['err_invalidhost_help'] = 'This plugin is misconfigured to point to an invalid (or deleted) mnet host.  This plugin relies on Moodle Networking peers with SSO IDP published, SSO_SP subscribed, and portfolio subscribed <b>and</b> published.';
+$string['err_invalidhost'] = 'Invalid MNet host';
+$string['err_invalidhost_help'] = 'This plugin is misconfigured to point to an invalid (or deleted) MNet host.  This plugin relies on Moodle Networking peers with SSO IDP published, SSO_SP subscribed, and portfolio subscribed <b>and</b> published.';
 $string['err_networkingoff'] = 'Moodle Networking is off';
 $string['err_networkingoff_help'] = 'Moodle Networking is off entirely. Please enable it before trying to configure this pugin.  Any instances of this plugin have been set to not visible until this is fixed - you will need to set them to visible again manully.  They cannot be used until this happens';
-$string['err_nomnetauth'] = 'The mnet authentication plugin is disabled';
-$string['err_nomnetauth_help'] = 'The mnet authentication plugin is disabled, but is required for this service';
+$string['err_nomnetauth'] = 'The MNet authentication plugin is disabled';
+$string['err_nomnetauth_help'] = 'The MNet authentication plugin is disabled, but is required for this service';
 $string['err_nomnethosts'] = 'Relies on Moodle Networking';
-$string['err_nomnethosts_help'] = 'This plugin relies on Moodle Networking peers with SSO IDP published, SSO SP subscribed, Portfolio services published <b>and</b> subscribed as well as the mnet authentication plugin.  Any instances of this plugin has been set to not visible until this is fixed - you will need to set them to visible again manually. They cannot be used before this happens.';
+$string['err_nomnethosts_help'] = 'This plugin relies on Moodle Networking peers with SSO IDP published, SSO SP subscribed, portfolio services published <b>and</b> subscribed as well as the MNet authentication plugin.  Any instances of this plugin have been hidden until these conditions are met. They will then manually need setting to visible again.';
 $string['failedtojump'] = 'Failed to start communication with remote server';
 $string['failedtoping'] = 'Failed to start communication with remote server: {$a}';
 $string['mnethost'] = 'MNet Host';
@@ -40,7 +40,7 @@ $string['mnet_nofilecontents'] = 'Found file in transfer object, but could not g
 $string['mnet_noid'] = 'Could not find the matching transfer record for this token';
 $string['mnet_notoken'] = 'Could not find token matching this transfer';
 $string['mnet_wronghost'] = 'Remote host did not match the transfer record for this token';
-$string['pf_description'] = 'Allow users to push Moodle content to this host<br />Subscribe to <b>and</b> publish this service to allow authenticated users in your site to push content to {$a}<br /><ul><li><em>Dependency</em>: You must also <strong>publish</strong> the SSO (Identify Provider) service to {$a}.</li><li><em>Dependency</em>: You must also <strong>subscribe</strong> to the SSO (Service Provider) service on {$a}</li><li><em>Dependency</em>: You must also enable the mnet authentication plugin.</li></ul><br />';
+$string['pf_description'] = 'Allow users to push Moodle content to this host<br />Subscribe to <b>and</b> publish this service to allow authenticated users in your site to push content to {$a}<br /><ul><li><em>Dependency</em>: You must also <strong>publish</strong> the SSO (Identify Provider) service to {$a}.</li><li><em>Dependency</em>: You must also <strong>subscribe</strong> to the SSO (Service Provider) service on {$a}</li><li><em>Dependency</em>: You must also enable the MNet authentication plugin.</li></ul><br />';
 $string['pf_name'] = 'Portfolio services';
 $string['pluginname'] = 'Mahara ePortfolio';
 $string['senddisallowed'] = 'You cannot transfer files to Mahara at this time';
