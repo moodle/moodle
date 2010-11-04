@@ -169,7 +169,6 @@ $string['selectedformat'] = 'Selected export format';
 $string['selectedwait'] = 'Selected to wait?';
 $string['selectplugin'] = 'Select destination';
 $string['singleinstancenomultiallowed'] = 'Only a single portfolio plugin instance is available, it doesn\'t support multiple exports per session, and there\'s already an active export in the session using this plugin!';
-$string['someinstancesdisabled'] = 'Some configured portfolio plugin instances have been disabled either because they are misconfigured or rely on something else that is';
 $string['somepluginsdisabled'] = 'Some entire portfolio plugins have been disabled because they are either misconfigured or rely on something else that is:';
 $string['sure'] = 'Are you sure you want to delete \'{$a}\'?  This cannot be undone.';
 $string['thirdpartyexception'] = 'A third party exception was thrown during portfolio export ({$a}). Caught and rethrown but this should really be fixed';
