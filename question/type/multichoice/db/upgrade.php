@@ -40,7 +40,8 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
                 GROUP BY qc.id, qc.name");
 
         // Rename the random qusetions in those categories.
-        $where = "qtype = 'random' AND category = ? AND " . $DB->sql_compare_text('questiontext') . " = ?";
+        $where = "qtype = 'random' AND category = ? AND " .
+                $DB->sql_compare_text('questiontext') . " = " . $DB->sql_compare_text('?');
         foreach ($categories as $cat) {
             $randomqname = $QTYPES[RANDOM]->question_name($cat, false);
             $DB->set_field_select('question', 'name', $randomqname, $where, array($cat->id, '0'));
