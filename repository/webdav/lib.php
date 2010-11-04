@@ -40,12 +40,12 @@ class repository_webdav extends repository {
         }
         $this->dav = new webdav_client($this->options['webdav_server'], $this->options['webdav_user'], $this->options['webdav_password'], $this->options['webdav_auth']);
         if (empty($this->options['webdav_type'])) {
-            $this->options['webdav_type'] = '';
+            $this->webdav_type = '';
         } else {
-            $this->options['webdav_type'] = 'ssl://';
+            $this->webdav_type = 'ssl://';
         }
         if (empty($this->options['webdav_port'])) {
-            if (empty($this->options['webdav_type'])) {
+            if (empty($this->webdav_type)) {
                 $this->dav->port = 80;
             } else {
                 $this->dav->port = 443;
@@ -55,7 +55,7 @@ class repository_webdav extends repository {
             $this->dav->port = $this->options['webdav_port'];
             $port = ':'.$this->options['webdav_port'];
         }
-        $this->webdav_host = $this->options['webdav_type'].$this->options['webdav_server'].$port;
+        $this->webdav_host = $this->webdav_type.$this->options['webdav_server'].$port;
         $this->dav->debug = false;
     }
     public function check_login() {
@@ -98,10 +98,10 @@ class repository_webdav extends repository {
             $dir = $this->dav->ls($path);
         } else {
             $path = urldecode($path);
-            if (empty($this->options['webdav_type'])) {
+            if (empty($this->webdav_type)) {
                 $partern = '#http://'.$this->webdav_host.'/#';
             } else {
-                $partern = '#http://'.$this->webdav_type.$this->webdav_host.'/#';
+                $partern = '#https://'.$this->webdav_host.'/#';
             }
             $path = '/'.preg_replace($partern, '', $path);
             $dir = $this->dav->ls($path);
