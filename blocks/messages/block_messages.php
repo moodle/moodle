@@ -35,7 +35,7 @@ class block_messages extends block_base {
         $ufields = user_picture::fields('u', array('lastaccess'));
         $users = $DB->get_records_sql("SELECT $ufields, COUNT(m.useridfrom) AS count
                                          FROM {user} u, {message} m
-                                        WHERE m.useridto = ? AND u.id = m.useridfrom
+                                        WHERE m.useridto = ? AND u.id = m.useridfrom AND m.notification = 0
                                      GROUP BY $ufields", array($USER->id));
 
 
