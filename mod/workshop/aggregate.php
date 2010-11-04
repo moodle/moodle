@@ -49,26 +49,11 @@ require_capability('mod/workshop:overridegrades', $PAGE->context);
 $evaluator = $workshop->grading_evaluation_instance();
 $settingsform = $evaluator->get_settings_form($PAGE->url);
 
-if ($settingsform->is_cancelled()) {
-    redirect(new moodle_url($workshop->view_url(), compact('page', 'sortby', 'sorthow')));
-
-} elseif ($settingsdata = $settingsform->get_data()) {
+if ($settingsdata = $settingsform->get_data()) {
     $workshop->aggregate_submission_grades();           // updates 'grade' in {workshop_submissions}
     $evaluator->update_grading_grades($settingsdata);   // updates 'gradinggrade' in {workshop_assessments}
     $workshop->aggregate_grading_grades();              // updates 'gradinggrade' in {workshop_aggregations}
     $workshop->log('update aggregate grades');
-    redirect(new moodle_url($workshop->view_url(), compact('page', 'sortby', 'sorthow')));
 }
 
-$PAGE->set_title($workshop->name);
-$PAGE->set_heading($course->fullname);
-$PAGE->navbar->add(get_string('aggregation', 'workshop'));
-
-//
-// Output starts here
-//
-echo $OUTPUT->header();
-echo $OUTPUT->confirm(get_string('aggregationinfo', 'workshop'),
-    new moodle_url($PAGE->url, $settingsdata),
-    new moodle_url($workshop->view_url(), compact('page', 'sortby', 'sorthow')));
-echo $OUTPUT->footer();
+redirect(new moodle_url($workshop->view_url(), compact('page', 'sortby', 'sorthow')));
