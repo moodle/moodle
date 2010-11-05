@@ -279,7 +279,7 @@ function forum_rss_feed_contents($forum, $sql) {
     //set a flag. Are we displaying discussions or posts?
     $isdiscussion = true;
     if (!empty($forum->rsstype) && $forum->rsstype!=1) {
-            $isdiscussion = false;
+        $isdiscussion = false;
     }
 
     $formatoptions = new stdClass();
@@ -287,10 +287,12 @@ function forum_rss_feed_contents($forum, $sql) {
     foreach ($recs as $rec) {
             $item = new stdClass();
             $user = new stdClass();
-            if (!empty($rec->postsubject)) {
+            if ($isdiscussion && !empty($rec->discussionname)) {
+                $item->title = format_string($rec->discussionname);
+            } else if (!empty($rec->postsubject)) {
                 $item->title = format_string($rec->postsubject);
             } else {
-                //if the post has no subject for some reason then substitute something somewhat meaningful
+                //we should have an item title by now but if we dont somehow then substitute something somewhat meaningful
                 $item->title = format_string($forum->name.' '.userdate($rec->postcreated,get_string('strftimedatetimeshort', 'langconfig')));
             }
             $user->firstname = $rec->userfirstname;
