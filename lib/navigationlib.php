@@ -1015,7 +1015,9 @@ class global_navigation extends navigation_node {
                 // course node and not populate it.
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 if ($course->id !== SITEID && !is_enrolled($coursecontext) && !has_capability('moodle/course:view', $coursecontext)) {
-                    $coursenode->make_active();
+                    if ($coursenode) {
+                        $coursenode->make_active();
+                    }
                     $canviewcourseprofile = false;
                     break;
                 }
