@@ -93,6 +93,9 @@ class question_shortanswer_qtype extends default_questiontype {
 
         // Insert all the new answers
         foreach ($question->answer as $key => $dataanswer) {
+            if (is_array($dataanswer)) {
+                $dataanswer = $dataanswer['text'];
+            }
             // Check for, and ingore, completely blank answer from the form.
             if (trim($dataanswer) == '' && $question->fraction[$key] == 0 &&
                     html_is_blank($question->feedback[$key]['text'])) {
@@ -100,6 +103,9 @@ class question_shortanswer_qtype extends default_questiontype {
             }
 
             $feedbackformat = $question->feedback[$key]['format'];
+            if (isset($question->feedback[$key]['files'])) {
+                $feedbackfiles = $question->feedback[$key]['files'];
+            }
 
             if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                 $answer = $oldanswer;
@@ -117,12 +123,19 @@ class question_shortanswer_qtype extends default_questiontype {
                 $answer->question = $question->id;
                 $answer->fraction = $question->fraction[$key];
                 // feedback content needs to be rewriten
-                $answer->feedback = '';
+                $answer->feedback = $question->feedback[$key]['text'];
                 $answer->feedbackformat = $feedbackformat;
                 $answer->id = $DB->insert_record("question_answers", $answer);
 
+                if (isset($feedbackfiles)) {
+                // import
+                    foreach ($feedbackfiles as $file) {
+                        $this->import_file($question->context, 'question', 'answerfeedback', $answer->id, $file);
+                    }
+                } else {
                 // save draft file and rewrite text in feedback
-                $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, $question->feedback[$key]['text']);
+                    $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, $question->feedback[$key]['text']);
+                }
                 // update feedback content
                 $DB->set_field('question_answers', 'feedback', $answer->feedback, array('id'=>$answer->id));
             }

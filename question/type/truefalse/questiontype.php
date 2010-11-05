@@ -35,6 +35,7 @@ class question_truefalse_qtype extends default_questiontype {
     function save_question_options($question) {
         global $DB;
         $result = new stdClass;
+        $fs = get_file_storage();
 
         // fetch old answer ids so that we can reuse them
         if (!$oldanswers = $DB->get_records("question_answers", array("question" =>  $question->id), "id ASC")) {
@@ -44,6 +45,9 @@ class question_truefalse_qtype extends default_questiontype {
         $feedbacktext = $question->feedbacktrue['text'];
         $feedbackitemid = $question->feedbacktrue['itemid'];
         $feedbackformat = $question->feedbacktrue['format'];
+        if (isset($question->feedbacktruefiles)) {
+            $files = $question->feedbacktruefiles;
+        }
         // Save answer 'True'
         if ($true = array_shift($oldanswers)) {  // Existing answer, so reuse it
             $true->answer   = get_string("true", "quiz");
@@ -61,7 +65,15 @@ class question_truefalse_qtype extends default_questiontype {
             $true->feedback = '';
             $true->feedbackformat = $feedbackformat;
             $true->id = $DB->insert_record("question_answers", $true);
-            $feedbacktext = file_save_draft_area_files($feedbackitemid, $question->context->id, 'question', 'answerfeedback', $true->id, self::$fileoptions, $feedbacktext);
+            // import
+            if (isset($files)) {
+                foreach ($files as $file) {
+                    $this->import_file($question->context, 'question', 'answerfeedback', $true->id, $file);
+                }
+            } else {
+            // moodle form
+                $feedbacktext = file_save_draft_area_files($feedbackitemid, $question->context->id, 'question', 'answerfeedback', $true->id, self::$fileoptions, $feedbacktext);
+            }
             $DB->set_field('question_answers', 'feedback', $feedbacktext, array('id'=>$true->id));
         }
 
@@ -85,7 +97,13 @@ class question_truefalse_qtype extends default_questiontype {
             $false->feedback = '';
             $false->feedbackformat = $feedbackformat;
             $false->id = $DB->insert_record("question_answers", $false);
-            $feedbacktext = file_save_draft_area_files($feedbackitemid, $question->context->id, 'question', 'answerfeedback', $false->id, self::$fileoptions, $feedbacktext);
+            if ($feedbackitemid == null && !empty($files)) {
+                foreach ($files as $file) {
+                    $this->import_file($question->context, 'question', 'answerfeedback', $false->id, $file);
+                }
+            } else {
+                $feedbacktext = file_save_draft_area_files($feedbackitemid, $question->context->id, 'question', 'answerfeedback', $false->id, self::$fileoptions, $feedbacktext);
+            }
             $DB->set_field('question_answers', 'feedback', $feedbacktext, array('id'=>$false->id));
         }
 

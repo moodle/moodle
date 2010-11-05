@@ -64,7 +64,7 @@ class question_calculated_qtype extends default_questiontype {
             "WHERE a.question = ? " .
             "AND   a.id = c.answer ".
             "ORDER BY a.id ASC", array($question->id))) {
-                echo $OUTPUT->notification('Error: Missing question answer for calculated question ' . $question->id . '!');
+                // echo $OUTPUT->notification('Error: Missing question answer for calculated question ' . $question->id . '!');
                 return false;
             }
 
@@ -151,7 +151,13 @@ class question_calculated_qtype extends default_questiontype {
             $options->$feedbackname = trim($feedback['text']);
             $feedbackformat = $feedbackname . 'format';
             $options->$feedbackformat = trim($feedback['format']);
-            $options->$feedbackname = file_save_draft_area_files($feedback['itemid'], $context->id, 'qtype_calculated', $feedbackname, $question->id, self::$fileoptions, trim($feedback['text']));
+            if (isset($feedback['files'])) {
+                foreach ($feedback['files'] as $file) {
+                    $this->import_file($question->context, 'qtype_calculated', $feedbackname, $question->id, $file);
+                }
+            } else {
+                $options->$feedbackname = file_save_draft_area_files($feedback['itemid'], $context->id, 'qtype_calculated', $feedbackname, $question->id, self::$fileoptions, trim($feedback['text']));
+            }
         }
 
         if ($update) {
@@ -182,21 +188,33 @@ class question_calculated_qtype extends default_questiontype {
             $question->answers=$question->answer;
         }
         foreach ($question->answers as $key => $dataanswer) {
+            if (is_array($dataanswer)) {
+                $dataanswer = $dataanswer['text'];
+            }
             if ( trim($dataanswer) != '' ) {
                 $answer = new stdClass;
                 $answer->question = $question->id;
                 $answer->answer = trim($dataanswer);
                 $answer->fraction = $question->fraction[$key];
                 $answer->feedbackformat = $question->feedback[$key]['format'];
+                if (isset($question->feedback[$key]['files'])) {
+                    $files = $question->feedback[$key]['files'];
+                }
 
                 if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                     $answer->id = $oldanswer->id;
                     $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $oldanswer->id, self::$fileoptions, trim($question->feedback[$key]['text']));
                     $DB->update_record("question_answers", $answer);
                 } else { // This is a completely new answer
-                    $answer->feedback = '';
+                    $answer->feedback = trim($question->feedback[$key]['text']);
                     $answer->id = $DB->insert_record("question_answers", $answer);
-                    $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, trim($question->feedback[$key]['text']));
+                    if (isset($files)) {
+                        foreach ($files as $file) {
+                            $this->import_file($context, 'question', 'answerfeedback', $answer->id, $file);
+                        }
+                    } else {
+                        $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, trim($question->feedback[$key]['text']));
+                    }
                     $DB->set_field('question_answers', 'feedback', $answer->feedback, array('id'=>$answer->id));
                 }
 

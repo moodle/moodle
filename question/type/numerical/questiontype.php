@@ -167,6 +167,9 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
         // Insert all the new answers
         foreach ($question->answer as $key => $dataanswer) {
+            if (is_array($dataanswer)) {
+                $dataanswer = $dataanswer['text'];
+            }
             // Check for, and ingore, completely blank answer from the form.
             if (trim($dataanswer) == '' && $question->fraction[$key] == 0 &&
                     html_is_blank($question->feedback[$key]['text'])) {
@@ -186,10 +189,13 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $answer->fraction = $question->fraction[$key];
 
             $feedbacktext = trim($question->feedback[$key]['text']);
-            $draftid = $question->feedback[$key]['itemid'];
-
-
             $answer->feedbackformat = $question->feedback[$key]['format'];
+            if (!empty($question->feedback[$key]['itemid'])) {
+                $draftid = $question->feedback[$key]['itemid'];
+            }
+            if ($question->feedback[$key]['files']) {
+                $feedbackfiles = $question->feedback[$key]['files'];
+            }
 
             if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                 $feedbacktext = file_save_draft_area_files($draftid, $context->id, 'question', 'answerfeedback', $oldanswer->id, self::$fileoptions, $feedbacktext);
@@ -199,7 +205,13 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             } else { // This is a completely new answer
                 $answer->feedback = $feedbacktext;
                 $answer->id = $DB->insert_record("question_answers", $answer);
-                $feedbacktext = file_save_draft_area_files($draftid, $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, $feedbacktext);
+                if (!isset($draftid) && isset($feedbackfiles)) {
+                    foreach ($feedbackfiles as $file) {
+                        $this->import_file($question->context, 'question', 'answerfeedback', $answer->id, $file);
+                    }
+                } else {
+                    $feedbacktext = file_save_draft_area_files($draftid, $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, $feedbacktext);
+                }
                 $DB->set_field('question_answers', 'feedback', $feedbacktext, array('id'=>$answer->id));
             }
 
@@ -319,14 +331,21 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $options->instructions = '' ;
         }
         $component = 'qtype_' . $question->qtype;
-        $options->instructions = file_save_draft_area_files($question->instructions['itemid'],
-            $question->context->id,  // context
-            $component,    // component
-            'instruction', // filearea
-            $question->id, // itemid
-            self::$fileoptions, // options
-            $question->instructions['text'] // text
-        );
+        if (isset($question->instructionsfiles) && is_array($question->instructionsfiles)) {
+            // import
+            foreach ($question->instructionsfiles as $file) {
+                $this->import_file($question->context, $component, 'instruction', $question->id, $file);
+            }
+        } else {
+            $options->instructions = file_save_draft_area_files($question->instructions['itemid'],
+                $question->context->id,  // context
+                $component,    // component
+                'instruction', // filearea
+                $question->id, // itemid
+                self::$fileoptions, // options
+                $question->instructions['text'] // text
+            );
+        }
         if ($update) {
             $DB->update_record("question_numerical_options", $options);
         } else {

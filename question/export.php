@@ -37,68 +37,30 @@
     $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
 
-    $exportfilename = default_export_filename($COURSE, $category);
-    $export_form = new question_export_form($thispageurl, array('contexts'=>$contexts->having_one_edit_tab_cap('export'), 'defaultcategory'=>$pagevars['cat'],
-                                    'defaultfilename'=>$exportfilename));
+    $export_form = new question_export_form($thispageurl, array('contexts'=>$contexts->having_one_edit_tab_cap('export'), 'defaultcategory'=>$pagevars['cat']));
 
 
-    if ($from_form = $export_form->get_data()) {   /// Filename
-
-
-        if (! is_readable("format/$from_form->format/format.php")) {
+    if ($from_form = $export_form->get_data()) {
+        $thiscontext = $contexts->lowest();
+        if (!is_readable("format/$from_form->format/format.php")) {
             print_error('unknowformat', '', '', $from_form->format);
         }
-
-        // load parent class for import/export
-        require_once("format.php");
-
-        // and then the class for the selected format
-        require_once("format/$from_form->format/format.php");
-
-        $classname = "qformat_$from_form->format";
-        $qformat = new $classname();
-        $qformat->setContexts($contexts->having_one_edit_tab_cap('export'));
-        $qformat->setCategory($category);
-        $qformat->setCourse($COURSE);
-
-        if (empty($from_form->exportfilename)) {
-            $from_form->exportfilename = default_export_filename($COURSE, $category);
+        $withcategories = 'nocategories';
+        if (!empty($from_form->cattofile)) {
+            $withcategories = 'withcategories';
         }
-        $qformat->setFilename($from_form->exportfilename);
-        $canaccessbackupdata = has_capability('moodle/backup:backupcourse', $contexts->lowest());
-        $qformat->set_can_access_backupdata($canaccessbackupdata);
-        $qformat->setCattofile(!empty($from_form->cattofile));
-        $qformat->setContexttofile(!empty($from_form->contexttofile));
-
-        if (! $qformat->exportpreprocess()) {   // Do anything before that we need to
-            print_error('exporterror', 'question', $thispageurl->out());
+        $withcontexts = 'nocontexts';
+        if (!empty($from_form->contexttofile)) {
+            $withcontexts = 'withcontexts';
         }
 
-        if (! $qformat->exportprocess()) {         // Process the export data
-            print_error('exporterror', 'question', $thispageurl->out());
-        }
+        $export_url = question_make_export_url($thiscontext->id, $category->id, $from_form->format, $withcategories, $withcontexts);
 
-        if (! $qformat->exportpostprocess()) {                    // In case anything needs to be done after
-            print_error('exporterror', 'question', $thispageurl->out());
-        }
-        echo "<hr />";
+        echo $OUTPUT->box_start();
+        echo get_string('yourfileshoulddownload', 'question', $export_url->out());
+        echo $OUTPUT->box_end();
 
-        // link to download the finished file
-        $file_ext = $qformat->export_file_extension();
-        $filename = $from_form->exportfilename . $file_ext;
-        if ($canaccessbackupdata) {
-            $efile = get_file_url($qformat->question_get_export_dir() . '/' . $filename,
-                    array('forcedownload' => 1));
-            echo '<p><div class="boxaligncenter"><a href="' . $efile . '">' .
-                    get_string('download', 'quiz') . '</a></div></p>';
-            echo '<p><div class="boxaligncenter"><font size="-1">' .
-                    get_string('downloadextra', 'quiz') . '</font></div></p>';
-        } else {
-            $efile = get_file_url($filename, null, 'questionfile');
-            echo '<p><div class="boxaligncenter">' .
-                    get_string('yourfileshoulddownload', 'question', $efile) . '</div></p>';
-            $PAGE->requires->js_function_call('document.location.replace', array($efile), false, 1);
-        }
+        $PAGE->requires->js_function_call('document.location.replace', array($export_url->out()), false, 1);
 
         echo $OUTPUT->continue_button(new moodle_url('edit.php', $thispageurl->params()));
         echo $OUTPUT->footer();
@@ -111,4 +73,3 @@
     $export_form->display();
 
     echo $OUTPUT->footer();
-

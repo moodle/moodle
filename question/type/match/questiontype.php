@@ -51,7 +51,12 @@ class question_match_qtype extends default_questiontype {
 
         // Insert all the new question+answer pairs
         foreach ($question->subquestions as $key => $questiontext) {
-            $itemid = $questiontext['itemid'];
+            if (!empty($questiontext['itemid'])) {
+                $itemid = $questiontext['itemid'];
+            }
+            if (!empty($questiontext['files'])) {
+                $files = $questiontext['files'];
+            }
             $format = $questiontext['format'];
             $questiontext = trim($questiontext['text']);
             $answertext = trim($question->subanswers[$key]);
@@ -73,7 +78,13 @@ class question_match_qtype extends default_questiontype {
                     $subquestion->questiontextformat = $format;
                     $subquestion->answertext = $answertext;
                     $subquestion->id = $DB->insert_record("question_match_sub", $subquestion);
-                    $questiontext = file_save_draft_area_files($itemid, $context->id, 'qtype_match', 'subquestion', $subquestion->id, self::$fileoptions, $questiontext);
+                    if (!isset($itemid)) {
+                        foreach ($files as $file) {
+                            $this->import_file($context, 'qtype_match', 'subquestion', $subquestion->id, $file);
+                        }
+                    } else {
+                        $questiontext = file_save_draft_area_files($itemid, $context->id, 'qtype_match', 'subquestion', $subquestion->id, self::$fileoptions, $questiontext);
+                    }
                     $DB->set_field('question_match_sub', 'questiontext', $questiontext, array('id'=>$subquestion->id));
                 }
                 $subquestions[] = $subquestion->id;

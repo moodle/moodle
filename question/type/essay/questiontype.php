@@ -56,7 +56,14 @@ class question_essay_qtype extends default_questiontype {
             $answer->feedback = $question->feedback['text'];
             $answer->answer = $answer->feedback;
             $answer->id = $DB->insert_record('question_answers', $answer);
-            $answer->feedback = file_save_draft_area_files($question->feedback['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, trim($question->feedback['text']));
+            if (isset($question->feedback['files'])) {
+                // import
+                foreach ($question->feedback['files'] as $file) {
+                    $this->import_file($context, 'question', 'answerfeedback', $answer->id, $file);
+                }
+            } else {
+                $answer->feedback = file_save_draft_area_files($question->feedback['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, trim($question->feedback['text']));
+            }
             $answer->answer = $answer->feedback;
             $DB->update_record('question_answers', $answer);
         }

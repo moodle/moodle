@@ -1782,4 +1782,28 @@ class default_questiontype {
             }
         }
     }
+
+    function import_file($context, $component, $filearea, $itemid, $file) {
+        $fs = get_file_storage();
+        $record = new stdclass;
+        if (is_object($context)) {
+            $record->contextid = $context->id;
+        } else {
+            $record->contextid = $context;
+        }
+        $record->component = $component;
+        $record->filearea  = $filearea;
+        $record->itemid    = $itemid;
+        $record->filename  = $file->name;
+        $record->filepath  = '/';
+        return $fs->create_file_from_string($record, $this->decode_file($file));
+    }
+
+    function decode_file($file) {
+        switch ($file->encoding) {
+        case 'base64':
+        default:
+            return base64_decode($file->content);
+        }
+    }
 }

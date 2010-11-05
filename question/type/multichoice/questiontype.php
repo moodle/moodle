@@ -74,14 +74,27 @@ class question_multichoice_qtype extends default_questiontype {
                     $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, $question->feedback[$key]['text']);
                     $DB->update_record("question_answers", $answer);
                 } else {
+                    // import goes here too
                     unset($answer);
-                    $answer->answer   = $dataanswer;
+                    if (is_array($dataanswer)) {
+                        $answer->answer = $dataanswer['text'];
+                        $answer->answerformat = $dataanswer['format'];
+                    } else {
+                        $answer->answer = $dataanswer;
+                    }
                     $answer->question = $question->id;
                     $answer->fraction = $question->fraction[$key];
-                    $answer->feedback = '';
+                    $answer->feedback = $question->feedback[$key]['text'];
                     $answer->feedbackformat = $feedbackformat;
                     $answer->id = $DB->insert_record("question_answers", $answer);
-                    $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, $question->feedback[$key]['text']);
+                    if (isset($question->feedback[$key]['files'])) {
+                        foreach ($question->feedback[$key]['files'] as $file) {
+                            $this->import_file($context, 'question', 'answerfeedback', $answer->id, $file);
+                        }
+                    } else {
+                        $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, $question->feedback[$key]['text']);
+                    }
+
                     $DB->set_field('question_answers', 'feedback', $answer->feedback, array('id'=>$answer->id));
                 }
                 $answers[] = $answer->id;
@@ -114,9 +127,18 @@ class question_multichoice_qtype extends default_questiontype {
         foreach (array('correct', 'partiallycorrect', 'incorrect') as $feedbacktype) {
             $feedbackname = $feedbacktype . 'feedback';
             $feedbackformat = $feedbackname . 'format';
+            $feedbackfiles = $feedbackname . 'files';
             $feedback = $question->$feedbackname;
             $options->$feedbackformat = trim($feedback['format']);
-            $options->$feedbackname = file_save_draft_area_files($feedback['itemid'], $context->id, 'qtype_multichoice', $feedbackname, $question->id, self::$fileoptions, trim($feedback['text']));
+            $options->$feedbackname = trim($feedback['text']);
+            if (isset($feedback['files'])) {
+                // import
+                foreach ($feedback['files'] as $file) {
+                    $this->import_file($context, 'qtype_multichoice', $feedbackname, $question->id, $file);
+                }
+            } else {
+                $options->$feedbackname = file_save_draft_area_files($feedback['itemid'], $context->id, 'qtype_multichoice', $feedbackname, $question->id, self::$fileoptions, trim($feedback['text']));
+            }
         }
 
         if ($update) {

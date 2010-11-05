@@ -27,6 +27,7 @@ class qformat_default {
     var $translator = null;
     var $canaccessbackupdata = true;
 
+    protected $importcontext = null;
 
 // functions to indicate import/export functionality
 // override to return true if implemented
@@ -225,13 +226,17 @@ class qformat_default {
     /**
      * Process the file
      * This method should not normally be overidden
+     * @param object $context
      * @return boolean success
      */
-    function importprocess() {
-        global $USER, $DB, $OUTPUT;
+    function importprocess($category) {
+        global $USER, $DB, $OUTPUT, $QTYPES;
+
+        $context = $category->context;
+        $this->importcontext = $context;
 
        // reset the timer in case file upload was slow
-       @set_time_limit(0);
+       set_time_limit(0);
 
        // STAGE 1: Parse the file
        echo $OUTPUT->notification( get_string('parsingquestions','quiz') );
@@ -241,7 +246,7 @@ class qformat_default {
             return false;
         }
 
-        if (! $questions = $this->readquestions($lines)) {   // Extract all the questions
+        if (!$questions = $this->readquestions($lines)) {   // Extract all the questions
             echo $OUTPUT->notification( get_string('noquestionsinfile','quiz') );
             return false;
         }
@@ -264,6 +269,7 @@ class qformat_default {
         $gradeerrors = 0;
         $goodquestions = array();
         foreach ($questions as $question) {
+
             if (!empty($question->fraction) and (is_array($question->fraction))) {
                 $fractions = $question->fraction;
                 $answersvalid = true; // in case they are!
@@ -314,26 +320,35 @@ class qformat_default {
                 }
                 continue;
             }
+            $question->context = $context;
 
             $count++;
 
             echo "<hr /><p><b>$count</b>. ".$this->format_question_text($question)."</p>";
 
-            $question->category = $this->category->id;
+            $question->category = $category->id;
             $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
 
             $question->createdby = $USER->id;
             $question->timecreated = time();
 
-            $question->id = $DB->insert_record("question", $question);
+            $question->id = $DB->insert_record('question', $question);
+            if (isset($question->questiontextfiles)) {
+                foreach ($question->questiontextfiles as $file) {
+                    $QTYPES[$question->qtype]->import_file($context, 'question', 'questiontext', $question->id, $file);
+                }
+            }
+            if (isset($question->generalfeedbackfiles)) {
+                foreach ($question->generalfeedbackfiles as $file) {
+                    $QTYPES[$question->qtype]->import_file($context, 'question', 'generalfeedback', $question->id, $file);
+                }
+            }
 
             $this->questionids[] = $question->id;
 
             // Now to save all the answers and type-specific options
 
-            global $QTYPES;
-            $result = $QTYPES[$question->qtype]
-                    ->save_question_options($question);
+            $result = $QTYPES[$question->qtype]->save_question_options($question);
 
             if (!empty($result->error)) {
                 echo $OUTPUT->notification($result->error);
@@ -455,9 +470,10 @@ class qformat_default {
      * then you will need to override this method. Even then
      * try to use readquestion for each question
      * @param array lines array of lines from readdata
+     * @param object $context
      * @return array array of question objects
      */
-    function readquestions($lines) {
+    function readquestions($lines, $context) {
 
         $questions = array();
         $currentquestion = array();
@@ -477,7 +493,7 @@ class qformat_default {
         }
 
         if (!empty($currentquestion)) {  // There may be a final question
-            if ($question = $this->readquestion($currentquestion)) {
+            if ($question = $this->readquestion($currentquestion, $context)) {
                 $questions[] = $question;
             }
         }
@@ -548,50 +564,6 @@ class qformat_default {
         return true;
     }
 
-    /**
-     * Import an image file encoded in base64 format
-     * @param string path path (in course data) to store picture
-     * @param string base64 encoded picture
-     * @return string filename (nb. collisions are handled)
-     */
-    function importimagefile( $path, $base64 ) {
-        global $CFG;
-
-        //TODO: MDL-16094
-        throw new coding_exception('importimagefile() was not converted to new file api yet, sorry - see MDL-16094');
-
-        // all this to get the destination directory
-        // and filename!
-        $fullpath = "{$CFG->dataroot}/{$this->course->id}/$path";
-        $path_parts = pathinfo( $fullpath );
-        $destination = $path_parts['dirname'];
-        $file = clean_filename( $path_parts['basename'] );
-
-        // check if path exists
-        check_dir_exists($destination, true, true );
-
-        // detect and fix any filename collision - get unique filename
-        $newfiles = resolve_filename_collisions( $destination, array($file) );
-        $newfile = $newfiles[0];
-
-        // convert and save file contents
-        if (!$content = base64_decode( $base64 )) {
-            return '';
-        }
-        $newfullpath = "$destination/$newfile";
-        if (!$fh = fopen( $newfullpath, 'w' )) {
-            return '';
-        }
-        if (!fwrite( $fh, $content )) {
-            return '';
-        }
-        fclose( $fh );
-
-        // return the (possibly) new filename
-        $newfile = preg_replace("~{$CFG->dataroot}/{$this->course->id}/~", '',$newfullpath);
-        return $newfile;
-    }
-
 
 /*******************
  * EXPORT FUNCTIONS
@@ -654,26 +626,20 @@ class qformat_default {
     /**
      * Do the export
      * For most types this should not need to be overrided
-     * @return boolean success
+     * @return stored_file
      */
     function exportprocess() {
-        global $CFG, $OUTPUT;
-
-        // create a directory for the exports (if not already existing)
-        if (! $export_dir = make_upload_directory($this->question_get_export_dir())) {
-              print_error('cannotcreatepath', 'quiz', $export_dir);
-        }
-        $path = $CFG->dataroot.'/'.$this->question_get_export_dir();
+        global $CFG, $OUTPUT, $DB, $USER;
 
         // get the questions (from database) in this category
         // only get q's with no parents (no cloze subquestions specifically)
-        if ($this->category){
+        if ($this->category) {
             $questions = get_questions_category( $this->category, true );
         } else {
             $questions = $this->questions;
         }
 
-        echo $OUTPUT->notification( get_string('exportingquestions','quiz') );
+        //echo $OUTPUT->notification( get_string('exportingquestions','quiz') );
         $count = 0;
 
         // results are first written into string (and then to a file)
@@ -685,8 +651,13 @@ class qformat_default {
         // file if selected. 0 means that it will get printed before the 1st question
         $trackcategory = 0;
 
+        $fs = get_file_storage();
+
         // iterate through questions
         foreach($questions as $question) {
+            // used by file api
+            $contextid = $DB->get_field('question_categories', 'contextid', array('id'=>$question->category));
+            $question->contextid = $contextid;
 
             // do not export hidden questions
             if (!empty($question->hidden)) {
@@ -711,15 +682,35 @@ class qformat_default {
                     $dummyquestion->name = 'Switch category to ' . $categoryname;
                     $dummyquestion->id = 0;
                     $dummyquestion->questiontextformat = '';
+                    $dummyquestion->contextid = 0;
                     $expout .= $this->writequestion($dummyquestion) . "\n";
                 }
             }
 
             // export the question displaying message
             $count++;
-            echo "<hr /><p><b>$count</b>. ".$this->format_question_text($question)."</p>";
-            if (question_has_capability_on($question, 'view', $question->category)){
-                $expout .= $this->writequestion( $question ) . "\n";
+
+            //echo '<hr />';
+            //echo $OUTPUT->container_start();
+            //echo '<strong>' . $count . '.</strong>&nbsp;';
+            //echo $this->format_question_text($question);
+            //echo $OUTPUT->container_end();
+
+            if (question_has_capability_on($question, 'view', $question->category)) {
+                // files used by questiontext
+                $files = $fs->get_area_files($contextid, 'question', 'questiontext', $question->id);
+                $question->questiontextfiles = $files;
+                // files used by generalfeedback
+                $files = $fs->get_area_files($contextid, 'question', 'generalfeedback', $question->id);
+                $question->generalfeedbackfiles = $files;
+                if (!empty($question->options->answers)) {
+                    foreach ($question->options->answers as $answer) {
+                        $files = $fs->get_area_files($contextid, 'question', 'answerfeedback', $answer->id);
+                        $answer->feedbackfiles = $files;
+                    }
+                }
+
+                $expout .= $this->writequestion($question, $contextid) . "\n";
             }
         }
 
@@ -733,18 +724,8 @@ class qformat_default {
         }
 
         // final pre-process on exported data
-        $expout = $this->presave_process( $expout );
-
-        // write file
-        $filepath = $path."/".$this->filename . $this->export_file_extension();
-        if (!$fh=fopen($filepath,"w")) {
-            print_error( 'cannotopen','quiz',$continuepath,$filepath );
-        }
-        if (!fwrite($fh, $expout, strlen($expout) )) {
-            print_error( 'cannotwrite','quiz',$continuepath,$filepath );
-        }
-        fclose($fh);
-        return true;
+        $expout = $this->presave_process($expout);
+        return $expout;
     }
 
     /**
@@ -875,5 +856,31 @@ class qformat_default {
         }
         $text = $question->questiontext;
         return format_text(html_to_text($text), $format, $formatoptions);
+    }
+
+    /**
+     * convert files into text output in the given format.
+     * @param array
+     * @param string encoding method
+     * @return string $string
+     */
+    function writefiles($files, $encoding='base64') {
+        if (empty($files)) {
+            return '';
+        }
+        $string = '';
+        foreach ($files as $file) {
+            if ($file->is_directory()) {
+                continue;
+            }
+            $string .= '<file ';
+            $string .= ('name="' . $file->get_filename() . '"');
+            $string .= (' encoding="' . $encoding . '"');
+            $string .= '>';
+            $string .= base64_encode($file->get_content());
+            //$string .= 'base64';
+            $string .= '</file>';
+        }
+        return $string;
     }
 }

@@ -3270,10 +3270,73 @@ function quiz_rewrite_question_urls($text, $file, $contextid, $component, $filea
 function question_pluginfile($course, $context, $component, $filearea, $args, $forcedownload) {
     global $DB, $CFG;
 
+    list($context, $course, $cm) = get_context_info_array($context->id);
+    require_login($course, false, $cm);
+
+    if ($filearea === 'export') {
+        require_once($CFG->dirroot . '/question/editlib.php');
+        $contexts = new question_edit_contexts($context);
+        // check export capability
+        $contexts->require_one_edit_tab_cap('export');
+        $category_id = (int)array_shift($args);
+        $format      = array_shift($args);
+        $cattofile   = array_shift($args);
+        $contexttofile = array_shift($args);
+        $filename    = array_shift($args);
+
+        // load parent class for import/export
+        require_once($CFG->dirroot . '/question/format.php');
+        require_once($CFG->dirroot . '/question/editlib.php');
+        require_once($CFG->dirroot . '/question/format/' . $format . '/format.php');
+
+        $classname = 'qformat_' . $format;
+        if (!class_exists($classname)) {
+            send_file_not_found();
+        }
+
+        $qformat = new $classname();
+
+        if (!$category = $DB->get_record('question_categories', array('id' => $category_id))) {
+            send_file_not_found();
+        }
+
+        $qformat->setCategory($category);
+        $qformat->setContexts($contexts->having_one_edit_tab_cap('export'));
+        $qformat->setCourse($course);
+
+        if ($cattofile == 'withcategories') {
+            $qformat->setCattofile(true);
+        } else {
+            $qformat->setCattofile(false);
+        }
+
+        if ($contexttofile == 'withcontexts') {
+            $qformat->setContexttofile(true);
+        } else {
+            $qformat->setContexttofile(false);
+        }
+
+        if (!$qformat->exportpreprocess()) {
+            send_file_not_found();
+            print_error('exporterror', 'question', $thispageurl->out());
+        }
+
+        // export data to moodle file pool
+        if (!$content = $qformat->exportprocess(true)) {
+            send_file_not_found();
+        }
+
+        //DEBUG
+        //echo '<textarea cols=90 rows=20>';
+        //echo $content;
+        //echo '</textarea>';
+        //die;
+        send_file($content, $filename, 0, 0, true, true);
+    }
+
     $attemptid = (int)array_shift($args);
     $questionid = (int)array_shift($args);
 
-    require_login($course, false);
 
     if ($attemptid === 0) {
         // preview
@@ -3320,4 +3383,20 @@ function question_check_file_access($question, $state, $options, $contextid, $co
     global $QTYPES;
     return $QTYPES[$question->qtype]->check_file_access($question, $state, $options, $contextid, $component,
             $filearea, $args, $forcedownload);
+}
+
+/**
+ * Create url for question export
+ *
+ * @param int $contextid, current context
+ * @param int $categoryid, categoryid
+ * @param string $format
+ * @param string $withcategories
+ * @param string $ithcontexts
+ * @param moodle_url export file url
+ */
+function question_make_export_url($contextid, $categoryid, $format, $withcategories, $withcontexts) {
+    global $CFG;
+    $urlbase = "$CFG->httpswwwroot/pluginfile.php";
+    return moodle_url::make_file_url($urlbase, "/$contextid/question/export/{$categoryid}/{$format}/{$withcategories}/{$withcontexts}/export.xml", true);
 }

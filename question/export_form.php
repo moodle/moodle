@@ -13,7 +13,6 @@ class question_export_form extends moodleform {
 
         $defaultcategory   = $this->_customdata['defaultcategory'];
         $contexts   = $this->_customdata['contexts'];
-        $defaultfilename = $this->_customdata['defaultfilename'];
 //--------------------------------------------------------------------------------
         $mform->addElement('header','fileformat',get_string('fileformat','quiz'));
         $fileformatnames = get_import_export_formats('export');
@@ -46,10 +45,6 @@ class question_export_form extends moodleform {
 //        $mform->addElement('select', 'format', get_string('fileformat','quiz'), $fileformatnames);
 //        $mform->setDefault('format', 'gift');
 
-        $mform->addElement('text', 'exportfilename', get_string('exportname', 'quiz'), array('size'=>40));
-        $mform->setDefault('exportfilename', $defaultfilename);
-        $mform->setType('exportfilename', PARAM_FILE);
-
         // set a template for the format select elements
         $renderer =& $mform->defaultRenderer();
         $template = "{help} {element}\n";
@@ -60,4 +55,3 @@ class question_export_form extends moodleform {
 //--------------------------------------------------------------------------------
     }
 }
-

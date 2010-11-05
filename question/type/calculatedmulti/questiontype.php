@@ -65,7 +65,15 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
             $feedbackformat = $feedbackname . 'format';
             $feedback = $question->$feedbackname;
             $options->$feedbackformat = $feedback['format'];
-            $options->$feedbackname = file_save_draft_area_files($feedback['itemid'], $context->id, 'qtype_calculatedmulti', $feedbackname, $question->id, self::$fileoptions, trim($feedback['text']));
+            if (isset($feedback['files'])) {
+                $options->$feedbackname = trim($feedback['text']);
+                $files = $feedback['files'];
+                foreach ($files as $file) {
+                    $this->import_file($question->context, 'qtype_calculatedmulti', $feedbackname, $question->id, $file);
+                }
+            } else {
+                $options->$feedbackname = file_save_draft_area_files($feedback['itemid'], $context->id, 'qtype_calculatedmulti', $feedbackname, $question->id, self::$fileoptions, trim($feedback['text']));
+            }
         }
 
         if ($update) {
@@ -97,6 +105,9 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
             $question->answers = $question->answer;
         }
         foreach ($question->answers as $key => $dataanswer) {
+            if (is_array($dataanswer)) {
+                $dataanswer = $dataanswer['text'];
+            }
             if ( trim($dataanswer) != '' ) {
                 $answer = new stdClass;
                 $answer->question = $question->id;
@@ -104,6 +115,9 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
                 $answer->fraction = $question->fraction[$key];
                 $answer->feedback = trim($question->feedback[$key]['text']);
                 $answer->feedbackformat = $question->feedback[$key]['format'];
+                if (isset($question->feedback[$key]['files'])) {
+                    $files = $question->feedback[$key]['files'];
+                }
 
                 if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                     $answer->id = $oldanswer->id;
@@ -111,7 +125,14 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
                     $DB->update_record("question_answers", $answer);
                 } else { // This is a completely new answer
                     $answer->id = $DB->insert_record("question_answers", $answer);
-                    $feedbacktext = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, $answer->feedback);
+                    if (isset($files)) {
+                        $feedbacktext = $answer->feedback;
+                        foreach ($files as $file) {
+                            $this->import_file($context, 'question', 'answerfeedback', $answer->id, $file);
+                        }
+                    } else {
+                        $feedbacktext = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, $answer->feedback);
+                    }
                     $DB->set_field('question_answers', 'feedback', $feedbacktext, array('id'=>$answer->id));
                 }
 
