@@ -54,8 +54,11 @@ if ($ADMIN->fulltree) {
 
 
     // modules activations
-
-    $types = explode(',', $CFG->block_search_filetypes);
+    if (isset($CFG->block_search_filetypes)) {
+        $types = explode(',', $CFG->block_search_filetypes);
+    } else {
+        $types = explode(',', $defaultfiletypes);
+    }
     if (!empty($types)) {
         foreach($types as $type) {
             $utype = strtoupper($type);
