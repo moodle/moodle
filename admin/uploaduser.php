@@ -208,6 +208,8 @@ if ($formdata = $mform->is_cancelled()) {
                 if (in_array($key, $upt->columns)) {
                     $upt->track($key, $value);
                 }
+            } else {
+                $user->$columns[$key] = '';
             }
         }
 
