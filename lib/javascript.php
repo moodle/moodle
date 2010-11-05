@@ -28,6 +28,8 @@
 define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
 
+ini_set('zlib.output_compression', 'Off');
+
 // setup include path
 set_include_path($CFG->libdir . '/minify/lib' . PATH_SEPARATOR . get_include_path());
 require_once('Minify.php');
