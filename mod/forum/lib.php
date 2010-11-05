@@ -3311,10 +3311,12 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
 
     // Begin output
-    
+
+    $output  = '';
+
     if ($istracked) {
         if ($postisread) {
-            $forumpostclass = 'read';
+            $forumpostclass = ' read';
         } else {
             $forumpostclass = ' unread';
             $output .= html_writer::tag('a', '', array('name'=>'unread'));
@@ -3329,9 +3331,8 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         $topicclass = ' firstpost starter';
     }
 
-    $output  = '';
     $output .= html_writer::tag('a', '', array('id'=>'p'.$post->id));
-    $output .= html_writer::start_tag('div', array('class'=>'forumpost clearfix '.$forumpostclass.$topicclass));
+    $output .= html_writer::start_tag('div', array('class'=>'forumpost clearfix'.$forumpostclass.$topicclass));
     $output .= html_writer::start_tag('div', array('class'=>'row header clearfix'));
     $output .= html_writer::start_tag('div', array('class'=>'left picture'));
     $output .= $OUTPUT->user_picture($postuser, array('courseid'=>$course->id));
