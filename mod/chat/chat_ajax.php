@@ -42,7 +42,7 @@ if (!$course = $DB->get_record('course', array('id'=>$chat->course))) {
 if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
     chat_print_error('ERROR', get_string('invalidcoursemodule', 'error'));
 }
-if (isguestuser()) {
+if (!isloggedin()) {
     chat_print_error('ERROR', get_string('notlogged','chat'));
 }
 
