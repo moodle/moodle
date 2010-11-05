@@ -43,10 +43,6 @@ class block_blog_recent extends block_base {
         return array('all' => true, 'my' => false, 'tag' => false);
     }
 
-    function has_config() {
-        return true;
-    }
-
     function instance_allow_config() {
         return true;
     }
