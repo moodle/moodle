@@ -2059,7 +2059,11 @@ EOD;
             // because the buffered text would be printed before our start of page.
             // NOTE: this hack might be behave unexpectedly in case output buffering is enabled in PHP.ini
             while (ob_get_level() > 0) {
-                $obbuffer .= ob_get_clean();
+                $buff = ob_get_clean();
+                if ($buff === false) {
+                    break;
+                }
+                $obbuffer .= $buff;
             }
 
             // Header not yet printed
