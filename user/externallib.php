@@ -321,9 +321,6 @@ class moodle_user_external extends external_api {
             }
         }
 
-
-
-
         $transaction->allow_commit();
 
         return null;
@@ -363,10 +360,6 @@ class moodle_user_external extends external_api {
         //they are "user" related
         require_once($CFG->dirroot . "/user/profile/lib.php");
 
-        $context = get_context_instance(CONTEXT_SYSTEM);
-        require_capability('moodle/user:viewdetails', $context);
-        self::validate_context($context);
-
         $params = self::validate_parameters(self::get_users_by_id_parameters(),
                 array('userids'=>$userids));
 
@@ -376,6 +369,10 @@ class moodle_user_external extends external_api {
         $users = user_get_users_by_id($params['userids']);
         $result = array();
         foreach ($users as $user) {
+
+            $context = get_context_instance(CONTEXT_USER, $user->id);
+            require_capability('moodle/user:viewalldetails', $context);
+            self::validate_context($context);
 
             if (empty($user->deleted)) {
 

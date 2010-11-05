@@ -357,6 +357,7 @@ $string['user:managesyspages'] = 'Configure default page layout for public user 
 $string['user:readuserblogs'] = 'See all user blogs';
 $string['user:readuserposts'] = 'See all user posts';
 $string['user:update'] = 'Update user profiles';
+$string['user:viewalldetails'] = 'View user full information';
 $string['user:viewdetails'] = 'View user profiles';
 $string['user:viewhiddendetails'] = 'View hidden details of users';
 $string['user:viewuseractivitiesreport'] = 'See user activity reports';

@@ -113,7 +113,10 @@ class file_info_context_user extends file_info {
     protected function get_area_user_profile($itemid, $filepath, $filename) {
         global $CFG;
 
-        if (!has_capability('moodle/user:update', $this->context)) {
+        $readaccess = has_capability('moodle/user:update', $this->context);
+        $writeaccess = has_capability('moodle/user:viewalldetails', $this->context);
+
+        if (!$readaccess and !$writeaccess) {
             // the idea here is that only admins should be able to list/modify files in user profile, the rest has to use profile page
             return null;
         }
@@ -137,7 +140,8 @@ class file_info_context_user extends file_info {
             }
         }
         $urlbase = $CFG->wwwroot.'/pluginfile.php';
-        return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, get_string('areauserprofile', 'repository'), false, true, true, false);
+        return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, 
+                get_string('areauserprofile', 'repository'), false, $readaccess, $writeaccess, false);
     }
 
     protected function get_area_user_draft($itemid, $filepath, $filename) {

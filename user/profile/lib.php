@@ -267,10 +267,12 @@ class profile_field_base {
                 if ($this->userid == $USER->id) {
                     return true;
                 } else {
-                    return has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM));
+                    return has_capability('moodle/user:viewalldetails',
+                            get_context_instance(CONTEXT_USER, $this->userid));
                 }
             default:
-                return has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM));
+                return has_capability('moodle/user:viewalldetails',
+                        get_context_instance(CONTEXT_USER, $this->userid));
         }
     }
 
