@@ -324,7 +324,7 @@ class grade_report_user extends grade_report {
 
                 } else {
                     $data['feedback']['class'] = $class.' feedbacktext';
-                    $data['feedback']['content'] = format_text($grade_grade->feedback, $grade_grade->feedbackformat);
+                    $data['feedback']['content'] = format_text($grade_grade->feedback, $grade_grade->feedbackformat, array('overflowdiv'=>true));
                 }
 
                 /// Range

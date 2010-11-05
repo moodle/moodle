@@ -384,6 +384,7 @@ if ($action === 'delete') {
 
     $formattextdefoptions = new stdClass;
     $formattextdefoptions->para = false;  //I'll use it widely in this page
+    $formattextdefoptions->overflowdiv = true;
 
     $userid = optional_param('userid', NULL, PARAM_INT); // if empty, then will display the general detailed view
     $try    = optional_param('try', NULL, PARAM_INT);
@@ -442,6 +443,7 @@ if ($action === 'delete') {
 
         $options = new stdClass;
         $options->noclean = true;
+        $options->overflowdiv = true;
         $answerpage->contents = format_text($page->contents, $page->contentsformat, $options);
 
         $answerpage->qtype = $qtypes[$page->qtype].$page->option_description_string();

@@ -124,7 +124,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
         $o .= $this->output->container_end(); // end of header
 
-        $content = format_text($submission->content, $submission->contentformat);
+        $content = format_text($submission->content, $submission->contentformat, array('overflowdiv'=>true));
         $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $this->page->context->id,
                                                         'mod_workshop', 'submission_content', $submission->id);
         $o .= $this->output->container($content, 'content');
@@ -215,7 +215,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $o .= $this->output->heading(format_string($example->title), 3, 'title');
         $o .= $this->output->container_end(); // end of header
 
-        $content = format_text($example->content, $example->contentformat);
+        $content = format_text($example->content, $example->contentformat, array('overflowdiv'=>true));
         $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $this->page->context->id,
                                                         'mod_workshop', 'submission_content', $example->id);
         $o .= $this->output->container($content, 'content');

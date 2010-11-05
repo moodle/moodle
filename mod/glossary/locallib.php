@@ -391,6 +391,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
 
         $entry->definition = portfolio_rewrite_pluginfile_urls($entry->definition, $context->id, 'mod_glossary', 'entry', $entry->id, $format);
 
+        $options->overflowdiv = true;
         $output .= format_text($entry->definition, $entry->definitionformat, $options);
         if (isset($entry->footer)) {
             $output .= $entry->footer;

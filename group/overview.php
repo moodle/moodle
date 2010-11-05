@@ -162,6 +162,7 @@ foreach ($members as $gpgid=>$groupdata) {
         $description = file_rewrite_pluginfile_urls($groups[$gpid]->description, 'pluginfile.php', $context->id, 'group', 'description', $gpid);
         $options = new stdClass;
         $options->noclean = true;
+        $options->overflowdiv = true;
         $jsdescription = trim(format_text($description, $groups[$gpid]->descriptionformat, $options));
         if (empty($jsdescription)) {
             $line[] = $name;
@@ -187,6 +188,7 @@ foreach ($members as $gpgid=>$groupdata) {
         $description = file_rewrite_pluginfile_urls($groupings[$gpgid]->description, 'pluginfile.php', $context->id, 'grouping', 'description', $gpgid);
         $options = new stdClass;
         $options->noclean = true;
+        $options->overflowdiv = true;
         echo $OUTPUT->box(format_text($description, $groupings[$gpgid]->descriptionformat, $options), 'generalbox boxwidthnarrow boxaligncenter');
     }
     echo html_writer::table($table);

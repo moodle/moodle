@@ -214,7 +214,8 @@ if ($user->description && !isset($hiddenfields['description'])) {
         echo get_string('profilenotshown', 'moodle');
     } else {
         $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user', 'profile', null);
-        echo format_text($user->description, $user->descriptionformat);
+        $options = array('overflowdiv'=>true);
+        echo format_text($user->description, $user->descriptionformat, $options);
     }
 }
 echo '</div>';

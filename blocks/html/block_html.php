@@ -46,12 +46,11 @@ class block_html extends block_base {
             return $this->content;
         }
 
+        $filteropt = new stdClass;
+        $filteropt->overflowdiv = true;
         if ($this->content_is_trusted()) {
             // fancy html allowed only on course, category and system blocks.
-            $filteropt = new stdClass;
             $filteropt->noclean = true;
-        } else {
-            $filteropt = null;
         }
 
         $this->content = new stdClass;

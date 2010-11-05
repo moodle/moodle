@@ -168,7 +168,7 @@ h2.headingblock {
 .forumpost .topic {
     background: #eee;
     border-width: 0;
-    padding: 0 10px 0;
+    padding: 4px 10px 4px;
 }
 
 .forumpost .subject {
@@ -180,10 +180,14 @@ h2.headingblock {
     font-style: italic;
 }
 
-.forumpost .content {
+.forumpost .no-overflow {
     border-width: 0 1px 10px;
     border-style: solid;
     border-color: #aaa #eee #eee;
+    margin: 0 1px 1px 1px;
+}
+
+.forumpost .content .posting {
     padding: 5px 10px 10px;
 }
 

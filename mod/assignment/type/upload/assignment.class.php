@@ -211,7 +211,7 @@ class assignment_upload extends assignment_base {
 
         if ($submission = $this->get_submission($USER->id)
           and !empty($submission->data1)) {
-            echo $OUTPUT->box(format_text($submission->data1, FORMAT_HTML), 'generalbox boxaligncenter boxwidthwide');
+            echo $OUTPUT->box(format_text($submission->data1, FORMAT_HTML, array('overflowdiv'=>true)), 'generalbox boxaligncenter boxwidthwide');
         } else {
             echo $OUTPUT->box(get_string('notesempty', 'assignment'), 'generalbox boxaligncenter');
         }

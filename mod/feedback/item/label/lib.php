@@ -129,7 +129,7 @@ class feedback_item_label extends feedback_item_base {
         $item->presentationtrust = 1;
 
         $output = file_rewrite_pluginfile_urls($item->presentation, 'pluginfile.php', $context->id, 'mod_feedback', $filearea, $item->id);
-        echo format_text($output, FORMAT_HTML);
+        echo format_text($output, FORMAT_HTML, array('overflowdiv'=>true));
     }
 
     /**

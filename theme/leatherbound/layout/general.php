@@ -29,26 +29,26 @@ echo $OUTPUT->doctype() ?>
 <div id="page">
 <?php if ($hasheading || $hasnavbar) { ?>
     <div id="page-header">
-		<div id="page-header-wrapper" class="wrapper clearfix">
-	        <?php if ($hasheading) { ?>
-    		    <h1 class="headermain inside"><?php echo $PAGE->heading ?></h1>
-		        <div class="headermenu"><?php
-        	    	echo $OUTPUT->login_info();
-            			if (!empty($PAGE->layout_options['langmenu'])) {
-	        	        	echo $OUTPUT->lang_menu();
-	    		        }
-		            echo $PAGE->headingmenu ?>
-	            </div>
-	        <?php } ?>
-	    </div>
+        <div id="page-header-wrapper" class="wrapper clearfix">
+            <?php if ($hasheading) { ?>
+                <h1 class="headermain inside"><?php echo $PAGE->heading ?></h1>
+                <div class="headermenu"><?php
+                    echo $OUTPUT->login_info();
+                        if (!empty($PAGE->layout_options['langmenu'])) {
+                            echo $OUTPUT->lang_menu();
+                        }
+                    echo $PAGE->headingmenu ?>
+                </div>
+            <?php } ?>
+        </div>
     </div>
 
         <?php if ($hasnavbar) { ?>
             <div class="navbar">
-            	<div class="wrapper clearfix">
-	                <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
-    	            <div class="navbutton"> <?php echo $PAGE->button; ?></div>
-    	        </div>
+                <div class="wrapper clearfix">
+                    <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
+                    <div class="navbutton"> <?php echo $PAGE->button; ?></div>
+                </div>
             </div>
         <?php } ?>
 

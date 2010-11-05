@@ -141,6 +141,6 @@ foreach ($datas as $data) {
 }
 
 echo "<br />";
-echo html_writer::table($table);
+echo html_writer::tag('div', html_writer::table($table), array('class'=>'no-overflow'));
 echo $OUTPUT->footer();
 

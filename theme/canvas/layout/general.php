@@ -26,29 +26,29 @@ echo $OUTPUT->doctype() ?>
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
-	
+
 <!-- START OF HEADER -->
 
-	<?php if ($hasheading || $hasnavbar) { ?>
-	<div id="wrapper" class="clearfix">
-	
-	    <div id="page-header">
-			<div id="page-header-wrapper" class="clearfix">
-		   	    <?php if ($hasheading) { ?>
-    		    <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
-	    		<div class="headermenu">
-	    	    	<?php 
-	    	    		echo $OUTPUT->login_info();
-			       		if (!empty($PAGE->layout_options['langmenu'])) {
-			               	echo $OUTPUT->lang_menu();
-	    	       		}
-		    	   	    echo $PAGE->headingmenu;
-	            	?>
-		        </div>
-		        <?php } ?>
-	    	</div>
-	    </div>
-	    
+    <?php if ($hasheading || $hasnavbar) { ?>
+    <div id="wrapper" class="clearfix">
+
+        <div id="page-header">
+            <div id="page-header-wrapper" class="clearfix">
+                   <?php if ($hasheading) { ?>
+                <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
+                <div class="headermenu">
+                    <?php
+                        echo $OUTPUT->login_info();
+                           if (!empty($PAGE->layout_options['langmenu'])) {
+                               echo $OUTPUT->lang_menu();
+                           }
+                           echo $PAGE->headingmenu;
+                    ?>
+                </div>
+                <?php } ?>
+            </div>
+        </div>
+
         <?php if ($hasnavbar) { ?>
             <div class="navbar clearfix">
                 <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
@@ -62,57 +62,57 @@ echo $OUTPUT->doctype() ?>
 
 <!-- START OF CONTENT -->
 
-		<div id="page-content-wrapper" class="clearfix">
-	    	<div id="page-content">
-		        <div id="region-main-box">
-    		        <div id="region-post-box">
+        <div id="page-content-wrapper" class="clearfix">
+            <div id="page-content">
+                <div id="region-main-box">
+                    <div id="region-post-box">
             
-        		        <div id="region-main-wrap">
-            		        <div id="region-main">
-                		        <div class="region-content">
-                    		        <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
-                        		</div>
-		                    </div>
-    		            </div>
+                        <div id="region-main-wrap">
+                            <div id="region-main">
+                                <div class="region-content">
+                                    <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+                                </div>
+                            </div>
+                        </div>
                 
-        		        <?php if ($hassidepre) { ?>
-            		    <div id="region-pre">
-                		    <div class="region-content">
-                    		    <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
-	                    	</div>
-	    	            </div>
-    	    	        <?php } ?>
+                        <?php if ($hassidepre) { ?>
+                        <div id="region-pre">
+                            <div class="region-content">
+                                <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
+                            </div>
+                        </div>
+                        <?php } ?>
                 
-        	    	    <?php if ($hassidepost) { ?>
-            	    	<div id="region-post">
-                	    	<div class="region-content">
-                    	    	<?php echo $OUTPUT->blocks_for_region('side-post') ?>
-	                    	</div>
-	    	            </div>
-    	    	        <?php } ?>
+                        <?php if ($hassidepost) { ?>
+                        <div id="region-post">
+                            <div class="region-content">
+                                <?php echo $OUTPUT->blocks_for_region('side-post') ?>
+                            </div>
+                        </div>
+                        <?php } ?>
                 
-        	    	</div>
-	        	</div>
-	    	</div>
-	    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 <!-- END OF CONTENT -->
 
 <!-- START OF FOOTER -->
 
-	    <?php if ($hasfooter) { ?>
-    	<div id="page-footer" class="clearfix">
-        	<p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
-	        <?php
-    		    echo $OUTPUT->login_info();
-		        echo $OUTPUT->home_link();
-        		echo $OUTPUT->standard_footer_html();
-	        ?>
-	    </div>
-    	<?php } ?>
-	
-	<?php if ($hasheading || $hasnavbar) { ?>
-    	</div> <!-- END #wrapper -->
+        <?php if ($hasfooter) { ?>
+        <div id="page-footer" class="clearfix">
+            <p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
+            <?php
+                echo $OUTPUT->login_info();
+                echo $OUTPUT->home_link();
+                echo $OUTPUT->standard_footer_html();
+            ?>
+        </div>
+        <?php } ?>
+
+    <?php if ($hasheading || $hasnavbar) { ?>
+        </div> <!-- END #wrapper -->
     <?php } ?>
 
 </div> <!-- END #page -->

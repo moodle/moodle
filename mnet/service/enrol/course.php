@@ -67,6 +67,7 @@ if (!empty($course->summary)) {
     $options->para    = false;
     $options->filter  = false;
     $options->noclean = false;
+    $options->overflowdiv = true;
     print_collapsible_region_start('remotecourse summary', 'remotecourse-summary', get_string('coursesummary'), false, true);
     echo format_text($course->summary, $course->summaryformat, $options,  $course->id);
     print_collapsible_region_end();

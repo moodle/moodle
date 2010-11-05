@@ -315,7 +315,7 @@
         if(isset($savereturn) && $savereturn == 'saved') {
             if($feedback->page_after_submit) {
                 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-                echo format_text($feedback->page_after_submit);
+                echo format_text($feedback->page_after_submit, $feedback->page_after_submitformat, array('overflowdiv'=>true));
                 echo $OUTPUT->box_end();
             } else {
                 echo '<p align="center"><b><font color="green">'.get_string('entries_saved','feedback').'</font></b></p>';

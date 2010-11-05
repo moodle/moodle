@@ -44,6 +44,7 @@
 
     require_login($course, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $PAGE->set_pagelayout('report');
 
     $reportlist = quiz_report_list($context);
     if (count($reportlist)==0){

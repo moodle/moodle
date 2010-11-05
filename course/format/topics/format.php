@@ -107,6 +107,7 @@ if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing())
     $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course', 'section', $thissection->id);
     $summaryformatoptions = new stdClass();
     $summaryformatoptions->noclean = true;
+    $summaryformatoptions->overflowdiv = true;
     echo format_text($summarytext, $thissection->summaryformat, $summaryformatoptions);
 
     if ($PAGE->user_is_editing() && has_capability('moodle/course:update', $coursecontext)) {
@@ -229,6 +230,7 @@ while ($section <= $course->numsections) {
                 $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course', 'section', $thissection->id);
                 $summaryformatoptions = new stdClass();
                 $summaryformatoptions->noclean = true;
+                $summaryformatoptions->overflowdiv = true;
                 echo format_text($summarytext, $thissection->summaryformat, $summaryformatoptions);
             } else {
                echo '&nbsp;';

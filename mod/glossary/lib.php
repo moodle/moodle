@@ -845,7 +845,8 @@ function glossary_print_entry_default ($entry, $glossary, $cm) {
     $options = new stdClass();
     $options->para = false;
     $options->trusted = $entry->definitiontrust;
-    $options->context = $context; 
+    $options->context = $context;
+    $options->overflowdiv = true;
     $definition = format_text($definition, $entry->definitionformat, $options);
     echo ($definition);
     echo '<br /><br />';
@@ -873,22 +874,19 @@ function  glossary_print_entry_concept($entry, $return=false) {
 
 /**
  *
- * @global object
- * @global array
+ * @global moodle_database DB
  * @param object $entry
  * @param object $glossary
  * @param object $cm
  */
 function glossary_print_entry_definition($entry, $glossary, $cm) {
-    global $DB;
+    global $DB, $GLOSSARY_EXCLUDECONCEPTS;
 
     $definition = $entry->definition;
 
-    global $GLOSSARY_EXCLUDECONCEPTS;
-
     //Calculate all the strings to be no-linked
     //First, the concept
-    $GLOSSARY_EXCLUDECONCEPTS=array($entry->concept);
+    $GLOSSARY_EXCLUDECONCEPTS = array($entry->concept);
     //Now the aliases
     if ( $aliases = $DB->get_records('glossary_alias', array('entryid'=>$entry->id))) {
         foreach ($aliases as $alias) {
@@ -902,7 +900,8 @@ function glossary_print_entry_definition($entry, $glossary, $cm) {
     $options = new stdClass();
     $options->para = false;
     $options->trusted = $entry->definitiontrust;
-    $options->context = $context; 
+    $options->context = $context;
+    $options->overflowdiv = true;
     $text = format_text($definition, $entry->definitionformat, $options);
 
     // Stop excluding concepts from autolinking

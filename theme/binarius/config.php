@@ -166,6 +166,11 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'noblocks'=>true, 'nonavbar'=>false, 'nocustommenu'=>true),
     ),
+    'report' => array(
+        'file' => 'report.php',
+        'regions' => array('side-post'),
+        'defaultregion' => 'side-post',
+    ),
 );
 
 ///////////////////////////////////////////////////////////////

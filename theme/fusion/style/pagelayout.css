@@ -38,14 +38,14 @@ body {
 	width: 100%;
 }
 
-#page-content #region-main-box #region-post-box {
+#page-content #region-post-box {
 	float: left;
 	right: 72%;
 	position: relative;
 	width: 100%;
 }
 
-#page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+#page-content #region-main {
 	float: left;
 	overflow: hidden;
 	position: relative;
@@ -54,7 +54,7 @@ body {
 	width: 72%;
 }
 
-#page-content #region-main-box #region-post-box #region-post {
+#page-content #region-post {
 	float: left;
 	overflow: hidden;
 	position: relative;
@@ -62,12 +62,12 @@ body {
 	width: 28%;
 }
 
-#page-content #region-main-box #region-post-box #region-main-wrap #region-main .region-content {
+#page-content #region-main .region-content {
 	overflow: hidden;
 	padding: 50px 15px 20px 0;
 }
 
-#page-content #region-main-box #region-post-box #region-post .region-content {
+#page-content #region-post .region-content {
 	overflow: hidden;
 	padding: 0 0 0 10px;
 }
@@ -84,19 +84,22 @@ body {
 	right: 0%;
 }
 
-.content-only #page-content #region-main-box #region-post-box {
+.content-only #page-content #region-post-box {
 	right: 100%;
 }
 
-.content-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+.content-only #page-content #region-main {
 	left: 100%;
 	width: 100%;
 }
 
-.content-only #page-content #region-main-box #region-post-box #region-pre {
+.content-only #page-content #region-pre {
 	width: 0%;
 }
 
-.content-only #page-content #region-main-box #region-post-box #region-post {
+.content-only #page-content #region-post {
 	width: 0%;
 }
+
+.pagelayout-report #page-content #region-main {overflow:auto;}
+.pagelayout-report #page-content #region-main .region-content {overflow:visible;}

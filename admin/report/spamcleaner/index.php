@@ -267,7 +267,7 @@ function print_user_entry($user, $keywords, $count) {
             $user->descriptionformat = FORMAT_MOODLE;
         }
 
-        $html .= '<td align="left">'.format_text($user->description, $user->descriptionformat).'</td>';
+        $html .= '<td align="left">'.format_text($user->description, $user->descriptionformat, array('overflowdiv'=>true)).'</td>';
         $html .= '<td width="100px" align="center">';
         $html .= '<button onclick="M.report_spamcleaner.del_user(this,'.$user->id.')">'.get_string('deleteuser', 'admin').'</button><br />';
         $html .= '<button onclick="M.report_spamcleaner.ignore_user(this,'.$user->id.')">'.get_string('ignore', 'admin').'</button>';

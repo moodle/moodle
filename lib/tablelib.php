@@ -1187,7 +1187,7 @@ class flexible_table {
         $this->wrap_html_start();
         // Start of main data table
 
-        echo html_writer::start_tag('div', array('class'=>'flexible-wrap'));
+        echo html_writer::start_tag('div', array('class'=>'no-overflow'));
         echo '<table'.$this->make_attributes_string($this->attributes).'>';
 
     }

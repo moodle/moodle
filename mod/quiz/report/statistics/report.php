@@ -230,7 +230,7 @@ class quiz_statistics_report extends quiz_default_report {
             echo $OUTPUT->heading(get_string('questioninformation', 'quiz_statistics'));
             echo html_writer::table($questioninfotable);
 
-            echo $OUTPUT->box(format_text($question->questiontext, $question->questiontextformat).$actions, 'boxaligncenter generalbox boxwidthnormal mdl-align');
+            echo $OUTPUT->box(format_text($question->questiontext, $question->questiontextformat, array('overflowdiv'=>true)).$actions, 'boxaligncenter generalbox boxwidthnormal mdl-align');
 
             echo $OUTPUT->heading(get_string('questionstatistics', 'quiz_statistics'));
             echo html_writer::table($questionstatstable);
@@ -356,7 +356,7 @@ class quiz_statistics_report extends quiz_default_report {
         $quizinformationtable = new html_table();
         $quizinformationtable->align = array('center', 'center');
         $quizinformationtable->width = '60%';
-        $quizinformationtable->class = 'generaltable titlesleft';
+        $quizinformationtable->attributes['class'] = 'generaltable titlesleft boxaligncenter';
         $quizinformationtable->data = array();
         $quizinformationtable->data[] = array(get_string('quizname', 'quiz_statistics'), $quiz->name);
         $quizinformationtable->data[] = array(get_string('coursename', 'quiz_statistics'), $course->fullname);

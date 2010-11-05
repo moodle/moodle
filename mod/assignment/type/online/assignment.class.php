@@ -100,7 +100,7 @@ class assignment_online extends assignment_base {
                 echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter', 'online');
                 if ($submission && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'mod_assignment', $this->filearea, $submission->id);
-                    echo format_text($text, $submission->data2);
+                    echo format_text($text, $submission->data2, array('overflowdiv'=>true));
                     if ($CFG->enableportfolios) {
                         require_once($CFG->libdir . '/portfoliolib.php');
                         $button = new portfolio_add_button();
@@ -233,7 +233,7 @@ class assignment_online extends assignment_base {
         $wordcount .= '</p>';
 
         $text = file_rewrite_pluginfile_urls($submission->data1, 'pluginfile.php', $this->context->id, 'mod_assignment', $this->filearea, $submission->id);
-        return $wordcount . format_text($text, $submission->data2);
+        return $wordcount . format_text($text, $submission->data2, array('overflowdiv'=>true));
 
 
         }

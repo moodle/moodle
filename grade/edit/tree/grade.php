@@ -41,6 +41,7 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 
+$PAGE->set_pagelayout('incourse');
 require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 if (!has_capability('moodle/grade:manage', $context)) {

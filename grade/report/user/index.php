@@ -30,6 +30,7 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 require_login($course);
+$PAGE->set_pagelayout('report');
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_capability('gradereport/user:view', $context);
@@ -149,5 +150,3 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
 }
 
 echo $OUTPUT->footer();
-
-

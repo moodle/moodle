@@ -34,13 +34,14 @@ class block_site_main_menu extends block_list {
 /// extra fast view mode
         if (!$isediting) {
             if (!empty($modinfo->sections[0])) {
+                $options = array('overflowdiv'=>true);
                 foreach($modinfo->sections[0] as $cmid) {
                     $cm = $modinfo->cms[$cmid];
                     if (!$cm->uservisible) {
                         continue;
                     }
                     if ($cm->modname == 'label') {
-                        $this->content->items[] = format_text($cm->extra, FORMAT_HTML);
+                        $this->content->items[] = format_text($cm->extra, FORMAT_HTML, $options);
                         $this->content->icons[] = '';
                     } else {
                         $linkcss = $cm->visible ? '' : ' class="dimmed" ';
@@ -85,6 +86,7 @@ class block_site_main_menu extends block_list {
 
         if (!empty($section->sequence)) {
             $sectionmods = explode(',', $section->sequence);
+            $options = array('overflowdiv'=>true);
             foreach ($sectionmods as $modnumber) {
                 if (empty($mods[$modnumber])) {
                     continue;
@@ -127,7 +129,7 @@ class block_site_main_menu extends block_list {
                     }
 
                     if ($mod->modname == 'label') {
-                        $this->content->items[] = format_text($extra, FORMAT_HTML).$editbuttons;
+                        $this->content->items[] = format_text($extra, FORMAT_HTML,$options).$editbuttons;
                         $this->content->icons[] = '';
                     } else {
                         //Accessibility: incidental image - should be empty Alt text

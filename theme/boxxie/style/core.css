@@ -645,15 +645,14 @@ h2.headingblock {
     text-decoration: none;
 }
 
-.forumpost .content {
-    border-width: 1px ;
-    border-color: #a0c278;
-    border-style: solid;
-    padding: 5px 10px;
+.forumpost .no-overflow,
+.forumpost .options {
+    border: 1px solid #a0c278;
 }
 
-.forumpost .commands {
-    padding: 10px 0;
+.forumpost .options,
+.forumpost .content .posting {
+    padding: 5px 10px;
 }
 
 .forumaddnew,

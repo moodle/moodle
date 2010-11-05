@@ -940,6 +940,19 @@ function format_text_menu() {
  * This function should mainly be used for long strings like posts,
  * answers, glossary items etc. For short strings @see format_string().
  *
+ * <pre>
+ * Options:
+ *      trusted     :   If true the string won't be cleaned. Default false required noclean=true.
+ *      noclean     :   If true the string won't be cleaned. Default false required trusted=true.
+ *      nocache     :   If true the strign will not be cached and will be formatted every call. Default false.
+ *      filter      :   If true the string will be run through applicable filters as well. Default true.
+ *      para        :   If true then the returned string will be wrapped in div tags. Default true.
+ *      newlines    :   If true then lines newline breaks will be converted to HTML newline breaks. Default true.
+ *      context     :   The context that will be used for filtering.
+ *      overflowdiv :   If set to true the formatted text will be encased in a div
+ *                      with the class no-overflow before being returned. Default false.
+ * </pre>
+ *
  * @todo Finish documenting this function
  *
  * @staticvar array $croncache
@@ -982,6 +995,9 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
     }
     if (!isset($options['newlines'])) {
         $options['newlines'] = true;
+    }
+    if (!isset($options['overflowdiv'])) {
+        $options['overflowdiv'] = false;
     }
 
     // Calculate best context
@@ -1090,6 +1106,10 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
                 'called $CFG->currenttextiscacheable. The good news is that this no ' .
                 'longer exists. The bad news is that you seem to be using a filter that '.
                 'relies on it. Please seek out and destroy that filter code.', DEBUG_DEVELOPER);
+    }
+
+    if (!empty($options['overflowdiv'])) {
+        $text = html_writer::tag('div', $text, array('class'=>'no-overflow'));
     }
 
     if (empty($options['nocache']) and !empty($CFG->cachetext)) {
@@ -1367,7 +1387,7 @@ function format_module_intro($module, $activity, $cmid, $filter=true) {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
     $context = get_context_instance(CONTEXT_MODULE, $cmid);
-    $options = (object)array('noclean'=>true, 'para'=>false, 'filter'=>$filter, 'context'=>$context);
+    $options = array('noclean'=>true, 'para'=>false, 'filter'=>$filter, 'context'=>$context, 'overflowdiv'=>true);
     $intro = file_rewrite_pluginfile_urls($activity->intro, 'pluginfile.php', $context->id, 'mod_'.$module, 'intro', null);
     return trim(format_text($intro, $activity->introformat, $options, null));
 }

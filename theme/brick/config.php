@@ -38,8 +38,8 @@ $THEME->name = 'brick';
 
 
 $THEME->parents = array(
-	'canvas',
-	'base',
+    'canvas',
+    'base',
 );
 
 /////////////////////////////////////////////////////
@@ -54,11 +54,10 @@ $THEME->parents = array(
 
 
 $THEME->sheets = array(
-'pagelayout',
-	'core',
-	'colors',
-	'css3',
-	
+    'pagelayout',
+    'core',
+    'colors',
+    'css3',
 );
 
 ////////////////////////////////////////////////////
@@ -67,12 +66,12 @@ $THEME->sheets = array(
 ////////////////////////////////////////////////////
 
 $THEME->parents_exclude_sheets = array(
-		'base'=>array(
-			'pagelayout', 
-		),
-		'canvas'=>array(
-			'pagelayout',
-		),
+    'base'=>array(
+        'pagelayout',
+    ),
+    'canvas'=>array(
+        'pagelayout',
+    ),
 );
 
 
@@ -158,10 +157,15 @@ $THEME->layouts = array(
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
     'embedded' => array(
-    	'theme' => 'canvas',
+        'theme' => 'canvas',
         'file' => 'embedded.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
+    ),
+    'report' => array(
+        'file' => 'general.php',
+        'regions' => array('side-post'),
+        'defaultregion' => 'side-post',
     ),
     
 );
@@ -175,7 +179,7 @@ $THEME->layouts = array(
 // specific page.
 ///////////////////////////////////////////////////////////////
 
-//$THEME->csspostprocess = 'arialist_process_css';	
+//$THEME->csspostprocess = 'arialist_process_css';
 ////////////////////////////////////////////////////
 // Allows the user to provide the name of a function 
 // that all CSS should be passed to before being 
@@ -189,7 +193,7 @@ $THEME->layouts = array(
 // media player for the filters
 ////////////////////////////////////////////////////
 
-// $THEME->javascripts	
+// $THEME->javascripts
 
 ////////////////////////////////////////////////////
 // An array containing the names of JavaScript files
@@ -203,20 +207,20 @@ $THEME->layouts = array(
 // As above but will be included in the page footer.
 ////////////////////////////////////////////////////
 
-//$THEME->larrow	= '&lang;';
+//$THEME->larrow    = '&lang;';
 
 ////////////////////////////////////////////////////
 // Overrides the left arrow image used throughout 
 // Moodle
 ////////////////////////////////////////////////////
 
-//$THEME->rarrow	= '&rang;';
+//$THEME->rarrow    = '&rang;';
 
 ////////////////////////////////////////////////////
 // Overrides the right arrow image used throughout Moodle
 ////////////////////////////////////////////////////
 
-// $THEME->layouts	
+// $THEME->layouts
 
 ////////////////////////////////////////////////////
 // An array setting the layouts for the theme
@@ -229,7 +233,7 @@ $THEME->layouts = array(
 // the themes parents
 ////////////////////////////////////////////////////
 
-// $THEME->parents_exclude_sheets	
+// $THEME->parents_exclude_sheets
 
 ////////////////////////////////////////////////////
 // An array of stylesheets not to inherit from the
@@ -253,7 +257,7 @@ $THEME->layouts = array(
 // $THEME->resource_mp3player_colors
 
 ////////////////////////////////////////////////////
-// Controls the colours for the MP3 player 	
+// Controls the colours for the MP3 player
 ////////////////////////////////////////////////////
 $THEME->csspostprocess = 'brick_process_css';
  //$THEME->rendererfactory = 'theme_overridden_renderer_factory';

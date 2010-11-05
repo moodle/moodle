@@ -23,7 +23,7 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once('locallib.php');
 
 require_login();
-admin_externalpage_setup('comments');
+admin_externalpage_setup('comments', '', null, '', array('pagelayout'=>'report'));
 
 $context = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/comment:delete', $context);

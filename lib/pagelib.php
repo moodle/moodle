@@ -838,6 +838,9 @@ class moodle_page {
      * in the standard theme.
      */
     public function set_pagelayout($pagelayout) {
+        if (!empty($this->_wherethemewasinitialised) && $pagelayout != $this->_pagelayout) {
+            debugging('Page layout has already been set and cannot be changed.', DEBUG_DEVELOPER);
+        }
         $this->_pagelayout = $pagelayout;
     }
 
@@ -1202,11 +1205,6 @@ class moodle_page {
      */
     public function initialise_theme_and_output() {
         global $OUTPUT, $PAGE, $SITE;
-
-        // If you have lost all blocks on a page and cannot work out why
-        // try uncommenting this this debugging line and seeing what you get.
-        // Chances are the theme and output are being initialised prematurely.
-        // debugging('Initialising theme and output with layout '.$this->_pagelayout, DEBUG_DEVELOPER);
 
         if (!empty($this->_wherethemewasinitialised)) {
             return;

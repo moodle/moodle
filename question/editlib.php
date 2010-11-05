@@ -1159,6 +1159,7 @@ class question_bank_view {
     protected function print_category_info($category) {
         $formatoptions = new stdClass;
         $formatoptions->noclean = true;
+        $formatoptions->overflowdiv = true;
         echo '<div class="boxaligncenter">';
         echo format_text($category->info, FORMAT_MOODLE, $formatoptions, $this->course->id);
         echo "</div>\n";

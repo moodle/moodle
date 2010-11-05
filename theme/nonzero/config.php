@@ -38,8 +38,8 @@ $THEME->name = 'nonzero';
 
 
 $THEME->parents = array(
-	'canvas',
-	'base',
+    'canvas',
+    'base',
 );
 
 /////////////////////////////////////////////////////
@@ -54,8 +54,8 @@ $THEME->parents = array(
 
 
 $THEME->sheets = array(
-	'core',
-	'pagelayout',
+    'core',
+    'pagelayout',
 );
 
 ////////////////////////////////////////////////////
@@ -64,12 +64,12 @@ $THEME->sheets = array(
 ////////////////////////////////////////////////////
 
 $THEME->parents_exclude_sheets = array(
-		'base'=>array(
-			'pagelayout',
-		),
-		'canvas'=>array(
-			'pagelayout',
-		),
+    'base'=>array(
+        'pagelayout',
+    ),
+    'canvas'=>array(
+        'pagelayout',
+    ),
 );
 
 
@@ -155,7 +155,7 @@ $THEME->layouts = array(
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
     'embedded' => array(
-    	'theme' => 'canvas',
+        'theme' => 'canvas',
         'file' => 'embedded.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
@@ -166,7 +166,11 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>false, 'noblocks'=>true),
     ),
-
+    'report' => array(
+        'file' => 'general.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
 );
 
 ///////////////////////////////////////////////////////////////

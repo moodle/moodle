@@ -305,7 +305,8 @@
                 if (!isset($group->descriptionformat)) {
                     $group->descriptionformat = FORMAT_MOODLE;
                 }
-                $contentcell->text = $OUTPUT->heading($contentheading, 3) . format_text($group->description, $group->descriptionformat);
+                $options = array('overflowdiv'=>true);
+                $contentcell->text = $OUTPUT->heading($contentheading, 3) . format_text($group->description, $group->descriptionformat, $options);
                 $groupinfotable->data[] = new html_table_row(array($picturecell, $contentcell));
                 echo html_writer::table($groupinfotable);
             }

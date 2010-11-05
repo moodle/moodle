@@ -1272,6 +1272,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
     $labelformatoptions = new stdClass();
     $labelformatoptions->noclean = true;
+    $labelformatoptions->overflowdiv = true;
 
 /// Casting $course->modinfo to string prevents one notice when the field is null
     $modinfo = get_fast_modinfo($course);
@@ -2322,6 +2323,7 @@ function print_course($course, $highlightterms = '') {
     $options = NULL;
     $options->noclean = true;
     $options->para = false;
+    $options->overflowdiv = true;
     if (!isset($course->summaryformat)) {
         $course->summaryformat = FORMAT_MOODLE;
     }
@@ -2468,6 +2470,7 @@ function print_remote_course($course, $width="100%") {
     $options = NULL;
     $options->noclean = true;
     $options->para = false;
+    $options->overflowdiv = true;
     echo format_text($course->summary, $course->summaryformat, $options);
     echo '</div>';
     echo '</div>';

@@ -14,273 +14,274 @@
 ------------------------*/
 
 body {
-	background: #fff;
-	margin: 0;
-	padding: 0;
-	color: #281f18;
+    background: #fff;
+    margin: 0;
+    padding: 0;
+    color: #281f18;
 }
 
 body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .wrapper {
-	margin: 0 25px;
+    margin: 0 25px;
 }
 
 a:link,a:visited {
-	color: #DA5013;
+    color: #DA5013;
 }
 
 a:hover,a:active {
-	color: #251c17;
+    color: #251c17;
 }
 
 a img {
-	border: none;
+    border: none;
 }
 
 a:active {
-	outline: none;
+    outline: none;
 }
 
 /* Header 
 -----------------------*/
 
 #page-header {
-	float: none;
-	padding: 10px 0 0;
-	background: url([[pix:theme|header]]);
-	border-bottom: 5px solid #DA5013;
-	color: #fff;
+    float: none;
+    padding: 10px 0 0;
+    background: url([[pix:theme|header]]);
+    border-bottom: 5px solid #DA5013;
+    color: #fff;
 }
 
 #page-header h1 {
-	font-size: 2.25em;
-	margin: 30px 0 20px;
+    font-size: 2.25em;
+    margin: 30px 0 20px;
 }
 
 #page-header h1.inside {
-	font-size: 1.8em;
-	margin: 20px 0 10px;
+    font-size: 1.8em;
+    margin: 20px 0 10px;
 }
 
 .headermenu {
-	margin: 0;
-	font-size: 0.9em;
+    margin: 0;
+    font-size: 0.9em;
 }
 
 /* Navbar
 -----------------------*/
 
 .navbar {
-	border-width: 0 0 1px 0;
-	border-color: #ddddd7;
-	background: #f7f6f1;
-	margin: 0;
-	padding: 5px 0;
+    border-width: 0 0 1px 0;
+    border-color: #ddddd7;
+    background: #f7f6f1;
+    margin: 0;
+    padding: 5px 0;
 }
 
 .navbar .navbutton {
-	margin-top: 0;
+    margin-top: 0;
 }
 
 .breadcrumb .sep {
-	font-size: 0.8em;
-	color: #999;
+    font-size: 0.8em;
+    color: #999;
 }
 
 /* Content
 -----------------------*/
 
 #page-content-wrapper {
-	float: none;
-	margin-top: 5px;
+    float: none;
+    margin-top: 5px;
 }
 
 /* Blocks
 -----------------------*/
 
 .block {
-	margin-bottom: 20px;
-	border: none;
+    margin-bottom: 20px;
+    border: none;
 }
 
 .block .header {
-	border-top: 2px solid #da5013;
-	background: #f7f6f1;
-	padding: 4px 5px 5px;
+    border-top: 2px solid #da5013;
+    background: #f7f6f1;
+    padding: 4px 5px 5px;
 }
 
 .block .title h2 {
-	color: #35251B;
-	font-weight: normal;
-	font-size: 1.2em;
-	margin: 0;
+    color: #35251B;
+    font-weight: normal;
+    font-size: 1.2em;
+    margin: 0;
 }
 
 /* Forum
 ------------------------*/
 
 .forumpost .topic {
-	background: #dbd6c7;
-	border-bottom-color: #da5013;
+    background: #dbd6c7;
+    border-bottom:1px solid #da5013;
+    padding:5px 4px 4px;
 }
 
 .forumpost .topic .subject {
-	font-weight: bold;
-	font-size: 1.1em;
+    font-weight: bold;
+    font-size: 1.1em;
 }
 
 .forumpost .topic .author {
-	font-size: 0.9em;
+    font-size: 0.9em;
 }
 
 .forumpost .content {
-	background: #f7f5f1;
-	border-width: 0 1px 1px;
-	border-style: solid;
-	border-color: #d9d8d4;
+    background: #f7f5f1;
+    border-width: 0 1px 1px;
+    border-style: solid;
+    border-color: #d9d8d4;
 }
 
 /* Course
 ---------------------------*/
 
 h2.headingblock {
-	border-width: 0 0 1px 0;
-	padding: 5px 5px 2px;
-	font-weight: normal;
-	font-size: 1.2em;
-	background: #f7f5f1;
-	color: #251c17;
+    border-width: 0 0 1px 0;
+    padding: 5px 5px 2px;
+    font-weight: normal;
+    font-size: 1.2em;
+    background: #f7f5f1;
+    color: #251c17;
 }
 
 .course-content .main {
-	background: #f7f5f1;
-	border: 1px solid #ddd
+    background: #f7f5f1;
+    border: 1px solid #ddd
 }
 
 .course-content .current {
-	background: #da5013;
-	color: #fff;
+    background: #da5013;
+    color: #fff;
 }
 
 .course-content .main .content {
-	background: #fff;
+    background: #fff;
 }
 
 /* Dock
 ---------------------------*/
 
 #dock {
-	background-color: #f7f5f1;
-	border-right-color: #433b30;
+    background-color: #f7f5f1;
+    border-right-color: #433b30;
 }
 
 #dock .dockeditem_container {
-	margin-top: 10px;
+    margin-top: 10px;
 }
 
 #dock .dockeditem {
-	background-color: #fff;
+    background-color: #fff;
 }
 
 #dock .firstdockitem {
-	margin-top: 1em;
+    margin-top: 1em;
 }
 
 #dock .dockeditem .dockedtitle {
-	border-color: #dddddd;
-	border-top-color: #fff;
+    border-color: #dddddd;
+    border-top-color: #fff;
 }
 
 #dock .dockeditem .dockedtitle.activeitem {
-	background: #f7f5f1;
-	border-top-color:#f7f5f1 ;
+    background: #f7f5f1;
+    border-top-color:#f7f5f1 ;
 }
 
 #dock .firstdockitem .dockedtitle {
-	border-top-color: #ddd;	
+    border-top-color: #ddd;
 }
-	
+
 #dock .dockeditem .dockedtitle h2 {
-	margin: 12px 0 12px 7px;
+    margin: 12px 0 12px 7px;
 }
 
 #dockeditempanel .dockeditempanel_content {
-	border-color: #433b30;
+    border-color: #433b30;
 }
 
 #dockeditempanel .dockeditempanel_hd {
-	border-bottom: none;
-	padding: 3px 5px;
-	background: #f7f6f1;
-	text-align: left;
+    border-bottom: none;
+    padding: 3px 5px;
+    background: #f7f6f1;
+    text-align: left;
 }
 
 #dockeditempanel .dockeditempanel_hd h2 {
-	color: #333;
-	text-align: left;
-	font-weight: normal;
-	font-size: 1.25em;
-	padding: 0 2px;
+    color: #333;
+    text-align: left;
+    font-weight: normal;
+    font-size: 1.25em;
+    padding: 0 2px;
 }
 
 #dockeditempanel .dockeditempanel_hd .commands {
-	float: right;
+    float: right;
 }
 /* block expansion code */
 
 .block_js_expansion .block_tree {
-	overflow-x: scroll;
+    overflow-x: scroll;
 }
 
 .block_js_expansion.mouseover .content {
-	width: 200%;
-	z-index: 1000;
-	position: relative;
+    width: 200%;
+    z-index: 1000;
+    position: relative;
 }
 
 .block_js_expansion.mouseover .content .block_tree {
-	width: 100%;
-	background-color: #FAFAFA;
-	padding-bottom: 0px;
+    width: 100%;
+    background-color: #FAFAFA;
+    padding-bottom: 0px;
 }
 
 /** IE stylings */
 
 .ie6 .block .block_tree {
-	width: 160px;
-	overflow-x: scroll;
+    width: 160px;
+    overflow-x: scroll;
 }
 
 .ie6 .block_tree .tree_item {
-	width: 100%;
+    width: 100%;
 }
 
 .ie6 #dock {
-	position: absolute;
+    position: absolute;
 }
 
 .ie6 #dock hr {
-	display: none;
-	margin: 0px;
-	height: 0px;
-	padding: 0px;
+    display: none;
+    margin: 0px;
+    height: 0px;
+    padding: 0px;
 }
 
 .ie6 #dock li p {
-	background-color: inherit;
+    background-color: inherit;
 }
 
 .ie6 #dock .bd.oversized_content .content, .ie7 #dock .bd.oversized_content .content {
-	padding-bottom: 0px;
+    padding-bottom: 0px;
 }
 
 .ie6 .block_js_expansion.mouseover .content, .ie7 .block_js_expansion.mouseover .content {
-	padding-bottom: 2px;
+    padding-bottom: 2px;
 }
 
 .ie6 #dock .bd.oversized_content {
-	width: 100%;
+    width: 100%;
 }

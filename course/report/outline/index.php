@@ -12,7 +12,7 @@
     }
 
     $PAGE->set_url('/course/report/outline/index.php', array('id'=>$id));
-    $PAGE->set_pagelayout('admin');
+    $PAGE->set_pagelayout('report');
 
     require_login($course);
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -47,6 +47,7 @@
 
     $outlinetable = new html_table();
     $outlinetable->attributes['class'] = 'generaltable boxaligncenter';
+    $outlinetable->attributes['style'] = 'width:2000px;';
     $outlinetable->cellpadding = 5;
     $outlinetable->id = 'outlinetable';
     $outlinetable->head = array($stractivity, $strviews);

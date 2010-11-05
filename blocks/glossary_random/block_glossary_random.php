@@ -84,6 +84,7 @@ class block_glossary_random extends block_base {
 
                 $options = new stdClass();
                 $options->trusted = $entry->definitiontrust;
+                $options->overflowdiv = true;
                 $text .= format_text($entry->definition, $entry->definitionformat, $options);
 
                 $this->config->nexttime = usergetmidnight(time()) + DAYSECS * $this->config->refresh;

@@ -2020,6 +2020,7 @@ abstract class lesson_page extends lesson_base {
                     $options = new stdClass;
                     $options->noclean = true;
                     $options->para = true;
+                    $options->overflowdiv = true;
                     $result->feedback = $OUTPUT->box(format_text($this->get_contents(), $this->properties->contentsformat, $options), 'generalbox boxaligncenter');
                     $result->feedback .= '<div class="correctanswer generalbox"><em>'.get_string("youranswer", "lesson").'</em> : '.$result->studentanswer; // already in clean html
                     $result->feedback .= $OUTPUT->box($result->response, $class); // already conerted to HTML

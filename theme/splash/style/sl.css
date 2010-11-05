@@ -20,7 +20,6 @@ body {                /* Define margins and background colour/image */
     margin: 0 auto;
     padding: 0;
     width: 100%;
-    overflow-x:hidden;
 }
 
 body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {   /* Set fonttype for site */ 
@@ -428,44 +427,23 @@ div.summary {
     padding-top: 10px;
 }
 
-#region-pre {
+.block-region {
     background: #fff;
 }
 
-#region-post {
-    background: #fff;
-}
-
-#region-pre .block .header {  /*-- right block header   --*/
+.block-region .block .header {  /*-- right block header   --*/
     background: url([[pix:theme|sbheaderbg2]]) center no-repeat;
     height: 25px;
     color: #fff;
     padding: 12px 5px 5px 5px;
 }
 
-#region-pre .block .header h2{  /*-- right block text --*/
+.block-region .block .header h2{  /*-- right block text --*/
     color: #333;
     padding: 0 0 0 10px;
 }
 
-#region-pre .block .content {  /*-- right block content   --*/
-    background:  #f2f2f2;
-    padding: 4px 5px 5px;
-}
-
-#region-post .block .header {  /*-- left block header   --*/
-    background: url([[pix:theme|sbheaderbg2]]) center no-repeat;
-    height: 25px;
-    color: #fff;
-    padding: 12px 5px 5px 5px;
-}
-
-#region-post .block .header h2{  /*-- left block text   --*/
-    color: #333;
-    padding: 0 0 0 10px;
-}
-
-#region-post .block .content { /*-- left block content   --*/
+.block-region .block .content {  /*-- right block content   --*/
     background:  #f2f2f2;
     padding: 4px 5px 5px;
 }
@@ -638,6 +616,11 @@ ul.topics li#section-0, ul.weeks li#section-0 {
 
 .pagelayout-redirect {background-position:0 0;border-top:1px solid #853650;}
 .pagelayout-redirect #content {margin-top:150px;}
+
+.pagelayout-report #page #page-header {
+    width:960px;
+    margin:0 auto;
+}
 
 /* Splash Theme Specific settings for Administrators to customise css.
 ---------------------------*/

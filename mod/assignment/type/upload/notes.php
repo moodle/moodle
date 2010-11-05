@@ -53,7 +53,7 @@ if ($submission = $assignmentinstance->get_submission($user->id)
     $PAGE->set_title(fullname($user,true).': '.$assignment->name);
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('notes', 'assignment').' - '.fullname($user,true));
-    echo $OUTPUT->box(format_text($submission->data1, FORMAT_HTML), 'generalbox boxaligncenter boxwidthwide');
+    echo $OUTPUT->box(format_text($submission->data1, FORMAT_HTML, array('overflowdiv'=>true)), 'generalbox boxaligncenter boxwidthwide');
     if ($mode != 'single') {
         echo $OUTPUT->close_window_button();
     } else {

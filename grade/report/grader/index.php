@@ -106,13 +106,15 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 
 $reportname = get_string('pluginname', 'gradereport_grader');
 
+/// Print header
+print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
+
 //Initialise the grader report object that produces the table
 //the class grade_report_grader_ajax was removed as part of MDL-21562
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
 
 // make sure separate group does not prevent view
 if ($report->currentgroup == -2) {
-    print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
     echo $OUTPUT->heading(get_string("notingroup"));
     echo $OUTPUT->footer();
     exit;
@@ -135,9 +137,6 @@ if ($perpageurl) {
 $report->load_users();
 $numusers = $report->get_numusers();
 $report->load_final_grades();
-
-/// Print header
-print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
 
 echo $report->group_selector;
 echo '<div class="clearer"></div>';

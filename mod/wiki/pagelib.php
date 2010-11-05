@@ -589,7 +589,7 @@ class page_wiki_edit extends page_wiki {
             file_save_draft_area_files($this->attachments, $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
             return null;
             //return wiki_process_attachments($this->attachments, $this->deleteuploads, $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
-            }
+        }
     }
 }
 
@@ -694,7 +694,7 @@ class page_wiki_comments extends page_wiki {
                 $t->data[] = $row3;
             }
 
-            echo html_writer::table($t);
+            echo html_writer::tag('div', html_writer::table($t), array('class'=>'no-overflow'));
 
         }
     }
@@ -1035,7 +1035,7 @@ class page_wiki_preview extends page_wiki_edit {
             $parseroutput = wiki_parse_content($data->contentformat, $data->newcontent_editor['text'], $options);
             $this->set_newcontent($data->newcontent_editor['text']);
             echo $OUTPUT->notification(get_string('previewwarning', 'wiki'), 'notifyproblem wiki_info');
-            $content = format_text($parseroutput['parsed_text'], FORMAT_HTML);
+            $content = format_text($parseroutput['parsed_text'], FORMAT_HTML, array('overflowdiv'=>true));
             echo $OUTPUT->box($content, 'generalbox wiki_previewbox');
             $content = $this->newcontent;
         }
@@ -2080,7 +2080,7 @@ class page_wiki_viewversion extends page_wiki {
             print_container($heading, false, 'mdl-align wiki_modifieduser wiki_headingtime');
             $options = array('swid' => $this->subwiki->id, 'pretty_print' => true, 'pageid' => $this->page->id);
             $parseroutput = wiki_parse_content($pageversion->contentformat, $pageversion->content, $options);
-            $content = print_container(format_text($parseroutput['parsed_text'], FORMAT_HTML), false, '', '', true);
+            $content = print_container(format_text($parseroutput['parsed_text'], FORMAT_HTML, array('overflowdiv'=>true)), false, '', '', true);
             echo $OUTPUT->box($content, 'generalbox wiki_contentbox');
 
         } else {

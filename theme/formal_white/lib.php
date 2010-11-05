@@ -64,12 +64,14 @@ function formalwhite_set_backgroundcolor($css, $backgroundcolor) {
 function formalwhite_set_regionwidth($css, $regionwidth) {
     $tag = '[[setting:regionwidth]]';
     $doubletag = '[[setting:regionwidthdouble]]';
+    $tagplus10 = '[[setting:regionwidthplus10]]';
     $replacement = $regionwidth;
     if (is_null($replacement)) {
         $replacement = 200;
     }
     $css = str_replace($tag, $replacement.'px', $css);
     $css = str_replace($doubletag, ($replacement*2).'px', $css);
+    $css = str_replace($tag, ($replacement+10).'px', $css);
     return $css;
 }
 

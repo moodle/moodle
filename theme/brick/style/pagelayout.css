@@ -38,33 +38,33 @@ body {
 	right: 100%;
 }
 
-#page-content #region-main-box #region-post-box {
+#page-content #region-post-box {
 	float: left;
 	width: 100%;
 }
 
-#page-content #region-main-box #region-post-box #region-main-wrap {
+#page-content #region-main-wrap {
 	float: left;
 	width: 50%;
 }
 
-#page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+#page-content #region-main {
 	overflow: hidden;
 	position: relative;
 	left: 100%;
 }
 
-#page-content #region-main-box #region-post-box #region-post {
+#page-content #region-post {
 	float: right;
 	position: relative;
 }
 
-#page-content #region-main-box #region-post-box #region-main-wrap #region-main .region-content {
+#page-content #region-main .region-content {
 	overflow: hidden;
 	padding: 0px 30px 20px 0;
 }
 
-#page-content #region-main-box #region-post-box #region-post .region-content {
+#page-content #region-post .region-content {
 	overflow: hidden;
 	padding: 0px 0 20px 10px;
 }
@@ -86,31 +86,34 @@ body {
 	margin-left: 0px;
 }
 
-.content-only #page-content #region-main-box #region-post-box {
+.content-only #page-content #region-post-box {
 	margin-left: 0px;
 }
 
-.content-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+.content-only #page-content #region-main {
 	margin-left: 0px;
 }
 
-.content-only #page-content #region-main-box #region-post-box #region-pre {
+.content-only #page-content #region-pre {
 	width: 0px;
 }
 
-.content-only #page-content #region-main-box #region-post-box #region-post {
+.content-only #page-content #region-post {
 	width: 0px;
 }
 
-#page-content #region-main-box #region-post-box {
+#page-content #region-post-box {
 	margin-left: -250px;
 }
 
-#page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+#page-content #region-main {
 	margin-left: 250px;
 }
 
-#page-content #region-main-box #region-post-box #region-post {
+#page-content #region-post {
 	left: 250px;
 	width: 250px;
 }
+
+.pagelayout-report #page-content #region-main {overflow:auto;}
+.pagelayout-report #page-content #region-main .region-content {overflow:visible;}

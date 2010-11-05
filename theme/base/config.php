@@ -152,6 +152,12 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
     ),
+    // The pagelayout used for reports
+    'report' => array(
+        'file' => 'report.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
 );
 
 // We don't want the base theme to be shown on the theme selection screen, by setting

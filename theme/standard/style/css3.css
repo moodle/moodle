@@ -195,6 +195,7 @@ table.minicalendar {
 .loginbox .content.right,
 .forumpost .content,
 .forumpost .message,
+.forumpost .side,
 .glossarycomment .entry {
   -moz-border-radius-bottomright:10px;
   -webkit-border-bottom-right-radius: 10px;

@@ -121,6 +121,11 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>false, 'noblocks'=>true),
     ),
+    'report' => array(
+        'file' => 'report.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre'
+    ),
 );
 
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';

@@ -65,6 +65,7 @@ if ($sm->string_exists($identifier.'_help', $component)) {
     $options->filter = false;
     $options->para = true;
     $options->newlines = false;
+    $options->overflowdiv = !$ajax;
 
     echo $OUTPUT->heading(format_string(get_string($identifier, $component)), 1, 'helpheading');
     // Should be simple wiki only MDL-21695

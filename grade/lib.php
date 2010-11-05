@@ -628,7 +628,11 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
         $title = $PAGE->course->fullname.': ' . $stractive_plugin;
     }
 
-    $PAGE->set_pagelayout('admin');
+    if ($active_type == 'report') {
+        $PAGE->set_pagelayout('report');
+    } else {
+        $PAGE->set_pagelayout('admin');
+    }
     $PAGE->set_title(get_string('grades') . ': ' . $stractive_type);
     $PAGE->set_heading($title);
     if ($buttons instanceof single_button) {

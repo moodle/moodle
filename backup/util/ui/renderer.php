@@ -587,7 +587,7 @@ class core_backup_renderer extends plugin_renderer_base {
             $row->cells = array(
                 html_writer::empty_tag('input', array('type'=>'radio', 'name'=>'targetid', 'value'=>$category->id)),
                 $category->name,
-                format_text($category->description, $category->descriptionformat)
+                format_text($category->description, $category->descriptionformat, array('overflowdiv'=>true))
             );
             $table->data[] = $row;
         }

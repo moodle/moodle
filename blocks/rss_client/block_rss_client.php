@@ -185,7 +185,7 @@
         }
 
 
-        $r.='<ul class="list">'."\n";
+        $r.='<ul class="list no-overflow">'."\n";
 
         $feeditems = $feed->get_items(0, $maxentries);
         foreach($feeditems as $item){

@@ -98,6 +98,11 @@ form.popupform,
 form.popupform div {display: inline;}
 .arrow_button input {overflow:hidden;}
 
+.no-overflow {overflow:auto;}
+.pagelayout-report .no-overflow {overflow:visible;}
+.no-overflow > .generaltable {margin-bottom:0;}
+.ie6 .no-overflow {width:100%;}
+
 /** IE6 float + background bug solution **/
 .ie6 li.section {line-height:1.2em;width:100%;}
 
@@ -649,10 +654,12 @@ body.tag .managelink {padding: 5px;}
 
 .restore-course-search .rcs-results {width:70%;min-width:400px;border:1px solid #ddd;margin:5px 0;}
 .restore-course-search .rcs-results table {width:100%;margin:0;border-width:0;}
+.restore-course-search .rcs-results table .no-overflow {max-width:600px;}
 .restore-course-search .rcs-results .paging {text-align:left;margin:0;background-color:#eee;padding:3px;}
 
 .restore-course-category .rcs-results {width:70%;min-width:400px;border:1px solid #ddd;margin:5px 0;}
 .restore-course-category .rcs-results table {width:100%;margin:0;border-width:0;}
+.restore-course-category .rcs-results table .no-overflow {max-width:600px;}
 .restore-course-category .rcs-results .paging {text-align:left;margin:0;background-color:#eee;padding:3px;}
 
 .corelightbox {background-color:#CCC;position:absolute;top:0;left:0;width:100%;height:100%;text-align:center;}

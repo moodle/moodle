@@ -114,7 +114,8 @@ class blog_entry {
         }
         $this->summary = file_rewrite_pluginfile_urls($this->summary, 'pluginfile.php', SYSCONTEXTID, 'blog', 'post', $this->id);
 
-        $template['body'] = format_text($this->summary, $this->summaryformat).$cmttext;
+        $options = array('overflowdiv'=>true);
+        $template['body'] = format_text($this->summary, $this->summaryformat, $options).$cmttext;
         $template['title'] = format_string($this->subject);
         $template['userid'] = $user->id;
         $template['author'] = fullname($user);

@@ -196,6 +196,7 @@
         $options = new stdClass;
         $options->noclean = true;
         $options->para = false;
+        $options->overflowdiv = true;
         if (!isset($category->descriptionformat)) {
             $category->descriptionformat = FORMAT_MOODLE;
         }

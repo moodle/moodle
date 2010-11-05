@@ -117,6 +117,7 @@
             $summarytext = file_rewrite_pluginfile_urls($section->summary, 'pluginfile.php', $context->id, 'course', 'section', $section->id);
             $summaryformatoptions = new stdClass();
             $summaryformatoptions->noclean = true;
+            $summaryformatoptions->overflowdiv = true;
 
             echo format_text($summarytext, $section->summaryformat, $summaryformatoptions);
 

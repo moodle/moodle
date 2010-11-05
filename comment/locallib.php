@@ -47,11 +47,12 @@ class comment_manager {
             WHERE u.id=c.userid ORDER BY c.timecreated ASC";
 
         $comments = array();
+        $formatoptions = array('overflowdiv' => true);
         if ($records = $DB->get_records_sql($sql, array(), $start, $this->perpage)) {
             foreach ($records as $item) {
                 $item->fullname = fullname($item);
                 $item->time = userdate($item->timecreated);
-                $item->content = format_text($item->content);
+                $item->content = format_text($item->content, FORMAT_MOODLE, $formatoptions);
                 $comments[] = $item;
                 unset($item->firstname);
                 unset($item->lastname);

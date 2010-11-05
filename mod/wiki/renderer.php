@@ -67,6 +67,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
             $table->colclasses = array('wikisearchresults');
             $html .= html_writer::table($table);
         }
+        $html = html_writer::tag('div', $html, array('class'=>'no-overflow'));
         return $this->output->container($html);
     }
 

@@ -38,8 +38,8 @@ $THEME->name = 'overlay';
 
 
 $THEME->parents = array(
-	'canvas',
-	'base',
+    'canvas',
+    'base',
 );
 
 /////////////////////////////////////////////////////
@@ -54,9 +54,9 @@ $THEME->parents = array(
 
 
 $THEME->sheets = array(
-	'core',
-	'settings',
-	'pagelayout',
+    'core',
+    'settings',
+    'pagelayout',
 );
 
 ////////////////////////////////////////////////////
@@ -65,12 +65,12 @@ $THEME->sheets = array(
 ////////////////////////////////////////////////////
 
 $THEME->parents_exclude_sheets = array(
-		'base'=>array(
-			'pagelayout', 
-		),
-		'canvas'=>array(
-			'pagelayout',
-		),
+    'base'=>array(
+        'pagelayout',
+    ),
+    'canvas'=>array(
+        'pagelayout',
+    ),
 );
 
 
@@ -156,12 +156,16 @@ $THEME->layouts = array(
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
     'embedded' => array(
-    	'theme' => 'canvas',
+        'theme' => 'canvas',
         'file' => 'embedded.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
-    
+    'report' => array(
+        'file' => 'general.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
 );
 
 ///////////////////////////////////////////////////////////////
@@ -174,7 +178,7 @@ $THEME->layouts = array(
 ///////////////////////////////////////////////////////////////
 
 $THEME->csspostprocess = 'overlay_process_css';
-	
+
 ////////////////////////////////////////////////////
 // Allows the user to provide the name of a function 
 // that all CSS should be passed to before being 
@@ -188,7 +192,7 @@ $THEME->csspostprocess = 'overlay_process_css';
 // media player for the filters
 ////////////////////////////////////////////////////
 
-// $THEME->javascripts	
+// $THEME->javascripts
 
 ////////////////////////////////////////////////////
 // An array containing the names of JavaScript files
@@ -196,26 +200,26 @@ $THEME->csspostprocess = 'overlay_process_css';
 // (gets included in the head)
 ////////////////////////////////////////////////////
 
-// $THEME->javascripts_footer	
+// $THEME->javascripts_footer
 
 ////////////////////////////////////////////////////
 // As above but will be included in the page footer.
 ////////////////////////////////////////////////////
 
-// $THEME->larrow	
+// $THEME->larrow
 
 ////////////////////////////////////////////////////
 // Overrides the left arrow image used throughout 
 // Moodle
 ////////////////////////////////////////////////////
 
-// $THEME->rarrow	
+// $THEME->rarrow
 
 ////////////////////////////////////////////////////
 // Overrides the right arrow image used throughout Moodle
 ////////////////////////////////////////////////////
 
-// $THEME->layouts	
+// $THEME->layouts
 
 ////////////////////////////////////////////////////
 // An array setting the layouts for the theme
@@ -228,7 +232,7 @@ $THEME->csspostprocess = 'overlay_process_css';
 // the themes parents
 ////////////////////////////////////////////////////
 
-// $THEME->parents_exclude_sheets	
+// $THEME->parents_exclude_sheets
 
 ////////////////////////////////////////////////////
 // An array of stylesheets not to inherit from the
@@ -252,5 +256,5 @@ $THEME->csspostprocess = 'overlay_process_css';
 // $THEME->resource_mp3player_colors
 
 ////////////////////////////////////////////////////
-// Controls the colours for the MP3 player 	
+// Controls the colours for the MP3 player
 ////////////////////////////////////////////////////

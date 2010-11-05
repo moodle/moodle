@@ -162,13 +162,16 @@ img.iconhelp {vertical-align:middle;}
 
 /** Forum **/
 .forumheaderlist,
-.forumpost {margin-top:15px;border:1px solid #DDD;border-collapse:separate;}
-.forumpost td {border-width:0px;}
-.forumpost .topic {background-color:#C8C9C7;}
+.forumpost {margin-top:15px;border:1px solid #DDD;background-color:#EEE;}
+.forumpost .header {background-color:#C8C9C7;}
+.forumpost .topic {padding:7px;}
 .forumpost .topic .subject {font-weight:bold;}
 .forumpost .topic .author {font-size:0.8em;}
-.forumpost .left {background-color:#EEE;padding:4px;text-align:center;vertical-align:top;width:35px;}
-.forumpost .content .commands {font-size:0.9em;clear:both;padding-top:0.5em;text-align:right;}
+.forumpost .left {background-color:#EEE;}
+.forumpost .content {background-color:#FFF;border-top:1px solid #333;}
+.forumpost .content .posting {padding:4px;}
+.forumpost .options {background-color:#FFF;}
+.forumpost .options .commands {font-size:0.9em;clear:both;padding:0.5em 5px 5px;text-align:right;}
 .forumpost .content .link {font-size:0.9em;}
 .forumpost .content .footer {font-size:0.9em;padding-top:0.5em;text-align:right;}
 

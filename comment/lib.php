@@ -413,6 +413,7 @@ EOD;
 
         $comments = array();
         $candelete = has_capability('moodle/comment:delete', $this->context);
+        $formatoptions = array('overflowdiv' => true);
         $rs = $DB->get_recordset_sql($sql, $params, $start, $CFG->commentsperpage);
         foreach ($rs as $u) {
             $c = new stdClass();
@@ -424,7 +425,7 @@ EOD;
             $c->profileurl = $url->out();
             $c->fullname = fullname($u);
             $c->time = userdate($c->timecreated, get_string('strftimerecent', 'langconfig'));
-            $c->content = format_text($c->content, $c->format);
+            $c->content = format_text($c->content, $c->format, $formatoptions);
 
             $c->avatar = $OUTPUT->user_picture($u, array('size'=>18));
             if (($USER->id == $u->id) || !empty($candelete)) {
@@ -513,7 +514,7 @@ EOD;
             $newcmt->fullname = fullname($USER);
             $url = new moodle_url('/user/view.php', array('id'=>$USER->id, 'course'=>$this->courseid));
             $newcmt->profileurl = $url->out();
-            $newcmt->content = format_text($newcmt->content, $format);
+            $newcmt->content = format_text($newcmt->content, $format, array('overflowdiv'=>true));
             $newcmt->avatar = $OUTPUT->user_picture($USER, array('size'=>16));
             return $newcmt;
         } else {

@@ -62,27 +62,27 @@
 	right: 0%;
 }
 
-.side-pre-only #page-content #region-main-box #region-post-box {
+.side-pre-only #page-content #region-post-box {
 	right: 77%;
 }
 
-.side-pre-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+.side-pre-only #page-content #region-main {
 	left: 100%;
 	width: 77%;
 }
 
-.side-pre-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main .region-content {
+.side-pre-only #page-content #region-main .region-content {
 	overflow: hidden;
 	padding: 20px 10px;
 	padding-top: 10px;
 }
 
-.side-pre-only #page-content #region-main-box #region-post-box #region-pre {
+.side-pre-only #page-content #region-pre {
 	left: 1%;
 	width: 21%;
 }
 
-.side-pre-only #page-content #region-main-box #region-post-box #region-post {
+.side-pre-only #page-content #region-post {
 	width: 0%;
 }
 
@@ -92,21 +92,21 @@
 	right: 23%;
 }
 
-.side-post-only #page-content #region-main-box #region-post-box {
+.side-post-only #page-content #region-post-box {
 	right: 76%;
 }
 
-.side-post-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+.side-post-only #page-content #region-main {
 	left: 100%;
 	width: 77%;
 }
 
-.side-post-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main .region-content {
+.side-post-only #page-content #region-main .region-content {
 	overflow: hidden;
 	padding: 20px 10px;
 }
 
-.side-post-only #page-content #region-main-box #region-post-box #region-post {
+.side-post-only #page-content #region-post {
 	left: 100%;
 	width: 21%;
 }
@@ -121,15 +121,15 @@
 	right: 0%;
 }
 
-.content-only #page-content #region-main-box #region-post-box {
+.content-only #page-content #region-post-box {
 	right: 100%;
 }
 
-.content-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+.content-only #page-content #region-main {
 	width: 98%;
 }
 
-.content-only #page-content #region-main-box #region-post-box #region-pre {
+.content-only #page-content #region-pre {
 	width: 0%;
 }
 
@@ -146,3 +146,6 @@
 #region-post {
 	padding-top: 0px;
 }
+
+.pagelayout-report #page-content #region-main {overflow:auto;}
+.pagelayout-report #page-content #region-main .region-content {overflow:visible;}

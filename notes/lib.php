@@ -196,7 +196,7 @@ function note_print($note, $detail = NOTES_SHOW_FULL) {
     // print note content
     if ($detail & NOTES_SHOW_BODY) {
         echo '<div class="content">';
-        echo format_text($note->content, $note->format);
+        echo format_text($note->content, $note->format, array('overflowdiv'=>true));
         echo '</div>';
     }
 

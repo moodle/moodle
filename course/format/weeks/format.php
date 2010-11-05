@@ -99,8 +99,9 @@ defined('MOODLE_INTERNAL') || die();
 
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course', 'section', $thissection->id);
-        $summaryformatoptions = new stdClass();
+        $summaryformatoptions = new stdClass;
         $summaryformatoptions->noclean = true;
+        $summaryformatoptions->overflowdiv = true;
         echo format_text($summarytext, $thissection->summaryformat, $summaryformatoptions);
 
         if ($PAGE->user_is_editing() && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
@@ -230,8 +231,9 @@ defined('MOODLE_INTERNAL') || die();
                 echo '<div class="summary">';
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
                 $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course', 'section', $thissection->id);
-                $summaryformatoptions = new stdClass();
+                $summaryformatoptions = new stdClass;
                 $summaryformatoptions->noclean = true;
+                $summaryformatoptions->overflowdiv = true;
                 echo format_text($summarytext, $thissection->summaryformat, $summaryformatoptions);
 
                 if ($PAGE->user_is_editing() && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {

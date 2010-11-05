@@ -100,7 +100,7 @@ case workshop::PHASE_SUBMISSION:
         $instructions = file_rewrite_pluginfile_urls($workshop->instructauthors, 'pluginfile.php', $PAGE->context->id,
             'mod_workshop', 'instructauthors', 0, workshop::instruction_editors_options($PAGE->context));
         print_collapsible_region_start('', 'workshop-viewlet-instructauthors', get_string('instructauthors', 'workshop'));
-        echo $output->box(format_text($instructions, $workshop->instructauthorsformat), array('generalbox', 'instructions'));
+        echo $output->box(format_text($instructions, $workshop->instructauthorsformat, array('overflowdiv'=>true)), array('generalbox', 'instructions'));
         print_collapsible_region_end();
     }
 
@@ -241,7 +241,7 @@ case workshop::PHASE_ASSESSMENT:
         $instructions = file_rewrite_pluginfile_urls($workshop->instructreviewers, 'pluginfile.php', $PAGE->context->id,
             'mod_workshop', 'instructreviewers', 0, workshop::instruction_editors_options($PAGE->context));
         print_collapsible_region_start('', 'workshop-viewlet-instructreviewers', get_string('instructreviewers', 'workshop'));
-        echo $output->box(format_text($instructions, $workshop->instructreviewersformat), array('generalbox', 'instructions'));
+        echo $output->box(format_text($instructions, $workshop->instructreviewersformat, array('overflowdiv'=>true)), array('generalbox', 'instructions'));
         print_collapsible_region_end();
     }
 

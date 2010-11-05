@@ -133,7 +133,7 @@ foreach ($views as $view) {
     //submission part
     echo $OUTPUT->container_start('generalbox submission');
     echo '<div class="submissiondate">'.$view->submissiondate.'</div>';
-    echo "<p>$view->submissiontext</p>\n";
+    echo "<p class='no-overflow'>$view->submissiontext</p>\n";
     echo "<p>$view->editlink</p>\n";
     echo $OUTPUT->container_end();
 

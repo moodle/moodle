@@ -97,7 +97,9 @@ $group->description = file_rewrite_pluginfile_urls($group->description, 'pluginf
 if (!isset($group->descriptionformat)) {
     $group->descriptionformat = FORMAT_MOODLE;
 }
-$contentcell->text = format_text($group->description, $group->descriptionformat);
+$options = new stdClass;
+$options->overflowdiv = true;
+$contentcell->text = format_text($group->description, $group->descriptionformat, $options);
 $groupinfotable->data[] = new html_table_row(array($picturecell, $contentcell));
 echo html_writer::table($groupinfotable);
 

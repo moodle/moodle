@@ -45,6 +45,10 @@ $version = optional_param('version', -1, PARAM_INT);
 $attachments = optional_param('attachments', 0, PARAM_INT);
 $deleteuploads = optional_param('deleteuploads', 0, PARAM_RAW);
 
+if (is_array($newcontent)) {
+    $newcontent = $newcontent['text'];
+}
+
 if (!$page = wiki_get_page($pageid)) {
     print_error('incorrectpageid', 'wiki');
 }

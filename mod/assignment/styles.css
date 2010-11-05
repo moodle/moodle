@@ -10,8 +10,6 @@
 .path-mod-assignment .feedback .from {float: left;}
 .path-mod-assignment .files img {margin-right: 4px;}
 .path-mod-assignment .files a {white-space:nowrap;}
-.path-mod-assignment .flexible-wrap {width:100%;overflow:auto;}
-.path-mod-assignment .flexible-wrap > .flexible {margin:0;}
 .path-mod-assignment .late {color: red;}
 
 /** Styles for submissions.php **/

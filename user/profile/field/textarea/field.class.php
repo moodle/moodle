@@ -36,7 +36,7 @@ class profile_field_textarea extends profile_field_base {
      * Display the data for this field
      */
     function display_data() {
-        return format_text($this->data, $this->dataformat, new stdClass());
+        return format_text($this->data, $this->dataformat, array('overflowdiv'=>true));
     }
 
 }

@@ -38,8 +38,8 @@ $THEME->name = 'fusion';
 
 
 $THEME->parents = array(
-	'canvas',
-	'base',
+    'canvas',
+    'base',
 );
 
 /////////////////////////////////////////////////////
@@ -54,10 +54,10 @@ $THEME->parents = array(
 
 
 $THEME->sheets = array(
-	'core',
-	'pagelayout',
-	'menus',
-	'settings',
+    'core',
+    'pagelayout',
+    'menus',
+    'settings',
 );
 
 ////////////////////////////////////////////////////
@@ -66,12 +66,12 @@ $THEME->sheets = array(
 ////////////////////////////////////////////////////
 
 $THEME->parents_exclude_sheets = array(
-		'base'=>array(
-			'pagelayout',
-		),
-		'canvas'=>array(
-			'pagelayout',
-		),
+    'base'=>array(
+        'pagelayout',
+    ),
+    'canvas'=>array(
+        'pagelayout',
+    ),
 );
 
 
@@ -156,7 +156,7 @@ $THEME->layouts = array(
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
     'embedded' => array(
-    	'theme' => 'canvas',
+        'theme' => 'canvas',
         'file' => 'embedded.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
@@ -167,7 +167,11 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>false, 'noblocks'=>true),
     ),
-
+    'report' => array(
+        'file' => 'general.php',
+        'regions' => array('side-post'),
+        'defaultregion' => 'side-post',
+    ),
 );
 
 ///////////////////////////////////////////////////////////////
@@ -208,14 +212,14 @@ $THEME->layouts = array(
 // As above but will be included in the page footer.
 ////////////////////////////////////////////////////
 
-$THEME->larrow	= '&lang;';
+$THEME->larrow    = '&lang;';
 
 ////////////////////////////////////////////////////
 // Overrides the left arrow image used throughout
 // Moodle
 ////////////////////////////////////////////////////
 
-$THEME->rarrow	= '&rang;';
+$THEME->rarrow    = '&rang;';
 
 ////////////////////////////////////////////////////
 // Overrides the right arrow image used throughout Moodle

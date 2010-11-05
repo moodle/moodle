@@ -219,7 +219,8 @@ if ($user->description && !isset($hiddenfields['description'])) {
             // we have to make a little detour thought the course context to verify the access control for course profile
             $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $coursecontext->id, 'user', 'profile', $user->id);
         }
-        echo format_text($user->description, $user->descriptionformat);
+        $options = array('overflowdiv'=>true);
+        echo format_text($user->description, $user->descriptionformat, $options);
     }
 }
 echo '</div>';

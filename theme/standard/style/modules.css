@@ -76,20 +76,17 @@ table.mod_index {width:90%;margin:1em auto;}
 #page-mod-folder-view .foldertree {width: 90%;margin:0 auto;}
 
 /** Forum **/
-.forumpost {border-color:#DDDDDD;} /** header of reply posts and lower corners of all posts in */
-.forumpost .starter {background-color:#DDDDDD;} /** header of the first post in */
-.forumpost .topic {border-bottom-color: #EEEEEE;} /** line between header and post body in */
-.forumpost .topic .author {font-size: 0.8em;}
-.forumpost .topic .subject {font-weight: bold;}
-.forumpost .ratings {padding-top: 1em;}
-.forumpost .attachments {padding: 7px;}
-.forumpost .content {padding: 4px;background-color: #FFFFFF;}
-.forumpost .commands,
-.forumpost .footer,
-.forumpost .link {padding-top: 0.5em;font-size: 0.9em;}
-.forumpost .left {padding: 4px;text-align: center;background-color:#EEEEEE;}
-.forumpost .edited {font-style: italic;}
+.forumpost {border-color:#DDDDDD;}
+.forumpost .row {background-color:#FFF;}
+.forumpost .row.header {background-color:#EEE;background-image:none;}
+.forumpost.firstpost .row.header {background-color:#DDD;}
+.forumpost .topic .author {font-size: 0.8em;padding:4px;}
+.forumpost .topic .subject {font-weight: bold;padding:4px 4px 0;}
+.forumpost .content div,
+.forumpost .options div {padding:4px;}
 .forumpost.unread {background: #9EBEFF;}
+.forumpost.unread .content {border:2px solid #0046C7;} /** inside border of unread posts in nested format in */
+
 #page-mod-forum-view .forummode,
 .path-mod-forum .forumheaderlist .replies {text-align: center;}
 .path-mod-forum .forumheaderlist .discussion .lastpost {font-size: 0.7em;}
@@ -99,7 +96,6 @@ table.mod_index {width:90%;margin:1em auto;}
 #page-mod-forum-subscribers .subscriberdiv,
 #page-mod-forum-subscribers .subscribertable tr td {padding:0.2em 0.3em;}
 #page-mod-forum-discuss .ratingsubmit {text-align:center;padding:10px;}
-#page-mod-forum-discuss .forumpost.unread .content {border:2px solid #0046C7;} /** inside border of unread posts in nested format in */
 #page-mod-forum-view .forumheaderlist .discussion .starter, /** Discussion column background in */
 #page-mod-forum-view .forumaddnew {margin-bottom: 20px;text-align:center;}
 #page-mod-forum-view .forumheaderlist td {border-color: #FFFFFF;} /** wire frame around cells in */

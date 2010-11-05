@@ -168,7 +168,7 @@ echo $OUTPUT->box_end();
 if(has_capability('mod/feedback:edititems', $context)) {
     echo $OUTPUT->heading(get_string("page_after_submit", "feedback"), 4);
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
-    echo format_text($feedback->page_after_submit);
+    echo format_text($feedback->page_after_submit, $feedback->page_after_submitformat, array('overflowdiv'=>true));
     echo $OUTPUT->box_end();
 }
 

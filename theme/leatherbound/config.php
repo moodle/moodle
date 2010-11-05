@@ -38,8 +38,8 @@ $THEME->name = 'leatherbound';
 
 
 $THEME->parents = array(
-		'canvas',
-		'base',
+    'canvas',
+    'base',
 );
 
 /////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ $THEME->parents = array(
 
 
 $THEME->sheets = array(
-	'core',
+    'core',
 );
 
 ////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ $THEME->layouts = array(
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
     'embedded' => array(
-    	'theme' => 'canvas',
+        'theme' => 'canvas',
         'file' => 'embedded.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>true),
@@ -155,7 +155,11 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nonavbar'=>false, 'noblocks'=>true),
     ),
-
+    'report' => array(
+        'file' => 'report.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
 );
 
 ///////////////////////////////////////////////////////////////
