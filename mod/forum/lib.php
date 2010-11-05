@@ -464,13 +464,6 @@ function forum_cron() {
                 $modcontext = get_context_instance(CONTEXT_MODULE, $coursemodules[$forumid]->id);
                 if ($subusers = forum_subscribed_users($courses[$courseid], $forums[$forumid], 0, $modcontext)) {
                     foreach ($subusers as $postuser) {
-                        // do not try to mail users with stopped email
-                        if ($postuser->emailstop) {
-                            if (!empty($CFG->forum_logblocked)) {
-                                add_to_log(SITEID, 'forum', 'mail blocked', '', '', 0, $postuser->id);
-                            }
-                            continue;
-                        }
                         // this user is subscribed to this forum
                         $subscribedusers[$forumid][$postuser->id] = $postuser->id;
                         // this user is a user we have to process later
@@ -654,9 +647,6 @@ function forum_cron() {
                     add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#p$post->id",
                                substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
                     $errorcount[$post->id]++;
-                } else if ($mailresult === 'emailstop') {
-                    // should not be reached anymore - see check above
-                    mtrace("Error: mod/forum/lib.php forum_cron(): received 'emailstop' while sending out mail for id $post->id to user $userto->id ($userto->email)");
                 } else {
                     $mailcount[$post->id]++;
 
@@ -734,12 +724,6 @@ function forum_cron() {
                     }
                 }
                 $postuser = $users[$digestpost->userid];
-                if ($postuser->emailstop) {
-                    if (!empty($CFG->forum_logblocked)) {
-                        add_to_log(SITEID, 'forum', 'mail blocked', '', '', 0, $postuser->id);
-                    }
-                    continue;
-                }
 
                 if (!isset($posts[$digestpost->postid])) {
                     if ($post = $DB->get_record('forum_posts', array('id' => $digestpost->postid))) {
@@ -941,8 +925,6 @@ function forum_cron() {
                     mtrace("ERROR!");
                     echo "Error: mod/forum/cron.php: Could not send out digest mail to user $userto->id ($userto->email)... not trying again.\n";
                     add_to_log($course->id, 'forum', 'mail digest error', '', '', $cm->id, $userto->id);
-                } else if ($mailresult === 'emailstop') {
-                    // should not happen anymore - see check above
                 } else {
                     mtrace("success.");
                     $usermailcount++;
@@ -2837,7 +2819,6 @@ function forum_subscribed_users($course, $forum, $groupid=0, $context = NULL) {
               u.maildisplay,
               u.mailformat,
               u.maildigest,
-              u.emailstop,
               u.imagealt,
               u.email,
               u.city,

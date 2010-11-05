@@ -87,8 +87,5 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('forum_enabletimedposts', get_string('timedposts', 'forum'),
                        get_string('configenabletimedposts', 'forum'), 0));
-
-    $settings->add(new admin_setting_configcheckbox('forum_logblocked', get_string('logblocked', 'forum'),
-                       get_string('configlogblocked', 'forum'), 1));
 }
 

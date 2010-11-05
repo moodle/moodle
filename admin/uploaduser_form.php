@@ -168,9 +168,6 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
         $mform->setDefault('maildisplay', 2);
 
-        $choices = array(0 => get_string('emailenable'), 1 => get_string('emaildisable'));
-        $mform->addElement('select', 'emailstop', get_string('emailactive'), $choices);
-
         $choices = array(0 => get_string('textformat'), 1 => get_string('htmlformat'));
         $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
         $mform->setDefault('mailformat', 1);

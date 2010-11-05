@@ -249,47 +249,7 @@ if ($user->maildisplay == 1
    or ($user->maildisplay == 2 && !isguestuser())
    or has_capability('moodle/course:useremail', $context)) {
 
-    $emailswitch = '';
-
-    if ($currentuser or has_capability('moodle/course:useremail', $context)) {   /// Can use the enable/disable email stuff
-        if (!empty($enable) and confirm_sesskey()) {     /// Recieved a parameter to enable the email address
-            $DB->set_field('user', 'emailstop', 0, array('id'=>$user->id));
-            $user->emailstop = 0;
-        }
-        if (!empty($disable) and confirm_sesskey()) {     /// Recieved a parameter to disable the email address
-            $DB->set_field('user', 'emailstop', 1, array('id'=>$user->id));
-            $user->emailstop = 1;
-        }
-    }
-
-    if (has_capability('moodle/course:useremail', $context)) {   /// Can use the enable/disable email stuff
-        if ($user->emailstop) {
-            $switchparam = 'enable';
-            $switchtitle = get_string('emaildisable');
-            $switchclick = get_string('emailenableclick');
-            $switchpix   = 't/emailno';
-        } else {
-            $switchparam = 'disable';
-            $switchtitle = get_string('emailenable');
-            $switchclick = get_string('emaildisableclick');
-            $switchpix   = 't/email';
-        }
-        $emailswitch = "&nbsp;<a title=\"$switchclick\" ".
-                       "href=\"profile.php?id=$user->id&amp;$switchparam=1&amp;sesskey=".sesskey()."\">".
-                       "<img src=\"" . $OUTPUT->pix_url("$switchpix") . "\" alt=\"$switchclick\" /></a>";
-
-    } else if ($currentuser) {         /// Can only re-enable an email this way
-        if ($user->emailstop) {   // Include link that tells how to re-enable their email
-            $switchparam = 'enable';
-            $switchtitle = get_string('emaildisable');
-            $switchclick = get_string('emailenableclick');
-
-            $emailswitch = "&nbsp;(<a title=\"$switchclick\" ".
-                           "href=\"profile.php?id=$user->id&amp;enable=1&amp;sesskey=".sesskey()."\">$switchtitle</a>)";
-        }
-    }
-
-    print_row(get_string("email").":", obfuscate_mailto($user->email, '', $user->emailstop)."$emailswitch");
+    print_row(get_string("email").":", obfuscate_mailto($user->email, ''));
 }
 
 if ($user->url && !isset($hiddenfields['webpage'])) {

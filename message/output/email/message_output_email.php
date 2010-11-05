@@ -56,7 +56,7 @@ class message_output_email extends message_output {
         $result = email_to_user($eventdata->userto, $eventdata->userfrom,
             $eventdata->subject, $eventdata->fullmessage, $eventdata->fullmessagehtml);
 
-        return ($result===true || $result=='emailstop'); //email_to_user() can return true, false or "emailstop"
+        return $result;
     }
 
     /**

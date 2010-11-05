@@ -242,7 +242,6 @@ global $SESSION;
  * $USER is stored in the session.
  *
  * Items found in the user record:
- *  - $USER->emailstop - Does the user want email sent to them?
  *  - $USER->email - The user's email address.
  *  - $USER->id - The unique integer identified of this user in the 'user' table.
  *  - $USER->email - The user's email address.

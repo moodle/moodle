@@ -4727,8 +4727,7 @@ function get_mailer($action='get') {
  * @param string $replyto Email address to reply to
  * @param string $replytoname Name of reply to recipient
  * @param int $wordwrapwidth custom word wrap width, default 79
- * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
- *          was blocked by user and "false" if there was another sort of error.
+ * @return bool Returns true if mail was sent OK and false if there was an error.
  */
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $replyto='', $replytoname='', $wordwrapwidth=79) {
 
@@ -4760,10 +4759,6 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     // skip mail to suspended users
     if (isset($user->auth) && $user->auth=='nologin') {
         return true;
-    }
-
-    if (!empty($user->emailstop)) {
-        return 'emailstop';
     }
 
     if (over_bounce_threshold($user)) {
@@ -4974,8 +4969,7 @@ function generate_email_supportuser() {
  * @global object
  * @global object
  * @param user $user A {@link $USER} object
- * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
- *          was blocked by user and "false" if there was another sort of error.
+ * @return boolean|string Returns "true" if mail was sent OK and "false" if there was an error
  */
 function setnew_password_and_mail($user) {
     global $CFG, $DB;
@@ -5009,8 +5003,7 @@ function setnew_password_and_mail($user) {
  *
  * @global object
  * @param user $user A {@link $USER} object
- * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
- *          was blocked by user and "false" if there was another sort of error.
+ * @return bool Returns true if mail was sent OK and false if there was an error.
  */
 function reset_password_and_mail($user) {
     global $CFG;
@@ -5052,8 +5045,7 @@ function reset_password_and_mail($user) {
  *
  * @global object
  * @param user $user A {@link $USER} object
- * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
- *          was blocked by user and "false" if there was another sort of error.
+ * @return bool Returns true if mail was sent OK and false if there was an error.
  */
  function send_confirmation_email($user) {
     global $CFG;
@@ -5083,8 +5075,7 @@ function reset_password_and_mail($user) {
  *
  * @global object
  * @param user $user A {@link $USER} object
- * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
- *          was blocked by user and "false" if there was another sort of error.
+ * @return bool Returns true if mail was sent OK and false if there was an error.
  */
 function send_password_change_confirmation_email($user) {
     global $CFG;
@@ -5111,8 +5102,7 @@ function send_password_change_confirmation_email($user) {
  *
  * @global object
  * @param user $user A {@link $USER} object
- * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
- *          was blocked by user and "false" if there was another sort of error.
+ * @return bool Returns true if mail was sent OK and false if there was an error.
  */
 function send_password_change_info($user) {
     global $CFG;

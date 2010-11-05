@@ -297,7 +297,6 @@ function cron_run() {
                                                WHERE p.name='create_password' AND p.value='1' AND u.email !='' ");
 
             foreach ($newusers as $newuserid => $newuser) {
-                $newuser->emailstop = 0; // send email regardless
                 // email user
                 if (setnew_password_and_mail($newuser)) {
                     // remove user pref

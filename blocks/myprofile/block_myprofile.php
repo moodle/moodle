@@ -104,7 +104,7 @@ class block_myprofile extends block_base {
 
         if(!isset($this->config->display_email) || $this->config->display_email == 1) {
             $this->content->text .= '<div class="myprofileitem email">';
-            $this->content->text .= obfuscate_mailto($user->email, '', $user->emailstop);
+            $this->content->text .= obfuscate_mailto($user->email, '');
             $this->content->text .= '</div>';
         }
 

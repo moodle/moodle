@@ -219,7 +219,6 @@ if ($usernew = $userform->get_data()) {
     if ($email_changed && $CFG->emailchangeconfirmation) {
         $temp_user = fullclone($user);
         $temp_user->email = $usernew->preference_newemail;
-        $temp_user->emailstop = NULL;
 
         $a = new stdClass();
         $a->url = $CFG->wwwroot . '/user/emailupdate.php?key=' . $usernew->preference_newemailkey . '&id=' . $user->id;

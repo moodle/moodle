@@ -454,7 +454,6 @@ class webservice_test extends UnitTestCase {
         $user1->email = 'testemail1@moodle.com';
         $user1->auth = 'manual';
         $user1->idnumber = 'testidnumber1';
-        $user1->emailstop = 1;
         $user1->lang = 'en';
         $user1->theme = 'standard';
         $user1->timezone = 99;
@@ -522,7 +521,6 @@ class webservice_test extends UnitTestCase {
         $this->assertEqual($dbuser1->email, $user1->email);
         $this->assertEqual($dbuser1->auth, $user1->auth);
         $this->assertEqual($dbuser1->idnumber, $user1->idnumber);
-        $this->assertEqual($dbuser1->emailstop, $user1->emailstop);
         $this->assertEqual($dbuser1->lang, $user1->lang);
         $this->assertEqual($dbuser1->theme, $user1->theme);
         $this->assertEqual($dbuser1->timezone, $user1->timezone);

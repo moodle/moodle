@@ -296,25 +296,34 @@ function message_uninstall($component) {
 function message_set_default_message_preferences($user) {
     global $DB;
 
-    $defaultonlineprocessor = 'email';
-    $defaultofflineprocessor = 'email';
-    $offlineprocessortouse = $onlineprocessortouse = null;
+    //check for the pre 2.0 disable email setting
+    $useemail = empty($user->emailstop);
 
     //look for the pre-2.0 preference if it exists
     $oldpreference = get_user_preferences('message_showmessagewindow', -1, $user->id);
     //if they elected to see popups or the preference didnt exist
     $usepopups = (intval($oldpreference)==1 || intval($oldpreference)==-1);
 
+    $defaultonlineprocessor = 'none';
+    $defaultofflineprocessor = 'none';
+    
+    if ($useemail) {
+        $defaultonlineprocessor = 'email';
+        $defaultofflineprocessor = 'email';
+    } else if ($usepopups) {
+        $defaultonlineprocessor = 'popup';
+        $defaultofflineprocessor = 'popup';
+    }
+
+    $offlineprocessortouse = $onlineprocessortouse = null;
 
     $providers = $DB->get_records('message_providers');
     $preferences = array();
 
     foreach ($providers as $providerid => $provider) {
 
-        //force some specific defaults for some types of message
-
-        //if old popup preference was set to 1 or is missing use popups for IMs
-        if ($provider->name=='instantmessage' && $usepopups) {
+        //force some specific defaults for IMs
+        if ($provider->name=='instantmessage' && $usepopups && $useemail) {
             $onlineprocessortouse = 'popup';
             $offlineprocessortouse = 'email,popup';
         } else {

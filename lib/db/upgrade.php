@@ -5393,9 +5393,17 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010110200);
     }
 
+    //remove forum_logblocked from config. No longer required after user->emailstop was removed
+    if ($oldversion < 2010110500) {
+        unset_config('forum_logblocked');
+        upgrade_main_savepoint(true, 2010110500);
+    }
+
     return true;
 }
 
 //TODO: Cleanup before the 2.0 release - we do not want to drag along these dev machine fixes forever
 // 1/ drop block_pinned_old table here and in install.xml
 // 2/ drop block_instance_old table here and in install.xml
+
+//TODO: AFTER 2.0 remove the column user->emailstop and the user preference "message_showmessagewindow"

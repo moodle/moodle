@@ -35,9 +35,7 @@
     if (count($SESSION->emailto[$id])) {
         foreach ($SESSION->emailto[$id] as $user) {
             echo '<tr><td>'.fullname($user,true).'</td><td>'.$user->email.'</td><td>';
-            if ($user->emailstop) {
-                $error = get_string('emaildisable');
-            } elseif (empty($user->email)) {
+            if (empty($user->email)) {
                 $error = get_string('emailempty');
             }
             if (!empty($error)) {

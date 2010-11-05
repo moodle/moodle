@@ -78,10 +78,6 @@ class backup_anonymizer_helper {
         return 'anon' . $counter . '@doesntexist.com'; // Just a counter
     }
 
-    public static function process_user_emailstop($value) {
-        return 1; // Stop email for anon users
-    }
-
     public static function process_user_icq($value) {
         return ''; // Clean icq
     }

@@ -123,12 +123,6 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     $mform->setDefault('maildisplay', 2);
 
     $choices = array();
-    $choices['0'] = get_string('emailenable');
-    $choices['1'] = get_string('emaildisable');
-    $mform->addElement('select', 'emailstop', get_string('emailactive'), $choices);
-    $mform->setDefault('emailstop', 0);
-
-    $choices = array();
     $choices['0'] = get_string('textformat');
     $choices['1'] = get_string('htmlformat');
     $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);

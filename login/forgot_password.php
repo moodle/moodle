@@ -80,8 +80,6 @@ if ($p_secret !== false) {
         // make sure user is allowed to change password
         require_capability('moodle/user:changeownpassword', $systemcontext, $user->id);
 
-        // override email stop and mail new password
-        $user->emailstop = 0;
         if (!reset_password_and_mail($user)) {
             print_error('cannotresetmail');
         }
@@ -132,8 +130,7 @@ if ($mform->is_cancelled()) {
 
         $userauth = get_auth_plugin($user->auth);
         if (has_capability('moodle/user:changeownpassword', $systemcontext, $user->id)) {
-            // send email (make sure mail block is off)
-            $user->emailstop = 0;
+            // send email
         }
 
         if ($userauth->can_reset_password() and is_enabled_auth($user->auth)
