@@ -838,9 +838,13 @@ class moodle_page {
      * in the standard theme.
      */
     public function set_pagelayout($pagelayout) {
-        if (!empty($this->_wherethemewasinitialised) && $pagelayout != $this->_pagelayout) {
-            debugging('Page layout has already been set and cannot be changed.', DEBUG_DEVELOPER);
-        }
+        /**
+         * Uncomment this to debug theme pagelayout issues like missing blocks.
+         *
+         * if (!empty($this->_wherethemewasinitialised) && $pagelayout != $this->_pagelayout) {
+         *     debugging('Page layout has already been set and cannot be changed.', DEBUG_DEVELOPER);
+         * }
+         */
         $this->_pagelayout = $pagelayout;
     }
 
