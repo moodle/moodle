@@ -197,7 +197,7 @@
                 FROM (SELECT * FROM {role_assignments} WHERE contextid $relatedcontexts AND roleid = :roleid ) ra
                 JOIN {user} u ON u.id = ra.userid
                 LEFT JOIN (
-                    SELECT userid, COUNT(action) actioncount FROM {log} WHERE cmid = :instanceid AND time > :timefrom AND $actionsql GROUP BY userid
+                    SELECT userid, COUNT(action) AS actioncount FROM {log} WHERE cmid = :instanceid AND time > :timefrom AND $actionsql GROUP BY userid
                 ) l ON (l.userid = ra.userid)";
         $params['roleid'] = $roleid;
         $params['instanceid'] = $instanceid;
