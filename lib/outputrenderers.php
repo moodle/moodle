@@ -2045,6 +2045,7 @@ EOD;
      * @return string the HTML to output.
      */
     public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
+        global $CFG;
 
         $output = '';
         $obbuffer = '';
@@ -2058,6 +2059,7 @@ EOD;
             // It is really bad if library code throws exception when output buffering is on,
             // because the buffered text would be printed before our start of page.
             // NOTE: this hack might be behave unexpectedly in case output buffering is enabled in PHP.ini
+            error_reporting(0); // disable notices from gzip compression, etc.
             while (ob_get_level() > 0) {
                 $buff = ob_get_clean();
                 if ($buff === false) {
@@ -2065,6 +2067,7 @@ EOD;
                 }
                 $obbuffer .= $buff;
             }
+            error_reporting($CFG->debug);
 
             // Header not yet printed
             if (isset($_SERVER['SERVER_PROTOCOL'])) {
