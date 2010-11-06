@@ -192,6 +192,8 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $answer->feedbackformat = $question->feedback[$key]['format'];
             if (!empty($question->feedback[$key]['itemid'])) {
                 $draftid = $question->feedback[$key]['itemid'];
+            }else {
+                $draftid = '' ;
             }
             if ($question->feedback[$key]['files']) {
                 $feedbackfiles = $question->feedback[$key]['files'];
@@ -324,8 +326,12 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         }else {
             $options->unitsleft = 0 ;
         }
-        $options->instructionsformat = $question->instructions['format'];
-        if(isset($question->instructions)){
+        $options->instructionsformat = '1' ;
+        if ( isset($question->instructions) && isset($question->instructions['format']) && $question->instructions['format'] != '' ){
+            $options->instructionsformat = $question->instructions['format'];
+        }
+
+        if(isset($question->instructions) && isset($question->instructions['text'])  ){
             $options->instructions = trim($question->instructions['text']);
         }else {
             $options->instructions = '' ;
@@ -337,6 +343,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 $this->import_file($question->context, $component, 'instruction', $question->id, $file);
             }
         } else {
+            if(isset($question->instructions)){
             $options->instructions = file_save_draft_area_files($question->instructions['itemid'],
                 $question->context->id,  // context
                 $component,    // component
@@ -345,6 +352,9 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 self::$fileoptions, // options
                 $question->instructions['text'] // text
             );
+            }else {
+               $options->instructions = "";
+            } 
         }
         if ($update) {
             $DB->update_record("question_numerical_options", $options);
