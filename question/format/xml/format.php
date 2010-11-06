@@ -493,6 +493,10 @@ class qformat_xml extends qformat_default {
                 $qo->unit[] = $this->getpath( $unit, array('#','unit_name',0,'#'), '', true );
             }
         }
+        $qo->unitgradingtype = $this->getpath( $question, array('#','unitgradingtype',0,'#'), 0 );
+        $qo->unitpenalty = $this->getpath( $question, array('#','unitpenalty',0,'#'), 0 );
+        $qo->showunits = $this->getpath( $question, array('#','showunits',0,'#'), 0 );
+        $qo->unitsleft = $this->getpath( $question, array('#','unitsleft',0,'#'), 0 );
         $instructions = $this->getpath($question, array('#', 'instructions'), array());
         if (!empty($instructions)) {
             $qo->instructions = array();
@@ -576,7 +580,7 @@ class qformat_xml extends qformat_default {
         return $qo;
     }
 
-    function import_calculated($question) {
+    function import_calculated($question,$qtype) {
     // import calculated question
 
         // get common parts
@@ -637,7 +641,21 @@ class qformat_xml extends qformat_default {
         $qo->unitpenalty = $this->getpath( $question, array('#','unitpenalty',0,'#'), 0 );
         $qo->showunits = $this->getpath( $question, array('#','showunits',0,'#'), 0 );
         $qo->unitsleft = $this->getpath( $question, array('#','unitsleft',0,'#'), 0 );
-        $qo->instructions = $this->getpath( $question, array('#','instructions',0,'#','text',0,'#'), '', true );
+//        $qo->instructions = $this->getpath( $question, array('#','instructions',0,'#','text',0,'#'), '', true );
+        if (!empty($instructions)) {
+            $qo->instructions = array();
+            $qo->instructions['text'] = $instructions[0]['#']['text'][0]['#'];
+            $qo->instructions['format'] = $this->trans_format($instructions[0]['@']['format']);
+            $files = $instructions[0]['#']['file'];
+            $qo->instructionsfiles = array();
+            foreach ($files as $file) {
+                $data = new stdclass;
+                $data->content = $file['#'];
+                $data->encoding = $file['@']['encoding'];
+                $data->name = $file['@']['name'];
+                $qo->instructionsfiles[] = $data;
+            }
+        }
 
         $files = $this->getpath($question, array('#', 'instructions', 0, '#', 'file', 0, '@'), '', false);
 
@@ -794,14 +812,14 @@ class qformat_xml extends qformat_default {
                 $qo = $this->import_essay( $question );
             }
             elseif ($question_type=='calculated') {
-                $qo = $this->import_calculated( $question );
+                $qo = $this->import_calculated( $question,CALCULATED  );
             }
             elseif ($question_type=='calculatedsimple') {
-                $qo = $this->import_calculated( $question );
+                $qo = $this->import_calculated( $question,CALCULATEDMULTI  );
                 $qo->qtype = CALCULATEDSIMPLE ;
             }
             elseif ($question_type=='calculatedmulti') {
-                $qo = $this->import_calculated( $question );
+                $qo = $this->import_calculated( $question,CALCULATEDMULTI );
                 $qo->qtype = CALCULATEDMULTI ;
             }
             elseif ($question_type=='category') {
@@ -1170,6 +1188,18 @@ class qformat_xml extends qformat_default {
                 }
                 $expout .= "</units>\n";
             }
+            if (isset($question->options->unitgradingtype)) {
+                $expout .= "    <unitgradingtype>{$question->options->unitgradingtype}</unitgradingtype>\n";
+            }
+            if (isset($question->options->unitpenalty)) {
+                $expout .= "    <unitpenalty>{$question->options->unitpenalty}</unitpenalty>\n";
+            }
+            if (isset($question->options->showunits)) {
+                $expout .= "    <showunits>{$question->options->showunits}</showunits>\n";
+            }
+            if (isset($question->options->unitsleft)) {
+                $expout .= "    <unitsleft>{$question->options->unitsleft}</unitsleft>\n";
+            }
             if (!empty($question->options->instructionsformat)) {
                 $textformat = $this->get_format($question->options->instructionsformat);
                 $files = $fs->get_area_files($contextid, 'qtype_numerical', 'instruction', $question->id);
@@ -1267,20 +1297,20 @@ class qformat_xml extends qformat_default {
                 $expout .= "    </feedback>\n";
                 $expout .= "</answer>\n";
             }
-            if (!empty($question->options->unitgradingtype)) {
+            if (isset($question->options->unitgradingtype)) {
                 $expout .= "    <unitgradingtype>{$question->options->unitgradingtype}</unitgradingtype>\n";
             }
-            if (!empty($question->options->unitpenalty)) {
+            if (isset($question->options->unitpenalty)) {
                 $expout .= "    <unitpenalty>{$question->options->unitpenalty}</unitpenalty>\n";
             }
-            if (!empty($question->options->showunits)) {
+            if (isset($question->options->showunits)) {
                 $expout .= "    <showunits>{$question->options->showunits}</showunits>\n";
             }
-            if (!empty($question->options->unitsleft)) {
+            if (isset($question->options->unitsleft)) {
                 $expout .= "    <unitsleft>{$question->options->unitsleft}</unitsleft>\n";
             }
 
-            if (!empty($question->options->instructionsformat)) {
+            if (isset($question->options->instructionsformat)) {
                 $textformat = $this->get_format($question->options->instructionsformat);
                 $files = $fs->get_area_files($contextid, $component, 'instruction', $question->id);
                 $expout .= "    <instructions format=\"$textformat\">\n";
