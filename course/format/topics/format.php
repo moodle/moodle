@@ -221,11 +221,11 @@
             echo '<td class="right side">';
             if ($displaysection == $section) {      // Show the zoom boxes
                 echo '<a href="view.php?id='.$course->id.'&amp;topic=0#section-'.$section.'" title="'.$strshowalltopics.'">'.
-                     '<img src="'.$CFG->pixpath.'/i/all.gif" alt="'.$strshowalltopics.'" /></a><br />';
+                     '<img src="'.$CFG->pixpath.'/i/all.gif" class="icon topicall" alt="'.$strshowalltopics.'" /></a><br />';
             } else {
                 $strshowonlytopic = get_string('showonlytopic', '', $section);
                 echo '<a href="view.php?id='.$course->id.'&amp;topic='.$section.'" title="'.$strshowonlytopic.'">'.
-                     '<img src="'.$CFG->pixpath.'/i/one.gif" alt="'.$strshowonlytopic.'" /></a><br />';
+                     '<img src="'.$CFG->pixpath.'/i/one.gif" class="icon topicone" alt="'.$strshowonlytopic.'" /></a><br />';
             }
 
             if (isediting($course->id) && has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id))) {
