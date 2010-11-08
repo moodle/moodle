@@ -57,6 +57,7 @@ require_login($course, false, $cm);
 $PAGE->set_context($context);
 
 echo $OUTPUT->header(); // send headers
+@header('Content-type: text/html');
 
 if (!confirm_sesskey()) {
     $err->error = get_string('invalidsesskey');
