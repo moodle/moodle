@@ -218,8 +218,7 @@ function wiki_upgrade_migrate_versions() {
                 ON po.pagename = p.title AND p.subwikiid = s.id";
     $pagesinfo = $DB->get_recordset_sql($sql, array());
 
-    while ($pagesinfo->valid()) {
-        $pageinfo = $pagesinfo->current();
+    foreach ($pagesinfo as $pageinfo) {
 
         $oldpage = new StdClass();
         $oldpage->id = $pageinfo->oldpage_id;
@@ -305,8 +304,6 @@ function wiki_upgrade_migrate_versions() {
                 print_object($version);
             }
         }
-
-        $pagesinfo->next();
     }
 
     $pagesinfo->close();

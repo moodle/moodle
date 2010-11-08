@@ -204,10 +204,8 @@ function xmldb_wiki_upgrade($oldversion) {
 
         $pages = $DB->get_recordset('wiki_pages');
 
-        while ($pages->valid()) {
-            $page = $pages->current();
+        foreach ($pages as $page) {
             wiki_refresh_cachedcontent($page);
-            $pages->next();
         }
 
         $pages->close();
