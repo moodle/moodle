@@ -305,7 +305,9 @@ class moodle_url {
      * @param moodle_url|string $url - moodle_url means make a copy of another
      *      moodle_url and change parameters, string means full url or shortened
      *      form (ex.: '/course/view.php'). It is strongly encouraged to not include
-     *      query string because it may result in double encoded values
+     *      query string because it may result in double encoded values. Use the
+     *      $params instead. For admin URLs, just use /admin/script.php, this
+     *      class takes care of the $CFG->admin issue.
      * @param array $params these params override current params or add new
      */
     public function __construct($url, array $params = null) {
