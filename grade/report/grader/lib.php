@@ -630,6 +630,7 @@ class grade_report_grader extends grade_report {
                 $idnumbercell->attributes['class'] = 'header useridnumber';
                 $idnumbercell->header = true;
                 $idnumbercell->scope = 'row';
+                $idnumbercell->text = $user->idnumber;
                 $userrow->cells[] = $idnumbercell;
             }
 
