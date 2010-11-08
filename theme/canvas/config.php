@@ -65,6 +65,7 @@ $THEME->sheets = array(
     'admin',
     'tables',
     'popups',
+    'question',
 );
 
 ////////////////////////////////////////////////////
