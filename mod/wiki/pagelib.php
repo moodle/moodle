@@ -2124,14 +2124,9 @@ class page_wiki_confirmrestore extends page_wiki_save {
 class page_wiki_prettyview extends page_wiki {
 
     function print_header() {
-        global $CFG, $OUTPUT;
-
-        echo $OUTPUT->doctype();
-        echo '<html>';
-        echo '<head>';
-        echo $OUTPUT->standard_head_html();
-        echo '</head>';
-        echo '<body>';
+        global $CFG, $PAGE, $OUTPUT;
+        $PAGE->set_pagelayout('embedded');
+        echo $OUTPUT->header();
 
         echo '<h1 id="wiki_printable_title">' . format_string($this->title) . '</h1>';
     }
@@ -2149,11 +2144,6 @@ class page_wiki_prettyview extends page_wiki {
         global $PAGE, $CFG;
 
         $PAGE->set_url($CFG->wwwroot . '/mod/wiki/prettyview.php', array('pageid' => $this->page->id));
-    }
-
-    function print_footer() {
-        echo '</body>';
-        echo '</html>';
     }
 
     private function print_pretty_view() {
