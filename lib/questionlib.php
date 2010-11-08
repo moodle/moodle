@@ -517,7 +517,7 @@ function question_delete_course($course, $feedback=true) {
     //Cache some strings
     $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-    $categoriescourse = get_records('question_categories', 'contextid', $coursecontext->id, 'parent', 'id, parent, name');
+    $categoriescourse = get_records('question_categories', 'contextid', $coursecontext->id, 'parent', 'id, parent, name, contextid');
 
     if ($categoriescourse) {
 
@@ -676,7 +676,7 @@ function question_delete_activity($cm, $feedback=true) {
     //Cache some strings
     $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    if ($categoriesmods = get_records('question_categories', 'contextid', $modcontext->id, 'parent', 'id, parent, name')){
+    if ($categoriesmods = get_records('question_categories', 'contextid', $modcontext->id, 'parent', 'id, parent, name, contextid')){
         //Sort categories following their tree (parent-child) relationships
         //this will make the feedback more readable
         $categoriesmods = sort_categories_by_tree($categoriesmods);
@@ -1796,7 +1796,7 @@ function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
     if ($level == 1) {
         foreach ($keys as $key) {
             //If not processed and it's a good candidate to start (because its parent doesn't exist in the course)
-            if (!isset($categories[$key]->processed) && !record_exists('question_categories', 'course', $categories[$key]->course, 'id', $categories[$key]->parent)) {
+            if (!isset($categories[$key]->processed) && !record_exists('question_categories', 'contextid', $categories[$key]->contextid, 'id', $categories[$key]->parent)) {
                 $children[$key] = $categories[$key];
                 $categories[$key]->processed = true;
                 $children = $children + sort_categories_by_tree($categories, $children[$key]->id, $level+1);
