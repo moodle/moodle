@@ -304,6 +304,14 @@ if (!isset($hiddenfields['mycourses'])) {
 
 echo "</table></div></div>";
 
+// Print messaging link if allowed
+if (isloggedin() && has_capability('moodle/site:sendmessage', $usercontext)
+    && !empty($CFG->messaging) && !isguestuser() && !isguestuser($user) && ($USER->id != $user->id)) {
+    echo '<div class="messagebox">';
+    echo '<a href="'.$CFG->wwwroot.'/message/index.php?id='.$user->id.'">'.get_string('messageselectadd').'</a>';
+    echo '</div>';
+}
+
 if ($currentuser || has_capability('moodle/user:viewdetails', $usercontext) || has_coursecontact_role($id)) {
     echo '<div class="fullprofilelink">';
     echo html_writer::link($CFG->wwwroot.'/user/profile.php?id='.$id, get_string('fullprofile'));
