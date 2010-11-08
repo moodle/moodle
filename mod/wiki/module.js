@@ -40,12 +40,14 @@ M.mod_wiki.init = function(Y, args) {
 };
 M.mod_wiki.renew_lock = function(Y, args) {
     function renewLock() {
-        var args = 'pageid=' + wiki.pageid;
+        var args = {};
+        args['sesskey'] = M.cfg.sesskey;
+        args['pageid'] = wiki.pageid;
         if (wiki.section) {
-            args += '&section=' + wiki.section;
+            args['section'] = wiki.section;
         }
         var callback = {};
-        YAHOO.util.Connect.asyncRequest('GET', 'lock.php?' + args, callback);
+        YAHOO.util.Connect.asyncRequest('GET', 'lock.php?' + build_querystring(args), callback);
     }
     setInterval(renewLock, wiki.renew_lock_timeout * 1000);
 }

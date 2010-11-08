@@ -37,6 +37,10 @@ require_once($CFG->dirroot . '/mod/wiki/lib.php');
 require_once($CFG->dirroot . '/mod/wiki/locallib.php');
 require_once($CFG->dirroot . '/mod/wiki/pagelib.php');
 
+if (!confirm_sesskey()) {
+    print_error('invalidsesskey');
+}
+
 $pageid = required_param('pageid', PARAM_INT);
 $section = optional_param('section', "", PARAM_TEXT);
 
