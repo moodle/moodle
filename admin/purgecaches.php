@@ -33,23 +33,31 @@ admin_externalpage_setup('purgecaches');
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
-$return = new moodle_url('/');
-if (isset($_SERVER['HTTP_REFERER']) and !empty($_SERVER['HTTP_REFERER'])) {
-    if ($_SERVER['HTTP_REFERER'] !== "$CFG->wwwroot/$CFG->admin/purgecaches.php") {
-        $return = $_SERVER['HTTP_REFERER'];
-    }
-}
-
 if ($confirm) {
     require_sesskey();
+
+    // Valid request. Purge, and redisplay the form so it is easy to purge again
+    // in the near future.
     purge_all_caches();
-    redirect($return, get_string('purgecachesfinished', 'admin'));
+    redirect(new moodle_url('/admin/purgecaches.php'), get_string('purgecachesfinished', 'admin'));
+
 } else {
+    // Show a confirm form.
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('purgecaches', 'admin'));
 
     $url = new moodle_url('/admin/purgecaches.php', array('sesskey'=>sesskey(), 'confirm'=>1));
-    echo $OUTPUT->confirm(get_string('purgecachesconfirm', 'admin'), $url, $return);
+    $button = new single_button($url, get_string('purgecaches','admin'), 'post');
 
+    // Cancel button takes them back to the page the were on, if possible,
+    // otherwise to the site home page.
+    $return = new moodle_url('/');
+    if (isset($_SERVER['HTTP_REFERER']) and !empty($_SERVER['HTTP_REFERER'])) {
+        if ($_SERVER['HTTP_REFERER'] !== "$CFG->wwwroot/$CFG->admin/purgecaches.php") {
+            $return = $_SERVER['HTTP_REFERER'];
+        }
+    }
+
+    echo $OUTPUT->confirm(get_string('purgecachesconfirm', 'admin'), $button, $return);
     echo $OUTPUT->footer();
 }
