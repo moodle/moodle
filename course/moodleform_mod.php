@@ -199,6 +199,10 @@ abstract class moodleform_mod extends moodleform {
                 if ($mform->elementExists('unlockcompletion')) {
                     $mform->removeElement('unlockcompletion');
                 }
+                // Automatically set to unlocked (note: this is necessary
+                // in order to make it recalculate completion once the option
+                // is changed, maybe someone has completed it now)
+                $mform->getElement('completionunlocked')->setValue(1);
             } else {
                 // Has the element been unlocked?
                 if ($mform->exportValue('unlockcompletion')) {

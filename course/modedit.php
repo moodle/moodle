@@ -290,13 +290,7 @@ if ($mform->is_cancelled()) {
 
         $completion = new completion_info($course);
         if ($completion->is_enabled()) {
-            // Handle completion settings. If necessary, wipe existing completion
-            // data first.
-            if (!empty($fromform->completionunlocked)) {
-                $completion = new completion_info($course);
-                $completion->reset_all_state($cm);
-            }
-
+            // Update completion settings
             $cm->completion                = $fromform->completion;
             $cm->completiongradeitemnumber = $fromform->completiongradeitemnumber;
             $cm->completionview            = $fromform->completionview;
@@ -338,6 +332,12 @@ if ($mform->is_cancelled()) {
         if (isset($fromform->cmidnumber)) { //label
             // set cm idnumber - uniqueness is already verified by form validation
             set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
+        }
+
+        // Now that module is fully updated, also update completion data if 
+        // required (this will wipe all user completion data and recalculate it)
+        if ($completion->is_enabled() && !empty($fromform->completionunlocked)) {
+            $completion->reset_all_state($cm);
         }
 
         // Trigger mod_updated event with information about this module.
