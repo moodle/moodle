@@ -32,12 +32,27 @@ class qformat_default {
 // functions to indicate import/export functionality
 // override to return true if implemented
 
+    /** @return boolean whether this plugin provides import functionality. */
     function provide_import() {
-      return false;
+        return false;
     }
 
+    /** @return boolean whether this plugin provides export functionality. */
     function provide_export() {
-      return false;
+        return false;
+    }
+
+    /** The string mime-type of the files that this plugin reads or writes. */
+    function mime_type() {
+        return mimeinfo('type', $this->export_file_extension());
+    }
+
+    /**
+     * @return string the file extension (including .) that is normally used for
+     * files handled by this plugin.
+     */
+    function export_file_extension() {
+        return '.txt';
     }
 
 // Accessor methods
@@ -593,15 +608,6 @@ class qformat_default {
             }
         }
         return false;
-    }
-
-    /**
-     * Return the files extension appropriate for this type
-     * override if you don't want .txt
-     * @return string file extension
-     */
-    function export_file_extension() {
-        return ".txt";
     }
 
     /**

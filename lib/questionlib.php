@@ -3331,7 +3331,7 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
         //echo $content;
         //echo '</textarea>';
         //die;
-        send_file($content, $filename, 0, 0, true, true);
+        send_file($content, $filename, 0, 0, true, true, $qformat->mime_type());
     }
 
     $attemptid = (int)array_shift($args);

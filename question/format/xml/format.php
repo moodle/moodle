@@ -45,6 +45,10 @@ class qformat_xml extends qformat_default {
         return true;
     }
 
+    function mime_type() {
+        return 'application/xml';
+    }
+
     // IMPORT FUNCTIONS START HERE
 
     /**
@@ -847,11 +851,8 @@ class qformat_xml extends qformat_default {
     // EXPORT FUNCTIONS START HERE
 
     function export_file_extension() {
-    // override default type so extension is .xml
-
-        return ".xml";
+        return '.xml';
     }
-
 
     /**
      * Turn the internal question code into a human readable form
@@ -974,21 +975,6 @@ class qformat_xml extends qformat_default {
         return $xml;
     }
 
-    function xmltidy( $content ) {
-        // can only do this if tidy is installed
-        if (extension_loaded('tidy')) {
-            $config = array( 'input-xml'=>true, 'output-xml'=>true, 'indent'=>true, 'wrap'=>0 );
-            $tidy = new tidy;
-            $tidy->parseString($content, $config, 'utf8');
-            $tidy->cleanRepair();
-            return $tidy->value;
-        }
-        else {
-            return $content;
-        }
-    }
-
-
     function presave_process( $content ) {
     // override method to allow us to add xml headers and footers
 
@@ -997,10 +983,6 @@ class qformat_xml extends qformat_default {
                        "<quiz>\n" .
                        $content . "\n" .
                        "</quiz>";
-
-        // make the xml look nice
-        $content = $this->xmltidy( $content );
-
         return $content;
     }
 
