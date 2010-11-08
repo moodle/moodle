@@ -58,7 +58,7 @@ class message_output_jabber extends message_output {
             $jabbermessage .= "\n".get_string('view').': '.$eventdata->contexturl;
         }
 
-        $jabbermessage .= "\n".get_string('noreply','message');
+        $jabbermessage .= "\n(".get_string('noreply','message').')';
 
         $conn = new XMPPHP_XMPP($CFG->jabberhost,$CFG->jabberport,$CFG->jabberusername,$CFG->jabberpassword,'moodle',$CFG->jabberserver);
 
