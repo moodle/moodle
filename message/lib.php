@@ -1333,7 +1333,7 @@ function message_shorten_message($message, $minlength=0) {
  */
 function message_get_fragment($message, $keywords) {
 
-    $fullsize = 120;
+    $fullsize = 160;
     $halfsize = (int)($fullsize/2);
 
     $message = strip_tags($message);
