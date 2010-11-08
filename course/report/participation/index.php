@@ -186,7 +186,7 @@
                 FROM (SELECT * FROM {$CFG->prefix}role_assignments WHERE contextid $relatedcontexts AND roleid = $roleid ) ra
                 JOIN {$CFG->prefix}user u ON u.id = ra.userid
                 LEFT JOIN (
-                    SELECT userid, COUNT(action) actioncount FROM {$CFG->prefix}log WHERE cmid = $instanceid AND time > $timefrom AND $actionsql GROUP BY userid
+                    SELECT userid, COUNT(action) AS actioncount FROM {$CFG->prefix}log WHERE cmid = $instanceid AND time > $timefrom AND $actionsql GROUP BY userid
                 ) l ON (l.userid = ra.userid)";
 
 
