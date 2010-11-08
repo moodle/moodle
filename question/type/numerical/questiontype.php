@@ -192,12 +192,10 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $answer->feedbackformat = $question->feedback[$key]['format'];
             if (!empty($question->feedback[$key]['itemid'])) {
                 $draftid = $question->feedback[$key]['itemid'];
-            }else {
+            } else {
                 $draftid = '' ;
             }
-            if ($question->feedback[$key]['files']) {
-                $feedbackfiles = $question->feedback[$key]['files'];
-            }
+            $feedbackfiles = $question->feedback[$key]['files'];
 
             if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                 $feedbacktext = file_save_draft_area_files($draftid, $context->id, 'question', 'answerfeedback', $oldanswer->id, self::$fileoptions, $feedbacktext);
@@ -207,12 +205,12 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             } else { // This is a completely new answer
                 $answer->feedback = $feedbacktext;
                 $answer->id = $DB->insert_record("question_answers", $answer);
-                if (!isset($draftid) && isset($feedbackfiles)) {
+                if ($draftid) {
+                    $feedbacktext = file_save_draft_area_files($draftid, $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, $feedbacktext);
+                } else {
                     foreach ($feedbackfiles as $file) {
                         $this->import_file($question->context, 'question', 'answerfeedback', $answer->id, $file);
                     }
-                } else {
-                    $feedbacktext = file_save_draft_area_files($draftid, $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, $feedbacktext);
                 }
                 $DB->set_field('question_answers', 'feedback', $feedbacktext, array('id'=>$answer->id));
             }

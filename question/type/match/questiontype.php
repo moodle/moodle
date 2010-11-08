@@ -54,9 +54,7 @@ class question_match_qtype extends default_questiontype {
             if (!empty($questiontext['itemid'])) {
                 $itemid = $questiontext['itemid'];
             }
-            if (!empty($questiontext['files'])) {
-                $files = $questiontext['files'];
-            }
+            $files = $questiontext['files'];
             $format = $questiontext['format'];
             $questiontext = trim($questiontext['text']);
             $answertext = trim($question->subanswers[$key]);
