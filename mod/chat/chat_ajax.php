@@ -14,14 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-//TODO: use standard CLI_SCRIPT support here (skodak)
-
 define('AJAX_SCRIPT', true);
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 
-$action = optional_param('action', '', PARAM_ALPHANUM);
+$action       = optional_param('action', '', PARAM_ALPHANUM);
 $beep_id      = optional_param('beep', '', PARAM_RAW);
 $chat_sid     = required_param('chat_sid', PARAM_ALPHANUM);
 $theme        = required_param('theme', PARAM_ALPHANUM);
@@ -31,19 +29,20 @@ $chat_lastrow  = optional_param('chat_lastrow', 1, PARAM_INT);
 
 
 if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
-    chat_print_error('ERROR', get_string('notlogged','chat'));
+    throw new moodle_exception('notlogged', 'chat');
 }
 if (!$chat = $DB->get_record('chat', array('id'=>$chatuser->chatid))) {
-    chat_print_error('ERROR', get_string('invalidcoursemodule', 'error'));
+    throw new moodle_exception('invaliduserid', 'error');
 }
 if (!$course = $DB->get_record('course', array('id'=>$chat->course))) {
-    chat_print_error('ERROR', get_string('invaliduserid', 'error'));
+    throw new moodle_exception('invalidcourseid', 'error');
 }
 if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-    chat_print_error('ERROR', get_string('invalidcoursemodule', 'error'));
+    throw new moodle_exception('invalidcoursemodule', 'error');
 }
+
 if (!isloggedin()) {
-    chat_print_error('ERROR', get_string('notlogged','chat'));
+    throw new moodle_exception('notlogged', 'chat');
 }
 
 // setup $PAGE so that format_text will work properly
@@ -56,7 +55,6 @@ header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 header('Cache-Control: no-cache, must-revalidate');
 header('Pragma: no-cache');
 header('Content-Type: text/html; charset=utf-8');
-header('X-Powered-By: MOODLE-Chat-V2');
 
 switch ($action) {
 case 'init':
@@ -65,6 +63,7 @@ case 'init':
     $response['users'] = $users;
     echo json_encode($response);
     break;
+
 case 'chat':
     session_get_instance()->write_close();
     chat_delete_old_users();
@@ -94,6 +93,7 @@ case 'chat':
         ob_end_flush();
     }
     break;
+
 case 'update':
     if ((time() - $chat_lasttime) > $CFG->chat_old_ping) {
         chat_delete_old_users();
@@ -162,6 +162,7 @@ case 'update':
 
     ob_end_flush();
     break;
+
 default:
     break;
 }

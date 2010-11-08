@@ -211,10 +211,9 @@ M.mod_chat_ajax.init = function(Y, cfg) {
                 return;
             }
             if (data.error) {
-                if (data.error.level == 'ERROR'){
-                    clearInterval(this.interval);
-                    window.location = this.cfg.home;
-                }
+                clearInterval(this.interval);
+                alert(data.error);
+                window.location = this.cfg.home;
             }
             this.cfg.chat_lasttime = data.lasttime;
             this.cfg.chat_lastrow  = data.lastrow;

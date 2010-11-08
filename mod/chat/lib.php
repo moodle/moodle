@@ -1294,3 +1294,13 @@ function chat_extend_settings_navigation(settings_navigation $settings, navigati
         }
     }
 }
+
+/**
+ * user logout event handler
+ *
+ * @param object $user full $USER object
+ */
+function chat_user_logout($user) {
+    global $DB;
+    $DB->delete_records('chat_users', array('userid'=>$user->id));
+}

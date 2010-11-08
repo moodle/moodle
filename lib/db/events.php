@@ -59,6 +59,7 @@ $handlers = array(
 user_created - object user table record
 user_updated - object user table record
 user_deleted - object user table record
+user_logout - full $USER object
 
 ==== course related events ====
 

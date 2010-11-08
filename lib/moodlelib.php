@@ -2628,6 +2628,8 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
 function require_logout() {
     global $USER;
 
+    $params = $USER;
+
     if (isloggedin()) {
         add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
 
@@ -2638,7 +2640,9 @@ function require_logout() {
         }
     }
 
+    events_trigger('user_logout', $params);
     session_get_instance()->terminate_current();
+    unset($params);
 }
 
 /**
