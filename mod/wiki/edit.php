@@ -45,7 +45,8 @@ $version = optional_param('version', -1, PARAM_INT);
 $attachments = optional_param('attachments', 0, PARAM_INT);
 $deleteuploads = optional_param('deleteuploads', 0, PARAM_RAW);
 
-if (is_array($newcontent)) {
+$newconent = '';
+if (!empty($newcontent) && is_array($newcontent)) {
     $newcontent = $newcontent['text'];
 }
 

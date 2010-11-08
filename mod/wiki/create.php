@@ -94,15 +94,13 @@ case 'create':
     $wikipage->create_page($title);
     break;
 case 'new':
-    if (!empty($title)) {
-        // create page from interlink with pagetitle
-        $wikipage->print_header();
-        $wikipage->print_content($title);
+    if ((int)$wiki->forceformat == 1 && !empty($title)) {
+        $wikipage->create_page($title);
     } else {
         // create link from moodle navigation block without pagetitle
         $wikipage->print_header();
         // new page without page title
-        $wikipage->print_content();
+        $wikipage->print_content($title);
     }
     $wikipage->print_footer();
     break;

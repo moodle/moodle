@@ -942,14 +942,18 @@ class page_wiki_create extends page_wiki {
         $this->mform->display();
     }
 
-    function create_page() {
+    function create_page($pagetitle) {
         global $USER, $CFG, $PAGE;
         $data = $this->mform->get_data();
         if (empty($this->subwiki)) {
             $swid = wiki_add_subwiki($PAGE->activityrecord->id, $this->gid, $this->uid);
             $this->subwiki = wiki_get_subwiki($swid);
         }
-        $id = wiki_create_page($this->subwiki->id, $data->pagetitle, $data->pageformat, $USER->id);
+        if ($data) {
+            $id = wiki_create_page($this->subwiki->id, $data->pagetitle, $data->pageformat, $USER->id);
+        } else {
+            $id = wiki_create_page($this->subwiki->id, $pagetitle, $PAGE->activityrecord->defaultformat, $USER->id);
+        }
         redirect($CFG->wwwroot . '/mod/wiki/edit.php?pageid=' . $id);
     }
 }
