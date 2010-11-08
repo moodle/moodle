@@ -27,6 +27,9 @@ $chat_message = optional_param('chat_message', '', PARAM_RAW);
 $chat_lasttime = optional_param('chat_lasttime', 0, PARAM_INT);
 $chat_lastrow  = optional_param('chat_lastrow', 1, PARAM_INT);
 
+if (!confirm_sesskey()) {
+    throw new moodle_exception('invalidsesskey', 'error');
+}
 
 if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
     throw new moodle_exception('notlogged', 'chat');

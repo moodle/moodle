@@ -21,7 +21,7 @@ M.mod_chat_ajax.init = function(Y, cfg) {
     var gui_ajax = {
 
         // Properties
-        api : M.cfg.wwwroot+'/mod/chat/chat_ajax.php',  // The path to the ajax callback script
+        api : M.cfg.wwwroot+'/mod/chat/chat_ajax.php?sesskey='+M.cfg.sesskey,  // The path to the ajax callback script
         cfg : {},                                       // A configuration variable
         interval : null,                                // The interval object for refreshes
         layout : null,                                  // A reference to the layout used in this module
@@ -155,8 +155,9 @@ M.mod_chat_ajax.init = function(Y, cfg) {
             if (beep) {
                 data.beep = beep
             }
+            data.action = 'chat';
 
-            Y.io(this.api+'?action=chat', {
+            Y.io(this.api, {
                 method : 'POST',
                 data : build_querystring(data),
                 on : {
@@ -189,9 +190,10 @@ M.mod_chat_ajax.init = function(Y, cfg) {
 
         update_messages : function() {
             this.cfg.req_count++;
-            Y.io(this.api+'?action=update', {
+            Y.io(this.api, {
                 method : 'POST',
                 data : build_querystring({
+                    action: 'update',
                     chat_lastrow : this.cfg.chat_lastrow || false,
                     chat_lasttime : this.cfg.chat_lasttime,
                     chat_sid : this.cfg.sid,
