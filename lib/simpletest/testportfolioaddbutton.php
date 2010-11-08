@@ -37,9 +37,28 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir . '/portfoliolib.php');
 
-class portfoliolibaddbutton_test extends FakeDBUnitTestCase {
+class portfoliolibaddbutton_test extends UnitTestCaseUsingDatabase {
 
     public static $includecoverage = array('lib/portfoliolib.php');
+
+    protected $testtables = array(
+                'lib' => array(
+                    'portfolio_instance', 'portfolio_instance_user'));
+    
+    public function setUp() {
+        parent::setUp();
+
+        $this->switch_to_test_db(); // Switch to test DB for all the execution
+
+        foreach ($this->testtables as $dir => $tables) {
+            $this->create_test_tables($tables, $dir); // Create tables
+        }
+
+    }
+
+    public function tearDown() {
+        parent::tearDown(); // In charge of droppng all the test tables
+    }
 
     function test_set_formats() {
 
@@ -47,7 +66,6 @@ class portfoliolibaddbutton_test extends FakeDBUnitTestCase {
         $button->set_callback_options('assignment_portfolio_caller', array('id' => 6), '/mod/assignment/locallib.php');
         $formats = array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_IMAGE);
         $button->set_formats($formats);
-
         $this->assertEqual(2, count($button->get_formats()));
     }
 }
