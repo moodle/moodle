@@ -1,5 +1,5 @@
 .block .content {background-color:[[setting:backgroundcolor]];}
-#page-content #region-main-box {left:[[setting:regionwidthplus10]];}
+#page-content #region-main-box {left:[[setting:regionwidth]];}
 #page-content #region-post-box {margin-left:-[[setting:regionwidthdouble]];}
 #page-content #region-pre {width:[[setting:regionwidth]];left:[[setting:regionwidth]];}
 #page-content #region-post {width:[[setting:regionwidth]];}
