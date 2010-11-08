@@ -1855,7 +1855,9 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                 CASE WHEN subpagepattern IS NULL THEN ''
                     ELSE subpagepattern END,
                 0, defaultregion, defaultweight
-                FROM {block_instances} WHERE visible = 0 AND pagetypepattern <> 'admin-*'");
+                FROM {block_instances} WHERE visible = 0 AND pagetypepattern <> 'admin-*' AND pagetypepattern IS NOT NULL");
+        // note: MDL-25031 all block instances should have a pagetype pattern, NULL is not allowed,
+        //       if we manage to find out how NULLs get there we should fix them before this step
 
     /// Main savepoint reached
         upgrade_main_savepoint(true, 2009050618);
