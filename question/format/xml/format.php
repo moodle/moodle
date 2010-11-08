@@ -508,9 +508,8 @@ class qformat_xml extends qformat_default {
             $qo->instructions = array();
             $qo->instructions['text'] = $this->getpath($instructions,
                     array('0', '#', 'text', '0', '#'), '', true);
-            $qo->instructions['format'] = $this->trans_format($this->getpath(
+            $qo->instructions['format'] = $this->trans_format($this->getpath($instructions,
                     array('0', '@', 'format'), 'moodle_auto_format'));
-            $files = $this->getpath($question, array('#', 'questiontext', 0, '#','file'), array(), false);
             $files = $this->getpath($instructions, array('0', '#', 'file'), array());
             $qo->instructionsfiles = array();
             foreach ($files as $file) {
