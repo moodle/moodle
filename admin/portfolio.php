@@ -11,7 +11,7 @@ $sure          = optional_param('sure', '', PARAM_ALPHA);
 
 $display = true; // fall through to normal display
 
-$pagename = 'portfoliocontroller';
+$pagename = 'manageportfolios';
 
 if ($action == 'edit') {
     $pagename = 'portfoliosettings' . $portfolio;
@@ -37,11 +37,20 @@ admin_externalpage_setup($pagename);
 
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
-$baseurl    = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageportfolios";
+$baseurl    = "$CFG->wwwroot/$CFG->admin/portfolio.php";
 $sesskeyurl = "$CFG->wwwroot/$CFG->admin/portfolio.php?sesskey=" . sesskey();
 $configstr  = get_string('manageportfolios', 'portfolio');
 
 $return = true; // direct back to the main page
+
+/**
+ * Helper function that generates a moodle_url object
+ * relevant to the portfolio
+ */
+function portfolio_action_url($portfolio) {
+    global $baseurl;
+    return new moodle_url($baseurl, array('sesskey'=>sesskey(), 'pf'=>$portfolio));
+}
 
 if (($action == 'edit') || ($action == 'new')) {
     if (($action == 'edit')) {
@@ -126,11 +135,113 @@ if (($action == 'edit') || ($action == 'new')) {
         echo $OUTPUT->confirm(get_string('sure', 'portfolio', $instance->get('name')), $sesskeyurl . '&pf='.$portfolio.'&action=delete&sure=yes', $baseurl);
         $return = false;
     }
+} else {
+    // If page is loaded directly
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('manageportfolios', 'portfolio'));
+
+    // Get strings that are used
+    $strshow = get_string('on', 'portfolio');
+    $strhide = get_string('off', 'portfolio');
+    $strdelete = get_string('disabledinstance', 'portfolio');
+    $strsettings = get_string('settings');
+
+    $actionchoicesforexisting = array(
+        'show' => $strshow,
+        'hide' => $strhide,
+        'delete' => $strdelete
+    );
+
+    $actionchoicesfornew = array(
+        'newon' => $strshow,
+        'newoff' => $strhide,
+        'delete' => $strdelete
+    );
+
+    $output = $OUTPUT->box_start('generalbox');
+
+    $plugins = get_plugin_list('portfolio');
+    $plugins = array_keys($plugins);
+    $instances = portfolio_instances(false, false);
+    $usedplugins = array();
+
+    // to avoid notifications being sent out while admin is editing the page
+    define('ADMIN_EDITING_PORTFOLIO', true);
+
+    $insane = portfolio_plugin_sanity_check($plugins);
+    $insaneinstances = portfolio_instance_sanity_check($instances);
+
+    $table = new html_table();
+    $table->head = array(get_string('plugin', 'portfolio'), '', '');
+    $table->data = array();
+
+    foreach ($instances as $i) {
+        $settings = '<a href="' . $sesskeyurl . '&amp;action=edit&amp;pf=' . $i->get('id') . '">' . $strsettings .'</a>';
+        // Set some commonly used variables
+        $pluginid = $i->get('id');
+        $plugin = $i->get('plugin');
+        $pluginname = $i->get('name');
+
+        // Check if the instance is misconfigured
+        if (array_key_exists($plugin, $insane) || array_key_exists($pluginid, $insaneinstances)) {
+            if (!empty($insane[$plugin])) {
+                $information = $insane[$plugin];
+            } else if (!empty($insaneinstances[$pluginid])) {
+                $information = $insaneinstances[$pluginid];
+            }
+            $table->data[] = array($pluginname, $strdelete  . " " . $OUTPUT->help_icon($information, 'portfolio_' .  $plugin), $settings);
+        } else {
+            if ($i->get('visible')) {
+                $currentaction = 'show';
+            } else {
+                $currentaction = 'hide';
+            }
+            $select = new single_select(portfolio_action_url($pluginid, 'pf'), 'action', $actionchoicesforexisting, $currentaction, null, 'applyto' . $pluginid);
+            $table->data[] = array($pluginname, $OUTPUT->render($select), $settings);
+        }
+        if (!in_array($plugin, $usedplugins)) {
+            $usedplugins[] = $plugin;
+        }
+    }
+
+    // Create insane plugin array
+    $insaneplugins = array();
+    if (!empty($plugins)) {
+        foreach ($plugins as $p) {
+            // Check if it can not have multiple instances and has already been used
+            if (!portfolio_static_function($p, 'allows_multiple_instances') && in_array($p, $usedplugins)) {
+                continue;
+            }
+
+            // Check if it is misconfigured - if so store in array then display later
+            if (array_key_exists($p, $insane)) {
+                $insaneplugins[] = $p;
+            } else {
+                $select = new single_select(portfolio_action_url($p, 'pf'), 'action', $actionchoicesfornew, 'delete', null, 'applyto' . $p);
+                $table->data[] = array(portfolio_static_function($p, 'get_name'), $OUTPUT->render($select), '');
+            }
+        }
+    }
+
+    // Loop through all the insane plugins
+    if (!empty($insaneplugins)) {
+        foreach ($insaneplugins as $p) {
+            $table->data[] = array(portfolio_static_function($p, 'get_name'), $strdelete . " " . $OUTPUT->help_icon($insane[$p], 'portfolio_' .  $p), '');
+        }
+    }
+
+    $output .= html_writer::table($table);
+
+    $output .= $OUTPUT->box_end();
+
+    echo $output;
+    $return = false;
 }
 
-if (!empty($return)) {
-    // normal display. fall through to here (don't call exit) if you want this to run
+if ($return) {
+    // Redirect to base
     redirect($baseurl);
 }
+
 echo $OUTPUT->footer();
 

@@ -10,7 +10,7 @@ $sure          = optional_param('sure', '', PARAM_ALPHA);
 
 $display = true; // fall through to normal display
 
-$pagename = 'repositorycontroller';
+$pagename = 'managerepositories';
 
 if ($action == 'edit') {
     $pagename = 'repositorysettings' . $repository;
@@ -36,11 +36,20 @@ require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 admin_externalpage_setup($pagename);
 
 $sesskeyurl = $CFG->wwwroot.'/'.$CFG->admin.'/repository.php?sesskey=' . sesskey();
-$baseurl    = $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=managerepositories';
+$baseurl    = $CFG->wwwroot.'/'.$CFG->admin.'/repository.php';
 
 $configstr  = get_string('manage', 'repository');
 
 $return = true;
+
+/**
+ * Helper function that generates a moodle_url object
+ * relevant to the repository
+ */
+function repository_action_url($repository) {
+    global $baseurl;
+    return new moodle_url($baseurl, array('sesskey'=>sesskey(), 'repos'=>$repository));
+}
 
 if (($action == 'edit') || ($action == 'new')) {
     $pluginname = '';
@@ -193,9 +202,158 @@ if (($action == 'edit') || ($action == 'new')) {
 } else if ($action == 'movedown') {
     $repositorytype = repository::get_type_by_typename($repository);
     $repositorytype->move_order('down');
+} else {
+    // If page is loaded directly
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('manage', 'repository'));
+
+    // Get strings that are used
+    $strshow = get_string('on', 'repository');
+    $strhide = get_string('off', 'repository');
+    $strdelete = get_string('disabled', 'repository');
+
+    $actionchoicesforexisting = array(
+        'show' => $strshow,
+        'hide' => $strhide,
+        'delete' => $strdelete
+    );
+
+    $actionchoicesfornew = array(
+        'newon' => $strshow,
+        'newoff' => $strhide,
+        'delete' => $strdelete
+    );
+
+    $output = '';
+    $output .= $OUTPUT->box_start('generalbox');
+
+    // Set strings that are used multiple times
+    $settingsstr = get_string('settings');
+    $disablestr = get_string('disable');
+
+    // Table to list plug-ins
+    $table = new html_table();
+    $table->head = array(get_string('name'), get_string('isactive', 'repository'), get_string('order'), $settingsstr);
+    $table->align = array('left', 'center', 'center', 'center', 'center');
+    $table->data = array();
+
+    // Get list of used plug-ins
+    $instances = repository::get_types();
+    if (!empty($instances)) {
+        // Array to store plugins being used
+        $alreadyplugins = array();
+        $totalinstances = count($instances);
+        $updowncount = 1;
+        foreach ($instances as $i) {
+            $settings = '';
+            $typename = $i->get_typename();
+            // Display edit link only if you can config the type or if it has multiple instances (e.g. has instance config)
+            $typeoptionnames = repository::static_function($typename, 'get_type_option_names');
+            $instanceoptionnames = repository::static_function($typename, 'get_instance_option_names');
+
+            if (!empty($typeoptionnames) || !empty($instanceoptionnames)) {
+                // Calculate number of instances in order to display them for the Moodle administrator
+                if (!empty($instanceoptionnames)) {
+                    $params = array();
+                    $params['context'] = array(get_system_context());
+                    $params['onlyvisible'] = false;
+                    $params['type'] = $typename;
+                    $admininstancenumber = count(repository::static_function($typename, 'get_instances', $params));
+                    // site instances
+                    $admininstancenumbertext = get_string('instancesforsite', 'repository', $admininstancenumber);
+                    $params['context'] = array();
+                    $instances = repository::static_function($typename, 'get_instances', $params);
+                    $courseinstances = array();
+                    $userinstances = array();
+
+                    foreach ($instances as $instance) {
+                        if ($instance->context->contextlevel == CONTEXT_COURSE) {
+                            $courseinstances[] = $instance;
+                        } else if ($instance->context->contextlevel == CONTEXT_USER) {
+                            $userinstances[] = $instance;
+                        }
+                    }
+                    // course instances
+                    $instancenumber = count($courseinstances);
+                    $courseinstancenumbertext = get_string('instancesforcourses', 'repository', $instancenumber);
+
+                    // user private instances
+                    $instancenumber =  count($userinstances);
+                    $userinstancenumbertext = get_string('instancesforusers', 'repository', $instancenumber);
+                } else {
+                    $admininstancenumbertext = "";
+                    $courseinstancenumbertext = "";
+                    $userinstancenumbertext = "";
+                }
+
+                $settings .= '<a href="' . $sesskeyurl . '&amp;action=edit&amp;repos=' . $typename . '">' . $settingsstr .'</a>';
+
+                $settings .= $OUTPUT->container_start('mdl-left');
+                $settings .= '<br/>';
+                $settings .= $admininstancenumbertext;
+                $settings .= '<br/>';
+                $settings .= $courseinstancenumbertext;
+                $settings .= '<br/>';
+                $settings .= $userinstancenumbertext;
+                $settings .= $OUTPUT->container_end();
+            }
+            // Get the current visibility
+            if ($i->get_visible()) {
+                $currentaction = 'show';
+            } else {
+                $currentaction = 'hide';
+            }
+
+            $select = new single_select(repository_action_url($typename, 'repos'), 'action', $actionchoicesforexisting, $currentaction, null, 'applyto' . basename($typename));
+
+            // Display up/down link
+            $updown = '';
+            $spacer = $OUTPUT->spacer(array('height'=>15, 'width'=>15)); // should be done with CSS instead
+
+            if ($updowncount > 1) {
+                $updown .= "<a href=\"$sesskeyurl&amp;action=moveup&amp;repos=".$typename."\">";
+                $updown .= "<img src=\"" . $OUTPUT->pix_url('t/up') . "\" alt=\"up\" /></a>&nbsp;";
+            }
+            else {
+                $updown .= $spacer;
+            }
+            if ($updowncount < $totalinstances) {
+                $updown .= "<a href=\"$sesskeyurl&amp;action=movedown&amp;repos=".$typename."\">";
+                $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"down\" /></a>";
+            }
+            else {
+                $updown .= $spacer;
+            }
+
+            $updowncount++;
+
+            $table->data[] = array($i->get_readablename(), $OUTPUT->render($select), $updown, $settings);
+
+            if (!in_array($typename, $alreadyplugins)) {
+                $alreadyplugins[] = $typename;
+            }
+        }
+    }
+
+    // Get all the plugins that exist on disk
+    $plugins = get_plugin_list('repository');
+    if (!empty($plugins)) {
+        foreach ($plugins as $plugin => $dir) {
+            // Check that it has not already been listed
+            if (!in_array($plugin, $alreadyplugins)) {
+                $select = new single_select(repository_action_url($plugin, 'repos'), 'action', $actionchoicesfornew, 'delete', null, 'applyto' . basename($plugin));
+                $table->data[] = array(get_string('pluginname', 'repository_'.$plugin), $OUTPUT->render($select), '', '');
+            }
+        }
+    }
+
+    $output .= html_writer::table($table);
+    $output .= $OUTPUT->box_end();
+    print $output;
+    $return = false;
 }
 
-if (!empty($return)) {
+if ($return) {
     redirect($baseurl);
 }
 echo $OUTPUT->footer();

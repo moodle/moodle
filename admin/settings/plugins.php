@@ -216,11 +216,13 @@ if ($hassiteconfig) {
 
     $ADMIN->add('modules', new admin_category('portfoliosettings', $catname, empty($CFG->enableportfolios)));
 
-    // jump through hoops to do what we want
-    $temp = new admin_settingpage('manageportfolios', get_string('manageportfolios', 'portfolio'));
-    $temp->add(new admin_setting_heading('manageportfolios', get_string('activeportfolios', 'portfolio'), ''));
-    $temp->add(new admin_setting_manageportfolio());
-    $temp->add(new admin_setting_heading('manageportfolioscommon', get_string('commonsettings', 'admin'), get_string('commonsettingsdesc', 'portfolio')));
+    // Add manage page (with table)
+    $temp = new admin_page_manageportfolios();
+    $ADMIN->add('portfoliosettings', $temp);
+
+    // Add common settings page
+    $temp = new admin_settingpage('manageportfolioscommon', get_string('commonportfoliosettings', 'portfolio'));
+    $temp->add(new admin_setting_heading('manageportfolioscommon', '', get_string('commonsettingsdesc', 'portfolio')));
     $fileinfo = portfolio_filesize_info(); // make sure this is defined in one place since its used inside portfolio too to detect insane settings
     $fileoptions = $fileinfo['options'];
     $temp->add(new admin_setting_configselect(
@@ -273,10 +275,13 @@ if ($hassiteconfig) {
     $managerepo = get_string('manage', 'repository');
     $url = $CFG->wwwroot.'/'.$CFG->admin.'/repository.php';
     $ADMIN->add('modules', new admin_category('repositorysettings', $catname));
-    $temp = new admin_settingpage('managerepositories', $managerepo);
-    $temp->add(new admin_setting_heading('managerepositories', get_string('activerepository', 'repository'), ''));
-    $temp->add(new admin_setting_managerepository());
-    $temp->add(new admin_setting_heading('managerepositoriescommonheading', get_string('commonsettings', 'admin'), ''));
+
+    // Add main page (with table)
+    $temp = new admin_page_managerepositories();
+    $ADMIN->add('repositorysettings', $temp);
+
+    // Add common settings page
+    $temp = new admin_settingpage('managerepositoriescommon', get_string('commonrepositorysettings', 'repository'));
     $temp->add(new admin_setting_configtext('repositorycacheexpire', get_string('cacheexpire', 'repository'), get_string('configcacheexpire', 'repository'), 120));
     $temp->add(new admin_setting_configcheckbox('repositoryallowexternallinks', get_string('allowexternallinks', 'repository'), get_string('configallowexternallinks', 'repository'), 1));
     $temp->add(new admin_setting_configcheckbox('legacyfilesinnewcourses', get_string('legacyfilesinnewcourses', 'admin'), get_string('legacyfilesinnewcourses_help', 'admin'), 0));

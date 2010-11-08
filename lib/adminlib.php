@@ -4815,6 +4815,108 @@ class admin_page_manageqtypes extends admin_externalpage {
     }
 }
 
+class admin_page_manageportfolios extends admin_externalpage {
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        global $CFG;
+        parent::__construct('manageportfolios', get_string('manageportfolios', 'portfolio'),
+                "$CFG->wwwroot/$CFG->admin/portfolio.php");
+    }
+
+    /**
+     * Searches page for the specified string.
+     * @param string $query The string to search for
+     * @return bool True if it is found on this page
+     */
+    public function search($query) {
+        global $CFG;
+        if ($result = parent::search($query)) {
+            return $result;
+        }
+
+        $found = false;
+        $textlib = textlib_get_instance();
+        $portfolios = get_plugin_list('portfolio');
+        foreach ($portfolios as $p => $dir) {
+            if (strpos($p, $query) !== false) {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            foreach (portfolio_instances(false, false) as $instance) {
+                $title = $instance->get('name');
+                if (strpos($textlib->strtolower($title), $query) !== false) {
+                    $found = true;
+                    break;
+                }
+            }
+        }
+
+        if ($found) {
+            $result = new stdClass();
+            $result->page     = $this;
+            $result->settings = array();
+            return array($this->name => $result);
+        } else {
+            return array();
+        }
+    }
+}
+
+class admin_page_managerepositories extends admin_externalpage {
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        global $CFG;
+        parent::__construct('managerepositories', get_string('manage',
+                'repository'), "$CFG->wwwroot/$CFG->admin/repository.php");
+    }
+
+    /**
+     * Searches page for the specified string.
+     * @param string $query The string to search for
+     * @return bool True if it is found on this page
+     */
+    public function search($query) {
+        global $CFG;
+        if ($result = parent::search($query)) {
+            return $result;
+        }
+
+        $found = false;
+        $textlib = textlib_get_instance();
+        $repositories= get_plugin_list('repository');
+        foreach ($repositories as $p => $dir) {
+            if (strpos($p, $query) !== false) {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            foreach (repository::get_types() as $instance) {
+                $title = $instance->get_typename();
+                if (strpos($textlib->strtolower($title), $query) !== false) {
+                    $found = true;
+                    break;
+                }
+            }
+        }
+
+        if ($found) {
+            $result = new stdClass();
+            $result->page     = $this;
+            $result->settings = array();
+            return array($this->name => $result);
+        } else {
+            return array();
+        }
+    }
+}
+
 /**
  * Special class for authentication administration.
  *
@@ -5326,192 +5428,6 @@ class admin_page_managefilters extends admin_externalpage {
             return array();
         }
     }
-}
-
-/**
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class admin_setting_manageportfolio extends admin_setting {
-    private $baseurl;
-
-    public function __construct() {
-        global $CFG;
-        $this->nosave = true;
-        parent::__construct('manageportfolio', get_string('manageportfolios', 'portfolio'), '', '');
-        $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/portfolio.php?sesskey=' . sesskey();
-    }
-
-    /**
-     * Always returns true, does nothing
-     *
-     * @return true
-     */
-    public function get_setting() {
-        return true;
-    }
-
-    /**
-     * Always returns true, does nothing
-     *
-     * @return true
-     */
-    public function get_defaultsetting() {
-        return true;
-    }
-
-    /**
-     * Always returns '', does not write anything
-     *
-     * @return string Always returns ''
-     */
-    public function write_setting($data) {
-        return '';
-    }
-
-    /**
-     * Helper function that generates a moodle_url object
-     * relevant to the portfolio
-     */
-
-    function portfolio_action_url($portfolio) {
-        return new moodle_url($this->baseurl, array('sesskey'=>sesskey(), 'pf'=>$portfolio));
-    }
-
-    /**
-     * Searches the portfolio types for the specified type(string)
-     *
-     * @param string $query The string to search for
-     * @return bool true for found or related, false for not
-     */
-    public function is_related($query) {
-        if (parent::is_related($query)) {
-            return true;
-        }
-
-        $textlib = textlib_get_instance();
-        $portfolios = get_plugin_list('portfolio');
-        foreach ($portfolios as $p => $dir) {
-            if (strpos($p, $query) !== false) {
-                return true;
-            }
-        }
-        foreach (portfolio_instances(false, false) as $instance) {
-            $title = $instance->get('name');
-            if (strpos($textlib->strtolower($title), $query) !== false) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Builds XHTML to display the control
-     *
-     * @param string $data Unused
-     * @param string $query
-     * @return string XHTML to display the control
-     */
-    public function output_html($data, $query='') {
-        global $CFG, $OUTPUT;
-
-        // Get strings that are used
-        $strshow = get_string('on', 'portfolio');
-        $strhide = get_string('off', 'portfolio');
-        $strdelete = get_string('disabledinstance', 'portfolio');
-        $strsettings = get_string('settings');
-
-        $actionchoicesforexisting = array(
-            'show' => $strshow,
-            'hide' => $strhide,
-            'delete' => $strdelete
-        );
-
-        $actionchoicesfornew = array(
-            'newon' => $strshow,
-            'newoff' => $strhide,
-            'delete' => $strdelete
-        );
-
-        $output = $OUTPUT->box_start('generalbox');
-
-        $plugins = get_plugin_list('portfolio');
-        $plugins = array_keys($plugins);
-        $instances = portfolio_instances(false, false);
-        $usedplugins = array();
-
-        // to avoid notifications being sent out while admin is editing the page
-        define('ADMIN_EDITING_PORTFOLIO', true);
-
-        $insane = portfolio_plugin_sanity_check($plugins);
-        $insaneinstances = portfolio_instance_sanity_check($instances);
-
-        $table = new html_table();
-        $table->head = array(get_string('plugin', 'portfolio'), '', '');
-        $table->data = array();
-
-        foreach ($instances as $i) {
-            $settings = '<a href="' . $this->baseurl . '&amp;action=edit&amp;pf=' . $i->get('id') . '">' . $strsettings .'</a>';
-            // Set some commonly used variables
-            $pluginid = $i->get('id');
-            $plugin = $i->get('plugin');
-            $pluginname = $i->get('name');
-
-            // Check if the instance is misconfigured
-            if (array_key_exists($plugin, $insane) || array_key_exists($pluginid, $insaneinstances)) {
-                if (!empty($insane[$plugin])) {
-                    $information = $insane[$plugin];
-                } else if (!empty($insaneinstances[$pluginid])) {
-                    $information = $insaneinstances[$pluginid];
-                }
-                $table->data[] = array($pluginname, $strdelete  . " " . $OUTPUT->help_icon($information, 'portfolio_' .  $plugin), $settings);
-            } else {
-                if ($i->get('visible')) {
-                    $currentaction = 'show';
-                } else {
-                    $currentaction = 'hide';
-                }
-                $select = new single_select($this->portfolio_action_url($pluginid, 'pf'), 'action', $actionchoicesforexisting, $currentaction, null, 'applyto' . $pluginid);
-                $table->data[] = array($pluginname, $OUTPUT->render($select), $settings);
-            }
-            if (!in_array($plugin, $usedplugins)) {
-                $usedplugins[] = $plugin;
-            }
-        }
-
-        // Create insane plugin array
-        $insaneplugins = array();
-        if (!empty($plugins)) {
-            foreach ($plugins as $p) {
-                // Check if it can not have multiple instances and has already been used
-                if (!portfolio_static_function($p, 'allows_multiple_instances') && in_array($p, $usedplugins)) {
-                    continue;
-                }
-
-                // Check if it is misconfigured - if so store in array then display later
-                if (array_key_exists($p, $insane)) {
-                    $insaneplugins[] = $p;
-                } else {
-                    $select = new single_select($this->portfolio_action_url($p, 'pf'), 'action', $actionchoicesfornew, 'delete', null, 'applyto' . $p);
-                    $table->data[] = array(portfolio_static_function($p, 'get_name'), $OUTPUT->render($select), '');
-                }
-            }
-        }
-
-        // Loop through all the insane plugins
-        if (!empty($insaneplugins)) {
-            foreach ($insaneplugins as $p) {
-                $table->data[] = array(portfolio_static_function($p, 'get_name'), $strdelete . " " . $OUTPUT->help_icon($insane[$p], 'portfolio_' .  $p), '');
-            }
-        }
-
-        $output .= html_writer::table($table);
-
-        $output .= $OUTPUT->box_end();
-
-        return highlight($query, $output);
-    }
-
 }
 
 /**

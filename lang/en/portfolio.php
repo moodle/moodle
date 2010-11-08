@@ -34,6 +34,7 @@ $string['availableformats'] = 'Available export formats';
 $string['callbackclassinvalid'] = 'Callback class specified was invalid or not part of the portfolio_caller hierarchy';
 $string['callercouldnotpackage'] = 'Failed to package up your data for export: original error was {$a}';
 $string['cannotsetvisible'] = 'Cannot set this to visible - the plugin has been completely disabled because of a misconfiguration';
+$string['commonportfoliosettings'] = 'Common portfolio settings';
 $string['commonsettingsdesc'] = '<p>Whether a transfer is considered to take a \'Moderate\' or \'High\' amount of time changes whether the user is able to wait for the transfer to complete or not.</p><p>Sizes up to the \'Moderate\' threshold just happen immediately without the user being asked, and \'Moderate\' and \'High\' transfers mean they are offered the option but warned it might take some time.</p><p>Additionally, some portfolio plugins might ignore this option completely and force all transfers to be queued.</p>';
 $string['configexport'] = 'Configure exported data';
 $string['configplugin'] = 'Configure portfolio plugin';

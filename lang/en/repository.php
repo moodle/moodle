@@ -57,6 +57,7 @@ $string['cannotdownloaddir'] = 'Cannot download this folder';
 $string['cannotinitplugin'] = 'Call plugin_init failed';
 $string['cleancache'] = 'Clean my cache files';
 $string['close'] = 'Close';
+$string['commonrepositorysettings'] = 'Common repository settings';
 $string['configallowexternallinks'] = 'This option enables all users to choose whether or not external media is copied into Moodle or not. If this is off then media is always copied into Moodle (this is usually best for overall data integrity and security).  If this is on then users can choose each time they add media to a text.';
 $string['configcacheexpire'] = 'The amount of time that file listings are cached locally (in seconds) when browsing external repositories.';
 $string['configsaved'] = 'Configuration saved!';
