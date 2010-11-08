@@ -1,5 +1,6 @@
 <?php
 
+defined('MOODLE_INTERNAL') || die();
 /*
      Can be used to allow preserving of certain "safe" HTML <tags>
      (as seen in [sfWiki | http://sfwiki.sf.net/].

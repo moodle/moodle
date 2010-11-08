@@ -5,6 +5,7 @@
     Adapted by Michael Schneider
 */
 
+defined('MOODLE_INTERNAL') || die();
 /// Glue
 $ewiki_plugins["database"][0] = "ewiki_database_moodle";
 

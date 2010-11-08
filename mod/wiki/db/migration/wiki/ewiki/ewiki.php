@@ -1,4 +1,7 @@
 <?php
+
+defined('MOODLE_INTERNAL') || die();
+
 @define("EWIKI_VERSION", "R1.01d");
 
 /*
