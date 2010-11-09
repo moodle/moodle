@@ -591,7 +591,7 @@ class assignment_upload extends assignment_base {
         require_once($CFG->dirroot.'/lib/uploadlib.php');
         $um = new upload_manager('newfile',false,true,$this->course,false,$this->assignment->maxbytes,true);
 
-        if ($um->process_file_uploads($dir)) {
+        if ($um->process_file_uploads($dir) and confirm_sesskey()) {
             $submission = $this->get_submission($USER->id, true); //create new submission if needed
             $updated = new object();
             $updated->id           = $submission->id;
