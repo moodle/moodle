@@ -138,10 +138,11 @@ class repository_dropbox extends repository {
         $list['nosearch'] = true;
         // process breacrumb trail
         $list['path'] = array(
-            array('name'=>get_string('sandbox', 'repository_dropbox'), 'path'=>'/')
+            array('name'=>get_string('dropbox', 'repository_dropbox'), 'path'=>'/')
         );
 
         $result = $this->dropbox->get_listing($path, $this->access_key, $this->access_secret);
+
         if (!is_object($result) || empty($result)) {
             return $list;
         }

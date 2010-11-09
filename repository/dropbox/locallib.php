@@ -32,27 +32,54 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once($CFG->libdir.'/oauthlib.php');
 
 class dropbox extends oauth_helper {
-    private $mode = 'sandbox';
+    /** dropbox access type, can be dropbox or sandbox */
+    private $mode = 'dropbox';
+    /** dropbox api url*/
     private $dropbox_api = 'http://api.dropbox.com/0';
+    /** dropbox content api url*/
     private $dropbox_content_api = 'http://api-content.dropbox.com/0';
+
     function __construct($args) {
         parent::__construct($args);
     }
+    /**
+     * Get file listing from dropbox
+     */
     public function get_listing($path='/', $token='', $secret='') {
         $url = $this->dropbox_api.'/metadata/'.$this->mode.$path;
         $content = $this->get($url, array(), $token, $secret);
         $data = json_decode($content);
         return $data;
     }
+
+    /**
+     * Get user account info
+     */
     public function get_account_info($token, $secret) {
         $url = $this->dropbox_api.'/account/info';
         $content = $this->get($url, array(), $token, $secret);
         return $content;
     }
+
+    /**
+     * Download a file
+     */
     public function get_file($filepath, $saveas) {
-        $url = 'http://api-content.dropbox.com/0/files/sandbox'.$filepath;
+        $info = pathinfo($filepath);
+        $dirname = $info['dirname'];
+        $basename = $info['basename'];
+        $filepath = $dirname . rawurlencode($basename);
+        if ($dirname != '/') {
+            $filepath = $dirname . '/' . rawurlencode($basename);
+        }
+
+        $url = $this->dropbox_content_api.'/files/'.$this->mode.$filepath;
         $content = $this->get($url, array());
         file_put_contents($saveas, $content);
         return array('path'=>$saveas, 'url'=>$url);
+    }
+
+    public function set_mode($mode) {
+        $this->mode = $mode;
     }
 }
