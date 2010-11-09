@@ -7405,8 +7405,7 @@ function forum_get_extra_capabilities() {
  * @param stdClass $module
  * @param stdClass $cm
  */
-/******
- * Removing temporarily
+
 function forum_extend_navigation($navref, $course, $module, $cm) {
     global $CFG, $OUTPUT, $USER;
 
@@ -7419,6 +7418,7 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
     }
     $discussionnode = $navref->add(get_string('discussions', 'forum').' ('.$discussioncount.')');
     $discussionnode->mainnavonly = true;
+    $discussionnode->display = false; // Do not display on navigation (only on navbar)
 
     foreach ($discussions as $discussion) {
         $icon = new pix_icon('i/feedback', '');
@@ -7448,6 +7448,7 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
     if (is_array($recentposts) && count($recentposts)>0) {
         $recentnode = $navref->add(get_string('recentactivity').' ('.count($recentposts).')');
         $recentnode->mainnavonly = true;
+        $recentnode->display = false;
         foreach ($recentposts as $post) {
             $icon = new pix_icon('i/feedback', '');
             $url = new moodle_url('/mod/forum/discuss.php', array('d'=>$post->content->discussion));
@@ -7456,7 +7457,6 @@ function forum_extend_navigation($navref, $course, $module, $cm) {
         }
     }
 }
-***********/
 
 /**
  * Adds module specific settings to the settings block
