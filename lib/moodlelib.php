@@ -4779,7 +4779,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         require_once($CFG->dirroot.'/mnet/lib.php');
 
         $jumpurl = mnet_get_idp_jump_url($user);
-        $callback = partial('mnet_sso_apply_redirection', $jumpurl);
+        $callback = partial('mnet_sso_apply_indirection', $jumpurl);
 
         $messagetext = preg_replace_callback("%($CFG->wwwroot[^[:space:]]*)%",
                 $callback,
