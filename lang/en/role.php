@@ -37,6 +37,7 @@ $string['allowroletoswitch'] = 'Allow users with role {$a->fromrole} to switch r
 $string['allowswitch'] = 'Allow role switches';
 $string['allsiteusers'] = 'All site users';
 $string['archetype'] = 'Role archetype';
+$string['archetype_help'] = 'The role archetype determines the permissions when a role is reset to default. It also determines any new permissions for the role when the site is upgraded.';
 $string['archetypecoursecreator'] = 'ARCHETYPE: Course Creator';
 $string['archetypeeditingteacher'] = 'ARCHETYPE: Teacher (editing)';
 $string['archetypefrontpage'] = 'ARCHETYPE: Authenticated user on frontpage';
