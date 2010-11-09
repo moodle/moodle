@@ -58,7 +58,7 @@ function scorm_eval_prerequisites($prerequisites, $usertracks) {
                 $count = 0;
                 foreach ($set as $setelement) {
                   if (isset($usertracks[$setelement]) &&
-                      ($usertracks[$setelement]->status == 'completed' || $usertracks[$element]->status == 'passed')) {
+                      ($usertracks[$setelement]->status == 'completed' || $usertracks[$setelement]->status == 'passed')) {
                       $count++;
                   }
                 }
