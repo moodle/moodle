@@ -116,10 +116,10 @@ function message_send($eventdata) {
         }
         $processor = get_user_preferences($preferencename, NULL, $eventdata->userto->id);
         if (empty($processor)) {
-            //this means they supplied an $eventdata->component $eventdata->name combination which doesn't
+            //MDL-25114 They supplied an $eventdata->component $eventdata->name combination which doesn't
             //exist in the message_provider table
             $preferrormsg = get_string('couldnotfindpreference', 'message', $preferencename);
-            throw new coding_exception($preferrormsg);
+            throw new coding_exception($preferrormsg,'blah');
         }
     }
 
