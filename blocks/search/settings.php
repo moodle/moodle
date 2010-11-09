@@ -4,14 +4,6 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
 
-    //Search text
-    $settings->add(new admin_setting_configtext('block_search_text', get_string('configsearchtext', 'block_search'),
-                       get_string('headingofsearchblock', 'block_search'), get_string('searchmoodle', 'block_search'), PARAM_TEXT ));
-
-    //Button Label
-    $settings->add(new admin_setting_configtext('block_search_button', get_string('configbuttonlabel', 'block_search'),
-                       get_string('labelofsearchbutton', 'block_search'), get_string('go', 'block_search'), PARAM_TEXT));
-
     //Enable file indexing (y/n)
     $settings->add(new admin_setting_configcheckbox('block_search_enable_file_indexing', get_string('configenablefileindexing', 'block_search'),
                        get_string('enablefileindexing', 'block_search'), 0, 1, 0));

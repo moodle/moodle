@@ -41,17 +41,12 @@ class block_search extends block_base {
 
       $this->content = new stdClass;
 
-      //lazy check for the moment
-      //fetch values if defined in admin, otherwise use defaults
-      $label  = (!empty($CFG->block_search_text)) ? $CFG->block_search_text : get_string('searchmoodle', 'block_search');
-      $button = (!empty($CFG->block_search_button)) ? $CFG->block_search_button : get_string('go', 'block_search');
-
       //basic search form
       $this->content->text =
             '<form id="searchquery" method="get" action="'. $CFG->wwwroot .'/search/query.php"><div>'
-          . '<label for="block_search_q">'. $label .'</label>'
+          . '<label for="block_search_q">' . get_string('searchmoodle', 'block_search') . '</label>'
           . '<input id="block_search_q" type="text" name="query_string" />'
-          . '<input type="submit" value="'.$button.'" />'
+          . '<input type="submit" value="' . s(get_string('go', 'block_search')) . '" />'
           . '</div></form>';
 
       //no footer, thanks

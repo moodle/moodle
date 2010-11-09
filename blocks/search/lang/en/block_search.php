@@ -25,12 +25,10 @@
 
 $string['blockssearchswitches'] = 'Indexer activation for blocks';
 $string['bytes'] = 'bytes (0 stands for no limits)';
-$string['configbuttonlabel'] = 'Button label';
 $string['configenablefileindexing'] = 'Enable file indexing';
 $string['configfiletypes'] = 'File types handled';
 $string['configlimitindexbody'] = 'Indexed body size limitation';
 $string['configpdftotextcmd'] = 'Path to command pdftotext';
-$string['configsearchtext'] = 'Search text';
 $string['configtypetotxtcmd'] = 'Converter\'s command line';
 $string['configtypetotxtenv'] = 'Environment define for converter';
 $string['configwordtotextcmd'] = 'Path to command doctotext';
@@ -42,9 +40,7 @@ $string['enableindexinginblock'] = 'Allow indexing of the {$a} block';
 $string['envforcmdtotextfor'] = 'Environment for {$a} conversion command to text';
 $string['go'] = 'Go!';
 $string['handlingfor'] = 'Extra handling for';
-$string['headingofsearchblock'] = 'The title shown above the search box in the block';
 $string['indexbodylimit'] = 'The limit of indexing the body';
-$string['labelofsearchbutton'] = 'The text in the block search button itself';
 $string['listoffiletypes'] = 'The list of file types handled';
 $string['modulessearchswitches'] = 'Indexer activation for modules';
 $string['nosearchableblocks'] = 'No searchable blocks';

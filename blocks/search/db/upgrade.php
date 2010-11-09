@@ -77,6 +77,11 @@ function xmldb_block_search_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2010101800, 'search');
     }
 
+    if ($oldversion < 2010110900) {
+        unset_config('block_search_text');
+        unset_config('block_search_button');
+        upgrade_block_savepoint(true, 2010110900, 'search');
+    }
 
     return $result;
 }
