@@ -33,8 +33,7 @@ require_once($CFG->dirroot . '/blocks/community/forms.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
 
 require_login();
-
-$courseid = optional_param('courseid', $SITE->id, PARAM_INT); //if no courseid is given
+$courseid = required_param('courseid', PARAM_INT); //if no courseid is given
 $parentcourse = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
 $context = get_context_instance(CONTEXT_COURSE, $courseid);

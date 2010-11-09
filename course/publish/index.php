@@ -30,7 +30,7 @@ require('../../config.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
 require_once($CFG->dirroot . '/course/publish/lib.php');
 
-$id = optional_param('id', 0, PARAM_INT);
+$id = required_param('id', PARAM_INT);
 $hubname = optional_param('hubname', 0, PARAM_TEXT);
 $huburl = optional_param('huburl', 0, PARAM_URL);
 

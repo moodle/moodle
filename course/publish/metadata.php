@@ -38,11 +38,7 @@ require_once($CFG->libdir . '/filelib.php');
 
 
 //check user access capability to this page
-$id = optional_param('id', 0, PARAM_INT);
-
-if (empty($id)) {
-    throw new moodle_exception('wrongurlformat', 'hub');
-}
+$id = required_param('id', PARAM_INT);
 
 $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 require_login($course);

@@ -39,9 +39,9 @@ require_once($CFG->libdir . '/filelib.php');
 
 
 //retrieve initial page parameters
-$id = optional_param('id', 0, PARAM_INT);
-$hubcourseid = optional_param('hubcourseid', 0, PARAM_INT);
-$huburl = optional_param('huburl', '', PARAM_URL);
+$id = required_param('id', PARAM_INT);
+$hubcourseid = required_param('hubcourseid', PARAM_INT);
+$huburl = required_param('huburl', PARAM_URL);
 $hubname = optional_param('hubname', '', PARAM_TEXT);
 
 //some permissions and parameters checking
@@ -50,9 +50,6 @@ require_login($course);
 if (!has_capability('moodle/course:publish', get_context_instance(CONTEXT_COURSE, $id))
         or !confirm_sesskey()) {
     throw new moodle_exception('nopermission');
-}
-if (empty($huburl) or empty($hubcourseid)) {
-        throw new moodle_exception('missingparameter');
 }
 
 //page settings
