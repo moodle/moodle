@@ -728,7 +728,6 @@ class qformat_xml extends qformat_default {
             $files = $this->getpath($instructions,
                     array('0', '#', 'file'), array());
             $qo->instructionsfiles = array();
-            $files = $instructions[0]['#']['file'];
             foreach ($files as $file) {
                 $data = new stdclass;
                 $data->content = $file['#'];
