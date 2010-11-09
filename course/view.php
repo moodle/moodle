@@ -152,7 +152,7 @@
     $ajaxformatfile = $CFG->dirroot.'/course/format/'.$course->format.'/ajax.php';
     $bodytags = '';
 
-    if (empty($CFG->disablecourseajax) and file_exists($ajaxformatfile)) {      // Needs to exist otherwise no AJAX by default
+    if (empty($CFG->disablecourseajax) and file_exists($ajaxformatfile) and !$PAGE->theme->disablecourseajax) {      // Needs to exist otherwise no AJAX by default
 
         // TODO: stop abusing CFG global here
         $CFG->ajaxcapable = false;           // May be overridden later by ajaxformatfile
