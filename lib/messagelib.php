@@ -32,7 +32,8 @@ defined('MOODLE_INTERNAL') || die();
  * then tries to send it.
  *
  * Required parameter $eventdata structure:
- *  modulename     -
+ *  component string component name. must exist in message_providers
+ *  name string message type name. must exist in message_providers
  *  userfrom object the user sending the message
  *  userto object the message recipient
  *  subject string the message subject
@@ -43,7 +44,7 @@ defined('MOODLE_INTERNAL') || die();
  *  contexturl - if this is a notification then you can specify a url to view the event. For example the forum post the user is being notified of.
  *  contexturlname - the display text for contexturl
  *
- * @param object $eventdata information about the message (modulename, userfrom, userto, ...)
+ * @param object $eventdata information about the message (component, userfrom, userto, ...)
  * @return boolean success
  */
 function message_send($eventdata) {
