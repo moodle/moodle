@@ -31,7 +31,7 @@
 $string['admindirname'] = 'Admin-mappe';
 $string['availablelangs'] = 'Tilgængelige sprogpakker';
 $string['chooselanguagehead'] = 'Vælg et sprog';
-$string['chooselanguagesub'] = 'Vælg et sprog til brug under installationen. Senere vil du kunne vælge hvilke sprog Moodle skal kunne bruge.';
+$string['chooselanguagesub'] = 'Vælg et sprog til brug under installationen. Dette sprog vil også blive brugt som standardsprog på sitet, men det kan altid ændres til et andet sprog.';
 $string['dataroot'] = 'Datamappe';
 $string['dbprefix'] = 'Præfix for tabeller';
 $string['dirroot'] = 'Moodle-mappe';
