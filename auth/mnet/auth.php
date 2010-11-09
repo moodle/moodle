@@ -1239,17 +1239,27 @@ class auth_plugin_mnet extends auth_plugin_base {
      */
     function loginpage_idp_list($wantsurl) {
         global $DB, $CFG;
+
         // strip off wwwroot, since the remote site will prefix it's return url with this
         $wantsurl = preg_replace('/(' . preg_quote($CFG->wwwroot, '/') . '|' . preg_quote($CFG->httpswwwroot, '/') . ')/', '', $wantsurl);
-        if (!$hosts = $DB->get_records_sql('SELECT DISTINCT h.id, h.wwwroot, h.name, a.sso_jump_url,a.name as application
-                FROM {mnet_host} h
-                JOIN {mnet_host2service} m ON h.id=m.hostid
-                JOIN {mnet_service} s ON s.id=m.serviceid
-                JOIN {mnet_application} a ON h.applicationid = a.id
-                WHERE s.name=? AND h.deleted=? AND m.publish = ?',
-                array('sso_sp', 0, 1))) {
+
+        $sql = "SELECT DISTINCT h.id, h.wwwroot, h.name, a.sso_jump_url, a.name as application
+                  FROM {mnet_host} h
+                  JOIN {mnet_host2service} m ON h.id = m.hostid
+                  JOIN {mnet_service} s ON s.id = m.serviceid
+                  JOIN {mnet_application} a ON h.applicationid = a.id
+                 WHERE s.name = ? AND h.deleted = ? AND m.publish = ?";
+        $params = array('sso_sp', 0, 1);
+
+        if (!empty($CFG->mnet_all_hosts_id)) {
+            $sql .= " AND h.id <> ?";
+            $params[] = $CFG->mnet_all_hosts_id;
+        }
+
+        if (!$hosts = $DB->get_records_sql($sql, $params)) {
             return array();
         }
+
         $idps = array();
         foreach ($hosts as $host) {
             $idps[] = array(
