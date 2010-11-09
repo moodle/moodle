@@ -111,9 +111,24 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (! forum_user_can_post_discussion($forum, $groupid, -1, $cm)) {
         if (!isguestuser()) {
             if (!is_enrolled($coursecontext)) {
-                $SESSION->wantsurl = $FULLME;
-                $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
-                redirect($CFG->wwwroot.'/enrol/index.php?id='.$course->id, get_string('youneedtoenrol'));
+                //note: this is a bloody hack, make sure there is at least one enrol
+                //      plugin that allows them to self enrol...
+                $enrolinstances = enrol_get_instances($course->id, true);
+
+                $somethingprobablyusefulforselfenrol = false;
+                foreach($enrolinstances as $instance) {
+                    if ($instance->enrol === 'self' or $instance->enrol === 'paypal') {
+                        $somethingprobablyusefulforselfenrol = true;
+                        break;
+                    }
+                }
+                unset($enrolinstances);
+
+                if ($somethingprobablyusefulforselfenrol) {
+                    $SESSION->wantsurl = $FULLME;
+                    $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
+                    redirect($CFG->wwwroot.'/enrol/index.php?id='.$course->id, get_string('youneedtoenrol'));
+                }
             }
         }
         print_error('nopostforum', 'forum');
@@ -253,7 +268,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     }
 
     $PAGE->set_cm($cm, $course, $forum);
-    
+
     if (!($forum->type == 'news' && !$post->parent && $discussion->timestart > time())) {
         if (((time() - $post->created) > $CFG->maxeditingtime) and
                     !has_capability('mod/forum:editanypost', $modcontext)) {
