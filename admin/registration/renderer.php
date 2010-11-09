@@ -45,7 +45,7 @@ class core_register_renderer extends plugin_renderer_base {
     /**
      * Display the page to register on Moodle.org or on a specific hub
      */
-    public function registrationselector() {
+    public function registrationselector($updatemoodleorg = false) {
         global $CFG;
         $table = new html_table();
         $table->head = array(get_string('moodleorg', 'hub'), get_string('specifichub', 'hub'));
@@ -71,7 +71,7 @@ class core_register_renderer extends plugin_renderer_base {
                         array('sesskey' => sesskey(), 'huburl' => HUB_MOODLEORGHUBURL
                             , 'hubname' => 'Moodle.org'));
         $registeronmoodleorgbutton = new single_button($registeronmoodleorgurl,
-                        get_string('registeronmoodleorg', 'hub'));
+                        $updatemoodleorg ? get_string('updatesite', 'hub', 'Moodle.org') : get_string('registeronmoodleorg', 'hub'));
         $registeronmoodleorgbutton->class = 'centeredbutton';
         $registeronmoodleorgbuttonhtml = $this->output->render($registeronmoodleorgbutton);
         $moodleorgcell = $registeronmoodleorgbuttonhtml;
@@ -103,6 +103,9 @@ class core_register_renderer extends plugin_renderer_base {
         $table->size = array('80%', '20%');
 
         foreach ($hubs as $hub) {
+            if ($hub->huburl == HUB_MOODLEORGHUBURL) {
+                $hub->hubname = get_string('registeredmoodleorg', 'hub', $hub->hubname);
+            }
             $hublink = html_writer::tag('a', $hub->hubname, array('href' => $hub->huburl));
             $hublinkcell = html_writer::tag('div', $hublink, array('class' => 'registeredhubrow'));
 
