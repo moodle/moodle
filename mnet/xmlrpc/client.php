@@ -310,7 +310,7 @@ class mnet_xmlrpc_client {
      */
 
     function permission_to_call($mnet_peer) {
-        global $DB, $CFG;
+        global $DB, $CFG, $USER;
 
         // Executing any system method is permitted.
         $system_methods = array('system/listMethods', 'system/methodSignature', 'system/methodHelp', 'system/listServices');
@@ -318,35 +318,32 @@ class mnet_xmlrpc_client {
             return true;
         }
 
-        $id_list = $mnet_peer->id;
+        $hostids = array($mnet_peer->id);
         if (!empty($CFG->mnet_all_hosts_id)) {
-            $id_list .= ', '.$CFG->mnet_all_hosts_id;
+            $hostids[] = $CFG->mnet_all_hosts_id;
         }
         // At this point, we don't care if the remote host implements the
         // method we're trying to call. We just want to know that:
         // 1. The method belongs to some service, as far as OUR host knows
         // 2. We are allowed to subscribe to that service on this mnet_peer
 
-        // Find methods that we subscribe to on this host
-        $sql = "
-            SELECT
-                *
-            FROM
-                {mnet_remote_rpc} r,
-                {mnet_remote_service2rpc} s2r,
-                {mnet_host2service} h2s
-            WHERE
-                r.xmlrpcpath = ? AND
-                s2r.rpcid = r.id AND
-                s2r.serviceid = h2s.serviceid AND
-                h2s.subscribe = '1' AND
-                h2s.hostid in ({$id_list})";
+        list($hostidsql, $hostidparams) = $DB->get_in_or_equal($hostids);
 
-        $permission = $DB->get_record_sql($sql, array($this->method));
-        if ($permission == true) {
+        $sql = "SELECT r.id
+                  FROM {mnet_remote_rpc} r
+            INNER JOIN {mnet_remote_service2rpc} s2r ON s2r.rpcid = r.id
+            INNER JOIN {mnet_host2service} h2s ON h2s.serviceid = s2r.serviceid
+                 WHERE r.xmlrpcpath = ?
+                       AND h2s.subscribe = ?
+                       AND h2s.hostid $hostidsql";
+
+        $params = array($this->method, 1);
+        $params = array_merge($params, $hostidparams);
+
+        if ($DB->record_exists_sql($sql, $params)) {
             return true;
         }
-        global $USER;
+
         $this->error[] = '7:User with ID '. $USER->id .
                          ' attempted to call unauthorised method '.
                          $this->method.' on host '.
