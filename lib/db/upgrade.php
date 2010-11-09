@@ -5401,6 +5401,20 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010110500);
     }
 
+    if ($oldversion < 2010110800) {
+        // convert $CFG->disablecourseajax to $CFG->enablecourseajax
+        $disabledcourseajax = get_config('disablecourseajax', 0);
+        if ($disabledcourseajax) {
+            set_config('enablecourseajax', 0);
+        } else {
+            set_config('enablecourseajax', 1);
+        }
+        unset_config('disablecourseajax');
+
+        upgrade_main_savepoint(true, 2010110800);
+    }
+
+
     return true;
 }
 

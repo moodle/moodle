@@ -53,7 +53,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 require_login($course);
 require_capability('moodle/course:update', $context);
 
-if (!empty($CFG->disablecourseajax)) {
+if (empty($CFG->enablecourseajax)) {
     error_log('Course AJAX not allowed');
     die;
 }

@@ -150,7 +150,7 @@
     $useajax = false;
     $formatajax = course_format_ajax_support($course->format);
 
-    if (empty($CFG->disablecourseajax)
+    if (!empty($CFG->enablecourseajax)
             and $formatajax->capable
             and !empty($USER->editing)
             and ajaxenabled($formatajax->testedbrowsers)
