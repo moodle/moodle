@@ -195,10 +195,21 @@ foreach ($portfolio_plugins as $plugin) {
 class portfoliolib_test extends UnitTestCaseUsingDatabase {
     private $olduser;
 
+    protected $testtables = array(
+                'lib' => array(
+                    'portfolio_instance', 'portfolio_instance_user', 'portfolio_instance_config', 
+                        'user', 'course', 'course_categories'));
+
     function setup() {
         global $USER;
         parent::setup();
+        
+        $this->switch_to_test_db(); // Switch to test DB for all the execution
 
+        foreach ($this->testtables as $dir => $tables) {
+            $this->create_test_tables($tables, $dir); // Create tables
+        }
+        
         // It is necessary to store $USER object because some subclasses use generator
         // stuff which breaks $USER
         $this->olduser = $USER;
