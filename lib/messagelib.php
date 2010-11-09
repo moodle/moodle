@@ -115,6 +115,12 @@ function message_send($eventdata) {
             print_error('cannotsavemessageprefs', 'message');
         }
         $processor = get_user_preferences($preferencename, NULL, $eventdata->userto->id);
+        if (empty($processor)) {
+            //this means they supplied an $eventdata->component $eventdata->name combination which doesn't
+            //exist in the message_provider table
+            $preferrormsg = get_string('couldnotfindpreference', 'message', $preferencename);
+            throw new coding_exception($preferrormsg);
+        }
     }
 
     if ($processor=='none' && $savemessage->notification) {
