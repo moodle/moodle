@@ -120,12 +120,22 @@ if ($course->id == SITEID) {
 // Get the posts.
 if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $perpage, $totalcount, $extrasql)) {
 
+    require_once($CFG->dirroot.'/rating/lib.php');
+
     $baseurl = new moodle_url('user.php', array('id' => $user->id, 'course' => $course->id, 'mode' => $mode, 'perpage' => $perpage));
     echo $OUTPUT->paging_bar($totalcount, $page, $perpage, $baseurl);
 
     $discussions = array();
     $forums      = array();
     $cms         = array();
+
+    //todo Rather than retrieving the ratings for each post individually it would be nice to do them in groups
+    //however this requires creating arrays of posts with each array containing all of the posts from a particular forum,
+    //retrieving the ratings then reassembling them all back into a single array sorted by post.modified (descending)
+    $rm = new rating_manager();
+    $ratingoptions = new stdclass();
+    $ratingoptions->plugintype = 'mod';
+    $ratingoptions->pluginname = 'forum';
 
     foreach ($posts as $post) {
 
@@ -142,20 +152,35 @@ if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $pe
             if (! $forum = $DB->get_record('forum', array('id' => $discussion->forum))) {
                 print_error('invalidforumid', 'forum');
             }
+            //hold onto forum cm and context for when we load ratings
+            if ($forumcm = get_coursemodule_from_instance('forum', $forum->id)) {
+                $forum->cm = $forumcm;
+                $forumcontext = get_context_instance(CONTEXT_MODULE, $forum->cm->id);
+                $forum->context = $forumcontext;
+            }
             $forums[$discussion->forum] = $forum;
         } else {
             $forum = $forums[$discussion->forum];
         }
 
-        $ratings = null;
-        if ($forum->assessed) {
-            if ($scale = make_grades_menu($forum->scale)) {
-                $ratings =new stdClass();
-                $ratings->scale = $scale;
-                $ratings->assesstimestart = $forum->assesstimestart;
-                $ratings->assesstimefinish = $forum->assesstimefinish;
-                $ratings->allow = false;
+        //load ratings
+        if ($forum->assessed!=RATING_AGGREGATE_NONE) {
+            $ratingoptions->context = $forum->context;
+            $ratingoptions->items = array($post);
+            $ratingoptions->aggregate = $forum->assessed;//the aggregation method
+            $ratingoptions->scaleid = $forum->scale;
+            $ratingoptions->userid = $user->id;
+            if ($forum->type == 'single' or !$discussion->id) {
+                $ratingoptions->returnurl = "$CFG->wwwroot/mod/forum/view.php?id={$forum->cm->id}";
+            } else {
+                $ratingoptions->returnurl = "$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id";
             }
+            $ratingoptions->assesstimestart = $forum->assesstimestart;
+            $ratingoptions->assesstimefinish = $forum->assesstimefinish;
+
+            $updatedpost = $rm->get_ratings($ratingoptions);
+            //updating the array this way because we're iterating over a collection and updating them one by one
+            $posts[$updatedpost[0]->id] = $updatedpost[0];
         }
 
         if (!isset($cms[$forum->id])) {
