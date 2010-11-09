@@ -330,17 +330,34 @@ class qformat_xml extends qformat_default {
      * @return object question object
      */
     function import_multianswer( $questions ) {
-        $questiontext = $questions['#']['questiontext'][0]['#']['text'];
-        $qo = qtype_multianswer_extract_question($this->import_text($questiontext));
+        $questiontext = array();
+        $questiontext['text'] = $this->import_text($questions['#']['questiontext'][0]['#']['text']);
+        $questiontext['format'] = '1';
+        $questiontext['itemid'] = ''; 
+        $qo = qtype_multianswer_extract_question($questiontext);
 
         // 'header' parts particular to multianswer
         $qo->qtype = MULTIANSWER;
         $qo->course = $this->course;
-        $qo->generalfeedback = $this->getpath( $questions, array('#','generalfeedback',0,'#','text',0,'#'), '', true );
-
+        $qo->generalfeedback = '' ;
+        // restore files in generalfeedback
+        $qo->generalfeedback = $this->getpath($questions, array('#','generalfeedback',0,'#','text',0,'#'), $qo->generalfeedback, true);
+        $qo->generalfeedbackfiles = array();
+        $qo->generalfeedbackformat = $this->trans_format(
+                $this->getpath($questions, array('#', 'generalfeedback', 0, '@', 'format'), 'moodle_auto_format'));
+        $files = $this->getpath($questions, array('#', 'generalfeedback', 0, '#', 'file'), array(), false);
+        foreach ($files as $file) {
+            $data = new stdclass;
+            $data->content = $file['#'];
+            $data->encoding = $file['@']['encoding'];
+            $data->name = $file['@']['name'];
+            $qo->generalfeedbackfiles[] = $data;
+        }
         if (!empty($questions)) {
             $qo->name = $this->import_text( $questions['#']['name'][0]['#']['text'] );
         }
+        $qo->questiontext =  $qo->questiontext['text'] ;
+        $qo->questiontextformat = '' ;
 
         return $qo;
     }
