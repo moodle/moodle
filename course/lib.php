@@ -1348,7 +1348,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
             }
 
-            echo '<li class="activity '.$mod->modname.'" id="module-'.$modnumber.'">';  // Unique ID
+            echo '<li class="activity '.$mod->modname.' modtype_'.$mod->modname.'" id="module-'.$modnumber.'">';  // Unique ID
             if ($ismoving) {
                 echo '<a title="'.$strmovefull.'"'.
                      ' href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.sesskey().'">'.
@@ -1432,7 +1432,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     echo '<a '.$linkcss.' '.$extra.
                          ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
                          '<img src="'.$icon.'" class="activityicon" alt="'.get_string('modulename',$mod->modname).'" /> '.
-                         $accesstext.'<span>'.$instancename.$altname.'</span></a>';
+                         $accesstext.'<span class="instancename">'.$instancename.$altname.'</span></a>';
 
                     if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
                         if (!isset($groupings)) {
