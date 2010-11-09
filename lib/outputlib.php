@@ -295,6 +295,11 @@ class theme_config {
      */
     public $larrow = null;
 
+    /**
+     * Some themes may want to disable ajax course editing.
+     * @var bool
+     */
+    public $enablecourseajax = true;
 
     //==Following properties are not configurable from theme config.php==
 
@@ -333,11 +338,6 @@ class theme_config {
      */
     public $hidefromselector = false;
 
-    /**
-     * Some themes may want to disable ajax course editing.
-     * @var bool
-     */
-    public $disablecourseajax = false;
     /**
      * Instance of the renderer_factory implementation
      * we are using. Implementation detail.
@@ -414,7 +414,7 @@ class theme_config {
         }
 
         $configurable = array('parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'javascripts', 'javascripts_footer',
-                              'parents_exclude_javascripts', 'layouts', 'resource_mp3player_colors', 'enable_dock', 'disablecourseajax',
+                              'parents_exclude_javascripts', 'layouts', 'resource_mp3player_colors', 'enable_dock', 'enablecourseajax',
                               'filter_mediaplugin_colors', 'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'hidefromselector');
 
         foreach ($config as $key=>$value) {

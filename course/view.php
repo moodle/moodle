@@ -154,7 +154,7 @@
             and $formatajax->capable
             and !empty($USER->editing)
             and ajaxenabled($formatajax->testedbrowsers)
-            and $PAGE->theme->disablecourseajax
+            and $PAGE->theme->enablecourseajax
             and has_capability('moodle/course:manageactivities', $context)) {
         $PAGE->requires->yui2_lib('dragdrop');
         $PAGE->requires->yui2_lib('connection');
