@@ -77,3 +77,16 @@ function callback_topics_get_section_name($course, $section) {
         return get_string('topic').' '.$section->section;
     }
 }
+
+/**
+ * Declares support for course AJAX features
+ *
+ * @see course_format_ajax_support()
+ * @return stdClass
+ */
+function callback_topics_ajax_support() {
+    $ajaxsupport = new stdClass();
+    $ajaxsupport->capable = true;
+    $ajaxsupport->testedbrowsers = array('MSIE' => 6.0, 'Gecko' => 20061111, 'Safari' => 531, 'Chrome' => 6.0);
+    return $ajaxsupport;
+}

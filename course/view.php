@@ -146,38 +146,28 @@
         redirect($CFG->wwwroot .'/');
     }
 
-
     // AJAX-capable course format?
     $useajax = false;
-    $ajaxformatfile = $CFG->dirroot.'/course/format/'.$course->format.'/ajax.php';
-    $bodytags = '';
+    $formatajax = course_format_ajax_support($course->format);
 
-    if (empty($CFG->disablecourseajax) and file_exists($ajaxformatfile) and !$PAGE->theme->disablecourseajax) {      // Needs to exist otherwise no AJAX by default
+    if (empty($CFG->disablecourseajax)
+            and $formatajax->capable
+            and !empty($USER->editing)
+            and ajaxenabled($formatajax->testedbrowsers)
+            and $PAGE->theme->disablecourseajax
+            and has_capability('moodle/course:manageactivities', $context)) {
+        $PAGE->requires->yui2_lib('dragdrop');
+        $PAGE->requires->yui2_lib('connection');
+        $PAGE->requires->yui2_lib('selector');
+        $PAGE->requires->js('/lib/ajax/block_classes.js', true);
+        $PAGE->requires->js('/lib/ajax/section_classes.js', true);
 
-        // TODO: stop abusing CFG global here
-        $CFG->ajaxcapable = false;           // May be overridden later by ajaxformatfile
-        $CFG->ajaxtestedbrowsers = array();  // May be overridden later by ajaxformatfile
-
-        require_once($ajaxformatfile);
-
-        if (!empty($USER->editing) && $CFG->ajaxcapable && has_capability('moodle/course:manageactivities', $context)) {
-                                                             // Course-based switches
-
-            if (ajaxenabled($CFG->ajaxtestedbrowsers)) {     // Browser, user and site-based switches
-                $PAGE->requires->yui2_lib('dragdrop');
-                $PAGE->requires->yui2_lib('connection');
-                $PAGE->requires->yui2_lib('selector');
-                $PAGE->requires->js('/lib/ajax/block_classes.js', true);
-                $PAGE->requires->js('/lib/ajax/section_classes.js', true);
-
-                // Okay, global variable alert. VERY UGLY. We need to create
-                // this object here before the <blockname>_print_block()
-                // function is called, since that function needs to set some
-                // stuff in the javascriptportal object.
-                $COURSE->javascriptportal = new jsportal();
-                $useajax = true;
-            }
-        }
+        // Okay, global variable alert. VERY UGLY. We need to create
+        // this object here before the <blockname>_print_block()
+        // function is called, since that function needs to set some
+        // stuff in the javascriptportal object.
+        $COURSE->javascriptportal = new jsportal();
+        $useajax = true;
     }
 
     $CFG->blocksdrag = $useajax;   // this will add a new class to the header so we can style differently

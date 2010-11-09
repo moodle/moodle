@@ -3397,6 +3397,43 @@ function course_format_uses_sections($format) {
 }
 
 /**
+ * Returns the information about the ajax support in the given source format
+ *
+ * The returned object's property (boolean)capable indicates that
+ * the course format supports Moodle course ajax features.
+ * The property (array)testedbrowsers can be used as a parameter for {@see ajaxenabled()}.
+ *
+ * @param string $format
+ * @return stdClass
+ */
+function course_format_ajax_support($format) {
+    global $CFG;
+
+    // set up default values
+    $ajaxsupport = new stdClass();
+    $ajaxsupport->capable = false;
+    $ajaxsupport->testedbrowsers = array();
+
+    // get the information from the course format library
+    $featurefile = $CFG->dirroot.'/course/format/'.$format.'/lib.php';
+    $featurefunction = 'callback_'.$format.'_ajax_support';
+    if (!function_exists($featurefunction) && file_exists($featurefile)) {
+        require_once $featurefile;
+    }
+    if (function_exists($featurefunction)) {
+        $formatsupport = $featurefunction();
+        if (isset($formatsupport->capable)) {
+            $ajaxsupport->capable = $formatsupport->capable;
+        }
+        if (is_array($formatsupport->testedbrowsers)) {
+            $ajaxsupport->testedbrowsers = $formatsupport->testedbrowsers;
+        }
+    }
+
+    return $ajaxsupport;
+}
+
+/**
  * Can the current user delete this course?
  * Course creators have exception,
  * 1 day after the creation they can sill delete the course.
