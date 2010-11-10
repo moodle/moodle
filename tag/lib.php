@@ -945,7 +945,7 @@ function tag_get_correlated($tag_id, $limitnum=null) {
     }
 
     // this is (and has to) return the same fields as the query in tag_get_tags
-    if ( !$result = $DB->get_records_sql("SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
+    if ( !$result = $DB->get_records_sql("SELECT DISTINCT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
                                             FROM {tag} tg INNER JOIN {tag_instance} ti ON tg.id = ti.tagid
                                            WHERE tg.id IN ({$tag_correlation->correlatedtags})") ) {
         return array();
