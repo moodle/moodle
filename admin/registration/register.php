@@ -41,10 +41,11 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
 
 admin_externalpage_setup('registrationindex');
 
-$huburl = optional_param('huburl', '', PARAM_URL);
+$huburl = required_param('huburl', PARAM_URL);
+$huburl = rtrim($huburl, "/");
 $password = optional_param('password', '', PARAM_TEXT);
 $hubname = optional_param('hubname', '', PARAM_TEXT);
-if (empty($huburl) or !confirm_sesskey()) {
+if (!confirm_sesskey()) {
     throw new moodle_exception('missingparameter');
 }
 
@@ -132,7 +133,7 @@ if (!empty($fromform) and empty($update) and confirm_sesskey()) {
             //we save the token into the communication table in order to have a reference
             $unconfirmedhub = new stdClass();
             $unconfirmedhub->token = get_site_identifier();
-            $unconfirmedhub->huburl = rtrim($huburl, "/");
+            $unconfirmedhub->huburl = $huburl;
             $unconfirmedhub->hubname = $hubname;
             $unconfirmedhub->confirmed = 0;
             $unconfirmedhub->id = $registrationmanager->add_registeredhub($unconfirmedhub);
