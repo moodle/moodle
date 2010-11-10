@@ -38,7 +38,7 @@ $string['cannotsavezipfile'] = 'Det går inte att spara ZIP-fil';
 $string['cannotunzipfile'] = 'Det går inte att packa upp fil';
 $string['componentisuptodate'] = 'Komponenten är av en aktuell version';
 $string['downloadedfilecheckfailed'] = 'Det gick inte att kontrollera den nedladdade filen';
-$string['invalidmd5'] = 'Ogiltig md5';
+$string['invalidmd5'] = 'Kontrollvariabeln var felaktig - försök igen';
 $string['missingrequiredfield'] = 'Det saknas några obligatoriska fält';
 $string['remotedownloaderror'] = 'Nedladdningen av en komponent till din server misslyckades, var snäll och verifiera inställningar för proxy. <br /><br />Du måste ladda ner <a href="{$a->url}">{$a->url}</a> filen manuellt, kopiera den till "{$a->dest}" på din server och packa upp den där.';
 $string['wrongdestpath'] = 'Fel sökväg';
