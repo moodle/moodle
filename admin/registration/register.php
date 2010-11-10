@@ -100,10 +100,8 @@ if (!empty($fromform) and confirm_sesskey()) {
     set_config('site_participantnumberaverage_' . $cleanhuburl, $fromform->participantnumberaverage, 'hub');
 }
 
-/////// UNREGISTER ACTION //////
-//TO DO
-
 /////// UPDATE ACTION ////////
+
 // update the hub registration
 $update = optional_param('update', 0, PARAM_INT);
 if ($update and confirm_sesskey()) {
@@ -134,7 +132,7 @@ if (!empty($fromform) and empty($update) and confirm_sesskey()) {
             //we save the token into the communication table in order to have a reference
             $unconfirmedhub = new stdClass();
             $unconfirmedhub->token = get_site_identifier();
-            $unconfirmedhub->huburl = $huburl;
+            $unconfirmedhub->huburl = rtrim($huburl, "/");
             $unconfirmedhub->hubname = $hubname;
             $unconfirmedhub->confirmed = 0;
             $unconfirmedhub->id = $registrationmanager->add_registeredhub($unconfirmedhub);
