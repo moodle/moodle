@@ -45,14 +45,5 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
         $ADMIN->add('development', new admin_externalpage('mnettestclient', get_string('testclient', 'mnet'), "$CFG->wwwroot/$CFG->admin/mnet/testclient.php"));
     }
 
-    // lock block to hidden if global search is disabled.
-    if ($CFG->enableglobalsearch != 1) {
-        //get the one block.
-        if (!$block = $DB->get_record('block', array('name'=>'search'))) {
-            print_error('blockdoesnotexist', 'error');
-        }
-        $DB->set_field('block', 'visible', '0', array('id'=>$block->id));      // Hide block
-    }
-
     $ADMIN->add('development', new admin_externalpage('purgecaches', get_string('purgecaches','admin'), "$CFG->wwwroot/$CFG->admin/purgecaches.php"));
 } // end of speedup
