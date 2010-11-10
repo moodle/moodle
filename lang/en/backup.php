@@ -27,8 +27,6 @@ $string['automatedbackupschedule'] = 'Schedule';
 $string['automatedbackupschedulehelp'] = 'Choose which days of the week to perform automated backups.';
 $string['automatedbackupsinactive'] = 'Automated backups haven\'t been enabled by the site admin';
 $string['automatedbackupstatus'] = 'Automated backup status';
-
-
 $string['backupactivity'] = 'Backup activity: {$a}';
 $string['backupcourse'] = 'Backup course: {$a}';
 $string['backupcoursedetails'] = 'Course details';
