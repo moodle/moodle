@@ -111,20 +111,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
     if (! forum_user_can_post_discussion($forum, $groupid, -1, $cm)) {
         if (!isguestuser()) {
             if (!is_enrolled($coursecontext)) {
-                //note: this is a bloody hack, make sure there is at least one enrol
-                //      plugin that allows them to self enrol...
-                $enrolinstances = enrol_get_instances($course->id, true);
-
-                $somethingprobablyusefulforselfenrol = false;
-                foreach($enrolinstances as $instance) {
-                    if ($instance->enrol === 'self' or $instance->enrol === 'paypal') {
-                        $somethingprobablyusefulforselfenrol = true;
-                        break;
-                    }
-                }
-                unset($enrolinstances);
-
-                if ($somethingprobablyusefulforselfenrol) {
+                if (enrol_selfenrol_available($course->id)) {
                     $SESSION->wantsurl = $FULLME;
                     $SESSION->enrolcancel = $_SERVER['HTTP_REFERER'];
                     redirect($CFG->wwwroot.'/enrol/index.php?id='.$course->id, get_string('youneedtoenrol'));
