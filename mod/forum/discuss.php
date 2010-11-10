@@ -174,13 +174,16 @@
 /// If so, make sure the current person is allowed to see this discussion
 /// Also, if we know they should be able to reply, then explicitly set $canreply for performance reasons
 
-    if (isguestuser() or !isloggedin() or (!is_enrolled($modcontext) and !is_viewing($modcontext))) {
-        // allow guests and not-logged-in to see the link - they are prompted to log in after clicking the link
-        // normal users with temporary guest access see this link too, they are asked to enrol instead
-        $canreply = ($forum->type != 'news'); // no reply in news forums
-
-    } else {
-        $canreply = forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext);
+    $canreply = forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext);
+    if (!$canreply and $forum->type !== 'news') {
+        if (isguestuser() or !isloggedin()) {
+            $canreply = true;
+        }
+        if (!is_enrolled($modcontext) and !is_viewing($modcontext)) {
+            // allow guests and not-logged-in to see the link - they are prompted to log in after clicking the link
+            // normal users with temporary guest access see this link too, they are asked to enrol instead
+            $canreply = enrol_selfenrol_available($course->id);
+        }
     }
 
 /// Print the controls across the top
