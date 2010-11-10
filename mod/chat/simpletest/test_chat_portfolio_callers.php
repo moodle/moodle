@@ -15,11 +15,12 @@ require_once("$CFG->dirroot/$CFG->admin/generator.php");
  *
  * This might be left until Moodle 2.1 when the test case framework
  * is due to change.
-
+ */
 Mock::generate('chat_portfolio_caller', 'mock_caller');
 Mock::generate('portfolio_exporter', 'mock_exporter');
 
 class testChatPortfolioCallers extends portfoliolib_test {
+/*
     public static $includecoverage = array('lib/portfoliolib.php', 'mod/chat/lib.php');
     public $module_type = 'chat';
     public $modules = array();
@@ -55,5 +56,5 @@ class testChatPortfolioCallers extends portfoliolib_test {
     public function test_caller_with_plugins() {
         parent::test_caller_with_plugins();
     }
-}
 */
+}

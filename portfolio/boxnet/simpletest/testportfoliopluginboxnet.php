@@ -15,11 +15,12 @@ require_once("$CFG->dirroot/$CFG->admin/generator.php");
  *
  * This might be left until Moodle 2.1 when the test case framework
  * is due to change.
-
+ */
 Mock::generate('boxclient', 'mock_boxclient');
 Mock::generatePartial('portfolio_plugin_boxnet', 'mock_boxnetplugin', array('ensure_ticket', 'ensure_account_tree'));
 
 class testPortfolioPluginBoxnet extends portfoliolib_test {
+/*
     public static $includecoverage = array('lib/portfoliolib.php', 'portfolio/boxnet/lib.php');
     public function setUp() {
         global $DB;
@@ -68,6 +69,5 @@ class testPortfolioPluginBoxnet extends portfoliolib_test {
         $this->assertTrue($this->plugin->prepare_package());
         $this->assertTrue($this->plugin->send_package());
     }
-}
 */
-
+}

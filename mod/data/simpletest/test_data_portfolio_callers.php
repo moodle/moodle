@@ -16,11 +16,12 @@ require_once("$CFG->dirroot/mod/data/locallib.php");
  *
  * This might be left until Moodle 2.1 when the test case framework
  * is due to change.
-
+ */
 Mock::generate('data_portfolio_caller', 'mock_caller');
 Mock::generate('portfolio_exporter', 'mock_exporter');
 
 class testDataPortfolioCallers extends portfoliolib_test {
+/*
     public static $includecoverage = array('lib/portfoliolib.php', 'mod/data/lib.php');
     public $module_type = 'data';
     public $modules = array();
@@ -82,5 +83,5 @@ class testDataPortfolioCallers extends portfoliolib_test {
     public function test_caller_with_plugins() {
         parent::test_caller_with_plugins();
     }
-}
 */
+}
