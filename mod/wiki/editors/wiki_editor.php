@@ -25,8 +25,10 @@
 function wiki_print_editor_wiki($pageid, $content, $editor, $version = -1, $section = null, $upload = false, $deleteuploads = array(), $comesfrom = 'editorview', $commentid = 0) {
     global $CFG, $OUTPUT, $PAGE;
 
-    if ($comesfrom == 'fromcomments') {
+    if ($comesfrom == 'editcomments') {
         $action = $CFG->wwwroot . '/mod/wiki/instancecomments.php?pageid=' . $pageid . '&id=' . $commentid . '&action=edit';
+    } else if ($comesfrom == 'addcomments') {
+        $action = $CFG->wwwroot . '/mod/wiki/instancecomments.php?pageid=' . $pageid . '&id=' . $commentid . '&action=add';
     } else {
         $action = $CFG->wwwroot . '/mod/wiki/edit.php?pageid=' . $pageid;
     }

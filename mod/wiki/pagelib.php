@@ -788,7 +788,7 @@ class page_wiki_editcomment extends page_wiki {
         if ($this->format == 'html') {
             $this->form->display();
         } else {
-            wiki_print_editor_wiki($this->page->id, null, $this->format, -1, null, false, null, 'fromcomments');
+            wiki_print_editor_wiki($this->page->id, null, $this->format, -1, null, false, null, 'addcomments');
         }
     }
 
@@ -809,7 +809,7 @@ class page_wiki_editcomment extends page_wiki {
             $commentid = $com->id;
             $pageid = $this->page->id;
             $destination = $CFG->wwwroot . '/mod/wiki/instancecomments.php?pageid=' . $pageid . '&id=' . $commentid . '&action=' . $action;
-            wiki_print_editor_wiki($this->page->id, $com->content, $this->format, -1, null, false, array(), 'fromcomments', $commentid);
+            wiki_print_editor_wiki($this->page->id, $com->content, $this->format, -1, null, false, array(), 'editcomments', $commentid);
         }
 
     }
