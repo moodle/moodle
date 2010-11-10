@@ -3514,7 +3514,7 @@ class admin_setting_special_backupdays extends admin_setting_configmulticheckbox
  * Calls parent::__construct with specific arguments
  */
     public function __construct() {
-        parent::__construct('backup_sche_weekdays', get_string('schedule'), get_string('backupschedulehelp'), array(), NULL);
+        parent::__construct('backup_auto_weekdays', get_string('automatedbackupschedule','backup'), get_string('automatedbackupschedulehelp','backup'), array(), NULL);
         $this->plugin = 'backup';
     }
     /**

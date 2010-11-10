@@ -155,10 +155,6 @@ $CFG->admin = 'admin';
 // any existing key.
 //      $CFG->mnetkeylifetime = 28;
 //
-// Prevent scheduled backups from operating (and hide the GUI for them)
-// Useful for webhost operators who have alternate methods of backups
-//      $CFG->disablescheduledbackups = true;
-//
 // Allow user passwords to be included in backup files. Very dangerous
 // setting as far as it publishes password hashes that can be unencrypted
 // if the backup file is publicy available. Use it only if you can guarantee

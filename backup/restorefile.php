@@ -152,4 +152,20 @@ $renderer = $PAGE->get_renderer('core', 'backup');
 echo $renderer->backup_files_viewer($treeview_options);
 echo $OUTPUT->container_end();
 
+$automatedbackups = get_config('backup', 'backup_auto_active');
+if (!empty($automatedbackups)) {
+    echo $OUTPUT->heading_with_help(get_string('choosefilefromautomatedbackup', 'backup'), 'choosefilefromautomatedbackup', 'backup');
+    echo $OUTPUT->container_start();
+    $treeview_options = array();
+    $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+    $treeview_options['filecontext'] = $context;
+    $treeview_options['currentcontext'] = $context;
+    $treeview_options['component']   = 'backup';
+    $treeview_options['context']     = $context;
+    $treeview_options['filearea']    = 'automated';
+    $renderer = $PAGE->get_renderer('core', 'backup');
+    echo $renderer->backup_files_viewer($treeview_options);
+    echo $OUTPUT->container_end();
+}
+
 echo $OUTPUT->footer();

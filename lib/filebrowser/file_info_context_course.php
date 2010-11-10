@@ -189,6 +189,44 @@ class file_info_context_course extends file_info {
         return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, get_string('coursebackup', 'repository'), false, $downloadable, $uploadable, false);
     }
 
+    /**
+     * Gets a stored file for the automated backup filearea directory
+     *
+     * @param int $itemid
+     * @param string $filepath
+     * @param string $filename
+     * @return file_info_context_course 
+     */
+    protected function get_area_backup_automated($itemid, $filepath, $filename) {
+        global $CFG;
+
+        if (!has_capability('moodle/restore:viewautomatedfilearea', $this->context)) {
+            return null;
+        }
+        if (is_null($itemid)) {
+            return $this;
+        }
+
+        $fs = get_file_storage();
+
+        $filepath = is_null($filepath) ? '/' : $filepath;
+        $filename = is_null($filename) ? '.' : $filename;
+        if (!$storedfile = $fs->get_file($this->context->id, 'backup', 'automated', 0, $filepath, $filename)) {
+            if ($filepath === '/' and $filename === '.') {
+                $storedfile = new virtual_root_file($this->context->id, 'backup', 'automated', 0);
+            } else {
+                // not found
+                return null;
+            }
+        }
+
+        $downloadable = has_capability('moodle/site:config', $this->context);
+        $uploadable   = false;
+
+        $urlbase = $CFG->wwwroot.'/pluginfile.php';
+        return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase, get_string('automatedbackup', 'repository'), true, $downloadable, $uploadable, false);
+    }
+
     protected function get_area_backup_section($itemid, $filepath, $filename) {
         global $CFG, $DB;
 
@@ -262,6 +300,9 @@ class file_info_context_course extends file_info {
             $children[] = $child;
         }
         if ($child = $this->get_area_backup_course(0, '/', '.')) {
+            $children[] = $child;
+        }
+        if ($child = $this->get_area_backup_automated(0, '/', '.')) {
             $children[] = $child;
         }
         if ($child = $this->get_area_course_legacy(0, '/', '.')) {

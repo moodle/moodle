@@ -72,7 +72,7 @@ class backup_controller extends backup implements loggable {
      * @param int $id The ID of the item to backup; e.g the course id
      * @param int $format The backup format to use; Most likely backup::FORMAT_MOODLE
      * @param bool $interactive Whether this backup will require user interaction; backup::INTERACTIVE_YES or INTERACTIVE_NO
-     * @param int $mode One of backup::MODE_GENERAL, MODE_IMPORT, MODE_SAMESITE, MODE_HUB
+     * @param int $mode One of backup::MODE_GENERAL, MODE_IMPORT, MODE_SAMESITE, MODE_HUB, MODE_AUTOMATED
      * @param int $userid The id of the user making the backup
      */
     public function __construct($type, $id, $format, $interactive, $mode, $userid){

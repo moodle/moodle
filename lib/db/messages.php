@@ -41,4 +41,8 @@ $messageproviders = array (
     'instantmessage' => array (
     ),
 
+    'backup' => array (
+        'capability'  => 'moodle/site:config'
+    )
+
 );

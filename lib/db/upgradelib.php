@@ -598,3 +598,48 @@ function upgrade_cleanup_unwanted_block_contexts($contextidarray) {
     $DB->delete_records_select('role_names', 'contextid IN ('.$blockcontextidsstring.')');
     $DB->delete_records_select('context', 'id IN ('.$blockcontextidsstring.')');
 }
+
+/**
+ * This function is used to establish the automated backup settings using the
+ * original scheduled backup settings.
+ *
+ * @since 2010111000
+ */
+function update_fix_automated_backup_config() {
+    $mappings = array(
+        // Old setting      => new setting
+        'backup_sche_active'            => 'backup_auto_active',
+        'backup_sche_hour'              => 'backup_auto_hour',
+        'backup_sche_minute'            => 'backup_auto_minute',
+        'backup_sche_destination'       => 'backup_auto_destination',
+        'backup_sche_keep'              => 'backup_auto_keep',
+        'backup_sche_userfiles'         => 'backup_auto_user_files',
+        'backup_sche_modules'           => 'backup_auto_activities',
+        'backup_sche_logs'              => 'backup_auto_logs',
+        'backup_sche_messages'          => 'backup_auto_messages',
+        'backup_sche_blocks'            => 'backup_auto_blocks',
+        'backup_sche_weekdays'          => 'backup_auto_weekdays',
+        'backup_sche_users'             => 'backup_auto_users',
+        'backup_sche_blogs'             => 'backup_auto_blogs',
+        'backup_sche_coursefiles'       => null,
+        'backup_sche_sitefiles'         => null,
+        'backup_sche_withuserdata'      => null,
+        'backup_sche_metacourse'        => null,
+        'backup_sche_running'           => null,
+    );
+
+    $oldconfig = get_config('backup');
+    foreach ($mappings as $oldsetting=>$newsetting) {
+        if (!isset($oldconfig->$oldsetting)) {
+            continue;
+        }
+        if ($newsetting !== null) {
+            $oldvalue = $oldconfig->$oldsetting;
+            set_config($newsetting, $oldvalue, 'backup');
+        }
+        unset_config($oldsetting, 'backup');
+    }
+
+    unset_config('backup_sche_gradebook_history');
+    unset_config('disablescheduleddbackups');
+}

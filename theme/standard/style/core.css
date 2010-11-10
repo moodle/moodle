@@ -359,6 +359,11 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
 .path-backup .mform .grouped_settings.activity_level .include_setting label {font-weight:normal;}
 .path-backup .backup_progress {margin:10px;}
 .path-backup .backup_progress .backup_stage {margin:5px 20px;}
+.backup-files-table .c0 {min-width:300px;}
+.backup-files-table .c1 {width:300px;}
+.backup-files-table .c2 {width:80px;}
+.backup-files-table .c3 {width:80px;}
+.backup-files-table .c4 {width:80px;}
 
 /**
  * Site registration

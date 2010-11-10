@@ -10,15 +10,10 @@
     admin_externalpage_setup('reportbackups');
     echo $OUTPUT->header();
 
-/// Scheduled backups are disabled by the server admin
-    if (!empty($CFG->disablescheduledbackups)) {
-        print_error('scheduledbackupsdisabled', 'error');
-    }
-
-/// Scheduled backups aren't active by the site admin
+/// Automated backups aren't active by the site admin
     $backup_config = backup_get_config();
-    if (empty($backup_config->backup_sche_active)) {
-        echo $OUTPUT->notification(get_string('scheduledbackupsinactive'));
+    if (empty($backup_config->backup_auto_active)) {
+        echo $OUTPUT->notification(get_string('automatedbackupsinactive', 'backup'));
     }
 
 /// Get needed strings

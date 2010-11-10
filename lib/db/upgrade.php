@@ -5414,6 +5414,12 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010110800);
     }
 
+    if ($oldversion < 2010111000) {
+        
+        // Clean up the old scheduled backup settings that are no longer relevant
+        update_fix_automated_backup_config();
+        upgrade_main_savepoint(true, 2010111000);
+    }
 
     return true;
 }

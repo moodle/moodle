@@ -185,7 +185,6 @@ $string['backupnonisowarning'] = 'Warning: this backup is from a non-Unicode ver
 $string['backuporiginalname'] = 'Backup name';
 $string['backuproleassignments'] = 'Backup role assignments for these roles';
 $string['backupsavetohelp'] = 'Full path to the directory where you want to save the backup files<br />(leave blank to save in its course default dir)';
-$string['backupschedulehelp'] = 'Choose which days of the week to perform automated backups.';
 $string['backupsitefileshelp'] = 'If enabled then site files used in courses will be included in automated backups';
 $string['backuptakealook'] = 'Please take a look at your backup logs in:
   {$a}';
@@ -1508,8 +1507,6 @@ $string['showthishelpinlanguage'] = 'Show this help in language: {$a}';
 $string['showtopicfromothers'] = 'Show topic';
 $string['showweekfromothers'] = 'Show week';
 $string['schedule'] = 'Schedule';
-$string['scheduledbackupsinactive'] = 'Scheduled backups haven\'t been enabled by the site admin';
-$string['scheduledbackupstatus'] = 'Scheduled backup status';
 $string['since'] = 'Since';
 $string['sincelast'] = 'since last login';
 $string['site'] = 'Site';

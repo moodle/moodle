@@ -229,6 +229,11 @@ abstract class backup_helper {
                 break;
         }
 
+        if ($backupmode == backup::MODE_AUTOMATED) {
+            // Automated backups have there own special area!
+            $filearea  = 'automated';
+        }
+
         // Backups of type HUB (by definition never have user info)
         // are sent to user's "user_tohub" file area. The upload process
         // will be responsible for cleaning that filearea once finished

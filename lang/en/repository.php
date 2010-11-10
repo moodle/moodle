@@ -153,6 +153,7 @@ $string['save'] = 'Save';
 $string['saveas'] = 'Save as';
 $string['saved'] = 'Saved';
 $string['saving'] = 'Saving';
+$string['automatedbackup'] = 'Automated backups';
 $string['search'] = 'Search';
 $string['searching'] = 'Search in';
 $string['select'] = 'Select';

@@ -257,6 +257,14 @@ $capabilities = array(
         'clonepermissionsfrom' =>  'moodle/restore:restorecourse'
     ),
 
+    'moodle/restore:viewautomatedfilearea' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+    ),
+
     'moodle/restore:restoretargethub' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,

@@ -23,6 +23,12 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['automatedbackupschedule'] = 'Schedule';
+$string['automatedbackupschedulehelp'] = 'Choose which days of the week to perform automated backups.';
+$string['automatedbackupsinactive'] = 'Automated backups haven\'t been enabled by the site admin';
+$string['automatedbackupstatus'] = 'Automated backup status';
+
+
 $string['backupactivity'] = 'Backup activity: {$a}';
 $string['backupcourse'] = 'Backup course: {$a}';
 $string['backupcoursedetails'] = 'Course details';
@@ -54,6 +60,8 @@ $string['choosefilefromuserbackup'] = 'User private backup area';
 $string['choosefilefromuserbackup_help'] = 'When backup courses with "Anonymize user information" option ticked, backup files will be stored here';
 $string['choosefilefromactivitybackup'] = 'Activity backup area';
 $string['choosefilefromactivitybackup_help'] = 'When backup activities using default settings, backup files will be stored here';
+$string['choosefilefromautomatedbackup'] = 'Automated backups';
+$string['choosefilefromautomatedbackup_help'] = 'Contains automatically generated backups.';
 $string['configgeneralactivities'] = 'Sets the default for including activities in a backup.';
 $string['configgeneralanonymize'] = 'If enabled all information pertaining to users will be anonymised by default.';
 $string['configgeneralblocks'] = 'Sets the default for including blocks in a backup.';
@@ -187,7 +195,13 @@ $string['rootsettingcomments'] = 'Include comments';
 $string['rootsettinguserscompletion'] = 'Include user completion details';
 $string['rootsettinglogs'] = 'Include course logs';
 $string['rootsettinggradehistories'] = 'Include grade history';
-$string['scheduledsettings'] = 'Scheduled backup settings';
+$string['automatedsetup'] = 'Automated backup setup';
+$string['automatedsettings'] = 'Automated backup settings';
+$string['automatedstorage'] = 'Automated backup storage';
+$string['automatedstoragehelp'] = 'Choose the location where you want backups to be stored when they are automatically created.';
+$string['storagecourseonly'] = 'Course backup filearea';
+$string['storagecourseandexternal'] = 'Course backup filearea and the specified directory';
+$string['storageexternalonly'] = 'Specified directory for automated backups';
 $string['sectionincanduser'] = 'Included in backup along with user information';
 $string['sectioninc'] = 'Included in backup (no user information)';
 $string['sectionactivities'] = 'Activities';

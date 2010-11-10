@@ -108,19 +108,18 @@ if ($hassiteconfig
     $ADMIN->add('backups', $temp);
 
 /// "backups" settingpage
-    $temp = new admin_settingpage('scheduled', get_string('scheduledsettings','backup'), 'moodle/backup:backupcourse');
-    $temp->add(new admin_setting_configcheckbox('backup/backup_sche_modules', get_string('includemodules'), get_string('backupincludemoduleshelp'), 0));
-    $temp->add(new admin_setting_configcheckbox('backup/backup_sche_withuserdata', get_string('includemoduleuserdata'), get_string('backupincludemoduleuserdatahelp'), 0));
-    $temp->add(new admin_setting_configselect('backup/backup_sche_users', get_string('users'), get_string('backupusershelp'),
-            0, array(0 => get_string('all'), 1 => get_string('course'))));
-    $temp->add(new admin_setting_configcheckbox('backup/backup_sche_logs', get_string('logs'), get_string('backuplogshelp'), 0));
-    $temp->add(new admin_setting_configcheckbox('backup/backup_sche_userfiles', get_string('userfiles'), get_string('backupuserfileshelp'), 0));
-    $temp->add(new admin_setting_configcheckbox('backup/backup_sche_coursefiles', get_string('coursefiles'), get_string('backupcoursefileshelp'), 0));
-    $temp->add(new admin_setting_configcheckbox('backup/backup_sche_sitefiles', get_string('sitefiles'), get_string('backupsitefileshelp'), 0));
-    $temp->add(new admin_setting_configcheckbox('backup_sche_gradebook_history', get_string('gradebookhistories', 'grades'), get_string('backupgradebookhistoryhelp'), 0));
-    $temp->add(new admin_setting_configcheckbox('backup/backup_sche_messages', get_string('messages', 'message'), get_string('backupmessageshelp','message'), 0));
-    $temp->add(new admin_setting_configcheckbox('backup/backup_sche_blogs', get_string('blogs', 'blog'), get_string('backupblogshelp','blog'), 0));
-
+    $temp = new admin_settingpage('automated', get_string('automatedsetup','backup'), 'moodle/backup:backupcourse');
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_active', get_string('active'), get_string('backupactivehelp'), 0));
+    $temp->add(new admin_setting_special_backupdays());
+    $temp->add(new admin_setting_configtime('backup/backup_auto_hour', 'backup_auto_minute', get_string('executeat'),
+            get_string('backupexecuteathelp'), array('h' => 0, 'm' => 0)));
+    $storageoptions = array(
+        0 => get_string('storagecourseonly', 'backup'),
+        1 => get_string('storageexternalonly', 'backup'),
+        2 => get_string('storagecourseandexternal', 'backup')
+    );
+    $temp->add(new admin_setting_configselect('backup/backup_auto_storage', get_string('automatedstorage', 'backup'), get_string('automatedstoragehelp', 'backup'), 0, $storageoptions));
+    $temp->add(new admin_setting_configdirectory('backup/backup_auto_destination', get_string('saveto'), get_string('backupsavetohelp'), ''));
     $keepoptoins = array(
         0 => get_string('all'), 1 => '1',
         2 => '2',
@@ -135,13 +134,24 @@ if ($hassiteconfig
         300 => '300',
         400 => '400',
         500 => '500');
-    $temp->add(new admin_setting_configselect('backup/backup_sche_keep', get_string('keep'),
-            get_string('backupkeephelp'), 1, $keepoptoins));
-    $temp->add(new admin_setting_configcheckbox('backup/backup_sche_active', get_string('active'), get_string('backupactivehelp'), 0));
-    $temp->add(new admin_setting_special_backupdays());
-    $temp->add(new admin_setting_configtime('backup/backup_sche_hour', 'backup_sche_minute', get_string('executeat'),
-            get_string('backupexecuteathelp'), array('h' => 0, 'm' => 0)));
-    $temp->add(new admin_setting_configdirectory('backup/backup_sche_destination', get_string('saveto'), get_string('backupsavetohelp'), ''));
+    $temp->add(new admin_setting_configselect('backup/backup_auto_keep', get_string('keep'), get_string('backupkeephelp'), 1, $keepoptoins));
+   
+
+    $temp->add(new admin_setting_heading('automatedsettings', get_string('automatedsettings','backup'), ''));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_users', get_string('users'), get_string('backupusershelp'), 1));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_role_assignments', get_string('generalroleassignments','backup'), get_string('configgeneralroleassignments','backup'), 1));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_user_files', get_string('generaluserfiles', 'backup'), get_string('configgeneraluserfiles','backup'), 1));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_activities', get_string('generalactivities','backup'), get_string('configgeneralactivities','backup'), 1));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_blocks', get_string('generalblocks','backup'), get_string('configgeneralblocks','backup'), 1));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_filters', get_string('generalfilters','backup'), get_string('configgeneralfilters','backup'), 1));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_comments', get_string('generalcomments','backup'), get_string('configgeneralcomments','backup'), 1));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_userscompletion', get_string('generaluserscompletion','backup'), get_string('configgeneraluserscompletion','backup'), 1));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_logs', get_string('logs'), get_string('backuplogshelp'), 0));
+    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_histories', get_string('generalhistories','backup'), get_string('configgeneralhistories','backup'), 0));
+    
+    
+    //$temp->add(new admin_setting_configcheckbox('backup/backup_auto_messages', get_string('messages', 'message'), get_string('backupmessageshelp','message'), 0));
+    //$temp->add(new admin_setting_configcheckbox('backup/backup_auto_blogs', get_string('blogs', 'blog'), get_string('backupblogshelp','blog'), 0));
 
     $ADMIN->add('backups', $temp);
 
