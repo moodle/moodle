@@ -2168,7 +2168,7 @@ class page_wiki_handlecomments extends page_wiki {
     }
 
     public function print_content() {
-        global $PAGE, $USER;
+        global $CFG, $PAGE, $USER;
 
         $context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id);
 
@@ -2179,16 +2179,17 @@ class page_wiki_handlecomments extends page_wiki {
         } else if ($this->action == 'edit') {
             $comment = wiki_get_comment($this->commentid);
             $edit = has_capability('mod/wiki:editcomment', $context);
-            $owner = $comment->userid == $USER->id;
+            $owner = ($comment->userid == $USER->id);
             if ($owner && $edit) {
                 $this->add_comment($this->content, $this->commentid);
             }
         } else if ($this->action == 'delete') {
             $comment = wiki_get_comment($this->commentid);
             $manage = has_capability('mod/wiki:managecomment', $context);
-            $owner = $comment->userid == $USER->id;
+            $owner = ($comment->userid == $USER->id);
             if ($owner || $manage) {
                 $this->delete_comment($this->commentid);
+                redirect($CFG->wwwroot . '/mod/wiki/comments.php?pageid=' . $this->page->id, get_string('deletecomment', 'wiki'), 2);
             }
         }
 
@@ -2224,6 +2225,7 @@ class page_wiki_handlecomments extends page_wiki {
             redirect($CFG->wwwroot . '/mod/wiki/comments.php?pageid=' . $pageid, get_string('createcomment', 'wiki'), 2);
         } else {
             $this->delete_comment($idcomment);
+            redirect($CFG->wwwroot . '/mod/wiki/comments.php?pageid=' . $pageid, get_string('editingcomment', 'wiki'), 2);
         }
     }
 
@@ -2235,8 +2237,6 @@ class page_wiki_handlecomments extends page_wiki {
         $pageid = $this->page->id;
 
         wiki_delete_comment($commentid, $context, $pageid);
-
-        redirect($CFG->wwwroot . '/mod/wiki/comments.php?pageid=' . $pageid, get_string('deletecomment', 'wiki'), 2);
     }
 
 }
