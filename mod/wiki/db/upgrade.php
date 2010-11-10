@@ -271,8 +271,6 @@ function xmldb_wiki_upgrade($oldversion) {
                     }
                 } else {
                     echo $OUTPUT->notification("Bad data found: $r->pagename <br/> Expected file path: $thefile Please fix the bad file path manually.");
-                    // print file meta info, which can help admin find missing file
-                    print_object($filemeta);
                 }
             }
         }

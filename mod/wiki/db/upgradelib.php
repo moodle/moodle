@@ -293,15 +293,13 @@ function wiki_upgrade_migrate_versions() {
                 $version->content = $content;
                 $DB->insert_record('wiki_versions', $version);
             } catch (Exception $e) {
-                echo $OUTPUT->notification('Cannot insert this record');
-                print_object($version);
+                echo $OUTPUT->notification('Cannot insert this record, page id: ' . $page->id);
             }
         } else {
             try {
                 $DB->insert_record('wiki_versions', $version);
             } catch (Exception $e) {
-                echo $OUTPUT->notification('Cannot insert this record');
-                print_object($version);
+                echo $OUTPUT->notification('Cannot insert this record, page id: ' . $page->id);
             }
         }
     }
