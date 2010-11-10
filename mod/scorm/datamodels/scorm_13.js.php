@@ -578,9 +578,6 @@ function SCORMapi1_3() {
                                                             } else {
                                                                 nodes[0] = value;
                                                             }
-                                                            if (interactiontype == 'choice' && nodes.length == 1) {
-                                                              alert('not enough choices: ' + element);
-                                                            }
                                                             if ((nodes.length > 0) && (nodes.length <= correct_responses[interactiontype].max)) {
                                                                 errorCode = CRcheckValueNodes (element, interactiontype, nodes, value, errorCode);
                                                             } else if (nodes.length > correct_responses[interactiontype].max) {
