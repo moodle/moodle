@@ -70,6 +70,10 @@ function workshopform_comments_upgrade_legacy() {
         $rs = $DB->get_recordset_sql($sql, $params);
         $newassessmentids = workshop_upgrade_assessment_id_mappings();
         foreach ($rs as $old) {
+            if (!isset($newassessmentids[$old->assessmentid])) {
+                // orphaned comment - the assessment was removed but the grade remained
+                continue;
+            }
             if (!isset($newelementids[$old->workshopid]) or !isset($newelementids[$old->workshopid][$old->elementno])) {
                 // orphaned comment - the assessment form element has been removed after the grade was recorded
                 continue;

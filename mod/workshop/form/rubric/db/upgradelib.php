@@ -104,6 +104,10 @@ function workshopform_rubric_upgrade_legacy_criterion() {
         $newassessmentids = workshop_upgrade_assessment_id_mappings();
         $newdimensionids = $DB->get_records('workshopform_rubric_levels', array(), '', 'id,dimensionid');
         foreach ($rs as $old) {
+            if (!isset($newassessmentids[$old->assessmentid])) {
+                // orphaned grade - the assessment was removed but the grade remained
+                continue;
+            }
             if (!isset($newelementids[$old->workshopid]) or !isset($newelementids[$old->workshopid][$old->elementno])) {
                 // orphaned grade - the assessment form element has been removed after the grade was recorded
                 continue;
