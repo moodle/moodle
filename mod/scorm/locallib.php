@@ -1093,6 +1093,9 @@ function scorm_get_attempt_count($userid, $scorm, $attempts_only=false) {
     global $DB;
     $attemptcount = 0;
     $element = 'cmi.core.score.raw';
+    if ($scorm->grademethod == GRADESCOES) {
+        $element = 'cmi.core.lesson_status';
+    }
     if ($scorm->version == 'scorm1_3') {
         $element = 'cmi.score.raw';
     }
