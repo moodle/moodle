@@ -69,7 +69,7 @@ if ($ADMIN->fulltree) {
                                get_string('cmdtoconverttotextfor', 'block_search', $type), '', PARAM_PATH, 60));
             
             //word_to_text_env
-            $propname = "block_search_'.$type.'_to_text_env";
+            $propname = 'block_search_'.$type.'_to_text_env';
             $settings->add(new admin_setting_configtext($propname, get_string('configtypetotxtenv', 'block_search'),
                                get_string('envforcmdtotextfor', 'block_search', $type), '', PARAM_PATH, 60));
             
