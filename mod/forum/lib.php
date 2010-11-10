@@ -3215,7 +3215,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
     // Prepare the attachements for the post, files then images
     list($attachments, $attachedimages) = forum_print_attachments($post, $cm, 'separateimages');
-    
+
     // Determine if we need to shorten this post
     $shortenpost = ($link && (strlen(strip_tags($post->message)) > $CFG->forum_longpost));
 
@@ -3241,7 +3241,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     }
 
     // Zoom in to the parent specifically
-    if ($post->parent) {  
+    if ($post->parent) {
         $url = new moodle_url($discussionlink);
         if ($str->displaymode == FORUM_MODE_THREADED) {
             $url->param('parent', $post->parent);
@@ -3319,7 +3319,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $output .= $OUTPUT->user_picture($postuser, array('courseid'=>$course->id));
     $output .= html_writer::end_tag('div');
 
-    
+
     $output .= html_writer::start_tag('div', array('class'=>'topic'.$topicclass));
 
     $postsubject = $post->subject;
@@ -3327,7 +3327,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         $postsubject = format_string($postsubject);
     }
     $output .= html_writer::tag('div', $postsubject, array('class'=>'subject'));
-    
+
     $by = new stdClass();
     $by->name = html_writer::link($postuser->profilelink, $postuser->fullname);
     $by->date = userdate($post->modified);
@@ -5026,10 +5026,19 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
 // button for it. We do not show the button if we are showing site news
 // and the current user is a guest.
 
-    if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode, $cm, $context) ||
-        ($forum->type != 'news'
-         and (isguestuser() or !isloggedin() or (!is_enrolled($context) and !is_viewing($context)))) ) {
+    $canstart = forum_user_can_post_discussion($forum, $currentgroup, $groupmode, $cm, $context);
+    if (!$canstart and $forum->type !== 'news') {
+        if (isguestuser() or !isloggedin()) {
+            $canstart = true;
+        }
+        if (!is_enrolled($context) and !is_viewing($context)) {
+            // allow guests and not-logged-in to see the button - they are prompted to log in after clicking the link
+            // normal users with temporary guest access see this button too, they are asked to enrol instead
+            $canstart = enrol_selfenrol_available($course->id);
+        }
+    }
 
+    if ($canstart) {
         echo '<div class="singlebutton forumaddnew">';
         echo "<form id=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
         echo '<div>';
