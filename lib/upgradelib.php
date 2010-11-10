@@ -1507,6 +1507,7 @@ function upgrade_plugin_mnet_functions($component) {
                 } else {
                     $serviceobj = new stdClass();
                     $serviceobj->name        = $service['servicename'];
+                    $serviceobj->description = empty($service['description']) ? '' : $service['description'];
                     $serviceobj->apiversion  = $service['apiversion'];
                     $serviceobj->offer       = 1;
                     $serviceobj->id          = $DB->insert_record('mnet_service', $serviceobj);
