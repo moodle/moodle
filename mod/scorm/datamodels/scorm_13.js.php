@@ -77,7 +77,7 @@ function SCORMapi1_3() {
     var CMIDecimal = '^-?([0-9]{1,5})(\\.[0-9]{1,18})?$';
     var CMIIdentifier = '^\\S{0,250}[a-zA-Z0-9]$';
     var CMIShortIdentifier = '^[\\w\.]{1,250}$';
-    var CMILongIdentifier = '^\\S{0,4000}[a-zA-Z0-9]$';
+    var CMILongIdentifier = '^\\S{0,4000}$';
     var CMIFeedback = '^.*$'; // This must be redefined
     var CMIIndex = '[._](\\d+).';
     var CMIIndexStore = '.N(\\d+).';
