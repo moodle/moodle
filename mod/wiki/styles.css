@@ -233,12 +233,14 @@
     color: red;
 }
 
-a.wiki_newentry:link,a.wiki_newentry:visited {
+a.wiki_newentry:link, a.wiki_newentry:visited {
     color: red;
+    font-style: italic;
 }
 
 .wiki_newentry a {
     color: red;
+    font-style: italic;
 }
 
 #intro.generalbox {
