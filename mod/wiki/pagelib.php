@@ -828,7 +828,7 @@ class page_wiki_search extends page_wiki {
     protected function create_navbar() {
         global $PAGE, $CFG;
 
-        $PAGE->navbar->add($PAGE->activityrecord->name, $CFG->wwwroot . '/mod/wiki/view.php?id=' . $PAGE->cm->id);
+        $PAGE->navbar->add(format_string($this->title));
     }
 
     function set_search_string($search, $searchcontent) {
