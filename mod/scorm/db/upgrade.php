@@ -121,69 +121,11 @@ function xmldb_scorm_upgrade($oldversion) {
     }
 
     if ($oldversion < 2008090304) {
-
         /////////////////////////////////////
         /// new file storage upgrade code ///
         /////////////////////////////////////
 
-        function scorm_migrate_content_files($context, $base, $path) {
-            global $CFG, $OUTPUT;
-
-            $fullpathname = $base.$path;
-            $fs           = get_file_storage();
-            $filearea     = 'content';
-            $items        = new DirectoryIterator($fullpathname);
-
-            foreach ($items as $item) {
-                if ($item->isDot()) {
-                    unset($item); // release file handle
-                    continue;
-                }
-
-                if ($item->isLink()) {
-                    // do not follow symlinks - they were never supported in moddata, sorry
-                    unset($item); // release file handle
-                    continue;
-                }
-
-                if ($item->isFile()) {
-                    if (!$item->isReadable()) {
-                        echo $OUTPUT->notification(" File not readable, skipping: ".$fullpathname.$item->getFilename());
-                        unset($item); // release file handle
-                        continue;
-                    }
-
-                    $filepath    = clean_param($path, PARAM_PATH);
-                    $filename    = clean_param($item->getFilename(), PARAM_FILE);
-                    $oldpathname = $fullpathname.$item->getFilename();
-
-                    if ($filename === '') {
-                        continue;
-                        unset($item); // release file handle
-                    }
-
-                    if (!$fs->file_exists($context->id, 'mod_scorm', $filearea, '0', $filepath, $filename)) {
-                        $file_record = array('contextid'=>$context->id, 'component'=>'mod_scorm', 'filearea'=>$filearea, 'itemid'=>0, 'filepath'=>$filepath, 'filename'=>$filename,
-                                             'timecreated'=>$item->getCTime(), 'timemodified'=>$item->getMTime());
-                        unset($item); // release file handle
-                        if ($fs->create_file_from_pathname($file_record, $oldpathname)) {
-                            @unlink($oldpathname);
-                        }
-                    } else {
-                        unset($item); // release file handle
-                    }
-
-                } else {
-                    //migrate recursively all subdirectories
-                    $oldpathname = $fullpathname.$item->getFilename().'/';
-                    $subpath     = $path.$item->getFilename().'/';
-                    unset($item);  // release file handle
-                    scorm_migrate_content_files($context, $base, $subpath);
-                    @rmdir($oldpathname); // deletes dir if empty
-                }
-            }
-            unset($items); //release file handles
-        }
+        require_once("$CFG->dirroot/mod/scorm/db/upgradelib.php");
 
         $fs = get_file_storage();
 
@@ -206,16 +148,17 @@ function xmldb_scorm_upgrade($oldversion) {
                 $context       = get_context_instance(CONTEXT_MODULE, $scorm->cmid);
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $scorm->course);
 
-                // first copy local packages if found - do not delete in case they are shared ;-)
                 if ($scorm->scormtype === 'local' and preg_match('/.*(\.zip|\.pif)$/i', $scorm->reference)) {
+                    // first copy local packages if found - do not delete in case they are shared ;-)
                     $packagefile = clean_param($scorm->reference, PARAM_PATH);
                     $pathnamehash = sha1("/$coursecontext->id/course/legacy/0/$packagefile");
                     if ($file = $fs->get_file_by_hash($pathnamehash)) {
-                        $file_record = array('scontextid'=>$context->id, 'component'=>'mod_scorm', 'filearea'=>'package',
+                        $file_record = array('contextid'=>$context->id, 'component'=>'mod_scorm', 'filearea'=>'package',
                                              'itemid'=>0, 'filepath'=>'/');
                         try {
                             $fs->create_file_from_storedfile($file_record, $file);
                         } catch (Exception $x) {
+                            // ignore any errors, we can not do much anyway
                         }
                         $scorm->reference = $file->get_filepath().$file->get_filename();
 
@@ -223,16 +166,42 @@ function xmldb_scorm_upgrade($oldversion) {
                         $scorm->reference = '';
                     }
                     $DB->update_record('scorm', $scorm);
-                }
+                    // the package should be already extracted, we need to move the files there
+                    // just in case somebody modified it directly there
+                    scorm_migrate_moddata_files($scorm, $context);
 
-                // now migrate the extracted package
-                $basepath = "$CFG->dataroot/$scorm->course/$CFG->moddata/scorm/$scorm->id";
-                if (!is_dir($basepath)) {
-                    //no files?
-                    continue;
-                }
+                } else if ($scorm->scormtype === 'local' and preg_match('/.*\/imsmanifest\.xml$/i', $scorm->reference)) {
+                    // ignore imsmanifest in course root because we would be duplicating all course files which is not acceptable
+                    // moddata dir is not used at all, ignore any rubbish there
+                    $manifest = clean_param($scorm->reference, PARAM_PATH);
 
-                scorm_migrate_content_files($context, $basepath, '/');
+                    $pathnamehash = sha1("/$coursecontext->id/course/legacy/0/$manifest");
+                    if ($file = $fs->get_file_by_hash($pathnamehash)) {
+                        $scorm->reference = $file->get_filepath().$file->get_filename();
+
+                        $manifestdir = '/'.str_ireplace('/imsmanifest.xml', '', $manifest).'/';
+                        $pregmanifestdir = preg_quote($manifestdir, '/');
+                        $file_record = array('contextid'=>$context->id, 'component'=>'mod_scorm', 'filearea'=>'content', 'itemid'=>0);
+                        if ($files = $fs->get_directory_files($coursecontext->id, 'course', 'legacy', 0, $manifestdir, true)) {
+                            foreach ($files as $file) {
+                                $file_record['filepath'] = preg_replace("/^$pregmanifestdir/", '/', $file->get_filepath());
+                                try {
+                                    $fs->create_file_from_storedfile($file_record, $file);
+                                } catch (Exception $x) {
+                                    // ignore any errors, we can not do much anyway
+                                }
+                            }
+                        }
+
+                    } else {
+                        $scorm->reference = '';
+                    }
+                    $DB->update_record('scorm', $scorm);
+
+                } else {
+                    // just try to migrate anything from moddata
+                    scorm_migrate_moddata_files($scorm, $context);
+                }
 
                 // remove dirs if empty
                 @rmdir("$CFG->dataroot/$scorm->course/$CFG->moddata/scorm/$scorm->id/");
