@@ -24,7 +24,6 @@
  */
 
 $string['apikey'] = 'API key';
-$string['apikeyinlinehelp'] = '<p>To configure Box.net, visit the developer page at <a href="http://www.box.net/developers/services">box.net</a> and log in.</p><p>Under My Projects you will need to create one new project for each Moodle site.</p><p>The only setting that matters is the callback url, which should be {$a}. You can put anything you like for the other settings. Save it and you\'re done!';
 $string['err_noapikey'] = 'No API Key';
 $string['err_noapikey_help'] = 'There is no API Key configured for this plugin.  You can get one of these from http://enabled.box.net';
 $string['existingfolder'] = 'Exiting folder to put file(s) into';
@@ -36,8 +35,10 @@ $string['noauthtoken'] = 'Could not retrieve an authentication token for use in 
 $string['notarget'] = 'You must specify either an existing folder or a new folder to upload into';
 $string['noticket'] = 'Could not retrieve a ticket from box.net to begin the authentication session';
 $string['password'] = 'Your box.net password (will not be stored)';
-$string['pluginname'] = 'Box.net internet storage';
+$string['pluginname'] = 'Box.net';
 $string['sendfailed'] = 'Failed to send content to box.net: {$a}';
+$string['setupinfo'] = 'Setup instructions';
+$string['setupinfodetails'] = 'To obtain API key, log in to Box.net and visit their <a href="{$a->servicesurl}">OpenBox development page</a>. In \'Developer Tools\', follow \'Create new application\' and create new application for your Moodle site. API key is displayed in \'Backend parameters\' section of the application edit form. In that form, fill \'Redirect URL\' field to:<br /><code>{$a->callbackurl}</code><br />Optionally, you can also provide other information about your Moodle site. These values can be edited later at \'View my applications\' page.';
 $string['sharedfolder'] = 'Shared';
 $string['sharefile'] = 'Share this file?';
 $string['sharefolder'] = 'Share this new folder?';

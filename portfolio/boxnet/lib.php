@@ -108,11 +108,14 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
 
     public function admin_config_form(&$mform) {
         global $CFG;
-        $strrequired = get_string('required');
-        $mform->addElement('text', 'apikey', get_string('apikey', 'portfolio_boxnet'));
-        $mform->addRule('apikey', $strrequired, 'required', null, 'client');
-        $mform->addElement('warning', 'apikeyhelp', 'smalltext', get_string('apikeyinlinehelp', 'portfolio_boxnet', $CFG->wwwroot . '/portfolio/add.php?postcontrol=1&type=boxnet'));
 
+        $mform->addElement('text', 'apikey', get_string('apikey', 'portfolio_boxnet'));
+        $mform->addRule('apikey', get_string('required'), 'required', null, 'client');
+        $a = new stdClass();
+        $a->servicesurl = 'http://www.box.net/developers/services';
+        $a->callbackurl = $CFG->wwwroot . '/portfolio/add.php?postcontrol=1&type=boxnet';
+        $mform->addElement('static', 'setupinfo', get_string('setupinfo', 'portfolio_boxnet'),
+            get_string('setupinfodetails', 'portfolio_boxnet', $a));
     }
 
     public function steal_control($stage) {
