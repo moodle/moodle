@@ -7,8 +7,12 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // Experimental settings page
     $ADMIN->add('development', new admin_category('experimental', get_string('experimental','admin')));
 
+    require_once($CFG->dirroot .'/search/lib.php');
     $temp = new admin_settingpage('experimentalsettings', get_string('experimentalsettings', 'admin'));
-    $temp->add(new admin_setting_configcheckbox('enableglobalsearch', get_string('enableglobalsearch', 'admin'), get_string('configenableglobalsearch', 'admin'), 0));
+    $englobalsearch = new admin_setting_configcheckbox('enableglobalsearch', get_string('enableglobalsearch', 'admin'), get_string('configenableglobalsearch', 'admin'), 0);
+    $englobalsearch->set_updatedcallback('search_updatedcallback');
+    $temp->add($englobalsearch);
+
     $temp->add(new admin_setting_configcheckbox('experimentalsplitrestore', get_string('experimentalsplitrestore', 'admin'), get_string('configexperimentalsplitrestore', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('enableimsccimport', get_string('enable_cc_import', 'imscc'), get_string('enable_cc_import_description', 'imscc'), 0));
     $temp->add(new admin_setting_configcheckbox('enablesafebrowserintegration', get_string('enablesafebrowserintegration', 'admin'), get_string('configenablesafebrowserintegration', 'admin'), 0));

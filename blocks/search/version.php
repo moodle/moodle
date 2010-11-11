@@ -15,5 +15,5 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version = 2010110900;
+$plugin->version = 2010111100;
 $plugin->cron = 1;

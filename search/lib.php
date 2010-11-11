@@ -186,4 +186,12 @@ function search_pexit($str = "") {
     exit(0);
 }
 
+function search_updatedcallback($name) {
+    global $CFG, $DB;
+    // set block to hidden when global search is disabled.
+    if ($CFG->enableglobalsearch != 1) {
+        $DB->set_field('block', 'visible', 0, array('name'=>'search'));     // Hide block
+    }
+}
+
 ?>

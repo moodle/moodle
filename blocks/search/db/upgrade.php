@@ -83,5 +83,12 @@ function xmldb_block_search_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2010110900, 'search');
     }
 
+    if ($oldversion < 2010111100) {
+        // set block to hidden if global search is disabled.
+        if ($CFG->enableglobalsearch != 1) {
+            $DB->set_field('block', 'visible', 0, array('name'=>'search'));     // Hide block
+        }
+        upgrade_block_savepoint(true, 2010111100, 'search');
+    }
     return $result;
 }
