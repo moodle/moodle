@@ -3511,8 +3511,10 @@ class settings_navigation extends navigation_node {
         }
 
         // Assign local roles
-        $assignurl = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$this->context->id));
-        $categorynode->add(get_string('assignroles', 'role'), $assignurl, self::TYPE_SETTING);
+        if (has_capability('moodle/role:assign', $this->context)) {
+            $assignurl = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$this->context->id));
+            $categorynode->add(get_string('assignroles', 'role'), $assignurl, self::TYPE_SETTING);
+        }
 
         // Override roles
         if (has_capability('moodle/role:review', $this->context) or count(get_overridable_roles($this->context))>0) {
