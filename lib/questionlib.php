@@ -121,16 +121,6 @@ define('QUESTION_ADAPTIVE', 1);
 /**#@-*/
 
 /**#@+
- * Options used in forms that move files.
- */
-define('QUESTION_FILENOTHINGSELECTED', 0);
-define('QUESTION_FILEDONOTHING', 1);
-define('QUESTION_FILECOPY', 2);
-define('QUESTION_FILEMOVE', 3);
-define('QUESTION_FILEMOVELINKSONLY', 4);
-/**#@-*/
-
-/**#@+
  * Options for whether flags are shown/editable when rendering questions.
  */
 define('QUESTION_FLAGSHIDDEN', 0);
@@ -718,7 +708,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
                     // added to a course, and then that course is moved to another category (MDL-14802).
                     $questionids = $DB->get_records_menu('question', array('category'=>$category->id), '', 'id,1');
                     if (!empty($questionids)) {
-                        if (!$rescueqcategory = question_save_from_deletion(implode(',', array_keys($questionids)),
+                        if (!$rescueqcategory = question_save_from_deletion(array_keys($questionids),
                                 get_parent_contextid($context), print_context_name($context), $rescueqcategory)) {
                             return false;
                        }
@@ -854,30 +844,55 @@ function question_delete_activity($cm, $feedback=true) {
 function question_move_questions_to_category($questionids, $newcategoryid) {
     global $DB, $QTYPES;
 
-    $ids = explode(',', $questionids);
-    foreach ($ids as $questionid) {
-        $questionid = (int)$questionid;
-        $params = array();
-        $params[] = $questionid;
-        $sql = 'SELECT q.*, c.id AS contextid, c.contextlevel, c.instanceid, c.path, c.depth
-                  FROM {question} q, {question_categories} qc, {context} c
-                 WHERE q.category=qc.id AND q.id=? AND qc.contextid=c.id';
-        $question = $DB->get_record_sql($sql, $params);
-        $category = $DB->get_record('question_categories', array('id'=>$newcategoryid));
-        // process files
-        $QTYPES[$question->qtype]->move_files($question, $category);
+    $newcontextid = $DB->get_field('question_categories', 'contextid',
+            array('id' => $newcategoryid));
+    list($questionidcondition, $params) = $DB->get_in_or_equal($questionids);
+    $questions = $DB->get_records_sql("
+            SELECT q.id, q.qtype, qc.contextid
+              FROM {question} q
+              JOIN {question_categories} qc ON q.category = qc.id
+             WHERE  q.id $questionidcondition", $params);
+    foreach ($questions as $question) {
+        if ($newcontextid != $question->contextid) {
+            $QTYPES[$question->qtype]->move_files($question->id,
+                    $question->contextid, $newcontextid);
+        }
     }
 
-
     // Move the questions themselves.
-    $DB->set_field_select('question', 'category', $newcategoryid, "id IN ($questionids)");
+    $DB->set_field_select('question', 'category', $newcategoryid, "id $questionidcondition", $params);
 
     // Move any subquestions belonging to them.
-    $DB->set_field_select('question', 'category', $newcategoryid, "parent IN ($questionids)");
+    $DB->set_field_select('question', 'category', $newcategoryid, "parent $questionidcondition", $params);
 
     // TODO Deal with datasets.
 
     return true;
+}
+
+/**
+ * This function helps move a question cateogry to a new context by moving all
+ * the files belonging to all the questions to the new context.
+ * Also moves subcategories.
+ * @param integer $categoryid the id of the category being moved.
+ * @param integer $oldcontextid the old context id.
+ * @param integer $newcontextid the new context id.
+ */
+function question_move_category_to_context($categoryid, $oldcontextid, $newcontextid) {
+    global $DB, $QTYPES;
+
+    $questionids = $DB->get_records_menu('question',
+            array('category' => $categoryid), '', 'id,qtype');
+    foreach ($questionids as $questionid => $qtype) {
+        $QTYPES[$qtype]->move_files($questionid, $oldcontextid, $newcontextid);
+    }
+
+    $subcatids = $DB->get_records_menu('question_categories',
+            array('parent' => $categoryid), '', 'id,1');
+    foreach ($subcatids as $subcatid => $notused) {
+        $DB->set_field('question_categories', 'contextid', $newcontextid, array('id' => $subcatid));
+        question_move_category_to_context($subcatid, $oldcontextid, $newcontextid);
+    }
 }
 
 /**
@@ -1850,37 +1865,11 @@ function print_question_icon($question, $return = false) {
 }
 
 /**
-* Returns a html link to the question image if there is one
-*
- * @global object
- * @global object
-* @return string The html image tag or the empy string if there is no image.
-* @param object $question The question object
-*/
-function get_question_image($question) {
-    global $CFG, $DB;
-    $img = '';
-
-    if (!$category = $DB->get_record('question_categories', array('id'=>$question->category))) {
-        print_error('invalidcategory');
-    }
-    $coursefilesdir = get_filesdir_from_context(get_context_instance_by_id($category->contextid));
-
-    if ($question->image) {
-
-        if (substr(strtolower($question->image), 0, 7) == 'http://') {
-            $img .= $question->image;
-
-        } else {
-            require_once($CFG->libdir .'/filelib.php');
-            $img = get_file_url("$coursefilesdir/{$question->image}");
-        }
-    }
-    return $img;
-}
-
-/**
- * @global array
+ * @param $question
+ * @param $state
+ * @param $prefix
+ * @param $cmoptions
+ * @param $caption
  */
 function question_print_comment_fields($question, $state, $prefix, $cmoptions, $caption = '') {
     global $QTYPES;
@@ -2827,124 +2816,13 @@ function question_require_capability_on($question, $cap){
 }
 
 /**
- * @global object
- */
-function question_file_links_base_url($courseid){
-    global $CFG;
-    $baseurl = preg_quote("$CFG->wwwroot/file.php", '!');
-    $baseurl .= '('.preg_quote('?file=', '!').')?';//may or may not
-                                     //be using slasharguments, accept either
-    $baseurl .= "/$courseid/";//course directory
-    return $baseurl;
-}
-
-/**
- * Find all course / site files linked to in a piece of html.
- * @global object
- * @param string html the html to search
- * @param int course search for files for courseid course or set to siteid for
- *              finding site files.
- * @return array files with keys being files.
- */
-function question_find_file_links_from_html($html, $courseid){
-    global $CFG;
-    $baseurl = question_file_links_base_url($courseid);
-    $searchfor = '!'.
-                   '(<\s*(a|img)\s[^>]*(href|src)\s*=\s*")'.$baseurl.'([^"]*)"'.
-                   '|'.
-                   '(<\s*(a|img)\s[^>]*(href|src)\s*=\s*\')'.$baseurl.'([^\']*)\''.
-                  '!i';
-    $matches = array();
-    $no = preg_match_all($searchfor, $html, $matches);
-    if ($no){
-        $rawurls = array_filter(array_merge($matches[5], $matches[10]));//array_filter removes empty elements
-        //remove any links that point somewhere they shouldn't
-        foreach (array_keys($rawurls) as $rawurlkey){
-            if (!$cleanedurl = question_url_check($rawurls[$rawurlkey])){
-                unset($rawurls[$rawurlkey]);
-            } else {
-                $rawurls[$rawurlkey] = $cleanedurl;
-            }
-
-        }
-        $urls = array_flip($rawurls);// array_flip removes duplicate files
-                                            // and when we merge arrays will continue to automatically remove duplicates
-    } else {
-        $urls = array();
-    }
-    return $urls;
-}
-
-/**
- * Check that url doesn't point anywhere it shouldn't
- *
- * @global object
- * @param $url string relative url within course files directory
- * @return mixed boolean false if not OK or cleaned URL as string if OK
- */
-function question_url_check($url){
-    global $CFG;
-    if ((substr(strtolower($url), 0, strlen($CFG->moddata)) == strtolower($CFG->moddata)) ||
-            (substr(strtolower($url), 0, 10) == 'backupdata')){
-        return false;
-    } else {
-        return clean_param($url, PARAM_PATH);
-    }
-}
-
-/**
- * Find all course / site files linked to in a piece of html.
- *
- * @global object
- * @param string html the html to search
- * @param int course search for files for courseid course or set to siteid for
- *              finding site files.
- * @return array files with keys being files.
- */
-function question_replace_file_links_in_html($html, $fromcourseid, $tocourseid, $url, $destination, &$changed){
-    global $CFG;
-    require_once($CFG->libdir .'/filelib.php');
-    $tourl = get_file_url("$tocourseid/$destination");
-    $fromurl = question_file_links_base_url($fromcourseid).preg_quote($url, '!');
-    $searchfor = array('!(<\s*(a|img)\s[^>]*(href|src)\s*=\s*")'.$fromurl.'(")!i',
-                   '!(<\s*(a|img)\s[^>]*(href|src)\s*=\s*\')'.$fromurl.'(\')!i');
-    $newhtml = preg_replace($searchfor, '\\1'.$tourl.'\\5', $html);
-    if ($newhtml != $html){
-        $changed = true;
-    }
-    return $newhtml;
-}
-
-/**
- * @global object
- */
-function get_filesdir_from_context($context){
-    global $DB;
-
-    switch ($context->contextlevel){
-        case CONTEXT_COURSE :
-            $courseid = $context->instanceid;
-            break;
-        case CONTEXT_MODULE :
-            $courseid = $DB->get_field('course_modules', 'course', array('id'=>$context->instanceid));
-            break;
-        case CONTEXT_COURSECAT :
-        case CONTEXT_SYSTEM :
-            $courseid = SITEID;
-            break;
-        default :
-            print_error('invalidcontext');
-    }
-    return $courseid;
-}
-/**
  * Get the real state - the correct question id and answer - for a random
  * question.
  * @param object $state with property answer.
  * @return mixed return integer real question id or false if there was an
  * error..
  */
-function question_get_real_state($state){
+function question_get_real_state($state) {
     global $OUTPUT;
     $realstate = clone($state);
     $matches = array();

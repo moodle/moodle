@@ -155,14 +155,6 @@ class default_questiontype {
     }
 
     /**
-     * @return whether the question_answers.answer field needs to have
-     * restore_decode_content_links_worker called on it.
-     */
-    function has_html_answers() {
-        return false;
-    }
-
-    /**
      * If your question type has a table that extends the question table, and
      * you want the base class to automatically save, backup and restore the extra fields,
      * override this method to return an array wherer the first element is the table name,
@@ -1529,93 +1521,6 @@ class default_questiontype {
         return format_text($text, $textformat, $formatoptions, $cmoptions === NULL ? NULL : $cmoptions->course);
     }
 
-    /*
-     * Find all course / site files linked from a question.
-     *
-     * Need to check for links to files in question_answers.answer and feedback
-     * and in question table in generalfeedback and questiontext fields. Methods
-     * on child classes will also check extra question specific fields.
-     *
-     * Needs to be overriden for child classes that have extra fields containing
-     * html.
-     *
-     * @param string html the html to search
-     * @param int courseid search for files for courseid course or set to siteid for
-     *              finding site files.
-     * @return array of url, relative url is key and array with one item = question id as value
-     *                  relative url is relative to course/site files directory root.
-     */
-    function find_file_links($question, $courseid){
-        $urls = array();
-    /// Questiontext and general feedback.
-        $urls += question_find_file_links_from_html($question->questiontext, $courseid);
-        $urls += question_find_file_links_from_html($question->generalfeedback, $courseid);
-
-    /// Answers, if this question uses them.
-        if (isset($question->options->answers)){
-            foreach ($question->options->answers as $answerkey => $answer){
-            /// URLs in the answers themselves, if appropriate.
-                if ($this->has_html_answers()) {
-                    $urls += question_find_file_links_from_html($answer->answer, $courseid);
-                }
-            /// URLs in the answer feedback.
-                $urls += question_find_file_links_from_html($answer->feedback, $courseid);
-            }
-        }
-
-    /// Set all the values of the array to the question object
-        if ($urls){
-            $urls = array_combine(array_keys($urls), array_fill(0, count($urls), array($question->id)));
-        }
-        return $urls;
-    }
-    /*
-     * Find all course / site files linked from a question.
-     *
-     * Need to check for links to files in question_answers.answer and feedback
-     * and in question table in generalfeedback and questiontext fields. Methods
-     * on child classes will also check extra question specific fields.
-     *
-     * Needs to be overriden for child classes that have extra fields containing
-     * html.
-     *
-     * @param string html the html to search
-     * @param int course search for files for courseid course or set to siteid for
-     *              finding site files.
-     * @return array of files, file name is key and array with one item = question id as value
-     */
-    function replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination){
-        global $CFG, $DB;
-        $updateqrec = false;
-    /// Questiontext and general feedback.
-        $question->questiontext = question_replace_file_links_in_html($question->questiontext, $fromcourseid, $tocourseid, $url, $destination, $updateqrec);
-        $question->generalfeedback = question_replace_file_links_in_html($question->generalfeedback, $fromcourseid, $tocourseid, $url, $destination, $updateqrec);
-
-    /// If anything has changed, update it in the database.
-        if ($updateqrec){
-            $DB->update_record('question', $question);
-        }
-
-
-    /// Answers, if this question uses them.
-        if (isset($question->options->answers)){
-            //answers that do not need updating have been unset
-            foreach ($question->options->answers as $answer){
-                $answerchanged = false;
-            /// URLs in the answers themselves, if appropriate.
-                if ($this->has_html_answers()) {
-                    $answer->answer = question_replace_file_links_in_html($answer->answer, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
-                }
-            /// URLs in the answer feedback.
-                $answer->feedback = question_replace_file_links_in_html($answer->feedback, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
-            /// If anything has changed, update it in the database.
-                if ($answerchanged){
-                    $DB->update_record('question_answers', $answer);
-                }
-            }
-        }
-    }
-
     /**
      * @return the best link to pass to print_error.
      * @param $cmoptions as passed in from outside.
@@ -1755,31 +1660,39 @@ class default_questiontype {
     }
 
     /**
-     * When move the category of questions, the belonging files should be moved as well
-     * @param object $question, question information
-     * @param object $newcategory, target category information
+     * Move all the files belonging to this question from one context to another.
+     * @param object $question the question to move.
+     * @param integer $oldcontextid the context it is moving from.
+     * @param integer $newcontextid the context it is moving to.
      */
-    function move_files($question, $newcategory) {
+    public function move_files($questionid, $oldcontextid, $newcontextid) {
+        $fs = get_file_storage();
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'question', 'questiontext', $questionid);
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'question', 'generalfeedback', $questionid);
+    }
+
+    /**
+     * 
+     * @param object $question the question to move.
+     * @param integer $oldcontextid the context it is moving from.
+     * @param integer $newcontextid the context it is moving to.
+     * @param boolean $answerstoo whether there is an 'answer' question area,
+     *      as well as an 'answerfeedback' one. Default false.
+     */
+    protected function move_files_in_answers($questionid, $oldcontextid, $newcontextid, $answerstoo = false) {
         global $DB;
         $fs = get_file_storage();
-        $component = 'question';
-        // process general question files
-        // Currently we have questiontext and generalfeedback areas
-        foreach (array('questiontext', 'generalfeedback') as $filearea) {
-            $files = $fs->get_area_files($question->contextid, $component, $filearea, $question->id);
-            foreach ($files as $storedfile) {
-                if (!$storedfile->is_directory()) {
-                    if ($newcategory->contextid == $question->contextid) {
-                        continue;
-                    }
-                    $newfile = new stdClass();
-                    // only contextid changed
-                    $newfile->contextid = (int)$newcategory->contextid;
-                    $fs->create_file_from_storedfile($newfile, $storedfile);
-                    // delete old files
-                    $storedfile->delete();
-                }
+        $answerids = $DB->get_records_menu('question_answers',
+                array('question' => $questionid), 'id', 'id,1');
+        foreach ($answerids as $answerid => $notused) {
+            if ($answerstoo) {
+                $fs->move_area_files_to_new_context($oldcontextid,
+                        $newcontextid, 'question', 'answer', $answerid);
             }
+            $fs->move_area_files_to_new_context($oldcontextid,
+                    $newcontextid, 'question', 'answerfeedback', $answerid);
         }
     }
 

@@ -211,7 +211,7 @@ if ($mform->is_cancelled()){
         }
         redirect($returnurl->out(false));
     }
-} elseif ($fromform = $mform->get_data()) {
+} else if ($fromform = $mform->get_data()) {
     /// If we are saving as a copy, break the connection to the old question.
     if (!empty($fromform->makecopy)) {
         $question->id = 0;
@@ -237,36 +237,27 @@ if ($mform->is_cancelled()){
         question_require_capability_on($question, 'move');
     }
 
-    /// Ensure we redirect back to the category the question is being saved into.
+    // Ensure we redirect back to the category the question is being saved into.
     $returnurl->param('category', $fromform->category);
 
-    /// Call the appropriate method.
     if ($movecontext) {
+        // We are just moving the question to a different context.
         list($tocatid, $tocontextid) = explode(',', $fromform->categorymoveto);
-        $tocontext = get_context_instance_by_id($tocontextid);
-        require_capability('moodle/question:add', $tocontext);
-        if (get_filesdir_from_context($categorycontext) != get_filesdir_from_context($tocontext)){
-            $movecontexturl  = new moodle_url('/question/contextmoveq.php', array(
-                    'returnurl' => str_replace($CFG->wwwroot, '', $returnurl->out(false)),
-                    'ids' => $question->id,
-                    'tocatid' => $tocatid));
-            if ($cmid){
-                $movecontexturl->param('cmid', $cmid);
-            } else {
-                $movecontexturl->param('courseid', $courseid);
-            }
-            redirect($movecontexturl);
+        require_capability('moodle/question:add', get_context_instance_by_id($tocontextid));
+        question_move_questions_to_category(array($question->id), $tocatid);
+
+    } else {
+        // We are acutally saving the question.
+        $question = $QTYPES[$question->qtype]->save_question($question, $fromform, $COURSE, $wizardnow, true);
+        if (!empty($CFG->usetags) && isset($fromform->tags)) {
+            // A wizardpage from multipe pages questiontype like calculated may not
+            // allow editing the question tags, hence the isset($fromform->tags) test.
+            require_once($CFG->dirroot.'/tag/lib.php');
+            tag_set('question', $question->id, $fromform->tags);
         }
     }
 
-    $question = $QTYPES[$question->qtype]->save_question($question, $fromform, $COURSE, $wizardnow, true);
-    // a wizardpage from multipe pages questiontype like calculated may not allow editing the question tags
-    if (!empty($CFG->usetags) && isset($fromform->tags)) {
-        require_once($CFG->dirroot.'/tag/lib.php');
-        tag_set('question', $question->id, $fromform->tags);
-    }
-
-    if (($QTYPES[$question->qtype]->finished_edit_wizard($fromform)) || $movecontext){
+    if (($QTYPES[$question->qtype]->finished_edit_wizard($fromform)) || $movecontext) {
         if ($inpopup) {
             echo $OUTPUT->notification(get_string('changessaved'), '');
             close_window(3);
@@ -279,6 +270,7 @@ if ($mform->is_cancelled()){
             }
             redirect($returnurl);
         }
+
     } else {
         $nexturlparams = array(
                 'returnurl' => $originalreturnurl,
@@ -297,8 +289,8 @@ if ($mform->is_cancelled()){
         }
         redirect($nexturl);
     }
-} else {
 
+} else {
     $streditingquestion = $QTYPES[$question->qtype]->get_heading();
     $PAGE->set_title($streditingquestion);
     $PAGE->set_heading($COURSE->fullname);
@@ -316,7 +308,7 @@ if ($mform->is_cancelled()){
 
     } else {
         $strediting = '<a href="edit.php?courseid='.$COURSE->id.'">'.get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
-        $PAGE->navbar->add(get_string('editquestions', "quiz"), $returnurl);
+        $PAGE->navbar->add(get_string('editquestions', 'quiz'), $returnurl);
         $PAGE->navbar->add($streditingquestion);
         echo $OUTPUT->header();
     }

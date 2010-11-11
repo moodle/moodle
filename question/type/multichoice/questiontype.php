@@ -14,10 +14,6 @@ class question_multichoice_qtype extends default_questiontype {
         return 'multichoice';
     }
 
-    function has_html_answers() {
-        return true;
-    }
-
     function get_question_options(&$question) {
         global $DB, $OUTPUT;
         // Get additional information from database
@@ -489,48 +485,6 @@ class question_multichoice_qtype extends default_questiontype {
         }
     }
 
-    function find_file_links($question, $courseid){
-        $urls = array();
-        // find links in the answers table.
-        $urls +=  question_find_file_links_from_html($question->options->correctfeedback, $courseid);
-        $urls +=  question_find_file_links_from_html($question->options->partiallycorrectfeedback, $courseid);
-        $urls +=  question_find_file_links_from_html($question->options->incorrectfeedback, $courseid);
-        foreach ($question->options->answers as $answer) {
-            $urls += question_find_file_links_from_html($answer->answer, $courseid);
-        }
-        //set all the values of the array to the question id
-        if ($urls){
-            $urls = array_combine(array_keys($urls), array_fill(0, count($urls), array($question->id)));
-        }
-        $urls = array_merge_recursive($urls, parent::find_file_links($question, $courseid));
-        return $urls;
-    }
-
-    function replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination){
-        global $DB;
-        parent::replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination);
-        // replace links in the question_match_sub table.
-        // We need to use a separate object, because in load_question_options, $question->options->answers
-        // is changed from a comma-separated list of ids to an array, so calling $DB->update_record on
-        // $question->options stores 'Array' in that column, breaking the question.
-        $optionschanged = false;
-        $newoptions = new stdClass;
-        $newoptions->id = $question->options->id;
-        $newoptions->correctfeedback = question_replace_file_links_in_html($question->options->correctfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
-        $newoptions->partiallycorrectfeedback  = question_replace_file_links_in_html($question->options->partiallycorrectfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
-        $newoptions->incorrectfeedback = question_replace_file_links_in_html($question->options->incorrectfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
-        if ($optionschanged){
-            $DB->update_record('question_multichoice', $newoptions);
-        }
-        $answerchanged = false;
-        foreach ($question->options->answers as $answer) {
-            $answer->answer = question_replace_file_links_in_html($answer->answer, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
-            if ($answerchanged){
-                $DB->update_record('question_answers', $answer);
-            }
-        }
-    }
-
     /**
      * Runs all the code required to set up and save an essay question for testing purposes.
      * Alternate DB table prefix may be used to facilitate data deletion.
@@ -559,48 +513,19 @@ class question_multichoice_qtype extends default_questiontype {
 
         return $this->save_question($question, $form, $course);
     }
-    /**
-     * When move the category of questions, the belonging files should be moved as well
-     * @param object $question, question information
-     * @param object $newcategory, target category information
-     */
-    function move_files($question, $newcategory) {
-        global $DB;
-        // move files belonging to question component
-        parent::move_files($question, $newcategory);
 
-        // move files belonging to qtype_multichoice
+    function move_files($questionid, $oldcontextid, $newcontextid) {
         $fs = get_file_storage();
-        // process files in answer
-        if (!$oldanswers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
-            $oldanswers = array();
-        }
-        $component = 'question';
-        $filearea = 'answerfeedback';
-        foreach ($oldanswers as $answer) {
-            $files = $fs->get_area_files($question->contextid, $component, $filearea, $answer->id);
-            foreach ($files as $storedfile) {
-                if (!$storedfile->is_directory()) {
-                    $newfile = new stdClass();
-                    $newfile->contextid = (int)$newcategory->contextid;
-                    $fs->create_file_from_storedfile($newfile, $storedfile);
-                    $storedfile->delete();
-                }
-            }
-        }
 
-        $component = 'qtype_multichoice';
-        foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $filearea) {
-            $files = $fs->get_area_files($question->contextid, $component, $filearea, $question->id);
-            foreach ($files as $storedfile) {
-                if (!$storedfile->is_directory()) {
-                    $newfile = new stdClass();
-                    $newfile->contextid = (int)$newcategory->contextid;
-                    $fs->create_file_from_storedfile($newfile, $storedfile);
-                    $storedfile->delete();
-                }
-            }
-        }
+        parent::move_files($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid, true);
+
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'qtype_multichoice', 'correctfeedback', $questionid);
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'qtype_multichoice', 'partiallycorrectfeedback', $questionid);
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'qtype_multichoice', 'incorrectfeedback', $questionid);
     }
 
     function check_file_access($question, $state, $options, $contextid, $component,

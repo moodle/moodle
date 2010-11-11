@@ -341,45 +341,15 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
 
         return $new_question;
     }
-    /**
-     * When move the category of questions, the belonging files should be moved as well
-     * @param object $question, question information
-     * @param object $newcategory, target category information
-     */
-    function move_files($question, $newcategory) {
-        global $DB;
-        parent::move_files($question, $newcategory);
 
+    function move_files($questionid, $oldcontextid, $newcontextid) {
         $fs = get_file_storage();
-        // process files in answer
-        if (!$oldanswers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
-            $oldanswers = array();
-        }
-        $component = 'question';
-        $filearea = 'feedback';
-        foreach ($oldanswers as $answer) {
-            $files = $fs->get_area_files($question->contextid, $component, $filearea, $answer->id);
-            foreach ($files as $storedfile) {
-                if (!$storedfile->is_directory()) {
-                    $newfile = new stdClass();
-                    $newfile->contextid = (int)$newcategory->contextid;
-                    $fs->create_file_from_storedfile($newfile, $storedfile);
-                    $storedfile->delete();
-                }
-            }
-        }
-        $component = 'qtype_calculatedsimple';
-        $filearea = 'feedback';
-        $filearea = 'instruction';
-        $files = $fs->get_area_files($question->contextid, $component, $filearea, $question->id);
-        foreach ($files as $storedfile) {
-            if (!$storedfile->is_directory()) {
-                $newfile = new stdClass();
-                $newfile->contextid = (int)$newcategory->contextid;
-                $fs->create_file_from_storedfile($newfile, $storedfile);
-                $storedfile->delete();
-            }
-        }
+
+        parent::move_files($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
+
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'qtype_calculatedsimple', 'instruction', $questionid);
     }
 
     function check_file_access($question, $state, $options, $contextid, $component,

@@ -257,6 +257,11 @@ class question_truefalse_qtype extends default_questiontype {
         include("$CFG->dirroot/question/type/truefalse/display.html");
     }
 
+    function move_files($questionid, $oldcontextid, $newcontextid) {
+        parent::move_files($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
+    }
+
     function check_file_access($question, $state, $options, $contextid, $component,
             $filearea, $args) {
         if ($component == 'question' && $filearea == 'answerfeedback') {
@@ -331,34 +336,6 @@ class question_truefalse_qtype extends default_questiontype {
         }
 
         return $this->save_question($question, $form, $course);
-    }
-    /**
-     * When move the category of questions, the belonging files should be moved as well
-     * @param object $question, question information
-     * @param object $newcategory, target category information
-     */
-    function move_files($question, $newcategory) {
-        global $DB;
-        parent::move_files($question, $newcategory);
-
-        $fs = get_file_storage();
-        // process files in answer
-        if (!$oldanswers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
-            $oldanswers = array();
-        }
-        $component = 'question';
-        $filearea = 'answerfeedback';
-        foreach ($oldanswers as $answer) {
-            $files = $fs->get_area_files($question->contextid, $component, $filearea, $answer->id);
-            foreach ($files as $storedfile) {
-                if (!$storedfile->is_directory()) {
-                    $newfile = new stdClass();
-                    $newfile->contextid = (int)$newcategory->contextid;
-                    $fs->create_file_from_storedfile($newfile, $storedfile);
-                    $storedfile->delete();
-                }
-            }
-        }
     }
 }
 //// END OF CLASS ////

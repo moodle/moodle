@@ -66,7 +66,7 @@ class question_edit_multichoice_form extends question_edit_form {
 
         foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
             $mform->addElement('editor', $feedbackname, get_string($feedbackname, 'qtype_multichoice'),
-                                array('course' => $this->coursefilesid), $this->editoroptions);
+                                array('rows' => 10), $this->editoroptions);
             $mform->setType($feedbackname, PARAM_RAW);
         }
 

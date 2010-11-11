@@ -46,7 +46,6 @@ class question_edit_form extends moodleform {
     public $contexts;
     public $category;
     public $categorycontext;
-    public $coursefilesid;
 
     /** @var object current context */
     public $context;
@@ -64,25 +63,20 @@ class question_edit_form extends moodleform {
 
         $this->contexts = $contexts;
 
-        $record = $DB->get_record('question_categories', array('id'=>$question->category), 'contextid');
+        $record = $DB->get_record('question_categories', array('id' => $question->category), 'contextid');
         $this->context = get_context_instance_by_id($record->contextid);
 
-        $this->editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'context'=>$this->context);
-        $this->fileoptions = array('subdir'=>true, 'maxfiles'=>-1, 'maxbytes'=>-1);
+        $this->editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'context' => $this->context);
+        $this->fileoptions = array('subdir' => true, 'maxfiles' => -1, 'maxbytes' => -1);
 
         $this->category = $category;
         $this->categorycontext = get_context_instance_by_id($category->contextid);
-                                              //** *
-        //course id or site id depending on question cat context
-        $this->coursefilesid =  get_filesdir_from_context(get_context_instance_by_id($category->contextid));
 
         if (!empty($question->id)) {
-            $question->id = (int)$question->id;
-            //$this->instance = new
+            $question->id = (int) $question->id;
         }
 
         parent::moodleform($submiturl, null, 'post', '', null, $formeditable);
-
     }
 
     /**
@@ -104,20 +98,20 @@ class question_edit_form extends moodleform {
         $mform->addElement('header', 'generalheader', get_string("general", 'form'));
 
         if (!isset($this->question->id)){
-            //adding question
+            // Adding question
             $mform->addElement('questioncategory', 'category', get_string('category', 'quiz'),
                     array('contexts' => $this->contexts->having_cap('moodle/question:add')));
         } elseif (!($this->question->formoptions->canmove || $this->question->formoptions->cansaveasnew)){
-            //editing question with no permission to move from category.
+            // Editing question with no permission to move from category.
             $mform->addElement('questioncategory', 'category', get_string('category', 'quiz'),
                     array('contexts' => array($this->categorycontext)));
         } elseif ($this->question->formoptions->movecontext){
-            //moving question to another context.
+            // Moving question to another context.
             $mform->addElement('questioncategory', 'categorymoveto', get_string('category', 'quiz'),
                     array('contexts' => $this->contexts->having_cap('moodle/question:add')));
 
         } else {
-            //editing question with permission to move from category or save as new q
+            // Editing question with permission to move from category or save as new q
             $currentgrp = array();
             $currentgrp[0] =& $mform->createElement('questioncategory', 'category', get_string('categorycurrent', 'question'),
                     array('contexts' => array($this->categorycontext)));
@@ -143,7 +137,7 @@ class question_edit_form extends moodleform {
         $mform->addRule('name', null, 'required', null, 'client');
 
         $mform->addElement('editor', 'questiontext', get_string('questiontext', 'quiz'),
-                array('rows' => 15, 'course' => $this->coursefilesid), $this->editoroptions);
+                array('rows' => 15), $this->editoroptions);
         $mform->setType('questiontext', PARAM_RAW);
 
         $mform->addElement('text', 'defaultgrade', get_string('defaultgrade', 'quiz'),
@@ -160,7 +154,7 @@ class question_edit_form extends moodleform {
         $mform->setDefault('penalty', 0.1);
 
         $mform->addElement('editor', 'generalfeedback', get_string('generalfeedback', 'quiz'),
-                array('rows' => 10, 'course' => $this->coursefilesid), $this->editoroptions);
+                array('rows' => 10), $this->editoroptions);
         $mform->setType('generalfeedback', PARAM_RAW);
         $mform->addHelpButton('generalfeedback', 'generalfeedback', 'quiz');
 
@@ -243,15 +237,15 @@ class question_edit_form extends moodleform {
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
 
-        if ($this->question->formoptions->movecontext){
+        if ($this->question->formoptions->movecontext) {
             $mform->hardFreezeAllVisibleExcept(array('categorymoveto', 'buttonar'));
-        } elseif ((!empty($this->question->id)) && (!($this->question->formoptions->canedit || $this->question->formoptions->cansaveasnew))){
+        } else if ((!empty($this->question->id)) && (!($this->question->formoptions->canedit || $this->question->formoptions->cansaveasnew))){
             $mform->hardFreezeAllVisibleExcept(array('categorymoveto', 'buttonar', 'currentgrp'));
         }
     }
 
     function validation($fromform, $files) {
-        $errors= parent::validation($fromform, $files);
+        $errors = parent::validation($fromform, $files);
         if (empty($fromform->makecopy) && isset($this->question->id)
                 && ($this->question->formoptions->canedit || $this->question->formoptions->cansaveasnew)
                 && empty($fromform->usecurrentcat) && !$this->question->formoptions->canmove) {
@@ -284,7 +278,7 @@ class question_edit_form extends moodleform {
         $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'), array('size' => 80));
         $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
         $repeated[] =& $mform->createElement('editor', 'feedback', get_string('feedback', 'quiz'),
-                                array('course' => $this->coursefilesid), $this->editoroptions);
+                                array('rows' => 5), $this->editoroptions);
         $repeatedoptions['answer']['type'] = PARAM_RAW;
         $repeatedoptions['fraction']['default'] = 0;
         $answersoption = 'answers';

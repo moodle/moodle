@@ -492,39 +492,6 @@ class question_match_qtype extends default_questiontype {
         return 1 / count($question->options->subquestions);
     }
 
-    function find_file_links($question, $courseid){
-        // find links in the question_match_sub table.
-        $urls = array();
-        if (isset($question->options->subquestions)){
-            foreach ($question->options->subquestions as $subquestion) {
-                $urls += question_find_file_links_from_html($subquestion->questiontext, $courseid);
-            }
-
-            //set all the values of the array to the question object
-            if ($urls){
-                $urls = array_combine(array_keys($urls), array_fill(0, count($urls), array($question->id)));
-            }
-        }
-        $urls = array_merge_recursive($urls, parent::find_file_links($question, $courseid));
-
-        return $urls;
-    }
-
-    function replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination){
-        global $DB;
-        parent::replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination);
-        // replace links in the question_match_sub table.
-        if (isset($question->options->subquestions)){
-            foreach ($question->options->subquestions as $subquestion) {
-                $subquestionchanged = false;
-                $subquestion->questiontext = question_replace_file_links_in_html($subquestion->questiontext, $fromcourseid, $tocourseid, $url, $destination, $subquestionchanged);
-                if ($subquestionchanged){//need to update rec in db
-                    $DB->update_record('question_match_sub', $subquestion);
-                }
-            }
-        }
-    }
-
     /**
      * Runs all the code required to set up and save an essay question for testing purposes.
      * Alternate DB table prefix may be used to facilitate data deletion.
@@ -544,36 +511,20 @@ class question_match_qtype extends default_questiontype {
         return $this->save_question($question, $form, $course);
     }
 
-    function move_files($question, $newcategory) {
+    function move_files($questionid, $oldcontextid, $newcontextid) {
         global $DB;
-        // move files belonging to question component
-        parent::move_files($question, $newcategory);
-
-        // move files belonging to qtype_multichoice
         $fs = get_file_storage();
-        // process files in answer
-        if (!$oldanswers = $DB->get_records('question_answers', array('question' => $question->id), 'id ASC')) {
-            $oldanswers = array();
-        }
 
-        // process files in sub questions
-        if (!$subquestions = $DB->get_records('question_match_sub', array('question' => $question->id), 'id ASC')) {
-            $subquestions = array();
-        }
-        $component = 'qtype_match';
-        $filearea = 'subquestion';
-        foreach ($subquestions as $sub) {
-            $files = $fs->get_area_files($question->contextid, $component, $filearea, $sub->id);
-            foreach ($files as $storedfile) {
-                if (!$storedfile->is_directory()) {
-                    $newfile = new stdClass();
-                    $newfile->contextid = (int)$newcategory->contextid;
-                    $fs->create_file_from_storedfile($newfile, $storedfile);
-                    $storedfile->delete();
-                }
-            }
+        parent::move_files($questionid, $oldcontextid, $newcontextid);
+
+        $subquestionids = $DB->get_records_menu('question_match_sub',
+                array('question' => $questionid), 'id', 'id,1');
+        foreach ($subquestionids as $subquestionid => $notused) {
+            $fs->move_area_files_to_new_context($oldcontextid,
+                    $newcontextid, 'qtype_match', 'subquestion', $subquestionid);
         }
     }
+
     function check_file_access($question, $state, $options, $contextid, $component,
             $filearea, $args) {
 

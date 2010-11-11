@@ -754,7 +754,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             // The student did type a number, so check it with tolerances.
             $this->get_tolerance_interval($answer);
             return ($answer->min <= $response && $response <= $answer->max);
-        }else { // $question->options->unitgradingtype > 0 
+        } else { // $question->options->unitgradingtype > 0 
             /* testing with unitgradingtype $question->options->unitgradingtype > 0
             * if the response is at least patially true
             * if the numerical value agree in the interval 
@@ -1089,10 +1089,10 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     }
 
     /**
-    * function used in function definition_inner()
-    * of edit_..._form.php for
-    * numerical, calculated, calculatedsimple
-    */
+     * function used in function definition_inner()
+     * of edit_..._form.php for
+     * numerical, calculated, calculatedsimple
+     */
     function add_units_options(&$mform, &$that){
         // Units are graded
         $mform->addElement('header', 'unithandling', get_string('unitshandling', 'qtype_numerical'));
@@ -1113,10 +1113,9 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $mform->addGroup($multichoicedisplaygrp, 'multichoicedisplaygrp', get_string('studentunitanswer', 'qtype_numerical'),' OR ' , false);        
         $unitslefts = array('0' => get_string('rightexample', 'qtype_numerical'),'1' => get_string('leftexample', 'qtype_numerical'));
         $mform->addElement('select', 'unitsleft', get_string('unitposition', 'qtype_numerical') , $unitslefts );
-        
+
         $mform->addElement('static', 'separator2', '<HR/>', '<HR/>');
-        
-        
+
         $mform->addElement('editor', 'instructions', get_string('instructions', 'qtype_numerical'), null, $that->editoroptions);
         $showunits1grp = array();
         $mform->addElement('static', 'separator2', '<HR/>', '<HR/>');
@@ -1131,12 +1130,10 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $mform->disabledIf('penaltygrp', 'unitrole','eq','0');
         $mform->disabledIf('penaltygrp', 'unitrole','eq','1');
         $mform->disabledIf('penaltygrp', 'unitrole','eq','2');
-         $mform->disabledIf('unitsleft', 'unitrole','eq','0');
-         $mform->disabledIf('multichoicedisplay','unitrole','eq','0');
-         $mform->disabledIf('multichoicedisplay','unitrole','eq','1');
-         $mform->disabledIf('multichoicedisplay','unitrole','eq','2');
-
-
+        $mform->disabledIf('unitsleft', 'unitrole','eq','0');
+        $mform->disabledIf('multichoicedisplay','unitrole','eq','0');
+        $mform->disabledIf('multichoicedisplay','unitrole','eq','1');
+        $mform->disabledIf('multichoicedisplay','unitrole','eq','2');
     }
 
     /**
@@ -1383,44 +1380,15 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
         return $this->save_question($question, $form, $course);
     }
-    /**
-     * When move the category of questions, the belonging files should be moved as well
-     * @param object $question, question information
-     * @param object $newcategory, target category information
-     */
-    function move_files($question, $newcategory) {
-        global $DB;
-        parent::move_files($question, $newcategory);
 
+    function move_files($questionid, $oldcontextid, $newcontextid) {
         $fs = get_file_storage();
-        // process files in answer
-        if (!$oldanswers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
-            $oldanswers = array();
-        }
-        $component = 'question';
-        $filearea = 'answerfeedback';
-        foreach ($oldanswers as $answer) {
-            $files = $fs->get_area_files($question->contextid, $component, $filearea, $answer->id);
-            foreach ($files as $storedfile) {
-                if (!$storedfile->is_directory()) {
-                    $newfile = new stdClass();
-                    $newfile->contextid = (int)$newcategory->contextid;
-                    $fs->create_file_from_storedfile($newfile, $storedfile);
-                    $storedfile->delete();
-                }
-            }
-        }
-        $component = 'qtype_numerical';
-        $filearea = 'instruction';
-        $files = $fs->get_area_files($question->contextid, $component, $filearea, $question->id);
-        foreach ($files as $storedfile) {
-            if (!$storedfile->is_directory()) {
-                $newfile = new stdClass();
-                $newfile->contextid = (int)$newcategory->contextid;
-                $fs->create_file_from_storedfile($newfile, $storedfile);
-                $storedfile->delete();
-            }
-        }
+
+        parent::move_files($questionid, $oldcontextid, $newcontextid);
+        $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
+
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'qtype_numerical', 'instruction', $questionid);
     }
 
     function check_file_access($question, $state, $options, $contextid, $component,
