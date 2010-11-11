@@ -263,7 +263,10 @@ class course_enrolment_manager {
         $tests = array("id <> :guestid", 'u.deleted = 0', 'u.confirmed = 1');
         $params = array('guestid' => $CFG->siteguest);
         if (!empty($search)) {
-            $conditions = array('u.firstname','u.lastname');
+            $conditions = array(
+                $DB->sql_concat('u.firstname', "' '", 'u.lastname'),
+                'u.email'
+            );
             if ($searchanywhere) {
                 $searchparam = '%' . $search . '%';
             } else {
