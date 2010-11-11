@@ -2540,6 +2540,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
                     if (!isset($enrols[$instance->enrol])) {
                         continue;
                     }
+                    // Get a duration for the guestaccess, a timestamp in the future or false.
                     $until = $enrols[$instance->enrol]->try_autoenrol($instance);
                     if ($until !== false) {
                         $USER->enrol['enrolled'][$course->id] = $until;
@@ -2554,6 +2555,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
                         if (!isset($enrols[$instance->enrol])) {
                             continue;
                         }
+                        // Get a duration for the guestaccess, a timestamp in the future or false.
                         $until = $enrols[$instance->enrol]->try_guestaccess($instance);
                         if ($until !== false) {
                             $USER->enrol['tempguest'][$course->id] = $until;

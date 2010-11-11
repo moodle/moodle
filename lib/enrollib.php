@@ -958,6 +958,8 @@ abstract class enrol_plugin {
      * Attempt to automatically enrol current user in course without any interaction,
      * calling code has to make sure the plugin and instance are active.
      *
+     * This should return either a timestamp in the future or false.
+     *
      * @param stdClass $instance course enrol instance
      * @param stdClass $user record
      * @return bool|int false means not enrolled, integer means timeend
@@ -971,6 +973,8 @@ abstract class enrol_plugin {
     /**
      * Attempt to automatically gain temporary guest access to course,
      * calling code has to make sure the plugin and instance are active.
+     *
+     * This should return either a timestamp in the future or false.
      *
      * @param stdClass $instance course enrol instance
      * @param stdClass $user record
