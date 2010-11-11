@@ -25,9 +25,9 @@
 
 $string['activeexport'] = 'Resolve active export';
 $string['activeportfolios'] = 'Available portfolios';
-$string['addalltoportfolio'] = 'Save all...';
+$string['addalltoportfolio'] = 'Export all to portfolio';
 $string['addnewportfolio'] = 'Add a new portfolio';
-$string['addtoportfolio'] = 'Save...';
+$string['addtoportfolio'] = 'Export to portfolio';
 $string['alreadyalt'] = 'Already exporting - please click here to resolve this transfer';
 $string['alreadyexporting'] = 'You already have an active portfolio export in this session. Before continuing, you must either complete this export, or cancel it.  Would you like to continue it? (No will cancel it)';
 $string['availableformats'] = 'Available export formats';
