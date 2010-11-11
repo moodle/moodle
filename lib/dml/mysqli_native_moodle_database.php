@@ -1054,6 +1054,14 @@ class mysqli_native_moodle_database extends moodle_database {
         }
     }
 
+    /**
+     * Returns the proper SQL to do CONCAT between the elements passed
+     * Can take many parameters
+     *
+     * @param string $str,... 1 or more fields/strings to concat
+     *
+     * @return string The concat sql
+     */
     public function sql_concat() {
         $arr = func_get_args();
         $s = implode(', ', $arr);
@@ -1063,6 +1071,14 @@ class mysqli_native_moodle_database extends moodle_database {
         return "CONCAT($s)";
     }
 
+    /**
+     * Returns the proper SQL to do CONCAT between the elements passed
+     * with a given separator
+     *
+     * @param string $separator The string to use as the separator
+     * @param array $elements An array of items to concatenate
+     * @return string The concat SQL
+     */
     public function sql_concat_join($separator="' '", $elements=array()) {
         $s = implode(', ', $elements);
 
