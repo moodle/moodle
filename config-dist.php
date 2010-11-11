@@ -359,6 +359,11 @@ $CFG->admin = 'admin';
 // $CFG->debug = 38911;  // DEBUG_DEVELOPER // NOT FOR PRODUCTION SERVERS!
 // $CFG->debugdisplay = true;   // NOT FOR PRODUCTION SERVERS!
 //
+// You can specify a comma separated list of user ids that that always see
+// debug messages, this overrides the debug flag in $CFG->debug and $CFG->debugdisplay
+// for these users only.
+// $CFG->debugusers = '2';
+//
 // Prevent theme caching
 // $CFG->themerev = -1; // NOT FOR PRODUCTION SERVERS!
 //

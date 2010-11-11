@@ -2843,9 +2843,15 @@ function get_docs_url($path) {
  * @return bool
  */
 function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
-    global $CFG, $UNITTEST;
+    global $CFG, $USER, $UNITTEST;
 
-    if (empty($CFG->debug) || $CFG->debug < $level) {
+    $forcedebug = false;
+    if (!empty($CFG->debugusers)) {
+        $debugusers = explode(',', $CFG->debugusers);
+        $forcedebug = in_array($USER->id, $debugusers);
+    }
+
+    if (!$forcedebug and (empty($CFG->debug) || $CFG->debug < $level)) {
         return false;
     }
 
@@ -2871,7 +2877,7 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
             // we send the info to error log instead
             error_log('Debugging: ' . $message . $from);
 
-        } else if ($CFG->debugdisplay) {
+        } else if ($forcedebug or $CFG->debugdisplay) {
             if (!defined('DEBUGGING_PRINTED')) {
                 define('DEBUGGING_PRINTED', 1); // indicates we have printed something
             }
