@@ -7181,7 +7181,6 @@ function get_plugin_types($fullpaths=true) {
                       'filter'        => 'filter',
                       'editor'        => 'lib/editor',
                       'format'        => 'course/format',
-                      'import'        => 'course/import',
                       'profilefield'  => 'user/profile/field',
                       'report'        => $CFG->admin.'/report',
                       'coursereport'  => 'course/report', // must be after system reports
