@@ -78,8 +78,9 @@ class mod_wiki_renderer extends plugin_renderer_base {
         } else {
             $total = 0;
         }
-        $diff1 = format_text($old->diff, FORMAT_HTML);
-        $diff2 = format_text($new->diff, FORMAT_HTML);
+        $diff1 = format_text($old->diff, FORMAT_HTML, array('overflowdiv'=>true));
+        $diff2 = format_text($new->diff, FORMAT_HTML, array('overflowdiv'=>true));
+        $strdatetime = get_string('strftimedatetime', 'langconfig');
 
         $olduser = $old->user;
         $versionlink = new moodle_url('/mod/wiki/viewversion.php', array('pageid' => $pageid, 'versionid' => $old->id));
@@ -106,7 +107,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
         $oldheading .= $this->output->container_end();
         // userdate container
         $oldheading .= $this->output->container_start('wiki_difftime');
-        $oldheading .= userdate($old->timecreated, get_string('strftimedatetime', 'langconfig'));
+        $oldheading .= userdate($old->timecreated, $strdatetime);
         $oldheading .= $this->output->container_end();
 
         $newuser = $new->user;
@@ -129,24 +130,17 @@ class mod_wiki_renderer extends plugin_renderer_base {
         $newheading .= $this->output->container_end();
         // userdate
         $newheading .= $this->output->container_start('wiki_difftime');
-        $newheading .= userdate($new->timecreated, get_string('strftimedatetime', 'langconfig'));
+        $newheading .= userdate($new->timecreated, $strdatetime);
         $newheading .= $this->output->container_end();
 
-        $table1 = new html_table();
-        $table1->head = array($oldheading);
-        $table1->width = '100%';
-        $table1->data = array(array($diff1));
+        $oldheading = html_writer::tag('div', $oldheading, array('class'=>'wiki-diff-heading header clearfix'));
+        $newheading = html_writer::tag('div', $newheading, array('class'=>'wiki-diff-heading header  clearfix'));
 
-        $table2 = new html_table();
-        $table2->head = array($newheading);
-        $table2->width = '100%';
-        $table2->data = array(array($diff2));
-        $output = '';
-
-        $box = new html_table();
-        $box->width = '95%';
-        $box->data = array(array(html_writer::table($table1), html_writer::table($table2)));
-        $output .= html_writer::table($box);
+        $output  = '';
+        $output .= html_writer::start_tag('div', array('class'=>'wiki-diff-container clearfix'));
+        $output .= html_writer::tag('div', $oldheading.$diff1, array('class'=>'wiki-diff-leftside'));
+        $output .= html_writer::tag('div', $newheading.$diff2, array('class'=>'wiki-diff-rightside'));
+        $output .= html_writer::end_tag('div');
 
         if (!empty($total)) {
             $output .= '<div class="wiki_diff_paging">';

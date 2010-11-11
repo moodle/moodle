@@ -341,3 +341,11 @@ a.wiki_edit_section {
     padding-left: 50px;
     padding-top: 20px;
 }
+
+.wiki-diff-container {width:95%;margin:10px auto;}
+.wiki-diff-container .wiki-diff-leftside,
+.wiki-diff-container .wiki-diff-rightside {width:49.5%;margin:0;padding:0;float:left;}
+.wiki-diff-container .wiki-diff-rightside {margin-left:1%;}
+.wiki-diff-container .wiki-diff-heading,
+.wiki-diff-container .no-overflow {padding:10px;border:1px solid #DDD;}
+.wiki-diff-container .wiki-diff-rightside .wiki_diffversion {text-align:right;}

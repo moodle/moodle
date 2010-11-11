@@ -56,6 +56,7 @@ h2.headingblock {font-size:1.1em;}
 .errorcode {font-size: 0.7em;}
 
 .generaltable {border:1px solid #DDD;border-collapse: collapse;background-color:#FFF;border-color:#EEEEEE;}
+.generaltable.mdl-align {margin:0 auto;}
 .generaltable td {border:1px solid #DDD;vertical-align:top;}
 .generaltable .cell {background-color:#FFFFFF;border-color:#EEEEEE;}
 

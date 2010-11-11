@@ -1302,7 +1302,7 @@ class page_wiki_history extends page_wiki {
 
                 $table->head = array(get_string('diff', 'wiki') . $icon, get_string('version'), get_string('user'), get_string('modified'), '');
                 $table->data = $contents;
-                $table->attributes['class'] = 'mdl-align';
+                $table->attributes['class'] = 'generaltable mdl-align';
                 $table->rowclasses = $rowclass;
 
                 /*$table = new StdClass();
@@ -1316,11 +1316,13 @@ class page_wiki_history extends page_wiki {
                  $table->rowclass = $rowclass;*/
 
                 ///Print the form
-                echo '<form action="' . $CFG->wwwroot . '/mod/wiki/diff.php" method="get" id="diff">';
-                echo '<div><input type="hidden" name="pageid" value="' . $pageid . '" /></div>';
+                echo html_writer::start_tag('form', array('action'=>new moodle_url('/mod/wiki/diff.php'), 'method'=>'get', 'id'=>'diff'));
+                echo html_writer::tag('div', html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'pageid', 'value'=>$pageid)));
                 echo html_writer::table($table);
-                echo '<div><input class="wiki_form-button" type="submit" value="' . get_string('comparesel', 'wiki') . '"/></div>';
-                echo '</form>';
+                echo html_writer::start_tag('div', array('class'=>'mdl-align'));
+                echo html_writer::empty_tag('input', array('type'=>'submit', 'class'=>'wiki_form-button', 'value'=>get_string('comparesel', 'wiki')));
+                echo html_writer::end_tag('div');
+                echo html_writer::end_tag('form');
             }
         } else {
             print_string('nohistory', 'wiki');
