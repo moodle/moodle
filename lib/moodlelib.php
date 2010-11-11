@@ -9107,8 +9107,8 @@ function moodle_request_shutdown() {
   */
 function message_popup_window() {
     global $USER, $DB, $PAGE, $CFG, $SITE;
-
-    if (defined('MESSAGE_WINDOW') || empty($CFG->messaging)) {
+    
+    if (!$PAGE->get_popup_notification_allowed() || empty($CFG->messaging)) {
         return;
     }
 

@@ -27,7 +27,8 @@ require_once($CFG->libdir.'/eventslib.php');
 
 
 define ('MESSAGE_SHORTLENGTH', 300);
-define ('MESSAGE_WINDOW', true);          // We are in a message window (so don't pop up a new one!)
+
+$PAGE->set_popup_notification_allowed(false); // We are in a message window (so don't pop up a new one)
 
 define ('MESSAGE_DISCUSSION_WIDTH',600);
 define ('MESSAGE_DISCUSSION_HEIGHT',500);

@@ -30,8 +30,7 @@ require_once($CFG->libdir.'/resourcelib.php');
 $agree = optional_param('agree', 0, PARAM_BOOL);
 
 $PAGE->set_url('/user/policy.php');
-
-define('MESSAGE_WINDOW', true);  // This prevents the message window coming up - TODO: this is a hack! (skodak)
+$PAGE->set_popup_notification_allowed(false);
 
 if (!isloggedin()) {
     require_login();

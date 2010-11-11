@@ -775,8 +775,7 @@ class securewindow_access_rule extends quiz_access_rule_base {
      */
     public function setup_secure_page($title, $headtags=null) {
         global $OUTPUT, $PAGE;
-    /// This prevents the message window coming up.
-        define('MESSAGE_WINDOW', true);
+        $PAGE->set_popup_notification_allowed(false);//prevent message notifications
         $PAGE->set_title($title);
         $PAGE->set_cacheable(false);
         $PAGE->set_pagelayout('popup');
