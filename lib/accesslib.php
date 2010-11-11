@@ -2610,7 +2610,6 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
 
     if (!$DB->record_exists('user', array('id'=>$userid, 'deleted'=>0))) {
         throw new coding_exception('User ID does not exist or is deleted!', 'userid:'.$userid);
-        return false;
     }
 
     $context = get_context_instance_by_id($contextid, MUST_EXIST);
