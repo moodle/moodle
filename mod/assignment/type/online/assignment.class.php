@@ -295,7 +295,10 @@ class assignment_online extends assignment_base {
 
     function portfolio_prepare_package($exporter, $user) {
         $submission = $this->get_submission($user->id);
-        $html = format_text($submission->data1, $submission->data2);
+        $options = new stdClass();
+        $options->para = true;
+        $options->filter = false;
+        $html = format_text($submission->data1, $submission->data2, $options);
         $html = portfolio_rewrite_pluginfile_urls($html, $this->context->id, 'mod_assignment', $this->filearea, $submission->id, $exporter->get('format'));
         if (in_array($exporter->get('formatclass'), array(PORTFOLIO_FORMAT_PLAINHTML, PORTFOLIO_FORMAT_RICHHTML))) {
             if ($files = $exporter->get('caller')->get('multifiles')) {
