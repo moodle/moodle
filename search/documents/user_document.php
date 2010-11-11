@@ -284,14 +284,14 @@ function user_single_document($id, $itemtype) {
             return new UserSearchDocument($userhash, $user->id, 'user', null);
         }
     } elseif ($itemtype == 'post') {
-        if ($post = $DB->get_records('post', array('id' => $id))){
+        if ($post = $DB->get_record('post', array('id' => $id))){
             $texts = array();
             $texts[] = $post->subject;
             $texts[] = $post->summary;
             $texts[] = $post->content;
             $post->description = implode(" ", $texts);
             $posthash = get_object_vars($post);
-            return new UserPostSearchDocument($posthash, $user->id, 'post', null);
+            return new UserPostSearchDocument($posthash, $post->userid, 'post', null);
         }
     } elseif ($itemtype == 'attachment' && @$CFG->block_search_enable_file_indexing) {
         if ($post = $DB->get_records('post', array('id' => $id))){
