@@ -225,6 +225,8 @@ class moodle_page {
 
     protected $_https_login_required = false;
 
+    protected $_popup_notification_allowed = true;
+
 /// Magic getter methods =============================================================
 /// Due to the __get magic below, you normally do not call these as $PAGE->magic_get_x
 /// methods, but instead use the $PAGE->x syntax.
@@ -1191,10 +1193,10 @@ class moodle_page {
                 $title .= ' - ';
             }
             $this->set_title($title . get_string('maintenancemode', 'admin'));
+        } else {
+            // Show the messaging popup if there are messages
+            message_popup_window();
         }
-
-        // Show the messaging popup, if there are messages.
-        message_popup_window();
 
         $this->initialise_standard_body_classes();
     }
@@ -1676,6 +1678,24 @@ class moodle_page {
 
     public function set_block_actions_done($setting = true) {
         $this->_block_actions_done = $setting;
+    }
+
+    /**
+     * Are popup notifications allowed on this page?
+     * Popup notifications may be disallowed in situations such as while upgrading or completing a quiz
+     * @return boolean true if popup notifications may be displayed
+     */
+    public function get_popup_notification_allowed() {
+        return $this->_popup_notification_allowed;
+    }
+
+    /**
+     * Allow or disallow popup notifications on this page. Popups are allowed by default.
+     * @param boolean true if notifications are allowed. False if not allowed. They are allowed by default.
+     * @return null
+     */
+    public function set_popup_notification_allowed($allowed) {
+        $this->_popup_notification_allowed = $allowed;
     }
 }
 
