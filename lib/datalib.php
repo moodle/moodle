@@ -1645,6 +1645,12 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         $userid = empty($USER->id) ? '0' : $USER->id;
     }
 
+    if (isset($CFG->logguests) and !$CFG->logguests) {
+        if (!$userid or isguestuser($userid)) {
+            return;
+        }
+    }
+
     $REMOTE_ADDR = getremoteaddr();
 
     $timenow = time();
