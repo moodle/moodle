@@ -243,10 +243,10 @@ class core_backup_renderer extends plugin_renderer_base {
         foreach ($nextstageurl->params() as $key=>$value) {
             $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>$key, 'value'=>$value));
         }
+        // We only allow import adding for now. Enforce it here.
+        $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'target', 'value'=>backup::TARGET_CURRENT_ADDING));
         $html .= html_writer::start_tag('div', array('class'=>'ics-existing-course backup-section'));
         $html .= $this->output->heading(get_string('importdatafrom'), 2, array('class'=>'header'));
-        $html .= $this->backup_detail_input(get_string('importadding', 'backup'), 'radio', 'target', backup::TARGET_CURRENT_ADDING, array('checked'=>'checked'), get_string('importaddingdesc', 'backup'));
-        $html .= $this->backup_detail_input(get_string('importdeleting', 'backup'), 'radio', 'target', backup::TARGET_CURRENT_DELETING, array(), get_string('importdeletingdesc', 'backup'));
         $html .= $this->backup_detail_pair(get_string('selectacourse', 'backup'), $this->render($courses));
         $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
         $html .= html_writer::end_tag('div');
