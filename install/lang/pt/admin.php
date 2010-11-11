@@ -28,5 +28,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 's';
+$string['cliincorrectvalueretry'] = 'Valor incorrecto, por favor tente novamente';
+$string['clitypevalue'] = 'valor do tipo';
+$string['cliyesnoprompt'] = 'digite s (para sim) ou n (para não)';
 $string['environmentrequireinstall'] = 'é necessário estar instalada/activa';
 $string['environmentrequireversion'] = 'É requerida a versão {$a->needed} e está a correr a versão {$a->current}';

@@ -38,5 +38,5 @@ $string['cliunknowoption'] = 'Neznámé volby:
  {$a}
 Použijte volbu --help pro získání nápovědy';
 $string['cliyesnoprompt'] = 'zadejte a (pro "ano") nebo n (pro "ne")';
-$string['environmentrequireinstall'] = 'vyžadovaná komponenta';
+$string['environmentrequireinstall'] = 'musí být nainstalováno a povoleno';
 $string['environmentrequireversion'] = 'vyžadována je verze {$a->needed}, nyní používáte verzi {$a->current}';
