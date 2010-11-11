@@ -138,41 +138,37 @@ class community_hub_search_form extends moodleform {
             //TODO: sort hubs by trusted/prioritize
             //Public hub list
             $options = array();
-            $brtag = html_writer::empty_tag('br');
             $firsthub = false;
             foreach ($hubs as $hub) {
                 if (key_exists('id', $hub)) {
                     $params = array('hubid' => $hub['id'],
                         'filetype' => HUB_HUBSCREENSHOT_FILE_TYPE);
                     $imgurl = new moodle_url(HUB_HUBDIRECTORYURL .
-                            "/local/hubdirectory/webservice/download.php", $params);
+                                    "/local/hubdirectory/webservice/download.php", $params);
                     $ascreenshothtml = html_writer::empty_tag('img',
-                            array('src' => $imgurl, 'alt' => $hub['name']));
+                                    array('src' => $imgurl, 'alt' => $hub['name']));
 
-                    $hubdescription = '&nbsp;&nbsp;' . html_writer::tag('a', $hub['name'],
-                                    array('class' => 'hublink', 'href' => $hub['url'],
+                    $hubdescription = html_writer::tag('a', $hub['name'],
+                                    array('class' => 'hublink clearfix', 'href' => $hub['url'],
                                         'onclick' => 'this.target="_blank"'));
-                    $hubdescription .= $brtag;
                     $hubdescription .= html_writer::tag('span', $ascreenshothtml,
-                            array('class' => 'hubscreenshot'));
-                    $hubdescription .= html_writer::tag('span', $hub['description'],
-                            array('class' => 'hubdescription'));
-                    $hubdescription .= $brtag;
+                                    array('class' => 'hubscreenshot'));
+                    $hubdescription .= html_writer::tag('span', format_text($hub['description'], FORMAT_PLAIN),
+                                    array('class' => 'hubdescription'));
                     $additionaldesc = get_string('sites', 'block_community') . ': ' . $hub['sites'] . ' - ' .
                             get_string('courses', 'block_community') . ': ' . $hub['courses'];
                     $hubdescription .= html_writer::tag('span', $additionaldesc,
-                            array('class' => 'hubadditionaldesc'));
-                    $hubdescription .= $brtag;
+                                    array('class' => 'hubadditionaldesc'));
+                    $hubtrusted = $hub['trusted'] ? get_string('hubtrusted', 'block_community') :
+                            get_string('hubnottrusted', 'block_community');
                     $hubdescription .= html_writer::tag('span',
-                                    $hub['trusted'] ? get_string('hubtrusted', 'block_community') :
-                                            get_string('hubnottrusted', 'block_community'),
+                                    $hubtrusted . ' ' . $OUTPUT->doc_link('trusted_hubs'),
                                     array('class' => $hub['trusted'] ? 'trusted' : 'nottrusted'));
+
                     $hubdescription = html_writer::tag('span',
                                     $hubdescription,
                                     array('class' => $hub['trusted'] ? 'hubtrusted' : 'hubnottrusted'));
-                     $hubdescription .= ' ' . $OUTPUT->doc_link('trusted_hubs');
                 } else {
-                    $hubdescription = '&nbsp;&nbsp;';
                     $hubdescription .= html_writer::tag('a', $hub['name'],
                                     array('class' => 'hublink', 'href' => $hub['url']));
                 }
