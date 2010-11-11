@@ -282,7 +282,7 @@ function xmldb_quiz_upgrade($oldversion) {
 
         // conditionally migrate to html format in intro
         if ($CFG->texteditors !== 'textarea') {
-            $rs = $DB->get_recordset('quiz', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
+            $rs = $DB->get_recordset('quiz', array('introformat' => FORMAT_MOODLE), '', 'id,intro,introformat');
             foreach ($rs as $q) {
                 $q->intro       = text_to_html($q->intro, false, false, true);
                 $q->introformat = FORMAT_HTML;
@@ -351,6 +351,8 @@ function xmldb_quiz_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+
+        // This column defaults to FORMAT_MOODLE, which is correct.
 
         // quiz savepoint reached
         upgrade_mod_savepoint(true, 2010080600, 'quiz');

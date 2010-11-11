@@ -105,7 +105,7 @@ class question_essay_qtype extends default_questiontype {
         if (isset($state->responses[''])) {
             $value = $state->responses[''];
         } else {
-            $value = "";
+            $value = '';
         }
 
         // answer

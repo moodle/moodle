@@ -36,15 +36,19 @@ function xmldb_qtype_match_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        $rs = $DB->get_recordset('question_match_sub');
+        // In the past, question_match_sub.questiontext assumed to contain
+        // content of the same form as question.questiontextformat. If we are
+        // using the HTML editor, then convert FORMAT_MOODLE content to FORMAT_HTML.
+        $rs = $DB->get_recordset_sql('
+                SELECT qms.*, q.oldquestiontextformat
+                FROM {question_match_sub} qms
+                JOIN {question} q ON qms.question = q.id');
         foreach ($rs as $record) {
-            if ($CFG->texteditors !== 'textarea') {
-                if (!empty($record->questiontext)) {
-                    $record->questiontext = text_to_html($record->questiontext);
-                }
+            if ($CFG->texteditors !== 'textarea' && $record->oldquestiontextformat == FORMAT_MOODLE) {
+                $record->questiontext = text_to_html($record->questiontext, false, false, true);
                 $record->questiontextformat = FORMAT_HTML;
             } else {
-                $record->questiontextformat = FORMAT_MOODLE;
+                $record->questiontextformat = $record->oldquestiontextformat;
             }
             $DB->update_record('question_match_sub', $record);
         }

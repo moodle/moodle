@@ -643,24 +643,19 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                                                 break ;
                                             }
                                         }
-                                    } // else
-                                        
-                                   // }
+                                    }
                                 }
-  
                             }
-                        }    
+                        }
                     }
                     if ($answer->feedback) {
                         $answer->feedback = quiz_rewrite_question_urls($answer->feedback, 'pluginfile.php', $context->id, 'question', 'answerfeedback', array($state->attempt, $state->question), $answer->id);
-                        $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
+                        $feedback = format_text($answer->feedback, $answer->feedbackformat, $formatoptions, $cmoptions->course);
                     }
                     
                     break;
                 }
             }
-                                    
-                                       
     }
         $state->options->raw_unitpenalty = 0 ;
         $raw_unitpenalty = 0 ;

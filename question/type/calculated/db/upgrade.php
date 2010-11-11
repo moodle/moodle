@@ -165,26 +165,26 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // fix fieldformat
-        $rs = $DB->get_recordset('question_calculated_options');
+        // In the past, the correctfeedback, partiallycorrectfeedback,
+        // incorrectfeedback columns were assumed to contain content of the same
+        // form as questiontextformat. If we are using the HTML editor, then
+        // convert FORMAT_MOODLE content to FORMAT_HTML.
+        $rs = $DB->get_recordset_sql('
+                SELECT qco.*, q.oldquestiontextformat
+                FROM {question_calculated_options} qco
+                JOIN {question} q ON qco.question = q.id');
         foreach ($rs as $record) {
-            if ($CFG->texteditors !== 'textarea') {
-                if (!empty($record->correctfeedback)) {
-                    $record->correctfeedback = text_to_html($record->correctfeedback);
-                }
+            if ($CFG->texteditors !== 'textarea' && $record->oldquestiontextformat == FORMAT_MOODLE) {
+                $record->correctfeedback = text_to_html($record->correctfeedback, false, false, true);
                 $record->correctfeedbackformat = FORMAT_HTML;
-                if (!empty($record->partiallycorrectfeedback)) {
-                    $record->partiallycorrectfeedback = text_to_html($record->partiallycorrectfeedback);
-                }
+                $record->partiallycorrectfeedback = text_to_html($record->partiallycorrectfeedback, false, false, true);
                 $record->partiallycorrectfeedbackformat = FORMAT_HTML;
-                if (!empty($record->incorrectfeedback)) {
-                    $record->incorrectfeedback = text_to_html($record->incorrectfeedback);
-                }
+                $record->incorrectfeedback = text_to_html($record->incorrectfeedback, false, false, true);
                 $record->incorrectfeedbackformat = FORMAT_HTML;
             } else {
-                $record->correctfeedbackformat = FORMAT_MOODLE;
-                $record->partiallycorrectfeedbackformat = FORMAT_MOODLE;
-                $record->incorrectfeedbackformat = FORMAT_MOODLE;
+                $record->correctfeedbackformat = $record->oldquestiontextformat;
+                $record->partiallycorrectfeedback = $record->oldquestiontextformat;
+                $record->incorrectfeedbackformat = $record->oldquestiontextformat;
             }
             $DB->update_record('question_calculated_options', $record);
         }

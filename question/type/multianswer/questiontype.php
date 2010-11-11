@@ -527,11 +527,11 @@ class embedded_cloze_qtype extends default_questiontype {
 
                 // Print the answer text: no automatic numbering
 
-                $a->text =format_text($mcanswer->answer, FORMAT_MOODLE, $formatoptions, $cmoptions->course);
+                $a->text = format_text($mcanswer->answer, $mcanswer->answerformat, $formatoptions, $cmoptions->course);
 
                 // Print feedback if feedback is on
                 if (($options->feedback || $options->correct_responses) && ($checked )) { //|| $options->readonly
-                    $a->feedback = format_text($mcanswer->feedback, true, $formatoptions, $cmoptions->course);
+                    $a->feedback = format_text($mcanswer->feedback, $mcanswer->feedbackformat, $formatoptions, $cmoptions->course);
                 } else {
                     $a->feedback = '';
                 }

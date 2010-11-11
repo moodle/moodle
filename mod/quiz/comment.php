@@ -44,7 +44,7 @@
 /// Process any data that was submitted.
     if ($data = data_submitted() and confirm_sesskey()) {
         $error = $attemptobj->process_comment($questionid,
-                $data->response['comment'], $data->response['grade']);
+                $data->response['comment'], FORMAT_HTML, $data->response['grade']);
 
     /// If success, notify and print a close button.
         if (!is_string($error)) {

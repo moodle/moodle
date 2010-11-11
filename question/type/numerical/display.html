@@ -41,11 +41,7 @@
 
 ?>
   <div class="answer">
-    <input type="hidden"
-    <?php
-    echo $nameunit;
-    ?>
-   value ="" />
+    <input type="hidden" <?php echo $nameunit; ?> value ="" />
   </div>
 <?php
   } else if ($question->options->showunits == NUMERICALQUESTIONUNITTEXTINPUTDISPLAY  ) {// display unit text input
@@ -100,27 +96,15 @@
             <?php echo get_string('unit', 'quiz');
              ?>
          </legend>
-    <input type="hidden"
-    <?php
-    echo $nameunit; echo $valueunit ;
-
-    ?>
-   />
- <?php   echo $question->options->units[0]->unit  ;
-
-         echo '&nbsp; ' ;
-     ?>
+    <input type="hidden" <?php echo $nameunit; echo $valueunit; ?> />
+    <?php echo $question->options->units[0]->unit; echo '&nbsp; '; ?>
     </fieldset>
   </div>
 
   <?php
 
     //display the units as choice
-
     } else if ($question->options->showunits == NUMERICALQUESTIONUNITMULTICHOICEDISPLAY){?>
-
-
-
 <?php
     //display the units as choice 
     if ( isset($question->options->units)){?>
@@ -133,7 +117,7 @@
          </legend>
          <table >
 
-<?php       
+<?php
             // the order is not shuffled
             //however the unitvalue is related to the number value
             // if the response/unit->multiplier is true then
@@ -204,9 +188,9 @@
                 $a->id   = $question->name_prefix."unit" ;//. "2"
                 $a->class =  '' ;
                 $a->feedbackimg = '';
-    
+
                 $a->control = "<input $readonly  $nameunit $checked $type  value=\"$key\" />";
-    
+
                 if ($options->correct_responses && $classunit > 0 ) { //$answer->fraction 
                     $a->class = question_get_feedback_class($classunit);
                 }
@@ -216,9 +200,8 @@
     
                 // Print the control
                 // Print the answer text
-                $a->text = format_text($unit->unit, FORMAT_MOODLE, $formatoptions, $cmoptions->course);
+                $a->text = s($unit->unit);
                 $row = 0 ;
-    
 ?>
                         <tr class="<?php echo 'r'.$row = $row ? 0 : 1; ?>">
                             <td class="c0 control " style=" ">
@@ -281,7 +264,7 @@
             <?php echo get_string('instructions', 'auth'); ?>
          </legend>
         <div>
-     <?php   echo  format_text($question->options->instructions, $question->options->instructionsformat, $formatoptions, $cmoptions->course);?>
+     <?php echo format_text($question->options->instructions, $question->options->instructionsformat, $formatoptions, $cmoptions->course);?>
         </div>
      </fieldset>
      </div>

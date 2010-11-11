@@ -130,7 +130,8 @@ class quiz_grading_report extends quiz_default_report {
                     $state = &$states[$question->id];
 
                     // the following will update the state and attempt
-                    $error = question_process_comment($question, $state, $attempt, $response['comment'], $response['grade']);
+                    $error = question_process_comment($question, $state, $attempt,
+                            $response['comment'], FORMAT_HTML, $response['grade']);
                     if (is_string($error)) {
                         echo $OUTPUT->notification($error);
                         $allok = false;

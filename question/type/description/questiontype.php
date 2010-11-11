@@ -72,7 +72,7 @@ class description_qtype extends default_questiontype {
         $generalfeedback = '';
         if ($isfinished && $options->generalfeedback) {
             $generalfeedback = $this->format_text($question->generalfeedback,
-                    $question->questiontextformat, $cmoptions);
+                    $question->generalfeedbackformat, $cmoptions);
         }
 
         include "$CFG->dirroot/question/type/description/question.html";

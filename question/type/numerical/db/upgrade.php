@@ -62,15 +62,19 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        $rs = $DB->get_recordset('question_numerical_options');
+        // In the past, question_match_sub.questiontext assumed to contain
+        // content of the same form as question.questiontextformat. If we are
+        // using the HTML editor, then convert FORMAT_MOODLE content to FORMAT_HTML.
+        $rs = $DB->get_recordset_sql('
+                SELECT qno.*, q.oldquestiontextformat
+                FROM {question_numerical_options} qno
+                JOIN {question} q ON qno = q.id');
         foreach ($rs as $record) {
-            if ($CFG->texteditors !== 'textarea') {
-                if (!empty($record->instructions)) {
-                    $record->instructions = text_to_html($record->instructions);
-                }
+            if ($CFG->texteditors !== 'textarea' && $record->oldquestiontextformat == FORMAT_MOODLE) {
+                $record->instructions = text_to_html($record->questiontext, false, false, true);
                 $record->instructionsformat = FORMAT_HTML;
             } else {
-                $record->instructionsformat = FORMAT_MOODLE;
+                $record->instructionsformat = $record->oldquestiontextformat;
             }
             $DB->update_record('question_numerical_options', $record);
         }

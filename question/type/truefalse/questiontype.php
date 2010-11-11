@@ -251,7 +251,7 @@ class question_truefalse_qtype extends default_questiontype {
         if ($options->feedback and isset($answers[$response])) {
             $chosenanswer = $answers[$response];
             $chosenanswer->feedback = quiz_rewrite_question_urls($chosenanswer->feedback, 'pluginfile.php', $context->id, 'question', 'answerfeedback', array($state->attempt, $state->question), $chosenanswer->id);
-            $feedback = format_text($chosenanswer->feedback, true, $formatoptions, $cmoptions->course);
+            $feedback = format_text($chosenanswer->feedback, $chosenanswer->feedbackformat, $formatoptions, $cmoptions->course);
         }
 
         include("$CFG->dirroot/question/type/truefalse/display.html");

@@ -209,7 +209,7 @@ class question_shortanswer_qtype extends default_questiontype {
                     $feedbackimg = question_get_feedback_image($answer->fraction);
                     if ($answer->feedback) {
                         $answer->feedback = quiz_rewrite_question_urls($answer->feedback, 'pluginfile.php', $context->id, 'question', 'answerfeedback', array($state->attempt, $state->question), $answer->id);
-                        $feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
+                        $feedback = format_text($answer->feedback, $answer->feedbackformat, $formatoptions, $cmoptions->course);
                     }
                     break;
                 }

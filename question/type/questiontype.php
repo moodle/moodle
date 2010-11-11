@@ -963,7 +963,7 @@ class default_questiontype {
 
         $formatoptions = new stdClass;
         $formatoptions->para = false;
-        $comment = format_text($state->manualcomment, FORMAT_HTML,
+        $comment = format_text($state->manualcomment, $state->manualcommentformat,
                 $formatoptions, $cmoptions->course);
         $commentlink = '';
 

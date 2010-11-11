@@ -895,7 +895,7 @@ class quiz_attempt extends quiz {
      * @return mixed true on success, a string error message if a problem is detected
      *         (for example score out of range).
      */
-    public function process_comment($questionid, $comment, $grade) {
+    public function process_comment($questionid, $comment, $commentformat, $grade) {
         // I am not sure it is a good idea to have update methods here - this
         // class is only about getting data out of the question engine, and
         // helping to display it, apart from this.
@@ -904,7 +904,7 @@ class quiz_attempt extends quiz {
         $state = $this->states[$questionid];
 
         $error = question_process_comment($this->questions[$questionid],
-                $state, $this->attempt, $comment, $grade);
+                $state, $this->attempt, $comment, $commentformat, $grade);
 
         // If the state was update (successfully), save the changes.
         if (!is_string($error) && $state->changed) {

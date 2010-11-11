@@ -4927,6 +4927,19 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $dbman->add_field($table, $field);
         }
 
+    /// Upgrading the text formats in some question types depends on the
+    /// questiontextformat field, but the question type upgrade only runs
+    /// after the code below has messed around with the questiontextformat
+    /// value. Therefore, we need to create a new column to store the old value.
+    /// The column should be dropped in Moodle 2.1.
+    /// Define field oldquestiontextformat to be added to question
+        $field = new xmldb_field('oldquestiontextformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'generalfeedback');
+
+    /// Conditionally launch add field oldquestiontextformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
     /// Define field infoformat to be added to question_categories
         $table = new xmldb_table('question_categories');
         $field = new xmldb_field('infoformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'info');
@@ -5039,44 +5052,72 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $dbman->drop_field($table, $field);
         }
 
-        // fix fieldformat
-        $sql = 'SELECT a.*, q.qtype FROM {question_answers} a, {question} q WHERE a.question = q.id';
-        $rs = $DB->get_recordset_sql($sql);
+        // Update question_answers.
+        // In question_answers.feedback was previously always treated as
+        // FORMAT_HTML in calculated, multianswer, multichoice, numerical,
+        // shortanswer and truefalse; and
+        // FORMAT_MOODLE in essay (despite being edited using the HTML editor)
+        // So essay feedback needs to be converted to HTML unless $CFG->texteditors == 'textarea'.
+        // For all question types except multichoice,
+        // question_answers.answer is FORMAT_PLAIN and does not need to be changed.
+        // For multichoice, question_answers.answer is FORMAT_MOODLE, and should
+        // stay that way, at least for now.
+        $rs = $DB->get_recordset_sql('
+                SELECT qa.*, q.qtype
+                FROM {question_answers} qa
+                JOIN {question} q ON a.question = q.id');
         foreach ($rs as $record) {
-            // generalfeedback should use questiontext format
+            // Convert question_answers.answer
+            if ($record->qtype !== 'multichoice') {
+                $record->answerformat = FORMAT_PLAIN;
+            } else {
+                $record->answerformat = FORMAT_MOODLE;
+            }
+
+            // Convert question_answers.feedback
             if ($CFG->texteditors !== 'textarea') {
-                if (!empty($record->feedback)) {
-                    $record->feedback = text_to_html($record->feedback);
+                if ($record->qtype == 'essay') {
+                    $record->feedback = text_to_html($record->feedback, false, false, true);
                 }
                 $record->feedbackformat = FORMAT_HTML;
             } else {
                 $record->feedbackformat = FORMAT_MOODLE;
-                $record->answerformat = FORMAT_MOODLE;
             }
-            unset($record->qtype);
+
             $DB->update_record('question_answers', $record);
         }
         $rs->close();
 
-        $rs = $DB->get_recordset('question');
-        foreach ($rs as $record) {
-            if ($CFG->texteditors !== 'textarea') {
-                if (!empty($record->questiontext)) {
-                    $record->questiontext = text_to_html($record->questiontext);
-                }
+        // In the question table, the code previously used questiontextformat
+        // for both question text and general feedback. We need to copy the
+        // values into the new column.
+        // Then we need to convert FORMAT_MOODLE to FORMAT_HTML (depending on
+        // $CFG->texteditors).
+        $DB->execute('
+                UPDATE {question}
+                SET generalfeedbackformat = questiontextformat');
+        // Also save the old questiontextformat, so that plugins that need it
+        // can access it.
+        $DB->execute('
+                UPDATE {question}
+                SET oldquestiontextformat = questiontextformat');
+        // Now covert FORMAT_MOODLE content, if necssary.
+        if ($CFG->texteditors !== 'textarea') {
+            $rs = $DB->get_recordset('question', 'questiontextformat', FORMAT_MOODLE);
+            foreach ($rs as $record) {
+                $record->questiontext = text_to_html($record->questiontext, false, false, true);
                 $record->questiontextformat = FORMAT_HTML;
-                // conver generalfeedback text to html
-                if (!empty($record->generalfeedback)) {
-                    $record->generalfeedback = text_to_html($record->generalfeedback);
-                }
-            } else {
-                $record->questiontextformat = FORMAT_MOODLE;
+                $record->generalfeedback = text_to_html($record->generalfeedback, false, false, true);
+                $record->generalfeedbackformat = FORMAT_HTML;
+                $DB->update_record('question', $record);
             }
-            // generalfeedbackformat should be the save as questiontext format
-            $record->generalfeedbackformat = $record->questiontextformat;
-            $DB->update_record('question', $record);
+            $rs->close();
         }
-        $rs->close();
+
+        // In the past, question_sessions.manualcommentformat was always treated
+        // as FORMAT_HTML.
+        $DB->set_field('question_sessions', 'manualcommentformat', FORMAT_HTML);
+
         // Main savepoint reached
         upgrade_main_savepoint(true, 2010080901);
     }

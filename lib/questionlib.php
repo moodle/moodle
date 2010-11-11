@@ -1027,7 +1027,8 @@ function question_preload_states($attemptid) {
     // array index in the array returned by $DB->get_records_sql
     $statefields = 'n.questionid as question, s.id, s.attempt, ' .
             's.seq_number, s.answer, s.timestamp, s.event, s.grade, s.raw_grade, ' .
-            's.penalty, n.sumpenalty, n.manualcomment, n.flagged, n.id as questionsessionid';
+            's.penalty, n.sumpenalty, n.manualcomment, n.manualcommentformat, ' .
+            'n.flagged, n.id as questionsessionid';
 
     // Load the newest states for the questions
     $sql = "SELECT $statefields
@@ -1131,6 +1132,7 @@ function question_load_states(&$questions, &$states, $cmoptions, $attempt, $last
             $states[$qid]->penalty = 0;
             $states[$qid]->sumpenalty = 0;
             $states[$qid]->manualcomment = '';
+            $states[$qid]->manualcommentformat = FORMAT_HTML;
             $states[$qid]->flagged = 0;
 
             // Prevent further changes to the session from incrementing the
@@ -1217,7 +1219,8 @@ function question_load_specific_state($question, $cmoptions, $attempt, $stateid)
     global $DB;
     // Load specified states for the question.
     // sess.sumpenalty is probably wrong here shoul really be a sum of penalties from before the one we are asking for.
-    $sql = 'SELECT st.*, sess.sumpenalty, sess.manualcomment, sess.flagged, sess.id as questionsessionid
+    $sql = 'SELECT st.*, sess.sumpenalty, sess.manualcomment, sess.manualcommentformat,
+                        sess.flagged, sess.id as questionsessionid
               FROM {question_states} st, {question_sessions} sess
              WHERE st.id = ?
                AND st.attempt = ?
@@ -1231,7 +1234,8 @@ function question_load_specific_state($question, $cmoptions, $attempt, $stateid)
     restore_question_state($question, $state);
 
     // Load the most recent graded states for the questions before the specified one.
-    $sql = 'SELECT st.*, sess.sumpenalty, sess.manualcomment, sess.flagged, sess.id as questionsessionid
+    $sql = 'SELECT st.*, sess.sumpenalty, sess.manualcomment, sess.manualcommentformat,
+                        sess.flagged, sess.id as questionsessionid
               FROM {question_states} st, {question_sessions} sess
              WHERE st.seq_number <= ?
                AND st.attempt = ?
@@ -1267,8 +1271,6 @@ function restore_question_state(&$question, &$state) {
 
     // initialise response to the value in the answer field
     $state->responses = array('' => $state->answer);
-    unset($state->answer);
-    $state->manualcomment = isset($state->manualcomment) ? $state->manualcomment : '';
 
     // Set the changed field to false; any code which changes the
     // question session must set this to true and must increment
@@ -1278,8 +1280,7 @@ function restore_question_state(&$question, &$state) {
     $state->changed = false;
 
     // Load the question type specific data
-    return $QTYPES[$question->qtype]
-            ->restore_session_and_responses($question, $state);
+    return $QTYPES[$question->qtype]->restore_session_and_responses($question, $state);
 
 }
 
@@ -1332,6 +1333,7 @@ function save_question_session($question, $state) {
         $session->newgraded = $state->id;
         $session->sumpenalty = $state->sumpenalty;
         $session->manualcomment = $state->manualcomment;
+        $session->manualcommentformat = $state->manualcommentformat;
         $session->flagged = !empty($state->newflaggedstate);
         $DB->insert_record('question_sessions', $session);
     } else {
@@ -1341,8 +1343,7 @@ function save_question_session($question, $state) {
             $session->newgraded = $state->id;
             $session->sumpenalty = $state->sumpenalty;
             $session->manualcomment = $state->manualcomment;
-        } else {
-            $session->manualcomment = $session->manualcomment;
+            $session->manualcommentformat = $state->manualcommentformat;
         }
         $session->flagged = !empty($state->newflaggedstate);
         $DB->update_record('question_sessions', $session);
@@ -1554,7 +1555,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
                 }
                 if (!$dryrun){
                     $error = question_process_comment($question, $replaystate, $attempt,
-                            $replaystate->manualcomment, $states[$j]->grade);
+                            $replaystate->manualcomment, $replaystate->manualcommentformat, $states[$j]->grade);
                     if (is_string($error)) {
                          echo $OUTPUT->notification($error);
                     }
@@ -1939,7 +1940,7 @@ function question_print_comment_fields($question, $state, $prefix, $cmoptions, $
  * @return mixed true on success, a string error message if a problem is detected
  *         (for example score out of range).
  */
-function question_process_comment($question, &$state, &$attempt, $comment, $grade) {
+function question_process_comment($question, &$state, &$attempt, $comment, $commentformat, $grade) {
     global $DB;
 
     $grade = trim($grade);
@@ -1954,6 +1955,7 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
     // Update the comment and save it in the database
     $comment = trim($comment);
     $state->manualcomment = $comment;
+    $state->manualcommentformat = $commentformat;
     $state->newflaggedstate = $state->flagged;
     $DB->set_field('question_sessions', 'manualcomment', $comment, array('attemptid'=>$attempt->uniqueid, 'questionid'=>$question->id));
 

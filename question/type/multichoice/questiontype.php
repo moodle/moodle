@@ -126,25 +126,25 @@ class question_multichoice_qtype extends default_questiontype {
 
         foreach (array('correct', 'partiallycorrect', 'incorrect') as $feedbacktype) {
             $feedbackname = $feedbacktype . 'feedback';
-            $feedbackformat = $feedbackname . 'format';
-            $feedbackfiles = $feedbackname . 'files';
             $feedback = $question->$feedbackname;
-            $options->$feedbackformat = trim($feedback['format']);
+            $feedbackformatname = $feedbackname . 'format';
             $options->$feedbackname = trim($feedback['text']);
+            $options->$feedbackformatname = trim($feedback['format']);
             if (isset($feedback['files'])) {
                 // import
                 foreach ($feedback['files'] as $file) {
                     $this->import_file($context, 'qtype_multichoice', $feedbackname, $question->id, $file);
                 }
             } else {
-                $options->$feedbackname = file_save_draft_area_files($feedback['itemid'], $context->id, 'qtype_multichoice', $feedbackname, $question->id, self::$fileoptions, trim($feedback['text']));
+                $options->$feedbackname = file_save_draft_area_files(
+                        $feedback['itemid'], $context->id, 'qtype_multichoice', $feedbackname, $question->id, self::$fileoptions, trim($feedback['text']));
             }
         }
 
         if ($update) {
-            $DB->update_record("question_multichoice", $options);
+            $DB->update_record('question_multichoice', $options);
         } else {
-            $DB->insert_record("question_multichoice", $options);
+            $DB->insert_record('question_multichoice', $options);
         }
 
         // delete old answer records
@@ -441,10 +441,6 @@ class question_multichoice_qtype extends default_questiontype {
         return $responses;
     }
 
-
-    function format_response($response, $format){
-        return $this->format_text($response, $format);
-    }
     /**
      * @param object $question
      * @return mixed either a integer score out of 1 that the average random
