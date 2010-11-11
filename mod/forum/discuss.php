@@ -189,24 +189,25 @@
 /// Print the controls across the top
     echo '<div class="discussioncontrols clearfix">';
 
-    // groups selector not needed here
-    echo '<div class="displaymode">';
-    forum_print_mode_form($discussion->id, $displaymode);
-    echo "</div>";
-
     if (has_capability('mod/forum:exportdiscussion', $modcontext) && (!empty($CFG->enableportfolios))) {
-        echo '<div class="exporttoportfolio">';
         require_once($CFG->libdir.'/portfoliolib.php');
         $button = new portfolio_add_button();
         $button->set_callback_options('forum_portfolio_caller', array('discussionid' => $discussion->id), '/mod/forum/locallib.php');
-        $button->render();
-        echo '</div>';
+        echo html_writer::tag('div', $button->to_html(PORTFOLIO_ADD_FULL_FORM, get_string('exportdiscussion', 'mod_forum')),
+                array('class' => 'discussioncontrol exporttoportfolio'));
+    } else {
+        echo html_writer::tag('div', '&nbsp;', array('class'=>'discussioncontrol nullcontrol'));
     }
+
+    // groups selector not needed here
+    echo '<div class="discussioncontrol displaymode">';
+    forum_print_mode_form($discussion->id, $displaymode);
+    echo "</div>";
 
     if ($forum->type != 'single'
                 && has_capability('mod/forum:movediscussions', $modcontext)) {
 
-        echo '<div class="movediscussion">';
+        echo '<div class="discussioncontrol movediscussion">';
         // Popup menu to move discussions to other forums. The discussion in a
         // single discussion forum can't be moved.
         $modinfo = get_fast_modinfo($course);

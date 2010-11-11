@@ -69,10 +69,11 @@
 
 /** Styles for discuss.php **/
 #page-mod-forum-discuss .discussioncontrols {width:100%;margin:5px;}
-#page-mod-forum-discuss .displaymode {float:left;width:55%;}
-#page-mod-forum-discuss .exporttoportfolio {float:left;width:15%;text-align:right;}
-#page-mod-forum-discuss .movediscussion .movediscussionoption {float:right;width:25%;text-align:right;padding-right:10px;}
-#page-mod-forum-discuss .discussioncontrols .displaymode .singleselect {text-align:right;margin: 0;}
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol {width:33%;float:left;}
+#page-mod-forum-discuss .discussioncontrol.exporttoportfolio {text-align:left;}
+#page-mod-forum-discuss .discussioncontrol.displaymode {text-align:center;}
+#page-mod-forum-discuss .discussioncontrol.movediscussion {text-align:right;padding-right:10px;}
+#page-mod-forum-discuss .discussioncontrol.movediscussion .movediscussionoption {}
 
 /** Styles for view.php **/
 #page-mod-forum-view .forumaddnew {margin-bottom: 20px;}
