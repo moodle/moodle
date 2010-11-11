@@ -3759,24 +3759,18 @@ function forum_move_attachments($discussion, $forumfrom, $forumto) {
     // loop through all posts, better not use attachment flag ;-)
     if ($posts = $DB->get_records('forum_posts', array('discussion'=>$discussion->id), '', 'id, attachment')) {
         foreach ($posts as $post) {
-            if ($oldfiles = $fs->get_area_files($oldcontext->id, 'mod_forum', 'attachment', $post->id, "id", false)) {
-                foreach ($oldfiles as $oldfile) {
-                    $file_record = new stdClass();
-                    $file_record->contextid = $newcontext->id;
-                    $fs->create_file_from_storedfile($file_record, $oldfile);
-                }
-                $fs->delete_area_files($oldcontext->id, 'mod_forum', 'attachment', $post->id);
-                if ($post->attachment != '1') {
-                    //weird - let's fix it
-                    $post->attachment = '1';
-                    $DB->update_record('forum_posts', $post);
-                }
-            } else {
-                if ($post->attachment != '') {
-                    //weird - let's fix it
-                    $post->attachment = '';
-                    $DB->update_record('forum_posts', $post);
-                }
+            $fs->move_area_files_to_new_context($oldcontext->id,
+                    $newcontext->id, 'mod_forum', 'post', $post->id);
+            $attachmentsmoved = $fs->move_area_files_to_new_context($oldcontext->id,
+                    $newcontext->id, 'mod_forum', 'attachment', $post->id);
+            if ($attachmentsmoved > 0 && $post->attachment != '1') {
+                // Weird - let's fix it
+                $post->attachment = '1';
+                $DB->update_record('forum_posts', $post);
+            } else if ($attachmentsmoved == 0 && $post->attachment != '') {
+                // Weird - let's fix it
+                $post->attachment = '';
+                $DB->update_record('forum_posts', $post);
             }
         }
     }
@@ -4235,6 +4229,7 @@ function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompleti
     //delete attachments
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'mod_forum', 'attachment', $post->id);
+    $fs->delete_area_files($context->id, 'mod_forum', 'post', $post->id);
 
     if ($DB->delete_records("forum_posts", array("id" => $post->id))) {
 
@@ -7006,6 +7001,7 @@ function forum_reset_userdata($data) {
                 }
                 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
                 $fs->delete_area_files($context->id, 'mod_forum', 'attachment');
+                $fs->delete_area_files($context->id, 'mod_forum', 'post');
 
                 //remove ratings
                 $ratingdeloptions->contextid = $context->id;

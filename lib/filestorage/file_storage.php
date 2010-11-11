@@ -442,6 +442,35 @@ class file_storage {
     }
 
     /**
+     * Move all the files in a file area from one context to another.
+     * @param integer $oldcontextid the context the files are being moved from.
+     * @param integer $newcontextid the context the files are being moved to.
+     * @param string $component the plugin that these files belong to.
+     * @param string $filearea the name of the file area.
+     * @return integer the number of files moved, for information.
+     */
+    public function move_area_files_to_new_context($oldcontextid, $newcontextid, $component, $filearea, $itemid = false) {
+        // Note, this code is based on some code that Petr wrote in
+        // forum_move_attachments in mod/forum/lib.php. I moved it here because
+        // I needed it in the question code too.
+        $count = 0;
+
+        $oldfiles = $this->get_area_files($oldcontextid, $component, $filearea, $itemid, 'id', false);
+        foreach ($oldfiles as $oldfile) {
+            $filerecord = new stdClass();
+            $filerecord->contextid = $newcontextid;
+            $this->create_file_from_storedfile($filerecord, $oldfile);
+            $count += 1;
+        }
+
+        if ($count) {
+            $this->delete_area_files($oldcontextid, $component, $filearea, $itemid);
+        }
+
+        return $count;
+    }
+
+    /**
      * Recursively creates directory.
      *
      * @param int $contextid
