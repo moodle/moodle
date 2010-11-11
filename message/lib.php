@@ -28,7 +28,10 @@ require_once($CFG->libdir.'/eventslib.php');
 
 define ('MESSAGE_SHORTLENGTH', 300);
 
-$PAGE->set_popup_notification_allowed(false); // We are in a message window (so don't pop up a new one)
+//$PAGE isnt set if we're being loaded by cron which doesnt display popups anyway
+if (isset($PAGE)) {
+    $PAGE->set_popup_notification_allowed(false); // We are in a message window (so don't pop up a new one)
+}
 
 define ('MESSAGE_DISCUSSION_WIDTH',600);
 define ('MESSAGE_DISCUSSION_HEIGHT',500);
