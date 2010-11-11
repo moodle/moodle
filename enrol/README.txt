@@ -87,7 +87,7 @@ Cron
 ====
 
 If your class offers a cron() method, it will be invoked by
-the standard Moodle cron every 5 minutes. Note that if the
+the standard Moodle cron every time it is called. Note that if the
 tasks are not lightweight you must control how frequently they
 execute, perhaps offering a config option.
 
