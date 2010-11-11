@@ -392,7 +392,7 @@ class portfolio_exporter {
         $nourl  = $baseurl . '&cancel=1';
         $this->print_header(get_string('confirmexport', 'portfolio'));
         echo $OUTPUT->box_start();
-        echo $OUTPUT->heading(get_string('confirmsummary', 'portfolio'), 4);
+        echo $OUTPUT->heading(get_string('confirmsummary', 'portfolio'), 3);
         $mainsummary = array();
         if (!$this->instance->get_export_config('hideformat')) {
             $mainsummary[get_string('selectedformat', 'portfolio')] = get_string('format_' . $this->instance->get_export_config('format'), 'portfolio');
@@ -420,6 +420,7 @@ class portfolio_exporter {
         }
         $mainsummary = array_merge($mainsummary, $csummary, $isummary);
         $table = new html_table();
+        $table->attributes['class'] = 'generaltable exportsummary';
         $table->data = array();
         foreach ($mainsummary as $string => $value) {
             $table->data[] = array($string, $value);
