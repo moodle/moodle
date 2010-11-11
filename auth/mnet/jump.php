@@ -26,7 +26,10 @@ if ($hostwwwroot !== '') $url->param('hostwwwroot', $hostwwwroot);
 if ($wantsurl !== '') $url->param('wantsurl', $wantsurl);
 $PAGE->set_url($url);
 
-require_login(SITEID,false);
+if (!isloggedin() or isguestuser()) {
+    $SESSION->wantsurl = $PAGE->url->out(false);
+    redirect(get_login_url());
+}
 
 if (!is_enabled_auth('mnet')) {
     print_error('mnetdisable');
