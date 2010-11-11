@@ -694,6 +694,13 @@ class block_list extends block_base {
             return '';
         }
     }
+
+    function html_attributes() {
+        $attributes = parent::html_attributes();
+        $attributes['class'] .= ' list_block';
+        return $attributes;
+    }
+
 }
 
 /**

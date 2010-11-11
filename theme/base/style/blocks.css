@@ -11,6 +11,10 @@
 .block .footer {margin-bottom: 4px;}
 .block .blockannotation {font-size:0.75em;margin: -1em 0 1em;}
 
+/** block_list blocks need column stuffs **/
+.block.list_block .unlist > li > .column {display:inline-block;}
+.ie6 .block.list_block .unlist .column {display:inline;}
+
 .block.beingmoved {border-width: 2px;border-style: dashed;}
 .blockmovetarget {display: block;height: 1em;margin-bottom: 1em;border-width: 2px;border-style: dashed;}
 
