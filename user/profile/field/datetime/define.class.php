@@ -37,7 +37,7 @@ class profile_define_datetime extends profile_define_base {
         $form->setDefault('param2', $currentyear + 20);
 
         $form->addElement('checkbox', 'param3', get_string('wanttime', 'profilefield_datetime'));
-        $form->setType('param4', PARAM_INT);
+        $form->setType('param3', PARAM_INT);
 
         $form->addElement('hidden', 'defaultdata', '0');
         $form->setType('defaultdata', PARAM_INT);

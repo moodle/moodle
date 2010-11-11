@@ -5,7 +5,7 @@
  *
  * @author Mark Nelson - Pukunui Technology
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @version 20100611
+ * @version 20101022
  */
 
 $string['currentdatedefault'] = 'Check to use current date as default';
