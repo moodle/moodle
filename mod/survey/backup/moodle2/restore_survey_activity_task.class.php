@@ -72,4 +72,43 @@ class restore_survey_activity_task extends restore_activity_task {
         return $rules;
 
     }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * survey logs. It must return one array
+     * of {@link restore_log_rule} objects
+     */
+    static public function define_restore_log_rules() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('survey', 'add', 'view.php?id={course_module}', '{survey}');
+        $rules[] = new restore_log_rule('survey', 'update', 'view.php?id={course_module}', '{survey}');
+        $rules[] = new restore_log_rule('survey', 'view', 'view.php?id={course_module}', '{survey}');
+        $rules[] = new restore_log_rule('survey', 'download', 'download.php?id={course_module}&type=[type]&group=[group]', '{survey}');
+        $rules[] = new restore_log_rule('survey', 'view report', 'report.php?id={course_module}', '{survey}');
+        $rules[] = new restore_log_rule('survey', 'submit', 'view.php?id={course_module}', '{survey}');
+        $rules[] = new restore_log_rule('survey', 'view graph', 'view.php?id={course_module}', '{survey}');
+        $rules[] = new restore_log_rule('survey', 'view form', 'view.php?id={course_module}', '{survey}');
+
+        return $rules;
+    }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * course logs. It must return one array
+     * of {@link restore_log_rule} objects
+     *
+     * Note this rules are applied when restoring course logs
+     * by the restore final task, but are defined here at
+     * activity level. All them are rules not linked to any module instance (cmid = 0)
+     */
+    static public function define_restore_log_rules_for_course() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('survey', 'view all', 'index.php?id={course}', null);
+
+        return $rules;
+    }
 }

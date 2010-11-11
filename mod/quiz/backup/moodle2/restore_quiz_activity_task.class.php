@@ -74,4 +74,80 @@ class restore_quiz_activity_task extends restore_activity_task {
         return $rules;
 
     }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * quiz logs. It must return one array
+     * of {@link restore_log_rule} objects
+     */
+    static public function define_restore_log_rules() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('quiz', 'add', 'view.php?id={course_module}', '{quiz}');
+        $rules[] = new restore_log_rule('quiz', 'update', 'view.php?id={course_module}', '{quiz}');
+        $rules[] = new restore_log_rule('quiz', 'view', 'view.php?id={course_module}', '{quiz}');
+        $rules[] = new restore_log_rule('quiz', 'preview', 'view.php?id={course_module}', '{quiz}');
+        $rules[] = new restore_log_rule('quiz', 'report', 'report.php?id={course_module}', '{quiz}');
+        $rules[] = new restore_log_rule('quiz', 'editquestions', 'view.php?id={course_module}', '{quiz}');
+        $rules[] = new restore_log_rule('quiz', 'delete attempt', 'report.php?id={course_module}', '[oldattempt]');
+        $rules[] = new restore_log_rule('quiz', 'edit override', 'overrideedit.php?id={quiz_override}', '{quiz}');
+        $rules[] = new restore_log_rule('quiz', 'delete override', 'overrides.php.php?cmid={course_module}', '{quiz}');
+        $rules[] = new restore_log_rule('quiz', 'addcategory', 'view.php?id={course_module}', '{question_category}');
+        $rules[] = new restore_log_rule('quiz', 'view summary', 'summary.php?attempt={quiz_attempt_id}', '{quiz}');
+        $rules[] = new restore_log_rule('quiz', 'manualgrade', 'comment.php?attempt={quiz_attempt_id}&question={question}', '{quiz}');
+        $rules[] = new restore_log_rule('quiz', 'manualgrading', 'report.php?mode=grading&q={quiz}', '{quiz}');
+        // All the ones calling to review.php have two rules to handle both old and new urls
+        // in any case they are always converted to new urls on restore
+        // TODO: In Moodle 2.x (x >= 5) kill the old rules
+        // Note we are using the 'quiz_attempt_id' mapping becuase that is the one containing the quiz_attempt->ids
+        // old an new for quiz-attempt
+        $rules[] = new restore_log_rule('quiz', 'attempt', 'review.php?id={course_module}&attempt={quiz_attempt}', '{quiz}',
+                                        null, null, 'review.php?attempt={quiz_attempt}');
+        // old an new for quiz-submit
+        $rules[] = new restore_log_rule('quiz', 'submit', 'review.php?id={course_module}&attempt={quiz_attempt_id}', '{quiz}',
+                                        null, null, 'review.php?attempt={quiz_attempt_id}');
+        $rules[] = new restore_log_rule('quiz', 'submit', 'review.php?attempt={quiz_attempt_id}', '{quiz}');
+        // old an new for quiz-review
+        $rules[] = new restore_log_rule('quiz', 'review', 'review.php?id={course_module}&attempt={quiz_attempt_id}', '{quiz}',
+                                        null, null, 'review.php?attempt={quiz_attempt_id}');
+        $rules[] = new restore_log_rule('quiz', 'review', 'review.php?attempt={quiz_attempt_id}', '{quiz}');
+        // old an new for quiz-start attemp
+        $rules[] = new restore_log_rule('quiz', 'start attempt', 'review.php?id={course_module}&attempt={quiz_attempt_id}', '{quiz}',
+                                        null, null, 'review.php?attempt={quiz_attempt_id}');
+        $rules[] = new restore_log_rule('quiz', 'start attempt', 'review.php?attempt={quiz_attempt_id}', '{quiz}');
+        // old an new for quiz-close attemp
+        $rules[] = new restore_log_rule('quiz', 'close attempt', 'review.php?id={course_module}&attempt={quiz_attempt_id}', '{quiz}',
+                                        null, null, 'review.php?attempt={quiz_attempt_id}');
+        $rules[] = new restore_log_rule('quiz', 'close attempt', 'review.php?attempt={quiz_attempt_id}', '{quiz}');
+        // old an new for quiz-continue attempt
+        $rules[] = new restore_log_rule('quiz', 'continue attempt', 'review.php?id={course_module}&attempt={quiz_attempt_id}', '{quiz}',
+                                        null, null, 'review.php?attempt={quiz_attempt_id}');
+        $rules[] = new restore_log_rule('quiz', 'continue attempt', 'review.php?attempt={quiz_attempt_id}', '{quiz}');
+        // old an new for quiz-continue attemp
+        $rules[] = new restore_log_rule('quiz', 'continue attemp', 'review.php?id={course_module}&attempt={quiz_attempt_id}', '{quiz}',
+                                        null, 'continue attempt', 'review.php?attempt={quiz_attempt_id}');
+        $rules[] = new restore_log_rule('quiz', 'continue attemp', 'review.php?attempt={quiz_attempt_id}', '{quiz}',
+                                        null, 'continue attempt');
+
+        return $rules;
+    }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * course logs. It must return one array
+     * of {@link restore_log_rule} objects
+     *
+     * Note this rules are applied when restoring course logs
+     * by the restore final task, but are defined here at
+     * activity level. All them are rules not linked to any module instance (cmid = 0)
+     */
+    static public function define_restore_log_rules_for_course() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('quiz', 'view all', 'index.php?id={course}', null);
+
+        return $rules;
+    }
 }

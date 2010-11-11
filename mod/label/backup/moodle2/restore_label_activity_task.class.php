@@ -66,4 +66,38 @@ class restore_label_activity_task extends restore_activity_task {
     static public function define_decode_rules() {
         return array();
     }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * label logs. It must return one array
+     * of {@link restore_log_rule} objects
+     */
+    static public function define_restore_log_rules() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('label', 'add', 'view.php?id={course_module}', '{label}');
+        $rules[] = new restore_log_rule('label', 'update', 'view.php?id={course_module}', '{label}');
+        $rules[] = new restore_log_rule('label', 'view', 'view.php?id={course_module}', '{label}');
+
+        return $rules;
+    }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * course logs. It must return one array
+     * of {@link restore_log_rule} objects
+     *
+     * Note this rules are applied when restoring course logs
+     * by the restore final task, but are defined here at
+     * activity level. All them are rules not linked to any module instance (cmid = 0)
+     */
+    static public function define_restore_log_rules_for_course() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('label', 'view all', 'index.php?id={course}', null);
+
+        return $rules;
+    }
 }

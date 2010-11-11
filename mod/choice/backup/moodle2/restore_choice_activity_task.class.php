@@ -72,4 +72,44 @@ class restore_choice_activity_task extends restore_activity_task {
         return $rules;
 
     }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * choice logs. It must return one array
+     * of {@link restore_log_rule} objects
+     */
+    static public function define_restore_log_rules() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('choice', 'add', 'view.php?id={course_module}', '{choice}');
+        $rules[] = new restore_log_rule('choice', 'update', 'view.php?id={course_module}', '{choice}');
+        $rules[] = new restore_log_rule('choice', 'view', 'view.php?id={course_module}', '{choice}');
+        $rules[] = new restore_log_rule('choice', 'choose', 'view.php?id={course_module}', '{choice}');
+        $rules[] = new restore_log_rule('choice', 'choose again', 'view.php?id={course_module}', '{choice}');
+        $rules[] = new restore_log_rule('choice', 'report', 'report.php?id={course_module}', '{choice}');
+
+        return $rules;
+    }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * course logs. It must return one array
+     * of {@link restore_log_rule} objects
+     *
+     * Note this rules are applied when restoring course logs
+     * by the restore final task, but are defined here at
+     * activity level. All them are rules not linked to any module instance (cmid = 0)
+     */
+    static public function define_restore_log_rules_for_course() {
+        $rules = array();
+
+        // Fix old wrong uses (missing extension)
+        $rules[] = new restore_log_rule('choice', 'view all', 'index?id={course}', null,
+                                        null, null, 'index.php?id={course}');
+        $rules[] = new restore_log_rule('choice', 'view all', 'index.php?id={course}', null);
+
+        return $rules;
+    }
 }

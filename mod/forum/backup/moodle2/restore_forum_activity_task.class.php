@@ -82,4 +82,61 @@ class restore_forum_activity_task extends restore_activity_task {
 
         return $rules;
     }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * forum logs. It must return one array
+     * of {@link restore_log_rule} objects
+     */
+    static public function define_restore_log_rules() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('forum', 'add', 'view.php?id={course_module}', '{forum}');
+        $rules[] = new restore_log_rule('forum', 'update', 'view.php?id={course_module}', '{forum}');
+        $rules[] = new restore_log_rule('forum', 'view', 'view.php?id={course_module}', '{forum}');
+        $rules[] = new restore_log_rule('forum', 'view forum', 'view.php?id={course_module}', '{forum}');
+        $rules[] = new restore_log_rule('forum', 'mark read', 'view.php?f={forum}', '{forum}');
+        $rules[] = new restore_log_rule('forum', 'start tracking', 'view.php?f={forum}', '{forum}');
+        $rules[] = new restore_log_rule('forum', 'stop tracking', 'view.php?f={forum}', '{forum}');
+        $rules[] = new restore_log_rule('forum', 'subscribe', 'view.php?f={forum}', '{forum}');
+        $rules[] = new restore_log_rule('forum', 'unsubscribe', 'view.php?f={forum}', '{forum}');
+        $rules[] = new restore_log_rule('forum', 'subscriber', 'subscribers.php?id={forum}', '{forum}');
+        $rules[] = new restore_log_rule('forum', 'subscribers', 'subscribers.php?id={forum}', '{forum}');
+        $rules[] = new restore_log_rule('forum', 'view subscribers', 'subscribers.php?id={forum}', '{forum}');
+        $rules[] = new restore_log_rule('forum', 'add discussion', 'discuss.php?d={forum_discussion}', '{forum_discussion}');
+        $rules[] = new restore_log_rule('forum', 'view discussion', 'discuss.php?d={forum_discussion}', '{forum_discussion}');
+        $rules[] = new restore_log_rule('forum', 'move discussion', 'discuss.php?d={forum_discussion}', '{forum_discussion}');
+        $rules[] = new restore_log_rule('forum', 'delete discussi', 'view.php?id={course_module}', '{forum}',
+                                        null, 'delete discussion');
+        $rules[] = new restore_log_rule('forum', 'delete discussion', 'view.php?id={course_module}', '{forum}');
+        $rules[] = new restore_log_rule('forum', 'add post', 'discuss.php?d={forum_discussion}&parent={forum_post}', '{forum_post}');
+        $rules[] = new restore_log_rule('forum', 'update post', 'discuss.php?d={forum_discussion}&parent={forum_post}', '{forum_post}');
+        $rules[] = new restore_log_rule('forum', 'prune post', 'discuss.php?d={forum_discussion}', '{forum_post}');
+        $rules[] = new restore_log_rule('forum', 'delete post', 'discuss.php?d={forum_discussion}', '[post]');
+
+        return $rules;
+    }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * course logs. It must return one array
+     * of {@link restore_log_rule} objects
+     *
+     * Note this rules are applied when restoring course logs
+     * by the restore final task, but are defined here at
+     * activity level. All them are rules not linked to any module instance (cmid = 0)
+     */
+    static public function define_restore_log_rules_for_course() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('forum', 'view forums', 'index.php?id={course}', null);
+        $rules[] = new restore_log_rule('forum', 'subscribeall', 'index.php?id={course}', '{course}');
+        $rules[] = new restore_log_rule('forum', 'unsubscribeall', 'index.php?id={course}', '{course}');
+        $rules[] = new restore_log_rule('forum', 'user report', 'user.php?course={course}&id={user}&mode=[mode]', '{user}');
+        $rules[] = new restore_log_rule('forum', 'search', 'search.php?id={course}&search=[searchenc]', '[search]');
+
+        return $rules;
+    }
 }

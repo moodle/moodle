@@ -72,8 +72,7 @@
     }
     $accessmanager->do_password_check($attemptobj->is_preview_user());
 
-/// This action used to be 'continue attempt' but the database field has only 15 characters.
-    add_to_log($attemptobj->get_courseid(), 'quiz', 'continue attemp',
+    add_to_log($attemptobj->get_courseid(), 'quiz', 'continue attempt',
             'review.php?attempt=' . $attemptobj->get_attemptid(),
             $attemptobj->get_quizid(), $attemptobj->get_cmid());
 

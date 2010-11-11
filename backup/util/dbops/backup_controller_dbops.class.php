@@ -99,6 +99,8 @@ abstract class backup_controller_dbops extends backup_dbops {
         // that way, any change in the "template" will be applied here automatically. If this causes
         // too much slow, we can always forget about the template and keep maintained the xmldb_table
         // structure inline - manually - here.
+        // TODO: Right now, loading the whole lib/db/install.xml is "eating" 10M, we should
+        // change our way here in order to decrease that memory usage
         $templatetablename = $realtablename;
         $targettablename   = $temptablename;
         $xmlfile = $CFG->dirroot . '/lib/db/install.xml';

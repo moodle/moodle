@@ -42,7 +42,7 @@ class restore_decode_processor {
     protected $rules;     // Array of restore_decode_rule workers
     protected $restoreid;   // The unique restoreid we are executing
     protected $sourcewwwroot; // The original wwwroot of the backup file
-    protected $targetwwwroot; // The targer wwwroot of the restore operation
+    protected $targetwwwroot; // The target wwwroot of the restore operation
 
     public function __construct($restoreid, $sourcewwwroot, $targetwwwroot) {
         $this->restoreid = $restoreid;

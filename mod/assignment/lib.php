@@ -722,7 +722,7 @@ class assignment_base {
 
                         //add to log only if updating
                         add_to_log($this->course->id, 'assignment', 'update grades',
-                                   'submissions.php?id='.$this->assignment->id.'&user='.$submission->userid,
+                                   'submissions.php?id='.$this->cm->id.'&user='.$submission->userid,
                                    $submission->userid, $this->cm->id);
                     }
 
@@ -1573,7 +1573,7 @@ class assignment_base {
             $this->update_grade($submission);
 
             add_to_log($this->course->id, 'assignment', 'update grades',
-                       'submissions.php?id='.$this->assignment->id.'&user='.$feedback->userid, $feedback->userid, $this->cm->id);
+                       'submissions.php?id='.$this->cm->id.'&user='.$feedback->userid, $feedback->userid, $this->cm->id);
              if (!is_null($formdata)) {
                     if ($this->type == 'upload' || $this->type == 'uploadsingle') {
                         $mformdata = $formdata->mform->get_data();

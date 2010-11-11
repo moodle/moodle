@@ -45,6 +45,8 @@ require_once($CFG->dirroot . '/backup/util/helper/restore_structure_parser_proce
 require_once($CFG->dirroot . '/backup/util/helper/restore_decode_rule.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/restore_decode_content.class.php');
 require_once($CFG->dirroot . '/backup/util/helper/restore_decode_processor.class.php');
+require_once($CFG->dirroot . '/backup/util/helper/restore_logs_processor.class.php');
+require_once($CFG->dirroot . '/backup/util/helper/restore_log_rule.class.php');
 require_once($CFG->dirroot . '/backup/util/xml/parser/progressive_parser.class.php');
 require_once($CFG->dirroot . '/backup/util/output/output_controller.class.php');
 require_once($CFG->dirroot . '/backup/util/dbops/backup_dbops.class.php');

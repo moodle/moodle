@@ -146,9 +146,9 @@ abstract class restore_activity_task extends restore_task {
             $this->add_step(new restore_userscompletion_structure_step('activity_userscompletion', 'completion.xml'));
         }
 
-        // TODO: Logs (conditionally)
+        // Logs (conditionally)
         if ($this->get_setting_value('logs')) {
-            //$this->add_step(new restore_activity_logs_structure_step('activity_logs', 'logs.xml'));
+            $this->add_step(new restore_activity_logs_structure_step('activity_logs', 'logs.xml'));
         }
 
         // At the end, mark it as built
@@ -226,6 +226,16 @@ abstract class restore_activity_task extends restore_task {
      */
     static public function define_decode_rules() {
         throw new coding_exception('define_decode_rules() method needs to be overridden in each subclass of restore_activity_task');
+    }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * activity logs. It must return one array
+     * of {@link restore_log_rule} objects
+     */
+    static public function define_restore_log_rules() {
+        throw new coding_exception('define_restore_log_rules() method needs to be overridden in each subclass of restore_activity_task');
     }
 
 // Protected API starts here

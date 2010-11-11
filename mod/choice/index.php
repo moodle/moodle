@@ -14,7 +14,7 @@
     require_course_login($course);
     $PAGE->set_pagelayout('incourse');
 
-    add_to_log($course->id, "choice", "view all", "index?id=$course->id", "");
+    add_to_log($course->id, "choice", "view all", "index.php?id=$course->id", "");
 
     $strchoice = get_string("modulename", "choice");
     $strchoices = get_string("modulenameplural", "choice");

@@ -73,4 +73,46 @@ class restore_glossary_activity_task extends restore_activity_task {
         return $rules;
 
     }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * glossary logs. It must return one array
+     * of {@link restore_log_rule} objects
+     */
+    static public function define_restore_log_rules() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('glossary', 'add', 'view.php?id={course_module}', '{glossary}');
+        $rules[] = new restore_log_rule('glossary', 'update', 'view.php?id={course_module}', '{glossary}');
+        $rules[] = new restore_log_rule('glossary', 'view', 'view.php?id={course_module}', '{glossary}');
+        $rules[] = new restore_log_rule('glossary', 'add category', 'editcategories.php?id={course_module}', '{glossary_category}');
+        $rules[] = new restore_log_rule('glossary', 'edit category', 'editcategories.php?id={course_module}', '{glossary_category}');
+        $rules[] = new restore_log_rule('glossary', 'delete category', 'editcategories.php?id={course_module}', '{glossary_category}');
+        $rules[] = new restore_log_rule('glossary', 'add entry', 'view.php?id={course_module}&mode=entry&hook={glossary_entry}', '{glossary_entry}');
+        $rules[] = new restore_log_rule('glossary', 'update entry', 'view.php?id={course_module}&mode=entry&hook={glossary_entry}', '{glossary_entry}');
+        $rules[] = new restore_log_rule('glossary', 'delete entry', 'view.php?id={course_module}&mode=entry&hook={glossary_entry}', '{glossary_entry}');
+        $rules[] = new restore_log_rule('glossary', 'approve entry', 'showentry.php?id={course_module}&eid={glossary_entry}', '{glossary_entry}');
+        $rules[] = new restore_log_rule('glossary', 'view entry', 'showentry.php?eid={glossary_entry}', '{glossary_entry}');
+
+        return $rules;
+    }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * course logs. It must return one array
+     * of {@link restore_log_rule} objects
+     *
+     * Note this rules are applied when restoring course logs
+     * by the restore final task, but are defined here at
+     * activity level. All them are rules not linked to any module instance (cmid = 0)
+     */
+    static public function define_restore_log_rules_for_course() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('glossary', 'view all', 'index.php?id={course}', null);
+
+        return $rules;
+    }
 }

@@ -65,6 +65,12 @@ class restore_final_task extends restore_task {
         // Decode all the interlinks
         $this->add_step(new restore_decode_interlinks('decode_interlinks'));
 
+        // Restore course logs (conditionally). They are restored here because we need all
+        // the activities to be already restored
+        if ($this->get_setting_value('logs')) {
+            $this->add_step(new restore_course_logs_structure_step('course_logs', 'course/logs.xml'));
+        }
+
         // Rebuild course cache to see results, whoah!
         $this->add_step(new restore_rebuild_course_cache('rebuild_course_cache'));
 
@@ -88,6 +94,55 @@ class restore_final_task extends restore_task {
     public function launch_execute_after_restore() {
         $this->plan->execute_after_restore();
     }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * course logs. It must return one array
+     * of {@link restore_log_rule} objects
+     *
+     * Note these are course logs, but are defined and restored
+     * in final task because we need all the activities to be
+     * restored in order to handle some log records properly
+     */
+    static public function define_restore_log_rules() {
+        $rules = array();
+
+        // module 'course' rules
+        $rules[] = new restore_log_rule('course', 'view', 'view.php?id={course}', '{course}');
+        $rules[] = new restore_log_rule('course', 'guest', 'view.php?id={course}', null);
+        $rules[] = new restore_log_rule('course', 'user report', 'user.php?id={course}&user={user}&mode=[mode]', null);
+        $rules[] = new restore_log_rule('course', 'add mod', '../mod/[modname]/view.php?id={course_module}', '[modname] {[modname]}');
+        $rules[] = new restore_log_rule('course', 'update mod', '../mod/[modname]/view.php?id={course_module}', '[modname] {[modname]}');
+        $rules[] = new restore_log_rule('course', 'delete mod', 'view.php?id={course}', null);
+        $rules[] = new restore_log_rule('course', 'update', 'view.php?id={course}', '');
+        $rules[] = new restore_log_rule('course', 'enrol', 'view.php?id={course}', '{user}');
+        $rules[] = new restore_log_rule('course', 'unenrol', 'view.php?id={course}', '{user}');
+        $rules[] = new restore_log_rule('course', 'editsection', 'editsection.php?id={course_section}', null);
+        $rules[] = new restore_log_rule('course', 'new', 'view.php?id={course}', '');
+        $rules[] = new restore_log_rule('course', 'recent', 'recent.php?id={course}', '');
+        $rules[] = new restore_log_rule('course', 'report log', 'report/log/index.php?id={course}', '{course}');
+        $rules[] = new restore_log_rule('course', 'report live', 'report/live/index.php?id={course}', '{course}');
+        $rules[] = new restore_log_rule('course', 'report outline', 'report/outline/index.php?id={course}', '{course}');
+        $rules[] = new restore_log_rule('course', 'report participation', 'report/participation/index.php?id={course}', '{course}');
+        $rules[] = new restore_log_rule('course', 'report stats', 'report/stats/index.php?id={course}', '{course}');
+
+        // module 'user' rules
+        $rules[] = new restore_log_rule('user', 'view', 'view.php?id={user}&course={course}', '{user}');
+        $rules[] = new restore_log_rule('user', 'change password', 'view.php?id={user}&course={course}', '{user}');
+        $rules[] = new restore_log_rule('user', 'login', 'view.php?id={user}&course={course}', '{user}');
+        $rules[] = new restore_log_rule('user', 'logout', 'view.php?id={user}&course={course}', '{user}');
+        $rules[] = new restore_log_rule('user', 'view all', 'index.php?id={course}', '');
+        $rules[] = new restore_log_rule('user', 'update', 'view.php?id={user}&course={course}', '');
+
+        // rules from other tasks (activities) not belonging to one module instance (cmid = 0), so are restored here
+        $rules = array_merge($rules, restore_logs_processor::register_log_rules_for_course());
+
+        // TODO: Other logs like 'calendar', 'upload'... will go here
+
+        return $rules;
+    }
+
 
 // Protected API starts here
 

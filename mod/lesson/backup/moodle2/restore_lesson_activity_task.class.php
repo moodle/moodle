@@ -79,4 +79,45 @@ class restore_lesson_activity_task extends restore_activity_task {
         return $rules;
 
     }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * lesson logs. It must return one array
+     * of {@link restore_log_rule} objects
+     */
+    static public function define_restore_log_rules() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('lesson', 'add', 'view.php?id={course_module}', '{lesson}');
+        $rules[] = new restore_log_rule('lesson', 'update', 'view.php?id={course_module}', '{lesson}');
+        $rules[] = new restore_log_rule('lesson', 'view', 'view.php?id={course_module}', '{lesson}');
+        $rules[] = new restore_log_rule('lesson', 'start', 'view.php?id={course_module}', '{lesson}');
+        $rules[] = new restore_log_rule('lesson', 'end', 'view.php?id={course_module}', '{lesson}');
+        $rules[] = new restore_log_rule('lesson', 'view grade', 'essay.php?id={course_module}', '[name]');
+        $rules[] = new restore_log_rule('lesson', 'update grade', 'essay.php?id={course_module}', '[name]');
+        $rules[] = new restore_log_rule('lesson', 'update email essay grade', 'essay.php?id={course_module}', '[name]');
+        $rules[] = new restore_log_rule('lesson', 'update highscores', 'highscores.php?id={course_module}', '[name]');
+        $rules[] = new restore_log_rule('lesson', 'view highscores', 'highscores.php?id={course_module}', '[name]');
+
+        return $rules;
+    }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * course logs. It must return one array
+     * of {@link restore_log_rule} objects
+     *
+     * Note this rules are applied when restoring course logs
+     * by the restore final task, but are defined here at
+     * activity level. All them are rules not linked to any module instance (cmid = 0)
+     */
+    static public function define_restore_log_rules_for_course() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('lesson', 'view all', 'index.php?id={course}', null);
+
+        return $rules;
+    }
 }

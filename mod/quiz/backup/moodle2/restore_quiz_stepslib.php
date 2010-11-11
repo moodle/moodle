@@ -120,7 +120,10 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->timeopen = $this->apply_date_offset($data->timeopen);
         $data->timeclose = $this->apply_date_offset($data->timeclose);
 
-        $DB->insert_record('quiz_overrides', $data);
+        $newitemid = $DB->insert_record('quiz_overrides', $data);
+
+        // Add mapping, restore of logs needs it
+        $this->set_mapping('quiz_override', $oldid, $newitemid);
     }
 
     protected function process_quiz_grade($data) {
@@ -162,9 +165,10 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $newitemid = $DB->insert_record('quiz_attempts', $data);
 
         // Save quiz_attempt->uniqueid as quiz_attempt mapping, both question_states and
-        // question_sessions have Fk to it and not to quiz_attempts->id at all. In fact
-        // quiz_attempt->id isn't use by anybody
+        // question_sessions have Fk to it and not to quiz_attempts->id at all.
         $this->set_mapping('quiz_attempt', $olduniqueid, $data->uniqueid, false);
+        // Also save quiz_attempt->id mapping, because logs use it
+        $this->set_mapping('quiz_attempt_id', $oldid, $newitemid, false);
     }
 
     protected function after_execute() {

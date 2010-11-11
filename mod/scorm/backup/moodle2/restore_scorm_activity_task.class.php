@@ -72,4 +72,42 @@ class restore_scorm_activity_task extends restore_activity_task {
         return $rules;
 
     }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * scorm logs. It must return one array
+     * of {@link restore_log_rule} objects
+     */
+    static public function define_restore_log_rules() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('scorm', 'add', 'view.php?id={course_module}', '{scorm}');
+        $rules[] = new restore_log_rule('scorm', 'update', 'view.php?id={course_module}', '{scorm}');
+        $rules[] = new restore_log_rule('scorm', 'view', 'player.php?cm={course_module}&scoid={scorm_sco}', '{scorm}');
+        $rules[] = new restore_log_rule('scorm', 'pre-view', 'view.php?id={course_module}', '{scorm}');
+        $rules[] = new restore_log_rule('scorm', 'report', 'report.php?id={course_module}', '{scorm}');
+        $rules[] = new restore_log_rule('scorm', 'launch', 'view.php?id={course_module}', '[result]');
+        $rules[] = new restore_log_rule('scorm', 'delete attempts', 'report.php?id={course_module}', '[oldattempts]');
+
+        return $rules;
+    }
+
+    /**
+     * Define the restore log rules that will be applied
+     * by the {@link restore_logs_processor} when restoring
+     * course logs. It must return one array
+     * of {@link restore_log_rule} objects
+     *
+     * Note this rules are applied when restoring course logs
+     * by the restore final task, but are defined here at
+     * activity level. All them are rules not linked to any module instance (cmid = 0)
+     */
+    static public function define_restore_log_rules_for_course() {
+        $rules = array();
+
+        $rules[] = new restore_log_rule('scorm', 'view all', 'index.php?id={course}', null);
+
+        return $rules;
+    }
 }

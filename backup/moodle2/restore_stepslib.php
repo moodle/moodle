@@ -1613,6 +1613,124 @@ class restore_course_completion_structure_step extends restore_structure_step {
 
 }
 
+
+/**
+ * This structure step restores course logs (cmid = 0), delegating
+ * the hard work to the corresponding {@link restore_logs_processor} passing the
+ * collection of {@link restore_log_rule} rules to be observed as they are defined
+ * by the task. Note this is only executed based in the 'logs' setting.
+ *
+ * NOTE: This is executed by final task, to have all the activities already restored
+ *
+ * NOTE: Not all course logs are being restored. For now only 'course' and 'user'
+ * records are. There are others like 'calendar' and 'upload' that will be handled
+ * later.
+ *
+ * NOTE: All the missing actions (not able to be restored) are sent to logs for
+ * debugging purposes
+ */
+class restore_course_logs_structure_step extends restore_structure_step {
+
+    /**
+     * Conditionally decide if this step should be executed.
+     *
+     * This function checks the following four parameters:
+     *
+     *   1. the course/logs.xml file exists
+     *
+     * @return bool true is safe to execute, false otherwise
+     */
+    protected function execute_condition() {
+
+        // Check it is included in the backup
+        $fullpath = $this->task->get_taskbasepath();
+        $fullpath = rtrim($fullpath, '/') . '/' . $this->filename;
+        if (!file_exists($fullpath)) {
+            // Not found, can't restore course logs
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function define_structure() {
+
+        $paths = array();
+
+        // Simple, one plain level of information contains them
+        $paths[] = new restore_path_element('log', '/logs/log');
+
+        return $paths;
+    }
+
+    protected function process_log($data) {
+        global $DB;
+
+        $data = (object)($data);
+
+        $data->time = $this->apply_date_offset($data->time);
+        $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->course = $this->get_courseid();
+        $data->cmid = 0;
+
+        // For any reason user wasn't remapped ok, stop processing this
+        if (empty($data->userid)) {
+            return;
+        }
+
+        // Everything ready, let's delegate to the restore_logs_processor
+
+        // Set some fixed values that will save tons of DB requests
+        $values = array(
+            'course' => $this->get_courseid());
+        // Get instance and process log record
+        $data = restore_logs_processor::get_instance($this->task, $values)->process_log_record($data);
+
+        // If we have data, insert it, else something went wrong in the restore_logs_processor
+        if ($data) {
+            $DB->insert_record('log', $data);
+        }
+    }
+}
+
+/**
+ * This structure step restores activity logs, extending {@link restore_course_logs_structure_step}
+ * sharing its same structure but modifying the way records are handled
+ */
+class restore_activity_logs_structure_step extends restore_course_logs_structure_step {
+
+    protected function process_log($data) {
+        global $DB;
+
+        $data = (object)($data);
+
+        $data->time = $this->apply_date_offset($data->time);
+        $data->userid = $this->get_mappingid('user', $data->userid);
+        $data->course = $this->get_courseid();
+        $data->cmid = $this->task->get_moduleid();
+
+        // For any reason user wasn't remapped ok, stop processing this
+        if (empty($data->userid)) {
+            return;
+        }
+
+        // Everything ready, let's delegate to the restore_logs_processor
+
+        // Set some fixed values that will save tons of DB requests
+        $values = array(
+            'course' => $this->get_courseid(),
+            'course_module' => $this->task->get_moduleid(),
+            $this->task->get_modulename() => $this->task->get_activityid());
+        // Get instance and process log record
+        $data = restore_logs_processor::get_instance($this->task, $values)->process_log_record($data);
+
+        // If we have data, insert it, else something went wrong in the restore_logs_processor
+        if ($data) {
+            $DB->insert_record('log', $data);
+        }
+    }
+}
+
 /**
  * This structure step restores the grade items associated with one activity
  * All the grade items are made child of the "course" grade item but the original
