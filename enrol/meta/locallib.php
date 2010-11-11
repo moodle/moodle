@@ -271,6 +271,7 @@ function enrol_meta_sync($courseid = NULL) {
         list($enabled, $params) = $DB->get_in_or_equal($enabled, SQL_PARAMS_NAMED, 'e00');
         $sql = "SELECT DISTINCT pra.roleid, pra.userid, c.id AS contextid, e.id AS enrolid
                   FROM {role_assignments} pra
+                  JOIN {user} u ON (u.id = pra.userid AND u.deleted = 0)
                   JOIN {context} pc ON (pc.id = pra.contextid AND pc.contextlevel = :coursecontext AND pra.component $enabled)
                   JOIN {enrol} e ON (e.customint1 = pc.instanceid AND e.enrol = 'meta' AND e.status = :statusenabled $onecourse)
                   JOIN {context} c ON (c.contextlevel = pc.contextlevel AND c.instanceid = e.courseid)
