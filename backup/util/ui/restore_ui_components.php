@@ -31,40 +31,20 @@ abstract class restore_search_base implements renderable {
     /**
      * The default values for this components params
      */
-    const DEFAULT_PAGE = 0;
-    const DEFAULT_PAGELIMIT = 5;
     const DEFAULT_SEARCH = '';
 
-    /**
-     * The param used to convey the current page
-     * @var string
-     */
-    static $VAR_PAGE = 'page';
-    /**
-     * The param used to convey the current page limit
-     * @var string
-     */
-    static $VAR_PAGELIMIT = 'pagelimit';
     /**
      * The param used to convey the current search string
      * @var string
      */
     static $VAR_SEARCH = 'search';
+
+    static $MAXRESULTS = 10;
     /**
      * The current search string
      * @var string|null
      */
     private $search = null;
-    /**
-     * The current page
-     * @var int
-     */
-    private $page = null;
-    /**
-     * The current page limit
-     * @var int
-     */
-    private $pagelimit = null;
     /**
      * The URL for this page including required params to return to it
      * @var moodle_url
@@ -92,8 +72,6 @@ abstract class restore_search_base implements renderable {
      */
     public function __construct(array $config=array()) {
 
-        $this->page = optional_param($this->get_varpage(), self::DEFAULT_PAGE, PARAM_INT);
-        $this->pagelimit = optional_param($this->get_varpagelimit(), self::DEFAULT_PAGELIMIT, PARAM_INT);
         $this->search = optional_param($this->get_varsearch(), self::DEFAULT_SEARCH, PARAM_ALPHANUMEXT);
 
         foreach ($config as $name=>$value) {
@@ -104,20 +82,6 @@ abstract class restore_search_base implements renderable {
         }
     }
     /**
-     * The current page
-     * @return int
-     */
-    final public function get_page() {
-        return ($this->page !== null)?$this->page:self::DEFAULT_PAGE;
-    }
-    /**
-     * The current page limit
-     * @return int
-     */
-    final public function get_pagelimit() {
-        return ($this->pagelimit !== null)?$this->pagelimit:self::DEFAULT_PAGELIMIT;
-    }
-    /**
      * The URL for this search
      * @global moodle_page $PAGE
      * @return moodle_url The URL for this page
@@ -125,8 +89,6 @@ abstract class restore_search_base implements renderable {
     final public function get_url() {
         global $PAGE;
         $params = array(
-            $this->get_varpage()      => $this->get_page(),
-            $this->get_varpagelimit() => $this->get_pagelimit(),
             $this->get_varsearch()    => $this->get_search()
         );
         return ($this->url !== null)?new moodle_url($this->url, $params):new moodle_url($PAGE->url, $params);
@@ -142,21 +104,11 @@ abstract class restore_search_base implements renderable {
      * The total number of results
      * @return int
      */
-    final public function get_totalcount() {
+    final public function get_count() {
         if ($this->totalcount === null) {
             $this->search();
         }
         return $this->totalcount;
-    }
-    /**
-     * The number of results in this result set
-     * @return int
-     */
-    final public function get_resultscount() {
-        if ($this->results === null) {
-            $this->search();
-        }
-        return count($this->results);
     }
     /**
      * Returns an array of results from the search
@@ -167,32 +119,6 @@ abstract class restore_search_base implements renderable {
             $this->search();
         }
         return $this->results;
-    }
-    /**
-     * Sets the current page
-     * @param int $page
-     */
-    final public function set_page($page) {
-        $this->page = abs((int)$page);
-        $this->invalidate_results();
-    }
-    /**
-     * Sets the page limit for this component
-     * @param int $pagelimit
-     */
-    final public function set_pagelimit($pagelimit) {
-        $this->pagelimit = abs((int)$pagelimit);
-        if ($this->pagelimit < 5 || $this->pagelimit > 500) {
-            $this->pagelimit = null;
-        }
-        $this->invalidate_results();
-    }
-    /**
-     * Returns the total number of pages
-     * @return int
-     */
-    final public function get_totalpages() {
-        return ceil($this->get_totalcount()/$this->pagelimit);
     }
     /**
      * Sets the page URL
@@ -232,42 +158,41 @@ abstract class restore_search_base implements renderable {
         if (!is_null($this->results)) {
             return $this->results;
         }
-        $params = array(
-            2=>$this->get_page()*$this->get_pagelimit(),
-            3=>$this->get_pagelimit()
-        );
-        $this->results = call_user_func_array(array($DB, 'get_records_sql'), $this->get_searchsql()+$params);
-        $this->totalcount = call_user_func_array(array($DB, 'count_records_sql'), $this->get_countsql()+$params);
 
-        if (count($this->requiredcapabilities) > 0) {
-            $contextlevel = $this->get_itemcontextlevel();
-            foreach ($this->results as $key=>$result) {
-                context_instance_preload($result);
-                $context = get_context_instance($contextlevel, $result->id);
+        $this->results = array();
+        $this->totalcount = 0;
+        $contextlevel = $this->get_itemcontextlevel();
+        list($sql, $params) = $this->get_searchsql();
+        $resultset = $DB->get_recordset_sql($sql, $params, 0, 250);
+        foreach ($resultset as $result) {
+            context_instance_preload($result);
+            $context = get_context_instance($contextlevel, $result->id);
+            if (count($this->requiredcapabilities) > 0) {
                 foreach ($this->requiredcapabilities as $cap) {
                     if (!has_capability($cap['capability'], $context, $cap['user'])) {
-                        unset($this->results[$key]);
-                        break 1;
+                        continue 2;
                     }
                 }
             }
+            $this->results[$result->id] = $result;
+            $this->totalcount++;
+            if ($this->totalcount >= self::$MAXRESULTS) {
+                break;
+            }
         }
 
-        $this->format_results();
-
-        return $this->get_resultscount();
+        return $this->totalcount;
     }
+
+    final public function has_more_results() {
+        return $this->get_count() >= self::$MAXRESULTS;
+    }
+
     /**
      * Returns an array containing the SQL for the search and the params
      * @return array
      */
     abstract protected function get_searchsql();
-    /**
-     * Returns an array containing the SQL to get the total number of search results
-     * as well as an array of params for it
-     * @return array
-     */
-    abstract protected function get_countsql();
     /**
      * Gets the context level associated with this components items
      * @return CONTEXT_*
@@ -277,16 +202,6 @@ abstract class restore_search_base implements renderable {
      * Formats the results
      */
     abstract protected function format_results();
-    /**
-     * Gets the string used to transfer the page for this compontents requests
-     * @return string
-     */
-    abstract public function get_varpage();
-    /**
-     * Gets the string used to transfer the page limit for this compontents requests
-     * @return string
-     */
-    abstract public function get_varpagelimit();
     /**
      * Gets the string used to transfer the search string for this compontents requests
      * @return string
@@ -299,8 +214,6 @@ abstract class restore_search_base implements renderable {
  */
 class restore_course_search extends restore_search_base {
 
-    static $VAR_PAGE = 'page';
-    static $VAR_PAGELIMIT = 'pagelimit';
     static $VAR_SEARCH = 'search';
 
     protected $currentcourseid = null;
@@ -323,7 +236,7 @@ class restore_course_search extends restore_search_base {
 
         list($ctxselect, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
         $params = array(
-            'fullnamesearch' => $this->get_search().'%',
+            'fullnamesearch' => '%'.$this->get_search().'%',
             'shortnamesearch' => '%'.$this->get_search().'%',
             'siteid' => SITEID
         );
@@ -340,36 +253,10 @@ class restore_course_search extends restore_search_base {
 
         return array($select.$ctxselect.$from.$ctxjoin.$where.$orderby, $params);
     }
-    protected function get_countsql() {
-        global $DB;
-
-        $params = array(
-            'fullnamesearch' => $this->get_search().'%',
-            'shortnamesearch' => '%'.$this->get_search().'%',
-            'siteid' => SITEID
-        );
-
-        $select     = " SELECT COUNT(c.id) ";
-        $from       = " FROM {course} c ";
-        $where      = " WHERE (".$DB->sql_like('c.fullname', ':fullnamesearch', false)." OR ".$DB->sql_like('c.shortname', ':shortnamesearch', false).") AND c.id <> :siteid";
-
-        if ($this->currentcourseid !== null) {
-            $where .= " AND c.id <> :currentcourseid";
-            $params['currentcourseid'] = $this->currentcourseid;
-        }
-
-        return array($select.$from.$where, $params);
-    }
     protected function get_itemcontextlevel() {
         return CONTEXT_COURSE;
     }
     protected function format_results() {}
-    public function get_varpage() {
-        return self::$VAR_PAGE;
-    }
-    public function get_varpagelimit() {
-        return self::$VAR_PAGELIMIT;
-    }
     public function get_varsearch() {
         return self::$VAR_SEARCH;
     }
@@ -380,8 +267,6 @@ class restore_course_search extends restore_search_base {
  */
 class restore_category_search extends restore_search_base  {
 
-    static $VAR_PAGE = 'catpage';
-    static $VAR_PAGELIMIT = 'catpagelimit';
     static $VAR_SEARCH = 'catsearch';
 
     public function __construct(array $config=array()) {
@@ -397,7 +282,7 @@ class restore_category_search extends restore_search_base  {
 
         list($ctxselect, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSECAT, 'ctx');
         $params = array(
-            'namesearch' => $this->get_search().'%',
+            'namesearch' => '%'.$this->get_search().'%',
         );
 
         $select     = " SELECT c.id,c.name,c.visible,c.sortorder,c.description,c.descriptionformat ";
@@ -407,29 +292,10 @@ class restore_category_search extends restore_search_base  {
 
         return array($select.$ctxselect.$from.$ctxjoin.$where.$orderby, $params);
     }
-    protected function get_countsql() {
-        global $DB;
-
-        $params = array(
-            'namesearch' => $this->get_search().'%',
-        );
-
-        $select     = " SELECT COUNT(c.id) ";
-        $from       = " FROM {course_categories} c ";
-        $where      = " WHERE ".$DB->sql_like('c.name', ':namesearch', false);
-
-        return array($select.$from.$where, $params);
-    }
     protected function get_itemcontextlevel() {
         return CONTEXT_COURSECAT;
     }
     protected function format_results() {}
-    public function get_varpage() {
-        return self::$VAR_PAGE;
-    }
-    public function get_varpagelimit() {
-        return self::$VAR_PAGELIMIT;
-    }
     public function get_varsearch() {
         return self::$VAR_SEARCH;
     }
