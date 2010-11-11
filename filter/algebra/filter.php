@@ -67,6 +67,7 @@ function filter_algebra_image($imagefile, $tex= "", $height="", $width="", $alig
     $style .= " width:{$width}px;";
   }
   $style .= '"';
+  $anchorcontents = '';
   if ($imagefile) {
     $anchorcontents .= "<img $title alt=\"".s($origtex)."\" src=\"";
     if ($CFG->slasharguments) {        // Use this method if possible for better caching
