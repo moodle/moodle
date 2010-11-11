@@ -21,6 +21,11 @@
  *   3. Remove all cache code, it will implement in curl class.
  *   4. Clean up session code
  *
+ * Modified by David Mudrak <david@moodle.com>
+ * ChangeLog:
+ *   1. upload() method uses Moodle stored_file
+ *   2. upload() method supports all params provided by http://www.flickr.com/services/api/upload.api.html
+ *
  * @package moodlecore
  * @subpackage 3rd-party
  */
@@ -1084,37 +1089,49 @@ class phpFlickr {
         $this->request("flickr.urls.lookupUser", array("url"=>$url));
         return $this->parsed_response ? $this->parsed_response['user'] : false;
     }
+
     /**
-     * upload a photo to flickr
-     * @param string $photo must be the path of the file
-     * @param string $title
-     * @param string $description
-     * @param string $tags
-     * @param string $is_public
-     * @param string $is_friend
-     * @param string $is_family
+     * Upload a photo from Moodle file pool to Flickr
+     *
+     * Optional meta information are title, description, tags, is_public, is_friend, is_family, safety_level,
+     * content_type and hidden {@see http://www.flickr.com/services/api/upload.api.html}
+     *
+     * @param stored_file $photo stored in Moodle file pool
+     * @param array $meta optional meta information
      * @return boolean
      */
+    function upload(stored_file $photo, array $meta = array()) {
 
-    function upload ($photo, $title = null, $description = null, $tags = null, $is_public = null, $is_friend = null, $is_family = null) {
-        global $SESSION;
-        $args = array("async" => 1, "api_key" => $this->api_key, "title" => $title, "description" => $description, "tags" => $tags, "is_public" => $is_public, "is_friend" => $is_friend, "is_family" => $is_family);
+        $args = array();
+
+        $args['title']          = isset($meta['title']) ? $meta['title'] : null;
+        $args['description']    = isset($meta['description']) ? $meta['description'] : null;
+        $args['tags']           = isset($meta['tags']) ? $meta['tags'] : null;
+        $args['is_public']      = isset($meta['is_public']) ? $meta['is_public'] : 0;
+        $args['is_friend']      = isset($meta['is_friend']) ? $meta['is_friend'] : 0;
+        $args['is_family']      = isset($meta['is_family']) ? $meta['is_family'] : 0;
+        $args['safety_level']   = isset($meta['safety_level']) ? $meta['safety_level'] : 1; // safe by default
+        $args['content_type']   = isset($meta['content_type']) ? $meta['content_type'] : 1; // photo by default
+        $args['hidden']         = isset($meta['hidden']) ? $meta['hidden'] : 2;             // hide from public searches by default
+
+        $args['async'] = 1;
+        $args['api_key'] = $this->api_key;
+
         if (!empty($this->email)) {
-            $args = array_merge($args, array("email" => $this->email));
+            $args['email'] = $this->email;
         }
         if (!empty($this->password)) {
-            $args = array_merge($args, array("password" => $this->password));
+            $args['password'] = $this->password;
         }
-        // TODO:
-        // should we request a token if it is not valid?
         if (!empty($this->token)) {
-            $args = array_merge($args, array("auth_token" => $this->token));
+            $args['auth_token'] = $this->token;
         }
 
+        // sign the arguments using the shared secret
         ksort($args);
-        $auth_sig = "";
+        $auth_sig = '';
         foreach ($args as $key => $data) {
-            if ($data !== null) {
+            if (!is_null($data)) {
                 $auth_sig .= $key . $data;
             } else {
                 unset($args[$key]);
@@ -1125,8 +1142,7 @@ class phpFlickr {
             $args['api_sig'] = $api_sig;
         }
 
-        $photo = realpath($photo);
-        $args['photo'] = '@'.$photo;
+        $args['photo'] = $photo; // $this->curl will process it correctly
 
         if ($response = $this->curl->post($this->Upload, $args)) {
             return true;
@@ -1135,4 +1151,3 @@ class phpFlickr {
         }
     }
 }
-?>

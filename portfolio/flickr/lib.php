@@ -1,4 +1,29 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    portfolio
+ * @subpackage flickr
+ * @copyright  2008 Nicolas Connault
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir.'/portfolio/plugin.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/flickrlib.php');
@@ -27,26 +52,25 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
             $filesize = $file->get_filesize();
 
             if ($file->is_valid_image()) {
-                /**
-                $return = $this->flickr->upload (array('photo' => $file,
-                                                                'title' => $this->get_export_config('title'),
-                                                                'description' => $this->get_export_config('description'),
-                                                                'tags' => $this->get_export_config('tags'),
-                                                                'is_public' => $this->get_export_config('is_public'),
-                                                                'is_friend' => $this->get_export_config('is_friend'),
-                                                                'is_family' => $this->get_export_config('is_family'),
-                                                                'safety_level' => $this->get_export_config('safety_level'),
-                                                                'content_type' => $this->get_export_config('content_type'),
-                                                                'hidden' => $this->get_export_config('hidden')));
-                 */
-                $return = $this->flickr->upload($file, $this->get_export_config('title'), $this->get_export_config('description'), $this->get_export_config('tags'), $this->get_export_config('is_public'), $this->get_export_config('is_friend'), $this->get_export_config('is_family'));
+                $return = $this->flickr->upload($file, array(
+                        'title'         => $this->get_export_config('title'),
+                        'description'   => $this->get_export_config('description'),
+                        'tags'          => $this->get_export_config('tags'),
+                        'is_public'     => $this->get_export_config('is_public'),
+                        'is_friend'     => $this->get_export_config('is_friend'),
+                        'is_family'     => $this->get_export_config('is_family'),
+                        'safety_level'  => $this->get_export_config('safety_level'),
+                        'content_type'  => $this->get_export_config('content_type'),
+                        'hidden'        => $this->get_export_config('hidden')));
                 if ($return) {
                     // Attach photo to a set if requested
                     if ($this->get_export_config('set')) {
-                        $this->flickr->photosets_addPhoto($this->get_export_config('set'), $this->flickr->parsed_response['photoid']);
+                        $this->flickr->photosets_addPhoto($this->get_export_config('set'),
+                            $this->flickr->parsed_response['photoid']);
                     }
                 } else {
-                    throw new portfolio_plugin_exception('uploadfailed', 'portfolio_flickr', $this->flickr->error_code . ': ' . $this->flickr->error_msg);
+                    throw new portfolio_plugin_exception('uploadfailed', 'portfolio_flickr',
+                        $this->flickr->error_code . ': ' . $this->flickr->error_msg);
                 }
             }
         }
@@ -57,8 +81,7 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
     }
 
     public function get_interactive_continue_url() {
-        // return $this->flickr->urls_getUserPhotos();
-        return "http://www.flickr.com/tools/uploader_edit.gne?ids="; // Add ids of uploaded files
+        return $this->flickr->urls_getUserPhotos();
     }
 
     public function expected_time($callertime) {
@@ -74,11 +97,19 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
     }
 
     public function admin_config_form(&$mform) {
+        global $CFG;
+
         $strrequired = get_string('required');
-        $mform->addElement('text', 'apikey', get_string('apikey', 'portfolio_flickr'));
+        $mform->addElement('text', 'apikey', get_string('apikey', 'portfolio_flickr'), array('size' => 30));
         $mform->addRule('apikey', $strrequired, 'required', null, 'client');
         $mform->addElement('text', 'sharedsecret', get_string('sharedsecret', 'portfolio_flickr'));
         $mform->addRule('sharedsecret', $strrequired, 'required', null, 'client');
+        $a = new stdClass();
+        $a->applyurl = 'http://www.flickr.com/services/api/keys/apply/';
+        $a->keysurl = 'http://www.flickr.com/services/api/keys/';
+        $a->callbackurl = $CFG->wwwroot . '/portfolio/add.php?postcontrol=1&type=boxnet';
+        $mform->addElement('static', 'setupinfo', get_string('setupinfo', 'portfolio_flickr'),
+            get_string('setupinfodetails', 'portfolio_flickr', $a));
     }
 
     public function has_export_config() {
@@ -207,5 +238,12 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
         } else {
             return '-';
         }
+    }
+
+    /**
+     * For now, flickr doesn't support this because we can't dynamically construct callbackurl
+     */
+    public static function allows_multiple_exports() {
+        return false;
     }
 }
