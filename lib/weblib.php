@@ -2955,7 +2955,7 @@ function is_in_popup() {
  * To use this class.
  * - construct
  * - call create (or use the 3rd param to the constructor)
- * - call update or update_full repeatedly
+ * - call update or update_full() or update() repeatedly
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package moodlecore
@@ -2963,123 +2963,138 @@ function is_in_popup() {
 class progress_bar {
     /** @var string html id */
     private $html_id;
-    /** @var int */
-    private $percent;
-    /** @var int */
+    /** @var int total width */
     private $width;
-    /** @var int */
-    private $lastcall;
-    /** @var int */
-    private $time_start;
-    private $minimum_time = 2; //min time between updates.
+    /** @var int last percentage printed */
+    private $percent = 0;
+    /** @var int time when last printed */
+    private $lastupdate = 0;
+    /** @var int when did we start printing this */
+    private $time_start = 0;
+
     /**
      * Constructor
      *
      * @param string $html_id
      * @param int $width
      * @param bool $autostart Default to false
+     * @return void, prints JS code if $autostart true
      */
-    public function __construct($html_id = '', $width = 500, $autostart = false){
+    public function __construct($html_id = '', $width = 500, $autostart = false) {
         if (!empty($html_id)) {
             $this->html_id  = $html_id;
         } else {
-            $this->html_id  = uniqid();
+            $this->html_id  = 'pbar_'.uniqid();
         }
+
         $this->width = $width;
-        $this->restart();
-        if($autostart){
+
+        if ($autostart){
             $this->create();
         }
     }
+
     /**
       * Create a new progress bar, this function will output html.
       *
       * @return void Echo's output
       */
-    public function create(){
-            flush();
-            $this->lastcall->pt = 0;
-            $this->lastcall->time = microtime(true);
-            if (CLI_SCRIPT) {
-                return; // temporary solution for cli scripts
-            }
-            $htmlcode = <<<EOT
-            <div style="text-align:center;width:{$this->width}px;clear:both;padding:0;margin:0 auto;">
-                <h2 id="status_{$this->html_id}" style="text-align: center;margin:0 auto"></h2>
-                <p id="time_{$this->html_id}"></p>
-                <div id="bar_{$this->html_id}" style="border-style:solid;border-width:1px;width:500px;height:50px;">
-                    <div id="progress_{$this->html_id}"
-                    style="text-align:center;background:#FFCC66;width:4px;border:1px
-                    solid gray;height:38px; padding-top:10px;">&nbsp;<span id="pt_{$this->html_id}"></span>
-                    </div>
+    public function create() {
+        $this->time_start = microtime(true);
+        if (CLI_SCRIPT) {
+            return; // temporary solution for cli scripts
+        }
+        $htmlcode = <<<EOT
+        <div style="text-align:center;width:{$this->width}px;clear:both;padding:0;margin:0 auto;">
+            <h2 id="status_{$this->html_id}" style="text-align: center;margin:0 auto"></h2>
+            <p id="time_{$this->html_id}"></p>
+            <div id="bar_{$this->html_id}" style="border-style:solid;border-width:1px;width:500px;height:50px;">
+                <div id="progress_{$this->html_id}"
+                style="text-align:center;background:#FFCC66;width:4px;border:1px
+                solid gray;height:38px; padding-top:10px;">&nbsp;<span id="pt_{$this->html_id}"></span>
                 </div>
             </div>
+        </div>
 EOT;
-            echo $htmlcode;
-            flush();
+        flush();
+        echo $htmlcode;
+        flush();
     }
+
     /**
      * Update the progress bar
      *
      * @param int $percent from 1-100
      * @param string $msg
-     * @param mixed $es
      * @return void Echo's output
      */
-    private function _update($percent, $msg, $es){
-        global $PAGE;
-        if(empty($this->time_start)){
+    private function _update($percent, $msg) {
+        if (empty($this->time_start)){
             $this->time_start = microtime(true);
         }
-        $this->percent = $percent;
-        $this->lastcall->time = microtime(true);
-        $this->lastcall->pt   = $percent;
-        $w = $this->percent * $this->width;
+
         if (CLI_SCRIPT) {
             return; // temporary solution for cli scripts
         }
-        if ($es === null){
-            $es = "Infinity";
+
+        $es = $this->estimate($percent);
+
+        if ($es === null) {
+            // always do the first and last updates
+            $es = "?";
+        } else if ($es == 0) {
+            // always do the last updates
+        } else if ($this->lastupdate + 20 < time()) {
+            // we must update otherwise browser would time out
+        } else if (round($this->percent, 2) === round($percent, 2)) {
+            // no significant change, no need to update anything
+            return;
         }
-        echo html_writer::script(js_writer::function_call('update_progress_bar', Array($this->html_id, $w, $this->percent, $msg, $es)));
+
+        $this->percent = $percent;
+        $this->lastupdate = microtime(true);
+
+        $w = ($this->percent/100) * $this->width;
+        echo html_writer::script(js_writer::function_call('update_progress_bar', array($this->html_id, $w, $this->percent, $msg, $es)));
         flush();
     }
+
     /**
-      * estimate time
+      * Estimate how much time it is going to take.
       *
       * @param int $curtime the time call this function
       * @param int $percent from 1-100
-      * @return mixed Null, or int
+      * @return mixed Null (unknown), or int
       */
-    private function estimate($curtime, $pt){
-        $consume = $curtime - $this->time_start;
-        $one = $curtime - $this->lastcall->time;
-        $this->percent = $pt;
-        $percent = $pt - $this->lastcall->pt;
-        if ($percent != 0) {
-            $left = ($one / $percent) - $consume;
-        } else {
+    private function estimate($pt) {
+        if ($this->lastupdate == 0) {
             return null;
         }
-        if($left < 0) {
-            return 0;
-        } else {
-            return $left;
+        if ($pt < 0.00001) {
+            return null; // we do not know yet how long it will take
         }
+        if ($pt > 99.99999) {
+            return 0; // nearly done, right?
+        }
+        $consumed = microtime(true) - $this->time_start;
+        if ($consumed < 0.001) {
+            return null;
+        }
+
+        return (100 - $pt) * ($consumed / $pt);
     }
+
     /**
       * Update progress bar according percent
       *
       * @param int $percent from 1-100
       * @param string $msg the message needed to be shown
       */
-    public function update_full($percent, $msg){
+    public function update_full($percent, $msg) {
         $percent = max(min($percent, 100), 0);
-        if ($percent != 100 && ($this->lastcall->time + $this->minimum_time) > microtime(true)){
-            return;
-        }
-        $this->_update($percent, 100, $msg);
+        $this->_update($percent, $msg);
     }
+
     /**
       * Update progress bar according the number of tasks
       *
@@ -3087,30 +3102,18 @@ EOT;
       * @param int $total total task number
       * @param string $msg message
       */
-    public function update($cur, $total, $msg){
-        $cur = max($cur, 0);
-        if ($cur >= $total){
-            $percent = 1;
-        } else {
-            $percent = $cur / $total;
-        }
-        /**
-        if ($percent != 1 && ($this->lastcall->time + $this->minimum_time) > microtime(true)){
-            return;
-        }
-        */
-        $es = $this->estimate(microtime(true), $percent);
-        $this->_update($percent, $msg, $es);
+    public function update($cur, $total, $msg) {
+        $percent = ($cur / $total) * 100;
+        $this->update_full($percent, $msg);
     }
+
     /**
      * Restart the progress bar.
      */
-    public function restart(){
-        $this->percent  = 0;
-        $this->lastcall = new stdClass;
-        $this->lastcall->pt = 0;
-        $this->lastcall->time = microtime(true);
-        $this->time_start  = 0;
+    public function restart() {
+        $this->percent    = 0;
+        $this->lastupdate = 0;
+        $this->time_start = 0;
     }
 }
 

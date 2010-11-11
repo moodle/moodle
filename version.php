@@ -29,7 +29,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$version = 2010111001;  // YYYYMMDD   = date of the last version bump
+$version = 2010111002;  // YYYYMMDD   = date of the last version bump
                         //         XX = daily increments
 
 $release = '2.0 RC1 (Build: 20101111)';  // Human-friendly version name
