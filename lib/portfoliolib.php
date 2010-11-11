@@ -334,7 +334,7 @@ class portfolio_add_button {
 
         $formoutput = '<form method="post" action="' . $CFG->wwwroot . '/portfolio/add.php" id="portfolio-add-button">' . "\n";
         $formoutput .= html_writer::input_hidden_params($url);
-        $linkoutput = '<a href="' . $url->out();
+        $linkoutput = '<a title="'.$addstr.'" href="' . $url->out();
 
         switch ($format) {
             case PORTFOLIO_ADD_FULL_FORM:
@@ -353,8 +353,6 @@ class portfolio_add_button {
             case PORTFOLIO_ADD_TEXT_LINK:
                 $linkoutput .= '">' . $addstr .'</a>';
             break;
-            case PORTFOLIO_ADD_FAKE_URL:
-                return urldecode($linkoutput);
             default:
                 debugging(get_string('invalidaddformat', 'portfolio', $format));
         }
