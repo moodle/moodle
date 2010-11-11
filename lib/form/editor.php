@@ -114,7 +114,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
     }
 
     function toHtml() {
-        global $CFG, $COURSE, $PAGE;
+        global $CFG, $PAGE;
         require_once($CFG->dirroot.'/repository/lib.php');
 
         if ($this->_flagFrozen) {
