@@ -274,10 +274,15 @@ class invalid_dataroot_permissions extends moodle_exception {
  * @return void -does not return. Terminates execution!
  */
 function default_exception_handler($ex) {
-    global $DB, $OUTPUT;
+    global $CFG, $DB, $OUTPUT, $USER, $FULLME, $SESSION;
 
     // detect active db transactions, rollback and log as error
     abort_all_db_transactions();
+
+    if (($ex instanceof required_capability_exception) && !CLI_SCRIPT && !AJAX_SCRIPT && !empty($CFG->autologinguests) && !empty($USER->autologinguest)) {
+        $SESSION->wantsurl = $FULLME;
+        redirect(get_login_url());
+    }
 
     $info = get_exception_info($ex);
 

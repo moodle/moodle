@@ -2330,6 +2330,7 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
             }
             $lang = isset($SESSION->lang) ? $SESSION->lang : $CFG->lang;
             complete_user_login($guest, false);
+            $USER->autologinguest = true;
             $SESSION->lang = $lang;
         } else {
             //NOTE: $USER->site check was obsoleted by session test cookie,
