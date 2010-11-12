@@ -1665,8 +1665,8 @@ class default_questiontype {
      *      array with keys 'text', 'format' and 'itemid'. However, when we are
      *      importing, it will be an array with keys 'text', 'format' and 'files'
      * @param object $context the context the question is in.
-     * @param string $component indentifies the file area.
-     * @param string $filearea indentifies the file area.
+     * @param string $component indentifies the file area question.
+     * @param string $filearea indentifies the file area questiontext, generalfeedback,answerfeedback.
      * @param integer $itemid identifies the file area.
      *
      * @return string the text for this field, after files have been processed.
@@ -1679,8 +1679,8 @@ class default_questiontype {
 
         } else if (!empty($field['files'])) {
             // This is the case when we are doing an import.
-            foreach ($question->feedback['files'] as $file) {
-                $this->import_file($context, 'question', 'answerfeedback', $itemid, $file);
+            foreach ($field['files'] as $file) {
+                $this->import_file($context, $component,  $filearea, $itemid, $file);
             }
         }
         return trim($field['text']);
