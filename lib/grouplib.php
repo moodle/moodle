@@ -346,7 +346,7 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
 
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context)) {
-        $allowedgroups = groups_get_all_groups($course->id, 0, $course->defaultgroupingid);
+        $allowedgroups = groups_get_all_groups($course->id, 0);
         // detect changes related to groups and fix active group
         if (!empty($SESSION->activegroup[$course->id][VISIBLEGROUPS][0])) {
             if (!array_key_exists($SESSION->activegroup[$course->id][VISIBLEGROUPS][0], $allowedgroups)) {
@@ -362,7 +362,7 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
         }
 
     } else {
-        $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
+        $allowedgroups = groups_get_all_groups($course->id, $USER->id);
         // detect changes related to groups and fix active group
         if (isset($SESSION->activegroup[$course->id][SEPARATEGROUPS][0])) {
             if ($SESSION->activegroup[$course->id][SEPARATEGROUPS][0] == 0) {
