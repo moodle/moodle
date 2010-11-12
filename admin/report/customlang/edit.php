@@ -72,7 +72,7 @@ if ($translatorsubmitted) {
     if (!is_array($strings)) {
         $strings = array();
     }
-    $current = $DB->get_records_list('customlang', 'id', array_keys($strings));
+    $current = $DB->get_records_list('report_customlang', 'id', array_keys($strings));
     $now = time();
 
     foreach ($strings as $recordid => $customization) {
@@ -83,7 +83,7 @@ if ($translatorsubmitted) {
             $current[$recordid]->modified = 1;
             $current[$recordid]->outdated = 0;
             $current[$recordid]->timecustomized = null;
-            $DB->update_record('customlang', $current[$recordid]);
+            $DB->update_record('report_customlang', $current[$recordid]);
             continue;
         }
 
@@ -96,7 +96,7 @@ if ($translatorsubmitted) {
             $current[$recordid]->modified = 1;
             $current[$recordid]->outdated = 0;
             $current[$recordid]->timecustomized = $now;
-            $DB->update_record('customlang', $current[$recordid]);
+            $DB->update_record('report_customlang', $current[$recordid]);
             continue;
         }
     }
@@ -106,7 +106,7 @@ if ($translatorsubmitted) {
     }
     if (!empty($updates)) {
         list($sql, $params) = $DB->get_in_or_equal($updates);
-        $DB->set_field_select('customlang', 'outdated', 0, "local IS NOT NULL AND id $sql", $params);
+        $DB->set_field_select('report_customlang', 'outdated', 0, "local IS NOT NULL AND id $sql", $params);
     }
 
     redirect($nexturl);

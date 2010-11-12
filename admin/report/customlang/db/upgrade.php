@@ -16,13 +16,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Language customization report upgrades
+ *
  * @package    report
  * @subpackage customlang
- * @copyright  2010 David Mudrak <david@moodle.com>
+ * @copyright  2010 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+function xmldb_report_customlang_upgrade($oldversion) {
+    global $CFG, $DB, $OUTPUT;
 
-$plugin->version  = 2010111200;
-$plugin->requires = 2010111002;
+    $dbman = $DB->get_manager();
+    $result = true;
+
+    /**
+     * Use proper plugin prefix for tables
+     */
+    if ($oldversion < 2010111200) {
+        if ($dbman->table_exists('customlang')) {
+            $dbman->rename_table(new xmldb_table('customlang'), 'report_customlang');
+        }
+        if ($dbman->table_exists('customlang_components')) {
+            $dbman->rename_table(new xmldb_table('customlang_components'), 'report_customlang_components');
+        }
+        upgrade_plugin_savepoint(true, 2010111200, 'report', 'customlang');
+    }
+
+    return $result;
+}

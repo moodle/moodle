@@ -88,7 +88,7 @@ class report_customlang_utils {
         global $DB;
 
         // make sure that all components are registered
-        $current = $DB->get_records('customlang_components', null, 'name', 'name,version,id');
+        $current = $DB->get_records('report_customlang_components', null, 'name', 'name,version,id');
         foreach (self::list_components() as $component) {
             if (empty($current[$component])) {
                 $record = new stdclass();
@@ -98,10 +98,10 @@ class report_customlang_utils {
                 } else {
                     $record->version = $version;
                 }
-                $DB->insert_record('customlang_components', $record);
+                $DB->insert_record('report_customlang_components', $record);
             } elseif ($version = get_component_version($component)) {
                 if (is_null($current[$component]->version) or ($version > $current[$component]->version)) {
-                    $DB->set_field('customlang_components', 'version', $version, array('id' => $current[$component]->id));
+                    $DB->set_field('report_customlang_components', 'version', $version, array('id' => $current[$component]->id));
                 }
             }
         }
@@ -109,10 +109,10 @@ class report_customlang_utils {
 
         // reload components and fetch their strings
         $stringman  = get_string_manager();
-        $components = $DB->get_records('customlang_components');
+        $components = $DB->get_records('report_customlang_components');
         foreach ($components as $component) {
             $sql = "SELECT stringid, s.*
-                      FROM {customlang} s
+                      FROM {report_customlang} s
                      WHERE lang = ? AND componentid = ?
                   ORDER BY stringid";
             $current = $DB->get_records_sql($sql, array($lang, $component->id));
@@ -150,7 +150,7 @@ class report_customlang_utils {
                     }
 
                     if ($needsupdate) {
-                        $DB->update_record('customlang', $current[$stringid]);
+                        $DB->update_record('report_customlang', $current[$stringid]);
                         continue;
                     }
 
@@ -171,7 +171,7 @@ class report_customlang_utils {
                         $record->timecustomized = null;
                     }
 
-                    $DB->insert_record('customlang', $record);
+                    $DB->insert_record('report_customlang', $record);
                 }
             }
         }
@@ -192,8 +192,8 @@ class report_customlang_utils {
 
         // get all customized strings from updated components
         $sql = "SELECT s.*, c.name AS component
-                  FROM {customlang} s
-                  JOIN {customlang_components} c ON s.componentid = c.id
+                  FROM {report_customlang} s
+                  JOIN {report_customlang_components} c ON s.componentid = c.id
                  WHERE s.lang = ?
                        AND (s.local IS NOT NULL OR s.modified = 1)
               ORDER BY componentid, stringid";
@@ -211,7 +211,7 @@ class report_customlang_utils {
             self::dump_strings($lang, $component, $strings);
         }
 
-        $DB->set_field_select('customlang', 'modified', 0, 'lang = ?', array($lang));
+        $DB->set_field_select('report_customlang', 'modified', 0, 'lang = ?', array($lang));
         $sm = get_string_manager();
         $sm->reset_caches();
     }
@@ -341,7 +341,7 @@ EOF
     public static function get_count_of_modified($lang) {
         global $DB;
 
-        return $DB->count_records('customlang', array('lang'=>$lang, 'modified'=>1));
+        return $DB->count_records('report_customlang', array('lang'=>$lang, 'modified'=>1));
     }
 
     /**
@@ -472,8 +472,8 @@ class report_customlang_translator implements renderable {
 
         $csql = "SELECT COUNT(*)";
         $fsql = "SELECT s.id, s.*, c.name AS component";
-        $sql  = "  FROM {customlang_components} c
-                   JOIN {customlang} s ON s.componentid = c.id
+        $sql  = "  FROM {report_customlang_components} c
+                   JOIN {report_customlang} s ON s.componentid = c.id
                   WHERE s.lang = :lang
                         AND c.name $insql";
 
