@@ -44,7 +44,14 @@ class qformat_multianswer extends qformat_default {
         // multianswer import
         $questions = array();
 
-        $question = qtype_multianswer_extract_question(implode('', $lines));
+        $questiontext = array();
+        $questiontext['text'] = implode('', $lines);
+        $questiontext['format'] = 0 ;
+        $questiontext['itemid'] = ''; 
+        $question = qtype_multianswer_extract_question($questiontext);
+        $question->questiontext = $question->questiontext['text'] ;
+        $question->questiontextformat = 0 ;
+
         $question->qtype = MULTIANSWER;
         $question->generalfeedback = '';
         $question->course = $this->course;
