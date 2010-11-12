@@ -345,32 +345,28 @@ class default_questiontype {
             $question->defaultgrade = $form->defaultgrade;
         }
 
-        if (!empty($question->id)) {
-        /// Question already exists, update.
-            $question->modifiedby = $USER->id;
-            $question->timemodified = time();
-
-            // process queston text
-            $question->questiontext = file_save_draft_area_files($form->questiontext['itemid'], $context->id, 'question', 'questiontext', (int)$question->id, self::$fileoptions, $question->questiontext);
-            // process feedback text
-            $question->generalfeedback = file_save_draft_area_files($form->generalfeedback['itemid'], $context->id, 'question', 'generalfeedback', (int)$question->id, self::$fileoptions, $question->generalfeedback);
-            $DB->update_record('question', $question);
-        } else {
-        /// New question.
+        // If the question is new, create it.
+        if (empty($question->id)) {
             // Set the unique code
             $question->stamp = make_unique_id_code();
             $question->createdby = $USER->id;
-            $question->modifiedby = $USER->id;
             $question->timecreated = time();
-            $question->timemodified = time();
             $question->id = $DB->insert_record('question', $question);
-            // process queston text
-            $question->questiontext = file_save_draft_area_files($form->questiontext['itemid'], $context->id, 'question', 'questiontext', (int)$question->id, self::$fileoptions, $question->questiontext);
-            // process feedback text
-            $question->generalfeedback = file_save_draft_area_files($form->generalfeedback['itemid'], $context->id, 'question', 'generalfeedback', (int)$question->id, self::$fileoptions, $question->generalfeedback);
-
-            $DB->update_record('question', $question);
         }
+
+        // Now, whether we are updating a existing question, or creating a new
+        // one, we have to do the files processing and update the record.
+        /// Question already exists, update.
+        $question->modifiedby = $USER->id;
+        $question->timemodified = time();
+
+        if (!empty($question->questiontext)) {
+            $question->questiontext = file_save_draft_area_files($form->questiontext['itemid'], $context->id, 'question', 'questiontext', (int)$question->id, self::$fileoptions, $question->questiontext);
+        }
+        if (!empty($question->generalfeedback)) {
+            $question->generalfeedback = file_save_draft_area_files($form->generalfeedback['itemid'], $context->id, 'question', 'generalfeedback', (int)$question->id, self::$fileoptions, $question->generalfeedback);
+        }
+        $DB->update_record('question', $question);
 
         // Now to save all the answers and type-specific options
         $form->id = $question->id;
