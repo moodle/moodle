@@ -9242,7 +9242,7 @@ function array_is_nested($array) {
  * @return array
  */
 function get_performance_info() {
-    global $CFG, $PERF, $DB;
+    global $CFG, $PERF, $DB, $PAGE;
 
     $info = array();
     $info['html'] = '';         // holds userfriendly HTML representation
@@ -9291,6 +9291,33 @@ function get_performance_info() {
             $info['txt'] .= "$key: $value ";
         }
     }
+
+     $jsmodules = $PAGE->requires->get_loaded_modules();
+     if ($jsmodules) {
+         $yuicount = 0;
+         $othercount = 0;
+         $details = '';
+         foreach ($jsmodules as $module => $backtraces) {
+             if (strpos($module, 'yui') === 0) {
+                 $yuicount += 1;
+             } else {
+                 $othercount += 1;
+             }
+             $details .= "<div class='yui-module'><p>$module</p>";
+             foreach ($backtraces as $backtrace) {
+                 $details .= "<div class='backtrace'>$backtrace</div>";
+             }
+             $details .= '</div>';
+         }
+         $info['html'] .= "<span class='includedyuimodules'>Included YUI modules: $yuicount</span> ";
+         $info['txt'] .= "includedyuimodules: $yuicount ";
+         $info['html'] .= "<span class='includedjsmodules'>Other JavaScript modules: $othercount</span> ";
+         $info['txt'] .= "includedjsmodules: $othercount ";
+         // Slightly odd to output the details in a display: none div. The point
+         // Is that it takes a lot of space, and if you care you can reveal it
+         // using firebug.
+         $info['html'] .= '<div id="yui-module-debug" class="notifytiny">'.$details.'</div>';
+     }
 
     if (!empty($PERF->logwrites)) {
         $info['logwrites'] = $PERF->logwrites;

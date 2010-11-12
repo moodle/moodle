@@ -109,6 +109,8 @@ class page_requirements_manager {
     protected $M_yui_loader;
     /** some config vars exposed in JS, please no secret stuff there */
     protected $M_cfg;
+    /** stores debug backtraces from when JS modules were included in the page */
+    protected $debug_moduleloadstacktraces = array();
 
     /**
      * Page requirements constructor.
@@ -257,6 +259,12 @@ class page_requirements_manager {
                 }
             }
             $this->M_yui_loader->modules[$name] = $module;
+            if (debugging('', DEBUG_DEVELOPER)) {
+                if (!array_key_exists($name, $this->debug_moduleloadstacktraces)) {
+                    $this->debug_moduleloadstacktraces[$name] = array();
+                }
+                $this->debug_moduleloadstacktraces[$name][] = format_backtrace(debug_backtrace());
+            }
         }
     }
 
@@ -497,6 +505,14 @@ class page_requirements_manager {
             throw new coding_exception('Missing YUI3 module details.');
         }
 
+        // Don't load this module if we already have, no need to!
+        if ($this->js_module_loaded($module['name'])) {
+            if (debugging('', DEBUG_DEVELOPER)) {
+                $this->debug_moduleloadstacktraces[$module['name']][] = format_backtrace(debug_backtrace());
+            }
+            return;
+        }
+
         $module['fullpath'] = $this->js_fix_url($module['fullpath'])->out(false);
         // add all needed strings
         if (!empty($module['strings'])) {
@@ -509,11 +525,52 @@ class page_requirements_manager {
         }
         unset($module['strings']);
 
+        // Process module requirements and attempt to load each. This allows
+        // moodle modules to require each other.
+        if (!empty($module['requires'])){
+            foreach ($module['requires'] as $requirement) {
+                $rmodule = $this->find_module($requirement);
+                if (is_array($rmodule)) {
+                    $this->js_module($rmodule);
+                }
+            }
+        }
+        
         if ($this->headdone) {
             $this->extramodules[$module['name']] = $module;
         } else {
             $this->M_yui_loader->modules[$module['name']] = $module;
         }
+        if (debugging('', DEBUG_DEVELOPER)) {
+            if (!array_key_exists($module['name'], $this->debug_moduleloadstacktraces)) {
+                $this->debug_moduleloadstacktraces[$module['name']] = array();
+            }
+            $this->debug_moduleloadstacktraces[$module['name']][] = format_backtrace(debug_backtrace());
+        }
+    }
+
+    /**
+     * Returns true if the module has already been loaded.
+     *
+     * @param string|array $modulename
+     * @return bool True if the module has already been loaded
+     */
+    protected function js_module_loaded($module) {
+        if (is_string($module)) {
+            $modulename = $module;
+        } else {
+            $modulename = $module['name'];
+        }
+        return array_key_exists($modulename, $this->M_yui_loader->modules) ||
+               array_key_exists($modulename, $this->extramodules);
+    }
+
+    /**
+     * Returns the stacktraces from loading js modules.
+     * @return array
+     */
+    public function get_loaded_modules() {
+        return $this->debug_moduleloadstacktraces;
     }
 
     /**

@@ -128,6 +128,8 @@ a.skip:active {position: static;display: block;}
 .arrow,
 .arrow_button input {font-family: Arial,Helvetica,Courier,sans-serif;}
 
+#yui-module-debug {display:none;}
+
 /**
  * Header
  */
