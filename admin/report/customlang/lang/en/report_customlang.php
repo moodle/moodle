@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['checkin'] = 'Check in strings into disk';
 $string['checkout'] = 'Check out strings into translator';
-$string['chooselangtocustomize'] = 'Choose language to customize';
 $string['confirmcheckin'] = 'You are about to check in modified strings into your local language pack. This will export the customized strings from the translator into the data directory and Moodle will start using the modified strings. Press \'Continue\' button to proceed check in.';
 $string['customlang:edit'] = 'Edit local translation';
 $string['customlang:view'] = 'View local translation';
