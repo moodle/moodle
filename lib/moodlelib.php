@@ -3841,12 +3841,11 @@ function complete_user_login($user, $setcookie=true) {
  * Compare password against hash stored in internal user table.
  * If necessary it also updates the stored hash to new format.
  *
- * @global object
- * @param object $user
+ * @param stdClass $user (password property may be updated)
  * @param string $password plain text password
  * @return bool is password valid?
  */
-function validate_internal_user_password(&$user, $password) {
+function validate_internal_user_password($user, $password) {
     global $CFG;
 
     if (!isset($CFG->passwordsaltmain)) {
@@ -3855,13 +3854,22 @@ function validate_internal_user_password(&$user, $password) {
 
     $validated = false;
 
-    if ($user->password == md5($password.$CFG->passwordsaltmain) or $user->password == md5($password)) {
+    if ($user->password === 'not cached') {
+        // internal password is not used at all, it can not validate
+
+    } else if ($user->password === md5($password.$CFG->passwordsaltmain)
+            or $user->password === md5($password)
+            or $user->password === md5(addslashes($password).$CFG->passwordsaltmain)
+            or $user->password === md5(addslashes($password))) {
+        // note: we are intentionally using the addslashes() here because we
+        //       need to accept old password hashes of passwords with magic quotes
         $validated = true;
+
     } else {
         for ($i=1; $i<=20; $i++) { //20 alternative salts should be enough, right?
             $alt = 'passwordsaltalt'.$i;
             if (!empty($CFG->$alt)) {
-                if ($user->password == md5($password.$CFG->$alt)) {
+                if ($user->password === md5($password.$CFG->$alt) or $user->password === md5(addslashes($password).$CFG->$alt)) {
                     $validated = true;
                     break;
                 }
@@ -3880,7 +3888,6 @@ function validate_internal_user_password(&$user, $password) {
 /**
  * Calculate hashed value from password using current hash mechanism.
  *
- * @global object
  * @param string $password
  * @return string password hash
  */
@@ -3897,12 +3904,12 @@ function hash_internal_user_password($password) {
 /**
  * Update password hash in user object.
  *
- * @param object $user
+ * @param stdClass $user (password property may be updated)
  * @param string $password plain text password
  * @return bool always returns true
  */
-function update_internal_user_password(&$user, $password) {
-    global $CFG, $DB;
+function update_internal_user_password($user, $password) {
+    global $DB;
 
     $authplugin = get_auth_plugin($user->auth);
     if ($authplugin->prevent_local_passwords()) {
@@ -9106,7 +9113,7 @@ function moodle_request_shutdown() {
   */
 function message_popup_window() {
     global $USER, $DB, $PAGE, $CFG, $SITE;
-    
+
     if (!$PAGE->get_popup_notification_allowed() || empty($CFG->messaging)) {
         return;
     }
