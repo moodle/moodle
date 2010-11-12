@@ -29,15 +29,21 @@ require_once($CFG->dirroot.'/'.$CFG->admin.'/report/customlang/filter_form.php')
 require_login(SITEID, false);
 require_capability('report/customlang:edit', get_system_context());
 
+$lng                    = required_param('lng', PARAM_LANG);
 $currentpage            = optional_param('p', 0, PARAM_INT);
 $translatorsubmitted    = optional_param('translatorsubmitted', 0, PARAM_BOOL);
 
 $PAGE->set_pagelayout('standard');
-$PAGE->set_url('/admin/report/customlang/edit.php');
+$PAGE->set_url('/admin/report/customlang/edit.php', array('lng' => $lng));
 navigation_node::override_active_url(new moodle_url('/admin/report/customlang/index.php'));
 $PAGE->set_title(get_string('pluginname', 'report_customlang'));
 $PAGE->set_heading(get_string('pluginname', 'report_customlang'));
 //$PAGE->requires->js_init_call('M.report_customlang.init_translator', array(), true);
+
+if (empty($lng)) {
+    // PARAM_LANG validation failed
+    print_error('missingparameter');
+}
 
 // pre-output processing
 $filter     = new report_customlang_filter_form($PAGE->url, null, 'post', '', array('class'=>'filterform'));
@@ -60,7 +66,7 @@ if ($translatorsubmitted) {
     if ($checkin === false) {
         $nexturl = $PAGE->url;
     } else {
-        $nexturl = new moodle_url('/admin/report/customlang/index.php', array('action'=>'checkin', 'sesskey'=>sesskey()));
+        $nexturl = new moodle_url('/admin/report/customlang/index.php', array('action'=>'checkin', 'lng' => $lng, 'sesskey'=>sesskey()));
     }
 
     if (!is_array($strings)) {
@@ -106,7 +112,7 @@ if ($translatorsubmitted) {
     redirect($nexturl);
 }
 
-$translator = new report_customlang_translator($PAGE->url, current_language(), $filterdata, $currentpage);
+$translator = new report_customlang_translator($PAGE->url, $lng, $filterdata, $currentpage);
 
 // output starts here
 $output     = $PAGE->get_renderer('report_customlang');
