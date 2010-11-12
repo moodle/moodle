@@ -1156,38 +1156,6 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
 }
 
 /**
- * Converts the text format from the value to the 'internal'
- * name or vice versa.
- *
- * $key can either be the value or the name and you get the other back.
- *
- * @uses FORMAT_MOODLE
- * @uses FORMAT_HTML
- * @uses FORMAT_PLAIN
- * @uses FORMAT_MARKDOWN
- * @param mixed $key int 0-4 or string one of 'moodle','html','plain','markdown'
- * @return mixed as above but the other way around!
- */
-function text_format_name($key) {
-  $lookup = array();
-  $lookup[FORMAT_MOODLE] = 'moodle';
-  $lookup[FORMAT_HTML] = 'html';
-  $lookup[FORMAT_PLAIN] = 'plain';
-  $lookup[FORMAT_MARKDOWN] = 'markdown';
-  $value = "error";
-  if (!is_numeric($key)) {
-    $key = strtolower( $key );
-    $value = array_search( $key, $lookup );
-  }
-  else {
-    if (isset( $lookup[$key] )) {
-      $value =  $lookup[ $key ];
-    }
-  }
-  return $value;
-}
-
-/**
  * Resets all data related to filters, called during upgrade or when filter settings change.
  *
  * @global object
