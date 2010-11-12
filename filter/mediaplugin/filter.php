@@ -123,7 +123,7 @@ class filter_mediaplugin extends moodle_text_filter {
             $search = '/<a[^>]*href="([^<]*?)youtube.com\/watch\?v=([^"]*)"[^>]*>(.*?)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_callback', $newtext);
 
-            $search = '/<a.*?href="([^<]*)youtube.com\/v\/([^"]*)"[^>]*>(.*?)<\/a>/is';
+            $search = '/<a[^>]*href="([^<]*)youtube.com\/v\/([^"]*)"[^>]*>(.*?)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_callback', $newtext);
         }
 
