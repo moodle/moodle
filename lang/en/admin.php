@@ -332,14 +332,14 @@ $string['configsmartpix'] = 'With this on, icons are served through a PHP script
 $string['configsmtphosts'] = 'Give the full name of one or more local SMTP servers that Moodle should use to send mail (eg \'mail.a.com\' or \'mail.a.com;mail.b.com\'). To specify a non-default port (i.e other than port 25), you can use the [server]:[port] syntax (eg \'mail.a.com:587\'. If you leave it blank, Moodle will use the PHP default method of sending mail.';
 $string['configsmtpmaxbulk'] = 'Maximum number of messages sent per SMTP session. Grouping messages may speed up the sending of emails. Values lower than 2 force creation of new SMTP session for each email.';
 $string['configsmtpuser'] = 'If you have specified an SMTP server above, and the server requires authentication, then enter the username and password here.';
-$string['configstartwday'] = 'Start of Week';
+$string['configstartwday'] = 'Start of week';
 $string['configstatsfirstrun'] = 'This specifies how far back the logs should be processed <b>the first time</b> the cronjob wants to process statistics. If you have a lot of traffic and are on shared hosting, it\'s probably not a good idea to go too far back, as it could take a long time to run and be quite resource intensive. (Note that for this setting, 1 month = 28 days. In the graphs and reports generated, 1 month = 1 calendar month.)';
 $string['configstatsmaxruntime'] = 'Stats processing can be quite intensive, so use a combination of this field and the next one to specify when it will run and how long for.';
 $string['configstatsmaxruntime2'] = 'Stats processing can be quite intensive, specify maximum time allowed for gathering of one day of statistics. Maximum number of days processed in one cron execution is 31.';
 $string['configstatsmaxruntime3'] = 'Specify the maximum time allowed to calculate the statistics for one day, bearing in mind that stats processing can put a big load on the server. The maximum number of days processed in one cron can be specified below.';
 $string['configstatsruntimedays'] = 'Specify the maximum number of days processed in each stats execution. When stats are up-to-date, only one day will be processed, so adjust this value depending of your server load, reducing it if shorter cron executions are needed.';
 $string['configstatsruntimestart'] = 'What time should the cronjob that does the stats processing <b>start</b>? Please specify different times if there are multiple Moodles on one physical server.';
-$string['configstatsuserthreshold'] = 'If you enter a non-zero,  non numeric value here, for ranking courses, courses with less than this number of enrolled users (all roles) will be ignored';
+$string['configstatsuserthreshold'] = 'This setting specifies the minimum number of enrolled users for a course to be included in statistics calculations.';
 $string['configstripalltitletags'] = 'Uncheck this setting to allow HTML tags in activity and resource names.';
 $string['configsupportemail'] = 'This email address will be published to users of this site as the one to email when they need general help (for example, when new users create their own accounts).  If this email is left blank then no such helpful email address is supplied.';
 $string['configsupportname'] = 'This is the name of a person or other entity offering general help via the support email or web address.';
