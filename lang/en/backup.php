@@ -23,6 +23,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['autoactivedisabled'] = 'Disabled';
+$string['autoactiveenabled'] = 'Enabled';
+$string['autoactivemanual'] = 'Manual';
+$string['autoactivedescription'] = 'Choose whether or not to do automated backups. If manual is selected automated backups will be possible only by through the automated backups CLI script. This can be done either manually on the command line or through cron.';
 $string['automatedbackupschedule'] = 'Schedule';
 $string['automatedbackupschedulehelp'] = 'Choose which days of the week to perform automated backups.';
 $string['automatedbackupsinactive'] = 'Automated backups haven\'t been enabled by the site admin';

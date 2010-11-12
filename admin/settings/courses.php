@@ -109,7 +109,11 @@ if ($hassiteconfig
 
 /// "backups" settingpage
     $temp = new admin_settingpage('automated', get_string('automatedsetup','backup'), 'moodle/backup:backupcourse');
-    $temp->add(new admin_setting_configcheckbox('backup/backup_auto_active', get_string('active'), get_string('backupactivehelp'), 0));
+    $temp->add(new admin_setting_configselect('backup/backup_auto_active', get_string('active'),  get_string('autoactivedescription', 'backup'), 0, array(
+        0 => get_string('autoactivedisabled', 'backup'),
+        1 => get_string('autoactiveenabled', 'backup'),
+        2 => get_string('autoactivemanual', 'backup')
+    )));
     $temp->add(new admin_setting_special_backupdays());
     $temp->add(new admin_setting_configtime('backup/backup_auto_hour', 'backup_auto_minute', get_string('executeat'),
             get_string('backupexecuteathelp'), array('h' => 0, 'm' => 0)));

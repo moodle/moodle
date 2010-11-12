@@ -47,13 +47,21 @@ abstract class backup_cron_automated_helper {
     /** Course automated backup was skipped */
     const BACKUP_STATUS_SKIPPED = 3;
 
+    /** Run if required by the schedule set in config. Default. **/
+    const RUN_ON_SCHEDULE = 0;
+    /** Run immediatly. **/
+    const RUN_IMMEDIATLY = 1;
+
+    const AUTO_BACKUP_DISABLED = 0;
+    const AUTO_BACKUP_ENABLED = 1;
+    const AUTO_BACKUP_MANUAL = 2;
 
     /**
      * Runs the automated backups if required
      *
      * @global moodle_database $DB
      */
-    public static function run_automated_backup() {
+    public static function run_automated_backup($rundirective = self::RUN_ON_SCHEDULE) {
         global $CFG, $DB;
 
         $status = true;
@@ -61,14 +69,18 @@ abstract class backup_cron_automated_helper {
         $now = time();
 
         mtrace("Checking automated backup status",'...');
-        $state = backup_cron_automated_helper::get_automated_backup_state();
+        $state = backup_cron_automated_helper::get_automated_backup_state($rundirective);
         if ($state === backup_cron_automated_helper::STATE_DISABLED) {
             mtrace('INACTIVE');
-            return true;
+            return $state;
         } else if ($state === backup_cron_automated_helper::STATE_RUNNING) {
             mtrace('RUNNING');
-            mtrace("automated backup seems to be running. Execution delayed");
-            return true;
+            if ($rundirective == self::RUN_IMMEDIATLY) {
+                mtrace('automated backups are already. If this script is being run by cron this constitues an error. You will need to increase the time between executions within cron.');
+            } else {
+                mtrace("automated backup are already running. Execution delayed");
+            }
+            return $state;
         } else {
             mtrace('OK');
         }
@@ -116,8 +128,9 @@ abstract class backup_cron_automated_helper {
                 if (empty($course->visible) && ($now - $course->timemodified) > 31*24*60*60) {  //Hidden + unmodified last month
                     $backupcourse->laststatus = backup_cron_automated_helper::BACKUP_STATUS_SKIPPED;
                     $DB->update_record('backup_courses', $backupcourse);
+                    mtrace('Skipping unchanged course '.$course->fullname);
                     $skipped = true;
-                } else if ($backupcourse->nextstarttime > 0 && $backupcourse->nextstarttime < $now) {
+                } else if (($backupcourse->nextstarttime >= 0 && $backupcourse->nextstarttime < $now) || $rundirective == self::RUN_IMMEDIATLY) {
                     mtrace('Backing up '.$course->fullname, '...');
 
                     //We have to send a email because we have included at least one backup
@@ -408,11 +421,12 @@ abstract class backup_cron_automated_helper {
      * @global moodle_database $DB
      * @return int One of self::STATE_*
      */
-    public static function get_automated_backup_state() {
+    public static function get_automated_backup_state($rundirective = self::RUN_ON_SCHEDULE) {
         global $DB;
 
         $config = get_config('backup');
-        if (empty($config->backup_auto_active)) {
+        $active = (int)$config->backup_auto_active;
+        if ($active === self::AUTO_BACKUP_DISABLED || ($rundirective == self::RUN_ON_SCHEDULE && $active === self::AUTO_BACKUP_MANUAL)) {
             return self::STATE_DISABLED;
         } else if (!empty($config->backup_auto_running)) {
             // TODO: We should find some way of checking whether the automated
