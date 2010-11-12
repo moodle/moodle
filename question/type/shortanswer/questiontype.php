@@ -54,6 +54,11 @@ class question_shortanswer_qtype extends default_questiontype {
         $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
     }
 
+    protected function delete_files($questionid, $contextid) {
+        parent::delete_files($questionid, $contextid);
+        $this->delete_files_in_answers($questionid, $contextid);
+    }
+
     function save_question_options($question) {
         global $DB;
         $result = new stdClass;

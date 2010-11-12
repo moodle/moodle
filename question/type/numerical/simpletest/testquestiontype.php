@@ -31,42 +31,6 @@ class question_numerical_qtype_test extends UnitTestCase {
         $this->assertEqual($this->qtype->name(), 'numerical');
     }
 
-//    function test_get_question_options() {
-//    }
-//
-//    function test_get_numerical_units() {
-//    }
-//
-//    function test_get_default_numerical_unit() {
-//    }
-//
-//    function test_save_question_options() {
-//    }
-//
-//    function test_save_numerical_units() {
-//    }
-//
-//    function test_delete_question() {
-//    }
-//
-//    function test_compare_responses() {
-//    }
-//
-//    function test_test_response() {
-//    }
-//
-//    function test_check_response(){
-//    }
-//
-//    function test_grade_responses() {
-//    }
-//
-//    function test_get_correct_responses() {
-//    }
-//
-//    function test_get_all_responses() {
-//    }
-
     function test_get_tolerance_interval() {
         $answer = new stdClass;
         $answer->tolerance = 0.01;

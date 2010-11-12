@@ -161,6 +161,11 @@ class question_essay_qtype extends default_questiontype {
         $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
     }
 
+    protected function delete_files($questionid, $contextid) {
+        parent::delete_files($questionid, $contextid);
+        $this->delete_files_in_answers($questionid, $contextid);
+    }
+
     function check_file_access($question, $state, $options, $contextid, $component,
             $filearea, $args) {
         if ($component == 'question' && $filearea == 'answerfeedback') {

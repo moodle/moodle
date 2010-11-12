@@ -214,16 +214,11 @@ class embedded_cloze_qtype extends default_questiontype {
         return true;
     }
 
-    /**
-    * Deletes question from the question-type specific tables
-    *
-    * @return boolean Success/Failure
-    * @param object $question  The question being deleted
-    */
-    function delete_question($questionid) {
+    function delete_question($questionid, $contextid) {
         global $DB;
         $DB->delete_records("question_multianswer", array("question" => $questionid));
-        return true;
+
+        parent::delete_question($questionid, $contextid);
     }
 
     function get_correct_responses(&$question, &$state) {

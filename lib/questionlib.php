@@ -566,7 +566,12 @@ function delete_attempt($attemptid) {
 function delete_question($questionid) {
     global $QTYPES, $DB;
 
-    if (!$question = $DB->get_record('question', array('id'=>$questionid))) {
+    $question = $DB->get_record_sql('
+            SELECT q.*, qc.contextid
+            FROM {question} q
+            JOIN {question_categories} qc ON qc.id = q.category
+            WHERE q.id = ?', array($questionid));
+    if (!$question) {
         // In some situations, for example if this was a child of a
         // Cloze question that was previously deleted, the question may already
         // have gone. In this case, just do nothing.
@@ -580,12 +585,8 @@ function delete_question($questionid) {
 
     // delete questiontype-specific data
     question_require_capability_on($question, 'edit');
-    if ($question) {
-        if (isset($QTYPES[$question->qtype])) {
-            $QTYPES[$question->qtype]->delete_question($questionid);
-        }
-    } else {
-        echo "Question with id $questionid does not exist.<br />";
+    if (isset($QTYPES[$question->qtype])) {
+        $QTYPES[$question->qtype]->delete_question($questionid, $question->contextid);
     }
 
     if ($states = $DB->get_records('question_states', array('question'=>$questionid))) {
@@ -597,11 +598,11 @@ function delete_question($questionid) {
         }
     }
 
-    // delete entries from all other question tables
+    // Delete entries from all other question tables
     // It is important that this is done only after calling the questiontype functions
-    $DB->delete_records("question_answers", array("question"=>$questionid));
-    $DB->delete_records("question_states", array("question"=>$questionid));
-    $DB->delete_records("question_sessions", array("questionid"=>$questionid));
+    $DB->delete_records('question_answers', array('question' => $questionid));
+    $DB->delete_records('question_states', array('question' => $questionid));
+    $DB->delete_records('question_sessions', array('questionid' => $questionid));
 
     // Now recursively delete all child questions
     if ($children = $DB->get_records('question', array('parent' => $questionid), '', 'id,qtype')) {
@@ -614,8 +615,6 @@ function delete_question($questionid) {
 
     // Finally delete the question record itself
     $DB->delete_records('question', array('id'=>$questionid));
-
-    return;
 }
 
 /**
@@ -2770,13 +2769,13 @@ function question_has_capability_on($question, $cap, $cachecat = -1){
     static $questions = array();
     static $categories = array();
     static $cachedcat = array();
-    if ($cachecat != -1 && (array_search($cachecat, $cachedcat)===FALSE)){
-        $questions += $DB->get_records('question', array('category'=>$cachecat));
+    if ($cachecat != -1 && array_search($cachecat, $cachedcat) === false) {
+        $questions += $DB->get_records('question', array('category' => $cachecat));
         $cachedcat[] = $cachecat;
     }
     if (!is_object($question)){
         if (!isset($questions[$question])){
-            if (!$questions[$question] = $DB->get_record('question', array('id'=>$question), 'id,category,createdby')) {
+            if (!$questions[$question] = $DB->get_record('question', array('id' => $question), 'id,category,createdby')) {
                 print_error('questiondoesnotexist', 'question');
             }
         }
@@ -2788,11 +2787,12 @@ function question_has_capability_on($question, $cap, $cachecat = -1){
         }
     }
     $category = $categories[$question->category];
+    $context = get_context_instance_by_id($category->contextid);
 
     if (array_search($cap, $question_questioncaps)!== FALSE){
-        if (!has_capability('moodle/question:'.$cap.'all', get_context_instance_by_id($category->contextid))){
+        if (!has_capability('moodle/question:'.$cap.'all', $context)){
             if ($question->createdby == $USER->id){
-                return has_capability('moodle/question:'.$cap.'mine', get_context_instance_by_id($category->contextid));
+                return has_capability('moodle/question:'.$cap.'mine', $context);
             } else {
                 return false;
             }
@@ -2800,7 +2800,7 @@ function question_has_capability_on($question, $cap, $cachecat = -1){
             return true;
         }
     } else {
-        return has_capability('moodle/question:'.$cap, get_context_instance_by_id($category->contextid));
+        return has_capability('moodle/question:'.$cap, $context);
     }
 
 }

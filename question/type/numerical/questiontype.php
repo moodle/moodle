@@ -463,19 +463,15 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         return true;
     }
 
-    /**
-     * Deletes question from the question-type specific tables
-     *
-     * @return boolean Success/Failure
-     * @param object $question  The question being deleted
-     */
-    function delete_question($questionid) {
+    function delete_question($questionid, $contextid) {
         global $DB;
-        $DB->delete_records("question_numerical", array("question" => $questionid));
-        $DB->delete_records("question_numerical_options", array("question" => $questionid));
-        $DB->delete_records("question_numerical_units", array("question" => $questionid));
-        return true;
+        $DB->delete_records('question_numerical', array('question' => $questionid));
+        $DB->delete_records('question_numerical_options', array('question' => $questionid));
+        $DB->delete_records('question_numerical_units', array('question' => $questionid));
+
+        parent::delete_question($questionid, $contextid);
     }
+
     /**
     * This function has been reinserted in numerical/questiontype.php to simplify
     * the separate rendering of number and unit
@@ -1389,6 +1385,14 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
         $fs->move_area_files_to_new_context($oldcontextid,
                 $newcontextid, 'qtype_numerical', 'instruction', $questionid);
+    }
+
+    protected function delete_files($questionid, $contextid) {
+        $fs = get_file_storage();
+
+        parent::delete_files($questionid, $contextid);
+        $this->delete_files_in_answers($questionid, $contextid);
+        $fs->delete_area_files($contextid, 'qtype_numerical', 'instruction', $questionid);
     }
 
     function check_file_access($question, $state, $options, $contextid, $component,

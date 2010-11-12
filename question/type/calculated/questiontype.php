@@ -744,13 +744,8 @@ class question_calculated_qtype extends default_questiontype {
         }
         return $question;
     }
-    /**
-     * Deletes question from the question-type specific tables
-     *
-     * @return boolean Success/Failure
-     * @param object $question  The question being deleted
-     */
-    function delete_question($questionid) {
+
+    function delete_question($questionid, $contextid) {
         global $DB;
 
         $DB->delete_records("question_calculated", array("question" => $questionid));
@@ -768,13 +763,16 @@ class question_calculated_qtype extends default_questiontype {
             }
         }
         $DB->delete_records("question_datasets", array("question" => $questionid));
-        return true;
+
+        parent::delete_question($questionid, $contextid);
     }
+
     function test_response(&$question, &$state, $answer) {
         $virtualqtype = $this->get_virtual_qtype();
         return $virtualqtype->test_response($question, $state, $answer);
 
     }
+
     function compare_responses(&$question, $state, $teststate) {
 
         $virtualqtype = $this->get_virtual_qtype();
@@ -2115,7 +2113,15 @@ class question_calculated_qtype extends default_questiontype {
         $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
 
         $fs->move_area_files_to_new_context($oldcontextid,
-                $newcontextid, 'qtype_numerical', 'instruction', $questionid);
+                $newcontextid, 'qtype_calculated', 'instruction', $questionid);
+    }
+
+    protected function delete_files($questionid, $contextid) {
+        $fs = get_file_storage();
+
+        parent::delete_files($questionid, $contextid);
+        $this->delete_files_in_answers($questionid, $contextid);
+        $fs->delete_area_files($contextid, 'qtype_calculated', 'instruction', $questionid);
     }
 
     function check_file_access($question, $state, $options, $contextid, $component,

@@ -352,6 +352,14 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
                 $newcontextid, 'qtype_calculatedsimple', 'instruction', $questionid);
     }
 
+    protected function delete_files($questionid, $contextid) {
+        $fs = get_file_storage();
+
+        parent::delete_files($questionid, $contextid);
+        $this->delete_files_in_answers($questionid, $contextid);
+        $fs->delete_area_files($contextid, 'qtype_calculatedsimple', 'instruction', $questionid);
+    }
+
     function check_file_access($question, $state, $options, $contextid, $component,
             $filearea, $args) {
         $itemid = reset($args);

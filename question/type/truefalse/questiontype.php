@@ -151,16 +151,11 @@ class question_truefalse_qtype extends default_questiontype {
         return true;
     }
 
-    /**
-    * Deletes question from the question-type specific tables
-    *
-    * @return boolean Success/Failure
-    * @param object $question  The question being deleted
-    */
-    function delete_question($questionid) {
+    function delete_question($questionid, $contextid) {
         global $DB;
-        $DB->delete_records("question_truefalse", array("question" => $questionid));
-        return true;
+        $DB->delete_records('question_truefalse', array('question' => $questionid));
+
+        parent::delete_question($questionid, $contextid);
     }
 
     function compare_responses($question, $state, $teststate) {
@@ -260,6 +255,11 @@ class question_truefalse_qtype extends default_questiontype {
     function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
         $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
+    }
+
+    protected function delete_files($questionid, $contextid) {
+        parent::delete_files($questionid, $contextid);
+        $this->delete_files_in_answers($questionid, $contextid);
     }
 
     function check_file_access($question, $state, $options, $contextid, $component,

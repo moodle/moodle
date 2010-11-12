@@ -123,17 +123,12 @@ class question_match_qtype extends default_questiontype {
         return true;
     }
 
-    /**
-    * Deletes question from the question-type specific tables
-    *
-    * @return boolean Success/Failure
-    * @param integer $question->id
-    */
-    function delete_question($questionid) {
+    function delete_question($questionid, $contextid) {
         global $DB;
-        $DB->delete_records("question_match", array("question" => $questionid));
-        $DB->delete_records("question_match_sub", array("question" => $questionid));
-        return true;
+        $DB->delete_records('question_match', array('question' => $questionid));
+        $DB->delete_records('question_match_sub', array('question' => $questionid));
+
+        parent::delete_question($questionid, $contextid);
     }
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
@@ -522,6 +517,19 @@ class question_match_qtype extends default_questiontype {
         foreach ($subquestionids as $subquestionid => $notused) {
             $fs->move_area_files_to_new_context($oldcontextid,
                     $newcontextid, 'qtype_match', 'subquestion', $subquestionid);
+        }
+    }
+
+    protected function delete_files($questionid, $contextid) {
+        global $DB;
+        $fs = get_file_storage();
+
+        parent::delete_files($questionid, $contextid);
+
+        $subquestionids = $DB->get_records_menu('question_match_sub',
+                array('question' => $questionid), 'id', 'id,1');
+        foreach ($subquestionids as $subquestionid => $notused) {
+            $fs->delete_area_files($contextid, 'qtype_match', 'subquestion', $subquestionid);
         }
     }
 

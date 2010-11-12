@@ -168,16 +168,11 @@ class question_multichoice_qtype extends default_questiontype {
         return true;
     }
 
-    /**
-     * Deletes question from the question-type specific tables
-     *
-     * @return boolean Success/Failure
-     * @param object $question  The question being deleted
-     */
-    function delete_question($questionid) {
+    function delete_question($questionid, $contextid) {
         global $DB;
-        $DB->delete_records("question_multichoice", array("question" => $questionid));
-        return true;
+        $DB->delete_records('question_multichoice', array('question' => $questionid));
+
+        parent::delete_question($questionid, $contextid);
     }
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
@@ -526,6 +521,16 @@ class question_multichoice_qtype extends default_questiontype {
                 $newcontextid, 'qtype_multichoice', 'partiallycorrectfeedback', $questionid);
         $fs->move_area_files_to_new_context($oldcontextid,
                 $newcontextid, 'qtype_multichoice', 'incorrectfeedback', $questionid);
+    }
+
+    protected function delete_files($questionid, $contextid) {
+        $fs = get_file_storage();
+
+        parent::delete_files($questionid, $contextid);
+        $this->delete_files_in_answers($questionid, $contextid, true);
+        $fs->delete_area_files($contextid, 'qtype_multichoice', 'correctfeedback', $questionid);
+        $fs->delete_area_files($contextid, 'qtype_multichoice', 'partiallycorrectfeedback', $questionid);
+        $fs->delete_area_files($contextid, 'qtype_multichoice', 'incorrectfeedback', $questionid);
     }
 
     function check_file_access($question, $state, $options, $contextid, $component,

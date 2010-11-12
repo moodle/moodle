@@ -562,6 +562,16 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
                 $newcontextid, 'qtype_calculatedmulti', 'incorrectfeedback', $questionid);
     }
 
+    protected function delete_files($questionid, $contextid) {
+        $fs = get_file_storage();
+
+        parent::delete_files($questionid, $contextid);
+        $this->delete_files_in_answers($questionid, $contextid, true);
+        $fs->delete_area_files($contextid, 'qtype_calculatedmulti', 'correctfeedback', $questionid);
+        $fs->delete_area_files($contextid, 'qtype_calculatedmulti', 'partiallycorrectfeedback', $questionid);
+        $fs->delete_area_files($contextid, 'qtype_calculatedmulti', 'incorrectfeedback', $questionid);
+    }
+
     function check_file_access($question, $state, $options, $contextid, $component,
             $filearea, $args) {
         $itemid = reset($args);

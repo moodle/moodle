@@ -514,32 +514,30 @@ class default_questiontype {
     }
 
     /**
-    * Deletes a question from the question-type specific tables
-    *
-    * @return boolean Success/Failure
-    * @param object $question  The question being deleted
-    */
-    function delete_question($questionid) {
-        global $CFG, $DB;
-        $success = true;
+     * Deletes the question-type specific data when a question is deleted.
+     * @param integer $question the question being deleted.
+     * @param integer $contextid the context this quesiotn belongs to.
+     */
+    function delete_question($questionid, $contextid) {
+        global $DB;
+
+        $this->delete_files($questionid, $contextid);
 
         $extra_question_fields = $this->extra_question_fields();
         if (is_array($extra_question_fields)) {
             $question_extension_table = array_shift($extra_question_fields);
-            $success = $success && $DB->delete_records($question_extension_table,
+            $DB->delete_records($question_extension_table,
                     array($this->questionid_column_name() => $questionid));
         }
 
         $extra_answer_fields = $this->extra_answer_fields();
         if (is_array($extra_answer_fields)) {
             $answer_extension_table = array_shift($extra_answer_fields);
-            $success = $success && $DB->delete_records_select($answer_extension_table,
+            $DB->delete_records_select($answer_extension_table,
                 "answerid IN (SELECT qa.id FROM {question_answers} qa WHERE qa.question = ?)", array($questionid));
         }
 
-        $success = $success && $DB->delete_records('question_answers', array('question' => $questionid));
-
-        return $success;
+        $DB->delete_records('question_answers', array('question' => $questionid));
     }
 
     /**
@@ -1657,7 +1655,7 @@ class default_questiontype {
 
     /**
      * Move all the files belonging to this question from one context to another.
-     * @param object $question the question to move.
+     * @param integer $questionid the question being moved.
      * @param integer $oldcontextid the context it is moving from.
      * @param integer $newcontextid the context it is moving to.
      */
@@ -1670,8 +1668,9 @@ class default_questiontype {
     }
 
     /**
-     * 
-     * @param object $question the question to move.
+     * Move all the files belonging to this question's answers when the question
+     * is moved from one context to another.
+     * @param integer $questionid the question being moved.
      * @param integer $oldcontextid the context it is moving from.
      * @param integer $newcontextid the context it is moving to.
      * @param boolean $answerstoo whether there is an 'answer' question area,
@@ -1680,6 +1679,7 @@ class default_questiontype {
     protected function move_files_in_answers($questionid, $oldcontextid, $newcontextid, $answerstoo = false) {
         global $DB;
         $fs = get_file_storage();
+
         $answerids = $DB->get_records_menu('question_answers',
                 array('question' => $questionid), 'id', 'id,1');
         foreach ($answerids as $answerid => $notused) {
@@ -1689,6 +1689,38 @@ class default_questiontype {
             }
             $fs->move_area_files_to_new_context($oldcontextid,
                     $newcontextid, 'question', 'answerfeedback', $answerid);
+        }
+    }
+
+    /**
+     * Delete all the files belonging to this question.
+     * @param integer $questionid the question being deleted.
+     * @param integer $contextid the context the question is in.
+     */
+    protected function delete_files($questionid, $contextid) {
+        $fs = get_file_storage();
+        $fs->delete_area_files($contextid, 'question', 'questiontext', $questionid);
+        $fs->delete_area_files($contextid, 'question', 'generalfeedback', $questionid);
+    }
+
+    /**
+     * Delete all the files belonging to this question's answers.
+     * @param integer $questionid the question being deleted.
+     * @param integer $contextid the context the question is in.
+     * @param boolean $answerstoo whether there is an 'answer' question area,
+     *      as well as an 'answerfeedback' one. Default false.
+     */
+    protected function delete_files_in_answers($questionid, $contextid, $answerstoo = false) {
+        global $DB;
+        $fs = get_file_storage();
+
+        $answerids = $DB->get_records_menu('question_answers',
+                array('question' => $questionid), 'id', 'id,1');
+        foreach ($answerids as $answerid => $notused) {
+            if ($answerstoo) {
+                $fs->delete_area_files($contextid, 'question', 'answer', $answerid);
+            }
+            $fs->delete_area_files($contextid, 'question', 'answerfeedback', $answerid);
         }
     }
 
