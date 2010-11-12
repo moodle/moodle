@@ -245,5 +245,24 @@ function xmldb_workshop_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010072300, 'workshop');
     }
 
+    /**
+     * Create legacy _old tables to sync install.xml and real database
+     *
+     * In most cases these tables already exists because they were created during 1.9->2.0 migration
+     * This step is just for those site that were installed from vanilla 2.0 and these _old tables
+     * were not created.
+     * Note that these tables will be dropped again later in 2.x
+     */
+    if ($oldversion < 2010111200) {
+        foreach (array('workshop', 'workshop_elements', 'workshop_rubrics', 'workshop_submissions', 'workshop_assessments',
+                'workshop_grades', 'workshop_comments', 'workshop_stockcomments') as $tableorig) {
+            $tablearchive = $tableorig . '_old';
+            if (!$dbman->table_exists($tablearchive)) {
+                $dbman->install_one_table_from_xmldb_file($CFG->dirroot.'/mod/workshop/db/install.xml', $tablearchive);
+            }
+        }
+        upgrade_mod_savepoint(true, 2010111200, 'workshop');
+    }
+
     return true;
 }

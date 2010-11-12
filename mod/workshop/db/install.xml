@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/workshop/db" VERSION="20100723" COMMENT="XMLDB file for Moodle mod/workshop"
+<XMLDB PATH="mod/workshop/db" VERSION="20101112" COMMENT="XMLDB file for Moodle mod/workshop"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -108,7 +108,7 @@
         <KEY NAME="formfield_uk" TYPE="unique" FIELDS="assessmentid, strategy, dimensionid" COMMENT="The combination of assessmentid, strategy and dimensionid must be unique" PREVIOUS="assessment_fk"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="workshop_aggregations" COMMENT="Aggregated grades for assessment are stored here. The aggregated grade for submission is stored in workshop_submissions" PREVIOUS="workshop_grades">
+    <TABLE NAME="workshop_aggregations" COMMENT="Aggregated grades for assessment are stored here. The aggregated grade for submission is stored in workshop_submissions" PREVIOUS="workshop_grades" NEXT="workshop_old">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
         <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="the id of the workshop instance" PREVIOUS="id" NEXT="userid"/>
@@ -122,6 +122,192 @@
         <KEY NAME="user_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="workshop_fk" NEXT="workshopuser"/>
         <KEY NAME="workshopuser" TYPE="unique" FIELDS="workshopid, userid" COMMENT="The combination of workshopid with userid must be unique in this table" PREVIOUS="user_fk"/>
       </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_old" COMMENT="Legacy workshop table to be dropped later in Moodle 2.x" PREVIOUS="workshop_aggregations" NEXT="workshop_elements_old">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="course" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="wtype"/>
+        <FIELD NAME="wtype" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="nelements"/>
+        <FIELD NAME="nelements" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="wtype" NEXT="nattachments"/>
+        <FIELD NAME="nattachments" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="nelements" NEXT="phase"/>
+        <FIELD NAME="phase" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="nattachments" NEXT="format"/>
+        <FIELD NAME="format" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="phase" NEXT="gradingstrategy"/>
+        <FIELD NAME="gradingstrategy" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="format" NEXT="resubmit"/>
+        <FIELD NAME="resubmit" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradingstrategy" NEXT="agreeassessments"/>
+        <FIELD NAME="agreeassessments" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="resubmit" NEXT="hidegrades"/>
+        <FIELD NAME="hidegrades" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="agreeassessments" NEXT="anonymous"/>
+        <FIELD NAME="anonymous" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="hidegrades" NEXT="includeself"/>
+        <FIELD NAME="includeself" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="anonymous" NEXT="maxbytes"/>
+        <FIELD NAME="maxbytes" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="100000" SEQUENCE="false" PREVIOUS="includeself" NEXT="submissionstart"/>
+        <FIELD NAME="submissionstart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="maxbytes" NEXT="assessmentstart"/>
+        <FIELD NAME="assessmentstart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="submissionstart" NEXT="submissionend"/>
+        <FIELD NAME="submissionend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentstart" NEXT="assessmentend"/>
+        <FIELD NAME="assessmentend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="submissionend" NEXT="releasegrades"/>
+        <FIELD NAME="releasegrades" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentend" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="releasegrades" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade" NEXT="ntassessments"/>
+        <FIELD NAME="ntassessments" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradinggrade" NEXT="assessmentcomps"/>
+        <FIELD NAME="assessmentcomps" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="2" SEQUENCE="false" PREVIOUS="ntassessments" NEXT="nsassessments"/>
+        <FIELD NAME="nsassessments" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentcomps" NEXT="overallocation"/>
+        <FIELD NAME="overallocation" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="nsassessments" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="overallocation" NEXT="teacherweight"/>
+        <FIELD NAME="teacherweight" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="timemodified" NEXT="showleaguetable"/>
+        <FIELD NAME="showleaguetable" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="teacherweight" NEXT="usepassword"/>
+        <FIELD NAME="usepassword" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="showleaguetable" NEXT="password"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" PREVIOUS="usepassword" NEXT="newplugin"/>
+        <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="password" NEXT="newid"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="workshop_elements_old" COMMENT="Legacy workshop_elements table to be dropped later in Moodle 2.x" PREVIOUS="workshop_old" NEXT="workshop_rubrics_old">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="elementno"/>
+        <FIELD NAME="elementno" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="elementno" NEXT="scale"/>
+        <FIELD NAME="scale" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="maxscore"/>
+        <FIELD NAME="maxscore" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="scale" NEXT="weight"/>
+        <FIELD NAME="weight" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="11" SEQUENCE="false" PREVIOUS="maxscore" NEXT="stddev"/>
+        <FIELD NAME="stddev" TYPE="float" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="weight" NEXT="totalassessments"/>
+        <FIELD NAME="totalassessments" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="stddev" NEXT="newplugin"/>
+        <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="totalassessments" NEXT="newid"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshopid"/>
+        <KEY NAME="workshopid" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_rubrics_old" COMMENT="Legacy workshop_rubrics table to be dropped later in Moodle 2.x" PREVIOUS="workshop_elements_old" NEXT="workshop_submissions_old">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="elementno"/>
+        <FIELD NAME="elementno" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="rubricno"/>
+        <FIELD NAME="rubricno" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="elementno" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="rubricno" NEXT="newplugin"/>
+        <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="description" NEXT="newid"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshopid"/>
+        <KEY NAME="workshopid" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_submissions_old" COMMENT="Legacy workshop_submissions table to be dropped later in Moodle 2.x" PREVIOUS="workshop_rubrics_old" NEXT="workshop_assessments_old">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="title"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" PREVIOUS="userid" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="title" NEXT="mailed"/>
+        <FIELD NAME="mailed" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="mailed" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="finalgrade"/>
+        <FIELD NAME="finalgrade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradinggrade" NEXT="late"/>
+        <FIELD NAME="late" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="finalgrade" NEXT="nassessments"/>
+        <FIELD NAME="nassessments" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="late" NEXT="newplugin"/>
+        <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="nassessments" NEXT="newid"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshopid"/>
+        <KEY NAME="workshopid" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="mailed"/>
+        <INDEX NAME="mailed" UNIQUE="false" FIELDS="mailed" PREVIOUS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="workshop_assessments_old" COMMENT="Legacy workshop_assessments table to be dropped later in Moodle 2.x" PREVIOUS="workshop_submissions_old" NEXT="workshop_grades_old">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="submissionid"/>
+        <FIELD NAME="submissionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="submissionid" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="timegraded"/>
+        <FIELD NAME="timegraded" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="timeagreed"/>
+        <FIELD NAME="timeagreed" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timegraded" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="float" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="timeagreed" NEXT="gradinggrade"/>
+        <FIELD NAME="gradinggrade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade" NEXT="teachergraded"/>
+        <FIELD NAME="teachergraded" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradinggrade" NEXT="mailed"/>
+        <FIELD NAME="mailed" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="teachergraded" NEXT="resubmission"/>
+        <FIELD NAME="resubmission" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="mailed" NEXT="donotuse"/>
+        <FIELD NAME="donotuse" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="resubmission" NEXT="generalcomment"/>
+        <FIELD NAME="generalcomment" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="donotuse" NEXT="teachercomment"/>
+        <FIELD NAME="teachercomment" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="generalcomment" NEXT="newplugin"/>
+        <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="teachercomment" NEXT="newid"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshopid"/>
+        <KEY NAME="workshopid" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary" NEXT="submissionid"/>
+        <KEY NAME="submissionid" TYPE="foreign" FIELDS="submissionid" REFTABLE="workshop_submissions" REFFIELDS="id" PREVIOUS="workshopid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="mailed"/>
+        <INDEX NAME="mailed" UNIQUE="false" FIELDS="mailed" PREVIOUS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="workshop_grades_old" COMMENT="Legacy workshop_grades table to be dropped later in Moodle 2.x" PREVIOUS="workshop_assessments_old" NEXT="workshop_stockcomments_old">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="assessmentid"/>
+        <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="elementno"/>
+        <FIELD NAME="elementno" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentid" NEXT="feedback"/>
+        <FIELD NAME="feedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="elementno" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="feedback" NEXT="newplugin"/>
+        <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="grade" NEXT="newid"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshopid"/>
+        <KEY NAME="workshopid" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary" NEXT="assessmentid"/>
+        <KEY NAME="assessmentid" TYPE="foreign" FIELDS="assessmentid" REFTABLE="workshop_assessments" REFFIELDS="id" PREVIOUS="workshopid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_stockcomments_old" COMMENT="Legacy workshop_stockcomments table to be dropped later in Moodle 2.x" PREVIOUS="workshop_grades_old" NEXT="workshop_comments_old">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="elementno"/>
+        <FIELD NAME="elementno" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="comments"/>
+        <FIELD NAME="comments" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="elementno" NEXT="newplugin"/>
+        <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="comments" NEXT="newid"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshopid"/>
+        <KEY NAME="workshopid" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="workshop_comments_old" COMMENT="Legacy workshop_comments table to be dropped later in Moodle 2.x" PREVIOUS="workshop_stockcomments_old">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="workshopid"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="assessmentid"/>
+        <FIELD NAME="assessmentid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="workshopid" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assessmentid" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="mailed"/>
+        <FIELD NAME="mailed" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="comments"/>
+        <FIELD NAME="comments" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="mailed" NEXT="newplugin"/>
+        <FIELD NAME="newplugin" TYPE="char" LENGTH="28" NOTNULL="false" SEQUENCE="false" PREVIOUS="comments" NEXT="newid"/>
+        <FIELD NAME="newid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="newplugin"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="workshopid"/>
+        <KEY NAME="workshopid" TYPE="foreign" FIELDS="workshopid" REFTABLE="workshop" REFFIELDS="id" PREVIOUS="primary" NEXT="assessmentid"/>
+        <KEY NAME="assessmentid" TYPE="foreign" FIELDS="assessmentid" REFTABLE="workshop_assessments" REFFIELDS="id" PREVIOUS="workshopid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="mailed"/>
+        <INDEX NAME="mailed" UNIQUE="false" FIELDS="mailed" PREVIOUS="userid"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>
