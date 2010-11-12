@@ -111,7 +111,7 @@ class report_customlang_utils {
         $stringman  = get_string_manager();
         $components = $DB->get_records('report_customlang_components');
         foreach ($components as $component) {
-            $sql = "SELECT stringid, s.*
+            $sql = "SELECT stringid, id, lang, componentid, original, master, local, timemodified, timecustomized, outdated, modified
                       FROM {report_customlang} s
                      WHERE lang = ? AND componentid = ?
                   ORDER BY stringid";
