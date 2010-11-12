@@ -334,7 +334,7 @@ class portfolio_add_button {
 
         $formoutput = '<form method="post" action="' . $CFG->wwwroot . '/portfolio/add.php" id="portfolio-add-button">' . "\n";
         $formoutput .= html_writer::input_hidden_params($url);
-        $linkoutput = '<a title="'.$addstr.'" href="' . $url->out();
+        $linkoutput = '<a class="portfolio-add-link" title="'.$addstr.'" href="' . $url->out();
 
         switch ($format) {
             case PORTFOLIO_ADD_FULL_FORM:
@@ -344,11 +344,11 @@ class portfolio_add_button {
             break;
             case PORTFOLIO_ADD_ICON_FORM:
                 $formoutput .= $selectoutput;
-                $formoutput .= "\n" . '<input type="image" src="' . $OUTPUT->pix_url('t/portfolio') . '" alt=' . $addstr .'" />';
+                $formoutput .= "\n" . '<input class="portfolio-add-icon" type="image" src="' . $OUTPUT->pix_url('t/portfolioadd') . '" alt=' . $addstr .'" />';
                 $formoutput .= "\n" . '</form>';
             break;
             case PORTFOLIO_ADD_ICON_LINK:
-                $linkoutput .= '"><img src="' . $OUTPUT->pix_url('t/portfolio') . '" alt="' . $addstr .'" /></a>';
+                $linkoutput .= '"><img class="portfolio-add-icon" src="' . $OUTPUT->pix_url('t/portfolioadd') . '" alt="' . $addstr .'" /></a>';
             break;
             case PORTFOLIO_ADD_TEXT_LINK:
                 $linkoutput .= '">' . $addstr .'</a>';
