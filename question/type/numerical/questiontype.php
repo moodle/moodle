@@ -149,78 +149,58 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $context = $question->context;
 
         // Get old versions of the objects
-        if (!$oldanswers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
-            $oldanswers = array();
-        }
-
-        if (!$oldoptions = $DB->get_records('question_numerical', array('question' =>  $question->id), 'answer ASC')) {
-            $oldoptions = array();
-        }
+        $oldanswers = $DB->get_records('question_answers',
+                array('question' => $question->id), 'id ASC');
+        $oldoptions = $DB->get_records('question_numerical',
+                array('question' => $question->id), 'answer ASC');
 
         // Save the units.
         $result = $this->save_numerical_units($question);
         if (isset($result->error)) {
             return $result;
         } else {
-            $units = &$result->units;
+            $units = $result->units;
         }
 
         // Insert all the new answers
-        foreach ($question->answer as $key => $dataanswer) {
-            if (is_array($dataanswer)) {
-                $dataanswer = $dataanswer['text'];
-            }
+        foreach ($question->answer as $key => $answerdata) {
             // Check for, and ingore, completely blank answer from the form.
-            if (trim($dataanswer) == '' && $question->fraction[$key] == 0 &&
+            if (trim($answerdata) == '' && $question->fraction[$key] == 0 &&
                     html_is_blank($question->feedback[$key]['text'])) {
                 continue;
             }
 
-            $answer = new stdClass;
-            $answer->question = $question->id;
-            if (trim($dataanswer) === '*') {
+            // Update an existing answer if possible.
+            $answer = array_shift($oldanswers);
+            if (!$answer) {
+                $answer = new stdClass();
+                $answer->question = $question->id;
+                $answer->answer = '';
+                $answer->feedback = '';
+                $answer->id = $DB->insert_record('question_answers', $answer);
+            }
+
+            if (trim($answerdata) === '*') {
                 $answer->answer = '*';
             } else {
-                $answer->answer = $this->apply_unit($dataanswer, $units);
+                $answer->answer = $this->apply_unit($answerdata, $units);
                 if ($answer->answer === false) {
                     $result->notice = get_string('invalidnumericanswer', 'quiz');
                 }
             }
             $answer->fraction = $question->fraction[$key];
-
-            $feedbacktext = trim($question->feedback[$key]['text']);
+            $answer->feedback = $this->import_or_save_files($question->feedback[$key],
+                    $context, 'question', 'answerfeedback', $answer->id);
             $answer->feedbackformat = $question->feedback[$key]['format'];
-            if (!empty($question->feedback[$key]['itemid'])) {
-                $draftid = $question->feedback[$key]['itemid'];
-            } else {
-                $draftid = '' ;
-            }
-            $feedbackfiles = $question->feedback[$key]['files'];
-
-            if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
-                $feedbacktext = file_save_draft_area_files($draftid, $context->id, 'question', 'answerfeedback', $oldanswer->id, self::$fileoptions, $feedbacktext);
-                $answer->feedback = $feedbacktext;
-                $answer->id = $oldanswer->id;
-                $DB->update_record("question_answers", $answer);
-            } else { // This is a completely new answer
-                $answer->feedback = $feedbacktext;
-                $answer->id = $DB->insert_record("question_answers", $answer);
-                if ($draftid) {
-                    $feedbacktext = file_save_draft_area_files($draftid, $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, $feedbacktext);
-                } else {
-                    foreach ($feedbackfiles as $file) {
-                        $this->import_file($question->context, 'question', 'answerfeedback', $answer->id, $file);
-                    }
-                }
-                $DB->set_field('question_answers', 'feedback', $feedbacktext, array('id'=>$answer->id));
-            }
+            $DB->update_record('question_answers', $answer);
 
             // Set up the options object
+            $options = array_shift($oldoptions);
             if (!$options = array_shift($oldoptions)) {
-                $options = new stdClass;
+                $options = new stdClass();
             }
-            $options->question  = $question->id;
-            $options->answer    = $answer->id;
+            $options->question = $question->id;
+            $options->answer   = $answer->id;
             if (trim($question->tolerance[$key]) == '') {
                 $options->tolerance = '';
             } else {
@@ -229,35 +209,28 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                     $result->notice = get_string('invalidnumerictolerance', 'quiz');
                 }
             }
-
-            // Save options
-            if (isset($options->id)) { // reusing existing record
+            if (isset($options->id)) {
                 $DB->update_record('question_numerical', $options);
-            } else { // new options
+            } else {
                 $DB->insert_record('question_numerical', $options);
             }
         }
-        // delete old answer records
-        if (!empty($oldanswers)) {
-            foreach($oldanswers as $oa) {
-                $DB->delete_records('question_answers', array('id' => $oa->id));
-            }
+
+        // Delete any left over old answer records.
+        $fs = get_file_storage();
+        foreach($oldanswers as $oldanswer) {
+            $fs->delete_area_files($context->id, 'question', 'answerfeedback', $oldanswer->id);
+            $DB->delete_records('question_answers', array('id' => $oldanswer->id));
+        }
+        foreach($oldoptions as $oldoption) {
+            $DB->delete_records('question_numerical', array('id' => $oldoption->id));
         }
 
-        // delete old answer records
-        if (!empty($oldoptions)) {
-            foreach($oldoptions as $oo) {
-                $DB->delete_records('question_numerical', array('id' => $oo->id));
-            }
-        }
         $result = $this->save_numerical_options($question);
-        if (isset($result->error)) {
+        if (!empty($result->error) || !empty($result->notice)) {
             return $result;
         }
-        // Report any problems.
-        if (!empty($result->notice)) {
-            return $result;
-        }
+
         return true;
     }
 
@@ -269,31 +242,32 @@ class question_numerical_qtype extends question_shortanswer_qtype {
      * as old question.
      * 
      */
-    function save_numerical_options(&$question) {
+    function save_numerical_options($question) {
         global $DB;
-        //        echo"<p> ".$question->id."question<pre>";print_r($question) ;echo"</pre></p>";
 
         $result = new stdClass;
-        // numerical options
+
         $update = true ;
         $options = $DB->get_record('question_numerical_options', array('question' => $question->id));
         if (!$options) {
-            $update = false;
             $options = new stdClass;
             $options->question = $question->id;
+            $options->instructions = '';
+            $options->id = $DB->insert_record('question_numerical_options', $options);
         }
-        if(isset($question->options->unitgradingtype)){
+
+        if (isset($question->options->unitgradingtype)) {
             $options->unitgradingtype = $question->options->unitgradingtype;
-        }else {
+        } else {
             $options->unitgradingtype = 0 ;
         }
-        if(isset($question->unitpenalty)){
+        if (isset($question->unitpenalty)){
             $options->unitpenalty = $question->unitpenalty;
-        }else { //so this is either an old question or a close question type
+        } else { //so this is either an old question or a close question type
             $options->unitpenalty = 1 ;
         }
         // if we came from the form then 'unitrole' exists
-        if(isset($question->unitrole)){
+        if (isset($question->unitrole)){
             switch ($question->unitrole){
                 case '0' : $options->showunits = NUMERICALQUESTIONUNITNODISPLAY ;
                 break ;
@@ -307,58 +281,30 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 break ;
             }
         } else {
-            if(isset($question->showunits)){
+            if (isset($question->showunits)){
                 $options->showunits = $question->showunits;
-            }else {
+            } else {
                 if ($defaultunit = $this->get_default_numerical_unit($question)) {
                     // so units can be used
                     $options->showunits = NUMERICALQUESTIONUNITTEXTINPUTDISPLAY ;
-                }else {
+                } else {
                     // only numerical will be graded
                     $options->showunits = NUMERICALQUESTIONUNITNODISPLAY ;
                 }
             }
         }
-        if(isset($question->unitsleft)){
+
+        if (isset($question->unitsleft)) {
             $options->unitsleft = $question->unitsleft;
-        }else {
+        } else {
             $options->unitsleft = 0 ;
         }
-        $options->instructionsformat = '1' ;
-        if ( isset($question->instructions) && isset($question->instructions['format']) && $question->instructions['format'] != '' ){
-            $options->instructionsformat = $question->instructions['format'];
-        }
 
-        if(isset($question->instructions) && isset($question->instructions['text'])  ){
-            $options->instructions = trim($question->instructions['text']);
-        }else {
-            $options->instructions = '' ;
-        }
-        $component = 'qtype_' . $question->qtype;
-        if (isset($question->instructionsfiles) && is_array($question->instructionsfiles)) {
-            // import
-            foreach ($question->instructionsfiles as $file) {
-                $this->import_file($question->context, $component, 'instruction', $question->id, $file);
-            }
-        } else {
-            if(isset($question->instructions)){
-            $options->instructions = file_save_draft_area_files($question->instructions['itemid'],
-                $question->context->id,  // context
-                $component,    // component
-                'instruction', // filearea
-                $question->id, // itemid
-                self::$fileoptions, // options
-                $question->instructions['text'] // text
-            );
-            }else {
-               $options->instructions = "";
-            } 
-        }
-        if ($update) {
-            $DB->update_record("question_numerical_options", $options);
-        } else {
-            $id = $DB->insert_record("question_numerical_options", $options);
-        }
+        $options->instructions = $this->import_or_save_files($question->instructions,
+                $question->context, 'qtype_' . $question->qtype, 'instructions', $options->id);
+        $options->instructionsformat = $question->instructions['format'];
+
+        $DB->update_record('question_numerical_options', $options);
 
         return $result;
     }
@@ -487,7 +433,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $nameprefix = $question->name_prefix;
         $component = 'qtype_' . $question->qtype;
         // rewrite instructions text
-        $question->options->instructions = quiz_rewrite_question_urls($question->options->instructions, 'pluginfile.php', $context->id, $component, 'instruction', array($state->attempt, $state->question), $question->id);
+        $question->options->instructions = quiz_rewrite_question_urls($question->options->instructions, 'pluginfile.php', $context->id, $component, 'instructions', array($state->attempt, $state->question), $question->id);
 
         /// Print question text and media
 

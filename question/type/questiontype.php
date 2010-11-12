@@ -46,7 +46,11 @@ require_once($CFG->libdir . '/questionlib.php');
  * @subpackage questiontypes
  */
 class default_questiontype {
-    public static $fileoptions = array('subdirs'=>false, 'maxfiles'=>-1, 'maxbytes'=>0);
+    protected $fileoptions = array(
+        'subdirs' => false,
+        'maxfiles' => -1,
+        'maxbytes' => 0,
+    );
 
     /**
      * Name of the question type
@@ -361,10 +365,10 @@ class default_questiontype {
         $question->timemodified = time();
 
         if (!empty($question->questiontext)) {
-            $question->questiontext = file_save_draft_area_files($form->questiontext['itemid'], $context->id, 'question', 'questiontext', (int)$question->id, self::$fileoptions, $question->questiontext);
+            $question->questiontext = file_save_draft_area_files($form->questiontext['itemid'], $context->id, 'question', 'questiontext', (int)$question->id, $this->fileoptions, $question->questiontext);
         }
         if (!empty($question->generalfeedback)) {
-            $question->generalfeedback = file_save_draft_area_files($form->generalfeedback['itemid'], $context->id, 'question', 'generalfeedback', (int)$question->id, self::$fileoptions, $question->generalfeedback);
+            $question->generalfeedback = file_save_draft_area_files($form->generalfeedback['itemid'], $context->id, 'question', 'generalfeedback', (int)$question->id, $this->fileoptions, $question->generalfeedback);
         }
         $DB->update_record('question', $question);
 
@@ -1651,6 +1655,35 @@ class default_questiontype {
         $contextid = $DB->get_field('question_categories', 'contextid', array('id'=>$category));
         $context = get_context_instance_by_id($contextid);
         return $context;
+    }
+
+    /**
+     * Save the file belonging to one text field.
+     *
+     * @param array $field the data from the form (or from import). This will
+     *      normally have come from the formslib editor element, so it will be an
+     *      array with keys 'text', 'format' and 'itemid'. However, when we are
+     *      importing, it will be an array with keys 'text', 'format' and 'files'
+     * @param object $context the context the question is in.
+     * @param string $component indentifies the file area.
+     * @param string $filearea indentifies the file area.
+     * @param integer $itemid identifies the file area.
+     *
+     * @return string the text for this field, after files have been processed.
+     */
+    protected function import_or_save_files($field, $context, $component, $filearea, $itemid) {
+        if (!empty($field['itemid'])) {
+            // This is the normal case. We are safing the questions editing form.
+            return file_save_draft_area_files($field['itemid'], $context->id, $component,
+                    $filearea, $itemid, $this->fileoptions, trim($field['text']));
+
+        } else if (!empty($field['files'])) {
+            // This is the case when we are doing an import.
+            foreach ($question->feedback['files'] as $file) {
+                $this->import_file($context, 'question', 'answerfeedback', $itemid, $file);
+            }
+        }
+        return trim($field['text']);
     }
 
     /**

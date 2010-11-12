@@ -448,8 +448,8 @@ class qformat_xml extends qformat_default {
         $answers = $question['#']['answer'];
         $a_count = 0;
         foreach ($answers as $answer) {
-            $ans = $this->import_answer( $answer );
-            $qo->answer[$a_count] = $ans->answer;
+            $ans = $this->import_answer($answer);
+            $qo->answer[$a_count] = $ans->answer['text'];
             $qo->fraction[$a_count] = $ans->fraction;
             $qo->feedback[$a_count] = $ans->feedback;
             ++$a_count;
@@ -494,7 +494,7 @@ class qformat_xml extends qformat_default {
         foreach ($answers as $answer) {
             // answer outside of <text> is deprecated
             $obj = $this->import_answer($answer);
-            $qo->answer[] = $obj->answer;
+            $qo->answer[] = $obj->answer['text'];
             if (empty($qo->answer)) {
                 $qo->answer = '*';
             }
@@ -520,6 +520,8 @@ class qformat_xml extends qformat_default {
         $qo->unitpenalty = $this->getpath( $question, array('#','unitpenalty',0,'#'), 0 );
         $qo->showunits = $this->getpath( $question, array('#','showunits',0,'#'), 0 );
         $qo->unitsleft = $this->getpath( $question, array('#','unitsleft',0,'#'), 0 );
+        $qo->instructions['text'] = '';
+        $qo->instructions['format'] = FORMAT_HTML;
         $instructions = $this->getpath($question, array('#', 'instructions'), array());
         if (!empty($instructions)) {
             $qo->instructions = array();

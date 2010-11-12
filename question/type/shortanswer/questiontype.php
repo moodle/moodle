@@ -65,88 +65,63 @@ class question_shortanswer_qtype extends default_questiontype {
 
         $context = $question->context;
 
-        if (!$oldanswers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
-            $oldanswers = array();
-        }
-
-        $answers = array();
-        $maxfraction = -1;
+        $oldanswers = $DB->get_records('question_answers',
+                array('question' => $question->id), 'id ASC');
 
         // Insert all the new answers
-        foreach ($question->answer as $key => $dataanswer) {
-            if (is_array($dataanswer)) {
-                $dataanswer = $dataanswer['text'];
-            }
-            // Check for, and ingore, completely blank answer from the form.
-            if (trim($dataanswer) == '' && $question->fraction[$key] == 0 &&
+        $answers = array();
+        $maxfraction = -1;
+        foreach ($question->answer as $key => $answerdata) {
+            // Check for, and ignore, completely blank answer from the form.
+            if (trim($answerdata) == '' && $question->fraction[$key] == 0 &&
                     html_is_blank($question->feedback[$key]['text'])) {
                 continue;
             }
 
-            $feedbackformat = $question->feedback[$key]['format'];
-            if (isset($question->feedback[$key]['files'])) {
-                $feedbackfiles = $question->feedback[$key]['files'];
-            }
-
-            if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
-                $answer = $oldanswer;
-                $answer->answer   = trim($dataanswer);
-                $answer->fraction = $question->fraction[$key];
-
-                // save draft file and rewrite text in feedback
-                $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $oldanswer->id, self::$fileoptions, $question->feedback[$key]['text']);
-                $answer->feedbackformat = $feedbackformat;
-
-                $DB->update_record("question_answers", $answer);
-            } else {    // This is a completely new answer
-                $answer = new stdClass;
-                $answer->answer   = trim($dataanswer);
+            // Update an existing answer if possible.
+            $answer = array_shift($oldanswers);
+            if (!$answer) {
+                $answer = new stdClass();
                 $answer->question = $question->id;
-                $answer->fraction = $question->fraction[$key];
-                // feedback content needs to be rewriten
-                $answer->feedback = $question->feedback[$key]['text'];
-                $answer->feedbackformat = $feedbackformat;
-                $answer->id = $DB->insert_record("question_answers", $answer);
-
-                if (isset($feedbackfiles)) {
-                // import
-                    foreach ($feedbackfiles as $file) {
-                        $this->import_file($question->context, 'question', 'answerfeedback', $answer->id, $file);
-                    }
-                } else {
-                // save draft file and rewrite text in feedback
-                    $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, $question->feedback[$key]['text']);
-                }
-                // update feedback content
-                $DB->set_field('question_answers', 'feedback', $answer->feedback, array('id'=>$answer->id));
+                $answer->answer = '';
+                $answer->feedback = '';
+                $answer->id = $DB->insert_record('question_answers', $answer);
             }
+
+            $answer->answer   = trim($answerdata);
+            $answer->fraction = $question->fraction[$key];
+            $answer->feedback = $this->import_or_save_files($question->feedback[$key],
+                    $context, 'question', 'answerfeedback', $answer->id);
+            $answer->feedbackformat = $question->feedback[$key]['format'];
+            $DB->update_record('question_answers', $answer);
+
             $answers[] = $answer->id;
             if ($question->fraction[$key] > $maxfraction) {
                 $maxfraction = $question->fraction[$key];
             }
         }
 
+        // Delete any left over old answer records.
+        $fs = get_file_storage();
+        foreach($oldanswers as $oldanswer) {
+            $fs->delete_area_files($context->id, 'question', 'answerfeedback', $oldanswer->id);
+            $DB->delete_records('question_answers', array('id' => $oldanswer->id));
+        }
+
         $question->answers = implode(',', $answers);
         $parentresult = parent::save_question_options($question);
-        if($parentresult !== null) { // Parent function returns null if all is OK
+        if ($parentresult !== null) {
+            // Parent function returns null if all is OK
             return $parentresult;
         }
 
-        // delete old answer records
-        if (!empty($oldanswers)) {
-            foreach($oldanswers as $oa) {
-                $DB->delete_records('question_answers', array('id' => $oa->id));
-            }
+        // Perform sanity checks on fractional grades
+        if ($maxfraction != 1) {
+            $result->noticeyesno = get_string('fractionsnomax', 'quiz', $maxfraction * 100);
+            return $result;
         }
 
-        /// Perform sanity checks on fractional grades
-        if ($maxfraction != 1) {
-            $maxfraction = $maxfraction * 100;
-            $result->noticeyesno = get_string("fractionsnomax", "quiz", $maxfraction);
-            return $result;
-        } else {
-            return true;
-        }
+        return true;
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {

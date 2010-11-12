@@ -42,73 +42,63 @@ class question_match_qtype extends default_questiontype {
         $context = $question->context;
         $result = new stdClass;
 
-        if (!$oldsubquestions = $DB->get_records("question_match_sub", array("question" => $question->id), "id ASC")) {
-            $oldsubquestions = array();
-        }
+        $oldsubquestions = $DB->get_records('question_match_sub',
+                array('question' => $question->id), 'id ASC');
 
         // $subquestions will be an array with subquestion ids
         $subquestions = array();
 
         // Insert all the new question+answer pairs
         foreach ($question->subquestions as $key => $questiontext) {
-            if (!empty($questiontext['itemid'])) {
-                $itemid = $questiontext['itemid'];
+            if ($questiontext['text'] == '' && trim($question->subanswers[$key]) == '') {
+                continue;
             }
-            $files = $questiontext['files'];
-            $format = $questiontext['format'];
-            $questiontext = trim($questiontext['text']);
-            $answertext = trim($question->subanswers[$key]);
-            if ($questiontext != '' || $answertext != '') {
-                if ($subquestion = array_shift($oldsubquestions)) {  // Existing answer, so reuse it
-                    $subquestion->answertext   = $answertext;
-                    $subquestion->questiontext = file_save_draft_area_files($itemid, $context->id, 'qtype_match', 'subquestion', $subquestion->id, self::$fileoptions, $questiontext);
-                    $subquestion->questiontextformat = $format;
-                    $DB->update_record("question_match_sub", $subquestion);
-                } else {
-                    $subquestion = new stdClass;
-                    // Determine a unique random code
-                    $subquestion->code = rand(1, 999999999);
-                    while ($DB->record_exists('question_match_sub', array('code' => $subquestion->code, 'question' => $question->id))) {
-                        $subquestion->code = rand();
-                    }
-                    $subquestion->question = $question->id;
-                    $subquestion->questiontext = $questiontext;
-                    $subquestion->questiontextformat = $format;
-                    $subquestion->answertext = $answertext;
-                    $subquestion->id = $DB->insert_record("question_match_sub", $subquestion);
-                    if (!isset($itemid)) {
-                        foreach ($files as $file) {
-                            $this->import_file($context, 'qtype_match', 'subquestion', $subquestion->id, $file);
-                        }
-                    } else {
-                        $questiontext = file_save_draft_area_files($itemid, $context->id, 'qtype_match', 'subquestion', $subquestion->id, self::$fileoptions, $questiontext);
-                    }
-                    $DB->set_field('question_match_sub', 'questiontext', $questiontext, array('id'=>$subquestion->id));
-                }
-                $subquestions[] = $subquestion->id;
-            }
-            if ($questiontext != '' && $answertext == '') {
+            if ($questiontext['text'] != '' && trim($question->subanswers[$key]) == '') {
                 $result->notice = get_string('nomatchinganswer', 'quiz', $questiontext);
             }
-        }
 
-        // delete old subquestions records
-        if (!empty($oldsubquestions)) {
-            foreach($oldsubquestions as $os) {
-                $DB->delete_records('question_match_sub', array('id' => $os->id));
+            // Update an existing subquestion if possible.
+            $subquestion = array_shift($oldsubquestions);
+            if (!$subquestion) {
+                $subquestion = new stdClass;
+                // Determine a unique random code
+                $subquestion->code = rand(1, 999999999);
+                while ($DB->record_exists('question_match_sub', array('code' => $subquestion->code, 'question' => $question->id))) {
+                    $subquestion->code = rand(1, 999999999);
+                }
+                $subquestion->question = $question->id;
+                $subquestion->questiontext = '';
+                $subquestion->answertext = '';
+                $subquestion->id = $DB->insert_record('question_match_sub', $subquestion);
             }
+
+            $subquestion->questiontext = $this->import_or_save_files($questiontext,
+                    $context, 'qtype_match', 'subquestion', $subquestion->id);
+            $subquestion->questiontextformat = $questiontext['format'];
+            $subquestion->answertext = trim($question->subanswers[$key]);
+
+            $DB->update_record('question_match_sub', $subquestion);
+
+            $subquestions[] = $subquestion->id;
         }
 
-        if ($options = $DB->get_record("question_match", array("question" => $question->id))) {
-            $options->subquestions = implode(",",$subquestions);
+        // Delete old subquestions records
+        $fs = get_file_storage();
+        foreach($oldsubquestions as $oldsub) {
+            $fs->delete_area_files($context->id, 'qtype_match', 'subquestion', $oldsub->id);
+            $DB->delete_records('question_match_sub', array('id' => $oldsub->id));
+        }
+
+        if ($options = $DB->get_record('question_match', array('question' => $question->id))) {
+            $options->subquestions = implode(',', $subquestions);
             $options->shuffleanswers = $question->shuffleanswers;
-            $DB->update_record("question_match", $options);
+            $DB->update_record('question_match', $options);
         } else {
             unset($options);
             $options->question = $question->id;
-            $options->subquestions = implode(",",$subquestions);
+            $options->subquestions = implode(',', $subquestions);
             $options->shuffleanswers = $question->shuffleanswers;
-            $DB->insert_record("question_match", $options);
+            $DB->insert_record('question_match', $options);
         }
 
         if (!empty($result->notice)) {

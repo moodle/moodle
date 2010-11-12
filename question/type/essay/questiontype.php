@@ -37,37 +37,28 @@ class question_essay_qtype extends default_questiontype {
     function save_question_options($question) {
         global $DB;
         $context = $question->context;
-        $result = true;
-        $update = true;
-        $answer = $DB->get_record("question_answers", array("question" => $question->id));
+
+        $answer = $DB->get_record('question_answers', array('question' => $question->id));
         if (!$answer) {
             $answer = new stdClass;
             $answer->question = $question->id;
-            $update = false;
+            $answer->answer = '';
+            $answer->feedback = '';
+            $answer->id = $DB->insert_record('question_answers', $answer);
         }
+
+        $answer->feedback = $question->feedback['text'];
         $answer->feedbackformat = $question->feedback['format'];
+        $answer->answer = $answer->feedback;
         $answer->answerformat = $question->feedback['format'];
         $answer->fraction = $question->fraction;
-        if ($update) {
-            $answer->feedback = file_save_draft_area_files($question->feedback['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, trim($question->feedback['text']));
-            $answer->answer = $answer->feedback;
-            $DB->update_record("question_answers", $answer);
-        } else {
-            $answer->feedback = $question->feedback['text'];
-            $answer->answer = $answer->feedback;
-            $answer->id = $DB->insert_record('question_answers', $answer);
-            if (isset($question->feedback['files'])) {
-                // import
-                foreach ($question->feedback['files'] as $file) {
-                    $this->import_file($context, 'question', 'answerfeedback', $answer->id, $file);
-                }
-            } else {
-                $answer->feedback = file_save_draft_area_files($question->feedback['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, trim($question->feedback['text']));
-            }
-            $answer->answer = $answer->feedback;
-            $DB->update_record('question_answers', $answer);
-        }
-        return $result;
+
+        $answer->feedback = $this->import_or_save_files($question->feedback,
+                $context, 'question', 'answerfeedback', $answer->id);
+        $answer->answer = $answer->feedback;
+        $DB->update_record('question_answers', $answer);
+
+        return true;
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
