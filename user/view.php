@@ -29,8 +29,6 @@ require_once($CFG->dirroot.'/tag/lib.php');
 
 $id        = optional_param('id', 0, PARAM_INT);   // user id
 $courseid  = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
-$enable    = optional_param('enable', 0, PARAM_BOOL);       // enable email
-$disable   = optional_param('disable', 0, PARAM_BOOL);      // disable email
 
 if (empty($id)) {            // See your own profile by default
     require_login();
