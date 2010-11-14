@@ -195,7 +195,6 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $DB->update_record('question_answers', $answer);
 
             // Set up the options object
-            $options = array_shift($oldoptions);
             if (!$options = array_shift($oldoptions)) {
                 $options = new stdClass();
             }
