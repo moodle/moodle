@@ -457,3 +457,10 @@
 #page-mod-folder-edit .foldertree {
 	width: 65%;
 }
+
+/* Quiz
+--------------------------------*/
+
+.que {
+	border-color: #eee;
+}

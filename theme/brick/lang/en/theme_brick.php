@@ -38,6 +38,9 @@ $string['choosereadme'] = '<div class="clearfix">
 
 	<h3>Theme Documentation:</h3>
 	<p><a href="http://docs.moodle.org/en/Themes">http://docs.moodle.org/en/Themes</a></p>
+
+	<h3>Theme Credits</h3>
+	<p><a href="http://docs.moodle.org/en/Theme_credits">http://docs.moodle.org/en/Theme_credits</a></p>	
 	
 	<h3>Report a bug:</h3>
 	<p><a href="http://tracker.moodle.org">http://tracker.moodle.org</a></p>
