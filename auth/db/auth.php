@@ -1,20 +1,17 @@
 <?php
 
 /**
- * @author Martin Dougiamas
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodle multiauth
- *
  * Authentication Plugin: External Database Authentication
  *
  * Checks against an external database.
  *
- * 2006-08-28  File created.
+ * @package    auth
+ * @subpackage db
+ * @author     Martin Dougiamas
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/authlib.php');
 require_once($CFG->libdir.'/adodb/adodb.inc.php');
@@ -53,7 +50,7 @@ class auth_plugin_db extends auth_plugin_base {
 
         $authdb = $this->db_init();
 
-        if ($this->config->passtype === 'internal') {
+        if ($this->is_internal()) {
             // lookup username externally, but resolve
             // password locally -- to support backend that
             // don't track passwords
@@ -65,10 +62,10 @@ class auth_plugin_db extends auth_plugin_base {
                 return false;
             }
 
-            if ( !$rs->EOF ) {
+            if (!$rs->EOF) {
                 $rs->Close();
                 $authdb->Close();
-                // user exists exterally
+                // user exists externally
                 // check username/password internally
                 if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
                     return validate_internal_user_password($user, $password);
@@ -81,7 +78,7 @@ class auth_plugin_db extends auth_plugin_base {
             }
 
         } else {
-            // normal case: use external db for passwords
+            // normal case: use external db for both usernames and passwords
 
             if ($this->config->passtype === 'md5') {   // Re-format password accordingly
                 $extpassword = md5($extpassword);
@@ -126,6 +123,7 @@ class auth_plugin_db extends auth_plugin_base {
 
         return $authdb;
     }
+
     /**
      * retuns user attribute mappings between moodle and ldap
      *
@@ -151,7 +149,6 @@ class auth_plugin_db extends auth_plugin_base {
      * @return array without magic quotes
      */
     function get_userinfo($username) {
-
         global $CFG;
 
         $textlib = textlib_get_instance();
@@ -186,9 +183,7 @@ class auth_plugin_db extends auth_plugin_base {
         }
         $authdb->Close();
         return $result;
-
     }
-
 
     /**
      * Change a user's password
@@ -199,9 +194,7 @@ class auth_plugin_db extends auth_plugin_base {
      * @return bool                  True on success
      */
     function user_update_password($user, $newpassword) {
-
-        global $CFG;
-        if ($this->config->passtype === 'internal') {
+        if ($this->is_internal()) {
             return update_internal_user_password($user, $newpassword);
         } else {
             // we should have never been called!
@@ -219,15 +212,13 @@ class auth_plugin_db extends auth_plugin_base {
      * Syncing users removes (disables) users that dont exists anymore in external db.
      * Creates new users and updates coursecreator status of users.
      *
-     * @param bool $do_updates  Optional: set to true to force an update of existing accounts
-     *
      * This implementation is simpler but less scalable than the one found in the LDAP module.
      *
+     * @param bool $do_updates  Optional: set to true to force an update of existing accounts
+     * @return bool success
      */
     function sync_users($do_updates=false) {
-
         global $CFG, $DB;
-        $pcfg = get_config('auth/db');
 
 /// list external users
         $userlist = $this->get_userlist();
@@ -370,7 +361,7 @@ class auth_plugin_db extends auth_plugin_base {
                     $id = $DB->insert_record ('user',$user); // it is truly a new user
                     echo "\t"; print_string('auth_dbinsertuser','auth_db',array('name'=>$user->username, 'id'=>$id)); echo "\n";
                     // if relevant, tag for password generation
-                    if ($this->config->passtype === 'internal') {
+                    if ($this->is_internal()) {
                         set_user_preference('auth_forcepasswordchange', 1, $id);
                         set_user_preference('create_password',          1, $id);
                     }
@@ -397,7 +388,7 @@ class auth_plugin_db extends auth_plugin_base {
 
         if (!$rs) {
             print_error('auth_dbcantconnect','auth_db');
-        } else if ( !$rs->EOF ) {
+        } else if (!$rs->EOF) {
             // user exists exterally
             $result = true;
         }
@@ -420,7 +411,7 @@ class auth_plugin_db extends auth_plugin_base {
 
         if (!$rs) {
             print_error('auth_dbcantconnect','auth_db');
-        } else if ( !$rs->EOF ) {
+        } else if (!$rs->EOF) {
             while ($rec = $rs->FetchRow()) {
                 $rec = (object)array_change_key_case((array)$rec , CASE_LOWER);
                 array_push($result, $rec->username);
@@ -546,8 +537,8 @@ class auth_plugin_db extends auth_plugin_base {
         }
         if (!empty($update)) {
             $authdb->Execute("UPDATE {$this->config->table}
-                                SET ".implode(',', $update)."
-                                WHERE {$this->config->fielduser}='".$this->ext_addslashes($extusername)."'");
+                                 SET ".implode(',', $update)."
+                               WHERE {$this->config->fielduser}='".$this->ext_addslashes($extusername)."'");
         }
         $authdb->Close();
         return true;
@@ -565,14 +556,13 @@ class auth_plugin_db extends auth_plugin_base {
     }
 
     function prevent_local_passwords() {
-        if (!isset($this->config->passtype)) {
-            return false;
-        }
-        return ($this->config->passtype != 'internal');
+        return !$this->is_internal();
     }
 
     /**
-     * Returns true if this authentication plugin is 'internal'.
+     * Returns true if this authentication plugin is "internal".
+     *
+     * Internal plugins use password hashes from Moodle user table for authentication.
      *
      * @return bool
      */
@@ -580,7 +570,18 @@ class auth_plugin_db extends auth_plugin_base {
         if (!isset($this->config->passtype)) {
             return true;
         }
-        return ($this->config->passtype == 'internal');
+        return ($this->config->passtype === 'internal');
+    }
+
+    /**
+     * Indicates if moodle should automatically update internal user
+     * records with data from external sources using the information
+     * from auth_plugin_base::get_userinfo().
+     *
+     * @return bool true means automatically copy data from ext to user table
+     */
+    function is_synchronised_with_external() {
+        return true;
     }
 
     /**
@@ -590,7 +591,7 @@ class auth_plugin_db extends auth_plugin_base {
      * @return bool
      */
     function can_change_password() {
-        return ($this->config->passtype == 'internal' or !empty($this->config->changepasswordurl));
+        return ($this->is_internal() or !empty($this->config->changepasswordurl));
     }
 
     /**
@@ -600,11 +601,11 @@ class auth_plugin_db extends auth_plugin_base {
      * @return moodle_url
      */
     function change_password_url() {
-        if ($this->config->passtype == 'internal') {
+        if ($this->is_internal()) {
             // standard form
             return null;
         } else {
-            // use custom url
+            // use admin defined custom url
             return new moodle_url($this->config->changepasswordurl);
         }
     }
@@ -615,7 +616,7 @@ class auth_plugin_db extends auth_plugin_base {
      * @return bool
      */
     function can_reset_password() {
-        return ($this->config->passtype == 'internal');
+        return $this->is_internal();
     }
 
     /**

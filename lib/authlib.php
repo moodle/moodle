@@ -172,9 +172,9 @@ class auth_plugin_base {
     }
 
     /**
-     * Returns true if this authentication plugin is "internal" (which means that
-     * Moodle stores the users' passwords and other details in the local Moodle
-     * database).
+     * Returns true if this authentication plugin is "internal".
+     *
+     * Internal plugins use password hashes from Moodle user table for authentication.
      *
      * @return bool
      */
@@ -188,8 +188,18 @@ class auth_plugin_base {
      * @return bool true means md5 password hash stored in user table, false means flag 'not_cached' stored there instead
      */
     function prevent_local_passwords() {
-        // NOTE: this will be changed to true in 2.0
-        return false;
+        return !$this->is_internal();
+    }
+
+    /**
+     * Indicates if moodle should automatically update internal user
+     * records with data from external sources using the information
+     * from get_userinfo() method.
+     *
+     * @return bool true means automatically copy data from ext to user table
+     */
+    function is_synchronised_with_external() {
+        return !$this->is_internal();
     }
 
     /**

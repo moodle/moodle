@@ -3735,7 +3735,7 @@ function authenticate_user_login($username, $password) {
 
             update_internal_user_password($user, $password); // just in case salt or encoding were changed (magic quotes too one day)
 
-            if (!$authplugin->is_internal()) {            // update user record from external DB
+            if ($authplugin->is_synchronised_with_external()) { // update user record from external DB
                 $user = update_user_record($username, get_auth_plugin($user->auth));
             }
         } else {
