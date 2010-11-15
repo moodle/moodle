@@ -24,7 +24,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$module->version  = 2010111100;
+$module->version  = 2010111500;
 $module->requires = 2010111002;  // Requires this Moodle version
 $module->cron     = 60;
 

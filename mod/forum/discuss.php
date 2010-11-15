@@ -193,8 +193,14 @@
         require_once($CFG->libdir.'/portfoliolib.php');
         $button = new portfolio_add_button();
         $button->set_callback_options('forum_portfolio_caller', array('discussionid' => $discussion->id), '/mod/forum/locallib.php');
-        echo html_writer::tag('div', $button->to_html(PORTFOLIO_ADD_FULL_FORM, get_string('exportdiscussion', 'mod_forum')),
-                array('class' => 'discussioncontrol exporttoportfolio'));
+        $button = $button->to_html(PORTFOLIO_ADD_FULL_FORM, get_string('exportdiscussion', 'mod_forum'));
+        $buttonextraclass = '';
+        if (empty($button)) {
+            // no portfolio plugin available.
+            $button = '&nbsp;';
+            $buttonextraclass = ' noavailable';
+        }
+        echo html_writer::tag('div', $button, array('class' => 'discussioncontrol exporttoportfolio'.$buttonextraclass));
     } else {
         echo html_writer::tag('div', '&nbsp;', array('class'=>'discussioncontrol nullcontrol'));
     }
