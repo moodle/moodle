@@ -300,7 +300,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         }
 
         $options->instructions = $this->import_or_save_files($question->instructions,
-                $question->context, 'qtype_' . $question->qtype, 'instructions', $options->id);
+                    $question->context, 'qtype_'.$question->qtype , 'instruction', $question->id);
         $options->instructionsformat = $question->instructions['format'];
 
         $DB->update_record('question_numerical_options', $options);
@@ -430,10 +430,9 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $formatoptions->noclean = true;
         $formatoptions->para = false;
         $nameprefix = $question->name_prefix;
-        $component = 'qtype_' . $question->qtype;
-        // rewrite instructions text
-        $question->options->instructions = quiz_rewrite_question_urls($question->options->instructions, 'pluginfile.php', $context->id, $component, 'instructions', array($state->attempt, $state->question), $question->id);
-
+        $component = 'qtype_' . $question->qtype;        
+        // rewrite instructions text 
+        $question->options->instructions = quiz_rewrite_question_urls($question->options->instructions, 'pluginfile.php', $context->id, $component, 'instruction', array($state->attempt, $state->question), $question->id);
         /// Print question text and media
 
         $questiontext = format_text($question->questiontext,
@@ -1158,9 +1157,9 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
             // processing files
             $component = 'qtype_' . $question->qtype;
-            $draftid = file_get_submitted_draft_itemid('instructions');
+            $draftid = file_get_submitted_draft_itemid('instruction');
             $default_values['instructions'] = array();
-            $default_values['instructions']['format'] = $question->options->instructionsformat;
+            $default_values['instructions']['format'] = $question->options->instructionsformat;           
             $default_values['instructions']['text'] = file_prepare_draft_area(
                 $draftid,       // draftid
                 $context->id,   // context
@@ -1343,6 +1342,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     function check_file_access($question, $state, $options, $contextid, $component,
             $filearea, $args) {
         $itemid = reset($args);
+        
         if ($component == 'question' && $filearea == 'answerfeedback') {
             $result = $options->feedback && array_key_exists($itemid, $question->options->answers);
             if (!$result) {
