@@ -143,15 +143,9 @@ $quizhasattempts = quiz_has_attempts($quiz->id);
 $PAGE->set_url($thispageurl);
 $PAGE->set_pagelayout('admin');
 
-$strquizzes = get_string('modulenameplural', 'quiz');
-$strquiz = get_string('modulename', 'quiz');
-$streditingquestions = get_string('editquestions', 'quiz');
-
-$streditingquiz = get_string('editingquiz', 'quiz');
-$strorderingquiz = get_string('orderingquiz', 'quiz');
-$pagetitle = $streditingquiz;
+$pagetitle = get_string('editingquiz', 'quiz');
 if ($quiz_reordertool) {
-    $pagetitle = $strorderingquiz;
+    $pagetitle = get_string('orderingquiz', 'quiz');
 }
 // Get the course object and related bits.
 $course = $DB->get_record('course', array('id' => $quiz->course));
@@ -466,8 +460,8 @@ if ($quiz_reordertool) {
     $currenttab = 'edit';
 }
 $tabs = array(array(
-    new tabobject('edit', new moodle_url($thispageurl, array('reordertool' => 0)), $streditingquiz),
-    new tabobject('reorder', new moodle_url($thispageurl, array('reordertool' => 1)), $strorderingquiz),
+    new tabobject('edit', new moodle_url($thispageurl, array('reordertool' => 0)), get_string('editingquiz', 'quiz')),
+    new tabobject('reorder', new moodle_url($thispageurl, array('reordertool' => 1)), get_string('orderingquiz', 'quiz')),
 ));
 print_tabs($tabs, $currenttab);
 
@@ -520,8 +514,14 @@ if ($quiz_reordertool) {
             get_string('repaginatecommand', 'quiz').'...</button>';
     echo '</div>';
 }
-echo $OUTPUT->heading($pagetitle.": ".$quiz->name, 2);
-echo $OUTPUT->help_icon('editingquiz', 'quiz', get_string('basicideasofquiz', 'quiz'));
+
+if ($quiz_reordertool) {
+    echo $OUTPUT->heading_with_help(get_string('orderingquiz', 'quiz') . ': ' . $quiz->name,
+            'orderandpaging', 'quiz');
+} else {
+    echo $OUTPUT->heading(get_string('editingquiz', 'quiz') . ': ' . $quiz->name, 2);
+    echo $OUTPUT->help_icon('editingquiz', 'quiz', get_string('basicideasofquiz', 'quiz'));
+}
 quiz_print_status_bar($quiz);
 
 $tabindex = 0;
