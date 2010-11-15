@@ -95,35 +95,48 @@ abstract class backup_controller_dbops extends backup_dbops {
         global $CFG, $DB;
         $dbman = $DB->get_manager(); // We are going to use database_manager services
 
-        // Note: For now we are going to load the realtablename from core lib/db/install.xml
-        // that way, any change in the "template" will be applied here automatically. If this causes
-        // too much slow, we can always forget about the template and keep maintained the xmldb_table
-        // structure inline - manually - here.
-        // TODO: Right now, loading the whole lib/db/install.xml is "eating" 10M, we should
-        // change our way here in order to decrease that memory usage
-        $templatetablename = $realtablename;
-        $targettablename   = $temptablename;
-        $xmlfile = $CFG->dirroot . '/lib/db/install.xml';
-        $xmldb_file = new xmldb_file($xmlfile);
-        if (!$xmldb_file->fileExists()) {
-            throw new ddl_exception('ddlxmlfileerror', null, 'File does not exist');
+        // As far as xmldb objects use a lot of circular references (prev and next) and we aren't destroying
+        // them at all, that causes one memory leak of about 3M per backup execution, not problematic for
+        // individual backups but critical for automated (multiple) ones.
+        // So we are statically caching the xmldb_table definition here to produce the leak "only" once
+        static $xmldb_tables = array();
+
+        // Not cached, get it
+        if (!isset($xmldb_tables[$realtablename])) {
+            // Note: For now we are going to load the realtablename from core lib/db/install.xml
+            // that way, any change in the "template" will be applied here automatically. If this causes
+            // too much slow, we can always forget about the template and keep maintained the xmldb_table
+            // structure inline - manually - here.
+            // TODO: Right now, loading the whole lib/db/install.xml is "eating" 10M, we should
+            // change our way here in order to decrease that memory usage
+            $templatetablename = $realtablename;
+            $targettablename   = $temptablename;
+            $xmlfile = $CFG->dirroot . '/lib/db/install.xml';
+            $xmldb_file = new xmldb_file($xmlfile);
+            if (!$xmldb_file->fileExists()) {
+                throw new ddl_exception('ddlxmlfileerror', null, 'File does not exist');
+            }
+            $loaded = $xmldb_file->loadXMLStructure();
+            if (!$loaded || !$xmldb_file->isLoaded()) {
+                throw new ddl_exception('ddlxmlfileerror', null, 'not loaded??');
+            }
+            $xmldb_structure = $xmldb_file->getStructure();
+            $xmldb_table = $xmldb_structure->getTable($templatetablename);
+            if (is_null($xmldb_table)) {
+                throw new ddl_exception('ddlunknowntable', null, 'The table ' . $templatetablename . ' is not defined in file ' . $xmlfile);
+            }
+            // Clean prev & next, we are alone
+            $xmldb_table->setNext(null);
+            $xmldb_table->setPrevious(null);
+            // Rename
+            $xmldb_table->setName($targettablename);
+            // Cache it
+            $xmldb_tables[$realtablename] = $xmldb_table;
         }
-        $loaded = $xmldb_file->loadXMLStructure();
-        if (!$loaded || !$xmldb_file->isLoaded()) {
-            throw new ddl_exception('ddlxmlfileerror', null, 'not loaded??');
-        }
-        $xmldb_structure = $xmldb_file->getStructure();
-        $xmldb_table = $xmldb_structure->getTable($templatetablename);
-        if (is_null($xmldb_table)) {
-            throw new ddl_exception('ddlunknowntable', null, 'The table ' . $templatetablename . ' is not defined in file ' . $xmlfile);
-        }
+        // Arrived here, we have the table always in static cache, get it
+        $xmldb_table = $xmldb_tables[$realtablename];
         // Set default backupid (not needed but this enforce any missing backupid). That's hackery in action!
         $xmldb_table->getField('backupid')->setDefault($backupid);
-        // Clean prev & next, we are alone
-        $xmldb_table->setNext(null);
-        $xmldb_table->setPrevious(null);
-        // Rename
-        $xmldb_table->setName($targettablename);
 
         $dbman->create_temp_table($xmldb_table); // And create it
     }
@@ -343,6 +356,8 @@ abstract class backup_controller_dbops extends backup_dbops {
                 $settingsinfo = array_merge($settingsinfo, $settings);
             }
         }
+
+        $bc->destroy(); // Always need to destroy controller to handle circular references
 
         return array(array((object)$detailsinfo), $contentsinfo, $settingsinfo);
     }
