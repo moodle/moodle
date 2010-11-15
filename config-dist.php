@@ -396,6 +396,12 @@ $CFG->admin = 'admin';
 // Please note that this setting may produce very long upgrade page on large sites.
 // $CFG->upgradeshowsql = true; // NOT FOR PRODUCTION SERVERS!
 //
+// Add SQL queries to the output of cron, just before their execution
+// $CFG->showcronsql = true;
+//
+// Force developer level debug and add debug info to the output of cron
+// $CFG->showcrondebugging = true;
+//
 //=========================================================================
 // 9. FORCED SETTINGS
 //=========================================================================
