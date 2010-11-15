@@ -252,11 +252,11 @@ class qformat_default {
         $context = $category->context;
         $this->importcontext = $context;
 
-       // reset the timer in case file upload was slow
-       set_time_limit(0);
+        // reset the timer in case file upload was slow
+        set_time_limit(0);
 
-       // STAGE 1: Parse the file
-       echo $OUTPUT->notification(get_string('parsingquestions','quiz'));
+        // STAGE 1: Parse the file
+        echo $OUTPUT->notification(get_string('parsingquestions','quiz'));
 
         if (! $lines = $this->readdata($this->filename)) {
             echo $OUTPUT->notification(get_string('cannotread','quiz'));
@@ -326,7 +326,7 @@ class qformat_default {
             @set_time_limit(0);
 
             // check for category modifiers
-            if ($question->qtype=='category') {
+            if ($question->qtype == 'category') {
                 if ($this->catfromfile) {
                     // find/create category object
                     $catpath = $question->category;
@@ -343,7 +343,7 @@ class qformat_default {
 
             echo "<hr /><p><b>$count</b>. ".$this->format_question_text($question)."</p>";
 
-            $question->category = $category->id;
+            $question->category = $this->category->id;
             $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
 
             $question->createdby = $USER->id;
