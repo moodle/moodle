@@ -38,6 +38,12 @@ class block_glossary_random extends block_base {
                 $this->instance_config_commit();
             }
 
+            // Get module and context, to be able to rewrite urls
+            if (! $cm = get_coursemodule_from_instance("glossary", $this->config->glossary, $this->course->id)) {
+                return false;
+            }
+            $glossaryctx = get_context_instance(CONTEXT_MODULE, $cm->id);
+
             $limitfrom = 0;
             $limitnum = 1;
 
@@ -69,7 +75,7 @@ class block_glossary_random extends block_base {
                     break;
             }
 
-            if ($entry = $DB->get_records_sql("SELECT concept, definition, definitionformat, definitiontrust
+            if ($entry = $DB->get_records_sql("SELECT id, concept, definition, definitionformat, definitiontrust
                                                  FROM {glossary_entries}
                                                 WHERE glossaryid = ? AND approved = 1
                                              ORDER BY timemodified $SORT", array($this->config->glossary), $limitfrom, $limitnum)) {
@@ -85,6 +91,7 @@ class block_glossary_random extends block_base {
                 $options = new stdClass();
                 $options->trusted = $entry->definitiontrust;
                 $options->overflowdiv = true;
+                $entry->definition = file_rewrite_pluginfile_urls($entry->definition, 'pluginfile.php', $glossaryctx->id, 'mod_glossary', 'entry', $entry->id);
                 $text .= format_text($entry->definition, $entry->definitionformat, $options);
 
                 $this->config->nexttime = usergetmidnight(time()) + DAYSECS * $this->config->refresh;
