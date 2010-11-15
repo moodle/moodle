@@ -72,7 +72,7 @@ class question_multichoice_qtype extends default_questiontype {
             }
 
             $answer->answer = $answerdata;
-            $answer->answer = FORMAT_HTML;
+            $answer->answerformat = FORMAT_HTML;
             $answer->fraction = $question->fraction[$key];
             $answer->feedback = $this->import_or_save_files($question->feedback[$key],
                     $context, 'question', 'answerfeedback', $answer->id);
