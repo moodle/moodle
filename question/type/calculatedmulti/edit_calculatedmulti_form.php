@@ -179,7 +179,7 @@ class question_edit_calculatedmulti_form extends question_edit_form {
                     $default_values['correctanswerformat['.$key.']'] = $answer->correctanswerformat;
                     $default_values['feedback['.$key.']'] = array();
                     // prepare draftarea
-                    $default_values['feedback['.$key.']']['text'] = file_prepare_draft_area($draftid, $this->context->id, 'question', 'answerfeedback', empty($answer->id)?null:(int)$answer->id, null, $answer->feedback);
+                    $default_values['feedback['.$key.']']['text'] = file_prepare_draft_area($draftid, $this->context->id, 'question', 'answerfeedback', empty($answer->id)?null:(int)$answer->id, $this->fileoptions, $answer->feedback);
                     $default_values['feedback['.$key.']']['format'] = $answer->feedbackformat;
                     $default_values['feedback['.$key.']']['itemid'] = $draftid;
                     $key++;

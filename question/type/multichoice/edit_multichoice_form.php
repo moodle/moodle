@@ -84,7 +84,7 @@ class question_edit_multichoice_form extends question_edit_form {
                     // prepare question text
                     $draftid = file_get_submitted_draft_itemid('feedback['.$key.']');
                     $default_values['feedback['.$key.']'] = array();
-                    $default_values['feedback['.$key.']']['text'] = file_prepare_draft_area($draftid, $this->context->id, 'question', 'answerfeedback', empty($answer->id)?null:(int)$answer->id, null, $answer->feedback);
+                    $default_values['feedback['.$key.']']['text'] = file_prepare_draft_area($draftid, $this->context->id, 'question', 'answerfeedback', empty($answer->id)?null:(int)$answer->id, $this->fileoptions, $answer->feedback);
                     $default_values['feedback['.$key.']']['format'] = $answer->feedbackformat;
                     $default_values['feedback['.$key.']']['itemid'] = $draftid;
                     $key++;

@@ -66,8 +66,8 @@ class question_edit_form extends moodleform {
         $record = $DB->get_record('question_categories', array('id' => $question->category), 'contextid');
         $this->context = get_context_instance_by_id($record->contextid);
 
-        $this->editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'context' => $this->context);
-        $this->fileoptions = array('subdir' => true, 'maxfiles' => -1, 'maxbytes' => -1);
+        $this->editoroptions = array('subdirs' => 1,'maxfiles' => EDITOR_UNLIMITED_FILES, 'context' => $this->context);
+        $this->fileoptions = array('subdirs' => 1, 'maxfiles' => -1, 'maxbytes' => -1);
 
         $this->category = $category;
         $this->categorycontext = get_context_instance_by_id($category->contextid);
@@ -323,7 +323,7 @@ class question_edit_form extends moodleform {
         } else {
             $questiontext = '';
         }
-        $questiontext = file_prepare_draft_area($draftid, $this->context->id, 'question', 'questiontext', empty($question->id)?null:(int)$question->id, null, $questiontext);
+        $questiontext = file_prepare_draft_area($draftid, $this->context->id, 'question', 'questiontext', empty($question->id)?null:(int)$question->id, $this->fileoptions, $questiontext);
 
         $question->questiontext = array();
         $question->questiontext['text'] = $questiontext;
@@ -337,7 +337,7 @@ class question_edit_form extends moodleform {
             $question->generalfeedback = '';
         }
 
-        $feedback = file_prepare_draft_area($draftid, $this->context->id, 'question', 'generalfeedback', empty($question->id)?null:(int)$question->id, null, $question->generalfeedback);
+        $feedback = file_prepare_draft_area($draftid, $this->context->id, 'question', 'generalfeedback', empty($question->id)?null:(int)$question->id, $this->fileoptions, $question->generalfeedback);
         $question->generalfeedback = array();
         $question->generalfeedback['text'] = $feedback;
         $question->generalfeedback['format'] = empty($question->generalfeedbackformat) ? editors_get_preferred_format() : $question->generalfeedbackformat;
