@@ -1845,17 +1845,19 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     if ($oldversion < 2009050618) {
     /// And block instances with visible = 0, copy that information to block_positions
         $DB->execute("INSERT INTO {block_positions} (blockinstanceid, contextid, pagetype, subpage, visible, region, weight)
-                SELECT id, contextid,
-                CASE WHEN pagetypepattern = 'course-view-*' THEN
-                        (SELECT " . $DB->sql_concat("'course-view-'", 'format') . "
-                        FROM {course}
-                        JOIN {context} ON {course}.id = {context}.instanceid
-                        WHERE {context}.id = contextid)
-                    ELSE pagetypepattern END,
-                CASE WHEN subpagepattern IS NULL THEN ''
-                    ELSE subpagepattern END,
-                0, defaultregion, defaultweight
-                FROM {block_instances} WHERE visible = 0 AND pagetypepattern <> 'admin-*' AND pagetypepattern IS NOT NULL");
+                SELECT bi.id, bi.contextid,
+                       CASE WHEN bi.pagetypepattern = 'course-view-*'
+                           THEN (SELECT " . $DB->sql_concat("'course-view-'", 'c.format') . "
+                                   FROM {course} c
+                                   JOIN {context} ctx ON c.id = ctx.instanceid
+                                  WHERE ctx.id = bi.contextid)
+                           ELSE bi.pagetypepattern END,
+                       CASE WHEN bi.subpagepattern IS NULL
+                           THEN ''
+                           ELSE bi.subpagepattern END,
+                       0, bi.defaultregion, bi.defaultweight
+                  FROM {block_instances} bi
+                 WHERE bi.visible = 0 AND bi.pagetypepattern <> 'admin-*' AND bi.pagetypepattern IS NOT NULL");
         // note: MDL-25031 all block instances should have a pagetype pattern, NULL is not allowed,
         //       if we manage to find out how NULLs get there we should fix them before this step
 
@@ -5108,7 +5110,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                 SET oldquestiontextformat = questiontextformat');
         // Now covert FORMAT_MOODLE content, if necssary.
         if ($CFG->texteditors !== 'textarea') {
-            $rs = $DB->get_recordset('question', 'questiontextformat', FORMAT_MOODLE);
+            $rs = $DB->get_recordset('question', array('questiontextformat'=>FORMAT_MOODLE));
             foreach ($rs as $record) {
                 $record->questiontext = text_to_html($record->questiontext, false, false, true);
                 $record->questiontextformat = FORMAT_HTML;
