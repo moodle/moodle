@@ -106,7 +106,6 @@
 /* Publication */
 #page-course-publish-metadata .metadatatext {width: 400px;}
 #page-course-publish-metadata .hubscreenshot {
-    border:1px solid;
     display:inline;
     float:left;
     margin-right:10px;
