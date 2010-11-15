@@ -43,5 +43,19 @@ function xmldb_report_customlang_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2010111200, 'report', 'customlang');
     }
 
+    /**
+     * Regenerate the foreign key after the tables rename
+     */
+    if ($oldversion < 2010111500) {
+        $table = new xmldb_table('report_customlang');
+        $oldkey = new xmldb_key('fk_component', XMLDB_KEY_FOREIGN, array('componentid'), 'customlang_components', array('id'));
+        $newkey = new xmldb_key('fk_component', XMLDB_KEY_FOREIGN, array('componentid'), 'report_customlang_components', array('id'));
+
+        $dbman->drop_key($table, $oldkey);
+        $dbman->add_key($table, $newkey);
+
+        upgrade_plugin_savepoint(true, 2010111500, 'report', 'customlang');
+    }
+
     return $result;
 }

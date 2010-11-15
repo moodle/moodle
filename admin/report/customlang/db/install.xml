@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/report/customlang/db" VERSION="20101112" COMMENT="XMLDB file for Moodle admin/report/customlang"
+<XMLDB PATH="admin/report/customlang/db" VERSION="20101115" COMMENT="XMLDB file for Moodle admin/report/customlang"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -20,13 +20,13 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_component"/>
-        <KEY NAME="fk_component" TYPE="foreign" FIELDS="componentid" REFTABLE="customlang_components" REFFIELDS="id" PREVIOUS="primary"/>
+        <KEY NAME="fk_component" TYPE="foreign" FIELDS="componentid" REFTABLE="report_customlang_components" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="uq_lang_component_string" UNIQUE="true" FIELDS="lang, componentid, stringid" COMMENT="For a given language and component, string identifiers must be unique"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="report_customlang_components" COMMENT="Contains the list of all installed plugins that provide their own language pack " PREVIOUS="report_customlang">
+    <TABLE NAME="report_customlang_components" COMMENT="Contains the list of all installed plugins that provide their own language pack" PREVIOUS="report_customlang">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The normalized name of the plugin" PREVIOUS="id" NEXT="version"/>
