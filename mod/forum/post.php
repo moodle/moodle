@@ -848,7 +848,7 @@ if (!empty($parent)) {
         if ($forum->type != 'qanda' || forum_user_can_see_discussion($forum, $discussion, $modcontext)) {
             $forumtracked = forum_tp_is_tracked($forum);
             $posts = forum_get_all_discussion_posts($discussion->id, "created ASC", $forumtracked);
-            forum_print_posts_threaded($course, $cm, $forum, $discussion, $parent, 0, false, false, $forumtracked, $posts);
+            forum_print_posts_threaded($course, $cm, $forum, $discussion, $parent, 0, false, $forumtracked, $posts);
         }
     }
 } else {
