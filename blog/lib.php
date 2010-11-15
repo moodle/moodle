@@ -196,8 +196,16 @@ function blog_sync_external_entries($externalblog) {
         $newentry->format = FORMAT_HTML;
         $newentry->subject = $entry->get_title();
         $newentry->summary = $entry->get_description();
-        $newentry->created = $entry->get_date('U');
-        $newentry->lastmodified = $entry->get_date('U');
+
+        //our DB doesnt allow null creation or modified timestamps so check the external blog didnt supply one
+        $entrydate = $entry->get_date('U');
+        if (empty($entrydate)) {
+            $newentry->created = time();
+            $newentry->lastmodified = time();
+        } else {
+            $newentry->created = $entrydate;
+            $newentry->lastmodified = $entrydate;
+        }
 
         $textlib = textlib_get_instance();
         if ($textlib->strlen($newentry->uniquehash) > 255) {
