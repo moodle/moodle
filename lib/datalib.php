@@ -1656,7 +1656,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     $timenow = time();
     $info = $info;
     if (!empty($url)) { // could break doing html_entity_decode on an empty var.
-        $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
+        $url = html_entity_decode($url);
     }
 
     // Restrict length of log lines to the space actually available in the
@@ -1679,28 +1679,27 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 
     $log = array('time'=>$timenow, 'userid'=>$userid, 'course'=>$courseid, 'ip'=>$REMOTE_ADDR, 'module'=>$module,
                  'cmid'=>$cm, 'action'=>$action, 'url'=>$url, 'info'=>$info);
-    $result = $DB->insert_record_raw('log', $log, false);
 
-    // MDL-11893, alert $CFG->supportemail if insert into log failed
-    if (!$result and $CFG->supportemail and empty($CFG->noemailever)) {
-        // email_to_user is not usable because email_to_user tries to write to the logs table,
-        // and this will get caught in an infinite loop, if disk is full
-        $site = get_site();
-        $subject = 'Insert into log failed at your moodle site '.$site->fullname;
-        $message = "Insert into log table failed at ". date('l dS \of F Y h:i:s A') .".\n It is possible that your disk is full.\n\n";
-        $message .= "The failed query parameters are:\n\n" . var_export($log, true);
+    try {
+        $DB->insert_record_raw('log', $log, false);
+    } catch (dml_write_exception $e) {
+        debugging('Error: Could not insert a new entry to the Moodle log', DEBUG_ALL);
+        // MDL-11893, alert $CFG->supportemail if insert into log failed
+        if ($CFG->supportemail and empty($CFG->noemailever)) {
+            // email_to_user is not usable because email_to_user tries to write to the logs table,
+            // and this will get caught in an infinite loop, if disk is full
+            $site = get_site();
+            $subject = 'Insert into log failed at your moodle site '.$site->fullname;
+            $message = "Insert into log table failed at ". date('l dS \of F Y h:i:s A') .".\n It is possible that your disk is full.\n\n";
+            $message .= "The failed query parameters are:\n\n" . var_export($log, true);
 
-        $lasttime = get_config('admin', 'lastloginserterrormail');
-        if(empty($lasttime) || time() - $lasttime > 60*60*24) { // limit to 1 email per day
-            mail($CFG->supportemail, $subject, $message);
-            set_config('lastloginserterrormail', time(), 'admin');
+            $lasttime = get_config('admin', 'lastloginserterrormail');
+            if(empty($lasttime) || time() - $lasttime > 60*60*24) { // limit to 1 email per day
+                mail($CFG->supportemail, $subject, $message);
+                set_config('lastloginserterrormail', time(), 'admin');
+            }
         }
     }
-
-    if (!$result) {
-        debugging('Error: Could not insert a new entry to the Moodle log', DEBUG_ALL);
-    }
-
 }
 
 /**
