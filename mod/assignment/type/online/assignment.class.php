@@ -272,7 +272,7 @@ class assignment_online extends assignment_base {
     }
 
     function portfolio_exportable() {
-        return false; // not until MDL-22001 is fixed :(
+        return true;
     }
 
     function portfolio_load_data($caller) {
@@ -296,7 +296,7 @@ class assignment_online extends assignment_base {
     function portfolio_prepare_package($exporter, $user) {
         $submission = $this->get_submission($user->id);
         $options = new stdClass();
-        $options->para = true;
+        $options->para = false;
         $options->filter = false;
         $html = format_text($submission->data1, $submission->data2, $options);
         $html = portfolio_rewrite_pluginfile_urls($html, $this->context->id, 'mod_assignment', $this->filearea, $submission->id, $exporter->get('format'));

@@ -386,14 +386,12 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
         $output .= '<td class="entry">' . "\n";
 
         $output .= '<div class="concept">';
-        $output .= format_text($OUTPUT->heading('<span class="nolink">' . $entry->concept . '</span>', 3, 'nolink'), FORMAT_MOODLE, $options);
+        $output .= format_text($OUTPUT->heading($entry->concept, 3), FORMAT_MOODLE, $options);
         $output .= '</div> ' . "\n";
 
+        $entry->definition = format_text($entry->definition, $entry->definitionformat, $options);
+        $output .= portfolio_rewrite_pluginfile_urls($entry->definition, $context->id, 'mod_glossary', 'entry', $entry->id, $format);
 
-        $entry->definition = portfolio_rewrite_pluginfile_urls($entry->definition, $context->id, 'mod_glossary', 'entry', $entry->id, $format);
-
-        $options->overflowdiv = true;
-        $output .= format_text($entry->definition, $entry->definitionformat, $options);
         if (isset($entry->footer)) {
             $output .= $entry->footer;
         }
