@@ -651,17 +651,25 @@ class url_select implements renderable {
      */
     var $helpicon = null;
     /**
+     * @var string If set, makes button visible with given name for button
+     */
+    var $showbutton = null;
+    /**
      * Constructor
      * @param array $urls list of options
      * @param string $selected selected element
      * @param array $nothing
      * @param string $formid
+     * @param string $showbutton Set to text of button if it should be visible
+     *   or null if it should be hidden (hidden version always has text 'go')
      */
-    public function __construct(array $urls, $selected='', $nothing=array(''=>'choosedots'), $formid=null) {
-        $this->urls     = $urls;
-        $this->selected = $selected;
-        $this->nothing  = $nothing;
-        $this->formid   = $formid;
+    public function __construct(array $urls, $selected='', $nothing=array(''=>'choosedots'),
+            $formid=null, $showbutton=null) {
+        $this->urls       = $urls;
+        $this->selected   = $selected;
+        $this->nothing    = $nothing;
+        $this->formid     = $formid;
+        $this->showbutton = $showbutton;
     }
 
     /**
