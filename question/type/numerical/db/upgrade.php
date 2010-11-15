@@ -68,7 +68,7 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
         $rs = $DB->get_recordset_sql('
                 SELECT qno.*, q.oldquestiontextformat
                 FROM {question_numerical_options} qno
-                JOIN {question} q ON qno = q.id');
+                JOIN {question} q ON qno.question = q.id');
         foreach ($rs as $record) {
             if ($CFG->texteditors !== 'textarea' && $record->oldquestiontextformat == FORMAT_MOODLE) {
                 $record->instructions = text_to_html($record->questiontext, false, false, true);
