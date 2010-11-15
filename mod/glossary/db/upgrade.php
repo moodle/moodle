@@ -299,6 +299,16 @@ function xmldb_glossary_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010042800, 'glossary');
     }
 
+    if ($oldversion < 2010111500) {
+        // Delete orphaned glossary_entries not belonging to any glossary (MDL-25227)
+        $sql = "DELETE FROM {glossary_entries}
+                WHERE NOT EXISTS (
+                    SELECT 'x' FROM {glossary} g
+                    WHERE g.id = glossaryid)";
+        $DB->execute($sql);
+
+        upgrade_mod_savepoint(true, 2010111500, 'glossary');
+    }
     return true;
 }
 

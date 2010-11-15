@@ -194,6 +194,7 @@ function glossary_delete_instance($id) {
     $category_select = "SELECT id FROM {glossary_categories} WHERE glossaryid = ?";
     $DB->delete_records_select('glossary_entries_categories', "categoryid IN ($category_select)", array($id));
     $DB->delete_records('glossary_categories', array('glossaryid'=>$id));
+    $DB->delete_records('glossary_entries', array('glossaryid'=>$id));
 
     // delete all files
     $fs->delete_area_files($context->id);
