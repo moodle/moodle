@@ -59,6 +59,16 @@ class restore_plan extends base_plan implements loggable {
         parent::__construct('restore_plan');
     }
 
+    /**
+     * Destroy all circular references. It helps PHP 5.2 a lot!
+     */
+    public function destroy() {
+        // No need to destroy anything recursively here, direct reset
+        $this->controller = null;
+        // Delegate to base plan the rest
+        parent::destroy();
+    }
+
     public function build() {
         restore_plan_builder::build_plan($this->controller); // We are moodle2 always, go straight to builder
         $this->built = true;
