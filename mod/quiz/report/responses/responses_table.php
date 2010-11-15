@@ -85,6 +85,15 @@ class quiz_report_responses_table extends table_sql {
         return $OUTPUT->user_picture($user);
     }
 
+    function col_fullname($attempt){
+        $html = parent::col_fullname($attempt);
+        if ($this->is_downloading()) {
+            return $html;
+        }
+
+        return $html . '<br /><a class="reviewlink" href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.
+                '">'.get_string('reviewattempt', 'quiz').'</a>';
+    }
 
     function col_timestart($attempt){
         if ($attempt->attempt) {
@@ -126,21 +135,23 @@ class quiz_report_responses_table extends table_sql {
     }
 
     function col_sumgrades($attempt){
-        if ($attempt->timefinish) {
-            $grade = quiz_rescale_grade($attempt->sumgrades, $this->quiz);
-            if (!$this->is_downloading()) {
-                $gradehtml = '<a href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$grade.'</a>';
-                if ($this->qmsubselect && $attempt->gradedattempt){
-                    $gradehtml = '<div class="highlight">'.$gradehtml.'</div>';
-                }
-                return $gradehtml;
-            } else {
-                return $grade;
-            }
-        } else {
+        if (!$attempt->timefinish) {
             return '-';
         }
+
+        $grade = quiz_rescale_grade($attempt->sumgrades, $this->quiz);
+        if ($this->is_downloading()) {
+            return $grade;
+        }
+
+        $gradehtml = '<a href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.
+                '" title="'.get_string('reviewattempt', 'quiz').'">'.$grade.'</a>';
+        if ($this->qmsubselect && $attempt->gradedattempt){
+            $gradehtml = '<div class="highlight">'.$gradehtml.'</div>';
+        }
+        return $gradehtml;
     }
+
     function other_cols($colname, $attempt){
         global $QTYPES, $OUTPUT;
         static $states =array();
@@ -170,7 +181,7 @@ class quiz_report_responses_table extends table_sql {
                 if ($summary){
                     $link = new moodle_url("/mod/quiz/reviewquestion.php?attempt=$attempt->attempt&question=$question->id");
                     $action = new popup_action('click', $link, 'reviewquestion', array('height' => 450, 'width' => 650));
-                    $summary = $OUTPUT->action_link($link, $summary, $action, array('title'=>$question->formattedname));
+                    $summary = $OUTPUT->action_link($link, $summary, $action, array('title'=>get_string('reviewresponsetoq', 'quiz', $question->formattedname)));
 
                     if (question_state_is_graded($stateforqinattempt)
                                 && ($question->maxgrade > 0)){

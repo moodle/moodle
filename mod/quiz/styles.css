@@ -122,6 +122,7 @@ table#categoryquestions td,
 #page-mod-quiz-report fieldset.felement.fgroup {margin: 0;}
 #page-mod-quiz-report #cachingnotice {margin-bottom: 1em; padding: 0.2em; }
 #page-mod-quiz-report #cachingnotice .singlebutton {margin: 0.5em 0 0;}
+#page-mod-quiz-report .bold .reviewlink {font-weight: normal;}
 
 /** Mod quiz grading **/
 #page-mod-quiz-grading table#grading {width: 80%;margin: 20px auto;}

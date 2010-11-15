@@ -315,10 +315,6 @@ class quiz_responses_report extends quiz_default_report {
 
             $table->collapsible(true);
 
-            $table->column_suppress('picture');
-            $table->column_suppress('fullname');
-            $table->column_suppress('idnumber');
-
             $table->no_sorting('feedbacktext');
 
             $table->column_class('picture', 'picture');

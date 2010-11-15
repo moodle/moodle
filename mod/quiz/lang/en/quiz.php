@@ -713,6 +713,7 @@ $string['reverttodefaults'] = 'Revert to quiz defaults';
 $string['review'] = 'Review';
 $string['reviewafter'] = 'Allow review after quiz is closed';
 $string['reviewalways'] = 'Allow review at any time';
+$string['reviewattempt'] = 'Review attempt';
 $string['reviewbefore'] = 'Allow review while quiz is open';
 $string['reviewclosed'] = 'After the quiz is closed';
 $string['reviewimmediately'] = 'Immediately after the attempt';

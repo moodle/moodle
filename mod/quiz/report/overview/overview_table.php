@@ -129,31 +129,26 @@ class quiz_report_overview_table extends table_sql {
         return $OUTPUT->user_picture($user);
     }
 
+    function col_fullname($attempt){
+        $html = parent::col_fullname($attempt);
+        if ($this->is_downloading()) {
+            return $html;
+        }
+
+        return $html . '<br /><a class="reviewlink" href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.
+                '">'.get_string('reviewattempt', 'quiz').'</a>';
+    }
 
     function col_timestart($attempt){
         if ($attempt->attempt) {
-            $startdate = userdate($attempt->timestart, $this->strtimeformat);
-            if (!$this->is_downloading()) {
-                return  '<a href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$startdate.'</a>';
-            } else {
-                return  $startdate;
-            }
+            return userdate($attempt->timestart, $this->strtimeformat);
         } else {
             return  '-';
         }
     }
     function col_timefinish($attempt){
-        if ($attempt->attempt) {
-            if ($attempt->timefinish) {
-                $timefinish = userdate($attempt->timefinish, $this->strtimeformat);
-                if (!$this->is_downloading()) {
-                    return '<a href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$timefinish.'</a>';
-                } else {
-                    return $timefinish;
-                }
-            } else {
-                return  '-';
-            }
+        if ($attempt->attempt && $attempt->timefinish) {
+            return userdate($attempt->timefinish, $this->strtimeformat);
         } else {
             return  '-';
         }
@@ -168,37 +163,40 @@ class quiz_report_overview_table extends table_sql {
             return '-';
         }
     }
+
     function col_sumgrades($attempt){
-        if ($attempt->timefinish) {
-            $grade = quiz_rescale_grade($attempt->sumgrades, $this->quiz);
-            if (!$this->is_downloading()) {
-                if (isset($this->regradedqs[$attempt->attemptuniqueid])){
-                    $newsumgrade = 0;
-                    $oldsumgrade = 0;
-                    foreach ($this->questions as $question){
-                        if (isset($this->regradedqs[$attempt->attemptuniqueid][$question->id])){
-                            $newsumgrade += $this->regradedqs[$attempt->attemptuniqueid][$question->id]->newgrade;
-                            $oldsumgrade += $this->regradedqs[$attempt->attemptuniqueid][$question->id]->oldgrade;
-                        } else {
-                            $newsumgrade += $this->gradedstatesbyattempt[$attempt->attemptuniqueid][$question->id]->grade;
-                            $oldsumgrade += $this->gradedstatesbyattempt[$attempt->attemptuniqueid][$question->id]->grade;
-                        }
-                    }
-                    $newsumgrade = quiz_rescale_grade($newsumgrade, $this->quiz);
-                    $oldsumgrade = quiz_rescale_grade($oldsumgrade, $this->quiz);
-                    $grade = "<del>$oldsumgrade</del><br />$newsumgrade";
-                }
-                $gradehtml = '<a href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$grade.'</a>';
-                if ($this->qmsubselect && $attempt->gradedattempt){
-                    $gradehtml = '<div class="highlight">'.$gradehtml.'</div>';
-                }
-                return $gradehtml;
-            } else {
-                return $grade;
-            }
-        } else {
+        if (!$attempt->timefinish) {
             return '-';
         }
+
+        $grade = quiz_rescale_grade($attempt->sumgrades, $this->quiz);
+        if ($this->is_downloading()) {
+            return $grade;
+        }
+
+        if (isset($this->regradedqs[$attempt->attemptuniqueid])){
+            $newsumgrade = 0;
+            $oldsumgrade = 0;
+            foreach ($this->questions as $question){
+                if (isset($this->regradedqs[$attempt->attemptuniqueid][$question->id])){
+                    $newsumgrade += $this->regradedqs[$attempt->attemptuniqueid][$question->id]->newgrade;
+                    $oldsumgrade += $this->regradedqs[$attempt->attemptuniqueid][$question->id]->oldgrade;
+                } else {
+                    $newsumgrade += $this->gradedstatesbyattempt[$attempt->attemptuniqueid][$question->id]->grade;
+                    $oldsumgrade += $this->gradedstatesbyattempt[$attempt->attemptuniqueid][$question->id]->grade;
+                }
+            }
+            $newsumgrade = quiz_rescale_grade($newsumgrade, $this->quiz);
+            $oldsumgrade = quiz_rescale_grade($oldsumgrade, $this->quiz);
+            $grade = "<del>$oldsumgrade</del><br />$newsumgrade";
+        }
+
+        $gradehtml = '<a href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.
+                '" title="'.get_string('reviewattempt', 'quiz').'">'.$grade.'</a>';
+        if ($this->qmsubselect && $attempt->gradedattempt){
+            $gradehtml = '<div class="highlight">'.$gradehtml.'</div>';
+        }
+        return $gradehtml;
     }
 
     /**
