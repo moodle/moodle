@@ -190,4 +190,29 @@ class core_publish_renderer extends plugin_renderer_base {
         return $html;
     }
 
+    /**
+     * Hub information (logo - name - description - link)
+     * @param object $hubinfo
+     * @return string html code
+     */
+    public function hubinfo($hubinfo) {
+        $params = array('filetype' => HUB_HUBSCREENSHOT_FILE_TYPE);
+        $imgurl = new moodle_url($hubinfo['url'] .
+                        "/local/hub/webservice/download.php", $params);
+        $screenshothtml = html_writer::empty_tag('img',
+                        array('src' => $imgurl, 'alt' => $hubinfo['name']));
+        $hubdescription = html_writer::tag('div', $screenshothtml,
+                        array('class' => 'hubscreenshot'));
+
+        $hubdescription .= html_writer::tag('a', $hubinfo['name'],
+                        array('class' => 'hublink', 'href' => $hubinfo['url'],
+                            'onclick' => 'this.target="_blank"'));
+        
+        $hubdescription .= html_writer::tag('div', format_text($hubinfo['description'], FORMAT_PLAIN),
+                        array('class' => 'hubdescription'));
+        $hubdescription = html_writer::tag('div', $hubdescription, array('class' => 'hubinfo'));
+
+        return $hubdescription;
+    }
+
 }
