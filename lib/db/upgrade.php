@@ -4982,66 +4982,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     /// updating question image
     if ($oldversion < 2010080901) {
         $fs = get_file_storage();
-        $rs = $DB->get_recordset('question');
-        $textlib = textlib_get_instance();
-        foreach ($rs as $question) {
-            if (empty($question->image)) {
-                continue;
-            }
-            if (!$category = $DB->get_record('question_categories', array('id'=>$question->category))) {
-                continue;
-            }
-            $categorycontext = get_context_instance_by_id($category->contextid);
-            // question files are stored in course level
-            // so we have to find course context
-            switch ($categorycontext->contextlevel){
-                case CONTEXT_COURSE :
-                    $context = $categorycontext;
-                    break;
-                case CONTEXT_MODULE :
-                    $courseid = $DB->get_field('course_modules', 'course', array('id'=>$categorycontext->instanceid));
-                    $context = get_context_instance(CONTEXT_COURSE, $courseid);
-                    break;
-                case CONTEXT_COURSECAT :
-                case CONTEXT_SYSTEM :
-                    $context = get_system_context();
-                    break;
-                default :
-                    continue;
-            }
-            if ($textlib->substr($textlib->strtolower($question->image), 0, 7) == 'http://') {
-                // it is a link, appending to existing question text
-                $question->questiontext .= ' <img src="' . $question->image . '" />';
-                // update question record
-                $DB->update_record('question', $question);
-            } else {
-                $filename = basename($question->image);
-                $filepath = dirname($question->image);
-                if (empty($filepath) or $filepath == '.' or $filepath == '/') {
-                    $filepath = '/';
-                } else {
-                    // append /
-                    $filepath = '/'.trim($filepath, './@#$ ').'/';
-                }
-
-                // course files already moved to file pool by previous upgrade block
-                // so we just create copy from course_legacy area
-                if ($image = $fs->get_file($context->id, 'course', 'legacy', 0, $filepath, $filename)) {
-                    // move files to file pool
-                    $file_record = array(
-                        'contextid'=>$category->contextid,
-                        'component'=>'question',
-                        'filearea'=>'questiontext',
-                        'itemid'=>$question->id
-                    );
-                    $fs->create_file_from_storedfile($file_record, $image);
-                    $question->questiontext .= ' <img src="@@PLUGINFILE@@' . $filepath . $filename . '" />';
-                    // update question record
-                    $DB->update_record('question', $question);
-                }
-            }
-        }
-        $rs->close();
 
         // Define field image to be dropped from question
         $table = new xmldb_table('question');
@@ -5049,6 +4989,71 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
         // Conditionally launch drop field image
         if ($dbman->field_exists($table, $field)) {
+
+            $rs = $DB->get_recordset('question');
+            $textlib = textlib_get_instance();
+
+            foreach ($rs as $question) {
+                if (empty($question->image)) {
+                    continue;
+                }
+                if (!$category = $DB->get_record('question_categories', array('id'=>$question->category))) {
+                    continue;
+                }
+                $categorycontext = get_context_instance_by_id($category->contextid);
+                // question files are stored in course level
+                // so we have to find course context
+                switch ($categorycontext->contextlevel){
+                    case CONTEXT_COURSE :
+                        $context = $categorycontext;
+                        break;
+                    case CONTEXT_MODULE :
+                        $courseid = $DB->get_field('course_modules', 'course', array('id'=>$categorycontext->instanceid));
+                        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+                        break;
+                    case CONTEXT_COURSECAT :
+                    case CONTEXT_SYSTEM :
+                        $context = get_system_context();
+                        break;
+                    default :
+                        continue;
+                }
+                if ($textlib->substr($textlib->strtolower($question->image), 0, 7) == 'http://') {
+                    // it is a link, appending to existing question text
+                    $question->questiontext .= ' <img src="' . $question->image . '" />';
+                    $question->image = '';
+                    // update question record
+                    $DB->update_record('question', $question);
+                } else {
+                    $filename = basename($question->image);
+                    $filepath = dirname($question->image);
+                    if (empty($filepath) or $filepath == '.' or $filepath == '/') {
+                        $filepath = '/';
+                    } else {
+                        // append /
+                        $filepath = '/'.trim($filepath, './@#$ ').'/';
+                    }
+
+                    // course files already moved to file pool by previous upgrade block
+                    // so we just create copy from course_legacy area
+                    if ($image = $fs->get_file($context->id, 'course', 'legacy', 0, $filepath, $filename)) {
+                        // move files to file pool
+                        $file_record = array(
+                            'contextid'=>$category->contextid,
+                            'component'=>'question',
+                            'filearea'=>'questiontext',
+                            'itemid'=>$question->id
+                        );
+                        $fs->create_file_from_storedfile($file_record, $image);
+                        $question->questiontext .= ' <img src="@@PLUGINFILE@@' . $filepath . $filename . '" />';
+                        $question->image = '';
+                        // update question record
+                        $DB->update_record('question', $question);
+                    }
+                }
+            }
+            $rs->close();
+
             $dbman->drop_field($table, $field);
         }
 
@@ -5065,7 +5070,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $rs = $DB->get_recordset_sql('
                 SELECT qa.*, q.qtype
                 FROM {question_answers} qa
-                JOIN {question} q ON a.question = q.id');
+                JOIN {question} q ON qa.question = q.id');
         foreach ($rs as $record) {
             // Convert question_answers.answer
             if ($record->qtype !== 'multichoice') {
@@ -5456,7 +5461,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
     if ($oldversion < 2010111000) {
-        
+
         // Clean up the old scheduled backup settings that are no longer relevant
         update_fix_automated_backup_config();
         upgrade_main_savepoint(true, 2010111000);
