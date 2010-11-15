@@ -530,13 +530,13 @@ class qformat_xml extends qformat_default {
             $qo->instructions['format'] = $this->trans_format($this->getpath($instructions,
                     array('0', '@', 'format'), 'moodle_auto_format'));
             $files = $this->getpath($instructions, array('0', '#', 'file'), array());
-            $qo->instructionsfiles = array();
+            $qo->instructions['files'] = array();
             foreach ($files as $file) {
                 $data = new stdclass;
                 $data->content = $file['#'];
                 $data->encoding = $file['@']['encoding'];
                 $data->name = $file['@']['name'];
-                $qo->instructionsfiles[] = $data;
+                $qo->instructions['files'][]= $data;
             }
         }
         return $qo;
@@ -676,7 +676,7 @@ class qformat_xml extends qformat_default {
         $qo->unitpenalty = $this->getpath($question, array('#','unitpenalty',0,'#'), 0 );
         $qo->showunits = $this->getpath($question, array('#','showunits',0,'#'), 0 );
         $qo->unitsleft = $this->getpath($question, array('#','unitsleft',0,'#'), 0 );
-//        $qo->instructions = $this->getpath( $question, array('#','instructions',0,'#','text',0,'#'), '', true );
+        $qo->instructions = $this->getpath( $question, array('#','instructions',0,'#','text',0,'#'), '', true );
         if (!empty($instructions)) {
             $qo->instructions = array();
             $qo->instructions['text'] = $this->getpath($instructions,
@@ -685,20 +685,19 @@ class qformat_xml extends qformat_default {
                     array('0', '@', 'format'), 'moodle_auto_format'));
             $files = $this->getpath($instructions,
                     array('0', '#', 'file'), array());
-            $qo->instructionsfiles = array();
+            $qo->instructions['files'] = array();
             foreach ($files as $file) {
                 $data = new stdclass;
                 $data->content = $file['#'];
                 $data->encoding = $file['@']['encoding'];
                 $data->name = $file['@']['name'];
-                $qo->instructionsfiles[] = $data;
+                $qo->instructions['files'][]= $data;
             }
         }
 
         $files = $this->getpath($question, array('#', 'instructions', 0, '#', 'file', 0, '@'), '', false);
 
         // get answers array
-        // echo "<pre> question";print_r($question);echo "</pre>";
         $answers = $question['#']['answer'];
         $qo->answers = array();
         $qo->feedback = array();
@@ -746,13 +745,13 @@ class qformat_xml extends qformat_default {
                     array('0', '@', 'format'), 'moodle_auto_format'));
             $files = $this->getpath($instructions,
                     array('0', '#', 'file'), array());
-            $qo->instructionsfiles = array();
+            $qo->instructions['files'] = array();
             foreach ($files as $file) {
                 $data = new stdclass;
                 $data->content = $file['#'];
                 $data->encoding = $file['@']['encoding'];
                 $data->name = $file['@']['name'];
-                $qo->instructionsfiles[] = $data;
+                $qo->instructions['files'][]= $data;
             }
         }
         $datasets = $question['#']['dataset_definitions'][0]['#']['dataset_definition'];
