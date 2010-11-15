@@ -96,6 +96,12 @@ if ($confirm and confirm_sesskey()) { // the operation was confirmed.
         $DB->delete_records("glossary_alias", array("entryid"=>$entry->id));
         $DB->delete_records("glossary_entries", array("id"=>$entry->id));
 
+        // Update completion state
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $glossary->completionentries) {
+            $completion->update_state($cm, COMPLETION_INCOMPLETE, $entry->userid);
+        }
+
         //delete glossary entry ratings
         require_once($CFG->dirroot.'/rating/lib.php');
         $delopt = new stdclass();

@@ -156,6 +156,45 @@ class mod_glossary_mod_form extends moodleform_mod {
 
     function data_preprocessing(&$default_values){
         parent::data_preprocessing($default_values);
+
+        // Set up the completion checkboxes which aren't part of standard data.
+        // We also make the default value (if you turn on the checkbox) for those
+        // numbers to be 1, this will not apply unless checkbox is ticked.
+        $default_values['completionentriesenabled']=
+            !empty($default_values['completionentries']) ? 1 : 0;
+        if (empty($default_values['completionentries'])) {
+            $default_values['completionentries']=1;
+        }
+    }
+
+    function add_completion_rules() {
+        $mform =& $this->_form;
+
+        $group=array();
+        $group[] =& $mform->createElement('checkbox', 'completionentriesenabled', '', get_string('completionentries','glossary'));
+        $group[] =& $mform->createElement('text', 'completionentries', '', array('size'=>3));
+        $mform->setType('completionentries', PARAM_INT);
+        $mform->addGroup($group, 'completionentriesgroup', get_string('completionentriesgroup','glossary'), array(' '), false);
+        $mform->disabledIf('completionentries','completionentriesenabled','notchecked');
+
+        return array('completionentriesgroup');
+    }
+
+    function completion_rule_enabled($data) {
+        return (!empty($data['completionentriesenabled']) && $data['completionentries']!=0);
+    }
+
+    function get_data() {
+        $data = parent::get_data();
+        if (!$data) {
+            return false;
+        }
+        // Turn off completion settings if the checkboxes aren't ticked
+        $autocompletion = !empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
+        if (empty($data->completionentriesenabled) || !$autocompletion) {
+            $data->completionentries = 0;
+        }
+        return $data;
     }
 
 }

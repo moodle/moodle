@@ -119,6 +119,13 @@ if ($mform->is_cancelled()){
     if (empty($entry->id)) {
         //new entry
         $entry->id = $DB->insert_record('glossary_entries', $entry);
+
+        // Update completion state
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $glossary->completionentries && $entry->approved) {
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+        }
+
         add_to_log($course->id, "glossary", "add entry",
                    "view.php?id=$cm->id&amp;mode=entry&amp;hook=$entry->id", $entry->id, $cm->id);
 

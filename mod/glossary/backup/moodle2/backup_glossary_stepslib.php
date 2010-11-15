@@ -43,7 +43,7 @@ class backup_glossary_activity_structure_step extends backup_activity_structure_
             'allowcomments', 'allowprintview', 'usedynalink', 'defaultapproval',
             'globalglossary', 'entbypage', 'editalways', 'rsstype',
             'rssarticles', 'assessed', 'assesstimestart', 'assesstimefinish',
-            'scale', 'timecreated', 'timemodified'));
+            'scale', 'timecreated', 'timemodified', 'completionentries'));
 
         $entries = new backup_nested_element('entries');
 

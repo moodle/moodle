@@ -309,6 +309,22 @@ function xmldb_glossary_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2010111500, 'glossary');
     }
+
+    if ($oldversion < 2010111501) {
+
+        // Define field completionentries to be added to glossary
+        $table = new xmldb_table('glossary');
+        $field = new xmldb_field('completionentries', XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'timemodified');
+
+        // Conditionally launch add field completionentries
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // glossary savepoint reached
+        upgrade_mod_savepoint(true, 2010111501, 'glossary');
+    }
+
     return true;
 }
 
