@@ -113,6 +113,26 @@ abstract class base_setting {
         $this->uisetting = new base_setting_ui($this);
     }
 
+    /**
+     * Destroy all circular references. It helps PHP 5.2 a lot!
+     */
+    public function destroy() {
+        // Before reseting anything, call destroy recursively
+        foreach ($this->dependencies as $dependency) {
+            $dependency->destroy();
+        }
+        foreach ($this->dependenton as $dependenton) {
+            $dependenton->destroy();
+        }
+        if ($this->uisetting) {
+            $this->uisetting->destroy();
+        }
+        // Everything has been destroyed recursively, now we can reset safely
+        $this->dependencies = array();
+        $this->dependenton = array();
+        $this->uisetting = null;
+    }
+
     public function get_name() {
         return $this->name;
     }

@@ -73,6 +73,15 @@ class base_setting_ui {
     public function __construct(base_setting $setting) {
         $this->setting = $setting;
     }
+
+    /**
+     * Destroy all circular references. It helps PHP 5.2 a lot!
+     */
+    public function destroy() {
+        // No need to destroy anything recursively here, direct reset
+        $this->setting = null;
+    }
+
     /**
      * Gets the name of this item including its prefix
      * @return string

@@ -77,6 +77,16 @@ abstract class setting_dependency {
         $this->defaultvalue = $defaultvalue;
         $this->lastvalue = $dependentsetting->get_value();
     }
+
+    /**
+     * Destroy all circular references. It helps PHP 5.2 a lot!
+     */
+    public function destroy() {
+        // No need to destroy anything recursively here, direct reset
+        $this->setting = null;
+        $this->dependentsetting = null;
+    }
+
     /**
      * Processes a change is setting called by the primary setting
      * @param int $changetype
