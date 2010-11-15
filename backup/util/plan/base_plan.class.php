@@ -148,6 +148,22 @@ abstract class base_plan implements checksumable, executable {
             $task->execute();
         }
     }
+
+    /**
+     * Destroy all circular references. It helps PHP 5.2 a lot!
+     */
+    public function destroy() {
+        // Before reseting anything, call destroy recursively
+        foreach ($this->tasks as $task) {
+            $task->destroy();
+        }
+        foreach ($this->settings as $setting) {
+            $setting->destroy();
+        }
+        // Everything has been destroyed recursively, now we can reset safely
+        $this->tasks = array();
+        $this->settings = array();
+    }
 }
 
 

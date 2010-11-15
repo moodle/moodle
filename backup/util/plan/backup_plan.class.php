@@ -47,6 +47,16 @@ class backup_plan extends base_plan implements loggable {
         parent::__construct('backup_plan');
     }
 
+    /**
+     * Destroy all circular references. It helps PHP 5.2 a lot!
+     */
+    public function destroy() {
+        // No need to destroy anything recursively here, direct reset
+        $this->controller = null;
+        // Delegate to base plan the rest
+        parent::destroy();
+    }
+
     public function build() {
         backup_factory::build_plan($this->controller); // Dispatch to correct format
         $this->built = true;

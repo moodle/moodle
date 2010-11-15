@@ -57,6 +57,14 @@ abstract class base_step implements executable, loggable {
         $this->task = $task;
     }
 
+    /**
+     * Destroy all circular references. It helps PHP 5.2 a lot!
+     */
+    public function destroy() {
+        // No need to destroy anything recursively here, direct reset
+        $this->task = null;
+    }
+
     public function log($message, $level, $a = null, $depth = null, $display = false) {
         if (is_null($this->task)) {
             throw new base_step_exception('not_specified_base_task');
