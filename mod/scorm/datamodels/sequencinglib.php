@@ -138,7 +138,7 @@ function scorm_seq_navigation ($scoid,$userid,$request,$attempt=0) {
                     $seq->target = $request;
                 } else {
                     if ($parentsco = scorm_get_parent($targetsco)) {
-                        if (!isset($parentsco->choice) || ($parent->choice == true)) {
+                        if (!isset($parentsco->choice) || ($parentsco->choice == true)) {
                             $seq->target = $request;
                         }
                     }
@@ -151,7 +151,7 @@ function scorm_seq_navigation ($scoid,$userid,$request,$attempt=0) {
                         if (!$sco = scorm_get_sco($scoid)) {
                             return $seq;
                         }
-                        if ($sco->parent != $target->parent) {
+                        if ($sco->parent != $targetsco->parent) {
                             $ancestors = scorm_get_ancestors($sco);
                             $commonpos = scorm_find_common_ancestor($ancestors,$targetsco);
                             if ($commonpos !== false) {
@@ -344,7 +344,7 @@ function scorm_seq_end_attempt($sco,$userid,$seq) {
         }
     }
     scorm_seq_set('active',$sco,$userid,0,false);
-    scorm_seq_overall_rollup($sco,$userid);
+    scorm_seq_overall_rollup($sco,$userid, $seq);
 }
 
 function scorm_seq_is($what, $scoid, $userid, $attempt=0) {
@@ -477,7 +477,7 @@ function scorm_seq_rule_check ($sco, $rule){
 }
 
 
-function scorm_seq_overall_rollup($sco,$userid){//Carlos
+function scorm_seq_overall_rollup($sco,$userid, $seq){//Carlos
 
      if ($ancestors = scorm_get_ancestors($sco)) {
             foreach ($ancestors as $ancestor) {
@@ -485,7 +485,7 @@ function scorm_seq_overall_rollup($sco,$userid){//Carlos
                     scorm_seq_measure_rollup($sco,$userid);
                 }
                 scorm_seq_objective_rollup($sco,$userid);
-                scorm_seq_activity_progress_rollup($sco,$userid);
+                scorm_seq_activity_progress_rollup($sco,$userid, $seq);
 
             }
 
@@ -715,7 +715,7 @@ function scorm_seq_objective_rollup_rules($sco,$userid){
 
 }
 
-function scorm_seq_activity_progress_rollup ($sco, $userid){
+function scorm_seq_activity_progress_rollup ($sco, $userid, $seq){
 
     if(scorm_seq_rollup_rule_check($sco,$userid,'incomplete')){
         //incomplete rollup action
