@@ -1090,7 +1090,7 @@ function scorm_seq_sequencing ($scoid,$userid,$seq) {
             break;
 
         case 'resumeall':
-            $seq = scorm_seq_resume_sequencing($scoid,$userid,$seq); //We'll see the parameters we have to send, this should update delivery and end
+            $seq = scorm_seq_resume_all_sequencing($scoid,$userid,$seq); //We'll see the parameters we have to send, this should update delivery and end
             $seq->sequencing = true;
 
 
