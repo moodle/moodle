@@ -43,9 +43,7 @@ if (!empty($function)) {
     $PAGE->navbar->add($function);
 }
 
-//require_login();
-//require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
-admin_externalpage_setup('externalservice');
+admin_externalpage_setup('testclient');
 
 // list of all available functions for testing
 $allfunctions = $DB->get_records('external_functions', array(), 'name ASC');

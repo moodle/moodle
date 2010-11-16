@@ -29,16 +29,16 @@ require_once($CFG->dirroot . '/webservice/lib.php');
 
 $id = required_param('id', PARAM_INT);
 
-$PAGE->set_url('/' . $CFG->admin . '/webservice/service_users.php', array('id' => $id));
-$PAGE->navbar->ignore_active(true);
-$PAGE->navbar->add(get_string('administrationsite'));
-$PAGE->navbar->add(get_string('plugins', 'admin'));
-$PAGE->navbar->add(get_string('webservices', 'webservice'));
-$PAGE->navbar->add(get_string('externalservices', 'webservice'),
-        new moodle_url('/' . $CFG->admin . '/settings.php?section=externalservices'));
-$PAGE->navbar->add(get_string('serviceusers', 'webservice'));
-
 admin_externalpage_setup('externalserviceusers');
+
+//define nav bar
+$PAGE->set_url('/' . $CFG->admin . '/webservice/service_users.php', array('id' => $id));
+$node = $PAGE->settingsnav->find('externalservices', navigation_node::TYPE_SETTING);
+if ($node) {
+    $node->make_active();
+}
+$PAGE->navbar->add(get_string('serviceusers', 'webservice'),
+        new moodle_url('/' . $CFG->admin . '/webservice/service_users.php', array('id' => $id)));
 
 $webservicemanager = new webservice();
 

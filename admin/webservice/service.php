@@ -29,13 +29,14 @@ require_once($CFG->dirroot . '/webservice/lib.php');
 
 admin_externalpage_setup('externalservice');
 
-//Deactivate the 'Edit service' navigation node, and use the main 'Service' navigation node
+//define nav bar
 $node = $PAGE->settingsnav->find('externalservice', navigation_node::TYPE_SETTING);
 $newnode = $PAGE->settingsnav->find('externalservices', navigation_node::TYPE_SETTING);
 if ($node && $newnode) {
     $node->display = false;
     $newnode->make_active();
 }
+$PAGE->navbar->add(get_string('externalservice', 'webservice'));
 
 //Retrieve few general parameters
 $id = required_param('id', PARAM_INT);

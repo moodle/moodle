@@ -1,7 +1,16 @@
 <?php
 require "../../../config.php";
+require_once($CFG->libdir . '/adminlib.php');
 
+admin_externalpage_setup('externalservice');
+
+//page nav bar
 $PAGE->set_url('/webservice/amf/testclient/index.php');
+$node = $PAGE->settingsnav->find('testclient', navigation_node::TYPE_SETTING);
+if ($node) {
+    $node->make_active();
+}
+$PAGE->navbar->add(get_string('amftestclient', 'webservice'));
 
 $flashvars = new stdClass();
 $flashvars->rooturl =$CFG->wwwroot;
