@@ -1995,7 +1995,7 @@ function scorm_content_delivery_environment ($seq,$userid){
     }
     $track = $DB->get_record('scorm_scoes_track', array('scoid'=>$act->id,'userid'=>$userid,'element'=>'suspendedactivity'));
     if ($track != null){
-        $seq = scorm_clear_suspended_activity($seq->delivery, $seq);
+        $seq = scorm_clear_suspended_activity($seq->delivery, $seq, $userid);
 
     }
     $seq = scorm_terminate_descendent_attempts ($seq->delivery,$userid,$seq);
@@ -2041,7 +2041,7 @@ function scorm_content_delivery_environment ($seq,$userid){
 
 
 }
-function scorm_clear_suspended_activity($act,$seq){
+function scorm_clear_suspended_activity($act,$seq, $userid){
     global $DB;
     $currentact= $seq->currentactivity;
     $track = $DB->get_record('scorm_scoes_track', array('scoid'=>$currentact->id,'userid'=>$userid,'element'=>'suspendedactivity')); // TODO: undefined
