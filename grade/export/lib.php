@@ -54,13 +54,20 @@ class grade_export {
         $this->groupid = $groupid;
         $this->grade_items = grade_item::fetch_all(array('courseid'=>$this->course->id));
 
+        //Populating the columns here is required by /grade/export/(whatever)/export.php
+        //however index.php, when the form is submitted, will construct the collection here
+        //with an empty $itemlist then reconstruct it in process_form() using $formdata
         $this->columns = array();
         if (!empty($itemlist)) {
-            $itemids = explode(',', $itemlist);
-            // remove items that are not requested
-            foreach ($itemids as $itemid) {
-                if (array_key_exists($itemid, $this->grade_items)) {
-                    $this->columns[$itemid] =& $this->grade_items[$itemid];
+            if ($itemlist=='-1') {
+            //user deselected all items
+            } else {
+                $itemids = explode(',', $itemlist);
+                // remove items that are not requested
+                foreach ($itemids as $itemid) {
+                    if (array_key_exists($itemid, $this->grade_items)) {
+                        $this->columns[$itemid] =& $this->grade_items[$itemid];
+                    }
                 }
             }
         } else {
@@ -87,9 +94,13 @@ class grade_export {
 
         $this->columns = array();
         if (!empty($formdata->itemids)) {
-            foreach ($formdata->itemids as $itemid=>$selected) {
-                if ($selected and array_key_exists($itemid, $this->grade_items)) {
-                    $this->columns[$itemid] =& $this->grade_items[$itemid];
+            if ($formdata->itemids=='-1') {
+                //user deselected all items
+            } else {
+                foreach ($formdata->itemids as $itemid=>$selected) {
+                    if ($selected and array_key_exists($itemid, $this->grade_items)) {
+                        $this->columns[$itemid] =& $this->grade_items[$itemid];
+                    }
                 }
             }
         } else {
@@ -267,10 +278,14 @@ class grade_export {
      */
     function get_export_params() {
         $itemids = array_keys($this->columns);
+        $itemidsparam = implode(',', $itemids);
+        if (empty($itemidsparam)) {
+            $itemidsparam = '-1';
+        }
 
         $params = array('id'                =>$this->course->id,
                         'groupid'           =>$this->groupid,
-                        'itemids'           =>implode(',', $itemids),
+                        'itemids'           =>$itemidsparam,
                         'export_letters'    =>$this->export_letters,
                         'export_feedback'   =>$this->export_feedback,
                         'updatedgradesonly' =>$this->updatedgradesonly,
