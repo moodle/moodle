@@ -61,6 +61,9 @@ class question_calculated_qtype extends default_questiontype {
             $question->options->correctfeedback = '';
             $question->options->partiallycorrectfeedback = '';
             $question->options->incorrectfeedback = '';
+            $question->options->correctfeedbackformat = 0;
+            $question->options->partiallycorrectfeedbackformat = 0;
+            $question->options->incorrectfeedbackformat = 0;
         }
 
         if (!$question->options->answers = $DB->get_records_sql(
@@ -153,17 +156,9 @@ class question_calculated_qtype extends default_questiontype {
         $options->shuffleanswers = $question->shuffleanswers;
 
         foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
-            $feedback = $question->$feedbackname;
-            $options->$feedbackname = trim($feedback['text']);
+            $options->$feedbackname = '';
             $feedbackformat = $feedbackname . 'format';
-            $options->$feedbackformat = trim($feedback['format']);
-            if (isset($feedback['files'])) {
-                foreach ($feedback['files'] as $file) {
-                    $this->import_file($question->context, 'qtype_calculated', $feedbackname, $question->id, $file);
-                }
-            } else {
-                $options->$feedbackname = file_save_draft_area_files($feedback['itemid'], $context->id, 'qtype_calculated', $feedbackname, $question->id, $this->fileoptionsa , trim($feedback['text']));
-            }
+            $options->$feedbackformat = 0 ;
         }
 
         if ($update) {
