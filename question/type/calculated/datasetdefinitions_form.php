@@ -112,7 +112,8 @@ class question_dataset_dependent_definitions_form extends moodleform {
 
         //hidden elements
         $mform->addElement('hidden', 'returnurl');
-        $mform->setType('returnurl', PARAM_URL);
+        $mform->setType('returnurl', PARAM_LOCALURL);
+        $mform->setDefault('returnurl', 0);
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
