@@ -103,8 +103,6 @@ class question_edit_calculated_form extends question_edit_form {
     function definition_inner(&$mform) {
         global $QTYPES;
         $this->qtypeobj =& $QTYPES[$this->qtype()];
-        // echo code left for testing period
-        // echo "<p>question ".optional_param('multichoice', '', PARAM_RAW)." optional<pre>";print_r($this->question);echo "</pre></p>";
         $label = get_string('sharedwildcards', 'qtype_calculated');
         $mform->addElement('hidden', 'initialcategory', 1);
         $mform->addElement('hidden', 'reload', 1);
@@ -137,12 +135,6 @@ class question_edit_calculated_form extends question_edit_form {
 
         $QTYPES['numerical']->add_units_options($mform,$this);
         $QTYPES['numerical']->add_units_elements($mform,$this);
-
-        $mform->addElement('header', 'overallfeedbackhdr', get_string('overallfeedback', 'qtype_multichoice'));
-        foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
-            $mform->addElement('editor', $feedbackname, get_string($feedbackname, 'qtype_calculated'), null, $this->editoroptions);
-            $mform->setType($feedbackname, PARAM_RAW);
-        }
 
         //hidden elements
         $mform->addElement('hidden', 'synchronize', '');
@@ -190,31 +182,11 @@ class question_edit_calculated_form extends question_edit_form {
             $default_values['single'] =  $question->options->single;
             $default_values['answernumbering'] =  $question->options->answernumbering;
             $default_values['shuffleanswers'] =  $question->options->shuffleanswers;
-            //$default_values['correctfeedback'] =  $question->options->correctfeedback;
-            //$default_values['partiallycorrectfeedback'] =  $question->options->partiallycorrectfeedback;
-            //$default_values['incorrectfeedback'] =  $question->options->incorrectfeedback;
             // prepare feedback editor to display files in draft area
-            foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
-                $draftid = file_get_submitted_draft_itemid($feedbackname);
-                $text = $question->options->$feedbackname;
-                $feedbackformat = $feedbackname . 'format';
-                $format = $question->options->$feedbackformat;
-                $default_values[$feedbackname] = array();
-                $default_values[$feedbackname]['text'] = file_prepare_draft_area(
-                    $draftid,       // draftid
-                    $this->context->id,    // context
-                    'qtype_calculated',   // component
-                    $feedbackname,         // filarea
-                    !empty($question->id)?(int)$question->id:null, // itemid
-                    $this->fileoptions,    // options
-                    $text      // text
-                );
-                $default_values[$feedbackname]['format'] = $format;
-                $default_values[$feedbackname]['itemid'] = $draftid;
-            }
         }
         $default_values['submitbutton'] = get_string('nextpage', 'qtype_calculated');
         $default_values['makecopy'] = get_string('makecopynextpage', 'qtype_calculated');
+        $default_values['returnurl'] = '0' ;
         /* set the wild cards category display given that on loading the category element is
         unselected when processing this function but have a valid value when processing the
         update category button. The value can be obtain by
