@@ -1291,12 +1291,11 @@ function scorm_seq_retry_sequencing($scoid,$userid,$seq){
 }
 
 function scorm_seq_flow ($candidate,$direction,$seq,$childrenflag,$userid){
-    //$PREVDIRECTION NOT DEFINED YET
+    //TODO: $PREVDIRECTION NOT DEFINED YET
 
     $activity=$candidate;
-    $deliverable=false;
-    $previdirection = null;
-    $seq = scorm_seq_flow_tree_traversal ($activity,$direction,$childrenflag,$prevdirection,$seq,$userid); // TODO: undefined
+    $prevdirection = null;
+    $seq = scorm_seq_flow_tree_traversal ($activity,$direction,$childrenflag,$prevdirection,$seq,$userid);
     if($seq->identifiedactivity == null){//if identifies
         $seq->identifiedactivity = $candidate;
         $seq->deliverable = false;
