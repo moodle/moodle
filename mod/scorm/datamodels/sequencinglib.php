@@ -1332,11 +1332,11 @@ function scorm_seq_flow_activity_traversal ($activity, $userid, $direction, $chi
 
             if ($prevdirection = 'backward' && $seq->traversaldir == 'backward'){
                 $seq = scorm_seq_flow_tree_traversal ($activity,$direction,false,null,$seq,$userid);
-                $seq = scorm_seq_flow_activity($seq->identifiedactivity, $userid, $direction, $childrenflag, $prevdirection, $seq,$userid);
+                $seq = scorm_seq_flow_activity_traversal($seq->identifiedactivity, $userid, $direction, $childrenflag, $prevdirection, $seq,$userid);
             }
             else{
                 $seq = scorm_seq_flow_tree_traversal ($activity,$direction,false,null,$seq,$userid);
-                $seq = scorm_seq_flow_activity($seq->identifiedactivity, $userid, $direction, $childrenflag, $prevdirection, $seq,$userid);
+                $seq = scorm_seq_flow_activity_traversal($seq->identifiedactivity, $userid, $direction, $childrenflag, $prevdirection, $seq,$userid);
             }
             return $seq;
         }
@@ -1365,10 +1365,10 @@ function scorm_seq_flow_activity_traversal ($activity, $userid, $direction, $chi
 
         else{
             if($direction == 'backward' && $seq->traversaldir == 'forward'){
-                $seq = scorm_seq_flow_activity($seq->identifiedactivity, $userid, 'forward', $childrenflag, 'backward', $seq,$userid);
+                $seq = scorm_seq_flow_activity_traversal($seq->identifiedactivity, $userid, 'forward', $childrenflag, 'backward', $seq,$userid);
             }
             else{
-                scorm_seq_flow_activity($seq->identifiedactivity, $userid, $direction, $childrenflag, null, $seq,$userid);
+                scorm_seq_flow_activity_traversal($seq->identifiedactivity, $userid, $direction, $childrenflag, null, $seq,$userid);
             }
             return $seq;
         }
