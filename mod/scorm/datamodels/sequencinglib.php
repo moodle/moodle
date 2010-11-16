@@ -841,7 +841,7 @@ function scorm_seq_evaluate_rollupcond($sco,$conditioncombination,$rolluprulecon
     $unk = false;
     foreach($rollupruleconds as $rolluprulecond){
 
-        $condit = scorm_evaluate_cond($rolluprulecond,$sco,$userid);
+        $condit = scorm_evaluate_condition($rolluprulecond,$sco,$userid);
 
         if($rule->operator=='not'){// If operator is not, negate the condition
             if ($rule->cond != 'unknown'){
