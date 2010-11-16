@@ -113,6 +113,7 @@ $curl->post($huburl . "/local/hub/webservice/upload.php", $params);
 
 //delete the temp backup file from user_tohub aera
 $backupfile->delete();
+$bc->destroy();
 
 //Output sending success
 echo $renderer->sentbackupinfo($id, $huburl, $hubname);
