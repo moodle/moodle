@@ -14,21 +14,21 @@ $string['attachmentattach'] = 'Add as attachment';
 $string['attachmentimage'] = 'Add as image';
 $string['attachmentlink'] = 'Add as link';
 $string['attachments'] = 'Attachments';
-$string['backcomments'] = 'Back to Comments';
-$string['backhistory'] = 'Back to History';
-$string['backoldversion'] = 'Back to Old Version';
-$string['backpage'] = 'Back to Page';
-$string['backtomapmenu'] = 'Back to Map Menu';
+$string['backcomments'] = 'Back to comments';
+$string['backhistory'] = 'Back to history';
+$string['backoldversion'] = 'Back to old version';
+$string['backpage'] = 'Back to page';
+$string['backtomapmenu'] = 'Back to map menu';
 $string['changerate']='Do you wish to change it?';
-$string['comparesel'] = 'Compare Selected';
+$string['comparesel'] = 'Compare selected';
 $string['comments'] = 'Comments';
 $string['commentscount'] = 'Comments ({$a})';
 $string['comparewith'] = 'Comparing version {$a->old} with version {$a->new}';
 $string['contributions'] = 'Contributions';
 $string['contributions_help'] = 'List of pages that you have edited.';
 $string['createcomment'] = 'Creating comment';
-$string['creating'] = 'Creating wiki page';
-$string['createpage'] = 'Create Page';
+$string['creating'] = 'Creating a wiki page';
+$string['createpage'] = 'Create page';
 $string['createddate'] = 'Created: {$a->date} by {$a->username}';
 $string['creole'] = 'Creole';
 $string['defaultformat'] = 'Default format';
@@ -57,23 +57,29 @@ $string['firstpagetitle_help'] = 'Title of the first page of the wiki.';
 $string['forceformat'] = 'Force format';
 $string['forceformat_help'] = 'If the format is forced (checkbox ticked), there is no option to choose a format when editing a wiki page.';
 $string['format'] = 'Format';
-$string['format_help'] = 'Format used when editing wiki pages.
-
-* HTML - The HTML editor is available
+$string['format_help'] = '* HTML - The HTML editor is available
 * Creole - A common wiki markup language for which a small edit toolbar is available
 * Nwiki - Mediawiki-like markup language used in the contributed Nwiki module';
-$string['formathtml'] = 'HTML Format';
-$string['formathtml_help'] = '<a href="http://docs.moodle.org/en/HTML_format">HTML Format</a>';
-$string['formatcreole'] = 'Creole Format';
-$string['formatcreole_help'] = '<a href="http://docs.moodle.org/en/Creole_format">Creole Format</a>';
-$string['formatnwiki'] = 'NWiki Format';
-$string['formatnwiki_help'] = '<a href="http://docs.moodle.org/en/NWiki_format">NWiki Format</a>';
+$string['formathtml'] = 'HTML format';
+$string['formathtml_help'] = 'The HTML editor may be used for formatting content.
+
+To create a new page, type the new page name enclosed in double square brackets, for example [[Page 2]].';
+$string['formatcreole'] = 'Creole format';
+$string['formatcreole_help'] = 'Creole is a common wiki markup language with an edit toolbar for inserting appropriate markup.
+
+To create a new page, type the new page name enclosed in double square brackets, for example [[Page 2]].';
+$string['formatcreole_link'] = 'mod/wiki/creole';
+$string['formatnwiki'] = 'NWiki format';
+$string['formatnwiki_help'] = 'Nwiki is the Mediawiki-like markup language used in the contributed Nwiki module.
+
+To create a new page, type the new page name enclosed in double square brackets, for example [[Page 2]].';
+$string['formatnwiki_link'] = 'mod/wiki/nwiki';
 $string['history'] = 'History';
 $string['html'] = 'HTML';
 $string['insertcomment'] = 'Insert comment';
 $string['invalidlock'] = 'This page is already locked by another user.';
 $string['invalidparameters'] = 'Invalid parameters have been given.';
-$string['invalidsesskey'] = 'The given Sesskey is not valid. Please resend data again';
+$string['invalidsesskey'] = 'The given sesskey is not valid. Please resend data again';
 $string['individualpagedoesnotexist'] = 'Individual wiki page doesn\'t exist';
 $string['javascriptdisabledlocks'] = 'Javascript is disabled on your browser and locks are not working. The changes you make may not be saved correctly.';
 $string['lockingajaxtimeout'] = 'Edit page locking refresh time';
@@ -181,15 +187,15 @@ $string['wikiinternalurl'] = 'Internal link';
 $string['wikiintro'] = 'Wiki description';
 $string['wikiitalictext'] = 'Italic Text';
 $string['wikilockingsettings'] = 'Locking and reparsing timeouts';
-$string['wikimode'] = 'Wiki Mode';
+$string['wikimode'] = 'Wiki mode';
 $string['wikimode_help'] = 'The wiki mode determines whether everyone can edit the wiki - a collaborative wiki - or whether everyone has their own wiki which only they can edit - an individual wiki.';
-$string['wikimodecollaborative'] = 'Collaborative Wiki';
-$string['wikimodeindividual'] = 'Individual Wiki';
+$string['wikimodecollaborative'] = 'Collaborative wiki';
+$string['wikimodeindividual'] = 'Individual wiki';
 $string['wikiname'] = 'Wiki name';
-$string['wikinowikitext'] = 'No Wiki Text';
-$string['wikiorderedlist'] = 'Ordered List';
+$string['wikinowikitext'] = 'No wiki text';
+$string['wikiorderedlist'] = 'Ordered list';
 $string['wikisettings'] = 'Wiki settings';
-$string['wikiunorderedlist'] = 'Unordered List';
+$string['wikiunorderedlist'] = 'Unordered list';
 $string['wiki:createpage'] = 'Create new wiki pages';
 $string['wiki:editcomment'] = 'Add comments to pages';
 $string['wiki:editpage'] = 'Save wiki pages';
