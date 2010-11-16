@@ -27,7 +27,7 @@
 $string['actenrolshhdr'] = 'Available course enrolment plugins';
 $string['addinstance'] = 'Add method';
 $string['ajaxoneuserfound'] = '1 user found';
-$string['ajaxxusersfound'] = '[users] users found';
+$string['ajaxxusersfound'] = '{$a} users found';
 $string['ajaxnext25'] = 'Next 25...';
 $string['assignnotpermitted'] = 'You do not have permission or can not assign roles in this course.';
 $string['configenrolplugins'] = 'Please select all required plugins and arrange then in appropriate order.';

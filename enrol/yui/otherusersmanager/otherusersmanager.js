@@ -186,7 +186,7 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
             }
             this.set(USERCOUNT, count);
             if (!args.append) {
-                var usersstr = (result.response.totalusers == '1')?M.str.enrol.ajaxoneuserfound:M.str.enrol.ajaxxusersfound.replace(/\[users\]/, result.response.totalusers);
+                var usersstr = (result.response.totalusers == '1')?M.str.enrol.ajaxoneuserfound:M.util.get_string('ajaxxusersfound','enrol', result.response.totalusers);
                 var content = Y.Node.create('<div class="'+CSS.SEARCHRESULTS+'"></div>')
                     .append(Y.Node.create('<div class="'+CSS.TOTALUSERS+'">'+usersstr+'</div>'))
                     .append(usersnode);
