@@ -180,7 +180,7 @@ echo '</div>';
 
 echo $OUTPUT->heading("$strsearchresults: $totalcount");
 
-$url = new moodle_url('search.php', array('search' => urlencode($search), 'id' => $course->id, 'perpage' => $perpage));
+$url = new moodle_url('search.php', array('search' => $search, 'id' => $course->id, 'perpage' => $perpage));
 echo $OUTPUT->paging_bar($totalcount, $page, $perpage, $url);
 
 //added to implement highlighting of search terms found only in HTML markup
