@@ -843,8 +843,8 @@ function scorm_seq_evaluate_rollupcond($sco,$conditioncombination,$rolluprulecon
 
         $condit = scorm_evaluate_condition($rolluprulecond,$sco,$userid);
 
-        if($rule->operator=='not'){// If operator is not, negate the condition
-            if ($rule->cond != 'unknown'){
+        if($rolluprulecond->operator=='not'){// If operator is not, negate the condition
+            if ($rolluprulecond->cond != 'unknown'){
                 if ($condit){
                     $condit = false;
                 }
@@ -866,7 +866,7 @@ function scorm_seq_evaluate_rollupcond($sco,$conditioncombination,$rolluprulecon
         $i = 0;
         foreach ($bag as $b){
 
-             if ($rolluprule->conditioncombination == 'all'){
+             if ($rolluprulecond->conditioncombination == 'all'){
 
                  $val = true;
                  if($b == 'unknown'){
@@ -1217,7 +1217,7 @@ function scorm_seq_previous_sequencing($scoid,$userid,$seq){
 
     $currentact= $seq->currentactivity;
     if ($currentact->parent != '/') {//if the activity is the root and is leaf
-        $parent = scorm_get_parent ($activity); // TODO: undefined!!
+        $parent = scorm_get_parent ($currentact);
         if (!isset($parent->flow) || ($parent->flow == false)) {
             $seq->delivery = null;
             $seq->exception = 'SB.2.8-2';
