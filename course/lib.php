@@ -843,7 +843,7 @@ function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
 }
 
 
-function print_overview($courses) {
+function print_overview($courses, array $remote_courses=array()) {
     global $CFG, $USER, $DB, $OUTPUT;
 
     $htmlarray = array();
@@ -859,17 +859,31 @@ function print_overview($courses) {
         }
     }
     foreach ($courses as $course) {
-        echo $OUTPUT->box_start("coursebox");
-        $linkcss = '';
+        echo $OUTPUT->box_start('coursebox');
+        $attributes = array('title' => s($course->fullname));
         if (empty($course->visible)) {
-            $linkcss = 'class="dimmed"';
+            $attributes['class'] = 'dimmed';
         }
-        echo $OUTPUT->heading('<a title="'. format_string($course->fullname).'" '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'. format_string($course->fullname).'</a>', 3);
+        echo $OUTPUT->heading(html_writer::link(
+            new moodle_url('/course/view.php', array('id' => $course->id)), format_string($course->fullname), $attributes), 3);
         if (array_key_exists($course->id,$htmlarray)) {
             foreach ($htmlarray[$course->id] as $modname => $html) {
                 echo $html;
             }
         }
+        echo $OUTPUT->box_end();
+    }
+
+    if (!empty($remote_courses)) {
+        echo $OUTPUT->heading(get_string('remotecourses', 'mnet'));
+    }
+    foreach ($remote_courses as $course) {
+        echo $OUTPUT->box_start('coursebox');
+        $attributes = array('title' => s($course->fullname));
+        echo $OUTPUT->heading(html_writer::link(
+            new moodle_url('/auth/mnet/jump.php', array('hostid' => $course->hostid, 'wantsurl' => '/course/view.php?id='.$course->remoteid)),
+            format_string($course->shortname),
+            $attributes) . ' (' . format_string($course->hostname) . ')', 3);
         echo $OUTPUT->box_end();
     }
 }

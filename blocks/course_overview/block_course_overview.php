@@ -68,9 +68,20 @@ class block_course_overview extends block_base {
         $site = get_site();
         $course = $site; //just in case we need the old global $course hack
 
-        if (($courses_limit > 0) && (count($courses) >= $courses_limit)) {
-            //remove the 'marker' course that we retrieve just to see if we have more than $courses_limit
-            array_pop($courses);
+        if (is_enabled_auth('mnet')) {
+            $remote_courses = get_my_remotecourses();
+        }
+        if (empty($remote_courses)) {
+            $remote_courses = array();
+        }
+
+        if (($courses_limit > 0) && (count($courses)+count($remote_courses) >= $courses_limit)) {
+            // get rid of any remote courses that are above the limit
+            $remote_courses = array_slice($remote_courses, 0, $courses_limit - count($courses), true);
+            if (count($courses) >= $courses_limit) {
+                //remove the 'marker' course that we retrieve just to see if we have more than $courses_limit
+                array_pop($courses);
+            }
             $morecourses = true;
         }
 
@@ -87,13 +98,13 @@ class block_course_overview extends block_base {
             }
         }
 
-        if (empty($courses)) {
+        if (empty($courses) && empty($remote_courses)) {
             $content[] = get_string('nocourses','my');
         } else {
             ob_start();
 
             require_once $CFG->dirroot."/course/lib.php";
-            print_overview($courses);
+            print_overview($courses, $remote_courses);
 
             $content[] = ob_get_contents();
             ob_end_clean();
