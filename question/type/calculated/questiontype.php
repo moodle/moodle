@@ -24,6 +24,12 @@
 
 class question_calculated_qtype extends default_questiontype {
 
+    public $fileoptionsa = array(
+        'subdirs' => false,
+        'maxfiles' => -1,
+        'maxbytes' => 0,
+    );
+
     // Used by the function custom_generator_tools:
     public $calcgenerateidhasbeenadded = false;
     public $virtualqtype = false;
@@ -156,7 +162,7 @@ class question_calculated_qtype extends default_questiontype {
                     $this->import_file($question->context, 'qtype_calculated', $feedbackname, $question->id, $file);
                 }
             } else {
-                $options->$feedbackname = file_save_draft_area_files($feedback['itemid'], $context->id, 'qtype_calculated', $feedbackname, $question->id, self::$fileoptions, trim($feedback['text']));
+                $options->$feedbackname = file_save_draft_area_files($feedback['itemid'], $context->id, 'qtype_calculated', $feedbackname, $question->id, $this->fileoptionsa , trim($feedback['text']));
             }
         }
 
@@ -203,7 +209,7 @@ class question_calculated_qtype extends default_questiontype {
 
                 if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                     $answer->id = $oldanswer->id;
-                    $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $oldanswer->id, self::$fileoptions, trim($question->feedback[$key]['text']));
+                    $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $oldanswer->id, $this->fileoptionsa, trim($question->feedback[$key]['text']));
                     $DB->update_record("question_answers", $answer);
                 } else { // This is a completely new answer
                     $answer->feedback = trim($question->feedback[$key]['text']);
@@ -213,7 +219,7 @@ class question_calculated_qtype extends default_questiontype {
                             $this->import_file($context, 'question', 'answerfeedback', $answer->id, $file);
                         }
                     } else {
-                        $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, self::$fileoptions, trim($question->feedback[$key]['text']));
+                        $answer->feedback = file_save_draft_area_files($question->feedback[$key]['itemid'], $context->id, 'question', 'answerfeedback', $answer->id, $this->fileoptionsa , trim($question->feedback[$key]['text']));
                     }
                     $DB->set_field('question_answers', 'feedback', $answer->feedback, array('id'=>$answer->id));
                 }
