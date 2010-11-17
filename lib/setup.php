@@ -461,7 +461,7 @@ try {
     define('SITEID', $SITE->id);
     // And the 'default' course - this will usually get reset later in require_login() etc.
     $COURSE = clone($SITE);
-} catch (dml_read_exception $e) {
+} catch (dml_exception $e) {
     $SITE = null;
     if (empty($CFG->version)) {
         // we are just installing
