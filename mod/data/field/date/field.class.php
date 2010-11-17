@@ -64,10 +64,13 @@ class data_field_date extends data_field_base {
     }
 
     function generate_sql($tablealias, $value) {
+        global $DB;
+
         static $i=0;
         $i++;
-        $name = "df_picture_$i";
-        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$value') ", array($name=>"%$value%"));
+        $name = "df_date_$i";
+        $varcharcontent = $DB->sql_compare_text("{$tablealias}.content");
+        return array(" ({$tablealias}.fieldid = {$this->field->id} AND $varcharcontent = :$name) ", array($name=>$value));
     }
 
     function parse_search_field() {
