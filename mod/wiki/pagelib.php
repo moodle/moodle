@@ -1589,7 +1589,7 @@ class page_wiki_map extends page_wiki {
         foreach ($tolinks as $link) {
             if ($link->tomissingpage) {
                 $viewlink = new moodle_url('/mod/wiki/create.php', array('swid' => $page->subwikiid, 'title' => $link->tomissingpage, 'action' => 'new'));
-                $table->data[] = array(html_writer::link($viewlink->out(false), format_string($link)->tomissingpage, array('class' => 'wiki_newentry')));
+                $table->data[] = array(html_writer::link($viewlink->out(false), format_string($link->tomissingpage), array('class' => 'wiki_newentry')));
             } else {
                 $lpage = wiki_get_page($link->topageid);
                 $viewlink = new moodle_url('/mod/wiki/view.php', array('pageid' => $lpage->id));
