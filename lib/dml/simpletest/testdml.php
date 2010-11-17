@@ -3047,6 +3047,25 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('course' => 5, 'content' => 'hello', 'name'=>'def'));
         $DB->insert_record($tablename, array('course' => 2, 'content' => 'universe', 'name'=>'abc'));
 
+        // test limits in queries with DISTINCT/ALL clauses and multiple whitespace. MDL-25268
+        $sql = "SELECT   DISTINCT   course
+                  FROM {{$tablename}}
+                 ORDER BY course";
+        // only limitfrom
+        $records = $DB->get_records_sql($sql, null, 1);
+        $this->assertEqual(2, count($records));
+        $this->assertEqual(3, reset($records)->course);
+        $this->assertEqual(5, next($records)->course);
+        // only limitnum
+        $records = $DB->get_records_sql($sql, null, 0, 2);
+        $this->assertEqual(2, count($records));
+        $this->assertEqual(2, reset($records)->course);
+        $this->assertEqual(3, next($records)->course);
+        // both limitfrom and limitnum
+        $records = $DB->get_records_sql($sql, null, 2, 2);
+        $this->assertEqual(1, count($records));
+        $this->assertEqual(5, reset($records)->course);
+
         // we have sql like this in moodle, this syntax breaks on older versions of sqlite for example..
         $sql = "SELECT a.id AS id, a.course AS course
                   FROM {{$tablename}} a
