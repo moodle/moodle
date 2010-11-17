@@ -65,13 +65,14 @@ class data_field_checkbox extends data_field_base {
     }
 
     function display_search_field($value='') {
-        global $CFG, $DB, $OUTPUT;
+        global $CFG, $DB;
+
         if (is_array($value)) {
             $content = $value['checked'];
-            $allrequired = $value['allrequired'] ? 'checked = "checked"' : '';
+            $allrequired = $value['allrequired'] ? true : false;
         } else {
             $content = array();
-            $allrequired = '';
+            $allrequired = false;
         }
 
         $str = '';
@@ -90,7 +91,7 @@ class data_field_checkbox extends data_field_base {
             return '';
         }
 
-        $str .= html_writer::checkbox('f_'.$this->field->id.'_allreq', null, false, get_string('selectedrequired', 'data'));
+        $str .= html_writer::checkbox('f_'.$this->field->id.'_allreq', null, $allrequired, get_string('selectedrequired', 'data'));
         return $str;
     }
 
@@ -105,26 +106,38 @@ class data_field_checkbox extends data_field_base {
     }
 
     function generate_sql($tablealias, $value) {
+        global $DB;
+
         static $i=0;
         $i++;
-        $name = "df_checkbox_$i";
+        $name = "df_checkbox_{$i}_";
+        $params = array();
+        $varcharcontent = $DB->sql_compare_text("{$tablealias}.content", 255);
+
         $allrequired = $value['allrequired'];
         $selected    = $value['checked'];
 
         if ($selected) {
             $conditions = array();
+            $j=0;
             foreach ($selected as $sel) {
+                $j++;
+                $xname = $name.$j;
                 $likesel = str_replace('%', '\%', $sel);
                 $likeselsel = str_replace('_', '\_', $likesel);
-                $conditions[] = "({$tablealias}.fieldid = {$this->field->id} AND ({$tablealias}.content = '$sel'
-                    OR {$tablealias}.content LIKE '$likesel##%'
-                    OR {$tablealias}.content LIKE '%##$likesel'
-                    OR {$tablealias}.content LIKE '%##$likesel##%'))";
+                $conditions[] = "({$tablealias}.fieldid = {$this->field->id} AND ({$varcharcontent} = :{$xname}a
+                                                                               OR {$tablealias}.content LIKE :{$xname}b
+                                                                               OR {$tablealias}.content LIKE :{$xname}c
+                                                                               OR {$tablealias}.content LIKE :{$xname}d))";
+                $params[$xname.'a'] = $sel;
+                $params[$xname.'b'] = "$likesel##%";
+                $params[$xname.'c'] = "%##$likesel";
+                $params[$xname.'d'] = "%##$likesel##%";
             }
             if ($allrequired) {
-                return array(" (".implode(" AND ", $conditions).") ", array($name=>$value));
+                return array(" (".implode(" AND ", $conditions).") ", $params);
             } else {
-                return array(" (".implode(" OR ", $conditions).") ", array($name=>$value));
+                return array(" (".implode(" OR ", $conditions).") ", $params);
             }
         } else {
             return array(" ", array());

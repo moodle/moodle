@@ -63,10 +63,10 @@ class data_field_multimenu extends data_field_base {
 
         if (is_array($value)){
             $content     = $value['selected'];
-            $allrequired = $value['allrequired'] ? 'checked = "checked"' : '';
+            $allrequired = $value['allrequired'] ? true : false;
         } else {
             $content     = array();
-            $allrequired = '';
+            $allrequired = false;
         }
 
         static $c = 0;
@@ -115,9 +115,7 @@ class data_field_multimenu extends data_field_base {
 
         $str .= '</select>';
 
-        $str .= '&nbsp;<input name="f_'.$this->field->id.'_allreq" id="f_'.$this->field->id.'_allreq'.$c.'" type="checkbox" '.$allrequired.'/>';
-        $str .= '<label for="f_'.$this->field->id.'_allreq'.$c.'">'.get_string('selectedrequired', 'data').'</label>';
-        $c++;
+        $str .= html_writer::checkbox('f_'.$this->field->id.'_allreq', null, $allrequired, get_string('selectedrequired', 'data'));
 
         return $str;
 
@@ -134,10 +132,13 @@ class data_field_multimenu extends data_field_base {
     }
 
     function generate_sql($tablealias, $value) {
+        global $DB;
+
         static $i=0;
         $i++;
         $name = "df_multimenu_{$i}_";
         $params = array();
+        $varcharcontent = $DB->sql_compare_text("{$tablealias}.content", 255);
 
         $allrequired = $value['allrequired'];
         $selected    = $value['selected'];
@@ -150,7 +151,7 @@ class data_field_multimenu extends data_field_base {
                 $xname = $name.$j;
                 $likesel = str_replace('%', '\%', $sel);
                 $likeselsel = str_replace('_', '\_', $likesel);
-                $conditions[] = "({$tablealias}.fieldid = {$this->field->id} AND ({$tablealias}.content = :{$xname}a
+                $conditions[] = "({$tablealias}.fieldid = {$this->field->id} AND ({$varcharcontent} = :{$xname}a
                                                                                OR {$tablealias}.content LIKE :{$xname}b
                                                                                OR {$tablealias}.content LIKE :{$xname}c
                                                                                OR {$tablealias}.content LIKE :{$xname}d))";
