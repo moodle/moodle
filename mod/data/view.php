@@ -520,10 +520,10 @@ if ($showactivity) {
 
         } else {
 
-            $sortcontent = $sortfield->get_sort_field();
-            $sortcontentfull = $sortfield->get_sort_sql('c.'.$sortcontent);
+            $sortcontent = $DB->sql_compare_text('c.' . $sortfield->get_sort_field());
+            $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
 
-            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, '.$DB->sql_compare_text($sortcontentfull).' AS _order ';
+            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, ' . $sortcontentfull . ' AS _order ';
             $count = ' COUNT(DISTINCT c.recordid) ';
             $tables = '{data_content} c, {data_records} r, {data_content} cs, {user} u ';
             $where =  'WHERE c.recordid = r.id
