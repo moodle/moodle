@@ -570,7 +570,6 @@ if ($showactivity) {
         $fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
         $sqlselect  = "SELECT $what $fromsql $sortorder";
         $sqlcount   = "SELECT $count $fromsql";   // Total number of records when searching
-        $sqlrids    = "SELECT tmp.id FROM ($sqlselect) tmp";
         $sqlmax     = "SELECT $count FROM $tables $where $groupselect $approveselect"; // number of all recoirds user may see
         $allparams  = array_merge($params, $advparams);
 
@@ -588,8 +587,8 @@ if ($showactivity) {
             $mode = 'single';
 
             $page = 0;
-            if ($allrecordids = $DB->get_records_sql($sqlrids, $allparams)) {
-                $allrecordids = array_keys($allrecordids);
+            // TODO: Improve this because we are executing $sqlselect twice (here and some lines below)!
+            if ($allrecordids = $DB->get_fieldset_sql($sqlselect, $allparams)) {
                 $page = (int)array_search($record->id, $allrecordids);
                 unset($allrecordids);
             }
