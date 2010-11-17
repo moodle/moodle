@@ -25,6 +25,7 @@
 
 require_once("../config.php");
 require_once("lib.php");
+require_once($CFG->libdir.'/completionlib.php');
 
 $id      = required_param('id',PARAM_INT);       // course id
 $user    = required_param('user',PARAM_INT);     // user id
@@ -355,7 +356,6 @@ switch ($mode) {
     case "coursecompletions":
 
         // Display course completion user report
-        require_once $CFG->libdir.'/completionlib.php';
 
         // Grab all courses the user is enrolled in and their completion status
         $sql = "

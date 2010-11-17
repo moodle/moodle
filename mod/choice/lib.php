@@ -244,7 +244,9 @@ function choice_prepare_options($choice, $user, $coursemodule, $allresponses) {
  * @param object $cm
  */
 function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->libdir.'/completionlib.php');
+
     $current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $userid));
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -525,7 +527,9 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forc
  * @return bool
  */
 function choice_delete_responses($attemptids, $choice, $cm, $course) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->libdir.'/completionlib.php');
+
     if(!is_array($attemptids) || empty($attemptids)) {
         return false;
     }
@@ -841,7 +845,7 @@ function choice_get_completion_state($course, $cm, $userid, $type) {
     $choice = $DB->get_record('choice', array('id'=>$cm->instance), '*',
             MUST_EXIST);
 
-    // If completion option is enabled, evaluate it and return true/false 
+    // If completion option is enabled, evaluate it and return true/false
     if($choice->completionsubmit) {
         return $DB->record_exists('choice_answers', array(
                 'choiceid'=>$choice->id, 'userid'=>$userid));

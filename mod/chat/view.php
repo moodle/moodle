@@ -19,6 +19,7 @@
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/chat/lib.php');
+require_once($CFG->libdir.'/completionlib.php');
 
 $id   = optional_param('id', 0, PARAM_INT);
 $c    = optional_param('c', 0, PARAM_INT);

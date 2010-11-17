@@ -19,7 +19,7 @@
  * to students ('conditional availability').
  *
  * @package    core
- * @subpackage completion
+ * @subpackage condition
  * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,6 +39,8 @@ define('CONDITION_MISSING_NOTHING',0);
 define('CONDITION_MISSING_EXTRATABLE',1);
 /** The $cm variable is expected to contain nothing except the ID */
 define('CONDITION_MISSING_EVERYTHING',2);
+
+require_once($CFG->libdir.'/completionlib.php');
 
 /**
  * @global stdClass $CONDITIONLIB_PRIVATE

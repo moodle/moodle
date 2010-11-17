@@ -24,7 +24,6 @@
 /** Include required files */
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/eventslib.php');
-require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->dirroot.'/user/selector/lib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
@@ -4153,7 +4152,9 @@ function forum_add_discussion($discussion, $mform=null, &$message=null, $userid=
  * @return bool
  */
 function forum_delete_discussion($discussion, $fulldelete, $course, $cm, $forum) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->libdir.'/completionlib.php');
+
     $result = true;
 
     if ($posts = $DB->get_records("forum_posts", array("discussion" => $discussion->id))) {
@@ -4205,6 +4206,7 @@ function forum_delete_discussion($discussion, $fulldelete, $course, $cm, $forum)
  */
 function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompletion=false) {
     global $DB, $CFG;
+    require_once($CFG->libdir.'/completionlib.php');
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 

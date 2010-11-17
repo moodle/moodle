@@ -28,6 +28,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir.'/completionlib.php');
 
 class course_completion_form extends moodleform {
 

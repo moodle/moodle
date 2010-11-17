@@ -231,6 +231,8 @@ function resource_get_coursemodule_info($coursemodule) {
     global $CFG, $DB;
     require_once("$CFG->libdir/filelib.php");
     require_once("$CFG->dirroot/mod/resource/locallib.php");
+    require_once($CFG->libdir.'/completionlib.php');
+
     $context = get_context_instance(CONTEXT_MODULE, $coursemodule->id);
 
     if (!$resource = $DB->get_record('resource', array('id'=>$coursemodule->instance), 'id, name, display, displayoptions, tobemigrated, revision')) {

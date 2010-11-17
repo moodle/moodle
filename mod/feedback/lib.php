@@ -28,9 +28,6 @@
 require_once($CFG->libdir.'/eventslib.php');
 /** Include calendar/lib.php */
 require_once($CFG->dirroot.'/calendar/lib.php');
-/** Include completionlib.php */
-require_once($CFG->libdir . '/completionlib.php');
-
 
 define('FEEDBACK_ANONYMOUS_YES', 1);
 define('FEEDBACK_ANONYMOUS_NO', 2);
@@ -438,7 +435,7 @@ function feedback_get_completion_state($course, $cm, $userid, $type) {
     // Get feedback details
     $feedback = $DB->get_record('feedback', array('id'=>$cm->instance), '*', MUST_EXIST);
 
-    // If completion option is enabled, evaluate it and return true/false 
+    // If completion option is enabled, evaluate it and return true/false
     if($feedback->completionsubmit) {
         return $DB->record_exists('feedback_tracking', array('userid'=>$userid, 'feedback'=>$feedback->id));
     } else {
@@ -1054,7 +1051,10 @@ function feedback_delete_template($id) {
  * @param boolean $deleteold
  */
 function feedback_items_from_template($feedback, $templateid, $deleteold = false) {
-    global $DB;
+    global $DB, $CFG;
+
+    require_once($CFG->libdir.'/completionlib.php');
+
     $fs = get_file_storage();
 
     //get all templateitems
@@ -1079,7 +1079,7 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
             }
             //delete tracking-data
             $DB->delete_records('feedback_tracking', array('feedback'=>$feedback->id));
-            
+
             if($completeds = $DB->get_records('feedback_completed', array('feedback'=>$feedback->id))) {
                 $completion = new completion_info($course);
                 foreach($completeds as $completed) {
@@ -1368,20 +1368,21 @@ function feedback_delete_item($itemid, $renumber = true){
  * @return void
  */
 function feedback_delete_all_items($feedbackid){
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->libdir.'/completionlib.php');
 
     if(!$feedback = $DB->get_record('feedback', array('id'=>$feedbackid))) {
         return false;
     }
-    
+
     if (!$cm = get_coursemodule_from_instance('feedback', $feedback->id)) {
         return false;
     }
-    
+
     if(!$course = $DB->get_record('course', array('id'=>$feedback->course))) {
         return false;
     }
-    
+
     if(!$items = $DB->get_records('feedback_item', array('feedback'=>$feedbackid))) {
         return;
     }
@@ -1399,9 +1400,9 @@ function feedback_delete_all_items($feedbackid){
             $DB->delete_records('feedback_completed', array('id'=>$completed->id));
         }
     }
-    
+
     $DB->delete_records('feedback_completedtmp', array('feedback'=>$feedbackid));
-    
+
 }
 
 /**
@@ -2333,20 +2334,21 @@ function feedback_delete_all_completeds($feedbackid) {
  * @return boolean
  */
 function feedback_delete_completed($completedid) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->libdir.'/completionlib.php');
 
     if (!$completed = $DB->get_record('feedback_completed', array('id'=>$completedid))) {
         return false;
     }
-    
+
     if (!$feedback = $DB->get_record('feedback', array('id'=>$completed->feedback))) {
         return false;
     }
-    
+
     if (!$course = $DB->get_record('course', array('id'=>$feedback->course))) {
         return false;
     }
-    
+
     if (!$cm = get_coursemodule_from_instance('feedback', $feedback->id)) {
         return false;
     }

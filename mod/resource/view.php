@@ -26,6 +26,7 @@
 
 require('../../config.php');
 require_once($CFG->dirroot.'/mod/resource/locallib.php');
+require_once($CFG->libdir.'/completionlib.php');
 
 $id       = optional_param('id', 0, PARAM_INT); // Course Module ID
 $r        = optional_param('r', 0, PARAM_INT);  // Resource instance ID
@@ -55,7 +56,6 @@ require_capability('mod/resource:view', $context);
 add_to_log($course->id, 'resource', 'view', 'view.php?id='.$cm->id, $resource->id, $cm->id);
 
 // Update 'viewed' state if required by completion system
-require_once($CFG->libdir . '/completionlib.php');
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 

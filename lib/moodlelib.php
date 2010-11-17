@@ -4151,6 +4151,7 @@ function delete_course($courseorid, $showfeedback = true) {
  */
 function remove_course_contents($courseid, $showfeedback = true) {
     global $CFG, $DB, $OUTPUT;
+    require_once($CFG->libdir.'/completionlib.php');
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/group/lib.php');
@@ -4343,6 +4344,7 @@ function shift_course_mod_dates($modname, $fields, $timeshift, $courseid) {
 function reset_course_userdata($data) {
     global $CFG, $USER, $DB;
     require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir.'/completionlib.php');
     require_once($CFG->dirroot.'/group/lib.php');
 
     $data->courseid = $data->id;

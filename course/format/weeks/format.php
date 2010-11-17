@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
     require_once($CFG->libdir.'/filelib.php');
+    require_once($CFG->libdir.'/completionlib.php');
 
     $week = optional_param('week', -1, PARAM_INT);
 

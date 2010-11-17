@@ -26,6 +26,7 @@
 
 require('../../config.php');
 require_once($CFG->dirroot.'/mod/page/locallib.php');
+require_once($CFG->libdir.'/completionlib.php');
 
 $id      = optional_param('id', 0, PARAM_INT); // Course Module ID
 $p       = optional_param('p', 0, PARAM_INT);  // Page instance ID

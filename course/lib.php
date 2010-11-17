@@ -3698,7 +3698,7 @@ function average_number_of_participants() {
     $sql = 'SELECT COUNT(*) FROM (
         SELECT DISTINCT ue.userid, e.courseid
         FROM {user_enrolments} ue, {enrol} e, {course} c
-        WHERE ue.enrolid = e.id 
+        WHERE ue.enrolid = e.id
             AND e.courseid <> :siteid
             AND c.id = e.courseid
             AND c.visible = 1) as total';
@@ -3731,7 +3731,7 @@ function average_number_of_courses_modules() {
     $sql = 'SELECT COUNT(*) FROM (
         SELECT cm.course, cm.module
         FROM {course} c, {course_modules} cm
-        WHERE c.id = cm.course 
+        WHERE c.id = cm.course
             AND c.id <> :siteid
             AND cm.visible = 1
             AND c.visible = 1) as total';
