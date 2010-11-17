@@ -94,10 +94,14 @@ class data_field_menu extends data_field_base {
      }
 
     function generate_sql($tablealias, $value) {
+        global $DB;
+
         static $i=0;
         $i++;
         $name = "df_menu_$i";
-        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = :$name) ", array($name=>$value));
+        $varcharcontent = $DB->sql_compare_text("{$tablealias}.content", 255);
+
+        return array(" ({$tablealias}.fieldid = {$this->field->id} AND $varcharcontent = :$name) ", array($name=>$value));
     }
 
 }

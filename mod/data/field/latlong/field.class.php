@@ -90,15 +90,20 @@ class data_field_latlong extends data_field_base {
     }
 
     function generate_sql($tablealias, $value) {
+        global $DB;
+
         static $i=0;
         $i++;
         $name1 = "df_latlong1_$i";
         $name2 = "df_latlong2_$i";
+        $varcharlat = $DB->sql_compare_text("{$tablealias}.content");
+        $varcharlong= $DB->sql_compare_text("{$tablealias}.content1");
+
 
         $latlong[0] = '';
         $latlong[1] = '';
         $latlong = explode (',', $value, 2);
-        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = :$name1 AND {$tablealias}.content1 = :$name2) ",
+        return array(" ({$tablealias}.fieldid = {$this->field->id} AND $varcharlat = :$name1 AND $varcharlong = :$name2) ",
                      array($name1=>$latlong[0], $name2=>$latlong[1]));
     }
 

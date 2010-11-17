@@ -39,7 +39,7 @@ class data_field_text extends data_field_base {
 
         static $i=0;
         $i++;
-        $name = "df_picture_$i";
+        $name = "df_text_$i";
         return array(" ({$tablealias}.fieldid = {$this->field->id} AND ".$DB->sql_like("{$tablealias}.content", ":$name", false).") ", array($name=>"%$value%"));
     }
 
