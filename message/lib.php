@@ -1417,9 +1417,10 @@ function message_get_history($user1, $user2, $limitnum=0, $viewingnewmessages=fa
     }
 
     //if we only want the last $limitnum messages
-    if ($limitnum>0) {
-        ksort($messages);
-        $messages = array_slice($messages, count($messages)-$limitnum, $limitnum, true);
+    ksort($messages);
+    $messagecount = count($messages);
+    if ($limitnum>0 && $messagecount>$limitnum) {
+        $messages = array_slice($messages, $messagecount-$limitnum, $limitnum, true);
     }
 
     return $messages;
@@ -1520,7 +1521,7 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
 
     //if supplied display small messages as fullmessage may contain boilerplate text that shouldnt appear in the messaging UI
     if (!empty($message->smallmessage)) {
-        $messagetext = format_text($message->smallmessage, null, $options);
+        $messagetext = format_text($message->smallmessage, FORMAT_MOODLE, $options);
     } else {
         $messagetext = format_text($message->fullmessage, $message->fullmessageformat, $options);
     }
