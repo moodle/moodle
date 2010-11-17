@@ -349,13 +349,12 @@ $CFG->admin = 'admin';
 //
 //     $CFG->lang = 'yourlangcode'; // for example 'cs'
 //
-// When Moodle is about to perform an intensive operation it sets a memory limit
-// it thinks is suitable for the required operation. The following settings should
-// be turned on for large sites and is used to ensure that the memory limit is
-// only raised if the current memory limit is lower than the currently set memory
-// limit in PHP.
+// When Moodle is about to perform an intensive operation it raises PHP's memory
+// limit. The following setting should be used on large sites to set the raised
+// memory limit to something higher.
+// The value for the settings should be a valid PHP memory value. e.g. 512M, 1G
 //
-//     $CFG->extramemorylimit = true;
+//     $CFG->extramemorylimit = 1G;
 //
 //
 //=========================================================================
