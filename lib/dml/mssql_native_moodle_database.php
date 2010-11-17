@@ -622,7 +622,7 @@ class mssql_native_moodle_database extends moodle_database {
                 $return .= 'NULL';
 
             } else if (is_number($param)) { // we can not use is_numeric() because it eats leading zeros from strings like 0045646
-                $return .= $param;
+                $return .= "'".$param."'"; //fix for MDL-24863 to prevent auto-cast to int.
 
             } else if (is_float($param)) {
                 $return .= $param;
