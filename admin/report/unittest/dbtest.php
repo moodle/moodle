@@ -11,6 +11,20 @@ require_once($CFG->libdir.'/simpletestcoveragelib.php');
 require_once('ex_simple_test.php');
 require_once('ex_reporter.php');
 
+// disable compression, it would prevent closing of buffers
+if (ini_get('zlib.output_compression')) {
+    ini_set('zlib.output_compression', 'Off');
+}
+
+// try to flush everything all the time
+ob_implicit_flush(true);
+while(ob_get_level()) {
+    if (!ob_end_clean()) {
+        // prevent infinite loop
+        break;
+    }
+}
+
 $showpasses   = optional_param('showpasses', false, PARAM_BOOL);
 $codecoverage = optional_param('codecoverage', false, PARAM_BOOL);
 $selected     = optional_param('selected', array(), PARAM_INT);
@@ -68,11 +82,6 @@ for ($i=1; $i<=10; $i++) {
 }
 
 if (!empty($tests)) {
-    @ob_implicit_flush(true);
-    while(ob_get_level()) {
-        ob_end_flush();
-    }
-
     $covreporter = new moodle_coverage_reporter('Functional DB Tests Code Coverage Report', 'dbtest');
     $covrecorder = new moodle_coverage_recorder($covreporter);
 
