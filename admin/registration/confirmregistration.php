@@ -65,10 +65,16 @@ if (!empty($registeredhub) and $registeredhub->token == $token) {
     $registeredhub->hubname = $hubname;
     $registrationmanager->update_registeredhub($registeredhub);
 
+    //display notficiation message
     $notificationmessage = $OUTPUT->notification(
             get_string('registrationconfirmedon', 'hub', $hublink), 'notifysuccess');
-
     echo $notificationmessage;
+
+    //display continue button
+    $registrationpage = new moodle_url('/admin/registration/index.php');
+    $continuebutton = $OUTPUT->render(new single_button($registrationpage, get_string('continue', 'hub')));
+    $continuebutton = html_writer::tag('div', $continuebutton, array('class' => 'mdl-align'));
+    echo $continuebutton;
 
     if (!extension_loaded('xmlrpc')) {
         //display notice about xmlrpc
