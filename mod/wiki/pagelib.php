@@ -527,7 +527,7 @@ class page_wiki_edit extends page_wiki {
             $url .= "&section=" . $this->section;
         }
 
-        $params = array('attachmentoptions' => page_wiki_edit::$attachmentoptions, 'format' => $version->contentformat, 'version' => $versionnumber);
+        $params = array('attachmentoptions' => page_wiki_edit::$attachmentoptions, 'format' => $version->contentformat, 'version' => $versionnumber, 'pagetitle'=>$this->page->title);
 
         $data = new StdClass();
         $data->newcontent = $content;

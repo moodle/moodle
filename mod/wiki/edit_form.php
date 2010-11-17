@@ -52,14 +52,21 @@ class mod_wiki_edit_form extends moodleform {
             $fileitemid = $this->_customdata['fileitemid'];
         }
 
-        //editor
-        $mform->addElement('header', 'general', get_string('general'));
+        if (isset($this->_customdata['pagetitle'])) {
+            $pagetitle = get_string('editingpage', 'wiki', $this->_customdata['pagetitle']);
+        } else {
+            $pagetitle = get_string('editing', 'wiki');
+        }
 
+        //editor
+        $mform->addElement('header', 'general', $pagetitle);
+
+        $fieldname = get_string('format' . $format, 'wiki');
         if ($format != 'html') {
-            $mform->addElement('wikieditor', 'newcontent', get_string('content'), array('cols' => 50, 'rows' => 20, 'wiki_format' => $format));
+            $mform->addElement('wikieditor', 'newcontent', $fieldname, array('cols' => 50, 'rows' => 20, 'wiki_format' => $format));
             $mform->addHelpButton('newcontent', 'format'.$format, 'wiki');
         } else {
-            $mform->addElement('editor', 'newcontent_editor', get_string('content'), null, page_wiki_edit::$attachmentoptions);
+            $mform->addElement('editor', 'newcontent_editor', $fieldname, null, page_wiki_edit::$attachmentoptions);
             $mform->addHelpButton('newcontent_editor', 'formathtml', 'wiki');
 
         }
