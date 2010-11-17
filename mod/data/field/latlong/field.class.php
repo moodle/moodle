@@ -66,17 +66,22 @@ class data_field_latlong extends data_field_base {
     }
 
     function display_search_field($value = '') {
-        global $CFG, $DB, $OUTPUT;
-        $lats = $DB->get_records_sql_menu('SELECT id, content FROM {data_content} WHERE fieldid=? GROUP BY content ORDER BY content', array($this->field->id));
-        $longs = $DB->get_records_sql_menu('SELECT id, content1 FROM {data_content} WHERE fieldid=? GROUP BY content ORDER BY content', array($this->field->id));
+        global $CFG, $DB;
+
+        $varcharlat = $DB->sql_compare_text('content');
+        $varcharlong= $DB->sql_compare_text('content1');
+        $latlongsrs = $DB->get_recordset_sql(
+            "SELECT DISTINCT $varcharlat AS la, $varcharlong AS lo
+               FROM {data_content}
+              WHERE fieldid = ?
+             ORDER BY $varcharlat, $varcharlong", array($this->field->id));
+
         $options = array();
-        if(!empty($lats) && !empty($longs)) {
-            $options[''] = '';
-            // Make first index blank.
-            foreach($lats as $key => $temp) {
-                $options[$temp.','.$longs[$key]] = $temp.','.$longs[$key];
-            }
+        foreach ($latlongsrs as $latlong) {
+            $options[$latlong->la . ',' . $latlong->lo] = $latlong->la . ',' . $latlong->lo;
         }
+        $latlongsrs->close();
+
        return html_writer::select($options, 'f_'.$this->field->id, $value);
     }
 

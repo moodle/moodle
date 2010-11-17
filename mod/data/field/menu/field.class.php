@@ -55,12 +55,14 @@ class data_field_menu extends data_field_base {
     }
 
     function display_search_field($content = '') {
-        global $CFG, $DB, $OUTPUT;
+        global $CFG, $DB;
 
-        $usedoptions = array();
-        $sql = "SELECT DISTINCT content
+        $varcharcontent =  $DB->sql_compare_text('content', 255);
+        $sql = "SELECT DISTINCT $varcharcontent AS content
                   FROM {data_content}
                  WHERE fieldid=? AND content IS NOT NULL";
+
+        $usedoptions = array();
         if ($used = $DB->get_records_sql($sql, array($this->field->id))) {
             foreach ($used as $data) {
                 $value = $data->content;
@@ -84,7 +86,7 @@ class data_field_menu extends data_field_base {
             return '';
         }
 
-        return html_writer::select($options, 'f_'.$this->field->id, $content, array(''=>'&nbsp;'));
+        return html_writer::select($options, 'f_'.$this->field->id, $content);
     }
 
      function parse_search_field() {
