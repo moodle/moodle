@@ -1015,7 +1015,7 @@ class global_navigation extends navigation_node {
                 // If the user is not enrolled then we only want to show the
                 // course node and not populate it.
                 $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-                if (can_access_course($coursecontext)) {
+                if (!can_access_course($coursecontext)) {
                     if ($coursenode) {
                         $coursenode->make_active();
                     }
@@ -1070,7 +1070,7 @@ class global_navigation extends navigation_node {
                     // If the user is not enrolled then we only want to show the
                     // course node and not populate it.
                     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-                    if (can_access_course($coursecontext)) {
+                    if (!can_access_course($coursecontext)) {
                         $coursenode->make_active();
                         $canviewcourseprofile = false;
                         break;
