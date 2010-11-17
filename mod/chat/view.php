@@ -17,9 +17,9 @@
 
 /// This page prints a particular instance of chat
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->dirroot . '/mod/chat/lib.php');
-require_once($CFG->libdir.'/completionlib.php');
+require_once($CFG->libdir . '/completionlib.php');
 
 $id   = optional_param('id', 0, PARAM_INT);
 $c    = optional_param('c', 0, PARAM_INT);
@@ -109,12 +109,16 @@ if ($chat->intro) {
     echo $OUTPUT->box(format_module_intro('chat', $chat, $cm->id), 'generalbox', 'intro');
 }
 
-if (has_capability('mod/chat:chat',$context)) {
+if (has_capability('mod/chat:chat', $context)) {
     /// Print the main part of the page
     echo $OUTPUT->box_start('generalbox', 'enterlink');
 
-    if ($chat->chattime and $chat->schedule) {  // A chat is scheduled
-        echo "<p class=\"nextchatsession\">$strnextsession: ".userdate($chat->chattime).' ('.usertimezone($USER->timezone).')</p>';
+    $now = time();
+    $span = $chat->chattime - $now;
+    if ($chat->chattime and $chat->schedule and ($span>0)) {  // A chat is scheduled
+        echo '<p>';
+        echo get_string('sessionstart', 'chat', format_time($span));
+        echo '</p>';
     }
 
     if (empty($USER->screenreader)) {
