@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A page displaying the user's contacts. Similar to index.php but not a popup.
+ * A page displaying the user's contacts and messages
  *
  * @package   moodlecore
  * @copyright 2010 Andrew Davis
