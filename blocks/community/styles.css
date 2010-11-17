@@ -7,14 +7,15 @@
     font-size: 95%;
     display:block;
 }
+#page-blocks-community-communitycourse .hubdescriptiontext {margin-left:160px;display:block;}
 #page-blocks-community-communitycourse .hubadditionaldesc {
     color: #666666;
     font-size: 90%;
     display:block;
 }
 #page-blocks-community-communitycourse .hubscreenshot {margin-right: 10px;}
-#page-blocks-community-communitycourse .nottrusted {}
-#page-blocks-community-communitycourse .hubtrusted {display:inline;}
+#page-blocks-community-communitycourse .hubnottrusted {margin-left: 6px;}
+#page-blocks-community-communitycourse .hubtrusted {display:inline;margin-left: 6px;}
 #page-blocks-community-communitycourse .hubnottrusted {}
 #page-blocks-community-communitycourse .trustedtr {background-color: #ffe1c3;}
 #page-blocks-community-communitycourse .prioritisetr {background-color: #ffd4ff;}

@@ -153,20 +153,24 @@ class community_hub_search_form extends moodleform {
                                         'onclick' => 'this.target="_blank"'));
                     $hubdescription .= html_writer::tag('span', $ascreenshothtml,
                                     array('class' => 'hubscreenshot'));
-                    $hubdescription .= html_writer::tag('span', format_text($hub['description'], FORMAT_PLAIN),
+                    $hubdescriptiontext = html_writer::tag('span', format_text($hub['description'], FORMAT_PLAIN),
                                     array('class' => 'hubdescription'));
                     $additionaldesc = get_string('sites', 'block_community') . ': ' . $hub['sites'] . ' - ' .
                             get_string('courses', 'block_community') . ': ' . $hub['courses'];
-                    $hubdescription .= html_writer::tag('span', $additionaldesc,
+                    $hubdescriptiontext .= html_writer::tag('span', $additionaldesc,
                                     array('class' => 'hubadditionaldesc'));
-                    $hubtrusted = $hub['trusted'] ? get_string('hubtrusted', 'block_community') :
-                            get_string('hubnottrusted', 'block_community');
-                    $hubdescription .= html_writer::tag('span',
+                    if ($hub['trusted']) {
+                    $hubtrusted =  get_string('hubtrusted', 'block_community');
+                    $hubdescriptiontext .= html_writer::tag('span',
                                     $hubtrusted . ' ' . $OUTPUT->doc_link('trusted_hubs'),
-                                    array('class' => $hub['trusted'] ? 'trusted' : 'nottrusted'));
+                                    array('class' => 'trusted'));
+
+                    }
+                    $hubdescriptiontext = html_writer::tag('span', $hubdescriptiontext,
+                            array('class' => 'hubdescriptiontext'));
 
                     $hubdescription = html_writer::tag('span',
-                                    $hubdescription,
+                                    $hubdescription . $hubdescriptiontext,
                                     array('class' => $hub['trusted'] ? 'hubtrusted' : 'hubnottrusted'));
                 } else {
                     $hubdescription = html_writer::tag('a', $hub['name'],
