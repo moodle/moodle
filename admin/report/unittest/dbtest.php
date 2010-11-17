@@ -69,7 +69,9 @@ for ($i=1; $i<=10; $i++) {
 
 if (!empty($tests)) {
     @ob_implicit_flush(true);
-    while(@ob_end_flush());
+    while(ob_get_level()) {
+        ob_end_flush();
+    }
 
     $covreporter = new moodle_coverage_reporter('Functional DB Tests Code Coverage Report', 'dbtest');
     $covrecorder = new moodle_coverage_recorder($covreporter);
