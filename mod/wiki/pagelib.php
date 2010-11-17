@@ -1012,11 +1012,12 @@ class page_wiki_preview extends page_wiki_edit {
     }
 
     protected function print_preview() {
-        global $CFG, $OUTPUT;
+        global $CFG, $PAGE, $OUTPUT;
 
         $version = wiki_get_current_version($this->page->id);
         $format = $version->contentformat;
         $content = $version->content;
+        $context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id);
 
         $url = $CFG->wwwroot . '/mod/wiki/edit.php?pageid=' . $this->page->id;
         if (!empty($this->section)) {
@@ -1036,8 +1037,15 @@ class page_wiki_preview extends page_wiki_edit {
         $options = array('swid' => $this->page->subwikiid, 'pageid' => $this->page->id, 'pretty_print' => true);
 
         if ($data = $form->get_data()) {
-            $parseroutput = wiki_parse_content($data->contentformat, $data->newcontent_editor['text'], $options);
-            $this->set_newcontent($data->newcontent_editor['text']);
+            if (isset($data->newcontent)) {
+                // wiki fromat
+                $text = $data->newcontent;
+            } else {
+                // html format
+                $text = $data->newcontent_editor['text'];
+            }
+            $parseroutput = wiki_parse_content($data->contentformat, $text, $options);
+            $this->set_newcontent($text);
             echo $OUTPUT->notification(get_string('previewwarning', 'wiki'), 'notifyproblem wiki_info');
             $content = format_text($parseroutput['parsed_text'], FORMAT_HTML, array('overflowdiv'=>true));
             echo $OUTPUT->box($content, 'generalbox wiki_previewbox');
