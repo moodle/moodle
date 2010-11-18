@@ -133,6 +133,9 @@ abstract class restore_ui_independent_stage {
     final public function is_independent() {
         return true;
     }
+    public function destroy() {
+        // Nothing to destroy here!
+    }
 }
 
 /**
