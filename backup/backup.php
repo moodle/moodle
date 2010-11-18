@@ -100,4 +100,6 @@ if ($backup->enforce_changed_dependencies()) {
 }
 echo $renderer->progress_bar($backup->get_progress_bar());
 echo $backup->display();
+$backup->destroy();
+unset($backup);
 echo $OUTPUT->footer();

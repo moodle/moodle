@@ -90,6 +90,8 @@ if ($backup->get_stage() == backup_ui::STAGE_CONFIRMATION) {
 if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     // First execute the backup
     $backup->execute();
+    $backup->destroy();
+    unset($backup);
 
     // Check whether the backup directory still exists. If missing, something
     // went really wrong in backup, throw error. Note that backup::MODE_IMPORT
@@ -156,4 +158,6 @@ if ($backup->enforce_changed_dependencies()) {
 }
 echo $renderer->progress_bar($backup->get_progress_bar());
 echo $backup->display();
+$backup->destroy();
+unset($backup);
 echo $OUTPUT->footer();

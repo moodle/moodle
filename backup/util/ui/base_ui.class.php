@@ -73,6 +73,17 @@ abstract class base_ui {
         $this->controller->process_ui_event();
     }
     /**
+     * Destorys the backup controller and the loaded stage.
+     */
+    public function destroy() {
+
+        if ($this->controller) {
+            $this->controller->destroy();
+        }
+        unset($this->stage);
+
+    }
+    /**
      * Intialises what ever stage is requested. If none are requested we check
      * params for 'stage' and default to initial
      *

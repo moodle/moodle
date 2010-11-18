@@ -54,4 +54,6 @@ if (!$restore->is_independent() && $restore->enforce_changed_dependencies()) {
 }
 echo $renderer->progress_bar($restore->get_progress_bar());
 echo $restore->display($renderer);
+$restore->destroy();
+unset($restore);
 echo $OUTPUT->footer();
