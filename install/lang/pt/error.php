@@ -38,7 +38,7 @@ $string['cannotsavezipfile'] = 'Não  é possível gravar ficheiro ZIP';
 $string['cannotunzipfile'] = 'Não é possível descompactar ficheiro ZIP';
 $string['componentisuptodate'] = 'O componente está actualizado';
 $string['downloadedfilecheckfailed'] = 'Falhou a verificação do ficheiro descarregado.';
-$string['invalidmd5'] = 'md5 não válido';
+$string['invalidmd5'] = 'md5 inválido';
 $string['missingrequiredfield'] = 'Falta algum campo necessário';
 $string['remotedownloaderror'] = 'Não foi possível descarregar algum componente para o seu servidor; verifique as definições do proxy; recomenda-se fortemente o uso da extensão cURL do PHP.<br /><br />Deverá descarregar o ficheiro <a href="{$a->url}">{$a->url}</a> manualmente, copiá-lo para "{$a->dest}" no seu servidor, e descomprimi-lo nesse local.';
 $string['wrongdestpath'] = 'Caminho de destino errado.';

@@ -31,7 +31,7 @@
 $string['admindirname'] = 'Directório de Administração';
 $string['availablelangs'] = 'Lista de línguas disponíveis';
 $string['chooselanguagehead'] = 'Escolha uma língua';
-$string['chooselanguagesub'] = 'Escolha a língua substituta';
+$string['chooselanguagesub'] = 'Escolha por favor a língua a usar na instalação. Esta língua será usada por omissão no site, mas pode ser alterada posteriormente.';
 $string['databasehost'] = 'Servidor da base de dados:';
 $string['databasename'] = 'Nome da base de dados:';
 $string['dataroot'] = 'Directório de dados';
