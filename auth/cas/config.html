@@ -48,6 +48,14 @@
 
         $config->multiauth = '';
 
+    if (!isset ($config->certificate_check)) 
+
+        $config->certificate_check = '';
+
+    if (!isset ($config->certificate_path))
+
+        $config->certificate_path = '';
+
   // set to defaults if undefined (LDAP)
 
     if (!isset($config->host_url))
@@ -359,6 +367,44 @@ if (!function_exists('ldap_connect')) { // Is php4-ldap really there?
     </td>
 
     <td><?php print_string('auth_cas_multiauth', 'auth') ?></td>
+
+</tr>
+
+
+
+<tr valign="top"  class="required">
+
+    <td align="right"><?php print_string('auth_cas_certificate_check_key', 'auth') ?>:</td>
+
+    <td>
+
+        <?php choose_from_menu ($yesno, 'certificate_check', $config->certificate_check, ''); ?>
+
+    </td>
+
+    <td><?php print_string('auth_cas_certificate_check', 'auth') ?></td>
+
+</tr>
+
+
+
+<tr valign="top" class="required">
+
+    <td align="right"><?php print_string('auth_cas_certificate_path_key', 'auth') ?>:</td>
+
+    <td>
+
+        <input name="certificate_path" type="text" size="30" value="<?php echo $config->certificate_path ?>" />
+
+        <?php if (isset($err['certificate_path'])) formerr($err['certificate_path']); ?>
+
+    </td>
+
+    <td>
+
+        <?php print_string('auth_cas_certificate_path', 'auth') ?>
+      
+    </td>
 
 </tr>
 
