@@ -25,3 +25,4 @@
 
 $string['pluginname'] = 'Jabber message';
 $string['jabberid'] = 'Jabber ID';
+$string['notconfigured'] = 'The Jabber server hasn\'t been configured so Jabber messages cannot be sent';

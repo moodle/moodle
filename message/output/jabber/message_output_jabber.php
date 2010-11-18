@@ -44,36 +44,40 @@ class message_output_jabber extends message_output {
     function send_message($eventdata){
         global $CFG;
 
-        //hold onto jabber id preference because /admin/cron.php sends a lot of messages at once
-        static $jabberaddresses = array();
+        //Is Jabber set up?
+        if (!empty($CFG->jabberhost) && !empty($CFG->jabberserver)) {
+            //hold onto jabber id preference because /admin/cron.php sends a lot of messages at once
+            static $jabberaddresses = array();
 
-        if (!array_key_exists($eventdata->userto->id, $jabberaddresses)) {
-            $jabberaddresses[$eventdata->userto->id] = get_user_preferences('message_processor_jabber_jabberid', $eventdata->userto->email, $eventdata->userto->id);
+            if (!array_key_exists($eventdata->userto->id, $jabberaddresses)) {
+                $jabberaddresses[$eventdata->userto->id] = get_user_preferences('message_processor_jabber_jabberid', $eventdata->userto->email, $eventdata->userto->id);
+            }
+            $jabberaddress = $jabberaddresses[$eventdata->userto->id];
+
+            $jabbermessage = fullname($eventdata->userfrom).': '.$eventdata->smallmessage;
+
+            if (!empty($eventdata->contexturl)) {
+                $jabbermessage .= "\n".get_string('view').': '.$eventdata->contexturl;
+            }
+
+            $jabbermessage .= "\n(".get_string('noreply','message').')';
+
+            $conn = new XMPPHP_XMPP($CFG->jabberhost,$CFG->jabberport,$CFG->jabberusername,$CFG->jabberpassword,'moodle',$CFG->jabberserver);
+
+            try {
+                //$conn->useEncryption(false);
+                $conn->connect();
+                $conn->processUntil('session_start');
+                $conn->presence();
+                $conn->message($jabberaddress, $jabbermessage);
+                $conn->disconnect();
+            } catch(XMPPHP_Exception $e) {
+                debugging($e->getMessage());
+                return false;
+            }
         }
-        $jabberaddress = $jabberaddresses[$eventdata->userto->id];
 
-        $jabbermessage = fullname($eventdata->userfrom).': '.$eventdata->smallmessage;
-
-        if (!empty($eventdata->contexturl)) {
-            $jabbermessage .= "\n".get_string('view').': '.$eventdata->contexturl;
-        }
-
-        $jabbermessage .= "\n(".get_string('noreply','message').')';
-
-        $conn = new XMPPHP_XMPP($CFG->jabberhost,$CFG->jabberport,$CFG->jabberusername,$CFG->jabberpassword,'moodle',$CFG->jabberserver);
-
-        try {
-            //$conn->useEncryption(false);
-            $conn->connect();
-            $conn->processUntil('session_start');
-            $conn->presence();
-            $conn->message($jabberaddress, $jabbermessage);
-            $conn->disconnect();
-        } catch(XMPPHP_Exception $e) {
-            debugging($e->getMessage());
-            return false;
-        }
-
+        //note that we're reporting success if message was sent or if Jabber simply isnt configured
         return true;
     }
 
@@ -82,7 +86,13 @@ class message_output_jabber extends message_output {
      * @param object $mform preferences form class
      */
     function config_form($preferences){
-        return get_string('jabberid', 'message_jabber').': <input size="30" name="jabber_jabberid" value="'.$preferences->jabber_jabberid.'" />';
+        global $CFG;
+        
+        if (empty($CFG->jabberhost) || empty($CFG->jabberserver)) {
+            return get_string('notconfigured','message_jabber');
+        } else {
+            return get_string('jabberid', 'message_jabber').': <input size="30" name="jabber_jabberid" value="'.$preferences->jabber_jabberid.'" />';
+        }
     }
 
     /**
