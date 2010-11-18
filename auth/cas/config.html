@@ -195,7 +195,7 @@ $yesno = array( get_string('no'), get_string('yes') );
     <td align="right"><?php print_string('auth_cas_certificate_path_key', 'auth_cas') ?>:</td>
     <td>
         <input name="certificate_path" id="certificate_path" type="text" size="30" value="<?php echo $config->certificate_path ?>" />
-        <?php if (isset($err['certificate_path'])) formerr($err['certificate_path']); ?>
+        <?php if (isset($err['certificate_path'])) echo $OUTPUT->error_text($err['certificate_path']); ?>
     </td>
     <td>
         <?php print_string('auth_cas_certificate_path', 'auth_cas') ?>

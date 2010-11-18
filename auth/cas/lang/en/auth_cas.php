@@ -32,6 +32,7 @@ $string['auth_cas_broken_password'] = 'You cannot proceed without changing your 
 $string['auth_cas_cantconnect'] = 'LDAP part of CAS-module cannot connect to server: {$a}';
 $string['auth_cas_casversion'] = 'Version';
 $string['auth_cas_certificate_check'] = 'Turn this to \'yes\' if you want to validate the server certificate';
+$string['auth_cas_certificate_path_empty'] = 'If you turn on Server validation, you need to specify a certificate path';
 $string['auth_cas_certificate_check_key'] = 'Server validation';
 $string['auth_cas_certificate_path'] = 'Path of the CA chain file (PEM Format) to validate the server certificate';
 $string['auth_cas_certificate_path_key'] = 'Certificate path';

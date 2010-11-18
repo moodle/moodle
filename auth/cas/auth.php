@@ -210,6 +210,19 @@ class auth_plugin_cas extends auth_plugin_ldap {
     }
 
     /**
+     * A chance to validate form data, and last chance to
+     * do stuff before it is inserted in config_plugin
+     * @param object object with submitted configuration settings (without system magic quotes)
+     * @param array $err array of error messages
+     */
+    function validate_form(&$form, &$err) {
+        $certificate_path = trim($form->certificate_path);
+        if ($form->certificate_check && empty($certificate_path)) {
+            $err['certificate_path'] = get_string('auth_cas_certificate_path_empty', 'auth_cas');
+        }
+    }
+
+    /**
      * Returns the URL for changing the user's pw, or empty if the default can
      * be used.
      *
