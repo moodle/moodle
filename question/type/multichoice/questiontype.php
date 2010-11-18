@@ -124,10 +124,10 @@ class question_multichoice_qtype extends default_questiontype {
         $options->correctfeedback = $this->import_or_save_files($question->correctfeedback,
                 $context, 'qtype_multichoice', 'correctfeedback', $question->id);
         $options->correctfeedbackformat = $question->correctfeedback['format'];
-        $options->partiallycorrectfeedback = $this->import_or_save_files($question->correctfeedback,
+        $options->partiallycorrectfeedback = $this->import_or_save_files($question->partiallycorrectfeedback,
                 $context, 'qtype_multichoice', 'partiallycorrectfeedback', $question->id);
         $options->partiallycorrectfeedbackformat = $question->partiallycorrectfeedback['format'];
-        $options->incorrectfeedback = $this->import_or_save_files($question->correctfeedback,
+        $options->incorrectfeedback = $this->import_or_save_files($question->incorrectfeedback,
                 $context, 'qtype_multichoice', 'incorrectfeedback', $question->id);
         $options->incorrectfeedbackformat = $question->incorrectfeedback['format'];
 
