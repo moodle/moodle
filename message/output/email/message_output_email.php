@@ -67,7 +67,13 @@ class message_output_email extends message_output {
         global $USER;
         $string = get_string('email','message_email').': <input size="30" name="email_email" value="'.$preferences->email_email.'" />';
         if (empty($preferences->email_email)) {
-            $string .= ' ('.get_string('default').': '.$USER->email.')';
+            $userdefaultemail = null;
+            if (empty($preferences->userdefaultemail)) {
+                $userdefaultemail = $USER->email;
+            } else {
+                $userdefaultemail = $preferences->userdefaultemail;
+            }
+            $string .= ' ('.get_string('default').': '.$userdefaultemail.')';
         }
         return $string;
     }

@@ -144,7 +144,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
     $preferences['message_blocknoncontacts']  = !empty($form->blocknoncontacts)?1:0;
     //$preferences['message_beepnewmessage']    = !empty($form->beepnewmessage)?1:0;
 
-/// Save all the new preferences to the database
+    // Save all the new preferences to the database
     if (!set_user_preferences( $preferences, $user->id ) ){
         print_error('cannotupdateusermsgpref');
     }
@@ -154,6 +154,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
 
 /// Load preferences
 $preferences = new stdClass();
+$preferences->userdefaultemail = $user->email;//may be displayed by the email processor
 
 /// Get providers preferences
 $providers = message_get_my_providers();
@@ -204,8 +205,8 @@ if ($course->id != SITEID) {
 }
 echo $OUTPUT->header();
 
-/// Start the form.  We're not using mform here because of our special formatting needs ...
-echo '<form class="mform" method="post" action="'.$CFG->wwwroot.'/message/edit.php">';
+// Start the form.  We're not using mform here because of our special formatting needs ...
+echo '<form class="mform" method="post" action="'.$PAGE->url.'">';
 
 /// Settings table...
 echo '<fieldset id="providers" class="clearfix">';
