@@ -487,18 +487,31 @@ abstract class moodle_database {
 
     /**
      * Returns SQL WHERE conditions.
-     *
+     * @param string $table - the table name that these conditions will be validated against.
      * @param array conditions - must not contain numeric indexes
      * @return array sql part and params
      */
-    protected function where_clause(array $conditions=null) {
+    protected function where_clause($table, array $conditions=null) {
         $allowed_types = $this->allowed_param_types();
         if (empty($conditions)) {
             return array('', array());
         }
         $where = array();
         $params = array();
+
+        $columns = $this->get_columns($table);
         foreach ($conditions as $key=>$value) {
+            if (!isset($columns[$key])) {
+                $a = new stdClass();
+                $a->fieldname = $key;
+                $a->tablename = $table;
+                throw new dml_exception('ddlfieldnotexist', $a);
+            }
+            $column = $columns[$key];
+            if ($column->meta_type == 'X') {
+                //ok so the column is a text column. sorry no text columns in the where clause conditions
+                throw new dml_exception('textconditionsnotallowed', $conditions);
+            }
             if (is_int($key)) {
                 throw new dml_exception('invalidnumkey');
             }
@@ -921,7 +934,7 @@ abstract class moodle_database {
      * @throws dml_exception if error
      */
     public function get_recordset($table, array $conditions=null, $sort='', $fields='*', $limitfrom=0, $limitnum=0) {
-        list($select, $params) = $this->where_clause($conditions);
+        list($select, $params) = $this->where_clause($table, $conditions);
         return $this->get_recordset_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum);
     }
 
@@ -1020,7 +1033,7 @@ abstract class moodle_database {
      * @throws dml_exception if error
      */
     public function get_records($table, array $conditions=null, $sort='', $fields='*', $limitfrom=0, $limitnum=0) {
-        list($select, $params) = $this->where_clause($conditions);
+        list($select, $params) = $this->where_clause($table, $conditions);
         return $this->get_records_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum);
     }
 
@@ -1191,7 +1204,7 @@ abstract class moodle_database {
      * @throws dml_exception if error
      */
     public function get_record($table, array $conditions, $fields='*', $strictness=IGNORE_MISSING) {
-        list($select, $params) = $this->where_clause($conditions);
+        list($select, $params) = $this->where_clause($table, $conditions);
         return $this->get_record_select($table, $select, $params, $fields, $strictness);
     }
 
@@ -1272,7 +1285,7 @@ abstract class moodle_database {
      * @throws dml_exception if error
      */
     public function get_field($table, $return, array $conditions, $strictness=IGNORE_MISSING) {
-        list($select, $params) = $this->where_clause($conditions);
+        list($select, $params) = $this->where_clause($table, $conditions);
         return $this->get_field_select($table, $return, $select, $params, $strictness);
     }
 
@@ -1424,7 +1437,7 @@ abstract class moodle_database {
      * @throws dml_exception if error
      */
     public function set_field($table, $newfield, $newvalue, array $conditions=null) {
-        list($select, $params) = $this->where_clause($conditions);
+        list($select, $params) = $this->where_clause($table, $conditions);
         return $this->set_field_select($table, $newfield, $newvalue, $select, $params);
     }
 
@@ -1451,7 +1464,7 @@ abstract class moodle_database {
      * @throws dml_exception if error
      */
     public function count_records($table, array $conditions=null) {
-        list($select, $params) = $this->where_clause($conditions);
+        list($select, $params) = $this->where_clause($table, $conditions);
         return $this->count_records_select($table, $select, $params);
     }
 
@@ -1505,7 +1518,7 @@ abstract class moodle_database {
      * @throws dml_exception if error
      */
     public function record_exists($table, array $conditions) {
-        list($select, $params) = $this->where_clause($conditions);
+        list($select, $params) = $this->where_clause($table, $conditions);
         return $this->record_exists_select($table, $select, $params);
     }
 
@@ -1558,7 +1571,7 @@ abstract class moodle_database {
         if (is_null($conditions)) {
             return $this->execute("TRUNCATE TABLE {".$table."}");
         }
-        list($select, $params) = $this->where_clause($conditions);
+        list($select, $params) = $this->where_clause($table, $conditions);
         return $this->delete_records_select($table, $select, $params);
     }
 

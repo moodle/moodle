@@ -442,6 +442,7 @@ $string['storedfileproblem'] = 'Unknown exception related to local files ({$a})'
 $string['tagdisabled'] = 'Tags are disabled!';
 $string['tagnotfound'] = 'The specified tag was not found in the database';
 $string['targetdatabasenotempty'] = 'The target database is not empty. Transfer aborted for safety reasons.';
+$string['textconditionsnotallowed'] = 'Comparisons of text column conditions are not allowed. Please use sql_compare_text() in your query.';
 $string['themenotinstall'] = 'This theme is not installed!';
 $string['TODO'] = 'TODO';
 $string['tokengenerationfailed'] = 'Cannot generate a new token.';

@@ -335,7 +335,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
         if (is_null($conditions)) {
             return $this->execute("DELETE FROM {{$table}}");
         }
-        list($select, $params) = $this->where_clause($conditions);
+        list($select, $params) = $this->where_clause($table, $conditions);
         return $this->delete_records_select($table, $select, $params);
     }
 

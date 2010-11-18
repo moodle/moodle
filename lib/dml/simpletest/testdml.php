@@ -634,6 +634,7 @@ class dml_test extends UnitTestCase {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, '0');
+        $table->add_field('onetext', XMLDB_TYPE_TEXT, 'big', null, null, null);
         $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
@@ -693,6 +694,19 @@ class dml_test extends UnitTestCase {
             next($data);
         }
         $rs->close();
+
+        // test for exception throwing on text conditions being compared. (MDL-24863, unwanted auto conversion of param to int)
+        $conditions = array('onetext' => '1');
+        try {
+            $rs = $DB->get_recordset($tablename, $conditions);
+            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
+        } catch (dml_exception $e) {
+            if ($e->errorcode == 'textconditionsnotallowed') {
+                $this->assertTrue(true, 'The Expected exception was caught.');
+            } else {
+                throw $e;
+            }
+        }
 
         // notes:
         //  * limits are tested in test_get_recordset_sql()
@@ -894,6 +908,7 @@ class dml_test extends UnitTestCase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('onetext', XMLDB_TYPE_TEXT, 'big', null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -939,6 +954,19 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(0, count($records));
         $records = $DB->get_records($tablename, array('course' => false));
         $this->assertEqual(0, count($records));
+
+        // test for exception throwing on text conditions being compared. (MDL-24863, unwanted auto conversion of param to int)
+        $conditions = array('onetext' => '1');
+        try {
+            $records = $DB->get_records($tablename, $conditions);
+            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
+        } catch (dml_exception $e) {
+            if ($e->errorcode == 'textconditionsnotallowed') {
+                $this->assertTrue(true, 'The Expected exception was caught.');
+            } else {
+                throw $e;
+            }
+        }
 
         // note: delegate limits testing to test_get_records_sql()
     }
@@ -1251,6 +1279,7 @@ class dml_test extends UnitTestCase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('onetext', XMLDB_TYPE_TEXT, 'big', null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -1276,6 +1305,19 @@ class dml_test extends UnitTestCase {
         $this->enable_debugging();
         $this->assertEqual(5, $DB->get_field($tablename, 'course', array('course' => 5), IGNORE_MISSING));
         $this->assertFalse($this->get_debugging() === '');
+
+        // test for exception throwing on text conditions being compared. (MDL-24863, unwanted auto conversion of param to int)
+        $conditions = array('onetext' => '1');
+        try {
+            $DB->get_field($tablename, 'course', $conditions);
+            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
+        } catch (dml_exception $e) {
+            if ($e->errorcode == 'textconditionsnotallowed') {
+                $this->assertTrue(true, 'The Expected exception was caught.');
+            } else {
+                throw $e;
+    }
+        }
     }
 
     public function test_get_field_select() {
@@ -2018,6 +2060,8 @@ class dml_test extends UnitTestCase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('onechar', XMLDB_TYPE_CHAR, '100', null, null, null);
+        $table->add_field('onetext', XMLDB_TYPE_TEXT, 'big', null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -2059,6 +2103,19 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(5, $DB->get_field($tablename, 'course', array('id' => $id1)));
         $this->assertEqual(5, $DB->get_field($tablename, 'course', array('id' => $id2)));
         $this->assertEqual(5, $DB->get_field($tablename, 'course', array('id' => $id3)));
+
+        // test for exception throwing on text conditions being compared. (MDL-24863, unwanted auto conversion of param to int)
+        $conditions = array('onetext' => '1');
+        try {
+            $DB->set_field($tablename, 'onechar', 'frog', $conditions);
+            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
+        } catch (dml_exception $e) {
+            if ($e->errorcode == 'textconditionsnotallowed') {
+                $this->assertTrue(true, 'The Expected exception was caught.');
+            } else {
+                throw $e;
+            }
+        }
 
         // Note: All the nulls, booleans, empties, quoted and backslashes tests
         // go to set_field_select() because set_field() is just one wrapper over it
@@ -2190,6 +2247,22 @@ class dml_test extends UnitTestCase {
         $DB->set_field_select($tablename, 'onebinary', $newblob, 'id = ?', array(1));
         $this->assertEqual($newclob, $DB->get_field($tablename, 'onetext', array('id' => 1)), 'Test "small" CLOB set_field (full contents output disabled)');
         $this->assertEqual($newblob, $DB->get_field($tablename, 'onebinary', array('id' => 1)), 'Test "small" BLOB set_field (full contents output disabled)');
+
+        // This is the failure from MDL-24863. This was giving an error on MSSQL,
+        // which converts the '1' to an integer, which cannot then be compared with
+        // onetext cast to a varchar. This should be fixed and working now.
+        $newchar = 'frog';
+        // test for exception throwing on text conditions being compared. (MDL-24863, unwanted auto conversion of param to int)
+        $params = array('onetext' => '1');
+        try {
+            $DB->set_field_select($tablename, 'onechar', $newchar, $DB->sql_compare_text('onetext') . ' = ?', $params);
+            $this->assertTrue(true, 'No exceptions thrown with numerical text param comparison for text field.');
+        } catch (dml_exception $e) {
+            $this->assertFalse(true, 'We have an unexpected exception.');
+            throw $e;
+        }
+
+
     }
 
     public function test_count_records() {
@@ -2202,6 +2275,7 @@ class dml_test extends UnitTestCase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('onetext', XMLDB_TYPE_TEXT, 'big', null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -2212,6 +2286,19 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('course' => 5));
 
         $this->assertEqual(3, $DB->count_records($tablename));
+
+        // test for exception throwing on text conditions being compared. (MDL-24863, unwanted auto conversion of param to int)
+        $conditions = array('onetext' => '1');
+        try {
+            $DB->count_records($tablename, $conditions);
+            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
+        } catch (dml_exception $e) {
+            if ($e->errorcode == 'textconditionsnotallowed') {
+                $this->assertTrue(true, 'The Expected exception was caught.');
+            } else {
+                throw $e;
+    }
+        }
     }
 
     public function test_count_records_select() {
@@ -2266,6 +2353,7 @@ class dml_test extends UnitTestCase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('onetext', XMLDB_TYPE_TEXT, 'big', null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -2276,6 +2364,19 @@ class dml_test extends UnitTestCase {
 
         $this->assertTrue($DB->record_exists($tablename, array('course' => 3)));
 
+
+        // test for exception throwing on text conditions being compared. (MDL-24863, unwanted auto conversion of param to int)
+        $conditions = array('onetext' => '1');
+        try {
+            $DB->record_exists($tablename, $conditions);
+            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
+        } catch (dml_exception $e) {
+            if ($e->errorcode == 'textconditionsnotallowed') {
+                $this->assertTrue(true, 'The Expected exception was caught.');
+            } else {
+                throw $e;
+    }
+        }
     }
 
     public function test_record_exists_select() {
@@ -2327,6 +2428,7 @@ class dml_test extends UnitTestCase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('onetext', XMLDB_TYPE_TEXT, 'big', null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
@@ -2349,6 +2451,32 @@ class dml_test extends UnitTestCase {
         // delete all
         $this->assertTrue($DB->delete_records($tablename, array()));
         $this->assertEqual(0, $DB->count_records($tablename));
+
+        // test for exception throwing on text conditions being compared. (MDL-24863, unwanted auto conversion of param to int)
+        $conditions = array('onetext'=>'1');
+        try {
+            $DB->delete_records($tablename, $conditions);
+            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
+        } catch (dml_exception $e) {
+            if ($e->errorcode == 'textconditionsnotallowed') {
+                $this->assertTrue(true, 'The Expected exception was caught.');
+            } else {
+                throw $e;
+            }
+        }
+
+        // test for exception throwing on text conditions being compared. (MDL-24863, unwanted auto conversion of param to int)
+        $conditions = array('onetext' => 1);
+        try {
+            $DB->delete_records($tablename, $conditions);
+            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
+        } catch (dml_exception $e) {
+            if ($e->errorcode == 'textconditionsnotallowed') {
+                $this->assertTrue(true, 'The Expected exception was caught.');
+            } else {
+                throw $e;
+            }
+        }
     }
 
     public function test_delete_records_select() {
