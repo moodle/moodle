@@ -71,8 +71,16 @@ class question_multichoice_qtype extends default_questiontype {
                 $answer->id = $DB->insert_record('question_answers', $answer);
             }
 
-            $answer->answer = $answerdata['text'];
-            $answer->answerformat = FORMAT_HTML;
+            if (is_array($answerdata)) {
+                // Doing an import
+                $answer->feedback = $this->import_or_save_files($answerdata,
+                        $context, 'question', 'answerfeedback', $answer->id);
+                $answer->feedbackformat = $answerdata['format'];
+            } else {
+                // Saving the form
+                $answer->answer = $answerdata;
+                $answer->answerformat = FORMAT_HTML;
+            }
             $answer->fraction = $question->fraction[$key];
             $answer->feedback = $this->import_or_save_files($question->feedback[$key],
                     $context, 'question', 'answerfeedback', $answer->id);
