@@ -29,3 +29,7 @@
 .gradetreebox img.icon {margin-right: 5px;}
 .gradetreebox #gradetreesubmit {margin-bottom:1em;text-align: center;}
 .gradetreebox .hidden {display: none;}
+
+/*adjustments to grader report (with static student cols) to make things line up in IE and Safari*/
+#page-grade-report-grader-index .right_scroller #user-grades td {padding-top:0;padding-bottom:2px;}
+#page-grade-report-grader-index #fixed_column td {padding-top:0;padding-bottom:2px;}
