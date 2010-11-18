@@ -987,6 +987,7 @@ $string['memberincourse'] = 'People in the course';
 $string['messagebody'] = 'Message body';
 $string['messagedselectedusers'] = 'Selected users have been messaged and the recipient list has been reset.';
 $string['messagedselectedusersfailed'] = 'Something went wrong while messaging selected users.  Some may have received the email.';
+$string['messageprovider:backup'] = 'Backup notifications';
 $string['messageprovider:errors'] = 'Important errors with the site';
 $string['messageprovider:errors_help'] = 'These are important errors that an administrator should know about.';
 $string['messageprovider:notices'] = 'Notices about minor problems';
