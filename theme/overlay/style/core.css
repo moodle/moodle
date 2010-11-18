@@ -255,3 +255,11 @@ div.custom_menu_submenu li a {
 div.firstdockitem {
 	margin-top: 30px;
 }
+
+.headermenu .logininfo, .headermenu div, .headermenu form {
+	display: inline; 
+}
+
+.headermenu .logininfo {
+	padding-right: 5px;
+}
