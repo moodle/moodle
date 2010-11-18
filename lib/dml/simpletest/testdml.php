@@ -2518,27 +2518,48 @@ class dml_test extends UnitTestCase {
 
         $table1->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table1->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table1->add_field('nametext', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
         $table1->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table1);
 
-        $DB->insert_record($tablename1, array('name'=>'100'));
+        $DB->insert_record($tablename1, array('name'=>'0100', 'nametext'=>'0200'));
+        $DB->insert_record($tablename1, array('name'=>'10',   'nametext'=>'20'));
 
         $table2 = $this->get_test_table("2");
         $tablename2 = $table2->getName();
         $table2->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table2->add_field('res', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table2->add_field('restext', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
         $table2->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table2);
 
-        $DB->insert_record($tablename2, array('res'=>100));
+        $DB->insert_record($tablename2, array('res'=>100, 'restext'=>200));
 
-        try {
-            $sql = "SELECT * FROM {".$tablename1."} t1, {".$tablename2."} t2 WHERE ".$DB->sql_cast_char2int("t1.name")." = t2.res ";
-            $records = $DB->get_records_sql($sql);
-            $this->assertEqual(count($records), 1);
-        } catch (dml_exception $e) {
-            $this->fail("No exception expected");
-        }
+        // casting varchar field
+        $sql = "SELECT *
+                  FROM {".$tablename1."} t1
+                  JOIN {".$tablename2."} t2 ON ".$DB->sql_cast_char2int("t1.name")." = t2.res ";
+        $records = $DB->get_records_sql($sql);
+        $this->assertEqual(count($records), 1);
+        // also test them in order clauses
+        $sql = "SELECT * FROM {{$tablename1}} ORDER BY ".$DB->sql_cast_char2int('name');
+        $records = $DB->get_records_sql($sql);
+        $this->assertEqual(count($records), 2);
+        $this->assertEqual(reset($records)->name, '10');
+        $this->assertEqual(next($records)->name, '0100');
+
+        // casting text field
+        $sql = "SELECT *
+                  FROM {".$tablename1."} t1
+                  JOIN {".$tablename2."} t2 ON ".$DB->sql_cast_char2int("t1.nametext", true)." = t2.restext ";
+        $records = $DB->get_records_sql($sql);
+        $this->assertEqual(count($records), 1);
+        // also test them in order clauses
+        $sql = "SELECT * FROM {{$tablename1}} ORDER BY ".$DB->sql_cast_char2int('nametext', true);
+        $records = $DB->get_records_sql($sql);
+        $this->assertEqual(count($records), 2);
+        $this->assertEqual(reset($records)->nametext, '20');
+        $this->assertEqual(next($records)->nametext, '0200');
     }
 
     function test_cast_char2real() {
@@ -2550,17 +2571,38 @@ class dml_test extends UnitTestCase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('nametext', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
         $table->add_field('res', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        $DB->insert_record($tablename, array('name'=>'10.10', 'res'=>5.1));
-        $DB->insert_record($tablename, array('name'=>'1.10', 'res'=>666));
-        $DB->insert_record($tablename, array('name'=>'11.10', 'res'=>0.1));
+        $DB->insert_record($tablename, array('name'=>'10.10', 'nametext'=>'10.10', 'res'=>5.1));
+        $DB->insert_record($tablename, array('name'=>'91.10', 'nametext'=>'91.10', 'res'=>666));
+        $DB->insert_record($tablename, array('name'=>'011.10','nametext'=>'011.10','res'=>10.1));
 
+        // casting varchar field
         $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_cast_char2real('name')." > res";
         $records = $DB->get_records_sql($sql);
         $this->assertEqual(count($records), 2);
+        // also test them in order clauses
+        $sql = "SELECT * FROM {{$tablename}} ORDER BY ".$DB->sql_cast_char2real('name');
+        $records = $DB->get_records_sql($sql);
+        $this->assertEqual(count($records), 3);
+        $this->assertEqual(reset($records)->name, '10.10');
+        $this->assertEqual(next($records)->name, '011.10');
+        $this->assertEqual(next($records)->name, '91.10');
+
+        // casting text field
+        $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_cast_char2real('nametext', true)." > res";
+        $records = $DB->get_records_sql($sql);
+        $this->assertEqual(count($records), 2);
+        // also test them in order clauses
+        $sql = "SELECT * FROM {{$tablename}} ORDER BY ".$DB->sql_cast_char2real('nametext', true);
+        $records = $DB->get_records_sql($sql);
+        $this->assertEqual(count($records), 3);
+        $this->assertEqual(reset($records)->nametext, '10.10');
+        $this->assertEqual(next($records)->nametext, '011.10');
+        $this->assertEqual(next($records)->nametext, '91.10');
     }
 
     function sql_compare_text() {
