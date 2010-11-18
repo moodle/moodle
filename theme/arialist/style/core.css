@@ -293,6 +293,7 @@ h2.headingblock {
 .yui3-skin-sam #custommenu .yui3-menu .yui3-menu .yui3-menuitem-content {
     color:#F25F0F;
     border-width:0;
+    padding-right: 25px;
 }
 
 .yui3-skin-sam #custommenu .yui3-menu-content,
