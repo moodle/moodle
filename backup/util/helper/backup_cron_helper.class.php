@@ -354,10 +354,14 @@ abstract class backup_cron_automated_helper {
                 }
             }
 
+            $outcome = true;
         } catch (backup_exception $e) {
             $bc->log('backup_auto_failed_on_course', backup::LOG_WARNING, $course->shortname);
-            return false;
+            $outcome = false;
         }
+
+        $bc->destroy();
+        unset($bc);
 
         return true;
     }
