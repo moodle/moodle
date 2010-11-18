@@ -1052,7 +1052,19 @@ class mssql_native_moodle_database extends moodle_database {
 /// SQL helper functions
 
     public function sql_cast_char2int($fieldname, $text=false) {
-        return ' CAST(' . $fieldname . ' AS INT) ';
+        if (!$text) {
+            return ' CAST(' . $fieldname . ' AS INT) ';
+        } else {
+            return ' CAST(' . $this->sql_compare_text($fieldname) . ' AS INT) ';
+        }
+    }
+
+    public function sql_cast_char2real($fieldname, $text=false) {
+        if (!$text) {
+            return ' CAST(' . $fieldname . ' AS REAL) ';
+        } else {
+            return ' CAST(' . $this->sql_compare_text($fieldname) . ' AS REAL) ';
+        }
     }
 
     public function sql_ceil($fieldname) {

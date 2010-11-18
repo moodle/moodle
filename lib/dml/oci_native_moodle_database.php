@@ -1447,6 +1447,14 @@ class oci_native_moodle_database extends moodle_database {
         }
     }
 
+    public function sql_cast_char2real($fieldname, $text=false) {
+        if (!$text) {
+            return ' CAST(' . $fieldname . ' AS FLOAT) ';
+        } else {
+            return ' CAST(' . $this->sql_compare_text($fieldname) . ' AS FLOAT) ';
+        }
+    }
+
     /**
      * Returns 'LIKE' part of a query.
      *

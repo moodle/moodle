@@ -1052,6 +1052,10 @@ class mysqli_native_moodle_database extends moodle_database {
         return ' CAST(' . $fieldname . ' AS SIGNED) ';
     }
 
+    public function sql_cast_char2real($fieldname, $text=false) {
+        return ' CAST(' . $fieldname . ' AS DECIMAL) ';
+    }
+
     /**
      * Returns 'LIKE' part of a query.
      *
