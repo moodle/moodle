@@ -48,9 +48,15 @@ class textlib_test extends UnitTestCase {
         $this->assertIdentical(array_keys($arr), array(1, 'b', 0));
         $this->assertIdentical(array_values($arr), array('aa', 'ab', 'cc'));
 
+        if (extension_loaded('intl')) {
+            $error = 'Collation aware sorting not supported';
+        } else {
+            $error = 'Collation aware sorting not supported, PHP extension "intl" is not available.';
+        }
+
         $arr = array('a'=>'áb', 'b'=>'ab', 1=>'aa', 0=>'cc');
         textlib_get_instance()->asort($arr);
-        $this->assertIdentical(array_keys($arr), array(1, 'b', 'a', 0), 'Collation aware sorting not supported');
+        $this->assertIdentical(array_keys($arr), array(1, 'b', 'a', 0), $error);
 
         unset($SESSION->lang);
     }
