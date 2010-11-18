@@ -4,9 +4,13 @@
 $string['auth_cas_proxycas_key'] = "Proxy mode";
 $string['auth_cas_logoutcas_key'] = "Logout CAS";
 $string['auth_cas_multiauth_key'] = "Multi-authentication";
-$string['auth_cas_proxycas'] = "Turn this to 'yes'' if you use CASin proxy-mode";
-$string['auth_cas_logoutcas'] = "Turn this to 'yes'' if tou want to logout from CAS when you deconnect from Moodle";
-$string['auth_cas_multiauth'] = "Turn this to 'yes'' if you want to have multi-authentication (CAS + other authentication)";
+$string['auth_cas_certificate_check_key'] = "Server validation";
+$string['auth_cas_certificate_path_key'] = "Certificate path";
+$string['auth_cas_proxycas'] = "Turn this to ''yes'' if you use CASin proxy-mode";
+$string['auth_cas_logoutcas'] = "Turn this to ''yes'' if tou want to logout from CAS when you deconnect from Moodle";
+$string['auth_cas_multiauth'] = "Turn this to ''yes'' if you want to have multi-authentication (CAS + other authentication)";
+$string['auth_cas_certificate_check'] = "Turn this to ''yes'' if you want to validate the server certificate";
+$string['auth_cas_certificate_path'] = "Path of the CA chain file (PEM Format) to validate the server certificate";
 $string['accesCAS'] = "CAS users";
 $string['accesNOCAS'] = "other users";
 $string['CASform'] = "Authentication choice";

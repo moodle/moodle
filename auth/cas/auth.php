@@ -114,8 +114,12 @@ class auth_plugin_cas extends auth_plugin_base {
 // Connection to CAS server
 	 $this->connectCAS();
 
-     // Don't try to validate the server SSL credentials
-     phpCAS::setNoCasServerValidation();
+     if($this->config->certificate_check && $this->config->certificate_path){
+         phpCAS::setCasServerCACert($this->config->certificate_path);
+     }else{
+         // Don't try to validate the server SSL credentials
+         phpCAS::setNoCasServerValidation();
+     }
 
 	  // Gestion de la connection CAS si acc�s direct d'un ent ou autre	 
 	 if (phpCAS::checkAuthentication()) {
@@ -244,6 +248,10 @@ if ( !is_object($PHPCAS_CLIENT) ) {
             $config->logoutcas = '';
         if (!isset ($config->multiauth))
             $config->multiauth = '';
+        if (!isset ($config->certificate_check))
+            $config->certificate_check = '';
+        if (!isset ($config->certificate_path))
+            $config->certificate_path = '';
         // LDAP settings
         if (!isset($config->host_url))
             { $config->host_url = ''; }
@@ -286,6 +294,8 @@ if ( !is_object($PHPCAS_CLIENT) ) {
         set_config('proxycas',     $config->proxycas,     'auth/cas');
         set_config('logoutcas',     $config->logoutcas,     'auth/cas');
         set_config('multiauth',     $config->multiauth,     'auth/cas');
+        set_config('certificate_check',     $config->certificate_check,     'auth/cas');
+        set_config('certificate_path',     $config->certificate_path,     'auth/cas');
         // save LDAP settings
         set_config('host_url', $config->host_url, 'auth/cas');
         set_config('ldapencoding', $config->ldapencoding, 'auth/cas');
