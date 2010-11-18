@@ -699,13 +699,10 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext' => '1');
         try {
             $rs = $DB->get_recordset($tablename, $conditions);
-            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
-        } catch (dml_exception $e) {
-            if ($e->errorcode == 'textconditionsnotallowed') {
-                $this->assertTrue(true, 'The Expected exception was caught.');
-            } else {
-                throw $e;
-            }
+            $this->fail('An Exception is missing, expected due to equating of text fields');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+            $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
         }
 
         // notes:
@@ -959,13 +956,10 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext' => '1');
         try {
             $records = $DB->get_records($tablename, $conditions);
-            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
-        } catch (dml_exception $e) {
-            if ($e->errorcode == 'textconditionsnotallowed') {
-                $this->assertTrue(true, 'The Expected exception was caught.');
-            } else {
-                throw $e;
-            }
+            $this->fail('An Exception is missing, expected due to equating of text fields');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+            $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
         }
 
         // note: delegate limits testing to test_get_records_sql()
@@ -1310,13 +1304,10 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext' => '1');
         try {
             $DB->get_field($tablename, 'course', $conditions);
-            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
-        } catch (dml_exception $e) {
-            if ($e->errorcode == 'textconditionsnotallowed') {
-                $this->assertTrue(true, 'The Expected exception was caught.');
-            } else {
-                throw $e;
-    }
+            $this->fail('An Exception is missing, expected due to equating of text fields');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+            $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
         }
     }
 
@@ -2108,13 +2099,10 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext' => '1');
         try {
             $DB->set_field($tablename, 'onechar', 'frog', $conditions);
-            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
-        } catch (dml_exception $e) {
-            if ($e->errorcode == 'textconditionsnotallowed') {
-                $this->assertTrue(true, 'The Expected exception was caught.');
-            } else {
-                throw $e;
-            }
+            $this->fail('An Exception is missing, expected due to equating of text fields');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+            $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
         }
 
         // Note: All the nulls, booleans, empties, quoted and backslashes tests
@@ -2291,13 +2279,10 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext' => '1');
         try {
             $DB->count_records($tablename, $conditions);
-            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
-        } catch (dml_exception $e) {
-            if ($e->errorcode == 'textconditionsnotallowed') {
-                $this->assertTrue(true, 'The Expected exception was caught.');
-            } else {
-                throw $e;
-    }
+            $this->fail('An Exception is missing, expected due to equating of text fields');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+            $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
         }
     }
 
@@ -2369,13 +2354,10 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext' => '1');
         try {
             $DB->record_exists($tablename, $conditions);
-            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
-        } catch (dml_exception $e) {
-            if ($e->errorcode == 'textconditionsnotallowed') {
-                $this->assertTrue(true, 'The Expected exception was caught.');
-            } else {
-                throw $e;
-    }
+            $this->fail('An Exception is missing, expected due to equating of text fields');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+            $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
         }
     }
 
@@ -2456,26 +2438,20 @@ class dml_test extends UnitTestCase {
         $conditions = array('onetext'=>'1');
         try {
             $DB->delete_records($tablename, $conditions);
-            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
-        } catch (dml_exception $e) {
-            if ($e->errorcode == 'textconditionsnotallowed') {
-                $this->assertTrue(true, 'The Expected exception was caught.');
-            } else {
-                throw $e;
-            }
+            $this->fail('An Exception is missing, expected due to equating of text fields');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+            $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
         }
 
         // test for exception throwing on text conditions being compared. (MDL-24863, unwanted auto conversion of param to int)
         $conditions = array('onetext' => 1);
         try {
             $DB->delete_records($tablename, $conditions);
-            $this->assertFalse(true, 'An Exception is missing, expected due to equating of text fields');
-        } catch (dml_exception $e) {
-            if ($e->errorcode == 'textconditionsnotallowed') {
-                $this->assertTrue(true, 'The Expected exception was caught.');
-            } else {
-                throw $e;
-            }
+            $this->fail('An Exception is missing, expected due to equating of text fields');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+            $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
         }
     }
 
