@@ -53,6 +53,9 @@ function message_send($eventdata) {
     //TODO: we need to solve problems with database transactions here somehow, for now we just prevent transactions - sorry
     $DB->transactions_forbidden();
 
+    //flag we'll return indicating that all processors ran successfully
+    $success = true;
+
     if (is_int($eventdata->userto)) {
         mtrace('message_send() userto is a user ID when it should be a user object');
         $eventdata->userto = $DB->get_record('user', array('id' => $eventdata->useridto));
@@ -148,12 +151,12 @@ function message_send($eventdata) {
 
                         if (!$pclass->send_message($eventdata)) {
                             debugging('Error calling message processor '.$procname);
-                            return false;
+                            $success = false;
                         }
                     }
                 } else {
                     debugging('Error finding message processor '.$procname);
-                    return false;
+                    $success = false;
                 }
             }
             
@@ -171,7 +174,7 @@ function message_send($eventdata) {
         }
     }
 
-    return true;
+    return $success;
 }
 
 
