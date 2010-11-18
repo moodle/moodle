@@ -5469,6 +5469,14 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010111000);
     }
 
+    if ($oldversion < 2010111702) {
+
+        // Clean up the old experimental split restore no loger used
+        unset_config('experimentalsplitrestore');
+
+        upgrade_main_savepoint(true, 2010111702);
+    }
+
     return true;
 }
 

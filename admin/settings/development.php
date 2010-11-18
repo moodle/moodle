@@ -12,9 +12,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $englobalsearch = new admin_setting_configcheckbox('enableglobalsearch', get_string('enableglobalsearch', 'admin'), get_string('configenableglobalsearch', 'admin'), 0);
     $englobalsearch->set_updatedcallback('search_updatedcallback');
     $temp->add($englobalsearch);
-
-    $temp->add(new admin_setting_configcheckbox('experimentalsplitrestore', get_string('experimentalsplitrestore', 'admin'), get_string('configexperimentalsplitrestore', 'admin'), 0));
-    $temp->add(new admin_setting_configcheckbox('enableimsccimport', get_string('enable_cc_import', 'imscc'), get_string('enable_cc_import_description', 'imscc'), 0));
+    //TODO: Re-enable cc-import once re-implemented in 2.0.x
+    //$temp->add(new admin_setting_configcheckbox('enableimsccimport', get_string('enable_cc_import', 'imscc'), get_string('enable_cc_import_description', 'imscc'), 0));
     $temp->add(new admin_setting_configcheckbox('enablesafebrowserintegration', get_string('enablesafebrowserintegration', 'admin'), get_string('configenablesafebrowserintegration', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('enablegroupmembersonly', get_string('enablegroupmembersonly', 'admin'), get_string('configenablegroupmembersonly', 'admin'), 0));
 
