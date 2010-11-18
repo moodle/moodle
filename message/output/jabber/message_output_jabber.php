@@ -44,8 +44,7 @@ class message_output_jabber extends message_output {
     function send_message($eventdata){
         global $CFG;
 
-        //Is Jabber set up?
-        if (!empty($CFG->jabberhost) && !empty($CFG->jabberserver)) {
+        if (message_output_jabber::_jabber_configured()) {
             //hold onto jabber id preference because /admin/cron.php sends a lot of messages at once
             static $jabberaddresses = array();
 
@@ -88,7 +87,7 @@ class message_output_jabber extends message_output {
     function config_form($preferences){
         global $CFG;
         
-        if (empty($CFG->jabberhost) || empty($CFG->jabberserver)) {
+        if (!message_output_jabber::_jabber_configured()) {
             return get_string('notconfigured','message_jabber');
         } else {
             return get_string('jabberid', 'message_jabber').': <input size="30" name="jabber_jabberid" value="'.$preferences->jabber_jabberid.'" />';
@@ -111,6 +110,15 @@ class message_output_jabber extends message_output {
      */
     function load_data(&$preferences, $userid){
         $preferences->jabber_jabberid = get_user_preferences( 'message_processor_jabber_jabberid', '', $userid);
+    }
+
+    /**
+     * Tests whether the Jabber settings have been configured
+     * @return boolean true if Jabber is configured
+     */
+    private function _jabber_configured() {
+        global $CFG;
+        return (!empty($CFG->jabberhost) && !empty($CFG->jabberport) && !empty($CFG->jabberusername) && !empty($CFG->jabberpassword));
     }
 
 }
