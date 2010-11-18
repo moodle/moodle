@@ -53,3 +53,40 @@ body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea { font-family: "Trebuchet MS", 
 
 #page-footer { margin:25px 0; }
 #page-footer .logininfo  { margin: 1em 0; }
+
+/* custum menu */
+#custommenu { margin:0 50px; }
+
+#custommenu, div.yui3-menu, div.yui3-menu-content {
+	border: none !important;
+}
+
+#custommenu {
+	background:url([[pix:theme|gradient-sb]]) repeat-x 0 30%;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	border-bottom: 1px solid #ccc !important;
+	border-left: 1px solid #eee !important;
+	border-right: 1px solid #eee !important;
+	
+}
+
+a.yui3-menu-label {
+	border: none !important;
+}
+
+div.yui3-menu-content .yui3-menu-content {
+	border: 1px solid #ccc !important;
+	border-top: none !important;
+	margin-top: 3px;
+	padding: 10px;
+}
+
+div.yui3-menu-content .yui3-menu-content .yui3-menu-content {
+	border-top: 1px solid #ccc !important;
+}
+
+div.yui3-menu-content .yui3-menu-content .yui3-menuitem-content, div.yui3-menu-content .yui3-menu-content .yui3-menu-label{
+	padding-top: 5px !important;
+	
+}
