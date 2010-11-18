@@ -3245,7 +3245,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         if ($str->displaymode == FORUM_MODE_THREADED) {
             $url->param('parent', $post->parent);
         } else {
-            $url->set_anchor('p'.$post->id);
+            $url->set_anchor('p'.$post->parent);
         }
         $commands[] = array('url'=>$url, 'text'=>$str->parent);
     }
