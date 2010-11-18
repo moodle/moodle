@@ -11,6 +11,7 @@ $string['auth_cas_logoutcas'] = "Turn this to ''yes'' if tou want to logout from
 $string['auth_cas_multiauth'] = "Turn this to ''yes'' if you want to have multi-authentication (CAS + other authentication)";
 $string['auth_cas_certificate_check'] = "Turn this to ''yes'' if you want to validate the server certificate";
 $string['auth_cas_certificate_path'] = "Path of the CA chain file (PEM Format) to validate the server certificate";
+$string['auth_cas_certificate_path_empty'] = "If you turn on Server validation, you need to specify a certificate path";
 $string['accesCAS'] = "CAS users";
 $string['accesNOCAS'] = "other users";
 $string['CASform'] = "Authentication choice";
