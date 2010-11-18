@@ -6528,6 +6528,8 @@ function can_use_html_editor() {
             return 'MSIE';
         } else if (check_browser_version('Gecko', 20030516)) {
             return 'Gecko';
+        } else if (check_browser_version('Safari', 531)) {
+            return 'AppleWebKit';
         }
     }
     return false;
