@@ -27,6 +27,12 @@ if (!isset ($config->logoutcas)) {
 if (!isset ($config->multiauth)) {
     $config->multiauth = '';
 }
+if (!isset ($config->certificate_check)) {
+    $config->certificate_check = '';
+}
+if (!isset ($config->certificate_path)) {
+    $config->certificate_path = '';
+}
 
 // set to defaults if undefined (LDAP)
 if (!isset($config->host_url)) {
@@ -174,6 +180,25 @@ $yesno = array( get_string('no'), get_string('yes') );
     </td>
     <td>
         <?php print_string('auth_cas_multiauth', 'auth_cas') ?>
+    </td>
+</tr>
+<tr valign="top"  class="required">
+    <td align="right"><?php print_string('auth_cas_certificate_check_key', 'auth_cas') ?>:</td>
+    <td>
+        <?php echo html_writer::select($yesno, 'certificate_check', $config->certificate_check, false); ?>
+    </td>
+    <td>
+        <?php print_string('auth_cas_certificate_check', 'auth_cas') ?>
+    </td>
+</tr>
+<tr valign="top" class="required">
+    <td align="right"><?php print_string('auth_cas_certificate_path_key', 'auth_cas') ?>:</td>
+    <td>
+        <input name="certificate_path" id="certificate_path" type="text" size="30" value="<?php echo $config->certificate_path ?>" />
+        <?php if (isset($err['certificate_path'])) formerr($err['certificate_path']); ?>
+    </td>
+    <td>
+        <?php print_string('auth_cas_certificate_path', 'auth_cas') ?>
     </td>
 </tr>
 <tr>
