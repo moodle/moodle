@@ -639,9 +639,9 @@ class dml_test extends UnitTestCase {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        $data = array(array('id' => 1, 'course' => 3, 'name' => 'record1'),
-                      array('id' => 2, 'course' => 3, 'name' => 'record2'),
-                      array('id' => 3, 'course' => 5, 'name' => 'record3'));
+        $data = array(array('id' => 1, 'course' => 3, 'name' => 'record1', 'onetext'=>'abc'),
+                      array('id' => 2, 'course' => 3, 'name' => 'record2', 'onetext'=>'abcd'),
+                      array('id' => 3, 'course' => 5, 'name' => 'record3', 'onetext'=>'abcde'));
 
         foreach ($data as $record) {
             $DB->insert_record($tablename, $record);
