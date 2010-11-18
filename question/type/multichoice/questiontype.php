@@ -73,9 +73,9 @@ class question_multichoice_qtype extends default_questiontype {
 
             if (is_array($answerdata)) {
                 // Doing an import
-                $answer->feedback = $this->import_or_save_files($answerdata,
+                $answer->answer = $this->import_or_save_files($answerdata,
                         $context, 'question', 'answerfeedback', $answer->id);
-                $answer->feedbackformat = $answerdata['format'];
+                $answer->answerformat = $answerdata['format'];
             } else {
                 // Saving the form
                 $answer->answer = $answerdata;
