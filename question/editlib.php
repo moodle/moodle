@@ -75,7 +75,7 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
 
     // get (list) of categories
     if ($recurse) {
-        $categorylist = question_categorylist( $category->id );
+        $categorylist = question_categorylist($category->id);
     }
     else {
         $categorylist = $category->id;
@@ -89,7 +89,7 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
         foreach($questions as $question) {
             $questiontype = $QTYPES[$question->qtype];
             $question->export_process = $export;
-            $questiontype->get_question_options( $question );
+            $questiontype->get_question_options($question);
             $qresults[] = $question;
         }
     }
