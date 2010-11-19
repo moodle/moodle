@@ -1037,7 +1037,7 @@ M.core_filepicker.init = function(Y, options) {
             str += '</td>';
             str += '</tr></table>';
             str += '</form>';
-            str += '<div class="fp-upload-btn"><button id="'+id+'_action">'+M.str.repository.upload+'...</button></div>';
+            str += '<div class="fp-upload-btn"><button id="'+id+'_action">'+M.str.repository.upload+'</button></div>';
             str += '</div>';
             var upload_form = Y.Node.create(str);
             Y.one('#panel-'+client_id).appendChild(upload_form);
