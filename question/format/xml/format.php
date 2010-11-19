@@ -158,11 +158,6 @@ class qformat_xml extends qformat_default {
         $qo->questiontext       = $this->getpath($question, array('#','questiontext',0,'#','text',0,'#'), '', true );
         $qo->questiontextformat = $this->trans_format(
                 $this->getpath($question, array('#','questiontext',0,'@','format'), 'moodle_auto_format'));
-        $qo->image = $this->getpath($question, array('#','image',0,'#'), $qo->image );
-        $image_base64 = $this->getpath( $question, array('#','image_base64','0','#'),'' );
-        if (!empty($image_base64)) {
-            $qo->image = $this->importimagefile($qo->image, $image_base64);
-        }
 
         $qo->questiontextfiles = array();
 
@@ -174,6 +169,18 @@ class qformat_xml extends qformat_default {
             $data->encoding = $file['@']['encoding'];
             $data->name = $file['@']['name'];
             $qo->questiontextfiles[] = $data;
+        }
+
+        // Backwards compatibility, deal with the old image tag.
+        $filedata = $this->getpath($question, array('#', 'image_base64', '0', '#'), null, false);
+        $filename = $this->getpath($question, array('#', 'image', '0', '#'), null, false);
+        if ($filedata && $filename) {
+            $data = new stdclass;
+            $data->content = $filedata;
+            $data->encoding = 'base64';
+            $data->name = $filename;
+            $qo->questiontextfiles[] = $data;
+            $qo->questiontext .= ' <img src="@@PLUGINFILE@@/' . $filename . '" />';
         }
 
         // restore files in generalfeedback

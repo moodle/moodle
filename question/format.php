@@ -880,12 +880,8 @@ class qformat_default {
             if ($file->is_directory()) {
                 continue;
             }
-            $string .= '<file ';
-            $string .= ('name="' . $file->get_filename() . '"');
-            $string .= (' encoding="' . $encoding . '"');
-            $string .= '>';
+            $string .= '<file name="' . $file->get_filename() . '" encoding="' . $encoding . '">';
             $string .= base64_encode($file->get_content());
-            //$string .= 'base64';
             $string .= '</file>';
         }
         return $string;
