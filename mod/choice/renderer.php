@@ -118,11 +118,12 @@ class mod_choice_renderer extends plugin_renderer_base {
      * @return string
      */
     public function display_publish_name_vertical($choices) {
+        global $PAGE;
         $html ='';
         $html .= html_writer::tag('h2',format_string(get_string("responses", "choice")), array('class'=>'main'));
 
         $attributes = array('method'=>'POST');
-        $attributes['action'] = new moodle_url('/mod/choice/view.php');
+        $attributes['action'] = new moodle_url($PAGE->url);
         $attributes['id'] = 'attemptsform';
 
         if ($choices->viewresponsecapability) {
@@ -213,7 +214,7 @@ class mod_choice_renderer extends plugin_renderer_base {
 
             $actiondata .= html_writer::tag('label', ' ' . get_string('withselected', 'quiz') . ' ', array('for'=>'menuaction'));
 
-            $actionurl = new moodle_url('/mod/choice/view.php', array('sesskey'=>sesskey(), 'action'=>'delete_confirmation()'));
+            $actionurl = new moodle_url($PAGE->url, array('sesskey'=>sesskey(), 'action'=>'delete_confirmation()'));
             $select = new single_select($actionurl, 'action', array('delete'=>get_string('delete')), null, array(''=>get_string('chooseaction', 'choice')), 'attemptsform');
 
             $actiondata .= $this->output->render($select);
