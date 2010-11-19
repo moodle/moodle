@@ -51,7 +51,7 @@
     $PAGE->set_heading($course->fullname);
 
 /// Submit any new data if there is any
-    if ($form = data_submitted() && is_enrolled($context, NULL, 'mod/choice:choose') && confirm_sesskey()) {
+    if (data_submitted() && is_enrolled($context, NULL, 'mod/choice:choose') && confirm_sesskey()) {
         $timenow = time();
         if (has_capability('mod/choice:deleteresponses', $context)) {
             if ($action == 'delete') { //some responses need to be deleted
