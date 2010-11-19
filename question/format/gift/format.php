@@ -54,29 +54,31 @@ class qformat_gift extends qformat_default {
         return $answer_weight;
     }
 
-    function commentparser(&$answer) {
-        if (strpos($answer,"#") > 0) {
-            $hashpos = strpos($answer,"#");
-            $comment = substr($answer, $hashpos+1);
-            $comment = trim($this->escapedchar_post($comment));
-            $answer  = substr($answer, 0, $hashpos);
+    function commentparser($answer, $defaultformat) {
+        $bits = explode('#', $answer, 2);
+        $ans = $this->parse_text_with_format(trim($bits[0]), $defaultformat);
+        if (count($bits) > 1) {
+            $feedback = $this->parse_text_with_format(trim($bits[1]), $defaultformat);
         } else {
-            $comment = " ";
+            $feedback = array('text' => '', 'format' => $defaultformat, 'files' => array());
         }
-        return $comment;
+        return array($ans, $feedback);
     }
 
-    function split_truefalse_comment($comment) {
-        // splits up comment around # marks
-        // returns an array of true/false feedback
-        $bits = explode('#',$comment);
-        $feedback = array('wrong' => $bits[0]);
-        if (count($bits) >= 2) {
-            $feedback['right'] = $bits[1];
+    function split_truefalse_comment($answer, $defaultformat) {
+        $bits = explode('#', $answer, 3);
+        $ans = $this->parse_text_with_format(trim($bits[0]), $defaultformat);
+        if (count($bits) > 1) {
+            $wrongfeedback = $this->parse_text_with_format(trim($bits[1]), $defaultformat);
         } else {
-            $feedback['right'] = '';
+            $wrongfeedback = array('text' => '', 'format' => $defaultformat, 'files' => array());
         }
-        return $feedback;
+        if (count($bits) > 2) {
+            $rightfeedback = $this->parse_text_with_format(trim($bits[2]), $defaultformat);
+        } else {
+            $rightfeedback = array('text' => '', 'format' => $defaultformat, 'files' => array());
+        }
+        return array($ans, $wrongfeedback, $rightfeedback);
     }
 
     function escapedchar_pre($string) {
@@ -110,6 +112,24 @@ class qformat_gift extends qformat_default {
         return true;
     }
 
+    protected function parse_text_with_format($text, $defaultformat = FORMAT_MOODLE) {
+        $result = array(
+            'text' => $text,
+            'format' => $defaultformat,
+            'files' => array(),
+        );
+        if (strpos($text, '[') === 0) {
+            $formatend = strpos($text, ']');
+            $result['format'] = $this->format_name_to_const(substr($text, 1, $formatend - 1));
+            if ($result['format'] == -1) {
+                $result['format'] = $defaultformat;
+            } else {
+                $result['text'] = substr($text, $formatend + 1);
+            }
+        }
+        $result['text'] = trim($this->escapedchar_post($result['text']));
+        return $result;
+    }
 
     function readquestion($lines) {
     // Given an array of lines known to define a question in this format, this function
@@ -196,18 +216,10 @@ class qformat_gift extends qformat_default {
         }
 
         // Get questiontext format from questiontext
-        $questiontextformat = FORMAT_MOODLE;
-        if (strpos($questiontext, '[') === 0) {
-            $formatend = strpos($questiontext, ']');
-            $questiontextformat = $this->format_name_to_const(substr($questiontext, 1, $formatend));
-            if ($questiontextformat == -1) {
-                $questiontextformat = FORMAT_MOODLE;
-            } else {
-                $questiontext = substr($questiontext, $formatend + 1);
-            }
-        }
-        $question->questiontextformat = $questiontextformat;
-        $question->questiontext = trim($this->escapedchar_post($questiontext));
+        $text = $this->parse_text_with_format($questiontext);
+        $question->questiontextformat = $text['format'];
+        $question->generalfeedbackformat = $text['format'];
+        $question->questiontext = $text['text'];
 
         // set question name if not already set
         if ($question->name === false) {
@@ -279,7 +291,7 @@ class qformat_gift extends qformat_default {
             case ESSAY:
                 $question->fraction = 0;
                 $question->feedback['text'] = '';
-                $question->feedback['format'] = $questiontextformat;
+                $question->feedback['format'] = $question->questiontextformat;
                 $question->feedback['files'] = array();
                 return $question;
                 break;
@@ -290,13 +302,13 @@ class qformat_gift extends qformat_default {
                     $question->single = 1; // only one answer allowed (the default)
                 }
                 $question->correctfeedback['text'] = '';
-                $question->correctfeedback['format'] = $questiontextformat;
+                $question->correctfeedback['format'] = $question->questiontextformat;
                 $question->correctfeedback['files'] = array();
                 $question->partiallycorrectfeedback['text'] = '';
-                $question->partiallycorrectfeedback['format'] = $questiontextformat;
+                $question->partiallycorrectfeedback['format'] = $question->questiontextformat;
                 $question->partiallycorrectfeedback['files'] = array();
                 $question->incorrectfeedback['text'] = '';
-                $question->incorrectfeedback['format'] = $questiontextformat;
+                $question->incorrectfeedback['format'] = $question->questiontextformat;
                 $question->incorrectfeedback['files'] = array();
 
                 $answertext = str_replace("=", "~=", $answertext);
@@ -329,14 +341,9 @@ class qformat_gift extends qformat_default {
                     } else {     //default, i.e., wrong anwer
                         $answer_weight = 0;
                     }
-                    $question->answer[$key]['text'] =
-                            $this->escapedchar_post($answer);
-                    $question->answer[$key]['format'] = $questiontextformat;
-                    $question->answer[$key]['files'] = array();
+                    list($question->answer[$key], $question->feedback[$key]) =
+                            $this->commentparser($answer, $question->questiontextformat);
                     $question->fraction[$key] = $answer_weight;
-                    $question->feedback[$key]['text'] = $this->commentparser($answer); // commentparser also removes comment from $answer
-                    $question->feedback[$key]['format'] = $questiontextformat;
-                    $question->feedback[$key]['files'] = array();
                 }  // end foreach answer
 
                 //$question->defaultgrade = 1;
@@ -368,38 +375,30 @@ class qformat_gift extends qformat_default {
                     }
 
                     $marker = strpos($answer, '->');
-                    $question->subquestions[$key]['text']   =
-                            trim($this->escapedchar_post(substr($answer, 0, $marker)));
-                    $question->subquestions[$key]['format'] = $questiontextformat;
-                    $question->subquestions[$key]['files']  = array();
-                    $question->subanswers[$key] =
-                            trim($this->escapedchar_post(substr($answer, $marker + 2)));
-                }  // end foreach answer
+                    $question->subquestions[$key] = $this->parse_text_with_format(
+                            substr($answer, 0, $marker), $question->questiontextformat);
+                    $question->subanswers[$key] = trim($this->escapedchar_post(
+                            substr($answer, $marker + 2)));
+                }
 
                 return $question;
                 break;
 
             case TRUEFALSE:
-                $answer = $answertext;
-                $comment = $this->commentparser($answer); // commentparser also removes comment from $answer
-                $feedback = $this->split_truefalse_comment($comment);
+                list($answer, $wrongfeedback, $rightfeedback) =
+                        $this->split_truefalse_comment($answertext, $question->questiontextformat);
 
                 if ($answer == "T" OR $answer == "TRUE") {
-                    $question->answer = 1;
-                    $question->feedbacktrue['text'] = $feedback['right'];
-                    $question->feedbackfalse['text'] = $feedback['wrong'];
+                    $question->correctanswer = 1;
+                    $question->feedbacktrue = $rightfeedback;
+                    $question->feedbackfalse = $wrongfeedback;
                 } else {
-                    $question->answer = 0;
-                    $question->feedbackfalse['text'] = $feedback['right'];
-                    $question->feedbacktrue['text'] = $feedback['wrong'];
+                    $question->correctanswer = 0;
+                    $question->feedbacktrue = $wrongfeedback;
+                    $question->feedbackfalse = $rightfeedback;
                 }
-                $question->feedbackfalse['format'] = $questiontextformat;
-                $question->feedbacktrue['format'] = $questiontextformat;
-                $question->feedbackfalse['files'] = array();
-                $question->feedbacktrue['files'] = array();
 
                 $question->penalty = 1;
-                $question->correctanswer = $question->answer;
 
                 return $question;
                 break;
@@ -414,7 +413,7 @@ class qformat_gift extends qformat_default {
                     array_shift($answers);
                 }
 
-                if (!$this->check_answer_count(1,$answers,$text)) {
+                if (!$this->check_answer_count(1, $answers, $text)) {
                     return false;
                     break;
                 }
@@ -422,22 +421,20 @@ class qformat_gift extends qformat_default {
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);
 
-                    // Answer Weight
+                    // Answer weight
                     if (preg_match($gift_answerweight_regex, $answer)) {    // check for properly formatted answer weight
                         $answer_weight = $this->answerweightparser($answer);
                     } else {     //default, i.e., full-credit anwer
                         $answer_weight = 1;
                     }
-                    $question->answer[$key]   = $this->escapedchar_post($answer);
-                    $question->fraction[$key] = $answer_weight;
-                    $question->feedback[$key]['text'] = $this->commentparser($answer); //commentparser also removes comment from $answer
-                    $question->feedback[$key]['format'] = $questiontextformat;
-                    $question->feedback[$key]['files'] = array();
-                }     // end foreach
 
-                //$question->usecase = 0;  // Ignore case
-                //$question->defaultgrade = 1;
-                //$question->image = "";   // No images with this format
+                    list($answer, $question->feedback[$key]) = $this->commentparser(
+                            $answer, $question->questiontextformat);
+
+                    $question->answer[$key] = $answer['text'];
+                    $question->fraction[$key] = $answer_weight;
+                }
+
                 return $question;
                 break;
 
@@ -478,10 +475,11 @@ class qformat_gift extends qformat_default {
                     } else {     //default, i.e., full-credit anwer
                         $answer_weight = 1;
                     }
+
+                    list($answer, $question->feedback[$key]) = $this->commentparser(
+                            $answer, $question->questiontextformat);
                     $question->fraction[$key] = $answer_weight;
-                    $question->feedback[$key]['text'] = $this->commentparser($answer); //commentparser also removes comment from $answer
-                    $question->feedback[$key]['format'] = $questiontextformat;
-                    $question->feedback[$key]['files'] = array();
+                    $answer = $answer['text'];
 
                     //Calculate Answer and Min/Max values
                     if (strpos($answer,"..") > 0) { // optional [min]..[max] format
@@ -509,14 +507,13 @@ class qformat_gift extends qformat_default {
                     // store results
                     $question->answer[$key] = $ans;
                     $question->tolerance[$key] = $tol;
-                } // end foreach
+                }
 
                 if ($wrongfeedback) {
                     $key += 1;
                     $question->fraction[$key] = 0;
-                    $question->feedback[$key]['text'] = $this->commentparser($wrongfeedback);
-                    $question->feedback[$key]['format'] = $questiontextformat;
-                    $question->feedback[$key]['files'] = array();
+                    list($notused, $question->feedback[$key]) = $this->commentparser(
+                            $wrongfeedback, $question->questiontextformat);
                     $question->answer[$key] = '*';
                     $question->tolerance[$key] = '';
                 }
@@ -526,7 +523,7 @@ class qformat_gift extends qformat_default {
 
                 default:
                     $this->error(get_string('giftnovalidquestion', 'quiz'), $text);
-                return false;
+                return fale;
                 break;
 
         }
@@ -569,7 +566,7 @@ class qformat_gift extends qformat_default {
         if ($format == 'moodle') {
             return FORMAT_MOODLE;
         } else if ($format == 'html') {
-            return FORMAT_PLAIN;
+            return FORMAT_HTML;
         } else if ($format == 'plain') {
             return FORMAT_PLAIN;
         } else if ($format == 'markdown') {
@@ -583,9 +580,9 @@ class qformat_gift extends qformat_default {
         return '::' . $this->repchar($name) . '::';
     }
 
-    public function write_questiontext($text, $format) {
+    public function write_questiontext($text, $format, $defaultformat = FORMAT_MOODLE) {
         $output = '';
-        if ($format != FORMAT_MOODLE) {
+        if ($text != '' && $format != $defaultformat) {
             $output .= '[' . $this->format_const_to_name($format) . ']';
         }
         $output .= $this->repchar($text, $format);
@@ -596,7 +593,7 @@ class qformat_gift extends qformat_default {
         global $QTYPES, $OUTPUT;
 
         // Start with a comment
-        $expout = "// question: $question->id  name: $question->name \n";
+        $expout = "// question: $question->id  name: $question->name\n";
 
         // output depends on question type
         switch($question->qtype) {
@@ -622,27 +619,28 @@ class qformat_gift extends qformat_default {
             $falseanswer = $question->options->answers[$question->options->falseanswer];
             if ($trueanswer->fraction == 1) {
                 $answertext = 'TRUE';
-                $right_feedback = $trueanswer->feedback;
-                $wrong_feedback = $falseanswer->feedback;
+                $rightfeedback = $this->write_questiontext($trueanswer->feedback,
+                        $trueanswer->feedbackformat, $question->questiontextformat);
+                $wrongfeedback = $this->write_questiontext($falseanswer->feedback,
+                        $falseanswer->feedbackformat, $question->questiontextformat);
             } else {
                 $answertext = 'FALSE';
-                $right_feedback = $falseanswer->feedback;
-                $wrong_feedback = $trueanswer->feedback;
+                $rightfeedback = $this->write_questiontext($falseanswer->feedback,
+                        $falseanswer->feedbackformat, $question->questiontextformat);
+                $wrongfeedback = $this->write_questiontext($trueanswer->feedback,
+                        $trueanswer->feedbackformat, $question->questiontextformat);
             }
-
-            $wrong_feedback = $this->repchar($wrong_feedback);
-            $right_feedback = $this->repchar($right_feedback);
 
             $expout .= $this->write_name($question->name);
             $expout .= $this->write_questiontext($question->questiontext, $question->questiontextformat);
             $expout .= '{' . $this->repchar($answertext);
-            if ($wrong_feedback) {
-                $expout .= '#' . $wrong_feedback;
-            } else if ($right_feedback) {
+            if ($wrongfeedback) {
+                $expout .= '#' . $wrongfeedback;
+            } else if ($rightfeedback) {
                 $expout .= '#';
             }
-            if ($right_feedback) {
-                $expout .= '#' . $right_feedback;
+            if ($rightfeedback) {
+                $expout .= '#' . $rightfeedback;
             }
             $expout .= "}\n";
             break;
@@ -660,9 +658,11 @@ class qformat_gift extends qformat_default {
                     $weight = $answer->fraction * 100;
                     $answertext = '~%' . $weight . '%';
                 }
-                $expout .= "\t" . $answertext . $this->repchar($answer->answer);
+                $expout .= "\t" . $answertext . $this->write_questiontext($answer->answer,
+                            $answer->answerformat, $question->questiontextformat);
                 if ($answer->feedback != '') {
-                    $expout .= '#' . $this->repchar($answer->feedback);
+                    $expout .= '#' . $this->write_questiontext($answer->feedback,
+                            $answer->feedbackformat, $question->questiontextformat);
                 }
                 $expout .= "\n";
             }
@@ -676,7 +676,8 @@ class qformat_gift extends qformat_default {
             foreach($question->options->answers as $answer) {
                 $weight = 100 * $answer->fraction;
                 $expout .= "\t=%" . $weight . '%' . $this->repchar($answer->answer) .
-                        '#' . $this->repchar($answer->feedback) . "\n";
+                        '#' . $this->write_questiontext($answer->feedback,
+                            $answer->feedbackformat, $question->questiontextformat) . "\n";
             }
             $expout .= "}\n";
             break;
@@ -689,9 +690,11 @@ class qformat_gift extends qformat_default {
                 if ($answer->answer != '' && $answer->answer != '*') {
                     $weight = 100 * $answer->fraction;
                     $expout .= "\t=%" . $weight . '%' . $answer->answer . ':' .
-                            (float)$answer->tolerance . '#' . $this->repchar($answer->feedback) . "\n";
+                            (float)$answer->tolerance . '#' . $this->write_questiontext($answer->feedback,
+                            $answer->feedbackformat, $question->questiontextformat) . "\n";
                 } else {
-                    $expout .= "\t~#" . $this->repchar($answer->feedback) . "\n";
+                    $expout .= "\t~#" . $this->write_questiontext($answer->feedback,
+                            $answer->feedbackformat, $question->questiontextformat) . "\n";
                 }
             }
             $expout .= "}\n";
@@ -702,7 +705,7 @@ class qformat_gift extends qformat_default {
             $expout .= $this->write_questiontext($question->questiontext, $question->questiontextformat);
             $expout .= "{\n";
             foreach($question->options->subquestions as $subquestion) {
-                $expout .= "\t=" . $this->repchar($subquestion->questiontext) .
+                $expout .= "\t=" . $this->repchar($this->write_questiontext($subquestion->questiontext, $subquestion->questiontextformat, $question->questiontextformat)) .
                         ' -> ' . $this->repchar($subquestion->answertext) . "\n";
             }
             $expout .= "}\n";
