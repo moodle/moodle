@@ -138,7 +138,11 @@ M.block_navigation.classes.tree = function(Y, id, properties) {
  */
 M.block_navigation.classes.tree.prototype.init_load_ajax = function(e, branch) {
     e.stopPropagation();
-    if (e.target.get('nodeName').toUpperCase() != 'P') {
+    var target = e.target;
+    if (target.test('span')) {
+        target = target.ancestor('p');
+    }
+    if (!target || !target.test('p')) {
         return true;
     }
     var cfginstance = '', Y = this.Y;
@@ -150,11 +154,11 @@ M.block_navigation.classes.tree.prototype.init_load_ajax = function(e, branch) {
         data:'elementid='+branch.id+'&id='+branch.branchid+'&type='+branch.type+'&sesskey='+M.cfg.sesskey+cfginstance,
         on: {
             complete:this.load_ajax,
-            success:function() {Y.detach('click', this.init_load_ajax, e.target);}
+            success:function() {Y.detach('click', this.init_load_ajax, target);}
         },
         context:this,
         arguments:{
-            target:e.target
+            target:target
         }
     });
     return true;

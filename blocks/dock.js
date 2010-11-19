@@ -627,6 +627,7 @@ M.core_dock.resize = function() {
         var titletop = item.nodes.docktitle.getY()-docky-buffer;
         var containery = this.nodes.container.getY();
         var containerheight = containery-docky+this.nodes.buttons.get('offsetHeight');
+        var scrolltop = panel.contentBody.get('scrollTop');
         panel.contentBody.setStyle('height', 'auto');
         panel.removeClass('oversized_content');
         var panelheight = panel.get('offsetHeight');
@@ -642,6 +643,10 @@ M.core_dock.resize = function() {
             panel.setTop(titletop-containerheight-difference+buffer);
         } else {
             panel.setTop(titletop-containerheight+buffer);
+        }
+
+        if (scrolltop) {
+            panel.contentBody.set('scrollTop', scrolltop);
         }
     }
 
