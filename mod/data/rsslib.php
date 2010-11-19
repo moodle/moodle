@@ -34,8 +34,9 @@
         if (file_exists($cachedfilepath)) {
             $cachedfilelastmodified = filemtime($cachedfilepath);
         }
-
-        if (data_rss_newstuff($data, $cachedfilelastmodified)) {
+        //if the cache is more than 60 seconds old and there's new stuff
+        $dontrecheckcutoff = time()-60;
+        if ( $dontrecheckcutoff > $cachedfilelastmodified && data_rss_newstuff($data, $cachedfilelastmodified)) {
             require_once($CFG->dirroot . '/mod/data/lib.php');
 
             // Get the first field in the list  (a hack for now until we have a selector)
