@@ -1362,7 +1362,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
             }
 
-            echo '<li class="activity '.$mod->modname.' modtype_'.$mod->modname.'" id="module-'.$modnumber.'">';  // Unique ID
+            $liclasses = array();
+            $liclasses[] = 'activity';
+            $liclasses[] = $mod->modname;
+            $liclasses[] = 'modtype_'.$mod->modname;
+            echo html_writer::start_tag('li', array('class'=>join(' ', $liclasses), 'id'=>'module-'.$modnumber));
             if ($ismoving) {
                 echo '<a title="'.$strmovefull.'"'.
                      ' href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.sesskey().'">'.
@@ -1371,9 +1375,14 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                      ';
             }
 
-            if ($mod->indent) {
-                echo $OUTPUT->spacer(array('height'=>12, 'width'=>(20 * $mod->indent))); // should be done with CSS instead
+            $classes = array('mod-indent');
+            if (!empty($mod->indent)) {
+                $classes[] = 'mod-indent-'.$mod->indent;
+                if ($mod->indent > 15) {
+                    $classes[] = 'mod-indent-huge';
+                }
             }
+            echo html_writer::start_tag('div', array('class'=>join(' ', $classes)));
 
             $extra = '';
             if (!empty($modinfo->cms[$modnumber]->extra)) {
@@ -1572,7 +1581,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
             }
 
-            echo "</li>\n";
+            echo html_writer::end_tag('div');
+            echo html_writer::end_tag('li')."\n";
         }
 
     } elseif ($ismoving) {
