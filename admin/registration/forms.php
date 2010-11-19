@@ -368,8 +368,8 @@ class site_registration_form extends moodleform {
         $questioncount = $DB->count_records('question');
         $resourcecount = $DB->count_records('resource');
         require_once($CFG->dirroot . "/course/lib.php");
-        $participantnumberaverage = average_number_of_participants();
-        $modulenumberaverage = average_number_of_courses_modules();
+        $participantnumberaverage = number_format(average_number_of_participants(), 2);
+        $modulenumberaverage = number_format(average_number_of_courses_modules(), 2);
 
         if (HUB_MOODLEORGHUBURL != $huburl) {
             $mform->addElement('checkbox', 'courses', get_string('sendfollowinginfo', 'hub'),
@@ -398,13 +398,11 @@ class site_registration_form extends moodleform {
             $mform->setDefault('resources', true);
 
             $mform->addElement('checkbox', 'participantnumberaverage', '',
-                    " " . get_string('participantnumberaverage', 'hub',
-                            number_format($participantnumberaverage, 2)));
+                    " " . get_string('participantnumberaverage', 'hub', $participantnumberaverage));
             $mform->setDefault('participantnumberaverage', true);
 
             $mform->addElement('checkbox', 'modulenumberaverage', '',
-                    " " . get_string('modulenumberaverage', 'hub', 
-                            number_format($modulenumberaverage, 2)));
+                    " " . get_string('modulenumberaverage', 'hub', $modulenumberaverage));
             $mform->setDefault('modulenumberaverage', true);
         } else {
             $mform->addElement('static', 'courseslabel', get_string('sendfollowinginfo', 'hub'),
