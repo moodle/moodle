@@ -398,11 +398,13 @@ class site_registration_form extends moodleform {
             $mform->setDefault('resources', true);
 
             $mform->addElement('checkbox', 'participantnumberaverage', '',
-                    " " . get_string('participantnumberaverage', 'hub', $participantnumberaverage));
+                    " " . get_string('participantnumberaverage', 'hub',
+                            number_format($participantnumberaverage, 2)));
             $mform->setDefault('participantnumberaverage', true);
 
             $mform->addElement('checkbox', 'modulenumberaverage', '',
-                    " " . get_string('modulenumberaverage', 'hub', $modulenumberaverage));
+                    " " . get_string('modulenumberaverage', 'hub', 
+                            number_format($modulenumberaverage, 2)));
             $mform->setDefault('modulenumberaverage', true);
         } else {
             $mform->addElement('static', 'courseslabel', get_string('sendfollowinginfo', 'hub'),
