@@ -95,8 +95,14 @@ if ($token==="$inttoken") {
         rss_error('rsserror');
     }
 
-    //calling isguestuser() just to make sure that $CFG->siteguest is set
-    isguestuser($token);
+    //make sure that $CFG->siteguest is set
+    if (empty($CFG->siteguest)) {
+        if (!$guestid = $DB->get_field('user', 'id', array('username'=>'guest', 'mnethostid'=>$CFG->mnet_localhost_id))) {
+            // guest does not exist yet, weird
+            rss_error('rsserror');
+        }
+        set_config('siteguest', $guestid);
+    }
     $guesttoken = rss_get_token($CFG->siteguest);
 
     //change forum to mod_forum (for example)
