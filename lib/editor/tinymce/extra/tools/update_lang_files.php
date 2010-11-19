@@ -31,12 +31,14 @@ if (!debugging('', DEBUG_DEVELOPER)) {
     die('Only for developers!!!!!');
 }
 
-// mapping of Moodle langs to TinyMCE langs
 $langconversion = array(
-    'no'    => 'nb',
-    'ko'    => false,  // ignore Korean translation for now - does not parse
-    'sr_lt' => false,  //'sr_lt' => 'sr' ignore the Serbian translation
-    'zh_tw' => 'zh',
+    // mapping of TinyMCE lang codes to Moodle codes
+    'nb'    => 'no',
+    'sr'    => 'sr_lt',
+
+    // ignore the following files due to known errors
+    'ch'    => false,   // XML parsing error, Moodle does not seem to have Chamorro yet anyway
+    'zh'    => false,   // XML parsing error, use 'zh' => 'zh_tw' when sorted out
 );
 
 $targetlangdir = "$CFG->dirroot/lib/editor/tinymce/extra/tools/temp/langs"; // change if needed
@@ -122,97 +124,68 @@ if ($tweaked) {
 
 fclose($handle);
 
-die("No other lang strings for now\n"); //TODO: integrate with AMOS
-
 //now update all other langs
 $en_strings = editor_tinymce_get_all_strings('en');
 if (!file_exists($targetlangdir)) {
     echo "Can not find target lang dir: $targetlangdir !!";
 }
 
-$langs = new DirectoryIterator($targetlangdir);
-foreach ($langs as $lang) {
-    if ($lang->isDot() or $lang->isLink() or !$lang->isDir()) {
+$xmlfiles = new DirectoryIterator($tempdir);
+foreach ($xmlfiles as $xmlfile) {
+    if ($xmlfile->isDot() or $xmlfile->isLink() or $xmlfile->isDir()) {
         continue;
     }
 
-    $lang = $lang->getFilename();
+    $filename = $xmlfile->getFilename();
 
-    if ($lang == 'en' or $lang == 'CVS' or $lang == '.settings') {
+    if ($filename == 'en.xml') {
+        continue;
+    }
+    if (substr($filename, -4) !== '.xml') {
         continue;
     }
 
-    $xmllang = $lang;
+    $xmllang = substr($filename, 0, strlen($filename) - 4);
+
+    echo "Processing $xmllang ...\n";
+
     if (array_key_exists($xmllang, $langconversion)) {
-        $xmllang = $langconversion[$xmllang];
-        if (empty($xmllang)) {
-            echo "         Ignoring: $lang\n";
+        $lang = $langconversion[$xmllang];
+        if (empty($lang)) {
+            echo "  Ignoring: $xmllang\n";
             continue;
+        } else {
+            echo "  Mapped to: $lang\n";
         }
-    }
-
-    $xmlfile = "$tempdir/$xmllang.xml";
-    if (!file_exists($xmlfile)) {
-        echo "         Skipping: $lang\n";
-        continue;
+    } else {
+        $lang = $xmllang;
     }
 
     $langfile = "$targetlangdir/$lang/editor_tinymce.php";
+    if (!file_exists(dirname($langfile))) {
+        mkdir(dirname($langfile), 0755, true);
+    }
 
     if (file_exists($langfile)) {
-        $old_strings = editor_tinymce_get_all_strings($lang);
-        ksort($old_strings);
-        foreach ($old_strings as $key=>$value) {
-            if (!array_key_exists($key, $en_strings)) {
-                unset($old_strings[$key]);
-            }
-        }
-    } else {
-        $old_strings = array();
+        unlink($langfile);
     }
 
-    // our modifications and upstream changes in existing strings
-    $tweaked = array();
-
-    //detect changes and new additions
-    $parsed = editor_tinymce_parse_xml_lang($xmlfile);
+    $parsed = editor_tinymce_parse_xml_lang("$tempdir/$xmlfile");
     ksort($parsed);
-    foreach ($parsed as $key=>$value) {
-        if (array_key_exists($key, $old_strings)) {
-            $oldvalue = $old_strings[$key];
-            if ($oldvalue !== $value) {
-                $tweaked[$key] = $oldvalue;
-            }
-            unset($old_strings[$key]);
-        }
-    }
 
     if (!$handle = fopen($langfile, 'w')) {
          echo "*** Cannot write to $langfile !!\n";
          continue;
     }
-    echo " Modifying: $lang\n";
 
-    fwrite($handle, "<?php\n\n//== Custom Moodle strings that are not part of upstream TinyMCE ==\n");
-    foreach ($old_strings as $key=>$value) {
-        fwrite($handle, editor_tinymce_encode_stringline($key, $value));
-    }
-
-    fwrite($handle, "\n\n// == TinyMCE upstream lang strings from all plugins ==\n");
+    fwrite($handle, "<?php\n\n// upload this file into the AMOS stage, rebase the stage, review the changes and commit\n");
     foreach ($parsed as $key=>$value) {
         fwrite($handle, editor_tinymce_encode_stringline($key, $value));
     }
 
-    if ($tweaked) {
-        fwrite($handle, "\n\n// == Our modifications or upstream changes ==\n");
-        foreach ($tweaked as $key=>$value) {
-            fwrite($handle, editor_tinymce_encode_stringline($key, $value));
-        }
-    }
-
     fclose($handle);
 }
-unset($langs);
+unset($xmlfiles);
 
 
 die("\nFinished!\n\n");
