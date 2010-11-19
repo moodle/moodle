@@ -302,6 +302,7 @@ $string['emailnotifybody'] = 'Dear {$a->username},
 in course \'{$a->coursename}\'
 
 You can review this attempt at {$a->quizreviewurl}.';
+$string['emailnotifysmall'] = '{$a->studentname} has completed {$a->quizname}';
 $string['emailnotifysubject'] = '{$a->studentname} has completed quiz {$a->quizname}';
 $string['empty'] = 'Empty';
 $string['enabled'] = 'Enabled';
@@ -475,6 +476,7 @@ $string['matcherror'] = 'Grades do not match grade options - question skipped';
 $string['matchgrades'] = 'Match grades';
 $string['matchgradeserror'] = 'Error if grade not listed';
 $string['matchgradesnearest'] = 'Nearest grade if not listed';
+$string['messageprovider:submission'] = 'Quiz submission notifications';
 $string['max'] = 'Max';
 $string['min'] = 'Min';
 $string['minutes'] = 'Minutes';

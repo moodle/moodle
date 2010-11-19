@@ -73,7 +73,7 @@ function message_send($eventdata) {
     }
 
     // Work out if the user is logged in or not
-    if ((time() - $timetoshowusers) < $eventdata->userto->lastaccess) {
+    if (!empty($eventdata->userto->lastaccess) && (time()-$timetoshowusers) < $eventdata->userto->lastaccess) {
         $userstate = 'loggedin';
     } else {
         $userstate = 'loggedoff';

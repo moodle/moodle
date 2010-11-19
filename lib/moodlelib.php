@@ -9107,7 +9107,7 @@ function message_popup_window() {
         $USER->message_lastpopup = 0;
     } else if ($USER->message_lastpopup > (time()-120)) {
         //dont run the query to check whether to display a popup if its been run in the last 2 minutes
-        //return;
+        return;
     }
 
     //a quick query to check whether the user has new messages
@@ -9140,10 +9140,14 @@ WHERE m.useridto = :userid AND p.name='popup'";
             $strmessages = get_string('unreadnewmessages', 'message', count($message_users));
         } else {
             $message_users = reset($message_users);
+
+            //show who the message is from if its not a notification
             if (!$message_users->notification) {
-            $strmessages = get_string('unreadnewmessage', 'message', fullname($message_users) );
+                $strmessages = get_string('unreadnewmessage', 'message', fullname($message_users) );
             }
 
+            //try to display the small version of the message
+            $smallmessage = null;
             if (!empty($message_users->smallmessage)) {
                 //display the first 200 chars of the message in the popup
                 $smallmessage = null;
@@ -9152,6 +9156,11 @@ WHERE m.useridto = :userid AND p.name='popup'";
                 } else {
                     $smallmessage = $message_users->smallmessage;
                 }
+            } else if ($message_users->notification) {
+                //its a notification with no smallmessage so just say they have a notification
+                $smallmessage = get_string('unreadnewnotification', 'message');
+            }
+            if (!empty($smallmessage)) {
                 $strmessages .= '<div id="usermessage">'.$smallmessage.'</div>';
             }
         }
