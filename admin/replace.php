@@ -1,14 +1,11 @@
 <?php
       /// Search and replace strings throughout all texts in the whole database
 
+define('NO_OUTPUT_BUFFERING', true);
+
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
-
-// workaround for problems with compression
-if (ini_get('zlib.output_compression')) {
-    @ini_set('zlib.output_compression', 'Off');
-}
 
 admin_externalpage_setup('replace');
 

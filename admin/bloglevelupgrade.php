@@ -1,6 +1,8 @@
 <?php
       /// Create "blog" forums in each course and copy blog entries from these courses' participants in these forums
 
+define('NO_OUTPUT_BUFFERING', true);
+
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/blog/lib.php');
@@ -28,9 +30,7 @@ echo $OUTPUT->box_start();
 
 /// Turn off time limits, sometimes upgrades can be slow.
 
-@set_time_limit(0);
-@ob_implicit_flush(true);
-while(@ob_end_flush());
+set_time_limit(0);
 
 $i = 0;
 

@@ -1,6 +1,8 @@
 <?php
       /// Search and replace strings throughout all texts in the whole database
 
+define('NO_OUTPUT_BUFFERING', true);
+
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
@@ -33,8 +35,6 @@ echo $OUTPUT->box_start();
 /// Turn off time limits, sometimes upgrades can be slow.
 
 @set_time_limit(0);
-@ob_implicit_flush(true);
-while(@ob_end_flush());
 
 echo '<strong>Progress:</strong>';
 $i = 0;

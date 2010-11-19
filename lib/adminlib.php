@@ -5919,8 +5919,6 @@ function db_replace($search, $replace) {
 
     /// Turn off time limits, sometimes upgrades can be slow.
     @set_time_limit(0);
-    @ob_implicit_flush(true);
-    while(@ob_end_flush());
 
     if (!$tables = $DB->get_tables() ) {    // No tables yet at all.
         return false;

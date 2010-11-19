@@ -18,6 +18,7 @@
 
 define('CHAT_MAX_CLIENT_UPDATES', 1000);
 define('NO_MOODLE_COOKIES', true); // session not used here
+define('NO_OUTPUT_BUFFERING', true);
 
 require('../../../config.php');
 require('../lib.php');
@@ -119,7 +120,6 @@ $refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdated.php?chat_sid=$ch
 
     // Ensure the HTML head makes it out there
     echo $CHAT_DUMMY_DATA;
-    @ob_end_flush();
 
     for ($n=0; $n <= CHAT_MAX_CLIENT_UPDATES; $n++) {
 
@@ -135,7 +135,6 @@ $refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdated.php?chat_sid=$ch
             $chat_newlastid   = 0;
             print " \n";
             print $CHAT_DUMMY_DATA;
-            @ob_end_flush();
             sleep($CFG->chat_refresh_room);
             continue;
         }
@@ -164,7 +163,6 @@ $refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdated.php?chat_sid=$ch
         } else {
             print " \n";
             print $CHAT_DUMMY_DATA;
-            @ob_end_flush();
             sleep($CFG->chat_refresh_room);
             continue;
             $num = 0;
@@ -229,7 +227,6 @@ EOD;
             print '<embed src="../beep.wav" autostart="true" hidden="true" name="beep" />';
         }
         print $CHAT_DUMMY_DATA;
-        @ob_end_flush();
         sleep($CFG->chat_refresh_room);
     } // here ends the for() loop
 

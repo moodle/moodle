@@ -129,6 +129,7 @@ $string['cannotsavedata'] = 'Cannot save data';
 $string['cannotsavefile'] = 'Cannot save the file "{$a}"!';
 $string['cannotsavemd5file'] = 'Cannot save md5 file';
 $string['cannotsavezipfile'] = 'Cannot save ZIP file';
+$string['cannotservefile'] = 'Can not serve file - server configuration problem.';
 $string['cannotsetparentforcatoritem'] = 'Cannot set parent for category or course item!';
 $string['cannotsetpassword'] = 'Could not set user password!';
 $string['cannotsetprefgrade'] = 'Could not set preference aggregationview to {$a} for this grade category';

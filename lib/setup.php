@@ -113,6 +113,11 @@ if (!defined('NO_DEBUG_DISPLAY')) {
     define('NO_DEBUG_DISPLAY', false);
 }
 
+// Some scripts such as upgrade may want to prevent output buffering
+if (!defined('NO_OUTPUT_BUFFERING')) {
+    define('NO_OUTPUT_BUFFERING', false);
+}
+
 // Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.
 // This is a quick hack.  Ideally we should ask the admin for a value.  See MDL-22625 for more on this.
 if (function_exists('date_default_timezone_set') and function_exists('date_default_timezone_get')) {
@@ -338,6 +343,10 @@ if (!isset($CFG->forced_plugin_settings)) {
 $CFG->httpswwwroot = $CFG->wwwroot;
 
 require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first
+
+if (NO_OUTPUT_BUFFERING) {
+    disable_output_buffering();
+}
 
 // Increase memory limits if possible
 raise_memory_limit(MEMORY_STANDARD);

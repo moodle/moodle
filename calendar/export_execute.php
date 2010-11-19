@@ -152,7 +152,7 @@ if(empty($serialized)) {
 }
 
 //IE compatibility HACK!
-if(ini_get('zlib.output_compression')) {
+if (ini_get_bool('zlib.output_compression')) {
     ini_set('zlib.output_compression', 'Off');
 }
 

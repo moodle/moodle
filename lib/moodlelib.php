@@ -7636,28 +7636,6 @@ function get_browser_version_classes() {
 }
 
 /**
- * This function makes the return value of ini_get consistent if you are
- * setting server directives through the .htaccess file in apache.
- *
- * Current behavior for value set from php.ini On = 1, Off = [blank]
- * Current behavior for value set from .htaccess On = On, Off = Off
- * Contributed by jdell @ unr.edu
- *
- * @todo Finish documenting this function
- *
- * @param string $ini_get_arg The argument to get
- * @return bool True for on false for not
- */
-function ini_get_bool($ini_get_arg) {
-    $temp = ini_get($ini_get_arg);
-
-    if ($temp == '1' or strtolower($temp) == 'on') {
-        return true;
-    }
-    return false;
-}
-
-/**
  * Can handle rotated text. Whether it is safe to use the trickery in textrotate.js.
  *
  * @return bool True for yes, false for no

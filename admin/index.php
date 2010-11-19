@@ -38,19 +38,7 @@ if (version_compare(phpversion(), '5.2.0') < 0) {
     die;
 }
 
-// disable compression, it would prevent closing of buffers
-if (ini_get('zlib.output_compression')) {
-    ini_set('zlib.output_compression', 'Off');
-}
-
-// try to flush everything all the time
-ob_implicit_flush(true);
-while(ob_get_level()) {
-    if (!ob_end_clean()) {
-        // prevent infinite loop
-        break;
-    }
-}
+define('NO_OUTPUT_BUFFERING', true);
 
 require('../config.php');
 require_once($CFG->libdir.'/adminlib.php');    // various admin-only functions

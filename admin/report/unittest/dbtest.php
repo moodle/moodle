@@ -4,26 +4,13 @@
  * @package SimpleTestEx
  */
 
-/** */
+define('NO_OUTPUT_BUFFERING', true);
+
 require_once(dirname(__FILE__).'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/simpletestcoveragelib.php');
 require_once('ex_simple_test.php');
 require_once('ex_reporter.php');
-
-// disable compression, it would prevent closing of buffers
-if (ini_get('zlib.output_compression')) {
-    ini_set('zlib.output_compression', 'Off');
-}
-
-// try to flush everything all the time
-ob_implicit_flush(true);
-while(ob_get_level()) {
-    if (!ob_end_clean()) {
-        // prevent infinite loop
-        break;
-    }
-}
 
 $showpasses   = optional_param('showpasses', false, PARAM_BOOL);
 $codecoverage = optional_param('codecoverage', false, PARAM_BOOL);
