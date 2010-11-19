@@ -1067,7 +1067,7 @@ $capabilities = array(
         'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
             'student' => CAP_ALLOW,
             'user' => CAP_ALLOW,
