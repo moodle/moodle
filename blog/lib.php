@@ -235,7 +235,9 @@ function blog_sync_external_entries($externalblog) {
 function blog_delete_external_entries($externalblog) {
     global $DB;
     require_capability('moodle/blog:manageexternal', get_context_instance(CONTEXT_SYSTEM));
-    $DB->delete_records_select('post', 'content='.$DB->sql_compare_text($externalblog->id)." and module='blog_external'");
+    $DB->delete_records_select('post',
+                               "module='blog_external' AND " . $DB->sql_compare_text('content') . " = ?",
+                               array($externalblog->id));
 }
 
 /**
