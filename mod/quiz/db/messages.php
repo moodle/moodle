@@ -18,14 +18,14 @@
 /**
  * Defines message providers (types of messages being sent)
  *
- * @package mod-forum
- * @copyright  1999 onwards  Martin Dougiamas  http://moodle.com
+ * @package mod-quiz
+ * @copyright  2010 onwards  Andrew Davis  http://moodle.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $messageproviders = array (
-
-/// Ordinary single forum posts
+    
+    // student has submitted a quiz attempt
     'submission' => array (
         'capability'  => 'mod/quiz:emailnotifysubmission'
     )
