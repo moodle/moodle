@@ -216,18 +216,20 @@ function xmldb_wiki_upgrade($oldversion) {
     // Step 8, migrating files
     if ($oldversion < 2010040108) {
         $fs = get_file_storage();
-        $sql = "SELECT DISTINCT po.pagename, w.id AS wikiid, po.userid,
-                    po.meta AS filemeta, eo.id AS entryid, eo.groupid, s.id AS subwiki,
-                    w.course AS courseid, cm.id AS cmid
-                    FROM {wiki_pages_old} po
-                    LEFT OUTER JOIN {wiki_entries_old} eo
-                    ON eo.id=po.wiki
-                    LEFT OUTER JOIN {wiki} w
-                    ON w.id = eo.wikiid
-                    LEFT OUTER JOIN {wiki_subwikis} s
-                    ON s.groupid = eo.groupid AND s.wikiid = eo.wikiid AND eo.userid = s.userid
-                    JOIN {modules} m ON m.name = 'wiki'
-                    JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = w.id)";
+        $sql = "SELECT files.*, po.meta AS filemeta FROM {wiki_pages_old} po JOIN (
+                    SELECT DISTINCT po.id, po.pagename, w.id AS wikiid, po.userid,
+                        eo.id AS entryid, eo.groupid, s.id AS subwiki,
+                        w.course AS courseid, cm.id AS cmid
+                        FROM {wiki_pages_old} po
+                        LEFT OUTER JOIN {wiki_entries_old} eo
+                        ON eo.id=po.wiki
+                        LEFT OUTER JOIN {wiki} w
+                        ON w.id = eo.wikiid
+                        LEFT OUTER JOIN {wiki_subwikis} s
+                        ON s.groupid = eo.groupid AND s.wikiid = eo.wikiid AND eo.userid = s.userid
+                        JOIN {modules} m ON m.name = 'wiki'
+                        JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = w.id)
+                ) files ON files.id = po.id";
 
         $rs = $DB->get_recordset_sql($sql);
         foreach ($rs as $r) {
