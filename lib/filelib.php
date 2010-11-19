@@ -1482,17 +1482,27 @@ function send_file_not_found() {
 function prepare_file_sending() {
     $olddebug = error_reporting(0);
 
+    // this is weird, but browser that do not support gzip or deflate have session problems here,
+    // let's try to work around it
+    $bugalert = false;
+
     // IE compatibility HACK - it does not like zlib compression much
     // there is also a problem with the length header in older PHP versions
     if (ini_get_bool('zlib.output_compression')) {
-        ini_set('zlib.output_compression', 'Off');
+        if (!isset($_SERVER['HTTP_ACCEPT_ENCODING']) or (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') === false and strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'deflate') === false)) {
+            $bugalert = true;
+        } else {
+            ini_set('zlib.output_compression', 'Off');
+        }
     }
 
     // flush and close all buffers if possible
-    while(ob_get_level()) {
-        if (!ob_end_flush()) {
-            // prevent infinite loop when buffer can not be closed
-            break;
+    if (!$bugalert) {
+        while(ob_get_level()) {
+            if (!ob_end_flush()) {
+                // prevent infinite loop when buffer can not be closed
+                break;
+            }
         }
     }
 
