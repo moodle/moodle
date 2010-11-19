@@ -214,7 +214,7 @@ class mod_choice_renderer extends plugin_renderer_base {
             $actiondata .= html_writer::tag('label', ' ' . get_string('withselected', 'quiz') . ' ', array('for'=>'menuaction'));
 
             $actionurl = new moodle_url('/mod/choice/view.php', array('sesskey'=>sesskey(), 'action'=>'delete_confirmation()'));
-            $select = new single_select($actionurl, 'action', array('delete'=>get_string('delete')), null, array(''=>get_string('moveselectedusersto', 'choice')), 'attemptsform');
+            $select = new single_select($actionurl, 'action', array('delete'=>get_string('delete')), null, array(''=>get_string('chooseaction', 'choice')), 'attemptsform');
 
             $actiondata .= $this->output->render($select);
         }

@@ -52,6 +52,7 @@ If limits are disabled then any number of participants can select each of the op
 $string['choice:readresponses'] = 'Read responses';
 $string['choicesaved'] = 'Your choice has been saved';
 $string['choicetext'] = 'Choice text';
+$string['chooseaction'] = 'Choose an action ...';
 $string['limit'] = 'Limit';
 $string['limitanswers'] = 'Limit the number of responses allowed';
 $string['modulename'] = 'Choice';
