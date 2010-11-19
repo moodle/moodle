@@ -79,7 +79,9 @@ function forum_rss_get_feed($context, $args) {
     if (file_exists($cachedfilepath)) {
         $cachedfilelastmodified = filemtime($cachedfilepath);
     }
-    if (forum_rss_newstuff($forum, $cm, $cachedfilelastmodified)) {
+    //if the cache is more than 60 seconds old and there's new stuff
+    $dontrecheckcutoff = time()-60;
+    if ( $dontrecheckcutoff > $cachedfilelastmodified && forum_rss_newstuff($forum, $cm, $cachedfilelastmodified)) {
         //need to regenerate the cached version
         $result = forum_rss_feed_contents($forum, $sql);
         if (!empty($result)) {
