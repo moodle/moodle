@@ -294,6 +294,7 @@ at {$a->submissiontime}.
 This email confirms that we have safely received your answers.
 
 You can access this quiz at {$a->quizurl}.';
+$string['emailconfirmsmall'] = 'Thank you for submitting your answers to \'{$a->quizname}\'';
 $string['emailconfirmsubject'] = 'Quiz submission confirmation: {$a->quizname}';
 $string['emailnotifybody'] = 'Dear {$a->username},
 
@@ -476,7 +477,8 @@ $string['matcherror'] = 'Grades do not match grade options - question skipped';
 $string['matchgrades'] = 'Match grades';
 $string['matchgradeserror'] = 'Error if grade not listed';
 $string['matchgradesnearest'] = 'Nearest grade if not listed';
-$string['messageprovider:submission'] = 'Quiz submission notifications';
+$string['messageprovider:confirmation'] = 'Confirmation of your own quiz submissions';
+$string['messageprovider:submission'] = 'Notification of quiz submissions';
 $string['max'] = 'Max';
 $string['min'] = 'Min';
 $string['minutes'] = 'Minutes';

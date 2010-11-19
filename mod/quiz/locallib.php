@@ -1017,14 +1017,21 @@ function quiz_send_confirmation($a) {
 
     // send email and analyse result
     $eventdata = new stdClass();
-    $eventdata->modulename        = 'quiz';
+    $eventdata->component        = 'mod_quiz';
+    $eventdata->name             = 'confirmation';
+    $eventdata->notification      = 1;
+
     $eventdata->userfrom          = get_admin();
     $eventdata->userto            = $USER;
     $eventdata->subject           = $subject;
     $eventdata->fullmessage       = $body;
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml   = '';
-    $eventdata->smallmessage      = '';
+
+    $eventdata->smallmessage      = get_string('emailconfirmsmall', 'quiz', $a);
+    $eventdata->contexturl        = $a->quizurl;
+    $eventdata->contexturlname    = $a->quizname;
+    
     return message_send($eventdata);
 }
 

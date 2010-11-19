@@ -25,9 +25,14 @@
 
 $messageproviders = array (
     
-    // student has submitted a quiz attempt
+    // notify teacher that a student has submitted a quiz attempt
     'submission' => array (
         'capability'  => 'mod/quiz:emailnotifysubmission'
+    ),
+    
+    // confirm a student's quiz attempt
+    'confirmation' => array (
+        'capability'  => 'mod/quiz:emailconfirmsubmission'
     )
 
 );
