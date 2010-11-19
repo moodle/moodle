@@ -248,7 +248,7 @@ if ($id) {
     //     *
     //     * Error. No more options
     //     */
-    } else {
+} else {
     print_error('incorrectparameters');
 }
 require_course_login($course, true, $cm);

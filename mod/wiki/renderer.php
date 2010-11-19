@@ -303,8 +303,8 @@ class mod_wiki_renderer extends plugin_renderer_base {
             } else if ($wiki->wikimode == 'individual') {
                 // We have private wikis here
 
-                $view = has_capability('mod/wiki:viewpage', $context, $USER);
-                $manage = has_capability('mod/wiki:managewiki', $context, $USER);
+                $view = has_capability('mod/wiki:viewpage', $context);
+                $manage = has_capability('mod/wiki:managewiki', $context);
 
                 // Only people with these capabilities can view all wikis
                 if ($view && $manage) {
@@ -340,8 +340,8 @@ class mod_wiki_renderer extends plugin_renderer_base {
                 return;
             } else if ($wiki->wikimode == 'individual') {
                 //  @TODO: Print here a combo that contains all users of that subwiki.
-                $view = has_capability('mod/wiki:viewpage', $context, $USER);
-                $manage = has_capability('mod/wiki:managewiki', $context, $USER);
+                $view = has_capability('mod/wiki:viewpage', $context);
+                $manage = has_capability('mod/wiki:managewiki', $context);
 
                 // Only people with these capabilities can view all wikis
                 if ($view && $manage) {
