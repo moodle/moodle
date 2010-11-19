@@ -221,19 +221,19 @@ function choice_prepare_options($choice, $user, $coursemodule, $allresponses) {
             }
             if ( $choice->limitanswers && ($option->countanswers >= $option->maxanswers) && empty($option->attributes->checked)) {
                 $option->attributes->disabled = true;
-                }
-            $cdisplay['options'][] = $option;
             }
+            $cdisplay['options'][] = $option;
         }
+    }
 
     $cdisplay['hascapability'] = is_enrolled($context, NULL, 'mod/choice:choose'); //only enrolled users are allowed to make a choice
 
     if ($choice->allowupdate && $DB->record_exists('choice_answers', array('choiceid'=> $choice->id, 'userid'=> $user->id))) {
         $cdisplay['allowupdate'] = true;
-                }
+    }
 
     return $cdisplay;
-                    }
+}
 
 /**
  * @global object
@@ -360,7 +360,7 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forc
         $display->options[$optionid]->maxanswer = $choice->maxanswers[$optionid];
 
         if (array_key_exists($optionid, $allresponses)) {
-            $display->options[$optionid]->user = $allresponses[$optionid]; //->user;
+            $display->options[$optionid]->user = $allresponses[$optionid];
             $totaluser += count($allresponses[$optionid]);
         }
     }
