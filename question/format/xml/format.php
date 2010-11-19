@@ -144,6 +144,8 @@ class qformat_xml extends qformat_default {
      * @return object question object
      */
     function import_headers($question) {
+        global $CFG;
+
         // get some error strings
         $error_noname = get_string('xmlimportnoname','quiz');
         $error_noquestion = get_string('xmlimportnoquestion','quiz');
@@ -190,6 +192,16 @@ class qformat_xml extends qformat_default {
 
         $qo->defaultgrade = $this->getpath( $question, array('#','defaultgrade',0,'#'), $qo->defaultgrade );
         $qo->penalty = $this->getpath( $question, array('#','penalty',0,'#'), $qo->penalty );
+
+        // Read the question tags.
+        if (!empty($CFG->usetags) && array_key_exists('tags', $question['#'])
+                && !empty($question['#']['tags'][0]['#']['tag'])) {
+            require_once($CFG->dirroot.'/tag/lib.php');
+            $qo->tags = array();
+            foreach ($question['#']['tags'][0]['#']['tag'] as $tagdata) {
+                $qo->tags[] = $this->getpath($tagdata, array('#', 'text', 0, '#'), '', true);
+            }
+        }
 
         return $qo;
     }
@@ -991,18 +1003,17 @@ class qformat_xml extends qformat_default {
      * @param boolean short stick it on one line
      * @return string formatted text
      */
-    function writetext($raw, $ilev=0, $short=true) {
-        $indent = str_repeat( "  ",$ilev );
+    function writetext($raw, $ilev = 0, $short = true) {
+        $indent = str_repeat('  ', $ilev);
 
         // if required add CDATA tags
-        if (!empty($raw) and (htmlspecialchars($raw)!=$raw)) {
+        if (!empty($raw) and (htmlspecialchars($raw) != $raw)) {
             $raw = "<![CDATA[$raw]]>";
         }
 
         if ($short) {
-            $xml = "$indent<text>$raw</text>\n";
-        }
-        else {
+            $xml = "$indent<text>$raw</text>";
+        } else {
             $xml = "$indent<text>\n$raw\n$indent</text>\n";
         }
 
@@ -1391,13 +1402,21 @@ class qformat_xml extends qformat_default {
             $expout .= $data;
         }
 
+        // Write the question tags.
+        if (!empty($CFG->usetags)) {
+            require_once($CFG->dirroot.'/tag/lib.php');
+            $tags = tag_get_tags_array('question', $question->id);
+            if (!empty($tags)) {
+                $expout .= "    <tags>\n";
+                foreach ($tags as $tag) {
+                    $expout .= "      <tag>" . $this->writetext($tag, 0, true) . "</tag>\n";
+                }
+                $expout .= "    </tags>\n";
+            }
+        }
+
         // close the question tag
         $expout .= "</question>\n";
-
-        // XXX: debuging
-        //echo '<textarea cols=100 rows=20>';
-        //echo $expout;
-        //echo '</textarea>';
 
         return $expout;
     }

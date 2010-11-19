@@ -247,7 +247,7 @@ class qformat_default {
      * @return boolean success
      */
     function importprocess($category) {
-        global $USER, $DB, $OUTPUT, $QTYPES;
+        global $USER, $CFG, $DB, $OUTPUT, $QTYPES;
 
         $context = $category->context;
         $this->importcontext = $context;
@@ -366,6 +366,11 @@ class qformat_default {
             // Now to save all the answers and type-specific options
 
             $result = $QTYPES[$question->qtype]->save_question_options($question);
+
+            if (!empty($CFG->usetags) && isset($question->tags)) {
+                require_once($CFG->dirroot . '/tag/lib.php');
+                tag_set('question', $question->id, $question->tags);
+            }
 
             if (!empty($result->error)) {
                 echo $OUTPUT->notification($result->error);
