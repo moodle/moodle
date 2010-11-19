@@ -84,7 +84,7 @@ if ($externalblogform->is_cancelled()){
 
             $newexternal->id = $DB->insert_record('blog_external', $newexternal);
             blog_sync_external_entries($newexternal);
-            tag_set('blog_external', $newexternal->id, $data->autotags);
+            tag_set('blog_external', $newexternal->id, explode(',', $data->autotags));
 
             break;
 
