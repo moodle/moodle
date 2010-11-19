@@ -44,21 +44,21 @@
 
 /** Only side pre **/
 
-.side-pre-only #page-content #region-main-box #region-post-box {
+.side-pre-only #page-content #region-post-box {
     margin-left: -210px;
 }
 
-.side-pre-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+.side-pre-only #page-content #region-main {
     margin-left: 210px;
 }
 
 /** Only side post **/
 
-.side-post-only #page-content #region-main-box #region-post-box {
+.side-post-only #page-content #region-post-box {
     margin-left: -210px;
 }
 
-.side-post-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+.side-post-only #page-content #region-main {
     margin-left: 210px;
 }
 
