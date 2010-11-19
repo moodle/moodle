@@ -310,8 +310,7 @@ if ($data->addtemplate){
     $newtext = '';
 }
 
-$formatoptions = (object)array('noclean'=>true, 'para'=>false, 'filter'=>true);
-echo format_text($newtext, FORMAT_HTML, $formatoptions);
+echo $newtext;
 
 echo '<div class="mdl-align"><input type="submit" name="saveandview" value="'.get_string('saveandview','data').'" />';
 if ($rid) {
