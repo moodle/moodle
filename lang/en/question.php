@@ -118,6 +118,8 @@ $string['exportcategory_help'] = 'This setting determines the category from whic
 
 Certain import formats, such as GIFT and Moodle XML, permit category and context data to be included in the export file, enabling them to (optionally) be recreated on import. If required, the appropriate checkboxes should be ticked.';
 $string['exporterror'] = 'Errors occur during exporting!';
+$string['exportfilename'] = 'questions';
+$string['exportnameformat'] = '%Y%m%d-%H%M';
 $string['exportquestions'] = 'Export questions to file';
 $string['exportquestions_help'] = 'This function enables the export of a complete category (and any subcategories) of questions to file. Please note that, depending on the file format selected, some question data and certain question types may not be exported.';
 $string['exportquestions_link'] = 'question/export';
