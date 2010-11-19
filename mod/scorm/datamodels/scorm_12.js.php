@@ -39,15 +39,15 @@ function SCORMapi1_2() {
     CMIResult = '^correct$|^wrong$|^unanticipated$|^neutral$|^([0-9]{0,3})?(\.[0-9]{1,2})?$';
     NAVEvent = '^previous$|^continue$';
     // Children lists
-    cmi_children = 'core, suspend_data, launch_data, comments, objectives, student_data, student_preference, interactions';
-    core_children = 'student_id, student_name, lesson_location, credit, lesson_status, entry, score, total_time, lesson_mode, exit, session_time';
-    score_children = 'raw, min, max';
-    comments_children = 'content, location, time';
-    objectives_children = 'id, score, status';
+    cmi_children = 'core,suspend_data,launch_data,comments,objectives,student_data,student_preference,interactions';
+    core_children = 'student_id,student_name,lesson_location,credit,lesson_status,entry,score,total_time,lesson_mode,exit,session_time';
+    score_children = 'raw,min,max';
+    comments_children = 'content,location,time';
+    objectives_children = 'id,score,status';
     correct_responses_children = 'pattern';
-    student_data_children = 'mastery_score, max_time_allowed, time_limit_action';
-    student_preference_children = 'audio, language, speed, text';
-    interactions_children = 'id, objectives, time, type, correct_responses, weighting, student_response, result, latency';
+    student_data_children = 'mastery_score,max_time_allowed,time_limit_action';
+    student_preference_children = 'audio,language,speed,text';
+    interactions_children = 'id,objectives,time,type,correct_responses,weighting,student_response,result,latency';
     // Data ranges
     score_range = '0#100';
     audio_range = '-1#100';
