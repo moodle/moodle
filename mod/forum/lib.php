@@ -7485,7 +7485,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
 
     $canmanage  = has_capability('mod/forum:managesubscriptions', $PAGE->cm->context);
     $subscriptionmode = forum_get_forcesubscribed($forumobject);
-    $cansubscribe = ($enrolled &&($subscriptionmode != FORUM_FORCESUBSCRIBE && ($subscriptionmode != FORUM_DISALLOWSUBSCRIBE || $canmanage)));
+    $cansubscribe = ($enrolled && $subscriptionmode != FORUM_FORCESUBSCRIBE && ($subscriptionmode != FORUM_DISALLOWSUBSCRIBE || $canmanage));
 
     if ($canmanage) {
         $mode = $forumnode->add(get_string('subscriptionmode', 'forum'), null, navigation_node::TYPE_CONTAINER);
