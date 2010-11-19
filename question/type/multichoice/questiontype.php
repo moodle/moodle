@@ -119,7 +119,7 @@ class question_multichoice_qtype extends default_questiontype {
         if (isset($question->layout)) {
             $options->layout = $question->layout;
         }
-        $options->answernumbering = $question->answernumbering['text'][0]['#'];
+        $options->answernumbering = $question->answernumbering;
         $options->shuffleanswers = $question->shuffleanswers;
         $options->correctfeedback = $this->import_or_save_files($question->correctfeedback,
                 $context, 'qtype_multichoice', 'correctfeedback', $question->id);
