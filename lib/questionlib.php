@@ -2622,47 +2622,29 @@ function get_import_export_formats( $type ) {
 
 
 /**
-* Create default export filename
-*
-* @return string   default export filename
-* @param object $course
-* @param object $category
+* Create a reasonable default file name for exporting questions from a particular
+* category.
+* @param object $course the course the questions are in.
+* @param object $category the question category.
+* @return string the filename.
 */
-function default_export_filename($course,$category) {
-    //Take off some characters in the filename !!
-    $takeoff = array(" ", ":", "/", "\\", "|");
-    $export_word = str_replace($takeoff,"_",moodle_strtolower(get_string("exportfilename","quiz")));
-    //If non-translated, use "export"
-    if (substr($export_word,0,1) == "[") {
-        $export_word= "export";
+function question_default_export_filename($course, $category) {
+    // We build a string that is an appropriate name (questions) from the lang pack,
+    // then the corse shortname, then the question category name, then a timestamp. 
+
+    $base = clean_filename(get_string('exportfilename', 'question'));
+
+    $dateformat = str_replace(' ', '_', get_string('exportnameformat', 'question'));
+    $timestamp = clean_filename(userdate(time(), $dateformat, 99, false));
+
+    $shortname = clean_filename($course->shortname);
+    if ($shortname == '' || $shortname == '_' ) {
+        $shortname = $course->id;
     }
 
-    //Calculate the date format string
-    $export_date_format = str_replace(" ","_",get_string("exportnameformat","quiz"));
-    //If non-translated, use "%Y%m%d-%H%M"
-    if (substr($export_date_format,0,1) == "[") {
-        $export_date_format = "%%Y%%m%%d-%%H%%M";
-    }
+    $categoryname = clean_filename(format_string($category->name));
 
-    //Calculate the shortname
-    $export_shortname = clean_filename($course->shortname);
-    if (empty($export_shortname) or $export_shortname == '_' ) {
-        $export_shortname = $course->id;
-    }
-
-    //Calculate the category name
-    $export_categoryname = clean_filename($category->name);
-
-    //Calculate the final export filename
-    //The export word
-    $export_name = $export_word."-";
-    //The shortname
-    $export_name .= moodle_strtolower($export_shortname)."-";
-    //The category name
-    $export_name .= moodle_strtolower($export_categoryname)."-";
-    //The date format
-    $export_name .= userdate(time(),$export_date_format,99,false);
-    //Extension is supplied by format later.
+    return "{$base}-{$shortname}-{$categoryname}-{$timestamp}";
 
     return $export_name;
 }
@@ -3276,8 +3258,8 @@ function question_check_file_access($question, $state, $options, $contextid, $co
  * @param string $ithcontexts
  * @param moodle_url export file url
  */
-function question_make_export_url($contextid, $categoryid, $format, $withcategories, $withcontexts) {
+function question_make_export_url($contextid, $categoryid, $format, $withcategories, $withcontexts, $filename) {
     global $CFG;
     $urlbase = "$CFG->httpswwwroot/pluginfile.php";
-    return moodle_url::make_file_url($urlbase, "/$contextid/question/export/{$categoryid}/{$format}/{$withcategories}/{$withcontexts}/export.xml", true);
+    return moodle_url::make_file_url($urlbase, "/$contextid/question/export/{$categoryid}/{$format}/{$withcategories}/{$withcontexts}/{$filename}", true);
 }

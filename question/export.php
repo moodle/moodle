@@ -54,7 +54,12 @@
             $withcontexts = 'withcontexts';
         }
 
-        $export_url = question_make_export_url($thiscontext->id, $category->id, $from_form->format, $withcategories, $withcontexts);
+        $classname = 'qformat_' . $from_form->format;
+        $qformat = new $classname();
+        $filename = question_default_export_filename($COURSE, $category) .
+                $qformat->export_file_extension();
+        $export_url = question_make_export_url($thiscontext->id, $category->id,
+                $from_form->format, $withcategories, $withcontexts, $filename);
 
         echo $OUTPUT->box_start();
         echo get_string('yourfileshoulddownload', 'question', $export_url->out());

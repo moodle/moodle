@@ -45,6 +45,10 @@ class qformat_gift extends qformat_default {
         return true;
     }
 
+    function export_file_extension() {
+        return '.txt';
+    }
+
     function answerweightparser(&$answer) {
         $answer = substr($answer, 1);                        // removes initial %
         $end_position  = strpos($answer, "%");

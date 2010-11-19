@@ -698,12 +698,6 @@ class qformat_default {
             // export the question displaying message
             $count++;
 
-            //echo '<hr />';
-            //echo $OUTPUT->container_start();
-            //echo '<strong>' . $count . '.</strong>&nbsp;';
-            //echo $this->format_question_text($question);
-            //echo $OUTPUT->container_end();
-
             if (question_has_capability_on($question, 'view', $question->category)) {
                 // files used by questiontext
                 $files = $fs->get_area_files($contextid, 'question', 'questiontext', $question->id);
