@@ -31,7 +31,7 @@
 $string['cannotcreatelangdir'] = 'Nije moguće stvoriti lang mapu';
 $string['cannotcreatetempdir'] = 'Nije moguće stvoriti privremenu (TEMP) mapu';
 $string['cannotdownloadcomponents'] = 'Nije moguće preuzimanje komponenti';
-$string['cannotdownloadzipfile'] = 'Ne mogu preuzeti ZIP datoteku';
+$string['cannotdownloadzipfile'] = 'Nije moguće preuzeti ZIP datoteku';
 $string['cannotfindcomponent'] = 'Nije moguće pronaći komponentu';
 $string['cannotsavemd5file'] = 'Nije moguće pohraniti md5 datoteku';
 $string['cannotsavezipfile'] = 'Nije moguće pohraniti ZIP datoteku';
