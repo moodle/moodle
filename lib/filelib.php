@@ -1480,12 +1480,12 @@ function send_file_not_found() {
  * @return void
  */
 function prepare_file_sending() {
-    $olddebug = error_reporting(0);
-
     // We need to be able to send headers
     if (headers_sent()) {
         throw new file_serving_exception('Headers already sent, can not serve file, this is definitely a server configuration issue!');
     }
+
+    $olddebug = error_reporting(0);
 
     // this is weird, but browser that do not support gzip or deflate have session problems here,
     // let's try to work around it
