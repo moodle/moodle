@@ -488,7 +488,7 @@ class enrol_database_plugin extends enrol_plugin {
         $idnumber  = strtolower($this->get_config('newcourseidnumber'));
         $category  = strtolower($this->get_config('newcoursecategory'));
 
-        $fields = array($fullname, $shortname, $idnumber);
+        $fields = array($fullname, $shortname);
         if ($category) {
             $fields[] = $category;
         }
