@@ -12,6 +12,7 @@ $temp->add(new admin_setting_configselect('gdversion', get_string('gdversion','a
                                                                                                                                                           '2' => get_string('gd2'))));
 $temp->add(new admin_setting_configexecutable('pathtodu', get_string('pathtodu', 'admin'), get_string('configpathtodu', 'admin'), ''));
 $temp->add(new admin_setting_configexecutable('aspellpath', get_string('aspellpath', 'admin'), get_string('edhelpaspellpath'), ''));
+$temp->add(new admin_setting_configexecutable('pathtodot', get_string('pathtodot', 'admin'), get_string('pathtodot_help', 'admin'), ''));
 $ADMIN->add('server', $temp);
 
 
