@@ -150,7 +150,7 @@ function url_display_frame($url, $cm, $course) {
     } else {
         $config = get_config('url');
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $exteurl = s(url_get_full_url($url, $cm, $course, $config));
+        $exteurl = url_get_full_url($url, $cm, $course, $config);
         $navurl = "$CFG->wwwroot/mod/url/view.php?id=$cm->id&amp;frameset=top";
         $title = strip_tags(format_string($course->shortname.': '.$url->name));
         $framesize = $config->framesize;
@@ -227,12 +227,12 @@ function url_print_workaround($url, $cm, $course) {
 function url_display_embed($url, $cm, $course) {
     global $CFG, $PAGE, $OUTPUT;
 
-    $link = html_writer::tag('a', $url->externalurl, array('href'=>$url->externalurl));
-    $clicktoopen = get_string('clicktoopen', 'url', $link);
-
     $mimetype = resourcelib_guess_url_mimetype($url->externalurl);
     $fullurl  = url_get_full_url($url, $cm, $course);
     $title    = $url->name;
+
+    $link = html_writer::tag('a', $fullurl, array('href'=>str_replace('&amp;', '&', $fullurl)));
+    $clicktoopen = get_string('clicktoopen', 'url', $link);
 
     if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
         $code = resourcelib_embed_image($fullurl, $title);
