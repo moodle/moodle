@@ -471,7 +471,7 @@ class enrol_database_plugin extends enrol_plugin {
         global $CFG, $DB;
 
         // make sure we sync either enrolments or courses
-        if (!$this->get_config('dbtype') or !$this->get_config('dbhost') or $this->get_config('newcoursetable') or $this->get_config('newcoursefullname') or $this->get_config('newcourseshortname')) {
+        if (!$this->get_config('dbtype') or !$this->get_config('dbhost') or !$this->get_config('newcoursetable') or !$this->get_config('newcoursefullname') or !$this->get_config('newcourseshortname')) {
             return;
         }
 
