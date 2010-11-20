@@ -964,7 +964,9 @@ function get_real_size($size = 0) {
 }
 
 /**
- * Try to disable all output buffering
+ * Try to disable all output buffering and purge
+ * all headers.
+ *
  * @private to be called only from lib/setup.php !
  * @return void
  */
