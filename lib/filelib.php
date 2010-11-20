@@ -1482,6 +1482,11 @@ function send_file_not_found() {
 function prepare_file_sending() {
     $olddebug = error_reporting(0);
 
+    // We need to be able to send headers
+    if (headers_sent()) {
+        throw new file_serving_exception('Headers already sent, can not serve file, this is definitely a server configuration issue!');
+    }
+
     // this is weird, but browser that do not support gzip or deflate have session problems here,
     // let's try to work around it
     $bugalert = false;
@@ -1513,7 +1518,9 @@ function prepare_file_sending() {
     // create XSS problems through student files
     // or the content of the file would be borked.
     if (headers_sent()) {
-        throw new file_serving_exception('Headers already sent, can not serve file!');
+        //NOTE: if too many sites have problems with the ob_end_flush() above
+        //      then we may need to comment this out.
+        throw new file_serving_exception('Headers already sent, can not serve file! This could be caused also by PHP bug or server misconfiguration.');
     }
 }
 
