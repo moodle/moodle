@@ -1475,53 +1475,39 @@ function send_file_not_found() {
 }
 
 /**
- * Check output buffering settings before sending file
+ * Check output buffering settings before sending file.
+ * Please note you should not send any other headers after calling this function.
+ *
  * @private to be called only from lib/filelib.php !
  * @return void
  */
-function prepare_file_sending() {
-    // We need to be able to send headers
+function prepare_file_content_sending() {
+    // We needed to be able to send headers up until now
     if (headers_sent()) {
-        throw new file_serving_exception('Headers already sent, can not serve file, this is definitely a server configuration issue!');
+        throw new file_serving_exception('Headers already sent, can not serve file.');
     }
 
     $olddebug = error_reporting(0);
 
-    // this is weird, but browser that do not support gzip or deflate have session problems here,
-    // let's try to work around it
-    $bugalert = false;
-
     // IE compatibility HACK - it does not like zlib compression much
     // there is also a problem with the length header in older PHP versions
     if (ini_get_bool('zlib.output_compression')) {
-        if (!isset($_SERVER['HTTP_ACCEPT_ENCODING']) or (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') === false and strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'deflate') === false)) {
-            $bugalert = true;
-        } else {
-            ini_set('zlib.output_compression', 'Off');
-        }
+        ini_set('zlib.output_compression', 'Off');
     }
 
     // flush and close all buffers if possible
-    if (!$bugalert) {
-        while(ob_get_level()) {
-            if (!ob_end_flush()) {
-                // prevent infinite loop when buffer can not be closed
-                break;
-            }
+    while(ob_get_level()) {
+        if (!ob_end_flush()) {
+            // prevent infinite loop when buffer can not be closed
+            break;
         }
     }
 
     error_reporting($olddebug);
 
-    // now make sure we can actually send out headers,
-    // if not it is a fatal problem because we could
-    // create XSS problems through student files
-    // or the content of the file would be borked.
-    if (headers_sent()) {
-        //NOTE: if too many sites have problems with the ob_end_flush() above
-        //      then we may need to comment this out.
-        throw new file_serving_exception('Headers already sent, can not serve file! This could be caused also by PHP bug or server misconfiguration.');
-    }
+    //NOTE: we can not reliable test headers_sent() here because
+    //      the headers might be sent which trying to close the buffers,
+    //      this happens especially if browser does not support gzip or deflate
 }
 
 /**
@@ -1553,10 +1539,6 @@ function send_temp_file($path, $filename, $pathisstring=false) {
         $filename = urlencode($filename);
     }
 
-    //flush the buffers - save memory and disable sid rewrite
-    // this also disables zlib compression
-    prepare_file_sending();
-
     $filesize = $pathisstring ? strlen($path) : filesize($path);
 
     header('Content-Disposition: attachment; filename='.$filename);
@@ -1571,6 +1553,10 @@ function send_temp_file($path, $filename, $pathisstring=false) {
         header('Pragma: no-cache');
     }
     header('Accept-Ranges: none'); // Do not allow byteserving
+
+    //flush the buffers - save memory and disable sid rewrite
+    // this also disables zlib compression
+    prepare_file_content_sending();
 
     // send the contents
     if ($pathisstring) {
@@ -1660,10 +1646,6 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
     //try to disable automatic sid rewrite in cookieless mode
     @ini_set("session.use_trans_sid", "false");
 
-    //flush the buffers - save memory and disable sid rewrite
-    //this also disables zlib compression
-    prepare_file_sending();
-
     //do not put '@' before the next header to detect incorrect moodle configurations,
     //error should be better than "weird" empty lines for admins/users
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
@@ -1752,6 +1734,10 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
         }
         header('Content-Length: '.$filesize);
 
+        //flush the buffers - save memory and disable sid rewrite
+        //this also disables zlib compression
+        prepare_file_content_sending();
+
         // send the contents
         if ($pathisstring) {
             echo $path;
@@ -1775,6 +1761,11 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
 
             header('Content-Length: '.strlen($output));
             header('Content-Type: text/html');
+
+            //flush the buffers - save memory and disable sid rewrite
+            //this also disables zlib compression
+            prepare_file_content_sending();
+
             // send the contents
             echo $output;
         // only filter text if filter all files is selected
@@ -1791,11 +1782,22 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
 
             header('Content-Length: '.strlen($output));
             header('Content-Type: text/html; charset=utf-8'); //add encoding
+
+            //flush the buffers - save memory and disable sid rewrite
+            //this also disables zlib compression
+            prepare_file_content_sending();
+
             // send the contents
             echo $output;
+
         } else {    // Just send it out raw
             header('Content-Length: '.$filesize);
             header('Content-Type: '.$mimetype);
+
+            //flush the buffers - save memory and disable sid rewrite
+            //this also disables zlib compression
+            prepare_file_content_sending();
+
             // send the contents
             if ($pathisstring) {
                 echo $path;
@@ -1858,10 +1860,6 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
 
     //try to disable automatic sid rewrite in cookieless mode
     @ini_set("session.use_trans_sid", "false");
-
-    //flush the buffers - save memory and disable sid rewrite
-    //this also disables zlib compression
-    prepare_file_sending();
 
     //do not put '@' before the next header to detect incorrect moodle configurations,
     //error should be better than "weird" empty lines for admins/users
@@ -1951,6 +1949,11 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
             header('Content-Type: '.$mimetype);
         }
         header('Content-Length: '.$filesize);
+
+        //flush the buffers - save memory and disable sid rewrite
+        //this also disables zlib compression
+        prepare_file_content_sending();
+
         // send the contents
         if ($filtered) {
             echo $text;
@@ -1973,10 +1976,16 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
 
             header('Content-Length: '.strlen($output));
             header('Content-Type: text/html');
+
+            //flush the buffers - save memory and disable sid rewrite
+            //this also disables zlib compression
+            prepare_file_content_sending();
+
             // send the contents
             echo $output;
-        // only filter text if filter all files is selected
+
         } else if (($mimetype == 'text/plain') and ($filter == 1)) {
+            // only filter text if filter all files is selected
             $options = new stdClass();
             $options->newlines = false;
             $options->noclean = true;
@@ -1989,11 +1998,22 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
 
             header('Content-Length: '.strlen($output));
             header('Content-Type: text/html; charset=utf-8'); //add encoding
+
+            //flush the buffers - save memory and disable sid rewrite
+            //this also disables zlib compression
+            prepare_file_content_sending();
+
             // send the contents
             echo $output;
+
         } else {    // Just send it out raw
             header('Content-Length: '.$filesize);
             header('Content-Type: '.$mimetype);
+
+            //flush the buffers - save memory and disable sid rewrite
+            //this also disables zlib compression
+            prepare_file_content_sending();
+
             // send the contents
             $stored_file->readfile();
         }
@@ -2185,6 +2205,11 @@ function byteserving_send_file($handle, $mimetype, $ranges, $filesize) {
         header('Content-Length: '.$length);
         header('Content-Range: bytes '.$ranges[0][1].'-'.$ranges[0][2].'/'.$filesize);
         header('Content-Type: '.$mimetype);
+
+        //flush the buffers - save memory and disable sid rewrite
+        //this also disables zlib compression
+        prepare_file_content_sending();
+
         $buffer = '';
         fseek($handle, $ranges[0][1]);
         while (!feof($handle) && $length > 0) {
@@ -2206,6 +2231,11 @@ function byteserving_send_file($handle, $mimetype, $ranges, $filesize) {
         header('Content-Length: '.$totallength);
         header('Content-Type: multipart/byteranges; boundary='.BYTESERVING_BOUNDARY);
         //TODO: check if "multipart/x-byteranges" is more compatible with current readers/browsers/servers
+
+        //flush the buffers - save memory and disable sid rewrite
+        //this also disables zlib compression
+        prepare_file_content_sending();
+
         foreach($ranges as $range) {
             $length = $range[2] - $range[1] + 1;
             echo $range[0];
