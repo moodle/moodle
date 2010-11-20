@@ -778,8 +778,8 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $offset = max(0, $offset);
 
         if ($limit > 0 && $offset == 0) {
-            $sql1 = preg_replace('/^([\s(])*SELECT([\s]+)(DISTINCT|ALL)?(?!\s*TOP\s*\()/i',
-                                 "\\1SELECT\\2\\3 TOP $limit", $sql);
+            $sql1 = preg_replace('/^([\s(])*SELECT([\s]+(DISTINCT|ALL))?(?!\s*TOP\s*\()/i',
+                                 "\\1SELECT\\2 TOP $limit", $sql);
         } else {
             // Only apply TOP clause if we have any limitnum (limitfrom offset is handled later)
             if ($limit < 1) {

@@ -686,8 +686,8 @@ class mssql_native_moodle_database extends moodle_database {
         if ($limitfrom or $limitnum) {
             if ($limitnum >= 1) { // Only apply TOP clause if we have any limitnum (limitfrom offset is handled later)
                 $fetch = $limitfrom + $limitnum;
-                $sql = preg_replace('/^([\s(])*SELECT([\s]+)(DISTINCT|ALL)?(?!\s*TOP\s*\()/i',
-                                    "\\1SELECT\\2\\3 TOP $fetch", $sql);
+                $sql = preg_replace('/^([\s(])*SELECT([\s]+(DISTINCT|ALL))?(?!\s*TOP\s*\()/i',
+                                    "\\1SELECT\\2 TOP $fetch", $sql);
             }
         }
 
