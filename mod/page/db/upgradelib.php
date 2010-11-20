@@ -60,7 +60,12 @@ function page_20_migrate() {
 
     if ($candidates = $DB->get_recordset('resource_old', array('type'=>'text', 'migrated'=>0))) {
         foreach ($candidates as $candidate) {
-            page_20_migrate_candidate($candidate, $fs, $candidate->reference);
+            //there might be some rubbish instead of format int value
+            $format = (int)$candidate->reference;
+            if ($format < 0 or $format > 4) {
+                $format = FORMAT_MOODLE;
+            }
+            page_20_migrate_candidate($candidate, $fs, $format);
         }
         $candidates->close();
     }
