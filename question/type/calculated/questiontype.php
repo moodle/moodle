@@ -1767,7 +1767,10 @@ class question_calculated_qtype extends default_questiontype {
                FROM {question_dataset_definitions} d, {question_dataset_items} i, {question_datasets} q
               WHERE q.question = ? AND q.datasetdefinition = d.id AND d.id = i.definition AND i.itemnumber = ?
            ORDER by i.id DESC ", array($question->id, $datasetitem))) {
-            print_error('cannotgetdsfordependent', 'question', '', array($question->id, $datasetitem));
+           $a = new stdClass;
+           $a->id = $question->id;
+           $a->item = $datasetitem ;
+            print_error('cannotgetdsfordependent', 'question', '', $a );
         }
         $dataset = Array();
         foreach($dataitems as $id => $dataitem  ){
