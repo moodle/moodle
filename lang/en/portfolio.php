@@ -98,6 +98,8 @@ The list of portfolio plugin instances that have been disabled is:
 
 This should be corrected as soon as possible, by visiting {$a->fixurl}.';
 $string['insanebodyhtml'] = '<p>Hi! You are receiving this message as an administrator of {$a->sitename}.</p>
+<p>Some portfolio plugin instances have been automatically disabled due to misconfigurations. This means that users can not currently export content to these portfolios.</p>
+<p>The list of portfolio plugin instances that have been disabled is:</p>
 {$a->htmllist}
 <p>This should be corrected as soon as possible, by visiting <a href="{$a->fixurl}">the portfolio configuration pages</a></p>';
 $string['insanebodysmall'] = 'Hi! You are receiving this message as an administrator of {$a->sitename}. Some portfolio plugin instances have been automatically disabled due to misconfigurations. This means that users can not currently export content to these portfolios. This should be corrected as soon as possible, by visiting {$a->fixurl}.';
