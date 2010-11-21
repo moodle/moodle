@@ -60,7 +60,7 @@ $string['exportcomplete'] = 'Portfolio export complete!';
 $string['exportedpreviously'] = 'Previous exports';
 $string['exportexceptionnoexporter'] = 'A portfolio_export_exception was thrown with an active session but no exporter object';
 $string['exportexpired'] = 'Portfolio export expired';
-$string['exportexpireddesc'] = 'You tried to repeat the export of some information, or start an empty export.  To do that properly you should go back to the original location and start again.  This sometimes happens if you use the back button after an export has completed, or by bookmarking an invalid url.';
+$string['exportexpireddesc'] = 'You tried to repeat the export of some information, or start an empty export. To do that properly you should go back to the original location and start again. This sometimes happens if you use the back button after an export has completed, or by bookmarking an invalid url.';
 $string['exporting'] = 'Exporting to portfolio';
 $string['exportingcontentfrom'] = 'Exporting content from {$a}';
 $string['exportingcontentto'] = 'Exporting content to {$a}';
@@ -75,22 +75,22 @@ $string['format_document'] = 'Document';
 $string['format_file'] = 'File';
 $string['format_image'] = 'Image';
 $string['format_leap2a'] = 'Leap2A portfolio format';
-$string['format_mbkp'] = 'Moodle Backup Format';
+$string['format_mbkp'] = 'Moodle backup format';
 $string['format_pdf'] = 'PDF';
 $string['format_plainhtml'] = 'HTML';
 $string['format_presentation'] = 'Presentation';
 $string['format_richhtml'] = 'HTML with attachments';
 $string['format_spreadsheet'] = 'Spreadsheet';
-$string['format_text'] = 'Plain Text';
+$string['format_text'] = 'Plain text';
 $string['format_video'] = 'Video';
 $string['hidden'] = 'Hidden';
 $string['highdbsizethreshold'] = 'High transfer dbsize';
 $string['highdbsizethresholddesc'] = 'Number of db records over which will be considered to take a high amount of time to transfer';
 $string['highfilesizethreshold'] = 'High transfer filesize';
 $string['highfilesizethresholddesc'] = 'Filesizes over this threshold will be considered to take a high amount of time to transfer';
-$string['insanebody'] = 'Hi!  You are receiving this message as an administrator of {$a->sitename}.
+$string['insanebody'] = 'Hi! You are receiving this message as an administrator of {$a->sitename}.
 
-Some portfolio plugin instances have been automatically disabled due to misconfigurations.  This means that users can not currently export content to these portfolios.
+Some portfolio plugin instances have been automatically disabled due to misconfigurations. This means that users can not currently export content to these portfolios.
 
 The list of portfolio plugin instances that have been disabled is:
 
@@ -100,10 +100,10 @@ This should be corrected as soon as possible, by visiting {$a->fixurl}.';
 $string['insanebodyhtml'] = '<p>Hi! You are receiving this message as an administrator of {$a->sitename}.</p>
 {$a->htmllist}
 <p>This should be corrected as soon as possible, by visiting <a href="{$a->fixurl}">the portfolio configuration pages</a></p>';
-$string['insanebodysmall'] = 'Hi!  You are receiving this message as an administrator of {$a->sitename}.  Some portfolio plugin instances have been automatically disabled due to misconfigurations.  This means that users can not currently export content to these portfolios.  This should be corrected as soon as possible, by visiting {$a->fixurl}.';
+$string['insanebodysmall'] = 'Hi! You are receiving this message as an administrator of {$a->sitename}. Some portfolio plugin instances have been automatically disabled due to misconfigurations. This means that users can not currently export content to these portfolios. This should be corrected as soon as possible, by visiting {$a->fixurl}.';
 $string['insanesubject'] = 'Some portfolio instances automatically disabled';
 $string['instancedeleted'] = 'Portfolio deleted successfully';
-$string['instanceismisconfigured'] = 'Portfolio instance is misconfigured, skipping.  Error was: {$a}';
+$string['instanceismisconfigured'] = 'Portfolio instance is misconfigured, skipping. Error was: {$a}';
 $string['instancenotdelete'] = 'Failed to delete portfolio';
 $string['instancenotsaved'] = 'Failed to save portfolio';
 $string['instancesaved'] = 'Portfolio saved successfully';
@@ -117,12 +117,12 @@ $string['invalidinstance'] = 'Could not find that portfolio instance';
 $string['invalidpreparepackagefile'] = 'Invalid call to prepare_package_file - either single or multifiles must be set';
 $string['invalidproperty'] = 'Could not find that property ({$a->property} of {$a->class})';
 $string['invalidsha1file'] = 'Invalid call to get_sha1_file - either single or multifiles must be set';
-$string['invalidtempid'] = 'Invalid export id. maybe it has expired';
+$string['invalidtempid'] = 'Invalid export id. Maybe it has expired';
 $string['invaliduserproperty'] = 'Could not find that user config property ({$a->property} of {$a->class})';
 $string['leap2a_emptyselection'] = 'Required value not selected';
 $string['leap2a_entryalreadyexists'] = 'You tried to add a Leap2A entry with an id ({$a}) that already exists in this feed';
 $string['leap2a_feedtitle'] = 'Leap2A export from Moodle for {$a}';
-$string['leap2a_filecontent'] = 'Tried to set the content of a leap2a entry to a file, rather than using the file sublcass';
+$string['leap2a_filecontent'] = 'Tried to set the content of a Leap2A entry to a file, rather than using the file subclass';
 $string['leap2a_invalidentryfield'] = 'You tried to set an entry field that didn\'t exist ({$a}) or you can\'t set directly';
 $string['leap2a_invalidentryid'] = 'You tried to access an entry by an id that didn\'t exist ({$a})';
 $string['leap2a_missingfield'] = 'Required Leap2A entry field {$a} missing';
@@ -148,8 +148,8 @@ $string['noclassbeforeformats'] = 'You must set the callback class before callin
 $string['nocommonformats'] = 'No common formats between any available portfolio plugin and the calling location {$a->location} (caller supported {$a->formats})';
 $string['noinstanceyet'] = 'Not yet selected';
 $string['nologs'] = 'There are no logs to display!';
-$string['nomultipleexports'] = 'Sorry, but the portfolio destination ({$a->plugin}) doesn\'t support multiple exports at the same time.  Please <a href="{$a->link}">finish the current one first</a> and try again';
-$string['nonprimative'] = 'A non primitive value was passed as a callback argument to portfolio_add_button.  Refusing to continue.  The key was {$a->key} and the value was {$a->value}';
+$string['nomultipleexports'] = 'Sorry, but the portfolio destination ({$a->plugin}) doesn\'t support multiple exports at the same time. Please <a href="{$a->link}">finish the current one first</a> and try again';
+$string['nonprimative'] = 'A non primitive value was passed as a callback argument to portfolio_add_button. Refusing to continue. The key was {$a->key} and the value was {$a->value}';
 $string['nopermissions'] = 'Sorry but you do not have the required permissions to export files from this area';
 $string['notexportable'] = 'Sorry, but the type of content you are trying to export is not exportable';
 $string['notimplemented'] = 'Sorry, but you are trying to export content in some format that is not yet implemented ({$a})';
@@ -160,7 +160,7 @@ $string['off'] = 'Enabled but hidden';
 $string['on'] = 'Enabled and visible';
 $string['plugin'] = 'Portfolio plugin';
 $string['plugincouldnotpackage'] = 'Failed to package up your data for export: original error was {$a}';
-$string['pluginismisconfigured'] = 'Portfolio plugin is misconfigured, skipping.  Error was: {$a}';
+$string['pluginismisconfigured'] = 'Portfolio plugin is misconfigured, skipping. Error was: {$a}';
 $string['portfolio'] = 'Portfolio';
 $string['portfolios'] = 'Portfolios';
 $string['queuesummary'] = 'Currently queued transfers';
@@ -171,7 +171,7 @@ $string['selectedwait'] = 'Selected to wait?';
 $string['selectplugin'] = 'Select destination';
 $string['singleinstancenomultiallowed'] = 'Only a single portfolio plugin instance is available, it doesn\'t support multiple exports per session, and there\'s already an active export in the session using this plugin!';
 $string['somepluginsdisabled'] = 'Some entire portfolio plugins have been disabled because they are either misconfigured or rely on something else that is:';
-$string['sure'] = 'Are you sure you want to delete \'{$a}\'?  This cannot be undone.';
+$string['sure'] = 'Are you sure you want to delete \'{$a}\'? This cannot be undone.';
 $string['thirdpartyexception'] = 'A third party exception was thrown during portfolio export ({$a}). Caught and rethrown but this should really be fixed';
 $string['transfertime'] = 'Transfer time';
 $string['unknownplugin'] = 'Unknown (may have since been removed by an administrator)';
