@@ -206,7 +206,7 @@ if($do_show == 'showentries'){
                     $data = array ($OUTPUT->user_picture($student, array('courseid'=>$course->id)), $profilelink);
 
                     //link to the entry of the user
-                    $feedbackcompleted = $DB->get_record('feedback_completed', array('feedback'=>$feedback->id, ' userid'=>$student->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO));
+                    $feedbackcompleted = $DB->get_record('feedback_completed', array('feedback'=>$feedback->id, 'userid'=>$student->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO));
                     $showentryurl = new moodle_url($url, array('userid'=>$student->id, 'do_show'=>'showoneentry'));
                     $showentrylink = '<a href="'.$showentryurl->out().'">'.UserDate($feedbackcompleted->timemodified).'</a>';
                     $data[] = $showentrylink;
