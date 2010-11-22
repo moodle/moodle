@@ -173,12 +173,6 @@
         echo $OUTPUT->header();
     }
 
-/// Print link to roles
-    if (has_capability('moodle/role:assign', $context)) {
-        echo '<div class="rolelink"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.
-         $context->id.'">'.get_string('assignroles','role').'</a></div>';
-    }
-
 /// Print the category selector
     $displaylist = array();
     $notused = array();
