@@ -1318,7 +1318,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $course = $DB->get_record('course', array('id' => $courseid));
         }
 
-        return $this->save_question($question, $form, $course);
+        return $this->save_question($question, $form);
     }
 
     function move_files($questionid, $oldcontextid, $newcontextid) {

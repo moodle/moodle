@@ -305,7 +305,7 @@ class default_questiontype {
     *       redisplayed with validation errors, from validation_errors field, which
     *       is itself an object, shown next to the form fields. (I don't think this is accurate any more.)
     */
-    function save_question($question, $form, $course) {
+    function save_question($question, $form) {
         global $USER, $DB, $OUTPUT;
 
         list($question->category) = explode(',', $form->category);
@@ -364,10 +364,10 @@ class default_questiontype {
         $question->modifiedby = $USER->id;
         $question->timemodified = time();
 
-        if (!empty($question->questiontext)) {
+        if (!empty($question->questiontext) && !empty($form->questiontext['itemid'])) {
             $question->questiontext = file_save_draft_area_files($form->questiontext['itemid'], $context->id, 'question', 'questiontext', (int)$question->id, $this->fileoptions, $question->questiontext);
         }
-        if (!empty($question->generalfeedback)) {
+        if (!empty($question->generalfeedback) && !empty($form->generalfeedback['itemid'])) {
             $question->generalfeedback = file_save_draft_area_files($form->generalfeedback['itemid'], $context->id, 'question', 'generalfeedback', (int)$question->id, $this->fileoptions, $question->generalfeedback);
         }
         $DB->update_record('question', $question);
@@ -392,10 +392,7 @@ class default_questiontype {
         }
 
         if (!empty($result->noticeyesno)) {
-            echo $OUTPUT->confirm($result->noticeyesno, "question.php?id=$question->id&courseid={$course->id}",
-                    "edit.php?courseid={$course->id}");
-            echo $OUTPUT->footer();
-            exit;
+            throw new coding_exception('$result->noticeyesno no longer supported in save_question.');
         }
 
         // Give the question a unique version stamp determined by question_hash()

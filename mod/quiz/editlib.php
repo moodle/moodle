@@ -82,13 +82,13 @@ function quiz_delete_empty_page($layout, $index) {
  * Adds a question to a quiz by updating $quiz as well as the
  * quiz and quiz_question_instances tables. It also adds a page break
  * if required.
- * @return boolean         false if the question was already in the quiz
- * @param int $id          The id of the question to be added
- * @param object $quiz  The extended quiz object as used by edit.php
- *                         This is updated by this function
- * @param int $page  Which page in quiz to add the question on; if 0 (default), add at the end
+ * @param int $id The id of the question to be added
+ * @param object $quiz The extended quiz object as used by edit.php
+ *      This is updated by this function
+ * @param int $page Which page in quiz to add the question on. If 0 (default), add at the end
+ * @return boolean false if the question was already in the quiz
  */
-function quiz_add_quiz_question($id, &$quiz, $page = 0) {
+function quiz_add_quiz_question($id, $quiz, $page = 0) {
     global $DB;
     $questions = explode(',', quiz_clean_layout($quiz->questions));
     if (in_array($id, $questions)) {
@@ -146,6 +146,54 @@ function quiz_add_quiz_question($id, &$quiz, $page = 0) {
     quiz_update_question_instance($quiz->grades[$id], $id, $quiz->instance);
 
     return true;
+}
+
+function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number, $includesubcategories) {
+    global $DB, $QTYPES;
+
+    $category = $DB->get_record('question_categories', array('id' => $categoryid));
+    if (!$category) {
+        print_error('invalidcategoryid', 'error');
+    }
+
+    $catcontext = get_context_instance_by_id($category->contextid);
+    require_capability('moodle/question:useall', $catcontext);
+
+    // Find existing random questions in this category that are
+    // not used by any quiz.
+    if ($existingquestions = $DB->get_records_sql(
+            "SELECT q.id,q.qtype FROM {question} q
+            WHERE qtype = '" . RANDOM . "'
+                AND category = ?
+                AND " . $DB->sql_compare_text('questiontext') . " = ?
+                AND NOT EXISTS (SELECT * FROM {quiz_question_instances} WHERE question = q.id)
+            ORDER BY id", array($category->id, $includesubcategories))) {
+        // Take as many of these as needed.
+        while (($existingquestion = array_shift($existingquestions)) && $number > 0) {
+            quiz_add_quiz_question($existingquestion->id, $quiz, $addonpage);
+            $number -= 1;
+        }
+    }
+
+    if ($number <= 0) {
+        return;
+    }
+
+    // More random questions are needed, create them.
+    $form->questiontext = array('text' => $includesubcategories, 'format' => 0);
+    $form->defaultgrade = 1;
+    $form->hidden = 1;
+    for ($i = 0; $i < $number; $i += 1) {
+        $form->category = $category->id . ',' . $category->contextid;
+        $form->stamp = make_unique_id_code(); // Set the unique code (not to be changed)
+        $question = new stdClass;
+        $question->qtype = RANDOM;
+        $question = $QTYPES[RANDOM]->save_question($question, $form);
+        if (!isset($question->id)) {
+            print_error('cannotinsertrandomquestion', 'quiz');
+        }
+        quiz_add_quiz_question($question->id, $quiz, $addonpage);
+    }
 }
 
 /**
@@ -551,8 +599,6 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
                              '" tabindex="' . ($lastindex + $qno) .
                              '" />';
         ?>
-<!--         <input type="submit" class="pointssubmitbutton" value="<?php
-        echo $strsave; ?>" /> -->
 </div>
 <?php
                 }
@@ -640,7 +686,7 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts) {
     $contexts = new question_edit_contexts($thiscontext);
 
     // Get the default category.
-    $defaultcategory = question_make_default_categories($contexts->all());
+    list($defaultcategoryid) = explode(',', $pageurl->param('cat'));
 
     // Create the url the question page will return to
     $returnurladdtoquiz = new moodle_url($pageurl, array('addonpage' => $page));
@@ -649,7 +695,7 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts) {
     $returnurladdtoquiz = str_replace($CFG->wwwroot, '', $returnurladdtoquiz->out(false));
     $newquestionparams = array('returnurl' => $returnurladdtoquiz,
             'cmid' => $quiz->cmid, 'appendqnumstring' => 'addquestion');
-    create_new_question_button($defaultcategory->id, $newquestionparams, get_string('addaquestion', 'quiz'),
+    create_new_question_button($defaultcategoryid, $newquestionparams, get_string('addaquestion', 'quiz'),
             get_string('createquestionandadd', 'quiz'), $hasattempts);
 
     if ($hasattempts) {
@@ -661,10 +707,11 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts) {
     <div class="singlebutton">
         <form class="randomquestionform" action="<?php echo $CFG->wwwroot; ?>/mod/quiz/addrandom.php" method="get">
             <div>
-                <input type="hidden" class="addonpage_formelement" name="addonpage_form" value="<?php echo $page; ?>" />
+                <input type="hidden" class="addonpage_formelement" name="addonpage" value="<?php echo $page; ?>" />
                 <input type="hidden" name="cmid" value="<?php echo $quiz->cmid; ?>" />
                 <input type="hidden" name="courseid" value="<?php echo $quiz->course; ?>" />
-                <input type="hidden" name="returnurl" value="<?php echo s($pageurl->out(false)); ?>" />
+                <input type="hidden" name="category" value="<?php echo $pageurl->param('cat'); ?>" />
+                <input type="hidden" name="returnurl" value="<?php echo s(str_replace($CFG->wwwroot, '', $pageurl->out(false))); ?>" />
                 <input type="submit" id="addrandomdialoglaunch_<?php echo $randombuttoncount; ?>" value="<?php echo get_string('addarandomquestion', 'quiz'); ?>" <?php echo " $disabled"; ?> />
             </div>
         </form>
@@ -672,44 +719,6 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts) {
     <?php echo $OUTPUT->help_icon('addarandomquestion', 'quiz'); ?>
     <?php
     echo "\n</div>";
-}
-/**
- * Process submitted form data to create a new category for a random question
- * This is used by edit.php and addrandom.php
- * cmid
- *
- * @param object $qcobject
- * @return object an object with properties newrandomcategory and addonpage if operation successful.
- *      if operation failed, returns false.
- */
-function quiz_process_randomquestion_formdata(&$qcobject) {
-    global $CFG, $DB;
-    $newrandomcategory = 0;
-    $addonpage = 0;
-    $newquestioninfo = false;
-    if ($qcobject->catform_rand->is_cancelled()) {
-        return 'cancelled';
-    } else if ($catformdata = $qcobject->catform_rand->get_data()) {
-        $newquestioninfo = new stdClass;
-        $addonpage = $catformdata->addonpage;
-        $newquestioninfo->addonpage = $catformdata->addonpage;
-        if (!$catformdata->id) {//new category
-            $newrandomcategory = $qcobject->add_category($catformdata->parent,
-                    $catformdata->name, $catformdata->info, true);
-            if (!is_null($newrandomcategory)) {
-                $newquestioninfo->newrandomcategory = $newrandomcategory;
-                if (! $newcategory = $DB->get_record('question_categories',
-                        array('id' => $newrandomcategory))) {
-                    $newquestioninfo->newrandomcategory = false;
-                }
-            } else {
-                $newquestioninfo->newrandomcategory = false;
-            }
-        } else {
-            $newquestioninfo->newrandomcategory = false;
-        }
-    }
-    return $newquestioninfo;
 }
 
 /**

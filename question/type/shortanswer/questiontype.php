@@ -372,7 +372,7 @@ class question_shortanswer_qtype extends default_questiontype {
             $course = $DB->get_record('course', array('id' => $courseid));
         }
 
-        return $this->save_question($question, $form, $course);
+        return $this->save_question($question, $form);
     }
 
     function check_file_access($question, $state, $options, $contextid, $component,

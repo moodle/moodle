@@ -49,6 +49,7 @@
 
 require_once('../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/editlib.php');
+require_once($CFG->dirroot . '/mod/quiz/addrandomform.php');
 require_once($CFG->dirroot . '/question/category_class.php');
 
 /**
@@ -63,8 +64,7 @@ function module_specific_buttons($cmid, $cmoptions) {
     } else {
         $disabled = '';
     }
-    $straddtoquiz = get_string('addtoquiz', 'quiz');
-    $out = '<input type="submit" name="add" value="' . $OUTPUT->larrow() . ' ' . $straddtoquiz .
+    $out = '<input type="submit" name="add" value="' . $OUTPUT->larrow() . ' ' . get_string('addtoquiz', 'quiz') .
             '" ' . $disabled . "/>\n";
     return $out;
 }
@@ -79,7 +79,7 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
     $catcontext = get_context_instance_by_id($category->contextid);
     if (has_capability('moodle/question:useall', $catcontext)) {
         if ($cmoptions->hasattempts) {
-            $disabled = 'disabled="disabled"';
+            $disabled = ' disabled="disabled"';
         } else {
             $disabled = '';
         }
@@ -93,19 +93,22 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
             for ($i = 20; $i <= min(100, $maxrand); $i += 10) {
                 $randomcount[$i] = $i;
             }
-            $straddtoquiz = get_string('addtoquiz', 'quiz');
-            $out = '<strong><label for="menurandomcount">'.get_string('addrandomfromcategory', 'quiz').
-                    '</label></strong><br />';
-            $attributes = array();
-            $attributes['disabled'] = $cmoptions->hasattempts ? 'disabled' : null;
-            $select = html_writer::select($randomcount, 'randomcount', '1', null, $attributes);
-            $out .= get_string('addrandom', 'quiz', $select);
-            $out .= '<input type="hidden" name="recurse" value="'.$recurse.'" />';
-            $out .= '<input type="hidden" name="categoryid" value="' . $category->id . '" />';
-            $out .= ' <input type="submit" name="addrandom" value="'.
-                    $straddtoquiz.'" '.$disabled.' />';
-            $out .= $OUTPUT->help_icon('addarandomquestion', 'quiz');
+        } else {
+            $randomcount[0] = 0;
+            $disabled = ' disabled="disabled"';
         }
+
+        $out = '<strong><label for="menurandomcount">'.get_string('addrandomfromcategory', 'quiz').
+                '</label></strong><br />';
+        $attributes = array();
+        $attributes['disabled'] = $disabled ? 'disabled' : null;
+        $select = html_writer::select($randomcount, 'randomcount', '1', null, $attributes);
+        $out .= get_string('addrandom', 'quiz', $select);
+        $out .= '<input type="hidden" name="recurse" value="'.$recurse.'" />';
+        $out .= '<input type="hidden" name="categoryid" value="' . $category->id . '" />';
+        $out .= ' <input type="submit" name="addrandom" value="'.
+                get_string('addtoquiz', 'quiz').'"' . $disabled . ' />';
+        $out .= $OUTPUT->help_icon('addarandomquestion', 'quiz');
     }
     return $out;
 }
@@ -119,9 +122,7 @@ list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', '/mod/quiz/edit.php', true);
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());
-$defaultcategoryid = $defaultcategoryobj->id;
-$defaultcategorycontext = $defaultcategoryobj->contextid;
-$defaultcategory = $defaultcategoryid . ',' . $defaultcategorycontext;
+$defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
 
 if ($quiz_qbanktool > -1) {
     $thispageurl->param('qbanktool', $quiz_qbanktool);
@@ -227,80 +228,16 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
 }
 
 $qcobject = new question_category_object($pagevars['cpage'], $thispageurl,
-        $contexts->having_one_edit_tab_cap('categories'), $defaultcategoryid,
+        $contexts->having_one_edit_tab_cap('categories'), $defaultcategoryobj->id,
         $defaultcategory, null, $contexts->having_cap('moodle/question:add'));
 
-$newrandomcategory = false;
-$newquestioninfo = quiz_process_randomquestion_formdata($qcobject);
-if ($newquestioninfo && $newquestioninfo != 'cancelled') {
-    $newrandomcategory = $newquestioninfo->newrandomcategory;
-    if (!$newrandomcategory) {
-        print_error('cannotcreatecategory');
-    } else {
-        add_to_log($quiz->course, 'quiz', 'addcategory',
-                "view.php?id=$cm->id", $newrandomcategory, $cm->id);
-    }
-}
-
-if ((optional_param('addrandom', false, PARAM_BOOL) || $newrandomcategory) && confirm_sesskey()) {
-
-    /// Add random questions to the quiz
+if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
+    // Add random questions to the quiz
     $recurse = optional_param('recurse', 0, PARAM_BOOL);
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
-    if ($newrandomcategory) {
-        $categoryid = $newrandomcategory;
-        $randomcount = optional_param('randomcount', 1, PARAM_INT);
-    } else {
-        $categoryid = required_param('categoryid', PARAM_INT);
-        $randomcount = required_param('randomcount', PARAM_INT);
-    }
-    // load category
-    $category = $DB->get_record('question_categories', array('id' => $categoryid));
-    if (!$category) {
-        print_error('invalidcategoryid', 'error');
-    }
-    $catcontext = get_context_instance_by_id($category->contextid);
-    require_capability('moodle/question:useall', $catcontext);
-    $category->name = $category->name;
-    // Find existing random questions in this category that are
-    // not used by any quiz.
-    if ($existingquestions = $DB->get_records_sql(
-            "SELECT q.id,q.qtype FROM {question} q
-            WHERE qtype = '" . RANDOM . "'
-                AND category = ?
-                AND " . $DB->sql_compare_text('questiontext') . " = ?
-                AND NOT EXISTS (SELECT * FROM {quiz_question_instances} WHERE question = q.id)
-            ORDER BY id", array($category->id, $recurse))) {
-        // Take as many of these as needed.
-        while (($existingquestion = array_shift($existingquestions)) && $randomcount > 0) {
-            quiz_add_quiz_question($existingquestion->id, $quiz, $addonpage);
-            $randomcount--;
-        }
-    }
-
-    // If more are needed, create them.
-    if ($randomcount > 0) {
-        $form->questiontext = $recurse; // we use the questiontext field
-                // to store the info on whether to include
-                // questions in subcategories
-        $form->questiontextformat = 0;
-        $form->image = '';
-        $form->defaultgrade = 1;
-        $form->hidden = 1;
-        for ($i = 0; $i < $randomcount; $i++) {
-            $form->category = $category->id . ',' . $category->contextid;
-            $form->stamp = make_unique_id_code(); // Set the unique
-                    //code (not to be changed)
-            $question = new stdClass;
-            $question->qtype = RANDOM;
-            $question = $QTYPES[RANDOM]->save_question($question, $form,
-                    $course);
-            if(!isset($question->id)) {
-                print_error('cannotinsertrandomquestion', 'quiz');
-            }
-            quiz_add_quiz_question($question->id, $quiz, $addonpage);
-        }
-    }
+    $categoryid = required_param('categoryid', PARAM_INT);
+    $randomcount = required_param('randomcount', PARAM_INT);
+    quiz_add_random_questions($quiz, $addonpage, $categoryid, $randomcount, $recurse);
 
     quiz_update_sumgrades($quiz);
     quiz_delete_previews($quiz);
@@ -546,7 +483,7 @@ if (!empty($notifystrings)) {
 }
 
 if ($quiz_reordertool) {
-    $perpage= array();
+    $perpage = array();
     $perpage[0] = get_string('allinone', 'quiz');
     for ($i = 1; $i <= 50; ++$i) {
         $perpage[$i] = $i;
@@ -585,7 +522,12 @@ echo '</div>';
 echo '</div>';
 
 if (!$quiz_reordertool) {
-    // display category adding UI
+    $randomform = new quiz_add_random_form(new moodle_url('/mod/quiz/addrandom.php'), $contexts);
+    $randomform->set_data(array(
+        'category' => $pagevars['cat'],
+        'returnurl' => str_replace($CFG->wwwroot, '', $thispageurl->out(false)),
+        'cmid' => $cm->id,
+    ));
     ?>
 <div id="randomquestiondialog">
 <div class="hd"><?php print_string('addrandomquestiontoquiz', 'quiz', $quiz->name); ?>
@@ -593,7 +535,7 @@ if (!$quiz_reordertool) {
 </span>
 </div>
 <div class="bd"><?php
-$qcobject->display_randomquestion_user_interface();
+$randomform->display();
 ?></div>
 </div>
     <?php

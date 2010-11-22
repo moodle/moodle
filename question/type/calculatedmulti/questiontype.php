@@ -526,7 +526,7 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
             $course = $DB->get_record('course', array('id'=> $courseid));
         }
 
-        $new_question = $this->save_question($question, $form, $course);
+        $new_question = $this->save_question($question, $form);
 
         $dataset_form = new stdClass();
         $dataset_form->nextpageparam["forceregeneration"]= 1;

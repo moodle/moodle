@@ -6,6 +6,9 @@ function quiz_edit_init() {
 
     // Add random question dialogue --------------------------------------------
 
+    var randomquestiondialog = YAHOO.util.Dom.get('randomquestiondialog');
+    YAHOO.util.Dom.get(document.body).appendChild(randomquestiondialog);
+
     quiz_edit.randomquestiondialog = new YAHOO.widget.Dialog('randomquestiondialog', {
             modal: true,
             width: '100%',
@@ -28,7 +31,7 @@ function quiz_edit_init() {
         // Transfer the page number from the button form to the pop-up form.
         var addrandombutton = YAHOO.util.Event.getTarget(e);
         var addpagehidden = YAHOO.util.Dom.getElementsByClassName('addonpage_formelement', 'input', addrandombutton.form);
-        document.getElementById('rform_qpage').value = addpagehidden.value;
+        document.getElementById('rform_qpage').value = addpagehidden[0].value;
 
         // Show the dialogue and stop the default action.
         quiz_edit.randomquestiondialog.show();
@@ -45,6 +48,10 @@ function quiz_edit_init() {
         quiz_edit.randomquestiondialog.hide();
         YAHOO.util.Event.preventDefault(e);
     });
+
+    YAHOO.util.Event.addListener('id_existingcategory', 'click', quiz_yui_workaround);
+
+    YAHOO.util.Event.addListener('id_newcategory', 'click', quiz_yui_workaround);
 
     // Repaginate dialogue -----------------------------------------------------
     quiz_edit.repaginatedialog = new YAHOO.widget.Dialog('repaginatedialog', {
@@ -86,6 +93,17 @@ function quiz_edit_init() {
     if (elementcauseinglayoutproblem) {
         elementcauseinglayoutproblem.style.left = '0px';
     }
+}
+
+function quiz_yui_workaround(e) {
+    // YUI does not send the button pressed with the form submission, so copy
+    // the button name to a hidden input.
+    var submitbutton = YAHOO.util.Event.getTarget(e);
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = submitbutton.name;
+    input.value = 1;
+    submitbutton.form.appendChild(input);
 }
 
 // Initialise everything on the quiz settings form.

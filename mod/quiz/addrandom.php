@@ -10,73 +10,82 @@
  */
 require_once('../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/editlib.php');
+require_once($CFG->dirroot . '/mod/quiz/addrandomform.php');
 require_once($CFG->dirroot . '/question/category_class.php');
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', '/mod/quiz/addrandom.php', true);
 
-$defaultcategoryobj = question_make_default_categories($contexts->all());
-$defaultcategoryid = $defaultcategoryobj->id;
-$defaultcategorycontext = $defaultcategoryobj->contextid;
-$defaultcategory = "$defaultcategoryid, $defaultcategorycontext";
-
-$qcobject = new question_category_object(
-    $pagevars['cpage'],
-    $thispageurl,
-    $contexts->having_one_edit_tab_cap('categories'),
-    $defaultcategoryid,
-    $defaultcategory,
-    null,
-    $contexts->having_cap('moodle/question:add'));
-
-//setting the second parameter of process_randomquestion_formdata to true causes it to redirect on success
-$newquestioninfo = quiz_process_randomquestion_formdata($qcobject);
-if ($newquestioninfo == 'cancelled') {
-    $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
-    if ($returnurl) {
-        redirect($CFG->wwwroot . $returnurl);
-    } else {
-        redirect($CFG->wwwroot . '/mod/quiz/edit.php?cmid=' . $cmid);
-    }
-}
-if ($newquestioninfo) {
-    $newrandomcategory = $newquestioninfo->newrandomcategory;
-    if (!$newrandomcategory) {
-        print_error('cannotcreatecategory');
-    } else {
-        add_to_log($quiz->course, 'quiz', 'addcategory',
-                "view.php?id = $cm->id", "$newrandomcategory", $cm->id);
-        redirect($CFG->wwwroot . "/mod/quiz/edit.php?cmid=$cmid&addonpage=$newquestioninfo->addonpage&addrandom=1&categoryid=$newquestioninfo->newrandomcategory&randomcount=1&sesskey=" . sesskey());
-    }
-}
-
-//these params are only passed from page request to request while we stay on this page
-//otherwise they would go in question_edit_setup
-$quiz_page = optional_param('quiz_page', 0, PARAM_SEQUENCE);
-$returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
-
-$url = new moodle_url('/mod/quiz/addrandom.php');
-if ($quiz_page != 0) {
-    $url->param('quiz_page', $quiz_page);
-}
-if ($returnurl != 0) {
-    $url->param('returnurl', $returnurl);
-}
-$PAGE->set_url($url);
-
-$strquizzes = get_string('modulenameplural', 'quiz');
-$strquiz = get_string('modulename', 'quiz');
-$streditingquestions = get_string('editquestions', 'quiz');
-$streditingquiz = get_string('editinga', 'moodle', $strquiz);
+// These params are only passed from page request to request while we stay on
+// this page otherwise they would go in question_edit_setup
+$returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
+$addonpage = optional_param('addonpage', 0, PARAM_INT);
+$category = optional_param('category', 0, PARAM_INT);
 
 // Get the course object and related bits.
-if (! $course = $DB->get_record('course', array('id' => $quiz->course))) {
+if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
     print_error('invalidcourseid');
 }
 //you need mod/quiz:manage in addition to question capabilities to access this page.
 require_capability('mod/quiz:manage', $contexts->lowest());
 
-// Print basic page layout.
+$PAGE->set_url($thispageurl);
+
+if ($returnurl) {
+    $returnurl = new moodle_url($returnurl);
+} else {
+    $returnurl = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cmid));
+}
+
+$defaultcategoryobj = question_make_default_categories($contexts->all());
+$defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
+
+$qcobject = new question_category_object(
+    $pagevars['cpage'],
+    $thispageurl,
+    $contexts->having_one_edit_tab_cap('categories'),
+    $defaultcategoryobj->id,
+    $defaultcategory,
+    null,
+    $contexts->having_cap('moodle/question:add'));
+
+$mform = new quiz_add_random_form(new moodle_url('/mod/quiz/addrandom.php'), $contexts);
+
+if ($mform->is_cancelled()) {
+    redirect($returnurl);
+}
+
+if ($data = $mform->get_data()) {
+    if (!empty($data->existingcategory)) {
+        list($categoryid) = explode(',', $data->category);
+        $includesubcategories = !empty($data->includesubcategories);
+        $returnurl->param('cat', $data->category);
+
+    } else if (!empty($data->newcategory)) {
+        list($parentid, $contextid) = explode(',', $data->parent);
+        $categoryid = $qcobject->add_category($data->parent, $data->name, '', true);
+        $includesubcategories = 0;
+        add_to_log($quiz->course, 'quiz', 'addcategory',
+                'view.php?id=' . $cm->id, $categoryid, $cm->id);
+        $returnurl->param('cat', $categoryid . ',' . $contextid);
+
+    } else {
+        throw new coding_exception('It seems a form was submitted without any button being pressed???');
+    }
+
+    quiz_add_random_questions($quiz, $addonpage, $categoryid, 1, $includesubcategories);
+    redirect($returnurl);
+}
+
+$mform->set_data(array(
+    'addonpage' => $addonpage,
+    'returnurl' => $returnurl,
+    'cmid' => $cm->id,
+    'category' => $category,
+));
+
+// Setup $PAGE.
+$streditingquiz = get_string('editinga', 'moodle', get_string('modulename', 'quiz'));
 $PAGE->navbar->add($streditingquiz);
 $PAGE->set_title($streditingquiz);
 $PAGE->set_heading($course->fullname);
@@ -87,9 +96,6 @@ if (!$quizname = $DB->get_field($cm->modname, 'name', array('id' => $cm->instanc
 }
 
 echo $OUTPUT->heading(get_string('addrandomquestiontoquiz', 'quiz', $quizname), 2, 'mdl-left');
-
-$addonpage = optional_param('addonpage_form', 0, PARAM_SEQUENCE);
-$qcobject->display_randomquestion_user_interface($addonpage);
-
+$mform->display();
 echo $OUTPUT->footer();
 

@@ -667,10 +667,10 @@ class question_calculated_qtype extends default_questiontype {
      * @param int $course
      * @param PARAM_ALPHA $wizardnow should be added as we are coming from question2.php
      */
-    function save_question($question, $form, $course) {
+    function save_question($question, $form) {
         global $DB;
         if ($this->wizard_pages_number() == 1 ){
-                $question = parent::save_question($question, $form, $course);
+                $question = parent::save_question($question, $form);
             return $question ;
         }
 
@@ -689,7 +689,7 @@ class question_calculated_qtype extends default_questiontype {
         case '' :
         case 'question': // coming from the first page, creating the second
             if (empty($form->id)) { // for a new question $form->id is empty
-                $question = parent::save_question($question, $form, $course);
+                $question = parent::save_question($question, $form);
                 //prepare the datasets using default $questionfromid
                 $this->preparedatasets($form);
                 $form->id = $question->id;
@@ -699,7 +699,7 @@ class question_calculated_qtype extends default_questiontype {
                 }
             } else if (!empty($form->makecopy)){
                 $questionfromid =  $form->id ;
-                $question = parent::save_question($question, $form, $course);
+                $question = parent::save_question($question, $form);
                 //prepare the datasets
                 $this->preparedatasets($form,$questionfromid);
                 $form->id = $question->id;
@@ -708,7 +708,7 @@ class question_calculated_qtype extends default_questiontype {
                     $this->addnamecategory($question);
                 }
             }  else {// editing a question
-                $question = parent::save_question($question, $form, $course);
+                $question = parent::save_question($question, $form);
                 //prepare the datasets
                 $this->preparedatasets($form,$question->id);
                 $form->id = $question->id;
@@ -2087,7 +2087,7 @@ class question_calculated_qtype extends default_questiontype {
             $course = $DB->get_record('course', array('id'=> $courseid));
         }
 
-        $new_question = $this->save_question($question, $form, $course);
+        $new_question = $this->save_question($question, $form);
 
         $dataset_form = new stdClass();
         $dataset_form->nextpageparam["forceregeneration"]= 1;

@@ -34,7 +34,7 @@ class question_edit_random_form extends question_edit_form {
         $mform->addElement('questioncategory', 'category', get_string('category', 'quiz'),
                 array('contexts' => $this->contexts->having_cap('moodle/question:useall')));
 
-        $mform->addElement('advcheckbox', 'questiontext', get_string("recurse", "quiz"), null, null, array(0, 1));
+        $mform->addElement('advcheckbox', 'questiontext[text]', get_string('recurse', 'quiz'), null, null, array(0, 1));
 
         $mform->addElement('hidden', 'name');
         $mform->setType('name', PARAM_ALPHA);
@@ -73,11 +73,16 @@ class question_edit_random_form extends question_edit_form {
         $mform->setDefault('returnurl', 0);
 
         $buttonarray = array();
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
-
-        $buttonarray[] = &$mform->createElement('cancel');
+        $buttonarray[] = $mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+        $buttonarray[] = $mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
+    }
+
+    function set_data($question) {
+        $question->questiontext = array('text' => $question->questiontext);
+        // We don't want the complex stuff in the base class to run.
+        moodleform::set_data($question);
     }
 
     function validation($fromform, $files) {

@@ -130,8 +130,7 @@ class embedded_cloze_qtype extends default_questiontype {
             $wrapped->parent = $question->id;
             $previousid = $wrapped->id ;
             $wrapped->category = $question->category . ',1'; // save_question strips this extra bit off again.
-            $wrapped = $QTYPES[$wrapped->qtype]->save_question($wrapped,
-                    clone($wrapped), $question->course);
+            $wrapped = $QTYPES[$wrapped->qtype]->save_question($wrapped, clone($wrapped));
             $sequence[] = $wrapped->id;
             if ($previousid != 0 && $previousid != $wrapped->id ) {
                 // for some reasons a new question has been created
@@ -160,7 +159,7 @@ class embedded_cloze_qtype extends default_questiontype {
         }
     }
 
-    function save_question($authorizedquestion, $form, $course) {
+    function save_question($authorizedquestion, $form) {
         $question = qtype_multianswer_extract_question($form->questiontext);
         if (isset($authorizedquestion->id)) {
             $question->id = $authorizedquestion->id;
@@ -176,7 +175,7 @@ class embedded_cloze_qtype extends default_questiontype {
         $form->questiontextformat = 0;
         $form->options = clone($question->options);
         unset($question->options);
-        return parent::save_question($question, $form, $course);
+        return parent::save_question($question, $form);
     }
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
@@ -694,7 +693,7 @@ Good luck!
             $course = $DB->get_record('course', array('id' => $courseid));
         }
 
-        return $this->save_question($question, $form, $course);
+        return $this->save_question($question, $form);
     }
 
 }

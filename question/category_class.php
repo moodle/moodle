@@ -10,9 +10,8 @@
 // number of categories to display on page
 define("QUESTION_PAGE_LENGTH", 25);
 
-require_once("$CFG->libdir/listlib.php");
-require_once("$CFG->dirroot/question/category_form.php");
-require_once("$CFG->dirroot/question/category_form_randomquestion.php");
+require_once($CFG->libdir . '/listlib.php');
+require_once($CFG->dirroot . '/question/category_form.php');
 require_once('move_form.php');
 
 class question_category_list extends moodle_list {
@@ -111,10 +110,6 @@ class question_category_object {
      * @var question_category_edit_form Object representing form for adding / editing categories.
      */
     var $catform;
-    /**
-     * @var question_category_edit_form_randomquestion Object representing simplified form for adding a category in order to add it into a quiz as a random question.
-     */
-    var $catform_rand;
 
     /**
      * Constructor
@@ -176,10 +171,8 @@ class question_category_object {
             list($paged, $count) = $this->editlists[$key]->list_from_records($paged, $count);
         }
         $this->catform = new question_category_edit_form($this->pageurl, compact('contexts', 'currentcat'));
-        $this->catform_rand = new question_category_edit_form_randomquestion($this->pageurl, compact('contexts', 'currentcat'));
         if (!$currentcat){
             $this->catform->set_data(array('parent'=>$defaultcategory));
-            $this->catform_rand->set_data(array('parent'=>$defaultcategory));
         }
     }
     /**
@@ -198,16 +191,6 @@ class question_category_object {
         echo '<br />';
 
     }
-    /**
-     * Displays the user interface
-     *
-     */
-    function display_randomquestion_user_interface($addonpage=0) {
-        $this->catform_rand->set_data(array('addonpage'=>$addonpage));
-        /// Interface for adding a new category:
-        $this->output_new_randomquestion_table();
-
-    }
 
     /**
      * Outputs a table to allow entry of a new category
@@ -215,14 +198,6 @@ class question_category_object {
     public function output_new_table() {
         $this->catform->display();
     }
-
-    /**
-     * Outputs a table to allow entry of a new category
-     */
-    function output_new_randomquestion_table() {
-        $this->catform_rand->display();
-    }
-
 
     /**
      * Outputs a list to allow editing/rearranging of existing categories
@@ -365,7 +340,7 @@ class question_category_object {
     /**
      * Creates a new category with given params
      */
-    public function add_category($newparent, $newcategory, $newinfo, $return=false) {
+    public function add_category($newparent, $newcategory, $newinfo, $return = false) {
         global $DB;
         if (empty($newcategory)) {
             print_error('categorynamecantbeblank', 'quiz');

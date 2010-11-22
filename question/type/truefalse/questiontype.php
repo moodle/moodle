@@ -306,7 +306,7 @@ class question_truefalse_qtype extends default_questiontype {
             $course = $DB->get_record('course', array('id' => $courseid));
         }
 
-        return $this->save_question($question, $form, $course);
+        return $this->save_question($question, $form);
     }
 }
 //// END OF CLASS ////
