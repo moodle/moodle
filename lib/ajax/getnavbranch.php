@@ -70,7 +70,7 @@ try {
     }
 
     // Create a navigation object to use, we can't guarantee PAGE will be complete
-    if (!isloggedin() || isguestuser()) {
+    if (!isloggedin()) {
         $navigation->set_expansion_limit(navigation_node::TYPE_COURSE);
     } else {
         if (isset($block) && !empty($block->config->expansionlimit)) {

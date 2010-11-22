@@ -536,14 +536,7 @@ class navigation_node implements renderable {
      * @param array $expandable An array by reference to populate with expandable nodes.
      */
     public function find_expandable(array &$expandable) {
-        $isloggedin = (isloggedin() && !isguestuser());
-        if (!$isloggedin && $this->type > self::TYPE_CATEGORY) {
-            return;
-        }
         foreach ($this->children as &$child) {
-            if (!$isloggedin && $child->type > self::TYPE_CATEGORY) {
-                continue;
-            }
             if ($child->nodetype == self::NODETYPE_BRANCH && $child->children->count()==0 && $child->display) {
                 $child->id = 'expandable_branch_'.(count($expandable)+1);
                 $this->add_class('canexpand');
