@@ -1568,7 +1568,7 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
 
     $s = new stdClass();
     $s->sitename = $SITE->shortname;
-    $s->url = $CFG->wwwroot.'/message/index.php?id='.$userfrom->id;//.'&user='.$userto->id;
+    $s->url = $CFG->wwwroot.'/message/index.php?user='.$userto->id.'&id='.$userfrom->id;
 
     $emailtagline = get_string_manager()->get_string('emailtagline', 'message', $s, $userto->lang);
     if (!empty($eventdata->fullmessage)) {
