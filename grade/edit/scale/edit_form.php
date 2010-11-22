@@ -124,22 +124,30 @@ class edit_scale_form extends moodleform {
         }
 
         if (array_key_exists('scale', $data)) {
-            $count = $DB->count_records('scale', array('courseid'=>$courseid, 'scale'=>$data['scale']));
+            $scalearray = explode(',', $data['scale']);
+            $scalearray = array_map('trim', $scalearray);
+            $scaleoptioncount = count($scalearray);
 
-            if (empty($old->id) or $old->courseid != $courseid) {
-                if ($count) {
-                    $errors['scale'] = get_string('duplicatescale', 'grades');
-                }
-
-            } else if ($old->scale != $data['scale']) {
-                if ($count) {
-                    $errors['scale'] = get_string('duplicatescale', 'grades');
-                }
-            }
-
-            $options = explode(',', $data['scale']);
-            if (count($options) < 2) {
+            if (count($scalearray) < 2) {
                 $errors['scale'] = get_string('badlyformattedscale', 'grades');
+            } else {
+	            $thescale = implode(',',$scalearray);
+
+	            $textlib = textlib_get_instance();
+                //this check strips out whitespace from the scale we're validating but not from those already in the DB
+	            $count = $DB->count_records_select('scale', "courseid=:courseid AND ".$DB->sql_compare_text('scale', $textlib->strlen($thescale)).'=:scale',
+	                array('courseid'=>$courseid, 'scale'=>$thescale));
+
+                if ($count) {
+                    //if this is a new scale but we found a duplice in the DB
+                    //or we found a duplicate in another course report the error
+                    if (empty($old->id) or $old->courseid != $courseid) {
+	                    $errors['scale'] = get_string('duplicatescale', 'grades');
+                    } else if ($old->scale !== $thescale and $old->scale !== $data['scale']) {
+                        //if the old scale from DB is different but we found a duplicate then we're trying to modify a scale to be a duplicate
+	                    $errors['scale'] = get_string('duplicatescale', 'grades');
+	                }
+	            }
             }
         }
 
