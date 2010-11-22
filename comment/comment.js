@@ -226,7 +226,9 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                         }
                         container.set('innerHTML', result.html);
                         var img = Y.one('#comment-img-'+scope.client_id);
-                        img.set('src', M.util.image_url('t/expanded', 'core'));
+                        if (img) {
+                            img.set('src', M.util.image_url('t/expanded', 'core'));
+                        }
                         args.scope.register_pagination();
                         args.scope.register_delete_buttons();
                     }
@@ -329,7 +331,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                 Y.all('#comment-pagination-'+this.client_id+' a').each(
                     function(node, id) {
                         node.on('click', function(e, node) {
-							e.preventDefault();
+                            e.preventDefault();
                             var id = node.get('id');
                             var re = new RegExp("comment-page-"+this.client_id+"-(\\d+)", "i");
                             var result = id.match(re);
