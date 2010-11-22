@@ -66,7 +66,7 @@ class core_course_renderer extends plugin_renderer_base {
 
         // Generate an id and the required JS call to make this a nice widget
         $id = html_writer::random_id('course_category_tree');
-        $this->page->requires->js_init_call('M.util.init_toggle_class_on_click', array($id, '.category.with_children .category_label', 'collapsed'));
+        $this->page->requires->js_init_call('M.util.init_toggle_class_on_click', array($id, '.category.with_children .category_label', 'collapsed', '.category.with_children'));
 
         // Start content generation
         $content = html_writer::start_tag('div', array('class'=>'course_category_tree', 'id'=>$id));
