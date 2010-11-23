@@ -41,7 +41,7 @@ $string['dataroot'] = 'Adatkönyvtár';
 $string['dbprefix'] = 'Táblázat előtagja';
 $string['dirroot'] = 'Moodle-könyvtár';
 $string['environmenthead'] = 'Környezetének ellenőrzése ...';
-$string['environmentsub2'] = 'Minden Moodle-változat valamilyen minimális verziójú PHP és szükséges számú PHP-kibővítés használatát írja elő. A telepítések és frissítések előtt teljes környezet-ellenőrzésre kerül sor. Ha nem tudja, hogyan kell egy új verziót telepíteni és a PHP-bővítéseket bekapcsolni, forduljon a rendszergazdához.';
+$string['environmentsub2'] = 'Minden Moodle-változat valamilyen minimális verziójú PHP és szükséges számú PHP-bővítmény használatát írja elő. A telepítések és frissítések előtt teljes környezet-ellenőrzésre kerül sor. Ha nem tudja, hogyan kell egy új verziót telepíteni és a PHP-bővítményeket bekapcsolni, forduljon a rendszergazdához.';
 $string['errorsinenvironment'] = 'A környezet ellenőrzése nem sikerült!';
 $string['installation'] = 'Telepítés';
 $string['langdownloaderror'] = 'A(z) "{$a}" nyelvet nem lehet letölteni. A telepítés angolul folytatódik.
@@ -62,7 +62,7 @@ címet itt adja meg, a DNS-t pedig úgy állítsa be, hogy az intranetről a
 nyilvános cím is elérhető legyen. Ha a cím hibás, módosítsa böngészőjében az URL-t, hogy a telepítés egy másik értékkel induljon újra.';
 $string['pathsunsecuredataroot'] = 'Az adatok gyökérkönyvtára nem biztonságos.';
 $string['pathswrongadmindir'] = 'Nem létezik az admin könyvtár.';
-$string['phpextension'] = '{$a} PHP-kibővítés';
+$string['phpextension'] = '{$a} PHP-bővítmény';
 $string['phpversion'] = 'PHP-verzió';
 $string['phpversionhelp'] = 'A Moodle használatához legalább a PHP 4.3.0 vagy 5.1.0 verziója szükséges
  (az 5.0.x több ismert gond miatt nem ajánlott). Az Ön által használt 

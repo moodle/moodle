@@ -40,7 +40,7 @@ $string['componentisuptodate'] = 'Az összetevő a legújabb.';
 $string['downloadedfilecheckfailed'] = 'A letöltött állomány ellenőrzése nem sikerült.';
 $string['invalidmd5'] = 'Az ellenőrző változó hibás volt – próbálkozzék ismét';
 $string['missingrequiredfield'] = 'Egy szükséges mező hiányzik.';
-$string['remotedownloaderror'] = 'Az összetevőt nem lehet szerverére letölteni, ellenőrizze a proxy beállításait. Ajánlatos a PHP cURL-kiterjesztés használata. A(z) <a href="{$a->url}">{$a->url}</a> állományt töltse le kézzel, másolja át szerverén a(z) "{$a->dest}" célkönyvtárba, és csomagolja ki ott.';
+$string['remotedownloaderror'] = 'Az összetevőt nem lehet szerverére letölteni, ellenőrizze a proxy beállításait. Ajánlatos a PHP cURL-bővítmény használata. A(z) <a href="{$a->url}">{$a->url}</a> állományt töltse le kézzel, másolja át szerverén a(z) "{$a->dest}" célkönyvtárba, és csomagolja ki ott.';
 $string['wrongdestpath'] = 'Hibás célútvonal.';
 $string['wrongsourcebase'] = 'Hibás forrás-URL.';
 $string['wrongzipfilename'] = 'Hibás a tömörített állomány neve.';

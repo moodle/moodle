@@ -29,3 +29,4 @@
  */
 
 $string['language'] = 'Език';
+$string['next'] = 'Следващ';
