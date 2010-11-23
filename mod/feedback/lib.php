@@ -2582,8 +2582,8 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
 
             if($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
                 $eventdata = new stdClass();
-                $eventdata->name             = 'feedback';
-                $eventdata->component        = 'mod';
+                $eventdata->name             = 'submission';
+                $eventdata->component        = 'mod_feedback';
                 $eventdata->userfrom         = $user;
                 $eventdata->userto           = $teacher;
                 $eventdata->subject          = $postsubject;
@@ -2594,8 +2594,8 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
                 message_send($eventdata);
             }else {
                 $eventdata = new stdClass();
-                $eventdata->name             = 'feedback';
-                $eventdata->component        = 'mod';
+                $eventdata->name             = 'submission';
+                $eventdata->component        = 'mod_feedback';
                 $eventdata->userfrom         = $teacher;
                 $eventdata->userto           = $teacher;
                 $eventdata->subject          = $postsubject;
@@ -2646,8 +2646,8 @@ function feedback_send_email_anonym($cm, $feedback, $course) {
             $posthtml = ($teacher->mailformat == 1) ? feedback_send_email_html($info, $course, $cm) : '';
 
             $eventdata = new stdClass();
-            $eventdata->name             = 'feedback';
-            $eventdata->component        = 'mod';
+            $eventdata->name             = 'submission';
+            $eventdata->component        = 'mod_feedback';
             $eventdata->userfrom         = $teacher;
             $eventdata->userto           = $teacher;
             $eventdata->subject          = $postsubject;
