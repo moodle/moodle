@@ -81,10 +81,6 @@ class webservice {
                   WHERE u.id <> ? AND u.deleted = 0 AND u.confirmed = 1
                         AND esu.userid = u.id
                         AND esu.externalserviceid = ?";
-        if (!empty($userid)) { //TODO: what is this?
-            $sql .= ' AND u.id = ?';
-            $params[] = $userid;
-        }
 
         $users = $DB->get_records_sql($sql, $params);
         return $users;
