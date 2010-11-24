@@ -64,7 +64,7 @@ Standard plugin features:
 * /local/xxx/db/access.php - definition of capabilities
 * /local/xxx/db/events.php - event handlers and subscripts
 * /local/xxx/db/messages.php - messaging registration
-* /local/xxx/db/external.php - web services and external functions descriptions
+* /local/xxx/db/services.php - definition of web services and web service functions
 * /local/xxx/lang/en/local_pluginname.php - language file
 
 
@@ -163,6 +163,34 @@ List of upgrade related files:
                                  for general install code
 /local/nicehack/db/upgrade.php - executed when version changes
 
+
+Local plugin web services
+-------------------------
+During plugin installation or upgrade, the web service definitions are read
+from /local/nicehack/db/services.php and are automatically installed/updated in Moodle.
+
+sample files
+/local/nicehack/db/services.php
+$$functions = array (
+    'nicehack_hello_world' => array(
+                'classname'   => 'local_nicehack_external',
+                'methodname'  => 'hello_world',
+                'classpath'   => 'local/nicehack/externallib.php',
+                'description' => 'Get hello world string',
+                'type'        => 'read',
+    ),
+);
+$services = array(
+        'Nice hack service 1' => array(
+                'functions' => array ('nicehack_hello_world'),
+                'enabled'=>1,
+        ),
+);
+
+
+You will need to write the /local/nicehack/externallib.php - external functions
+description and code. See some examples from the core files (/user/externallib.php,
+/group/externallib.php...).
 
 
 Other local customisation files
