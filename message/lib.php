@@ -1561,10 +1561,16 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     //using string manager directly so that strings in the message will be in the message recipients language rather than the senders
     $eventdata->subject          = get_string_manager()->get_string('unreadnewmessage', 'message', fullname($userfrom), $userto->lang);
 
-    $eventdata->fullmessage      = $message;
+    if ($format==FORMAT_HTML) {
+        $eventdata->fullmessage      = '';
+        $eventdata->fullmessagehtml  = $message;
+    } else {
+        $eventdata->fullmessage      = $message;
+        $eventdata->fullmessagehtml  = '';
+    }
+    
     $eventdata->fullmessageformat = $format;
-    $eventdata->fullmessagehtml  = '';
-    $eventdata->smallmessage     = $message;
+    $eventdata->smallmessage     = strip_tags($message);//strip just in case there are is any html that would break the popup notification
 
     $s = new stdClass();
     $s->sitename = $SITE->shortname;
