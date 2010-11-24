@@ -88,6 +88,13 @@ abstract class base_step implements executable, loggable {
         return $this->task->get_setting($name);
     }
 
+    protected function setting_exists($name) {
+        if (is_null($this->task)) {
+            throw new base_step_exception('not_specified_base_task');
+        }
+        return $this->task->setting_exists($name);
+    }
+
     protected function get_setting_value($name) {
         if (is_null($this->task)) {
             throw new base_step_exception('not_specified_base_task');

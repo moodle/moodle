@@ -213,10 +213,13 @@ abstract class restore_structure_step extends restore_step {
         }
         // No cache, let's calculate the offset
         $original = $this->task->get_info()->original_course_startdate;
-        $setting  = $this->get_setting_value('course_startdate');
+        $setting = 0;
+        if ($this->setting_exists('course_startdate')) { // Seting may not exist (MDL-25019)
+            $setting  = $this->get_setting_value('course_startdate');
+        }
 
-        // Original course has not startdate, offset = 0
-        if (empty($original)) {
+        // Original course has not startdate or setting doesn't exist, offset = 0
+        if (empty($original) || empty($setting)) {
             $cache[$this->get_restoreid()] = 0;
 
         // Less than 24h of difference, offset = 0 (this avoids some problems with timezones)

@@ -87,6 +87,10 @@ abstract class base_task implements checksumable, executable, loggable {
         }
     }
 
+    public function setting_exists($name) {
+        return $this->plan->setting_exists($name);
+    }
+
     public function get_setting_value($name) {
         return $this->get_setting($name)->get_value();
     }
