@@ -328,9 +328,8 @@ function quiz_move_question_down($layout, $questionid) {
  * @param boolean $quiz_qbanktool  Indicates whether the question bank should be displayed
  * @param boolean $hasattempts  Indicates whether the quiz has attempts
  */
-function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
-        $reordertool = false, $quiz_qbanktool = false,
-        $hasattempts = false) {
+function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
+        $quiz_qbanktool, $hasattempts, $defaultcategoryobj) {
     global $USER, $CFG, $QTYPES, $DB, $OUTPUT;
     $strorder = get_string('order');
     $strquestionname = get_string('questionname', 'quiz');
@@ -637,7 +636,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
             if ($pageopen) {
                 if (!$reordertool && !($quiz->shufflequestions && $i < $questiontotalcount - 1)) {
                     quiz_print_pagecontrols($quiz, $pageurl, $pagecount,
-                            $hasattempts);
+                            $hasattempts, $defaultcategoryobj);
                 } else if ($i < $questiontotalcount - 1) {
                     //do not include the last page break for reordering
                     //to avoid creating a new extra page in the end
@@ -675,7 +674,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete = true,
  * @param unknown_type $page
  * @param unknown_type $hasattempts
  */
-function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts) {
+function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts, $defaultcategoryobj) {
     global $CFG, $OUTPUT;
     static $randombuttoncount = 0;
     $randombuttoncount++;
@@ -687,6 +686,9 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts) {
 
     // Get the default category.
     list($defaultcategoryid) = explode(',', $pageurl->param('cat'));
+    if (empty($defaultcategoryid)) {
+        $defaultcategoryid = $defaultcategoryobj->id;
+    }
 
     // Create the url the question page will return to
     $returnurladdtoquiz = new moodle_url($pageurl, array('addonpage' => $page));

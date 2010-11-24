@@ -515,7 +515,7 @@ if ($quiz_reordertool) {
 }
 
 quiz_print_question_list($quiz, $thispageurl, true,
-        $quiz_reordertool, $quiz_qbanktool, $quizhasattempts);
+        $quiz_reordertool, $quiz_qbanktool, $quizhasattempts, $defaultcategoryobj);
 echo '</div>';
 
 // Close <div class="quizcontents">:
