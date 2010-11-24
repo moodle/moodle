@@ -3419,14 +3419,12 @@ function get_user_fieldnames() {
  *
  * @todo Outline auth types and provide code example
  *
- * @global object
- * @global object
  * @param string $username New user's username to add to record
  * @param string $password New user's password to add to record
  * @param string $auth Form of authentication required
- * @return object A {@link $USER} object
+ * @return stdClass A complete user object
  */
-function create_user_record($username, $password, $auth='manual') {
+function create_user_record($username, $password, $auth = 'manual') {
     global $CFG, $DB;
 
     //just in case check text case
@@ -3468,7 +3466,7 @@ function create_user_record($username, $password, $auth='manual') {
     $newuser->mnethostid = $CFG->mnet_localhost_id;
 
     $DB->insert_record('user', $newuser);
-    $user = get_complete_user_data('username', $newuser->username);
+    $user = get_complete_user_data('username', $newuser->username, $CFG->mnet_localhost_id);
     if (!empty($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'})){
         set_user_preference('auth_forcepasswordchange', 1, $user->id);
     }
@@ -3477,26 +3475,28 @@ function create_user_record($username, $password, $auth='manual') {
 }
 
 /**
- * Will update a local user record from an external source
+ * Will update a local user record from an external source.
+ * (MNET users can not be updated using this method!)
  *
- * @global object
- * @param string $username New user's username to add to record
- * @param string $authplugin Unused
- * @return user A {@link $USER} object
+ * @param string $username user's username to update the record
+ * @return stdClass A complete user object
  */
-function update_user_record($username, $authplugin) {
-    global $DB;
+function update_user_record($username) {
+    global $DB, $CFG;
 
     $username = trim(moodle_strtolower($username)); /// just in case check text case
 
-    $oldinfo = $DB->get_record('user', array('username'=>$username), 'username, auth');
+    $oldinfo = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
+    $newuser = array();
     $userauth = get_auth_plugin($oldinfo->auth);
 
     if ($newinfo = $userauth->get_userinfo($username)) {
         $newinfo = truncate_userinfo($newinfo);
         foreach ($newinfo as $key => $value){
-            if ($key === 'username') {
-                // 'username' is not a mapped updateable/lockable field, so skip it.
+            $key = strtolower($key);
+            if (!property_exists($oldinfo, $key) or $key === 'username' or $key === 'id'
+                    or $key === 'auth' or $key === 'mnethostid' or $key === 'deleted') {
+                // unknown or must not be changed
                 continue;
             }
             $confval = $userauth->config->{'field_updatelocal_' . $key};
@@ -3512,13 +3512,19 @@ function update_user_record($username, $authplugin) {
                 // nothing_ for this field. Thus it makes sense to let this value
                 // stand in until LDAP is giving a value for this field.
                 if (!(empty($value) && $lockval === 'unlockedifempty')) {
-                    $DB->set_field('user', $key, $value, array('username'=>$username));
+                    if ((string)$oldinfo->$key !== (string)$value) {
+                        $newuser[$key] = (string)$value;
+                    }
                 }
             }
         }
+        if ($newuser) {
+            $newuser['id'] = $oldinfo->id;
+            $DB->update_record('user', $newuser);
+        }
     }
 
-    return get_complete_user_data('username', $username);
+    return get_complete_user_data('username', $username, $CFG->mnet_localhost_id);
 }
 
 /**
@@ -3736,7 +3742,7 @@ function authenticate_user_login($username, $password) {
             update_internal_user_password($user, $password); // just in case salt or encoding were changed (magic quotes too one day)
 
             if ($authplugin->is_synchronised_with_external()) { // update user record from external DB
-                $user = update_user_record($username, get_auth_plugin($user->auth));
+                $user = update_user_record($username);
             }
         } else {
             // if user not found, create him
