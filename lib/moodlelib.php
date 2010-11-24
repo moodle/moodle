@@ -2978,7 +2978,7 @@ function create_user_record($username, $password, $auth='manual') {
     $newuser->mnethostid = $CFG->mnet_localhost_id;
 
     if (insert_record('user', $newuser)) {
-        $user = get_complete_user_data('username', $newuser->username);
+        $user = get_complete_user_data('username', $newuser->username, $CFG->mnet_localhost_id);
         if(!empty($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'})){
             set_user_preference('auth_forcepasswordchange', 1, $user->id);
         }
@@ -2995,17 +2995,19 @@ function create_user_record($username, $password, $auth='manual') {
  * @param string $username New user's username to add to record
  * @return user A {@link $USER} object
  */
-function update_user_record($username, $authplugin) {
+function update_user_record($username, $unused) {
+    global $CFG;
+
     $username = trim(moodle_strtolower($username)); /// just in case check text case
 
-    $oldinfo = get_record('user', 'username', $username, '','','','', 'username, auth');
+    $oldinfo = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id, '','', 'id, username, auth');
     $userauth = get_auth_plugin($oldinfo->auth);
 
     if ($newinfo = $userauth->get_userinfo($username)) {
         $newinfo = truncate_userinfo($newinfo);
         foreach ($newinfo as $key => $value){
-            if ($key === 'username') {
-                // 'username' is not a mapped updateable/lockable field, so skip it.
+            if ($key === 'username' or $key === 'id' or $key === 'auth' or $key === 'mnethostid' or $key === 'deleted') {
+                // these fields must not be changed
                 continue;
             }
             $confval = $userauth->config->{'field_updatelocal_' . $key};
@@ -3022,14 +3024,14 @@ function update_user_record($username, $authplugin) {
                 // nothing_ for this field. Thus it makes sense to let this value
                 // stand in until LDAP is giving a value for this field.
                 if (!(empty($value) && $lockval === 'unlockedifempty')) {
-                    set_field('user', $key, $value, 'username', $username)
+                    set_field('user', $key, $value, 'id', $oldinfo->id)
                         || error_log("Error updating $key for $username");
                 }
             }
         }
     }
 
-    return get_complete_user_data('username', $username);
+    return get_complete_user_data('username', $username, $CFG->mnet_localhost_id);
 }
 
 function truncate_userinfo($info) {
