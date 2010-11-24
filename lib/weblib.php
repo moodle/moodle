@@ -2269,7 +2269,7 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true, $ret
 
     $linkobject = '<span class="helplink"><img class="iconhelp" alt="'.$strscales.'" src="'.$OUTPUT->pix_url('help') . '" /></span>';
     $link = new moodle_url('/course/scales.php', array('id'=>$courseid, 'list'=>1));
-    $action = new popup_action('click', $link->url, 'ratingscales', array('height' => 400, 'width' => 500));
+    $action = new popup_action('click', $link, 'ratingscales', array('height' => 400, 'width' => 500));
     $output .= $OUTPUT->action_link($link, $linkobject, $action, array('title'=>$strscales));
 
     if ($return) {
