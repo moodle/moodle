@@ -150,7 +150,7 @@ function xmldb_wiki_upgrade($oldversion) {
          * Migrating wiki entries to new subwikis
          */
         $sql = "INSERT into {wiki_subwikis} (wikiid, groupid, userid)
-                    SELECT e.wikiid, e.groupid, e.userid
+                    SELECT DISTINCT e.wikiid, e.groupid, e.userid
                     FROM {wiki_entries_old} e";
         echo $OUTPUT->notification('Migrating old entries to new subwikis', 'notifysuccess');
 
