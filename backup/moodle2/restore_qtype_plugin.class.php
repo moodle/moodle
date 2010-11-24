@@ -126,7 +126,12 @@ abstract class restore_qtype_plugin extends restore_plugin {
         // The question existed, we need to map the existing question_answers
         } else {
             // Look in question_answers by answertext matching
-            $newitemid = $DB->get_field('question_answers', 'id', array('question' => $newquestionid, 'answer' => $data->answertext));
+            $sql = 'SELECT id
+                      FROM {question_answers}
+                     WHERE question = ?
+                       AND ' . $DB->sql_compare_text('answer', 255) . ' = ' . $DB->sql_compare_text('?', 255);
+            $params = array($newquestionid, $data->answertext);
+            $newitemid = $DB->get_field_sql($sql, $params);
             // If we haven't found the newitemid, something has gone really wrong, question in DB
             // is missing answers, exception
             if (!$newitemid) {
