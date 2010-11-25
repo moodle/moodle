@@ -344,7 +344,7 @@
 
                 if ($listing->doctype == 'user'){ // A special handle for users
                     //TODO: this is a performance problem, fetch data elsewhere
-                    $user = (object)array('id'=>$listing->userid);
+                    $user = $DB->get_record('user', array('id' => $listing->userid));
                     $icon = $OUTPUT->user_picture($user);
                 } else {
                     $iconpath = $OUTPUT->pix_url('icon', $listing->doctype);
