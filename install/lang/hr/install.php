@@ -41,7 +41,7 @@ $string['dataroot'] = 'Mapa s podacima';
 $string['dbprefix'] = 'Prefiks tablice';
 $string['dirroot'] = 'Moodle mapa';
 $string['environmenthead'] = 'Provjera okruženja vašeg poslužitelja ...';
-$string['environmentsub2'] = 'Svaka inačica Moodle-a ima minimalne zahtjeve po pitanju odgovarajuće PHP verzije i nekoliko obaveznih PHP ekstenzija.
+$string['environmentsub2'] = 'Svaka inačica Moodle-a ima minimalne zahtjeve po pitanju odgovarajuće PHP inačice i nekoliko obaveznih PHP ekstenzija.
 Puna provjera okruženja se obavlja prije svake instalacije ili nadogradnje postojeće inačice. Ako ne znate kako instalirati novu inačicu ili omogućiti PHP ekstenzije, kontaktirajte administratora vašeg poslužitelja.';
 $string['errorsinenvironment'] = 'Pogreške u okruženju poslužitelja!';
 $string['installation'] = 'Instalacija';
@@ -62,7 +62,7 @@ $string['pathshead'] = 'Potvrdi putanje (PATH)';
 $string['pathsrodataroot'] = 'Nije moguće zapisivanje u podatkovnu (dataroot) mapu.';
 $string['pathsroparentdataroot'] = 'Nije moguće zapisivati podatke u nadređenu mapu ({$a->parent}). Instalacijska skripta ne može stvoriti mapu za podatke ({$a->dataroot}).';
 $string['pathssubadmindir'] = 'Manji broj webhosting tvrtki koristi /admin kao posebni URL za Vaš pristup upravljanju vašim hosting paketom. Nažalost, to rezultira konfliktom sa standardnom lokacijom za Moodle administratorsku stranicu. Navedenu lokaciju unutar Moodle sustava možete preimenovati. Na primjer: <br /> <br /><em>moodleadmin</em><br /> <br />
-Ovo će promijeniti administratorski link na Moodle sustavu u novu vrijednost.';
+Ovo će promijeniti administratorsku poveznicu na Moodle sustavu u novu vrijednost.';
 $string['pathssubdataroot'] = 'Mora postojati mapa u koju Moodle može pohraniti upload datoteke. Korisnik pod kojim je pokrenut web server (obično \'nobody\' ili \'apache\') bi morao imati mogućnost čitanja/pisanja podataka u toj mapi, ali oni ne bi trebali biti dostupni direktno preko weba. Instalacijska skripta će pokušati stvoriti navedenu mapu ako ista ne postoji.';
 $string['pathssubdirroot'] = 'Puna putanja (PATH) do Moodle instalacije.';
 $string['pathssubwwwroot'] = 'Unesite punu web adresu putem koje će se pristupati vašem Moodle sustavu. 
