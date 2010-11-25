@@ -2412,7 +2412,6 @@ function data_reset_userdata($data) {
 
     // delete entries if requested
     if (!empty($data->reset_data)) {
-        //$DB->delete_records_select('data_ratings', "recordid IN ($allrecordssql)", array($data->courseid));
         $DB->delete_records_select('comments', "itemid IN ($allrecordssql) AND commentarea='database_entry'", array($data->courseid));
         $DB->delete_records_select('data_content', "recordid IN ($allrecordssql)", array($data->courseid));
         $DB->delete_records_select('data_records', "dataid IN ($alldatassql)", array($data->courseid));
@@ -2454,7 +2453,6 @@ function data_reset_userdata($data) {
                 if (array_key_exists($record->userid, $notenrolled) or !$record->userexists or $record->userdeleted
                   or !is_enrolled($course_context, $record->userid)) {
                     //delete ratings
-                    //$DB->delete_records('data_ratings', array('recordid'=>$record->id));
                     if (!$cm = get_coursemodule_from_instance('data', $record->dataid)) {
                         continue;
                     }
@@ -2487,7 +2485,6 @@ function data_reset_userdata($data) {
 
     // remove all ratings
     if (!empty($data->reset_data_ratings)) {
-        //$DB->delete_records_select('data_ratings', "recordid IN ($allrecordssql)", array($data->courseid));
         if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
             foreach ($datas as $dataid=>$unused) {
                 if (!$cm = get_coursemodule_from_instance('data', $dataid)) {

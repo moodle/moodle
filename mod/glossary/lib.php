@@ -415,20 +415,6 @@ function glossary_cron () {
  * @return array array of grades, false if none
  */
 function glossary_get_user_grades($glossary, $userid=0) {
-    /*global $DB;
-
-    $params = array('userid'=>$userid, 'gid'=>$glossary->id);
-
-    $user = $userid ? "AND u.id = :userid" : "";
-
-    $sql = "SELECT u.id, u.id AS userid, avg(gr.rating) AS rawgrade
-              FROM {user} u, {glossary_entries} ge, {glossary_ratings} gr
-             WHERE u.id = ge.userid AND ge.id = gr.entryid
-                   AND gr.userid != u.id AND ge.glossaryid = :gid
-                   $user
-          GROUP BY u.id";
-
-    return $DB->get_records_sql($sql, $params);*/
     global $CFG;
 
     require_once($CFG->dirroot.'/rating/lib.php');
