@@ -343,7 +343,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                             $report .= "\t\t\t<li><ul class='$liststyle'>\n";
                             foreach($usertrack as $element => $value) {
                                 if (substr($element,0,3) == 'cmi') {
-                                    $report .= '<li>'.$element.' => '.$value.'</li>';
+                                    $report .= '<li>'.$element.' => '.s($value).'</li>';
                                 }
                             }
                             $report .= "\t\t\t</ul></li>\n";
