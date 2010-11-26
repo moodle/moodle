@@ -3465,12 +3465,17 @@ function create_user_record($username, $password, $auth = 'manual') {
     $newuser->timemodified = time();
     $newuser->mnethostid = $CFG->mnet_localhost_id;
 
-    $DB->insert_record('user', $newuser);
-    $user = get_complete_user_data('username', $newuser->username, $CFG->mnet_localhost_id);
+    $newuser->id = $DB->insert_record('user', $newuser);
+    $user = get_complete_user_data('id', $newuser->id);
     if (!empty($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'})){
-        set_user_preference('auth_forcepasswordchange', 1, $user->id);
+        set_user_preference('auth_forcepasswordchange', 1, $user);
     }
     update_internal_user_password($user, $password);
+
+    // fetch full user record for the event, the complete user data contains too much info
+    // and we want to be consistent with other places that trigger this event
+    events_trigger('user_created', $DB->get_record('user', array('id'=>$user->id)));
+
     return $user;
 }
 
@@ -3521,10 +3526,13 @@ function update_user_record($username) {
         if ($newuser) {
             $newuser['id'] = $oldinfo->id;
             $DB->update_record('user', $newuser);
+            // fetch full user record for the event, the complete user data contains too much info
+            // and we want to be consistent with other places that trigger this event
+            events_trigger('user_updated', $DB->get_record('user', array('id'=>$oldinfo->id)));
         }
     }
 
-    return get_complete_user_data('username', $username, $CFG->mnet_localhost_id);
+    return get_complete_user_data('id', $oldinfo->id);
 }
 
 /**
