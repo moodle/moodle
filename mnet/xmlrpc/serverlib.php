@@ -205,7 +205,7 @@ function mnet_server_fault_xml($code, $text, $privatekey = null) {
 
     if ($code != 7025) { // new key responses
         mnet_debug("XMLRPC Error Response $code: $text");
-        mnet_debug($return);
+        //mnet_debug($return);
     }
 
     return $return;
