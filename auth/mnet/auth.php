@@ -464,9 +464,16 @@ class auth_plugin_mnet extends auth_plugin_base {
         }
         // make sure it is a user we have an in active session
         // with that host...
-        if (!$userid = $DB->get_field('mnet_session', 'userid',
-                            array('username'=>$username, 'mnethostid'=>$remoteclient->id))) {
-            throw new mnet_server_exception(1, 'authfail_nosessionexists');
+        $mnetsessions = $DB->get_records('mnet_session', array('username' => $username, 'mnethostid' => $remoteclient->id), '', 'id, userid');
+        $userid = null;
+        foreach ($mnetsessions as $mnetsession) {
+            if (is_null($userid)) {
+                $userid = $mnetsession->userid;
+                continue;
+            }
+            if ($userid != $mnetsession->userid) {
+                throw new mnet_server_exception(3, 'authfail_usermismatch');
+            }
         }
 
         if (empty($courses)) { // no courses? clear out quickly
