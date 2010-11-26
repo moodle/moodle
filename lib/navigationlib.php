@@ -3440,7 +3440,7 @@ class settings_navigation extends navigation_node {
         }
 
         // Blogs
-        if (!empty($CFG->bloglevel)) {
+        if ($currentuser && !empty($CFG->bloglevel)) {
             $blog = $usersetting->add(get_string('blogs', 'blog'), null, navigation_node::TYPE_CONTAINER, null, 'blogs');
             $blog->add(get_string('preferences', 'blog'), new moodle_url('/blog/preferences.php'), navigation_node::TYPE_SETTING);
             if (!empty($CFG->useexternalblogs) && $CFG->maxexternalblogsperuser > 0 && has_capability('moodle/blog:manageexternal', get_context_instance(CONTEXT_SYSTEM))) {
