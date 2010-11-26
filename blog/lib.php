@@ -491,7 +491,7 @@ function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
     if (has_capability('moodle/blog:create', $sitecontext)) {
         // We can blog about this course
         $options['courseadd'] = array(
-            'string' => get_string('blogaboutthiscourse', 'blog', get_string('course')),
+            'string' => get_string('blogaboutthiscourse', 'blog'),
             'link' => new moodle_url('/blog/edit.php', array('action'=>'add', 'courseid'=>$course->id))
         );
     }
