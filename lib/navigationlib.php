@@ -3498,7 +3498,7 @@ class settings_navigation extends navigation_node {
         $categorynode = $this->add(print_context_name($this->context));
         $categorynode->force_open();
 
-        if (can_edit_in_category()) {
+        if (has_any_capability(array('moodle/category:manage', 'moodle/course:create'), $this->context)) {
             $url = new moodle_url('/course/category.php', array('id'=>$this->context->instanceid, 'sesskey'=>sesskey()));
             if ($this->page->user_is_editing()) {
                 $url->param('categoryedit', '0');
