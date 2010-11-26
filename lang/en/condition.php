@@ -25,28 +25,28 @@
 
 $string['addcompletions'] = 'Add {no} activity conditions to form';
 $string['addgrades'] = 'Add {no} grade conditions to form';
-$string['availabilityconditions'] = 'Restrict availability';
-$string['availablefrom'] = 'Accessible from';
-$string['availablefrom_help'] = 'Accessible from/to dates determine when students can access the activity via a link on the course page.
+$string['availabilityconditions'] = 'Restrict access';
+$string['availablefrom'] = 'Allow access from';
+$string['availablefrom_help'] = 'Access from/to dates determine when students can access the activity via a link on the course page.
 
-The difference between accessible from/to dates and availability settings for the activity is that outside the set dates the latter allows students to view the activity description, whereas accessible from/to dates prevent access completely.';
-$string['availableuntil'] = 'Accessible until';
-$string['badavailabledates'] = 'Invalid dates. If you set both dates, the \'available from\' date should be before the \'until\' date.';
+The difference between access from/to dates and availability settings for the activity is that outside the set dates the latter allows students to view the activity description, whereas access from/to dates prevent access completely.';
+$string['availableuntil'] = 'Allow access until';
+$string['badavailabledates'] = 'Invalid dates. If you set both dates, the \'Allow access from\' date should be before the \'until\' date.';
 $string['completion_complete'] = 'must be marked complete';
 $string['completioncondition'] = 'Activity completion condition';
-$string['completioncondition_help'] = 'This setting determines any activity completion conditions which must be met in order for the activity to be available. Note that completion tracking must first be set before an activity completion condition can be set.
+$string['completioncondition_help'] = 'This setting determines any activity completion conditions which must be met in order to access the activity. Note that completion tracking must first be set before an activity completion condition can be set.
 
-Multiple activity completion conditions may be set if desired.  If so, the activity will only become available when ALL activity completion conditions are met.';
+Multiple activity completion conditions may be set if desired.  If so, access to the activity will only be permitted when ALL activity completion conditions are met.';
 $string['completion_fail'] = 'must be complete with fail grade';
 $string['completion_incomplete'] = 'must not be marked complete';
 $string['completion_pass'] = 'must be complete with pass grade';
-$string['configenableavailability'] = 'When enabled, this lets you set conditions (based on date, grade, or completion) that control whether an activity is available.';
-$string['enableavailability'] = 'Enable conditional availability';
+$string['configenableavailability'] = 'When enabled, this lets you set conditions (based on date, grade, or completion) that control whether an activity can be accessed.';
+$string['enableavailability'] = 'Enable conditional access';
 $string['grade_atleast'] = 'must be at least';
 $string['gradecondition'] = 'Grade condition';
-$string['gradecondition_help'] = 'This setting determines any grade conditions which must be met in order for the activity to be available.
+$string['gradecondition_help'] = 'This setting determines any grade conditions which must be met in order to access the activity.
 
-Multiple grade conditions may be set if desired. If so, the activity will only become available when ALL grade conditions are met.';
+Multiple grade conditions may be set if desired. If so, the activity will only allow access when ALL grade conditions are met.';
 $string['grade_upto'] = 'and less than';
 $string['none'] = '(none)';
 $string['notavailableyet'] = 'Not available yet';
@@ -61,7 +61,7 @@ $string['requires_grade_any'] = 'Not available until you have a grade in <strong
 $string['requires_grade_max'] = 'Not available unless you get an appropriate score in <strong>{$a}</strong>.';
 $string['requires_grade_min'] = 'Not available until you achieve a required score in <strong>{$a}</strong>.';
 $string['requires_grade_range'] = 'Not available unless you get a particular score in <strong>{$a}</strong>.';
-$string['showavailability'] = 'Before activity is available';
+$string['showavailability'] = 'Before activity can be accessed';
 $string['showavailability_hide'] = 'Hide activity entirely';
 $string['showavailability_show'] = 'Show activity greyed-out, with restriction information';
 $string['userrestriction_hidden'] = 'Restricted (completely hidden, no message): &lsquo;{$a}&rsquo;';
