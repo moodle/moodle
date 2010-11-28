@@ -28,5 +28,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['cliincorrectvalueretry'] = 'Rangt gildi, vinsamlegast reyndu aftur';
 $string['environmentrequireinstall'] = 'verður að vera uppsett/virkt';
 $string['environmentrequireversion'] = 'krafist er útgáfu {$a->needed} en þú notast við útgáfu {$a->current}';
