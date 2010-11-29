@@ -71,6 +71,7 @@ $timenow  = time();
 $strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname  = get_string('name');
 
+$table = new html_table();
 if ($usesections) {
     $table->head  = array ($strsectionname, $strname);
     $table->align = array ('center', 'left');
@@ -96,7 +97,7 @@ foreach ($workshops as $workshop) {
 }
 
 echo $OUTPUT->heading(get_string('modulenameplural', 'workshop'), 2);
-print_table($table);
+echo html_writer::table($table);
 
 /// Finish the page
 
