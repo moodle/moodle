@@ -98,7 +98,7 @@ if ($id) {
 
     // Getting first page. If it does not exists, redirecting to create page
     if (!$page = wiki_get_first_page($subwiki->id, $wiki)) {
-        $params = array('wid'=>$wiki->id, 'uid'=>$userid ,'gid'=>$currentgroup, 'title'=>$wiki->firstpagetitle);
+        $params = array('swid'=>$subwiki->id, 'title'=>$wiki->firstpagetitle);
         $url = new moodle_url('/mod/wiki/create.php', $params);
         redirect($url);
     }
