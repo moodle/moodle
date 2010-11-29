@@ -29,18 +29,39 @@ class block_mnet_hosts extends block_list {
         // remote users can't on-jump
         // so don't show this block to them
         if (is_mnet_remote_user($USER)) {
-            return '';
+            if (debugging() and !empty($CFG->debugdisplay)) {
+                $this->content = new stdClass();
+                $this->content->footer = html_writer::tag('span',
+                    get_string('error_localusersonly', 'block_mnet_hosts'),
+                    array('class' => 'error'));
+                return $this->content;
+            } else {
+                return '';
+            }
         }
 
         if (!is_enabled_auth('mnet')) {
-            // no need to query anything remote related
-            debugging( 'mnet authentication plugin is not enabled', DEBUG_ALL );
-            return '';
+            if (debugging() and !empty($CFG->debugdisplay)) {
+                $this->content = new stdClass();
+                $this->content->footer = html_writer::tag('span',
+                    get_string('error_authmnetneeded', 'block_mnet_hosts'),
+                    array('class' => 'error'));
+                return $this->content;
+            } else {
+                return '';
+            }
         }
 
-        // check for outgoing roaming permission first
         if (!has_capability('moodle/site:mnetlogintoremote', get_context_instance(CONTEXT_SYSTEM), NULL, false)) {
-            return '';
+            if (debugging() and !empty($CFG->debugdisplay)) {
+                $this->content = new stdClass();
+                $this->content->footer = html_writer::tag('span',
+                    get_string('error_roamcapabilityneeded', 'block_mnet_hosts'),
+                    array('class' => 'error'));
+                return $this->content;
+            } else {
+                return '';
+            }
         }
 
         if ($this->content !== NULL) {
@@ -81,7 +102,7 @@ class block_mnet_hosts extends block_list {
 
         $hosts = $DB->get_records_sql($sql, array($CFG->mnet_localhost_id));
 
-        $this->content = new stdClass;
+        $this->content = new stdClass();
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';
@@ -104,5 +125,3 @@ class block_mnet_hosts extends block_list {
         return $this->content;
     }
 }
-
-

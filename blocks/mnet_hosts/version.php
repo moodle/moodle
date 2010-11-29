@@ -15,4 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version = 2007101509;
+/**
+ * Network servers block version is defined in this file
+ */
+
+$plugin->version = 2010112900;
