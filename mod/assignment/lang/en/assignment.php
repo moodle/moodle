@@ -47,7 +47,7 @@ assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
 You can see it appended to your <a href="{$a->url}">assignment submission</a>.';
 $string['assignmentname'] = 'Assignment name';
 $string['assignment:submit'] = 'Submit assignment';
-$string['assignmentsubmission'] = 'Assignment Submissions';
+$string['assignmentsubmission'] = 'Assignment submissions';
 $string['assignmenttype'] = 'Assignment type';
 $string['assignment:view'] = 'View assignment';
 $string['availabledate'] = 'Available from';
@@ -180,7 +180,7 @@ $string['submitedformarking'] = 'Assignment was already submitted for marking an
 $string['submitformarking'] = 'Final submission for assignment marking';
 $string['submitted'] = 'Submitted';
 $string['submittedfiles'] = 'Submitted files';
-$string['trackdrafts'] = 'Enable Send for marking';
+$string['trackdrafts'] = 'Enable "Send for marking" button';
 $string['trackdrafts_help'] = 'The "Send for marking" button allows students to indicate to the teacher that they have finished working on an assignment. The teacher may choose to revert the assignment to draft status (if it requires further work, for example).';
 $string['typeblog'] = 'Blog post';
 $string['typeoffline'] = 'Offline activity';
