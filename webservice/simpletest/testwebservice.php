@@ -78,6 +78,7 @@ class webservice_test extends UnitTestCase {
         $this->writetests = array(
             'moodle_user_create_users' => false,
             'moodle_course_create_courses' => false,
+            'moodle_user_delete_users' => false
         );
 
         //performance testing: number of time the web service are run
@@ -158,7 +159,9 @@ class webservice_test extends UnitTestCase {
 
                 require_once($CFG->dirroot . "/webservice/soap/lib.php");
                 $soapclient = new webservice_soap_client($CFG->wwwroot
-                                . '/webservice/soap/server.php', $this->testtoken);
+                                . '/webservice/soap/server.php', $this->testtoken,
+                        array("features" => SOAP_WAIT_ONE_WAY_CALLS)); //force SOAP synchronous mode
+                                                                     //when function return null
                 $soapclient->setWsdlCache(false);
 
                 for ($i = 1; $i <= $this->iteration; $i = $i + 1) {
@@ -201,7 +204,7 @@ class webservice_test extends UnitTestCase {
 
     function moodle_user_get_users_by_id($client) {
         global $DB;
-        $dbusers = $DB->get_records('user');
+        $dbusers = $DB->get_records('user', array('deleted' => 0));
         $userids = array();
         foreach ($dbusers as $dbuser) {
             $userids[] = $dbuser->id;
@@ -567,6 +570,86 @@ class webservice_test extends UnitTestCase {
         //delete users from DB
         $DB->delete_records_list('user', 'id',
                 array($dbuser1->id, $dbuser2->id));
+    }
+
+    function moodle_user_delete_users($client) {
+        global $DB, $CFG;
+
+        //Set test data
+        //a full user: user1
+        $user1 = new stdClass();
+        $user1->username = 'veryimprobabletestusername1';
+        $user1->password = 'testpassword1';
+        $user1->firstname = 'testfirstname1';
+        $user1->lastname = 'testlastname1';
+        $user1->email = 'testemail1@moodle.com';
+        $user1->auth = 'manual';
+        $user1->idnumber = 'testidnumber1';
+        $user1->lang = 'en';
+        $user1->theme = 'standard';
+        $user1->timezone = 99;
+        $user1->mailformat = 0;
+        $user1->description = 'Hello World!';
+        $user1->city = 'testcity1';
+        $user1->country = 'au';
+        $preferencename1 = 'preference1';
+        $preferencename2 = 'preference2';
+        $user1->preferences = array(
+            array('type' => $preferencename1, 'value' => 'preferencevalue1'),
+            array('type' => $preferencename2, 'value' => 'preferencevalue2'));
+        $customfieldname1 = 'testdatacustom1';
+        $customfieldname2 = 'testdatacustom2';
+        $user1->customfields = array(
+            array('type' => $customfieldname1, 'value' => 'customvalue'),
+            array('type' => $customfieldname2, 'value' => 'customvalue2'));
+        //a small user: user2
+        $user2 = new stdClass();
+        $user2->username = 'veryimprobabletestusername2';
+        $user2->password = 'testpassword2';
+        $user2->firstname = 'testfirstname2';
+        $user2->lastname = 'testlastname2';
+        $user2->email = 'testemail1@moodle.com';       
+        $users = array($user1, $user2);
+
+        //can run this test only if test usernames don't exist
+        $searchusers = $DB->get_records_list('user', 'username',
+                array($user1->username, $user1->username));
+        if (count($searchusers) == 0) {
+            //create two users
+            require_once($CFG->dirroot."/user/lib.php");
+            require_once($CFG->dirroot."/user/profile/lib.php");
+            $user1->id = user_create_user($user1);
+            // custom fields
+            if(!empty($user1->customfields)) {
+                foreach($user1->customfields as $customfield) {
+                    $user1->{"profile_field_".$customfield['type']} = $customfield['value'];
+                }
+                profile_save_data((object) $user1);
+            }
+            //preferences
+            if (!empty($user1->preferences)) {
+                foreach($user1->preferences as $preference) {
+                    set_user_preference($preference['type'], $preference['value'],$user1->id);
+                }
+            }
+            $user2->id = user_create_user($user2);
+
+            //search for them => TEST they exists
+            $searchusers = $DB->get_records_list('user', 'username',
+                    array($user1->username, $user2->username));
+            $this->assertEqual(count($users), count($searchusers));
+
+            //delete the users by webservice
+            $function = 'moodle_user_delete_users';
+            $params = array('users' => array($user1->id, $user2->id));
+            $client->call($function, $params);
+
+            //search for them => TESTS they don't exists
+            $searchusers = $DB->get_records_list('user', 'username',
+                    array($user1->username, $user2->username));
+           
+            $this->assertTrue(empty($searchusers));
+        }
     }
 
 }

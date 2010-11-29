@@ -28,11 +28,12 @@ class webservice_soap_client extends Zend_Soap_Client {
      * Constructor
      * @param string $serverurl
      * @param string $token
+     * @param array $options PHP SOAP client options - see php.net
      */
-    public function __construct($serverurl, $token) {
+    public function __construct($serverurl, $token, $options = null) {
         $this->serverurl = $serverurl;
         $wsdl = $serverurl . "?wstoken=" . $token . '&wsdl=1';
-        parent::__construct($wsdl);
+        parent::__construct($wsdl, $options);
     }
 
     /**
