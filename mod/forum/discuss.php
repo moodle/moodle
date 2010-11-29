@@ -158,9 +158,10 @@
     if (empty($forumnode)) {
         $forumnode = $PAGE->navbar;
     } else {
-        $forumnode->display = false;
+        $forumnode->make_active();
     }
     $node = $forumnode->add(format_string($discussion->name), new moodle_url('/mod/forum/discuss.php', array('d'=>$discussion->id)));
+    $node->display = false;
     if ($node && $post->id != $discussion->firstpost) {
         $node->add(format_string($post->subject), $PAGE->url);
     }
