@@ -78,7 +78,8 @@ class webservice_test extends UnitTestCase {
         $this->writetests = array(
             'moodle_user_create_users' => false,
             'moodle_course_create_courses' => false,
-            'moodle_user_delete_users' => false
+            'moodle_user_delete_users' => false,
+            'moodle_user_update_users' => false
         );
 
         //performance testing: number of time the web service are run
@@ -608,7 +609,7 @@ class webservice_test extends UnitTestCase {
         $user2->password = 'testpassword2';
         $user2->firstname = 'testfirstname2';
         $user2->lastname = 'testlastname2';
-        $user2->email = 'testemail1@moodle.com';       
+        $user2->email = 'testemail1@moodle.com';
         $users = array($user1, $user2);
 
         //can run this test only if test usernames don't exist
@@ -634,6 +635,18 @@ class webservice_test extends UnitTestCase {
             }
             $user2->id = user_create_user($user2);
 
+            //create the custom fields
+            $customfield = new stdClass();
+            $customfield->shortname = $customfieldname1;
+            $customfield->name = $customfieldname1;
+            $customfield->datatype = 'text';
+            $DB->insert_record('user_info_field', $customfield);
+            $customfield = new stdClass();
+            $customfield->shortname = $customfieldname2;
+            $customfield->name = $customfieldname2;
+            $customfield->datatype = 'text';
+            $DB->insert_record('user_info_field', $customfield);
+
             //search for them => TEST they exists
             $searchusers = $DB->get_records_list('user', 'username',
                     array($user1->username, $user2->username));
@@ -649,6 +662,202 @@ class webservice_test extends UnitTestCase {
                     array($user1->username, $user2->username));
            
             $this->assertTrue(empty($searchusers));
+
+            //unset preferences
+            $DB->delete_records('user_preferences', array('userid' => $user1->id));
+
+            //clear custom fields data
+            $DB->delete_records('user_info_data', array('userid' => $user1->id));
+
+            //delete custom fields
+            $DB->delete_records_list('user_info_field', 'shortname',
+                    array($customfieldname1, $customfieldname2));
+
+            //delete users from DB
+            $DB->delete_records_list('user', 'id',
+                    array($user1->id, $user2->id));
+        }
+    }
+
+    function moodle_user_update_users($client) {
+        global $DB, $CFG;
+
+        //Set test data
+        //a full user: user1
+        $user1 = new stdClass();
+        $user1->username = 'veryimprobabletestusername1';
+        $user1->password = 'testpassword1';
+        $user1->firstname = 'testfirstname1';
+        $user1->lastname = 'testlastname1';
+        $user1->email = 'testemail1@moodle.com';
+        $user1->auth = 'manual';
+        $user1->idnumber = 'testidnumber1';
+        $user1->lang = 'en';
+        $user1->theme = 'standard';
+        $user1->timezone = 99;
+        $user1->mailformat = 0;
+        $user1->description = 'Hello World!';
+        $user1->city = 'testcity1';
+        $user1->country = 'au';
+        $preferencename1 = 'preference1';
+        $preferencename2 = 'preference2';
+        $user1->preferences = array(
+            array('type' => $preferencename1, 'value' => 'preferencevalue1'),
+            array('type' => $preferencename2, 'value' => 'preferencevalue2'));
+        $customfieldname1 = 'testdatacustom1';
+        $customfieldname2 = 'testdatacustom2';
+        $user1->customfields = array(
+            array('type' => $customfieldname1, 'value' => 'customvalue'),
+            array('type' => $customfieldname2, 'value' => 'customvalue2'));
+        //a small user: user2
+        $user2 = new stdClass();
+        $user2->username = 'veryimprobabletestusername2';
+        $user2->password = 'testpassword2';
+        $user2->firstname = 'testfirstname2';
+        $user2->lastname = 'testlastname2';
+        $user2->email = 'testemail1@moodle.com';
+        $users = array($user1, $user2);
+
+        //can run this test only if test usernames don't exist
+        $searchusers = $DB->get_records_list('user', 'username',
+                array($user1->username, $user1->username));
+        if (count($searchusers) == 0) {
+            //create two users
+            require_once($CFG->dirroot."/user/lib.php");
+            require_once($CFG->dirroot."/user/profile/lib.php");
+            $user1->id = user_create_user($user1);
+            //unset field created by user_create_user
+            unset($user1->timemodified);
+            unset($user1->timecreated);
+
+            // custom fields
+            if(!empty($user1->customfields)) {
+                foreach($user1->customfields as $customfield) {
+                    $customuser1->id = $user1->id;
+                    $customuser1->{"profile_field_".$customfield['type']} = $customfield['value'];
+                }
+                profile_save_data((object) $customuser1);
+            }
+            //preferences
+            if (!empty($user1->preferences)) {
+                foreach($user1->preferences as $preference) {
+                    set_user_preference($preference['type'], $preference['value'],$user1->id);
+                }
+            }
+            $user2->id = user_create_user($user2);
+            unset($user2->timemodified);
+            unset($user2->timecreated);
+
+             //create the custom fields
+            $customfield = new stdClass();
+            $customfield->shortname = $customfieldname1;
+            $customfield->name = $customfieldname1;
+            $customfield->datatype = 'text';
+            $DB->insert_record('user_info_field', $customfield);
+            $customfield = new stdClass();
+            $customfield->shortname = $customfieldname2;
+            $customfield->name = $customfieldname2;
+            $customfield->datatype = 'text';
+            $DB->insert_record('user_info_field', $customfield);
+            
+            //search for them => TEST they exists
+            $searchusers = $DB->get_records_list('user', 'username',
+                    array($user1->username, $user2->username));
+            $this->assertEqual(count($users), count($searchusers));
+
+            //update the test data
+            $user1->username = 'veryimprobabletestusername1_updated';
+            $user1->password = 'testpassword1_updated';
+            $user1->firstname = 'testfirstname1_updated';
+            $user1->lastname = 'testlastname1_updated';
+            $user1->email = 'testemail1_updated@moodle.com';
+            $user1->auth = 'manual';
+            $user1->idnumber = 'testidnumber1_updated';
+            $user1->lang = 'en';
+            $user1->theme = 'standard';
+            $user1->timezone = 98;
+            $user1->mailformat = 1;
+            $user1->description = 'Hello World!_updated';
+            $user1->city = 'testcity1_updated';
+            $user1->country = 'au';
+            $preferencename1 = 'preference1';
+            $preferencename2 = 'preference2';
+            $user1->preferences = array(
+            array('type' => $preferencename1, 'value' => 'preferencevalue1_updated'),
+            array('type' => $preferencename2, 'value' => 'preferencevalue2_updated'));
+            $customfieldname1 = 'testdatacustom1';
+            $customfieldname2 = 'testdatacustom2';
+            $user1->customfields = array(
+            array('type' => $customfieldname1, 'value' => 'customvalue_updated'),
+            array('type' => $customfieldname2, 'value' => 'customvalue2_updated'));
+            $user2->username = 'veryimprobabletestusername2_updated';
+            $user2->password = 'testpassword2_updated';
+            $user2->firstname = 'testfirstname2_updated';
+            $user2->lastname = 'testlastname2_updated';
+            $user2->email = 'testemail1_updated@moodle.com';
+            $users = array($user1, $user2);
+            
+            //update the user
+            //delete the users by webservice
+            $function = 'moodle_user_update_users';
+            $params = array('users' => $users);
+            $client->call($function, $params);
+
+            //compare user
+            $dbuser1 = $DB->get_record('user', array('username' => $user1->username));
+            $this->assertEqual($dbuser1->firstname, $user1->firstname);
+            $this->assertEqual($dbuser1->password,
+                    hash_internal_user_password($user1->password));
+            $this->assertEqual($dbuser1->lastname, $user1->lastname);
+            $this->assertEqual($dbuser1->email, $user1->email);
+            $this->assertEqual($dbuser1->auth, $user1->auth);
+            $this->assertEqual($dbuser1->idnumber, $user1->idnumber);
+            $this->assertEqual($dbuser1->lang, $user1->lang);
+            $this->assertEqual($dbuser1->theme, $user1->theme);
+            $this->assertEqual($dbuser1->timezone, $user1->timezone);
+            $this->assertEqual($dbuser1->mailformat, $user1->mailformat);
+            $this->assertEqual($dbuser1->description, $user1->description);
+            $this->assertEqual($dbuser1->city, $user1->city);
+            $this->assertEqual($dbuser1->country, $user1->country);
+            $user1preference1 = get_user_preferences($user1->preferences[0]['type'],
+                            null, $dbuser1->id);
+            $this->assertEqual($user1->preferences[0]['value'], $user1preference1);
+            $user1preference2 = get_user_preferences($user1->preferences[1]['type'],
+                            null, $dbuser1->id);
+            $this->assertEqual($user1->preferences[1]['value'], $user1preference2);
+            require_once($CFG->dirroot . "/user/profile/lib.php");
+            $customfields = profile_user_record($dbuser1->id);
+
+            $customfields = (array) $customfields;
+            $customfieldname1 = $user1->customfields[0]['type'];
+            $customfieldname2 = $user1->customfields[1]['type'];
+            $this->assertEqual($customfields[$customfieldname1],
+                    $user1->customfields[0]['value']);
+            $this->assertEqual($customfields[$customfieldname2],
+                    $user1->customfields[1]['value']);
+
+            //retrieve user2 from the DB and check values
+            $dbuser2 = $DB->get_record('user', array('username' => $user2->username));
+            $this->assertEqual($dbuser2->firstname, $user2->firstname);
+            $this->assertEqual($dbuser2->password,
+                    hash_internal_user_password($user2->password));
+            $this->assertEqual($dbuser2->lastname, $user2->lastname);
+            $this->assertEqual($dbuser2->email, $user2->email);
+
+            //unset preferences
+            $DB->delete_records('user_preferences', array('userid' => $dbuser1->id));
+
+            //clear custom fields data
+            $DB->delete_records('user_info_data', array('userid' => $dbuser1->id));
+
+            //delete custom fields
+            $DB->delete_records_list('user_info_field', 'shortname',
+                    array($customfieldname1, $customfieldname2));
+
+            //delete users from DB
+            $DB->delete_records_list('user', 'id',
+                    array($dbuser1->id, $dbuser2->id));
+
         }
     }
 
