@@ -28,6 +28,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'j';
 $string['cliincorrectvalueretry'] = 'Rangt gildi, vinsamlegast reyndu aftur';
-$string['environmentrequireinstall'] = 'verður að vera uppsett/virkt';
+$string['clitypevalue'] = 'Sláðu inn gildi';
+$string['clitypevaluedefault'] = 'Sláðu inn gildi, sláðu á Enter hnappinn á lyklaborðinu til að nota sjálfgefið gildi ({$a})';
+$string['environmentrequireinstall'] = 'verður að vera uppsett og virkjað';
 $string['environmentrequireversion'] = 'krafist er útgáfu {$a->needed} en þú notast við útgáfu {$a->current}';
