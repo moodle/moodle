@@ -1013,6 +1013,7 @@ class grade_structure {
                 $is_category = $element['object']->is_category_item();
                 $is_scale    = $element['object']->gradetype == GRADE_TYPE_SCALE;
                 $is_value    = $element['object']->gradetype == GRADE_TYPE_VALUE;
+                $is_outcome  = !empty($element['object']->outcomeid);
 
                 if ($element['object']->is_calculated()) {
                     $strcalc = get_string('calculatedgrade', 'grades');
@@ -1038,12 +1039,19 @@ class grade_structure {
                     }
 
                 } else if ($element['object']->itemtype == 'mod') {
-                    $strmodname = get_string('modulename', $element['object']->itemmodule);
-                    return '<img src="'.$OUTPUT->pix_url('icon',
+                    //prevent outcomes being displaying the same icon as the activity they are attached to
+                    if ($is_outcome) {
+                        $stroutcome = s(get_string('outcome', 'grades'));
+                        return '<img src="'.$OUTPUT->pix_url('i/outcomes') . '" ' .
+                            'class="icon itemicon" title="'.$stroutcome.
+                            '" alt="'.$stroutcome.'"/>';
+                    } else {
+                        $strmodname = get_string('modulename', $element['object']->itemmodule);
+                        return '<img src="'.$OUTPUT->pix_url('icon',
                             $element['object']->itemmodule) . '" ' .
                             'class="icon itemicon" title="' .s($strmodname).
                             '" alt="' .s($strmodname).'"/>';
-
+                    }
                 } else if ($element['object']->itemtype == 'manual') {
                     if ($element['object']->is_outcome_item()) {
                         $stroutcome = get_string('outcome', 'grades');
