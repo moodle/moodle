@@ -71,7 +71,9 @@ class webservice_test extends UnitTestCase {
             'moodle_group_get_groups' => false,
             'moodle_course_get_courses' => false,
             'moodle_user_get_users_by_id' => false,
-            'moodle_enrol_get_enrolled_users' => false
+            'moodle_enrol_get_enrolled_users' => false,
+            'moodle_group_get_course_groups' => false,
+            'moodle_group_get_groupmembers' => false
         );
 
         ////// WRITE DB tests ////
@@ -973,5 +975,55 @@ class webservice_test extends UnitTestCase {
 
     }
 
+    /**
+     * READ ONLY test
+     * TODO: find a better solution that running web service for each course
+     * in the system
+     * For each courses, test the number of groups
+     * @param object $client
+     */
+    function moodle_group_get_course_groups($client) {
+        global $DB;
+
+        $courses = $DB->get_records('course');
+        foreach($courses as $course) {
+            $coursegroups = groups_get_all_groups($course->id);
+            $function = 'moodle_group_get_course_groups';
+            $params = array('courseid' => $course->id);
+            $groups = $client->call($function, $params);
+            $this->assertEqual(count($groups), count($coursegroups));
+        }
+    }
+
+
+    /**
+     * READ ONLY test
+     * Test that the same number of members are returned
+     * for each existing group in the system
+     * @param object $client
+     */
+    function moodle_group_get_groupmembers($client) {
+        global $DB;
+
+        $groups = $DB->get_records('groups');
+        $groupids = array();
+        foreach ($groups as $group) {
+            $groupids[] = $group->id;
+        }
+        $function = 'moodle_group_get_groupmembers';
+        $params = array('groupids' => $groupids);
+        $groupsmembers = $client->call($function, $params);
+
+        foreach($groupsmembers as $groupmembers) {
+            $dbgroupmembers = groups_get_members($groupmembers['groupid']);
+            unset($groups[$groupmembers['groupid']]);
+            $this->assertEqual(count($dbgroupmembers), count($groupmembers['userids']));
+        }
+
+        //check that all existing groups have been returned by the web service function
+        $this->assertTrue(empty($groups));
+       
+        
+    }
 
 }
