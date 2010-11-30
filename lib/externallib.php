@@ -185,7 +185,12 @@ class external_api {
                 unset($params[$key]);
             }
             if (!empty($params)) {
-                throw new invalid_parameter_exception(get_string('errorunexpectedkey', 'webservice'));
+                //list all unexpected keys
+                $keys = '';
+                foreach($params as $key => $value) {
+                    $keys .= $key . ',';
+                }
+                throw new invalid_parameter_exception(get_string('errorunexpectedkey', 'webservice', $keys));
             }
             return $result;
 
