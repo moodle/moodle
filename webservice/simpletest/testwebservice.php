@@ -80,7 +80,8 @@ class webservice_test extends UnitTestCase {
             'moodle_course_create_courses' => false,
             'moodle_user_delete_users' => false,
             'moodle_user_update_users' => false,
-            'moodle_role_assign' => false
+            'moodle_role_assign' => false,
+            'moodle_role_unassign' => false
         );
 
         //performance testing: number of time the web service are run
@@ -912,6 +913,64 @@ class webservice_test extends UnitTestCase {
             delete_role($role1->id);
             delete_role($role2->id);
         }
+    }
+
+    function moodle_role_unassign($client) {
+        global $DB, $CFG;
+
+        $searchusers = $DB->get_records_list('user', 'username',
+                array('veryimprobabletestusername2'));
+        $searchroles = $DB->get_records_list('role', 'shortname',
+                array('role1thatshouldnotexist', 'role2thatshouldnotexist'));
+
+        if (empty($searchusers) and empty($searchroles)) {
+
+            //create a temp user
+            $user = new stdClass();
+            $user->username = 'veryimprobabletestusername2';
+            $user->password = 'testpassword2';
+            $user->firstname = 'testfirstname2';
+            $user->lastname = 'testlastname2';
+            $user->email = 'testemail1@moodle.com';
+            require_once($CFG->dirroot."/user/lib.php");
+            $user->id = user_create_user($user);
+
+            //create two roles
+            $role1->id = create_role('role1thatshouldnotexist', 'role1thatshouldnotexist', '');
+            $role2->id = create_role('role2thatshouldnotexist', 'role2thatshouldnotexist', '');
+        
+            //assign roles from user
+            $context = get_system_context();
+            role_assign($role1->id, $user->id, $context->id);
+            role_assign($role2->id, $user->id, $context->id);
+
+            //check that the local assignment work
+            $roles = get_user_roles($context, $user->id, false);
+            foreach ($roles as $role) {
+                $this->assertTrue(($role->roleid == $role1->id) or ($role->roleid == $role2->id) );
+            }
+
+            //unassign user to role by webservice          
+            $assignments = array(
+                array('roleid' => $role1->id, 'userid' => $user->id, 'contextid' => $context->id),
+                array('roleid' => $role2->id, 'userid' => $user->id, 'contextid' => $context->id)
+            );
+            $function = 'moodle_role_unassign';
+            $params = array('assignments' => $assignments);
+            $client->call($function, $params);
+
+            //check that the web service unassignment work
+            $roles = get_user_roles($context, $user->id, false);
+            $this->assertTrue(empty($roles));
+
+            //delete user from DB
+            $DB->delete_records('user', array('id' => $user->id));
+
+            //delete the two role from DB
+            delete_role($role1->id);
+            delete_role($role2->id);
+        }
+
     }
 
 
