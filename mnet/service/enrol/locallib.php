@@ -101,6 +101,7 @@ class mnetservice_enrol {
                       JOIN {mnet_service} s ON hs.serviceid = s.id
                       JOIN {mnet_application} a ON h.applicationid = a.id
                      WHERE s.name = 'mnet_enrol'
+                           AND h.deleted = 0
                            AND hs.publish = 1";
             $this->cachesubscribers = $DB->get_records_sql($sql);
         }
@@ -129,6 +130,7 @@ class mnetservice_enrol {
                       JOIN {mnet_service} s ON hs.serviceid = s.id
                       JOIN {mnet_application} a ON h.applicationid = a.id
                      WHERE s.name = 'mnet_enrol'
+                           AND h.deleted = 0
                            AND hs.subscribe = 1";
             $this->cachepublishers = $DB->get_records_sql($sql);
         }
