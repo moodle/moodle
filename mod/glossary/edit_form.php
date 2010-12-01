@@ -107,21 +107,21 @@ class mod_glossary_entry_form extends moodleform {
                 }
             }
             if (!$glossary->allowduplicatedentries) {
-                if ($dupentries = $DB->get_records('glossary_entries', array('LOWER(concept)'=>moodle_strtolower($data['concept'])))) {
-                    foreach ($dupentries as $curentry) {
-                        if ($glossary->id == $curentry->glossaryid) {
-                           if ($curentry->id != $id) {
-                               $errors['concept'] = get_string('errconceptalreadyexists', 'glossary');
-                               break;
-                           }
-                        }
-                    }
+                if ($DB->record_exists_select('glossary_entries',
+                        'glossaryid = :glossaryid AND LOWER(concept) = :concept AND id != :id', array(
+                            'glossaryid' => $glossary->id,
+                            'concept'    => moodle_strtolower($data['concept']),
+                            'id'         => $id))) {
+                    $errors['concept'] = get_string('errconceptalreadyexists', 'glossary');
                 }
             }
 
         } else {
             if (!$glossary->allowduplicatedentries) {
-                if ($dupentries = $DB->get_record('glossary_entries', array('LOWER(concept)'=>moodle_strtolower($data['concept']), 'glossaryid'=>$glossary->id))) {
+                if ($DB->record_exists_select('glossary_entries',
+                        'glossaryid = :glossaryid AND LOWER(concept) = :concept', array(
+                            'glossaryid' => $glossary->id,
+                            'concept'    => moodle_strtolower($data['concept'])))) {
                     $errors['concept'] = get_string('errconceptalreadyexists', 'glossary');
                 }
             }
