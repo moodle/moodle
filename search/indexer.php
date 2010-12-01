@@ -102,8 +102,14 @@ require_once($CFG->dirroot.'/search/lib.php');
         mtrace("Using {$index_path} as data directory.");
     }
 
-    Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8_CaseInsensitive());
-    $index = new Zend_Search_Lucene($index_path, true);
+    try {
+        Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8_CaseInsensitive());
+        $index = new Zend_Search_Lucene($index_path, true);
+    }
+    catch (Exception $e) {
+        mtrace("Exception caught: ". $e->getMessage(). " \n" . $e->getTraceAsString());
+        throw $e;
+    }
 
 /// New regeneration
 
