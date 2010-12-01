@@ -42,11 +42,13 @@ if (!empty($return)) {
 }
 
 if (!empty($add)) {
-    $url->param('add', $add);
-    $PAGE->set_url($url);
-
     $section = required_param('section', PARAM_INT);
     $course  = required_param('course', PARAM_INT);
+
+    $url->param('add', $add);
+    $url->param('section', $section);
+    $url->param('course', $course);
+    $PAGE->set_url($url);
 
     $course = $DB->get_record('course', array('id'=>$course), '*', MUST_EXIST);
     $module = $DB->get_record('modules', array('name'=>$add), '*', MUST_EXIST);
