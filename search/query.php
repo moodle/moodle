@@ -339,13 +339,19 @@
             $authorstr = get_string('author', 'search');
 
             $searchables = search_collect_searchables(false, false);
-
+            
+            //build a list of distinct user objects needed for results listing.
+            $hitusers = array();
+            foreach ($hits as $listing) {
+                if ($listing->doctype == 'user' and !isset($hitusers[$listing->userid])) {
+                    $hitusers[$listing->userid] = $DB->get_record('user', array('id' => $listing->userid));
+                }
+            }
+            
             foreach ($hits as $listing) {
 
-                if ($listing->doctype == 'user'){ // A special handle for users
-                    //TODO: this is a performance problem, fetch data elsewhere
-                    $user = (object)array('id'=>$listing->userid);
-                    $icon = $OUTPUT->user_picture($user);
+                if ($listing->doctype == 'user') { // A special handle for users
+                    $icon = $OUTPUT->user_picture($hitusers[$listing->userid]);
                 } else {
                     $iconpath = $OUTPUT->pix_url('icon', $listing->doctype);
                     $icon = "<img align=\"top\" src=\"".$iconpath."\" class=\"activityicon\" alt=\"\"/>";
