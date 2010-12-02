@@ -158,6 +158,11 @@ if (empty($data->addtemplate) and empty($data->singletemplate) and
 
 editors_head_setup();
 $format = FORMAT_HTML;
+
+if ($mode === 'csstemplate' or $mode === 'jstemplate') {
+    $disableeditor = true;
+}
+
 if ($disableeditor) {
     $format = FORMAT_PLAIN;
 }
