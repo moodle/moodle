@@ -30,6 +30,7 @@ $string['coursestructures'] = 'Categories, courses, and course structures';
 $string['courseactivities'] = 'Categories, courses, and course Activities';
 $string['enabledockdesc'] = 'Allow the user to dock this block';
 $string['expansionlimit'] = 'Generate navigation for the following';
+$string['linkcategoriesdesc'] = 'Display categories as links';
 $string['pluginname'] = 'Navigation';
 $string['trimmode'] = 'Trim mode';
 $string['trimmoderight'] = 'Trim characters from the right';

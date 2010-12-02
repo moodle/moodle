@@ -180,9 +180,12 @@ class block_navigation extends block_base {
         $arguments = array($this->instance->id, array('expansions'=>$expandable, 'instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked(), 'courselimit'=>$limit));
         $this->page->requires->js_init_call('M.block_navigation.init_add_tree', $arguments, false, $module);
 
+        $options = array();
+        $options['linkcategories'] = (!empty($this->config->linkcategories) && $this->config->linkcategories == 'yes');
+        
         // Grab the items to display
         $renderer = $this->page->get_renderer('block_navigation');
-        $this->content->text = $renderer->navigation_tree($navigation, $expansionlimit);
+        $this->content->text = $renderer->navigation_tree($navigation, $expansionlimit, $options);
 
         // Set content generated to true so that we know it has been done
         $this->contentgenerated = true;

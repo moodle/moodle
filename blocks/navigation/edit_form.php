@@ -39,7 +39,7 @@ class block_navigation_edit_form extends block_edit_form {
         global $CFG;
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
 
-        $mods = array('enabledock'=>'yes');
+        $mods = array('enabledock'=>'yes', 'linkcategories'=>'no');
         $yesnooptions = array('yes'=>get_string('yes'), 'no'=>get_string('no'));
         foreach ($mods as $modname=>$default) {
             $mform->addElement('select', 'config_'.$modname, get_string($modname.'desc', $this->block->blockname), $yesnooptions);

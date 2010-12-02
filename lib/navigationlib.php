@@ -1284,7 +1284,7 @@ class global_navigation extends navigation_node {
         if (!$categorynode) {
             $category = $cat['category'];
             $url = new moodle_url('/course/category.php', array('id'=>$category->id));
-            $categorynode = $parent->add($category->name, null, self::TYPE_CATEGORY, $category->name, $category->id);
+            $categorynode = $parent->add($category->name, $url, self::TYPE_CATEGORY, $category->name, $category->id);
             if (empty($category->visible)) {
                 if (has_capability('moodle/category:viewhiddencategories', get_system_context())) {
                     $categorynode->hidden = true;
