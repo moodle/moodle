@@ -36,8 +36,8 @@ $string['attlsintro'] = 'The purpose of this questionnaire is to help us evaluat
 There are no \'right\' or \'wrong\' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.';
 $string['attlsmintro'] = 'In discussion ...';
 $string['attlsm1'] = 'Attitudes Towards Thinking and Learning';
-$string['attlsm2'] = 'Connected Learning';
-$string['attlsm3'] = 'Separate Learning';
+$string['attlsm2'] = 'Connected learning';
+$string['attlsm3'] = 'Separate learning';
 $string['attlsname'] = 'ATTLS (20 item version)';
 $string['attls1'] = 'In evaluating what someone says, I focus on the quality of their argument, not on the person who\'s presenting it.';
 $string['attls1short'] = 'focus quality of argument';
@@ -83,7 +83,7 @@ $string['cannotfindanswer'] = 'There are no answers for this survey yet.';
 $string['cannotfindquestion'] = 'Question doesn\'t exist';
 $string['cannotfindsurveytmpt'] = 'No survey templates found!';
 $string['ciqintro'] = 'While thinking about recent events in this class, answer the questions below.';
-$string['ciqname'] = 'Critical Incidents';
+$string['ciqname'] = 'Critical incidents';
 $string['ciq1'] = 'At what moment in class were you most engaged as a learner?';
 $string['ciq1short'] = 'Most engaged';
 $string['ciq2'] = 'At what moment in class were you most distanced as a learner?';
@@ -119,14 +119,14 @@ $string['collesapname'] = 'COLLES (Preferred and Actual)';
 $string['collesmintro'] = 'In this online unit...';
 $string['collesm1'] = 'Relevance';
 $string['collesm1short'] = 'Relevance';
-$string['collesm2'] = 'Reflective Thinking';
-$string['collesm2short'] = 'Reflective Thinking';
+$string['collesm2'] = 'Reflective thinking';
+$string['collesm2short'] = 'Reflective thinking';
 $string['collesm3'] = 'Interactivity';
 $string['collesm3short'] = 'Interactivity';
-$string['collesm4'] = 'Tutor Support';
-$string['collesm4short'] = 'Tutor Support';
-$string['collesm5'] = 'Peer Support';
-$string['collesm5short'] = 'Peer Support';
+$string['collesm4'] = 'Tutor support';
+$string['collesm4short'] = 'Tutor support';
+$string['collesm5'] = 'Peer support';
+$string['collesm5short'] = 'Peer support';
 $string['collesm6'] = 'Interpretation';
 $string['collesm6short'] = 'Interpretation';
 $string['collespintro'] = 'The purpose of this survey is to help us understand what you value in an online learning experience.
@@ -229,7 +229,7 @@ $string['responses'] = 'Responses';
 $string['savednotes'] = 'Your notes were saved';
 $string['scaleagree5'] = 'Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree';
 $string['scales'] = 'Scales';
-$string['scaletimes5'] = 'Almost Never,Seldom,Sometimes,Often,Almost Always';
+$string['scaletimes5'] = 'Almost never,Seldom,Sometimes,Often,Almost always';
 $string['seemoredetail'] = 'Click here to see more detail';
 $string['selectedquestions'] = 'Selected questions from a scale, all students';
 $string['summary'] = 'Summary';
@@ -244,7 +244,7 @@ $string['surveytype'] = 'Survey type';
 $string['surveytype_help'] = 'There are 3 available survey types:
 
 * Attitudes to Thinking and Learning Survey (ATTLS) - For measuring the extent to which a person is a \'connected knower\' (tends to find learning more enjoyable, and is often more cooperative, congenial and more willing to build on the ideas of others) or a \'separate knower\' (tends to take a more critical and argumentative stance to learning)
-* Critical Incidents survey
+* Critical incidents survey
 * Constructivist On-line Learning Environment Survey (COLLES) - For monitoring the extent to which the interactive capacity of the World Wide Web may be exploited for engaging students in dynamic learning practices';
 $string['surveytype_link'] = 'mod/survey/mod';
 $string['thanksforanswers'] = 'Thanks for answering this survey, {$a}';
