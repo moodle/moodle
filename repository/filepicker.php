@@ -93,6 +93,12 @@ if ($repository = $DB->get_record_sql($sql, array($repo_id))) {
     }
 }
 
+$moodle_maxbytes = get_max_upload_file_size();
+// to prevent maxbytes greater than moodle maxbytes setting
+if ($maxbytes == 0 || $maxbytes>=$moodle_maxbytes) {
+    $maxbytes = $moodle_maxbytes;
+}
+
 $params = array('ctx_id' => $contextid, 'itemid' => $itemid, 'env' => $env, 'course'=>$courseid, 'maxbytes'=>$maxbytes, 'maxfiles'=>$maxfiles, 'subdirs'=>$subdirs, 'sesskey'=>sesskey());
 $params['action'] = 'browse';
 $params['draftpath'] = $draftpath;
@@ -107,7 +113,7 @@ switch ($action) {
 case 'upload':
     // The uploaded file has been processed in plugin construct function
     // redirect to default page
-    $repo->upload();
+    $repo->upload('', $maxbytes);
     redirect($home_url, get_string('uploadsucc','repository'));
     break;
 
