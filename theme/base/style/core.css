@@ -553,6 +553,7 @@ body.tag .managelink {padding: 5px;}
  * Custom menu
  */
 #custommenu {clear:both;}
+#custommenu .yui3-menu .yui3-menu {z-index:500;}
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .ul {border:1px solid #000;}
 #custommenu .yui3-menu-horizontal.javascript-disabled ul {margin:0;padding:0;}
