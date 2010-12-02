@@ -2342,9 +2342,13 @@ class custom_menu extends custom_menu_item {
             if (preg_match('/^(\-*)/', $line, $match) && $lastchild != null && $lastdepth !== null) {
                 $depth = strlen($match[1]);
                 if ($depth < $lastdepth) {
-                    if ($lastdepth > 1) {
-                        $depth = $lastdepth - 1;
-                        $lastchild = $lastchild->get_parent()->get_parent()->add($bits[0], $bits[1], $bits[2], $bits[3]);
+                    $difference = $lastdepth - $depth;
+                    if ($lastdepth > 1 && $lastdepth != $difference) {
+                        $tempchild = $lastchild->get_parent();
+                        for ($i =0; $i < $difference; $i++) {
+                            $tempchild = $tempchild->get_parent();
+                        }
+                        $lastchild = $tempchild->add($bits[0], $bits[1], $bits[2], $bits[3]);
                     } else {
                         $depth = 0;
                         $lastchild = new custom_menu_item($bits[0], $bits[1], $bits[2], $bits[3]);
