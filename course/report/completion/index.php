@@ -48,7 +48,7 @@ $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
 $url = new moodle_url('/course/report/completion/index.php', array('course'=>$course->id));
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('report');
 
 $firstnamesort = ($sort == 'firstname');
 $excel = ($format == 'excelcsv');

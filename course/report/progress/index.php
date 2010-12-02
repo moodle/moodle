@@ -53,7 +53,7 @@ if ($start !== 0) {
     $url->param('start', $start);
 }
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('report');
 
 require_login($course);
 

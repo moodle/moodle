@@ -49,7 +49,7 @@
     if ($chooselog !== 0) $params['chooselog'] = $chooselog;
     if ($logformat !== 'showashtml') $params['logformat'] = $logformat;
     $PAGE->set_url('/course/report/log/index.php', $params);
-    $PAGE->set_pagelayout('admin');
+    $PAGE->set_pagelayout('report');
 
     if ($hostid == $CFG->mnet_localhost_id) {
         if (!$course = $DB->get_record('course', array('id'=>$id))) {

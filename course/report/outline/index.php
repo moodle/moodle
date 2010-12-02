@@ -47,7 +47,6 @@
 
     $outlinetable = new html_table();
     $outlinetable->attributes['class'] = 'generaltable boxaligncenter';
-    $outlinetable->attributes['style'] = 'width:2000px;';
     $outlinetable->cellpadding = 5;
     $outlinetable->id = 'outlinetable';
     $outlinetable->head = array($stractivity, $strviews);
