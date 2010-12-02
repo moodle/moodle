@@ -126,19 +126,18 @@ $ADMIN->add('root', new admin_category('tweaks', 'Custom tweaks'));
 $ADMIN->add('tweaks', new admin_externalpage('nicehackery', 'Tweak something',
             $CFG->wwwroot.'/local/nicehack/setuppage.php'));
 
-Or if you want a new standard settings page for the plugin, inside a new
-category at the top level called 'Local hacks', use the following:
+Or if you want a new standard settings page for the plugin, inside the local
+plugins category:
 <?php
 defined('MOODLE_INTERNAL') || die;
 
-if (!$ADMIN->locate('localhacks')) {
-    $ADMIN->add('root', new admin_category('localhacks', 'Local hacks'));
-}
-$settings = new admin_settingpage('local_pluginname', 'This plugin');
-$ADMIN->add('localhacks', $settings);
+if ($hassiteconfig) { // needs this condition or there is error on login page
+    $settings = new admin_settingpage('local_thisplugin', 'This plugin');
+    $ADMIN->add('localplugins', $settings);
 
-$settings->add(new admin_setting_configtext('local_thisplugin/option',
-    'Option', 'Information about this option', 100, PARAM_INT));
+    $settings->add(new admin_setting_configtext('local_thisplugin/option',
+        'Option', 'Information about this option', 100, PARAM_INT));
+}
 
 Local plugin event handlers
 ---------------------------
