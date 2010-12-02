@@ -152,7 +152,7 @@ $string['autosubscribeno'] = 'No: don\'t automatically subscribe me to forums';
 $string['autosubscribeyes'] = 'Yes: when I post, subscribe me to that forum';
 $string['availability'] = 'Availability';
 $string['availability_help'] = 'This setting determines whether the course appears in the list of courses. Apart from teachers and administrators, users are not allowed to enter the course.';
-$string['availablecourses'] = 'Available Courses';
+$string['availablecourses'] = 'Available courses';
 $string['back'] = 'Back';
 $string['backto'] = 'Back to {$a}';
 $string['backtocourselisting'] = 'Back to course listing';
@@ -254,7 +254,7 @@ $string['confirmcheckfull'] = 'Are you absolutely sure you want to confirm {$a} 
 $string['content'] = 'Content';
 $string['continue'] = 'Continue';
 $string['continuetocourse'] = 'Click here to enter your course';
-$string['convertingwikitomarkdown'] = 'Converting Wiki to Markdown';
+$string['convertingwikitomarkdown'] = 'Converting wiki to Markdown';
 $string['cookiesenabled'] = 'Cookies must be enabled in your browser';
 $string['cookiesenabled_help'] = 'Two cookies are used by this site:
 
@@ -311,7 +311,7 @@ $string['courseinfo'] = 'Course info';
 $string['coursemessage'] = 'Message course users';
 $string['coursenotaccessible'] = 'This course does not allow public access';
 $string['courselegacyfiles'] = 'Legacy course files';
-$string['courselegacyfiles_help'] = 'The Course Files area provides some backward compatibility with Moodle 1.9 and earlier.  All files in this area are always accessible to all participants in the course (whether you link to them or not) and there is no way to know where any of these files are being used in Moodle.
+$string['courselegacyfiles_help'] = 'The course files area provides some backward compatibility with Moodle 1.9 and earlier.  All files in this area are always accessible to all participants in the course (whether you link to them or not) and there is no way to know where any of these files are being used in Moodle.
 
 If you use this area to store course files, you can expose yourself to a number of privacy and security issues, as well as experiencing missing files in backups, course imports and any time content is shared or re-used.  It is therefore recommended that you do not use this area unless you really know what you are doing.
 
@@ -452,8 +452,6 @@ $string['displayingrecords'] = 'Displaying {$a} records';
 $string['displayingusers'] = 'Displaying users {$a->start} to {$a->end}';
 $string['displayonpage'] = 'Display on page';
 $string['documentation'] = 'Moodle documentation';
-$string['donotask'] = 'Do Not Ask';
-$string['donotclickcontinue'] = 'Do not click on the following continue link ;-)';
 $string['down'] = 'Down';
 $string['download'] = 'Download';
 $string['downloadall'] = 'Download all';
@@ -738,7 +736,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the Moodle License information page for full details:
 http://docs.moodle.org/en/License';
-$string['gpllicense'] = 'GPL License';
+$string['gpllicense'] = 'GPL license';
 $string['gpl3'] = 'Copyright (C) 1999 onwards Martin Dougiamas (http://moodle.com)
 
 This program is free software: you can redistribute it and/or modify
@@ -784,12 +782,12 @@ $string['guestskey'] = 'Allow guests who have the key';
 $string['guestsno'] = 'Do not allow guests in';
 $string['guestsnotallowed'] = 'Sorry, \'{$a}\' does not allow guests to enter.';
 $string['guestsyes'] = 'Allow guests without the key';
-$string['guestuser'] = 'Guest User';
+$string['guestuser'] = 'Guest user';
 $string['guestuserinfo'] = 'This user is a special user that allows read-only access to some courses.';
-$string['healthcenter'] = 'Health Center';
+$string['healthcenter'] = 'Health center';
 $string['healthnoproblemsfound'] = 'There is no health problem found!';
-$string['healthproblemsdetected'] = 'Health Problems Detected!';
-$string['healthproblemsolution'] = 'Health Problem Solution';
+$string['healthproblemsdetected'] = 'Health problems detected!';
+$string['healthproblemsolution'] = 'Health problem solution';
 $string['healthreturntomain'] = 'Continue';
 $string['healthsolution'] = 'Solution';
 $string['help'] = 'Help';
@@ -886,7 +884,7 @@ $string['invalidemail'] = 'Invalid email address';
 $string['invalidlogin'] = 'Invalid login, please try again';
 $string['invalidusername'] = 'The username can only contain alphanumeric lowercase characters, underscore (_), hyphen (-), period (.) or at symbol (@)';
 $string['invalidusernameupload'] = 'Invalid username';
-$string['ip_address'] = 'IP Address';
+$string['ip_address'] = 'IP address';
 $string['jump'] = 'Jump';
 $string['jumpto'] = 'Jump to...';
 $string['keep'] = 'Keep';
@@ -1033,8 +1031,8 @@ $string['modulesetup'] = 'Setting up module tables';
 $string['modulesuccess'] = '{$a} tables have been set up correctly';
 $string['moodledocs'] = 'Moodle Docs';
 $string['moodledocslink'] = 'Moodle Docs for this page';
-$string['moodleversion'] = 'Moodle Version';
-$string['moodlerelease'] = 'Moodle Release';
+$string['moodleversion'] = 'Moodle version';
+$string['moodlerelease'] = 'Moodle release';
 $string['more'] = 'more';
 $string['morehelp'] = 'More help';
 $string['moreinformation'] = 'More information about this error';
@@ -1252,7 +1250,7 @@ $string['periodending'] = 'Period ending ({$a})';
 $string['personal'] = 'Personal';
 $string['personalprofile'] = 'Personal profile';
 $string['phone'] = 'Phone';
-$string['phone2'] = 'Mobile Phone';
+$string['phone2'] = 'Mobile phone';
 $string['phpinfo'] = 'PHP info';
 $string['pictureof'] = 'Picture of {$a}';
 $string['pictureofuser'] = 'User picture';
@@ -1268,8 +1266,8 @@ before continuing with this Moodle upgrade.';
 $string['pluginsetup'] = 'Setting up plugin tables';
 $string['policyaccept'] = 'I understand and agree';
 $string['policyagree'] = 'You must agree to this policy to continue using this site.  Do you agree?';
-$string['policyagreement'] = 'Site Policy Agreement';
-$string['policyagreementclick'] = 'Link to Site Policy Agreement';
+$string['policyagreement'] = 'Site policy agreement';
+$string['policyagreementclick'] = 'Link to site policy agreement';
 $string['popup'] = 'popup';
 $string['popupwindow'] = 'Open file in new window';
 $string['popupwindowname'] = 'Popup window';
@@ -1321,7 +1319,7 @@ for important notifications such as security alerts and new releases of Moodle.<
    picture of the Moodle community as a whole.</p>
 <p>If you choose, you can allow your site name, country and URL to be added to the public list of Moodle Sites.</p>
 <p>All new registrations are verified manually before they are added to the list, but once you are added you can update your registration (and your entry on the public list) at any time by resubmitting this form.</p>';
-$string['registrationinfotitle'] = 'Registration Information';
+$string['registrationinfotitle'] = 'Registration information';
 $string['registrationno'] = 'No, I do not want to receive email';
 $string['registrationsend'] = 'Send registration information to moodle.org';
 $string['registrationyes'] = 'Yes, please notify me about important issues';
@@ -1467,7 +1465,7 @@ $string['separate'] = 'Separate';
 $string['separateandconnected'] = 'Separate and Connected ways of knowing';
 $string['separateandconnectedinfo'] = 'The scale based on the theory of separate and connected knowing. This theory describes two different ways that we can evaluate and learn about the things we see and hear.<ul><li><strong>Separate knowers</strong> remain as objective as possible without including feelings and emotions. In a discussion with other people, they like to defend their own ideas, using logic to find holes in opponent\'s ideas.</li><li><strong>Connected knowers</strong> are more sensitive to other people. They are skilled at empathy and tends to listen and ask questions until they feel they can connect and "understand things from their point of view". They learn by trying to share the experiences that led to the knowledge they find in other people.</li></ul>';
 $string['serverlocaltime'] = 'Server\'s local time';
-$string['setcategorytheme'] = 'Set Category Theme';
+$string['setcategorytheme'] = 'Set category theme';
 $string['settings'] = 'Settings';
 $string['shortname'] = 'Short name';
 $string['shortnamecollisionwarning'] = '[*] = This shortname is already in use by a course and will need to be changed upon approval';
@@ -1573,7 +1571,7 @@ $string['statsreport3'] = 'Posts (all roles)';
 $string['statsreport4'] = 'All activity (all roles)';
 $string['statsreport5'] = 'All activity (views and posts)';
 $string['statsreport7'] = 'User activity (views and posts)';
-$string['statsreport8'] = 'All User activity';
+$string['statsreport8'] = 'All user activity';
 $string['statsreport9'] = 'Logins (site course)';
 $string['statsstudentactivity'] = 'Student activity';
 $string['statsstudentreads'] = 'Student views';
