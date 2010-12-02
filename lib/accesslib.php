@@ -3765,6 +3765,20 @@ function fetch_context_capabilities($context) {
             $cm = $DB->get_record('course_modules', array('id'=>$context->instanceid));
             $module = $DB->get_record('modules', array('id'=>$cm->module));
 
+            $subcaps = array();
+            $subpluginsfile = "$CFG->dirroot/mod/$module->name/db/subplugins.php";
+            if (file_exists($subpluginsfile)) {
+                $subplugins = array();  // should be redefined in the file
+                include($subpluginsfile);
+                if (!empty($subplugins)) {
+                    foreach (array_keys($subplugins) as $subplugintype) {
+                        foreach (array_keys(get_plugin_list($subplugintype)) as $subpluginname) {
+                            $subcaps = array_merge($subcaps, array_keys(load_capability_def($subplugintype.'_'.$subpluginname)));
+                        }
+                    }
+                }
+            }
+
             $modfile = "$CFG->dirroot/mod/$module->name/lib.php";
             if (file_exists($modfile)) {
                 include_once($modfile);
@@ -3776,6 +3790,8 @@ function fetch_context_capabilities($context) {
             if (empty($extracaps)) {
                 $extracaps = array();
             }
+
+            $extracaps = array_merge($subcaps, $extracaps);
 
             // All modules allow viewhiddenactivities. This is so you can hide
             // the module then override to allow specific roles to see it.
@@ -4220,6 +4236,7 @@ function get_component_string($component, $contextlevel) {
     }
 
     switch ($type) {
+        // TODO this is really hacky
         case 'quiz':         return get_string($name.':componentname', $component);// insane hack!!!
         case 'repository':   return get_string('repository', 'repository').': '.get_string('pluginname', $component);
         case 'gradeimport':  return get_string('gradeimport', 'grades').': '.get_string('pluginname', $component);
