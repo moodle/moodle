@@ -282,9 +282,9 @@ class course_enrolment_manager {
         }
         $wherecondition = implode(' AND ', $tests);
 
-        $ufields = user_picture::fields('u');
+        $ufields = user_picture::fields('u', array('username', 'lastaccess'));
 
-        $fields      = 'SELECT u.id, u.firstname, u.lastname, u.username, u.email, u.lastaccess, u.picture, u.imagealt, '.$ufields;
+        $fields      = 'SELECT '.$ufields;
         $countfields = 'SELECT COUNT(1)';
         $sql = " FROM {user} u
                 WHERE $wherecondition
