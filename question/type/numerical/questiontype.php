@@ -134,7 +134,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             $question->options->showunits = $options->showunits;
             $question->options->unitsleft = $options->unitsleft;
             $question->options->instructions = $options->instructions;
-            $question->options->instructionsformat = $options->instructionsformat;
+            $question->options->instructionsformat = $options->instructionsformat; 
         }
 
         return true;
@@ -1091,7 +1091,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $repeated[] =& $mform->createElement('text', 'multiplier', get_string('multiplier', 'quiz'));
         $mform->setType('multiplier', PARAM_NUMBER);
 
-        if (isset($that->question->options)){
+        if (isset($that->question->options->units)){
             $countunits = count($that->question->options->units);
         } else {
             $countunits = 0;
@@ -1122,54 +1122,62 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $context = $this->get_context_by_category_id($categoryid);
 
         if (isset($question->options)){
+            if (isset($question->options->unitpenalty)){
+                $default_values['unitpenalty'] = $question->options->unitpenalty ;
+            }
             $default_values['unitgradingtypes'] = 1 ;
-            if ($question->options->unitgradingtype == 2 ) {
-                $default_values['unitgradingtypes'] = 1 ;
-            }
-            if ($question->options->unitgradingtype == 0 ) {
-                $default_values['unitgradingtypes'] = 0 ;
-            }
-            $default_values['unitpenalty'] = $question->options->unitpenalty ;
-            switch ($question->options->showunits){
-                case 0 :// NUMERICALQUESTIONUNITTEXTINPUTDISPLAY
-                    if($question->options->unitgradingtype == 0 ){
-                        $default_values['unitrole'] = 2 ;
-                        $default_values['multichoicedisplay'] = 0 ;
-                    }else { // 1 or 2
+            if (isset($question->options->unitgradingtype )&& isset($question->options->showunits ) ){
+                if ( $question->options->unitgradingtype == 2 ) {
+                    $default_values['unitgradingtypes'] = 1 ;
+                }
+                if ( $question->options->unitgradingtype == 0 ) {
+                    $default_values['unitgradingtypes'] = 0 ;
+                }
+                switch ($question->options->showunits){
+                    case 0 :// NUMERICALQUESTIONUNITTEXTINPUTDISPLAY
+                        if($question->options->unitgradingtype == 0 ){
+                            $default_values['unitrole'] = 2 ;
+                            $default_values['multichoicedisplay'] = 0 ;
+                        }else { // 1 or 2
+                            $default_values['unitrole'] = 3 ;
+                            $default_values['multichoicedisplay'] = 0 ;
+                            $default_values['unitgradingtypes'] = $question->options->unitgradingtype ;
+                        }
+                        break;
+                    case 1 : // NUMERICALQUESTIONUNITMULTICHOICEDISPLAY
                         $default_values['unitrole'] = 3 ;
-                        $default_values['multichoicedisplay'] = 0 ;
+                        $default_values['multichoicedisplay'] = $question->options->unitgradingtype ;
                         $default_values['unitgradingtypes'] = $question->options->unitgradingtype ;
-                    }
-                    break;
-                case 1 : // NUMERICALQUESTIONUNITMULTICHOICEDISPLAY
-                    $default_values['unitrole'] = 3 ;
-                    $default_values['multichoicedisplay'] = $question->options->unitgradingtype ;
-                    $default_values['unitgradingtypes'] = $question->options->unitgradingtype ;
-                    break;
-                case 2 : // NUMERICALQUESTIONUNITTEXTDISPLAY
-                    $default_values['unitrole'] = 1 ;
-                case 3 : // NUMERICALQUESTIONUNITNODISPLAY
-                    $default_values['unitrole'] = 0 ;
-                  //  $default_values['showunits1'] = $question->options->showunits ;
-                    break;
+                        break;
+                    case 2 : // NUMERICALQUESTIONUNITTEXTDISPLAY
+                        $default_values['unitrole'] = 1 ;
+                    case 3 : // NUMERICALQUESTIONUNITNODISPLAY
+                        $default_values['unitrole'] = 0 ;
+                        //  $default_values['showunits1'] = $question->options->showunits ;
+                        break;
+                }
             }
-            $default_values['unitsleft'] = $question->options->unitsleft ;
+            if (isset($question->options->unitsleft)){
+                $default_values['unitsleft'] = $question->options->unitsleft ;
+            }
 
             // processing files
             $component = 'qtype_' . $question->qtype;
             $draftid = file_get_submitted_draft_itemid('instruction');
             $default_values['instructions'] = array();
-            $default_values['instructions']['format'] = $question->options->instructionsformat;           
-            $default_values['instructions']['text'] = file_prepare_draft_area(
-                $draftid,       // draftid
-                $context->id,   // context
-                $component,     // component
-                'instruction',  // filarea
-                !empty($question->id)?(int)$question->id:null, // itemid
-                $mform->fileoptions,    // options
-                $question->options->instructions // text
-            );
-            $default_values['instructions']['itemid'] = $draftid;
+            if (isset($question->options->instructionsformat) && isset($question->options->instructions)){
+                $default_values['instructions']['format'] = $question->options->instructionsformat;
+                $default_values['instructions']['text'] = file_prepare_draft_area(
+                    $draftid,       // draftid
+                    $context->id,   // context
+                    $component,     // component
+                    'instruction',  // filarea
+                    !empty($question->id)?(int)$question->id:null, // itemid
+                    $mform->fileoptions,    // options
+                    $question->options->instructions // text
+                );
+            }
+            $default_values['instructions']['itemid'] = $draftid ;
 
             if (isset($question->options->units)) {
                 $units  = array_values($question->options->units);
