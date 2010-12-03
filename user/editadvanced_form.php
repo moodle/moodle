@@ -100,7 +100,7 @@ class user_editadvanced_form extends moodleform {
         }
 
         // print picture
-        if (!empty($CFG->gdversion)) {
+        if (!empty($CFG->gdversion) and empty($USER->newadminuser)) {
             $image_el =& $mform->getElement('currentpicture');
             if ($user and $user->picture) {
                 $image_el->setValue($OUTPUT->user_picture($user, array('courseid'=>SITEID)));

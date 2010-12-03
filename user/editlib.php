@@ -232,7 +232,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     $mform->setType('description_editor', PARAM_CLEANHTML);
     $mform->addHelpButton('description_editor', 'userdescription');
 
-    if (!empty($CFG->gdversion)) {
+    if (!empty($CFG->gdversion) and empty($USER->newadminuser)) {
         $mform->addElement('header', 'moodle_picture', get_string('pictureofuser'));
 
         $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
@@ -248,7 +248,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
 
     }
 
-    if (!empty($CFG->usetags)) {
+    if (!empty($CFG->usetags) and empty($USER->newadminuser)) {
         $mform->addElement('header', 'moodle_interests', get_string('interests'));
         $mform->addElement('tags', 'interests', get_string('interestslist'), array('display' => 'noofficial'));
         $mform->addHelpButton('interests', 'interestslist');

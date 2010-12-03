@@ -176,12 +176,12 @@ if ($usernew = $userform->get_data()) {
     useredit_update_user_preference($usernew);
 
     // update tags
-    if (!empty($CFG->usetags)) {
+    if (!empty($CFG->usetags) and empty($USER->newadminuser)) {
         useredit_update_interests($usernew, $usernew->interests);
     }
 
     //update user picture
-    if (!empty($CFG->gdversion)) {
+    if (!empty($CFG->gdversion) and empty($USER->newadminuser)) {
         useredit_update_picture($usernew, $userform);
     }
 
