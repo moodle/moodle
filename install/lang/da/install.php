@@ -41,6 +41,9 @@ $string['dataroot'] = 'Datamappe';
 $string['dbprefix'] = 'Præfix for tabeller';
 $string['dirroot'] = 'Moodle-mappe';
 $string['environmenthead'] = 'Kontrollerer din serveropsætning...';
+$string['environmentsub2'] = 'Hver version af Moodle har nogle minimumskrav til PHP-version og nogle obligatoriske PHP-extensions.
+Installationsprogrammet udfører et tjek før hver installation og opgradering. Kontakt din serveradministrator hvis ikke du ved hvordan du installerer en ny version eller aktiverer PHP-extensions.';
+$string['errorsinenvironment'] = 'Systemtjekket mislykkedes!';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Sproget "{$a}" blev desværre ikke installeret. Installationen vil fortsætte på engelsk.';
 $string['memorylimithelp'] = '<p>Den mængde hukommelse PHP kan bruge, er sat til {$a}.</p> 
@@ -64,8 +67,15 @@ $string['pathserrcreatedataroot'] = 'Databiblioteket ({$a->dataroot}) kan ikke o
 $string['pathshead'] = 'Bekræft stier';
 $string['pathsrodataroot'] = 'Datarootbiblioteket er skrivebeskyttet.';
 $string['pathsroparentdataroot'] = 'Det overordnede bibliotek ({$a->parent}) er skrivebeskyttet. Databiblioteket ({$a->dataroot}) kan ikke oprettes af installationsprogrammet.';
+$string['pathssubadmindir'] = 'Enkelte webhoteller bruger /admin som speciel URL til kontrolpanelet el. lign. Desværre konflikter det med Moodles standardplacering af admin-sider. Du kan klare dette ved at give admin-mappen et andet navn i din installation og skrive det her. Det kan f.eks. være <em>moodleadmin</em>. Det vil fikse admin-links i Moodle.';
 $string['pathssubdataroot'] = 'Du har brug for et sted, hvor Moodle kan gemme uploadede filer. Denne mappe skal kunne læses OG SKRIVES I af webserverbrugeren (oftest \'ingen\' eller \'apache\'), men må ikke være tilgængelig direkte via internettet. Installationsprogrammet vil forsøge at oprette mappen, hvis ikke den allerede eksisterer.';
 $string['pathssubdirroot'] = 'Den fulde sti til Moodleinstallationen.';
+$string['pathssubwwwroot'] = 'Moodles fulde web-adresse. 
+Det er ikke muligt at komme ind på Moodle fra mere end en adresse.
+Hvis dit websted har flere offentlige adresser skal du opsætte permanent viderestilling på dem alle undtagen fra denne.
+Hvis dit websted er tilgængeligt fra både internet og intranet skal du bruge internetadressen her og opsætte din DNS sådan at intranet-brugerne kan bruge den offentlige adresse også.
+Hvis ikke adressen er korrekt må du ændre URL\'en i din browser og genstarte installationen med den rigtige adresse.
+';
 $string['pathsunsecuredataroot'] = 'Dataroot er ikke sikret';
 $string['pathswrongadmindir'] = 'Adminmappe eksisterer ikke';
 $string['phpextension'] = '{$a} PHP-extension';

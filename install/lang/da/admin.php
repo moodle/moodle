@@ -28,5 +28,5 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['environmentrequireinstall'] = 'det er nødvendigt at installere/aktivere';
+$string['environmentrequireinstall'] = 'skal være installeret og aktiveret';
 $string['environmentrequireversion'] = 'version {$a->needed} er nødvendigt og du kører {$a->current}';
