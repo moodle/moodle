@@ -427,6 +427,7 @@ if ($mform->is_cancelled()) {
         // update embedded links and save files
         $modcontext = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
         if (plugin_supports('mod', $fromform->modulename, FEATURE_MOD_INTRO, true)) {
+            $introeditor = $fromform->introeditor;
             $fromform->intro = file_save_draft_area_files($introeditor['itemid'], $modcontext->id,
                                                           'mod_'.$fromform->modulename, 'intro', 0,
                                                           array('subdirs'=>true), $introeditor['text']);
