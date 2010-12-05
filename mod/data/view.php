@@ -256,8 +256,21 @@
     add_to_log($course->id, 'data', 'view', "view.php?id=$cm->id", $data->id, $cm->id);
 
 
+    $urlparams = array('d' => $data->id);
+    if ($record) {
+        $urlparams['rid'] = $record->id;
+    }
+    if ($page) {
+        $urlparams['page'] = $page;
+    }
+    if ($mode) {
+        $urlparams['mode'] = $mode;
+    }
+    if ($filter) {
+        $urlparams['filter'] = $filter;
+    }
 // Initialize $PAGE, compute blocks
-    $PAGE->set_url('/mod/data/view.php', array('id' => $cm->id));
+    $PAGE->set_url('/mod/data/view.php', $urlparams);
 
     if (($edit != -1) and $PAGE->user_allowed_editing()) {
         $USER->editing = $edit;
