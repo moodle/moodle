@@ -2351,11 +2351,7 @@ EOD;
      * @return string XHTML navbar
      */
     public function navbar() {
-        //return $this->page->navbar->content();
-
         $items = $this->page->navbar->get_items();
-
-        $count = 0;
 
         $htmlblocks = array();
         // Iterate the navarray and display each node
