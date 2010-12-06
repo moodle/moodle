@@ -748,8 +748,7 @@ function load_role_mappings() {
 
     $this->rolemappings = array();
     foreach($imsroles as $imsrolenum=>$imsrolename) {
-        $this->rolemappings[$imsrolenum] = $this->rolemappings[$imsrolename]
-            = $DB->get_field('config_plugins', 'value', array('name'=>'imsrolemap' . $imsrolenum));
+        $this->rolemappings[$imsrolenum] = $this->rolemappings[$imsrolename] = $this->get_config('imsrolemap' . $imsrolenum);
     }
 }
 
