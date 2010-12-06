@@ -448,8 +448,7 @@ div.yui3-widget-bd {
 div.yui3-widget-bd h1.helpheading {
     font-size: 16px !important;
     font-weight: 800;
-    margin: 5px 0px 2px 18px;
-    background: url([[pix:theme|information]]) no-repeat 0% 50%;
+    margin-top: 5px;
 }
 
 .yui-module.yui-overlay.yui-panel div.hd {
