@@ -32,7 +32,7 @@ $user = optional_param('user',0,PARAM_INT);
 
 $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$id));
 if ($mode !== '') {
-    $url->param('force', $mode);
+    $url->param('mode', $mode);
 }
 if ($user !== 0) {
     $url->param('user', $user);
