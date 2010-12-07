@@ -90,9 +90,6 @@ class workshop_random_allocator implements workshop_allocator {
             $newallocations     = array();      // array of array(reviewer => reviewee)
 
             if ($numofreviews) {
-                // TODO MDL-19870 rewrite this part to make it easier to maintain and extend.
-                // $removecurrent -> remove it at the beginning and stop doing the magic with unkept allocation
-                // (leading to possible bugs)
                 if ($removecurrent) {
                     // behave as if there were no current assessments
                     $curassessments = array();
@@ -100,7 +97,6 @@ class workshop_random_allocator implements workshop_allocator {
                     $curassessments = $assessments;
                 }
                 $randomallocations  = $this->random_allocation($authors, $reviewers, $curassessments, $numofreviews, $numper, $o);
-                $this->filter_current_assessments($randomallocations, $assessments);
                 $newallocations     = array_merge($newallocations, $randomallocations);
                 $o[] = 'ok::' . get_string('numofrandomlyallocatedsubmissions', 'workshopallocation_random', count($randomallocations));
                 unset($randomallocations);
@@ -114,13 +110,19 @@ class workshop_random_allocator implements workshop_allocator {
             if (empty($newallocations)) {
                 $o[] = 'info::' . get_string('noallocationtoadd', 'workshopallocation_random');
             } else {
-                $this->add_new_allocations($newallocations, $authors, $reviewers);
+                $newnonexistingallocations = $newallocations;
+                $this->filter_current_assessments($newnonexistingallocations, $assessments);
+                $this->add_new_allocations($newnonexistingallocations, $authors, $reviewers);
                 foreach ($newallocations as $newallocation) {
                     list($reviewerid, $authorid) = each($newallocation);
                     $a                  = new stdclass();
                     $a->reviewername    = fullname($reviewers[0][$reviewerid]);
                     $a->authorname      = fullname($authors[0][$authorid]);
-                    $o[] = 'ok::indent::' . get_string('allocationaddeddetail', 'workshopallocation_random', $a);
+                    if (in_array($newallocation, $newnonexistingallocations)) {
+                        $o[] = 'ok::indent::' . get_string('allocationaddeddetail', 'workshopallocation_random', $a);
+                    } else {
+                        $o[] = 'ok::indent::' . get_string('allocationreuseddetail', 'workshopallocation_random', $a);
+                    }
                 }
             }
             if ($removecurrent) {
