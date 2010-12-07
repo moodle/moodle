@@ -130,6 +130,13 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     // link to tag management interface
     $ADMIN->add('appearance', new admin_externalpage('managetags', get_string('managetags', 'tag'), "$CFG->wwwroot/tag/manage.php"));
+    
+    $temp = new admin_settingpage('additionalhtml', get_string('additionalhtml', 'admin'));
+    $temp->add(new admin_setting_heading('additionalhtml_heading', get_string('additionalhtml_heading', 'admin'), get_string('additionalhtml_desc', 'admin')));
+    $temp->add(new admin_setting_configtextarea('additionalhtmlhead', get_string('additionalhtmlhead', 'admin'), get_string('additionalhtmlhead_desc', 'admin'), '', PARAM_RAW));
+    $temp->add(new admin_setting_configtextarea('additionalhtmltopofbody', get_string('additionalhtmltopofbody', 'admin'), get_string('additionalhtmltopofbody_desc', 'admin'), '', PARAM_RAW));
+    $temp->add(new admin_setting_configtextarea('additionalhtmlfooter', get_string('additionalhtmlfooter', 'admin'), get_string('additionalhtmlfooter_desc', 'admin'), '', PARAM_RAW));
+    $ADMIN->add('appearance', $temp);
 
 } // end of speedup
 

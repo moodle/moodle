@@ -324,6 +324,10 @@ class core_renderer extends renderer_base {
             $output .= html_writer::empty_tag('link', array('rel' => 'alternate',
                     'type' => $type, 'title' => $alt->title, 'href' => $alt->url));
         }
+        
+        if (!empty($CFG->additionalhtmlhead)) {
+            $output .= "\n".$CFG->additionalhtmlhead;
+        }
 
         return $output;
     }
@@ -334,7 +338,12 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment.
      */
     public function standard_top_of_body_html() {
-        return  $this->page->requires->get_top_of_body_code();
+        global $CFG;
+        $output = $this->page->requires->get_top_of_body_code();
+        if (!empty($CFG->additionalhtmltopofbody)) {
+            $output .= "\n".$CFG->additionalhtmltopofbody;
+        }
+        return $output;
     }
 
     /**
@@ -366,6 +375,9 @@ class core_renderer extends renderer_base {
               <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=-1&amp;url1=' . urlencode(qualified_me()) . '">Section 508 Check</a></li>
               <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=0&amp;warnp2n3e=1&amp;url1=' . urlencode(qualified_me()) . '">WCAG 1 (2,3) Check</a></li>
             </ul></div>';
+        }
+        if (!empty($CFG->additionalhtmlfooter)) {
+            $output .= "\n".$CFG->additionalhtmlfooter;
         }
         return $output;
     }

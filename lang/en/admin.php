@@ -25,6 +25,15 @@
 
 $string['accessdenied'] = 'Access denied';
 $string['accounts'] = 'Accounts';
+$string['additionalhtml'] = 'Additional HTML';
+$string['additionalhtml_heading'] = 'Additional HTML to be added to every page.';
+$string['additionalhtml_desc'] = 'These settings allow you to specify HTML that you want added to every page. You can set HTML that will be added within the HEAD tag for the page, immediatly after the BODY tag has been opened, or immediatly before the body tag is closed.<br />Doing this allows you add custom headers or footers on every page, or add support for services like Google Analytics very easily and independent of your chosen theme.';
+$string['additionalhtmlhead'] = 'Within HEAD';
+$string['additionalhtmlhead_desc'] = 'Content here will be added to the bottom of the HEAD tag for every page.';
+$string['additionalhtmltopofbody'] = 'When BODY is opened';
+$string['additionalhtmltopofbody_desc'] = 'Content here will be added in to every page immediatly after the opening body tag.';
+$string['additionalhtmlfooter'] = 'Before BODY is closed';
+$string['additionalhtmlfooter_desc'] = 'Content here will be added in to every page right before the body tag is closed.';
 $string['adminseesall'] = 'Admins see all';
 $string['adminseesallevents'] = 'Administrators see all events';
 $string['adminseesownevents'] = 'Administrators are just like other users';
