@@ -6436,6 +6436,10 @@ function check_php_version($version='4.1.0') {
           } elseif (strpos($agent, 'SimbianOS')) { // Reject SimbianOS
               return false;
           }
+          if (strpos($agent, 'iPhone') or strpos($agent, 'iPad') or strpos($agent, 'iPod')) {
+              // No Apple mobile devices here - editor does not work, course ajax is not touch compatible, etc.
+              return false;
+          }
 
           if (preg_match("/AppleWebKit\/([0-9]+)/i", $agent, $match)) {
               if (version_compare($match[1], $version) >= 0) {
