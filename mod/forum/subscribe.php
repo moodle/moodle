@@ -78,7 +78,7 @@ if (!is_enrolled($context)) {   // Guests and visitors can't subscribe - only en
     $PAGE->set_title($course->shortname);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
-    echo $OUTPUT->confirm(get_string('noguestsubscribe', 'forum').'<br /><br />'.get_string('liketologin'),
+    echo $OUTPUT->confirm(get_string('subscribeenrolledonly', 'forum').'<br /><br />'.get_string('liketologin'),
                  get_login_url(), new moodle_url('/mod/forum/view.php', array('f'=>$id)));
     echo $OUTPUT->footer();
     exit;
