@@ -132,13 +132,9 @@ if (forum_is_subscribed($user->id, $forum->id)) {
         print_error('disallowsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
     }
     if (!has_capability('mod/forum:viewdiscussion', $context)) {
-        print_error('cannotsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
+        print_error('noviewdiscussionspermission', 'forum', $_SERVER["HTTP_REFERER"]);
     }
-    if (forum_subscribe($user->id, $forum->id) ) {
-        add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
-        redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
-    } else {
-        print_error('cannotsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
-    }
+    forum_subscribe($user->id, $forum->id);
+    add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
+    redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
 }
-
