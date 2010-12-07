@@ -261,8 +261,13 @@ class mysqli_native_moodle_database extends moodle_database {
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
         unset($this->dboptions['dbsocket']);
 
+        if (empty($this->dboptions['dbport'])) {
+            $dbport = ini_get('mysqli.default_port');
+        } else {
+            $dbport = (int)$this->dboptions['dbport'];
+        }
         ob_start();
-        $this->mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
+        $this->mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname, $dbport);
         $dberr = ob_get_contents();
         ob_end_clean();
         $errorno = @$this->mysqli->connect_errno;
