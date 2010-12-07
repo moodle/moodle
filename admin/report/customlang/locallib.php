@@ -257,9 +257,6 @@ class report_customlang_utils {
             $packageinfo .= "\n * @subpackage $subpackage";
         }
         $filepath = self::get_localpack_location($lang);
-        if ($filepath !== clean_param($filepath, PARAM_SAFEPATH)) {
-            throw new coding_exception('Incorrect file location '.s($filepath));
-        }
         $filepath = $filepath.'/'.$filename;
         if (!is_dir(dirname($filepath))) {
             check_dir_exists(dirname($filepath));
