@@ -3325,7 +3325,7 @@ function choose_from_menu_yesno($name, $selected, $script = '', $return = false,
 function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$script = '',
                                  $nothingvalue=0,$return=false,$disabled=false,$tabindex=0) {
 
-    debugging('choose_from_menu_nested() has been removed. Please change your code to use html_writer:.select().');
+    debugging('choose_from_menu_nested() has been removed. Please change your code to use html_writer::select().');
     global $OUTPUT;
 }
 
