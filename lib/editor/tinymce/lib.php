@@ -37,6 +37,8 @@ class tinymce_texteditor extends texteditor {
             return true;
         } else if (check_browser_version('Safari iOS')) {
             return false;
+        } else if (check_browser_version('Android WebKit')) {
+            return false;
         } else if (check_browser_version('Safari', 3)) {
             return true;
         } else if (check_browser_version('Opera', 9)) {

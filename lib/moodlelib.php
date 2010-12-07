@@ -7606,6 +7606,15 @@ function check_php_version($version='5.2.4') {
           if (strpos($agent, 'iPad')) {
               return true;
           }
+          if (strpos($agent, 'iPod')) {
+              return true;
+          }
+          break;
+
+      case 'Android WebKit':  /// WebKit browser on Android
+          if (strpos($agent, 'Linux; U; Android')) {
+              return true;
+          }
           break;
 
     }
