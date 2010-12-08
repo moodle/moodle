@@ -26,7 +26,7 @@
 $string['incbydesc1'] = 'This is the value the section is incremented each time a section link is displayed starting at 1.';
 $string['incbydesc2'] = 'This is the value the section is incremented each time a section link is displayed starting at 1.';
 $string['incby1'] = 'Increase by';
-$string['incby2'] = 'Alternative Increase by';
+$string['incby2'] = 'Alternative increase by';
 $string['jumptocurrenttopic'] = 'Jump to current topic';
 $string['jumptocurrentweek'] = 'Jump to current week';
 $string['numsectionsdesc1'] = 'Once the number of sections in the course reaches this number then the increment by value is used.';
