@@ -1,13 +1,28 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
 //
-// Capability definitions for the assignment module.
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// The capabilities are loaded into the database table when the module is
-// installed or updated. Whenever the capability definitions are updated,
-// the module version number should be bumped up.
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-// The system has four possible values for a capability:
-// CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT, and inherit (not set).
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Book module capability definition
+ *
+ * @package    mod
+ * @subpackage book
+ * @copyright  2009-2010 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $mod_book_capabilities = array(
 
@@ -18,7 +33,8 @@ $mod_book_capabilities = array(
             'guest' => CAP_ALLOW,
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
         )
     ),
 
@@ -27,7 +43,8 @@ $mod_book_capabilities = array(
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
             'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
         )
     ),
 
@@ -36,7 +53,8 @@ $mod_book_capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
-            'editingteacher' => CAP_ALLOW
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
         )
     ),
 
@@ -45,7 +63,8 @@ $mod_book_capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
-            'editingteacher' => CAP_ALLOW
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
         )
     ),
 
@@ -56,7 +75,8 @@ $mod_book_capabilities = array(
             'guest' => CAP_ALLOW,
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
         )
     ),
 
