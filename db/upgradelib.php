@@ -47,8 +47,8 @@ function book_migrate_moddata_dir_to_legacy($book, $context, $path) {
     }
 
     $fs      = get_file_storage();
-    $items   = new DirectoryIterator($fulldir);
     $textlib = textlib_get_instance();
+    $items   = new DirectoryIterator($fulldir);
 
     foreach ($items as $item) {
         if ($item->isDot()) {
@@ -74,11 +74,13 @@ function book_migrate_moddata_dir_to_legacy($book, $context, $path) {
 
             if ($filename === '') {
                 //unsupported chars, sorry
+                unset($item); // release file handle
                 continue;
             }
 
             if ($textlib->strlen($filepath) > 255) {
                 echo $OUTPUT->notification(" File path longer than 255 chars, skipping: ".$fulldir.$item->getFilename());
+                unset($item); // release file handle
                 continue;
             }
 
@@ -87,7 +89,9 @@ function book_migrate_moddata_dir_to_legacy($book, $context, $path) {
                                      'timecreated'=>$item->getCTime(), 'timemodified'=>$item->getMTime());
                 $fs->create_file_from_pathname($file_record, $fulldir.$item->getFilename());
             }
-            @unlink($fulldir.$item->getFilename());
+            $oldpathname = $fulldir.$item->getFilename();
+            unset($item); // release file handle
+            @unlink($oldpathname);
 
         } else {
             //migrate recursively all subdirectories
