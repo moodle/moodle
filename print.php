@@ -114,8 +114,7 @@ if ($chapter) {
 
 } else {
     add_to_log($course->id, 'book', 'print', 'print.php?id='.$cm->id, $book->id, $cm->id);
-    $site = get_record('course','id',1);
-    $chapters = get_records('book_chapters', 'bookid', $book->id, 'pagenum');
+    $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum');
 
     /// page header
     ?>
@@ -134,7 +133,7 @@ if ($chapter) {
     <div class="book_info"><table>
     <tr>
     <td><?PHP echo get_string('site') ?>:</td>
-    <td><a href="<?PHP echo $CFG->wwwroot ?>"><?PHP echo format_string($site->fullname) ?></a></td>
+    <td><a href="<?PHP echo $CFG->wwwroot ?>"><?PHP echo format_string($SITE->fullname) ?></a></td>
     </tr><tr>
     <td><?PHP echo get_string('course') ?>:</td>
     <td><?PHP echo format_string($course->fullname) ?></td>

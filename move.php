@@ -44,7 +44,7 @@ require_capability('mod/book:edit', $context);
 $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
 
 
-$oldchapters = get_records('book_chapters', 'bookid', $book->id, 'pagenum', 'id, pagenum, subchapter');
+$oldchapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum', 'id, pagenum, subchapter');
 
 $nothing = 0;
 

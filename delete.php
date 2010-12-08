@@ -40,16 +40,15 @@ require_sesskey();
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/book:edit', $context);
 
+$PAGE->set_url('/mod/book/delete.php', array('id'=>$id, 'chapterid'=>$chapterid));
+
 $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
 
 
 ///header and strings
-$strbooks = get_string('modulenameplural', 'book');
-$strbook  = get_string('modulename', 'book');
-
-$navigation = build_navigation('', $cm);
-
-print_header("$course->shortname: $book->name", $course->fullname, $navigation);
+$PAGE->set_title(format_string($book->name));
+$PAGE->add_body_class('mod_book');
+$PAGE->set_heading(format_string($course->fullname));
 
 ///form processing
 if ($confirm) {  // the operation was confirmed.
@@ -74,17 +73,19 @@ if ($confirm) {  // the operation was confirmed.
     book_check_structure($book->id);
     redirect('view.php?id='.$cm->id);
 
-} else {
-    // the operation has not been confirmed yet so ask the user to do so
-    if ($chapter->subchapter) {
-        $strconfirm = get_string('confchapterdelete','book');
-    } else {
-        $strconfirm = get_string('confchapterdeleteall','book');
-    }
-    echo '<br />';
-    notice_yesno("<b>$chapter->title</b><p>$strconfirm</p>",
-                  "delete.php?id=$cm->id&chapterid=$chapter->id&confirm=1&sesskey=$USER->sesskey",
-                  "view.php?id=$cm->id&chapterid=$chapter->id");
 }
 
-print_footer($course);
+echo $OUTPUT->header();
+
+// the operation has not been confirmed yet so ask the user to do so
+if ($chapter->subchapter) {
+    $strconfirm = get_string('confchapterdelete','book');
+} else {
+    $strconfirm = get_string('confchapterdeleteall','book');
+}
+echo '<br />';
+$continue = new moodle_url('/mod/book/delete.php', array('id'=>$cm->id, 'chapterid'=>$chapter->id, 'confirm'=>1));
+$cancel = new moodle_url('/mod/book/view.php', array('id'=>$cm->id, 'chapterid'=>$chapter->id));
+echo $OUTPUT->confirm("<strong>$chapter->title</strong><p>$strconfirm</p>", $continue, $cancel);
+
+echo $OUTPUT->footer();

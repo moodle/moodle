@@ -74,30 +74,6 @@ function book_check_structure($bookid) {
     }
 }
 
-
-/// prepare button to turn chapter editing on - connected with course editing
-function book_edit_button($book, $cm, $chapter) {
-    global $CFG, $USER;
-
-
-    if (has_capability('mod/book:edit', get_context_instance(CONTEXT_MODULE, $cm->id))) {
-        if (!empty($USER->editing)) {
-            $string = get_string("turneditingoff");
-            $edit = '0';
-        } else {
-            $string = get_string("turneditingon");
-            $edit = '1';
-        }
-        return '<form method="get" action="'.$CFG->wwwroot.'/mod/book/view.php"><div>'.
-               '<input type="hidden" name="id" value="'.$cm->id.'" />'.
-               '<input type="hidden" name="chapterid" value="'.$chapter->id.'" />'.
-               '<input type="hidden" name="edit" value="'.$edit.'" />'.
-               '<input type="submit" value="'.$string.'" /></div></form>';
-    } else {
-        return '';
-    }
-}
-
 /// general function for logging to table
 function book_log($str1, $str2, $level = 0) {
     switch ($level) {

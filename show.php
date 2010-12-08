@@ -39,6 +39,8 @@ require_sesskey();
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/book:edit', $context);
 
+$PAGE->set_url('/mod/book/show.php', array('id'=>$id, 'chapterid'=>$chapterid));
+
 $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
 
 

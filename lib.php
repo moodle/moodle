@@ -201,3 +201,43 @@ function book_supports($feature) {
         default: return null;
     }
 }
+
+/**
+ * Adds module specific settings to the settings block
+ *
+ * @param settings_navigation $settings The settings navigation object
+ * @param navigation_node $forumnode The node to add module settings to
+ * @return void
+ */
+function book_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $booknode) {
+    global $USER, $PAGE, $CFG, $DB, $OUTPUT;
+
+    if ($PAGE->cm->modname !== 'book') {
+        return;
+    }
+
+    if (empty($PAGE->cm->context)) {
+        $PAGE->cm->context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->instance);
+    }
+
+    if (!has_capability('mod/book:edit', $PAGE->cm->context)) {
+        return;
+    }
+
+    $params = $PAGE->url->params();
+
+    if (empty($params['id']) or empty($params['chapterid'])) {
+        return;
+    }
+
+    if (!empty($USER->editing)) {
+        $string = get_string("turneditingoff");
+        $edit = '0';
+    } else {
+        $string = get_string("turneditingon");
+        $edit = '1';
+    }
+
+    $url = new moodle_url('/mod/book/view.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid'], 'edit'=>$edit, 'sesskey'=>sesskey()));
+    $booknode->add($string, $url, navigation_node::TYPE_SETTING);
+}

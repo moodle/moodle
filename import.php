@@ -42,6 +42,8 @@ require_login($course, false, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/book:import', $context);
 
+$PAGE->set_url('/mod/book/import.php', array('id'=>$id));
+
 //check all variables
 unset($id);
 

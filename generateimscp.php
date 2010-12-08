@@ -31,6 +31,8 @@ require_once($CFG->libdir.'/filelib.php');
 
 $id = required_param('id', PARAM_INT);           // Course Module ID
 
+die('Not converted to 2.0 yet, sorry');
+
 if (!$cm = get_coursemodule_from_id('book', $id)) {
     error('Course Module ID was incorrect');
 }

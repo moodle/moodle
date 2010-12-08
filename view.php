@@ -48,10 +48,10 @@ $allowprint  = has_capability('mod/book:print', $context) and !$book->disablepri
 $allowexport = has_capability('mod/book:exportimscp', $context);
 $viewhidden  = has_capability('mod/book:viewhiddenchapters', $context);
 
-$PAGE->set_url('/mod/book/view.php', array('id'=>$id, 'chpterid'=>'chapterid'));
+$PAGE->set_url('/mod/book/view.php', array('id'=>$id, 'chapterid'=>$chapterid));
 
 if ($allowedit) {
-    if ($edit != -1) {
+    if ($edit != -1 and confirm_sesskey()) {
         $USER->editing = $edit;
     } else {
         if (isset($USER->editing)) {
@@ -117,20 +117,10 @@ $strbook  = get_string('modulename', 'book');
 $strtoc   = get_string('toc', 'book');
 
 /// prepare header
-$navigation = build_navigation('', $cm);
-
-$buttons = $allowedit ? book_edit_button($book, $cm, $chapter) : '&nbsp;';
-
-print_header( "$course->shortname: $book->name ($chapter->title)",
-              $course->fullname,
-              $navigation,
-              '',
-              '',
-              true,
-              $buttons,
-              navmenu($course, $cm)
-            );
-
+$PAGE->set_title(format_string($book->name));
+$PAGE->add_body_class('mod_book');
+$PAGE->set_heading(format_string($course->fullname));
+echo $OUTPUT->header();
 
 /// prepare chapter navigation icons
 $previd = null;
@@ -153,18 +143,18 @@ if ($ch == current($chapters)) {
 }
 $chnavigation = '';
 if ($previd) {
-    $chnavigation .= '<a title="'.get_string('navprev', 'book').'" href="view.php?id='.$cm->id.'&amp;chapterid='.$previd.'"><img src="pix/nav_prev.gif" class="bigicon" alt="'.get_string('navprev', 'book').'"/></a>';
+    $chnavigation .= '<a title="'.get_string('navprev', 'book').'" href="view.php?id='.$cm->id.'&amp;chapterid='.$previd.'"><img src="'.$OUTPUT->pix_url('nav_prev', 'mod_book').'" class="bigicon" alt="'.get_string('navprev', 'book').'"/></a>';
 } else {
     $chnavigation .= '<img src="pix/nav_prev_dis.gif" class="bigicon" alt="" />';
 }
 if ($nextid) {
-    $chnavigation .= '<a title="'.get_string('navnext', 'book').'" href="view.php?id='.$cm->id.'&amp;chapterid='.$nextid.'"><img src="pix/nav_next.gif" class="bigicon" alt="'.get_string('navnext', 'book').'" /></a>';
+    $chnavigation .= '<a title="'.get_string('navnext', 'book').'" href="view.php?id='.$cm->id.'&amp;chapterid='.$nextid.'"><img src="'.$OUTPUT->pix_url('nav_next', 'mod_book').'" class="bigicon" alt="'.get_string('navnext', 'book').'" /></a>';
 } else {
     $sec = '';
     if ($section = $DB->get_record('course_sections', array('id'=>$cm->section))) {
         $sec = $section->section;
     }
-    $chnavigation .= '<a title="'.get_string('navexit', 'book').'" href="../../course/view.php?id='.$course->id.'#section-'.$sec.'"><img src="pix/nav_exit.gif" class="bigicon" alt="'.get_string('navexit', 'book').'" /></a>';
+    $chnavigation .= '<a title="'.get_string('navexit', 'book').'" href="../../course/view.php?id='.$course->id.'#section-'.$sec.'"><img src="'.$OUTPUT->pix_url('nav_exit', 'mod_book').'" class="bigicon" alt="'.get_string('navexit', 'book').'" /></a>';
 }
 
 /// prepare print icons
@@ -172,13 +162,13 @@ if (!$allowprint) {
     $printbook = '';
     $printchapter = '';
 } else {
-    $printbook = '<a title="'.get_string('printbook', 'book').'" href="print.php?id='.$cm->id.'" onclick="this.target=\'_blank\'"><img src="pix/print_book.gif" class="bigicon" alt="'.get_string('printbook', 'book').'"/></a>';
-    $printchapter = '<a title="'.get_string('printchapter', 'book').'" href="print.php?id='.$cm->id.'&amp;chapterid='.$chapter->id.'" onclick="this.target=\'_blank\'"><img src="pix/print_chapter.gif" class="bigicon" alt="'.get_string('printchapter', 'book').'"/></a>';
+    $printbook = '<a title="'.get_string('printbook', 'book').'" href="print.php?id='.$cm->id.'" onclick="this.target=\'_blank\'"><img src="'.$OUTPUT->pix_url('print_book', 'mod_book').'" class="bigicon" alt="'.get_string('printbook', 'book').'"/></a>';
+    $printchapter = '<a title="'.get_string('printchapter', 'book').'" href="print.php?id='.$cm->id.'&amp;chapterid='.$chapter->id.'" onclick="this.target=\'_blank\'"><img src="'.$OUTPUT->pix_url('print_chapter', 'mod_book').'" class="bigicon" alt="'.get_string('printchapter', 'book').'"/></a>';
 }
 
 // prepare $toc and $currtitle, $currsubtitle
 $print = 0;
-require('toc.php');
+include('toc.php');
 
 if ($edit) {
     $tocwidth = $CFG->book_tocwidth + 80;
@@ -189,7 +179,8 @@ if ($edit) {
 $doimport = ($allowimport and $edit) ? '<div>(<a href="import.php?id='.$cm->id.'">'.get_string('doimport', 'book').'</a>)</div>' : '';
 
 /// Enable the IMS CP button
-$generateimscp = ($allowexport) ? '<a title="'.get_string('generateimscp', 'book').'" href="generateimscp.php?id='.$cm->id.'"><img class="bigicon" src="pix/generateimscp.gif" alt="'.get_string('generateimscp', 'book').'"></img></a>' : '';
+//$generateimscp = ($allowexport) ? '<a title="'.get_string('generateimscp', 'book').'" href="generateimscp.php?id='.$cm->id.'"><img class="bigicon" src="'.$OUTPUT->pix_url('generateimscp', 'mod_book').'" alt="'.get_string('generateimscp', 'book').'"></img></a>' : '';
+$generateimscp = ''; //TODO after new file handling
 
 
 // =====================================================

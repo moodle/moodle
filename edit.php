@@ -45,6 +45,8 @@ require_login($course, false, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/book:edit', $context);
 
+$PAGE->set_url('/mod/book/edit.php', array('cmid'=>$cmid, 'id'=>$chapterid, 'pagenum'=>$pagenum, 'subchapter'=>$subchapter));
+
 if ($chapterid) {
     $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
 } else {
@@ -109,23 +111,14 @@ if ($mform->is_cancelled()) {
 }
 
 /// Otherwise fill and print the form.
-$strbook = get_string('modulename', 'book');
-$strbooks = get_string('modulenameplural', 'book');
-$stredit = get_string('edit');
-$pageheading = get_string('editingchapter', 'book');
+$PAGE->set_title(format_string($book->name));
+$PAGE->add_body_class('mod_book');
+$PAGE->set_heading(format_string($course->fullname));
 
-///prepare the page header
-$navlinks = array();
-$navlinks[] = array('name' => $stredit, 'link' => '', 'type' => 'title');
-
-$navigation = build_navigation($navlinks, $cm);
-
-print_header("$course->shortname: $book->name", $course->fullname, $navigation);
-
-$icon = '<img class="icon" src="pix/chapter.gif" alt="" />&nbsp;';
-print_heading_with_help($pageheading, 'edit', 'book', $icon);
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('editingchapter', 'book'));
 
 $mform->display();
 
-print_footer($course);
+echo $OUTPUT->footer();
 
