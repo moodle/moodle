@@ -4,6 +4,7 @@
 
 $string['modulename'] = 'Knjiga';
 $string['modulenameplural'] = 'Knjige';
+$string['pluginname'] = 'Knjiga';
 $string['toc'] = 'Kazalo vsebine';
 $string['tocwidth'] = 'Izberite širino kazala vsebine za vse knjige.';
 $string['faq'] = 'Knjiga - pogosta vprašanja';

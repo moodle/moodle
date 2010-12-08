@@ -29,6 +29,7 @@ $string['numbering0'] = 'żaden';
 $string['numbering1'] = 'Liczby';
 $string['numbering2'] = 'Wypunktowanie';
 $string['numbering3'] = 'Wcięte';
+$string['pluginname'] = 'Książka';
 $string['printbook'] = 'Drukuj kopletną książkę';
 $string['printchapter'] = 'Drukuj ten rozdział';
 $string['printdate'] = 'Data';

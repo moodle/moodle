@@ -2,6 +2,7 @@
 
 $string['modulename'] = 'Buku';
 $string['modulenameplural'] = 'Buku-buku';
+$string['pluginname'] = 'Buku';
 
 $string['toc'] = 'Daftar Isi';
 $string['faq'] = 'Pertanyaan yang Sering Diajukan tentang Buku';

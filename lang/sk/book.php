@@ -29,6 +29,7 @@ $string['numbering0'] = 'Žiadne';
 $string['numbering1'] = 'Čísla';
 $string['numbering2'] = 'Odrážky';
 $string['numbering3'] = 'Odsadené';
+$string['pluginname'] = 'Kniha';
 $string['printbook'] = 'Vytlačiť celú knihu';
 $string['printchapter'] = 'Vytlačiť jednu kapitolu';
 $string['printdate'] = 'Dátum';

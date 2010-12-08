@@ -2,6 +2,7 @@
 
 $string['modulename'] = 'Livre';
 $string['modulenameplural'] = 'Livre';
+$string['pluginname'] = 'Livre';
 
 $string['toc'] = 'Table des matières';
 $string['faq'] = 'FAQ sur les livres';

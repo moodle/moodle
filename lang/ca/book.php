@@ -2,6 +2,7 @@
 
 $string['modulename'] = 'Llibre';
 $string['modulenameplural'] = 'Llibres';
+$string['pluginname'] = 'Llibre';
 
 $string['toc'] = 'Índex';
 $string['tocwidth'] = 'Escolliu l\'amplada de l\'índex per tots els llibres.';

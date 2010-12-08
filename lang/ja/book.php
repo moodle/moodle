@@ -2,6 +2,7 @@
 
 $string['modulename'] = 'ブック';
 $string['modulenameplural'] = 'ブック';
+$string['pluginname'] = 'ブック';
 
 $string['toc'] = '目次';
 $string['tocwidth'] = 'コンテンツのテーブル幅を選んでください。';

@@ -19,6 +19,7 @@ $string['numbering0'] = 'Nada';
 $string['numbering1'] = 'Númerica';
 $string['numbering2'] = 'Viñetas';
 $string['numbering3'] = 'Indentidad';
+$string['pluginname'] = 'Libro';
 $string['printbook'] = 'Imprimir el Libro Completo';
 $string['printchapter'] = 'Imprimir este Cápitulo';
 $string['printdate'] = 'Día';

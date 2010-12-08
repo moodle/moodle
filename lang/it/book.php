@@ -36,6 +36,7 @@ $string['numbering0'] = 'Senza numerazione';
 $string['numbering1'] = 'Numeri';
 $string['numbering2'] = 'Elenco puntato';
 $string['numbering3'] = 'Elenco rientrato';
+$string['pluginname'] = 'Libro';
 $string['printbook'] = 'Stampa tutto';
 $string['printchapter'] = 'Stampa capitolo';
 $string['printdate'] = 'Data';

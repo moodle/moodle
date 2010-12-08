@@ -29,6 +29,7 @@ $string['numbering0'] = 'Ingen';
 $string['numbering1'] = 'Tal';
 $string['numbering2'] = 'Bullets';
 $string['numbering3'] = 'Indragen';
+$string['pluginname'] = 'Bok';
 $string['printbook'] = 'Skriv ut hela boken';
 $string['printchapter'] = 'Skriv ut det här kapitlet';
 $string['printdate'] = 'Datum';

@@ -2,6 +2,7 @@
 
 $string['modulename'] = 'Book';
 $string['modulenameplural'] = 'Books';
+$string['pluginname'] = 'Book';
 
 $string['toc'] = 'Table of Contents';
 $string['tocwidth'] = 'Select width of the Table of Contents for all books.';

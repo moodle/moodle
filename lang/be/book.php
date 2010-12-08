@@ -29,6 +29,7 @@ $string['numbering0'] = 'Няма';
 $string['numbering1'] = 'Нумары';
 $string['numbering2'] = 'Маркеры';
 $string['numbering3'] = 'Павялічыць водступ';
+$string['pluginname'] = 'Падручнік';
 $string['printbook'] = 'Друкаваць увесь падручнік';
 $string['printchapter'] = 'Друкаваць раздзел';
 $string['printdate'] = 'Дата';

@@ -28,6 +28,7 @@ $string['numbering0'] = 'Ei mitään';
 $string['numbering1'] = 'Numerot';
 $string['numbering2'] = 'Luettelomerkit';
 $string['numbering3'] = 'Sisennys';
+$string['pluginname'] = 'Kirja';
 $string['printbook'] = 'Tulosta koko kirja';
 $string['printchapter'] = 'Tulosta tämä luku';
 $string['printdate'] = 'Tulostettu';

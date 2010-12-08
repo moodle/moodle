@@ -28,6 +28,7 @@ $string['numbering0'] = 'Geen';
 $string['numbering1'] = 'Nummering';
 $string['numbering2'] = 'Bolletjes';
 $string['numbering3'] = 'Inspringen';
+$string['pluginname'] = 'Boek';
 $string['printbook'] = 'Druk het hele boek af';
 $string['printchapter'] = 'Druk dit hoofdstuk af';
 $string['printdate'] = 'Datum';
