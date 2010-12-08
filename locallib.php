@@ -31,6 +31,7 @@ define('BOOK_NUM_BULLETS',  '2');
 define('BOOK_NUM_INDENTED', '3');
 
 require_once($CFG->dirroot.'/mod/book/lib.php');
+require_once($CFG->libdir.'/filelib.php');
 
 function book_get_numbering_types() {
     return array (BOOK_NUM_NONE       => get_string('numbering0', 'mod_book'),

@@ -31,8 +31,12 @@ class book_chapter_edit_form extends moodleform {
 
     function definition() {
         global $CFG;
+
+        $chapter = $this->_customdata['chapter'];
+        $options = $this->_customdata['options'];
+
         $mform = $this->_form;
-        $cm    = $this->_customdata;
+        $context = $options['context'];
 
         $mform->addElement('header', 'general', get_string('edit'));
 
@@ -42,8 +46,15 @@ class book_chapter_edit_form extends moodleform {
 
         $mform->addElement('advcheckbox', 'subchapter', get_string('subchapter', 'book'));
 
-        $mform->addElement('htmleditor', 'content', get_string('content', 'book'), array('cols'=>50, 'rows'=>30));
-        $mform->setType('content', PARAM_RAW);
+        $mform->addElement('editor', 'content_editor', get_string('content', 'book'), null, $options);
+        $mform->setType('content_editor', PARAM_RAW);
+        $mform->addRule('content_editor', get_string('required'), 'required', null, 'client');
+
+        if ($chapter->id and has_capability('mod/book:import', $context)) {
+            //TODO: after files
+            //$mform->addElement('static', 'doimport', get_string('importingchapters', 'book').':', '<a href="import.php?id='.$chapter->cmid.'">'.get_string('doimport', 'book').'</a>');
+        }
+
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -54,22 +65,10 @@ class book_chapter_edit_form extends moodleform {
         $mform->addElement('hidden', 'pagenum');
         $mform->setType('pagenum', PARAM_INT);
 
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        if (false and has_capability('mod/book:import', $context)) { //TODO: after files
-            $mform->addElement('static', 'doimport', get_string('importingchapters', 'book').':', '<a href="import.php?id='.$cm->id.'">'.get_string('doimport', 'book').'</a>');
-        }
 
         $this->add_action_buttons(true);
-    }
 
-    function definition_after_data() {
-        global $CFG;
-        $mform = $this->_form;
-
-        if ($mform->getElementValue('id')) {
-            if ($mform->elementExists('doimport')) {
-                $mform->removeElement('doimport');
-            }
-        }
+        // set the defaults
+        $this->set_data($chapter);
     }
 }

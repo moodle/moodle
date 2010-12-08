@@ -50,7 +50,7 @@ if ($book->disableprinting) {
 //check all variables
 if ($chapterid) {
     //single chapter printing - only visible!
-    $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id, 'visible'=>1), '*', MUST_EXIST);
+    $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id, 'hidden'=>0), '*', MUST_EXIST);
 } else {
     //complete book
     $chapter = false;
@@ -74,7 +74,7 @@ $strtop   = get_string('top', 'book');
 if ($chapter) {
     add_to_log($course->id, 'book', 'print', 'print.php?id='.$cm->id.'&chapterid='.$chapter->id, $book->id, $cm->id);
 
-    $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id, 'visible'=>1), 'pagenum, title');
+    $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id, 'hidden'=>0), 'pagenum, title');
 
     $print = 0;
     $edit = 0;
@@ -102,7 +102,8 @@ if ($chapter) {
             echo '<p class="book_chapter_title">'.$currtitle.'<br />'.$currsubtitle.'</p>';
         }
     }
-    echo format_text($chapter->content, $chapter->contentformat, array('noclean'=>true, 'context'=>$context));
+    $chaptertext = file_rewrite_pluginfile_urls($chapter->content, 'pluginfile.php', $context->id, 'mod_book', 'chapter', $chapter->id);
+    echo format_text($chaptertext, $chapter->contentformat, array('noclean'=>true, 'context'=>$context));
     echo '</div>';
     echo '</body> </html>';
 
@@ -151,18 +152,16 @@ if ($chapter) {
     $link1 = $CFG->wwwroot.'/mod/book/view.php?id='.$course->id.'&chapterid=';
     $link2 = $CFG->wwwroot.'/mod/book/view.php?id='.$course->id;
     foreach ($chapters as $ch) {
-        if (!$ch->hidden) {
-            echo '<div class="book_chapter"><a name="ch'.$ch->id.'"></a>';
-            if (!$book->customtitles) {
-                echo '<p class="book_chapter_title">'.$titles[$ch->id].'</p>';
-            }
-            $content = str_replace($link1, '#ch', $ch->content);
-            $content = str_replace($link2, '#top', $content);
-            echo format_text($content, $ch->contentformat, array('noclean'=>true, 'context'=>$context));
-            echo '</div>';
-            //echo '<a href="#toc">'.$strtop.'</a>';
-
+        echo '<div class="book_chapter"><a name="ch'.$ch->id.'"></a>';
+        if (!$book->customtitles) {
+            echo '<p class="book_chapter_title">'.$titles[$ch->id].'</p>';
         }
+        $content = str_replace($link1, '#ch', $ch->content);
+        $content = str_replace($link2, '#top', $content);
+        $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $context->id, 'mod_book', 'chapter', $ch->id);
+        echo format_text($content, $ch->contentformat, array('noclean'=>true, 'context'=>$context));
+        echo '</div>';
+        //echo '<a href="#toc">'.$strtop.'</a>';
     }
     echo '</body> </html>';
 }

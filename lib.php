@@ -152,7 +152,7 @@ function book_get_participants($bookid) {
 /**
  * This function returns if a scale is being used by one book
  * it it has support for grading and scales. Commented code should be
- * modified if necessary. See forum, glossary or journal modules
+ * modified if necessary. See book, glossary or journal modules
  * as reference.
  *
  * @param $bookid int
@@ -206,7 +206,7 @@ function book_supports($feature) {
  * Adds module specific settings to the settings block
  *
  * @param settings_navigation $settings The settings navigation object
- * @param navigation_node $forumnode The node to add module settings to
+ * @param navigation_node $booknode The node to add module settings to
  * @return void
  */
 function book_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $booknode) {
@@ -240,4 +240,57 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
 
     $url = new moodle_url('/mod/book/view.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid'], 'edit'=>$edit, 'sesskey'=>sesskey()));
     $booknode->add($string, $url, navigation_node::TYPE_SETTING);
+}
+
+/**
+ * Serves the book attachments. Implements needed access control ;-)
+ *
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @return bool false if file not found, does not return if found - justsend the file
+ */
+function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+    global $CFG, $DB;
+
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return false;
+    }
+
+    require_course_login($course, true, $cm);
+
+    if ($filearea !== 'chapter') {
+        return false;
+    }
+
+    if (!has_capability('mod/book:read', $context)) {
+        return false;
+    }
+
+    $chid = (int)array_shift($args);
+
+    if (!$book = $DB->get_record('book', array('id'=>$cm->instance))) {
+        return false;
+    }
+
+    if (!$chapter = $DB->get_record('book_chapters', array('id'=>$chid, 'bookid'=>$book->id))) {
+        return false;
+    }
+
+    if ($chapter->hidden and !has_capability('mod/book:viewhiddenchapters', $context)) {
+        return false;
+    }
+
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/mod_book/chapter/$chid/$relativepath";
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        return false;
+    }
+
+    // finally send the file
+    send_stored_file($file, 360, 0, false);
 }

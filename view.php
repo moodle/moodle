@@ -48,8 +48,6 @@ $allowprint  = has_capability('mod/book:print', $context) and !$book->disablepri
 $allowexport = has_capability('mod/book:exportimscp', $context);
 $viewhidden  = has_capability('mod/book:viewhiddenchapters', $context);
 
-$PAGE->set_url('/mod/book/view.php', array('id'=>$id, 'chapterid'=>$chapterid));
-
 if ($allowedit) {
     if ($edit != -1 and confirm_sesskey()) {
         $USER->editing = $edit;
@@ -90,6 +88,7 @@ if ($chapterid == '0') { // go to first chapter if no given
     }
 }
 
+$PAGE->set_url('/mod/book/view.php', array('id'=>$id, 'chapterid'=>$chapterid));
 
 if (!$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id))) {
     error('Error reading book chapters.');
@@ -230,7 +229,8 @@ $generateimscp = ''; //TODO after new file handling
               echo '<p class="book_chapter_title">'.$currtitle.'<br />'.$currsubtitle.'</p>';
           }
         }
-        echo format_text($chapter->content, $chapter->contentformat, array('noclean'=>true, 'context'=>$context));
+        $chaptertext = file_rewrite_pluginfile_urls($chapter->content, 'pluginfile.php', $context->id, 'mod_book', 'chapter', $chapter->id);
+        echo format_text($chaptertext, $chapter->contentformat, array('noclean'=>true, 'context'=>$context));
         echo '</div>';
         echo $OUTPUT->box_end();
         /// lower navigation
@@ -241,5 +241,6 @@ $generateimscp = ''; //TODO after new file handling
 </table>
 
 <?php
+
 echo $OUTPUT->footer();
 

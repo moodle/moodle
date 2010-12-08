@@ -47,28 +47,24 @@ require_capability('mod/book:edit', $context);
 
 $PAGE->set_url('/mod/book/edit.php', array('cmid'=>$cmid, 'id'=>$chapterid, 'pagenum'=>$pagenum, 'subchapter'=>$subchapter));
 
-if ($chapterid) {
-    $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
-} else {
-    $chapter = null;
-}
-
-//check all variables
-unset($cmid);
-unset($chapterid);
-
 // =========================================================================
 // security checks END
 // =========================================================================
 
-$mform = new book_chapter_edit_form(null, $cm);
-
-if ($chapter) {
-    $chapter->cmid = $cm->id;
-    $mform->set_data($chapter);
+if ($chapterid) {
+    $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
 } else {
-    $mform->set_data(array('cmid'=>$cm->id, 'pagenum'=>($pagenum+1), 'subchapter'=>$subchapter));
+    $chapter = new stdClass();
+    $chapter->id         = null;
+    $chapter->subchapter = $subchapter;
+    $chapter->pagenum    = $pagenum + 1;
 }
+$chapter->cmid = $cm->id;
+
+$options = array('noclean'=>true, 'subdirs'=>true, 'maxfiles'=>-1, 'maxbytes'=>0, 'context'=>$context);
+$chapter = file_prepare_standard_editor($chapter, 'content', $options, $context, 'mod_book', 'chapter', $chapter->id);
+
+$mform = new book_chapter_edit_form(null, array('chapter'=>$chapter, 'options'=>$options));
 
 /// If data submitted, then process and store.
 if ($mform->is_cancelled()) {
@@ -81,6 +77,8 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
 
     if ($data->id) {
+        // store the files
+        $data = file_postupdate_standard_editor($data, 'content', $options, $context, 'mod_book', 'chapter', $data->id);
         $DB->update_record('book_chapters', $data);
 
         add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
@@ -88,11 +86,13 @@ if ($mform->is_cancelled()) {
 
     } else {
         /// adding new chapter
-        $data->bookid       = $book->id;
-        $data->hidden       = 0;
-        $data->timecreated  = time();
-        $data->timemodified = time();
-        $data->importsrc    = '';
+        $data->bookid        = $book->id;
+        $data->hidden        = 0;
+        $data->timecreated   = time();
+        $data->timemodified  = time();
+        $data->importsrc     = '';
+        $data->content       = '';          // updated later
+        $data->contentformat = FORMAT_HTML; // updated later
 
         // make room for new page
         $sql = "UPDATE {book_chapters}
@@ -101,6 +101,10 @@ if ($mform->is_cancelled()) {
         $DB->execute($sql, array($book->id, $data->pagenum));
 
         $data->id = $DB->insert_record('book_chapters', $data);
+
+        // store the files
+        $data = file_postupdate_standard_editor($data, 'content', $options, $context, 'mod_book', 'chapter', $data->id);
+        $DB->update_record('book_chapters', $data);
 
         add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
         add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id.'&chapterid='.$data->id, $book->id, $cm->id);
