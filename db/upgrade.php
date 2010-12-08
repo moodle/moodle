@@ -1,6 +1,6 @@
 <?php
 
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Book module for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die;
 
 function xmldb_book_upgrade($oldversion) {
     global $CFG, $DB;
-    require_once("$CFG->dirroot/mod/book/db/upgradelib.php");
 
     $dbman = $DB->get_manager();
 
@@ -82,6 +81,41 @@ function xmldb_book_upgrade($oldversion) {
 
         // book savepoint reached
         upgrade_mod_savepoint(true, 2010120802, 'book');
+    }
+
+    if ($oldversion < 2010120803) {
+        require_once("$CFG->dirroot/mod/book/db/upgradelib.php");
+
+        $sqlfrom = "FROM {book} b
+                    JOIN {modules} m ON m.name = 'book'
+                    JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = b.id)";
+
+        $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
+
+        if ($rs = $DB->get_recordset_sql("SELECT b.id, b.course, cm.id AS cmid $sqlfrom ORDER BY b.course, b.id")) {
+
+            $pbar = new progress_bar('migratebookfiles', 500, true);
+
+            $i = 0;
+            foreach ($rs as $book) {
+                $i++;
+                upgrade_set_timeout(360); // set up timeout, may also abort execution
+                $pbar->update($i, $count, "Migrating book files - $i/$count.");
+
+                $context = get_context_instance(CONTEXT_MODULE, $book->cmid);
+
+                book_migrate_moddata_dir_to_legacy($book, $context, '/');
+
+                // remove dirs if empty
+                @rmdir("$CFG->dataroot/$book->course/$CFG->moddata/book/$book->id/");
+                @rmdir("$CFG->dataroot/$book->course/$CFG->moddata/book/");
+                @rmdir("$CFG->dataroot/$book->course/$CFG->moddata/");
+            }
+            $rs->close();
+        }
+
+        // book savepoint reached
+        upgrade_mod_savepoint(true, 2010120803, 'book');
     }
 
 
