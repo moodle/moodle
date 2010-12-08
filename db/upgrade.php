@@ -62,7 +62,7 @@ function xmldb_book_upgrade($oldversion) {
     if ($oldversion < 2010120802) {
        // Rename field summary on table book to intro
         $table = new xmldb_table('book');
-        $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'large', null, null, null, null, 'name');
+        $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'big', null, null, null, null, 'name');
 
         // Launch rename field summary
         $dbman->change_field_precision($table, $field);
