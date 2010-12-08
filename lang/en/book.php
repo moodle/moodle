@@ -77,6 +77,7 @@ $string['navexit'] = 'Exit Book';
 
 $string['importingchapters'] = 'Importing chapters into book';
 $string['import'] = 'Import';
+$string['import_help'] = 'You can import a single HTML file or every HTML file in a direcory. Relative file links are converted to absolute chapter links. Images, flash and Java are relinked too.';
 $string['doimport'] = 'Import';
 $string['doexport'] = 'Export';
 $string['importing'] = 'Importing';

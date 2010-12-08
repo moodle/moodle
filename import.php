@@ -29,6 +29,8 @@ require_once('import_form.php');
 
 $id = required_param('id', PARAM_INT);           // Course Module ID
 
+die('Not converted to 2.0 yet, sorry');
+
 // =========================================================================
 // security checks START - only teachers edit
 // =========================================================================
