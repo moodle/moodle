@@ -28,5 +28,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'j';
+$string['cliincorrectvalueerror'] = 'Fejl, "{$a->value}" er en forkert værdi for "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Forkert værdi, prøv igen!';
+$string['clitypevalue'] = 'tast værdi';
+$string['clitypevaluedefault'] = 'tast værdi eller brug standardværdien ved at trykke Enter';
 $string['environmentrequireinstall'] = 'skal være installeret og aktiveret';
 $string['environmentrequireversion'] = 'version {$a->needed} er nødvendigt og du kører {$a->current}';
