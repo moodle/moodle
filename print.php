@@ -49,11 +49,8 @@ require_capability('mod/book:print', $context);
 
 //check all variables
 if ($chapterid) {
-    //single chapter printing
-    $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
-    if ($chapter->hidden) {
-        error('Only visible chapters can be printed');
-    }
+    //single chapter printing - only visible!
+    $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id, 'visible'=>1), '*', MUST_EXIST);
 } else {
     //complete book
     $chapter = false;
@@ -77,7 +74,7 @@ $strtop   = get_string('top', 'book');
 if ($chapter) {
     add_to_log($course->id, 'book', 'print', 'print.php?id='.$cm->id.'&chapterid='.$chapter->id, $book->id, $cm->id);
 
-    $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum, title');
+    $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id, 'visible'=>1), 'pagenum, title');
 
     $print = 0;
     $edit = 0;
