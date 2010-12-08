@@ -114,6 +114,10 @@ function xmldb_book_upgrade($oldversion) {
             $rs->close();
         }
 
+
+        //TODO: migrate the legacy file.php links to new pluginfile.php and file areas per chapter
+
+
         // book savepoint reached
         upgrade_mod_savepoint(true, 2010120803, 'book');
     }
