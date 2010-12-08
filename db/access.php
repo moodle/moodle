@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$mod_book_capabilities = array(
+$capabilities = array(
 
     'mod/book:read' => array(
         'captype' => 'read',
