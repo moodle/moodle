@@ -161,7 +161,7 @@ if ($nextid) {
     $chnavigation .= '<a title="'.get_string('navnext', 'book').'" href="view.php?id='.$cm->id.'&amp;chapterid='.$nextid.'"><img src="pix/nav_next.gif" class="bigicon" alt="'.get_string('navnext', 'book').'" /></a>';
 } else {
     $sec = '';
-    if ($section = get_record('course_sections', 'id', $cm->section)) {
+    if ($section = $DB->get_record('course_sections', array('id'=>$cm->section))) {
         $sec = $section->section;
     }
     $chnavigation .= '<a title="'.get_string('navexit', 'book').'" href="../../course/view.php?id='.$course->id.'#section-'.$sec.'"><img src="pix/nav_exit.gif" class="bigicon" alt="'.get_string('navexit', 'book').'" /></a>';
