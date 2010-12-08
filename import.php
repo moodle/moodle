@@ -1,4 +1,27 @@
 <?php
+// This file is part of Book module for Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Book import
+ *
+ * @package    mod
+ * @subpackage book
+ * @copyright  2004-2010 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require('../../config.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
@@ -10,22 +33,14 @@ $id = required_param('id', PARAM_INT);           // Course Module ID
 // security checks START - only teachers edit
 // =========================================================================
 
-if (!$cm = get_coursemodule_from_id('book', $id)) {
-    error('Course Module ID was incorrect');
-}
-
-if (!$course = get_record('course', 'id', $cm->course)) {
-    error('Course is misconfigured');
-}
+$cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+$book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/book:import', $context);
-
-if (!$book = get_record('book', 'id', $cm->instance)) {
-    error('Course module is incorrect');
-}
 
 //check all variables
 unset($id);
@@ -94,12 +109,9 @@ if ($mform->is_cancelled()) {
     foreach($refs as $ref) {
         $chapter = book_read_chapter($coursebase, $ref);
         if ($chapter) {
-            $chapter->title = addslashes($chapter->title);
-            $chapter->content = addslashes($chapter->content);
-            $chapter->importsrc = addslashes($chapter->importsrc);
-            $chapter->bookid = $book->id;
-            $chapter->pagenum = count_records('book_chapters', 'bookid', $book->id)+1;
-            $chapter->timecreated = time();
+            $chapter->bookid       = $book->id;
+            $chapter->pagenum      = $DB->count_records('book_chapters', array('bookid'=>$book->id)+1;
+            $chapter->timecreated  = time();
             $chapter->timemodified = time();
             echo "imsrc:".$chapter->importsrc;
             if (($data->subchapter) || preg_match('/_sub\.htm/i', $chapter->importsrc)) { //if filename or directory starts with sub_* treat as subdirecotories
@@ -107,9 +119,8 @@ if ($mform->is_cancelled()) {
             } else {
                 $chapter->subchapter = 0;
             }
-            if (!$chapter->id = insert_record('book_chapters', $chapter)) {
-                error('Could not update your book');
-            }
+            $chapter->id = $DB->insert_record('book_chapters', $chapter);
+
             add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
             add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id.'&chapterid='.$chapter->id, $book->id, $cm->id);
         }

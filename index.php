@@ -11,9 +11,7 @@ $id = required_param('id', PARAM_INT);           // Course Module ID
 // security checks START - teachers and students view
 // =========================================================================
 
-if (!$course = get_record('course', 'id', $id)) {
-    error('Course ID is incorrect');
-}
+$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
 require_course_login($course, true);
 
@@ -65,7 +63,7 @@ $currentsection = '';
 foreach ($books as $book) {
     $nocleanoption = new object();
     $nocleanoption->noclean = true;
-    $book->summary = format_text($book->summary, FORMAT_HTML, $nocleanoption, $course->id);
+    $book->summary = format_text($book->intro, $book->introformat, $nocleanoption, $course->id);
     $book->summary = '<span style="font-size:x-small;">'.$book->summary.'</span>';
 
     if (!$book->visible) {
@@ -76,7 +74,7 @@ foreach ($books as $book) {
         $link = '<a href="view.php?id='.$book->coursemodule.'">'.$book->name.'</a>';
     }
 
-    $count = count_records('book_chapters', 'bookid', $book->id, 'hidden', '0');
+    $count = $DB->count_records('book_chapters', array('bookid'=>$book->id, 'hidden'=>'0'));
 
     if ($course->format == 'weeks' or $course->format == 'topics') {
         $printsection = '';

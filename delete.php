@@ -1,10 +1,46 @@
 <?php
+// This file is part of Book module for Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require('teacheraccess.php'); //page only for teachers
+/**
+ * Delete book chapter
+ *
+ * @package    mod
+ * @subpackage book
+ * @copyright  2004-2010 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+require('../../config.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
 
-$confirm = optional_param('confirm', 0, PARAM_BOOL);
+$id        = required_param('id', PARAM_INT);        // Course Module ID
+$chapterid = required_param('chapterid', PARAM_INT); // Chapter ID
+$confirm   = optional_param('confirm', 0, PARAM_BOOL);
+
+$cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+$book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
+
+require_login($course, false, $cm);
+require_sesskey();
+
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('mod/book:edit', $context);
+
+$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
 
 
 ///header and strings
@@ -18,29 +54,26 @@ print_header("$course->shortname: $book->name", $course->fullname, $navigation);
 ///form processing
 if ($confirm) {  // the operation was confirmed.
     if (!$chapter->subchapter) { //delete all its subchapters if any
-        $chapters = get_records('book_chapters', 'bookid', $book->id, 'pagenum', 'id, subchapter');
+        $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum', 'id, subchapter');
         $found = false;
         foreach($chapters as $ch) {
             if ($ch->id == $chapter->id) {
                 $found = true;
             } else if ($found and $ch->subchapter) {
-                if (!delete_records('book_chapters', 'id', $ch->id)) {
-                    error('Could not update your book');
-                }
+                $DB->delete_records('book_chapters', array('id'=>$ch->id));
             } else if ($found) {
                 break;
             }
         }
     }
-    if (!delete_records('book_chapters', 'id', $chapter->id)) {
-        error('Could not update your book');
-    }
+    $DB->delete_records('book_chapters', array('id'=>$chapter->id));
 
     add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
     add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id, $book->id, $cm->id);
+
     book_check_structure($book->id);
     redirect('view.php?id='.$cm->id);
-    die;
+
 } else {
     // the operation has not been confirmed yet so ask the user to do so
     if ($chapter->subchapter) {

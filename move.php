@@ -1,10 +1,47 @@
 <?php
+// This file is part of Book module for Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require('teacheraccess.php'); //page only for teachers
+/**
+ * Move book chapter
+ *
+ * @package    mod
+ * @subpackage book
+ * @copyright  2004-2010 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+
+require('../../config.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
 
-$up  = optional_param('up', 0, PARAM_BOOL);
+$id        = required_param('id', PARAM_INT);        // Course Module ID
+$chapterid = required_param('chapterid', PARAM_INT); // Chapter ID
+$up        = optional_param('up', 0, PARAM_BOOL);
+
+$cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+$book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
+
+require_login($course, false, $cm);
+require_sesskey();
+
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('mod/book:edit', $context);
+
+$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
 
 
 $oldchapters = get_records('book_chapters', 'bookid', $book->id, 'pagenum', 'id, pagenum, subchapter');
@@ -137,13 +174,14 @@ if (!$nothing) {
     $i = 1;
     foreach ($newchapters as $ch) {
         $ch->pagenum = $i;
-        update_record('book_chapters', $ch);
+        $DB->update_record('book_chapters', $ch);
         $i++;
     }
 }
 
 add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
 add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id, $book->id, $cm->id);
+
 book_check_structure($book->id);
 redirect('view.php?id='.$cm->id.'&chapterid='.$chapter->id);
-die;
+

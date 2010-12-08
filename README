@@ -1,5 +1,5 @@
 Book module for Moodle
-Copyright (C) 2004-2010  Petr Skoda (http:skodak.org)
+Copyright (C) 2004-2010  Petr Skoda (http://skodak.org)
 
 
 This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,6 @@ Installation:
     * see http://docs.moodle.org/en/Installing_contributed_modules_or_plugins
 
 List of features - version 2.0:
-
     * easy to use - new teachers can quickly create multipage study materials
     * two levels - only chapters and subchapters
     * possible automatic chapter numbering
@@ -39,11 +38,10 @@ List of features - version 2.0:
     * support for global searching in study materials (see contrib/search)
     * import from html files (relinking of images, flash, Java applets and
       relative links)
-    * works with MySQL and PostgreSQL databases
+    * works with all supported databases
 
 
 Intentionally omitted features:
-
     * more chapter levels - it would encourage teachers to write too much
       complex and long books, better use standard standalone HTML editor and
       import it as Resource. DocBook format is another suitable solution.
@@ -55,7 +53,7 @@ Intentionally omitted features:
       Save page as... in print view
 
 Future:
-    * I like eXe editor, I would like to improve Book in this direction ... ;-)
+    * I like eXe editor, I would like to improve Book in this direction ...
 
 CHANGELOG:
 == 1.1RC1 - 2004/11/15 =======================================================

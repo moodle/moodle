@@ -44,11 +44,16 @@ function book_get_numbering_types() {
 /// Any other book functions go here.  Each of them must have a name that
 /// starts with book_
 
-//check chapter ordering and
-//make sure subchapter is not first in book
-//hidden chapter must have all subchapters hidden too
+/**
+ * check chapter ordering and make sure subchapter is not first
+ * in book hidden chapter must have all subchapters hidden too
+ * @param int $id
+ * @return void
+ */
 function book_check_structure($bookid) {
-    if ($chapters = get_records('book_chapters', 'bookid', $bookid, 'pagenum', 'id, pagenum, subchapter, hidden')) {
+    global $DB;
+
+    if ($chapters = $DB->get_records('book_chapters', array('bookid'=>$bookid), 'pagenum', 'id, pagenum, subchapter, hidden')) {
         $first = true;
         $hidesub = true;
         $i = 1;
@@ -63,7 +68,7 @@ function book_check_structure($bookid) {
                 $ch->hidden = $hidesub ? true : $ch->hidden;
             }
             $ch->pagenum = $i;
-            update_record('book_chapters', $ch);
+            $DB->update_record('book_chapters', $ch);
             $i++;
         }
     }
@@ -71,11 +76,11 @@ function book_check_structure($bookid) {
 
 
 /// prepare button to turn chapter editing on - connected with course editing
-function book_edit_button($id, $courseid, $chapterid) {
+function book_edit_button($book, $cm, $chapter) {
     global $CFG, $USER;
 
 
-    if (isteacheredit($courseid)) {
+    if (has_capability('mod/book:edit', get_context_instance(CONTEXT_MODULE, $cm->id))) {
         if (!empty($USER->editing)) {
             $string = get_string("turneditingoff");
             $edit = '0';
@@ -84,8 +89,8 @@ function book_edit_button($id, $courseid, $chapterid) {
             $edit = '1';
         }
         return '<form method="get" action="'.$CFG->wwwroot.'/mod/book/view.php"><div>'.
-               '<input type="hidden" name="id" value="'.$id.'" />'.
-               '<input type="hidden" name="chapterid" value="'.$chapterid.'" />'.
+               '<input type="hidden" name="id" value="'.$cm->id.'" />'.
+               '<input type="hidden" name="chapterid" value="'.$chapter->id.'" />'.
                '<input type="hidden" name="edit" value="'.$edit.'" />'.
                '<input type="submit" value="'.$string.'" /></div></form>';
     } else {
@@ -179,13 +184,14 @@ function book_read_chapter($base, $ref) {
 
 ///relink images and relative links
 function book_relink($id, $bookid, $courseid) {
-    global $CFG;
+    global $CFG, $DB;
+
     if ($CFG->slasharguments) {
         $coursebase = $CFG->wwwroot.'/file.php/'.$courseid;
     } else {
         $coursebase = $CFG->wwwroot.'/file.php?file=/'.$courseid;
     }
-    $chapters = get_records('book_chapters', 'bookid', $bookid, 'pagenum', 'id, pagenum, title, content, importsrc');
+    $chapters = $DB->get_records('book_chapters', array('bookid'=>$bookid), 'pagenum', 'id, pagenum, title, content, importsrc');
     $originals = array();
     foreach($chapters as $ch) {
         $originals[$ch->importsrc] = $ch;
@@ -312,12 +318,7 @@ function book_relink($id, $bookid, $courseid) {
             }
         }
         if ($modified) {
-            $ch->title = addslashes($ch->title);
-            $ch->content = addslashes($ch->content);
-            $ch->importsrc = addslashes($ch->importsrc);
-            if (!update_record('book_chapters', $ch)) {
-                error('Could not update your book');
-            }
+            $DB->update_record('book_chapters', $ch);
         }
     }
 }

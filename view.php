@@ -1,4 +1,27 @@
 <?php
+// This file is part of Book module for Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Book view page
+ *
+ * @package    mod
+ * @subpackage book
+ * @copyright  2004-2010 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require('../../config.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
@@ -10,17 +33,9 @@ $edit      = optional_param('edit', -1, PARAM_BOOL);    // Edit mode
 // =========================================================================
 // security checks START - teachers edit; students view
 // =========================================================================
-if (!$cm = get_coursemodule_from_id('book', $id)) {
-    error('Course Module ID was incorrect');
-}
-
-if (!$course = get_record('course', 'id', $cm->course)) {
-    error('Course is misconfigured');
-}
-
-if (!$book = get_record('book', 'id', $cm->instance)) {
-    error('Course module is incorrect');
-}
+$cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+$book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
 
@@ -48,8 +63,8 @@ if ($allowedit) {
 }
 
 /// read chapters
-$select = $viewhidden ? "bookid = $book->id" : "bookid = $book->id AND hidden = 0";
-$chapters = get_records_select('book_chapters', $select, 'pagenum', 'id, pagenum, subchapter, title, hidden');
+$select = $viewhidden ? array('bookid' => $book->id) : array('bookid' => $book->id, 'hidden' => 0);
+$chapters = $DB->get_records('book_chapters', $select, 'pagenum', 'id, pagenum, subchapter, title, hidden');
 
 if (!$chapters) {
     if ($allowedit) {
@@ -74,7 +89,7 @@ if ($chapterid == '0') { // go to first chapter if no given
 }
 
 
-if (!$chapter = get_record('book_chapters', 'id', $chapterid)) {
+if (!$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id))) {
     error('Error reading book chapters.');
 }
 
@@ -87,10 +102,6 @@ if (!$viewhidden and $chapter->hidden) {
     error('Error reading book chapters.');
 }
 
-/// chapter not part of this book!
-if ($chapter->bookid != $book->id) {
-    error('Chapter not part of this book!');
-}
 // =========================================================================
 // security checks  END
 // =========================================================================
@@ -107,7 +118,7 @@ $strTOC = get_string('TOC', 'book');
 $navigation = build_navigation('', $cm);
 
 $buttons = $allowedit ? '<table cellspacing="0" cellpadding="0"><tr><td>'.update_module_button($cm->id, $course->id, $strbook).'</td>'.
-           '<td>&nbsp;</td><td>'.book_edit_button($cm->id, $course->id, $chapter->id).'</td></tr></table>'
+           '<td>&nbsp;</td><td>'.book_edit_button($book, $cm, $chapter).'</td></tr></table>'
            : '&nbsp;';
 
 print_header( "$course->shortname: $book->name ($chapter->title)",

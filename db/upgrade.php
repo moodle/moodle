@@ -66,17 +66,7 @@ function xmldb_book_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // conditionally migrate to html format in intro
-        if ($CFG->texteditors !== 'textarea') {
-            $rs = $DB->get_recordset('book', array('introformat'=>FORMAT_MOODLE), '', 'id,intro,introformat');
-            foreach ($rs as $r) {
-                $r->intro       = text_to_html($r->intro, false, false, true);
-                $r->introformat = FORMAT_HTML;
-                $DB->update_record('book', $r);
-                upgrade_set_timeout();
-            }
-            $rs->close();
-        }
+        $DB->set_field('book', 'introformat', FORMAT_HTML, array());
 
         // book savepoint reached
         upgrade_mod_savepoint(true, 2010120802, 'book');
@@ -114,6 +104,7 @@ function xmldb_book_upgrade($oldversion) {
         }
 
 
+        //TODO: add contentformat into book_chapters
         //TODO: migrate the legacy file.php links to new pluginfile.php and file areas per chapter
 
 

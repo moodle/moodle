@@ -1,4 +1,27 @@
 <?php
+// This file is part of Book module for Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Book printing
+ *
+ * @package    mod
+ * @subpackage book
+ * @copyright  2004-2010 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
@@ -9,19 +32,12 @@ $chapterid = optional_param('chapterid', 0, PARAM_INT); // Chapter ID
 // =========================================================================
 // security checks START - teachers and students view
 // =========================================================================
-if (!$cm = get_coursemodule_from_id('book', $id)) {
-    error('Course Module ID was incorrect');
-}
 
-if (!$course = get_record('course', 'id', $cm->course)) {
-    error('Course is misconfigured');
-}
+$cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+$book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
-
-if (!$book = get_record('book', 'id', $cm->instance)) {
-    error('Course module is incorrect');
-}
 
 if ($book->disableprinting) {
     error('Printing is disabled');
@@ -34,12 +50,7 @@ require_capability('mod/book:print', $context);
 //check all variables
 if ($chapterid) {
     //single chapter printing
-    if (!$chapter = get_record('book_chapters', 'id', $chapterid)) {
-        error('Incorrect chapter ID');
-    }
-    if ($chapter->bookid != $book->id) {//chapter id not in this book!!!!
-        error('Chapter not in this book!');
-    }
+    $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
     if ($chapter->hidden) {
         error('Only visible chapters can be printed');
     }
@@ -63,13 +74,13 @@ $strtop   = get_string('top', 'book');
 @header('Accept-Ranges: none');
 @header('Content-type: text/html; charset=utf-8');
 
-$formatoptions = new object();
+$formatoptions = new stdClass();
 $formatoptions->noclean = true;
 
 if ($chapter) {
     add_to_log($course->id, 'book', 'print', 'print.php?id='.$cm->id.'&chapterid='.$chapter->id, $book->id, $cm->id);
 
-    $chapters = get_records('book_chapters', 'bookid', $book->id, 'pagenum, title');
+    $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum, title');
 
     $print = 0;
     $edit = 0;
@@ -119,7 +130,7 @@ if ($chapter) {
     <body>
     <a name="top"></a>
     <p class="book_title"><?PHP echo format_string($book->name) ?></p>
-    <p class="book_summary"><?PHP echo format_string($book->summary) ?></p>
+    <p class="book_summary"><?PHP echo format_text($book->intro, $book->introformat) ?></p>
     <div class="book_info"><table>
     <tr>
     <td><?PHP echo get_string('site') ?>:</td>

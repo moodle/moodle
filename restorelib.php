@@ -318,7 +318,7 @@
                 $result = restore_decode_content_links_worker($content,$restore);
                 if ($result != $content) {
                     //Update record
-                    $book->summary = addslashes($result);
+                    $book->intro $result;
                     $status = update_record('book',$book);
                     if ($CFG->debug>7) {
                         if (!defined('RESTORE_SILENTLY')) {
@@ -354,7 +354,7 @@
                 $result = restore_decode_content_links_worker($content,$restore);
                 if ($result != $content) {
                     //Update record
-                    $chapter->content = addslashes($result);
+                    $chapter->content = $result;
                     $status = update_record('book_chapters',$chapter);
                     if ($CFG->debug>7) {
                         if (!defined('RESTORE_SILENTLY')) {
