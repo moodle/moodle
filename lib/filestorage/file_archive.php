@@ -161,20 +161,18 @@ abstract class file_archive implements Iterator {
      * please note that it may fail really badly.
      * The resulting file name is cleaned.
      *
-     * @param string $localname in another encoding
+     * @param string $localname in $this->encoding
      * @return string in utf-8
      */
     protected function unmangle_pathname($localname) {
-        if ($this->encoding === 'utf-8') {
-            return $localname;
+        $result = str_replace('\\', '/', $localname); // no MS \ separators
+        $result = ltrim($result, '/');                // no leading /
+
+        if ($this->encoding !== 'utf-8') {
+            $result = textlib_get_instance()->convert($result, $this->encoding, 'utf-8');
         }
-        $textlib = textlib_get_instance();
 
-        $result = $textlib->convert($localname, $this->encoding, 'utf-8');
-        $result = clean_param($result, PARAM_PATH);
-        $result = ltrim($result); // no leading /
-
-        return $result;
+        return clean_param($result, PARAM_PATH);
     }
 
     /**
