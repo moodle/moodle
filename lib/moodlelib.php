@@ -7497,10 +7497,10 @@ function check_php_version($version='5.2.4') {
  *
  * @uses $_SERVER
  * @param string $brand The browser identifier being tested
- * @param int $version The version of the browser
+ * @param int $version The version of the browser, if not specified any version (except 5.5 for IE for BC reasons)
  * @return bool true if the given version is below that of the detected browser
  */
- function check_browser_version($brand='MSIE', $version=5.5) {
+ function check_browser_version($brand, $version = null) {
     if (empty($_SERVER['HTTP_USER_AGENT'])) {
         return false;
     }
@@ -7509,8 +7509,13 @@ function check_php_version($version='5.2.4') {
 
     switch ($brand) {
 
-      case 'Camino':   /// Mozilla Firefox browsers
-
+      case 'Camino':   /// OSX browser using Gecke engine
+          if (strpos($agent, 'Camino') === false) {
+              return false;
+          }
+          if (empty($version)) {
+              return true; // no version specified
+          }
           if (preg_match("/Camino\/([0-9\.]+)/i", $agent, $match)) {
               if (version_compare($match[1], $version) >= 0) {
                   return true;
@@ -7520,7 +7525,12 @@ function check_php_version($version='5.2.4') {
 
 
       case 'Firefox':   /// Mozilla Firefox browsers
-
+          if (strpos($agent, 'Iceweasel') === false and strpos($agent, 'Firefox') === false) {
+              return false;
+          }
+          if (empty($version)) {
+              return true; // no version specified
+          }
           if (preg_match("/(Iceweasel|Firefox)\/([0-9\.]+)/i", $agent, $match)) {
               if (version_compare($match[2], $version) >= 0) {
                   return true;
@@ -7530,8 +7540,7 @@ function check_php_version($version='5.2.4') {
 
 
       case 'Gecko':   /// Gecko based browsers
-
-          if (substr_count($agent, 'Camino')) {
+          if (empty($version) and substr_count($agent, 'Camino')) {
               // MacOS X Camino support
               $version = 20041110;
           }
@@ -7547,25 +7556,30 @@ function check_php_version($version='5.2.4') {
 
 
       case 'MSIE':   /// Internet Explorer
+          if (strpos($agent, 'Opera') !== false) {     // Reject Opera
+              return false;
+          }
+          // in case of IE we have to deal with BC of the version parameter
+          if (is_null($version)) {
+              $version = 5.5; // anything older is not considered a browser at all!
+          }
 
-          if (strpos($agent, 'Opera')) {     // Reject Opera
-              return false;
-          }
-          $string = explode(';', $agent);
-          if (!isset($string[1])) {
-              return false;
-          }
-          $string = explode(' ', trim($string[1]));
-          if (!isset($string[0]) and !isset($string[1])) {
-              return false;
-          }
-          if ($string[0] == $brand and (float)$string[1] >= $version ) {
-              return true;
+          //see: http://www.useragentstring.com/pages/Internet%20Explorer/
+          if (preg_match("/MSIE ([0-9\.]+)/", $agent, $match)) {
+              if (version_compare($match[1], $version) >= 0) {
+                  return true;
+              }
           }
           break;
 
-      case 'Opera':  /// Opera
 
+      case 'Opera':  /// Opera
+          if (strpos($agent, 'Opera') === false) {
+              return false;
+          }
+          if (empty($version)) {
+              return true; // no version specified
+          }
           if (preg_match("/Opera\/([0-9\.]+)/i", $agent, $match)) {
               if (version_compare($match[1], $version) >= 0) {
                   return true;
@@ -7573,25 +7587,47 @@ function check_php_version($version='5.2.4') {
           }
           break;
 
-      case 'Safari':  /// Safari
-          // Look for AppleWebKit, excluding strings with OmniWeb, Shiira and SimbianOS
+
+      case 'Safari':  /// Desktop or laptop Apple Safari browser
+          if (strpos($agent, 'AppleWebKit') === false) {
+              return false;
+          }
+          // Look for AppleWebKit, excluding strings with OmniWeb, Shiira and SimbianOS and any other mobile devices
           if (strpos($agent, 'OmniWeb')) { // Reject OmniWeb
               return false;
-          } elseif (strpos($agent, 'Shiira')) { // Reject Shiira
+          }
+          if (strpos($agent, 'Shiira')) { // Reject Shiira
               return false;
-          } elseif (strpos($agent, 'SimbianOS')) { // Reject SimbianOS
+          }
+          if (strpos($agent, 'SimbianOS')) { // Reject SimbianOS
+              return false;
+          }
+          if (strpos($agent, 'iPhone') or strpos($agent, 'iPad') or strpos($agent, 'iPod')) {
+              // No Apple mobile devices here - editor does not work, course ajax is not touch compatible, etc.
+              return false;
+          }
+          if (strpos($agent, 'Chrome')) { // Reject chrome browsers - it needs to be tested explicitly
               return false;
           }
 
+          if (empty($version)) {
+              return true; // no version specified
+          }
           if (preg_match("/AppleWebKit\/([0-9]+)/i", $agent, $match)) {
               if (version_compare($match[1], $version) >= 0) {
                   return true;
               }
           }
-
           break;
 
+
       case 'Chrome':
+          if (strpos($agent, 'Chrome') === false) {
+              return false;
+          }
+          if (empty($version)) {
+              return true; // no version specified
+          }
           if (preg_match("/Chrome\/(.*)[ ]+/i", $agent, $match)) {
               if (version_compare($match[1], $version) >= 0) {
                   return true;
@@ -7599,22 +7635,34 @@ function check_php_version($version='5.2.4') {
           }
           break;
 
+
       case 'Safari iOS':  /// Safari on iPhone and iPad
-          if (strpos($agent, 'iPhone')) {
-              return true;
+          if (strpos($agent, 'AppleWebKit') === false or strpos($agent, 'Safari') === false) {
+              return false;
           }
-          if (strpos($agent, 'iPad')) {
-              return true;
+          if (!strpos($agent, 'iPhone') and !strpos($agent, 'iPad') and !strpos($agent, 'iPod')) {
+              return false;
           }
-          if (strpos($agent, 'iPod')) {
-              return true;
+          if (empty($version)) {
+              return true; // no version specified
+          }
+          if (preg_match("/AppleWebKit\/([0-9]+)/i", $agent, $match)) {
+              if (version_compare($match[1], $version) >= 0) {
+                  return true;
+              }
           }
           break;
 
+
       case 'Android WebKit':  /// WebKit browser on Android
-          if (strpos($agent, 'Linux; U; Android')) {
-              return true;
+          if (strpos($agent, 'Linux; U; Android') === false) {
+              return false;
           }
+          if (empty($version)) {
+              return true; // no version specified
+          }
+          //TODO: add version check here
+          return true;
           break;
 
     }
@@ -7633,7 +7681,9 @@ function get_browser_version_classes() {
 
     if (check_browser_version("MSIE", "0")) {
         $classes[] = 'ie';
-        if (check_browser_version("MSIE", 8)) {
+        if (check_browser_version("MSIE", 9)) {
+            $classes[] = 'ie9';
+        } else if (check_browser_version("MSIE", 8)) {
             $classes[] = 'ie8';
         } elseif (check_browser_version("MSIE", 7)) {
             $classes[] = 'ie7';
@@ -7641,16 +7691,20 @@ function get_browser_version_classes() {
             $classes[] = 'ie6';
         }
 
-    } elseif (check_browser_version("Firefox", 0) || check_browser_version("Gecko", 0) || check_browser_version("Camino", 0)) {
+    } elseif (check_browser_version("Firefox") || check_browser_version("Gecko") || check_browser_version("Camino")) {
         $classes[] = 'gecko';
         if (preg_match('/rv\:([1-2])\.([0-9])/', $_SERVER['HTTP_USER_AGENT'], $matches)) {
             $classes[] = "gecko{$matches[1]}{$matches[2]}";
         }
 
-    } elseif (check_browser_version("Safari", 0)) {
+    } elseif (check_browser_version("Safari") || check_browser_version("Chrome")) {
         $classes[] = 'safari';
 
-    } elseif (check_browser_version("Opera", 0)) {
+    } else if (check_browser_version("Safari iOS")) {
+        $classes[] = 'safari';
+        $classes[] = 'ios';
+
+    } elseif (check_browser_version("Opera")) {
         $classes[] = 'opera';
 
     }

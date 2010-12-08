@@ -1531,7 +1531,8 @@ class grade_report_grader extends grade_report {
              check_browser_version('Gecko', '2006010100') ||
              check_browser_version('Camino', '1.0') ||
              check_browser_version('Opera', '6.0') ||
-             check_browser_version('Safari', '2.0'));
+             check_browser_version('Chrome', '6') ||
+             check_browser_version('Safari', '300'));
     }
 
     /**

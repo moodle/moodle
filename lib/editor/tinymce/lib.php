@@ -31,17 +31,19 @@ class tinymce_texteditor extends texteditor {
     public $version = '3.3.9.2';
 
     public function supported_by_browser() {
-        if (check_browser_version('MSIE', 5.5)) {
+        if (check_browser_version('MSIE', 6)) {
             return true;
-        } else if (check_browser_version('Gecko', 20030516)) {
+        }
+        if (check_browser_version('Gecko', 20030516)) {
             return true;
-        } else if (check_browser_version('Safari iOS')) {
-            return false;
-        } else if (check_browser_version('Android WebKit')) {
-            return false;
-        } else if (check_browser_version('Safari', 3)) {
+        }
+        if (check_browser_version('Safari', 412)) {
             return true;
-        } else if (check_browser_version('Opera', 9)) {
+        }
+        if (check_browser_version('Chrome', 6)) {
+            return true;
+        }
+        if (check_browser_version('Opera', 9)) {
             return true;
         }
 
