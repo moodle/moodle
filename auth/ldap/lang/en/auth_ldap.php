@@ -28,7 +28,7 @@ $string['auth_ldap_attrcreators'] = 'List of groups or contexts whose members ar
 $string['auth_ldap_attrcreators_key'] = 'Attribute creators';
 $string['auth_ldap_auth_user_create_key'] = 'Create users externally';
 $string['auth_ldap_bind_dn'] = 'If you want to use bind-user to search users, specify it here. Something like \'cn=ldapuser,ou=public,o=org\'';
-$string['auth_ldap_bind_dn_key'] = 'Distinguished Name';
+$string['auth_ldap_bind_dn_key'] = 'Distinguished name';
 $string['auth_ldap_bind_pw'] = 'Password for bind-user.';
 $string['auth_ldap_bind_pw_key'] = 'Password';
 $string['auth_ldap_bind_settings'] = 'Bind settings';
@@ -103,7 +103,7 @@ $string['auth_ntlmsso_ie_fastpath'] = 'Set to yes to enable the NTLM SSO fast pa
 $string['auth_ntlmsso_ie_fastpath_key'] = 'MS IE fast path?';
 $string['auth_ntlmsso_subnet'] = 'If set, it will only attempt SSO with clients in this subnet. Format: xxx.xxx.xxx.xxx/bitmask';
 $string['auth_ntlmsso_subnet_key'] = 'Subnet';
-$string['auth_ntlmsso_type_key'] = 'Authentication Type';
+$string['auth_ntlmsso_type_key'] = 'Authentication type';
 $string['auth_ntlmsso_type'] = 'The authentication method configured in the web server to authenticate the users (if in doubt, choose NTLM)';
 $string['connectingldap'] = "Connecting to LDAP server...\n";
 $string['creatingtemptable'] = "Creating temporary table {\$a}\n";
