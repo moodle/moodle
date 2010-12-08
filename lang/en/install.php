@@ -151,12 +151,12 @@ $string['databasesocket'] = 'Unix socket';
 $string['databasetypehead'] = 'Choose database driver';
 $string['databasetypesub'] = 'Moodle supports several types of database servers. Please contact server administrator if you do not know which type to use.';
 $string['databaseuser'] = 'Database user';
-$string['dataroot'] = 'Data Directory';
-$string['datarooterror'] = 'The \'Data Directory\' you specified could not be found or created.  Either correct the path or create that directory manually.';
-$string['datarootpublicerror'] = 'The \'Data Directory\' you specified is directly accessible via web, you must use different directory.';
+$string['dataroot'] = 'Data directory';
+$string['datarooterror'] = 'The \'data directory\' you specified could not be found or created.  Either correct the path or create that directory manually.';
+$string['datarootpublicerror'] = 'The \'data directory\' you specified is directly accessible via web, you must use different directory.';
 $string['dbconnectionerror'] = 'We could not connect to the database you specified. Please check your database settings.';
 $string['dbcreationerror'] = 'Database creation error. Could not create the given database name with the settings provided';
-$string['dbhost'] = 'Host Server';
+$string['dbhost'] = 'Host server';
 $string['dbpass'] = 'Password';
 $string['dbprefix'] = 'Tables prefix';
 $string['dbtype'] = 'Type';
@@ -166,41 +166,41 @@ $string['dbwrongnlslang'] = 'The NLS_LANG environment variable in your web serve
 $string['dbwrongprefix'] = 'You must follow "Tables Prefix" rules as explained above.';
 $string['directorysettings'] = '<p>Please confirm the locations of this Moodle installation.</p>
 
-<p><b>Web Address:</b>
+<p><b>Web address:</b>
 Specify the full web address where Moodle will be accessed.  
 If your web site is accessible via multiple URLs then choose the 
 most natural one that your students would use.  Do not include 
 a trailing slash.</p>
 
-<p><b>Moodle Directory:</b>
+<p><b>Moodle directory:</b>
 Specify the full directory path to this installation
 Make sure the upper/lower case is correct.</p>
 
-<p><b>Data Directory:</b>
+<p><b>Data directory:</b>
 You need a place where Moodle can save uploaded files.  This
 directory should be readable AND WRITEABLE by the web server user 
 (usually \'nobody\' or \'apache\'), but it must not be accessible 
 directly via the web. The installer will try to create it if doesn\'t exist.</p>';
 $string['directorysettingshead'] = 'Please confirm the locations of this Moodle installation';
-$string['directorysettingssub'] = '<b>Web Address:</b>
+$string['directorysettingssub'] = '<b>Web address:</b>
 Specify the full web address where Moodle will be accessed.  
 If your web site is accessible via multiple URLs then choose the 
 most natural one that your students would use.  Do not include 
 a trailing slash.
 <br />
 <br />
-<b>Moodle Directory:</b>
+<b>Moodle directory:</b>
 Specify the full directory path to this installation
 Make sure the upper/lower case is correct.
 <br />
 <br />
-<b>Data Directory:</b>
+<b>Data directory:</b>
 You need a place where Moodle can save uploaded files.  This
 directory must be readable AND WRITEABLE by the web server user 
 (usually \'nobody\' or \'apache\'), but it must not be accessible 
 directly via the web. The installer will try to create it if doesn\'t exist.';
-$string['dirroot'] = 'Moodle Directory';
-$string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there. The value below has been reset.';
+$string['dirroot'] = 'Moodle directory';
+$string['dirrooterror'] = 'The \'Moodle directory\' setting seems to be incorrect - we can\'t find a Moodle installation there. The value below has been reset.';
 $string['download'] = 'Download';
 $string['downloadlanguagebutton'] = 'Download the &quot;{$a}&quot; language pack';
 $string['downloadlanguagehead'] = 'Download language pack';
@@ -213,7 +213,7 @@ $string['environmentsub2'] = 'Each Moodle release has some minimum PHP version r
 Full environment check is done before each install and upgrade. Please contact server administrator if you do not know how to install new version or enable PHP extensions.';
 $string['errorsinenvironment'] = 'Environment check failed!';
 $string['fail'] = 'Fail';
-$string['fileuploads'] = 'File Uploads';
+$string['fileuploads'] = 'File uploads';
 $string['fileuploadserror'] = 'This should be on';
 $string['fileuploadshelp'] = '<p>File uploading seems to be disabled on your server.</p>
 
@@ -235,9 +235,9 @@ $string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</
 <p>To add GD to PHP under Unix, compile PHP using the --with-gd parameter.</p>
 
 <p>Under Windows you can usually edit php.ini and uncomment the line referencing php_gd2.dll.</p>';
-$string['globalsquotes'] = 'Insecure Handling of Globals';
+$string['globalsquotes'] = 'Insecure handling of globals';
 $string['globalsquoteserror'] = 'Fix your PHP settings: disable register_globals and/or enable magic_quotes_gpc';
-$string['globalsquoteshelp'] = '<p>Combination of disabled Magic Quotes GPC and enabled Register Globals both at the same time is not recommended.</p>
+$string['globalsquoteshelp'] = '<p>Combination of disabled magic quotes GPC and enabled register globals both at the same time is not recommended.</p>
 
 <p>The recommended setting is <b>magic_quotes_gpc = On</b> and <b>register_globals = Off</b> in your php.ini</p>
 
@@ -248,13 +248,13 @@ $string['globalsquoteshelp'] = '<p>Combination of disabled Magic Quotes GPC and 
 $string['chooselanguage'] = 'Choose a language';
 $string['chooselanguagehead'] = 'Choose a language';
 $string['chooselanguagesub'] = 'Please choose a language for the installation. This language will also be used as the default language for the site, though it may be changed later.';
-$string['inputdatadirectory'] = 'Data Directory :';
+$string['inputdatadirectory'] = 'Data directory:';
 $string['inputwebadress'] = 'Web address :';
-$string['inputwebdirectory'] = 'Moodle Directory :';
+$string['inputwebdirectory'] = 'Moodle directory:';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Unfortunately the language "{$a}" could not be downloaded. The installation process will continue in English.';
 $string['langdownloadok'] = 'The language "{$a}" was installed successfully. The installation process will continue in this language.';
-$string['magicquotesruntime'] = 'Magic Quotes Run Time';
+$string['magicquotesruntime'] = 'Magic quotes run time';
 $string['magicquotesruntimeerror'] = 'This should be off';
 $string['magicquotesruntimehelp'] = '<p>Magic quotes runtime should be turned off for Moodle to function properly.</p>
 
@@ -263,7 +263,7 @@ $string['magicquotesruntimehelp'] = '<p>Magic quotes runtime should be turned of
 <p>If you don\'t have access to your php.ini, you might be able to place the following line in a file 
    called .htaccess within your Moodle directory:</p>
    <blockquote><div>php_value magic_quotes_runtime Off</div></blockquote>';
-$string['memorylimit'] = 'Memory Limit';
+$string['memorylimit'] = 'Memory limit';
 $string['memorylimiterror'] = 'The PHP memory limit is set quite low ... you may run into problems later.';
 $string['memorylimithelp'] = '<p>The PHP memory limit for your server is currently set to {$a}.</p>
 
@@ -309,20 +309,20 @@ $string['odbcextensionisnotpresentinphp'] = 'PHP has not been properly configure
 $string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['pass'] = 'Pass';
 $string['paths'] = 'Paths';
-$string['pathserrcreatedataroot'] = 'Data Directory ({$a->dataroot}) cannot be created by the installer.';
+$string['pathserrcreatedataroot'] = 'Data directory ({$a->dataroot}) cannot be created by the installer.';
 $string['pathshead'] = 'Confirm paths';
 $string['pathsrodataroot'] = 'Dataroot directory is not writable.';
-$string['pathsroparentdataroot'] = 'Parent directory ({$a->parent}) is not writeable. Data Directory ({$a->dataroot}) cannot be created by the installer.';
+$string['pathsroparentdataroot'] = 'Parent directory ({$a->parent}) is not writeable. Data directory ({$a->dataroot}) cannot be created by the installer.';
 $string['pathssubadmindir'] = 'A very few webhosts use /admin as a special URL for you to access a
 control panel or something.  Unfortunately this conflicts with the standard location for the Moodle admin pages.  You can fix this by
 renaming the admin directory in your installation, and putting that  new name here.  For example: <em>moodleadmin</em>. This will fix admin links in Moodle.';
 $string['pathssubdataroot'] = 'You need a place where Moodle can save uploaded files. This directory should be readable AND WRITEABLE by the web server user
 (usually \'nobody\' or \'apache\'), but it must not be accessible directly via the web. The installer will try to create it if doesn\'t exist.';
-$string['pathssubdirroot'] = 'Full directory path to moodle installation.';
-$string['pathssubwwwroot'] = 'Full web address where moodle will be accessed.
+$string['pathssubdirroot'] = 'Full directory path to Moodle installation.';
+$string['pathssubwwwroot'] = 'Full web address where Moodle will be accessed.
 It\'s not possible to access Moodle using multiple addresses.
-If your site has multiple public addresses you must setup permanent redirects on all of them except this one.
-If your site is accessible both from intranet and Internet use the public address here and setup DNS so that the intranet users may use the public address too.
+If your site has multiple public addresses you must set up permanent redirects on all of them except this one.
+If your site is accessible both from Intranet and Internet use the public address here and set up DNS so that the Intranet users may use the public address too.
 If the address is not correct please change the URL in your browser to restart installation with a different value.';
 $string['pathsunsecuredataroot'] = 'Dataroot location is not secure';
 $string['pathswrongadmindir'] = 'Admin directory does not exist';
@@ -334,8 +334,8 @@ $string['phpversionhelp'] = '<p>Moodle requires a PHP version of at least 4.3.0 
 <p>You must upgrade PHP or move to a host with a newer version of PHP!<br />
 (In case of 5.0.x you could also downgrade to 4.4.x version)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
-$string['releasenoteslink'] = 'For information about this version of Moodle, please see Release Notes at {$a}';
-$string['safemode'] = 'Safe Mode';
+$string['releasenoteslink'] = 'For information about this version of Moodle, please see the release notes at {$a}';
+$string['safemode'] = 'Safe mode';
 $string['safemodeerror'] = 'Moodle may have trouble with safe mode on';
 $string['safemodehelp'] = '<p>Moodle may have a variety of problems with safe mode on, not least is that 
    it probably won\'t be allowed to create new files.</p>
@@ -344,17 +344,17 @@ $string['safemodehelp'] = '<p>Moodle may have a variety of problems with safe mo
    to just find a new web hosting company for your Moodle site.</p>
    
 <p>You can try continuing the install if you like, but expect a few problems later on.</p>';
-$string['sessionautostart'] = 'Session Auto Start';
+$string['sessionautostart'] = 'Session auto start';
 $string['sessionautostarterror'] = 'This should be off';
 $string['sessionautostarthelp'] = '<p>Moodle requires session support and will not function without it.</p>
 
 <p>Sessions can be enabled in the php.ini file ... look for the session.auto_start parameter.</p>';
-$string['skipdbencodingtest'] = 'Skip DB Encoding Test';
+$string['skipdbencodingtest'] = 'Skip DB encoding test';
 $string['nativesqlsrv'] = 'SQL*Server Microsoft (native/sqlsrv)';
 $string['nativesqlsrvhelp'] = 'Now you need to configure the database where most Moodle data will be stored.
 This database must already have been created and a username and password created to access it. Table prefix is mandatory.';
 $string['sqliteextensionisnotpresentinphp'] = 'PHP has not been properly configured with the SQLite extension.  Please check your php.ini file or recompile PHP.';
-$string['upgradingqtypeplugin'] = 'Upgrading Question/type Plugin';
+$string['upgradingqtypeplugin'] = 'Upgrading question/type plugin';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'You are seeing this page because you have successfully installed and 
     launched the <strong>{$a->packname} {$a->packversion}</strong> package in your computer. Congratulations!';
