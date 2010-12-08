@@ -1,7 +1,7 @@
 <?php
 
-require_once('../../config.php');
-require_once('lib.php');
+require('../../config.php');
+require_once($CFG->dirroot.'/mod/book/locallib.php');
 require_once('edit_form.php');
 
 $cmid       = required_param('cmid', PARAM_INT);  // Book Course Module ID

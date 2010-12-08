@@ -1,6 +1,6 @@
 <?php
 
-defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
+defined('MOODLE_INTERNAL') || die();
 
 /// included from mod/book/view.php and print.php
 ///
@@ -27,16 +27,16 @@ $title = '';
 $first = 1;
 
 switch ($book->numbering) {
-  case NUM_NONE:
+  case BOOK_NUM_NONE:
       $toc .= '<div class="book_toc_none">';
       break;
-  case NUM_NUMBERS:
+  case BOOK_NUM_NUMBERS:
       $toc .= '<div class="book_toc_numbered">';
       break;
-  case NUM_BULLETS:
+  case BOOK_NUM_BULLETS:
       $toc .= '<div class="book_toc_bullets">';
       break;
-  case NUM_INDENTED:
+  case BOOK_NUM_INDENTED:
       $toc .= '<div class="book_toc_indented">';
       break;
 }
@@ -58,13 +58,13 @@ if ($print) { ///TOC for printing
                 $nch++;
                 $ns = 0;
                 $toc .= ($first) ? '<li>' : '</ul></li><li>';
-                if ($book->numbering == NUM_NUMBERS) {
+                if ($book->numbering == BOOK_NUM_NUMBERS) {
                       $title = "$nch $title";
                 }
             } else {
                 $ns++;
                 $toc .= ($first) ? '<li><ul><li>' : '<li>';
-                if ($book->numbering == NUM_NUMBERS) {
+                if ($book->numbering == BOOK_NUM_NUMBERS) {
                       $title = "$nch.$ns $title";
                 }
             }
@@ -86,11 +86,11 @@ if ($print) { ///TOC for printing
             if (!$ch->hidden) {
                 $nch++;
                 $ns = 0;
-                if ($book->numbering == NUM_NUMBERS) {
+                if ($book->numbering == BOOK_NUM_NUMBERS) {
                     $title = "$nch $title";
                 }
             } else {
-                if ($book->numbering == NUM_NUMBERS) {
+                if ($book->numbering == BOOK_NUM_NUMBERS) {
                     $title = "x $title";
                 }
                 $title = '<span class="dimmed_text">'.$title.'</span>';
@@ -100,11 +100,11 @@ if ($print) { ///TOC for printing
             $toc .= ($first) ? '<li><ul><li>' : '<li>';
             if (!$ch->hidden) {
                 $ns++;
-                if ($book->numbering == NUM_NUMBERS) {
+                if ($book->numbering == BOOK_NUM_NUMBERS) {
                     $title = "$nch.$ns $title";
                 }
             } else {
-                if ($book->numbering == NUM_NUMBERS) {
+                if ($book->numbering == BOOK_NUM_NUMBERS) {
                     $title = "x.x $title";
                 }
                 $title = '<span class="dimmed_text">'.$title.'</span>';
@@ -152,14 +152,14 @@ if ($print) { ///TOC for printing
                 $nch++;
                 $ns = 0;
                 $toc .= ($first) ? '<li>' : '</ul></li><li>';
-                if ($book->numbering == NUM_NUMBERS) {
+                if ($book->numbering == BOOK_NUM_NUMBERS) {
                       $title = "$nch $title";
                 }
             $prevtitle = $title;
             } else {
                 $ns++;
                 $toc .= ($first) ? '<li><ul><li>' : '<li>';
-                if ($book->numbering == NUM_NUMBERS) {
+                if ($book->numbering == BOOK_NUM_NUMBERS) {
                       $title = "$nch.$ns $title";
                 }
             }

@@ -2,6 +2,8 @@
 
 require('teacheraccess.php'); //page only for teachers
 
+require_once($CFG->dirroot.'/mod/book/locallib.php');
+
 ///switch hidden state
 $chapter->hidden = $chapter->hidden ? 0 : 1;
 

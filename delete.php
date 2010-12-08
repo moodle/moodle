@@ -1,6 +1,9 @@
 <?php
 
 require('teacheraccess.php'); //page only for teachers
+
+require_once($CFG->dirroot.'/mod/book/locallib.php');
+
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 

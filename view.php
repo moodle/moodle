@@ -1,7 +1,7 @@
 <?php
 
 require('../../config.php');
-require_once('lib.php');
+require_once($CFG->dirroot.'/mod/book/locallib.php');
 
 $id        = required_param('id', PARAM_INT);           // Course Module ID
 $chapterid = optional_param('chapterid', 0, PARAM_INT); // Chapter ID

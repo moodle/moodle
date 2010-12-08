@@ -1,5 +1,7 @@
 <?php
 
+defined('MOODLE_INTERNAL') || die;
+
 require_once($CFG->libdir.'/formslib.php');
 
 class book_chapter_edit_form extends moodleform {

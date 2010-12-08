@@ -1,7 +1,7 @@
 <?php
 
 require('../../config.php');
-require_once('lib.php');
+require_once($CFG->dirroot.'/mod/book/locallib.php');
 require_once('import_form.php');
 
 $id = required_param('id', PARAM_INT);           // Course Module ID

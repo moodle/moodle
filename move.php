@@ -1,6 +1,9 @@
 <?php
 
 require('teacheraccess.php'); //page only for teachers
+
+require_once($CFG->dirroot.'/mod/book/locallib.php');
+
 $up  = optional_param('up', 0, PARAM_BOOL);
 
 

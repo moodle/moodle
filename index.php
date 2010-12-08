@@ -3,7 +3,7 @@
 /// This page lists all the instances of book in a particular course
 
 require_once('../../config.php');
-require_once('lib.php');
+require_once($CFG->dirroot.'/mod/book/locallib.php');
 
 $id = required_param('id', PARAM_INT);           // Course Module ID
 

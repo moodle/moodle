@@ -25,7 +25,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 require('../../config.php');
-require_once('lib.php');
+require_once($CFG->dirroot.'/mod/book/locallib.php');
 require_once($CFG->dirroot.'/backup/lib.php');
 require_once($CFG->libdir.'/filelib.php');
 
