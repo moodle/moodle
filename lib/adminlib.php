@@ -5436,6 +5436,8 @@ class admin_page_managefilters extends admin_externalpage {
  *
  * This function must be called on each admin page before other code.
  *
+ * @global moodle_page $PAGE
+ * 
  * @param string $section name of page
  * @param string $extrabutton extra HTML that is added after the blocks editing on/off button.
  * @param array $extraurlparams an array paramname => paramvalue, or parameters that need to be
@@ -5482,9 +5484,6 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
         $actualurl = $extpage->url;
     }
 
-    $extraurlparams = (array)$extraurlparams;
-    $extraurlparams['section'] = $section; // TODO: this is an ugly hack for navigation that must be eliminated!
-
     $PAGE->set_url($actualurl, $extraurlparams);
     if (strpos($PAGE->pagetype, 'admin-') !== 0) {
         $PAGE->set_pagetype('admin-' . $PAGE->pagetype);
@@ -5499,6 +5498,16 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
         $PAGE->set_heading($strinstallation);
         $PAGE->set_cacheable(false);
         return;
+    }
+    
+    // Locate the current item on the navigation and make it active when found.
+    $path = $extpage->path;
+    $node = $PAGE->settingsnav;
+    while ($node && count($path) > 0) {
+        $node = $node->get(array_pop($path));
+    }
+    if ($node) {
+        $node->make_active();
     }
 
     // Normal case.

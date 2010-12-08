@@ -31,7 +31,8 @@
     if ($perpage) {
         $urlparams['perpage'] = $perpage;
     }
-    $PAGE->set_url('/course/category.php', $urlparams);
+    $PAGE->set_url(new moodle_url('/course/category.php', array('id' => $id)));
+    navigation_node::override_active_url($PAGE->url);
     $context = $PAGE->context;
     $category = $PAGE->category;
 
@@ -161,11 +162,15 @@
         require_once($CFG->libdir . '/adminlib.php');
         admin_externalpage_setup('coursemgmt', '', $urlparams, $CFG->wwwroot . '/course/category.php');
         $PAGE->set_context($context);   // Ensure that we are actually showing blocks etc for the cat context
+
+        $settingsnode = $PAGE->settingsnav->find_active_node();
+        if ($settingsnode) {
+            $settingsnode->make_inactive();
+            $settingsnode->force_open();
+            $PAGE->navbar->add($settingsnode->text, $settingsnode->action);
+        }
         echo $OUTPUT->header();
     } else {
-        $PAGE->navbar->add($strcategories, new moodle_url('/course/index.php'));
-        $PAGE->navbar->add($category->name);
-        $PAGE->navbar->add($strcourses);
         $PAGE->set_title("$site->shortname: $category->name");
         $PAGE->set_heading($site->fullname);
         $PAGE->set_button(print_course_search('', true, 'navbar'));

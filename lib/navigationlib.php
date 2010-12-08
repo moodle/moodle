@@ -963,9 +963,13 @@ class global_navigation extends navigation_node {
         // Next load context specific content into the navigation
         switch ($this->page->context->contextlevel) {
             case CONTEXT_SYSTEM :
+                // This has already been loaded we just need to map the variable
+                $coursenode = $frontpagecourse;
+                break;
             case CONTEXT_COURSECAT :
                 // This has already been loaded we just need to map the variable
                 $coursenode = $frontpagecourse;
+                $this->load_all_categories($this->page->context->instanceid);
                 break;
             case CONTEXT_BLOCK :
             case CONTEXT_COURSE :
