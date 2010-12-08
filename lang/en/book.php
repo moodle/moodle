@@ -2,12 +2,40 @@
 
 $string['modulename'] = 'Book';
 $string['modulenameplural'] = 'Books';
+$string['modulename_help'] = 'Book is a simple multipage study material.';
 $string['pluginname'] = 'Book';
+$string['pluginadministration'] = 'Book administration';
 
 $string['toc'] = 'Table of Contents';
 $string['tocwidth'] = 'Select width of the Table of Contents for all books.';
 $string['book_tocwidth'] = 'Table of Contents width';
 $string['faq'] = 'Book FAQ';
+$string['faq_help'] = '
+*Why only two levels?*
+
+Two levels are generally enough for all books, three levels would lead to poorly structured documents. Book module is designed for
+creation of short multipage study materials. It is usually better to use PDF format for longer documents. The easiest way to create PDFs are
+virtual printers (see
+<a  href="http://sector7g.wurzel6.de/pdfcreator/index_en.htm"  target="_blank">PDFCreator</a>,
+<a  href="http://fineprint.com/products/pdffactory/index.html"  target="_blank">PDFFactory</a>,
+<a  href="http://www.adobe.com/products/acrobatstd/main.html"  target="_blank">Adobe Acrobat</a>,
+etc.).
+
+*Can students edit books?*
+
+Only teachers can create and edit books. There are no plans to implement student editing for books, but somebody may create something
+similar for students (Portfolio?). The main reason is to keep Book module as simple as possible.
+
+*How do I search the books?*
+
+At present there is only one way, use browser\'s search capability in print page. Global searching is now possible only in Moodle forums.
+It would be nice to have global searching for all resources including books, any volunteers?
+
+*My titles do not fit on one line.*
+
+Either rephrase your titles or ask your site admin to change TOC
+width. It is defined globally for all books in module configuration
+page.';
 
 $string['disableprinting'] = 'Disable Printing';
 $string['disableprinting_help'] = 'Hide print icons.';

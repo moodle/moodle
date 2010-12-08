@@ -48,6 +48,8 @@ $allowprint  = has_capability('mod/book:print', $context) and !$book->disablepri
 $allowexport = has_capability('mod/book:exportimscp', $context);
 $viewhidden  = has_capability('mod/book:viewhiddenchapters', $context);
 
+$PAGE->set_url('/mod/book/view.php', array('id'=>$id, 'chpterid'=>'chapterid'));
+
 if ($allowedit) {
     if ($edit != -1) {
         $USER->editing = $edit;
@@ -112,14 +114,12 @@ add_to_log($course->id, 'book', 'view', 'view.php?id='.$cm->id.'&amp;chapterid='
 ///read standard strings
 $strbooks = get_string('modulenameplural', 'book');
 $strbook  = get_string('modulename', 'book');
-$strTOC = get_string('TOC', 'book');
+$strtoc   = get_string('toc', 'book');
 
 /// prepare header
 $navigation = build_navigation('', $cm);
 
-$buttons = $allowedit ? '<table cellspacing="0" cellpadding="0"><tr><td>'.update_module_button($cm->id, $course->id, $strbook).'</td>'.
-           '<td>&nbsp;</td><td>'.book_edit_button($book, $cm, $chapter).'</td></tr></table>'
-           : '&nbsp;';
+$buttons = $allowedit ? book_edit_button($book, $cm, $chapter) : '&nbsp;';
 
 print_header( "$course->shortname: $book->name ($chapter->title)",
               $course->fullname,
@@ -217,19 +217,19 @@ $generateimscp = ($allowexport) ? '<a title="'.get_string('generateimscp', 'book
 <tr class="tocandchapter">
     <td style="width:<?php echo $tocwidth ?>px" align="left"><div class="clearer">&nbsp;</div>
         <?php
-        print_box_start('generalbox');
+        echo $OUTPUT->box_start('generalbox');
         echo $toc;
-        print_box_end();
+        echo $OUTPUT->box_end();
         if ($allowedit and $edit) {
             echo '<div class="faq">';
-            helpbutton('faq', get_string('faq','book'), 'book', true, true);
+            echo $OUTPUT->help_icon('faq', 'mod_book', get_string('faq', 'mod_book'));
             echo '</div>';
         }
         ?>
     </td>
     <td align="right"><div class="clearer">&nbsp;</div>
         <?php
-        print_box_start('generalbox');
+        echo $OUTPUT->box_start('generalbox');
         $content = '';
         if (!$book->customtitles) {
           if ($currsubtitle == '&nbsp;') {
@@ -245,7 +245,7 @@ $generateimscp = ($allowexport) ? '<a title="'.get_string('generateimscp', 'book
         echo '<div class="book_content">';
         echo format_text($content, FORMAT_HTML, $nocleanoption, $course->id);
         echo '</div>';
-        print_box_end();
+        echo $OUTPUT->box_end();
         /// lower navigation
         echo '<div class="booknav">'.$chnavigation.'</div>';
         ?>
@@ -254,5 +254,5 @@ $generateimscp = ($allowexport) ? '<a title="'.get_string('generateimscp', 'book
 </table>
 
 <?php
-print_footer($course);
+echo $OUTPUT->footer();
 
