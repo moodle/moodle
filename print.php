@@ -39,13 +39,13 @@ $book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
 
-if ($book->disableprinting) {
-    error('Printing is disabled');
-}
-
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/book:read', $context);
 require_capability('mod/book:print', $context);
+
+if ($book->disableprinting) {
+    error('Printing is disabled');
+}
 
 //check all variables
 if ($chapterid) {
