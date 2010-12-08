@@ -26,16 +26,24 @@
 require('../../config.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
 
-$id        = required_param('id', PARAM_INT);           // Course Module ID
+$id        = optional_param('id', 0, PARAM_INT);        // Course Module ID
+$bid       = optional_param('b', 0, PARAM_INT);         // Book id
 $chapterid = optional_param('chapterid', 0, PARAM_INT); // Chapter ID
 $edit      = optional_param('edit', -1, PARAM_BOOL);    // Edit mode
 
 // =========================================================================
 // security checks START - teachers edit; students view
 // =========================================================================
-$cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
-$book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
+if ($id) {
+    $cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
+    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
+} else {
+    $book = $DB->get_record('book', array('id'=>$bid), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('book', $book->id, 0, false, MU<ST_EXIST);
+    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $id = $cm->id;
+}
 
 require_course_login($course, true, $cm);
 
@@ -96,6 +104,7 @@ if (!$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid
 
 //check all variables
 unset($id);
+unset($bid);
 unset($chapterid);
 
 /// chapter is hidden for students
