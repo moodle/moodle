@@ -80,7 +80,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read string $pagetype Returns the page type string, should be used as the id for the body tag in the theme.
  * @property-read int $periodicrefreshdelay The periodic refresh delay to use with meta refresh
  * @property-read page_requirements_manager $requires Tracks the JavaScript, CSS files, etc. required by this page.
- * @property-read settings_navigation $settignsnav
+ * @property-read settings_navigation $settingsnav
  * @property-read int $state One of the STATE_... constants
  * @property-read string $subpage The subpage identifier, if any.
  * @property-read theme_config $theme Returns the initialised theme for this page.
