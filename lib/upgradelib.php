@@ -1296,8 +1296,8 @@ function upgrade_core($version, $verbose) {
         print_upgrade_part_start('moodle', false, $verbose);
 
         // one time special local migration pre 2.0 upgrade script
-        if ($version < 2007101600) {
-            $pre20upgradefile = "$CFG->dirrot/local/upgrade_pre20.php";
+        if ($CFG->version < 2007101600) {
+            $pre20upgradefile = "$CFG->dirroot/local/upgrade_pre20.php";
             if (file_exists($pre20upgradefile)) {
                 set_time_limit(0);
                 require($pre20upgradefile);
