@@ -11,6 +11,9 @@ class block_glossary_random extends block_base {
 
     function specialization() {
         global $CFG, $DB;
+
+        require_once($CFG->libdir . '/filelib.php');
+
         $this->course = $this->page->course;
 
         // load userdefined title and make sure it's never empty
