@@ -55,7 +55,7 @@ class book_chapter_edit_form extends moodleform {
         $mform->setType('pagenum', PARAM_INT);
 
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        if (has_capability('mod/book:import', $context)) {
+        if (false and has_capability('mod/book:import', $context)) { //TODO: after files
             $mform->addElement('static', 'doimport', get_string('importingchapters', 'book').':', '<a href="import.php?id='.$cm->id.'">'.get_string('doimport', 'book').'</a>');
         }
 
