@@ -222,20 +222,15 @@ $generateimscp = ''; //TODO after new file handling
     <td align="right"><div class="clearer">&nbsp;</div>
         <?php
         echo $OUTPUT->box_start('generalbox');
-        $content = '';
+        echo '<div class="book_content">';
         if (!$book->customtitles) {
           if ($currsubtitle == '&nbsp;') {
-              $content .= '<p class="book_chapter_title">'.$currtitle.'</p>';
+              echo '<p class="book_chapter_title">'.$currtitle.'</p>';
           } else {
-              $content .= '<p class="book_chapter_title">'.$currtitle.'<br />'.$currsubtitle.'</p>';
+              echo '<p class="book_chapter_title">'.$currtitle.'<br />'.$currsubtitle.'</p>';
           }
         }
-        $content .= $chapter->content;
-
-        $nocleanoption = new object();
-        $nocleanoption->noclean = true;
-        echo '<div class="book_content">';
-        echo format_text($content, FORMAT_HTML, $nocleanoption, $course->id);
+        echo format_text($chapter->content, $chapter->contentformat, array('noclean'=>true, 'context'=>$context));
         echo '</div>';
         echo $OUTPUT->box_end();
         /// lower navigation

@@ -74,9 +74,6 @@ $strtop   = get_string('top', 'book');
 @header('Accept-Ranges: none');
 @header('Content-type: text/html; charset=utf-8');
 
-$formatoptions = new stdClass();
-$formatoptions->noclean = true;
-
 if ($chapter) {
     add_to_log($course->id, 'book', 'print', 'print.php?id='.$cm->id.'&chapterid='.$chapter->id, $book->id, $cm->id);
 
@@ -91,15 +88,15 @@ if ($chapter) {
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
     <html>
     <head>
-      <title><?PHP echo format_string($book->name) ?></title>
+      <title><?php echo format_string($book->name) ?></title>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-      <meta name="description" content="<?PHP echo s(format_string($book->name)) ?>" />
+      <meta name="description" content="<?php echo s(format_string($book->name)) ?>" />
       <link rel="stylesheet" type="text/css" href="book_print.css" />
     </head>
     <body>
     <a name="top"></a>
     <div class="chapter">
-    <?PHP
+    <?php
 
     if (!$book->customtitles) {
         if ($currsubtitle == '&nbsp;') {
@@ -108,7 +105,7 @@ if ($chapter) {
             echo '<p class="book_chapter_title">'.$currtitle.'<br />'.$currsubtitle.'</p>';
         }
     }
-    echo format_text($chapter->content, FORMAT_HTML, $formatoptions, $course->id);
+    echo format_text($chapter->content, $chapter->contentformat, array('noclean'=>true, 'context'=>$context));
     echo '</div>';
     echo '</body> </html>';
 
@@ -121,35 +118,35 @@ if ($chapter) {
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
     <html>
     <head>
-      <title><?PHP echo format_string(name) ?></title>
-      <meta http-equiv="Content-Type" content="text/html; charset=<?PHP echo $encoding ?>" />
-      <meta name="description" content="<?PHP echo s(format_string($book->name)) ?>" />
+      <title><?php echo format_string(name) ?></title>
+      <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $encoding ?>" />
+      <meta name="description" content="<?php echo s(format_string($book->name)) ?>" />
       <link rel="stylesheet" type="text/css" href="book_print.css" />
     </head>
     <body>
     <a name="top"></a>
-    <p class="book_title"><?PHP echo format_string($book->name) ?></p>
-    <p class="book_summary"><?PHP echo format_text($book->intro, $book->introformat) ?></p>
+    <p class="book_title"><?php echo format_string($book->name) ?></p>
+    <p class="book_summary"><?php echo format_text($book->intro, $book->introformat) ?></p>
     <div class="book_info"><table>
     <tr>
-    <td><?PHP echo get_string('site') ?>:</td>
-    <td><a href="<?PHP echo $CFG->wwwroot ?>"><?PHP echo format_string($SITE->fullname) ?></a></td>
+    <td><?php echo get_string('site') ?>:</td>
+    <td><a href="<?php echo $CFG->wwwroot ?>"><?php echo format_string($SITE->fullname) ?></a></td>
     </tr><tr>
-    <td><?PHP echo get_string('course') ?>:</td>
-    <td><?PHP echo format_string($course->fullname) ?></td>
+    <td><?php echo get_string('course') ?>:</td>
+    <td><?php echo format_string($course->fullname) ?></td>
     </tr><tr>
-    <td><?PHP echo get_string('modulename', 'book') ?>:</td>
-    <td><?PHP echo format_string($book->name) ?></td>
+    <td><?php echo get_string('modulename', 'book') ?>:</td>
+    <td><?php echo format_string($book->name) ?></td>
     </tr><tr>
-    <td><?PHP echo get_string('printedby', 'book') ?>:</td>
-    <td><?PHP echo format_string(fullname($USER, true)) ?></td>
+    <td><?php echo get_string('printedby', 'book') ?>:</td>
+    <td><?php echo format_string(fullname($USER, true)) ?></td>
     </tr><tr>
-    <td><?PHP echo get_string('printdate','book') ?>:</td>
-    <td><?PHP echo userdate(time()) ?></td>
+    <td><?php echo get_string('printdate','book') ?>:</td>
+    <td><?php echo userdate(time()) ?></td>
     </tr>
     </table></div>
 
-    <?PHP
+    <?php
     $print = 1;
     require('toc.php');
     echo $toc;
@@ -164,7 +161,7 @@ if ($chapter) {
             }
             $content = str_replace($link1, '#ch', $ch->content);
             $content = str_replace($link2, '#top', $content);
-            echo format_text($content, FORMAT_HTML, $formatoptions, $course->id);
+            echo format_text($content, $ch->contentformat, array('noclean'=>true, 'context'=>$context));
             echo '</div>';
             //echo '<a href="#toc">'.$strtop.'</a>';
 
