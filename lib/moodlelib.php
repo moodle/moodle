@@ -7588,7 +7588,22 @@ function check_php_version($version='5.2.4') {
           break;
 
 
-      case 'Safari':  /// Desktop or laptop Apple Safari browser
+      case 'WebKit':  /// WebKit based browser - everything derived from it (Safari, Chrome, iOS, Android and other mobiles)
+          if (strpos($agent, 'AppleWebKit') === false) {
+              return false;
+          }
+          if (empty($version)) {
+              return true; // no version specified
+          }
+          if (preg_match("/AppleWebKit\/([0-9]+)/i", $agent, $match)) {
+              if (version_compare($match[1], $version) >= 0) {
+                  return true;
+              }
+          }
+          break;
+
+
+      case 'Safari':  /// Desktop version of Apple Safari browser - no mobile or touch devices
           if (strpos($agent, 'AppleWebKit') === false) {
               return false;
           }
@@ -7600,6 +7615,9 @@ function check_php_version($version='5.2.4') {
               return false;
           }
           if (strpos($agent, 'SimbianOS')) { // Reject SimbianOS
+              return false;
+          }
+          if (strpos($agent, 'Android')) { // Reject Androids too
               return false;
           }
           if (strpos($agent, 'iPhone') or strpos($agent, 'iPad') or strpos($agent, 'iPod')) {
@@ -7636,7 +7654,7 @@ function check_php_version($version='5.2.4') {
           break;
 
 
-      case 'Safari iOS':  /// Safari on iPhone and iPad
+      case 'Safari iOS':  /// Safari on iPhone, iPad and iPod touch
           if (strpos($agent, 'AppleWebKit') === false or strpos($agent, 'Safari') === false) {
               return false;
           }
@@ -7654,15 +7672,18 @@ function check_php_version($version='5.2.4') {
           break;
 
 
-      case 'Android WebKit':  /// WebKit browser on Android
+      case 'WebKit Android':  /// WebKit browser on Android
           if (strpos($agent, 'Linux; U; Android') === false) {
               return false;
           }
           if (empty($version)) {
               return true; // no version specified
           }
-          //TODO: add version check here
-          return true;
+          if (preg_match("/AppleWebKit\/([0-9]+)/i", $agent, $match)) {
+              if (version_compare($match[1], $version) >= 0) {
+                  return true;
+              }
+          }
           break;
 
     }
@@ -7691,20 +7712,22 @@ function get_browser_version_classes() {
             $classes[] = 'ie6';
         }
 
-    } elseif (check_browser_version("Firefox") || check_browser_version("Gecko") || check_browser_version("Camino")) {
+    } else if (check_browser_version("Firefox") || check_browser_version("Gecko") || check_browser_version("Camino")) {
         $classes[] = 'gecko';
         if (preg_match('/rv\:([1-2])\.([0-9])/', $_SERVER['HTTP_USER_AGENT'], $matches)) {
             $classes[] = "gecko{$matches[1]}{$matches[2]}";
         }
 
-    } elseif (check_browser_version("Safari") || check_browser_version("Chrome")) {
+    } else if (check_browser_version("WebKit")) {
         $classes[] = 'safari';
+        if (check_browser_version("Safari iOS")) {
+            $classes[] = 'ios';
 
-    } else if (check_browser_version("Safari iOS")) {
-        $classes[] = 'safari';
-        $classes[] = 'ios';
+        } else if (check_browser_version("WebKit Android")) {
+            $classes[] = 'android';
+        }
 
-    } elseif (check_browser_version("Opera")) {
+    } else if (check_browser_version("Opera")) {
         $classes[] = 'opera';
 
     }

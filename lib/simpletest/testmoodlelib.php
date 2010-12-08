@@ -71,6 +71,10 @@ class moodlelib_test extends UnitTestCase {
                 '528' => array('iPhone' => 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_1_2 like Mac OS X; cs-cz) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7D11 Safari/528.16'),
                 '533' => array('iPad' => 'Mozilla/5.0 (iPad; U; CPU OS 4_2_1 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C148 Safari/6533.18.5'),
             ),
+            'WebKit Android' => array(
+                '525' => array('G1 Phone' => 'Mozilla/5.0 (Linux; U; Android 1.1; en-gb; dream) AppleWebKit/525.10+ (KHTML, like Gecko) Version/3.0.4 Mobile Safari/523.12.2 – G1 Phone'),
+                '530' => array('Nexus' => 'Mozilla/5.0 (Linux; U; Android 2.1; en-us; Nexus One Build/ERD62) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 –Nexus'),
+            ),
             'Chrome' => array(
                 '8' => array('Mac OS X' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_5; en-US) AppleWebKit/534.10 (KHTML, like Gecko) Chrome/8.0.552.215 Safari/534.10'),
             ),
@@ -199,6 +203,7 @@ class moodlelib_test extends UnitTestCase {
 
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Safari']['412']['Mac OS X'];
         $this->assertTrue(check_browser_version('Safari'));
+        $this->assertTrue(check_browser_version('WebKit'));
         $this->assertTrue(check_browser_version('Safari', '312'));
         $this->assertFalse(check_browser_version('Safari', '500'));
         $this->assertFalse(check_browser_version('Chrome'));
@@ -206,14 +211,23 @@ class moodlelib_test extends UnitTestCase {
 
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Safari iOS']['528']['iPhone'];
         $this->assertTrue(check_browser_version('Safari iOS'));
+        $this->assertTrue(check_browser_version('WebKit'));
         $this->assertTrue(check_browser_version('Safari iOS', '527'));
         $this->assertFalse(check_browser_version('Safari iOS', 590));
         $this->assertFalse(check_browser_version('Safari', '312'));
         $this->assertFalse(check_browser_version('Safari', '500'));
         $this->assertFalse(check_browser_version('Chrome'));
 
+        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['WebKit Android']['530']['Nexus'];
+        $this->assertTrue(check_browser_version('WebKit'));
+        $this->assertTrue(check_browser_version('WebKit Android', '527'));
+        $this->assertFalse(check_browser_version('WebKit Android', 590));
+        $this->assertFalse(check_browser_version('Safari'));
+        $this->assertFalse(check_browser_version('Chrome'));
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Chrome']['8']['Mac OS X'];
         $this->assertTrue(check_browser_version('Chrome'));
+        $this->assertTrue(check_browser_version('WebKit'));
         $this->assertTrue(check_browser_version('Chrome', 8));
         $this->assertFalse(check_browser_version('Chrome', 10));
         $this->assertFalse(check_browser_version('Safari', '1'));
@@ -250,6 +264,15 @@ class moodlelib_test extends UnitTestCase {
     function test_get_browser_version_classes() {
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Safari']['412']['Mac OS X'];
         $this->assertEqual(array('safari'), get_browser_version_classes());
+
+        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Chrome']['8']['Mac OS X'];
+        $this->assertEqual(array('safari'), get_browser_version_classes());
+
+        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Safari iOS']['528']['iPhone'];
+        $this->assertEqual(array('safari', 'ios'), get_browser_version_classes());
+
+        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['WebKit Android']['530']['Nexus'];
+        $this->assertEqual(array('safari', 'android'), get_browser_version_classes());
 
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Chrome']['8']['Mac OS X'];
         $this->assertEqual(array('safari'), get_browser_version_classes());
