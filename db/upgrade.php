@@ -52,11 +52,26 @@ function xmldb_book_upgrade($oldversion) {
         // Launch rename field summary
         $dbman->rename_field($table, $field, 'intro');
 
+        // Launch rename field summary
+        $dbman->change_field_precision($table, $field, 'intro');
+
         // book savepoint reached
         upgrade_mod_savepoint(true, 2010120801, 'book');
     }
 
     if ($oldversion < 2010120802) {
+       // Rename field summary on table book to intro
+        $table = new xmldb_table('book');
+        $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'large', null, null, null, null, 'name');
+
+        // Launch rename field summary
+        $dbman->change_field_precision($table, $field);
+
+        // book savepoint reached
+        upgrade_mod_savepoint(true, 2010120802, 'book');
+    }
+
+    if ($oldversion < 2010120803) {
         // Define field introformat to be added to book
         $table = new xmldb_table('book');
         $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
@@ -69,10 +84,26 @@ function xmldb_book_upgrade($oldversion) {
         $DB->set_field('book', 'introformat', FORMAT_HTML, array());
 
         // book savepoint reached
-        upgrade_mod_savepoint(true, 2010120802, 'book');
+        upgrade_mod_savepoint(true, 2010120803, 'book');
     }
 
-    if ($oldversion < 2010120803) {
+    if ($oldversion < 2010120804) {
+        // Define field introformat to be added to book
+        $table = new xmldb_table('book_chapters');
+        $field = new xmldb_field('contentformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'content');
+
+        // Launch add field introformat
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $DB->set_field('book_chapters', 'contentformat', FORMAT_HTML, array());
+
+        // book savepoint reached
+        upgrade_mod_savepoint(true, 2010120804, 'book');
+    }
+
+    if ($oldversion < 2010120805) {
         require_once("$CFG->dirroot/mod/book/db/upgradelib.php");
 
         $sqlfrom = "FROM {book} b
@@ -103,14 +134,13 @@ function xmldb_book_upgrade($oldversion) {
             $rs->close();
         }
 
-
-        //TODO: add contentformat into book_chapters
-        //TODO: migrate the legacy file.php links to new pluginfile.php and file areas per chapter
-
-
         // book savepoint reached
-        upgrade_mod_savepoint(true, 2010120803, 'book');
+        upgrade_mod_savepoint(true, 2010120805, 'book');
     }
+
+
+
+    //TODO: migrate the legacy file.php links to new pluginfile.php and file areas per chapter
 
 
     return true;
