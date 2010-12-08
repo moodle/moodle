@@ -115,7 +115,7 @@ $navigation = build_navigation($navlinks, $cm);
 
 print_header("$course->shortname: $book->name", $course->fullname, $navigation);
 
-$icon = '<img class="icon" src="icon_chapter.gif" alt="" />&nbsp;';
+$icon = '<img class="icon" src="pix/chapter.gif" alt="" />&nbsp;';
 print_heading_with_help($pageheading, 'edit', 'book', $icon);
 
 $mform->display();
