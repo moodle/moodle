@@ -293,9 +293,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         $post->author = $users[$post->userid];
         $viewfullnames = true;
         // format the post body
-        $options = new stdClass();
-        $options->para = false;
-        $options->filter = false;
+        $options = portfolio_format_text_options();
         $format = $this->get('exporter')->get('format');
         $formattedtext = format_text($post->message, $post->messageformat, $options, $this->get('course')->id);
         $formattedtext = portfolio_rewrite_pluginfile_urls($formattedtext, $this->modcontext->id, 'mod_forum', 'post', $post->id, $format);

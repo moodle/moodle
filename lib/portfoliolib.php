@@ -1171,6 +1171,24 @@ function portfolio_existing_exports_by_plugin($userid) {
     return $DB->get_records_sql_menu($sql, $values);
 }
 
+/**
+ * Return default common options for {@link format_text()} when preparing a content to be exported
+ *
+ * It is important not to apply filters and not to clean the HTML in format_text()
+ *
+ * @return stdClass
+ */
+function portfolio_format_text_options() {
+
+    $options                = new stdClass();
+    $options->para          = false;
+    $options->newlines      = true;
+    $options->filter        = false;
+    $options->noclean       = true;
+    $options->overflowdiv   = false;
+
+    return $options;
+}
 
 /**
  * callback function from {@link portfolio_rewrite_pluginfile_urls}

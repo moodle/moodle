@@ -375,10 +375,8 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
         global $OUTPUT, $DB;
         $entry = clone $entry;
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $options = new stdClass();
-        $options->para = false;
+        $options = portfolio_format_text_options();
         $options->trusted = $entry->definitiontrust;
-        $options->filter = false;
         $options->context = $context;
 
         $output = '<table class="glossarypost dictionary" cellspacing="0">' . "\n";
