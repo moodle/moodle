@@ -130,6 +130,7 @@ function xmldb_book_upgrade($oldversion) {
                 @rmdir("$CFG->dataroot/$book->course/$CFG->moddata/book/$book->id/");
                 @rmdir("$CFG->dataroot/$book->course/$CFG->moddata/book/");
                 @rmdir("$CFG->dataroot/$book->course/$CFG->moddata/");
+                @rmdir("$CFG->dataroot/$book->course/");
             }
             $rs->close();
         }
