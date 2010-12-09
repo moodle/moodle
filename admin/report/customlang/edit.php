@@ -38,7 +38,7 @@ $PAGE->set_url('/admin/report/customlang/edit.php', array('lng' => $lng));
 navigation_node::override_active_url(new moodle_url('/admin/report/customlang/index.php'));
 $PAGE->set_title(get_string('pluginname', 'report_customlang'));
 $PAGE->set_heading(get_string('pluginname', 'report_customlang'));
-//$PAGE->requires->js_init_call('M.report_customlang.init_translator', array(), true);
+$PAGE->requires->js_init_call('M.report_customlang.init_editor', array(), true);
 
 if (empty($lng)) {
     // PARAM_LANG validation failed

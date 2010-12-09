@@ -1,5 +1,3 @@
-<?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,7 +20,26 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * @namespace
+ */
+M.report_customlang = M.report_customlang || {};
 
-$plugin->version  = 2010120900;
-$plugin->requires = 2010120700;
+/**
+ * YUI instance holder
+ */
+M.report_customlang.Y = {};
+
+/**
+ * Initialize JS support for the edit.php
+ *
+ * @param {Object} Y YUI instance
+ */
+M.report_customlang.init_editor = function(Y) {
+    M.report_customlang.Y = Y;
+
+    Y.all('#translator .local textarea').each(function (textarea) {
+        var cell = textarea.get('parentNode');
+        textarea.setStyle('height', cell.getComputedStyle('height'));
+    });
+}
