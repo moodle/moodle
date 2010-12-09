@@ -27,7 +27,10 @@ if ($confirm and !empty($msg) and confirm_sesskey()) {
     list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
     if ($rs = $DB->get_recordset_select('user', "id $in", $params)) {
         foreach ($rs as $user) {
-            message_post_message($USER, $user, $msg, FORMAT_HTML, 'direct'); // TODO: this is weird, we should support all text formats here
+            //TODO we should probably support all text formats here or only FORMAT_MOODLE
+            //For now bulk messaging is still using the html editor and its supplying html
+            //so we have to use html format for it to be displayed correctly
+            message_post_message($USER, $user, $msg, FORMAT_HTML, 'direct');
         }
         $rs->close();
     }
