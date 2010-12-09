@@ -138,11 +138,19 @@ class mssql_native_moodle_database extends moodle_database {
 
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
+        $dbhost = $this->dbhost;
+        if (isset($dboptions['dbport'])) {
+            if (stristr(PHP_OS, 'win') && !stristr(PHP_OS, 'darwin')) {
+                $dbhost .= ','.$dboptions['dbport'];
+            } else {
+                $dbhost .= ':'.$dboptions['dbport'];
+            }
+        }
         ob_start();
         if (!empty($this->dboptions['dbpersist'])) { // persistent connection
-            $this->mssql = mssql_pconnect($this->dbhost, $this->dbuser, $this->dbpass, true);
+            $this->mssql = mssql_pconnect($dbhost, $this->dbuser, $this->dbpass, true);
         } else {
-            $this->mssql = mssql_connect($this->dbhost, $this->dbuser, $this->dbpass, true);
+            $this->mssql = mssql_connect($dbhost, $this->dbuser, $this->dbpass, true);
         }
         $dberr = ob_get_contents();
         ob_end_clean();
