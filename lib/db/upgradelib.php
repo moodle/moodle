@@ -185,7 +185,7 @@ function upgrade_migrate_user_icons() {
     $icon = array('component'=>'user', 'filearea'=>'icon', 'itemid'=>0, 'filepath'=>'/');
 
     $count = $DB->count_records('user', array('picture'=>1, 'deleted'=>0));
-    $pbar = new progress_bar('migratecoursefiles', 500, true);
+    $pbar = new progress_bar('migrateusericons', 500, true);
 
     $rs = $DB->get_recordset('user', array('picture'=>1, 'deleted'=>0), 'id ASC', 'id, picture');
     $i = 0;
