@@ -37,6 +37,10 @@ class block_news_items extends block_base {
             }
             $cm = $modinfo->instances['forum'][$forum->id];
 
+            if (!$cm->uservisible) {
+                return '';
+            }
+
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         /// User must have perms to view discussions in that forum
