@@ -204,9 +204,15 @@ if ($xml = glossary_read_imported_file($result)) {
             if ( !$glossary->allowduplicatedentries ) {
                 // checking if the entry is valid (checking if it is duplicated when should not be)
                 if ( $newentry->casesensitive ) {
-                    $dupentry = $DB->get_record("glossary_entries", array("concept"=>$newentry->concept, "glossaryid"=>$glossary->id));
+                    $dupentry = $DB->record_exists_select('glossary_entries',
+                                    'glossaryid = :glossaryid AND concept = :concept', array(
+                                        'glossaryid' => $glossary->id,
+                                        'concept'    => $newentry->concept));
                 } else {
-                    $dupentry = $DB->get_record("glossary_entries", array("lower(concept)"=>moodle_strtolower($newentry->concept), "glossaryid"=>$glossary->id));
+                    $dupentry = $DB->record_exists_select('glossary_entries',
+                                    'glossaryid = :glossaryid AND LOWER(concept) = :concept', array(
+                                        'glossaryid' => $glossary->id,
+                                        'concept'    => moodle_strtolower($newentry->concept)));
                 }
                 if ($dupentry) {
                     $permissiongranted = 0;
