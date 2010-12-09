@@ -56,8 +56,13 @@ class mysqli_native_moodle_database extends moodle_database {
             throw new dml_exception('dbdriverproblem', $driverstatus);
         }
 
+        if (empty($this->dboptions['dbport'])) {
+            $dbport = ini_get('mysqli.default_port');
+        } else {
+            $dbport = (int)$this->dboptions['dbport'];
+        }
         ob_start();
-        $conn = new mysqli($dbhost, $dbuser, $dbpass); /// Connect without db
+        $conn = new mysqli($dbhost, $dbuser, $dbpass, '', $dbport); /// Connect without db
         $dberr = ob_get_contents();
         ob_end_clean();
         $errorno = @$conn->connect_errno;
