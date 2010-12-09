@@ -7,6 +7,7 @@ require('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/csvlib.class.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
+require_once($CFG->dirroot.'/group/lib.php');
 require_once('uploaduser_form.php');
 
 $iid         = optional_param('iid', '', PARAM_INT);
@@ -528,7 +529,7 @@ if ($formdata = $mform->is_cancelled()) {
                 $DB->update_record('user', $existinguser);
 
                 //remove user preference
-                
+
                 if (get_user_preferences('create_password', false, $existinguser)) {
                     unset_user_preference('create_password', $existinguser);
                 }
