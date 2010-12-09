@@ -238,6 +238,11 @@
 
         if(empty($link)){
             $link = $item->get_id();
+        } else {
+            //URLs in our RSS cache will be escaped (correctly as theyre store in XML)
+            //html_writer::link() will re-escape them. To prevent double escaping unescape here.
+            //This can by done using htmlspecialchars_decode() but moodle_url also has that effect
+            $link = new moodle_url($link);
         }
 
         $r = html_writer::start_tag('li');
