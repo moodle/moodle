@@ -37,9 +37,9 @@ $string['cliinstallheader'] = 'Moodle {$a} command line installation program';
 $string['databasehost'] = 'Database host';
 $string['databasename'] = 'Database name';
 $string['databasetypehead'] = 'Choose database driver';
-$string['dataroot'] = 'Data Directory';
+$string['dataroot'] = 'Data directory';
 $string['dbprefix'] = 'Tables prefix';
-$string['dirroot'] = 'Moodle Directory';
+$string['dirroot'] = 'Moodle directory';
 $string['environmenthead'] = 'Checking your environment ...';
 $string['environmentsub2'] = 'Each Moodle release has some minimum PHP version requirement and a number of mandatory PHP extensions.
 Full environment check is done before each install and upgrade. Please contact server administrator if you do not know how to install new version or enable PHP extensions.';
@@ -66,20 +66,20 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
     (you will see errors when you look at pages) so you\'ll have to remove the .htaccess file.</p></li>
 </ol>';
 $string['paths'] = 'Paths';
-$string['pathserrcreatedataroot'] = 'Data Directory ({$a->dataroot}) cannot be created by the installer.';
+$string['pathserrcreatedataroot'] = 'Data directory ({$a->dataroot}) cannot be created by the installer.';
 $string['pathshead'] = 'Confirm paths';
 $string['pathsrodataroot'] = 'Dataroot directory is not writable.';
-$string['pathsroparentdataroot'] = 'Parent directory ({$a->parent}) is not writeable. Data Directory ({$a->dataroot}) cannot be created by the installer.';
+$string['pathsroparentdataroot'] = 'Parent directory ({$a->parent}) is not writeable. Data directory ({$a->dataroot}) cannot be created by the installer.';
 $string['pathssubadmindir'] = 'A very few webhosts use /admin as a special URL for you to access a
 control panel or something.  Unfortunately this conflicts with the standard location for the Moodle admin pages.  You can fix this by
 renaming the admin directory in your installation, and putting that  new name here.  For example: <em>moodleadmin</em>. This will fix admin links in Moodle.';
 $string['pathssubdataroot'] = 'You need a place where Moodle can save uploaded files. This directory should be readable AND WRITEABLE by the web server user
 (usually \'nobody\' or \'apache\'), but it must not be accessible directly via the web. The installer will try to create it if doesn\'t exist.';
-$string['pathssubdirroot'] = 'Full directory path to moodle installation.';
-$string['pathssubwwwroot'] = 'Full web address where moodle will be accessed.
+$string['pathssubdirroot'] = 'Full directory path to Moodle installation.';
+$string['pathssubwwwroot'] = 'Full web address where Moodle will be accessed.
 It\'s not possible to access Moodle using multiple addresses.
-If your site has multiple public addresses you must setup permanent redirects on all of them except this one.
-If your site is accessible both from intranet and Internet use the public address here and setup DNS so that the intranet users may use the public address too.
+If your site has multiple public addresses you must set up permanent redirects on all of them except this one.
+If your site is accessible both from Intranet and Internet use the public address here and set up DNS so that the Intranet users may use the public address too.
 If the address is not correct please change the URL in your browser to restart installation with a different value.';
 $string['pathsunsecuredataroot'] = 'Dataroot location is not secure';
 $string['pathswrongadmindir'] = 'Admin directory does not exist';
