@@ -156,7 +156,7 @@ if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', 
                 print_error('invalidsesskey');
             }
 
-            $messageid = message_post_message($user1, $user2, $data->message, FORMAT_PLAIN, 'direct');
+            $messageid = message_post_message($user1, $user2, $data->message, FORMAT_MOODLE, 'direct');
             if (!empty($messageid)) {
                 redirect($CFG->wwwroot . '/message/index.php?usergroup='.$usergroup.'&id='.$user2->id);
             }
