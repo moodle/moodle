@@ -52,9 +52,6 @@ function xmldb_book_upgrade($oldversion) {
         // Launch rename field summary
         $dbman->rename_field($table, $field, 'intro');
 
-        // Launch rename field summary
-        $dbman->change_field_precision($table, $field, 'intro');
-
         // book savepoint reached
         upgrade_mod_savepoint(true, 2010120801, 'book');
     }
