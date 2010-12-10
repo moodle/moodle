@@ -39,7 +39,60 @@ require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
 
 class grade_category_test extends grade_test {
 
-    function test_grade_category_construct() {
+    public function __construct() {
+        $this->starttime = time();
+        parent::__construct();
+    }
+
+    public function __destruct() {
+        $this->endtime = time();
+        //var_dump($this->endtime-$this->starttime);
+        
+        parent::__destruct();
+    }
+
+    function test_grade_category() {
+        $this->sub_test_grade_category_construct();
+        $this->sub_test_grade_category_build_path();
+        $this->sub_test_grade_category_fetch();
+        $this->sub_test_grade_category_fetch_all();
+        $this->sub_test_grade_category_update();
+        $this->sub_test_grade_category_delete();
+        $this->sub_test_grade_category_insert();
+        $this->sub_test_grade_category_qualifies_for_regrading();
+        $this->sub_test_grade_category_force_regrading();
+        $this->sub_test_grade_category_aggregate_grades();
+        $this->sub_test_grade_category_apply_limit_rules();
+        $this->sub_test_grade_category_is_aggregationcoef_used();
+        $this->sub_test_grade_category_fetch_course_tree();
+        $this->sub_test_grade_category_get_children();
+        $this->sub_test_grade_category_load_grade_item();
+        $this->sub_test_grade_category_get_grade_item();
+        $this->sub_test_grade_category_load_parent_category();
+        $this->sub_test_grade_category_get_parent_category();
+        $this->sub_test_grade_category_get_name();
+        $this->sub_test_grade_category_set_parent();
+        $this->sub_test_grade_category_get_final();
+        $this->sub_test_grade_category_get_sortorder();
+        $this->sub_test_grade_category_set_sortorder();
+        $this->sub_test_grade_category_is_editable();
+        $this->sub_test_grade_category_move_after_sortorder();
+        $this->sub_test_grade_category_is_course_category();
+        $this->sub_test_grade_category_fetch_course_category();
+        $this->sub_test_grade_category_is_locked();
+        $this->sub_test_grade_category_set_locked();
+        $this->sub_test_grade_category_is_hidden();
+        $this->sub_test_grade_category_set_hidden();
+
+        //this won't work until MDL-11837 is complete
+        //$this->sub_test_grade_category_generate_grades();
+
+        //do this last as adding a second course category messes up the data
+        $this->sub_test_grade_category_insert_course_category();
+    }
+
+    //adds 3 new grade categories at various depths
+    function sub_test_grade_category_construct() {
         $course_category = grade_category::fetch_course_category($this->courseid);
 
         $params = new stdClass();
@@ -49,6 +102,7 @@ class grade_category_test extends grade_test {
 
         $grade_category = new grade_category($params, false);
         $grade_category->insert();
+        $this->grade_categories[] = $grade_category;
 
         $this->assertEqual($params->courseid, $grade_category->courseid);
         $this->assertEqual($params->fullname, $grade_category->fullname);
@@ -61,6 +115,7 @@ class grade_category_test extends grade_test {
         $params->fullname = 'unittestcategory5';
         $grade_category = new grade_category($params, false);
         $grade_category->insert();
+        $this->grade_categories[] = $grade_category;
 
         $this->assertEqual(3, $grade_category->depth);
         $this->assertEqual($parentpath.$grade_category->id."/", $grade_category->path);
@@ -71,18 +126,20 @@ class grade_category_test extends grade_test {
         $params->fullname = 'unittestcategory6';
         $grade_category = new grade_category($params, false);
         $grade_category->insert();
+        $this->grade_categories[50] = $grade_category;//going to delete this one later hence the special index
+        
         $this->assertEqual(4, $grade_category->depth);
         $this->assertEqual($parentpath.$grade_category->id."/", $grade_category->path);
     }
 
-    function test_grade_category_build_path() {
+    function sub_test_grade_category_build_path() {
         $grade_category = new grade_category($this->grade_categories[1]);
         $this->assertTrue(method_exists($grade_category, 'build_path'));
         $path = grade_category::build_path($grade_category);
         $this->assertEqual($grade_category->path, $path);
     }
 
-    function test_grade_category_fetch() {
+    function sub_test_grade_category_fetch() {
         $grade_category = new grade_category();
         $this->assertTrue(method_exists($grade_category, 'fetch'));
 
@@ -91,7 +148,7 @@ class grade_category_test extends grade_test {
         $this->assertEqual($this->grade_categories[0]->fullname, $grade_category->fullname);
     }
 
-    function test_grade_category_fetch_all() {
+    function sub_test_grade_category_fetch_all() {
         $grade_category = new grade_category();
         $this->assertTrue(method_exists($grade_category, 'fetch_all'));
 
@@ -99,7 +156,7 @@ class grade_category_test extends grade_test {
         $this->assertEqual(count($this->grade_categories), count($grade_categories)-1);
     }
 
-    function test_grade_category_update() {
+    function sub_test_grade_category_update() {
         global $DB;
         $grade_category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($grade_category, 'update'));
@@ -127,16 +184,17 @@ class grade_category_test extends grade_test {
         $this->assertEqual(1, $grade_item->needsupdate);
     }
 
-    function test_grade_category_delete() {
+    function sub_test_grade_category_delete() {
         global $DB;
-        $grade_category = new grade_category($this->grade_categories[0]);
+
+        $grade_category = new grade_category($this->grade_categories[50]);
         $this->assertTrue(method_exists($grade_category, 'delete'));
 
         $this->assertTrue($grade_category->delete());
         $this->assertFalse($DB->get_record('grade_categories', array('id' => $grade_category->id)));
     }
 
-    function test_grade_category_insert() {
+    function sub_test_grade_category_insert() {
         $course_category = grade_category::fetch_course_category($this->courseid);
 
         $grade_category = new grade_category();
@@ -149,12 +207,12 @@ class grade_category_test extends grade_test {
         $grade_category->keephigh    = 100;
         $grade_category->droplow     = 10;
         $grade_category->hidden      = 0;
-        $grade_category->parent      = $this->grade_categories[0]->id;
+        $grade_category->parent      = $this->grade_categories[1]->id; //sub_test_grade_category_delete() removed the category at 0
 
         $grade_category->insert();
 
-        $this->assertEqual('/'.$course_category->id.'/'.$this->grade_categories[0]->id.'/'.$grade_category->id.'/', $grade_category->path);
-        $this->assertEqual(3, $grade_category->depth);
+        $this->assertEqual('/'.$course_category->id.'/'.$this->grade_categories[1]->parent.'/'.$this->grade_categories[1]->id.'/'.$grade_category->id.'/', $grade_category->path);
+        $this->assertEqual(4, $grade_category->depth);
 
         $last_grade_category = end($this->grade_categories);
 
@@ -167,38 +225,24 @@ class grade_category_test extends grade_test {
         $this->assertFalse(empty($grade_category->timemodified));
     }
 
-    function test_grade_category_insert_course_category() {
-        $grade_category = new grade_category();
-        $this->assertTrue(method_exists($grade_category, 'insert_course_category'));
-
-        $id = $grade_category->insert_course_category($this->courseid);
-        $this->assertNotNull($id);
-        $this->assertEqual('?', $grade_category->fullname);
-        $this->assertEqual(GRADE_AGGREGATE_WEIGHTED_MEAN2, $grade_category->aggregation);
-        $this->assertEqual("/$id/", $grade_category->path);
-        $this->assertEqual(1, $grade_category->depth);
-        $this->assertNull($grade_category->parent);
-    }
-
-    function test_grade_category_qualifies_for_regrading() {
-        $grade_category = new grade_category($this->grade_categories[0]);
+    function sub_test_grade_category_qualifies_for_regrading() {
+        $grade_category = new grade_category($this->grade_categories[1]);
         $this->assertTrue(method_exists($grade_category, 'qualifies_for_regrading'));
-
         $this->assertFalse($grade_category->qualifies_for_regrading());
 
         $grade_category->aggregation = GRADE_AGGREGATE_MAX;
         $this->assertTrue($grade_category->qualifies_for_regrading());
 
-        $grade_category = new grade_category($this->grade_categories[0]);
+        $grade_category = new grade_category($this->grade_categories[1]);
         $grade_category->droplow = 99;
         $this->assertTrue($grade_category->qualifies_for_regrading());
 
-        $grade_category = new grade_category($this->grade_categories[0]);
+        $grade_category = new grade_category($this->grade_categories[1]);
         $grade_category->keephigh = 99;
         $this->assertTrue($grade_category->qualifies_for_regrading());
     }
 
-    function test_grade_category_force_regrading() {
+    function sub_test_grade_category_force_regrading() {
         $grade_category = new grade_category($this->grade_categories[1]);
         $this->assertTrue(method_exists($grade_category, 'force_regrading'));
 
@@ -213,41 +257,173 @@ class grade_category_test extends grade_test {
         $this->assertEqual(1, $grade_category->grade_item->needsupdate);
     }
 
-    /*
-     * I am disabling this test until we implement proper mock objects. This is meant
-     * to be a private method called from within a grade_item method.
+    /**
+     * Tests the calculation of grades using the various aggregation methods with and without hidden grades
+     * This will not work entirely until MDL-11837 is done
+     * @global type $DB 
+     */
+    function sub_test_grade_category_generate_grades() {
+        global $DB;
 
-    function test_grade_category_generate_grades() {
-        $category = new grade_category($this->grade_categories[3]);
-        $this->assertTrue(method_exists($category, 'generate_grades'));
-        $category->load_grade_item();
+        //inserting some special grade items to make testing the final grade calculation easier
+        $params->courseid = $this->courseid;
+        $params->fullname = 'unittestgradecalccategory';
+        $params->aggregation = GRADE_AGGREGATE_MEAN;
+        $params->aggregateonlygraded = 0;
+        $grade_category = new grade_category($params, false);
+        $grade_category->insert();
 
-        $grades = $DB->get_records('grade_grades', array('itemid'=>$category->grade_item->id));
-        $this->assertFalse($grades);
+        $this->assertTrue(method_exists($grade_category, 'generate_grades'));
 
-        $category->generate_grades();
-        $grades = $DB->get_records('grade_grades', array('itemid'=>$category->grade_item->id));
-        $this->assertEqual(3, count($grades));
+        $grade_category->load_grade_item();
+        $cgi = $grade_category->get_grade_item();
+        $cgi->grademin = 0;
+        $cgi->grademax = 20;//3 grade items out of 10 but category is out of 20 to force scaling to occur
+        $cgi->update();
 
-        $rawvalues = array();
-        foreach ($grades as $grade) {
-            $this->assertWithinMargin($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
-            $rawvalues[] = (int)$grade->rawgrade;
+        //3 grade items each with a maximum grade of 10
+        $grade_items = array();
+        for ($i=0; $i<3; $i++) {
+            $grade_items[$i] = new grade_item();
+            $grade_items[$i]->courseid = $this->courseid;
+            $grade_items[$i]->categoryid = $grade_category->id;
+            $grade_items[$i]->itemname = 'manual grade_item '.$i;
+            $grade_items[$i]->itemtype = 'manual';
+            $grade_items[$i]->itemnumber = 0;
+            $grade_items[$i]->needsupdate = false;
+            $grade_items[$i]->gradetype = GRADE_TYPE_VALUE;
+            $grade_items[$i]->grademin = 0;
+            $grade_items[$i]->grademax = 10;
+            $grade_items[$i]->iteminfo = 'Manual grade item used for unit testing';
+            $grade_items[$i]->timecreated = mktime();
+            $grade_items[$i]->timemodified = mktime();
+            
+            //used as the weight by weighted mean and as extra credit by mean with extra credit
+            //Will be 0, 1 and 2
+            $grade_items[$i]->aggregationcoef = $i;
+            
+            $grade_items[$i]->insert();
         }
-        sort($rawvalues);
-        // calculated mean results
-        $this->assertEqual($rawvalues, array(20,50,100));
+
+        //a grade for each grade item
+        $grade_grades = array();
+        for ($i=0; $i<3; $i++) {
+            $grade_grades[$i] = new grade_grade();
+            $grade_grades[$i]->itemid = $grade_items[$i]->id;
+            $grade_grades[$i]->userid = $this->userid;
+            $grade_grades[$i]->rawgrade = ($i+1)*2;//produce grade grades of 2, 4 and 6
+            $grade_grades[$i]->finalgrade = ($i+1)*2;
+            $grade_grades[$i]->timecreated = mktime();
+            $grade_grades[$i]->timemodified = mktime();
+            $grade_grades[$i]->information = '1 of 2 grade_grades';
+            $grade_grades[$i]->informationformat = FORMAT_PLAIN;
+            $grade_grades[$i]->feedback = 'Good, but not good enough..';
+            $grade_grades[$i]->feedbackformat = FORMAT_PLAIN;
+
+            $grade_grades[$i]->insert();
+        }
+
+        //3 grade items with 1 grade_grade each.
+        //grade grades have the values 2, 4 and 6
+        
+        //First correct answer is the aggregate with all 3 grades
+        //Second correct answer is with the first grade (value 2) hidden
+        
+        $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_MEDIAN, 'GRADE_AGGREGATE_MEDIAN', 8, 8);
+        $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_MAX, 'GRADE_AGGREGATE_MAX', 12, 12);
+        $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_MODE, 'GRADE_AGGREGATE_MODE', 12, 12);
+        
+        //weighted mean. note grade totals are rounded to an int to prevent rounding discrepancies. correct final grade isnt actually exactly 10
+        //3 items with grades 2, 4 and 6 with weights 0, 1 and 2 and all out of 10. then doubled to be out of 20.
+        $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_WEIGHTED_MEAN, 'GRADE_AGGREGATE_WEIGHTED_MEAN', 10, 10);
+
+        //simple weighted mean
+        //3 items with grades 2, 4 and 6 equally weighted and all out of 10. then doubled to be out of 20.
+        $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_WEIGHTED_MEAN2, 'GRADE_AGGREGATE_WEIGHTED_MEAN2', 8, 10);
+
+        //mean of grades with extra credit
+        //3 items with grades 2, 4 and 6 with extra credit 0, 1 and 2 equally weighted and all out of 10. then doubled to be out of 20.
+        $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_EXTRACREDIT_MEAN, 'GRADE_AGGREGATE_EXTRACREDIT_MEAN', 10, 13);
+        
+        //aggregation tests the are affected by a hidden grade currently dont work as we dont store the altered grade in the database
+        //instead an in memory recalculation is done. This should be remedied by MDL-11837
+
+        //fails with 1 grade hidden. still reports 8 as being correct
+        $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_MEAN, 'GRADE_AGGREGATE_MEAN', 8, 10);
+        
+        //fails with 1 grade hidden. still reports 4 as being correct
+        $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_MIN, 'GRADE_AGGREGATE_MIN', 4, 8);
+        
+        //fails with 1 grade hidden. still reports 12 as being correct
+        $this->helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, GRADE_AGGREGATE_SUM, 'GRADE_AGGREGATE_SUM', 12, 10);
     }
 
+    /**
+     * Test grade category aggregation using the supplied grade objects and aggregation method
+     * @param grade_category $grade_category the category to be tested
+     * @param array $grade_items array of instance of grade_item
+     * @param array $grade_grades array of instances of grade_grade
+     * @param int $aggmethod the aggregation method to apply ie GRADE_AGGREGATE_MEAN
+     * @param string $aggmethodname the name of the aggregation method to apply. Used to display any test failure messages
+     * @param int $correct1 the correct final grade for the category with NO items hidden
+     * @param int $correct2 the correct final grade for the category with the grade at $grade_grades[0] hidden
+     * @return void
     */
+    function helper_test_grade_agg_method($grade_category, $grade_items, $grade_grades, $aggmethod, $aggmethodname, $correct1, $correct2) {
+        global $DB;
 
-    function test_grade_category_aggregate_grades() {
+        $grade_category->aggregation = $aggmethod;
+        $grade_category->update();
+
+        //check grade_item isnt hidden from a previous test
+        $grade_items[0]->set_hidden(0, true);
+        $this->helper_test_grade_aggregation_result($grade_category, $correct1, 'Testing aggregation method('.$aggmethodname.') with no items hidden %s');
+
+        //hide the grade item with grade of 2
+        $grade_items[0]->set_hidden(1, true);
+        $this->helper_test_grade_aggregation_result($grade_category, $correct2, 'Testing aggregation method('.$aggmethodname.') with 1 item hidden %s');
+    }
+
+    /**
+     * Verify the value of the category grade item for $this->userid
+     * @param grade_category $grade_category the category to be tested
+     * @param int $correctgrade the expected grade
+     * @param string msg The message that should be displayed if the correct grade is not found
+     * @return void
+     */
+    function helper_test_grade_aggregation_result($grade_category, $correctgrade, $msg) {
+        global $DB;
+        
+        $category_grade_item = $grade_category->get_grade_item();
+        
+        //this creates all the grade_grades we need
+        grade_regrade_final_grades($this->courseid);
+        
+        $grade = $DB->get_record('grade_grades', array('itemid'=>$category_grade_item->id, 'userid'=>$this->userid));
+        $this->assertWithinMargin($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
+        $this->assertEqual(intval($correctgrade), intval($grade->finalgrade), $msg);
+        
+        /*
+         * TODO this doesnt work as the grade_grades created by $grade_category->generate_grades(); dont
+         * observe the category's max grade
+        //delete the grade_grades for the category itself and check they get recreated correctly
+        $DB->delete_records('grade_grades', array('itemid'=>$category_grade_item->id));
+        $grade_category->generate_grades();
+        
+        $grade = $DB->get_record('grade_grades', array('itemid'=>$category_grade_item->id, 'userid'=>$this->userid));
+        $this->assertWithinMargin($grade->rawgrade, $grade->rawgrademin, $grade->rawgrademax);
+        $this->assertEqual(intval($correctgrade), intval($grade->finalgrade), $msg);
+         * 
+         */
+    }
+
+    function sub_test_grade_category_aggregate_grades() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'aggregate_grades'));
-        // tested above in test_grade_category_generate_grades()
+        // tested more fully via test_grade_category_generate_grades()
     }
 
-    function test_grade_category_apply_limit_rules() {
+    function sub_test_grade_category_apply_limit_rules() {
         $items[$this->grade_items[0]->id] = new grade_item($this->grade_items[0], false);
         $items[$this->grade_items[1]->id] = new grade_item($this->grade_items[1], false);
         $items[$this->grade_items[2]->id] = new grade_item($this->grade_items[2], false);
@@ -308,17 +484,17 @@ class grade_category_test extends grade_test {
     /**
      * TODO implement
      */
-    function test_grade_category_is_aggregationcoef_used() {
+    function sub_test_grade_category_is_aggregationcoef_used() {
 
     }
 
-    function test_grade_category_fetch_course_tree() {
+    function sub_test_grade_category_fetch_course_tree() {
         $category = new grade_category();
         $this->assertTrue(method_exists($category, 'fetch_course_tree'));
         //TODO: add some tests
     }
 
-    function test_grade_category_get_children() {
+    function sub_test_grade_category_get_children() {
         $course_category = grade_category::fetch_course_category($this->courseid);
 
         $category = new grade_category($this->grade_categories[0]);
@@ -337,7 +513,7 @@ class grade_category_test extends grade_test {
         $this->assertEqual($this->grade_items[2]->id, $children_array[5]['children'][6]['object']->id);
     }
 
-    function test_grade_category_load_grade_item() {
+    function sub_test_grade_category_load_grade_item() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'load_grade_item'));
         $this->assertEqual(null, $category->grade_item);
@@ -345,14 +521,14 @@ class grade_category_test extends grade_test {
         $this->assertEqual($this->grade_items[3]->id, $category->grade_item->id);
     }
 
-    function test_grade_category_get_grade_item() {
+    function sub_test_grade_category_get_grade_item() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'get_grade_item'));
         $grade_item = $category->get_grade_item();
         $this->assertEqual($this->grade_items[3]->id, $grade_item->id);
     }
 
-    function test_grade_category_load_parent_category() {
+    function sub_test_grade_category_load_parent_category() {
         $category = new grade_category($this->grade_categories[1]);
         $this->assertTrue(method_exists($category, 'load_parent_category'));
         $this->assertEqual(null, $category->parent_category);
@@ -360,20 +536,20 @@ class grade_category_test extends grade_test {
         $this->assertEqual($this->grade_categories[0]->id, $category->parent_category->id);
     }
 
-    function test_grade_category_get_parent_category() {
+    function sub_test_grade_category_get_parent_category() {
         $category = new grade_category($this->grade_categories[1]);
         $this->assertTrue(method_exists($category, 'get_parent_category'));
         $parent_category = $category->get_parent_category();
         $this->assertEqual($this->grade_categories[0]->id, $parent_category->id);
     }
 
-    function test_grade_category_get_name() {
+    function sub_test_grade_category_get_name() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'get_name'));
         $this->assertEqual($this->grade_categories[0]->fullname, $category->get_name());
     }
 
-    function test_grade_category_set_parent() {
+    function sub_test_grade_category_set_parent() {
         $category = new grade_category($this->grade_categories[1]);
         $this->assertTrue(method_exists($category, 'set_parent'));
         // TODO: implement detailed tests
@@ -383,41 +559,41 @@ class grade_category_test extends grade_test {
         $this->assertEqual($course_category->id, $category->parent);
     }
 
-    function test_grade_category_get_final() {
+    function sub_test_grade_category_get_final() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'get_final'));
         $category->load_grade_item();
         $this->assertEqual($category->get_final(), $category->grade_item->get_final());
     }
 
-    function test_grade_category_get_sortorder() {
+    function sub_test_grade_category_get_sortorder() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'get_sortorder'));
         $category->load_grade_item();
         $this->assertEqual($category->get_sortorder(), $category->grade_item->get_sortorder());
     }
 
-    function test_grade_category_set_sortorder() {
+    function sub_test_grade_category_set_sortorder() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'set_sortorder'));
         $category->load_grade_item();
         $this->assertEqual($category->set_sortorder(10), $category->grade_item->set_sortorder(10));
     }
 
-    function test_grade_category_move_after_sortorder() {
+    function sub_test_grade_category_move_after_sortorder() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'move_after_sortorder'));
         $category->load_grade_item();
         $this->assertEqual($category->move_after_sortorder(10), $category->grade_item->move_after_sortorder(10));
     }
 
-    function test_grade_category_is_course_category() {
+    function sub_test_grade_category_is_course_category() {
         $category = grade_category::fetch_course_category($this->courseid);
         $this->assertTrue(method_exists($category, 'is_course_category'));
         $this->assertTrue($category->is_course_category());
     }
 
-    function test_grade_category_fetch_course_category() {
+    function sub_test_grade_category_fetch_course_category() {
         $category = new grade_category();
         $this->assertTrue(method_exists($category, 'fetch_course_category'));
         $category = grade_category::fetch_course_category($this->courseid);
@@ -426,36 +602,57 @@ class grade_category_test extends grade_test {
     /**
      * TODO implement
      */
-    function test_grade_category_is_editable() {
+    function sub_test_grade_category_is_editable() {
 
     }
 
-    function test_grade_category_is_locked() {
+    function sub_test_grade_category_is_locked() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'is_locked'));
         $category->load_grade_item();
         $this->assertEqual($category->is_locked(), $category->grade_item->is_locked());
     }
 
-    function test_grade_category_set_locked() {
+    function sub_test_grade_category_set_locked() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'set_locked'));
+
+        //will return false as cannot lock a grade that needs updating
+        $this->assertFalse($category->set_locked(1));
+        grade_regrade_final_grades($this->courseid);
+
+        //get the category from the db again
+        $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue($category->set_locked(1));
     }
 
-    function test_grade_category_is_hidden() {
+    function sub_test_grade_category_is_hidden() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'is_hidden'));
         $category->load_grade_item();
         $this->assertEqual($category->is_hidden(), $category->grade_item->is_hidden());
     }
 
-    function test_grade_category_set_hidden() {
+    function sub_test_grade_category_set_hidden() {
         $category = new grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'set_hidden'));
         $category->set_hidden(1);
         $category->load_grade_item();
         $this->assertEqual(true, $category->grade_item->is_hidden());
+    }
+
+    //beware: adding a duplicate course category messes up the data in a way that's hard to recover from
+    function sub_test_grade_category_insert_course_category() {
+        $grade_category = new grade_category();
+        $this->assertTrue(method_exists($grade_category, 'insert_course_category'));
+
+        $id = $grade_category->insert_course_category($this->courseid);
+        $this->assertNotNull($id);
+        $this->assertEqual('?', $grade_category->fullname);
+        $this->assertEqual(GRADE_AGGREGATE_WEIGHTED_MEAN2, $grade_category->aggregation);
+        $this->assertEqual("/$id/", $grade_category->path);
+        $this->assertEqual(1, $grade_category->depth);
+        $this->assertNull($grade_category->parent);
     }
 
     function generate_random_raw_grade($item, $userid) {

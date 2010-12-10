@@ -39,7 +39,20 @@ require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
 
 class grade_grade_test extends grade_test {
 
-    function test_grade_grade_construct() {
+    function test_grade_grade() {
+        $this->sub_test_grade_grade_construct();
+        $this->sub_test_grade_grade_insert();
+        $this->sub_test_grade_grade_update();
+        $this->sub_test_grade_grade_fetch();
+        $this->sub_test_grade_grade_fetch_all();
+        $this->sub_test_grade_grade_load_grade_item();
+        $this->sub_test_grade_grade_standardise_score();
+        $this->sub_test_grade_grade_is_locked();
+        $this->sub_test_grade_grade_set_hidden();
+        $this->sub_test_grade_grade_is_hidden();
+    }
+
+    function sub_test_grade_grade_construct() {
         $params = new stdClass();
 
         $params->itemid = $this->grade_items[0]->id;
@@ -53,7 +66,7 @@ class grade_grade_test extends grade_test {
         $this->assertEqual($params->rawgrade, $grade_grade->rawgrade);
     }
 
-    function test_grade_grade_insert() {
+    function sub_test_grade_grade_insert() {
         $grade_grade = new grade_grade();
         $this->assertTrue(method_exists($grade_grade, 'insert'));
 
@@ -77,14 +90,17 @@ class grade_grade_test extends grade_test {
         $this->assertTrue(empty($grade_grade->timecreated));
         // timemodified will only be set if the grade was submitted by an activity module
         $this->assertTrue(empty($grade_grade->timemodified));
+
+        //keep our collection the same as is in the database
+        $this->grade_grades[] = $grade_grade;
     }
 
-    function test_grade_grade_update() {
+    function sub_test_grade_grade_update() {
         $grade_grade = new grade_grade($this->grade_grades[0]);
         $this->assertTrue(method_exists($grade_grade, 'update'));
     }
 
-    function test_grade_grade_fetch() {
+    function sub_test_grade_grade_fetch() {
         $grade_grade = new grade_grade();
         $this->assertTrue(method_exists($grade_grade, 'fetch'));
 
@@ -93,7 +109,7 @@ class grade_grade_test extends grade_test {
         $this->assertEqual($this->grade_grades[0]->rawgrade, $grades->rawgrade);
     }
 
-    function test_grade_grade_fetch_all() {
+    function sub_test_grade_grade_fetch_all() {
         $grade_grade = new grade_grade();
         $this->assertTrue(method_exists($grade_grade, 'fetch_all'));
 
@@ -101,7 +117,7 @@ class grade_grade_test extends grade_test {
         $this->assertEqual(count($this->grade_grades), count($grades));
     }
 
-    function test_grade_grade_load_grade_item() {
+    function sub_test_grade_grade_load_grade_item() {
         $grade_grade = new grade_grade($this->grade_grades[0]);
         $this->assertTrue(method_exists($grade_grade, 'load_grade_item'));
         $this->assertNull($grade_grade->grade_item);
@@ -112,7 +128,7 @@ class grade_grade_test extends grade_test {
     }
 
 
-    function test_grade_grade_standardise_score() {
+    function sub_test_grade_grade_standardise_score() {
         $this->assertEqual(4, round(grade_grade::standardise_score(6, 0, 7, 0, 5)));
         $this->assertEqual(40, grade_grade::standardise_score(50, 30, 80, 0, 100));
     }
@@ -147,7 +163,7 @@ class grade_grade_test extends grade_test {
     }
     */
 
-    function test_grade_grade_is_locked() {
+    function sub_test_grade_grade_is_locked() {
         $grade = new grade_grade($this->grade_grades[0]);
         $this->assertTrue(method_exists($grade, 'is_locked'));
 
@@ -156,7 +172,7 @@ class grade_grade_test extends grade_test {
         $this->assertTrue($grade->is_locked());
     }
 
-    function test_grade_grade_set_hidden() {
+    function sub_test_grade_grade_set_hidden() {
         $grade_item = new grade_item($this->grade_items[0]);
         $grade = new grade_grade($grade_item->get_final(1));
         $this->assertTrue(method_exists($grade, 'set_hidden'));
@@ -171,12 +187,13 @@ class grade_grade_test extends grade_test {
         $this->assertEqual(1, $grade->hidden);
     }
 
-    function test_grade_grade_is_hidden() {
+    function sub_test_grade_grade_is_hidden() {
         $grade = new grade_grade($this->grade_grades[0]);
         $this->assertTrue(method_exists($grade, 'is_hidden'));
 
-        $this->assertFalse($grade->is_hidden());
-        $grade->hidden = 1;
+        //$this->grade_grades[0] is hidden by sub_test_grade_grade_set_hidden()
+        //$this->assertFalse($grade->is_hidden());
+        //$grade->hidden = 1;
         $this->assertTrue($grade->is_hidden());
 
         $grade->hidden = time()-666;

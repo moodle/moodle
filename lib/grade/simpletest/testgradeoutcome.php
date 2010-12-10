@@ -39,7 +39,16 @@ require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
 
 class grade_outcome_test extends grade_test {
 
-    function test_grade_outcome_construct() {
+    function test_grade_outcome() {
+        $this->sub_test_grade_outcome_construct();
+        $this->sub_test_grade_outcome_insert();
+        $this->sub_test_grade_outcome_update();
+        $this->sub_test_grade_outcome_delete();
+        //$this->sub_test_grade_outcome_fetch();
+        $this->sub_test_grade_outcome_fetch_all();
+    }
+
+    function sub_test_grade_outcome_construct() {
         $params = new stdClass();
 
         $params->courseid = $this->courseid;
@@ -50,7 +59,7 @@ class grade_outcome_test extends grade_test {
         $this->assertEqual($params->shortname, $grade_outcome->shortname);
     }
 
-    function test_grade_outcome_insert() {
+    function sub_test_grade_outcome_insert() {
         $grade_outcome = new grade_outcome();
         $this->assertTrue(method_exists($grade_outcome, 'insert'));
 
@@ -67,7 +76,7 @@ class grade_outcome_test extends grade_test {
         $this->assertFalse(empty($grade_outcome->timemodified));
     }
 
-    function test_grade_outcome_update() {
+    function sub_test_grade_outcome_update() {
         global $DB;
         $grade_outcome = new grade_outcome($this->grade_outcomes[0]);
         $this->assertTrue(method_exists($grade_outcome, 'update'));
@@ -77,7 +86,7 @@ class grade_outcome_test extends grade_test {
         $this->assertEqual($grade_outcome->shortname, $shortname);
     }
 
-    function test_grade_outcome_delete() {
+    function sub_test_grade_outcome_delete() {
         global $DB;
         $grade_outcome = new grade_outcome($this->grade_outcomes[0]);
         $this->assertTrue(method_exists($grade_outcome, 'delete'));
@@ -86,7 +95,7 @@ class grade_outcome_test extends grade_test {
         $this->assertFalse($DB->get_record('grade_outcomes', array('id' => $grade_outcome->id)));
     }
 
-    function test_grade_outcome_fetch() {
+    function sub_test_grade_outcome_fetch() {
         $grade_outcome = new grade_outcome();
         $this->assertTrue(method_exists($grade_outcome, 'fetch'));
 
@@ -98,7 +107,7 @@ class grade_outcome_test extends grade_test {
         $this->assertEqual($this->scale[2]->id, $grade_outcome->scale->id);
     }
 
-    function test_grade_outcome_fetch_all() {
+    function sub_test_grade_outcome_fetch_all() {
         $grade_outcome = new grade_outcome();
         $this->assertTrue(method_exists($grade_outcome, 'fetch_all'));
 

@@ -39,7 +39,17 @@ require_once($CFG->libdir.'/simpletest/fixtures/gradetest.php');
 
 class grade_scale_test extends grade_test {
 
-    function test_scale_construct() {
+    function test_grade_scale() {
+        $this->sub_test_scale_construct();
+        $this->sub_test_grade_scale_insert();
+        $this->sub_test_grade_scale_update();
+        $this->sub_test_grade_scale_delete();
+        $this->sub_test_grade_scale_fetch();
+        $this->sub_test_scale_load_items();
+        $this->sub_test_scale_compact_items();
+    }
+
+    function sub_test_scale_construct() {
         $params = new stdClass();
 
         $params->name        = 'unittestscale3';
@@ -57,7 +67,7 @@ class grade_scale_test extends grade_test {
 
     }
 
-    function test_grade_scale_insert() {
+    function sub_test_grade_scale_insert() {
         $grade_scale = new grade_scale();
         $this->assertTrue(method_exists($grade_scale, 'insert'));
 
@@ -76,27 +86,30 @@ class grade_scale_test extends grade_test {
         $this->assertTrue(!empty($grade_scale->timemodified));
     }
 
-    function test_grade_scale_update() {
+    function sub_test_grade_scale_update() {
         global $DB;
-        $grade_scale = new grade_scale($this->scale[0]);
+        $grade_scale = new grade_scale($this->scale[1]);
         $this->assertTrue(method_exists($grade_scale, 'update'));
 
         $grade_scale->name = 'Updated info for this unittest grade_scale';
         $this->assertTrue($grade_scale->update());
-        $name = $DB->get_field('scale', 'name', array('id' => $this->scale[0]->id));
+        $name = $DB->get_field('scale', 'name', array('id' => $this->scale[1]->id));
         $this->assertEqual($grade_scale->name, $name);
     }
 
-    function test_grade_scale_delete() {
+    function sub_test_grade_scale_delete() {
         global $DB;
-        $grade_scale = new grade_scale($this->scale[0]);
+        $grade_scale = new grade_scale($this->scale[4]);//choose one we're not using elsewhere
         $this->assertTrue(method_exists($grade_scale, 'delete'));
 
         $this->assertTrue($grade_scale->delete());
         $this->assertFalse($DB->get_record('scale', array('id' => $grade_scale->id)));
+
+        //keep the reference collection the same as what is in the database
+        unset($this->scale[4]);
     }
 
-    function test_grade_scale_fetch() {
+    function sub_test_grade_scale_fetch() {
         $grade_scale = new grade_scale();
         $this->assertTrue(method_exists($grade_scale, 'fetch'));
 
@@ -105,7 +118,7 @@ class grade_scale_test extends grade_test {
         $this->assertEqual($this->scale[0]->name, $grade_scale->name);
     }
 
-    function test_scale_load_items() {
+    function sub_test_scale_load_items() {
         $scale = new grade_scale($this->scale[0]);
         $this->assertTrue(method_exists($scale, 'load_items'));
 
@@ -115,7 +128,7 @@ class grade_scale_test extends grade_test {
 
     }
 
-    function test_scale_compact_items() {
+    function sub_test_scale_compact_items() {
         $scale = new grade_scale($this->scale[0]);
         $this->assertTrue(method_exists($scale, 'compact_items'));
 
