@@ -74,9 +74,32 @@ class repository_upload extends repository {
         if (!isset($_FILES[$elname])) {
             throw new moodle_exception('nofile');
         }
-
         if (!empty($_FILES[$elname]['error'])) {
-            throw new moodle_exception('maxbytes');
+            switch ($_FILES[$elname]['error']) {
+            case UPLOAD_ERR_INI_SIZE:
+                throw new moodle_exception('upload_error_ini_size', 'repository_upload');
+                break;
+            case UPLOAD_ERR_FORM_SIZE:
+                throw new moodle_exception('upload_error_form_size', 'repository_upload');
+                break;
+            case UPLOAD_ERR_PARTIAL:
+                throw new moodle_exception('upload_error_partial', 'repository_upload');
+                break;
+            case UPLOAD_ERR_NO_FILE:
+                throw new moodle_exception('upload_error_no_file', 'repository_upload');
+                break;
+            case UPLOAD_ERR_NO_TMP_DIR:
+                throw new moodle_exception('upload_error_no_tmp_dir', 'repository_upload');
+                break;
+            case UPLOAD_ERR_CANT_WRITE:
+                throw new moodle_exception('upload_error_cant_write', 'repository_upload');
+                break;
+            case UPLOAD_ERR_EXTENSION:
+                throw new moodle_exception('upload_error_extension', 'repository_upload');
+                break;
+            default:
+                throw new moodle_exception('nofile');
+            }
         }
 
         if (empty($saveas_filename)) {
