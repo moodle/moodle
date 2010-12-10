@@ -86,6 +86,7 @@ class block_mnet_hosts extends block_list {
                  {mnet_service} s_SP
              WHERE
                  h.id <> ? AND
+                 h.id <> ? AND
                  h.id = h2s_IDP.hostid AND
                  h.deleted = 0 AND
                  h.applicationid = a.id AND
@@ -100,7 +101,7 @@ class block_mnet_hosts extends block_list {
                  a.display_name,
                  h.name";
 
-        $hosts = $DB->get_records_sql($sql, array($CFG->mnet_localhost_id));
+        $hosts = $DB->get_records_sql($sql, array($CFG->mnet_localhost_id, $CFG->mnet_all_hosts_id));
 
         $this->content = new stdClass();
         $this->content->items = array();
