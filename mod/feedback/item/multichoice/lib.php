@@ -119,7 +119,8 @@ class feedback_item_multichoice extends feedback_item_base {
 
         $analysedAnswer = array();
         if($info->subtype == 'c') {
-            for($i = 1; $i <= sizeof($answers); $i++) {
+	    $sizeofanswers = sizeof($answers);
+            for($i = 1; $i <= $sizeofanswers; $i++) {
                 $ans = null;
                 $ans->answertext = $answers[$i-1];
                 $ans->answercount = 0;
@@ -136,7 +137,8 @@ class feedback_item_multichoice extends feedback_item_base {
                 $analysedAnswer[] = $ans;
             }
         }else {
-            for($i = 1; $i <= sizeof($answers); $i++) {
+	    $sizeofanswers = sizeof($answers);
+            for($i = 1; $i <= $sizeofanswers; $i++) {
                 $ans = null;
                 $ans->answertext = $answers[$i-1];
                 $ans->answercount = 0;
@@ -167,7 +169,8 @@ class feedback_item_multichoice extends feedback_item_base {
 
         if($info->subtype == 'c') {
             $vallist = array_values(explode (FEEDBACK_MULTICHOICE_LINE_SEP, $value->value));
-            for($i = 0; $i < sizeof($vallist); $i++) {
+	    $sizeofvallist = sizeof($vallist);
+            for($i = 0; $i < $sizeofvallist; $i++) {
                 for($k = 0; $k < sizeof($presentation); $k++) {
                     if($vallist[$i] == ($k + 1)) {//Die Werte beginnen bei 1, das Array aber mit 0
                         $printval .= trim($presentation[$k]) . chr(10);
