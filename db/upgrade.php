@@ -50,7 +50,9 @@ function xmldb_book_upgrade($oldversion) {
         $field = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'name');
 
         // Launch rename field summary
-        $dbman->rename_field($table, $field, 'intro');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'intro');
+        }
 
         // book savepoint reached
         upgrade_mod_savepoint(true, 2010120801, 'book');
