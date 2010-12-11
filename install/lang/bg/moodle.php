@@ -29,4 +29,5 @@
  */
 
 $string['language'] = 'Език';
-$string['next'] = 'Следващ';
+$string['next'] = 'Следваща';
+$string['previous'] = 'Предишна';
