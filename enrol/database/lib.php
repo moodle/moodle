@@ -319,9 +319,9 @@ class enrol_database_plugin extends enrol_plugin {
 
         // sync enrolments
         $ignorehidden = $this->get_config('ignorehiddencourses');
-        $fields = array($userfield);
+        $sqlfields = array($userfield);
         if ($rolefield) {
-            $fields[] = $rolefield;
+            $sqlfields[] = $rolefield;
         }
         foreach ($existing as $course) {
             if ($ignorehidden and !$course->visible) {
@@ -356,7 +356,7 @@ class enrol_database_plugin extends enrol_plugin {
 
             // get list of users that need to be enrolled and their roles
             $requested_roles = array();
-            $sql = $this->db_get_sql($table, array($coursefield=>$course->mapping), $fields);
+            $sql = $this->db_get_sql($table, array($coursefield=>$course->mapping), $sqlfields);
             if ($rs = $extdb->Execute($sql)) {
                 if (!$rs->EOF) {
                     if ($localuserfield === 'username') {
@@ -488,14 +488,14 @@ class enrol_database_plugin extends enrol_plugin {
         $idnumber  = strtolower($this->get_config('newcourseidnumber'));
         $category  = strtolower($this->get_config('newcoursecategory'));
 
-        $fields = array($fullname, $shortname);
+        $sqlfields = array($fullname, $shortname);
         if ($category) {
-            $fields[] = $category;
+            $sqlfields[] = $category;
         }
         if ($idnumber) {
-            $fields[] = $idnumber;
+            $sqlfields[] = $idnumber;
         }
-        $sql = $this->db_get_sql($table, array(), $fields);
+        $sql = $this->db_get_sql($table, array(), $sqlfields);
         $createcourses = array();
         if ($rs = $extdb->Execute($sql)) {
             if (!$rs->EOF) {
