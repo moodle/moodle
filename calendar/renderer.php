@@ -176,7 +176,7 @@ class core_calendar_renderer extends plugin_renderer_base {
      * @param mixed $pos BLOCK_POS_RIGHT | BLOCK_POS_LEFT
      */
     public function add_pretend_calendar_block(block_contents $bc, $pos=BLOCK_POS_RIGHT) {
-        $this->page->blocks->add_pretend_block($bc, $pos);
+        $this->page->blocks->add_fake_block($bc, $pos);
     }
 
     /**

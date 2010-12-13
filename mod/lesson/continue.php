@@ -156,7 +156,7 @@ $PAGE->set_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page-
 $PAGE->set_subpage($page->id);
 
 /// Print the header, heading and tabs
-lesson_add_pretend_blocks($PAGE, $cm, $lesson, $timer);
+lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
 echo $lessonoutput->header($lesson, $cm, 'view', true, $page->id);
 
 if ($lesson->displayleft) {

@@ -371,7 +371,7 @@ if ($pageid != LESSON_EOL) {
         ob_end_clean();
     }
 
-    lesson_add_pretend_blocks($PAGE, $cm, $lesson, $timer);
+    lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
     echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid);
     if ($attemptflag) {
         echo $OUTPUT->heading(get_string('attempt', 'lesson', $retries));
@@ -553,7 +553,7 @@ if ($pageid != LESSON_EOL) {
     $url = new moodle_url('/grade/index.php', array('id'=>$course->id));
     $lessoncontent .= html_writer::link($url, get_string('viewgrades', 'lesson'), array('class'=>'centerpadded lessonbutton standardbutton'));
 
-    lesson_add_pretend_blocks($PAGE, $cm, $lesson, $timer);
+    lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
     echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid);
     echo $lessoncontent;
     echo $lessonoutput->footer();

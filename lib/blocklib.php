@@ -406,19 +406,32 @@ class block_manager {
      * Add something that looks like a block, but which isn't an actual block_instance,
      * to this page.
      *
-     * @param block_contents $bc the content of the block like thing.
+     * @param block_contents $bc the content of the block-like thing.
      * @param string $region a block region that exists on this page.
      */
-    public function add_pretend_block($bc, $region) {
+    public function add_fake_block($bc, $region) {
         $this->page->initialise_theme_and_output();
         if (!$this->is_known_region($region)) {
             $region = $this->get_default_region();
         }
         if (array_key_exists($region, $this->visibleblockcontent)) {
             throw new coding_exception('block_manager has already prepared the blocks in region ' .
-                    $region . 'for output. It is too late to add a pretend block.');
+                    $region . 'for output. It is too late to add a fake block.');
         }
         $this->extracontent[$region][] = $bc;
+    }
+
+    /**
+     * When the block_manager class was created, the {@link add_fake_block()}
+     * was called add_pretend_block, which is inconsisted with
+     * {@link show_only_fake_blocks()}. To fix this inconsistency, this method
+     * was renamed to add_fake_block. Please update your code.
+     * @param block_contents $bc the content of the block-like thing.
+     * @param string $region a block region that exists on this page.
+     */
+    public function add_pretend_block($bc, $region) {
+        debugging(DEBUG_DEVELOPER, 'add_pretend_block has been renamed to add_fake_block. Please rename the method call in your code.');
+        $this->add_fake_block($bc, $region);
     }
 
     /**

@@ -411,23 +411,23 @@ function lesson_displayleftif($lesson) {
  * @param $page
  * @return unknown_type
  */
-function lesson_add_pretend_blocks($page, $cm, $lesson, $timer = null) {
+function lesson_add_fake_blocks($page, $cm, $lesson, $timer = null) {
     $bc = lesson_menu_block_contents($cm->id, $lesson);
     if (!empty($bc)) {
         $regions = $page->blocks->get_regions();
         $firstregion = reset($regions);
-        $page->blocks->add_pretend_block($bc, $firstregion);
+        $page->blocks->add_fake_block($bc, $firstregion);
     }
 
     $bc = lesson_mediafile_block_contents($cm->id, $lesson);
     if (!empty($bc)) {
-        $page->blocks->add_pretend_block($bc, $page->blocks->get_default_region());
+        $page->blocks->add_fake_block($bc, $page->blocks->get_default_region());
     }
 
     if (!empty($timer)) {
         $bc = lesson_clock_block_contents($cm->id, $lesson, $timer, $page);
         if (!empty($bc)) {
-            $page->blocks->add_pretend_block($bc, $page->blocks->get_default_region());
+            $page->blocks->add_fake_block($bc, $page->blocks->get_default_region());
         }
     }
 }

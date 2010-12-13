@@ -97,7 +97,7 @@
     // Arrange for the navigation to be displayed.
     $navbc = $attemptobj->get_navigation_panel('quiz_attempt_nav_panel', $page);
     $firstregion = reset($PAGE->blocks->get_regions());
-    $PAGE->blocks->add_pretend_block($navbc, $firstregion);
+    $PAGE->blocks->add_fake_block($navbc, $firstregion);
 
     // Print the page header
     $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
