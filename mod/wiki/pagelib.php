@@ -1183,6 +1183,16 @@ class page_wiki_history extends page_wiki {
         $this->print_pagetitle();
     }
 
+    function print_pagetitle() {
+        global $OUTPUT;
+        $html = '';
+
+        $html .= $OUTPUT->container_start();
+        $html .= $OUTPUT->heading_with_help(format_string($this->title), 'history', 'wiki');
+        $html .= $OUTPUT->container_end();
+        echo $html;
+    }
+
     function print_content() {
         global $PAGE;
 
@@ -1426,7 +1436,7 @@ class page_wiki_map extends page_wiki {
 
         if ($this->view > 0) {
             //echo '<div><a href="' . $CFG->wwwroot . '/mod/wiki/map.php?pageid=' . $this->page->id . '">' . get_string('backtomapmenu', 'wiki') . '</a></div>';
-            }
+        }
 
         switch ($this->view) {
         case 1:
@@ -1559,7 +1569,7 @@ class page_wiki_map extends page_wiki {
 
         $table = new html_table();
         $table->attributes['class'] = 'wiki_navigation_from';
-        $table->head = array(get_string('navigationfrom', 'wiki') . ':');
+        $table->head = array(get_string('navigationfrom', 'wiki') . $OUTPUT->help_icon('navigationfrom', 'wiki') . ':');
         $table->data = array();
         $table->rowclasses = array();
         foreach ($fromlinks as $link) {
@@ -1573,7 +1583,7 @@ class page_wiki_map extends page_wiki {
 
         $table = new html_table();
         $table->attributes['class'] = 'wiki_navigation_to';
-        $table->head = array(get_string('navigationto', 'wiki') . ':');
+        $table->head = array(get_string('navigationto', 'wiki') . $OUTPUT->help_icon('navigationto', 'wiki') . ':');
         $table->data = array();
         $table->rowclasses = array();
         foreach ($tolinks as $link) {
@@ -1597,6 +1607,7 @@ class page_wiki_map extends page_wiki {
      *
      */
     private function print_index_content() {
+        global $OUTPUT;
         $page = $this->page;
 
         if ($page->timerendered + WIKI_REFRESH_CACHE_TIME < time()) {
@@ -1611,7 +1622,7 @@ class page_wiki_map extends page_wiki {
         $tree = wiki_build_tree($page, $node, $keys);
 
         $table = new html_table();
-        $table->head = array(get_string('pageindex', 'wiki'));
+        $table->head = array(get_string('pageindex', 'wiki') . $OUTPUT->help_icon('pageindex', 'wiki'));
         $table->attributes['class'] = 'wiki_editor generalbox';
         $table->data[] = array($this->render_navigation_node($tree));
 
@@ -1624,6 +1635,7 @@ class page_wiki_map extends page_wiki {
      *
      */
     private function print_page_list_content() {
+        global $OUTPUT;
         $page = $this->page;
 
         if ($page->timerendered + WIKI_REFRESH_CACHE_TIME < time()) {
@@ -1650,7 +1662,7 @@ class page_wiki_map extends page_wiki {
         }
 
         $table = new html_table();
-        $table->head = array(get_string('pagelist', 'wiki'));
+        $table->head = array(get_string('pagelist', 'wiki') . $OUTPUT->help_icon('pagelist', 'wiki'));
         $table->attributes['class'] = 'wiki_editor generalbox';
         $table->align = array('center');
         foreach ($stdaux as $key => $elem) {
@@ -1716,7 +1728,7 @@ class page_wiki_map extends page_wiki {
         $swid = $this->subwiki->id;
 
         $table = new html_table();
-        $table->head = array(get_string('updatedpages', 'wiki'));
+        $table->head = array(get_string('updatedpages', 'wiki') . $OUTPUT->help_icon('updatedpages', 'wiki'));
         $table->attributes['class'] = 'wiki_editor generalbox';
         $table->data = array();
         $table->rowclasses = array();
