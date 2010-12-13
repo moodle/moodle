@@ -156,31 +156,6 @@ function cron_run() {
     }
     mtrace("Finished quiz reports");
 
-    mtrace('Starting admin reports');
-    // Admin reports do not have a database table that lists them. Instead a
-    // report includes cron.php with function report_reportname_cron() if it wishes
-    // to be cronned. It is up to cron.php to handle e.g. if it only needs to
-    // actually do anything occasionally.
-    $reports = get_plugin_list('report');
-    foreach($reports as $report => $reportdir) {
-        $cronfile = $reportdir.'/cron.php';
-        if (file_exists($cronfile)) {
-            require_once($cronfile);
-            $cronfunction = 'report_'.$report.'_cron';
-            mtrace('Processing cron function for '.$report.'...', '');
-            $pre_dbqueries = null;
-            $pre_dbqueries = $DB->perf_get_queries();
-            $pre_time      = microtime(true);
-            $cronfunction();
-            if (isset($pre_dbqueries)) {
-                mtrace("... used " . ($DB->perf_get_queries() - $pre_dbqueries) . " dbqueries");
-                mtrace("... used " . round(microtime(true) - $pre_time, 2) . " seconds");
-            }
-            mtrace('done.');
-        }
-    }
-    mtrace('Finished admin reports');
-
     mtrace('Starting main gradebook job ...');
     grade_cron();
     mtrace('done.');
@@ -496,6 +471,33 @@ function cron_run() {
         mtrace('done.');
     }
 
+    // NOTE: Other types of plugin could also be supported in this loop, which
+    // can handle generic cron function.
+    foreach (array('report', 'coursereport') as $plugintype) {
+        mtrace('Starting plugin type: ' . $plugintype);
+        // These reports do not have a database table that lists them. Instead
+        // a report has cron.php with function report_reportname_cron() if it
+        // wishes to be cronned. It is up to this function to handle e.g. if it
+        // only needs to actually do anything occasionally.
+        $reports = get_plugin_list_with_function(
+                $plugintype, 'cron', 'cron.php');
+        foreach($reports as $report => $cronfunction) {
+            mtrace('Processing cron function for ' . $report . '...', '');
+            $pre_dbqueries = null;
+            $pre_dbqueries = $DB->perf_get_queries();
+            $pre_time = microtime(true);
+            $cronfunction();
+            if (isset($pre_dbqueries)) {
+                mtrace("... used " . 
+                        ($DB->perf_get_queries() - $pre_dbqueries) . 
+                        " dbqueries");
+                mtrace("... used " . round(microtime(true) - $pre_time, 2) . 
+                        " seconds");
+            }
+            mtrace('done.');
+        }
+        mtrace('Finished plugin type: ' . $plugintype);
+    }
 
     mtrace("Cron script completed correctly");
 
