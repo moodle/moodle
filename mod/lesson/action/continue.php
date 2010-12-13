@@ -415,12 +415,7 @@
 
             $response = '';
             if ($ncorrect == count($answers)-2) {  // dont count correct/wrong responses in the total.
-                foreach ($answers as $answer) {
-                    if ($answer->response == NULL && $answer->answer != NULL) {
-                        $response = $answer->answer;
-                        break;
-                    }
-                }
+                $response = reset($answers)->answer;
                 if (isset($correctpageid)) {
                     $newpageid = $correctpageid;
                 }
@@ -429,16 +424,8 @@
                 }
                 $correctanswer = true;
             } else {
-                $t = 0;
-                foreach ($answers as $answer) {
-                    if ($answer->response == NULL && $answer->answer != NULL) {
-                        if ($t == 1) {
-                            $response = $answer->answer;
-                            break;
-                        }
-                        $t++;
-                    }
-                }
+                reset($answers);
+                $response = next($answers)->answer;
                 $newpageid = $wrongpageid;
                 $answerid = $wronganswerid;
             }
