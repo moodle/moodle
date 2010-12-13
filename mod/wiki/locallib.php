@@ -1194,7 +1194,15 @@ function wiki_print_page_content($page, $context, $subwikiid) {
 
     if (!empty($CFG->usetags)) {
         $tags = tag_get_tags_array('wiki_pages', $page->id);
-        echo '<p class="wiki-tags"><span>Tags: </span>' . join($tags, ", ") . '</p>';
+        echo $OUTPUT->container_start('wiki-tags');
+        echo '<span>'.get_string('tags').': </span>';
+        $links = array();
+        foreach ($tags as $tagid=>$tag) {
+            $url = new moodle_url('/tag/index.php', array('tag'=>$tag));
+            $links[] = html_writer::link($url, $tag);
+        }
+        echo join($links, ", ");
+        echo $OUTPUT->container_end();
     }
 
     wiki_increment_pageviews($page);

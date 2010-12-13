@@ -1463,24 +1463,6 @@ class page_wiki_map extends page_wiki {
         $this->view = $option;
     }
 
-    function print_menu_map() {
-        $options = array('contributions', 'links', 'orphaned', 'pageindex', 'pagelist', 'updatedpages');
-        $items = array();
-        foreach ($options as $opt) {
-            $items[] = get_string($opt, 'wiki');
-        }
-        $table = new html_table();
-        $table->head = array(get_string('mapmenu', 'wiki'));
-        $table->attributes['class'] = 'wiki_editor generalbox';
-        $table->data = array();
-        $table->rowclasses = array();
-        foreach ($items as $key => $item) {
-            $link = new moodle_url('/mod/wiki/map.php', array('pageid' => $this->page->id, 'option' => $key + 1));
-            $table->data[] = array(html_writer::link($link, $item));
-        }
-        echo html_writer::table($table);
-    }
-
     function set_url() {
         global $PAGE, $CFG;
         $PAGE->set_url($CFG->wwwroot . '/mod/wiki/map.php', array('pageid' => $this->page->id));
