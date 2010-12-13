@@ -647,7 +647,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[1]->id;
         $grade->userid = 1;
-        $grade->finalgrade = 60;
+        $grade->finalgrade = 72;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
         $grade->information = '4 of 17 grade_grades';
@@ -658,7 +658,7 @@ class grade_test extends UnitTestCaseUsingDatabase {
         $grade = new stdClass();
         $grade->itemid = $this->grade_items[1]->id;
         $grade->userid = 2;
-        $grade->finalgrade = 70;
+        $grade->finalgrade = 92;
         $grade->timecreated = mktime();
         $grade->timemodified = mktime();
         $grade->information = '5 of 17 grade_grades';
