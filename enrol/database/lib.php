@@ -271,11 +271,37 @@ class enrol_database_plugin extends enrol_plugin {
             $roles[$role->$localrolefield] = $role->id;
         }
 
+        // get a list of courses to be synced that are in external table
+        $externalcourses = array();
+        $sql = $this->db_get_sql($table, array(), array($coursefield), true);
+        if ($rs = $extdb->Execute($sql)) {
+            if (!$rs->EOF) {
+                while ($mapping = $rs->FetchRow()) {
+                    $mapping = reset($mapping);
+                    $mapping = $this->db_decode($mapping);
+                    if (empty($mapping)) {
+                        // invalid mapping
+                        continue;
+                    }
+                    $externalcourses[$mapping] = true;
+                }
+            }
+            $rs->Close();
+        } else {
+            debugging('Error while communicating with external enrolment database');
+            $extdb->Close();
+            return;
+        }
+        $preventfullunenrol = empty($externalcourses);
+        if ($preventfullunenrol and $unenrolaction == ENROL_EXT_REMOVED_UNENROL) {
+            debugging('Preventing unenrolment of all current users, because it might result in major data loss, there has to be at least one record in external enrol table, sorry.');
+        }
+
         // first find all existing courses with enrol instance
+        $existing = array();
         $sql = "SELECT c.id, c.visible, c.$localcoursefiled AS mapping, e.id AS enrolid
                   FROM {course} c
                   JOIN {enrol} e ON (e.courseid = c.id AND e.enrol = 'database')";
-        $existing = array();
         $rs = $DB->get_recordset_sql($sql); // watch out for idnumber duplicates
         foreach ($rs as $course) {
             if (empty($course->mapping)) {
@@ -285,37 +311,31 @@ class enrol_database_plugin extends enrol_plugin {
         }
         $rs->close();
 
-        // add necessary enrol instances that are not present yet;
-        $sql = $this->db_get_sql($table, array(), array($coursefield), true);
-        if ($rs = $extdb->Execute($sql)) {
-            if (!$rs->EOF) {
-                $sql = "SELECT c.id, c.visible
-                          FROM {course} c
-                          JOIN {enrol} e ON (e.courseid = c.id AND e.enrol = 'database')
-                         WHERE c.$localcoursefiled = :mapping";
-                $params = array();
-                while ($mapping = $rs->FetchRow()) {
-                    $mapping = reset($mapping);
-                    $mapping = $this->db_decode($mapping);
-                    if (!empty($mapping) and !isset($existing[$mapping])) {
-                        $params['mapping'] = $mapping;
-                        if ($course = $DB->get_record_sql($sql, $params, IGNORE_MULTIPLE)) {
-                            $new = new stdClass();
-                            $new->id      = $course->id;
-                            $new->visible = $course->visible;
-                            $new->mapping = $mapping;
-                            $new->enrolid = $this->add_instance($course);
-                            $existing[$mapping] = $new;
-                        }
-                    }
-                }
+        // add necessary enrol instances that are not present yet
+        $sql = "SELECT c.id, c.visible, c.$localcoursefiled AS mapping
+                  FROM {course} c
+             LEFT JOIN {enrol} e ON (e.courseid = c.id AND e.enrol = 'database')
+                 WHERE e.id IS NULL AND c.$localcoursefiled <> ?";
+        $rs = $DB->get_recordset_sql($sql, array($DB->sql_empty()));
+        foreach ($rs as $course) {
+            if (empty($course->mapping)) {
+                continue;
             }
-            $rs->Close();
-        } else {
-            debugging('Error while communicating with external enrolment database');
-            $extdb->Close();
-            return;
+            if (!isset($externalcourses[$course->mapping])) {
+                // course not synced
+                continue;
+            }
+            if (isset($existing[$course->mapping])) {
+                // some duplicate, sorry
+                continue;
+            }
+            $course->enrolid = $this->add_instance($course);
+            $existing[$course->mapping] = $course;
         }
+        $rs->close();
+
+        // free memory
+        unset($externalcourses);
 
         // sync enrolments
         $ignorehidden = $this->get_config('ignorehiddencourses');
@@ -426,9 +446,8 @@ class enrol_database_plugin extends enrol_plugin {
 
             // deal with enrolments removed from external table
             if ($unenrolaction == ENROL_EXT_REMOVED_UNENROL) {
-                // unenrol
-                if (!empty($requested_roles)) {
-                    // we might get some error or connection problem, better not unenrol everybody
+                if (!$preventfullunenrol) {
+                    // unenrol
                     foreach ($current_status as $userid=>$status) {
                         if (isset($requested_roles[$userid])) {
                             continue;
