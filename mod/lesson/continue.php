@@ -67,7 +67,16 @@ if (!$canmanage) {
 
 // record answer (if necessary) and show response (if none say if answer is correct or not)
 $page = $lesson->load_page(required_param('pageid', PARAM_INT));
-$result = $page->record_attempt($context);
+// Check the page has answers [MDL-25632]
+if (count($page->answers) > 0) {
+    $result = $page->record_attempt($context);
+} else {
+    // The page has no answers so we will just progress to the next page in the
+    // sequence (as set by newpageid).
+    $result = new stdClass;
+    $result->newpageid       = optional_param('newpageid', $page->nextpageid, PARAM_INT);
+    $result->nodefaultresponse  = true;
+}
 
 if (isset($USER->modattempts[$lesson->id])) {
     // make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time

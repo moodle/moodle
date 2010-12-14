@@ -1881,7 +1881,9 @@ abstract class lesson_page extends lesson_base {
             $this->answers = array();
             $answers = $DB->get_records('lesson_answers', array('pageid'=>$this->properties->id, 'lessonid'=>$this->lesson->id), 'id');
             if (!$answers) {
-                debugging(get_string('cannotfindanswer', 'lesson'));
+                // It is possible that a lesson upgraded from Moodle 1.9 still
+                // contains questions without any answers [MDL-25632].
+                // debugging(get_string('cannotfindanswer', 'lesson'));
                 return array();
             }
             foreach ($answers as $answer) {
