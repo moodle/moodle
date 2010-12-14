@@ -35,4 +35,4 @@ $string['cliincorrectvalueretry'] = 'Forkert værdi, prøv igen!';
 $string['clitypevalue'] = 'tast værdi';
 $string['clitypevaluedefault'] = 'tast værdi eller brug standardværdien ved at trykke Enter';
 $string['environmentrequireinstall'] = 'skal være installeret og aktiveret';
-$string['environmentrequireversion'] = 'version {$a->needed} er nødvendigt og du kører {$a->current}';
+$string['environmentrequireversion'] = 'minimumskravet er version {$a->needed} og du kører {$a->current}';

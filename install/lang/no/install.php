@@ -37,9 +37,9 @@ $string['cliinstallheader'] = 'Moodle {$a} kommandolinje installasjonsprogram';
 $string['databasehost'] = 'Databasevert';
 $string['databasename'] = 'Databasenavn';
 $string['databasetypehead'] = 'Velg databasedriver';
-$string['dataroot'] = 'Datamappe';
+$string['dataroot'] = 'Dataområde';
 $string['dbprefix'] = 'Tabellprefix';
-$string['dirroot'] = 'Moodles programfiler';
+$string['dirroot'] = 'Moodles filområde';
 $string['environmenthead'] = 'Sjekker "omgivelsene" dine...';
 $string['environmentsub2'] = 'Hver Moodle-utgivelse har minimumskrav til PHP versjon og et sett med obligatoriske PHP-tillegg. En full sjekk av omgivelser gjøres før hver installering og oppgradering. Vær vennlig å kontakte serveradministrator hvis du ikke vet hvordan du skal installere nye versjoner eller slå på PHP-tillegg.';
 $string['errorsinenvironment'] = 'Omgivelseskontroll feilet!';
@@ -57,10 +57,10 @@ Dette vil tillate Moodle å sette minnegrensen selv.</li>
     <p>Uansett, på noen servere kan dette forhindre <b>alle</b> PHP sider fra å virke (du vil se feilmeldinger når du ser på sider) og da må du fjerne .htaccess fila.</p></li>
 </ol>';
 $string['paths'] = 'Stier';
-$string['pathserrcreatedataroot'] = 'Datakatalog ({$a->dataroot}) kan ikke lages av installasjonsprosessen.';
+$string['pathserrcreatedataroot'] = 'Datakatalogen ({$a->dataroot}) kan ikke opprettes av installasjonsprogrammet.';
 $string['pathshead'] = 'Bekreft stier';
 $string['pathsrodataroot'] = 'Dataroot katalog er ikke skrivbar.';
-$string['pathsroparentdataroot'] = 'Overordnet katalog ({$a->parent}) er ikke skrivbar. Datakatalogen ({$a->dataroot}) kan ikke lages av installasjonsprosessen.';
+$string['pathsroparentdataroot'] = 'Overordnet katalog ({$a->parent}) er ikke skrivbar. Datakatalogen ({$a->dataroot}) kan ikke opprettes av installasjonsprogrammet.';
 $string['pathssubadmindir'] = 'Noen ganske få webhoteller bruker  /admin som en egen url for å få tilgang til et kontrollpanel. Dessverre kommer det i konflikt med standard lokalisering av Moodle sine admin-sider. Du kan fikse dette ved å endre navn på admin-mappen og deretter oppgi dette navnet her. F.eks. <em>moodleadmin</em>.  Dette vil fikse adminlenkene i Moodle.';
 $string['pathssubdataroot'] = 'Du trenger et sted hvor Moodle kan lagre opplastede filer. Denne mappen må være med lese og skriverettigheter for webserver-brukeren (veldig ofte \'nobody\' eller \'apache\'), men denne mappen må IKKE være direkte tilgjengelig via web. Installasjonsprogrammet vil forsøke å opprette den om den ikke finnes fra før.';
 $string['pathssubdirroot'] = 'Full mappesti til moodleinstallasjonen.';
