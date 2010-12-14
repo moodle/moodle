@@ -2135,13 +2135,17 @@ abstract class lesson_page extends lesson_base {
                 $this->answers[$i]->pageid = $this->id;
                 $this->answers[$i]->timecreated = $this->timecreated;
             }
-            if (!empty($properties->answer_editor[$i])) {
+
+            if (!empty($properties->answer_editor[$i]) && is_array($properties->answer_editor[$i])) {
                 $this->answers[$i]->answer = $properties->answer_editor[$i]['text'];
                 $this->answers[$i]->answerformat = $properties->answer_editor[$i]['format'];
-                if (isset($properties->response_editor[$i])) {
-                    $this->answers[$i]->response = $properties->response_editor[$i]['text'];
-                    $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
-                }
+            }
+            if (!empty($properties->response_editor[$i]) && is_array($properties->response_editor[$i])) {
+                $this->answers[$i]->response = $properties->response_editor[$i]['text'];
+                $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
+            }
+
+            if (!empty($this->answers[$i]->answer)) {
                 if (isset($properties->jumpto[$i])) {
                     $this->answers[$i]->jumpto = $properties->jumpto[$i];
                 }
@@ -2154,8 +2158,9 @@ abstract class lesson_page extends lesson_base {
                     $DB->update_record("lesson_answers", $this->answers[$i]->properties());
                 }
 
-            } else {
-                break;
+            } else if (isset($this->answers[$i]->id)) {
+                $DB->delete_records('lesson_answers', array('id'=>$this->answers[$i]->id));
+                unset($this->answers[$i]);
             }
         }
         return true;
@@ -2223,13 +2228,17 @@ abstract class lesson_page extends lesson_base {
 
         for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
             $answer = clone($newanswer);
-            if (!empty($properties->answer_editor[$i])) {
+
+            if (!empty($properties->answer_editor[$i]) && is_array($properties->answer_editor[$i])) {
                 $answer->answer = $properties->answer_editor[$i]['text'];
                 $answer->answerformat = $properties->answer_editor[$i]['format'];
-                if (isset($properties->response_editor[$i])) {
-                    $answer->response = $properties->response_editor[$i]['text'];
-                    $answer->responseformat = $properties->response_editor[$i]['format'];
-                }
+            }
+            if (!empty($properties->response_editor[$i]) && is_array($properties->response_editor[$i])) {
+                $answer->response = $properties->response_editor[$i]['text'];
+                $answer->responseformat = $properties->response_editor[$i]['format'];
+            }
+
+            if (!empty($answer->answer)) {
                 if (isset($properties->jumpto[$i])) {
                     $answer->jumpto = $properties->jumpto[$i];
                 }
