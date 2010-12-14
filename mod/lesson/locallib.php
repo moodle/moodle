@@ -1915,6 +1915,7 @@ abstract class lesson_page extends lesson_base {
      * Records an attempt at this page
      *
      * @final
+     * @global moodle_database $DB
      * @param stdClass $context
      * @return stdClass Returns the result of the attempt
      */
@@ -1960,7 +1961,7 @@ abstract class lesson_page extends lesson_base {
                 if (!$result->correctanswer && ($result->newpageid == 0)) {
                     // wrong answer and student is stuck on this page - check how many attempts
                     // the student has had at this page/question
-                    $nattempts = $DB->count_records("lesson_attempts", array("pageid"=>$this->properties->id, "userid"=>$USER->id),"retry", $nretakes);
+                    $nattempts = $DB->count_records("lesson_attempts", array("pageid"=>$this->properties->id, "userid"=>$USER->id, "retry" => $nretakes));
                     // retreive the number of attempts left counter for displaying at bottom of feedback page
                     if ($nattempts >= $this->lesson->maxattempts) {
                         if ($this->lesson->maxattempts > 1) { // don't bother with message if only one attempt
