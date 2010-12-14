@@ -2470,6 +2470,8 @@ abstract class lesson_page extends lesson_base {
             foreach ($answers as $answer) {
                 $jumps[] = $this->get_jump_name($answer->jumpto);
             }
+        } else {
+            $jumps[] = $this->get_jump_name($this->properties->nextpageid);
         }
         return $jumps;
     }

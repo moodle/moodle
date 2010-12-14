@@ -420,6 +420,8 @@ class lesson_page_type_matching extends lesson_page {
             foreach ($answers as $answer) {
                 $jumps[] = $this->get_jump_name($answer->jumpto);
             }
+        } else {
+            $jumps[] = $this->get_jump_name($this->properties->nextpageid);
         }
         return $jumps;
     }
