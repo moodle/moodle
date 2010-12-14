@@ -63,7 +63,7 @@ function glossary_filter($courseid, $text) {
                                               'glossaryid IN ('.$glossarylist.') AND usedynalink != 0', null, '',
                                               'id,glossaryid,name AS concept, 1 AS casesensitive, 1 AS category, 1 AS fullmatch');
 
-        $aliases = $DB->get_records_sql('SELECT ga.id, ge.glossaryid, ga.alias as concept, ge.concept as originalconcept,
+        $aliases = $DB->get_records_sql('SELECT ga.id, ge.id AS entryid, ge.glossaryid, ga.alias AS concept, ge.concept AS originalconcept,
                                                 casesensitive, 0 AS category, fullmatch
                                            FROM {glossary_alias} ga,
                                                 {glossary_entries} ge
@@ -123,33 +123,36 @@ function glossary_filter($courseid, $text) {
         foreach ($concepts as $concept) {
 
             $glossaryname = str_replace(':', '-', $glossaries[$concept->glossaryid]);
+
             if ($concept->category) {       // Link to a category
                 $title = strip_tags($glossaryname.': '.$strcategory.' '.$concept->concept);
                 $href_tag_begin = '<a class="glossary autolink glossaryid'.$concept->glossaryid.'" title="'.$title.'" '.
                                   'href="'.$CFG->wwwroot.'/mod/glossary/view.php?g='.$concept->glossaryid.
                                   '&amp;mode=cat&amp;hook='.$concept->id.'">';
-            } else {
-                if (!empty($concept->originalconcept)) {  // We are dealing with an alias (so show original)
-                    //$encodedconcept = urlencode($concept->originalconcept);
+
+            } else { // Link to entry or alias
+                if (!empty($concept->originalconcept)) {  // We are dealing with an alias (so show and point to original)
                     $title = str_replace('"', "'", strip_tags($glossaryname.': '.$concept->originalconcept));
-                } else {
-                    //$encodedconcept = urlencode($concept->concept);
+                    $concept->id = $concept->entryid;
+                } else { // This is an entry
                     $title = str_replace('"', "'", strip_tags($glossaryname.': '.$concept->concept));
                 }
-                //hardcoding dictionary format in the URL rather than defaulting to the current glossary format which may not work in a popup.
-                //for example "entry list" means the popup would only contain a link that opens another popup.
+                // hardcoding dictionary format in the URL rather than defaulting
+                // to the current glossary format which may not work in a popup.
+                // for example "entry list" means the popup would only contain
+                // a link that opens another popup.
                 $link = new moodle_url('/mod/glossary/showentry.php', array('courseid'=>$courseid, 'eid'=>$concept->id, 'displayformat'=>'dictionary'));
                 $attributes = array(
-                    'href'=>$link,
-                    'title'=>$title,
-                    'class'=>'glossary autolink glossaryid'.$concept->glossaryid);
+                    'href' => $link,
+                    'title'=> $title,
+                    'class'=> 'glossary autolink glossaryid'.$concept->glossaryid);
 
-                //this flag is optionally set by resource_pluginfile()
-                //if processing an embedded file use target to prevent getting nested Moodles
+                // this flag is optionally set by resource_pluginfile()
+                // if processing an embedded file use target to prevent getting nested Moodles
                 if (isset($CFG->embeddedsoforcelinktarget) && $CFG->embeddedsoforcelinktarget) {
                     $attributes['target'] = '_top';
                 }
-                
+
                 $href_tag_begin = html_writer::start_tag('a', $attributes);
             }
             $conceptlist[] = new filterobject($concept->concept, $href_tag_begin, '</a>',
