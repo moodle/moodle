@@ -78,10 +78,12 @@ class data_field_multimenu extends data_field_base {
         $str = '<select name="f_'.$this->field->id.'[]" multiple="multiple">';
 
         // display only used options
-        $usedoptions = array();
-        $sql = "SELECT DISTINCT content
+        $varcharcontent = sql_compare_text('content', 255);
+        $sql = "SELECT DISTINCT $varcharcontent AS content
                   FROM {$CFG->prefix}data_content
                  WHERE fieldid={$this->field->id} AND content IS NOT NULL";
+
+        $usedoptions = array();
         if ($used = get_records_sql($sql)) {
             foreach ($used as $data) {
                 $valuestr = $data->content;
