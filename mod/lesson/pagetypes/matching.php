@@ -433,8 +433,7 @@ class lesson_page_type_matching extends lesson_page {
     }
     public function get_jumps() {
         global $DB;
-        // The jumps for matching question type is stored
-        // in the 3rd and 4rth answer record.
+        // The jumps for matching question type are stored in the 1st and 2nd answer record.
         $jumps = array();
         if ($answers = $DB->get_records("lesson_answers", array("lessonid" => $this->lesson->id, "pageid" => $this->properties->id), 'id', '*', 0, 2)) {
             foreach ($answers as $answer) {
