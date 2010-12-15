@@ -82,13 +82,6 @@ $strdata = get_string('modulenameplural','data');
 // For the javascript for inserting template tags: initialise the default textarea to
 // 'edit_template' - it is always present in all different possible views.
 
-$editorobj = 'editor_'.md5('template');
-
-$bodytag = 'onload="';
-$bodytag .= 'if (typeof('.$editorobj.') != \'undefined\') { currEditor = '.$editorobj.'; } ';
-$bodytag .= 'currTextarea = document.getElementById(\'tempform\').template;';
-$bodytag .= '" ';
-
 if ($mode == 'singletemplate') {
     $PAGE->navbar->add(get_string($mode,'data'));
 }
