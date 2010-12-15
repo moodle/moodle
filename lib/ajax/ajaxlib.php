@@ -136,29 +136,29 @@ class jsportal {
         $output .= "    main.portal.blocks = new Array(".$blocksoutput.");\n";
         $output .= "    main.portal.strings['courseformat']='".$COURSE->format."';\n";
         $output .= "    main.portal.strings['wwwroot']='".$CFG->wwwroot."';\n";
-        $output .= "    main.portal.strings['marker']='".get_string('markthistopic', '', '_var_')."';\n";
-        $output .= "    main.portal.strings['marked']='".get_string('markedthistopic', '', '_var_')."';\n";
+        $output .= "    main.portal.strings['marker']='".addslashes_js(get_string('markthistopic', '', '_var_'))."';\n";
+        $output .= "    main.portal.strings['marked']='".addslashes_js(get_string('markedthistopic', '', '_var_'))."';\n";
         $output .= "    main.portal.numsections = ".$COURSE->numsections.";\n";
         $output .= "    main.portal.lastsection = ".$DB->get_field_sql("SELECT MAX(section) FROM {course_sections} WHERE course = ?", array($courseid)).";\n"; // needed for orphaned activities in unavailable sections
-        $output .= "    main.portal.strings['hide']='".get_string('hide')."';\n";
-        $output .= "    main.portal.strings['hidesection']='".get_string('hidesection', '', '_var_')."';\n";
-        $output .= "    main.portal.strings['show']='".get_string('show')."';\n";
-        $output .= "    main.portal.strings['delete']='".get_string('delete')."';\n";
-        $output .= "    main.portal.strings['move']='".get_string('move')."';\n";
-        $output .= "    main.portal.strings['movesection']='".get_string('movesection', '', '_var_')."';\n";
-        $output .= "    main.portal.strings['moveleft']='".get_string('moveleft')."';\n";
-        $output .= "    main.portal.strings['moveright']='".get_string('moveright')."';\n";
-        $output .= "    main.portal.strings['update']='".get_string('update')."';\n";
-        $output .= "    main.portal.strings['groupsnone']='".get_string('groupsnone')."';\n";
-        $output .= "    main.portal.strings['groupsseparate']='".get_string('groupsseparate')."';\n";
-        $output .= "    main.portal.strings['groupsvisible']='".get_string('groupsvisible')."';\n";
-        $output .= "    main.portal.strings['clicktochange']='".get_string('clicktochange')."';\n";
-        $output .= "    main.portal.strings['deletecheck']='".get_string('deletecheckfull','','_var_')."';\n";
-        $output .= "    main.portal.strings['resource']='".get_string('resource')."';\n";
-        $output .= "    main.portal.strings['activity']='".get_string('activity')."';\n";
+        $output .= "    main.portal.strings['hide']='".addslashes_js(get_string('hide'))."';\n";
+        $output .= "    main.portal.strings['hidesection']='".addslashes_js(get_string('hidesection', '', '_var_'))."';\n";
+        $output .= "    main.portal.strings['show']='".addslashes_js(get_string('show'))."';\n";
+        $output .= "    main.portal.strings['delete']='".addslashes_js(get_string('delete'))."';\n";
+        $output .= "    main.portal.strings['move']='".addslashes_js(get_string('move'))."';\n";
+        $output .= "    main.portal.strings['movesection']='".addslashes_js(get_string('movesection', '', '_var_'))."';\n";
+        $output .= "    main.portal.strings['moveleft']='".addslashes_js(get_string('moveleft'))."';\n";
+        $output .= "    main.portal.strings['moveright']='".addslashes_js(get_string('moveright'))."';\n";
+        $output .= "    main.portal.strings['update']='".addslashes_js(get_string('update'))."';\n";
+        $output .= "    main.portal.strings['groupsnone']='".addslashes_js(get_string('groupsnone'))."';\n";
+        $output .= "    main.portal.strings['groupsseparate']='".addslashes_js(get_string('groupsseparate'))."';\n";
+        $output .= "    main.portal.strings['groupsvisible']='".addslashes_js(get_string('groupsvisible'))."';\n";
+        $output .= "    main.portal.strings['clicktochange']='".addslashes_js(get_string('clicktochange'))."';\n";
+        $output .= "    main.portal.strings['deletecheck']='".addslashes_js(get_string('deletecheckfull','','_var_'))."';\n";
+        $output .= "    main.portal.strings['resource']='".addslashes_js(get_string('resource'))."';\n";
+        $output .= "    main.portal.strings['activity']='".addslashes_js(get_string('activity'))."';\n";
         $output .= "    main.portal.strings['sesskey']='".sesskey()."';\n";
         foreach (array_keys(get_plugin_list('mod')) as $modtype) {
-            $output .= "    main.portal.strings['modtype_".$modtype."']='".get_string('pluginname', 'mod_'.$modtype)."';\n";
+            $output .= "    main.portal.strings['modtype_".$modtype."']='".addslashes_js(get_string('pluginname', 'mod_'.$modtype))."';\n";
         }
         $output .= "    main.portal.icons['spacerimg']='".$OUTPUT->pix_url('spacer')."';\n";
         $output .= "    main.portal.icons['marker']='".$OUTPUT->pix_url('i/marker')."';\n";
