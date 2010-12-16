@@ -461,8 +461,9 @@ function forum_cron() {
             // caching subscribed users of each forum
             if (!isset($subscribedusers[$forumid])) {
                 $modcontext = get_context_instance(CONTEXT_MODULE, $coursemodules[$forumid]->id);
-                if ($subusers = forum_subscribed_users($courses[$courseid], $forums[$forumid], 0, $modcontext)) {
+                if ($subusers = forum_subscribed_users($courses[$courseid], $forums[$forumid], 0, $modcontext, "u.*")) {
                     foreach ($subusers as $postuser) {
+                        unset($postuser->description); // not necessary
                         // this user is subscribed to this forum
                         $subscribedusers[$forumid][$postuser->id] = $postuser->id;
                         // this user is a user we have to process later
@@ -530,6 +531,7 @@ function forum_cron() {
                 if (array_key_exists($post->userid, $users)) { // we might know him/her already
                     $userfrom = $users[$post->userid];
                 } else if ($userfrom = $DB->get_record('user', array('id' => $post->userid))) {
+                    unset($userfrom->description); // not necessary
                     $users[$userfrom->id] = $userfrom; // fetch only once, we can add it to user list, it will be skipped anyway
                 } else {
                     mtrace('Could not find user '.$post->userid);
@@ -2796,9 +2798,10 @@ function forum_get_potential_subscribers($forumcontext, $groupid, $fields, $sort
  * @param forum $forum the forum
  * @param integer $groupid group id, or 0 for all.
  * @param object $context the forum context, to save re-fetching it where possible.
+ * @param string $fields requested user fields (with "u." table prefix)
  * @return array list of users.
  */
-function forum_subscribed_users($course, $forum, $groupid=0, $context = NULL) {
+function forum_subscribed_users($course, $forum, $groupid=0, $context = null, $fields = null) {
     global $CFG, $DB;
     $params = array($forum->id);
 
@@ -2811,25 +2814,27 @@ function forum_subscribed_users($course, $forum, $groupid=0, $context = NULL) {
         $groupselect = '';
     }
 
-    $fields ="u.id,
-              u.username,
-              u.firstname,
-              u.lastname,
-              u.maildisplay,
-              u.mailformat,
-              u.maildigest,
-              u.imagealt,
-              u.email,
-              u.city,
-              u.country,
-              u.lastaccess,
-              u.lastlogin,
-              u.picture,
-              u.timezone,
-              u.theme,
-              u.lang,
-              u.trackforums,
-              u.mnethostid";
+    if (empty($fields)) {
+        $fields ="u.id,
+                  u.username,
+                  u.firstname,
+                  u.lastname,
+                  u.maildisplay,
+                  u.mailformat,
+                  u.maildigest,
+                  u.imagealt,
+                  u.email,
+                  u.city,
+                  u.country,
+                  u.lastaccess,
+                  u.lastlogin,
+                  u.picture,
+                  u.timezone,
+                  u.theme,
+                  u.lang,
+                  u.trackforums,
+                  u.mnethostid";
+    }
 
     if (forum_is_forcesubscribed($forum)) {
         if (empty($context)) {
