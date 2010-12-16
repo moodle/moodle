@@ -51,9 +51,8 @@ define('LASTACCESS_UPDATE_SECS', 60);
  * Returns $user object of the main admin user
  * primary admin = admin with lowest role_assignment id among admins
  *
- * @global object
- * @static object $myadmin
- * @return object An associative array representing the admin user.
+ * @static stdClass $mainadmin
+ * @return stdClass An associative array representing the admin user.
  */
 function get_admin() {
     static $mainadmin = null;
@@ -66,7 +65,8 @@ function get_admin() {
         //      for now return the first assigned admin
         $mainadmin = reset($admins);
     }
-    return $mainadmin;
+    // we must clone this otherwise code outside can break the static var
+    return clone($mainadmin);
 }
 
 /**
