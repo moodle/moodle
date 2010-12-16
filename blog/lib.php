@@ -158,9 +158,6 @@ function blog_sync_external_entries($externalblog) {
         $DB->update_record('blog_external', $externalblog);
     }
 
-    // Delete all blog entries associated with this external blog
-    blog_delete_external_entries($externalblog);
-
     $rss = new moodle_simplepie($externalblog->url);
 
     if (empty($rss->data)) {
@@ -196,8 +193,12 @@ function blog_sync_external_entries($externalblog) {
         $newentry->format = FORMAT_HTML;
         $newentry->subject = $entry->get_title();
         $newentry->summary = $entry->get_description();
+        
+        //used to decide whether to insert or update
+        //uses enty permalink plus creation date if available
+        $existingpostconditions = array('uniquehash'=>$entry->get_permalink());
 
-        //our DB doesnt allow null creation or modified timestamps so check the external blog didnt supply one
+        //our DB doesnt allow null creation or modified timestamps so check the external blog supplied one
         $entrydate = $entry->get_date('U');
         if (empty($entrydate)) {
             $newentry->created = time();
@@ -205,6 +206,8 @@ function blog_sync_external_entries($externalblog) {
         } else {
             $newentry->created = $entrydate;
             $newentry->lastmodified = $entrydate;
+            
+            $existingpostconditions['created'] = $entrydate;
         }
 
         $textlib = textlib_get_instance();
@@ -216,11 +219,17 @@ function blog_sync_external_entries($externalblog) {
             continue;
         }
 
-        $id = $DB->insert_record('post', $newentry);
+        $postid = $DB->get_field('post', 'id', $existingpostconditions);
+        if ($postid===false) {
+            $id = $DB->insert_record('post', $newentry);
 
-        // Set tags
-        if ($tags = tag_get_tags_array('blog_external', $externalblog->id)) {
-            tag_set('post', $id, $tags);
+            // Set tags
+            if ($tags = tag_get_tags_array('blog_external', $externalblog->id)) {
+                tag_set('post', $id, $tags);
+            }
+        } else {
+            $newentry->id = $postid;
+            $id = $DB->update_record('post', $newentry);
         }
     }
 
