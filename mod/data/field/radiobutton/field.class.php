@@ -91,7 +91,8 @@ class data_field_radiobutton extends data_field_base {
     }
 
     function generate_sql($tablealias, $value) {
-        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$value') ";
+        $varcharcontent = sql_compare_text("{$tablealias}.content", 255);
+        return " ({$tablealias}.fieldid = {$this->field->id} AND $varcharcontent = '$value') ";
     }
 
 }

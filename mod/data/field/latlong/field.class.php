@@ -93,7 +93,9 @@ class data_field_latlong extends data_field_base {
         $latlong[0] = '';
         $latlong[1] = '';
         $latlong = explode (',', $value, 2);
-        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$latlong[0]' AND {$tablealias}.content1 = '$latlong[1]') ";
+        $varcharlat = sql_compare_text("{$tablealias}.content");
+        $varcharlong= sql_compare_text("{$tablealias}.content1");
+        return " ({$tablealias}.fieldid = {$this->field->id} AND $varcharlat = '$latlong[0]' AND $varcharlong = '$latlong[1]') ";
     }
 
     function display_browse_field($recordid, $template) {

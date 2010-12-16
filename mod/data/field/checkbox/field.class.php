@@ -113,17 +113,18 @@ class data_field_checkbox extends data_field_base {
         }
         return array('checked'=>$selected, 'allrequired'=>$allrequired);
     }
-    
+
     function generate_sql($tablealias, $value) {
         $allrequired = $value['allrequired'];
         $selected    = $value['checked'];
+        $varcharcontent = sql_compare_text("{$tablealias}.content", 255);
 
         if ($selected) {
             $conditions = array();
             foreach ($selected as $sel) {
                 $likesel = str_replace('%', '\%', $sel);
                 $likeselsel = str_replace('_', '\_', $likesel);
-                $conditions[] = "({$tablealias}.fieldid = {$this->field->id} AND ({$tablealias}.content = '$sel'
+                $conditions[] = "({$tablealias}.fieldid = {$this->field->id} AND ($varcharcontent = '$sel'
                                                                                OR {$tablealias}.content LIKE '$likesel##%'
                                                                                OR {$tablealias}.content LIKE '%##$likesel'
                                                                                OR {$tablealias}.content LIKE '%##$likesel##%'))";
@@ -137,7 +138,6 @@ class data_field_checkbox extends data_field_base {
             return " ";
         }
     }
-
 
     function update_content($recordid, $value, $name='') {
         $content = new object();
