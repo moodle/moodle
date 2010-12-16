@@ -176,3 +176,148 @@ class ContainsTagWithContents_test extends UnitTestCase {
 }
 
 
+/**
+ * Unit tests for the {@link ContainsSelectExpectation} class.
+ *
+ * @copyright 2010 The Open University.
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class ContainsSelectExpectation_test extends UnitTestCase {
+    function test_matching_select_passes() {
+        $expectation = new ContainsSelectExpectation('selectname', array('Choice1', 'Choice2'));
+        $this->assertTrue($expectation->test('
+                <select name="selectname">
+                    <option value="0">Choice1</option>
+                    <option value="1">Choice2</option>
+                </select>'));
+    }
+
+    function test_fails_if_no_select() {
+        $expectation = new ContainsSelectExpectation('selectname', array('Choice1', 'Choice2'));
+        $this->assertFalse($expectation->test('<span>should not match</span>'));
+    }
+
+    function test_select_with_missing_choices_fails() {
+        $expectation = new ContainsSelectExpectation('selectname', array('Choice1', 'Choice2'));
+        $this->assertFalse($expectation->test('
+                <select name="selectname">
+                    <option value="0">Choice1</option>
+                </select>'));
+    }
+
+    function test_select_with_extra_choices_fails() {
+        $expectation = new ContainsSelectExpectation('selectname', array('Choice1'));
+        $this->assertFalse($expectation->test('
+                <select name="selectname">
+                    <option value="0">Choice1</option>
+                    <option value="1">Choice2</option>
+                </select>'));
+    }
+
+    function test_select_with_wrong_order_choices_fails() {
+        $expectation = new ContainsSelectExpectation('selectname', array('Choice1'));
+        $this->assertFalse($expectation->test('
+                <select name="selectname">
+                    <option value="1">Choice2</option>
+                    <option value="0">Choice1</option>
+                </select>'));
+    }
+
+    function test_select_check_selected_pass() {
+        $expectation = new ContainsSelectExpectation('selectname',
+                array('key1' => 'Choice1', 'key2' => 'Choice2'), 'key2');
+        $this->assertTrue($expectation->test('
+                <select name="selectname">
+                    <option value="key1">Choice1</option>
+                    <option value="key2" selected="selected">Choice2</option>
+                </select>'));
+    }
+
+    function test_select_check_wrong_one_selected_fail() {
+        $expectation = new ContainsSelectExpectation('selectname',
+                array('key1' => 'Choice1', 'key2' => 'Choice2'), 'key2');
+        $this->assertFalse($expectation->test('
+                <select name="selectname">
+                    <option value="key1" selected="selected">Choice1</option>
+                    <option value="key2">Choice2</option>
+                </select>'));
+    }
+
+    function test_select_check_nothing_selected_fail() {
+        $expectation = new ContainsSelectExpectation('selectname',
+                array('key1' => 'Choice1', 'key2' => 'Choice2'), 'key2');
+        $this->assertFalse($expectation->test('
+                <select name="selectname">
+                    <option value="key1">Choice1</option>
+                    <option value="key2">Choice2</option>
+                </select>'));
+    }
+
+    function test_select_disabled_pass() {
+        $expectation = new ContainsSelectExpectation('selectname',
+                array('key1' => 'Choice1', 'key2' => 'Choice2'), null, false);
+        $this->assertTrue($expectation->test('
+                <select name="selectname" disabled="disabled">
+                    <option value="key1">Choice1</option>
+                    <option value="key2">Choice2</option>
+                </select>'));
+    }
+
+    function test_select_disabled_fail1() {
+        $expectation = new ContainsSelectExpectation('selectname',
+                array('key1' => 'Choice1', 'key2' => 'Choice2'), null, true);
+        $this->assertFalse($expectation->test('
+                <select name="selectname" disabled="disabled">
+                    <option value="key1">Choice1</option>
+                    <option value="key2">Choice2</option>
+                </select>'));
+    }
+
+    function test_select_disabled_fail2() {
+        $expectation = new ContainsSelectExpectation('selectname',
+                array('key1' => 'Choice1', 'key2' => 'Choice2'), null, false);
+        $this->assertFalse($expectation->test('
+                <select name="selectname">
+                    <option value="key1">Choice1</option>
+                    <option value="key2">Choice2</option>
+                </select>'));
+    }
+}
+
+
+/**
+ * Unit tests for the {@link DoesNotContainTagWithAttributes} class.
+ *
+ * @copyright 2010 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class DoesNotContainTagWithAttributes_test extends UnitTestCase {
+    function test_simple() {
+        $content = <<<END
+<input id="qIhr6wWLTt3,1_omact_gen_14" name="qIhr6wWLTt3,1_omact_gen_14" onclick="if(this.hasSubmitted) { return false; } this.hasSubmitted=true; preSubmit(this.form); return true;" type="submit" value="Check" />
+END;
+        $expectation = new DoesNotContainTagWithAttributes('input',
+                array('type' => 'submit', 'name' => 'qIhr6wWLTt3,1_omact_gen_14', 'value' => 'Check'));
+        $this->assertFalse($expectation->test($content));
+    }
+
+    function test_zero_attr() {
+        $expectation = new DoesNotContainTagWithAttributes('span', array('class' => 0));
+        $this->assertFalse($expectation->test('<span class="0">message</span>'));
+    }
+
+    function test_zero_different_attr_ok() {
+        $expectation = new DoesNotContainTagWithAttributes('span', array('class' => 'shrub'));
+        $this->assertTrue($expectation->test('<span class="tree">message</span>'));
+    }
+
+    function test_blank_attr() {
+        $expectation = new DoesNotContainTagWithAttributes('span', array('class' => ''));
+        $this->assertFalse($expectation->test('<span class="">message</span>'));
+    }
+
+    function test_blank_attr_does_not_match_zero() {
+        $expectation = new ContainsTagWithAttributes('span', array('class' => ''));
+        $this->assertFalse($expectation->test('<span class="0">message</span>'));
+    }
+}

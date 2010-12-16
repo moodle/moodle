@@ -205,6 +205,18 @@ abstract class XMLStructureExpectation extends SimpleExpectation {
         libxml_use_internal_errors($prevsetting);
         return $parser;
     }
+
+    function testMessage($html) {
+        $parsererrors = $this->load_xml($html);
+        if (is_array($parsererrors)) {
+            foreach ($parsererrors as $key => $message) {
+                $parsererrors[$key] = $message->message;
+            }
+            return 'Could not parse XML [' . $html . '] errors were [' . 
+                    implode('], [', $parsererrors) . ']';
+        }
+        return $this->customMessage($html);
+    }
 }
 /**
  * An Expectation that looks to see whether some HMTL contains a tag with a certain attribute.
@@ -226,6 +238,9 @@ class ContainsTagWithAttribute extends XMLStructureExpectation {
 
     function test($html) {
         $parser = $this->load_xml($html);
+        if (is_array($parser)) {
+            return false;
+        }
         $list = $parser->getElementsByTagName($this->tag);
 
         foreach ($list as $node) {
@@ -236,7 +251,7 @@ class ContainsTagWithAttribute extends XMLStructureExpectation {
         return false;
     }
 
-    function testMessage($html) {
+    function customMessage($html) {
         return 'Content [' . $html . '] does not contain the tag [' .
                 $this->tag . '] with attribute [' . $this->attribute . '="' . $this->value . '"].';
     }
@@ -277,8 +292,11 @@ class ContainsTagWithAttributes extends XMLStructureExpectation {
 
     function test($html) {
         $parser = $this->load_xml($html);
-        $list = $parser->getElementsByTagName($this->tag);
+        if (is_array($parser)) {
+            return false;
+        }
 
+        $list = $parser->getElementsByTagName($this->tag);
         $foundamatch = false;
 
         // Iterating through inputs
@@ -319,7 +337,7 @@ class ContainsTagWithAttributes extends XMLStructureExpectation {
         return $foundamatch;
     }
 
-    function testMessage($html) {
+    function customMessage($html) {
         $output = 'Content [' . $html . '] ';
 
         if (preg_match('/forbiddenmatch:(.*):(.*)/', $this->failurereason, $matches)) {
@@ -332,6 +350,135 @@ class ContainsTagWithAttributes extends XMLStructureExpectation {
             $output = rtrim($output);
             $output .= '].';
         }
+
+        return $output;
+    }
+}
+
+/**
+ * An Expectation that looks to see whether some HMTL contains a tag with an array of attributes.
+ * All attributes must be present and their values must match the expected values.
+ * A third parameter can be used to specify attribute=>value pairs which must not be present in a positive match.
+ *
+ * @copyright 2010 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class ContainsSelectExpectation extends XMLStructureExpectation {
+    /**
+     * @var string $tag The name of the Tag to search
+     */
+    protected $name;
+    /**
+     * @var array $expectedvalues An associative array of parameters, all of which must be matched
+     */
+    protected $choices;
+    /**
+     * @var array $forbiddenvalues An associative array of parameters, none of which must be matched
+     */
+    protected $selected;
+    /**
+     * @var string $failurereason The reason why the test failed: nomatch or forbiddenmatch
+     */
+    protected $enabled;
+
+    function __construct($name, $choices, $selected = null, $enabled = null, $message = '%s') {
+        parent::__construct($message);
+        $this->name = $name;
+        $this->choices = $choices;
+        $this->selected = $selected;
+        $this->enabled = $enabled;
+    }
+
+    function test($html) {
+        $parser = $this->load_xml($html);
+        if (is_array($parser)) {
+            return false;
+        }
+
+        $list = $parser->getElementsByTagName('select');
+
+        // Iterating through inputs
+        foreach ($list as $node) {
+            if (empty($node->attributes) || !is_a($node->attributes, 'DOMNamedNodeMap')) {
+                continue;
+            }
+
+            if ($node->getAttribute('name') != $this->name) {
+                continue;
+            }
+
+            if ($this->enabled === true && $node->getAttribute('disabled')) {
+                continue;
+            } else if ($this->enabled === false && $node->getAttribute('disabled') != 'disabled') {
+                continue;
+            }
+
+            $options = $node->getElementsByTagName('option');
+            reset($this->choices);
+            foreach ($options as $option) {
+                if ($option->getAttribute('value') != key($this->choices)) {
+                    continue 2;
+                }
+                if ($option->firstChild->wholeText != current($this->choices)) {
+                    continue 2;
+                }
+                if ($option->getAttribute('value') === $this->selected &&
+                        !$option->hasAttribute('selected')) {
+                    continue 2;
+                }
+                next($this->choices);
+            }
+            if (current($this->choices) !== false) {
+                // The HTML did not contain all the choices.
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    function customMessage($html) {
+        if ($this->enabled === true) {
+            $state = 'an enabled';
+        } else if ($this->enabled === false) {
+            $state = 'a disabled';
+        } else {
+            $state = 'a';
+        }
+        $output = 'Content [' . $html . '] does not contain ' . $state .
+                ' <select> with name ' . $this->name . ' and choices ' .
+                implode(', ', $this->choices);
+        if ($this->selected) {
+            $output .= ' with ' . $this->selected . ' selected).';
+        }
+
+        return $output;
+    }
+}
+
+/**
+ * The opposite of {@link ContainsTagWithAttributes}. The test passes only if
+ * the HTML does not contain a tag with the given attributes.
+ *
+ * @copyright 2010 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class DoesNotContainTagWithAttributes extends ContainsTagWithAttributes {
+    function __construct($tag, $expectedvalues, $message = '%s') {
+        parent::__construct($tag, $expectedvalues, array(), $message);
+    }
+    function test($html) {
+        return !parent::test($html);
+    }
+    function customMessage($html) {
+        $output = 'Content [' . $html . '] ';
+
+        $output .= 'contains the tag [' . $this->tag . '] with attributes [';
+        foreach ($this->expectedvalues as $var => $val) {
+            $output .= "$var=\"$val\" ";
+        }
+        $output = rtrim($output);
+        $output .= '].';
 
         return $output;
     }
