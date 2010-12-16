@@ -81,6 +81,15 @@ class enrol_database_plugin extends enrol_plugin {
 
         $ignorehidden     = $this->get_config('ignorehiddencourses');
 
+        if (!is_object($user) or !property_exists($user, 'id')) {
+            throw new coding_exception('Invalid $user parameter in sync_user_enrolments()');
+        }
+
+        if (!property_exists($user, $localuserfield)) {
+            debugging('Invalid $user parameter in sync_user_enrolments(), missing '.$localuserfield);
+            $user = $DB->get_record('user', array('id'=>$user->id));
+        }
+
         // create roles mapping
         $allroles = get_all_roles();
         if (!isset($allroles[$defaultrole])) {

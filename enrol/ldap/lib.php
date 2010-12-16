@@ -136,6 +136,15 @@ class enrol_ldap_plugin extends enrol_plugin {
             return;
         }
 
+        if (!is_object($user) or !property_exists($user, 'id')) {
+            throw new coding_exception('Invalid $user parameter in sync_user_enrolments()');
+        }
+
+        if (!property_exists($user, 'idnumbner')) {
+            debugging('Invalid $user parameter in sync_user_enrolments(), missing idnumber');
+            $user = $DB->get_record('user', array('id'=>$user->id));
+        }
+
         // We may need a lot of memory here
         @set_time_limit(0);
         raise_memory_limit(MEMORY_HUGE);
