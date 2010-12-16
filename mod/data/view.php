@@ -504,10 +504,10 @@
 
             } else {
 
-                $sortcontent = $sortfield->get_sort_field();
-                $sortcontentfull = $sortfield->get_sort_sql('c.'.$sortcontent);
+                $sortcontent = sql_compare_text('c.' . $sortfield->get_sort_field());
+                $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
 
-                $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, '.sql_compare_text($sortcontentfull).' AS _order ';
+                $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, '.$sortcontentfull.' AS _order ';
                 $count = ' COUNT(DISTINCT c.recordid) ';
                 $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content cs, '.$CFG->prefix.'user u ';
                 $where =  'WHERE c.recordid = r.id
@@ -545,7 +545,6 @@
             $fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
             $sqlselect  = "SELECT $what $fromsql $sortorder";
             $sqlcount   = "SELECT $count $fromsql";   // Total number of records when searching
-            $sqlrids    = "SELECT tmp.id FROM ($sqlselect) tmp";
             $sqlmax     = "SELECT $count FROM $tables $where $groupselect $approveselect"; // number of all recoirds user may see
 
         /// Work out the paging numbers and counts
@@ -562,7 +561,8 @@
                 $mode = 'single';
 
                 $page = 0;
-                if ($allrecordids = get_records_sql($sqlrids)) {
+                // TODO: Improve this because we are executing $sqlselect twice (here and some lines below)!
+                if ($allrecordids = get_fieldset_sql($sqlselect)) {
                     $allrecordids = array_keys($allrecordids);
                     $page = (int)array_search($record->id, $allrecordids);
                     unset($allrecordids);
