@@ -123,6 +123,10 @@ class web_test extends UnitTestCase {
         $this->assertEqual('[edit]', html_to_text('<img src="edit.png" alt="edit" />'));
     }
 
+    public function test_html_to_text_image_with_backslash() {
+        $this->assertEqual('[\edit]', html_to_text('<img src="edit.png" alt="\edit" />'));
+    }
+
     public function test_html_to_text_nowrap() {
         $long = "Here is a long string, more than 75 characters long, since by default html_to_text wraps text at 75 chars.";
         $this->assertEqual($long, html_to_text($long, 0));
