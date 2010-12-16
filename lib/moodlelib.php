@@ -183,6 +183,11 @@ define('PARAM_PERMISSION',   'permission');
 define('PARAM_RAW', 'raw');
 
 /**
+ * PARAM_RAW_TRIMMED like PARAM_RAW but leading and trailing whitespace is stripped.
+ */
+define('PARAM_RAW_TRIMMED', 'raw_trimmed');
+
+/**
  * PARAM_SAFEDIR - safe directory name, suitable for include() and require()
  */
 define('PARAM_SAFEDIR',  'safedir');
@@ -552,6 +557,9 @@ function clean_param($param, $type) {
     switch ($type) {
         case PARAM_RAW:          // no cleaning at all
             return $param;
+
+        case PARAM_RAW_TRIMMED:         // no cleaning, but strip leading and trailing whitespace.
+            return trim($param);
 
         case PARAM_CLEAN:        // General HTML cleaning, try to use more specific type if possible
             // this is deprecated!, please use more specific type instead
