@@ -197,18 +197,29 @@ function blog_sync_external_entries($externalblog) {
         //used to decide whether to insert or update
         //uses enty permalink plus creation date if available
         $existingpostconditions = array('uniquehash'=>$entry->get_permalink());
+        $postid = null;//ID of the post if a matching permalink and creation timestamp are found in the DB
 
         //our DB doesnt allow null creation or modified timestamps so check the external blog supplied one
         $entrydate = $entry->get_date('U');
-        if (empty($entrydate)) {
-            $newentry->created = time();
-            $newentry->lastmodified = time();
-        } else {
-            $newentry->created = $entrydate;
-            $newentry->lastmodified = $entrydate;
-            
+        if (!empty($entrydate)) {
             $existingpostconditions['created'] = $entrydate;
         }
+        
+        //the post ID or false if post not found
+        $postid = $DB->get_field('post', 'id', $existingpostconditions);
+        
+        $timestamp = null;
+        if (empty($entrydate)) {
+            $timestamp = time();
+        } else {
+            $timestamp = $entrydate;
+        }
+        
+        //only set created if its a new post so we retain the original creation timestamp if the post is edited
+        if ($postid===false) {
+            $newentry->created = $timestamp;
+        }
+        $newentry->lastmodified = $timestamp;
 
         $textlib = textlib_get_instance();
         if ($textlib->strlen($newentry->uniquehash) > 255) {
@@ -219,7 +230,6 @@ function blog_sync_external_entries($externalblog) {
             continue;
         }
 
-        $postid = $DB->get_field('post', 'id', $existingpostconditions);
         if ($postid===false) {
             $id = $DB->insert_record('post', $newentry);
 
@@ -229,7 +239,7 @@ function blog_sync_external_entries($externalblog) {
             }
         } else {
             $newentry->id = $postid;
-            $id = $DB->update_record('post', $newentry);
+            $DB->update_record('post', $newentry);
         }
     }
 
