@@ -70,17 +70,19 @@ class data_field_latlong extends data_field_base {
 
     function display_search_field($value = '') {
         global $CFG;
-        $lats = get_records_sql_menu('SELECT id, content from '.$CFG->prefix.'data_content WHERE fieldid='.$this->field->id.' GROUP BY content ORDER BY content');
-        $longs = get_records_sql_menu('SELECT id, content1 from '.$CFG->prefix.'data_content WHERE fieldid='.$this->field->id.' GROUP BY content ORDER BY content');
+        $varcharlat = sql_compare_text('content');
+        $varcharlong= sql_compare_text('content1');
+        $latlongsrs = get_recordset_sql(
+            "SELECT DISTINCT $varcharlat AS la, $varcharlong AS lo
+              FROM {$CFG->prefix}data_content
+             WHERE fieldid = {$this->field->id}
+             ORDER BY $varcharlat, $varcharlong");
         $options = array();
-        if(!empty($lats) && !empty($longs)) {
-            $options[''] = '';
-            // Make first index blank.
-            foreach($lats as $key => $temp) {
-                $options[$temp.','.$longs[$key]] = $temp.','.$longs[$key];
-            }
+        while ($latlong = rs_fetch_next_record($latlongsrs)) {
+            $options[$latlong->la . ',' . $latlong->lo] = $latlong->la . ',' . $latlong->lo;
         }
-       return choose_from_menu($options, 'f_'.$this->field->id, $value, 'choose', '', 0, true);
+        rs_close($latlongsrs);
+        return choose_from_menu($options, 'f_'.$this->field->id, $value, 'choose', '', 0, true);
     }
 
     function parse_search_field() {
@@ -91,7 +93,9 @@ class data_field_latlong extends data_field_base {
         $latlong[0] = '';
         $latlong[1] = '';
         $latlong = explode (',', $value, 2);
-        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$latlong[0]' AND {$tablealias}.content1 = '$latlong[1]') ";
+        $varcharlat = sql_compare_text("{$tablealias}.content");
+        $varcharlong= sql_compare_text("{$tablealias}.content1");
+        return " ({$tablealias}.fieldid = {$this->field->id} AND $varcharlat = '$latlong[0]' AND $varcharlong = '$latlong[1]') ";
     }
 
     function display_browse_field($recordid, $template) {

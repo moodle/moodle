@@ -56,14 +56,16 @@ class data_field_menu extends data_field_base {
 
         return $str;
     }
-    
+
     function display_search_field($content = '') {
         global $CFG;
 
-        $usedoptions = array();
-        $sql = "SELECT DISTINCT content
+        $varcharcontent = sql_compare_text('content', 255);
+        $sql = "SELECT DISTINCT $varcharcontent AS content
                   FROM {$CFG->prefix}data_content
                  WHERE fieldid={$this->field->id} AND content IS NOT NULL";
+
+        $usedoptions = array();
         if ($used = get_records_sql($sql)) {
             foreach ($used as $data) {
                 $value = $data->content;
@@ -87,7 +89,7 @@ class data_field_menu extends data_field_base {
             return '';
         }
 
-        return choose_from_menu($options, 'f_'.$this->field->id, stripslashes($content), '&nbsp;', '', 0, true);    
+        return choose_from_menu($options, 'f_'.$this->field->id, stripslashes($content), 'choose', '', 0, true);
     }
 
      function parse_search_field() {
@@ -95,7 +97,8 @@ class data_field_menu extends data_field_base {
      }
 
     function generate_sql($tablealias, $value) {
-        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$value') "; 
+        $varcharcontent = sql_compare_text("{$tablealias}.content", 255);
+        return " ({$tablealias}.fieldid = {$this->field->id} AND $varcharcontent = '$value') ";
     }
 
 }

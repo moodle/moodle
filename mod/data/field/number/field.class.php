@@ -76,10 +76,10 @@ class data_field_number extends data_field_base {
     function parse_search_field() {
         return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
     }
-    
-    // need to cast?
+
     function generate_sql($tablealias, $value) {
-        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$value') ";
+        $varcharcontent = sql_compare_text("{$tablealias}.content");
+        return " ({$tablealias}.fieldid = {$this->field->id} AND $varcharcontent = '$value') ";
     }
 
     function get_sort_sql($fieldname) {

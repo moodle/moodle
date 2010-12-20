@@ -66,15 +66,21 @@ class data_field_radiobutton extends data_field_base {
         $str .= '</div>';
         return $str;
     }
-    
+
      function display_search_field($value = '') {
         global $CFG;
-        $temp = get_records_sql_menu('SELECT id, content from '.$CFG->prefix.'data_content WHERE fieldid='.$this->field->id.' GROUP BY content ORDER BY content');
+
+        $varcharcontent = sql_compare_text('content', 255);
+        $used = get_records_sql(
+            "SELECT DISTINCT $varcharcontent AS content
+               FROM {$CFG->prefix}data_content
+              WHERE fieldid={$this->field->id}
+             ORDER BY $varcharcontent");
+
         $options = array();
-        if(!empty($temp)) {
-            $options[''] = '';              //Make first index blank.
-            foreach ($temp as $key) {
-                $options[$key] = $key;  //Build following indicies from the sql.
+        if(!empty($used)) {
+            foreach ($used as $rec) {
+                $options[$rec->content] = $rec->content;  //Build following indicies from the sql.
             }
         }
         return choose_from_menu($options, 'f_'.$this->field->id, $value, 'choose', '', 0, true);
@@ -83,9 +89,10 @@ class data_field_radiobutton extends data_field_base {
     function parse_search_field() {
         return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
     }
-    
+
     function generate_sql($tablealias, $value) {
-        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$value') "; 
+        $varcharcontent = sql_compare_text("{$tablealias}.content", 255);
+        return " ({$tablealias}.fieldid = {$this->field->id} AND $varcharcontent = '$value') ";
     }
 
 }

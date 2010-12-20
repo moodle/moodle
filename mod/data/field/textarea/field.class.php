@@ -68,20 +68,20 @@ class data_field_textarea extends data_field_base {
         $str .= '</div>';
         return $str;
     }
-    
-    
+
+
     function display_search_field($value = '') {
-        return '<input type="text" size="16" name="f_'.$this->field->id.'" value="'.$value.'" />';   
+        return '<input type="text" size="16" name="f_'.$this->field->id.'" value="'.$value.'" />';
     }
-    
+
     function parse_search_field() {
         return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
     }
-    
+
     function generate_sql($tablealias, $value) {
-        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content LIKE '%{$value}%') "; 
+        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content LIKE '%{$value}%') ";
     }
-    
+
     function gen_textarea($usehtmleditor, $text='') {
         // MDL-16018: Don't print htmlarea with < 7 lines height, causes visualization problem
         $text = clean_text($text);

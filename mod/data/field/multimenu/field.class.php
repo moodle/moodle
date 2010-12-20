@@ -78,10 +78,12 @@ class data_field_multimenu extends data_field_base {
         $str = '<select name="f_'.$this->field->id.'[]" multiple="multiple">';
 
         // display only used options
-        $usedoptions = array();
-        $sql = "SELECT DISTINCT content
+        $varcharcontent = sql_compare_text('content', 255);
+        $sql = "SELECT DISTINCT $varcharcontent AS content
                   FROM {$CFG->prefix}data_content
                  WHERE fieldid={$this->field->id} AND content IS NOT NULL";
+
+        $usedoptions = array();
         if ($used = get_records_sql($sql)) {
             foreach ($used as $data) {
                 $valuestr = $data->content;
@@ -138,13 +140,14 @@ class data_field_multimenu extends data_field_base {
     function generate_sql($tablealias, $value) {
         $allrequired = $value['allrequired'];
         $selected    = $value['selected'];
+        $varcharcontent = sql_compare_text("{$tablealias}.content", 255);
 
         if ($selected) {
             $conditions = array();
             foreach ($selected as $sel) {
                 $likesel = str_replace('%', '\%', $sel);
                 $likeselsel = str_replace('_', '\_', $likesel);
-                $conditions[] = "({$tablealias}.fieldid = {$this->field->id} AND ({$tablealias}.content = '$sel'
+                $conditions[] = "({$tablealias}.fieldid = {$this->field->id} AND ($varcharcontent = '$sel'
                                                                                OR {$tablealias}.content LIKE '$likesel##%'
                                                                                OR {$tablealias}.content LIKE '%##$likesel'
                                                                                OR {$tablealias}.content LIKE '%##$likesel##%'))";
