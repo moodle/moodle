@@ -78,5 +78,23 @@ class question_import_form extends moodleform {
         $template = "{help} {element}\n";
         $renderer->setGroupElementTemplate($template, 'format');
     }
+
+    public function validation($data, $files){
+        $errors = parent::validation($data, $files);
+        return $errors; // TODO.
+        // If a file is uploaded return
+        if ($data['choosefile'] || $files['newfile']) {
+            return $errors;
+        }
+        // If file is not uploaded from  file upload
+        if (!$files['newfile']) {
+            $errors['newfile'] = get_string('importfromupload', 'question');
+        }
+        // If filke is not imported from course files
+        if (!$data['choosefile'] && !$files['newfile']) {
+            $errors['choosefile'] = get_string('importfromcoursefiles', 'question');
+        }
+        return $errors;
+    }
 }
 

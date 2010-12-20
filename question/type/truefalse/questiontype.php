@@ -15,89 +15,102 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
 
-/////////////////
-/// TRUEFALSE ///
-/////////////////
-
-/// QUESTION TYPE CLASS //////////////////
 /**
- * @package questionbank
- * @subpackage questiontypes
+ * Question type class for the true-false question type.
+ *
+ * @package qtype_truefalse
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_truefalse_qtype extends default_questiontype {
 
-    function name() {
-        return 'truefalse';
-    }
 
-    function save_question_options($question) {
-        global $DB;
+/**
+ * The true-false question type class.
+ *
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class qtype_truefalse extends question_type {
+    public function save_question_options($question) {
         $result = new stdClass;
-        $context = $question->context;
 
-        // Fetch old answer ids so that we can reuse them
-        $oldanswers = $DB->get_records('question_answers',
-                array('question' => $question->id), 'id ASC');
-
-        // Save the true answer - update an existing answer if possible.
-        $answer = array_shift($oldanswers);
-        if (!$answer) {
-            $answer = new stdClass();
-            $answer->question = $question->id;
-            $answer->answer = '';
-            $answer->feedback = '';
-            $answer->id = $DB->insert_record('question_answers', $answer);
+        // fetch old answer ids so that we can reuse them
+        if (!$oldanswers = get_records("question_answers", "question", $question->id, "id ASC")) {
+            $oldanswers = array();
         }
 
-        $answer->answer   = get_string('true', 'quiz');
-        $answer->fraction = $question->correctanswer;
-        $answer->feedback = $this->import_or_save_files($question->feedbacktrue,
-                $context, 'question', 'answerfeedback', $answer->id);
-        $answer->feedbackformat = $question->feedbacktrue['format'];
-        $DB->update_record('question_answers', $answer);
-        $trueid = $answer->id;
-
-        // Save the false answer - update an existing answer if possible.
-        $answer = array_shift($oldanswers);
-        if (!$answer) {
-            $answer = new stdClass();
-            $answer->question = $question->id;
-            $answer->answer = '';
-            $answer->feedback = '';
-            $answer->id = $DB->insert_record('question_answers', $answer);
+        // Save answer 'True'
+        if ($true = array_shift($oldanswers)) {  // Existing answer, so reuse it
+            $true->answer   = get_string("true", "quiz");
+            $true->fraction = $question->correctanswer;
+            $true->feedback = $question->feedbacktrue;
+            if (!update_record("question_answers", $true)) {
+                $result->error = "Could not update quiz answer \"true\")!";
+                return $result;
+            }
+        } else {
+            unset($true);
+            $true->answer   = get_string("true", "quiz");
+            $true->question = $question->id;
+            $true->fraction = $question->correctanswer;
+            $true->feedback = $question->feedbacktrue;
+            if (!$true->id = insert_record("question_answers", $true)) {
+                $result->error = "Could not insert quiz answer \"true\")!";
+                return $result;
+            }
         }
 
-        $answer->answer   = get_string('false', 'quiz');
-        $answer->fraction = 1 - (int)$question->correctanswer;
-        $answer->feedback = $this->import_or_save_files($question->feedbackfalse,
-                $context, 'question', 'answerfeedback', $answer->id);
-        $answer->feedbackformat = $question->feedbackfalse['format'];
-        $DB->update_record('question_answers', $answer);
-        $falseid = $answer->id;
+        // Save answer 'False'
+        if ($false = array_shift($oldanswers)) {  // Existing answer, so reuse it
+            $false->answer   = get_string("false", "quiz");
+            $false->fraction = 1 - (int)$question->correctanswer;
+            $false->feedback = $question->feedbackfalse;
+            if (!update_record("question_answers", $false)) {
+                $result->error = "Could not insert quiz answer \"false\")!";
+                return $result;
+            }
+        } else {
+            unset($false);
+            $false->answer   = get_string("false", "quiz");
+            $false->question = $question->id;
+            $false->fraction = 1 - (int)$question->correctanswer;
+            $false->feedback = $question->feedbackfalse;
+            if (!$false->id = insert_record("question_answers", $false)) {
+                $result->error = "Could not insert quiz answer \"false\")!";
+                return $result;
+            }
+        }
 
-        // Delete any left over old answer records.
-        $fs = get_file_storage();
-        foreach($oldanswers as $oldanswer) {
-            $fs->delete_area_files($context->id, 'question', 'answerfeedback', $oldanswer->id);
-            $DB->delete_records('question_answers', array('id' => $oldanswer->id));
+        // delete any leftover old answer records (there couldn't really be any, but who knows)
+        if (!empty($oldanswers)) {
+            foreach($oldanswers as $oa) {
+                delete_records('question_answers', 'id', $oa->id);
+            }
         }
 
         // Save question options in question_truefalse table
-        if ($options = $DB->get_record('question_truefalse', array('question' => $question->id))) {
+        if ($options = get_record("question_truefalse", "question", $question->id)) {
             // No need to do anything, since the answer IDs won't have changed
             // But we'll do it anyway, just for robustness
-            $options->trueanswer  = $trueid;
-            $options->falseanswer = $falseid;
-            $DB->update_record('question_truefalse', $options);
+            $options->trueanswer  = $true->id;
+            $options->falseanswer = $false->id;
+            if (!update_record("question_truefalse", $options)) {
+                $result->error = "Could not update quiz truefalse options! (id=$options->id)";
+                return $result;
+            }
         } else {
-            $options = new stdClass();
+            unset($options);
             $options->question    = $question->id;
-            $options->trueanswer  = $trueid;
-            $options->falseanswer = $falseid;
-            $DB->insert_record('question_truefalse', $options);
+            $options->trueanswer  = $true->id;
+            $options->falseanswer = $false->id;
+            if (!insert_record("question_truefalse", $options)) {
+                $result->error = "Could not insert quiz truefalse options!";
+                return $result;
+            }
         }
+
+        $this->save_hints($question);
 
         return true;
     }
@@ -105,213 +118,181 @@ class question_truefalse_qtype extends default_questiontype {
     /**
     * Loads the question type specific options for the question.
     */
-    function get_question_options(&$question) {
-        global $DB, $OUTPUT;
+    public function get_question_options($question) {
         // Get additional information from database
         // and attach it to the question object
-        if (!$question->options = $DB->get_record('question_truefalse', array('question' => $question->id))) {
-            echo $OUTPUT->notification('Error: Missing question options!');
+        if (!$question->options = get_record('question_truefalse', 'question', $question->id)) {
+            notify('Error: Missing question options!');
             return false;
         }
-        // Load the answers
-        if (!$question->options->answers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
-           echo $OUTPUT->notification('Error: Missing question answers for truefalse question ' . $question->id . '!');
-           return false;
-        }
+
+        parent::get_question_options($question);
 
         return true;
     }
 
-    function delete_question($questionid, $contextid) {
-        global $DB;
-        $DB->delete_records('question_truefalse', array('question' => $questionid));
-
-        parent::delete_question($questionid, $contextid);
-    }
-
-    function compare_responses($question, $state, $teststate) {
-        if (isset($state->responses['']) && isset($teststate->responses[''])) {
-            return $state->responses[''] === $teststate->responses[''];
-        } else if (isset($teststate->responses['']) && $teststate->responses[''] === '' &&
-                !isset($state->responses[''])) {
-            // Nothing selected in the past, and nothing selected now.
-            return true;
+    protected function initialise_question_instance(question_definition $question, $questiondata) {
+        parent::initialise_question_instance($question, $questiondata);
+        $answers = $questiondata->options->answers;
+        if ($answers[$questiondata->options->trueanswer]->fraction > 0.99) {
+            $question->rightanswer = true;
+        } else {
+            $question->rightanswer = false;
         }
-        return false;
-    }
-
-    function get_correct_responses(&$question, &$state) {
-        // The correct answer is the one which gives full marks
-        foreach ($question->options->answers as $answer) {
-            if (((int) $answer->fraction) === 1) {
-                return array('' => $answer->id);
-            }
-        }
-        return null;
+        $question->truefeedback = $answers[$questiondata->options->trueanswer]->feedback;
+        $question->falsefeedback = $answers[$questiondata->options->falseanswer]->feedback;
     }
 
     /**
-    * Prints the main content of the question including any interactions
+    * Deletes question from the question-type specific tables
+    *
+    * @return boolean Success/Failure
+    * @param object $question  The question being deleted
     */
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
-        global $CFG;
-        $context = $this->get_context_by_category_id($question->category);
-
-        $readonly = $options->readonly ? ' disabled="disabled"' : '';
-
-        $formatoptions = new stdClass;
-        $formatoptions->noclean = true;
-        $formatoptions->para = false;
-
-        // Print question formulation
-        $questiontext = format_text($question->questiontext,
-                         $question->questiontextformat,
-                         $formatoptions, $cmoptions->course);
-
-        $answers = &$question->options->answers;
-        $trueanswer = &$answers[$question->options->trueanswer];
-        $falseanswer = &$answers[$question->options->falseanswer];
-        $correctanswer = ($trueanswer->fraction == 1) ? $trueanswer : $falseanswer;
-
-        $trueclass = '';
-        $falseclass = '';
-        $truefeedbackimg = '';
-        $falsefeedbackimg = '';
-
-        // Work out which radio button to select (if any)
-        if (isset($state->responses[''])) {
-            $response = $state->responses[''];
-        } else {
-            $response = '';
-        }
-        $truechecked = ($response == $trueanswer->id) ? ' checked="checked"' : '';
-        $falsechecked = ($response == $falseanswer->id) ? ' checked="checked"' : '';
-
-        // Work out visual feedback for answer correctness.
-        if ($options->feedback) {
-            if ($truechecked) {
-                $trueclass = question_get_feedback_class($trueanswer->fraction);
-            } else if ($falsechecked) {
-                $falseclass = question_get_feedback_class($falseanswer->fraction);
-            }
-        }
-        if ($options->feedback || $options->correct_responses) {
-            if (isset($answers[$response])) {
-                $truefeedbackimg = question_get_feedback_image($trueanswer->fraction, !empty($truechecked) && $options->feedback);
-                $falsefeedbackimg = question_get_feedback_image($falseanswer->fraction, !empty($falsechecked) && $options->feedback);
-            }
-        }
-
-        $inputname = ' name="'.$question->name_prefix.'" ';
-        $trueid    = $question->name_prefix.'true';
-        $falseid   = $question->name_prefix.'false';
-
-        $radiotrue = '<input type="radio"' . $truechecked . $readonly . $inputname
-            . 'id="'.$trueid . '" value="' . $trueanswer->id . '" /><label for="'.$trueid . '">'
-            . s($trueanswer->answer) . '</label>';
-        $radiofalse = '<input type="radio"' . $falsechecked . $readonly . $inputname
-            . 'id="'.$falseid . '" value="' . $falseanswer->id . '" /><label for="'.$falseid . '">'
-            . s($falseanswer->answer) . '</label>';
-
-        $feedback = '';
-        if ($options->feedback and isset($answers[$response])) {
-            $chosenanswer = $answers[$response];
-            $chosenanswer->feedback = quiz_rewrite_question_urls($chosenanswer->feedback, 'pluginfile.php', $context->id, 'question', 'answerfeedback', array($state->attempt, $state->question), $chosenanswer->id);
-            $feedback = format_text($chosenanswer->feedback, $chosenanswer->feedbackformat, $formatoptions, $cmoptions->course);
-        }
-
-        include("$CFG->dirroot/question/type/truefalse/display.html");
+    public function delete_question($questionid) {
+        delete_records("question_truefalse", "question", $questionid);
+        return parent::delete_question($questionid);
     }
 
-    function move_files($questionid, $oldcontextid, $newcontextid) {
-        parent::move_files($questionid, $oldcontextid, $newcontextid);
-        $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
-    }
-
-    protected function delete_files($questionid, $contextid) {
-        parent::delete_files($questionid, $contextid);
-        $this->delete_files_in_answers($questionid, $contextid);
-    }
-
-    function check_file_access($question, $state, $options, $contextid, $component,
-            $filearea, $args) {
-        if ($component == 'question' && $filearea == 'answerfeedback') {
-
-            $answerid = reset($args); // itemid is answer id.
-            $answers = &$question->options->answers;
-            if (isset($state->responses[''])) {
-                $response = $state->responses[''];
-            } else {
-                $response = '';
-            }
-
-            return $options->feedback && isset($answers[$response]) && $answerid == $response;
-
-        } else {
-            return parent::check_file_access($question, $state, $options, $contextid, $component,
-                    $filearea, $args);
-        }
-    }
-
-    function grade_responses(&$question, &$state, $cmoptions) {
-        if (isset($state->responses['']) && isset($question->options->answers[$state->responses['']])) {
-            $state->raw_grade = $question->options->answers[$state->responses['']]->fraction * $question->maxgrade;
-        } else {
-            $state->raw_grade = 0;
-        }
-        // Only allow one attempt at the question
-        $state->penalty = 1 * $question->maxgrade;
-
-        // mark the state as graded
-        $state->event = ($state->event ==  QUESTION_EVENTCLOSE) ? QUESTION_EVENTCLOSEANDGRADE : QUESTION_EVENTGRADE;
-
-        return true;
-    }
-
-    function get_actual_response($question, $state) {
-        if (isset($question->options->answers[$state->responses['']])) {
-            $responses[] = $question->options->answers[$state->responses['']]->answer;
-        } else {
-            $responses[] = '';
-        }
-        return $responses;
-    }
-    /**
-     * @param object $question
-     * @return mixed either a integer score out of 1 that the average random
-     * guess by a student might give or an empty string which means will not
-     * calculate.
-     */
-    function get_random_guess_score($question) {
+    function get_random_guess_score($questiondata) {
         return 0.5;
+    }
+
+    function get_possible_responses($questiondata) {
+        return array(
+            $questiondata->id => array(
+                0 => new question_possible_response(get_string('false', 'qtype_truefalse'),
+                        $questiondata->options->answers[
+                        $questiondata->options->falseanswer]->fraction),
+                1 => new question_possible_response(get_string('true', 'qtype_truefalse'),
+                        $questiondata->options->answers[
+                        $questiondata->options->trueanswer]->fraction),
+                null => question_possible_response::no_response()
+            )
+        );
+    }
+
+/// BACKUP FUNCTIONS ////////////////////////////
+
+    /*
+     * Backup the data in a truefalse question
+     *
+     * This is used in question/backuplib.php
+     */
+    public function backup($bf,$preferences,$question,$level=6) {
+
+        $status = true;
+
+        $truefalses = get_records("question_truefalse","question",$question,"id");
+        //If there are truefalses
+        if ($truefalses) {
+            //Iterate over each truefalse
+            foreach ($truefalses as $truefalse) {
+                $status = fwrite ($bf,start_tag("TRUEFALSE",$level,true));
+                //Print truefalse contents
+                fwrite ($bf,full_tag("TRUEANSWER",$level+1,false,$truefalse->trueanswer));
+                fwrite ($bf,full_tag("FALSEANSWER",$level+1,false,$truefalse->falseanswer));
+                $status = fwrite ($bf,end_tag("TRUEFALSE",$level,true));
+            }
+            //Now print question_answers
+            $status = question_backup_answers($bf,$preferences,$question);
+        }
+        return $status;
+    }
+
+/// RESTORE FUNCTIONS /////////////////
+
+    /*
+     * Restores the data in the question
+     *
+     * This is used in question/restorelib.php
+     */
+    public function restore($old_question_id,$new_question_id,$info,$restore) {
+
+        $status = true;
+
+        //Get the truefalse array
+        if (array_key_exists('TRUEFALSE', $info['#'])) {
+            $truefalses = $info['#']['TRUEFALSE'];
+        } else {
+            $truefalses = array();
+        }
+
+        //Iterate over truefalse
+        for($i = 0; $i < sizeof($truefalses); $i++) {
+            $tru_info = $truefalses[$i];
+
+            //Now, build the question_truefalse record structure
+            $truefalse = new stdClass;
+            $truefalse->question = $new_question_id;
+            $truefalse->trueanswer = backup_todb($tru_info['#']['TRUEANSWER']['0']['#']);
+            $truefalse->falseanswer = backup_todb($tru_info['#']['FALSEANSWER']['0']['#']);
+
+            ////We have to recode the trueanswer field
+            $answer = backup_getid($restore->backup_unique_code,"question_answers",$truefalse->trueanswer);
+            if ($answer) {
+                $truefalse->trueanswer = $answer->new_id;
+            }
+
+            ////We have to recode the falseanswer field
+            $answer = backup_getid($restore->backup_unique_code,"question_answers",$truefalse->falseanswer);
+            if ($answer) {
+                $truefalse->falseanswer = $answer->new_id;
+            }
+
+            //The structure is equal to the db, so insert the question_truefalse
+            $newid = insert_record ("question_truefalse", $truefalse);
+
+            //Do some output
+            if (($i+1) % 50 == 0) {
+                if (!defined('RESTORE_SILENTLY')) {
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
+                    }
+                }
+                backup_flush(300);
+            }
+
+            if (!$newid) {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
+    public function restore_recode_answer($state, $restore) {
+        //answer may be empty
+        if ($state->answer) {
+            $answer = backup_getid($restore->backup_unique_code,"question_answers",$state->answer);
+            if ($answer) {
+                return $answer->new_id;
+            } else {
+                echo 'Could not recode truefalse answer id '.$state->answer.' for state '.$state->oldid.'<br />';
+            }
+        }
     }
 
     /**
      * Runs all the code required to set up and save an essay question for testing purposes.
      * Alternate DB table prefix may be used to facilitate data deletion.
      */
-    function generate_test($name, $courseid = null) {
-        global $DB;
+    public function generate_test($name, $courseid = null) {
         list($form, $question) = parent::generate_test($name, $courseid);
         $question->category = $form->category;
 
         $form->questiontext = "This question is really stupid";
         $form->penalty = 1;
-        $form->defaultgrade = 1;
+        $form->defaultmark = 1;
         $form->correctanswer = 0;
-        $form->feedbacktrue = 'Can you justify such a hasty judgment?';
-        $form->feedbackfalse = 'Wisdom has spoken!';
+        $form->feedbacktrue = array('Can you justify such a hasty judgment?');
+        $form->feedbackfalse = array('Wisdom has spoken!');
 
         if ($courseid) {
-            $course = $DB->get_record('course', array('id' => $courseid));
+            $course = get_record('course', 'id', $courseid);
         }
 
-        return $this->save_question($question, $form);
+        return $this->save_question($question, $form, $course);
     }
 }
-//// END OF CLASS ////
-
-//////////////////////////////////////////////////////////////////////////
-//// INITIATION - Without this line the question type is not in use... ///
-//////////////////////////////////////////////////////////////////////////
-question_register_questiontype(new question_truefalse_qtype());
