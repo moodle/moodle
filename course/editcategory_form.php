@@ -14,11 +14,17 @@ class editcategory_form extends moodleform {
         $editoroptions = $this->_customdata['editoroptions'];
 
         // get list of categories to use as parents, with site as the first one
-        $options = array(get_string('top'));
+        $options = array();
+        if (has_capability('moodle/category:manage', get_system_context()) || $category->parent == 0) {
+            $options[0] = get_string('top');
+        }
         $parents = array();
         if ($category->id) {
             // Editing an existing category.
             make_categories_list($options, $parents, 'moodle/category:manage', $category->id);
+            if (empty($options[$category->parent])) {
+                $options[$category->parent] = get_field('course_categories', 'name', 'id', $category->parent);
+            }
             $strsubmit = get_string('savechanges');
         } else {
             // Making a new category
