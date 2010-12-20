@@ -61,6 +61,8 @@ if ($mform->is_cancelled()) {
         // Update an existing category.
         $newcategory->id = $category->id;
         if ($newcategory->parent != $category->parent) {
+            // check category manage capability if parent changed
+            require_capability('moodle/category:manage', get_category_or_system_context((int)$newcategory->parent));
             $parent_cat = get_record('course_categories', 'id', $newcategory->parent);
             move_category($newcategory, $parent_cat);
         }
