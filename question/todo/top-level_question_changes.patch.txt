@@ -1,0 +1,1363 @@
+diff --git a/question/backuplib.php b/question/backuplib.php
+index 6d37298..0e2cf4b 100644
+--- a/question/backuplib.php
++++ b/question/backuplib.php
+@@ -192,7 +192,7 @@
+                 fwrite ($bf,full_tag("QUESTIONTEXTFORMAT",$level + 2,false,$question->questiontextformat));
+                 fwrite ($bf,full_tag("IMAGE",$level + 2,false,$question->image));
+                 fwrite ($bf,full_tag("GENERALFEEDBACK",$level + 2,false,$question->generalfeedback));
+-                fwrite ($bf,full_tag("DEFAULTGRADE",$level + 2,false,$question->defaultgrade));
++                fwrite ($bf,full_tag("DEFAULTGRADE",$level + 2,false,$question->defaultmark));
+                 fwrite ($bf,full_tag("PENALTY",$level + 2,false,$question->penalty));
+                 fwrite ($bf,full_tag("QTYPE",$level + 2,false,$question->qtype));
+                 fwrite ($bf,full_tag("LENGTH",$level + 2,false,$question->length));
+@@ -205,6 +205,9 @@
+                 fwrite ($bf,full_tag("MODIFIEDBY",$level + 2,false,$question->modifiedby));
+                 // Backup question type specific data
+                 $status = $status && $QTYPES[$question->qtype]->backup($bf,$preferences,$question->id, $level + 2);
++
++                $status = $status && backup_question_hints($bf, $preferences, $question->id, $level + 2);
++
+                 //End question
+                 $status = $status && fwrite ($bf,end_tag("QUESTION",$level + 1,true));
+                 //Do some output
+@@ -223,6 +226,27 @@
+         return $status;
+     }
+ 
++    function question_backup_hints($bf, $preferences, $questionid, $level = 6) {
++        $hints = get_records('question_hints', 'questionid', $questionid, 'id');
++        if (!$hints) {
++            return true;
++        }
++
++        $status = true;
++        $status = $status && fwrite($bf, start_tag("HINTS", $level, true));
++        foreach ($hints as $hint) {
++            $status = $status && fwrite($bf, start_tag("HINT", $level + 1, true));
++            $status = $status && fwrite($bf, full_tag("HINT_TEXT", $level + 2, false, $hint->hint));
++            $status = $status && fwrite($bf, full_tag("SHOWNUMCORRECT", $level + 2, false, $hint->shownumcorrect));
++            $status = $status && fwrite($bf, full_tag("CLEARWRONG", $level + 2, false, $hint->clearwrong));
++            $status = $status && fwrite($bf, full_tag("OPTIONS", $level + 2, false, $hint->options));
++            $status = $status && fwrite($bf, end_tag("HINT", $level + 1, true));
++        }
++        $status = $status && fwrite($bf, end_tag("HINTS", $level, true));
++
++        return $status;
++    }
++
+     //This function backups the answers data in some question types
+     //(truefalse, shortanswer,multichoice,numerical,calculated)
+     function question_backup_answers($bf,$preferences,$question, $level = 6) {
+diff --git a/question/editlib.php b/question/editlib.php
+index c18daf9..e21a4ce 100644
+--- a/question/editlib.php
++++ b/question/editlib.php
+@@ -1,17 +1,33 @@
+-<?php // $Id$
++<?php
++
++// This file is part of Moodle - http://moodle.org/
++//
++// Moodle is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// Moodle is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
++
++
+ /**
+  * Functions used to show question editing interface
+  *
+- *
+- * @author Martin Dougiamas and many others. This has recently been extensively
+- *         rewritten by members of the Serving Mathematics project
+- *         {@link http://maths.york.ac.uk/serving_maths}
+- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+- * @package questionbank
++ * @package mod_quiz
++ * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
++ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+  */
+ 
++
+ require_once($CFG->libdir.'/questionlib.php');
+ 
++
+ define('DEFAULT_QUESTIONS_PER_PAGE', 20);
+ 
+ function get_module_from_cmid($cmid){
+@@ -492,13 +508,13 @@ function question_showbank_actions($pageurl, $cm){
+                     // for each question either hide it if it is in use or delete it
+                     foreach ($questionlist as $questionid) {
+                         question_require_capability_on($questionid, 'edit');
+-                        if (record_exists('quiz_question_instances', 'question', $questionid)) {
++                        if (questions_in_use(array($questionid))) {
+                             if (!set_field('question', 'hidden', 1, 'id', $questionid)) {
+                                 question_require_capability_on($questionid, 'edit');
+                                 error('Was not able to hide question');
+                             }
+                         } else {
+-                            delete_question($questionid);
++                            question_delete_question($questionid);
+                         }
+                     }
+                 }
+@@ -551,7 +567,7 @@ function question_showbank($tabname, $contexts, $pageurl, $cm, $page, $perpage,
+                 $key = $matches[1];
+                 $questionlist .= $key.',';
+                 question_require_capability_on($key, 'edit');
+-                if (record_exists('quiz_question_instances', 'question', $key)) {
++                if (questions_in_use(array($key))) {
+                     $questionnames .= '* ';
+                     $inuse = true;
+                 }
+diff --git a/question/exportfile.php b/question/exportfile.php
+index 1a40c5f..67503e5 100644
+--- a/question/exportfile.php
++++ b/question/exportfile.php
+@@ -1,17 +1,43 @@
+-<?php  // $Id$
+-    require_once(dirname(__FILE__) . '/../config.php');
+-    require_once($CFG->libdir . '/filelib.php');
++<?php
+ 
+-    // Note: file.php always calls require_login() with $setwantsurltome=false
+-    //       in order to avoid messing redirects. MDL-14495
+-    require_login(0, true, null, false);
++// This file is part of Moodle - http://moodle.org/
++//
++// Moodle is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// Moodle is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+ 
+-    $relativepath = get_file_argument('question/exportfile.php');
+-    if (!$relativepath) {
+-        error('No valid arguments supplied or incorrect server configuration');
+-    }
+ 
+-    $pathname = $CFG->dataroot . '/temp/questionexport/' . $USER->id . '/' .  $relativepath;
++/**
++ * This script sends question exports to users who do not have permisison to
++ * view the course files.
++ *
++ * @package moodlecore
++ * @subpackage questionbank
++ * @copyright 2008 The Open University
++ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
++ */
+ 
+-    send_temp_file($pathname, $relativepath);
+-?>
+\ No newline at end of file
++require_once(dirname(__FILE__) . '/../config.php');
++require_once($CFG->libdir . '/filelib.php');
++
++// Note: file.php always calls require_login() with $setwantsurltome=false
++//       in order to avoid messing redirects. MDL-14495
++require_login(0, true, null, false);
++
++$relativepath = get_file_argument('question/exportfile.php');
++if (!$relativepath) {
++    error('No valid arguments supplied or incorrect server configuration');
++}
++
++$pathname = $CFG->dataroot . '/temp/questionexport/' . $USER->id . '/' .  $relativepath;
++
++send_temp_file($pathname, $relativepath);
+diff --git a/question/file.php b/question/file.php
+index cd4789a..8774e7d 100644
+--- a/question/file.php
++++ b/question/file.php
+@@ -1,86 +1,109 @@
+-<?php  // $Id$
+-      // This script fetches files from the dataroot/questionattempt directory
+-      // It is based on the top-level file.php
+-      //
+-      // On a module-by-module basis (currently only implemented for quiz), it checks
+-      // whether the user has permission to view the file.
+-      //
+-      // Syntax:      question/file.php/attemptid/questionid/filename.ext
+-      // Workaround:  question/file.php?file=/attemptid/questionid/filename.ext
+-
+-    require_once('../config.php');
+-    require_once('../lib/filelib.php');
+-
+-    // disable moodle specific debug messages
+-    disable_debugging();
+-
+-    $relativepath = get_file_argument('file.php');
+-    // force download for any student-submitted files to prevent XSS attacks.
+-    $forcedownload = 1;
+-
+-    // relative path must start with '/', because of backup/restore!!!
+-    if (!$relativepath) {
+-        error('No valid arguments supplied or incorrect server configuration');
+-    } else if ($relativepath{0} != '/') {
+-        error('No valid arguments supplied, path does not start with slash!');
+-    }
++<?php
+ 
+-    $pathname = $CFG->dataroot.'/questionattempt'.$relativepath;
++// This file is part of Moodle - http://moodle.org/
++//
++// Moodle is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// Moodle is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+ 
+-    // extract relative path components
+-    $args = explode('/', trim($relativepath, '/'));
+ 
+-    // check for the right number of directories in the path
+-    if (count($args) != 3) {
+-        error('Invalid arguments supplied');
+-    }
++/**
++ * This script fetches files from the dataroot/questionattempt directory
++ * It is based on the top-level file.php
++ *
++ * On a module-by-module basis (currently only implemented for quiz), it checks
++ * whether the user has permission to view the file.
++ *
++ * Syntax:      question/file.php/attemptid/questionid/filename.ext
++ * Workaround:  question/file.php?file=/attemptid/questionid/filename.ext
++ *
++ * @package moodlecore
++ * @subpackage questionengine
++ * @copyright 2007 Adriane Boyd
++ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
++ */
+ 
+-    // security: require login
+-    require_login();
++require_once('../config.php');
++require_once('../lib/filelib.php');
+ 
+-    // security: do not return directory node!
+-    if (is_dir($pathname)) {
+-        question_attempt_not_found();
+-    }
++// disable moodle specific debug messages
++disable_debugging();
+ 
+-    $lifetime = 0;  // do not cache because students may reupload files
+-
+-    // security: check that the user has permission to access this file
+-    $haspermission = false;
+-    if ($attempt = get_record("question_attempts", "id", $args[0])) {
+-        $modfile = $CFG->dirroot .'/mod/'. $attempt->modulename .'/lib.php';
+-        $modcheckfileaccess = $attempt->modulename .'_check_file_access';
+-        if (file_exists($modfile)) {
+-            @require_once($modfile);
+-            if (function_exists($modcheckfileaccess)) {
+-                $haspermission = $modcheckfileaccess($args[0], $args[1]);
+-            }
+-        }
+-    } else if ($args[0][0] == 0) {
+-        global $USER;
+-        $list = explode('_', $args[0]);
+-        if ($list[1] == $USER->id) {
+-            $haspermission = true;
+-        }
+-    }
++$relativepath = get_file_argument('file.php');
++// force download for any student-submitted files to prevent XSS attacks.
++$forcedownload = 1;
++
++// relative path must start with '/', because of backup/restore!!!
++if (!$relativepath) {
++    error('No valid arguments supplied or incorrect server configuration');
++} else if ($relativepath{0} != '/') {
++    error('No valid arguments supplied, path does not start with slash!');
++}
++
++$pathname = $CFG->dataroot.'/questionattempt'.$relativepath;
+ 
+-    if ($haspermission) {
+-        // check that file exists
+-        if (!file_exists($pathname)) {
+-            question_attempt_not_found();
++// extract relative path components
++$args = explode('/', trim($relativepath, '/'));
++
++// check for the right number of directories in the path
++if (count($args) != 3) {
++    error('Invalid arguments supplied');
++}
++
++// security: require login
++require_login();
++
++// security: do not return directory node!
++if (is_dir($pathname)) {
++    question_attempt_not_found();
++}
++
++$lifetime = 0;  // do not cache because students may reupload files
++
++// security: check that the user has permission to access this file
++$haspermission = false;
++if ($attempt = get_record("question_attempts", "id", $args[0])) {
++    $modfile = $CFG->dirroot .'/mod/'. $attempt->modulename .'/lib.php';
++    $modcheckfileaccess = $attempt->modulename .'_check_file_access';
++    if (file_exists($modfile)) {
++        @require_once($modfile);
++        if (function_exists($modcheckfileaccess)) {
++            $haspermission = $modcheckfileaccess($args[0], $args[1]);
+         }
++    }
++} else if ($args[0][0] == 0) {
++    global $USER;
++    $list = explode('_', $args[0]);
++    if ($list[1] == $USER->id) {
++        $haspermission = true;
++    }
++}
+ 
+-        // send the file
+-        session_write_close(); // unlock session during fileserving
+-        $filename = $args[count($args)-1];
+-        send_file($pathname, $filename, $lifetime, $CFG->filteruploadedfiles, false, $forcedownload);
+-    } else {
++if ($haspermission) {
++    // check that file exists
++    if (!file_exists($pathname)) {
+         question_attempt_not_found();
+     }
+ 
+-    function question_attempt_not_found() {
+-        global $CFG;
+-        header('HTTP/1.0 404 not found');
+-        print_error('filenotfound', 'error', $CFG->wwwroot); //this is not displayed on IIS??
+-    }
+-?>
++    // send the file
++    session_write_close(); // unlock session during fileserving
++    $filename = $args[count($args)-1];
++    send_file($pathname, $filename, $lifetime, $CFG->filteruploadedfiles, false, $forcedownload);
++} else {
++    question_attempt_not_found();
++}
++
++function question_attempt_not_found() {
++    global $CFG;
++    header('HTTP/1.0 404 not found');
++    print_error('filenotfound', 'error', $CFG->wwwroot); //this is not displayed on IIS??
++}
+diff --git a/question/format.php b/question/format.php
+index 61ba333..410b275 100644
+--- a/question/format.php
++++ b/question/format.php
+@@ -184,8 +184,8 @@ class qformat_default {
+      * @param qtypehint hint about a question type from format
+      * @return object question object suitable for save_options() or false if cannot handle
+      */
+-    function try_importing_using_qtypes( $data, $question=null, $extra=null, $qtypehint='') {
+-        global $QTYPES;
++    function try_importing_using_qtypes($data, $question = null, $extra = null,
++            $qtypehint = '') {
+ 
+         // work out what format we are using
+         $formatname = substr(get_class($this), strlen('qformat_'));
+@@ -193,7 +193,7 @@ class qformat_default {
+ 
+         //first try importing using a hint from format
+         if (!empty($qtypehint)) {
+-            $qtype = $QTYPES[$qtypehint];
++            $qtype = question_bank::get_qtype($qtypehint, false);
+             if (is_object($qtype) && method_exists($qtype, $methodname)) {
+                 $question = $qtype->$methodname($data, $question, $this, $extra);
+                 if ($question) {
+@@ -204,7 +204,7 @@ class qformat_default {
+ 
+         // loop through installed questiontypes checking for
+         // function to handle this question
+-        foreach ($QTYPES as $qtype) {
++        foreach (question_bank::get_all_qtypes() as $qtype) {
+             if (method_exists( $qtype, $methodname)) {
+                 if ($question = $qtype->$methodname( $data, $question, $this, $extra )) {
+                     return $question;
+@@ -242,6 +242,9 @@ class qformat_default {
+         }
+ 
+         if (! $questions = $this->readquestions($lines)) {   // Extract all the questions
++            if (!is_array($questions)) {
++                return false;
++            }
+             notify( get_string('noquestionsinfile','quiz') );
+             return false;
+         }
+@@ -501,7 +504,7 @@ class qformat_default {
+ 
+         $question = new stdClass();
+         $question->shuffleanswers = $CFG->quiz_shuffleanswers;
+-        $question->defaultgrade = 1;
++        $question->defaultmark = 1;
+         $question->image = "";
+         $question->usecase = 0;
+         $question->multiplier = array();
+@@ -510,7 +513,7 @@ class qformat_default {
+         $question->partiallycorrectfeedback = '';
+         $question->incorrectfeedback = '';
+         $question->answernumbering = 'abc';
+-        $question->penalty = 0.1;
++        $question->penalty = 0.3333333;
+         $question->length = 1;
+ 
+         // this option in case the questiontypes class wants
+diff --git a/question/import_form.php b/question/import_form.php
+index 108846b..cb876af 100644
+--- a/question/import_form.php
++++ b/question/import_form.php
+@@ -90,5 +90,24 @@ class question_import_form extends moodleform {
+             return  NULL;
+         }
+     }
++
++    
++    
++    public function validation($data, $files){
++        $errors = parent::validation($data, $files);
++        // If a file is uploaded return
++        if ($data['choosefile'] || $files['newfile']) {
++            return $errors;
++        }
++        // If file is not uploaded from  file upload
++        if (!$files['newfile']) {
++            $errors['newfile'] = get_string('importfromupload', 'question');
++        }
++        // If filke is not imported from course files
++        if (!$data['choosefile'] && !$files['newfile']) {
++            $errors['choosefile'] = get_string('importfromcoursefiles', 'question');
++        }
++        return $errors;
++    }
+ }
+ ?>
+diff --git a/question/move_form.php b/question/move_form.php
+index d2b6445..4965167 100644
+--- a/question/move_form.php
++++ b/question/move_form.php
+@@ -1,4 +1,29 @@
+-<?php  // $Id$
++<?php
++
++// This file is part of Moodle - http://moodle.org/
++//
++// Moodle is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// Moodle is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
++
++
++/**
++ * Form for moving questions between categories.
++ *
++ * @package moodlecore
++ * @subpackage questionbank
++ * @copyright 2008 The Open University
++ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
++ */
+ 
+ if (!defined('MOODLE_INTERNAL')) {
+     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+@@ -13,16 +38,11 @@ class question_move_form extends moodleform {
+ 
+         $currentcat   = $this->_customdata['currentcat'];
+         $contexts   = $this->_customdata['contexts'];
+-//--------------------------------------------------------------------------------
+ 
+         $mform->addElement('questioncategory', 'category', get_string('category','quiz'), compact('contexts', 'currentcat'));
+ 
+-
+-//--------------------------------------------------------------------------------
+         $this->add_action_buttons(true, get_string('categorymoveto', 'quiz'));
+-//--------------------------------------------------------------------------------
+         $mform->addElement('hidden', 'delete', $currentcat);
+         $mform->setType('delete', PARAM_INT);
+     }
+ }
+-?>
+diff --git a/question/preview.php b/question/preview.php
+index 4335165..f3c7baf 100644
+--- a/question/preview.php
++++ b/question/preview.php
+@@ -1,4 +1,21 @@
+-<?php // $Id$
++<?php
++
++// This file is part of Moodle - http://moodle.org/
++//
++// Moodle is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// Moodle is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
++
++
+ /**
+  * This page displays a preview of a question
+  *
+@@ -7,231 +24,178 @@
+  * information is stored in the session as an array of subsequent states rather
+  * than in the database.
+  *
+- * TODO: make this work with activities other than quiz
+- *
+- * @author Alex Smith as part of the Serving Mathematics project
+- *         {@link http://maths.york.ac.uk/serving_maths}
+- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+- * @package questionbank
++ * @package core
++ * @subpackage questionbank
++ * @copyright Alex Smith {@link http://maths.york.ac.uk/serving_maths} and
++ *      numerous contributors.
++ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+  */
+ 
+-    require_once("../config.php");
+-    require_once($CFG->libdir.'/questionlib.php');
+-    require_once($CFG->dirroot.'/mod/quiz/locallib.php'); // We really want to get rid of this
+-
+-    $id = required_param('id', PARAM_INT);        // question id
+-    // if no quiz id is specified then a dummy quiz with default options is used
+-    $quizid = optional_param('quizid', 0, PARAM_INT);
+-    // if no quiz id is specified then tell us the course
+-    if (empty($quizid)) {
+-        $courseid = required_param('courseid', PARAM_INT);
+-    }
+-
+-    // Test if we are continuing an attempt at a question
+-    $continue = optional_param('continue', 0, PARAM_BOOL);
+-    // Check for any of the submit buttons
+-    $fillcorrect = optional_param('fillcorrect', 0, PARAM_BOOL);
+-    $markall = optional_param('markall', 0, PARAM_BOOL);
+-    $finishattempt = optional_param('finishattempt', 0, PARAM_BOOL);
+-    $back = optional_param('back', 0, PARAM_BOOL);
+-    $startagain = optional_param('startagain', 0, PARAM_BOOL);
+-    // We are always continuing an attempt if a submit button was pressed with the
+-    // exception of the start again button
+-    if ($fillcorrect || $markall || $finishattempt || $back) {
+-        $continue = true;
+-    } else if ($startagain) {
+-        $continue = false;
+-    }
+-
+-    $url = new moodle_url($CFG->wwwroot . '/question/preview.php');
+-    $url->param('id', $id);
+-    if ($quizid) {
+-        $url->param('quizid', $quizid);
+-    } else {
+-        $url->param('courseid', $courseid);
+-    }
+-    $url->param('continue', 1);
+-    if (!$continue) {
+-        // Start a new attempt; delete the old session
+-        unset($SESSION->quizpreview);
+-        // Redirect to ourselves but with continue=1; prevents refreshing the page
+-        // from restarting an attempt (needed so that random questions don't change)
+-        redirect($url->out());
+-    }
+-    // Load the question information
+-    if (!$questions = get_records('question', 'id', $id)) {
+-        error('Could not load question');
+-    }
+-    if (empty($quizid)) {
+-        $quiz = new cmoptions;
+-        $quiz->id = 0;
+-        $quiz->review = $CFG->quiz_review;
+-        require_login($courseid, false);
+-        $quiz->course = $courseid;
+-    } else if (!$quiz = get_record('quiz', 'id', $quizid)) {
+-        error("Quiz id $quizid does not exist");
+-    } else {
+-        require_login($quiz->course, false, get_coursemodule_from_instance('quiz', $quizid, $quiz->course));
+-    }
+-
+-
+-
+-    if ($maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $id)) {
+-        $questions[$id]->maxgrade = $maxgrade;
+-    } else {
+-        $questions[$id]->maxgrade = $questions[$id]->defaultgrade;
+-    }
+-
+-    $quiz->id = 0; // just for safety
+-    $quiz->questions = $id;
+-
+-    if (!$category = get_record("question_categories", "id", $questions[$id]->category)) {
+-        error("This question doesn't belong to a valid category!");
+-    }
+-
+-    if (!question_has_capability_on($questions[$id], 'use', $questions[$id]->category)){
+-        error("You can't preview these questions!");
+-    }
+-    if (isset($COURSE)){
+-        $quiz->course = $COURSE->id;
+-    }
+-
+-    // Load the question type specific information
+-    if (!get_question_options($questions)) {
+-        print_error('newattemptfail', 'quiz');
+-    }
+-
+-    // Create a dummy quiz attempt
+-    // TODO: find out what of the following we really need. What is $attempt
+-    //       really used for?
+-    $timenow = time();
+-    $attempt->quiz = $quiz->id;
+-    $attempt->userid = $USER->id;
+-    $attempt->attempt = 0;
+-    $attempt->sumgrades = 0;
+-    $attempt->timestart = $timenow;
+-    $attempt->timefinish = 0;
+-    $attempt->timemodified = $timenow;
+-    $attempt->uniqueid = 0;
+-    $attempt->id = 0;
+-
+-    // Restore the history of question sessions from the moodle session or create
+-    // new sessions. Make $states a reference to the states array in the moodle
+-    // session.
+-    if (isset($SESSION->quizpreview->states) and $SESSION->quizpreview->questionid == $id) {
+-        // Reload the question session history from the moodle session
+-        $states =& $SESSION->quizpreview->states;
+-        $historylength = count($states) - 1;
+-        if ($back && $historylength > 0) {
+-            // Go back one step in the history
+-            unset($states[$historylength]);
+-            $historylength--;
++require_once(dirname(__FILE__) . '/../config.php');
++require_once($CFG->libdir . '/questionlib.php');
++require_once($CFG->libdir . '/formslib.php');
++require_once(dirname(__FILE__) . '/previewlib.php');
++require_js('yui_dom-event');
++require_js($CFG->httpswwwroot . '/question/preview.js');
++
++// Get and validate question id.
++$id = required_param('id', PARAM_INT); // Question id
++$question = question_bank::load_question($id);
++require_login();
++if (!$category = get_record('question_categories', 'id', $question->category)) {
++    print_error('unknownquestioncategory', 'question', $question->category);
++}
++question_require_capability_on($question, 'use');
++
++// Get and validate display options.
++$options = new question_preview_options($question);
++$options->load_user_defaults();
++$options->set_from_request();
++
++// Get and validate exitsing preview, or start a new one.
++$previewid = optional_param('previewid', 0, PARAM_ALPHANUM);
++if ($previewid) {
++    if (!isset($SESSION->question_previews[$previewid])) {
++        print_error('notyourpreview', 'question');
++    }
++    try {
++        $quba = question_engine::load_questions_usage_by_activity($previewid);
++    } catch (Exception $e){
++        print_error('submissionoutofsequencefriendlymessage', 'question',
++                question_preview_url($question->id, $options->behaviour,
++                $options->maxmark, $options));
++    }
++    $slot = $quba->get_first_question_number();
++    $usedquestion = $quba->get_question($slot);
++    if ($usedquestion->id != $question->id) {
++        print_error('questionidmismatch', 'question');
++    }
++    $question = $usedquestion;
++
++} else {
++    $quba = question_engine::make_questions_usage_by_activity('core_question_preview',
++            get_context_instance_by_id($category->contextid));
++    $quba->set_preferred_behaviour($options->behaviour);
++    $slot = $quba->add_question($question, $options->maxmark);
++    $quba->start_all_questions();
++    begin_sql();
++    question_engine::save_questions_usage_by_activity($quba);
++    commit_sql();
++
++    $SESSION->question_previews[$quba->get_id()] = true;
++}
++$options->behaviour = $quba->get_preferred_behaviour();
++$options->maxmark = $quba->get_question_max_mark($slot);
++
++// Create the settings form, and initialise the fields.
++$optionsform = new preview_options_form($CFG->wwwroot . '/question/preview.php?id=' . $question->id, $quba);
++$optionsform->set_data($options);
++
++// Process change of settings, if that was requested.
++if ($newoptions = $optionsform->get_submitted_data()) {
++    // Set user preferences
++    $options->save_user_preview_options($newoptions);
++    restart_preview($previewid, $question->id, $newoptions);
++}
++
++// Prepare a URL that is used in various places.
++$actionurl = question_preview_action_url($question->id, $quba->get_id(), $options);
++
++// Process any actions from the buttons at the bottom of the form.
++if (data_submitted() && confirm_sesskey()) {
++    if (optional_param('restart', false, PARAM_BOOL)) {
++        restart_preview($previewid, $question->id, $options);
++
++    } else if (optional_param('fill', null, PARAM_BOOL)) {
++        $correctresponse = $quba->get_correct_response($slot);
++        $quba->process_action($slot, $correctresponse);
++        begin_sql();
++        question_engine::save_questions_usage_by_activity($quba);
++        commit_sql();
++        redirect($actionurl);
++
++    } else if (optional_param('finish', null, PARAM_BOOL)) {
++        try {
++            $quba->process_all_actions();
++        } catch (question_out_of_sequence_exception $e){
++            print_error('submissionoutofsequencefriendlymessage', 'question', $actionurl);
+         }
++        $quba->finish_all_questions();
++        begin_sql();
++        question_engine::save_questions_usage_by_activity($quba);
++        commit_sql();
++        redirect($actionurl);
++
+     } else {
+-        // Record the question id in the moodle session
+-        $SESSION->quizpreview->questionid = $id;
+-        // Create an empty session for the question
+-        if (!$newstates =
+-         get_question_states($questions, $quiz, $attempt)) {
+-            print_error('newattemptfail', 'quiz');
++        try {
++            $quba->process_all_actions();
++        } catch (question_out_of_sequence_exception $e){
++            print_error('submissionoutofsequencefriendlymessage', 'question', $actionurl);
+         }
+-        $SESSION->quizpreview->states = array($newstates);
+-        $states =& $SESSION->quizpreview->states;
+-        $historylength = 0;
+-    }
+-
+-    if (!$fillcorrect && !$back && ($form = data_submitted())) {
+-        $form = (array)$form;
+-        $submitted = true;
+-
+-        // Create a new item in the history of question states (don't simplify!)
+-        $states[$historylength + 1] = array();
+-        $states[$historylength + 1][$id] = clone($states[$historylength][$id]);
+-        $historylength++;
+-        $curstate =& $states[$historylength][$id];
+-        $curstate->changed = false;
+-
+-        // Process the responses
+-        unset($form['id']);
+-        unset($form['quizid']);
+-        unset($form['continue']);
+-        unset($form['markall']);
+-        unset($form['finishattempt']);
+-        unset($form['back']);
+-        unset($form['startagain']);
+-
+-        $event = $finishattempt ? QUESTION_EVENTCLOSE : QUESTION_EVENTSUBMIT;
+-        if ($actions = question_extract_responses($questions, $form, $event)) {
+-            $actions[$id]->timestamp = 0; // We do not care about timelimits here
+-            if (!question_process_responses($questions[$id], $curstate, $actions[$id], $quiz, $attempt)) {
+-                unset($SESSION->quizpreview);
+-                print_error('errorprocessingresponses', 'question', $url->out());
+-            }
+-            if (!$curstate->changed) {
+-                // Update the current state rather than creating a new one
+-                $historylength--;
+-                unset($states[$historylength]);
+-                $states = array_values($states);
+-                $curstate =& $states[$historylength][$id];
+-            }
++        begin_sql();
++        question_engine::save_questions_usage_by_activity($quba);
++        commit_sql();
++        $scrollpos = optional_param('scrollpos', '', PARAM_RAW);
++        if ($scrollpos !== '') {
++            $actionurl .= '&scrollpos=' . ((int) $scrollpos);
+         }
+-    } else {
+-        $submitted = false;
+-        $curstate =& $states[$historylength][$id];
+-    }
+-
+-    // TODO: should not use quiz-specific function here
+-    $options = quiz_get_renderoptions($quiz->review, $curstate);
+-    $options->noeditlink = true;
+-
+-    // Fill in the correct responses (unless the question is in readonly mode)
+-    if ($fillcorrect && !$options->readonly) {
+-        $curstate->responses = $QTYPES[$questions[$id]->qtype]
+-         ->get_correct_responses($questions[$id], $curstate);
+-    }
+-
+-    $strpreview = get_string('preview', 'quiz').' '.format_string($questions[$id]->name);
+-    $questionlist = array($id);
+-    $headtags = get_html_head_contributions($questionlist, $questions, $states[$historylength]);
+-    print_header($strpreview, '', '', '', $headtags);
+-    print_heading($strpreview);
++        redirect($actionurl);
++    }
++}
++
++if ($question->length) {
++    $displaynumber = '1';
++} else {
++    $displaynumber = 'i';
++}
++$restartdisabled = '';
++$finishdisabled = '';
++$filldisabled = '';
++if ($quba->get_question_state($slot)->is_finished()) {
++    $finishdisabled = ' disabled="disabled"';
++    $filldisabled = ' disabled="disabled"';
++}
++if (!$previewid) {
++    $restartdisabled = ' disabled="disabled"';
++}
++// Output
++$title = get_string('previewquestion', 'question', format_string($question->name));
++$headtags = question_engine::initialise_js() . $quba->render_question_head_html($slot);
++print_header($title, '', '', '', $headtags);
++print_heading($title);
++
++// Start the question form.
++echo '<form method="post" action="' . s($actionurl) .
++        '" enctype="multipart/form-data" id="responseform">', "\n";
++print_js_call('question_init_form', array('responseform'));
++echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />', "\n";
++echo '<input type="hidden" name="slots" value="' . $slot . '" />', "\n";
++
++// Output the question.
++echo $quba->render_question($slot, $options, $displaynumber);
++
++echo '<p class="notifytiny">' . get_string('behaviourbeingused', 'question',
++        question_engine::get_behaviour_name(
++        $quba->get_question_attempt($slot)->get_behaviour_name())) . '</p>';
++// Finish the question form.
++echo '<div id="previewcontrols" class="controls">';
++echo '<input type="submit" name="restart"' . $restartdisabled .
++        ' value="' . get_string('restart', 'question') . '" />', "\n";
++echo '<input type="submit" name="fill"' . $filldisabled .
++        ' value="' . get_string('fillincorrect', 'question') . '" />', "\n";
++echo '<input type="submit" name="finish"' . $finishdisabled .
++        ' value="' . get_string('submitandfinish', 'question') . '" />', "\n";
++echo '<input type="hidden" name="scrollpos" id="scrollpos" value="" />';
++echo '</div>';
++echo '</form>';
++
++// Display the settings form.
++$optionsform->display();
++
++echo '<script type="text/javascript">question_preview_init("' .
++        get_string('closepreview', 'question') . '", "previewcontrols");</script>', "\n";
++
++// Finish output.
++use_html_editor();
++print_footer('empty');
+ 
+-    if (!empty($quizid)) {
+-        echo '<p class="quemodname">'.get_string('modulename', 'quiz') . ': ';
+-        p(format_string($quiz->name));
+-        echo "</p>\n";
+-    }
+-    $number = 1;
+-    echo '<form method="post" action="'.$url->out(true).'" enctype="multipart/form-data" id="responseform">', "\n";
+-    print_question($questions[$id], $curstate, $number, $quiz, $options);
+-
+-    echo '<div class="controls">';
+-    echo $url->hidden_params_out();
+-
+-    // Print the mark and finish attempt buttons
+-    echo '<input name="markall" type="submit" value="' . get_string('markall',
+-     'quiz') . "\" />\n";
+-    echo '<input name="finishattempt" type="submit" value="' .
+-     get_string('finishattempt', 'quiz') . "\" />\n";
+-    echo '<br />';
+-    echo '<br />';
+-    // Print the fill correct button (unless the question is in readonly mode)
+-    if (!$options->readonly) {
+-        echo '<input name="fillcorrect" type="submit" value="' .
+-         get_string('fillcorrect', 'quiz') . "\" />\n";
+-    }
+-    // Print the navigation buttons
+-    if ($historylength > 0) {
+-        echo '<input name="back" type="submit" value="' . get_string('previous',
+-         'quiz') . "\" />\n";
+-    }
+-    // Print the start again button
+-    echo '<input name="startagain" type="submit" value="' .
+-     get_string('startagain', 'quiz') . "\" />\n";
+-    // Print the close window button
+-    echo '<input type="button" onclick="window.close()" value="' .
+-     get_string('closepreview', 'quiz') . "\" />";
+-    echo '</div>';
+-    echo '</form>';
+-    print_footer();
+-?>
+diff --git a/question/previewlib.php b/question/previewlib.php
+new file mode 100644
+index 0000000..f507a38
+--- /dev/null
++++ b/question/previewlib.php
+@@ -0,0 +1,214 @@
++<?php
++
++// This file is part of Moodle - http://moodle.org/
++//
++// Moodle is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// Moodle is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
++
++
++/**
++ * Helper code for the question preview UI.
++ *
++ * @package core
++ * @subpackage questionbank
++ * @copyright 2009 The Open University
++ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
++ */
++
++/**
++ * Settings form for the preview options.
++ *
++ * @copyright 2009 The Open University
++ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
++ */
++class preview_options_form extends moodleform {
++    public function definition() {
++        $mform = $this->_form;
++
++        $hiddenofvisible = array(
++            question_display_options::HIDDEN => get_string('notshown', 'question'),
++            question_display_options::VISIBLE => get_string('shown', 'question'),
++        );
++
++        $mform->addElement('header', 'optionsheader', get_string('changeoptions', 'question'));
++
++        $behaviours = question_engine::get_behaviour_options($this->_customdata->get_preferred_behaviour());
++        $mform->addElement('select', 'behaviour', get_string('howquestionsbehave', 'question'), $behaviours);
++        $mform->setHelpButton('behaviour', array('howquestionsbehave', get_string('howquestionsbehave', 'question'), 'question'));
++
++        $mform->addElement('text', 'maxmark', get_string('markedoutof', 'question'), array('size' => '5'));
++        $mform->setType('maxmark', PARAM_NUMBER);
++
++        $mform->addElement('select', 'correctness', get_string('whethercorrect', 'question'), $hiddenofvisible);
++
++        $marksoptions = array(
++            question_display_options::HIDDEN => get_string('notshown', 'question'),
++            question_display_options::MAX_ONLY => get_string('showmaxmarkonly', 'question'),
++            question_display_options::MARK_AND_MAX => get_string('showmarkandmax', 'question'),
++        );
++        $mform->addElement('select', 'marks', get_string('marks', 'question'), $marksoptions);
++
++        $mform->addElement('select', 'markdp', get_string('decimalplacesingrades', 'question'),
++                question_engine::get_dp_options());
++
++        $mform->addElement('select', 'feedback', get_string('specificfeedback', 'question'), $hiddenofvisible);
++
++        $mform->addElement('select', 'generalfeedback', get_string('generalfeedback', 'question'), $hiddenofvisible);
++
++        $mform->addElement('select', 'rightanswer', get_string('rightanswer', 'question'), $hiddenofvisible);
++
++        $mform->addElement('select', 'history', get_string('responsehistory', 'question'), $hiddenofvisible);
++
++        $mform->addElement('submit', 'submit', get_string('restartwiththeseoptions', 'question'), $hiddenofvisible);
++    }
++}
++
++
++/**
++ * Displays question preview options as default and set the options
++ * Setting default, getting and setting user preferences in question preview options.
++ *
++ * @copyright 2010 The Open University
++ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
++ */
++class question_preview_options extends question_display_options {
++    /** @var string the behaviour to use for this preview. */
++    public $behaviour;
++
++    /** @var number the maximum mark to use for this preview. */
++    public $maxmark;
++
++    /** @var string prefix to append to field names to get user_preference names. */
++    const OPTIONPREFIX = 'question_preview_options_';
++
++    /**
++     * Constructor.
++     */
++    public function __construct($question) {
++        global $CFG;
++        $this->behaviour = 'deferredfeedback';
++        $this->maxmark = $question->defaultmark;
++        $this->correctness = self::VISIBLE;
++        $this->marks = self::MARK_AND_MAX;
++        $this->markdp = $CFG->quiz_decimalpoints;
++        $this->feedback = self::VISIBLE;
++        $this->numpartscorrect = $this->feedback;
++        $this->generalfeedback = self::VISIBLE;
++        $this->rightanswer = self::VISIBLE;
++        $this->history = self::HIDDEN;
++        $this->flags = self::HIDDEN;
++        $this->manualcomment = self::HIDDEN;
++    }
++
++    /**
++     * @return array names of the options we store in the user preferences table.
++     */
++    protected function get_user_pref_fields() {
++        return array('behaviour', 'correctness', 'marks', 'markdp', 'feedback',
++                'generalfeedback', 'rightanswer', 'history');
++    }
++
++    /**
++     * @return array names and param types of the options we read from the request.
++     */
++    protected function get_field_types() {
++        return array(
++            'behaviour' => PARAM_ALPHA,
++            'maxmark' => PARAM_NUMBER,
++            'correctness' => PARAM_BOOL,
++            'marks' => PARAM_INT,
++            'markdp' => PARAM_INT,
++            'feedback' => PARAM_BOOL,
++            'generalfeedback' => PARAM_BOOL,
++            'rightanswer' => PARAM_BOOL,
++            'history' => PARAM_BOOL,
++        );
++    }
++
++    /**
++     * Load the value of the options from the user_preferences table.
++     */
++    public function load_user_defaults() {
++        foreach ($this->get_user_pref_fields() as $field) {
++            $this->$field = get_user_preferences(
++                    self::OPTIONPREFIX . $field, $this->$field);
++        }
++        $this->numpartscorrect = $this->feedback;
++    }
++
++    /**
++     * Save a change to the user's preview options to the database.
++     * @param object $newoptions
++     */
++    public function save_user_preview_options($newoptions) {
++        foreach ($this->get_user_pref_fields() as $field) {
++            if (isset($newoptions->$field)) {
++                set_user_preference(self::OPTIONPREFIX . $field, $newoptions->$field);
++            }
++        }
++    }
++
++    /**
++     * Set the value of any fields included in the request.
++     */
++    public function set_from_request() {
++        foreach ($this->get_field_types() as $field => $type) {
++            $this->$field = optional_param($field, $this->$field, $type);
++        }
++        $this->numpartscorrect = $this->feedback;
++    }
++
++    /**
++     * @return string URL fragment. Parameters needed in the URL when continuing
++     * this preview.
++     */
++    public function get_query_string() {
++        $querystring = array();
++        foreach ($this->get_field_types() as $field => $notused) {
++            if ($field == 'behaviour' || $field == 'maxmark') {
++                continue;
++            }
++            $querystring[] = $field . '=' . $this->$field;
++        }
++        return implode('&', $querystring);
++    }
++}
++
++
++/**
++ * The the URL to use for actions relating to this preview.
++ * @param integer $questionid the question being previewed.
++ * @param integer $qubaid the id of the question usage for this preview.
++ * @param question_preview_options $options the options in use.
++ */
++function question_preview_action_url($questionid, $qubaid,
++        question_preview_options $options) {
++    global $CFG;
++    $url = $CFG->wwwroot . '/question/preview.php?id=' . $questionid . '&previewid=' . $qubaid;
++    return $url . '&' . $options->get_query_string();
++}
++
++/**
++ * Delete the current preview, if any, and redirect to start a new preview.
++ * @param integer $previewid
++ * @param integer $questionid
++ * @param object $displayoptions
++ */
++function restart_preview($previewid, $questionid, $displayoptions) {
++    if ($previewid) {
++        begin_sql();
++        question_engine::delete_questions_usage_by_activity($previewid);
++        commit_sql();
++    }
++    redirect(question_preview_url($questionid, $displayoptions->behaviour, $displayoptions->maxmark, $displayoptions));
++}
+diff --git a/question/question.php b/question/question.php
+index c67c6fb..a0a9e49 100644
+--- a/question/question.php
++++ b/question/question.php
+@@ -142,7 +142,6 @@ if ($mform->is_cancelled()){
+         close_window();
+     } else {
+         $nexturl = new moodle_url($returnurl);
+-        $nexturl->param('lastchanged', $question->id);
+         redirect($nexturl->out());
+     }
+ } elseif ($fromform = $mform->get_data()) {
+@@ -222,7 +221,7 @@ if ($mform->is_cancelled()){
+     }
+ } else {
+ 
+-    list($streditingquestion,) = $QTYPES[$question->qtype]->get_heading();
++    $streditingquestion = $QTYPES[$question->qtype]->get_heading();
+     $headtags = get_editing_head_contributions($question);
+     if ($cm !== null) {
+         $strmodule = get_string('modulename', $cm->modname);
+diff --git a/question/restorelib.php b/question/restorelib.php
+index ca8d940..aa37793 100644
+--- a/question/restorelib.php
++++ b/question/restorelib.php
+@@ -325,7 +325,7 @@
+             $question->questiontextformat = backup_todb($que_info['#']['QUESTIONTEXTFORMAT']['0']['#']);
+             $question->image = backup_todb($que_info['#']['IMAGE']['0']['#']);
+             $question->generalfeedback = backup_todb_optional_field($que_info, 'GENERALFEEDBACK', '');
+-            $question->defaultgrade = backup_todb($que_info['#']['DEFAULTGRADE']['0']['#']);
++            $question->defaultmark = backup_todb($que_info['#']['DEFAULTGRADE']['0']['#']);
+             $question->penalty = backup_todb($que_info['#']['PENALTY']['0']['#']);
+             $question->qtype = backup_todb($que_info['#']['QTYPE']['0']['#']);
+             $question->length = backup_todb($que_info['#']['LENGTH']['0']['#']);
+@@ -335,6 +335,17 @@
+             $question->timecreated = backup_todb_optional_field($que_info, 'TIMECREATED', 0);
+             $question->timemodified = backup_todb_optional_field($que_info, 'TIMEMODIFIED', 0);
+ 
++            // Update old, badly rounded penalties, to the new equivalents.
++            if ($question->penalty >= 0.33 && $question->penalty <= 0.34) {
++                $question->penalty = 0.3333333;
++            }
++            if ($question->penalty >= 0.66 && $question->penalty <= 0.67) {
++                $question->penalty = 0.6666667;
++            }
++            if ($question->penalty >= 1) {
++                $question->penalty = 1;
++            }
++
+             // Set the createdby field, if the user was in the backup, or if we are on the same site.
+             $createdby = backup_todb_optional_field($que_info, 'CREATEDBY', null);
+             if (!empty($createdby)) {
+@@ -466,7 +477,8 @@
+                 }
+ 
+                 //Now, restore every question_answers in this question
+-                $status = question_restore_answers($oldid,$newid,$que_info,$restore);
++                $status = $status && question_restore_answers($oldid,$newid,$que_info,$restore);
++                $status = $status && question_restore_hints($oldid,$newid,$que_info,$restore);
+                 // Restore questiontype specific data
+                 if (array_key_exists($question->qtype, $QTYPES)) {
+                     $status = $QTYPES[$question->qtype]->restore($oldid,$newid,$que_info,$restore);
+@@ -510,6 +522,61 @@
+         }
+     }
+ 
++    function question_restore_hints($old_question_id, $new_question_id, $info, $restore) {
++        if (!isset($info['#']['HINTS']['0']['#']['HINT'])) {
++            return true;
++        }
++        $hints = $info['#']['HINTS']['0']['#']['HINT'];
++
++        $status = true;
++        $count = 0;
++        foreach ($hints as $hint_info) {
++            if (isset($hint_info['#']['REST'])) {
++                // Backwards compatibility.
++                $hintoptions = backup_todb($hint_info['#']['REST']['0']['#']);
++                if ($hintoptions) {
++                    $hintoptions = unserialize($hintoptions);
++                } else {
++                    $hintoptions = array(0, 0);
++                }
++                $numoptions = count($hintoptions);
++
++                $hint = new stdClass;
++                $hint->questionid = $new_question_id;
++                $hint->hint = backup_todb($hint_info['#']['HINT_TEXT']['0']['#']);
++                $hint->shownumcorrect = $hintoptions[0];
++                $hint->clearwrong = $hintoptions[$numoptions - 1];
++                if ($numoptions == 3) {
++                    $hint->options = $hintoptions[1];
++                } else {
++                    $hint->options = 0;
++                }
++                $status = $status && insert_record('question_hints', $hint, false);
++
++            } else {
++                // Copy the data from the XML to the DB.
++                $hint = new stdClass;
++                $hint->questionid = $new_question_id;
++                $hint->hint = backup_todb($hint_info['#']['HINT_TEXT']['0']['#']);
++                $hint->shownumcorrect = backup_todb($hint_info['#']['SHOWNUMCORRECT']['0']['#']);
++                $hint->clearwrong = backup_todb($hint_info['#']['CLEARWRONG']['0']['#']);
++                $hint->options = backup_todb($hint_info['#']['OPTIONS']['0']['#']);
++                $status = $status && insert_record('question_hints', $hint, false);
++            }
++
++            //Do some output
++            if (($count++ % 50) == 0 && !defined('RESTORE_SILENTLY')) {
++                echo ".";
++                if ($count % 1000 == 0) {
++                    echo "<br />";
++                }
++                backup_flush(300);
++            }
++        }
++
++        return $status;
++    }
++
+     function question_restore_answers ($old_question_id,$new_question_id,$info,$restore) {
+ 
+         global $CFG;
+@@ -543,6 +610,23 @@
+                     $answer->answer = '*';
+                 }
+ 
++                // Update old, badly rounded values, to the new equivalents.
++                $changes = array(
++                    '-0.66666'  => '-0.6666667',
++                    '-0.33333'  => '-0.3333333',
++                    '-0.16666'  => '-0.1666667',
++                    '-0.142857' => '-0.1428571',
++                     '0.11111'  =>  '0.1111111',
++                     '0.142857' =>  '0.1428571',
++                     '0.16666'  =>  '0.1666667',
++                     '0.33333'  =>  '0.3333333',
++                     '0.333333' =>  '0.3333333',
++                     '0.66666'  =>  '0.6666667',
++                );
++                if (array_key_exists($answer->fraction, $changes)) {
++                    $answer->fraction = $changes[$answer->fraction];
++                }
++
+                 //The structure is equal to the db, so insert the question_answers
+                 $newid = insert_record ("question_answers",$answer);
+ 
+diff --git a/question/toggleflag.php b/question/toggleflag.php
+new file mode 100644
+index 0000000..fdbefab
+--- /dev/null
++++ b/question/toggleflag.php
+@@ -0,0 +1,49 @@
++<?php
++
++// This file is part of Moodle - http://moodle.org/
++//
++// Moodle is free software: you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// Moodle is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++// GNU General Public License for more details.
++//
++// You should have received a copy of the GNU General Public License
++// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
++
++
++/**
++ * Used by ajax calls to toggle the flagged state of a question in an attempt.
++ *
++ * @package moodlecore
++ * @subpackage questionengine
++ * @copyright 2009 The Open University
++ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
++ */
++
++require_once('../config.php');
++require_once($CFG->dirroot . '/question/engine/lib.php');
++
++// Parameters
++$qaid = required_param('qaid', PARAM_INT);
++$qubaid = required_param('qubaid', PARAM_INT);
++$questionid = required_param('qid', PARAM_INT);
++$newstate = required_param('newstate', PARAM_BOOL);
++$checksum = required_param('checksum', PARAM_ALPHANUM);
++
++// Check user is logged in.
++require_login();
++
++// Check the sesskey.
++if (!confirm_sesskey()) {
++    echo 'sesskey failure';
++}
++
++// Check that the requested session really exists
++question_flags::update_flag($qubaid, $questionid, $qaid, $checksum, $newstate);
++
++echo 'OK';
