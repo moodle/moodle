@@ -233,7 +233,6 @@ $CFG->admin = 'admin';
 // like AOL.
 //      $CFG->tracksessionip = true;
 //
-//
 // The following lines are for handling email bounces.
 //      $CFG->handlebounces = true;
 //      $CFG->minbounces = 10;
