@@ -437,7 +437,12 @@ if ($action === 'delete') {
         $page = $lessonpages[$pageid];
         $answerpage = new stdClass;
         $data ='';
+        
         $answerdata = new stdClass;
+        // Set some defaults for the answer data.
+        $answerdata->score = NULL;
+        $answerdata->response = NULL;
+        $answerdata->responseformat = FORMAT_PLAIN;
 
         $answerpage->title = format_string($page->title);
 
@@ -452,9 +457,7 @@ if ($action === 'delete') {
         if (empty($userid)) {
             // there is no userid, so set these vars and display stats.
             $answerpage->grayout = 0;
-            $useranswer = NULL;
-            $answerdata->score = NULL;
-            $answerdata->response = NULL;
+            $useranswer = NULL;    
         } elseif ($useranswers = $DB->get_records("lesson_attempts",array("lessonid"=>$lesson->id, "userid"=>$userid, "retry"=>$try,"pageid"=>$page->id), "timeseen")) {
             // get the user's answer for this page
             // need to find the right one
@@ -470,9 +473,6 @@ if ($action === 'delete') {
             // user did not answer this page, gray it out and set some nulls
             $answerpage->grayout = 1;
             $useranswer = NULL;
-            $answerdata->score = NULL;
-            $answerdata->response = NULL;
-
         }
         $i = 0;
         $n = 0;

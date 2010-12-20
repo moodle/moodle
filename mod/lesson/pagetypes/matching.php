@@ -105,13 +105,16 @@ class lesson_page_type_matching extends lesson_page {
         $this->lesson->maxanswers = $this->lesson->maxanswers + 2;
         for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
             $answer = clone($newanswer);
-            if (!empty($properties->answer_editor[$i])) {
+            if (!empty($properties->answer_editor[$i]) && is_array($properties->answer_editor[$i])) {
                 $answer->answer = $properties->answer_editor[$i]['text'];
                 $answer->answerformat = $properties->answer_editor[$i]['format'];
-                if (isset($properties->response_editor[$i])) {
-                    $answer->response = $properties->response_editor[$i]['text'];
-                    $answer->responseformat = $properties->response_editor[$i]['format'];
-                }
+            }
+            if (!empty($properties->response_editor[$i]) && is_array($properties->response_editor[$i])) {
+                $answer->response = $properties->response_editor[$i]['text'];
+                $answer->responseformat = $properties->response_editor[$i]['format'];
+            }
+
+            if (!empty($answer->answer)) {
                 if (isset($properties->jumpto[$i])) {
                     $answer->jumpto = $properties->jumpto[$i];
                 }
@@ -276,6 +279,14 @@ class lesson_page_type_matching extends lesson_page {
         }
         return $table;
     }
+    /**
+     * Updates the page and its answers
+     *
+     * @global moodle_database $DB
+     * @global moodle_page $PAGE
+     * @param stdClass $properties
+     * @return bool
+     */
     public function update($properties) {
         global $DB, $PAGE;
         $answers  = $this->get_answers();
@@ -293,13 +304,17 @@ class lesson_page_type_matching extends lesson_page {
                 $this->answers[$i]->pageid = $this->id;
                 $this->answers[$i]->timecreated = $this->timecreated;
             }
-            if (!empty($properties->answer_editor[$i])) {
+
+            if (!empty($properties->answer_editor[$i]) && is_array($properties->answer_editor[$i])) {
                 $this->answers[$i]->answer = $properties->answer_editor[$i]['text'];
                 $this->answers[$i]->answerformat = $properties->answer_editor[$i]['format'];
-                if (isset($properties->response_editor[$i])) {
-                    $this->answers[$i]->response = $properties->response_editor[$i]['text'];
-                    $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
-                }
+            }
+            if (!empty($properties->response_editor[$i]) && is_array($properties->response_editor[$i])) {
+                $this->answers[$i]->response = $properties->response_editor[$i]['text'];
+                $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
+            }
+
+            if (!empty($this->answers[$i]->answer)) {
                 if (isset($properties->jumpto[$i])) {
                     $this->answers[$i]->jumpto = $properties->jumpto[$i];
                 }
@@ -319,8 +334,9 @@ class lesson_page_type_matching extends lesson_page {
                     $DB->update_record("lesson_answers", $this->answers[$i]->properties());
                 }
 
-            } else {
-                break;
+            } else if (isset($this->answers[$i]->id)) {
+                $DB->delete_records('lesson_answers', array('id'=>$this->answers[$i]->id));
+                unset($this->answers[$i]);
             }
         }
         return true;
@@ -383,7 +399,11 @@ class lesson_page_type_matching extends lesson_page {
                 $data = "<select disabled=\"disabled\"><option selected=\"selected\">".strip_tags(format_string($answer->answer))."</option></select>";
                 if ($useranswer != NULL) {
                     $userresponse = explode(",", $useranswer->useranswer);
-                    $data .= "<select disabled=\"disabled\"><option selected=\"selected\">".strip_tags(format_string($answers[$userresponse[$i]]->response))."</option></select>";
+                    $data .= "<select disabled=\"disabled\"><option selected=\"selected\">";
+                    if (array_key_exists($i, $userresponse)) {
+                        $data .= strip_tags(format_string($answers[$userresponse[$i]]->response));
+                    }
+                    $data .= "</option></select>";
                 } else {
                     $data .= "<select disabled=\"disabled\"><option selected=\"selected\">".strip_tags(format_string($answer->response))."</option></select>";
                 }
@@ -413,13 +433,14 @@ class lesson_page_type_matching extends lesson_page {
     }
     public function get_jumps() {
         global $DB;
-        // The jumps for matching question type is stored
-        // in the 3rd and 4rth answer record.
+        // The jumps for matching question type are stored in the 1st and 2nd answer record.
         $jumps = array();
         if ($answers = $DB->get_records("lesson_answers", array("lessonid" => $this->lesson->id, "pageid" => $this->properties->id), 'id', '*', 0, 2)) {
             foreach ($answers as $answer) {
                 $jumps[] = $this->get_jump_name($answer->jumpto);
             }
+        } else {
+            $jumps[] = $this->get_jump_name($this->properties->nextpageid);
         }
         return $jumps;
     }

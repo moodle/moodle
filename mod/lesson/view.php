@@ -359,11 +359,17 @@ if ($pageid != LESSON_EOL) {
     } else {
         $data = new stdClass;
         $data->id = $PAGE->cm->id;
+        $data->pageid = $page->id;
+        $data->newpageid = LESSON_NEXTPAGE;
         if ($nextpage = $lesson->get_next_page($page->nextpageid)) {
             $data->newpageid = $nextpage->id;
         }
 
-        $mform = new lesson_page_without_answers();
+        $customdata = array(
+            'title'     => $page->title,
+            'contents'  => $page->get_contents()
+        );
+        $mform = new lesson_page_without_answers($CFG->wwwroot.'/mod/lesson/continue.php', $customdata);
         $mform->set_data($data);
         ob_start();
         $mform->display();

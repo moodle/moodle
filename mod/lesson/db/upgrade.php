@@ -44,6 +44,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ *
+ * @global stdClass $CFG
+ * @global moodle_database $DB
+ * @global core_renderer $OUTPUT
+ * @param int $oldversion
+ * @return bool 
+ */
 function xmldb_lesson_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
@@ -236,7 +244,50 @@ function xmldb_lesson_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2010081200, 'lesson');
     }
-
+    
+    
+    if ($oldversion < 2010121400) {
+        // Fix matching question pages.
+        // In Moodle 1.9 matching question pages stored the correct and incorrect
+        // jumps on the third and forth answers, in Moodle 2.0 they are stored
+        // in the first and second answers.
+        // This upgrade block detects matching questions where this is the case
+        // and fixed it by making firstjump = thirdjump && secondjump = forthjump.
+        $pages = $DB->get_recordset('lesson_pages', array('qtype'=>'5'));
+        foreach ($pages as $page) {
+            $answers = $DB->get_records('lesson_answers', array('pageid'=>$page->id), 'id', 'id, jumpto', 0, 4);
+            if (count($answers) < 4) {
+                // If there are less then four answers the problem wont exist.
+                // All Moodle 1.9 matching questions had a least 4 answers.
+                continue;
+            }
+            $first  = array_shift($answers);
+            $second = array_shift($answers);
+            $third  = array_shift($answers);
+            $forth  = array_shift($answers);
+            if ($first->jumpto !== '0' || $second->jumpto !== '0') {
+                // If either are set to something other than the next page then
+                // there is no problem.
+                continue;
+            }
+            if ($third->jumpto !== '0') {
+                $first->jumpto = $third->jumpto;
+                $DB->update_record('lesson_answers', $first);
+                $third->jumpto = '0';
+                $DB->update_record('lesson_answers', $third);
+            }
+            if ($forth->jumpto !== '0') {
+                $second->jumpto = $forth->jumpto;
+                $DB->update_record('lesson_answers', $second);
+                $forth->jumpto = '0';
+                $DB->update_record('lesson_answers', $forth);
+            }
+        }
+        // Close the record set
+        $pages->close();
+        
+        upgrade_mod_savepoint(true, 2010121400, 'lesson');
+    }
 
     return true;
 }
