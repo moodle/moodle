@@ -160,6 +160,7 @@ $string['searchresult'] = 'Search results:';
 $string['searchwikis'] = 'Search wikis';
 $string['special'] = 'Special';
 $string['tagsdeleted'] = 'Wiki tags have been deleted';
+$string['tagtitle'] = 'See the "{$a}" tag';
 $string['teacherrating'] = 'Teacher rating';
 $string['timesrating']='This page has been rated  {$a->c} times with an average of: {$a->s}';
 $string['updatedpages'] = "Updated pages";
