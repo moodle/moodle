@@ -137,7 +137,8 @@ function blog_remove_associations_for_course($courseid) {
 
 /**
  * Given a record in the {blog_external} table, checks the blog's URL
- * for new entries not yet copied into Moodle.
+ * for new entries not yet copied into Moodle. 
+ * Also attempts to identify and remove deleted blog entries
  *
  * @param object $externalblog
  * @return boolean False if the Feed is invalid
@@ -164,7 +165,9 @@ function blog_sync_external_entries($externalblog) {
         return null;
     }
     
+    //used to identify blog posts that have been deleted from the source feed
     $oldesttimestamp = null;
+    $uniquehashes = array();
 
     foreach ($rss->get_items() as $entry) {
         // If filtertags are defined, use them to filter the entries by RSS category
@@ -185,6 +188,8 @@ function blog_sync_external_entries($externalblog) {
                 continue;
             }
         }
+        
+        $uniquehashes[] = $entry->get_permalink();
 
         $newentry = new stdClass();
         $newentry->userid = $externalblog->userid;
@@ -249,6 +254,18 @@ function blog_sync_external_entries($externalblog) {
             $DB->update_record('post', $newentry);
         }
     }
+    
+    //Look at the posts we have in the database to check if any of them have been deleted from the feed.
+    //Only checking posts within the time frame returned by the rss feed. Older items may have been deleted or 
+    //may just not be returned anymore. We cant tell the difference so we leave older posts alone.
+    $dbposts = $DB->get_records_select('post', 'created > :ts', array('ts'=>$oldesttimestamp), '', 'id, uniquehash');
+    $todelete = array();
+    foreach($dbposts as $dbpost) {
+        if (!in_array($dbpost->uniquehash,$uniquehashes)) {
+            $todelete[] = $dbpost->id;
+        }
+    }
+    $DB->delete_records_list('post', 'id', $todelete);
 
     $DB->update_record('blog_external', array('id' => $externalblog->id, 'timefetched' => mktime()));
 }
