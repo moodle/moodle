@@ -8,7 +8,7 @@ class editcategory_form extends moodleform {
 
     // form definition
     function definition() {
-        global $CFG;
+        global $CFG, $DB;
         $mform =& $this->_form;
         $category = $this->_customdata['category'];
         $editoroptions = $this->_customdata['editoroptions'];
@@ -23,7 +23,7 @@ class editcategory_form extends moodleform {
             // Editing an existing category.
             make_categories_list($options, $parents, 'moodle/category:manage', $category->id);
             if (empty($options[$category->parent])) {
-                $options[$category->parent] = get_field('course_categories', 'name', 'id', $category->parent);
+                $options[$category->parent] = $DB->get_field('course_categories', 'name', array('id'=>$category->parent));
             }
             $strsubmit = get_string('savechanges');
         } else {
