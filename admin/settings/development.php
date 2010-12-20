@@ -35,6 +35,44 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('debugpageinfo', get_string('debugpageinfo', 'admin'), get_string('configdebugpageinfo', 'admin'), 0));
     $ADMIN->add('development', $temp);
 
+    // "profiling" settingpage (conditionally if the 'xhprof' extension is available only)
+    if (extension_loaded('xhprof') && function_exists('xhprof_enable')) {
+        $temp = new admin_settingpage('profiling', get_string('profiling', 'admin'));
+        // Main profiling switch
+        $temp->add(new admin_setting_configcheckbox('profilingenabled', get_string('profilingenabled', 'admin'), get_string('profilingenabled_help', 'admin'), false));
+        // List of URLs that will be automatically profiled
+        $temp->add(new admin_setting_configtextarea('profilingincluded', get_string('profilingincluded', 'admin'), get_string('profilingincluded_help', 'admin'), ''));
+        // List of URLs that won't be profiled ever
+        $temp->add(new admin_setting_configtextarea('profilingexcluded', get_string('profilingexcluded', 'admin'), get_string('profilingexcluded_help', 'admin'), ''));
+        // Allow random profiling each XX requests
+        $temp->add(new admin_setting_configtext('profilingautofrec', get_string('profilingautofrec', 'admin'), get_string('profilingautofrec_help', 'admin'), 0, PARAM_INT));
+        // Allow PROFILEME/DONTPROFILEME GPC
+        $temp->add(new admin_setting_configcheckbox('profilingallowme', get_string('profilingallowme', 'admin'), get_string('profilingallowme_help', 'admin'), false));
+        // Allow PROFILEALL/PROFILEALLSTOP GPC
+        $temp->add(new admin_setting_configcheckbox('profilingallowall', get_string('profilingallowall', 'admin'), get_string('profilingallowall_help', 'admin'), false));
+        // TODO: Allow to skip PHP functions (XHPROF_FLAGS_NO_BUILTINS)
+        // TODO: Allow to skip call_user functions (ignored_functions array)
+        // Specify the life time (in minutes) of profiling runs
+        $temp->add(new admin_setting_configselect('profilinglifetime', get_string('profilinglifetime', 'admin'), get_string('profilinglifetime_help', 'admin'), 24*60, array(
+             0 => get_string('neverdeleteruns', 'admin'),
+      30*24*60 => get_string('numdays', '', 30),
+      15*24*60 => get_string('numdays', '', 15),
+       7*24*60 => get_string('numdays', '', 7),
+       4*24*60 => get_string('numdays', '', 4),
+       2*24*60 => get_string('numdays', '', 2),
+         24*60 => get_string('numhours', '', 24),
+         16*80 => get_string('numhours', '', 16),
+          8*60 => get_string('numhours', '', 8),
+          4*60 => get_string('numhours', '', 4),
+          2*60 => get_string('numhours', '', 2),
+            60 => get_string('numminutes', '', 60),
+            30 => get_string('numminutes', '', 30),
+            15 => get_string('numminutes', '', 15))));
+
+        // Add the 'profiling' page to admin block
+        $ADMIN->add('development', $temp);
+    }
+
 
     // XMLDB editor
     $ADMIN->add('development', new admin_externalpage('xmldbeditor', get_string('xmldbeditor'), "$CFG->wwwroot/$CFG->admin/xmldb/"));

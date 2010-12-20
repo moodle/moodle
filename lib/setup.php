@@ -646,7 +646,6 @@ if (isset($_SERVER['PHP_SELF'])) {
 // initialise ME's
 initialise_fullme();
 
-
 // init session prevention flag - this is defined on pages that do not want session
 if (CLI_SCRIPT) {
     // no sessions in CLI scripts possible
@@ -668,6 +667,13 @@ if (CLI_SCRIPT) {
 session_get_instance();
 $SESSION = &$_SESSION['SESSION'];
 $USER    = &$_SESSION['USER'];
+
+// include and start profiling if needed, and register profiling_stop as shutdown function
+if (!empty($CFG->profilingenabled)) {
+    require_once($CFG->libdir . '/xhprof/xhprof_moodle.php');
+    profiling_start();
+    register_shutdown_function('profiling_stop');
+}
 
 // Process theme change in the URL.
 if (!empty($CFG->allowthemechangeonurl) and !empty($_GET['theme'])) {
