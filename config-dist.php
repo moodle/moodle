@@ -355,7 +355,6 @@ $CFG->admin = 'admin';
 //
 //     $CFG->extramemorylimit = 1G;
 //
-//
 //=========================================================================
 // 8. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
