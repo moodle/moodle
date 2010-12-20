@@ -163,6 +163,8 @@ function blog_sync_external_entries($externalblog) {
     if (empty($rss->data)) {
         return null;
     }
+    
+    $oldesttimestamp = null;
 
     foreach ($rss->get_items() as $entry) {
         // If filtertags are defined, use them to filter the entries by RSS category
@@ -220,6 +222,11 @@ function blog_sync_external_entries($externalblog) {
             $newentry->created = $timestamp;
         }
         $newentry->lastmodified = $timestamp;
+        
+        if (empty($oldesttimestamp) || $timestamp<$oldesttimestamp) {
+            //found an older post
+            $oldesttimestamp = $timestamp;
+        }
 
         $textlib = textlib_get_instance();
         if ($textlib->strlen($newentry->uniquehash) > 255) {
