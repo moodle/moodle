@@ -112,7 +112,7 @@ form.popupform div {display: inline;}
  */
 /*Accessibility: text 'seen' by screen readers but not visual users. */
 .accesshide {position:absolute;left:-10000px;font-weight:normal;font-size:1em;}
-.dir-rtl .accesshide {right:-10000px;left:auto;}
+.dir-rtl .accesshide {top:-30000px;left:auto;}
 span.hide,
 div.hide {display:none;}
 .invisiblefieldset {display:inline;border-width:0;padding:0;margin:0;}
