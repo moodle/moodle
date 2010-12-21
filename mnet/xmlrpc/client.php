@@ -332,6 +332,14 @@ class mnet_xmlrpc_client {
                 $this->error[] = $this->response['faultCode'] . " : " . $this->response['faultString'];
             }
         }
+
+        // ok, it's signed, but is it signed with the right certificate ?
+        // do this *after* we check for an out of date key
+        if (!openssl_verify($this->xmlrpcresponse, base64_decode($sig_parser->signature), 
+                $mnet_peer->public_key)) {
+            $this->error[] = 'Invalid signature';
+        }
+
         return empty($this->error);
     }
 }
