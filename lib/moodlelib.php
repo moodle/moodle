@@ -7333,7 +7333,7 @@ function get_plugin_list($plugintype) {
  *   'forum_hook')
  */
 function get_plugin_list_with_function($plugintype, $function, $file='lib.php') {
-    global $CFG; // mandatory because the lib functions do not define it global!
+    global $CFG; // mandatory in case it is referenced by include()d PHP script
 
     $result = array();
     // Loop through list of plugins with given type
