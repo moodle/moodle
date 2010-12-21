@@ -486,7 +486,7 @@ img.iconkbhelp {
   font-size:1em;
 }
 .dir-rtl .accesshide {
-  right:-10000px;
+  top:-30000px;
   left:auto;
 }
 
