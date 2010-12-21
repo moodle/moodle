@@ -35,6 +35,25 @@
  */
 class question_engine_data_mapper {
     /**
+     * @var moodle_database normally points to global $DB, but I prefer not to
+     * use globals if I can help it.
+     */
+    protected $db;
+
+    /**
+     * @param moodle_database $db a database connectoin. Defaults to global $DB.
+     */
+    public function __construct($db = null) {
+        if (is_null($db)) {
+            global $DB;
+            new moodle_database;
+            $this->db = $DB;
+        } else {
+            $this->db = $db;
+        }
+    }
+
+    /**
      * Store an entire {@link question_usage_by_activity} in the database,
      * including all the question_attempts that comprise it.
      * @param question_usage_by_activity $quba the usage to store.
@@ -45,10 +64,7 @@ class question_engine_data_mapper {
         $record->component = addslashes($quba->get_owning_component());
         $record->preferredbehaviour = addslashes($quba->get_preferred_behaviour());
 
-        $newid = insert_record('question_usages', $record);
-        if (!$newid) {
-            throw new Exception('Failed to save questions_usage_by_activity.');
-        }
+        $newid = $this->db->insert_record('question_usages', $record);
         $quba->set_id_from_database($newid);
 
         foreach ($quba->get_attempt_iterator() as $qa) {
@@ -74,10 +90,7 @@ class question_engine_data_mapper {
         $record->rightanswer = addslashes($qa->get_right_answer_summary());
         $record->responsesummary = addslashes($qa->get_response_summary());
         $record->timemodified = time();
-        $record->id = insert_record('question_attempts', $record);
-        if (!$record->id) {
-            throw new Exception('Failed to save question_attempt ' . $qa->get_slot());
-        }
+        $record->id = $this->db->insert_record('question_attempts', $record);
 
         foreach ($qa->get_step_iterator() as $seq => $step) {
             $this->insert_question_attempt_step($step, $record->id, $seq);
@@ -98,18 +111,14 @@ class question_engine_data_mapper {
         $record->timecreated = $step->get_timecreated();
         $record->userid = $step->get_user_id();
 
-        $record->id = insert_record('question_attempt_steps', $record);
-        if (!$record->id) {
-            throw new Exception('Failed to save question_attempt_step' . $seq .
-                    ' for question attempt id ' . $questionattemptid);
-        }
+        $record->id = $this->db->insert_record('question_attempt_steps', $record);
 
         foreach ($step->get_all_data() as $name => $value) {
             $data = new stdClass;
             $data->attemptstepid = $record->id;
             $data->name = addslashes($name);
             $data->value = addslashes($value);
-            insert_record('question_attempt_step_data', $data, false);
+            $this->db->insert_record('question_attempt_step_data', $data, false);
         }
     }
 
@@ -119,8 +128,7 @@ class question_engine_data_mapper {
      * @param question_attempt_step the step that was loaded.
      */
     public function load_question_attempt_step($stepid) {
-        global $CFG;
-        $records = get_records_sql("
+        $records = $this->db->get_records_sql("
 SELECT
     COALESCE(qasd.id, -1 * qas.id) AS id,
     qas.id AS attemptstepid,
@@ -133,12 +141,12 @@ SELECT
     qasd.name,
     qasd.value
 
-FROM {$CFG->prefix}question_attempt_steps qas
-LEFT JOIN {$CFG->prefix}question_attempt_step_data qasd ON qasd.attemptstepid = qas.id
+FROM {question_attempt_steps} qas
+LEFT JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id
 
 WHERE
-    qas.id = $stepid
-        ");
+    qas.id = :stepid
+        ", array('stepid' => $stepid));
 
         if (!$records) {
             throw new Exception('Failed to load question_attempt_step ' . $stepid);
@@ -154,8 +162,7 @@ WHERE
      * @param question_attempt the question attempt that was loaded.
      */
     public function load_question_attempt($questionattemptid) {
-        global $CFG;
-        $records = get_records_sql("
+        $records = $this->db->get_records_sql("
 SELECT
     COALESCE(qasd.id, -1 * qas.id) AS id,
     quba.preferredbehaviour,
@@ -180,17 +187,17 @@ SELECT
     qasd.name,
     qasd.value
 
-FROM {$CFG->prefix}question_attempts qa
-JOIN {$CFG->prefix}question_usages quba ON quba.id = qa.questionusageid
-LEFT JOIN {$CFG->prefix}question_attempt_steps qas ON qas.questionattemptid = qa.id
-LEFT JOIN {$CFG->prefix}question_attempt_step_data qasd ON qasd.attemptstepid = qas.id
+FROM      {question_attempts           qa
+JOIN      {question_usages}            quba ON quba.id               = qa.questionusageid
+LEFT JOIN {question_attempt_steps}     qas  ON qas.questionattemptid = qa.id
+LEFT JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid    = qas.id
 
 WHERE
-    qa.id = $questionattemptid
+    qa.id = :questionattemptid
 
 ORDER BY
     qas.sequencenumber
-        ");
+        ", array('questionattemptid' => $questionattemptid));
 
         if (!$records) {
             throw new Exception('Failed to load question_attempt ' . $questionattemptid);
@@ -208,8 +215,7 @@ ORDER BY
      * @param question_usage_by_activity the usage that was loaded.
      */
     public function load_questions_usage_by_activity($qubaid) {
-        global $CFG;
-        $records = get_records_sql("
+        $records = $this->db->get_records_sql("
 SELECT
     COALESCE(qasd.id, -1 * qas.id) AS id,
     quba.id AS qubaid,
@@ -237,18 +243,18 @@ SELECT
     qasd.name,
     qasd.value
 
-FROM {$CFG->prefix}question_usages quba
-LEFT JOIN {$CFG->prefix}question_attempts qa ON qa.questionusageid = quba.id
-LEFT JOIN {$CFG->prefix}question_attempt_steps qas ON qas.questionattemptid = qa.id
-LEFT JOIN {$CFG->prefix}question_attempt_step_data qasd ON qasd.attemptstepid = qas.id
+FROM      {question_usages}            quba
+LEFT JOIN {question_attempts}          qa   ON qa.questionusageid    = quba.id
+LEFT JOIN {question_attempt_steps}     qas  ON qas.questionattemptid = qa.id
+LEFT JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid    = qas.id
 
 WHERE
-    quba.id = $qubaid
+    quba.id = :qubaid
 
 ORDER BY
     qa.slot,
     qas.sequencenumber
-    ");
+    ", array('qubaid', $qubaid));
 
         if (!$records) {
             throw new Exception('Failed to load questions_usage_by_activity ' . $qubaid);
@@ -266,8 +272,6 @@ ORDER BY
      * @return array of records. See the SQL in this function to see the fields available.
      */
     public function load_questions_usages_latest_steps(qubaid_condition $qubaids, $slots) {
-        global $CFG;
-
         list($slottest, $params) = get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot0000');
 
         $records = get_records_sql("
@@ -293,17 +297,13 @@ SELECT
     qas.userid
 
 FROM {$qubaids->from_question_attempts('qa')}
-JOIN {$CFG->prefix}question_attempt_steps qas ON
+JOIN {question_attempt_steps} qas ON
         qas.id = {$this->latest_step_for_qa_subquery()}
 
 WHERE
     {$qubaids->where()} AND
     qa.slot $slottest
-        ");
-
-        if (!$records) {
-            $records = array();
-        }
+        ", $params + $qubaids->from_where_params());
 
         return $records;
     }
@@ -321,11 +321,9 @@ WHERE
      * $manuallygraded and $all.
      */
     public function load_questions_usages_question_state_summary(qubaid_condition $qubaids, $slots) {
-        global $CFG;
-
         list($slottest, $params) = get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot0000');
 
-        $rs = get_recordset_sql("
+        $rs = $this->db->get_recordset_sql("
 SELECT
     qa.slot,
     qa.questionid,
@@ -336,9 +334,9 @@ SELECT
     COUNT(1) AS numattempts
 
 FROM {$qubaids->from_question_attempts('qa')}
-JOIN {$CFG->prefix}question_attempt_steps qas ON
+JOIN {question_attempt_steps} qas ON
         qas.id = {$this->latest_step_for_qa_subquery()}
-JOIN {$CFG->prefix}question q ON q.id = qa.questionid
+JOIN {question} q ON q.id = qa.questionid
 
 WHERE
     {$qubaids->where()} AND
@@ -356,7 +354,7 @@ ORDER BY
     qa.questionid,
     q.name,
     q.id
-        ");
+        ", $params + $qubaids->from_where_params());
 
         if (!$rs) {
             throw new moodle_exception('errorloadingdata');
@@ -694,15 +692,13 @@ ORDER BY
      * @param integer $sessionid the question_attempt id.
      * @param boolean $newstate the new state of the flag. true = flagged.
      */
-    public function update_question_attempt_flag($qubaid, $questionid, $qaid, $newstate) {
-        if (!record_exists('question_attempts', 'id', $qaid, 
-                'questionusageid', $qubaid, 'questionid', $questionid)) {
+    public function update_question_attempt_flag($qubaid, $questionid, $qaid, $slot, $newstate) {
+        if (!$this->db->record_exists('question_attempts', array('id' => $qaid, 
+                'questionusageid' => $qubaid, 'questionid' => $questionid, 'slot' => $slot))) {
             throw new Exception('invalid ids');
         }
 
-        if (!set_field('question_attempts', 'flagged', $newstate, 'id', $qaid)) {
-            throw new Exception('flag update failed');
-        }
+        $this->db->set_field('question_attempts', 'flagged', $newstate, array('id' => $qaid));
     }
 
     /**

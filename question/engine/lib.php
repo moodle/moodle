@@ -504,12 +504,12 @@ abstract class question_flags {
      * @param object $user the user. If null, defaults to $USER.
      * @return string that needs to be sent to question/toggleflag.php for it to work.
      */
-    protected static function get_toggle_checksum($qubaid, $questionid, $qaid, $user = null) {
+    protected static function get_toggle_checksum($qubaid, $questionid, $qaid, $slot, $user = null) {
         if (is_null($user)) {
             global $USER;
             $user = $USER;
         }
-        return md5($qubaid . "_" . $user->secret . "_" . $questionid . "_" . $qaid);
+        return md5($qubaid . "_" . $user->secret . "_" . $questionid . "_" . $qaid . "_" . $slot);
     }
 
     /**
@@ -521,8 +521,9 @@ abstract class question_flags {
         $qaid = $qa->get_database_id();
         $qubaid = $qa->get_usage_id();
         $qid = $qa->get_question()->id;
-        $checksum = self::get_toggle_checksum($qubaid, $qid, $qaid);
-        return "qaid=$qaid&qubaid=$qubaid&qid=$qid&checksum=$checksum&sesskey=" . sesskey();
+        $slot = $qa->get_slot();
+        $checksum = self::get_toggle_checksum($qubaid, $qid, $qaid, $slot);
+        return "qaid=$qaid&qubaid=$qubaid&qid=$qid&slot=$slot&checksum=$checksum&sesskey=" . sesskey();
     }
 
     /**
@@ -535,18 +536,18 @@ abstract class question_flags {
      *      corresponding to the last three arguments.
      * @param boolean $newstate the new state of the flag. true = flagged.
      */
-    public static function update_flag($qubaid, $questionid, $qaid, $checksum, $newstate) {
+    public static function update_flag($qubaid, $questionid, $qaid, $slot, $checksum, $newstate) {
         // Check the checksum - it is very hard to know who a question session belongs
         // to, so we require that checksum parameter is matches an md5 hash of the 
         // three ids and the users username. Since we are only updating a flag, that
         // probably makes it sufficiently difficult for malicious users to toggle
         // other users flags.
-        if ($checksum != question_flags::get_toggle_checksum($qubaid, $questionid, $qaid)) {
+        if ($checksum != question_flags::get_toggle_checksum($qubaid, $questionid, $qaid, $slot)) {
             throw new Exception('checksum failure');
         }
 
         $dm = new question_engine_data_mapper();
-        $dm->update_question_attempt_flag($qubaid, $questionid, $qaid, $newstate);
+        $dm->update_question_attempt_flag($qubaid, $questionid, $qaid, $slot, $newstate);
     }
 
     public static function initialise_js() {

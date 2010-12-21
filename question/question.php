@@ -105,8 +105,7 @@ if ($id) {
     $question->qtype = $qtype;
 
     // Check that users are allowed to create this question type at the moment.
-    $allowedtypes = question_type_menu();
-    if (!isset($allowedtypes[$qtype])) {
+    if (!question_bank::qtype_enabled($qtype)) {
         print_error('cannotenable', 'question', $returnurl, $qtype);
     }
 
@@ -120,6 +119,8 @@ if ($id) {
 } else {
     print_error('notenoughdatatoeditaquestion', 'question', $returnurl);
 }
+
+$qtypeobj = question_bank::get_qtype($question->qtype);
 
 // Validate the question category.
 if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
@@ -164,23 +165,13 @@ if ($id) {
 }
 
 // Validate the question type.
-if (!isset($QTYPES[$question->qtype])) {
-    print_error('unknownquestiontype', 'question', $returnurl, $question->qtype);
-}
 $PAGE->set_pagetype('question-type-' . $question->qtype);
 
 // Create the question editing form.
 if ($wizardnow!=='' && !$movecontext){
-    if (!method_exists($QTYPES[$question->qtype], 'next_wizard_form')){
-        print_error('missingimportantcode', 'question', $returnurl, 'wizard form definition');
-    } else {
-        $mform = $QTYPES[$question->qtype]->next_wizard_form('question.php', $question, $wizardnow, $formeditable);
-    }
+    $mform = $qtypeobj->next_wizard_form('question.php', $question, $wizardnow, $formeditable);
 } else {
-    $mform = $QTYPES[$question->qtype]->create_editing_form('question.php', $question, $category, $contexts, $formeditable);
-}
-if ($mform === null) {
-    print_error('missingimportantcode', 'question', $returnurl, 'question editing form definition for "'.$question->qtype.'"');
+    $mform = $qtypeobj->create_editing_form('question.php', $question, $category, $contexts, $formeditable);
 }
 $toform = fullclone($question); // send the question object and a few more parameters to the form
 $toform->category = "$category->id,$category->contextid";
@@ -202,15 +193,13 @@ $toform->inpopup = $inpopup;
 
 $mform->set_data($toform);
 
-if ($mform->is_cancelled()){
+if ($mform->is_cancelled()) {
     if ($inpopup) {
         close_window();
     } else {
-        if (!empty($question->id)) {
-            $returnurl->param('lastchanged', $question->id);
-        }
         redirect($returnurl->out(false));
     }
+
 } else if ($fromform = $mform->get_data()) {
     /// If we are saving as a copy, break the connection to the old question.
     if (!empty($fromform->makecopy)) {
@@ -248,7 +237,7 @@ if ($mform->is_cancelled()){
 
     } else {
         // We are acutally saving the question.
-        $question = $QTYPES[$question->qtype]->save_question($question, $fromform);
+        $question = $qtypeobj->save_question($question, $fromform);
         if (!empty($CFG->usetags) && isset($fromform->tags)) {
             // A wizardpage from multipe pages questiontype like calculated may not
             // allow editing the question tags, hence the isset($fromform->tags) test.
@@ -257,7 +246,7 @@ if ($mform->is_cancelled()){
         }
     }
 
-    if (($QTYPES[$question->qtype]->finished_edit_wizard($fromform)) || $movecontext) {
+    if (($qtypeobj->finished_edit_wizard($fromform)) || $movecontext) {
         if ($inpopup) {
             echo $OUTPUT->notification(get_string('changessaved'), '');
             close_window(3);
@@ -291,7 +280,7 @@ if ($mform->is_cancelled()){
     }
 
 } else {
-    $streditingquestion = $QTYPES[$question->qtype]->get_heading();
+    $streditingquestion = $qtypeobj->get_heading();
     $PAGE->set_title($streditingquestion);
     $PAGE->set_heading($COURSE->fullname);
     if ($cm !== null) {
@@ -315,7 +304,6 @@ if ($mform->is_cancelled()){
 
     // Display a heading, question editing form and possibly some extra content needed for
     // for this question type.
-    $QTYPES[$question->qtype]->display_question_editing_page($mform, $question, $wizardnow);
+    $qtypeobj->display_question_editing_page($mform, $question, $wizardnow);
     echo $OUTPUT->footer();
 }
-

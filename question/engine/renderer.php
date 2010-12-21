@@ -211,9 +211,9 @@ class core_question_renderer extends renderer_base {
                 // of a stupid IE bug: http://www.456bereastreet.com/archive/200802/beware_of_id_and_name_attribute_mixups_when_using_getelementbyid_in_internet_explorer/
                 $flagcontent = '<input type="hidden" name="' . $id . '" value="0" />' .
                         '<input type="checkbox" id="' . $id . 'checkbox" name="' . $id . '" value="1" ' . $checked . ' />' .
+                        '<input type="hidden" value="' . s($postdata) . '" class="questionflagpostdata" />' .
                         '<label id="' . $id . 'label" for="' . $id . '">' . $this->get_flag_html(
                         $qa->is_flagged(), $id . 'img') . '</label>' . "\n" .
-                        print_js_call('question_flag_changer.init_flag', array($id, $postdata, $qa->get_slot()), true);
                 break;
             default:
                 $flagcontent = '';

@@ -162,11 +162,11 @@ DONE question/file.php                                  |  171 +- | but this fil
 DONE question/move_form.php                             |   32 +-
 DONE question/preview.js                                |   47 +
  question/preview.php                               |  408 ++--
- question/previewlib.php                            |  214 ++
- question/qengine.js                                |  181 ++
- question/question.php                              |    3 +-
+DONE question/previewlib.php                            |  214 ++
+DONE question/qengine.js                                |  181 ++
+DONE question/question.php                              |    3 +-
  question/restorelib.php                            |   88 +-
- question/toggleflag.php                            |   49 +
+DONE question/toggleflag.php                            |   49 +
 
  question/behaviour/behaviourbase.php               |  627 +++++
  question/behaviour/rendererbase.php                |  200 ++

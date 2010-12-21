@@ -42,7 +42,6 @@ M.core_question_flags = {
             Y.io(M.core_question_flags.actionurl , {method: 'POST', 'data': postdata});
             M.core_question_flags.fire_listeners(postdata);
         }, document.body, 'input.questionflagimage');
-
     },
 
     update_flag: function(input, image) {
@@ -56,8 +55,8 @@ M.core_question_flags = {
     fire_listeners: function(postdata) {
         for (var i = 0; i < M.core_question_flags.listeners.length; i++) {
             M.core_question_flags.listeners[i](
-                postdata.match(/\baid=(\d+)\b/)[1],
-                postdata.match(/\bqid=(\d+)\b/)[1],
+                postdata.match(/\bqubaid=(\d+)\b/)[1],
+                postdata.match(/\bslot=(\d+)\b/)[1],
                 postdata.match(/\bnewstate=(\d+)\b/)[1]
             );
         }

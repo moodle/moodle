@@ -78,6 +78,14 @@ abstract class question_bank {
     }
 
     /**
+     * @param string $qtypename the internal name of a question type. For example multichoice.
+     * @return boolean whether users are allowed to create questions of this type.
+     */
+    public static function qtype_enabled($qtypename) {
+        ;
+    }
+
+    /**
      * @param $qtypename the internal name of a question type, for example multichoice.
      * @return string the human_readable name of this question type, from the language pack.
      */

@@ -15,7 +15,7 @@
 
 
 /**
- * This file the Moodle question engine.
+ * JavaScript required by the question preview pop-up.
  *
  * @package moodlecore
  * @subpackage questionengine
@@ -24,23 +24,22 @@
  */
 
 
+M.core_question_preview = M.core_question_preview || {};
+
+
 /**
  * Initialise JavaScript-specific parts of the question preview popup.
  */
-function question_preview_init(caption, addto) {
+M.core_question_preview.init(Y) {
+    M.core_question_engine.init_form(Y, '#responseform');
+
     // Add a close button to the window.
-    var button = document.createElement('input');
-    button.type = 'button';
-    button.value = caption;
+    var closebutton = Y.Node.create('<input type="button" />');
+    button.value = M.str.question.closepreview;
+    Y.one('#previewcontrols').append(closebutton);
+    Y.on('click', function() { window.close() }, closebutton);
 
-    YAHOO.util.Event.addListener(button, 'click', function() { window.close() });
-
-    var container = document.getElementById(addto);
-    container.appendChild(button);
-
-    // Make changint the settings disable all submit buttons, like clicking one of the
-    // question buttons does.
-    var form = document.getElementById('mform1');
-    YAHOO.util.Event.addListener(form, 'submit',
-            question_prevent_repeat_submission, document.body);
+    // Make changing the settings disable all submit buttons, like clicking one
+    // of the question buttons does.
+    Y.on('submit', M.core_question_engine.prevent_repeat_submission, '#mform1', null, Y)
 }
