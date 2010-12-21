@@ -52,7 +52,7 @@ define('LASTACCESS_UPDATE_SECS', 60);
  * primary admin = admin with lowest role_assignment id among admins
  *
  * @static stdClass $mainadmin
- * @return stdClass An associative array representing the admin user.
+ * @return stdClass {@link $USER} record from DB, false if not found
  */
 function get_admin() {
     static $mainadmin = null;
