@@ -156,6 +156,10 @@ function cron_run() {
     }
     mtrace("Finished quiz reports");
 
+    mtrace('Starting admin reports');
+    cron_execute_plugin_type('report');
+    mtrace('Finished admin reports');
+
     mtrace('Starting main gradebook job ...');
     grade_cron();
     mtrace('done.');
@@ -382,45 +386,17 @@ function cron_run() {
         }
     }
 
+
+    mtrace('Starting course reports');
+    cron_execute_plugin_type('coursereport');
+    mtrace('Finished course reports');
+
     // run gradebook import/export/report cron
-    if ($gradeimports = get_plugin_list('gradeimport')) {
-        foreach ($gradeimports as $gradeimport => $plugindir) {
-            if (file_exists($plugindir.'/lib.php')) {
-                require_once($plugindir.'/lib.php');
-                $cron_function = 'grade_import_'.$gradeimport.'_cron';
-                if (function_exists($cron_function)) {
-                    mtrace("Processing gradebook import function $cron_function ...", '');
-                    $cron_function();
-                }
-            }
-        }
-    }
-
-    if ($gradeexports = get_plugin_list('gradeexport')) {
-        foreach ($gradeexports as $gradeexport => $plugindir) {
-            if (file_exists($plugindir.'/lib.php')) {
-                require_once($plugindir.'/lib.php');
-                $cron_function = 'grade_export_'.$gradeexport.'_cron';
-                if (function_exists($cron_function)) {
-                    mtrace("Processing gradebook export function $cron_function ...", '');
-                    $cron_function();
-                }
-            }
-        }
-    }
-
-    if ($gradereports = get_plugin_list('gradereport')) {
-        foreach ($gradereports as $gradereport => $plugindir) {
-            if (file_exists($plugindir.'/lib.php')) {
-                require_once($plugindir.'/lib.php');
-                $cron_function = 'grade_report_'.$gradereport.'_cron';
-                if (function_exists($cron_function)) {
-                    mtrace("Processing gradebook report function $cron_function ...", '');
-                    $cron_function();
-                }
-            }
-        }
-    }
+    mtrace('Starting gradebook plugins');
+    cron_execute_plugin_type('gradeimport');
+    cron_execute_plugin_type('gradeexport');
+    cron_execute_plugin_type('gradereport');
+    mtrace('Finished gradebook plugins');
 
     // Run external blog cron if needed
     if ($CFG->useexternalblogs) {
@@ -432,6 +408,7 @@ function cron_run() {
         foreach ($externalblogs as $eb) {
             blog_sync_external_entries($eb);
         }
+        mtrace('done.');
     }
 
     // Run blog associations cleanup
@@ -440,6 +417,7 @@ function cron_run() {
         // delete entries whose contextids no longer exists
         mtrace("Deleting blog associations linked to non-existent contexts...", '');
         $DB->delete_records_select('blog_association', 'contextid NOT IN (SELECT id FROM {context})');
+        mtrace('done.');
     }
 
     //Run registration updated cron
@@ -460,9 +438,24 @@ function cron_run() {
                     array('onedayago' => time() - DAYSECS, 'tokentype' => EXTERNAL_TOKEN_EMBEDDED));
     mtrace('done.');
 
-    // run any customized cronjobs, if any
+    // all other plugins
+    cron_execute_plugin_type('message', 'message plugins');
+    cron_execute_plugin_type('filter', 'filters');
+    cron_execute_plugin_type('editor', 'editor');
+    cron_execute_plugin_type('format', 'course formats');
+    cron_execute_plugin_type('profilefield', 'profile fields');
+    cron_execute_plugin_type('webservice', 'webservices');
+    //cron_execute_plugin_type('repository', 'repositories'); TODO: repository lib.php files are messed up, sorry
+    cron_execute_plugin_type('qtype', 'question types');
+    cron_execute_plugin_type('plagiarism', 'plagiarism plugins');
+    cron_execute_plugin_type('theme', 'themes');
+
+    // and finally run any local cronjobs, if any
     if ($locals = get_plugin_list('local')) {
         mtrace('Processing customized cron scripts ...', '');
+        // new cron functions in lib.php first
+        cron_execute_plugin_type('local');
+        // legacy cron files are executed directly
         foreach ($locals as $local => $localdir) {
             if (file_exists("$localdir/cron.php")) {
                 include("$localdir/cron.php");
@@ -504,4 +497,104 @@ function cron_run() {
     $difftime = microtime_diff($starttime, microtime());
     mtrace("Execution took ".$difftime." seconds");
 
+}
+
+function cron_execute_plugin_type($plugintype, $description = null) {
+    global $DB;
+
+    $allplugins = get_plugin_list($plugintype);
+    $plugins    = get_plugin_list_with_function($plugintype, 'cron', 'lib.php');
+
+    // add BC compatible file locations and old cron function names
+    $plugins = cron_plugins_functions_bc_hacks($plugintype, $plugins);
+
+    if (!$plugins) {
+        return;
+    }
+
+    if ($description) {
+        mtrace('Starting '.$description);
+    }
+
+    foreach ($plugins as $component=>$cronfunction) {
+        $dir = $allplugins[$component];
+        $cronperiod = 0;
+        if (file_exists("$dir/version.php")) {
+            $plugin = new stdClass();
+            include("$dir/version.php");
+            if (isset($plugin->cron)) {
+                $cronperiod = $plugin->cron;
+            }
+        }
+
+        $lastcron = get_config($component, 'lastcron');
+        if ($cronperiod and $lastcron) {
+            if ($lastcron + $cronperiod > time()) {
+                // do not execute cron yet
+                continue;
+            }
+        }
+
+        mtrace('Processing cron function for '.$component.'...');
+        $pre_dbqueries = $DB->perf_get_queries();
+        $pre_time      = microtime(true);
+
+        $cronfunction();
+
+        mtrace("... used " . ($DB->perf_get_queries() - $pre_dbqueries) . " dbqueries");
+        mtrace("... used " . round(microtime(true) - $pre_time, 2) . " seconds");
+        mtrace('done.');
+
+        set_config('lastcron', time(), $component);
+    }
+
+    if ($description) {
+        mtrace('Finished '.$description);
+    }
+}
+
+function cron_plugins_functions_bc_hacks($plugintype, $plugins) {
+    global $CFG; // mandatory because the lib functions do not define it global!
+
+    if ($plugintype === 'report' or $plugintype === 'coursereport') {
+        // admin and course reports
+        foreach(get_plugin_list($plugintype) as $pluginname=>$dir) {
+            $component = $plugintype.'_'.$pluginname;
+            if (isset($plugins[$component])) {
+                // we already have the new type
+                continue;
+            }
+            if (!file_exists("$dir/cron.php")) {
+                //no old style corn file present
+                continue;
+            }
+            include_once("$dir/cron.php");
+            $cronfunction = $component.'_cron';
+            if (function_exists($cronfunction)) {
+                $plugins[$component] = $cronfunction;
+            } else {
+                debugging("Invalid legacy cron.php detected in $component, please use lib.php instead");
+            }
+        }
+
+    } else if (strpos($plugintype, 'grade') === 0) {
+        // detect old style cron functio names
+        foreach(get_plugin_list($plugintype) as $pluginname=>$dir) {
+            $component = $plugintype.'_'.$pluginname;
+            if (isset($plugins[$component])) {
+                // we already have the new type
+                continue;
+            }
+            if (!file_exists("$dir/lib.php")) {
+                continue;
+            }
+            include_once("$dir/lib.php");
+            $cronfunction = str_replace('grade', 'grade_', $plugintype).'_'.$pluginname.'_cron';
+            if (function_exists($cronfunction)) {
+                $plugins[$component] = $cronfunction;
+            }
+        }
+    }
+
+    return $plugins;
 }

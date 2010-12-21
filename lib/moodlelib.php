@@ -7333,6 +7333,8 @@ function get_plugin_list($plugintype) {
  *   'forum_hook')
  */
 function get_plugin_list_with_function($plugintype, $function, $file='lib.php') {
+    global $CFG; // mandatory because the lib functions do not define it global!
+
     $result = array();
     // Loop through list of plugins with given type
     $list = get_plugin_list($plugintype);
@@ -7340,13 +7342,13 @@ function get_plugin_list_with_function($plugintype, $function, $file='lib.php') 
         $path = $dir . '/' . $file;
         // If file exists, require it and look for function
         if (file_exists($path)) {
-            require_once($path);
+            include_once($path);
             $fullfunction = $plugintype . '_' . $plugin . '_' . $function;
             if (function_exists($fullfunction)) {
                 // Function exists with standard name. Store, indexed by
                 // frankenstyle name of plugin
                 $result[$plugintype . '_' . $plugin] = $fullfunction;
-            } else if($plugintype === 'mod') {
+            } else if ($plugintype === 'mod') {
                 // For modules, we also allow plugin without full frankenstyle
                 // but just starting with the module name
                 $shortfunction = $plugin . '_' . $function;

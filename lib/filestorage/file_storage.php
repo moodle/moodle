@@ -1214,6 +1214,7 @@ class file_storage {
         foreach ($rs as $dir) {
             $this->delete_area_files($dir->contextid, $dir->component, $dir->filearea, $dir->itemid);
         }
+        mtrace('done.');
 
         // remove trash pool files once a day
         // if you want to disable purging of trash put $CFG->fileslastcleanup=time(); into config.php
