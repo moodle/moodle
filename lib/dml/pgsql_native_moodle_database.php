@@ -1115,7 +1115,9 @@ class pgsql_native_moodle_database extends moodle_database {
         if ($s === '') {
             return " '' ";
         }
-        return " $s ";
+        // Add always empty string element so integer-exclusive concats
+        // will work without needing to cast each element explicity
+        return " '' || $s ";
     }
 
     public function sql_concat_join($separator="' '", $elements=array()) {
