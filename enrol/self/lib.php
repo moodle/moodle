@@ -303,6 +303,7 @@ class enrol_self_plugin extends enrol_plugin {
             $contact = get_admin();
         }
 
+        //directly emailing welcome message rather than using messaging
         email_to_user($user, $contact, $subject, $message);
     }
 

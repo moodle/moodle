@@ -228,6 +228,7 @@ if ($usernew = $userform->get_data()) {
         $emailupdatemessage = get_string('auth_emailupdatemessage', 'auth_email', $a);
         $emailupdatetitle = get_string('auth_emailupdatetitle', 'auth_email', $a);
 
+        //email confirmation directly rather than using messaging so they will definitely get an email
         if (!$mail_results = email_to_user($temp_user, get_admin(), $emailupdatetitle, $emailupdatemessage)) {
             die("could not send email!");
         }
