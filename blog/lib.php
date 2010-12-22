@@ -226,7 +226,7 @@ function blog_sync_external_entries($externalblog) {
             $newentry->created = $timestamp;
         }
         $newentry->lastmodified = $timestamp;
-        
+
         if (empty($oldesttimestamp) || $timestamp < $oldesttimestamp) {
             //found an older post
             $oldesttimestamp = $timestamp;
