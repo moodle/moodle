@@ -164,7 +164,6 @@ function blog_sync_external_entries($externalblog) {
     if (empty($rss->data)) {
         return null;
     }
-    
     //used to identify blog posts that have been deleted from the source feed
     $oldesttimestamp = null;
     $uniquehashes = array();
@@ -188,7 +187,7 @@ function blog_sync_external_entries($externalblog) {
                 continue;
             }
         }
-        
+
         $uniquehashes[] = $entry->get_permalink();
 
         $newentry = new stdClass();
@@ -200,7 +199,7 @@ function blog_sync_external_entries($externalblog) {
         $newentry->format = FORMAT_HTML;
         $newentry->subject = $entry->get_title();
         $newentry->summary = $entry->get_description();
-        
+
         //used to decide whether to insert or update
         //uses enty permalink plus creation date if available
         $existingpostconditions = array('uniquehash' => $entry->get_permalink());
@@ -211,17 +210,17 @@ function blog_sync_external_entries($externalblog) {
         if (!empty($entrydate)) {
             $existingpostconditions['created'] = $entrydate;
         }
-        
+
         //the post ID or false if post not found
         $postid = $DB->get_field('post', 'id', $existingpostconditions);
-        
+
         $timestamp = null;
         if (empty($entrydate)) {
             $timestamp = time();
         } else {
             $timestamp = $entrydate;
         }
-        
+
         //only set created if its a new post so we retain the original creation timestamp if the post is edited
         if ($postid === false) {
             $newentry->created = $timestamp;
@@ -254,7 +253,7 @@ function blog_sync_external_entries($externalblog) {
             $DB->update_record('post', $newentry);
         }
     }
-    
+
     //Look at the posts we have in the database to check if any of them have been deleted from the feed.
     //Only checking posts within the time frame returned by the rss feed. Older items may have been deleted or 
     //may just not be returned anymore. We cant tell the difference so we leave older posts alone.
