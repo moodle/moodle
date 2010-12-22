@@ -2904,11 +2904,14 @@ class dml_test extends UnitTestCase {
         // float, empty and strings
         $params = array(123.45, '', 'test');
         $this->assertEqual('123.45test', $DB->get_field_sql($sql, $params));
+        // only integers
+        $params = array(12, 34, 56);
+        $this->assertEqual('123456', $DB->get_field_sql($sql, $params));
         // float, null and strings
         $params = array(123.45, null, 'test');
         $this->assertNull($DB->get_field_sql($sql, $params), 'ANSI behaviour: Concatenating NULL must return NULL - But in Oracle :-(. [%s]'); // Concatenate NULL with anything result = NULL
 
-        /// Testing fieldnames + values
+        /// Testing fieldnames + values and also integer fieldnames
         $table = $this->get_test_table();
         $tablename = $table->getName();
 
@@ -2921,10 +2924,22 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('description'=>'dxxx'));
         $DB->insert_record($tablename, array('description'=>'bcde'));
 
+        // fieldnames and values mixed
         $sql = 'SELECT id, ' . $DB->sql_concat('description', "'harcoded'", '?', '?') . ' AS result FROM {' . $tablename . '}';
         $records = $DB->get_records_sql($sql, array(123.45, 'test'));
         $this->assertEqual(count($records), 3);
         $this->assertEqual($records[1]->result, 'áéíóúharcoded123.45test');
+        // integer fieldnames and values
+        $sql = 'SELECT id, ' . $DB->sql_concat('id', "'harcoded'", '?', '?') . ' AS result FROM {' . $tablename . '}';
+        $records = $DB->get_records_sql($sql, array(123.45, 'test'));
+        $this->assertEqual(count($records), 3);
+        $this->assertEqual($records[1]->result, '1harcoded123.45test');
+        // all integer fieldnames
+        $sql = 'SELECT id, ' . $DB->sql_concat('id', 'id', 'id') . ' AS result FROM {' . $tablename . '}';
+        $records = $DB->get_records_sql($sql, array());
+        $this->assertEqual(count($records), 3);
+        $this->assertEqual($records[1]->result, '111');
+
     }
 
     function test_concat_join() {
