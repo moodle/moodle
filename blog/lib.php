@@ -82,7 +82,7 @@ function blog_user_can_view_user_entry($targetuserid, $blogentry=null) {
         return false;  // can not view draft of others
     }
 
-    // coming for 1 entry, make sure user is logged in, if not a public blog
+    // coming for 0 entry, make sure user is logged in, if not a public blog
     if ($blogentry && $blogentry->publishstate != 'public' && !isloggedin()) {
         return false;
     }
@@ -203,7 +203,7 @@ function blog_sync_external_entries($externalblog) {
         
         //used to decide whether to insert or update
         //uses enty permalink plus creation date if available
-        $existingpostconditions = array('uniquehash'=>$entry->get_permalink());
+        $existingpostconditions = array('uniquehash' => $entry->get_permalink());
         $postid = null;//ID of the post if a matching permalink and creation timestamp are found in the DB
 
         //our DB doesnt allow null creation or modified timestamps so check the external blog supplied one
@@ -223,12 +223,12 @@ function blog_sync_external_entries($externalblog) {
         }
         
         //only set created if its a new post so we retain the original creation timestamp if the post is edited
-        if ($postid===false) {
+        if ($postid === false) {
             $newentry->created = $timestamp;
         }
         $newentry->lastmodified = $timestamp;
         
-        if (empty($oldesttimestamp) || $timestamp<$oldesttimestamp) {
+        if (empty($oldesttimestamp) || $timestamp < $oldesttimestamp) {
             //found an older post
             $oldesttimestamp = $timestamp;
         }
@@ -242,7 +242,7 @@ function blog_sync_external_entries($externalblog) {
             continue;
         }
 
-        if ($postid===false) {
+        if ($postid === false) {
             $id = $DB->insert_record('post', $newentry);
 
             // Set tags
