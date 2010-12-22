@@ -321,6 +321,11 @@
       </PHP_SETTING>
     </PHP_SETTINGS>
     <CUSTOM_CHECKS>
+      <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_php533" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="php533warning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>
