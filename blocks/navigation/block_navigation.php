@@ -102,6 +102,13 @@ class block_navigation extends block_base {
     function get_required_javascript() {
         global $CFG;
         user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
+        $this->page->requires->js_module('core_dock');
+        $limit = 20;
+        if (!empty($CFG->navcourselimit)) {
+            $limit = $CFG->navcourselimit;
+    }
+        $arguments = array('id'=>$this->instance->id, 'instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked(), 'courselimit'=>$limit);
+        $this->page->requires->yui_module(array('core_dock', 'moodle-block_navigation-navigation'), 'M.block_navigation.init_add_tree', array($arguments));
     }
 
     /**
@@ -113,7 +120,6 @@ class block_navigation extends block_base {
         if ($this->contentgenerated === true) {
             return $this->content;
         }
-        $this->page->requires->yui2_lib('dom');
         // JS for navigation moved to the standard theme, the code will probably have to depend on the actual page structure
         // $this->page->requires->js('/lib/javascript-navigation.js');
         // Navcount is used to allow us to have multiple trees although I dont' know why
@@ -171,14 +177,7 @@ class block_navigation extends block_base {
             }
         }
 
-        // Initialise the JS tree object
-        $module = array('name'=>'block_navigation', 'fullpath'=>'/blocks/navigation/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse'), 'strings'=>array(array('viewallcourses','moodle')));
-        $limit = 20;
-        if (!empty($CFG->navcourselimit)) {
-            $limit = $CFG->navcourselimit;
-        }
-        $arguments = array($this->instance->id, array('expansions'=>$expandable, 'instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked(), 'courselimit'=>$limit));
-        $this->page->requires->js_init_call('M.block_navigation.init_add_tree', $arguments, false, $module);
+        $this->page->requires->data_for_js('navtreeexpansions'.$this->instance->id, $expandable);
 
         $options = array();
         $options['linkcategories'] = (!empty($this->config->linkcategories) && $this->config->linkcategories == 'yes');
