@@ -187,7 +187,8 @@ abstract class grade_object {
         $rs = $DB->get_recordset_select($table, $wheresql, $newparams);
         //returning false rather than empty array if nothing found
         if (!$rs->valid()) {
-             return false;
+            $rs->close();
+            return false;
         }
 
         $result = array();
