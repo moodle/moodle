@@ -779,10 +779,14 @@ class sqlsrv_native_moodle_database extends moodle_database {
         // Make sure they are at least 0
         $limit = max(0, (int)$limit);
         $offset = max(0, (int)$offset);
+        // This is an sqlserver bigint - -1 and will be used as a value
+        // for top when essentially we want everything.
+        // This needs to be a string so that it doesn't get malformed.
+        $bigint = '9223372036854775806';
 
         // If limit is 0 set it to BITINT - 1
         if (empty($limit)) {
-            $limit = 9223372036854775806;
+            $limit = $bigint;
         } else {
             $limit = $offset + $limit;
         }
@@ -864,7 +868,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         }
 
         // Build the inner outer query.
-        $sql = "SELECT TOP 9223372036854775806 ROW_NUMBER() OVER(ORDER BY $orderby) AS sqlsrvrownumber, $columnnames FROM ($sql) AS q";
+        $sql = "SELECT TOP $bigint ROW_NUMBER() OVER(ORDER BY $orderby) AS sqlsrvrownumber, $columnnames FROM ($sql) AS q";
         // Build the outer most query.
         $sql = "SELECT $columnnames FROM ($sql) AS q WHERE q.sqlsrvrownumber > $offset AND q.sqlsrvrownumber <= $limit";
 
