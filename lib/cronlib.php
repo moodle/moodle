@@ -447,7 +447,7 @@ function cron_run() {
     cron_execute_plugin_type('webservice', 'webservices');
     // TODO: Repository lib.php files are messed up (include many other files, etc), so it is
     // currently not possible to implement repository plugin cron using this infrastructure
-    // cron_execute_plugin_type('repository', 'repository plugins'); 
+    // cron_execute_plugin_type('repository', 'repository plugins');
     cron_execute_plugin_type('qtype', 'question types');
     cron_execute_plugin_type('plagiarism', 'plagiarism plugins');
     cron_execute_plugin_type('theme', 'themes');
@@ -481,9 +481,6 @@ function cron_run() {
 function cron_execute_plugin_type($plugintype, $description = null) {
     global $DB;
 
-    // Get list of all plugin directories of this type
-    $allplugins = get_plugin_list($plugintype);
-
     // Get list from plugin => function for all plugins
     $plugins = get_plugin_list_with_function($plugintype, 'cron');
 
@@ -500,10 +497,7 @@ function cron_execute_plugin_type($plugintype, $description = null) {
     }
 
     foreach ($plugins as $component=>$cronfunction) {
-        // Get short name of plugin without frankenstyle prefix, use this to find out plugin
-        // directory from the array
-        $nameonly = preg_replace('~^.*?_~', '', $component);
-        $dir = $allplugins[$nameonly];
+        $dir = get_component_directory($component);
 
         // Get cron period if specified in version.php, otherwise assume every cron
         $cronperiod = 0;
