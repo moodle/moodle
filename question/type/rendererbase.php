@@ -200,7 +200,7 @@ abstract class qtype_renderer extends renderer_base {
      * @return string html fragment.
      */
     function feedback_image($fraction, $selected = true) {
-        global $CFG;
+        global $OUTPUT;
 
         $state = question_state::graded_state_for_fraction($fraction);
 
@@ -218,7 +218,7 @@ abstract class qtype_renderer extends renderer_base {
         }
 
         $attributes = array(
-            'src' => $CFG->pixpath . '/i/' . $icon . '.gif',
+            'src' => $OUTPUT->pix_url('i/' . $icon),
             'alt' => get_string($state->get_feedback_class(), 'question'),
             'class' => 'questioncorrectnessicon',
         );

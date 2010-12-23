@@ -63,8 +63,9 @@ abstract class question_bank {
         if (isset(self::$questiontypes[$qtypename])) {
             return self::$questiontypes[$qtypename];
         }
-        $file = $CFG->dirroot . '/question/type/' . $qtypename . '/questiontype.php';
+        $file = get_plugin_directory('qtype', $qtypename) . '/questiontype.php';
         if (!is_readable($file)) {
+            echo 'problem';
             if ($mustexist || $qtypename == 'missingtype') {
                 throw new Exception('Unknown question type ' . $qtypename);
             } else {
@@ -73,6 +74,9 @@ abstract class question_bank {
         }
         include_once($file);
         $class = 'qtype_' . $qtypename;
+        if (!class_exists($class)) {
+            throw new coding_exception("Class $class must be defined in $file");
+        }
         self::$questiontypes[$qtypename] = new $class();
         return self::$questiontypes[$qtypename];
     }
@@ -82,7 +86,7 @@ abstract class question_bank {
      * @return boolean whether users are allowed to create questions of this type.
      */
     public static function qtype_enabled($qtypename) {
-        ;
+        return true; // TODO
     }
 
     /**
@@ -98,9 +102,12 @@ abstract class question_bank {
      */
     public static function get_all_qtypes() {
         $qtypes = array();
-        $plugins = get_list_of_plugins('question/type', 'datasetdependent');
-        foreach ($plugins as $plugin) {
-            $qtypes[$plugin] = self::get_qtype($plugin);
+        foreach (get_plugin_list('qtype') as $plugin => $notused) {
+            try {
+                $qtypes[$plugin] = self::get_qtype($plugin);
+            } catch (Exception $e) {
+                // TODO ingore, but reivew this later.
+            }
         }
         return $qtypes;
     }

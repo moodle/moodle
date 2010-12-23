@@ -1,0 +1,807 @@
+
+ /**
+  * Prints a question
+  *
+  * Simply calls the question type specific print_question() method.
++ *
++ * @global array
+  * @param object $question The question to be rendered.
+  * @param object $state    The state to render the question in.
+  * @param integer $number  The number for this question.
+  * @param object $cmoptions  The options specified by the course module
+  * @param object $options  An object specifying the rendering options.
+  */
+-function print_question(&$question, &$state, $number, $cmoptions, $options=null) {
++function print_question(&$question, &$state, $number, $cmoptions, $options=null, $context=null) {
+     global $QTYPES;
+-    $QTYPES[$question->qtype]->print_question($question, $state, $number, $cmoptions, $options);
++    $QTYPES[$question->qtype]->print_question($question, $state, $number, $cmoptions, $options, $context);
+ }
+ /**
+  * Saves question options
+  *
+  * Simply calls the question type specific save_question_options() method.
++ *
++ * @global array
+  */
+ function save_question_options($question) {
+     global $QTYPES;
+@@ -2075,8 +2255,9 @@ function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
+     //If level = 1, we have finished, try to look for non processed categories (bad parent) and sort them too
+     if ($level == 1) {
+         foreach ($keys as $key) {
+-            //If not processed and it's a good candidate to start (because its parent doesn't exist in the course)
+-            if (!isset($categories[$key]->processed) && !$DB->record_exists('question_categories', array('course'=>$categories[$key]->course, 'id'=>$categories[$key]->parent))) {
++            // If not processed and it's a good candidate to start (because its parent doesn't exist in the course)
++            if (!isset($categories[$key]->processed) && !$DB->record_exists(
++                    'question_categories', array('contextid'=>$categories[$key]->contextid, 'id'=>$categories[$key]->parent))) {
+                 $children[$key] = $categories[$key];
+                 $categories[$key]->processed = true;
+                 $children = $children + sort_categories_by_tree($categories, $children[$key]->id, $level+1);
+@@ -2167,16 +2348,23 @@ function add_indented_names($categories, $nochildrenof = -1) {
+  * @param integer $selected optionally, the id of a category to be selected by default in the dropdown.
+  */
+ function question_category_select_menu($contexts, $top = false, $currentcat = 0, $selected = "", $nochildrenof = -1) {
++    global $OUTPUT;
+     $categoriesarray = question_category_options($contexts, $top, $currentcat, false, $nochildrenof);
+     if ($selected) {
+-        $nothing = '';
++        $choose = '';
+     } else {
+-        $nothing = 'choose';
++        $choose = 'choosedots';
++    }
++    $options = array();
++    foreach($categoriesarray as $group=>$opts) {
++        $options[] = array($group=>$opts);
+     }
+-    choose_from_menu_nested($categoriesarray, 'category', $selected, $nothing);
++
++    echo html_writer::select($options, 'category', $selected, $choose);
+ }
+@@ -2216,23 +2406,31 @@ function question_edit_url($context) {
+ /**
+ * Gets the default category in the most specific context.
+ * If no categories exist yet then default ones are created in all contexts.
+ *
++ * @global object
+ * @param array $contexts  The context objects for this context and all parent contexts.
+ * @return object The default category - the category in the course context
+ */
+ function question_make_default_categories($contexts) {
+     global $DB;
++    static $preferredlevels = array(
++        CONTEXT_COURSE => 4,
++        CONTEXT_MODULE => 3,
++        CONTEXT_COURSECAT => 2,
++        CONTEXT_SYSTEM => 1,
++    );
+ 
+     $toreturn = null;
++    $preferredness = 0;
+     // If it already exists, just return it.
+     foreach ($contexts as $key => $context) {
+-        if (!$exists = $DB->record_exists("question_categories", array('contextid'=>$context->id))){
++        if (!$exists = $DB->record_exists("question_categories", array('contextid'=>$context->id))) {
+             // Otherwise, we need to make one
+             $category = new stdClass;
+             $contextname = print_context_name($context, false, true);
+@@ -2242,19 +2440,20 @@ function question_make_default_categories($contexts) {
+             $category->parent = 0;
+             $category->sortorder = 999; // By default, all categories get this number, and are sorted alphabetically.
+             $category->stamp = make_unique_id_code();
+-            if (!$category->id = $DB->insert_record('question_categories', $category)) {
+-                print_error('cannotcreatedefaultcat', '', '', print_context_name($context));
+-            }
++            $category->id = $DB->insert_record('question_categories', $category);
+         } else {
+             $category = question_get_default_category($context->id);
+         }
+-
+-        if ($context->contextlevel == CONTEXT_COURSE){
+-            $toreturn = clone($category);
++        if ($preferredlevels[$context->contextlevel] > $preferredness &&
++                has_any_capability(array('moodle/question:usemine', 'moodle/question:useall'), $context)) {
++            $toreturn = $category;
++            $preferredness = $preferredlevels[$context->contextlevel];
+         }
+     }
+ 
+-
++    if (!is_null($toreturn)) {
++        $toreturn = clone($toreturn);
++    }
+     return $toreturn;
+ }
+ 
+@@ -2313,9 +2514,12 @@ function question_category_options($contexts, $top = false, $currentcat = 0, $po
+     if ($popupform){
+         $popupcats = array();
+         foreach ($categoriesarray as $contextstring => $optgroup){
+-            $popupcats[] = '--'.$contextstring;
+-            $popupcats = array_merge($popupcats, $optgroup);
+-            $popupcats[] = '--';
++            $group = array();
++            foreach ($optgroup as $key=>$value) {
++                $key = str_replace($CFG->wwwroot, '', $key);
++                $group[$key] = $value;
++            }
++            $popupcats[] = array($contextstring=>$group);
+         }
+         return $popupcats;
+     } else {
+@@ -2335,7 +2539,7 @@ function question_add_context_in_key($categories){
+ function question_add_tops($categories, $pcontexts){
+     $topcats = array();
+     foreach ($pcontexts as $context){
+-        $newcat = new object();
++        $newcat = new stdClass();
+         $newcat->id = "0,$context";
+         $newcat->name = get_string('top');
+         $newcat->parent = -1;
+ function get_import_export_formats( $type ) {
+ 
+     global $CFG;
+-    $fileformats = get_list_of_plugins("question/format");
++    $fileformats = get_plugin_list("qformat");
+ 
+     $fileformatname=array();
+     require_once( "{$CFG->dirroot}/question/format.php" );
+-    foreach ($fileformats as $key => $fileformat) {
+-        $format_file = $CFG->dirroot . "/question/format/$fileformat/format.php";
+-        if (file_exists( $format_file ) ) {
+-            require_once( $format_file );
++    foreach ($fileformats as $fileformat=>$fdir) {
++        $format_file = "$fdir/format.php";
++        if (file_exists($format_file) ) {
++            require_once($format_file);
+         }
+         else {
+             continue;
+@@ -2400,7 +2607,10 @@ function get_import_export_formats( $type ) {
+         if ($provided) {
+             $formatname = get_string($fileformat, 'quiz');
+             if ($formatname == "[[$fileformat]]") {
+-                $formatname = $fileformat;  // Just use the raw folder name
++                $formatname = get_string($fileformat, 'qformat_'.$fileformat);
++                if ($formatname == "[[$fileformat]]") {
++                    $formatname = $fileformat;  // Just use the raw folder name
++                }
+             }
+             $fileformatnames[$fileformat] = $formatname;
+         }
+@@ -2412,50 +2622,39 @@ function get_import_export_formats( $type ) {
+ 
+ 
+ /**
+-* Create default export filename
+-*
+-* @return string   default export filename
+-* @param object $course
+-* @param object $category
++* Create a reasonable default file name for exporting questions from a particular
++* category.
++* @param object $course the course the questions are in.
++* @param object $category the question category.
++* @return string the filename.
+ */
+-function default_export_filename($course,$category) {
+-    //Take off some characters in the filename !!
+-    $takeoff = array(" ", ":", "/", "\\", "|");
+-    $export_word = str_replace($takeoff,"_",moodle_strtolower(get_string("exportfilename","quiz")));
+-    //If non-translated, use "export"
+-    if (substr($export_word,0,1) == "[") {
+-        $export_word= "export";
+-    }
+-
+-    //Calculate the date format string
+-    $export_date_format = str_replace(" ","_",get_string("exportnameformat","quiz"));
+-    //If non-translated, use "%Y%m%d-%H%M"
+-    if (substr($export_date_format,0,1) == "[") {
+-        $export_date_format = "%%Y%%m%%d-%%H%%M";
+-    }
+-
+-    //Calculate the shortname
+-    $export_shortname = clean_filename($course->shortname);
+-    if (empty($export_shortname) or $export_shortname == '_' ) {
+-        $export_shortname = $course->id;
+-    }
+-
+-    //Calculate the category name
+-    $export_categoryname = clean_filename($category->name);
+-
+-    //Calculate the final export filename
+-    //The export word
+-    $export_name = $export_word."-";
+-    //The shortname
+-    $export_name .= moodle_strtolower($export_shortname)."-";
+-    //The category name
+-    $export_name .= moodle_strtolower($export_categoryname)."-";
+-    //The date format
+-    $export_name .= userdate(time(),$export_date_format,99,false);
+-    //Extension is supplied by format later.
++function question_default_export_filename($course, $category) {
++    // We build a string that is an appropriate name (questions) from the lang pack,
++    // then the corse shortname, then the question category name, then a timestamp. 
++
++    $base = clean_filename(get_string('exportfilename', 'question'));
++
++    $dateformat = str_replace(' ', '_', get_string('exportnameformat', 'question'));
++    $timestamp = clean_filename(userdate(time(), $dateformat, 99, false));
++
++    $shortname = clean_filename($course->shortname);
++    if ($shortname == '' || $shortname == '_' ) {
++        $shortname = $course->id;
++    }
++
++    $categoryname = clean_filename(format_string($category->name));
++
++    return "{$base}-{$shortname}-{$categoryname}-{$timestamp}";
+ 
+     return $export_name;
+ }
++
++/**
++ * @package moodlecore
++ * @subpackage question
++ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
++ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
++ */
+ class context_to_string_translator{
+     /**
+      * @var array used to translate between contextids and strings for this context.
+@@ -2549,13 +2751,13 @@ function question_has_capability_on($question, $cap, $cachecat = -1){
+     static $questions = array();
+     static $categories = array();
+     static $cachedcat = array();
+-    if ($cachecat != -1 && (array_search($cachecat, $cachedcat)===FALSE)){
+-        $questions += $DB->get_records('question', array('category'=>$cachecat));
++    if ($cachecat != -1 && array_search($cachecat, $cachedcat) === false) {
++        $questions += $DB->get_records('question', array('category' => $cachecat));
+         $cachedcat[] = $cachecat;
+     }
+     if (!is_object($question)){
+         if (!isset($questions[$question])){
+-            if (!$questions[$question] = $DB->get_record('question', array('id'=>$question), 'id,category,createdby')) {
++            if (!$questions[$question] = $DB->get_record('question', array('id' => $question), 'id,category,createdby')) {
+                 print_error('questiondoesnotexist', 'question');
+             }
+         }
+@@ -2567,11 +2769,12 @@ function question_has_capability_on($question, $cap, $cachecat = -1){
+         }
+     }
+     $category = $categories[$question->category];
++    $context = get_context_instance_by_id($category->contextid);
+ 
+     if (array_search($cap, $question_questioncaps)!== FALSE){
+-        if (!has_capability('moodle/question:'.$cap.'all', get_context_instance_by_id($category->contextid))){
++        if (!has_capability('moodle/question:'.$cap.'all', $context)){
+             if ($question->createdby == $USER->id){
+-                return has_capability('moodle/question:'.$cap.'mine', get_context_instance_by_id($category->contextid));
++                return has_capability('moodle/question:'.$cap.'mine', $context);
+             } else {
+                 return false;
+             }
+@@ -2579,7 +2782,7 @@ function question_has_capability_on($question, $cap, $cachecat = -1){
+             return true;
+         }
+     } else {
+-        return has_capability('moodle/question:'.$cap, get_context_instance_by_id($category->contextid));
++        return has_capability('moodle/question:'.$cap, $context);
+     }
+ 
+ }
+@@ -2594,107 +2797,6 @@ function question_require_capability_on($question, $cap){
+     return true;
+ }
+ 
+-function question_file_links_base_url($courseid){
+-    global $CFG;
+-    $baseurl = preg_quote("$CFG->wwwroot/file.php", '!');
+-    $baseurl .= '('.preg_quote('?file=', '!').')?';//may or may not
+-                                     //be using slasharguments, accept either
+-    $baseurl .= "/$courseid/";//course directory
+-    return $baseurl;
+-}
+-
+-/*
+- * Find all course / site files linked to in a piece of html.
+- * @param string html the html to search
+- * @param int course search for files for courseid course or set to siteid for
+- *              finding site files.
+- * @return array files with keys being files.
+- */
+-function question_find_file_links_from_html($html, $courseid){
+-    global $CFG;
+-    $baseurl = question_file_links_base_url($courseid);
+-    $searchfor = '!'.
+-                   '(<\s*(a|img)\s[^>]*(href|src)\s*=\s*")'.$baseurl.'([^"]*)"'.
+-                   '|'.
+-                   '(<\s*(a|img)\s[^>]*(href|src)\s*=\s*\')'.$baseurl.'([^\']*)\''.
+-                  '!i';
+-    $matches = array();
+-    $no = preg_match_all($searchfor, $html, $matches);
+-    if ($no){
+-        $rawurls = array_filter(array_merge($matches[5], $matches[10]));//array_filter removes empty elements
+-        //remove any links that point somewhere they shouldn't
+-        foreach (array_keys($rawurls) as $rawurlkey){
+-            if (!$cleanedurl = question_url_check($rawurls[$rawurlkey])){
+-                unset($rawurls[$rawurlkey]);
+-            } else {
+-                $rawurls[$rawurlkey] = $cleanedurl;
+-            }
+-
+-        }
+-        $urls = array_flip($rawurls);// array_flip removes duplicate files
+-                                            // and when we merge arrays will continue to automatically remove duplicates
+-    } else {
+-        $urls = array();
+-    }
+-    return $urls;
+-}
+-
+-/**
+- * Check that url doesn't point anywhere it shouldn't
+- *
+- * @param $url string relative url within course files directory
+- * @return mixed boolean false if not OK or cleaned URL as string if OK
+- */
+-function question_url_check($url){
+-    global $CFG;
+-    if ((substr(strtolower($url), 0, strlen($CFG->moddata)) == strtolower($CFG->moddata)) ||
+-            (substr(strtolower($url), 0, 10) == 'backupdata')){
+-        return false;
+-    } else {
+-        return clean_param($url, PARAM_PATH);
+-    }
+-}
+-
+-/**
+- * Find all course / site files linked to in a piece of html.
+- * @param string html the html to search
+- * @param int course search for files for courseid course or set to siteid for
+- *              finding site files.
+- * @return array files with keys being files.
+- */
+-function question_replace_file_links_in_html($html, $fromcourseid, $tocourseid, $url, $destination, &$changed){
+-    global $CFG;
+-    require_once($CFG->libdir .'/filelib.php');
+-    $tourl = get_file_url("$tocourseid/$destination");
+-    $fromurl = question_file_links_base_url($fromcourseid).preg_quote($url, '!');
+-    $searchfor = array('!(<\s*(a|img)\s[^>]*(href|src)\s*=\s*")'.$fromurl.'(")!i',
+-                   '!(<\s*(a|img)\s[^>]*(href|src)\s*=\s*\')'.$fromurl.'(\')!i');
+-    $newhtml = preg_replace($searchfor, '\\1'.$tourl.'\\5', $html);
+-    if ($newhtml != $html){
+-        $changed = true;
+-    }
+-    return $newhtml;
+-}
+-
+-function get_filesdir_from_context($context){
+-    global $DB;
+-
+-    switch ($context->contextlevel){
+-        case CONTEXT_COURSE :
+-            $courseid = $context->instanceid;
+-            break;
+-        case CONTEXT_MODULE :
+-            $courseid = $DB->get_field('course_modules', 'course', array('id'=>$context->instanceid));
+-            break;
+-        case CONTEXT_COURSECAT :
+-        case CONTEXT_SYSTEM :
+-            $courseid = SITEID;
+-            break;
+-        default :
+-            print_error('invalidcontext');
+-    }
+-    return $courseid;
+-}
+ /**
+  * Get the real state - the correct question id and answer - for a random
+  * question.
+@@ -2702,11 +2804,12 @@ function get_filesdir_from_context($context){
+  * @return mixed return integer real question id or false if there was an
+  * error..
+  */
+-function question_get_real_state($state){
++function question_get_real_state($state) {
++    global $OUTPUT;
+     $realstate = clone($state);
+     $matches = array();
+     if (!preg_match('|^random([0-9]+)-(.*)|', $state->answer, $matches)){
+-        notify(get_string('errorrandom', 'quiz_statistics'));
++        echo $OUTPUT->notification(get_string('errorrandom', 'quiz_statistics'));
+         return false;
+     } else {
+         $realstate->question = $matches[1];
+@@ -2770,4 +2877,389 @@ function question_get_toggleflag_checksum($attemptid, $questionid, $sessionid, $
+     return md5($attemptid . "_" . $user->secret . "_" . $questionid . "_" . $sessionid);
+ }
+ 
+-?>
++/**
++ * Adds question bank setting links to the given navigation node if caps are met.
++ *
++ * @param navigation_node $navigationnode The navigation node to add the question branch to
++ * @param stdClass $context
++ * @return navigation_node Returns the question branch that was added
++ */
++function question_extend_settings_navigation(navigation_node $navigationnode, $context) {
++    global $PAGE;
++
++    if ($context->contextlevel == CONTEXT_COURSE) {
++        $params = array('courseid'=>$context->instanceid);
++    } else if ($context->contextlevel == CONTEXT_MODULE) {
++        $params = array('cmid'=>$context->instanceid);
++    } else {
++        return;
++    }
++
++    $questionnode = $navigationnode->add(get_string('questionbank','question'), new moodle_url('/question/edit.php', $params), navigation_node::TYPE_CONTAINER);
++
++    $contexts = new question_edit_contexts($context);
++    if ($contexts->have_one_edit_tab_cap('questions')) {
++        $questionnode->add(get_string('questions', 'quiz'), new moodle_url('/question/edit.php', $params), navigation_node::TYPE_SETTING);
++    }
++    if ($contexts->have_one_edit_tab_cap('categories')) {
++        $questionnode->add(get_string('categories', 'quiz'), new moodle_url('/question/category.php', $params), navigation_node::TYPE_SETTING);
++    }
++    if ($contexts->have_one_edit_tab_cap('import')) {
++        $questionnode->add(get_string('import', 'quiz'), new moodle_url('/question/import.php', $params), navigation_node::TYPE_SETTING);
++    }
++    if ($contexts->have_one_edit_tab_cap('export')) {
++        $questionnode->add(get_string('export', 'quiz'), new moodle_url('/question/export.php', $params), navigation_node::TYPE_SETTING);
++    }
++
++    return $questionnode;
++}
++
++class question_edit_contexts {
++
++    public static $CAPS = array(
++        'editq' => array('moodle/question:add',
++            'moodle/question:editmine',
++            'moodle/question:editall',
++            'moodle/question:viewmine',
++            'moodle/question:viewall',
++            'moodle/question:usemine',
++            'moodle/question:useall',
++            'moodle/question:movemine',
++            'moodle/question:moveall'),
++        'questions'=>array('moodle/question:add',
++            'moodle/question:editmine',
++            'moodle/question:editall',
++            'moodle/question:viewmine',
++            'moodle/question:viewall',
++            'moodle/question:movemine',
++            'moodle/question:moveall'),
++        'categories'=>array('moodle/question:managecategory'),
++        'import'=>array('moodle/question:add'),
++        'export'=>array('moodle/question:viewall', 'moodle/question:viewmine'));
++
++    protected $allcontexts;
++
++    /**
++     * @param current context
++     */
++    public function question_edit_contexts($thiscontext){
++        $pcontextids = get_parent_contexts($thiscontext);
++        $contexts = array($thiscontext);
++        foreach ($pcontextids as $pcontextid){
++            $contexts[] = get_context_instance_by_id($pcontextid);
++        }
++        $this->allcontexts = $contexts;
++    }
++    /**
++     * @return array all parent contexts
++     */
++    public function all(){
++        return $this->allcontexts;
++    }
++    /**
++     * @return object lowest context which must be either the module or course context
++     */
++    public function lowest(){
++        return $this->allcontexts[0];
++    }
++    /**
++     * @param string $cap capability
++     * @return array parent contexts having capability, zero based index
++     */
++    public function having_cap($cap){
++        $contextswithcap = array();
++        foreach ($this->allcontexts as $context){
++            if (has_capability($cap, $context)){
++                $contextswithcap[] = $context;
++            }
++        }
++        return $contextswithcap;
++    }
++    /**
++     * @param array $caps capabilities
++     * @return array parent contexts having at least one of $caps, zero based index
++     */
++    public function having_one_cap($caps){
++        $contextswithacap = array();
++        foreach ($this->allcontexts as $context){
++            foreach ($caps as $cap){
++                if (has_capability($cap, $context)){
++                    $contextswithacap[] = $context;
++                    break; //done with caps loop
++                }
++            }
++        }
++        return $contextswithacap;
++    }
++    /**
++     * @param string $tabname edit tab name
++     * @return array parent contexts having at least one of $caps, zero based index
++     */
++    public function having_one_edit_tab_cap($tabname){
++        return $this->having_one_cap(self::$CAPS[$tabname]);
++    }
++    /**
++     * Has at least one parent context got the cap $cap?
++     *
++     * @param string $cap capability
++     * @return boolean
++     */
++    public function have_cap($cap){
++        return (count($this->having_cap($cap)));
++    }
++
++    /**
++     * Has at least one parent context got one of the caps $caps?
++     *
++     * @param array $caps capability
++     * @return boolean
++     */
++    public function have_one_cap($caps){
++        foreach ($caps as $cap) {
++            if ($this->have_cap($cap)) {
++                return true;
++            }
++        }
++        return false;
++    }
++    /**
++     * Has at least one parent context got one of the caps for actions on $tabname
++     *
++     * @param string $tabname edit tab name
++     * @return boolean
++     */
++    public function have_one_edit_tab_cap($tabname){
++        return $this->have_one_cap(self::$CAPS[$tabname]);
++    }
++    /**
++     * Throw error if at least one parent context hasn't got the cap $cap
++     *
++     * @param string $cap capability
++     */
++    public function require_cap($cap){
++        if (!$this->have_cap($cap)){
++            print_error('nopermissions', '', '', $cap);
++        }
++    }
++    /**
++     * Throw error if at least one parent context hasn't got one of the caps $caps
++     *
++     * @param array $cap capabilities
++     */
++     public function require_one_cap($caps) {
++        if (!$this->have_one_cap($caps)) {
++            $capsstring = join($caps, ', ');
++            print_error('nopermissions', '', '', $capsstring);
++        }
++    }
++
++    /**
++     * Throw error if at least one parent context hasn't got one of the caps $caps
++     *
++     * @param string $tabname edit tab name
++     */
++    public function require_one_edit_tab_cap($tabname){
++        if (!$this->have_one_edit_tab_cap($tabname)) {
++            print_error('nopermissions', '', '', 'access question edit tab '.$tabname);
++        }
++    }
++}
++
++/**
++ * Rewrite question url, file_rewrite_pluginfile_urls always build url by
++ * $file/$contextid/$component/$filearea/$itemid/$pathname_in_text, so we cannot add
++ * extra questionid and attempted in url by it, so we create quiz_rewrite_question_urls
++ * to build url here
++ *
++ * @param string $text text being processed
++ * @param string $file the php script used to serve files
++ * @param int $contextid
++ * @param string $component component
++ * @param string $filearea filearea
++ * @param array $ids other IDs will be used to check file permission
++ * @param int $itemid
++ * @param array $options
++ * @return string
++ */
++function quiz_rewrite_question_urls($text, $file, $contextid, $component, $filearea, array $ids, $itemid, array $options=null) {
++    global $CFG;
++
++    $options = (array)$options;
++    if (!isset($options['forcehttps'])) {
++        $options['forcehttps'] = false;
++    }
++
++    if (!$CFG->slasharguments) {
++        $file = $file . '?file=';
++    }
++
++    $baseurl = "$CFG->wwwroot/$file/$contextid/$component/$filearea/";
++
++    if (!empty($ids)) {
++        $baseurl .= (implode('/', $ids) . '/');
++    }
++
++    if ($itemid !== null) {
++        $baseurl .= "$itemid/";
++    }
++
++    if ($options['forcehttps']) {
++        $baseurl = str_replace('http://', 'https://', $baseurl);
++    }
++
++    return str_replace('@@PLUGINFILE@@/', $baseurl, $text);
++}
++
++/**
++ * Called by pluginfile.php to serve files related to the 'question' core
++ * component and for files belonging to qtypes.
++ *
++ * For files that relate to questions in a question_attempt, then we delegate to
++ * a function in the component that owns the attempt (for example in the quiz,
++ * or in core question preview) to get necessary inforation.
++ *
++ * (Note that, at the moment, all question file areas relate to questions in
++ * attempts, so the If at the start of the last paragraph is always true.)
++ *
++ * Does not return, either calls send_file_not_found(); or serves the file.
++ *
++ * @param object $course course settings object
++ * @param object $context context object
++ * @param string $component the name of the component we are serving files for.
++ * @param string $filearea the name of the file area.
++ * @param array $args the remaining bits of the file path.
++ * @param bool $forcedownload whether the user must be forced to download the file.
++ */
++function question_pluginfile($course, $context, $component, $filearea, $args, $forcedownload) {
++    global $DB, $CFG;
++
++    list($context, $course, $cm) = get_context_info_array($context->id);
++    require_login($course, false, $cm);
++
++    if ($filearea === 'export') {
++        require_once($CFG->dirroot . '/question/editlib.php');
++        $contexts = new question_edit_contexts($context);
++        // check export capability
++        $contexts->require_one_edit_tab_cap('export');
++        $category_id = (int)array_shift($args);
++        $format      = array_shift($args);
++        $cattofile   = array_shift($args);
++        $contexttofile = array_shift($args);
++        $filename    = array_shift($args);
++
++        // load parent class for import/export
++        require_once($CFG->dirroot . '/question/format.php');
++        require_once($CFG->dirroot . '/question/editlib.php');
++        require_once($CFG->dirroot . '/question/format/' . $format . '/format.php');
++
++        $classname = 'qformat_' . $format;
++        if (!class_exists($classname)) {
++            send_file_not_found();
++        }
++
++        $qformat = new $classname();
++
++        if (!$category = $DB->get_record('question_categories', array('id' => $category_id))) {
++            send_file_not_found();
++        }
++
++        $qformat->setCategory($category);
++        $qformat->setContexts($contexts->having_one_edit_tab_cap('export'));
++        $qformat->setCourse($course);
++
++        if ($cattofile == 'withcategories') {
++            $qformat->setCattofile(true);
++        } else {
++            $qformat->setCattofile(false);
++        }
++
++        if ($contexttofile == 'withcontexts') {
++            $qformat->setContexttofile(true);
++        } else {
++            $qformat->setContexttofile(false);
++        }
++
++        if (!$qformat->exportpreprocess()) {
++            send_file_not_found();
++            print_error('exporterror', 'question', $thispageurl->out());
++        }
++
++        // export data to moodle file pool
++        if (!$content = $qformat->exportprocess(true)) {
++            send_file_not_found();
++        }
++
++        //DEBUG
++        //echo '<textarea cols=90 rows=20>';
++        //echo $content;
++        //echo '</textarea>';
++        //die;
++        send_file($content, $filename, 0, 0, true, true, $qformat->mime_type());
++    }
++
++    $attemptid = (int)array_shift($args);
++    $questionid = (int)array_shift($args);
++
++
++    if ($attemptid === 0) {
++        // preview
++        require_once($CFG->dirroot . '/question/previewlib.php');
++        return question_preview_question_pluginfile($course, $context,
++                $component, $filearea, $attemptid, $questionid, $args, $forcedownload);
++
++    } else {
++        $module = $DB->get_field('question_attempts', 'modulename',
++                array('id' => $attemptid));
++
++        $dir = get_component_directory($module);
++        if (!file_exists("$dir/lib.php")) {
++            send_file_not_found();
++        }
++        include_once("$dir/lib.php");
++
++        $filefunction = $module . '_question_pluginfile';
++        if (!function_exists($filefunction)) {
++            send_file_not_found();
++        }
++
++        $filefunction($course, $context, $component, $filearea, $attemptid, $questionid,
++                $args, $forcedownload);
++
++        send_file_not_found();
++    }
++}
++
++/**
++ * Final test for whether a studnet should be allowed to see a particular file.
++ * This delegates the decision to the question type plugin.
++ *
++ * @param object $question The question to be rendered.
++ * @param object $state    The state to render the question in.
++ * @param object $options  An object specifying the rendering options.
++ * @param string $component the name of the component we are serving files for.
++ * @param string $filearea the name of the file area.
++ * @param array $args the remaining bits of the file path.
++ * @param bool $forcedownload whether the user must be forced to download the file.
++ */
++function question_check_file_access($question, $state, $options, $contextid, $component,
++        $filearea, $args, $forcedownload) {
++    global $QTYPES;
++    return $QTYPES[$question->qtype]->check_file_access($question, $state, $options, $contextid, $component,
++            $filearea, $args, $forcedownload);
++}
++
++/**
++ * Create url for question export
++ *
++ * @param int $contextid, current context
++ * @param int $categoryid, categoryid
++ * @param string $format
++ * @param string $withcategories
++ * @param string $ithcontexts
++ * @param moodle_url export file url
++ */
++function question_make_export_url($contextid, $categoryid, $format, $withcategories, $withcontexts, $filename) {
++    global $CFG;
++    $urlbase = "$CFG->httpswwwroot/pluginfile.php";
++    return moodle_url::make_file_url($urlbase, "/$contextid/question/export/{$categoryid}/{$format}/{$withcategories}/{$withcontexts}/{$filename}", true);
++}

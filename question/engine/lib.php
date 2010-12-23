@@ -551,21 +551,32 @@ abstract class question_flags {
     }
 
     public static function initialise_js() {
-        global $CFG;
-
-        require_js(array('yui_yahoo','yui_dom','yui_event','yui_connection'));
-        require_js($CFG->wwwroot . '/question/qengine.js');
-
-        $config = array(
-            'actionurl' => $CFG->wwwroot . '/question/toggleflag.php',
-            'flagicon' => $CFG->pixpath . '/i/flagged.png',
-            'unflagicon' => $CFG->pixpath . '/i/unflagged.png',
-            'flagtooltip' => get_string('clicktoflag', 'question'),
-            'unflagtooltip' => get_string('clicktounflag', 'question'),
-            'flaggedalt' => get_string('flagged', 'question'),
-            'unflaggedalt' => get_string('notflagged', 'question'),
+        global $CFG, $PAGE, $OUTPUT;
+        static $done = false;
+        if ($done) {
+            return;
+        }
+        $module = array(
+            'name' => 'core_question_flags',
+            'fullpath' => '/question/flags.js',
+            'requires' => array('base', 'dom', 'event-delegate', 'io-base'),
         );
-        return print_js_config($config, 'qengine_config', true);
+        $actionurl = $CFG->wwwroot . '/question/toggleflag.php';
+        $flagattributes = array(
+            0 => array(
+                'src' => $OUTPUT->pix_url('i/unflagged') . '',
+                'title' => get_string('clicktoflag', 'question'),
+                'alt' => get_string('notflagged', 'question'),
+            ),
+            1 => array(
+                'src' => $OUTPUT->pix_url('i/flagged') . '',
+                'title' => get_string('clicktounflag', 'question'),
+                'alt' => get_string('flagged', 'question'),
+            ),
+        );
+        $PAGE->requires->js_init_call('M.core_question_flags.init',
+                array($actionurl, $flagattributes), false, $module);
+        $done = true;
     }
 }
 

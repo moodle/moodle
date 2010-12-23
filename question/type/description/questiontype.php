@@ -33,6 +33,10 @@ require_once($CFG->libdir . '/questionlib.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_description extends question_type {
+    function is_real_question_type() {
+        return false;
+    }
+
     public function is_usable_by_random() {
         return false;
     }

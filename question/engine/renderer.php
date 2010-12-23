@@ -213,7 +213,7 @@ class core_question_renderer extends renderer_base {
                         '<input type="checkbox" id="' . $id . 'checkbox" name="' . $id . '" value="1" ' . $checked . ' />' .
                         '<input type="hidden" value="' . s($postdata) . '" class="questionflagpostdata" />' .
                         '<label id="' . $id . 'label" for="' . $id . '">' . $this->get_flag_html(
-                        $qa->is_flagged(), $id . 'img') . '</label>' . "\n" .
+                        $qa->is_flagged(), $id . 'img') . '</label>' . "\n";
                 break;
             default:
                 $flagcontent = '';

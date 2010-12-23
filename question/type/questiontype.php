@@ -1,4 +1,20 @@
-<?php  // $Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * The default questiontype class.
  *
@@ -11,14 +27,10 @@
  * @subpackage questiontypes
  */
 
+
 require_once($CFG->dirroot . '/question/engine/lib.php');
 
-// DONOTCOMMIT
-class default_questiontype {
-    function plugin_dir() {
-        return '';
-    }
-}
+
 /**
  * This is the base class for Moodle question types.
  *
@@ -36,6 +48,11 @@ class default_questiontype {
  * @subpackage questiontypes
  */
 class question_type {
+    protected $fileoptions = array(
+        'subdirs' => false,
+        'maxfiles' => -1,
+        'maxbytes' => 0,
+    );
 
     public function __construct() {
     }
@@ -48,14 +65,53 @@ class question_type {
     }
 
     /**
+     * @return string the full frankenstyle name for this plugin.
+     */
+    public function plugin_name() {
+        return get_class($this);
+    }
+
+    /**
+     * @return string the name of this question type in the user's language.
+     * You should not need to override this method, the default behaviour should be fine.
+     */
+    public function local_name() {
+        return get_string($this->name(), $this->plugin_name());
+    }
+
+    /**
      * The name this question should appear as in the create new question
-     * dropdown.
+     * dropdown. Override this method to return false if you don't want your
+     * question type to be createable, for example if it is an abstract base type,
+     * otherwise, you should not need to override this method.
      *
      * @return mixed the desired string, or false to hide this question type in the menu.
      */
     public function menu_name() {
-        $name = $this->name();
-        return get_string($name, 'qtype_' . $name);
+        return $this->local_name();
+    }
+
+    /**
+     * Returns a list of other question types that this one requires in order to
+     * work. For example, the calculated question type is a subclass of the
+     * numerical question type, which is a subclass of the shortanswer question
+     * type; and the randomsamatch question type requires the shortanswer type
+     * to be installed.
+     *
+     * @return array any other question types that this one relies on. An empty
+     * array if none.
+     */
+    public function requires_qtypes() {
+        return array();
+    }
+
+    /**
+     * @return boolean override this to return false if this is not really a
+     *      question type, for example the description question type is not
+     *      really a question type.
+     */
+    public function is_real_question_type() {
+        return true;
     }
 
     /**
@@ -139,7 +195,7 @@ class question_type {
     /**
      * Return an instance of the question editing form definition. This looks for a
      * class called edit_{$this->name()}_question_form in the file
-     * {$CFG->docroot}/question/type/{$this->name()}/edit_{$this->name()}_question_form.php
+     * question/type/{$this->name()}/edit_{$this->name()}_question_form.php
      * and if it exists returns an instance of it.
      *
      * @param string $submiturl passed on to the constructor call.
@@ -184,9 +240,12 @@ class question_type {
      * @param object $question
      * @param string $wizardnow is '' for first page.
      */
-    public function display_question_editing_page(&$mform, $question, $wizardnow) {
-        $name = $this->name();
-        print_heading_with_help($this->get_heading(empty($question->id)), $name, 'qtype_' . $name);
+    public function display_question_editing_page($mform, $question, $wizardnow) {
+        global $OUTPUT;
+        $heading = $this->get_heading(empty($question->id));
+
+        echo $OUTPUT->heading_with_help($heading, $this->name(), $this->plugin_name());
+
         $permissionstrs = array();
         if (!empty($question->id)){
             if ($question->formoptions->canedit){
@@ -200,13 +259,13 @@ class question_type {
             }
         }
         if (!$question->formoptions->movecontext  && count($permissionstrs)){
-            print_heading(get_string('permissionto', 'question'), 'center', 3);
+            echo $OUTPUT->heading(get_string('permissionto', 'question'), 3);
             $html = '<ul>';
             foreach ($permissionstrs as $permissionstr){
                 $html .= '<li>'.$permissionstr.'</li>';
             }
             $html .= '</ul>';
-            print_box($html, 'boxwidthnarrow boxaligncenter generalbox');
+            echo $OUTPUT->box($html, 'boxwidthnarrow boxaligncenter generalbox');
         }
         $mform->display();
     }
@@ -217,13 +276,12 @@ class question_type {
      * @return string the heading
      */
     public function get_heading($adding = false){
-        $name = $this->name();
-        if ($adding){
+        if ($adding) {
             $action = 'adding';
         } else {
             $action = 'editing';
         }
-        return get_string($action . $name, 'qtype_' . $name);
+        return get_string($action . $this->name(), $this->plugin_name());
     }
 
     /**
@@ -261,34 +319,37 @@ class question_type {
     *       redisplayed with validation errors, from validation_errors field, which
     *       is itself an object, shown next to the form fields. (I don't think this is accurate any more.)
     */
-    public function save_question($question, $form, $course) {
-        global $USER;
+    function save_question($question, $form) {
+        global $USER, $DB, $OUTPUT;
+
+        list($question->category) = explode(',', $form->category);
+        $context = $this->get_context_by_category_id($question->category);
 
         // This default implementation is suitable for most
         // question types.
 
         // First, save the basic question itself
         $question->name = trim($form->name);
-        $question->questiontext = trim($form->questiontext);
-        $question->questiontextformat = $form->questiontextformat;
         $question->parent = isset($form->parent) ? $form->parent : 0;
         $question->length = $this->actual_number_of_questions($question);
         $question->penalty = isset($form->penalty) ? $form->penalty : 0;
 
-        if (empty($form->image)) {
-            $question->image = '';
+        if (empty($form->questiontext['text'])) {
+            $question->questiontext = '';
         } else {
-            $question->image = $form->image;
+            $question->questiontext = trim($form->questiontext['text']);;
         }
+        $question->questiontextformat = !empty($form->questiontext['format'])?$form->questiontext['format']:0;
 
-        if (empty($form->generalfeedback)) {
+        if (empty($form->generalfeedback['text'])) {
             $question->generalfeedback = '';
         } else {
-            $question->generalfeedback = trim($form->generalfeedback);
+            $question->generalfeedback = trim($form->generalfeedback['text']);
         }
+        $question->generalfeedbackformat = !empty($form->generalfeedback['format'])?$form->generalfeedback['format']:0;
 
         if (empty($question->name)) {
-            $question->name = shorten_text(strip_tags($question->questiontext), 15);
+            $question->name = shorten_text(strip_tags($form->questiontext['text']), 15);
             if (empty($question->name)) {
                 $question->name = '-';
             }
@@ -302,39 +363,42 @@ class question_type {
             $question->defaultmark = $form->defaultmark;
         }
 
-        list($question->category) = explode(',', $form->category);
-
-        if (!empty($question->id)) {
-        /// Question already exists, update.
-            $question->modifiedby = $USER->id;
-            $question->timemodified = time();
-            if (!update_record('question', $question)) {
-                error('Could not update question!');
-            }
-
-        } else {
-        /// New question.
+        // If the question is new, create it.
+        if (empty($question->id)) {
             // Set the unique code
             $question->stamp = make_unique_id_code();
             $question->createdby = $USER->id;
-            $question->modifiedby = $USER->id;
             $question->timecreated = time();
-            $question->timemodified = time();
-            if (!$question->id = insert_record('question', $question)) {
-                error('Could not insert new question!');
-            }
+            $question->id = $DB->insert_record('question', $question);
         }
+
+        // Now, whether we are updating a existing question, or creating a new
+        // one, we have to do the files processing and update the record.
+        /// Question already exists, update.
+        $question->modifiedby = $USER->id;
+        $question->timemodified = time();
+
+        if (!empty($question->questiontext) && !empty($form->questiontext['itemid'])) {
+            $question->questiontext = file_save_draft_area_files($form->questiontext['itemid'], $context->id, 'question', 'questiontext', (int)$question->id, $this->fileoptions, $question->questiontext);
+        }
+        if (!empty($question->generalfeedback) && !empty($form->generalfeedback['itemid'])) {
+            $question->generalfeedback = file_save_draft_area_files($form->generalfeedback['itemid'], $context->id, 'question', 'generalfeedback', (int)$question->id, $this->fileoptions, $question->generalfeedback);
+        }
+        $DB->update_record('question', $question);
 
         // Now to save all the answers and type-specific options
         $form->id = $question->id;
         $form->qtype = $question->qtype;
         $form->category = $question->category;
         $form->questiontext = $question->questiontext;
+        $form->questiontextformat = $question->questiontextformat;
+        // current context
+        $form->context = $context;
 
         $result = $this->save_question_options($form);
 
         if (!empty($result->error)) {
-            error($result->error);
+            print_error($result->error);
         }
 
         if (!empty($result->notice)) {
@@ -342,16 +406,11 @@ class question_type {
         }
 
         if (!empty($result->noticeyesno)) {
-            notice_yesno($result->noticeyesno, "question.php?id=$question->id&amp;courseid={$course->id}",
-                "edit.php?courseid={$course->id}");
-            print_footer($course);
-            exit;
+            throw new coding_exception('$result->noticeyesno no longer supported in save_question.');
         }
 
         // Give the question a unique version stamp determined by question_hash()
-        if (!set_field('question', 'version', question_hash($question), 'id', $question->id)) {
-            error('Could not update question version field');
-        }
+        $DB->set_field('question', 'version', question_hash($question), array('id' => $question->id));
 
         return $question;
     }
@@ -365,6 +424,7 @@ class question_type {
      *      it is not a standard question object.
      */
     public function save_question_options($question) {
+        global $DB;
         $extra_question_fields = $this->extra_question_fields();
 
         if (is_array($extra_question_fields)) {
@@ -372,7 +432,7 @@ class question_type {
 
             $function = 'update_record';
             $questionidcolname = $this->questionid_column_name();
-            $options = get_record($question_extension_table,  $questionidcolname, $question->id);
+            $options = $DB->get_record($question_extension_table, array($questionidcolname => $question->id));
             if (!$options) {
                 $function = 'insert_record';
                 $options = new stdClass;
@@ -388,7 +448,7 @@ class question_type {
                 $options->$field = $question->$field;
             }
 
-            if (!$function($question_extension_table, $options)) {
+            if (!$DB->{$function}($question_extension_table, $options)) {
                 $result = new stdClass;
                 $result->error = 'Could not save question options for ' .
                         $this->name() . ' question id ' . $question->id;
@@ -403,7 +463,8 @@ class question_type {
     }
 
     public function save_hints($formdata, $withparts = false) {
-        delete_records('question_hints', 'questionid', $formdata->id);
+        global $DB;
+        $DB->delete_records('question_hints', array('questionid' => $formdata->id));
 
         if (!empty($formdata->hint)) {
             $numhints = max(array_keys($formdata->hint)) + 1;
@@ -443,7 +504,7 @@ class question_type {
                 continue;
             }
 
-            insert_record('question_hints', $hint);
+            $DB->insert_record('question_hints', $hint);
         }
     }
 
@@ -460,18 +521,22 @@ class question_type {
      *                         specific information (it is passed by reference).
      */
     public function get_question_options($question) {
-        global $CFG;
+        global $CFG, $DB, $OUTPUT;
+
+        if (!isset($question->options)) {
+            $question->options = new stdClass();
+        }
 
         $extra_question_fields = $this->extra_question_fields();
         if (is_array($extra_question_fields)) {
             $question_extension_table = array_shift($extra_question_fields);
-            $extra_data = get_record($question_extension_table, $this->questionid_column_name(), $question->id, '', '', '', '', implode(', ', $extra_question_fields));
+            $extra_data = $DB->get_record($question_extension_table, array($this->questionid_column_name() => $question->id), implode(', ', $extra_question_fields));
             if ($extra_data) {
                 foreach ($extra_question_fields as $field) {
                     $question->options->$field = $extra_data->$field;
                 }
             } else {
-                notify("Failed to load question options from the table $question_extension_table for questionid " .
+                echo $OUTPUT->notification("Failed to load question options from the table $question_extension_table for questionid " .
                         $question->id);
                 return false;
             }
@@ -480,21 +545,21 @@ class question_type {
         $extra_answer_fields = $this->extra_answer_fields();
         if (is_array($extra_answer_fields)) {
             $answer_extension_table = array_shift($extra_answer_fields);
-            $question->options->answers = get_records_sql('
-                    SELECT qa.*, qax.' . implode(', qax.', $extra_answer_fields) . '
-                    FROM ' . $CFG->prefix . 'question_answers qa, ' . $CFG->prefix . '$answer_extension_table qax
-                    WHERE qa.questionid = ' . $question->id . ' AND qax.answerid = qa.id');
+            $question->options->answers = $DB->get_records_sql("
+                    SELECT qa.*, qax." . implode(', qax.', $extra_answer_fields) . "
+                    FROM {question_answers} qa, {$answer_extension_table} qax
+                    WHERE qa.questionid = ? AND qax.answerid = qa.id", array($question->id));
             if (!$question->options->answers) {
-                notify("Failed to load question answers from the table $answer_extension_table for questionid " .
+                echo $OUTPUT->notification("Failed to load question answers from the table $answer_extension_table for questionid " .
                         $question->id);
                 return false;
             }
         } else {
             // Don't check for success or failure because some question types do not use the answers table.
-            $question->options->answers = get_records('question_answers', 'question', $question->id, 'id ASC');
+            $question->options->answers = $DB->get_records('question_answers', array('question' => $question->id), 'id ASC');
         }
 
-        $question->hints = get_records('question_hints', 'questionid', $question->id, 'id ASC');
+        $question->hints = $DB->get_records('question_hints', array('questionid' => $question->id), 'id ASC');
 
         return true;
     }
@@ -592,34 +657,32 @@ class question_type {
     }
 
     /**
-    * Deletes a question from the question-type specific tables
-    *
-    * @return boolean Success/Failure
-    * @param object $question  The question being deleted
-    */
-    public function delete_question($questionid) {
-        global $CFG;
-        $success = true;
+     * Deletes the question-type specific data when a question is deleted.
+     * @param integer $question the question being deleted.
+     * @param integer $contextid the context this quesiotn belongs to.
+     */
+    public function delete_question($questionid, $contextid) {
+        global $DB;
+
+        $this->delete_files($questionid, $contextid);
 
         $extra_question_fields = $this->extra_question_fields();
         if (is_array($extra_question_fields)) {
             $question_extension_table = array_shift($extra_question_fields);
-            $success = $success && delete_records($question_extension_table,
-                    $this->questionid_column_name(), $questionid);
+            $DB->delete_records($question_extension_table,
+                    array($this->questionid_column_name() => $questionid));
         }
 
         $extra_answer_fields = $this->extra_answer_fields();
         if (is_array($extra_answer_fields)) {
             $answer_extension_table = array_shift($extra_answer_fields);
-            $success = $success && delete_records_select($answer_extension_table,
-                    "answerid IN (SELECT qa.id FROM {$CFG->prefix}question_answers qa WHERE qa.question = $questionid)");
+            $DB->delete_records_select($answer_extension_table,
+                "answerid IN (SELECT qa.id FROM {question_answers} qa WHERE qa.question = ?)", array($questionid));
         }
 
-        $success = $success && delete_records('question_answers', 'question', $questionid);
+        $DB->delete_records('question_answers', array('question' => $questionid));
 
-        $success = $success && delete_records('question_hints', 'questionid', $questionid);
-
-        return $success;
+        $DB->delete_records('question_hints', array('questionid' => $questionid));
     }
 
     /**
@@ -681,53 +744,35 @@ class question_type {
     }
 
     /**
-     * Return any CSS JavaScript required on the head of the question editing
-     * page question/question.php.
-     *
-     * @return an array of bits of HTML to add to the head of pages where
-     * this question is displayed in the body. The array should use
-     * integer array keys, which have no significance.
+     * Like @see{get_html_head_contributions}, but this method is for CSS and
+     * JavaScript required on the question editing page question/question.php.
      */
     public function get_editing_head_contributions() {
         // By default, we link to any of the files styles.css, styles.php,
         // script.js or script.php that exist in the plugin folder.
         // Core question types should not use this mechanism. Their styles
         // should be included in the standard theme.
-        return $this->find_standard_scripts_and_css();
+        $this->find_standard_scripts();
     }
 
     /**
-     * Utility method used by @see{get_editing_head_contributions} and
+     * Utility method used by @see{get_html_head_contributions} and
      * @see{get_editing_head_contributions}. This looks for any of the files
-     * styles.css, styles.php, script.js or script.php that exist in the plugin
-     * folder and ensures they get included.
-     *
-     * @return array as required by get_editing_head_contributions.
+     * script.js or script.php that exist in the plugin folder and ensures they
+     * get included.
      */
-    public function find_standard_scripts_and_css() {
+    protected function find_standard_scripts() {
+        global $PAGE;
+
         $plugindir = $this->plugin_dir();
-        $baseurl = $this->plugin_baseurl();
+        $plugindirrel = 'question/type/' . $this->name();
 
         if (file_exists($plugindir . '/script.js')) {
-            require_js($baseurl . '/script.js');
+            $PAGE->requires->js('/' . $plugindirrel . '/script.js');
         }
         if (file_exists($plugindir . '/script.php')) {
-            require_js($baseurl . '/script.php');
+            $PAGE->requires->js('/' . $plugindirrel . '/script.php');
         }
-
-        $stylesheets = array();
-        if (file_exists($plugindir . '/styles.css')) {
-            $stylesheets[] = 'styles.css';
-        }
-        if (file_exists($plugindir . '/styles.php')) {
-            $stylesheets[] = 'styles.php';
-        }
-        $contributions = array();
-        foreach ($stylesheets as $stylesheet) {
-            $contributions[] = '<link rel="stylesheet" type="text/css" href="' .
-                    $baseurl . '/' . $stylesheet . '" />';
-        }
-        return $contributions;
     }
 
     /**
@@ -746,221 +791,9 @@ class question_type {
     *
     * @return boolean      Whether the wizard's last page was submitted or not.
     */
-    public function finished_edit_wizard(&$form) {
+    public function finished_edit_wizard($form) {
         //In the default case there is only one edit page.
         return true;
-    }
-
-    /*
-     * Find all course / site files linked from a question.
-     *
-     * Need to check for links to files in question_answers.answer and feedback
-     * and in question table in generalfeedback and questiontext fields. Methods
-     * on child classes will also check extra question specific fields.
-     *
-     * Needs to be overriden for child classes that have extra fields containing
-     * html.
-     *
-     * @param string html the html to search
-     * @param int courseid search for files for courseid course or set to siteid for
-     *              finding site files.
-     * @return array of url, relative url is key and array with one item = question id as value
-     *                  relative url is relative to course/site files directory root.
-     */
-    public function find_file_links($question, $courseid){
-        $urls = array();
-
-    /// Question image
-        if ($question->image != ''){
-            if (substr(strtolower($question->image), 0, 7) == 'http://') {
-                $matches = array();
-
-                //support for older questions where we have a complete url in image field
-                if (preg_match('!^'.question_file_links_base_url($courseid).'(.*)!i', $question->image, $matches)){
-                    if ($cleanedurl = question_url_check($urls[$matches[2]])){
-                        $urls[$cleanedurl] = null;
-                    }
-                }
-            } else {
-                if ($question->image != ''){
-                    if ($cleanedurl = question_url_check($question->image)){
-                        $urls[$cleanedurl] = null;//will be set later
-                    }
-                }
-
-            }
-
-        }
-
-    /// Questiontext and general feedback.
-        $urls += question_find_file_links_from_html($question->questiontext, $courseid);
-        $urls += question_find_file_links_from_html($question->generalfeedback, $courseid);
-
-    /// Answers, if this question uses them.
-        if (isset($question->options->answers)){
-            foreach ($question->options->answers as $answerkey => $answer){
-            /// URLs in the answers themselves, if appropriate.
-                if ($this->has_html_answers()) {
-                    $urls += question_find_file_links_from_html($answer->answer, $courseid);
-                }
-            /// URLs in the answer feedback.
-                $urls += question_find_file_links_from_html($answer->feedback, $courseid);
-            }
-        }
-
-    /// Set all the values of the array to the question object
-        if ($urls){
-            $urls = array_combine(array_keys($urls), array_fill(0, count($urls), array($question->id)));
-        }
-        return $urls;
-    }
-
-    /*
-     * Find all course / site files linked from a question.
-     *
-     * Need to check for links to files in question_answers.answer and feedback
-     * and in question table in generalfeedback and questiontext fields. Methods
-     * on child classes will also check extra question specific fields.
-     *
-     * Needs to be overriden for child classes that have extra fields containing
-     * html.
-     *
-     * @param string html the html to search
-     * @param int course search for files for courseid course or set to siteid for
-     *              finding site files.
-     * @return array of files, file name is key and array with one item = question id as value
-     */
-    public function replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination){
-        global $CFG;
-        $updateqrec = false;
-
-    /// Question image
-        if (!empty($question->image)){
-            //support for older questions where we have a complete url in image field
-            if (substr(strtolower($question->image), 0, 7) == 'http://') {
-                $questionimage = preg_replace('!^'.question_file_links_base_url($fromcourseid).preg_quote($url, '!').'$!i', $destination, $question->image, 1);
-            } else {
-                $questionimage = preg_replace('!^'.preg_quote($url, '!').'$!i', $destination, $question->image, 1);
-            }
-            if ($questionimage != $question->image){
-                $question->image = $questionimage;
-                $updateqrec = true;
-            }
-        }
-
-    /// Questiontext and general feedback.
-        $question->questiontext = question_replace_file_links_in_html($question->questiontext, $fromcourseid, $tocourseid, $url, $destination, $updateqrec);
-        $question->generalfeedback = question_replace_file_links_in_html($question->generalfeedback, $fromcourseid, $tocourseid, $url, $destination, $updateqrec);
-
-    /// If anything has changed, update it in the database.
-        if ($updateqrec){
-            if (!update_record('question', addslashes_recursive($question))){
-                error ('Couldn\'t update question '.$question->name);
-            }
-        }
-
-
-    /// Answers, if this question uses them.
-        if (isset($question->options->answers)){
-            //answers that do not need updating have been unset
-            foreach ($question->options->answers as $answer){
-                $answerchanged = false;
-            /// URLs in the answers themselves, if appropriate.
-                if ($this->has_html_answers()) {
-                    $answer->answer = question_replace_file_links_in_html($answer->answer, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
-                }
-            /// URLs in the answer feedback.
-                $answer->feedback = question_replace_file_links_in_html($answer->feedback, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
-            /// If anything has changed, update it in the database.
-                if ($answerchanged){
-                    if (!update_record('question_answers', addslashes_recursive($answer))){
-                        error ('Couldn\'t update question ('.$question->name.') answer '.$answer->id);
-                    }
-                }
-            }
-        }
-    }
-
-/// BACKUP FUNCTIONS ////////////////////////////
-
-    /*
-     * Backup the data in the question
-     *
-     * This is used in question/backuplib.php
-     */
-    public function backup($bf,$preferences,$question,$level=6) {
-
-        $status = true;
-        $extraquestionfields = $this->extra_question_fields();
-
-        if (is_array($extraquestionfields)) {
-            $questionextensiontable = array_shift($extraquestionfields);
-            $record = get_record($questionextensiontable, $this->questionid_column_name(), $question);
-            if ($record) {
-                $tagname = strtoupper($this->name());
-                $status = $status && fwrite($bf, start_tag($tagname, $level, true));
-                foreach ($extraquestionfields as $field) {
-                    if (!isset($record->$field)) {
-                        echo "No data for field $field when backuping " .
-                                $this->name() . ' question id ' . $question;
-                        return false;
-                    }
-                    fwrite($bf, full_tag(strtoupper($field), $level + 1, false, $record->$field));
-                }
-                $status = $status && fwrite($bf, end_tag($tagname, $level, true));
-            }
-        }
-
-        $extraasnwersfields = $this->extra_answer_fields();
-        if (is_array($extraasnwersfields)) {
-            //TODO backup the answers, with any extra data.
-        } else {
-            $status = $status && question_backup_answers($bf, $preferences, $question);
-        }
-        return $status;
-    }
-
-/// RESTORE FUNCTIONS /////////////////
-
-    /*
-     * Restores the data in the question
-     *
-     * This is used in question/restorelib.php
-     */
-    public function restore($old_question_id,$new_question_id,$info,$restore) {
-
-        $status = true;
-        $extraquestionfields = $this->extra_question_fields();
-
-        if (is_array($extraquestionfields)) {
-            $questionextensiontable = array_shift($extraquestionfields);
-            $tagname = strtoupper($this->name());
-            $recordinfo = $info['#'][$tagname][0];
-
-            $record = new stdClass;
-            $qidcolname = $this->questionid_column_name();
-            $record->$qidcolname = $new_question_id;
-            foreach ($extraquestionfields as $field) {
-                $record->$field = backup_todb($recordinfo['#'][strtoupper($field)]['0']['#']);
-            }
-            if (!insert_record($questionextensiontable, $record)) {
-                echo "Can't insert record in $questionextensiontable when restoring " .
-                                $this->name() . ' question id ' . $question;
-                $status = false;
-            }
-        }
-        //TODO restore extra data in answers
-        return $status;
-    }
-
-    public function restore_map($old_question_id,$new_question_id,$info,$restore) {
-        // There is nothing to decode
-        return true;
-    }
-
-    public function restore_recode_answer($state, $restore) {
-        // There is nothing to decode
-        return $state->answer;
     }
 
 /// IMPORT/EXPORT FUNCTIONS /////////////////
@@ -988,7 +821,7 @@ class question_type {
         $qo->qtype = $question_type;
 
         foreach ($extraquestionfields as $field) {
-            $qo->$field = addslashes($format->getpath($data, array('#',$field,0,'#'), $qo->$field));
+            $qo->$field = $format->getpath($data, array('#',$field,0,'#'), $qo->$field);
         }
 
         // run through the answers
@@ -1071,6 +904,142 @@ class question_type {
         $question->courseid = $courseid;
         $question->qtype = $this->qtype;
         return array($form, $question);
+    }
+
+    /**
+     * Get question context by category id
+     * @param int $category
+     * @return object $context
+     */
+    function get_context_by_category_id($category) {
+        global $DB;
+        $contextid = $DB->get_field('question_categories', 'contextid', array('id'=>$category));
+        $context = get_context_instance_by_id($contextid);
+        return $context;
+    }
+
+    /**
+     * Save the file belonging to one text field.
+     *
+     * @param array $field the data from the form (or from import). This will
+     *      normally have come from the formslib editor element, so it will be an
+     *      array with keys 'text', 'format' and 'itemid'. However, when we are
+     *      importing, it will be an array with keys 'text', 'format' and 'files'
+     * @param object $context the context the question is in.
+     * @param string $component indentifies the file area question.
+     * @param string $filearea indentifies the file area questiontext, generalfeedback,answerfeedback.
+     * @param integer $itemid identifies the file area.
+     *
+     * @return string the text for this field, after files have been processed.
+     */
+    protected function import_or_save_files($field, $context, $component, $filearea, $itemid) {
+        if (!empty($field['itemid'])) {
+            // This is the normal case. We are safing the questions editing form.
+            return file_save_draft_area_files($field['itemid'], $context->id, $component,
+                    $filearea, $itemid, $this->fileoptions, trim($field['text']));
+
+        } else if (!empty($field['files'])) {
+            // This is the case when we are doing an import.
+            foreach ($field['files'] as $file) {
+                $this->import_file($context, $component,  $filearea, $itemid, $file);
+            }
+        }
+        return trim($field['text']);
+    }
+
+    /**
+     * Move all the files belonging to this question from one context to another.
+     * @param integer $questionid the question being moved.
+     * @param integer $oldcontextid the context it is moving from.
+     * @param integer $newcontextid the context it is moving to.
+     */
+    public function move_files($questionid, $oldcontextid, $newcontextid) {
+        $fs = get_file_storage();
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'question', 'questiontext', $questionid);
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'question', 'generalfeedback', $questionid);
+    }
+
+    /**
+     * Move all the files belonging to this question's answers when the question
+     * is moved from one context to another.
+     * @param integer $questionid the question being moved.
+     * @param integer $oldcontextid the context it is moving from.
+     * @param integer $newcontextid the context it is moving to.
+     * @param boolean $answerstoo whether there is an 'answer' question area,
+     *      as well as an 'answerfeedback' one. Default false.
+     */
+    protected function move_files_in_answers($questionid, $oldcontextid, $newcontextid, $answerstoo = false) {
+        global $DB;
+        $fs = get_file_storage();
+
+        $answerids = $DB->get_records_menu('question_answers',
+                array('question' => $questionid), 'id', 'id,1');
+        foreach ($answerids as $answerid => $notused) {
+            if ($answerstoo) {
+                $fs->move_area_files_to_new_context($oldcontextid,
+                        $newcontextid, 'question', 'answer', $answerid);
+            }
+            $fs->move_area_files_to_new_context($oldcontextid,
+                    $newcontextid, 'question', 'answerfeedback', $answerid);
+        }
+    }
+
+    /**
+     * Delete all the files belonging to this question.
+     * @param integer $questionid the question being deleted.
+     * @param integer $contextid the context the question is in.
+     */
+    protected function delete_files($questionid, $contextid) {
+        $fs = get_file_storage();
+        $fs->delete_area_files($contextid, 'question', 'questiontext', $questionid);
+        $fs->delete_area_files($contextid, 'question', 'generalfeedback', $questionid);
+    }
+
+    /**
+     * Delete all the files belonging to this question's answers.
+     * @param integer $questionid the question being deleted.
+     * @param integer $contextid the context the question is in.
+     * @param boolean $answerstoo whether there is an 'answer' question area,
+     *      as well as an 'answerfeedback' one. Default false.
+     */
+    protected function delete_files_in_answers($questionid, $contextid, $answerstoo = false) {
+        global $DB;
+        $fs = get_file_storage();
+
+        $answerids = $DB->get_records_menu('question_answers',
+                array('question' => $questionid), 'id', 'id,1');
+        foreach ($answerids as $answerid => $notused) {
+            if ($answerstoo) {
+                $fs->delete_area_files($contextid, 'question', 'answer', $answerid);
+            }
+            $fs->delete_area_files($contextid, 'question', 'answerfeedback', $answerid);
+        }
+    }
+
+    function import_file($context, $component, $filearea, $itemid, $file) {
+        $fs = get_file_storage();
+        $record = new stdclass;
+        if (is_object($context)) {
+            $record->contextid = $context->id;
+        } else {
+            $record->contextid = $context;
+        }
+        $record->component = $component;
+        $record->filearea  = $filearea;
+        $record->itemid    = $itemid;
+        $record->filename  = $file->name;
+        $record->filepath  = '/';
+        return $fs->create_file_from_string($record, $this->decode_file($file));
+    }
+
+    function decode_file($file) {
+        switch ($file->encoding) {
+        case 'base64':
+        default:
+            return base64_decode($file->content);
+        }
     }
 }
 
