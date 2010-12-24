@@ -64,8 +64,8 @@
  * 1. Use recordset instead of record when migrating historic
  * 2. Select only usefull data on block 06
  *
+ * @global moodle_database $DB
  */
-
 function xmldb_wiki_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
@@ -358,6 +358,37 @@ function xmldb_wiki_upgrade($oldversion) {
         echo $OUTPUT->notification('Updating tags itemtype', 'notifysuccess');
 
         upgrade_mod_savepoint(true, 2010102800, 'wiki');
+    }
+    
+    if ($oldversion < 2010122300) {
+        // Fix wiki in the post table after upgrade from 1.9
+        $table = new xmldb_table('wiki');
+        
+        // name should default to Wiki
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, 255, null, XMLDB_NOTNULL, null, 'Wiki', 'course');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->change_field_default($table, $field);
+        }
+        
+        // timecreated field is missing after 1.9 upgrade
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'introformat');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        // timemodified field is missing after 1.9 upgrade
+        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'timecreated');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        // scaleid is not there any more
+        $field = new xmldb_field('scaleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', null);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+        
+        upgrade_mod_savepoint(true, 2010122300, 'wiki');
     }
 
     return true;
