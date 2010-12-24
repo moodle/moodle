@@ -164,14 +164,6 @@ if (!$previewid) {
     $restartdisabled = ' disabled="disabled"';
 }
 
-$PAGE->requires->js_init_call('M.core_question_preview.init', null, array(
-        'name' => 'core_question_preview',
-        'fullpath' => '/question/preview.js',
-        'requires' => array('base', 'dom', 'event-delegate', 'event-key', 'core_question_engine'),
-        'strings' => array(
-            array('question', 'closepreview'),
-        )));
-
 // Output
 $title = get_string('previewquestion', 'question', format_string($question->name));
 $headtags = question_engine::initialise_js() . $quba->render_question_head_html($slot);
@@ -206,8 +198,12 @@ echo '</form>';
 // Display the settings form.
 $optionsform->display();
 
-echo '<script type="text/javascript">question_preview_init("' .
-        get_string('closepreview', 'question') . '", "previewcontrols");</script>', "\n";
-
+$PAGE->requires->js_init_call('M.core_question_preview.init', null, false, array(
+        'name' => 'core_question_preview',
+        'fullpath' => '/question/preview.js',
+        'requires' => array('base', 'dom', 'event-delegate', 'event-key', 'core_question_engine'),
+        'strings' => array(
+            array('closepreview', 'question'),
+        )));
 echo $OUTPUT->footer();
 

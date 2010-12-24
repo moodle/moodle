@@ -85,7 +85,7 @@ function xmldb_quiz_statistics_upgrade($oldversion) {
         $table->add_field('anssubqid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
         $table->add_field('response', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
         $table->add_field('rcount', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
-        $table->add_field('credit', XMLDB_TYPE_NUMBER, '15, 5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('credit', XMLDB_TYPE_NUMBER, '15, 5', null, XMLDB_NOTNULL, null, null);
 
     /// Adding keys to table quiz_question_response_stats
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));

@@ -439,7 +439,7 @@ function xmldb_local_qedatabase_install() {
 
         // Rename the question_attempts table to question_usages.
         $table = new xmldb_table('question_attempts');
-        if (table_exists($table)) {
+        if ($dbman->table_exists($table)) {
             $dbman->rename_table($table, 'question_usages');
         }
 
@@ -530,7 +530,7 @@ function xmldb_local_qedatabase_install() {
 
         // Define table question_attempts to be created
         $table = new xmldb_table('question_attempts');
-        if (!table_exists($table)) {
+        if (!$dbman->table_exists($table)) {
 
             // Adding fields to table question_attempts
             $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
@@ -539,7 +539,7 @@ function xmldb_local_qedatabase_install() {
             $table->add_field('behaviour', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, null);
             $table->add_field('questionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
             $table->add_field('maxmark', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, null);
-            $table->add_field('minfraction', XMLDB_TYPE_NUMBER, '12, 7', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+            $table->add_field('minfraction', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, null);
             $table->add_field('flagged', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
             $table->add_field('questionsummary', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
             $table->add_field('rightanswer', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
@@ -566,7 +566,7 @@ function xmldb_local_qedatabase_install() {
 
         // Define table question_attempt_steps to be created
         $table = new xmldb_table('question_attempt_steps');
-        if (!table_exists($table)) {
+        if (!$dbman->table_exists($table)) {
 
             // Adding fields to table question_attempt_steps
             $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
@@ -597,7 +597,7 @@ function xmldb_local_qedatabase_install() {
 
         // Define table question_attempt_step_data to be created
         $table = new xmldb_table('question_attempt_step_data');
-        if (!table_exists($table)) {
+        if (!$dbman->table_exists($table)) {
 
             // Adding fields to table question_attempt_step_data
             $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
@@ -639,7 +639,7 @@ function xmldb_local_qedatabase_install() {
 
 //    if ($oldversion < 2008000551) {
 //        $table = new xmldb_table('question_states');
-//        if (table_exists($table)) {
+//        if ($dbman->table_exists($table)) {
 //            // First delete all data from preview attempts.
 //            delete_records_select('question_states',
 //                    "attempt IN (SELECT uniqueid FROM {quiz_attempts} WHERE preview = 1)");

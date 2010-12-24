@@ -30,7 +30,7 @@ M.core_question_preview = M.core_question_preview || {};
 /**
  * Initialise JavaScript-specific parts of the question preview popup.
  */
-M.core_question_preview.init(Y) {
+M.core_question_preview.init = function(Y) {
     M.core_question_engine.init_form(Y, '#responseform');
 
     // Add a close button to the window.

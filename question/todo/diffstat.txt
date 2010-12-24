@@ -67,7 +67,7 @@ DONE lib/questionlib.php                                | 1434 ++--------
 
  mod/quiz/accessrules.php                           |  828 ++++++
  mod/quiz/attempt.php                               |  742 ++----
- mod/quiz/attempt_close_js.php                      |   27 -
+DONE mod/quiz/attempt_close_js.php                      |   27 -
  mod/quiz/attemptlib.php                            | 1219 +++++++++
  mod/quiz/backuplib.php                             |   16 +-
  mod/quiz/comment.php                               |  171 +-
@@ -96,7 +96,7 @@ DONE mod/quiz/defaults.php                              |   12 +-
  mod/quiz/pix/sa.gif                                |  Bin 74 -> 0 bytes
  mod/quiz/pix/tf.gif                                |  Bin 190 -> 0 bytes
  mod/quiz/processattempt.php                        |  126 +
- mod/quiz/protect_js.php                            |   56 -
+DONE mod/quiz/protect_js.php                            |   56 -
  mod/quiz/quiz.js                                   |  355 ++-
  mod/quiz/restorelib.php                            |  113 +-
  mod/quiz/restorelibpre15.php                       |   41 +-
@@ -223,62 +223,62 @@ DONE question/behaviour/behaviourbase.php               |  627 +++++
 DONE question/behaviour/rendererbase.php                |  200 ++
 
  question/behaviour/adaptive/behaviour.php          |  181 ++
- question/behaviour/adaptive/lang/en_utf8/qbehaviour_adaptive.php  |    6 +
+DONE question/behaviour/adaptive/lang/en_utf8/qbehaviour_adaptive.php  |    6 +
  question/behaviour/adaptive/renderer.php           |   98 +
  question/behaviour/adaptive/simpletest/testwalkthrough.php        |  239 ++
 
  question/behaviour/adaptivenopenalty/behaviour.php |   43 +
- question/behaviour/adaptivenopenalty/lang/en_utf8/qbehaviour_adaptivenopenalty.php  |    3 +
+DONE question/behaviour/adaptivenopenalty/lang/en_utf8/qbehaviour_adaptivenopenalty.php  |    3 +
  question/behaviour/adaptivenopenalty/renderer.php  |   34 +
  question/behaviour/adaptivenopenalty/simpletest/testwalkthrough.php                 |  186 ++
 
  question/behaviour/deferredcbm/behaviour.php       |  125 +
- question/behaviour/deferredcbm/lang/en_utf8/qbehaviour_deferredcbm.php        |    9 +
+DONE question/behaviour/deferredcbm/lang/en_utf8/qbehaviour_deferredcbm.php        |    9 +
  question/behaviour/deferredcbm/renderer.php        |   87 +
  question/behaviour/deferredcbm/simpletest/testwalkthrough.php     |  261 ++
 
  question/behaviour/deferredfeedback/behaviour.php  |   94 +
- question/behaviour/deferredfeedback/lang/en_utf8/qbehaviour_deferredfeedback.php   |    3 +
+DONE question/behaviour/deferredfeedback/lang/en_utf8/qbehaviour_deferredfeedback.php   |    3 +
  question/behaviour/deferredfeedback/renderer.php   |   30 +
  question/behaviour/deferredfeedback/simpletest/testwalkthrough.php                 |  205 ++
 
  question/behaviour/immediatecbm/behaviour.php      |  151 +
- question/behaviour/immediatecbm/lang/en_utf8/qbehaviour_immediatecbm.php       |    4 +
+DONE question/behaviour/immediatecbm/lang/en_utf8/qbehaviour_immediatecbm.php       |    4 +
  question/behaviour/immediatecbm/renderer.php       |   43 +
  question/behaviour/immediatecbm/simpletest/testwalkthrough.php    |  282 ++
 
  question/behaviour/immediatefeedback/behaviour.php |  131 +
- question/behaviour/immediatefeedback/lang/en_utf8/qbehaviour_immediatefeedback.php  |    3 +
+DONE question/behaviour/immediatefeedback/lang/en_utf8/qbehaviour_immediatefeedback.php  |    3 +
  question/behaviour/immediatefeedback/renderer.php  |   33 +
  question/behaviour/immediatefeedback/simpletest/testwalkthrough.php                 |  237 ++
 
  question/behaviour/informationitem/behaviour.php   |  114 +
- question/behaviour/informationitem/lang/en_utf8/qbehaviour_informationitem.php    |    4 +
+DONE question/behaviour/informationitem/lang/en_utf8/qbehaviour_informationitem.php    |    4 +
  question/behaviour/informationitem/renderer.php    |   42 +
  question/behaviour/informationitem/simpletest/testwalkthrough.php |   78 +
 
  question/behaviour/interactive/behaviour.php       |  232 ++
- question/behaviour/interactive/lang/en_utf8/qbehaviour_interactive.php        |    6 +
+DONE question/behaviour/interactive/lang/en_utf8/qbehaviour_interactive.php        |    6 +
  question/behaviour/interactive/renderer.php        |   62 +
  question/behaviour/interactive/interactive/simpletest/testwalkthrough.php     |  470 ++++
 
  question/behaviour/interactivecountback/behaviour.php   |   91 +
- question/behaviour/interactivecountback/en_utf8/qbehaviour_interactivecountback.php    |    3 +
+DONE question/behaviour/interactivecountback/en_utf8/qbehaviour_interactivecountback.php    |    3 +
  question/behaviour/interactivecountback/renderer.php    |   36 +
  question/behaviour/interactivecountback/simpletest/testwalkthrough.php                 |  135 +
 
  question/behaviour/manualgraded/behaviour.php      |   91 +
- question/behaviour/manualgraded/lang/en_utf8/qbehaviour_manualgraded.php       |    3 +
+DONE question/behaviour/manualgraded/lang/en_utf8/qbehaviour_manualgraded.php       |    3 +
  question/behaviour/manualgraded/renderer.php       |   31 +
  question/behaviour/manualgraded/simpletest/testwalkthrough.php    |  259 ++
 
  question/behaviour/missing/behaviour.php           |   65 +
- question/behaviour/missing/lang/en_utf8/qbehaviour_missing.php    |    3 +
+DONE question/behaviour/missing/lang/en_utf8/qbehaviour_missing.php    |    3 +
  question/behaviour/missing/renderer.php            |   35 +
  question/behaviour/missing/simpletest/testmissingbehaviour.php    |   96 +
 
  question/behaviour/opaque/behaviour.php            |  197 ++
- question/behaviour/opaque/lang/en_utf8/qbehaviour_opaque.php      |    4 +
+DONE question/behaviour/opaque/lang/en_utf8/qbehaviour_opaque.php      |    4 +
  question/behaviour/opaque/renderer.php             |   65 +
  question/behaviour/opaque/simpletest/testopaquebehaviour.php      |  227 ++
 
