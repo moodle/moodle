@@ -46,7 +46,6 @@ class question_engine_data_mapper {
     public function __construct($db = null) {
         if (is_null($db)) {
             global $DB;
-            new moodle_database;
             $this->db = $DB;
         } else {
             $this->db = $db;
@@ -254,7 +253,7 @@ WHERE
 ORDER BY
     qa.slot,
     qas.sequencenumber
-    ", array('qubaid', $qubaid));
+    ", array('qubaid' => $qubaid));
 
         if (!$records) {
             throw new Exception('Failed to load questions_usage_by_activity ' . $qubaid);
@@ -272,7 +271,7 @@ ORDER BY
      * @return array of records. See the SQL in this function to see the fields available.
      */
     public function load_questions_usages_latest_steps(qubaid_condition $qubaids, $slots) {
-        list($slottest, $params) = get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot0000');
+        list($slottest, $params) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot0000');
 
         $records = get_records_sql("
 SELECT
@@ -595,7 +594,7 @@ ORDER BY
         $record->component = addslashes($quba->get_owning_component());
         $record->preferredbehaviour = addslashes($quba->get_preferred_behaviour());
 
-        if (!update_record('question_usages', $record)) {
+        if (!$this->db->update_record('question_usages', $record)) {
             throw new Exception('Failed to update question_usage_by_activity ' . $record->id);
         }
     }
@@ -606,6 +605,8 @@ ORDER BY
      * @param question_attempt $qa the question attempt that has changed.
      */
     public function update_question_attempt(question_attempt $qa) {
+        global $DB;
+
         $record = new stdClass;
         $record->id = $qa->get_database_id();
         $record->maxmark = $qa->get_max_mark();
@@ -616,7 +617,7 @@ ORDER BY
         $record->responsesummary = addslashes($qa->get_response_summary());
         $record->timemodified = time();
 
-        if (!update_record('question_attempts', $record)) {
+        if (!$this->db->update_record('question_attempts', $record)) {
             throw new Exception('Failed to update question_attempt ' . $record->id);
         }
     }
@@ -627,25 +628,26 @@ ORDER BY
      * database.
      * @param string $where a where clause. Becuase of MySQL limitations, you
      *      must refer to {$CFG->prefix}question_usages.id in full like that.
+     * @param array $params values to substitute for placeholders in $where.
      */
-    public function delete_questions_usage_by_activities($where) {
+    public function delete_questions_usage_by_activities($where, $params) {
         global $CFG;
-        delete_records_select('question_attempt_step_data', "attemptstepid IN (
+        $this->db->delete_records_select('question_attempt_step_data', "attemptstepid IN (
                 SELECT qas.id
-                FROM {$CFG->prefix}question_attempts qa
-                JOIN {$CFG->prefix}question_attempt_steps qas ON qas.questionattemptid = qa.id
-                JOIN {$CFG->prefix}question_usages ON qa.questionusageid = {$CFG->prefix}question_usages.id
-                WHERE $where)");
-        delete_records_select('question_attempt_steps', "questionattemptid IN (
+                FROM {question_attempts} qa
+                JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+                JOIN {question_usages} ON qa.questionusageid = {question_usages}.id
+                WHERE $where)", $params);
+        $this->db->delete_records_select('question_attempt_steps', "questionattemptid IN (
                 SELECT qa.id
-                FROM {$CFG->prefix}question_attempts qa
-                JOIN {$CFG->prefix}question_usages ON qa.questionusageid = {$CFG->prefix}question_usages.id
-                WHERE $where)");
-        delete_records_select('question_attempts', "questionusageid IN (
+                FROM {question_attempts} qa
+                JOIN {question_usages} ON qa.questionusageid = {question_usages}.id
+                WHERE $where)", $params);
+        $this->db->delete_records_select('question_attempts', "questionusageid IN (
                 SELECT id
-                FROM {$CFG->prefix}question_usages
-                WHERE $where)");
-        delete_records_select('question_usages', $where);
+                FROM {question_usages}
+                WHERE $where)", $params);
+        $this->db->delete_records_select('question_usages', $where, $params);
     }
 
     /**
@@ -658,11 +660,11 @@ ORDER BY
             return;
         }
         list($test, $params) = get_in_or_equal($qaids);
-        delete_records_select('question_attempt_step_data', "attemptstepid IN (
+        $this->db->delete_records_select('question_attempt_step_data', "attemptstepid IN (
                 SELECT qas.id
-                FROM {$CFG->prefix}question_attempt_steps qas
-                WHERE questionattemptid $test)");
-        delete_records_select('question_attempt_steps', 'questionattemptid ' . $test);
+                FROM {question_attempt_steps} qas
+                WHERE questionattemptid $test)", $params);
+        $this->db->delete_records_select('question_attempt_steps', 'questionattemptid ' . $test, $params);
     }
 
     /**
@@ -671,18 +673,17 @@ ORDER BY
      */
     public function delete_previews($questionid) {
         global $CFG;
-        $previews = get_records_sql_menu("
+        $previews = $this->db->get_records_sql_menu("
                 SELECT DISTINCT quba.id, 1
-                FROM {$CFG->prefix}question_usages quba
-                JOIN {$CFG->prefix}question_attempts qa ON qa.questionusageid = quba.id
+                FROM {question_usages} quba
+                JOIN {question_attempts} qa ON qa.questionusageid = quba.id
                 WHERE quba.component = 'core_question_preview' AND
-                    qa.questionid = '$questionid'");
+                    qa.questionid = ?", array($questionid));
         if (empty($previews)) {
             return;
         }
-        $this->delete_questions_usage_by_activities(
-                "{$CFG->prefix}question_usages.id IN (" .
-                implode(',', array_keys($previews)) . ')');
+        list($test, $params) = $this->db->get_in_or_equal(array_keys($previews));
+        $this->delete_questions_usage_by_activities('question_usages.id ' . $test, $params);
     }
 
     /**
@@ -725,7 +726,8 @@ ORDER BY
      */
     public function in_summary_state_test($summarystate, $equal = true) {
         $states = question_state::get_all_for_summary_state($summarystate);
-        list($sql, $params) = get_in_or_equal($states, SQL_PARAMS_QM, 'param0000', $equal);
+        list($sql, $params) = $this->db->get_in_or_equal($states, SQL_PARAMS_QM, 'param0000', $equal);
+        // TODO return $params;
         return $sql;
     }
 
@@ -737,8 +739,9 @@ ORDER BY
      * @param number $newmaxmark the new max mark to set.
      */
     public function set_max_mark_in_attempts(qubaid_condition $qubaids, $slot, $newmaxmark) {
-        set_field_select('question_attempts', 'maxmark', $newmaxmark,
-                "questionusageid {$qubaids->usage_id_in()} AND slot = $slot");
+        $this->db->set_field_select('question_attempts', 'maxmark', $newmaxmark,
+                "questionusageid {$qubaids->usage_id_in()} AND slot = :slot",
+                $qubaids->usage_id_in_params() + array('slot' => $slot));
     }
 
     /**
@@ -754,23 +757,22 @@ ORDER BY
      * @return string SQL code for the subquery.
      */
     public function sum_usage_marks_subquery($qubaid) {
-        global $CFG;
         return "SELECT SUM(qa.maxmark * qas.fraction)
-            FROM {$CFG->prefix}question_attempts qa
+            FROM {question_attempts} qa
             JOIN (
                 SELECT summarks_qa.id AS questionattemptid, MAX(summarks_qas.id) AS latestid
-                FROM {$CFG->prefix}question_attempt_steps summarks_qas
-                JOIN {$CFG->prefix}question_attempts summarks_qa ON summarks_qa.id = summarks_qas.questionattemptid
+                FROM {question_attempt_steps} summarks_qas
+                JOIN {question_attempts} summarks_qa ON summarks_qa.id = summarks_qas.questionattemptid
                 WHERE summarks_qa.questionusageid = $qubaid
                 GROUP BY summarks_qa.id
             ) lateststepid ON lateststepid.questionattemptid = qa.id
-            JOIN {$CFG->prefix}question_attempt_steps qas ON qas.id = lateststepid.latestid
+            JOIN {question_attempt_steps} qas ON qas.id = lateststepid.latestid
             WHERE qa.questionusageid = $qubaid
             HAVING COUNT(CASE WHEN qas.state = 'needsgrading' THEN 1 ELSE NULL END) = 0";
+        // TODO handle $qubaid with placeholders.
     }
 
     public function question_attempt_latest_state_view($alias) {
-        global $CFG;
         return "(
                 SELECT
                     {$alias}qa.id AS questionattemptid,
@@ -802,7 +804,7 @@ ORDER BY
         global $CFG;
         return "(
                 SELECT MAX(id)
-                FROM {$CFG->prefix}question_attempt_steps
+                FROM {question_attempt_steps}
                 WHERE questionattemptid = $questionattemptid
             )";
     }
@@ -812,8 +814,9 @@ ORDER BY
      * @return boolean whether any of these questions are being used by the question engine.
      */
     public static function questions_in_use(array $questionids) {
-        return record_exists_select('question_attempts', 'questionid IN (' .
-                implode(',', $questionids) . ')');
+        list($test, $params) = $this->db->get_in_or_equal($questionids);
+        return $this->db->record_exists_select('question_attempts',
+                'questionid ' . $test, $params);
     }
 }
 

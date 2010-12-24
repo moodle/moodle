@@ -138,15 +138,14 @@ abstract class question_bank {
      * @return question_definition loaded from the database.
      */
     public static function load_question($questionid) {
+        global $DB;
+
         if (self::$testmode) {
             // Evil, test code in production, but now way round it.
             return self::return_test_question_data($questionid);
         }
 
-        $questiondata = get_record('question', 'id', $questionid);
-        if (empty($questiondata)) {
-            throw new Exception('Unknown question id ' . $questionid);
-        }
+        $questiondata = $DB->get_record('question', array('id' => $questionid), '*', MUST_EXIST);
         get_question_options($questiondata);
         return self::make_question($questiondata);
     }
@@ -223,7 +222,8 @@ class question_finder {
         if ($extraconditions) {
             $extraconditions = ' AND (' . $extraconditions . ')';
         }
-        $questionids = get_records_select_menu('question',
+        // TODO switch to using $DB->in_or_equal.
+        $questionids = $DB->get_records_select_menu('question',
                 "category IN ($categoryids)
                  AND parent = 0
                  AND hidden = 0

@@ -45,7 +45,7 @@ class preview_options_form extends moodleform {
 
         $behaviours = question_engine::get_behaviour_options($this->_customdata->get_preferred_behaviour());
         $mform->addElement('select', 'behaviour', get_string('howquestionsbehave', 'question'), $behaviours);
-        $mform->setHelpButton('behaviour', array('howquestionsbehave', get_string('howquestionsbehave', 'question'), 'question'));
+        $mform->addHelpButton('behaviour', 'howquestionsbehave', 'question');
 
         $mform->addElement('text', 'maxmark', get_string('markedoutof', 'question'), array('size' => '5'));
         $mform->setType('maxmark', PARAM_NUMBER);
@@ -101,7 +101,7 @@ class question_preview_options extends question_display_options {
         $this->maxmark = $question->defaultmark;
         $this->correctness = self::VISIBLE;
         $this->marks = self::MARK_AND_MAX;
-        $this->markdp = $CFG->quiz_decimalpoints;
+        $this->markdp = get_config('quiz', 'decimalpoints');
         $this->feedback = self::VISIBLE;
         $this->numpartscorrect = $this->feedback;
         $this->generalfeedback = self::VISIBLE;
@@ -289,10 +289,12 @@ function question_preview_action_url($questionid, $qubaid,
  * @param object $displayoptions
  */
 function restart_preview($previewid, $questionid, $displayoptions) {
+    global $DB;
+
     if ($previewid) {
-        begin_sql();
+        $transaction = $DB->start_delegated_transaction();
         question_engine::delete_questions_usage_by_activity($previewid);
-        commit_sql();
+        $transaction->allow_commit();
     }
     redirect(question_preview_url($questionid, $displayoptions->behaviour, $displayoptions->maxmark, $displayoptions));
 }

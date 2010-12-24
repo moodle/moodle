@@ -126,7 +126,8 @@ abstract class question_behaviour {
      * @return qbehaviour_renderer get the appropriate renderer to use for this model.
      */
     public function get_renderer() {
-        return renderer_factory::get_renderer(get_class($this));
+        global $PAGE;
+        return $PAGE->get_renderer(get_class($this));
     }
 
     /**

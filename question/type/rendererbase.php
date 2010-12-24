@@ -185,7 +185,8 @@ abstract class qtype_renderer extends plugin_renderer_base {
      * @return string HTML fragment.
      */
     public function head_code(question_attempt $qa) {
-        return implode("\n", $qa->get_question()->qtype->find_standard_scripts_and_css());
+        // TODO I think we can get rid of this, but what about Opaque?
+        $qa->get_question()->qtype->find_standard_scripts();
     }
 
     protected function feedback_class($fraction) {

@@ -94,7 +94,7 @@ class qtype_truefalse_renderer extends qtype_renderer {
                 array('for' => $falseattributes['id']));
 
         $result = '';
-        $result .= html_writer::tag('div', $question->format_questiontext(),
+        $result .= html_writer::tag('div', $question->format_questiontext($qa),
                 array('class' => 'qtext'));
 
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));

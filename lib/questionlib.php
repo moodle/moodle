@@ -849,7 +849,7 @@ function question_load_questions($questionids, $extrafields = '', $join = '') {
  * @param boolean $loadtags load the question tags from the tags table. Optional, default false.
  * @return boolean true if successful, else false.
  */
-function _tidy_question(&$question, $loadtags = false) {
+function _tidy_question($question, $loadtags = false) {
     global $CFG, $QTYPES;
     if (!array_key_exists($question->qtype, $QTYPES)) {
         $question->qtype = 'missingtype';

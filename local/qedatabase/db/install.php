@@ -4,6 +4,8 @@ function xmldb_local_qedatabase_install() {
     global $DB;
     $dbman = $DB->get_manager();
 
+    // TODO quiz default settings are now in config_plugins.
+
     // Bit of a hack to prevent errors like "Cannot downgrade local_qedatabase from ... to ...".
     $oldversion = 2008000000;
     $DB->set_field('config_plugins', 'value', $oldversion,

@@ -197,7 +197,8 @@ abstract class question_definition {
      * @return qtype_renderer the renderer to use for outputting this question.
      */
     public function get_renderer() {
-        return renderer_factory::get_renderer('qtype_' . $this->qtype->name());
+        global $PAGE;
+        return $PAGE->get_renderer('qtype_' . $this->qtype->name());
     }
 
     /**

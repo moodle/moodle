@@ -761,7 +761,7 @@ class question_type {
      * script.js or script.php that exist in the plugin folder and ensures they
      * get included.
      */
-    protected function find_standard_scripts() {
+    public function find_standard_scripts() {
         global $PAGE;
 
         $plugindir = $this->plugin_dir();

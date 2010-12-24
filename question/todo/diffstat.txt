@@ -74,10 +74,10 @@ DONE lib/questionlib.php                                | 1434 ++--------
  mod/quiz/config.html                               |  304 ++-
  mod/quiz/db/access.php                             |   19 +-
  mod/quiz/db/install.xml                            |  191 +-
- mod/quiz/db/mysql.php                              | 1163 --------
- mod/quiz/db/postgres7.php                          | 1497 ----------
- mod/quiz/db/upgrade.php                            | 1204 ++++++++-
- mod/quiz/defaults.php                              |   12 +-
+DONE mod/quiz/db/mysql.php                              | 1163 --------
+DONE mod/quiz/db/postgres7.php                          | 1497 ----------
+DONE mod/quiz/db/upgrade.php                            | 1204 ++++++++-
+DONE mod/quiz/defaults.php                              |   12 +-
  mod/quiz/edit.js                                   |  131 +
  mod/quiz/edit.php                                  |  118 +-
  mod/quiz/editlib.php                               |   79 +-
@@ -172,12 +172,33 @@ DONE question/file.php                                  |  171 +- | but this fil
  question/import_form.php                           |   19 +  | the change is to add validation that a file has been uploaded.
 DONE question/move_form.php                             |   32 +-
 DONE question/preview.js                                |   47 +
- question/preview.php                               |  408 ++--
+DONE question/preview.php                               |  408 ++--
 DONE question/previewlib.php                            |  214 ++
 DONE question/qengine.js                                |  181 ++
 DONE question/question.php                              |    3 +-
  question/restorelib.php                            |   88 +-
 DONE question/toggleflag.php                            |   49 +
+
+DONE question/engine/bank.php                           |  221 ++
+DONE question/engine/compatibility.php                  |  958 +++++++
+DONE question/engine/datalib.php                        | 1069 ++++++++
+DONE question/engine/lib.php                            | 2873 ++++++++++++++++++++
+DONE question/engine/renderer.php                       |  362 +++
+DONE question/engine/simpletest/helpers.php             |  629 +++++
+DONE question/engine/simpletest/testdatalib.php         |  125 +
+DONE question/engine/simpletest/testhtmlwriter.php      |   94 +
+DONE question/engine/simpletest/testquestionattempt.php |  346 +++
+DONE question/engine/simpletest/testquestionattemptiterator.php     |  108 +
+DONE question/engine/simpletest/testquestionattemptstep.php  |  170 ++
+DONE question/engine/simpletest/testquestionattemptstepiterator.php |  127 +
+DONE question/engine/simpletest/testquestioncbm.php     |   40 +
+DONE question/engine/simpletest/testquestionengine.php  |   94 +
+DONE question/engine/simpletest/testquestionstate.php   |  154 ++
+DONE question/engine/simpletest/testquestionusagebyactivity.php     |  153 ++
+DONE question/engine/simpletest/testquestionutils.php   |  186 ++
+DONE question/engine/states.php                         |  460 ++++
+DONE question/engine/todo.txt                           |  235 ++
+ question/engine/upgradefromoldqe/upgrade.php       | 1963 +++++++++++++
 
 DONE question/type/edit_question_form.php               |  264 ++-
 DONE question/type/question.html                        |   46 -
@@ -192,14 +213,14 @@ DONE question/type/truefalse/display.html               |   30 -
 DONE question/type/truefalse/edit_truefalse_form.php    |   53 +-
 DONE question/type/truefalse/lang/en_utf8/qtype_truefalse.php     |   14 +
 DONE question/type/truefalse/question.php               |   97 +
- question/type/truefalse/questiontype.php           |  212 +-
+DONE question/type/truefalse/questiontype.php           |  212 +-
 DONE question/type/truefalse/renderer.php               |  142 +
 DONE question/type/truefalse/simpletest/testquestion.php     |   99 +
 DONE question/type/truefalse/simpletest/testquestiontype.php |   73 +
 DONE question/type/truefalse/version.php                |    4 +-
 
- question/behaviour/behaviourbase.php               |  627 +++++
- question/behaviour/rendererbase.php                |  200 ++
+DONE question/behaviour/behaviourbase.php               |  627 +++++
+DONE question/behaviour/rendererbase.php                |  200 ++
 
  question/behaviour/adaptive/behaviour.php          |  181 ++
  question/behaviour/adaptive/lang/en_utf8/qbehaviour_adaptive.php  |    6 +
@@ -260,27 +281,6 @@ DONE question/type/truefalse/version.php                |    4 +-
  question/behaviour/opaque/lang/en_utf8/qbehaviour_opaque.php      |    4 +
  question/behaviour/opaque/renderer.php             |   65 +
  question/behaviour/opaque/simpletest/testopaquebehaviour.php      |  227 ++
-
- question/engine/bank.php                           |  221 ++
- question/engine/compatibility.php                  |  958 +++++++
- question/engine/datalib.php                        | 1069 ++++++++
- question/engine/lib.php                            | 2873 ++++++++++++++++++++
- question/engine/renderer.php                       |  362 +++
- question/engine/simpletest/helpers.php             |  629 +++++
- question/engine/simpletest/testdatalib.php         |  125 +
- question/engine/simpletest/testhtmlwriter.php      |   94 +
- question/engine/simpletest/testquestionattempt.php |  346 +++
- question/engine/simpletest/testquestionattemptiterator.php     |  108 +
- question/engine/simpletest/testquestionattemptstep.php  |  170 ++
- question/engine/simpletest/testquestionattemptstepiterator.php |  127 +
- question/engine/simpletest/testquestioncbm.php     |   40 +
- question/engine/simpletest/testquestionengine.php  |   94 +
- question/engine/simpletest/testquestionstate.php   |  154 ++
- question/engine/simpletest/testquestionusagebyactivity.php     |  153 ++
- question/engine/simpletest/testquestionutils.php   |  186 ++
- question/engine/states.php                         |  460 ++++
- question/engine/todo.txt                           |  235 ++
- question/engine/upgradefromoldqe/upgrade.php       | 1963 +++++++++++++
 
  question/format.php                                |   15 +-
  question/format/blackboard/format.php              |    2 +-

@@ -96,16 +96,16 @@ abstract class question_engine {
      */
     public static function delete_questions_usage_by_activity($qubaid) {
         global $CFG;
-        self::delete_questions_usage_by_activities($CFG->prefix . 'question_usages.id = ' . $qubaid);
+        self::delete_questions_usage_by_activities('{question_usages}.id = :qubaid', array('qubaid' => $qubaid));
     }
 
     /**
      * Delete a {@link question_usage_by_activity} from the database, based on its id.
      * @param integer $qubaid the id of the usage to delete.
      */
-    public static function delete_questions_usage_by_activities($where) {
+    public static function delete_questions_usage_by_activities($where, $params) {
         $dm = new question_engine_data_mapper();
-        $dm->delete_questions_usage_by_activities($where);
+        $dm->delete_questions_usage_by_activities($where, $params);
     }
 
     /**
@@ -291,7 +291,7 @@ abstract class question_engine {
         $archetypes = self::get_archetypal_behaviours();
 
         // If no admin setting return all behavious
-        if (!$CFG->questionbehavioursdisabled && !$CFG->questionbehavioursorder) {
+        if (empty($CFG->questionbehavioursdisabled) && empty($CFG->questionbehavioursorder)) {
             return $archetypes;
         }
 
@@ -1797,7 +1797,8 @@ class question_attempt {
      * @return string HTML fragment representing the question.
      */
     public function render($options, $number) {
-        $qoutput = renderer_factory::get_renderer('core', 'question');
+        global $PAGE;
+        $qoutput = $PAGE->get_renderer('core', 'question');
         $qtoutput = $this->question->get_renderer();
         return $this->behaviour->render($options, $number, $qoutput, $qtoutput);
     }
