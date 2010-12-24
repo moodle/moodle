@@ -1,3 +1,14 @@
+The magic core commit I backported code from was:
+
+50da63ebd90247819619b80de9d9e40f93e9982b
+
+So
+
+git diff 50da63e..master 
+git diff --stat 50da63e..master 
+
+are useful command stems.
+
 External changes
 ================
 
@@ -168,13 +179,24 @@ DONE question/question.php                              |    3 +-
  question/restorelib.php                            |   88 +-
 DONE question/toggleflag.php                            |   49 +
 
- question/type/edit_question_form.php               |  264 ++-
- question/type/question.html                        |   46 -
- question/type/questionbase.php                     |  787 ++++++
+DONE question/type/edit_question_form.php               |  264 ++-
+DONE question/type/question.html                        |   46 -
+DONE question/type/questionbase.php                     |  787 ++++++
 DONE question/type/questiontype.php                     | 1302 ++-------
- question/type/rendererbase.php                     |  265 ++ -- TODO diff questointype to get necessary changes.
- question/type/simpletest/testquestionbase.php      |  117 +
+DONE question/type/rendererbase.php                     |  265 ++ -- TODO diff questointype to get necessary changes.
+DONE question/type/simpletest/testquestionbase.php      |  117 +
 DONE question/type/simpletest/testquestiontype.php      |   91 +-
+
+DONE question/type/truefalse/db/upgrade.php             |    2 -
+DONE question/type/truefalse/display.html               |   30 -
+DONE question/type/truefalse/edit_truefalse_form.php    |   53 +-
+DONE question/type/truefalse/lang/en_utf8/qtype_truefalse.php     |   14 +
+DONE question/type/truefalse/question.php               |   97 +
+ question/type/truefalse/questiontype.php           |  212 +-
+DONE question/type/truefalse/renderer.php               |  142 +
+DONE question/type/truefalse/simpletest/testquestion.php     |   99 +
+DONE question/type/truefalse/simpletest/testquestiontype.php |   73 +
+DONE question/type/truefalse/version.php                |    4 +-
 
  question/behaviour/behaviourbase.php               |  627 +++++
  question/behaviour/rendererbase.php                |  200 ++
@@ -419,17 +441,6 @@ DONE question/type/simpletest/testquestiontype.php      |   91 +-
  question/type/shortanswer/simpletest/testquestion.php   |  146 +
  question/type/shortanswer/simpletest/testquestiontype.php    |  283 +--
  question/type/shortanswer/version.php              |    4 +-
-
- question/type/truefalse/db/upgrade.php             |    2 -
- question/type/truefalse/display.html               |   30 -
- question/type/truefalse/edit_truefalse_form.php    |   53 +-
- question/type/truefalse/lang/en_utf8/qtype_truefalse.php     |   14 +
- question/type/truefalse/question.php               |   97 +
- question/type/truefalse/questiontype.php           |  212 +-
- question/type/truefalse/renderer.php               |  142 +
- question/type/truefalse/simpletest/testquestion.php     |   99 +
- question/type/truefalse/simpletest/testquestiontype.php |   73 +
- question/type/truefalse/version.php                |    4 +-
 
  theme/standard/styles_color.css                    |   72 +-
  theme/standard/styles_fonts.css                    |   20 +-

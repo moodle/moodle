@@ -158,8 +158,8 @@ abstract class question_definition {
      * inappropriate.
      * @return string|null a plain text summary of this question.
      */
-    public function get_question_summary() {
-        return html_to_text($this->format_questiontext(), 0, false);
+    public function get_question_summary(question_attempt $qa) {
+        return html_to_text($this->format_questiontext($qa), 0, false);
     }
 
     /**
@@ -231,22 +231,23 @@ abstract class question_definition {
      *      parts of the question do not need to be cleaned, and student input does.
      * @return string the text formatted for output by format_text.
      */
-    public function format_text($text, $clean = false) {
+    public function format_text($text, $qa, $component, $filearea, $clean = false) {
         $formatoptions = new stdClass;
         $formatoptions->noclean = !$clean;
         $formatoptions->para = false;
-
+// TODO $itemid needs to be an argument too.
+        $text = $qa->rewrite_pluginfile_urls($text, $component, $filearea);
         return format_text($text, $this->questiontextformat, $formatoptions);
     }
 
     /** @return the result of applying {@link format_text()} to the question text. */
-    public function format_questiontext() {
-        return $this->format_text($this->questiontext);
+    public function format_questiontext($qa) {
+        return $this->format_text($this->questiontext, $qa, 'question', 'questiontext');
     }
 
     /** @return the result of applying {@link format_text()} to the general feedback. */
-    public function format_generalfeedback() {
-        return $this->format_text($this->generalfeedback);
+    public function format_generalfeedback($qa) {
+        return $this->format_text($this->generalfeedback, $qa, 'question', 'generalfeedback');
     }
 }
 

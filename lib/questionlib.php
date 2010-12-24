@@ -1717,7 +1717,7 @@ class question_edit_contexts {
  * @param array $options
  * @return string
  */
-function quiz_rewrite_question_urls($text, $file, $contextid, $component, $filearea, array $ids, $itemid, array $options=null) {
+function question_rewrite_question_urls($text, $file, $contextid, $component, $filearea, array $ids, $itemid, array $options=null) {
     global $CFG;
 
     $options = (array)$options;

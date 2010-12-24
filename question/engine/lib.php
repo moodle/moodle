@@ -1297,6 +1297,9 @@ class question_attempt {
     /** @var integer|string the id of the question_usage_by_activity we belong to. */
     protected $usageid;
 
+    // TODO
+    protected $owningcontextid = null;
+
     /** @var integer the number used to identify this question_attempt within the usage. */
     protected $slot = null;
 
@@ -1777,6 +1780,12 @@ class question_attempt {
      */
     public function summarise_action(question_attempt_step $step) {
         return $this->behaviour->summarise_action($step);
+    }
+
+    public function rewrite_pluginfile_urls($text, $component, $filearea) {
+        return question_rewrite_question_urls($text,
+                'pluginfile.php', $this->owningcontextid, $component, $filearea,
+                array($this->get_usage_id(), $this->get_slot()), $this->get_question()->id);
     }
 
     /**

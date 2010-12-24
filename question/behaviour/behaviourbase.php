@@ -246,7 +246,7 @@ abstract class question_behaviour {
      * @return string|null a plain text summary of this question.
      */
     public function get_question_summary() {
-        return $this->question->get_question_summary();
+        return $this->question->get_question_summary($this->qa);
     }
 
     /**

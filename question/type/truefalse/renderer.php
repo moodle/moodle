@@ -124,9 +124,9 @@ class qtype_truefalse_renderer extends qtype_renderer {
         $response = $qa->get_last_qt_var('answer', '');
 
         if ($response) {
-            return $question->format_text($question->truefeedback);
+            return $question->format_text($question->truefeedback, $qa, 'question', 'answerfeedback');
         } else {
-            return $question->format_text($question->falsefeedback);
+            return $question->format_text($question->falsefeedback, $qa, 'question', 'answerfeedback');
         }
     }
 

@@ -23,6 +23,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['editingmissingtype'] = 'Editing a question of an unknown type';
+
+$string['editingmissingtype'] = 'Adding a question of a type that is not installed on this system';
+$string['answerno'] = 'Answer {$a}';
+$string['cannotchangeamissingqtype'] = 'You cannot make any changes to a question of a missing type.';
+$string['deletedquestion'] = 'Deleted question';
+$string['deletedquestiontext'] = 'This question has been deleted. Unable to display anything.';
+$string['editingmissingtype'] = 'Editing a question of a type that is not installed on this system';
+$string['missing'] = 'Question of a type that is not installed on this system';
 $string['missingtype'] = 'Missing type';
+$string['missingqtypewarning'] = 'This question is of a type that is not currently installed on this system. You will not be able to do anything with this question.';
 $string['warningmissingtype'] = '<b>This question is of a type that has not been installed on your Moodle yet.<br />Please alert your Moodle administrator.</b>';

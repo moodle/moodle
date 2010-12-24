@@ -35,7 +35,7 @@
  * @copyright 2009 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class qbehaviour_renderer extends renderer_base {
+abstract class qbehaviour_renderer extends plugin_renderer_base {
     /**
      * Generate some HTML (which may be blank) that appears in the question
      * formulation area, afer the question type generated output.

@@ -32,7 +32,7 @@
  * @copyright 2009 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class qtype_renderer extends renderer_base {
+abstract class qtype_renderer extends plugin_renderer_base {
     /**
      * Generate the display of the formulation part of the question. This is the
      * area that contains the quetsion text, and the controls for students to
@@ -45,7 +45,7 @@ abstract class qtype_renderer extends renderer_base {
      */
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
-        return $qa->get_question()->questiontext;
+        return $qa->get_question()->format_questiontext($qa);
     }
 
     /**
@@ -163,7 +163,7 @@ abstract class qtype_renderer extends renderer_base {
      * @return string HTML fragment.
      */
     protected function general_feedback(question_attempt $qa) {
-        return $qa->get_question()->format_generalfeedback();
+        return $qa->get_question()->format_generalfeedback($qa);
     }
 
     /**
@@ -200,8 +200,6 @@ abstract class qtype_renderer extends renderer_base {
      * @return string html fragment.
      */
     function feedback_image($fraction, $selected = true) {
-        global $OUTPUT;
-
         $state = question_state::graded_state_for_fraction($fraction);
 
         if ($state == question_state::$gradedright) {
@@ -218,7 +216,7 @@ abstract class qtype_renderer extends renderer_base {
         }
 
         $attributes = array(
-            'src' => $OUTPUT->pix_url('i/' . $icon),
+            'src' => $this->output->pix_url('i/' . $icon),
             'alt' => get_string($state->get_feedback_class(), 'question'),
             'class' => 'questioncorrectnessicon',
         );

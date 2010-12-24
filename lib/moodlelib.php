@@ -7229,8 +7229,9 @@ function get_plugin_types($fullpaths=true) {
                       'webservice'    => 'webservice',
                       'repository'    => 'repository',
                       'portfolio'     => 'portfolio',
-                      'qtype'         => 'question/type',
+                      'qbehaviour'    => 'question/behaviour',
                       'qformat'       => 'question/format',
+                      'qtype'         => 'question/type',
                       'plagiarism'    => 'plagiarism',
                       'theme'         => 'theme'); // this is a bit hacky, themes may be in dataroot too
 
