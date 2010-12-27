@@ -19,9 +19,10 @@
  * Code fragment to define the version of wiki
  * This fragment is called by moodle_needs_upgrading() and /admin/index.php
  *
- * @package mod-wiki-2.0
- * @copyrigth 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
- * @copyrigth 2009 Universitat Politecnica de Catalunya http://www.upc.edu
+ * @package    mod
+ * @subpackage wiki
+ * @copyrigth  2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
+ * @copyrigth  2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *
  * @author Jordi Piguillem
  * @author Marc Alier
@@ -32,6 +33,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$module->version  = 2010102800; // The current module version (Date: YYYYMMDDXX)
+$module->version  = 2010122700; // The current module version (Date: YYYYMMDDXX)
 $module->requires = 2010080300;
 $module->cron     = 0; // Period for cron to check this module (secs)
