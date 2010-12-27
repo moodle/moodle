@@ -184,20 +184,22 @@ abstract class grade_object {
         }
 
         global $DB;
-        if ($datas = $DB->get_records_select($table, $wheresql, $newparams)) {
-
-            $result = array();
-            foreach($datas as $data) {
-                $instance = new $classname();
-                grade_object::set_properties($instance, $data);
-                $result[$instance->id] = $instance;
-            }
-            return $result;
-
-        } else {
-
+        $rs = $DB->get_recordset_select($table, $wheresql, $newparams);
+        //returning false rather than empty array if nothing found
+        if (!$rs->valid()) {
+            $rs->close();
             return false;
         }
+
+        $result = array();
+        foreach($rs as $data) {
+            $instance = new $classname();
+            grade_object::set_properties($instance, $data);
+            $result[$instance->id] = $instance;
+        }
+        $rs->close();
+
+        return $result;
     }
 
     /**
