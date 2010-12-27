@@ -195,10 +195,10 @@ abstract class grade_object {
         foreach($rs as $data) {
             $instance = new $classname();
             grade_object::set_properties($instance, $data);
-            $result[$instance->id] = $instance;	
+            $result[$instance->id] = $instance;
         }
         $rs->close();
-        
+
         return $result;
     }
 
