@@ -321,7 +321,7 @@
       </PHP_SETTING>
     </PHP_SETTINGS>
     <CUSTOM_CHECKS>
-        <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_php533" level="optional">
+      <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_php533" level="optional">
         <FEEDBACK>
           <ON_CHECK message="php533warning" />
         </FEEDBACK>
