@@ -82,7 +82,7 @@ function blog_user_can_view_user_entry($targetuserid, $blogentry=null) {
         return false;  // can not view draft of others
     }
 
-    // coming for 1 entry, make sure user is logged in, if not a public blog
+    // coming for 0 entry, make sure user is logged in, if not a public blog
     if ($blogentry && $blogentry->publishstate != 'public' && !isloggedin()) {
         return false;
     }
@@ -137,7 +137,8 @@ function blog_remove_associations_for_course($courseid) {
 
 /**
  * Given a record in the {blog_external} table, checks the blog's URL
- * for new entries not yet copied into Moodle.
+ * for new entries not yet copied into Moodle. 
+ * Also attempts to identify and remove deleted blog entries
  *
  * @param object $externalblog
  * @return boolean False if the Feed is invalid
@@ -158,14 +159,14 @@ function blog_sync_external_entries($externalblog) {
         $DB->update_record('blog_external', $externalblog);
     }
 
-    // Delete all blog entries associated with this external blog
-    blog_delete_external_entries($externalblog);
-
     $rss = new moodle_simplepie($externalblog->url);
 
     if (empty($rss->data)) {
         return null;
     }
+    //used to identify blog posts that have been deleted from the source feed
+    $oldesttimestamp = null;
+    $uniquehashes = array();
 
     foreach ($rss->get_items() as $entry) {
         // If filtertags are defined, use them to filter the entries by RSS category
@@ -187,6 +188,8 @@ function blog_sync_external_entries($externalblog) {
             }
         }
 
+        $uniquehashes[] = $entry->get_permalink();
+
         $newentry = new stdClass();
         $newentry->userid = $externalblog->userid;
         $newentry->module = 'blog_external';
@@ -197,14 +200,36 @@ function blog_sync_external_entries($externalblog) {
         $newentry->subject = $entry->get_title();
         $newentry->summary = $entry->get_description();
 
-        //our DB doesnt allow null creation or modified timestamps so check the external blog didnt supply one
+        //used to decide whether to insert or update
+        //uses enty permalink plus creation date if available
+        $existingpostconditions = array('uniquehash' => $entry->get_permalink());
+        $postid = null;//ID of the post if a matching permalink and creation timestamp are found in the DB
+
+        //our DB doesnt allow null creation or modified timestamps so check the external blog supplied one
         $entrydate = $entry->get_date('U');
+        if (!empty($entrydate)) {
+            $existingpostconditions['created'] = $entrydate;
+        }
+
+        //the post ID or false if post not found
+        $postid = $DB->get_field('post', 'id', $existingpostconditions);
+
+        $timestamp = null;
         if (empty($entrydate)) {
-            $newentry->created = time();
-            $newentry->lastmodified = time();
+            $timestamp = time();
         } else {
-            $newentry->created = $entrydate;
-            $newentry->lastmodified = $entrydate;
+            $timestamp = $entrydate;
+        }
+
+        //only set created if its a new post so we retain the original creation timestamp if the post is edited
+        if ($postid === false) {
+            $newentry->created = $timestamp;
+        }
+        $newentry->lastmodified = $timestamp;
+
+        if (empty($oldesttimestamp) || $timestamp < $oldesttimestamp) {
+            //found an older post
+            $oldesttimestamp = $timestamp;
         }
 
         $textlib = textlib_get_instance();
@@ -216,13 +241,30 @@ function blog_sync_external_entries($externalblog) {
             continue;
         }
 
-        $id = $DB->insert_record('post', $newentry);
+        if ($postid === false) {
+            $id = $DB->insert_record('post', $newentry);
 
-        // Set tags
-        if ($tags = tag_get_tags_array('blog_external', $externalblog->id)) {
-            tag_set('post', $id, $tags);
+            // Set tags
+            if ($tags = tag_get_tags_array('blog_external', $externalblog->id)) {
+                tag_set('post', $id, $tags);
+            }
+        } else {
+            $newentry->id = $postid;
+            $DB->update_record('post', $newentry);
         }
     }
+
+    //Look at the posts we have in the database to check if any of them have been deleted from the feed.
+    //Only checking posts within the time frame returned by the rss feed. Older items may have been deleted or 
+    //may just not be returned anymore. We cant tell the difference so we leave older posts alone.
+    $dbposts = $DB->get_records_select('post', 'created > :ts', array('ts' => $oldesttimestamp), '', 'id, uniquehash');
+    $todelete = array();
+    foreach($dbposts as $dbpost) {
+        if ( !in_array($dbpost->uniquehash, $uniquehashes) ) {
+            $todelete[] = $dbpost->id;
+        }
+    }
+    $DB->delete_records_list('post', 'id', $todelete);
 
     $DB->update_record('blog_external', array('id' => $externalblog->id, 'timefetched' => mktime()));
 }
