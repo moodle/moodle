@@ -771,42 +771,109 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return string sql
      */
     private function limit_to_top_n($sql, $offset, $limit) {
+        // If there is no limit we can return immediatly
         if ($limit < 1 && $offset < 1) {
             return $sql;
         }
-        $limit = max(0, $limit);
-        $offset = max(0, $offset);
 
-        if ($limit > 0 && $offset == 0) {
-            $sql1 = preg_replace('/^([\s(])*SELECT([\s]+(DISTINCT|ALL))?(?!\s*TOP\s*\()/i',
-                                 "\\1SELECT\\2 TOP $limit", $sql);
+        // Make sure they are at least 0
+        $limit = max(0, (int)$limit);
+        $offset = max(0, (int)$offset);
+        // This is an sqlserver bigint - -1 and will be used as a value
+        // for top when essentially we want everything.
+        // This needs to be a string so that it doesn't get malformed.
+        $bigint = '9223372036854775806';
+
+        // If limit is 0 set it to BITINT - 1
+        if (empty($limit)) {
+            $limit = $bigint;
         } else {
-            // Only apply TOP clause if we have any limitnum (limitfrom offset is handled later)
-            if ($limit < 1) {
-               $limit = "9223372036854775806"; // MAX BIGINT -1
-            }
-            if (preg_match('/\w*FROM[\s|{]*([\w|.]*)[\s|}]?/i', $sql, $match)) {
-                $from_table = $match[1];
-                if (preg_match('/SELECT[\w|\s]*(\*)[\w|\s]*FROM/i', $sql)) {
-                    // Need all the columns as the emulation returns some temp cols
-                    $cols = array_keys($this->get_columns($from_table));
-                    $cols = implode(', ', $cols);
-                } else {
-                    $cols = '*';
+            $limit = $offset + $limit;
+        }
+
+        // Set up defaults for the next bit.
+        $columns = '*';      // Default to all columns
+        $columnnames = '*';  // As above
+        $firstcolumn = 'id'; // The default first column is id
+        $orderby = '';       // The order by of the main query
+
+        // We need to find all the columns so that we can request JUST the desired
+        // columns in the end transaction. We also need to do a couple of maintenance
+        // tasks on the columns seeing as they are going to be wrapped in a 
+        // sub select.
+        //
+        // 1. Collect the first column to use for an order by if there isn't an
+        //    explicit order by within the query.
+        // 2. Make we use the aliases for columns that have it because of next point.
+        // 3. Strip off table aliases they will be incorrect outside of the immediate
+        //    sub select.
+        // 4. Give all constant columns a proper alias, this is required because
+        //    of the subselect.
+        if (preg_match('#^(\s*SELECT\s+)(DISTINCT\s+)?(.*?)(\sFROM\s)#is', $sql, $columnmatches)) {
+            // Make sure we have some columns
+            if (!empty($columnmatches[3])) {
+                $columns = explode(',', $columnmatches[3]);
+                $columnnames = array();
+                $firstcolumn = null;
+                $constantcount = 0;
+                foreach ($columns as $key=>$column) {
+                    // Trim, trim, trim, except during Movember.
+                    $column = trim($column);
+                    if (preg_match('#\sAS\s+(\w+)\s*$#si', $column, $matches)) {
+                        // Make sure we use the column alias if available.
+                        $column = $matches[1];
+                    } else if (preg_match("#^'[^']*'$#", $column)) {
+                        // Give constants an alias in the main query and use the
+                        // alias for the new outer queries.
+                        $constantcount++;
+                        $column = 'constant_'.$constantcount;
+                        $columns[$key] .= ' AS '.$column;
+                    }
+
+                    // Store the first column for later abuse.
+                    if ($firstcolumn === null) {
+                        $firstcolumn = $column;
+                    }
+
+                    // Remove any table aliases from the column name for the outer
+                    // queries.
+                    if (preg_match('#^\w+\.(.*)$#s', $column, $matches)) {
+                        $column = $matches[1];
+                    }
+                    $columnnames[] = $column;
                 }
-                $sql1 = "SELECT $cols
-                           FROM (SELECT sub2.*, ROW_NUMBER() OVER(ORDER BY sub2.line2) AS line3
-                                   FROM (SELECT 1 AS line2, sub1.*
-                                           FROM {".$from_table."} AS sub1
-                                        ) AS sub2
-                                ) AS sub3
-                          WHERE line3 BETWEEN ".($offset+1)." AND ".($offset + $limit);
-            } else {
-                $sql1 = "SELECT 'Invalid table'";
+                // Glue things back together
+                $columnnames = join(', ', $columnnames);
+                $columns = join(', ', $columns);
+                // Switch out the fixed main columns (added constant aliases).
+                $sql = str_replace($columnmatches[0], $columnmatches[1].$columnmatches[2].$columns.$columnmatches[4], $sql);
             }
         }
 
-        return $sql1;
+        // Collect the orderby from the main query to use in the row number order by.
+        if (preg_match('#\sORDER\s+BY\s+([^)]+?)(GROUP\s+BY|$)#i', $sql, $matches)) {
+            // We need to remove it from the main query as well.
+            $sql = str_replace($matches[0], ' '.$matches[2], $sql);
+            $orderby = $matches[1];
+        } else {
+            // Default orderby to the first column.
+            $orderby = $firstcolumn;
+        }
+        // Remove any table aliases from the order by.
+        $orderby = preg_replace('#[^\s,]*\.([^\s,]*)#', '$1', $orderby);
+
+        // If the orderby is all tables everything will break, default to id.
+        if ($orderby == '*') {
+            $orderby = 'id';
+        }
+
+        // Build the inner outer query.
+        $sql = "SELECT TOP $bigint ROW_NUMBER() OVER(ORDER BY $orderby) AS sqlsrvrownumber, $columnnames FROM ($sql) AS q";
+        // Build the outer most query.
+        $sql = "SELECT $columnnames FROM ($sql) AS q WHERE q.sqlsrvrownumber > $offset AND q.sqlsrvrownumber <= $limit";
+
+        // Return the now mangled query for use.
+        return $sql;
     }
 
     /**
