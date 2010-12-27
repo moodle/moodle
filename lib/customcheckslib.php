@@ -54,4 +54,12 @@ function php_check_register_globals($result) {
     return $result;
 }
 
+function php_check_php533($result) {
+    if (version_compare(phpversion(), '5.3.3') < 0) {
+        $result->status = false;
+    } else {
+        $result = null;
+    }
+    return $result;
+}
 ?>
