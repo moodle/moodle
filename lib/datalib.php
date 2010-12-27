@@ -1695,6 +1695,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 
             $lasttime = get_config('admin', 'lastloginserterrormail');
             if(empty($lasttime) || time() - $lasttime > 60*60*24) { // limit to 1 email per day
+                //using email directly rather than messaging as they may not be able to log in to access a message
                 mail($CFG->supportemail, $subject, $message);
                 set_config('lastloginserterrormail', time(), 'admin');
             }

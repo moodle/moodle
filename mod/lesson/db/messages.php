@@ -18,15 +18,18 @@
 /**
  * Defines message providers (types of messages being sent)
  *
- * @package mod-feedback
- * @copyright  2010 onwards  Aparup Banerjee  http://moodle.com
+ * @package mod-lesson
+ * @copyright 2010 Andrew Davis
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $messageproviders = array (
 
-/// Submitting a feedback
-    'submission' => array (
+    // essay graded notification
+    'graded_essay' => array (
     )
 
 );
+
+
+

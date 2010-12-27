@@ -284,6 +284,7 @@ function setup_DB() {
                 $content = @fread($fp, 24);
                 @fclose($fp);
                 if((time() - (int)$content) > 600){
+                    //email directly rather than using messaging
                     @mail($CFG->emailconnectionerrorsto,
                         'WARNING: Database connection error: '.$CFG->wwwroot,
                         'Connection error: '.$CFG->wwwroot);
@@ -291,6 +292,7 @@ function setup_DB() {
                     @fwrite($fp, time());
                 }
             } else {
+               //email directly rather than using messaging
                @mail($CFG->emailconnectionerrorsto,
                     'WARNING: Database connection error: '.$CFG->wwwroot,
                     'Connection error: '.$CFG->wwwroot);
