@@ -203,7 +203,6 @@ function blog_sync_external_entries($externalblog) {
         //used to decide whether to insert or update
         //uses enty permalink plus creation date if available
         $existingpostconditions = array('uniquehash' => $entry->get_permalink());
-        $postid = null;//ID of the post if a matching permalink and creation timestamp are found in the DB
 
         //our DB doesnt allow null creation or modified timestamps so check the external blog supplied one
         $entrydate = $entry->get_date('U');
@@ -211,7 +210,7 @@ function blog_sync_external_entries($externalblog) {
             $existingpostconditions['created'] = $entrydate;
         }
 
-        //the post ID or false if post not found
+        //the post ID or false if post not found in DB
         $postid = $DB->get_field('post', 'id', $existingpostconditions);
 
         $timestamp = null;
@@ -266,7 +265,7 @@ function blog_sync_external_entries($externalblog) {
     }
     $DB->delete_records_list('post', 'id', $todelete);
 
-    $DB->update_record('blog_external', array('id' => $externalblog->id, 'timefetched' => mktime()));
+    $DB->update_record('blog_external', array('id' => $externalblog->id, 'timefetched' => time()));
 }
 
 /**
