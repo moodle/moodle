@@ -537,10 +537,10 @@ class navigation_node implements renderable {
      */
     public function find_expandable(array &$expandable) {
         foreach ($this->children as &$child) {
-            if ($child->nodetype == self::NODETYPE_BRANCH && $child->children->count()==0 && $child->display) {
+            if ($child->nodetype == self::NODETYPE_BRANCH && $child->children->count() == 0 && $child->display) {
                 $child->id = 'expandable_branch_'.(count($expandable)+1);
                 $this->add_class('canexpand');
-                $expandable[] = array('id'=>$child->id,'branchid'=>$child->key,'type'=>$child->type);
+                $expandable[] = array('id' => $child->id, 'key' => $child->key, 'type' => $child->type);
             }
             $child->find_expandable($expandable);
         }
@@ -3699,7 +3699,7 @@ class navigation_json {
      */
     public function set_expandable($expandable) {
         foreach ($expandable as $node) {
-            $this->expandable[$node['branchid'].':'.$node['type']] = $node;
+            $this->expandable[$node['key'].':'.$node['type']] = $node;
         }
     }
     /**

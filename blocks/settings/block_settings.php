@@ -92,9 +92,8 @@ class block_settings extends block_base {
 
     function get_required_javascript() {
         global $CFG;
-        $module = array('name'=>'block_navigation', 'fullpath'=>'/blocks/navigation/navigation.js', 'requires'=>array('core_dock', 'io', 'node', 'dom', 'event-custom', 'json-parse'));
-        $arguments = array($this->instance->id, array('instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked()));
-        $this->page->requires->js_init_call('M.block_navigation.init_add_tree', $arguments, false, $module);
+        $arguments = array('id' => $this->instance->id, 'instance' => $this->instance->id, 'candock' => $this->instance_can_be_docked());
+        $this->page->requires->yui_module(array('core_dock', 'moodle-block_navigation-navigation'), 'M.block_navigation.init_add_tree', array($arguments));
         user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
     }
 
@@ -107,7 +106,6 @@ class block_settings extends block_base {
         if ($this->contentgenerated === true) {
             return true;
         }
-        $this->page->requires->yui2_lib('dom');
         // JS for navigation moved to the standard theme, the code will probably have to depend on the actual page structure
         // $this->page->requires->js('/lib/javascript-navigation.js');
         block_settings::$navcount++;
