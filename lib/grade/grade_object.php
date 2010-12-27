@@ -173,13 +173,14 @@ class grade_object {
             $wheresql = implode("AND", $wheresql);
         }
 
-        if ($datas = get_records_select($table, $wheresql, 'id')) {
+        if ($rs = get_recordset_select($table, $wheresql, 'id')) {
             $result = array();
-            foreach($datas as $data) {
+            while ($data = rs_fetch_next_record($rs)) {
                 $instance = new $classname();
                 grade_object::set_properties($instance, $data);
                 $result[$instance->id] = $instance;
             }
+            rs_close($rs);
             return $result;
 
         } else {
