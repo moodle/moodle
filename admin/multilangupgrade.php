@@ -56,35 +56,34 @@ foreach ($tables as $table) {
             if (in_array($data->type, array('text','mediumtext','longtext','varchar'))) {  // Text stuff only
                 // first find candidate records
                 $sql = "SELECT id, $column FROM $fulltable WHERE $column LIKE '%</lang>%' OR $column LIKE '%<span lang=%'";
-                if ($rs = $DB->get_recordset_sql($sql)) {
-                    foreach ($rs as $data) {
-                        $text = $data->$column;
-                        $id   = $data->id;
-                        if ($i % 600 == 0) {
-                            echo '<br />';
-                        }
-                        if ($i % 10 == 0) {
-                            echo '.';
-                        }
-                        $i++;
-
-                        if (empty($text) or is_numeric($text)) {
-                            continue; // nothing to do
-                        }
-
-                        $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>)(\s*<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>)+/is';
-                        $newtext = preg_replace_callback($search, 'multilangupgrade_impl', $text);
-
-                        if (is_null($newtext)) {
-                            continue; // regex error
-                        }
-
-                        if ($newtext != $text) {
-                            $DB->execute("UPDATE $fulltable SET $column=? WHERE id=?", array($newtext, $id));
-                        }
+                $rs = $DB->get_recordset_sql($sql);
+                foreach ($rs as $data) {
+                    $text = $data->$column;
+                    $id   = $data->id;
+                    if ($i % 600 == 0) {
+                        echo '<br />';
                     }
-                    $rs->close();
+                    if ($i % 10 == 0) {
+                        echo '.';
+                    }
+                    $i++;
+
+                    if (empty($text) or is_numeric($text)) {
+                        continue; // nothing to do
+                    }
+
+                    $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>)(\s*<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>)+/is';
+                    $newtext = preg_replace_callback($search, 'multilangupgrade_impl', $text);
+
+                    if (is_null($newtext)) {
+                        continue; // regex error
+                    }
+
+                    if ($newtext != $text) {
+                        $DB->execute("UPDATE $fulltable SET $column=? WHERE id=?", array($newtext, $id));
+                    }
                 }
+                $rs->close();
             }
         }
     }
