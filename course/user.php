@@ -400,7 +400,8 @@ switch ($mode) {
         }
 
         // Check if result is empty
-        if (!$rs = $DB->get_recordset_sql($sql)) {
+        $rs = $DB->get_recordset_sql($sql);
+        if (!$rs->valid()) {
 
             if ($course->id != 1) {
                 $error = get_string('nocompletions', 'coursereport_completion');
@@ -409,6 +410,7 @@ switch ($mode) {
             }
 
             echo $OUTPUT->notification($error);
+            $rs->close(); // not going to loop (but break), close rs
             break;
         }
 
@@ -437,8 +439,7 @@ switch ($mode) {
                 $courses['unstarted'][] = $c_info;
             }
         }
-
-        $rs->close();
+        $rs->close(); // after loop, close rs
 
         // Loop through course status groups
         foreach ($courses as $type => $infos) {

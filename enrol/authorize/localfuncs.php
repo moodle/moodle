@@ -194,7 +194,9 @@ function send_welcome_messages($orderdata) {
              WHERE e.id IN(" . implode(',', $orderdata) . ")
           ORDER BY e.userid";
 
-    if (!$rs = $DB->get_recordset_sql($sql)) {
+    $rs = $DB->get_recordset_sql($sql);
+    if (!$rs->valid()) {
+        $rs->close(); // Not going to iterate (but exit), close rs
         return;
     }
 
@@ -247,7 +249,7 @@ function send_welcome_messages($orderdata) {
         }
         while ($ei);
 
-        $rs->close();
+        $rs->close(); // end of iteration, close rs
     }
 }
 
