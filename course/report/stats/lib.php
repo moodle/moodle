@@ -54,13 +54,13 @@ function report_stats_timeoptions($mode) {
     global $CFG, $DB;
 
     if ($mode == STATS_MODE_DETAILED) {
-        $earliestday = $DB->get_field_sql('SELECT timeend FROM {stats_user_daily} ORDER BY timeend');
-        $earliestweek = $DB->get_field_sql('SELECT timeend FROM {stats_user_weekly} ORDER BY timeend');
-        $earliestmonth = $DB->get_field_sql('SELECT timeend FROM {stats_user_monthly} ORDER BY timeend');
+        $earliestday = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_user_daily}');
+        $earliestweek = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_user_weekly}');
+        $earliestmonth = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_user_monthly}');
     } else {
-        $earliestday = $DB->get_field_sql('SELECT timeend FROM {stats_daily} ORDER BY timeend');
-        $earliestweek = $DB->get_field_sql('SELECT timeend FROM {stats_weekly} ORDER BY timeend');
-        $earliestmonth = $DB->get_field_sql('SELECT timeend FROM {stats_monthly} ORDER BY timeend');
+        $earliestday = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_daily}');
+        $earliestweek = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_weekly}');
+        $earliestmonth = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_monthly}');
     }
 
 

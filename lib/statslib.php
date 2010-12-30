@@ -854,13 +854,13 @@ function stats_get_start_from($str) {
     global $CFG, $DB;
 
     // are there any data in stats table? Should not be...
-    if ($timeend = $DB->get_field_sql('SELECT timeend FROM {stats_'.$str.'} ORDER BY timeend DESC')) {
+    if ($timeend = $DB->get_field_sql('SELECT MAX(timeend) FROM {stats_'.$str.'}')) {
         return $timeend;
     }
     // decide what to do based on our config setting (either all or none or a timestamp)
     switch ($CFG->statsfirstrun) {
         case 'all':
-            if ($firstlog = $DB->get_field_sql('SELECT time FROM {log} ORDER BY time ASC')) {
+            if ($firstlog = $DB->get_field_sql('SELECT MIN(time) FROM {log}')) {
                 return $firstlog;
             }
         default:
