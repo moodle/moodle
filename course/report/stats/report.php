@@ -98,7 +98,7 @@
                 .' ORDER BY timeend DESC';
         }
 
-        $stats = $DB->get_records_sql($sql, $params);
+        $stats = $DB->get_records_sql($sql);
 
         if (empty($stats)) {
             echo $OUTPUT->notification(get_string('statsnodata'));
