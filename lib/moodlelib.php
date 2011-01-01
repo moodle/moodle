@@ -8012,14 +8012,13 @@ function notify_login_failures() {
           GROUP BY ip
             HAVING COUNT(*) >= ?";
     $params = array($CFG->lastnotifyfailure, $CFG->notifyloginthreshold);
-    if ($rs = $DB->get_recordset_sql($sql, $params)) {
-        foreach ($rs as $iprec) {
-            if (!empty($iprec->ip)) {
-                set_cache_flag('login_failure_by_ip', $iprec->ip, '1', 0);
-            }
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $iprec) {
+        if (!empty($iprec->ip)) {
+            set_cache_flag('login_failure_by_ip', $iprec->ip, '1', 0);
         }
-        $rs->close();
     }
+    $rs->close();
 
 /// Get all the INFOs with more than notifyloginthreshold failures since lastnotifyfailure
 /// and insert them into the cache_flags temp table
@@ -8030,14 +8029,13 @@ function notify_login_failures() {
           GROUP BY info
             HAVING count(*) >= ?";
     $params = array($CFG->lastnotifyfailure, $CFG->notifyloginthreshold);
-    if ($rs = $DB->get_recordset_sql($sql, $params)) {
-        foreach ($rs as $inforec) {
-            if (!empty($inforec->info)) {
-                set_cache_flag('login_failure_by_info', $inforec->info, '1', 0);
-            }
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $inforec) {
+        if (!empty($inforec->info)) {
+            set_cache_flag('login_failure_by_info', $inforec->info, '1', 0);
         }
-        $rs->close();
     }
+    $rs->close();
 
 /// Now, select all the login error logged records belonging to the ips and infos
 /// since lastnotifyfailure, that we have stored in the cache_flags table
@@ -8063,14 +8061,13 @@ function notify_login_failures() {
     $count = 0;
     $messages = '';
 /// Iterate over the logs recordset
-    if ($rs = $DB->get_recordset_sql($sql, $params)) {
-        foreach ($rs as $log) {
-            $log->time = userdate($log->time);
-            $messages .= get_string('notifyloginfailuresmessage','',$log)."\n";
-            $count++;
-        }
-        $rs->close();
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $log) {
+        $log->time = userdate($log->time);
+        $messages .= get_string('notifyloginfailuresmessage','',$log)."\n";
+        $count++;
     }
+    $rs->close();
 
 /// If we haven't run in the last hour and
 /// we have something useful to report and we
