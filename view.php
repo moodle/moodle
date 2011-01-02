@@ -214,7 +214,7 @@ $generateimscp = ''; //TODO after new file handling
 </tr>
 
 <!-- toc and chapter row //-->
-<tr class="tocandchapter">
+<tr class="tocandchapter" valign="top">
     <td style="width:<?php echo $tocwidth ?>px" align="left"><div class="clearer">&nbsp;</div>
         <?php
         echo $OUTPUT->box_start('generalbox');
@@ -227,7 +227,7 @@ $generateimscp = ''; //TODO after new file handling
         }
         ?>
     </td>
-    <td align="right"><div class="clearer">&nbsp;</div>
+    <td align="right" valign="top"><div class="clearer">&nbsp;</div>
         <?php
         echo $OUTPUT->box_start('generalbox');
         echo '<div class="book_content">';
