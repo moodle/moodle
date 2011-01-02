@@ -1550,12 +1550,10 @@ abstract class moodle_database {
      * @throws dml_exception if error
      */
     public function record_exists_sql($sql, array $params=null) {
-        if ($mrs = $this->get_recordset_sql($sql, $params, 0, 1)) {
-            $return = $mrs->valid();
-            $mrs->close();
-            return $return;
-        }
-        return false;
+        $mrs = $this->get_recordset_sql($sql, $params, 0, 1);
+        $return = $mrs->valid();
+        $mrs->close();
+        return $return;
     }
 
     /**

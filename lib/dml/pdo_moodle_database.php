@@ -287,7 +287,9 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return array of values
      */
     public function get_fieldset_sql($sql, array $params=null) {
-        if(!$rs = $this->get_recordset_sql($sql, $params)) {
+        $rs = $this->get_recordset_sql($sql, $params);
+        if (!$rs->valid()) {
+            $rs->close(); // Not going to iterate (but exit), close rs
             return false;
         }
         $result = array();
@@ -312,7 +314,9 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return array of objects, or empty array if no records were found, or false if an error occurred.
      */
     public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
-        if(!$rs = $this->get_recordset_sql($sql, $params, $limitfrom, $limitnum)) {
+        $rs = $this->get_recordset_sql($sql, $params, $limitfrom, $limitnum);
+        if (!$rs->valid()) {
+            $rs->close(); // Not going to iterate (but exit), close rs
             return false;
         }
         $objects = array();
