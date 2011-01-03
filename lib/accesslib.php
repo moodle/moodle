@@ -4459,7 +4459,7 @@ function get_user_roles($context, $userid = 0, $checkparentcontexts = true, $ord
  *
  * @param int $sroleid source roleid
  * @param int $troleid target roleid
- * @return int id or false
+ * @return void
  */
 function allow_override($sroleid, $troleid) {
     global $DB;
@@ -4475,7 +4475,7 @@ function allow_override($sroleid, $troleid) {
  *
  * @param int $sroleid source roleid
  * @param int $troleid target roleid
- * @return int id or false
+ * @return void
  */
 function allow_assign($fromroleid, $targetroleid) {
     global $DB;
@@ -4491,7 +4491,7 @@ function allow_assign($fromroleid, $targetroleid) {
  *
  * @param int $sroleid source roleid
  * @param int $troleid target roleid
- * @return int id or false
+ * @return void
  */
 function allow_switch($fromroleid, $targetroleid) {
     global $DB;
