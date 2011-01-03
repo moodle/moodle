@@ -46,7 +46,7 @@ function report_stats_mode_menu($course, $mode, $time, $url) {
     $popupurl = $url."?course=$course->id&time=$time";
     $select = new single_select(new moodle_url($popupurl), 'mode', $options, $mode, null);
     $select->formid = 'switchmode';
-    echo $OUTPUT->render($select);
+    return $OUTPUT->render($select);
 }
 
 
@@ -54,13 +54,13 @@ function report_stats_timeoptions($mode) {
     global $CFG, $DB;
 
     if ($mode == STATS_MODE_DETAILED) {
-        $earliestday = $DB->get_field_sql('SELECT timeend FROM {stats_user_daily} ORDER BY timeend');
-        $earliestweek = $DB->get_field_sql('SELECT timeend FROM {stats_user_weekly} ORDER BY timeend');
-        $earliestmonth = $DB->get_field_sql('SELECT timeend FROM {stats_user_monthly} ORDER BY timeend');
+        $earliestday = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_user_daily}');
+        $earliestweek = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_user_weekly}');
+        $earliestmonth = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_user_monthly}');
     } else {
-        $earliestday = $DB->get_field_sql('SELECT timeend FROM {stats_daily} ORDER BY timeend');
-        $earliestweek = $DB->get_field_sql('SELECT timeend FROM {stats_weekly} ORDER BY timeend');
-        $earliestmonth = $DB->get_field_sql('SELECT timeend FROM {stats_monthly} ORDER BY timeend');
+        $earliestday = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_daily}');
+        $earliestweek = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_weekly}');
+        $earliestmonth = $DB->get_field_sql('SELECT MIN(timeend) FROM {stats_monthly}');
     }
 
 
@@ -86,7 +86,7 @@ function stats_report_extend_navigation($navigation, $course, $context) {
     global $CFG, $OUTPUT;
     if (has_capability('coursereport/stats:view', $context)) {
         if (!empty($CFG->enablestats)) {
-            $url = new moodle_url('/course/report/stats/index.php', array('id'=>$course->id));
+            $url = new moodle_url('/course/report/stats/index.php', array('course'=>$course->id));
             $navigation->add(get_string('stats'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
         }
     }

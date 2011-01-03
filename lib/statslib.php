@@ -854,13 +854,13 @@ function stats_get_start_from($str) {
     global $CFG, $DB;
 
     // are there any data in stats table? Should not be...
-    if ($timeend = $DB->get_field_sql('SELECT timeend FROM {stats_'.$str.'} ORDER BY timeend DESC')) {
+    if ($timeend = $DB->get_field_sql('SELECT MAX(timeend) FROM {stats_'.$str.'}')) {
         return $timeend;
     }
     // decide what to do based on our config setting (either all or none or a timestamp)
     switch ($CFG->statsfirstrun) {
         case 'all':
-            if ($firstlog = $DB->get_field_sql('SELECT time FROM {log} ORDER BY time ASC')) {
+            if ($firstlog = $DB->get_field_sql('SELECT MIN(time) FROM {log}')) {
                 return $firstlog;
             }
         default:
@@ -1333,8 +1333,8 @@ function stats_get_report_options($courseid,$mode) {
     case STATS_MODE_GENERAL:
         $reportoptions[STATS_REPORT_ACTIVITY] = get_string('statsreport'.STATS_REPORT_ACTIVITY);
         if ($courseid != SITEID && $context = get_context_instance(CONTEXT_COURSE, $courseid)) {
-            $sql = 'SELECT r.id,r.name FROM {role} r JOIN {stats_daily} s ON s.roleid = r.id WHERE s.courseid = '.$courseid;
-            if ($roles = $DB->get_records_sql($sql)) {
+            $sql = 'SELECT r.id, r.name FROM {role} r JOIN {stats_daily} s ON s.roleid = r.id WHERE s.courseid = :courseid GROUP BY s.roleid';
+            if ($roles = $DB->get_records_sql($sql, array('courseid' => $courseid))) {
                 foreach ($roles as $role) {
                     $reportoptions[STATS_REPORT_ACTIVITYBYROLE.$role->id] = get_string('statsreport'.STATS_REPORT_ACTIVITYBYROLE). ' '.$role->name;
                 }
