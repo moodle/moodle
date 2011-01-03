@@ -481,7 +481,8 @@ class grade_category extends grade_object {
               ORDER BY g.userid";
 
         // group the results by userid and aggregate the grades for this user
-        if ($rs = $DB->get_recordset_sql($sql, $params)) {
+        $rs = $DB->get_recordset_sql($sql, $params);
+        if ($rs->valid()) {
             $prevuser = 0;
             $grade_values = array();
             $excluded     = array();
@@ -506,9 +507,9 @@ class grade_category extends grade_object {
                     $oldgrade = $used;
                 }
             }
-            $rs->close();
             $this->aggregate_grades($prevuser, $items, $grade_values, $oldgrade, $excluded);//the last one
         }
+        $rs->close();
 
         return true;
     }

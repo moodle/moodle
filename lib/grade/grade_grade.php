@@ -390,14 +390,13 @@ class grade_grade extends grade_object {
         $now = time(); // no rounding needed, this is not supposed to be called every 10 seconds
         list($usql, $params) = $DB->get_in_or_equal($items);
         $params[] = $now;
-        if ($rs = $DB->get_recordset_select('grade_grades', "itemid $usql AND locked = 0 AND locktime > 0 AND locktime < ?", $params)) {
-            foreach ($rs as $grade) {
-                $grade_grade = new grade_grade($grade, false);
-                $grade_grade->locked = time();
-                $grade_grade->update('locktime');
-            }
-            $rs->close();
+        $rs = $DB->get_recordset_select('grade_grades', "itemid $usql AND locked = 0 AND locktime > 0 AND locktime < ?", $params);
+        foreach ($rs as $grade) {
+            $grade_grade = new grade_grade($grade, false);
+            $grade_grade->locked = time();
+            $grade_grade->update('locktime');
         }
+        $rs->close();
     }
 
     /**
