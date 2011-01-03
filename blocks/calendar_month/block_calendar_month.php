@@ -40,8 +40,6 @@ class block_calendar_month extends block_base {
             calendar_set_referring_course(0);
 
         } else {
-            //MDL-14693: fix calendar on resource page
-            $courseshown =  optional_param( 'id', $this->page->course->id, PARAM_INT );
             // Forcibly filter events to include only those from the particular course we are in.
             $filtercourse    = array($courseshown => $this->page->course);
             $groupeventsfrom = array($courseshown => 1);
