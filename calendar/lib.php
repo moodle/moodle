@@ -273,7 +273,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                 $dayhref->set_anchor('event_'.$event->id);
 
                 $popupcontent .= html_writer::start_tag('div');
-                $popupcontent .= $OUTPUT->pix_icon($popupicon, $popupalt);
+                $popupcontent .= $OUTPUT->pix_icon($popupicon, $popupalt, $component);
                 $popupcontent .= html_writer::link($dayhref, format_string($event->name, true));
                 $popupcontent .= html_writer::end_tag('div');
             }
