@@ -382,61 +382,76 @@ function xmldb_quiz_upgrade($oldversion) {
     if ($oldversion < 2010122300) {
         // Fix quiz in the post table after upgrade from 1.9
         $table = new xmldb_table('quiz');
-        
-        // questiondecimalpoints should be default -2
-        // Fixed in earlier upgrade code
-        $field = new xmldb_field('questiondecimalpoints', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, -2, 'decimalpoints');
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->change_field_default($table, $field);
+        $columns = $DB->get_columns('quiz');
+
+        if (array_key_exists('questiondecimalpoints', $columns) && $columns['questiondecimalpoints']->default_value != '-2') {
+            // questiondecimalpoints should be default -2
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('questiondecimalpoints', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, -2, 'decimalpoints');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
         }
-        
-        // sumgrades should be NOT NULL DEFAULT '0.0000000',
-        // Fixed in earlier upgrade code
-        $field = new xmldb_field('sumgrades', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'questions');
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->change_field_default($table, $field);
+
+        if (array_key_exists('sumgrades', $columns) && empty($columns['sumgrades']->not_null)) {
+            // sumgrades should be NOT NULL DEFAULT '0.0000000',
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('sumgrades', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'questions');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
         }
-        
-        // grade should be NOT NULL DEFAULT '0.0000000',
-        // Fixed in earlier upgrade code
-        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'sumgrades');
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->change_field_default($table, $field);
+
+        if (array_key_exists('grade', $columns) && empty($columns['grade']->not_null)) {
+            // grade should be NOT NULL DEFAULT '0.0000000',
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'sumgrades');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
         }
-        
+
         upgrade_mod_savepoint(true, 2010122300, 'quiz');
     }
     
     if ($oldversion < 2010122301) {
         // Fix quiz_attempts in the post table after upgrade from 1.9
         $table = new xmldb_table('quiz_attempts');
-        
-        // sumgrades should be NOT NULL DEFAULT '0.0000000',
-        // Fixed in earlier upgrade code
-        $field = new xmldb_field('sumgrades', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'attempt');
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->change_field_default($table, $field);
+        $columns = $DB->get_columns('quiz_attempts');
+
+        if (array_key_exists('sumgrades', $columns) && empty($columns['sumgrades']->not_null)) {
+            // sumgrades should be NOT NULL DEFAULT '0.0000000',
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('sumgrades', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'attempt');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
         }
-        
+
         upgrade_mod_savepoint(true, 2010122301, 'quiz');
     }
     
     if ($oldversion < 2010122302) {
         // Fix quiz_feedback in the post table after upgrade from 1.9
         $table = new xmldb_table('quiz_feedback');
-        
-        // mingrade should be NOT NULL DEFAULT '0.0000000',
-        // Fixed in earlier upgrade code
-        $field = new xmldb_field('mingrade', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'feedbacktextformat');
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->change_field_default($table, $field);
+        $columns = $DB->get_columns('quiz_feedback');
+
+        if (array_key_exists('mingrade', $columns) && empty($columns['mingrade']->not_null)) {
+            // mingrade should be NOT NULL DEFAULT '0.0000000',
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('mingrade', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'feedbacktextformat');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
         }
-        
-        // maxgrade should be NOT NULL DEFAULT '0.0000000',
-        // Fixed in earlier upgrade code
-        $field = new xmldb_field('maxgrade', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'mingrade');
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->change_field_default($table, $field);
+
+        if (array_key_exists('maxgrade', $columns) && empty($columns['maxgrade']->not_null)) {
+            // maxgrade should be NOT NULL DEFAULT '0.0000000',
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('maxgrade', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'mingrade');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
         }
         
         upgrade_mod_savepoint(true, 2010122302, 'quiz');
@@ -445,28 +460,34 @@ function xmldb_quiz_upgrade($oldversion) {
     if ($oldversion < 2010122303) {
         // Fix quiz_grades in the post table after upgrade from 1.9
         $table = new xmldb_table('quiz_grades');
-        
-        // grade should be NOT NULL DEFAULT '0.0000000',
-        // Fixed in earlier upgrade code
-        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'userid');
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->change_field_default($table, $field);
+        $columns = $DB->get_columns('quiz_grades');
+
+        if (array_key_exists('grade', $columns) && empty($columns['grade']->not_null)) {
+            // grade should be NOT NULL DEFAULT '0.0000000',
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, XMLDB_NOTNULL, null, '0', 'userid');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
         }
-        
+
         upgrade_mod_savepoint(true, 2010122303, 'quiz');
     }
     
     if ($oldversion < 2010122304) {
         // Fix quiz_question_instances in the post table after upgrade from 1.9
         $table = new xmldb_table('quiz_question_instances');
-        
-        // grade should be NOT NULL DEFAULT '0.0000000',
-        // Fixed in earlier upgrade code
-        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'question');
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->change_field_default($table, $field);
+        $columns = $DB->get_columns('quiz_question_instances');
+
+        if (array_key_exists('grade', $columns) && empty($columns['grade']->not_null)) {
+            // grade should be NOT NULL DEFAULT '0.0000000',
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'question');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
         }
-        
+
         upgrade_mod_savepoint(true, 2010122304, 'quiz');
     }
 
