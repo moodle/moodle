@@ -269,24 +269,21 @@ function message_get_contacts($user1=null, &$user2=null) {
                  GROUP BY $userfields
                  ORDER BY u.firstname ASC";
 
-    if ($rs = $DB->get_recordset_sql($contactsql, array($user1->id, $user1->id))){
-        foreach($rs as $rd){
+    $rs = $DB->get_recordset_sql($contactsql, array($user1->id, $user1->id));
+    foreach ($rs as $rd) {
+        if ($rd->lastaccess >= $timefrom) {
+            // they have been active recently, so are counted online
+            $onlinecontacts[] = $rd;
 
-            if($rd->lastaccess >= $timefrom){
-                // they have been active recently, so are counted online
-                $onlinecontacts[] = $rd;
-
-            }else{
-                $offlinecontacts[] = $rd;
-            }
-
-            if (!empty($user2) && $user2->id==$rd->id) {
-                $user2->iscontact = true;
-            }
+        } else {
+            $offlinecontacts[] = $rd;
         }
-        unset($rd);
-        $rs->close();
+
+        if (!empty($user2) && $user2->id==$rd->id) {
+            $user2->iscontact = true;
+        }
     }
+    $rs->close();
 
     // get messages from anyone who isn't in our contact list and count the number
     // of messages we have from each of them
@@ -298,13 +295,11 @@ function message_get_contacts($user1=null, &$user2=null) {
                   GROUP BY $userfields
                   ORDER BY u.firstname ASC";
 
-    if($rs = $DB->get_recordset_sql($strangersql, array($USER->id))){
-        foreach($rs as $rd){
-            $strangers[] = $rd;
-        }
-        unset($rd);
-        $rs->close();
+    $rs = $DB->get_recordset_sql($strangersql, array($USER->id));
+    foreach ($rs as $rd) {
+        $strangers[] = $rd;
     }
+    $rs->close();
 
     return array($onlinecontacts, $offlinecontacts, $strangers);
 }
