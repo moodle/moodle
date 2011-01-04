@@ -43,6 +43,21 @@ $messageproviders = array (
 
     'backup' => array (
         'capability'  => 'moodle/site:config'
+    ),
+
+    //course creation request notification
+    'courserequested' => array (
+        'capability'  => 'moodle/site:approvecourse'
+    ),
+
+    //course request approval notification
+    'courserequestapproved' => array (
+         'capability'  => 'moodle/course:request'
+    ),
+
+    //course request rejection notification
+    'courserequestrejected' => array (
+        'capability'  => 'moodle/course:request'
     )
 
 );

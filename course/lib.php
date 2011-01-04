@@ -4074,8 +4074,7 @@ class course_request {
      */
     protected function notify($touser, $fromuser, $name='courserequested', $subject, $message) {
         $eventdata = new stdClass();
-        $eventdata->modulename        = 'moodle';
-        $eventdata->component         = 'course';
+        $eventdata->component         = 'moodle';
         $eventdata->name              = $name;
         $eventdata->userfrom          = $fromuser;
         $eventdata->userto            = $touser;
@@ -4084,6 +4083,7 @@ class course_request {
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';
+        $eventdata->notification      = 1;
         message_send($eventdata);
     }
 }

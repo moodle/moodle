@@ -40,7 +40,10 @@ if (isguestuser()) {
 if (empty($CFG->enablecourserequests)) {
     print_error('courserequestdisabled', '', $returnurl);
 }
-require_capability('moodle/course:request', get_context_instance(CONTEXT_SYSTEM));
+
+$context = get_context_instance(CONTEXT_SYSTEM);
+require_capability('moodle/course:request', $context);
+$PAGE->set_context($context);
 
 /// Set up the form.
 $data = course_request::prepare();
