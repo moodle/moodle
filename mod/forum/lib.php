@@ -4504,10 +4504,11 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
 
         if ($fakelink) {
             $PAGE->requires->js('/mod/forum/forum.js');
-            $PAGE->requires->js_function_call('forum_produce_subscribe_link', Array($forum->id, $backtoindexlink, $linktext, $linktitle));
+            $PAGE->requires->js_function_call('forum_produce_subscribe_link', array($forum->id, $backtoindexlink, $linktext, $linktitle));
             $link = "<noscript>";
         }
-        $options ['id'] = $forum->id;
+        $options['id'] = $forum->id;
+        $options['sesskey'] = sesskey();
         $url = new moodle_url('/mod/forum/subscribe.php', $options);
         $link .= $OUTPUT->single_button($url, $linktext, 'get', array('title'=>$linktitle));
         if ($fakelink) {
@@ -7496,10 +7497,10 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
     if ($canmanage) {
         $mode = $forumnode->add(get_string('subscriptionmode', 'forum'), null, navigation_node::TYPE_CONTAINER);
 
-        $allowchoice = $mode->add(get_string('subscriptionoptional', 'forum'), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>'0')), navigation_node::TYPE_SETTING);
-        $forceforever = $mode->add(get_string("subscriptionforced", "forum"), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>'1')), navigation_node::TYPE_SETTING);
-        $forceinitially = $mode->add(get_string("subscriptionauto", "forum"), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>'2')), navigation_node::TYPE_SETTING);
-        $disallowchoice = $mode->add(get_string('subscriptiondisabled', 'forum'), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>'3')), navigation_node::TYPE_SETTING);
+        $allowchoice = $mode->add(get_string('subscriptionoptional', 'forum'), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>FORUM_CHOOSESUBSCRIBE, 'sesskey'=>sesskey())), navigation_node::TYPE_SETTING);
+        $forceforever = $mode->add(get_string("subscriptionforced", "forum"), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>FORUM_FORCESUBSCRIBE, 'sesskey'=>sesskey())), navigation_node::TYPE_SETTING);
+        $forceinitially = $mode->add(get_string("subscriptionauto", "forum"), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>FORUM_INITIALSUBSCRIBE, 'sesskey'=>sesskey())), navigation_node::TYPE_SETTING);
+        $disallowchoice = $mode->add(get_string('subscriptiondisabled', 'forum'), new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'mode'=>FORUM_DISALLOWSUBSCRIBE, 'sesskey'=>sesskey())), navigation_node::TYPE_SETTING);
 
         switch ($subscriptionmode) {
             case FORUM_CHOOSESUBSCRIBE : // 0
@@ -7544,7 +7545,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         } else {
             $linktext = get_string('subscribe', 'forum');
         }
-        $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id));
+        $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$forumobject->id, 'sesskey'=>sesskey()));
         $forumnode->add($linktext, $url, navigation_node::TYPE_SETTING);
     }
 
