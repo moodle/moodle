@@ -119,6 +119,7 @@
                                         
     /// Do course wide subscribe/unsubscribe
     if (!is_null($subscribe) and !isguestuser() and !isguest()) {
+        require_sesskey();
         foreach ($modinfo->instances['forum'] as $forumid=>$cm) {
             $forum = $forums[$forumid];
             $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id); 
@@ -387,9 +388,9 @@
     if (!isguest()) {
         print_box_start('subscription');
         echo '<span class="helplink">';
-        echo '<a href="index.php?id='.$course->id.'&amp;subscribe=1">'.get_string('allsubscribe', 'forum').'</a>';
+        echo '<a href="index.php?id='.$course->id.'&amp;subscribe=1&amp;sesskey='.sesskey().'">'.get_string('allsubscribe', 'forum').'</a>';
         echo '</span><br /><span class="helplink">';
-        echo '<a href="index.php?id='.$course->id.'&amp;subscribe=0">'.get_string('allunsubscribe', 'forum').'</a>';
+        echo '<a href="index.php?id='.$course->id.'&amp;subscribe=0&amp;sesskey='.sesskey().'">'.get_string('allunsubscribe', 'forum').'</a>';
         echo '</span>';
         print_box_end();
         print_box('&nbsp;', 'clearer');
