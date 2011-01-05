@@ -107,7 +107,13 @@ class block_navigation extends block_base {
         if (!empty($CFG->navcourselimit)) {
             $limit = $CFG->navcourselimit;
         }
-        $arguments = array('id'=>$this->instance->id, 'instance'=>$this->instance->id, 'candock'=>$this->instance_can_be_docked(), 'courselimit'=>$limit);
+        $arguments = array(
+            'id'             => $this->instance->id,
+            'instance'       => $this->instance->id,
+            'candock'        => $this->instance_can_be_docked(),
+            'courselimit'    => $limit,
+            'expansionlimit' => $this->config->expansionlimit
+        );
         $this->page->requires->yui_module(array('core_dock', 'moodle-block_navigation-navigation'), 'M.block_navigation.init_add_tree', array($arguments));
     }
 
