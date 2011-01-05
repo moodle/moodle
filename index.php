@@ -208,7 +208,7 @@
                             $subtext = get_string('subscribe', 'forum');
                         }
                         print_heading_block($newsforum->name);
-                        echo '<div class="subscribelink"><a href="mod/forum/subscribe.php?id='.$newsforum->id.'">'.$subtext.'</a></div>';
+                        echo '<div class="subscribelink"><a href="mod/forum/subscribe.php?id='.$newsforum->id.'&amp;sesskey='.sesskey().'">'.$subtext.'</a></div>';
                     } else {
                         print_heading_block($newsforum->name);
                     }

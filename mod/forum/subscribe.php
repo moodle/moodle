@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 //  Subscribe to or unsubscribe from a forum.
 
@@ -8,6 +8,7 @@
     $id = required_param('id',PARAM_INT);      // The forum to subscribe or unsubscribe to
     $force = optional_param('force','',PARAM_ALPHA);  // Force everyone to be subscribed to this forum?
     $user = optional_param('user',0,PARAM_INT);
+    $sesskey = optional_param('sesskey', null, PARAM_RAW);
 
     if (! $forum = get_record("forum", "id", $id)) {
         error("Forum ID was incorrect");
@@ -25,6 +26,7 @@
     }
 
     if ($user) {
+        require_sesskey();
         if (!has_capability('mod/forum:managesubscriptions', $context)) {
             error('You do not have the permission to subscribe/unsubscribe other people!');
         }
@@ -65,6 +67,7 @@
         : "view.php?f=$id";
 
     if ($force and has_capability('mod/forum:managesubscriptions', $context)) {
+        require_sesskey();
         if (forum_is_forcesubscribed($forum)) {
             forum_forcesubscribe($forum->id, 0);
             redirect($returnto, get_string("everyonecannowchoose", "forum"), 1);
@@ -81,7 +84,20 @@
     $info->name  = fullname($user);
     $info->forum = format_string($forum->name);
 
+    if ($user->id == $USER->id) {
+        $selflink = 'subscribe.php?id='.$id.'&amp;sesskey='.sesskey();
+    } else {
+        $selflink = 'subscribe.php?id='.$id.'&amp;user='.$user->id.'&amp;sesskey='.sesskey();
+    }
+
     if (forum_is_subscribed($user->id, $forum->id)) {
+        if (is_null($sesskey)) {    // we came here via link in email
+            $navigation = build_navigation('', $cm);
+            print_header($course->shortname, $course->fullname, $navigation, '', '', true, '', navmenu($course, $cm));
+            notice_yesno(get_string('confirmunsubscribe', 'forum', format_string($forum->name)), $selflink, $returnto);
+            print_footer($course);
+            exit;
+        }
         if (forum_unsubscribe($user->id, $forum->id)) {
             add_to_log($course->id, "forum", "unsubscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
             redirect($returnto, get_string("nownotsubscribed", "forum", $info), 1);
@@ -96,6 +112,13 @@
         }
         if (!has_capability('mod/forum:viewdiscussion', $context)) {
             error("Could not subscribe you to that forum", $_SERVER["HTTP_REFERER"]);
+        }
+        if (is_null($sesskey)) {    // we came here via link in email
+            $navigation = build_navigation('', $cm);
+            print_header($course->shortname, $course->fullname, $navigation, '', '', true, '', navmenu($course, $cm));
+            notice_yesno(get_string('confirmsubscribe', 'forum', format_string($forum->name)), $selflink, $returnto);
+            print_footer($course);
+            exit;
         }
         if (forum_subscribe($user->id, $forum->id) ) {
             add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
