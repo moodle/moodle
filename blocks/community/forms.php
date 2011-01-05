@@ -131,7 +131,7 @@ class community_hub_search_form extends moodleform {
             }
         }
         if (!empty($additionalhubs)) {
-            $hubs = $hubs + $additionalhubs;
+            $hubs = array_merge($hubs, $additionalhubs);
         }
 
         if (!empty($hubs)) {
@@ -174,7 +174,7 @@ class community_hub_search_form extends moodleform {
                                     array('class' => $hub['trusted'] ? 'hubtrusted' : 'hubnottrusted'));
                 } else {
                     $hubdescription = html_writer::tag('a', $hub['name'],
-                                    array('class' => 'hublink', 'href' => $hub['url']));
+                                    array('class' => 'hublink hubtrusted', 'href' => $hub['url']));
                 }
 
                 if (empty($firsthub)) {
