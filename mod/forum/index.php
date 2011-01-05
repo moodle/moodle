@@ -31,6 +31,7 @@ $subscribe = optional_param('subscribe', null, PARAM_INT);  // Subscribe/Unsubsc
 
 $url = new moodle_url('/mod/forum/index.php', array('id'=>$id));
 if ($subscribe !== null) {
+    require_sesskey();
     $url->param('subscribe', $subscribe);
 }
 $PAGE->set_url($url);
@@ -410,11 +411,14 @@ echo $OUTPUT->header();
 
 if (!isguestuser()) {
     echo $OUTPUT->box_start('subscription');
-    echo '<span class="helplink">';
-    echo '<a href="index.php?id='.$course->id.'&amp;subscribe=1">'.get_string('allsubscribe', 'forum').'</a>';
-    echo '</span><br /><span class="helplink">';
-    echo '<a href="index.php?id='.$course->id.'&amp;subscribe=0">'.get_string('allunsubscribe', 'forum').'</a>';
-    echo '</span>';
+    echo html_writer::tag('div',
+        html_writer::link(new moodle_url('/mod/forum/index.php', array('id'=>$course->id, 'subscribe'=>1, 'sesskey'=>sesskey())),
+            get_string('allsubscribe', 'forum')),
+        array('class'=>'helplink'));
+    echo html_writer::tag('div',
+        html_writer::link(new moodle_url('/mod/forum/index.php', array('id'=>$course->id, 'subscribe'=>0, 'sesskey'=>sesskey())),
+            get_string('allunsubscribe', 'forum')),
+        array('class'=>'helplink'));
     echo $OUTPUT->box_end();
     echo $OUTPUT->box('&nbsp;', 'clearer');
 }
