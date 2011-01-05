@@ -333,24 +333,33 @@ class grade_report_grader extends grade_report {
     public function load_users() {
         global $CFG, $DB;
 
-        list($usql, $gbrparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
+        //limit to users with a gradeable role
+        list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
+        //limit to users with an active enrollment
+        list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
+
+        //fields we need from the user table
+        $userfields = user_picture::fields('u', array('idnumber'));	
+
+        //if the user has clicked one of the sort asc/desc arrows
         if (is_numeric($this->sortitemid)) {
-            $params = array_merge(array('gitemid'=>$this->sortitemid), $gbrparams, $this->groupwheresql_params);
+            $params = array_merge(array('gitemid'=>$this->sortitemid), $gradebookrolesparams, $this->groupwheresql_params, $enrolledparams);
             // the MAX() magic is required in order to please PG
             $sort = "MAX(g.finalgrade) $this->sortorder";
 
-            $ufields = user_picture::fields('u', array('idnumber'));
-            $sql = "SELECT $ufields
-                      FROM {user} u
-                           JOIN {role_assignments} ra ON ra.userid = u.id
-                           $this->groupsql
-                           LEFT JOIN {grade_grades} g ON (g.userid = u.id AND g.itemid = :gitemid)
-                     WHERE ra.roleid $usql AND u.deleted = 0
-                           $this->groupwheresql
-                           AND ra.contextid ".get_related_contexts_string($this->context)."
-                  GROUP BY $ufields
-                  ORDER BY $sort";
+            $sql = "SELECT $userfields
+                    FROM {user} u
+                        JOIN ($enrolledsql) je ON je.id = u.id
+                        JOIN {role_assignments} ra ON ra.userid = u.id
+                        $this->groupsql
+                        LEFT JOIN {grade_grades} g ON (g.userid = u.id AND g.itemid = :gitemid)
+                    WHERE ra.roleid $gradebookrolessql
+                        AND u.deleted = 0
+                        AND ra.contextid ".get_related_contexts_string($this->context)."
+                        $this->groupwheresql
+                    GROUP BY $userfields
+                    ORDER BY $sort";
 
         } else {
             switch($this->sortitemid) {
@@ -363,17 +372,18 @@ class grade_report_grader extends grade_report {
                     $sort = "u.idnumber $this->sortorder"; break;
             }
 
-            $params = array_merge($gbrparams, $this->groupwheresql_params);
+            $params = array_merge($gradebookrolesparams, $this->groupwheresql_params, $enrolledparams);
 
-            $userfields = user_picture::fields('u', array('idnumber'));
             $sql = "SELECT DISTINCT $userfields
-                      FROM {user} u
-                           JOIN {role_assignments} ra ON u.id = ra.userid
-                           $this->groupsql
-                     WHERE ra.roleid $usql AND u.deleted = 0
-                           $this->groupwheresql
-                           AND ra.contextid ".get_related_contexts_string($this->context)."
-                  ORDER BY $sort";
+                    FROM {user} u
+                        JOIN ($enrolledsql) je ON je.id = u.id
+                        JOIN {role_assignments} ra ON u.id = ra.userid
+                        $this->groupsql
+                    WHERE ra.roleid $gradebookrolessql 
+                        AND u.deleted = 0
+                        AND ra.contextid ".get_related_contexts_string($this->context)."
+                        $this->groupwheresql
+                    ORDER BY $sort";
         }
 
 
