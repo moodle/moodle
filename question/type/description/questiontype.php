@@ -67,10 +67,13 @@ class description_qtype extends default_questiontype {
         // For editing teachers print a link to an editing popup window
         $editlink = $this->get_question_edit_link($question, $cmoptions, $options);
 
+        $context = $this->get_context_by_category_id($question->category);
+        $question->questiontext = quiz_rewrite_question_urls($question->questiontext, 'pluginfile.php', $context->id, 'question', 'questiontext', array($state->attempt, $state->question), $question->id);
         $questiontext = $this->format_text($question->questiontext, $question->questiontextformat, $cmoptions);
 
         $generalfeedback = '';
         if ($isfinished && $options->generalfeedback) {
+            $question->generalfeedback = quiz_rewrite_question_urls($question->generalfeedback, 'pluginfile.php', $context->id, 'question', 'generalfeedback', array($state->attempt, $state->question), $question->id);
             $generalfeedback = $this->format_text($question->generalfeedback,
                     $question->generalfeedbackformat, $cmoptions);
         }
