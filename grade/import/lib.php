@@ -163,7 +163,11 @@ function get_unenrolled_users_in_import($importcode, $courseid) {
     global $CFG, $DB;
     $relatedctxcondition = get_related_contexts_string(get_context_instance(CONTEXT_COURSE, $courseid));
 
-    list($usql, $params) = $DB->get_in_or_equal(explode(',', $CFG->gradebookroles));
+    //users with a gradeable role
+    list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $CFG->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
+
+    //enrolled users
+    list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
 
     $sql = "SELECT giv.id, u.firstname, u.lastname, u.idnumber AS useridnumber,
                 COALESCE(gi.idnumber, gin.itemname) AS gradeidnumber
@@ -171,16 +175,17 @@ function get_unenrolled_users_in_import($importcode, $courseid) {
                 {grade_import_values} giv
                 JOIN {user} u ON giv.userid = u.id
                 LEFT JOIN {grade_items} gi ON gi.id = giv.itemid
-                LEFT JOIN {grade_import_newitem} gin ON gin.id = giv.newgradeitem
+                LEFT JOIN {grade_import_newitem} gin ON gin.id = giv.newgradeitem                
+                LEFT JOIN ($enrolledsql) je ON je.id = u.id
                 LEFT JOIN {role_assignments} ra ON (giv.userid = ra.userid AND
-                    ra.roleid $usql AND
+                    ra.roleid $gradebookrolessql AND
                     ra.contextid $relatedctxcondition)
                 WHERE giv.importcode = ?
-                    AND ra.id IS NULL
+                    AND (ra.id IS NULL OR je.id IS NULL)
                 ORDER BY gradeidnumber, u.lastname, u.firstname";
     $params[] = $importcode;
 
-    return $DB->get_records_sql($sql, $params);
+    return $DB->get_records_sql($sql, array_merge($gradebookrolesparams, $enrolledparams));
 }
 
 /**
