@@ -1279,20 +1279,25 @@ class grade_report_grader extends grade_report {
 
         $totalcount = $this->get_numusers($grouponly);
 
-        list($usql, $rolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
+        //limit to users with a gradeable role
+        list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
+
+        //limit to users with an active enrollment
+        list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
 
         if ($showaverages) {
-            $params = array_merge(array('courseid'=>$this->courseid), $rolesparams, $groupwheresqlparams);
+            $params = array_merge(array('courseid'=>$this->courseid), $gradebookrolesparams, $enrolledparams, $groupwheresqlparams);
 
             // find sums of all grade items in course
             $SQL = "SELECT g.itemid, SUM(g.finalgrade) AS sum
                       FROM {grade_items} gi
                            JOIN {grade_grades} g      ON g.itemid = gi.id
                            JOIN {user} u              ON u.id = g.userid
+                           JOIN ($enrolledsql) je ON je.id = u.id
                            JOIN {role_assignments} ra ON ra.userid = u.id
                            $groupsql
                      WHERE gi.courseid = :courseid
-                           AND ra.roleid $usql
+                           AND ra.roleid $gradebookrolessql
                            AND ra.contextid ".get_related_contexts_string($this->context)."
                            AND g.finalgrade IS NOT NULL
                            $groupwheresql
@@ -1306,15 +1311,16 @@ class grade_report_grader extends grade_report {
 
             // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
             // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
-            $params = array_merge(array('courseid'=>$this->courseid), $rolesparams, $groupwheresqlparams);
+            $params = array_merge(array('courseid'=>$this->courseid), $params);
             $SQL = "SELECT gi.id, COUNT(u.id) AS count
                       FROM {grade_items} gi
                            CROSS JOIN {user} u
+                           JOIN ($enrolledsql) je ON je.id = u.id
                            JOIN {role_assignments} ra        ON ra.userid = u.id
                            LEFT OUTER JOIN  {grade_grades} g ON (g.itemid = gi.id AND g.userid = u.id AND g.finalgrade IS NOT NULL)
                            $groupsql
                      WHERE gi.courseid = :courseid
-                           AND ra.roleid $usql
+                           AND ra.roleid $gradebookrolessql
                            AND ra.contextid ".get_related_contexts_string($this->context)."
                            AND g.id IS NULL
                            $groupwheresql
