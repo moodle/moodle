@@ -205,13 +205,60 @@ class user_picture implements renderable {
                 if ($e === 'id' or isset($fields[$e])) {
                     continue;
                 }
-                $fields[$e] = $tableprefix.$e;
+                if ($fieldprefix) {
+                    $fields[$e] = "$tableprefix$e AS $fieldprefix$e";
+                } else {
+                    $fields[$e] = "$tableprefix$e";
+                }
             }
         }
         return implode(',', $fields);
     }
-}
 
+    /**
+     * Extract the aliased user fields from a given record
+     *
+     * Given a record that was previously obtained using {@link self::fields()} with aliases,
+     * this method extracts user related unaliased fields.
+     *
+     * @param stdClass $record containing user picture fields
+     * @param array $extrafields extra fields included in the $record
+     * @param string $idalias alias of the id field
+     * @param string $fieldprefix prefix added to all columns in their aliases, does not apply to 'id'
+     * @return stdClass object with unaliased user fields
+     */
+    public static function unalias(stdClass $record, array $extrafields=null, $idalias='id', $fieldprefix='') {
+
+        if (empty($idalias)) {
+            $idalias = 'id';
+        }
+
+        $return = new stdClass();
+
+        foreach (self::$fields as $field) {
+            if ($field === 'id') {
+                if (isset($record->{$idalias})) {
+                    $return->id = $record->{$idalias};
+                }
+            } else {
+                if (isset($record->{$fieldprefix.$field})) {
+                    $return->{$field} = $record->{$fieldprefix.$field};
+                }
+            }
+        }
+        // add extra fields if not already there
+        if ($extrafields) {
+            foreach ($extrafields as $e) {
+                if ($e === 'id' or isset($return->{$e})) {
+                    continue;
+                }
+                $return->{$e} = $record->{$fieldprefix.$e};
+            }
+        }
+
+        return $return;
+    }
+}
 
 /**
  * Data structure representing a help icon.
