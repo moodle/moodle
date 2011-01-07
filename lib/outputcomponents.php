@@ -177,9 +177,10 @@ class user_picture implements renderable {
      * @param string $tableprefix name of database table prefix in query
      * @param array $extrafields extra fields to be included in result (do not include TEXT columns because it would break SELECT DISTINCT in MSSQL and ORACLE)
      * @param string $idalias alias of id field
+     * @param string $fieldprefix prefix to add to all columns in their aliases, does not apply to 'id'
      * @return string
      */
-    public static function fields($tableprefix = '', array $extrafields = NULL, $idalias = 'id') {
+    public static function fields($tableprefix = '', array $extrafields = NULL, $idalias = 'id', $fieldprefix = '') {
         if (!$tableprefix and !$extrafields and !$idalias) {
             return implode(',', self::$fields);
         }
@@ -191,7 +192,11 @@ class user_picture implements renderable {
             if ($field === 'id' and $idalias and $idalias !== 'id') {
                 $fields[$field] = "$tableprefix$field AS $idalias";
             } else {
-                $fields[$field] = $tableprefix.$field;
+                if ($fieldprefix and $field !== 'id') {
+                    $fields[$field] = "$tableprefix$field AS $fieldprefix$field";
+                } else {
+                    $fields[$field] = "$tableprefix$field";
+                }
             }
         }
         // add extra fields if not already there
