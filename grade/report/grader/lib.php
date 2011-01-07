@@ -1311,7 +1311,6 @@ class grade_report_grader extends grade_report {
 
             // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
             // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
-            $params = array_merge(array('courseid'=>$this->courseid), $params);
             $SQL = "SELECT gi.id, COUNT(u.id) AS count
                       FROM {grade_items} gi
                            CROSS JOIN {user} u
