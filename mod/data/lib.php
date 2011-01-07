@@ -361,13 +361,14 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
             $conditions = array('fieldid'=>$this->field->id);
         }
 
-        if ($rs = $DB->get_recordset('data_content', $conditions)) {
+        $rs = $DB->get_recordset('data_content', $conditions);
+        if ($rs->valid()) {
             $fs = get_file_storage();
             foreach ($rs as $content) {
                 $fs->delete_area_files($this->context->id, 'mod_data', 'content', $content->id);
             }
-            $rs->close();
         }
+        $rs->close();
 
         return $DB->delete_records('data_content', $conditions);
     }
@@ -1071,7 +1072,8 @@ function data_upgrade_grades() {
     $sql = "SELECT d.*, cm.idnumber AS cmidnumber, d.course AS courseid
               FROM {data} d, {course_modules} cm, {modules} m
              WHERE m.name='data' AND m.id=cm.module AND cm.instance=d.id";
-    if ($rs = $DB->get_recordset_sql($sql)) {
+    $rs = $DB->get_recordset_sql($sql);
+    if ($rs->valid()) {
         // too much debug output
         $pbar = new progress_bar('dataupgradegrades', 500, true);
         $i=0;
@@ -1081,8 +1083,8 @@ function data_upgrade_grades() {
             data_update_grades($data, 0, false);
             $pbar->update($i, $count, "Updating Database grades ($i/$count).");
         }
-        $rs->close();
     }
+    $rs->close();
 }
 
 /**
@@ -2448,39 +2450,38 @@ function data_reset_userdata($data) {
         $course_context = get_context_instance(CONTEXT_COURSE, $data->courseid);
         $notenrolled = array();
         $fields = array();
-        if ($rs = $DB->get_recordset_sql($recordssql, array($data->courseid))) {
-            foreach ($rs as $record) {
-                if (array_key_exists($record->userid, $notenrolled) or !$record->userexists or $record->userdeleted
-                  or !is_enrolled($course_context, $record->userid)) {
-                    //delete ratings
-                    if (!$cm = get_coursemodule_from_instance('data', $record->dataid)) {
-                        continue;
-                    }
-                    $datacontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-                    $ratingdeloptions->contextid = $datacontext->id;
-                    $ratingdeloptions->itemid = $record->id;
-                    $rm->delete_ratings($ratingdeloptions);
-
-                    $DB->delete_records('comments', array('itemid'=>$record->id, 'commentarea'=>'database_entry'));
-                    $DB->delete_records('data_content', array('recordid'=>$record->id));
-                    $DB->delete_records('data_records', array('id'=>$record->id));
-                    // HACK: this is ugly - the recordid should be before the fieldid!
-                    if (!array_key_exists($record->dataid, $fields)) {
-                        if ($fs = $DB->get_records('data_fields', array('dataid'=>$record->dataid))) {
-                            $fields[$record->dataid] = array_keys($fs);
-                        } else {
-                            $fields[$record->dataid] = array();
-                        }
-                    }
-                    foreach($fields[$record->dataid] as $fieldid) {
-                        fulldelete("$CFG->dataroot/$data->courseid/moddata/data/$record->dataid/$fieldid/$record->id");
-                    }
-                    $notenrolled[$record->userid] = true;
+        $rs = $DB->get_recordset_sql($recordssql, array($data->courseid));
+        foreach ($rs as $record) {
+            if (array_key_exists($record->userid, $notenrolled) or !$record->userexists or $record->userdeleted
+              or !is_enrolled($course_context, $record->userid)) {
+                //delete ratings
+                if (!$cm = get_coursemodule_from_instance('data', $record->dataid)) {
+                    continue;
                 }
+                $datacontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+                $ratingdeloptions->contextid = $datacontext->id;
+                $ratingdeloptions->itemid = $record->id;
+                $rm->delete_ratings($ratingdeloptions);
+
+                $DB->delete_records('comments', array('itemid'=>$record->id, 'commentarea'=>'database_entry'));
+                $DB->delete_records('data_content', array('recordid'=>$record->id));
+                $DB->delete_records('data_records', array('id'=>$record->id));
+                // HACK: this is ugly - the recordid should be before the fieldid!
+                if (!array_key_exists($record->dataid, $fields)) {
+                    if ($fs = $DB->get_records('data_fields', array('dataid'=>$record->dataid))) {
+                        $fields[$record->dataid] = array_keys($fs);
+                    } else {
+                        $fields[$record->dataid] = array();
+                    }
+                }
+                foreach($fields[$record->dataid] as $fieldid) {
+                    fulldelete("$CFG->dataroot/$data->courseid/moddata/data/$record->dataid/$fieldid/$record->id");
+                }
+                $notenrolled[$record->userid] = true;
             }
-            $rs->close();
-            $status[] = array('component'=>$componentstr, 'item'=>get_string('deletenotenrolled', 'data'), 'error'=>false);
         }
+        $rs->close();
+        $status[] = array('component'=>$componentstr, 'item'=>get_string('deletenotenrolled', 'data'), 'error'=>false);
     }
 
     // remove all ratings
