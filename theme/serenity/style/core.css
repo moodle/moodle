@@ -124,6 +124,9 @@ a:hover {
 
 .course-content .current {
     background: #9ca7b4;
+}
+
+.course-content .current .left {
     color: #fff;
 }
 

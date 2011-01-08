@@ -126,6 +126,9 @@ fieldset#general {
 
 .course-content .current {
     background: #f14e16;
+}
+
+.course-content .current .left {
     color: #fff;
 }
 
