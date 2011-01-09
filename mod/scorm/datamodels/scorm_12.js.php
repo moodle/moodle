@@ -421,7 +421,7 @@ function SCORMapi1_2() {
                     }
                 ?>
                 result = ('true' == result) ? 'true' : 'false';
-                errorCode = (result ==' true')? '0' : '101';
+                errorCode = (result =='true')? '0' : '101';
                 <?php 
                     if (debugging('',DEBUG_DEVELOPER)) {
                         //echo 'alert("Finished SCORM 1.2");';
