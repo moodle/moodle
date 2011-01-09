@@ -39,7 +39,9 @@ class blog_preferences_form extends moodleform {
         $strpagesize = get_string('pagesize', 'blog');
 
         $mform->addElement('text', 'pagesize', $strpagesize);
-        $mform->setDefault('pagesize', get_user_preferences('pagesize'));
+        $mform->setType('pagesize', PARAM_INT);
+        $mform->addRule('pagesize', null, 'numeric', null, 'client');
+        $mform->setDefault('pagesize', 10);
 
         $this->add_action_buttons();
     }
