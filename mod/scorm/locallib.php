@@ -723,13 +723,13 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     if (empty($organization)) {
         $organization = $scorm->launch;
     }
-    if ($orgs = $DB->get_records_select('scorm_scoes', 'scorm = ? AND '.
+    if ($orgs = $DB->get_records_select_menu('scorm_scoes', 'scorm = ? AND '.
                                          $DB->sql_isempty('scorm_scoes', 'launch', false, true).' AND '.
                                          $DB->sql_isempty('scorm_scoes', 'organization', false, false),
                                          array($scorm->id),'id','id,title')) {
         if (count($orgs) > 1) {
             $select = new single_select(new moodle_url($action), 'organization', $orgs, $organization, null);
-            $select->lable = get_string('organizations','scorm');
+            $select->label = get_string('organizations','scorm');
             $select->class = 'scorm-center';
             echo $OUTPUT->render($select);
         }
