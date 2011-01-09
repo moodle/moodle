@@ -198,6 +198,7 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
     /// Of course, you can't be stopped if you are an editting teacher! =)
 
         if (data_atmaxentries($data) and !has_capability('mod/data:manageentries',$context)){
+            echo $OUTPUT->header();
             echo $OUTPUT->notification(get_string('atmaxentry','data'));
             echo $OUTPUT->footer();
             exit;
