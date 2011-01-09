@@ -433,7 +433,7 @@
         echo $OUTPUT->single_button(new moodle_url('edit.php', $options), get_string('addnewcourse'), 'get');
     }
 
-    if (!empty($CFG->enablecourserequests) && $category->id == $CFG->enablecourserequests) {
+    if (!empty($CFG->enablecourserequests) && $category->id == $CFG->defaultrequestcategory) {
         print_course_request_buttons(get_context_instance(CONTEXT_SYSTEM));
     }
     echo '</div>';
