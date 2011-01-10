@@ -16,53 +16,59 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Subscribe to or unsubscribe from a forum.
+ * Subscribe to or unsubscribe from a forum or manage forum subscription mode
  *
- * @package mod-forum
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * This script can be used by either individual users to subscribe to or
+ * unsubscribe from a forum (no 'mode' param provided), or by forum managers
+ * to control the subscription mode (by 'mode' param).
+ * This script can be called from a link in email so the sesskey is not
+ * required parameter. However, if sesskey is missing, the user has to go
+ * through a confirmation page that redirects the user back with the
+ * sesskey.
+ *
+ * @package    mod
+ * @subpackage forum
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("../../config.php");
-require_once("lib.php");
+require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require_once($CFG->dirroot.'/mod/forum/lib.php');
 
-$id = required_param('id',PARAM_INT);      // The forum to subscribe or unsubscribe to
-$mode = optional_param('mode',false,PARAM_INT);  // Force everyone to be subscribed to this forum?
-$user = optional_param('user',0,PARAM_INT);
+$id      = required_param('id', PARAM_INT);             // the forum to subscribe or unsubscribe to
+$mode    = optional_param('mode', null, PARAM_INT);     // the forum's subscription mode
+$user    = optional_param('user', 0, PARAM_INT);        // userid of the user to subscribe, defaults to $USER
+$sesskey = optional_param('sesskey', null, PARAM_RAW);  // sesskey
 
 $url = new moodle_url('/mod/forum/subscribe.php', array('id'=>$id));
-if ($mode !== '') {
+if (!is_null($mode)) {
     $url->param('mode', $mode);
 }
 if ($user !== 0) {
     $url->param('user', $user);
 }
+if (!is_null($sesskey)) {
+    $url->param('sesskey', $sesskey);
+}
 $PAGE->set_url($url);
 
-if (! $forum = $DB->get_record("forum", array("id" => $id))) {
-    print_error('invalidforumid', 'forum');
-}
-
-if (! $course = $DB->get_record("course", array("id" => $forum->course))) {
-    print_error('invalidcoursemodule');
-}
-
-$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id, false, MUST_EXIST);
+$forum   = $DB->get_record('forum', array('id' => $id), '*', MUST_EXIST);
+$course  = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
+$cm      = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 if ($user) {
+    require_sesskey();
     if (!has_capability('mod/forum:managesubscriptions', $context)) {
         print_error('nopermissiontosubscribe', 'forum');
     }
-    if (!$user = $DB->get_record("user", array("id" => $user))) {
-        print_error('invaliduserid');
-    }
+    $user = $DB->get_record('user', array('id' => $user), MUST_EXIST);
 } else {
     $user = $USER;
 }
 
 if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
-    $groupmode =  $cm->groupmode;
+    $groupmode = $cm->groupmode;
 } else {
     $groupmode = $course->groupmode;
 }
@@ -74,7 +80,7 @@ if ($groupmode && !forum_is_subscribed($user->id, $forum) && !has_capability('mo
 
 require_login($course->id, false, $cm);
 
-if (!is_enrolled($context)) {   // Guests and visitors can't subscribe - only enrolled
+if (is_null($mode) and !is_enrolled($context)) {   // Guests and visitors can't subscribe - only enrolled
     $PAGE->set_title($course->shortname);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
@@ -88,7 +94,8 @@ $returnto = optional_param('backtoindex',0,PARAM_INT)
     ? "index.php?id=".$course->id
     : "view.php?f=$id";
 
-if ($mode !== false && has_capability('mod/forum:managesubscriptions', $context)) {
+if (!is_null($mode) and has_capability('mod/forum:managesubscriptions', $context)) {
+    require_sesskey();
     switch ($mode) {
         case FORUM_CHOOSESUBSCRIBE : // 0
             forum_forcesubscribe($forum->id, 0);
@@ -119,6 +126,16 @@ $info->name  = fullname($user);
 $info->forum = format_string($forum->name);
 
 if (forum_is_subscribed($user->id, $forum->id)) {
+    if (is_null($sesskey)) {    // we came here via link in email
+        $PAGE->set_title($course->shortname);
+        $PAGE->set_heading($course->fullname);
+        echo $OUTPUT->header();
+        echo $OUTPUT->confirm(get_string('confirmunsubscribe', 'forum', format_string($forum->name)),
+                new moodle_url($PAGE->url, array('sesskey' => sesskey())), new moodle_url('/mod/forum/view.php', array('f' => $id)));
+        echo $OUTPUT->footer();
+        exit;
+    }
+    require_sesskey();
     if (forum_unsubscribe($user->id, $forum->id)) {
         add_to_log($course->id, "forum", "unsubscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
         redirect($returnto, get_string("nownotsubscribed", "forum", $info), 1);
@@ -134,6 +151,16 @@ if (forum_is_subscribed($user->id, $forum->id)) {
     if (!has_capability('mod/forum:viewdiscussion', $context)) {
         print_error('noviewdiscussionspermission', 'forum', $_SERVER["HTTP_REFERER"]);
     }
+    if (is_null($sesskey)) {    // we came here via link in email
+        $PAGE->set_title($course->shortname);
+        $PAGE->set_heading($course->fullname);
+        echo $OUTPUT->header();
+        echo $OUTPUT->confirm(get_string('confirmsubscribe', 'forum', format_string($forum->name)),
+                new moodle_url($PAGE->url, array('sesskey' => sesskey())), new moodle_url('/mod/forum/view.php', array('f' => $id)));
+        echo $OUTPUT->footer();
+        exit;
+    }
+    require_sesskey();
     forum_subscribe($user->id, $forum->id);
     add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
     redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
