@@ -31,27 +31,56 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 #categoryquestions th { padding: 0 0.2em; }
 .questionbank .singleselect { margin: 0; }
 
-.que {text-align: left;margin: 0 auto 1.8em auto;border: 1px solid;}
-.que .info {float: left;margin: 0.5em 0;width: 11.9%;}
-.que .info h2 {margin: 0 0 0 0.64em;}
-.que .info div {margin-left: 1em;}
+/* Question editing form */
+#combinedfeedbackhdr div.fhtmleditor {padding: 0;}
+#combinedfeedbackhdr div.fcheckbox {margin-bottom: 1em;}
+
+.que {text-align: left;margin: 0 auto 1.8em auto;}
+
+.que .info {float: left;width: 6em;padding:0.5em;margin-bottom: 1.8em;background: #eee;}
+.que h2.no {margin: 0;font-size: 0.8em;line-height: 1;}
+.que span.qno {font-size: 1.5em;font-weight:bold;}
+.que .state,
+.que .grade {font-size: 0.8em; margin-top: 0.7em;}
 .que .info .questionflag {margin-top: 1em;margin-right: 1em;text-align: center;}
 
+.que .content {margin: 0 0 0 7.5em;}
+
+.que .formulation,
+.que .outcome,
+.que .comment,
+.que .history {padding: 0.5em;margin: 0 0 0.5em;}
+.que .formulation {background: #e4f1fa;}
+.que .outcome {background: #fff3bf;}
+.que .comment {background: #e0ffe0;}
+.que .history {background: #eee;}
+
 .que .ablock {margin: 0.7em 0 0.3em 0;}
-.que .answer {float: left;width: 83%;margin-bottom: 0.5em;}
-.que .content {float: left;margin: 0.5em 0;width: 88%;}
-.que .control {width: 5%;}
-.que .feedback {clear: both;padding: 0 0 0.3em 0.3em;margin-bottom: 0.5em;border: 1px solid;}
+.que .im-controls {margin-top: 0.5em;text-align: left;}
+
+.que .specificfeedback,
+.que .generalfeedback,
+.que .rightanswer,
+.que .im-feedback,
+.que .feedback,
+.que p {margin: 0 0 0.5em;}
 .que .prompt {float: left;width: 15%;height: 2em;padding-top: 0.3em;}
 .que .qtext {margin-bottom: 1.5em;}
 .que .submit {position: relative;clear: both;float: left;}
 
+.que .correct {background-color: #afa;}
+.que .notanswered,
+.que .incorrect {background-color: #faa;}
+.que .partiallycorrect {background-color: #ff9;}
+.que .validationerror {color: #a00;}
 .que .grading,
 .que .comment,
 .que .commentlink,
-.que .generalfeedback,
 .que .history {margin-top: 0.5em;}
-.que .grade {margin-top: 0.5em;}
+
+.que .history h3 {margin: 0 0 0.2em;font-size: 1em;}
+.que .history table {width: 100%;margin: 0;}
+.que .history .current {font-weight: bold;}
 
 .que.description .info {margin: 0.5em 0 0.5em 0.2em;width: 1em;}
 .que.description .content,
@@ -65,18 +94,19 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 
 .calculated .answer,
 .numerical .answer,
-.shortanswer .answer {padding: 0.3em;width: auto;}
+.shortanswer .answer {padding: 0.3em;width: auto;display: inline;}
 
 .calculated .answer input,
 .numerical .answer input,
 .shortanswer .answer input {width: 99%;}
 
-.truefalse .answer span {float: left;clear: left;padding: 0.3em;width: 100%;}
+.multichoice .answer span.r0,
+.multichoice .answer span.r1,
+.truefalse .answer span.r0,
+.truefalse .answer span.r1 {display: block;padding: 0.3em;}
 
 .importerror {margin-top: 10px;border-bottom: 1px solid #555;}
 .mform .que.comment .fitemtitle {width: 20%;}
-
-.essay .feedback {border-style: none;}
 
 /**** GRRRRR ***/
 /* MSIE Hack */
