@@ -349,17 +349,17 @@ class grade_report_grader extends grade_report {
             $sort = "MAX(g.finalgrade) $this->sortorder";
 
             $sql = "SELECT $userfields
-                    FROM {user} u
-                        JOIN ($enrolledsql) je ON je.id = u.id
-                        JOIN {role_assignments} ra ON ra.userid = u.id
-                        $this->groupsql
-                        LEFT JOIN {grade_grades} g ON (g.userid = u.id AND g.itemid = :gitemid)
-                    WHERE ra.roleid $gradebookrolessql
-                        AND u.deleted = 0
-                        AND ra.contextid ".get_related_contexts_string($this->context)."
-                        $this->groupwheresql
-                    GROUP BY $userfields
-                    ORDER BY $sort";
+                      FROM {user} u
+                           JOIN ($enrolledsql) je ON je.id = u.id
+                           JOIN {role_assignments} ra ON ra.userid = u.id
+                           $this->groupsql
+                           LEFT JOIN {grade_grades} g ON (g.userid = u.id AND g.itemid = :gitemid)
+                     WHERE ra.roleid $gradebookrolessql
+                           AND u.deleted = 0
+                           AND ra.contextid ".get_related_contexts_string($this->context)."
+                           $this->groupwheresql
+                  GROUP BY $userfields
+                  ORDER BY $sort";
 
         } else {
             switch($this->sortitemid) {
@@ -375,15 +375,15 @@ class grade_report_grader extends grade_report {
             $params = array_merge($gradebookrolesparams, $this->groupwheresql_params, $enrolledparams);
 
             $sql = "SELECT DISTINCT $userfields
-                    FROM {user} u
-                        JOIN ($enrolledsql) je ON je.id = u.id
-                        JOIN {role_assignments} ra ON u.id = ra.userid
-                        $this->groupsql
-                    WHERE ra.roleid $gradebookrolessql 
-                        AND u.deleted = 0
-                        AND ra.contextid ".get_related_contexts_string($this->context)."
-                        $this->groupwheresql
-                    ORDER BY $sort";
+                      FROM {user} u
+                           JOIN ($enrolledsql) je ON je.id = u.id
+                           JOIN {role_assignments} ra ON u.id = ra.userid
+                           $this->groupsql
+                     WHERE ra.roleid $gradebookrolessql 
+                           AND u.deleted = 0
+                           AND ra.contextid ".get_related_contexts_string($this->context)."
+                           $this->groupwheresql
+                  ORDER BY $sort";
         }
 
 

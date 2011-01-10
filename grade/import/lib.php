@@ -181,11 +181,11 @@ function get_unenrolled_users_in_import($importcode, $courseid) {
                 LEFT JOIN {role_assignments} ra ON (giv.userid = ra.userid AND
                     ra.roleid $gradebookrolessql AND
                     ra.contextid $relatedctxcondition)
-                WHERE giv.importcode = ?
+                WHERE giv.importcode = :importcode
                     AND (ra.id IS NULL OR je.id IS NULL)
                 ORDER BY gradeidnumber, u.lastname, u.firstname";
     $params = array_merge($gradebookrolesparams, $enrolledparams);
-    $params[] = $importcode;
+    $params['importcode'] = $importcode;
 
     return $DB->get_records_sql($sql, $params);
 }
