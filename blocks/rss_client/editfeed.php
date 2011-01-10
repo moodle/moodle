@@ -44,7 +44,7 @@ class feed_edit_form extends moodleform {
         $mform =& $this->_form;
 
         // Then show the fields about where this block appears.
-        $mform->addElement('header', 'header', get_string('feed', 'block_rss_client'));
+        $mform->addElement('header', 'rsseditfeedheader', get_string('feed', 'block_rss_client'));
 
         $mform->addElement('text', 'url', get_string('feedurl', 'block_rss_client'), array('size' => 60));
         $mform->setType('url', PARAM_URL);
