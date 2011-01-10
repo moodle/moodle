@@ -48,7 +48,10 @@ function folder_20_migrate() {
         return;
     }
 
-    if (!$candidates = $DB->get_recordset('resource_old', array('type'=>'directory', 'migrated'=>0))) {
+    $candidates = $DB->get_recordset('resource_old', array('type'=>'directory', 'migrated'=>0));
+
+    if (!$candidates->valid()) {
+        $candidates->close(); // Not going to iterate (but exit), close rs
         return;
     }
 
