@@ -367,14 +367,14 @@ switch ($mode) {
                 {context} con
              ON con.instanceid = c.id
             INNER JOIN
+                {role_assignments} ra
+             ON ra.contextid = con.id
+            INNER JOIN
                 {enrol} e
              ON c.id = e.courseid
             INNER JOIN
                 {user_enrolments} ue
-             ON e.id = ue.enrolid
-            INNER JOIN
-                {role_assignments} ra
-             ON ra.contextid = con.id AND ra.userid=ue.userid
+             ON e.id = ue.enrolid AND ra.userid = ue.userid
             AND ra.userid = {$user->id}
         ";
 
