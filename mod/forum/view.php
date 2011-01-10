@@ -131,7 +131,7 @@
             helpbutton("subscription", $strallowchoice, "forum");
             echo '&nbsp;<span class="helplink">';
             if (has_capability('mod/forum:managesubscriptions', $context)) {
-                echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&amp;force=no\">$strallowchoice</a>";
+                echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&amp;force=no&amp;sesskey=".sesskey()."\">$strallowchoice</a>";
             } else {
                 echo $streveryoneisnowsubscribed;
             }
@@ -150,7 +150,7 @@
             echo '&nbsp;';
 
             if (has_capability('mod/forum:managesubscriptions', $context)) {
-                echo "<span class=\"helplink\"><a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&amp;force=yes\">$strforcesubscribe</a></span>";
+                echo "<span class=\"helplink\"><a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&amp;force=yes&amp;sesskey=".sesskey()."\">$strforcesubscribe</a></span>";
             } else {
                 echo '<span class="helplink">'.$streveryonecannowchoose.'</span>';
             }

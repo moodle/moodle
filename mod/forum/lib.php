@@ -4299,6 +4299,7 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
             $backtoindexlink = '';
         }
         $link = '';
+        $sesskeylink = '&amp;sesskey='.sesskey();
 
         if ($fakelink) {
             $link .= <<<EOD
@@ -4306,14 +4307,15 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
 //<![CDATA[
 var subs_link = document.getElementById("subscriptionlink");
 if(subs_link){
-    subs_link.innerHTML = "<a title=\"$linktitle\" href='$CFG->wwwroot/mod/forum/subscribe.php?id={$forum->id}{$backtoindexlink}'>$linktext<\/a>";
+    subs_link.innerHTML = "<a title=\"$linktitle\" href='$CFG->wwwroot/mod/forum/subscribe.php?id={$forum->id}{$backtoindexlink}{$sesskeylink}'>$linktext<\/a>";
 }
 //]]>
 </script>
 <noscript>
 EOD;
         }
-        $options ['id'] = $forum->id;
+        $options['id'] = $forum->id;
+        $options['sesskey'] = sesskey();
         $link .= print_single_button($CFG->wwwroot . '/mod/forum/subscribe.php',
                 $options, $linktext, 'post', '_self', true, $linktitle);
         if ($fakelink) {
