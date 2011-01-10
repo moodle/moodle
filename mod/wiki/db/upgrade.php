@@ -360,7 +360,7 @@ function xmldb_wiki_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010102800, 'wiki');
     }
     
-    if ($oldversion < 2010122300) {
+    if ($oldversion < 2011011000) {
         // Fix wiki in the post table after upgrade from 1.9
         $table = new xmldb_table('wiki');
         
@@ -388,7 +388,7 @@ function xmldb_wiki_upgrade($oldversion) {
             $dbman->drop_field($table, $field);
         }
         
-        upgrade_mod_savepoint(true, 2010122300, 'wiki');
+        upgrade_mod_savepoint(true, 2011011000, 'wiki');
     }
 
     return true;
