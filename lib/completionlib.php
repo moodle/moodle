@@ -207,6 +207,16 @@ class completion_info {
     }
 
     /**
+     * Displays the 'Your progress' help icon, if completion tracking is enabled.
+     * Just prints the result of display_help_icon().
+     * @deprecated Use display_help_icon instead.
+     * @return void
+     */
+    public function print_help_icon() {
+        print $this->display_help_icon();
+    }
+
+    /**
      * Returns the 'Your progress' help icon, if completion tracking is enabled.
      * @global object
      * @return string HTML code for help icon, or blank if not needed
