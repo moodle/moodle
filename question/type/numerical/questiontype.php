@@ -36,7 +36,7 @@ require_once("$CFG->dirroot/question/type/shortanswer/questiontype.php");
  * @subpackage questiontypes
  */
 
-class question_numerical_qtype extends question_shortanswer_qtype {
+class question_numerical_qtype extends qtype_shortanswer {
 
     public $virtualqtype = false;
     function name() {

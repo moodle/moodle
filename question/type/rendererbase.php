@@ -102,7 +102,7 @@ abstract class qtype_renderer extends plugin_renderer_base {
         }
 
         if ($hint) {
-            $output .= $this->hint($qa->get_question(), $hint);
+            $output .= $this->hint($qa, $hint);
         }
 
         if ($options->generalfeedback) {
@@ -151,9 +151,9 @@ abstract class qtype_renderer extends plugin_renderer_base {
      * @param question_attempt $qa the question attempt to display.
      * @return string HTML fragment.
      */
-    protected function hint(question_definition $question, question_hint $hint) {
-        return html_writer::nonempty_tag('div', $question->format_text($hint->hint),
-                array('class' => 'hint'));
+    protected function hint(question_attempt $qa, question_hint $hint) {
+        return html_writer::nonempty_tag('div', $qa->get_question()->format_text(
+                $hint->hint, $qa, 'question', 'hint'), array('class' => 'hint'));
     }
 
     /**
@@ -248,15 +248,15 @@ abstract class qtype_with_combined_feedback_renderer extends qtype_renderer {
 
         $feedback = '';
         if ($state->is_correct()) {
-            $feedback = $question->correctfeedback;
+            $feedbackfield = 'correctfeedback';
         } else if ($state->is_partially_correct()) {
-            $feedback = $question->partiallycorrectfeedback;
+            $feedbackfield = 'partiallycorrectfeedback';
         } else if ($state->is_incorrect()) {
-            $feedback = $question->incorrectfeedback;
+            $feedbackfield = 'incorrectfeedback';
         }
 
-        if ($feedback) {
-            $feedback = $question->format_text($feedback);
+        if ($question->$feedbackfield) {
+            $feedback .= $question->format_text($question->$feedbackfield, $qa, 'question', $feedbackfield);
         }
 
         return $feedback;

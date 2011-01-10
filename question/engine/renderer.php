@@ -315,7 +315,7 @@ class core_question_renderer extends renderer_base {
             return '';
         }
 
-        $table = new stdClass;
+        $table = new html_table();
         $table->head  = array (
             get_string('step', 'question'),
             get_string('time'),
@@ -350,13 +350,13 @@ class core_question_renderer extends renderer_base {
                 $row[] = $qa->format_fraction_as_mark($step->get_fraction(), $options->markdp);
             }
 
-            $table->rowclass[] = $rowclass;
+            $table->rowclasses[] = $rowclass;
             $table->data[] = $row;
         }
 
         return html_writer::tag('h3', get_string('responsehistory', 'question'),
                 array('class' => 'responsehistoryheader')) . html_writer::tag('div',
-                print_table($table, true), array('class' => 'responsehistoryheader'));
+                html_writer::table($table, true), array('class' => 'responsehistoryheader'));
     }
 
 }

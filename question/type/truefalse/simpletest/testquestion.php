@@ -33,17 +33,6 @@ require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_truefalse_question_test extends UnitTestCase {
-
-    /**
-     * TODO Temporary helper method to just make a questoin_attempt.
-     */
-    protected function get_a_qa() {
-        $question = test_question_maker::make_a_description_question();
-        $question->defaultmark = 3;
-        $usageid = 13;
-        return new question_attempt($question, $usageid);
-    }
-
     public function test_is_complete_response() {
         $question = test_question_maker::make_a_truefalse_question();
 
@@ -84,7 +73,7 @@ class qtype_truefalse_question_test extends UnitTestCase {
 
     public function test_get_question_summary() {
         $tf = test_question_maker::make_a_truefalse_question();
-        $qsummary = $tf->get_question_summary($this->get_a_qa());
+        $qsummary = $tf->get_question_summary(test_question_maker::get_a_qa($tf));
         $this->assertEqual('The answer is true.', $qsummary);
     }
 

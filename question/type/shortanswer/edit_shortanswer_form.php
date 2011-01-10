@@ -20,15 +20,16 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Defines the editing form for the shortanswer question type.
  *
+ * @package qtype_shortanswer
  * @copyright &copy; 2007 Jamie Pratt
- * @author Jamie Pratt me@jamiep.org
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
- * @subpackage questiontypes
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * shortanswer editing form definition.
+ * Short answer question editing form definition.
+ *
+ * @copyright &copy; 2007 Jamie Pratt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_edit_shortanswer_form extends question_edit_form {
     /**
@@ -36,26 +37,30 @@ class question_edit_shortanswer_form extends question_edit_form {
      *
      * @param MoodleQuickForm $mform the form being built.
      */
-    function definition_inner(&$mform) {
-        $menu = array(get_string('caseno', 'quiz'), get_string('caseyes', 'quiz'));
-        $mform->addElement('select', 'usecase', get_string('casesensitive', 'quiz'), $menu);
+    protected function definition_inner($mform) {
+        $menu = array(
+            get_string('caseno', 'qtype_shortanswer'),
+            get_string('caseyes', 'qtype_shortanswer')
+        );
+        $mform->addElement('select', 'usecase', get_string('casesensitive', 'qtype_shortanswer'), $menu);
 
-        $mform->addElement('static', 'answersinstruct', get_string('correctanswers', 'quiz'), get_string('filloutoneanswer', 'quiz'));
+        $mform->addElement('static', 'answersinstruct', get_string('correctanswers', 'qtype_shortanswer'),
+                get_string('filloutoneanswer', 'qtype_shortanswer'));
         $mform->closeHeaderBefore('answersinstruct');
 
         $creategrades = get_grade_options();
         $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_shortanswer', '{no}'),
                 $creategrades->gradeoptions);
+
+        $this->add_interactive_settings();
     }
 
     function data_preprocessing($question) {
         if (isset($question->options)){
             $answers = $question->options->answers;
-            $answers_ids = array();
             if (count($answers)) {
                 $key = 0;
                 foreach ($answers as $answer){
-                    $answers_ids[] = $answer->id;
                     $default_values['answer['.$key.']'] = $answer->answer;
                     $default_values['fraction['.$key.']'] = $answer->fraction;
                     $default_values['feedback['.$key.']'] = array();
@@ -65,8 +70,8 @@ class question_edit_shortanswer_form extends question_edit_form {
                     $default_values['feedback['.$key.']']['text'] = file_prepare_draft_area(
                         $draftid_editor,       // draftid
                         $this->context->id,    // context
-                        'question',   // component
-                        'answerfeedback',             // filarea
+                        'question',            // component
+                        'answerfeedback',      // filarea
                         !empty($answer->id)?(int)$answer->id:null, // itemid
                         $this->fileoptions,    // options
                         $answer->feedback      // text
@@ -83,7 +88,8 @@ class question_edit_shortanswer_form extends question_edit_form {
         }
         return $question;
     }
-    function validation($data, $files) {
+
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         $answers = $data['answer'];
         $answercount = 0;
@@ -101,14 +107,14 @@ class question_edit_shortanswer_form extends question_edit_form {
             }
         }
         if ($answercount==0){
-            $errors['answer[0]'] = get_string('notenoughanswers', 'quiz', 1);
+            $errors['answer[0]'] = get_string('notenoughanswers', 'qtype_shortanswer', 1);
         }
         if ($maxgrade == false) {
             $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
         }
         return $errors;
     }
-    function qtype() {
+    public function qtype() {
         return 'shortanswer';
     }
 }

@@ -61,6 +61,18 @@ class test_question_maker {
     const STANDARD_OVERALL_INCORRECT_FEEDBACK = 'That is not right at all.';
 
     /**
+     * Just make a question_attempt at a question. Useful for unit tests that
+     * need to pass a $qa to methods that call format_text. Probably not safe
+     * to use for anything beyond that.
+     * @param question_definition $question a question.
+     * @param number $maxmark the max mark to set.
+     * @return question_attempt the question attempt.
+     */
+    public function get_a_qa($question, $maxmark = 3) {
+        return new question_attempt($question, 13, null, $maxmark);
+    }
+
+    /**
      * Initialise the common fields of a question of any type.
      */
     public static function initialise_a_question($q) {

@@ -228,6 +228,9 @@ abstract class question_definition {
      * this question.
      *
      * @param string $text some content that needs to be output.
+     * @param question_attempt $qa the question attempt.
+     * @param string $component used for rewriting file area URLs.
+     * @param string $filearea used for rewriting file area URLs.
      * @param boolean $clean Whether the HTML needs to be cleaned. Generally,
      *      parts of the question do not need to be cleaned, and student input does.
      * @return string the text formatted for output by format_text.
