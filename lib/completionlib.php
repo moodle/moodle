@@ -207,17 +207,19 @@ class completion_info {
     }
 
     /**
-     * Print the Your progress help icon if the completion tracking is enabled.
+     * Returns the 'Your progress' help icon, if completion tracking is enabled.
      * @global object
-     * @return void
+     * @return string HTML code for help icon, or blank if not needed
      */
-    public function print_help_icon() {
+    public function display_help_icon() {
         global $PAGE, $OUTPUT;
+        $result = '';
         if ($this->is_enabled() && !$PAGE->user_is_editing() && isloggedin() && !isguestuser()) {
-            echo '<span id = "completionprogressid" class="completionprogress">'.get_string('yourprogress','completion').' ';
-            echo $OUTPUT->help_icon('completionicons', 'completion');
-            echo '</span>';
+            $result .= '<span id = "completionprogressid" class="completionprogress">'.get_string('yourprogress','completion').' ';
+            $result .= $OUTPUT->help_icon('completionicons', 'completion');
+            $result .= '</span>';
         }
+        return $result;
     }
 
     /**

@@ -69,7 +69,7 @@ if ($editing) {
 
 // Print the Your progress icon if the track completion is enabled
 $completioninfo = new completion_info($course);
-$completioninfo->print_help_icon();
+echo $completioninfo->display_help_icon();
 
 echo $OUTPUT->heading(get_string('topicoutline'), 2, 'headingblock header outline');
 
