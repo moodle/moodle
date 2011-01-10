@@ -1,5 +1,11 @@
 YUI.add('moodle-block_navigation-navigation', function(Y){
 
+var EXPANSIONLIMIT_EVERYTHING = 0,
+    EXPANSIONLIMIT_COURSE     = 20,
+    EXPANSIONLIMIT_SECTION    = 30,
+    EXPANSIONLIMIT_ACTIVITY   = 40;
+
+
 /**
  * Navigation tree class.
  *
@@ -119,6 +125,12 @@ Y.extend(TREE, Y.Base, TREE.prototype, {
         accordian : {
             validator : Y.Lang.isBool,
             value : false
+        },
+        expansionlimit : {
+            value : 0,
+            setter : function(val) {
+                return parseInt(val);
+            }
         }
     }
 });
@@ -161,7 +173,15 @@ BRANCH.prototype = {
                 this.set(i, config.overrides[i]);
             }
         }
+        // Get the node for this branch
         this.node = Y.one('#', this.get('id'));
+        // Now check whether the branch is not expandable because of the expansionlimit
+        var expansionlimit = this.get('tree').get('expansionlimit');
+        var type = this.get('type');
+        if (expansionlimit != EXPANSIONLIMIT_EVERYTHING &&  type >= expansionlimit && type <= EXPANSIONLIMIT_ACTIVITY) {
+            this.set('expandable', false);
+            this.set('haschildren', false);
+        }
     },
     /**
      * Draws the branch within the tree.
