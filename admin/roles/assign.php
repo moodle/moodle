@@ -232,7 +232,8 @@ $assignurl = new moodle_url($PAGE->url, array('roleid'=>$roleid));
     $select = new single_select($PAGE->url, 'roleid', $nameswithcounts, $roleid, null);
     $select->label = get_string('assignanotherrole', 'role');
     echo $OUTPUT->render($select);
-    echo '<p><a href="' . $PAGE->url . '">' . get_string('backtoallroles', 'role') . '</a></p>';
+    $backurl = new moodle_url('/admin/roles/assign.php', array('contextid' => $contextid));
+    echo '<p><a href="' . $backurl->out() . '">' . get_string('backtoallroles', 'role') . '</a></p>';
     echo '</div>';
 
 } else if (empty($assignableroles)) {
