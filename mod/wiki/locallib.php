@@ -261,6 +261,9 @@ function wiki_refresh_cachedcontent($page, $newcontent = null) {
     global $DB;
 
     $version = wiki_get_current_version($page->id);
+    if (empty($version)) {
+        return null;
+    }
     if (!isset($newcontent)) {
         $newcontent = $version->content;
     }
@@ -299,7 +302,11 @@ function wiki_refresh_page_links($page, $links) {
             $newlink->topageid = $linkinfo['pageid'];
         }
 
-        $DB->insert_record('wiki_links', $newlink);
+        try {
+            $DB->insert_record('wiki_links', $newlink);
+        } catch (dml_exception $e) {
+            debugging($e->getMessage());
+        }
 
     }
 }
