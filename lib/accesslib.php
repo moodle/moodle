@@ -5011,7 +5011,7 @@ function sort_by_roleassignment_authority($users, $context, $roles=array(), $sor
  * @param bool gethidden - whether to fetch hidden enrolments too
  * @return array()
  */
-function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.lastname ASC', $gethidden=true, $group='', $limitfrom='', $limitnum='') {
+function get_role_users($roleid, $context, $parent=false, $fields='', $sort='u.lastname ASC, u.firstname ASC', $gethidden=true, $group='', $limitfrom='', $limitnum='') {
     global $CFG;
 
     if (empty($fields)) {
