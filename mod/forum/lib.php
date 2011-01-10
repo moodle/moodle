@@ -3165,6 +3165,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         }
         $output .= html_writer::tag('div', get_string('forumsubjecthidden','forum'), array('class'=>'subject')); // Subject
         $output .= html_writer::tag('div', get_string('forumauthorhidden','forum'), array('class'=>'author')); // author
+        $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('div'); // row
         $output .= html_writer::start_tag('div', array('class'=>'row'));
         $output .= html_writer::tag('div', '&nbsp;', array('class'=>'left side')); // Groups
