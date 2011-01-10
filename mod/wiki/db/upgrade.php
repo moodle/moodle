@@ -36,6 +36,36 @@
  *
  */
 
+/**
+ *
+ * TODO LIST:
+ *
+ * 1. Add needed fields to wiki table. DONE
+ * 2. Rename other wiki tables. DONE
+ * 3. Create new wiki tables. DONE BUT NOT FINISHED, WATING FOR NEW TABLES
+ * 4. Move/Adapt/Transform configurations info to new structure
+ * 5. Migrate wiki entries to subwikis. DONE
+ * 6. Fill pages table with latest versions of every page. DONE
+ * 7. Migrate page history to new table (transforming formats). DONE, BUT STILL WORKING
+ * 8. Fill links table
+ * 9. Drop useless information
+ *
+ * ADITIONAL THINGS AFTER CHAT WITH ELOY:
+ *
+ * 1. addField is deprecated. DONE
+ * 2. Fix SQL error at block 3. DONE
+ * 3. Merge set_field_select with previous update sentence. DONE
+ * 4. Don't insert id fields on database (it won't work on mssql, oracle, pg). DONE.
+ * 5. Use upgrade_set_timeout function.
+ * 6. Use grafic of progess
+ *
+ * OTHER THINGS:
+ *
+ * 1. Use recordset instead of record when migrating historic
+ * 2. Select only usefull data on block 06
+ *
+ * @global moodle_database $DB
+ */
 function xmldb_wiki_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
@@ -321,6 +351,37 @@ function xmldb_wiki_upgrade($oldversion) {
         echo $OUTPUT->notification('Updating tags itemtype', 'notifysuccess');
 
         upgrade_mod_savepoint(true, 2010102800, 'wiki');
+    }
+
+    if ($oldversion < 2011011000) {
+        // Fix wiki in the post table after upgrade from 1.9
+        $table = new xmldb_table('wiki');
+
+        // name should default to Wiki
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, 255, null, XMLDB_NOTNULL, null, 'Wiki', 'course');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->change_field_default($table, $field);
+        }
+
+        // timecreated field is missing after 1.9 upgrade
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'introformat');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // timemodified field is missing after 1.9 upgrade
+        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'timecreated');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // scaleid is not there any more
+        $field = new xmldb_field('scaleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', null);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2011011000, 'wiki');
     }
 
     // TODO: Will hold the old tables so we will have chance to fix problems
