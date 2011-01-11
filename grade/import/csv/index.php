@@ -88,7 +88,8 @@ if ($id) {
 if ($importcode = optional_param('importcode', '', PARAM_FILE)) {
     $filename = $CFG->dataroot.'/temp/gradeimport/cvs/'.$USER->id.'/'.$importcode;
     $fp = fopen($filename, "r");
-    $header = explode($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH), PARAM_RAW);
+    $headers = fgets($fp,GRADE_CSV_LINE_LENGTH);
+    $header = explode($csv_delimiter, $headers);//, PARAM_RAW
 }
 
 $mform2 = new grade_import_mapping_form(null, array('gradeitems'=>$gradeitems, 'header'=>$header));
@@ -177,7 +178,9 @@ if ($formdata = $mform->get_data()) {
     $map = array();
     // loops mapping_0, mapping_1 .. mapping_n and construct $map array
     foreach ($header as $i => $head) {
-        $map[$i] = $formdata->{'mapping_'.$i};
+        if (isset($formdata->{'mapping_'.$i})) {
+            $map[$i] = $formdata->{'mapping_'.$i};
+        }
     }
 
     // if mapping information is supplied
@@ -303,18 +306,19 @@ if ($formdata = $mform->get_data()) {
                             $newgradeitem->importcode = $importcode;
                             $newgradeitem->importer   = $USER->id;
 
-                            // failed to insert into new grade item buffer
+                            // insert into new grade item buffer
                             $newgradeitems[$key] = $DB->insert_record('grade_import_newitem', $newgradeitem);
-                            // add this to grade_import_newitem table
-                            // add the new id to $newgradeitem[$key]
                         }
                         $newgrade = new stdClass();
                         $newgrade->newgradeitem = $newgradeitems[$key];
-                        $newgrade->finalgrade   = $value;
-                        $newgrades[] = $newgrade;
-
-                        // if not, put it in
-                        // else, insert grade into the table
+                        
+                        //if the user has a grade for this grade item
+                        if (trim($value)!='-') {
+                            //instead of omitting the grade we could insert one with finalgrade set to 0
+                            //we do not have access to grade item min grade
+                            $newgrade->finalgrade   = $value;
+                            $newgrades[] = $newgrade;
+                        }
                     break;
                     case 'feedback':
                         if ($t1) {
