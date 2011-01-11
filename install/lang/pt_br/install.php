@@ -32,7 +32,10 @@ $string['admindirname'] = 'Diretório Admin';
 $string['availablelangs'] = 'Pacotes de idioma disponíveis';
 $string['chooselanguagehead'] = 'Escolha um idioma';
 $string['chooselanguagesub'] = 'Escolha um idioma a ser usado durante a instalação. Após a instalação você pode definir o idioma principal do site e outros idiomas a serem utilizados pelos usuários.';
-$string['dataroot'] = 'Diretório Data';
+$string['clialreadyinstalled'] = 'O arquivo config.php já existe, por favor use admin/cli/upgrade.php, se você quiser atualizar o seu site.';
+$string['databasename'] = 'Nome da Base de Dados';
+$string['databasetypehead'] = 'Escolha o driver da base de dados';
+$string['dataroot'] = 'Diretório de Dados';
 $string['dbprefix'] = 'Prefixo das tabelas';
 $string['dirroot'] = 'Diretório Moodle';
 $string['environmenthead'] = 'Verificando o ambiente ...';
@@ -51,6 +54,10 @@ Com esta operação Moodle será capaz de configurar o limite de memória sózin
 <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário excluir o arquivo .htaccess .</p>
 </li></ol>';
+$string['pathssubdirroot'] = 'Caminho completo do diretório para instalação do Moddle.';
+$string['pathssubwwwroot'] = 'Endereço web completo onde o Moodle será acessado.
+Não é possível acessar o Moodle usando múltiplos endereços. Se seu site tem múltiplos endereços públicos você deve configurar redirecionamentos permantentes em todos eles exceto esse. Se seu site é acessado tanto da Intranet como Internet, use o endereço público aqui e configure o DNS para que os usuários da Intranet possam usar o endereço público também. Se o endereço não estiver correto, por favo mude a URL no seu navegador para reiniciar a instalação com um valor diferente.';
+$string['pathswrongadmindir'] = 'Diretório Admin não existe';
 $string['phpversion'] = 'Versão do PHP';
 $string['phpversionhelp'] = '<p>Moodle requer a versão 4.1.0 de PHP ou posterior.</p>
 <p>A sua versão é {$a}</p>

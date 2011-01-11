@@ -65,8 +65,8 @@ $string['pathssubadmindir'] = 'Alcuni web host utilizzano la cartella /admin com
 Tutti i link che puntano ai file di amministrazione di Moodle terranno conto di questa variazione.';
 $string['pathssubdataroot'] = 'E\' necessario specificare una cartella dove Moodle inserirà i file caricati dagli utenti. Il web server (in genere \'nobody\' o \'apache\') DEVE avere i permessi di lettura e di scrittura su questa cartella. In aggiunta, la cartella dei dati NON DEVE essere direttamente accessibile via web. Se la Cartella dei dati non esiste, lo script di installazione tenterà di crearla.';
 $string['pathssubdirroot'] = 'Percorso assoluto della cartella di installazione di Moodle.';
-$string['pathssubwwwroot'] = 'Indirizzo web per raggiungere l\'installazione. Non è possibile accedere a Moodle usando indirizzi multipli. Se il tuo sito ha indirizzi pubblici multipli, devi configurare dei re-indirizzamenti permanenti su tutti gli altri indirizzi.
-Se il tuo sito è raggiungibile sia dalla Internet che dalla Intranet, allora usa l\'indirizzo Internet pubblico ed imposta il DNS in modo che anche gli utenti intranet possano accedere usando l\'indirizzo pubblico.
+$string['pathssubwwwroot'] = 'Indirizzo web per accedere a Moodle. Non è possibile accedere alla stessa installazione Moodle usando più di un indirizzi web. Se il tuo sito usa più indirizzi web, devi configurare dei re-indirizzamenti permanenti per tutti gli altri indirizzi.
+Se il tuo sito è raggiungibile sia dalla Internet che dalla Intranet, allora usa l\'indirizzo Internet pubblico ed imposta il DNS in modo che anche gli utenti della Intranet possano accedere usando l\'indirizzo pubblico.
 Se l\'indirizzo è errato per favore correggilo nella barra degli indirizzi del browser per avviare nuovamente l\'installazione.';
 $string['pathsunsecuredataroot'] = 'La posizione della Cartella dei dati non è sicura';
 $string['pathswrongadmindir'] = 'La cartella Admin non esiste';

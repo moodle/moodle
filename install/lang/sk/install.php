@@ -52,13 +52,14 @@ $string['memorylimithelp'] = '<p>PHP limit pamäte pre Váš server je momentál
 <ol>
 <li>Ak je to možné, znovu vytvorte PHP s <i>--enable-memory-limit</i>. Toto umožní Moodle samonastavenie limitu pamäte.</li>
 <li>Ak máte prístup k Vášmu php.ini súboru, môžete zmeniť <b>memory_limit</b> nastavenie, napr. na 40M. Ak nemáte prístup k súboru, môžete sa na to spýtať Vášho administrátora.</li>
-Na niektorých PHP serveroch, si môžete vytvoriť súbor .htaccess v Adresári Moodle, ktorý bude obsahovať tento riadok: <p><blockquote>php_value memory_limit 40M</blockquote></p>
+Na niektorých PHP serveroch, si môžete vytvoriť súbor .htaccess v Adresári Moodle, ktorý bude obsahovať tento riadok: <p><blockquote><div>php_value memory_limit 40M</div></blockquote></p>
 <p>Avšak, na niektorých serveroch bude toto brániť <b>všetkým</b> PHP stránkam v práci (budete vidieť chyby, keď sa pozriete na stránky), takže budete musieť odstrániť súbor .htaccess.</p></li>
 </ol>';
 $string['paths'] = 'Cesty';
-$string['pathserrcreatedataroot'] = 'Adresár súborov ({$a->dataroot}) nie je možné vytvoriť. ';
+$string['pathserrcreatedataroot'] = 'Inštalátor nemôže vytvoriť dátový adresár ({$a->dataroot}). ';
 $string['pathshead'] = 'Vytvoriť cesty';
 $string['pathsrodataroot'] = 'Kmeňový adresár nie je zapisovateľný';
+$string['pathsroparentdataroot'] = 'Nadriadený adresár ({$a->parent}) nie je zapisovateľný. Inštalátor nemôže vytvoriť dátový adresár ({$a->dataroot}). ';
 $string['pathssubdataroot'] = 'Potrebujete adresár, kam Moodle bude ukladať nahrané súbory. Adresár by mal povoliť čítanie a zapisovanie údajov používateľom web serveru, ale nesmie byť prístupný priamo cez web rozhranie. Pokiaľ ešte neexistuje, inštalácia sa pokúsi o jeho vytvorenie. ';
 $string['pathssubdirroot'] = 'Plná cesta adresára moodle inštalácie';
 $string['pathsunsecuredataroot'] = 'Umiestnenie dátového adresára nie je bezpečné';
