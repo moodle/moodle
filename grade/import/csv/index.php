@@ -79,8 +79,13 @@ if ($id) {
                 continue;
             }
 
-            // this was idnumber
-            $gradeitems[$grade_item->id] = $grade_item->get_name();
+            $displaystring = null;
+            if (!empty($grade_item->itemmodule)) {
+                $displaystring = get_string('modulename', $grade_item->itemmodule).': '.$grade_item->get_name();
+            } else {
+                $displaystring = $grade_item->get_name();
+            }
+            $gradeitems[$grade_item->id] = $displaystring;
         }
     }
 }
@@ -90,6 +95,7 @@ if ($importcode = optional_param('importcode', '', PARAM_FILE)) {
     $fp = fopen($filename, "r");
     $headers = fgets($fp,GRADE_CSV_LINE_LENGTH);
     $header = explode($csv_delimiter, $headers);
+    fclose($fp);
 }
 
 $mform2 = new grade_import_mapping_form(null, array('gradeitems'=>$gradeitems, 'header'=>$header));
@@ -140,7 +146,7 @@ if ($formdata = $mform->get_data()) {
         $lines = explode($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
         echo '<tr>';
         foreach ($lines as $line) {
-            echo '<td>'.$line.'</td>';;
+            echo '<td>'.$line.'</td>';
         }
         $numlines ++;
         echo '</tr>';
