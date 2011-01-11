@@ -120,7 +120,7 @@
     }
 
 /// Get all the potential subscribers excluding users already subscribed
-    $users = forum_get_potential_subscribers($context, $currentgroup, 'id,email,firstname,lastname', 'firstname ASC, lastname ASC');
+    $users = forum_get_potential_subscribers($context, $currentgroup, 'u.id,u.email,u.firstname,u.lastname', 'u.firstname ASC, u.lastname ASC');
     if (!$users) {
         $users = array();
     }
