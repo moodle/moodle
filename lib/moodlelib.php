@@ -792,17 +792,15 @@ function clean_param($param, $type) {
             }
 
         case PARAM_TAG:
-            //as long as magic_quotes_gpc is used, a backslash will be a
-            //problem, so remove *all* backslash.
-            //$param = str_replace('\\', '', $param);
-            //remove some nasties
+            // Please note it is not safe to use the tag name directly anywhere,
+            // it must be processed with s(), urlencode() before embedding anywhere.
+            // remove some nasties
             $param = preg_replace('~[[:cntrl:]]|[<>`]~u', '', $param);
             //convert many whitespace chars into one
             $param = preg_replace('/\s+/', ' ', $param);
             $textlib = textlib_get_instance();
             $param = $textlib->substr(trim($param), 0, TAG_MAX_LENGTH);
             return $param;
-
 
         case PARAM_TAGLIST:
             $tags = explode(',', $param);
