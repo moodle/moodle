@@ -506,7 +506,8 @@ function glossary_upgrade_grades() {
     $sql = "SELECT g.*, cm.idnumber AS cmidnumber, g.course AS courseid
               FROM {glossary} g, {course_modules} cm, {modules} m
              WHERE m.name='glossary' AND m.id=cm.module AND cm.instance=g.id";
-    if ($rs = $DB->get_recordset_sql($sql)) {
+    $rs = $DB->get_recordset_sql($sql);
+    if ($rs->valid()) {
         $pbar = new progress_bar('glossaryupgradegrades', 500, true);
         $i=0;
         foreach ($rs as $glossary) {
@@ -515,8 +516,8 @@ function glossary_upgrade_grades() {
             glossary_update_grades($glossary, 0, false);
             $pbar->update($i, $count, "Updating Glossary grades ($i/$count).");
         }
-        $rs->close();
     }
+    $rs->close();
 }
 
 /**
@@ -2462,7 +2463,8 @@ function glossary_reset_userdata($data) {
 
         $course_context = get_context_instance(CONTEXT_COURSE, $data->courseid);
         $notenrolled = array();
-        if ($rs = $DB->get_recordset_sql($entriessql, $params)) {
+        $rs = $DB->get_recordset_sql($entriessql, $params);
+        if ($rs->valid()) {
             foreach ($rs as $entry) {
                 if (array_key_exists($entry->userid, $notenrolled) or !$entry->userexists or $entry->userdeleted
                   or !is_enrolled($course_context , $entry->userid)) {
@@ -2479,9 +2481,9 @@ function glossary_reset_userdata($data) {
                     }
                 }
             }
-            $rs->close();
             $status[] = array('component'=>$componentstr, 'item'=>get_string('deletenotenrolled', 'glossary'), 'error'=>false);
         }
+        $rs->close();
     }
 
     // remove all ratings
