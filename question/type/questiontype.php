@@ -458,8 +458,6 @@ class question_type {
 
         $extra_answer_fields = $this->extra_answer_fields();
         // TODO save the answers, with any extra data.
-
-        return null;
     }
 
     public function save_hints($formdata, $withparts = false) {

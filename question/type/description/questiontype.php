@@ -19,7 +19,8 @@
 /**
  * Question type class for the description 'question' type.
  *
- * @package qtype_description
+ * @package qtype
+ * @subpackage description
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,7 +34,7 @@ require_once($CFG->libdir . '/questionlib.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_description extends question_type {
-    function is_real_question_type() {
+    public function is_real_question_type() {
         return false;
     }
 
@@ -45,21 +46,11 @@ class qtype_description extends question_type {
         return false;
     }
 
-    public function save_question($question, $form, $course) {
+    public function save_question($question, $form) {
         // Make very sure that descriptions can'e be created with a grade of
         // anything other than 0.
         $form->defaultmark = 0;
-        return parent::save_question($question, $form, $course);
-    }
-
-    public function get_question_options(&$question) {
-        // No options to be restored for this question type
-        return true;
-    }
-
-    public function save_question_options($question) {
-        /// No options to be saved for this question type:
-        return true;
+        return parent::save_question($question, $form);
     }
 
     public function actual_number_of_questions($question) {

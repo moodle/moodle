@@ -813,7 +813,7 @@ ORDER BY
      * @param array $questionids of question ids.
      * @return boolean whether any of these questions are being used by the question engine.
      */
-    public static function questions_in_use(array $questionids) {
+    public function questions_in_use(array $questionids) {
         list($test, $params) = $this->db->get_in_or_equal($questionids);
         return $this->db->record_exists_select('question_attempts',
                 'questionid ' . $test, $params);

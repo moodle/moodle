@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,15 +17,15 @@
 /**
  * Defines the editing form for the description question type.
  *
+ * @package qtype
+ * @subpackage description
  * @copyright &copy; 2007 Jamie Pratt
- * @author Jamie Pratt me@jamiep.org
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
- * @subpackage questiontypes
  */
 
+
 /**
- * description editing form definition.
+ * Description editing form definition.
  */
 class question_edit_description_form extends question_edit_form {
     /**
@@ -34,16 +33,14 @@ class question_edit_description_form extends question_edit_form {
      *
      * @param MoodleQuickForm $mform the form being built.
      */
-    function definition_inner(&$mform) {
-        //don't need these default elements :
-        $mform->removeElement('defaultgrade');
-        $mform->removeElement('penalty');
-
-        $mform->addElement('hidden', 'defaultgrade', 0);
-        $mform->setType('defaultgrade', PARAM_RAW);
+    protected function definition_inner($mform) {
+        // We don't need this default element.
+        $mform->removeElement('defaultmark');
+        $mform->addElement('hidden', 'defaultmark', 0);
+        $mform->setType('defaultmark', PARAM_RAW);
     }
 
-    function qtype() {
+    public function qtype() {
         return 'description';
     }
 }
