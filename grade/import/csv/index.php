@@ -89,7 +89,7 @@ if ($importcode = optional_param('importcode', '', PARAM_FILE)) {
     $filename = $CFG->dataroot.'/temp/gradeimport/cvs/'.$USER->id.'/'.$importcode;
     $fp = fopen($filename, "r");
     $headers = fgets($fp,GRADE_CSV_LINE_LENGTH);
-    $header = explode($csv_delimiter, $headers);//, PARAM_RAW
+    $header = explode($csv_delimiter, $headers);
 }
 
 $mform2 = new grade_import_mapping_form(null, array('gradeitems'=>$gradeitems, 'header'=>$header));
