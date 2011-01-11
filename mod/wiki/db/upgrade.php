@@ -64,7 +64,6 @@
  * 1. Use recordset instead of record when migrating historic
  * 2. Select only usefull data on block 06
  *
- * @global moodle_database $DB
  */
 function xmldb_wiki_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
@@ -149,9 +148,9 @@ function xmldb_wiki_upgrade($oldversion) {
         /**
          * Migrating wiki entries to new subwikis
          */
-        $sql = "INSERT INTO {wiki_subwikis} (wikiid, groupid, userid)
-                SELECT DISTINCT e.wikiid, e.groupid, e.userid
-                  FROM {wiki_entries_old} e";
+        $sql = "INSERT into {wiki_subwikis} (wikiid, groupid, userid)
+                    SELECT DISTINCT e.wikiid, e.groupid, e.userid
+                    FROM {wiki_entries_old} e";
         echo $OUTPUT->notification('Migrating old entries to new subwikis', 'notifysuccess');
 
         $DB->execute($sql, array());
@@ -161,39 +160,30 @@ function xmldb_wiki_upgrade($oldversion) {
 
     // Step 5: Migrating pages
     if ($oldversion < 2010040105) {
+        /**
+         * Filling pages table with latest versions of every page.
+         *
+         * @TODO:   Ensure that ALL versions of every page are always in database and
+         *          they can be removed or cleaned.
+         *          That fact could let us rewrite the subselect to execute a count(*) to avoid
+         *          the order by and it would be much faster.
+         */
 
-        // select all wiki pages
-        $sql = "SELECT s.id, p.pagename, p.created, p.lastmodified, p.userid, p.hits
-                  FROM {wiki_pages_old} p
-                  LEFT OUTER JOIN {wiki_entries_old} e ON e.id = p.wiki
-                  LEFT OUTER JOIN {wiki_subwikis} s ON s.wikiid = e.wikiid AND s.groupid = e.groupid AND s.userid = e.userid
-                 WHERE p.version = (SELECT max(po.version)
-                                      FROM {wiki_pages_old} po
-                                     WHERE p.pagename = po.pagename AND p.wiki = po.wiki)";
+        $sql = "INSERT into {wiki_pages} (subwikiid, title, cachedcontent, timecreated, timemodified, userid, pageviews)
+                    SELECT s.id, p.pagename, ?, p.created, p.lastmodified, p.userid, p.hits
+                    FROM {wiki_pages_old} p
+                    LEFT OUTER JOIN {wiki_entries_old} e ON e.id = p.wiki
+                    LEFT OUTER JOIN {wiki_subwikis} s
+                    ON s.wikiid = e.wikiid AND s.groupid = e.groupid AND s.userid = e.userid
+                    WHERE p.version = (
+                        SELECT max(po.version)
+                        FROM {wiki_pages_old} po
+                        WHERE p.pagename = po.pagename and
+                        p.wiki = po.wiki
+                    )";
         echo $OUTPUT->notification('Migrating old pages to new pages', 'notifysuccess');
 
-        $records = $DB->get_recordset_sql($sql);
-        foreach ($records as $record) {
-            $page = new stdclass();
-            $page->subwikiid     = $record->id;
-            $page->title         = $record->pagename;
-            $page->cachedcontent = '**reparse needed**';
-            $page->timecreated   = $record->created;
-            $page->timemodified  = $record->lastmodified;
-            $page->userid        = $record->userid;
-            $page->pageviews     = $record->hits;
-            try {
-                // make sure there is no duplicated records exist
-                if (!$DB->record_exists('wiki_pages', array('subwikiid'=>$record->id, 'userid'=>$record->userid, 'title'=>$record->pagename))) {
-                    $DB->insert_record('wiki_pages', $page);
-                }
-            } catch (dml_exception $e) {
-                // catch possible insert exception
-                debugging($e->getMessage());
-                continue;
-            }
-        }
-        $records->close();
+        $DB->execute($sql, array('**reparse needed**'));
 
         upgrade_mod_savepoint(true, 2010040105, 'wiki');
     }
@@ -304,6 +294,22 @@ function xmldb_wiki_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010040109, 'wiki');
     }
 
+    // TODO: Will hold the old tables so we will have chance to fix problems
+    // Will remove old tables once migrating 100% stable
+    // Step 10: delete old tables
+    if ($oldversion < 2010040120) {
+        //$tables = array('wiki_pages', 'wiki_locks', 'wiki_entries');
+
+        //foreach ($tables as $tablename) {
+            //$table = new xmldb_table($tablename . '_old');
+            //if ($dbman->table_exists($table)) {
+                //$dbman->drop_table($table);
+            //}
+        //}
+        //echo $OUTPUT->notification('Droping old tables', 'notifysuccess');
+        //upgrade_mod_savepoint(true, 2010040120, 'wiki');
+    }
+
     if ($oldversion < 2010080201) {
 
         $sql = "UPDATE {comments}
@@ -383,22 +389,6 @@ function xmldb_wiki_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2011011000, 'wiki');
     }
-
-    // TODO: Will hold the old tables so we will have chance to fix problems
-    // Will remove old tables once migrating 100% stable
-    // Step 10: delete old tables
-    //if ($oldversion < 2011000000) {
-        //$tables = array('wiki_pages', 'wiki_locks', 'wiki_entries');
-
-        //foreach ($tables as $tablename) {
-            //$table = new xmldb_table($tablename . '_old');
-            //if ($dbman->table_exists($table)) {
-                //$dbman->drop_table($table);
-            //}
-        //}
-        //echo $OUTPUT->notification('Droping old tables', 'notifysuccess');
-        //upgrade_mod_savepoint(true, 2011000000, 'wiki');
-    //}
 
     return true;
 }
