@@ -31,7 +31,8 @@
 $string['admindirname'] = 'Administratora direktorijs';
 $string['availablelangs'] = 'Pieejamās valodu pakotnes';
 $string['chooselanguagehead'] = 'Valodas izvēle';
-$string['chooselanguagesub'] = 'Lūdzu, izvēlieties valodu, kas tiks lietota TIKAI instalēšanas laikā. Vietni un lietotājiem pieejamās valodas vēlāk varēsit izvēlēties citā ekrānā.';
+$string['chooselanguagesub'] = 'Lūdzu izvēlieties šīs instalācijas valodu. Izvēlētā valoda tiks izmantota arī kā noklusētā šīs vietnes valoda, lai gan tā var tikt nomainīta vēlāk.';
+$string['databasetypehead'] = 'Izvēlēties datubāzes draiveru';
 $string['dataroot'] = 'Datu direktorijs';
 $string['dbprefix'] = 'Tabulu prefikss';
 $string['dirroot'] = 'Moodle direktorijs';

@@ -30,17 +30,17 @@
 
 $string['cannotcreatelangdir'] = 'Impossível criar diretório lang';
 $string['cannotcreatetempdir'] = 'Impossível criar diretório temp';
-$string['cannotdownloadcomponents'] = 'Impossível baixar componentes';
-$string['cannotdownloadzipfile'] = 'Impossível baixar arquivo ZIP';
+$string['cannotdownloadcomponents'] = 'Impossível fazer download dos componentes';
+$string['cannotdownloadzipfile'] = 'Impossível fazer download do arquivo ZIP';
 $string['cannotfindcomponent'] = 'Impossível achar componente';
 $string['cannotsavemd5file'] = 'Impossível salvar arquivo md5';
 $string['cannotsavezipfile'] = 'Impossível salvar arquivo ZIP';
 $string['cannotunzipfile'] = 'Impossível descompactar arquivo ZIP';
-$string['componentisuptodate'] = 'Componente atualizado';
-$string['downloadedfilecheckfailed'] = 'Impossível fazer o controle do arquivo baixado';
-$string['invalidmd5'] = 'md5 inválido';
+$string['componentisuptodate'] = 'Componente está atualizado';
+$string['downloadedfilecheckfailed'] = 'A verificação do arquivo baixado falhou';
+$string['invalidmd5'] = 'A variável de verificação estava errada - tente novamente';
 $string['missingrequiredfield'] = 'Faltam informações obrigatórias';
 $string['remotedownloaderror'] = 'O download do componente falhou, por favor verifique as configurações do proxy. A extensão cURL do PHP é altamente recomendada.<br /><br />Você precisar baixar o <a href="{$a->url}">arquivo</a> manualmente, copiar para "{$a->dest}" e descompactar lá.';
-$string['wrongdestpath'] = 'Percurso do destino errado';
-$string['wrongsourcebase'] = 'URL do recurso errado';
+$string['wrongdestpath'] = 'Caminho do destino errado';
+$string['wrongsourcebase'] = 'URL do recurso errada';
 $string['wrongzipfilename'] = 'Nome do arquivo ZIP errado';
