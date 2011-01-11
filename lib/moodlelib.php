@@ -567,15 +567,18 @@ function clean_param($param, $type) {
             }
 
         case PARAM_TAG:
+            // Please note it is not safe to use the tag name directly anywhere,
+            // it must be processed with s(), urlencode() before embedding anywhere.
+            // remove some nasties
+            $param = preg_replace('~[[:cntrl:]]|[<>`]~u', '', $param);
             //as long as magic_quotes_gpc is used, a backslash will be a
-            //problem, so remove *all* backslash.
+            //problem, so remove *all* backslash - BUT watch out for SQL injections caused by this sloppy design (skodak)
             $param = str_replace('\\', '', $param);
             //convert many whitespace chars into one
             $param = preg_replace('/\s+/', ' ', $param);
             $textlib = textlib_get_instance();
             $param = $textlib->substr(trim($param), 0, TAG_MAX_LENGTH);
             return $param;
-
 
         case PARAM_TAGLIST:
             $tags = explode(',', $param);

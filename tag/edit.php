@@ -4,7 +4,7 @@ require_once('../config.php');
 require_once('lib.php');
 require_once('edit_form.php');
 
-require_js(array('yui_dom-event', 'yui_connection', 'yui_animation', 'yui_autocomplete'));
+require_js(array('yui_dom-event', 'yui_connection', 'yui_animation', 'yui_datasource', 'yui_autocomplete'));
 
 require_login();
 
@@ -92,21 +92,21 @@ if ($tagnew = $tagform->get_data()) {
                 error('Error updating tag record');
             }
         }
-        
+
         //log tag changes activity
         //if tag name exist from form, renaming is allow.  record log action as rename
-        //otherwise, record log action as update       
+        //otherwise, record log action as update
         if (isset($tagnew->name) && ($tag->name != $tagnew->name)){
             add_to_log($COURSE->id, 'tag', 'update', 'index.php?id='. $tag->id, $tag->name . '->'. $tagnew->name);
 
-        } elseif ($tag->description != $tagnew->description) {  
+        } elseif ($tag->description != $tagnew->description) {
             add_to_log($COURSE->id, 'tag', 'update', 'index.php?id='. $tag->id, $tag->name);
         }
-        
+
         //updated related tags
         tag_set('tag', $tagnew->id, explode(',', trim($tagnew->relatedtags)));
         //print_object($tagnew); die();
-    
+
         redirect($CFG->wwwroot.'/tag/index.php?tag='.rawurlencode($tag->name)); // must use $tag here, as the name isn't in the edit form
     }
 }
@@ -133,9 +133,9 @@ if (ajaxenabled()) {
 <script type="text/javascript">
 
 // An XHR DataSource
-var myServer = "./tag_autocomplete.php";
-var myDataSource = new YAHOO.widget.DS_XHR(myServer, ["\n", "\t"]);
-myDataSource.responseType = YAHOO.widget.DS_XHR.TYPE_FLAT;
+var myDataSource = new YAHOO.util.XHRDataSource("./tag_autocomplete.php");
+myDataSource.responseType = YAHOO.util.XHRDataSource.TYPE_TEXT;
+myDataSource.responseSchema = {recordDelim: "\n", fieldDelim: "\t"};
 myDataSource.maxCacheEntries = 60;
 myDataSource.queryMatchSubset = true;
 
