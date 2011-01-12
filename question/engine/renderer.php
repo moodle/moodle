@@ -231,7 +231,6 @@ class core_question_renderer extends renderer_base {
      * @return string the img tag.
      */
     protected function get_flag_html($flagged, $id = '') {
-        global $CFG;
         if ($id) {
             $id = 'id="' . $id . '" ';
         }
@@ -240,7 +239,7 @@ class core_question_renderer extends renderer_base {
         } else {
             $img = 'unflagged.png';
         }
-        return '<img ' . $id . 'src="' . $CFG->pixpath . '/i/' . $img .
+        return '<img ' . $id . 'src="' . $this->pix_url('/i/' . $img) .
                 '" alt="' . get_string('flagthisquestion', 'question') . '" />';
     }
 

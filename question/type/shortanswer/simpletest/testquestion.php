@@ -116,7 +116,7 @@ class qtype_shortanswer_question_test extends UnitTestCase {
 
     public function test_get_question_summary() {
         $sa = test_question_maker::make_a_shortanswer_question();
-        $qsummary = $sa->get_question_summary(test_question_maker::get_a_qa($sa));
+        $qsummary = $sa->get_question_summary();
         $this->assertEqual('Name an amphibian: __________', $qsummary);
     }
 

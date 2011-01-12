@@ -284,9 +284,9 @@ DONE question/behaviour/opaque/lang/en_utf8/qbehaviour_opaque.php      |    4 +
  question/type/calculated/questiontype.php          |   19 +-
  question/type/calculated/version.php               |    2 -
 
- question/type/datasetdependent/abstractqtype.php   |    4 +-
- question/type/datasetdependent/datasetdefinitions_form.php   |    1 -
- question/type/datasetdependent/datasetitems_form.php    |    1 -
+DONE question/type/datasetdependent/abstractqtype.php   |    4 +-
+DONE question/type/datasetdependent/datasetdefinitions_form.php   |    1 -
+DONE question/type/datasetdependent/datasetitems_form.php    |    1 -
 
  question/type/ddwtos/db/install.xml                |   23 +
  question/type/ddwtos/db/upgrade.php                |   83 +
@@ -304,23 +304,23 @@ DONE question/behaviour/opaque/lang/en_utf8/qbehaviour_opaque.php      |    4 +
  question/type/ddwtos/styles.css                    |   67 +
  question/type/ddwtos/version.php                   |    4 +
 
- question/type/description/edit_description_form.php     |   15 +-
- question/type/description/lang/en_utf8/qtype_description.php |    5 +
- question/type/description/question.html            |   19 -
- question/type/description/question.php             |   35 +
- question/type/description/questiontype.php         |   90 +-
- question/type/description/renderer.php             |   41 +
- question/type/description/simpletest/testquestiontype.php    |   65 +
+DONE question/type/description/edit_description_form.php     |   15 +-
+DONE question/type/description/lang/en_utf8/qtype_description.php |    5 +
+DONE question/type/description/question.html            |   19 -
+DONE question/type/description/question.php             |   35 +
+DONE question/type/description/questiontype.php         |   90 +-
+DONE question/type/description/renderer.php             |   41 +
+DONE question/type/description/simpletest/testquestiontype.php    |   65 +
 
- question/type/essay/display.html                   |   22 -
- question/type/essay/edit_essay_form.php            |   31 +-
- question/type/essay/lang/en_utf8/qtype_essay.php   |    5 +
- question/type/essay/question.php                   |   64 +
- question/type/essay/questiontype.php               |  164 +-
- question/type/essay/renderer.php                   |   65 +
- question/type/essay/simpletest/testquestion.php    |   50 +
- question/type/essay/simpletest/testquestiontype.php     |   71 +
- question/type/essay/version.php                    |    2 -
+DONE question/type/essay/display.html                   |   22 -
+DONE question/type/essay/edit_essay_form.php            |   31 +-
+DONE question/type/essay/lang/en_utf8/qtype_essay.php   |    5 +
+DONE question/type/essay/question.php                   |   64 +
+DONE question/type/essay/questiontype.php               |  164 +-
+DONE question/type/essay/renderer.php                   |   65 +
+DONE question/type/essay/simpletest/testquestion.php    |   50 +
+DONE question/type/essay/simpletest/testquestiontype.php     |   71 +
+DONE question/type/essay/version.php                    |    2 -
 
  question/type/match/db/install.xml                 |    6 +-
  question/type/match/db/upgrade.php                 |   44 +

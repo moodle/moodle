@@ -37,8 +37,7 @@ class qtype_essay_question_test extends UnitTestCase {
     public function test_get_question_summary() {
         $essay = test_question_maker::make_an_essay_question();
         $essay->questiontext = 'Hello <img src="http://example.com/globe.png" alt="world" />';
-        $this->assertEqual('Hello [world]', $essay->get_question_summary(
-                test_question_maker::get_a_qa($essay)));
+        $this->assertEqual('Hello [world]', $essay->get_question_summary());
     }
 
     public function test_summarise_response() {

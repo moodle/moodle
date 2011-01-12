@@ -73,7 +73,7 @@ class qtype_truefalse_question_test extends UnitTestCase {
 
     public function test_get_question_summary() {
         $tf = test_question_maker::make_a_truefalse_question();
-        $qsummary = $tf->get_question_summary(test_question_maker::get_a_qa($tf));
+        $qsummary = $tf->get_question_summary();
         $this->assertEqual('The answer is true.', $qsummary);
     }
 

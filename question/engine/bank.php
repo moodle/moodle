@@ -65,7 +65,6 @@ abstract class question_bank {
         }
         $file = get_plugin_directory('qtype', $qtypename) . '/questiontype.php';
         if (!is_readable($file)) {
-            echo 'problem';
             if ($mustexist || $qtypename == 'missingtype') {
                 throw new Exception('Unknown question type ' . $qtypename);
             } else {

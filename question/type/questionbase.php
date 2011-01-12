@@ -158,8 +158,8 @@ abstract class question_definition {
      * inappropriate.
      * @return string|null a plain text summary of this question.
      */
-    public function get_question_summary(question_attempt $qa) {
-        return html_to_text($this->format_questiontext($qa), 0, false);
+    public function get_question_summary() {
+        return $this->html_to_text($this->questiontext);
     }
 
     /**
@@ -197,7 +197,7 @@ abstract class question_definition {
      * @return qtype_renderer the renderer to use for outputting this question.
      */
     public function get_renderer() {
-        global $PAGE;
+        global $PAGE; // TODO get rid of this global.
         return $PAGE->get_renderer('qtype_' . $this->qtype->name());
     }
 
@@ -236,11 +236,24 @@ abstract class question_definition {
      * @return string the text formatted for output by format_text.
      */
     public function format_text($text, $qa, $component, $filearea, $itemid, $clean = false) {
+        // TODO format.
         $formatoptions = new stdClass;
         $formatoptions->noclean = !$clean;
         $formatoptions->para = false;
         $text = $qa->rewrite_pluginfile_urls($text, $component, $filearea, $itemid);
         return format_text($text, $this->questiontextformat, $formatoptions);
+    }
+
+    /**
+     * Convert some part of the question text to plain text. This might be used,
+     * for example, by get_response_summary().
+     * @param string $text The HTML to reduce to plain text.
+     */
+    public function html_to_text($text) {
+        $formatoptions = new stdClass;
+        $formatoptions->noclean = true;
+        return html_to_text(format_text($text, $this->questiontextformat, $formatoptions),
+                0, false);
     }
 
     /** @return the result of applying {@link format_text()} to the question text. */
