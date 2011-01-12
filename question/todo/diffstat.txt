@@ -335,30 +335,30 @@ DONE question/type/essay/version.php                    |    2 -
  question/type/match/simpletest/testwalkthrough.php |  474 ++++
  question/type/match/version.php                    |    4 +-
 
- question/type/missingtype/display.html             |   24 -
- question/type/missingtype/edit_missingtype_form.php     |  102 +-
- question/type/missingtype/lang/en_utf8/qtype_missingtype.php |   10 +
- question/type/missingtype/question.php             |   86 +
- question/type/missingtype/questiontype.php         |  125 +-
- question/type/missingtype/renderer.php             |   36 +
- question/type/missingtype/simpletest/testmissingtype.php     |  125 +
+DONE question/type/missingtype/display.html             |   24 -
+DONE question/type/missingtype/edit_missingtype_form.php     |  102 +-
+DONE question/type/missingtype/lang/en_utf8/qtype_missingtype.php |   10 +
+DONE question/type/missingtype/question.php             |   86 +
+DONE question/type/missingtype/questiontype.php         |  125 +-
+DONE question/type/missingtype/renderer.php             |   36 +
+DONE question/type/missingtype/simpletest/testmissingtype.php     |  125 +
 
- question/type/multianswer/db/upgrade.php           |    1 -
- question/type/multianswer/edit_multianswer_form.php     |   11 +-
- question/type/multianswer/questiontype.php         |   61 +-
- question/type/multianswer/version.php              |    2 -
- question/type/multichoice/db/install.xml           |    3 +-
- question/type/multichoice/db/upgrade.php           |   16 +-
- question/type/multichoice/display.html             |   38 -
- question/type/multichoice/edit_multichoice_form.php     |   88 +-
- question/type/multichoice/lang/en_utf8/qtype_multichoice.php |   42 +
- question/type/multichoice/question.php             |  367 +++
- question/type/multichoice/questiontype.php         |  399 +--
- question/type/multichoice/renderer.php             |  313 +++
- question/type/multichoice/simpletest/testquestion.php   |  236 ++
- question/type/multichoice/simpletest/testquestiontype.php    |   90 +
- question/type/multichoice/simpletest/testwalkthrough.php     |   91 +
- question/type/multichoice/version.php              |    6 +-
+DONE question/type/multianswer/db/upgrade.php           |    1 -
+DONE question/type/multianswer/edit_multianswer_form.php     |   11 +-
+DONE question/type/multianswer/questiontype.php         |   61 +-
+DONE question/type/multianswer/version.php              |    2 -
+DONE question/type/multichoice/db/install.xml           |    3 +-
+DONE question/type/multichoice/db/upgrade.php           |   16 +-
+DONE question/type/multichoice/display.html             |   38 -
+DONE question/type/multichoice/edit_multichoice_form.php     |   88 +-
+DONE question/type/multichoice/lang/en_utf8/qtype_multichoice.php |   42 +
+DONE question/type/multichoice/question.php             |  367 +++
+DONE question/type/multichoice/questiontype.php         |  399 +--
+DONE question/type/multichoice/renderer.php             |  313 +++
+DONE question/type/multichoice/simpletest/testquestion.php   |  236 ++
+DONE question/type/multichoice/simpletest/testquestiontype.php    |   90 +
+DONE question/type/multichoice/simpletest/testwalkthrough.php     |   91 +
+DONE question/type/multichoice/version.php              |    6 +-
 
  question/type/numerical/db/upgrade.php             |    2 -
  question/type/numerical/edit_numerical_form.php    |   48 +-

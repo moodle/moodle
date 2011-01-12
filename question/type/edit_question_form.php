@@ -425,6 +425,7 @@ abstract class question_edit_form extends moodleform {
                 }
             }
         }
+
         // subclass adds data_preprocessing code here
         $question = $this->data_preprocessing($question);
 
@@ -475,6 +476,35 @@ abstract class question_edit_form extends moodleform {
             $question->feedback[$key]['format'] = $answer->feedbackformat;
             $key++;
         }
+        return $question;
+    }
+
+    protected function data_preprocessing_combined_feedback($question, $withshownumcorrect = false) {
+        if (empty($question->options)) {
+            return $question;
+        }
+
+        foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
+            $draftid = file_get_submitted_draft_itemid($feedbackname);
+            $question->$feedbackname = array();
+            $question->$feedbackname['text'] = file_prepare_draft_area(
+                $draftid,              // draftid
+                $this->context->id,    // context
+                'qtype_multichoice',   // component
+                $feedbackname,         // filarea
+                !empty($question->id) ? (int) $question->id : null, // itemid
+                $this->fileoptions,    // options
+                $question->options->$feedbackname // text
+            );
+            $feedbackformat = $feedbackname . 'format';
+            $question->$feedbackname['format'] = $question->options->$feedbackformat;
+            $question->$feedbackname['itemid'] = $draftid;
+        }
+
+        if ($withshownumcorrect) {
+            $question->shownumcorrect = $question->options->shownumcorrect;
+        }
+
         return $question;
     }
 
