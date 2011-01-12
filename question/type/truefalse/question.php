@@ -97,7 +97,7 @@ class qtype_truefalse_question extends question_graded_automatically {
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
 
-    function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
+    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
         if ($component == 'question' && $filearea == 'answerfeedback') {
             $answerid = reset($args); // itemid is answer id.
             $response = $qa->get_last_qt_var('answer', '');

@@ -29,46 +29,7 @@
  * essay editing form definition.
  */
 class question_edit_essay_form extends question_edit_form {
-    /**
-     * Add question-type specific form fields.
-     *
-     * @param MoodleQuickForm $mform the form being built.
-     */
-    function definition_inner(&$mform) {
-        $mform->addElement('editor', 'feedback', get_string('feedback', 'quiz'), null, $this->editoroptions);
-        $mform->setType('feedback', PARAM_RAW);
-
-        $mform->addElement('hidden', 'fraction', 0);
-        $mform->setType('fraction', PARAM_RAW);
-
-        //don't need this default element.
-        $mform->removeElement('penalty');
-        $mform->addElement('hidden', 'penalty', 0);
-        $mform->setType('penalty', PARAM_RAW);
-    }
-
-    function data_preprocessing($question) {
-        if (!empty($question->options) && !empty($question->options->answers)) {
-            $answer = reset($question->options->answers);
-            $question->feedback = array();
-            $draftid = file_get_submitted_draft_itemid('feedback');
-            $question->feedback['text'] = file_prepare_draft_area(
-                $draftid,       // draftid
-                $this->context->id,    // context
-                'question',   // component
-                'answerfeedback',             // filarea
-                !empty($answer->id)?(int)$answer->id:null, // itemid
-                $this->fileoptions,    // options
-                $answer->feedback      // text
-            );
-            $question->feedback['format'] = $answer->feedbackformat;
-            $question->feedback['itemid'] = $draftid;
-        }
-        $question->penalty = 0;
-        return $question;
-    }
-
-    function qtype() {
+    public function qtype() {
         return 'essay';
     }
 }
