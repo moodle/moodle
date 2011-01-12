@@ -85,8 +85,10 @@ class qtype_missingtype extends question_type {
         return null;
     }
 
-    public function display_question_editing_page($mform, $question, $wizardnow){
-        print_heading(get_string('missingqtypewarning', 'qtype_missingtype'));
+    function display_question_editing_page(&$mform, $question, $wizardnow){
+        global $OUTPUT;
+        echo $OUTPUT->heading(get_string('warningmissingtype', 'qtype_missingtype'));
+
         $mform->display();
     }
 }
