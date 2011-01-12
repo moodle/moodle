@@ -134,6 +134,8 @@ class qtype_truefalse extends question_type {
         }
         $question->truefeedback = $answers[$questiondata->options->trueanswer]->feedback;
         $question->falsefeedback = $answers[$questiondata->options->falseanswer]->feedback;
+        $question->trueanswerid = $questiondata->options->trueanswer;
+        $question->falseanswerid = $questiondata->options->falseanswer;
     }
 
     function delete_question($questionid, $contextid) {
@@ -151,26 +153,6 @@ class qtype_truefalse extends question_type {
     protected function delete_files($questionid, $contextid) {
         parent::delete_files($questionid, $contextid);
         $this->delete_files_in_answers($questionid, $contextid);
-    }
-
-    function check_file_access($question, $state, $options, $contextid, $component,
-            $filearea, $args) {
-        if ($component == 'question' && $filearea == 'answerfeedback') {
-
-            $answerid = reset($args); // itemid is answer id.
-            $answers = &$question->options->answers;
-            if (isset($state->responses[''])) {
-                $response = $state->responses[''];
-            } else {
-                $response = '';
-            }
-
-            return $options->feedback && isset($answers[$response]) && $answerid == $response;
-
-        } else {
-            return parent::check_file_access($question, $state, $options, $contextid, $component,
-                    $filearea, $args);
-        }
     }
 
     function get_random_guess_score($questiondata) {

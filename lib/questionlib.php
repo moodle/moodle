@@ -1833,20 +1833,18 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
         send_file($content, $filename, 0, 0, true, true, $qformat->mime_type());
     }
 
-    $attemptid = (int)array_shift($args);
-    $questionid = (int)array_shift($args);
+    $qubaid = (int)array_shift($args);
+    $slot = (int)array_shift($args);
 
+    $module = $DB->get_field('question_usages', 'component',
+            array('id' => $qubaid));
 
-    if ($attemptid === 0) {
-        // preview
+    if ($module === 'core_question_preview') {
         require_once($CFG->dirroot . '/question/previewlib.php');
         return question_preview_question_pluginfile($course, $context,
-                $component, $filearea, $attemptid, $questionid, $args, $forcedownload);
+                $component, $filearea, $qubaid, $slot, $args, $forcedownload);
 
     } else {
-        $module = $DB->get_field('question_attempts', 'modulename',
-                array('id' => $attemptid));
-
         $dir = get_component_directory($module);
         if (!file_exists("$dir/lib.php")) {
             send_file_not_found();
@@ -1858,7 +1856,7 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
             send_file_not_found();
         }
 
-        $filefunction($course, $context, $component, $filearea, $attemptid, $questionid,
+        $filefunction($course, $context, $component, $filearea, $qubaid, $slot,
                 $args, $forcedownload);
 
         send_file_not_found();
@@ -1866,6 +1864,8 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
 }
 
 /**
+ * TODO delete this. Replaced by $quba->check_file_access.
+ *
  * Final test for whether a studnet should be allowed to see a particular file.
  * This delegates the decision to the question type plugin.
  *

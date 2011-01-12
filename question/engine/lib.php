@@ -718,7 +718,8 @@ class question_usage_by_activity {
      * @return integer the number used to identify this question within this usage.
      */
     public function add_question(question_definition $question, $maxmark = null) {
-        $qa = new question_attempt($question, $this->get_id(), $this->observer, $maxmark);
+        $qa = new question_attempt($question, $this->get_id(),
+                $this->context->id, $this->observer, $maxmark);
         if (count($this->questionattempts) == 0) {
             $this->questionattempts[1] = $qa;
         } else {
@@ -923,6 +924,20 @@ class question_usage_by_activity {
      */
     public function render_question_at_step($slot, $seq, $options, $number = null) {
         return $this->get_question_attempt($slot)->render_at_step($seq, $options, $number, $this->preferredbehaviour);
+    }
+
+    /**
+     * Checks whether the users is allow to be served a particular file.
+     * @param integer $slot the number used to identify this question within this usage.
+     * @param question_display_options $options the options that control display of the question.
+     * @param string $component the name of the component we are serving files for.
+     * @param string $filearea the name of the file area.
+     * @param array $args the remaining bits of the file path.
+     * @param boolean $forcedownload whether the user must be forced to download the file.
+     * @return boolean true if the user can access this file.
+     */
+    public function check_file_access($slot, $options, $component, $filearea, $args, $forcedownload) {
+        return $this->get_question_attempt($slot)->check_file_access($options, $component, $filearea, $args, $forcedownload);
     }
 
     /**
@@ -1141,7 +1156,7 @@ class question_usage_by_activity {
         $this->observer->notify_delete_attempt_steps($oldqa);
 
         $newqa = new question_attempt($oldqa->get_question(), $oldqa->get_usage_id(),
-                $this->observer, $newmaxmark);
+                $this->context->id, $this->observer, $newmaxmark);
         $newqa->set_database_id($oldqa->get_database_id());
         $newqa->regrade($oldqa, $finished);
 
@@ -1297,7 +1312,7 @@ class question_attempt {
     /** @var integer|string the id of the question_usage_by_activity we belong to. */
     protected $usageid;
 
-    // TODO
+    /** @var integer the id of the context this question_attempt belongs to. */
     protected $owningcontextid = null;
 
     /** @var integer the number used to identify this question_attempt within the usage. */
@@ -1370,10 +1385,11 @@ class question_attempt {
      * @param number $maxmark the maximum grade for this question_attempt. If not
      * passed, $question->defaultmark is used.
      */
-    public function __construct(question_definition $question, $usageid,
+    public function __construct(question_definition $question, $usageid, $owningcontextid,
             question_usage_observer $observer = null, $maxmark = null) {
         $this->question = $question;
         $this->usageid = $usageid;
+        $this->owningcontextid = $owningcontextid;
         if (is_null($observer)) {
             $observer = new question_usage_null_observer();
         }
@@ -1782,10 +1798,18 @@ class question_attempt {
         return $this->behaviour->summarise_action($step);
     }
 
-    public function rewrite_pluginfile_urls($text, $component, $filearea) {
+    /**
+     * Calls {@link question_rewrite_question_urls()} with appropriate parameters
+     * for content belonging to this question.
+     * @param string $text the content to output.
+     * @param string $component the component name (normally 'question' or 'qtype_...')
+     * @param string $filearea the name of the file area.
+     * @param integer $itemid the item id.
+     */
+    public function rewrite_pluginfile_urls($text, $component, $filearea, $itemid) {
         return question_rewrite_question_urls($text,
                 'pluginfile.php', $this->owningcontextid, $component, $filearea,
-                array($this->get_usage_id(), $this->get_slot()), $this->get_question()->id);
+                array($this->get_usage_id(), $this->get_slot()), $itemid);
     }
 
     /**
@@ -1826,6 +1850,19 @@ class question_attempt {
     public function render_at_step($seq, $options, $number, $preferredbehaviour) {
         $restrictedqa = new question_attempt_with_restricted_history($this, $seq, $preferredbehaviour);
         return $restrictedqa->render($options, $number);
+    }
+
+    /**
+     * Checks whether the users is allow to be served a particular file.
+     * @param question_display_options $options the options that control display of the question.
+     * @param string $component the name of the component we are serving files for.
+     * @param string $filearea the name of the file area.
+     * @param array $args the remaining bits of the file path.
+     * @param boolean $forcedownload whether the user must be forced to download the file.
+     * @return boolean true if the user can access this file.
+     */
+    public function check_file_access($options, $component, $filearea, $args, $forcedownload) {
+        return $this->behaviour->check_file_access($options, $component, $filearea, $args, $forcedownload);
     }
 
     /**
@@ -2121,16 +2158,17 @@ class question_attempt {
     }
 
     /**
-     * @return string the most recent manual comment that was added to this question.
-     * null, if none.
+     * @return array(string, int) the most recent manual comment that was added
+     * to this question, and the FORMAT_... it is.
      */
     public function get_manual_comment() {
         foreach ($this->get_reverse_step_iterator() as $step) {
             if ($step->has_behaviour_var('comment')) {
-                return $step->get_behaviour_var('comment');
+                return array($step->get_behaviour_var('comment'),
+                        $step->get_behaviour_var('commentformat'));
             }
         }
-        return null;
+        return array(null, null);
     }
 
     /**
@@ -2172,7 +2210,8 @@ class question_attempt {
                     $record->questionid, $record->maxmark + 0);
         }
 
-        $qa = new question_attempt($question, $record->questionusageid, null, $record->maxmark + 0);
+        $qa = new question_attempt($question, $record->questionusageid,
+                $record->contextid, null, $record->maxmark + 0);
         $qa->set_database_id($record->questionattemptid);
         $qa->set_number_in_usage($record->slot);
         $qa->minfraction = $record->minfraction + 0;

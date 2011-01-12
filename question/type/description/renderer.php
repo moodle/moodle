@@ -35,7 +35,7 @@ class qtype_description_renderer extends qtype_renderer {
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
 
-        return html_writer::tag('div', $qa->get_question()->format_questiontext(),
+        return html_writer::tag('div', $qa->get_question()->format_questiontext($qa),
                 array('class' => 'qtext'));
     }
 }

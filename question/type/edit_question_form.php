@@ -315,7 +315,8 @@ abstract class question_edit_form extends moodleform {
 
         $repeated = array();
         $repeated[] = $mform->createElement('header', 'answerhdr', get_string('hintn', 'question'));
-        $repeated[] = $mform->createElement('htmleditor', 'hint', get_string('hinttext', 'question'), array('size' => 50));
+        $repeated[] = $mform->createElement('editor', 'hint', get_string('hinttext', 'question'),
+                array('rows' => 5), $this->editoroptions);
         $repeatedoptions['hint']['type'] = PARAM_RAW;
 
         if ($withclearwrong) {
@@ -427,16 +428,6 @@ abstract class question_edit_form extends moodleform {
         // subclass adds data_preprocessing code here
         $question = $this->data_preprocessing($question);
 
-        if (!empty($question->hints)) {
-            $i = 0;
-            foreach ($question->hints as $hint) {
-                $question->hint[$i] = $hint->hint;
-                $question->hintclearwrong[$i] = !empty($hint->clearwrong);
-                $question->hintshownumcorrect[$i] = !empty($hint->shownumcorrect);
-                $i += 1;
-            }
-        }
-
         parent::set_data($question);
     }
 
@@ -446,7 +437,74 @@ abstract class question_edit_form extends moodleform {
      * @param array $question - array to fill in with the default values
      */
     function data_preprocessing($question) {
-        // TODO is this really necessary?
+        return $question;
+    }
+
+    protected function data_preprocessing_answers($question) {
+        if (empty($question->options->answers)) {
+            return $question;
+        }
+
+        $key = 0;
+        foreach ($question->options->answers as $answer){
+            $question->answer[$key] = $answer->answer;
+            $question->fraction[$key] = 0 + $answer->fraction;
+            $question->feedback[$key] = array();
+
+            // Evil hack alert. Formslib can store defaults in two ways for
+            // repeat elements: ->_defaultValues['fraction[0]'] and
+            // ->_defaultValues['fraction'][0]. The $repeatedoptions['fraction']['default'] = 0;
+            // bit above means that ->_defaultValues['fraction[0]'] has already
+            // been set, but we are using object notation here, so we will be setting
+            // ->_defaultValues['fraction'][0]. That does not work, so we have to unset
+            // ->_defaultValues['fraction[0]']
+            unset($this->_form->_defaultValues["fraction[$key]"]);
+
+            // Prepare the feedback editor to display files in draft area
+            $draftitemid = file_get_submitted_draft_itemid('feedback['.$key.']');
+            $question->feedback[$key]['text'] = file_prepare_draft_area(
+                $draftitemid,          // draftid
+                $this->context->id,    // context
+                'question',            // component
+                'answerfeedback',      // filarea
+                !empty($answer->id) ? (int) $answer->id : null, // itemid
+                $this->fileoptions,    // options
+                $answer->feedback      // text
+            );
+            $question->feedback[$key]['itemid'] = $draftitemid;
+            $question->feedback[$key]['format'] = $answer->feedbackformat;
+            $key++;
+        }
+        return $question;
+    }
+
+    protected function data_preprocessing_hints($question, $withclearwrong = false, $withshownumpartscorrect = false) {
+        if (empty($question->hints)) {
+            return $question;
+        }
+
+        $key = 0;
+        foreach ($question->hints as $hint){
+            $question->hint[$key] = array();
+
+            // prepare feedback editor to display files in draft area
+            $draftitemid = file_get_submitted_draft_itemid('hint['.$key.']');
+            $question->hint[$key]['text'] = file_prepare_draft_area(
+                $draftitemid,          // draftid
+                $this->context->id,    // context
+                'question',            // component
+                'hint',                // filarea
+                !empty($hint->id) ? (int) $hint->id : null, // itemid
+                $this->fileoptions,    // options
+                $hint->hint            // text
+            );
+            $question->hint[$key]['itemid'] = $draftitemid;
+            $question->hint[$key]['format'] = $hint->hintformat;
+            $key++;
+        }
+
+        // TODO $withclearwrong, $withshownumpartscorrect
+
         return $question;
     }
 

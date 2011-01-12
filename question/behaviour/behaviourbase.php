@@ -123,6 +123,20 @@ abstract class question_behaviour {
     }
 
     /**
+     * Checks whether the users is allow to be served a particular file.
+     * @param question_display_options $options the options that control display of the question.
+     * @param string $component the name of the component we are serving files for.
+     * @param string $filearea the name of the file area.
+     * @param array $args the remaining bits of the file path.
+     * @param boolean $forcedownload whether the user must be forced to download the file.
+     * @return boolean true if the user can access this file.
+     */
+    public function check_file_access($options, $component, $filearea, $args, $forcedownload) {
+        $this->adjust_display_options($options);
+        return $this->question->check_file_access($this->qa, $options, $component, $filearea, $args, $forcedownload);
+    }
+
+    /**
      * @return qbehaviour_renderer get the appropriate renderer to use for this model.
      */
     public function get_renderer() {
@@ -432,18 +446,19 @@ abstract class question_behaviour {
     /**
      * @param $comment the comment text to format. If omitted,
      *      $this->qa->get_manual_comment() is used.
+     * @param $commentformat the format of the comment, one of the FORMAT_... constants.
      * @return string the comment, ready to be output.
      */
-    public function format_comment($comment = null) {
+    public function format_comment($comment = null, $commentformat = null) {
         $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->para = false;
 
         if (is_null($comment)) {
-            $comment = $this->qa->get_manual_comment();
+            list($comment, $commentformat) = $this->qa->get_manual_comment();
         }
 
-        return format_text($comment, FORMAT_HTML, $formatoptions);
+        return format_text($comment, $commentformat, $formatoptions);
     }
 
     /**

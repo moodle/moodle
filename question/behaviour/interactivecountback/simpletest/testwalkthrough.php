@@ -36,8 +36,8 @@ class qbehaviour_interactivecountback_walkthrough_test extends qbehaviour_walkth
         $m = test_question_maker::make_a_matching_question();
         $m->shufflestems = false;
         $m->hints = array(
-            new question_hint_with_parts('This is the first hint.', true, true),
-            new question_hint_with_parts('This is the second hint.', true, true),
+            new question_hint_with_parts(0, 'This is the first hint.', FORMAT_HTML, true, true),
+            new question_hint_with_parts(0, 'This is the second hint.', FORMAT_HTML, true, true),
         );
         $this->start_attempt_at_question($m, 'interactive', 12);
 

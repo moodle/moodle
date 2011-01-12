@@ -36,7 +36,7 @@ class question_attempt_step_iterator_test extends UnitTestCase {
 
     public function setUp() {
         $question = test_question_maker::make_a_description_question();
-        $this->qa = new testable_question_attempt($question, 0);
+        $this->qa = new testable_question_attempt($question, 0, 0);
         for ($i = 0; $i < 3; $i++) {
             $step = new question_attempt_step(array('i' => $i));
             $this->qa->add_step($step);

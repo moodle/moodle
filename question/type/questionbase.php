@@ -235,23 +235,48 @@ abstract class question_definition {
      *      parts of the question do not need to be cleaned, and student input does.
      * @return string the text formatted for output by format_text.
      */
-    public function format_text($text, $qa, $component, $filearea, $clean = false) {
+    public function format_text($text, $qa, $component, $filearea, $itemid, $clean = false) {
         $formatoptions = new stdClass;
         $formatoptions->noclean = !$clean;
         $formatoptions->para = false;
-// TODO $itemid needs to be an argument too.
-        $text = $qa->rewrite_pluginfile_urls($text, $component, $filearea);
+        $text = $qa->rewrite_pluginfile_urls($text, $component, $filearea, $itemid);
         return format_text($text, $this->questiontextformat, $formatoptions);
     }
 
     /** @return the result of applying {@link format_text()} to the question text. */
     public function format_questiontext($qa) {
-        return $this->format_text($this->questiontext, $qa, 'question', 'questiontext');
+        return $this->format_text($this->questiontext, $qa,
+                'question', 'questiontext', $this->id);
     }
 
     /** @return the result of applying {@link format_text()} to the general feedback. */
     public function format_generalfeedback($qa) {
-        return $this->format_text($this->generalfeedback, $qa, 'question', 'generalfeedback');
+        return $this->format_text($this->generalfeedback, $qa,
+                'question', 'generalfeedback', $this->id);
+    }
+
+    /**
+     * Checks whether the users is allow to be served a particular file.
+     * @param question_attempt the question attempt being displayed.
+     * @param question_display_options $options the options that control display of the question.
+     * @param string $component the name of the component we are serving files for.
+     * @param string $filearea the name of the file area.
+     * @param array $args the remaining bits of the file path.
+     * @param boolean $forcedownload whether the user must be forced to download the file.
+     * @return boolean true if the user can access this file.
+     */
+    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
+        if ($component == 'question' && $filearea == 'questiontext') {
+            // Question text always visible.
+            return true;
+
+        } else if ($component == 'question' && $filearea == 'generalfeedback') {
+            return $options->generalfeedback;
+
+        } else {
+            // Unrecognised component or filearea.
+            return false;
+        }
     }
 }
 
@@ -495,6 +520,10 @@ abstract class question_graded_automatically extends question_with_responses
         }
         return $this->hints[$hintnumber];
     }
+
+    public function format_hint(question_hint $hint, question_attempt $qa) {
+        return $this->format_text($hint->hint, $qa, 'question', 'hint', $hint->id);
+    }
 }
 
 
@@ -625,15 +654,23 @@ class question_answer {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_hint {
-    /** @var The feedback hint to be shown. */
+    /** @var integer The hint id. */
+    public $id;
+    /** @var string The feedback hint to be shown. */
     public $hint;
+    /** @var integer The corresponding text FORMAT_... type. */
+    public $hintformat;
 
     /**
      * Constructor.
+     * @param integer the hint id from the database.
      * @param string $hint The hint text
+     * @param integer the corresponding text FORMAT_... type.
      */
-    public function __construct($hint) {
+    public function __construct($id, $hint, $hintformat) {
+        $this->id = $id;
         $this->hint = $hint;
+        $this->hintformat = $hintformat;
     }
 
     /**
@@ -642,7 +679,7 @@ class question_hint {
      * @return question_hint
      */
     public static function load_from_record($row) {
-        return new question_hint($row->hint);
+        return new question_hint($row->id, $row->hint, $row->hintformat);
     }
 
     /**
@@ -672,12 +709,14 @@ class question_hint_with_parts extends question_hint {
 
     /**
      * Constructor.
+     * @param integer the hint id from the database.
      * @param string $hint The hint text
+     * @param integer the corresponding text FORMAT_... type.
      * @param boolean $shownumcorrect whether the number of right parts should be shown
      * @param boolean $clearwrong whether the wrong parts should be reset.
      */
-    public function __construct($hint, $shownumcorrect, $clearwrong) {
-        parent::__construct($hint);
+    public function __construct($id, $hint, $hintformat, $shownumcorrect, $clearwrong) {
+        parent::__construct($id, $hint, $hintformat);
         $this->shownumcorrect = $shownumcorrect;
         $this->clearwrong = $clearwrong;
     }
@@ -688,7 +727,8 @@ class question_hint_with_parts extends question_hint {
      * @return question_hint_with_parts
      */
     public static function load_from_record($row) {
-        return new question_hint_with_parts($row->hint, $row->shownumcorrect, $row->clearwrong);
+        return new question_hint_with_parts($row->id, $row->hint, $row->hintformat,
+                $row->shownumcorrect, $row->clearwrong);
     }
 
     public function adjust_display_options(question_display_options $options) {

@@ -64,9 +64,7 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 .que .im-feedback,
 .que .feedback,
 .que p {margin: 0 0 0.5em;}
-.que .prompt {float: left;width: 15%;height: 2em;padding-top: 0.3em;}
 .que .qtext {margin-bottom: 1.5em;}
-.que .submit {position: relative;clear: both;float: left;}
 
 .que .correct {background-color: #afa;}
 .que .notanswered,
@@ -81,11 +79,6 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 .que .history h3 {margin: 0 0 0.2em;font-size: 1em;}
 .que .history table {width: 100%;margin: 0;}
 .que .history .current {font-weight: bold;}
-
-.que.description .info {margin: 0.5em 0 0.5em 0.2em;width: 1em;}
-.que.description .content,
-.que.description .generalfeedback {margin-left: 1.2em;margin-bottom: 0.5em;float: none;width: auto;}
-.que.description .qtext {margin-bottom: 0;}
 
 .multianswer .submit {margin-top: 1em;}
 
@@ -107,10 +100,6 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 
 .importerror {margin-top: 10px;border-bottom: 1px solid #555;}
 .mform .que.comment .fitemtitle {width: 20%;}
-
-/**** GRRRRR ***/
-/* MSIE Hack */
-* html .que .submit {float: none;}
 
 /** Overide for RTL layout **/
 .dir-rtl #qtypechoicecontainer #chooseqtype .instruction,

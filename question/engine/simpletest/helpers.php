@@ -69,7 +69,7 @@ class test_question_maker {
      * @return question_attempt the question attempt.
      */
     public function get_a_qa($question, $maxmark = 3) {
-        return new question_attempt($question, 13, null, $maxmark);
+        return new question_attempt($question, 13, 0, null, $maxmark);
     }
 
     /**
@@ -111,6 +111,8 @@ class test_question_maker {
         $tf->rightanswer = true;
         $tf->truefeedback = 'This is the right answer.';
         $tf->falsefeedback = 'This is the wrong answer.';
+        $tf->trueanswerid = 13;
+        $tf->falseanswerid = 14;
 
         return $tf;
     }

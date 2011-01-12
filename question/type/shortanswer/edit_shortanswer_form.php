@@ -56,36 +56,10 @@ class question_edit_shortanswer_form extends question_edit_form {
     }
 
     function data_preprocessing($question) {
-        if (isset($question->options)){
-            $answers = $question->options->answers;
-            if (count($answers)) {
-                $key = 0;
-                foreach ($answers as $answer){
-                    $default_values['answer['.$key.']'] = $answer->answer;
-                    $default_values['fraction['.$key.']'] = $answer->fraction;
-                    $default_values['feedback['.$key.']'] = array();
-
-                    // prepare feedback editor to display files in draft area
-                    $draftid_editor = file_get_submitted_draft_itemid('feedback['.$key.']');
-                    $default_values['feedback['.$key.']']['text'] = file_prepare_draft_area(
-                        $draftid_editor,       // draftid
-                        $this->context->id,    // context
-                        'question',            // component
-                        'answerfeedback',      // filarea
-                        !empty($answer->id)?(int)$answer->id:null, // itemid
-                        $this->fileoptions,    // options
-                        $answer->feedback      // text
-                    );
-                    $default_values['feedback['.$key.']']['itemid'] = $draftid_editor;
-                    // prepare files code block ends
-
-                    $default_values['feedback['.$key.']']['format'] = $answer->feedbackformat;
-                    $key++;
-                }
-            }
-            $default_values['usecase'] = $question->options->usecase;
-            $question = (object)((array)$question + $default_values);
-        }
+        $question = parent::data_preprocessing($question);
+        $question = $this->data_preprocessing_answers($question);
+        $question = $this->data_preprocessing_hints($question);
+        $question->usecase = $question->options->usecase;
         return $question;
     }
 
@@ -114,6 +88,7 @@ class question_edit_shortanswer_form extends question_edit_form {
         }
         return $errors;
     }
+
     public function qtype() {
         return 'shortanswer';
     }

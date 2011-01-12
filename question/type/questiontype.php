@@ -462,7 +462,9 @@ class question_type {
 
     public function save_hints($formdata, $withparts = false) {
         global $DB;
-        $DB->delete_records('question_hints', array('questionid' => $formdata->id));
+        $context = $formdata->context;
+
+        $oldhints = $DB->get_records('question_hints', array('questionid' => $formdata->id));
 
         if (!empty($formdata->hint)) {
             $numhints = max(array_keys($formdata->hint)) + 1;
@@ -485,24 +487,44 @@ class question_type {
         }
 
         for ($i = 0; $i < $numhints; $i += 1) {
-            $hint = new stdClass;
-            $hint->hint = $formdata->hint[$i];
-            $hint->questionid = $formdata->id;
-
-            if (html_is_blank($hint->hint)) {
-                $hint->hint = '';
+            if (html_is_blank($formdata->hint[$i]['text'])) {
+                $formdata->hint[$i]['text'] = '';
             }
 
             if ($withparts) {
-                $hint->clearwrong = !empty($formdata->hintclearwrong[$i]);
-                $hint->shownumcorrect = !empty($formdata->hintshownumcorrect[$i]);
+                $clearwrong = !empty($formdata->hintclearwrong[$i]);
+                $shownumcorrect = !empty($formdata->hintshownumcorrect[$i]);
             }
 
-            if (empty($hint->hint) && empty($hint->clearwrong) && empty($hint->shownumcorrect)) {
+            if (empty($formdata->hint[$i]['text']) && empty($clearwrong) && empty($shownumcorrect)) {
                 continue;
             }
 
-            $DB->insert_record('question_hints', $hint);
+            // Update an existing answer if possible.
+            $hint = array_shift($oldhints);
+            if (!$hint) {
+                $hint = new stdClass();
+                $hint->questionid = $formdata->id;
+                $hint->hint = '';
+                $hint->id = $DB->insert_record('question_hints', $hint);
+            }
+
+            $hint->hint = '';
+            $hint->hint = $this->import_or_save_files($formdata->hint[$i],
+                    $context, 'question', 'hint', $hint->id);
+            $hint->hintformat = $formdata->hint[$i]['format'];
+            if ($withparts) {
+                $hint->clearwrong = $clearwrong;
+                $hint->shownumcorrect = $shownumcorrect;
+            }
+            $DB->update_record('question_hints', $hint);
+        }
+
+        // Delete any remaining old hints.
+        $fs = get_file_storage();
+        foreach($oldhints as $oldhint) {
+            $fs->delete_area_files($context->id, 'question', 'hint', $oldhint->id);
+            $DB->delete_records('question_hints', array('id' => $oldhint->id));
         }
     }
 

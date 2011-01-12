@@ -174,6 +174,7 @@ function quiz_load_attempt($attemptid) {
         return false;
     }
 
+    // TODO kill this.
     if (!$DB->record_exists('question_sessions', array('attemptid' => $attempt->uniqueid))) {
     /// this attempt has not yet been upgraded to the new model
         quiz_upgrade_states($attempt);

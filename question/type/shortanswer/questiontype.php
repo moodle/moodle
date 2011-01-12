@@ -147,30 +147,4 @@ class qtype_shortanswer extends question_type {
 
         return array($questiondata->id => $responses);
     }
-
-    public function check_file_access($question, $state, $options, $contextid, $component,
-            $filearea, $args) {
-        if ($component == 'question' && $filearea == 'answerfeedback') {
-            $answers = &$question->options->answers;
-            if (isset($state->responses[''])) {
-                $response = $state->responses[''];
-            } else {
-                $response = '';
-            }
-            $answerid = reset($args); // itemid is answer id.
-            if (empty($options->feedback)) {
-                return false;
-            }
-            foreach($answers as $answer) {
-                if ($this->test_response($question, $state, $answer)) {
-                    return true;
-                }
-            }
-            return false;
-
-        } else {
-            return parent::check_file_access($question, $state, $options, $contextid, $component,
-                    $filearea, $args);
-        }
-    }
 }

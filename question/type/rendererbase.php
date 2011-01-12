@@ -152,8 +152,8 @@ abstract class qtype_renderer extends plugin_renderer_base {
      * @return string HTML fragment.
      */
     protected function hint(question_attempt $qa, question_hint $hint) {
-        return html_writer::nonempty_tag('div', $qa->get_question()->format_text(
-                $hint->hint, $qa, 'question', 'hint'), array('class' => 'hint'));
+        return html_writer::nonempty_tag('div',
+                $qa->get_question()->format_hint($hint, $qa), array('class' => 'hint'));
     }
 
     /**
@@ -256,7 +256,8 @@ abstract class qtype_with_combined_feedback_renderer extends qtype_renderer {
         }
 
         if ($question->$feedbackfield) {
-            $feedback .= $question->format_text($question->$feedbackfield, $qa, 'question', $feedbackfield);
+            $feedback .= $question->format_text($question->$feedbackfield, $qa,
+                    'question', $feedbackfield, $question->id);
         }
 
         return $feedback;

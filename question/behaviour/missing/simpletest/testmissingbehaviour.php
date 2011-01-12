@@ -31,21 +31,21 @@ require_once(dirname(__FILE__) . '/../behaviour.php');
 
 class qbehaviour_missing_test extends UnitTestCase {
     public function test_missing_cannot_start() {
-        $qa = new question_attempt(test_question_maker::make_a_truefalse_question(), 0);
+        $qa = new question_attempt(test_question_maker::make_a_truefalse_question(), 0, 0);
         $behaviour = new qbehaviour_missing($qa, 'deferredfeedback');
         $this->expectException();
         $behaviour->init_first_step(new question_attempt_step(array()));
     }
 
     public function test_missing_cannot_process() {
-        $qa = new question_attempt(test_question_maker::make_a_truefalse_question(), 0);
+        $qa = new question_attempt(test_question_maker::make_a_truefalse_question(), 0, 0);
         $behaviour = new qbehaviour_missing($qa, 'deferredfeedback');
         $this->expectException();
         $behaviour->process_action(new question_attempt_pending_step(array()));
     }
 
     public function test_missing_cannot_get_min_grade() {
-        $qa = new question_attempt(test_question_maker::make_a_truefalse_question(), 0);
+        $qa = new question_attempt(test_question_maker::make_a_truefalse_question(), 0, 0);
         $behaviour = new qbehaviour_missing($qa, 'deferredfeedback');
         $this->expectException();
         $behaviour->get_min_fraction();

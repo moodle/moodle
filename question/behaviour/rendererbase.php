@@ -71,7 +71,8 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
 
         $commentfield = $qa->get_behaviour_field_name('comment');
 
-        $comment = print_textarea(can_use_html_editor(), 10, 80, null, null, $commentfield, $qa->get_manual_comment(), 0, true);
+        list($commenttext, $commentformat) = $this->qa->get_manual_comment();
+        $comment = print_textarea(can_use_html_editor(), 10, 80, null, null, $commentfield, $commenttext, 0, true);
         $comment = html_writer::tag('div', html_writer::tag('div',
                 html_writer::tag('label', get_string('comment', 'question'), array('for' => $commentfield)),
                 array('class' => 'fitemtitle')) .

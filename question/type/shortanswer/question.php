@@ -97,4 +97,24 @@ class qtype_shortanswer_question extends question_graded_by_strategy
 
         return preg_match($regexp, trim($string));
     }
+
+    function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
+        if ($component == 'question' && $filearea == 'answerfeedback') {
+            $currentanswer = $qa->get_last_qt_var('answer');
+            $answer = $qa->get_question()->get_matching_answer(array('answer' => $currentanswer));
+            $answerid = reset($args); // itemid is answer id.
+            return $options->feedback && $answerid == $answer->id;
+
+        } else if ($component == 'question' && $filearea == 'hint') {
+            if (!$options->feedback) {
+                return false;
+            }
+            $hint = $qa->get_applicable_hint();
+            $hintid = reset($args); // itemid is hint id.
+            return $hintid == $hint->id;
+
+        } else {
+            return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
+        }
+    }
 }

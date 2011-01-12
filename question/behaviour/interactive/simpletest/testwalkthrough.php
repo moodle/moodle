@@ -36,8 +36,8 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
         // Create a multichoice single question.
         $mc = test_question_maker::make_a_multichoice_single_question();
         $mc->hints = array(
-            new question_hint_with_parts('This is the first hint.', false, false),
-            new question_hint_with_parts('This is the second hint.', true, true),
+            new question_hint_with_parts(0, 'This is the first hint.', FORMAT_HTML, false, false),
+            new question_hint_with_parts(0, 'This is the second hint.', FORMAT_HTML, true, true),
         );
         $this->start_attempt_at_question($mc, 'interactive');
 
@@ -176,7 +176,7 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
         // Create a multichoice single question.
         $mc = test_question_maker::make_a_multichoice_single_question();
         $mc->hints = array(
-            new question_hint_with_parts('This is the first hint.', false, false),
+            new question_hint_with_parts(0, 'This is the first hint.', FORMAT_HTML, false, false),
         );
         $this->start_attempt_at_question($mc, 'interactive');
 
@@ -235,8 +235,8 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
         // Create a short answer question.
         $sa = test_question_maker::make_a_shortanswer_question();
         $sa->hints = array(
-            new question_hint('This is the first hint.'),
-            new question_hint('This is the second hint.'),
+            new question_hint(0, 'This is the first hint.', FORMAT_HTML),
+            new question_hint(0, 'This is the second hint.', FORMAT_HTML),
         );
         $this->start_attempt_at_question($sa, 'interactive');
 
@@ -330,8 +330,8 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
         // Create a multichoice multiple question.
         $mc = test_question_maker::make_a_multichoice_multi_question();
         $mc->hints = array(
-            new question_hint_with_parts('This is the first hint.', true, true),
-            new question_hint_with_parts('This is the second hint.', true, true),
+            new question_hint_with_parts(0, 'This is the first hint.', FORMAT_HTML, true, true),
+            new question_hint_with_parts(0, 'This is the second hint.', FORMAT_HTML, true, true),
         );
         $this->start_attempt_at_question($mc, 'interactive', 2);
 
@@ -403,8 +403,8 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
         // Create a multichoice multiple question.
         $q = test_question_maker::make_a_shortanswer_question();
         $q->hints = array(
-            new question_hint_with_parts('This is the first hint.', true, true),
-            new question_hint_with_parts('This is the second hint.', true, true),
+            new question_hint_with_parts(0, 'This is the first hint.', FORMAT_HTML, true, true),
+            new question_hint_with_parts(0, 'This is the second hint.', FORMAT_HTML, true, true),
         );
         $this->start_attempt_at_question($q, 'interactive', 3);
 
@@ -436,8 +436,8 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
         // Create a multichoice multiple question.
         $q = test_question_maker::make_a_shortanswer_question();
         $q->hints = array(
-            new question_hint_with_parts('This is the first hint.', true, true),
-            new question_hint_with_parts('This is the second hint.', true, true),
+            new question_hint_with_parts(0, 'This is the first hint.', FORMAT_HTML, true, true),
+            new question_hint_with_parts(0, 'This is the second hint.', FORMAT_HTML, true, true),
         );
         $this->start_attempt_at_question($q, 'interactive', 3);
 

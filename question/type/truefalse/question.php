@@ -35,6 +35,8 @@ class qtype_truefalse_question extends question_graded_automatically {
     public $rightanswer;
     public $truefeedback;
     public $falsefeedback;
+    public $trueanswerid;
+    public $falseanswerid;
 
     public function get_expected_data() {
         return array('answer' => PARAM_INTEGER);
@@ -93,5 +95,18 @@ class qtype_truefalse_question extends question_graded_automatically {
             $fraction = 0;
         }
         return array($fraction, question_state::graded_state_for_fraction($fraction));
+    }
+
+    function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
+        if ($component == 'question' && $filearea == 'answerfeedback') {
+            $answerid = reset($args); // itemid is answer id.
+            $response = $qa->get_last_qt_var('answer', '');
+            return $options->feedback && (
+                    ($answerid == $this->trueanswerid && $response) ||
+                    ($answerid == $this->falseanswerid && $response !== ''));
+
+        } else {
+            return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
+        }
     }
 }

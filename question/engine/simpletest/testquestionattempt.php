@@ -41,7 +41,7 @@ class question_attempt_test extends UnitTestCase {
         $this->question = test_question_maker::make_a_description_question();
         $this->question->defaultmark = 3;
         $this->usageid = 13;
-        $this->qa = new question_attempt($this->question, $this->usageid);
+        $this->qa = new question_attempt($this->question, $this->usageid, 0);
     }
 
     public function tearDown() {
@@ -51,13 +51,13 @@ class question_attempt_test extends UnitTestCase {
     }
 
     public function test_constructor_sets_maxmark() {
-        $qa = new question_attempt($this->question, $this->usageid);
+        $qa = new question_attempt($this->question, $this->usageid, 0);
         $this->assertIdentical($this->question, $qa->get_question());
         $this->assertEqual(3, $qa->get_max_mark());
     }
 
     public function test_maxmark_beats_default_mark() {
-        $qa = new question_attempt($this->question, $this->usageid, null, 2);
+        $qa = new question_attempt($this->question, $this->usageid, 0, null, 2);
         $this->assertEqual(2, $qa->get_max_mark());
     }
 
@@ -133,7 +133,7 @@ class question_attempt_with_steps_test extends UnitTestCase {
 
     public function setUp() {
         $this->question = test_question_maker::make_a_description_question();
-        $this->qa = new testable_question_attempt($this->question, 0, null, 2);
+        $this->qa = new testable_question_attempt($this->question, 0, 0, null, 2);
         for ($i = 0; $i < 3; $i++) {
             $step = new question_attempt_step(array('i' => $i));
             $this->qa->add_step($step);
@@ -237,7 +237,7 @@ class question_attempt_with_steps_test extends UnitTestCase {
     }
 
     public function test_cannot_get_min_fraction_before_start() {
-        $qa = new question_attempt($this->question, null);
+        $qa = new question_attempt($this->question, null, 0);
         $this->expectException();
         $qa->get_min_fraction();
     }
@@ -247,19 +247,19 @@ class question_attempt_with_steps_test extends UnitTestCase {
 class question_attempt_db_test extends data_loading_method_test_base {
     public function test_load() {
         $records = testing_db_record_builder::build_db_records(array(
-            array('id', 'questionattemptid', 'questionusageid', 'slot',
+            array('id', 'questionattemptid', 'contextid', 'questionusageid', 'slot',
                               'behaviour', 'questionid', 'maxmark', 'minfraction', 'flagged',
                                                                              'questionsummary', 'rightanswer', 'responsesummary', 'timemodified',
                                                                                                      'attemptstepid', 'sequencenumber', 'state', 'fraction',
                                                                                                                           'timecreated', 'userid', 'name', 'value'),
-            array(1, 1, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',              null, 1256233700, 1,       null, null),
-            array(2, 1, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 2, 1, 'complete',          null, 1256233705, 1,   'answer',  '1'),
-            array(3, 1, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 1, '', '', '', 1256233790, 3, 2, 'complete',          null, 1256233710, 1,   'answer',  '0'),
-            array(4, 1, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 4, 3, 'complete',          null, 1256233715, 1,   'answer',  '1'),
-            array(5, 1, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 5, 4, 'gradedright',  1.0000000, 1256233720, 1,  '-finish',  '1'),
-            array(6, 1, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 6, 5, 'mangrpartial', 0.5000000, 1256233790, 1, '-comment', 'Not good enough!'),
-            array(7, 1, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 6, 5, 'mangrpartial', 0.5000000, 1256233790, 1,    '-mark',  '1'),
-            array(8, 1, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 6, 5, 'mangrpartial', 0.5000000, 1256233790, 1, '-maxmark',  '2'),
+            array(1, 1, 123, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',              null, 1256233700, 1,       null, null),
+            array(2, 1, 123, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 2, 1, 'complete',          null, 1256233705, 1,   'answer',  '1'),
+            array(3, 1, 123, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 1, '', '', '', 1256233790, 3, 2, 'complete',          null, 1256233710, 1,   'answer',  '0'),
+            array(4, 1, 123, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 4, 3, 'complete',          null, 1256233715, 1,   'answer',  '1'),
+            array(5, 1, 123, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 5, 4, 'gradedright',  1.0000000, 1256233720, 1,  '-finish',  '1'),
+            array(6, 1, 123, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 6, 5, 'mangrpartial', 0.5000000, 1256233790, 1, '-comment', 'Not good enough!'),
+            array(7, 1, 123, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 6, 5, 'mangrpartial', 0.5000000, 1256233790, 1,    '-mark',  '1'),
+            array(8, 1, 123, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 6, 5, 'mangrpartial', 0.5000000, 1256233790, 1, '-maxmark',  '2'),
         ));
 
         $question = test_question_maker::make_a_truefalse_question();
@@ -320,12 +320,12 @@ class question_attempt_db_test extends data_loading_method_test_base {
 
     public function test_load_missing_question() {
         $records = testing_db_record_builder::build_db_records(array(
-            array('id', 'questionattemptid', 'questionusageid', 'slot',
+            array('id', 'questionattemptid', 'contextid', 'questionusageid', 'slot',
                               'behaviour', 'questionid', 'maxmark', 'minfraction', 'flagged',
                                                                              'questionsummary', 'rightanswer', 'responsesummary', 'timemodified',
                                                                                                      'attemptstepid', 'sequencenumber', 'state', 'fraction',
                                                                                                                           'timecreated', 'userid', 'name', 'value'),
-            array(1, 1, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',              null, 1256233700, 1,       null, null),
+            array(1, 1, 123, 1, 1, 'deferredfeedback', -1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',              null, 1256233700, 1,       null, null),
         ));
 
         question_bank::start_unit_test();

@@ -164,6 +164,7 @@ WHERE
         $records = $this->db->get_records_sql("
 SELECT
     COALESCE(qasd.id, -1 * qas.id) AS id,
+    quba.contextid,
     quba.preferredbehaviour,
     qa.id AS questionattemptid,
     qa.questionusageid,

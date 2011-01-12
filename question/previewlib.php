@@ -26,6 +26,9 @@
  */
 
 
+require_once($CFG->libdir . '/formslib.php');
+
+
 /**
  * Settings form for the preview options.
  *
@@ -194,67 +197,34 @@ class question_preview_options extends question_display_options {
  * @param object $context context object
  * @param string $component the name of the component we are serving files for.
  * @param string $filearea the name of the file area.
+ * @param integer $qubaid the question_usage this image belongs to.
+ * @param integer $slot the relevant slot within the usage.
  * @param array $args the remaining bits of the file path.
  * @param bool $forcedownload whether the user must be forced to download the file.
  * @return bool false if file not found, does not return if found - justsend the file
  */
 function question_preview_question_pluginfile($course, $context, $component,
-        $filearea, $attemptid, $questionid, $args, $forcedownload) {
-    global $USER, $SESSION, $DB, $CFG;
-    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+        $filearea, $qubaid, $slot, $args, $forcedownload) {
+    global $USER, $DB, $CFG;
 
-    if (!$question = $DB->get_record('question', array('id' => $questionid))) {
-        return send_file_not_found();
-    }
+    $quba = question_engine::load_questions_usage_by_activity($qubaid);
 
-    if (!question_has_capability_on($question, 'use', $question->category)) {
+    if ($quba->get_owning_context()->id != $context->id) {
         send_file_not_found();
     }
 
-    if (!isset($SESSION->quizpreview->states) || $SESSION->quizpreview->questionid != $questionid) {
+    if (!question_has_capability_on($quba->get_question($slot), 'use')) {
         send_file_not_found();
     }
 
-    $states = end($SESSION->quizpreview->states);
-    if (!array_key_exists($question->id, $states)) {
-        send_file_not_found();
-    }
-    $state = $states[$question->id];
-
-    // Build fake cmoptions
-    $quiz = new cmoptions;
-    $quiz->id = 0;
-    $quiz->review = get_config('quiz', 'review');
-    if (empty($course->id)) {
-        $quiz->course = SITEID;
-    } else {
-        $quiz->course = $course->id;
-    }
-    $quiz->decimalpoints = get_config('quiz', 'decimalpoints');
-
-    $questions[$question->id] = $question;
-    get_question_options($questions);
-
-    // Build fake attempt
-    $timenow = time();
-    $attempt = new stdClass();
-    $attempt->quiz = $quiz->id;
-    $attempt->userid = $USER->id;
-    $attempt->attempt = 0;
-    $attempt->sumgrades = 0;
-    $attempt->timestart = $timenow;
-    $attempt->timefinish = 0;
-    $attempt->timemodified = $timenow;
-    $attempt->uniqueid = 0;
-    $attempt->id = 0;
-    $attempt->layout = $question->id;
-
-    $options = quiz_get_renderoptions($quiz, $attempt, $context, $state);
-    $options->noeditlink = true;
-    // TODO: mulitichoice type needs quiz id to get maxgrade
-    $options->quizid = 0;
-
-    if (!question_check_file_access($question, $state, $options, $context->id, $component,
+    $options = new question_display_options();
+    $options->feedback = question_display_options::VISIBLE;
+    $options->numpartscorrect = question_display_options::VISIBLE;
+    $options->generalfeedback = question_display_options::VISIBLE;
+    $options->rightanswer = question_display_options::VISIBLE;
+    $options->manualcomment = question_display_options::VISIBLE;
+    $options->history = question_display_options::VISIBLE;
+    if (!$quba->check_file_access($slot, $options, $component,
             $filearea, $args, $forcedownload)) {
         send_file_not_found();
     }

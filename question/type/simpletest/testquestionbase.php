@@ -97,19 +97,27 @@ class question_first_matching_answer_grading_strategy_test extends UnitTestCase 
 class question_hint_test extends UnitTestCase {
     public function test_basic() {
         $row = new stdClass;
+        $row->id = 123;
         $row->hint = 'A hint';
+        $row->hintformat = FORMAT_HTML;
         $hint = question_hint::load_from_record($row);
+        $this->assertEqual($row->id, $hint->id);
         $this->assertEqual($row->hint, $hint->hint);
+        $this->assertEqual($row->hintformat, $hint->hintformat);
     }
 
     public function test_with_parts() {
         $row = new stdClass;
+        $row->id = 123;
         $row->hint = 'A hint';
+        $row->hintformat = FORMAT_HTML;
         $row->shownumcorrect = 1;
         $row->clearwrong = 1;
 
         $hint = question_hint_with_parts::load_from_record($row);
+        $this->assertEqual($row->id, $hint->id);
         $this->assertEqual($row->hint, $hint->hint);
+        $this->assertEqual($row->hintformat, $hint->hintformat);
         $this->assertTrue($hint->shownumcorrect);
         $this->assertTrue($hint->clearwrong);
     }
