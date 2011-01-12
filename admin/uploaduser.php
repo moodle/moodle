@@ -668,10 +668,16 @@ if ($formdata = $mform->is_cancelled()) {
             $courseid      = $ccache[$shortname]->id;
             $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
             if (!isset($manualcache[$courseid])) {
-                if ($instances = enrol_get_instances($courseid, false)) {
-                    $manualcache[$courseid] = reset($instances);
-                } else {
-                    $manualcache[$courseid] = false;
+                $manualcache[$courseid] = false;
+                if ($manual) {
+                    if ($instances = enrol_get_instances($courseid, false)) {
+                        foreach ($instances as $instance) {
+                            if ($instance->enrol === 'manual') {
+                                $manualcache[$courseid] = $instance;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
