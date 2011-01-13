@@ -322,18 +322,18 @@ DONE question/type/essay/simpletest/testquestion.php    |   50 +
 DONE question/type/essay/simpletest/testquestiontype.php     |   71 +
 DONE question/type/essay/version.php                    |    2 -
 
- question/type/match/db/install.xml                 |    6 +-
- question/type/match/db/upgrade.php                 |   44 +
- question/type/match/display.html                   |   32 -
- question/type/match/edit_match_form.php            |   20 +-
- question/type/match/lang/en_utf8/qtype_match.php   |    9 +
- question/type/match/question.php                   |  256 ++
- question/type/match/questiontype.php               |  505 ++---
- question/type/match/renderer.php                   |  128 +
- question/type/match/simpletest/testquestion.php    |  177 ++
- question/type/match/simpletest/testquestiontype.php     |  115 +
- question/type/match/simpletest/testwalkthrough.php |  474 ++++
- question/type/match/version.php                    |    4 +-
+DONE question/type/match/db/install.xml                 |    6 +-
+DONE question/type/match/db/upgrade.php                 |   44 +
+DONE question/type/match/display.html                   |   32 -
+DONE question/type/match/edit_match_form.php            |   20 +-
+DONE question/type/match/lang/en_utf8/qtype_match.php   |    9 +
+DONE question/type/match/question.php                   |  256 ++
+DONE question/type/match/questiontype.php               |  505 ++---
+DONE question/type/match/renderer.php                   |  128 +
+DONE question/type/match/simpletest/testquestion.php    |  177 ++
+DONE question/type/match/simpletest/testquestiontype.php     |  115 +
+DONE question/type/match/simpletest/testwalkthrough.php |  474 ++++
+DONE question/type/match/version.php                    |    4 +-
 
 DONE question/type/missingtype/display.html             |   24 -
 DONE question/type/missingtype/edit_missingtype_form.php     |  102 +-

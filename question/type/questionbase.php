@@ -270,7 +270,7 @@ abstract class question_definition {
 
     /**
      * Checks whether the users is allow to be served a particular file.
-     * @param question_attempt the question attempt being displayed.
+     * @param question_attempt $qa the question attempt being displayed.
      * @param question_display_options $options the options that control display of the question.
      * @param string $component the name of the component we are serving files for.
      * @param string $filearea the name of the file area.
@@ -525,6 +525,43 @@ abstract class question_graded_automatically extends question_with_responses
             return null;
         }
         return $this->summarise_response($correctresponse);
+    }
+
+    /**
+     * Check a request for access to a file belonging to a combined feedback field.
+     * @param question_attempt $qa the question attempt being displayed.
+     * @param question_display_options $options the options that control display of the question.
+     * @param string $filearea the name of the file area.
+     * @return boolean whether access to the file should be allowed.
+     */
+    protected function check_combined_feedback_file_access($qa, $options, $filearea) {
+        $state = $qa->get_state();
+
+        if (!$state->is_finished()) {
+            $response = $qa->get_last_qt_data();
+            if (!$this->is_gradable_response($response)) {
+                return false;
+            }
+            list($notused, $state) = $this->grade_response($response);
+        }
+
+        return $options->feedback && $state->get_feedback_class() . 'feedback' == $filearea;
+    }
+
+    /**
+     * Check a request for access to a file belonging to a hint.
+     * @param question_attempt $qa the question attempt being displayed.
+     * @param question_display_options $options the options that control display of the question.
+     * @param array $args the remaining bits of the file path.
+     * @return boolean whether access to the file should be allowed.
+     */
+    protected function check_hint_file_access($qa, $options, $args) {
+        if (!$options->feedback) {
+            return false;
+        }
+        $hint = $qa->get_applicable_hint();
+        $hintid = reset($args); // itemid is hint id.
+        return $hintid == $hint->id;
     }
 
     public function get_hint($hintnumber, question_attempt $qa) {

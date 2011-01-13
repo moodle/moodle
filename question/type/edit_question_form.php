@@ -490,7 +490,7 @@ abstract class question_edit_form extends moodleform {
             $feedback['text'] = file_prepare_draft_area(
                 $draftid,              // draftid
                 $this->context->id,    // context
-                'qtype_multichoice',   // component
+                'question',            // component
                 $feedbackname,         // filarea
                 !empty($question->id) ? (int) $question->id : null, // itemid
                 $this->fileoptions,    // options

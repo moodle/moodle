@@ -129,13 +129,13 @@ class qtype_multichoice extends question_type {
         $options->shuffleanswers = $question->shuffleanswers;
         $options->shownumcorrect = !empty($question->shownumcorrect);
         $options->correctfeedback = $this->import_or_save_files($question->correctfeedback,
-                $context, 'qtype_multichoice', 'correctfeedback', $question->id);
+                $context, 'question', 'correctfeedback', $question->id);
         $options->correctfeedbackformat = $question->correctfeedback['format'];
         $options->partiallycorrectfeedback = $this->import_or_save_files($question->partiallycorrectfeedback,
-                $context, 'qtype_multichoice', 'partiallycorrectfeedback', $question->id);
+                $context, 'question', 'partiallycorrectfeedback', $question->id);
         $options->partiallycorrectfeedbackformat = $question->partiallycorrectfeedback['format'];
         $options->incorrectfeedback = $this->import_or_save_files($question->incorrectfeedback,
-                $context, 'qtype_multichoice', 'incorrectfeedback', $question->id);
+                $context, 'question', 'incorrectfeedback', $question->id);
         $options->incorrectfeedbackformat = $question->incorrectfeedback['format'];
 
         $DB->update_record('question_multichoice', $options);

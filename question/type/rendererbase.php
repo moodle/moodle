@@ -247,14 +247,7 @@ abstract class qtype_with_combined_feedback_renderer extends qtype_renderer {
         }
 
         $feedback = '';
-        if ($state->is_correct()) {
-            $feedbackfield = 'correctfeedback';
-        } else if ($state->is_partially_correct()) {
-            $feedbackfield = 'partiallycorrectfeedback';
-        } else if ($state->is_incorrect()) {
-            $feedbackfield = 'incorrectfeedback';
-        }
-
+        $feedbackfield = $state->get_feedback_class() . 'feedback';
         if ($question->$feedbackfield) {
             $feedback .= $question->format_text($question->$feedbackfield, $qa,
                     'question', $feedbackfield, $question->id);

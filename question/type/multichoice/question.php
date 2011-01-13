@@ -84,22 +84,10 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
 
     abstract public function is_choice_selected($response, $value);
 
-    function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
-        $itemid = reset($args);
-
-        if ($component == 'qtype_multichoice' && in_array($filearea,
+    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
+        if ($component == 'question' && in_array($filearea,
                 array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'))) {
-            $state = $qa->get_state();
-
-            if (!$state->is_finished()) {
-                $response = $qa->get_last_qt_data();
-                if (!$this->is_gradable_response($response)) {
-                    return false;
-                }
-                list($notused, $state) = $qa->get_question()->grade_response($response);
-            }
-
-            return $options->feedback && $state == $filearea;
+            return $this->check_combined_feedback_file_access($qa, $options, $filearea);
 
         } else if ($component == 'question' && $filearea == 'answerfeedback') {
             $answerid = reset($args); // itemid is answer id.
@@ -116,6 +104,9 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
             // avoid refering to it here.
             return $options->feedback && empty($options->suppresschoicefeedback) &&
                     $isselected;
+
+        } else if ($component == 'question' && $filearea == 'hint') {
+            return $this->check_hint_file_access($qa, $options, $args);
 
         } else {
             return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);

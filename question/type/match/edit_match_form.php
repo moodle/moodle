@@ -14,11 +14,11 @@
  */
 class question_edit_match_form extends question_edit_form {
 
-    function get_per_answer_fields(&$mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
+    function get_per_answer_fields($mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
         $repeated = array();
-        $repeated[] =& $mform->createElement('header', 'answerhdr', $label);
-        $repeated[] =& $mform->createElement('editor', 'subquestions', get_string('question', 'quiz'), null, $this->editoroptions);
-        $repeated[] =& $mform->createElement('text', 'subanswers', get_string('answer', 'quiz'), array('size'=>50));
+        $repeated[] = $mform->createElement('header', 'answerhdr', $label);
+        $repeated[] = $mform->createElement('editor', 'subquestions', get_string('question', 'quiz'), array('rows'=>3), $this->editoroptions);
+        $repeated[] = $mform->createElement('text', 'subanswers', get_string('answer', 'quiz'), array('size'=>50));
         $repeatedoptions['subquestions']['type'] = PARAM_RAW;
         $repeatedoptions['subanswers']['type'] = PARAM_TEXT;
         $answersoption = 'subquestions';
@@ -30,53 +30,55 @@ class question_edit_match_form extends question_edit_form {
      *
      * @param object $mform the form being built.
      */
-    function definition_inner(&$mform) {
+    protected function definition_inner($mform) {
         $mform->addElement('advcheckbox', 'shuffleanswers', get_string('shuffle', 'qtype_match'), null, null, array(0,1));
         $mform->addHelpButton('shuffleanswers', 'shuffle', 'qtype_match');
         $mform->setDefault('shuffleanswers', 1);
 
-        $mform->addElement('static', 'answersinstruct', get_string('choices', 'quiz'), get_string('filloutthreeqsandtwoas', 'qtype_match'));
+        $mform->addElement('static', 'answersinstruct', get_string('availablechoices', 'qtype_match'), get_string('filloutthreeqsandtwoas', 'qtype_match'));
         $mform->closeHeaderBefore('answersinstruct');
 
         $this->add_per_answer_fields($mform, get_string('questionno', 'quiz', '{no}'), 0);
+
+        $this->add_combined_feedback_fields(true);
+        $this->add_interactive_settings(true, true);
     }
 
     function data_preprocessing($question) {
-        if (isset($question->options)) {
-            $subquestions = $question->options->subquestions;
-            if (count($subquestions)) {
-                $key = 0;
-                foreach ($subquestions as $subquestion){
-                    $default_values['subanswers['.$key.']'] = $subquestion->answertext;
+        $question = parent::data_preprocessing($question);
+        $question = $this->data_preprocessing_combined_feedback($question, true);
+        $question = $this->data_preprocessing_hints($question, true, true);
 
-                    $draftid = file_get_submitted_draft_itemid('subquestions['.$key.']');
-                    $default_values['subquestions['.$key.']'] = array();
-                    $default_values['subquestions['.$key.']']['format'] = $subquestion->questiontextformat;
-                    $default_values['subquestions['.$key.']']['text'] = file_prepare_draft_area(
-                        $draftid, // draftid
-                        $this->context->id, // context
-                        'qtype_match', // component
-                        'subquestion', // filarea
-                        !empty($subquestion->id)?(int)$subquestion->id:null, // itemid
-                        $this->fileoptions, // options
-                        $subquestion->questiontext // text
-                    );
-                    $default_values['subquestions['.$key.']']['itemid'] = $draftid;
-
-                    $key++;
-                }
-            }
-            $default_values['shuffleanswers'] =  $question->options->shuffleanswers;
-            $question = (object)((array)$question + $default_values);
+        if (empty($question->options)) {
+            return $question;
         }
+
+        $question->shuffleanswers =  $question->options->shuffleanswers;
+
+        $key = 0;
+        foreach ($question->options->subquestions as $subquestion){
+            $question->subanswers[$key] = $subquestion->answertext;
+
+            $draftid = file_get_submitted_draft_itemid('subquestions[' . $key . ']');
+            $question->subquestions[$key] = array();
+            $question->subquestions[$key]['text'] = file_prepare_draft_area(
+                $draftid,           // draftid
+                $this->context->id, // context
+                'qtype_match',      // component
+                'subquestion',      // filarea
+                !empty($subquestion->id) ? (int) $subquestion->id : null, // itemid
+                $this->fileoptions, // options
+                $subquestion->questiontext // text
+            );
+            $question->subquestions[$key]['format'] = $subquestion->questiontextformat;
+            $question->subquestions[$key]['itemid'] = $draftid;
+            $key++;
+        }
+
         return $question;
     }
 
-    function qtype() {
-        return 'match';
-    }
-
-    function validation($data, $files) {
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         $answers = $data['subanswers'];
         $questions = $data['subquestions'];
@@ -108,5 +110,9 @@ class question_edit_match_form extends question_edit_form {
             $errors['subanswers[2]'] = get_string('notenoughqsandas', 'qtype_match', $numberqanda);
         }
         return $errors;
+    }
+
+    function qtype() {
+        return 'match';
     }
 }

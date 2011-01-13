@@ -12,7 +12,7 @@
  * @package questionbank
  * @subpackage questiontypes
 */
-class question_randomsamatch_qtype extends question_match_qtype {
+class question_randomsamatch_qtype extends qtype_match {
 /// Extends 'match' as there are quite a few simularities...
 
     function name() {
