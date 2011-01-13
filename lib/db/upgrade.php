@@ -5512,6 +5512,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // Main savepoint reached
         upgrade_main_savepoint(true, 2010121401);
     }
+    
+    if ($oldversion < 2011011300) {
+    	set_config('enabledevicedetection',1);
+    }
 
     if ($oldversion < 2011011401) {
         $columns = $DB->get_columns('block_instances');
