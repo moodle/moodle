@@ -42,4 +42,5 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
         get_string('configenableavailability','condition'), 0));
 
     $optionalsubsystems->add(new admin_setting_configcheckbox('enableplagiarism', get_string('enableplagiarism','plagiarism'), get_string('configenableplagiarism','plagiarism'), 0));
+    $optionalsubsystems->add(new admin_setting_configcheckbox('enabledevicedetection', get_string('enabledevicedetection', 'admin'), get_string('configenabledevicedetection', 'admin'), 1));
 }

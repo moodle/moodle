@@ -298,11 +298,15 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
     if (empty($CFG->dataroot)) {
         $config->stage = INSTALL_PATHS;
 
-    } else if (is_dataroot_insecure()) {
+    }
+/*
+    else if (is_dataroot_insecure()) {
         $hint_dataroot = get_string('pathsunsecuredataroot', 'install');
         $config->stage = INSTALL_PATHS;
 
-    } else if (!file_exists($CFG->dataroot)) {
+    }
+*/    
+     else if (!file_exists($CFG->dataroot)) {
         $a = new stdClass();
         $a->parent = dirname($CFG->dataroot);
         $a->dataroot = $CFG->dataroot;
