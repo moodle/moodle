@@ -67,7 +67,7 @@ class question_edit_multichoice_form extends question_edit_form {
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_answers($question, true);
         $question = $this->data_preprocessing_combined_feedback($question, true);
-        $question = $this->data_preprocessing_hints($question);
+        $question = $this->data_preprocessing_hints($question, true, true);
 
         if (!empty($question->options)) {
             $question->single =  $question->options->single;

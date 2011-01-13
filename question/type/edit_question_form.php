@@ -486,8 +486,8 @@ abstract class question_edit_form extends moodleform {
 
         foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
             $draftid = file_get_submitted_draft_itemid($feedbackname);
-            $question->$feedbackname = array();
-            $question->$feedbackname['text'] = file_prepare_draft_area(
+            $feedback = array();
+            $feedback['text'] = file_prepare_draft_area(
                 $draftid,              // draftid
                 $this->context->id,    // context
                 'qtype_multichoice',   // component
@@ -497,8 +497,10 @@ abstract class question_edit_form extends moodleform {
                 $question->options->$feedbackname // text
             );
             $feedbackformat = $feedbackname . 'format';
-            $question->$feedbackname['format'] = $question->options->$feedbackformat;
-            $question->$feedbackname['itemid'] = $draftid;
+            $feedback['format'] = $question->options->$feedbackformat;
+            $feedback['itemid'] = $draftid;
+
+            $question->$feedbackname = $feedback;
         }
 
         if ($withshownumcorrect) {
@@ -531,9 +533,14 @@ abstract class question_edit_form extends moodleform {
             $question->hint[$key]['itemid'] = $draftitemid;
             $question->hint[$key]['format'] = $hint->hintformat;
             $key++;
-        }
 
-        // TODO $withclearwrong, $withshownumpartscorrect
+            if ($withclearwrong) {
+                $question->hintclearwrong[] = $hint->clearwrong;
+            }
+            if ($withshownumpartscorrect) {
+                $question->hintshownumcorrect[] = $hint->shownumcorrect;
+            }
+        }
 
         return $question;
     }

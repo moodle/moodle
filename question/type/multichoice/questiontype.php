@@ -140,6 +140,8 @@ class qtype_multichoice extends question_type {
 
         $DB->update_record('question_multichoice', $options);
 
+        $this->save_hints($question, true);
+
         /// Perform sanity checks on fractional grades
         if ($options->single) {
             if ($maxfraction != 1) {
