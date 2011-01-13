@@ -140,7 +140,8 @@ function xmldb_scorm_upgrade($oldversion) {
 
         $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
 
-        if ($rs = $DB->get_recordset_sql("SELECT s.id, s.scormtype, s.reference, s.course, cm.id AS cmid $sqlfrom ORDER BY s.course, s.id")) {
+        $rs = $DB->get_recordset_sql("SELECT s.id, s.scormtype, s.reference, s.course, cm.id AS cmid $sqlfrom ORDER BY s.course, s.id");
+        if ($rs->valid()) {
 
             $pbar = new progress_bar('migratescormfiles', 500, true);
 
@@ -213,8 +214,8 @@ function xmldb_scorm_upgrade($oldversion) {
                 @rmdir("$CFG->dataroot/$scorm->course/$CFG->moddata/scorm/");
                 @rmdir("$CFG->dataroot/$scorm->course/$CFG->moddata/");
             }
-            $rs->close();
         }
+        $rs->close();
 
     /// scorm savepoint reached
         upgrade_mod_savepoint(true, 2008090304, 'scorm');
