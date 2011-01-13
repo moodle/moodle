@@ -1038,6 +1038,12 @@ class html_writer {
 
         $attributes['name'] = $name;
 
+        if (!empty($attributes['disabled'])) {
+            $attributes['disabled'] = 'disabled';
+        } else {
+            unset($attributes['disabled']);
+        }
+
         $output = '';
         foreach ($options as $value=>$label) {
             if (is_array($label)) {
