@@ -226,17 +226,17 @@ function xmldb_resource_upgrade($oldversion) {
                   JOIN {modules} m ON m.name='resource'
                   JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = r.id)";
 
-        if ($instances = $DB->get_recordset_sql($sql)) {
-            foreach ($instances as $instance) {
-                $context  = get_context_instance(CONTEXT_MODULE, $instance->cmid);
-                $component = 'mod_resource';
-                $filearea = 'content';
-                $itemid   = 0;
-                $filepath = file_correct_filepath(dirname($instance->mainfile));
-                $filename = basename($instance->mainfile);
-                file_set_sortorder($context->id, $component, $filearea, $itemid, $filepath, $filename, 1);
-            }
+        $instances = $DB->get_recordset_sql($sql);
+        foreach ($instances as $instance) {
+            $context  = get_context_instance(CONTEXT_MODULE, $instance->cmid);
+            $component = 'mod_resource';
+            $filearea = 'content';
+            $itemid   = 0;
+            $filepath = file_correct_filepath(dirname($instance->mainfile));
+            $filename = basename($instance->mainfile);
+            file_set_sortorder($context->id, $component, $filearea, $itemid, $filepath, $filename, 1);
         }
+        $instances->close();
 
      /// Define field mainfile to be dropped from resource
         $table = new xmldb_table('resource');
