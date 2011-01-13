@@ -178,9 +178,36 @@ class workshop_random_allocator implements workshop_allocator {
         $this->mform->display();
         $out .= ob_get_contents();
         ob_end_clean();
-        $out .= $output->container_end();
+
+        // if there are some not-grouped participant in a group mode, warn the user
+        $gmode = groups_get_activity_groupmode($this->workshop->cm, $this->workshop->course);
+        if (VISIBLEGROUPS == $gmode or SEPARATEGROUPS == $gmode) {
+            $users = $this->workshop->get_potential_authors() + $this->workshop->get_potential_reviewers();
+            $users = $this->workshop->get_grouped($users);
+            if (isset($users[0])) {
+                $nogroupusers = $users[0];
+                foreach ($users as $groupid => $groupusers) {
+                    if ($groupid == 0) {
+                        continue;
+                    }
+                    foreach ($groupusers as $groupuserid => $groupuser) {
+                        unset($nogroupusers[$groupuserid]);
+                    }
+                }
+                if (!empty($nogroupusers)) {
+                    $list = array();
+                    foreach ($nogroupusers as $nogroupuser) {
+                        $list[] = fullname($nogroupuser);
+                    }
+                    $a = implode(', ', $list);
+                    $out .= $output->box(get_string('nogroupusers', 'workshopallocation_random', $a), 'generalbox warning nogroupusers');
+                }
+            }
+        }
 
         // TODO $out .= $output->heading(get_string('stats', 'workshopallocation_random'));
+
+        $out .= $output->container_end();
 
         return $out;
     }
@@ -401,6 +428,22 @@ class workshop_random_allocator implements workshop_allocator {
         } else {
             throw new moodle_exception('unknownusertypepassed', 'workshop');
         }
+        // get the users that are not in any group. in visible groups mode, these users are exluded
+        // from allocation by this method
+        // $nogroupcircles is array (int)$userid => undefined
+        if (isset($allcircles[0])) {
+            $nogroupcircles = array_flip(array_keys($allcircles[0]));
+        } else {
+            $nogroupcircles = array();
+        }
+        foreach ($allcircles as $circlegroupid => $circles) {
+            if ($circlegroupid == 0) {
+                continue;
+            }
+            foreach ($circles as $circleid => $circle) {
+                unset($nogroupcircles[$circleid]);
+            }
+        }
         // $o[] = 'debug::circle links = ' . json_encode($circlelinks);
         // $o[] = 'debug::square links = ' . json_encode($squarelinks);
         $squareworkload         = array();  // individual workload indexed by squareid
@@ -440,6 +483,10 @@ class workshop_random_allocator implements workshop_allocator {
                 $this->shuffle_assoc($circles);
                 $o[] = 'debug::iteration ' . $requiredreviews;
                 foreach ($circles as $circleid => $circle) {
+                    if (VISIBLEGROUPS == $gmode and isset($nogroupcircles[$circleid])) {
+                        $o[] = 'debug::skipping circle id ' . $circleid;
+                        continue;
+                    }
                     $o[] = 'debug::processing circle id ' . $circleid;
                     if (!isset($circlelinks[$circleid])) {
                         $circlelinks[$circleid] = array();
