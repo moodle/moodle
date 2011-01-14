@@ -36,7 +36,8 @@ class qbehaviour_opaque_test extends qbehaviour_walkthrough_test_base {
      * @return unknown_type
      */
     protected function make_standard_om_question() {
-        $engineid = get_field('question_opaque_engines', 'MIN(id)', '', '');
+        global $DB;
+        $engineid = $DB->get_field('question_opaque_engines', 'MIN(id)', array());
         if (empty($engineid)) {
             throw new Exception('Cannot test Opaque. No question engines configured.');
         }

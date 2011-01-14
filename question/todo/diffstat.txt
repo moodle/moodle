@@ -372,29 +372,29 @@ DONE question/type/multichoice/version.php              |    6 +-
  question/type/numerical/simpletest/testquestiontype.php |  206 +-
  question/type/numerical/version.php                |    4 +-
 
- question/type/opaque/db/install.xml                |   44 +
- question/type/opaque/db/upgrade.php                |   69 +
- question/type/opaque/edit_opaque_form.php          |  114 +
+DONE question/type/opaque/db/install.xml                |   44 +
+DONE question/type/opaque/db/upgrade.php                |   69 +
+DONE question/type/opaque/edit_opaque_form.php          |  114 +
  question/type/opaque/editengine.php                |  152 +
- question/type/opaque/engines.php                   |   78 +
+DONE question/type/opaque/engines.php                   |   78 +
  question/type/opaque/file.php                      |   31 +
- question/type/opaque/icon.gif                      |  Bin 0 -> 97 bytes
- question/type/opaque/lang/en_utf8/help/opaque/configuredengines.html     |    6 +
- question/type/opaque/lang/en_utf8/help/opaque/editengine.html       |   16 +
- question/type/opaque/lang/en_utf8/help/opaque/opaque.html    |    8 +
- question/type/opaque/lang/en_utf8/help/opaque/passkey.html   |    6 +
- question/type/opaque/lang/en_utf8/help/opaque/questionengine.html   |    7 +
- question/type/opaque/lang/en_utf8/help/opaque/questionid.html       |    5 +
- question/type/opaque/lang/en_utf8/qtype_opaque.php |   57 +
+DONE question/type/opaque/icon.gif                      |  Bin 0 -> 97 bytes
+DONE question/type/opaque/lang/en_utf8/help/opaque/configuredengines.html     |    6 +
+DONE question/type/opaque/lang/en_utf8/help/opaque/editengine.html       |   16 +
+DONE question/type/opaque/lang/en_utf8/help/opaque/opaque.html    |    8 +
+DONE question/type/opaque/lang/en_utf8/help/opaque/passkey.html   |    6 +
+DONE question/type/opaque/lang/en_utf8/help/opaque/questionengine.html   |    7 +
+DONE question/type/opaque/lang/en_utf8/help/opaque/questionid.html       |    5 +
+DONE question/type/opaque/lang/en_utf8/qtype_opaque.php |   57 +
  question/type/opaque/locallib.php                  |  826 ++++++
- question/type/opaque/question.php                  |   55 +
- question/type/opaque/questiontype.php              |  220 ++
- question/type/opaque/renderer.php                  |   37 +
+DONE question/type/opaque/question.php                  |   55 +
+DONE question/type/opaque/questiontype.php              |  220 ++
+DONE question/type/opaque/renderer.php                  |   37 +
  question/type/opaque/simpletest/testlocallib.php   |   60 +
  question/type/opaque/simpletest/testquestiontype.php    |  303 ++
- question/type/opaque/styles.css                    |   14 +
+DONE question/type/opaque/styles.css                    |   14 +
  question/type/opaque/testengine.php                |   70 +
- question/type/opaque/version.php                   |    5 +
+DONE question/type/opaque/version.php                   |    5 +
 
  question/type/oumultiresponse/db/install.xml       |   24 +
  question/type/oumultiresponse/db/upgrade.php       |   58 +
