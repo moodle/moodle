@@ -125,7 +125,7 @@ function send_uncached_css($css) {
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + THEME_DESIGNER_CACHE_LIFETIME) .' GMT');
     header('Pragma: ');
     header('Accept-Ranges: none');
-    header('Content-Type: text/css');
+    header('Content-Type: text/css; charset=utf-8');
     //header('Content-Length: '.strlen($css));
 
     echo($css);

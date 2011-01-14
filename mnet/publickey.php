@@ -15,6 +15,6 @@ if ($CFG->mnet_dispatcher_mode === 'off') {
     print_error('mnetdisabled', 'mnet');
 }
 
-header("Content-type: text/plain");
+header("Content-type: text/plain; charset=utf-8");
 $keypair = mnet_get_keypair();
 echo $keypair['certificate'];

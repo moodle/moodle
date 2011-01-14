@@ -324,7 +324,7 @@ class core_renderer extends renderer_base {
             $output .= html_writer::empty_tag('link', array('rel' => 'alternate',
                     'type' => $type, 'title' => $alt->title, 'href' => $alt->url));
         }
-        
+
         if (!empty($CFG->additionalhtmlhead)) {
             $output .= "\n".$CFG->additionalhtmlhead;
         }
@@ -2719,9 +2719,9 @@ class core_renderer_ajax extends core_renderer {
     public function header() {
         // unfortunately YUI iframe upload does not support application/json
         if (!empty($_FILES)) {
-            @header('Content-type: text/plain');
+            @header('Content-type: text/plain; charset=utf-8');
         } else {
-            @header('Content-type: application/json');
+            @header('Content-type: application/json; charset=utf-8');
         }
 
         /// Headers to make it not cacheable and json
