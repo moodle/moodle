@@ -239,7 +239,7 @@ function xmldb_main_upgrade($oldversion) {
         // add field
         $field = new xmldb_field('tiuserid');
         if (!$dbman->field_exists($table, $field)) {
-            $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'itemid');
+            $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'itemid');
             $dbman->add_field($table, $field);
         }
         // modify index
@@ -645,49 +645,49 @@ function xmldb_main_upgrade($oldversion) {
     if ($oldversion < 2008081500) {
     /// Changing the type of all the columns that the question bank uses to store grades to be NUMBER(12, 7).
         $table = new xmldb_table('question');
-        $field = new xmldb_field('defaultgrade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'generalfeedback');
+        $field = new xmldb_field('defaultgrade', XMLDB_TYPE_NUMBER, '12, 7', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1.0000000', 'generalfeedback');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint(true, 2008081500);
     }
 
     if ($oldversion < 2008081501) {
         $table = new xmldb_table('question');
-        $field = new xmldb_field('penalty', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'defaultgrade');
+        $field = new xmldb_field('penalty', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0.1000000', 'defaultgrade');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint(true, 2008081501);
     }
 
     if ($oldversion < 2008081502) {
         $table = new xmldb_table('question_answers');
-        $field = new xmldb_field('fraction', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'answer');
+        $field = new xmldb_field('fraction', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'answer');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint(true, 2008081502);
     }
 
     if ($oldversion < 2008081503) {
         $table = new xmldb_table('question_sessions');
-        $field = new xmldb_field('sumpenalty', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'newgraded');
+        $field = new xmldb_field('sumpenalty', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'newgraded');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint(true, 2008081503);
     }
 
     if ($oldversion < 2008081504) {
         $table = new xmldb_table('question_states');
-        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'event');
+        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'event');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint(true, 2008081504);
     }
 
     if ($oldversion < 2008081505) {
         $table = new xmldb_table('question_states');
-        $field = new xmldb_field('raw_grade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'grade');
+        $field = new xmldb_field('raw_grade', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'grade');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint(true, 2008081505);
     }
 
     if ($oldversion < 2008081506) {
         $table = new xmldb_table('question_states');
-        $field = new xmldb_field('penalty', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'raw_grade');
+        $field = new xmldb_field('penalty', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'raw_grade');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint(true, 2008081506);
     }
@@ -1552,7 +1552,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table = new xmldb_table('block_instances');
 
     /// Rename field weight on table block_instances to defaultweight
-        $field = new xmldb_field('weight', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0', 'position');
+        $field = new xmldb_field('weight', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null, 'position');
         $dbman->rename_field($table, $field, 'defaultweight');
 
     /// Rename field position on table block_instances to defaultregion
@@ -1817,11 +1817,11 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     /// Adding fields to table block_positions
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('blockinstanceid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('blockinstanceid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
         $table->add_field('pagetype', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null);
         $table->add_field('subpage', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('visible', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1');
+        $table->add_field('visible', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, null);
         $table->add_field('region', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, null);
         $table->add_field('weight', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
@@ -2351,19 +2351,19 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     if ($oldversion < 2009110400) {
         // list of tables where we need to add new format field and convert texts
-        $extendtables = array('course' => 'summary',
-                              'course_categories' => 'description',
-                              'course_categories' => 'description',
-                              'course_request' => 'summary',
-                              'grade_outcomes' => 'description',
-                              'groups' => 'description',
-                              'groupings' => 'description',
-                              'scale' => 'description',
-                              'user_info_field' => 'description',
-                              'user_info_field' => 'defaultdata',
-                              'user_info_data' => 'data');
+        $extendtables = array('course'              => 'summary',
+                              'course_categories'   => 'description',
+                              'course_categories'   => 'description',
+                              'course_request'      => 'summary',
+                              'grade_outcomes'      => 'description',
+                              'groups'              => 'description',
+                              'groupings'           => 'description',
+                              'scale'               => 'description',
+                              'user_info_field'     => 'description',
+                              'user_info_field'     => 'defaultdata',
+                              'user_info_data'      => 'data');
 
-        foreach ($extendtables as $tablestr=>$fieldstr) {
+        foreach ($extendtables as $tablestr => $fieldstr) {
             $formatfieldstr = $fieldstr.'format';
 
             $table = new xmldb_table($tablestr);
@@ -2374,7 +2374,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                 $dbman->add_field($table, $field);
             }
             if ($CFG->texteditors !== 'textarea') {
-                $rs = $DB->get_recordset($tablestr, array($formatfieldstr=>FORMAT_MOODLE), '', "id,$fieldstr,$formatfieldstr");
+                $rs = $DB->get_recordset($tablestr, array($formatfieldstr => FORMAT_MOODLE), '', "id,$fieldstr,$formatfieldstr");
                 foreach ($rs as $rec) {
                     $rec->$fieldstr       = text_to_html($rec->$fieldstr, false, false, true);
                     $rec->$formatfieldstr = FORMAT_HTML;
@@ -2382,6 +2382,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                     upgrade_set_timeout();
                 }
                 $rs->close();
+                unset($rs);
             }
         }
 
@@ -2430,7 +2431,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     if ($oldversion < 2010011200) {
         $table = new xmldb_table('grade_categories');
-        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'timemodified');
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
@@ -3594,8 +3595,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, 0);
         $table->add_field('name', XMLDB_TYPE_CHAR, '200', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('private', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
-        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '6', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('private', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1');
+        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0');
 
 
     /// Adding keys to table my_pages
@@ -5351,7 +5352,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     //install.xml so there are 2.0 sites that are missing it.
     if ($oldversion < 2010101900) {
         $table = new xmldb_table('grade_categories');
-        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0);
+        $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'timemodified');
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
@@ -5371,9 +5372,9 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     //MDL-24771
     if ($oldversion < 2010102601) {
 
-        $fieldnotification = new xmldb_field('notification', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'smallmessage');
-        $fieldcontexturl = new xmldb_field('contexturl', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'notification');
-        $fieldcontexturlname = new xmldb_field('contexturlname', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'contexturl');
+        $fieldnotification = new xmldb_field('notification', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, 0, 'smallmessage');
+        $fieldcontexturl = new xmldb_field('contexturl', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'notification');
+        $fieldcontexturlname = new xmldb_field('contexturlname', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'contexturl');
         $fieldstoadd = array($fieldnotification, $fieldcontexturl, $fieldcontexturlname);
 
         $tablestomodify = array(new xmldb_table('message'), new xmldb_table('message_read'));
@@ -5421,7 +5422,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     if ($oldversion < 2010102700) {
 
         $table = new xmldb_table('post');
-        $field = new xmldb_field('uniquehash', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'content');
+        $field = new xmldb_field('uniquehash', XMLDB_TYPE_CHAR, '128', null, XMLDB_NOTNULL, null, null, 'content');
         // Launch change of precision for field name
         $dbman->change_field_precision($table, $field);
 
