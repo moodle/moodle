@@ -5926,6 +5926,17 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2011011413);
     }
 
+    if ($oldversion < 2011011414) {
+        // Drop the adodb_logsql table if it exists... it was never actually used anyway.
+        $table = new xmldb_table('adodb_logsql');
+
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        upgrade_main_savepoint(true, 2011011414);
+    }
+
     return true;
 }
 
