@@ -5512,7 +5512,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010121401);
     }
 
-    if ($oldversion < 2010122300) {
+    if ($oldversion < 2011011401) {
         $columns = $DB->get_columns('block_instances');
 
         // Check if we need to fix the default weight column
@@ -5521,6 +5521,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $table = new xmldb_table('block_instances');
 
             // defaultweight is smallint(3) after upgrade should be bigint 10
+            // Also fixed in earlier upgrade code
             $field = new xmldb_field('defaultweight', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null, 'defaultregion');
             if ($dbman->field_exists($table, $field)) {
                 $dbman->change_field_type($table, $field);
@@ -5534,10 +5535,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2010122300);
+        upgrade_main_savepoint(true, 2011011401);
     }
 
-    if ($oldversion < 2010122301) {
+    if ($oldversion < 2011011402) {
         // Fix discrepancies in the block_positions table after upgrade from 1.9
         $table = new xmldb_table('block_positions');
         $columns = $DB->get_columns('block_positions');
@@ -5569,6 +5570,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // Check if the visible field needs fixing.
         if (array_key_exists('visible', $columns) && !empty($columns['visible']->has_default)) {
             // visible shouldn't have a default
+            // Also fixed in earlier upgrade code
             $field = new xmldb_field('visible', XMLDB_TYPE_INTEGER, 4, null, XMLDB_NOTNULL, null, null, 'subpage');
             if ($dbman->field_exists($table, $field)) {
                 $dbman->change_field_default($table, $field);
@@ -5576,10 +5578,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2010122301);
+        upgrade_main_savepoint(true, 2011011402);
     }
 
-    if ($oldversion < 2010122302) {
+    if ($oldversion < 2011011403) {
         $columns = $DB->get_columns('grade_categories');
         // Check if we need to fix the hidden field
         if (array_key_exists('hidden', $columns) && $columns['hidden']->max_length != 1) {
@@ -5595,10 +5597,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2010122302);
+        upgrade_main_savepoint(true, 2011011403);
     }
 
-    if ($oldversion < 2010122303) {
+    if ($oldversion < 2011011404) {
         // Fix discrepancies in the message table after upgrade from 1.9
         $columns = $DB->get_columns('message');
         $table = new xmldb_table('message');
@@ -5662,10 +5664,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2010122303);
+        upgrade_main_savepoint(true, 2011011404);
     }
 
-    if ($oldversion < 2010122304) {
+    if ($oldversion < 2011011405) {
         // Fix discrepancies in the message_read table after upgrade from 1.9
         $columns = $DB->get_columns('message_read');
         $table = new xmldb_table('message_read');
@@ -5729,10 +5731,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2010122304);
+        upgrade_main_savepoint(true, 2011011405);
     }
 
-    if ($oldversion < 2010122305) {
+    if ($oldversion < 2011011406) {
         // Fix discrepancies in the my_pages table after upgrade from 1.9
         $columns = $DB->get_columns('my_pages');
         $table = new xmldb_table('my_pages');
@@ -5762,10 +5764,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             }
         }
 
-        upgrade_main_savepoint(true, 2010122305);
+        upgrade_main_savepoint(true, 2011011406);
     }
 
-    if ($oldversion < 2010122306) {
+    if ($oldversion < 2011011407) {
         // Check if we need to fix post.uniquehash
         $columns = $DB->get_columns('my_pages');
         if (array_key_exists('uniquehash', $columns) && $columns['uniquehash']->max_length != 128) {
@@ -5780,10 +5782,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             }
         }
 
-        upgrade_main_savepoint(true, 2010122306);
+        upgrade_main_savepoint(true, 2011011407);
     }
 
-    if ($oldversion < 2010122307) {
+    if ($oldversion < 2011011408) {
         // Fix question in the post table after upgrade from 1.9
         $columns = $DB->get_columns('question');
         $table = new xmldb_table('question');
@@ -5811,10 +5813,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             }
         }
 
-        upgrade_main_savepoint(true, 2010122307);
+        upgrade_main_savepoint(true, 2011011408);
     }
 
-    if ($oldversion < 2010122308) {
+    if ($oldversion < 2011011409) {
         // Fix question_answers in the post table after upgrade from 1.9
         $columns = $DB->get_columns('question_answers');
         $table = new xmldb_table('question_answers');
@@ -5828,10 +5830,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             }
         }
 
-        upgrade_main_savepoint(true, 2010122308);
+        upgrade_main_savepoint(true, 2011011409);
     }
 
-    if ($oldversion < 2010122309) {
+    if ($oldversion < 2011011410) {
         // Fix question_sessions in the post table after upgrade from 1.9
         $columns = $DB->get_columns('question_sessions');
         $table = new xmldb_table('question_sessions');
@@ -5846,10 +5848,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             }
         }
 
-        upgrade_main_savepoint(true, 2010122309);
+        upgrade_main_savepoint(true, 2011011410);
     }
 
-    if ($oldversion < 2010122310) {
+    if ($oldversion < 2011011411) {
         // Fix question_states in the post table after upgrade from 1.9
         $columns = $DB->get_columns('question_states');
         $table = new xmldb_table('question_states');
@@ -5884,10 +5886,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             }
         }
 
-        upgrade_main_savepoint(true, 2010122310);
+        upgrade_main_savepoint(true, 2011011411);
     }
 
-    if ($oldversion < 2010122311) {
+    if ($oldversion < 2011011412) {
         // Fix tag_instance in the post table after upgrade from 1.9
         $columns = $DB->get_columns('tag_instance');
         $table = new xmldb_table('tag_instance');
@@ -5907,10 +5909,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $dbman->add_index($table, $index);
         }
 
-        upgrade_main_savepoint(true, 2010122311);
+        upgrade_main_savepoint(true, 2011011412);
     }
 
-    if ($oldversion < 2010122312) {
+    if ($oldversion < 2011011413) {
         // Fix user_info_field in the post table after upgrade from 1.9
         $table = new xmldb_table('user_info_field');
 
@@ -5921,7 +5923,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $dbman->add_field($table, $field);
         }
 
-        upgrade_main_savepoint(true, 2010122312);
+        upgrade_main_savepoint(true, 2011011413);
     }
 
     return true;
