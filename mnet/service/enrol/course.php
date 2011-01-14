@@ -192,4 +192,7 @@ if ($usecache) {
                                 get_string('refetch', 'mnetservice_enrol'), 'get');
 }
 
+echo $OUTPUT->single_button(new moodle_url('/mnet/service/enrol/host.php', array('id'=>$host->id)),
+                            get_string('availablecourseson', 'mnetservice_enrol', s($host->hostname)), 'get');
+
 echo $OUTPUT->footer();
