@@ -79,4 +79,10 @@ class filelib_test extends UnitTestCase {
         $postdata = format_postdata_for_curlcall($postdatatoconvert);
         $this->assertEqual($postdata, $expectedresult);
     }
+
+    public function test_download_file_content() {
+        $testhtml = "http://download.moodle.org/unittest/test.html";
+        $contents = download_file_content($testhtml);
+        $this->assertEqual('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
+    }
 }
