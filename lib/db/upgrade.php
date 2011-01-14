@@ -5936,6 +5936,24 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
         upgrade_main_savepoint(true, 2011011414);
     }
+    
+    if ($oldversion < 2011011415) {
+        //create the rating table indexes if required
+        $table = new xmldb_table('rating');
+        
+        $index = new xmldb_index('itemid', XMLDB_INDEX_NOTUNIQUE, array('itemid'));
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+            
+            $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+            $dbman->add_key($table, $key);
+            
+            $key = new xmldb_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+            $dbman->add_key($table, $key);
+        }
+        
+        upgrade_main_savepoint(true, 2011011415);
+    }
 
     return true;
 }
