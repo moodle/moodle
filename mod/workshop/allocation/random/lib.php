@@ -76,6 +76,7 @@ class workshop_random_allocator implements workshop_allocator {
             $o                  = array();      // list of output messages
             $numofreviews       = required_param('numofreviews', PARAM_INT);
             $numper             = required_param('numper', PARAM_INT);
+            $excludesamegroup   = optional_param('excludesamegroup', false, PARAM_BOOL);
             $removecurrent      = optional_param('removecurrent', false, PARAM_BOOL);
             $assesswosubmission = optional_param('assesswosubmission', false, PARAM_BOOL);
             $addselfassessment  = optional_param('addselfassessment', false, PARAM_BOOL);
@@ -96,7 +97,11 @@ class workshop_random_allocator implements workshop_allocator {
                 } else {
                     $curassessments = $assessments;
                 }
-                $randomallocations  = $this->random_allocation($authors, $reviewers, $curassessments, $numofreviews, $numper, $o);
+                $options                     = array();
+                $options['numofreviews']     = $numofreviews;
+                $options['numper']           = $numper;
+                $options['excludesamegroup'] = $excludesamegroup;
+                $randomallocations  = $this->random_allocation($authors, $reviewers, $curassessments, $o, $options);
                 $newallocations     = array_merge($newallocations, $randomallocations);
                 $o[] = 'ok::' . get_string('numofrandomlyallocatedsubmissions', 'workshopallocation_random', count($randomallocations));
                 unset($randomallocations);
@@ -398,19 +403,27 @@ class workshop_random_allocator implements workshop_allocator {
      * is to connect each "circle" (circles are representing either authors or reviewers) with a required
      * number of "squares" (the other type than circles are).
      *
+     * The passed $options array must provide keys:
+     *      (int)numofreviews - number of reviews to be allocated to each circle
+     *      (int)numper - what user type the circles represent.
+     *      (bool)excludesamegroup - whether to prevent peer submissions from the same group in visible group mode
+     *
      * @param array    $authors      structure of grouped authors
      * @param resource $reviewers    structure of grouped reviewers
      * @param array    $assessments  currently assigned assessments to be kept
-     * @param mixed    $numofreviews number of reviews to be allocated to each circle
-     * @param mixed    $numper       what user type the circles represent
      * @param array    $o            reference to an array of log messages
+     * @param array    $options      allocation options
      * @return array                 array of (reviewerid => authorid) pairs
      */
-    protected function random_allocation($authors, $reviewers, $assessments, $numofreviews, $numper, &$o) {
+    protected function random_allocation($authors, $reviewers, $assessments, &$o, array $options) {
         if (empty($authors) || empty($reviewers)) {
             // nothing to be done
             return array();
         }
+
+        $numofreviews = $options['numofreviews'];
+        $numper       = $options['numper'];
+
         if (self::USERTYPE_AUTHOR == $numper) {
             // circles are authors, squares are reviewers
             $o[] = 'info::Trying to allocate ' . $numofreviews . ' review(s) per author'; // todo translate
@@ -514,6 +527,16 @@ class workshop_random_allocator implements workshop_allocator {
                         } elseif (VISIBLEGROUPS == $gmode) {
                             $trygroups = array_diff_key($squaregroupsworkload, array(0 => null));   // all but [0]
                             $trygroups = array_diff_key($trygroups, array_flip($failedgroups));     // without previous failures
+                            if ($options['excludesamegroup']) {
+                                // exclude groups the circle is member of
+                                $excludegroups = array();
+                                foreach (array_diff_key($allcircles, array(0 => null)) as $exgroupid => $exgroupmembers) {
+                                    if (array_key_exists($circleid, $exgroupmembers)) {
+                                        $excludegroups[$exgroupid] = null;
+                                    }
+                                }
+                                $trygroups = array_diff_key($trygroups, $excludegroups);
+                            }
                             $targetgroup = $this->get_element_with_lowest_workload($trygroups);
                         }
                         if ($targetgroup === false) {
