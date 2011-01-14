@@ -225,7 +225,7 @@ function xmldb_scorm_upgrade($oldversion) {
 
     /// Define new fields forcecompleted, forcenewattempt, displayattemptstatus, and displaycoursestructure to be added to scorm
         $table = new xmldb_table('scorm');
-        $field = new xmldb_field('forcecompleted', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, 1, 'maxattempt');
+        $field = new xmldb_field('forcecompleted', XMLDB_TYPE_INTEGER, 1, null, XMLDB_NOTNULL, null, 1, 'maxattempt');
         if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
@@ -478,18 +478,16 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010092400, 'scorm');
     }
     
-    if ($oldversion < 2010122300) {
+    if ($oldversion < 2011011400) {
         // Fix scorm in the post table after upgrade from 1.9
         $table = new xmldb_table('scorm');
         $columns = $DB->get_columns('scorm');
 
-        if (array_key_exists('forcecompleted', $columns) && empty($columns['forcecompleted']->not_null)) {
-            // forcecompleted should be bigint(10) NOT NULL DEFAULT '1'
-            // Fixed in earlier upgrade code
-            $field = new xmldb_field('forcecompleted', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, 1, 'maxattempt');
-            if ($dbman->field_exists($table, $field)) {
-                $dbman->change_field_precision($table, $field);
-            }
+        // forcecompleted should be bigint(1) NOT NULL DEFAULT '1'
+        // Fixed in earlier upgrade code
+        $field = new xmldb_field('forcecompleted', XMLDB_TYPE_INTEGER, 1, null, XMLDB_NOTNULL, null, 1, 'maxattempt');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->change_field_precision($table, $field);
         }
 
         if (array_key_exists('forcenewattempt', $columns) && empty($columns['forcenewattempt']->not_null)) {
@@ -528,9 +526,9 @@ function xmldb_scorm_upgrade($oldversion) {
             }
         }
 
-        upgrade_mod_savepoint(true, 2010122300, 'scorm');
+        upgrade_mod_savepoint(true, 2011011400, 'scorm');
     }
-    
+
     return true;
 }
 
