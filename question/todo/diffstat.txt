@@ -211,60 +211,60 @@ DONE question/type/simpletest/testquestiontype.php      |   91 +-
 DONE question/behaviour/behaviourbase.php               |  627 +++++
 DONE question/behaviour/rendererbase.php                |  200 ++
 
- question/behaviour/adaptive/behaviour.php          |  181 ++
+DONE question/behaviour/adaptive/behaviour.php          |  181 ++
 DONE question/behaviour/adaptive/lang/en_utf8/qbehaviour_adaptive.php  |    6 +
- question/behaviour/adaptive/renderer.php           |   98 +
- question/behaviour/adaptive/simpletest/testwalkthrough.php        |  239 ++
+DONE question/behaviour/adaptive/renderer.php           |   98 +
+DONE question/behaviour/adaptive/simpletest/testwalkthrough.php        |  239 ++
 
- question/behaviour/adaptivenopenalty/behaviour.php |   43 +
+DONE question/behaviour/adaptivenopenalty/behaviour.php |   43 +
 DONE question/behaviour/adaptivenopenalty/lang/en_utf8/qbehaviour_adaptivenopenalty.php  |    3 +
- question/behaviour/adaptivenopenalty/renderer.php  |   34 +
- question/behaviour/adaptivenopenalty/simpletest/testwalkthrough.php                 |  186 ++
+DONE question/behaviour/adaptivenopenalty/renderer.php  |   34 +
+DONE question/behaviour/adaptivenopenalty/simpletest/testwalkthrough.php                 |  186 ++
 
- question/behaviour/deferredcbm/behaviour.php       |  125 +
+DONE question/behaviour/deferredcbm/behaviour.php       |  125 +
 DONE question/behaviour/deferredcbm/lang/en_utf8/qbehaviour_deferredcbm.php        |    9 +
- question/behaviour/deferredcbm/renderer.php        |   87 +
- question/behaviour/deferredcbm/simpletest/testwalkthrough.php     |  261 ++
+DONE question/behaviour/deferredcbm/renderer.php        |   87 +
+DONE question/behaviour/deferredcbm/simpletest/testwalkthrough.php     |  261 ++
 
- question/behaviour/deferredfeedback/behaviour.php  |   94 +
+DONE question/behaviour/deferredfeedback/behaviour.php  |   94 +
 DONE question/behaviour/deferredfeedback/lang/en_utf8/qbehaviour_deferredfeedback.php   |    3 +
- question/behaviour/deferredfeedback/renderer.php   |   30 +
- question/behaviour/deferredfeedback/simpletest/testwalkthrough.php                 |  205 ++
+DONE question/behaviour/deferredfeedback/renderer.php   |   30 +
+DONE question/behaviour/deferredfeedback/simpletest/testwalkthrough.php                 |  205 ++
 
- question/behaviour/immediatecbm/behaviour.php      |  151 +
+DONE question/behaviour/immediatecbm/behaviour.php      |  151 +
 DONE question/behaviour/immediatecbm/lang/en_utf8/qbehaviour_immediatecbm.php       |    4 +
- question/behaviour/immediatecbm/renderer.php       |   43 +
- question/behaviour/immediatecbm/simpletest/testwalkthrough.php    |  282 ++
+DONE question/behaviour/immediatecbm/renderer.php       |   43 +
+DONE question/behaviour/immediatecbm/simpletest/testwalkthrough.php    |  282 ++
 
- question/behaviour/immediatefeedback/behaviour.php |  131 +
+DONE question/behaviour/immediatefeedback/behaviour.php |  131 +
 DONE question/behaviour/immediatefeedback/lang/en_utf8/qbehaviour_immediatefeedback.php  |    3 +
- question/behaviour/immediatefeedback/renderer.php  |   33 +
- question/behaviour/immediatefeedback/simpletest/testwalkthrough.php                 |  237 ++
+DONE question/behaviour/immediatefeedback/renderer.php  |   33 +
+DONE question/behaviour/immediatefeedback/simpletest/testwalkthrough.php                 |  237 ++
 
- question/behaviour/informationitem/behaviour.php   |  114 +
+DONE question/behaviour/informationitem/behaviour.php   |  114 +
 DONE question/behaviour/informationitem/lang/en_utf8/qbehaviour_informationitem.php    |    4 +
- question/behaviour/informationitem/renderer.php    |   42 +
- question/behaviour/informationitem/simpletest/testwalkthrough.php |   78 +
+DONE question/behaviour/informationitem/renderer.php    |   42 +
+DONE question/behaviour/informationitem/simpletest/testwalkthrough.php |   78 +
 
- question/behaviour/interactive/behaviour.php       |  232 ++
+DONE question/behaviour/interactive/behaviour.php       |  232 ++
 DONE question/behaviour/interactive/lang/en_utf8/qbehaviour_interactive.php        |    6 +
- question/behaviour/interactive/renderer.php        |   62 +
- question/behaviour/interactive/interactive/simpletest/testwalkthrough.php     |  470 ++++
+DONE question/behaviour/interactive/renderer.php        |   62 +
+DONE question/behaviour/interactive/interactive/simpletest/testwalkthrough.php     |  470 ++++
 
- question/behaviour/interactivecountback/behaviour.php   |   91 +
+DONE question/behaviour/interactivecountback/behaviour.php   |   91 +
 DONE question/behaviour/interactivecountback/en_utf8/qbehaviour_interactivecountback.php    |    3 +
- question/behaviour/interactivecountback/renderer.php    |   36 +
- question/behaviour/interactivecountback/simpletest/testwalkthrough.php                 |  135 +
+DONE question/behaviour/interactivecountback/renderer.php    |   36 +
+DONE question/behaviour/interactivecountback/simpletest/testwalkthrough.php                 |  135 +
 
- question/behaviour/manualgraded/behaviour.php      |   91 +
+DONE question/behaviour/manualgraded/behaviour.php      |   91 +
 DONE question/behaviour/manualgraded/lang/en_utf8/qbehaviour_manualgraded.php       |    3 +
- question/behaviour/manualgraded/renderer.php       |   31 +
- question/behaviour/manualgraded/simpletest/testwalkthrough.php    |  259 ++
+DONE question/behaviour/manualgraded/renderer.php       |   31 +
+DONE question/behaviour/manualgraded/simpletest/testwalkthrough.php    |  259 ++
 
- question/behaviour/missing/behaviour.php           |   65 +
+DONE question/behaviour/missing/behaviour.php           |   65 +
 DONE question/behaviour/missing/lang/en_utf8/qbehaviour_missing.php    |    3 +
- question/behaviour/missing/renderer.php            |   35 +
- question/behaviour/missing/simpletest/testmissingbehaviour.php    |   96 +
+DONE question/behaviour/missing/renderer.php            |   35 +
+DONE question/behaviour/missing/simpletest/testmissingbehaviour.php    |   96 +
 
  question/behaviour/opaque/behaviour.php            |  197 ++
 DONE question/behaviour/opaque/lang/en_utf8/qbehaviour_opaque.php      |    4 +

@@ -70,7 +70,7 @@ class qbehaviour_deferredcbm_renderer extends qbehaviour_renderer {
         }
 
         $feedback = '';
-        if (!$qa->get_last_behaviour_var('certainty')) {
+        if (!$qa->get_last_behaviour_var('certainty') && $qa->get_last_behaviour_var('_assumedcertainty')) {
             $feedback .= html_writer::tag('p', get_string('assumingcertainty', 'qbehaviour_deferredcbm',
                     question_cbm::get_string($qa->get_last_behaviour_var('_assumedcertainty'))));
         }

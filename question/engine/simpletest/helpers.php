@@ -403,7 +403,7 @@ class qbehaviour_walkthrough_test_base extends UnitTestCase {
         return new PatternExpectation('/' . preg_quote($question->questiontext) . '/');
     }
 
-    protected function get_contains_general_feedback_expectation() {
+    protected function get_contains_general_feedback_expectation($question) {
         return new PatternExpectation('/' . preg_quote($question->generalfeedback) . '/');
     }
 
