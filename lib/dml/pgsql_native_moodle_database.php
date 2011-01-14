@@ -138,8 +138,11 @@ class pgsql_native_moodle_database extends moodle_database {
         // Unix socket connections should have lower overhead
         if (!empty($this->dboptions['dbsocket']) and ($this->dbhost === 'localhost' or $this->dbhost === '127.0.0.1')) {
             $connection = "user='$this->dbuser' password='$pass' dbname='$this->dbname'";
+            if (strpos($this->dboptions['dbsocket'], '/') !== false) {
+                $connection = $connection." host='".$this->dboptions['dbsocket']."'";
+            }
         } else {
-            $this->dboptions['dbsocket'] = 0;
+            $this->dboptions['dbsocket'] = '';
             if (empty($this->dbname)) {
                 // probably old style socket connection - do not add port
                 $port = "";
