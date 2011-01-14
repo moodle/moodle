@@ -21,7 +21,6 @@
 // before any action that may take longer time to finish.
 
 /**
- * @global moodle_database $DB
  * @param int $oldversion
  * @return bool 
  */
@@ -378,8 +377,8 @@ function xmldb_quiz_upgrade($oldversion) {
         // quiz savepoint reached
         upgrade_mod_savepoint(true, 2010102000, 'quiz');
     }
-    
-    if ($oldversion < 2010122300) {
+
+    if ($oldversion < 2011011400) {
         // Fix quiz in the post table after upgrade from 1.9
         $table = new xmldb_table('quiz');
         $columns = $DB->get_columns('quiz');
@@ -411,10 +410,10 @@ function xmldb_quiz_upgrade($oldversion) {
             }
         }
 
-        upgrade_mod_savepoint(true, 2010122300, 'quiz');
+        upgrade_mod_savepoint(true, 2011011400, 'quiz');
     }
-    
-    if ($oldversion < 2010122301) {
+
+    if ($oldversion < 2011011401) {
         // Fix quiz_attempts in the post table after upgrade from 1.9
         $table = new xmldb_table('quiz_attempts');
         $columns = $DB->get_columns('quiz_attempts');
@@ -428,10 +427,10 @@ function xmldb_quiz_upgrade($oldversion) {
             }
         }
 
-        upgrade_mod_savepoint(true, 2010122301, 'quiz');
+        upgrade_mod_savepoint(true, 2011011401, 'quiz');
     }
-    
-    if ($oldversion < 2010122302) {
+
+    if ($oldversion < 2011011402) {
         // Fix quiz_feedback in the post table after upgrade from 1.9
         $table = new xmldb_table('quiz_feedback');
         $columns = $DB->get_columns('quiz_feedback');
@@ -453,11 +452,11 @@ function xmldb_quiz_upgrade($oldversion) {
                 $dbman->change_field_default($table, $field);
             }
         }
-        
-        upgrade_mod_savepoint(true, 2010122302, 'quiz');
+
+        upgrade_mod_savepoint(true, 2011011402, 'quiz');
     }
-    
-    if ($oldversion < 2010122303) {
+
+    if ($oldversion < 2011011403) {
         // Fix quiz_grades in the post table after upgrade from 1.9
         $table = new xmldb_table('quiz_grades');
         $columns = $DB->get_columns('quiz_grades');
@@ -471,10 +470,10 @@ function xmldb_quiz_upgrade($oldversion) {
             }
         }
 
-        upgrade_mod_savepoint(true, 2010122303, 'quiz');
+        upgrade_mod_savepoint(true, 2011011403, 'quiz');
     }
-    
-    if ($oldversion < 2010122304) {
+
+    if ($oldversion < 2011011404) {
         // Fix quiz_question_instances in the post table after upgrade from 1.9
         $table = new xmldb_table('quiz_question_instances');
         $columns = $DB->get_columns('quiz_question_instances');
@@ -488,7 +487,7 @@ function xmldb_quiz_upgrade($oldversion) {
             }
         }
 
-        upgrade_mod_savepoint(true, 2010122304, 'quiz');
+        upgrade_mod_savepoint(true, 2011011404, 'quiz');
     }
 
     return true;
