@@ -247,7 +247,11 @@
         }
 
         // Settings link, if available.
-        if (file_exists($qtype->plugin_dir() . '/settings.php')) {
+        $settings = admin_get_root()->locate('qtypesetting' . $qtypename);
+        if ($settings instanceof admin_externalpage) {
+            $row[] = '<a href="' . $settings->url .
+                    '">' . get_string('settings') . '</a>';
+        } else if ($settings instanceof admin_settingpage) {
             $row[] = '<a href="' . admin_url('settings.php?section=qtypesetting' . $qtypename) .
                     '">' . get_string('settings') . '</a>';
         } else {
