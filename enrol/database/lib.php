@@ -430,8 +430,8 @@ class enrol_database_plugin extends enrol_plugin {
             unset($user_mapping);
 
             // enrol all users and sync roles
-            foreach ($requested_roles as $userid=>$roles) {
-                foreach ($roles as $roleid) {
+            foreach ($requested_roles as $userid=>$userroles) {
+                foreach ($userroles as $roleid) {
                     if (empty($current_roles[$userid])) {
                         $this->enrol_user($instance, $userid, $roleid);
                         $current_roles[$userid][$roleid] = $roleid;
@@ -441,7 +441,7 @@ class enrol_database_plugin extends enrol_plugin {
 
                 // unassign removed roles
                 foreach($current_roles[$userid] as $cr) {
-                    if (empty($roles[$cr])) {
+                    if (empty($userroles[$cr])) {
                         role_unassign($cr, $userid, $context->id, 'enrol_database', $instance->id);
                         unset($current_roles[$userid][$cr]);
                     }
