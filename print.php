@@ -76,9 +76,7 @@ if ($chapter) {
 
     $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id, 'hidden'=>0), 'pagenum, title');
 
-    $print = 0;
-    $edit = 0;
-    require('toc.php');
+    list($toc, $currtitle, $currsubtitle, $titles) = book_get_toc($chapters, $chapter, $book, $cm, 0, 0);
 
     /// page header
     ?>
@@ -145,8 +143,7 @@ if ($chapter) {
     </table></div>
 
     <?php
-    $print = 1;
-    require('toc.php');
+    list($toc, $currenttitle, $currsubtitle, $titles) = book_get_toc($chapters, $chapter, $book, $cm, 0, 1);
     echo $toc;
     // chapters
     $link1 = $CFG->wwwroot.'/mod/book/view.php?id='.$course->id.'&chapterid=';

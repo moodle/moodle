@@ -175,8 +175,7 @@ if (!$allowprint) {
 }
 
 // prepare $toc and $currtitle, $currsubtitle
-$print = 0;
-include('toc.php');
+list($toc, $currtitle, $currsubtitle, $titles) = book_get_toc($chapters, $chapter, $book, $cm, $edit, 0);
 
 if ($edit) {
     $tocwidth = $CFG->book_tocwidth + 80;
