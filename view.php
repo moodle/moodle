@@ -51,9 +51,6 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/book:read', $context);
 
 $allowedit   = has_capability('mod/book:edit', $context);
-$allowimport = has_capability('mod/book:import', $context);
-$allowprint  = (has_capability('mod/book:print', $context) and !$book->disableprinting);
-$allowexport = has_capability('mod/book:exportimscp', $context);
 $viewhidden  = has_capability('mod/book:viewhiddenchapters', $context);
 
 if ($allowedit) {
@@ -96,11 +93,10 @@ if ($chapterid == '0') { // go to first chapter if no given
     }
 }
 
+$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
+
 $PAGE->set_url('/mod/book/view.php', array('id'=>$id, 'chapterid'=>$chapterid));
 
-if (!$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id))) {
-    error('Error reading book chapters.');
-}
 
 //check all variables
 unset($id);
@@ -165,15 +161,6 @@ if ($nextid) {
     $chnavigation .= '<a title="'.get_string('navexit', 'book').'" href="../../course/view.php?id='.$course->id.'#section-'.$sec.'"><img src="'.$OUTPUT->pix_url('nav_exit', 'mod_book').'" class="bigicon" alt="'.get_string('navexit', 'book').'" /></a>';
 }
 
-/// prepare print icons
-if (!$allowprint) {
-    $printbook = '';
-    $printchapter = '';
-} else {
-    $printbook = '<a title="'.get_string('printbook', 'book').'" href="print.php?id='.$cm->id.'" onclick="this.target=\'_blank\'"><img src="'.$OUTPUT->pix_url('print_book', 'mod_book').'" class="bigicon" alt="'.get_string('printbook', 'book').'"/></a>';
-    $printchapter = '<a title="'.get_string('printchapter', 'book').'" href="print.php?id='.$cm->id.'&amp;chapterid='.$chapter->id.'" onclick="this.target=\'_blank\'"><img src="'.$OUTPUT->pix_url('print_chapter', 'mod_book').'" class="bigicon" alt="'.get_string('printchapter', 'book').'"/></a>';
-}
-
 // prepare $toc and $currtitle, $currsubtitle
 list($toc, $currtitle, $currsubtitle, $titles) = book_get_toc($chapters, $chapter, $book, $cm, $edit, 0);
 
@@ -182,14 +169,6 @@ if ($edit) {
 } else {
     $tocwidth = $CFG->book_tocwidth;
 }
-
-//$doimport = ($allowimport and $edit) ? '<div>(<a href="import.php?id='.$cm->id.'">'.get_string('doimport', 'book').'</a>)</div>' : '';
-$doimport = ''; //TODO: after new file handling
-
-/// Enable the IMS CP button
-//$generateimscp = ($allowexport) ? '<a title="'.get_string('generateimscp', 'book').'" href="generateimscp.php?id='.$cm->id.'"><img class="bigicon" src="'.$OUTPUT->pix_url('generateimscp', 'mod_book').'" alt="'.get_string('generateimscp', 'book').'"></img></a>' : '';
-$generateimscp = ''; //TODO after new file handling
-
 
 // =====================================================
 // Book display HTML code
@@ -203,11 +182,9 @@ $generateimscp = ''; //TODO after new file handling
     <td style="width:<?php echo $tocwidth ?>px" valign="bottom">
         <?php
         print_string('toc', 'book');
-        echo $doimport;
         ?>
     </td>
     <td>
-        <div class="bookexport"><?php echo $printbook.$printchapter.$generateimscp ?></div>
         <div class="booknav"><?php echo $chnavigation ?></div>
     </td>
 </tr>

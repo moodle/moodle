@@ -236,9 +236,6 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
         $PAGE->cm->context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->instance);
     }
 
-    if (!has_capability('mod/book:edit', $PAGE->cm->context)) {
-        return;
-    }
 
     $params = $PAGE->url->params();
 
@@ -246,16 +243,43 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
         return;
     }
 
-    if (!empty($USER->editing)) {
-        $string = get_string("turneditingoff");
-        $edit = '0';
-    } else {
-        $string = get_string("turneditingon");
-        $edit = '1';
+    if (has_capability('mod/book:print', $PAGE->cm->context)) {
+        $book = $DB->get_record('book', array('id'=>$PAGE->cm->instance));
+        if (!$book->disableprinting) {
+            $url = new moodle_url('/mod/book/print.php', array('id'=>$params['id']));
+            $booknode->add(get_string('printbook', 'book'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_book', '', 'mod_book', array('class'=>'icon')));
+
+            // buggy navlib - actions not supported!!
+            //$action = new action_link($url, get_string('printbook', 'book'), new popup_action('onclick', $url));
+            //$booknode->add('', $action, navigation_node::TYPE_SETTING);
+
+            $url = new moodle_url('/mod/book/print.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid']));
+            $booknode->add(get_string('printchapter', 'book'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_chapter', '', 'mod_book', array('class'=>'icon')));
+        }
     }
 
-    $url = new moodle_url('/mod/book/view.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid'], 'edit'=>$edit, 'sesskey'=>sesskey()));
-    $booknode->add($string, $url, navigation_node::TYPE_SETTING);
+    if (has_capability('mod/book:import', $PAGE->cm->context)) {
+        //TODO
+        //$doimport = ($allowimport and $edit) ? '<div>(<a href="import.php?id='.$cm->id.'">'.get_string('doimport', 'book').'</a>)</div>' : '';
+    }
+
+    if (has_capability('mod/book:exportimscp', $PAGE->cm->context)) {
+        //TODO
+        /// Enable the IMS CP button
+        //$generateimscp = ($allowexport) ? '<a title="'.get_string('generateimscp', 'book').'" href="generateimscp.php?id='.$cm->id.'"><img class="bigicon" src="'.$OUTPUT->pix_url('generateimscp', 'mod_book').'" alt="'.get_string('generateimscp', 'book').'"></img></a>' : '';
+    }
+
+    if (has_capability('mod/book:edit', $PAGE->cm->context)) {
+        if (!empty($USER->editing)) {
+            $string = get_string("turneditingoff");
+            $edit = '0';
+        } else {
+            $string = get_string("turneditingon");
+            $edit = '1';
+        }
+        $url = new moodle_url('/mod/book/view.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid'], 'edit'=>$edit, 'sesskey'=>sesskey()));
+        $booknode->add($string, $url, navigation_node::TYPE_SETTING);
+    }
 }
 
 /**
