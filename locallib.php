@@ -342,8 +342,8 @@ function book_read_chapter($base, $ref) {
         if (preg_match('/charset=([^"]+)/is', $head, $matches)) {
             $enc = $matches[1];
             $textlib = textlib_get_instance();
-            $chapter->content = $textlib->convert($chapter->content, $enc, current_charset());
-            $chapter->title = $textlib->convert($chapter->title, $enc, current_charset());
+            $chapter->content = $textlib->convert($chapter->content, $enc, 'utf-8');
+            $chapter->title = $textlib->convert($chapter->title, $enc, 'utf-8');
         }
         if (preg_match_all('/<link[^>]+rel="stylesheet"[^>]*>/i', $head, $matches)) { //dlnsk extract links to css
             for($i=0; $i<count($matches[0]); $i++){
