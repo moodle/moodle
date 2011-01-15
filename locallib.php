@@ -120,6 +120,8 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit, $print) {
     $first = 1;
     $titles = array();
 
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     switch ($book->numbering) {
       case BOOK_NUM_NONE:
           $toc .= '<div class="book_toc_none">';
@@ -145,7 +147,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit, $print) {
         }
         $toc .= '<ul>';
         foreach($chapters as $ch) {
-            $title = trim(strip_tags($ch->title));
+            $title = trim(format_string($ch->title, true, array('context'=>$context)));
             if (!$ch->hidden) {
                 if (!$ch->subchapter) {
                     $nch++;
@@ -173,7 +175,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit, $print) {
         $i = 0;
         foreach($chapters as $ch) {
             $i++;
-            $title = trim(strip_tags($ch->title));
+            $title = trim(format_string($ch->title, true, array('context'=>$context)));
             if (!$ch->subchapter) {
                 $toc .= ($first) ? '<li>' : '</ul></li><li>';
                 if (!$ch->hidden) {
@@ -239,7 +241,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit, $print) {
     } else { //normal students view
         $toc .= '<ul>';
         foreach($chapters as $ch) {
-            $title = trim(strip_tags($ch->title));
+            $title = trim(format_string($ch->title, true, array('context'=>$context)));
             if (!$ch->hidden) {
                 if (!$ch->subchapter) {
                     $nch++;
