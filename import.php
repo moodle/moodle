@@ -114,7 +114,7 @@ if ($mform->is_cancelled()) {
         $chapter = book_read_chapter($coursebase, $ref);
         if ($chapter) {
             $chapter->bookid       = $book->id;
-            $chapter->pagenum      = $DB->count_records('book_chapters', array('bookid'=>$book->id)+1;
+            $chapter->pagenum      = $DB->count_records('book_chapters', array('bookid'=>$book->id)+1);
             $chapter->timecreated  = time();
             $chapter->timemodified = time();
             echo "imsrc:".$chapter->importsrc;
