@@ -68,7 +68,7 @@ $mform->set_data(array('id'=>$cm->id));
 
 /// If data submitted, then process and store.
 if ($mform->is_cancelled()) {
-    if (empty($chapter->id)) {
+    if (empty($chapter->id)) { //TODO: problem
         redirect("view.php?id=$cm->id");
     } else {
         redirect("view.php?id=$cm->id&chapterid=$chapter->id");
