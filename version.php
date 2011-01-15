@@ -19,12 +19,12 @@
  *
  * @package    mod
  * @subpackage book
- * @copyright  2004-2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$module->version  = 2010120805;  // The current module version (Date: YYYYMMDDXX)
-$module->requires = 2010120700;  // Requires this Moodle version
-$module->cron     = 0;           // Period for cron to check this module (secs)
+$module->version  = 2011011500;   // The current module version (Date: YYYYMMDDXX)
+$module->requires = 2010120700;   // Requires this Moodle version
+$module->cron     = 0;            // Period for cron to check this module (secs)
 
-$release = "2.0dev";             // User-friendly version number
+$release = "2.0dev (2011011500)"; // User-friendly version number

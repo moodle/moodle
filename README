@@ -102,6 +102,10 @@ CHANGELOG:
     * minor cleanup
     * new Slovenian language pack - thanks Mitja Podreka
     * updated German Language pack - thanks Ralf Hilgenstock
+== 1.9 2011/01/15 ============================================================
+    * fixed print icons
+    * implemented user outline
+    * fixed page title formatting
 == 2.0dev ============================================================
     * Moodle 2.0 conversion - no new features
 
