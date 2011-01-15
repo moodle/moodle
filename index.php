@@ -1,100 +1,105 @@
 <?php
+// This file is part of Book module for Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/// This page lists all the instances of book in a particular course
+/**
+ * This page lists all the instances of book in a particular course
+ *
+ * @package    mod
+ * @subpackage book
+ * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
 
 $id = required_param('id', PARAM_INT);           // Course Module ID
 
-// =========================================================================
-// security checks START - teachers and students view
-// =========================================================================
-
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
-require_course_login($course, true);
-
-//check all variables
 unset($id);
 
-// =========================================================================
-// security checks END
-// =========================================================================
+require_course_login($course, true);
+$PAGE->set_pagelayout('incourse');
 
 /// Get all required strings
-$strbooks = get_string('modulenameplural', 'book');
-$strbook  = get_string('modulename', 'book');
+$strbooks        = get_string('modulenameplural', 'book');
+$strbook         = get_string('modulename', 'book');
+$strsectionname  = get_string('sectionname', 'format_'.$course->format);
+$strname         = get_string('name');
+$strintro        = get_string('moduleintro');
+$strlastmodified = get_string('lastmodified');
 
-
-$navlinks = array();
-$navlinks[] = array('name' => $strbooks, 'link' => '', 'type' => 'activity');
-$navigation = build_navigation($navlinks);
-
-print_header_simple($strbooks, '', $navigation, '', '', true, '', navmenu($course));
+$PAGE->set_url('/mod/book/index.php', array('id' => $course->id));
+$PAGE->set_title($course->shortname.': '.$strbooks);
+$PAGE->set_heading($course->fullname);
+$PAGE->navbar->add($strbooks);
+echo $OUTPUT->header();
 
 add_to_log($course->id, 'book', 'view all', 'index.php?id='.$course->id, '');
 
 /// Get all the appropriate data
 if (!$books = get_all_instances_in_course('book', $course)) {
-    notice('There are no books', '../../course/view.php?id='.$course->id);
+    notice(get_string('thereareno', 'moodle', $strbooks), "$CFG->wwwroot/course/view.php?id=$course->id");
     die;
 }
 
-/// Print the list of instances
-$strname  = get_string('name');
-$strweek  = get_string('week');
-$strtopic  = get_string('topic');
-$strsummary = get_string('summary');
-$strchapters  = get_string('chapterscount', 'book');
+$usesections = course_format_uses_sections($course->format);
+if ($usesections) {
+    $sections = get_all_sections($course->id);
+}
 
-if ($course->format == 'weeks') {
-    $table->head  = array ($strweek, $strname, $strsummary, $strchapters);
-    $table->align = array ('center', 'left', 'left', 'center');
-} else if ($course->format == 'topics') {
-    $table->head  = array ($strtopic, $strname, $strsummary, $strchapters);
-    $table->align = array ('center', 'left', 'left', 'center');
+$table = new html_table();
+$table->attributes['class'] = 'generaltable mod_index';
+
+if ($usesections) {
+    $table->head  = array ($strsectionname, $strname, $strintro);
+    $table->align = array ('center', 'left', 'left');
 } else {
-    $table->head  = array ($strname, $strsummary, $strchapters);
+    $table->head  = array ($strlastmodified, $strname, $strintro);
     $table->align = array ('left', 'left', 'left');
 }
 
+$modinfo = get_fast_modinfo($course);
 $currentsection = '';
 foreach ($books as $book) {
-    $nocleanoption = new object();
-    $nocleanoption->noclean = true;
-    $book->summary = format_text($book->intro, $book->introformat, $nocleanoption, $course->id);
-    $book->summary = '<span style="font-size:x-small;">'.$book->summary.'</span>';
-
-    if (!$book->visible) {
-        //Show dimmed if the mod is hidden
-        $link = '<a class="dimmed" href="view.php?id='.$book->coursemodule.'">'.$book->name.'</a>';
-    } else {
-        //Show normal if the mod is visible
-        $link = '<a href="view.php?id='.$book->coursemodule.'">'.$book->name.'</a>';
-    }
-
-    $count = $DB->count_records('book_chapters', array('bookid'=>$book->id, 'hidden'=>'0'));
-
-    if ($course->format == 'weeks' or $course->format == 'topics') {
+    $cm = $modinfo->cms[$book->coursemodule];
+    if ($usesections) {
         $printsection = '';
         if ($book->section !== $currentsection) {
             if ($book->section) {
-                $printsection = $book->section;
+                $printsection = get_section_name($course, $sections[$book->section]);
             }
             if ($currentsection !== '') {
                 $table->data[] = 'hr';
             }
             $currentsection = $book->section;
         }
-        $table->data[] = array ($printsection, $link, $book->summary, $count);
     } else {
-        $table->data[] = array ($link, $book->summary, $count);
+        $printsection = '<span class="smallinfo">'.userdate($book->timemodified)."</span>";
     }
+
+    $class = $book->visible ? '' : 'class="dimmed"'; // hidden modules are dimmed
+
+    $table->data[] = array (
+        $printsection,
+        "<a $class href=\"view.php?id=$cm->id\">".format_string($book->name)."</a>",
+        format_module_intro('book', $book, $cm->id));
 }
 
-echo '<br />';
-print_table($table);
+echo html_writer::table($table);
 
-print_footer($course);
-
+echo $OUTPUT->footer();
