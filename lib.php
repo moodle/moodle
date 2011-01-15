@@ -102,14 +102,30 @@ function book_get_types() {
     return array($type);
 }
 
-function book_user_outline($course, $user, $mod, $book) {
-    // Return a small object with summary information about what a
-    // user has done with a given particular instance of this module
-    // Used for user activity reports.
-    // $return->time = the time they did it
-    // $return->info = a short text description
+/**
+ * Return use outline
+ * @param object $course
+ * @param object $user
+ * @param object $mod
+ * @param object $page
+ * @return object|null
+ */
+function page_user_outline($course, $user, $mod, $book) {
+    global $DB;
 
-    return null;
+    if ($logs = $DB->get_records('log', array('userid'=>$user->id, 'module'=>'book',
+                                              'action'=>'view', 'info'=>$book->id), 'time ASC')) {
+
+        $numviews = count($logs);
+        $lastlog = array_pop($logs);
+
+        $result = new stdClass();
+        $result->info = get_string('numviews', '', $numviews);
+        $result->time = $lastlog->time;
+
+        return $result;
+    }
+    return NULL;
 }
 
 function book_user_complete($course, $user, $mod, $book) {
