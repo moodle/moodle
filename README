@@ -113,6 +113,7 @@ TODO:
 * upgrade imscp export code (disabled for now)
 * upgrade import code (disabled for now)
 * open print links in new windows (needs fix in navlib)
+* completion tracking
 
 
 Petr
