@@ -6,7 +6,7 @@ $string['modulename_help'] = 'Book is a simple multipage study material.';
 $string['pluginname'] = 'Book';
 $string['pluginadministration'] = 'Book administration';
 
-$string['toc'] = 'Table of Contents';
+$string['toc'] = 'Table of contents';
 $string['tocwidth'] = 'Select width of the Table of Contents for all books.';
 $string['book_tocwidth'] = 'Table of Contents width';
 $string['faq'] = 'Book FAQ';
@@ -37,17 +37,17 @@ Either rephrase your titles or ask your site admin to change TOC
 width. It is defined globally for all books in module configuration
 page.';
 
-$string['disableprinting'] = 'Disable Printing';
+$string['disableprinting'] = 'Disable printing';
 $string['disableprinting_help'] = 'Hide print icons.';
-$string['customtitles'] = 'Custom Titles';
+$string['customtitles'] = 'Custom citles';
 $string['customtitles_help'] = 'Chapter titles are displayed automatically only in TOC.';
 
 $string['editingchapter'] = 'Editing chapter';
-$string['chaptertitle'] = 'Chapter Title';
+$string['chaptertitle'] = 'Chapter title';
 $string['content'] = 'Content';
 $string['subchapter'] = 'Subchapter';
 
-$string['numbering'] = 'Chapter Numbering';
+$string['numbering'] = 'Chapter numbering';
 $string['numbering_help'] = '* None - chapter and subchapter titles are not formatted at all, use if you want to define special numbering styles. For example letters: in chapter title type "A First Chapter", "A.1 Some Subchapter",...
 * Numbers - chapters and subchapters are numbered (1, 1.1, 1.2, 2, ...)
 * Bullets - subchapters are indented and displayed with bullets
@@ -65,15 +65,15 @@ $string['confchapterdelete'] = 'Do you really want to delete this chapter?';
 $string['confchapterdeleteall'] = 'Do you really want to delete this chapter and all its subchapters?';
 
 $string['generateimscp'] = 'Generate IMS content package';
-$string['printbook'] = 'Print Complete Book';
-$string['printchapter'] = 'Print This Chapter';
+$string['printbook'] = 'Print book';
+$string['printchapter'] = 'Print this chapter';
 $string['printdate'] = 'Date';
 $string['printedby'] = 'Printed by';
 $string['top'] = 'top';
 
 $string['navprev'] = 'Previous';
 $string['navnext'] = 'Next';
-$string['navexit'] = 'Exit Book';
+$string['navexit'] = 'Exit book';
 
 $string['importingchapters'] = 'Importing chapters into book';
 $string['import'] = 'Import';
