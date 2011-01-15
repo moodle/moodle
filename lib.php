@@ -110,7 +110,7 @@ function book_get_types() {
  * @param object $page
  * @return object|null
  */
-function page_user_outline($course, $user, $mod, $book) {
+function book_user_outline($course, $user, $mod, $book) {
     global $DB;
 
     if ($logs = $DB->get_records('log', array('userid'=>$user->id, 'module'=>'book',
