@@ -83,9 +83,9 @@ if ($chapter) {
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
     <html>
     <head>
-      <title><?php echo format_string($book->name) ?></title>
+      <title><?php echo format_string($book->name, true, array('context'=>$context)) ?></title>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-      <meta name="description" content="<?php echo s(format_string($book->name)) ?>" />
+      <meta name="description" content="<?php echo s(format_string($book->name, true, array('context'=>$context))) ?>" />
       <link rel="stylesheet" type="text/css" href="book_print.css" />
     </head>
     <body>
@@ -114,28 +114,28 @@ if ($chapter) {
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
     <html>
     <head>
-      <title><?php echo format_string(name) ?></title>
-      <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $encoding ?>" />
-      <meta name="description" content="<?php echo s(format_string($book->name)) ?>" />
+      <title><?php echo format_string($book->name, true, array('context'=>$context)) ?></title>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <meta name="description" content="<?php echo s(format_string($book->name, true, array('noclean'=>true, 'context'=>$context))) ?>" />
       <link rel="stylesheet" type="text/css" href="book_print.css" />
     </head>
     <body>
     <a name="top"></a>
-    <p class="book_title"><?php echo format_string($book->name) ?></p>
-    <p class="book_summary"><?php echo format_text($book->intro, $book->introformat) ?></p>
+    <p class="book_title"><?php echo format_string($book->name, true, array('context'=>$context)) ?></p>
+    <p class="book_summary"><?php echo format_text($book->intro, $book->introformat, array('noclean'=>true, 'context'=>$context)) ?></p>
     <div class="book_info"><table>
     <tr>
     <td><?php echo get_string('site') ?>:</td>
-    <td><a href="<?php echo $CFG->wwwroot ?>"><?php echo format_string($SITE->fullname) ?></a></td>
+    <td><a href="<?php echo $CFG->wwwroot ?>"><?php echo format_string($SITE->fullname, true, array('context'=>$context)) ?></a></td>
     </tr><tr>
     <td><?php echo get_string('course') ?>:</td>
-    <td><?php echo format_string($course->fullname) ?></td>
+    <td><?php echo format_string($course->fullname, true, array('context'=>$context)) ?></td>
     </tr><tr>
     <td><?php echo get_string('modulename', 'book') ?>:</td>
-    <td><?php echo format_string($book->name) ?></td>
+    <td><?php echo format_string($book->name, true, array('context'=>$context)) ?></td>
     </tr><tr>
     <td><?php echo get_string('printedby', 'book') ?>:</td>
-    <td><?php echo format_string(fullname($USER, true)) ?></td>
+    <td><?php echo fullname($USER, true) ?></td>
     </tr><tr>
     <td><?php echo get_string('printdate','book') ?>:</td>
     <td><?php echo userdate(time()) ?></td>
