@@ -28,6 +28,8 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     require_once("$CFG->dirroot/mod/book/lib.php");
 
+    //--- general settings -----------------------------------------------------------------------------------
+
     $settings->add(new admin_setting_configcheckbox('book/requiremodintro',
         get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 1));
 
@@ -36,5 +38,12 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configmultiselect('book/numberingoptions',
         get_string('numberingoptions', 'mod_book'), get_string('numberingoptions_help', 'mod_book'),
         array_keys($options), $options));
+
+
+    //--- modedit defaults -----------------------------------------------------------------------------------
+    $settings->add(new admin_setting_heading('bookmodeditdefaults', get_string('modeditdefaults', 'admin'), get_string('condifmodeditdefaults', 'admin')));
+
+    $settings->add(new admin_setting_configselect('book/numbering',
+        get_string('numbering', 'mod_book'), '', BOOK_NUM_NUMBERS, $options));
 
 }
