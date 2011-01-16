@@ -107,9 +107,10 @@ CHANGELOG:
     * implemented user outline
     * fixed page title formatting
 == 2.0dev ============================================================
-    * Moodle 2.0 conversion - no new features
+    * Moodle 2.0 conversion
+    * removed "Disable printing" option, please use capabilities instead
 
-TODO:
+Known issues, please do not file tracker reports:
 * upgrade imscp export code (disabled for now)
 * upgrade import code (disabled for now)
 * open print links in new windows (needs fix in navlib)
