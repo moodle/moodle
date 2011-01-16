@@ -76,7 +76,7 @@ if ($allowedit and !$chapters) {
 /// check chapterid and read chapter data
 if ($chapterid == '0') { // go to first chapter if no given
     foreach($chapters as $ch) {
-        if ($allowedit) {
+        if ($allowedit and !empty($USER->editing)) {
             $chapterid = $ch->id;
             break;
         }
@@ -129,22 +129,21 @@ echo $OUTPUT->header();
 /// prepare chapter navigation icons
 $previd = null;
 $nextid = null;
-$found = 0;
+$last = null;
 foreach ($chapters as $ch) {
-    if ($found) {
-        $nextid= $ch->id;
+    if ($allowedit and empty($USER->editing) and $ch->hidden) {
+        continue;
+    }
+    if ($last == $chapter->id) {
+        $nextid = $ch->id;
         break;
     }
-    if ($ch->id == $chapter->id) {
-        $found = 1;
-    }
-    if (!$found) {
+    if ($ch->id != $chapter->id) {
         $previd = $ch->id;
     }
+    $last = $ch->id;
 }
-if ($ch == current($chapters)) {
-    $nextid = $ch->id;
-}
+
 $chnavigation = '';
 if ($previd) {
     $chnavigation .= '<a title="'.get_string('navprev', 'book').'" href="view.php?id='.$cm->id.'&amp;chapterid='.$previd.'"><img src="'.$OUTPUT->pix_url('nav_prev', 'mod_book').'" class="bigicon" alt="'.get_string('navprev', 'book').'"/></a>';
