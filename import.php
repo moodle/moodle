@@ -19,7 +19,7 @@
  *
  * @package    mod
  * @subpackage book
- * @copyright  2004-2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,13 +27,8 @@ require('../../config.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
 require_once('import_form.php');
 
-$id = required_param('id', PARAM_INT);           // Course Module ID
-
-die('Not converted to 2.0 yet, sorry');
-
-// =========================================================================
-// security checks START - only teachers edit
-// =========================================================================
+$id        = required_param('id', PARAM_INT);           // Course Module ID
+$chapterid = optional_param('chapterid', 0, PARAM_INT); // Chapter ID
 
 $cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
@@ -44,37 +39,40 @@ require_login($course, false, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/book:import', $context);
 
-$PAGE->set_url('/mod/book/import.php', array('id'=>$id));
+$PAGE->set_url('/mod/book/import.php', array('id'=>$id, 'chapterid'=>$chapterid));
 
-//check all variables
-unset($id);
+if ($chapterid) {
+    if (!$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id))) {
+        $chapterid = 0;
+    }
+} else {
+    $chapter = false;
+}
 
-// =========================================================================
-// security checks END
-// =========================================================================
+$PAGE->set_title(format_string($book->name));
+$PAGE->add_body_class('mod_book');
+$PAGE->set_heading(format_string($course->fullname));
 
 ///prepare the page header
 $strbook = get_string('modulename', 'book');
 $strbooks = get_string('modulenameplural', 'book');
-$strimport = get_string('import', 'book');
 
-$navlinks = array();
-$navlinks[] = array('name' => $strimport, 'link' => '', 'type' => 'title');
-
-$navigation = build_navigation($navlinks, $cm);
-
-$mform = new book_import_form(null, $cm);
-$mform->set_data(array('id'=>$cm->id));
+$mform = new book_import_form(null, array('id'=>$id, 'chapterid'=>$chapterid));
 
 /// If data submitted, then process and store.
 if ($mform->is_cancelled()) {
-    if (empty($chapter->id)) { //TODO: problem
+    if (empty($chapter->id)) {
         redirect("view.php?id=$cm->id");
     } else {
         redirect("view.php?id=$cm->id&chapterid=$chapter->id");
     }
 
-} else if ($data = $mform->get_data(false)) {
+} else if ($data = $mform->get_data()) {
+
+
+    die('TODO');
+/*
+
     $coursebase = $CFG->dataroot.'/'.$book->course;
 
     $reference = book_prepare_link($data->reference);
@@ -139,18 +137,13 @@ if ($mform->is_cancelled()) {
     print_continue('view.php?id='.$cm->id);
     print_footer($course);
     die;
+
+ */
 }
 
-print_header("$course->shortname: $book->name", $course->fullname, $navigation);
-
-$strdoimport = get_string('doimport', 'book');
-$strchoose = get_string('choose');
-$pageheading = get_string('importingchapters', 'book');
-
-$icon = '<img class="icon" src="pix/chapter.gif" alt="" />&nbsp;';
-print_heading_with_help($pageheading, 'import', 'book', $icon);
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('importingchapters', 'book'));
 
 $mform->display();
 
-print_footer($course);
-
+echo $OUTPUT->footer();

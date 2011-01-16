@@ -32,10 +32,6 @@ $chapterid  = optional_param('id', 0, PARAM_INT); // Chapter ID
 $pagenum    = optional_param('pagenum', 0, PARAM_INT);
 $subchapter = optional_param('subchapter', 0, PARAM_BOOL);
 
-// =========================================================================
-// security checks START - only teachers edit
-// =========================================================================
-
 $cm = get_coursemodule_from_id('book', $cmid, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 $book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
@@ -46,10 +42,6 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/book:edit', $context);
 
 $PAGE->set_url('/mod/book/edit.php', array('cmid'=>$cmid, 'id'=>$chapterid, 'pagenum'=>$pagenum, 'subchapter'=>$subchapter));
-
-// =========================================================================
-// security checks END
-// =========================================================================
 
 if ($chapterid) {
     $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
