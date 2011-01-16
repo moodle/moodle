@@ -59,6 +59,7 @@ function book_check_structure($bookid) {
         $hidesub = true;
         $i = 1;
         foreach($chapters as $ch) {
+            $oldch = clone($ch);
             if ($first and $ch->subchapter) {
                 $ch->subchapter = 0;
             }
@@ -69,7 +70,10 @@ function book_check_structure($bookid) {
                 $ch->hidden = $hidesub ? true : $ch->hidden;
             }
             $ch->pagenum = $i;
-            $DB->update_record('book_chapters', $ch);
+            if ($oldch->subchpter != $ch->subchpter or $oldch->pagenum != $ch->pagenum or $oldch->hidden != $ch->hidden) {
+                // update only if something changed
+                $DB->update_record('book_chapters', $ch);
+            }
             $i++;
         }
     }
