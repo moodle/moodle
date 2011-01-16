@@ -72,7 +72,7 @@ function book_check_structure($bookid) {
                 $ch->hidden = 1;
             }
             $ch->pagenum = $i;
-            if ($oldch->subchpter != $ch->subchpter or $oldch->pagenum != $ch->pagenum or $oldch->hidden != $ch->hidden) {
+            if ($oldch->subchapter != $ch->subchapter or $oldch->pagenum != $ch->pagenum or $oldch->hidden != $ch->hidden) {
                 // update only if something changed
                 $DB->update_record('book_chapters', $ch);
             }
