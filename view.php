@@ -116,9 +116,9 @@ add_to_log($course->id, 'book', 'view', 'view.php?id='.$cm->id.'&amp;chapterid='
 
 
 ///read standard strings
-$strbooks = get_string('modulenameplural', 'book');
-$strbook  = get_string('modulename', 'book');
-$strtoc   = get_string('toc', 'book');
+$strbooks = get_string('modulenameplural', 'mod_book');
+$strbook  = get_string('modulename', 'mod_book');
+$strtoc   = get_string('toc', 'mod_book');
 
 /// prepare header
 $PAGE->set_title(format_string($book->name));
@@ -181,7 +181,7 @@ if ($edit) {
 <tr>
     <td style="width:<?php echo $tocwidth ?>px" valign="bottom">
         <?php
-        print_string('toc', 'book');
+        print_string('toc', 'mod_book');
         ?>
     </td>
     <td>

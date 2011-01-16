@@ -54,8 +54,8 @@ $PAGE->add_body_class('mod_book');
 $PAGE->set_heading(format_string($course->fullname));
 
 ///prepare the page header
-$strbook = get_string('modulename', 'book');
-$strbooks = get_string('modulenameplural', 'book');
+$strbook = get_string('modulename', 'mod_book');
+$strbooks = get_string('modulenameplural', 'mod_book');
 
 $mform = new book_import_form(null, array('id'=>$id, 'chapterid'=>$chapterid));
 
@@ -142,7 +142,7 @@ if ($mform->is_cancelled()) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('importingchapters', 'book'));
+echo $OUTPUT->heading(get_string('importingchapters', 'mod_book'));
 
 $mform->display();
 

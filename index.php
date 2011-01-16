@@ -36,8 +36,8 @@ require_course_login($course, true);
 $PAGE->set_pagelayout('incourse');
 
 /// Get all required strings
-$strbooks        = get_string('modulenameplural', 'book');
-$strbook         = get_string('modulename', 'book');
+$strbooks        = get_string('modulenameplural', 'mod_book');
+$strbook         = get_string('modulename', 'mod_book');
 $strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname         = get_string('name');
 $strintro        = get_string('moduleintro');

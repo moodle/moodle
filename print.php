@@ -57,9 +57,9 @@ unset($chapterid);
 // security checks END
 // =========================================================================
 
-$strbooks = get_string('modulenameplural', 'book');
-$strbook  = get_string('modulename', 'book');
-$strtop   = get_string('top', 'book');
+$strbooks = get_string('modulenameplural', 'mod_book');
+$strbook  = get_string('modulename', 'mod_book');
+$strtop   = get_string('top', 'mod_book');
 
 @header('Cache-Control: private, pre-check=0, post-check=0, max-age=0');
 @header('Pragma: no-cache');
@@ -127,13 +127,13 @@ if ($chapter) {
     <td><?php echo get_string('course') ?>:</td>
     <td><?php echo format_string($course->fullname, true, array('context'=>$context)) ?></td>
     </tr><tr>
-    <td><?php echo get_string('modulename', 'book') ?>:</td>
+    <td><?php echo get_string('modulename', 'mod_book') ?>:</td>
     <td><?php echo format_string($book->name, true, array('context'=>$context)) ?></td>
     </tr><tr>
-    <td><?php echo get_string('printedby', 'book') ?>:</td>
+    <td><?php echo get_string('printedby', 'mod_book') ?>:</td>
     <td><?php echo fullname($USER, true) ?></td>
     </tr><tr>
-    <td><?php echo get_string('printdate','book') ?>:</td>
+    <td><?php echo get_string('printdate','mod_book') ?>:</td>
     <td><?php echo userdate(time()) ?></td>
     </tr>
     </table></div>

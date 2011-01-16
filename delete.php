@@ -79,9 +79,9 @@ echo $OUTPUT->header();
 
 // the operation has not been confirmed yet so ask the user to do so
 if ($chapter->subchapter) {
-    $strconfirm = get_string('confchapterdelete','book');
+    $strconfirm = get_string('confchapterdelete','mod_book');
 } else {
-    $strconfirm = get_string('confchapterdeleteall','book');
+    $strconfirm = get_string('confchapterdeleteall','mod_book');
 }
 echo '<br />';
 $continue = new moodle_url('/mod/book/delete.php', array('id'=>$cm->id, 'chapterid'=>$chapter->id, 'confirm'=>1));

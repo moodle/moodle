@@ -112,7 +112,7 @@ $PAGE->add_body_class('mod_book');
 $PAGE->set_heading(format_string($course->fullname));
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('editingchapter', 'book'));
+echo $OUTPUT->heading(get_string('editingchapter', 'mod_book'));
 
 $mform->display();
 

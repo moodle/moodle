@@ -91,7 +91,7 @@ function book_get_types() {
     $type = new stdClass();
     $type->modclass = MOD_CLASS_RESOURCE;
     $type->type     = 'book';
-    $type->typestr  = get_string('modulename', 'book');
+    $type->typestr  = get_string('modulename', 'mod_book');
 
     return array($type);
 }
@@ -239,14 +239,14 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
 
     if (has_capability('mod/book:print', $PAGE->cm->context)) {
         $url = new moodle_url('/mod/book/print.php', array('id'=>$params['id']));
-        $booknode->add(get_string('printbook', 'book'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_book', '', 'mod_book', array('class'=>'icon')));
+        $booknode->add(get_string('printbook', 'mod_book'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_book', '', 'mod_book', array('class'=>'icon')));
 
         // buggy navlib - actions not supported!!
         //$action = new action_link($url, get_string('printbook', 'book'), new popup_action('onclick', $url));
         //$booknode->add('', $action, navigation_node::TYPE_SETTING);
 
         $url = new moodle_url('/mod/book/print.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid']));
-        $booknode->add(get_string('printchapter', 'book'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_chapter', '', 'mod_book', array('class'=>'icon')));
+        $booknode->add(get_string('printchapter', 'mod_book'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_chapter', '', 'mod_book', array('class'=>'icon')));
     }
 
     if (has_capability('mod/book:import', $PAGE->cm->context)) {

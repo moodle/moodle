@@ -43,7 +43,7 @@ class book_import_form extends moodleform {
         $mform->addElement('hidden', 'chapterid');
         $mform->setType('chapterid', PARAM_INT);
 
-        $this->add_action_buttons(true, get_string('import', 'book'));
+        $this->add_action_buttons(true, get_string('import', 'mod_book'));
 
         $this->set_data($data);
     }
