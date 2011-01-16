@@ -46,7 +46,7 @@ require_capability('mod/book:print', $context);
 //check all variables
 if ($chapterid) {
     //single chapter printing - only visible!
-    $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id, 'hidden'=>0), '*', MUST_EXIST);
+    $chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
 } else {
     //complete book
     $chapter = false;
@@ -60,6 +60,9 @@ unset($chapterid);
 // security checks END
 // =========================================================================
 
+/// read chapters
+$chapters = book_preload_chapters($book);
+
 $strbooks = get_string('modulenameplural', 'mod_book');
 $strbook  = get_string('modulename', 'mod_book');
 $strtop   = get_string('top', 'mod_book');
@@ -71,11 +74,12 @@ $strtop   = get_string('top', 'mod_book');
 @header('Content-type: text/html; charset=utf-8');
 
 if ($chapter) {
+
+    if ($chapter->hidden) {
+        require_capability('mod/book:viewhiddenchapters', $context);
+    }
+
     add_to_log($course->id, 'book', 'print', 'print.php?id='.$cm->id.'&chapterid='.$chapter->id, $book->id, $cm->id);
-
-    $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id, 'hidden'=>0), 'pagenum, title');
-
-    list($toc, $currtitle, $currsubtitle, $titles) = book_get_toc($chapters, $chapter, $book, $cm, 0, 0);
 
     /// page header
     ?>
@@ -92,13 +96,18 @@ if ($chapter) {
     <div class="chapter">
     <?php
 
+
     if (!$book->customtitles) {
-        if ($currsubtitle == '&nbsp;') {
-            echo '<p class="book_chapter_title">'.$currtitle.'<p>';
+        if (!$chapter->subchapter) {
+            $currtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
+            echo '<p class="book_chapter_title">'.$currtitle.'</p>';
         } else {
+            $currtitle = book_get_chapter_title($chapters[$chapter->id]->parent, $chapters, $book, $context);
+            $currsubtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
             echo '<p class="book_chapter_title">'.$currtitle.'<br />'.$currsubtitle.'</p>';
         }
     }
+
     $chaptertext = file_rewrite_pluginfile_urls($chapter->content, 'pluginfile.php', $context->id, 'mod_book', 'chapter', $chapter->id);
     echo format_text($chaptertext, $chapter->contentformat, array('noclean'=>true, 'context'=>$context));
     echo '</div>';
@@ -106,7 +115,7 @@ if ($chapter) {
 
 } else {
     add_to_log($course->id, 'book', 'print', 'print.php?id='.$cm->id, $book->id, $cm->id);
-    $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum');
+    $allchapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum');
 
     /// page header
     ?>
@@ -142,20 +151,24 @@ if ($chapter) {
     </table></div>
 
     <?php
-    list($toc, $currenttitle, $currsubtitle, $titles) = book_get_toc($chapters, $chapter, $book, $cm, 0, 1);
+    list($toc, $titles) = book_get_print_toc($chapters, $book, $cm);
     echo $toc;
     // chapters
     $link1 = $CFG->wwwroot.'/mod/book/view.php?id='.$course->id.'&chapterid=';
     $link2 = $CFG->wwwroot.'/mod/book/view.php?id='.$course->id;
     foreach ($chapters as $ch) {
+        $chapter = $allchapters[$ch->id];
+        if ($chapter->hidden) {
+            continue;
+        }
         echo '<div class="book_chapter"><a name="ch'.$ch->id.'"></a>';
         if (!$book->customtitles) {
             echo '<p class="book_chapter_title">'.$titles[$ch->id].'</p>';
         }
-        $content = str_replace($link1, '#ch', $ch->content);
+        $content = str_replace($link1, '#ch', $chapter->content);
         $content = str_replace($link2, '#top', $content);
         $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $context->id, 'mod_book', 'chapter', $ch->id);
-        echo format_text($content, $ch->contentformat, array('noclean'=>true, 'context'=>$context));
+        echo format_text($content, $chapter->contentformat, array('noclean'=>true, 'context'=>$context));
         echo '</div>';
         //echo '<a href="#toc">'.$strtop.'</a>';
     }

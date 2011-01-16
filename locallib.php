@@ -164,7 +164,7 @@ function book_log($str1, $str2, $level = 0) {
 function book_add_fake_block($chapters, $chapter, $book, $cm, $edit) {
     global $OUTPUT, $PAGE;
 
-    list($toc, $currtitle, $currsubtitle, $titles) = book_get_toc($chapters, $chapter, $book, $cm, $edit, 0);
+    $toc= book_get_toc($chapters, $chapter, $book, $cm, $edit, 0);
 
     if ($edit) {
         $toc .= '<div class="faq">';
@@ -193,18 +193,78 @@ function book_add_fake_block($chapters, $chapter, $book, $cm, $edit) {
  * @param bool $print
  * @return array
  */
-function book_get_toc($chapters, $chapter, $book, $cm, $edit, $print) {
+function book_get_print_toc($chapters, $book, $cm) {
     global $USER, $OUTPUT;
 
-    $currtitle = '';    //active chapter title (plain text)
-    $currsubtitle = ''; //active subchapter if any
-    $prevtitle = '&nbsp;';
-    $toc = '';          //representation of toc (HTML)
-
-    $nch = 0; //chapter number
-    $ns = 0;  //subchapter number
-    $first = 1;
+    $first = true;
     $titles = array();
+
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    $toc = ''; //representation of toc (HTML)
+
+    switch ($book->numbering) {
+      case BOOK_NUM_NONE:
+          $toc .= '<div class="book_toc_none">';
+          break;
+      case BOOK_NUM_NUMBERS:
+          $toc .= '<div class="book_toc_numbered">';
+          break;
+      case BOOK_NUM_BULLETS:
+          $toc .= '<div class="book_toc_bullets">';
+          break;
+      case BOOK_NUM_INDENTED:
+          $toc .= '<div class="book_toc_indented">';
+          break;
+    }
+
+    $toc .= '<a name="toc"></a>'; //representation of toc (HTML)
+
+    if ($book->customtitles) {
+        $toc .= '<h1>'.get_string('toc', 'book').'</h1>';
+    } else {
+        $toc .= '<p class="book_chapter_title">'.get_string('toc', 'book').'</p>';
+    }
+    $toc .= '<ul>';
+    foreach($chapters as $ch) {
+        if (!$ch->hidden) {
+            $title = book_get_chapter_title($ch->id, $chapters, $book, $context);
+            if (!$ch->subchapter) {
+                $toc .= $first ? '<li>' : '</ul></li><li>';
+            } else {
+                $toc .= $first ? '<li><ul><li>' : '<li>';
+            }
+            $titles[$ch->id] = $title;
+            $toc .= '<a title="'.s($title).'" href="#ch'.$ch->id.'">'.$title.'</a>';
+            $toc .= (!$ch->subchapter) ? '<ul>' : '</li>';
+            $first = false;
+        }
+    }
+    $toc .= '</ul></li></ul>';
+    $toc .= '</div>';
+    $toc = str_replace('<ul></ul>', '', $toc); //cleanup of invalid structures
+
+    return array($toc, $titles);
+}
+
+/**
+ * Generate toc structure
+ *
+ * @param array $chapters
+ * @param stdClass $chapter
+ * @param stdClass $book
+ * @param stdClass $cm
+ * @param bool $edit
+ * @param bool $print
+ * @return string
+ */
+function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
+    global $USER, $OUTPUT;
+
+    $toc = '';  //representation of toc (HTML)
+    $nch = 0;   //chapter number
+    $ns = 0;    //subchapter number
+    $first = 1;
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -224,39 +284,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit, $print) {
     }
 
 
-    if ($print) { ///TOC for printing
-        $toc .= '<a name="toc"></a>';
-        if ($book->customtitles) {
-            $toc .= '<h1>'.get_string('toc', 'book').'</h1>';
-        } else {
-            $toc .= '<p class="book_chapter_title">'.get_string('toc', 'book').'</p>';
-        }
-        $toc .= '<ul>';
-        foreach($chapters as $ch) {
-            $title = trim(format_string($ch->title, true, array('context'=>$context)));
-            if (!$ch->hidden) {
-                if (!$ch->subchapter) {
-                    $nch++;
-                    $ns = 0;
-                    $toc .= ($first) ? '<li>' : '</ul></li><li>';
-                    if ($book->numbering == BOOK_NUM_NUMBERS) {
-                          $title = "$nch $title";
-                    }
-                } else {
-                    $ns++;
-                    $toc .= ($first) ? '<li><ul><li>' : '<li>';
-                    if ($book->numbering == BOOK_NUM_NUMBERS) {
-                          $title = "$nch.$ns $title";
-                    }
-                }
-                $titles[$ch->id] = $title;
-                $toc .= '<a title="'.s($title).'" href="#ch'.$ch->id.'">'.$title.'</a>';
-                $toc .= (!$ch->subchapter) ? '<ul>' : '</li>';
-                $first = 0;
-            }
-        }
-        $toc .= '</ul></li></ul>';
-    } else if ($edit) { ///teacher's TOC
+    if ($edit) { ///teacher's TOC
         $toc .= '<ul>';
         $i = 0;
         foreach($chapters as $ch) {
@@ -276,7 +304,6 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit, $print) {
                     }
                     $title = '<span class="dimmed_text">'.$title.'</span>';
                 }
-                $prevtitle = $title;
             } else {
                 $toc .= ($first) ? '<li><ul><li>' : '<li>';
                 if (!$ch->hidden) {
@@ -294,13 +321,6 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit, $print) {
 
             if ($ch->id == $chapter->id) {
                 $toc .= '<strong>'.$title.'</strong>';
-                if ($ch->subchapter) {
-                    $currtitle = $prevtitle;
-                    $currsubtitle = $title;
-                } else {
-                    $currtitle = $title;
-                    $currsubtitle = '&nbsp;';
-                }
             } else {
                 $toc .= '<a title="'.s($title).'" href="view.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'">'.$title.'</a>';
             }
@@ -336,7 +356,6 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit, $print) {
                     if ($book->numbering == BOOK_NUM_NUMBERS) {
                           $title = "$nch $title";
                     }
-                $prevtitle = $title;
                 } else {
                     $ns++;
                     $toc .= ($first) ? '<li><ul><li>' : '<li>';
@@ -346,13 +365,6 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit, $print) {
                 }
                 if ($ch->id == $chapter->id) {
                     $toc .= '<strong>'.$title.'</strong>';
-                    if ($ch->subchapter) {
-                        $currtitle = $prevtitle;
-                        $currsubtitle = $title;
-                    } else {
-                        $currtitle = $title;
-                        $currsubtitle = '&nbsp;';
-                    }
                 } else {
                     $toc .= '<a title="'.s($title).'" href="view.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'">'.$title.'</a>';
                 }
@@ -367,7 +379,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit, $print) {
 
     $toc = str_replace('<ul></ul>', '', $toc); //cleanup of invalid structures
 
-    return array($toc, $currtitle, $currsubtitle, $titles);
+    return $toc;
 }
 
 
