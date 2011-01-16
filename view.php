@@ -68,7 +68,7 @@ if ($allowedit) {
 }
 
 /// read chapters
-$chapters = book_preload_chapters($book->id);
+$chapters = book_preload_chapters($book);
 
 if ($allowedit and !$chapters) {
     redirect('edit.php?cmid='.$cm->id); //no chapters - add new one
@@ -160,9 +160,6 @@ if ($nextid) {
     $chnavigation .= '<a title="'.get_string('navexit', 'book').'" href="../../course/view.php?id='.$course->id.'#section-'.$sec.'"><img src="'.$OUTPUT->pix_url('nav_exit', 'mod_book').'" class="bigicon" alt="'.get_string('navexit', 'book').'" /></a>';
 }
 
-// prepare $toc and $currtitle, $currsubtitle
-list($toc, $currtitle, $currsubtitle, $titles) = book_get_toc($chapters, $chapter, $book, $cm, $edit, 0);
-
 // =====================================================
 // Book display HTML code
 // =====================================================
@@ -173,11 +170,15 @@ echo '<div class="booknav">'.$chnavigation.'</div>';
 // chapter itself
 echo $OUTPUT->box_start('generalbox book_content');
 if (!$book->customtitles) {
-  if (!$chapter->subchapter) {
-      echo '<p class="book_chapter_title">'.$currtitle.'</p>';
-  } else {
-      echo '<p class="book_chapter_title">'.$currtitle.'<br />'.$currsubtitle.'</p>';
-  }
+    $hidden = $chapter->hidden ? 'dimmed_text' : '';
+    if (!$chapter->subchapter) {
+        $currtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
+        echo '<p class="book_chapter_title '.$hidden.'">'.$currtitle.'</p>';
+    } else {
+        $currtitle = book_get_chapter_title($chapters[$chapter->id]->parent, $chapters, $book, $context);
+        $currsubtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
+        echo '<p class="book_chapter_title '.$hidden.'">'.$currtitle.'<br />'.$currsubtitle.'</p>';
+    }
 }
 $chaptertext = file_rewrite_pluginfile_urls($chapter->content, 'pluginfile.php', $context->id, 'mod_book', 'chapter', $chapter->id);
 echo format_text($chaptertext, $chapter->contentformat, array('noclean'=>true, 'context'=>$context));

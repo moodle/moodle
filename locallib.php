@@ -39,9 +39,9 @@ require_once($CFG->libdir.'/filelib.php');
  * @param  $cm
  * @return array of id=>chapter
  */
-function book_preload_chapters($bookid) {
+function book_preload_chapters($book) {
     global $DB;
-    $chapters = $DB->get_records('book_chapters', array('bookid'=>$bookid), 'pagenum', 'id, pagenum, subchapter, title, hidden');
+    $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum', 'id, pagenum, subchapter, title, hidden');
     if (!$chapters) {
         return array();
     }
@@ -71,7 +71,11 @@ function book_preload_chapters($bookid) {
                 $chapters[$prev]->next = $ch->id;
             }
             if ($ch->hidden) {
-                $ch->number = null;
+                if ($book->numbering == BOOK_NUM_NUMBERS) {
+                    $ch->number = 'x';
+                } else {
+                    $ch->number = null;
+                }
             } else {
                 $i++;
                 $ch->number = $i;
@@ -96,7 +100,11 @@ function book_preload_chapters($bookid) {
                 $ch->hidden = 1;
             }
             if ($ch->hidden) {
-                $ch->number = null;
+                if ($book->numbering == BOOK_NUM_NUMBERS) {
+                    $ch->number = 'x';
+                } else {
+                    $ch->number = null;
+                }
             } else {
                 $j++;
                 $ch->number = $j;
@@ -110,6 +118,26 @@ function book_preload_chapters($bookid) {
     }
 
     return $chapters;
+}
+
+function book_get_chapter_title($chid, $chapters, $book, $context) {
+    $ch = $chapters[$chid];
+    $title = trim(format_string($ch->title, true, array('context'=>$context)));
+    $numbers = array();
+    if ($book->numbering == BOOK_NUM_NUMBERS) {
+        if ($ch->parent and $chapters[$ch->parent]->number) {
+            $numbers[] = $chapters[$ch->parent]->number;
+        }
+        if ($ch->number) {
+            $numbers[] = $ch->number;
+        }
+    }
+
+    if ($numbers) {
+        $title = implode('.', $numbers).' '.$title;
+    }
+
+    return $title;
 }
 
 /**

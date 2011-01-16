@@ -102,7 +102,7 @@ if ($mform->is_cancelled()) {
         add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id.'&chapterid='.$data->id, $book->id, $cm->id);
     }
 
-    book_preload_chapters($book->id); // fix structure
+    book_preload_chapters($book); // fix structure
     redirect("view.php?id=$cm->id&chapterid=$data->id");
 }
 
