@@ -167,41 +167,25 @@ list($toc, $currtitle, $currsubtitle, $titles) = book_get_toc($chapters, $chapte
 // Book display HTML code
 // =====================================================
 
-?>
-<table class="booktable" width="100%" cellspacing="0" cellpadding="2">
+// upper nav
+echo '<div class="booknav">'.$chnavigation.'</div>';
 
-<!-- subchapter title and upper navigation row //-->
-<tr>
-    <td>
-        <div class="booknav"><?php echo $chnavigation ?></div>
-    </td>
-</tr>
+// chapter itself
+echo $OUTPUT->box_start('generalbox book_content');
+if (!$book->customtitles) {
+  if (!$chapter->subchapter) {
+      echo '<p class="book_chapter_title">'.$currtitle.'</p>';
+  } else {
+      echo '<p class="book_chapter_title">'.$currtitle.'<br />'.$currsubtitle.'</p>';
+  }
+}
+$chaptertext = file_rewrite_pluginfile_urls($chapter->content, 'pluginfile.php', $context->id, 'mod_book', 'chapter', $chapter->id);
+echo format_text($chaptertext, $chapter->contentformat, array('noclean'=>true, 'context'=>$context));
 
-<!-- toc and chapter row //-->
-<tr class="tocandchapter" valign="top">
-    <td align="right" valign="top"><div class="clearer">&nbsp;</div>
-        <?php
-        echo $OUTPUT->box_start('generalbox');
-        echo '<div class="book_content">';
-        if (!$book->customtitles) {
-          if ($currsubtitle == '&nbsp;') {
-              echo '<p class="book_chapter_title">'.$currtitle.'</p>';
-          } else {
-              echo '<p class="book_chapter_title">'.$currtitle.'<br />'.$currsubtitle.'</p>';
-          }
-        }
-        $chaptertext = file_rewrite_pluginfile_urls($chapter->content, 'pluginfile.php', $context->id, 'mod_book', 'chapter', $chapter->id);
-        echo format_text($chaptertext, $chapter->contentformat, array('noclean'=>true, 'context'=>$context));
-        echo '</div>';
-        echo $OUTPUT->box_end();
-        /// lower navigation
-        echo '<div class="booknav">'.$chnavigation.'</div>';
-        ?>
-    </td>
-</tr>
-</table>
+echo $OUTPUT->box_end();
 
-<?php
+/// lower navigation
+echo '<div class="booknav">'.$chnavigation.'</div>';
 
 echo $OUTPUT->footer();
 
