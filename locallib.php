@@ -221,9 +221,9 @@ function book_get_print_toc($chapters, $book, $cm) {
     $toc .= '<a name="toc"></a>'; //representation of toc (HTML)
 
     if ($book->customtitles) {
-        $toc .= '<h1>'.get_string('toc', 'book').'</h1>';
+        $toc .= '<h1>'.get_string('toc', 'mod_book').'</h1>';
     } else {
-        $toc .= '<p class="book_chapter_title">'.get_string('toc', 'book').'</p>';
+        $toc .= '<p class="book_chapter_title">'.get_string('toc', 'mod_book').'</p>';
     }
     $toc .= '<ul>';
     foreach($chapters as $ch) {
@@ -338,7 +338,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
             } else {
                 $toc .= ' <a title="'.get_string('hide').'" href="show.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/hide').'" class="iconsmall" alt="'.get_string('hide').'" /></a>';
             }
-            $toc .= ' <a title="'.get_string('addafter', 'book').'" href="edit.php?cmid='.$cm->id.'&amp;pagenum='.$ch->pagenum.'&amp;subchapter='.$ch->subchapter.'"><img src="'.$OUTPUT->pix_url('add', 'mod_book').'" class="iconsmall" alt="'.get_string('addafter', 'book').'" /></a>';
+            $toc .= ' <a title="'.get_string('addafter', 'mod_book').'" href="edit.php?cmid='.$cm->id.'&amp;pagenum='.$ch->pagenum.'&amp;subchapter='.$ch->subchapter.'"><img src="'.$OUTPUT->pix_url('add', 'mod_book').'" class="iconsmall" alt="'.get_string('addafter', 'mod_book').'" /></a>';
 
             $toc .= (!$ch->subchapter) ? '<ul>' : '</li>';
             $first = 0;
