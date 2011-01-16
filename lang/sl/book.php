@@ -8,7 +8,6 @@ $string['pluginname'] = 'Knjiga';
 $string['toc'] = 'Kazalo vsebine';
 $string['tocwidth'] = 'Izberite širino kazala vsebine za vse knjige.';
 $string['faq'] = 'Knjiga - pogosta vprašanja';
-$string['disableprinting'] = 'Onemogoči tiskanje';
 $string['customtitles'] = 'Ločeni naslovi';
 $string['editingchapter'] = 'Urejanje poglavja';
 $string['chaptertitle'] = 'Naslov poglavja';

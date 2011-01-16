@@ -8,7 +8,6 @@ $string['toc'] = 'Sumário';
 $string['tocwidth'] = 'Selecione a largura do Sumário para todos os livros.';
 $string['faq'] = 'Perguntas sobre Livro';
 
-$string['disableprinting'] = 'Desabilitar Impressão';
 $string['customtitles'] = 'Títulos Personalizados';
 
 $string['editingchapter'] = 'Edição de capítulo';

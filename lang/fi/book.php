@@ -9,7 +9,6 @@ $string['confchapterdelete'] = 'Haluatko varmasti poistaa tämän luvun?';
 $string['confchapterdeleteall'] = 'Haluatko varmasti poistaa tämän luvun ja sen alaluvut?';
 $string['content'] = 'Sisältö';
 $string['customtitles'] = 'Mukautetut otsikot';
-$string['disableprinting'] = 'Estä tulostus';
 $string['doimport'] = 'Tuo';
 $string['editingchapter'] = 'Luvun muokkaus';
 $string['faq'] = 'Usein kysytyt kysymykset';

@@ -40,9 +40,6 @@ function book_add_instance($book) {
     if (!isset($book->customtitles)) {
         $book->customtitles = 0;
     }
-    if (!isset($book->disableprinting)) {
-        $book->disableprinting = 0;
-    }
 
     return $DB->insert_record('book', $book);
 }
@@ -61,9 +58,6 @@ function book_update_instance($book) {
     $book->id = $book->instance;
     if (!isset($book->customtitles)) {
         $book->customtitles = 0;
-    }
-    if (!isset($book->disableprinting)) {
-        $book->disableprinting = 0;
     }
 
     $DB->update_record('book', $book);
@@ -244,18 +238,15 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
     }
 
     if (has_capability('mod/book:print', $PAGE->cm->context)) {
-        $book = $DB->get_record('book', array('id'=>$PAGE->cm->instance));
-        if (!$book->disableprinting) {
-            $url = new moodle_url('/mod/book/print.php', array('id'=>$params['id']));
-            $booknode->add(get_string('printbook', 'book'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_book', '', 'mod_book', array('class'=>'icon')));
+        $url = new moodle_url('/mod/book/print.php', array('id'=>$params['id']));
+        $booknode->add(get_string('printbook', 'book'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_book', '', 'mod_book', array('class'=>'icon')));
 
-            // buggy navlib - actions not supported!!
-            //$action = new action_link($url, get_string('printbook', 'book'), new popup_action('onclick', $url));
-            //$booknode->add('', $action, navigation_node::TYPE_SETTING);
+        // buggy navlib - actions not supported!!
+        //$action = new action_link($url, get_string('printbook', 'book'), new popup_action('onclick', $url));
+        //$booknode->add('', $action, navigation_node::TYPE_SETTING);
 
-            $url = new moodle_url('/mod/book/print.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid']));
-            $booknode->add(get_string('printchapter', 'book'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_chapter', '', 'mod_book', array('class'=>'icon')));
-        }
+        $url = new moodle_url('/mod/book/print.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid']));
+        $booknode->add(get_string('printchapter', 'book'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_chapter', '', 'mod_book', array('class'=>'icon')));
     }
 
     if (has_capability('mod/book:import', $PAGE->cm->context)) {

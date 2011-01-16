@@ -9,7 +9,6 @@ $string['confchapterdelete'] = 'Är Du säker på att vill ta bort det här kapi
 $string['confchapterdeleteall'] = 'Är Du säker på att vill ta bort det här kapitlet och alla underavdelningar?';
 $string['content'] = 'Innehåll';
 $string['customtitles'] = 'Standardtitlar';
-$string['disableprinting'] = 'Avaktivera utskrift';
 $string['doimport'] = 'Importera';
 $string['editingchapter'] = 'Redigerar kapitel';
 $string['faq'] = 'FAQ för Bok';

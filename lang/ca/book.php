@@ -8,7 +8,6 @@ $string['toc'] = 'Índex';
 $string['tocwidth'] = 'Escolliu l\'amplada de l\'índex per tots els llibres.';
 $string['faq'] = 'PMF dels llibres (FAQ)';
 
-$string['disableprinting'] = 'Desactiva la impressió';
 $string['customtitles'] = 'Títols personalitzats';
 
 $string['editingchapter'] = 'S\'està editant el capítol';

@@ -8,7 +8,6 @@ $string['toc'] = 'Inhaltsverzeichnis';
 $string['tocwidth'] = 'Wählen Sie die Breite des Inhaltsverzeichnisses für alle Bücher aus.';
 $string['faq'] = 'Buch FAQ';
 
-$string['disableprinting'] = 'Drucken deaktivieren';
 $string['customtitles'] = 'Angepasster Titel';
 
 $string['editingchapter'] = 'Kapitel ändern';

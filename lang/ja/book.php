@@ -8,7 +8,6 @@ $string['toc'] = '目次';
 $string['tocwidth'] = 'コンテンツのテーブル幅を選んでください。';
 $string['faq'] = 'ブック FAQ';
 
-$string['disableprinting'] = 'プリント不可';
 $string['customtitles'] = 'カスタムタイトル';
 
 $string['editingchapter'] = '章を編集';

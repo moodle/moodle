@@ -9,7 +9,6 @@ $string['confchapterdelete'] = 'Opravdu chcete odstranit tuto kapitolu?';
 $string['confchapterdeleteall'] = 'Opravdu chcete odstranit tuto kapitolu včetně podkapitol?';
 $string['content'] = 'Text';
 $string['customtitles'] = 'Uživatelské nadpisy';
-$string['disableprinting'] = 'Zakázat tisk';
 $string['doimport'] = 'Importovat';
 $string['editingchapter'] = 'Úprava kapitoly';
 $string['faq'] = 'Časté otázky';

@@ -9,7 +9,6 @@ $string['confchapterdelete'] = 'Wil je dit hoofdstuk echt verwijderen?';
 $string['confchapterdeleteall'] = 'Wil je dit hoofdstuk en alle paragrafen echt verwijderen?';
 $string['content'] = 'Inhoud';
 $string['customtitles'] = 'Titels alleen in inhoudstafel';
-$string['disableprinting'] = 'Schakel afdrukken uit';
 $string['doimport'] = 'Importeer';
 $string['editingchapter'] = 'Bewerk hoofdstuk';
 $string['faq'] = 'Boek FAQ';

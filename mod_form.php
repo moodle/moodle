@@ -52,10 +52,6 @@ class mod_book_mod_form extends moodleform_mod {
         $mform->addElement('select', 'numbering', get_string('numbering', 'book'), book_get_numbering_types());
         $mform->addHelpButton('numbering', 'numbering', 'mod_book');
 
-        $mform->addElement('checkbox', 'disableprinting', get_string('disableprinting', 'book'));
-        $mform->addHelpButton('disableprinting', 'disableprinting', 'mod_book');
-        $mform->setDefault('disableprinting', 0);
-
         $mform->addElement('checkbox', 'customtitles', get_string('customtitles', 'book'));
         $mform->addHelpButton('customtitles', 'customtitles', 'mod_book');
         $mform->setDefault('customtitles', 0);

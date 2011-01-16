@@ -14,7 +14,6 @@ $string['confchapterdelete'] = 'Sei sicuro di eliminare questo capitolo?';
 $string['confchapterdeleteall'] = 'Sei sicuro di eliminare questo capitolo e tutti i suoi paragrafi?';
 $string['content'] = 'Contenuto';
 $string['customtitles'] = 'Titoli personalizzati';
-$string['disableprinting'] = 'Disabilita la stampa';
 $string['doexport'] = 'Esporta';
 $string['doimport'] = 'Importa';
 $string['editingchapter'] = 'Modifica capitolo';

@@ -19,7 +19,7 @@
  *
  * @package    mod
  * @subpackage book
- * @copyright  2009-2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2009-2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -138,6 +138,19 @@ function xmldb_book_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010120805, 'book');
     }
 
+    if ($oldversion < 2011011600) {
+        // Define field disableprinting to be dropped from book
+        $table = new xmldb_table('book');
+        $field = new xmldb_field('disableprinting');
+
+        // Conditionally launch drop field disableprinting
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // book savepoint reached
+        upgrade_mod_savepoint(true, 2011011600, 'book');
+    }
 
 
     //TODO: migrate the legacy file.php links to new pluginfile.php and file areas per chapter

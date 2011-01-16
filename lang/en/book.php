@@ -37,8 +37,6 @@ Either rephrase your titles or ask your site admin to change TOC
 width. It is defined globally for all books in module configuration
 page.';
 
-$string['disableprinting'] = 'Disable printing';
-$string['disableprinting_help'] = 'Hide print icons.';
 $string['customtitles'] = 'Custom citles';
 $string['customtitles_help'] = 'Chapter titles are displayed automatically only in TOC.';
 

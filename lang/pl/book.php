@@ -9,7 +9,6 @@ $string['confchapterdelete'] = 'Czy napewno chcesz usunąć ten rozdział';
 $string['confchapterdeleteall'] = 'Czy napewno chcesz usunąć ten rozdział i wszystkie jego podrozdziały?';
 $string['content'] = 'Zawartość';
 $string['customtitles'] = 'Tytuły użytkownika';
-$string['disableprinting'] = 'Wyłącz drukowanie';
 $string['doimport'] = 'Import';
 $string['editingchapter'] = 'Edycja rozdziału';
 $string['faq'] = 'FAQ Książki';
