@@ -25,6 +25,7 @@
 
 require('../../config.php');
 require_once($CFG->dirroot.'/mod/book/locallib.php');
+require_once($CFG->libdir.'/completionlib.php');
 
 $id        = optional_param('id', 0, PARAM_INT);        // Course Module ID
 $bid       = optional_param('b', 0, PARAM_INT);         // Book id
@@ -158,6 +159,10 @@ if ($nextid) {
         $sec = $section->section;
     }
     $chnavigation .= '<a title="'.get_string('navexit', 'book').'" href="../../course/view.php?id='.$course->id.'#section-'.$sec.'"><img src="'.$OUTPUT->pix_url('nav_exit', 'mod_book').'" class="bigicon" alt="'.get_string('navexit', 'book').'" /></a>';
+
+    // we are cheating a bit here, viewing the last page means user has viewed the whole book
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
 }
 
 // =====================================================

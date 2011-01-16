@@ -109,12 +109,12 @@ CHANGELOG:
 == 2.0dev ============================================================
     * Moodle 2.0 conversion
     * removed "Disable printing" option, please use capabilities instead
+    * completion tracking supported
 
 Known issues, please do not file tracker reports:
-* upgrade imscp export code (disabled for now)
-* upgrade import code (disabled for now)
-* open print links in new windows (needs fix in navlib)
-* completion tracking
+    * upgrade imscp export code (disabled for now)
+    * upgrade import code (disabled for now)
+    * open print links in new windows (needs fix in navlib)
 
 
 Petr

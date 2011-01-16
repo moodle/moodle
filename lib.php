@@ -222,7 +222,7 @@ function book_supports($feature) {
         case FEATURE_GROUPINGS:               return false;
         case FEATURE_GROUPMEMBERSONLY:        return true;
         case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return false; //TODO
+        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_BACKUP_MOODLE2:          return true;
 
         default: return null;
