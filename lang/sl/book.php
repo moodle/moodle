@@ -6,7 +6,6 @@ $string['modulename'] = 'Knjiga';
 $string['modulenameplural'] = 'Knjige';
 $string['pluginname'] = 'Knjiga';
 $string['toc'] = 'Kazalo vsebine';
-$string['tocwidth'] = 'Izberite širino kazala vsebine za vse knjige.';
 $string['faq'] = 'Knjiga - pogosta vprašanja';
 $string['customtitles'] = 'Ločeni naslovi';
 $string['editingchapter'] = 'Urejanje poglavja';
@@ -45,6 +44,5 @@ $string['book:import'] = 'Uvozi poglavja';
 $string['book:print'] = 'Natisni knjigo';
 $string['book:read'] = 'Beri knjigo';
 $string['book:viewhiddenchapters'] = 'Poglej skrita poglavja';
-$string['book_tocwidth'] = 'Širina kazala vsebine';
 $string['generateimscp'] = 'Generiraj IMS vsebinski paket';
-?>
+

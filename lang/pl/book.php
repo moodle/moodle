@@ -36,5 +36,4 @@ $string['printedby'] = 'Wydrukowane przez użytkoniwka';
 $string['relinking'] = 'Ponowne tworzenie linków';
 $string['subchapter'] = 'Podrozdział';
 $string['toc'] = 'Spis treści';
-$string['tocwidth'] = 'Ustaw szrokość spisu treści dla wszystkich książek';
 $string['top'] = 'Góra';

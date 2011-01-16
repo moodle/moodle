@@ -36,5 +36,4 @@ $string['printedby'] = 'Utskrivet av';
 $string['relinking'] = 'Länkar tillbaka';
 $string['subchapter'] = 'Underavdelning';
 $string['toc'] = 'Innehållsförteckning';
-$string['tocwidth'] = 'Välj en bredd på innehållsförteckningen som gäller alla böcker.';
 $string['top'] = 'Upp';

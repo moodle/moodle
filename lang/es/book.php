@@ -27,5 +27,4 @@ $string['printedby'] = 'Imprimido por';
 $string['showpreview'] = 'Mostrar TOC Preliminar';
 $string['subchapter'] = 'Subcápitulo';
 $string['toc'] = 'Tabla de Contenido';
-$string['tocwidth'] = 'Seleciona el Ancho de la Tabla de Contenidos de Todos los Libros.';
 $string['top'] = 'arriba';

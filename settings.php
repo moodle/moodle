@@ -19,15 +19,22 @@
  *
  * @package    mod
  * @subpackage book
- * @copyright  2004-2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
+    require_once("$CFG->dirroot/mod/book/lib.php");
 
-    $choices = array('140'=>'140', '160'=>'160', '180'=>'180', '200'=>'200', '220'=>'220', '240'=>'240', '260'=>'260', '280'=>'280', '300'=>'300');
-    $settings->add(new admin_setting_configselect('book_tocwidth', get_string('book_tocwidth', 'mod_book'), get_string('tocwidth', 'book'), '180', $choices));
+    $settings->add(new admin_setting_configcheckbox('book/requiremodintro',
+        get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 1));
+
+    $options = book_get_numbering_types();
+
+    $settings->add(new admin_setting_configmultiselect('book/numberingoptions',
+        get_string('numberingoptions', 'mod_book'), get_string('numberingoptions_help', 'mod_book'),
+        array_keys($options), $options));
 
 }

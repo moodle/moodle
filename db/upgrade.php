@@ -152,6 +152,13 @@ function xmldb_book_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2011011600, 'book');
     }
 
+    if ($oldversion < 2011011601) {
+        unset_config('book_tocwidth');
+
+        // book savepoint reached
+        upgrade_mod_savepoint(true, 2011011601, 'book');
+    }
+
 
     //TODO: migrate the legacy file.php links to new pluginfile.php and file areas per chapter
 

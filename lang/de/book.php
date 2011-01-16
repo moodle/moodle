@@ -5,7 +5,6 @@ $string['modulenameplural'] = 'Bücher';
 $string['pluginname'] = 'Buch';
 
 $string['toc'] = 'Inhaltsverzeichnis';
-$string['tocwidth'] = 'Wählen Sie die Breite des Inhaltsverzeichnisses für alle Bücher aus.';
 $string['faq'] = 'Buch FAQ';
 
 $string['customtitles'] = 'Angepasster Titel';

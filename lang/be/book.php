@@ -36,5 +36,4 @@ $string['printedby'] = 'Надрукаваны';
 $string['relinking'] = 'Перакампанаваць';
 $string['subchapter'] = 'Параграф';
 $string['toc'] = 'Змест';
-$string['tocwidth'] = 'Вызначыць шырыню зместу для ўсіх падручнікаў';
 $string['top'] = 'наверх';

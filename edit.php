@@ -19,7 +19,7 @@
  *
  * @package    mod
  * @subpackage book
- * @copyright  2004-2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -102,7 +102,7 @@ if ($mform->is_cancelled()) {
         add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id.'&chapterid='.$data->id, $book->id, $cm->id);
     }
 
-    book_check_structure($book->id);
+    book_preload_chapters($book->id); // fix structure
     redirect("view.php?id=$cm->id&chapterid=$data->id");
 }
 

@@ -32,9 +32,6 @@ $string['top'] = 'atas';
 $string['navprev'] = 'Sebelumnya';
 $string['navnext'] = 'Selanjutnya';
 
-#$string['tocwidth'] = 'Select width of the Table of the Contents for all books.';
-$string['tocwidth'] = 'Pilih lebar Tabel untuk semua buku';
-
 $string['import'] = 'Import';
 $string['doimport'] = 'Import';
 $string['importing'] = 'Meng-Impor';

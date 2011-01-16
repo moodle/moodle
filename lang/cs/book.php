@@ -36,5 +36,4 @@ $string['printedby'] = 'Vytiskl(a)';
 $string['relinking'] = 'Relinkuji';
 $string['subchapter'] = 'Podkapitola';
 $string['toc'] = 'Obsah';
-$string['tocwidth'] = 'Vyberte šířku obsahu pro všechny knihy.';
 $string['top'] = 'začátek';

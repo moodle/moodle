@@ -19,7 +19,7 @@
  *
  * @package    mod
  * @subpackage book
- * @copyright  2004-2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -35,6 +35,8 @@ class mod_book_mod_form extends moodleform_mod {
 
         $mform = $this->_form;
 
+        $config = get_config('book');
+
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
@@ -45,11 +47,25 @@ class mod_book_mod_form extends moodleform_mod {
             $mform->setType('name', PARAM_CLEANHTML);
         }
         $mform->addRule('name', null, 'required', null, 'client');
+        $this->add_intro_editor($config->requiremodintro, get_string('summary'));
 
-        $this->add_intro_editor(true, get_string('summary'));
 
-
-        $mform->addElement('select', 'numbering', get_string('numbering', 'book'), book_get_numbering_types());
+        $alloptions = book_get_numbering_types();
+        $allowed = explode(',', $config->numberingoptions);
+        $options = array();
+        foreach ($allowed as $type) {
+            if (isset($alloptions[$type])) {
+                $options[$type] = $alloptions[$type];
+            }
+        }
+        if ($this->current->instance) {
+            if (!isset($options[$this->current->numbering])) {
+                if (isset($alloptions[$this->current->numbering])) {
+                    $options[$this->current->numbering] = $alloptions[$this->current->numbering];
+                }
+            }
+        }
+        $mform->addElement('select', 'numbering', get_string('numbering', 'book'), $options);
         $mform->addHelpButton('numbering', 'numbering', 'mod_book');
 
         $mform->addElement('checkbox', 'customtitles', get_string('customtitles', 'book'));

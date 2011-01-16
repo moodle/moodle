@@ -107,7 +107,7 @@ if ($mform->is_cancelled()) {
     print_box_start('generalbox boxaligncenter centerpara');
     echo '<strong>'.get_string('importing', 'book').':</strong>';
     echo '<table cellpadding="2" cellspacing="2" border="1">';
-    book_check_structure($book->id);
+    book_preload_chapters($book->id); // fix structure
     foreach($refs as $ref) {
         $chapter = book_read_chapter($coursebase, $ref);
         if ($chapter) {

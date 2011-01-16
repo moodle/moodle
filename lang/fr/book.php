@@ -32,8 +32,6 @@ $string['top'] = 'Haut';
 $string['navprev'] = 'Précédent';
 $string['navnext'] = 'Suivant';
 
-$string['tocwidth'] = 'Largeur (en pixels) de la table des matières des livres.';
-
 $string['import'] = 'Importation';
 $string['doimport'] = 'Importer';
 $string['importing'] = 'Importation';

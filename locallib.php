@@ -19,7 +19,7 @@
  *
  * @package    mod
  * @subpackage book
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2010-2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,57 +28,88 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot.'/mod/book/lib.php');
 require_once($CFG->libdir.'/filelib.php');
 
-
-define('BOOK_NUM_NONE',     '0');
-define('BOOK_NUM_NUMBERS',  '1');
-define('BOOK_NUM_BULLETS',  '2');
-define('BOOK_NUM_INDENTED', '3');
-
 /**
- * Returns list of available numbering types
- * @return array
+ * Preload book chapters and fix toc structure if necessary.
+ *
+ * Returns array of chapters with standard 'pagenum', 'id, pagenum, subchapter, title, hidden'
+ * and extra 'parent, number, subchapters, prev, next'.
+ * Please note the content/text of chapters is not included.
+ *
+ * @param  $book
+ * @param  $cm
+ * @return array of id=>chapter
  */
-function book_get_numbering_types() {
-    return array (BOOK_NUM_NONE       => get_string('numbering0', 'mod_book'),
-                  BOOK_NUM_NUMBERS    => get_string('numbering1', 'mod_book'),
-                  BOOK_NUM_BULLETS    => get_string('numbering2', 'mod_book'),
-                  BOOK_NUM_INDENTED   => get_string('numbering3', 'mod_book') );
-}
-
-/**
- * Check chapter ordering and make sure subchapter is not first
- * in book hidden chapter must have all subchapters hidden too
- * @param int $bookid
- * @return void
- */
-function book_check_structure($bookid) {
+function book_preload_chapters($bookid) {
     global $DB;
+    $chapters = $DB->get_records('book_chapters', array('bookid'=>$bookid), 'pagenum', 'id, pagenum, subchapter, title, hidden');
+    if (!$chapters) {
+        return array();
+    }
 
-    if ($chapters = $DB->get_records('book_chapters', array('bookid'=>$bookid), 'pagenum', 'id, pagenum, subchapter, hidden')) {
-        $first = true;
-        $hidesub = true;
-        $i = 1;
-        foreach($chapters as $ch) {
-            $oldch = clone($ch);
-            if ($first) {
-                // book can not start with a subchapter
-                $ch->subchapter = 0;
-                $first = false;
+    $prev = null;
+    $prevsub = null;
+
+    $first = true;
+    $hidesub = true;
+    $parent = null;
+    $pagenum = 0; // chapter sort
+    $i = 0;       // main chapter num
+    $j = 0;       // subchapter num
+    foreach($chapters as $id=>$ch) {
+        $oldch = clone($ch);
+        $pagenum++;
+        $ch->pagenum = $pagenum;
+        if ($first) {
+            // book can not start with a subchapter
+            $ch->subchapter = 0;
+            $first = false;
+        }
+        if (!$ch->subchapter) {
+            $ch->prev = $prev;
+            $ch->next = null;
+            if ($prev) {
+                $chapters[$prev]->next = $ch->id;
             }
-            if (!$ch->subchapter) {
-                $hidesub = $ch->hidden;
-            } else if ($hidesub) {
-                // all subchapters if hidden chapter are hidden too
+            if ($ch->hidden) {
+                $ch->number = null;
+            } else {
+                $i++;
+                $ch->number = $i;
+            }
+            $j = 0;
+            $prevsub = null;
+            $hidesub = $ch->hidden;
+            $parent = $ch->id;
+            $ch->parent = null;
+            $ch->subchpaters = array();
+        } else {
+            $ch->prev = $prevsub;
+            $ch->next = null;
+            if ($prevsub) {
+                $chapters[$prevsub]->next = $ch->id;
+            }
+            $ch->parent = $parent;
+            $ch->subchpaters = null;
+            $chapters[$parent]->subchapters[$ch->id] = $ch->id;
+            if ($hidesub) {
+                // all subchapters in hidden chapter must be hidden too
                 $ch->hidden = 1;
             }
-            $ch->pagenum = $i;
-            if ($oldch->subchapter != $ch->subchapter or $oldch->pagenum != $ch->pagenum or $oldch->hidden != $ch->hidden) {
-                // update only if something changed
-                $DB->update_record('book_chapters', $ch);
+            if ($ch->hidden) {
+                $ch->number = null;
+            } else {
+                $j++;
+                $ch->number = $j;
             }
-            $i++;
         }
+        if ($oldch->subchapter != $ch->subchapter or $oldch->pagenum != $ch->pagenum or $oldch->hidden != $ch->hidden) {
+            // update only if something changed
+            $DB->update_record('book_chapters', $ch);
+        }
+        $chapters[$id] = $ch;
     }
+
+    return $chapters;
 }
 
 /**
@@ -100,6 +131,27 @@ function book_log($str1, $str2, $level = 0) {
             echo '<tr><td>'.$str1.'</class></td><td>'.$str2.'</td></tr>';
             break;
     }
+}
+
+function book_add_fake_block($chapters, $chapter, $book, $cm, $edit) {
+    global $OUTPUT, $PAGE;
+
+    list($toc, $currtitle, $currsubtitle, $titles) = book_get_toc($chapters, $chapter, $book, $cm, $edit, 0);
+
+    if ($edit) {
+        $toc .= '<div class="faq">';
+        $toc .=  $OUTPUT->help_icon('faq', 'mod_book', get_string('faq', 'mod_book'));
+        $toc .=  '</div>';
+    }
+
+    $bc = new block_contents();
+    $bc->title = get_string('toc', 'mod_book');
+    $bc->attributes['class'] = 'block';
+    $bc->content = $toc;
+
+    $regions = $PAGE->blocks->get_regions();
+    $firstregion = reset($regions);
+    $PAGE->blocks->add_fake_block($bc, $firstregion);
 }
 
 /**

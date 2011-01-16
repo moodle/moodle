@@ -5,7 +5,6 @@ $string['modulenameplural'] = 'ブック';
 $string['pluginname'] = 'ブック';
 
 $string['toc'] = '目次';
-$string['tocwidth'] = 'コンテンツのテーブル幅を選んでください。';
 $string['faq'] = 'ブック FAQ';
 
 $string['customtitles'] = 'カスタムタイトル';

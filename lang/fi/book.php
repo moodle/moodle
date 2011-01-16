@@ -37,5 +37,4 @@ $string['subchapter'] = 'Alaluku';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Suomi';
 $string['toc'] = 'Sisällysluettelo';
-$string['tocwidth'] = 'Valitse kaikkien kirjojen sisällysluetteloiden leveys.';
 $string['top'] = 'Alkuun';

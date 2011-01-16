@@ -69,6 +69,6 @@ if (!$chapter->subchapter) {
 add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
 add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id, $book->id, $cm->id);
 
-book_check_structure($book->id);
+book_preload_chapters($book->id); // fix structure
 redirect('view.php?id='.$cm->id.'&chapterid='.$chapter->id);
 

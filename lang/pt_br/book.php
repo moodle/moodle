@@ -5,7 +5,6 @@ $string['modulenameplural'] = 'Livros';
 $string['pluginname'] = 'Livro';
 
 $string['toc'] = 'Sumário';
-$string['tocwidth'] = 'Selecione a largura do Sumário para todos os livros.';
 $string['faq'] = 'Perguntas sobre Livro';
 
 $string['customtitles'] = 'Títulos Personalizados';

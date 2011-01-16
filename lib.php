@@ -19,11 +19,28 @@
  *
  * @package    mod
  * @subpackage book
- * @copyright  2004-2010 Petr Skoda  {@link http://skodak.org}
+ * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
+
+
+define('BOOK_NUM_NONE',     '0');
+define('BOOK_NUM_NUMBERS',  '1');
+define('BOOK_NUM_BULLETS',  '2');
+define('BOOK_NUM_INDENTED', '3');
+
+/**
+ * Returns list of available numbering types
+ * @return array
+ */
+function book_get_numbering_types() {
+    return array (BOOK_NUM_NONE       => get_string('numbering0', 'mod_book'),
+                  BOOK_NUM_NUMBERS    => get_string('numbering1', 'mod_book'),
+                  BOOK_NUM_BULLETS    => get_string('numbering2', 'mod_book'),
+                  BOOK_NUM_INDENTED   => get_string('numbering3', 'mod_book') );
+}
 
 /**
  * Add book instance.

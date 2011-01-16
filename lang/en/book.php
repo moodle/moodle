@@ -7,8 +7,6 @@ $string['pluginname'] = 'Book';
 $string['pluginadministration'] = 'Book administration';
 
 $string['toc'] = 'Table of contents';
-$string['tocwidth'] = 'Select width of the Table of Contents for all books.';
-$string['book_tocwidth'] = 'Table of Contents width';
 $string['faq'] = 'Book FAQ';
 $string['faq_help'] = '
 *Why only two levels?*
@@ -55,6 +53,8 @@ $string['numbering0'] = 'None';
 $string['numbering1'] = 'Numbers';
 $string['numbering2'] = 'Bullets';
 $string['numbering3'] = 'Indented';
+$string['numberingoptions'] = 'Available numbering options';
+$string['numberingoptions_help'] = 'Select numbering options that should be available when creating new books.';
 
 $string['chapterscount'] = 'Chapters';
 
@@ -90,3 +90,5 @@ $string['book:viewhiddenchapters'] = 'View hidden book chapters';
 $string['book:import'] = 'Import chapters';
 $string['book:print'] = 'Print book';
 $string['book:exportimscp'] = 'Export book as IMS content package';
+
+$string['errorchapter'] = 'Error reading book chapter.';

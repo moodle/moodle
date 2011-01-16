@@ -35,5 +35,4 @@ $string['printedby'] = 'Afgedrukt door';
 $string['relinking'] = 'Opnieuw linken';
 $string['subchapter'] = 'Paragraaf';
 $string['toc'] = 'Inhoudstafel';
-$string['tocwidth'] = 'Kies de breedte van de inhoudstafel voor alle boeken.';
 $string['top'] = 'boven';

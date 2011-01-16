@@ -50,8 +50,8 @@ require_course_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/book:read', $context);
 
-$allowedit   = has_capability('mod/book:edit', $context);
-$viewhidden  = has_capability('mod/book:viewhiddenchapters', $context);
+$allowedit  = has_capability('mod/book:edit', $context);
+$viewhidden = has_capability('mod/book:viewhiddenchapters', $context);
 
 if ($allowedit) {
     if ($edit != -1 and confirm_sesskey()) {
@@ -68,16 +68,10 @@ if ($allowedit) {
 }
 
 /// read chapters
-$select = $viewhidden ? array('bookid' => $book->id) : array('bookid' => $book->id, 'hidden' => 0);
-$chapters = $DB->get_records('book_chapters', $select, 'pagenum', 'id, pagenum, subchapter, title, hidden');
+$chapters = book_preload_chapters($book->id);
 
-if (!$chapters) {
-    if ($allowedit) {
-        redirect('edit.php?cmid='.$cm->id); //no chapters - add new one
-        die;
-    } else {
-        error('Error reading book chapters.');
-    }
+if ($allowedit and !$chapters) {
+    redirect('edit.php?cmid='.$cm->id); //no chapters - add new one
 }
 /// check chapterid and read chapter data
 if ($chapterid == '0') { // go to first chapter if no given
@@ -93,20 +87,23 @@ if ($chapterid == '0') { // go to first chapter if no given
     }
 }
 
-$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id), '*', MUST_EXIST);
+if (!$chapterid or !$chapter = $DB->get_record('book_chapters', array('id'=>$chapterid, 'bookid'=>$book->id))) {
+    print_error('errorchapter', 'mod_book', new moodle_url('/course/view.php', array('id'=>$course->id)));
+}
+
+/// chapter is hidden for students
+if ($chapter->hidden and !$viewhidden) {
+    print_error('errorchapter', 'mod_book', new moodle_url('/course/view.php', array('id'=>$course->id)));
+}
 
 $PAGE->set_url('/mod/book/view.php', array('id'=>$id, 'chapterid'=>$chapterid));
 
 
-//check all variables
+//unset all page parameters
 unset($id);
 unset($bid);
 unset($chapterid);
 
-/// chapter is hidden for students
-if (!$viewhidden and $chapter->hidden) {
-    error('Error reading book chapters.');
-}
 
 // =========================================================================
 // security checks  END
@@ -124,6 +121,9 @@ $strtoc   = get_string('toc', 'mod_book');
 $PAGE->set_title(format_string($book->name));
 $PAGE->add_body_class('mod_book');
 $PAGE->set_heading(format_string($course->fullname));
+
+book_add_fake_block($chapters, $chapter, $book, $cm, $edit);
+
 echo $OUTPUT->header();
 
 /// prepare chapter navigation icons
@@ -164,12 +164,6 @@ if ($nextid) {
 // prepare $toc and $currtitle, $currsubtitle
 list($toc, $currtitle, $currsubtitle, $titles) = book_get_toc($chapters, $chapter, $book, $cm, $edit, 0);
 
-if ($edit) {
-    $tocwidth = $CFG->book_tocwidth + 80;
-} else {
-    $tocwidth = $CFG->book_tocwidth;
-}
-
 // =====================================================
 // Book display HTML code
 // =====================================================
@@ -179,11 +173,6 @@ if ($edit) {
 
 <!-- subchapter title and upper navigation row //-->
 <tr>
-    <td style="width:<?php echo $tocwidth ?>px" valign="bottom">
-        <?php
-        print_string('toc', 'mod_book');
-        ?>
-    </td>
     <td>
         <div class="booknav"><?php echo $chnavigation ?></div>
     </td>
@@ -191,18 +180,6 @@ if ($edit) {
 
 <!-- toc and chapter row //-->
 <tr class="tocandchapter" valign="top">
-    <td style="width:<?php echo $tocwidth ?>px" align="left"><div class="clearer">&nbsp;</div>
-        <?php
-        echo $OUTPUT->box_start('generalbox');
-        echo $toc;
-        echo $OUTPUT->box_end();
-        if ($allowedit and $edit) {
-            echo '<div class="faq">';
-            echo $OUTPUT->help_icon('faq', 'mod_book', get_string('faq', 'mod_book'));
-            echo '</div>';
-        }
-        ?>
-    </td>
     <td align="right" valign="top"><div class="clearer">&nbsp;</div>
         <?php
         echo $OUTPUT->box_start('generalbox');
