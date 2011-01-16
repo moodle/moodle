@@ -76,7 +76,7 @@ if ($allowedit and !$chapters) {
 /// check chapterid and read chapter data
 if ($chapterid == '0') { // go to first chapter if no given
     foreach($chapters as $ch) {
-        if ($allowedit and !empty($USER->editing)) {
+        if ($edit) {
             $chapterid = $ch->id;
             break;
         }
@@ -131,7 +131,7 @@ $previd = null;
 $nextid = null;
 $last = null;
 foreach ($chapters as $ch) {
-    if ($allowedit and empty($USER->editing) and $ch->hidden) {
+    if (!$edit and $ch->hidden) {
         continue;
     }
     if ($last == $chapter->id) {
