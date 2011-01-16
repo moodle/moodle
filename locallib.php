@@ -60,14 +60,16 @@ function book_check_structure($bookid) {
         $i = 1;
         foreach($chapters as $ch) {
             $oldch = clone($ch);
-            if ($first and $ch->subchapter) {
+            if ($first) {
+                // book can not start with a subchapter
                 $ch->subchapter = 0;
+                $first = false;
             }
-            $first = false;
             if (!$ch->subchapter) {
                 $hidesub = $ch->hidden;
-            } else {
-                $ch->hidden = $hidesub ? true : $ch->hidden;
+            } else if ($hidesub) {
+                // all subchapters if hidden chapter are hidden too
+                $ch->hidden = 1;
             }
             $ch->pagenum = $i;
             if ($oldch->subchpter != $ch->subchpter or $oldch->pagenum != $ch->pagenum or $oldch->hidden != $ch->hidden) {
