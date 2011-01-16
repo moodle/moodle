@@ -51,6 +51,9 @@ if ($chapterid) {
     //complete book
     $chapter = false;
 }
+
+$PAGE->set_url('/mod/book/print.php', array('id'=>$id, 'chapterid'=>$chapterid));
+
 unset($id);
 unset($chapterid);
 // =========================================================================
