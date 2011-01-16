@@ -23,8 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$module->version  = 2011011600;   // The current module version (Date: YYYYMMDDXX)
-$module->requires = 2010120700;   // Requires this Moodle version
-$module->cron     = 0;            // Period for cron to check this module (secs)
+$module->version  = 2011011600; // The current module version (Date: YYYYMMDDXX)
+$module->requires = 2010120700; // Requires this Moodle version
+$module->cron     = 0;          // Period for cron to check this module (secs)
 
-$release = "2.0dev (2011011500)"; // User-friendly version number
+$release = "2.0dev (20110116)"; // User-friendly version number
