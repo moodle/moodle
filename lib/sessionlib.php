@@ -753,7 +753,7 @@ function session_gc() {
         $rs->close();
 
         // delete expired sessions for userid = 0 (not logged in)
-        $DB->delete_records_select('sessions', 'userid = 0 AND timemodified < ?', array(time() - $maxlifeitme));
+        $DB->delete_records_select('sessions', 'userid = 0 AND timemodified < ?', array(time() - $maxlifetime));
     } catch (dml_exception $ex) {
         error_log('Error gc-ing sessions');
     }
