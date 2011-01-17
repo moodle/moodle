@@ -5512,6 +5512,449 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2010121401);
     }
 
+    if ($oldversion < 2011011401) {
+        $columns = $DB->get_columns('block_instances');
+
+        // Check if we need to fix the default weight column
+        if (array_key_exists('defaultweight', $columns) && $columns['defaultweight']->max_length != 10) {
+            // Fix discrepancies in the block_instances table after upgrade from 1.9
+            $table = new xmldb_table('block_instances');
+
+            // defaultweight is smallint(3) after upgrade should be bigint 10
+            // Also fixed in earlier upgrade code
+            $field = new xmldb_field('defaultweight', XMLDB_TYPE_INTEGER, 10, null, XMLDB_NOTNULL, null, null, 'defaultregion');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_type($table, $field);
+            }
+
+            // add missing key `blocinst_par_ix` (`parentcontextid`)
+            $index = new xmldb_index('parentcontextid', XMLDB_INDEX_NOTUNIQUE, array('parentcontextid'));
+            if (!$dbman->index_exists($table, $index)) {
+                $dbman->add_index($table, $index);
+            }
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011011401);
+    }
+
+    if ($oldversion < 2011011402) {
+        // Fix discrepancies in the block_positions table after upgrade from 1.9
+        $table = new xmldb_table('block_positions');
+        $columns = $DB->get_columns('block_positions');
+
+        // Check if we need to fix the blockinstanceid field
+        if (array_key_exists('blockinstanceid', $columns) && empty($columns['blockinstanceid']->unsigned)) {
+            // Fix blockinstanceid
+            // First remove the indexs on the field
+            $indexone = new xmldb_index('blockinstanceid', XMLDB_INDEX_NOTUNIQUE, array('blockinstanceid'));
+            $indexall = new xmldb_index('blockinstanceid-contextid-pagetype-subpage', XMLDB_INDEX_UNIQUE, array('blockinstanceid','contextid','pagetype','subpage'));
+            if ($dbman->index_exists($table, $indexone)) {
+                $dbman->drop_index($table, $indexone);
+            }
+            if ($dbman->index_exists($table, $indexall)) {
+                $dbman->drop_index($table, $indexall);
+            }
+            // blockinstanceid should be unsigned
+            // Also fixed in earlier upgrade code
+            $field = new xmldb_field('blockinstanceid', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'id');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_unsigned($table, $field);
+            }
+
+            // Add the indexs back in
+            $dbman->add_index($table, $indexone);
+            $dbman->add_index($table, $indexall);
+        }
+
+        // Check if the visible field needs fixing.
+        if (array_key_exists('visible', $columns) && !empty($columns['visible']->has_default)) {
+            // visible shouldn't have a default
+            // Also fixed in earlier upgrade code
+            $field = new xmldb_field('visible', XMLDB_TYPE_INTEGER, 4, null, XMLDB_NOTNULL, null, null, 'subpage');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011011402);
+    }
+
+    if ($oldversion < 2011011403) {
+        $columns = $DB->get_columns('grade_categories');
+        // Check if we need to fix the hidden field
+        if (array_key_exists('hidden', $columns) && $columns['hidden']->max_length != 1) {
+            // Fix discrepancies in the grade_categories table after upgrade from 1.9
+            $table = new xmldb_table('grade_categories');
+
+            // hidden should be tinyint(1)
+            // Also fixed in earlier upgrade code
+            $field = new xmldb_field('hidden', XMLDB_TYPE_INTEGER, 1, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'timemodified');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_precision($table, $field);
+            }
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011011403);
+    }
+
+    if ($oldversion < 2011011404) {
+        // Fix discrepancies in the message table after upgrade from 1.9
+        $columns = $DB->get_columns('message');
+        $table = new xmldb_table('message');
+
+        // Check if we need to fix the useridfrom field
+        if (array_key_exists('useridfrom', $columns) && empty($columns['useridfrom']->unsigned)) {
+            // useridfrom should be unsigned
+            $field = new xmldb_field('useridfrom', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'id');
+            $index = new xmldb_index('useridfrom', XMLDB_INDEX_NOTUNIQUE, array('useridfrom'));
+            if ($dbman->index_exists($table, $index)) {
+                $dbman->drop_index($table, $index);
+            }
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_unsigned($table, $field);
+            }
+            $dbman->add_index($table, $index);
+        }
+
+        // Check if we need to fix the useridto field
+        if (array_key_exists('useridto', $columns) && empty($columns['useridto']->unsigned)) {
+            // useridto should be unsigned
+            $field = new xmldb_field('useridto', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'useridfrom');
+            $index = new xmldb_index('useridto', XMLDB_INDEX_NOTUNIQUE, array('useridto'));
+            if ($dbman->index_exists($table, $index)) {
+                $dbman->drop_index($table, $index);
+            }
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_unsigned($table, $field);
+            }
+            $dbman->add_index($table, $index);
+        }
+
+        // Check if we need to fix the notification field
+        if (array_key_exists('notification', $columns) && !empty($columns['notification']->not_null)) {
+            // notification should allow null
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('notification', XMLDB_TYPE_INTEGER, 1, XMLDB_UNSIGNED, null, null, 0, 'smallmessage');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_notnull($table, $field);
+            }
+        }
+
+        // Check if we need to fix the contexturl field
+        if (array_key_exists('contexturl', $columns) && strpos($columns['contexturl']->type, 'text') === false) {
+            // contexturl should be text
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('contexturl', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'notification');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_type($table, $field);
+            }
+        }
+
+        // Check if we need to fix the contexturl field
+        if (array_key_exists('contexturlname', $columns) && strpos($columns['contexturlname']->type, 'text') === false) {
+            // contexturlname should be text
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('contexturlname', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'contexturl');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_type($table, $field);
+            }
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011011404);
+    }
+
+    if ($oldversion < 2011011405) {
+        // Fix discrepancies in the message_read table after upgrade from 1.9
+        $columns = $DB->get_columns('message_read');
+        $table = new xmldb_table('message_read');
+
+        // Check if we need to fix the useridfrom field
+        if (array_key_exists('useridfrom', $columns) && empty($columns['useridfrom']->unsigned)) {
+            // useridfrom should be unsigned
+            $field = new xmldb_field('useridfrom', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'id');
+            $index = new xmldb_index('useridfrom', XMLDB_INDEX_NOTUNIQUE, array('useridfrom'));
+            if ($dbman->index_exists($table, $index)) {
+                $dbman->drop_index($table, $index);
+            }
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_unsigned($table, $field);
+            }
+            $dbman->add_index($table, $index);
+        }
+
+        // Check if we need to fix the useridto field
+        if (array_key_exists('useridto', $columns) && empty($columns['useridto']->unsigned)) {
+            // useridto should be unsigned
+            $field = new xmldb_field('useridto', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'useridfrom');
+            $index = new xmldb_index('useridto', XMLDB_INDEX_NOTUNIQUE, array('useridto'));
+            if ($dbman->index_exists($table, $index)) {
+                $dbman->drop_index($table, $index);
+            }
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_unsigned($table, $field);
+            }
+            $dbman->add_index($table, $index);
+        }
+
+        // Check if we need to fix the notification field
+        if (array_key_exists('notification', $columns) && !empty($columns['notification']->not_null)) {
+            // notification should allow null
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('notification', XMLDB_TYPE_INTEGER, 1, XMLDB_UNSIGNED, null, null, 0, 'smallmessage');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_notnull($table, $field);
+            }
+        }
+
+        // Check if we need to fix the contexturl field
+        if (array_key_exists('contexturl', $columns) && strpos($columns['contexturl']->type, 'text') === false) {
+            // contexturl should be text
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('contexturl', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'notification');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_type($table, $field);
+            }
+        }
+
+        // Check if we need to fix the contexturl field
+        if (array_key_exists('contexturlname', $columns) && strpos($columns['contexturlname']->type, 'text') === false) {
+            // contexturlname should be text
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('contexturlname', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'contexturl');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_type($table, $field);
+            }
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011011405);
+    }
+
+    if ($oldversion < 2011011406) {
+        // Fix discrepancies in the my_pages table after upgrade from 1.9
+        $columns = $DB->get_columns('my_pages');
+        $table = new xmldb_table('my_pages');
+
+        // Check if we need to fix the private column
+        if (array_key_exists('private', $columns) && $columns['private']->default_value != '1') {
+            // private should be default 1
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('private', XMLDB_TYPE_INTEGER, 1, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 1, 'name');
+            $index = new xmldb_index('user_idx', XMLDB_INDEX_NOTUNIQUE, array('userid','private'));
+            if ($dbman->index_exists($table, $index)) {
+                $dbman->drop_index($table, $index);
+            }
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
+            $dbman->add_index($table, $index);
+        }
+
+        // Check if we need to fix the sortorder field
+        if (array_key_exists('sortorder', $columns) && !empty($columns['sortorder']->unsigned)) {
+            // Sortorder should not be unsigned
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('sortorder', XMLDB_TYPE_INTEGER, 6, null, XMLDB_NOTNULL, null, 0, 'private');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_notnull($table, $field);
+            }
+        }
+
+        upgrade_main_savepoint(true, 2011011406);
+    }
+
+    if ($oldversion < 2011011407) {
+        // Check if we need to fix post.uniquehash
+        $columns = $DB->get_columns('my_pages');
+        if (array_key_exists('uniquehash', $columns) && $columns['uniquehash']->max_length != 128) {
+            // Fix discrepancies in the post table after upgrade from 1.9
+            $table = new xmldb_table('post');
+
+            // Uniquehash should be 128 chars
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('uniquehash', XMLDB_TYPE_CHAR, 128, null, XMLDB_NOTNULL, null, null, 'content');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_precision($table, $field);
+            }
+        }
+
+        upgrade_main_savepoint(true, 2011011407);
+    }
+
+    if ($oldversion < 2011011408) {
+        // Fix question in the post table after upgrade from 1.9
+        $columns = $DB->get_columns('question');
+        $table = new xmldb_table('question');
+
+        // Check if we need to fix default grade
+        if (array_key_exists('defaultgrade', $columns) && (
+                empty($columns['defaultgrade']->unsigned) || 
+                empty($columns['defaultgrade']->not_null) || 
+                $columns['defaultgrade']->default_value !== '1.0000000')) {
+            // defaultgrade should be unsigned NOT NULL DEFAULT '1.0000000'
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('defaultgrade', XMLDB_TYPE_NUMBER, '12, 7', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1.0000000', 'generalfeedbackformat');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
+        }
+
+        // Check if we need to fix penalty
+        if (array_key_exists('penalty', $columns) && (empty($columns['penalty']->not_null) || $columns['penalty']->default_value !== '0.1000000')) {
+            // penalty should be NOT NULL DEFAULT '0.1000000'
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('penalty', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0.1000000', 'defaultgrade');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
+        }
+
+        upgrade_main_savepoint(true, 2011011408);
+    }
+
+    if ($oldversion < 2011011409) {
+        // Fix question_answers in the post table after upgrade from 1.9
+        $columns = $DB->get_columns('question_answers');
+        $table = new xmldb_table('question_answers');
+
+        if (array_key_exists('fraction', $columns) && empty($columns['fraction']->not_null)) {
+            // fraction should be NOT NULL DEFAULT '0.0000000',
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('fraction', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'feedback');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
+        }
+
+        upgrade_main_savepoint(true, 2011011409);
+    }
+
+    if ($oldversion < 2011011410) {
+        // Fix question_sessions in the post table after upgrade from 1.9
+        $columns = $DB->get_columns('question_sessions');
+        $table = new xmldb_table('question_sessions');
+
+        // Check if we need to fix sumpenalty
+        if (array_key_exists('sumpenalty', $columns) && empty($columns['sumpenalty']->not_null)) {
+            // sumpenalty should be NOT NULL DEFAULT '0.0000000',
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('sumpenalty', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'newgraded');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
+        }
+
+        upgrade_main_savepoint(true, 2011011410);
+    }
+
+    if ($oldversion < 2011011411) {
+        // Fix question_states in the post table after upgrade from 1.9
+        $columns = $DB->get_columns('question_states');
+        $table = new xmldb_table('question_states');
+
+        // Check if we need to fix grade
+        if (array_key_exists('grade', $columns) && empty($columns['grade']->not_null)) {
+            // grade should be NOT NULL DEFAULT '0.0000000',
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'event');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
+        }
+
+        // Check if we need to fix raw_grade
+        if (array_key_exists('raw_grade', $columns) && empty($columns['raw_grade']->not_null)) {
+            // raw_grade should be NOT NULL DEFAULT '0.0000000',
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('raw_grade', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'grade');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
+        }
+
+        // Check if we need to fix raw_grade
+        if (array_key_exists('penalty', $columns) && empty($columns['penalty']->not_null)) {
+            // penalty should be NOT NULL DEFAULT '0.0000000',
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('penalty', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'raw_grade');
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
+        }
+
+        upgrade_main_savepoint(true, 2011011411);
+    }
+
+    if ($oldversion < 2011011412) {
+        // Fix tag_instance in the post table after upgrade from 1.9
+        $columns = $DB->get_columns('tag_instance');
+        $table = new xmldb_table('tag_instance');
+
+        // Check if we need to fix tiuserid
+        if (array_key_exists('tiuserid', $columns) && !empty($columns['tiuserid']->has_default)) {
+            // tiuserid should have no default
+            // Fixed in earlier upgrade code
+            $field = new xmldb_field('tiuserid', XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'itemid');
+            $index = new xmldb_index('itemtype-itemid-tagid-tiuserid', XMLDB_INDEX_UNIQUE, array('itemtype', 'itemid', 'tagid', 'tiuserid'));
+            if ($dbman->index_exists($table, $index)) {
+                $dbman->drop_index($table, $index);
+            }
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_default($table, $field);
+            }
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2011011412);
+    }
+
+    if ($oldversion < 2011011413) {
+        // Fix user_info_field in the post table after upgrade from 1.9
+        $table = new xmldb_table('user_info_field');
+
+        // Missing field descriptionformat
+        // Fixed in earlier upgrade code
+        $field = new xmldb_field('descriptionformat', XMLDB_TYPE_INTEGER, 2, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, 0, 'description');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2011011413);
+    }
+
+    if ($oldversion < 2011011414) {
+        // Drop the adodb_logsql table if it exists... it was never actually used anyway.
+        $table = new xmldb_table('adodb_logsql');
+
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        upgrade_main_savepoint(true, 2011011414);
+    }
+    
+    if ($oldversion < 2011011415) {
+        //create the rating table indexes if required
+        $table = new xmldb_table('rating');
+        
+        $index = new xmldb_index('itemid', XMLDB_INDEX_NOTUNIQUE, array('itemid'));
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+            
+            $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+            $dbman->add_key($table, $key);
+            
+            $key = new xmldb_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+            $dbman->add_key($table, $key);
+        }
+        
+        upgrade_main_savepoint(true, 2011011415);
+    }
+
     return true;
 }
 
