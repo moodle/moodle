@@ -334,11 +334,12 @@ class mnetservice_enrol {
 
             // prune stale enrolment records
             if (empty($list)) {
-                $DB->delete_records('mnetservice_enrol_enrolments', array('hostid'=>$mnethostid));
+                $DB->delete_records('mnetservice_enrol_enrolments', array('hostid'=>$mnethostid, 'remotecourseid'=>$remotecourseid));
             } else {
                 list($isql, $params) = $DB->get_in_or_equal(array_keys($list), SQL_PARAMS_NAMED, 'param0000', false);
                 $params['hostid'] = $mnethostid;
-                $select = "hostid = :hostid AND id $isql";
+                $params['remotecourseid'] = $remotecourseid;
+                $select = "hostid = :hostid AND remotecourseid = :remotecourseid AND id $isql";
                 $DB->delete_records_select('mnetservice_enrol_enrolments', $select, $params);
             }
 
