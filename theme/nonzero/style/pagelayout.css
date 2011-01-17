@@ -103,7 +103,7 @@ body {margin:auto 0px;width:auto;}
 }
 
 .side-post-only #page-content #region-post {
-    left: [[setting:regionpostwidth]];
+    left: [[setting:regionsumwidth]];
     width: [[setting:regionpostwidth]];
 }
 
