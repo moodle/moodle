@@ -3045,6 +3045,10 @@ function &get_fast_modinfo(&$course, $userid=0) {
         return $cache[$course->id];
     }
 
+    if (!property_exists($course, 'modinfo')) {
+        debugging('Coding problem - missing course modinfo property in get_fast_modinfo() call');
+    }
+
     if (empty($course->modinfo)) {
         // no modinfo yet - load it
         rebuild_course_cache($course->id);
