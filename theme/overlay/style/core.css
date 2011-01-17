@@ -218,9 +218,25 @@ h1.headermain {
 -------------------------------*/
 
 #custommenu {
-	width: 70%;
+	width: 60%;
 	float: left;
 }
+
+/*YUI Reset */
+/*full menu bar */
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-content {
+background: none !important;
+}
+/*single items */
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label {
+background: none !important;
+}
+/*active items */
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label-active, .yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-active .yui3-menuitem-content, .yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label-menuvisible {
+background: #666 !important;
+border-color:inherit;
+}
+
 
 div.yui3-menu-content {
 	border: none !important;
@@ -239,6 +255,7 @@ div.yui3-menu-content {
 	margin-left: 0px !important;
 	padding-left: 0px !important;
 	margin-right: 10px !important;
+	padding-left: 5px !important;
 }
 
 .yui3-menu-content li a:hover {
@@ -248,16 +265,20 @@ div.yui3-menu-content {
 div.custom_menu_submenu li a {
 	line-height: 30px;
 	text-shadow: none !important;
-	color: #333 !important;
+	color: #fff !important;
 	margin-left: 5px !important;
+}
+
+.custom_menu_submenu {
+	background: #333;
 }
 
 div.firstdockitem {
 	margin-top: 30px;
 }
 
-.headermenu .logininfo, .headermenu div, .headermenu form {
-	display: inline; 
+.headermenu .logininfo, .headermenu .langmenu, .headermenu .langmenu div, .headermenu .langmenu form, .headermenu .langmenu select, .headermenu .langmenu label {
+	display: inline !important;
 }
 
 .headermenu .logininfo {
