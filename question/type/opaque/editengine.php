@@ -28,9 +28,8 @@
 
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->libdir . '/formslib.php');
-include_once($CFG->libdir . '/validateurlsyntax.php');
 require_once(dirname(__FILE__) . '/locallib.php');
+require_once(dirname(__FILE__) . '/edit_engine_form.php');
 
 
 $engineid = optional_param('engineid', 0, PARAM_INT);
@@ -45,84 +44,7 @@ admin_externalpage_setup('qtypesettingopaque', '', null,
 $PAGE->set_title(get_string('editquestionengine', 'qtype_opaque'));
 $PAGE->navbar->add(get_string('editquestionengineshort', 'qtype_opaque'));
 
-
-/**
- * Form definition class.
- *
- * @copyright 2006 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class qtype_opaque_engine_edit_form extends moodleform {
-    public function definition() {
-        $mform = $this->_form;
-
-        $mform->addElement('text', 'enginename', get_string('enginename', 'qtype_opaque'));
-        $mform->addRule('enginename', get_string('missingenginename', 'qtype_opaque'), 'required', null, 'client');
-        $mform->setType('enginename', PARAM_MULTILANG);
-
-        $mform->addElement('textarea', 'questionengineurls', get_string('questionengineurls', 'qtype_opaque'),
-                'rows="5" cols="80"');
-        $mform->addRule('questionengineurls', get_string('missingengineurls', 'qtype_opaque'), 'required', null, 'client');
-        $mform->setType('questionengineurls', PARAM_RAW);
-
-        $mform->addElement('textarea', 'questionbankurls', get_string('questionbankurls', 'qtype_opaque'),
-                'rows="5" cols="80"');
-        $mform->setType('questionbankurls', PARAM_RAW);
-
-        $mform->addElement('text', 'passkey', get_string('passkey', 'qtype_opaque'));
-        $mform->setType('passkey', PARAM_MULTILANG);
-        $mform->addHelpButton('passkey', 'passkey', 'qtype_opaque');
-
-        $mform->addElement('hidden', 'engineid');
-        $mform->setType('engineid', PARAM_INT);
-
-        $this->add_action_buttons();
-    }
-
-    /**
-     * Validate the contents of a textarea field, which should be a newline-separated list of URLs.
-     *
-     * @param $data the form data.
-     * @param $field the field to validate.
-     * @param $errors any error messages are added to this array.
-     */
-    protected function validateurllist(&$data, $field, &$errors) {
-        $urls = preg_split('/[\r\n]+/', $data[$field]);
-        foreach ($urls as $url) {
-            $url = trim($url);
-            if ($url && !validateUrlSyntax($url, 's?H?S?u-P-a?I?p?f?q?r?')) {
-                $errors[$field] = get_string('urlsinvalid', 'qtype_opaque');
-            }
-        }
-    }
-
-    /**
-     * Extract the contents of a textarea field, which should be a newline-separated list of URLs.
-     *
-     * @param $data the form data.
-     * @param $field the field to extract.
-     * @param @return array those lines from the form field that are valid URLs.
-     */
-    public function extracturllist($data, $field) {
-        $rawurls = preg_split('/[\r\n]+/', $data->$field);
-        $urls = array();
-        foreach ($rawurls as $url) {
-            $url = clean_param(trim($url), PARAM_URL);
-            if ($url) {
-                $urls[] = $url;
-            }
-        }
-        return $urls;
-    }
-
-    public function validation($data) {
-        $errors = parent::validation($data, $files);
-        $this->validateurllist($data, 'questionengineurls', $errors);
-        $this->validateurllist($data, 'questionbankurls', $errors);
-        return $errors;
-    }
-}
-
+// Create form.
 $mform = new qtype_opaque_engine_edit_form('editengine.php');
 
 if ($mform->is_cancelled()){
@@ -137,7 +59,7 @@ if ($mform->is_cancelled()){
     $engine->passkey = trim($data->passkey);
     $engine->questionengines = $mform->extracturllist($data, 'questionengineurls');
     $engine->questionbanks = $mform->extracturllist($data, 'questionbankurls');
-    save_engine_def($engine);
+    qtype_opaque_save_engine_def($engine);
     redirect(new moodle_url('/question/type/opaque/engines.php'));
 }
 
@@ -145,7 +67,7 @@ if ($mform->is_cancelled()){
 $defaults = new stdClass;
 $defaults->engineid = $engineid;
 if ($engineid) {
-    $engine = load_engine_def($engineid);
+    $engine = qtype_opaque_load_engine_def($engineid);
     $defaults->enginename = $engine->name;
     $defaults->questionengineurls = implode("\n", $engine->questionengines);
     $defaults->questionbankurls = implode("\n", $engine->questionbanks);

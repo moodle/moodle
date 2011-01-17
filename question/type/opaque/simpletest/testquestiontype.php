@@ -123,7 +123,7 @@ class qtype_opaque_test extends UnitTestCase {
     <questiontext format="moodle_auto_format">
       <text></text>
     </questiontext>
-    <generalfeedback>
+    <generalfeedback format="moodle_auto_format">
       <text></text>
     </generalfeedback>
     <defaultgrade>3</defaultgrade>
@@ -185,7 +185,7 @@ class qtype_opaque_test extends UnitTestCase {
     <questiontext format="moodle_auto_format">
       <text></text>
     </questiontext>
-    <generalfeedback>
+    <generalfeedback format="moodle_auto_format">
       <text></text>
     </generalfeedback>
     <defaultgrade>3</defaultgrade>
@@ -251,11 +251,13 @@ class qtype_opaque_test extends UnitTestCase {
 
         $qdata = new stdClass;
         $qdata->id = 321;
+        $qdata->contextid = -666;
         $qdata->qtype = 'opaque';
         $qdata->name = 'An Opaque question';
         $qdata->questiontext = '';
         $qdata->questiontextformat = FORMAT_MOODLE;
         $qdata->generalfeedback = '';
+        $qdata->generalfeedbackformat = FORMAT_MOODLE;
         $qdata->defaultmark = 3;
         $qdata->length = 1;
         $qdata->penalty = 0;
@@ -276,7 +278,7 @@ class qtype_opaque_test extends UnitTestCase {
     <questiontext format="moodle_auto_format">
       <text></text>
     </questiontext>
-    <generalfeedback>
+    <generalfeedback format="moodle_auto_format">
       <text></text>
     </generalfeedback>
     <defaultgrade>3</defaultgrade>

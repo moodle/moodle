@@ -375,7 +375,7 @@ DONE question/type/multichoice/version.php              |    6 +-
 DONE question/type/opaque/db/install.xml                |   44 +
 DONE question/type/opaque/db/upgrade.php                |   69 +
 DONE question/type/opaque/edit_opaque_form.php          |  114 +
- question/type/opaque/editengine.php                |  152 +
+DONE question/type/opaque/editengine.php                |  152 +
 DONE question/type/opaque/engines.php                   |   78 +
  question/type/opaque/file.php                      |   31 +
 DONE question/type/opaque/icon.gif                      |  Bin 0 -> 97 bytes
@@ -386,14 +386,14 @@ DONE question/type/opaque/lang/en_utf8/help/opaque/passkey.html   |    6 +
 DONE question/type/opaque/lang/en_utf8/help/opaque/questionengine.html   |    7 +
 DONE question/type/opaque/lang/en_utf8/help/opaque/questionid.html       |    5 +
 DONE question/type/opaque/lang/en_utf8/qtype_opaque.php |   57 +
- question/type/opaque/locallib.php                  |  826 ++++++
+DONE question/type/opaque/locallib.php                  |  826 ++++++
 DONE question/type/opaque/question.php                  |   55 +
 DONE question/type/opaque/questiontype.php              |  220 ++
 DONE question/type/opaque/renderer.php                  |   37 +
  question/type/opaque/simpletest/testlocallib.php   |   60 +
  question/type/opaque/simpletest/testquestiontype.php    |  303 ++
 DONE question/type/opaque/styles.css                    |   14 +
- question/type/opaque/testengine.php                |   70 +
+DONE question/type/opaque/testengine.php                |   70 +
 DONE question/type/opaque/version.php                   |    5 +
 
  question/type/oumultiresponse/db/install.xml       |   24 +

@@ -45,16 +45,12 @@ define('OPAQUE_CSS_FILENAME_PREFIX', '__styles_');
  * @return an array id -> enginename, that can be used to build a dropdown
  * menu of installed question types.
  */
-function installed_engine_choices() {
+function qtype_opaque_installed_engine_choices() {
     global $DB;
     return $DB->get_records_menu('question_opaque_engines', array(), 'name ASC', 'id, name');
 }
 
-function format_opaque_error($message, $a = NULL) {
-    return get_string($message, 'qtype_opaque', $a);
-}
-
-function format_soap_fault($fault) {
+function qtype_opaque_format_soap_fault($fault) {
     foreach (array('faultcode', 'faultactor', 'faultstring', 'faultdetail') as $field) {
         if (empty($fault->$field)) {
             $fault->$field = '';
@@ -79,15 +75,14 @@ class qtype_opaque_engine_manager {
      * qtype_opaque language file as an error message.
      */
     public function load_engine_def($engineid) {
-        $engine = get_record('question_opaque_engines', 'id', $engineid);
-        if (!$engine) {
-            return format_opaque_error('couldnotloadenginename', $engineid);
-        }
+        global $DB;
+        $engine = $DB->get_record('question_opaque_engines', array('id' => $engineid), '*', MUST_EXIST);
+
         $engine->questionengines = array();
         $engine->questionbanks = array();
-        $servers = get_records('question_opaque_servers', 'engineid', $engineid, 'id ASC');
+        $servers = $DB->get_records('question_opaque_servers', array('engineid' => $engineid), 'id ASC');
         if (!$servers) {
-            return format_opaque_error('couldnotloadengineservers', $engineid);
+            throw new moodle_exception('couldnotloadengineservers', 'qtype_opaque', '', $engineid);
         }
         foreach ($servers as $server) {
             if ($server->type == 'qe') {
@@ -95,7 +90,7 @@ class qtype_opaque_engine_manager {
             } else if ($server->type == 'qb') {
                 $engine->questionbanks[] = $server->url;
             } else {
-                return format_opaque_error('unrecognisedservertype', $engineid);
+                throw new moodle_exception('unrecognisedservertype', 'qtype_opaque', '', $engineid);
             }
         }
         return $engine;
@@ -109,23 +104,20 @@ class qtype_opaque_engine_manager {
      * @return integer the id of the saved definition.
      */
     public function save_engine_def($engine) {
-        global $db;
-        $db->StartTrans();
+        global $DB;
+        $transaction = $DB->start_delegated_transaction();
 
         if (!empty($engine->id)) {
-            update_record('question_opaque_engines', $engine);
+            $DB->update_record('question_opaque_engines', $engine);
         } else {
-            $engine->id = insert_record('question_opaque_engines', $engine);
+            $engine->id = $DB->insert_record('question_opaque_engines', $engine);
         }
-        delete_records('question_opaque_servers', 'engineid', $engine->id);
+        $DB->delete_records('question_opaque_servers', array('engineid' => $engine->id));
         $this->store_opaque_servers($engine->questionengines, 'qe', $engine->id);
         $this->store_opaque_servers($engine->questionbanks, 'qb', $engine->id);
 
-        if ($db->CompleteTrans()) {
-            return $engine->id;
-        } else {
-            print_error('couldnotsaveengineinfo', 'qtype_opaque', 'engines.php');
-        }
+        $transaction->allow_commit();
+        return $engine->id;
     }
 
     /**
@@ -136,12 +128,13 @@ class qtype_opaque_engine_manager {
      * @param int $engineid
      */
     protected function store_opaque_servers($urls, $type, $engineid) {
+        global $DB;
         foreach ($urls as $url) {
-            $server = new stdClass;
+            $server = new stdClass();
             $server->engineid = $engineid;
             $server->type = $type;
             $server->url = $url;
-            insert_record('question_opaque_servers', $server, false);
+            $DB->insert_record('question_opaque_servers', $server, false);
         }
     }
 
@@ -154,32 +147,36 @@ class qtype_opaque_engine_manager {
         global $DB;
         $transaction = $DB->start_delegated_transaction();
         $DB->delete_records('question_opaque_servers', array('engineid' => $engineid));
-        $DB->sdelete_records('question_opaque_engines', array('id' => $engineid));
+        $DB->delete_records('question_opaque_engines', array('id' => $engineid));
         $transaction->allow_commit();
     }
 
     protected function get_possibly_matching_engines($engine) {
-        global $CFG;
+        global $DB;
 
-        // First we try to get a reasonably accurate guess with SQL - we load the id of all
-        // engines with the same passkey and which use the first questionengine and questionbank
-        // (if any).
-        $where = "WHERE e.passkey = '$engine->passkey'";
-        $sql = "SELECT e.id,1 FROM {$CFG->prefix}question_opaque_engines e ";
+        // First we try to get a reasonably accurate guess with SQL - we load
+        // the id of all engines with the same passkey and which use the first
+        // questionengine and questionbank (if any).
+        $tables = array('FROM {question_opaque_engines} e');
+        $conditions = array('e.passkey = :passkey');
+        $params = array('passkey' => $engine->passkey);
         if (!empty($engine->questionengines)) {
             $qeurl = reset($engine->questionengines);
-            $sql .= "JOIN {$CFG->prefix}question_opaque_servers qe ON
+            $tables[] = "JOIN {question_opaque_servers} qe ON
                     qe.engineid = e.id AND qe.type = 'qe'";
-            $where .= " AND qe.url = '$qeurl'";
+            $conditions[] = 'qe.url = :qeurl';
+            $params['qeurl'] = $qeurl;
         }
         if (!empty($engine->questionbanks)) {
             $qburl = reset($engine->questionbanks);
-            $sql .= "JOIN {$CFG->prefix}question_opaque_servers qb ON
+            $tables[] = "JOIN {question_opaque_servers} qb ON
                     qb.engineid = e.id AND qb.type = 'qb'";
-            $where .= " AND qb.url = '$qburl'";
+            $conditions[] = 'qb.url = :qburl';
+            $params['qburl'] = $qburl;
         }
-        $sql .= $where;
-        return get_records_sql_menu($sql);
+        return get_records_sql_menu('
+                SELECT e.id,1 ' . implode(' ', $tables) . ' WHERE ' .
+                implode(' AND ', $conditions), $params);
     }
 
     /**
@@ -234,7 +231,7 @@ class qtype_opaque_engine_manager {
  * The last two fields are arrays of URLs. On an error, returns a string to look up in the
  * qtype_opaque language file as an error message.
  */
-function load_engine_def($engineid) {
+function qtype_opaque_load_engine_def($engineid) {
     $manager = new qtype_opaque_engine_manager();
     return $manager->load_engine_def($engineid);
 }
@@ -246,7 +243,7 @@ function load_engine_def($engineid) {
  * @param object $engine the definition to save.
  * @return integer the id of the saved definition.
  */
-function save_engine_def($engine) {
+function qtype_opaque_save_engine_def($engine) {
     $manager = new qtype_opaque_engine_manager();
     return $manager->save_engine_def($engine);
 }
@@ -256,7 +253,7 @@ function save_engine_def($engine) {
  * @param integer $engineid the id of the engine to delete.
  * @return boolean whether the delete succeeded.
  */
-function delete_engine_def($engineid) {
+function qtype_opaque_delete_engine_def($engineid) {
     $manager = new qtype_opaque_engine_manager();
     return $manager->delete_engine_def($engineid);
 }
@@ -269,7 +266,7 @@ function delete_engine_def($engineid) {
  * @param object $engine the engine to ensure is in the databse.
  * @return integer its id.
  */
-function find_or_create_engineid($engine) {
+function qtype_opaque_find_or_create_engineid($engine) {
     $manager = new qtype_opaque_engine_manager();
     return $manager->find_or_create_engineid($engine);
 }
@@ -280,7 +277,7 @@ function find_or_create_engineid($engine) {
  * of this $engine object picked at random. returns a string to look up in the qtype_opaque
  * language file as an error message if a problem arises.
  */
-function connect_to_engine(&$engine) {
+function qtype_opaque_connect($engine) {
     if (is_string($engine)) {
         $url = $engine;
     } else if (!empty($engine->urlused)) {
@@ -288,10 +285,7 @@ function connect_to_engine(&$engine) {
     } else {
         $url = $engine->questionengines[array_rand($engine->questionengines)];
     }
-    $connection = soap_connect($url . '?wsdl');
-    if (is_soap_fault($connection)) {
-        return format_opaque_error('couldnotconnect', $url);
-    }
+    $connection = new SoapClient($url . '?wsdl', array('soap_version'=>SOAP_1_1, 'exceptions'=>true));
     if (!is_string($engine)) {
         $engine->urlused = $url;
     }
@@ -303,19 +297,10 @@ function connect_to_engine(&$engine) {
  * @return some XML, as parsed by xmlize, on success, or a string to look up in the qtype_opaque
  * language file as an error message.
  */
-function get_engine_info($engine) {
-    $connection = connect_to_engine($engine);
-    if (is_string($connection)) {
-        return $connection;
-    }
-
-    $getengineinforesult = soap_call($connection, 'getEngineInfo', array());
-    if (is_soap_fault($getengineinforesult)) {
-        return format_opaque_error('couldnotgetengineinfo', format_soap_fault($getengineinforesult));
-    }
-
-    $xmlarr = xmlize($getengineinforesult);
-    return $xmlarr;
+function qtype_opaque_get_engine_info($engine) {
+    $connection = qtype_opaque_connect($engine);
+    $getengineinforesult = $connection->getEngineInfo();
+    return xmlize($getengineinforesult);
 }
 
 /**
@@ -324,15 +309,10 @@ function get_engine_info($engine) {
  * $metadata[questionmetadata][@][#][scoring][0][#][marks][0][#] is the maximum possible score for
  * this question.
  */
-function get_question_metadata(&$engine, $remoteid, $remoteversion) {
-    $connection = connect_to_engine($engine);
+function qtype_opaque_get_question_metadata($engine, $remoteid, $remoteversion) {
+    $connection = qtype_opaque_connect($engine);
     $questionbaseurl = $engine->questionbanks[array_rand($engine->questionbanks)];
-    $getmetadataresult = soap_call($connection, 'getQuestionMetadata',
-            array($remoteid, $remoteversion, $questionbaseurl));
-    if (is_soap_fault($getmetadataresult)) {
-        return format_opaque_error('getmetadatacallfailed', format_soap_fault($getmetadataresult));
-    }
-
+    $getmetadataresult = $connection->getQuestionMetadata($remoteid, $remoteversion, $questionbaseurl);
     return xmlize($getmetadataresult);
 }
 
@@ -343,67 +323,40 @@ function get_question_metadata(&$engine, $remoteid, $remoteversion) {
  * @param int $randomseed
  * @return mixed the result of the soap call on success, or a string error message on failure.
  */
-function start_question_session(&$engine, $remoteid, $remoteversion, $data, $cached_resources) {
-    $connection = connect_to_engine($engine);
-    if (is_string($connection)) {
-        return format_opaque_error('startcallfailed', $connection);
-    }
+function qtype_opaque_start_question_session($engine, $remoteid, $remoteversion, $data, $cached_resources) {
+    $connection = qtype_opaque_connect($engine);
 
     $questionbaseurl = '';
     if (!empty($engine->questionbanks)) {
         $questionbaseurl = $engine->questionbanks[array_rand($engine->questionbanks)];
     }
 
-    $startresult = soap_call($connection, 'start', array(
-        $remoteid,
-        $remoteversion,
-        $questionbaseurl,
-        array('randomseed', 'userid', 'language', 'passKey', 'preferredbehaviour'),
-        array($data['-_randomseed'], $data['-_userid'], $data['-_language'],
-                generate_passkey($engine->passkey, $data['-_userid']), $data['-_preferredbehaviour']),
-        $cached_resources
-    ));
+    $initialparams = array(
+        'randomseed' => $data['-_randomseed'],
+        'userid' => $data['-_userid'],
+        'language' => $data['-_language'],
+        'passKey' => generate_passkey($engine->passkey, $data['-_userid']),
+        'preferredbehaviour' => $data['-_preferredbehaviour'],
+    );
 
-    if (is_soap_fault($startresult)) {
-        return format_opaque_error('startcallfailed', format_soap_fault($startresult));
-    }
-
-    return $startresult;
+    return $connection->start($remoteid, $remoteversion, $questionbaseurl,
+            array_keys($initialparams), array_values($initialparams), $cached_resources);
 }
 
-function opaque_process(&$engine, $questionsessionid, $response) {
-    $connection = connect_to_engine($engine);
-    if (is_string($connection)) {
-        return format_opaque_error('processcallfailed', $connection);
-    }
-    $processresult = soap_call($connection, 'process', array(
-        $questionsessionid,
-        array_keys($response),
-        array_values($response)
-    ));
-    if (is_soap_fault($processresult)) {
-        return format_opaque_error('processcallfailed', format_soap_fault($processresult));
-    }
-
-    return $processresult;
+function qtype_opaque_process($engine, $questionsessionid, $response) {
+    $connection = qtype_opaque_connect($engine);
+    return $connection->process($questionsessionid, array_keys($response),
+            array_values($response));
 }
 
 /**
  * @param string $questionsessionid the question session to stop.
  * @return true on success, or a string error message on failure.
  */
-function stop_question_session($engine, $questionsessionid) {
-    $connection = connect_to_engine($engine);
-    if (is_string($connection)) {
-        return format_opaque_error('stopcallfailed', $connection);
-    }
-
-    $stopresult = soap_call($connection, 'stop', array($questionsessionid));
-    if (is_soap_fault($stopresult)) {
-        return format_opaque_error('stopcallfailed', format_soap_fault($stopresult));
-    } else {
-        return true;
-    }
+function qtype_opaque_stop_question_session($engine, $questionsessionid) {
+    $connection = qtype_opaque_connect($engine);
+    $connection->stop($questionsessionid);
+    return true;
 }
 
 /**
@@ -414,7 +367,7 @@ function stop_question_session($engine, $questionsessionid) {
  * @param question_attempt_step|null $pendingstep
  * @return question_attempt_step
  */
-function opaque_get_step($seq, question_attempt $qa, $pendingstep) {
+function qtype_opaque_get_step($seq, question_attempt $qa, $pendingstep) {
     if ($seq < $qa->get_num_steps()) {
         return $qa->get_step($seq);
     }
@@ -431,7 +384,7 @@ function opaque_get_step($seq, question_attempt $qa, $pendingstep) {
  * @param object $state
  * @return mixed $SESSION->cached_opaque_state on success, a string error message on failure.
  */
-function update_opaque_state(question_attempt $qa, question_attempt_step $pendingstep = null) {
+function qtype_opaque_update_state(question_attempt $qa, question_attempt_step $pendingstep = null) {
     global $SESSION;
 
     $question = $qa->get_question();
@@ -537,7 +490,7 @@ function update_opaque_state(question_attempt $qa, question_attempt_step $pendin
 /**
  * File name used to store the CSS of the question, question session id is appended.
  */
-function opaque_stylesheet_filename($questionsessionid) {
+function qtype_opaque_stylesheet_filename($questionsessionid) {
     return OPAQUE_CSS_FILENAME_PREFIX . $questionsessionid . '.css';
 }
 
@@ -548,7 +501,7 @@ function opaque_stylesheet_filename($questionsessionid) {
  * @param object $resourcecache the resource cache for this question.
  * @return true on success, or a string error message on failure.
  */
-function extract_stuff_from_response(&$opaquestate, $response, &$resourcecache) {
+function qtype_opaque_extract_stuff_from_response($opaquestate, $response, $resourcecache) {
     global $CFG;
     static $replaces;
 
@@ -615,7 +568,7 @@ function extract_stuff_from_response(&$opaquestate, $response, &$resourcecache) 
 /**
  * Strip any buttons, followed by script tags, where the button has an id containing _omact_, and is not disabled.
  */
-function strip_omact_buttons($xhtml) {
+function qtype_opaque_strip_omact_buttons($xhtml) {
     return preg_replace('|<input(?:(?!disabled=)[^>])*? id="[^"]*_omact_[^"]*"(?:(?!disabled=)[^>])*?><script type="text/javascript">[^<]*</script>|', '', $xhtml);
 }
 
@@ -625,7 +578,7 @@ function strip_omact_buttons($xhtml) {
  * @return string the passkey that needs to be sent to the quetion engine to show that
  *      we are allowed to start a question session for this user.
  */
-function generate_passkey($secret, $userid) {
+function qtype_opaque_generate_passkey($secret, $userid) {
     return md5($secret . $userid);
 }
 
@@ -636,7 +589,7 @@ function generate_passkey($secret, $userid) {
  * https://openmark.dev.java.net/source/browse/openmark/trunk/src/util/misc/UserAgent.java?view=markup
  * @return string class to add to the HTML.
  */
-function opaque_browser_type() {
+function qtype_opaque_browser_type() {
     $useragent = $_SERVER['HTTP_USER_AGENT'];
 
     // Filter troublemakers
@@ -664,10 +617,10 @@ function opaque_browser_type() {
  *
  * There are synchronisation issues if two students are doing the same question at the same time.
  */
-class opaque_resource_cache {
-    var $folder; // Path to the folder where resources for this question are cached.
-    var $metadatafolder; // Path to the folder where mime types are stored.
-    var $baseurl; // initial part of the URL to link to a file in the cache.
+class qtype_opaque_resource_cache {
+    protected $folder; // Path to the folder where resources for this question are cached.
+    protected $metadatafolder; // Path to the folder where mime types are stored.
+    protected $baseurl; // initial part of the URL to link to a file in the cache.
 
     /**
      * Create a new opaque_resource_cache for a particular remote question.
@@ -675,7 +628,7 @@ class opaque_resource_cache {
      * @param string $remoteid remote question id, as per Opaque spec.
      * @param string $remoteversion remote question version, as per Opaque spec.
      */
-    function opaque_resource_cache($engineid, $remoteid, $remoteversion) {
+    public function __construct($engineid, $remoteid, $remoteversion) {
         global $CFG;
         $folderstart = $CFG->dataroot . '/opaqueresources/' . $engineid . '/' . $remoteid . '/' . $remoteversion;
         $this->folder = $folderstart . '/files';
@@ -695,7 +648,7 @@ class opaque_resource_cache {
      * @param string $filename the file name.
      * @return the full path of a file with the given name.
      */
-    function file_path($filename) {
+    public function file_path($filename) {
         return $this->folder . '/' . $filename;
     }
 
@@ -703,7 +656,7 @@ class opaque_resource_cache {
      * @param string $filename the file name.
      * @return the full path of a file with the given name.
      */
-    function file_meta_path($filename) {
+    public function file_meta_path($filename) {
         return $this->metadatafolder . '/' . $filename;
     }
 
@@ -711,7 +664,7 @@ class opaque_resource_cache {
      * @param string $filename the file name.
      * @return the URL to access this file.
      */
-    function file_url($filename) {
+    public function file_url($filename) {
         return $this->baseurl . $filename;
     }
 
@@ -719,7 +672,7 @@ class opaque_resource_cache {
      * @param string $filename the file name.
      * @return the URL to access this file.
      */
-    function file_mime_type($filename) {
+    public function file_mime_type($filename) {
         $metapath = $this->file_meta_path($filename);
         if (file_exists($metapath)) {
             return file_get_contents($metapath);
@@ -731,7 +684,7 @@ class opaque_resource_cache {
      * @param string $filename the name of the file to look for.
      * @return true if this named file is in the cache, otherwise false.
      */
-    function file_in_cache($filename) {
+    public function file_in_cache($filename) {
         return file_exists($this->file_path($filename));
     }
 
@@ -739,7 +692,7 @@ class opaque_resource_cache {
      * Serve a file from the cache.
      * @param string $filename the file name.
      */
-    function serve_file($filename) {
+    public function serve_file($filename) {
         if (!$this->file_in_cache($filename)) {
             header('HTTP/1.0 404 Not Found');
             header('Content-Type: text/plain;charset=UTF-8');
@@ -768,10 +721,8 @@ class opaque_resource_cache {
         header('Content-Length: ' . filesize($file));
 
         // Output file
-        $handle = fopen($file,'r');
         session_write_close(); // unlock session during fileserving
-        fpassthru($handle);
-        fclose($handle);
+        readfile($file);
     }
 
     /**
@@ -781,7 +732,7 @@ class opaque_resource_cache {
      * @param string $mimetype the type of the file to cache.
      * @param string $content the contents to write to the file.
      */
-    function cache_file($filename, $mimetype, $content) {
+    public function cache_file($filename, $mimetype, $content) {
         file_put_contents($this->file_path($filename), $content);
         file_put_contents($this->file_meta_path($filename), $mimetype);
     }
@@ -790,7 +741,7 @@ class opaque_resource_cache {
      * Add the resources from a particular response to the cache.
      * @param array $resources as returned from start or process Opaque methods.
      */
-    function cache_resources($resources) {
+    public function cache_resources($resources) {
         if(!empty($resources)) {
             foreach ($resources as $resource) {
                 $mimetype = $resource->mimeType;
@@ -806,7 +757,7 @@ class opaque_resource_cache {
      * List the resources cached for this question.
      * @return array list of resource names.
      */
-    function list_cached_resources() {
+    public function list_cached_resources() {
         $filepaths = glob($this->folder . '/*');
         if (!is_array($filepaths)) {
             // If an error occurrs, say that we have no files cached.
@@ -830,18 +781,17 @@ class opaque_resource_cache {
      * @param int $mode Mode for creation (default 0755)
      * @return boolean True if folder (now) exists, false if there was a failure
      */
-    function mkdir_recursive($folder, $mode='') {
-        if(is_dir($folder)) {
+    protected function mkdir_recursive($folder, $mode='') {
+        if (is_dir($folder)) {
             return true;
         }
         if ($mode == '') {
             global $CFG;
             $mode = $CFG->directorypermissions;
         }
-        if(!$this->mkdir_recursive(dirname($folder),$mode)) {
+        if (!$this->mkdir_recursive(dirname($folder),$mode)) {
             return false;
         }
         return mkdir($folder,$mode);
     }
 }
-?>

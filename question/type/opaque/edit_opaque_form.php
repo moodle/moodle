@@ -51,7 +51,8 @@ class question_edit_opaque_form extends question_edit_form {
     }
 
     function definition_inner($mform) {
-        $mform->addElement('select', 'engineid', get_string('questionengine', 'qtype_opaque'), installed_engine_choices());
+        $mform->addElement('select', 'engineid', get_string('questionengine', 'qtype_opaque'),
+                qtype_opaque_installed_engine_choices());
         $mform->setType('engineid', PARAM_INT);
         $mform->addRule('engineid', null, 'required', null, 'client');
         $mform->addHelpButton('engineid', 'questionengine', 'qtype_opaque');

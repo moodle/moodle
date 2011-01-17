@@ -1,70 +1,92 @@
-<?php // $Id$
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
 /**
- * Page for configuring the list Opaque question engines we can connect to.
+ * Page for testing that Moodle can connect to a particular Opaque engine.
  *
- * @copyright &copy; 2006 The Open University
- * @author T.J.Hunt@open.ac.uk
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package opaquequestiontype
- *//** */
+ * @package qtype
+ * @subpackage opaque
+ * @copyright 2006 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once(dirname(__FILE__) . '/../../../config.php');
-require_once($CFG->libdir . '/formslib.php');
-include_once($CFG->libdir . '/validateurlsyntax.php');
+require_once($CFG->libdir . '/adminlib.php');
 require_once(dirname(__FILE__) . '/locallib.php');
+
+
+$engineid = required_param('engineid', PARAM_INT);
 
 // Check the user is logged in.
 require_login();
-if (!has_capability('moodle/question:config', get_context_instance(CONTEXT_SYSTEM, SITEID))) {
-    print_error('restricteduser');
-}
+$context = get_context_instance(CONTEXT_SYSTEM);
+require_capability('moodle/question:config', $context);
+
+admin_externalpage_setup('qtypesettingopaque', '', null,
+        new moodle_url('/question/type/opaque/testengine.php', array('engineid' => $engineid)));
+$PAGE->set_title(get_string('testingengine', 'qtype_opaque'));
+$PAGE->navbar->add(get_string('testingengine', 'qtype_opaque'));
 
 // Load the engine definition.
-$engineid = required_param('engineid', PARAM_INT);
-$engine = load_engine_def($engineid);
-if (is_string($engine)) {
-    print_error('unknownengine', 'qtype_opaque', 'engines.php', $engine);
-}
+$engine = qtype_opaque_load_engine_def($engineid);
 
 // Do the test.
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('testingengine', 'qtype_opaque'));
+
 $ok = true;
-$strtitle = get_string('testingengine', 'qtype_opaque');
-$navlinks[] = array('name' => get_string('configuredquestionengines', 'qtype_opaque'), 'link' => "$CFG->wwwroot/question/type/opaque/engines.php", 'type' => 'misc');
-$navlinks[] = array('name' => $strtitle, 'link' => '', 'type' => 'title');
-print_header_simple($strtitle, '', build_navigation($navlinks));
-print_heading($strtitle);
-
 foreach ($engine->questionengines as $engineurl) {
-    print_box_start();
-    print_heading(get_string('testconnectionto', 'qtype_opaque', $engineurl), '', 3);
+    echo $OUTPUT->heading(get_string('testconnectionto', 'qtype_opaque', $engineurl), 3);
 
-    $info = get_engine_info($engineurl);
-    if (is_array($info) && isset($info['engineinfo']['#'])) {
-        xml_to_dl($info['engineinfo']['#']);
-    } else {
-        notify($info);
+    try {
+        $info = qtype_opaque_get_engine_info($engineurl);
+        if (is_array($info) && isset($info['engineinfo']['#'])) {
+            echo xml_to_dl($info['engineinfo']['#']);
+        } else {
+            echo $OUTPUT->notification(get_string('testconnectionunknownreturn', 'qtype_opaque'));
+            echo html_writer::tag('<pre>', s($info));
+            $ok = false;
+        }
+    } catch (SoapFault $sf) {
+        echo $OUTPUT->notification(get_string('testconnectionfailed', 'qtype_opaque'));
+        echo html_writer::tag('<pre>', s($sf));
         $ok = false;
     }
-    print_box_end();
 }
 
 if ($ok) {
-    notify(get_string('testconnectionpassed', 'qtype_opaque'), 'notifysuccess');
+    echo $OUTPUT->notification(get_string('testconnectionpassed', 'qtype_opaque'), 'notifysuccess');
 } else {
-    notify(get_string('testconnectionfailed', 'qtype_opaque'));
+    echo $OUTPUT->notification(get_string('testconnectionfailed', 'qtype_opaque'));
 }
 
-print_continue('engines.php');
-print_footer();
+echo $OUTPUT->continue_button(new moodle_url('/question/type/opaque/engines.php'));
+echo $OUTPUT->footer();
 
 /**
  * @param output some XML as a <dl>.
  */
 function xml_to_dl($xml) {
-    echo '<dl>';
+    $output = html_writer::start_tag('dl');
     foreach ($xml as $element => $content) {
-        echo "<dt>$element</dt><dd>" . $content['0']['#'] . "</dd>\n";
+        $output .= html_writer::tag('dt', $element) .
+                html_writer::tag('dd', s($content['0']['#'])) . "\n";
     }
-    echo '</dl>';
+    $output .= html_writer::end_tag('dl');
+    return $output;
 }
-?>
