@@ -85,4 +85,30 @@ class user_picture_test extends UnitTestCase {
         }
         $this->assertEqual($returned->custom1, 'Value of custom1');
     }
+
+    public function test_user_picture_fields_unaliasing_null() {
+        $fields = user_picture::fields();
+        $fields = array_map('trim', explode(',', $fields));
+
+        $fakerecord = new stdClass();
+        $fakerecord->aliasedid = 42;
+        foreach ($fields as $field) {
+            if ($field !== 'id') {
+                $fakerecord->{'prefix'.$field} = "Value of $field";
+            }
+        }
+        $fakerecord->prefixcustom1 = 'Value of custom1';
+        $fakerecord->prefiximagealt = null;
+
+        $returned = user_picture::unalias($fakerecord, array('custom1'), 'aliasedid', 'prefix');
+
+        $this->assertEqual($returned->id, 42);
+        $this->assertEqual($returned->imagealt, null);
+        foreach ($fields as $field) {
+            if ($field !== 'id' and $field !== 'imagealt') {
+                $this->assertEqual($returned->{$field}, "Value of $field");
+            }
+        }
+        $this->assertEqual($returned->custom1, 'Value of custom1');
+    }
 }
