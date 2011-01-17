@@ -1268,7 +1268,7 @@ width: 80%; -moz-border-radius: 20px; padding: 15px">
                     $e->stacktrace = format_backtrace($backtrace, true);
                 }
             }
-            @header('Content-Type: application/json');
+            @header('Content-Type: application/json; charset=utf-8');
             echo json_encode($e);
             return;
         }

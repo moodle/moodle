@@ -132,7 +132,7 @@ EOF;
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
     header('Accept-Ranges: none');
-    header('Content-Type: text/css');
+    header('Content-Type: text/css; charset=utf-8');
     header('Content-Length: '.strlen($css));
 
     echo $css;
@@ -147,7 +147,7 @@ function send_cached_css($csspath, $rev) {
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Pragma: ');
     header('Accept-Ranges: none');
-    header('Content-Type: text/css');
+    header('Content-Type: text/css; charset=utf-8');
     if (!min_enable_zlib_compression()) {
         header('Content-Length: '.filesize($csspath));
     }
