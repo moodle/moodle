@@ -180,6 +180,8 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
                 // OK
             } else if (is_null($value) && is_null($actual->$key)) {
                 // OK
+            } else if (!isset($actual->$key)) {
+                $mismatches[] = $key . ' (expected [' . $value . '] but was missing.';
             } else {
                 $mismatches[] = $key . ' (expected [' . $value . '] got [' . $actual->$key . '].';
             }
