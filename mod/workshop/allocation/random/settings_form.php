@@ -74,6 +74,14 @@ class workshop_random_allocator_form extends moodleform {
         $mform->setDefault('numper', workshop_random_allocator::USERTYPE_AUTHOR);
         $mform->addGroup($grpnumofreviews, 'grpnumofreviews', get_string('numofreviews', 'workshopallocation_random'),
                 array(' '), false);
+
+        if (VISIBLEGROUPS == $gmode) {
+            $mform->addElement('checkbox', 'excludesamegroup', get_string('excludesamegroup', 'workshopallocation_random'));
+            $mform->setDefault('excludesamegroup', 0);
+        } else {
+            $mform->addElement('hidden', 'excludesamegroup', 0);
+        }
+
         $mform->addElement('checkbox', 'removecurrent', get_string('removecurrentallocations', 'workshopallocation_random'));
         $mform->setDefault('removecurrent', 0);
 
