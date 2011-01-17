@@ -39,6 +39,7 @@ $string['dataroot'] = 'Diretório de Dados';
 $string['dbprefix'] = 'Prefixo das tabelas';
 $string['dirroot'] = 'Diretório Moodle';
 $string['environmenthead'] = 'Verificando o ambiente ...';
+$string['errorsinenvironment'] = 'Verificação do Ambiente falhou!';
 $string['installation'] = 'Instalação';
 $string['langdownloaderror'] = 'Infelizmente o idioma "{$a}" não foi instalado. A instalação vai continuar em Inglês.';
 $string['memorylimithelp'] = '<p>O limite de memória do PHP configurado atualmente no seu servidor é de {$a}.</p>
@@ -54,6 +55,8 @@ Com esta operação Moodle será capaz de configurar o limite de memória sózin
 <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário excluir o arquivo .htaccess .</p>
 </li></ol>';
+$string['pathssubdataroot'] = 'Você precisa de um local onde o Moodle possa salvar arquivos enviados. Este diretório deve possuir permissões de leitura e escrita pelo usuário do servidor web
+(geralmente \'nobody\' ou \'apache \'), mas não deverá ser acessível diretamente através da web. O instalador irá tentar criá-lo se ele não existir.';
 $string['pathssubdirroot'] = 'Caminho completo do diretório para instalação do Moddle.';
 $string['pathssubwwwroot'] = 'Endereço web completo onde o Moodle será acessado.
 Não é possível acessar o Moodle usando múltiplos endereços. Se seu site tem múltiplos endereços públicos você deve configurar redirecionamentos permantentes em todos eles exceto esse. Se seu site é acessado tanto da Intranet como Internet, use o endereço público aqui e configure o DNS para que os usuários da Intranet possam usar o endereço público também. Se o endereço não estiver correto, por favo mude a URL no seu navegador para reiniciar a instalação com um valor diferente.';
