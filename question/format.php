@@ -202,8 +202,8 @@ class qformat_default {
      * @param qtypehint hint about a question type from format
      * @return object question object suitable for save_options() or false if cannot handle
      */
-    function try_importing_using_qtypes($data, $question=null, $extra=null, $qtypehint='') {
-        global $QTYPES;
+    function try_importing_using_qtypes($data, $question = null, $extra = null,
+            $qtypehint = '') {
 
         // work out what format we are using
         $formatname = substr(get_class($this), strlen('qformat_'));
@@ -211,7 +211,7 @@ class qformat_default {
 
         //first try importing using a hint from format
         if (!empty($qtypehint)) {
-            $qtype = $QTYPES[$qtypehint];
+            $qtype = question_bank::get_qtype($qtypehint, false);
             if (is_object($qtype) && method_exists($qtype, $methodname)) {
                 $question = $qtype->$methodname($data, $question, $this, $extra);
                 if ($question) {
@@ -222,7 +222,7 @@ class qformat_default {
 
         // loop through installed questiontypes checking for
         // function to handle this question
-        foreach ($QTYPES as $qtype) {
+        foreach (question_bank::get_all_qtypes() as $qtype) {
             if (method_exists($qtype, $methodname)) {
                 if ($question = $qtype->$methodname($data, $question, $this, $extra)) {
                     return $question;
@@ -243,7 +243,7 @@ class qformat_default {
     /**
      * Process the file
      * This method should not normally be overidden
-     * @param object $context
+     * @param object $category
      * @return boolean success
      */
     function importprocess($category) {
@@ -286,7 +286,6 @@ class qformat_default {
         $gradeerrors = 0;
         $goodquestions = array();
         foreach ($questions as $question) {
-
             if (!empty($question->fraction) and (is_array($question->fraction))) {
                 $fractions = $question->fraction;
                 $answersvalid = true; // in case they are!
@@ -323,7 +322,7 @@ class qformat_default {
         foreach ($questions as $question) {   // Process and store each question
 
             // reset the php timeout
-            @set_time_limit(0);
+            set_time_limit(0);
 
             // check for category modifiers
             if ($question->qtype == 'category') {
@@ -428,7 +427,7 @@ class qformat_default {
 
         // check for context id in path, it might not be there in pre 1.9 exports
         $matchcount = preg_match('/^\$([a-z]+)\$$/', $catnames[0], $matches);
-        if ($matchcount==1) {
+        if ($matchcount == 1) {
             $contextid = $this->translator->string_to_context($matches[1]);
             array_shift($catnames);
         } else {
@@ -540,7 +539,7 @@ class qformat_default {
 
         $question = new stdClass();
         $question->shuffleanswers = $defaultshuffleanswers;
-        $question->defaultgrade = 1;
+        $question->defaultmark = 1;
         $question->image = "";
         $question->usecase = 0;
         $question->multiplier = array();
@@ -549,7 +548,7 @@ class qformat_default {
         $question->partiallycorrectfeedback = '';
         $question->incorrectfeedback = '';
         $question->answernumbering = 'abc';
-        $question->penalty = 0.1;
+        $question->penalty = 0.3333333;
         $question->length = 1;
 
         // this option in case the questiontypes class wants
@@ -652,7 +651,6 @@ class qformat_default {
             $questions = $this->questions;
         }
 
-        //echo $OUTPUT->notification(get_string('exportingquestions','quiz'));
         $count = 0;
 
         // results are first written into string (and then to a file)
@@ -663,8 +661,6 @@ class qformat_default {
         // if it changes we will record the category change in the output
         // file if selected. 0 means that it will get printed before the 1st question
         $trackcategory = 0;
-
-        $fs = get_file_storage();
 
         // iterate through questions
         foreach($questions as $question) {
@@ -704,19 +700,6 @@ class qformat_default {
             $count++;
 
             if (question_has_capability_on($question, 'view', $question->category)) {
-                // files used by questiontext
-                $files = $fs->get_area_files($contextid, 'question', 'questiontext', $question->id);
-                $question->questiontextfiles = $files;
-                // files used by generalfeedback
-                $files = $fs->get_area_files($contextid, 'question', 'generalfeedback', $question->id);
-                $question->generalfeedbackfiles = $files;
-                if (!empty($question->options->answers)) {
-                    foreach ($question->options->answers as $answer) {
-                        $files = $fs->get_area_files($contextid, 'question', 'answerfeedback', $answer->id);
-                        $answer->feedbackfiles = $files;
-                    }
-                }
-
                 $expout .= $this->writequestion($question, $contextid) . "\n";
             }
         }
@@ -727,7 +710,7 @@ class qformat_default {
 
         // did we actually process anything
         if ($count==0) {
-            print_error('noquestions','quiz',$continuepath);
+            print_error('noquestions', 'quiz', $continuepath);
         }
 
         // final pre-process on exported data

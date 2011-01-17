@@ -271,11 +271,11 @@ DONE question/behaviour/opaque/lang/en_utf8/qbehaviour_opaque.php      |    4 +
  question/behaviour/opaque/renderer.php             |   65 +
  question/behaviour/opaque/simpletest/testopaquebehaviour.php      |  227 ++
 
- question/format.php                                |   15 +-
- question/format/blackboard/format.php              |    2 +-
- question/format/gift/format.php                    |    6 +-
- question/format/hotpot/format.php                  |   10 +-
- question/format/webct/format.php                   |    4 +-
+DONE question/format.php                                |   15 +-
+DONE question/format/blackboard/format.php              |    2 +-
+DONE question/format/gift/format.php                    |    6 +-
+DONE question/format/hotpot/format.php                  |   10 +-
+DONE question/format/webct/format.php                   |    4 +-
  question/format/xml/format.php                     |  985 ++++---
  question/format/xml/simpletest/testxmlformat.php   | 1064 ++++++++
 

@@ -259,8 +259,8 @@ class qformat_webct extends qformat_default {
                         $question->name = substr($question->name,0,250)."...";
                         $warnings[] = get_string("questionnametoolong", "quiz", $nQuestionStartLine);
                     }
-                    if (!isset($question->defaultgrade)) {
-                        $question->defaultgrade = 1;
+                    if (!isset($question->defaultmark)) {
+                        $question->defaultmark = 1;
                     }
                     if (!isset($question->image)) {
                         $question->image = "";

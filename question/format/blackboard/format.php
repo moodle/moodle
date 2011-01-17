@@ -213,7 +213,7 @@ function process_ma($xml, &$questions) {
         $question = $this->defaultquestion();
 
         $question->qtype = MULTICHOICE;
-        $question->defaultgrade = 1;
+        $question->defaultmark = 1;
         $question->single = 0; // More than one answers allowed
         $question->image = ""; // No images with this format
 

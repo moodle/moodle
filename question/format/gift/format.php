@@ -288,7 +288,7 @@ class qformat_gift extends qformat_default {
 
         switch ($question->qtype) {
             case DESCRIPTION:
-                $question->defaultgrade = 0;
+                $question->defaultmark = 0;
                 $question->length = 0;
                 return $question;
                 break;
@@ -350,7 +350,7 @@ class qformat_gift extends qformat_default {
                     $question->fraction[$key] = $answer_weight;
                 }  // end foreach answer
 
-                //$question->defaultgrade = 1;
+                //$question->defaultmark = 1;
                 //$question->image = "";   // No images with this format
                 return $question;
                 break;
@@ -731,4 +731,3 @@ class qformat_gift extends qformat_default {
         return $expout;
     }
 }
-
