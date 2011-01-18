@@ -618,9 +618,12 @@ class grade_report_user extends grade_report {
             // find sums of all grade items in course
             $sql = "SELECT gg.itemid, SUM(gg.finalgrade) AS sum
                       FROM {grade_items} gi
-                      JOIN {grade_grades} gg ON gg.itemid = gi.id
-                      JOIN ($enrolledsql) je ON je.id = gg.userid
-                      JOIN {role_assignments} ra ON ra.userid = gg.userid
+                      JOIN {grade_grades} gg
+                           ON gg.itemid = gi.id
+                      JOIN ($enrolledsql) je
+                           ON je.id = gg.userid
+                      JOIN {role_assignments} ra
+                           ON ra.userid = gg.userid
                       $groupsql
                      WHERE gi.courseid = :courseid
                            AND ra.roleid $gradebookrolessql
@@ -647,9 +650,12 @@ class grade_report_user extends grade_report {
             $sql = "SELECT gi.id, COUNT(u.id) AS count
                       FROM {grade_items} gi
                       JOIN {user} u
-                      JOIN ($enrolledsql) je ON je.id = u.id
-                      JOIN {role_assignments} ra ON ra.userid = u.id
-                      LEFT JOIN {grade_grades} gg ON (gg.itemid = gi.id AND gg.userid = u.id AND gg.finalgrade IS NOT NULL AND gg.hidden = 0)
+                      JOIN ($enrolledsql) je
+                           ON je.id = u.id
+                      JOIN {role_assignments} ra
+                           ON ra.userid = u.id
+                      LEFT JOIN {grade_grades} gg
+                           ON (gg.itemid = gi.id AND gg.userid = u.id AND gg.finalgrade IS NOT NULL AND gg.hidden = 0)
                       $groupsql
                     WHERE gi.courseid = :courseid
                           AND ra.roleid $gradebookrolessql
