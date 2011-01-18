@@ -340,7 +340,7 @@ class grade_report_grader extends grade_report {
         list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
 
         //fields we need from the user table
-        $userfields = user_picture::fields('u', array('idnumber'));	
+        $userfields = user_picture::fields('u', array('idnumber'));
 
         //if the user has clicked one of the sort asc/desc arrows
         if (is_numeric($this->sortitemid)) {
@@ -350,10 +350,13 @@ class grade_report_grader extends grade_report {
 
             $sql = "SELECT $userfields
                       FROM {user} u
-                           JOIN ($enrolledsql) je ON je.id = u.id
-                           JOIN {role_assignments} ra ON ra.userid = u.id
-                           $this->groupsql
-                           LEFT JOIN {grade_grades} g ON (g.userid = u.id AND g.itemid = :gitemid)
+                      JOIN ($enrolledsql) je
+                           ON je.id = u.id
+                      JOIN {role_assignments} ra
+                           ON ra.userid = u.id
+                      $this->groupsql
+                      LEFT JOIN {grade_grades} g
+                                ON (g.userid = u.id AND g.itemid = :gitemid)
                      WHERE ra.roleid $gradebookrolessql
                            AND u.deleted = 0
                            AND ra.contextid ".get_related_contexts_string($this->context)."
@@ -376,10 +379,12 @@ class grade_report_grader extends grade_report {
 
             $sql = "SELECT DISTINCT $userfields
                       FROM {user} u
-                           JOIN ($enrolledsql) je ON je.id = u.id
-                           JOIN {role_assignments} ra ON u.id = ra.userid
+                      JOIN ($enrolledsql) je
+                           ON je.id = u.id
+                      JOIN {role_assignments} ra
+                           ON u.id = ra.userid
                            $this->groupsql
-                     WHERE ra.roleid $gradebookrolessql 
+                     WHERE ra.roleid $gradebookrolessql
                            AND u.deleted = 0
                            AND ra.contextid ".get_related_contexts_string($this->context)."
                            $this->groupwheresql
@@ -1291,11 +1296,15 @@ class grade_report_grader extends grade_report {
             // find sums of all grade items in course
             $SQL = "SELECT g.itemid, SUM(g.finalgrade) AS sum
                       FROM {grade_items} gi
-                           JOIN {grade_grades} g      ON g.itemid = gi.id
-                           JOIN {user} u              ON u.id = g.userid
-                           JOIN ($enrolledsql) je ON je.id = u.id
-                           JOIN {role_assignments} ra ON ra.userid = u.id
-                           $groupsql
+                      JOIN {grade_grades} g
+                           ON g.itemid = gi.id
+                      JOIN {user} u
+                           ON u.id = g.userid
+                      JOIN ($enrolledsql) je
+                           ON je.id = u.id
+                      JOIN {role_assignments} ra
+                           ON ra.userid = u.id
+                      $groupsql
                      WHERE gi.courseid = :courseid
                            AND ra.roleid $gradebookrolessql
                            AND ra.contextid ".get_related_contexts_string($this->context)."
@@ -1313,11 +1322,14 @@ class grade_report_grader extends grade_report {
             // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
             $SQL = "SELECT gi.id, COUNT(u.id) AS count
                       FROM {grade_items} gi
-                           CROSS JOIN {user} u
-                           JOIN ($enrolledsql) je ON je.id = u.id
-                           JOIN {role_assignments} ra        ON ra.userid = u.id
-                           LEFT OUTER JOIN  {grade_grades} g ON (g.itemid = gi.id AND g.userid = u.id AND g.finalgrade IS NOT NULL)
-                           $groupsql
+                      CROSS JOIN {user} u
+                      JOIN ($enrolledsql) je
+                           ON je.id = u.id
+                      JOIN {role_assignments} ra
+                           ON ra.userid = u.id
+                      LEFT OUTER JOIN {grade_grades} g
+                           ON (g.itemid = gi.id AND g.userid = u.id AND g.finalgrade IS NOT NULL)
+                      $groupsql
                      WHERE gi.courseid = :courseid
                            AND ra.roleid $gradebookrolessql
                            AND ra.contextid ".get_related_contexts_string($this->context)."

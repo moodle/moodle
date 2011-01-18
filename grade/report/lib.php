@@ -291,10 +291,13 @@ abstract class grade_report {
 
         $countsql = "SELECT COUNT(DISTINCT u.id)
                        FROM {user} u
-                            JOIN ($enrolledsql) je ON je.id = u.id
-                            JOIN {role_assignments} ra ON u.id = ra.userid
-                            $groupsql
-                      WHERE ra.roleid $gradebookrolessql AND u.deleted = 0
+                       JOIN ($enrolledsql) je
+                            ON je.id = u.id
+                       JOIN {role_assignments} ra
+                            ON u.id = ra.userid
+                       $groupsql
+                      WHERE ra.roleid $gradebookrolessql
+                            AND u.deleted = 0
                             $groupwheresql
                             AND ra.contextid ".get_related_contexts_string($this->context);
         return $DB->count_records_sql($countsql, $params);
