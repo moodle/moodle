@@ -250,10 +250,10 @@ DONE question/behaviour/informationitem/lang/en_utf8/qbehaviour_informationitem.
 DONE question/behaviour/informationitem/renderer.php    |   42 +
 DONE question/behaviour/informationitem/simpletest/testwalkthrough.php |   78 +
 
- question/behaviour/interactive/behaviour.php       |  232 ++
+DONE question/behaviour/interactive/behaviour.php       |  232 ++
 DONE question/behaviour/interactive/lang/en_utf8/qbehaviour_interactive.php        |    6 +
 DONE question/behaviour/interactive/renderer.php        |   62 +
- question/behaviour/interactive/interactive/simpletest/testwalkthrough.php     |  470 ++++
+DONE question/behaviour/interactive/interactive/simpletest/testwalkthrough.php     |  470 ++++
 
 DONE question/behaviour/interactivecountback/behaviour.php   |   91 +
 DONE question/behaviour/interactivecountback/en_utf8/qbehaviour_interactivecountback.php    |    3 +
@@ -270,10 +270,10 @@ DONE question/behaviour/missing/lang/en_utf8/qbehaviour_missing.php    |    3 +
 DONE question/behaviour/missing/renderer.php            |   35 +
 DONE question/behaviour/missing/simpletest/testmissingbehaviour.php    |   96 +
 
- question/behaviour/opaque/behaviour.php            |  197 ++
+DONE question/behaviour/opaque/behaviour.php            |  197 ++
 DONE question/behaviour/opaque/lang/en_utf8/qbehaviour_opaque.php      |    4 +
- question/behaviour/opaque/renderer.php             |   65 +
- question/behaviour/opaque/simpletest/testopaquebehaviour.php      |  227 ++
+DONE question/behaviour/opaque/renderer.php             |   65 +
+DONE question/behaviour/opaque/simpletest/testopaquebehaviour.php      |  227 ++
 
 DONE question/format.php                                |   15 +-
 DONE question/format/blackboard/format.php              |    2 +-
@@ -381,7 +381,7 @@ DONE question/type/opaque/db/upgrade.php                |   69 +
 DONE question/type/opaque/edit_opaque_form.php          |  114 +
 DONE question/type/opaque/editengine.php                |  152 +
 DONE question/type/opaque/engines.php                   |   78 +
- question/type/opaque/file.php                      |   31 +
+DONE question/type/opaque/file.php                      |   31 +
 DONE question/type/opaque/icon.gif                      |  Bin 0 -> 97 bytes
 DONE question/type/opaque/lang/en_utf8/help/opaque/configuredengines.html     |    6 +
 DONE question/type/opaque/lang/en_utf8/help/opaque/editengine.html       |   16 +
@@ -394,8 +394,8 @@ DONE question/type/opaque/locallib.php                  |  826 ++++++
 DONE question/type/opaque/question.php                  |   55 +
 DONE question/type/opaque/questiontype.php              |  220 ++
 DONE question/type/opaque/renderer.php                  |   37 +
- question/type/opaque/simpletest/testlocallib.php   |   60 +
- question/type/opaque/simpletest/testquestiontype.php    |  303 ++
+DONE question/type/opaque/simpletest/testlocallib.php   |   60 +
+DONE question/type/opaque/simpletest/testquestiontype.php    |  303 ++
 DONE question/type/opaque/styles.css                    |   14 +
 DONE question/type/opaque/testengine.php                |   70 +
 DONE question/type/opaque/version.php                   |    5 +

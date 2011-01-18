@@ -69,12 +69,12 @@ class qbehaviour_opaque extends question_behaviour {
         }
 
         // Set up the random seed to be the current time in milliseconds.
-        list($micros, $sec) = explode(" ", microtime());
+        list($micros, $sec) = explode(' ', microtime());
         $step->set_behaviour_var('_randomseed', $sec . floor($micros * 1000));
         $step->set_behaviour_var('_userid', $USER->id);
         $step->set_behaviour_var('_language', current_language());
         $step->set_behaviour_var('_preferredbehaviour', $this->preferredbehaviour);
-        $opaquestate = update_opaque_state($this->qa, $step);
+        $opaquestate = qtype_opaque_update_state($this->qa, $step);
         $step->set_behaviour_var('_statestring', $opaquestate->progressinfo);
 
         // Remember the question summary.
@@ -147,10 +147,10 @@ class qbehaviour_opaque extends question_behaviour {
     }
 
     public function process_remote_action(question_attempt_pending_step $pendingstep) {
-        $opaquestate = update_opaque_state($this->qa, $pendingstep);
-
-        if (is_string($opaquestate)) {
-            notify($opaquestate);
+        try {
+            $opaquestate = qtype_opaque_update_state($this->qa, $pendingstep);
+        } catch (SoapFault $sf) {
+            print_object($sf);
             return question_attempt::DISCARD; // TODO
         }
 

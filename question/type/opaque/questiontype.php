@@ -59,12 +59,12 @@ class qtype_opaque extends question_type {
         return array('question_opaque', 'engineid', 'remoteid', 'remoteversion');
     }
 
-    function save_question($question, $form, $course) {
+    function save_question($question, $form) {
         $form->questiontext = '';
         $form->questiontextformat = FORMAT_MOODLE;
         $form->unlimited = 0;
         $form->penalty = 0;
-        return parent::save_question($question, $form, $course);
+        return parent::save_question($question, $form);
     }
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {

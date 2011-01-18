@@ -33,31 +33,33 @@ class qbehaviour_opaque_renderer extends qbehaviour_renderer {
                     array('class' => 'question_aborted'));
         }
 
-        $opaquestate =& update_opaque_state($qa);
-        if (is_string($opaquestate)) {
-            return notify($opaquestate, '', '', true);
-            // TODO
+        try {
+            $opaquestate = qtype_opaque_update_state($qa);
+        } catch (SoapFault $sf) {
+            return html_writer::tag('div', get_string('errorconnecting', 'qtype_opaque') .
+                    html_writer::tag('pre', get_string('soapfault', 'qtype_opaque', $sf), array('class' => 'notifytiny')),
+                    array('class' => 'opaqueerror'));
         }
 
         return html_writer::tag('div', $opaquestate->xhtml,
-                array('class' => opaque_browser_type()));
+                array('class' => qtype_opaque_browser_type()));
     }
 
     public function head_code(question_attempt $qa) {
         $output = '';
-        $opaquestate =& update_opaque_state($qa);
+        try {
+            $opaquestate = qtype_opaque_update_state($qa);
+        } catch (SoapFault $sf) {
+            // Errors are reported properly elsewhere.
+            return '';
+        }
 
         $question = $qa->get_question();
-        $resourcecache = new opaque_resource_cache($question->engineid,
+        $resourcecache = new qtype_opaque_resource_cache($question->engineid,
                 $question->remoteid, $question->remoteversion);
 
         if (!empty($opaquestate->cssfilename) && $resourcecache->file_in_cache($opaquestate->cssfilename)) {
-            $output .= '<link rel="stylesheet" type="text/css" href="' .
-                    $resourcecache->file_url($opaquestate->cssfilename) . '" />';
-        }
-
-        if(!empty($opaquestate->headXHTML)) {
-            $output .= $opaquestate->headXHTML;
+            $this->page->requires->css($resourcecache->file_url($opaquestate->cssfilename));
         }
 
         return $output;

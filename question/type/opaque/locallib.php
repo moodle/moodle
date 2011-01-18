@@ -174,7 +174,7 @@ class qtype_opaque_engine_manager {
             $conditions[] = 'qb.url = :qburl';
             $params['qburl'] = $qburl;
         }
-        return get_records_sql_menu('
+        return $DB->get_records_sql_menu('
                 SELECT e.id,1 ' . implode(' ', $tables) . ' WHERE ' .
                 implode(' AND ', $conditions), $params);
     }
@@ -335,7 +335,7 @@ function qtype_opaque_start_question_session($engine, $remoteid, $remoteversion,
         'randomseed' => $data['-_randomseed'],
         'userid' => $data['-_userid'],
         'language' => $data['-_language'],
-        'passKey' => generate_passkey($engine->passkey, $data['-_userid']),
+        'passKey' => qtype_opaque_generate_passkey($engine->passkey, $data['-_userid']),
         'preferredbehaviour' => $data['-_preferredbehaviour'],
     );
 
@@ -400,7 +400,7 @@ function qtype_opaque_update_state(question_attempt $qa, question_attempt_step $
     } else if ($SESSION->cached_opaque_state->qaid != $qa->get_database_id() ||
             $SESSION->cached_opaque_state->sequencenumber > $targetseq) {
         if (!empty($SESSION->cached_opaque_state->questionsessionid)) {
-            $error = stop_question_session($SESSION->cached_opaque_state->engine,
+            $error = qtype_opaque_stop_question_session($SESSION->cached_opaque_state->engine,
                     $SESSION->cached_opaque_state->questionsessionid);
             if (is_string($error)) {
                 unset($SESSION->cached_opaque_state);
@@ -415,7 +415,7 @@ function qtype_opaque_update_state(question_attempt $qa, question_attempt_step $
         $cachestatus = 'good';
     }
 
-    $resourcecache = new opaque_resource_cache($question->engineid,
+    $resourcecache = new qtype_opaque_resource_cache($question->engineid,
             $question->remoteid, $question->remoteversion);
 
     if ($cachestatus == 'empty') {
@@ -430,22 +430,22 @@ function qtype_opaque_update_state(question_attempt $qa, question_attempt_step $
         $opaquestate->sequencenumber = -1;
         $opaquestate->resultssequencenumber = -1;
 
-        $engine = load_engine_def($question->engineid);
+        $engine = qtype_opaque_load_engine_def($question->engineid);
         if (is_string($engine)) {
             unset($SESSION->cached_opaque_state);
             return $engine;
         }
         $opaquestate->engine = $engine;
 
-        $step = opaque_get_step(0, $qa, $pendingstep);
-        $startreturn = start_question_session($engine, $question->remoteid,
+        $step = qtype_opaque_get_step(0, $qa, $pendingstep);
+        $startreturn = qtype_opaque_start_question_session($engine, $question->remoteid,
                 $question->remoteversion, $step->get_all_data(), $resourcecache->list_cached_resources());
         if (is_string($startreturn)) {
             unset($SESSION->cached_opaque_state);
             return $startreturn;
         }
 
-        extract_stuff_from_response($opaquestate, $startreturn, $resourcecache);
+        qtype_opaque_extract_stuff_from_response($opaquestate, $startreturn, $resourcecache);
         $opaquestate->sequencenumber++;
         $cachestatus = 'catchup';
     } else {
@@ -454,13 +454,13 @@ function qtype_opaque_update_state(question_attempt $qa, question_attempt_step $
 
     if ($cachestatus == 'catchup') {
         if ($opaquestate->sequencenumber >= $targetseq) {
-            $error = stop_question_session($opaquestate->engine,
+            $error = qtype_opaque_stop_question_session($opaquestate->engine,
                     $opaquestate->questionsessionid);
         }
         while ($opaquestate->sequencenumber < $targetseq) {
-            $step = opaque_get_step($opaquestate->sequencenumber + 1, $qa, $pendingstep);
+            $step = qtype_opaque_get_step($opaquestate->sequencenumber + 1, $qa, $pendingstep);
 
-            $processreturn = opaque_process($opaquestate->engine, $opaquestate->questionsessionid, $step->get_submitted_data());
+            $processreturn = qtype_opaque_process($opaquestate->engine, $opaquestate->questionsessionid, $step->get_submitted_data());
             if (is_string($processreturn)) {
                 unset($SESSION->cached_opaque_state);
                 return $processreturn;
@@ -473,11 +473,11 @@ function qtype_opaque_update_state(question_attempt $qa, question_attempt_step $
             if ($processreturn->questionEnd) {
                 $opaquestate->questionended = true;
                 $opaquestate->sequencenumber = $targetseq;
-                $opaquestate->xhtml = strip_omact_buttons($opaquestate->xhtml);
+                $opaquestate->xhtml = qtype_opaque_strip_omact_buttons($opaquestate->xhtml);
                 unset($opaquestate->questionsessionid);
                 break;
             }
-            extract_stuff_from_response($opaquestate, $processreturn, $resourcecache);
+            qtype_opaque_extract_stuff_from_response($opaquestate, $processreturn, $resourcecache);
 
             $opaquestate->sequencenumber++;
         }
@@ -538,14 +538,14 @@ function qtype_opaque_extract_stuff_from_response($opaquestate, $response, $reso
     // Actually, we remove any non-disabled buttons, and the following script tag.
     // TODO think of a better way to do this.
     if ($opaquestate->resultssequencenumber >= 0) {
-        $xhtml = strip_omact_buttons($xhtml);
+        $xhtml = qtype_opaque_strip_omact_buttons($xhtml);
     }
 
     $opaquestate->xhtml = $xhtml;
 
     // Process the CSS (only when we have a StartResponse).
     if (!empty($response->CSS)) {
-        $opaquestate->cssfilename = opaque_stylesheet_filename($response->questionSession);
+        $opaquestate->cssfilename = qtype_opaque_stylesheet_filename($response->questionSession);
         $resourcecache->cache_file($opaquestate->cssfilename, 'text/css;charset=UTF-8', $response->CSS);
     }
 
@@ -623,7 +623,7 @@ class qtype_opaque_resource_cache {
     protected $baseurl; // initial part of the URL to link to a file in the cache.
 
     /**
-     * Create a new opaque_resource_cache for a particular remote question.
+     * Create a new qtype_opaque_resource_cache for a particular remote question.
      * @param integer $engineid the id of the question engine.
      * @param string $remoteid remote question id, as per Opaque spec.
      * @param string $remoteversion remote question version, as per Opaque spec.
@@ -639,9 +639,8 @@ class qtype_opaque_resource_cache {
         if (!is_dir($this->metadatafolder)) {
             $this->mkdir_recursive($this->metadatafolder);
         }
-        $this->baseurl = $CFG->wwwroot . '/question/type/opaque/file.php?engineid=' .
-                $engineid . '&amp;remoteid=' . $remoteid .
-                '&amp;remoteversion=' . $remoteversion . '&amp;filename=';
+        $this->baseurl = new moodle_url('/question/type/opaque/file.php', array(
+                'engineid' => $engineid, 'remoteid' => $remoteid, 'remoteversion' => $remoteversion));
     }
 
     /**
@@ -665,7 +664,7 @@ class qtype_opaque_resource_cache {
      * @return the URL to access this file.
      */
     public function file_url($filename) {
-        return $this->baseurl . $filename;
+        return new moodle_url($this->baseurl, array('filename' => $filename));
     }
 
     /**

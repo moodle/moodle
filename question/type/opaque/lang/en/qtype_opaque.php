@@ -20,6 +20,7 @@ $string['editquestionengine_help'] = 'Each remote system you configure must have
 $string['editquestionengineshort'] = 'Editing engine';
 $string['enginedeleted'] = 'Engine configuration deleted.';
 $string['enginename'] = 'Engine name';
+$string['errorconnecting'] = 'Error connecting to the remote question engine.';
 $string['getmetadatacallfailed'] = 'Failed to retrieve the metadata for this question.  Are you sure the remote id and version are correct?';
 $string['invalidquestionidsyntax'] = 'This does not match the syntax for a question id';
 $string['invalidquestionversionsyntax'] = 'The question version should be of the form major.minor, where major and minor are integers.';
@@ -53,7 +54,11 @@ $string['questionengine_help'] = 'Select the remote question engine that hosts t
 $string['questionid'] = 'Question id';
 $string['questionid_help'] = 'Opaque questions are identified by both a question id and a question version number. The person who created the question you are trying to refer to will be able to tell you these.';
 $string['questionversion'] = 'Question version';
-$string['soapfault'] = 'Soap fault: Fault code: {$a->faultcode}. Fault actor: {$a->faultactor}. Fault string: {$a->faultstring}. Fault detail: {$a->faultdetail}.';
+$string['soapfault'] = 'Technical details:
+Fault code: {$a->faultcode}.
+Fault actor: {$a->faultactor}.
+Fault string: {$a->faultstring}.
+Fault detail: {$a->faultdetail}.';
 $string['startcallfailed'] = 'Failed to start a question session. {$a}';
 $string['stopcallfailed'] = 'Failed to close question session. {$a}';
 $string['testconnection'] = 'Test connection';

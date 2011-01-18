@@ -71,7 +71,7 @@ class question_edit_opaque_form extends question_edit_form {
         $errors = parent::validation($data, $files);
 
         // Check we can connect to this questoin engine.
-        $engine = load_engine_def($data['engineid']);
+        $engine = qtype_opaque_load_engine_def($data['engineid']);
         if (is_string($engine)) {
             $errors['engineid'] = $engine;
         }
@@ -90,7 +90,7 @@ class question_edit_opaque_form extends question_edit_form {
         // Try connecting to the remote question engine both as extra validation of the id, and
         // also to get the default grade.
         if ($remoteidok) {
-            $metadata = get_question_metadata($engine, $data['remoteid'], $data['remoteversion']);
+            $metadata = qtype_opaque_get_question_metadata($engine, $data['remoteid'], $data['remoteversion']);
             if (is_string($metadata)) {
                 $errors['remoteid'] = $metadata;
             } else if (!isset($metadata['questionmetadata']['#']['scoring'][0]['#']['marks'][0]['#'])) {
