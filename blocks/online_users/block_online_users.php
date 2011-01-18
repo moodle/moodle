@@ -43,8 +43,6 @@ class block_online_users extends block_base {
 
         $groupmembers = "";
         $groupselect  = "";
-        $rafrom       = "";
-        $rawhere      = "";
         $params = array();
 
         //Add this to the SQL to show only group users
@@ -78,22 +76,22 @@ class block_online_users extends block_base {
             $params = array_merge($params, $eparams);
 
             $sql = "SELECT $userfields, MAX(ul.timeaccess) AS lastaccess
-                      FROM {user_lastaccess} ul, {user} u $groupmembers $rafrom
+                      FROM {user_lastaccess} ul $groupmembers, {user} u
                       JOIN ($esqljoin) euj ON euj.id = u.id
                      WHERE ul.timeaccess > $timefrom
                            AND u.id = ul.userid
                            AND ul.courseid = :courseid
-                           $groupselect $rawhere
+                           $groupselect
                   GROUP BY $userfields
                   ORDER BY lastaccess DESC";
 
            $csql = "SELECT u.id
-                      FROM {user_lastaccess} ul, {user} u $groupmembers $rafrom
+                      FROM {user_lastaccess} ul $groupmembers, {user} u
                       JOIN ($esqljoin) euj ON euj.id = u.id
                      WHERE ul.timeaccess > $timefrom
                            AND u.id = ul.userid
                            AND ul.courseid = :courseid
-                           $groupselect $rawhere
+                           $groupselect
                   GROUP BY u.id";
 
             $params['courseid'] = $this->page->course->id;
