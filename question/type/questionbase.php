@@ -673,6 +673,9 @@ abstract class question_graded_by_strategy extends question_graded_automatically
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_answer {
+    /** @var integer the answer id. */
+    public $id;
+
     /** @var string the answer. */
     public $answer;
 
@@ -682,16 +685,21 @@ class question_answer {
     /** @var string the feedback for this answer. */
     public $feedback;
 
+    /** @var integer one of the FORMAT_... constans. */
+    public $feedbackformat;
+
     /**
      * Constructor.
      * @param string $answer the answer.
      * @param number $fraction the fraction this answer is worth.
      * @param string $feedback the feedback for this answer.
      */
-    public function __construct($answer, $fraction, $feedback) {
+    public function __construct($id, $answer, $fraction, $feedback, $feedbackformat) {
+        $this->id = $id;
         $this->answer = $answer;
         $this->fraction = $fraction;
         $this->feedback = $feedback;
+        $this->feedbackformat = $feedbackformat;
     }
 }
 

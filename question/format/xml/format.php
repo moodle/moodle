@@ -1160,8 +1160,6 @@ class qformat_xml extends qformat_default {
         } else if ($question->qtype != MULTIANSWER) {
             // for all question types except Close
             $name_text = $this->writetext($question->name, 3);
-            $qtformat = $this->get_format($question->questiontextformat);
-            $generalfeedbackformat = $this->get_format($question->generalfeedbackformat);
 
             $question_text = $this->writetext($question->questiontext, 3);
             $question_text_files = $this->writefiles($question->questiontextfiles);
@@ -1173,11 +1171,11 @@ class qformat_xml extends qformat_default {
             $expout .= "    <name>\n";
             $expout .= $name_text;
             $expout .= "    </name>\n";
-            $expout .= "    <questiontext format=\"$qtformat\">\n";
+            $expout .= "    <questiontext {$this->format($question->questiontextformat)}>\n";
             $expout .= $question_text;
             $expout .= $question_text_files;
             $expout .= "    </questiontext>\n";
-            $expout .= "    <generalfeedback format=\"$generalfeedbackformat\">\n";
+            $expout .= "    <generalfeedback {$this->format($question->generalfeedbackformat)}>\n";
             $expout .= $generalfeedback;
             $expout .= $generalfeedback_files;
             $expout .= "    </generalfeedback>\n";
@@ -1208,12 +1206,12 @@ class qformat_xml extends qformat_default {
 
         case TRUEFALSE:
             $trueanswer = $question->options->answers[$question->options->trueanswer];
-            $expout .= $this->write_answer(new question_answer(
-                    'true', $trueanswer->fraction, $trueanswer->feedback));
+            $trueanswer->answer = 'true';
+            $expout .= $this->write_answer($trueanswer);
 
             $falseanswer = $question->options->answers[$question->options->falseanswer];
-            $expout .= $this->write_answer(new question_answer(
-                    'false', $falseanswer->fraction, $falseanswer->feedback));
+            $falseanswer->answer = 'false';
+            $expout .= $this->write_answer($falseanswer);
             break;
 
         case MULTICHOICE:
@@ -1222,18 +1220,6 @@ class qformat_xml extends qformat_default {
             $expout .= "    <answernumbering>{$question->options->answernumbering}</answernumbering>\n";
             $expout .= $this->write_combined_feedback($question->options);
             $expout .= $this->write_answers($question->options->answers);
-            // TODO move the following to writeanswers.
-            foreach($question->options->answers as $answer) {
-                $percent = $answer->fraction * 100;
-                $expout .= "      <answer fraction=\"$percent\">\n";
-                $expout .= $this->writetext($answer->answer,4,false);
-                $feedbackformat = $this->get_format($answer->feedbackformat);
-                $expout .= "      <feedback format=\"$feedbackformat\">\n";
-                $expout .= $this->writetext($answer->feedback,5,false);
-                $expout .= $this->writefiles($answer->feedbackfiles);
-                $expout .= "      </feedback>\n";
-                $expout .= "    </answer>\n";
-            }
             break;
 
         case SHORTANSWER:
@@ -1271,9 +1257,8 @@ class qformat_xml extends qformat_default {
                 $expout .= "    <unitsleft>{$question->options->unitsleft}</unitsleft>\n";
             }
             if (!empty($question->options->instructionsformat)) {
-                $textformat = $this->get_format($question->options->instructionsformat);
                 $files = $fs->get_area_files($contextid, 'qtype_numerical', 'instruction', $question->id);
-                $expout .= "    <instructions format=\"$textformat\">\n";
+                $expout .= "    <instructions {$this->format($question->options->instructionsformat)}>\n";
                 $expout .= $this->writetext($question->options->instructions, 3);
                 $expout .= $this->writefiles($files);
                 $expout .= "    </instructions>\n";
@@ -1285,8 +1270,7 @@ class qformat_xml extends qformat_default {
             $expout .= $this->write_combined_feedback($question->options);
             foreach ($question->options->subquestions as $subquestion) {
                 $files = $fs->get_area_files($contextid, 'qtype_match', 'subquestion', $subquestion->id);
-                $textformat = $this->get_format($subquestion->questiontextformat);
-                $expout .= "    <subquestion format=\"$textformat\">\n";
+                $expout .= "    <subquestion {$this->format($subquestion->questiontextformat)}>\n";
                 $expout .= $this->writetext($subquestion->questiontext, 3);
                 $expout .= $this->writefiles($files);
                 $expout .= "      <answer>\n";
@@ -1345,7 +1329,6 @@ class qformat_xml extends qformat_default {
                 $tolerance = $answer->tolerance;
                 $tolerancetype = $answer->tolerancetype;
                 $correctanswerlength= $answer->correctanswerlength ;
-                $correctanswerformat= $answer->correctanswerformat;
                 $percent = 100 * $answer->fraction;
                 $expout .= "<answer fraction=\"$percent\">\n";
                 // "<text/>" tags are an added feature, old files won't have them
@@ -1355,7 +1338,7 @@ class qformat_xml extends qformat_default {
                 $expout .= "    <correctanswerformat>$correctanswerformat</correctanswerformat>\n";
                 $expout .= "    <correctanswerlength>$correctanswerlength</correctanswerlength>\n";
                 $feedbackformat = $this->get_format($answer->feedbackformat);
-                $expout .= "    <feedback format=\"$feedbackformat\">\n";
+                $expout .= "    <feedback {$this->format($answer->correctanswerformat)}>\n";
                 $expout .= $this->writetext($answer->feedback);
                 $expout .= $this->writefiles($answer->feedbackfiles);
                 $expout .= "    </feedback>\n";
@@ -1375,9 +1358,8 @@ class qformat_xml extends qformat_default {
             }
 
             if (isset($question->options->instructionsformat)) {
-                $textformat = $this->get_format($question->options->instructionsformat);
                 $files = $fs->get_area_files($contextid, $component, 'instruction', $question->id);
-                $expout .= "    <instructions format=\"$textformat\">\n";
+                $expout .= "    <instructions {$this->format($question->options->instructionsformat)}>\n";
                 $expout .= $this->writetext($question->options->instructions, 3);
                 $expout .= $this->writefiles($files);
                 $expout .= "    </instructions>\n";
@@ -1478,8 +1460,9 @@ class qformat_xml extends qformat_default {
         $output = '';
         $output .= "    <answer fraction=\"$percent\">\n";
         $output .= $this->writetext($answer->answer, 3);
-        $output .= "      <feedback>\n";
+        $output .= "      <feedback {$this->format($answer->feedbackformat)}>\n";
         $output .= $this->writetext($answer->feedback, 4);
+        $output .= $this->writefiles($answer->feedbackfiles);
         $output .= "      </feedback>\n";
         $output .= $extra;
         $output .= "    </answer>\n";
@@ -1498,9 +1481,17 @@ class qformat_xml extends qformat_default {
         return $output;
     }
 
+    /**
+     * @param unknown_type $format a FORMAT_... constant.
+     * @return string the attribute to add to an XML tag.
+     */
+    protected function format($format) {
+        return 'format="' . $this->get_format($format) . '"';
+    }
+
     public function write_hint($hint) {
         $output = '';
-        $output .= "    <hint>\n";
+        $output .= "    <hint {$this->format($hint->hintformat)}>\n";
         $output .= '      ' . $this->writetext($hint->hint);
         if (!empty($hint->shownumcorrect)) {
             $output .= "      <shownumcorrect/>\n";
@@ -1516,11 +1507,11 @@ class qformat_xml extends qformat_default {
     }
 
     public function write_combined_feedback($questionoptions) {
-        $output = "    <correctfeedback>
+        $output = "    <correctfeedback {$this->format($questionoptions->correctfeedbackformat)}>
       {$this->writetext($questionoptions->correctfeedback)}    </correctfeedback>
-    <partiallycorrectfeedback>
+    <partiallycorrectfeedback {$this->format($questionoptions->partiallycorrectfeedbackformat)}>
       {$this->writetext($questionoptions->partiallycorrectfeedback)}    </partiallycorrectfeedback>
-    <incorrectfeedback>
+    <incorrectfeedback {$this->format($questionoptions->incorrectfeedbackformat)}>
       {$this->writetext($questionoptions->incorrectfeedback)}    </incorrectfeedback>\n";
         if (!empty($questionoptions->shownumcorrect)) {
             $output .= "    <shownumcorrect/>\n";

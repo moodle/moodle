@@ -84,12 +84,12 @@ class qtype_multichoice_single_question_test extends UnitTestCase {
         test_question_maker::set_standard_combined_feedback_fields($mc);
 
         $mc->answers = array(
-            11 => new question_answer('1', 0.3333333, ''),
-            12 => new question_answer('2', -1, ''),
-            13 => new question_answer('3', 0.3333333, ''),
-            14 => new question_answer('4', -1, ''),
-            15 => new question_answer('5', 0.3333333, ''),
-            16 => new question_answer('6', -1, ''),
+            11 => new question_answer(11, '1', 0.3333333, '', FORMAT_HTML),
+            12 => new question_answer(12, '2', -1, '', FORMAT_HTML),
+            13 => new question_answer(13, '3', 0.3333333, '', FORMAT_HTML),
+            14 => new question_answer(14, '4', -1, '', FORMAT_HTML),
+            15 => new question_answer(15, '5', 0.3333333, '', FORMAT_HTML),
+            16 => new question_answer(16, '6', -1, '', FORMAT_HTML),
         );
 
         $mc->init_first_step(new question_attempt_step());

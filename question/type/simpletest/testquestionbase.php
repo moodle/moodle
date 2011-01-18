@@ -64,23 +64,23 @@ class question_first_matching_answer_grading_strategy_test extends UnitTestCase 
     }
 
     public function test_matching_answer_returned1() {
-        $answer = new question_answer('frog', 1, '');
+        $answer = new question_answer(0, 'frog', 1, '', FORMAT_HTML);
         $question = new test_response_answer_comparer(array($answer));
         $strategy = new question_first_matching_answer_grading_strategy($question);
         $this->assertIdentical($answer, $strategy->grade(array('answer' => 'frog')));
     }
 
     public function test_matching_answer_returned2() {
-        $answer = new question_answer('frog', 1, '');
-        $answer2 = new question_answer('frog', 0.5, '');
+        $answer = new question_answer(0, 'frog', 1, '', FORMAT_HTML);
+        $answer2 = new question_answer(0, 'frog', 0.5, '');
         $question = new test_response_answer_comparer(array($answer, $answer2));
         $strategy = new question_first_matching_answer_grading_strategy($question);
         $this->assertIdentical($answer, $strategy->grade(array('answer' => 'frog')));
     }
 
     public function test_no_matching_answer_gives_null() {
-        $answer = new question_answer('frog', 1, '');
-        $answer2 = new question_answer('frog', 0.5, '');
+        $answer = new question_answer(0, 'frog', 1, '', FORMAT_HTML);
+        $answer2 = new question_answer(0, 'frog', 0.5, '', FORMAT_HTML);
         $question = new test_response_answer_comparer(array($answer, $answer2));
         $strategy = new question_first_matching_answer_grading_strategy($question);
         $this->assertNull($strategy->grade(array('answer' => 'toad')));

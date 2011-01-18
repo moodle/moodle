@@ -672,7 +672,8 @@ class question_type {
             return;
         }
         foreach ($questiondata->options->answers as $a) {
-            $question->answers[$a->id] = new question_answer($a->answer, $a->fraction, $a->feedback);
+            $question->answers[$a->id] = new question_answer($a->id, $a->answer,
+                    $a->fraction, $a->feedback, $a->feedbackformat);
         }
     }
 

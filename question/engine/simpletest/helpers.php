@@ -135,9 +135,9 @@ class test_question_maker {
         $mc->answernumbering = 'abc';
 
         $mc->answers = array(
-            13 => new question_answer('A', 1, 'A is right'),
-            14 => new question_answer('B', -0.3333333, 'B is wrong'),
-            15 => new question_answer('C', -0.3333333, 'C is wrong'),
+            13 => new question_answer(13, 'A', 1, 'A is right', FORMAT_HTML),
+            14 => new question_answer(14, 'B', -0.3333333, 'B is wrong', FORMAT_HTML),
+            15 => new question_answer(15, 'C', -0.3333333, 'C is wrong', FORMAT_HTML),
         );
 
         return $mc;
@@ -163,10 +163,10 @@ class test_question_maker {
         self::set_standard_combined_feedback_fields($mc);
 
         $mc->answers = array(
-            13 => new question_answer('A', 0.5, 'A is part of the right answer'),
-            14 => new question_answer('B', -1, 'B is wrong'),
-            15 => new question_answer('C', 0.5, 'C is part of the right answer'),
-            16 => new question_answer('D', -1, 'D is wrong'),
+            13 => new question_answer(13, 'A', 0.5, 'A is part of the right answer', FORMAT_HTML),
+            14 => new question_answer(14, 'B', -1, 'B is wrong', FORMAT_HTML),
+            15 => new question_answer(15, 'C', 0.5, 'C is part of the right answer', FORMAT_HTML),
+            16 => new question_answer(16, 'D', -1, 'D is wrong', FORMAT_HTML),
         );
 
         return $mc;
@@ -215,9 +215,9 @@ class test_question_maker {
         $sa->generalfeedback = 'Generalfeedback: frog or toad would have been OK.';
         $sa->usecase = false;
         $sa->answers = array(
-            new question_answer('frog', 1.0, 'Frog is a very good answer.'),
-            new question_answer('toad', 0.8, 'Toad is an OK good answer.'),
-            new question_answer('*', 0.0, 'That is a bad answer.'),
+            13 => new question_answer(13, 'frog', 1.0, 'Frog is a very good answer.', FORMAT_HTML),
+            14 => new question_answer(14, 'toad', 0.8, 'Toad is an OK good answer.', FORMAT_HTML),
+            15 => new question_answer(15, '*', 0.0, 'That is a bad answer.', FORMAT_HTML),
         );
         $sa->qtype = question_bank::get_qtype('shortanswer');
 

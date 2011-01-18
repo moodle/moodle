@@ -69,9 +69,9 @@ class qformat_xml_test extends UnitTestCase {
         $q->generalfeedback = 'Generalfeedback: frog or toad would have been OK.';
         $q->options->usecase = false;
         $q->options->answers = array(
-            new question_answer('frog', 1.0, 'Frog is a very good answer.'),
-            new question_answer('toad', 0.8, 'Toad is an OK good answer.'),
-            new question_answer('*', 0.0, 'That is a bad answer.'),
+            13 => new question_answer(13, 'frog', 1.0, 'Frog is a very good answer.', FORMAT_HTML),
+            14 => new question_answer(14, 'toad', 0.8, 'Toad is an OK good answer.', FORMAT_HTML),
+            15 => new question_answer(15, '*', 0.0, 'That is a bad answer.', FORMAT_HTML),
         );
         $q->qtype = 'shortanswer';
         $q->hints = array(
@@ -81,12 +81,11 @@ class qformat_xml_test extends UnitTestCase {
         $exporter = new qformat_xml();
         $xml = $exporter->writequestion($q);
 
-        $this->assertPattern('|<hint>\s*<text>\s*This is the first hint\.\s*</text>\s*</hint>|', $xml);
+        $this->assertPattern('|<hint format=\"moodle_auto_format\">\s*<text>\s*This is the first hint\.\s*</text>\s*</hint>|', $xml);
         $this->assertNoPattern('|<shownumcorrect/>|', $xml);
         $this->assertNoPattern('|<clearwrong/>|', $xml);
         $this->assertNoPattern('|<options>|', $xml);
     }
-
 
     public function test_write_hint_with_parts() {
         $q = $this->make_test_question();
@@ -97,8 +96,11 @@ class qformat_xml_test extends UnitTestCase {
 
         $q->options->shuffleanswers = 1;
         $q->options->correctfeedback = '';
+        $q->options->correctfeedbackformat = FORMAT_HTML;
         $q->options->partiallycorrectfeedback = '';
+        $q->options->partiallycorrectfeedbackformat = FORMAT_HTML;
         $q->options->incorrectfeedback = '';
+        $q->options->incorrectfeedbackformat = FORMAT_HTML;
 
         $q->options->subquestions = array();
         $q->hints = array(
@@ -109,9 +111,9 @@ class qformat_xml_test extends UnitTestCase {
         $exporter = new qformat_xml();
         $xml = $exporter->writequestion($q);
 
-        $this->assertPattern('|<hint>\s*<text>\s*This is the first hint\.\s*</text>|', $xml);
-        $this->assertPattern('|<hint>\s*<text>\s*This is the second hint\.\s*</text>|', $xml);
-        list($ignored, $hint1, $hint2) = explode('<hint>', $xml);
+        $this->assertPattern('|<hint format=\"html\">\s*<text>\s*This is the first hint\.\s*</text>|', $xml);
+        $this->assertPattern('|<hint format=\"html\">\s*<text>\s*This is the second hint\.\s*</text>|', $xml);
+        list($ignored, $hint1, $hint2) = explode('<hint', $xml);
         $this->assertNoPattern('|<shownumcorrect/>|', $hint1);
         $this->assertPattern('|<clearwrong/>|', $hint1);
         $this->assertPattern('|<shownumcorrect/>|', $hint2);
@@ -245,7 +247,7 @@ END;
     <questiontext format="html">
       <text>The question text.</text>
     </questiontext>
-    <generalfeedback>
+    <generalfeedback format="html">
       <text>Here is some general feedback.</text>
     </generalfeedback>
     <defaultgrade>0</defaultgrade>
@@ -316,7 +318,7 @@ END;
     <questiontext format="moodle_auto_format">
       <text>Write something.</text>
     </questiontext>
-    <generalfeedback>
+    <generalfeedback format="moodle_auto_format">
       <text>I hope you wrote something interesting.</text>
     </generalfeedback>
     <defaultgrade>1</defaultgrade>
@@ -432,9 +434,12 @@ END;
         $qdata->options = new stdClass;
         $qdata->options->shuffleanswers = 1;
         $qdata->options->correctfeedback = 'Well done.';
+        $qdata->options->correctfeedbackformat = FORMAT_HTML;
         $qdata->options->partiallycorrectfeedback = 'Not entirely.';
+        $qdata->options->partiallycorrectfeedbackformat = FORMAT_HTML;
         $qdata->options->shownumcorrect = false;
         $qdata->options->incorrectfeedback = 'Completely wrong!';
+        $qdata->options->incorrectfeedbackformat = FORMAT_HTML;
 
         $subq1 = new stdClass();
         $subq1->id = -4;
@@ -479,51 +484,51 @@ END;
     <questiontext format="html">
       <text>Match the upper and lower case letters.</text>
     </questiontext>
-    <generalfeedback>
+    <generalfeedback format="html">
       <text><![CDATA[The answer is A -> a, B -> b and C -> c.]]></text>
     </generalfeedback>
     <defaultgrade>1</defaultgrade>
     <penalty>0.3333333</penalty>
     <hidden>0</hidden>
     <shuffleanswers>true</shuffleanswers>
-    <correctfeedback>
+    <correctfeedback format="html">
       <text>Well done.</text>
     </correctfeedback>
-    <partiallycorrectfeedback>
+    <partiallycorrectfeedback format="html">
       <text>Not entirely.</text>
     </partiallycorrectfeedback>
-    <incorrectfeedback>
+    <incorrectfeedback format="html">
       <text>Completely wrong!</text>
     </incorrectfeedback>
-    <subquestion>
+    <subquestion format="html">
       <text>A</text>
       <answer>
         <text>a</text>
       </answer>
     </subquestion>
-    <subquestion>
+    <subquestion format="html">
       <text>B</text>
       <answer>
         <text>b</text>
       </answer>
     </subquestion>
-    <subquestion>
+    <subquestion format="html">
       <text>C</text>
       <answer>
         <text>c</text>
       </answer>
     </subquestion>
-    <subquestion>
+    <subquestion format="html">
       <text></text>
       <answer>
         <text>d</text>
       </answer>
     </subquestion>
-    <hint>
+    <hint format="html">
       <text>Hint 1</text>
       <shownumcorrect/>
     </hint>
-    <hint>
+    <hint format="html">
       <text></text>
       <shownumcorrect/>
       <clearwrong/>
@@ -644,15 +649,18 @@ END;
         $qdata->options->shuffleanswers = 0;
         $qdata->options->answernumbering = 'abc';
         $qdata->options->correctfeedback = '<p>Your answer is correct.</p>';
+        $qdata->options->correctfeedbackformat = FORMAT_HTML;
         $qdata->options->partiallycorrectfeedback = '<p>Your answer is partially correct.</p>';
+        $qdata->options->partiallycorrectfeedbackformat = FORMAT_HTML;
         $qdata->options->shownumcorrect = 1;
         $qdata->options->incorrectfeedback = '<p>Your answer is incorrect.</p>';
+        $qdata->options->incorrectfeedbackformat = FORMAT_HTML;
 
         $qdata->options->answers = array(
-            new question_answer('1', 0, ''),
-            new question_answer('2', 1, ''),
-            new question_answer('3', 0, ''),
-            new question_answer('4', 1, ''),
+            13 => new question_answer(13, '1', 0, '', FORMAT_HTML),
+            14 => new question_answer(14, '2', 1, '', FORMAT_HTML),
+            15 => new question_answer(15, '3', 0, '', FORMAT_HTML),
+            16 => new question_answer(16, '4', 1, '', FORMAT_HTML),
         );
 
         $qdata->hints = array(
@@ -671,7 +679,7 @@ END;
     <questiontext format="html">
       <text>Which are the even numbers?</text>
     </questiontext>
-    <generalfeedback>
+    <generalfeedback format="html">
       <text>The even numbers are 2 and 4.</text>
     </generalfeedback>
     <defaultgrade>2</defaultgrade>
@@ -680,44 +688,44 @@ END;
     <single>false</single>
     <shuffleanswers>false</shuffleanswers>
     <answernumbering>abc</answernumbering>
-    <correctfeedback>
+    <correctfeedback format="html">
       <text><![CDATA[<p>Your answer is correct.</p>]]></text>
     </correctfeedback>
-    <partiallycorrectfeedback>
+    <partiallycorrectfeedback format="html">
       <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
     </partiallycorrectfeedback>
-    <incorrectfeedback>
+    <incorrectfeedback format="html">
       <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
     </incorrectfeedback>
     <shownumcorrect/>
     <answer fraction="0">
       <text>1</text>
-      <feedback>
+      <feedback format="html">
         <text></text>
       </feedback>
     </answer>
     <answer fraction="100">
       <text>2</text>
-      <feedback>
+      <feedback format="html">
         <text></text>
       </feedback>
     </answer>
     <answer fraction="0">
       <text>3</text>
-      <feedback>
+      <feedback format="html">
         <text></text>
       </feedback>
     </answer>
     <answer fraction="100">
       <text>4</text>
-      <feedback>
+      <feedback format="html">
         <text></text>
       </feedback>
     </answer>
-    <hint>
+    <hint format="html">
       <text>Hint 1.</text>
     </hint>
-    <hint>
+    <hint format="html">
       <text>Hint 2.</text>
     </hint>
   </question>
@@ -927,8 +935,8 @@ END;
         $qdata->options->usecase = 0;
 
         $qdata->options->answers = array(
-            new question_answer('Beta', 1, 'Well done!'),
-            new question_answer('*', 0, 'Doh!'),
+            13 => new question_answer(13, 'Beta', 1, 'Well done!', FORMAT_HTML),
+            14 => new question_answer(14, '*', 0, 'Doh!', FORMAT_HTML),
         );
 
         $qdata->hints = array(
@@ -1043,8 +1051,8 @@ END;
         $qdata->hidden = 0;
 
         $qdata->options->answers = array(
-            1 => new question_answer('True', 1, 'Well done!'),
-            2 => new question_answer('False', 0, 'Doh!'),
+            1 => new question_answer(1, 'True', 1, 'Well done!', FORMAT_HTML),
+            2 => new question_answer(2, 'False', 0, 'Doh!', FORMAT_HTML),
         );
         $qdata->options->trueanswer = 1;
         $qdata->options->falseanswer = 2;
@@ -1060,7 +1068,7 @@ END;
     <questiontext format="html">
       <text>The answer is true.</text>
     </questiontext>
-    <generalfeedback>
+    <generalfeedback format="html">
       <text>General feedback: You should have chosen true.</text>
     </generalfeedback>
     <defaultgrade>1</defaultgrade>
@@ -1068,13 +1076,13 @@ END;
     <hidden>0</hidden>
     <answer fraction="100">
       <text>true</text>
-      <feedback>
+      <feedback format="html">
         <text>Well done!</text>
       </feedback>
     </answer>
     <answer fraction="0">
       <text>false</text>
-      <feedback>
+      <feedback format="html">
         <text>Doh!</text>
       </feedback>
     </answer>
