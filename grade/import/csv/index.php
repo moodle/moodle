@@ -93,7 +93,7 @@ if ($id) {
 if ($importcode = optional_param('importcode', '', PARAM_FILE)) {
     $filename = $CFG->dataroot.'/temp/gradeimport/cvs/'.$USER->id.'/'.$importcode;
     $fp = fopen($filename, "r");
-    $headers = fgets($fp,GRADE_CSV_LINE_LENGTH);
+    $headers = fgets($fp, GRADE_CSV_LINE_LENGTH);
     $header = explode($csv_delimiter, $headers);
     fclose($fp);
 }
@@ -129,7 +129,7 @@ if ($formdata = $mform->get_data()) {
     $fp = fopen($filename, "r");
 
     // --- get header (field names) ---
-    $header = explode($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
+    $header = explode($csv_delimiter, fgets($fp, GRADE_CSV_LINE_LENGTH));
 
     // print some preview
     $numlines = 0; // 0 preview lines displayed
@@ -143,7 +143,7 @@ if ($formdata = $mform->get_data()) {
     }
     echo '</tr>';
     while (!feof ($fp) && $numlines <= $formdata->previewrows) {
-        $lines = explode($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
+        $lines = explode($csv_delimiter, fgets($fp, GRADE_CSV_LINE_LENGTH));
         echo '<tr>';
         foreach ($lines as $line) {
             echo '<td>'.$line.'</td>';
@@ -194,7 +194,7 @@ if ($formdata = $mform->get_data()) {
 
     // check for mapto collisions
     $maperrors = array();
-    foreach ($map as $i=>$j) {
+    foreach ($map as $i => $j) {
         if ($j == 0) {
             // you can have multiple ignores
             continue;
@@ -220,14 +220,14 @@ if ($formdata = $mform->get_data()) {
     if ($fp = fopen($filename, "r")) {
 
         // read the first line makes sure this doesn't get read again
-        $header = explode($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
+        $header = explode($csv_delimiter, fgets($fp, GRADE_CSV_LINE_LENGTH));
 
         $newgradeitems = array(); // temporary array to keep track of what new headers are processed
         $status = true;
 
         while (!feof ($fp)) {
             // add something
-            $line = explode($csv_delimiter, fgets($fp,GRADE_CSV_LINE_LENGTH));
+            $line = explode($csv_delimiter, fgets($fp, GRADE_CSV_LINE_LENGTH));
 
             if(count($line) <= 1){
                 // there is no data on this line, move on
@@ -317,11 +317,11 @@ if ($formdata = $mform->get_data()) {
                         }
                         $newgrade = new stdClass();
                         $newgrade->newgradeitem = $newgradeitems[$key];
-                        
-                        //if the user has a grade for this grade item
-                        if (trim($value)!='-') {
-                            //instead of omitting the grade we could insert one with finalgrade set to 0
-                            //we do not have access to grade item min grade
+
+                        // if the user has a grade for this grade item
+                        if (trim($value) != '-') {
+                            // instead of omitting the grade we could insert one with finalgrade set to 0
+                            // we do not have access to grade item min grade
                             $newgrade->finalgrade   = $value;
                             $newgrades[] = $newgrade;
                         }
