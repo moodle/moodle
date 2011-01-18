@@ -177,7 +177,7 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
         //write image info
         $rsspix = $CFG->pixpath."/i/rsssitelogo.gif";
 
-        //write the info 
+        //write the info
         $result .= rss_start_tag('image', 2, true);
         $result .= rss_full_tag('url', 3, false, $rsspix);
         $result .= rss_full_tag('title', 3, false, 'moodle');
@@ -226,10 +226,10 @@ function rss_add_items($items) {
             $result .= rss_full_tag('link',3,false,$item->link);
             $result .= rss_add_enclosures($item);
             $result .= rss_full_tag('pubDate',3,false,gmdate('D, d M Y H:i:s',$item->pubdate).' GMT');  # MDL-12563
-            //Include the author if exists 
+            //Include the author if exists
             if (isset($item->author)) {
                 //$result .= rss_full_tag('author',3,false,$item->author);
-                //We put it in the description instead because it's more important 
+                //We put it in the description instead because it's more important
                 //for moodle than most other feeds, and most rss software seems to ignore
                 //the author field ...
                 $item->description = get_string('byname','',$item->author).'. &nbsp;<p>'.$item->description.'</p>';
@@ -415,7 +415,7 @@ function rss_display_feeds($courseid, $userid, $rssid='', $context) {
                 $feedicons = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=rssedit&amp;rssid='. $feed->id .'&amp;shared='.$feed->shared.'&amp;blogid='. $blogid .'">'.
                              '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. get_string('edit').'" title="'. get_string('edit') .'" /></a>&nbsp;'.
 
-                             '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=delfeed&amp;rssid='. $feed->id.'&amp;shared='.$feed->shared.'blogid='. $blogid .'" 
+                             '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=delfeed&amp;sesskey='.sesskey().'&amp;rssid='. $feed->id.'&amp;shared='.$feed->shared.'blogid='. $blogid .'"
                 onclick="return confirm(\''. get_string('deletefeedconfirm', 'block_rss_client') .'\');">'.
                              '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. get_string('delete').'" title="'. get_string('delete') .'" /></a>';
             }
@@ -519,6 +519,7 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $shar
     $returnstring .= '<input type="hidden" name="id" value="'. $courseid .'" />'."\n";
     $returnstring .= '<input type="hidden" name="blogid" value="'. $blogid .'" />'."\n";
     $returnstring .= '<input type="hidden" name="user" value="'. $USER->id .'" />'."\n";
+    $returnstring .= '<input type="hidden" name="sesskey" value="'. sesskey() .'" />'."\n";
     $returnstring .= '<br /><input type="submit" value="';
     $validatestring = "<a href=\"#\" onclick=\"window.open('http://feedvalidator.org/check.cgi?url='+getElementById('block_rss').elements['url'].value,'validate','width=640,height=480,scrollbars=yes,status=yes,resizable=yes');return true;\">". get_string('validatefeed', 'block_rss_client')."</a>";
 
@@ -530,7 +531,7 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $shar
 
     $returnstring .= '" />&nbsp;'. $validatestring ."\n";
     $returnstring .= '</div></form>'."\n";
-    
+
     return $returnstring;
 }
 
