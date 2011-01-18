@@ -599,7 +599,7 @@ function tag_display_name($tagobject, $html=TAG_RETURN_HTML) {
 
     global $CFG;
 
-    if(!isset($tagobject->name)) {
+    if (!isset($tagobject->name)) {
         return '';
     }
 
@@ -611,6 +611,9 @@ function tag_display_name($tagobject, $html=TAG_RETURN_HTML) {
         //original casing of the tag name
         $tagname = $tagobject->rawname;
     }
+
+    // clean up a bit just in case the rules change again
+    $tagname = clean_param($tagname, PARAM_TAG);
 
     if ($html == TAG_RETURN_TEXT) {
         return $tagname;
