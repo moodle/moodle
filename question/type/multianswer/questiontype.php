@@ -278,12 +278,6 @@ class embedded_cloze_qtype extends default_questiontype {
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
         global $QTYPES, $CFG, $USER, $OUTPUT, $PAGE;
 
-        static $overlibdivoutput = false;
-        if (!$overlibdivoutput) {
-            echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
-            $overlibdivoutput = true;
-        }
-
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $disabled = empty($options->readonly) ? '' : 'disabled="disabled"';
         $formatoptions = new stdClass;
