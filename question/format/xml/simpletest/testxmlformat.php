@@ -330,7 +330,7 @@ END;
         $this->assert_same_xml($expectedxml, $xml);
     }
 
-    public function test_import_match() {
+    public function test_import_match_19() {
         $xml = '  <question type="matching">
     <name>
       <text>Matching question</text>
@@ -398,16 +398,21 @@ END;
         $expectedq->name = 'Matching question';
         $expectedq->questiontext = 'Match the upper and lower case letters.';
         $expectedq->questiontextformat = FORMAT_HTML;
-        $expectedq->correctfeedback = 'Well done.';
-        $expectedq->partiallycorrectfeedback = 'Not entirely.';
+        $expectedq->correctfeedback = array('text' => 'Well done.', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->partiallycorrectfeedback = array('text' => 'Not entirely.', 'format' => FORMAT_MOODLE, 'files' => array());
         $expectedq->shownumcorrect = false;
-        $expectedq->incorrectfeedback = 'Completely wrong!';
+        $expectedq->incorrectfeedback = array('text' => 'Completely wrong!', 'format' => FORMAT_MOODLE, 'files' => array());
         $expectedq->generalfeedback = 'The answer is A -> a, B -> b and C -> c.';
+        $expectedq->generalfeedbackformat = FORMAT_MOODLE;
         $expectedq->defaultmark = 1;
         $expectedq->length = 1;
         $expectedq->penalty = 0.3333333;
         $expectedq->shuffleanswers = 0;
-        $expectedq->subquestions = array('A', 'B', 'C', '');
+        $expectedq->subquestions = array(
+            array('text' => 'A', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => 'B', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => 'C', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()));
         $expectedq->subanswers = array('a', 'b', 'c', 'd');
         $expectedq->hint = array('Hint 1', '');
         $expectedq->hintshownumcorrect = array(true, true);
@@ -539,7 +544,7 @@ END;
         $this->assert_same_xml($expectedxml, $xml);
     }
 
-    public function test_import_multichoice() {
+    public function test_import_multichoice_19() {
         $xml = '  <question type="multichoice">
     <name>
       <text>Multiple choice question</text>
@@ -607,10 +612,11 @@ END;
         $expectedq->name = 'Multiple choice question';
         $expectedq->questiontext = 'Which are the even numbers?';
         $expectedq->questiontextformat = FORMAT_HTML;
-        $expectedq->correctfeedback = '<p>Your answer is correct.</p>';
-        $expectedq->partiallycorrectfeedback = '<p>Your answer is partially correct.</p>';
+        $expectedq->correctfeedback = array('text' => '<p>Your answer is correct.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->shownumcorrect = false;
+        $expectedq->partiallycorrectfeedback = array('text' => '<p>Your answer is partially correct.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
         $expectedq->shownumcorrect = true;
-        $expectedq->incorrectfeedback = '<p>Your answer is incorrect.</p>';
+        $expectedq->incorrectfeedback = array('text' => '<p>Your answer is incorrect.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
         $expectedq->generalfeedback = 'The even numbers are 2 and 4.';
         $expectedq->defaultmark = 2;
         $expectedq->length = 1;
@@ -618,9 +624,17 @@ END;
         $expectedq->shuffleanswers = 0;
         $expectedq->single = false;
 
-        $expectedq->answer = array('1', '2', '3', '4');
+        $expectedq->answer = array(
+            array('text' => '1', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => '2', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => '3', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => '4', 'format' => FORMAT_MOODLE, 'files' => array()));
         $expectedq->fraction = array(0, 1, 0, 1);
-        $expectedq->feedback = array('', '', '', '');
+        $expectedq->feedback = array(
+            array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()));
 
         $expectedq->hint = array('Hint 1.', 'Hint 2.');
         $expectedq->hintshownumcorrect = array(false, false);
@@ -734,7 +748,7 @@ END;
         $this->assert_same_xml($expectedxml, $xml);
     }
 
-    public function test_import_numerical() {
+    public function test_import_numerical_19() {
         $xml = '  <question type="numerical">
     <name>
       <text>Numerical question</text>
@@ -781,13 +795,17 @@ END;
         $expectedq->questiontext = 'What is the answer?';
         $expectedq->questiontextformat = FORMAT_HTML;
         $expectedq->generalfeedback = 'General feedback: Think Hitch-hikers guide to the Galaxy.';
+        $expectedq->generalfeedbackformat = FORMAT_MOODLE;
         $expectedq->defaultmark = 1;
         $expectedq->length = 1;
         $expectedq->penalty = 0.1;
 
         $expectedq->answer = array('42', '13', '*');
         $expectedq->fraction = array(1, 0, 0);
-        $expectedq->feedback = array('Well done!', 'What were you thinking?!', 'Completely wrong.');
+        $expectedq->feedback = array(
+            array('text' => 'Well done!', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => 'What were you thinking?!', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => 'Completely wrong.', 'format' => FORMAT_MOODLE, 'files' => array()));
         $expectedq->tolerance = array(0.001, 1, 0);
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
@@ -798,20 +816,22 @@ END;
 
         $qdata = new stdClass;
         $qdata->id = 123;
+        $qdata->contextid = 0;
         $qdata->qtype = 'numerical';
         $qdata->name = 'Numerical question';
         $qdata->questiontext = 'What is the answer?';
         $qdata->questiontextformat = FORMAT_HTML;
         $qdata->generalfeedback = 'General feedback: Think Hitch-hikers guide to the Galaxy.';
+        $qdata->generalfeedbackformat = FORMAT_HTML;
         $qdata->defaultmark = 1;
         $qdata->length = 1;
         $qdata->penalty = 0.1;
         $qdata->hidden = 0;
 
         $qdata->options->answers = array(
-            new qtype_numerical_answer('42', 1, 'Well done!', 0.001),
-            new qtype_numerical_answer('13', 0, 'What were you thinking?!', 1),
-            new qtype_numerical_answer('*', 0, 'Completely wrong.', ''),
+            13 => new qtype_numerical_answer(13, '42', 1, 'Well done!', FORMAT_HTML, 0.001),
+            14 => new qtype_numerical_answer(14, '13', 0, 'What were you thinking?!', FORMAT_HTML, 1),
+            15 => new qtype_numerical_answer(15, '*', 0, 'Completely wrong.', FORMAT_HTML, ''),
         );
 
         $qdata->options->units = array();
@@ -827,7 +847,7 @@ END;
     <questiontext format="html">
       <text>What is the answer?</text>
     </questiontext>
-    <generalfeedback>
+    <generalfeedback format="html">
       <text>General feedback: Think Hitch-hikers guide to the Galaxy.</text>
     </generalfeedback>
     <defaultgrade>1</defaultgrade>
@@ -835,21 +855,21 @@ END;
     <hidden>0</hidden>
     <answer fraction="100">
       <text>42</text>
-      <feedback>
+      <feedback format="html">
         <text>Well done!</text>
       </feedback>
       <tolerance>0.001</tolerance>
     </answer>
     <answer fraction="0">
       <text>13</text>
-      <feedback>
+      <feedback format="html">
         <text>What were you thinking?!</text>
       </feedback>
       <tolerance>1</tolerance>
     </answer>
     <answer fraction="0">
       <text>*</text>
-      <feedback>
+      <feedback format="html">
         <text>Completely wrong.</text>
       </feedback>
       <tolerance>0</tolerance>
@@ -860,7 +880,7 @@ END;
         $this->assert_same_xml($expectedxml, $xml);
     }
 
-    public function test_import_shortanswer() {
+    public function test_import_shortanswer_19() {
         $xml = '  <question type="shortanswer">
     <name>
       <text>Short answer question</text>
@@ -912,7 +932,9 @@ END;
 
         $expectedq->answer = array('Beta', '*');
         $expectedq->fraction = array(1, 0);
-        $expectedq->feedback = array('Well done!', 'Doh!');
+        $expectedq->feedback = array(
+            array('text' => 'Well done!', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => 'Doh!', 'format' => FORMAT_MOODLE, 'files' => array()));
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
     }
@@ -955,7 +977,7 @@ END;
     <questiontext format="html">
       <text>Fill in the gap in this sequence: Alpha, ________, Gamma.</text>
     </questiontext>
-    <generalfeedback>
+    <generalfeedback format="html">
       <text>The answer is Beta.</text>
     </generalfeedback>
     <defaultgrade>1</defaultgrade>
@@ -964,20 +986,20 @@ END;
     <usecase>0</usecase>
     <answer fraction="100">
       <text>Beta</text>
-      <feedback>
+      <feedback format="html">
         <text>Well done!</text>
       </feedback>
     </answer>
     <answer fraction="0">
       <text>*</text>
-      <feedback>
+      <feedback format="html">
         <text>Doh!</text>
       </feedback>
     </answer>
-    <hint>
+    <hint format="html">
       <text>Hint 1</text>
     </hint>
-    <hint>
+    <hint format="html">
       <text>Hint 2</text>
     </hint>
   </question>
@@ -986,7 +1008,7 @@ END;
         $this->assert_same_xml($expectedxml, $xml);
     }
 
-    public function test_import_truefalse() {
+    public function test_import_truefalse_19() {
         $xml = '  <question type="truefalse">
     <name>
       <text>True false question</text>
@@ -1028,8 +1050,8 @@ END;
         $expectedq->length = 1;
         $expectedq->penalty = 1;
 
-        $expectedq->feedbacktrue = 'Well done!';
-        $expectedq->feedbackfalse = 'Doh!';
+        $expectedq->feedbacktrue = array('text' => 'Well done!', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->feedbackfalse = array('text' => 'Doh!', 'format' => FORMAT_MOODLE, 'files' => array());
         $expectedq->correctanswer = true;
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);

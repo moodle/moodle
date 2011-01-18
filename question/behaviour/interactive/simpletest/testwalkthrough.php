@@ -422,8 +422,8 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
         $this->check_current_mark(3);
 
         // Now change the quiestion so that answer is only partially right, and regrade.
-        $q->answers[0]->fraction = 0.6666667;
-        $q->answers[1]->fraction = 1;
+        $q->answers[13]->fraction = 0.6666667;
+        $q->answers[14]->fraction = 1;
 
         $this->quba->regrade_all_questions(false);
 
@@ -455,8 +455,8 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
         $this->check_current_mark(3);
 
         // Now change the quiestion so that answer is only partially right, and regrade.
-        $q->answers[0]->fraction = 0.6666667;
-        $q->answers[1]->fraction = 1;
+        $q->answers[13]->fraction = 0.6666667;
+        $q->answers[14]->fraction = 1;
 
         $this->quba->regrade_all_questions(true);
 

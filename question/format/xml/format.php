@@ -282,12 +282,25 @@ class qformat_xml extends qformat_default {
      * @param boolean $withshownumpartscorrect include the shownumcorrect field.
      */
     public function import_combined_feedback($qo, $questionxml, $withshownumpartscorrect = false) {
-        $qo->correctfeedback = $this->getpath($questionxml,
-                array('#', 'correctfeedback', 0, '#', 'text', 0, '#'), '', true);
-        $qo->partiallycorrectfeedback = $this->getpath($questionxml,
-                array('#', 'partiallycorrectfeedback', 0, '#', 'text', 0, '#'), '', true);
-        $qo->incorrectfeedback = $this->getpath($questionxml,
-                array('#', 'incorrectfeedback', 0, '#', 'text', 0, '#'), '', true);
+        foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $field) {
+            $text = array();
+            $text['text'] = $this->getpath($questionxml,
+                    array('#', $field, 0, '#', 'text', 0, '#'), '', true);
+            $text['format'] = $this->trans_format($this->getpath($questionxml,
+                    array('#', $field, 0, '@', 'format'), 'moodle_auto_format'));
+
+            $text['files'] = array();
+            $files = $this->getpath($questionxml, array('#', $field, 0, '#','file'), array(), false);
+            foreach ($files as $file) {
+                $data = new stdClass();
+                $data->content = $file['#'];
+                $data->encoding = $file['@']['encoding'];
+                $data->name = $file['@']['name'];
+                $text['files'][] = $data;
+            }
+
+            $qo->$field = $text;
+        }
 
         if ($withshownumpartscorrect) {
             $qo->shownumcorrect = array_key_exists('shownumcorrect', $questionxml['#']);
@@ -341,7 +354,8 @@ class qformat_xml extends qformat_default {
         if (!isset($questionxml['#']['hint'])) {
             return;
         }
-// TODO files in hints.
+
+        // TODO Handle files in hints.
         foreach ($questionxml['#']['hint'] as $hintxml) {
             $hint = $this->import_hint($hintxml);
             $qo->hint[] = $hint->hint;
@@ -373,52 +387,6 @@ class qformat_xml extends qformat_default {
         $shuffleanswers = $this->getpath($question, array('#', 'shuffleanswers', 0, '#'), 'false');
         $qo->answernumbering = $this->getpath($question, array('#', 'answernumbering', 0, '#'), 'abc');
         $qo->shuffleanswers = $this->trans_single($shuffleanswers);
-
-        // TODO move into import_combined_feedback
-        $qo->correctfeedback = array();
-        $qo->correctfeedback['text'] = $this->getpath($question, array('#', 'correctfeedback', 0, '#', 'text', 0, '#'), '', true);
-        $qo->correctfeedback['format'] = $this->trans_format(
-                $this->getpath($question, array('#', 'correctfeedback', 0, '@', 'format'), 'moodle_auto_format'));
-        $qo->correctfeedback['files'] = array();
-        // restore files in correctfeedback
-        $files = $this->getpath($question, array('#', 'correctfeedback', 0, '#','file'), array(), false);
-        foreach ($files as $file) {
-            $data = new stdclass;
-            $data->content = $file['#'];
-            $data->encoding = $file['@']['encoding'];
-            $data->name = $file['@']['name'];
-            $qo->correctfeedback['files'][] = $data;
-        }
-
-        $qo->partiallycorrectfeedback = array();
-        $qo->partiallycorrectfeedback['text'] = $this->getpath( $question, array('#','partiallycorrectfeedback',0,'#','text',0,'#'), '', true );
-        $qo->partiallycorrectfeedback['format'] = $this->trans_format(
-                $this->getpath($question, array('#', 'partiallycorrectfeedback', 0, '@', 'format'), 'moodle_auto_format'));
-        $qo->partiallycorrectfeedback['files'] = array();
-        // restore files in partiallycorrectfeedback
-        $files = $this->getpath($question, array('#', 'partiallycorrectfeedback', 0, '#','file'), array(), false);
-        foreach ($files as $file) {
-            $data = new stdclass;
-            $data->content = $file['#'];
-            $data->encoding = $file['@']['encoding'];
-            $data->name = $file['@']['name'];
-            $qo->partiallycorrectfeedback['files'][] = $data;
-        }
-
-        $qo->incorrectfeedback = array();
-        $qo->incorrectfeedback['text'] = $this->getpath( $question, array('#','incorrectfeedback',0,'#','text',0,'#'), '', true );
-        $qo->incorrectfeedback['format'] = $this->trans_format(
-                $this->getpath($question, array('#', 'incorrectfeedback', 0, '@', 'format'), 'moodle_auto_format'));
-        $qo->incorrectfeedback['files'] = array();
-        // restore files in incorrectfeedback
-        $files = $this->getpath($question, array('#', 'incorrectfeedback', 0, '#','file'), array(), false);
-        foreach ($files as $file) {
-            $data = new stdclass;
-            $data->content = $file['#'];
-            $data->encoding = $file['@']['encoding'];
-            $data->name = $file['@']['name'];
-            $qo->incorrectfeedback['files'][] = $data;
-        }
 
         // There was a time on the 1.8 branch when it could output an empty answernumbering tag, so fix up any found.
         if (empty($qo->answernumbering)) {
@@ -530,16 +498,14 @@ class qformat_xml extends qformat_default {
                 $qo->feedbacktrue = array();
                 $qo->feedbacktrue['text'] = $feedback;
                 $qo->feedbacktrue['format'] = $this->trans_format($feedbackformat);
-                $qo->feedbacktrue['itemid'] = null;
-                $qo->feedbacktruefiles = $files;
+                $qo->feedbacktrue['files'] = $files;
             } else {
                 $qo->answer = ($answer['@']['fraction'] != 100);
                 $qo->correctanswer = $qo->answer;
                 $qo->feedbackfalse = array();
                 $qo->feedbackfalse['text'] = $feedback;
                 $qo->feedbackfalse['format'] = $this->trans_format($feedbackformat);
-                $qo->feedbackfalse['itemid'] = null;
-                $qo->feedbackfalsefiles = $files;
+                $qo->feedbackfalse['files'] = $files;
             }
             $first = false;
         }
@@ -576,7 +542,7 @@ class qformat_xml extends qformat_default {
         $acount = 0;
         foreach ($answers as $answer) {
             $ans = $this->import_answer($answer);
-            $qo->answer[$acount] = $ans->answer;
+            $qo->answer[$acount] = $ans->answer['text'];
             $qo->fraction[$acount] = $ans->fraction;
             $qo->feedback[$acount] = $ans->feedback;
             ++$acount;
@@ -688,30 +654,27 @@ class qformat_xml extends qformat_default {
         $qo->shuffleanswers = $this->trans_single($this->getpath($question,
                 array('#', 'shuffleanswers', 0, '#'), 1));
 
-        // get subquestions
-        $subquestions = $question['#']['subquestion'];
+        // run through subquestions
         $qo->subquestions = array();
         $qo->subanswers = array();
+        foreach ($question['#']['subquestion'] as $subqxml) {
+            $subquestion = array();
+            $subquestion['text'] = $this->getpath($subqxml, array('#', 'text', 0, '#'), '', true);
+            $subquestion['format'] = $this->trans_format(
+                    $this->getpath($subqxml, array('@', 'format'), 'moodle_auto_format'));
+            $subquestion['files'] = array();
 
-        // run through subquestions
-        foreach ($subquestions as $subquestion) {
-            $question = array();
-            $question['text'] = $this->getpath($subquestion, array('#', 'text', 0, '#'), '', true);
-            $question['format'] = $this->trans_format(
-                    $this->getpath($subquestion, array('@', 'format'), 'moodle_auto_format'));
-            $question['files'] = array();
-
-            $files = $this->getpath($subquestion, array('#', 'file'), array());
+            $files = $this->getpath($subqxml, array('#', 'file'), array());
             foreach ($files as $file) {
                 $data = new stdclass();
                 $data->content = $file['#'];
                 $data->encoding = $file['@']['encoding'];
                 $data->name = $file['@']['name'];
-                $question['files'][] = $data;
+                $subquestion['files'][] = $data;
             }
-            $qo->subquestions[] = $question;
-            $answers = $this->getpath($subquestion, array('#', 'answer'), array());
-            $qo->subanswers[] = $this->getpath($subquestion, array('#','answer',0,'#','text',0,'#'), '', true);
+            $qo->subquestions[] = $subquestion;
+            $answers = $this->getpath($subqxml, array('#', 'answer'), array());
+            $qo->subanswers[] = $this->getpath($subqxml, array('#','answer',0,'#','text',0,'#'), '', true);
         }
 
         $this->import_combined_feedback($qo, $question, true);
@@ -1122,16 +1085,16 @@ class qformat_xml extends qformat_default {
 
         $fs = get_file_storage();
         $contextid = $question->contextid;
-        // files used by questiontext
-        $files = $fs->get_area_files($contextid, 'question', 'questiontext', $question->id);
-        $question->questiontextfiles = $files;
-        // files used by generalfeedback
-        $files = $fs->get_area_files($contextid, 'question', 'generalfeedback', $question->id);
-        $question->generalfeedbackfiles = $files;
+        // Get files used by the questiontext.
+        $question->questiontextfiles = $fs->get_area_files(
+                $contextid, 'question', 'questiontext', $question->id);
+        // Get files used by the generalfeedback.
+        $question->generalfeedbackfiles = $fs->get_area_files(
+                $contextid, 'question', 'generalfeedback', $question->id);
         if (!empty($question->options->answers)) {
             foreach ($question->options->answers as $answer) {
-                $files = $fs->get_area_files($contextid, 'question', 'answerfeedback', $answer->id);
-                $answer->feedbackfiles = $files;
+                $answer->feedbackfiles = $fs->get_area_files(
+                        $contextid, 'question', 'answerfeedback', $answer->id);
             }
         }
 

@@ -160,9 +160,13 @@ DONE mod/quiz/protect_js.php                            |   56 -
  mod/quiz/report/statistics/statistics_table.php    |  335 +++
  mod/quiz/report/statistics/version.php             |   26 +
 
- pix/i/flagged.png                                  |  Bin 0 -> 193 bytes
- pix/i/ne_red_mark.png                              |  Bin 0 -> 121 bytes
- pix/i/unflagged.png                                |  Bin 0 -> 197 bytes
+ theme/standard/styles_color.css                    |   72 +-
+ theme/standard/styles_fonts.css                    |   20 +-
+ theme/standard/styles_layout.css                   |  265 ++-
+
+DONE pix/i/flagged.png                                  |  Bin 0 -> 193 bytes
+DONE pix/i/ne_red_mark.png                              |  Bin 0 -> 121 bytes
+DONE pix/i/unflagged.png                                |  Bin 0 -> 197 bytes
 
  question/backuplib.php                             |   26 +-
 DONE question/comment.html                              |   25 -
@@ -246,10 +250,10 @@ DONE question/behaviour/informationitem/lang/en_utf8/qbehaviour_informationitem.
 DONE question/behaviour/informationitem/renderer.php    |   42 +
 DONE question/behaviour/informationitem/simpletest/testwalkthrough.php |   78 +
 
-DONE question/behaviour/interactive/behaviour.php       |  232 ++
+ question/behaviour/interactive/behaviour.php       |  232 ++
 DONE question/behaviour/interactive/lang/en_utf8/qbehaviour_interactive.php        |    6 +
 DONE question/behaviour/interactive/renderer.php        |   62 +
-DONE question/behaviour/interactive/interactive/simpletest/testwalkthrough.php     |  470 ++++
+ question/behaviour/interactive/interactive/simpletest/testwalkthrough.php     |  470 ++++
 
 DONE question/behaviour/interactivecountback/behaviour.php   |   91 +
 DONE question/behaviour/interactivecountback/en_utf8/qbehaviour_interactivecountback.php    |    3 +
@@ -276,8 +280,8 @@ DONE question/format/blackboard/format.php              |    2 +-
 DONE question/format/gift/format.php                    |    6 +-
 DONE question/format/hotpot/format.php                  |   10 +-
 DONE question/format/webct/format.php                   |    4 +-
- question/format/xml/format.php                     |  985 ++++---
- question/format/xml/simpletest/testxmlformat.php   | 1064 ++++++++
+DONE question/format/xml/format.php                     |  985 ++++---
+DONE question/format/xml/simpletest/testxmlformat.php   | 1064 ++++++++
 
  question/type/calculated/db/upgrade.php            |    2 -
  question/type/calculated/edit_calculated_form.php  |    5 +-
@@ -441,8 +445,3 @@ DONE question/type/truefalse/renderer.php               |  142 +
 DONE question/type/truefalse/simpletest/testquestion.php     |   99 +
 DONE question/type/truefalse/simpletest/testquestiontype.php |   73 +
 DONE question/type/truefalse/version.php                |    4 +-
-
- theme/standard/styles_color.css                    |   72 +-
- theme/standard/styles_fonts.css                    |   20 +-
- theme/standard/styles_layout.css                   |  265 ++-
-

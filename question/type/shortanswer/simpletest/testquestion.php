@@ -131,13 +131,13 @@ class qtype_shortanswer_question_test extends UnitTestCase {
         $sa->init_first_step(new question_attempt_step());
 
         $this->assertEqual(array(
-                new question_classified_response(0, 'frog', 1.0)),
+                new question_classified_response(13, 'frog', 1.0)),
                 $sa->classify_response(array('answer' => 'frog')));
         $this->assertEqual(array(
-                new question_classified_response(1, 'toad', 0.8)),
+                new question_classified_response(14, 'toad', 0.8)),
                 $sa->classify_response(array('answer' => 'toad')));
         $this->assertEqual(array(
-                new question_classified_response(2, 'cat', 0.0)),
+                new question_classified_response(15, 'cat', 0.0)),
                 $sa->classify_response(array('answer' => 'cat')));
         $this->assertEqual(array(
                 question_classified_response::no_response()),
