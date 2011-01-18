@@ -82,6 +82,7 @@ class test_question_maker {
         $q->category = 0;
         $q->parent = 0;
         $q->questiontextformat = FORMAT_HTML;
+        $q->generalfeedbackformat = FORMAT_HTML;
         $q->defaultmark = 1;
         $q->penalty = 0.3333333;
         $q->length = 1;
@@ -290,9 +291,12 @@ class test_question_maker {
      */
     public static function set_standard_combined_feedback_fields($q) {
         $q->correctfeedback = self::STANDARD_OVERALL_CORRECT_FEEDBACK;
+        $q->correctfeedbackformat = FORMAT_HTML;
         $q->partiallycorrectfeedback = self::STANDARD_OVERALL_PARTIALLYCORRECT_FEEDBACK;
+        $q->partiallycorrectfeedbackformat = FORMAT_HTML;
         $q->shownumcorrect = true;
         $q->incorrectfeedback = self::STANDARD_OVERALL_INCORRECT_FEEDBACK;
+        $q->incorrectfeedbackformat = FORMAT_HTML;
     }
 }
 

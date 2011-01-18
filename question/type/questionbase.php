@@ -63,6 +63,9 @@ abstract class question_definition {
     /** @var string question general feedback. */
     public $generalfeedback;
 
+    /** @var integer question test format. */
+    public $generalfeedbackformat;
+
     /** @var number what this quetsion is marked out of, by default. */
     public $defaultmark = 1;
 

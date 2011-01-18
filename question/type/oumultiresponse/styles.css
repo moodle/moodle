@@ -1,0 +1,14 @@
+.oumultiresponse .answer span.r0,
+.oumultiresponse .answer span.r1 {
+    display: block;
+    padding: 0.3em;
+}
+.que.oumultiresponse .answer .specificfeedback {
+    display: inline;
+    padding: 0 0.7em;
+    background: #FFF3BF;
+}
+.que.oumultiresponse .answer .specificfeedback * {
+    display: inline;
+    background: #FFF3BF;
+}

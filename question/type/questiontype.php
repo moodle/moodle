@@ -509,7 +509,6 @@ class question_type {
                 $hint->id = $DB->insert_record('question_hints', $hint);
             }
 
-            $hint->hint = '';
             $hint->hint = $this->import_or_save_files($formdata->hint[$i],
                     $context, 'question', 'hint', $hint->id);
             $hint->hintformat = $formdata->hint[$i]['format'];
@@ -526,6 +525,32 @@ class question_type {
             $fs->delete_area_files($context->id, 'question', 'hint', $oldhint->id);
             $DB->delete_records('question_hints', array('id' => $oldhint->id));
         }
+    }
+
+    /**
+     * Can be used to {@link save_question_options()} to transfer the combined
+     * feedback fields from $formdata to $options.
+     * @param object $options the $question->options object being built.
+     * @param object $formdata the data from the form.
+     * @param object $context the context the quetsion is being saved into.
+     * @param boolean $withparts whether $options->shownumcorrect should be set.
+     */
+    protected function save_combined_feedback_helper($options, $formdata, $context, $withparts = false) {
+        $options->correctfeedback = $this->import_or_save_files($formdata->correctfeedback,
+                $context, 'question', 'correctfeedback', $formdata->id);
+        $options->correctfeedbackformat = $formdata->correctfeedback['format'];
+        $options->partiallycorrectfeedback = $this->import_or_save_files($formdata->partiallycorrectfeedback,
+                $context, 'question', 'partiallycorrectfeedback', $formdata->id);
+        $options->partiallycorrectfeedbackformat = $formdata->partiallycorrectfeedback['format'];
+        $options->incorrectfeedback = $this->import_or_save_files($formdata->incorrectfeedback,
+                $context, 'question', 'incorrectfeedback', $formdata->id);
+        $options->incorrectfeedbackformat = $formdata->incorrectfeedback['format'];
+
+        if ($withparts) {
+            $options->shownumcorrect = !empty($formdata->shownumcorrect);
+        }
+
+        return $options;
     }
 
     /**
@@ -623,6 +648,7 @@ class question_type {
         $question->questiontext = $questiondata->questiontext;
         $question->questiontextformat = $questiondata->questiontextformat;
         $question->generalfeedback = $questiondata->generalfeedback;
+        $question->generalfeedbackformat = $questiondata->generalfeedbackformat;
         $question->defaultmark = $questiondata->defaultmark + 0;
         $question->length = $questiondata->length;
         $question->penalty = $questiondata->penalty;
@@ -659,6 +685,24 @@ class question_type {
      */
     protected function make_hint($hint) {
         return question_hint::load_from_record($hint);
+    }
+
+    /**
+     * Initialise the combined feedback fields.
+     * @param question_definition $question the question_definition we are creating.
+     * @param object $questiondata the question data loaded from the database.
+     * @param boolean $withparts whether to set the shownumcorrect field.
+     */
+    protected function initialise_combined_feedback(question_definition $question, $questiondata, $withparts = false) {
+        $question->correctfeedback = $questiondata->options->correctfeedback;
+        $question->correctfeedbackformat = $questiondata->options->correctfeedbackformat;
+        $question->partiallycorrectfeedback = $questiondata->options->partiallycorrectfeedback;
+        $question->partiallycorrectfeedbackformat = $questiondata->options->partiallycorrectfeedbackformat;
+        $question->incorrectfeedback = $questiondata->options->incorrectfeedback;
+        $question->incorrectfeedbackformat = $questiondata->options->incorrectfeedbackformat;
+        if ($withparts) {
+            $question->shownumcorrect = $questiondata->options->shownumcorrect;
+        }
     }
 
     /**

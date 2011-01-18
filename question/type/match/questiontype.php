@@ -109,17 +109,7 @@ class qtype_match extends question_type {
 
         $options->subquestions = implode(',', $subquestions);
         $options->shuffleanswers = $question->shuffleanswers;
-        $options->shownumcorrect = !empty($question->shownumcorrect);
-        $options->correctfeedback = $this->import_or_save_files($question->correctfeedback,
-                $context, 'question', 'correctfeedback', $question->id);
-        $options->correctfeedbackformat = $question->correctfeedback['format'];
-        $options->partiallycorrectfeedback = $this->import_or_save_files($question->partiallycorrectfeedback,
-                $context, 'question', 'partiallycorrectfeedback', $question->id);
-        $options->partiallycorrectfeedbackformat = $question->partiallycorrectfeedback['format'];
-        $options->incorrectfeedback = $this->import_or_save_files($question->incorrectfeedback,
-                $context, 'question', 'incorrectfeedback', $question->id);
-        $options->incorrectfeedbackformat = $question->incorrectfeedback['format'];
-
+        $options = $this->save_combined_feedback_helper($options, $question, $context, true);
         $DB->update_record('question_match', $options);
 
         $this->save_hints($question, true);
@@ -140,11 +130,7 @@ class qtype_match extends question_type {
         parent::initialise_question_instance($question, $questiondata);
 
         $question->shufflestems = $questiondata->options->shuffleanswers;
-
-        $question->correctfeedback = $questiondata->options->correctfeedback;
-        $question->partiallycorrectfeedback = $questiondata->options->partiallycorrectfeedback;
-        $question->incorrectfeedback = $questiondata->options->incorrectfeedback;
-        $question->shownumcorrect = $questiondata->options->shownumcorrect;
+        $this->initialise_combined_feedback($question, $questiondata, true);
 
         $question->stems = array();
         $question->choices = array();
@@ -228,5 +214,9 @@ class qtype_match extends question_type {
         foreach ($subquestionids as $subquestionid => $notused) {
             $fs->delete_area_files($contextid, 'qtype_match', 'subquestion', $subquestionid);
         }
+
+        $fs->delete_area_files($contextid, 'qtype_multichoice', 'correctfeedback', $questionid);
+        $fs->delete_area_files($contextid, 'qtype_multichoice', 'partiallycorrectfeedback', $questionid);
+        $fs->delete_area_files($contextid, 'qtype_multichoice', 'incorrectfeedback', $questionid);
     }
 }

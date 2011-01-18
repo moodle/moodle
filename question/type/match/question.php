@@ -36,8 +36,11 @@ class qtype_match_question extends question_graded_automatically_with_countback 
     public $shufflestems;
 
     public $correctfeedback;
+    public $correctfeedbackformat;
     public $partiallycorrectfeedback;
+    public $partiallycorrectfeedbackformat;
     public $incorrectfeedback;
+    public $incorrectfeedbackformat;
 
     /** @var array of question stems. */
     public $stems;

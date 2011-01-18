@@ -54,6 +54,7 @@ class qtype_match_test extends UnitTestCase {
         $q->questiontext = 'Classify the animals.';
         $q->questiontextformat = FORMAT_HTML;
         $q->generalfeedback = 'General feedback.';
+        $q->generalfeedbackformat = FORMAT_HTML;
         $q->defaultmark = 1;
         $q->penalty = 0.3333333;
         $q->length = 1;
