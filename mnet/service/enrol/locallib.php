@@ -552,6 +552,10 @@ class mnetservice_enrol_potential_users_selector extends user_selector_base {
         $systemcontext = get_system_context();
         $userids = get_users_by_capability($systemcontext, 'moodle/site:mnetlogintoremote', 'u.id');
 
+        if (empty($userids)) {
+            return array();
+        }
+
         list($usql, $uparams) = $DB->get_in_or_equal(array_keys($userids), SQL_PARAMS_NAMED, 'uid0000');
 
         list($wherecondition, $params) = $this->search_sql($search, 'u');
