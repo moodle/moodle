@@ -409,16 +409,15 @@ function tag_get_id($tags, $return_value=null) {
 
     list($tag_string, $params) = $DB->get_in_or_equal($tags);
 
-    if ($rs = $DB->get_recordset_sql("SELECT * FROM {tag} WHERE name $tag_string ORDER BY name", $params)) {
-        foreach ($rs as $record) {
-            if ($return_value == TAG_RETURN_OBJECT) {
-                $result[$record->name] = $record;
-            } else { // TAG_RETURN_ARRAY
-                $result[$record->name] = $record->id;
-            }
+    $rs = $DB->get_recordset_sql("SELECT * FROM {tag} WHERE name $tag_string ORDER BY name", $params);
+    foreach ($rs as $record) {
+        if ($return_value == TAG_RETURN_OBJECT) {
+            $result[$record->name] = $record;
+        } else { // TAG_RETURN_ARRAY
+            $result[$record->name] = $record->id;
         }
-        $rs->close();
     }
+    $rs->close();
 
     if ($return_an_int) {
         return array_pop($result);
