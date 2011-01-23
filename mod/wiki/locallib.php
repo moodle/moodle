@@ -34,6 +34,7 @@
 
 require_once($CFG->dirroot . '/mod/wiki/lib.php');
 require_once($CFG->dirroot . '/mod/wiki/parser/parser.php');
+require_once($CFG->libdir . '/filelib.php');
 
 define('WIKI_REFRESH_CACHE_TIME', 30); // @TODO: To be deleted.
 define('FORMAT_CREOLE', '37');

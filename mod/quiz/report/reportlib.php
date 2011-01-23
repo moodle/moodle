@@ -310,7 +310,10 @@ function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)
  * @return string the comment that corresponds to this grade (empty string if there is not one.
  */
 function quiz_report_feedback_for_grade($grade, $quizid, $context) {
-    global $DB;
+    global $DB, $CFG;
+
+    require_once($CFG->libdir . '/filelib.php');
+
     static $feedbackcache = array();
     if (!isset($feedbackcache[$quizid])){
         $feedbackcache[$quizid] = $DB->get_records('quiz_feedback', array('quizid' => $quizid));

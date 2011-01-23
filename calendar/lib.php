@@ -1874,7 +1874,10 @@ class calendar_event {
      * @return string
      */
     protected function get_description() {
-       global $USER;
+        global $USER, $CFG;
+
+        require_once($CFG->libdir . '/filelib.php');
+
         if ($this->_description === null) {
             // Check if we have already resolved the context for this event
             if ($this->editorcontext === null) {

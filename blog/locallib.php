@@ -26,6 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir . '/filelib.php');
+
 /**
  * Blog_entry class. Represents an entry in a user's blog. Contains all methods for managing this entry.
  * This class does not contain any HTML-generating code. See blog_listing sub-classes for such code.

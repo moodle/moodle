@@ -48,6 +48,7 @@ require_once($CFG->dirroot . '/mod/quiz/accessrules.php');
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->libdir  . '/eventslib.php');
+require_once($CFG->libdir . '/filelib.php');
 
 /// Constants ///////////////////////////////////////////////////////////////////
 
@@ -1031,7 +1032,7 @@ function quiz_send_confirmation($a) {
     $eventdata->smallmessage      = get_string('emailconfirmsmall', 'quiz', $a);
     $eventdata->contexturl        = $a->quizurl;
     $eventdata->contexturlname    = $a->quizname;
-    
+
     return message_send($eventdata);
 }
 

@@ -3110,6 +3110,8 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
                           $footer="", $highlight="", $postisread=null, $dummyifcantsee=true, $istracked=null, $return=false) {
     global $USER, $CFG, $OUTPUT;
 
+    require_once($CFG->libdir . '/filelib.php');
+
     // String cache
     static $str;
 
