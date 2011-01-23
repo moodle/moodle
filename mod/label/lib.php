@@ -181,7 +181,7 @@ function label_reset_userdata($data) {
  *
  * @return array
  */
-function lable_get_extra_capabilities() {
+function label_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
