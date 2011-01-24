@@ -37,6 +37,9 @@ $allmodules = $DB->get_records('modules', array('visible'=>1));
 $modules = array();
 foreach ($allmodules as $key=>$module) {
     $modname = $module->name;
+    if ($modname === 'label') {
+        continue;
+    }
     $libfile = "$CFG->dirroot/mod/$modname/lib.php";
     if (!file_exists($libfile)) {
         continue;
