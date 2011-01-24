@@ -10,7 +10,7 @@
         $completion = new completion_info($course);
         if ($completion->is_enabled() && $completion->has_criteria()) {
             echo '<p>';
-            echo '<a href="'.$CFG->wwwroot.'/course/report/completion/index.php?coursetest='.$course->id.'">'.get_string('coursecompletion').'</a>';
+            echo '<a href="'.$CFG->wwwroot.'/course/report/completion/index.php?course='.$course->id.'">'.get_string('coursecompletion').'</a>';
             echo '</p>';
         }
     }

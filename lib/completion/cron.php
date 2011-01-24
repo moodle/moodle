@@ -57,8 +57,8 @@ function completion_cron_mark_started() {
         mtrace('Marking users as started');
     }
 
-    if (!empty($CFG->progresstrackedroles)) {
-        $roles = ' AND ra.roleid IN ('.$CFG->progresstrackedroles.')';
+    if (!empty($CFG->gradebookroles)) {
+        $roles = ' AND ra.roleid IN ('.$CFG->gradebookroles.')';
     } else {
         // This causes it to default to everyone (if there is no student role)
         $roles = '';

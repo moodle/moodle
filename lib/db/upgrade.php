@@ -5793,8 +5793,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
         // Check if we need to fix default grade
         if (array_key_exists('defaultgrade', $columns) && (
-                empty($columns['defaultgrade']->unsigned) || 
-                empty($columns['defaultgrade']->not_null) || 
+                empty($columns['defaultgrade']->unsigned) ||
+                empty($columns['defaultgrade']->not_null) ||
                 $columns['defaultgrade']->default_value !== '1.0000000')) {
             // defaultgrade should be unsigned NOT NULL DEFAULT '1.0000000'
             // Fixed in earlier upgrade code
@@ -5945,15 +5945,22 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $index = new xmldb_index('itemid', XMLDB_INDEX_NOTUNIQUE, array('itemid'));
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
-            
+
             $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
             $dbman->add_key($table, $key);
-            
+
             $key = new xmldb_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
             $dbman->add_key($table, $key);
         }
 
         upgrade_main_savepoint(true, 2011011415);
+    }
+
+    if ($oldversion < 2011012400) {
+        // Clean up the old progress tracked roles setting, no longer used (replaced by enrolment)
+        unset_config('progresstrackedroles');
+
+        upgrade_main_savepoint(true, 2011012400);
     }
 
     return true;
