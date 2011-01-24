@@ -389,11 +389,13 @@ class moodle_url {
             if (is_int($key)) {
                 throw new coding_exception('Url parameters can not have numeric keys!');
             }
-            if (is_array($value)) {
-                throw new coding_exception('Url parameters values can not be arrays!');
-            }
-            if (is_object($value) and !method_exists($value, '__toString')) {
-                throw new coding_exception('Url parameters values can not be objects, unless __toString() is defined!');
+            if (!is_string($value)) {
+                if (is_array($value)) {
+                    throw new coding_exception('Url parameters values can not be arrays!');
+                }
+                if (is_object($value) and !method_exists($value, '__toString')) {
+                    throw new coding_exception('Url parameters values can not be objects, unless __toString() is defined!');
+                }
             }
             $this->params[$key] = (string)$value;
         }
@@ -486,7 +488,11 @@ class moodle_url {
      */
     public function get_query_string($escaped = true, array $overrideparams = null) {
         $arr = array();
-        $params = $this->merge_overrideparams($overrideparams);
+        if ($overrideparams !== null) {
+            $params = $this->merge_overrideparams($overrideparams);
+        } else {
+            $params = $this->params;
+        }
         foreach ($params as $key => $val) {
            $arr[] = rawurlencode($key)."=".rawurlencode($val);
         }
