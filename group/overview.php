@@ -9,6 +9,7 @@
  */
 
 require_once('../config.php');
+require_once($CFG->libdir . '/filelib.php');
 
 $courseid   = required_param('id', PARAM_INT);
 $groupid    = optional_param('group', 0, PARAM_INT);

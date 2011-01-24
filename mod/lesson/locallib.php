@@ -31,6 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 /** Include the files that are required by this module */
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/lesson/lib.php');
+require_once($CFG->libdir . '/filelib.php');
 
 /** This page */
 define('LESSON_THISPAGE', 0);

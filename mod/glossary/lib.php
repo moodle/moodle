@@ -821,6 +821,10 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $mode='',$hook=''
  * @return void Output is echo'd
  */
 function glossary_print_entry_default ($entry, $glossary, $cm) {
+    global $CFG;
+
+    require_once($CFG->libdir . '/filelib.php');
+
     echo '<h3>'. strip_tags($entry->concept) . ': </h3>';
 
     $definition = $entry->definition;
