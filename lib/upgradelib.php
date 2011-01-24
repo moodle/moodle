@@ -272,12 +272,27 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
     foreach ($plugs as $plug=>$fullplug) {
         $component = $type.'_'.$plug; // standardised plugin name
 
+        // check plugin dir is valid name
+        $cplug = strtolower($plug);
+        $cplug = clean_param($cplug, PARAM_SAFEDIR);
+        $cplug = str_replace('-', '', $cplug);
+        if ($plug !== $cplug) {
+            throw new plugin_defective_exception($component, 'Invalid plugin directory name.');
+        }
+
         if (!is_readable($fullplug.'/version.php')) {
             continue;
         }
 
         $plugin = new stdClass();
         require($fullplug.'/version.php');  // defines $plugin with version etc
+
+        // if plugin tells us it's full name we may check the location
+        if (isset($plugin->component)) {
+            if ($plugin->component !== $component) {
+                throw new plugin_defective_exception($component, 'Plugin installed in wrong folder.');
+            }
+        }
 
         if (empty($plugin->version)) {
             throw new plugin_defective_exception($component, 'Missing version value in version.php');
@@ -396,11 +411,20 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
 
     foreach ($mods as $mod=>$fullmod) {
 
-        if ($mod == 'NEWMODULE') {   // Someone has unzipped the template, ignore it
+        if ($mod === 'NEWMODULE') {   // Someone has unzipped the template, ignore it
             continue;
         }
 
         $component = 'mod_'.$mod;
+
+        // check module dir is valid name
+        $cmod = strtolower($mod);
+        $cmod = clean_param($cmod, PARAM_SAFEDIR);
+        $cmod = str_replace('-', '', $cmod);
+        $cmod = str_replace('_', '', $cmod); // modules MUST not have '_' in name and never will, sorry
+        if ($mod !== $cmod) {
+            throw new plugin_defective_exception($component, 'Invalid plugin directory name.');
+        }
 
         if (!is_readable($fullmod.'/version.php')) {
             throw new plugin_defective_exception($component, 'Missing version.php');
@@ -408,6 +432,13 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
 
         $module = new stdClass();
         require($fullmod .'/version.php');  // defines $module with version etc
+
+        // if plugin tells us it's full name we may check the location
+        if (isset($module->component)) {
+            if ($module->component !== $component) {
+                throw new plugin_defective_exception($component, 'Plugin installed in wrong folder.');
+            }
+        }
 
         if (empty($module->version)) {
             if (isset($module->version)) {
@@ -424,6 +455,11 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             } else if ($module->requires < 2010000000) {
                 throw new plugin_defective_exception($component, 'Plugin is not compatible with Moodle 2.x or later.');
             }
+        }
+
+        // all modules must have en lang pack
+        if (!is_readable("$fullmod/lang/en/$mod.php")) {
+            throw new plugin_defective_exception($component, 'Missing mandatory en language pack.');
         }
 
         $module->name = $mod;   // The name MUST match the directory
@@ -548,6 +584,14 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 
         $component = 'block_'.$blockname;
 
+        // check block dir is valid name
+        $cblockname = strtolower($blockname);
+        $cblockname = clean_param($cblockname, PARAM_SAFEDIR);
+        $cblockname = str_replace('-', '', $cblockname);
+        if ($blockname !== $cblockname) {
+            throw new plugin_defective_exception($component, 'Invalid plugin directory name.');
+        }
+
         if (!is_readable($fullblock.'/version.php')) {
             throw new plugin_defective_exception('block/'.$blockname, 'Missing version.php file.');
         }
@@ -556,6 +600,13 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
         $plugin->cron    = 0;
         include($fullblock.'/version.php');
         $block = $plugin;
+
+        // if plugin tells us it's full name we may check the location
+        if (isset($block->component)) {
+            if ($block->component !== $component) {
+                throw new plugin_defective_exception($component, 'Plugin installed in wrong folder.');
+            }
+        }
 
         if (!empty($plugin->requires)) {
             if ($plugin->requires > $CFG->version) {
