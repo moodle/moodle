@@ -130,7 +130,8 @@ img.iconhelp {vertical-align:middle;}
 
 #categoryquestions th, .user th, .user th.header, .group th.header, .admin table tr th, .admin table tr th.header {color:black; border-width:1px;}
 
-#permissions th, td {border-bottom:1px solid #000000; padding:0.5em;}
+#defineroletable .rolecap th, #defineroletable .rolecap td {border-bottom:1px solid #000000; padding:0.5em;}
+
 #permissions tr {background-color:#EEEEEE;}
 #permissions tr.rolecapheading {border-top: 1px black; background-color:#E3DFD4;}
 .user th a:link, #categoryquestions th a:link, .group th a:link, .admin table tr th a:link {

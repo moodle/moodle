@@ -46,7 +46,7 @@ $THEME->parents = array('canvas','base');
 // changes you want to your theme.
 ////////////////////////////////////////////////////
 
-$THEME->sheets = array('dock','base','general','fw_corners','formalwhite','settings');
+$THEME->sheets = array('dock','base','general','fw_corners','formalwhite','settings','course');
 ////////////////////////////////////////////////////
 // Name of the stylesheet(s) you've including in
 // this theme's /styles/ directory.

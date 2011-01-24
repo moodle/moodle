@@ -3,7 +3,7 @@
  *** Core
  ***/
 html, body {
-    background-color: #FBF9FA;
+    background-color: #EFEFEF;
 }
 
 .block .header {
@@ -58,7 +58,7 @@ body {
 }
 
 #headerenvelop { /* Inside Header Middle */
-    color:black;
+    color:#000;
     height: 105px;
     /*background-color: #E3DFD4;*/
 }
@@ -73,16 +73,25 @@ body {
 }
 
 /* Header */
+#header-i3 {
+	background-color: #FFF;
+	margin-left: 7px;
+	margin-right: 7px;
+}
+
 #header, #header-home {
     padding:0 17px;
     background-color: #E3DFD4;
-    margin-left:17px;
-    margin-right:17px;
+    margin-left:10px;
+    margin-right:10px;
+    -moz-border-radius: 6px 6px 0px 0px;
+    -webkit-border-radius: 6px 6px 0px 0px;
+    border-radius: 6px 6px 0px 0px;
 }
 
 #custommenu, .navbar {
-	margin-right: 17px;
-	margin-left: 17px;
+	margin-right: 10px;
+	margin-left: 10px;
 }
 
 .yui3-skin-sam .yui3-menu-content {border-right:none;border-left:none;}
@@ -97,8 +106,8 @@ body {
 #page-content {
 	float: none;
 	width: auto;
-	margin-right: 17px;
-	margin-left: 17px;
+	margin-right: 10px;
+	margin-left: 10px;
     background-color: #FFF;
 }
 

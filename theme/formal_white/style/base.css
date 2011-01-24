@@ -1,4 +1,4 @@
-body, div, p, li, input, option, textarea {font-size:8pt;line-height:1.5em;}
+body, div, p, li, input, option, textarea {font-size:10pt;line-height:1.5em;}
 body, div, p, li, input, option, textarea, h1, h2, h3, h4, h5 {font-family:Arial, Helvetica, sans-serif;}
 
 h1.main, h2.main, h3.main, h4.main, h5.main, h6.main {text-align:center;}
@@ -35,3 +35,17 @@ h1.main, h2.main, h3.main, h4.main, h5.main, h6.main {text-align:center;}
 .groupmanagementtable td p {margin:0px;}
 
 .pagelayout-redirect #page {background-image:none;}
+
+.course_category_tree .category {margin: 5px;padding-left: 16px;}
+.course_category_tree .category .course.odd {background-color: #E3DFD4;}
+.course_category_tree .category .course.even {background-color: #EEE;}
+.course_category_tree .category_link {
+    display: block;
+    font-size: 120%;
+    font-weight: bold;
+    margin: 5px;
+}
+/* la posizione del disclosure triangle */
+.course_category_tree .category.with_children .category_label {
+    background-position: 0px 3px;
+}
