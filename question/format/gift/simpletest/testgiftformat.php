@@ -659,6 +659,74 @@ FALSE#42 is the Ultimate Answer.#You gave the right answer.}";
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
     }
 
+    public function test_import_truefalse_true_answer1() {
+        $gift = "// name 0-11
+::2-08 TSL::TSL is blablabla.{T}";
+        $lines = preg_split('/[\\n\\r]/', str_replace("\r\n", "\n", $gift));
+
+        $importer = new qformat_gift();
+        $q = $importer->readquestion($lines);
+
+        $expectedq = (object) array(
+            'name' => '2-08 TSL',
+            'questiontext' => "TSL is blablabla.",
+            'questiontextformat' => FORMAT_MOODLE,
+            'generalfeedback' => '',
+            'generalfeedbackformat' => FORMAT_MOODLE,
+            'qtype' => 'truefalse',
+            'defaultgrade' => 1,
+            'penalty' => 1,
+            'length' => 1,
+            'correctanswer' => 1,
+            'feedbacktrue' => array(
+                'text' => '',
+                'format' => FORMAT_MOODLE,
+                'files' => array(),
+            ),
+            'feedbackfalse' => array(
+                'text' => '',
+                'format' => FORMAT_MOODLE,
+                'files' => array(),
+            ),
+        );
+
+        $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
+    }
+
+    public function test_import_truefalse_true_answer2() {
+        $gift = "// name 0-11
+::2-08 TSL::TSL is blablabla.{TRUE}";
+        $lines = preg_split('/[\\n\\r]/', str_replace("\r\n", "\n", $gift));
+
+        $importer = new qformat_gift();
+        $q = $importer->readquestion($lines);
+
+        $expectedq = (object) array(
+            'name' => '2-08 TSL',
+            'questiontext' => "TSL is blablabla.",
+            'questiontextformat' => FORMAT_MOODLE,
+            'generalfeedback' => '',
+            'generalfeedbackformat' => FORMAT_MOODLE,
+            'qtype' => 'truefalse',
+            'defaultgrade' => 1,
+            'penalty' => 1,
+            'length' => 1,
+            'correctanswer' => 1,
+            'feedbacktrue' => array(
+                'text' => '',
+                'format' => FORMAT_MOODLE,
+                'files' => array(),
+            ),
+            'feedbackfalse' => array(
+                'text' => '',
+                'format' => FORMAT_MOODLE,
+                'files' => array(),
+            ),
+        );
+
+        $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
+    }
+
     public function test_export_truefalse() {
         $qdata = (object) array(
             'id' => 666 ,
