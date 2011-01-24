@@ -378,7 +378,7 @@
                                                 //Iterate over tags
                                                 $tags = array();
                                                 $sizetagsarr = sizeof($tagsarr);
-                                                for($i = 0; $i < $sizetagsarr; $i++) {
+                                                for ($i = 0; $i < $sizetagsarr; $i++) {
                                                     $tag_info = $tagsarr[$i];
                                                     ///traverse_xmlize($tag_info);                        //Debug
                                                     ///print_object ($GLOBALS['traverse_array']);         //Debug
