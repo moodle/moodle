@@ -105,12 +105,9 @@ class qbehaviour_opaque extends question_behaviour {
         } else if ($step->has_behaviour_var('comment')) {
             return $this->summarise_manual_comment($step);
         } else {
-            $data = $step->get_qt_data();
+            $data = qtype_opaque_get_submitted_data($step);
             $formatteddata = array();
             foreach ($data as $name => $value) {
-                if (substr($name, 0, 1) == '_') {
-                    continue;
-                }
                 $formatteddata[] = $name . ' => ' . s($value);
             }
             if ($formatteddata) {

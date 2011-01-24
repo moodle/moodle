@@ -378,6 +378,23 @@ function qtype_opaque_get_step($seq, question_attempt $qa, $pendingstep) {
 }
 
 /**
+ * Wrapper round $step->get_submitted_data() to work around an incompatibility
+ * between OpenMark and the Moodle question engine.
+ * @param question_attempt_step $step a step.
+ * @return array approximately $step->get_submitted_data().
+ */
+function qtype_opaque_get_submitted_data(question_attempt_step $step) {
+    // By default, OpenMark radio buttons get the name '_rg', whcih breaks
+    // one of the assumptions of the qutesion engine, so we have to manually
+    // include it when doing get_submitted_data.
+    $response = $step->get_submitted_data();
+    if ($step->has_qt_var('_rg')) {
+        $response['_rg'] = $step->get_qt_var('_rg');
+    }
+    return $response;
+}
+
+/**
  * Update the $SESSION->cached_opaque_state to show the current status of $question for state
  * $state.
  * @param object $question the question
@@ -460,7 +477,8 @@ function qtype_opaque_update_state(question_attempt $qa, question_attempt_step $
         while ($opaquestate->sequencenumber < $targetseq) {
             $step = qtype_opaque_get_step($opaquestate->sequencenumber + 1, $qa, $pendingstep);
 
-            $processreturn = qtype_opaque_process($opaquestate->engine, $opaquestate->questionsessionid, $step->get_submitted_data());
+            $processreturn = qtype_opaque_process($opaquestate->engine, $opaquestate->questionsessionid,
+                    qtype_opaque_get_submitted_data($step));
             if (is_string($processreturn)) {
                 unset($SESSION->cached_opaque_state);
                 return $processreturn;
