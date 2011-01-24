@@ -142,7 +142,8 @@ class feedback_item_textarea extends feedback_item_base {
                 $worksheet->write_string($rowOffset, 2, $data[0], $xlsFormats->value_bold);
             }
             $rowOffset++;
-            for($i = 1; $i < sizeof($data); $i++) {
+            $sizeofdata = sizeof($data);
+            for($i = 1; $i < $sizeofdata; $i++) {
                 // $worksheet->setFormat("<l><vo>");
                 $worksheet->write_string($rowOffset, 2, $data[$i], $xlsFormats->default);
                 $rowOffset++;

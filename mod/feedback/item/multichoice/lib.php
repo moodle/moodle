@@ -171,7 +171,8 @@ class feedback_item_multichoice extends feedback_item_base {
             $vallist = array_values(explode (FEEDBACK_MULTICHOICE_LINE_SEP, $value->value));
 	    $sizeofvallist = sizeof($vallist);
             for($i = 0; $i < $sizeofvallist; $i++) {
-                for($k = 0; $k < sizeof($presentation); $k++) {
+                $sizeofpresentation = sizeof($presentation);
+                for($k = 0; $k < $sizeofpresentation; $k++) {
                     if($vallist[$i] == ($k + 1)) {//Die Werte beginnen bei 1, das Array aber mit 0
                         $printval .= trim($presentation[$k]) . chr(10);
                         break;
@@ -235,7 +236,8 @@ class feedback_item_multichoice extends feedback_item_base {
         $worksheet->write_string($rowOffset, 0, $item->label, $xlsFormats->head2_green);
         $worksheet->write_string($rowOffset, 1, $analysed_item[1], $xlsFormats->head2_green);
         if(is_array($data)) {
-            for($i = 0; $i < sizeof($data); $i++) {
+            $sizeofdata = sizeof($data);
+            for($i = 0; $i < $sizeofdata; $i++) {
                 $aData = $data[$i];
 
                 // $worksheet->setFormat("<l><f><ro2><vo><c:blue>");
@@ -570,7 +572,8 @@ class feedback_item_multichoice extends feedback_item_base {
         $arrvals = array_values($value);
         $arrvals = clean_param($arrvals, PARAM_INT);  //prevent sql-injection
         $retval = $arrvals[0];
-        for($i = 1; $i < sizeof($arrvals); $i++) {
+        $sizeofarrvals = sizeof($arrvals);
+        for($i = 1; $i < $sizeofarrvals; $i++) {
             $retval .= FEEDBACK_MULTICHOICE_LINE_SEP.$arrvals[$i];
         }
         return $retval;

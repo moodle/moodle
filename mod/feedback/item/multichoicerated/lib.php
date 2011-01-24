@@ -120,8 +120,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
         //schleife ueber den Werten und ueber die Antwortmoeglichkeiten
 
         $analysedAnswer = array();
-
-        for($i = 1; $i <= sizeof($lines); $i++) {
+        $sizeoflines = sizeof($lines);
+        for($i = 1; $i <= $sizeoflines; $i++) {
             $item_values = explode(FEEDBACK_MULTICHOICERATED_VALUE_SEP, $lines[$i-1]);
             $ans = null;
             $ans->answertext = $item_values[1];
@@ -215,7 +215,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $worksheet->write_string($rowOffset, 1, $analysed_item[1], $xlsFormats->head2);
         if(is_array($data)) {
             $avg = 0.0;
-            for($i = 0; $i < sizeof($data); $i++) {
+            $sizeofdata = sizeof($data);
+            for($i = 0; $i < $sizeofdata; $i++) {
                 $aData = $data[$i];
 
                 // $worksheet->setFormat("<l><f><ro2><vo><c:blue>");

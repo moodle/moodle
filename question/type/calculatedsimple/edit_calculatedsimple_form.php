@@ -168,7 +168,8 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                     $calcmax = optional_param('calcmax', '', PARAM_NUMBER);
                     $oldoptions  = optional_param('defoptions', '', PARAM_RAW);
                     $newdatasetvalues = false ;
-                    for($key = 1 ; $key <= sizeof($olddef) ; $key++) {
+                    $sizeofolddef = sizeof($olddef);
+                    for($key = 1; $key <= $sizeofolddef; $key++) {
                         $def = $olddef[$key] ;
                         $this->datasetdefs[$def]= new stdClass ;
                         $this->datasetdefs[$def]->type = 1;
