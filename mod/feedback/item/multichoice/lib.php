@@ -119,14 +119,15 @@ class feedback_item_multichoice extends feedback_item_base {
 
         $analysedAnswer = array();
         if($info->subtype == 'c') {
-            for($i = 1; $i <= sizeof($answers); $i++) {
+            $sizeofanswers = sizeof($answers);
+            for ($i = 1; $i <= $sizeofanswers; $i++) {
                 $ans = null;
                 $ans->answertext = $answers[$i-1];
                 $ans->answercount = 0;
-                foreach($values as $value) {
+                foreach ($values as $value) {
                     //ist die Antwort gleich dem index der Antworten + 1?
                     $vallist = explode(FEEDBACK_MULTICHOICE_LINE_SEP, $value->value);
-                    foreach($vallist as $val) {
+                    foreach ($vallist as $val) {
                         if ($val == $i) {
                            $ans->answercount++;
                         }
@@ -136,11 +137,12 @@ class feedback_item_multichoice extends feedback_item_base {
                 $analysedAnswer[] = $ans;
             }
         }else {
-            for($i = 1; $i <= sizeof($answers); $i++) {
+            $sizeofanswers = sizeof($answers);
+            for ($i = 1; $i <= $sizeofanswers; $i++) {
                 $ans = null;
                 $ans->answertext = $answers[$i-1];
                 $ans->answercount = 0;
-                foreach($values as $value) {
+                foreach ($values as $value) {
                     //ist die Antwort gleich dem index der Antworten + 1?
                     if ($value->value == $i) {
                         $ans->answercount++;
@@ -159,26 +161,30 @@ class feedback_item_multichoice extends feedback_item_base {
 
         $printval = '';
 
-        if(!isset($value->value)) return $printval;
+        if (!isset($value->value)) {
+            return $printval;
+        }
 
         // @list($presentation) = explode(FEEDBACK_RADIO_ADJUST_SEP, $item->presentation); //remove the adjustment-info
 
         $presentation = explode (FEEDBACK_MULTICHOICE_LINE_SEP, $info->presentation);
 
-        if($info->subtype == 'c') {
+        if ($info->subtype == 'c') {
             $vallist = array_values(explode (FEEDBACK_MULTICHOICE_LINE_SEP, $value->value));
-            for($i = 0; $i < sizeof($vallist); $i++) {
-                for($k = 0; $k < sizeof($presentation); $k++) {
-                    if($vallist[$i] == ($k + 1)) {//Die Werte beginnen bei 1, das Array aber mit 0
+            $sizeofvallist = sizeof($vallist);
+            $sizeofpresentation = sizeof($presentation);
+            for ($i = 0; $i < $sizeofvallist; $i++) {
+                for ($k = 0; $k < $sizeofpresentation; $k++) {
+                    if ($vallist[$i] == ($k + 1)) {//Die Werte beginnen bei 1, das Array aber mit 0
                         $printval .= trim($presentation[$k]) . chr(10);
                         break;
                     }
                 }
             }
-        }else {
+        } else {
             $index = 1;
             foreach($presentation as $pres){
-                if($value->value == $index){
+                if ($value->value == $index){
                     $printval = $pres;
                     break;
                 }
@@ -231,8 +237,9 @@ class feedback_item_multichoice extends feedback_item_base {
         //frage schreiben
         $worksheet->write_string($rowOffset, 0, $item->label, $xlsFormats->head2_green);
         $worksheet->write_string($rowOffset, 1, $analysed_item[1], $xlsFormats->head2_green);
-        if(is_array($data)) {
-            for($i = 0; $i < sizeof($data); $i++) {
+        if (is_array($data)) {
+            $sizeofdata = sizeof($data);
+            for ($i = 0; $i < $sizeofdata; $i++) {
                 $aData = $data[$i];
 
                 // $worksheet->setFormat("<l><f><ro2><vo><c:blue>");
@@ -244,7 +251,7 @@ class feedback_item_multichoice extends feedback_item_base {
                 $worksheet->write_number($rowOffset + 2, $i + 2, $aData->quotient, $xlsFormats->procent);
             }
         }
-        $rowOffset +=3 ;
+        $rowOffset += 3;
         return $rowOffset;
     }
 
@@ -560,14 +567,15 @@ class feedback_item_multichoice extends feedback_item_base {
     }
 
     function item_arrayToString($value) {
-        if(!is_array($value)) {
+        if (!is_array($value)) {
             return $value;
         }
         $retval = '';
         $arrvals = array_values($value);
         $arrvals = clean_param($arrvals, PARAM_INT);  //prevent sql-injection
         $retval = $arrvals[0];
-        for($i = 1; $i < sizeof($arrvals); $i++) {
+        $sizeofarrvals = sizeof($arrvals);
+        for ($i = 1; $i < $sizeofarrvals; $i++) {
             $retval .= FEEDBACK_MULTICHOICE_LINE_SEP.$arrvals[$i];
         }
         return $retval;

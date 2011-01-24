@@ -73,7 +73,8 @@ class qformat_blackboard_six extends qformat_default {
         }
 
         // Delete all files in the curent directory return false and halt if a file cannot be removed
-        for($i=0; $i<count($dir_files); $i++) {
+        $countdir_files = count($dir_files);
+        for($i=0; $i<$countdir_files; $i++) {
             chmod($dir_files[$i], $CFG->directorypermissions);
             if (((unlink($dir_files[$i]))) == FALSE) {
                 return false;
@@ -81,7 +82,8 @@ class qformat_blackboard_six extends qformat_default {
         }
 
         // Empty sub directories and then remove the directory
-        for($i=0; $i<count($dir_subdirs); $i++) {
+        $countdir_subdirs = count($dir_subdirs);
+        for($i=0; $i<$countdir_subdirs; $i++) {
             chmod($dir_subdirs[$i], $CFG->directorypermissions);
             if ($this->clean_temp_dir($dir_subdirs[$i]) == FALSE) {
                 return false;

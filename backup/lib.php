@@ -119,7 +119,7 @@
         }
 
         // Loop through all directory entries, and construct two temporary arrays containing files and sub directories
-        while(false !== ($entry = readdir($handle))) {
+        while (false !== ($entry = readdir($handle))) {
             if (is_dir($dir. $slash .$entry) && $entry != ".." && $entry != "." && $entry != $excludeddir) {
                 $dir_subdirs[] = $dir. $slash .$entry;
             }
@@ -129,7 +129,8 @@
         }
 
         // Delete all files in the curent directory return false and halt if a file cannot be removed
-        for($i=0; $i<count($dir_files); $i++) {
+        $countdirfiles = count($dir_files);
+        for ($i=0; $i<$countdirfiles; $i++) {
             chmod($dir_files[$i], $CFG->directorypermissions);
             if (((unlink($dir_files[$i]))) == FALSE) {
                 return false;
@@ -137,7 +138,8 @@
         }
 
         // Empty sub directories and then remove the directory
-        for($i=0; $i<count($dir_subdirs); $i++) {
+        $countdirsubdirs = count($dir_subdirs);
+        for($i=0; $i<$countdirsubdirs; $i++) {
             chmod($dir_subdirs[$i], $CFG->directorypermissions);
             if (delete_dir_contents($dir_subdirs[$i]) == FALSE) {
                 return false;
