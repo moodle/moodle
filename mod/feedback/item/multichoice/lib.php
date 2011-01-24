@@ -119,7 +119,7 @@ class feedback_item_multichoice extends feedback_item_base {
 
         $analysedAnswer = array();
         if($info->subtype == 'c') {
-	    $sizeofanswers = sizeof($answers);
+            $sizeofanswers = sizeof($answers);
             for($i = 1; $i <= $sizeofanswers; $i++) {
                 $ans = null;
                 $ans->answertext = $answers[$i-1];
@@ -137,7 +137,7 @@ class feedback_item_multichoice extends feedback_item_base {
                 $analysedAnswer[] = $ans;
             }
         }else {
-	    $sizeofanswers = sizeof($answers);
+            $sizeofanswers = sizeof($answers);
             for($i = 1; $i <= $sizeofanswers; $i++) {
                 $ans = null;
                 $ans->answertext = $answers[$i-1];
@@ -169,7 +169,7 @@ class feedback_item_multichoice extends feedback_item_base {
 
         if($info->subtype == 'c') {
             $vallist = array_values(explode (FEEDBACK_MULTICHOICE_LINE_SEP, $value->value));
-	    $sizeofvallist = sizeof($vallist);
+            $sizeofvallist = sizeof($vallist);
             for($i = 0; $i < $sizeofvallist; $i++) {
                 $sizeofpresentation = sizeof($presentation);
                 for($k = 0; $k < $sizeofpresentation; $k++) {

@@ -142,7 +142,7 @@ class nwiki_parser extends wiki_markup_parser {
         $cells = array();
         foreach($normalcells as $nc) {
             $headercells = explode("!!", $nc);
-	    $countheadercells = count($headercells);
+            $countheadercells = count($headercells);
             for($i = 0; $i < $countheadercells; $i++) {
                 $cells[] = array($type, $headercells[$i]);
                 $type = 'header';

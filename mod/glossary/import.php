@@ -248,7 +248,7 @@ if ($xml = glossary_read_imported_file($result)) {
             $importedentries++;
 
             $xmlaliases = @$xmlentry['#']['ALIASES'][0]['#']['ALIAS']; // ignore missing ALIASES
-	    $sizeofxmlaliases = sizeof($xmlaliases);
+            $sizeofxmlaliases = sizeof($xmlaliases);
             for($k = 0; $k < $sizeofxmlaliases; $k++) {
             /// Importing aliases
                 $xmlalias = $xmlaliases[$k];
@@ -265,7 +265,7 @@ if ($xml = glossary_read_imported_file($result)) {
             if (!empty($data->catsincl)) {
                 // If the categories must be imported...
                 $xmlcats = @$xmlentry['#']['CATEGORIES'][0]['#']['CATEGORY']; // ignore missing CATEGORIES
-		$sizeofxmlcats = sizeof($xmlcats);
+                $sizeofxmlcats = sizeof($xmlcats);
                 for($k = 0; $k < $sizeofxmlcats; $k++) {
                     $xmlcat = $xmlcats[$k];
 

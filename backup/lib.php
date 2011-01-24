@@ -129,7 +129,7 @@
         }
 
         // Delete all files in the curent directory return false and halt if a file cannot be removed
-	$countdirfiles = count($dir_files);
+        $countdirfiles = count($dir_files);
         for($i=0; $i<$countdirfiles; $i++) {
             chmod($dir_files[$i], $CFG->directorypermissions);
             if (((unlink($dir_files[$i]))) == FALSE) {
@@ -138,7 +138,7 @@
         }
 
         // Empty sub directories and then remove the directory
-	$countdirsubdirs = count($dir_subdirs);
+        $countdirsubdirs = count($dir_subdirs);
         for($i=0; $i<$countdirsubdirs; $i++) {
             chmod($dir_subdirs[$i], $CFG->directorypermissions);
             if (delete_dir_contents($dir_subdirs[$i]) == FALSE) {

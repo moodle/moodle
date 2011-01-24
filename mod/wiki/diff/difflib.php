@@ -300,7 +300,7 @@ class ouwiki_line {
         $pos=0;
         while(true) {
             // Find a non-space
-	    $strlendata = strlen($data);
+            $strlendata = strlen($data);
             for(;$pos < $strlendata && substr($data,$pos,1)===' ';$pos++) ;
             if($pos==$strlendata) {
                 // No more content
@@ -528,7 +528,7 @@ class ouwiki_changes {
         //    resulting array will be -,-,3,3,3,-,0
         $squidges=array();
         $lowest=0;
-	$countdiff = count($diff);
+        $countdiff = count($diff);
         for($index1=$countdiff;$index1>=1;$index1--) {
             $index2=$diff[$index1];
             if($index2===0) {

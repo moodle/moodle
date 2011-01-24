@@ -377,7 +377,7 @@
                                                 $tagsarr = $info['BLOG']['#']['BLOG_TAGS']['0']['#']['BLOG_TAG'];
                                                 //Iterate over tags
                                                 $tags = array();
-						$sizetagsarr = sizeof($tagsarr);
+                                                $sizetagsarr = sizeof($tagsarr);
                                                 for($i = 0; $i < $sizetagsarr; $i++) {
                                                     $tag_info = $tagsarr[$i];
                                                     ///traverse_xmlize($tag_info);                        //Debug
