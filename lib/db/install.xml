@@ -1935,7 +1935,7 @@
         <FIELD NAME="tagid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="itemtype"/>
         <FIELD NAME="itemtype" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="tagid" NEXT="itemid"/>
         <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="itemtype" NEXT="tiuserid"/>
-        <FIELD NAME="tiuserid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="itemid" NEXT="ordering"/>
+        <FIELD NAME="tiuserid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="itemid" NEXT="ordering"/>
         <FIELD NAME="ordering" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Maintains the order of the tag instances of an item" PREVIOUS="tiuserid" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="timemodified" PREVIOUS="ordering"/>
       </FIELDS>
