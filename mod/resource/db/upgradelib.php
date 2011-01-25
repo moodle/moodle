@@ -53,7 +53,11 @@ function resource_20_migrate() {
         $siteid = get_site()->id;
         $fs = get_file_storage();
 
-        if (strpos($path, 'LOCALPATH') === 0) {
+        if (empty($candidate->cmid)) {
+            // skip borked records
+            continue;
+
+        } else if (strpos($path, 'LOCALPATH') === 0) {
             // ignore not maintained local files - sorry
             continue;
 
