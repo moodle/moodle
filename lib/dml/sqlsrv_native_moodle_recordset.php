@@ -32,6 +32,7 @@ class sqlsrv_native_moodle_recordset extends moodle_recordset {
 
     protected $rsrc;
     protected $current;
+    protected $hasrownumber = null;
 
     public function __construct($rsrc) {
         $this->rsrc  = $rsrc;
@@ -44,6 +45,12 @@ class sqlsrv_native_moodle_recordset extends moodle_recordset {
 
     private function fetch_next() {
         if ($row = sqlsrv_fetch_array($this->rsrc, SQLSRV_FETCH_ASSOC)) {
+            if ($this->hasrownumber === null) {
+                $this->hasrownumber = array_key_exists('sqlsrvrownumber', $row);
+            }
+            if ($this->hasrownumber) {
+                unset($row['sqlsrvrownumber']);
+            }
             $row = array_change_key_case($row, CASE_LOWER);
         }
         return $row;
