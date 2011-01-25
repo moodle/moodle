@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20110114" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20110125" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1246,6 +1246,9 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="userfieldidx" UNIQUE="false" FIELDS="userid, fieldid"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="question_categories" COMMENT="Categories are for grouping questions" PREVIOUS="user_info_data" NEXT="question">
       <FIELDS>

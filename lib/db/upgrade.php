@@ -5956,6 +5956,18 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2011011415);
     }
 
+    if ($oldversion < 2011012500) {
+        //add the index userfieldidx (not unique) to user_info_data
+        $table = new xmldb_table('user_info_data');
+        $index = new xmldb_index('userfieldidx', XMLDB_INDEX_NOTUNIQUE, array('userid', 'fieldid'));
+        
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_main_savepoint(true, 2011012500);
+    }
+
     return true;
 }
 
