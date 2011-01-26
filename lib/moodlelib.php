@@ -7551,12 +7551,28 @@ function get_device_type(){
 	if(empty($CFG->enabledevicedetection)){
 		return 'default';
 	}
-	
+
+    $useragent = $_SERVER['HTTP_USER_AGENT'];
+
+	if(!empty($CFG->devicedetectionregex)){
+		$regexes = json_decode($CFG->devicedetectionregex);
+		
+		$i = 0;	
+		
+		foreach($regexes as $regex){
+		    $expressionname  = 'expression'.$i;
+            $valuename       = 'value'.$i;
+            
+		    if(preg_match($regex->$expressionname,$useragent)){
+                return $regex->$valuename;
+		    }
+		}
+	}
+
 	if(check_browser_version('MSIE',6.0)) {
 		return 'legacy';
 	}
 	
-	$useragent = $_SERVER['HTTP_USER_AGENT'];
 	
 	$tablet_regex = '/Tablet browser|iPad|iProd|GT-P1000|GT-I9000|SHW-M180S|SGH-T849|SCH-I800|Build/ERE27|sholest/i';
 	
