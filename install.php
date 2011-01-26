@@ -306,7 +306,7 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
         $a = new stdClass();
         $a->parent = dirname($CFG->dataroot);
         $a->dataroot = $CFG->dataroot;
-        if (!is_writable(dirname($CFG->dataroot))) {
+        if (!is_writable($a->parent)) {
             $hint_dataroot = get_string('pathsroparentdataroot', 'install', $a);
             $config->stage = INSTALL_PATHS;
         } else {
@@ -317,7 +317,7 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
         }
 
     } else if (!install_init_dataroot($CFG->dataroot, $CFG->directorypermissions)) {
-        $hint_dataroot = get_string('pathserrcreatedataroot', 'install', $a);
+        $hint_dataroot = get_string('pathserrcreatedataroot', 'install', array('dataroot' => $CFG->dataroot));
         $config->stage = INSTALL_PATHS;
     }
 
