@@ -164,10 +164,10 @@ function book_log($str1, $str2, $level = 0) {
 function book_add_fake_block($chapters, $chapter, $book, $cm, $edit) {
     global $OUTPUT, $PAGE;
 
-    $toc= book_get_toc($chapters, $chapter, $book, $cm, $edit, 0);
+    $toc = book_get_toc($chapters, $chapter, $book, $cm, $edit, 0);
 
     if ($edit) {
-        $toc .= '<div class="faq">';
+        $toc .= '<div class="book_faq">';
         $toc .=  $OUTPUT->help_icon('faq', 'mod_book', get_string('faq', 'mod_book'));
         $toc .=  '</div>';
     }

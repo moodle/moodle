@@ -170,7 +170,7 @@ if ($nextid) {
 // =====================================================
 
 // upper nav
-echo '<div class="booknav">'.$chnavigation.'</div>';
+echo '<div class="navtop">'.$chnavigation.'</div>';
 
 // chapter itself
 echo $OUTPUT->box_start('generalbox book_content');
@@ -191,7 +191,7 @@ echo format_text($chaptertext, $chapter->contentformat, array('noclean'=>true, '
 echo $OUTPUT->box_end();
 
 /// lower navigation
-echo '<div class="booknav">'.$chnavigation.'</div>';
+echo '<div class="navbottom">'.$chnavigation.'</div>';
 
 echo $OUTPUT->footer();
 
