@@ -89,7 +89,7 @@ if ($chapter) {
       <title><?php echo format_string($book->name, true, array('context'=>$context)) ?></title>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
       <meta name="description" content="<?php echo s(format_string($book->name, true, array('context'=>$context))) ?>" />
-      <link rel="stylesheet" type="text/css" href="book_print.css" />
+      <link rel="stylesheet" type="text/css" href="print.css" />
     </head>
     <body>
     <a name="top"></a>
@@ -125,7 +125,7 @@ if ($chapter) {
       <title><?php echo format_string($book->name, true, array('context'=>$context)) ?></title>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
       <meta name="description" content="<?php echo s(format_string($book->name, true, array('noclean'=>true, 'context'=>$context))) ?>" />
-      <link rel="stylesheet" type="text/css" href="book_print.css" />
+      <link rel="stylesheet" type="text/css" href="print.css" />
     </head>
     <body>
     <a name="top"></a>
