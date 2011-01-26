@@ -7791,3 +7791,35 @@ class forum_existing_subscriber_selector extends forum_subscriber_selector_base 
     }
 
 }
+
+/**
+ * Adds information about unread messages, that is only required for the course view page (and
+ * similar), to the course-module object.
+ * @param cm_info $cm Course-module object
+ */
+function forum_cm_info_view(cm_info $cm) {
+    global $CFG;
+
+    // Get tracking status (once per request)
+    static $initialised;
+    static $usetracking, $strunreadpostsone;
+    if (!isset($initialised)) {
+        if ($usetracking = forum_tp_can_track_forums()) {
+            $strunreadpostsone = get_string('unreadpostsone', 'forum');
+        }
+        $initialised = true;
+    }
+
+    if ($usetracking) {
+        if ($unread = forum_tp_count_forum_unread_posts($cm, $cm->get_course())) {
+            $out = '<span class="unread"> <a href="' . $cm->get_url() . '">';
+            if ($unread == 1) {
+                $out .= $strunreadpostsone;
+            } else {
+                $out .= get_string('unreadpostsnumber', 'forum', $unread);
+            }
+            $out .= '</a></span>';
+            $cm->set_after_link($out);
+        }
+    }
+}

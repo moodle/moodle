@@ -2174,7 +2174,8 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
 
     $menu[] = '<ul class="navmenulist"><li class="jumpto section"><span>'.$strjumpto.'</span><ul>';
     foreach ($modinfo->cms as $mod) {
-        if ($mod->modname == 'label') {
+        if (!$mod->has_view()) {
+            // Don't show modules which you can't link to!
             continue;
         }
 
