@@ -140,7 +140,7 @@ function message_print_participants($context, $courseid, $contactselecturl=null,
 
     $countparticipants = count_enrolled_users($context);
     $participants = get_enrolled_users($context, '', 0, 'u.*', '', $page*MESSAGE_CONTACTS_PER_PAGE, MESSAGE_CONTACTS_PER_PAGE);
-    
+
     $pagingbar = new paging_bar($countparticipants, $page, MESSAGE_CONTACTS_PER_PAGE, $PAGE->url, 'page');
     echo $OUTPUT->render($pagingbar);
 
@@ -527,7 +527,11 @@ function message_print_search($advancedsearch = false, $user1=null) {
 
     $doingsearch = false;
     if ($frm) {
-        $doingsearch = !empty($frm->combinedsubmit) || !empty($frm->keywords) || (!empty($frm->personsubmit) and !empty($frm->name));
+        if (confirm_sesskey()) {
+            $doingsearch = !empty($frm->combinedsubmit) || !empty($frm->keywords) || (!empty($frm->personsubmit) and !empty($frm->name));
+        } else {
+            $frm = false;
+        }
     }
 
     if (!empty($frm->combinedsearch)) {
@@ -1568,7 +1572,7 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
         $eventdata->fullmessage      = $message;
         $eventdata->fullmessagehtml  = '';
     }
-    
+
     $eventdata->fullmessageformat = $format;
     $eventdata->smallmessage     = strip_tags($message);//strip just in case there are is any html that would break the popup notification
 
@@ -1583,7 +1587,7 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     if (!empty($eventdata->fullmessagehtml)) {
         $eventdata->fullmessagehtml .= "<br /><br />---------------------------------------------------------------------<br />".$emailtagline;
     }
-    
+
     $eventdata->timecreated     = time();
     return message_send($eventdata);
 }
@@ -1769,7 +1773,7 @@ function message_mark_messages_read($touserid, $fromuserid){
 */
 function message_mark_message_read($message, $timeread, $messageworkingempty=false) {
     global $DB;
-    
+
     $message->timeread = $timeread;
 
     $messageid = $message->id;
