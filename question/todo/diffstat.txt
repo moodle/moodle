@@ -400,19 +400,19 @@ DONE question/type/opaque/styles.css                    |   14 +
 DONE question/type/opaque/testengine.php                |   70 +
 DONE question/type/opaque/version.php                   |    5 +
 
- question/type/oumultiresponse/db/install.xml       |   24 +
- question/type/oumultiresponse/db/upgrade.php       |   58 +
- question/type/oumultiresponse/edit_oumultiresponse_form.php  |  144 +
- question/type/oumultiresponse/icon.gif             |  Bin 0 -> 945 bytes
- question/type/oumultiresponse/lang/en_utf8/qtype_oumultiresponse.php         |   35 +
- question/type/oumultiresponse/question.php         |  168 ++
- question/type/oumultiresponse/questiontype.php     |  559 ++++
- question/type/oumultiresponse/simpletest/helper.php     |  175 ++
- question/type/oumultiresponse/simpletest/testquestion.php    |  244 ++
- question/type/oumultiresponse/simpletest/testquestiontype.php                |  401 +++
- question/type/oumultiresponse/simpletest/testwalkthrough.php |  501 ++++
- question/type/oumultiresponse/styles.css           |   14 +
- question/type/oumultiresponse/version.php          |   29 +
+DONE question/type/oumultiresponse/db/install.xml       |   24 +
+DONE question/type/oumultiresponse/db/upgrade.php       |   58 +
+DONE question/type/oumultiresponse/edit_oumultiresponse_form.php  |  144 +
+DONE question/type/oumultiresponse/icon.gif             |  Bin 0 -> 945 bytes
+DONE question/type/oumultiresponse/lang/en_utf8/qtype_oumultiresponse.php         |   35 +
+DONE question/type/oumultiresponse/question.php         |  168 ++
+DONE question/type/oumultiresponse/questiontype.php     |  559 ++++
+DONE question/type/oumultiresponse/simpletest/helper.php     |  175 ++
+DONE question/type/oumultiresponse/simpletest/testquestion.php    |  244 ++
+DONE question/type/oumultiresponse/simpletest/testquestiontype.php                |  401 +++
+DONE question/type/oumultiresponse/simpletest/testwalkthrough.php |  501 ++++
+DONE question/type/oumultiresponse/styles.css           |   14 +
+DONE question/type/oumultiresponse/version.php          |   29 +
 
  question/type/random/edit_random_form.php          |    7 +-
  question/type/random/lang/en_utf8/qtype_random.php |    9 +

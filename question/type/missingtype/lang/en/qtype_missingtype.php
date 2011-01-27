@@ -27,8 +27,8 @@
 $string['addingmissingtype'] = 'Adding a question of a type that is not installed on this system';
 $string['answerno'] = 'Answer {$a}';
 $string['cannotchangeamissingqtype'] = 'You cannot make any changes to a question of a missing type.';
-$string['deletedquestion'] = 'Deleted question';
-$string['deletedquestiontext'] = 'This question has been deleted. Unable to display anything.';
+$string['deletedquestion'] = 'Missing question';
+$string['deletedquestiontext'] = 'This question is missing. Unable to display anything.';
 $string['editingmissingtype'] = 'Editing a question of a type that is not installed on this system';
 $string['missing'] = 'Question of a type that is not installed on this system';
 $string['missingtype'] = 'Missing type';
