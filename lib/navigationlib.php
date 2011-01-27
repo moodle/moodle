@@ -2537,7 +2537,7 @@ class settings_navigation extends navigation_node {
      *
      */
     public function initialise() {
-        global $DB;
+        global $DB, $SESSION;
 
         if (during_initial_install()) {
             return false;
@@ -2581,7 +2581,13 @@ class settings_navigation extends navigation_node {
         }
 
         $settings = $this->load_user_settings($this->page->course->id);
-        $admin = $this->load_administration_settings();
+
+        if (isloggedin() && !isguestuser() && (!property_exists($SESSION, 'load_navigation_admin') || $SESSION->load_navigation_admin)) {
+            $admin = $this->load_administration_settings();
+            $SESSION->load_navigation_admin = ($admin->has_children());
+        } else {
+            $admin = false;
+        }
 
         if ($context->contextlevel == CONTEXT_SYSTEM && $admin) {
             $admin->force_open();
@@ -2597,8 +2603,6 @@ class settings_navigation extends navigation_node {
             $url = new moodle_url('/course/loginas.php',array('id'=>$this->page->course->id, 'return'=>1,'sesskey'=>sesskey()));
             $this->add(get_string('returntooriginaluser', 'moodle', fullname($realuser, true)), $url, self::TYPE_SETTING, null, null, new pix_icon('t/left', ''));
         }
-
-        // Make sure the first child doesnt have proceed with hr set to true
 
         foreach ($this->children as $key=>$node) {
             if ($node->nodetype != self::NODETYPE_BRANCH || $node->children->count()===0) {
