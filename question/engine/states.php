@@ -340,7 +340,11 @@ class question_state_complete extends question_state {
 }
 class question_state_needsgrading extends question_state {
     public function get_state_class($showcorrectness) {
-        return 'requiresgrading';
+        if ($showcorrectness) {
+            return 'requiresgrading';
+        } else {
+            return 'complete';
+        }
     }
     public function corresponding_commented_state($fraction) {
         return self::manually_graded_state_for_fraction($fraction);
