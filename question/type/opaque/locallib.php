@@ -568,6 +568,16 @@ function qtype_opaque_extract_stuff_from_response($opaquestate, $response, $reso
     }
 
     // Process the resources.
+    // TODO remove this. Evil hack. IE cannot cope with : and other odd characters
+    // in the name argument to window.open. Until we can deploy a fix to the
+    // OpenMark servers, apply the fix to the JS code here.
+    foreach ($response->resources as $key => $resource) {
+        if ($resource->filename == 'script.js') {
+            $response->resources[$key]->content = preg_replace(
+                    '/(?<=window\.open\(\"\", idprefix|window\.open\(\"\",idprefix)\+(?=\"\w+\"\+id,)/',
+                    '.replace(/\W/g,"_")+', $resource->content);
+        }
+    }
     $resourcecache->cache_resources($response->resources);
 
     // Process the other bits.
