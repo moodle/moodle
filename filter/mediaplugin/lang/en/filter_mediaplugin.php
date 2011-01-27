@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['filtername'] = 'Multimedia Plugins';
+$string['filtername'] = 'Multimedia plugins';
 $string['flashanimation'] = 'Flash animation';
 $string['flashvideo'] = 'Flash video';
 $string['mp3audio'] = 'MP3 audio';
