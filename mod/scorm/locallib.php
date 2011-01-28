@@ -23,6 +23,9 @@ define('AVERAGEATTEMPT', '1');
 define('FIRSTATTEMPT', '2');
 define('LASTATTEMPT', '3');
 
+define('TOCJSLINK', 1);
+define('TOCFULLURL', 2);
+
 /// Local Library of functions for module scorm
 
 /**
@@ -759,7 +762,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     }
     require_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php');
 
-    $result = scorm_get_toc($user,$scorm,'structlist',$orgidentifier);
+    $result = scorm_get_toc($user,$scorm,TOCFULLURL,$orgidentifier);
     $incomplete = $result->incomplete;
 
     // do we want the TOC to be displayed?
