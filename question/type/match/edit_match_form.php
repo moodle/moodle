@@ -12,7 +12,7 @@
 /**
  * match editing form definition.
  */
-class question_edit_match_form extends question_edit_form {
+class qtype_match_edit_form extends question_edit_form {
 
     function get_per_answer_fields($mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
         $repeated = array();

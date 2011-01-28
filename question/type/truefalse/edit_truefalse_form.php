@@ -37,7 +37,7 @@ require_once($CFG->dirroot.'/question/type/edit_question_form.php');
  * @copyright &copy; 2006 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_edit_truefalse_form extends question_edit_form {
+class qtype_truefalse_edit_form extends question_edit_form {
     /**
      * Add question-type specific form fields.
      *

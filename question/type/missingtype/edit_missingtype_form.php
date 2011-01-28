@@ -33,7 +33,7 @@
  * @copyright 2007 Jamie Pratt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_edit_missingtype_form extends question_edit_form {
+class qtype_missingtype_edit_form extends question_edit_form {
     public function __construct($submiturl, $question, $category, $contexts, $formeditable = true) {
         parent::__construct($submiturl, $question, $category, $contexts, false);
     }

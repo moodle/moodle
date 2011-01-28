@@ -209,7 +209,7 @@ class question_type {
             return null;
         }
         require_once($definition_file);
-        $classname = 'question_edit_'.$this->name().'_form';
+        $classname = $this->plugin_name() . '_edit_form';
         if (!class_exists($classname)) {
             return null;
         }

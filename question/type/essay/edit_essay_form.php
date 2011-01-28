@@ -28,7 +28,7 @@
 /**
  * essay editing form definition.
  */
-class question_edit_essay_form extends question_edit_form {
+class qtype_essay_edit_form extends question_edit_form {
     public function qtype() {
         return 'essay';
     }

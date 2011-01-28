@@ -27,7 +27,7 @@
 /**
  * Description editing form definition.
  */
-class question_edit_description_form extends question_edit_form {
+class qtype_description_edit_form extends question_edit_form {
     /**
      * Add question-type specific form fields.
      *

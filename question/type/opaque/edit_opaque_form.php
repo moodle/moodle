@@ -38,7 +38,7 @@ require_once(dirname(__FILE__) . '/locallib.php');
  * @copyright 2006 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_edit_opaque_form extends question_edit_form {
+class qtype_opaque_edit_form extends question_edit_form {
     function definition() {
         parent::definition();
         $mform = $this->_form;

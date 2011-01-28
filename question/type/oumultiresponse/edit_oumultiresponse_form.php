@@ -31,7 +31,7 @@
  * @copyright 2008 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_edit_oumultiresponse_form extends question_edit_form {
+class qtype_oumultiresponse_edit_form extends question_edit_form {
 
     public function definition_inner($mform) {
         global $QTYPES;

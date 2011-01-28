@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright &copy; 2007 Jamie Pratt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_edit_shortanswer_form extends question_edit_form {
+class qtype_shortanswer_edit_form extends question_edit_form {
     /**
      * Add question-type specific form fields.
      *
