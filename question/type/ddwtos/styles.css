@@ -1,0 +1,67 @@
+.que.ddwtos .qtext {
+    line-height:2em;
+    margin-top: 1px;
+    margin-bottom: 0.5em;
+    display: block;
+}
+
+.que.ddwtos .answercontainer {
+    line-height: 2em;
+    margin-bottom:1em;
+    display: block;
+}
+
+.que.ddwtos .answertext {
+    padding-bottom: 0.5em;
+}
+
+.que.ddwtos .slot {
+    display: inline-block;
+    text-align: center;
+    border: 1px solid #000000;
+}
+.que.ddwtos .player {
+    display: inline-block;
+    text-align: center;
+    cursor: move;
+    border: 1px solid #000000;
+}
+.que.ddwtos .player.placed { /* Lets the focus rectangle be visible in IE. */
+    background: transparent;
+}
+
+.que.ddwtos .readonly {
+    cursor: default;
+}
+
+.que.ddwtos span.incorrect {
+    background-color: #faa;
+}
+.que.ddwtos span.correct {
+    background-color: #afa;
+}
+
+.que.ddwtos .group1 {
+    background-color: #FFFFFF;
+}
+.que.ddwtos .group2 {
+    background-color: #DCDCDC;
+}
+.que.ddwtos .group3 {
+    background-color: #B0C4DE;
+}
+.que.ddwtos .group4 {
+    background-color: #D8BFD8;
+}
+.que.ddwtos .group5 {
+    background-color: #87CEFA;
+}
+.que.ddwtos .group6 {
+    background-color: #DAA520;
+}
+.que.ddwtos .group7 {
+    background-color: #FFD700;
+}
+.que.ddwtos .group8 {
+    background-color: #F0E68C;
+}
