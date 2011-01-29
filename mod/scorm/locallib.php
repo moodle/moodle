@@ -749,7 +749,7 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
     }
     require_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php');
 
-    $result = scorm_get_toc($user,$scorm,TOCFULLURL,$orgidentifier);
+    $result = scorm_get_toc($user,$scorm,$cm->id,TOCFULLURL,$orgidentifier);
     $incomplete = $result->incomplete;
 
     // do we want the TOC to be displayed?

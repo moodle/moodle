@@ -330,7 +330,7 @@ function scorm_parse_aicc($scorm) {
     return true;
 }
 
-function scorm_get_toc($user,$scorm,$toclink=TOCJSLINK,$currentorg='',$scoid='',$mode='normal',$attempt='',$play=false, $tocheader=false) {
+function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$scoid='',$mode='normal',$attempt='',$play=false, $tocheader=false) {
     global $CFG, $DB, $PAGE, $OUTPUT;
 
     $modestr = '';
@@ -464,7 +464,7 @@ function scorm_get_toc($user,$scorm,$toclink=TOCJSLINK,$currentorg='',$scoid='',
                                 $scoid = $sco->id;
                             }
                         }
-                        if ($usertrack->score_raw != '') {
+                        if ($usertrack->score_raw != '' && has_capability('mod/scorm:viewscores', get_context_instance(CONTEXT_MODULE,$cmid))) {
                             $score = '('.get_string('score','scorm').':&nbsp;'.$usertrack->score_raw.')';
                         }
                         $strsuspended = get_string('suspended','scorm');

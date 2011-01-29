@@ -106,7 +106,7 @@
     }
     $attemptstr = '&amp;attempt=' . $attempt;
 
-    $result = scorm_get_toc($USER, $scorm, TOCJSLINK, $currentorg, $scoid, $mode, $attempt, true, true);
+    $result = scorm_get_toc($USER, $scorm, $cm->id, TOCJSLINK, $currentorg, $scoid, $mode, $attempt, true, true);
     $sco = $result->sco;
 
     if (($mode == 'browse') && ($scorm->hidebrowse == 1)) {
