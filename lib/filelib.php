@@ -321,7 +321,7 @@ function file_get_unused_draft_itemid() {
  * @return string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
 function file_prepare_draft_area(&$draftitemid, $contextid, $component, $filearea, $itemid, array $options=null, $text=null) {
-    global $CFG, $USER;
+    global $CFG, $USER, $CFG;
 
     $options = (array)$options;
     if (!isset($options['subdirs'])) {
@@ -350,6 +350,12 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $component, $fileare
                 }
                 $fs->create_file_from_storedfile($file_record, $file);
             }
+        }
+        if (!is_null($text)) {
+            // at this point there should not be any draftfile links yet,
+            // because this is a new text from database that should still contain the @@pluginfile@@ links
+            // this happens when developers forget to post process the text
+            $text = str_replace("\"$CFG->httpswwwroot/draftfile.php", "\"$CFG->httpswwwroot/brokenfile.php#", $text);
         }
     } else {
         // nothing to do

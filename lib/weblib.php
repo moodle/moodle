@@ -1106,6 +1106,13 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
             $text = $filtermanager->filter_text($text, $context, array('originalformat' => $format));
             break;
     }
+    if ($options['filter']) {
+        // at this point there should not be any draftfile links any more,
+        // this happens when developers forget to post process the text.
+        // The only potential problem is that somebody might try to format
+        // the text before storing into database which would be itself big bug.
+        $text = str_replace("\"$CFG->httpswwwroot/draftfile.php", "\"$CFG->httpswwwroot/brokenfile.php#", $text);
+    }
 
     // Warn people that we have removed this old mechanism, just in case they
     // were stupid enough to rely on it.
