@@ -2,9 +2,11 @@
 /**
  * This page allows the teacher to enter a manual grade for a particular question.
  * This page is expected to only be used in a popup window.
- *  *
+ *
+ * @package mod
+ * @subpackage quiz
+ * @copyright gustav delius 2006
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package quiz
  */
 
     require_once('../../config.php');
@@ -61,7 +63,7 @@
     $attemptobj->question_print_comment_fields($questionid, 'response');
 ?>
 <div>
-    <input type="hidden" name="attempt" value="<?php echo $attemptobj->get_uniqueid(); ?>" />
+    <input type="hidden" name="attempt" value="<?php echo $attemptobj->get_attemptid(); ?>" />
     <input type="hidden" name="question" value="<?php echo $questionid; ?>" />
     <input type="hidden" name="sesskey" value="<?php echo sesskey(); ?>" />
 </div>
