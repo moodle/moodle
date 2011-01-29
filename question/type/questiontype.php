@@ -1087,12 +1087,11 @@ class default_questiontype {
             return '';
         }
 
-        $params = array('aid' => $state->attempt);
         if (isset($question->randomquestionid)) {
-            $params['qid'] = $question->randomquestionid;
+            $actualquestionid = $question->randomquestionid;
             $randomprefix = 'random' . $question->id . '-';
         } else {
-            $params['qid'] = $question->id;
+            $actualquestionid = $question->id;
             $randomprefix = '';
         }
         if ($options->history == 'all') {
@@ -1101,7 +1100,8 @@ class default_questiontype {
             $eventtest = 'event IN (' . QUESTION_EVENTS_GRADED . ')';
         }
         $states = $DB->get_records_select('question_states',
-                'attempt = :aid AND question = :qid AND ' . $eventtest, $params, 'seq_number ASC');
+                'attempt = :aid AND question = :qid AND ' . $eventtest,
+                array('aid' => $state->attempt, 'qid' => $actualquestionid), 'seq_number,id');
         if (count($states) <= 1) {
             return '';
         }
@@ -1131,7 +1131,7 @@ class default_questiontype {
                 $link = '<b>' . $st->seq_number . '</b>';
             } else if (isset($options->questionreviewlink)) {
                 $reviewlink = new moodle_url($options->questionreviewlink);
-                $reviewlink->params(array('state'=>$st->id,'question'=>$question->id));
+                $reviewlink->params(array('state' => $st->id,'question' => $actualquestionid));
                 $link = new moodle_url($reviewlink);
                 $action = new popup_action('click', $link, 'reviewquestion', array('height' => 450, 'width' => 650));
                 $link = $OUTPUT->action_link($link, $st->seq_number, $action, array('title'=>$strreviewquestion));
