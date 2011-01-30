@@ -632,7 +632,7 @@ foreach ($progress as $user) {
                 $describe = get_string('completion-alt-auto-'.$completiontype,'completion');
 
                 print '<td class="completion-progresscell">'.
-                    '<a href="'.$CFG->wwwroot.'/course/togglecompletion.php?user='.$user->id.'&course='.$course->id.'&rolec='.$allow_marking_criteria.'">'.
+                    '<a href="'.$CFG->wwwroot.'/course/togglecompletion.php?user='.$user->id.'&amp;course='.$course->id.'&amp;rolec='.$allow_marking_criteria.'&amp;sesskey='.sesskey().'">'.
                     '<img src="'.$OUTPUT->pix_url('i/completion-manual-'.($is_complete ? 'y' : 'n')).
                     '" alt="'.$describe.'" class="icon" title="Mark as complete" /></a></td>'; //TODO: localize
             } else {
