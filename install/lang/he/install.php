@@ -32,12 +32,19 @@ $string['admindirname'] = 'ספריית מנהל המערכת';
 $string['availablelangs'] = 'חבילות שפה זמינות';
 $string['chooselanguagehead'] = 'בחר שפה';
 $string['chooselanguagesub'] = 'אנא בחר שפה עבור ההתקנה בלבד. תוכל לבחור בשפה שונה לאתר ולמשתמש באחד מהמסכים הבאים.';
+$string['clialreadyinstalled'] = 'קובץ ה-config.php קיים כבר, אנא השתמש ב- admin/cli/upgrade.php
+אם ברצונך לשדרג את האתר שלך.';
+$string['cliinstallheader'] = 'תוכנית התקנת Moodle {$a} בשורת הפקודה';
 $string['databasehost'] = 'מסד הנתונים המארח (host)';
 $string['databasename'] = 'שם מסד הנתונים';
+$string['databasetypehead'] = 'בחר התקן מסד הנתונים';
 $string['dataroot'] = 'ספריית הנתונים';
 $string['dbprefix'] = 'Tables prefix';
 $string['dirroot'] = 'ספריית ה-Moodle';
 $string['environmenthead'] = 'בודק את הסביבה שלך...';
+$string['environmentsub2'] = 'לכל התקנת Moodle יש דרישות מינימליות לגרסת ה-PHP ומספר הרחבות הכרחי של ה-PHP.
+בדיקת הסביבה הושלמה לפני התקנת כל אחד ושדרוגו.אם הינך מתקשה, אנא פנה למנהל המערכת בכדי להתקין גרסת PHP חדשה או לאפשר הרחבות PHP.';
+$string['errorsinenvironment'] = 'בדיקת הסביבה נכשלה!';
 $string['installation'] = 'התקנה';
 $string['langdownloaderror'] = 'לצערינו השפה "{$a}" לא הותקנה. תהליך ההתקנה ימשיך באנגלית.';
 $string['memorylimithelp'] = '<p>
@@ -62,6 +69,16 @@ $string['memorylimithelp'] = '<p>
 </ol>
 
 </p>';
+$string['paths'] = 'נתיבים';
+$string['pathserrcreatedataroot'] = 'ספריית המידע (Data Directory) - ({$a->dataroot}) לא יכולה להיווצר על-ידי המתקין.';
+$string['pathshead'] = 'נתיבים מאושרים';
+$string['pathsrodataroot'] = 'ספריית המידע (Data Directory) לא ניתנת לכתיבה.';
+$string['pathsroparentdataroot'] = 'ספריית האב - ({$a->parent}) לא ניתנת לכתיבה. 
+ספריית המידע (Data Directory) - ({$a->dataroot}) לא יכולה להיווצר על-ידי המתקין. ';
+$string['pathssubdirroot'] = 'הנתיב המלא לספריית ההתקנה של Moodle';
+$string['pathsunsecuredataroot'] = 'ספריית המידע (Data Directory) לא מאובטחת';
+$string['pathswrongadmindir'] = 'ספריית ה-admin לא קיימת';
+$string['phpextension'] = 'הרחבת PHP {$a}';
 $string['phpversion'] = 'גירסת PHP';
 $string['phpversionhelp'] = '<p>גירסת PHP חייבת להיות לפחות 4.3.0 או 5.1.0 (בגירסאות 5.0.x קיימות מספר בעיות ידועות) </p>
 <p> במערכת שלך פועלת כרגע גירסת {$a} </p>

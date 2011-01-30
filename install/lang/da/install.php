@@ -72,7 +72,7 @@ $string['pathssubdataroot'] = 'Du har brug for et sted, hvor Moodle kan gemme up
 $string['pathssubdirroot'] = 'Den fulde sti til Moodleinstallationen.';
 $string['pathssubwwwroot'] = 'Moodles fulde web-adresse. 
 Det er ikke muligt at komme ind på Moodle fra mere end en adresse.
-Hvis dit websted har flere offentlige adresser skal du opsætte permanent viderestilling på dem alle undtagen fra denne.
+Hvis dit websted har flere offentlige adresser skal du opsætte permanent viderestilling til dem alle undtagen denne.
 Hvis dit websted er tilgængeligt fra både internet og intranet skal du bruge internetadressen her og opsætte din DNS sådan at intranet-brugerne kan bruge den offentlige adresse også.
 Hvis ikke adressen er korrekt må du ændre URL\'en i din browser og genstarte installationen med den rigtige adresse.
 ';
