@@ -13,7 +13,7 @@
 
       //TODO: Blog attachments do not have access control implemented - anybody can read them!
       //      It might be better to move the code to separate file because the access
-      //      control is quite complex - see bolg/index.php 
+      //      control is quite complex - see bolg/index.php
 
     require_once('config.php');
     require_once('lib/filelib.php');
@@ -29,7 +29,7 @@
 
     $relativepath = get_file_argument('file.php');
     $forcedownload = optional_param('forcedownload', 0, PARAM_BOOL);
-    
+
     // relative path must start with '/', because of backup/restore!!!
     if (!$relativepath) {
         error('No valid arguments supplied or incorrect server configuration');
@@ -39,12 +39,20 @@
 
     $pathname = $CFG->dataroot.$relativepath;
 
+    // protect imsenterprise plugin data
+    if (strtolower("$CFG->dataroot/1/imsenterprise-enrol.xml") === strtolower(realpath($pathname))
+        or (!empty($CFG->enrol_imsfilelocation) and strtolower($CFG->enrol_imsfilelocation) === strtolower(realpath($pathname)))) {
+        require_login();
+        require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+        $forcedownload = 1;
+    }
+
     // extract relative path components
     $args = explode('/', trim($relativepath, '/'));
     if (count($args) == 0) { // always at least courseid, may search for index.html in course root
         error('No valid arguments supplied');
     }
-  
+
     // security: limit access to existing course subdirectories
     if (($args[0]!='blog') and (!$course = get_record_sql("SELECT * FROM {$CFG->prefix}course WHERE id='".(int)$args[0]."'"))) {
         error('Invalid course ID');
@@ -84,7 +92,7 @@
         if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $course->id))) {
             error('Access not allowed');
         } else {
-            $lifetime = 0; //disable browser caching for backups 
+            $lifetime = 0; //disable browser caching for backups
         }
     }
 
@@ -120,7 +128,7 @@
             if (!has_capability('mod/assignment:grade', get_context_instance(CONTEXT_MODULE, $cm->id))) {
                 error('Access not allowed');
             }
-        } 
+        }
     }
 
     // security: force download of all attachments submitted by students
@@ -144,11 +152,11 @@
     }
     if ($args[0] == 'blog') {
         $forcedownload  = 1; // force download of all attachments
-    }    
+    }
 
     // security: some protection of hidden resource files
     // warning: it may break backwards compatibility
-    if ((!empty($CFG->preventaccesstohiddenfiles)) 
+    if ((!empty($CFG->preventaccesstohiddenfiles))
         and (count($args) >= 2)
         and (!(strtolower($args[1]) == 'moddata' and strtolower($args[2]) != 'resource')) // do not block files from other modules!
         and (!has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $course->id)))) {
