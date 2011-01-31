@@ -27,7 +27,8 @@ class block_activity_modules extends block_list {
         $archetypes = array();
 
         foreach($modinfo->cms as $cm) {
-            if (!$cm->uservisible or $cm->modname === 'label') {
+            // Exclude activities which are not visible or have no link (=label)
+            if (!$cm->uservisible or !$cm->has_view()) {
                 continue;
             }
             if (array_key_exists($cm->modname, $modfullnames)) {

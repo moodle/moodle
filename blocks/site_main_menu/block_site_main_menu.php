@@ -40,21 +40,19 @@ class block_site_main_menu extends block_list {
                     if (!$cm->uservisible) {
                         continue;
                     }
-                    if ($cm->modname == 'label') {
-                        $this->content->items[] = format_text($cm->extra, FORMAT_HTML, $options);
+
+                    list($content, $instancename) =
+                            get_print_section_cm_text($cm, $course);
+
+                    if (!($url = $cm->get_url())) {
+                        $this->content->items[] = $content;
                         $this->content->icons[] = '';
                     } else {
                         $linkcss = $cm->visible ? '' : ' class="dimmed" ';
-                        $instancename = format_string($cm->name, true, $course->id);
                         //Accessibility: incidental image - should be empty Alt text
-                        if (!empty($cm->icon)) {
-                            $icon = $OUTPUT->pix_url($cm->icon);
-                        } else {
-                            $icon = $OUTPUT->pix_url('icon', $cm->modname);
-                        }
-                        $icon = '<img src="'.$icon.'" class="icon" alt="" />&nbsp;';
+                        $icon = '<img src="' . $cm->get_icon_url() . '" class="icon" alt="" />&nbsp;';
                         $this->content->items[] = '<a title="'.$cm->modplural.'" '.$linkcss.' '.$cm->extra.
-                            ' href="'.$CFG->wwwroot.'/mod/'.$cm->modname.'/view.php?id='.$cm->id.'">'.$icon.$instancename.'</a>';
+                                ' href="' . $url . '">' . $icon . $instancename . '</a>';
                     }
                 }
             }
@@ -114,28 +112,18 @@ class block_site_main_menu extends block_list {
                             '<img style="height:16px; width:80px; border:0px" src="'.$OUTPUT->pix_url('movehere') . '" alt="'.$strmovehere.'" /></a>';
                         $this->content->icons[] = '';
                     }
-                    $instancename = $modinfo->cms[$modnumber]->name;
-                    $instancename = format_string($instancename, true, $course->id);
+                    list($content, $instancename) =
+                            get_print_section_cm_text($modinfo->cms[$modnumber], $course);
                     $linkcss = $mod->visible ? '' : ' class="dimmed" ';
-                    if (!empty($modinfo->cms[$modnumber]->extra)) {
-                        $extra = $modinfo->cms[$modnumber]->extra;
-                    } else {
-                        $extra = '';
-                    }
-                    if (!empty($modinfo->cms[$modnumber]->icon)) {
-                        $icon = $OUTPUT->pix_url($modinfo->cms[$modnumber]->icon);
-                    } else {
-                        $icon = $OUTPUT->pix_url('icon', $mod->modname);
-                    }
 
-                    if ($mod->modname == 'label') {
-                        $this->content->items[] = format_text($extra, FORMAT_HTML,$options).$editbuttons;
+                    if (!($url = $mod->get_url())) {
+                        $this->content->items[] = $content . $editbuttons;
                         $this->content->icons[] = '';
                     } else {
                         //Accessibility: incidental image - should be empty Alt text
-                        $icon = '<img src="'.$icon.'" class="icon" alt="" />&nbsp;';
-                        $this->content->items[] = '<a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
-                            ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.$icon.$instancename.'</a>'.$editbuttons;
+                        $icon = '<img src="' . $mod->get_icon_url() . '" class="icon" alt="" />&nbsp;';
+                        $this->content->items[] = '<a title="' . $mod->modfullname . '" ' . $linkcss . ' ' . $mod->extra .
+                            ' href="' . $url . '">' . $icon . $instancename . '</a>' . $editbuttons;
                     }
                 }
             }

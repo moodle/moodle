@@ -1026,10 +1026,14 @@ class global_navigation extends navigation_node {
                 if ($course->id !== SITEID) {
                     // Find the section for the $CM associated with the page and collect
                     // its section number.
-                    foreach ($sections as $section) {
-                        if ($section->id == $cm->section) {
-                            $cm->sectionnumber = $section->section;
-                            break;
+                    if (isset($cm->sectionnum)) {
+                        $cm->sectionnumber = $cm->sectionnum;
+                    } else {
+                        foreach ($sections as $section) {
+                            if ($section->id == $cm->section) {
+                                $cm->sectionnumber = $section->section;
+                                break;
+                            }
                         }
                     }
 
@@ -1429,10 +1433,10 @@ class global_navigation extends navigation_node {
      *
      * @param navigation_node $sectionnode
      * @param int $sectionnumber
-     * @param stdClass $modinfo Object returned from {@see get_fast_modinfo()}
+     * @param course_modinfo $modinfo Object returned from {@see get_fast_modinfo()}
      * @return array Array of activity nodes
      */
-    protected function load_section_activities(navigation_node $sectionnode, $sectionnumber, $modinfo) {
+    protected function load_section_activities(navigation_node $sectionnode, $sectionnumber, course_modinfo $modinfo) {
         if (!array_key_exists($sectionnumber, $modinfo->sections)) {
             return true;
         }
@@ -1449,11 +1453,12 @@ class global_navigation extends navigation_node {
             } else {
                 $icon = new pix_icon('icon', get_string('modulename', $cm->modname), $cm->modname);
             }
-            $url = new moodle_url('/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id));
+            $url = $cm->get_url();
             $activitynode = $sectionnode->add(format_string($cm->name), $url, navigation_node::TYPE_ACTIVITY, null, $cm->id, $icon);
             $activitynode->title(get_string('modulename', $cm->modname));
             $activitynode->hidden = (!$cm->visible);
-            if ($cm->modname == 'label') {
+            if (!$url) {
+                // Do not show activities that don't have links!
                 $activitynode->display = false;
             } else if ($this->module_extends_navigation($cm->modname)) {
                 $activitynode->nodetype = navigation_node::NODETYPE_BRANCH;
@@ -1482,11 +1487,12 @@ class global_navigation extends navigation_node {
         } else {
             $icon = new pix_icon('icon', get_string('modulename', $cm->modname), $cm->modname);
         }
-        $url = new moodle_url('/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id));
+        $url = $cm->get_url();
         $activitynode = $coursenode->add(format_string($cm->name), $url, navigation_node::TYPE_ACTIVITY, null, $cm->id, $icon);
         $activitynode->title(get_string('modulename', $cm->modname));
         $activitynode->hidden = (!$cm->visible);
-        if ($cm->modname == 'label') {
+        if (!$url) {
+            // Don't show activities that don't have links!
             $activitynode->display = false;
         } else if ($this->module_extends_navigation($cm->modname)) {
             $activitynode->nodetype = navigation_node::NODETYPE_BRANCH;
@@ -1509,7 +1515,7 @@ class global_navigation extends navigation_node {
      * @param navigation_node $activity
      * @return bool
      */
-    protected function load_activity(stdClass $cm, stdClass $course, navigation_node $activity) {
+    protected function load_activity($cm, stdClass $course, navigation_node $activity) {
         global $CFG, $DB;
 
         $activity->make_active();
