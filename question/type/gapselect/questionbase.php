@@ -17,8 +17,8 @@
 
 
 /**
- * Definition class for embedded element in question text question. Parent of drag and drop and select from
- * drop down list and ?others? *
+ * Definition class for embedded element in question text question. Parent of
+ * gap-select, drag and drop and possibly others.
  *
  * @package qtype
  * @subpackage gapselect
@@ -34,7 +34,7 @@
  * @copyright 2009 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_gapselect_question_base extends question_graded_automatically_with_countback {
+abstract class qtype_gapselect_question_base extends question_graded_automatically_with_countback {
     /** @var boolean Whether the question stems should be shuffled. */
     public $shufflechoices;
 
@@ -89,12 +89,12 @@ class qtype_gapselect_question_base extends question_graded_automatically_with_c
     }
 
     public function get_question_summary() {
-        $question = html_to_text($this->format_questiontext(), 0, false);
+        $question = $this->html_to_text($this->questiontext);
         $groups = array();
         foreach ($this->choices as $group => $choices) {
             $cs = array();
             foreach ($choices as $choice) {
-                $cs[] = html_to_text($this->format_text($choice->text), 0, false);
+                $cs[] = $this->html_to_text($choice->text);
             }
             $groups[] = '[[' . $group . ']] -> {' . implode(' / ', $cs) . '}';
         }
@@ -112,8 +112,8 @@ class qtype_gapselect_question_base extends question_graded_automatically_with_c
         foreach ($this->places as $place => $group) {
             if (array_key_exists($this->field($place), $response) &&
                     $response[$this->field($place)]) {
-                $choices[] = '{' . html_to_text($this->format_text($this->get_selected_choice(
-                        $group, $response[$this->field($place)])->text), 0, false) . '}';
+                $choices[] = '{' . $this->html_to_text($this->get_selected_choice(
+                        $group, $response[$this->field($place)])->text) . '}';
                 $allblank = false;
             } else {
                 $choices[] = '{}';
@@ -278,7 +278,7 @@ class qtype_gapselect_question_base extends question_graded_automatically_with_c
             $choiceno = $this->choiceorder[$group][$response[$fieldname]];
             $choice = $this->choices[$group][$choiceno];
             $parts[$place] = new question_classified_response(
-                    $choiceno, html_to_text($this->format_text($choice->text), 0, false),
+                    $choiceno, $this->html_to_text($choice->text),
                     $this->get_right_choice_for($place) == $response[$fieldname]);
         }
         return $parts;
