@@ -1757,17 +1757,16 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
         @set_time_limit(0);  // this could take a while!   MDL-10954
     }
 
-    if ($rs = $DB->get_recordset("course", $select,'','id,fullname')) {
-        foreach ($rs as $course) {
-            $modinfo = serialize(get_array_of_activities($course->id));
-            $DB->set_field("course", "modinfo", $modinfo, array("id"=>$course->id));
-            // update cached global COURSE too ;-)
-            if ($course->id == $COURSE->id) {
-                $COURSE->modinfo = $modinfo;
-            }
+    $rs = $DB->get_recordset("course", $select,'','id,fullname');
+    foreach ($rs as $course) {
+        $modinfo = serialize(get_array_of_activities($course->id));
+        $DB->set_field("course", "modinfo", $modinfo, array("id"=>$course->id));
+        // update cached global COURSE too ;-)
+        if ($course->id == $COURSE->id) {
+            $COURSE->modinfo = $modinfo;
         }
-        $rs->close();
     }
+    $rs->close();
     // reset the fast modinfo cache
     $reset = 'reset';
     get_fast_modinfo($reset);

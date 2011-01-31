@@ -634,12 +634,11 @@ class grade_report_user extends grade_report {
                   GROUP BY gg.itemid";
 
             $sum_array = array();
-            if ($sums = $DB->get_recordset_sql($sql, $params)) {
-                foreach ($sums as $itemid => $csum) {
-                    $sum_array[$itemid] = $csum->sum;
-                }
-                $sums->close();
+            $sums = $DB->get_recordset_sql($sql, $params);
+            foreach ($sums as $itemid => $csum) {
+                $sum_array[$itemid] = $csum->sum;
             }
+            $sums->close();
 
             $columncount=0;
 

@@ -425,12 +425,11 @@ function get_role_access($roleid, $accessdata = null) {
 
         if (!isset($ACCESSLIB_PRIVATE->croncache[$roleid])) {
             $ACCESSLIB_PRIVATE->croncache[$roleid] = array();
-            if ($rs = $DB->get_recordset_sql($sql, $params)) {
-                foreach ($rs as $rd) {
-                    $ACCESSLIB_PRIVATE->croncache[$roleid][] = $rd;
-                }
-                $rs->close();
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $rd) {
+                $ACCESSLIB_PRIVATE->croncache[$roleid][] = $rd;
             }
+            $rs->close();
         }
 
         foreach ($ACCESSLIB_PRIVATE->croncache[$roleid] as $rd) {
@@ -439,14 +438,15 @@ function get_role_access($roleid, $accessdata = null) {
         }
 
     } else {
-        if ($rs = $DB->get_recordset_sql($sql, $params)) {
+        $rs = $DB->get_recordset_sql($sql, $params);
+        if ($rs->valid()) {
             foreach ($rs as $rd) {
                 $k = "{$rd->path}:{$roleid}";
                 $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
             }
             unset($rd);
-            $rs->close();
         }
+        $rs->close();
     }
 
     return $accessdata;
@@ -480,14 +480,15 @@ function get_default_frontpage_role_access($roleid, $accessdata = null) {
           ORDER BY ctx.depth, ctx.path";
     $params = array($roleid, "$base/%");
 
-    if ($rs = $DB->get_recordset_sql($sql, $params)) {
+    $rs = $DB->get_recordset_sql($sql, $params);
+    if ($rs->valid()) {
         foreach ($rs as $rd) {
             $k = "{$rd->path}:{$roleid}";
             $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
         }
         unset($rd);
-        $rs->close();
     }
+    $rs->close();
 
     return $accessdata;
 }
@@ -1315,18 +1316,15 @@ function load_subcontext($userid, $context, &$accessdata) {
     $params = array($context->id, $context->path."/%");
 
     $newrdefs = array();
-    if ($rs = $DB->get_recordset_sql($sql, $params)) {
-        foreach ($rs as $rd) {
-            $k = "{$rd->path}:{$rd->roleid}";
-            if (!array_key_exists($k, $newrdefs)) {
-                $newrdefs[$k] = array();
-            }
-            $newrdefs[$k][$rd->capability] = $rd->permission;
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $rd) {
+        $k = "{$rd->path}:{$rd->roleid}";
+        if (!array_key_exists($k, $newrdefs)) {
+            $newrdefs[$k] = array();
         }
-        $rs->close();
-    } else {
-        debugging('Bad SQL encountered!');
+        $newrdefs[$k][$rd->capability] = $rd->permission;
     }
+    $rs->close();
 
     compact_rdefs($newrdefs);
     foreach ($newrdefs as $key=>$value) {
@@ -1389,13 +1387,12 @@ function get_role_access_bycontext($roleid, $context, $accessdata = null) {
           ORDER BY ctx.depth ASC, ctx.path DESC, rc.roleid ASC ";
     $params = array($roleid, $context->path."/%");
 
-    if ($rs = $DB->get_recordset_sql($sql, $params)) {
-        foreach ($rs as $rd) {
-            $k = "{$rd->path}:{$roleid}";
-            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
-        }
-        $rs->close();
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $rd) {
+        $k = "{$rd->path}:{$roleid}";
+        $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
     }
+    $rs->close();
 
     return $accessdata;
 }
@@ -1615,13 +1612,12 @@ function load_temp_role($context, $roleid, array $accessdata) {
                    AND rc.roleid = ?
           ORDER BY ctx.depth, ctx.path";
     $params = array($context->path."/%", $roleid);
-    if ($rs = $DB->get_recordset_sql($sql, $params)) {
-        foreach ($rs as $rd) {
-            $k = "{$rd->path}:{$roleid}";
-            $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
-        }
-        $rs->close();
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $rd) {
+        $k = "{$rd->path}:{$roleid}";
+        $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
     }
+    $rs->close();
 
     //
     // Say we loaded everything for the course context
@@ -2132,12 +2128,11 @@ function cleanup_contexts() {
     // transactions used only for performance reasons here
     $transaction = $DB->start_delegated_transaction();
 
-    if ($rs = $DB->get_recordset_sql($sql)) {
-        foreach ($rs as $ctx) {
-            delete_context($ctx->contextlevel, $ctx->instanceid);
-        }
-        $rs->close();
+    $rs = $DB->get_recordset_sql($sql);
+    foreach ($rs as $ctx) {
+        delete_context($ctx->contextlevel, $ctx->instanceid);
     }
+    $rs->close();
 
     $transaction->allow_commit();
     return true;
@@ -5335,16 +5330,13 @@ function get_user_capability_course($capability, $userid = null, $doanything = t
     // Note the result can be used directly as a context (we are going to), the course
     // fields are just appended.
 
-    if (!$rs = $DB->get_recordset_sql("SELECT x.*, c.id AS courseid $fieldlist
-                                         FROM {course} c
-                                        INNER JOIN {context} x
-                                              ON (c.id=x.instanceid AND x.contextlevel=".CONTEXT_COURSE.")
-                                     $orderby")) {
-         return false;
-    }
-
-    // Check capability for each course in turn
     $courses = array();
+    $rs = $DB->get_recordset_sql("SELECT x.*, c.id AS courseid $fieldlist
+                                    FROM {course} c
+                                   INNER JOIN {context} x
+                                         ON (c.id=x.instanceid AND x.contextlevel=".CONTEXT_COURSE.")
+                                $orderby");
+    // Check capability for each course in turn
     foreach ($rs as $coursecontext) {
         if (has_capability($capability, $coursecontext, $userid, $doanything)) {
             // We've got the capability. Make the record look like a course record
@@ -5357,7 +5349,7 @@ function get_user_capability_course($capability, $userid = null, $doanything = t
         }
     }
     $rs->close();
-    return $courses;
+    return empty($courses) ? false : $courses;
 }
 
 /**

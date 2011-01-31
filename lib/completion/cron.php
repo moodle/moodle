@@ -118,9 +118,12 @@ function completion_cron_mark_started() {
             userid
     ";
 
-    // Check if result is empty
     $now = time();
-    if (!$rs = $DB->get_recordset_sql($sql, array($now, $now, $now, $now))) {
+    $rs = $DB->get_recordset_sql($sql, array($now, $now, $now, $now));
+
+    // Check if result is empty
+    if (!$rs->valid()) {
+        $rs->close(); // Not going to iterate (but exit), close rs
         return;
     }
 
@@ -267,8 +270,11 @@ function completion_cron_completions() {
             userid
     ';
 
+    $rs = $DB->get_recordset_sql($sql, array('timestarted' => $timestarted));
+
     // Check if result is empty
-    if (!$rs = $DB->get_recordset_sql($sql, array('timestarted' => $timestarted))) {
+    if (!$rs->valid()) {
+        $rs->close(); // Not going to iterate (but exit), close rs
         return;
     }
 

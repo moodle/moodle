@@ -50,7 +50,9 @@ function url_20_migrate() {
         return;
     }
 
-    if (!$candidates = $DB->get_recordset('resource_old', array('type'=>'file', 'migrated'=>0))) {
+    $candidates = $DB->get_recordset('resource_old', array('type'=>'file', 'migrated'=>0));
+    if (!$candidates->valid()) {
+        $candidates->close(); // Not going to iterate (but exit), close rs
         return;
     }
 

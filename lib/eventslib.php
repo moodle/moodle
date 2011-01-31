@@ -435,25 +435,24 @@ function events_cron($eventname='') {
         $params = array();
     }
 
-    if ($rs = $DB->get_recordset_sql($sql, $params)) {
-        foreach ($rs as $qhandler) {
-            if (isset($failed[$qhandler->handlerid])) {
-                // do not try to dispatch any later events when one already asked for retry or ended with exception
-                continue;
-            }
-            $status = events_process_queued_handler($qhandler);
-            if ($status === false) {
-                // handler is asking for retry, do not send other events to this handler now
-                $failed[$qhandler->handlerid] = $qhandler->handlerid;
-            } else if ($status === NULL) {
-                // means completely broken handler, event data was purged
-                $failed[$qhandler->handlerid] = $qhandler->handlerid;
-            } else {
-                $processed++;
-            }
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $qhandler) {
+        if (isset($failed[$qhandler->handlerid])) {
+            // do not try to dispatch any later events when one already asked for retry or ended with exception
+            continue;
         }
-        $rs->close();
+        $status = events_process_queued_handler($qhandler);
+        if ($status === false) {
+            // handler is asking for retry, do not send other events to this handler now
+            $failed[$qhandler->handlerid] = $qhandler->handlerid;
+        } else if ($status === NULL) {
+            // means completely broken handler, event data was purged
+            $failed[$qhandler->handlerid] = $qhandler->handlerid;
+        } else {
+            $processed++;
+        }
     }
+    $rs->close();
 
     // remove events that do not have any handlers waiting
     $sql = "SELECT eq.id

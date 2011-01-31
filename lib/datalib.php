@@ -438,6 +438,12 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
 
     list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
 
+    $totalcount = 0;
+    if (!$limitfrom) {
+        $limitfrom = 0;
+    }
+    $visiblecourses = array();
+
     $sql = "SELECT $fields $ccselect
               FROM {course} c
               $ccjoin
@@ -445,17 +451,8 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
           ORDER BY $sort";
 
     // pull out all course matching the cat
-    if (!$rs = $DB->get_recordset_sql($sql, $params)) {
-        return array();
-    }
-    $totalcount = 0;
-
-    if (!$limitfrom) {
-        $limitfrom = 0;
-    }
-
+    $rs = $DB->get_recordset_sql($sql, $params);
     // iteration will have to be done inside loop to keep track of the limitfrom and limitnum
-    $visiblecourses = array();
     foreach($rs as $course) {
         context_instance_preload($course);
         if ($course->visible <= 0) {
@@ -764,35 +761,35 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
     $searchcond = implode(" AND ", $searchcond);
 
+    $courses = array();
+    $c = 0; // counts how many visible courses we've seen
+
+    // Tiki pagination
+    $limitfrom = $page * $recordsperpage;
+    $limitto   = $limitfrom + $recordsperpage;
+
     list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
     $sql = "SELECT c.* $ccselect
               FROM {course} c
            $ccjoin
              WHERE $searchcond AND c.id <> ".SITEID."
           ORDER BY $sort";
-    $courses = array();
-    $c = 0; // counts how many visible courses we've seen
 
-    if ($rs = $DB->get_recordset_sql($sql, $params)) {
-        // Tiki pagination
-        $limitfrom = $page * $recordsperpage;
-        $limitto   = $limitfrom + $recordsperpage;
-
-        foreach($rs as $course) {
-            context_instance_preload($course);
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-            if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
-                // Don't exit this loop till the end
-                // we need to count all the visible courses
-                // to update $totalcount
-                if ($c >= $limitfrom && $c < $limitto) {
-                    $courses[$course->id] = $course;
-                }
-                $c++;
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach($rs as $course) {
+        context_instance_preload($course);
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+            // Don't exit this loop till the end
+            // we need to count all the visible courses
+            // to update $totalcount
+            if ($c >= $limitfrom && $c < $limitto) {
+                $courses[$course->id] = $course;
             }
+            $c++;
         }
-        $rs->close();
     }
+    $rs->close();
 
     // our caller expects 2 bits of data - our return
     // array, and an updated $totalcount
@@ -857,16 +854,15 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
     }
     $categories = array();
 
-    if( $rs = $DB->get_recordset_sql($sql, $params) ){
-        foreach($rs as $cat) {
-            context_instance_preload($cat);
-            $catcontext = get_context_instance(CONTEXT_COURSECAT, $cat->id);
-            if ($cat->visible || has_capability('moodle/category:viewhiddencategories', $catcontext)) {
-                $categories[$cat->id] = $cat;
-            }
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach($rs as $cat) {
+        context_instance_preload($cat);
+        $catcontext = get_context_instance(CONTEXT_COURSECAT, $cat->id);
+        if ($cat->visible || has_capability('moodle/category:viewhiddencategories', $catcontext)) {
+            $categories[$cat->id] = $cat;
         }
-        $rs->close();
     }
+    $rs->close();
     return $categories;
 }
 
