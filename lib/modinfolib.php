@@ -197,7 +197,7 @@ class course_modinfo {
      * @param int $userid User ID
      */
     public function __construct($course, $userid) {
-        global $CFG;
+        global $CFG, $DB;
 
         // Set initial values
         $this->courseid = $course->id;
