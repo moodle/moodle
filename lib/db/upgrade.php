@@ -2825,10 +2825,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     if ($oldversion < 2010033102.00) {
         // rename course view capability to participate
-        $params = array('view'=>'moodle/course:view', 'participate'=>'moodle/course:participate');
-        $sql = "UPDATE {role_capabilities} SET capability = :participate WHERE capability = :view";
+        $params = array('viewcap'=>'moodle/course:view', 'participatecap'=>'moodle/course:participate');
+        $sql = "UPDATE {role_capabilities} SET capability = :participatecap WHERE capability = :viewcap";
         $DB->execute($sql, $params);
-        $sql = "UPDATE {capabilities} SET name = :participate WHERE name = :view";
+        $sql = "UPDATE {capabilities} SET name = :participatecap WHERE name = :viewcap";
         $DB->execute($sql, $params);
         // note: the view capability is readded again at the end of upgrade, but with different meaning
         upgrade_main_savepoint(true, 2010033102.00);
