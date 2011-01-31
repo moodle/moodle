@@ -28,5 +28,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['cliincorrectvalueerror'] = 'Błąd, niepoprawna wartość "{$a->value}" dla "{$a->option}"';
+$string['clitypevalue'] = 'typ wartości';
+$string['clitypevaluedefault'] = 'typ wartości, naciśnij Enter, aby użyć wartości domyślnej ({$a})';
+$string['cliyesnoprompt'] = 'wpisz y (czyli tak) lub n (czyli nie)';
 $string['environmentrequireinstall'] = 'jest niezbędnę, żeby było zainstalowane/włączone';
 $string['environmentrequireversion'] = 'wersja {$a->needed} jest niezbędna a ty używasz wersji {$a->current}';
