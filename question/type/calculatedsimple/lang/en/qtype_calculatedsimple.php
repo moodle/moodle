@@ -23,14 +23,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addingcalculatedsimple'] = 'Adding a Simple Calculated question';
+$string['addingcalculatedsimple'] = 'Adding a Simple calculated question';
 $string['atleastonewildcard'] = 'There must be at least one wild card <strong>{x..}</strong> present in the correct answer formulas';
-$string['calculatedsimple'] = 'Calculated Simple';
+$string['calculatedsimple'] = 'Calculated simple';
 $string['calculatedsimple_help'] = 'Simple calculated questions enable individual numerical questions to be created using wildcards that are substituted with individual values when the quiz is taken. Simple calculated questions offer the most used features of the calculated question with a simpler creation interface.';
 $string['calculatedsimple_link'] = 'question/type/calculatedsimple';
 $string['calculatedsimplesummary'] = 'A simpler version of calculated questions which are like numerical questions but with the numbers used selected randomly from a set when the quiz is taken.';
 $string['converttocalculated'] = 'Save as a new regular calculated question';
-$string['editingcalculatedsimple'] = 'Editing a Simple Calculated question';
+$string['editingcalculatedsimple'] = 'Editing a Simple calculated question';
 $string['findwildcards'] = 'Find the wild cards {x..} present in the correct answer formulas';
 $string['generatenewitemsset'] = 'Generate';
 $string['mustbenumeric'] = 'You must enter a number here.';

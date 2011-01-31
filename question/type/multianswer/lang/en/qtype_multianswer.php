@@ -24,11 +24,11 @@
  */
 
 $string['addingmultianswer'] = 'Adding an Embedded answers (Cloze) question';
-$string['confirmquestionsaveasedited'] = ' I confirm that I want the question to be saved as edited';
+$string['confirmquestionsaveasedited'] = 'I confirm that I want the question to be saved as edited';
 $string['confirmsave'] = 'Confirm then save {$a}';
-$string['correctanswer'] = 'Correct Answer';
-$string['correctanswerandfeedback'] = 'Correct Answer and Feedback';
-$string['decodeverifyquestiontext'] = 'Decode and Verify the Question Text';
+$string['correctanswer'] = 'Correct answer';
+$string['correctanswerandfeedback'] = 'Correct answer and feedback';
+$string['decodeverifyquestiontext'] = 'Decode and verify the question text';
 $string['editingmultianswer'] = 'Editing an Embedded answers (Cloze) question';
 $string['layout'] = 'Layout';
 $string['layouthorizontal'] = 'Horizontal row of radio-buttons';
@@ -42,7 +42,7 @@ $string['multianswer_link'] = 'question/type/multianswer';
 $string['nooptionsforsubquestion'] = 'Unable to get options for question part # {$a->sub} (question->id={$a->id})';
 $string['noquestions'] = 'The Cloze(multianswer) question "<strong>{$a}</strong>" does not contain any question';
 $string['qtypenotrecognized'] = 'questiontype {$a} not recognized';
-$string['questionnadded'] = '"Question added "';
+$string['questionnadded'] = 'Question added';
 $string['questiondefinition'] = 'Question definition';
 $string['questiondeleted'] = 'Question deleted' ;
 $string['questioninquiz'] = '
@@ -58,7 +58,7 @@ $string['questionsmore'] = '{$a} question(s) more than in the multianswer questi
 $string['questionnotfound'] = 'Unable to find question of question part #{$a}';
 $string['questionsaveasedited'] = 'The question will be saved as edited';
 $string['questiontypechanged'] = 'Question type changed';
-$string['questiontypechangedcomment'] = ' At least one question type has been changed.<br \> Did you add, delete or move a question? <br \>Look ahead. ';
+$string['questiontypechangedcomment'] = 'At least one question type has been changed.<br \>Did you add, delete or move a question?<br \>Look ahead.';
 $string['questionusedinquiz'] = 'This question is used in {$a->nb_of_quiz} quiz(s), total attempt(s) : {$a->nb_of_attempts} ';
 $string['unknownquestiontypeofsubquestion'] = 'Unknown question type: {$a->type} of question part # {$a->sub}';
 $string['warningquestionmodified'] = '<b>WARNING</b>' ;
