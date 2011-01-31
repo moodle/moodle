@@ -5518,18 +5518,33 @@ function get_users_from_role_on_context($role, $context) {
 }
 
 /**
- * Simple function returning a boolean true if roles exist, otherwise false
+ * Simple function returning a boolean true if user has roles
+ * in context or parent contexts, otherwise false.
  *
  * @param int $userid
  * @param int $roleid
- * @param int $contextid
+ * @param int $contextid empty means any context
  * @return bool
  */
 function user_has_role_assignment($userid, $roleid, $contextid = 0) {
     global $DB;
 
     if ($contextid) {
-        return $DB->record_exists('role_assignments', array('userid'=>$userid, 'roleid'=>$roleid, 'contextid'=>$contextid));
+        if (!$context = get_context_instance_by_id($contextid)) {
+            return false;
+        }
+        $parents = get_parent_contexts($context, true);
+        list($contexts, $params) = $DB->get_in_or_equal($parents, SQL_PARAMS_NAMED, 'r0000');
+        $params['userid'] = $userid;
+        $params['roleid'] = $roleid;
+
+        $sql = "SELECT COUNT(ra.id)
+                  FROM {role_assignments} ra
+                 WHERE ra.userid = :userid AND ra.roleid = :roleid AND ra.contextid $contexts";
+
+        $count = $DB->get_field_sql($sql, $params);
+        return ($count > 0);
+
     } else {
         return $DB->record_exists('role_assignments', array('userid'=>$userid, 'roleid'=>$roleid));
     }
