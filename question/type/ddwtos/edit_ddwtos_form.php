@@ -24,7 +24,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->dirroot . '/question/type/sddl/edit_form_base.php');
+require_once($CFG->dirroot . '/question/type/gapselect/edit_form_base.php');
 
 
 /**
