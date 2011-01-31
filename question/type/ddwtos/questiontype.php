@@ -38,30 +38,29 @@ require_once($CFG->dirroot . '/question/type/gapselect/questiontypebase.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddwtos extends qtype_gapselect_base {
-    protected function feedback_serialization($choice){
+    protected function choice_group_key(){
+        return 'draggroup';
+    }
+
+    public function requires_qtypes() {
+        return array('gapselect');
+    }
+
+    protected function choice_options_to_feedback($choice){
         $output = new stdClass;
         $output->draggroup = $choice['draggroup'];
         $output->infinite = !empty($choice['infinite']);
         return serialize($output);
     }
 
-    protected function feedback_unserialization($choicedata){
-        $options = unserialize($choicedata->feedback);
-        return new qtype_ddwtos_choice($choicedata->answer, $options->draggroup, $options->infinite);
-    }
-
-
-    protected function feedback_unserialize_as_array($feedback){
+    protected function feedback_to_choice_options($feedback){
         $feedbackobj = unserialize($feedback);
         return array('draggroup'=> $feedbackobj->draggroup, 'infinite'=> $feedbackobj->infinite);
     }
 
-    protected function choice_group_key(){
-        return 'draggroup';
-    }
-
-    public function requires_qtypes() {
-        return array('sddl');
+    protected function make_choice($choicedata){
+        $options = unserialize($choicedata->feedback);
+        return new qtype_ddwtos_choice($choicedata->answer, $options->draggroup, $options->infinite);
     }
 
     public function import_from_xml($data, $question, $format, $extra=null) {
@@ -94,7 +93,7 @@ class qtype_ddwtos extends qtype_gapselect_base {
             // Legacy format containing PHP serialisation.
             foreach ($data['#']['answer'] as $answerxml) {
                 $ans = $format->import_answer($answerxml);
-                $options = unserialize(stripslashes($ans->feedback));
+                $options = unserialize(stripslashes($ans->feedback['text']));
                 $question->choices[] = array(
                     'answer' => $ans->answer,
                     'draggroup' => $options->draggroup,

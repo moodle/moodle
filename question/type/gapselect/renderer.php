@@ -45,8 +45,8 @@ class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_
 
         $attributes = array(
             'id' => $this->box_id($qa, 'p' . $place, $group),
-            'class' => 'group' . $group
         );
+        $groupclass = 'group' . $group;
 
         if ($options->readonly) {
             $attributes['disabled'] = 'disabled';
@@ -68,7 +68,8 @@ class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_
             }
         }
 
-        return html_writer::select($selectoptions, $qa->get_qt_field_name($fieldname), $value, ' ', $attributes) . ' ' . $feedbackimage;
+        $selecthtml = html_writer::select($selectoptions, $qa->get_qt_field_name($fieldname), $value, ' ', $attributes) . ' ' . $feedbackimage;
+        return html_writer::tag('span', $selecthtml, array('class' => 'control '.$groupclass));
     }
 
 }

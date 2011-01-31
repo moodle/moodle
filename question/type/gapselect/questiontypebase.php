@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/format/xml/format.php');
  * @copyright 2009 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_gapselect_base extends question_type {
+abstract class qtype_gapselect_base extends question_type {
     /**
      * Choices are stored in the question_answers table, and any options need to
      * be put into the feedback field somehow. This method is responsible for
@@ -93,7 +93,7 @@ class qtype_gapselect_base extends question_type {
         }
 
         $update = true;
-        $options = get_record('question_'.$this->name(), 'questionid', $question->id);
+        $options = get_record('question_' . $this->name(), 'questionid', $question->id);
         if (!$options) {
             $update = false;
             $options = new stdClass;
@@ -152,10 +152,7 @@ class qtype_gapselect_base extends question_type {
 
         $question->shufflechoices = $questiondata->options->shuffleanswers;
 
-        $question->correctfeedback = $questiondata->options->correctfeedback;
-        $question->partiallycorrectfeedback = $questiondata->options->partiallycorrectfeedback;
-        $question->incorrectfeedback = $questiondata->options->incorrectfeedback;
-        $question->shownumcorrect = $questiondata->options->shownumcorrect;
+        $this->initialise_combined_feedback($question, $questiondata, true);
 
         $question->choices = array();
         $choiceindexmap= array();
@@ -235,7 +232,8 @@ class qtype_gapselect_base extends question_type {
         return $answers;
     }
 
-    /* This method gets the choices (answers) and sort them by groups
+    /**
+     * This method gets the choices (answers) and sort them by groups
      * in a 2 dimentional array.
      *
      * @param object $question
@@ -244,10 +242,10 @@ class qtype_gapselect_base extends question_type {
     protected function get_array_of_groups($question, $state) {
         $answers = $this->get_array_of_choices($question);
         $arr = array();
-        for($group=1;$group<count($answers);$group++) {
-            $players = $this->get_group_of_players ($question, $state, $answers, $group);
-            if($players) {
-                $arr [$group]= $players;
+        for ($group=1; $group < count($answers); $group++) {
+            $players = $this->get_group_of_players($question, $state, $answers, $group);
+            if ($players) {
+                $arr[$group]= $players;
             }
         }
         return $arr;
@@ -322,7 +320,7 @@ class qtype_gapselect_base extends question_type {
 
             foreach ($question->choices[$group] as $i => $choice) {
                 $choices[$i] = new question_possible_response(
-                        html_to_text($question->format_text($choice->text), 0, false),
+                        $question->html_to_text($choice->text),
                         $question->rightchoices[$place] == $i);
             }
             $choices[null] = question_possible_response::no_response();
