@@ -668,7 +668,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             if ($conflictblock !== false) {
                 // Duplicate block titles are not allowed, they confuse people
                 // AND PHP's associative arrays ;)
-                throw new plugin_defective_exception($component, get_string('blocknameconflict', '', (object)array('name'=>$block->name, 'conflict'=>$conflictblock)));
+                throw new plugin_defective_exception($component, get_string('blocknameconflict', 'error', (object)array('name'=>$block->name, 'conflict'=>$conflictblock)));
             }
             $startcallback($component, true, $verbose);
 
