@@ -750,6 +750,9 @@ function setup_get_remote_url() {
 
     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false) {
         //nginx - not officially supported
+        if (!isset($_SERVER['SCRIPT_NAME'])) {
+            die('Invalid server configuration detected, please try to add "fastcgi_param SCRIPT_NAME $fastcgi_script_name;" to the nginx server configuration.');
+        }
         $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
         $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
