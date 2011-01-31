@@ -116,6 +116,10 @@
 
 .path-course .clearfloat {float:none; clear:both;height:0px;}
 
+
+/*all courses view*/
+#page-course-index .categorylist .course.clearfloat { height: auto; }
+
 /** 
 * Overide for RTL layout
 */
