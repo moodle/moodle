@@ -20,6 +20,7 @@
         $url->param('state', $stateid);
     }
     $PAGE->set_url($url);
+    $PAGE->set_pagelayout('popup');
 
     $attemptobj = quiz_attempt::create($attemptid);
 
@@ -27,23 +28,37 @@
     require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
     $attemptobj->check_review_capability();
 
+/// Create an object to manage all the other (non-roles) access rules.
+    $accessmanager = $attemptobj->get_access_manager(time());
+    $options = $attemptobj->get_review_options();
+
 /// Permissions checks for normal users who do not have quiz:viewreports capability.
     if (!$attemptobj->has_capability('mod/quiz:viewreports')) {
     /// Can't review during the attempt - send them back to the attempt page.
         if (!$attemptobj->is_finished()) {
+            echo $OUTPUT->header();
             echo $OUTPUT->notification(get_string('cannotreviewopen', 'quiz'));
             echo $OUTPUT->close_window_button();
+            echo $OUTPUT->footer();
+            die;
         }
     /// Can't review other users' attempts.
         if (!$attemptobj->is_own_attempt()) {
+            echo $OUTPUT->header();
             echo $OUTPUT->notification(get_string('notyourattempt', 'quiz'));
             echo $OUTPUT->close_window_button();
+            echo $OUTPUT->footer();
+            die;
         }
+
     /// Can't review unless Students may review -> Responses option is turned on.
         if (!$options->responses) {
             $accessmanager = $attemptobj->get_access_manager(time());
+            echo $OUTPUT->header();
             echo $OUTPUT->notification($accessmanager->cannot_review_message($attemptobj->get_review_options()));
             echo $OUTPUT->close_window_button();
+            echo $OUTPUT->footer();
+            die;
         }
     }
 

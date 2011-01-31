@@ -536,7 +536,7 @@ class quiz_attempt extends quiz {
     public function load_specific_question_state($questionid, $stateid) {
         global $DB;
         $state = question_load_specific_state($this->questions[$questionid],
-                $this->quiz, $this->attempt, $stateid);
+                $this->quiz, $this->attempt->uniqueid, $stateid);
         if ($state === false) {
             throw new moodle_quiz_exception($this, 'invalidstateid');
         }
