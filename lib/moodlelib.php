@@ -2654,7 +2654,7 @@ function require_course_login($courseorid, $autologinguest = true, $cm = NULL, $
     global $CFG, $PAGE, $SITE;
     $issite = (is_object($courseorid) and $courseorid->id == SITEID)
           or (!is_object($courseorid) and $courseorid == SITEID);
-    if ($issite && !($cm instanceof cm_info)) {
+    if ($issite && !empty($cm) && !($cm instanceof cm_info)) {
         // note: nearly all pages call get_fast_modinfo anyway and it does not make any
         // db queries so this is not really a performance concern, however it is obviously
         // better if you use get_fast_modinfo to get the cm before calling this.
