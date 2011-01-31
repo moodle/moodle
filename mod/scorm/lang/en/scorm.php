@@ -84,7 +84,6 @@ $string['everytime'] = 'Every time it\'s used';
 $string['exceededmaxattempts'] = 'You have reached the maximum number of attempts.';
 $string['exit'] = 'Exit course';
 $string['exitactivity'] = 'Exit activity';
-$string['expcoll'] = 'Expand/Collide';
 $string['expired'] = 'Sorry, this activity closed on {$a} and is no longer available';
 $string['external'] = 'Update external packages timing';
 $string['failed'] = 'Failed';
