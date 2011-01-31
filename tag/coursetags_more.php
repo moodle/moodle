@@ -9,8 +9,8 @@ require_once('../config.php');
 require_once($CFG->dirroot.'/tag/coursetagslib.php');
 require_once($CFG->dirroot.'/tag/lib.php');
 
-$sort = optional_param('sort', 'alpha', PARAM_TEXT); //alpha, date or popularity
-$show = optional_param('show', 'all', PARAM_TEXT); //all, my, official, community or course
+$sort = optional_param('sort', 'alpha', PARAM_ALPHA); //alpha, date or popularity
+$show = optional_param('show', 'all', PARAM_ALPHA); //all, my, official, community or course
 $courseid = optional_param('courseid', 0, PARAM_INT);
 
 $url = new moodle_url('/tag/coursetags_more.php');
