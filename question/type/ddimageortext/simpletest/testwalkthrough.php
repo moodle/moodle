@@ -57,8 +57,8 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
         // Create a drag-and-drop question.
         $dd = qtype_ddwtos_test_helper::make_a_ddwtos_question();
         $dd->hints = array(
-            new question_hint_with_parts('This is the first hint.', false, false),
-            new question_hint_with_parts('This is the second hint.', true, true),
+            13 => new question_hint_with_parts(13, 'This is the first hint.', FORMAT_HTML, false, false),
+            14 => new question_hint_with_parts(14, 'This is the second hint.', FORMAT_HTML, true, true),
         );
         $dd->shufflechoices = false;
         $this->start_attempt_at_question($dd, 'interactive', 3);
