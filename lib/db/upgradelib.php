@@ -244,7 +244,10 @@ function upgrade_migrate_group_icons() {
         upgrade_set_timeout(60); /// Give upgrade at least 60 more seconds
         $pbar->update($i, $count, "Migrated group icons  $i/$count.");
 
-        $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+        if (!$context = get_context_instance(CONTEXT_COURSE, $group->courseid)) {
+            debugging('Invalid group record (id=' . $group->id . ') found.');
+            continue;
+        }
 
         if ($fs->file_exists($context->id, 'group', 'icon', $group->id, '/', 'f1.jpg')) {
             // already converted!
