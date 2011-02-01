@@ -70,9 +70,9 @@ class qtype_multichoice_edit_form extends question_edit_form {
         $question = $this->data_preprocessing_hints($question, true, true);
 
         if (!empty($question->options)) {
-            $question->single =  $question->options->single;
-            $question->shuffleanswers =  $question->options->shuffleanswers;
-            $question->answernumbering =  $question->options->answernumbering;
+            $question->single = $question->options->single;
+            $question->shuffleanswers = $question->options->shuffleanswers;
+            $question->answernumbering = $question->options->answernumbering;
         }
 
         return $question;

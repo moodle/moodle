@@ -48,7 +48,7 @@ class qtype_ddwtos extends qtype_gapselect_base {
 
     protected function choice_options_to_feedback($choice){
         $output = new stdClass;
-        $output->draggroup = $choice['draggroup'];
+        $output->draggroup = $choice['choicegroup'];
         $output->infinite = !empty($choice['infinite']);
         return serialize($output);
     }

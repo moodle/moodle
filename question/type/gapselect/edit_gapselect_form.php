@@ -35,31 +35,10 @@ require_once($CFG->dirroot . '/question/type/gapselect/edit_form_base.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_gapselect_edit_form extends qtype_gapselect_edit_form_base {
-
     // HTML tags allowed in answers (choices).
     protected $allowedhtmltags = array();
 
     function qtype() {
         return 'gapselect';
-    }
-
-    protected function default_values_from_feedback_field($feedback, $key) {
-        $default_values = array();
-        $default_values['choices['.$key.'][selectgroup]'] = $feedback;
-        return $default_values;
-    }
-
-    protected function repeated_options() {
-        $repeatedoptions = array();
-        $repeatedoptions['selectgroup']['default'] = '1';
-        return $repeatedoptions;
-    }
-    protected function choice_group(&$mform, $grouparray) {
-        $options = array();
-        for ($i = 1; $i <= 8; $i += 1) {
-            $options[$i] = $i;
-        }
-        $grouparray[] =& $mform->createElement('select', 'selectgroup', get_string('group', 'qtype_gapselect'), $options);
-        return $grouparray;
     }
 }

@@ -8,6 +8,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_gapselect_edit_form_base extends question_edit_form {
+    const MAX_GROUPS = 8;
 
     /** @var array of HTML tags allowed in choices / drag boxes. */
     protected $allowedhtmltags = array(
@@ -64,7 +65,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
      * definition_inner adds all specific fields to the form.
      * @param object $mform (the form being built).
      */
-    function definition_inner(&$mform) {
+    function definition_inner($mform) {
         global $CFG;
 
         //add the answer (choice) fields to the form
@@ -75,19 +76,14 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
     }
 
     protected function definition_answer_choice(&$mform) {
-        $mform->addElement('header', 'choicehdr',   get_string('choices', 'qtype_gapselect'));
+        $mform->addElement('header', 'choicehdr', get_string('choices', 'qtype_gapselect'));
 
-        $mform->addElement('checkbox', 'shuffleanswers',  get_string('shuffle', 'quiz'));
+        $mform->addElement('checkbox', 'shuffleanswers', get_string('shuffle', 'qtype_gapselect'));
         $mform->setDefault('shuffleanswers', 0);
 
         $textboxgroup = array();
-
-        $grouparray = array();
-        $grouparray[] =& $mform->createElement('text', 'answer', get_string('answer', 'qtype_gapselect'), array('size'=>30, 'class'=>'tweakcss'));
-        $grouparray[] =& $mform->createElement('static', '', '',' '.get_string('group', 'qtype_gapselect').' ');
-
-        $grouparray = $this->choice_group($mform, $grouparray);
-        $textboxgroup[] = $mform->createElement('group','choices', 'Choice {no}',$grouparray);
+        $textboxgroup[] = $mform->createElement('group', 'choices',
+                get_string('choicex', 'qtype_gapselect'), $this->choice_group($mform));
 
         if (isset($this->question->options)) {
             $countanswers = count($this->question->options->answers);
@@ -96,7 +92,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         }
 
         if ($this->question->formoptions->repeatelements) {
-            $defaultstartnumbers = QUESTION_NUMANS_START*2;
+            $defaultstartnumbers = QUESTION_NUMANS_START * 2;
             $repeatsatstart = max($defaultstartnumbers, QUESTION_NUMANS_START, $countanswers + QUESTION_NUMANS_ADD);
         } else {
             $repeatsatstart = $countanswers;
@@ -107,29 +103,51 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         $this->repeat_elements($textboxgroup, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', QUESTION_NUMANS_ADD, get_string('addmorechoiceblanks', 'qtype_gapselect'));
     }
 
-
-
-    public function set_data($question) {
-        if (isset($question->options)) {
-            $options = $question->options;
-            $default_values = array();
-            if (count($options->answers)) {
-                $key = 0;
-                foreach ($options->answers as $answer) {
-                    $default_values['choices['.$key.'][answer]'] = $answer->answer;
-                    $default_values += $this->default_values_from_feedback_field($answer->feedback, $key);
-                    $key++;
-                }
-            }
-
-            $default_values['shuffleanswers'] =  $question->options->shuffleanswers;
-            $default_values['correctfeedback'] =  $question->options->correctfeedback;
-            $default_values['partiallycorrectfeedback'] =  $question->options->partiallycorrectfeedback;
-            $default_values['incorrectfeedback'] =  $question->options->incorrectfeedback;
-            $default_values['shownumcorrect'] = $question->options->shownumcorrect;
-            $question = (object)((array)$question + $default_values);
+    protected function choice_group($mform) {
+        $options = array();
+        for ($i = 1; $i <= self::MAX_GROUPS; $i += 1) {
+            $options[$i] = $i;
         }
-        parent::set_data($question);
+        $grouparray = array();
+        $grouparray[] = $mform->createElement('text', 'answer', get_string('answer', 'qtype_gapselect'), array('size'=>30, 'class'=>'tweakcss'));
+        $grouparray[] = $mform->createElement('static', '', '',' '.get_string('group', 'qtype_gapselect').' ');
+        $grouparray[] = $mform->createElement('select', 'choicegroup', get_string('group', 'qtype_gapselect'), $options);
+        return $grouparray;
+    }
+
+    protected function repeated_options() {
+        $repeatedoptions = array();
+        $repeatedoptions['choicegroup']['default'] = '1';
+        return $repeatedoptions;
+    }
+
+    public function data_preprocessing($question) {
+        $question = parent::data_preprocessing($question);
+        $question = $this->data_preprocessing_combined_feedback($question, true);
+        $question = $this->data_preprocessing_hints($question, true, true);
+
+        $question = $this->data_preprocessing_answers($question, true);
+        if (!empty($question->options->answers)) {
+            $key = 0;
+            foreach ($question->options->answers as $answer) {
+                $question = $this->data_preprocessing_choice($question, $answer, $key);
+                $key++;
+            }
+        }
+
+        if (!empty($question->options)) {
+            $question->shuffleanswers = $question->options->shuffleanswers;
+        }
+
+        return $question;
+    }
+
+    protected function data_preprocessing_choice($question, $answer, $key) {
+        // See comment in data_preprocessing_answers.
+        unset($this->_form->_defaultValues['choices[$key][choicegroup]']);
+        $question->choices[$key]['answer'] = $answer->answer;
+        $question->choices[$key]['choicegroup'] = $answer->feedback;
+        return $question;
     }
 
     public function validation($data, $files) {
@@ -138,7 +156,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         $choices = $data['choices'];
 
         //check the whether the slots are valid
-        $errorsinquestiontext = $this->validate_slots($questiontext, $choices);
+        $errorsinquestiontext = $this->validate_slots($questiontext['text'], $choices);
         if ($errorsinquestiontext) {
             $errors['questiontext'] = $errorsinquestiontext;
         }
@@ -196,17 +214,8 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         }
         return false;
     }
+
     function qtype() {
         return '';
-    }
-
-    protected function default_values_from_feedback_field($feedback, $key) {
-        $default_values = array();
-        return $default_values;
-    }
-
-    protected function repeated_options() {
-        $repeatedoptions = array();
-        return $repeatedoptions;
     }
 }
