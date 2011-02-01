@@ -57,8 +57,8 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
         // Create a drag-and-drop question.
         $dd = qtype_ddwtos_test_helper::make_a_ddwtos_question();
         $dd->hints = array(
-            13 => new question_hint_with_parts(13, 'This is the first hint.', FORMAT_HTML, false, false),
-            14 => new question_hint_with_parts(14, 'This is the second hint.', FORMAT_HTML, true, true),
+            new question_hint_with_parts(13, 'This is the first hint.', FORMAT_HTML, false, false),
+            new question_hint_with_parts(14, 'This is the second hint.', FORMAT_HTML, true, true),
         );
         $dd->shufflechoices = false;
         $this->start_attempt_at_question($dd, 'interactive', 3);
@@ -332,8 +332,8 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
         // Create a drag-and-drop question.
         $dd = qtype_ddwtos_test_helper::make_a_ddwtos_question();
         $dd->hints = array(
-            new question_hint_with_parts('This is the first hint.', true, true),
-            new question_hint_with_parts('This is the second hint.', true, true),
+            new question_hint_with_parts(1, 'This is the first hint.', FORMAT_MOODLE, true, true),
+            new question_hint_with_parts(2, 'This is the second hint.', FORMAT_MOODLE, true, true),
         );
         $dd->shufflechoices = false;
         $this->start_attempt_at_question($dd, 'interactive', 9);
@@ -469,8 +469,8 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
         // Create a drag-and-drop question.
         $dd = qtype_ddwtos_test_helper::make_a_ddwtos_question();
         $dd->hints = array(
-            new question_hint_with_parts('This is the first hint.', false, false),
-            new question_hint_with_parts('This is the second hint.', true, true),
+            new question_hint_with_parts(23, 'This is the first hint.', FORMAT_MOODLE, false, false),
+            new question_hint_with_parts(24, 'This is the second hint.', FORMAT_MOODLE, true, true),
         );
         $dd->shufflechoices = false;
         $this->start_attempt_at_question($dd, 'interactive', 3);
@@ -520,8 +520,8 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
         // Create a drag-and-drop question.
         $dd = qtype_ddwtos_test_helper::make_a_ddwtos_question();
         $dd->hints = array(
-            new question_hint_with_parts('This is the first hint.', false, false),
-            new question_hint_with_parts('This is the second hint.', true, true),
+            new question_hint_with_parts(23, 'This is the first hint.', FORMAT_MOODLE, false, false),
+            new question_hint_with_parts(24, 'This is the second hint.', FORMAT_MOODLE, true, true),
         );
         $dd->shufflechoices = false;
         $this->start_attempt_at_question($dd, 'interactive', 3);
@@ -571,8 +571,8 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
         // Create a drag-and-drop question.
         $dd = qtype_ddwtos_test_helper::make_a_ddwtos_question();
         $dd->hints = array(
-            new question_hint_with_parts('This is the first hint.', false, true),
-            new question_hint_with_parts('This is the second hint.', true, true),
+            new question_hint_with_parts(23, 'This is the first hint.', FORMAT_MOODLE, false, true),
+            new question_hint_with_parts(24, 'This is the second hint.', FORMAT_MOODLE, true, true),
         );
         $dd->shufflechoices = false;
         $this->start_attempt_at_question($dd, 'interactive', 3);
@@ -675,6 +675,5 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_drop_box_expectation('p3', 3, true, 'correct'),
                 $this->get_contains_correct_expectation(),
                 new PatternExpectation('/' . preg_quote('The [quick] brown [fox] jumped over the [lazy] dog.') . '/'));
-
     }
 }
