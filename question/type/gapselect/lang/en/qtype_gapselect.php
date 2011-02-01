@@ -17,10 +17,10 @@
 
 
 /**
- * Language strings for the select missing words question type.
+ * Language strings for the sdrag-and-drop words into sentences question type.
  *
  * @package qtype
- * @subpackage gapselect
+ * @subpackage ddwtos
  * @copyright 2011 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ $string['addinggapselect'] = 'Adding a select missing words question';
 $string['addmorechoiceblanks'] = 'Blanks for {no} more choices';
 $string['answer'] = 'Answer';
 $string['choices'] = 'Choices';
-$string['correctansweris'] = 'The correct answer is: $a';
+$string['correctansweris'] = 'The correct answer is: {$a}';
 $string['gapselect'] = 'Select missing words';
 $string['gapselect_help'] = 'Type in some question text like "The [[1]] jumped over the [[2]]", then enter the possible words to go in gaps 1 and 2 underneath.';
 $string['gapselectsummary'] = 'Missing words in some text are filled in using dropdown menus.';

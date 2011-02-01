@@ -66,6 +66,7 @@ class qtype_gapselect_test extends UnitTestCase {
         $gapselect->category = 0;
         $gapselect->parent = 0;
         $gapselect->questiontextformat = FORMAT_HTML;
+        $gapselect->generalfeedbackformat = FORMAT_HTML;
         $gapselect->defaultmark = 1;
         $gapselect->penalty = 0.3333333;
         $gapselect->length = 1;
@@ -206,10 +207,10 @@ class qtype_gapselect_test extends UnitTestCase {
         $expectedq->penalty = 0.3333333;
 
         $expectedq->shuffleanswers = 1;
-        $expectedq->correctfeedback = '<p>Your answer is correct.</p>';
-        $expectedq->partiallycorrectfeedback = '<p>Your answer is partially correct.</p>';
+        $expectedq->correctfeedback = array('text' => '<p>Your answer is correct.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->partiallycorrectfeedback = array('text' => '<p>Your answer is partially correct.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
         $expectedq->shownumcorrect = true;
-        $expectedq->incorrectfeedback = '<p>Your answer is incorrect.</p>';
+        $expectedq->incorrectfeedback = array('text' => '<p>Your answer is incorrect.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
 
         $expectedq->choices = array(
             array('answer' => 'Alpha', 'selectgroup' => 1),
@@ -227,11 +228,13 @@ class qtype_gapselect_test extends UnitTestCase {
     public function test_xml_export() {
         $qdata = new stdClass;
         $qdata->id = 123;
+        $qdata->contextid = 0;
         $qdata->qtype = 'gapselect';
         $qdata->name = 'A select missing words question';
         $qdata->questiontext = 'Put these in order: [[1]], [[2]], [[3]].';
         $qdata->questiontextformat = FORMAT_MOODLE;
         $qdata->generalfeedback = 'The answer is Alpha, Beta, Gamma.';
+        $qdata->generalfeedbackformat = FORMAT_MOODLE;
         $qdata->defaultmark = 3;
         $qdata->length = 1;
         $qdata->penalty = 0.3333333;
@@ -239,19 +242,22 @@ class qtype_gapselect_test extends UnitTestCase {
 
         $qdata->options->shuffleanswers = 1;
         $qdata->options->correctfeedback = '<p>Your answer is correct.</p>';
+        $qdata->options->correctfeedbackformat = FORMAT_MOODLE;
         $qdata->options->partiallycorrectfeedback = '<p>Your answer is partially correct.</p>';
+                $qdata->options->partiallycorrectfeedbackformat = FORMAT_MOODLE;
         $qdata->options->shownumcorrect = true;
         $qdata->options->incorrectfeedback = '<p>Your answer is incorrect.</p>';
+        $qdata->options->incorrectfeedbackformat = FORMAT_MOODLE;
 
         $qdata->options->answers = array(
-            new question_answer('Alpha', 0, '1'),
-            new question_answer('Beta', 0, '1'),
-            new question_answer('Gamma', 0, '1'),
+            13 => new question_answer(13, 'Alpha', 0, '1', FORMAT_MOODLE),
+            14 => new question_answer(14, 'Beta', 0, '1', FORMAT_MOODLE),
+            15 => new question_answer(15, 'Gamma', 0, '1', FORMAT_MOODLE),
         );
 
         $qdata->hints = array(
-            new question_hint_with_parts('Try again.', true, false),
-            new question_hint_with_parts('These are the first three letters of the Greek alphabet.', true, true),
+            1 => new question_hint_with_parts(1, 'Try again.', FORMAT_MOODLE, true, false),
+            2 => new question_hint_with_parts(2, 'These are the first three letters of the Greek alphabet.', FORMAT_MOODLE, true, true),
         );
 
         $exporter = new qformat_xml();
@@ -265,20 +271,20 @@ class qtype_gapselect_test extends UnitTestCase {
     <questiontext format="moodle_auto_format">
       <text>Put these in order: [[1]], [[2]], [[3]].</text>
     </questiontext>
-    <generalfeedback>
+    <generalfeedback format="moodle_auto_format">
       <text>The answer is Alpha, Beta, Gamma.</text>
     </generalfeedback>
     <defaultgrade>3</defaultgrade>
     <penalty>0.3333333</penalty>
     <hidden>0</hidden>
     <shuffleanswers>1</shuffleanswers>
-    <correctfeedback>
+    <correctfeedback format="moodle_auto_format">
       <text><![CDATA[<p>Your answer is correct.</p>]]></text>
     </correctfeedback>
-    <partiallycorrectfeedback>
+    <partiallycorrectfeedback format="moodle_auto_format">
       <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
     </partiallycorrectfeedback>
-    <incorrectfeedback>
+    <incorrectfeedback format="moodle_auto_format">
       <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
     </incorrectfeedback>
     <shownumcorrect/>
@@ -294,11 +300,11 @@ class qtype_gapselect_test extends UnitTestCase {
       <text>Gamma</text>
       <group>1</group>
     </selectoption>
-    <hint>
+    <hint format="moodle_auto_format">
       <text>Try again.</text>
       <shownumcorrect/>
     </hint>
-    <hint>
+    <hint format="moodle_auto_format">
       <text>These are the first three letters of the Greek alphabet.</text>
       <shownumcorrect/>
       <clearwrong/>

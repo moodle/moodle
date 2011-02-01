@@ -37,10 +37,10 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
         // Create a gapselect question.
         $q = qtype_gapselect_test_helper::make_a_gapselect_question();
         $q->hints = array(
-            new question_hint_with_parts('This is the first hint.', false, false),
-            new question_hint_with_parts('This is the second hint.', true, true),
+            new question_hint_with_parts(1, 'This is the first hint.', FORMAT_HTML, false, false),
+            new question_hint_with_parts(2, 'This is the second hint.', FORMAT_HTML, true, true),
         );
-        $ql->shufflechoices = false;
+        $q->shufflechoices = false;
         $this->start_attempt_at_question($q, 'interactive', 3);
 
         // Check the initial state.
