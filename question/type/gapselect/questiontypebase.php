@@ -49,11 +49,12 @@ abstract class qtype_gapselect_base extends question_type {
     protected abstract function choice_options_to_feedback($choice);
 
     public function save_question_options($question) {
+        global $DB;
+        $context = $question->context;
         $result = new stdClass();
 
-        if (!$oldanswers = get_records('question_answers', 'question', $question->id, 'id ASC')) {
-            $oldanswers = array();
-        }
+        $oldanswers = $DB->get_records('question_answers',
+                array('question' => $question->id), 'id ASC');
 
         // Insert all the new answers
         foreach ($question->choices as $key => $choice) {
@@ -64,80 +65,56 @@ abstract class qtype_gapselect_base extends question_type {
 
             $feedback = $this->choice_options_to_feedback($choice);
 
-            if ($answer = array_shift($oldanswers)) {  // Existing answer, so reuse it
+            if ($answer = array_shift($oldanswers)) {
                 $answer->answer = $choice['answer'];
-                $answer->fraction = 0;
                 $answer->feedback = $feedback;
-                if (!update_record('question_answers', $answer)) {
-                    $result->error = "Could not update question type '".$this->name()."' question answer! (id=$answer->id)";
-                    return $result;
-                }
+                $DB->update_record('question_answers', $answer);
+
             } else {
-                $answer = new stdClass;
-                $answer->answer = $choice['answer'];
+                $answer = new stdClass();
                 $answer->question = $question->id;
+                $answer->answer = $choice['answer'];
+                $answer->answerformat = FORMAT_HTML;
                 $answer->fraction = 0;
                 $answer->feedback = $feedback;
-                if (!$answer->id = insert_record('question_answers', $answer)) {
-                    $result->error = 'Could not insert question type \''.$this->name().'\'  question answer!';
-                    return $result;
-                }
+                $answer->feedbackformat = 0;
+                $DB->insert_record('question_answers', $answer);
             }
         }
 
         // Delete old answer records
-        if (!empty($oldanswers)) {
-            foreach($oldanswers as $oa) {
-                delete_records('question_answers', 'id', $oa->id);
-            }
+        foreach($oldanswers as $oa) {
+            delete_records('question_answers', 'id', $oa->id);
         }
 
-        $update = true;
-        $options = get_record('question_' . $this->name(), 'questionid', $question->id);
+        $options = $DB->get_record('question_' . $this->name(), array('questionid' => $question->id));
         if (!$options) {
-            $update = false;
-            $options = new stdClass;
+            $options = new stdClass();
             $options->questionid = $question->id;
+            $options->correctfeedback = '';
+            $options->partiallycorrectfeedback = '';
+            $options->incorrectfeedback = '';
+            $options->id = $DB->insert_record('question_' . $this->name(), $options);
         }
 
         $options->shuffleanswers = !empty($question->shuffleanswers);
-        $options->correctfeedback = trim($question->correctfeedback);
-        $options->partiallycorrectfeedback = trim($question->partiallycorrectfeedback);
-        $options->shownumcorrect = !empty($question->shownumcorrect);
-        $options->incorrectfeedback = trim($question->incorrectfeedback);
-
-        if ($update) {
-            if (!update_record('question_'.$this->name(), $options)) {
-                $result->error = "Could not update question type '".$this->name()."' options! (id=$options->id)";
-                return $result;
-            }
-
-        } else {
-            if (!insert_record('question_gapselect', $options)) {
-                $result->error = 'Could not insert question type \''.$this->name().'\' options!';
-                return $result;
-            }
-        }
+        $options = $this->save_combined_feedback_helper($options, $question, $context, true);
+        $DB->update_record('question_' . $this->name(), $options);
 
         $this->save_hints($question, true);
-
-        return true;
     }
 
     public function get_question_options($question) {
-        // Get additional information from database and attach it to the question object
-        if (!$question->options = get_record('question_'.$this->name(), 'questionid', $question->id)) {
-            notify('Error: Missing question options for question type \''.$this->name().'\' question '.$question->id.'!');
-            return false;
-        }
-
+        global $DB;
+        $question->options = $DB->get_record('question_'.$this->name(),
+                array('questionid' => $question->id), '*', MUST_EXIST);
         parent::get_question_options($question);
-        return true;
     }
 
-    public function delete_question($questionid) {
-        delete_records('question_'.$this->name(), 'questionid', $questionid);
-        return parent::delete_question($questionid);
+    public function delete_question($questionid, $contextid) {
+        global $DB;
+        $DB->delete_records('question_'.$this->name(), array('questionid' => $questionid));
+        return parent::delete_question($questionid, $contextid);
     }
 
     /**
@@ -261,15 +238,15 @@ abstract class qtype_gapselect_base extends question_type {
         $arrayofchoices = $this->get_array_of_choices($question);
         $arrayofplaceholdeers = $this->get_array_of_placeholders($question);
 
-        $correctplayeers = array();
+        $correctplayers = array();
         foreach($arrayofplaceholdeers as $ph) {
             foreach($arrayofchoices as $key=>$choice) {
                 if(($key+1) == $ph) {
-                    $correctplayeers[]= $choice;
+                    $correctplayers[]= $choice;
                 }
             }
         }
-        return $correctplayeers;
+        return $correctplayers;
     }
 
     protected function get_array_of_placeholders($question) {
@@ -290,22 +267,21 @@ abstract class qtype_gapselect_base extends question_type {
 
         $output = array();
         foreach ($slots as $slot) {
-            $output[]=substr($slot, 2, (strlen($slot)-4));//2 is for'[[' and 4 is for '[[]]'
+            $output[] = substr($slot, 2, strlen($slot) - 4); //2 is for '[[' and 4 is for '[[]]'.
         }
         return $output;
      }
 
-    protected function get_group_of_players ($question, $state, $subquestions, $group) {
-        $goupofanswers=array();
-        foreach($subquestions as $key=>$subquestion) {
-            if($subquestion[$this->choice_group_key()] == $group) {
-                $goupofanswers[] =  $subquestion;
+    protected function get_group_of_players($question, $state, $subquestions, $group) {
+        $goupofanswers = array();
+        foreach ($subquestions as $key => $subquestion) {
+            if ($subquestion[$this->choice_group_key()] == $group) {
+                $goupofanswers[] = $subquestion;
             }
         }
 
-        //shuffle answers within this group
+        // Shuffle answers within this group
         if ($question->options->shuffleanswers == 1) {
-            srand($state->attempt);
             shuffle($goupofanswers);
         }
         return $goupofanswers;
@@ -331,5 +307,24 @@ abstract class qtype_gapselect_base extends question_type {
         return $parts;
     }
 
+    function move_files($questionid, $oldcontextid, $newcontextid) {
+        parent::move_files($questionid, $oldcontextid, $newcontextid);
 
+        $fs = get_file_storage();
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'question', 'correctfeedback', $questionid);
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'question', 'partiallycorrectfeedback', $questionid);
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'question', 'incorrectfeedback', $questionid);
+    }
+
+    protected function delete_files($questionid, $contextid) {
+        parent::delete_files($questionid, $contextid);
+
+        $fs = get_file_storage();
+        $fs->delete_area_files($contextid, 'question', 'correctfeedback', $questionid);
+        $fs->delete_area_files($contextid, 'question', 'partiallycorrectfeedback', $questionid);
+        $fs->delete_area_files($contextid, 'question', 'incorrectfeedback', $questionid);
+    }
 }

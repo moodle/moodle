@@ -40,7 +40,7 @@ require_once($CFG->dirroot . '/question/type/gapselect/questiontypebase.php');
  */
 class qtype_gapselect extends qtype_gapselect_base {
     protected function choice_options_to_feedback($choice) {
-        return $choice['selectgroup'];
+        return $choice['choicegroup'];
     }
 
     protected function make_choice($choicedata) {
