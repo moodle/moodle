@@ -1,4 +1,5 @@
 <?php
+    die(); // This (unsecure MDL-26237) stuff isn't used by moodle at all
 /*
  *  $Id$
  *  
