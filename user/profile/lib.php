@@ -136,7 +136,7 @@ class profile_field_base {
                     SELECT id, userid
                       FROM {user_info_data}
                      WHERE fieldid = ?
-                       AND ' . $DB->sql_compare_text('data') . ' = ?',
+                       AND ' . $DB->sql_compare_text('data', 255) . ' = ' . $DB->sql_compare_text('?', 255),
                     array($this->field->id, $value));
             if ($data) {
                 $existing = false;
