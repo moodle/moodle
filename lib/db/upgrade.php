@@ -3933,8 +3933,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     if ($oldversion < 2010061900.04) {
         // there is no default course role any more, each enrol plugin has to handle it separately
         if (!empty($CFG->defaultcourseroleid)) {
-            $sql = "UPDATE {course} SET defaultrole = :default WHERE defaultrole = 0";
-            $params = array('default' => $CFG->defaultcourseroleid);
+            $sql = "UPDATE {course} SET defaultrole = :defaultrole WHERE defaultrole = 0";
+            $params = array('defaultrole' => $CFG->defaultcourseroleid);
             $DB->execute($sql, $params);
         }
         unset_config('defaultcourseroleid');
