@@ -158,7 +158,13 @@ if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', 
 
             $messageid = message_post_message($user1, $user2, $data->message, FORMAT_MOODLE, 'direct');
             if (!empty($messageid)) {
-                redirect($CFG->wwwroot . '/message/index.php?usergroup='.$usergroup.'&id='.$user2->id);
+                //Not including message ID as the ID may change when its moved to message_read
+                //.'#m'.$messageid;
+                $returnurl = '/message/index.php?usergroup='.$usergroup.'&id='.$user2->id;
+
+                //including the id of the user sending the message in the logged URL
+                add_to_log(SITEID, 'message', 'write', $returnurl.'&user='.$user1->id, $user1->id);
+                redirect($CFG->wwwroot.$returnurl);
             }
         }
     }
