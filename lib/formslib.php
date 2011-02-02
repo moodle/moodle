@@ -1561,6 +1561,10 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             }
         }
 
+        if (is_array($this->_constantValues)) {
+            $unfiltered = HTML_QuickForm::arrayMerge($unfiltered, $this->_constantValues);
+        }
+
         return $unfiltered;
     }
     /**
