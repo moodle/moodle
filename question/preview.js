@@ -35,7 +35,7 @@ M.core_question_preview.init = function(Y) {
 
     // Add a close button to the window.
     var closebutton = Y.Node.create('<input type="button" />');
-    button.value = M.str.question.closepreview;
+    closebutton.set('value', M.str.question.closepreview);
     Y.one('#previewcontrols').append(closebutton);
     Y.on('click', function() { window.close() }, closebutton);
 

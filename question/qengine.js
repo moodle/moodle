@@ -11,14 +11,15 @@ M.core_question_engine.questionformalreadysubmitted = false;
  * @param id the id of the button in the HTML.
  * @param slot the number of the question_attempt within the usage.
  */
-M.core_question_engine.init_submit_button(Y, button, slot) {
+M.core_question_engine.init_submit_button = function(Y, button, slot) {
+    var buttonel = document.getElementById(button);
     Y.on('click', function(e) {
         var scrollpos = document.getElementById('scrollpos');
         if (scrollpos) {
             scrollpos.value = YAHOO.util.Dom.getDocumentScrollTop();
         }
-        button.form.action = button.form.action + '#q' + slot;
-    }, button);
+        buttonel.form.action = buttonel.form.action + '#q' + slot;
+    }, buttonel);
 }
 
 /**
@@ -68,14 +69,14 @@ M.core_question_engine.init_form = function(Y, form) {
  * @param e the form submit event.
  * @param form the form element.
  */
-M.core_question_engine.prevent_repeat_submission(e, Y) {
+M.core_question_engine.prevent_repeat_submission = function(e, Y) {
     if (M.core_question_engine.questionformalreadysubmitted) {
         e.halt();
         return;
     }
 
     setTimeout(function() {
-        Y.all('input[type=submit]').disabled = true;
+        Y.all('input[type=submit]').set('disabled', true);
     }, 0);
     M.core_question_engine.questionformalreadysubmitted = true;
 }
@@ -84,7 +85,7 @@ M.core_question_engine.prevent_repeat_submission(e, Y) {
  * Beat IE into submission.
  * @param targetpos the target scroll position.
  */
-M.core_question_engine.force_ie_to_scroll(targetpos) {
+M.core_question_engine.force_ie_to_scroll = function(targetpos) {
     var hackcount = 25;
     function do_scroll() {
         window.scrollTo(0, targetpos);

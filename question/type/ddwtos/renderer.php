@@ -127,7 +127,9 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
 
 
     public function head_code(question_attempt $qa) {
-        require_js(array('yui_dom-event', 'yui_dragdrop'));
+        $this->page->requires->yui2_lib('dom');
+        $this->page->requires->yui2_lib('event');
+        $this->page->requires->yui2_lib('dragdrop');
         return parent::head_code($qa);
     }
 

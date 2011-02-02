@@ -1,13 +1,16 @@
 .que.ddwtos .qtext {
-    line-height:2em;
-    margin-top: 1px;
+    line-height: 2em;
     margin-bottom: 0.5em;
     display: block;
 }
 
+.que.ddwtos .qtext * {
+    line-height: 2em;
+}
+
 .que.ddwtos .answercontainer {
     line-height: 2em;
-    margin-bottom:1em;
+    margin-bottom: 1em;
     display: block;
 }
 

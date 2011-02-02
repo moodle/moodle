@@ -283,4 +283,17 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
         }
         return $parts;
     }
+
+    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
+        if ($component == 'question' && in_array($filearea,
+                array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'))) {
+            return $this->check_combined_feedback_file_access($qa, $options, $filearea);
+
+        } else if ($component == 'question' && $filearea == 'hint') {
+            return $this->check_hint_file_access($qa, $options, $args);
+
+        } else {
+            return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
+        }
+    }
 }
