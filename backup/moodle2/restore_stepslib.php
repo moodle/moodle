@@ -991,12 +991,15 @@ class restore_course_structure_step extends restore_structure_step {
 
     protected function define_structure() {
 
-        $course = new restore_path_element('course', '/course', true); // Grouped
+        $course = new restore_path_element('course', '/course');
         $category = new restore_path_element('category', '/course/category');
         $tag = new restore_path_element('tag', '/course/tags/tag');
-        $allowed = new restore_path_element('allowed', '/course/allowed_modules/module');
+        $allowed_module = new restore_path_element('allowed_module', '/course/allowed_modules/module');
 
-        return array($course, $category, $tag, $allowed);
+        // Apply for 'format' plugins optional paths at course level
+        $this->add_plugin_structure('format', $course);
+
+        return array($course, $category, $tag, $allowed_module);
     }
 
     /**
@@ -1026,9 +1029,6 @@ class restore_course_structure_step extends restore_structure_step {
         $data->shortname= $shortname;
         $data->idnumber = '';
 
-        // Category is set by UI when choosing the destination
-        unset($data->category);
-
         $data->startdate= $this->apply_date_offset($data->startdate);
         if ($data->defaultgroupingid) {
             $data->defaultgroupingid = $this->get_mappingid('grouping', $data->defaultgroupingid);
@@ -1050,34 +1050,56 @@ class restore_course_structure_step extends restore_structure_step {
         // Course record ready, update it
         $DB->update_record('course', $data);
 
-        // Course tags
-        if (!empty($CFG->usetags) && isset($coursetags)) { // if enabled in server and present in backup
+        // Role name aliases
+        restore_dbops::set_course_role_names($this->get_restoreid(), $this->get_courseid());
+    }
+
+    public function process_category($data) {
+        // Nothing to do with the category. UI sets it before restore starts
+    }
+
+    public function process_tag($data) {
+        global $CFG, $DB;
+
+        $data = (object)$data;
+
+        if (!empty($CFG->usetags)) { // if enabled in server
+            // TODO: This is highly inneficient. Each time we add one tag
+            // we fetch all the existing because tag_set() deletes them
+            // so everything must be reinserted on each call
             $tags = array();
-            foreach ($coursetags as $coursetag) {
-                $coursetag = (object)$coursetag;
-                $tags[] = $coursetag->rawname;
+            $existingtags = tag_get_tags('course', $this->get_courseid());
+            // Re-add all the existitng tags
+            foreach ($existingtags as $existingtag) {
+                $tags[] = $existingtag->rawname;
             }
+            // Add the one being restored
+            $tags[] = $data->rawname;
+            // Send all the tags back to the course
             tag_set('course', $this->get_courseid(), $tags);
         }
-        // Course allowed modules
-        if (!empty($data->restrictmodules) && !empty($coursemodules)) {
+    }
+
+    public function process_allowed_module($data) {
+        global $CFG, $DB;
+
+        $data = (object)$data;
+
+        // only if enabled by admin setting
+        if (!empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor == 'all') {
             $available = get_plugin_list('mod');
-            foreach ($coursemodules as $coursemodule) {
-                $mname = $coursemodule['modulename'];
-                if (array_key_exists($mname, $available)) {
-                    if ($module = $DB->get_record('modules', array('name' => $mname, 'visible' => 1))) {
-                        $rec = new stdclass();
-                        $rec->course = $this->get_courseid();
-                        $rec->module = $module->id;
-                        if (!$DB->record_exists('course_allowed_modules', (array)$rec)) {
-                            $DB->insert_record('course_allowed_modules', $rec);
-                        }
+            $mname = $data->modulename;
+            if (array_key_exists($mname, $available)) {
+                if ($module = $DB->get_record('modules', array('name' => $mname, 'visible' => 1))) {
+                    $rec = new stdclass();
+                    $rec->course = $this->get_courseid();
+                    $rec->module = $module->id;
+                    if (!$DB->record_exists('course_allowed_modules', (array)$rec)) {
+                        $DB->insert_record('course_allowed_modules', $rec);
                     }
                 }
             }
         }
-        // Role name aliases
-        restore_dbops::set_course_role_names($this->get_restoreid(), $this->get_courseid());
     }
 
     protected function after_execute() {
