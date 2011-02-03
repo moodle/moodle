@@ -987,11 +987,8 @@ function upgrade_handle_exception($ex, $plugin = null) {
 /**
  * Adds log entry into upgrade_log table
  *
- * @global object
- * @global object
- * @global object
  * @param int $type UPGRADE_LOG_NORMAL, UPGRADE_LOG_NOTICE or UPGRADE_LOG_ERROR
- * @param string $plugin plugin or null if main
+ * @param string $plugin frankenstyle component name
  * @param string $info short description text of log entry
  * @param string $details long problem description
  * @param string $backtrace string used for errors only
@@ -1000,54 +997,80 @@ function upgrade_handle_exception($ex, $plugin = null) {
 function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
     global $DB, $USER, $CFG;
 
-    $plugin = ($plugin==='moodle') ? null : $plugin;
+    if (empty($plugin)) {
+        $plugin = 'core';
+    }
+
+    list($plugintype, $pluginname) = normalize_component($plugin);
+    $component = is_null($pluginname) ? $plugintype : $plugintype . '_' . $pluginname;
 
     $backtrace = format_backtrace($backtrace, true);
 
-    $version = null;
+    $currentversion = null;
+    $targetversion  = null;
 
     //first try to find out current version number
-    if (empty($plugin) or $plugin === 'moodle') {
+    if ($plugintype === 'core') {
         //main
-        $version = $CFG->version;
+        $currentversion = $CFG->version;
 
-    } else if ($plugin === 'local') {
-        //customisation
-        $version = $CFG->local_version;
+        $version = null;
+        include("$CFG->dirroot/version.php");
+        $targetversion = $version;
 
-    } else if (strpos($plugin, 'mod/') === 0) {
+    } else if ($plugintype === 'mod') {
         try {
-            $modname = substr($plugin, strlen('mod/'));
-            $version = $DB->get_field('modules', 'version', array('name'=>$modname));
-            $version = ($version === false) ? null : $version;
+            $currentversion = $DB->get_field('modules', 'version', array('name'=>$pluginname));
+            $currentversion = ($currentversion === false) ? null : $currentversion;
         } catch (Exception $ignored) {
         }
+        $cd = get_component_directory($component);
+        if (file_exists("$cd/version.php")) {
+            $module = new stdClass();
+            $module->version = null;
+            include("$cd/version.php");
+            $targetversion = $module->version;
+        }
 
-    } else if (strpos($plugin, 'block/') === 0) {
+    } else if ($plugintype === 'block') {
         try {
-            $blockname = substr($plugin, strlen('block/'));
-            if ($block = $DB->get_record('block', array('name'=>$blockname))) {
-                $version = $block->version;
+            if ($block = $DB->get_record('block', array('name'=>$pluginname))) {
+                $currentversion = $block->version;
             }
         } catch (Exception $ignored) {
         }
+        $cd = get_component_directory($component);
+        if (file_exists("$cd/version.php")) {
+            $plugin = new stdClass();
+            $plugin->version = null;
+            include("$cd/version.php");
+            $targetversion = $plugin->version;
+        }
 
     } else {
-        $pluginversion = get_config(str_replace('/', '_', $plugin), 'version');
+        $pluginversion = get_config($component, 'version');
         if (!empty($pluginversion)) {
-            $version = $pluginversion;
+            $currentversion = $pluginversion;
+        }
+        $cd = get_component_directory($component);
+        if (file_exists("$cd/version.php")) {
+            $plugin = new stdClass();
+            $plugin->version = null;
+            include("$cd/version.php");
+            $targetversion = $plugin->version;
         }
     }
 
     $log = new stdClass();
-    $log->type         = $type;
-    $log->plugin       = $plugin;
-    $log->version      = $version;
-    $log->info         = $info;
-    $log->details      = $details;
-    $log->backtrace    = $backtrace;
-    $log->userid       = $USER->id;
-    $log->timemodified = time();
+    $log->type          = $type;
+    $log->plugin        = $component;
+    $log->version       = $currentversion;
+    $log->targetversion = $targetversion;
+    $log->info          = $info;
+    $log->details       = $details;
+    $log->backtrace     = $backtrace;
+    $log->userid        = $USER->id;
+    $log->timemodified  = time();
     try {
         $DB->insert_record('upgrade_log', $log);
     } catch (Exception $ignored) {
