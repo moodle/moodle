@@ -114,6 +114,15 @@ $string['groupsseparate'] = 'Separate groups';
 $string['groupsvisible'] = 'Visible groups';
 $string['grouptemplate'] = 'Group @';
 $string['hidepicture'] = 'Hide picture';
+$string['importgroups'] = 'Import groups';
+$string['importgroups_help'] = 'Groups may be imported via text file. The format of the file should be as follows:
+
+* Each line of the file contains one record
+* Each record is a series of data separated by commas
+* The first record contains a list of fieldnames defining the format of the rest of the file
+* Required fieldname is groupname
+* Optional fieldnames are description, enrolmentkey, picture, hidepicture';
+$string['importgroups_link'] = 'group/import';
 $string['javascriptrequired'] = 'This page requires JavaScript to be enabled.';
 $string['members'] = 'Members per group';
 $string['membersofselectedgroup'] = 'Members of:';

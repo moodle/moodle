@@ -23,7 +23,7 @@ class groups_import_form extends moodleform {
 
         $mform->addElement('hidden', 'id');
 
-        $this->add_action_buttons(true, get_string('importgroups'));
+        $this->add_action_buttons(true, get_string('importgroups', 'core_group'));
 
         $this->set_data($data);
     }
