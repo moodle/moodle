@@ -110,7 +110,8 @@ class block_news_items extends block_base {
                 } else {
                     $userid = $USER->id;
                 }
-                $this->content->footer .= '<br />'.rss_get_link($this->page->context->id, $userid, 'mod_forum', $forum->id, $tooltiptext);
+
+                $this->content->footer .= '<br />'.rss_get_link($context->id, $userid, 'mod_forum', $forum->id, $tooltiptext);
             }
 
         }
