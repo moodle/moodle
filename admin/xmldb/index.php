@@ -103,7 +103,7 @@
                         echo $OUTPUT->footer();
                         break;
                     case ACTION_GENERATE_XML:
-                        header('Content-type: application/xhtml+xml');
+                        header('Content-type: application/xhtml+xml; charset=utf-8');
                         echo $xmldb_action->getOutput();
                         break;
                 }

@@ -38,17 +38,16 @@ if ($confirm and confirm_sesskey()) {
     $parts = array_chunk($SESSION->bulk_users, 300);
     foreach ($parts as $users) {
         list($in, $params) = $DB->get_in_or_equal($users);
-        if ($rs = $DB->get_recordset_select('user', "id $in", $params)) {
-            foreach ($rs as $user) {
-                if (!empty($changeable[$user->auth])) {
-                    set_user_preference('auth_forcepasswordchange', 1, $user->id);
-                    unset($SESSION->bulk_users[$user->id]);
-                } else {
-                    echo $OUTPUT->notification(get_string('forcepasswordchangenot', '', fullname($user, true)));
-                }
+        $rs = $DB->get_recordset_select('user', "id $in", $params);
+        foreach ($rs as $user) {
+            if (!empty($changeable[$user->auth])) {
+                set_user_preference('auth_forcepasswordchange', 1, $user->id);
+                unset($SESSION->bulk_users[$user->id]);
+            } else {
+                echo $OUTPUT->notification(get_string('forcepasswordchangenot', '', fullname($user, true)));
             }
-            $rs->close();
         }
+        $rs->close();
     }
     echo $OUTPUT->notification(get_string('changessaved'), 'notifysuccess');
     echo $OUTPUT->continue_button($return);

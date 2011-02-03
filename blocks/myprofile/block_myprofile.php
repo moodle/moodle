@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,16 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Displays the user's profile information.
+ * Block displaying information about current logged-in user.
  *
- * @package    blocks
+ * This block can be used as anti cheating measure, you
+ * can easily check the logged-in user matches the person
+ * operating the computer.
+ *
+ * @package    block
+ * @subpackage myprofile
  * @copyright  2010 Remote-Learner.net
  * @author     Olav Jordan <olav.jordan@remote-learner.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Displays the user's profile information.
+ * Displays the current user's profile information.
  *
  * @copyright  2010 Remote-Learner.net
  * @author     Olav Jordan <olav.jordan@remote-learner.ca>
@@ -51,8 +57,8 @@ class block_myprofile extends block_base {
             return $this->content;
         }
 
-        if (!isloggedin()){
-            return '';      // Never useful unless you are logged in
+        if (!isloggedin() or isguestuser()) {
+            return '';      // Never useful unless you are logged in as real users
         }
 
         $this->content = new stdClass;
@@ -60,168 +66,113 @@ class block_myprofile extends block_base {
         $this->content->footer = '';
 
         $course = $this->page->course;
-        if ($PAGE->context->contextlevel == CONTEXT_USER) {
-            $user = $DB->get_record('user', array('id' => $PAGE->context->instanceid));
-        } else {
-            $user = $USER;
-        }
-
-        if ($course->id == SITEID) {
-            $coursecontext = get_context_instance(CONTEXT_SYSTEM);
-        } else {
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);   // Course context
-            // Make sure they can view the course
-            if (!is_viewing($coursecontext)) {
-                return '';
-            }
-        }
-
-
-        // TODO: clean up the following even more
 
         if (!isset($this->config->display_picture) || $this->config->display_picture == 1) {
             $this->content->text .= '<div class="myprofileitem picture">';
-            $this->content->text .= $OUTPUT->user_picture($user, array('courseid'=>$course->id, 'size'=>'100', 'class'=>'profilepicture'));  // The new class makes CSS easier
+            $this->content->text .= $OUTPUT->user_picture($USER, array('courseid'=>$course->id, 'size'=>'100', 'class'=>'profilepicture'));  // The new class makes CSS easier
             $this->content->text .= '</div>';
         }
 
-        $this->content->text .= '<div class="myprofileitem fullname">'.fullname($user).'</div>';
+        $this->content->text .= '<div class="myprofileitem fullname">'.fullname($USER).'</div>';
 
         if(!isset($this->config->display_country) || $this->config->display_country == 1) {
             $countries = get_string_manager()->get_list_of_countries();
-            if (isset($countries[$user->country])) {
+            if (isset($countries[$USER->country])) {
                 $this->content->text .= '<div class="myprofileitem country">';
-                $this->content->text .= get_string('country') . ': ' . $countries[$user->country];
+                $this->content->text .= get_string('country') . ': ' . $countries[$USER->country];
                 $this->content->text .= '</div>';
             }
         }
 
         if(!isset($this->config->display_city) || $this->config->display_city == 1) {
             $this->content->text .= '<div class="myprofileitem city">';
-            $this->content->text .= get_string('city') . ': ' . $user->city;
+            $this->content->text .= get_string('city') . ': ' . format_string($USER->city);
             $this->content->text .= '</div>';
         }
 
         if(!isset($this->config->display_email) || $this->config->display_email == 1) {
             $this->content->text .= '<div class="myprofileitem email">';
-            $this->content->text .= obfuscate_mailto($user->email, '');
+            $this->content->text .= obfuscate_mailto($USER->email, '');
             $this->content->text .= '</div>';
         }
 
-        if(!empty($this->config->display_icq) && !empty($user->icq)) {
+        if(!empty($this->config->display_icq) && !empty($USER->icq)) {
             $this->content->text .= '<div class="myprofileitem icq">';
-            $this->content->text .= 'ICQ: ' . $user->icq;
+            $this->content->text .= 'ICQ: ' . s($USER->icq);
             $this->content->text .= '</div>';
         }
 
-        if(!empty($this->config->display_skype) && !empty($user->skype)) {
+        if(!empty($this->config->display_skype) && !empty($USER->skype)) {
             $this->content->text .= '<div class="myprofileitem skype">';
-            $this->content->text .= 'Skype: ' . $user->skype;
+            $this->content->text .= 'Skype: ' . s($USER->skype);
             $this->content->text .= '</div>';
         }
 
-        if(!empty($this->config->display_yahoo) && !empty($user->yahoo)) {
+        if(!empty($this->config->display_yahoo) && !empty($USER->yahoo)) {
             $this->content->text .= '<div class="myprofileitem yahoo">';
-            $this->content->text .= 'Yahoo: ' . $user->yahoo;
+            $this->content->text .= 'Yahoo: ' . s($USER->yahoo);
             $this->content->text .= '</div>';
         }
 
-        if(!empty($this->config->display_aim) && !empty($user->aim)) {
+        if(!empty($this->config->display_aim) && !empty($USER->aim)) {
             $this->content->text .= '<div class="myprofileitem aim">';
-            $this->content->text .= 'AIM: ' . $user->aim;
+            $this->content->text .= 'AIM: ' . s($USER->aim);
             $this->content->text .= '</div>';
         }
 
-        if(!empty($this->config->display_msn) && !empty($user->msn)) {
+        if(!empty($this->config->display_msn) && !empty($USER->msn)) {
             $this->content->text .= '<div class="myprofileitem msn">';
-            $this->content->text .= 'MSN: ' . $user->msn;
+            $this->content->text .= 'MSN: ' . s($USER->msn);
             $this->content->text .= '</div>';
         }
 
-        if(!empty($this->config->display_phone1) && !empty($user->phone1)) {
+        if(!empty($this->config->display_phone1) && !empty($USER->phone1)) {
             $this->content->text .= '<div class="myprofileitem phone1">';
-            $this->content->text .= get_string('phone').': ' . $user->phone1;
+            $this->content->text .= get_string('phone').': ' . s($USER->phone1);
             $this->content->text .= '</div>';
         }
 
-        if(!empty($this->config->display_phone2) && !empty($user->phone2)) {
+        if(!empty($this->config->display_phone2) && !empty($USER->phone2)) {
             $this->content->text .= '<div class="myprofileitem phone2">';
-            $this->content->text .= get_string('phone').': ' . $user->phone2;
+            $this->content->text .= get_string('phone').': ' . s($USER->phone2);
             $this->content->text .= '</div>';
         }
 
-        if(!empty($this->config->display_institution) && !empty($user->institution)) {
+        if(!empty($this->config->display_institution) && !empty($USER->institution)) {
             $this->content->text .= '<div class="myprofileitem institution">';
-            $this->content->text .= $user->institution;
+            $this->content->text .= format_string($USER->institution);
             $this->content->text .= '</div>';
         }
 
-        if(!empty($this->config->display_address) && !empty($user->address)) {
+        if(!empty($this->config->display_address) && !empty($USER->address)) {
             $this->content->text .= '<div class="myprofileitem address">';
-            $this->content->text .= $user->address;
+            $this->content->text .= format_string($USER->address);
             $this->content->text .= '</div>';
         }
 
-        if(!empty($this->config->display_firstaccess) && !empty($user->firstaccess)) {
+        if(!empty($this->config->display_firstaccess) && !empty($USER->firstaccess)) {
             $this->content->text .= '<div class="myprofileitem firstaccess">';
-            $this->content->text .= get_string('firstaccess').': ' . userdate($user->firstaccess);
+            $this->content->text .= get_string('firstaccess').': ' . userdate($USER->firstaccess);
             $this->content->text .= '</div>';
         }
 
-        if(!empty($this->config->display_lastaccess) && !empty($user->lastaccess)) {
+        if(!empty($this->config->display_lastaccess) && !empty($USER->lastaccess)) {
             $this->content->text .= '<div class="myprofileitem lastaccess">';
-            $this->content->text .= get_string('lastaccess').': ' . userdate($user->lastaccess);
+            $this->content->text .= get_string('lastaccess').': ' . userdate($USER->lastaccess);
             $this->content->text .= '</div>';
         }
 
-        if(!empty($this->config->display_currentlogin) && !empty($user->currentlogin)) {
+        if(!empty($this->config->display_currentlogin) && !empty($USER->currentlogin)) {
             $this->content->text .= '<div class="myprofileitem currentlogin">';
-            $this->content->text .= get_string('login').': ' . userdate($user->currentlogin);
+            $this->content->text .= get_string('login').': ' . userdate($USER->currentlogin);
             $this->content->text .= '</div>';
         }
 
-        if(!empty($this->config->display_lastip) && !empty($user->lastip)) {
+        if(!empty($this->config->display_lastip) && !empty($USER->lastip)) {
             $this->content->text .= '<div class="myprofileitem lastip">';
-            $this->content->text .= 'IP: ' . $user->lastip;
+            $this->content->text .= 'IP: ' . $USER->lastip;
             $this->content->text .= '</div>';
         }
-
-        $editscript = NULL;
-        if (isguestuser($user)) {
-            // guest account can not be edited
-
-        } else if (is_mnet_remote_user($user)) {
-            // cannot edit remote users
-
-        } else if (isguestuser() or !isloggedin()) {
-            // guests and not logged in can not edit own profile
-
-        } else if ($USER->id == $user->id) {
-            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-            if (has_capability('moodle/user:update', $systemcontext)) {
-                $editscript = '/user/editadvanced.php';
-            } else if (has_capability('moodle/user:editownprofile', $systemcontext)) {
-                $editscript = '/user/edit.php';
-            }
-
-        } else {
-            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-            $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
-            if (has_capability('moodle/user:update', $systemcontext) and !is_primary_admin($user->id)){
-                $editscript = '/user/editadvanced.php';
-            } else if (has_capability('moodle/user:editprofile', $personalcontext) and !is_primary_admin($user->id)){
-                //teachers, parents, etc.
-                $editscript = '/user/edit.php';
-            }
-        }
-
-
-        if ($editscript) {
-            $this->content->text .= '<div class="myprofileitem edit">';
-            $this->content->text .= '<a href="'.$CFG->wwwroot.$editscript.'?id='.$user->id.'&amp;course='.$course->id.'">'.get_string('editmyprofile').'</a>';
-            $this->content->text .= '</div>';
-        }
-
 
         return $this->content;
     }
@@ -304,4 +255,3 @@ class block_myprofile extends block_base {
     }
 
 }
-?>

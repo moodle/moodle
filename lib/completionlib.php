@@ -1085,8 +1085,8 @@ class completion_info {
         $return->sql = '';
         $return->data = array();
 
-        if (!empty($CFG->progresstrackedroles)) {
-            $roles = ' AND ra.roleid IN ('.$CFG->progresstrackedroles.')';
+        if (!empty($CFG->gradebookroles)) {
+            $roles = ' AND ra.roleid IN ('.$CFG->gradebookroles.')';
         } else {
             // This causes it to default to everyone (if there is no student role)
             $roles = '';
@@ -1154,7 +1154,7 @@ class completion_info {
      * for all users in a specific group. Intended for use when displaying progress.
      *
      * This includes only users who, in course context, have one of the roles for
-     * which progress is tracked (the progresstrackedroles admin option).
+     * which progress is tracked (the gradebookroles admin option) and are enrolled in course.
      *
      * Users are included (in the first array) even if they do not have
      * completion progress for any course-module.

@@ -45,7 +45,7 @@ class qtype_numerical_question extends question_graded_by_strategy
     }
 
     public function get_expected_data() {
-        return array('answer' => PARAM_TRIM);
+        return array('answer' => PARAM_RAW_TRIMMED);
     }
 
     public function init_first_step(question_attempt_step $step) {

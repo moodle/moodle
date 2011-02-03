@@ -24,19 +24,18 @@ echo $OUTPUT->header();
 
 if ($confirm and confirm_sesskey()) {
     list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
-    if ($rs = $DB->get_recordset_select('user', "id $in", $params, '', 'id, username, secret, confirmed, auth, firstname, lastname')) {
-        foreach ($rs as $user) {
-            if ($user->confirmed) {
-                continue;
-            }
-            $auth = get_auth_plugin($user->auth);
-            $result = $auth->user_confirm($user->username, $user->secret);
-            if ($result != AUTH_CONFIRM_OK && $result != AUTH_CONFIRM_ALREADY) {
-                echo $OUTPUT->notification(get_string('usernotconfirmed', '', fullname($user, true)));
-            }
+    $rs = $DB->get_recordset_select('user', "id $in", $params, '', 'id, username, secret, confirmed, auth, firstname, lastname');
+    foreach ($rs as $user) {
+        if ($user->confirmed) {
+            continue;
         }
-        $rs->close();
+        $auth = get_auth_plugin($user->auth);
+        $result = $auth->user_confirm($user->username, $user->secret);
+        if ($result != AUTH_CONFIRM_OK && $result != AUTH_CONFIRM_ALREADY) {
+            echo $OUTPUT->notification(get_string('usernotconfirmed', '', fullname($user, true)));
+        }
     }
+    $rs->close();
     redirect($return, get_string('changessaved'));
 
 } else {

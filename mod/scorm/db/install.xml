@@ -18,7 +18,7 @@
         <FIELD NAME="grademethod" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="maxgrade" NEXT="whatgrade"/>
         <FIELD NAME="whatgrade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="grademethod" NEXT="maxattempt"/>
         <FIELD NAME="maxattempt" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="whatgrade" NEXT="forcecompleted"/>
-        <FIELD NAME="forcecompleted" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="maxattempt" NEXT="forcenewattempt"/>
+        <FIELD NAME="forcecompleted" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="maxattempt" NEXT="forcenewattempt"/>
         <FIELD NAME="forcenewattempt" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="forcecompleted" NEXT="lastattemptlock"/>
         <FIELD NAME="lastattemptlock" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="forcenewattempt" NEXT="displayattemptstatus"/>
         <FIELD NAME="displayattemptstatus" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="lastattemptlock" NEXT="displaycoursestructure"/>

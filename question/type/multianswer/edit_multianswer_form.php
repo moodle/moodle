@@ -119,9 +119,9 @@ class question_edit_multianswer_form extends question_edit_form {
 
         $mform->addElement('submit', 'analyzequestion', get_string('decodeverifyquestiontext','qtype_multianswer'));
         $mform->registerNoSubmitButton('analyzequestion');
-        echo '<div class="ablock clearfix">';
-        echo '<div class=" clearfix">';
         if ( $this->reload ){
+            $mform->addElement('html', '<div class="ablock clearfix">');
+            $mform->addElement('html', '<div class=" clearfix">');
             for ($sub =1;$sub <=$countsubquestions ;$sub++) {
 
                 $this->editas[$sub] =  'unknown type';
@@ -170,7 +170,7 @@ class question_edit_multianswer_form extends question_edit_form {
                 }
 
             }
-            echo '</div>';
+            $mform->addElement('html', '</div>');
             $this->negative_diff =$countsavedsubquestions - $countsubquestions ;
             if ( ($this->negative_diff > 0 ) ||$this->qtype_change || ($this->used_in_quiz && $this->negative_diff != 0)){
                 $mform->addElement('header', 'additemhdr', get_string('warningquestionmodified','qtype_multianswer'));
@@ -182,7 +182,7 @@ class question_edit_multianswer_form extends question_edit_form {
             if($this->qtype_change ) {
                 $mform->addElement('static', 'alert1', "<strong>".get_string('questiontypechanged','qtype_multianswer')."</strong>",get_string('questiontypechangedcomment','qtype_multianswer'));
             }
-            echo '</div>';
+            $mform->addElement('html', '</div>');
         }
         if( $this->used_in_quiz){
             if($this->negative_diff < 0) {

@@ -2,6 +2,8 @@
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->dirroot . '/mod/assignment/lib.php');
+require_once($CFG->libdir . '/filelib.php');
+
 /**
  * Extend the base assignment class for assignments where you upload a single file
  *

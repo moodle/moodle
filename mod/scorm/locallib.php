@@ -23,6 +23,9 @@ define('AVERAGEATTEMPT', '1');
 define('FIRSTATTEMPT', '2');
 define('LASTATTEMPT', '3');
 
+define('TOCJSLINK', 1);
+define('TOCFULLURL', 2);
+
 /// Local Library of functions for module scorm
 
 /**
@@ -585,7 +588,6 @@ function scorm_grade_user($scorm, $userid) {
         break;
         case HIGHESTATTEMPT:
             $maxscore = 0;
-            $attempttime = 0;
             for ($attempt = 1; $attempt <= $lastattempt; $attempt++) {
                 $attemptscore = scorm_grade_user_attempt($scorm, $userid, $attempt);
                 $maxscore = $attemptscore > $maxscore ? $attemptscore: $maxscore;
@@ -658,7 +660,6 @@ function scorm_course_format_display($user,$course) {
     global $CFG, $DB, $PAGE, $OUTPUT;
 
     $strupdate = get_string('update');
-    $strmodule = get_string('modulename','scorm');
     $context = get_context_instance(CONTEXT_COURSE,$course->id);
 
     echo '<div class="mod-scorm">';
@@ -690,10 +691,9 @@ function scorm_course_format_display($user,$course) {
             }
             $colspan = ' colspan="2"';
         }
-        $options = (object)array('noclean'=>true);
         $headertext .= '</td></tr><tr><td'.$colspan.'>'.get_string('summary').':<br />'.format_module_intro('scorm', $scorm, $scorm->coursemodule).'</td></tr></table>';
         echo $OUTPUT->box($headertext,'generalbox boxwidthwide');
-        scorm_view_display($user, $scorm, 'view.php?id='.$course->id, $cm, '100%');
+        scorm_view_display($user, $scorm, 'view.php?id='.$course->id, $cm);
     } else {
         if (has_capability('moodle/course:update', $context)) {
             // Create a new activity
@@ -705,7 +705,7 @@ function scorm_course_format_display($user,$course) {
     echo '</div>';
 }
 
-function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
+function scorm_view_display ($user, $scorm, $action, $cm) {
     global $CFG, $DB, $PAGE, $OUTPUT;
 
     if ($scorm->updatefreq == UPDATE_EVERYTIME) {
@@ -715,7 +715,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     $organization = optional_param('organization', '', PARAM_INT);
 
     if($scorm->displaycoursestructure == 1) {
-        echo $OUTPUT->box_start('generalbox boxaligncenter');
+        echo $OUTPUT->box_start('generalbox boxaligncenter toc');
 ?>
         <div class="structurehead"><?php print_string('contents','scorm') ?></div>
 <?php
@@ -743,23 +743,13 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
         }
     }
 
-/*
- $orgidentifier = '';
-    if ($org = $DB->get_record('scorm_scoes', array('id'=>$organization))) {
-        if (($org->organization == '') && ($org->launch == '')) {
-            $orgidentifier = $org->identifier;
-        } else {
-            $orgidentifier = $org->organization;
-        }
-    }*/
-
     $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe
     if (!file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php')) {
         $scorm->version = 'scorm_12';
     }
     require_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php');
 
-    $result = scorm_get_toc($user,$scorm,'structlist',$orgidentifier);
+    $result = scorm_get_toc($user,$scorm,$cm->id,TOCFULLURL,$orgidentifier);
     $incomplete = $result->incomplete;
 
     // do we want the TOC to be displayed?
@@ -1025,8 +1015,6 @@ function scorm_get_attempt_status($user, $scorm) {
     }
     $result .= get_string('noattemptsmade', 'scorm').': ' . $attemptcount . '<BR>';
 
-    $gradereported = 0;
-    $gradesum = 0;
     if ($scorm->maxattempt == 1) {
         switch ($scorm->grademethod) {
             case GRADEHIGHEST:
@@ -1216,8 +1204,6 @@ function scorm_format_duration($duration) {
         // then convert in the same way as SCORM 2004
         $pattern = array( '#T0+H#', '#([A-Z])0+M#', '#([A-Z])[0.]+S#', '#\.0+S#', '#0*(\d+)H#', '#0*(\d+)M#', '#0+\.(\d+)S#', '#0*([\d.]+)S#', '#T#' );
         $replace = array( 'T', '$1', '$1', 'S', '$1 '.$strhours.' ', '$1 '.$strminutes.' ', '0.$1 '.$strseconds, '$1 '.$strseconds, '' );
-        //$pattern = '##';
-        //$replace = '';
     }
 
     $result = preg_replace($pattern, $replace, $duration);

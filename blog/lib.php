@@ -548,11 +548,11 @@ function blog_get_options_for_course(stdClass $course, stdClass $user=null) {
  * Get the blog options relating to the given module for the given user
  *
  * @staticvar array $moduleoptions Cache
- * @param stdClass $module The module to get options for
+ * @param stdClass|cm_info $module The module to get options for
  * @param stdClass $user The user to get options for null == currentuser
  * @return array
  */
-function blog_get_options_for_module(stdClass $module, stdClass $user=null) {
+function blog_get_options_for_module($module, $user=null) {
     global $CFG, $USER;
     // Cache
     static $moduleoptions = array();

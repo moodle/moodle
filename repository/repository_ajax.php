@@ -52,19 +52,18 @@ $saveas_path   = optional_param('savepath', '/', PARAM_PATH);   // save as file 
 $search_text   = optional_param('s', '', PARAM_CLEANHTML);
 $linkexternal  = optional_param('linkexternal', '', PARAM_ALPHA);
 
-@header('Content-type: text/plain');
+list($context, $course, $cm) = get_context_info_array($contextid);
+require_login($course, false, $cm);
+$PAGE->set_context($context);
+
+echo $OUTPUT->header(); // send headers
+@header('Content-type: text/html; charset=utf-8');
 
 // if uploaded file is larger than post_max_size (php.ini) setting, $_POST content will lost
 if (empty($_POST) && !empty($action)) {
     $err->error = get_string('errorpostmaxsize', 'repository');
     die(json_encode($err));
 }
-
-list($context, $course, $cm) = get_context_info_array($contextid);
-require_login($course, false, $cm);
-$PAGE->set_context($context);
-
-echo $OUTPUT->header(); // send headers
 
 if (!confirm_sesskey()) {
     $err->error = get_string('invalidsesskey');

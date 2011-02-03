@@ -96,7 +96,7 @@
 
 
     function outputText($texexp) {
-        header("Content-type: text/html");
+        header("Content-type: text/html; charset=utf-8");
         echo "<html><body><pre>\n";
         if ($texexp) {
             $texexp = str_replace('<', '&lt;', $texexp);

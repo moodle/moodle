@@ -38,9 +38,10 @@ if (!$cmid && !$courseid) {
 // Process self completion
 if ($courseid) {
     $PAGE->set_url(new moodle_url('/course/togglecompletion.php', array('course'=>$courseid)));
-    
+
     // Check user is logged in
     $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
     require_login($course);
 
     $completion = new completion_info($course);
@@ -50,14 +51,19 @@ if ($courseid) {
     $rolec = optional_param('rolec', 0, PARAM_INT);
 
     if ($user && $rolec) {
+        require_sesskey();
 
-        $criteria = completion_criteria::factory((object) array('id'=>$rolec, 'criteriatype'=>COMPLETION_CRITERIA_TYPE_ROLE));
-        $criteria_completions = $completion->get_completions($user, COMPLETION_CRITERIA_TYPE_ROLE);
+        completion_criteria::factory((object) array('id'=>$rolec, 'criteriatype'=>COMPLETION_CRITERIA_TYPE_ROLE)); //TODO: this is dumb, because it does not fetch the data?!?!
+        $criteria = completion_criteria_role::fetch(array('id'=>$rolec));
 
-        foreach ($criteria_completions as $criteria_completion) {
-            if ($criteria_completion->criteriaid == $rolec) {
-                $criteria->complete($criteria_completion);
-                break;
+        if ($criteria and user_has_role_assignment($USER->id, $criteria->role, $context->id)) {
+            $criteria_completions = $completion->get_completions($user, COMPLETION_CRITERIA_TYPE_ROLE);
+
+            foreach ($criteria_completions as $criteria_completion) {
+                if ($criteria_completion->criteriaid == $rolec) {
+                    $criteria->complete($criteria_completion);
+                    break;
+                }
             }
         }
 
@@ -71,7 +77,7 @@ if ($courseid) {
     } else {
 
         // Confirm with user
-        if ($confirm) {
+        if ($confirm and confirm_sesskey()) {
             $completion = $completion->get_completion($USER->id, COMPLETION_CRITERIA_TYPE_SELF);
 
             if (!$completion) {
@@ -94,7 +100,7 @@ if ($courseid) {
         $PAGE->set_heading($course->fullname);
         $PAGE->navbar->add($strconfirm);
         echo $OUTPUT->header();
-        $buttoncontinue = new single_button(new moodle_url('/course/togglecompletion.php', array('course'=>$courseid, 'confirm'=>1)), get_string('yes'), 'post');
+        $buttoncontinue = new single_button(new moodle_url('/course/togglecompletion.php', array('course'=>$courseid, 'confirm'=>1, 'sesskey'=>sesskey())), get_string('yes'), 'post');
         $buttoncancel   = new single_button(new moodle_url('/course/view.php', array('id'=>$courseid)), get_string('no'), 'get');
         echo $OUTPUT->confirm($strconfirm, $buttoncontinue, $buttoncancel);
         echo $OUTPUT->footer();

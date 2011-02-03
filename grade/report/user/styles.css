@@ -35,3 +35,6 @@
 .user-grade td.hidden {color: #aaa;}
 .user-grade td.feedbacktext {max-width:600px;padding:0;}
 .pagelayout-report .user-grade .feedbacktext .no-overflow {overflow:auto;padding:0.25em;}
+
+table.user-grade td.feedbacktext {text-align:left;width: 40%;font-size: 0.8em;white-space:normal;}
+table.user-grade td.itemcenter {text-align:center;}

@@ -34,6 +34,7 @@
 
 require_once($CFG->dirroot . '/mod/wiki/lib.php');
 require_once($CFG->dirroot . '/mod/wiki/parser/parser.php');
+require_once($CFG->libdir . '/filelib.php');
 
 define('WIKI_REFRESH_CACHE_TIME', 30); // @TODO: To be deleted.
 define('FORMAT_CREOLE', '37');
@@ -261,6 +262,9 @@ function wiki_refresh_cachedcontent($page, $newcontent = null) {
     global $DB;
 
     $version = wiki_get_current_version($page->id);
+    if (empty($version)) {
+        return null;
+    }
     if (!isset($newcontent)) {
         $newcontent = $version->content;
     }
@@ -299,7 +303,11 @@ function wiki_refresh_page_links($page, $links) {
             $newlink->topageid = $linkinfo['pageid'];
         }
 
-        $DB->insert_record('wiki_links', $newlink);
+        try {
+            $DB->insert_record('wiki_links', $newlink);
+        } catch (dml_exception $e) {
+            debugging($e->getMessage());
+        }
 
     }
 }

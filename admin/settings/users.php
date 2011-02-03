@@ -107,7 +107,7 @@ if ($hassiteconfig
 
         if (!during_initial_install()) {
             $temp->add(new admin_setting_configselect('creatornewroleid', get_string('creatornewroleid', 'admin'),
-                          get_string('configcreatornewroleid', 'admin'), $defaultteacherid, $creatornewroles));
+                          get_string('creatornewroleid_help', 'admin'), $defaultteacherid, $creatornewroles));
         }
 
         $temp->add(new admin_setting_configcheckbox('autologinguests', get_string('autologinguests', 'admin'), get_string('configautologinguests', 'admin'), 0));

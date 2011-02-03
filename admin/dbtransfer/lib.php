@@ -26,7 +26,7 @@ function dbtransfer_export_xml_database($description, $mdb) {
 
     session_get_instance()->write_close(); // release session
 
-    header('Content-Type: application/xhtml+xml');
+    header('Content-Type: application/xhtml+xml; charset=utf-8');
     header('Content-Disposition: attachment; filename=database.xml');
     header('Expires: 0');
     header('Cache-Control: must-revalidate,post-check=0,pre-check=0');

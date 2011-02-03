@@ -24,7 +24,7 @@
  */
 
 $string['cannotloadoptions'] = 'Could not load question options';
-$string['pagesize'] = 'Page Size';
+$string['pagesize'] = 'Page size';
 $string['reportresponses'] = 'Responses';
 $string['responses'] = 'Responses';
 $string['responsesdownload'] = 'Responses download';

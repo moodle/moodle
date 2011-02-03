@@ -110,7 +110,8 @@ if ($data = $mform->get_data()) {
             // want to allow <b><i>(maybe more) tags but when we do that
             // the preg_match messes up.
             preg_match_all("/(<([\w]+)[^>]*>)([^<\\2>]*)(<\/\\2>)/", $string, $matches);
-            for($i = 0; $i < count($matches[1]); $i++) { // go through all of our div matches
+            $countmatches = count($matches[1]);
+            for($i = 0; $i < $countmatches; $i++) { // go through all of our div matches
 
                 $class = lesson_importppt_isolate_class($matches[1][$i]); // first step in isolating the class
 

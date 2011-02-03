@@ -165,6 +165,6 @@ header('Pragma: no-cache');
 header('Accept-Ranges: none'); // Comment out if PDFs do not work...
 header('Content-disposition: attachment; filename='.$filename);
 header('Content-length: '.strlen($serialized));
-header('Content-type: text/calendar');
+header('Content-type: text/calendar; charset=utf-8');
 
 echo $serialized;

@@ -604,7 +604,8 @@ function quiz_upgrade_grades() {
     $sql = "SELECT a.*, cm.idnumber AS cmidnumber, a.course AS courseid
               FROM {quiz} a, {course_modules} cm, {modules} m
              WHERE m.name='quiz' AND m.id=cm.module AND cm.instance=a.id";
-    if ($rs = $DB->get_recordset_sql($sql)) {
+    $rs = $DB->get_recordset_sql($sql);
+    if ($rs->valid()) {
         $pbar = new progress_bar('quizupgradegrades', 500, true);
         $i=0;
         foreach ($rs as $quiz) {
@@ -613,8 +614,8 @@ function quiz_upgrade_grades() {
             quiz_update_grades($quiz, 0, false);
             $pbar->update($i, $count, "Updating Quiz grades ($i/$count).");
         }
-        $rs->close();
     }
+    $rs->close();
 }
 
 /**

@@ -369,11 +369,17 @@ switch ($mode) {
             INNER JOIN
                 {role_assignments} ra
              ON ra.contextid = con.id
+            INNER JOIN
+                {enrol} e
+             ON c.id = e.courseid
+            INNER JOIN
+                {user_enrolments} ue
+             ON e.id = ue.enrolid AND ra.userid = ue.userid
             AND ra.userid = {$user->id}
         ";
 
         // Get roles that are tracked by course completion
-        if ($roles = $CFG->progresstrackedroles) {
+        if ($roles = $CFG->gradebookroles) {
             $sql .= '
                 AND ra.roleid IN ('.$roles.')
             ';
@@ -394,7 +400,8 @@ switch ($mode) {
         }
 
         // Check if result is empty
-        if (!$rs = $DB->get_recordset_sql($sql)) {
+        $rs = $DB->get_recordset_sql($sql);
+        if (!$rs->valid()) {
 
             if ($course->id != 1) {
                 $error = get_string('nocompletions', 'coursereport_completion');
@@ -403,6 +410,7 @@ switch ($mode) {
             }
 
             echo $OUTPUT->notification($error);
+            $rs->close(); // not going to loop (but break), close rs
             break;
         }
 
@@ -431,8 +439,7 @@ switch ($mode) {
                 $courses['unstarted'][] = $c_info;
             }
         }
-
-        $rs->close();
+        $rs->close(); // after loop, close rs
 
         // Loop through course status groups
         foreach ($courses as $type => $infos) {

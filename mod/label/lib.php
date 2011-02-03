@@ -181,7 +181,7 @@ function label_reset_userdata($data) {
  *
  * @return array
  */
-function lable_get_extra_capabilities() {
+function label_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
@@ -209,6 +209,7 @@ function label_supports($feature) {
         case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
         case FEATURE_BACKUP_MOODLE2:          return true;
+        case FEATURE_NO_VIEW_LINK:            return true;
 
         default: return null;
     }

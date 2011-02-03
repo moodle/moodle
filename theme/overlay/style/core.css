@@ -18,7 +18,7 @@ body {
 }
 
 body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {
-  font-family: 'Myriad Pro', 'Myriad', helvetica, arial, sans-serif; 
+  font-family: 'Myriad Pro', 'Myriad', helvetica, arial, sans-serif;
 }
 
 .wrapper {
@@ -80,10 +80,10 @@ h1.headermain {
 	padding-left: 0px;
 	color: #fff;
 	margin-top: 35px;
-	font-family: 'Myriad Pro', 'Myriad', helvetica, arial, sans-serif;  
-	text-shadow: 2px 3px 3px #292929;  
-	letter-spacing: -1px;  
-	-webkit-text-stroke: 1px white;  
+	font-family: 'Myriad Pro', 'Myriad', helvetica, arial, sans-serif;
+	text-shadow: 2px 3px 3px #292929;
+	letter-spacing: -1px;
+	-webkit-text-stroke: 1px white;
 }
 
 #region-main-box {
@@ -109,7 +109,7 @@ h1.headermain {
 	-moz-box-shadow: 6px 0px 8px #ccc;
 	box-shadow: 6px 0px 8px #ccc;
  }
- 
+
  #region-main {
 	-webkit-box-shadow: 6px 0px 8px #ccc;
 	-moz-box-shadow: 6px 0px 8px #ccc;
@@ -121,13 +121,13 @@ h1.headermain {
 	-moz-box-shadow: none;
 	box-shadow: none;
  }
- 
+
 /* Navbar
 --------------------------*/
 
 .navbar {
 	margin-top: 10px;
-	
+
 }
 
 .navbar .wrapper {
@@ -257,7 +257,7 @@ div.firstdockitem {
 }
 
 .headermenu .logininfo, .headermenu div, .headermenu form {
-	display: inline; 
+	display: inline;
 }
 
 .headermenu .logininfo {

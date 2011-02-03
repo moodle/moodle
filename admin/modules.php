@@ -141,12 +141,17 @@
             $settings = "";
         }
 
-        $count = $DB->count_records_select($module->name, "course<>0");
+        try {
+            $count = $DB->count_records_select($module->name, "course<>0");
+        } catch (dml_exception $e) {
+            $count = -1;
+        }
         if ($count>0) {
             $countlink = "<a href=\"{$CFG->wwwroot}/course/search.php?modulelist=$module->name" .
                 "&amp;sesskey=".sesskey()."\" title=\"$strshowmodulecourse\">$count</a>";
-        }
-        else {
+        } else if ($count < 0) {
+            $countlink = get_string('error');
+        } else {
             $countlink = "$count";
         }
 

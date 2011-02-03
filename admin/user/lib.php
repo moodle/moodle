@@ -11,14 +11,13 @@ function add_selection_all($ufiltering) {
 
     list($sqlwhere, $params) = $ufiltering->get_sql_filter("id<>:exguest AND deleted <> 1", array('exguest'=>$CFG->siteguest));
 
-    if ($rs = $DB->get_recordset_select('user', $sqlwhere, $params, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname')) {
-        foreach ($rs as $user) {
-            if (!isset($SESSION->bulk_users[$user->id])) {
-                $SESSION->bulk_users[$user->id] = $user->id;
-            }
+    $rs = $DB->get_recordset_select('user', $sqlwhere, $params, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
+    foreach ($rs as $user) {
+        if (!isset($SESSION->bulk_users[$user->id])) {
+            $SESSION->bulk_users[$user->id] = $user->id;
         }
-        $rs->close();
     }
+    $rs->close();
 }
 
 function get_selection_data($ufiltering) {

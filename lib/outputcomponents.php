@@ -237,11 +237,11 @@ class user_picture implements renderable {
 
         foreach (self::$fields as $field) {
             if ($field === 'id') {
-                if (isset($record->{$idalias})) {
+                if (property_exists($record, $idalias)) {
                     $return->id = $record->{$idalias};
                 }
             } else {
-                if (isset($record->{$fieldprefix.$field})) {
+                if (property_exists($record, $fieldprefix.$field)) {
                     $return->{$field} = $record->{$fieldprefix.$field};
                 }
             }
@@ -249,7 +249,7 @@ class user_picture implements renderable {
         // add extra fields if not already there
         if ($extrafields) {
             foreach ($extrafields as $e) {
-                if ($e === 'id' or isset($return->{$e})) {
+                if ($e === 'id' or property_exists($return, $e)) {
                     continue;
                 }
                 $return->{$e} = $record->{$fieldprefix.$e};

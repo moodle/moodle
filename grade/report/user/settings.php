@@ -21,8 +21,16 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
 
-    $settings->add(new admin_setting_configcheckbox('grade_report_user_showrank', get_string('showrank', 'grades'), get_string('showrank_help', 'grades'), 0, PARAM_INT));
-    $settings->add(new admin_setting_configcheckbox('grade_report_user_showpercentage', get_string('showpercentage', 'grades'), get_string('showpercentage_help', 'grades'), 2, PARAM_INT));
+    $settings->add(new admin_setting_configcheckbox('grade_report_user_showrank', get_string('showrank', 'grades'), get_string('showrank_help', 'grades'), 0));
+    $settings->add(new admin_setting_configcheckbox('grade_report_user_showpercentage', get_string('showpercentage', 'grades'), get_string('showpercentage_help', 'grades'), 1));
+    $settings->add(new admin_setting_configcheckbox('grade_report_user_showgrade', get_string('showgrade', 'grades'), get_string('showgrade_help', 'grades'), 1));
+    $settings->add(new admin_setting_configcheckbox('grade_report_user_showfeedback', get_string('showfeedback', 'grades'), get_string('showfeedback_help', 'grades'), 1));
+    $settings->add(new admin_setting_configcheckbox('grade_report_user_showrange', get_string('showrange', 'grades'), get_string('showrange_help', 'grades'), 1));
+    $settings->add(new admin_setting_configcheckbox('grade_report_user_showweight', get_string('showweight', 'grades'), get_string('showweight_help', 'grades'), 0));
+    $settings->add(new admin_setting_configcheckbox('grade_report_user_showaverage', get_string('showaverage', 'grades'), get_string('showaverage_help', 'grades'), 0));
+    $settings->add(new admin_setting_configcheckbox('grade_report_user_showlettergrade', get_string('showlettergrade', 'grades'), get_string('showlettergrade_help', 'grades'), 0));
+    $settings->add(new admin_setting_configselect('grade_report_user_rangedecimals', get_string('rangedecimals', 'grades'),
+            get_string('rangedecimals_help', 'grades'), 0,array(0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5)));
 
     $options = array(0 => get_string('shownohidden', 'grades'),
                      1 => get_string('showhiddenuntilonly', 'grades'),

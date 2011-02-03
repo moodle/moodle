@@ -162,7 +162,7 @@ if (defined('WEB_CRON_EMULATED_CLI')) {
 // Detect CLI maintenance mode - this is useful when you need to mess with database, such as during upgrades
 if (file_exists("$CFG->dataroot/climaintenance.html")) {
     if (!CLI_SCRIPT) {
-        header('Content-type: text/html');
+        header('Content-type: text/html; charset=utf-8');
         /// Headers to make it not cacheable and json
         header('Cache-Control: no-store, no-cache, must-revalidate');
         header('Cache-Control: post-check=0, pre-check=0', false);
@@ -414,6 +414,7 @@ require_once($CFG->libdir .'/grouplib.php');        // Groups functions
 require_once($CFG->libdir .'/sessionlib.php');      // All session and cookie related stuff
 require_once($CFG->libdir .'/editorlib.php');       // All text editor related functions and classes
 require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
+require_once($CFG->libdir .'/modinfolib.php');      // Cached information on course-module instances
 
 // make sure PHP is not severly misconfigured
 setup_validate_php_configuration();

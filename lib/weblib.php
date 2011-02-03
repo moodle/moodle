@@ -389,11 +389,13 @@ class moodle_url {
             if (is_int($key)) {
                 throw new coding_exception('Url parameters can not have numeric keys!');
             }
-            if (is_array($value)) {
-                throw new coding_exception('Url parameters values can not be arrays!');
-            }
-            if (is_object($value) and !method_exists($value, '__toString')) {
-                throw new coding_exception('Url parameters values can not be objects, unless __toString() is defined!');
+            if (!is_string($value)) {
+                if (is_array($value)) {
+                    throw new coding_exception('Url parameters values can not be arrays!');
+                }
+                if (is_object($value) and !method_exists($value, '__toString')) {
+                    throw new coding_exception('Url parameters values can not be objects, unless __toString() is defined!');
+                }
             }
             $this->params[$key] = (string)$value;
         }
@@ -486,7 +488,11 @@ class moodle_url {
      */
     public function get_query_string($escaped = true, array $overrideparams = null) {
         $arr = array();
-        $params = $this->merge_overrideparams($overrideparams);
+        if ($overrideparams !== null) {
+            $params = $this->merge_overrideparams($overrideparams);
+        } else {
+            $params = $this->params;
+        }
         foreach ($params as $key => $val) {
            $arr[] = rawurlencode($key)."=".rawurlencode($val);
         }
@@ -1099,6 +1105,13 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
             }
             $text = $filtermanager->filter_text($text, $context, array('originalformat' => $format));
             break;
+    }
+    if ($options['filter']) {
+        // at this point there should not be any draftfile links any more,
+        // this happens when developers forget to post process the text.
+        // The only potential problem is that somebody might try to format
+        // the text before storing into database which would be itself big bug.
+        $text = str_replace("\"$CFG->httpswwwroot/draftfile.php", "\"$CFG->httpswwwroot/brokenfile.php#", $text);
     }
 
     // Warn people that we have removed this old mechanism, just in case they
@@ -2168,7 +2181,8 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
 
     $menu[] = '<ul class="navmenulist"><li class="jumpto section"><span>'.$strjumpto.'</span><ul>';
     foreach ($modinfo->cms as $mod) {
-        if ($mod->modname == 'label') {
+        if (!$mod->has_view()) {
+            // Don't show modules which you can't link to!
             continue;
         }
 

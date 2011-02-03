@@ -45,6 +45,12 @@ class message_output_jabber extends message_output {
         global $CFG;
 
         if (message_output_jabber::_jabber_configured()) {
+            if (!empty($CFG->noemailever)) {
+                // hidden setting for development sites, set in config.php if needed
+                debugging('$CFG->noemailever active, no jabber message sent.', DEBUG_MINIMAL);
+                return true;
+            }
+
             //hold onto jabber id preference because /admin/cron.php sends a lot of messages at once
             static $jabberaddresses = array();
 
@@ -86,7 +92,7 @@ class message_output_jabber extends message_output {
      */
     function config_form($preferences){
         global $CFG;
-        
+
         if (!message_output_jabber::_jabber_configured()) {
             return get_string('notconfigured','message_jabber');
         } else {

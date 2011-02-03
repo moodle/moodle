@@ -1026,10 +1026,14 @@ class global_navigation extends navigation_node {
                 if ($course->id !== SITEID) {
                     // Find the section for the $CM associated with the page and collect
                     // its section number.
-                    foreach ($sections as $section) {
-                        if ($section->id == $cm->section) {
-                            $cm->sectionnumber = $section->section;
-                            break;
+                    if (isset($cm->sectionnum)) {
+                        $cm->sectionnumber = $cm->sectionnum;
+                    } else {
+                        foreach ($sections as $section) {
+                            if ($section->id == $cm->section) {
+                                $cm->sectionnumber = $section->section;
+                                break;
+                            }
                         }
                     }
 
@@ -1429,10 +1433,10 @@ class global_navigation extends navigation_node {
      *
      * @param navigation_node $sectionnode
      * @param int $sectionnumber
-     * @param stdClass $modinfo Object returned from {@see get_fast_modinfo()}
+     * @param course_modinfo $modinfo Object returned from {@see get_fast_modinfo()}
      * @return array Array of activity nodes
      */
-    protected function load_section_activities(navigation_node $sectionnode, $sectionnumber, $modinfo) {
+    protected function load_section_activities(navigation_node $sectionnode, $sectionnumber, course_modinfo $modinfo) {
         if (!array_key_exists($sectionnumber, $modinfo->sections)) {
             return true;
         }
@@ -1449,11 +1453,12 @@ class global_navigation extends navigation_node {
             } else {
                 $icon = new pix_icon('icon', get_string('modulename', $cm->modname), $cm->modname);
             }
-            $url = new moodle_url('/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id));
+            $url = $cm->get_url();
             $activitynode = $sectionnode->add(format_string($cm->name), $url, navigation_node::TYPE_ACTIVITY, null, $cm->id, $icon);
             $activitynode->title(get_string('modulename', $cm->modname));
             $activitynode->hidden = (!$cm->visible);
-            if ($cm->modname == 'label') {
+            if (!$url) {
+                // Do not show activities that don't have links!
                 $activitynode->display = false;
             } else if ($this->module_extends_navigation($cm->modname)) {
                 $activitynode->nodetype = navigation_node::NODETYPE_BRANCH;
@@ -1482,11 +1487,12 @@ class global_navigation extends navigation_node {
         } else {
             $icon = new pix_icon('icon', get_string('modulename', $cm->modname), $cm->modname);
         }
-        $url = new moodle_url('/mod/'.$cm->modname.'/view.php', array('id'=>$cm->id));
+        $url = $cm->get_url();
         $activitynode = $coursenode->add(format_string($cm->name), $url, navigation_node::TYPE_ACTIVITY, null, $cm->id, $icon);
         $activitynode->title(get_string('modulename', $cm->modname));
         $activitynode->hidden = (!$cm->visible);
-        if ($cm->modname == 'label') {
+        if (!$url) {
+            // Don't show activities that don't have links!
             $activitynode->display = false;
         } else if ($this->module_extends_navigation($cm->modname)) {
             $activitynode->nodetype = navigation_node::NODETYPE_BRANCH;
@@ -1509,7 +1515,7 @@ class global_navigation extends navigation_node {
      * @param navigation_node $activity
      * @return bool
      */
-    protected function load_activity(stdClass $cm, stdClass $course, navigation_node $activity) {
+    protected function load_activity($cm, stdClass $course, navigation_node $activity) {
         global $CFG, $DB;
 
         $activity->make_active();
@@ -2537,7 +2543,7 @@ class settings_navigation extends navigation_node {
      *
      */
     public function initialise() {
-        global $DB;
+        global $DB, $SESSION;
 
         if (during_initial_install()) {
             return false;
@@ -2581,7 +2587,13 @@ class settings_navigation extends navigation_node {
         }
 
         $settings = $this->load_user_settings($this->page->course->id);
-        $admin = $this->load_administration_settings();
+
+        if (isloggedin() && !isguestuser() && (!property_exists($SESSION, 'load_navigation_admin') || $SESSION->load_navigation_admin)) {
+            $admin = $this->load_administration_settings();
+            $SESSION->load_navigation_admin = ($admin->has_children());
+        } else {
+            $admin = false;
+        }
 
         if ($context->contextlevel == CONTEXT_SYSTEM && $admin) {
             $admin->force_open();
@@ -2597,8 +2609,6 @@ class settings_navigation extends navigation_node {
             $url = new moodle_url('/course/loginas.php',array('id'=>$this->page->course->id, 'return'=>1,'sesskey'=>sesskey()));
             $this->add(get_string('returntooriginaluser', 'moodle', fullname($realuser, true)), $url, self::TYPE_SETTING, null, null, new pix_icon('t/left', ''));
         }
-
-        // Make sure the first child doesnt have proceed with hr set to true
 
         foreach ($this->children as $key=>$node) {
             if ($node->nodetype != self::NODETYPE_BRANCH || $node->children->count()===0) {

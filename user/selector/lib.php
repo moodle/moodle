@@ -763,12 +763,11 @@ class group_non_members_selector extends groups_user_selector_base {
                     JOIN {groups} g ON gm.groupid = g.id
                     WHERE u.id $membersidsclause AND g.courseid = :courseid ";
             $params['courseid'] = $courseid;
-            if ($rs = $DB->get_recordset_sql($sql, $params)) {
-                foreach ($rs as $usergroup) {
-                    $usergroups[$usergroup->userid][$usergroup->id] = $usergroup;
-                }
-                $rs->close();
+            $rs = $DB->get_recordset_sql($sql, $params);
+            foreach ($rs as $usergroup) {
+                $usergroups[$usergroup->userid][$usergroup->id] = $usergroup;
             }
+            $rs->close();
 
             foreach ($potentialmembersids as $userid) {
                 if (isset($usergroups[$userid])) {

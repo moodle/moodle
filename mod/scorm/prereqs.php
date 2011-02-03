@@ -52,7 +52,7 @@
         $result = true;
         $request = null;
         if (has_capability('mod/scorm:savetrack', get_context_instance(CONTEXT_MODULE,$cm->id))) {
-            $result = scorm_get_toc($USER,$scorm,'structurelist',$currentorg,$scoid,$mode,$attempt,true, false);
+            $result = scorm_get_toc($USER,$scorm,$cm->id,TOCJSLINK,$currentorg,$scoid,$mode,$attempt,true, false);
             echo $result->toc;
         }
     }

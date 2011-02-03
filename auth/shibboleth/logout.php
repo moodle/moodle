@@ -12,7 +12,7 @@ require_once($CFG->dirroot."/auth/shibboleth/auth.php");
 // Find out whether host supports https
 $protocol = 'http://';
 if ( isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'){
-	$protocol = 'https://';
+    $protocol = 'https://';
 }
 
 // Front channel logout
@@ -197,11 +197,12 @@ function LogoutNotification($SessionID){
 /*****************************************************************************/
 
 // Same function as in adodb, but cannot be used for file session for some reason...
-function unserializesession( $serialized_string ){
-    $variables = array( );
-    $a = preg_split( "/(\w+)\|/", $serialized_string, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
-    for( $i = 0; $i < count( $a ); $i = $i+2 ) {
-            $variables[$a[$i]] = unserialize( $a[$i+1] );
+function unserializesession($serialized_string) {
+    $variables = array();
+    $a = preg_split("/(\w+)\|/", $serialized_string, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+    $counta = count($a);
+    for ($i = 0; $i < $counta; $i = $i+2) {
+            $variables[$a[$i]] = unserialize($a[$i+1]);
     }
-    return( $variables );
+    return $variables;
 }

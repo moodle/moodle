@@ -69,7 +69,7 @@ if (!empty($course->summary)) {
     $options->noclean = false;
     $options->overflowdiv = true;
     print_collapsible_region_start('remotecourse summary', 'remotecourse-summary', get_string('coursesummary'), false, true);
-    echo format_text($course->summary, $course->summaryformat, $options,  $course->id);
+    echo format_text($course->summary, $course->summaryformat, $options);
     print_collapsible_region_end();
 }
 
@@ -191,5 +191,8 @@ if ($usecache) {
     echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('usecache'=>0, 'sesskey'=>sesskey())),
                                 get_string('refetch', 'mnetservice_enrol'), 'get');
 }
+
+echo $OUTPUT->single_button(new moodle_url('/mnet/service/enrol/host.php', array('id'=>$host->id)),
+                            get_string('availablecourseson', 'mnetservice_enrol', s($host->hostname)), 'get');
 
 echo $OUTPUT->footer();

@@ -429,7 +429,8 @@ function lesson_upgrade_grades() {
     $sql = "SELECT l.*, cm.idnumber AS cmidnumber, l.course AS courseid
               FROM {lesson} l, {course_modules} cm, {modules} m
              WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id";
-    if ($rs = $DB->get_recordset_sql($sql)) {
+    $rs = $DB->get_recordset_sql($sql);
+    if ($rs->valid()) {
         $pbar = new progress_bar('lessonupgradegrades', 500, true);
         $i=0;
         foreach ($rs as $lesson) {
@@ -438,8 +439,8 @@ function lesson_upgrade_grades() {
             lesson_update_grades($lesson, 0, false);
             $pbar->update($i, $count, "Updating Lesson grades ($i/$count).");
         }
-        $rs->close();
     }
+    $rs->close();
 }
 
 /**

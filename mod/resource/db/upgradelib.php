@@ -42,7 +42,9 @@ function resource_20_migrate() {
     $withrelativelinks = array('text/html', 'text/xml', 'application/xhtml+xml', 'application/x-shockwave-flash');
     // note: pdf doc and other types may contain links too, but we do not support relative links there
 
-    if (!$candidates = $DB->get_recordset('resource_old', array('type'=>'file', 'migrated'=>0))) {
+    $candidates = $DB->get_recordset('resource_old', array('type'=>'file', 'migrated'=>0));
+    if (!$candidates->valid()) {
+        $candidates->close(); // Not going to iterate (but exit), close rs
         return;
     }
 
@@ -53,7 +55,11 @@ function resource_20_migrate() {
         $siteid = get_site()->id;
         $fs = get_file_storage();
 
-        if (strpos($path, 'LOCALPATH') === 0) {
+        if (empty($candidate->cmid)) {
+            // skip borked records
+            continue;
+
+        } else if (strpos($path, 'LOCALPATH') === 0) {
             // ignore not maintained local files - sorry
             continue;
 

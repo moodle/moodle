@@ -131,9 +131,23 @@ class profile_field_base {
         $errors = array();
         /// Check for uniqueness of data if required
         if ($this->is_unique()) {
-            if ($userid = $DB->get_field('user_info_data', 'userid', array('fieldid'=>$this->field->id, 'data'=>$usernew->{$this->inputname}))) {
-                if ($userid != $usernew->id) {
-                    $errors["{$this->inputname}"] = get_string('valuealreadyused');
+            $value = (is_array($usernew->{$this->inputname}) and isset($usernew->{$this->inputname}['text'])) ? $usernew->{$this->inputname}['text'] : $usernew->{$this->inputname};
+            $data = $DB->get_records_sql('
+                    SELECT id, userid
+                      FROM {user_info_data}
+                     WHERE fieldid = ?
+                       AND ' . $DB->sql_compare_text('data', 255) . ' = ' . $DB->sql_compare_text('?', 255),
+                    array($this->field->id, $value));
+            if ($data) {
+                $existing = false;
+                foreach ($data as $v) {
+                    if ($v->userid == $usernew->id) {
+                        $existing = true;
+                        break;
+                    }
+                }
+                if (!$existing) {
+                    $errors[$this->inputname] = get_string('valuealreadyused');
                 }
             }
         }

@@ -32,7 +32,10 @@ $string['allocationsettings'] = 'Allocation settings';
 $string['assessmentdeleteddetail'] = 'Assessment deallocated: <strong>{$a->reviewername}</strong> is no longer reviewer of <strong>{$a->authorname}</strong>';
 $string['assesswosubmission'] = 'Participants can assess without having submitted anything';
 $string['confignumofreviews'] = 'Default number of submissions to be randomly allocated';
+$string['excludesamegroup'] = 'Prevent reviews by peers from the same group';
 $string['noallocationtoadd'] = 'No allocations to add';
+$string['nogroupusers'] = '<p>Warning: If the workshop is in \'visible groups\' mode or \'separate groups\' mode, then users MUST be part of at least one group to have peer-assessments allocated to them by this tool. Non-grouped users can still be given new self-assessments or have existing assessments removed.</p>
+<p>These users are currently not in a group: {$a}</p>';
 $string['numofdeallocatedassessment'] = 'Deallocating {$a} assessment(s)';
 $string['numofrandomlyallocatedsubmissions'] = 'Randomly allocating {$a} submissions';
 $string['numofreviews'] = 'Number of reviews';

@@ -66,7 +66,7 @@ class webservice_rest_server extends webservice_base_server {
 
             $this->functionname = isset($_REQUEST['wsfunction']) ? $_REQUEST['wsfunction'] : null;
             unset($_REQUEST['wsfunction']);
-           
+
             $this->parameters = $_REQUEST;
         }
     }
@@ -108,7 +108,7 @@ class webservice_rest_server extends webservice_base_server {
      * @return void
      */
     protected function send_headers() {
-        header('Content-Type: application/xml');
+        header('Content-Type: application/xml; charset=utf-8');
         header('Content-Disposition: inline; filename="response.xml"');
         header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
         header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
@@ -142,7 +142,7 @@ class webservice_rest_server extends webservice_base_server {
             if (!empty($returns)) {
                 foreach ($returns as $val) {
                     $mult .= self::xmlize_result($val, $desc->content);
-                } 
+                }
             }
             $mult .= '</MULTIPLE>'."\n";
             return $mult;

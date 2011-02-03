@@ -25,16 +25,15 @@ echo $OUTPUT->header();
 if ($confirm and confirm_sesskey()) {
 
     list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
-    if ($rs = $DB->get_recordset_select('user', "id $in", $params)) {
-        foreach ($rs as $user) {
-            if (!is_siteadmin($user) and $USER->id != $user->id and delete_user($user)) {
-                unset($SESSION->bulk_users[$user->id]);
-            } else {
-                echo $OUTPUT->notification(get_string('deletednot', '', fullname($user, true)));
-            }
+    $rs = $DB->get_recordset_select('user', "id $in", $params);
+    foreach ($rs as $user) {
+        if (!is_siteadmin($user) and $USER->id != $user->id and delete_user($user)) {
+            unset($SESSION->bulk_users[$user->id]);
+        } else {
+            echo $OUTPUT->notification(get_string('deletednot', '', fullname($user, true)));
         }
-        $rs->close();
     }
+    $rs->close();
     session_gc(); // remove stale sessions
     redirect($return, get_string('changessaved'));
 

@@ -72,9 +72,6 @@ if($group===0 && $course->groupmode==SEPARATEGROUPS) {
 $reportsurl=$CFG->wwwroot.'/course/report.php?id='.$course->id;
 $completion=new completion_info($course);
 $activities=$completion->get_activities();
-if(count($activities)==0) {
-    print_error('err_noactivities','completion',$reportsurl);
-}
 
 // Generate where clause
 $where = array();
@@ -96,16 +93,6 @@ $total = $completion->get_num_tracked_users(implode(' AND ', $where), $where_par
 // Total user count
 $grandtotal = $completion->get_num_tracked_users('', array(), $group);
 
-// If no users in this course what-so-ever
-if (!$grandtotal) {
-    echo $OUTPUT->box_start('errorbox errorboxcontent boxaligncenter boxwidthnormal');
-    echo '<p class="nousers">'.get_string('err_nousers','completion').'</p>';
-    echo '<p><a href="'.$CFG->wwwroot.'/course/report.php?id='.$course->id.'">'.get_string('continue').'</a></p>';
-    echo $OUTPUT->box_end();
-    echo $OUTPUT->footer();
-    exit;
-}
-
 // Get user data
 $progress = array();
 
@@ -120,7 +107,7 @@ if ($total) {
     );
 }
 
-if($csv) {
+if($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are some users/actvs
     header('Content-Disposition: attachment; filename=progress.'.
         preg_replace('/[^a-z0-9-]/','_',strtolower($course->shortname)).'.csv');
     // Unicode byte-order mark for Excel
@@ -153,6 +140,19 @@ if($csv) {
 
     // Handle groups (if enabled)
     groups_print_course_menu($course,$CFG->wwwroot.'/course/report/progress/?course='.$course->id);
+}
+
+if(count($activities)==0) {
+    echo $OUTPUT->container(get_string('err_noactivities', 'completion'), 'errorbox errorboxcontent');
+    echo $OUTPUT->footer();
+    exit;
+}
+
+// If no users in this course what-so-ever
+if (!$grandtotal) {
+    echo $OUTPUT->container(get_string('err_nousers', 'completion'), 'errorbox errorboxcontent');
+    echo $OUTPUT->footer();
+    exit;
 }
 
 // Build link for paging

@@ -219,22 +219,19 @@ class completion_criteria_duration extends completion_criteria {
 
         // Loop through completions, and mark as complete
         $now = time();
-        if ($rs = $DB->get_recordset_sql($sql, array($now, $now))) {
-            foreach ($rs as $record) {
+        $rs = $DB->get_recordset_sql($sql, array($now, $now));
+        foreach ($rs as $record) {
 
-                $completion = new completion_criteria_completion((array)$record);
+            $completion = new completion_criteria_completion((array)$record);
 
-                // Use time start if not 0, otherwise use timeenrolled
-                if ($record->otimestart) {
-                    $completion->mark_complete($record->ctimestart);
-                }
-                else {
-                    $completion->mark_complete($record->ctimeenrolled);
-                }
+            // Use time start if not 0, otherwise use timeenrolled
+            if ($record->otimestart) {
+                $completion->mark_complete($record->ctimestart);
+            } else {
+                $completion->mark_complete($record->ctimeenrolled);
             }
-
-            $rs->close();
         }
+        $rs->close();
     }
 
     /**

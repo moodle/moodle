@@ -56,7 +56,7 @@ class webservice_soap_server extends webservice_zend_server {
         global $CFG;
 
         parent::init_zend_server();
-        
+
         if ($this->authmethod == WEBSERVICE_AUTHMETHOD_USERNAME) {
             $username = optional_param('wsusername', '', PARAM_RAW);
             $password = optional_param('wspassword', '', PARAM_RAW);
@@ -129,7 +129,7 @@ class webservice_soap_server extends webservice_zend_server {
 </SOAP-ENV:Fault></SOAP-ENV:Body></SOAP-ENV:Envelope>';
 
         $this->send_headers();
-        header('Content-Type: application/xml');
+        header('Content-Type: application/xml; charset=utf-8');
         header('Content-Disposition: inline; filename="response.xml"');
 
         echo $xml;

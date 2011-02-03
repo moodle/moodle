@@ -751,6 +751,12 @@ function session_gc() {
             $DB->delete_records('sessions', array('sid'=>$user->sid));
         }
         $rs->close();
+
+        $purgebefore = time() - $maxlifetime;
+        // delete expired sessions for guest user account
+        $DB->delete_records_select('sessions', 'userid = ? AND timemodified < ?', array($CFG->siteguest, $purgebefore));
+        // delete expired sessions for userid = 0 (not logged in)
+        $DB->delete_records_select('sessions', 'userid = 0 AND timemodified < ?', array($purgebefore));
     } catch (dml_exception $ex) {
         error_log('Error gc-ing sessions');
     }

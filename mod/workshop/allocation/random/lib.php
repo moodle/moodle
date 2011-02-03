@@ -76,6 +76,7 @@ class workshop_random_allocator implements workshop_allocator {
             $o                  = array();      // list of output messages
             $numofreviews       = required_param('numofreviews', PARAM_INT);
             $numper             = required_param('numper', PARAM_INT);
+            $excludesamegroup   = optional_param('excludesamegroup', false, PARAM_BOOL);
             $removecurrent      = optional_param('removecurrent', false, PARAM_BOOL);
             $assesswosubmission = optional_param('assesswosubmission', false, PARAM_BOOL);
             $addselfassessment  = optional_param('addselfassessment', false, PARAM_BOOL);
@@ -96,7 +97,11 @@ class workshop_random_allocator implements workshop_allocator {
                 } else {
                     $curassessments = $assessments;
                 }
-                $randomallocations  = $this->random_allocation($authors, $reviewers, $curassessments, $numofreviews, $numper, $o);
+                $options                     = array();
+                $options['numofreviews']     = $numofreviews;
+                $options['numper']           = $numper;
+                $options['excludesamegroup'] = $excludesamegroup;
+                $randomallocations  = $this->random_allocation($authors, $reviewers, $curassessments, $o, $options);
                 $newallocations     = array_merge($newallocations, $randomallocations);
                 $o[] = 'ok::' . get_string('numofrandomlyallocatedsubmissions', 'workshopallocation_random', count($randomallocations));
                 unset($randomallocations);
@@ -178,9 +183,36 @@ class workshop_random_allocator implements workshop_allocator {
         $this->mform->display();
         $out .= ob_get_contents();
         ob_end_clean();
-        $out .= $output->container_end();
+
+        // if there are some not-grouped participant in a group mode, warn the user
+        $gmode = groups_get_activity_groupmode($this->workshop->cm, $this->workshop->course);
+        if (VISIBLEGROUPS == $gmode or SEPARATEGROUPS == $gmode) {
+            $users = $this->workshop->get_potential_authors() + $this->workshop->get_potential_reviewers();
+            $users = $this->workshop->get_grouped($users);
+            if (isset($users[0])) {
+                $nogroupusers = $users[0];
+                foreach ($users as $groupid => $groupusers) {
+                    if ($groupid == 0) {
+                        continue;
+                    }
+                    foreach ($groupusers as $groupuserid => $groupuser) {
+                        unset($nogroupusers[$groupuserid]);
+                    }
+                }
+                if (!empty($nogroupusers)) {
+                    $list = array();
+                    foreach ($nogroupusers as $nogroupuser) {
+                        $list[] = fullname($nogroupuser);
+                    }
+                    $a = implode(', ', $list);
+                    $out .= $output->box(get_string('nogroupusers', 'workshopallocation_random', $a), 'generalbox warning nogroupusers');
+                }
+            }
+        }
 
         // TODO $out .= $output->heading(get_string('stats', 'workshopallocation_random'));
+
+        $out .= $output->container_end();
 
         return $out;
     }
@@ -371,19 +403,27 @@ class workshop_random_allocator implements workshop_allocator {
      * is to connect each "circle" (circles are representing either authors or reviewers) with a required
      * number of "squares" (the other type than circles are).
      *
+     * The passed $options array must provide keys:
+     *      (int)numofreviews - number of reviews to be allocated to each circle
+     *      (int)numper - what user type the circles represent.
+     *      (bool)excludesamegroup - whether to prevent peer submissions from the same group in visible group mode
+     *
      * @param array    $authors      structure of grouped authors
      * @param resource $reviewers    structure of grouped reviewers
      * @param array    $assessments  currently assigned assessments to be kept
-     * @param mixed    $numofreviews number of reviews to be allocated to each circle
-     * @param mixed    $numper       what user type the circles represent
      * @param array    $o            reference to an array of log messages
+     * @param array    $options      allocation options
      * @return array                 array of (reviewerid => authorid) pairs
      */
-    protected function random_allocation($authors, $reviewers, $assessments, $numofreviews, $numper, &$o) {
+    protected function random_allocation($authors, $reviewers, $assessments, &$o, array $options) {
         if (empty($authors) || empty($reviewers)) {
             // nothing to be done
             return array();
         }
+
+        $numofreviews = $options['numofreviews'];
+        $numper       = $options['numper'];
+
         if (self::USERTYPE_AUTHOR == $numper) {
             // circles are authors, squares are reviewers
             $o[] = 'info::Trying to allocate ' . $numofreviews . ' review(s) per author'; // todo translate
@@ -400,6 +440,22 @@ class workshop_random_allocator implements workshop_allocator {
             list($squarelinks, $circlelinks) = $this->convert_assessments_to_links($assessments);
         } else {
             throw new moodle_exception('unknownusertypepassed', 'workshop');
+        }
+        // get the users that are not in any group. in visible groups mode, these users are exluded
+        // from allocation by this method
+        // $nogroupcircles is array (int)$userid => undefined
+        if (isset($allcircles[0])) {
+            $nogroupcircles = array_flip(array_keys($allcircles[0]));
+        } else {
+            $nogroupcircles = array();
+        }
+        foreach ($allcircles as $circlegroupid => $circles) {
+            if ($circlegroupid == 0) {
+                continue;
+            }
+            foreach ($circles as $circleid => $circle) {
+                unset($nogroupcircles[$circleid]);
+            }
         }
         // $o[] = 'debug::circle links = ' . json_encode($circlelinks);
         // $o[] = 'debug::square links = ' . json_encode($squarelinks);
@@ -428,76 +484,96 @@ class workshop_random_allocator implements workshop_allocator {
             // all users will be processed at once
             $circlegroups = array(0);
         }
-        $this->shuffle_assoc($circlegroups);
         // $o[] = 'debug::circle groups = ' . json_encode($circlegroups);
         foreach ($circlegroups as $circlegroupid) {
             $o[] = 'debug::processing circle group id ' . $circlegroupid;
             $circles = $allcircles[$circlegroupid];
-            $this->shuffle_assoc($circles);
-            foreach ($circles as $circleid => $circle) {
-                $o[] = 'debug::processing circle id ' . $circleid;
-                if (!isset($circlelinks[$circleid])) {
-                    $circlelinks[$circleid] = array();
-                }
-                $keeptrying     = true;     // is there a chance to find a square for this circle?
-                $failedgroups   = array();  // array of groupids where the square should be chosen from (because
-                                            // of their group workload) but it was not possible (for example there
-                                            // was the only square and it had been already connected
-                while ($keeptrying && (count($circlelinks[$circleid]) < $numofreviews)) {
-                    // firstly, choose a group to pick the square from
-                    if (NOGROUPS == $gmode) {
-                        if (in_array(0, $failedgroups)) {
-                            $keeptrying = false;
-                            $o[] = 'error::indent::No more peers available'; // todo translate
-                            break;
-                        }
-                        $targetgroup = 0;
-                    } elseif (SEPARATEGROUPS == $gmode) {
-                        if (in_array($circlegroupid, $failedgroups)) {
-                            $keeptrying = false;
-                            $o[] = 'error::indent::No more peers available in this separate group'; // todo translate
-                            break;
-                        }
-                        $targetgroup = $circlegroupid;
-                    } elseif (VISIBLEGROUPS == $gmode) {
-                        $trygroups = array_diff_key($squaregroupsworkload, array(0 => null));   // all but [0]
-                        $trygroups = array_diff_key($trygroups, array_flip($failedgroups));     // without previous failures
-                        $targetgroup = $this->get_element_with_lowest_workload($trygroups);
-                    }
-                    if ($targetgroup === false) {
-                        $keeptrying = false;
-                        $o[] = 'error::indent::Not enough peers available'; // todo translate
-                        break;
-                    }
-                    $o[] = 'debug::indent::next square should be from group id ' . $targetgroup;
-                    // now, choose a square from the target group
-                    $trysquares = array_intersect_key($squareworkload, $allsquares[$targetgroup]);
-                    // $o[] = 'debug::indent::individual workloads in this group are ' . json_encode($trysquares);
-                    unset($trysquares[$circleid]);  // can't allocate to self
-                    $trysquares = array_diff_key($trysquares, array_flip($circlelinks[$circleid])); // can't re-allocate the same
-                    $targetsquare = $this->get_element_with_lowest_workload($trysquares);
-                    if (false === $targetsquare) {
-                        $o[] = 'debug::indent::unable to find an available square. trying another group';
-                        $failedgroups[] = $targetgroup;
+            // iterate over all circles in the group until the requested number of links per circle exists
+            // or it is not possible to fulfill that requirment
+            // during the first iteration, we try to make sure that at least one circlelink exists. during the
+            // second iteration, we try to allocate two, etc.
+            for ($requiredreviews = 1; $requiredreviews <= $numofreviews; $requiredreviews++) {
+                $this->shuffle_assoc($circles);
+                $o[] = 'debug::iteration ' . $requiredreviews;
+                foreach ($circles as $circleid => $circle) {
+                    if (VISIBLEGROUPS == $gmode and isset($nogroupcircles[$circleid])) {
+                        $o[] = 'debug::skipping circle id ' . $circleid;
                         continue;
                     }
-                    $o[] = 'debug::indent::target square = ' . $targetsquare;
-                    // ok - we have found the square
-                    $circlelinks[$circleid][]       = $targetsquare;
-                    $squarelinks[$targetsquare][]   = $circleid;
-                    $squareworkload[$targetsquare]++;
-                    $o[] = 'debug::indent::increasing square workload to ' . $squareworkload[$targetsquare];
-                    if ($targetgroup) {
-                        // recalculate the group workload
-                        $squaregroupsworkload[$targetgroup] = 0;
-                        foreach ($allsquares[$targetgroup] as $squareid => $square) {
-                            $squaregroupsworkload[$targetgroup] += $squareworkload[$squareid];
-                        }
-                        $squaregroupsworkload[$targetgroup] /= count($allsquares[$targetgroup]);
-                        $o[] = 'debug::indent::increasing group workload to ' . $squaregroupsworkload[$targetgroup];
+                    $o[] = 'debug::processing circle id ' . $circleid;
+                    if (!isset($circlelinks[$circleid])) {
+                        $circlelinks[$circleid] = array();
                     }
-                } // end of processing this circle
-            } // end of processing circles in the group
+                    $keeptrying     = true;     // is there a chance to find a square for this circle?
+                    $failedgroups   = array();  // array of groupids where the square should be chosen from (because
+                                                // of their group workload) but it was not possible (for example there
+                                                // was the only square and it had been already connected
+                    while ($keeptrying && (count($circlelinks[$circleid]) < $requiredreviews)) {
+                        // firstly, choose a group to pick the square from
+                        if (NOGROUPS == $gmode) {
+                            if (in_array(0, $failedgroups)) {
+                                $keeptrying = false;
+                                $o[] = 'error::indent::No more peers available'; // todo translate
+                                break;
+                            }
+                            $targetgroup = 0;
+                        } elseif (SEPARATEGROUPS == $gmode) {
+                            if (in_array($circlegroupid, $failedgroups)) {
+                                $keeptrying = false;
+                                $o[] = 'error::indent::No more peers available in this separate group'; // todo translate
+                                break;
+                            }
+                            $targetgroup = $circlegroupid;
+                        } elseif (VISIBLEGROUPS == $gmode) {
+                            $trygroups = array_diff_key($squaregroupsworkload, array(0 => null));   // all but [0]
+                            $trygroups = array_diff_key($trygroups, array_flip($failedgroups));     // without previous failures
+                            if ($options['excludesamegroup']) {
+                                // exclude groups the circle is member of
+                                $excludegroups = array();
+                                foreach (array_diff_key($allcircles, array(0 => null)) as $exgroupid => $exgroupmembers) {
+                                    if (array_key_exists($circleid, $exgroupmembers)) {
+                                        $excludegroups[$exgroupid] = null;
+                                    }
+                                }
+                                $trygroups = array_diff_key($trygroups, $excludegroups);
+                            }
+                            $targetgroup = $this->get_element_with_lowest_workload($trygroups);
+                        }
+                        if ($targetgroup === false) {
+                            $keeptrying = false;
+                            $o[] = 'error::indent::Not enough peers available'; // todo translate
+                            break;
+                        }
+                        $o[] = 'debug::indent::next square should be from group id ' . $targetgroup;
+                        // now, choose a square from the target group
+                        $trysquares = array_intersect_key($squareworkload, $allsquares[$targetgroup]);
+                        // $o[] = 'debug::indent::individual workloads in this group are ' . json_encode($trysquares);
+                        unset($trysquares[$circleid]);  // can't allocate to self
+                        $trysquares = array_diff_key($trysquares, array_flip($circlelinks[$circleid])); // can't re-allocate the same
+                        $targetsquare = $this->get_element_with_lowest_workload($trysquares);
+                        if (false === $targetsquare) {
+                            $o[] = 'debug::indent::unable to find an available square. trying another group';
+                            $failedgroups[] = $targetgroup;
+                            continue;
+                        }
+                        $o[] = 'debug::indent::target square = ' . $targetsquare;
+                        // ok - we have found the square
+                        $circlelinks[$circleid][]       = $targetsquare;
+                        $squarelinks[$targetsquare][]   = $circleid;
+                        $squareworkload[$targetsquare]++;
+                        $o[] = 'debug::indent::increasing square workload to ' . $squareworkload[$targetsquare];
+                        if ($targetgroup) {
+                            // recalculate the group workload
+                            $squaregroupsworkload[$targetgroup] = 0;
+                            foreach ($allsquares[$targetgroup] as $squareid => $square) {
+                                $squaregroupsworkload[$targetgroup] += $squareworkload[$squareid];
+                            }
+                            $squaregroupsworkload[$targetgroup] /= count($allsquares[$targetgroup]);
+                            $o[] = 'debug::indent::increasing group workload to ' . $squaregroupsworkload[$targetgroup];
+                        }
+                    } // end of processing this circle
+                } // end of one iteration of processing circles in the group
+            } // end of all iterations over circles in the group
         } // end of processing circle groups
         $returned = array();
         if (self::USERTYPE_AUTHOR == $numper) {
@@ -569,15 +645,14 @@ class workshop_random_allocator implements workshop_allocator {
     /**
      * Shuffle the order of array elements preserving the key=>values
      *
-     * @author rich at home dot nl
-     * @link http://php.net/manual/en/function.shuffle.php#80586
      * @param array $array to be shuffled
      * @return true
      */
     protected function shuffle_assoc(&$array) {
         if (count($array) > 1) {
             // $keys needs to be an array, no need to shuffle 1 item or empty arrays, anyway
-            $keys = array_rand($array, count($array));
+            $keys = array_keys($array);
+            shuffle($keys);
             foreach($keys as $key) {
                 $new[$key] = $array[$key];
             }

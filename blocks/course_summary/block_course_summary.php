@@ -14,6 +14,8 @@ class block_course_summary extends block_base {
     function get_content() {
         global $CFG, $OUTPUT;
 
+        require_once($CFG->libdir . '/filelib.php');
+
         if($this->content !== NULL) {
             return $this->content;
         }

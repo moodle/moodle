@@ -352,6 +352,8 @@ define('FEATURE_COMPLETION_TRACKS_VIEWS', 'completion_tracks_views');
 /** True if module has custom completion rules */
 define('FEATURE_COMPLETION_HAS_RULES', 'completion_has_rules');
 
+/** True if module has no 'view' page (like label) */
+define('FEATURE_NO_VIEW_LINK', 'viewlink');
 /** True if module supports outcomes */
 define('FEATURE_IDNUMBER', 'idnumber');
 /** True if module supports groups */
@@ -792,17 +794,15 @@ function clean_param($param, $type) {
             }
 
         case PARAM_TAG:
-            //as long as magic_quotes_gpc is used, a backslash will be a
-            //problem, so remove *all* backslash.
-            //$param = str_replace('\\', '', $param);
-            //remove some nasties
+            // Please note it is not safe to use the tag name directly anywhere,
+            // it must be processed with s(), urlencode() before embedding anywhere.
+            // remove some nasties
             $param = preg_replace('~[[:cntrl:]]|[<>`]~u', '', $param);
             //convert many whitespace chars into one
             $param = preg_replace('/\s+/', ' ', $param);
             $textlib = textlib_get_instance();
             $param = $textlib->substr(trim($param), 0, TAG_MAX_LENGTH);
             return $param;
-
 
         case PARAM_TAGLIST:
             $tags = explode(',', $param);
@@ -2314,6 +2314,14 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
             if ($cm->course != $course->id) {
                 throw new coding_exception('course and cm parameters in require_login() call do not match!!');
             }
+            // make sure we have a $cm from get_fast_modinfo as this contains activity access details
+            if (!($cm instanceof cm_info)) {
+                // note: nearly all pages call get_fast_modinfo anyway and it does not make any
+                // db queries so this is not really a performance concern, however it is obviously
+                // better if you use get_fast_modinfo to get the cm before calling this.
+                $modinfo = get_fast_modinfo($course);
+                $cm = $modinfo->get_cm($cm->id);
+            }
             $PAGE->set_cm($cm, $course); // set's up global $COURSE
             $PAGE->set_pagelayout('incourse');
         } else {
@@ -2585,45 +2593,13 @@ function require_login($courseorid = NULL, $autologinguest = true, $cm = NULL, $
         }
     }
 
-    // test visibility
-    if ($cm && !$cm->visible && !has_capability('moodle/course:viewhiddenactivities', $cmcontext)) {
+    // Check visibility of activity to current user; includes visible flag, groupmembersonly,
+    // conditional availability, etc
+    if ($cm && !$cm->uservisible) {
         if ($preventredirect) {
             throw new require_login_exception('Activity is hidden');
         }
         redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
-    }
-
-    // groupmembersonly access control
-    if (!empty($CFG->enablegroupmembersonly) and $cm and $cm->groupmembersonly and !has_capability('moodle/site:accessallgroups', get_context_instance(CONTEXT_MODULE, $cm->id))) {
-        if (isguestuser() or !groups_has_membership($cm)) {
-            if ($preventredirect) {
-                throw new require_login_exception('Not member of a group');
-            }
-            print_error('groupmembersonlyerror', 'group', $CFG->wwwroot.'/course/view.php?id='.$cm->course);
-        }
-    }
-
-    // Conditional activity access control
-    if (!empty($CFG->enableavailability) and $cm) {
-        // TODO: this is going to work with login-as-user, sorry!
-        // We cache conditional access in session
-        if (!isset($SESSION->conditionaccessok)) {
-            $SESSION->conditionaccessok = array();
-        }
-        // If you have been allowed into the module once then you are allowed
-        // in for rest of session, no need to do conditional checks
-        if (!array_key_exists($cm->id, $SESSION->conditionaccessok)) {
-            // Get condition info (does a query for the availability table)
-            require_once($CFG->libdir.'/conditionlib.php');
-            $ci = new condition_info($cm, CONDITION_MISSING_EXTRATABLE);
-            // Check condition for user (this will do a query if the availability
-            // information depends on grade or completion information)
-            if ($ci->is_available($junk) || has_capability('moodle/course:viewhiddenactivities', $cmcontext)) {
-                $SESSION->conditionaccessok[$cm->id] = true;
-            } else {
-                print_error('activityiscurrentlyhidden');
-            }
-        }
     }
 
     // Finally access granted, update lastaccess times
@@ -2676,16 +2652,29 @@ function require_logout() {
  */
 function require_course_login($courseorid, $autologinguest = true, $cm = NULL, $setwantsurltome = true, $preventredirect = false) {
     global $CFG, $PAGE, $SITE;
+    $issite = (is_object($courseorid) and $courseorid->id == SITEID)
+          or (!is_object($courseorid) and $courseorid == SITEID);
+    if ($issite && !empty($cm) && !($cm instanceof cm_info)) {
+        // note: nearly all pages call get_fast_modinfo anyway and it does not make any
+        // db queries so this is not really a performance concern, however it is obviously
+        // better if you use get_fast_modinfo to get the cm before calling this.
+        if (is_object($courseorid)) {
+            $course = $courseorid;
+        } else {
+            $course = clone($SITE);
+        }
+        $modinfo = get_fast_modinfo($course);
+        $cm = $modinfo->get_cm($cm->id);
+    }
     if (!empty($CFG->forcelogin)) {
         // login required for both SITE and courses
         require_login($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
 
-    } else if (!empty($cm) and !$cm->visible) {
+    } else if ($issite && !empty($cm) and !$cm->uservisible) {
         // always login for hidden activities
         require_login($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
 
-    } else if ((is_object($courseorid) and $courseorid->id == SITEID)
-          or (!is_object($courseorid) and $courseorid == SITEID)) {
+    } else if ($issite) {
               //login for SITE not required
         if ($cm and empty($cm->visible)) {
             // hidden activities are not accessible without login
@@ -3006,203 +2995,6 @@ function reset_login_count() {
     global $SESSION;
 
     $SESSION->logincount = 0;
-}
-
-/**
- * Returns reference to full info about modules in course (including visibility).
- * Cached and as fast as possible (0 or 1 db query).
- *
- * @global object
- * @global object
- * @global object
- * @uses CONTEXT_MODULE
- * @uses MAX_MODINFO_CACHE_SIZE
- * @param mixed $course object or 'reset' string to reset caches, modinfo may be updated in db
- * @param int $userid Defaults to current user id
- * @return mixed courseinfo object or nothing if resetting
- */
-function &get_fast_modinfo(&$course, $userid=0) {
-    global $CFG, $USER, $DB;
-    require_once($CFG->dirroot.'/course/lib.php');
-
-    if (!empty($CFG->enableavailability)) {
-        require_once($CFG->libdir.'/conditionlib.php');
-    }
-
-    static $cache = array();
-
-    if ($course === 'reset') {
-        $cache = array();
-        $nothing = null;
-        return $nothing; // we must return some reference
-    }
-
-    if (empty($userid)) {
-        $userid = $USER->id;
-    }
-
-    if (array_key_exists($course->id, $cache) and $cache[$course->id]->userid == $userid) {
-        return $cache[$course->id];
-    }
-
-    if (empty($course->modinfo)) {
-        // no modinfo yet - load it
-        rebuild_course_cache($course->id);
-        $course->modinfo = $DB->get_field('course', 'modinfo', array('id'=>$course->id));
-    }
-
-    $modinfo = new stdClass();
-    $modinfo->courseid  = $course->id;
-    $modinfo->userid    = $userid;
-    $modinfo->sections  = array();
-    $modinfo->cms       = array();
-    $modinfo->instances = array();
-    $modinfo->groups    = null; // loaded only when really needed - the only one db query
-
-    $info = unserialize($course->modinfo);
-    if (!is_array($info)) {
-        // hmm, something is wrong - lets try to fix it
-        rebuild_course_cache($course->id);
-        $course->modinfo = $DB->get_field('course', 'modinfo', array('id'=>$course->id));
-        $info = unserialize($course->modinfo);
-        if (!is_array($info)) {
-            return $modinfo;
-        }
-    }
-
-    if ($info) {
-        // detect if upgrade required
-        $first = reset($info);
-        if (!isset($first->id)) {
-            rebuild_course_cache($course->id);
-            $course->modinfo = $DB->get_field('course', 'modinfo', array('id'=>$course->id));
-            $info = unserialize($course->modinfo);
-            if (!is_array($info)) {
-                return $modinfo;
-            }
-        }
-    }
-
-    $modlurals = array();
-
-    // If we haven't already preloaded contexts for the course, do it now
-    preload_course_contexts($course->id);
-
-    foreach ($info as $mod) {
-        if (empty($mod->name)) {
-            // something is wrong here
-            continue;
-        }
-        // reconstruct minimalistic $cm
-        $cm = new stdClass();
-        $cm->id               = $mod->cm;
-        $cm->instance         = $mod->id;
-        $cm->course           = $course->id;
-        $cm->modname          = $mod->mod;
-        $cm->idnumber         = $mod->idnumber;
-        $cm->name             = $mod->name;
-        $cm->visible          = $mod->visible;
-        $cm->sectionnum       = $mod->section;
-        $cm->groupmode        = $mod->groupmode;
-        $cm->groupingid       = $mod->groupingid;
-        $cm->groupmembersonly = $mod->groupmembersonly;
-        $cm->indent           = $mod->indent;
-        $cm->completion       = $mod->completion;
-        $cm->extra            = isset($mod->extra) ? $mod->extra : '';
-        $cm->icon             = isset($mod->icon) ? $mod->icon : '';
-        $cm->iconcomponent    = isset($mod->iconcomponent) ? $mod->iconcomponent : '';
-        $cm->uservisible      = true;
-        if (!empty($CFG->enableavailability)) {
-            // We must have completion information from modinfo. If it's not
-            // there, cache needs rebuilding
-            if(!isset($mod->availablefrom)) {
-                debugging('enableavailability option was changed; rebuilding '.
-                    'cache for course '.$course->id);
-                rebuild_course_cache($course->id,true);
-                // Re-enter this routine to do it all properly
-                return get_fast_modinfo($course, $userid);
-            }
-            $cm->availablefrom    = $mod->availablefrom;
-            $cm->availableuntil   = $mod->availableuntil;
-            $cm->showavailability = $mod->showavailability;
-            $cm->conditionscompletion = $mod->conditionscompletion;
-            $cm->conditionsgrade  = $mod->conditionsgrade;
-        }
-
-        // preload long names plurals and also check module is installed properly
-        if (!isset($modlurals[$cm->modname])) {
-            if (!file_exists("$CFG->dirroot/mod/$cm->modname/lib.php")) {
-                continue;
-            }
-            $modlurals[$cm->modname] = get_string('modulenameplural', $cm->modname);
-        }
-        $cm->modplural = $modlurals[$cm->modname];
-        $modcontext = get_context_instance(CONTEXT_MODULE,$cm->id);
-
-        if (!empty($CFG->enableavailability)) {
-            // Unfortunately the next call really wants to call
-            // get_fast_modinfo, but that would be recursive, so we fake up a
-            // modinfo for it already
-            if (empty($minimalmodinfo)) { //TODO: this is suspicious (skodak)
-                $minimalmodinfo = new stdClass();
-                $minimalmodinfo->cms = array();
-                foreach($info as $mod) {
-                    if (empty($mod->name)) {
-                        // something is wrong here
-                        continue;
-                    }
-                    $minimalcm = new stdClass();
-                    $minimalcm->id = $mod->cm;
-                    $minimalcm->name = $mod->name;
-                    $minimalmodinfo->cms[$minimalcm->id]=$minimalcm;
-                }
-            }
-
-            // Get availability information
-            $ci = new condition_info($cm);
-            $cm->available = $ci->is_available($cm->availableinfo, true, $userid, $minimalmodinfo);
-        } else {
-            $cm->available = true;
-        }
-        if ((!$cm->visible or !$cm->available) and !has_capability('moodle/course:viewhiddenactivities', $modcontext, $userid)) {
-            $cm->uservisible = false;
-
-        } else if (!empty($CFG->enablegroupmembersonly) and !empty($cm->groupmembersonly)
-                and !has_capability('moodle/site:accessallgroups', $modcontext, $userid)) {
-            if (is_null($modinfo->groups)) {
-                $modinfo->groups = groups_get_user_groups($course->id, $userid);
-            }
-            if (empty($modinfo->groups[$cm->groupingid])) {
-                $cm->uservisible = false;
-            }
-        }
-
-        if (!isset($modinfo->instances[$cm->modname])) {
-            $modinfo->instances[$cm->modname] = array();
-        }
-        $modinfo->instances[$cm->modname][$cm->instance] =& $cm;
-        $modinfo->cms[$cm->id] =& $cm;
-
-        // reconstruct sections
-        if (!isset($modinfo->sections[$cm->sectionnum])) {
-            $modinfo->sections[$cm->sectionnum] = array();
-        }
-        $modinfo->sections[$cm->sectionnum][] = $cm->id;
-
-        unset($cm);
-    }
-
-    unset($cache[$course->id]); // prevent potential reference problems when switching users
-    $cache[$course->id] = $modinfo;
-
-    // Ensure cache does not use too much RAM
-    if (count($cache) > MAX_MODINFO_CACHE_SIZE) {
-        reset($cache);
-        $key = key($cache);
-        unset($cache[$key]);
-    }
-
-    return $cache[$course->id];
 }
 
 /**
@@ -8011,14 +7803,13 @@ function notify_login_failures() {
           GROUP BY ip
             HAVING COUNT(*) >= ?";
     $params = array($CFG->lastnotifyfailure, $CFG->notifyloginthreshold);
-    if ($rs = $DB->get_recordset_sql($sql, $params)) {
-        foreach ($rs as $iprec) {
-            if (!empty($iprec->ip)) {
-                set_cache_flag('login_failure_by_ip', $iprec->ip, '1', 0);
-            }
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $iprec) {
+        if (!empty($iprec->ip)) {
+            set_cache_flag('login_failure_by_ip', $iprec->ip, '1', 0);
         }
-        $rs->close();
     }
+    $rs->close();
 
 /// Get all the INFOs with more than notifyloginthreshold failures since lastnotifyfailure
 /// and insert them into the cache_flags temp table
@@ -8029,14 +7820,13 @@ function notify_login_failures() {
           GROUP BY info
             HAVING count(*) >= ?";
     $params = array($CFG->lastnotifyfailure, $CFG->notifyloginthreshold);
-    if ($rs = $DB->get_recordset_sql($sql, $params)) {
-        foreach ($rs as $inforec) {
-            if (!empty($inforec->info)) {
-                set_cache_flag('login_failure_by_info', $inforec->info, '1', 0);
-            }
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $inforec) {
+        if (!empty($inforec->info)) {
+            set_cache_flag('login_failure_by_info', $inforec->info, '1', 0);
         }
-        $rs->close();
     }
+    $rs->close();
 
 /// Now, select all the login error logged records belonging to the ips and infos
 /// since lastnotifyfailure, that we have stored in the cache_flags table
@@ -8062,14 +7852,13 @@ function notify_login_failures() {
     $count = 0;
     $messages = '';
 /// Iterate over the logs recordset
-    if ($rs = $DB->get_recordset_sql($sql, $params)) {
-        foreach ($rs as $log) {
-            $log->time = userdate($log->time);
-            $messages .= get_string('notifyloginfailuresmessage','',$log)."\n";
-            $count++;
-        }
-        $rs->close();
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $log) {
+        $log->time = userdate($log->time);
+        $messages .= get_string('notifyloginfailuresmessage','',$log)."\n";
+        $count++;
     }
+    $rs->close();
 
 /// If we haven't run in the last hour and
 /// we have something useful to report and we

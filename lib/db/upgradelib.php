@@ -38,15 +38,14 @@ function upgrade_fix_category_depths() {
     $sql = "SELECT c.id
               FROM {course_categories} c
              WHERE c.parent > 0 AND c.parent NOT IN (SELECT pc.id FROM {course_categories} pc)";
-    if ($rs = $DB->get_recordset_sql($sql)) {
-        foreach ($rs as $cat) {
-            $cat->depth  = 1;
-            $cat->path   = '/'.$cat->id;
-            $cat->parent = 0;
-            $DB->update_record('course_categories', $cat);
-        }
-        $rs->close();
+    $rs = $DB->get_recordset_sql($sql);
+    foreach ($rs as $cat) {
+        $cat->depth  = 1;
+        $cat->path   = '/'.$cat->id;
+        $cat->parent = 0;
+        $DB->update_record('course_categories', $cat);
     }
+    $rs->close();
 
     // now add path and depth to top level categories
     $sql = "UPDATE {course_categories}
@@ -60,14 +59,13 @@ function upgrade_fix_category_depths() {
         $sql = "SELECT c.id, pc.path
                   FROM {course_categories} c, {course_categories} pc
                  WHERE c.parent=pc.id AND c.depth=0 AND pc.depth=?";
-        if ($rs = $DB->get_recordset_sql($sql, array($parentdepth))) {
-            foreach ($rs as $cat) {
-                $cat->depth = $parentdepth+1;
-                $cat->path  = $cat->path.'/'.$cat->id;
-                $DB->update_record('course_categories', $cat);
-            }
-            $rs->close();
+        $rs = $DB->get_recordset_sql($sql, array($parentdepth));
+        foreach ($rs as $cat) {
+            $cat->depth = $parentdepth+1;
+            $cat->path  = $cat->path.'/'.$cat->id;
+            $DB->update_record('course_categories', $cat);
         }
+        $rs->close();
         $parentdepth++;
         if ($parentdepth > 100) {
             //something must have gone wrong - nobody can have more than 100 levels of categories, right?
@@ -246,7 +244,10 @@ function upgrade_migrate_group_icons() {
         upgrade_set_timeout(60); /// Give upgrade at least 60 more seconds
         $pbar->update($i, $count, "Migrated group icons  $i/$count.");
 
-        $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+        if (!$context = get_context_instance(CONTEXT_COURSE, $group->courseid)) {
+            debugging('Invalid group record (id=' . $group->id . ') found.');
+            continue;
+        }
 
         if ($fs->file_exists($context->id, 'group', 'icon', $group->id, '/', 'f1.jpg')) {
             // already converted!
@@ -378,7 +379,9 @@ function upgrade_migrate_files_blog() {
 
     $count = $DB->count_records_select('post', "module='blog' AND attachment IS NOT NULL AND attachment <> '1'");
 
-    if ($rs = $DB->get_recordset_select('post', "module='blog' AND attachment IS NOT NULL AND attachment <> '1'")) {
+    $rs = $DB->get_recordset_select('post', "module='blog' AND attachment IS NOT NULL AND attachment <> '1'");
+
+    if ($rs->valid()) {
 
         upgrade_set_timeout(60*20); // set up timeout, may also abort execution
 
@@ -419,8 +422,8 @@ function upgrade_migrate_files_blog() {
             $DB->update_record('post', $entry);
             $pbar->update($i, $count, "Migrated blog attachments - $i/$count.");
         }
-        $rs->close();
     }
+    $rs->close();
 
     @rmdir("$CFG->dataroot/blog/attachments/");
     @rmdir("$CFG->dataroot/blog/");
@@ -539,13 +542,12 @@ function upgrade_fix_incorrect_mnethostids() {
 
     $params = array_merge($in_params, array($current_mnet_localhost_host->id));
 
-    if ($rs = $DB->get_recordset_sql($sql, $params)) {
-        foreach ($rs as $rec) {
-            $DB->set_field('user', 'mnethostid', $current_mnet_localhost_host->id, array('id' => $rec->id));
-            upgrade_set_timeout(60); /// Give upgrade at least 60 more seconds
-        }
-        $rs->close();
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $rec) {
+        $DB->set_field('user', 'mnethostid', $current_mnet_localhost_host->id, array('id' => $rec->id));
+        upgrade_set_timeout(60); /// Give upgrade at least 60 more seconds
     }
+    $rs->close();
 
     // fix up any host records that have incorrect ids
     $DB->set_field_select('mnet_host', 'applicationid', $moodleapplicationid, 'id = ? or id = ?', array($current_mnet_localhost_host->id, $current_mnet_all_hosts_host->id));

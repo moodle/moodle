@@ -9,6 +9,7 @@
  */
 
 require_once('../config.php');
+require_once($CFG->libdir . '/filelib.php');
 
 $courseid   = required_param('id', PARAM_INT);
 $groupid    = optional_param('group', 0, PARAM_INT);
@@ -79,26 +80,25 @@ $sql = "SELECT g.id AS groupid, gg.groupingid, u.id AS userid, u.firstname, u.la
          WHERE g.courseid = :courseid $groupwhere $groupingwhere
       ORDER BY g.name, u.lastname, u.firstname";
 
-if ($rs = $DB->get_recordset_sql($sql, $params)) {
-    foreach ($rs as $row) {
-        $user = new stdClass();
-        $user->id        = $row->userid;
-        $user->firstname = $row->firstname;
-        $user->lastname  = $row->lastname;
-        $user->username  = $row->username;
-        $user->idnumber  = $row->idnumber;
-        if (!$row->groupingid) {
-            $row->groupingid = -1;
-        }
-        if (!array_key_exists($row->groupid, $members[$row->groupingid])) {
-            $members[$row->groupingid][$row->groupid] = array();
-        }
-        if(isset($user->id)){
-           $members[$row->groupingid][$row->groupid][] = $user;
-        }
+$rs = $DB->get_recordset_sql($sql, $params);
+foreach ($rs as $row) {
+    $user = new stdClass();
+    $user->id        = $row->userid;
+    $user->firstname = $row->firstname;
+    $user->lastname  = $row->lastname;
+    $user->username  = $row->username;
+    $user->idnumber  = $row->idnumber;
+    if (!$row->groupingid) {
+        $row->groupingid = -1;
     }
-    $rs->close();
+    if (!array_key_exists($row->groupid, $members[$row->groupingid])) {
+        $members[$row->groupingid][$row->groupid] = array();
+    }
+    if(isset($user->id)){
+        $members[$row->groupingid][$row->groupid][] = $user;
+    }
 }
+$rs->close();
 
 navigation_node::override_active_url(new moodle_url('/group/index.php', array('id'=>$courseid)));
 $PAGE->navbar->add(get_string('overview', 'group'));
