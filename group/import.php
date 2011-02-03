@@ -41,13 +41,11 @@ require_capability('moodle/course:managegroups', $context);
 
 $strimportgroups = get_string('importgroups', 'core_group');
 
-/// Print the header
-$PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
-$PAGE->navbar->add(get_string('import'), new moodle_url('/course/import.php', array('id'=>$course->id)));
 $PAGE->navbar->add($strimportgroups);
-
+navigation_node::override_active_url(new moodle_url('/group/index.php', array('id' => $course->id)));
 $PAGE->set_title("$course->shortname: $strimportgroups");
 $PAGE->set_heading($course->fullname);
+$PAGE->set_pagelayout('standard');
 
 $returnurl = new moodle_url('/group/index.php', array('id'=>$id));
 
