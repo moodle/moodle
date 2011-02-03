@@ -134,9 +134,10 @@ abstract class question_bank {
      * Load a question definition from the database. The object returned
      * will actually be of an appropriate {@link question_definition} subclass.
      * @param integer $questionid the id of the question to load.
+     * @param boolean $allowshuffle if false, then any shuffle option on the selected quetsion is disabled.
      * @return question_definition loaded from the database.
      */
-    public static function load_question($questionid) {
+    public static function load_question($questionid, $allowshuffle = true) {
         global $DB;
 
         if (self::$testmode) {
@@ -146,6 +147,9 @@ abstract class question_bank {
 
         $questiondata = $DB->get_record('question', array('id' => $questionid), '*', MUST_EXIST);
         get_question_options($questiondata);
+        if (!$allowshuffle) {
+            $questiondata->options->shuffleanswers = false;
+        }
         return self::make_question($questiondata);
     }
 
