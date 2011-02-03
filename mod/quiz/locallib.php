@@ -1,27 +1,19 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas  http://dougiamas.com     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Library of functions used by the quiz module.
@@ -32,8 +24,10 @@
  * the module-indpendent code for handling questions and which in turn
  * initialises all the questiontype classes.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package quiz
+ * @package mod
+ * @subpackage quiz
+ * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (!defined('MOODLE_INTERNAL')) {
@@ -53,13 +47,13 @@ require_once($CFG->libdir . '/filelib.php');
 /// Constants ///////////////////////////////////////////////////////////////////
 
 /**#@+
- * Constants to describe the various states a quiz attempt can be in.
+ * Options determining how the grades from individual attempts are combined to give
+ * the overall grade for a user
  */
-define('QUIZ_STATE_DURING', 'during');
-define('QUIZ_STATE_IMMEDIATELY', 'immedately');
-define('QUIZ_STATE_OPEN', 'open');
-define('QUIZ_STATE_CLOSED', 'closed');
-define('QUIZ_STATE_TEACHERACCESS', 'teacheraccess'); // State only relevant if you are in a studenty role.
+define("QUIZ_GRADEHIGHEST", "1");
+define("QUIZ_GRADEAVERAGE", "2");
+define("QUIZ_ATTEMPTFIRST", "3");
+define("QUIZ_ATTEMPTLAST",  "4");
 /**#@-*/
 
 /**
@@ -109,11 +103,9 @@ function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $isp
     }
 
     $attempt->attempt = $attemptnumber;
-    $attempt->sumgrades = 0.0;
     $attempt->timestart = $timenow;
     $attempt->timefinish = 0;
     $attempt->timemodified = $timenow;
-    $attempt->uniqueid = question_new_attempt_uniqueid();
 
 /// If this is a preview, mark it as such.
     if ($ispreview) {
@@ -124,8 +116,8 @@ function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $isp
 }
 
 /**
- * Returns the unfinished attempt for the given
- * user on the given quiz, if there is one.
+ * Returns an unfinished attempt (if there is one) for the given
+ * user on the given quiz. This function does not return preview attempts.
  *
  * @param integer $quizid the id of the quiz.
  * @param integer $userid the id of the user.
@@ -152,8 +144,12 @@ function quiz_get_user_attempt_unfinished($quizid, $userid) {
  */
 function quiz_get_latest_attempt_by_user($quizid, $userid) {
     global $CFG, $DB;
-    $attempt = $DB->get_records_sql('SELECT qa.* FROM {quiz_attempts} qa
-            WHERE qa.quiz=? AND qa.userid= ? ORDER BY qa.timestart DESC, qa.id DESC', array($quizid, $userid), 0, 1);
+    $attempt = $DB->get_records_sql('
+            SELECT qa.*
+            FROM {quiz_attempts} qa
+            WHERE qa.quiz = ? AND qa.userid = ?
+            ORDER BY qa.timestart DESC, qa.id DESC',
+            array($quizid, $userid), 0, 1);
     if ($attempt) {
         return array_shift($attempt);
     } else {
@@ -175,11 +171,11 @@ function quiz_load_attempt($attemptid) {
         return false;
     }
 
-    // TODO kill this.
-    if (!$DB->record_exists('question_sessions', array('attemptid' => $attempt->uniqueid))) {
-    /// this attempt has not yet been upgraded to the new model
-        quiz_upgrade_states($attempt);
-    }
+    // TODO deal with the issue that makes this necessary.
+//    if (!$DB->record_exists('question_sessions', array('attemptid' => $attempt->uniqueid))) {
+//    /// this attempt has not yet been upgraded to the new model
+//        quiz_upgrade_states($attempt);
+//    }
 
     return $attempt;
 }
@@ -204,7 +200,7 @@ function quiz_delete_attempt($attempt, $quiz) {
     }
 
     $DB->delete_records('quiz_attempts', array('id' => $attempt->id));
-    delete_attempt($attempt->uniqueid);
+    question_engine::delete_questions_usage_by_activity($attempt->uniqueid);
 
     // Search quiz_attempts for other instances by this user.
     // If none, then delete record for this quiz, this user from quiz_grades
@@ -260,6 +256,7 @@ function quiz_has_attempts($quizid) {
  */
 function quiz_questions_on_page($layout, $page) {
     $pages = explode(',0', $layout);
+    // TODO is this still used.
     return trim($pages[$page], ',');
 }
 
@@ -273,10 +270,7 @@ function quiz_questions_on_page($layout, $page) {
  * @return string comma separated list of question ids, without page breaks.
  */
 function quiz_questions_in_quiz($layout) {
-    $layout = preg_replace('/,(0+,)+/', ',', $layout); // Remove page breaks from the middle.
-    $layout = preg_replace('/^0+,/', '', $layout); // And from the start.
-    $layout = preg_replace('/(^|,)0+$/', '', $layout); // And from the end.
-    return $layout;
+    return str_replace(',0', '', quiz_clean_layout($layout));
 }
 
 /**
@@ -286,16 +280,10 @@ function quiz_questions_in_quiz($layout) {
  * @return integer The number of pages in the quiz.
  */
 function quiz_number_of_pages($layout) {
-    $count = 0;
-    if ($layout !== '') {
-        //if the first page is empty, include it, too
-        if (strcmp($layout[0], '0') === 0) {
-            $count++;
-        }
-        $count += substr_count($layout, ',0');
-    }
-    return $count;
+    // TODO is this still used.
+    return substr_count($layout, ',0');
 }
+
 /**
  * Returns the number of questions in the quiz layout
  *
@@ -303,6 +291,7 @@ function quiz_number_of_pages($layout) {
  * @return integer The number of questions in the quiz.
  */
 function quiz_number_of_questions_in_quiz($layout) {
+    // TODO is this still used.
     $layout = quiz_questions_in_quiz(quiz_clean_layout($layout));
     $count = substr_count($layout, ',');
     if ($layout !== '') {
@@ -319,6 +308,7 @@ function quiz_number_of_questions_in_quiz($layout) {
  * @return integer the number of the first question
  */
 function quiz_first_questionnumber($quizlayout, $pagelayout) {
+    // TODO is this still used.
     // this works by finding all the questions from the quizlayout that
     // come before the current page and then adding up their lengths.
     global $CFG, $DB;
@@ -344,10 +334,6 @@ function quiz_first_questionnumber($quizlayout, $pagelayout) {
 function quiz_repaginate($layout, $perpage, $shuffle = false) {
     $layout = str_replace(',0', '', $layout); // remove existing page breaks
     $questions = explode(',', $layout);
-    //remove empty pages from beginning
-    while (reset($questions) == '0') {
-        array_shift($questions);
-    }
     if ($shuffle) {
         shuffle($questions);
     }
@@ -368,10 +354,10 @@ function quiz_repaginate($layout, $perpage, $shuffle = false) {
 
 /**
  * Creates an array of maximum grades for a quiz
- * The grades are extracted from the quiz_question_instances table.
  *
- * @param integer $quiz The quiz object
- * @return array Array of grades indexed by question id. These are the maximum
+ * The grades are extracted from the quiz_question_instances table.
+ * @param object $quiz The quiz settings.
+ * @return array of grades indexed by question id. These are the maximum
  *      possible grades that students can achieve for each of the questions.
  */
 function quiz_get_all_question_grades($quiz) {
@@ -408,44 +394,27 @@ function quiz_get_all_question_grades($quiz) {
 }
 
 /**
- * Update the sumgrades field of the quiz. This needs to be called whenever
- * the grading structure of the quiz is changed. For example if a question is
- * added or removed, or a question weight is changed.
- *
- * @param object $quiz a quiz.
- */
-function quiz_update_sumgrades($quiz) {
-    global $DB;
-    $grades = quiz_get_all_question_grades($quiz);
-    $sumgrades = 0;
-    foreach ($grades as $grade) {
-        $sumgrades += $grade;
-    }
-    if (!isset($quiz->sumgrades) || $quiz->sumgrades != $sumgrades) {
-        $DB->set_field('quiz', 'sumgrades', $sumgrades, array('id' => $quiz->id));
-        $quiz->sumgrades = $sumgrades;
-    }
-}
-
-/**
  * Convert the raw grade stored in $attempt into a grade out of the maximum
  * grade for this quiz.
  *
  * @param float $rawgrade the unadjusted grade, fof example $attempt->sumgrades
- * @param object $quiz the quiz object. Only the fields grade, sumgrades, decimalpoints and questiondecimalpoints are used.
- * @param mixed $round false = don't round, true = round using quiz_format_grade, 'question' = round using quiz_format_question_grade.
- * @return float the rescaled grade.
+ * @param object $quiz the quiz object. Only the fields grade, sumgrades and decimalpoints are used.
+ * @param boolean|string $format whether to format the results for display
+ *      or 'question' to format a question grade (different number of decimal places.
+ * @return float|string the rescaled grade, or null/the lang string 'notyetgraded' if the $grade is null.
  */
-function quiz_rescale_grade($rawgrade, $quiz, $round = true) {
-    if ($quiz->sumgrades != 0) {
+function quiz_rescale_grade($rawgrade, $quiz, $format = true) {
+    if (is_null($rawgrade)) {
+        $grade = null;
+    } else if ($quiz->sumgrades >= 0.000005) {
         $grade = $rawgrade * $quiz->grade / $quiz->sumgrades;
-        if ($round === 'question') { // === really necessary here true == 'question' is true in PHP!
-            $grade = quiz_format_question_grade($quiz, $grade);
-        } else if ($round) {
-            $grade = quiz_format_grade($quiz, $grade);
-        }
     } else {
         $grade = 0;
+    }
+    if ($format === 'question') {
+        $grade = quiz_format_question_grade($quiz, $grade);
+    } else if ($format) {
+        $grade = quiz_format_grade($quiz, $grade);
     }
     return $grade;
 }
@@ -460,6 +429,10 @@ function quiz_rescale_grade($rawgrade, $quiz, $round = true) {
  */
 function quiz_feedback_for_grade($grade, $quiz, $context, $cm=null) {
     global $DB;
+
+    if (is_null($grade)) {
+        return '';
+    }
 
     $feedback = $DB->get_record_select('quiz_feedback', "quizid = ? AND mingrade <= ? AND $grade < maxgrade", array($quiz->id, $grade));
 
@@ -493,15 +466,55 @@ function quiz_has_feedback($quiz) {
 }
 
 /**
+ * Update the sumgrades field of the quiz. This needs to be called whenever
+ * the grading structure of the quiz is changed. For example if a question is
+ * added or removed, or a question weight is changed.
+ *
+ * @param object $quiz a quiz.
+ */
+function quiz_update_sumgrades($quiz) {
+    global $DB;
+    $sql = 'UPDATE {quiz}
+            SET sumgrades = COALESCE((
+                SELECT SUM(grade)
+                FROM {quiz_question_instances}
+                WHERE quiz = {quiz}.id
+            ), 0)
+            WHERE id = ?';
+    $DB->execute_sql($sql, array($quiz->id));
+    $quiz->sumgrades = get_field('quiz', 'sumgrades', 'id', $quiz->id);
+    if ($quiz->sumgrades < 0.000005) {
+        quiz_set_grade(0, $quiz);
+    }
+}
+
+function quiz_update_all_attempt_sumgrades($quiz) {
+    global $DB;
+    $dm = new question_engine_data_mapper();
+    $timenow = time();
+
+    $sql = "UPDATE {quiz_attempts}
+            SET
+                timemodified = :timenow,
+                sumgrades = (
+                    {$dm->sum_usage_marks_subquery('uniqueid')}
+                )
+            WHERE quiz = :quizid AND timefinish <> 0";
+    $DB->execute($sql, array('timenow' => $timenow, 'quizid' => $quiz->id));
+}
+
+/**
  * The quiz grade is the score that student's results are marked out of. When it
  * changes, the corresponding data in quiz_grades and quiz_feedback needs to be
- * rescaled.
+ * rescaled. After calling this function, you probably need to call
+ * quiz_update_all_attempt_sumgrades, quiz_update_all_final_grades and
+ * quiz_update_grades.
  *
  * @param float $newgrade the new maximum grade for the quiz.
  * @param object $quiz the quiz we are updating. Passed by reference so its grade field can be updated too.
- * @return boolean indicating success or failure. TODO: MDL-20625
+ * @return boolean indicating success or failure.
  */
-function quiz_set_grade($newgrade, &$quiz) {
+function quiz_set_grade($newgrade, $quiz) {
     global $DB;
     // This is potentially expensive, so only do it if necessary.
     if (abs($quiz->grade - $newgrade) < 1e-7) {
@@ -547,7 +560,6 @@ function quiz_set_grade($newgrade, &$quiz) {
         return true;
 
     } catch (Exception $e) {
-        //TODO: MDL-20625 this part was returning false, but now throws exception
         $transaction->rollback($e);
     }
 }
@@ -572,10 +584,7 @@ function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
 
     if (!$attempts){
         // Get all the attempts made by the user
-        if (!$attempts = quiz_get_user_attempts($quiz->id, $userid)) {
-            echo $OUTPUT->notification('Could not find any user attempts');
-            return false;
-        }
+        $attempts = quiz_get_user_attempts($quiz->id, $userid);
     }
 
     // Calculate the best grade
@@ -583,10 +592,14 @@ function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
     $bestgrade = quiz_rescale_grade($bestgrade, $quiz, false);
 
     // Save the best grade in the database
-    if ($grade = $DB->get_record('quiz_grades', array('quiz' => $quiz->id, 'userid' => $userid))) {
+    if (is_null($bestgrade)) {
+        $DB->delete_records('quiz_grades', array('quiz' => $quiz->id, 'userid' => $userid));
+
+    } else if ($grade = $DB->get_record('quiz_grades', array('quiz' => $quiz->id, 'userid' => $userid))) {
         $grade->grade = $bestgrade;
         $grade->timemodified = time();
         $DB->update_record('quiz_grades', $grade);
+
     } else {
         $grade->quiz = $quiz->id;
         $grade->userid = $userid;
@@ -596,7 +609,6 @@ function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
     }
 
     quiz_update_grades($quiz, $userid);
-    return true;
 }
 
 /**
@@ -614,7 +626,7 @@ function quiz_calculate_best_grade($quiz, $attempts) {
             foreach ($attempts as $attempt) {
                 return $attempt->sumgrades;
             }
-            break;
+            return $final;
 
         case QUIZ_ATTEMPTLAST:
             foreach ($attempts as $attempt) {
@@ -626,20 +638,166 @@ function quiz_calculate_best_grade($quiz, $attempts) {
             $sum = 0;
             $count = 0;
             foreach ($attempts as $attempt) {
-                $sum += $attempt->sumgrades;
-                $count++;
+                if (!is_null($attempt->sumgrades)) {
+                    $sum += $attempt->sumgrades;
+                    $count++;
+                }
             }
-            return (float)$sum/$count;
+            if ($count == 0) {
+                return null;
+            }
+            return $sum / $count;
 
         default:
         case QUIZ_GRADEHIGHEST:
-            $max = 0;
+            $max = null;
             foreach ($attempts as $attempt) {
                 if ($attempt->sumgrades > $max) {
                     $max = $attempt->sumgrades;
                 }
             }
             return $max;
+    }
+}
+
+/**
+ * Update the final grade at this quiz for all students.
+ *
+ * This function is equivalent to calling quiz_save_best_grade for all
+ * users, but much more efficient.
+ *
+ * @param object $quiz the quiz settings.
+ */
+function quiz_update_all_final_grades($quiz) {
+    global $DB;
+
+    if (!$quiz->sumgrades) {
+        return;
+    }
+
+    $param = array('iquizid' => $quiz->id);
+    $firstlastattemptjoin = "JOIN (
+            SELECT
+                iquiza.userid,
+                MIN(attempt) AS firstattempt,
+                MAX(attempt) AS lastattempt
+
+            FROM {quiz_attempts iquiza}
+
+            WHERE
+                iquiza.timefinish <> 0 AND
+                iquiza.preview = 0 AND
+                iquiza.quiz = :iquizid
+
+            GROUP BY iquiza.userid
+        ) first_last_attempts ON first_last_attempts.userid = quiza.userid";
+
+    switch ($quiz->grademethod) {
+        case QUIZ_ATTEMPTFIRST:
+            // Becuase of the where clause, there will only be one row, but we
+            // must still use an aggregate function.
+            $select = 'MAX(quiza.sumgrades)';
+            $join = $firstlastattemptjoin;
+            $where = 'quiza.attempt = first_last_attempts.firstattempt AND';
+            break;
+
+        case QUIZ_ATTEMPTLAST:
+            // Becuase of the where clause, there will only be one row, but we
+            // must still use an aggregate function.
+            $select = 'MAX(quiza.sumgrades)';
+            $join = $firstlastattemptjoin;
+            $where = 'quiza.attempt = first_last_attempts.lastattempt AND';
+            break;
+
+        case QUIZ_GRADEAVERAGE:
+            $select = 'AVG(quiza.sumgrades)';
+            $join = '';
+            $where = '';
+            break;
+
+        default:
+        case QUIZ_GRADEHIGHEST:
+            $select = 'MAX(quiza.sumgrades)';
+            $join = '';
+            $where = '';
+            break;
+    }
+
+    if ($quiz->sumgrades >= 0.000005) {
+        $finalgrade = $select . ' * ' . ($quiz->grade / $quiz->sumgrades);
+    } else {
+        $finalgrade = '0';
+    }
+    $param['quizid'] = $quiz->id;
+    $param['quizid2'] = $quiz->id;
+    $param['quizid3'] = $quiz->id;
+    $param['quizid4'] = $quiz->id;
+    $finalgradesubquery = "
+            SELECT quiza.userid, $finalgrade AS newgrade
+            FROM {quiz_attempts} quiza
+            $join
+            WHERE
+                $where
+                quiza.timefinish <> 0 AND
+                quiza.preview = 0 AND
+                quiza.quiz = :quizid3
+            GROUP BY quiza.userid";
+
+    $changedgrades = $DB->get_records_sql("
+            SELECT users.userid, qg.id, qg.grade, newgrades.newgrade
+
+            FROM (
+                SELECT userid
+                FROM {quiz_grades} qg
+                WHERE quiz = :quizid
+            UNION
+                SELECT DISTINCT userid
+                FROM {quiz_attempts} quiza2
+                WHERE
+                    quiza2.timefinish <> 0 AND
+                    quiza2.preview = 0 AND
+                    quiza2.quiz = :quizid2
+            ) users
+
+            LEFT JOIN {quiz_grades} qg ON qg.userid = users.userid AND qg.quiz = :quizid4
+
+            LEFT JOIN (
+                $finalgradesubquery
+            ) newgrades ON newgrades.userid = users.userid
+
+            WHERE
+                ABS(newgrades.newgrade - qg.grade) > 0.000005 OR
+                (newgrades.newgrade IS NULL) <> (qg.grade IS NULL)",
+            $params);
+
+    $timenow = time();
+    $todelete = array();
+    foreach ($changedgrades as $changedgrade) {
+
+        if (is_null($changedgrade->newgrade)) {
+            $todelete[] = $changedgrade->userid;
+
+        } else if (is_null($changedgrade->grade)) {
+            $toinsert = new stdClass;
+            $toinsert->quiz = $quiz->id;
+            $toinsert->userid = $changedgrade->userid;
+            $toinsert->timemodified = $timenow;
+            $toinsert->grade = $changedgrade->newgrade;
+            $DB->insert_record('quiz_grades', $toinsert);
+
+        } else {
+            $toupdate = new stdClass;
+            $toupdate->id = $changedgrade->id;
+            $toupdate->grade = $changedgrade->newgrade;
+            $toupdate->timemodified = $timenow;
+            $DB->update_record('quiz_grades', $toupdate);
+        }
+    }
+
+    if (!empty($todelete)) {
+        list($test, $params) = $DB->get_in_or_equals($todelete);
+        $DB->delete_records_select('quiz_grades',
+                'quiz = ? AND userid ', array($quiz->id) + $params);
     }
 }
 
@@ -683,6 +841,18 @@ function quiz_calculate_best_attempt($quiz, $attempts) {
 }
 
 /**
+ * @return the options for calculating the quiz grade from the individual attempt grades.
+ */
+function quiz_get_grading_options() {
+    return array(
+        QUIZ_GRADEHIGHEST => get_string('gradehighest', 'quiz'),
+        QUIZ_GRADEAVERAGE => get_string('gradeaverage', 'quiz'),
+        QUIZ_ATTEMPTFIRST => get_string('attemptfirst', 'quiz'),
+        QUIZ_ATTEMPTLAST  => get_string('attemptlast', 'quiz')
+    );
+}
+
+/**
  * @param int $option one of the values QUIZ_GRADEHIGHEST, QUIZ_GRADEAVERAGE, QUIZ_ATTEMPTFIRST or QUIZ_ATTEMPTLAST.
  * @return the lang string for that option.
  */
@@ -692,18 +862,6 @@ function quiz_get_grading_option_name($option) {
 }
 
 /// Other quiz functions ////////////////////////////////////////////////////
-
-/**
- * Parse field names used for the replace options on question edit forms
- */
-function quiz_parse_fieldname($name, $nameprefix='question') {
-    $reg = array();
-    if (preg_match("/$nameprefix(\\d+)(\w+)/", $name, $reg)) {
-        return array('mode' => $reg[2], 'id' => (int)$reg[1]);
-    } else {
-        return false;
-    }
-}
 
 /**
  * Upgrade states for an attempt to Moodle 1.5 model
@@ -716,7 +874,6 @@ function quiz_parse_fieldname($name, $nameprefix='question') {
  */
 function quiz_upgrade_states($attempt) {
     global $DB;
-    global $CFG;
     // The old quiz model only allowed a single response per quiz attempt so that there will be
     // only one state record per question for this attempt.
 
@@ -803,7 +960,7 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
 /**
  * @param object $quiz the quiz
  * @param object $question the question
- * @param boolean $label if true, show the previewquestion label after the icon
+ * @param boolean $label if true, show the preview question label after the icon
  * @return the HTML for a preview question icon.
  */
 function quiz_question_preview_button($quiz, $question, $label = false) {
@@ -812,28 +969,27 @@ function quiz_question_preview_button($quiz, $question, $label = false) {
         return '';
     }
 
-    // Minor efficiency saving. Only get strings once, even if there are a lot of icons on one page.
-    static $strpreview = null;
-    static $strpreviewquestion = null;
-    if ($strpreview === null){
-        $strpreview = get_string('preview', 'quiz');
-        $strpreviewquestion = get_string('previewquestion', 'quiz');
-    }
+    // Get the appropriate display options.
+    $displayoptions = mod_quiz_display_options::make_from_quiz($quiz,
+            mod_quiz_display_options::DURING);
+
+    // Work out the correcte preview URL.
+    $url = question_preview_url($question->id, $quiz->preferredbehaviour,
+            $question->maxmark, $displayoptions);
 
     // Do we want a label?
-    $strpreviewlabel="";
+    $strpreviewlabel = '';
     if ($label) {
-        $strpreviewlabel = $strpreview;
+        $strpreviewlabel = get_string('preview', 'quiz');
     }
 
     // Build the icon.
     $image = $OUTPUT->pix_icon('t/preview', $strpreviewquestion);
 
-    $link = new moodle_url($CFG->wwwroot."/question/preview.php?id=$question->id&quizid=$quiz->id");
     parse_str(QUESTION_PREVIEW_POPUP_OPTIONS, $options);
-    $action = new popup_action('click', $link, 'questionpreview', $options);
+    $action = new popup_action('click', $url, 'questionpreview', $options);
 
-    return $OUTPUT->action_link($link, $image, $action, array('title' => $strpreviewquestion));
+    return $OUTPUT->action_link($url, $image, $action, array('title' => $strpreviewquestion));
 }
 
 /**
@@ -843,120 +999,72 @@ function quiz_question_preview_button($quiz, $question, $label = false) {
  */
 function quiz_get_flag_option($attempt, $context) {
     global $USER;
-    static $flagmode = null;
-    if (is_null($flagmode)) {
-        if (!has_capability('moodle/question:flag', $context)) {
-            $flagmode = QUESTION_FLAGSHIDDEN;
-        } else if ($attempt->userid == $USER->id) {
-            $flagmode = QUESTION_FLAGSEDITABLE;
-        } else {
-            $flagmode = QUESTION_FLAGSSHOWN;
-        }
+    if (!has_capability('moodle/question:flag', $context)) {
+        return question_display_options::HIDDEN;
+    } else if ($attempt->userid == $USER->id) {
+        return question_display_options::EDITABLE;
+    } else {
+        return question_display_options::VISIBLE;
     }
-    return $flagmode;
 }
 
 /**
- * Determine render options
- *
- * @param int $reviewoptions
- * @param object $state
+ * Work out what state this quiz attempt is in.
+ * @param object $quiz the quiz settings
+ * @param object $attempt the quiz_attempt database row.
+ * @return integer one of the mod_quiz_display_options::DURING,
+ *      IMMEDIATELY_AFTER, LATER_WHILE_OPEN or AFTER_CLOSE constants.
  */
-function quiz_get_renderoptions($quiz, $attempt, $context, $state) {
-    $reviewoptions = $quiz->review;
-    $options = new stdClass;
-
-    $options->flags = quiz_get_flag_option($attempt, $context);
-
-    // Show the question in readonly (review) mode if the question is in
-    // the closed state
-    $options->readonly = question_state_is_closed($state);
-
-    // Show feedback once the question has been graded (if allowed by the quiz)
-    $options->feedback = question_state_is_graded($state) && ($reviewoptions & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
-
-    // Show correct responses in readonly mode if the quiz allows it
-    $options->correct_responses = $options->readonly && ($reviewoptions & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
-
-    // Show general feedback if the question has been graded and the quiz allows it.
-    $options->generalfeedback = question_state_is_graded($state) && ($reviewoptions & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
-
-    // Show overallfeedback once the attempt is over.
-    $options->overallfeedback = false;
-
-    // Always show responses and scores
-    $options->responses = true;
-    $options->scores = true;
-    $options->quizstate = QUIZ_STATE_DURING;
-    $options->history = false;
-
-    return $options;
+function quiz_attempt_state($quiz, $attempt) {
+    if ($attempt->timefinish == 0) {
+        return mod_quiz_display_options::DURING;
+    } else if (time() < $attempt->timefinish + 120) {
+        return mod_quiz_display_options::IMMEDIATELY_AFTER;
+    } else if (!$quiz->timeclose || time() < $quiz->timeclose) {
+        return mod_quiz_display_options::LATER_WHILE_OPEN;
+    } else {
+        return mod_quiz_display_options::AFTER_CLOSE;
+    }
 }
 
 /**
- * Determine review options
+ * The the appropraite mod_quiz_display_options object for this attempt at this
+ * quiz right now.
  *
  * @param object $quiz the quiz instance.
  * @param object $attempt the attempt in question.
- * @param $context the quiz module context.
+ * @param $context the quiz context.
  *
- * @return object an object with boolean fields responses, scores, feedback,
- *          correct_responses, solutions and general feedback
+ * @return mod_quiz_display_options
  */
 function quiz_get_reviewoptions($quiz, $attempt, $context) {
-    global $USER;
+    $options = mod_quiz_display_options::make_from_quiz($quiz, quiz_attempt_state($quiz, $attempt));
 
-    $options = new stdClass;
     $options->readonly = true;
-
     $options->flags = quiz_get_flag_option($attempt, $context);
-
-    // Provide the links to the question review and comment script
-    if (!empty($attempt->id)) {
-        $options->questionreviewlink = '/mod/quiz/reviewquestion.php?attempt=' . $attempt->id;
-    }
+    $options->questionreviewlink = '/mod/quiz/reviewquestion.php?attempt=' . $attempt->id;
 
     // Show a link to the comment box only for closed attempts
-    if ($attempt->timefinish && has_capability('mod/quiz:grade', $context)) {
-        $options->questioncommentlink = new moodle_url('/mod/quiz/comment.php', array('attempt' => $attempt->id));
+    if ($attempt->timefinish && !$attempt->preview && !is_null($context) &&
+            has_capability('mod/quiz:grade', $context)) {
+        $options->manualcomment = question_display_options::VISIBLE;
+        $options->manualcommentlink = '/mod/quiz/comment.php?attempt=' . $attempt->id;
     }
 
-    // Whether to display a response history.
-    $canviewreports = has_capability('mod/quiz:viewreports', $context);
-    $options->history = ($canviewreports && !$attempt->preview) ? 'all' : 'graded';
-
-    if ($canviewreports && has_capability('moodle/grade:viewhidden', $context) && !$attempt->preview) {
+    if (!is_null($context) && !$attempt->preview && has_capability('mod/quiz:viewreports', $context) &&
+            has_capability('moodle/grade:viewhidden', $context)) {
         // People who can see reports and hidden grades should be shown everything,
         // except during preview when teachers want to see what students see.
-        $options->responses = true;
-        $options->scores = true;
-        $options->feedback = true;
-        $options->correct_responses = true;
-        $options->solutions = false;
-        $options->generalfeedback = true;
-        $options->overallfeedback = true;
-        $options->quizstate = QUIZ_STATE_TEACHERACCESS;
-    } else {
-        // Work out the state of the attempt ...
-        if (((time() - $attempt->timefinish) < 120) || $attempt->timefinish==0) {
-            $quiz_state_mask = QUIZ_REVIEW_IMMEDIATELY;
-            $options->quizstate = QUIZ_STATE_IMMEDIATELY;
-        } else if (!$quiz->timeclose or time() < $quiz->timeclose) {
-            $quiz_state_mask = QUIZ_REVIEW_OPEN;
-            $options->quizstate = QUIZ_STATE_OPEN;
-        } else {
-            $quiz_state_mask = QUIZ_REVIEW_CLOSED;
-            $options->quizstate = QUIZ_STATE_CLOSED;
-        }
+        $options->attempt = question_display_options::VISIBLE;
+        $options->correctness = question_display_options::VISIBLE;
+        $options->marks = question_display_options::MARK_AND_MAX;
+        $options->feedback = question_display_options::VISIBLE;
+        $options->numpartscorrect = question_display_options::VISIBLE;
+        $options->generalfeedback = question_display_options::VISIBLE;
+        $options->rightanswer = question_display_options::VISIBLE;
+        $options->overallfeedback = question_display_options::VISIBLE;
+        $options->history = question_display_options::VISIBLE;
 
-        // ... and hence extract the appropriate review options.
-        $options->responses = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_RESPONSES) ? 1 : 0;
-        $options->scores = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_SCORES) ? 1 : 0;
-        $options->feedback = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_FEEDBACK) ? 1 : 0;
-        $options->correct_responses = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_ANSWERS) ? 1 : 0;
-        $options->solutions = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_SOLUTIONS) ? 1 : 0;
-        $options->generalfeedback = ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_GENERALFEEDBACK) ? 1 : 0;
-        $options->overallfeedback = $attempt->timefinish && ($quiz->review & $quiz_state_mask & QUIZ_REVIEW_OVERALLFEEDBACK);
     }
 
     return $options;
@@ -964,7 +1072,7 @@ function quiz_get_reviewoptions($quiz, $attempt, $context) {
 
 /**
  * Combines the review options from a number of different quiz attempts.
- * Returns an array of two ojects, so he suggested way of calling this
+ * Returns an array of two ojects, so the suggested way of calling this
  * funciton is:
  * list($someoptions, $alloptions) = quiz_get_combined_reviewoptions(...)
  *
@@ -977,8 +1085,8 @@ function quiz_get_reviewoptions($quiz, $attempt, $context) {
  *          at least one of the attempts, the other showing which options are true
  *          for all attempts.
  */
-function quiz_get_combined_reviewoptions($quiz, $attempts, $context) {
-    $fields = array('readonly', 'scores', 'feedback', 'correct_responses', 'solutions', 'generalfeedback', 'overallfeedback');
+function quiz_get_combined_reviewoptions($quiz, $attempts) {
+    $fields = array('marks', 'feedback', 'generalfeedback', 'rightanswer', 'overallfeedback');
     $someoptions = new stdClass;
     $alloptions = new stdClass;
     foreach ($fields as $field) {
@@ -986,13 +1094,81 @@ function quiz_get_combined_reviewoptions($quiz, $attempts, $context) {
         $alloptions->$field = true;
     }
     foreach ($attempts as $attempt) {
-        $attemptoptions = quiz_get_reviewoptions($quiz, $attempt, $context);
+        $attemptoptions = mod_quiz_display_options::make_from_quiz($quiz,
+                quiz_attempt_state($quiz, $attempt));
         foreach ($fields as $field) {
             $someoptions->$field = $someoptions->$field || $attemptoptions->$field;
             $alloptions->$field = $alloptions->$field && $attemptoptions->$field;
         }
     }
     return array($someoptions, $alloptions);
+}
+
+/**
+ * Clean the question layout from various possible anomalies:
+ * - Remove consecutive ","'s
+ * - Remove duplicate question id's
+ * - Remove extra "," from beginning and end
+ * - Finally, add a ",0" in the end if there is none
+ *
+ * @param $string $layout the quiz layout to clean up, usually from $quiz->questions.
+ * @param boolean $removeemptypages If true, remove empty pages from the quiz. False by default.
+ * @return $string the cleaned-up layout
+ */
+function quiz_clean_layout($layout, $removeemptypages = false) {
+    // Remove repeated ','s. This can happen when a restore fails to find the right
+    // id to relink to.
+    $layout = preg_replace('/,{2,}/', ',', trim($layout, ','));
+
+    // Remove duplicate question ids
+    $layout = explode(',', $layout);
+    $cleanerlayout = array();
+    $seen = array();
+    foreach ($layout as $item) {
+        if ($item == 0) {
+            $cleanerlayout[] = '0';
+        } else if (!in_array($item, $seen)) {
+            $cleanerlayout[] = $item;
+            $seen[] = $item;
+        }
+    }
+
+    if ($removeemptypages) {
+        // Avoid duplicate page breaks
+        $layout = $cleanerlayout;
+        $cleanerlayout = array();
+        $stripfollowingbreaks = true; // Ensure breaks are stripped from the start.
+        foreach ($layout as $item) {
+            if ($stripfollowingbreaks && $item == 0) {
+                continue;
+            }
+            $cleanerlayout[] = $item;
+            $stripfollowingbreaks = $item == 0;
+        }
+    }
+
+    // Add a page break at the end if there is none
+    if (end($cleanerlayout) !== '0') {
+        $cleanerlayout[] = '0';
+    }
+
+    return implode(',', $cleanerlayout);
+}
+
+/**
+ * Get the slot for a question with a particular id.
+ * @param object $quiz the quiz settings.
+ * @param integer $questionid the of a question in the quiz.
+ * @return integer the corresponding slot. Null if the question is not in the quiz.
+ */
+function quiz_get_slot_for_question($quiz, $questionid) {
+    $questionids = quiz_questions_in_quiz($quiz->questions);
+    foreach (explode(',', $questionids) as $key => $id) {
+        if ($id == $questionid) {
+            return $key + 1;
+        }
+    }
+    return null;
 }
 
 /// FUNCTIONS FOR SENDING NOTIFICATION EMAILS ///////////////////////////////
@@ -1052,7 +1228,6 @@ function quiz_send_notification($recipient, $a) {
     // recipient info for template
     $a->username = fullname($recipient);
     $a->userusername = $recipient->username;
-    //$a->userusername = $recipient->username;
 
     // fetch the subject and body from strings
     $subject = get_string('emailnotifysubject', 'quiz', $a);
@@ -1189,74 +1364,10 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
 }
 
 /**
- * Clean the question layout from various possible anomalies:
- * - Remove consecutive ","'s
- * - Remove duplicate question id's
- * - Remove extra "," from beginning and end
- * - Finally, add a ",0" in the end if there is none
- *
- * @param $string $layout the quiz layout to clean up, usually from $quiz->questions.
- * @param boolean $removeemptypages If true, remove empty pages from the quiz. False by default.
- * @return $string the cleaned-up layout
- */
-function quiz_clean_layout($layout, $removeemptypages = false){
-    // Remove duplicate "," (or triple, or...)
-    $layout = preg_replace('/,{2,}/', ',', trim($layout, ','));
-
-    // Remove duplicate question ids
-    $layout = explode(',', $layout);
-    $cleanerlayout = array();
-    $seen = array();
-    foreach ($layout as $item) {
-        if ($item == 0) {
-            $cleanerlayout[] = '0';
-        } else if (!in_array($item, $seen)) {
-            $cleanerlayout[] = $item;
-            $seen[] = $item;
-        }
-    }
-
-    if ($removeemptypages) {
-        // Avoid duplicate page breaks
-        $layout = $cleanerlayout;
-        $cleanerlayout = array();
-        $stripfollowingbreaks = true; // Ensure breaks are stripped from the start.
-        foreach ($layout as $item) {
-            if ($stripfollowingbreaks && $item == 0) {
-                continue;
-            }
-            $cleanerlayout[] = $item;
-            $stripfollowingbreaks = $item == 0;
-        }
-    }
-
-    // Add a page break at the end if there is none
-    if (end($cleanerlayout) !== '0') {
-        $cleanerlayout[] = '0';
-    }
-
-    return implode(',', $cleanerlayout);
-}
-/**
- * Print a quiz error message. This is a thin wrapper around print_error, for convinience.
- *
- * @param mixed $quiz either the quiz object, or the interger quiz id.
- * @param string $errorcode the name of the string from quiz.php to print.
- * @param object $a any extra data required by the error string.
- */
-function quiz_error($quiz, $errorcode, $a = null) {
-    global $CFG;
-    if (is_object($quiz)) {
-        $quiz = $quiz->id;
-    }
-    print_error($errorcode, 'quiz', $CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz, $a);
-}
-
-/**
  * Checks if browser is safe browser
  *
  * @return true, if browser is safe browser else false
-*/
+ */
 function quiz_check_safe_browser() {
     return strpos($_SERVER['HTTP_USER_AGENT'], "SEB") !== false;
 }
@@ -1273,4 +1384,101 @@ function quiz_get_js_module() {
             array('flagged', 'question'),
         ),
     );
+}
+
+
+/**
+ * An extension of question_display_options that includes the extra options used
+ * by the quiz.
+ *
+ * @copyright 2010 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class mod_quiz_display_options extends question_display_options {
+    /**#@+
+     * @var integer bits used to indicate various times in relation to a
+     * quiz attempt.
+     */
+    const DURING =            0x10000;
+    const IMMEDIATELY_AFTER = 0x01000;
+    const LATER_WHILE_OPEN =  0x00100;
+    const AFTER_CLOSE =       0x00010;
+    /**#@-*/
+
+    /**
+     * @var boolean if this is false, then the student is not allowed to review
+     * anything about the attempt.
+     */
+    public $attempt = true;
+
+    /**
+     * @var boolean if this is false, then the student is not allowed to review
+     * anything about the attempt.
+     */
+    public $overallfeedback = self::VISIBLE;
+
+    /**
+     * Set up the various options from the quiz settings, and a time constant.
+     * @param stdClass $quiz the quiz settings.
+     * @param integer $one of the {@link DURING}, {@link IMMEDIATELY_AFTER},
+     * {@link LATER_WHILE_OPEN} or {@link AFTER_CLOSE} constants.
+     * @return mod_quiz_display_options set up appropriately.
+     */
+    public static function make_from_quiz($quiz, $when) {
+        $options = new self();
+
+        $options->attempt = self::extract($quiz->reviewattempt, $when, true, false);
+        $options->correctness = self::extract($quiz->reviewcorrectness, $when);
+        $options->marks = self::extract($quiz->reviewmarks, $when, self::MARK_AND_MAX);
+        $options->feedback = self::extract($quiz->reviewspecificfeedback, $when);
+        $options->generalfeedback = self::extract($quiz->reviewgeneralfeedback, $when);
+        $options->rightanswer = self::extract($quiz->reviewrightanswer, $when);
+        $options->overallfeedback = self::extract($quiz->reviewoverallfeedback, $when);
+
+        $options->numpartscorrect = $options->feedback;
+
+        if ($quiz->questiondecimalpoints != -1) {
+            $options->markdp = $quiz->questiondecimalpoints;
+        } else {
+            $options->markdp = $quiz->decimalpoints;
+        }
+
+        return $options;
+    }
+
+    protected static function extract($bitmask, $bit, $whenset = self::VISIBLE, $whennotset = self::HIDDEN) {
+        if ($bitmask & $bit) {
+            return $whenset;
+        } else {
+            return $whennotset;
+        }
+    }
+}
+
+
+/**
+ * A {@link qubaid_condition} for finding all the question usages belonging to
+ * a particular quiz.
+ *
+ * @copyright 2010 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class quibaid_for_quiz extends qubaid_join {
+    public function __construct($quizid, $includepreviews = true, $onlyfinished = false) {
+        global $CFG;
+
+        $from = $CFG->prefix . 'quiz_attempts quiza';
+
+        $where = 'quiza.quiz = ' . $quizid;
+
+        if (!$includepreviews) {
+            $where .= ' AND preview = 0';
+        }
+
+        if ($onlyfinished) {
+            $where .= ' AND timefinish <> 0';
+        }
+
+        parent::__construct($from, 'quiza.uniqueid', $where);
+    }
 }

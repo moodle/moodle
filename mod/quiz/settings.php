@@ -10,6 +10,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
+require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/mod/quiz/settingslib.php');
 
 // First get a list of quiz reports with there own settings pages. If there none,
@@ -100,10 +101,11 @@ $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/attempto
         get_string('eachattemptbuildsonthelast', 'quiz'), get_string('configeachattemptbuildsonthelast', 'quiz'),
         array('value' => 0, 'adv' => true)));
 
-// Review options.
-$quizsettings->add(new admin_setting_quiz_reviewoptions('quiz/review',
-        get_string('reviewoptions', 'quiz'), get_string('configreviewoptions', 'quiz'),
-        array('value' => QUIZ_REVIEW_IMMEDIATELY | QUIZ_REVIEW_OPEN | QUIZ_REVIEW_CLOSED, 'fix' => false)));
+//// Review options.
+// TODO
+//$quizsettings->add(new admin_setting_quiz_reviewoptions('quiz/review',
+//        get_string('reviewoptions', 'quiz'), get_string('configreviewoptions', 'quiz'),
+//        array('value' => QUIZ_REVIEW_IMMEDIATELY | QUIZ_REVIEW_OPEN | QUIZ_REVIEW_CLOSED, 'fix' => false)));
 
 // Show the user's picture
 $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/showuserpicture',

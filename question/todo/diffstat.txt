@@ -83,9 +83,9 @@ DONE mod/quiz/defaults.php                              |   12 +-
  mod/quiz/editlib.php                               |   79 +-
  mod/quiz/index.php                                 |    6 +-
  mod/quiz/jstimer.php                               |   58 -
- mod/quiz/lib.php                                   |  454 ++--
- mod/quiz/locallib.php                              |  848 +++++--
- mod/quiz/mod_form.php                              |  475 ++--
+DONE mod/quiz/lib.php                                   |  454 ++--
+DONE mod/quiz/locallib.php                              |  848 +++++--
+DONE mod/quiz/mod_form.php                              |  475 ++--
  mod/quiz/pix/de.gif                                |  Bin 117 -> 0 bytes
  mod/quiz/pix/ma.gif                                |  Bin 201 -> 0 bytes
  mod/quiz/pix/mc.gif                                |  Bin 214 -> 0 bytes
