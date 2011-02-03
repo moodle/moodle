@@ -137,10 +137,16 @@ class qbehaviour_opaque extends question_behaviour {
             return question_attempt::DISCARD;
         }
 
-        // They tried to finish the usage without having finished this question.
-        // That is, they gave up.
-        $pendingstep->set_state(question_state::$gaveup);
-        return question_attempt::KEEP;
+        // Try to get the question to stop.
+        $result = $this->process_remote_action($pendingstep);
+
+        if ($result == question_attempt::KEEP && !$this->qa->get_state()->is_finished()) {
+            // They tried to finish but the question is not finished, so all we
+            // can do is to set the state to gave up. This lets the renderer
+            // handle the review page appropriately.
+            $pendingstep->set_state(question_state::$gaveup);
+        }
+        return $result;
     }
 
     public function process_remote_action(question_attempt_pending_step $pendingstep) {
