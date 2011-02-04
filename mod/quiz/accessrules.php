@@ -1,7 +1,35 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Sets up the tabs used by the quiz pages based on the users capabilites.
+ *
+ * @package mod
+ * @subpackage quiz
+ * @copyright 2009 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 /**
  * This class keeps track of the various access rules that apply to a particular
  * quiz, with convinient methods for seeing whether access is allowed.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_access_manager {
     private $_quizobj;
@@ -349,8 +377,12 @@ class quiz_access_manager {
         if (!$attempt->timefinish) {
             return '';
         }
-        if (!$reviewoptions->responses) {
-            $message = $this->cannot_review_message($reviewoptions, true);
+
+        $when = quiz_attempt_state($this->_quizobj->get_quiz(), $attempt);
+        $reviewoptions = mod_quiz_display_options::make_from_quiz($this->_quizobj->get_quiz(), $when);
+
+        if (!$reviewoptions->attempt) {
+            $message = $this->cannot_review_message($when, true);
             if ($message) {
                 return '<span class="noreviewmessage">' . $message . '</span>';
             } else {
@@ -370,14 +402,15 @@ class quiz_access_manager {
     }
 
     /**
-     * If $reviewoptions->responses is false, meaning that students can't review this
+     * If $reviewoptions->attempt is false, meaning that students can't review this
      * attempt at the moment, return an appropriate string explaining why.
      *
-     * @param object $reviewoptions as obtained from quiz_get_reviewoptions.
+     * @param integer $when One of the mod_quiz_display_options::DURING,
+     *      IMMEDIATELY_AFTER, LATER_WHILE_OPEN or AFTER_CLOSE constants.
      * @param boolean $short if true, return a shorter string.
      * @return string an appropraite message.
      */
-    public function cannot_review_message($reviewoptions, $short = false) {
+    public function cannot_review_message($when, $short = false) {
         $quiz = $this->_quizobj->get_quiz();
         if ($short) {
             $langstrsuffix = 'short';
@@ -386,10 +419,10 @@ class quiz_access_manager {
             $langstrsuffix = '';
             $dateformat = '';
         }
-        if ($reviewoptions->quizstate == QUIZ_STATE_IMMEDIATELY) {
+        if ($when == mod_quiz_display_options::DURING || $when == mod_quiz_display_options::IMMEDIATELY_AFTER) {
             return '';
-        } else if ($reviewoptions->quizstate == QUIZ_STATE_OPEN && $quiz->timeclose &&
-                    ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES)) {
+        } else if ($when == mod_quiz_display_options::LATER_WHILE_OPEN &&
+                $quiz->timeclose && $quiz->reviewattempt & mod_quiz_display_options::AFTER_CLOSE) {
             return get_string('noreviewuntil' . $langstrsuffix, 'quiz', userdate($quiz->timeclose, $dateformat));
         } else {
             return get_string('noreview' . $langstrsuffix, 'quiz');
@@ -405,6 +438,9 @@ class quiz_access_manager {
  * return false if access is permitted, or a string explanation (which is treated
  * as true) if access should be blocked. Slighly unnatural, but acutally the easist
  * way to implement this.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class quiz_access_rule_base {
     protected $_quiz;
@@ -474,6 +510,9 @@ abstract class quiz_access_rule_base {
 
 /**
  * A rule controlling the number of attempts allowed.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class num_attempts_access_rule extends quiz_access_rule_base {
     public function description() {
@@ -492,6 +531,9 @@ class num_attempts_access_rule extends quiz_access_rule_base {
 
 /**
  * A rule enforcing open and close dates.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class open_close_date_access_rule extends quiz_access_rule_base {
     public function description() {
@@ -541,6 +583,9 @@ class open_close_date_access_rule extends quiz_access_rule_base {
 
 /**
  * A rule imposing the delay between attemtps settings.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class inter_attempt_delay_access_rule extends quiz_access_rule_base {
     public function prevent_new_attempt($numprevattempts, $lastattempt) {
@@ -598,6 +643,9 @@ class inter_attempt_delay_access_rule extends quiz_access_rule_base {
 
 /**
  * A rule implementing the ipaddress check against the ->submet setting.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class ipaddress_access_rule extends quiz_access_rule_base {
     public function prevent_access() {
@@ -612,6 +660,9 @@ class ipaddress_access_rule extends quiz_access_rule_base {
 /**
  * A rule representing the password check. It does not actually implement the check,
  * that has to be done directly in attempt.php, but this facilitates telling users about it.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class password_access_rule extends quiz_access_rule_base {
     public function description() {
@@ -632,6 +683,7 @@ class password_access_rule extends quiz_access_rule_base {
      *
      * @param boolean $canpreview used to enfore securewindow stuff.
      * @param object $accessmanager the accessmanager calling us.
+     * @return mixed return null, unless $return is true, and a form needs to be displayed.
      */
     public function do_password_check($canpreview, $accessmanager) {
         global $CFG, $SESSION, $OUTPUT, $PAGE;
@@ -720,6 +772,9 @@ class password_access_rule extends quiz_access_rule_base {
 /**
  * A rule representing the time limit. It does not actually restrict access, but we use this
  * class to encapsulate some of the relevant code.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class time_limit_access_rule extends quiz_access_rule_base {
     public function description() {
@@ -733,6 +788,9 @@ class time_limit_access_rule extends quiz_access_rule_base {
 /**
  * A rule for ensuring that the quiz is opened in a popup, with some JavaScript
  * to prevent copying and pasting, etc.
+ *
+ * @copyright 2009 Tim Hunt
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class securewindow_access_rule extends quiz_access_rule_base {
     /**
@@ -787,9 +845,13 @@ class securewindow_access_rule extends quiz_access_rule_base {
     }
 }
 
+
 /**
  * A rule representing the safe browser check.
-*/
+ *
+ * @copyright 2009 Oliver Rahs
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class safebrowser_access_rule extends quiz_access_rule_base {
     public function prevent_access() {
         if (!$this->_quizobj->is_preview_user() && !quiz_check_safe_browser()) {
@@ -803,4 +865,3 @@ class safebrowser_access_rule extends quiz_access_rule_base {
         return get_string("safebrowsernotice", "quiz");
     }
 }
-

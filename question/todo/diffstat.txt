@@ -65,8 +65,8 @@ Internal changes
 
 DONE lib/questionlib.php                                | 1434 ++--------
 
- mod/quiz/accessrules.php                           |  828 ++++++
- mod/quiz/attempt.php                               |  742 ++----
+DONE mod/quiz/accessrules.php                           |  828 ++++++
+DONE mod/quiz/attempt.php                               |  742 ++----
 DONE mod/quiz/attempt_close_js.php                      |   27 -
  mod/quiz/attemptlib.php                            | 1219 +++++++++
  mod/quiz/backuplib.php                             |   16 +-
@@ -107,7 +107,7 @@ DONE mod/quiz/reviewoptions.html                        |  124 +-
  mod/quiz/simpletest/testlib.php                    |   58 +
  mod/quiz/simpletest/testlocallib.php               |   76 +
  mod/quiz/simpletest/testquizdisplayoptions.php     |   71 +
- mod/quiz/startattempt.php                          |  189 ++
+DONE mod/quiz/startattempt.php                          |  189 ++
  mod/quiz/styles.php                                |   28 +
  mod/quiz/summary.php                               |  154 ++
 DONE mod/quiz/tabs.php                                  |   70 +-

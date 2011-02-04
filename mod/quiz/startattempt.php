@@ -1,20 +1,37 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * This page deals with starting a new attempt at a quiz.
+ * This script deals with starting a new attempt at a quiz.
  *
  * Normally, it will end up redirecting to attempt.php - unless a password form is displayed.
  *
  * This code used to be at the top of attempt.php, if you are looking for CVS history.
  *
- * @author Tim Hunt.
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package quiz
+ * @package mod
+ * @subpackage quiz
+ * @copyright 2009 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-/// Get submitted parameters.
+// Get submitted parameters.
 $id = required_param('cmid', PARAM_INT); // Course Module ID
 $forcenew = optional_param('forcenew', false, PARAM_BOOL); // Used to force a new preview
 
@@ -32,57 +49,55 @@ $quizobj = quiz::create($quiz->id, $USER->id);
 // This script should only ever be posted to, so set page URL to the view page.
 $PAGE->set_url($quizobj->view_url());
 
-/// Check login and sesskey.
+// Check login and sesskey.
 require_login($quizobj->get_courseid(), false, $quizobj->get_cm());
 if (!confirm_sesskey()) {
     throw new moodle_exception('confirmsesskeybad', 'error', $quizobj->view_url());
 }
 $PAGE->set_pagelayout('base');
 
-/// if no questions have been set up yet redirect to edit.php
+// if no questions have been set up yet redirect to edit.php
 if (!$quizobj->get_question_ids() && $quizobj->has_capability('mod/quiz:manage')) {
     redirect($quizobj->edit_url());
 }
 
-/// Create an object to manage all the other (non-roles) access rules.
+// Create an object to manage all the other (non-roles) access rules.
 $accessmanager = $quizobj->get_access_manager(time());
 if ($quizobj->is_preview_user() && $forcenew) {
     $accessmanager->clear_password_access();
 }
 
 
-/// Check capabilities.
+// Check capabilities.
 if (!$quizobj->is_preview_user()) {
     $quizobj->require_capability('mod/quiz:attempt');
 }
 
-/// Check to see if a new preview was requested.
+// Check to see if a new preview was requested.
 if ($quizobj->is_preview_user() && $forcenew) {
-/// To force the creation of a new preview, we set a finish time on the
-/// current attempt (if any). It will then automatically be deleted below
+// To force the creation of a new preview, we set a finish time on the
+// current attempt (if any). It will then automatically be deleted below
     $DB->set_field('quiz_attempts', 'timefinish', time(), array('quiz' => $quiz->id, 'userid' => $USER->id));
 }
 
-/// Look for an existing attempt.
+// Look for an existing attempt.
 $lastattempt = quiz_get_latest_attempt_by_user($quiz->id, $USER->id);
 
 if ($lastattempt && !$lastattempt->timefinish) {
-/// Continuation of an attempt - check password then redirect.
+// Continuation of an attempt - check password then redirect.
     $accessmanager->do_password_check($quizobj->is_preview_user());
     redirect($quizobj->attempt_url($lastattempt->id));
 }
 
-/// Get number for the next or unfinished attempt
+// Get number for the next or unfinished attempt
 if ($lastattempt && !$lastattempt->preview && !$quizobj->is_preview_user()) {
-    $lastattemptid = $lastattempt->id;
     $attemptnumber = $lastattempt->attempt + 1;
 } else {
     $lastattempt = false;
-    $lastattemptid = false;
     $attemptnumber = 1;
 }
 
-/// Check access.
+// Check access.
 $messages = $accessmanager->prevent_access() +
         $accessmanager->prevent_new_attempt($attemptnumber - 1, $lastattempt);
 if (!$quizobj->is_preview_user() && $messages) {
@@ -91,16 +106,94 @@ if (!$quizobj->is_preview_user() && $messages) {
 }
 $accessmanager->do_password_check($quizobj->is_preview_user());
 
-/// Delete any previous preview attempts belonging to this user.
+// Delete any previous preview attempts belonging to this user.
 quiz_delete_previews($quiz, $USER->id);
 
-/// Create the new attempt and initialize the question sessions
+$quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+$quba->set_preferred_behaviour($quiz->preferredbehaviour);
+
+// Create the new attempt and initialize the question sessions
 $attempt = quiz_create_attempt($quiz, $attemptnumber, $lastattempt, time(), $quizobj->is_preview_user());
 
-/// Save the attempt in the database.
-$attempt->id = $DB->insert_record('quiz_attempts', $attempt);
+if (!($quiz->attemptonlast && $lastattempt)) {
+    // Starting a normal, new, quiz attempt.
 
-/// Log the new attempt.
+    // Fully load all the questions in this quiz.
+    $quizobj->preload_questions();
+    $quizobj->load_questions();
+
+    // Add them all to the $quba.
+    $idstoslots = array();
+    $questionsinuse = array_keys($quizobj->get_questions());
+    foreach ($quizobj->get_questions() as $i => $questiondata) {
+        if ($questiondata->qtype != 'random') {
+            if (!$quiz->shuffleanswers) {
+                $questiondata->options->shuffleanswers = false;
+            }
+            $question = question_bank::make_question($questiondata);
+
+        } else {
+            $question = question_bank::get_qtype('random')->choose_other_question(
+                    $questiondata, $questionsinuse, $quiz->shuffleanswers);
+            if (is_null($question)) {
+                throw new moodle_exception('notenoughrandomquestions', 'quiz',
+                        $quizobj->view_url(), $questiondata);
+            }
+        }
+
+        $idstoslots[$i] = $quba->add_question($question, $questiondata->maxmark);
+        $questionsinuse[] = $question->id;
+    }
+
+    // Start all the quetsions.
+    $quba->start_all_questions();
+
+    // Update attempt layout.
+    $newlayout = array();
+    foreach (explode(',', $attempt->layout) as $qid) {
+        if ($qid != 0) {
+            $newlayout[] = $idstoslots[$qid];
+        } else {
+            $newlayout[] = 0;
+        }
+    }
+    $attempt->layout = implode(',', $newlayout);
+
+} else {
+    // Starting a subsequent attempt in each attempt builds on last mode.
+
+    $oldquba = question_engine::load_questions_usage_by_activity($lastattempt->uniqueid);
+
+    $oldnumberstonew = array();
+    foreach ($oldquba->get_attempt_iterator() as $oldslot => $oldqa) {
+        $newslot = $quba->add_question($oldqa->get_question(), $oldqa->get_max_mark());
+
+        $quba->start_question_based_on($newslot, $oldqa);
+
+        $oldnumberstonew[$oldslot] = $newslot;
+    }
+
+    // Update attempt layout.
+    $newlayout = array();
+    foreach (explode(',', $lastattempt->layout) as $oldslot) {
+        if ($oldslot != 0) {
+            $newlayout[] = $oldnumberstonew[$oldslot];
+        } else {
+            $newlayout[] = 0;
+        }
+    }
+    $attempt->layout = implode(',', $newlayout);
+}
+
+// Save the attempt in the database.
+begin_sql();
+question_engine::save_questions_usage_by_activity($quba);
+$attempt->uniqueid = $quba->get_id();
+if (!$attempt->id = insert_record('quiz_attempts', $attempt)) {
+    throw new moodle_quiz_exception($quizobj, 'newattemptfail');
+}
+
+// Log the new attempt.
 if ($attempt->preview) {
     add_to_log($course->id, 'quiz', 'preview', 'view.php?id=' . $quizobj->get_cmid(),
             $quizobj->get_quizid(), $quizobj->get_cmid());
@@ -109,23 +202,7 @@ if ($attempt->preview) {
             $quizobj->get_quizid(), $quizobj->get_cmid());
 }
 
-/// Fully load all the questions in this quiz.
-$quizobj->preload_questions();
-$quizobj->load_questions();
-
-/// Create initial states for all questions in this quiz.
-if (!$quiz->attemptonlast) {
-    $lastattemptid = false;
-}
-if (!$states = get_question_states($quizobj->get_questions(), $quizobj->get_quiz(), $attempt, $lastattemptid)) {
-    print_error('cannotrestore', 'quiz');
-}
-
-/// Save all the newly created states.
-foreach ($quizobj->get_questions() as $i => $question) {
-    save_question_session($question, $states[$i]);
-}
-/// Trigger event
+// Trigger event
 $eventdata = new stdClass();
 $eventdata->component  = 'mod_quiz';
 $eventdata->course     = $quizobj->get_courseid();
@@ -135,5 +212,7 @@ $eventdata->user       = $USER;
 $eventdata->attempt    = $attempt->id;
 events_trigger('quiz_attempt_started', $eventdata);
 
-/// Redirect to the attempt page.
+commit_sql();
+
+// Redirect to the attempt page.
 redirect($quizobj->attempt_url($attempt->id));
