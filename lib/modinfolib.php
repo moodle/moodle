@@ -40,7 +40,7 @@ if (!defined('MAX_MODINFO_CACHE_SIZE')) {
  * This includes information about the course-modules and the sections on the course. It can also
  * include dynamic data that has been updated for the current user.
  */
-class course_modinfo {
+class course_modinfo extends stdClass {
     // For convenience we store the course object here as it is needed in other parts of code
     private $course;
 
@@ -283,7 +283,7 @@ class course_modinfo {
  * data only using the supplied set functions. Setting the fields directly is not supported
  * and may cause problems later.
  */
-class cm_info {
+class cm_info extends stdClass  {
     /**
      * State: Only basic data from modinfo cache is available.
      */
