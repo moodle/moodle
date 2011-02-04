@@ -5318,7 +5318,7 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
     //load ratings
     if ($forum->assessed!=RATING_AGGREGATE_NONE) {
         $ratingoptions = new stdclass();
-        $ratingoptions->context = $cm->context;
+        $ratingoptions->context = $modcontext;
         $ratingoptions->items = $posts;
         $ratingoptions->aggregate = $forum->assessed;//the aggregation method
         $ratingoptions->scaleid = $forum->scale;
