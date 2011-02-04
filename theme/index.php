@@ -99,7 +99,7 @@ echo $OUTPUT->single_button(new moodle_url('index.php', array('sesskey'=>sesskey
 if($CFG->enabledevicedetection && empty($device)){    
 	$table = new html_table();
 	$table->id = 'devicethemeselector';
-	$table->head = array(get_string('devicetype','admin'), get_string('theme'));
+	$table->head = array(get_string('devicetype','admin'), get_string('theme'), get_string('info'));
 	
 	$devices = get_device_type_list();
 	
