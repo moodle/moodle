@@ -43,7 +43,7 @@ class mod_quiz_mod_form extends moodleform_mod {
     protected $_feedbacks;
     protected static $reviewfields = array(); // Initialised in the constructor.
 
-    public function __construct($instance, $section, $cm) {
+    public function __construct($current, $section, $cm, $course) {
         self::$reviewfields = array(
             'attempt' => get_string('theattempt', 'quiz'),
             'correctness' => get_string('whethercorrect', 'question'),
@@ -53,7 +53,7 @@ class mod_quiz_mod_form extends moodleform_mod {
             'rightanswer' => get_string('rightanswer', 'question'),
             'overallfeedback' => get_string('overallfeedback', 'quiz'),
         );
-        parent::__construct($instance, $section, $cm);
+        parent::__construct($current, $section, $cm, $course);
     }
 
     function definition() {
@@ -80,11 +80,10 @@ class mod_quiz_mod_form extends moodleform_mod {
     /// Open and close dates.
         $mform->addElement('date_time_selector', 'timeopen', get_string('quizopen', 'quiz'),
                 array('optional' => true, 'step' => 1));
-        $mform->addHelpButton('timeopen', 'quiz');
+        $mform->addHelpButton('timeopen', 'quizopenclose', 'quiz');
 
         $mform->addElement('date_time_selector', 'timeclose', get_string('quizclose', 'quiz'),
                 array('optional' => true, 'step' => 1));
-        $mform->addHelpButton('timeclose', 'quiz');
 
     /// Time limit.
         $mform->addElement('duration', 'timelimit', get_string('timelimit', 'quiz'), array('optional' => true));
@@ -150,16 +149,14 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setDefault('shuffleanswers', $quizconfig->shuffleanswers);
 
     /// How questions behave (question behaviour).
-        if (!empty($this->_instance)) {
-            // This is a nasty hack, but I can't think of a good way to get the
-            // current value of $quiz->preferredbehaviour here.
-            $currentbehaviour = get_field('quiz', 'preferredbehaviour', 'id', $this->_instance);
+        if (!empty($this->current->preferredbehaviour)) {
+            $currentbehaviour = $this->current->preferredbehaviour;
         } else {
             $currentbehaviour = '';
         }
         $behaviours = question_engine::get_behaviour_options($currentbehaviour);
         $mform->addElement('select', 'preferredbehaviour', get_string('howquestionsbehave', 'question'), $behaviours);
-        $mform->setHelpButton('preferredbehaviour', array('howquestionsbehave', get_string('howquestionsbehave','question'), 'question'));
+        $mform->addHelpButton('preferredbehaviour', 'howquestionsbehave', 'question');
         $mform->setAdvanced('preferredbehaviour', $CFG->quiz_fix_preferredbehaviour);
         $mform->setDefault('preferredbehaviour', $CFG->quiz_preferredbehaviour);
 
@@ -277,11 +274,11 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         $mform->addElement('hidden', 'grade', $quizconfig->maximumgrade);
         $mform->setType('grade', PARAM_RAW);
-        if (empty($this->_cm)) {
-            $needwarning = $quizconfig->maximumgrade == 0;
+
+        if (isset($this->current->grade)) {
+            $needwarning = $this->current->grade === 0;
         } else {
-            $quizgrade = $DB->get_field('quiz', 'grade', array('id' => $this->_instance));
-            $needwarning = $quizgrade == 0;
+            $needwarning = $quizconfig->maximumgrade == 0;
         }
         if ($needwarning) {
             $mform->addElement('static', 'nogradewarning', '', get_string('nogradewarning', 'quiz'));

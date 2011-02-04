@@ -72,8 +72,8 @@ DONE mod/quiz/attempt_close_js.php                      |   27 -
  mod/quiz/backuplib.php                             |   16 +-
  mod/quiz/comment.php                               |  171 +-
  mod/quiz/config.html                               |  304 ++-
- mod/quiz/db/access.php                             |   19 +-
- mod/quiz/db/install.xml                            |  191 +-
+DONE mod/quiz/db/access.php                             |   19 +-
+DONE mod/quiz/db/install.xml                            |  191 +-
 DONE mod/quiz/db/mysql.php                              | 1163 --------
 DONE mod/quiz/db/postgres7.php                          | 1497 ----------
 DONE mod/quiz/db/upgrade.php                            | 1204 ++++++++-
@@ -82,26 +82,26 @@ DONE mod/quiz/defaults.php                              |   12 +-
  mod/quiz/edit.php                                  |  118 +-
  mod/quiz/editlib.php                               |   79 +-
  mod/quiz/index.php                                 |    6 +-
- mod/quiz/jstimer.php                               |   58 -
+DONE mod/quiz/jstimer.php                               |   58 -
 DONE mod/quiz/lib.php                                   |  454 ++--
 DONE mod/quiz/locallib.php                              |  848 +++++--
 DONE mod/quiz/mod_form.php                              |  475 ++--
- mod/quiz/pix/de.gif                                |  Bin 117 -> 0 bytes
- mod/quiz/pix/ma.gif                                |  Bin 201 -> 0 bytes
- mod/quiz/pix/mc.gif                                |  Bin 214 -> 0 bytes
- mod/quiz/pix/mu.gif                                |  Bin 183 -> 0 bytes
- mod/quiz/pix/nu.gif                                |  Bin 84 -> 0 bytes
- mod/quiz/pix/rm.gif                                |  Bin 204 -> 0 bytes
- mod/quiz/pix/rs.gif                                |  Bin 143 -> 0 bytes
- mod/quiz/pix/sa.gif                                |  Bin 74 -> 0 bytes
- mod/quiz/pix/tf.gif                                |  Bin 190 -> 0 bytes
+DONE mod/quiz/pix/de.gif                                |  Bin 117 -> 0 bytes
+DONE mod/quiz/pix/ma.gif                                |  Bin 201 -> 0 bytes
+DONE mod/quiz/pix/mc.gif                                |  Bin 214 -> 0 bytes
+DONE mod/quiz/pix/mu.gif                                |  Bin 183 -> 0 bytes
+DONE mod/quiz/pix/nu.gif                                |  Bin 84 -> 0 bytes
+DONE mod/quiz/pix/rm.gif                                |  Bin 204 -> 0 bytes
+DONE mod/quiz/pix/rs.gif                                |  Bin 143 -> 0 bytes
+DONE mod/quiz/pix/sa.gif                                |  Bin 74 -> 0 bytes
+DONE mod/quiz/pix/tf.gif                                |  Bin 190 -> 0 bytes
  mod/quiz/processattempt.php                        |  126 +
 DONE mod/quiz/protect_js.php                            |   56 -
  mod/quiz/quiz.js                                   |  355 ++-
  mod/quiz/restorelib.php                            |  113 +-
  mod/quiz/restorelibpre15.php                       |   41 +-
  mod/quiz/review.php                                |  520 ++--
- mod/quiz/reviewoptions.html                        |  124 +-
+DONE mod/quiz/reviewoptions.html                        |  124 +-
  mod/quiz/reviewquestion.php                        |  267 +-
  mod/quiz/simpletest/testaccessrules.php            |  518 ++++
  mod/quiz/simpletest/testlib.php                    |   58 +
@@ -110,8 +110,8 @@ DONE mod/quiz/protect_js.php                            |   56 -
  mod/quiz/startattempt.php                          |  189 ++
  mod/quiz/styles.php                                |   28 +
  mod/quiz/summary.php                               |  154 ++
- mod/quiz/tabs.php                                  |   70 +-
- mod/quiz/version.php                               |    6 +-
+DONE mod/quiz/tabs.php                                  |   70 +-
+DONE mod/quiz/version.php                               |    6 +-
  mod/quiz/view.php                                  |  773 +++---
 
  mod/quiz/report.php                                |  161 +-

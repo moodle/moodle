@@ -18,24 +18,20 @@
 /**
  * Defines message providers (types of messages being sent)
  *
- * @package mod-quiz
- * @copyright  2010 onwards  Andrew Davis  http://moodle.com
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package mod
+ * @subpackage quiz
+ * @copyright 2010 onwards  Andrew Davis  http://moodle.com
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $messageproviders = array (
-    
-    // notify teacher that a student has submitted a quiz attempt
+    // Notify teacher that a student has submitted a quiz attempt
     'submission' => array (
         'capability'  => 'mod/quiz:emailnotifysubmission'
     ),
-    
-    // confirm a student's quiz attempt
+
+    // Confirm a student's quiz attempt
     'confirmation' => array (
         'capability'  => 'mod/quiz:emailconfirmsubmission'
     )
-
 );
-
-
-

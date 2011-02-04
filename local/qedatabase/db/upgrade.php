@@ -18,4 +18,30 @@ function xmldb_local_qedatabase_upgrade($oldversion) {
 
         upgrade_plugin_savepoint(true, 2008000700, 'local', 'qedatabase');
     }
+
+    if ($oldversion < 2008000701) {
+       // Define table quiz_report to be renamed to quiz_reports
+        $table = new xmldb_table('quiz_report');
+
+        // Launch rename table for quiz_reports
+        if ($dbman->table_exists($table)) {
+            $dbman->rename_table($table, 'quiz_reports');
+        }
+
+        upgrade_plugin_savepoint(true, 2008000701, 'local', 'qedatabase');
+    }
+
+    if ($oldversion < 2008000702) {
+        // Define index name (unique) to be added to quiz_reports
+        $table = new xmldb_table('quiz_reports');
+        $index = new xmldb_index('name', XMLDB_INDEX_UNIQUE, array('name'));
+
+        // Conditionally launch add index name
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_plugin_savepoint(true, 2008000702, 'local', 'qedatabase');
+    }
+
 }

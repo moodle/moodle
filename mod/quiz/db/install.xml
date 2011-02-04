@@ -12,16 +12,21 @@
         <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="The introductory text desplayed on the view.php page." PREVIOUS="name" NEXT="introformat"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="timeopen"/>
         <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time at which students may start attempting this quiz." PREVIOUS="introformat" NEXT="timeclose"/>
-        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time by which students must have completed their attempt." PREVIOUS="timeopen" NEXT="optionflags"/>
-        <FIELD NAME="optionflags" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="This stores the adaptive mode setting for this quiz." PREVIOUS="timeclose" NEXT="penaltyscheme"/>
-        <FIELD NAME="penaltyscheme" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Stores the apply penaties setting." PREVIOUS="optionflags" NEXT="attempts"/>
-        <FIELD NAME="attempts" TYPE="int" LENGTH="6" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="The maximum number of attempts that a student is allowed at this quiz. 0 mean no limit." PREVIOUS="penaltyscheme" NEXT="attemptonlast"/>
-        <FIELD NAME="attemptonlast" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Whether each attempt builds on last mode is on." PREVIOUS="attempts" NEXT="grademethod"/>
-        <FIELD NAME="grademethod" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" COMMENT="How individual attempt grades are combined to get the overall grade. From the top of mod/quiz/lib.php: 1 = QUIZ_GRADEHIGHEST, 2 = QUIZ_GRADEAVERAGE, 3 = QUIZ_ATTEMPTFIRST, 4 = QUIZ_ATTEMPTLAST." PREVIOUS="attemptonlast" NEXT="decimalpoints"/>
+        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time by which students must have completed their attempt." PREVIOUS="timeopen" NEXT="preferredbehaviour"/>
+        <FIELD NAME="preferredbehaviour" TYPE="char" LENGTH="32" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="timeclose" NEXT="attemptonlast"/>
+        <FIELD NAME="attemptonlast" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="preferredbehaviour" NEXT="attempts"/>
+        <FIELD NAME="attempts" TYPE="int" LENGTH="6" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="The maximum number of attempts that a student is allowed at this quiz. 0 mean no limit." PREVIOUS="attemptonlast" NEXT="grademethod"/>
+        <FIELD NAME="grademethod" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" COMMENT="How individual attempt grades are combined to get the overall grade. From the top of mod/quiz/lib.php: 1 = QUIZ_GRADEHIGHEST, 2 = QUIZ_GRADEAVERAGE, 3 = QUIZ_ATTEMPTFIRST, 4 = QUIZ_ATTEMPTLAST." PREVIOUS="attempts" NEXT="decimalpoints"/>
         <FIELD NAME="decimalpoints" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="2" SEQUENCE="false" COMMENT="Number of decimal points to display when printing scores belonging to this quiz." PREVIOUS="grademethod" NEXT="questiondecimalpoints"/>
-        <FIELD NAME="questiondecimalpoints" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="-2" SEQUENCE="false" COMMENT="The number of decimal digits to use when displaying question grades. -1 = use decimalpoints, otherwise a separate setting." PREVIOUS="decimalpoints" NEXT="review"/>
-        <FIELD NAME="review" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="A bitfield encoding the Review options setting. Read the code of function quiz_get_reviewoptions from mod/quiz/locallib.php to see what each bit means." PREVIOUS="questiondecimalpoints" NEXT="questionsperpage"/>
-        <FIELD NAME="questionsperpage" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="This does not do exactly what the name suggests, and the behaviour depends on the shufflequestions setting." PREVIOUS="review" NEXT="shufflequestions"/>
+        <FIELD NAME="questiondecimalpoints" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="-2" SEQUENCE="false" COMMENT="The number of decimal digits to use when displaying question grades. -1 = use decimalpoints, otherwise a separate setting." PREVIOUS="decimalpoints" NEXT="reviewattempt"/>
+        <FIELD NAME="reviewattempt" TYPE="int" LENGTH="6" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. This is a bit field, decoded by the mod_quiz_display_options class. It is formed by ORing together the constants defined there." PREVIOUS="questiondecimalpoints" NEXT="reviewcorrectness"/>
+        <FIELD NAME="reviewcorrectness" TYPE="int" LENGTH="6" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewattempt" NEXT="reviewmarks"/>
+        <FIELD NAME="reviewmarks" TYPE="int" LENGTH="6" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewcorrectness" NEXT="reviewspecificfeedback"/>
+        <FIELD NAME="reviewspecificfeedback" TYPE="int" LENGTH="6" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewmarks" NEXT="reviewgeneralfeedback"/>
+        <FIELD NAME="reviewgeneralfeedback" TYPE="int" LENGTH="6" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewspecificfeedback" NEXT="reviewrightanswer"/>
+        <FIELD NAME="reviewrightanswer" TYPE="int" LENGTH="6" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewgeneralfeedback" NEXT="reviewoverallfeedback"/>
+        <FIELD NAME="reviewoverallfeedback" TYPE="int" LENGTH="6" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewrightanswer" NEXT="questionsperpage"/>
+        <FIELD NAME="questionsperpage" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="This does not do exactly what the name suggests, and the behaviour depends on the shufflequestions setting." PREVIOUS="reviewoverallfeedback" NEXT="shufflequestions"/>
         <FIELD NAME="shufflequestions" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the list of questions in the quiz should be randomly shuffled at the start of each attempt." PREVIOUS="questionsperpage" NEXT="shuffleanswers"/>
         <FIELD NAME="shuffleanswers" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="Whether, in question types that support it, individual parts of a question should be shuffled." PREVIOUS="shufflequestions" NEXT="questions"/>
         <FIELD NAME="questions" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="Comma-separated list of questionids, with 0s for page breaks. The layout of questions in this quiz." PREVIOUS="shuffleanswers" NEXT="sumgrades"/>
@@ -61,7 +66,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="uniqueid"/>
-        <KEY NAME="uniqueid" TYPE="foreign-unique" FIELDS="uniqueid" REFTABLE="question_attempts" REFFIELDS="id" PREVIOUS="primary" NEXT="quiz"/>
+        <KEY NAME="uniqueid" TYPE="foreign-unique" FIELDS="uniqueid" REFTABLE="question_usages" REFFIELDS="id" PREVIOUS="primary" NEXT="quiz"/>
         <KEY NAME="quiz" TYPE="foreign" FIELDS="quiz" REFTABLE="quiz" REFFIELDS="id" PREVIOUS="uniqueid"/>
       </KEYS>
       <INDEXES>
@@ -97,7 +102,7 @@
         <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id" PREVIOUS="quiz"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="quiz_feedback" COMMENT="Feedback given to students based on which grade band their overall score lies." PREVIOUS="quiz_question_instances" NEXT="quiz_report">
+    <TABLE NAME="quiz_feedback" COMMENT="Feedback given to students based on which grade band their overall score lies." PREVIOUS="quiz_question_instances" NEXT="quiz_reports">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="quizid"/>
         <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references quiz.id." PREVIOUS="id" NEXT="feedbacktext"/>
@@ -111,7 +116,7 @@
         <KEY NAME="quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="quiz_report" COMMENT="Lists all the installed quiz reports and their display order and so on. No need to worry about deleting old records. Only records with an equivalent directory are displayed." PREVIOUS="quiz_feedback" NEXT="quiz_overrides">
+    <TABLE NAME="quiz_reports" COMMENT="Lists all the installed quiz reports and their display order and so on. No need to worry about deleting old records. Only records with an equivalent directory are displayed." PREVIOUS="quiz_feedback" NEXT="quiz_overrides">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="name of the report, same as the directory name" PREVIOUS="id" NEXT="displayorder"/>
@@ -123,8 +128,11 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="name" UNIQUE="true" FIELDS="name" COMMENT="Report name must be unique."/>
+      </INDEXES>
     </TABLE>
-    <TABLE NAME="quiz_overrides" COMMENT="The overrides to quiz settings on a per-user and per-group basis." PREVIOUS="quiz_report">
+    <TABLE NAME="quiz_overrides" COMMENT="The overrides to quiz settings on a per-user and per-group basis." PREVIOUS="quiz_reports">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="quiz"/>
         <FIELD NAME="quiz" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references quiz.id" PREVIOUS="id" NEXT="groupid"/>

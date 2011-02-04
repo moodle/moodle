@@ -11,6 +11,6 @@ function xmldb_quiz_statistics_install() {
     $record->displayorder = 8000;
     $record->cron         = 18000;
     $record->capability   = 'quizreport/statistics:view';
-    $DB->insert_record('quiz_report', $record);
+    $DB->insert_record('quiz_reports', $record);
 
 }

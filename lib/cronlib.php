@@ -131,7 +131,7 @@ function cron_run() {
     plagiarism_cron();
 
     mtrace("Starting quiz reports");
-    if ($reports = $DB->get_records_select('quiz_report', "cron > 0 AND ((? - lastcron) > cron)", array($timenow))) {
+    if ($reports = $DB->get_records_select('quiz_reports', "cron > 0 AND ((? - lastcron) > cron)", array($timenow))) {
         foreach ($reports as $report) {
             $cronfile = "$CFG->dirroot/mod/quiz/report/$report->name/cron.php";
             if (file_exists($cronfile)) {
@@ -143,7 +143,7 @@ function cron_run() {
                     $pre_dbqueries = $DB->perf_get_queries();
                     $pre_time      = microtime(1);
                     if ($cron_function()) {
-                        $DB->set_field('quiz_report', "lastcron", $timenow, array("id"=>$report->id));
+                        $DB->set_field('quiz_reports', "lastcron", $timenow, array("id"=>$report->id));
                     }
                     if (isset($pre_dbqueries)) {
                         mtrace("... used " . ($DB->perf_get_queries() - $pre_dbqueries) . " dbqueries");

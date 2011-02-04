@@ -99,7 +99,7 @@ function quiz_update_instance($quiz, $mform) {
         return $result;
     }
 
-    $oldquiz = get_record('quiz', 'id', $quiz->instance);
+    $oldquiz = $DB->get_record('quiz', array('id' => $quiz->instance));
 
     // Repaginate, if asked to.
     if (!$quiz->shufflequestions && !empty($quiz->repaginatenow)) {
