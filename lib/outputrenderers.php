@@ -212,7 +212,9 @@ class core_renderer extends renderer_base {
     protected $contenttype;
     /** @var string used by {@link redirect_message()} method to communicate with {@link header()}. */
     protected $metarefreshtag = '';
-
+    /** @var set if the theme links function has been called **/
+    private $switchlinkdisplayed;
+    
     /**
      * Get the DOCTYPE declaration that should be used with this page. Designed to
      * be called in theme layout.php files.
@@ -363,6 +365,9 @@ class core_renderer extends renderer_base {
             // The legacy theme is in use print the notification
             $output .= html_writer::tag('div', get_string('legacythemeinuse'), array('class'=>'legacythemeinuse'));
         }
+        
+        $output = $this->theme_switch_links();
+        
         if (!empty($CFG->debugpageinfo)) {
             $output .= '<div class="performanceinfo pageinfo">This page is: ' . $this->page->debug_summary() . '</div>';
         }
@@ -2582,6 +2587,40 @@ EOD;
             $content .= html_writer::end_tag('li');
         }
         // Return the sub menu
+        return $content;
+    }
+    
+    
+    /*
+     * Renders theme links for switching between default and other themes.
+     */
+    protected function theme_switch_links(){
+    	
+    	if($this->switchlinkdisplayed){
+    		return '';
+    	}
+    	
+    	global $USER, $PAGE;
+    	
+    	$switched = (!empty($USER->themeswitch));
+    	
+    	$content = html_writer::start_tag('div', array('id'=>'theme_switch_link'));
+    	
+        if($switched){
+            $link_text = get_string('switchdevicerecommended');
+            
+        } else {
+            $link_text = get_string('switchdevicedefault'); 
+        }
+        
+        $link_url = new moodle_url('/theme/switch.php', array('url' => $PAGE->url));
+        
+        $content .= html_writer::link($link_url, $link_text);
+        
+        $content .= html_writer::end_tag('div');
+        
+        $this->switchlinkdisplayed = true;
+        
         return $content;
     }
 }

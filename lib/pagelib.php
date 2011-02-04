@@ -1268,16 +1268,23 @@ class moodle_page {
             }
         }
 
+        if(!empty($USER->themeswitch) || !empty($SESSION->themeswitch)){
+        	$device_type = 'default';
+        } else {
+            $device_type = get_device_type();
+        }
+     
         $theme = '';
+
         foreach ($themeorder as $themetype) {
             switch ($themetype) {
                 case 'course':
-                    if (!empty($CFG->allowcoursethemes) and !empty($this->course->theme)) {
-                        return $this->course->theme;
+                    if (!empty($CFG->allowcoursethemes) and !empty($this->_course->theme) and $device_type == 'default') {
+                        return $this->_course->theme;
                     }
 
                 case 'category':
-                    if (!empty($CFG->allowcategorythemes)) {
+                    if (!empty($CFG->allowcategorythemes) and $device_type == 'default') {
                         $categories = $this->categories;
                         foreach ($categories as $category) {
                             if (!empty($category->theme)) {
@@ -1292,44 +1299,28 @@ class moodle_page {
                     }
 
                 case 'user':
-                    if (!empty($CFG->allowuserthemes) and !empty($USER->theme)) {
+                    if (!empty($CFG->allowuserthemes) and !empty($USER->theme) && $device_type == 'default') {
                         if ($mnetpeertheme) {
                             return $mnetpeertheme;
                         } else {
-                            return $USER->theme;
-                        }
+                        	return $USER->theme;
+                        } 
                     }
 
                 case 'site':
                     if ($mnetpeertheme) {
                         return $mnetpeertheme;
-                    } else if(!empty($CFG->themelegacy) && $this->browser_is_outdated()) {
-                        $this->_legacythemeinuse = true;
-                        return $CFG->themelegacy;
-                    } else {
-                    	return $CFG->theme;
+                    } 
+                    
+                    if($device_type == 'legacy'){
+                    	$this->_legacythemeinuse = true;
                     }
+
+                    return get_theme_for_device_type($CFG->themes);                
             }
         }
     }
 
-    /**
-     * Determines whether the current browser should
-     * default to the admin-selected legacy theme
-     *
-     * @return  true if legacy theme should be used, otherwise false
-     *
-     */
-    protected function browser_is_outdated() {
-    	foreach($this->_legacybrowsers as $browser => $version) {
-            // Check the browser is valid first then that its version is suitable
-    	    if(check_browser_version($browser, '0') &&
-    	       !check_browser_version($browser, $version)) {
-    	       	return true;
-    	    }
-    	}
-    	return false;
-    }
 
     /**
      * Sets ->pagetype from the script name. For example, if the script that was

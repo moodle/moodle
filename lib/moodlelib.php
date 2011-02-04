@@ -7548,6 +7548,8 @@ function check_php_version($version='5.2.4') {
  * @return string device type
  */
 function get_device_type(){
+	global $CFG;
+	
 	if(empty($CFG->enabledevicedetection)){
 		return 'default';
 	}
@@ -7593,6 +7595,57 @@ function get_device_type(){
 	return 'default';
 }
 
+
+/**
+ * Returns a list of the device types supporting by Moodle
+ * @param boolean inc_user_types includes types specified using the devicedetectregex admin setting
+ * @return array $types
+ */
+function get_device_type_list($inc_user_types = true){
+	global $CFG;
+	
+	$types = array('default','legacy','mobile','tablet');
+	
+	if($inc_user_types && !empty($CFG->devicedetectregex)){
+		$regexes = json_decode($regexes);
+		
+		$i = 0;
+		
+		foreach($regexes as $regex){
+			$device_name = 'value'.$i;
+			
+			$types[] = $regex->$device_name;
+			
+			$i++;
+		}
+	}
+	
+	return $types;
+}
+
+
+/**
+ * Returns the theme selected for a particular device or false if none selected.
+ * @param string $device_type
+ * @param string $themes
+ * @return string $theme or boolean false
+ */
+function get_theme_for_device_type($themes, $device_type = null){
+	
+	if(empty($device_type)){
+		$device_type = get_device_type();
+	}
+	
+	$themes = json_decode($themes);
+
+	foreach($themes as $theme){
+		if($theme->device == $device_type){
+			return $theme->themename;
+		}
+	}
+	
+	return false;
+}
 
 /**
  * Returns one or several CSS class names that match the user's browser. These can be put
