@@ -563,7 +563,6 @@
                 $page = 0;
                 // TODO: Improve this because we are executing $sqlselect twice (here and some lines below)!
                 if ($allrecordids = get_fieldset_sql($sqlselect)) {
-                    $allrecordids = array_keys($allrecordids);
                     $page = (int)array_search($record->id, $allrecordids);
                     unset($allrecordids);
                 }
