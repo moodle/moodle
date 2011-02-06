@@ -271,7 +271,8 @@ class mysqli_native_moodle_database extends moodle_database {
 
         // dbsocket is used ONLY if host is NULL or 'localhost',
         // you can not disable it because it is always tried if dbhost is 'localhost'
-        if (!empty($this->dboptions['dbsocket']) and strpos($this->dboptions['dbsocket'], '/') !== false) {
+        if (!empty($this->dboptions['dbsocket'])
+                and (strpos($this->dboptions['dbsocket'], '/') !== false or strpos($this->dboptions['dbsocket'], '\\') !== false)) {
             $dbsocket = $this->dboptions['dbsocket'];
         } else {
             $dbsocket = ini_get('mysqli.default_socket');
