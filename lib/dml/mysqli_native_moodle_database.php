@@ -57,9 +57,13 @@ class mysqli_native_moodle_database extends moodle_database {
         }
 
         if (empty($this->dboptions['dbport'])) {
-            $dbport = ini_get('mysqli.default_port');
+            $dbport = (int)ini_get('mysqli.default_port');
         } else {
             $dbport = (int)$this->dboptions['dbport'];
+        }
+        // verify ini.get does not return nonsense
+        if (empty($dbport)) {
+            $dbport = 3306;
         }
         ob_start();
         $conn = new mysqli($dbhost, $dbuser, $dbpass, '', $dbport); /// Connect without db
@@ -273,9 +277,13 @@ class mysqli_native_moodle_database extends moodle_database {
             $dbsocket = ini_get('mysqli.default_socket');
         }
         if (empty($this->dboptions['dbport'])) {
-            $dbport = ini_get('mysqli.default_port');
+            $dbport = (int)ini_get('mysqli.default_port');
         } else {
             $dbport = (int)$this->dboptions['dbport'];
+        }
+        // verify ini.get does not return nonsense
+        if (empty($dbport)) {
+            $dbport = 3306;
         }
         ob_start();
         $this->mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket);
