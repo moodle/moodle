@@ -295,7 +295,13 @@ if ($formdata = $mform->is_cancelled()) {
             }
             if (isset($formdata->$field)) {
                 // process templates
-                $user->$field = process_template($formdata->$field, $user);
+                if (is_array($formdata->$field)) {
+                    foreach ($formdata->$field as $k=>$v) {
+                        $user->$field[$k] = process_template($v, $user);
+                    }
+                } else {
+                    $user->$field = process_template($formdata->$field, $user);
+                }
             }
         }
 
