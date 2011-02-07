@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20110125" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20110206" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -50,8 +50,9 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="type"/>
         <FIELD NAME="type" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="type: 0==info, 1==notice, 2==error" PREVIOUS="id" NEXT="plugin"/>
         <FIELD NAME="plugin" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" PREVIOUS="type" NEXT="version"/>
-        <FIELD NAME="version" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="plugin or main version if known" PREVIOUS="plugin" NEXT="info"/>
-        <FIELD NAME="info" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="version" NEXT="details"/>
+        <FIELD NAME="version" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="plugin or main version if known" PREVIOUS="plugin" NEXT="targetversion"/>
+        <FIELD NAME="targetversion" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="version of plugin or core specified in version.php at the time of upgrade loggging" PREVIOUS="version" NEXT="info"/>
+        <FIELD NAME="info" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="targetversion" NEXT="details"/>
         <FIELD NAME="details" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="info" NEXT="backtrace"/>
         <FIELD NAME="backtrace" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="details" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="backtrace" NEXT="timemodified"/>

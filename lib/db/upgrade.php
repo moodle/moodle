@@ -74,6 +74,7 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_field('type', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null);
         $table->add_field('version', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('targetversion', XMLDB_TYPE_CHAR, '100', null, null, null, null);
         $table->add_field('info', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
         $table->add_field('details', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
         $table->add_field('backtrace', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
@@ -6004,6 +6005,22 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
         upgrade_main_savepoint(true, 2011012501);
     }
+
+    if ($oldversion < 2011020200.01) {
+
+        // Define field targetversion to be added to upgrade_log
+        $table = new xmldb_table('upgrade_log');
+        $field = new xmldb_field('targetversion', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'version');
+
+        // Conditionally launch add field targetversion
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011020200.01);
+    }
+
 
     return true;
 }
