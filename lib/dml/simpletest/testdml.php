@@ -3716,7 +3716,7 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(6, count($records));         // a,b,c,d,e,f
         $this->assertEqual(2, reset($records)->count);  // a has 2 records now
         $this->assertEqual(1, end($records)->count);    // f has 1 record still
-                        
+
         $this->assertTrue($records = $DB->get_records_sql($sqlqm, null, 0, 2));
         $this->assertEqual(2, count($records));
         $this->assertEqual(2, reset($records)->count);
