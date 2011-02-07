@@ -31,6 +31,8 @@ class user_filter_courserole extends user_filter_type {
      * @return array of course categories
      */
     function get_course_categories() {
+        global $CFG;
+        require_once($CFG->dirroot.'/course/lib.php');
         $displaylist = array();
         $parentlist = array();
         make_categories_list($displaylist, $parentlist);

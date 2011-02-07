@@ -92,6 +92,7 @@ if ($ADMIN->fulltree) {
         $options = $yesno;
         $settings->add(new admin_setting_configselect('enrol_ldap/autocreate', get_string('autocreate_key', 'enrol_ldap'), get_string('autocreate', 'enrol_ldap'), 0, $options));
         if (!during_initial_install()) {
+            require_once($CFG->dirroot.'/course/lib.php');
             $parentlist = array();
             $options = array();
             make_categories_list($options, $parentlist);
