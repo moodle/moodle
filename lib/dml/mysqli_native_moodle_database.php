@@ -57,9 +57,13 @@ class mysqli_native_moodle_database extends moodle_database {
         }
 
         if (empty($this->dboptions['dbport'])) {
-            $dbport = ini_get('mysqli.default_port');
+            $dbport = (int)ini_get('mysqli.default_port');
         } else {
             $dbport = (int)$this->dboptions['dbport'];
+        }
+        // verify ini.get does not return nonsense
+        if (empty($dbport)) {
+            $dbport = 3306;
         }
         ob_start();
         $conn = new mysqli($dbhost, $dbuser, $dbpass, '', $dbport); /// Connect without db
@@ -267,15 +271,20 @@ class mysqli_native_moodle_database extends moodle_database {
 
         // dbsocket is used ONLY if host is NULL or 'localhost',
         // you can not disable it because it is always tried if dbhost is 'localhost'
-        if (!empty($this->dboptions['dbsocket']) and strpos($this->dboptions['dbsocket'], '/') !== false) {
+        if (!empty($this->dboptions['dbsocket'])
+                and (strpos($this->dboptions['dbsocket'], '/') !== false or strpos($this->dboptions['dbsocket'], '\\') !== false)) {
             $dbsocket = $this->dboptions['dbsocket'];
         } else {
             $dbsocket = ini_get('mysqli.default_socket');
         }
         if (empty($this->dboptions['dbport'])) {
-            $dbport = ini_get('mysqli.default_port');
+            $dbport = (int)ini_get('mysqli.default_port');
         } else {
             $dbport = (int)$this->dboptions['dbport'];
+        }
+        // verify ini.get does not return nonsense
+        if (empty($dbport)) {
+            $dbport = 3306;
         }
         ob_start();
         $this->mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket);
