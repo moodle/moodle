@@ -1510,13 +1510,19 @@ class global_navigation extends navigation_node {
      *  * {@see forum_extend_navigation()}
      *  * {@see workshop_extend_navigation()}
      *
-     * @param stdClass $cm
+     * @param cm_info|stdClass $cm
      * @param stdClass $course
      * @param navigation_node $activity
      * @return bool
      */
     protected function load_activity($cm, stdClass $course, navigation_node $activity) {
         global $CFG, $DB;
+        
+        // make sure we have a $cm from get_fast_modinfo as this contains activity access details
+        if (!($cm instanceof cm_info)) {
+            $modinfo = get_fast_modinfo($course);
+            $cm = $modinfo->get_cm($cm->id);
+        }
 
         $activity->make_active();
         $file = $CFG->dirroot.'/mod/'.$cm->modname.'/lib.php';
@@ -2239,8 +2245,9 @@ class global_navigation_for_ajax extends global_navigation {
                 $this->load_section_activities($sections[$course->sectionnumber]->sectionnode, $course->sectionnumber, get_fast_modinfo($course));
                 break;
             case self::TYPE_ACTIVITY :
-                $cm = get_coursemodule_from_id(false, $this->instanceid, 0, false, MUST_EXIST);
                 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+                $modinfo = get_fast_modinfo($course);
+                $cm = $modinfo->get_cm($this->instanceid);
                 require_course_login($course, true, $cm);
                 $this->page->set_context(get_context_instance(CONTEXT_MODULE, $cm->id));
                 $coursenode = $this->load_course($course);
