@@ -67,21 +67,21 @@ class backup_book_activity_task extends backup_activity_task {
 
         // Link to the list of books
         $search  = "/(".$base."\/mod\/book\/index.php\?id\=)([0-9]+)/";
-        $content = preg_replace($search, '$@bookINDEX*$2@$', $content);
+        $content = preg_replace($search, '$@BOOKINDEX*$2@$', $content);
 
         // Link to book view by moduleid
         $search  = "/(".$base."\/mod\/book\/view.php\?id\=)([0-9]+)/";
-        $content = preg_replace($search, '$@bookVIEWBYID*$2@$', $content);
+        $content = preg_replace($search, '$@BOOKVIEWBYID*$2@$', $content);
 
         $search  = "/(".$base."\/mod\/book\/view.php\?id\=)([0-9]+)&chapterid=([0-9]+)/";
-        $content = preg_replace($search, '$@bookVIEWBYIDCH*$2*$3@$', $content);
+        $content = preg_replace($search, '$@BOOKVIEWBYIDCH*$2*$3@$', $content);
 
         // Link to book view by bookid
         $search  = "/(".$base."\/mod\/book\/view.php\?b\=)([0-9]+)/";
-        $content = preg_replace($search, '$@bookVIEWBYB*$2@$', $content);
+        $content = preg_replace($search, '$@BOOKVIEWBYB*$2@$', $content);
 
         $search  = "/(".$base."\/mod\/book\/view.php\?b\=)([0-9]+)&chapterid=([0-9]+)/";
-        $content = preg_replace($search, '$@bookVIEWBYBCH*$2*$3@$', $content);
+        $content = preg_replace($search, '$@BOOKVIEWBYBCH*$2*$3@$', $content);
 
         return $content;
     }
