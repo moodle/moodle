@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['apikey'] = 'API Key';
+$string['apikey'] = 'API key';
 $string['boxnet:view'] = 'View box.net repository';
 $string['configplugin'] = 'Box.net configuration';
 $string['information'] = 'Get an API key from the <a href="http://www.box.net/developers/services">Box.net developer page</a> for your Moodle site.';
