@@ -33,6 +33,8 @@ $string['availablelangs'] = 'Pacotes de idioma disponíveis';
 $string['chooselanguagehead'] = 'Escolha um idioma';
 $string['chooselanguagesub'] = 'Escolha um idioma a ser usado durante a instalação. Após a instalação você pode definir o idioma principal do site e outros idiomas a serem utilizados pelos usuários.';
 $string['clialreadyinstalled'] = 'O arquivo config.php já existe, por favor use admin/cli/upgrade.php, se você quiser atualizar o seu site.';
+$string['cliinstallheader'] = 'Programa de instalação por linha de comando do Moodle {$a}';
+$string['databasehost'] = 'Host da Base de Dados.';
 $string['databasename'] = 'Nome da Base de Dados';
 $string['databasetypehead'] = 'Escolha o driver da base de dados';
 $string['dataroot'] = 'Diretório de Dados';
@@ -55,16 +57,25 @@ Com esta operação Moodle será capaz de configurar o limite de memória sózin
 <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário excluir o arquivo .htaccess .</p>
 </li></ol>';
+$string['paths'] = 'Caminhos';
+$string['pathserrcreatedataroot'] = 'O Diretório de Dados ({&a->dataroot}) não pode ser criado pelo instalador.';
+$string['pathshead'] = 'Confirme os caminhos';
+$string['pathsrodataroot'] = 'O Diretório de Dados raiz não pode ser acessada para escrita.';
+$string['pathsroparentdataroot'] = 'O diretório pai ({$a->parent}) não pode ser escrito. O diretório de dados ({$a->dataroot)) não pode ser criado pelo instalador.';
+$string['pathssubadmindir'] = 'Alguns poucos webhosts usam /admin como um URL especial para acesso ao painel de controle ou outras coisas. Infelizmente isto conflita com a localizaçao padrão das páginas do administrador Moodle. Você pode corrigir isso renomeando a pasta admin na sua instalação, e colocando esse novo nome aqui. Por exemplo: <em>moodleadmin</em>. Isto irá corrigir os links das páginas do administrador Moodle.';
 $string['pathssubdataroot'] = 'Você precisa de um local onde o Moodle possa salvar arquivos enviados. Este diretório deve possuir permissões de leitura e escrita pelo usuário do servidor web
 (geralmente \'nobody\' ou \'apache \'), mas não deverá ser acessível diretamente através da web. O instalador irá tentar criá-lo se ele não existir.';
 $string['pathssubdirroot'] = 'Caminho completo do diretório para instalação do Moddle.';
 $string['pathssubwwwroot'] = 'Endereço web completo onde o Moodle será acessado.
 Não é possível acessar o Moodle usando múltiplos endereços. Se seu site tem múltiplos endereços públicos você deve configurar redirecionamentos permantentes em todos eles exceto esse. Se seu site é acessado tanto da Intranet como Internet, use o endereço público aqui e configure o DNS para que os usuários da Intranet possam usar o endereço público também. Se o endereço não estiver correto, por favo mude a URL no seu navegador para reiniciar a instalação com um valor diferente.';
+$string['pathsunsecuredataroot'] = 'A localização da pasta de dados não é segura.';
 $string['pathswrongadmindir'] = 'Diretório Admin não existe';
+$string['phpextension'] = 'Extensão PHP {$a}';
 $string['phpversion'] = 'Versão do PHP';
-$string['phpversionhelp'] = '<p>Moodle requer a versão 4.1.0 de PHP ou posterior.</p>
-<p>A sua versão é {$a}</p>
-<p>Atualize a versão do PHP!</p>';
+$string['phpversionhelp'] = '<p>Moodle requer a versão 4.3.0 de PHP ou posterior.</p>
+<p>A sua versão é  a {$a}</p>
+<p>Atualize a versão do PHP!</p>
+(atenção, a versão 5.0.x tem muitos problemas - use a versão 5.1.0 ou a 4.4)';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Se você chegou nesta página, o pacote <strong>{$a->packname} {$a->packversion}</strong> foi instalado. Parabéns!';
 $string['welcomep30'] = 'Esta versão do <strong>{$a->installername}</strong> inclui as aplicações para a criação de um ambiente em que <strong>Moodle</strong> possa operar:';
