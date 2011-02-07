@@ -3704,14 +3704,19 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($DB->insert_record($tablename, array('name' => 'b', 'content'=>'two')));
         $this->assertTrue($DB->insert_record($tablename, array('name' => 'c', 'content'=>'three')));
 
-        $sqlqm = "SELECT t.name, COUNT(DISTINCT t2.id) as count
+        $sqlqm = "SELECT t.name, COUNT(DISTINCT t2.id) AS count, 'Test' AS teststring
                     FROM {{$tablename}} t
                     LEFT JOIN (
                         SELECT t.id, t.name
                         FROM {{$tablename}} t
                     ) AS t2 ON t2.name = t.name
-                    GROUP BY t2.name
+                    GROUP BY t.name
                     ORDER BY t.name ASC";
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm));
+        $this->assertEqual(6, count($records));         // a,b,c,d,e,f
+        $this->assertEqual(2, reset($records)->count);  // a has 2 records now
+        $this->assertEqual(1, end($records)->count);    // f has 1 record still
+                        
         $this->assertTrue($records = $DB->get_records_sql($sqlqm, null, 0, 2));
         $this->assertEqual(2, count($records));
         $this->assertEqual(2, reset($records)->count);
