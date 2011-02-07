@@ -395,7 +395,7 @@ if ($allentries) {
     require_once($CFG->dirroot.'/rating/lib.php');
     if ($glossary->assessed!=RATING_AGGREGATE_NONE) {
         $ratingoptions = new stdclass();
-        $ratingoptions->context = $cm->context;
+        $ratingoptions->context = $context;
         $ratingoptions->items = $allentries;
         $ratingoptions->aggregate = $glossary->assessed;//the aggregation method
         $ratingoptions->scaleid = $glossary->scale;
