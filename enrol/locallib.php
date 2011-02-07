@@ -613,6 +613,8 @@ class course_enrolment_manager {
      * @return bool
      */
     public function edit_enrolment($userenrolment, $data) {
+        //Only allow editing if the user has the appropriate capability
+        //Already checked in /enrol/users.php but checking again in case this function is called from elsewhere
         list($instance, $plugin) = $this->get_user_enrolment_components($userenrolment);
         if ($instance && $plugin && $plugin->allow_manage($instance) && has_capability("enrol/$instance->enrol:manage", $this->context)) {
             if (!isset($data->status)) {
