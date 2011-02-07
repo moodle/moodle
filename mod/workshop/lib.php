@@ -1305,9 +1305,9 @@ function workshop_get_file_info($browser, $areas, $course, $cm, $context, $filea
  * @param navigation_node $navref An object representing the navigation tree node of the workshop module instance
  * @param stdClass $course
  * @param stdClass $module
- * @param stdClass $cm
+ * @param cm_info $cm
  */
-function workshop_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, stdclass $cm) {
+function workshop_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, cm_info $cm) {
     global $CFG;
 
     if (has_capability('mod/workshop:submit', get_context_instance(CONTEXT_MODULE, $cm->id))) {
