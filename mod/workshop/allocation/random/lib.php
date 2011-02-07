@@ -409,7 +409,7 @@ class workshop_random_allocator implements workshop_allocator {
      *      (bool)excludesamegroup - whether to prevent peer submissions from the same group in visible group mode
      *
      * @param array    $authors      structure of grouped authors
-     * @param resource $reviewers    structure of grouped reviewers
+     * @param array    $reviewers    structure of grouped reviewers
      * @param array    $assessments  currently assigned assessments to be kept
      * @param array    $o            reference to an array of log messages
      * @param array    $options      allocation options

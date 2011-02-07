@@ -10,6 +10,11 @@
     background-color: #eee;
 }
 
+.path-mod-workshop .manual-allocator .allocations .r0.highlightreviewerof,
+.path-mod-workshop .manual-allocator .allocations .r0.highlightreviewedby {
+    background-color: inherit;
+}
+
 .path-mod-workshop .manual-allocator .allocations .peer .image {
     margin-right: 5px;
     vertical-align: middle;
