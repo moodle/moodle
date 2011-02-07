@@ -33,7 +33,7 @@ require_capability('mod/chat:chat', $context);
 /// Check to see if groups are being used here
  if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
     if ($groupid = groups_get_activity_group($cm)) {
-        if (!$group = groups_get_group($groupid, false)) {
+        if (!$group = groups_get_group($groupid)) {
             print_error('invalidgroupid');
         }
         $groupname = ': '.$group->name;

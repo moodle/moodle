@@ -191,7 +191,7 @@ function blog_rss_get_feed($context, $args) {
             $info = $SITE->fullname;
             break;
         case 'group':
-            $group = groups_get_group($id, false);
+            $group = groups_get_group($id);
             $info = $group->name; //TODO: $DB->get_field('groups', 'name', array('id'=>$id))
             break;
         default:
