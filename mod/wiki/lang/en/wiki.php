@@ -51,7 +51,6 @@ $string['editblocks'] = 'Turn edit blocks on';
 $string['editing'] = 'Editing wiki page';
 $string['editingcomment'] = 'Editing comment';
 $string['editingpage'] = 'Editing this page \'{$a}\'';
-$string['editblocks'] = 'Turn edit blocks on';
 $string['filenotuploadederror'] = 'File \'{$a}\' could not be uploaded correctly.';
 $string['filtername'] = 'Wiki auto-linking';
 $string['firstpagetitle'] = 'First page name';
