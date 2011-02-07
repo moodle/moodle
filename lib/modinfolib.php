@@ -489,6 +489,14 @@ class cm_info extends stdClass  {
      */
     public $uservisible;
 
+    /**
+     * Module context - hacky shortcut
+     * @deprecated
+     * @var stdClass
+     */
+    public $context;
+
+
     // New data available only via functions
     ////////////////////////////////////////
 
@@ -706,7 +714,7 @@ class cm_info extends stdClass  {
      */
     public function set_no_view_link() {
         $this->check_not_view_only();
-        $url = null;
+        $this->url = null;
     }
 
     /**
@@ -791,6 +799,7 @@ class cm_info extends stdClass  {
         $this->icon             = isset($mod->icon) ? $mod->icon : '';
         $this->iconcomponent    = isset($mod->iconcomponent) ? $mod->iconcomponent : '';
         $this->customdata       = isset($mod->customdata) ? $mod->customdata : '';
+        $this->context          = get_context_instance(CONTEXT_MODULE, $mod->cm);
         $this->state = self::STATE_BASIC;
 
         // This special case handles old label data. Labels used to use the 'name' field for
