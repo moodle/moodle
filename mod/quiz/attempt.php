@@ -86,7 +86,7 @@ add_to_log($attemptobj->get_courseid(), 'quiz', 'continue attempt',
         $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
 // Get the list of questions needed by this page.
-$slots = $attemptobj->get_question_numbers($page);
+$slots = $attemptobj->get_slots($page);
 
 // Check.
 if (empty($slots)) {
@@ -139,7 +139,6 @@ if ($attemptobj->is_preview_user()) {
 echo '<form id="responseform" method="post" action="', s($attemptobj->processattempt_url()),
         '" enctype="multipart/form-data" accept-charset="utf-8">', "\n";
 echo '<div>';
-print_js_call('quiz_init_form');
 
 // Print all the questions
 foreach ($slots as $slot) {

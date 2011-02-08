@@ -44,19 +44,19 @@ Internal changes
  admin/report/quizupgrade/resetquiz.php             |   70 +
  admin/report/quizupgrade/settings.php              |    5 +
 
- lang/en_utf8/help/question/generalfeedback.html    |   14 +
- lang/en_utf8/help/question/howquestionsbehave.html |   13 +
- lang/en_utf8/help/question/penalty.html            |   11 +
- lang/en_utf8/help/question/questiontext.html       |    7 +
+DONE lang/en_utf8/help/question/generalfeedback.html    |   14 +
+DONE lang/en_utf8/help/question/howquestionsbehave.html |   13 +
+DONE lang/en_utf8/help/question/penalty.html            |   11 +
+DONE lang/en_utf8/help/question/questiontext.html       |    7 +
  lang/en_utf8/help/quiz/decimalplacesquestion.html  |    6 +
  lang/en_utf8/help/quiz/showuserpicture.html        |    7 +
- lang/en_utf8/qtype_match.php                       |    7 -
- lang/en_utf8/qtype_multichoice.php                 |   34 -
- lang/en_utf8/qtype_numerical.php                   |   10 -
- lang/en_utf8/qtype_random.php                      |    4 -
- lang/en_utf8/qtype_shortanswer.php                 |    6 -
- lang/en_utf8/qtype_truefalse.php                   |   13 -
- lang/en_utf8/question.php                          |  104 +-
+DONE lang/en_utf8/qtype_match.php                       |    7 -
+DONE lang/en_utf8/qtype_multichoice.php                 |   34 -
+DONE lang/en_utf8/qtype_numerical.php                   |   10 -
+DONE lang/en_utf8/qtype_random.php                      |    4 -
+DONE lang/en_utf8/qtype_shortanswer.php                 |    6 -
+DONE lang/en_utf8/qtype_truefalse.php                   |   13 -
+DONE lang/en_utf8/question.php                          |  104 +-
  lang/en_utf8/quiz.php                              |  207 ++-
  lang/en_utf8/quiz_grading.php                      |   18 -
  lang/en_utf8/quiz_overview.php                     |   30 -
@@ -68,7 +68,7 @@ DONE lib/questionlib.php                                | 1434 ++--------
 DONE mod/quiz/accessrules.php                           |  828 ++++++
 DONE mod/quiz/attempt.php                               |  742 ++----
 DONE mod/quiz/attempt_close_js.php                      |   27 -
- mod/quiz/attemptlib.php                            | 1219 +++++++++
+DONE mod/quiz/attemptlib.php                            | 1219 +++++++++
  mod/quiz/backuplib.php                             |   16 +-
  mod/quiz/comment.php                               |  171 +-
  mod/quiz/config.html                               |  304 ++-
@@ -160,9 +160,9 @@ DONE mod/quiz/version.php                               |    6 +-
  mod/quiz/report/statistics/statistics_table.php    |  335 +++
  mod/quiz/report/statistics/version.php             |   26 +
 
- theme/standard/styles_color.css                    |   72 +-
- theme/standard/styles_fonts.css                    |   20 +-
- theme/standard/styles_layout.css                   |  265 ++-
+DONE theme/standard/styles_color.css                    |   72 +-
+DONE theme/standard/styles_fonts.css                    |   20 +-
+DONE theme/standard/styles_layout.css                   |  265 ++-
 
 DONE pix/i/flagged.png                                  |  Bin 0 -> 193 bytes
 DONE pix/i/ne_red_mark.png                              |  Bin 0 -> 121 bytes

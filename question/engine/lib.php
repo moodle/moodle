@@ -740,7 +740,7 @@ class question_usage_by_activity {
     }
 
     /** @return array all the identifying numbers of all the questions in this usage. */
-    public function get_question_numbers() {
+    public function get_slots() {
         return array_keys($this->questionattempts);
     }
 
@@ -1016,7 +1016,7 @@ class question_usage_by_activity {
     public function process_all_actions($timestamp = null, $postdata = null) {
         $slots = question_attempt::get_submitted_var('slots', PARAM_SEQUENCE, $postdata);
         if (is_null($slots)) {
-            $slots = $this->get_question_numbers();
+            $slots = $this->get_slots();
         } else if (!$slots) {
             $slots = array();
         } else {
@@ -1239,7 +1239,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
      */
     public function __construct(question_usage_by_activity $quba) {
         $this->quba = $quba;
-        $this->slots = $quba->get_question_numbers();
+        $this->slots = $quba->get_slots();
         $this->rewind();
     }
 

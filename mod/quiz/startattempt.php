@@ -57,7 +57,7 @@ if (!confirm_sesskey()) {
 $PAGE->set_pagelayout('base');
 
 // if no questions have been set up yet redirect to edit.php
-if (!$quizobj->get_question_ids() && $quizobj->has_capability('mod/quiz:manage')) {
+if (!$quizobj->has_questions() && $quizobj->has_capability('mod/quiz:manage')) {
     redirect($quizobj->edit_url());
 }
 
@@ -66,7 +66,6 @@ $accessmanager = $quizobj->get_access_manager(time());
 if ($quizobj->is_preview_user() && $forcenew) {
     $accessmanager->clear_password_access();
 }
-
 
 // Check capabilities.
 if (!$quizobj->is_preview_user()) {
@@ -186,10 +185,10 @@ if (!($quiz->attemptonlast && $lastattempt)) {
 }
 
 // Save the attempt in the database.
-begin_sql();
+$transaction = $DB->start_delegated_transaction();
 question_engine::save_questions_usage_by_activity($quba);
 $attempt->uniqueid = $quba->get_id();
-if (!$attempt->id = insert_record('quiz_attempts', $attempt)) {
+if (!$attempt->id = $DB->insert_record('quiz_attempts', $attempt)) {
     throw new moodle_quiz_exception($quizobj, 'newattemptfail');
 }
 
@@ -212,7 +211,7 @@ $eventdata->user       = $USER;
 $eventdata->attempt    = $attempt->id;
 events_trigger('quiz_attempt_started', $eventdata);
 
-commit_sql();
+$transaction->allow_commit();
 
 // Redirect to the attempt page.
 redirect($quizobj->attempt_url($attempt->id));
