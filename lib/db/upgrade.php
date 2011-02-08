@@ -6010,7 +6010,11 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
     
     //remove the old theme and themelegacy fields and add any stored settings to the new themes setting.
-    if ($oldversion < 2011020400) {
+    if ($oldversion < 2011020700) {
+    	$table = new xmldb_table('config');
+        $field = new xmldb_field('themes');
+    	$dbman->drop_field($table, $field);
+    	
     	$theme = $DB->get_record('config', array('name'=>'theme'));
     	
     	$theme_obj = new stdClass();
@@ -6028,17 +6032,15 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $config_themes[] = $theme_obj;
     		
     	$table = new xmldb_table('config');
-    	
-        $table = new xmldb_table('message');
         $field = new xmldb_field('theme');
         
-        if (!$dbman->field_exists($table, $field)) {
+        if ($dbman->field_exists($table, $field)) {
             $dbman->drop_field($table, $field);
         }
         
         $field = new xmldb_field('themelegacy');
         
-        if (!$dbman->field_exists($table, $field)) {
+        if ($dbman->field_exists($table, $field)) {
             $dbman->drop_field($table, $field);
         }
 
@@ -6047,6 +6049,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->add_field($table, $field);
         
         set_config('themes', json_encode($config_themes));
+        set_config('enabledevicedetection', 1);
     }
 
     return true;

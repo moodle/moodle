@@ -2602,7 +2602,7 @@ EOD;
     	
     	global $USER, $PAGE;
     	
-    	$switched = (!empty($USER->themeswitch));
+    	$switched = get_user_switched_theme();
     	
     	$content = html_writer::start_tag('div', array('id'=>'theme_switch_link'));
     	

@@ -49,7 +49,7 @@ if ($reset and confirm_sesskey()) {
     
     foreach($config_themes as $config_theme){
     	if($config_theme->device == $device){
-    		unset($config_themes[$i]);
+    		array_splice($config_themes,$i,1);
     		break;
     	}
     	$i++;
@@ -108,7 +108,11 @@ if($CFG->enabledevicedetection && empty($device)){
 		
 		$row[] = $device;
 
-		$themename = get_theme_for_device_type($CFG->themes, $device);
+		$themename = get_selected_theme_for_device_type($CFG->themes, $device);
+		
+		if(!$themename && $device == 'default'){
+			$themename = theme_config::DEFAULT_THEME;
+		}
 		
 		if($themename){
 			$strthemename = get_string('pluginname', 'theme_'.$themename);
@@ -171,7 +175,7 @@ foreach ($themes as $themename => $themedir) {
     $rowclasses = array();
 
     // Set up bools whether this theme is chosen either main or legacy
-    $ischosentheme = ($themename == get_theme_for_device_type($CFG->themes, $device));
+    $ischosentheme = ($themename == get_selected_theme_for_device_type($CFG->themes, $device));
 
     if ($ischosentheme) {
         // Is the chosen main theme

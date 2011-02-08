@@ -1273,7 +1273,7 @@ class moodle_page {
         } else {
             $device_type = get_device_type();
         }
-     
+        
         $theme = '';
 
         foreach ($themeorder as $themetype) {
@@ -1316,7 +1316,7 @@ class moodle_page {
                     	$this->_legacythemeinuse = true;
                     }
 
-                    return get_theme_for_device_type($CFG->themes);                
+                    return get_selected_theme_for_device_type($CFG->themes);                
             }
         }
     }

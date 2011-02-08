@@ -7324,7 +7324,7 @@ class admin_setting_devicedetectregex extends admin_setting {
     public function __construct() {
         global $CFG;
 
-        parent::__construct('devicedetectregex', get_string('devicedetectregex', 'admin'), get_string('devicedetectregex_desc', 'admin'));
+        parent::__construct('devicedetectregex', get_string('devicedetectregex', 'admin'), get_string('devicedetectregex_desc', 'admin'), '');
     }
 
     /**
@@ -7446,10 +7446,10 @@ class admin_setting_devicedetectregex extends admin_setting {
         
         foreach($regexes as $regex) {
         	$expressionname  = 'expression'.$i;
-        	$valuename       = 'value'.$i;
+        	$valuename = 'value'.$i;
         	
-            $form[$expressionname]  = $regex->$expressionname;
-            $form[$valuename]       = $regex->$valuename;
+            $form[$expressionname] = $regex->expression;
+            $form[$valuename] = $regex->value;
             $i++;
         }
 
@@ -7484,9 +7484,9 @@ class admin_setting_devicedetectregex extends admin_setting {
         		continue;
         	}
         	
-            $regex                   = new stdClass();
-            $regex->$expressionname  = $expression;
-            $regex->$valuename       = $value;
+            $regex = new stdClass();
+            $regex->expression = $expression;
+            $regex->value = $value;
             
             $regexes[] = $regex;        
         }
