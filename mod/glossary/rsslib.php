@@ -6,22 +6,26 @@
     function glossary_rss_get_feed($context, $args) {
         global $CFG, $DB;
 
+        $status = true;
+
         if (empty($CFG->glossary_enablerssfeeds)) {
             debugging("DISABLED (module configuration)");
             return null;
         }
 
-        $status = true;
+        $glossaryid  = clean_param($args[3], PARAM_INT);
+        $cm = get_coursemodule_from_instance('glossary', $glossaryid, 0, false, MUST_EXIST);
+        if ($cm) {
+            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-        //check capabilities
-        //glossary module doesn't require any capabilities to view glossary entries (aside from being logged in)
-        if (!is_enrolled($context) && !isguestuser()) {
-            return null;
+            //context id from db should match the submitted one
+            //no specific capability required to view glossary entries so just check user is enrolled
+            if ($context->id != $modcontext->id || !is_enrolled($context)) {
+                return null;
+            }
         }
 
-        $glossaryid  = clean_param($args[3], PARAM_INT);
         $glossary = $DB->get_record('glossary', array('id' => $glossaryid), '*', MUST_EXIST);
-
         if (!rss_enabled_for_mod('glossary', $glossary)) {
             return null;
         }
