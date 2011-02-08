@@ -5512,10 +5512,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // Main savepoint reached
         upgrade_main_savepoint(true, 2010121401);
     }
-    
-    if ($oldversion < 2011011300) {
-    	set_config('enabledevicedetection',1);
-    }
 
     if ($oldversion < 2011011401) {
         $columns = $DB->get_columns('block_instances');
@@ -6011,6 +6007,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     
     //remove the old theme and themelegacy fields and add any stored settings to the new themes setting.
     if ($oldversion < 2011020700) {
+    	set_config('enabledevicedetection',1);
+    	
     	$table = new xmldb_table('config');
         $field = new xmldb_field('themes');
     	$dbman->drop_field($table, $field);
