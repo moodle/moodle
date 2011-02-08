@@ -270,7 +270,12 @@ function quiz_questions_on_page($layout, $page) {
  * @return string comma separated list of question ids, without page breaks.
  */
 function quiz_questions_in_quiz($layout) {
-    return str_replace(',0', '', quiz_clean_layout($layout));
+    $questions = str_replace(',0', '', quiz_clean_layout($layout, true));
+    if ($questions === '0') {
+        return '';
+    } else {
+        return $questions;
+    }
 }
 
 /**
@@ -280,8 +285,7 @@ function quiz_questions_in_quiz($layout) {
  * @return integer The number of pages in the quiz.
  */
 function quiz_number_of_pages($layout) {
-    // TODO is this still used.
-    return substr_count($layout, ',0');
+    return substr_count(',' . $layout, ',0');
 }
 
 /**

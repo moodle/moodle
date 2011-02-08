@@ -380,7 +380,7 @@ class mod_quiz_mod_form extends moodleform_mod {
                 $toform['feedbacktext['.$key.']']['itemid'] = $draftid;
 
                 if ($feedback->mingrade > 0) {
-                    $default_values['feedbackboundaries['.$key.']'] = (100.0 * $feedback->mingrade / $default_values['grade']) . '%';
+                    $toform['feedbackboundaries['.$key.']'] = (100.0 * $feedback->mingrade / $toform['grade']) . '%';
                 }
                 $key++;
             }

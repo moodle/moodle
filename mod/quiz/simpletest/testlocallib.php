@@ -88,4 +88,11 @@ class quiz_locallib_test extends UnitTestCase {
         $this->assertEqual(quiz_rescale_grade(0.12345678, $quiz, true), format_float(0.25, 2));
         $this->assertEqual(quiz_rescale_grade(0.12345678, $quiz, 'question'), format_float(0.247, 3));
     }
+
+    public function test_quiz_get_slot_for_question() {
+        $quiz = new stdClass;
+        $quiz->questions = '1,2,0,7,0';
+        $this->assertEqual(1, quiz_get_slot_for_question($quiz, 1));
+        $this->assertEqual(3, quiz_get_slot_for_question($quiz, 7));
+    }
 }
