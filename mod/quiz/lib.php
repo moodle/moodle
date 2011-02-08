@@ -468,7 +468,7 @@ function quiz_get_user_grades($quiz, $userid = 0) {
         $params[] = $userid;
         $usertest = 'AND u.id = ?';
     }
-    return $DB->get_records_sql('
+    return $DB->get_records_sql("
             SELECT
                 u.id,
                 u.id AS userid,
@@ -480,8 +480,9 @@ function quiz_get_user_grades($quiz, $userid = 0) {
             JOIN {quiz_grades} qg ON u.id = qg.userid
             JOIN {quiz_attempts} qa ON qa.quiz = qg.quiz AND qa.userid = u.id
 
-            WHERE qg.quiz = ? $usertest
-            GROUP BY u.id, qg.grade, qg.timemodified', $params);
+            WHERE qg.quiz = ?
+            $usertest
+            GROUP BY u.id, qg.grade, qg.timemodified", $params);
 }
 
 /**

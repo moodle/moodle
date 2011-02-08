@@ -105,7 +105,7 @@
         $PAGE->set_cacheable(false);
         echo $OUTPUT->header();
     } else {
-        $attemptobj->navigation($strreviewtitle);
+        $PAGE->navbar->add($strreviewtitle);
         $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
         $PAGE->set_heading($attemptobj->get_course()->fullname);
         echo $OUTPUT->header();

@@ -945,6 +945,7 @@ class quiz_attempt {
      * time in the database for these actions. If null, will use the current time.
      */
     public function process_all_actions($timestamp) {
+        global $DB;
         $this->quba->process_all_actions($timestamp);
         question_engine::save_questions_usage_by_activity($this->quba);
 
@@ -952,7 +953,7 @@ class quiz_attempt {
         if ($this->attempt->timefinish) {
             $this->attempt->sumgrades = $this->quba->get_total_mark();
         }
-        if (!update_record('quiz_attempts', $this->attempt)) {
+        if (!$DB->update_record('quiz_attempts', $this->attempt)) {
             throw new moodle_quiz_exception($this->get_quizobj(), 'saveattemptfailed');
         }
         if (!$this->is_preview() && $this->attempt->timefinish) {
@@ -970,6 +971,7 @@ class quiz_attempt {
     }
 
     public function finish_attempt($timestamp) {
+        global $DB;
         $this->quba->process_all_actions($timestamp);
         $this->quba->finish_all_questions($timestamp);
 
@@ -978,7 +980,7 @@ class quiz_attempt {
         $this->attempt->timemodified = $timestamp;
         $this->attempt->timefinish = $timestamp;
         $this->attempt->sumgrades = $this->quba->get_total_mark();
-        if (!update_record('quiz_attempts', $this->attempt)) {
+        if (!$DB->update_record('quiz_attempts', $this->attempt)) {
             throw new moodle_quiz_exception($this->get_quizobj(), 'saveattemptfailed');
         }
 
