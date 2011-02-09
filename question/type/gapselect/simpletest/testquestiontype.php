@@ -64,6 +64,7 @@ class qtype_gapselect_test extends UnitTestCase {
         $gapselect = new stdClass;
         $gapselect->id = 0;
         $gapselect->category = 0;
+        $gapselect->contextid = 0;
         $gapselect->parent = 0;
         $gapselect->questiontextformat = FORMAT_HTML;
         $gapselect->generalfeedbackformat = FORMAT_HTML;
