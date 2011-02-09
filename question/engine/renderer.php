@@ -34,7 +34,7 @@
  * @copyright 2009 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_question_renderer extends renderer_base {
+class core_question_renderer extends plugin_renderer_base {
 
     /**
      * Generate the display of a question in a particular state, and with certain
@@ -331,10 +331,10 @@ class core_question_renderer extends renderer_base {
             if ($stepno == $qa->get_num_steps()) {
                 $rowclass = 'current';
             } else if (!empty($options->questionreviewlink)) {
-                $stepno = link_to_popup_window($options->questionreviewlink .
-                        '&amp;slot=' . $qa->get_slot() .
-                        '&step=' . $i, 'reviewquestion', $stepno, 450, 650,
-                        get_string('reviewresponse', 'quiz'), 'none', true);
+                $url = new moodle_url($options->questionreviewlink, array('slot' => $qa->get_slot(), 'step' => $i));
+                $stepno = $this->output->action_link($url, $stepno,
+                        new popup_action('click', $url, 'reviewquestion', array('width' => 450, 'height' => 650)),
+                        array('title' => get_string('reviewresponse', 'quiz')));
             }
             $user = new stdClass;
             $user->id = $step->get_user_id();

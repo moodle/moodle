@@ -81,7 +81,7 @@ DONE mod/quiz/defaults.php                              |   12 +-
  mod/quiz/edit.js                                   |  131 +
  mod/quiz/edit.php                                  |  118 +-
  mod/quiz/editlib.php                               |   79 +-
- mod/quiz/index.php                                 |    6 +-
+DONE mod/quiz/index.php                                 |    6 +-
 DONE mod/quiz/jstimer.php                               |   58 -
 DONE mod/quiz/lib.php                                   |  454 ++--
 DONE mod/quiz/locallib.php                              |  848 +++++--
@@ -102,7 +102,7 @@ DONE mod/quiz/protect_js.php                            |   56 -
  mod/quiz/restorelibpre15.php                       |   41 +-
 DONE mod/quiz/review.php                                |  520 ++--
 DONE mod/quiz/reviewoptions.html                        |  124 +-
- mod/quiz/reviewquestion.php                        |  267 +-
+DONE mod/quiz/reviewquestion.php                        |  267 +-
  mod/quiz/settingslib.php
 DONE mod/quiz/simpletest/testaccessrules.php            |  518 ++++
 DONE mod/quiz/simpletest/testlib.php                    |   58 +
