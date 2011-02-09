@@ -823,13 +823,12 @@ function close_window($delay = 0, $reloadopener = false) {
     }
 
     if ($reloadopener) {
-        $function = 'close_window_reloading_opener';
-    } else {
-        $function = 'close_window';
+        // Trigger the reload immediately, even if the reload is after a delay.
+        $PAGE->requires->js_function_call('window.opener.location.reload', array(true));
     }
-    echo '<p class="centerpara">' . get_string('windowclosing') . '</p>';
+    $OUTPUT->notification(get_string('windowclosing'), 'notifysuccess');
 
-    $PAGE->requires->js_function_call($function, null, false, $delay);
+    $PAGE->requires->js_function_call('close_window', array(new stdClass()), false, $delay);
 
     echo $OUTPUT->footer();
     exit;
