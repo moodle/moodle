@@ -35,6 +35,7 @@ class qtype_missing_test extends UnitTestCase {
         $questiondata = new stdClass;
         $questiondata->id = 0;
         $questiondata->category = 0;
+        $questiondata->contextid = 0;
         $questiondata->parent = 0;
         $questiondata->name = 'Test';
         $questiondata->questiontext = 'This is the question text.';

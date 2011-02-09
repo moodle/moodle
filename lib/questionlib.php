@@ -797,8 +797,10 @@ function question_preload_questions($questionids, $extrafields = '', $join = '',
     }
     list($questionidcondition, $params) = $DB->get_in_or_equal(
             $questionids, SQL_PARAMS_NAMED, 'qid0000');
-    $sql = 'SELECT q.*' . $extrafields . ' FROM {question} q' . $join .
-            ' WHERE q.id ' . $questionidcondition;
+    $sql = 'SELECT q.*, qc.contextid' . $extrafields . ' FROM {question} q
+            JOIN {question_categories} qc ON q.category = qc.id' .
+            $join .
+          ' WHERE q.id ' . $questionidcondition;
 
     // Load the questions
     if (!$questions = $DB->get_records_sql($sql, $extraparams + $params)) {
@@ -1861,27 +1863,6 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
 
         send_file_not_found();
     }
-}
-
-/**
- * TODO delete this. Replaced by $quba->check_file_access.
- *
- * Final test for whether a studnet should be allowed to see a particular file.
- * This delegates the decision to the question type plugin.
- *
- * @param object $question The question to be rendered.
- * @param object $state    The state to render the question in.
- * @param object $options  An object specifying the rendering options.
- * @param string $component the name of the component we are serving files for.
- * @param string $filearea the name of the file area.
- * @param array $args the remaining bits of the file path.
- * @param bool $forcedownload whether the user must be forced to download the file.
- */
-function question_check_file_access($question, $state, $options, $contextid, $component,
-        $filearea, $args, $forcedownload) {
-    global $QTYPES;
-    return $QTYPES[$question->qtype]->check_file_access($question, $state, $options, $contextid, $component,
-            $filearea, $args, $forcedownload);
 }
 
 /**

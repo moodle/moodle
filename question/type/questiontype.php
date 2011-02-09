@@ -642,6 +642,7 @@ class question_type {
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         $question->id = $questiondata->id;
         $question->category = $questiondata->category;
+        $question->contextid = $questiondata->contextid;
         $question->parent = $questiondata->parent;
         $question->qtype = $this;
         $question->name = $questiondata->name;

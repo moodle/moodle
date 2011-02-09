@@ -145,7 +145,11 @@ abstract class question_bank {
             return self::return_test_question_data($questionid);
         }
 
-        $questiondata = $DB->get_record('question', array('id' => $questionid), '*', MUST_EXIST);
+        $questiondata = $DB->get_record_sql('
+                SELECT q.*, qc.contextid
+                FROM {question} q
+                JOIN {question_categories} qc ON q.category = qc.id
+                WHERE q.id = :id', array('id' => $questionid), MUST_EXIST);
         get_question_options($questiondata);
         if (!$allowshuffle) {
             $questiondata->options->shuffleanswers = false;

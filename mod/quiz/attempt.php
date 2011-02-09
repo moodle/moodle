@@ -157,7 +157,7 @@ echo "</div>";
 
 // Some hidden fields to trach what is going on.
 echo '<input type="hidden" name="attempt" value="' . $attemptobj->get_attemptid() . '" />';
-echo '<input type="hidden" name="thispage" id="nextpagehiddeninput" value="' . $page . '" />';
+echo '<input type="hidden" name="thispage" value="' . $page . '" />';
 echo '<input type="hidden" name="nextpage" id="nextpagehiddeninput" value="' . $nextpage . '" />';
 echo '<input type="hidden" name="timeup" id="timeup" value="0" />';
 echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';

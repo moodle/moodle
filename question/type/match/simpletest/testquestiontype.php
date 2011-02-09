@@ -24,7 +24,10 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 require_once($CFG->dirroot . '/question/type/match/questiontype.php');
+
 
 /**
  * Unit tests for the matching question definition class.
@@ -50,6 +53,7 @@ class qtype_match_test extends UnitTestCase {
         $q->id = 0;
         $q->name = 'Matching question';
         $q->category = 0;
+        $q->contextid = 0;
         $q->parent = 0;
         $q->questiontext = 'Classify the animals.';
         $q->questiontextformat = FORMAT_HTML;

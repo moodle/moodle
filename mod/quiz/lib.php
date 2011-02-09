@@ -1608,16 +1608,13 @@ function quiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
  * @param bool $forcedownload whether the user must be forced to download the file.
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function quiz_question_pluginfile($course, $context, $component,
-        $filearea, $attemptid, $questionid, $args, $forcedownload) {
+function mod_quiz_question_pluginfile($course, $context, $component,
+        $filearea, $qubaid, $slot, $args, $forcedownload) {
     global $USER, $CFG;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-    $attemptobj = quiz_attempt::create($attemptid);
+    $attemptobj = quiz_attempt::create_from_usage_id($qubaid);
     require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
-    $questionids = array($questionid);
-    $attemptobj->load_questions($questionids);
-    $attemptobj->load_question_states($questionids);
 
     if ($attemptobj->is_own_attempt() && !$attemptobj->is_finished()) {
         // In the middle of an attempt.
@@ -1632,7 +1629,7 @@ function quiz_question_pluginfile($course, $context, $component,
         $isreviewing = true;
     }
 
-    if (!$attemptobj->check_file_access($questionid, $isreviewing, $context->id,
+    if (!$attemptobj->check_file_access($slot, $isreviewing, $context->id,
             $component, $filearea, $args, $forcedownload)) {
         send_file_not_found();
     }

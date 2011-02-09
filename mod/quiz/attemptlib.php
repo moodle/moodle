@@ -375,15 +375,19 @@ class quiz_attempt {
     }
 
     /**
-     * Static function to create a new quiz_attempt object given an attemptid.
-     *
-     * @param integer $attemptid the attempt id.
-     * @return quiz_attempt the new quiz_attempt object
+     * Used by {create()} and {create_from_usage_id()}.
+     * @param array $conditions passed to $DB->get_record('quiz_attempts', $conditions).
      */
-    static public function create($attemptid) {
+    static protected function create_helper($conditions) {
         global $DB;
 
-        if (!$attempt = quiz_load_attempt($attemptid)) {
+// TODO deal with the issue that makes this necessary.
+//    if (!$DB->record_exists('question_sessions', array('attemptid' => $attempt->uniqueid))) {
+//        // this attempt has not yet been upgraded to the new model
+//        quiz_upgrade_states($attempt);
+//    }
+
+        if (!$attempt = $DB->get_record('quiz_attempts', $conditions)) {
             throw new moodle_exception('invalidattemptid', 'quiz');
         }
         if (!$quiz = $DB->get_record('quiz', array('id' => $attempt->quiz))) {
@@ -400,6 +404,26 @@ class quiz_attempt {
         $quiz = quiz_update_effective_access($quiz, $attempt->userid);
 
         return new quiz_attempt($attempt, $quiz, $cm, $course);
+    }
+
+    /**
+     * Static function to create a new quiz_attempt object given an attemptid.
+     *
+     * @param integer $attemptid the attempt id.
+     * @return quiz_attempt the new quiz_attempt object
+     */
+    static public function create($attemptid) {
+        return self::create_helper(array('id' => $attemptid));
+    }
+
+    /**
+     * Static function to create a new quiz_attempt object given a usage id.
+     *
+     * @param integer $usageid the attempt usage id.
+     * @return quiz_attempt the new quiz_attempt object
+     */
+    static public function create_from_usage_id($usageid) {
+        return self::create_helper(array('uniqueid' => $usageid));
     }
 
     private function determine_layout() {
@@ -637,7 +661,6 @@ class quiz_attempt {
      * @return array the reqested list of question ids.
      */
     public function get_slots($page = 'all') {
-        // TODO rename to get_slots
         if ($page === 'all') {
             $numbers = array();
             foreach ($this->pagelayout as $numbersonpage) {
@@ -757,7 +780,7 @@ class quiz_attempt {
      * this page to be output as only a fragment.
      * @return string the URL to continue this attempt.
      */
-    public function attempt_url($slot = 0, $page = -1, $thispage = -1) {
+    public function attempt_url($slot = null, $page = -1, $thispage = -1) {
         return $this->page_and_question_url('attempt', $slot, $page, false, $thispage);
     }
 
@@ -785,7 +808,7 @@ class quiz_attempt {
      * this page to be output as only a fragment.
      * @return string the URL to review this attempt.
      */
-    public function review_url($slot = 0, $page = -1, $showall = false, $thispage = -1) {
+    public function review_url($slot = null, $page = -1, $showall = false, $thispage = -1) {
         return $this->page_and_question_url('review', $slot, $page, $showall, $thispage);
     }
 
@@ -889,11 +912,10 @@ class quiz_attempt {
      * @param string $thispageurl the URL of the page this question is being printed on.
      * @return string HTML for the question in its current state.
      */
-    public function check_file_access($questionid, $reviewing, $contextid, $component,
+    public function check_file_access($slot, $reviewing, $contextid, $component,
             $filearea, $args, $forcedownload) {
-        return question_check_file_access($this->questions[$questionid],
-                $this->get_question_state($questionid), $this->get_display_options($reviewing),
-                $contextid, $component, $filearea, $args, $forcedownload);
+        return $this->quba->check_file_access($slot, $this->get_display_options($reviewing),
+                $component, $filearea, $args, $forcedownload);
     }
 
     /**
@@ -1030,7 +1052,7 @@ class quiz_attempt {
     protected function page_and_question_url($script, $slot, $page, $showall, $thispage) {
         // Fix up $page
         if ($page == -1) {
-            if ($slot && !$showall) {
+            if (!is_null($slot) && !$showall) {
                 $page = $this->quba->get_question($slot)->_page;
             } else {
                 $page = 0;
@@ -1043,7 +1065,7 @@ class quiz_attempt {
 
         // Add a fragment to scroll down to the question.
         $fragment = '';
-        if ($slot) {
+        if (!is_null($slot)) {
             if ($slot == reset($this->pagelayout[$page])) {
                 // First question on page, go to top.
                 $fragment = '#';

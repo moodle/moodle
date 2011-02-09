@@ -158,29 +158,6 @@ function quiz_get_latest_attempt_by_user($quizid, $userid) {
 }
 
 /**
- * Load an attempt by id. You need to use this method instead of $DB->get_record, because
- * of some ancient history to do with the upgrade from Moodle 1.4 to 1.5, See the comment
- * after CREATE TABLE `prefix_quiz_newest_states` in mod/quiz/db/mysql.php.
- *
- * @param integer $attemptid the id of the attempt to load.
- */
-function quiz_load_attempt($attemptid) {
-    global $DB;
-    $attempt = $DB->get_record('quiz_attempts', array('id' => $attemptid));
-    if (!$attempt) {
-        return false;
-    }
-
-    // TODO deal with the issue that makes this necessary.
-//    if (!$DB->record_exists('question_sessions', array('attemptid' => $attempt->uniqueid))) {
-//    /// this attempt has not yet been upgraded to the new model
-//        quiz_upgrade_states($attempt);
-//    }
-
-    return $attempt;
-}
-
-/**
  * Delete a quiz attempt.
  * @param mixed $attempt an integer attempt id or an attempt object (row of the quiz_attempts table).
  * @param object $quiz the quiz object.

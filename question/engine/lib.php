@@ -1313,6 +1313,7 @@ class question_attempt {
     protected $usageid;
 
     /** @var integer the id of the context this question_attempt belongs to. */
+    // TODO I don't think this is actually needed.
     protected $owningcontextid = null;
 
     /** @var integer the number used to identify this question_attempt within the usage. */
@@ -1808,7 +1809,7 @@ class question_attempt {
      */
     public function rewrite_pluginfile_urls($text, $component, $filearea, $itemid) {
         return question_rewrite_question_urls($text,
-                'pluginfile.php', $this->owningcontextid, $component, $filearea,
+                'pluginfile.php', $this->question->contextid, $component, $filearea,
                 array($this->get_usage_id(), $this->get_slot()), $itemid);
     }
 
