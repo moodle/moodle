@@ -70,8 +70,8 @@ DONE mod/quiz/attempt.php                               |  742 ++----
 DONE mod/quiz/attempt_close_js.php                      |   27 -
 DONE mod/quiz/attemptlib.php                            | 1219 +++++++++
  mod/quiz/backuplib.php                             |   16 +-
- mod/quiz/comment.php                               |  171 +-
- mod/quiz/config.html                               |  304 ++-
+DONE mod/quiz/comment.php                               |  171 +-
+DONE mod/quiz/config.html                               |  304 ++-
 DONE mod/quiz/db/access.php                             |   19 +-
 DONE mod/quiz/db/install.xml                            |  191 +-
 DONE mod/quiz/db/mysql.php                              | 1163 --------

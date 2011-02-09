@@ -218,7 +218,7 @@ if ($attempts) {
 
     // One row for each attempt
     foreach ($attempts as $attempt) {
-        $attemptoptions = quiz_get_reviewoptions($quiz, $attempt, $context);
+        $attemptoptions = quiz_get_review_options($quiz, $attempt, $context);
         $row = array();
 
         // Add the attempt number, making it a link, if appropriate.

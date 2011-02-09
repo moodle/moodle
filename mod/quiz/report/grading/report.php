@@ -381,7 +381,7 @@ class quiz_grading_report extends quiz_default_report {
                 // with only one question there is only one entry in this array
                 $state = &$states[$question->id];
 
-                $options = quiz_get_reviewoptions($quiz, $attempt, $context);
+                $options = quiz_get_review_options($quiz, $attempt, $context);
                 unset($options->questioncommentlink);
                 $options->readonly = 1;
 

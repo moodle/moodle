@@ -27,7 +27,7 @@ class quiz_responses_report extends quiz_default_report {
         $fakeattempt->preview = false;
         $fakeattempt->timefinish = $quiz->timeopen;
         $fakeattempt->userid = 0;
-        $reviewoptions = quiz_get_reviewoptions($quiz, $fakeattempt, $context);
+        $reviewoptions = quiz_get_review_options($quiz, $fakeattempt, $context);
         $showgrades = quiz_has_grades($quiz) && $reviewoptions->scores;
 
         $download = optional_param('download', '', PARAM_ALPHA);

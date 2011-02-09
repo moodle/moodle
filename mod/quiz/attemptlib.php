@@ -608,7 +608,7 @@ class quiz_attempt {
     public function get_display_options($reviewing) {
         if ($reviewing) {
             if (is_null($this->reviewoptions)) {
-                $this->reviewoptions = quiz_get_reviewoptions($this->get_quiz(),
+                $this->reviewoptions = quiz_get_review_options($this->get_quiz(),
                         $this->attempt, $this->quizobj->get_context());
             }
             return $this->reviewoptions;

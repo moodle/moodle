@@ -800,7 +800,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
             }
         }
 
-        $options = quiz_get_reviewoptions($quiz, $attempt, $context);
+        $options = quiz_get_review_options($quiz, $attempt, $context);
 
         $tmpactivity = new stdClass;
 

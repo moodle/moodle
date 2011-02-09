@@ -71,7 +71,7 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
 
         $commentfield = $qa->get_behaviour_field_name('comment');
 
-        list($commenttext, $commentformat) = $this->qa->get_manual_comment();
+        list($commenttext, $commentformat) = $qa->get_manual_comment();
         $comment = print_textarea(can_use_html_editor(), 10, 80, null, null, $commentfield, $commenttext, 0, true);
         $comment = html_writer::tag('div', html_writer::tag('div',
                 html_writer::tag('label', get_string('comment', 'question'), array('for' => $commentfield)),
@@ -136,10 +136,9 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
             $output .= get_string('commentx', 'question', $qa->get_behaviour()->format_comment());
         }
         if ($options->manualcommentlink) {
-            $strcomment = get_string('commentormark', 'question');
-            $link = link_to_popup_window($options->manualcommentlink .
-                    '&amp;slot=' . $qa->get_slot(),
-                    'commentquestion', $strcomment, 600, 800, $strcomment, 'none', true);
+            $url = new moodle_url($options->manualcommentlink, array('slot' => $qa->get_slot()));
+            $link = $this->output->action_link($url, get_string('commentormark', 'question'),
+                    new popup_action('click', $url, 'commentquestion', array('width' => 600, 'height' => 800)));
             $output .= html_writer::tag('div', $link, array('class' => 'commentlink'));
         }
         return $output;

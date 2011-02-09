@@ -1041,18 +1041,20 @@ function quiz_attempt_state($quiz, $attempt) {
  *
  * @return mod_quiz_display_options
  */
-function quiz_get_reviewoptions($quiz, $attempt, $context) {
+function quiz_get_review_options($quiz, $attempt, $context) {
     $options = mod_quiz_display_options::make_from_quiz($quiz, quiz_attempt_state($quiz, $attempt));
 
     $options->readonly = true;
     $options->flags = quiz_get_flag_option($attempt, $context);
-    $options->questionreviewlink = '/mod/quiz/reviewquestion.php?attempt=' . $attempt->id;
+    $options->questionreviewlink = new moodle_url('/mod/quiz/reviewquestion.php',
+            array('attempt' => $attempt->id));
 
     // Show a link to the comment box only for closed attempts
     if ($attempt->timefinish && !$attempt->preview && !is_null($context) &&
             has_capability('mod/quiz:grade', $context)) {
         $options->manualcomment = question_display_options::VISIBLE;
-        $options->manualcommentlink = '/mod/quiz/comment.php?attempt=' . $attempt->id;
+        $options->manualcommentlink = new moodle_url('/mod/quiz/comment.php',
+                array('attempt' => $attempt->id));
     }
 
     if (!is_null($context) && !$attempt->preview && has_capability('mod/quiz:viewreports', $context) &&
