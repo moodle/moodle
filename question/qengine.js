@@ -15,7 +15,7 @@ M.core_question_engine.init_form = function(Y, form) {
     Y.one(form).setAttribute('autocomplete', 'off');
     Y.on('key', function (e) {
         if (!e.target.test('a') && !e.target.test('input[type=submit]') &&
-                !e.target.test('input[type=img]')) {
+                !e.target.test('input[type=img]') && !e.target.test('textarea')) {
             e.preventDefault();
         }
     }, form, 'press:13');
