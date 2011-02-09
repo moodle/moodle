@@ -86,9 +86,9 @@
             array_push($headings, get_string('feedback', 'quiz'));
             array_push($align, 'left');
         }
-        $showing = 'scores';  // default
+        $showing = 'grades';  // default
 
-        $scores = $DB->get_records_sql_menu('
+        $grades = $DB->get_records_sql_menu('
                 SELECT qg.quiz, qg.grade
                 FROM {quiz_grades} qg
                 JOIN {quiz} q ON q.id = qg.quiz
@@ -140,22 +140,22 @@
             // fields set to make the following call work.
             $data[] = quiz_attempt_summary_link_to_reports($quiz, $cm, $context);
 
-        } else if ($showing == 'scores') {
+        } else if ($showing == 'grades') {
             // Grade and feedback.
             $attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'all');
             list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts, $context);
 
             $grade = '';
             $feedback = '';
-            if ($quiz->grade && array_key_exists($quiz->id, $scores)) {
-                if ($alloptions->scores) {
+            if ($quiz->grade && array_key_exists($quiz->id, grades)) {
+                if ($alloptions->marks) {
                     $a = new stdClass;
-                    $a->grade = quiz_format_grade($quiz, $scores[$quiz->id]);
+                    $a->grade = quiz_format_grade($quiz, grades[$quiz->id]);
                     $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
                     $grade = get_string('outofshort', 'quiz', $a);
                 }
                 if ($alloptions->overallfeedback) {
-                    $feedback = quiz_feedback_for_grade($scores[$quiz->id], $quiz, $context, $cm);
+                    $feedback = quiz_feedback_for_grade(grades[$quiz->id], $quiz, $context, $cm);
                 }
             }
             $data[] = $grade;

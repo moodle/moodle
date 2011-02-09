@@ -326,7 +326,7 @@ function quiz_get_best_grade($quiz, $userid) {
     global $DB;
     $grade = $DB->get_field('quiz_grades', 'grade', array('quiz' => $quiz->id, 'userid' => $userid));
 
-    // Need to detect errors/no result, without catching 0 scores.
+    // Need to detect errors/no result, without catching 0 grades.
     if ($grade === false) {
         return null;
     }
@@ -599,10 +599,10 @@ function quiz_grade_item_update($quiz, $grades = NULL) {
     }
 
 /* description by TJ:
-1/ If the quiz is set to not show scores while the quiz is still open, and is set to show scores after
+1/ If the quiz is set to not show grades while the quiz is still open, and is set to show grades after
    the quiz is closed, then create the grade_item with a show-after date that is the quiz close date.
-2/ If the quiz is set to not show scores at either of those times, create the grade_item as hidden.
-3/ If the quiz is set to show scores, create the grade_item visible.
+2/ If the quiz is set to not show grades at either of those times, create the grade_item as hidden.
+3/ If the quiz is set to show grades, create the grade_item visible.
 */
     $openreviewoptions = mod_quiz_display_options::make_from_quiz($quiz,
             mod_quiz_display_options::LATER_WHILE_OPEN);
@@ -812,7 +812,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
 
         $tmpactivity->content->attemptid = $attempt->id;
         $tmpactivity->content->attempt   = $attempt->attempt;
-        if (quiz_has_grades($quiz) && $options->scores) {
+        if (quiz_has_grades($quiz) && $options->marks) {
             $tmpactivity->content->sumgrades = quiz_format_grade($quiz, $attempt->sumgrades);
             $tmpactivity->content->maxgrade  = quiz_format_grade($quiz, $quiz->sumgrades);
         } else {

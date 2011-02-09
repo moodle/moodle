@@ -127,7 +127,7 @@ foreach ($slots as $slot) {
             $attemptobj->get_question_number($slot) . $flag . '</a>',
             $attemptobj->get_question_status($slot, $displayoptions->correctness));
     if ($markscolumn) {
-        $row[] = $attemptobj->get_question_score($slot);
+        $row[] = $attemptobj->get_question_mark($slot);
     }
     $table->data[] = $row;
 }

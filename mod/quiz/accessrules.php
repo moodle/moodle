@@ -166,8 +166,8 @@ class quiz_access_manager {
 
     /**
      * Do any of the rules mean that this student will no be allowed any further attempts at this
-     * quiz. Used, for example, to change the label by the  grade displayed on the view page from
-     * 'your current score is' to 'your final score is'.
+     * quiz. Used, for example, to change the label by the grade displayed on the view page from
+     * 'your current grade is' to 'your final grade is'.
      *
      * @param integer $numattempts the number of previous attempts this user has made.
      * @param object $lastattempt information about the user's last completed attempt.
@@ -484,7 +484,7 @@ abstract class quiz_access_rule_base {
     /**
      * If this rule can determine that this user will never be allowed another attempt at
      * this quiz, then return true. This is used so we can know whether to display a
-     * final score on the view page. This will only be called if there is not a currently
+     * final grade on the view page. This will only be called if there is not a currently
      * active attempt for this user.
      * @param integer $numattempts the number of previous attempts this user has made.
      * @param object $lastattempt information about the user's last completed attempt.

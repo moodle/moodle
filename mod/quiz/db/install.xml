@@ -17,7 +17,7 @@
         <FIELD NAME="attemptonlast" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="preferredbehaviour" NEXT="attempts"/>
         <FIELD NAME="attempts" TYPE="int" LENGTH="6" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="The maximum number of attempts that a student is allowed at this quiz. 0 mean no limit." PREVIOUS="attemptonlast" NEXT="grademethod"/>
         <FIELD NAME="grademethod" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" COMMENT="How individual attempt grades are combined to get the overall grade. From the top of mod/quiz/lib.php: 1 = QUIZ_GRADEHIGHEST, 2 = QUIZ_GRADEAVERAGE, 3 = QUIZ_ATTEMPTFIRST, 4 = QUIZ_ATTEMPTLAST." PREVIOUS="attempts" NEXT="decimalpoints"/>
-        <FIELD NAME="decimalpoints" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="2" SEQUENCE="false" COMMENT="Number of decimal points to display when printing scores belonging to this quiz." PREVIOUS="grademethod" NEXT="questiondecimalpoints"/>
+        <FIELD NAME="decimalpoints" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="2" SEQUENCE="false" COMMENT="Number of decimal points to display when printing grades belonging to this quiz." PREVIOUS="grademethod" NEXT="questiondecimalpoints"/>
         <FIELD NAME="questiondecimalpoints" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="-2" SEQUENCE="false" COMMENT="The number of decimal digits to use when displaying question grades. -1 = use decimalpoints, otherwise a separate setting." PREVIOUS="decimalpoints" NEXT="reviewattempt"/>
         <FIELD NAME="reviewattempt" TYPE="int" LENGTH="6" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. This is a bit field, decoded by the mod_quiz_display_options class. It is formed by ORing together the constants defined there." PREVIOUS="questiondecimalpoints" NEXT="reviewcorrectness"/>
         <FIELD NAME="reviewcorrectness" TYPE="int" LENGTH="6" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether users are allowed to review their quiz attempts at various times. A bit field, like reviewattempt." PREVIOUS="reviewattempt" NEXT="reviewmarks"/>
@@ -102,7 +102,7 @@
         <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id" PREVIOUS="quiz"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="quiz_feedback" COMMENT="Feedback given to students based on which grade band their overall score lies." PREVIOUS="quiz_question_instances" NEXT="quiz_reports">
+    <TABLE NAME="quiz_feedback" COMMENT="Feedback given to students based on which grade band their overall grade lies." PREVIOUS="quiz_question_instances" NEXT="quiz_reports">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="quizid"/>
         <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references quiz.id." PREVIOUS="id" NEXT="feedbacktext"/>

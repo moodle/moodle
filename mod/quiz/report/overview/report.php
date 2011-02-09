@@ -21,7 +21,7 @@ class quiz_overview_report extends quiz_default_report {
 
         $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-        // Work out some display options - whether there is feedback, and whether scores should be shown.
+        // Work out some display options - whether there is feedback, and whether grades should be shown.
         $hasfeedback = quiz_has_feedback($quiz);
         $fakeattempt = new stdClass();
         $fakeattempt->preview = false;

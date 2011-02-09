@@ -33,9 +33,6 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 
-// TODO get_question_score -> mark
-
-
 /**
  * Class for quiz exceptions. Just saves a couple of arguments on the
  * constructor for a moodle_exception.
@@ -558,6 +555,15 @@ class quiz_attempt {
     }
 
     /**
+     * Get the overall feedback corresponding to a particular mark.
+     * @param $grade a particular grade.
+     */
+    public function get_overall_feedback($grade) {
+        return quiz_feedback_for_grade($grade, $this->get_quiz(),
+                $this->quizobj->get_context(), $this->get_cm());
+    }
+
+    /**
      * Wrapper round the has_capability funciton that automatically passes in the quiz context.
      */
     public function has_capability($capability, $userid = NULL, $doanything = true) {
@@ -713,7 +719,7 @@ class quiz_attempt {
      * @param integer $slot the number used to identify this question within this attempt.
      * @return string the formatted grade, to the number of decimal places specified by the quiz.
      */
-    public function get_question_score($slot) {
+    public function get_question_mark($slot) {
         return quiz_format_question_grade($this->get_quiz(), $this->quba->get_question_mark($slot));
     }
 

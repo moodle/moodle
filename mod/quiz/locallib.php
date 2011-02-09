@@ -508,7 +508,7 @@ function quiz_update_all_attempt_sumgrades($quiz) {
 }
 
 /**
- * The quiz grade is the score that student's results are marked out of. When it
+ * The quiz grade is the maximum that student's results are marked out of. When it
  * changes, the corresponding data in quiz_grades and quiz_feedback needs to be
  * rescaled. After calling this function, you probably need to call
  * quiz_update_all_attempt_sumgrades, quiz_update_all_final_grades and
