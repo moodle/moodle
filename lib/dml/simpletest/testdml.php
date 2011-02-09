@@ -3709,7 +3709,7 @@ class dml_test extends UnitTestCase {
                     LEFT JOIN (
                         SELECT t.id, t.name
                         FROM {{$tablename}} t
-                    ) AS t2 ON t2.name = t.name
+                    ) t2 ON t2.name = t.name
                     GROUP BY t.name
                     ORDER BY t.name ASC";
         $this->assertTrue($records = $DB->get_records_sql($sqlqm));
