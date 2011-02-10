@@ -121,5 +121,4 @@ class question_hint_test extends UnitTestCase {
         $this->assertTrue($hint->shownumcorrect);
         $this->assertTrue($hint->clearwrong);
     }
-    
 }

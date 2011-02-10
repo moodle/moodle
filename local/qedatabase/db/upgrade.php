@@ -1,7 +1,7 @@
 <?php
 
 function xmldb_local_qedatabase_upgrade($oldversion) {
-    global $CFG, $DB, $QTYPES;
+    global $CFG, $DB;
 
     $dbman = $DB->get_manager();
 

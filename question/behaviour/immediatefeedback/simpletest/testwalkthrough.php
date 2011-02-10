@@ -163,7 +163,7 @@ class qbehaviour_immediatefeedback_walkthrough_test extends qbehaviour_walkthrou
                 $this->get_does_not_contain_feedback_expectation(),
                 $this->get_contains_validation_error_expectation());
         $this->assertNull($this->quba->get_response_summary($this->slot));
-    
+
         // Finish the attempt.
         $this->quba->finish_all_questions();
 

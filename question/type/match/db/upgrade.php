@@ -21,7 +21,7 @@
 // before any action that may take longer time to finish.
 
 function xmldb_qtype_match_upgrade($oldversion) {
-    global $CFG, $DB, $QTYPES;
+    global $CFG, $DB;
 
     $dbman = $DB->get_manager();
 

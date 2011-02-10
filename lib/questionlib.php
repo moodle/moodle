@@ -130,7 +130,7 @@ function question_type_menu() {
  * Sort an array of question type names according to the question type sort order stored in
  * config_plugins. Entries for which there is no xxx_sortorder defined will go
  * at the end, sorted according to textlib_get_instance()->asort($inarray).
- * @param $inarray an array $qtype => $QTYPES[$qtype]->local_name().
+ * @param $inarray an array $qtypename => $qtype->local_name().
  * @param $config get_config('question'), if you happen to have it around, to save one DB query.
  * @return array the sorted version of $inarray.
  */
@@ -431,7 +431,7 @@ function question_category_in_use($categoryid, $recursive = false) {
  * @param object $question  The question being deleted
  */
 function question_delete_question($questionid) {
-    global $QTYPES, $DB;
+    global $DB;
 
     $question = $DB->get_record_sql('
             SELECT q.*, qc.contextid

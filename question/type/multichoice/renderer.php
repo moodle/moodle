@@ -278,7 +278,6 @@ class qtype_multichoice_multi_renderer extends qtype_multichoice_renderer_base {
         if (!empty($right)) {
                 return get_string('correctansweris', 'qtype_multichoice',
                         implode(', ', $right));
-            
         }
         return '';
     }

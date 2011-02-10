@@ -114,7 +114,6 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
         // Save a partial response.
         $this->process_submission(array('sub0' => $orderforchoice[1],
                 'sub1' => $orderforchoice[2], 'sub2' => '0', 'sub3' => '0'));
-        
 
         // Verify.
         $this->check_current_state(question_state::$todo);

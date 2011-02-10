@@ -34,8 +34,6 @@
 class qtype_oumultiresponse_edit_form extends question_edit_form {
 
     public function definition_inner($mform) {
-        global $QTYPES;
-
         $mform->addElement('advcheckbox', 'shuffleanswers', get_string('shuffleanswers', 'qtype_multichoice'), null, null, array(0,1));
         $mform->addHelpButton('shuffleanswers', 'shuffleanswers', 'qtype_multichoice');
         $mform->setDefault('shuffleanswers', 1);

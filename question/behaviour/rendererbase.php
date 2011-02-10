@@ -123,7 +123,6 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
                     html_writer::tag('div', $error . get_string('xoutofmax', 'question', $a) .
                         $markrange, array('class' => 'felement ftext' . $errorclass)
                     ), array('class' => 'fitem'));
-            
         }
 
         return html_writer::tag('fieldset', html_writer::tag('div', $comment . $mark,

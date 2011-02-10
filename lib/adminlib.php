@@ -4796,9 +4796,8 @@ class admin_page_manageqtypes extends admin_externalpage {
 
         $found = false;
         $textlib = textlib_get_instance();
-        require_once($CFG->libdir . '/questionlib.php');
-        global $QTYPES;
-        foreach ($QTYPES as $qtype) {
+        require_once($CFG->dirroot . '/question/engine/bank.php');
+        foreach (question_bank::get_all_qtypes() as $qtype) {
             if (strpos($textlib->strtolower($qtype->local_name()), $query) !== false) {
                 $found = true;
                 break;

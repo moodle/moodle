@@ -1,36 +1,37 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas and others                //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 
 /**
- * Functions used by edit.php to edit quizzes
+ * This contains functions that are called from within the quiz module only
+ * Functions that are also called by core Moodle are in {@link lib.php}
+ * This script also loads the code in {@link questionlib.php} which holds
+ * the module-indpendent code for handling questions and which in turn
+ * initialises all the questiontype classes.
  *
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package quiz
- *//** */
+ * @package mod
+ * @subpackage quiz
+ * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+
 
 define('NUM_QS_TO_SHOW_IN_RANDOM', 3);
 
@@ -141,15 +142,16 @@ function quiz_add_quiz_question($id, $quiz, $page = 0) {
     $quiz->questions = implode(',', $questions);
     $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
 
-    // update question grades
-    $quiz->grades[$id] = $DB->get_field('question', 'defaultgrade', array('id' => $id));
-    quiz_update_question_instance($quiz->grades[$id], $id, $quiz->instance);
-
-    return true;
+    // Add the new question instance.
+    $instance = new stdClass;
+    $instance->quiz = $quiz->id;
+    $instance->question = $id;
+    $instance->grade = $DB->get_field('question', 'defaultmark', array('id' => $id));
+    $DB->insert_record('quiz_question_instances', $instance);
 }
 
 function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number, $includesubcategories) {
-    global $DB, $QTYPES;
+    global $DB;
 
     $category = $DB->get_record('question_categories', array('id' => $categoryid));
     if (!$category) {
@@ -163,7 +165,7 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number, $inc
     // not used by any quiz.
     if ($existingquestions = $DB->get_records_sql(
             "SELECT q.id,q.qtype FROM {question} q
-            WHERE qtype = '" . RANDOM . "'
+            WHERE qtype = 'random'
                 AND category = ?
                 AND " . $DB->sql_compare_text('questiontext') . " = ?
                 AND NOT EXISTS (SELECT * FROM {quiz_question_instances} WHERE question = q.id)
@@ -181,14 +183,14 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number, $inc
 
     // More random questions are needed, create them.
     $form->questiontext = array('text' => $includesubcategories, 'format' => 0);
-    $form->defaultgrade = 1;
+    $form->defaultmark = 1;
     $form->hidden = 1;
     for ($i = 0; $i < $number; $i += 1) {
         $form->category = $category->id . ',' . $category->contextid;
         $form->stamp = make_unique_id_code(); // Set the unique code (not to be changed)
         $question = new stdClass;
-        $question->qtype = RANDOM;
-        $question = $QTYPES[RANDOM]->save_question($question, $form);
+        $question->qtype = 'random';
+        $question = question_bank::get_qtype('random')->save_question($question, $form);
         if (!isset($question->id)) {
             print_error('cannotinsertrandomquestion', 'quiz');
         }
@@ -248,23 +250,29 @@ function quiz_save_new_layout($quiz) {
  *
  * Saves changes to the question grades in the quiz_question_instances table.
  * It does not update 'sumgrades' in the quiz table.
- * @return boolean         Indicates success or failure.
+ *
  * @param integer grade    The maximal grade for the question
  * @param integer $questionid  The id of the question
  * @param integer $quizid  The id of the quiz to update / add the instances for.
  */
-function quiz_update_question_instance($grade, $questionid, $quizid) {
-    global $DB;
-    if ($instance = $DB->get_record('quiz_question_instances', array('quiz' => $quizid, 'question' => $questionid))) {
-        $instance->grade = $grade;
-        return $DB->update_record('quiz_question_instances', $instance);
-    } else {
-        unset($instance);
-        $instance->quiz = $quizid;
-        $instance->question = $questionid;
-        $instance->grade = $grade;
-        return $DB->insert_record('quiz_question_instances', $instance);
+function quiz_update_question_instance($grade, $questionid, $quiz) {
+    $instance = $DB->get_record('quiz_question_instances', array('quiz' => $quizid,
+            'question' => $questionid));
+    $slot = quiz_get_slot_for_question($quiz, $questionid);
+
+    if (!$instance || !$slot) {
+        throw new coding_exception('Attempt to change the grade of a quesion not in the quiz.');
     }
+
+    if (abs($grade - $instance->grade) < 1e-7) {
+        // Grade has not changed. Nothing to do.
+        return;
+    }
+
+    $instance->grade = $grade;
+    $DB->update_record('quiz_question_instances', $instance);
+    question_engine::set_max_mark_in_attempts(new quibaid_for_quiz($quiz->id),
+            $slot, $grade);
 }
 
 // Private function used by the following two.
@@ -330,7 +338,7 @@ function quiz_move_question_down($layout, $questionid) {
  */
 function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
         $quiz_qbanktool, $hasattempts, $defaultcategoryobj) {
-    global $USER, $CFG, $QTYPES, $DB, $OUTPUT;
+    global $USER, $CFG, $DB, $OUTPUT;
     $strorder = get_string('order');
     $strquestionname = get_string('questionname', 'quiz');
     $strgrade = get_string('grade');
@@ -351,11 +359,12 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
 
     if ($quiz->questions) {
         list($usql, $params) = $DB->get_in_or_equal(explode(',', $quiz->questions));
-        $questions = $DB->get_records_sql("SELECT q.*,c.contextid
-                              FROM {question} q,
-                                   {question_categories} c
-                             WHERE q.id $usql
-                               AND q.category = c.id", $params);
+        $params[] = $quiz->id;
+        $questions = $DB->get_records_sql("SELECT q.*, qc.contextid, qqi.grade as maxmark
+                              FROM {question} q
+                              JOIN {question_categories} qc ON qc.id = q.category
+                              JOIN {quiz_question_instances} qqi ON qqi.question = q.id
+                             WHERE q.id $usql AND qqi.quiz = ?", $params);
     } else {
         $questions = array();
     }
@@ -429,20 +438,15 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
     $qno = 1;
     //the current question (includes questions and descriptions)
     $questioncount = 0;
-    //the ordinal of current element in the layout
-    //(includes page breaks, questions and descriptions)
-    $count = 0;
     //the current page number in iteration
     $pagecount = 0;
-
-    $sumgrade = 0;
 
     $pageopen = false;
 
     $returnurl = str_replace($CFG->wwwroot, '', $pageurl->out(false));
     $questiontotalcount = count($order);
 
-    foreach ($order as $i => $qnum) {
+    foreach ($order as $count => $qnum) {
 
         $reordercheckbox = '';
         $reordercheckboxlabel = '';
@@ -451,10 +455,22 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
         if ($qnum && empty($questions[$qnum])) {
             continue;
         }
+
         // If the questiontype is missing change the question type
-        if ($qnum && !array_key_exists($questions[$qnum]->qtype, $QTYPES)) {
+        if ($qnum && !array_key_exists($qnum, $questions)) {
+            $fakequestion = new stdClass();
+            $fakequestion->id = 0;
+            $fakequestion->qtype = 'missingtype';
+            $fakequestion->name = get_string('deletedquestion', 'qtype_missingtype');
+            $fakequestion->questiontext = '<p>' . get_string('deletedquestion', 'qtype_missing') . '</p>';
+            $fakequestion->length = 0;
+            $questions[$qnum] = $fakequestion;
+            $quiz->grades[$qnum] = 0;
+
+        } else if ($qnum and question_bank::qtype_exists($questions[$qnum]->qtype)) {
             $questions[$qnum]->qtype = 'missingtype';
         }
+
         if ($qnum != 0 || ($qnum == 0 && !$pageopen)) {
             //this is either a question or a page break after another
             //        (no page is currently open)
@@ -466,7 +482,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                         '</span><div class="pagecontent">';
                 $pageopen = true;
             }
-            if ($qnum == 0  && $i < $questiontotalcount) {
+            if ($qnum == 0  && $count < $questiontotalcount) {
                 // This is the second successive page break. Tell the user the page is empty.
                 echo '<div class="pagestatus">';
                 print_string('noquestionsonpage', 'quiz');
@@ -474,7 +490,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                 if ($allowdelete) {
                     echo '<div class="quizpagedelete">';
                     echo '<a title="' . get_string('removeemptypage', 'quiz') . '" href="' .
-                            $pageurl->out(true, array('deleteemptypage' => $i - 1, 'sesskey'=>sesskey())) .
+                            $pageurl->out(true, array('deleteemptypage' => $count - 1, 'sesskey'=>sesskey())) .
                             '"><img src="' . $OUTPUT->pix_url('t/delete') . '" ' .
                             'class="iconsmall" alt="' . $strremove . '" /></a>';
                     echo '</div>';
@@ -551,7 +567,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                             " alt=\"$strmovedown\" /></a>";
                 }
             }
-            if ($allowdelete && question_has_capability_on($question, 'use', $question->category)) {
+            if ($allowdelete && (empty($question->id) || question_has_capability_on($question, 'use', $question->category))) {
             // remove from quiz, not question delete.
                 if (!$hasattempts) {
                     echo "<a title=\"$strremove\" href=\"" .
@@ -625,19 +641,15 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
 </div>
 
     <?php
-            /* Display question end */
-                $count++;
-                $sumgrade += $quiz->grades[$qnum];
-
             }
         }
         //a page break: end the existing page.
         if ($qnum == 0) {
             if ($pageopen) {
-                if (!$reordertool && !($quiz->shufflequestions && $i < $questiontotalcount - 1)) {
+                if (!$reordertool && !($quiz->shufflequestions && $count < $questiontotalcount - 1)) {
                     quiz_print_pagecontrols($quiz, $pageurl, $pagecount,
                             $hasattempts, $defaultcategoryobj);
-                } else if ($i < $questiontotalcount - 1) {
+                } else if ($count < $questiontotalcount - 1) {
                     //do not include the last page break for reordering
                     //to avoid creating a new extra page in the end
                     echo '<input type="hidden" name="opg' . $pagecount . '" size="2" value="' .
@@ -661,8 +673,6 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
         echo $reordercontrolsbottom;
         echo '</div></form>';
     }
-
-    return $sumgrade;
 }
 
 /**
@@ -732,13 +742,11 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts, $defaultc
  * @param object $quiz The quiz in the context of which the question is being displayed
  */
 function quiz_print_singlequestion($question, $returnurl, $quiz) {
-    global $QTYPES;
     echo '<div class="singlequestion">';
     echo quiz_question_edit_button($quiz->cmid, $question, $returnurl, quiz_question_tostring($question) . ' ');
     echo '<span class="questiontype">';
-    $namestr = $QTYPES[$question->qtype]->local_name();
     print_question_icon($question);
-    echo " $namestr</span>";
+    echo ' ' . question_bank::get_qtype_name($question->qtype) . '</span>';
     echo '<span class="questionpreview">' . quiz_question_preview_button($quiz, $question, true) . '</span>';
     echo "</div>\n";
 }
@@ -752,7 +760,7 @@ function quiz_print_singlequestion($question, $returnurl, $quiz) {
  * @param boolean $quiz_qbanktool Indicate to this function if the question bank window open
  */
 function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktool) {
-    global $DB, $QTYPES, $OUTPUT;
+    global $DB, $OUTPUT;
     echo '<div class="quiz_randomquestion">';
 
     if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
@@ -778,7 +786,7 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktoo
     echo '<span class="questionpreview">' . quiz_question_preview_button($quiz, $question, true) . '</span>';
     echo '</div>';
 
-    $questionids = $QTYPES['random']->get_usable_questions_from_category(
+    $questionids = question_bank::get_qtype('random')->get_usable_questions_from_category(
             $category->id, $question->questiontext == '1', '0');
     $questioncount = count($questionids);
 
@@ -829,7 +837,6 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktoo
     echo '<div class="randomquestioncategorycount">';
     echo '</div>';
     echo '</div>';
-
 }
 
 /**
@@ -860,14 +867,14 @@ function quiz_print_singlequestion_reordertool($question, $returnurl, $quiz) {
  * @param object $quiz The quiz in the context of which the question is being displayed
  */
 function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz) {
-    global $DB, $QTYPES, $OUTPUT;
+    global $DB, $OUTPUT;
 
     // Load the category, and the number of available questions in it.
     if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
         echo $OUTPUT->notification('Random question category not found!');
         return;
     }
-    $questioncount = count($QTYPES['random']->get_usable_questions_from_category(
+    $questioncount = count(question_bank::get_qtype('random')->get_usable_questions_from_category(
             $category->id, $question->questiontext == '1', '0'));
 
     $reordercheckboxlabel = '<label for="s' . $question->id . '">';
@@ -898,7 +905,6 @@ function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz) {
     echo '<div class="randomquestioncategorycount">';
     echo '</div>';
     echo '</div>';
-
 }
 
 /**
@@ -916,7 +922,6 @@ function print_random_option_icon($question) {
     }
     echo '<img src="' . $OUTPUT->pix_url('i/' . $icon) . '" alt="' .
             $tooltip . '" title="' . $tooltip . '" class="uihint" />';
-
 }
 
 /**
@@ -928,39 +933,38 @@ function print_random_option_icon($question) {
  *       If false, show only question name.
  * @param boolean $return If true (default), return the output. If false, print it.
  */
-
 function quiz_question_tostring(&$question, $showicon = false, $showquestiontext = true, $return = true) {
-        global $COURSE;
-        $result = '';
-        $result .= '<span class="questionname">';
-        if ($showicon) {
-            $result .= print_question_icon($question, true);
-            echo " ";
-        }
-        $result .= shorten_text(format_string($question->name), 200) . '</span>';
-        if ($showquestiontext) {
-            $formatoptions = new stdClass;
-            $formatoptions->noclean = true;
-            $formatoptions->para = false;
-            $questiontext = strip_tags(format_text($question->questiontext,
-                    $question->questiontextformat,
-                    $formatoptions, $COURSE->id));
-            $questiontext = shorten_text($questiontext, 200);
-            $result .= '<span class="questiontext">';
-            if (!empty($questiontext)) {
-                $result .= $questiontext;
-            } else {
-                $result .= '<span class="error">';
-                $result .= get_string('questiontextisempty', 'quiz');
-                $result .= '</span>';
-            }
+    global $COURSE;
+    $result = '';
+    $result .= '<span class="questionname">';
+    if ($showicon) {
+        $result .= print_question_icon($question, true);
+        echo ' ';
+    }
+    $result .= shorten_text(format_string($question->name), 200) . '</span>';
+    if ($showquestiontext) {
+        $formatoptions = new stdClass;
+        $formatoptions->noclean = true;
+        $formatoptions->para = false;
+        $questiontext = strip_tags(format_text($question->questiontext,
+                $question->questiontextformat,
+                $formatoptions, $COURSE->id));
+        $questiontext = shorten_text($questiontext, 200);
+        $result .= '<span class="questiontext">';
+        if (!empty($questiontext)) {
+            $result .= $questiontext;
+        } else {
+            $result .= '<span class="error">';
+            $result .= get_string('questiontextisempty', 'quiz');
             $result .= '</span>';
         }
-        if ($return) {
-            return $result;
-        } else {
-            echo $result;
-        }
+        $result .= '</span>';
+    }
+    if ($return) {
+        return $result;
+    } else {
+        echo $result;
+    }
 }
 
 /**
@@ -1202,5 +1206,3 @@ function quiz_print_status_bar($quiz) {
     </div>
     <?php
 }
-
-?>

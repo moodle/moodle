@@ -56,7 +56,7 @@ class qtype_opaque_edit_form extends question_edit_form {
         $mform->setType('engineid', PARAM_INT);
         $mform->addRule('engineid', null, 'required', null, 'client');
         $mform->addHelpButton('engineid', 'questionengine', 'qtype_opaque');
-        
+
         $mform->addElement('text', 'remoteid', get_string('questionid', 'qtype_opaque'), array('size' => 50));
         $mform->setType('remoteid', PARAM_RAW);
         $mform->addRule('remoteid', null, 'required', null, 'client');

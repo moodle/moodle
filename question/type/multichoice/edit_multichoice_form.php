@@ -39,8 +39,6 @@ class qtype_multichoice_edit_form extends question_edit_form {
      * @param object $mform the form being built.
      */
     protected function definition_inner($mform) {
-        global $QTYPES;
-
         $menu = array(get_string('answersingleno', 'qtype_multichoice'), get_string('answersingleyes', 'qtype_multichoice'));
         $mform->addElement('select', 'single', get_string('answerhowmany', 'qtype_multichoice'), $menu);
         $mform->setDefault('single', 1);

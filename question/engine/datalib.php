@@ -349,7 +349,7 @@ GROUP BY
     q.id,
     summarystate
 
-ORDER BY 
+ORDER BY
     qa.slot,
     qa.questionid,
     q.name,
@@ -695,7 +695,7 @@ ORDER BY
      * @param boolean $newstate the new state of the flag. true = flagged.
      */
     public function update_question_attempt_flag($qubaid, $questionid, $qaid, $slot, $newstate) {
-        if (!$this->db->record_exists('question_attempts', array('id' => $qaid, 
+        if (!$this->db->record_exists('question_attempts', array('id' => $qaid,
                 'questionusageid' => $qubaid, 'questionid' => $questionid, 'slot' => $slot))) {
             throw new Exception('invalid ids');
         }

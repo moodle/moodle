@@ -87,12 +87,12 @@ if ($cm !== null) {
         $PAGE->navbar->add(get_string('editinga', 'moodle', get_string('modulename', $cm->modname)),$returnurl);
     }
     $PAGE->navbar->add($chooseqtype);
-    $PAGE->set_title($chooseqtype);    
+    $PAGE->set_title($chooseqtype);
     echo $OUTPUT->header();
 } else {
     $PAGE->navbar->add(get_string('questionbank', 'question'),$returnurl);
     $PAGE->navbar->add($chooseqtype);
-    $PAGE->set_title($chooseqtype);    
+    $PAGE->set_title($chooseqtype);
     echo $OUTPUT->header();
 }
 

@@ -47,7 +47,7 @@ class qformat_multianswer extends qformat_default {
         $questiontext = array();
         $questiontext['text'] = implode('', $lines);
         $questiontext['format'] = 0 ;
-        $questiontext['itemid'] = ''; 
+        $questiontext['itemid'] = '';
         $question = qtype_multianswer_extract_question($questiontext);
         $question->questiontext = $question->questiontext['text'] ;
         $question->questiontextformat = 0 ;

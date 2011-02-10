@@ -58,8 +58,7 @@ function get_module_from_cmid($cmid) {
 * @author added by Howard Miller June 2004
 */
 function get_questions_category( $category, $noparent=false, $recurse=true, $export=true ) {
-
-    global $QTYPES, $DB;
+    global $DB;
 
     // questions will be added to an array
     $qresults = array();
@@ -84,9 +83,8 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
 
         // iterate through questions, getting stuff we need
         foreach($questions as $question) {
-            $questiontype = $QTYPES[$question->qtype];
             $question->export_process = $export;
-            $questiontype->get_question_options($question);
+            question_bank::get_qtype($question->qtype)->get_question_options($question);
             $qresults[] = $question;
         }
     }
@@ -1679,7 +1677,7 @@ function require_login_in_context($contextorid = null){
  * the qtype radio buttons.
  */
 function print_choose_qtype_to_add_form($hiddenparams) {
-    global $CFG, $QTYPES, $PAGE, $OUTPUT;
+    global $CFG, $PAGE, $OUTPUT;
     $PAGE->requires->js('/question/qbank.js');
     echo '<div id="chooseqtypehead" class="hd">' . "\n";
     echo $OUTPUT->heading(get_string('chooseqtypetoadd', 'question'), 3);
@@ -1693,19 +1691,18 @@ function print_choose_qtype_to_add_form($hiddenparams) {
     echo '<div class="qtypes">' . "\n";
     echo '<div class="instruction">' . get_string('selectaqtypefordescription', 'question') . "</div>\n";
     echo '<div class="realqtypes">' . "\n";
-    $types = question_type_menu();
     $fakeqtypes = array();
-    foreach ($types as $qtype => $localizedname) {
-        if ($QTYPES[$qtype]->is_real_question_type()) {
-            print_qtype_to_add_option($qtype, $localizedname);
+    foreach (question_bank::get_creatable_qtypes() as $qtype) {
+        if (question_bank::get_qtype($qtype)->is_real_question_type()) {
+            print_qtype_to_add_option($qtype);
         } else {
-            $fakeqtypes[$qtype] = $localizedname;
+            $fakeqtypes[] = $qtype;
         }
     }
     echo "</div>\n";
     echo '<div class="fakeqtypes">' . "\n";
     foreach ($fakeqtypes as $qtype => $localizedname) {
-        print_qtype_to_add_option($qtype, $localizedname);
+        print_qtype_to_add_option($qtype);
     }
     echo "</div>\n";
     echo "</div>\n";
@@ -1720,18 +1717,17 @@ function print_choose_qtype_to_add_form($hiddenparams) {
 /**
  * Private function used by the preceding one.
  * @param $qtype the question type.
- * @param $localizedname the localized name of this question type.
  */
-function print_qtype_to_add_option($qtype, $localizedname) {
-    global $QTYPES;
+function print_qtype_to_add_option($qtype) {
     echo '<div class="qtypeoption">' . "\n";
-    echo '<label for="qtype_' . $qtype . '">';
-    echo '<input type="radio" name="qtype" id="qtype_' . $qtype . '" value="' . $qtype . '" />';
+    echo '<label for="qtype_' . $qtype->name() . '">';
+    echo '<input type="radio" name="qtype" id="qtype_' . $qtype->name() . '" value="' . $qtype->name() . '" />';
     echo '<span class="qtypename">';
     $fakequestion = new stdClass;
-    $fakequestion->qtype = $qtype;
+    $fakequestion->qtype = $qtype->name();
     print_question_icon($fakequestion);
-    echo $localizedname . '</span><span class="qtypesummary">' . get_string($qtype . 'summary', 'qtype_' . $qtype);
+    echo $qtype->menu_name() . '</span><span class="qtypesummary">' .
+            get_string($qtype->name() . 'summary', 'qtype_' . $qtype->name());
     echo "</span></label>\n";
     echo "</div>\n";
 }

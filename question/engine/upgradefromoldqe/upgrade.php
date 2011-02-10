@@ -224,7 +224,7 @@ class question_engine_attempt_upgrader {
         $this->logger->set_current_attempt_id(null);
 
         if (empty($qas)) {
-            $this->logger->log_assumption("All the question attempts for 
+            $this->logger->log_assumption("All the question attempts for
                     attempt {$attempt->id} at quiz {$attempt->quiz} were missing.
                     Deleting this attempt", $attempt->id);
             // Somehow, all the question attempt data for this quiz attempt
@@ -239,7 +239,7 @@ class question_engine_attempt_upgrader {
                 continue;
             }
             if (!array_key_exists($questionid, $qas)) {
-                $this->logger->log_assumption("Supplying minimal open state for 
+                $this->logger->log_assumption("Supplying minimal open state for
                         question {$questionid} in attempt {$attempt->id} at quiz
                         {$attempt->quiz}, since the session was missing.", $attempt->id);
                 try {
@@ -1877,7 +1877,7 @@ class qtype_opaque_updater extends qtype_updater {
         // We store the reponses by turning the associative array $state->responses
         // into a string as follows. For example, array('f2' => 'No, never - ever', 'f1' => '10')
         // becomes 'f1-10,f2-No\, never - ever'. That is, comma separated pairs, sorted by key,
-        // key and value linked with a '-', commas in vales escaped with '\'. 
+        // key and value linked with a '-', commas in vales escaped with '\'.
 
         // Deal with special case: no responses at all.
         if (empty($answer)) {

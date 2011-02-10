@@ -18,9 +18,10 @@
 /**
  * Strings for component 'qtype_random', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   qtype_random
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage random
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['configselectmanualquestions'] = 'Can the random question type select a manually graded question when it is making its random choice of a question from a category?';

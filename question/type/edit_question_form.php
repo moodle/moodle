@@ -90,7 +90,7 @@ abstract class question_edit_form extends moodleform {
         $qtype = $this->qtype();
         $langfile = "qtype_$qtype";
 
-        $mform = $this->_form; 
+        $mform = $this->_form;
 
         // Standard fields at the start of the form.
         $mform->addElement('header', 'generalheader', get_string("general", 'form'));
@@ -376,8 +376,7 @@ abstract class question_edit_form extends moodleform {
     }
 
     public function set_data($question) {
-        global $QTYPES;
-        $QTYPES[$question->qtype]->set_default_options($question);
+        question_bank::get_qtype($question->qtype)->set_default_options($question);
 
         // prepare question text
         $draftid = file_get_submitted_draft_itemid('questiontext');
@@ -416,7 +415,7 @@ abstract class question_edit_form extends moodleform {
         }
 
         // Set any options.
-        $extra_question_fields = $QTYPES[$question->qtype]->extra_question_fields();
+        $extra_question_fields = question_bank::get_qtype($question->qtype)->extra_question_fields();
         if (is_array($extra_question_fields) && !empty($question->options)) {
             array_shift($extra_question_fields);
             foreach ($extra_question_fields as $field) {

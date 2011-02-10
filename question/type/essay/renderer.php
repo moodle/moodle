@@ -57,7 +57,7 @@ class qtype_essay_renderer extends qtype_renderer {
                 array('class' => 'qtext'));
 
         $result .= html_writer::start_tag('div', array('class' => 'ablock clearfix'));
-        $result .= html_writer::tag('div', get_string('answer', 'question'), 
+        $result .= html_writer::tag('div', get_string('answer', 'question'),
                 array('class' => 'prompt'));
         $result .= html_writer::tag('div', $answer, array('class' => 'answer'));
         $result .= html_writer::end_tag('div');

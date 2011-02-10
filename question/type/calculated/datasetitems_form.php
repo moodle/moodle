@@ -87,7 +87,7 @@ class question_dataset_dependent_items_form extends moodleform {
         $data = array();
         $j = (($this->noofitems) * count($this->datasetdefs))+1;
         foreach ($this->datasetdefs as $defkey => $datasetdef){
-            if($datasetdef->category |= 0 ) { 
+            if($datasetdef->category |= 0 ) {
                 $name = get_string('sharedwildcardname', 'qtype_calculated',$datasetdef->name) ;
             }else {
                 $name = get_string('wildcard', 'qtype_calculated', $datasetdef->name);

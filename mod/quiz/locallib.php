@@ -917,11 +917,11 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
 
     // What sort of icon should we show?
     $action = '';
-    if (question_has_capability_on($question, 'edit', $question->category) ||
-            question_has_capability_on($question, 'move', $question->category)) {
+    if (!empty($question->id) && (question_has_capability_on($question, 'edit', $question->category) ||
+            question_has_capability_on($question, 'move', $question->category))) {
         $action = $stredit;
         $icon = '/t/edit';
-    } else if (question_has_capability_on($question, 'view', $question->category)) {
+    } else if (!empty($question->id) && question_has_capability_on($question, 'view', $question->category)) {
         $action = $strview;
         $icon = '/i/info';
     }
@@ -965,6 +965,7 @@ function quiz_question_preview_button($quiz, $question, $label = false) {
     }
 
     // Build the icon.
+    $strpreviewquestion = get_string('previewquestion', 'quiz');
     $image = $OUTPUT->pix_icon('t/preview', $strpreviewquestion);
 
     parse_str(QUESTION_PREVIEW_POPUP_OPTIONS, $options);

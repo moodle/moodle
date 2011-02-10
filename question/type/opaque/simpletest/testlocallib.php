@@ -77,6 +77,5 @@ class qtype_opaque_locallib_test extends UnitTestCase {
         $engine2->questionengines = array(
                 'http://ltsweb2.open.ac.uk/om-qe/services/Om');
         $this->assertFalse($manager->is_same_engine($engine1, $engine2));
-        
     }
 }

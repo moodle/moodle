@@ -1,4 +1,21 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
 /**
  * Defines the editing form for the random question type.
  *
@@ -20,7 +37,7 @@ class question_edit_random_form extends question_edit_form {
      * If your question type does not support all these fields, then you can
      * override this method and remove the ones you don't want with $mform->removeElement().
      */
-    function definition() {
+    public function definition() {
         global $COURSE, $CFG;
 
         $qtype = $this->qtype();
@@ -79,19 +96,19 @@ class question_edit_random_form extends question_edit_form {
         $mform->closeHeaderBefore('buttonar');
     }
 
-    function set_data($question) {
+    public function set_data($question) {
         $question->questiontext = array('text' => $question->questiontext);
         // We don't want the complex stuff in the base class to run.
         moodleform::set_data($question);
     }
 
-    function validation($fromform, $files) {
+    public function validation($fromform, $files) {
         //validation of category
         //is not relevant for this question type
         return array();
     }
 
-    function qtype() {
+    public function qtype() {
         return 'random';
     }
 }

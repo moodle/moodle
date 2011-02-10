@@ -419,7 +419,7 @@ class qformat_xml extends qformat_default {
         $questiontext = array();
         $questiontext['text'] = $this->import_text($questions['#']['questiontext'][0]['#']['text']);
         $questiontext['format'] = '1';
-        $questiontext['itemid'] = ''; 
+        $questiontext['itemid'] = '';
         $qo = qtype_multianswer_extract_question($questiontext);
 
         // 'header' parts particular to multianswer

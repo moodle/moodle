@@ -780,7 +780,7 @@ class question_type {
 
     /**
      * This method should return all the possible types of response that are
-     * recognised for this question. 
+     * recognised for this question.
      *
      * The question is modelled as comprising one or more subparts. For each
      * subpart, there are one or more classes that that students response

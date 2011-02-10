@@ -464,7 +464,7 @@ class qbehaviour_interactive_walkthrough_test extends qbehaviour_walkthrough_tes
         $this->check_current_state(question_state::$gradedpartial);
         // TODO I don't think 1 is the right fraction here. However, it is what
         // you get attempting a question like this without regrading being involved,
-        // and I am currently interested in testing regrading here. 
+        // and I am currently interested in testing regrading here.
         $this->check_current_mark(1);
     }
 }

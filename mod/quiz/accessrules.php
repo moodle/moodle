@@ -235,7 +235,7 @@ class quiz_access_manager {
      * @param boolean $unfinished whether the button is to continue an existing attempt,
      * or start a new one. This affects whether a javascript alert is shown.
      */
-    public function print_start_attempt_button($canpreview, $buttontext, $unfinished) { 
+    public function print_start_attempt_button($canpreview, $buttontext, $unfinished) {
         global $OUTPUT;
 
         $url = $this->_quizobj->start_attempt_url();

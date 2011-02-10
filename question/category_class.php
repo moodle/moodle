@@ -374,7 +374,7 @@ class question_category_object {
      * Updates an existing category with given params
      */
     public function update_category($updateid, $newparent, $newname, $newinfo) {
-        global $CFG, $QTYPES, $DB;
+        global $CFG, $DB;
         if (empty($newname)) {
             print_error('categorynamecantbeblank', 'quiz');
         }
@@ -413,10 +413,11 @@ class question_category_object {
         if ($oldcat->name != $cat->name) {
             $where = "qtype = 'random' AND category = ? AND " . $DB->sql_compare_text('questiontext') . " = ?";
 
-            $randomqname = $QTYPES[RANDOM]->question_name($cat, false);
+            $randomqtype = question_bank::get_qtype('random');
+            $randomqname = $randomqtype->question_name($cat, false);
             $DB->set_field_select('question', 'name', $randomqname, $where, array($cat->id, '0'));
 
-            $randomqname = $QTYPES[RANDOM]->question_name($cat, true);
+            $randomqname = $randomqtype->question_name($cat, true);
             $DB->set_field_select('question', 'name', $randomqname, $where, array($cat->id, '1'));
         }
 

@@ -51,6 +51,8 @@ abstract class question_bank {
     private static $testmode = false;
     private static $testdata = array();
 
+    private static $questionconfig = null;
+
     /**
      * Get the question type class for a particular question type.
      * @param string $qtypename the question type name. For example 'multichoice' or 'shortanswer'.
@@ -81,11 +83,33 @@ abstract class question_bank {
     }
 
     /**
+     * Load the question configuration data from config_plugins.
+     * @return object get_config('question') with caching.
+     */
+    protected static function get_config() {
+        if (is_null(self::$questionconfig)) {
+            $questionconfig = get_config('question');
+        }
+        return $questionconfig;
+    }
+
+    /**
      * @param string $qtypename the internal name of a question type. For example multichoice.
      * @return boolean whether users are allowed to create questions of this type.
      */
     public static function qtype_enabled($qtypename) {
-        return true; // TODO
+        $config = self::get_config();
+        $enabledvar = $qtypename . '_disabled';
+        return self::qtype_exists($qtypename) && empty($config->$enabledvar) &&
+                self::get_qtype($qtypename)->menu_name() != '';
+    }
+
+    /**
+     * @param string $qtypename the internal name of a question type. For example multichoice.
+     * @return boolean whether this question type exists.
+     */
+    public static function qtype_exists($qtypename) {
+        return array_key_exists($qtypename, get_plugin_list('qtype'));
     }
 
     /**
@@ -93,7 +117,7 @@ abstract class question_bank {
      * @return string the human_readable name of this question type, from the language pack.
      */
     public static function get_qtype_name($qtypename) {
-        return self::get_qtype($qtypename)->menu_name();
+        return self::get_qtype($qtypename)->local_name();
     }
 
     /**
@@ -107,6 +131,42 @@ abstract class question_bank {
             } catch (Exception $e) {
                 // TODO ingore, but reivew this later.
             }
+        }
+        return $qtypes;
+    }
+
+    /**
+     * @return array all the question types that users are allowed to create,
+     *      sorted into the preferred order set on the admin screen.
+     */
+    public static function get_creatable_qtypes() {
+        $config = self::get_config();
+        $allqtypes = self::get_all_qtypes();
+
+        $sortorder = array();
+        $otherqtypes = array();
+        foreach ($allqtypes as $name => $qtype) {
+            if (!self::qtype_enabled($name)) {
+                unset($allqtypes[$name]);
+                continue;
+            }
+            $sortvar = $name . '_sortorder';
+            if (isset($config->$sortvar)) {
+                $sortorder[$config->$sortvar] = $name;
+            } else {
+                $otherqtypes[$name] = $qtype->local_name();
+            }
+        }
+
+        ksort($sortorder);
+        textlib_get_instance()->asort($otherqtypes);
+
+        $creatableqtypes = array();
+        foreach ($sortorder as $name) {
+            $creatableqtypes[$name] = $allqtypes[$name];
+        }
+        foreach ($otherqtypes as $name => $notused) {
+            $creatableqtypes[$name] = $allqtypes[$name];
         }
         return $qtypes;
     }
@@ -222,6 +282,8 @@ class question_finder {
      * @return array questionid => questionid.
      */
     public function get_questions_from_categories($categoryids, $extraconditions) {
+        global $DB;
+
         if (is_array($categoryids)) {
             $categoryids = implode(',', $categoryids);
         }
@@ -234,10 +296,7 @@ class question_finder {
                 "category IN ($categoryids)
                  AND parent = 0
                  AND hidden = 0
-                 $extraconditions", '', 'id,id AS id2');
-        if (!$questionids) {
-            $questionids = array();
-        }
+                 $extraconditions", array(), '', 'id,id AS id2');
         return $questionids;
     }
 }

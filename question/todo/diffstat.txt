@@ -75,9 +75,9 @@ DONE mod/quiz/db/mysql.php                              | 1163 --------
 DONE mod/quiz/db/postgres7.php                          | 1497 ----------
 DONE mod/quiz/db/upgrade.php                            | 1204 ++++++++-
 DONE mod/quiz/defaults.php                              |   12 +-
- mod/quiz/edit.js                                   |  131 +
- mod/quiz/edit.php                                  |  118 +-
- mod/quiz/editlib.php                               |   79 +-
+DONE mod/quiz/edit.js                                   |  131 +
+DONE mod/quiz/edit.php                                  |  118 +-
+DONE mod/quiz/editlib.php                               |   79 +-
 DONE mod/quiz/index.php                                 |    6 +-
 DONE mod/quiz/jstimer.php                               |   58 -
 DONE mod/quiz/lib.php                                   |  454 ++--
@@ -415,10 +415,10 @@ DONE question/type/oumultiresponse/simpletest/testwalkthrough.php |  501 ++++
 DONE question/type/oumultiresponse/styles.css           |   14 +
 DONE question/type/oumultiresponse/version.php          |   29 +
 
- question/type/random/edit_random_form.php          |    7 +-
- question/type/random/lang/en_utf8/qtype_random.php |    9 +
- question/type/random/questiontype.php              |  430 +---
- question/type/random/simpletest/testquestiontype.php    |   61 +
+DONE question/type/random/edit_random_form.php          |    7 +-
+DONE question/type/random/lang/en_utf8/qtype_random.php |    9 +
+DONE question/type/random/questiontype.php              |  430 +---
+DONE question/type/random/simpletest/testquestiontype.php    |   61 +
 
  question/type/randomsamatch/db/upgrade.php         |    2 -
  question/type/randomsamatch/edit_randomsamatch_form.php |    3 +-

@@ -538,7 +538,7 @@ abstract class question_flags {
      */
     public static function update_flag($qubaid, $questionid, $qaid, $slot, $checksum, $newstate) {
         // Check the checksum - it is very hard to know who a question session belongs
-        // to, so we require that checksum parameter is matches an md5 hash of the 
+        // to, so we require that checksum parameter is matches an md5 hash of the
         // three ids and the users username. Since we are only updating a flag, that
         // probably makes it sufficiently difficult for malicious users to toggle
         // other users flags.
@@ -1083,7 +1083,6 @@ class question_usage_by_activity {
                 $qa->set_flagged($flagged);
             }
         }
-        
     }
 
     /**
@@ -2174,7 +2173,7 @@ class question_attempt {
 
     /**
      * @return array subpartid => object with fields
-     *      ->responseclassid the 
+     *      ->responseclassid matches one of the values returned from quetion_type::get_possible_responses.
      *      ->response the actual response the student gave to this part, as a string.
      *      ->fraction the credit awarded for this subpart, may be null.
      *      returns an empty array if no analysis is possible.
