@@ -920,7 +920,12 @@ class restore_process_categories_and_questions extends restore_execution_step {
 class restore_section_structure_step extends restore_structure_step {
 
     protected function define_structure() {
-        return array(new restore_path_element('section', '/section'));
+        $section = new restore_path_element('section', '/section');
+
+        // Apply for 'format' plugins optional paths at section level
+        $this->add_plugin_structure('format', $section);
+
+        return array($section);
     }
 
     public function process_section($data) {
@@ -961,6 +966,10 @@ class restore_section_structure_step extends restore_structure_step {
 
         // Annotate the section mapping, with restorefiles option if needed
         $this->set_mapping('course_section', $oldid, $newitemid, $restorefiles);
+
+        // set the new course_section id in the task
+        $this->task->set_sectionid($newitemid);
+
 
         // Commented out. We never modify course->numsections as far as that is used
         // by a lot of people to "hide" sections on purpose (so this remains as used to be in Moodle 1.x)
@@ -1985,10 +1994,14 @@ class restore_module_structure_step extends restore_structure_step {
 
         $paths = array();
 
-        $paths[] = new restore_path_element('module', '/module');
+        $module = new restore_path_element('module', '/module');
+        $paths[] = $module;
         if ($CFG->enableavailability) {
             $paths[] = new restore_path_element('availability', '/module/availability_info/availability');
         }
+
+        // Apply for 'format' plugins optional paths at module level
+        $this->add_plugin_structure('format', $module);
 
         return $paths;
     }
