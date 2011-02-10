@@ -125,11 +125,19 @@ abstract class backup_activity_structure_step extends backup_structure_step {
             $backupfile = $subpluginsdir . '/backup/moodle2/' . $classname . '.class.php';
             if (file_exists($backupfile)) {
                 require_once($backupfile);
-                $backupsubplugin = new $classname($subplugintype, $name, $optigroup);
+                $backupsubplugin = new $classname($subplugintype, $name, $optigroup, $this);
                 // Add subplugin returned structure to optigroup
                 $backupsubplugin->define_subplugin_structure($element->get_name());
             }
         }
+    }
+
+    /**
+     * As far as activity backup steps are implementing backup_subplugin stuff, they need to
+     * have the parent task available for wrapping purposes (get course/context....)
+     */
+    public function get_task() {
+        return $this->task;
     }
 
     /**
