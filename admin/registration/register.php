@@ -49,21 +49,6 @@ if (!confirm_sesskey()) {
     throw new moodle_exception('missingparameter');
 }
 
-/* TO DO
-  if DB config plugin table is not good for dealing with token reference and token confirmation
-  => create other DB table
-  -----------------------------------------------------------------------------
-  Local Type | Token | Local WS | Remote Type | Remote URL        | Confirmed
-  -----------------------------------------------------------------------------
-  HUB        4er4e   server    HUB-DIRECTORY  http...moodle.org      Yes
-  HUB        73j53   client    HUB-DIRECTORY  http...moodle.org      Yes
-  SITE       dfsd7   server    HUB            http...hub             Yes
-  SITE       fd8fd   client    HUB            http...hub             Yes
-  HUB        ds78s   server    SITE           http...site.com        Yes
-  HUB-DIR.   d7d8s   server    HUB            http...hub             Yes
-  -----------------------------------------------------------------------------
- */
-
 $registrationmanager = new registration_manager();
 
 $registeredhub = $registrationmanager->get_registeredhub($huburl);
@@ -132,7 +117,8 @@ if (!empty($fromform) and empty($update) and confirm_sesskey()) {
         if (empty($unconfirmedhub)) {
             //we save the token into the communication table in order to have a reference
             $unconfirmedhub = new stdClass();
-            $unconfirmedhub->token = get_site_identifier();
+            $unconfirmedhub->token = $registrationmanager->get_site_secret_for_hub($huburl);
+            $unconfirmedhub->secret = $unconfirmedhub->token;
             $unconfirmedhub->huburl = $huburl;
             $unconfirmedhub->hubname = $hubname;
             $unconfirmedhub->confirmed = 0;
