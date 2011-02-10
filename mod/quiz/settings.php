@@ -101,11 +101,20 @@ $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/attempto
         get_string('eachattemptbuildsonthelast', 'quiz'), get_string('configeachattemptbuildsonthelast', 'quiz'),
         array('value' => 0, 'adv' => true)));
 
-//// Review options.
-// TODO
-//$quizsettings->add(new admin_setting_quiz_reviewoptions('quiz/review',
-//        get_string('reviewoptions', 'quiz'), get_string('configreviewoptions', 'quiz'),
-//        array('value' => QUIZ_REVIEW_IMMEDIATELY | QUIZ_REVIEW_OPEN | QUIZ_REVIEW_CLOSED, 'fix' => false)));
+// Review options.
+$quizsettings->add(new admin_setting_heading('reviewheading', get_string('reviewoptionsheading', 'quiz'), ''));
+foreach (mod_quiz_admin_review_setting::fields() as $field => $name) {
+    $default = mod_quiz_admin_review_setting::all_on();
+    $forceduring = null;
+    if ($field == 'attempt') {
+        $forceduring = true;
+    } else if ($field == 'overallfeedback') {
+        $default = $default ^ mod_quiz_admin_review_setting::DURING;
+        $forceduring = false;
+    }
+    $quizsettings->add(new mod_quiz_admin_review_setting('quiz/review' . $field,
+            $name, '', $default, $forceduring));
+}
 
 // Show the user's picture
 $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/showuserpicture',

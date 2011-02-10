@@ -100,7 +100,7 @@ DONE mod/quiz/protect_js.php                            |   56 -
 DONE mod/quiz/review.php                                |  520 ++--
 DONE mod/quiz/reviewoptions.html                        |  124 +-
 DONE mod/quiz/reviewquestion.php                        |  267 +-
- mod/quiz/settingslib.php
+DONE mod/quiz/settingslib.php
 DONE mod/quiz/simpletest/testaccessrules.php            |  518 ++++
 DONE mod/quiz/simpletest/testlib.php                    |   58 +
 DONE mod/quiz/simpletest/testlocallib.php               |   76 +

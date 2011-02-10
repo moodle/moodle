@@ -173,10 +173,10 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setAdvanced('reviewoptionshdr', $quizconfig->review_adv);
 
     /// Review options.
-        $this->add_review_options_group($mform, 'during', mod_quiz_display_options::DURING);
-        $this->add_review_options_group($mform, 'immediately', mod_quiz_display_options::IMMEDIATELY_AFTER);
-        $this->add_review_options_group($mform, 'open', mod_quiz_display_options::LATER_WHILE_OPEN);
-        $this->add_review_options_group($mform, 'closed', mod_quiz_display_options::AFTER_CLOSE);
+        $this->add_review_options_group($mform, $quizconfig, 'during', mod_quiz_display_options::DURING);
+        $this->add_review_options_group($mform, $quizconfig, 'immediately', mod_quiz_display_options::IMMEDIATELY_AFTER);
+        $this->add_review_options_group($mform, $quizconfig, 'open', mod_quiz_display_options::LATER_WHILE_OPEN);
+        $this->add_review_options_group($mform, $quizconfig, 'closed', mod_quiz_display_options::AFTER_CLOSE);
 
         foreach ($behaviours as $behaviour => $notused) {
             $unusedoptions = question_engine::get_behaviour_unused_display_options($behaviour);
@@ -325,9 +325,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
-    protected function add_review_options_group($mform, $whenname, $when) {
-        global $CFG;
-
+    protected function add_review_options_group($mform, $quizconfig, $whenname, $when) {
         $group = array();
         foreach (self::$reviewfields as $field => $label) {
             $group[] = $mform->createElement('checkbox', $field . $whenname, '', $label);
@@ -335,8 +333,8 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addGroup($group, $whenname . 'optionsgrp', get_string('review' . $whenname, 'quiz'), null, false);
 
         foreach (self::$reviewfields as $field => $notused) {
-            $cfgfield = 'quiz_review' . $field;
-            if ($CFG->$cfgfield & $when) {
+            $cfgfield = 'review' . $field;
+            if ($quizconfig->$cfgfield & $when) {
                 $mform->setDefault($field . $whenname, 1);
             } else {
                 $mform->setDefault($field . $whenname, 0);
