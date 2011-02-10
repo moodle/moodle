@@ -307,6 +307,14 @@ $string['unsupportedexport'] = '({$a->fieldtype}) cannot be exported.';
 $string['updatefield'] = 'Update an existing field';
 $string['uploadfile'] = 'Upload file';
 $string['uploadrecords'] = 'Upload entries from a file';
+$string['uploadrecords_help'] = 'Entries may be uploaded via text file. The format of the file should be as follows:
+
+    * Each line of the file contains one record
+    * Each record is a series of data separated by commas (or other delimiters)
+    * The first record contains a list of fieldnames defining the format of the rest of the file
+
+The field enclosure is a character that surrounds each field in each record. It can normally be left unset.';
+$string['uploadrecords_link'] = 'mod/data/import';
 $string['url'] = 'Url';
 $string['usestandard'] = 'Use a preset';
 $string['usestandard_help'] = 'To use a preset available to the whole site, select it from the list. (If you have added a preset to the list using the save as preset feature then you have the option of deleting it.)';
