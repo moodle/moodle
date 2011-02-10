@@ -12,25 +12,25 @@ are useful command stems.
 External changes
 ================
 
- admin/cron.php                                     |   31 + Cron for quiz reports. Already in 2.0.
- admin/index.php                                    |    2 + Upgrade of quiz reports. Already in 2.0.
- admin/settings/misc.php                            |    4 + Admin settings for question behaviours. Redo properly.
- lang/en_utf8/error.php                             |    1 + Parsing XML exception message. Already in 2.0.
- lang/en_utf8/role.php                              |    1 + New capability name. Already in 2.0.
- lang/en_utf8/table.php                             |    9 + 7 New strings. 6 in 2.0. 1 to add.
- lib/accesslib.php                                  |   15 +- Handing of quizreport capabilities. Already in 2.0.
- lib/db/access.php                                  |   14 + New flag capability. In 2.0.
- lib/ddllib.php                                     |    7 + Support for quiz reports in XMLDB. Already in 2.0.
- lib/form/duration.php                              |  218 ++ Forum duration field type. Already in 2.0.
- lib/moodlelib.php                                  |   11 + New, param trim, TODO. qbehaviour to list of plugin types TODO. quizreport, done.
- lib/simpletest/testsimpletestlib.php               |  116 + Already in 2.0
- lib/simpletest/testweblib.php                      |    4 + Useful new test. See MDL-24060.
- lib/simpletestlib.php                              |  290 ++ Useful new assertions. 
- lib/simpletestlib/dumper.php                       |    3 + Not needed. KILL
+DONE admin/cron.php                                     |   31 + Cron for quiz reports. Already in 2.0.
+DONE admin/index.php                                    |    2 + Upgrade of quiz reports. Already in 2.0.
+DONE admin/settings/misc.php                            |    4 + Admin settings for question behaviours. Redo properly.
+DONE lang/en_utf8/error.php                             |    1 + Parsing XML exception message. Already in 2.0.
+DONE lang/en_utf8/role.php                              |    1 + New capability name. Already in 2.0.
+DONE lang/en_utf8/table.php                             |    9 + 7 New strings. 6 in 2.0. 1 to add.
+DONE lib/accesslib.php                                  |   15 +- Handing of quizreport capabilities. Already in 2.0.
+DONE lib/db/access.php                                  |   14 + New flag capability. In 2.0.
+DONE lib/ddllib.php                                     |    7 + Support for quiz reports in XMLDB. Already in 2.0.
+DONE lib/form/duration.php                              |  218 ++ Forum duration field type. Already in 2.0.
+DONE lib/moodlelib.php                                  |   11 + New, param trim, TODO. qbehaviour to list of plugin types TODO. quizreport, done.
+DONE lib/simpletest/testsimpletestlib.php               |  116 + Already in 2.0
+DONE lib/simpletest/testweblib.php                      |    4 + Useful new test. See MDL-24060.
+DONE lib/simpletestlib.php                              |  290 ++ Useful new assertions. 
+DONE lib/simpletestlib/dumper.php                       |    3 + Not needed. KILL
  lib/tablelib.php                                   | 1224 +++++++-- TODO. See MDL-25716
- lib/weblib.php                                     |   10 +- Improve html_to_text. See MDL-24060.
- lib/xmlize.php                                     |   74 +- In 2.0
- mod/assignment/lib.php                             |    2 +- TODO MDL-25716
+DONE lib/weblib.php                                     |   10 +- Improve html_to_text. See MDL-24060.
+DONE lib/xmlize.php                                     |   74 +- In 2.0
+DONE mod/assignment/lib.php                             |    2 +- TODO MDL-25716
 
 
 Internal changes
@@ -43,6 +43,7 @@ Internal changes
  admin/report/quizupgrade/resetindex.php            |   78 +
  admin/report/quizupgrade/resetquiz.php             |   70 +
  admin/report/quizupgrade/settings.php              |    5 +
+ question/engine/upgradefromoldqe/upgrade.php       | 1963 +++++++++++++
 
 DONE lang/en_utf8/help/question/generalfeedback.html    |   14 +
 DONE lang/en_utf8/help/question/howquestionsbehave.html |   13 +
@@ -58,10 +59,6 @@ DONE lang/en_utf8/qtype_shortanswer.php                 |    6 -
 DONE lang/en_utf8/qtype_truefalse.php                   |   13 -
 DONE lang/en_utf8/question.php                          |  104 +-
 DONE lang/en_utf8/quiz.php                              |  207 ++-
- lang/en_utf8/quiz_grading.php                      |   18 -
- lang/en_utf8/quiz_overview.php                     |   30 -
- lang/en_utf8/quiz_regrade.php                      |    7 -
- lang/en_utf8/quiz_responses.php                    |   11 -
 
 DONE lib/questionlib.php                                | 1434 ++--------
 
@@ -120,14 +117,16 @@ DONE mod/quiz/view.php                                  |  773 +++---
  mod/quiz/report/default.php                        |   74 +-
  mod/quiz/report/reportlib.php                      |  432 ++--
 
- mod/quiz/report/analysis/report.php                |  755 -----
- mod/quiz/report/regrade/report.php                 |   88 -
+DONE mod/quiz/report/analysis/report.php                |  755 -----
+DONE mod/quiz/report/regrade/report.php                 |   88 -
+DONE lang/en_utf8/quiz_regrade.php                      |    7 -
 
  mod/quiz/report/grading/db/access.php              |   49 +
  mod/quiz/report/grading/gradingsettings_form.php   |   91 +
  mod/quiz/report/grading/lang/en_utf8/quiz_grading.php   |   60 +
  mod/quiz/report/grading/report.php                 |  842 ++++---
  mod/quiz/report/grading/version.php                |   26 +
+ lang/en_utf8/quiz_grading.php                      |   18 -
 
  mod/quiz/report/overview/db/install.xml            |   22 +
  mod/quiz/report/overview/db/upgrade.php            |  152 +
@@ -137,12 +136,14 @@ DONE mod/quiz/view.php                                  |  773 +++---
  mod/quiz/report/overview/overviewsettings_form.php |   69 +-
  mod/quiz/report/overview/report.php                |  999 +++----
  mod/quiz/report/overview/version.php               |   26 +
+ lang/en_utf8/quiz_overview.php                     |   30 -
 
  mod/quiz/report/responses/lang/en_utf8/quiz_responses.php      |   19 +
  mod/quiz/report/responses/report.php               |  242 ++
  mod/quiz/report/responses/responses_table.php      |  160 ++
  mod/quiz/report/responses/responsessettings_form.php    |   89 +
  mod/quiz/report/simpletest/testreportlib.php       |   55 +
+ lang/en_utf8/quiz_responses.php                    |   11 -
 
  mod/quiz/report/statistics/cron.php                |   55 +
  mod/quiz/report/statistics/db/access.php           |   20 +
@@ -203,7 +204,6 @@ DONE question/engine/simpletest/testquestionusagebyactivity.php     |  153 ++
 DONE question/engine/simpletest/testquestionutils.php   |  186 ++
 DONE question/engine/states.php                         |  460 ++++
 DONE question/engine/todo.txt                           |  235 ++
- question/engine/upgradefromoldqe/upgrade.php       | 1963 +++++++++++++
 
 DONE question/type/edit_question_form.php               |  264 ++-
 DONE question/type/question.html                        |   46 -
