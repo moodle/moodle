@@ -65,7 +65,7 @@ abstract class backup_plugin {
      */
     protected function get_setting_value($name) {
         if (is_null($this->task)) {
-            throw new restore_step_exception('not_specified_restore_task');
+            throw new backup_step_exception('not_specified_backup_task');
         }
         return $this->task->get_setting_value($name);
     }
