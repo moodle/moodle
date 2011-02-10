@@ -203,6 +203,18 @@ abstract class restore_plugin {
     }
 
     /**
+     * Returns the value of one (task/plan) setting
+     */
+    protected function get_setting_value($name) {
+        if (is_null($this->task)) {
+            throw new restore_step_exception('not_specified_restore_task');
+        }
+        return $this->task->get_setting_value($name);
+    }
+
+// end of restore_step/structure_step/task wrappers
+
+    /**
      * Simple helper function that returns the name for the restore_path_element
      * It's not mandatory to use it but recommended ;-)
      */
