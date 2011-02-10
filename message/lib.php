@@ -56,6 +56,9 @@ define('VIEW_BLOCKED','blockedusers');
 define('VIEW_COURSE','course_');
 define('VIEW_SEARCH','search');
 
+define('MESSAGE_USER1_PARAM','user1');
+define('MESSAGE_USER2_PARAM','user2');
+
 define('SHOW_ACTION_LINKS_IN_CONTACT_LIST', true);
 
 define('MESSAGE_SEARCH_MAX_RESULTS', 200);
@@ -1547,6 +1550,7 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
 /**
  * Inserts a message into the database, but also forwards it
  * via other means if appropriate.
+ * @return int|false the ID of the new message or false
  */
 function message_post_message($userfrom, $userto, $message, $format, $messagetype) {
     global $SITE, $CFG, $USER;
@@ -1764,7 +1768,7 @@ function message_mark_messages_read($touserid, $fromuserid){
 * @param message an object with an object property ie $message->id which is an id in the message table
 * @param int $timeread the timestamp for when the message should be marked read. Usually time().
 * @param bool $messageworkingempty Is the message_working table already confirmed empty for this message?
-* @return void
+* @return int the ID of the message in the message_read table
 */
 function message_mark_message_read($message, $timeread, $messageworkingempty=false) {
     global $DB;
@@ -1778,6 +1782,7 @@ function message_mark_message_read($message, $timeread, $messageworkingempty=fal
     if (!$messageworkingempty) {
         $DB->delete_records('message_working', array('unreadmessageid' => $messageid));
     }
-    $DB->insert_record('message_read', $message);
+    $messagereadid = $DB->insert_record('message_read', $message);
     $DB->delete_records('message', array('id' => $messageid));
+    return $messagereadid;
 }

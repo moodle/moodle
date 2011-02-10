@@ -45,16 +45,16 @@ defined('MOODLE_INTERNAL') || die();
  *  contexturlname - the display text for contexturl
  *
  * @param object $eventdata information about the message (component, userfrom, userto, ...)
- * @return boolean success
+ * @return int|false the ID of the new message or false if there was a problem with a processor
  */
 function message_send($eventdata) {
     global $CFG, $DB;
 
+    //new message ID to return
+    $messageid = false;
+
     //TODO: we need to solve problems with database transactions here somehow, for now we just prevent transactions - sorry
     $DB->transactions_forbidden();
-
-    //flag we'll return indicating that all processors ran successfully
-    $success = true;
 
     if (is_int($eventdata->userto)) {
         mtrace('message_send() userto is a user ID when it should be a user object');
@@ -130,10 +130,10 @@ function message_send($eventdata) {
     if ($processor=='none' && $savemessage->notification) {
         //if they have deselected all processors and its a notification mark it read. The user doesnt want to be bothered
         $savemessage->timeread = time();
-        $DB->insert_record('message_read', $savemessage);
+        $messageid = $DB->insert_record('message_read', $savemessage);
     } else {                        // Process the message
         // Store unread message just in case we can not send it
-        $savemessage->id = $DB->insert_record('message', $savemessage);
+        $messageid = $savemessage->id = $DB->insert_record('message', $savemessage);
         $eventdata->savedmessageid = $savemessage->id;
 
         // Try to deliver the message to each processor
@@ -151,12 +151,12 @@ function message_send($eventdata) {
 
                         if (!$pclass->send_message($eventdata)) {
                             debugging('Error calling message processor '.$procname);
-                            $success = false;
+                            $messageid = false;
                         }
                     }
                 } else {
                     debugging('Error finding message processor '.$procname);
-                    $success = false;
+                    $messageid = false;
                 }
             }
             
@@ -165,16 +165,16 @@ function message_send($eventdata) {
             //unread. To prevent this mark the message read if messaging is disabled
             if (empty($CFG->messaging)) {
                 require_once($CFG->dirroot.'/message/lib.php');
-                message_mark_message_read($savemessage, time());
+                $messageid = message_mark_message_read($savemessage, time());
             } else if ( $DB->count_records('message_working', array('unreadmessageid' => $savemessage->id)) == 0){
                 //if there is no more processors that want to process this we can move message to message_read
                 require_once($CFG->dirroot.'/message/lib.php');
-                message_mark_message_read($savemessage, time(), true);
+                $messageid = message_mark_message_read($savemessage, time(), true);
             }
         }
     }
 
-    return $success;
+    return $messageid;
 }
 
 

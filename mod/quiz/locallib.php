@@ -1153,7 +1153,7 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
     // send confirmation if required
     if ($sendconfirm) {
         // send the email and update stats
-        switch (quiz_send_confirmation($a)) {
+        switch (!empty(quiz_send_confirmation($a))) {
             case true:
                 $emailresult['good']++;
                 break;
