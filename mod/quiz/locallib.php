@@ -916,7 +916,8 @@ function quiz_get_reviewoptions($quiz, $attempt, $context) {
     }
 
     // Show a link to the comment box only for closed attempts
-    if ($attempt->timefinish && has_capability('mod/quiz:grade', $context)) {
+    if (!empty($attempt->id) && $attempt->timefinish &&
+            has_capability('mod/quiz:grade', $context)) {
         $options->questioncommentlink = new moodle_url('/mod/quiz/comment.php', array('attempt' => $attempt->id));
     }
 
