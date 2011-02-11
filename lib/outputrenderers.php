@@ -2414,7 +2414,7 @@ EOD;
             if ($item->hidden) {
                 $link->add_class('dimmed');
             }
-            $content = $this->output->render($link);
+            $content = $this->render($link);
         } else if ($item->action instanceof moodle_url) {
             $attributes = array();
             if ($title !== '') {
