@@ -214,7 +214,7 @@ class core_renderer extends renderer_base {
     protected $metarefreshtag = '';
     /** @var set if the theme links function has been called **/
     private $switchlinkdisplayed;
-    
+
     /**
      * Get the DOCTYPE declaration that should be used with this page. Designed to
      * be called in theme layout.php files.
@@ -361,13 +361,13 @@ class core_renderer extends renderer_base {
         // but some of the content won't be known until later, so we return a placeholder
         // for now. This will be replaced with the real content in {@link footer()}.
         $output = self::PERFORMANCE_INFO_TOKEN;
-        if ($this->page->legacythemeinuse) {
+        if ($this->page->legacythemeinuse){
             // The legacy theme is in use print the notification
             $output .= html_writer::tag('div', get_string('legacythemeinuse'), array('class'=>'legacythemeinuse'));
         }
-        
+
         $output = $this->theme_switch_links();
-        
+
         if (!empty($CFG->debugpageinfo)) {
             $output .= '<div class="performanceinfo pageinfo">This page is: ' . $this->page->debug_summary() . '</div>';
         }
@@ -2589,38 +2589,36 @@ EOD;
         // Return the sub menu
         return $content;
     }
-    
-    
+
+
     /*
      * Renders theme links for switching between default and other themes.
      */
     protected function theme_switch_links(){
-    	
-    	if($this->switchlinkdisplayed){
-    		return '';
-    	}
-    	
-    	global $USER, $PAGE;
-    	
-    	$switched = get_user_switched_theme();
-    	
-    	$content = html_writer::start_tag('div', array('id'=>'theme_switch_link'));
-    	
+
+        if($this->switchlinkdisplayed){
+            return '';
+        }
+
+        global $USER, $PAGE;
+
+        $switched = get_user_switched_theme();
+
+        $content = html_writer::start_tag('div', array('id'=>'theme_switch_link'));
+
         if($switched){
             $link_text = get_string('switchdevicerecommended');
-            
         } else {
             $link_text = get_string('switchdevicedefault'); 
         }
-        
+
         $link_url = new moodle_url('/theme/switch.php', array('url' => $PAGE->url));
-        
+
         $content .= html_writer::link($link_url, $link_text);
-        
         $content .= html_writer::end_tag('div');
-        
+
         $this->switchlinkdisplayed = true;
-        
+
         return $content;
     }
 }

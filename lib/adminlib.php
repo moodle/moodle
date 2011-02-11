@@ -7374,20 +7374,19 @@ class admin_setting_devicedetectregex extends admin_setting {
         $out .= html_writer::end_tag('tr');
         $out .= html_writer::end_tag('thead');
         $out .= html_writer::start_tag('tbody');
-       
+
         $loop_limit = (sizeof($data)/2)+1;
 
         for($i=0; $i<$loop_limit; $i++) {
-        	$out .= html_writer::start_tag('tr');
-        	
-        	$expressionname = 'expression'.$i;
+            $out .= html_writer::start_tag('tr');
 
-        	if(!empty($data[$expressionname])){
-        		$expression = $data[$expressionname];
-        	}
-        	else {
-        		$expression = '';
-        	}
+            $expressionname = 'expression'.$i;
+
+            if(!empty($data[$expressionname])){
+                $expression = $data[$expressionname];
+            } else {
+                $expression = '';
+            }
 
             $out .= html_writer::tag('td',
                 html_writer::empty_tag('input',
@@ -7399,13 +7398,12 @@ class admin_setting_devicedetectregex extends admin_setting {
                     )
                 ), array('class' => 'c'.$i)
             );
-            
+
             $valuename = 'value'.$i;
-            
+
             if(!empty($data[$valuename])){
                 $value = $data[$valuename];
-            }
-            else {
+            } else {
                 $value= '';
             }
 
@@ -7438,16 +7436,16 @@ class admin_setting_devicedetectregex extends admin_setting {
      */
     protected function prepare_form_data($regexes) {
 
-    	$regexes = json_decode($regexes);
+        $regexes = json_decode($regexes);
 
         $form = array();
 
         $i = 0;
         
         foreach($regexes as $regex) {
-        	$expressionname  = 'expression'.$i;
-        	$valuename = 'value'.$i;
-        	
+            $expressionname  = 'expression'.$i;
+            $valuename = 'value'.$i;
+
             $form[$expressionname] = $regex->expression;
             $form[$valuename] = $regex->value;
             $i++;
@@ -7474,26 +7472,25 @@ class admin_setting_devicedetectregex extends admin_setting {
 
         $regexes = array();
         for ($i = 0; $i < $count / 2; $i++) {
-        	$expressionname  = "expression".$i;
-        	$valuename       = "value".$i;
-        	
-        	$expression = trim($form['expression'.$i]);
-        	$value      = trim($form['value'.$i]);
-        	
-        	if(empty($expression)){
-        		continue;
-        	}
-        	
+            $expressionname  = "expression".$i;
+            $valuename       = "value".$i;
+
+            $expression = trim($form['expression'.$i]);
+            $value      = trim($form['value'.$i]);
+
+            if(empty($expression)){
+                continue;
+            }
+
             $regex = new stdClass();
             $regex->expression = $expression;
             $regex->value = $value;
-            
+
             $regexes[] = $regex;        
         }
 
         $regexes = json_encode($regexes);
-        
+
         return $regexes;
-        
-    }    
+    }
 }

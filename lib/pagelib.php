@@ -1269,11 +1269,11 @@ class moodle_page {
         }
 
         if(!empty($USER->themeswitch) || !empty($SESSION->themeswitch)){
-        	$device_type = 'default';
+            $device_type = 'default';
         } else {
             $device_type = get_device_type();
         }
-        
+
         $theme = '';
 
         foreach ($themeorder as $themetype) {

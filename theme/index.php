@@ -38,29 +38,29 @@ if ($reset and confirm_sesskey()) {
     $chosentheme = $choose;
     $heading = get_string('themesaved');
     $config = 'themes';
-    
+
     $config_themes = json_decode($CFG->themes);
-    
+
     if(!is_array($config_themes)){
-    	$config_themes = array();
+        $config_themes = array();
     }
-    
+
     $i = 0;
-    
+
     foreach($config_themes as $config_theme){
-    	if($config_theme->device == $device){
-    		array_splice($config_themes,$i,1);
-    		break;
-    	}
-    	$i++;
+        if($config_theme->device == $device){
+            array_splice($config_themes,$i,1);
+            break;
+        }
+        $i++;
     }
-    
+
     $theme = theme_config::load($chosentheme);
-    
+
     $theme_obj = new stdClass();
     $theme_obj->device = $device;
     $theme_obj->themename = $theme->name;
-    
+
     $config_themes[] = $theme_obj;
 
     set_config($config, json_encode($config_themes));
@@ -96,51 +96,49 @@ echo $OUTPUT->heading(get_string('themes'));
 
 echo $OUTPUT->single_button(new moodle_url('index.php', array('sesskey'=>sesskey(),'reset'=>1)), get_string('themeresetcaches', 'admin'));
 
-if($CFG->enabledevicedetection && empty($device)){    
-	$table = new html_table();
-	$table->id = 'devicethemeselector';
-	$table->head = array(get_string('devicetype','admin'), get_string('theme'), get_string('info'));
-	
-	$devices = get_device_type_list();
-	
-	foreach($devices as $device){
-		$row = array();
-		
-		$row[] = $device;
+if($CFG->enabledevicedetection && empty($device)){
+    $table = new html_table();
+    $table->id = 'devicethemeselector';
+    $table->head = array(get_string('devicetype','admin'), get_string('theme'), get_string('info'));
 
-		$themename = get_selected_theme_for_device_type($CFG->themes, $device);
-		
-		if(!$themename && $device == 'default'){
-			$themename = theme_config::DEFAULT_THEME;
-		}
-		
-		if($themename){
-			$strthemename = get_string('pluginname', 'theme_'.$themename);
-	        // link to the screenshot, now mandatory - the image path is hardcoded because we need image from other themes, not the current one
+    $devices = get_device_type_list();
+
+    foreach($devices as $device){
+        $row = array();
+        $row[] = $device;
+
+        $themename = get_selected_theme_for_device_type($CFG->themes, $device);
+
+        if(!$themename && $device == 'default'){
+            $themename = theme_config::DEFAULT_THEME;
+        }
+
+        if($themename){
+            $strthemename = get_string('pluginname', 'theme_'.$themename);
+            // link to the screenshot, now mandatory - the image path is hardcoded because we need image from other themes, not the current one
             $screenshotpath = new moodle_url('/theme/image.php', array('theme'=>$themename, 'image'=>'screenshot','component'=>'theme'));
             // Contents of the first screenshot/preview cell.
             $row[] = html_writer::empty_tag('img', array('src'=>$screenshotpath, 'alt'=>$strthemename));			
-		} else {
-			$row[] = get_string('themenoselected','admin');
-		}
-		
-		$select = new single_button(new moodle_url('/theme/index.php', array('device' => $device, 'sesskey' => sesskey())), get_string('themeselect','admin'), 'get');
-		
-		$row[] = $OUTPUT->render($select);
-		
-		$table->data[$device] = $row;
-	}
-	
-	echo html_writer::table($table);
+        } else {
+            $row[] = get_string('themenoselected','admin');
+        }
 
+        $select = new single_button(new moodle_url('/theme/index.php', array('device' => $device, 'sesskey' => sesskey())), get_string('themeselect','admin'), 'get');
+
+        $row[] = $OUTPUT->render($select);
+
+        $table->data[$device] = $row;
+    }
+
+    echo html_writer::table($table);
     echo $OUTPUT->footer();
-	
-	exit;
+
+    exit;
 }
 
 //if $CFG->enabledevicedetection is set to no, then this will return the default device type.
 if(empty($device)){
-	$device = get_device_type();
+    $device = get_device_type();
 }
 
 $table = new html_table();
@@ -149,8 +147,7 @@ $table->head = array(get_string('theme'), get_string('info'));
 
 $themes = get_plugin_list('theme');
 
-foreach ($themes as $themename => $themedir) {
-
+foreach ($themes as $themename => $themedir){
     // Load the theme config.
     try {
         $theme = theme_config::load($themename);
@@ -158,6 +155,7 @@ foreach ($themes as $themename => $themedir) {
         // Bad theme, just skip it for now.
         continue;
     }
+
     if ($themename !== $theme->name) {
         //obsoleted or broken theme, just skip for now
         continue;
@@ -186,7 +184,6 @@ foreach ($themes as $themename => $themedir) {
     $screenshotpath = new moodle_url('/theme/image.php', array('theme'=>$themename, 'image'=>'screenshot','component'=>'theme'));
     // Contents of the first screenshot/preview cell.
     $row[] = html_writer::empty_tag('img', array('src'=>$screenshotpath, 'alt'=>$strthemename));
-
     // Contents of the second cell.
     $infocell = $OUTPUT->heading($strthemename, 3);
 
