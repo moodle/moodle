@@ -43,7 +43,7 @@ qtype_chooser = {
     container: null,
     submitbutton: null,
 
-    init: function(boxid) {
+    init: function(Y, boxid) {
         // Find the radio buttons.
         qtype_chooser.radiobuttons = YAHOO.util.Dom.getElementsBy(
                 function(el) { return el.type == 'radio'; }, 'input' , boxid);
@@ -57,9 +57,17 @@ qtype_chooser = {
         YAHOO.util.Event.addListener(boxid, 'click', qtype_chooser.enable_disable_submit);
         YAHOO.util.Event.addListener(boxid, 'key_down', qtype_chooser.enable_disable_submit);
         YAHOO.util.Event.addListener(boxid, 'key_up', qtype_chooser.enable_disable_submit);
-        YAHOO.util.Event.addListener(boxid, 'dblclick', qtype_chooser.double_click);
+        YAHOO.util.Event.addListener(boxid, 'dblclick', function(e) {
+                if (!qtype_chooser.submitbutton.disabled) {
+                    M.core_scroll_manager.save_scroll_pos(Y, Y.one(qtype_chooser.submitbutton));
+                    qtype_chooser.submitbutton.form.submit();
+                }
+            });
 
         YAHOO.util.Event.onDOMReady(qtype_chooser.init_container);
+        Y.on('submit', function(e) {
+            M.core_scroll_manager.save_scroll_pos(Y, Y.one(qtype_chooser.submitbutton));
+        }, qtype_chooser.submitbutton.form);
     },
 
     enable_disable_submit: function() {
@@ -73,12 +81,6 @@ qtype_chooser = {
             }
         }
         qtype_chooser.submitbutton.disabled = !ok;
-    },
-
-    double_click: function() {
-        if (!qtype_chooser.submitbutton.disabled) {
-            qtype_chooser.submitbutton.form.submit();
-        }
     },
 
     init_container: function() {

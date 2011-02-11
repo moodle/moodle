@@ -25,6 +25,7 @@ $movecontext = optional_param('movecontext', 0, PARAM_BOOL); // Switch to make
 $originalreturnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 $appendqnumstring = optional_param('appendqnumstring', '', PARAM_ALPHA);
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
+$scrollpos = optional_param('scrollpos', 0, PARAM_INT);
 
 $url = new moodle_url('/question/question.php');
 if ($id !== 0) {
@@ -57,6 +58,9 @@ if ($appendqnumstring !== '') {
 if ($inpopup !== 0) {
     $url->param('inpopup', $inpopup);
 }
+if ($scrollpos) {
+    $url->param('scrollpos', $scrollpos);
+}
 $PAGE->set_url($url);
 
 if ($originalreturnurl) {
@@ -68,6 +72,9 @@ if ($originalreturnurl) {
     $returnurl = new moodle_url('/question/edit.php', array('cmid' => $cmid));
 } else {
     $returnurl = new moodle_url('/question/edit.php', array('courseid' => $courseid));
+}
+if ($scrollpos) {
+    $returnurl->param('scrollpos', $scrollpos);
 }
 
 if ($movecontext && !$id){
@@ -175,6 +182,7 @@ if ($wizardnow!=='' && !$movecontext){
 }
 $toform = fullclone($question); // send the question object and a few more parameters to the form
 $toform->category = "$category->id,$category->contextid";
+$toform->scrollpos = $scrollpos;
 if ($formeditable && $id){
     $toform->categorymoveto = $toform->category;
 }
@@ -197,7 +205,7 @@ if ($mform->is_cancelled()) {
     if ($inpopup) {
         close_window();
     } else {
-        redirect($returnurl->out(false));
+        redirect($returnurl);
     }
 
 } else if ($fromform = $mform->get_data()) {
@@ -263,7 +271,8 @@ if ($mform->is_cancelled()) {
     } else {
         $nexturlparams = array(
                 'returnurl' => $originalreturnurl,
-                'appendqnumstring' => $appendqnumstring);
+                'appendqnumstring' => $appendqnumstring,
+                'scrollpos' => $scrollpos);
         if (isset($fromform->nextpageparam) && is_array($fromform->nextpageparam)){
             //useful for passing data to the next page which is not saved in the database.
             $nexturlparams += $fromform->nextpageparam;

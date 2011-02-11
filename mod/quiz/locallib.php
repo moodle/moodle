@@ -462,8 +462,8 @@ function quiz_update_sumgrades($quiz) {
                 WHERE quiz = {quiz}.id
             ), 0)
             WHERE id = ?';
-    $DB->execute_sql($sql, array($quiz->id));
-    $quiz->sumgrades = get_field('quiz', 'sumgrades', 'id', $quiz->id);
+    $DB->execute($sql, array($quiz->id));
+    $quiz->sumgrades = $DB->get_field('quiz', 'sumgrades', array('id' => $quiz->id));
     if ($quiz->sumgrades < 0.000005) {
         quiz_set_grade(0, $quiz);
     }
@@ -749,7 +749,7 @@ function quiz_update_all_final_grades($quiz) {
             WHERE
                 ABS(newgrades.newgrade - qg.grade) > 0.000005 OR
                 (newgrades.newgrade IS NULL) <> (qg.grade IS NULL)",
-            $params);
+            $param);
 
     $timenow = time();
     $todelete = array();

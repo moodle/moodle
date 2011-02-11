@@ -57,7 +57,6 @@ class mod_quiz_mod_form extends moodleform_mod {
     }
 
     function definition() {
-
         global $COURSE, $CFG, $DB, $PAGE;
         $quizconfig = get_config('quiz');
         $mform = $this->_form;
@@ -133,6 +132,7 @@ class mod_quiz_mod_form extends moodleform_mod {
             $mform->disabledIf('repaginatenow', 'shufflequestions', 'eq', 1);
             $PAGE->requires->yui2_lib('event');
             $PAGE->requires->js('/mod/quiz/edit.js');
+            $PAGE->requires->js_init_call('quiz_settings_init');
         }
 
         $mform->addGroup($pagegroup, 'questionsperpagegrp', get_string('newpage', 'quiz'), null, false);

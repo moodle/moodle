@@ -21,6 +21,7 @@ list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $addonpage = optional_param('addonpage', 0, PARAM_INT);
 $category = optional_param('category', 0, PARAM_INT);
+$scrollpos = optional_param('scrollpos', 0, PARAM_INT);
 
 // Get the course object and related bits.
 if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
@@ -35,6 +36,9 @@ if ($returnurl) {
     $returnurl = new moodle_url($returnurl);
 } else {
     $returnurl = new moodle_url('/mod/quiz/edit.php', array('cmid' => $cmid));
+}
+if ($scrollpos) {
+    $returnurl->param('scrollpos', $scrollpos);
 }
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());

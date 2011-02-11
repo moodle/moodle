@@ -1693,7 +1693,7 @@ function print_choose_qtype_to_add_form($hiddenparams) {
     echo '<div class="realqtypes">' . "\n";
     $fakeqtypes = array();
     foreach (question_bank::get_creatable_qtypes() as $qtype) {
-        if (question_bank::get_qtype($qtype)->is_real_question_type()) {
+        if ($qtype->is_real_question_type()) {
             print_qtype_to_add_option($qtype);
         } else {
             $fakeqtypes[] = $qtype;
@@ -1701,7 +1701,7 @@ function print_choose_qtype_to_add_form($hiddenparams) {
     }
     echo "</div>\n";
     echo '<div class="fakeqtypes">' . "\n";
-    foreach ($fakeqtypes as $qtype => $localizedname) {
+    foreach ($fakeqtypes as $qtype) {
         print_qtype_to_add_option($qtype);
     }
     echo "</div>\n";
@@ -1711,7 +1711,7 @@ function print_choose_qtype_to_add_form($hiddenparams) {
     echo '<input type="submit" id="chooseqtypecancel" name="addcancel" value="' . get_string('cancel') . '" />' . "\n";
     echo "</div></form>\n";
     echo "</div>\n";
-    $PAGE->requires->js_function_call('qtype_chooser.init', array('chooseqtype'));
+    $PAGE->requires->js_init_call('qtype_chooser.init', array('chooseqtype'));
 }
 
 /**

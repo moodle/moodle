@@ -123,7 +123,7 @@ foreach ($slots as $slot) {
         $flag = ' <img src="' . $OUTPUT->pix_url('i/flagged') . '" alt="' .
                 get_string('flagged', 'question') . '" class="questionflag" />';
     }
-    $row = array('<a href="' . s($attemptobj->attempt_url($slot)) . '">' .
+    $row = array('<a href="' . $attemptobj->attempt_url($slot) . '">' .
             $attemptobj->get_question_number($slot) . $flag . '</a>',
             $attemptobj->get_question_status($slot, $displayoptions->correctness));
     if ($markscolumn) {

@@ -204,6 +204,10 @@ abstract class question_edit_form extends moodleform {
         $mform->setType('returnurl', PARAM_LOCALURL);
         $mform->setDefault('returnurl', 0);
 
+        $mform->addElement('hidden', 'scrollpos');
+        $mform->setType('scrollpos', PARAM_INT);
+        $mform->setDefault('scrollpos', 0);
+
         $mform->addElement('hidden', 'appendqnumstring');
         $mform->setType('appendqnumstring', PARAM_ALPHA);
         $mform->setDefault('appendqnumstring', 0);

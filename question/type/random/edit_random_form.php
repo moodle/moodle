@@ -43,7 +43,7 @@ class question_edit_random_form extends question_edit_form {
         $qtype = $this->qtype();
         $langfile = "qtype_$qtype";
 
-        $mform =& $this->_form;
+        $mform = $this->_form;
 
         // Standard fields at the start of the form.
         $mform->addElement('header', 'generalheader', get_string("general", 'form'));

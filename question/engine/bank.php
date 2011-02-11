@@ -168,7 +168,7 @@ abstract class question_bank {
         foreach ($otherqtypes as $name => $notused) {
             $creatableqtypes[$name] = $allqtypes[$name];
         }
-        return $qtypes;
+        return $creatableqtypes;
     }
 
     /**

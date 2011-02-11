@@ -143,14 +143,16 @@ class qtype_random extends question_type {
         $question->name = get_string('selectedby', 'qtype_random', $a);
     }
 
-    public function save_question($question, $form, $course) {
+    public function save_question($question, $form) {
         $form->name = '';
         // Name is not a required field for random questions, but
         // parent::save_question Assumes that it is.
-        return parent::save_question($question, $form, $course);
+        return parent::save_question($question, $form);
     }
 
     public function save_question_options($question) {
+        global $DB;
+
         // No options, as such, but we set the parent field to the question's
         // own id. Setting the parent field has the effect of hiding this
         // question in various places.
