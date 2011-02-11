@@ -719,18 +719,26 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         return null;
     }
 
-    // relink embedded files if text submitted - no absolute links allowed in database!
-    if ($CFG->slasharguments) {
-        $draftbase = "$CFG->wwwroot/draftfile.php/$usercontext->id/user/draft/$draftitemid/";
-    } else {
-        $draftbase = "$CFG->wwwroot/draftfile.php?file=/$usercontext->id/user/draft/$draftitemid/";
-    }
-
+    $wwwroot = $CFG->wwwroot;
     if ($forcehttps) {
-        $draftbase = str_replace('http://', 'https://', $draftbase);
+        $wwwroot = str_replace('http://', 'https://', $wwwroot);
     }
 
-    $text = str_ireplace($draftbase, '@@PLUGINFILE@@/', $text);
+    // relink embedded files if text submitted - no absolute links allowed in database!
+    $text = str_ireplace("$wwwroot/draftfile.php/$usercontext->id/user/draft/$draftitemid/", '@@PLUGINFILE@@/', $text);
+
+    if (strpos($text, 'draftfile.php?file=') !== false) {
+        $matches = array();
+        preg_match_all("!$wwwroot/draftfile.php\?file=%2F{$usercontext->id}%2Fuser%2Fdraft%2F{$draftitemid}%2F[^'\",&<>|`\s:\\\\]+!iu", $text, $matches);
+        if ($matches) {
+            foreach ($matches[0] as $match) {
+                $replace = str_ireplace('%2F', '/', $match);
+                $text = str_replace($match, $replace, $text);
+            }
+        }
+        $text = str_ireplace("$wwwroot/draftfile.php?file=/$usercontext->id/user/draft/$draftitemid/", '@@PLUGINFILE@@/', $text);
+    }
+
 
     return $text;
 }
