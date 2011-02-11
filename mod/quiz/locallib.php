@@ -405,20 +405,22 @@ function quiz_rescale_grade($rawgrade, $quiz, $format = true) {
  * got this grade on this quiz. The feedback is processed ready for diplay.
  *
  * @param float $grade a grade on this quiz.
- * @param integer $quizid the id of the quiz object.
+ * @param object $quiz the quiz settings.
+ * @param object $context the quiz context.
  * @return string the comment that corresponds to this grade (empty string if there is not one.
  */
-function quiz_feedback_for_grade($grade, $quiz, $context, $cm=null) {
+function quiz_feedback_for_grade($grade, $quiz, $context) {
     global $DB;
 
     if (is_null($grade)) {
         return '';
     }
 
-    $feedback = $DB->get_record_select('quiz_feedback', "quizid = ? AND mingrade <= ? AND $grade < maxgrade", array($quiz->id, $grade));
+    $feedback = $DB->get_record_select('quiz_feedback',
+            'quizid = ? AND mingrade <= ? AND ? < maxgrade', array($quiz->id, $grade, $grade));
 
     if (empty($feedback->feedbacktext)) {
-        $feedback->feedbacktext = '';
+        return '';
     }
 
     // Clean the text, ready for display.
@@ -1024,12 +1026,14 @@ function quiz_get_review_options($quiz, $attempt, $context) {
 
     $options->readonly = true;
     $options->flags = quiz_get_flag_option($attempt, $context);
-    $options->questionreviewlink = new moodle_url('/mod/quiz/reviewquestion.php',
-            array('attempt' => $attempt->id));
+    if (!empty($attempt->id)) {
+        $options->questionreviewlink = new moodle_url('/mod/quiz/reviewquestion.php',
+                array('attempt' => $attempt->id));
+    }
 
     // Show a link to the comment box only for closed attempts
-    if ($attempt->timefinish && !$attempt->preview && !is_null($context) &&
-            has_capability('mod/quiz:grade', $context)) {
+    if (!empty($attempt->id) && $attempt->timefinish && !$attempt->preview &&
+            !is_null($context) && has_capability('mod/quiz:grade', $context)) {
         $options->manualcomment = question_display_options::VISIBLE;
         $options->manualcommentlink = new moodle_url('/mod/quiz/comment.php',
                 array('attempt' => $attempt->id));

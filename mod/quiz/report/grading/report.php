@@ -1,147 +1,160 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Quiz report to help teachers manually grade quiz questions that need it.
+ * This file defines the quiz manual grading report class.
  *
- * @package quiz
- * @subpackage reports
+ * @package quiz_grading
+ * @copyright 2006 Gustav Delius
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Flow of the file:
-//     Get variables, run essential queries
-//     Check for post data submitted.  If exists, then process data (the data is the grades and comments for essay questions)
-//     Check for userid, attemptid, or gradeall and for questionid.  If found, print out the appropriate essay question attempts
-//     Switch:
-//         first case: print out all essay questions in quiz and the number of ungraded attempts
-//         second case: print out all users and their attempts for a specific essay question
 
-require_once($CFG->dirroot . "/mod/quiz/editlib.php");
-require_once($CFG->libdir . '/tablelib.php');
+require_once($CFG->dirroot . '/mod/quiz/report/grading/gradingsettings_form.php');
+
 
 /**
- * Quiz report to help teachers manually grade quiz questions that need it.
+ * Quiz report to help teachers manually grade questions that need it.
  *
- * @package quiz
- * @subpackage reports
+ * This report basically provides two screens:
+ * - List question that might need manual grading (or optionally all questions).
+ * - Provide an efficient UI to grade all attempts at a particular question.
+ *
+ * @copyright 2006 Gustav Delius
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_grading_report extends quiz_default_report {
-    /**
-     * Displays the report.
-     */
+    const DEFAULT_PAGE_SIZE = 5;
+    const DEFAULT_ORDER = 'random';
+
+    protected $viewoptions = array();
+    protected $questions;
+    protected $currentgroup;
+    protected $users;
+    protected $cm;
+    protected $quiz;
+    protected $context;
+
     function display($quiz, $cm, $course) {
-        global $CFG, $QTYPES, $DB, $OUTPUT, $PAGE;
+        global $CFG, $DB, $OUTPUT, $PAGE;
 
-        $viewoptions = array('mode'=>'grading', 'q'=>$quiz->id);
-
-        if ($questionid = optional_param('questionid', 0, PARAM_INT)){
-            $viewoptions += array('questionid'=>$questionid);
-        }
-
-        // grade question specific parameters
-        if ($userid    = optional_param('userid', 0, PARAM_INT)){
-            $viewoptions += array('userid'=>$userid);
-        }
-        if ($attemptid = optional_param('attemptid', 0, PARAM_INT)){
-            $viewoptions += array('attemptid'=>$attemptid);
-        }
-        if ($gradeall  = optional_param('gradeall', 0, PARAM_INT)){
-            $viewoptions += array('gradeall'=> $gradeall);
-        }
-        if ($gradeungraded  = optional_param('gradeungraded', 0, PARAM_INT)){
-            $viewoptions += array('gradeungraded'=> $gradeungraded);
-        }
-        if ($gradenextungraded  = optional_param('gradenextungraded', 0, PARAM_INT)){
-            $viewoptions += array('gradenextungraded'=> $gradenextungraded);
-        }
-
+        $this->quiz = $quiz;
         $this->cm = $cm;
+        $this->course = $course;
 
-        $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="grading");
+        // Get the URL options.
+        $slot = optional_param('slot', null, PARAM_INT);
+        $questionid = optional_param('qid', null, PARAM_INT);
+        $grade = optional_param('grade', null, PARAM_ALPHA);
+
+        $includeauto = optional_param('includeauto', false, PARAM_BOOL);
+        if (!in_array($grade, array('all', 'needsgrading', 'autograded', 'manuallygraded'))) {
+            $grade = null;
+        }
+        $pagesize = optional_param('pagesize', self::DEFAULT_PAGE_SIZE, PARAM_INT);
+        $page = optional_param('page', 0, PARAM_INT);
+        $order = optional_param('order', self::DEFAULT_ORDER, PARAM_ALPHA);
+
+        // Assemble the options requried to reload this page.
+        $optparams = array('includeauto', 'page');
+        foreach ($optparams as $param) {
+            if ($$param) {
+                $this->viewoptions[$param] = $$param;
+            }
+        }
+        if ($pagesize != self::DEFAULT_PAGE_SIZE) {
+            $this->viewoptions['pagesize'] = $pagesize;
+        }
+        if ($order != self::DEFAULT_ORDER) {
+            $this->viewoptions['order'] = $order;
+        }
 
         // Check permissions
         $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        if (!has_capability('mod/quiz:grade', $this->context)) {
-            echo $OUTPUT->notification(get_string('gradingnotallowed', 'quiz_grading'));
-            return true;
+        require_capability('mod/quiz:grade', $this->context);
+        $shownames = has_capability('quizreport/grading:viewstudentnames', $this->context);
+        $showidnumbers = has_capability('quizreport/grading:viewidnumber', $this->context);
+
+        // Validate order.
+        if (!in_array($order, array('random', 'date', 'student', 'idnumber'))) {
+            $order = self::DEFAULT_ORDER;
+        } else if (!$shownames && $order == 'student') {
+            $order = self::DEFAULT_ORDER;
+        } else if (!$showidnumbers && $order == 'idnumber') {
+            $order = self::DEFAULT_ORDER;
+        }
+        if ($order == 'random') {
+            $page = 0;
         }
 
-        $gradeableqs = quiz_report_load_questions($quiz);
-        $questionsinuse = implode(',', array_keys($gradeableqs));
-        foreach ($gradeableqs as $qid => $question){
-            if (!$QTYPES[$question->qtype]->is_question_manual_graded($question, $questionsinuse)){
-                unset($gradeableqs[$qid]);
-            }
+        // Get the list of questions in this quiz.
+        $this->questions = quiz_report_get_significant_questions($quiz);
+        if ($slot && !array_key_exists($slot, $this->questions)) {
+            throw new moodle_exception('unknownquestion', 'quiz_grading');
         }
 
-        if (empty($gradeableqs)) {
-            echo $OUTPUT->heading(get_string('noessayquestionsfound', 'quiz'));
-            return true;
-        } else if (count($gradeableqs)==1){
-            $questionid = array_shift(array_keys($gradeableqs));
+        // Process any submitted data.
+        if ($data = data_submitted() && confirm_sesskey() && $this->validate_submitted_marks()) {
+            $this->process_submitted_data();
+
+            redirect($this->grade_question_url($slot, $questionid, $grade, $page + 1));
         }
 
-        $currentgroup = groups_get_activity_group($this->cm, true);
-        $this->users = get_users_by_capability($this->context, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'','','','',$currentgroup,'',false);
+        // Get the group, and the list of significant users.
+        $this->currentgroup = groups_get_activity_group($this->cm, true);
+        $this->users = get_users_by_capability($this->context,
+                array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), '', '', '', '',
+                $this->currentgroup, '', false);
 
-        if (!empty($questionid)) {
-            if (!isset($gradeableqs[$questionid])){
-                print_error('invalidquestionid', 'quiz_grading', '', $questionid);
-            } else {
-                $question =& $gradeableqs[$questionid];
-            }
+        // Start output.
+        $this->print_header_and_tabs($cm, $course, $quiz, 'grading');
 
-            // Some of the questions code is optimised to work with several questions
-            // at once so it wants the question to be in an array. The array key
-            // must be the question id.
-            $key = $question->id;
-            $questions[$key] = &$question;
+        // What sort of page to display?
+        if (!$slot) {
+            $this->display_index($includeauto);
 
-            // We need to add additional questiontype specific information to
-            // the question objects.
-            if (!get_question_options($questions)) {
-                print_error('cannotloadquestioninfo', 'quiz_grading');
-            }
-            // This will have extended the question object so that it now holds
-            // all the information about the questions that may be needed later.
+        } else {
+            $this->display_grading_interface($slot, $questionid, $grade,
+                    $pagesize, $page, $shownames, $showidnumbers, $order);
+        }
+        return true;
+    }
+
+    protected function get_attempts_query() {
+        global $DB;
+
+        $from = "FROM {$CFG->prefix}quiz_attempts quiza";
+        $where = "quiza.quiz = {$this->cm->instance} AND quiza.preview = 0 AND quiza.timefinish <> 0";
+
+        if ($this->currentgroup) {
+            $where .= ' AND quiza.userid IN (' . implode(',', array_keys($this->users)) . ')';
         }
 
-        add_to_log($course->id, "quiz", "manualgrading", "report.php?mode=grading&amp;q=$quiz->id", "$quiz->id", "$cm->id");
+        $sql = new stdClass;
+        $sql->from = $from;
+        $sql->where = $where;
+        $sql->usageidcolumn = 'quiza.uniqueid';
 
-        if ($data = data_submitted()) {  // post data submitted, process it
-            if (confirm_sesskey() && $this->users){
+        return $sql;
+    }
 
-                // now go through all of the responses and save them.
-                $allok = true;
-                foreach($data->manualgrades as $uniqueid => $response) {
-                    // get our attempt
-                    $uniqueid = clean_param($uniqueid, PARAM_INT);
-                    list($usql, $params) = $DB->get_in_or_equal(array_keys($this->users));
-
-                    if (!$attempt = $DB->get_record_sql("SELECT * FROM {quiz_attempts} " .
-                                    "WHERE uniqueid = ? AND " .
-                                    "userid $usql AND " .
-                                    "quiz=?", array_merge(array($uniqueid), $params, array($quiz->id)))){
-                        print_error('invalidattemptid', 'quiz_grading');
-                    }
-
-                    // Load the state for this attempt (The questions array was created earlier)
-                    $states = get_question_states($questions, $quiz, $attempt);
-                    // The $states array is indexed by question id but because we are dealing
-                    // with only one question there is only one entry in this array
-                    $state = &$states[$question->id];
-
-                    // the following will update the state and attempt
-                    $error = question_process_comment($question, $state, $attempt,
-                            $response['comment'], FORMAT_HTML, $response['grade']);
-                    if (is_string($error)) {
-                        echo $OUTPUT->notification($error);
-                        $allok = false;
-                    } else if ($state->changed) {
-                        // If the state has changed save it and update the quiz grade
-                        save_question_session($question, $state);
-                        quiz_save_best_grade($quiz, $attempt->userid);
-                    }
-                }
-
+    function temp() { // TODO
+        {
+            {
                 if ($allok) {
                     echo $OUTPUT->notification(get_string('changessaved', 'quiz'), 'notifysuccess');
                 } else {

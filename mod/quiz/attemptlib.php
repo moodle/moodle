@@ -584,7 +584,7 @@ class quiz_attempt {
      */
     public function get_overall_feedback($grade) {
         return quiz_feedback_for_grade($grade, $this->get_quiz(),
-                $this->quizobj->get_context(), $this->get_cm());
+                $this->quizobj->get_context());
     }
 
     /**
@@ -1267,9 +1267,9 @@ class quiz_review_nav_panel extends quiz_nav_panel_base {
         $html = '';
         if ($this->attemptobj->get_num_pages() > 1) {
             if ($this->showall) {
-                $html .= '<a href="' . s($this->attemptobj->review_url(0, 0, false)) . '">' . get_string('showeachpage', 'quiz') . '</a>';
+                $html .= '<a href="' . $this->attemptobj->review_url(null, 0, false) . '">' . get_string('showeachpage', 'quiz') . '</a>';
             } else {
-                $html .= '<a href="' . s($this->attemptobj->review_url(0, 0, true)) . '">' . get_string('showall', 'quiz') . '</a>';
+                $html .= '<a href="' . $this->attemptobj->review_url(null, 0, true) . '">' . get_string('showall', 'quiz') . '</a>';
             }
         }
         $accessmanager = $this->attemptobj->get_access_manager(time());

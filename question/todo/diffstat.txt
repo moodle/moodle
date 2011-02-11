@@ -94,7 +94,7 @@ DONE mod/quiz/pix/sa.gif                                |  Bin 74 -> 0 bytes
 DONE mod/quiz/pix/tf.gif                                |  Bin 190 -> 0 bytes
 DONE mod/quiz/processattempt.php                        |  126 +
 DONE mod/quiz/protect_js.php                            |   56 -
- mod/quiz/quiz.js                                   |  355 ++-
+DONE mod/quiz/quiz.js                                   |  355 ++-
  mod/quiz/restorelib.php                            |  113 +-
  mod/quiz/restorelibpre15.php                       |   41 +-
 DONE mod/quiz/review.php                                |  520 ++--
@@ -112,21 +112,21 @@ DONE mod/quiz/tabs.php                                  |   70 +-
 DONE mod/quiz/version.php                               |    6 +-
 DONE mod/quiz/view.php                                  |  773 +++---
 
- mod/quiz/report.php                                |  161 +-
+DONE mod/quiz/report.php                                |  161 +-
  mod/quiz/report/attemptsreport.php                 |  649 +++++
- mod/quiz/report/default.php                        |   74 +-
- mod/quiz/report/reportlib.php                      |  432 ++--
+DONE mod/quiz/report/default.php                        |   74 +-
+DONE mod/quiz/report/reportlib.php                      |  432 ++--
 
 DONE mod/quiz/report/analysis/report.php                |  755 -----
 DONE mod/quiz/report/regrade/report.php                 |   88 -
 DONE lang/en_utf8/quiz_regrade.php                      |    7 -
 
- mod/quiz/report/grading/db/access.php              |   49 +
- mod/quiz/report/grading/gradingsettings_form.php   |   91 +
- mod/quiz/report/grading/lang/en_utf8/quiz_grading.php   |   60 +
+DONE mod/quiz/report/grading/db/access.php              |   49 +
+DONE mod/quiz/report/grading/gradingsettings_form.php   |   91 +
+DONE mod/quiz/report/grading/lang/en_utf8/quiz_grading.php   |   60 +
  mod/quiz/report/grading/report.php                 |  842 ++++---
- mod/quiz/report/grading/version.php                |   26 +
- lang/en_utf8/quiz_grading.php                      |   18 -
+DONE mod/quiz/report/grading/version.php                |   26 +
+DONE lang/en_utf8/quiz_grading.php                      |   18 -
 
  mod/quiz/report/overview/db/install.xml            |   22 +
  mod/quiz/report/overview/db/upgrade.php            |  152 +
