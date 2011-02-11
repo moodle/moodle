@@ -179,7 +179,7 @@ httpsrequired();
                 $urltogo = $CFG->wwwroot.'/user/edit.php';
                 // We don't delete $SESSION->wantsurl yet, so we get there later
 
-            } else if (isset($SESSION->wantsurl) and (strpos($SESSION->wantsurl, $CFG->wwwroot) === 0)) {
+            } else if (isset($SESSION->wantsurl) and (strpos($SESSION->wantsurl, $CFG->wwwroot) === 0 or strpos($SESSION->wantsurl, str_replace('http://', 'https://', $CFG->wwwroot)) === 0)) {
                 $urltogo = $SESSION->wantsurl;    /// Because it's an address in this site
                 unset($SESSION->wantsurl);
 
