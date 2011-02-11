@@ -141,10 +141,10 @@ $aggregatetoreturn = round($items[0]->rating->aggregate,1);
 // Output a dash if aggregation method == COUNT as the count is output next to the aggregate anyway
 if ($items[0]->rating->settings->aggregationmethod==RATING_AGGREGATE_COUNT or $items[0]->rating->count == 0) {
     $aggregatetoreturn = ' - ';
-} else if($rating->scaleid < 0) { //if its non-numeric scale
+} else if($items[0]->rating->settings->scale->id < 0) { //if its non-numeric scale
     //dont use the scale item if the aggregation method is sum as adding items from a custom scale makes no sense
     if ($items[0]->rating->settings->aggregationmethod!= RATING_AGGREGATE_SUM) {
-        $scalerecord = $DB->get_record('scale', array('id' => -$rating->scaleid));
+        $scalerecord = $DB->get_record('scale', array('id' => -$items[0]->rating->settings->scale->id));
         if ($scalerecord) {
             $scalearray = explode(',', $scalerecord->scale);
             $aggregatetoreturn = $scalearray[$aggregatetoreturn-1];
