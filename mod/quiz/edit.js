@@ -25,10 +25,16 @@
 
 // Initialise everything on the quiz edit/order and paging page.
 var quiz_edit = {};
-function quiz_edit_init() {
+function quiz_edit_init(Y) {
+    M.core_scroll_manager.scroll_to_saved_pos(Y);
+    Y.on('submit', function(e) {
+            M.core_scroll_manager.save_scroll_pos(Y, 'id_existingcategory');
+        }, '#mform1');
+    Y.on('submit', function(e) {
+            M.core_scroll_manager.save_scroll_pos(Y, e.target.get('firstChild'));
+        }, '.quizsavegradesform');
 
     // Add random question dialogue --------------------------------------------
-
     var randomquestiondialog = YAHOO.util.Dom.get('randomquestiondialog');
     if (randomquestiondialog) {
         YAHOO.util.Dom.get(document.body).appendChild(randomquestiondialog);
@@ -148,15 +154,3 @@ function quiz_settings_init() {
         }, 50);
     });
 }
-
-// Depending on which page this is, do the appropriate initialisation.
-function quiz_edit_generic_init() {
-    switch (document.body.id) {
-    case 'page-mod-quiz-edit':
-        quiz_edit_init();
-        break;
-    case 'page-mod-quiz-mod':
-        quiz_settings_init();
-    }
-}
-YAHOO.util.Event.onDOMReady(quiz_edit_generic_init);

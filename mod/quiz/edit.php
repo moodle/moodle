@@ -115,6 +115,7 @@ function module_specific_controls($totalnumber, $recurse, $category, $cmid, $cmo
 //this page otherwise they would go in question_edit_setup
 $quiz_reordertool = optional_param('reordertool', -1, PARAM_BOOL);
 $quiz_qbanktool = optional_param('qbanktool', -1, PARAM_BOOL);
+$scrollpos = optional_param('scrollpos', '', PARAM_INT);
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', '/mod/quiz/edit.php', true);
@@ -183,18 +184,22 @@ foreach ($params as $key => $value) {
     }
 }
 
+$afteractionurl = new moodle_url($thispageurl);
+if ($scrollpos) {
+    $afteractionurl->param('scrollpos', $scrollpos);
+}
 if (($up = optional_param('up', false, PARAM_INT)) && confirm_sesskey()) {
     $quiz->questions = quiz_move_question_up($quiz->questions, $up);
     $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
     quiz_delete_previews($quiz);
-    redirect($thispageurl);
+    redirect($afteractionurl);
 }
 
 if (($down = optional_param('down', false, PARAM_INT)) && confirm_sesskey()) {
     $quiz->questions = quiz_move_question_down($quiz->questions, $down);
     $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
     quiz_delete_previews($quiz);
-    redirect($thispageurl);
+    redirect($afteractionurl);
 }
 
 if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
@@ -203,7 +208,7 @@ if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
     $quiz->questions = quiz_repaginate($quiz->questions, $questionsperpage );
     $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
     quiz_delete_previews($quiz);
-    redirect($thispageurl);
+    redirect($afteractionurl);
 }
 
 if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sesskey()) {
@@ -213,7 +218,7 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
     quiz_delete_previews($quiz);
     quiz_update_sumgrades($quiz);
     $thispageurl->param('lastchanged', $addquestion);
-    redirect($thispageurl);
+    redirect($afteractionurl);
 }
 
 if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
@@ -227,7 +232,7 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     }
     quiz_delete_previews($quiz);
     quiz_update_sumgrades($quiz);
-    redirect($thispageurl);
+    redirect($afteractionurl);
 }
 
 if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
@@ -240,7 +245,7 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
 
     quiz_delete_previews($quiz);
     quiz_update_sumgrades($quiz);
-    redirect($thispageurl);
+    redirect($afteractionurl);
 }
 
 if (optional_param('addnewpagesafterselected', null, PARAM_CLEAN) && !empty($selectedquestionids) && confirm_sesskey()) {
@@ -249,7 +254,7 @@ if (optional_param('addnewpagesafterselected', null, PARAM_CLEAN) && !empty($sel
     }
     $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
     quiz_delete_previews($quiz);
-    redirect($thispageurl);
+    redirect($afteractionurl);
 }
 
 $addpage = optional_param('addpage', false, PARAM_INT);
@@ -257,7 +262,7 @@ if ($addpage !== false && confirm_sesskey()) {
     $quiz->questions = quiz_add_page_break_at($quiz->questions, $addpage);
     $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
     quiz_delete_previews($quiz);
-    redirect($thispageurl);
+    redirect($afteractionurl);
 }
 
 $deleteemptypage = optional_param('deleteemptypage', false, PARAM_INT);
@@ -265,7 +270,7 @@ if (($deleteemptypage !== false) && confirm_sesskey()) {
     $quiz->questions = quiz_delete_empty_page($quiz->questions, $deleteemptypage);
     $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
     quiz_delete_previews($quiz);
-    redirect($thispageurl);
+    redirect($afteractionurl);
 }
 
 $remove = optional_param('remove', false, PARAM_INT);
@@ -273,7 +278,7 @@ if (($remove = optional_param('remove', false, PARAM_INT)) && confirm_sesskey())
     quiz_remove_question($quiz, $remove);
     quiz_update_sumgrades($quiz);
     quiz_delete_previews($quiz);
-    redirect($thispageurl);
+    redirect($afteractionurl);
 }
 
 if (optional_param('quizdeleteselected', false, PARAM_BOOL) && !empty($selectedquestionids) && confirm_sesskey()) {
@@ -282,7 +287,7 @@ if (optional_param('quizdeleteselected', false, PARAM_BOOL) && !empty($selectedq
     }
     quiz_delete_previews($quiz);
     quiz_update_sumgrades($quiz);
-    redirect($thispageurl);
+    redirect($afteractionurl);
 }
 
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
@@ -375,7 +380,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         quiz_update_all_final_grades($quiz);
         quiz_update_grades($quiz, 0, true);
     }
-    redirect($thispageurl);
+    redirect($afteractionurl);
 }
 
 $questionbank->process_actions($thispageurl, $cm);
@@ -403,7 +408,9 @@ for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
     $quizeditconfig->dialoglisteners[] = 'addrandomdialoglaunch_' . $pageiter;
 }
 $PAGE->requires->data_for_js('quiz_edit_config', $quizeditconfig);
+$PAGE->requires->js('/question/qengine.js');
 $PAGE->requires->js('/mod/quiz/edit.js');
+$PAGE->requires->js_init_call('quiz_edit_init');
 
 // Print the tabs to switch mode.
 if ($quiz_reordertool) {
