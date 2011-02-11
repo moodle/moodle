@@ -48,28 +48,16 @@ if ($fieldenclosure !== '') {
 if ($id) {
     $url->param('id', $id);
     $PAGE->set_url($url);
-    if (! $cm = get_coursemodule_from_id('data', $id)) {
-        print_error('invalidcoursemodule');
-    }
-    if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-        print_error('coursemisconf');
-    }
-    if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
-        print_error('invalidcoursemodule');
-    }
+    $cm     = get_coursemodule_from_id('data', $id, 0, false, MUST_EXIST);
+    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $data   = $DB->get_record('data', array('id'=>$cm->instance), '*', MUST_EXIST);
 
 } else {
     $url->param('d', $d);
     $PAGE->set_url($url);
-    if (! $data = $DB->get_record('data', array('id'=>$d))) {
-        print_error('invalidid', 'data');
-    }
-    if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-        print_error('coursemisconf');
-    }
-    if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-        print_error('coursemisconf');
-    }
+    $data   = $DB->get_record('data', array('id'=>$d), '*', MUST_EXIST);
+    $course = $DB->get_record('course', array('id'=>$data->course), '*', MUST_EXIST);
+    $cm     = get_coursemodule_from_instance('data', $data->id, $course->id, false, MUST_EXIST);
 }
 
 require_login($course, false, $cm);
@@ -82,8 +70,9 @@ $form = new mod_data_import_form(new moodle_url('/mod/data/import.php'));
 $PAGE->navbar->add(get_string('add', 'data'));
 $PAGE->set_title($data->name);
 $PAGE->set_heading($course->fullname);
+navigation_node::override_active_url(new moodle_url('/mod/data/import.php', array('d' => $data->id)));
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($data->name));
+echo $OUTPUT->heading_with_help(get_string('uploadrecords', 'mod_data'), 'uploadrecords', 'mod_data');
 
 /// Groups needed for Add entry tab
 $currentgroup = groups_get_activity_group($cm);
@@ -93,7 +82,6 @@ if (!$formdata = $form->get_data()) {
     /// Upload records section. Only for teachers and the admin.
     echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
     require_once('import_form.php');
-    echo $OUTPUT->heading(get_string('uploadrecords', 'data'), 3);
     $form = new mod_data_import_form(new moodle_url('/mod/data/import.php'));
     $formdata = new stdClass();
     $formdata->d = $data->id;

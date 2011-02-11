@@ -2848,10 +2848,10 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
     if (has_capability(DATA_CAP_EXPORT, $PAGE->cm->context)) {
         // The capability required to Export database records is centrally defined in 'lib.php'
         // and should be weaker than those required to edit Templates, Fields and Presets.
-        $datanode->add(get_string('export', 'data'), new moodle_url('/mod/data/export.php', array('d'=>$data->id)));
+        $datanode->add(get_string('exportentries', 'data'), new moodle_url('/mod/data/export.php', array('d'=>$data->id)));
     }
     if (has_capability('mod/data:manageentries', $PAGE->cm->context)) {
-        $datanode->add(get_string('import'), new moodle_url('/mod/data/import.php', array('d'=>$data->id)));
+        $datanode->add(get_string('importentries', 'data'), new moodle_url('/mod/data/import.php', array('d'=>$data->id)));
     }
 
     if (has_capability('mod/data:managetemplates', $PAGE->cm->context)) {

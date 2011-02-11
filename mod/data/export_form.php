@@ -55,7 +55,7 @@ class mod_data_export_form extends moodleform {
             }
         }
         $this->add_checkbox_controller(1, null, null, 1);
-        $this->add_action_buttons(true, get_string('exportdatabaserecords', 'data'));
+        $this->add_action_buttons(true, get_string('exportentries', 'data'));
     }
 
 }
