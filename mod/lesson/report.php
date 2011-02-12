@@ -41,10 +41,12 @@ require_login($course, false, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/lesson:manage', $context);
 
+$ufields = user_picture::fields('u'); // These fields are enough
 $params = array("lessonid" => $lesson->id);
+// TODO: Improve this. Fetching all students always is crazy!
 if (!empty($cm->groupingid)) {
     $params["groupid"] = $cm->groupingid;
-    $sql = "SELECT DISTINCT u.id, u.*
+    $sql = "SELECT DISTINCT $ufields
                 FROM {lesson_attempts} a
                     INNER JOIN {user} u ON u.id = a.userid
                     INNER JOIN {groups_members} gm ON gm.userid = u.id
@@ -52,7 +54,7 @@ if (!empty($cm->groupingid)) {
                 WHERE a.lessonid = :lessonid
                 ORDER BY u.lastname";
 } else {
-    $sql = "SELECT DISTINCT u.id, u.*
+    $sql = "SELECT DISTINCT $ufields
             FROM {user} u,
                  {lesson_attempts} a
             WHERE a.lessonid = :lessonid and
