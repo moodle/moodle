@@ -1240,10 +1240,11 @@ function get_all_sections($courseid) {
 }
 
 /**
- * Returns the course section to display. Returns 0 to mean show all sections.
- * Returns 0 all guests. It also sets the $USER->display cache to array($courseid=>return value)
+ * Returns the course section to display or 0 meaning show all sections. Returns 0 for guests.
+ * It also sets the $USER->display cache to array($courseid=>return value)
+ *
  * @param int $courseid The course id
- * @return int Course section to display
+ * @return int Course section to display, 0 means all
  */
 function course_get_display($courseid) {
     global $USER, $DB;
@@ -1254,42 +1255,55 @@ function course_get_display($courseid) {
     }
 
     if (!isset($USER->display[$courseid])) {
-        $display = $DB->get_field('course_display', 'display', array('userid' => $USER->id, 'course'=>$courseid));
-        if ($display === false) {
-            $display = 0; //return the implicit setting
+        if (!$display = $DB->get_field('course_display', 'display', array('userid' => $USER->id, 'course'=>$courseid))) {
+            $display = 0; // all sections option is not stored in DB, this makes the table much smaller
         }
-        //set display cache to only this course.
-        return $USER->display = array($courseid => (int)$display);
+        //use display cache for one course only - we need to keep session small
+        $USER->display = array($courseid => $display);
     }
+
     return $USER->display[$courseid];
 }
 
-function course_set_display($courseid, $display=0) {
+/**
+ * Show one section only or all sections.
+ *
+ * @param int $courseid The course id
+ * @param mixed $display show only this section, 0 or 'all' means show all sections
+ * @return int Course section to display, 0 means all
+ */
+function course_set_display($courseid, $display) {
     global $USER, $DB;
 
-    if ($display == 'all' or empty($display)) {
+    if ($display === 'all' or empty($display)) {
         $display = 0;
     }
 
     if (!isloggedin() or isguestuser()) {
         //do not store settings in db for guests
+        return 0;
+    }
+
+    if ($display == 0) {
+        //show all, do not store anything in database
+        $DB->delete_records('course_display', array('userid' => $USER->id, 'course' => $courseid));
+
     } else {
-        if ($display == 0) { //show all, so remove the explicit setting.
-            $DB->delete_records('course_display', array('userid' => $USER->id, 'course' => $courseid));
+        if ($DB->record_exists('course_display', array('userid' => $USER->id, 'course' => $courseid))) {
+            $DB->set_field('course_display', 'display', $display, array('userid' => $USER->id, 'course' => $courseid));
         } else {
-            if ($DB->record_exists('course_display', array('userid' => $USER->id, 'course' => $courseid))) {
-                $DB->set_field('course_display', 'display', $display, array('userid' => $USER->id, 'course' => $courseid));
-            } else {
-                $record = new stdClass();
-                $record->userid = $USER->id;
-                $record->course = $courseid;
-                $record->display = $display;
-                $DB->insert_record('course_display', $record);
-            }
+            $record = new stdClass();
+            $record->userid = $USER->id;
+            $record->course = $courseid;
+            $record->display = $display;
+            $DB->insert_record('course_display', $record);
         }
     }
 
-    return $USER->display[$courseid] = $display;  // Note: = not ==
+    //use display cache for one course only - we need to keep session small
+    $USER->display = array($courseid => $display);
+
+    return $display;
 }
 
 /**

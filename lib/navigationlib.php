@@ -1384,11 +1384,7 @@ class global_navigation extends navigation_node {
 
         $viewhiddensections = has_capability('moodle/course:viewhiddensections', $this->page->context);
 
-        if (isloggedin() && !isguestuser()) {
-            $activesection = course_get_display($course->id);
-        } else {
-            $activesection = null;
-        }
+        $activesection = course_get_display($course->id);
 
         $namingfunction = 'callback_'.$courseformat.'_get_section_name';
         $namingfunctionexists = (function_exists($namingfunction));
@@ -1418,7 +1414,7 @@ class global_navigation extends navigation_node {
                 $sectionnode = $coursenode->add($sectionname, $url, navigation_node::TYPE_SECTION, null, $section->id);
                 $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
                 $sectionnode->hidden = (!$section->visible);
-                if ($this->page->context->contextlevel != CONTEXT_MODULE && ($sectionnode->isactive || ($activesection != null && $section->section == $activesection))) {
+                if ($this->page->context->contextlevel != CONTEXT_MODULE && ($sectionnode->isactive || ($activesection && $section->section == $activesection))) {
                     $sectionnode->force_open();
                     $this->load_section_activities($sectionnode, $section->section, $modinfo);
                 }
@@ -1517,7 +1513,7 @@ class global_navigation extends navigation_node {
      */
     protected function load_activity($cm, stdClass $course, navigation_node $activity) {
         global $CFG, $DB;
-        
+
         // make sure we have a $cm from get_fast_modinfo as this contains activity access details
         if (!($cm instanceof cm_info)) {
             $modinfo = get_fast_modinfo($course);
