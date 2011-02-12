@@ -151,9 +151,7 @@ class quiz {
                 $questionstoprocess[$id] = $this->questions[$id];
             }
         }
-        if (!get_question_options($questionstoprocess)) {
-            throw new moodle_quiz_exception($this, 'loadingquestionsfailed', implode(', ', $questionids));
-        }
+        get_question_options($questionstoprocess);
     }
 
     // Simple getters ======================================================================
