@@ -118,15 +118,13 @@ class filter_mediaplugin extends moodle_text_filter {
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_youtube)) {
-            //see MDL-23903 for description of recent changes to this regex
-            //$search = '/<a.*?href="([^<]*)youtube.com\/watch\?v=([^"]*)"[^>]*>(.*?)<\/a>/is';
-            $search = '/<a(\s+[^>]+?)?\s+href="(([^"]+youtube\.com)\/watch\?v=([^"]*))"[^>]*>(.*?)<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="(([^"]+youtube\.com)\/watch\?v=([A-Za-z0-9\-_]+))[^>]*>(.*?)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_callback', $newtext);
 
-            $search = '/<a(\s+[^>]+?)?\s+href="(([^"]+youtube\.com)\/v\/([^"]*))"[^>]*>(.*?)<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="(([^"]+youtube\.com)\/v\/([A-Za-z0-9\-_]*))[^>]+>(.*?)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_callback', $newtext);
 
-            $search = '/<a(\s+[^>]+?)?\s+href="((([^"]+)youtube\.com)\/view_play_list\?p=([^"]*))"[^>]*>(.*?)<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="((([^"]+)youtube\.com)\/view_play_list\?p=([A-Za-z0-9\-_]+))[^>]*>(.*?)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_playlist_callback', $newtext);
         }
 
@@ -168,7 +166,7 @@ function filter_mediaplugin_mp3_callback($link) {
     $count++;
     $id = 'filter_mp3_'.time().$count; //we need something unique because it might be stored in text cache
 
-    $url = $link[2];
+    $url = addslashes_js($link[2]);
 
     $playerpath = $CFG->wwwroot.'/filter/mediaplugin/mp3player.swf';
     $audioplayerpath = $CFG->wwwroot .'/filter/mediaplugin/flowplayer.audio.swf';
@@ -281,16 +279,17 @@ function filter_mediaplugin_flv_callback($link) {
     $count++;
     $id = 'filter_flv_'.time().$count; //we need something unique because it might be stored in text cache
 
-    $width  = empty($link[4]) ? '480' : $link[4];
-    $height = empty($link[5]) ? '360' : $link[5];
-    $url = $link[2];
+    // note: in 1.9.x this used to be 480x360
+    $width  = empty($link[4]) ? '800' : $link[4];
+    $height = empty($link[5]) ? '600' : $link[5];
+    $url = addslashes_js($link[2]);
 
     $playerpath = $CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf';
 
     $output = <<<EOT
     <span class="mediaplugin mediaplugin_flv" id="$id"></span>
     <noscript><div>
-    <object width="800" height="600" id="undefined" name="undefined" data="$playerpath" type="application/x-shockwave-flash">
+    <object width="$width" height="$height" id="undefined" name="undefined" data="$playerpath" type="application/x-shockwave-flash">
     <param name="movie" value="$playerpath" />
     <param name="allowfullscreen" value="true" />
     <param name="allowscriptaccess" value="always" />
@@ -341,8 +340,8 @@ document.write(\'<object classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" wi
  */
 function filter_mediaplugin_youtube_callback($link, $autostart=false) {
     $site = s($link[3]);
-    $param = urlencode($link[4]);
-    $info = s($link[5]);
+    $param = $link[4]; // video id
+    $info = s(strip_tags($link[5]));
 
 
     return '<object title="'.$info.'"
@@ -361,8 +360,8 @@ function filter_mediaplugin_youtube_callback($link, $autostart=false) {
 function filter_mediaplugin_youtube_playlist_callback($link, $autostart=false) {
 
     $site = s($link[4]);
-    $param = s($link[5]);
-    $info = s($link[6]);
+    $param = $link[5]; // playlist id
+    $info = s(strip_tags($link[6]));
 
     return '<object title="'.$info.'"
                     class="mediaplugin mediaplugin_youtube" type="application/x-shockwave-flash"
@@ -379,7 +378,7 @@ function filter_mediaplugin_youtube_playlist_callback($link, $autostart=false) {
  */
 function filter_mediaplugin_img_callback($link, $autostart=false) {
     $url = $link[2];
-    $info = s($link[2]);
+    $info = s(strip_tags($link[2]));
     return '<img class="mediaplugin mediaplugin_img" alt="" title="'.$info.'" src="'.$url.'" />';
 }
 

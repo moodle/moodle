@@ -34,6 +34,26 @@ require_once($CFG->dirroot . '/filter/mediaplugin/filter.php'); // Include the c
 class filter_mediaplugin_test extends UnitTestCase {
 
     function test_filter_mediaplugin_link() {
+        global $CFG;
+
+        // we need to enable the plugins somehow
+        $oldcfg = clone($CFG); // very, very ugly hack
+        $CFG->filter_mediaplugin_enable_mp3     = 1;
+        $CFG->filter_mediaplugin_enable_ogg     = 1;
+        $CFG->filter_mediaplugin_enable_ogv     = 1;
+        $CFG->filter_mediaplugin_enable_swf     = 1;
+        $CFG->filter_mediaplugin_enable_flv     = 1;
+        $CFG->filter_mediaplugin_enable_mov     = 1;
+        $CFG->filter_mediaplugin_enable_wmv     = 1;
+        $CFG->filter_mediaplugin_enable_mpg     = 1;
+        $CFG->filter_mediaplugin_enable_avi     = 1;
+        $CFG->filter_mediaplugin_enable_ram     = 1;
+        $CFG->filter_mediaplugin_enable_rpm     = 1;
+        $CFG->filter_mediaplugin_enable_rm      = 1;
+        $CFG->filter_mediaplugin_enable_youtube = 1;
+        $CFG->filter_mediaplugin_enable_img     = 1;
+
+
         $filterplugin = new filter_mediaplugin(null, array());
 
         $validtexts = array (
@@ -98,5 +118,7 @@ class filter_mediaplugin_test extends UnitTestCase {
             $filter = $filterplugin->filter($text);
             $this->assertEqual($text, $filter, $msg);
         }
+
+        $CFG = $oldcfg; // very, very ugly hack
     }
 }
