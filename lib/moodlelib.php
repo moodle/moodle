@@ -3784,12 +3784,6 @@ function get_complete_user_data($field, $value, $mnethostid = null) {
 
 /// Get various settings and preferences
 
-    if ($displays = $DB->get_records('course_display', array('userid'=>$user->id))) {
-        foreach ($displays as $display) {
-            $user->display[$display->course] = $display->display;
-        }
-    }
-
     // preload preference cache
     check_user_preferences_loaded($user);
 

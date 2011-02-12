@@ -1385,7 +1385,7 @@ class global_navigation extends navigation_node {
         $viewhiddensections = has_capability('moodle/course:viewhiddensections', $this->page->context);
 
         if (isloggedin() && !isguestuser()) {
-            $activesection = $DB->get_field("course_display", "display", array("userid"=>$USER->id, "course"=>$course->id));
+            $activesection = course_get_display($course->id);
         } else {
             $activesection = null;
         }

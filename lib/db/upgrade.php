@@ -6021,6 +6021,11 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2011020200.01);
     }
 
+    if ($oldversion < 2011020900.07) {
+        $DB->delete_records('course_display', array('display' => 0));
+        upgrade_main_savepoint(true, 2011020900.07);
+    }
+
 
     return true;
 }
