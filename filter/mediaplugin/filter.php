@@ -46,6 +46,11 @@ class filter_mediaplugin extends moodle_text_filter {
             // non string data can not be filtered anyway
             return $text;
         }
+        if (stripos($text, '</a>') === false) {
+            // performance shortcut - all regexes bellow end with the </a> tag,
+            // if not present nothing can match
+            return $text;
+        }
         $newtext = $text; // fullclone is slow and not needed here
 
         if (!empty($CFG->filter_mediaplugin_enable_mp3)) {
