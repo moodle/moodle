@@ -242,7 +242,7 @@ class auth_plugin_shibboleth extends auth_plugin_base {
 
         // set to defaults if undefined
         if (!isset($config->auth_instructions) or empty($config->user_attribute)) {
-            $config->auth_instructions = get_string('shibboleth_instructions', 'auth', $CFG->wwwroot.'/auth/shibboleth/index.php');
+            $config->auth_instructions = get_string('auth_shib_instructions', 'auth_shibboleth', $CFG->wwwroot.'/auth/shibboleth/index.php');
         }
         if (!isset ($config->user_attribute)) {
             $config->user_attribute = '';
@@ -292,7 +292,7 @@ class auth_plugin_shibboleth extends auth_plugin_base {
         } else {
             // Check if integrated WAYF was enabled and is now turned off
             // If it was and only then, reset the Moodle alternate URL
-            if ($this->config->alt_login == 'on'){
+            if (isset($this->config->alt_login) and $this->config->alt_login == 'on'){
                 set_config('alt_login',    'off',    'auth/shibboleth');
                 set_config('alternateloginurl', '');
             }
