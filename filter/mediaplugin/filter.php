@@ -49,81 +49,81 @@ class filter_mediaplugin extends moodle_text_filter {
         $newtext = $text; // fullclone is slow and not needed here
 
         if (!empty($CFG->filter_mediaplugin_enable_mp3)) {
-            $search =   '/<a[^>]*?href="([^<]+\.mp3)"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.mp3)"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_mp3_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_ogg)) {
-            $search =   '/<a[^>]*?href="([^<]+\.ogg)"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.ogg)"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_ogg_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_ogv)) {
-            $search =   '/<a[^>]*?href="([^<]+\.ogv)"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.ogv)"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_ogv_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_swf)) {
-            $search = '/<a[^>]*?href="([^<]+\.swf)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.swf)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_swf_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_flv)) {
-            $search = '/<a[^>]*?href="([^<]+\.flv)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.flv)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_flv_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_mov)) {
-            $search = '/<a[^>]*?href="([^<]+\.mov)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.mov)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_qt_callback', $newtext);
 
-            $search = '/<a[^>]*?href="([^<]+\.mp4)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.mp4)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_qt_callback', $newtext);
 
-            $search = '/<a[^>]*?href="([^<]+\.m4v)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.m4v)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_qt_callback', $newtext);
 
-            $search = '/<a[^>]*?href="([^<]+\.m4a)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.m4a)(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_qt_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_wmv)) {
-            $search = '/<a[^>]*?href="([^<]+\.wmv)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.wmv)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_wmp_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_mpg)) {
-            $search = '/<a[^>]*?href="([^<]+\.mpe?g)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.mpe?g)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_qt_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_avi)) {
-            $search = '/<a[^>]*?href="([^<]+\.avi)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.avi)(\?d=([\d]{1,3}%?)x([\d]{1,3}%?))?"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_wmp_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_ram)) {
-            $search = '/<a[^>]*?href="([^<]+\.ram)"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.ram)"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_real_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_rpm)) {
-            $search = '/<a[^>]*?href="([^<]+\.rpm)"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.rpm)"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_real_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_rm)) {
-            $search = '/<a[^>]*?href="([^<]+\.rm)"[^>]*>.*?<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.rm)"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_real_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_youtube)) {
             //see MDL-23903 for description of recent changes to this regex
             //$search = '/<a.*?href="([^<]*)youtube.com\/watch\?v=([^"]*)"[^>]*>(.*?)<\/a>/is';
-            $search = '/<a[^>]*href="([^<]*?)youtube.com\/watch\?v=([^"]*)"[^>]*>(.*?)<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="(([^"]+youtube\.com)\/watch\?v=([^"]*))"[^>]*>(.*?)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_callback', $newtext);
 
-            $search = '/<a[^>]*href="([^<]*)youtube.com\/v\/([^"]*)"[^>]*>(.*?)<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="(([^"]+youtube\.com)\/v\/([^"]*))"[^>]*>(.*?)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_callback', $newtext);
 
             $search = '/<a(\s+[^>]+?)?\s+href="((([^"]+)youtube\.com)\/view_play_list\?p=([^"]*))"[^>]*>(.*?)<\/a>/is';
@@ -131,11 +131,13 @@ class filter_mediaplugin extends moodle_text_filter {
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_img)) {
-            $search = '/<a[^>]*?href="([^<]+\.jpg)"[^>]*>(.*?)<\/a>/is';
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.jpg)"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_img_callback', $newtext);
-            $search = '/<a[^>]*?href="([^<]+\.png)"[^>]*>(.*?)<\/a>/is';
+
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.png)"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_img_callback', $newtext);
-            $search = '/<a[^>]*?href="([^<]+\.gif)"[^>]*>(.*?)<\/a>/is';
+
+            $search = '/<a(\s+[^>]+?)?\s+href="([^"]+\.gif)"[^>]*>.*?<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_img_callback', $newtext);
         }
 
@@ -166,7 +168,7 @@ function filter_mediaplugin_mp3_callback($link) {
     $count++;
     $id = 'filter_mp3_'.time().$count; //we need something unique because it might be stored in text cache
 
-    $url = addslashes_js($link[1]);
+    $url = $link[2];
 
     $playerpath = $CFG->wwwroot.'/filter/mediaplugin/mp3player.swf';
     $audioplayerpath = $CFG->wwwroot .'/filter/mediaplugin/flowplayer.audio.swf';
@@ -215,7 +217,7 @@ function filter_mediaplugin_ogg_callback($link) {
     $count++;
     $id = 'filter_ogg_'.time().$count; //we need something unique because it might be stored in text cache
 
-    $url = addslashes_js($link[1]);
+    $url = $link[2];
     $printlink = html_writer::link($url, get_string('oggaudio', 'filter_mediaplugin'));
     $unsupportedplugins = get_string('unsupportedplugins', 'filter_mediaplugin', $printlink);
     $output = <<<OET
@@ -234,7 +236,7 @@ function filter_mediaplugin_ogv_callback($link) {
     $count++;
     $id = 'filter_ogv_'.time().$count; //we need something unique because it might be stored in text cache
 
-    $url = addslashes_js($link[1]);
+    $url = $link[2];
     $printlink = html_writer::link($url, get_string('ogvvideo', 'filter_mediaplugin'));
     $unsupportedplugins = get_string('unsupportedplugins', 'filter_mediaplugin', $printlink);
     $output = <<<OET
@@ -252,9 +254,9 @@ function filter_mediaplugin_swf_callback($link) {
     $count++;
     $id = 'filter_swf_'.time().$count; //we need something unique because it might be stored in text cache
 
-    $width  = empty($link[3]) ? '400' : $link[3];
-    $height = empty($link[4]) ? '300' : $link[4];
-    $url = addslashes_js($link[1]);
+    $width  = empty($link[4]) ? '400' : $link[4];
+    $height = empty($link[5]) ? '300' : $link[5];
+    $url = $link[2];
 
     $args = Array();
     $args['movie'] = $url;
@@ -279,9 +281,9 @@ function filter_mediaplugin_flv_callback($link) {
     $count++;
     $id = 'filter_flv_'.time().$count; //we need something unique because it might be stored in text cache
 
-    $width  = empty($link[3]) ? '480' : $link[3];
-    $height = empty($link[4]) ? '360' : $link[4];
-    $url = addslashes_js($link[1]);
+    $width  = empty($link[4]) ? '480' : $link[4];
+    $height = empty($link[5]) ? '360' : $link[5];
+    $url = $link[2];
 
     $playerpath = $CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf';
 
@@ -305,7 +307,8 @@ EOT;
 }
 
 function filter_mediaplugin_real_callback($link, $autostart=false) {
-    $url = addslashes_js($link[1]);
+    $url = $link[2];
+    $jsurl = addslashes_js($link[2]);
     $mimetype = mimeinfo('type', $url);
     $autostart = $autostart ? 'true' : 'false';
 
@@ -315,19 +318,19 @@ function filter_mediaplugin_real_callback($link, $autostart=false) {
 <script type="text/javascript">
 //<![CDATA[
 document.write(\'<object classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="240" height="180">\\
-  <param name="src" value="'.$url.'" />\\
+  <param name="src" value="'.$jsurl.'" />\\
   <param name="autostart" value="'.$autostart.'" />\\
   <param name="controls" value="imagewindow" />\\
   <param name="console" value="video" />\\
   <param name="loop" value="true" />\\
-  <embed src="'.$url.'" width="240" height="180" loop="true" type="'.$mimetype.'" controls="imagewindow" console="video" autostart="'.$autostart.'" />\\
+  <embed src="'.$jsurl.'" width="240" height="180" loop="true" type="'.$mimetype.'" controls="imagewindow" console="video" autostart="'.$autostart.'" />\\
   </object><br />\\
   <object classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="240" height="30">\\
-  <param name="src" value="'.$url.'" />\\
+  <param name="src" value="'.$jsurl.'" />\\
   <param name="autostart" value="'.$autostart.'" />\\
   <param name="controls" value="ControlPanel" />\\
   <param name="console" value="video" />\\
-  <embed src="'.$url.'" width="240" height="30" controls="ControlPanel" type="'.$mimetype.'" console="video" autostart="'.$autostart.'" />\\
+  <embed src="'.$jsurl.'" width="240" height="30" controls="ControlPanel" type="'.$mimetype.'" console="video" autostart="'.$autostart.'" />\\
   </object>\');
 //]]>
 </script></span>';
@@ -337,15 +340,15 @@ document.write(\'<object classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" wi
  * Change links to Youtube into embedded Youtube videos
  */
 function filter_mediaplugin_youtube_callback($link, $autostart=false) {
+    $site = s($link[3]);
+    $param = urlencode($link[4]);
+    $info = s($link[5]);
 
-    $site = addslashes_js($link[1]);
-    $url = addslashes_js($link[2]);
-    $info = addslashes_js(strip_tags($link[3]));//strip out html tags as they won't work in the title attribute
 
     return '<object title="'.$info.'"
                     class="mediaplugin mediaplugin_youtube" type="application/x-shockwave-flash"
-                    data="'.$site.'youtube.com/v/'.$url.'&amp;fs=1&amp;rel=0" width="425" height="344">'.
-           '<param name="movie" value="'.$site.'youtube.com/v/'.$url.'&amp;fs=1&amp;rel=0" />'.
+                    data="'.$site.'/v/'.$param.'&amp;fs=1&amp;rel=0" width="400" height="320">'.
+           '<param name="movie" value="'.$site.'/v/'.$param.'&amp;fs=1&amp;rel=0" />'.
            '<param name="FlashVars" value="playerMode=embedded" />'.
            '<param name="wmode" value="transparent" />'.
            '<param name="allowFullScreen" value="true" />'.
@@ -375,9 +378,8 @@ function filter_mediaplugin_youtube_playlist_callback($link, $autostart=false) {
  * Change links to images into embedded images
  */
 function filter_mediaplugin_img_callback($link, $autostart=false) {
-    $url = addslashes_js($link[1]);
-    $info = addslashes_js($link[2]);
-
+    $url = $link[2];
+    $info = s($link[2]);
     return '<img class="mediaplugin mediaplugin_img" alt="" title="'.$info.'" src="'.$url.'" />';
 }
 
@@ -385,13 +387,13 @@ function filter_mediaplugin_img_callback($link, $autostart=false) {
  * Embed video using window media player if available
  */
 function filter_mediaplugin_wmp_callback($link, $autostart=false) {
-    $url = $link[1];
-    if (empty($link[3]) or empty($link[4])) {
+    $url = $link[2];
+    if (empty($link[4]) or empty($link[5])) {
         $mpsize = '';
         $size = 'width="300" height="260"';
         $autosize = 'true';
     } else {
-        $size = 'width="'.$link[3].'" height="'.$link[4].'"';
+        $size = 'width="'.$link[4].'" height="'.$link[5].'"';
         $mpsize = $size;
         $autosize = 'false';
     }
@@ -428,11 +430,11 @@ function filter_mediaplugin_wmp_callback($link, $autostart=false) {
 }
 
 function filter_mediaplugin_qt_callback($link, $autostart=false) {
-    $url = $link[1];
-    if (empty($link[3]) or empty($link[4])) {
+    $url = $link[2];
+    if (empty($link[4]) or empty($link[5])) {
         $size = 'width="440" height="315"';
     } else {
-        $size = 'width="'.$link[3].'" height="'.$link[4].'"';
+        $size = 'width="'.$link[4].'" height="'.$link[5].'"';
     }
     $mimetype = mimeinfo('type', $url);
     $autostart = $autostart ? 'true' : 'false';
