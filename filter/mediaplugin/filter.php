@@ -241,7 +241,7 @@ function mediaplugin_filter_flv_callback($link) {
 '<span class="mediaplugin mediaplugin_flv" id="'.$id.'">('.get_string('flashvideo', 'mediaplugin').')</span>
 <script type="text/javascript">
 //<![CDATA[
-  var FO = { movie:"'.$CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf?file='.$url.'",
+  var FO = { movie:"'.$CFG->wwwroot.'/filter/mediaplugin/flvplayer.swf?file='.$jsurl.'",
     width:"'.$width.'", height:"'.$height.'", majorversion:"6", build:"40",
     allowscriptaccess:"never", quality: "high", allowfullscreen: "true" };
   UFO.create(FO, "'.$id.'");
@@ -285,9 +285,9 @@ document.write(\'<object classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" wi
  */
 function mediaplugin_filter_youtube_callback($link, $autostart=false) {
 
-    $site = addslashes_js($link[1]);
+    $site = s($link[1]);
     $url = $link[2];
-    $info = addslashes_js($link[3]);
+    $info = s($link[3]);
 
     return '<span class="mediaplugin mediaplugin_youtube">'.
            '<object title="'.$info.'"
