@@ -632,12 +632,14 @@ class course_enrolment_users_table extends course_enrolment_table {
 
         $instances  = $this->manager->get_enrolment_instances();
         $plugins    = $this->manager->get_enrolment_plugins();
+        $manuals    = array();
         // print enrol link or selection
         $links = array();
         foreach($instances as $instance) {
             $plugin = $plugins[$instance->enrol];
             if ($link = $plugin->get_manual_enrol_link($instance)) {
                 $links[$instance->id] = $link;
+                $manuals[$instance->id] = $instance;
             }
         }
         if (!empty($links)) {
@@ -671,6 +673,7 @@ class course_enrolment_users_table extends course_enrolment_table {
             $startdateoptions[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
 
             if ($count == 1) {
+                $instance = reset($manuals);
                 $page->requires->strings_for_js(array(
                     'ajaxoneuserfound',
                     'ajaxxusersfound',
@@ -697,7 +700,7 @@ class course_enrolment_users_table extends course_enrolment_table {
                     'ajaxurl'=>'/enrol/ajax.php',
                     'url'=>$url->out(false),
                     'optionsStartDate'=>$startdateoptions,
-                    'defaultRole'=>get_config('enrol_manual', 'roleid'));
+                    'defaultRole'=>$instance->roleid);
                 $page->requires->yui_module($modules, $function, array($arguments));
             }
             return $control;
