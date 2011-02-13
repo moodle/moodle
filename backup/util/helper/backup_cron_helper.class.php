@@ -456,32 +456,39 @@ abstract class backup_cron_automated_helper {
             $filearea = 'automated';
             $itemid = 0;
             $files = array();
+            // Store all the matching files into timemodified => stored_file array
             foreach ($fs->get_area_files($context->id, $component, $filearea, $itemid) as $file) {
                 if (strpos($file->get_filename(), $backupword) !== 0) {
                     continue;
                 }
                 $files[$file->get_timemodified()] = $file;
             }
-            arsort($files);
+            if (count($files) <= $keep) {
+                // There are less matching files than the desired number to keep
+                // do there is nothing to clean up.
+                return 0;
+            }
+            // Sort by keys descending (newer to older filemodified)
+            krsort($files);
             $remove = array_splice($files, $keep);
             foreach ($remove as $file) {
                 $file->delete();
             }
-            //mtrace('Removed '.count($remove).' old backup file(s) from the data directory');
+            //mtrace('Removed '.count($remove).' old backup file(s) from the automated filearea');
         }
 
         // Clean up excess backups in the specified external directory
         if (!empty($dir) && ($storage == 1 || $storage == 2)) {
-            // Calculate backup filename regex
-
+            // Calculate backup filename regex, ignoring the date/time/info parts that can be
+            // variable, depending of languages, formats and automated backup settings
             $filename = $backupword . '-' . backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' .$course->id . '-';
+            $regex = '#^'.preg_quote($filename, '#').'.*\.mbz$#';
 
-            $regex = '#^'.preg_quote($filename, '#').'(\d{8})\-(\d{4})\-[a-z]{2}\.mbz$#S';
-
+            // Store all the matching files into fullpath => timemodified array
             $files = array();
             foreach (scandir($dir) as $file) {
                 if (preg_match($regex, $file, $matches)) {
-                    $files[$file] = $matches[1].$matches[2];
+                    $files[$file] = filemtime($dir . '/' . $file);
                 }
             }
             if (count($files) <= $keep) {
@@ -489,10 +496,11 @@ abstract class backup_cron_automated_helper {
                 // do there is nothing to clean up.
                 return 0;
             }
+            // Sort by values descending (newer to older filemodified)
             arsort($files);
             $remove = array_splice($files, $keep);
             foreach (array_keys($remove) as $file) {
-                unlink($dir.'/'.$file);
+                unlink($dir . '/' . $file);
             }
             //mtrace('Removed '.count($remove).' old backup file(s) from external directory');
         }
