@@ -347,7 +347,7 @@ abstract class backup_cron_automated_helper {
                 $dir = null;
             }
             if (!empty($dir) && $storage !== 0) {
-                $filename = self::get_external_filename($course->id, $format, $type, $users, $anonymised);
+                $filename = backup_plan_dbops::get_default_backup_filename($format, $type, $course->id, $users, $anonymised, true);
                 $outcome = $file->copy_content_to($dir.'/'.$filename);
                 if ($outcome && $storage === 1) {
                     $file->delete();
@@ -364,38 +364,6 @@ abstract class backup_cron_automated_helper {
         unset($bc);
 
         return true;
-    }
-
-    /**
-     * Gets the filename to use for the backup when it is being moved to an
-     * external location.
-     *
-     * Note: we use the course id in the filename rather than the course shortname
-     * because it may contain UTF-8 characters that could cause problems for the
-     * recieving filesystem.
-     *
-     * @param int $courseid
-     * @param string $format One of backup::FORMAT_
-     * @param string $type One of backup::TYPE_
-     * @param bool $users Should be true is users were included in the backup
-     * @param bool $anonymised Should be true is user information was anonymized.
-     * @return string The filename to use
-     */
-    public static function get_external_filename($courseid, $format, $type, $users, $anonymised) {
-        $backupword = str_replace(' ', '_', moodle_strtolower(get_string('backupfilename')));
-        $backupword = trim(clean_filename($backupword), '_');
-        // Calculate date
-        $backupdateformat = str_replace(' ', '_', get_string('backupnameformat', 'langconfig'));
-        $date = userdate(time(), $backupdateformat, 99, false);
-        $date = moodle_strtolower(trim(clean_filename($date), '_'));
-        // Calculate info
-        $info = '';
-        if (!$users) {
-            $info = 'nu';
-        } else if ($anonymised) {
-            $info = 'an';
-        }
-        return $backupword.'-'.$format.'-'.$type.'-'.$courseid.'-'.$date.'-'.$info.'.mbz';
     }
 
     /**
