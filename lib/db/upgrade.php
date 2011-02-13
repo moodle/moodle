@@ -4091,10 +4091,12 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
     if ($oldversion < 2010061900.10) {
-        // migrate existing setup of meta courses
+        // migrate existing setup of meta courses, ignore records referencing invalid courses
         $sql = "INSERT INTO {enrol} (enrol, status, courseid, sortorder, customint1)
-                SELECT 'meta', 0, parent_course, 5, child_course
-                  FROM {course_meta}";
+                SELECT 'meta', 0, cm.parent_course, 5, cm.child_course
+                  FROM {course_meta} cm
+                  JOIN {course} p ON p.id = cm.parent_course
+                  JOIN {course} c ON c.id = cm.child_course";
         $DB->execute($sql);
 
         upgrade_main_savepoint(true, 2010061900.10);
