@@ -209,7 +209,7 @@ class block_base {
     }
 
     /**
-     * Return a block_contents oject representing the full contents of this block.
+     * Return a block_contents object representing the full contents of this block.
      *
      * This internally calls ->get_content(), and then adds the editing controls etc.
      *
@@ -217,7 +217,7 @@ class block_base {
      * {@link html_attributes()}, {@link formatted_contents()} or {@link get_content()},
      * {@link hide_header()}, {@link (get_edit_controls)}, etc.
      *
-     * @return block_contents a represntation of the block, for rendering.
+     * @return block_contents a representation of the block, for rendering.
      * @since Moodle 2.0.
      */
     public function get_content_for_output($output) {
@@ -243,10 +243,11 @@ class block_base {
 
         if ($this->page->user_is_editing()) {
             $bc->controls = $this->page->blocks->edit_controls($this);
-        }
-
-        if ($this->is_empty() && !$bc->controls) {
-            return null;
+        } else {
+            // we must not use is_empty on hidden blocks
+            if ($this->is_empty() && !$bc->controls) {
+                return null;
+            }
         }
 
         if (empty($CFG->allowuserblockhiding) ||
@@ -620,7 +621,7 @@ class block_base {
 
     /**
      * Can be overridden by the block to prevent the block from being dockable.
-     * 
+     *
      * @return bool
      */
     public function instance_can_be_docked() {
