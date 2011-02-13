@@ -1812,7 +1812,7 @@ function forum_get_readable_forums($userid, $courseid=0) {
     } else {
         // If no course is specified, then the user can see SITE + his courses.
         $courses1 = $DB->get_records('course', array('id' => SITEID));
-        $courses2 = enrol_get_users_courses($userid, true);
+        $courses2 = enrol_get_users_courses($userid, true, array('modinfo'));
         $courses = array_merge($courses1, $courses2);
     }
     if (!$courses) {
@@ -1929,8 +1929,8 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
         $select = array();
 
         if (!$forum->viewhiddentimedposts) {
-            $select[] = "(d.userid = :userid OR (d.timestart < : AND (d.timeend = 0 OR d.timeend > :timeend)))";
-            $params = array('userid'=>$USER->id, 'timestart'=>$now, 'timeend'=>$now);
+            $select[] = "(d.userid = :userid{$forumid} OR (d.timestart < :timestart{$forumid} AND (d.timeend = 0 OR d.timeend > :timeend{$forumid})))";
+            $params = array_merge($params, array('userid'.$forumid=>$USER->id, 'timestart'.$forumid=>$now, 'timeend'.$forumid=>$now));
         }
 
         $cm = $forum->cm;
@@ -1939,7 +1939,7 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
         if ($forum->type == 'qanda'
             && !has_capability('mod/forum:viewqandawithoutposting', $context)) {
             if (!empty($forum->onlydiscussions)) {
-                list($discussionid_sql, $discussionid_params) = $DB->get_in_or_equal($forum->onlydiscussions, SQL_PARAMS_NAMED, 'qanda0');
+                list($discussionid_sql, $discussionid_params) = $DB->get_in_or_equal($forum->onlydiscussions, SQL_PARAMS_NAMED, 'qanda'.$forumid.'_0000');
                 $params = array_merge($params, $discussionid_params);
                 $select[] = "(d.id $discussionid_sql OR p.parent = 0)";
             } else {
@@ -1948,15 +1948,15 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
         }
 
         if (!empty($forum->onlygroups)) {
-            list($groupid_sql, $groupid_params) = $DB->get_in_or_equal($forum->onlygroups, SQL_PARAMS_NAMED, 'grps0');
+            list($groupid_sql, $groupid_params) = $DB->get_in_or_equal($forum->onlygroups, SQL_PARAMS_NAMED, 'grps'.$forumid.'_0000');
             $params = array_merge($params, $groupid_params);
             $select[] = "d.groupid $groupid_sql";
         }
 
         if ($select) {
             $selects = implode(" AND ", $select);
-            $where[] = "(d.forum = :forum AND $selects)";
-            $params['forum'] = $forumid;
+            $where[] = "(d.forum = :forum{$forumid} AND $selects)";
+            $params['forum'.$forumid] = $forumid;
         } else {
             $fullaccess[] = $forumid;
         }
