@@ -44,4 +44,13 @@ function xmldb_local_qedatabase_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2008000702, 'local', 'qedatabase');
     }
 
+    if ($oldversion < 2008000703) {
+        // Rename the quiz_report table to quiz_reports.
+        $table = new xmldb_table('quiz_report');
+        if ($dbman->table_exists($table)) {
+            $dbman->rename_table($table, 'quiz_reports');
+        }
+
+        upgrade_plugin_savepoint(true, 2008000703, 'local', 'qedatabase');
+    }
 }
