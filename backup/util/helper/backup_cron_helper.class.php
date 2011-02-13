@@ -49,8 +49,8 @@ abstract class backup_cron_automated_helper {
 
     /** Run if required by the schedule set in config. Default. **/
     const RUN_ON_SCHEDULE = 0;
-    /** Run immediatly. **/
-    const RUN_IMMEDIATLY = 1;
+    /** Run immediately. **/
+    const RUN_IMMEDIATELY = 1;
 
     const AUTO_BACKUP_DISABLED = 0;
     const AUTO_BACKUP_ENABLED = 1;
@@ -75,7 +75,7 @@ abstract class backup_cron_automated_helper {
             return $state;
         } else if ($state === backup_cron_automated_helper::STATE_RUNNING) {
             mtrace('RUNNING');
-            if ($rundirective == self::RUN_IMMEDIATLY) {
+            if ($rundirective == self::RUN_IMMEDIATELY) {
                 mtrace('automated backups are already. If this script is being run by cron this constitues an error. You will need to increase the time between executions within cron.');
             } else {
                 mtrace("automated backup are already running. Execution delayed");
@@ -130,12 +130,12 @@ abstract class backup_cron_automated_helper {
                     $DB->update_record('backup_courses', $backupcourse);
                     mtrace('Skipping unchanged course '.$course->fullname);
                     $skipped = true;
-                } else if (($backupcourse->nextstarttime >= 0 && $backupcourse->nextstarttime < $now) || $rundirective == self::RUN_IMMEDIATLY) {
+                } else if (($backupcourse->nextstarttime >= 0 && $backupcourse->nextstarttime < $now) || $rundirective == self::RUN_IMMEDIATELY) {
                     mtrace('Backing up '.$course->fullname, '...');
 
                     //We have to send a email because we have included at least one backup
                     $emailpending = true;
-                    
+
                     //Only make the backup if laststatus isn't 2-UNFINISHED (uncontrolled error)
                     if ($backupcourse->laststatus != 2) {
                         //Set laststarttime
@@ -270,7 +270,7 @@ abstract class backup_cron_automated_helper {
         $config = get_config('backup');
         $midnight = usergetmidnight($now, $timezone);
         $date = usergetdate($now, $timezone);
-        
+
         //Get number of days (from today) to execute backups
         $automateddays = substr($config->backup_auto_weekdays,$date['wday']) . $config->backup_auto_weekdays;
         $daysfromtoday = strpos($automateddays, "1");
@@ -335,7 +335,7 @@ abstract class backup_cron_automated_helper {
             $users = $bc->get_plan()->get_setting('users')->get_value();
             $anonymised = $bc->get_plan()->get_setting('anonymize')->get_value();
             $bc->get_plan()->get_setting('filename')->set_value(backup_plan_dbops::get_default_backup_filename($format, $type, $id, $users, $anonymised));
-            
+
             $bc->set_status(backup::STATUS_AWAITING);
 
             $outcome = $bc->execute_plan();
@@ -505,7 +505,7 @@ abstract class backup_cron_automated_helper {
         // Clean up excess backups in the specified external directory
         if (!empty($dir) && ($storage == 1 || $storage == 2)) {
             // Calculate backup filename regex
-            
+
             $filename = $backupword . '-' . backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' .$course->id . '-';
 
             $regex = '#^'.preg_quote($filename, '#').'(\d{8})\-(\d{4})\-[a-z]{2}\.mbz$#S';

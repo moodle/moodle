@@ -131,7 +131,7 @@
                     echo $OUTPUT->notification('An error occurred while moving a section');
                 }
                 // Clear the navigation cache at this point so that the affects
-                // are seen immediatly on the navigation.
+                // are seen immediately on the navigation.
                 $PAGE->navigation->clear_cache();
             }
         }

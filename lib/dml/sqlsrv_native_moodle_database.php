@@ -771,7 +771,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return string sql
      */
     private function limit_to_top_n($sql, $offset, $limit) {
-        // If there is no limit we can return immediatly
+        // If there is no limit we can return immediately
         if ($limit < 1 && $offset < 1) {
             return $sql;
         }
