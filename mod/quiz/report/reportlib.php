@@ -133,23 +133,22 @@ WHERE
  * empty string if all attempts contribute to final grade.
  */
 function quiz_report_qm_filter_select($quiz, $quizattemptsalias = 'quiza') {
-    if ($quiz->attempts == 1) {//only one attempt allowed on this quiz
+    if ($quiz->attempts == 1) { // Only one attempt allowed on this quiz
         return '';
     }
-    // TODO params
-    $useridsql = "$quizattemptsalias.userid";
-    $quizidsql = "$quizattemptsalias.quiz";
-    $qmfilterattempts = true;
+
     switch ($quiz->grademethod) {
     case QUIZ_GRADEHIGHEST :
         return "$quizattemptsalias.id = (
                 SELECT MIN(qa2.id)
-                FROM {$CFG->prefix}quiz_attempts qa2
-                WHERE qa2.quiz = $quizidsql AND qa2.userid = $useridsql AND
+                FROM {quiz_attempts} qa2
+                WHERE qa2.quiz = $quizattemptsalias.quiz AND
+                    qa2.userid = $quizattemptsalias.userid AND
                     COALESCE(qa2.sumgrades, 0) = (
                         SELECT MAX(COALESCE(qa3.sumgrades, 0))
-                        FROM {$CFG->prefix}quiz_attempts qa3
-                        WHERE qa3.quiz = $quizidsql AND qa3.userid = $useridsql
+                        FROM {quiz_attempts} qa3
+                        WHERE qa3.quiz = $quizattemptsalias.quiz AND
+                            qa3.userid = $quizattemptsalias.userid
                     )
                 )";
 
@@ -160,13 +159,15 @@ function quiz_report_qm_filter_select($quiz, $quizattemptsalias = 'quiza') {
         return "$quizattemptsalias.id = (
                 SELECT MIN(qa2.id)
                 FROM {quiz_attempts} qa2
-                WHERE qa2.quiz = $quizidsql AND qa2.userid = $useridsql)";
+                WHERE qa2.quiz = $quizattemptsalias.quiz AND
+                    qa2.userid = $quizattemptsalias.userid)";
 
     case QUIZ_ATTEMPTLAST :
         return "$quizattemptsalias.id = (
                 SELECT MAX(qa2.id)
                 FROM {quiz_attempts} qa2
-                WHERE qa2.quiz = $quizidsql AND qa2.userid = $useridsql)";
+                WHERE qa2.quiz = $quizattemptsalias.quiz AND
+                    qa2.userid = $quizattemptsalias.userid)";
     }
 }
 

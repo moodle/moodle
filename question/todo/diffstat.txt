@@ -113,9 +113,10 @@ DONE mod/quiz/version.php                               |    6 +-
 DONE mod/quiz/view.php                                  |  773 +++---
 
 DONE mod/quiz/report.php                                |  161 +-
- mod/quiz/report/attemptsreport.php                 |  649 +++++
+DONE mod/quiz/report/attemptsreport.php                 |  649 +++++
 DONE mod/quiz/report/default.php                        |   74 +-
 DONE mod/quiz/report/reportlib.php                      |  432 ++--
+DONE mod/quiz/report/simpletest/testreportlib.php       |   55 +
 
 DONE mod/quiz/report/analysis/report.php                |  755 -----
 DONE mod/quiz/report/regrade/report.php                 |   88 -
@@ -138,12 +139,11 @@ DONE lang/en_utf8/quiz_grading.php                      |   18 -
  mod/quiz/report/overview/version.php               |   26 +
  lang/en_utf8/quiz_overview.php                     |   30 -
 
- mod/quiz/report/responses/lang/en_utf8/quiz_responses.php      |   19 +
- mod/quiz/report/responses/report.php               |  242 ++
- mod/quiz/report/responses/responses_table.php      |  160 ++
- mod/quiz/report/responses/responsessettings_form.php    |   89 +
- mod/quiz/report/simpletest/testreportlib.php       |   55 +
- lang/en_utf8/quiz_responses.php                    |   11 -
+DONE mod/quiz/report/responses/lang/en_utf8/quiz_responses.php      |   19 +
+DONE mod/quiz/report/responses/report.php               |  242 ++
+DONE mod/quiz/report/responses/responses_table.php      |  160 ++
+DONE mod/quiz/report/responses/responsessettings_form.php    |   89 +
+DONE lang/en_utf8/quiz_responses.php                    |   11 -
 
  mod/quiz/report/statistics/cron.php                |   55 +
  mod/quiz/report/statistics/db/access.php           |   20 +

@@ -274,7 +274,7 @@ ORDER BY
     public function load_questions_usages_latest_steps(qubaid_condition $qubaids, $slots) {
         list($slottest, $params) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot0000');
 
-        $records = get_records_sql("
+        $records = $this->db->get_records_sql("
 SELECT
     qas.id,
     qa.id AS questionattemptid,
@@ -527,8 +527,9 @@ ORDER BY qa.slot
      * @return array of question_attempts.
      */
     public function load_attempts_at_question($questionid, qubaid_condition $qubaids) {
-        global $CFG;
-        $records = get_records_sql("
+        global $DB;
+// TODO
+        $records = $DB->get_records_sql("
 SELECT
     COALESCE(qasd.id, -1 * qas.id) AS id,
     quba.preferredbehaviour,
@@ -995,9 +996,8 @@ class qubaid_list extends qubaid_condition {
     }
 
     public function from_question_attempts($alias) {
-        global $CFG;
         $this->columntotest = $alias . '.questionusageid';
-        return "{$CFG->prefix}question_attempts $alias";
+        return '{question_attempts} ' . $alias;
     }
 
     public function where() {
@@ -1007,11 +1007,12 @@ class qubaid_list extends qubaid_condition {
             throw new coding_exception('Must call another method that before where().');
         }
         if (empty($this->qubaids)) {
+            $this->params = array();
             return '1 = 0';
         }
         list($where, $this->params) = $DB->get_in_or_equal($this->qubaids, SQL_PARAMS_NAMED, 'qubaid0000');
 
-        return "{$this->columntotest} {$this->usage_id_in()}";
+        return $this->columntotest . ' ' . $this->usage_id_in();
     }
 
     public function from_where_params() {

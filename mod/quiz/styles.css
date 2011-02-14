@@ -8,6 +8,10 @@
 
 body.jsenabled .questionflagcheckbox {display: none;}
 
+/** Mod quiz attempt **/
+.generalbox#passwordbox { /* Should probably match .generalbox#intro above */width:70%;margin-left:auto;margin-right:auto;}
+#passwordform {margin: 1em 0;}
+
 /* Question navigation block. */
 #quiznojswarning {color: red;}
 #quiznojswarning {font-size: 0.7em;line-height: 1.1;}
@@ -99,6 +103,8 @@ div.editq div.question div.content .singlequestion a .questiontext{text-decorati
 #page-mod-quiz-view #page .quizgradefeedback,
 #page-mod-quiz-view #page .quizattempt {text-align: center;}
 #page-mod-quiz-view #page .quizattemptsummary td p {margin-top: 0;}
+table.quizattemptsummary .bestrow td {background-color: #e8e8e8;}
+table.quizattemptsummary .noreviewmessage {color: gray;}
 #page-mod-quiz-view .generalbox#feedback {width:70%;margin-left:auto;margin-right:auto;padding-bottom:15px;}
 #page-mod-quiz-view .generalbox#feedback h2 {margin: 0;}
 #page-mod-quiz-view .generalbox#feedback h3 {text-align: left;}
@@ -109,8 +115,9 @@ div.editq div.question div.content .singlequestion a .questiontext{text-decorati
 .mod-quiz .gradedattempt,
 .mod-quiz tr.gradedattempt td { background-color: #e8e8e8; }
 
-/** Mod quiz summary **/
+.quizattemptcounts {clear: left; text-align: center;}
 
+/** Mod quiz summary **/
 #page-mod-quiz-summary #content {text-align: center;}
 #page-mod-quiz-summary .questionflag {width: 16px;height: 16px;vertical-align: middle;}
 #page-mod-quiz-summary #quiz-timer {text-align: center; margin-top: 1em;}
@@ -138,10 +145,6 @@ table.quizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: left;bac
 #page-mod-quiz-report .negcovar{border :medium solid pink;}
 #page-mod-quiz-report .toggleincludeauto {text-align: center;}
 #page-mod-quiz-report .gradetheselink {font-size: 0.8em;}
-#page-mod-quiz-report #manualgradingform {width: 100%;}
-#page-mod-quiz-report #manualgradingform.mform br {clear: none;}
-#page-mod-quiz-report #manualgradingform.mform .clearfix:after {clear: none;}
-#page-mod-quiz-report #manualgradingform .que {margin-bottom: 0.7em;}
 #page-mod-quiz-report .mform fieldset {margin: 0;}
 #page-mod-quiz-report fieldset.felement.fgroup {margin: 0;}
 #page-mod-quiz-report table.titlesleft td.c0 {font-weight: bold;}
@@ -165,22 +168,6 @@ table.quizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: left;bac
 #page-mod-quiz-report #cachingnotice {margin-bottom: 1em; padding: 0.2em; }
 #page-mod-quiz-report #cachingnotice .singlebutton {margin: 0.5em 0 0;}
 #page-mod-quiz-report .bold .reviewlink {font-weight: normal;}
-
-/** Mod quiz grading **/
-#page-mod-quiz-grading table#grading {width: 80%;margin: 20px auto;}
-#page-mod-quiz-grading table#grading .header,
-#page-mod-quiz-grading table#grading .cell {padding: 4px;}
-#page-mod-quiz-grading table#grading .header .commands{display: inline;}
-#page-mod-quiz-grading table#grading .picture{width: 40px;}
-#page-mod-quiz-grading table#grading td {border-left-width: 1px;border-right-width: 1px;border-left-style: solid;border-right-style: solid;vertical-align: bottom;}
-
-/** Mod quiz attempt **/
-table.quizattemptsummary .bestrow td {background-color: #e8e8e8;}
-table.quizattemptsummary .noreviewmessage {color: gray;}
-
-.quizattemptcounts {clear: left; text-align: center;}
-.generalbox#passwordbox { /* Should probably match .generalbox#intro above */width:70%;margin-left:auto;margin-right:auto;}
-#passwordform {margin: 1em 0;}
 
 /** Mod quiz edit **/
 #page-mod-quiz-edit h2.main{display:inline;padding-right:1em;clear:left;}
