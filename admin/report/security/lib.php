@@ -1050,8 +1050,7 @@ function report_security_check_riskadmin($detailed=false) {
                      AND (sc.path = c.path OR sc.path LIKE ".sql_concat('c.path', "'/%'")." OR c.path LIKE ".sql_concat('sc.path', "'/%'").")
                      AND u.id = ra.userid AND u.deleted = 0
                      AND ra.contextid = sc.id AND ra.roleid = rc.roleid AND ra.contextid <> ".SYSCONTEXTID."
-            GROUP BY u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, ra.contextid, ra.roleid
-            ORDER BY u.lastname, u.firstname";
+            GROUP BY u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, ra.contextid, ra.roleid";
 
     $unsupcount = count_records_sql("SELECT COUNT('x') FROM ($sqlunsup) unsup");
 
@@ -1077,6 +1076,7 @@ function report_security_check_riskadmin($detailed=false) {
         $result->info = get_string('check_riskadmin_warning', 'report_security', $a);
 
         if ($detailed) {
+            $sqlunsup .= " ORDER BY u.lastname, u.firstname";
             $rs = get_recordset_sql($sqlunsup);
             $users = array();
             while ($user = rs_fetch_next_record($rs)) {
@@ -1113,13 +1113,13 @@ function report_security_check_riskbackup($detailed=false) {
     $syscontext = get_context_instance(CONTEXT_SYSTEM);
 
     $systemroles = get_records_sql(
-        "SELECT DISTINCT r.*
+        "SELECT DISTINCT r.id, r.name, r.shortname, r.sortorder
            FROM {$CFG->prefix}role r
            JOIN {$CFG->prefix}role_capabilities rc ON rc.roleid = r.id
           WHERE rc.capability = 'moodle/backup:userinfo' AND rc.contextid = $syscontext->id AND rc.permission = ".CAP_ALLOW."");
 
     $overriddenroles = get_records_sql(
-        "SELECT DISTINCT r.*, rc.contextid
+        "SELECT DISTINCT r.id, r.name, r.shortname, r.sortorder, rc.contextid
            FROM {$CFG->prefix}role r
            JOIN {$CFG->prefix}role_capabilities rc ON rc.roleid = r.id
           WHERE rc.capability = 'moodle/backup:userinfo' AND rc.contextid <> $syscontext->id AND rc.permission = ".CAP_ALLOW."");

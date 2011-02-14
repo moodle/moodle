@@ -17,14 +17,17 @@
     $nothingtodisplay = false;
 
     list($cm, $course, $lesson) = lesson_get_basics($id);
-    
+
     if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
-        $sql = "SELECT DISTINCT u.*
-                FROM {$CFG->prefix}lesson_attempts a 
-                    INNER JOIN {$CFG->prefix}user u ON u.id = a.userid
-                    INNER JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id
-                    INNER JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = {$cm->groupingid}
-                WHERE a.lessonid = '$lesson->id'
+        $sql = "SELECT u.*
+                  FROM {$CFG->prefix}user u
+                  JOIN (
+                    SELECT DISTINCT u.id
+                      FROM {$CFG->prefix}lesson_attempts a
+                      JOIN {$CFG->prefix}user u ON u.id = a.userid
+                      JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id
+                      JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = {$cm->groupingid}
+                WHERE a.lessonid = '$lesson->id') ui ON u.id = ui.id
                 ORDER BY u.lastname";
     } else {
         $sql = "SELECT u.*
