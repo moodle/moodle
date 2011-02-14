@@ -114,7 +114,7 @@ class repository_upload extends repository {
                 }
             }
             $ext = !empty($ext) ? $ext : '';
-            if (preg_match('#\.(' . $ext . ')$#', $saveas_filename)) {
+            if (preg_match('#\.(' . $ext . ')$#i', $saveas_filename)) {
                 // saveas filename contains file extension already
                 $record->filename = $saveas_filename;
             } else {
