@@ -1712,7 +1712,7 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
                     $ranges = false;
                 }
                 if ($ranges) {
-                    $handle = fopen($filename, 'rb');
+                    $handle = fopen($path, 'rb');
                     byteserving_send_file($handle, $mimetype, $ranges, $filesize);
                 }
             }
