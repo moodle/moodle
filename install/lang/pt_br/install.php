@@ -41,6 +41,8 @@ $string['dataroot'] = 'Diretório de Dados';
 $string['dbprefix'] = 'Prefixo das tabelas';
 $string['dirroot'] = 'Diretório Moodle';
 $string['environmenthead'] = 'Verificando o ambiente ...';
+$string['environmentsub2'] = 'Cada release do Moodle requer uma versão mínima do PHP e diversas extensões do PHP.
+A verificação completa do ambiente é feita antes de cada instalação e atualização.';
 $string['errorsinenvironment'] = 'Verificação do Ambiente falhou!';
 $string['installation'] = 'Instalação';
 $string['langdownloaderror'] = 'Infelizmente o idioma "{$a}" não foi instalado. A instalação vai continuar em Inglês.';
