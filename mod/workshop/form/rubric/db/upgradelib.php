@@ -57,25 +57,24 @@ function workshopform_rubric_upgrade_legacy_criterion() {
                  WHERE workshopid $workshopids
                        AND newid IS NULL";
         $rs = $DB->get_recordset_sql($sql, $params);
-        $newworkshopids = workshop_upgrade_workshop_id_mappings();
-        $newdimensionids = array(); // (int)oldworkshopid => (int)dimensionid
+        $newdimensionids = array(); // (int)workshopid => (int)dimensionid
         foreach ($rs as $old) {
             // create rubric criterion and the configuration if necessary
             if (!isset($newdimensionids[$old->workshopid])) {
-                if (!$DB->record_exists('workshopform_rubric', array('workshopid' => $newworkshopids[$old->workshopid], 'sort' => 1))) {
+                if (!$DB->record_exists('workshopform_rubric', array('workshopid' => $old->workshopid, 'sort' => 1))) {
                     $newdimension = new stdclass();
-                    $newdimension->workshopid = $newworkshopids[$old->workshopid];
+                    $newdimension->workshopid = $old->workshopid;
                     $newdimension->sort = 1;
                     $newdimension->description = trim(get_string('dimensionnumber', 'workshopform_rubric', ''));
                     $newdimension->descriptionformat = FORMAT_HTML;
                     $newdimensionids[$old->workshopid] = $DB->insert_record('workshopform_rubric', $newdimension);
                 } else {
                     $newdimensionids[$old->workshopid] = $DB->get_field('workshopform_rubric', 'id',
-                                                                array('workshopid' => $newworkshopids[$old->workshopid], 'sort' => 1));
+                                                                array('workshopid' => $old->workshopid, 'sort' => 1));
                 }
-                if (!$DB->record_exists('workshopform_rubric_config', array('workshopid' => $newworkshopids[$old->workshopid]))) {
+                if (!$DB->record_exists('workshopform_rubric_config', array('workshopid' => $old->workshopid))) {
                     $newconfig = new stdclass();
-                    $newconfig->workshopid = $newworkshopids[$old->workshopid];
+                    $newconfig->workshopid = $old->workshopid;
                     $newconfig->layout = 'list';
                     $DB->insert_record('workshopform_rubric_config', $newconfig);
                 }
@@ -148,27 +147,26 @@ function workshopform_rubric_upgrade_legacy_rubric() {
                        AND r.newid IS NULL
               ORDER BY e.workshopid, e.elementno, r.rubricno";
         $rs = $DB->get_recordset_sql($sql, $params);
-        $newworkshopids     = workshop_upgrade_workshop_id_mappings();  // array of (int)oldworkshopid => (int)newworkshopid
-        $newdimensionids    = array();  // (int)oldworkshopid => (int)elementno => (int)dimensionid
+        $newdimensionids    = array();  // (int)workshopid => (int)elementno => (int)dimensionid
         $newlevelids        = array();  // (int)oldrubricid => (int)newlevelid
         $prevelement        = null;
         foreach ($rs as $old) {
             // create rubric criterion and the configuration if necessary
             if (!isset($newdimensionids[$old->workshopid]) or !isset($newdimensionids[$old->workshopid][$old->esort])) {
-                if (!$DB->record_exists('workshopform_rubric', array('workshopid' => $newworkshopids[$old->workshopid], 'sort' => $old->esort))) {
+                if (!$DB->record_exists('workshopform_rubric', array('workshopid' => $old->workshopid, 'sort' => $old->esort))) {
                     $newdimension = new stdclass();
-                    $newdimension->workshopid = $newworkshopids[$old->workshopid];
+                    $newdimension->workshopid = $old->workshopid;
                     $newdimension->sort = $old->esort;
                     $newdimension->description = $old->edesc;
                     $newdimension->descriptionformat = FORMAT_HTML;
                     $newdimensionids[$old->workshopid][$old->esort] = $DB->insert_record('workshopform_rubric', $newdimension);
                 } else {
                     $newdimensionids[$old->workshopid][$old->esort] = $DB->get_field('workshopform_rubric', 'id',
-                                                                    array('workshopid' => $newworkshopids[$old->workshopid], 'sort' => $old->esort));
+                                                                    array('workshopid' => $old->workshopid, 'sort' => $old->esort));
                 }
-                if (!$DB->record_exists('workshopform_rubric_config', array('workshopid' => $newworkshopids[$old->workshopid]))) {
+                if (!$DB->record_exists('workshopform_rubric_config', array('workshopid' => $old->workshopid))) {
                     $newconfig = new stdclass();
-                    $newconfig->workshopid = $newworkshopids[$old->workshopid];
+                    $newconfig->workshopid = $old->workshopid;
                     $newconfig->layout = 'grid';
                     $DB->insert_record('workshopform_rubric_config', $newconfig);
                 }

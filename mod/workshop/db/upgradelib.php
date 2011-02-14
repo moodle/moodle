@@ -154,13 +154,13 @@ function workshop_upgrade_module_instances() {
 
     upgrade_set_timeout();
     $moduleid = $DB->get_field('modules', 'id', array('name' => 'workshop'), MUST_EXIST);
-    $rs = $DB->get_recordset_select('workshop_old', 'newid IS NULL');
+    $rs = $DB->get_recordset_select('workshop_old', 'newid IS NULL', null, 'id');
     foreach ($rs as $old) {
         $new = workshop_upgrade_transform_instance($old);
-        $newid = $DB->insert_record('workshop', $new, true, true);
-        $DB->set_field('course_modules', 'instance', $newid, array('module' => $moduleid, 'instance' => $old->id));
+        $new->id = $old->id;
+        $DB->import_record('workshop', $new);
         $DB->set_field('workshop_old', 'newplugin', 'workshop', array('id' => $old->id));
-        $DB->set_field('workshop_old', 'newid', $newid, array('id' => $old->id));
+        $DB->set_field('workshop_old', 'newid', $new->id, array('id' => $old->id));
     }
     $rs->close();
 }
@@ -215,24 +215,6 @@ function workshop_upgrade_transform_instance(stdClass $old) {
 }
 
 /**
- * Returns the list of new workshop instances ids
- *
- * @return array (int)oldid => (int)newid
- */
-function workshop_upgrade_workshop_id_mappings() {
-    global $DB;
-
-    $oldrecords = $DB->get_records('workshop_old', null, 'id', 'id,newid');
-    $newids = array();
-    foreach ($oldrecords as $oldid => $oldrecord) {
-        if ($oldrecord->id and $oldrecord->newid) {
-            $newids[$oldid] = $oldrecord->newid;
-        }
-    }
-    return $newids;
-}
-
-/**
  * Copies records from workshop_submissions_old into workshop_submissions. Can be called after all workshop module instances
  * were correctly migrated and new ids are filled in workshop_old
  *
@@ -242,19 +224,18 @@ function workshop_upgrade_submissions() {
     global $CFG, $DB;
 
     upgrade_set_timeout();
-    $newworkshopids = workshop_upgrade_workshop_id_mappings();
 
-    // list of teachers in every workshop: array of (int)oldworkshopid => array of (int)userid => notused
+    // list of teachers in every workshop: array of (int)workshopid => array of (int)userid => notused
     $workshopteachers = array();
 
     $rs = $DB->get_recordset_select('workshop_submissions_old', 'newid IS NULL');
     foreach ($rs as $old) {
         if (!isset($workshopteachers[$old->workshopid])) {
-            $cm = get_coursemodule_from_instance('workshop', $newworkshopids[$old->workshopid], 0, false, MUST_EXIST);
+            $cm = get_coursemodule_from_instance('workshop', $old->workshopid, 0, false, MUST_EXIST);
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             $workshopteachers[$old->workshopid] = get_users_by_capability($context, 'mod/workshop:manage', 'u.id');
         }
-        $new = workshop_upgrade_transform_submission($old, $newworkshopids[$old->workshopid], $workshopteachers[$old->workshopid]);
+        $new = workshop_upgrade_transform_submission($old, $old->workshopid, $workshopteachers[$old->workshopid]);
         $newid = $DB->insert_record('workshop_submissions', $new, true, true);
         $DB->set_field('workshop_submissions_old', 'newplugin', 'submissions', array('id' => $old->id));
         $DB->set_field('workshop_submissions_old', 'newid', $newid, array('id' => $old->id));
@@ -343,17 +324,17 @@ function workshop_upgrade_assessments() {
     global $CFG, $DB, $OUTPUT;
 
     upgrade_set_timeout();
-    $newworkshopids     = workshop_upgrade_workshop_id_mappings();
+
     $newsubmissionids   = workshop_upgrade_submission_id_mappings();
     $teacherweights     = workshop_upgrade_legacy_teacher_weights();
 
-    // list of teachers in every workshop: array of (int)oldworkshopid => array of (int)userid => notused
+    // list of teachers in every workshop: array of (int)workshopid => array of (int)userid => notused
     $workshopteachers   = array();
 
     $rs = $DB->get_recordset_select('workshop_assessments_old', 'newid IS NULL');
     foreach ($rs as $old) {
         if (!isset($workshopteachers[$old->workshopid])) {
-            $cm = get_coursemodule_from_instance('workshop', $newworkshopids[$old->workshopid], 0, false, MUST_EXIST);
+            $cm = get_coursemodule_from_instance('workshop', $old->workshopid, 0, false, MUST_EXIST);
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             $workshopteachers[$old->workshopid] = get_users_by_capability($context, 'mod/workshop:manage', 'u.id');
         }
