@@ -739,7 +739,7 @@ interface parentable_part_of_admin_tree extends part_of_admin_tree {
  */
 class admin_category implements parentable_part_of_admin_tree {
 
-/** @var mixed An array of part_of_admin_tree objects that are this object's children */
+    /** @var mixed An array of part_of_admin_tree objects that are this object's children */
     public $children;
     /** @var string An internal name for this category. Must be unique amongst ALL part_of_admin_tree objects */
     public $name;
@@ -751,6 +751,9 @@ class admin_category implements parentable_part_of_admin_tree {
     public $path;
     /** @var mixed Either a string or an array or strings */
     public $visiblepath;
+
+    /** @var array fast lookup category cache, all categories of one tree point to one cache */
+    protected $category_cache;
 
     /**
      * Constructor for an empty admin category
@@ -775,12 +778,22 @@ class admin_category implements parentable_part_of_admin_tree {
      *                  defaults to false
      */
     public function locate($name, $findpath=false) {
+        if (is_array($this->category_cache) and !isset($this->category_cache[$this->name])) {
+            // somebody much have purged the cache
+            $this->category_cache[$this->name] = $this;
+        }
+
         if ($this->name == $name) {
             if ($findpath) {
                 $this->visiblepath[] = $this->visiblename;
                 $this->path[]        = $this->name;
             }
             return $this;
+        }
+
+        // quick category lookup
+        if (!$findpath and is_array($this->category_cache) and isset($this->category_cache[$name])) {
+            return $this->category_cache[$name];
         }
 
         $return = NULL;
@@ -831,11 +844,16 @@ class admin_category implements parentable_part_of_admin_tree {
 
         foreach($this->children as $precedence => $child) {
             if ($child->name == $name) {
-            // found it!
+                // clear cache and delete self
+                if (is_array($this->category_cache)) {
+                    while($this->category_cache) {
+                        // delete the cache, but keep the original array address
+                        array_pop($this->category_cache);
+                    }
+                }
                 unset($this->children[$precedence]);
                 return true;
-            }
-            if ($this->children[$precedence]->prune($name)) {
+            } else if ($this->children[$precedence]->prune($name)) {
                 return true;
             }
         }
@@ -862,6 +880,25 @@ class admin_category implements parentable_part_of_admin_tree {
                 return false;
             }
             $parent->children[] = $something;
+            if (is_array($this->category_cache) and ($something instanceof admin_category)) {
+                if (isset($this->category_cache[$something->name])) {
+                    debugging('Duplicate admin catefory name: '.$something->name);
+                } else {
+                    $this->category_cache[$something->name] = $something;
+                    $something->category_cache =& $this->category_cache;
+                    foreach ($something->children as $child) {
+                        // just in case somebody already added subcategories
+                        if ($child instanceof admin_category) {
+                            if (isset($this->category_cache[$child->name])) {
+                                debugging('Duplicate admin catefory name: '.$child->name);
+                            } else {
+                                $this->category_cache[$child->name] = $child;
+                                $child->category_cache =& $this->category_cache;
+                            }
+                        }
+                    }
+                }
+            }
             return true;
 
         } else {
@@ -938,6 +975,8 @@ class admin_root extends admin_category {
         $this->fulltree = $fulltree;
         $this->loaded   = false;
 
+        $this->category_cache = array();
+
         // load custom defaults if found
         $this->custom_defaults = null;
         $defaultsfile = "$CFG->dirroot/local/defaults.php";
@@ -959,6 +998,11 @@ class admin_root extends admin_category {
         $this->children = array();
         $this->fulltree = ($requirefulltree || $this->fulltree);
         $this->loaded   = false;
+        //break circular dependencies - this helps PHP 5.2
+        while($this->category_cache) {
+            array_pop($this->category_cache);
+        }
+        $this->category_cache = array();
     }
 }
 
@@ -5437,7 +5481,7 @@ class admin_page_managefilters extends admin_externalpage {
  * This function must be called on each admin page before other code.
  *
  * @global moodle_page $PAGE
- * 
+ *
  * @param string $section name of page
  * @param string $extrabutton extra HTML that is added after the blocks editing on/off button.
  * @param array $extraurlparams an array paramname => paramvalue, or parameters that need to be
@@ -5499,7 +5543,7 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
         $PAGE->set_cacheable(false);
         return;
     }
-    
+
     // Locate the current item on the navigation and make it active when found.
     $path = $extpage->path;
     $node = $PAGE->settingsnav;
