@@ -39,6 +39,7 @@ $string['allowduplicatedentries'] = 'Duplicate entries allowed';
 $string['allowduplicatedentries_help'] = 'If enabled, multiple entries can have the same concept name.';
 $string['allowprintview'] = 'Allow print view';
 $string['allowprintview_help'] = 'If enabled, students are provided with a link to a printer-friendly version of the glossary. The link is always available to teachers.';
+$string['andmorenewentries'] = 'and {$a} more new entries.';
 $string['answer'] = 'Answer';
 $string['approve'] = 'Approve';
 $string['areyousuredelete'] = 'Are you sure you want to delete this entry?';

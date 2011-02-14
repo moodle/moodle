@@ -318,9 +318,13 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
     global $CFG, $USER, $DB, $OUTPUT;
 
     //TODO: use timestamp in approved field instead of changing timemodified when approving in 2.0
+    if (!defined('GLOSSARY_RECENT_ACTIVITY_LIMIT')) {
+        define('GLOSSARY_RECENT_ACTIVITY_LIMIT', 50);
+    }
 
     $modinfo = get_fast_modinfo($course);
     $ids = array();
+
     foreach ($modinfo->cms as $cm) {
         if ($cm->modname != 'glossary') {
             continue;
@@ -328,58 +332,71 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
         if (!$cm->uservisible) {
             continue;
         }
-        $ids[$cm->instance] = $cm->instance;
+        $ids[$cm->instance] = $cm->id;
     }
 
     if (!$ids) {
         return false;
     }
 
-    $glist = implode(',', $ids); // there should not be hundreds of glossaries in one course, right?
+    // generate list of approval capabilities for all glossaries in the course.
+    $approvals = array();
+    foreach ($ids as $glinstanceid => $glcmid) {
+        $context = get_context_instance(CONTEXT_MODULE, $glcmid);
+        // get records glossary entries that are approved if user has no capability to approve entries.
+        if (has_capability('mod/glossary:approve', $context)) {
+            $approvals[] = ' ge.glossaryid = :glsid'.$glinstanceid.' ';
+        } else {
+            $approvals[] = ' (ge.approved = 1 AND ge.glossaryid = :glsid'.$glinstanceid.') ';
+        }
+        $params['glsid'.$glinstanceid] = $glinstanceid;
+    }
 
-    if (!$entries = $DB->get_records_sql("SELECT ge.id, ge.concept, ge.approved, ge.timemodified, ge.glossaryid,
-                                                 ge.userid, u.firstname, u.lastname, u.email, u.picture
-                                            FROM {glossary_entries} ge
-                                            JOIN {user} u ON u.id = ge.userid
-                                           WHERE ge.glossaryid IN ($glist) AND ge.timemodified > ?
-                                        ORDER BY ge.timemodified ASC", array($timestart))) {
+    $selectsql = 'SELECT ge.id, ge.concept, ge.approved, ge.timemodified, ge.glossaryid,
+                                        ge.userid, '.user_picture::fields('u',null,'userid');
+    $countsql = 'SELECT COUNT(*)';
+
+    $joins = array(' FROM {glossary_entries} ge ');
+    $joins[] = 'JOIN {user} u ON u.id = ge.userid ';
+    $fromsql = implode($joins, "\n");
+
+    $params['timestart'] = $timestart;
+    $clausesql = ' WHERE ge.timemodified > :timestart AND (';
+    $approvalsql = implode($approvals, ' OR ');
+
+    $ordersql = ') ORDER BY ge.timemodified ASC';
+
+    $entries = $DB->get_records_sql($selectsql.$fromsql.$clausesql.$approvalsql.$ordersql, $params, 0, (GLOSSARY_RECENT_ACTIVITY_LIMIT+1));
+
+    if (empty($entries)) {
         return false;
     }
 
-    $editor  = array();
-
-    foreach ($entries as $entryid=>$entry) {
-        if ($entry->approved) {
-            continue;
-        }
-
-        if (!isset($editor[$entry->glossaryid])) {
-            $editor[$entry->glossaryid] = has_capability('mod/glossary:approve', get_context_instance(CONTEXT_MODULE, $modinfo->instances['glossary'][$entry->glossaryid]->id));
-        }
-
-        if (!$editor[$entry->glossaryid]) {
-            unset($entries[$entryid]);
-        }
-    }
-
-    if (!$entries) {
-        return false;
-    }
     echo $OUTPUT->heading(get_string('newentries', 'glossary').':');
 
     $strftimerecent = get_string('strftimerecent');
+    $entrycount = 0;
     foreach ($entries as $entry) {
-        $link = $CFG->wwwroot.'/mod/glossary/view.php?g='.$entry->glossaryid.'&amp;mode=entry&amp;hook='.$entry->id;
-        if ($entry->approved) {
-            $dimmed = '';
+        if ($entrycount < GLOSSARY_RECENT_ACTIVITY_LIMIT) {
+            if ($entry->approved) {
+                $dimmed = '';
+                $urlparams = array('g' => $entry->glossaryid, 'mode' => 'entry', 'hook' => $entry->id);
+            } else {
+                $dimmed = ' dimmed_text';
+                $urlparams = array('id' => $ids[$entry->glossaryid], 'mode' => 'approval', 'hook' => format_text($entry->concept, true));
+            }
+            $link = new moodle_url($CFG->wwwroot.'/mod/glossary/view.php' , $urlparams);
+            echo '<div class="head'.$dimmed.'">';
+            echo '<div class="date">'.userdate($entry->timemodified, $strftimerecent).'</div>';
+            echo '<div class="name">'.fullname($entry, $viewfullnames).'</div>';
+            echo '</div>';
+            echo '<div class="info"><a href="'.$link.'">'.format_text($entry->concept, true).'</a></div>';
+            $entrycount += 1;
         } else {
-            $dimmed = ' dimmed_text';
+            $numnewentries = $DB->count_records_sql($countsql.$joins[0].$clausesql.$approvalsql.')', $params);
+            echo '<div class="head"><div class="activityhead">'.get_string('andmorenewentries', 'glossary', $numnewentries - GLOSSARY_RECENT_ACTIVITY_LIMIT).'</div></div>';
+            break;
         }
-        echo '<div class="head'.$dimmed.'">';
-        echo '<div class="date">'.userdate($entry->timemodified, $strftimerecent).'</div>';
-        echo '<div class="name">'.fullname($entry, $viewfullnames).'</div>';
-        echo '</div>';
-        echo '<div class="info"><a href="'.$link.'">'.format_text($entry->concept, true).'</a></div>';
     }
 
     return true;
