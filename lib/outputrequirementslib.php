@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Typical usage would be
  * <pre>
- *     $PAGE->requires->init_js_call('M.mod_forum.init_view');
+ *     $PAGE->requires->js_init_call('M.mod_forum.init_view');
  * </pre>
  *
  * It also supports obsoleted coding style withouth YUI3 modules.
