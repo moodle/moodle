@@ -1384,11 +1384,7 @@ class global_navigation extends navigation_node {
 
         $viewhiddensections = has_capability('moodle/course:viewhiddensections', $this->page->context);
 
-        if (isloggedin() && !isguestuser()) {
-            $activesection = $DB->get_field("course_display", "display", array("userid"=>$USER->id, "course"=>$course->id));
-        } else {
-            $activesection = null;
-        }
+        $activesection = course_get_display($course->id);
 
         $namingfunction = 'callback_'.$courseformat.'_get_section_name';
         $namingfunctionexists = (function_exists($namingfunction));
@@ -1418,7 +1414,7 @@ class global_navigation extends navigation_node {
                 $sectionnode = $coursenode->add($sectionname, $url, navigation_node::TYPE_SECTION, null, $section->id);
                 $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
                 $sectionnode->hidden = (!$section->visible);
-                if ($this->page->context->contextlevel != CONTEXT_MODULE && ($sectionnode->isactive || ($activesection != null && $section->section == $activesection))) {
+                if ($this->page->context->contextlevel != CONTEXT_MODULE && ($sectionnode->isactive || ($activesection && $section->section == $activesection))) {
                     $sectionnode->force_open();
                     $this->load_section_activities($sectionnode, $section->section, $modinfo);
                 }
