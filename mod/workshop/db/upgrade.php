@@ -303,6 +303,8 @@ function xmldb_workshop_upgrade($oldversion) {
             }
         }
 
+        unset($problems);
+        unset($map);
         upgrade_mod_savepoint(true, 2011021100, 'workshop');
     }
 
