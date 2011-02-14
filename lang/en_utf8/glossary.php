@@ -12,6 +12,7 @@ $string['allowcomments'] = 'Allow comments on entries';
 $string['allowduplicatedentries'] = 'Duplicated entries allowed';
 $string['allowprintview'] = 'Allow print view';
 $string['allowratings'] = 'Allow entries to be rated?';
+$string['andmorenewentries'] = 'and {$a} more new entries.';
 $string['answer'] = 'Answer';
 $string['approve'] = 'Approve';
 $string['areyousuredelete'] = 'Are you sure you want to delete this entry?';
