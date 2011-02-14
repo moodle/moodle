@@ -150,6 +150,8 @@ function blog_sync_external_entries($externalblog) {
     $rssfile = new moodle_simplepie_file($externalblog->url);
     $filetest = new SimplePie_Locator($rssfile);
 
+    $textlib = textlib_get_instance(); // Going to use textlib services
+
     if (!$filetest->is_feed($rssfile)) {
         $externalblog->failedlastsync = 1;
         $DB->update_record('blog_external', $externalblog);
@@ -197,7 +199,13 @@ function blog_sync_external_entries($externalblog) {
         $newentry->uniquehash = $entry->get_permalink();
         $newentry->publishstate = 'site';
         $newentry->format = FORMAT_HTML;
-        $newentry->subject = $entry->get_title();
+        // Clean subject of html, just in case
+        $newentry->subject = clean_param($entry->get_title(), PARAM_TEXT);
+        // Observe 128 max chars in DB
+        // TODO: +1 to raise this to 255
+        if ($textlib->strlen($newentry->subject) > 128) {
+            $newentry->subject = $textlib->substr($newentry->subject, 0, 125) . '...';
+        }
         $newentry->summary = $entry->get_description();
 
         //used to decide whether to insert or update
