@@ -10,6 +10,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $options[99] = get_string('timezonenotforced', 'admin');
     $temp->add(new admin_setting_configselect('forcetimezone', get_string('forcetimezone', 'admin'), get_string('helpforcetimezone', 'admin'), 99, $options));
     $temp->add(new admin_settings_country_select('country', get_string('country', 'admin'), get_string('configcountry', 'admin'), 0));
+    $temp->add(new admin_setting_configtext('defaultcity', get_string('defaultcity', 'admin'), get_string('defaultcity_help', 'admin'), ''));
 
     $temp->add(new admin_setting_heading('iplookup', get_string('iplookup', 'admin'), get_string('iplookupinfo', 'admin')));
     $temp->add(new admin_setting_configfile('geoipfile', get_string('geoipfile', 'admin'), get_string('configgeoipfile', 'admin', $CFG->dataroot.'/geoip/'), $CFG->dataroot.'/geoip/GeoLiteCity.dat'));
