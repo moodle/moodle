@@ -490,6 +490,10 @@ class auth_plugin_ldap extends auth_plugin_base {
             print_error('auth_ldap_create_error', 'auth_ldap');
         }
 
+        if (!empty($CFG->defaultcity) and !property_exists($user, 'city')) {
+            $user->city = $CFG->defaultcity;
+        }
+
         $user->id = $DB->insert_record('user', $user);
 
         // Save any custom profile field information
@@ -847,6 +851,10 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $user->username = trim(moodle_strtolower($user->username));
                 if (empty($user->lang)) {
                     $user->lang = $CFG->lang;
+                }
+
+                if (!empty($CFG->defaultcity) and !property_exists($user, 'city')) {
+                    $user->city = $CFG->defaultcity;
                 }
 
                 $id = $DB->insert_record('user', $user);
