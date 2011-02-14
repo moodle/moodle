@@ -40,8 +40,7 @@ if ($courseid == SITEID) {   // Since Moodle 2.0 all site-level profiles are sho
     redirect($CFG->wwwroot.'/user/profile.php?id='.$id);  // Immediate redirect
 }
 
-$url = new moodle_url('/user/view.php', array('id'=>$id,'course'=>$courseid));
-$PAGE->set_url($url);
+$PAGE->set_url('/user/view.php', array('id'=>$id,'course'=>$courseid));
 
 $user = $DB->get_record('user', array('id'=>$id), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
@@ -55,6 +54,14 @@ $usercontext   = get_context_instance(CONTEXT_USER, $user->id, MUST_EXIST);
 if (isguestuser($user)) {
     // can not view profile of guest - thre is nothing to see there
     print_error('invaliduserid');
+}
+
+if (!empty($CFG->forceloginforprofiles)) {
+    require_login(); // we can not log in to course due to the parent hack bellow
+    if (isguestuser()) {
+        $SESSION->wantsurl = $PAGE->url->out(false);
+        redirect(get_login_url());
+    }
 }
 
 $PAGE->set_context($coursecontext);
@@ -76,7 +83,7 @@ if (!$currentuser
 } else {
     // normal course
     require_login($course);
-    // what to do with users temporary accessing this course? shoudl they see the details?
+    // what to do with users temporary accessing this course? should they see the details?
 }
 
 $strpersonalprofile = get_string('personalprofile');

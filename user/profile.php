@@ -42,9 +42,12 @@ require_once($CFG->libdir.'/filelib.php');
 $userid = optional_param('id', 0, PARAM_INT);
 $edit   = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off
 
+$PAGE->set_url('/user/profile.php', array('id'=>$userid));
+
 if (!empty($CFG->forceloginforprofiles)) {
     require_login();
     if (isguestuser()) {
+        $SESSION->wantsurl = $PAGE->url->out(false);
         redirect(get_login_url());
     }
 } else if (!empty($CFG->forcelogin)) {
@@ -106,8 +109,6 @@ if (has_capability('moodle/user:viewhiddendetails', $context)) {
 // Start setting up the page
 $strpublicprofile = get_string('publicprofile');
 
-$params = array('id'=>$userid);
-$PAGE->set_url('/user/profile.php', $params);
 $PAGE->blocks->add_region('content');
 $PAGE->set_subpage($currentpage->id);
 $PAGE->set_title(fullname($user).": $strpublicprofile");
