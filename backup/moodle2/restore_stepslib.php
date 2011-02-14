@@ -660,8 +660,8 @@ class restore_groups_structure_step extends restore_structure_step {
         $params = array('courseid' => $this->get_courseid(), 'grname' => $data->name);
         if (!empty($data->description)) {
             $description_clause = ' AND ' .
-                                  $DB->sql_compare_text('description') . ' = ' . $DB->sql_compare_text(':desc');
-           $params['desc'] = $data->description;
+                                  $DB->sql_compare_text('description') . ' = ' . $DB->sql_compare_text(':description');
+           $params['description'] = $data->description;
         }
         if (!$groupdb = $DB->get_record_sql("SELECT *
                                                FROM {groups}
@@ -708,8 +708,8 @@ class restore_groups_structure_step extends restore_structure_step {
         $params = array('courseid' => $this->get_courseid(), 'grname' => $data->name);
         if (!empty($data->description)) {
             $description_clause = ' AND ' .
-                                  $DB->sql_compare_text('description') . ' = ' . $DB->sql_compare_text(':desc');
-           $params['desc'] = $data->description;
+                                  $DB->sql_compare_text('description') . ' = ' . $DB->sql_compare_text(':description');
+           $params['description'] = $data->description;
         }
         if (!$groupingdb = $DB->get_record_sql("SELECT *
                                                   FROM {groupings}
@@ -1786,7 +1786,7 @@ class restore_activity_grades_structure_step extends restore_structure_step {
         $data->timecreated  = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        $gradeitem = new grade_item($data);
+        $gradeitem = new grade_item($data, false);
         $gradeitem->insert('restore');
 
         //sortorder is automatically assigned when inserting. Re-instate the previous sortorder
@@ -1809,7 +1809,7 @@ class restore_activity_grades_structure_step extends restore_structure_step {
         // TODO: Ask, all the rest of locktime/exported... work with time... to be rolled?
         $data->overridden = $this->apply_date_offset($data->overridden);
 
-        $grade = new grade_grade($data);
+        $grade = new grade_grade($data, false);
         $grade->insert('restore');
         // no need to save any grade_grade mapping
     }
