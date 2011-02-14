@@ -181,6 +181,17 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         }
         $rs->close();
 
+        // Remap all the restored 'jumpto' fields now that we have all the pages and their mappings
+        $rs = $DB->get_recordset('lesson_answers', array('lessonid' => $this->task->get_activityid()),
+                                 '', 'id, jumpto');
+        foreach ($rs as $answer) {
+            if ($answer->jumpto > 0) {
+                $answer->jumpto = $this->get_mappingid('lesson_page', $answer->jumpto);
+                $DB->update_record('lesson_answers', $answer);
+            }
+        }
+        $rs->close();
+
         // TODO: somewhere at the end of the restore... when all the activities have been restored
         // TODO: we need to decode the lesson->activitylink that points to another activity in the course
         // TODO: great functionality that breaks self-contained principles, grrr
