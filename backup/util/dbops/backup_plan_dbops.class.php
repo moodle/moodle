@@ -120,6 +120,15 @@ abstract class backup_plan_dbops extends backup_dbops {
     }
 
     /**
+     * Given one course id, return its format in DB
+     */
+    public static function get_courseformat_from_courseid($courseid) {
+        global $DB;
+
+        return $DB->get_field('course', 'format', array('id' => $courseid));
+    }
+
+    /**
      * Return the wwwroot of the $CFG->mnet_localhost_id host
      * caching it along the request
      */
