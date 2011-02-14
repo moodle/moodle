@@ -474,7 +474,7 @@ if(!$csv) {
 
                 // Display icon
                 $icon = $OUTPUT->pix_url('icon', $criterion->module);
-                $iconlink = $CFG->wwwroot.'/mod/'.$criterion->module.'/view.php?id='.$activity->moduleinstance;
+                $iconlink = $CFG->wwwroot.'/mod/'.$criterion->module.'/view.php?id='.$criterion->moduleinstance;
                 $icontitle = $activity->name;
                 $iconalt = get_string('modulename', $criterion->module);
                 break;
