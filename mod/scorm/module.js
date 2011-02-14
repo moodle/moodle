@@ -178,12 +178,6 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
             if (alsowidth) {
                 scorm_layout_widget.setStyle('width', '');
                 var newwidth = scorm_get_htmlelement_size('content', 'width');
-                if (newwidth > 600) {
-                    scorm_layout_widget.setStyle('width', newwidth+'px');
-                }
-                else {
-                    scorm_layout_widget.setStyle('width', '600px');
-                }
             }
             // make sure that the max width of the TOC doesn't go to far
 
