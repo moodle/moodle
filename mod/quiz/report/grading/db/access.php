@@ -18,14 +18,15 @@
 /**
  * Capability definitions for the quiz manual grading report.
  *
- * @package quiz_grading
+ * @package quiz
+ * @subpackage grading
  * @copyright 2010 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$quizreport_grading_capabilities = array(
+$capabilities = array(
     // Is the user allowed to see the student's real names while grading?
-    'quizreport/grading:viewstudentnames' => array(
+    'quiz/grading:viewstudentnames' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -36,7 +37,7 @@ $quizreport_grading_capabilities = array(
     ),
 
     // Is the user allowed to see the student's idnumber while grading?
-    'quizreport/grading:viewidnumber' => array(
+    'quiz/grading:viewidnumber' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(

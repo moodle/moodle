@@ -321,7 +321,7 @@ WHERE
      * $manuallygraded and $all.
      */
     public function load_questions_usages_question_state_summary(qubaid_condition $qubaids, $slots) {
-        list($slottest, $params) = get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot0000');
+        list($slottest, $params) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot0000');
 
         $rs = $this->db->get_recordset_sql("
 SELECT
@@ -356,12 +356,8 @@ ORDER BY
     q.id
         ", $params + $qubaids->from_where_params());
 
-        if (!$rs) {
-            throw new moodle_exception('errorloadingdata');
-        }
-
         $results = array();
-        while ($row = rs_fetch_next_record($rs)) {
+        foreach ($rs as $row) {
             $index = $row->slot . ',' . $row->questionid;
 
             if (!array_key_exists($index, $results)) {
@@ -380,7 +376,7 @@ ORDER BY
             $results[$index]->{$row->summarystate} = $row->numattempts;
             $results[$index]->all += $row->numattempts;
         }
-        rs_close($rs);
+        $rs->close();
 
         return $results;
     }
@@ -400,6 +396,7 @@ ORDER BY
      * @param integer $questionid (optional) Only return attempts that were of this specific question.
      * @param string $summarystate the summary state of interest, or 'all'.
      * @param string $orderby the column to order by.
+     * @param array $params any params required by any of the SQL fragments.
      * @param integer $limitfrom implements paging of the results.
      *      Ignored if $orderby = random or $limitnum is null.
      * @param integer $limitnum implements paging of the results. null = all.
@@ -407,16 +404,18 @@ ORDER BY
      */
     public function load_questions_usages_where_question_in_state(
             qubaid_condition $qubaids, $summarystate, $slot, $questionid = null,
-            $orderby = 'random', $limitfrom = 0, $limitnum = null) {
+            $orderby = 'random', $params, $limitfrom = 0, $limitnum = null) {
         global $CFG;
 
         $extrawhere = '';
         if ($questionid) {
-            $extrawhere .= ' AND qa.questionid = ' . $questionid;
+            $extrawhere .= ' AND qa.questionid = :questionid';
+            $params['questionid'] = $questionid;
         }
         if ($summarystate != 'all') {
-            $test = $this->in_summary_state_test($summarystate);
+            list($test, $sparams) = $this->in_summary_state_test($summarystate);
             $extrawhere .= ' AND qas.state ' . $test;
+            $params += $sparams;
         }
 
         if ($orderby == 'random') {
@@ -433,23 +432,25 @@ ORDER BY
         // 10,000 students in the coures, each doing 5 quiz attempts. That
         // is a 50,000 element int => int array, which PHP seems to use 5MB
         // memeory to store on a 64 bit server.
-        $qubaids = get_records_sql_menu("
+        $params += $qubaids->from_where_params();
+        $params['slot'] = $slot;
+        $qubaids = $this->db->get_records_sql_menu("
 SELECT
     qa.questionusageid,
     1
 
 FROM {$qubaids->from_question_attempts('qa')}
-JOIN {$CFG->prefix}question_attempt_steps qas ON
+JOIN {question_attempt_steps} qas ON
         qas.id = {$this->latest_step_for_qa_subquery()}
-JOIN {$CFG->prefix}question q ON q.id = qa.questionid
+JOIN {question} q ON q.id = qa.questionid
 
 WHERE
     {$qubaids->where()} AND
-    qa.slot = $slot
+    qa.slot = :slot
     $extrawhere
 
 $sqlorderby
-        ");
+        ", $params);
 
         $qubaids = array_keys($qubaids);
         $count = count($qubaids);
@@ -606,8 +607,6 @@ ORDER BY
      * @param question_attempt $qa the question attempt that has changed.
      */
     public function update_question_attempt(question_attempt $qa) {
-        global $DB;
-
         $record = new stdClass;
         $record->id = $qa->get_database_id();
         $record->maxmark = $qa->get_max_mark();
@@ -725,11 +724,9 @@ ORDER BY
      * @param boolean $equal if false, do a NOT IN test. Default true.
      * @return string SQL fragment.
      */
-    public function in_summary_state_test($summarystate, $equal = true) {
+    public function in_summary_state_test($summarystate, $equal = true, $prefix = 'summarystates') {
         $states = question_state::get_all_for_summary_state($summarystate);
-        list($sql, $params) = $this->db->get_in_or_equal($states, SQL_PARAMS_QM, 'param0000', $equal);
-        // TODO return $params;
-        return $sql;
+        return $this->db->get_in_or_equal($states, SQL_PARAMS_NAMED, $prefix . '00', $equal);
     }
 
     /**

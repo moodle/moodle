@@ -124,7 +124,7 @@ DONE lang/en_utf8/quiz_regrade.php                      |    7 -
 DONE mod/quiz/report/grading/db/access.php              |   49 +
 DONE mod/quiz/report/grading/gradingsettings_form.php   |   91 +
 DONE mod/quiz/report/grading/lang/en_utf8/quiz_grading.php   |   60 +
- mod/quiz/report/grading/report.php                 |  842 ++++---
+DONE mod/quiz/report/grading/report.php                 |  842 ++++---
 DONE mod/quiz/report/grading/version.php                |   26 +
 DONE lang/en_utf8/quiz_grading.php                      |   18 -
 

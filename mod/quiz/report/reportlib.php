@@ -87,11 +87,11 @@ function quiz_report_unindex($datum) {
  * @param object $quiz the quiz.
  * @return array of slot => $question object with fields ->slot, ->id, ->maxmark, ->number, ->length. 
  */
-function quiz_report_load_questions($quiz){
+function quiz_report_get_significant_questions($quiz) {
     global $DB;
 
-    $questionlist = quiz_questions_in_quiz($quiz->questions);
-    list($usql, $params) = $DB->get_in_or_equal(explode(',', $questionlist));
+    $questionids = quiz_questions_in_quiz($quiz->questions);
+    list($usql, $params) = $DB->get_in_or_equal(explode(',', $questionids));
     $params[] = $quiz->id;
     $questions = $DB->get_records_sql("
 SELECT
@@ -103,8 +103,8 @@ FROM {question} q
 JOIN {quiz_question_instances} qqi ON qqi.question = q.id
 
 WHERE
-    qqi.quiz = ? AND
     q.id $usql AND
+    qqi.quiz = ? AND
     length > 0", $params);
 
     $qsbyslot = array();
