@@ -255,15 +255,17 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
     }
 
     if (has_capability('mod/book:print', $PAGE->cm->context)) {
-        $url = new moodle_url('/mod/book/print.php', array('id'=>$params['id']));
-        $booknode->add(get_string('printbook', 'mod_book'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_book', '', 'mod_book', array('class'=>'icon')));
-
-        // buggy navlib - actions not supported!!
-        //$action = new action_link($url, get_string('printbook', 'book'), new popup_action('onclick', $url));
-        //$booknode->add('', $action, navigation_node::TYPE_SETTING);
-
-        $url = new moodle_url('/mod/book/print.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid']));
-        $booknode->add(get_string('printchapter', 'mod_book'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_chapter', '', 'mod_book', array('class'=>'icon')));
+        $url1 = new moodle_url('/mod/book/print.php', array('id'=>$params['id']));
+        $url2 = new moodle_url('/mod/book/print.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid']));
+        if ($CFG->version > 2011020900) {
+            $action = new action_link($url1, get_string('printbook', 'book'), new popup_action('click', $url1));
+            $booknode->add('', $action, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_book', '', 'mod_book', array('class'=>'icon')));
+            $action = new action_link($url2, get_string('printchapter', 'book'), new popup_action('click', $url2));
+            $booknode->add('', $action, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_chapter', '', 'mod_book', array('class'=>'icon')));
+        } else {
+            $booknode->add(get_string('printbook', 'mod_book'), $url1, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_book', '', 'mod_book', array('class'=>'icon')));
+            $booknode->add(get_string('printchapter', 'mod_book'), $url2, navigation_node::TYPE_SETTING, null, null, new pix_icon('print_chapter', '', 'mod_book', array('class'=>'icon')));
+        }
     }
 
     if (has_capability('mod/book:import', $PAGE->cm->context)) {
