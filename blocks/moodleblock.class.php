@@ -278,8 +278,8 @@ class block_base {
      */
     protected function formatted_contents($output) {
         $this->get_content();
+        $this->get_required_javascript();
         if (!empty($this->content->text)) {
-            $this->get_required_javascript();
             return $this->content->text;
         } else {
             return '';
@@ -688,8 +688,8 @@ class block_list extends block_base {
 
     protected function formatted_contents($output) {
         $this->get_content();
+        $this->get_required_javascript();
         if (!empty($this->content->items)) {
-            $this->get_required_javascript();
             return $output->list_block_contents($this->content->icons, $this->content->items);
         } else {
             return '';
