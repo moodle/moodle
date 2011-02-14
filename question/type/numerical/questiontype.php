@@ -1151,6 +1151,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                         break;
                     case 2 : // NUMERICALQUESTIONUNITTEXTDISPLAY
                         $default_values['unitrole'] = 1 ;
+                        break;
                     case 3 : // NUMERICALQUESTIONUNITNODISPLAY
                         $default_values['unitrole'] = 0 ;
                         //  $default_values['showunits1'] = $question->options->showunits ;
