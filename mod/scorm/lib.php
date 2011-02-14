@@ -100,7 +100,9 @@ function scorm_update_instance($scorm) {
     $scorm->timemodified = time();
     $scorm->id = $scorm->instance;
 
-    $scorm = scorm_option2text($scorm);
+    if (empty($scorm->options)) {
+        $scorm = scorm_option2text($scorm);
+    }
     $scorm->width = str_replace('%','',$scorm->width);
     $scorm->height = str_replace('%','',$scorm->height);
 
