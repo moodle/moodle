@@ -62,6 +62,13 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->deadline = $this->apply_date_offset($data->deadline);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
+        // lesson->highscores can come both in data->highscores and
+        // data->showhighscores, handle both. MDL-26229
+        if (isset($data->showhighscores)) {
+            $data->highscores = $data->showhighscores;
+            unset($data->showhighscores);
+        }
+
         // insert the lesson record
         $newitemid = $DB->insert_record('lesson', $data);
         // immediately after inserting "activity" record, call this

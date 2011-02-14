@@ -94,6 +94,10 @@ abstract class base_nested_element extends base_final_element {
     }
 
     protected function check_and_set_used($element) {
+        // First of all, check the element being added doesn't conflict with own final elements
+        if (array_key_exists($element->get_name(), $this->final_elements)) {
+            throw new base_element_struct_exception('baseelementchildnameconflict', $element->get_name());
+        }
         $grandparent = $this->get_grandoptigroupelement_or_grandparent();
         if ($existing = array_intersect($grandparent->get_used(), $element->get_used())) { // Check the element isn't being used already
             throw new base_element_struct_exception('baseelementexisting', implode($existing));

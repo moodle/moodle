@@ -67,6 +67,13 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         $data->questions = $this->questions_recode_layout($data->questions);
 
+        // quiz->attempts can come both in data->attempts and
+        // data->attempts_number, handle both. MDL-26229
+        if (isset($data->attempts_number)) {
+            $data->attempts = $data->attempts_number;
+            unset($data->attempts_number);
+        }
+
         // insert the quiz record
         $newitemid = $DB->insert_record('quiz', $data);
         // immediately after inserting "activity" record, call this
