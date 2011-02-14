@@ -202,7 +202,7 @@ class quiz_overview_report extends quiz_default_report {
         if (!$nostudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)) {
 
             // Construct the SQL
-            $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, \'0\')').' AS uniqueid, ';
+            $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, 0)').' AS uniqueid, ';
             if ($qmsubselect) {
                 $fields .=
                     "(CASE " .
