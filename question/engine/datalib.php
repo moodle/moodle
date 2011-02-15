@@ -528,10 +528,14 @@ ORDER BY qa.slot
      */
     public function load_attempts_at_question($questionid, qubaid_condition $qubaids) {
         global $DB;
-// TODO
+
+        $params = $qubaids->from_where_params();
+        $params['questionid'] = $questionid;
+
         $records = $DB->get_records_sql("
 SELECT
     COALESCE(qasd.id, -1 * qas.id) AS id,
+    quba.contextid,
     quba.preferredbehaviour,
     qa.id AS questionattemptid,
     qa.questionusageid,
@@ -555,19 +559,19 @@ SELECT
     qasd.value
 
 FROM {$qubaids->from_question_attempts('qa')}
-JOIN {$CFG->prefix}question_usages quba ON quba.id = qa.questionusageid
-LEFT JOIN {$CFG->prefix}question_attempt_steps qas ON qas.questionattemptid = qa.id
-LEFT JOIN {$CFG->prefix}question_attempt_step_data qasd ON qasd.attemptstepid = qas.id
+JOIN {question_usages} quba ON quba.id = qa.questionusageid
+LEFT JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+LEFT JOIN {question_attempt_step_data} qasd ON qasd.attemptstepid = qas.id
 
 WHERE
     {$qubaids->where()} AND
-    qa.questionid = $questionid
+    qa.questionid = :questionid
 
 ORDER BY
     quba.id,
     qa.id,
     qas.sequencenumber
-        ");
+        ", $params);
 
         if (!$records) {
             return array();
