@@ -337,6 +337,102 @@ class qformat_gift_test extends UnitTestCase {
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
     }
 
+    public function test_import_multichoice_multi() {
+        $gift = "
+// multiple choice, multiple response with specified feedback for right and wrong answers
+::colours:: What's between orange and green in the spectrum?
+{
+    ~%50%yellow # right; good!
+    ~%-100%red # [html]wrong
+    ~%50%off-beige # right; good!
+    ~%-100%[plain]blue # wrong
+}";
+        $lines = preg_split('/[\\n\\r]/', str_replace("\r\n", "\n", $gift));
+
+        $importer = new qformat_gift();
+        $q = $importer->readquestion($lines);
+
+        $expectedq = (object) array(
+            'name' => 'colours',
+            'questiontext' => "What's between orange and green in the spectrum?",
+            'questiontextformat' => FORMAT_MOODLE,
+            'generalfeedback' => '',
+            'generalfeedbackformat' => FORMAT_MOODLE,
+            'qtype' => 'multichoice',
+            'defaultgrade' => 1,
+            'penalty' => 0.1,
+            'length' => 1,
+            'single' => 0,
+            'shuffleanswers' => '1',
+            'answernumbering' => 'abc',
+            'correctfeedback' => array(
+                'text' => '',
+                'format' => FORMAT_MOODLE,
+                'files' => array(),
+            ),
+            'partiallycorrectfeedback' => array(
+                'text' => '',
+                'format' => FORMAT_MOODLE,
+                'files' => array(),
+            ),
+            'incorrectfeedback' => array(
+                'text' => '',
+                'format' => FORMAT_MOODLE,
+                'files' => array(),
+            ),
+            'answer' => array(
+                0 => array(
+                    'text' => 'yellow',
+                    'format' => FORMAT_MOODLE,
+                    'files' => array(),
+                ),
+                1 => array(
+                    'text' => 'red',
+                    'format' => FORMAT_MOODLE,
+                    'files' => array(),
+                ),
+                2 => array(
+                    'text' => 'off-beige',
+                    'format' => FORMAT_MOODLE,
+                    'files' => array(),
+                ),
+                3 => array(
+                    'text' => 'blue',
+                    'format' => FORMAT_PLAIN,
+                    'files' => array(),
+                ),
+            ),
+            'fraction' => array(0.5, -1, 0.5, -1),
+            'feedback' => array(
+                0 => array(
+                    'text' => 'right; good!',
+                    'format' => FORMAT_MOODLE,
+                    'files' => array(),
+                ),
+                1 => array(
+                    'text' => "wrong",
+                    'format' => FORMAT_HTML,
+                    'files' => array(),
+                ),
+                2 => array(
+                    'text' => "right; good!",
+                    'format' => FORMAT_MOODLE,
+                    'files' => array(),
+                ),
+                3 => array(
+                    'text' => "wrong",
+                    'format' => FORMAT_MOODLE,
+                    'files' => array(),
+                ),
+            ),
+        );
+
+        // Repeated test for better failure messages.
+        $this->assertEqual($expectedq->answer, $q->answer);
+        $this->assertEqual($expectedq->feedback, $q->feedback);
+        $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
+    }
+
     public function test_export_multichoice() {
         $qdata = (object) array(
             'id' => 666 ,
