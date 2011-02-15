@@ -353,7 +353,7 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
     }
 
     $selectsql = 'SELECT ge.id, ge.concept, ge.approved, ge.timemodified, ge.glossaryid,
-                                        ge.userid, '.user_picture::fields('u',null,'userid');
+                                        ge.userid, '.user_picture::fields('u',null,'uid');
     $countsql = 'SELECT COUNT(*)';
 
     $joins = array(' FROM {glossary_entries} ge ');
