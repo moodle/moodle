@@ -139,7 +139,7 @@ abstract class restore_qtype_plugin extends restore_plugin {
                 $info->filequestionid = $oldquestionid;
                 $info->dbquestionid   = $newquestionid;
                 $info->answer         = $data->answertext;
-                throw restore_step_exception('error_question_answers_missing_in_db', $info);
+                throw new restore_step_exception('error_question_answers_missing_in_db', $info);
             }
         }
         // Create mapping (we'll use this intensively when restoring question_states. And also answerfeedback files)
