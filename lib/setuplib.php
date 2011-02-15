@@ -721,15 +721,14 @@ function setup_get_remote_url() {
     list($rurl['host']) = explode(':', $_SERVER['HTTP_HOST']);
     $rurl['port'] = $_SERVER['SERVER_PORT'];
     $rurl['path'] = $_SERVER['SCRIPT_NAME']; // Script path without slash arguments
+    $rurl['scheme'] = (empty($_SERVER['HTTPS']) or $_SERVER['HTTPS'] === 'off' or $_SERVER['HTTPS'] === 'Off' or $_SERVER['HTTPS'] === 'OFF') ? 'http' : 'https';
 
     if (stripos($_SERVER['SERVER_SOFTWARE'], 'apache') !== false) {
         //Apache server
-        $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
         $rurl['fullpath'] = $_SERVER['REQUEST_URI'];
 
     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
         //IIS - needs a lot of tweaking to make it work
-        $rurl['scheme']   = ($_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
         $rurl['fullpath'] = $_SERVER['SCRIPT_NAME'];
 
         // NOTE: ignore PATH_INFO because it is incorrectly encoded using 8bit filesystem legacy encoding in IIS
@@ -745,7 +744,6 @@ function setup_get_remote_url() {
 
     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'lighttpd') !== false) {
         //lighttpd - not officially supported
-        $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
         $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false) {
@@ -753,22 +751,18 @@ function setup_get_remote_url() {
         if (!isset($_SERVER['SCRIPT_NAME'])) {
             die('Invalid server configuration detected, please try to add "fastcgi_param SCRIPT_NAME $fastcgi_script_name;" to the nginx server configuration.');
         }
-        $rurl['scheme']   = empty($_SERVER['HTTPS']) ? 'http' : 'https';
         $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
      } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'cherokee') !== false) {
          //cherokee - not officially supported
-         $rurl['scheme']   = ($_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
          $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
      } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'zeus') !== false) {
          //zeus - not officially supported
-         $rurl['scheme']   = ($_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
          $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'LiteSpeed') !== false) {
         //LiteSpeed - not officially supported
-        $rurl['scheme']   = ($_SERVER['HTTPS'] == 'off') ? 'http' : 'https';
         $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
      } else {
