@@ -1002,7 +1002,7 @@ function quiz_get_combined_reviewoptions($quiz, $attempts, $context) {
  *
  * @param stdClass $a associative array of replaceable fields for the templates
  *
- * @return bool|string result of events_triger
+ * @return bool
  */
 function quiz_send_confirmation($a) {
 
@@ -1034,7 +1034,7 @@ function quiz_send_confirmation($a) {
     $eventdata->contexturl        = $a->quizurl;
     $eventdata->contexturlname    = $a->quizname;
 
-    return message_send($eventdata);
+    return (bool)message_send($eventdata); // returns message id or false
 }
 
 /**
@@ -1043,7 +1043,7 @@ function quiz_send_confirmation($a) {
  * @param object $recipient user object of the intended recipient
  * @param stdClass $a associative array of replaceable fields for the templates
  *
- * @return bool|string result of events_triger()
+ * @return bool
  */
 function quiz_send_notification($recipient, $a) {
 
@@ -1075,7 +1075,7 @@ function quiz_send_notification($recipient, $a) {
     $eventdata->contexturl        = $a->quizreviewurl;
     $eventdata->contexturlname    = $a->quizname;
 
-    return message_send($eventdata);
+    return (bool)message_send($eventdata);
 }
 
 /**
@@ -1154,7 +1154,7 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
     // send confirmation if required
     if ($sendconfirm) {
         // send the email and update stats
-        switch (!empty(quiz_send_confirmation($a))) {
+        switch (quiz_send_confirmation($a)) {
             case true:
                 $emailresult['good']++;
                 break;
