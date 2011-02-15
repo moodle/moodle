@@ -43,9 +43,8 @@ class qubaid_condition_test extends UnitTestCase {
     }
 
     protected function check_typical_in_query(qubaid_condition $qubaids, $expectedsql, $expectedparams) {
-        global $CFG;
         $sql = "SELECT qa.id, qa.maxmark
-            FROM {$CFG->prefix}question_attempts qa
+            FROM {question_attempts} qa
             WHERE qa.questionusageid {$qubaids->usage_id_in()}";
         $this->assertEqual($expectedsql, $sql);
 
@@ -53,44 +52,40 @@ class qubaid_condition_test extends UnitTestCase {
     }
 
     public function test_qubaid_list_one_join() {
-        global $CFG;
         $qubaids = new qubaid_list(array(1));
         $this->check_typical_question_attempts_query($qubaids,
                 "SELECT qa.id, qa.maxmark
-            FROM {$CFG->prefix}question_attempts qa
+            FROM {question_attempts} qa
             WHERE qa.questionusageid = :qubaid0000 AND qa.slot = :slot",
             array('qubaid0000' => 1, 'slot' => 1));
     }
 
     public function test_qubaid_list_several_join() {
-        global $CFG;
         $qubaids = new qubaid_list(array(1, 3, 7));
         $this->check_typical_question_attempts_query($qubaids,
                 "SELECT qa.id, qa.maxmark
-            FROM {$CFG->prefix}question_attempts qa
+            FROM {question_attempts} qa
             WHERE qa.questionusageid IN (:qubaid0000,:qubaid0001,:qubaid0002) AND qa.slot = :slot",
             array('qubaid0000' => 1, 'qubaid0001' => 3, 'qubaid0002' => 7, 'slot' => 1));
     }
 
     public function test_qubaid_join() {
-        global $CFG;
-        $qubaids = new qubaid_join("{$CFG->prefix}other_table ot", 'ot.usageid', 'ot.id = 1');
+        $qubaids = new qubaid_join("{other_table} ot", 'ot.usageid', 'ot.id = 1');
 
         $this->check_typical_question_attempts_query($qubaids,
                 "SELECT qa.id, qa.maxmark
-            FROM {$CFG->prefix}other_table ot
-                JOIN {$CFG->prefix}question_attempts qa ON qa.questionusageid = ot.usageid
+            FROM {other_table} ot
+                JOIN {question_attempts} qa ON qa.questionusageid = ot.usageid
             WHERE ot.id = 1 AND qa.slot = :slot", array('slot' => 1));
     }
 
     public function test_qubaid_join_no_where_join() {
-        global $CFG;
-        $qubaids = new qubaid_join("{$CFG->prefix}other_table ot", 'ot.usageid');
+        $qubaids = new qubaid_join("{other_table} ot", 'ot.usageid');
 
         $this->check_typical_question_attempts_query($qubaids,
                 "SELECT qa.id, qa.maxmark
-            FROM {$CFG->prefix}other_table ot
-                JOIN {$CFG->prefix}question_attempts qa ON qa.questionusageid = ot.usageid
+            FROM {other_table} ot
+                JOIN {question_attempts} qa ON qa.questionusageid = ot.usageid
             WHERE 1 = 1 AND qa.slot = :slot", array('slot' => 1));
     }
 
@@ -99,7 +94,7 @@ class qubaid_condition_test extends UnitTestCase {
         $qubaids = new qubaid_list(array(1));
         $this->check_typical_in_query($qubaids,
                 "SELECT qa.id, qa.maxmark
-            FROM {$CFG->prefix}question_attempts qa
+            FROM {question_attempts} qa
             WHERE qa.questionusageid = :qubaid0000", array('qubaid0000' => 1));
     }
 
@@ -108,30 +103,30 @@ class qubaid_condition_test extends UnitTestCase {
         $qubaids = new qubaid_list(array(1, 2, 3));
         $this->check_typical_in_query($qubaids,
                 "SELECT qa.id, qa.maxmark
-            FROM {$CFG->prefix}question_attempts qa
+            FROM {question_attempts} qa
             WHERE qa.questionusageid IN (:qubaid0000,:qubaid0001,:qubaid0002)",
                 array('qubaid0000' => 1, 'qubaid0001' => 2, 'qubaid0002' => 3));
     }
 
     public function test_qubaid_join_in() {
         global $CFG;
-        $qubaids = new qubaid_join("{$CFG->prefix}other_table ot", 'ot.usageid', 'ot.id = 1');
+        $qubaids = new qubaid_join("{other_table} ot", 'ot.usageid', 'ot.id = 1');
 
         $this->check_typical_in_query($qubaids,
                 "SELECT qa.id, qa.maxmark
-            FROM {$CFG->prefix}question_attempts qa
-            WHERE qa.questionusageid IN (SELECT ot.usageid FROM {$CFG->prefix}other_table ot WHERE ot.id = 1)",
+            FROM {question_attempts} qa
+            WHERE qa.questionusageid IN (SELECT ot.usageid FROM {other_table} ot WHERE ot.id = 1)",
                 array());
     }
 
     public function test_qubaid_join_no_where_in() {
         global $CFG;
-        $qubaids = new qubaid_join("{$CFG->prefix}other_table ot", 'ot.usageid');
+        $qubaids = new qubaid_join("{other_table} ot", 'ot.usageid');
 
         $this->check_typical_in_query($qubaids,
                 "SELECT qa.id, qa.maxmark
-            FROM {$CFG->prefix}question_attempts qa
-            WHERE qa.questionusageid IN (SELECT ot.usageid FROM {$CFG->prefix}other_table ot WHERE 1 = 1)",
+            FROM {question_attempts} qa
+            WHERE qa.questionusageid IN (SELECT ot.usageid FROM {other_table} ot WHERE 1 = 1)",
                 array());
     }
 }

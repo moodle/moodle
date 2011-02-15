@@ -1079,9 +1079,8 @@ class qubaid_join extends qubaid_condition {
     }
 
     public function from_question_attempts($alias) {
-        global $CFG;
         return "$this->from
-                JOIN {$CFG->prefix}question_attempts {$alias} ON " .
+                JOIN {question_attempts} {$alias} ON " .
                         "{$alias}.questionusageid = $this->usageidcolumn";
     }
 
