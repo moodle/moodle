@@ -41,8 +41,15 @@ $usergroup = optional_param('usergroup', VIEW_UNREAD_MESSAGES, PARAM_ALPHANUMEXT
 $history   = optional_param('history', MESSAGE_HISTORY_SHORT, PARAM_INT);
 $search    = optional_param('search', '', PARAM_CLEAN); //TODO: use PARAM_RAW, but make sure we use s() and p() properly
 
-$user1id   = optional_param('user', $USER->id, PARAM_INT);
-$user2id   = optional_param('id', 0, PARAM_INT);
+//the same param as 1.9 and the param we have been logging. Use this parameter.
+$user1id   = optional_param(MESSAGE_USER1_PARAM, $USER->id, PARAM_INT);
+//2.0 shipped using this param. Retaining it only for compatibility. It should be removed.
+$user1id   = optional_param('user', $user1id, PARAM_INT);
+
+//the same param as 1.9 and the param we have been logging. Use this parameter.
+$user2id   = optional_param(MESSAGE_USER2_PARAM, 0, PARAM_INT);
+//2.0 shipped using this param. Retaining it only for compatibility. It should be removed.
+$user2id   = optional_param('id', $user2id, PARAM_INT);
 
 $addcontact     = optional_param('addcontact',     0, PARAM_INT); // adding a contact
 $removecontact  = optional_param('removecontact',  0, PARAM_INT); // removing a contact
@@ -158,6 +165,9 @@ if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', 
 
             $messageid = message_post_message($user1, $user2, $data->message, FORMAT_MOODLE, 'direct');
             if (!empty($messageid)) {
+                //including the id of the user sending the message in the logged URL so the URL works for admins
+                //note message ID may be misleading as the message may potentially get a different ID when moved from message to message_read
+                add_to_log(SITEID, 'message', 'write', 'index.php?user='.$user1->id.'&id='.$user2->id.'&history=1#m'.$messageid, $user1->id);
                 redirect($CFG->wwwroot . '/message/index.php?usergroup='.$usergroup.'&id='.$user2->id);
             }
         }
