@@ -13,6 +13,10 @@
     $sqlsortkey = NULL;
     $textlib = textlib_get_instance();
 
+    // For cases needing inner view
+    $sqlwrapheader = '';
+    $sqlwrapfooter = '';
+
 /// Calculate the SQL sortkey to be used by the SQL statements later
     switch ( $sortkey ) {
         case "CREATION":
@@ -134,9 +138,6 @@
     default:
         $sqlselect  = "SELECT ge.*, ge.concept AS glossarypivot";
         $sqlfrom    = "FROM {glossary_entries} ge";
-        // For cases needing inner view
-        $sqlwrapheader = '';
-        $sqlwrapfooter = '';
 
         $where = '';
         $fullpivot = 0;
