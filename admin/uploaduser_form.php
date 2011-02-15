@@ -206,10 +206,18 @@ class admin_uploaduser_form2 extends moodleform {
 
         $mform->addElement('text', 'city', get_string('city'), 'maxlength="100" size="25"');
         $mform->setType('city', PARAM_MULTILANG);
-        $mform->setDefault('city', $templateuser->city);
+        if (empty($CFG->defaultcity)) {
+            $mform->setDefault('city', $templateuser->city);
+        } else {
+            $mform->setDefault('city', $CFG->defaultcity);
+        }
 
         $mform->addElement('select', 'country', get_string('selectacountry'), get_string_manager()->get_list_of_countries());
-        $mform->setDefault('country', $templateuser->country);
+        if (empty($CFG->country)) {
+            $mform->setDefault('country', $templateuser->country);
+        } else {
+            $mform->setDefault('country', $CFG->country);
+        }
         $mform->setAdvanced('country');
 
         $choices = get_list_of_timezones();

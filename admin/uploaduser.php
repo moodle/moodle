@@ -572,10 +572,6 @@ if ($formdata = $mform->is_cancelled()) {
             $user->timemodified = time();
             $user->timecreated = time();
 
-            if (!empty($CFG->defaultcity) and !property_exists($user, 'city')) {
-                $user->city = $CFG->defaultcity;
-            }
-
             if (isset($user->auth) && empty($user->auth)) {
                 $user->auth = 'manual';
             }
