@@ -549,6 +549,18 @@ class flexible_table {
             return array();
         }
 
+        foreach ($this->sess->sortby as $column => $notused) {
+            if (isset($this->columns[$column])) {
+                continue; // This column is OK.
+            }
+            if (in_array($column, array('firstname', 'lastname')) &&
+                    isset($this->columns['fullname'])) {
+                continue; // This column is OK.
+            }
+            // This column is not OK.
+            unset($this->sess->sortby[$column]);
+        }
+
         return $this->sess->sortby;
     }
 
@@ -573,7 +585,7 @@ class flexible_table {
     }
 
     /**
-     * @return array - sql where, params array
+     * @return string sql to add to where statement.
      */
     function get_sql_where() {
         global $DB;
@@ -1304,8 +1316,15 @@ class table_sql extends flexible_table {
 
         // Fetch the attempts
         $sort = $this->get_sql_sort();
-        $sort = $sort?" ORDER BY {$sort}":'';
-        $sql = "SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}{$sort}";
+        if ($sort) {
+            $sort = "ORDER BY $sort";
+        }
+        $sql = "SELECT
+                {$this->sql->fields}
+                FROM {$this->sql->from}
+                WHERE {$this->sql->where}
+                {$sort}";
+
         if (!$this->is_downloading()) {
             $this->rawdata = $DB->get_records_sql($sql, $this->sql->params, $this->get_page_start(), $this->get_page_size());
         } else {
