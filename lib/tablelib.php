@@ -954,31 +954,36 @@ class flexible_table {
             $rowclasses[] = $classname;
         }
 
-        echo '<tr class="' . implode(' ', $rowclasses) . '">';
+        echo html_writer::start_tag('tr', array('class', implode(' ', $rowclasses)));
 
         // If we have a separator, print it
         if ($row === NULL) {
             $colcount = count($this->columns);
-            echo '<td colspan="'.$colcount.'"><div class="tabledivider"></div></td>';
+            echo html_writer::tag('td', html_writer::tag('div', '',
+                    array('class' => 'tabledivider')), array('colspan' => $colcount));
+
         } else {
             $colbyindex = array_flip($this->columns);
             foreach ($row as $index => $data) {
                 $column = $colbyindex[$index];
-                echo '<td class="cell c'.$index.$this->column_class[$column].'"'.$this->make_styles_string($this->column_style[$column]).'>';
+
                 if (empty($this->sess->collapse[$column])) {
                     if ($this->column_suppress[$column] && $suppress_lastrow !== NULL && $suppress_lastrow[$index] === $data) {
-                        echo '&nbsp;';
+                        $content = '&nbsp;';
                     } else {
-                        echo $data;
+                        $content = $data;
                     }
                 } else {
-                    echo '&nbsp;';
+                    $content = '&nbsp;';
                 }
-                echo '</td>';
+
+                echo html_writer::tag('td', $content, array(
+                        'class' => 'cell c' . $index . $this->column_class[$column],
+                        'style' => $this->make_styles_string($this->column_style[$column])));
             }
         }
 
-        echo '</tr>';
+        echo html_writer::end_tag('tr');
 
         $suppress_enabled = array_sum($this->column_suppress);
         if ($suppress_enabled) {
@@ -994,40 +999,54 @@ class flexible_table {
         if (!$this->started_output) {
             //no data has been added to the table.
             $this->print_nothing_to_display();
+
         } else {
-            echo '</table>';
+            echo html_writer::end_tag('table');
             echo html_writer::end_tag('div');
             $this->wrap_html_finish();
+
             // Paging bar
-            if (in_array(TABLE_P_BOTTOM, $this->showdownloadbuttonsat)) {
+            if(in_array(TABLE_P_BOTTOM, $this->showdownloadbuttonsat)) {
                 echo $this->download_buttons();
             }
-            if ($this->use_pages) {
+
+            if($this->use_pages) {
                 $pagingbar = new paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl);
                 $pagingbar->pagevar = $this->request[TABLE_VAR_PAGE];
                 echo $OUTPUT->render($pagingbar);
             }
         }
     }
+
+    protected function show_hide_link($column, $index) {
+        global $OUTPUT;
+        // Some headers contain <br /> tags, do not include in title, hence the
+        // strip tags.
+
+        if (!empty($this->sess->collapse[$column])) {
+            return html_writer::link($this->baseurl->out(false, array($this->request[TABLE_VAR_SHOW] => $column)),
+                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/switch_plus'), 'alt' => get_string('show'))),
+                    array('title' => get_string('show') . ' ' . strip_tags($this->headers[$index])));
+
+        } else if ($this->headers[$index] !== NULL) {
+            return html_writer::link($this->baseurl->out(false, array($this->request[TABLE_VAR_HIDE] => $column)),
+                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/switch_minus'), 'alt' => get_string('hide'))),
+                    array('title' => get_string('hide') . ' ' . strip_tags($this->headers[$index])));
+        }
+    }
+
     /**
      * This function is not part of the public api.
      */
     function print_headers() {
         global $CFG, $OUTPUT;
 
-        echo '<tr>';
+        echo html_writer::start_tag('tr');
         foreach ($this->columns as $column => $index) {
-            $icon_hide = '';
-            $icon_sort = '';
 
+            $icon_hide = '';
             if ($this->is_collapsible) {
-                if (!empty($this->sess->collapse[$column])) {
-                    // some headers contain < br/> tags, do not include in title
-                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_SHOW].'='.$column.'"><img src="'.$OUTPUT->pix_url('t/switch_plus') . '" title="'.get_string('show').' '.strip_tags($this->headers[$index]).'" alt="'.get_string('show').'" /></a>';
-                } else if($this->headers[$index] !== NULL) {
-                    // some headers contain < br/> tags, do not include in title
-                    $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_HIDE].'='.$column.'"><img src="'.$OUTPUT->pix_url('t/switch_minus') . '" title="'.get_string('hide').' '.strip_tags($this->headers[$index]).'" alt="'.get_string('hide').'" /></a>';
-                }
+                $icon_hide = $this->show_hide_link($column, $index);
             }
 
             $primary_sort_column = '';
@@ -1041,29 +1060,11 @@ class flexible_table {
 
                 case 'fullname':
                 if ($this->is_sortable($column)) {
-                    $icon_sort_first = $icon_sort_last = '';
-                    if ($primary_sort_column == 'firstname') {
-                        $lsortorder = get_string('asc');
-                        if ($primary_sort_order == SORT_ASC) {
-                            $icon_sort_first = ' <img src="'.$OUTPUT->pix_url('t/down') . '" alt="'.get_string('asc').'" />';
-                            $fsortorder = get_string('asc');
-                        } else {
-                            $icon_sort_first = ' <img src="'.$OUTPUT->pix_url('t/up') . '" alt="'.get_string('desc').'" />';
-                            $fsortorder = get_string('desc');
-                        }
-                    } else if($primary_sort_column == 'lastname') {
-                        $fsortorder = get_string('asc');
-                        if ($primary_sort_order == SORT_ASC) {
-                            $icon_sort_last = ' <img src="'.$OUTPUT->pix_url('t/down') . '" alt="'.get_string('asc').'" />';
-                            $lsortorder = get_string('asc');
-                        } else {
-                            $icon_sort_last = ' <img src="'.$OUTPUT->pix_url('t/up') . '" alt="'.get_string('desc').'" />';
-                            $lsortorder = get_string('desc');
-                        }
-                    } else {
-                        $fsortorder = get_string('asc');
-                        $lsortorder = get_string('asc');
-                    }
+                    $firstnamesortlink = $this->sort_link(get_string('firstname'),
+                            'firstname', $primary_sort_column === 'firstname', $primary_sort_order);
+
+                    $lastnamesortlink = $this->sort_link(get_string('lastname'),
+                            'lastname', $primary_sort_column === 'lastname', $primary_sort_order);
 
                     $override = new stdClass();
                     $override->firstname = 'firstname';
@@ -1073,11 +1074,9 @@ class flexible_table {
                     if (($CFG->fullnamedisplay == 'firstname lastname') or
                         ($CFG->fullnamedisplay == 'firstname') or
                         ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'firstname lastname' )) {
-                        $this->headers[$index] = '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'=firstname">'.get_string('firstname').get_accesshide(get_string('sortby').' '.get_string('firstname').' '.$fsortorder).'</a> '.$icon_sort_first.' / '.
-                                                 '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'=lastname">'.get_string('lastname').get_accesshide(get_string('sortby').' '.get_string('lastname').' '.$lsortorder).'</a> '.$icon_sort_last;
+                        $this->headers[$index] = $firstnamesortlink . ' / ' . $lastnamesortlink;
                     } else {
-                        $this->headers[$index] = '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'=lastname">'.get_string('lastname').get_accesshide(get_string('sortby').' '.get_string('lastname').' '.$lsortorder).'</a> '.$icon_sort_last.' / '.
-                                                 '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'=firstname">'.get_string('firstname').get_accesshide(get_string('sortby').' '.get_string('firstname').' '.$fsortorder).'</a> '.$icon_sort_first;
+                        $this->headers[$index] = $lastnamesortlink . ' / ' . $firstnamesortlink;
                     }
                 }
                 break;
@@ -1088,39 +1087,62 @@ class flexible_table {
 
                 default:
                 if ($this->is_sortable($column)) {
-                    if ($primary_sort_column == $column) {
-                        if ($primary_sort_order == SORT_ASC) {
-                            $icon_sort = ' <img src="'.$OUTPUT->pix_url('t/down') . '" alt="'.get_string('asc').'" />';
-                            $localsortorder = get_string('asc');
-                        } else {
-                            $icon_sort = ' <img src="'.$OUTPUT->pix_url('t/up') . '" alt="'.get_string('desc').'" />';
-                            $localsortorder = get_string('desc');
-                        }
-                    } else {
-                        $localsortorder = get_string('asc');
-                    }
-                    $this->headers[$index] = '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'='.$column.'">'.$this->headers[$index].get_accesshide(get_string('sortby').' '.$this->headers[$index].' '.$localsortorder).'</a>';
+                    $this->headers[$index] = $this->sort_link($this->headers[$index],
+                            $column, $primary_sort_column == $column, $primary_sort_order);
                 }
             }
 
+            $attributes = array(
+                'class' => 'header c' . $index . $this->column_class[$column],
+                'scope' => 'col',
+            );
             if ($this->headers[$index] === NULL) {
-                echo '<th class="header c'.$index.$this->column_class[$column].'" scope="col">&nbsp;</th>';
-            } else if(!empty($this->sess->collapse[$column])) {
-                echo '<th class="header c'.$index.$this->column_class[$column].'" scope="col">'.$icon_hide.'</th>';
+                $content = '&nbsp;';
+            } else if (!empty($this->sess->collapse[$column])) {
+                $content = $icon_hide;
             } else {
-                // took out nowrap for accessibility, might need replacement
-                if (!is_array($this->column_style[$column])) {
-                    // $usestyles = array('white-space:nowrap');
-                    $usestyles = '';
-                 } else {
-                    // $usestyles = $this->column_style[$column]+array('white-space'=>'nowrap');
-                    $usestyles = $this->column_style[$column];
-                 }
-                echo '<th class="header c'.$index.$this->column_class[$column].'" '.$this->make_styles_string($usestyles).' scope="col">'.$this->headers[$index].$icon_sort.'<div class="commands">'.$icon_hide.'</div></th>';
+                if (is_array($this->column_style[$column])) {
+                    $attributes['style'] = $this->make_styles_string($this->column_style[$column]);
+                }
+                $content = $this->headers[$index] . html_writer::tag('div',
+                        $icon_hide, array('class' => 'commands'));
             }
-
+            echo html_writer::tag('th', $content, $attributes);
         }
-        echo '</tr>';
+
+        echo html_writer::end_tag('tr');
+    }
+
+    protected function sort_icon($isprimary, $order) {
+        global $OUTPUT;
+
+        if (!$isprimary) {
+            return '';
+        }
+
+        if ($order == SORT_ASC) {
+            return html_writer::empty_tag('img',
+                    array('src' => $OUTPUT->pix_url('t/down'), 'alt' => get_string('asc')));
+        } else {
+            return html_writer::empty_tag('img',
+                    array('src' => $OUTPUT->pix_url('t/up'), 'alt' => get_string('desc')));
+        }
+    }
+
+    protected function sort_order_name($isprimary, $order) {
+        if ($isprimary && $order != SORT_ASC) {
+            return get_string('desc');
+        } else {
+            return get_string('asc');
+        }
+    }
+
+    protected function sort_link($text, $column, $isprimary, $order) {
+        return html_writer::link($this->baseurl->out(false,
+                array($this->request[TABLE_VAR_SORT] => $column)),
+                $text . get_accesshide(get_string('sortby') . ' ' .
+                $text . ' ' . $this->sort_order_name($isprimary, $order))) . ' ' .
+                $this->sort_icon($isprimary, $order);
     }
 
     /**
@@ -1145,44 +1167,25 @@ class flexible_table {
         $this->wrap_html_start();
         // Start of main data table
 
-        echo html_writer::start_tag('div', array('class'=>'no-overflow'));
-        echo '<table'.$this->make_attributes_string($this->attributes).'>';
+        echo html_writer::start_tag('div', array('class' => 'no-overflow'));
+        echo html_writer::start_tag('table', $this->attributes);
 
     }
 
     /**
      * This function is not part of the public api.
-     * @todo Document
-     * @return type?
+     * @param array $styles CSS-property => value
+     * @return string values suitably to go in a style="" attribute in HTML.
      */
-    function make_styles_string(&$styles) {
+    function make_styles_string($styles) {
         if (empty($styles)) {
-            return '';
+            return null;
         }
 
-        $string = ' style="';
-        foreach ($styles as $property => $value) {
-            $string .= $property.':'.$value.';';
+        $string = '';
+        foreach($styles as $property => $value) {
+            $string .= $property . ':' . $value . ';';
         }
-        $string .= '"';
-        return $string;
-    }
-
-    /**
-     * This function is not part of the public api.
-     * @todo Document
-     * @return type?
-     */
-    function make_attributes_string(&$attributes) {
-        if (empty($attributes)) {
-            return '';
-        }
-
-        $string = ' ';
-        foreach ($attributes as $attr => $value) {
-            $string .= ($attr.'="'.$value.'" ');
-        }
-
         return $string;
     }
 }
