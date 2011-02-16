@@ -177,7 +177,10 @@ class quiz_statistics_question_stats {
             $this->initial_question_walker($subquestion->_stats);
 
             if ($subquestionstats[$qid]->differentweights) {
-                notify(get_string('erroritemappearsmorethanoncewithdifferentweight', 'quiz_statistics', $this->subquestions[$qid]->name));
+                // TODO output here really sucks, but throwing is too severe.
+                global $OUTPUT;
+                echo $OUTPUT->notification(get_string('erroritemappearsmorethanoncewithdifferentweight',
+                        'quiz_statistics', $this->subquestions[$qid]->name));
             }
 
             if ($subquestion->_stats->usedin) {

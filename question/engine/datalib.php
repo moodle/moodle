@@ -476,13 +476,14 @@ $sqlorderby
      */
     public function load_average_marks(qubaid_condition $qubaids, $slots = null) {
         if (!empty($slots)) {
-            list($slottest, $params) = get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot0000');
+            list($slottest, $slotsparams) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot0000');
             $slotwhere = " AND qa.slot $slottest";
         } else {
             $slotwhere = '';
+            $params = array();
         }
 
-        list($statetest) = get_in_or_equal(array(
+        list($statetest, $stateparams) = $this->db->get_in_or_equal(array(
                 question_state::$gaveup,
                 question_state::$gradedwrong,
                 question_state::$gradedpartial,
@@ -490,9 +491,9 @@ $sqlorderby
                 question_state::$mangaveup,
                 question_state::$mangrwrong,
                 question_state::$mangrpartial,
-                question_state::$mangrright));
+                question_state::$mangrright), SQL_PARAMS_NAMED, 'st00');
 
-        $records = get_records_sql("
+        return $this->db->get_records_sql("
 SELECT
     qa.slot,
     AVG(COALESCE(qas.fraction, 0)) AS averagefraction,
@@ -510,9 +511,7 @@ WHERE
 GROUP BY qa.slot
 
 ORDER BY qa.slot
-        ");
-
-        return $records;
+        ", $slotsparams + $stateparams + $qubaids->from_where_params());
     }
 
     /**
@@ -659,7 +658,7 @@ ORDER BY
         if (empty($qaids)) {
             return;
         }
-        list($test, $params) = get_in_or_equal($qaids);
+        list($test, $params) = $this->db->get_in_or_equal($qaids);
         $this->db->delete_records_select('question_attempt_step_data', "attemptstepid IN (
                 SELECT qas.id
                 FROM {question_attempt_steps} qas
@@ -1060,6 +1059,7 @@ class qubaid_join extends qubaid_condition {
      * @param string $usageidcolumn the column in $from that should be
      * made equal to the usageid column in the JOIN clause.
      * @param string $where SQL fragment to go in the where clause.
+     * @param array $params required by the SQL. You must use named parameters.
      */
     public function __construct($from, $usageidcolumn, $where = '', $params = array()) {
         $this->from = $from;

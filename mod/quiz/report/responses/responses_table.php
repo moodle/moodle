@@ -69,6 +69,7 @@ class quiz_report_responses_table extends quiz_attempt_report_table {
             return;
         }
 
+        // TODO add back are you sure, and convert to html_writer.
         echo '<div id="commands">';
         echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.
                 get_string('selectall', 'quiz').'</a> / ';

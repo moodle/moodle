@@ -4,14 +4,14 @@
     xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="quiz_question_regrade" COMMENT="This table records which question attempts need regrading and the grade they will be regraded to.">
+    <TABLE NAME="quiz_overview_regrades" COMMENT="This table records which question attempts need regrading and the grade they will be regraded to.">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="questionid"/>
-        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key references question.id." PREVIOUS="id" NEXT="attemptid"/>
-        <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key references question_attempt.id, or equivalently quiz_attempt.uniqueid." PREVIOUS="questionid" NEXT="newgrade"/>
-        <FIELD NAME="newgrade" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" DECIMALS="7" COMMENT="The new grade for this question after regrading." PREVIOUS="attemptid" NEXT="oldgrade"/>
-        <FIELD NAME="oldgrade" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" DECIMALS="7" COMMENT="The previous grade for this question in this attempt." PREVIOUS="newgrade" NEXT="regraded"/>
-        <FIELD NAME="regraded" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="set to 0 if element has just been regraded. Set to 1 if element has been marked as needing regrading." PREVIOUS="oldgrade" NEXT="timemodified"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="questionusageid"/>
+        <FIELD NAME="questionusageid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key references question_usages.id, or equivalently quiz_attempt.uniqueid." PREVIOUS="id" NEXT="slot"/>
+        <FIELD NAME="slot" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key, references question_attempts.slot" PREVIOUS="questionusageid" NEXT="newfraction"/>
+        <FIELD NAME="newfraction" TYPE="number" LENGTH="12" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="7" COMMENT="The new fraction for this question_attempt after regrading." PREVIOUS="slot" NEXT="oldfraction"/>
+        <FIELD NAME="oldfraction" TYPE="number" LENGTH="12" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="7" COMMENT="The previous fraction for this question_attempt." PREVIOUS="newfraction" NEXT="regraded"/>
+        <FIELD NAME="regraded" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="set to 0 if element has just been regraded. Set to 1 if element has been marked as needing regrading." PREVIOUS="oldfraction" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Timestamp of when this row was last modified." PREVIOUS="regraded"/>
       </FIELDS>
       <KEYS>

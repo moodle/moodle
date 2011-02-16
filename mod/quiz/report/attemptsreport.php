@@ -412,33 +412,30 @@ abstract class quiz_attempt_report_table extends table_sql {
         return $OUTPUT->user_picture($user);
     }
 
-
-    public function col_timestart($attempt) {
-        if (!$attempt->attempt) {
-            return  '-';
+    public function col_fullname($attempt) {
+        $html = parent::col_fullname($attempt);
+        if ($this->is_downloading()) {
+            return $html;
         }
 
-        $startdate = userdate($attempt->timestart, $this->strtimeformat);
-        if (!$this->is_downloading()) {
-            return html_writer::link(new moodle_url('/mod/quiz/review.php', array('attempt' => $attempt->attempt)), $startdate);
+        return $html . html_writer::empty_tag('br') . html_writer::link(
+                new moodle_url('/mod/quiz/review.php', array('attempt' => $attempt->attempt)),
+                get_string('reviewattempt', 'quiz'), array('class' => 'reviewlink'));
+    }
+
+    public function col_timestart($attempt) {
+        if ($attempt->attempt) {
+            return userdate($attempt->timestart, $this->strtimeformat);
         } else {
-            return  $startdate;
+            return  '-';
         }
     }
 
     public function col_timefinish($attempt) {
-        if (!$attempt->attempt) {
-            return  '-';
-        }
-        if (!$attempt->timefinish) {
-            return  '-';
-        }
-
-        $timefinish = userdate($attempt->timefinish, $this->strtimeformat);
-        if (!$this->is_downloading()) {
-            return html_writer::link(new moodle_url('/mod/quiz/review.php', array('attempt' => $attempt->attempt)), $timefinish);
+        if ($attempt->attempt && $attempt->timefinish) {
+            return userdate($attempt->timefinish, $this->strtimeformat);
         } else {
-            return $timefinish;
+            return  '-';
         }
     }
 

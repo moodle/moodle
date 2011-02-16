@@ -27,7 +27,7 @@ DONE lib/simpletest/testsimpletestlib.php               |  116 + Already in 2.0
 DONE lib/simpletest/testweblib.php                      |    4 + Useful new test. See MDL-24060.
 DONE lib/simpletestlib.php                              |  290 ++ Useful new assertions. 
 DONE lib/simpletestlib/dumper.php                       |    3 + Not needed. KILL
- lib/tablelib.php                                   | 1224 +++++++-- TODO. See MDL-25716
+DONE lib/tablelib.php                                   | 1224 +++++++-- TODO. See MDL-25716
 DONE lib/weblib.php                                     |   10 +- Improve html_to_text. See MDL-24060.
 DONE lib/xmlize.php                                     |   74 +- In 2.0
 DONE mod/assignment/lib.php                             |    2 +- TODO MDL-25716
@@ -129,15 +129,15 @@ DONE mod/quiz/report/grading/report.php                 |  842 ++++---
 DONE mod/quiz/report/grading/version.php                |   26 +
 DONE lang/en_utf8/quiz_grading.php                      |   18 -
 
- mod/quiz/report/overview/db/install.xml            |   22 +
- mod/quiz/report/overview/db/upgrade.php            |  152 +
- mod/quiz/report/overview/lang/en_utf8/quiz_overview.php |   54 +
- mod/quiz/report/overview/overview_table.php        |  321 +++
- mod/quiz/report/overview/overviewgraph.php         |  168 +-
- mod/quiz/report/overview/overviewsettings_form.php |   69 +-
- mod/quiz/report/overview/report.php                |  999 +++----
- mod/quiz/report/overview/version.php               |   26 +
- lang/en_utf8/quiz_overview.php                     |   30 -
+DONE mod/quiz/report/overview/db/install.xml            |   22 +
+DONE mod/quiz/report/overview/db/upgrade.php            |  152 +
+DONE mod/quiz/report/overview/lang/en_utf8/quiz_overview.php |   54 +
+DONE mod/quiz/report/overview/overview_table.php        |  321 +++
+DONE mod/quiz/report/overview/overviewgraph.php         |  168 +-
+DONE mod/quiz/report/overview/overviewsettings_form.php |   69 +-
+DONE mod/quiz/report/overview/report.php                |  999 +++----
+DONE mod/quiz/report/overview/version.php               |   26 +
+DONE lang/en_utf8/quiz_overview.php                     |   30 -
 
 DONE mod/quiz/report/responses/lang/en_utf8/quiz_responses.php      |   19 +
 DONE mod/quiz/report/responses/report.php               |  242 ++

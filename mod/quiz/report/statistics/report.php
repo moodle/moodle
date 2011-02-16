@@ -540,7 +540,7 @@ class quiz_statistics_report extends quiz_default_report {
         $OUTPUT->heading(get_string('statisticsreportgraph', 'quiz_statistics'));
         echo html_writer::tag('div', html_writer::empty_tag('img',
                 array('src' => $imageurl, 'alt' => get_string('statisticsreportgraph', 'quiz_statistics'))),
-                array('class' => 'mdl-align'));
+                array('class' => 'graph'));
     }
 
     /**
