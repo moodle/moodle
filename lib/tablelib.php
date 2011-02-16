@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 defined('MOODLE_INTERNAL') || die();
 
 /** TABLE_VAR_SORT = 1 */
@@ -41,6 +42,7 @@ define('TABLE_VAR_PAGE',   6);
 define('TABLE_P_TOP',   1);
 /** TABLE_P_BOTTOM = 2 */
 define('TABLE_P_BOTTOM',  2);
+
 
 /**
  * @package   moodlecore
@@ -78,7 +80,6 @@ class flexible_table {
      * Array of positions in which to display download controls.
      */
     var $showdownloadbuttonsat= array(TABLE_P_TOP);
-
 
     /**
      * @var string Key of field returned by db query that is the id field of the
@@ -142,8 +143,8 @@ class flexible_table {
      * @param string $sheettitle title for downloaded data.
      * @return string download type.  One of csv, tsv, xhtml, ods, etc
      */
-    function is_downloading($download = null, $filename='', $sheettitle=''){
-        if ($download!==null){
+    function is_downloading($download = null, $filename='', $sheettitle='') {
+        if ($download!==null) {
             $this->sheettitle = $sheettitle;
             $this->is_downloadable(true);
             $this->download = $download;
@@ -153,21 +154,20 @@ class flexible_table {
         return $this->download;
     }
 
-    function export_class_instance(&$exportclass=null){
-        if (!is_null($exportclass)){
+    function export_class_instance(&$exportclass=null) {
+        if (!is_null($exportclass)) {
             $this->started_output = true;
             $this->exportclass =& $exportclass;
             $this->exportclass->table =& $this;
-        } elseif (is_null($this->exportclass) && !empty($this->download)){
+        } elseif (is_null($this->exportclass) && !empty($this->download)) {
             $classname = 'table_'.$this->download.'_export_format';
             $this->exportclass = new $classname($this);
-            if (!$this->exportclass->document_started()){
+            if (!$this->exportclass->document_started()) {
                 $this->exportclass->start_document($this->filename);
             }
         }
         return $this->exportclass;
     }
-
 
     /**
      * Probably don't need to call this directly. Calling is_downloading with a
@@ -178,8 +178,8 @@ class flexible_table {
      * current state of table.
      * @return boolean whether table data is set to be downloadable.
      */
-    function is_downloadable($downloadable = null){
-        if ($downloadable !== null){
+    function is_downloadable($downloadable = null) {
+        if ($downloadable !== null) {
             $this->downloadable = $downloadable;
         }
         return $this->downloadable;
@@ -190,10 +190,9 @@ class flexible_table {
      * @param array $showat array of postions in which to show download buttons.
      * Containing TABLE_P_TOP and/or TABLE_P_BOTTOM
      */
-    function show_download_buttons_at($showat){
+    function show_download_buttons_at($showat) {
         $this->showdownloadbuttonsat = $showat;
     }
-
 
     /**
      * Sets the is_sortable variable to the given boolean, sort_default_column to
@@ -222,7 +221,7 @@ class flexible_table {
      * @param string column name, null means table
      * @return bool
      */
-    function is_sortable($column=null) {
+    function is_sortable($column = null) {
         if (empty($column)) {
             return $this->is_sortable;
         }
@@ -231,6 +230,7 @@ class flexible_table {
         }
         return !in_array($column, $this->column_nosort);
     }
+
     /**
      * Sets the is_collapsible variable to the given boolean.
      * @param bool $bool
@@ -278,8 +278,8 @@ class flexible_table {
      * @return void
      */
     function set_control_variables($variables) {
-        foreach($variables as $what => $variable) {
-            if(isset($this->request[$what])) {
+        foreach ($variables as $what => $variable) {
+            if (isset($this->request[$what])) {
                 $this->request[$what] = $variable;
             }
         }
@@ -305,7 +305,7 @@ class flexible_table {
      * @param integer $column the index of a column.
      */
     function column_suppress($column) {
-        if(isset($this->column_suppress[$column])) {
+        if (isset($this->column_suppress[$column])) {
             $this->column_suppress[$column] = true;
         }
     }
@@ -317,7 +317,7 @@ class flexible_table {
      * @return void
      */
     function column_class($column, $classname) {
-        if(isset($this->column_class[$column])) {
+        if (isset($this->column_class[$column])) {
             $this->column_class[$column] = ' '.$classname; // This space needed so that classnames don't run together in the HTML
         }
     }
@@ -330,7 +330,7 @@ class flexible_table {
      * @return void
      */
     function column_style($column, $property, $value) {
-        if(isset($this->column_style[$column])) {
+        if (isset($this->column_style[$column])) {
             $this->column_style[$column][$property] = $value;
         }
     }
@@ -342,7 +342,7 @@ class flexible_table {
      * @return void
      */
     function column_style_all($property, $value) {
-        foreach(array_keys($this->columns) as $column) {
+        foreach (array_keys($this->columns) as $column) {
             $this->column_style[$column][$property] = $value;
         }
     }
@@ -353,10 +353,9 @@ class flexible_table {
      */
     function define_baseurl($url) {
         $this->reseturl = $url;
-        if(!strpos($url, '?')) {
+        if (!strpos($url, '?')) {
             $this->baseurl = $url.'?';
-        }
-        else {
+        } else {
             $this->baseurl = $url.'&amp;';
         }
     }
@@ -371,7 +370,7 @@ class flexible_table {
         $this->column_class = array();
         $colnum = 0;
 
-        foreach($columns as $column) {
+        foreach ($columns as $column) {
             $this->columns[$column]         = $colnum++;
             $this->column_style[$column]    = array();
             $this->column_class[$column]    = '';
@@ -387,9 +386,6 @@ class flexible_table {
         $this->headers = $headers;
     }
 
-
-
-
     /**
      * Must be called after table is defined. Use methods above first. Cannot
      * use functions below till after calling this method.
@@ -398,7 +394,7 @@ class flexible_table {
     function setup() {
         global $SESSION, $CFG;
 
-        if(empty($this->columns) || empty($this->uniqueid)) {
+        if (empty($this->columns) || empty($this->uniqueid)) {
             return false;
         }
 
@@ -406,7 +402,7 @@ class flexible_table {
             $SESSION->flextable = array();
         }
 
-        if(!isset($SESSION->flextable[$this->uniqueid])) {
+        if (!isset($SESSION->flextable[$this->uniqueid])) {
             $SESSION->flextable[$this->uniqueid] = new stdClass;
             $SESSION->flextable[$this->uniqueid]->uniqueid = $this->uniqueid;
             $SESSION->flextable[$this->uniqueid]->collapse = array();
@@ -417,45 +413,43 @@ class flexible_table {
 
         $this->sess = &$SESSION->flextable[$this->uniqueid];
 
-        if(!empty($_GET[$this->request[TABLE_VAR_SHOW]]) && isset($this->columns[$_GET[$this->request[TABLE_VAR_SHOW]]])) {
+        if (!empty($_GET[$this->request[TABLE_VAR_SHOW]]) && isset($this->columns[$_GET[$this->request[TABLE_VAR_SHOW]]])) {
             // Show this column
             $this->sess->collapse[$_GET[$this->request[TABLE_VAR_SHOW]]] = false;
-        }
-        else if(!empty($_GET[$this->request[TABLE_VAR_HIDE]]) && isset($this->columns[$_GET[$this->request[TABLE_VAR_HIDE]]])) {
+        } else if(!empty($_GET[$this->request[TABLE_VAR_HIDE]]) && isset($this->columns[$_GET[$this->request[TABLE_VAR_HIDE]]])) {
             // Hide this column
             $this->sess->collapse[$_GET[$this->request[TABLE_VAR_HIDE]]] = true;
-            if(array_key_exists($_GET[$this->request[TABLE_VAR_HIDE]], $this->sess->sortby)) {
+            if (array_key_exists($_GET[$this->request[TABLE_VAR_HIDE]], $this->sess->sortby)) {
                 unset($this->sess->sortby[$_GET[$this->request[TABLE_VAR_HIDE]]]);
             }
         }
 
         // Now, update the column attributes for collapsed columns
-        foreach(array_keys($this->columns) as $column) {
-            if(!empty($this->sess->collapse[$column])) {
+        foreach (array_keys($this->columns) as $column) {
+            if (!empty($this->sess->collapse[$column])) {
                 $this->column_style[$column]['width'] = '10px';
             }
         }
 
-        if(
+        if (
             !empty($_GET[$this->request[TABLE_VAR_SORT]]) && $this->is_sortable($_GET[$this->request[TABLE_VAR_SORT]]) &&
             (isset($this->columns[$_GET[$this->request[TABLE_VAR_SORT]]]) ||
                 (($_GET[$this->request[TABLE_VAR_SORT]] == 'firstname' || $_GET[$this->request[TABLE_VAR_SORT]] == 'lastname') && isset($this->columns['fullname']))
             ))
         {
-            if(empty($this->sess->collapse[$_GET[$this->request[TABLE_VAR_SORT]]])) {
-                if(array_key_exists($_GET[$this->request[TABLE_VAR_SORT]], $this->sess->sortby)) {
+            if (empty($this->sess->collapse[$_GET[$this->request[TABLE_VAR_SORT]]])) {
+                if (array_key_exists($_GET[$this->request[TABLE_VAR_SORT]], $this->sess->sortby)) {
                     // This key already exists somewhere. Change its sortorder and bring it to the top.
                     $sortorder = $this->sess->sortby[$_GET[$this->request[TABLE_VAR_SORT]]] == SORT_ASC ? SORT_DESC : SORT_ASC;
                     unset($this->sess->sortby[$_GET[$this->request[TABLE_VAR_SORT]]]);
                     $this->sess->sortby = array_merge(array($_GET[$this->request[TABLE_VAR_SORT]] => $sortorder), $this->sess->sortby);
-                }
-                else {
+                } else {
                     // Key doesn't exist, so just add it to the beginning of the array, ascending order
                     $this->sess->sortby = array_merge(array($_GET[$this->request[TABLE_VAR_SORT]] => SORT_ASC), $this->sess->sortby);
                 }
                 // Finally, make sure that no more than $this->maxsortkeys are present into the array
-                if(!empty($this->maxsortkeys) && ($sortkeys = count($this->sess->sortby)) > $this->maxsortkeys) {
-                    while($sortkeys-- > $this->maxsortkeys) {
+                if (!empty($this->maxsortkeys) && ($sortkeys = count($this->sess->sortby)) > $this->maxsortkeys) {
+                    while ($sortkeys-- > $this->maxsortkeys) {
                         array_pop($this->sess->sortby);
                     }
                 }
@@ -463,23 +457,23 @@ class flexible_table {
         }
 
         // If we didn't sort just now, then use the default sort order if one is defined and the column exists
-        if(empty($this->sess->sortby) && !empty($this->sort_default_column))  {
+        if (empty($this->sess->sortby) && !empty($this->sort_default_column))  {
             $this->sess->sortby = array ($this->sort_default_column => ($this->sort_default_order == SORT_DESC ? SORT_DESC : SORT_ASC));
         }
 
-        if(isset($_GET[$this->request[TABLE_VAR_ILAST]])) {
-            if(empty($_GET[$this->request[TABLE_VAR_ILAST]]) || is_numeric(strpos(get_string('alphabet', 'langconfig'), $_GET[$this->request[TABLE_VAR_ILAST]]))) {
+        if (isset($_GET[$this->request[TABLE_VAR_ILAST]])) {
+            if (empty($_GET[$this->request[TABLE_VAR_ILAST]]) || is_numeric(strpos(get_string('alphabet', 'langconfig'), $_GET[$this->request[TABLE_VAR_ILAST]]))) {
                 $this->sess->i_last = $_GET[$this->request[TABLE_VAR_ILAST]];
             }
         }
 
-        if(isset($_GET[$this->request[TABLE_VAR_IFIRST]])) {
-            if(empty($_GET[$this->request[TABLE_VAR_IFIRST]]) || is_numeric(strpos(get_string('alphabet', 'langconfig'), $_GET[$this->request[TABLE_VAR_IFIRST]]))) {
+        if (isset($_GET[$this->request[TABLE_VAR_IFIRST]])) {
+            if (empty($_GET[$this->request[TABLE_VAR_IFIRST]]) || is_numeric(strpos(get_string('alphabet', 'langconfig'), $_GET[$this->request[TABLE_VAR_IFIRST]]))) {
                 $this->sess->i_first = $_GET[$this->request[TABLE_VAR_IFIRST]];
             }
         }
 
-        if(empty($this->baseurl)) {
+        if (empty($this->baseurl)) {
             $getcopy  = $_GET;
             unset($getcopy[$this->request[TABLE_VAR_SHOW]]);
             unset($getcopy[$this->request[TABLE_VAR_HIDE]]);
@@ -490,22 +484,20 @@ class flexible_table {
 
             $strippedurl = strip_querystring(qualified_me());
 
-            if(!empty($getcopy)) {
+            if (!empty($getcopy)) {
                 $first = false;
                 $querystring = '';
-                foreach($getcopy as $var => $val) {
-                    if(!$first) {
+                foreach ($getcopy as $var => $val) {
+                    if (!$first) {
                         $first = true;
                         $querystring .= '?'.$var.'='.$val;
-                    }
-                    else {
+                    } else {
                         $querystring .= '&amp;'.$var.'='.$val;
                     }
                 }
                 $this->reseturl =  $strippedurl.$querystring;
                 $querystring .= '&amp;';
-            }
-            else {
+            } else {
                 $this->reseturl =  $strippedurl;
                 $querystring = '?';
             }
@@ -514,7 +506,7 @@ class flexible_table {
         }
 
         // If it's "the first time" we 've been here, forget the previous initials filters
-        if(qualified_me() == $this->reseturl) {
+        if (qualified_me() == $this->reseturl) {
             $this->sess->i_first = '';
             $this->sess->i_last  = '';
         }
@@ -542,7 +534,7 @@ class flexible_table {
      */
     public static function get_sort_for_table($uniqueid) {
         global $SESSION;
-        if(empty($SESSION->flextable[$uniqueid])) {
+        if (empty($SESSION->flextable[$uniqueid])) {
            return '';
         }
 
@@ -562,7 +554,7 @@ class flexible_table {
     public static function construct_order_by($cols) {
         $bits = array();
 
-        foreach($cols as $column => $order) {
+        foreach ($cols as $column => $order) {
             if ($order == SORT_ASC) {
                 $bits[] = $column . ' ASC';
             } else {
@@ -600,7 +592,7 @@ class flexible_table {
      * @return integer the offset for LIMIT clause of SQL
      */
     function get_page_start() {
-        if(!$this->use_pages) {
+        if (!$this->use_pages) {
             return '';
         }
         return $this->currpage * $this->pagesize;
@@ -610,7 +602,7 @@ class flexible_table {
      * @return integer the pagesize for LIMIT clause of SQL
      */
     function get_page_size() {
-        if(!$this->use_pages) {
+        if (!$this->use_pages) {
             return '';
         }
         return $this->pagesize;
@@ -652,7 +644,7 @@ class flexible_table {
      * @param $rowwithkeys array
      * @param string $classname CSS class name to add to this row's tr tag.
      */
-    function add_data_keyed($rowwithkeys, $classname = ''){
+    function add_data_keyed($rowwithkeys, $classname = '') {
         $this->add_data($this->get_row_from_keyed($rowwithkeys), $classname);
     }
 
@@ -660,7 +652,7 @@ class flexible_table {
      * Add a seperator line to table.
      */
     function add_separator() {
-        if(!$this->setup) {
+        if (!$this->setup) {
             return false;
         }
         $this->add_data(NULL);
@@ -678,14 +670,14 @@ class flexible_table {
      * @return boolean success.
      */
     function add_data($row, $classname = '') {
-        if(!$this->setup) {
+        if (!$this->setup) {
             return false;
         }
-        if (!$this->started_output){
+        if (!$this->started_output) {
             $this->start_output();
         }
-        if ($this->exportclass!==null){
-            if ($row === null){
+        if ($this->exportclass!==null) {
+            if ($row === null) {
                 $this->exportclass->add_seperator();
             } else {
                 $this->exportclass->add_data($row);
@@ -696,20 +688,18 @@ class flexible_table {
         return true;
     }
 
-
-
     /**
      * You should call this to finish outputting the table data after adding
      * data to the table with add_data or add_data_keyed.
      *
      */
-    function finish_output($closeexportclassdoc = true){
-        if ($this->exportclass!==null){
+    function finish_output($closeexportclassdoc = true) {
+        if ($this->exportclass!==null) {
             $this->exportclass->finish_table();
-            if ($closeexportclassdoc){
+            if ($closeexportclassdoc) {
                 $this->exportclass->finish_document();
             }
-        }else{
+        } else {
             $this->finish_html();
         }
     }
@@ -719,7 +709,7 @@ class flexible_table {
      * for example. Called only when there is data to display and not
      * downloading.
      */
-    function wrap_html_start(){
+    function wrap_html_start() {
     }
 
     /**
@@ -727,24 +717,23 @@ class flexible_table {
      * for example. Called only when there is data to display and not
      * downloading.
      */
-    function wrap_html_finish(){
+    function wrap_html_finish() {
     }
-
 
     /**
      *
      * @param array $row row of data from db used to make one row of the table.
      * @return array one row for the table, added using add_data_keyed method.
      */
-    function format_row($row){
+    function format_row($row) {
         $formattedrow = array();
-        foreach (array_keys($this->columns) as $column){
+        foreach (array_keys($this->columns) as $column) {
             $colmethodname = 'col_'.$column;
-            if (method_exists($this, $colmethodname)){
+            if (method_exists($this, $colmethodname)) {
                 $formattedcolumn = $this->$colmethodname($row);
             } else {
                 $formattedcolumn = $this->other_cols($column, $row);
-                if ($formattedcolumn===NULL){
+                if ($formattedcolumn===NULL) {
                     $formattedcolumn = $row->$column;
                 }
             }
@@ -761,10 +750,10 @@ class flexible_table {
      * field for the user id.
      *
      */
-    function col_fullname($row){
+    function col_fullname($row) {
         global $COURSE, $CFG;
 
-        if (!$this->download){
+        if (!$this->download) {
             if ($COURSE->id == SITEID) {
                 return '<a href="'.$CFG->wwwroot.'/user/profile.php?id='.$row->{$this->useridfield}.  '">'.
                         fullname($row).'</a>';
@@ -781,10 +770,9 @@ class flexible_table {
      * You can override this method in a child class. See the description of
      * build_table which calls this method.
      */
-    function other_cols($column, $row){
+    function other_cols($column, $row) {
         return NULL;
     }
-
 
     /**
      * Used from col_* functions when text is to be displayed. Does the
@@ -793,16 +781,16 @@ class flexible_table {
      * are the same as format_text function in weblib.php but some default
      * options are changed.
      */
-    function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL){
-        if (!$this->is_downloading()){
-            if (is_null($options)){
+    function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL) {
+        if (!$this->is_downloading()) {
+            if (is_null($options)) {
                 $options = new stdClass;
             }
             //some sensible defaults
-            if (!isset($options->para)){
+            if (!isset($options->para)) {
                 $options->para = false;
             }
-            if (!isset($options->newlines)){
+            if (!isset($options->newlines)) {
                 $options->newlines = false;
             }
             if (!isset($options->smiley)) {
@@ -822,7 +810,7 @@ class flexible_table {
      * @deprecated 1.9.2 - Jun 2, 2008
      */
     function print_html() {
-        if(!$this->setup) {
+        if (!$this->setup) {
             return false;
         }
         $this->finish_html();
@@ -833,7 +821,7 @@ class flexible_table {
      * @return string initial of first name we are currently filtering by
      */
     function get_initial_first() {
-        if(!$this->use_initials) {
+        if (!$this->use_initials) {
             return NULL;
         }
 
@@ -845,7 +833,7 @@ class flexible_table {
      * @return string initial of last name we are currently filtering by
      */
     function get_initial_last() {
-        if(!$this->use_initials) {
+        if (!$this->use_initials) {
             return NULL;
         }
 
@@ -855,7 +843,7 @@ class flexible_table {
     /**
      * This function is not part of the public api.
      */
-    function print_initials_bar(){
+    function print_initials_bar() {
         if ((!empty($this->sess->i_last) || !empty($this->sess->i_first) || $this->use_initials)
                     && isset($this->columns['fullname'])) {
 
@@ -865,7 +853,7 @@ class flexible_table {
             // Bar of first initials
 
             echo '<div class="initialbar firstinitial">'.get_string('firstname').' : ';
-            if(!empty($this->sess->i_first)) {
+            if (!empty($this->sess->i_first)) {
                 echo '<a href="'.$this->baseurl.$this->request[TABLE_VAR_IFIRST].'=">'.$strall.'</a>';
             } else {
                 echo '<strong>'.$strall.'</strong>';
@@ -882,7 +870,7 @@ class flexible_table {
             // Bar of last initials
 
             echo '<div class="initialbar lastinitial">'.get_string('lastname').' : ';
-            if(!empty($this->sess->i_last)) {
+            if (!empty($this->sess->i_last)) {
                 echo '<a href="'.$this->baseurl.$this->request[TABLE_VAR_ILAST].'=">'.$strall.'</a>';
             } else {
                 echo '<strong>'.$strall.'</strong>';
@@ -902,7 +890,7 @@ class flexible_table {
     /**
      * This function is not part of the public api.
      */
-    function print_nothing_to_display(){
+    function print_nothing_to_display() {
         global $OUTPUT;
         $this->print_initials_bar();
 
@@ -912,13 +900,13 @@ class flexible_table {
     /**
      * This function is not part of the public api.
      */
-    function get_row_from_keyed($rowwithkeys){
-        if (is_object($rowwithkeys)){
+    function get_row_from_keyed($rowwithkeys) {
+        if (is_object($rowwithkeys)) {
             $rowwithkeys = (array)$rowwithkeys;
         }
         $row = array();
-        foreach (array_keys($this->columns) as $column){
-            if (isset($rowwithkeys[$column])){
+        foreach (array_keys($this->columns) as $column) {
+            if (isset($rowwithkeys[$column])) {
                 $row [] = $rowwithkeys[$column];
             } else {
                 $row[] ='';
@@ -929,12 +917,12 @@ class flexible_table {
     /**
      * This function is not part of the public api.
      */
-    function get_download_menu(){
+    function get_download_menu() {
         $allclasses= get_declared_classes();
         $exportclasses = array();
-        foreach ($allclasses as $class){
+        foreach ($allclasses as $class) {
             $matches = array();
-            if (preg_match('/^table\_([a-z]+)\_export\_format$/', $class, $matches)){
+            if (preg_match('/^table\_([a-z]+)\_export\_format$/', $class, $matches)) {
                 $type = $matches[1];
                 $exportclasses[$type]= get_string("download$type", 'table');
             }
@@ -945,9 +933,9 @@ class flexible_table {
     /**
      * This function is not part of the public api.
      */
-    function download_buttons(){
+    function download_buttons() {
         global $OUTPUT;
-        if ($this->is_downloadable() && !$this->is_downloading()){
+        if ($this->is_downloadable() && !$this->is_downloading()) {
             $downloadoptions = $this->get_download_menu();
             $html = '<form action="'. $this->baseurl .'" method="post">';
             $html .= '<div class="mdl-align">';
@@ -966,9 +954,9 @@ class flexible_table {
      * needed when you start adding data to the table.
      *
      */
-    function start_output(){
+    function start_output() {
         $this->started_output = true;
-        if ($this->exportclass!==null){
+        if ($this->exportclass!==null) {
             $this->exportclass->start_table($this->sheettitle);
             $this->exportclass->output_headers($this->headers);
         } else {
@@ -1021,10 +1009,11 @@ class flexible_table {
             $suppress_lastrow = $row;
         }
     }
+
     /**
      * This function is not part of the public api.
      */
-    function finish_html(){
+    function finish_html() {
         global $OUTPUT;
         if (!$this->started_output) {
             //no data has been added to the table.
@@ -1034,10 +1023,10 @@ class flexible_table {
             echo html_writer::end_tag('div');
             $this->wrap_html_finish();
             // Paging bar
-            if(in_array(TABLE_P_BOTTOM, $this->showdownloadbuttonsat)) {
+            if (in_array(TABLE_P_BOTTOM, $this->showdownloadbuttonsat)) {
                 echo $this->download_buttons();
             }
-            if($this->use_pages) {
+            if ($this->use_pages) {
                 $pagingbar = new paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl);
                 $pagingbar->pagevar = $this->request[TABLE_VAR_PAGE];
                 echo $OUTPUT->render($pagingbar);
@@ -1047,20 +1036,19 @@ class flexible_table {
     /**
      * This function is not part of the public api.
      */
-    function print_headers(){
+    function print_headers() {
         global $CFG, $OUTPUT;
 
         echo '<tr>';
-        foreach($this->columns as $column => $index) {
+        foreach ($this->columns as $column => $index) {
             $icon_hide = '';
             $icon_sort = '';
 
-            if($this->is_collapsible) {
-                if(!empty($this->sess->collapse[$column])) {
+            if ($this->is_collapsible) {
+                if (!empty($this->sess->collapse[$column])) {
                     // some headers contain < br/> tags, do not include in title
                     $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_SHOW].'='.$column.'"><img src="'.$OUTPUT->pix_url('t/switch_plus') . '" title="'.get_string('show').' '.strip_tags($this->headers[$index]).'" alt="'.get_string('show').'" /></a>';
-                }
-                else if($this->headers[$index] !== NULL) {
+                } else if($this->headers[$index] !== NULL) {
                     // some headers contain < br/> tags, do not include in title
                     $icon_hide = ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_HIDE].'='.$column.'"><img src="'.$OUTPUT->pix_url('t/switch_minus') . '" title="'.get_string('hide').' '.strip_tags($this->headers[$index]).'" alt="'.get_string('hide').'" /></a>';
                 }
@@ -1068,34 +1056,31 @@ class flexible_table {
 
             $primary_sort_column = '';
             $primary_sort_order  = '';
-            if(reset($this->sess->sortby)) {
+            if (reset($this->sess->sortby)) {
                 $primary_sort_column = key($this->sess->sortby);
                 $primary_sort_order  = current($this->sess->sortby);
             }
 
-            switch($column) {
+            switch ($column) {
 
                 case 'fullname':
-                if($this->is_sortable($column)) {
+                if ($this->is_sortable($column)) {
                     $icon_sort_first = $icon_sort_last = '';
-                    if($primary_sort_column == 'firstname') {
+                    if ($primary_sort_column == 'firstname') {
                         $lsortorder = get_string('asc');
-                        if($primary_sort_order == SORT_ASC) {
+                        if ($primary_sort_order == SORT_ASC) {
                             $icon_sort_first = ' <img src="'.$OUTPUT->pix_url('t/down') . '" alt="'.get_string('asc').'" />';
                             $fsortorder = get_string('asc');
-                        }
-                        else {
+                        } else {
                             $icon_sort_first = ' <img src="'.$OUTPUT->pix_url('t/up') . '" alt="'.get_string('desc').'" />';
                             $fsortorder = get_string('desc');
                         }
-                    }
-                    else if($primary_sort_column == 'lastname') {
+                    } else if($primary_sort_column == 'lastname') {
                         $fsortorder = get_string('asc');
-                        if($primary_sort_order == SORT_ASC) {
+                        if ($primary_sort_order == SORT_ASC) {
                             $icon_sort_last = ' <img src="'.$OUTPUT->pix_url('t/down') . '" alt="'.get_string('asc').'" />';
                             $lsortorder = get_string('asc');
-                        }
-                        else {
+                        } else {
                             $icon_sort_last = ' <img src="'.$OUTPUT->pix_url('t/up') . '" alt="'.get_string('desc').'" />';
                             $lsortorder = get_string('desc');
                         }
@@ -1126,13 +1111,12 @@ class flexible_table {
                 break;
 
                 default:
-                if($this->is_sortable($column)) {
-                    if($primary_sort_column == $column) {
-                        if($primary_sort_order == SORT_ASC) {
+                if ($this->is_sortable($column)) {
+                    if ($primary_sort_column == $column) {
+                        if ($primary_sort_order == SORT_ASC) {
                             $icon_sort = ' <img src="'.$OUTPUT->pix_url('t/down') . '" alt="'.get_string('asc').'" />';
                             $localsortorder = get_string('asc');
-                        }
-                        else {
+                        } else {
                             $icon_sort = ' <img src="'.$OUTPUT->pix_url('t/up') . '" alt="'.get_string('desc').'" />';
                             $localsortorder = get_string('desc');
                         }
@@ -1143,13 +1127,11 @@ class flexible_table {
                 }
             }
 
-            if($this->headers[$index] === NULL) {
+            if ($this->headers[$index] === NULL) {
                 echo '<th class="header c'.$index.$this->column_class[$column].'" scope="col">&nbsp;</th>';
-            }
-            else if(!empty($this->sess->collapse[$column])) {
+            } else if(!empty($this->sess->collapse[$column])) {
                 echo '<th class="header c'.$index.$this->column_class[$column].'" scope="col">'.$icon_hide.'</th>';
-            }
-            else {
+            } else {
                 // took out nowrap for accessibility, might need replacement
                 if (!is_array($this->column_style[$column])) {
                     // $usestyles = array('white-space:nowrap');
@@ -1168,19 +1150,19 @@ class flexible_table {
     /**
      * This function is not part of the public api.
      */
-    function start_html(){
+    function start_html() {
         global $OUTPUT;
         // Do we need to print initial bars?
         $this->print_initials_bar();
 
         // Paging bar
-        if($this->use_pages) {
+        if ($this->use_pages) {
             $pagingbar = new paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl);
             $pagingbar->pagevar = $this->request[TABLE_VAR_PAGE];
             echo $OUTPUT->render($pagingbar);
         }
 
-        if(in_array(TABLE_P_TOP, $this->showdownloadbuttonsat)) {
+        if (in_array(TABLE_P_TOP, $this->showdownloadbuttonsat)) {
             echo $this->download_buttons();
         }
 
@@ -1198,12 +1180,12 @@ class flexible_table {
      * @return type?
      */
     function make_styles_string(&$styles) {
-        if(empty($styles)) {
+        if (empty($styles)) {
             return '';
         }
 
         $string = ' style="';
-        foreach($styles as $property => $value) {
+        foreach ($styles as $property => $value) {
             $string .= $property.':'.$value.';';
         }
         $string .= '"';
@@ -1216,12 +1198,12 @@ class flexible_table {
      * @return type?
      */
     function make_attributes_string(&$attributes) {
-        if(empty($attributes)) {
+        if (empty($attributes)) {
             return '';
         }
 
         $string = ' ';
-        foreach($attributes as $attr => $value) {
+        foreach ($attributes as $attr => $value) {
             $string .= ($attr.'="'.$value.'" ');
         }
 
@@ -1229,12 +1211,13 @@ class flexible_table {
     }
 }
 
+
 /**
  * @package   moodlecore
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class table_sql extends flexible_table{
+class table_sql extends flexible_table {
 
     public $countsql = NULL;
     public $countparams = NULL;
@@ -1256,12 +1239,11 @@ class table_sql extends flexible_table{
      */
     public $is_collapsible = true;
 
-
     /**
      * @param string $uniqueid a string identifying this table.Used as a key in
      *                          session  vars.
      */
-    function table_sql($uniqueid){
+    function table_sql($uniqueid) {
         parent::flexible_table($uniqueid);
         // some sensible defaults
         $this->set_attribute('cellspacing', '0');
@@ -1274,15 +1256,14 @@ class table_sql extends flexible_table{
      * method or if other_cols returns NULL then put the data straight into the
      * table.
      */
-    function build_table(){
-        if ($this->rawdata){
-            foreach($this->rawdata as $row){
+    function build_table() {
+        if ($this->rawdata) {
+            foreach ($this->rawdata as $row) {
                 $formattedrow = $this->format_row($row);
                 $this->add_data_keyed($formattedrow);
             }
         }
     }
-
 
     /**
      * This is only needed if you want to use different sql to count rows.
@@ -1293,7 +1274,7 @@ class table_sql extends flexible_table{
      * We need to count rows returned by the db seperately to the query itself
      * as we need to know how many pages of data we have to display.
      */
-    function set_count_sql($sql, array $params = NULL){
+    function set_count_sql($sql, array $params = NULL) {
         $this->countsql = $sql;
         $this->countparams = $params;
     }
@@ -1304,7 +1285,7 @@ class table_sql extends flexible_table{
      * Of course you can use sub-queries, JOINS etc. by putting them in the
      * appropriate clause of the query.
      */
-    function set_sql($fields, $from, $where, array $params = NULL){
+    function set_sql($fields, $from, $where, array $params = NULL) {
         $this->sql = new stdClass();
         $this->sql->fields = $fields;
         $this->sql->from = $from;
@@ -1319,10 +1300,10 @@ class table_sql extends flexible_table{
      * @param boolean $useinitialsbar do you want to use the initials bar. Bar
      * will only be used if there is a fullname column defined for the table.
      */
-    function query_db($pagesize, $useinitialsbar=true){
+    function query_db($pagesize, $useinitialsbar=true) {
         global $DB;
         if (!$this->is_downloading()) {
-            if ($this->countsql === NULL){
+            if ($this->countsql === NULL) {
                 $this->countsql = 'SELECT COUNT(1) FROM '.$this->sql->from.' WHERE '.$this->sql->where;
             }
             if ($useinitialsbar && !$this->is_downloading()) {
@@ -1357,14 +1338,13 @@ class table_sql extends flexible_table{
         }
     }
 
-
     /**
      * Convenience method to call a number of methods for you to display the
      * table.
      */
-    function out($pagesize, $useinitialsbar, $downloadhelpbutton=''){
+    function out($pagesize, $useinitialsbar, $downloadhelpbutton='') {
         global $DB;
-        if (!$this->columns){
+        if (!$this->columns) {
             $onerow = $DB->get_record_sql("SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}", $this->sql->params);
             //if columns is not set then define columns as the keys of the rows returned
             //from the db.
@@ -1378,12 +1358,13 @@ class table_sql extends flexible_table{
     }
 }
 
+
 /**
  * @package   moodlecore
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class table_default_export_format_parent{
+class table_default_export_format_parent {
     /**
      * @var flexible_table or child class reference pointing to table class
      * object from which to export data.
@@ -1395,21 +1376,23 @@ class table_default_export_format_parent{
      * started yet.
      */
     var $documentstarted = false;
-    function table_default_export_format_parent(&$table){
+    function table_default_export_format_parent(&$table) {
         $this->table =& $table;
     }
 
-    function set_table(&$table){
+    function set_table(&$table) {
         $this->table =& $table;
     }
 
     function add_data($row) {
         return false;
     }
+
     function add_seperator() {
         return false;
     }
-    function document_started(){
+
+    function document_started() {
         return $this->documentstarted;
     }
     /**
@@ -1417,19 +1400,20 @@ class table_default_export_format_parent{
      * the text as safe HTML or as plain text dependent on what is appropriate
      * for the download format. The default removes all tags.
      */
-    function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL){
+    function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL) {
         //use some whitespace to indicate where there was some line spacing.
         $text = str_replace(array('</p>', "\n", "\r"), '   ', $text);
         return strip_tags($text);
     }
 }
 
+
 /**
  * @package   moodlecore
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class table_spreadsheet_export_format_parent extends table_default_export_format_parent{
+class table_spreadsheet_export_format_parent extends table_default_export_format_parent {
     var $rownum;
     var $workbook;
     var $worksheet;
@@ -1450,9 +1434,10 @@ class table_spreadsheet_export_format_parent extends table_default_export_format
     /**
      * This method will be overridden in the child class.
      */
-    function define_workbook(){
+    function define_workbook() {
     }
-    function start_document($filename){
+
+    function start_document($filename) {
         $filename = $filename.'.'.$this->fileextension;
         $this->define_workbook();
         // format types
@@ -1465,11 +1450,13 @@ class table_spreadsheet_export_format_parent extends table_default_export_format
         $this->workbook->send($filename);
         $this->documentstarted = true;
     }
-    function start_table($sheettitle){
+
+    function start_table($sheettitle) {
         $this->worksheet =& $this->workbook->add_worksheet($sheettitle);
         $this->rownum=0;
     }
-    function output_headers($headers){
+
+    function output_headers($headers) {
         $colnum = 0;
         foreach ($headers as $item) {
             $this->worksheet->write($this->rownum,$colnum,$item,$this->formatheaders);
@@ -1477,37 +1464,41 @@ class table_spreadsheet_export_format_parent extends table_default_export_format
         }
         $this->rownum++;
     }
-    function add_data($row){
+
+    function add_data($row) {
         $colnum = 0;
-        foreach($row as $item){
+        foreach ($row as $item) {
             $this->worksheet->write($this->rownum,$colnum,$item,$this->formatnormal);
             $colnum++;
         }
         $this->rownum++;
         return true;
     }
+
     function add_seperator() {
         $this->rownum++;
         return true;
     }
 
-    function finish_table(){
+    function finish_table() {
     }
-    function finish_document(){
+
+    function finish_document() {
         $this->workbook->close();
         exit;
     }
 }
+
 
 /**
  * @package   moodlecore
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class table_excel_export_format extends table_spreadsheet_export_format_parent{
+class table_excel_export_format extends table_spreadsheet_export_format_parent {
     var $fileextension = 'xls';
 
-    function define_workbook(){
+    function define_workbook() {
         global $CFG;
         require_once("$CFG->libdir/excellib.class.php");
         // Creating a workbook
@@ -1516,20 +1507,22 @@ class table_excel_export_format extends table_spreadsheet_export_format_parent{
 
 }
 
+
 /**
  * @package   moodlecore
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class table_ods_export_format extends table_spreadsheet_export_format_parent{
+class table_ods_export_format extends table_spreadsheet_export_format_parent {
     var $fileextension = 'ods';
-    function define_workbook(){
+    function define_workbook() {
         global $CFG;
         require_once("$CFG->libdir/odslib.class.php");
         // Creating a workbook
         $this->workbook = new MoodleODSWorkbook("-");
     }
 }
+
 
 /**
  * @package   moodlecore
@@ -1585,35 +1578,38 @@ class table_text_export_format_parent extends table_default_export_format_parent
     }
 }
 
+
 /**
  * @package   moodlecore
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class table_tsv_export_format extends table_text_export_format_parent{
+class table_tsv_export_format extends table_text_export_format_parent {
     protected $seperator = "\t";
     protected $mimetype = 'text/tab-separated-values';
     protected $ext = '.txt';
 }
 
-/**
- * @package   moodlecore
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class table_csv_export_format extends table_text_export_format_parent{
-    protected $seperator = ",";
-    protected $mimetype = 'text/csv';
-    protected $ext = '.csv';
-}
 
 /**
  * @package   moodlecore
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class table_xhtml_export_format extends table_default_export_format_parent{
-    function start_document($filename){
+class table_csv_export_format extends table_text_export_format_parent {
+    protected $seperator = ",";
+    protected $mimetype = 'text/csv';
+    protected $ext = '.csv';
+}
+
+
+/**
+ * @package   moodlecore
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class table_xhtml_export_format extends table_default_export_format_parent {
+    function start_document($filename) {
         header("Content-Type: application/download\n");
         header("Content-Disposition: attachment; filename=\"$filename.html\"");
         header("Expires: 0");
@@ -1666,7 +1662,7 @@ table {
     margin:auto;
 }
 
-h1, h2{
+h1, h2 {
     text-align:center;
 }
 .bold {
@@ -1675,8 +1671,6 @@ font-weight:bold;
 .mdl-align {
     text-align:center;
 }
-
-
 /*]]>*/</style>
 <title>$filename</title>
 </head>
@@ -1684,41 +1678,46 @@ font-weight:bold;
 EOF;
         $this->documentstarted = true;
     }
-    function start_table($sheettitle){
+
+    function start_table($sheettitle) {
         $this->table->sortable(false);
         $this->table->collapsible(false);
         echo "<h2>{$sheettitle}</h2>";
         $this->table->start_html();
     }
 
-
-    function output_headers($headers){
+    function output_headers($headers) {
         $this->table->print_headers();
     }
-    function add_data($row){
+
+    function add_data($row) {
         $this->table->print_row($row);
         return true;
     }
+
     function add_seperator() {
         $this->table->print_row(NULL);
         return true;
     }
-    function finish_table(){
+
+    function finish_table() {
         $this->table->finish_html();
     }
-    function finish_document(){
+
+    function finish_document() {
         echo "</body>\n</html>";
         exit;
     }
-    function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL){
-        if (is_null($options)){
+
+    function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL) {
+        if (is_null($options)) {
             $options = new stdClass;
         }
         //some sensible defaults
-        if (!isset($options->para)){
+        if (!isset($options->para)) {
             $options->para = false;
         }
-        if (!isset($options->newlines)){
+        if (!isset($options->newlines)) {
             $options->newlines = false;
         }
         if (!isset($options->smiley)) {
