@@ -815,50 +815,52 @@ class flexible_table {
         return $this->sess->i_last;
     }
 
+    protected function print_one_initials_bar($alpha, $current, $class, $title, $urlvar) {
+        echo html_writer::start_tag('div', array('class' => 'initialbar ' . $class)) .
+                $title . ' : ';
+        if ($current) {
+            echo html_writer::link($this->baseurl->out(false, array($urlvar => '')), get_string('all'));
+        } else {
+            echo html_writer::tag('strong', get_string('all'));
+        }
+
+        foreach ($alpha as $letter) {
+            if ($letter === $current) {
+                echo html_writer::tag('strong', $letter);
+            } else {
+                echo html_writer::link($this->baseurl->out(false, array($urlvar => $letter)), $letter);
+            }
+        }
+
+        echo html_writer::end_tag('div');
+    }
+
     /**
      * This function is not part of the public api.
      */
     function print_initials_bar() {
-        if ((!empty($this->sess->i_last) || !empty($this->sess->i_first) || $this->use_initials)
+        if ((!empty($this->sess->i_last) || !empty($this->sess->i_first) ||$this->use_initials)
                     && isset($this->columns['fullname'])) {
 
-            $strall = get_string('all');
             $alpha  = explode(',', get_string('alphabet', 'langconfig'));
 
             // Bar of first initials
-
-            echo '<div class="initialbar firstinitial">'.get_string('firstname').' : ';
             if (!empty($this->sess->i_first)) {
-                echo '<a href="'.$this->baseurl.$this->request[TABLE_VAR_IFIRST].'=">'.$strall.'</a>';
+                $ifirst = $this->sess->i_first;
             } else {
-                echo '<strong>'.$strall.'</strong>';
+                $ifirst = '';
             }
-            foreach ($alpha as $letter) {
-                if (isset($this->sess->i_first) && $letter == $this->sess->i_first) {
-                    echo ' <strong>'.$letter.'</strong>';
-                } else {
-                    echo ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_IFIRST].'='.$letter.'">'.$letter.'</a>';
-                }
-            }
-            echo '</div>';
+            $this->print_one_initials_bar($alpha, $ifirst, 'firstinitial',
+                    get_string('firstname'), $this->request[TABLE_VAR_IFIRST]);
 
             // Bar of last initials
-
-            echo '<div class="initialbar lastinitial">'.get_string('lastname').' : ';
             if (!empty($this->sess->i_last)) {
-                echo '<a href="'.$this->baseurl.$this->request[TABLE_VAR_ILAST].'=">'.$strall.'</a>';
+                $ilast = $this->sess->i_last;
             } else {
-                echo '<strong>'.$strall.'</strong>';
+                $ilast = '';
             }
-            foreach ($alpha as $letter) {
-                if (isset($this->sess->i_last) && $letter == $this->sess->i_last) {
-                    echo ' <strong>'.$letter.'</strong>';
-                } else {
-                    echo ' <a href="'.$this->baseurl.$this->request[TABLE_VAR_ILAST].'='.$letter.'">'.$letter.'</a>';
-                }
-            }
-            echo '</div>';
-
+            $this->print_one_initials_bar($alpha, $ilast, 'lastinitial',
+                    get_string('lastname'), $this->request[TABLE_VAR_ILAST]);
         }
     }
 
