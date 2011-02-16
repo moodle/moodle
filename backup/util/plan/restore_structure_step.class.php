@@ -38,6 +38,11 @@ abstract class restore_structure_step extends restore_step {
     protected $elementsoldid; // Array to store last oldid used on each element
     protected $elementsnewid; // Array to store last newid used on each element
 
+    protected $pathlock;      // Path currently locking processing of children
+
+    const SKIP_ALL_CHILDREN = -991399; // To instruct the dispatcher about to ignore
+                                       // all children below path processor returning it
+
     /**
      * Constructor - instantiates one object of this class
      */
@@ -50,10 +55,11 @@ abstract class restore_structure_step extends restore_step {
         $this->pathelements = array();
         $this->elementsoldid = array();
         $this->elementsnewid = array();
+        $this->pathlock = null;
         parent::__construct($name, $task);
     }
 
-    public function execute() {
+    final public function execute() {
 
         if (!$this->execute_condition()) { // Check any condition to execute this
             return;
@@ -106,18 +112,37 @@ abstract class restore_structure_step extends restore_step {
      * Receive one chunk of information form the xml parser processor and
      * dispatch it, following the naming rules
      */
-    public function process($data) {
+    final public function process($data) {
         if (!array_key_exists($data['path'], $this->pathelements)) { // Incorrect path, must not happen
             throw new restore_step_exception('restore_structure_step_missing_path', $data['path']);
         }
         $element = $this->pathelements[$data['path']];
         $object = $element->get_processing_object();
         $method = $element->get_processing_method();
+        $rdata = null;
         if (empty($object)) { // No processing object defined
             throw new restore_step_exception('restore_structure_step_missing_pobject', $object);
         }
-        $rdata = $object->$method($data['tags']); // Dispatch to proper object/method
-        if ($rdata !== null) { // If the method has returned any info, set element data to it
+        // Release the lock if we aren't anymore within children of it
+        if (!is_null($this->pathlock) and strpos($data['path'], $this->pathlock) === false) {
+            $this->pathlock = null;
+        }
+        if (is_null($this->pathlock)) { // Only dispatch if there isn't any lock
+            $rdata = $object->$method($data['tags']); // Dispatch to proper object/method
+        }
+
+        // If the dispatched method returns SKIP_ALL_CHILDREN, we grab current path in order to
+        // lock dispatching to any children
+        if ($rdata === self::SKIP_ALL_CHILDREN) {
+            // Check we haven't any previous lock
+            if (!is_null($this->pathlock)) {
+                throw new restore_step_exception('restore_structure_step_already_skipping', $data['path']);
+            }
+            // Set the lock
+            $this->pathlock = $data['path'] . '/'; // Lock everything below current path
+
+        // Continue with normal processing of return values
+        } else if ($rdata !== null) { // If the method has returned any info, set element data to it
             $element->set_data($rdata);
         } else {               // Else, put the original parsed data
             $element->set_data($data);
