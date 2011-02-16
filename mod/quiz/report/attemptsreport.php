@@ -380,7 +380,7 @@ abstract class quiz_attempt_report_table extends table_sql {
 
     public function __construct($uniqueid, $quiz, $context, $qmsubselect, $groupstudents,
             $students, $questions, $candelete, $reporturl, $displayoptions) {
-        parent::table_sql($uniqueid);
+        parent::__construct($uniqueid);
         $this->quiz = $quiz;
         $this->context = $context;
         $this->qmsubselect = $qmsubselect;
@@ -634,10 +634,13 @@ abstract class quiz_attempt_report_table extends table_sql {
         return new qubaid_list($qubaids);
     }
 
-    public function query_db($pagesize, $useinitialsbar=true) {
+    public function query_db($pagesize, $useinitialsbar = true) {
+        $doneslots = array();
         foreach ($this->get_sort_columns() as $column => $notused) {
-            if ($slot = $this->is_latest_step_column($column)) {
+            $slot = $this->is_latest_step_column($column);
+            if ($slot && !in_array($slot, $doneslots)) {
                 $this->add_latest_state_join($slot);
+                $doneslots[] = $slot;
             }
         }
 

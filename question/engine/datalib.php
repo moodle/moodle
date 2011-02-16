@@ -405,7 +405,6 @@ ORDER BY
     public function load_questions_usages_where_question_in_state(
             qubaid_condition $qubaids, $summarystate, $slot, $questionid = null,
             $orderby = 'random', $params, $limitfrom = 0, $limitnum = null) {
-        global $CFG;
 
         $extrawhere = '';
         if ($questionid) {
@@ -476,8 +475,6 @@ $sqlorderby
      * load the averages for the specified questions.
      */
     public function load_average_marks(qubaid_condition $qubaids, $slots = null) {
-        global $CFG;
-
         if (!empty($slots)) {
             list($slottest, $params) = get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot0000');
             $slotwhere = " AND qa.slot $slottest";
@@ -502,7 +499,7 @@ SELECT
     COUNT(1) AS numaveraged
 
 FROM {$qubaids->from_question_attempts('qa')}
-JOIN {$CFG->prefix}question_attempt_steps qas ON
+JOIN {question_attempt_steps} qas ON
         qas.id = {$this->latest_step_for_qa_subquery()}
 
 WHERE
@@ -632,11 +629,10 @@ ORDER BY
      * {@link question_attempts} and {@link question_attempt_steps} from the
      * database.
      * @param string $where a where clause. Becuase of MySQL limitations, you
-     *      must refer to {$CFG->prefix}question_usages.id in full like that.
+     *      must refer to {question_usages}.id in full like that.
      * @param array $params values to substitute for placeholders in $where.
      */
     public function delete_questions_usage_by_activities($where, $params) {
-        global $CFG;
         $this->db->delete_records_select('question_attempt_step_data', "attemptstepid IN (
                 SELECT qas.id
                 FROM {question_attempts} qa
@@ -660,7 +656,6 @@ ORDER BY
      * @param integer $qaids question_attempt id.
      */
     public function delete_steps_for_question_attempts($qaids) {
-        global $CFG;
         if (empty($qaids)) {
             return;
         }
@@ -677,7 +672,6 @@ ORDER BY
      * @param integer $questionid question id.
      */
     public function delete_previews($questionid) {
-        global $CFG;
         $previews = $this->db->get_records_sql_menu("
                 SELECT DISTINCT quba.id, 1
                 FROM {question_usages} quba
@@ -797,14 +791,13 @@ ORDER BY
                     {$alias}qas.timecreated,
                     {$alias}qas.userid
 
-                FROM {$CFG->prefix}question_attempts {$alias}qa
-                JOIN {$CFG->prefix}question_attempt_steps {$alias}qas ON
+                FROM {question_attempts} {$alias}qa
+                JOIN {question_attempt_steps} {$alias}qas ON
                         {$alias}qas.id = {$this->latest_step_for_qa_subquery($alias . 'qa.id')}
             ) $alias";
     }
 
     protected function latest_step_for_qa_subquery($questionattemptid = 'qa.id') {
-        global $CFG;
         return "(
                 SELECT MAX(id)
                 FROM {question_attempt_steps}
@@ -1047,7 +1040,7 @@ class qubaid_list extends qubaid_condition {
  *
  * SELECT qa.id, qa.maxmark
  * FROM $from
- * JOIN {$CFG->prefix}question_attempts qa ON qa.questionusageid = $usageidcolumn
+ * JOIN {question_attempts} qa ON qa.questionusageid = $usageidcolumn
  * WHERE $where AND qa.slot = 1
  *
  * where $from, $usageidcolumn and $where are the arguments to the constructor.

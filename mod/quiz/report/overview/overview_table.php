@@ -11,7 +11,7 @@ class quiz_report_overview_table extends table_sql {
 
     function quiz_report_overview_table($quiz , $qmsubselect, $groupstudents,
                 $students, $detailedmarks, $questions, $candelete, $reporturl, $displayoptions, $context){
-        parent::table_sql('mod-quiz-report-overview-report');
+        parent::__construct('mod-quiz-report-overview-report');
         $this->quiz = $quiz;
         $this->qmsubselect = $qmsubselect;
         $this->groupstudents = $groupstudents;
