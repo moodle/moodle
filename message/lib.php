@@ -432,18 +432,6 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
     if ($countstrangers && ($countonlinecontacts + $countofflinecontacts == 0)) {  // Extra help
         echo html_writer::tag('div','('.get_string('addsomecontactsincoming', 'message').')',array('class' => 'note'));
     }
-
-    /*if ($refresh) {
-        $PAGE->requires->js_init_call('M.core_message.init_refresh_page', array(60*1000, $PAGE->url->out(false)));
-
-        echo $OUTPUT->container_start('messagejsautorefresh note center');
-        echo get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh);
-        echo $OUTPUT->container_end();
-
-        echo $OUTPUT->container_start('messagejsmanualrefresh aligncenter');
-        echo $OUTPUT->single_button(message_remove_url_params($PAGE->url), get_string('refresh'));
-        echo $OUTPUT->container_end();
-    }*/
 }
 
 /**
@@ -607,8 +595,6 @@ function message_print_search($advancedsearch = false, $user1=null) {
         $combinedsearchstring = '';
     }
 
-    //$PAGE->requires->js_init_call('M.core_message.init_search_page', array($combinedsearchstring));
-
     if ($doingsearch) {
         if ($advancedsearch) {
 
@@ -640,26 +626,6 @@ function message_print_search($advancedsearch = false, $user1=null) {
         return false;
     }
 }
-
-/*function message_print_settings() {
-    global $USER, $OUTPUT, $PAGE;
-
-    if ($frm = data_submitted() and confirm_sesskey()) {
-
-        $pref = array();
-        $pref['message_beepnewmessage'] = (isset($frm->beepnewmessage)) ? '1' : '0';
-        $pref['message_blocknoncontacts'] = (isset($frm->blocknoncontacts)) ? '1' : '0';
-
-        set_user_preferences($pref);
-
-        redirect(message_remove_url_params($PAGE->url), get_string('settingssaved', 'message'), 1);
-    }
-
-    $cbbeepnewmessage = (get_user_preferences('message_beepnewmessage', 0) == '1') ? 'checked="checked"' : '';
-    $cbblocknoncontacts = (get_user_preferences('message_blocknoncontacts', 0) == '1') ? 'checked="checked"' : '';
-
-    include('settings.html');
-}*/
 
 /**
  * Get the users recent conversations meaning all the people they've recently
@@ -1244,9 +1210,6 @@ function message_print_search_results($frm, $showicontext=false, $user1=null) {
         echo $OUTPUT->notification(get_string('emptysearchstring', 'message'));
     }
 
-    //echo '<br />';
-    //echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('tab' => 'search')), get_string('newsearch', 'message'));
-
     echo html_writer::end_tag('div');
 }
 
@@ -1419,7 +1382,6 @@ function message_history_link($userid1, $userid2, $return=false, $keywords='', $
             'resizable' => true);
 
     $link = new moodle_url('/message/index.php?history='.MESSAGE_HISTORY_ALL."&user=$userid1&id=$userid2$keywords$position");
-    //$action = new popup_action('click', $link, "message_history_$userid1", $popupoptions);
     $action = null;
     $str = $OUTPUT->action_link($link, $fulllink, $action, array('title' => $strmessagehistory));
 
@@ -2152,37 +2114,6 @@ function message_move_userfrom_unread2read($userid) {
     }
     return true;
 }
-
-/*function message_get_popup_messages($destuserid, $fromuserid=NULL){
-    global $DB;
-
-    $processor = $DB->get_record('message_processors', array('name' => 'popup'));
-
-    $messagesproc = $DB->get_records('message_working', array('processorid' => $processor->id), 'id ASC');
-
-    //for every message to process check if it's for current user and process
-    $messages = array();
-    foreach ($messagesproc as $msgp){
-        $query = array('id' => $msgp->unreadmessageid, 'useridto' => $destuserid);
-        if ($fromuserid){
-            $query['useridfrom'] = $fromuserid;
-        }
-        if ($message = $DB->get_record('message', $query)){
-            $messages[] = $message;
-            /// Move the entry to the other table
-            $message->timeread = time();
-            $messageid = $message->id;
-            unset($message->id);
-
-            //delete what we've processed and check if can move message
-            $DB->delete_records('message_working', array('id' => $msgp->id));
-            if ( $DB->count_records('message_working', array('unreadmessageid' => $messageid)) == 0){
-                message_mark_message_read($message, time(), true);
-            }
-        }
-    }
-    return $messages;
-}*/
 
 /**
 * marks ALL messages being sent from $fromuserid to $touserid as read
