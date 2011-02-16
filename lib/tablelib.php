@@ -119,7 +119,7 @@ class flexible_table {
      * @param int $uniqueid
      * @todo Document properly
      */
-    function flexible_table($uniqueid) {
+    function __construct($uniqueid) {
         $this->uniqueid = $uniqueid;
         $this->request  = array(
             TABLE_VAR_SORT    => 'tsort',
@@ -129,6 +129,17 @@ class flexible_table {
             TABLE_VAR_ILAST   => 'tilast',
             TABLE_VAR_PAGE    => 'page'
         );
+    }
+
+    /**
+     * Backwards-compatible constructor, so that legacy code subclassing
+     * flexible_table does not break.
+     * @deprecated since Moodle 2.0. Will be removed in Moodle 2.1.
+     */
+    function flexible_table($uniqueid) {
+        debugging('Please update your code to user PHP5-style parent::__construct(...), ' .
+                'not parent::flexible_table(...).');
+        $this->__construct($uniqueid);
     }
 
     /**
@@ -1244,11 +1255,22 @@ class table_sql extends flexible_table {
      * @param string $uniqueid a string identifying this table.Used as a key in
      *                          session  vars.
      */
-    function table_sql($uniqueid) {
-        parent::flexible_table($uniqueid);
+    function __construct($uniqueid) {
+        parent::__construct($uniqueid);
         // some sensible defaults
         $this->set_attribute('cellspacing', '0');
         $this->set_attribute('class', 'generaltable generalbox');
+    }
+
+    /**
+     * Backwards-compatible constructor, so that legacy code subclassing
+     * table_sql does not break.
+     * @deprecated since Moodle 2.0. Will be removed in Moodle 2.1.
+     */
+    function table_sql($uniqueid) {
+        debugging('Please update your code to user PHP5-style parent::__construct(...), ' .
+                'not parent::table_sql(...).');
+        $this->__construct($uniqueid);
     }
 
     /**
