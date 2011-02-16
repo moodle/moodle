@@ -25,23 +25,24 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/** TABLE_VAR_SORT = 1 */
+/**#@+
+ * These constants relate to the table's handling of URL parameters.
+ */
 define('TABLE_VAR_SORT',   1);
-/** TABLE_VAR_HIDE = 2 */
 define('TABLE_VAR_HIDE',   2);
-/** TABLE_VAR_SHOW = 3 */
 define('TABLE_VAR_SHOW',   3);
-/** TABLE_VAR_IFIRST = 4 */
 define('TABLE_VAR_IFIRST', 4);
-/** TABLE_VAR_ILAST = 5 */
 define('TABLE_VAR_ILAST',  5);
-/** TABLE_VAR_PAGE = 6 */
 define('TABLE_VAR_PAGE',   6);
+/**#@-*/
 
-/** TABLE_P_TOP = 1 */
-define('TABLE_P_TOP',   1);
-/** TABLE_P_BOTTOM = 2 */
-define('TABLE_P_BOTTOM',  2);
+/**#@+
+ * Constants that indicate whether the paging bar for the table
+ * appears above or below the table.
+ */
+define('TABLE_P_TOP',    1);
+define('TABLE_P_BOTTOM', 2);
+/**#@-*/
 
 
 /**
