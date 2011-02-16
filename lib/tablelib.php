@@ -96,7 +96,7 @@ class flexible_table {
     var $download  = '';
 
     /**
-     * @var boolean whether data is downloadable from table. Determines whether
+     * @var bool whether data is downloadable from table. Determines whether
      * to display download buttons. Set by method downloadable().
      */
     var $downloadable = false;
@@ -108,7 +108,7 @@ class flexible_table {
     var $defaultdownloadformat  = 'csv';
 
     /**
-     * @var boolean Has start output been called yet?
+     * @var bool Has start output been called yet?
      */
     var $started_output = false;
 
@@ -116,18 +116,18 @@ class flexible_table {
 
     /**
      * Constructor
-     * @param int $uniqueid
-     * @todo Document properly
+     * @param int $uniqueid all tables have to have a unique id, this is used
+     *      as a key when storing table properties like sort order in the session.
      */
     function __construct($uniqueid) {
         $this->uniqueid = $uniqueid;
         $this->request  = array(
-            TABLE_VAR_SORT    => 'tsort',
-            TABLE_VAR_HIDE    => 'thide',
-            TABLE_VAR_SHOW    => 'tshow',
-            TABLE_VAR_IFIRST  => 'tifirst',
-            TABLE_VAR_ILAST   => 'tilast',
-            TABLE_VAR_PAGE    => 'page'
+            TABLE_VAR_SORT   => 'tsort',
+            TABLE_VAR_HIDE   => 'thide',
+            TABLE_VAR_SHOW   => 'tshow',
+            TABLE_VAR_IFIRST => 'tifirst',
+            TABLE_VAR_ILAST  => 'tilast',
+            TABLE_VAR_PAGE   => 'page',
         );
     }
 
@@ -166,12 +166,17 @@ class flexible_table {
         return $this->download;
     }
 
-    function export_class_instance(&$exportclass=null) {
+    /**
+     * Get, and optionally set, the export class.
+     * @param $exportclass (optional) if passed, set the table to use this export class.
+     * @return table_default_export_format_parent the export class in use (after any set).
+     */
+    function export_class_instance($exportclass = null) {
         if (!is_null($exportclass)) {
             $this->started_output = true;
-            $this->exportclass =& $exportclass;
-            $this->exportclass->table =& $this;
-        } elseif (is_null($this->exportclass) && !empty($this->download)) {
+            $this->exportclass = $exportclass;
+            $this->exportclass->table = $this;
+        } else if (is_null($this->exportclass) && !empty($this->download)) {
             $classname = 'table_'.$this->download.'_export_format';
             $this->exportclass = new $classname($this);
             if (!$this->exportclass->document_started()) {
@@ -185,10 +190,10 @@ class flexible_table {
      * Probably don't need to call this directly. Calling is_downloading with a
      * param automatically sets table as downloadable.
      *
-     * @param boolean $downloadable optional param to set whether data from
+     * @param bool $downloadable optional param to set whether data from
      * table is downloadable. If ommitted this function can be used to get
      * current state of table.
-     * @return boolean whether table data is set to be downloadable.
+     * @return bool whether table data is set to be downloadable.
      */
     function is_downloadable($downloadable = null) {
         if ($downloadable !== null) {
@@ -314,7 +319,7 @@ class flexible_table {
      * For example, in the quiz overview report, the fullname column is set to be suppressed, so
      * that when one student has made multiple attempts, their name is only printed in the row
      * for their first attempt.
-     * @param integer $column the index of a column.
+     * @param int $column the index of a column.
      */
     function column_suppress($column) {
         if (isset($this->column_suppress[$column])) {
@@ -324,7 +329,7 @@ class flexible_table {
 
     /**
      * Sets the given $column index to the given $classname in $this->column_class.
-     * @param integer $column
+     * @param int $column
      * @param string $classname
      * @return void
      */
@@ -336,7 +341,7 @@ class flexible_table {
 
     /**
      * Sets the given $column index and $property index to the given $value in $this->column_style.
-     * @param integer $column
+     * @param int $column
      * @param string $property
      * @param mixed $value
      * @return void
@@ -349,7 +354,7 @@ class flexible_table {
 
     /**
      * Sets all columns' $propertys to the given $value in $this->column_style.
-     * @param integer $property
+     * @param int $property
      * @param string $value
      * @return void
      */
@@ -565,7 +570,7 @@ class flexible_table {
     }
 
     /**
-     * @return integer the offset for LIMIT clause of SQL
+     * @return int the offset for LIMIT clause of SQL
      */
     function get_page_start() {
         if (!$this->use_pages) {
@@ -575,7 +580,7 @@ class flexible_table {
     }
 
     /**
-     * @return integer the pagesize for LIMIT clause of SQL
+     * @return int the pagesize for LIMIT clause of SQL
      */
     function get_page_size() {
         if (!$this->use_pages) {
@@ -643,7 +648,7 @@ class flexible_table {
      *
      * @param array $row a numerically keyed row of data to add to the table.
      * @param string $classname CSS class name to add to this row's tr tag.
-     * @return boolean success.
+     * @return bool success.
      */
     function add_data($row, $classname = '') {
         if (!$this->setup) {
@@ -815,6 +820,14 @@ class flexible_table {
         return $this->sess->i_last;
     }
 
+    /**
+     * Helper function, used by {@link print_initials_bar()} to output one initial bar.
+     * @param array $alpha of letters in the alphabet.
+     * @param string $current the currently selected letter.
+     * @param string $class class name to add to this initial bar.
+     * @param string $title the name to put in front of this initial bar.
+     * @param string $urlvar URL parameter name for this initial.
+     */
     protected function print_one_initials_bar($alpha, $current, $class, $title, $urlvar) {
         echo html_writer::start_tag('div', array('class' => 'initialbar ' . $class)) .
                 $title . ' : ';
@@ -1018,6 +1031,13 @@ class flexible_table {
         }
     }
 
+    /**
+     * Generate the HTML for the collapse/uncollapse icon. This is a helper method
+     * used by {@link print_headers()}.
+     * @param string $column the column name, index into various names.
+     * @param int $index numerical index of the column.
+     * @return string HTML fragment.
+     */
     protected function show_hide_link($column, $index) {
         global $OUTPUT;
         // Some headers contain <br /> tags, do not include in title, hence the
@@ -1113,6 +1133,12 @@ class flexible_table {
         echo html_writer::end_tag('tr');
     }
 
+    /**
+     * Generate the HTML for the sort icon. This is a helper method used by {@link sort_link()}.
+     * @param bool $isprimary whether an icon is needed (it is only needed for the primary sort column.)
+     * @param int $order SORT_ASC or SORT_DESC
+     * @return string HTML fragment.
+     */
     protected function sort_icon($isprimary, $order) {
         global $OUTPUT;
 
@@ -1129,6 +1155,13 @@ class flexible_table {
         }
     }
 
+    /**
+     * Generate the correct tool tip for changing the sort order. This is a
+     * helper method used by {@link sort_link()}.
+     * @param bool $isprimary whether the is column is the current primary sort column.
+     * @param int $order SORT_ASC or SORT_DESC
+     * @return string the correct title.
+     */
     protected function sort_order_name($isprimary, $order) {
         if ($isprimary && $order != SORT_ASC) {
             return get_string('desc');
@@ -1137,6 +1170,14 @@ class flexible_table {
         }
     }
 
+    /**
+     * Generate the HTML for the sort link. This is a helper method used by {@link print_headers()}.
+     * @param string $text the text for the link.
+     * @param string $column the column name, may be a fake column like 'firstname' or a real one.
+     * @param bool $isprimary whether the is column is the current primary sort column.
+     * @param int $order SORT_ASC or SORT_DESC
+     * @return string HTML fragment.
+     */
     protected function sort_link($text, $column, $isprimary, $order) {
         return html_writer::link($this->baseurl->out(false,
                 array($this->request[TABLE_VAR_SORT] => $column)),
@@ -1210,11 +1251,11 @@ class table_sql extends flexible_table {
     public $rawdata = NULL;
 
     /**
-     * @var boolean Overriding default for this.
+     * @var bool Overriding default for this.
      */
     public $is_sortable    = true;
     /**
-     * @var boolean Overriding default for this.
+     * @var bool Overriding default for this.
      */
     public $is_collapsible = true;
 
@@ -1296,8 +1337,8 @@ class table_sql extends flexible_table {
     /**
      * Query the db. Store results in the table object for use by build_table.
      *
-     * @param integer $pagesize size of page for paginated displayed table.
-     * @param boolean $useinitialsbar do you want to use the initials bar. Bar
+     * @param int $pagesize size of page for paginated displayed table.
+     * @param bool $useinitialsbar do you want to use the initials bar. Bar
      * will only be used if there is a fullname column defined for the table.
      */
     function query_db($pagesize, $useinitialsbar=true) {
@@ -1379,7 +1420,7 @@ class table_default_export_format_parent {
     var $table;
 
     /**
-     * @var boolean output started. Keeps track of whether any output has been
+     * @var bool output started. Keeps track of whether any output has been
      * started yet.
      */
     var $documentstarted = false;
