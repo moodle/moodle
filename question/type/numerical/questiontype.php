@@ -601,7 +601,7 @@ class qtype_numerical extends question_type {
             if($question->options->unitgradingtype == 1){
                 $raw_unitpenalty = $question->options->unitpenalty * $rawgrade ;
             }else {
-                $raw_unitpenalty = $question->options->unitpenalty * $question->maxgrade;
+                $raw_unitpenalty = $question->options->unitpenalty ;
             }
             $state->options->raw_unitpenalty = $raw_unitpenalty ;
         }
@@ -811,7 +811,7 @@ class qtype_numerical extends question_type {
             if($question->options->unitgradingtype == 1){
                 $raw_unitpenalty = $question->options->unitpenalty * $state->raw_grade ;
             }else {
-                $raw_unitpenalty = $question->options->unitpenalty * $question->maxgrade;
+                $raw_unitpenalty = $question->options->unitpenalty ;
             }
             $state->raw_grade -= $raw_unitpenalty ;
         }
