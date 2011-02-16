@@ -2254,7 +2254,7 @@ class restore_create_categories_and_questions extends restore_structure_step {
 
         // Check we have one mapping for this category
         if (!$mapping = $this->get_mapping('question_category', $oldid)) {
-            return; // No mapping = this category doesn't need to be created/mapped
+            return self::SKIP_ALL_CHILDREN; // No mapping = this category doesn't need to be created/mapped
         }
 
         // Check we have to create the category (newitemid = 0)
