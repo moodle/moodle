@@ -360,16 +360,11 @@ class flexible_table {
     }
 
     /**
-     * Sets $this->reseturl to the given $url, and $this->baseurl to the given $url plus ? or &amp;
-     * @param string $url the url with params needed to call up this page
+     * Sets $this->baseurl.
+     * @param moodle_url|string $url the url with params needed to call up this page
      */
     function define_baseurl($url) {
-        $this->reseturl = $url;
-        if (!strpos($url, '?')) {
-            $this->baseurl = $url.'?';
-        } else {
-            $this->baseurl = $url.'&amp;';
-        }
+        $this->baseurl = new moodle_url($url);
     }
 
     /**
@@ -425,14 +420,15 @@ class flexible_table {
 
         $this->sess = &$SESSION->flextable[$this->uniqueid];
 
-        if (!empty($_GET[$this->request[TABLE_VAR_SHOW]]) && isset($this->columns[$_GET[$this->request[TABLE_VAR_SHOW]]])) {
-            // Show this column
-            $this->sess->collapse[$_GET[$this->request[TABLE_VAR_SHOW]]] = false;
-        } else if(!empty($_GET[$this->request[TABLE_VAR_HIDE]]) && isset($this->columns[$_GET[$this->request[TABLE_VAR_HIDE]]])) {
-            // Hide this column
-            $this->sess->collapse[$_GET[$this->request[TABLE_VAR_HIDE]]] = true;
-            if (array_key_exists($_GET[$this->request[TABLE_VAR_HIDE]], $this->sess->sortby)) {
-                unset($this->sess->sortby[$_GET[$this->request[TABLE_VAR_HIDE]]]);
+        if (($showcol = optional_param($this->request[TABLE_VAR_SHOW], '', PARAM_ALPHANUMEXT)) &&
+                isset($this->columns[$showcol])) {
+            $this->sess->collapse[$showcol] = false;
+
+        } else if (($hidecol = optional_param($this->request[TABLE_VAR_SHOW], '', PARAM_ALPHANUMEXT)) &&
+                isset($this->columns[$hidecol])) {
+            $this->sess->collapse[$hidecol] = true;
+            if (array_key_exists($hidecol, $this->sess->sortby)) {
+                unset($this->sess->sortby[$hidecol]);
             }
         }
 
@@ -443,29 +439,22 @@ class flexible_table {
             }
         }
 
-        if (
-            !empty($_GET[$this->request[TABLE_VAR_SORT]]) && $this->is_sortable($_GET[$this->request[TABLE_VAR_SORT]]) &&
-            (isset($this->columns[$_GET[$this->request[TABLE_VAR_SORT]]]) ||
-                (($_GET[$this->request[TABLE_VAR_SORT]] == 'firstname' || $_GET[$this->request[TABLE_VAR_SORT]] == 'lastname') && isset($this->columns['fullname']))
-            ))
-        {
-            if (empty($this->sess->collapse[$_GET[$this->request[TABLE_VAR_SORT]]])) {
-                if (array_key_exists($_GET[$this->request[TABLE_VAR_SORT]], $this->sess->sortby)) {
-                    // This key already exists somewhere. Change its sortorder and bring it to the top.
-                    $sortorder = $this->sess->sortby[$_GET[$this->request[TABLE_VAR_SORT]]] == SORT_ASC ? SORT_DESC : SORT_ASC;
-                    unset($this->sess->sortby[$_GET[$this->request[TABLE_VAR_SORT]]]);
-                    $this->sess->sortby = array_merge(array($_GET[$this->request[TABLE_VAR_SORT]] => $sortorder), $this->sess->sortby);
-                } else {
-                    // Key doesn't exist, so just add it to the beginning of the array, ascending order
-                    $this->sess->sortby = array_merge(array($_GET[$this->request[TABLE_VAR_SORT]] => SORT_ASC), $this->sess->sortby);
-                }
-                // Finally, make sure that no more than $this->maxsortkeys are present into the array
-                if (!empty($this->maxsortkeys) && ($sortkeys = count($this->sess->sortby)) > $this->maxsortkeys) {
-                    while ($sortkeys-- > $this->maxsortkeys) {
-                        array_pop($this->sess->sortby);
-                    }
-                }
+        if (($sortcol = optional_param($this->request[TABLE_VAR_SORT], '', PARAM_ALPHANUMEXT)) &&
+                $this->is_sortable($sortcol) && empty($this->sess->collapse[$sortcol]) &&
+                (isset($this->columns[$sortcol]) || in_array($sortcol, array('firstname', 'lastname')) && isset($this->columns['fullname']))) {
+
+            if (array_key_exists($sortcol, $this->sess->sortby)) {
+                // This key already exists somewhere. Change its sortorder and bring it to the top.
+                $sortorder = $this->sess->sortby[$sortcol] == SORT_ASC ? SORT_DESC : SORT_ASC;
+                unset($this->sess->sortby[$sortcol]);
+                $this->sess->sortby = array_merge(array($sortcol => $sortorder), $this->sess->sortby);
+            } else {
+                // Key doesn't exist, so just add it to the beginning of the array, ascending order
+                $this->sess->sortby = array_merge(array($sortcol => SORT_ASC), $this->sess->sortby);
             }
+
+            // Finally, make sure that no more than $this->maxsortkeys are present into the array
+            $this->sess->sortby = array_slice($this->sess->sortby, 0, $this->maxsortkeys);
         }
 
         // If we didn't sort just now, then use the default sort order if one is defined and the column exists
@@ -473,67 +462,30 @@ class flexible_table {
             $this->sess->sortby = array ($this->sort_default_column => ($this->sort_default_order == SORT_DESC ? SORT_DESC : SORT_ASC));
         }
 
-        if (isset($_GET[$this->request[TABLE_VAR_ILAST]])) {
-            if (empty($_GET[$this->request[TABLE_VAR_ILAST]]) || is_numeric(strpos(get_string('alphabet', 'langconfig'), $_GET[$this->request[TABLE_VAR_ILAST]]))) {
-                $this->sess->i_last = $_GET[$this->request[TABLE_VAR_ILAST]];
-            }
+        $ilast = optional_param($this->request[TABLE_VAR_ILAST], null, PARAM_RAW);
+        if (!is_null($ilast) && ($ilast ==='' || strpos(get_string('alphabet', 'langconfig'), $ilast) !== false)) {
+            $this->sess->i_last = $ilast;
         }
 
-        if (isset($_GET[$this->request[TABLE_VAR_IFIRST]])) {
-            if (empty($_GET[$this->request[TABLE_VAR_IFIRST]]) || is_numeric(strpos(get_string('alphabet', 'langconfig'), $_GET[$this->request[TABLE_VAR_IFIRST]]))) {
-                $this->sess->i_first = $_GET[$this->request[TABLE_VAR_IFIRST]];
-            }
+        $ifirst = optional_param($this->request[TABLE_VAR_IFIRST], null, PARAM_RAW);
+        if (!is_null($ifirst) && ($ifirst === '' || strpos(get_string('alphabet', 'langconfig'), $ifirst) !== false)) {
+            $this->sess->i_first = $ifirst;
         }
 
         if (empty($this->baseurl)) {
-            $getcopy  = $_GET;
-            unset($getcopy[$this->request[TABLE_VAR_SHOW]]);
-            unset($getcopy[$this->request[TABLE_VAR_HIDE]]);
-            unset($getcopy[$this->request[TABLE_VAR_SORT]]);
-            unset($getcopy[$this->request[TABLE_VAR_IFIRST]]);
-            unset($getcopy[$this->request[TABLE_VAR_ILAST]]);
-            unset($getcopy[$this->request[TABLE_VAR_PAGE]]);
-
-            $strippedurl = strip_querystring(qualified_me());
-
-            if (!empty($getcopy)) {
-                $first = false;
-                $querystring = '';
-                foreach ($getcopy as $var => $val) {
-                    if (!$first) {
-                        $first = true;
-                        $querystring .= '?'.$var.'='.$val;
-                    } else {
-                        $querystring .= '&amp;'.$var.'='.$val;
-                    }
-                }
-                $this->reseturl =  $strippedurl.$querystring;
-                $querystring .= '&amp;';
-            } else {
-                $this->reseturl =  $strippedurl;
-                $querystring = '?';
-            }
-
-            $this->baseurl = strip_querystring(qualified_me()) . $querystring;
-        }
-
-        // If it's "the first time" we 've been here, forget the previous initials filters
-        if (qualified_me() == $this->reseturl) {
-            $this->sess->i_first = '';
-            $this->sess->i_last  = '';
+            debugging('You should set baseurl when using flexible_table.');
+            global $PAGE;
+            $this->baseurl = $PAGE->url;
         }
 
         $this->currpage = optional_param($this->request[TABLE_VAR_PAGE], 0, PARAM_INT);
         $this->setup = true;
 
-    /// Always introduce the "flexible" class for the table if not specified
-    /// No attributes, add flexible class
+        // Always introduce the "flexible" class for the table if not specified
         if (empty($this->attributes)) {
             $this->attributes['class'] = 'flexible';
-    /// No classes, add flexible class
         } else if (!isset($this->attributes['class'])) {
             $this->attributes['class'] = 'flexible';
-    /// No flexible class in passed classes, add flexible class
         } else if (!in_array('flexible', explode(' ', $this->attributes['class']))) {
             $this->attributes['class'] = trim('flexible ' . $this->attributes['class']);
         }
