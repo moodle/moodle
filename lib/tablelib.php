@@ -730,13 +730,12 @@ class flexible_table {
         global $COURSE, $CFG;
 
         if (!$this->download) {
-            if ($COURSE->id == SITEID) {
-                return '<a href="'.$CFG->wwwroot.'/user/profile.php?id='.$row->{$this->useridfield}.  '">'.
-                        fullname($row).'</a>';
-            } else {
-                return '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$row->{$this->useridfield}.
-                        '&amp;course='.$COURSE->id.'">'.fullname($row).'</a>';
+            $profileurl = new moodle_url('/user/profile.php', array('id' => $row->{$this->useridfield}));
+            if ($COURSE->id != SITEID) {
+                $profileurl->param('course', $COURSE->id);
             }
+            return html_writer::link($profileurl, fullname($row));
+
         } else {
             return fullname($row);
         }
@@ -910,7 +909,6 @@ class flexible_table {
      * This function is not part of the public api.
      */
     function download_buttons() {
-        global $OUTPUT;
         if ($this->is_downloadable() && !$this->is_downloading()) {
             $downloadoptions = $this->get_download_menu();
             $html = '<form action="'. $this->baseurl .'" method="post">';
