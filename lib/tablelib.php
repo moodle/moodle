@@ -1245,9 +1245,19 @@ class table_sql extends flexible_table {
         if ($this->rawdata) {
             foreach ($this->rawdata as $row) {
                 $formattedrow = $this->format_row($row);
-                $this->add_data_keyed($formattedrow);
+                $this->add_data_keyed($formattedrow,
+                        $this->get_row_class($row));
             }
         }
+    }
+
+    /**
+     * Get any extra classes names to add to this row in the HTML.
+     * @param $row array the data for this row.
+     * @return string added to the class="" attribute of the tr.
+     */
+    function get_row_class($row) {
+        return '';
     }
 
     /**
