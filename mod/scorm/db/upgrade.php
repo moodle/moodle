@@ -478,22 +478,24 @@ function xmldb_scorm_upgrade($oldversion) {
         /// scorm savepoint reached
         upgrade_mod_savepoint(true, 2010092400, 'scorm');
     }
-    
+
     if ($oldversion < 2011011400) {
         // Fix scorm in the post table after upgrade from 1.9
         $table = new xmldb_table('scorm');
         $columns = $DB->get_columns('scorm');
 
-        // forcecompleted should be bigint(1) NOT NULL DEFAULT '1'
-        // Fixed in earlier upgrade code
+        // forcecompleted should be int(1) not null default 1
+        // Changing to NOT NULL, let's fill the current nulls with default 1
+        $DB->set_field('scorm', 'forcecompleted', 1, array('forcecompleted' => null));
         $field = new xmldb_field('forcecompleted', XMLDB_TYPE_INTEGER, 1, null, XMLDB_NOTNULL, null, 1, 'maxattempt');
         if ($dbman->field_exists($table, $field)) {
             $dbman->change_field_precision($table, $field);
         }
 
         if (array_key_exists('forcenewattempt', $columns) && empty($columns['forcenewattempt']->not_null)) {
-            // forcenewattempt should be NOT NULL
-            // Fixed in earlier upgrade code
+            // forcenewattempt should be int(1) not null default 0
+            // Changing to NOT NULL, let's fill the current nulls with default 0
+            $DB->set_field('scorm', 'forcenewattempt', 0, array('forcenewattempt' => null));
             $field = new xmldb_field('forcenewattempt', XMLDB_TYPE_INTEGER, 1, null, XMLDB_NOTNULL, null, 0, 'forcecompleted');
             if ($dbman->field_exists($table, $field)) {
                 $dbman->change_field_notnull($table, $field);
@@ -501,8 +503,9 @@ function xmldb_scorm_upgrade($oldversion) {
         }
 
         if (array_key_exists('lastattemptlock', $columns) && empty($columns['lastattemptlock']->not_null)) {
-            // lastattemptlock should be NOT NULL
-            // Fixed in earlier upgrade code
+            // lastattemptlock should be int(1) not null default 0
+            // Changing to NOT NULL, let's fill the current nulls with default 0
+            $DB->set_field('scorm', 'lastattemptlock', 0, array('lastattemptlock' => null));
             $field = new xmldb_field('lastattemptlock', XMLDB_TYPE_INTEGER, 1, null, XMLDB_NOTNULL, null, 0, 'forcenewattempt');
             if ($dbman->field_exists($table, $field)) {
                 $dbman->change_field_notnull($table, $field);
@@ -510,8 +513,9 @@ function xmldb_scorm_upgrade($oldversion) {
         }
 
         if (array_key_exists('displayattemptstatus', $columns) && empty($columns['displayattemptstatus']->not_null)) {
-            // displayattemptstatus should be NOT NULL
-            // Fixed in earlier upgrade code
+            // displayattemptstatus should be int(1) not null default 1
+            // Changing to NOT NULL, let's fill the current nulls with default 1
+            $DB->set_field('scorm', 'displayattemptstatus', 1, array('displayattemptstatus' => null));
             $field = new xmldb_field('displayattemptstatus', XMLDB_TYPE_INTEGER, 1, null, XMLDB_NOTNULL, null, 1, 'lastattemptlock');
             if ($dbman->field_exists($table, $field)) {
                 $dbman->change_field_notnull($table, $field);
@@ -519,8 +523,9 @@ function xmldb_scorm_upgrade($oldversion) {
         }
 
         if (array_key_exists('displaycoursestructure', $columns) && empty($columns['displaycoursestructure']->not_null)) {
-            // displaycoursestructure should be NOT NULL
-            // Fixed in earlier upgrade code
+            // displaycoursestructure should be int(1) not null default 1
+            // Changing to NOT NULL, let's fill the current nulls with default 1
+            $DB->set_field('scorm', 'displaycoursestructure', 1, array('displaycoursestructure' => null));
             $field = new xmldb_field('displaycoursestructure', XMLDB_TYPE_INTEGER, 1, null, XMLDB_NOTNULL, null, 1, 'displayattemptstatus');
             if ($dbman->field_exists($table, $field)) {
                 $dbman->change_field_notnull($table, $field);
