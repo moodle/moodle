@@ -554,7 +554,7 @@ class quiz_report extends quiz_default_report {
                     // Feedback column.
                     if ($hasfeedback) {
                         if ($attempt->timefinish) {
-                            $row[] = quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $quiz), $quiz->id);
+                            $row[] = quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $quiz, false), $quiz->id);
                         } else {
                             $row[] = '-';
                         }
