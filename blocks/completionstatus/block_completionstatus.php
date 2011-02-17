@@ -49,6 +49,7 @@ class block_completionstatus extends block_base {
 
         // Don't display if completion isn't enabled!
         if (!$this->page->course->enablecompletion) {
+            $this->content->text = get_string('completionnotenabled', 'block_completionstatus');
             return $this->content;
         }
 
@@ -58,6 +59,7 @@ class block_completionstatus extends block_base {
 
         // Check if this course has any criteria
         if (empty($completions)) {
+            $this->content->text = get_string('nocriteria', 'block_completionstatus');
             return $this->content;
         }
 
@@ -157,7 +159,7 @@ class block_completionstatus extends block_base {
 
         // Is course complete?
         $coursecomplete = $info->is_course_complete($USER->id);
-		
+
         // Load course completion
         $params = array(
             'userid' => $USER->id,
