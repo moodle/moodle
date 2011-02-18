@@ -261,10 +261,14 @@ function blog_sync_external_entries($externalblog) {
         }
     }
 
-    //Look at the posts we have in the database to check if any of them have been deleted from the feed.
-    //Only checking posts within the time frame returned by the rss feed. Older items may have been deleted or
-    //may just not be returned anymore. We cant tell the difference so we leave older posts alone.
-    $sql = "SELECT id, uniquehash FROM {post} WHERE ".$DB->sql_compare_text('content')." = :blogid AND module = 'blog_external' AND created > :ts";
+    // Look at the posts we have in the database to check if any of them have been deleted from the feed.
+    // Only checking posts within the time frame returned by the rss feed. Older items may have been deleted or
+    // may just not be returned anymore. We can't tell the difference so we leave older posts alone.
+    $sql = "SELECT id, uniquehash
+              FROM {post}
+             WHERE module = 'blog_external'
+                   AND " . $DB->sql_compare_text('content') . " = " . $DB->sql_compare_text(':blogid') . "
+                   AND created > :ts";
     $dbposts = $DB->get_records_sql($sql, array('blogid' => $externalblog->id, 'ts' => $oldesttimestamp));
 
     $todelete = array();
