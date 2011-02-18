@@ -10,7 +10,7 @@ class quiz_report_responses_table extends table_sql {
 
     function quiz_report_responses_table($quiz , $qmsubselect, $groupstudents,
                 $students, $questions, $candelete, $reporturl, $displayoptions, $context){
-        parent::table_sql('mod-quiz-report-responses-report');
+        parent::__construct('mod-quiz-report-responses-report');
         $this->quiz = $quiz;
         $this->qmsubselect = $qmsubselect;
         $this->groupstudents = $groupstudents;

@@ -8,7 +8,7 @@ class quiz_report_statistics_question_table extends flexible_table {
     var $question;
 
     function quiz_report_statistics_question_table($qid){
-        parent::flexible_table('mod-quiz-report-statistics-question-table'.$qid);
+        parent::__construct('mod-quiz-report-statistics-question-table'.$qid);
     }
 
     /**
