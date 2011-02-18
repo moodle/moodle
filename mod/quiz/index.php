@@ -147,7 +147,7 @@
             $feedback = '';
             if ($quiz->grade && !is_null($bestgrade)) {
                 if ($alloptions->scores) {
-                    $grade = "$bestgrade / $quiz->grade";
+                    $grade = round($bestgrade, $quiz->decimalpoints) . ' / ' . $quiz->grade;
                 }
                 if ($alloptions->overallfeedback) {
                     $feedback = quiz_feedback_for_grade($bestgrade, $quiz->id);
