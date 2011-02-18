@@ -80,6 +80,16 @@
         if ($attempt->userid != $USER->id) {
             error('This is not your attempt!');
         }
+
+    } else if (!has_capability('moodle/site:accessallgroups', $context) &&
+            groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
+        // Check the users have at least one group in common.
+        $teachersgroups = groups_get_activity_allowed_groups($cm);
+        $studentsgroups = groups_get_all_groups($cm->course, $attempt->userid, $cm->groupingid);
+        if (!($teachersgroups && $studentsgroups &&
+                array_intersect(array_keys($teachersgroups), array_keys($studentsgroups)))) {
+            print_error('noreview', 'quiz', 'view.php?q=' . $quiz->id);
+        }
     }
 
     //add_to_log($course->id, 'quiz', 'review', "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", "$cm->id");

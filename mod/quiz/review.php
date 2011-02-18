@@ -78,6 +78,16 @@
                 redirect('view.php?q=' . $quiz->id, $message);
             } 
         }
+
+    } else if (!has_capability('moodle/site:accessallgroups', $context) &&
+            groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
+        // Check the users have at least one group in common.
+        $teachersgroups = groups_get_activity_allowed_groups($cm);
+        $studentsgroups = groups_get_all_groups($cm->course, $attempt->userid, $cm->groupingid);
+        if (!($teachersgroups && $studentsgroups &&
+                array_intersect(array_keys($teachersgroups), array_keys($studentsgroups)))) {
+            print_error('noreview', 'quiz', 'view.php?q=' . $quiz->id);
+        }
     }
 
 /// Bits needed to print a good URL for this page.
