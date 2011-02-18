@@ -531,6 +531,7 @@ $string['noquestionsnotinuse'] = 'This random question is not in use, since its 
 $string['noquestionsonpage'] = 'Empty page';
 $string['noresponse'] = 'No response';
 $string['noreview'] = 'You are not allowed to review this quiz';
+$string['noreviewattempt'] = 'You are not allowed to review this attempt.';
 $string['noreviewshort'] = 'Not permitted';
 $string['noreviewuntil'] = 'You are not allowed to review this quiz until {$a}';
 $string['noreviewuntilshort'] = 'Available {$a}';
