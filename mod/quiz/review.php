@@ -255,7 +255,8 @@
     }
 
 /// Feedback if there is any, and the user is allowed to see it now.
-    $feedback = quiz_feedback_for_grade($grade, $attempt->quiz);
+    $feedback = quiz_feedback_for_grade(quiz_rescale_grade(
+            $attempt->sumgrades, $quiz, false), $attempt->quiz);
     if ($options->overallfeedback && $feedback) {
         $rows[] = '<tr><th scope="row" class="cell">' . get_string('feedback', 'quiz') .
                 '</th><td class="cell">' . $feedback . '</td></tr>';
