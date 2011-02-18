@@ -7454,14 +7454,14 @@ function check_php_version($version='5.2.4') {
           if (strpos($agent, 'AppleWebKit') === false) {
               return false;
           }
-          // Look for AppleWebKit, excluding strings with OmniWeb, Shiira and SimbianOS and any other mobile devices
+          // Look for AppleWebKit, excluding strings with OmniWeb, Shiira and SymbianOS and any other mobile devices
           if (strpos($agent, 'OmniWeb')) { // Reject OmniWeb
               return false;
           }
           if (strpos($agent, 'Shiira')) { // Reject Shiira
               return false;
           }
-          if (strpos($agent, 'SimbianOS')) { // Reject SimbianOS
+          if (strpos($agent, 'SymbianOS')) { // Reject SymbianOS
               return false;
           }
           if (strpos($agent, 'Android')) { // Reject Androids too
