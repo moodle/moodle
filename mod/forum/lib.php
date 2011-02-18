@@ -980,15 +980,15 @@ function forum_cron() {
 function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto, $bare = false) {
     global $CFG, $USER;
 
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     if (!isset($userto->viewfullnames[$forum->id])) {
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
     } else {
         $viewfullnames = $userto->viewfullnames[$forum->id];
     }
 
     if (!isset($userto->canpost[$discussion->id])) {
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         $canreply = forum_user_can_post($forum, $discussion, $userto, $cm, $course, $modcontext);
     } else {
         $canreply = $userto->canpost[$discussion->id];
@@ -1013,6 +1013,9 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
             $posttext  .= " -> ".format_string($discussion->name,true);
         }
     }
+
+    // add absolute file links
+    $post->message = file_rewrite_pluginfile_urls($post->message, 'pluginfile.php', $modcontext->id, 'mod_forum', 'post', $post->id);
 
     $posttext .= "\n---------------------------------------------------------------------\n";
     $posttext .= format_string($post->subject,true);
@@ -2979,15 +2982,16 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
 
     global $CFG, $OUTPUT;
 
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     if (!isset($userto->viewfullnames[$forum->id])) {
-        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-            print_error('invalidcoursemodule');
-        }
-        $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
     } else {
         $viewfullnames = $userto->viewfullnames[$forum->id];
     }
+
+    // add absolute file links
+    $post->message = file_rewrite_pluginfile_urls($post->message, 'pluginfile.php', $modcontext->id, 'mod_forum', 'post', $post->id);
 
     // format the post body
     $options = new stdClass();
@@ -3020,10 +3024,7 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
     if (isset($userfrom->groups)) {
         $groups = $userfrom->groups[$forum->id];
     } else {
-        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-            print_error('invalidcoursemodule');
-        }
-        $group = groups_get_all_groups($course->id, $userfrom->id, $cm->groupingid);
+        $groups = groups_get_all_groups($course->id, $userfrom->id, $cm->groupingid);
     }
 
     if ($groups) {
