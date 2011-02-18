@@ -47,27 +47,15 @@ $attemptobj = quiz_attempt::create($attemptid);
 require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
 $attemptobj->check_review_capability();
 
-// Permissions checks for normal users who do not have quiz:viewreports capability.
-if (!$attemptobj->has_capability('mod/quiz:viewreports')) {
-    // Can't review during the attempt - send them back to the attempt page.
+// Check permissions.
+if ($attemptobj->is_own_attempt()) {
     if (!$attemptobj->is_finished()) {
         echo $OUTPUT->header();
         echo $OUTPUT->notification(get_string('cannotreviewopen', 'quiz'));
         echo $OUTPUT->close_window_button();
         echo $OUTPUT->footer();
         die;
-    }
-    // Can't review other users' attempts.
-    if (!$attemptobj->is_own_attempt()) {
-        echo $OUTPUT->header();
-        echo $OUTPUT->notification(get_string('notyourattempt', 'quiz'));
-        echo $OUTPUT->close_window_button();
-        echo $OUTPUT->footer();
-        die;
-    }
-
-    // Can't review unless Students may review -> Responses option is turned on.
-    if (!$options->responses) {
+    } else if (!$options->responses) {
         $accessmanager = $attemptobj->get_access_manager(time());
         echo $OUTPUT->header();
         echo $OUTPUT->notification($accessmanager->cannot_review_message($attemptobj->get_review_options()));
@@ -75,30 +63,9 @@ if (!$attemptobj->has_capability('mod/quiz:viewreports')) {
         echo $OUTPUT->footer();
         die;
     }
-}
 
-// Log this review.
-add_to_log($attemptobj->get_courseid(), 'quiz', 'review', 'reviewquestion.php?attempt=' .
-        $attemptobj->get_attemptid() . '&slot=' . $slot . ($seq ? '&step=' . $seq : ''),
-        $attemptobj->get_quizid(), $attemptobj->get_cmid());
-
-// Print the page header
-$attemptobj->get_question_html_head_contributions($slot);
-$PAGE->set_title($attemptobj->get_course()->shortname . ': '.format_string($attemptobj->get_quiz_name()));
-$PAGE->set_heading($COURSE->fullname);
-echo $OUTPUT->header();
-
-// Print infobox
-$rows = array();
-
-// User picture and name.
-if ($attemptobj->get_userid() <> $USER->id) {
-    // Print user picture and name
-    $student = $DB->get_record('user', array('id' => $attemptobj->get_userid()));
-    $picture = $OUTPUT->user_picture($student, array('courseid'=>$attemptobj->get_courseid()));
-    $rows[] = '<tr><th scope="row" class="cell">' . $picture . '</th><td class="cell"><a href="' .
-            $CFG->wwwroot . '/user/view.php?id=' . $student->id . '&amp;course=' . $attemptobj->get_courseid() . '">' .
-            fullname($student, true) . '</a></td></tr>';
+} else if (!$attemptobj->is_review_allowed()) {
+    throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noreviewattempt');
 }
 
 // Quiz name.
