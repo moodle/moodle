@@ -1021,8 +1021,6 @@ class restore_course_structure_step extends restore_structure_step {
         global $CFG, $DB;
 
         $data = (object)$data;
-        $coursetags = isset($data->tags['tag']) ? $data->tags['tag'] : array();
-        $coursemodules = isset($data->allowed_modules['module']) ? $data->allowed_modules['module'] : array();
         $oldid = $data->id; // We'll need this later
 
         $fullname  = $this->get_setting_value('course_fullname');
@@ -1037,6 +1035,9 @@ class restore_course_structure_step extends restore_structure_step {
         $data->fullname = $fullname;
         $data->shortname= $shortname;
         $data->idnumber = '';
+
+        // Only restrict modules if original course was and target site too for new courses
+        $data->restrictmodules = $data->restrictmodules && !empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor == 'all';
 
         $data->startdate= $this->apply_date_offset($data->startdate);
         if ($data->defaultgroupingid) {
