@@ -2111,7 +2111,7 @@ function feedback_get_group_values($item, $groupid = false, $courseid = false, $
     //if the groupid is given?
     if (intval($groupid) > 0) {
         if($ignore_empty) {
-            $ignore_empty_select = "AND fbc.value != ''";
+            $ignore_empty_select = "AND fbv.value != ''";
         }
         else {
             $ignore_empty_select = "";
