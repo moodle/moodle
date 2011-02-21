@@ -1255,12 +1255,12 @@ function question_categorylist($categoryid) {
  * @return array sorted list of import/export formats available
  */
 function get_import_export_formats($type) {
-
     global $CFG;
+
     $fileformats = get_plugin_list('qformat');
 
-    $fileformatname=array();
-    require_once( "{$CFG->dirroot}/question/format.php" );
+    $fileformatname = array();
+    require_once($CFG->dirroot . '/question/format.php');
     foreach ($fileformats as $fileformat => $fdir) {
         $formatfile = $fdir . '/format.php';
         if (is_readable($formatfile)) {
@@ -1269,20 +1269,20 @@ function get_import_export_formats($type) {
             continue;
         }
 
-        $classname = "qformat_$fileformat";
+        $classname = 'qformat_' . $fileformat;
         $formatclass = new $classname();
         if ($type == 'import') {
-            $provided = $format_class->provide_import();
+            $provided = $formatclass->provide_import();
         } else {
-            $provided = $format_class->provide_export();
+            $provided = $formatclass->provide_export();
         }
 
         if ($provided) {
-            $fileformatnames[$fileformat] = get_string($fileformat, 'qformat_'.$fileformat);
+            $fileformatnames[$fileformat] = get_string($fileformat, 'qformat_' . $fileformat);
         }
     }
-    natcasesort($fileformatnames);
 
+    textlib_get_instance()->asort($fileformatnames);
     return $fileformatnames;
 }
 

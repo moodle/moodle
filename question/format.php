@@ -256,7 +256,7 @@ class qformat_default {
         set_time_limit(0);
 
         // STAGE 1: Parse the file
-        echo $OUTPUT->notification(get_string('parsingquestions','quiz'));
+        echo $OUTPUT->notification(get_string('parsingquestions','quiz'), 'notifysuccess');
 
         if (! $lines = $this->readdata($this->filename)) {
             echo $OUTPUT->notification(get_string('cannotread','quiz'));
@@ -269,7 +269,8 @@ class qformat_default {
         }
 
         // STAGE 2: Write data to database
-        echo $OUTPUT->notification(get_string('importingquestions','quiz',$this->count_questions($questions)));
+        echo $OUTPUT->notification(get_string('importingquestions', 'quiz',
+                $this->count_questions($questions)), 'notifysuccess');
 
         // check for errors before we continue
         if ($this->stoponerror and ($this->importerrors>0)) {

@@ -175,7 +175,7 @@ DONE question/comment.html                              |   25 -
 DONE question/editlib.php                               |   36 +-
 GONE question/exportfile.php                            |   52 +-
 DONE question/file.php                                  |  171 +- | but this file is probably obsolete.
- question/import_form.php                           |   19 +  | the change is to add validation that a file has been uploaded.
+DONE question/import_form.php                           |   19 +  | the change is to add validation that a file has been uploaded.
 DONE question/move_form.php                             |   32 +-
 DONE question/preview.js                                |   47 +
 DONE question/preview.php                               |  408 ++--
@@ -468,3 +468,65 @@ DONE mod/quiz/report/statistics/simpletest/mdl_question_states.csv
 DONE mod/quiz/settingslib.php
 DONE mod/quiz/styles.css
 DONE mod/quiz/version.php
+question/behaviour/adaptive/lang/en/qbehaviour_adaptive.php
+question/behaviour/adaptivenopenalty/lang/en/qbehaviour_adaptivenopenalty.php
+question/behaviour/deferredcbm/lang/en/qbehaviour_deferredcbm.php
+question/behaviour/deferredfeedback/lang/en/qbehaviour_deferredfeedback.php
+question/behaviour/immediatecbm/lang/en/qbehaviour_immediatecbm.php
+question/behaviour/immediatefeedback/lang/en/qbehaviour_immediatefeedback.php
+question/behaviour/informationitem/lang/en/qbehaviour_informationitem.php
+question/behaviour/interactive/lang/en/qbehaviour_interactive.php
+question/behaviour/interactivecountback/lang/en/qbehaviour_interactivecountback.php
+question/behaviour/manualgraded/lang/en/qbehaviour_manualgraded.php
+question/behaviour/missing/lang/en/qbehaviour_missing.php
+question/behaviour/opaque/lang/en/qbehaviour_opaque.php
+question/category_form.php
+question/export_form.php
+question/flags.js
+question/format/aiken/format.php
+question/format/gift/examples.txt
+question/format/qti_two/templates/choice.tpl
+question/format/qti_two/templates/choiceMultiple.tpl
+question/format/qti_two/templates/composite.tpl
+question/format/qti_two/templates/extendedText.tpl
+question/format/qti_two/templates/extendedText_simpleEssay.tpl
+question/format/qti_two/templates/graphicGapMatch.tpl
+question/format/qti_two/templates/imsmanifest.tpl
+question/format/qti_two/templates/match.tpl
+question/format/qti_two/templates/mmchoiceMultiple.tpl
+question/format/qti_two/templates/notimplemented.tpl
+question/format/qti_two/templates/numerical.tpl
+question/format/qti_two/templates/textEntry.tpl
+question/format/README.txt
+question/format/webct/TODO.txt
+question/import_form.php
+question/qbank.js
+question/qengine.js
+question/todo/quizinstall.diff.txt
+question/type/calculated/datasetitems_form.php
+question/type/calculated/db/upgrade.php
+question/type/calculated/questiontype.php
+question/type/calculated/version.php
+question/type/calculatedmulti/pix/icon.gif
+question/type/calculatedmulti/questiontype.php
+question/type/calculatedsimple/pix/icon.gif
+question/type/calculatedsimple/questiontype.php
+question/type/ddwtos/version.php
+question/type/description/question.html
+question/type/essay/display.html
+question/type/essay/version.php
+question/type/gapselect/edit_form_base.php
+question/type/gapselect/rendererbase.php
+question/type/match/db/upgrade.php
+question/type/match/version.php
+question/type/multianswer/db/upgrade.php
+question/type/multianswer/version.php
+question/type/multichoice/db/upgrade.php
+question/type/multichoice/version.php
+question/type/numerical/db/upgrade.php
+question/type/numerical/display.html
+question/type/numerical/version.php
+question/type/opaque/lang/en/qtype_opaque.php
+question/type/opaque/settings.php
+question/type/randomsamatch/version.php
+question/type/truefalse/version.php

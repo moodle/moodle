@@ -26,7 +26,7 @@
  */
 
 
-require_once($CFG->libdir.'/questionlib.php');
+require_once($CFG->libdir . '/questionlib.php');
 
 
 define('DEFAULT_QUESTIONS_PER_PAGE', 20);

@@ -125,6 +125,7 @@ $string['exportquestions_help'] = 'This function enables the export of a complet
 $string['exportquestions_link'] = 'question/export';
 $string['filecantmovefrom'] = 'The questions files cannot be moved because you do not have permission to remove files from the place you are trying to move questions from.';
 $string['filecantmoveto'] = 'The question files cannot be moved or copied becuase you do not have permission to add files to the place you are trying to move the questions to.';
+$string['fileformat'] = 'File format';
 $string['filesareacourse'] = 'the course files area';
 $string['filesareasite'] = 'the site files area';
 $string['filestomove'] = 'Move / copy files to {$a}?';
@@ -145,6 +146,7 @@ Certain import formats, such as GIFT and Moodle XML, may include category and co
 $string['importquestions'] = 'Import questions from file';
 $string['importquestions_help'] = 'This function enables questions in a variety of formats to be imported via text file. Note that the file must use UTF-8 encoding.';
 $string['importquestions_link'] = 'question/import';
+$string['importwrongfiletype'] = 'The type of the file you selected ({$a->actualtype}) does not match the type expected by this import format ({$a->expectedtype}).';
 $string['invalidarg'] = 'No valid arguments supplied or incorrect server configuration';
 $string['invalidcategoryidforparent'] = 'Invalid category id for parent!';
 $string['invalidcategoryidtomove'] = 'Invalid category id to move!';
@@ -156,6 +158,8 @@ $string['linkedfiledoesntexist'] = 'Linked file {$a} doesn\'t exist';
 $string['makechildof'] = 'Make child of \'{$a}\'';
 $string['maketoplevelitem'] = 'Move to top level';
 $string['matchgrades'] = 'Match grades';
+$string['matchgradeserror'] = 'Error if grade not listed';
+$string['matchgradesnearest'] = 'Nearest grade if not listed';
 $string['matchgrades_help'] = 'Imported grades must match one of the fixed list of valid grades - 100, 90, 80, 75, 70, 66.666, 60, 50, 40, 33.333, 30, 25, 20, 16.666, 14.2857, 12.5, 11.111, 10, 5, 0 (also negative values). If not, there are two options:
 
 *  Error if grade not listed - If a question contains any grades not found in the list an error is displayed and that question will not be imported
