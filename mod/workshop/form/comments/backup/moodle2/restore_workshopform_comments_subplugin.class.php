@@ -109,7 +109,7 @@ class restore_workshopform_comments_subplugin extends restore_subplugin {
         $this->set_mapping($this->get_namefor('dimension'), $oldid, $newitemid, true);
 
         // Process files for this workshopform_comments->id only
-        $this->add_related_files('workshopform_comments', 'description', 'workshopform_comments', null, $oldid);
+        $this->add_related_files('workshopform_comments', 'description', $this->get_namefor('dimension'), null, $oldid);
     }
 
     /**
