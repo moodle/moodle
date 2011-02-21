@@ -21,10 +21,10 @@
  * There are classes for loading all the information about a quiz and attempts,
  * and for displaying the navigation panel.
  *
- * @package mod
+ * @package    mod
  * @subpackage quiz
- * @copyright 2008 onwards Tim Hunt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2008 onwards Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 

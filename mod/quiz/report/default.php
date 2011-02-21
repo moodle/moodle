@@ -18,9 +18,10 @@
 /**
  * Base class for quiz report plugins.
  *
- * @package mod_quiz
- * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage quiz
+ * @copyright  1999 onwards Martin Dougiamas and others {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -36,8 +37,8 @@
  * to itself - all these will also be globally available.  You must
  * pass "id=$cm->id" or q=$quiz->id", and "mode=reportname".
  *
- * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  1999 onwards Martin Dougiamas and others {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class quiz_default_report {
     /**

@@ -15,14 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Unit tests for the {@link mod_quiz_display_options} class.
+ * Unit tests for the mod_quiz_display_options class.
  *
- * @package mod_quiz
+ * @package    mod
+ * @subpackage quiz
  * @copyright 2010 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.'); /// It must be included from a Moodle page.
@@ -30,6 +31,13 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
+
+/**
+ * Unit tests for {@link mod_quiz_display_options}.
+ *
+ * @copyright 2010 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class mod_quiz_display_options_test extends UnitTestCase {
     function test_num_attempts_access_rule() {
         $quiz = new stdClass;

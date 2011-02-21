@@ -16,12 +16,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines message providers (types of messages being sent)
+ * Defines message providers (types of message sent) for the quiz module.
  *
- * @package mod
+ * @package    mod
  * @subpackage quiz
- * @copyright 2010 onwards  Andrew Davis  http://moodle.com
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 Andrew Davis http://moodle.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $messageproviders = array (

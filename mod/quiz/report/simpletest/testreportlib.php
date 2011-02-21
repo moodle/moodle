@@ -1,20 +1,43 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Unit tests for (some of) mod/quiz/report/reportlib.php
  *
- * @author me@jamiep.org
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package quiz
+ * @package    mod
+ * @subpackage quiz
+ * @copyright  2008 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-/** */
+
 require_once(dirname(__FILE__) . '/../../../../config.php');
 
 global $CFG;
 require_once($CFG->libdir . '/simpletestlib.php'); // Include the test libraries
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php'); // Include the code to test
 
-/** This class contains the test cases for the functions in reportlib.php. */
+
+/**
+ * This class contains the test cases for the functions in reportlib.php.
+ *
+ * @copyright  2008 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
+ */
 class question_reportlib_test extends UnitTestCase {
     public static $includecoverage = array('mod/quiz/report/reportlib.php');
 

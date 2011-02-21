@@ -21,10 +21,10 @@
  * This contains functions that are called also from outside the quiz module
  * Functions that are only called by the quiz module itself are in {@link locallib.php}
  *
- * @package mod
+ * @package    mod
  * @subpackage quiz
- * @copyright 1999 onwards Martin Dougiamas {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 

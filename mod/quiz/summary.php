@@ -18,11 +18,12 @@
 /**
  * This page prints a summary of a quiz attempt before it is submitted.
  *
- * @package mod
+ * @package    mod
  * @subpackage quiz
- * @copyright 2009 Tim Hunt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');

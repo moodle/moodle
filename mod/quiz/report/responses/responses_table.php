@@ -18,17 +18,18 @@
 /**
  * This file defines the quiz responses report class.
  *
- * @package quiz_responses
- * @copyright 2008 Jean-Michel Vedrine
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    quiz
+ * @subpackage responses
+ * @copyright  2008 Jean-Michel Vedrine
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 /**
  * This is a table subclass for displaying the quiz responses report.
  *
- * @copyright 2008 Jean-Michel Vedrine
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2008 Jean-Michel Vedrine
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_report_responses_table extends quiz_attempt_report_table {
 

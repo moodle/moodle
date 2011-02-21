@@ -18,10 +18,10 @@
 /**
  * This script displays a particular page of a quiz attempt that is in progress.
  *
- * @package mod
+ * @package    mod
  * @subpackage quiz
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');

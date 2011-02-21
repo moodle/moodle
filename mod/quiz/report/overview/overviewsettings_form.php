@@ -18,9 +18,10 @@
 /**
  * This file defines the setting form for the quiz overview report.
  *
- * @package quiz_overview
- * @copyright 2008 Jamie Pratt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    quiz
+ * @subpackage overview
+ * @copyright  2008 Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 

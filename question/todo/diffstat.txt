@@ -446,3 +446,25 @@ DONE question/type/truefalse/renderer.php               |  142 +
 DONE question/type/truefalse/simpletest/testquestion.php     |   99 +
 DONE question/type/truefalse/simpletest/testquestiontype.php |   73 +
 DONE question/type/truefalse/version.php                |    4 +-
+
+Missing @package
+================
+
+DONE mod/quiz/addrandomform.php
+DONE mod/quiz/db/access.php
+DONE mod/quiz/db/install.php
+DONE mod/quiz/db/install.xml
+DONE mod/quiz/db/subplugins.php
+DONE mod/quiz/db/upgrade.php
+DONE mod/quiz/grade.php
+DONE mod/quiz/module.js
+DONE mod/quiz/pix/icon.gif
+DONE mod/quiz/pix/navflagged.png
+DONE mod/quiz/report/grading/styles.css
+DONE mod/quiz/report/overview/db/install.xml
+DONE mod/quiz/report/statistics/db/install.xml
+DONE mod/quiz/report/statistics/simpletest/mdl_question.csv
+DONE mod/quiz/report/statistics/simpletest/mdl_question_states.csv
+DONE mod/quiz/settingslib.php
+DONE mod/quiz/styles.css
+DONE mod/quiz/version.php

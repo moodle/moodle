@@ -18,10 +18,10 @@
 /**
  * Sets up the tabs used by the quiz pages based on the users capabilites.
  *
- * @package mod
+ * @package    mod
  * @subpackage quiz
- * @copyright 2009 Tim Hunt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -429,6 +429,7 @@ class quiz_access_manager {
         }
     }
 }
+
 
 /**
  * A base class that defines the interface for the various quiz access rules.

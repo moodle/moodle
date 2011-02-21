@@ -15,15 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This script lists all the instances of quiz in a particular course
  *
- * @package mod
+ * @package    mod
  * @subpackage quiz
- * @author Martin Dougiamas and many others.
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
 require_once("../../config.php");
 require_once("locallib.php");
 

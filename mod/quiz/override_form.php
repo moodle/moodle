@@ -15,14 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Settings form for overrides in the quiz module.
  *
- * @package mod_quiz
- * @copyright 2010 Matt Petro
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod
+ * @subpackage quiz
+ * @copyright  2010 Matt Petro
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
@@ -30,6 +31,13 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once $CFG->libdir.'/formslib.php';
 
+
+/**
+ * Form for editing settings overrides.
+ *
+ * @copyright  2010 Matt Petro
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class quiz_override_form extends moodleform {
 
     protected $cm;          // course module object

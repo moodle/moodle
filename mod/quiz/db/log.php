@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Definition of log events
+ * Definition of log events for the quiz module.
  *
  * @package    mod
  * @subpackage quiz
