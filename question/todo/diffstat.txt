@@ -468,21 +468,21 @@ DONE mod/quiz/report/statistics/simpletest/mdl_question_states.csv
 DONE mod/quiz/settingslib.php
 DONE mod/quiz/styles.css
 DONE mod/quiz/version.php
-question/behaviour/adaptive/lang/en/qbehaviour_adaptive.php
-question/behaviour/adaptivenopenalty/lang/en/qbehaviour_adaptivenopenalty.php
-question/behaviour/deferredcbm/lang/en/qbehaviour_deferredcbm.php
-question/behaviour/deferredfeedback/lang/en/qbehaviour_deferredfeedback.php
-question/behaviour/immediatecbm/lang/en/qbehaviour_immediatecbm.php
-question/behaviour/immediatefeedback/lang/en/qbehaviour_immediatefeedback.php
-question/behaviour/informationitem/lang/en/qbehaviour_informationitem.php
-question/behaviour/interactive/lang/en/qbehaviour_interactive.php
-question/behaviour/interactivecountback/lang/en/qbehaviour_interactivecountback.php
-question/behaviour/manualgraded/lang/en/qbehaviour_manualgraded.php
-question/behaviour/missing/lang/en/qbehaviour_missing.php
-question/behaviour/opaque/lang/en/qbehaviour_opaque.php
-question/category_form.php
-question/export_form.php
-question/flags.js
+DONE question/behaviour/adaptive/lang/en/qbehaviour_adaptive.php
+DONE question/behaviour/adaptivenopenalty/lang/en/qbehaviour_adaptivenopenalty.php
+DONE question/behaviour/deferredcbm/lang/en/qbehaviour_deferredcbm.php
+DONE question/behaviour/deferredfeedback/lang/en/qbehaviour_deferredfeedback.php
+DONE question/behaviour/immediatecbm/lang/en/qbehaviour_immediatecbm.php
+DONE question/behaviour/immediatefeedback/lang/en/qbehaviour_immediatefeedback.php
+DONE question/behaviour/informationitem/lang/en/qbehaviour_informationitem.php
+DONE question/behaviour/interactive/lang/en/qbehaviour_interactive.php
+DONE question/behaviour/interactivecountback/lang/en/qbehaviour_interactivecountback.php
+DONE question/behaviour/manualgraded/lang/en/qbehaviour_manualgraded.php
+DONE question/behaviour/missing/lang/en/qbehaviour_missing.php
+DONE question/behaviour/opaque/lang/en/qbehaviour_opaque.php
+DONE question/category_form.php
+DONE question/export_form.php
+DONE question/flags.js
 question/format/aiken/format.php
 question/format/gift/examples.txt
 question/format/qti_two/templates/choice.tpl
@@ -497,23 +497,20 @@ question/format/qti_two/templates/mmchoiceMultiple.tpl
 question/format/qti_two/templates/notimplemented.tpl
 question/format/qti_two/templates/numerical.tpl
 question/format/qti_two/templates/textEntry.tpl
-question/format/README.txt
-question/format/webct/TODO.txt
-question/import_form.php
-question/qbank.js
-question/qengine.js
-question/todo/quizinstall.diff.txt
+DONE question/format/README.txt
+DONE question/format/webct/TODO.txt
+DONE question/import_form.php
+DONE question/qbank.js
+DONE question/qengine.js
 question/type/calculated/datasetitems_form.php
 question/type/calculated/db/upgrade.php
 question/type/calculated/questiontype.php
 question/type/calculated/version.php
-question/type/calculatedmulti/pix/icon.gif
 question/type/calculatedmulti/questiontype.php
-question/type/calculatedsimple/pix/icon.gif
 question/type/calculatedsimple/questiontype.php
 question/type/ddwtos/version.php
-question/type/description/question.html
-question/type/essay/display.html
+DONE question/type/description/question.html
+DONE question/type/essay/display.html
 question/type/essay/version.php
 question/type/gapselect/edit_form_base.php
 question/type/gapselect/rendererbase.php

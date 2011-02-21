@@ -305,7 +305,7 @@ abstract class question_engine {
      * @return string name from the current language pack.
      */
     public static function get_behaviour_name($behaviour) {
-        return get_string($behaviour, 'qbehaviour_' . $behaviour);
+        return get_string('pluginname', 'qbehaviour_' . $behaviour);
     }
 
     /**

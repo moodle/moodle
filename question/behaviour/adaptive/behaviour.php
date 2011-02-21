@@ -19,9 +19,10 @@
 /**
  * Question behaviour for the old adaptive mode.
  *
- * @package qbehaviour_adaptive
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbehaviour
+ * @subpackage adaptive
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
