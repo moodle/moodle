@@ -49,7 +49,7 @@ class qtype_match_test extends UnitTestCase {
 
     protected function get_test_question_data() {
         global $USER;
-        $q = new stdClass;
+        $q = new stdClass();
         $q->id = 0;
         $q->name = 'Matching question';
         $q->category = 0;

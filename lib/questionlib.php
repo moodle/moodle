@@ -336,7 +336,7 @@ function get_grade_options() {
     arsort($gradeoptionsfull, SORT_NUMERIC);
 
     // construct return object
-    $grades = new stdClass;
+    $grades = new stdClass();
     $grades->gradeoptions = $gradeoptions;
     $grades->gradeoptionsfull = $gradeoptionsfull;
 
@@ -593,7 +593,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         }
         $DB->set_field('question_categories', 'contextid', $newcontext->id, array('contextid'=>$context->id));
         if ($feedback) {
-            $a = new stdClass;
+            $a = new stdClass();
             $a->oldplace = print_context_name($context);
             $a->newplace = print_context_name($newcontext);
             echo $OUTPUT->notification(get_string('movedquestionsandcategories', 'question', $a), 'notifysuccess');
@@ -1112,7 +1112,7 @@ function question_make_default_categories($contexts) {
     foreach ($contexts as $key => $context) {
         if (!$exists = $DB->record_exists("question_categories", array('contextid'=>$context->id))) {
             // Otherwise, we need to make one
-            $category = new stdClass;
+            $category = new stdClass();
             $contextname = print_context_name($context, false, true);
             $category->name = get_string('defaultfor', 'question', $contextname);
             $category->info = get_string('defaultinfofor', 'question', $contextname);
@@ -1296,7 +1296,7 @@ function get_import_export_formats($type) {
 */
 function question_default_export_filename($course, $category) {
     // We build a string that is an appropriate name (questions) from the lang pack,
-    // then the corse shortname, then the question category name, then a timestamp. 
+    // then the corse shortname, then the question category name, then a timestamp.
 
     $base = clean_filename(get_string('exportfilename', 'question'));
 
@@ -1484,7 +1484,7 @@ function question_edit_url($context) {
  * Adds question bank setting links to the given navigation node if caps are met.
  *
  * @param navigation_node $navigationnode The navigation node to add the question branch to
- * @param stdClass $context
+ * @param object $context
  * @return navigation_node Returns the question branch that was added
  */
 function question_extend_settings_navigation(navigation_node $navigationnode, $context) {

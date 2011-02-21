@@ -497,7 +497,7 @@ class question_bank_creator_name_column extends question_bank_column_base {
 
     protected function display_content($question, $rowclasses) {
         if (!empty($question->creatorfirstname) && !empty($question->creatorlastname)) {
-            $u = new stdClass;
+            $u = new stdClass();
             $u->firstname = $question->creatorfirstname;
             $u->lastname = $question->creatorlastname;
             echo fullname($u);
@@ -534,7 +534,7 @@ class question_bank_modifier_name_column extends question_bank_column_base {
 
     protected function display_content($question, $rowclasses) {
         if (!empty($question->modifierfirstname) && !empty($question->modifierlastname)) {
-            $u = new stdClass;
+            $u = new stdClass();
             $u->firstname = $question->modifierfirstname;
             $u->lastname = $question->modifierlastname;
             echo fullname($u);
@@ -718,7 +718,7 @@ class question_bank_question_text_row extends question_bank_row_base {
     protected $formatoptions;
 
     protected function init() {
-        $this->formatoptions = new stdClass;
+        $this->formatoptions = new stdClass();
         $this->formatoptions->noclean = true;
         $this->formatoptions->para = false;
     }
@@ -1152,7 +1152,7 @@ class question_bank_view {
     }
 
     protected function print_category_info($category) {
-        $formatoptions = new stdClass;
+        $formatoptions = new stdClass();
         $formatoptions->noclean = true;
         $formatoptions->overflowdiv = true;
         echo '<div class="boxaligncenter">';
@@ -1233,7 +1233,7 @@ class question_bank_view {
 
         $category = $this->get_current_category($categoryandcontext);
 
-        $cmoptions = new stdClass;
+        $cmoptions = new stdClass();
         $cmoptions->hasattempts = !empty($this->quizhasattempts);
 
         $strselectall = get_string("selectall", "quiz");
@@ -1723,7 +1723,7 @@ function print_qtype_to_add_option($qtype) {
     echo '<label for="qtype_' . $qtype->name() . '">';
     echo '<input type="radio" name="qtype" id="qtype_' . $qtype->name() . '" value="' . $qtype->name() . '" />';
     echo '<span class="qtypename">';
-    $fakequestion = new stdClass;
+    $fakequestion = new stdClass();
     $fakequestion->qtype = $qtype->name();
     print_question_icon($fakequestion);
     echo $qtype->menu_name() . '</span><span class="qtypesummary">' .

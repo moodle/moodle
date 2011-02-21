@@ -323,7 +323,7 @@ class question_category_object {
 
     public function display_move_form($questionsincategory, $category){
         global $OUTPUT;
-        $vars = new stdClass;
+        $vars = new stdClass();
         $vars->name = $category->name;
         $vars->count = $questionsincategory;
         echo $OUTPUT->box(get_string('categorymove', 'quiz', $vars), 'generalbox boxaligncenter');

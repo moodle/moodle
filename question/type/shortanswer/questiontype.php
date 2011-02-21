@@ -57,7 +57,7 @@ class qtype_shortanswer extends question_type {
 
     public function save_question_options($question) {
         global $DB;
-        $result = new stdClass;
+        $result = new stdClass();
 
         $context = $question->context;
 

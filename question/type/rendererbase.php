@@ -135,7 +135,7 @@ abstract class qtype_renderer extends plugin_renderer_base {
      * @return string HTML fragment.
      */
     protected function num_parts_correct(question_attempt $qa) {
-        $a = new stdClass;
+        $a = new stdClass();
         list($a->num, $a->outof) = $qa->get_question()->get_num_parts_right(
                 $qa->get_last_qt_data());
         if (is_null($a->outof)) {

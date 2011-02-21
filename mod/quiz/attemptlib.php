@@ -1164,7 +1164,7 @@ abstract class quiz_nav_panel_base {
             $qnostring = 'questionnonavinfo';
         }
 
-        $a = new stdClass;
+        $a = new stdClass();
         $a->number = $number;
         $a->attributes = implode(' ', $attributes);
 

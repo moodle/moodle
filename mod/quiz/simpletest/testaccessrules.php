@@ -40,14 +40,14 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 class simple_rules_test extends UnitTestCase {
     public static $includecoverage = array('mod/quiz/locallib.php');
     function test_num_attempts_access_rule() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->attempts = 3;
         $quiz->questions = '';
-        $cm = new stdClass;
+        $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
         $rule = new num_attempts_access_rule($quizobj, 0);
-        $attempt = new stdClass;
+        $attempt = new stdClass();
 
         $this->assertEqual($rule->description(), get_string('attemptsallowedn', 'quiz', 3));
 
@@ -66,9 +66,9 @@ class simple_rules_test extends UnitTestCase {
     }
 
     function test_ipaddress_access_rule() {
-        $quiz = new stdClass;
-        $attempt = new stdClass;
-        $cm = new stdClass;
+        $quiz = new stdClass();
+        $attempt = new stdClass();
+        $cm = new stdClass();
         $cm->id = 0;
 
         // Test the allowed case by getting the user's IP address. However, this
@@ -97,14 +97,14 @@ class simple_rules_test extends UnitTestCase {
     }
 
     function test_time_limit_access_rule() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->timelimit = 3600;
         $quiz->questions = '';
-        $cm = new stdClass;
+        $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
         $rule = new time_limit_access_rule($quizobj, 10000);
-        $attempt = new stdClass;
+        $attempt = new stdClass();
 
         $this->assertEqual($rule->description(), get_string('quiztimelimit', 'quiz', format_time(3600)));
 
@@ -126,14 +126,14 @@ class simple_rules_test extends UnitTestCase {
  */
 class open_close_date_access_rule_test extends UnitTestCase {
     function test_no_dates() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->timeopen = 0;
         $quiz->timeclose = 0;
         $quiz->questions = '';
-        $cm = new stdClass;
+        $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
-        $attempt = new stdClass;
+        $attempt = new stdClass();
         $attempt->preview = 0;
 
         $rule = new open_close_date_access_rule($quizobj, 10000);
@@ -153,14 +153,14 @@ class open_close_date_access_rule_test extends UnitTestCase {
     }
 
     function test_start_date() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->timeopen = 10000;
         $quiz->timeclose = 0;
         $quiz->questions = '';
-        $cm = new stdClass;
+        $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
-        $attempt = new stdClass;
+        $attempt = new stdClass();
         $attempt->preview = 0;
 
         $rule = new open_close_date_access_rule($quizobj, 9999);
@@ -179,14 +179,14 @@ class open_close_date_access_rule_test extends UnitTestCase {
     }
 
     function test_close_date() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->timeopen = 0;
         $quiz->timeclose = 20000;
         $quiz->questions = '';
-        $cm = new stdClass;
+        $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
-        $attempt = new stdClass;
+        $attempt = new stdClass();
         $attempt->preview = 0;
 
         $rule = new open_close_date_access_rule($quizobj, 20000);
@@ -211,14 +211,14 @@ class open_close_date_access_rule_test extends UnitTestCase {
     }
 
     function test_both_dates() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->timeopen = 10000;
         $quiz->timeclose = 20000;
         $quiz->questions = '';
-        $cm = new stdClass;
+        $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
-        $attempt = new stdClass;
+        $attempt = new stdClass();
         $attempt->preview = 0;
 
         $rule = new open_close_date_access_rule($quizobj, 9999);
@@ -261,17 +261,17 @@ class open_close_date_access_rule_test extends UnitTestCase {
  */
 class inter_attempt_delay_access_rule_test extends UnitTestCase {
     function test_just_first_delay() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->attempts = 3;
         $quiz->timelimit = 0;
         $quiz->delay1 = 1000;
         $quiz->delay2 = 0;
         $quiz->timeclose = 0;
         $quiz->questions = '';
-        $cm = new stdClass;
+        $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
-        $attempt = new stdClass;
+        $attempt = new stdClass();
         $attempt->timefinish = 10000;
 
         $rule = new inter_attempt_delay_access_rule($quizobj, 10000);
@@ -293,17 +293,17 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
     }
 
     function test_just_second_delay() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->attempts = 5;
         $quiz->timelimit = 0;
         $quiz->delay1 = 0;
         $quiz->delay2 = 1000;
         $quiz->timeclose = 0;
         $quiz->questions = '';
-        $cm = new stdClass;
+        $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
-        $attempt = new stdClass;
+        $attempt = new stdClass();
         $attempt->timefinish = 10000;
 
         $rule = new inter_attempt_delay_access_rule($quizobj, 10000);
@@ -328,17 +328,17 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
     }
 
     function test_just_both_delays() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->attempts = 5;
         $quiz->timelimit = 0;
         $quiz->delay1 = 2000;
         $quiz->delay2 = 1000;
         $quiz->timeclose = 0;
         $quiz->questions = '';
-        $cm = new stdClass;
+        $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
-        $attempt = new stdClass;
+        $attempt = new stdClass();
         $attempt->timefinish = 10000;
 
         $rule = new inter_attempt_delay_access_rule($quizobj, 10000);
@@ -371,17 +371,17 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
     }
 
     function test_with_close_date() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->attempts = 5;
         $quiz->timelimit = 0;
         $quiz->delay1 = 2000;
         $quiz->delay2 = 1000;
         $quiz->timeclose = 15000;
         $quiz->questions = '';
-        $cm = new stdClass;
+        $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
-        $attempt = new stdClass;
+        $attempt = new stdClass();
         $attempt->timefinish = 13000;
 
         $rule = new inter_attempt_delay_access_rule($quizobj, 10000);
@@ -421,17 +421,17 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
     }
 
     function test_time_limit_and_overdue() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->attempts = 5;
         $quiz->timelimit = 100;
         $quiz->delay1 = 2000;
         $quiz->delay2 = 1000;
         $quiz->timeclose = 0;
         $quiz->questions = '';
-        $cm = new stdClass;
+        $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
-        $attempt = new stdClass;
+        $attempt = new stdClass();
         $attempt->timestart = 9900;
         $attempt->timefinish = 10100;
 
@@ -486,14 +486,14 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
  */
 class password_access_rule_test extends UnitTestCase {
     function test_password_access_rule() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->password = 'frog';
         $quiz->questions = '';
-        $cm = new stdClass;
+        $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
         $rule = new password_access_rule($quizobj, 0);
-        $attempt = new stdClass;
+        $attempt = new stdClass();
 
         $this->assertFalse($rule->prevent_access());
         $this->assertEqual($rule->description(), get_string('requirepasswordmessage', 'quiz'));
@@ -512,14 +512,14 @@ class securewindow_access_rule_test extends UnitTestCase {
     // Nothing very testable in this class, just test that it obeys the general access rule contact.
 
     function test_securewindow_access_rule() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->popup = 1;
         $quiz->questions = '';
-        $cm = new stdClass;
+        $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
         $rule = new securewindow_access_rule($quizobj, 0);
-        $attempt = new stdClass;
+        $attempt = new stdClass();
 
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->description());
@@ -536,16 +536,16 @@ class securewindow_access_rule_test extends UnitTestCase {
  */
 class quiz_access_manager_test extends UnitTestCase {
     public function test_cannot_review_message() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->reviewattempt = 0x10010;
         $quiz->timeclose = 0;
         $quiz->attempts = 0;
         $quiz->questions = '1,2,0,3,4,0';
 
-        $cm = new stdClass;
+        $cm = new stdClass();
         $cm->id = 123;
 
-        $quizobj = new quiz($quiz, $cm, new stdClass, false);
+        $quizobj = new quiz($quiz, $cm, new stdClass(), false);
 
         $am = new quiz_access_manager($quizobj, time(), false);
 
@@ -556,7 +556,7 @@ class quiz_access_manager_test extends UnitTestCase {
 
         $closetime = time() + 10000;
         $quiz->timeclose = $closetime;
-        $quizobj = new quiz($quiz, $cm, new stdClass, false);
+        $quizobj = new quiz($quiz, $cm, new stdClass(), false);
         $am = new quiz_access_manager($quizobj, time(), false);
 
         $this->assertEqual(get_string('noreviewuntil', 'quiz', userdate($closetime)),

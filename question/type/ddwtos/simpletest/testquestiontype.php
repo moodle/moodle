@@ -59,7 +59,7 @@ class qtype_ddwtos_test extends UnitTestCase {
     protected function get_test_question_data() {
         global $USER;
 
-        $dd = new stdClass;
+        $dd = new stdClass();
         $dd->id = 0;
         $dd->category = 0;
         $dd->contextid = 0;
@@ -196,7 +196,7 @@ class qtype_ddwtos_test extends UnitTestCase {
         $q = $importer->try_importing_using_qtypes(
                 $xmldata['question'], null, null, 'ddwtos');
 
-        $expectedq = new stdClass;
+        $expectedq = new stdClass();
         $expectedq->qtype = 'ddwtos';
         $expectedq->name = 'A drag-and-drop question';
         $expectedq->questiontext = 'Put these in order: [[1]], [[2]], [[3]].';
@@ -345,7 +345,7 @@ class qtype_ddwtos_test extends UnitTestCase {
         $q = $importer->try_importing_using_qtypes(
                 $xmldata['question'], null, null, 'ddwtos');
 
-        $expectedq = new stdClass;
+        $expectedq = new stdClass();
         $expectedq->qtype = 'ddwtos';
         $expectedq->name = 'QDandD1 Base definition';
         $expectedq->questiontext = '<p>Drag and drop the words from the list below to fill the blank spaces and correctly complete the sentence.</p><p>At 25°C all aqueous basic solutions have [[1]] ion concentrations less than [[8]]<br />mol litre<sup>-1</sup> and pH values [[9]] than [[6]].</p><!--DONOTCLEAN-->';
@@ -385,7 +385,7 @@ class qtype_ddwtos_test extends UnitTestCase {
     }
 
     public function test_xml_export() {
-        $qdata = new stdClass;
+        $qdata = new stdClass();
         $qdata->id = 123;
         $qdata->contextid = 0;
         $qdata->qtype = 'ddwtos';

@@ -837,7 +837,7 @@ class qformat_default {
      */
     function format_question_text($question) {
         global $DB;
-        $formatoptions = new stdClass;
+        $formatoptions = new stdClass();
         $formatoptions->noclean = true;
         $formatoptions->para = false;
         if (empty($question->questiontextformat)) {

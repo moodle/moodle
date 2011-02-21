@@ -32,7 +32,7 @@ require_once(dirname(__FILE__) . '/../question.php');
 class qtype_missing_test extends UnitTestCase {
 
     protected function get_unknown_questiondata() {
-        $questiondata = new stdClass;
+        $questiondata = new stdClass();
         $questiondata->id = 0;
         $questiondata->category = 0;
         $questiondata->contextid = 0;

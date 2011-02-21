@@ -107,7 +107,7 @@ if ($id) {
     get_question_options($question, true);
 
 } else if ($categoryid && $qtype) { // only for creating new questions
-    $question = new stdClass;
+    $question = new stdClass();
     $question->category = $categoryid;
     $question->qtype = $qtype;
 
@@ -135,7 +135,7 @@ if (!$category = $DB->get_record('question_categories', array('id' => $question-
 }
 
 // Check permissions
-$question->formoptions = new stdClass;
+$question->formoptions = new stdClass();
 
 $categorycontext = get_context_instance_by_id($category->contextid);
 $addpermission = has_capability('moodle/question:add', $categorycontext);

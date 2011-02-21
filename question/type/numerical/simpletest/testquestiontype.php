@@ -56,7 +56,7 @@ class question_numerical_qtype_test extends UnitTestCase {
     }
 
     function test_get_tolerance_interval() {
-        $answer = new stdClass;
+        $answer = new stdClass();
         $answer->tolerance = 0.01;
         $answer->tolerancetype = 'relative';
         $answer->answer = 1.0;
@@ -64,7 +64,7 @@ class question_numerical_qtype_test extends UnitTestCase {
         $this->assertWithinMargin($answer->min, 0.99, $this->tolerance);
         $this->assertWithinMargin($answer->max, 1.01, $this->tolerance);
 
-        $answer = new stdClass;
+        $answer = new stdClass();
         $answer->tolerance = 0.01;
         $answer->tolerancetype = 'relative';
         $answer->answer = 10.0;
@@ -72,7 +72,7 @@ class question_numerical_qtype_test extends UnitTestCase {
         $this->assertWithinMargin($answer->min, 9.9, $this->tolerance);
         $this->assertWithinMargin($answer->max, 10.1, $this->tolerance);
 
-        $answer = new stdClass;
+        $answer = new stdClass();
         $answer->tolerance = 0.01;
         $answer->tolerancetype = 'nominal';
         $answer->answer = 1.0;
@@ -80,7 +80,7 @@ class question_numerical_qtype_test extends UnitTestCase {
         $this->assertWithinMargin($answer->min, 0.99, $this->tolerance);
         $this->assertWithinMargin($answer->max, 1.01, $this->tolerance);
 
-        $answer = new stdClass;
+        $answer = new stdClass();
         $answer->tolerance = 2.0;
         $answer->tolerancetype = 'nominal';
         $answer->answer = 10.0;
@@ -88,21 +88,21 @@ class question_numerical_qtype_test extends UnitTestCase {
         $this->assertWithinMargin($answer->min, 8, $this->tolerance);
         $this->assertWithinMargin($answer->max, 12, $this->tolerance);
 
-        $answer = new stdClass; // Test default tolerance 0.
+        $answer = new stdClass(); // Test default tolerance 0.
         $answer->tolerancetype = 'nominal';
         $answer->answer = 0.0;
         $this->qtype->get_tolerance_interval($answer);
         $this->assertWithinMargin($answer->min, 0, $this->tolerance);
         $this->assertWithinMargin($answer->max, 0, $this->tolerance);
 
-        $answer = new stdClass; // Test default type nominal.
+        $answer = new stdClass(); // Test default type nominal.
         $answer->tolerance = 1.0;
         $answer->answer = 1.0;
         $this->qtype->get_tolerance_interval($answer);
         $this->assertWithinMargin($answer->min, 0, $this->tolerance);
         $this->assertWithinMargin($answer->max, 2, $this->tolerance);
 
-        $answer = new stdClass;
+        $answer = new stdClass();
         $answer->tolerance = 1.0;
         $answer->tolerancetype = 'geometric';
         $answer->answer = 1.0;

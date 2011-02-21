@@ -116,7 +116,7 @@ class qtype_match_edit_form extends question_edit_form {
                 $errors['subanswers['.$key.']'] = get_string('nomatchinganswerforq', 'qtype_match', $trimmedquestion);
             }
         }
-        $numberqanda = new stdClass;
+        $numberqanda = new stdClass();
         $numberqanda->q = 2;
         $numberqanda->a = 3;
         if ($questioncount < 1){

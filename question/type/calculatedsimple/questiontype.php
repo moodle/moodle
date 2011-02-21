@@ -70,7 +70,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
                 $dataanswer = $dataanswer['text'];
             }
             if ( trim($dataanswer) != '' ) {
-                $answer = new stdClass;
+                $answer = new stdClass();
                 $answer->question = $question->id;
                 $answer->answer = trim($dataanswer);
                 $answer->fraction = $question->fraction[$key];
@@ -98,7 +98,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
 
                 // Set up the options object
                 if (!$options = array_shift($oldoptions)) {
-                    $options = new stdClass;
+                    $options = new stdClass();
                 }
                 $options->question  = $question->id;
                 $options->answer    = $answer->id;
@@ -158,7 +158,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
                 }
                 $datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef);
                 $datasetdefs[]= clone($datasetdef);
-                $questiondataset = new stdClass;
+                $questiondataset = new stdClass();
                 $questiondataset->question = $question->id;
                 $questiondataset->datasetdefinition = $datasetdef->id;
                 $DB->insert_record('question_datasets', $questiondataset);

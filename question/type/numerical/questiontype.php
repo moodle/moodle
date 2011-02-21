@@ -244,12 +244,12 @@ class question_numerical_qtype extends qtype_shortanswer {
     function save_numerical_options($question) {
         global $DB;
 
-        $result = new stdClass;
+        $result = new stdClass();
 
         $update = true ;
         $options = $DB->get_record('question_numerical_options', array('question' => $question->id));
         if (!$options) {
-            $options = new stdClass;
+            $options = new stdClass();
             $options->question = $question->id;
             $options->instructions = '';
             $options->id = $DB->insert_record('question_numerical_options', $options);
@@ -310,7 +310,7 @@ class question_numerical_qtype extends qtype_shortanswer {
 
     function save_numerical_units($question) {
         global $DB;
-        $result = new stdClass;
+        $result = new stdClass();
 
         // Delete the units previously saved for this question.
         $DB->delete_records('question_numerical_units', array('question' => $question->id));
@@ -328,7 +328,7 @@ class question_numerical_qtype extends qtype_shortanswer {
             // Discard any unit which doesn't specify the unit or the multiplier
             if (!empty($question->multiplier[$i]) && !empty($question->unit[$i])&& !array_key_exists($question->unit[$i],$unitalreadyinsert)) {
                 $unitalreadyinsert[$question->unit[$i]] = 1 ;
-                $units[$i] = new stdClass;
+                $units[$i] = new stdClass();
                 $units[$i]->question = $question->id;
                 $units[$i]->multiplier = $this->apply_unit($question->multiplier[$i], array());
                 $units[$i]->unit = $question->unit[$i];
@@ -426,7 +426,7 @@ class question_numerical_qtype extends qtype_shortanswer {
 
         $context = $this->get_context_by_category_id($question->category);
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
-        $formatoptions = new stdClass;
+        $formatoptions = new stdClass();
         $formatoptions->noclean = true;
         $formatoptions->para = false;
         $nameprefix = $question->name_prefix;
@@ -848,12 +848,12 @@ class question_numerical_qtype extends qtype_shortanswer {
 
     // ULPGC ecastro
     function get_all_responses(&$question, &$state) {
-        $result = new stdClass;
+        $result = new stdClass();
         $answers = array();
         $unit = $this->get_default_numerical_unit($question);
         if (is_array($question->options->answers)) {
             foreach ($question->options->answers as $aid=>$answer) {
-                $r = new stdClass;
+                $r = new stdClass();
                 $r->answer = $answer->answer;
                 $r->credit = $answer->fraction;
                 $this->get_tolerance_interval($answer);

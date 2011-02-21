@@ -346,7 +346,7 @@ class quiz_grading_report extends quiz_default_report {
         $mform = new quiz_grading_settings($hidden, $counts, $shownames, $showidnumbers);
 
         // Tell the form the current settings.
-        $settings = new stdClass;
+        $settings = new stdClass();
         $settings->grade = $grade;
         $settings->pagesize = $pagesize;
         $settings->order = $order;
@@ -355,7 +355,7 @@ class quiz_grading_report extends quiz_default_report {
         // Print the heading and form.
         echo question_engine::initialise_js();
 
-        $a = new stdClass;
+        $a = new stdClass();
         $a->number = $this->questions[$slot]->number;
         $a->questionname = format_string($counts->name);
         echo $OUTPUT->heading(get_string('gradingquestionx', 'quiz_grading', $a));
@@ -366,7 +366,7 @@ class quiz_grading_report extends quiz_default_report {
         $mform->display();
 
         // Paging info.
-        $a = new stdClass;
+        $a = new stdClass();
         $a->from = $page * $pagesize + 1;
         $a->to = min(($page + 1) * $pagesize, $count);
         $a->of = $count;
@@ -410,7 +410,7 @@ class quiz_grading_report extends quiz_default_report {
     }
 
     protected function get_question_heading($attempt, $shownames, $showidnumbers) {
-        $a = new stdClass;
+        $a = new stdClass();
         $a->attempt = $attempt->attempt;
         $a->fullname = fullname($attempt);
         $a->idnumber = $attempt->idnumber;

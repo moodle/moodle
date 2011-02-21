@@ -435,12 +435,12 @@ class question_type {
             $options = $DB->get_record($question_extension_table, array($questionidcolname => $question->id));
             if (!$options) {
                 $function = 'insert_record';
-                $options = new stdClass;
+                $options = new stdClass();
                 $options->$questionidcolname = $question->id;
             }
             foreach ($extra_question_fields as $field) {
                 if (!isset($question->$field)) {
-                    $result = new stdClass;
+                    $result = new stdClass();
                     $result->error = "No data for field $field when saving " .
                             $this->name() . ' question id ' . $question->id;
                     return $result;
@@ -449,7 +449,7 @@ class question_type {
             }
 
             if (!$DB->{$function}($question_extension_table, $options)) {
-                $result = new stdClass;
+                $result = new stdClass();
                 $result->error = 'Could not save question options for ' .
                         $this->name() . ' question id ' . $question->id;
                 return $result;
@@ -1086,7 +1086,7 @@ class question_type {
 
     function import_file($context, $component, $filearea, $itemid, $file) {
         $fs = get_file_storage();
-        $record = new stdclass;
+        $record = new stdClass();
         if (is_object($context)) {
             $record->contextid = $context->id;
         } else {

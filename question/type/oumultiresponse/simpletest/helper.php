@@ -61,12 +61,12 @@ class qtype_oumultiresponse_test_helper {
     /**
      * Get the question data, as it would be loaded by get_question_options, for
      * the question returned by {@link make_an_oumultiresponse_two_of_four()}.
-     * @return stdClass
+     * @return object
      */
     public static function get_question_data() {
         global $USER;
 
-        $qdata = new stdClass;
+        $qdata = new stdClass();
         $qdata->id = 0;
         $qdata->contextid = 0;
         $qdata->category = 0;

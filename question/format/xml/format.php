@@ -171,7 +171,7 @@ class qformat_xml extends qformat_default {
         // restore files in questiontext
         $files = $this->getpath($question, array('#', 'questiontext', 0, '#','file'), array(), false);
         foreach ($files as $file) {
-            $data = new stdclass;
+            $data = new stdClass();
             $data->content = $file['#'];
             $data->encoding = $file['@']['encoding'];
             $data->name = $file['@']['name'];
@@ -182,7 +182,7 @@ class qformat_xml extends qformat_default {
         $filedata = $this->getpath($question, array('#', 'image_base64', '0', '#'), null, false);
         $filename = $this->getpath($question, array('#', 'image', '0', '#'), null, false);
         if ($filedata && $filename) {
-            $data = new stdclass;
+            $data = new stdClass();
             $data->content = $filedata;
             $data->encoding = 'base64';
             $data->name = $filename;
@@ -198,7 +198,7 @@ class qformat_xml extends qformat_default {
                 $this->getpath($question, array('#', 'generalfeedback', 0, '@', 'format'), 'moodle_auto_format'));
         $files = $this->getpath($question, array('#', 'generalfeedback', 0, '#', 'file'), array(), false);
         foreach ($files as $file) {
-            $data = new stdclass;
+            $data = new stdClass();
             $data->content = $file['#'];
             $data->encoding = $file['@']['encoding'];
             $data->name = $file['@']['name'];
@@ -239,7 +239,7 @@ class qformat_xml extends qformat_default {
         $answerfiles = array();
         $files = $this->getpath($answer, array('#', 'answer', 0, '#', 'file'), array());
         foreach ($files as $file) {
-            $data = new stdclass;
+            $data = new stdClass();
             $data->content = $file['#'];
             $data->name = $file['@']['name'];
             $data->encoding = $file['@']['encoding'];
@@ -252,14 +252,14 @@ class qformat_xml extends qformat_default {
         $feedbackfiles = array();
         $files = $this->getpath($answer, array('#', 'feedback', 0, '#', 'file'), array());
         foreach ($files as $file) {
-            $data = new stdclass;
+            $data = new stdClass();
             $data->content = $file['#'];
             $data->name = $file['@']['name'];
             $data->encoding = $file['@']['encoding'];
             $feedbackfiles[] = $data;
         }
 
-        $ans = new stdclass;
+        $ans = new stdClass();
 
         $ans->answer = array();
         $ans->answer['text']   = $answertext;
@@ -322,7 +322,7 @@ class qformat_xml extends qformat_default {
         if (array_key_exists('hintcontent', $hintxml['#'])) {
             // Backwards compatibility:
 
-            $hint = new stdClass;
+            $hint = new stdClass();
             $hint->hint = $this->getpath($hintxml,
                     array('#', 'hintcontent', 0, '#', 'text' ,0, '#'), '', true);
             $hint->shownumcorrect = $this->getpath($hintxml,
@@ -335,7 +335,7 @@ class qformat_xml extends qformat_default {
             return $hint;
         }
 
-        $hint = new stdClass;
+        $hint = new stdClass();
         $hint->hint = $this->getpath($hintxml, array('#', 'text', 0 , '#'), '', true);
         $hint->shownumcorrect = array_key_exists('shownumcorrect', $hintxml['#']);
         $hint->clearwrong = array_key_exists('clearwrong', $hintxml['#']);
@@ -433,7 +433,7 @@ class qformat_xml extends qformat_default {
                 $this->getpath($questions, array('#', 'generalfeedback', 0, '@', 'format'), 'moodle_auto_format'));
         $files = $this->getpath($questions, array('#', 'generalfeedback', 0, '#', 'file'), array(), false);
         foreach ($files as $file) {
-            $data = new stdclass;
+            $data = new stdClass();
             $data->content = $file['#'];
             $data->encoding = $file['@']['encoding'];
             $data->name = $file['@']['name'];
@@ -476,7 +476,7 @@ class qformat_xml extends qformat_default {
             $feedbackfiles = $this->getpath($answer, array('#', 'feedback', 0, '#', 'file'), array());
             $files = array();
             foreach ($feedbackfiles as $file) {
-                $data = new stdclass;
+                $data = new stdClass();
                 $data->content = $file['#'];
                 $data->encoding = $file['@']['encoding'];
                 $data->name = $file['@']['name'];
@@ -511,7 +511,7 @@ class qformat_xml extends qformat_default {
         }
 
         if ($warning) {
-            $a = new stdClass;
+            $a = new stdClass();
             $a->questiontext = $qo->questiontext;
             $a->answer = get_string($qo->correctanswer ? 'true' : 'false', 'quiz');
             echo $OUTPUT->notification(get_string('truefalseimporterror', 'quiz', $a));
@@ -627,7 +627,7 @@ class qformat_xml extends qformat_default {
             $files = $this->getpath($instructions, array('0', '#', 'file'), array());
             $qo->instructions['files'] = array();
             foreach ($files as $file) {
-                $data = new stdclass;
+                $data = new stdClass();
                 $data->content = $file['#'];
                 $data->encoding = $file['@']['encoding'];
                 $data->name = $file['@']['name'];
@@ -787,7 +787,7 @@ class qformat_xml extends qformat_default {
                     array('0', '#', 'file'), array());
             $qo->instructions['files'] = array();
             foreach ($files as $file) {
-                $data = new stdclass;
+                $data = new stdClass();
                 $data->content = $file['#'];
                 $data->encoding = $file['@']['encoding'];
                 $data->name = $file['@']['name'];
@@ -847,7 +847,7 @@ class qformat_xml extends qformat_default {
                     array('0', '#', 'file'), array());
             $qo->instructions['files'] = array();
             foreach ($files as $file) {
-                $data = new stdclass;
+                $data = new stdClass();
                 $data->content = $file['#'];
                 $data->encoding = $file['@']['encoding'];
                 $data->name = $file['@']['name'];
@@ -894,7 +894,7 @@ class qformat_xml extends qformat_default {
      * </question>
      */
     function import_category($question) {
-        $qo = new stdClass;
+        $qo = new stdClass();
         $qo->qtype = 'category';
         $qo->category = $this->import_text($question['#']['category'][0]['#']['text']);
         return $qo;

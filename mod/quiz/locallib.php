@@ -85,7 +85,7 @@ function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $isp
 
     if ($attemptnumber == 1 || !$quiz->attemptonlast) {
     /// We are not building on last attempt so create a new attempt.
-        $attempt = new stdClass;
+        $attempt = new stdClass();
         $attempt->quiz = $quiz->id;
         $attempt->userid = $USER->id;
         $attempt->preview = 0;
@@ -424,7 +424,7 @@ function quiz_feedback_for_grade($grade, $quiz, $context) {
     }
 
     // Clean the text, ready for display.
-    $formatoptions = new stdClass;
+    $formatoptions = new stdClass();
     $formatoptions->noclean = true;
     $feedbacktext = file_rewrite_pluginfile_urls($feedback->feedbacktext, 'pluginfile.php', $context->id, 'mod_quiz', 'feedback', $feedback->id);
     $feedbacktext = format_text($feedbacktext, $feedback->feedbacktextformat, $formatoptions);
@@ -761,7 +761,7 @@ function quiz_update_all_final_grades($quiz) {
             $todelete[] = $changedgrade->userid;
 
         } else if (is_null($changedgrade->grade)) {
-            $toinsert = new stdClass;
+            $toinsert = new stdClass();
             $toinsert->quiz = $quiz->id;
             $toinsert->userid = $changedgrade->userid;
             $toinsert->timemodified = $timenow;
@@ -769,7 +769,7 @@ function quiz_update_all_final_grades($quiz) {
             $DB->insert_record('quiz_grades', $toinsert);
 
         } else {
-            $toupdate = new stdClass;
+            $toupdate = new stdClass();
             $toupdate->id = $changedgrade->id;
             $toupdate->grade = $changedgrade->newgrade;
             $toupdate->timemodified = $timenow;
@@ -868,7 +868,7 @@ function quiz_upgrade_states($attempt) {
     // Actually we only do this for states whose question is actually listed in $attempt->layout.
     // We do not do it for states associated to wrapped questions like for example the questions
     // used by a RANDOM question
-    $session = new stdClass;
+    $session = new stdClass();
     $session->attemptid = $attempt->uniqueid;
     $questionlist = quiz_questions_in_quiz($attempt->layout);
     $params = array($attempt->uniqueid);
@@ -1075,8 +1075,8 @@ function quiz_get_review_options($quiz, $attempt, $context) {
  */
 function quiz_get_combined_reviewoptions($quiz, $attempts) {
     $fields = array('marks', 'feedback', 'generalfeedback', 'rightanswer', 'overallfeedback');
-    $someoptions = new stdClass;
-    $alloptions = new stdClass;
+    $someoptions = new stdClass();
+    $alloptions = new stdClass();
     foreach ($fields as $field) {
         $someoptions->$field = false;
         $alloptions->$field = true;
@@ -1164,7 +1164,7 @@ function quiz_get_slot_for_question($quiz, $questionid) {
 /**
  * Sends confirmation email to the student taking the course
  *
- * @param stdClass $a associative array of replaceable fields for the templates
+ * @param object $a associative array of replaceable fields for the templates
  *
  * @return bool|string result of events_triger
  */
@@ -1205,7 +1205,7 @@ function quiz_send_confirmation($a) {
  * Sends notification messages to the interested parties that assign the role capability
  *
  * @param object $recipient user object of the intended recipient
- * @param stdClass $a associative array of replaceable fields for the templates
+ * @param object $a associative array of replaceable fields for the templates
  *
  * @return bool|string result of events_triger()
  */
@@ -1293,7 +1293,7 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
 
     // if something to send, then build $a
     if (! empty($userstonotify) or $sendconfirm) {
-        $a = new stdClass;
+        $a = new stdClass();
         // course info
         $a->coursename = $course->fullname;
         $a->courseshortname = $course->shortname;
@@ -1407,7 +1407,7 @@ class mod_quiz_display_options extends question_display_options {
 
     /**
      * Set up the various options from the quiz settings, and a time constant.
-     * @param stdClass $quiz the quiz settings.
+     * @param object $quiz the quiz settings.
      * @param integer $one of the {@link DURING}, {@link IMMEDIATELY_AFTER},
      * {@link LATER_WHILE_OPEN} or {@link AFTER_CLOSE} constants.
      * @return mod_quiz_display_options set up appropriately.

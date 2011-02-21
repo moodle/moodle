@@ -116,7 +116,7 @@ class question_calculated_qtype extends default_questiontype {
                             $n = 0;
                             foreach( $items as $ii){
                                 $n++;
-                                $def->items[$n] = new stdClass;
+                                $def->items[$n] = new stdClass();
                                 $def->items[$n]->itemnumber=$ii->itemnumber;
                                 $def->items[$n]->value=$ii->value;
                             }
@@ -142,7 +142,7 @@ class question_calculated_qtype extends default_questiontype {
         $options = $DB->get_record("question_calculated_options", array("question" => $question->id));
         if (!$options) {
             $update = false;
-            $options = new stdClass;
+            $options = new stdClass();
             $options->question = $question->id;
         }
         // as used only by calculated
@@ -193,7 +193,7 @@ class question_calculated_qtype extends default_questiontype {
                 $dataanswer = $dataanswer['text'];
             }
             if ( trim($dataanswer) != '' ) {
-                $answer = new stdClass;
+                $answer = new stdClass();
                 $answer->question = $question->id;
                 $answer->answer = trim($dataanswer);
                 $answer->fraction = $question->fraction[$key];
@@ -221,7 +221,7 @@ class question_calculated_qtype extends default_questiontype {
 
                 // Set up the options object
                 if (!$options = array_shift($oldoptions)) {
-                    $options = new stdClass;
+                    $options = new stdClass();
                 }
                 $options->question  = $question->id;
                 $options->answer    = $answer->id;
@@ -305,13 +305,13 @@ class question_calculated_qtype extends default_questiontype {
                 $datasetdef->id = $DB->insert_record( 'question_dataset_definitions', $datasetdef);
             }
             // Create relation to the dataset:
-            $questiondataset = new stdClass;
+            $questiondataset = new stdClass();
             $questiondataset->question = $question->id;
             $questiondataset->datasetdefinition = $datasetdef->id;
             $DB->insert_record('question_datasets', $questiondataset);
             if ($todo=='create'){ // add the items
                 foreach ($dataset->datasetitem as $dataitem ){
-                    $datasetitem = new stdClass;
+                    $datasetitem = new stdClass();
                     $datasetitem->definition=$datasetdef->id ;
                     $datasetitem->itemnumber = $dataitem->itemnumber ;
                     $datasetitem->value = $dataitem->value ;
@@ -362,7 +362,7 @@ class question_calculated_qtype extends default_questiontype {
         }else {
             // i.e records is true so test coherence
             $coherence = true ;
-            $a = new stdClass ;
+            $a = new stdClass() ;
             $a->qid = $question->id ;
             $a->qcat = $question->category ;
             foreach($records as $def ){
@@ -1213,7 +1213,7 @@ class question_calculated_qtype extends default_questiontype {
                     if (isset($datasetdefs[$defid]->items[$numberadded])  ){
                         // in case of regenerate it modifies the already existing record
                         if ( $defregenerate  ) {
-                            $datasetitem = new stdClass;
+                            $datasetitem = new stdClass();
                             $datasetitem->id = $datasetdefs[$defid]->items[$numberadded]->id;
                             $datasetitem->definition = $datasetdef->id ;
                             $datasetitem->itemnumber = $numberadded;
@@ -1222,7 +1222,7 @@ class question_calculated_qtype extends default_questiontype {
                         }
                         //if not regenerate do nothing as there is already a record
                     } else {
-                        $datasetitem = new stdClass;
+                        $datasetitem = new stdClass();
                         $datasetitem->definition = $datasetdef->id ;
                         $datasetitem->itemnumber = $numberadded;
                         if ($this->supports_dataset_item_generation()) {
@@ -1297,7 +1297,7 @@ class question_calculated_qtype extends default_questiontype {
 
     function comment_on_datasetitems($qtypeobj, $questionid, $questiontext, $answers, $data, $number) {
         global $DB, $QTYPES;
-        $comment = new stdClass;
+        $comment = new stdClass();
         $comment->stranswers = array();
         $comment->outsidelimit = false ;
         $comment->answers = array();
@@ -1353,7 +1353,7 @@ class question_calculated_qtype extends default_questiontype {
     }
     function multichoice_comment_on_datasetitems($questionid, $questiontext, $answers,$data, $number) {
         global $DB;
-        $comment = new stdClass;
+        $comment = new stdClass();
         $comment->stranswers = array();
         $comment->outsidelimit = false ;
         $comment->answers = array();
@@ -1510,7 +1510,7 @@ class question_calculated_qtype extends default_questiontype {
         foreach ($dataset as $name => $value) {
             $val = $value ;
             if(! is_numeric($val)){
-                $a = new stdClass;
+                $a = new stdClass();
                 $a->name = '{'.$name.'}' ;
                 $a->value = $value ;
                 echo $OUTPUT->notification(get_string('notvalidnumber','qtype_calculated',$a));
@@ -1573,7 +1573,7 @@ class question_calculated_qtype extends default_questiontype {
             if (!isset($datasetdefs[$dataset])) {
                 //make new datasetdef
                 list($type, $category, $name) = explode('-', $dataset, 3);
-                $datasetdef = new stdClass;
+                $datasetdef = new stdClass();
                 $datasetdef->type = $type;
                 $datasetdef->name = $name;
                 $datasetdef->category  = $category;
@@ -1635,7 +1635,7 @@ class question_calculated_qtype extends default_questiontype {
             }
 
             // Create relation to this dataset:
-            $questiondataset = new stdClass;
+            $questiondataset = new stdClass();
             $questiondataset->question = $form->id;
             $questiondataset->datasetdefinition = $datasetdef->id;
             $DB->insert_record('question_datasets', $questiondataset);
@@ -1703,7 +1703,7 @@ class question_calculated_qtype extends default_questiontype {
                 }// end of  copy the datasetdef
                 // Create relation to the new question with this
                 // copy as new datasetdef from the initial question
-                $questiondataset = new stdClass;
+                $questiondataset = new stdClass();
                 $questiondataset->question = $form->id;
                 $questiondataset->datasetdefinition = $datasetdef->id;
                 $DB->insert_record('question_datasets', $questiondataset);
@@ -1735,7 +1735,7 @@ class question_calculated_qtype extends default_questiontype {
             }
 
             // Create relation to this dataset:
-            $questiondataset = new stdClass;
+            $questiondataset = new stdClass();
             $questiondataset->question = $form->id;
             $questiondataset->datasetdefinition = $datasetdef->id;
             $DB->insert_record('question_datasets', $questiondataset);
@@ -1767,7 +1767,7 @@ class question_calculated_qtype extends default_questiontype {
                FROM {question_dataset_definitions} d, {question_dataset_items} i, {question_datasets} q
               WHERE q.question = ? AND q.datasetdefinition = d.id AND d.id = i.definition AND i.itemnumber = ?
            ORDER by i.id DESC ", array($question->id, $datasetitem))) {
-           $a = new stdClass;
+           $a = new stdClass();
            $a->id = $question->id;
            $a->item = $datasetitem ;
             print_error('cannotgetdsfordependent', 'question', '', $a );
@@ -1793,7 +1793,7 @@ class question_calculated_qtype extends default_questiontype {
         if (!isset($form->id) || $form->id == 0 ){
             $key = "$type-0-$name";
             $options[$key] = get_string($prefix."newlocal$type", $langfile);
-            $currentdatasetdef = new stdClass;
+            $currentdatasetdef = new stdClass();
             $currentdatasetdef->type = '0';
         }else {
 

@@ -40,7 +40,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  */
 class mod_quiz_display_options_test extends UnitTestCase {
     function test_num_attempts_access_rule() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->decimalpoints = 2;
         $quiz->questiondecimalpoints = -1;
         $quiz->reviewattempt          = 0x11110;

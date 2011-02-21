@@ -242,7 +242,7 @@ abstract class question_definition {
      */
     public function format_text($text, $qa, $component, $filearea, $itemid, $clean = false) {
         // TODO format.
-        $formatoptions = new stdClass;
+        $formatoptions = new stdClass();
         $formatoptions->noclean = !$clean;
         $formatoptions->para = false;
         $text = $qa->rewrite_pluginfile_urls($text, $component, $filearea, $itemid);
@@ -255,7 +255,7 @@ abstract class question_definition {
      * @param string $text The HTML to reduce to plain text.
      */
     public function html_to_text($text) {
-        $formatoptions = new stdClass;
+        $formatoptions = new stdClass();
         $formatoptions->noclean = true;
         return html_to_text(format_text($text, $this->questiontextformat, $formatoptions),
                 0, false);

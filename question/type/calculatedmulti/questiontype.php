@@ -52,7 +52,7 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
         $options = $DB->get_record("question_calculated_options", array("question" => $question->id));
         if (!$options) {
             $update = false;
-            $options = new stdClass;
+            $options = new stdClass();
             $options->question = $question->id;
         }
         $options->synchronize = $question->synchronize;
@@ -110,7 +110,7 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
                 $dataanswer = $dataanswer['text'];
             }
             if ( trim($dataanswer) != '' ) {
-                $answer = new stdClass;
+                $answer = new stdClass();
                 $answer->question = $question->id;
                 $answer->answer = trim($dataanswer);
                 $answer->fraction = $question->fraction[$key];
@@ -139,7 +139,7 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
 
                 // Set up the options object
                 if (!$options = array_shift($oldoptions)) {
-                    $options = new stdClass;
+                    $options = new stdClass();
                 }
                 $options->question  = $question->id;
                 $options->answer    = $answer->id;
@@ -199,7 +199,7 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
         } else {
             // i.e records is true so test coherence
             $coherence = true ;
-            $a = new stdClass ;
+            $a = new stdClass() ;
             $a->qid = $question->id ;
             $a->qcat = $question->category ;
             foreach($records as $def ){
@@ -384,7 +384,7 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
 
     function comment_on_datasetitems($qtypeobj,$questionid,$questiontext, $answers,$data, $number) { //multichoice_
         global $DB;
-        $comment = new stdClass;
+        $comment = new stdClass();
         $comment->stranswers = array();
         $comment->outsidelimit = false ;
         $comment->answers = array();

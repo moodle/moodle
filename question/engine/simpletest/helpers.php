@@ -309,7 +309,7 @@ abstract class testing_db_record_builder {
             if (count($row) != count($columns)) {
                 throw new Exception("Row contains the wrong number of fields.");
             }
-            $rec = new stdClass;
+            $rec = new stdClass();
             foreach ($columns as $i => $name) {
                 $rec->$name = $row[$i];
             }
@@ -448,7 +448,7 @@ class qbehaviour_walkthrough_test_base extends UnitTestCase {
     }
 
     protected function get_contains_num_parts_correct($num) {
-        $a = new stdClass;
+        $a = new stdClass();
         $a->num = $num;
         return new PatternExpectation('/<div class="numpartscorrect">' .
                 preg_quote(get_string('yougotnright', 'question', $a)) . '/');
@@ -467,7 +467,7 @@ class qbehaviour_walkthrough_test_base extends UnitTestCase {
     }
 
     protected function get_contains_mark_summary($mark) {
-        $a = new stdClass;
+        $a = new stdClass();
         $a->mark = format_float($mark, $this->displayoptions->markdp);
         $a->max = format_float($this->quba->get_question_max_mark($this->slot),
                 $this->displayoptions->markdp);

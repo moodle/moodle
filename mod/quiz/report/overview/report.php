@@ -353,7 +353,7 @@ class quiz_overview_report extends quiz_attempt_report {
 
         $finished = $attempt->timefinish > 0;
         foreach ($slots as $slot) {
-            $qqr = new stdClass;
+            $qqr = new stdClass();
             $qqr->oldfraction = $quba->get_question_fraction($slot);
 
             $quba->regrade_question($slot, $finished);

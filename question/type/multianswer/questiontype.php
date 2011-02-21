@@ -84,7 +84,7 @@ class embedded_cloze_qtype extends default_questiontype {
 
     function save_question_options($question) {
         global $QTYPES, $DB;
-        $result = new stdClass;
+        $result = new stdClass();
 
         // This function needs to be able to handle the case where the existing set of wrapped
         // questions does not match the new set of wrapped questions so that some need to be
@@ -147,7 +147,7 @@ class embedded_cloze_qtype extends default_questiontype {
         }
 
         if (!empty($sequence)) {
-            $multianswer = new stdClass;
+            $multianswer = new stdClass();
             $multianswer->question = $question->id;
             $multianswer->sequence = implode(',', $sequence);
             if ($oldid = $DB->get_field('question_multianswer', 'id', array('question' => $question->id))) {
@@ -280,7 +280,7 @@ class embedded_cloze_qtype extends default_questiontype {
 
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $disabled = empty($options->readonly) ? '' : 'disabled="disabled"';
-        $formatoptions = new stdClass;
+        $formatoptions = new stdClass();
         $formatoptions->noclean = true;
         $formatoptions->para = false;
         $nameprefix = $question->name_prefix;
@@ -383,7 +383,7 @@ class embedded_cloze_qtype extends default_questiontype {
                 // Set up a default chosenanswer so that all non-empty wrong
                 // answers are highlighted red
                 if (empty($chosenanswer) && $response != '') {
-                    $chosenanswer = new stdClass;
+                    $chosenanswer = new stdClass();
                     $chosenanswer->fraction = 0.0;
                 }
 
@@ -495,7 +495,7 @@ class embedded_cloze_qtype extends default_questiontype {
                                 $checked = 'checked="checked"';
                                 $chosen = true;
                             }
-                            $a = new stdClass;
+                            $a = new stdClass();
                             $a->id   = $question->name_prefix . $mcanswer->id;
                             $a->class = '';
                             $a->feedbackimg = '';
@@ -576,7 +576,7 @@ class embedded_cloze_qtype extends default_questiontype {
 
                     break;
                 default:
-                    $a = new stdClass;
+                    $a = new stdClass();
                     $a->type = $wrapped->qtype ;
                     $a->sub = $positionkey;
                     print_error('unknownquestiontypeofsubquestion', 'qtype_multianswer','',$a);
@@ -763,7 +763,7 @@ define("ANSWER_REGEX_ALTERNATIVES", 9);
 
 function qtype_multianswer_extract_question($text) {
     // $text is an array [text][format][itemid]
-    $question = new stdClass;
+    $question = new stdClass();
     $question->qtype = 'multianswer';
     $question->questiontext = $text;
     $question->generalfeedback['text'] = '';
@@ -774,7 +774,7 @@ function qtype_multianswer_extract_question($text) {
     $question->defaultgrade = 0; // Will be increased for each answer norm
 
     for ($positionkey=1; preg_match('/'.ANSWER_REGEX.'/', $question->questiontext['text'], $answerregs); ++$positionkey ) {
-        $wrapped = new stdClass;
+        $wrapped = new stdClass();
         $wrapped->generalfeedback['text'] = '';
         $wrapped->generalfeedback['format'] = '1';
         $wrapped->generalfeedback['itemid'] = '';

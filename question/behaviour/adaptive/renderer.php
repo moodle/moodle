@@ -47,7 +47,7 @@ class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
         }
 
         // Display the grading details from the last graded state
-        $mark = new stdClass;
+        $mark = new stdClass();
         $mark->max = $qa->format_max_mark($options->markdp);
 
         $actualmark = $gradedstep->get_fraction() * $qa->get_max_mark();

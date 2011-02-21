@@ -300,8 +300,6 @@ function quiz_update_effective_access($quiz, $userid) {
 /**
  * Delete all the attempts belonging to a quiz.
  *
- * @global stdClass
- * @global object
  * @param object $quiz The quiz object.
  */
 function quiz_delete_all_attempts($quiz) {
@@ -370,7 +368,7 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
         $grade = reset($grades->items[0]->grades);
     }
 
-    $result = new stdClass;
+    $result = new stdClass();
     $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
     $result->time = $grade->dategraded;
     return $result;
@@ -802,7 +800,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
 
         $options = quiz_get_review_options($quiz, $attempt, $context);
 
-        $tmpactivity = new stdClass;
+        $tmpactivity = new stdClass();
 
         $tmpactivity->type       = 'quiz';
         $tmpactivity->cmid       = $cm->id;
@@ -1003,7 +1001,7 @@ function quiz_after_add_or_update($quiz) {
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
 
     for ($i = 0; $i <= $quiz->feedbackboundarycount; $i++) {
-        $feedback = new stdClass;
+        $feedback = new stdClass();
         $feedback->quizid = $quiz->id;
         $feedback->feedbacktext = $quiz->feedbacktext[$i]['text'];
         $feedback->feedbacktextformat = $quiz->feedbacktext[$i]['format'];
@@ -1049,7 +1047,7 @@ function quiz_update_events($quiz, $override = null) {
         // need to add all the overrides
         $overrides = $DB->get_records('quiz_overrides', array('quiz' => $quiz->id));
         // as well as the original quiz (empty override)
-        $overrides[] = new stdClass;
+        $overrides[] = new stdClass();
     }
     else {
         // Just do the one override
@@ -1066,7 +1064,7 @@ function quiz_update_events($quiz, $override = null) {
         $addopen  = empty($current->id) || !empty($current->timeopen);
         $addclose = empty($current->id) || !empty($current->timeclose);
 
-        $event = new stdClass;
+        $event = new stdClass();
         $event->description = $quiz->intro;
         $event->courseid    = ($userid) ? 0 : $quiz->course; // Events module won't show user events when the courseid is nonzero
         $event->groupid     = $groupid;
@@ -1080,7 +1078,7 @@ function quiz_update_events($quiz, $override = null) {
 
         // Determine the event name
         if ($groupid) {
-            $params = new stdClass;
+            $params = new stdClass();
             $params->quiz = $quiz->name;
             $params->group = groups_get_group_name($groupid);
             if ($params->group === false) {
@@ -1090,7 +1088,7 @@ function quiz_update_events($quiz, $override = null) {
             $eventname = get_string('overridegroupeventname', 'quiz', $params);
         }
         else if ($userid) {
-            $params = new stdClass;
+            $params = new stdClass();
             $params->quiz = $quiz->name;
             $eventname = get_string('overrideusereventname', 'quiz', $params);
         } else {
@@ -1460,8 +1458,6 @@ function quiz_supports($feature) {
 }
 
 /**
- * @global object
- * @global stdClass
  * @return array all other caps used in module
  */
 function quiz_get_extra_capabilities() {
@@ -1479,9 +1475,9 @@ function quiz_get_extra_capabilities() {
  * available
  *
  * @param navigation_node $quiznode The quiz node within the global navigation
- * @param stdClass $course The course object returned from the DB
- * @param stdClass $module The module object returned from the DB
- * @param stdClass $cm The course module instance returned from the DB
+ * @param object $course The course object returned from the DB
+ * @param object $module The module object returned from the DB
+ * @param object $cm The course module instance returned from the DB
  */
 function quiz_extend_navigation($quiznode, $course, $module, $cm) {
     global $CFG;

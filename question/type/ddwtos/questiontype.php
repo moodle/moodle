@@ -47,7 +47,7 @@ class qtype_ddwtos extends qtype_gapselect_base {
     }
 
     protected function choice_options_to_feedback($choice){
-        $output = new stdClass;
+        $output = new stdClass();
         $output->draggroup = $choice['choicegroup'];
         $output->infinite = !empty($choice['infinite']);
         return serialize($output);
@@ -174,7 +174,7 @@ class qtype_ddwtos extends qtype_gapselect_base {
             $mul_info = $ddwtos[$i];
 
             //Now, build the question_ddwtos record structure
-            $ddwtos = new stdClass;
+            $ddwtos = new stdClass();
             $ddwtos->questionid = $new_question_id;
             $ddwtos->shuffleanswers = isset($mul_info['#']['SHUFFLEANSWERS']['0']['#'])?backup_todb($mul_info['#']['SHUFFLEANSWERS']['0']['#']):'';
             if (array_key_exists("CORRECTFEEDBACK", $mul_info['#'])) {

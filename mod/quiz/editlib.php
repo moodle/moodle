@@ -143,7 +143,7 @@ function quiz_add_quiz_question($id, $quiz, $page = 0) {
     $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
 
     // Add the new question instance.
-    $instance = new stdClass;
+    $instance = new stdClass();
     $instance->quiz = $quiz->id;
     $instance->question = $id;
     $instance->grade = $DB->get_field('question', 'defaultmark', array('id' => $id));
@@ -189,7 +189,7 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number, $inc
         $form->defaultmark = 1;
         $form->hidden = 1;
         $form->stamp = make_unique_id_code(); // Set the unique code (not to be changed)
-        $question = new stdClass;
+        $question = new stdClass();
         $question->qtype = 'random';
         $question = question_bank::get_qtype('random')->save_question($question, $form);
         if (!isset($question->id)) {
@@ -777,7 +777,7 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktoo
     print_random_option_icon($question);
     echo ' ' . get_string('randomfromcategory', 'quiz') . '</div>';
 
-    $a = new stdClass;
+    $a = new stdClass();
     $a->arrow = $OUTPUT->rarrow();
     $strshowcategorycontents = get_string('showcategorycontents', 'quiz', $a);
 
@@ -803,7 +803,7 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktoo
         echo '<br />';
 
         // Embed the link into the string with instructions
-        $a = new stdClass;
+        $a = new stdClass();
         $a->catname = '<strong>' . $category->name . '</strong>';
         $a->link = $linkcategorycontents;
         echo get_string('addnewquestionsqbank', 'quiz', $a);
@@ -943,7 +943,7 @@ function quiz_question_tostring(&$question, $showicon = false, $showquestiontext
     }
     $result .= shorten_text(format_string($question->name), 200) . '</span>';
     if ($showquestiontext) {
-        $formatoptions = new stdClass;
+        $formatoptions = new stdClass();
         $formatoptions->noclean = true;
         $formatoptions->para = false;
         $questiontext = strip_tags(format_text($question->questiontext,
@@ -1107,7 +1107,7 @@ class quiz_question_bank_view extends question_bank_view {
     }
 
     protected function print_category_info($category) {
-        $formatoptions = new stdClass;
+        $formatoptions = new stdClass();
         $formatoptions->noclean = true;
         $strcategory = get_string('category', 'quiz');
         echo '<div class="categoryinfo"><div class="categorynamefieldcontainer">' .

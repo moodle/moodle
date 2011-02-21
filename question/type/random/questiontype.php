@@ -137,7 +137,7 @@ class qtype_random extends question_type {
     }
 
     protected function set_selected_question_name($question, $randomname) {
-        $a = new stdClass;
+        $a = new stdClass();
         $a->randomname = $randomname;
         $a->questionname = $question->name;
         $question->name = get_string('selectedby', 'qtype_random', $a);
@@ -156,7 +156,7 @@ class qtype_random extends question_type {
         // No options, as such, but we set the parent field to the question's
         // own id. Setting the parent field has the effect of hiding this
         // question in various places.
-        $updateobject = new stdClass;
+        $updateobject = new stdClass();
         $updateobject->id = $question->id;
         $updateobject->parent = $question->id;
 

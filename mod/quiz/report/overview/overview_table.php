@@ -105,7 +105,7 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
                 $record = $gradeaverages[$question->slot];
                 $record->grade = quiz_rescale_grade($record->averagefraction * $question->maxmark, $this->quiz, false);
             } else {
-                $record = new stdClass;
+                $record = new stdClass();
                 $record->grade = null;
                 $record->numaveraged = null;
             }

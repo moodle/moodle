@@ -42,7 +42,7 @@ class qformat_xml_test extends UnitTestCase {
 
     public function make_test_question() {
         global $USER;
-        $q = new stdClass;
+        $q = new stdClass();
         $q->id = 0;
         $q->contextid = 0;
         $q->category = 0;
@@ -136,7 +136,7 @@ class qformat_xml_test extends UnitTestCase {
 END;
 
         $questionxml = xmlize($xml);
-        $qo = new stdClass;
+        $qo = new stdClass();
 
         $importer = new qformat_xml();
         $importer->import_hints($qo, $questionxml['question']);
@@ -162,7 +162,7 @@ END;
 END;
 
         $questionxml = xmlize($xml);
-        $qo = new stdClass;
+        $qo = new stdClass();
 
         $importer = new qformat_xml();
         $importer->import_hints($qo, $questionxml['question'], true, true);
@@ -180,7 +180,7 @@ END;
 END;
 
         $questionxml = xmlize($xml);
-        $qo = new stdClass;
+        $qo = new stdClass();
 
         $importer = new qformat_xml();
         $importer->import_hints($qo, $questionxml['question']);
@@ -208,7 +208,7 @@ END;
         $importer = new qformat_xml();
         $q = $importer->import_description($xmldata['question']);
 
-        $expectedq = new stdClass;
+        $expectedq = new stdClass();
         $expectedq->qtype = 'description';
         $expectedq->name = 'A description';
         $expectedq->questiontext = 'The question text.';
@@ -222,7 +222,7 @@ END;
     }
 
     public function test_export_description() {
-        $qdata = new stdClass;
+        $qdata = new stdClass();
         $qdata->id = 123;
         $qdata->contextid = 0;
         $qdata->qtype = 'description';
@@ -279,7 +279,7 @@ END;
         $importer = new qformat_xml();
         $q = $importer->import_essay($xmldata['question']);
 
-        $expectedq = new stdClass;
+        $expectedq = new stdClass();
         $expectedq->qtype = 'essay';
         $expectedq->name = 'An essay';
         $expectedq->questiontext = 'Write something.';
@@ -293,7 +293,7 @@ END;
     }
 
     public function test_export_essay() {
-        $qdata = new stdClass;
+        $qdata = new stdClass();
         $qdata->id = 123;
         $qdata->contextid = 0;
         $qdata->qtype = 'essay';
@@ -393,7 +393,7 @@ END;
         $importer = new qformat_xml();
         $q = $importer->import_matching($xmldata['question']);
 
-        $expectedq = new stdClass;
+        $expectedq = new stdClass();
         $expectedq->qtype = 'match';
         $expectedq->name = 'Matching question';
         $expectedq->questiontext = 'Match the upper and lower case letters.';
@@ -422,7 +422,7 @@ END;
     }
 
     public function test_export_match() {
-        $qdata = new stdClass;
+        $qdata = new stdClass();
         $qdata->id = 123;
         $qdata->contextid = 0;
         $qdata->qtype = 'match';
@@ -436,7 +436,7 @@ END;
         $qdata->penalty = 0.3333333;
         $qdata->hidden = 0;
 
-        $qdata->options = new stdClass;
+        $qdata->options = new stdClass();
         $qdata->options->shuffleanswers = 1;
         $qdata->options->correctfeedback = 'Well done.';
         $qdata->options->correctfeedbackformat = FORMAT_HTML;
@@ -607,7 +607,7 @@ END;
         $importer = new qformat_xml();
         $q = $importer->import_multichoice($xmldata['question']);
 
-        $expectedq = new stdClass;
+        $expectedq = new stdClass();
         $expectedq->qtype = 'multichoice';
         $expectedq->name = 'Multiple choice question';
         $expectedq->questiontext = 'Which are the even numbers?';
@@ -644,7 +644,7 @@ END;
     }
 
     public function test_export_multichoice() {
-        $qdata = new stdClass;
+        $qdata = new stdClass();
         $qdata->id = 123;
         $qdata->contextid = 0;
         $qdata->qtype = 'multichoice';
@@ -658,7 +658,7 @@ END;
         $qdata->penalty = 0.3333333;
         $qdata->hidden = 0;
 
-        $qdata->options = new stdClass;
+        $qdata->options = new stdClass();
         $qdata->options->single = 0;
         $qdata->options->shuffleanswers = 0;
         $qdata->options->answernumbering = 'abc';
@@ -789,7 +789,7 @@ END;
         $importer = new qformat_xml();
         $q = $importer->import_numerical($xmldata['question']);
 
-        $expectedq = new stdClass;
+        $expectedq = new stdClass();
         $expectedq->qtype = 'numerical';
         $expectedq->name = 'Numerical question';
         $expectedq->questiontext = 'What is the answer?';
@@ -814,7 +814,7 @@ END;
     public function test_export_numerical() {
         question_bank::load_question_definition_classes('numerical');
 
-        $qdata = new stdClass;
+        $qdata = new stdClass();
         $qdata->id = 123;
         $qdata->contextid = 0;
         $qdata->qtype = 'numerical';
@@ -919,7 +919,7 @@ END;
         $importer = new qformat_xml();
         $q = $importer->import_shortanswer($xmldata['question']);
 
-        $expectedq = new stdClass;
+        $expectedq = new stdClass();
         $expectedq->qtype = 'shortanswer';
         $expectedq->name = 'Short answer question';
         $expectedq->questiontext = 'Fill in the gap in this sequence: Alpha, ________, Gamma.';
@@ -940,7 +940,7 @@ END;
     }
 
     public function test_export_shortanswer() {
-        $qdata = new stdClass;
+        $qdata = new stdClass();
         $qdata->id = 123;
         $qdata->contextid = 0;
         $qdata->qtype = 'shortanswer';
@@ -1040,7 +1040,7 @@ END;
         $importer = new qformat_xml();
         $q = $importer->import_truefalse($xmldata['question']);
 
-        $expectedq = new stdClass;
+        $expectedq = new stdClass();
         $expectedq->qtype = 'truefalse';
         $expectedq->name = 'True false question';
         $expectedq->questiontext = 'The answer is true.';
@@ -1058,7 +1058,7 @@ END;
     }
 
     public function test_export_truefalse() {
-        $qdata = new stdClass;
+        $qdata = new stdClass();
         $qdata->id = 12;
         $qdata->contextid = 0;
         $qdata->qtype = 'truefalse';

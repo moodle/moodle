@@ -86,7 +86,7 @@ function quiz_report_unindex($datum) {
 /**
  * Get the slots of real questions (not descriptions) in this quiz, in order.
  * @param object $quiz the quiz.
- * @return array of slot => $question object with fields ->slot, ->id, ->maxmark, ->number, ->length. 
+ * @return array of slot => $question object with fields ->slot, ->id, ->maxmark, ->number, ->length.
  */
 function quiz_report_get_significant_questions($quiz) {
     global $DB;
@@ -275,7 +275,7 @@ function quiz_report_feedback_for_grade($grade, $quizid, $context) {
     }
 
     // Clean the text, ready for display.
-    $formatoptions = new stdClass;
+    $formatoptions = new stdClass();
     $formatoptions->noclean = true;
     $feedbacktext = file_rewrite_pluginfile_urls($feedbacktext, 'pluginfile.php', $context->id, 'mod_quiz', 'feedback', $feedbackid);
     $feedbacktext = format_text($feedbacktext, $feedbacktextformat, $formatoptions);

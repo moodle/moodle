@@ -194,7 +194,7 @@ if ($options->marks && quiz_has_grades($quiz)) {
     } else {
         // Show raw marks only if they are different from the grade (like on the view page).
         if ($quiz->grade != $quiz->sumgrades) {
-            $a = new stdClass;
+            $a = new stdClass();
             $a->grade = quiz_format_grade($quiz, $attempt->sumgrades);
             $a->maxgrade = quiz_format_grade($quiz, $quiz->sumgrades);
             $rows[] = '<tr><th scope="row" class="cell">' . get_string('marks', 'quiz') . '</th><td class="cell">' .
@@ -202,7 +202,7 @@ if ($options->marks && quiz_has_grades($quiz)) {
         }
 
         // Now the scaled grade.
-        $a = new stdClass;
+        $a = new stdClass();
         $a->grade = '<b>' . quiz_format_grade($quiz, $grade) . '</b>';
         $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
         if ($quiz->grade != 100) {

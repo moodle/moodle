@@ -669,7 +669,7 @@ class question_usage_by_activity {
         return $this->preferredbehaviour;
     }
 
-    /** @return stdClass the context this usage belongs to. */
+    /** @return object the context this usage belongs to. */
     public function get_owning_context() {
         return $this->context;
     }

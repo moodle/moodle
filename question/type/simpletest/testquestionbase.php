@@ -96,7 +96,7 @@ class question_first_matching_answer_grading_strategy_test extends UnitTestCase 
  */
 class question_hint_test extends UnitTestCase {
     public function test_basic() {
-        $row = new stdClass;
+        $row = new stdClass();
         $row->id = 123;
         $row->hint = 'A hint';
         $row->hintformat = FORMAT_HTML;
@@ -107,7 +107,7 @@ class question_hint_test extends UnitTestCase {
     }
 
     public function test_with_parts() {
-        $row = new stdClass;
+        $row = new stdClass();
         $row->id = 123;
         $row->hint = 'A hint';
         $row->hintformat = FORMAT_HTML;

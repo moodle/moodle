@@ -56,7 +56,7 @@ class qtype_truefalse_test extends UnitTestCase {
     }
 
     public function test_get_possible_responses() {
-        $q = new stdClass;
+        $q = new stdClass();
         $q->id = 1;
         $q->options->trueanswer = 1;
         $q->options->falseanswer = 2;

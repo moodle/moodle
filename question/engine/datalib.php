@@ -58,7 +58,7 @@ class question_engine_data_mapper {
      * @param question_usage_by_activity $quba the usage to store.
      */
     public function insert_questions_usage_by_activity(question_usage_by_activity $quba) {
-        $record = new stdClass;
+        $record = new stdClass();
         $record->contextid = $quba->get_owning_context()->id;
         $record->component = addslashes($quba->get_owning_component());
         $record->preferredbehaviour = addslashes($quba->get_preferred_behaviour());
@@ -77,7 +77,7 @@ class question_engine_data_mapper {
      * @param question_attempt $qa the question attempt to store.
      */
     public function insert_question_attempt(question_attempt $qa) {
-        $record = new stdClass;
+        $record = new stdClass();
         $record->questionusageid = $qa->get_usage_id();
         $record->slot = $qa->get_slot();
         $record->behaviour = addslashes($qa->get_behaviour_name());
@@ -102,7 +102,7 @@ class question_engine_data_mapper {
      */
     public function insert_question_attempt_step(question_attempt_step $step,
             $questionattemptid, $seq) {
-        $record = new stdClass;
+        $record = new stdClass();
         $record->questionattemptid = $questionattemptid;
         $record->sequencenumber = $seq;
         $record->state = addslashes('' . $step->get_state());
@@ -113,7 +113,7 @@ class question_engine_data_mapper {
         $record->id = $this->db->insert_record('question_attempt_steps', $record);
 
         foreach ($step->get_all_data() as $name => $value) {
-            $data = new stdClass;
+            $data = new stdClass();
             $data->attemptstepid = $record->id;
             $data->name = addslashes($name);
             $data->value = addslashes($value);
@@ -361,7 +361,7 @@ ORDER BY
             $index = $row->slot . ',' . $row->questionid;
 
             if (!array_key_exists($index, $results)) {
-                $res = new stdClass;
+                $res = new stdClass();
                 $res->slot = $row->slot;
                 $res->questionid = $row->questionid;
                 $res->name = $row->name;
@@ -591,7 +591,7 @@ ORDER BY
      * @param question_usage_by_activity $quba the usage that has changed.
      */
     public function update_questions_usage_by_activity(question_usage_by_activity $quba) {
-        $record = new stdClass;
+        $record = new stdClass();
         $record->id = $quba->get_id();
         $record->contextid = $quba->get_owning_context()->id;
         $record->component = addslashes($quba->get_owning_component());
@@ -608,7 +608,7 @@ ORDER BY
      * @param question_attempt $qa the question attempt that has changed.
      */
     public function update_question_attempt(question_attempt $qa) {
-        $record = new stdClass;
+        $record = new stdClass();
         $record->id = $qa->get_database_id();
         $record->maxmark = $qa->get_max_mark();
         $record->minfraction = $qa->get_min_fraction();

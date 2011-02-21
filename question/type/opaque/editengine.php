@@ -51,7 +51,7 @@ if ($mform->is_cancelled()){
     redirect(new moodle_url('/question/type/opaque/engines.php'));
 
 } else if ($data = $mform->get_data()){
-    $engine = new stdClass;
+    $engine = new stdClass();
     if (!empty($data->engineid)) {
         $engine->id = $data->engineid;
     }
@@ -64,7 +64,7 @@ if ($mform->is_cancelled()){
 }
 
 // Prepare defaults.
-$defaults = new stdClass;
+$defaults = new stdClass();
 $defaults->engineid = $engineid;
 if ($engineid) {
     $engine = qtype_opaque_load_engine_def($engineid);

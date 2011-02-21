@@ -450,7 +450,7 @@ abstract class question_behaviour {
      * @return string the comment, ready to be output.
      */
     public function format_comment($comment = null, $commentformat = null) {
-        $formatoptions = new stdClass;
+        $formatoptions = new stdClass();
         $formatoptions->noclean = true;
         $formatoptions->para = false;
 
@@ -466,7 +466,7 @@ abstract class question_behaviour {
      * @param unknown_type $step
      */
     protected function summarise_manual_comment($step) {
-        $a = new stdClass;
+        $a = new stdClass();
         if ($step->has_behaviour_var('comment')) {
             $a->comment = shorten_text(html_to_text($this->format_comment(
                     $step->get_behaviour_var('comment')), 0, false), 200);

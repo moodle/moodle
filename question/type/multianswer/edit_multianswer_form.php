@@ -191,7 +191,7 @@ class question_edit_multianswer_form extends question_edit_form {
                 $diff = $countsubquestions - $countsavedsubquestions;
                 $mform->addElement('static', 'alert1', "<strong>".get_string('questionsadded','qtype_multianswer')."</strong>","<strong>".get_string('questionsmore','qtype_multianswer',$diff)."</strong>");
             }
-            $a = new stdClass ;
+            $a = new stdClass() ;
             $a->nb_of_quiz = $this->nb_of_quiz;
             $a->nb_of_attempts = $this->nb_of_attempts;
             $mform->addElement('header', 'additemhdr2', get_string('questionusedinquiz','qtype_multianswer',$a));

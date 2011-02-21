@@ -68,7 +68,7 @@ class quiz_statistics_question_stats {
      * @return object ready to hold all the question statistics.
      */
     protected function make_blank_question_stats() {
-        $stats = new stdClass;
+        $stats = new stdClass();
         $stats->slot = null;
         $stats->s = 0;
         $stats->totalmarks = 0;

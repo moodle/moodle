@@ -400,7 +400,7 @@ if ($node) {
 echo $OUTPUT->header();
 
 // Initialise the JavaScript.
-$quizeditconfig = new stdClass;
+$quizeditconfig = new stdClass();
 $quizeditconfig->url = $thispageurl->out(true, array('qbanktool' => '0'));
 $quizeditconfig->dialoglisteners = array();
 $numberoflisteners = max(quiz_number_of_pages($quiz->questions), 1);

@@ -109,7 +109,7 @@ class qtype_opaque_test extends UnitTestCase {
         $manager = new qtype_opaque_engine_manager_mock();
         question_bank::get_qtype('opaque')->set_engine_manager($manager);
 
-        $engine = new stdClass;
+        $engine = new stdClass();
         $engine->name = 'A question engine';
         $engine->questionengines = array('http://example.com/');
         $engine->questionbanks = array();
@@ -149,7 +149,7 @@ class qtype_opaque_test extends UnitTestCase {
         $q = $importer->try_importing_using_qtypes(
                 $xmldata['question'], null, null, 'opaque');
 
-        $expectedq = new stdClass;
+        $expectedq = new stdClass();
         $expectedq->qtype = 'opaque';
         $expectedq->name = 'An Opaque question';
         $expectedq->questiontext = '';
@@ -172,7 +172,7 @@ class qtype_opaque_test extends UnitTestCase {
         $manager = new qtype_opaque_engine_manager_mock();
         question_bank::get_qtype('opaque')->set_engine_manager($manager);
 
-        $engine = new stdClass;
+        $engine = new stdClass();
         $engine->name = 'A question engine';
         $engine->questionengines = array('http://example.com/qe2', 'http://example.com/qe1');
         $engine->questionbanks = array('http://example.com/qb');
@@ -217,7 +217,7 @@ class qtype_opaque_test extends UnitTestCase {
         $q = $importer->try_importing_using_qtypes(
                 $xmldata['question'], null, null, 'opaque');
 
-        $expectedq = new stdClass;
+        $expectedq = new stdClass();
         $expectedq->qtype = 'opaque';
         $expectedq->name = 'An Opaque question';
         $expectedq->questiontext = '';
@@ -242,14 +242,14 @@ class qtype_opaque_test extends UnitTestCase {
         $manager = new qtype_opaque_engine_manager_mock();
         question_bank::get_qtype('opaque')->set_engine_manager($manager);
 
-        $engine = new stdClass;
+        $engine = new stdClass();
         $engine->name = 'A question engine';
         $engine->questionengines = array('http://example.com/');
         $engine->questionbanks = array();
         $engine->passkey = 'secret';
         $manager->add_test_engine(123, $engine);
 
-        $qdata = new stdClass;
+        $qdata = new stdClass();
         $qdata->id = 321;
         $qdata->contextid = -666;
         $qdata->qtype = 'opaque';

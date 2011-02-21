@@ -265,7 +265,7 @@ class qformat_blackboard_six extends qformat_default {
 // the object created is NOT a moodle question object
 function create_raw_question($quest) {
 
-    $question = new StdClass;
+    $question = new stdClass();
     $question->qtype = $quest['#']['itemmetadata'][0]['#']['bbmd_questiontype'][0]['#'];
     $question->id = $quest['#']['itemmetadata'][0]['#']['bbmd_asi_object_id'][0]['#'];
     $presentation->blocks = $quest['#']['presentation'][0]['#']['flow'][0]['#']['flow'];

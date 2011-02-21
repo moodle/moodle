@@ -169,7 +169,7 @@ foreach ($quizzes as $quiz) {
         $feedback = '';
         if ($quiz->grade && array_key_exists($quiz->id, grades)) {
             if ($alloptions->marks) {
-                $a = new stdClass;
+                $a = new stdClass();
                 $a->grade = quiz_format_grade($quiz, $grades[$quiz->id]);
                 $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
                 $grade = get_string('outofshort', 'quiz', $a);

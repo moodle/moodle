@@ -349,7 +349,7 @@ class quiz_statistics_report extends quiz_default_report {
         }
 
         foreach ($responesstats->responseclasses as $partid => $partclasses) {
-            $rowdata = new stdClass;
+            $rowdata = new stdClass();
             $rowdata->part = $partid;
             foreach ($partclasses as $responseclassid => $responseclass) {
                 $rowdata->responseclass = $responseclass->responseclass;
@@ -556,11 +556,11 @@ class quiz_statistics_report extends quiz_default_report {
      */
     protected function get_emtpy_stats($questions, $firstattemptscount = 0,
             $allattemptscount = 0) {
-        $quizstats = new stdClass;
+        $quizstats = new stdClass();
         $quizstats->firstattemptscount = $firstattemptscount;
         $quizstats->allattemptscount = $allattemptscount;
 
-        $qstats = new stdClass;
+        $qstats = new stdClass();
         $qstats->questions = $questions;
         $qstats->subquestions = array();
         $qstats->responses = array();
@@ -612,13 +612,13 @@ class quiz_statistics_report extends quiz_default_report {
             $firstattempts = $attempttotals[1];
             $firstattempts->average = $firstattempts->total / $firstattempts->countrecs;
         } else {
-            $firstattempts = new stdClass;
+            $firstattempts = new stdClass();
             $firstattempts->countrecs = 0;
             $firstattempts->total = 0;
             $firstattempts->average = '-';
         }
 
-        $allattempts = new stdClass;
+        $allattempts = new stdClass();
         if (isset($attempttotals[0])) {
             $allattempts->countrecs = $firstattempts->countrecs + $attempttotals[0]->countrecs;
             $allattempts->total = $firstattempts->total + $attempttotals[0]->total;
@@ -642,7 +642,7 @@ class quiz_statistics_report extends quiz_default_report {
         }
         $summarksavg = $usingattempts->total / $usingattempts->countrecs;
 
-        $quizstats = new stdClass;
+        $quizstats = new stdClass();
         $quizstats->allattempts = $useallattempts;
         $quizstats->firstattemptscount = $firstattempts->countrecs;
         $quizstats->allattemptscount = $allattempts->countrecs;
@@ -674,7 +674,7 @@ class quiz_statistics_report extends quiz_default_report {
             //fetch sum of squared, cubed and power 4d
             //differences between marks and mean mark
             $mean = $usingattempts->total / $s;
-            $sql = "SELECT 
+            $sql = "SELECT
                     SUM(POWER((quiza.sumgrades - $mean),2)) AS power2,
                     SUM(POWER((quiza.sumgrades - $mean),3)) AS power3,
                     SUM(POWER((quiza.sumgrades - $mean),4)) AS power4
@@ -953,7 +953,7 @@ class quiz_statistics_report extends quiz_default_report {
         }
 
         // Generate the output.
-        $a = new stdClass;
+        $a = new stdClass();
         $a->lastcalculated = format_time(time() - $quizstats->timemodified);
         $a->count = $count;
 

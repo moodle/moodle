@@ -41,7 +41,7 @@ class qtype_opaque_locallib_test extends UnitTestCase {
     function test_is_same_engine() {
         $manager = new qtype_opaque_engine_manager();
 
-        $engine1 = new stdClass;
+        $engine1 = new stdClass();
         $engine1->name = 'OpenMark live servers';
         $engine1->passkey = '';
         $engine1->questionengines = array(
@@ -51,7 +51,7 @@ class qtype_opaque_locallib_test extends UnitTestCase {
                 'https://ltsweb1.open.ac.uk/openmark/!question',
                 'https://ltsweb2.open.ac.uk/openmark/!question');
 
-        $engine2 = new stdClass;
+        $engine2 = new stdClass();
         $engine2->name = 'OpenMark live servers';
         $engine2->passkey = '';
         $engine2->questionengines = array(

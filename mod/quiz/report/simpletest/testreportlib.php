@@ -66,7 +66,7 @@ class question_reportlib_test extends UnitTestCase {
     }
 
     function test_quiz_report_scale_summarks_as_percentage() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->sumgrades = 10;
         $quiz->decimalpoints = 2;
 

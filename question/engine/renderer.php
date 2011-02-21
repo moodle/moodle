@@ -178,7 +178,7 @@ class core_question_renderer extends plugin_renderer_base {
             $summary = get_string('markedoutofmax', 'question', $qa->format_max_mark($options->markdp));
 
         } else {
-            $a = new stdClass;
+            $a = new stdClass();
             $a->mark = $qa->format_mark($options->markdp);
             $a->max = $qa->format_max_mark($options->markdp);
             $summary = get_string('markoutofmax', 'question', $a);
@@ -336,7 +336,7 @@ class core_question_renderer extends plugin_renderer_base {
                         new popup_action('click', $url, 'reviewquestion', array('width' => 450, 'height' => 650)),
                         array('title' => get_string('reviewresponse', 'quiz')));
             }
-            $user = new stdClass;
+            $user = new stdClass();
             $user->id = $step->get_user_id();
             $row = array(
                 $stepno,

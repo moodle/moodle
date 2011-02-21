@@ -83,7 +83,7 @@ class qtype_oumultiresponse_test extends UnitTestCase {
     }
 
     public function test_get_possible_responses() {
-        $q = new stdClass;
+        $q = new stdClass();
         $q->id = 1;
         $q->options->answers[1] = (object) array('answer' => 'frog', 'fraction' => 1);
         $q->options->answers[2] = (object) array('answer' => 'toad', 'fraction' => 1);
@@ -98,7 +98,7 @@ class qtype_oumultiresponse_test extends UnitTestCase {
     }
 
     public function test_get_random_guess_score() {
-        $questiondata = new stdClass;
+        $questiondata = new stdClass();
         $questiondata->options->answers = array(
             1 => new question_answer(1, 'A', 1, '', FORMAT_HTML),
             2 => new question_answer(2, 'B', 0, '', FORMAT_HTML),
@@ -179,7 +179,7 @@ class qtype_oumultiresponse_test extends UnitTestCase {
         $q = $importer->try_importing_using_qtypes(
                 $xmldata['question'], null, null, 'oumultiresponse');
 
-        $expectedq = new stdClass;
+        $expectedq = new stdClass();
         $expectedq->qtype = 'oumultiresponse';
         $expectedq->name = 'OU multiple response question';
         $expectedq->questiontext = 'Which are the odd numbers?';
@@ -299,7 +299,7 @@ class qtype_oumultiresponse_test extends UnitTestCase {
         $q = $importer->try_importing_using_qtypes(
                 $xmldata['question'], null, null, 'oumultiresponse');
 
-        $expectedq = new stdClass;
+        $expectedq = new stdClass();
         $expectedq->qtype = 'oumultiresponse';
         $expectedq->name = '008 OUMR feedback test';
         $expectedq->questiontext = '<p>OUMR question.</p><p>Right answers are eighta and eightb.</p>';

@@ -47,7 +47,7 @@ class qtype_match extends question_type {
     function save_question_options($question) {
         global $DB;
         $context = $question->context;
-        $result = new stdClass;
+        $result = new stdClass();
 
         $oldsubquestions = $DB->get_records('question_match_sub',
                 array('question' => $question->id), 'id ASC');
@@ -67,7 +67,7 @@ class qtype_match extends question_type {
             // Update an existing subquestion if possible.
             $subquestion = array_shift($oldsubquestions);
             if (!$subquestion) {
-                $subquestion = new stdClass;
+                $subquestion = new stdClass();
                 // Determine a unique random code
                 $subquestion->code = rand(1, 999999999);
                 while ($DB->record_exists('question_match_sub', array('code' => $subquestion->code, 'question' => $question->id))) {

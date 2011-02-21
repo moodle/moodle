@@ -178,7 +178,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                     $sizeofolddef = sizeof($olddef);
                     for($key = 1; $key <= $sizeofolddef; $key++) {
                         $def = $olddef[$key] ;
-                        $this->datasetdefs[$def]= new stdClass ;
+                        $this->datasetdefs[$def]= new stdClass() ;
                         $this->datasetdefs[$def]->type = 1;
                         $this->datasetdefs[$def]->category = 0;
                       //  $this->datasets[$key]->name = $datasetname;
@@ -202,7 +202,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
             foreach ($mandatorydatasets as $datasetname) {
                 if (!isset($this->datasetdefs["1-0-$datasetname"])) {
                     $key = "1-0-$datasetname";
-                    $this->datasetdefs[$key]=new stdClass ;//"1-0-$datasetname";
+                    $this->datasetdefs[$key]=new stdClass() ;//"1-0-$datasetname";
                     $this->datasetdefs[$key]->type = 1;
                     $this->datasetdefs[$key]->category = 0;
                     $this->datasetdefs[$key]->name = $datasetname;
@@ -238,7 +238,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 $datasetdef->itemcount = $maxnumber;
                 unset($datasetdef->items);
                 for ($numberadded =1 ; $numberadded <= $maxnumber; $numberadded++){
-                    $datasetitem = new stdClass;
+                    $datasetitem = new stdClass();
                     $datasetitem->itemnumber = $numberadded;
                     $datasetitem->id = 0;
                     $datasetitem->value = $this->qtypeobj->generate_dataset_item($datasetdef->options);
@@ -374,7 +374,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                 for ($itemnumber = $this->noofitems; $itemnumber >= 1; $itemnumber--){
                     $data = array();
                     $numbererrors = array() ;
-                    $comment = new stdClass;
+                    $comment = new stdClass();
                     $comment->stranswers = array();
                     $comment->outsidelimit = false ;
                     $comment->answers = array();
@@ -386,7 +386,7 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                             $data[$datasetdef->name] = $datasetdef->items[$itemnumber]->value;
                             $this->formdata["number[$j]"] = $number = $datasetdef->items[$itemnumber]->value;
                             if(! is_numeric($number)){
-                                $a = new stdClass;
+                                $a = new stdClass();
                                 $a->name = '{'.$datasetdef->name.'}' ;
                                 $a->value = $datasetdef->items[$itemnumber]->value ;
                                 if (stristr($number,',')){
@@ -399,13 +399,13 @@ class question_edit_calculatedsimple_form extends question_edit_form {
                                     //$comment->outsidelimit = false ;
                                 }
                             }else if( stristr($number,'x')){ // hexa will pass the test
-                                $a = new stdClass;
+                                $a = new stdClass();
                                 $a->name = '{'.$datasetdef->name.'}' ;
                                 $a->value = $datasetdef->items[$itemnumber]->value ;
                                 $this->numbererrors['number['.$j.']']= get_string('hexanotallowed','qtype_calculated',$a);
                                 $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
                             } else if( is_nan($number)){
-                                $a = new stdClass;
+                                $a = new stdClass();
                                 $a->name = '{'.$datasetdef->name.'}' ;
                                 $a->value = $datasetdef->items[$itemnumber]->value ;
                                 $this->numbererrors["number[$j]"]= get_string('notvalidnumber','qtype_calculated',$a);

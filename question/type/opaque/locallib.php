@@ -436,7 +436,7 @@ function qtype_opaque_update_state(question_attempt $qa, question_attempt_step $
             $question->remoteid, $question->remoteversion);
 
     if ($cachestatus == 'empty') {
-        $SESSION->cached_opaque_state = new stdClass;
+        $SESSION->cached_opaque_state = new stdClass();
         $opaquestate = $SESSION->cached_opaque_state;
         $opaquestate->qaid = $qa->get_database_id();
         $opaquestate->remoteid = $question->remoteid;

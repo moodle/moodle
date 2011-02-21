@@ -242,8 +242,8 @@ class question_edit_calculatedmulti_form extends question_edit_form {
          * $qu->category =$this->_form->_elements[$this->_form->_elementIndex['category']]->_values[0];
          * but is coded using existing functions
          */
-        $qu = new stdClass;
-        $el = new stdClass;
+        $qu = new stdClass();
+        $el = new stdClass();
         /* no need to call elementExists() here */
         if ($this->_form->elementExists('category')){
             $el=$this->_form->getElement('category');

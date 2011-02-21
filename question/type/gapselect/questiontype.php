@@ -158,7 +158,7 @@ class qtype_gapselect extends qtype_gapselect_base {
             $mul_info = $gapselects[$i];
 
             //Now, build the question_gapselect record structure
-            $gapselect = new stdClass;
+            $gapselect = new stdClass();
             $gapselect->questionid = $new_question_id;
             $gapselect->shuffleanswers = isset($mul_info['#']['SHUFFLEANSWERS']['0']['#'])?backup_todb($mul_info['#']['SHUFFLEANSWERS']['0']['#']):'';
             if (array_key_exists("CORRECTFEEDBACK", $mul_info['#'])) {

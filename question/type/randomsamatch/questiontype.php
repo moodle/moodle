@@ -258,14 +258,14 @@ class question_randomsamatch_qtype extends qtype_match {
                     foreach($answer->options->answers as $ans ){
                        $answer->answertext = $ans->answer ;
                     }
-                    $r = new stdClass;
+                    $r = new stdClass();
                     $r->answer = $answer->questiontext . ": " . $answer->answertext;
                     $r->credit = 1;
                     $answers[$aid] = $r;
                 }
             }
         }
-        $result = new stdClass;
+        $result = new stdClass();
         $result->id = $question->id;
         $result->responses = $answers;
         return $result;
@@ -314,7 +314,7 @@ class question_randomsamatch_qtype extends qtype_match {
                     if ($answer->questiontext) {
                         $ans = array_shift($answer->options->answers);
                         $answer->answertext = $ans->answer ;
-                        $r = new stdClass;
+                        $r = new stdClass();
                         $r->answer = $answer->questiontext . ": " . $answer->answertext;
                         $r->credit = 1;
                         $answers[$question->id][$subqid] = array($ans->id => $r);

@@ -310,13 +310,13 @@ if ($numattempts && $gradecolumn && !is_null($mygrade)) {
 
     if ($overallstats) {
         if ($moreattempts) {
-            $a = new stdClass;
+            $a = new stdClass();
             $a->method = quiz_get_grading_option_name($quiz->grademethod);
             $a->mygrade = quiz_format_grade($quiz, $mygrade);
             $a->quizgrade = quiz_format_grade($quiz, $quiz->grade);
             $resultinfo .= $OUTPUT->heading(get_string('gradesofar', 'quiz', $a), 2, 'main');
         } else {
-            $a = new stdClass;
+            $a = new stdClass();
             $a->grade = quiz_format_grade($quiz, $mygrade);
             $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
             $a = get_string('outofshort', 'quiz', $a);

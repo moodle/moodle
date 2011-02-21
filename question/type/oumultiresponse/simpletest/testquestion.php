@@ -121,9 +121,9 @@ class qtype_oumultiresponse_question_test extends UnitTestCase {
     }
 
     function test_grade_computation() {
-        $right = new stdClass;
+        $right = new stdClass();
         $right->fraction = 1.0;
-        $wrong = new stdClass;
+        $wrong = new stdClass();
         $wrong->fraction = 0.0;
 
         $penalty = 0.3333333;

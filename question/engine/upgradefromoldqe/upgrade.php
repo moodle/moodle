@@ -765,7 +765,7 @@ abstract class qbehaviour_converter {
     }
 
     /**
-     * @param stdClass $question a question definition
+     * @param object $question a question definition
      * @return qtype_updater
      */
     protected function make_qtype_updater() {

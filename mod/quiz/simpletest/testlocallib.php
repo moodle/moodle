@@ -100,7 +100,7 @@ class quiz_locallib_test extends UnitTestCase {
     }
 
     function test_quiz_rescale_grade() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->decimalpoints = 2;
         $quiz->questiondecimalpoints = 3;
         $quiz->grade = 10;
@@ -115,7 +115,7 @@ class quiz_locallib_test extends UnitTestCase {
     }
 
     public function test_quiz_get_slot_for_question() {
-        $quiz = new stdClass;
+        $quiz = new stdClass();
         $quiz->questions = '1,2,0,7,0';
         $this->assertEqual(1, quiz_get_slot_for_question($quiz, 1));
         $this->assertEqual(3, quiz_get_slot_for_question($quiz, 7));

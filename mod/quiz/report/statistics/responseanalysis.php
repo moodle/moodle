@@ -51,9 +51,8 @@ class quiz_statistics_response_analyser {
     public $responses = array();
 
     /**
-     * @var array An array of 
-     * $this->fractions[$subpartid][$responseclassid] is an object with two
-     * fields, ->responseclass and ->fraction.
+     * @var array $this->fractions[$subpartid][$responseclassid] is an object
+     * with two fields, ->responseclass and ->fraction.
      */
     public $responseclasses = array();
 
@@ -137,7 +136,7 @@ class quiz_statistics_response_analyser {
         $partresponses = $qa->classify_response();
         foreach ($partresponses as $subpartid => $partresponse) {
             if (!isset($this->responses[$subpartid][$partresponse->responseclassid][$partresponse->response])) {
-                $resp = new stdClass;
+                $resp = new stdClass();
                 $resp->count = 0;
                 if (!is_null($partresponse->fraction)) {
                     $resp->fraction = $partresponse->fraction;
@@ -195,7 +194,7 @@ class quiz_statistics_response_analyser {
         foreach ($this->responses as $subpartid => $partdata) {
             foreach ($partdata as $responseclassid => $classdata) {
                 foreach ($classdata as $response => $data) {
-                    $row = new stdClass;
+                    $row = new stdClass();
                     $row->quizstatisticsid = $quizstatisticsid;
                     $row->questionid = $this->questiondata->id;
                     $row->subqid = $subpartid;
