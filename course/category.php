@@ -57,7 +57,7 @@
         if ($resort and confirm_sesskey()) {
             if ($courses = get_courses($category->id, "fullname ASC", 'c.id,c.fullname,c.sortorder')) {
                 // move it off the range
-                
+
                 $sortorderresult = get_record_sql('SELECT MIN(sortorder) AS min, 1
                                          FROM ' . $CFG->prefix . 'course WHERE category=' . $category->id);
                 $sortordermin = $sortorderresult->min;
@@ -131,7 +131,10 @@
 /// Print current category description
     if (!$editingon && $category->description) {
         print_box_start();
-        echo format_text($category->description); // for multilang filter
+        $options = new stdClass();
+        $options->noclean = true;
+        $options->para = false;
+        echo format_text($category->description, FORMAT_MOODLE, $options); // for multilang filter
         print_box_end();
     }
 
