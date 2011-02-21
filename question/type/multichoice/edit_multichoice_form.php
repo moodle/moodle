@@ -20,17 +20,17 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Defines the editing form for the multiple choice question type.
  *
- * @package qtype
+ * @package    qtype
  * @subpackage multichoice
- * @copyright &copy; 2007 Jamie Pratt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2007 Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * Multiple choice editing form definition.
  *
- * @copyright &copy; 2007 Jamie Pratt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2007 Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_multichoice_edit_form extends question_edit_form {
     /**

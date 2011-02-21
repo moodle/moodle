@@ -17,15 +17,18 @@
 /**
  * Defines the editing form for the description question type.
  *
- * @package qtype
+ * @package    qtype
  * @subpackage description
- * @copyright &copy; 2007 Jamie Pratt
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @copyright  2007 Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 /**
  * Description editing form definition.
+ *
+ * @copyright  2007 Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_description_edit_form extends question_edit_form {
     /**

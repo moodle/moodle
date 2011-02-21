@@ -2,7 +2,7 @@
 /**
  * Unit tests for (some of) mod/quiz/accessrules.php.
  *
- * @copyright &copy; 2008 The Open University
+ * @copyright 2008 The Open University
  * @author T.J.Hunt@open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz

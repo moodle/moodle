@@ -18,9 +18,10 @@
 /**
  * Defines the editing form for the true-false question type.
  *
- * @package qtype_truefalse
- * @copyright &copy; 2007 Jamie Pratt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage truefalse
+ * @copyright  2007 Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -34,7 +35,7 @@ require_once($CFG->dirroot.'/question/type/edit_question_form.php');
 /**
  * True-false question editing form definition.
  *
- * @copyright &copy; 2006 The Open University
+ * @copyright 2007 Jamie Pratt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_truefalse_edit_form extends question_edit_form {

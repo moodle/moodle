@@ -2,15 +2,17 @@
 /**
  * Defines the editing form for the randomsamatch question type.
  *
- * @copyright &copy; 2007 Jamie Pratt
- * @author Jamie Pratt me@jamiep.org
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
- * @subpackage questiontypes
+ * @package    qtype
+ * @subpackage randomsamatch
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
 /**
  * randomsamatch editing form definition.
+ *
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 class question_edit_randomsamatch_form extends question_edit_form {
     /**

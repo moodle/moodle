@@ -19,9 +19,10 @@
 /**
  * Unit tests for the shortanswer question type class.
  *
- * @package qtype_shortanswer
- * @copyright &copy; 2007 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage shortanswer
+ * @copyright  2007 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (!defined('MOODLE_INTERNAL')) {
@@ -33,7 +34,7 @@ require_once($CFG->dirroot . '/question/type/shortanswer/questiontype.php');
 /**
  * Unit tests for the shortanswer question type class.
  *
- * @copyright &copy; 2007 The Open University
+ * @copyright 2007 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_shortanswer_test extends UnitTestCase {

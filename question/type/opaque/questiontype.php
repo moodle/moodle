@@ -19,10 +19,10 @@
 /**
  * The questiontype class for the Opaque question type.
  *
- * @package qtype
+ * @package    qtype
  * @subpackage opaque
- * @copyright &copy; 2006 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2006 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/locallib.php');
@@ -30,7 +30,7 @@ require_once(dirname(__FILE__) . '/locallib.php');
 /**
  * The Opaque question type.
  *
- * @copyright &copy; 2006 The Open University
+ * @copyright 2006 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_opaque extends question_type {

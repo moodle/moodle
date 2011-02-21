@@ -18,11 +18,18 @@
 /**
  * Defines the editing form for the calculated simplequestion type.
  *
- * @copyright &copy; 2007 Jamie Pratt
- * @author Jamie Pratt me@jamiep.org
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
- * @subpackage questiontypes
+ * @package    qtype
+ * @subpackage calculatedsimple
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+/**
+ * Editing form for the calculated simplequestion type.
+ *
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_edit_calculatedsimple_form extends question_edit_form {
     /**

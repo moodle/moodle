@@ -4,7 +4,7 @@
  * and also check methods that can be used for pre-install checks via
  * admin/environment.php and lib/environmentlib.php.
  *
- * @copyright &copy; 2007 The Open University
+ * @copyright 2007 The Open University
  * @author T.J.Hunt@open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package questionbank

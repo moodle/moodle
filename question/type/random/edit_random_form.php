@@ -19,15 +19,17 @@
 /**
  * Defines the editing form for the random question type.
  *
- * @copyright &copy; 2007 Jamie Pratt
- * @author Jamie Pratt me@jamiep.org
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
- * @subpackage questiontypes
+ * @package    qtype
+ * @subpackage random
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * random editing form definition.
+ *
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_edit_random_form extends question_edit_form {
     /**

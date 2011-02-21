@@ -15,14 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * A base class for question editing forms.
  *
- * @package moodlecore
+ * @package    core
  * @subpackage questiontypes
- * @copyright &copy; 2006 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @copyright  2006 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
 
@@ -32,7 +31,7 @@
  * class that inherits from this one, and implements the definition_inner()
  * method.
  *
- * @copyright &copy; 2006 The Open University
+ * @copyright 2006 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 abstract class question_edit_form extends moodleform {

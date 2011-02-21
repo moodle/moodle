@@ -18,15 +18,17 @@
 /**
  * Defines the editing form for the numerical question type.
  *
- * @copyright &copy; 2007 Jamie Pratt
- * @author Jamie Pratt me@jamiep.org
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
- * @subpackage questiontypes
+ * @package    qtype
+ * @subpackage numerical
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * numerical editing form definition.
+ *
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_edit_numerical_form extends question_edit_form {
 

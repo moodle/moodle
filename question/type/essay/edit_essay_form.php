@@ -18,15 +18,18 @@
 /**
  * Defines the editing form for the essay question type.
  *
- * @copyright &copy; 2007 Jamie Pratt
- * @author Jamie Pratt me@jamiep.org
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
- * @subpackage questiontypes
+ * @package    qtype
+ * @subpackage essay
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 /**
- * essay editing form definition.
+ * Essay question type editing form.
+ *
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_essay_edit_form extends question_edit_form {
     public function qtype() {

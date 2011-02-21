@@ -21,14 +21,14 @@ defined('MOODLE_INTERNAL') || die();
  * Defines the editing form for the shortanswer question type.
  *
  * @package qtype_shortanswer
- * @copyright &copy; 2007 Jamie Pratt
+ * @copyright 2007 Jamie Pratt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * Short answer question editing form definition.
  *
- * @copyright &copy; 2007 Jamie Pratt
+ * @copyright 2007 Jamie Pratt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_shortanswer_edit_form extends question_edit_form {
