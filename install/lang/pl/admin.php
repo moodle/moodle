@@ -29,6 +29,7 @@
  */
 
 $string['cliincorrectvalueerror'] = 'Błąd, niepoprawna wartość "{$a->value}" dla "{$a->option}"';
+$string['cliincorrectvalueretry'] = 'Nieprawidłowa wartość, spróbuj ponownie';
 $string['clitypevalue'] = 'typ wartości';
 $string['clitypevaluedefault'] = 'typ wartości, naciśnij Enter, aby użyć wartości domyślnej ({$a})';
 $string['cliyesnoprompt'] = 'wpisz y (czyli tak) lub n (czyli nie)';

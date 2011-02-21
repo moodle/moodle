@@ -28,16 +28,16 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['admindirname'] = 'Diretório Admin';
-$string['availablelangs'] = 'Pacotes de idioma disponíveis';
+$string['admindirname'] = 'Diretório admin';
+$string['availablelangs'] = 'Lista de idiomas disponíveis';
 $string['chooselanguagehead'] = 'Escolha um idioma';
-$string['chooselanguagesub'] = 'Escolha um idioma a ser usado durante a instalação. Após a instalação você pode definir o idioma principal do site e outros idiomas a serem utilizados pelos usuários.';
+$string['chooselanguagesub'] = 'Por favor, escolha o idioma para a instalação.Este idioma também será utilizado como idioma padrão do site, embora você possa mudar mais tarde.';
 $string['clialreadyinstalled'] = 'O arquivo config.php já existe, por favor use admin/cli/upgrade.php, se você quiser atualizar o seu site.';
 $string['cliinstallheader'] = 'Programa de instalação por linha de comando do Moodle {$a}';
-$string['databasehost'] = 'Host da Base de Dados.';
-$string['databasename'] = 'Nome da Base de Dados';
+$string['databasehost'] = 'Host da base de dados';
+$string['databasename'] = 'Nome da base de dados';
 $string['databasetypehead'] = 'Escolha o driver da base de dados';
-$string['dataroot'] = 'Diretório de Dados';
+$string['dataroot'] = 'Diretório de dados';
 $string['dbprefix'] = 'Prefixo das tabelas';
 $string['dirroot'] = 'Diretório Moodle';
 $string['environmenthead'] = 'Verificando o ambiente ...';
@@ -45,7 +45,7 @@ $string['environmentsub2'] = 'Cada release do Moodle requer uma versão mínima 
 A verificação completa do ambiente é feita antes de cada instalação e atualização.';
 $string['errorsinenvironment'] = 'Verificação do Ambiente falhou!';
 $string['installation'] = 'Instalação';
-$string['langdownloaderror'] = 'Infelizmente o idioma "{$a}" não foi instalado. A instalação vai continuar em Inglês.';
+$string['langdownloaderror'] = 'Infelizmente não foi possível fazer download do idioma "{$a}". O processo de instalação continuará em Inglês.';
 $string['memorylimithelp'] = '<p>O limite de memória do PHP configurado atualmente no seu servidor é de {$a}.</p>
 
 <p>Este limite pode causar problemas no futuro, especialmente quando muitos módulos estiverem ativados ou em caso de um número elevado de usuários.</p>
@@ -60,10 +60,10 @@ Com esta operação Moodle será capaz de configurar o limite de memória sózin
 <p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário excluir o arquivo .htaccess .</p>
 </li></ol>';
 $string['paths'] = 'Caminhos';
-$string['pathserrcreatedataroot'] = 'O Diretório de Dados ({&a->dataroot}) não pode ser criado pelo instalador.';
+$string['pathserrcreatedataroot'] = 'O diretório de dados ({$a->dataroot}) não pode ser criado pelo instalador.';
 $string['pathshead'] = 'Confirme os caminhos';
-$string['pathsrodataroot'] = 'O Diretório de Dados raiz não pode ser acessada para escrita.';
-$string['pathsroparentdataroot'] = 'O diretório pai ({$a->parent}) não pode ser escrito. O diretório de dados ({$a->dataroot)) não pode ser criado pelo instalador.';
+$string['pathsrodataroot'] = 'O diretório de dados raiz não pode ser acessado para escrita.';
+$string['pathsroparentdataroot'] = 'O diretório pai ({$a->parent}) não pode ser escrito. O diretório de dados ({$a->dataroot}) não pode ser criado pelo instalador.';
 $string['pathssubadmindir'] = 'Alguns poucos webhosts usam /admin como um URL especial para acesso ao painel de controle ou outras coisas. Infelizmente isto conflita com a localizaçao padrão das páginas do administrador Moodle. Você pode corrigir isso renomeando a pasta admin na sua instalação, e colocando esse novo nome aqui. Por exemplo: <em>moodleadmin</em>. Isto irá corrigir os links das páginas do administrador Moodle.';
 $string['pathssubdataroot'] = 'Você precisa de um local onde o Moodle possa salvar arquivos enviados. Este diretório deve possuir permissões de leitura e escrita pelo usuário do servidor web
 (geralmente \'nobody\' ou \'apache \'), mas não deverá ser acessível diretamente através da web. O instalador irá tentar criá-lo se ele não existir.';
