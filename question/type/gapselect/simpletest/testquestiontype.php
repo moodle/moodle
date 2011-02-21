@@ -61,7 +61,7 @@ class qtype_gapselect_test extends UnitTestCase {
     protected function get_test_question_data() {
         global $USER;
 
-        $gapselect = new stdClass;
+        $gapselect = new stdClass();
         $gapselect->id = 0;
         $gapselect->category = 0;
         $gapselect->contextid = 0;
@@ -197,7 +197,7 @@ class qtype_gapselect_test extends UnitTestCase {
         $q = $importer->try_importing_using_qtypes(
                 $xmldata['question'], null, null, 'gapselect');
 
-        $expectedq = new stdClass;
+        $expectedq = new stdClass();
         $expectedq->qtype = 'gapselect';
         $expectedq->name = 'A select missing words question';
         $expectedq->questiontext = 'Put these in order: [[1]], [[2]], [[3]].';
@@ -227,7 +227,7 @@ class qtype_gapselect_test extends UnitTestCase {
     }
 
     public function test_xml_export() {
-        $qdata = new stdClass;
+        $qdata = new stdClass();
         $qdata->id = 123;
         $qdata->contextid = 0;
         $qdata->qtype = 'gapselect';
