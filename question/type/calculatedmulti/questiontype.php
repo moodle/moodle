@@ -15,12 +15,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/////////////////
-// CALCULATED ///
-/////////////////
+/**
+ * Question type class for the calculated multiple-choice question type.
+ *
+ * @package    qtype
+ * @subpackage calculatedmulti
+ * @copyright  2009 Pierre Pichet
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-/// QUESTION TYPE CLASS //////////////////
 
+/**
+ * The calculated multiple-choice question type.
+ *
+ * @copyright  2009 Pierre Pichet
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_calculatedmulti_qtype extends question_calculated_qtype {
 
 

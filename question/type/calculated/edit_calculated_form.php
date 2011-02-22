@@ -26,7 +26,7 @@
 
 
 /**
- * Calculated editing form definition.
+ * Calculated question type editing form definition.
  *
  * @copyright  2007 Jamie Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

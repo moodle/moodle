@@ -483,47 +483,63 @@ DONE question/behaviour/opaque/lang/en/qbehaviour_opaque.php
 DONE question/category_form.php
 DONE question/export_form.php
 DONE question/flags.js
-question/format/aiken/format.php
-question/format/gift/examples.txt
-question/format/qti_two/templates/choice.tpl
-question/format/qti_two/templates/choiceMultiple.tpl
-question/format/qti_two/templates/composite.tpl
-question/format/qti_two/templates/extendedText.tpl
-question/format/qti_two/templates/extendedText_simpleEssay.tpl
-question/format/qti_two/templates/graphicGapMatch.tpl
-question/format/qti_two/templates/imsmanifest.tpl
-question/format/qti_two/templates/match.tpl
-question/format/qti_two/templates/mmchoiceMultiple.tpl
-question/format/qti_two/templates/notimplemented.tpl
-question/format/qti_two/templates/numerical.tpl
-question/format/qti_two/templates/textEntry.tpl
-DONE question/format/README.txt
-DONE question/format/webct/TODO.txt
+DONE question/format/aiken/format.php
 DONE question/import_form.php
 DONE question/qbank.js
 DONE question/qengine.js
-question/type/calculated/datasetitems_form.php
-question/type/calculated/db/upgrade.php
-question/type/calculated/questiontype.php
-question/type/calculated/version.php
-question/type/calculatedmulti/questiontype.php
-question/type/calculatedsimple/questiontype.php
-question/type/ddwtos/version.php
+DONE question/type/calculated/datasetitems_form.php
+DONE question/type/calculated/db/upgrade.php
+DONE question/type/calculated/questiontype.php
+DONE question/type/calculated/version.php
+DONE question/type/calculatedmulti/questiontype.php
+DONE question/type/calculatedsimple/questiontype.php
+DONE question/type/ddwtos/version.php
 DONE question/type/description/question.html
 DONE question/type/essay/display.html
-question/type/essay/version.php
-question/type/gapselect/edit_form_base.php
-question/type/gapselect/rendererbase.php
-question/type/match/db/upgrade.php
-question/type/match/version.php
-question/type/multianswer/db/upgrade.php
-question/type/multianswer/version.php
-question/type/multichoice/db/upgrade.php
-question/type/multichoice/version.php
-question/type/numerical/db/upgrade.php
-question/type/numerical/display.html
-question/type/numerical/version.php
-question/type/opaque/lang/en/qtype_opaque.php
-question/type/opaque/settings.php
-question/type/randomsamatch/version.php
-question/type/truefalse/version.php
+DONE question/type/essay/version.php
+DONE question/type/gapselect/edit_form_base.php
+DONE question/type/gapselect/rendererbase.php
+DONE question/type/match/db/upgrade.php
+DONE question/type/match/version.php
+DONE question/type/multianswer/db/upgrade.php
+DONE question/type/multianswer/version.php
+DONE question/type/multichoice/db/upgrade.php
+DONE question/type/multichoice/version.php
+DONE question/type/numerical/db/upgrade.php
+DONE question/type/numerical/display.html
+DONE question/type/numerical/version.php
+DONE question/type/opaque/lang/en/qtype_opaque.php
+DONE question/type/opaque/settings.php
+DONE question/type/randomsamatch/version.php
+DONE question/type/truefalse/version.php
+
+Missing boiler-plate
+====================
+
+DONE question/addquestion.php
+DONE question/category.php
+DONE question/category_class.php
+DONE question/edit.php
+DONE question/export.php
+DONE question/format/blackboard/format.php
+DONE question/format/blackboard_six/format.php
+DONE question/format/examview/format.php
+DONE question/format/learnwise/format.php
+DONE question/format/missingword/format.php
+DONE question/format/qti_two/custommediafilter.php
+DONE question/format/qti_two/format.php
+DONE question/format/qti_two/qt_common.php
+DONE question/format/webct/format.php
+DONE question/format/xhtml/format.php
+DONE question/format.php
+DONE question/question.php
+DONE question/type/calculated/datasetdefinitions_form.php
+DONE question/type/calculatedmulti/edit_calculatedmulti_form.php
+DONE question/type/ddwtos/script.js
+DONE question/type/multianswer/edit_multianswer_form.php
+DONE question/type/multianswer/questiontype.php
+DONE question/type/numerical/display.html
+DONE question/type/randomsamatch/edit_randomsamatch_form.php
+DONE question/type/randomsamatch/questiontype.php
+DONE question/upgrade.php
+

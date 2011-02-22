@@ -1,14 +1,38 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * A class for representing question categories.
+ *
+ * @package    moodlecore
+ * @subpackage questionbank
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 /**
  * Class representing question categories
  *
- * @author Martin Dougiamas and many others. {@link http://moodle.org}
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // number of categories to display on page
-define("QUESTION_PAGE_LENGTH", 25);
+define('QUESTION_PAGE_LENGTH', 25);
 
 require_once($CFG->libdir . '/listlib.php');
 require_once($CFG->dirroot . '/question/category_form.php');

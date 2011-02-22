@@ -1,37 +1,36 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// WebCT FORMAT                                                          //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Part of Moodle - Modular Object-Oriented Dynamic Learning Environment //
-//                  http://moodle.com                                    //
-//                                                                       //
-// Copyright (C) 2004 ASP Consulting   http://www.asp-consulting.net     //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
 
-// Based on format.php, included by ../../import.php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * @package questionbank
- * @subpackage importexport
+ * Web CT question importer.
+ *
+ * @package    qformat
+ * @subpackage webct
+ * @copyright  2004 ASP Consulting http://www.asp-consulting.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+/**
+ * Web CT question importer.
+ *
+ * @copyright  2004 ASP Consulting http://www.asp-consulting.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 function unhtmlentities($string){
     $search = array ("'<script[?>]*?>.*?</script>'si",  // remove javascript
                  "'<[\/\!]*?[^<?>]*?>'si",  // remove HTML tags

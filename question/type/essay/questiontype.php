@@ -15,22 +15,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Question type class for the essay question type.
  *
- * @package qtype
+ * @package    qtype
  * @subpackage essay
- * @copyright 2005 Mark Nielsen
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2005 Mark Nielsen
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 /**
  * The essay question type.
  *
- * @copyright 2005 Mark Nielsen
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2005 Mark Nielsen
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_essay extends question_type {
     public function is_manual_graded() {

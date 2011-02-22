@@ -15,15 +15,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/////////////////
-// CALCULATED ///
-/////////////////
+/**
+ * Question type class for the simple calculated question type.
+ *
+ * @package    qtype
+ * @subpackage calculatedsimple
+ * @copyright  2009 Pierre Pichet
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-/// QUESTION TYPE CLASS //////////////////
 
+/**
+ * The simple calculated question type.
+ *
+ * @copyright  2009 Pierre Pichet
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_calculatedsimple_qtype extends question_calculated_qtype {
-
-
 
     // Used by the function custom_generator_tools:
     public $calcgenerateidhasbeenadded = false;

@@ -1,39 +1,62 @@
 <?php
+
+// This file is part of Moodle - http://moodle.org/
 //
-///////////////////////////////////////////////////////////////
-// The GIFT import filter was designed as an easy to use method
-// for teachers writing questions as a text file. It supports most
-// question types and the missing word format.
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-// Multiple Choice / Missing Word
-//     Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}
-//     Grant is {~buried =entombed ~living} in Grant's tomb.
-// True-False:
-//     Grant is buried in Grant's tomb.{FALSE}
-// Short-Answer.
-//     Who's buried in Grant's tomb?{=no one =nobody}
-// Numerical
-//     When was Ulysses S. Grant born?{#1822:5}
-// Matching
-//     Match the following countries with their corresponding
-//     capitals.{=Canada->Ottawa =Italy->Rome =Japan->Tokyo}
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-// Comment lines start with a double backslash (//).
-// Optional question names are enclosed in double colon(::).
-// Answer feedback is indicated with hash mark (#).
-// Percentage answer weights immediately follow the tilde (for
-// multiple choice) or equal sign (for short answer and numerical),
-// and are enclosed in percent signs (% %). See docs and examples.txt for more.
-//
-// This filter was written through the collaboration of numerous
-// members of the Moodle community. It was originally based on
-// the missingword format, which included code from Thomas Robb
-// and others. Paul Tsuchido Shew wrote this filter in December 2003.
-//////////////////////////////////////////////////////////////////////////
-// Based on default.php, included by ../import.php
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * @package questionbank
- * @subpackage importexport
+ * GIFT format question importer/exporter.
+ *
+ * @package    qformat
+ * @subpackage gift
+ * @copyright  2003 Paul Tsuchido Shew
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+/**
+ * The GIFT import filter was designed as an easy to use method
+ * for teachers writing questions as a text file. It supports most
+ * question types and the missing word format.
+ *
+ * Multiple Choice / Missing Word
+ *     Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}
+ *     Grant is {~buried =entombed ~living} in Grant's tomb.
+ * True-False:
+ *     Grant is buried in Grant's tomb.{FALSE}
+ * Short-Answer.
+ *     Who's buried in Grant's tomb?{=no one =nobody}
+ * Numerical
+ *     When was Ulysses S. Grant born?{#1822:5}
+ * Matching
+ *     Match the following countries with their corresponding
+ *     capitals.{=Canada->Ottawa =Italy->Rome =Japan->Tokyo}
+ *
+ * Comment lines start with a double backslash (//).
+ * Optional question names are enclosed in double colon(::).
+ * Answer feedback is indicated with hash mark (#).
+ * Percentage answer weights immediately follow the tilde (for
+ * multiple choice) or equal sign (for short answer and numerical),
+ * and are enclosed in percent signs (% %). See docs and examples.txt for more.
+ *
+ * This filter was written through the collaboration of numerous
+ * members of the Moodle community. It was originally based on
+ * the missingword format, which included code from Thomas Robb
+ * and others. Paul Tsuchido Shew wrote this filter in December 2003.
+ *
+ * @copyright  2003 Paul Tsuchido Shew
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qformat_gift extends qformat_default {
 
