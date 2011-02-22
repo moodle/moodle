@@ -15,17 +15,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Defines the renderer for the Opaque behaviour.
+ *
+ * @package    qbehaviour
+ * @subpackage opaque
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 
 /**
  * Renderer for outputting parts of a question when the actual behaviour
  * used is not available.
  *
- * @package qbehaviour_opaque
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
 class qbehaviour_opaque_renderer extends qbehaviour_renderer {
     public function controls(question_attempt $qa, question_display_options $options) {
         if ($qa->get_state()->is_gave_up()) {

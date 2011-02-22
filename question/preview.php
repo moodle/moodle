@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This page displays a preview of a question
  *
@@ -24,12 +23,13 @@
  * information is stored in the session as an array of subsequent states rather
  * than in the database.
  *
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage questionbank
- * @copyright Alex Smith {@link http://maths.york.ac.uk/serving_maths} and
+ * @copyright  Alex Smith {@link http://maths.york.ac.uk/serving_maths} and
  *      numerous contributors.
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir . '/questionlib.php');

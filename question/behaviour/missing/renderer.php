@@ -15,17 +15,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Defines the renderer for when the actual behaviour used is not available.
+ *
+ * @package    qbehaviour
+ * @subpackage missing
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 
 /**
  * Renderer for outputting parts of a question when the actual behaviour
  * used is not available.
  *
- * @package qbehaviour_missing
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
 class qbehaviour_missing_renderer extends qbehaviour_renderer {
     public function controls(question_attempt $qa, question_display_options $options) {
         return html_writer::tag('div',

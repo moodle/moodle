@@ -15,20 +15,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This file contains tests that walks a question through the interactive with
  * countback behaviour.
  *
- * @package qbehaviour_interactivecountback
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbehaviour
+ * @subpackage interactivecountback
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 require_once(dirname(__FILE__) . '/../../../engine/lib.php');
 require_once(dirname(__FILE__) . '/../../../engine/simpletest/helpers.php');
 
+
+/**
+ * Unit tests for the interactive with countback behaviour.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qbehaviour_interactivecountback_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_feedback_match_reset() {
 

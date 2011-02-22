@@ -15,17 +15,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Defines the renderer the information item behaviour.
+ *
+ * @package    qbehaviour
+ * @subpackage informationitem
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 
 /**
  * Renderer for outputting parts of a question belonging to the information
  * item behaviour.
  *
- * @package qbehaviour_deferredfeedback
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
 class qbehaviour_informationitem_renderer extends qbehaviour_renderer {
     public function controls(question_attempt $qa, question_display_options $options) {
         if ($qa->get_state() != question_state::$todo) {

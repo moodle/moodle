@@ -19,10 +19,10 @@
 /**
  * Unit tests for the question import and export system.
  *
- * @package core
+ * @package    moodlecore
  * @subpackage questionbank
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once($CFG->libdir . '/questionlib.php');
@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/question/format.php');
 /**
  * Subclass to make it easier to test qformat_default.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testable_qformat extends qformat_default {
     public function assemble_category_path($names) {
@@ -49,8 +49,8 @@ class testable_qformat extends qformat_default {
 /**
  * Unit tests for the matching question definition class.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qformat_default_test extends UnitTestCase {
     public function test_assemble_category_path() {

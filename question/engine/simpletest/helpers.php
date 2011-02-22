@@ -19,10 +19,10 @@
 /**
  * This file contains helper classes for testing the question engine.
  *
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage questionengine
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -32,8 +32,8 @@ require_once(dirname(__FILE__) . '/../lib.php');
 /**
  * Makes some protected methods of question_attempt public to facilitate testing.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testable_question_attempt extends question_attempt {
     public function add_step($step) {#
@@ -52,8 +52,8 @@ class testable_question_attempt extends question_attempt {
  * This class creates questions of various types, which can then be used when
  * testing.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class test_question_maker {
     const STANDARD_OVERALL_CORRECT_FEEDBACK = 'Well done!';
@@ -301,6 +301,12 @@ class test_question_maker {
 }
 
 
+/**
+ * Helper for tests that need to simulate records loaded from the database.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 abstract class testing_db_record_builder {
     public static function build_db_records(array $table) {
         $columns = array_shift($table);
@@ -320,6 +326,13 @@ abstract class testing_db_record_builder {
 }
 
 
+/**
+ * Helper base class for tests that need to simulate records loaded from the
+ * database.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class data_loading_method_test_base extends UnitTestCase {
     public function build_db_records(array $table) {
         return testing_db_record_builder::build_db_records($table);
@@ -327,6 +340,13 @@ class data_loading_method_test_base extends UnitTestCase {
 }
 
 
+/**
+ * Helper base class for tests that walk a question through a sequents of
+ * interactions under the control of a particular behaviour.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qbehaviour_walkthrough_test_base extends UnitTestCase {
     /** @var question_display_options */
     protected $displayoptions;

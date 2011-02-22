@@ -15,18 +15,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Renderer for outputting parts of a question belonging to the legacy
+ * adaptive (no penalties) behaviour.
+ *
+ * @package    qbehaviour
+ * @subpackage adaptivenopenalty
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+require_once(dirname(__FILE__) . '/../adaptive/renderer.php');
+
 
 /**
  * Renderer for outputting parts of a question belonging to the legacy
  * adaptive (no penalties) behaviour.
  *
- * @package qbehaviour_adaptivenopenalty
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once(dirname(__FILE__) . '/../adaptive/renderer.php');
-
 class qbehaviour_adaptivenopenalty_renderer extends qbehaviour_adaptive_renderer {
     protected function penalty_info($qa, $mark) {
         return '';

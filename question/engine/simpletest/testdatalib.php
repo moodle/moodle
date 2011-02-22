@@ -15,19 +15,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * This file contains tests for the question_state class.
+ * This file contains tests for some of the code in ../datalib.php.
  *
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage questionengine
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 require_once(dirname(__FILE__) . '/../lib.php');
 
+
+/**
+ * Unit tests for some of the code in ../datalib.php.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qubaid_condition_test extends UnitTestCase {
 
     protected function check_typical_question_attempts_query(

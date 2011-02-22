@@ -23,10 +23,10 @@
  * fully object oriented structure, at which point this file can be a
  * starting point.
  *
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage questionbank
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -35,8 +35,8 @@
  *
  * It provides functions for managing question types and question definitions.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class question_bank {
     /** @var array question type name => question_type subclass. */

@@ -15,17 +15,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Defines the renderer for the manual graded behaviour.
+ *
+ * @package    qbehaviour
+ * @subpackage manualgraded
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 
 /**
  * Renderer for outputting parts of a question belonging to the manual
  * graded behaviour.
  *
- * @package qbehaviour_manualgraded
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
 class qbehaviour_manualgraded_renderer extends qbehaviour_renderer {
-
 }

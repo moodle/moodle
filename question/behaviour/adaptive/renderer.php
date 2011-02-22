@@ -15,16 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Renderer for outputting parts of a question belonging to the legacy
+ * adaptive behaviour.
+ *
+ * @package    qbehaviour
+ * @subpackage adaptive
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 
 /**
  * Renderer for outputting parts of a question belonging to the legacy
  * adaptive behaviour.
  *
- * @package qbehaviour_adaptive
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
     protected function get_graded_step(question_attempt $qa) {
         foreach ($qa->get_reverse_step_iterator() as $step) {

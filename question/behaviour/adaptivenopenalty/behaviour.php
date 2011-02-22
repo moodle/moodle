@@ -15,14 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Question behaviour for the old adaptive mode, with no penalties.
  *
- * @package qbehaviour_adaptivenopenalty
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbehaviour
+ * @subpackage adaptivenopenalty
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 require_once(dirname(__FILE__) . '/../adaptive/behaviour.php');
 
@@ -31,8 +32,8 @@ require_once(dirname(__FILE__) . '/../adaptive/behaviour.php');
  *
  * This is the old version of interactive mode, without penalties.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_adaptivenopenalty extends qbehaviour_adaptive {
     const IS_ARCHETYPAL = true;

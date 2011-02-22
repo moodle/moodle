@@ -15,20 +15,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This file contains tests that walks a question through the deferred feedback
- * behaviour.
+ * with certainty base marking behaviour.
  *
- * @package qbehaviour_deferredcbm
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbehaviour
+ * @subpackage deferredcbm
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 require_once(dirname(__FILE__) . '/../../../engine/lib.php');
 require_once(dirname(__FILE__) . '/../../../engine/simpletest/helpers.php');
 
+
+/**
+ * Unit tests for the deferred feedback with certainty base marking behaviour.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_deferred_cbm_truefalse_high_certainty() {
 

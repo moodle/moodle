@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This file contains tests for the Opaque behaviour.
  *
- * @package qbehaviour_opaque
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbehaviour
+ * @subpackage opaque
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -29,6 +29,13 @@ require_once(dirname(__FILE__) . '/../../../engine/lib.php');
 require_once(dirname(__FILE__) . '/../../../engine/simpletest/helpers.php');
 require_once(dirname(__FILE__) . '/../behaviour.php');
 
+
+/**
+ * Unit tests for the Opaque behaviour.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qbehaviour_opaque_test extends qbehaviour_walkthrough_test_base {
     /**
      * Makes an Opaque question that refers to one of the sample questions

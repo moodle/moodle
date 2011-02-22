@@ -20,10 +20,10 @@
  * This file contains the code required to upgrade all the attempt data from
  * old versions of Moodle into the tables used by the new question engine.
  *
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage questionengine
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -35,8 +35,8 @@ require_once($CFG->libdir . '/questionlib.php');
  * This class serves to record all the assumptions that the code had to make
  * during the question engine database database upgrade, to facilitate reviewing them.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_engine_assumption_logger {
     protected $handle;

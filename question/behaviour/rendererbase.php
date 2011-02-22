@@ -15,14 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Defines the renderer base class for question behaviours.
  *
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage questionbehaviours
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -32,8 +31,8 @@
  * The methods in this class are mostly called from {@link core_question_renderer}
  * which coordinates the overall output of questions.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class qbehaviour_renderer extends plugin_renderer_base {
     /**

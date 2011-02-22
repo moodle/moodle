@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This file contains tests for the 'missing' behaviour.
  *
- * @package qbehaviour_missing
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbehaviour
+ * @subpackage missing
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -29,6 +29,13 @@ require_once(dirname(__FILE__) . '/../../../engine/lib.php');
 require_once(dirname(__FILE__) . '/../../../engine/simpletest/helpers.php');
 require_once(dirname(__FILE__) . '/../behaviour.php');
 
+
+/**
+ * Unit tests for the 'missing' behaviour.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qbehaviour_missing_test extends UnitTestCase {
     public function test_missing_cannot_start() {
         $qa = new question_attempt(test_question_maker::make_a_truefalse_question(), 0, 0);

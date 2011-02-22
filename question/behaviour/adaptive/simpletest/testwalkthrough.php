@@ -20,15 +20,23 @@
  * This file contains tests that walks a question through the adaptive
  * behaviour.
  *
- * @package qbehaviour_adaptive
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbehaviour
+ * @subpackage adaptive
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 require_once(dirname(__FILE__) . '/../../../engine/lib.php');
 require_once(dirname(__FILE__) . '/../../../engine/simpletest/helpers.php');
 
+
+/**
+ * Unit tests for the adaptive behaviour.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_adaptive_multichoice() {
 

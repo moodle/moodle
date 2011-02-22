@@ -15,18 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Question behaviour that is like the interactive behaviour, but where the
  * student is credited for parts of the question they got right on earlier tries.
  *
- * @package qbehaviour_interactivecountback
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbehaviour
+ * @subpackage interactivecountback
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 require_once(dirname(__FILE__) . '/../interactive/behaviour.php');
+
 
 /**
  * Question behaviour for interactive mode with count-back scoring.
@@ -56,8 +57,8 @@ require_once(dirname(__FILE__) . '/../interactive/behaviour.php');
  * question type. The point is that the final grade can take into account all
  * of the tries the student made.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_interactivecountback extends qbehaviour_interactive {
     const IS_ARCHETYPAL = false;

@@ -15,14 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Question behaviour where the student can submit questions one at a
  * time for immediate feedback.
  *
- * @package qbehaviour_immediatefeedback
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbehaviour
+ * @subpackage immediatefeedback
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -34,8 +34,8 @@
  * student to change their answer any more, but the student gets full feedback
  * straight away.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_immediatefeedback extends question_behaviour_with_save {
     const IS_ARCHETYPAL = true;

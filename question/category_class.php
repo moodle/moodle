@@ -24,20 +24,21 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Class representing question categories
- *
- * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
 // number of categories to display on page
 define('QUESTION_PAGE_LENGTH', 25);
 
 require_once($CFG->libdir . '/listlib.php');
 require_once($CFG->dirroot . '/question/category_form.php');
-require_once('move_form.php');
+require_once($CFG->dirroot . '/question/move_form.php');
 
+
+/**
+ * Class representing a list of question categories
+ *
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_category_list extends moodle_list {
     public $table = "question_categories";
     public $listitemclassname = 'question_category_list_item';
@@ -63,6 +64,13 @@ class question_category_list extends moodle_list {
     }
 }
 
+
+/**
+ * An item in a list of question categories.
+ *
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_category_list_item extends list_item {
     public function set_icon_html($first, $last, &$lastitem){
         global $CFG;
@@ -109,9 +117,10 @@ class question_category_list_item extends list_item {
 
 
 /**
- * Class representing question categories
+ * Class representing q question category
  *
- * @package questionbank
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_category_object {
 
@@ -125,7 +134,7 @@ class question_category_object {
     var $newtable;
     var $tab;
     var $tabsize = 3;
-//------------------------------------------------------
+
     /**
      * @var moodle_url Object representing url for this page
      */
@@ -170,10 +179,7 @@ class question_category_object {
         $this->pageurl = $pageurl;
 
         $this->initialize($page, $contexts, $currentcat, $defaultcategory, $todelete, $addcontexts);
-
     }
-
-
 
     /**
      * Initializes this classes general category-related variables
@@ -199,6 +205,7 @@ class question_category_object {
             $this->catform->set_data(array('parent'=>$defaultcategory));
         }
     }
+
     /**
      * Displays the user interface
      *
@@ -246,8 +253,6 @@ class question_category_object {
         echo $list->display_page_numbers();
      }
 
-
-
     /**
      * gets all the courseids for the given categories
      *
@@ -265,8 +270,6 @@ class question_category_object {
         return $courseids;
     }
 
-
-
     public function edit_single_category($categoryid) {
     /// Interface for adding a new category
         global $COURSE, $DB;
@@ -282,7 +285,6 @@ class question_category_object {
             print_error('invalidcategory', '', '', $categoryid);
         }
     }
-
 
     /**
      * Sets the viable parents

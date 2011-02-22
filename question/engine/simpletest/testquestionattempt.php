@@ -20,18 +20,27 @@
  * This file contains tests for the question_attempt class.
  *
  * Action methods like start, process_action and finish are assumed to be
- * tested by testintegration.php.
+ * tested by walkthrough tests in the various behaviours.
  *
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage questionengine
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 require_once(dirname(__FILE__) . '/../lib.php');
 require_once(dirname(__FILE__) . '/helpers.php');
 
+
+/**
+ * Unit tests for the {@link question_attempt} class.
+ *
+ * These are the tests that don't require any steps.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_attempt_test extends UnitTestCase {
     private $question;
     private $usageid;
@@ -122,10 +131,10 @@ class question_attempt_test extends UnitTestCase {
 
 
 /**
- * These tests use a standard fixture of a question_attempt with three steps.
+ * These tests use a standard fixture of a {@link question_attempt} with three steps.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_attempt_with_steps_test extends UnitTestCase {
     private $question;
@@ -244,6 +253,12 @@ class question_attempt_with_steps_test extends UnitTestCase {
 }
 
 
+/**
+ * Unit tests for loading data into the {@link question_attempt} class.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_attempt_db_test extends data_loading_method_test_base {
     public function test_load() {
         $records = testing_db_record_builder::build_db_records(array(

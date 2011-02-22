@@ -20,9 +20,10 @@
  * Fake question behaviour that is used when the actual qim was not
  * available.
  *
- * @package qbehaviour_missing
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbehaviour
+ * @subpackage missing
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -39,8 +40,8 @@
  * possible. A warning is shown that behaviour specific bits may be missing.
  * Any attempt to process anything causes an exception to be thrown.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_missing extends question_behaviour {
     public function required_question_definition_type() {

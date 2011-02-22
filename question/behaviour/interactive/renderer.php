@@ -20,17 +20,18 @@
  * Renderer for outputting parts of a question belonging to the interactive
  * behaviour.
  *
- * @package qbehaviour_interactive
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbehaviour
+ * @subpackage interactive
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 /**
  * Interactive behaviour renderer.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_interactive_renderer extends qbehaviour_renderer {
     public function controls(question_attempt $qa, question_display_options $options) {

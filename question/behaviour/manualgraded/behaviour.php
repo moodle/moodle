@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Question behaviour for questions that can only be graded manually.
  *
- * @package qbehaviour_manualgraded
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbehaviour
+ * @subpackage manualgraded
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -32,8 +32,8 @@
  * when the whole attempt is finished, the attempt goes into the NEEDS_GRADING
  * state, and the teacher must grade it manually.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_manualgraded extends question_behaviour_with_save {
     const IS_ARCHETYPAL = true;

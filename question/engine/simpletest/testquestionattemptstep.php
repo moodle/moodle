@@ -15,20 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This file contains tests for the question_attempt_step class.
  *
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage questionengine
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 require_once(dirname(__FILE__) . '/../lib.php');
 require_once(dirname(__FILE__) . '/helpers.php');
 
+
+/**
+ * Unit tests for the {@link question_attempt_step} class.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_attempt_step_test extends UnitTestCase {
     public function test_initial_state_unprocessed() {
         $step = new question_attempt_step();
@@ -123,6 +129,12 @@ class question_attempt_step_test extends UnitTestCase {
 }
 
 
+/**
+ * Unit tests for the loading data into the {@link question_attempt_step} class.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_attempt_step_db_test extends data_loading_method_test_base {
     public function test_load_with_data() {
         $records = $this->build_db_records(array(

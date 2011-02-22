@@ -15,17 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Renderer for outputting parts of a question belonging to the deferred
- * feedback behaviour.
+ * Defines the renderer for the deferred feedback with certainty based marking
+ * behaviour.
  *
- * @package qbehaviour_deferredcbm
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbehaviour
+ * @subpackage deferredcbm
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
+/**
+ * Renderer for outputting parts of a question belonging to the deferred
+ * feedback with certainty based marking behaviour.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qbehaviour_deferredcbm_renderer extends qbehaviour_renderer {
     protected function certainly_choices($controlname, $selected, $readonly) {
         $attributes = array(

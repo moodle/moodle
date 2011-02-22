@@ -18,10 +18,10 @@
 /**
  * This defines the core classes of the Moodle question engine.
  *
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage questionengine
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -44,8 +44,8 @@ require_once($CFG->libdir . '/questionlib.php');
  * creating, loading, saving and deleting {@link question_usage_by_activity}s,
  * which is the main class that is used by other code that wants to use questions.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class question_engine {
     /** @var array behaviour name => 1. Records which behaviours have been loaded. */
@@ -333,8 +333,8 @@ abstract class question_engine {
  * be shown read-only, and a question that has not been submitted will not have
  * any sort of feedback displayed.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_display_options {
     /**#@+ @var integer named constants for the values that most of the options take. */
@@ -493,7 +493,7 @@ class question_display_options {
  * Contains the logic for handling question flags.
  *
  * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class question_flags {
     /**
@@ -611,8 +611,8 @@ class question_out_of_sequence_exception extends moodle_exception {
  *
  * Instances of this class correspond to rows in the question_usages table.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_usage_by_activity {
     /**
@@ -1223,8 +1223,8 @@ class question_usage_by_activity {
  * To create an instance of this class, use
  * {@link question_usage_by_activity::get_attempt_iterator()}
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_attempt_iterator implements Iterator, ArrayAccess {
     /** @var question_usage_by_activity that we are iterating over. */
@@ -1289,8 +1289,8 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
  * a collection of {@link question_attempt_steps}. Question inteaction models and
  * question types do work with question_attempt objects.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_attempt {
     /**
@@ -2248,7 +2248,7 @@ class question_attempt {
  * All methods that try to modify the question_attempt throw exceptions.
  *
  * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_attempt_with_restricted_history extends question_attempt {
     /**
@@ -2327,8 +2327,8 @@ class question_attempt_with_restricted_history extends question_attempt {
  * This is actively linked to question_attempt. If you add an new step
  * mid-iteration, then it will be included.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_attempt_step_iterator implements Iterator, ArrayAccess {
     /** @var question_attempt the question_attempt being iterated over. */
@@ -2386,8 +2386,8 @@ class question_attempt_step_iterator implements Iterator, ArrayAccess {
  * A variant of {@link question_attempt_step_iterator} that iterates through the
  * steps in reverse order.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_attempt_reverse_step_iterator extends question_attempt_step_iterator {
     public function next() {
@@ -2433,8 +2433,8 @@ class question_attempt_reverse_step_iterator extends question_attempt_step_itera
  * to check wether a varaible with a particular name is set, and {@link get_behaviour_data()}
  * to get all the behaviour data as an associative array.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_attempt_step {
     /** @var integer if this attempts is stored in the question_attempts table, the id of that row. */
@@ -2676,7 +2676,7 @@ class question_attempt_step {
  * A subclass with a bit of additional funcitonality, for pending steps.
  *
  * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_attempt_pending_step extends question_attempt_step {
     /** @var string . */
@@ -2707,8 +2707,8 @@ class question_attempt_pending_step extends question_attempt_step {
 /**
  * A subclass of {@link question_attempt_step} that cannot be modified.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_attempt_step_read_only extends question_attempt_step {
     public function set_state($state) {
@@ -2731,8 +2731,8 @@ class question_attempt_step_read_only extends question_attempt_step {
  * {@link question_attempt::get_last_step()} etc. when a an attempt has just been
  * created and there is no acutal step.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_null_step {
     public function get_state() {
@@ -2756,8 +2756,8 @@ class question_null_step {
  * A question behaviour controls the flow of actions a student can
  * take as they work through a question, and later, as a teacher manually grades it.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 interface question_usage_observer {
     /** Called when a field of the question_usage_by_activity is changed. */
@@ -2796,8 +2796,8 @@ interface question_usage_observer {
  * Null implmentation of the {@link question_usage_watcher} interface.
  * Does nothing.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_usage_null_observer implements question_usage_observer {
     public function notify_modified() {
@@ -2817,7 +2817,7 @@ class question_usage_null_observer implements question_usage_observer {
  * Useful functions for writing question types and behaviours.
  *
  * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class question_utils {
     /**

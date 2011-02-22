@@ -15,20 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Renderer for outputting parts of a question belonging to the immediate
- * feedback with CBM behaviour.
+ * Defines the renderer for the immediate feedback with CBM behaviour.
  *
- * @package qbehaviour_immediatecbm
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qbehaviour
+ * @subpackage immediatecbm
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 require_once(dirname(__FILE__) . '/../deferredcbm/renderer.php');
 
 
+/**
+ * Renderer for outputting parts of a question belonging to the immediate
+ * feedback with CBM behaviour.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qbehaviour_immediatecbm_renderer extends qbehaviour_deferredcbm_renderer {
     public function controls(question_attempt $qa, question_display_options $options) {
         $output = parent::controls($qa, $options);

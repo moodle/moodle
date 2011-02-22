@@ -15,6 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Defines the renderer for the interactive with countback behaviour.
+ *
+ * @package    qbehaviour
+ * @subpackage interactivecountback
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 
 require_once(dirname(__FILE__) . '/../interactive/renderer.php');
 
@@ -26,11 +35,8 @@ require_once(dirname(__FILE__) . '/../interactive/renderer.php');
  * There are not differences from the interactive output. We just need a class
  * definition.
  *
- * @package qbehaviour_interactivecountback
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-
 class qbehaviour_interactivecountback_renderer extends qbehaviour_interactive_renderer {
 }

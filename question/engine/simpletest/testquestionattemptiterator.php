@@ -15,14 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This file contains tests for the question_attempt_iterator class.
  *
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage questionengine
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -30,6 +29,12 @@ require_once(dirname(__FILE__) . '/../lib.php');
 require_once(dirname(__FILE__) . '/helpers.php');
 
 
+/**
+ * This file contains tests for the {@link question_attempt_iterator} class.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_attempt_iterator_test extends UnitTestCase {
     private $quba;
     private $qas = array();

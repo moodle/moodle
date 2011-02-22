@@ -19,10 +19,10 @@
 /**
  * Code for loading and saving quiz attempts to and from the database.
  *
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage questionengine
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -30,8 +30,8 @@
  * This class controls the loading and saving of question engine data to and from
  * the database.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_engine_data_mapper {
     /**
@@ -822,8 +822,8 @@ ORDER BY
  * changes to a {@link question_usage_by_activity}, and its constituent parts,
  * so that the changes can be saved to the database when {@link save()} is called.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_engine_unit_of_work implements question_usage_observer {
     /** @var question_usage_by_activity the usage being tracked. */
@@ -937,7 +937,7 @@ class question_engine_unit_of_work implements question_usage_observer {
  * WHERE $qubaids->where() AND qa.slot = 1
  *
  * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class qubaid_condition {
 
@@ -975,7 +975,7 @@ abstract class qubaid_condition {
  * in a larger database query based on an explicit list of ids.
  *
  * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qubaid_list extends qubaid_condition {
     /** @var array of ids. */
@@ -1045,7 +1045,7 @@ class qubaid_list extends qubaid_condition {
  * where $from, $usageidcolumn and $where are the arguments to the constructor.
  *
  * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qubaid_join extends qubaid_condition {
     public $from;
