@@ -186,7 +186,7 @@ function quiz_get_best_grade($quiz, $userid) {
 
     // Need to detect errors/no result, without catching 0 scores.
     if (is_numeric($grade)) {
-        return round($grade, $quiz->decimalpoints);
+        return $grade + 0;
     } else {
         return NULL;
     }

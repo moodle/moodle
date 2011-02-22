@@ -429,7 +429,7 @@ function quiz_save_best_grade($quiz, $userid = null) {
 
     // Calculate the best grade
     $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
-    $bestgrade = quiz_rescale_grade($bestgrade, $quiz);
+    $bestgrade = quiz_rescale_grade($bestgrade, $quiz, false);
 
     // Save the best grade in the database
     if ($grade = get_record('quiz_grades', 'quiz', $quiz->id, 'userid', $userid)) {

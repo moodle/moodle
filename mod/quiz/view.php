@@ -267,11 +267,11 @@
             }
 
             // Ouside the if because we may be showing feedback but not grades.
-            $attemptgrade = quiz_rescale_grade($attempt->sumgrades, $quiz);
+            $attemptgrade = quiz_rescale_grade($attempt->sumgrades, $quiz, false);
 
             if ($gradecolumn) {
                 if ($attemptoptions->scores && $attempt->timefinish > 0) {
-                    $formattedgrade = $attemptgrade;
+                    $formattedgrade = round($attemptgrade, $quiz->decimalpoints);
                     // highlight the highest grade if appropriate
                     if ($overallstats && $numattempts > 1 && !is_null($mygrade) && $attemptgrade == $mygrade && $quiz->grademethod == QUIZ_GRADEHIGHEST) {
                         $table->rowclass[$attempt->attempt] = 'bestrow';
@@ -313,7 +313,7 @@
             if ($available && $moreattempts) {
                 $a = new stdClass;
                 $a->method = quiz_get_grading_option_name($quiz->grademethod);
-                $a->mygrade = $mygrade;
+                $a->mygrade = round($mygrade, $quiz->decimalpoints);
                 $a->quizgrade = $quiz->grade;
                 $resultinfo .= print_heading(get_string('gradesofar', 'quiz', $a), '', 2, 'main', true);
             } else {
