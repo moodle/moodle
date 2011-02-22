@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Version information for the select missing words question type.
  *
@@ -24,7 +23,6 @@
  * @copyright 2011 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 $plugin->version  = 2011020100;
 $plugin->requires = 2011011200;
