@@ -2612,6 +2612,11 @@ function assignment_cron () {
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml  = $posthtml;
             $eventdata->smallmessage     = '';
+
+            $eventdata->name            = 'assignment_updates';
+            $eventdata->component       = 'mod_assignment';
+            $eventdata->notification    = 1;
+
             message_send($eventdata);
         }
 
