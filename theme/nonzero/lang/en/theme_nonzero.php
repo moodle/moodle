@@ -30,7 +30,7 @@ $string['choosereadme'] = '<div class="clearfix"><div class="theme_screenshot"><
 
 // Config
 
-$string['configtitle'] = 'Nonzero Settings';
+$string['configtitle'] = 'Nonzero settings';
 $string['customcss'] = 'Custom CSS';
 $string['customcssdesc'] = 'Any CSS you enter here will be added to every page allowing your to easily customise this theme.';
 $string['regionprewidth'] = 'Left column width';
