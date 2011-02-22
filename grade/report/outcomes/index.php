@@ -69,7 +69,7 @@ foreach ($outcomes as $outcomeid => $outcome) {
 }
 
 $html = '<table class="generaltable boxaligncenter" width="90%" cellspacing="1" cellpadding="5" summary="Outcomes Report">' . "\n";
-$html .= '<tr><th class="header c0" scope="col">' . get_string('outcomename', 'grades') . '</th>';
+$html .= '<tr><th class="header c0" scope="col">' . get_string('outcomeshortname', 'grades') . '</th>';
 $html .= '<th class="header c1" scope="col">' . get_string('courseavg', 'grades') . '</th>';
 $html .= '<th class="header c2" scope="col">' . get_string('sitewide', 'grades') . '</th>';
 $html .= '<th class="header c3" scope="col">' . get_string('activities', 'grades') . '</th>';

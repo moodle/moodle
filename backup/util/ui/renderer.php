@@ -461,7 +461,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div', array('class' => 'rcs-results'));
 
         $table = new html_table();
-        $table->head = array('', get_string('shortname'), get_string('fullname'));
+        $table->head = array('', get_string('shortnamecourse'), get_string('fullnamecourse'));
         $table->data = array();
         if ($component->get_count() !== 0) {
             foreach ($component->get_results() as $course) {
@@ -526,7 +526,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div', array('class' => 'ics-results'));
 
         $table = new html_table();
-        $table->head = array('', get_string('shortname'), get_string('fullname'));
+        $table->head = array('', get_string('shortnamecourse'), get_string('fullnamecourse'));
         $table->data = array();
         foreach ($component->get_results() as $course) {
             $row = new html_table_row();

@@ -89,7 +89,7 @@ echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 echo '</fieldset>';
 $table = new html_table();
-$table->head  = array (get_string('fullname'),
+$table->head  = array (get_string('fullnameuser'),
     get_string('content', 'notes'),
     get_string('publishstate', 'notes') . $OUTPUT->help_icon('publishstate', 'notes'),
     );
