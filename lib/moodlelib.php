@@ -6431,12 +6431,12 @@ function check_php_version($version='4.1.0') {
           break;
 
       case 'Safari':  /// Safari
-          // Look for AppleWebKit, excluding strings with OmniWeb, Shiira and SimbianOS
+          // Look for AppleWebKit, excluding strings with OmniWeb, Shiira and SymbianOS
           if (strpos($agent, 'OmniWeb')) { // Reject OmniWeb
               return false;
           } elseif (strpos($agent, 'Shiira')) { // Reject Shiira
               return false;
-          } elseif (strpos($agent, 'SimbianOS')) { // Reject SimbianOS
+          } elseif (strpos($agent, 'SymbianOS')) { // Reject SymbianOS
               return false;
           }
           if (strpos($agent, 'iPhone') or strpos($agent, 'iPad') or strpos($agent, 'iPod')) {
