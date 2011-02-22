@@ -593,6 +593,29 @@ class quiz_attempt extends quiz {
     }
 
     /**
+     * Is the current user allowed to review this attempt. This applies when
+     * {@link is_own_attempt()} returns false.
+     * @return bool whether the review should be allowed.
+     */
+    public function is_review_allowed() {
+        if (!$this->has_capability('mod/quiz:viewreports')) {
+            return false;
+        }
+
+        $cm = $this->get_cm();
+        if ($this->has_capability('moodle/site:accessallgroups') ||
+                groups_get_activity_groupmode($cm) != SEPARATEGROUPS) {
+            return true;
+        }
+
+        // Check the users have at least one group in common.
+        $teachersgroups = groups_get_activity_allowed_groups($cm);
+        $studentsgroups = groups_get_all_groups($cm->course, $this->attempt->userid, $cm->groupingid);
+        return $teachersgroups && $studentsgroups &&
+                array_intersect(array_keys($teachersgroups), array_keys($studentsgroups));
+    }
+
+    /**
      * Check the appropriate capability to see whether this user may review their own attempt.
      * If not, prints an error.
      */
