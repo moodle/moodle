@@ -25,8 +25,8 @@
 
 $string['apikey'] = 'API key';
 $string['contenttype'] = 'Content types';
-$string['err_noapikey'] = 'No API Key';
-$string['err_noapikey_help'] = 'There is no API Key configured for this plugin.  You can get one of these from http://flickr.com/services/api/keys/apply';
+$string['err_noapikey'] = 'No API key';
+$string['err_noapikey_help'] = 'There is no API key configured for this plugin. You can get one of these from Flickr services page.';
 $string['hidefrompublicsearches'] = 'Hide these images from public searches?';
 $string['isfamily'] = 'Visible to family';
 $string['isfriend'] = 'Visible to friends';

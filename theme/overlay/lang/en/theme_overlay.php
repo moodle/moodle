@@ -30,7 +30,7 @@ $string['choosereadme'] = '<div class="clearfix"><div class="theme_screenshot"><
 
 // Config
 
-$string['linkcolor'] = 'Link Color';
+$string['linkcolor'] = 'Link color';
 $string['linkcolordesc'] = 'This sets the link color for the theme.';
 $string['configtitle'] = 'Overlay settings';
 $string['customcss'] = 'Custom CSS';
