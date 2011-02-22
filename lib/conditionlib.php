@@ -557,7 +557,7 @@ WHERE
      */
     private function get_cached_grade_score($gradeitemid, $grabthelot=false, $userid=0) {
         global $USER, $DB, $SESSION;
-        if ($userid==0 || $userid=$USER->id) {
+        if ($userid==0 || $userid==$USER->id) {
             // For current user, go via cache in session
             if (empty($SESSION->gradescorecache) || $SESSION->gradescorecacheuserid!=$USER->id) {
                 $SESSION->gradescorecache = array();
