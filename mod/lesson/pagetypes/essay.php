@@ -252,7 +252,9 @@ class lesson_display_answer_form_essay extends moodleform {
         $mform = $this->_form;
         $contents = $this->_customdata['contents'];
 
-        $mform->addElement('header', 'pageheader', $OUTPUT->box($contents, 'contents'));
+        $mform->addElement('header', 'pageheader');
+
+        $mform->addElement('html', $OUTPUT->container($contents, 'contents'));
 
         $options = new stdClass;
         $options->para = false;
