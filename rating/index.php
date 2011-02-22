@@ -97,7 +97,7 @@ if (!$ratings) {
         //Undo the aliasing of the user id column from user_picture::fields()
         //we could clone the rating object or preserve the rating id if we needed it again
         //but we don't
-        $rating->id = $rating->uid;
+        $rating->id = $rating->userid;
 
         echo '<tr class="ratingitemheader">';
         echo "<td>";
