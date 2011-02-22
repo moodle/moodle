@@ -30,9 +30,9 @@
 
 $string['cannotcreatelangdir'] = 'Não é possível criar o directório para pacotes linguísticos';
 $string['cannotcreatetempdir'] = 'Não é possível criar o directório temporário';
-$string['cannotdownloadcomponents'] = 'Não é possível descarregar a cópia dos componentes';
-$string['cannotdownloadzipfile'] = 'Não é possível descarregar a cópia do ficheiro ZIP';
-$string['cannotfindcomponent'] = 'Não foi encontrado um componente';
+$string['cannotdownloadcomponents'] = 'Não é possível descarregar  componentes';
+$string['cannotdownloadzipfile'] = 'Não é possível descarregar o ficheiro ZIP';
+$string['cannotfindcomponent'] = 'O componente não foi encontrado';
 $string['cannotsavemd5file'] = 'Não é possível gravar ficheiro md5';
 $string['cannotsavezipfile'] = 'Não  é possível gravar ficheiro ZIP';
 $string['cannotunzipfile'] = 'Não é possível descompactar ficheiro ZIP';
