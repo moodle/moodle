@@ -18,9 +18,10 @@
 /**
  * Strings for component 'qtype_multianswer', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   qtype_multianswer
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage multianswer
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['addingmultianswer'] = 'Adding an Embedded answers (Cloze) question';

@@ -18,13 +18,10 @@
 /**
  * The default questiontype class.
  *
- * @author Martin Dougiamas and many others. This has recently been completely
- *         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
- *         the Serving Mathematics project
- *         {@link http://maths.york.ac.uk/serving_maths}
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
+ * @package    moodlecore
  * @subpackage questiontypes
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -44,8 +41,8 @@ require_once($CFG->dirroot . '/question/engine/lib.php');
  * interface to meet their needs, rather the freeze the API prematurely and
  * condem everyone to working round a clunky interface for ever afterwards.
  *
- * @package questionbank
- * @subpackage questiontypes
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_type {
     protected $fileoptions = array(
@@ -1114,8 +1111,8 @@ class question_type {
  * This class is used in the return value from
  * {@link question_type::get_possible_responses()}.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_possible_response {
     /**

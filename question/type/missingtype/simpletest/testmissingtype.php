@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This file contains tests for the 'missing' question type.
  *
- * @package qtype_missing
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage missingtype
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -29,6 +29,13 @@ require_once(dirname(__FILE__) . '/../../../engine/simpletest/helpers.php');
 require_once(dirname(__FILE__) . '/../../../behaviour/deferredfeedback/behaviour.php');
 require_once(dirname(__FILE__) . '/../question.php');
 
+
+/**
+ * Unit tests for the 'missing' question type.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qtype_missing_test extends UnitTestCase {
 
     protected function get_unknown_questiondata() {

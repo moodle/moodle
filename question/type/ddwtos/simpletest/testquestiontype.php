@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Unit tests for the drag-and-drop words into sentences question definition class.
  *
- * @package qtype_ddwtos
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage ddwtos
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -32,8 +32,8 @@ require_once($CFG->dirroot . '/question/type/ddwtos/simpletest/helper.php');
 /**
  * Unit tests for the drag-and-drop words into sentences question definition class.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddwtos_test extends UnitTestCase {
     /** @var qtype_ddwtos instance of the question type class to test. */

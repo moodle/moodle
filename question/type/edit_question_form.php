@@ -18,7 +18,7 @@
 /**
  * A base class for question editing forms.
  *
- * @package    core
+ * @package    moodlecore
  * @subpackage questiontypes
  * @copyright  2006 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -31,8 +31,8 @@
  * class that inherits from this one, and implements the definition_inner()
  * method.
  *
- * @copyright 2006 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @copyright  2006 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 abstract class question_edit_form extends moodleform {
     const DEFAULT_NUM_HINTS = 2;

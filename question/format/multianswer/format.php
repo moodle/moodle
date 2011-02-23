@@ -18,10 +18,10 @@
 /**
  * Embedded answer (Cloze) question importer.
  *
- * @package qformat
- * @subpackage qformat_multianswer
- * @copyright 2003 Henrik Kaipe
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qformat
+ * @subpackage multianswer
+ * @copyright  2003 Henrik Kaipe
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -29,8 +29,8 @@
  * Importer that imports a text file containing a single Multianswer question
  * from a text file.
  *
- * @copyright 2003 Henrik Kaipe
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2003 Henrik Kaipe
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qformat_multianswer extends qformat_default {
 

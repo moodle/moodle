@@ -18,11 +18,11 @@
 /**
  * Strings for component 'qtype_missingtype', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   qtype_missingtype
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage missingtype
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 $string['addingmissingtype'] = 'Adding a question of a type that is not installed on this system';
 $string['answerno'] = 'Answer {$a}';

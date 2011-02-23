@@ -19,9 +19,10 @@
 /**
  * Unit tests for the true-false question definition class.
  *
- * @package qtype_truefalse
- * @copyright 2008 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage truefalse
+ * @copyright  2008 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
@@ -29,8 +30,8 @@ require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 /**
  * Unit tests for the true-false question definition class.
  *
- * @copyright 2008 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2008 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_truefalse_question_test extends UnitTestCase {
     public function test_is_complete_response() {

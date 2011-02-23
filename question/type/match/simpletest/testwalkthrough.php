@@ -15,20 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This file contains tests that walks a question through the interactive
  * behaviour.
  *
- * @package qtype_ddwtos
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage match
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 
 
+/**
+ * Unit tests for the matching question type.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
     public function test_deferred_feedback_unanswered() {

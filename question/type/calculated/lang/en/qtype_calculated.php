@@ -18,9 +18,10 @@
 /**
  * Strings for component 'qtype_calculated', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   qtype_calculated
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage calculated
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['addingcalculated'] = 'Adding a calculated question';

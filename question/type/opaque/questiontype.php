@@ -32,8 +32,8 @@ require_once(dirname(__FILE__) . '/locallib.php');
 /**
  * The Opaque question type.
  *
- * @copyright 2006 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2006 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_opaque extends question_type {
     /** @var qtype_opaque_engine_manager */

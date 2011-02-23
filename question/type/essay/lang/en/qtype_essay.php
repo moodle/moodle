@@ -18,9 +18,10 @@
 /**
  * Strings for component 'qtype_essay', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   qtype_essay
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage essay
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['addingessay'] = 'Adding an Essay question';

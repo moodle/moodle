@@ -19,10 +19,10 @@
 /**
  * Code for exporting questions as Moodle XML.
  *
- * @package qformat
+ * @package    qformat
  * @subpackage xml
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -36,7 +36,7 @@ require_once($CFG->libdir . '/xmlize.php');
  * See http://docs.moodle.org/en/Moodle_XML_format for a description of the format.
  *
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qformat_xml extends qformat_default {
 

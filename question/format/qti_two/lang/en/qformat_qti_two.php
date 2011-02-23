@@ -18,9 +18,10 @@
 /**
  * Strings for component 'qformat_qti_two', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   qformat_qti_two
- * @copyright 2010 Helen Foster
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qformat
+ * @subpackage qti_two
+ * @copyright  2010 Helen Foster
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['qti_two'] = 'IMS QTI 2.0 format';

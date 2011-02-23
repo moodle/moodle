@@ -16,13 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @author Martin Dougiamas and many others. Tim Hunt.
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package questionbank
- * @subpackage questiontypes
+ * @package    qtype
+ * @subpackage numerical
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 require_once("$CFG->dirroot/question/type/shortanswer/questiontype.php");
+
 
 /**
  * NUMERICAL QUESTION TYPE CLASS
@@ -32,8 +34,9 @@ require_once("$CFG->dirroot/question/type/shortanswer/questiontype.php");
  *
  * This question type behaves like shortanswer in most cases.
  * Therefore, it extends the shortanswer question type...
- * @package questionbank
- * @subpackage questiontypes
+ *
+ * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 class question_numerical_qtype extends qtype_shortanswer {

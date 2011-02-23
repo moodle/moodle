@@ -18,11 +18,16 @@
 /**
  * Serve question type files
  *
- * @since 2.0
- * @package questionbank
- * @subpackage questiontypes
- * @author Dongsheng Cai <dongsheng@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      2.0
+ * @package    qtype
+ * @subpackage calculated
+ * @copyright  Dongsheng Cai <dongsheng@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+/**
+ * Checks file access for calculated questions.
  */
 function qtype_calculated_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG;

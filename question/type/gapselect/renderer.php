@@ -15,15 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Select from drop down list question renderer class.
  *
- * @package qtype
+ * @package    qtype
  * @subpackage gapselect
- * @copyright 2011 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
 
@@ -31,8 +31,8 @@ require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
 /**
  * Generates the output for select missing words questions.
  *
- * @copyright 2011 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_renderer {
     protected function embedded_element(question_attempt $qa, $place, question_display_options $options) {

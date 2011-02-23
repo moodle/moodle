@@ -19,9 +19,10 @@
 /**
  * Defines the 'qtype_missingtype' question definition class.
  *
- * @package qtype_missingtype
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage missingtype
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -33,8 +34,8 @@
  * sure at the moment. Perhaps it is important for it to work with as many
  * behaviours as possible.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_missingtype_question extends question_definition implements question_automatically_gradable {
     public function get_expected_data() {

@@ -15,23 +15,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Unit tests for the short answer question definition class.
  *
- * @package qtype_shortanswer
- * @copyright 2008 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage shortanswer
+ * @copyright  2008 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 require_once($CFG->dirroot . '/question/type/shortanswer/question.php');
 require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 
+
 /**
  * Unit tests for the short answer question definition class.
  *
- * @copyright 2008 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2008 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_shortanswer_question_test extends UnitTestCase {
     public function test_compare_string_with_wildcard() {

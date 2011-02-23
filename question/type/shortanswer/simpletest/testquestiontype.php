@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Unit tests for the shortanswer question type class.
  *
@@ -25,17 +24,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
 require_once($CFG->dirroot . '/question/type/shortanswer/questiontype.php');
 
+
 /**
  * Unit tests for the shortanswer question type class.
  *
- * @copyright 2007 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2007 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_shortanswer_test extends UnitTestCase {
     public static $includecoverage = array('question/type/questiontype.php', 'question/type/shortanswer/questiontype.php');

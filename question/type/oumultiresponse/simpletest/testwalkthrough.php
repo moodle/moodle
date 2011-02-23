@@ -15,14 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This file contains tests that walks a OU multiple response question through
  * various interaction models.
  *
- * @package qtype_oumultiresponse
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage oumultiresponse
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -31,6 +31,12 @@ require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 require_once($CFG->dirroot . '/question/type/oumultiresponse/simpletest/helper.php');
 
 
+/**
+ * Unit tests ofr the OU multiple response question type.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qtype_oumultiresponse_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
     public function test_interactive_behaviour() {

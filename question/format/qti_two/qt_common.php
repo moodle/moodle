@@ -31,11 +31,8 @@
  * @param int courseid
  * @return array containing filenames
  * @calledfrom type/<typename>/editquestion.php
- * @package questionbank
- * @subpackage importexport
  */
-function get_course_media_files($courseid)
-{
+function get_course_media_files($courseid) {
 // this code lifted from mod/quiz/question.php and modified
 throw new coding_exception('qti_two not converted to new fil api yet, sorry');
     /*global $CFG;

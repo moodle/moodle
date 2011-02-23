@@ -18,11 +18,16 @@
 /**
  * Serve question type files
  *
- * @since 2.0
- * @package qtype
- * @subpackage qtype_truefalse
- * @copyright The Open Unviersity
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      2.0
+ * @package    qtype
+ * @subpackage truefalse
+ * @copyright  2010 The Open Unviersity
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+/**
+ * Checks file access for true-false questions.
  */
 function qtype_truefalse_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
     global $CFG;

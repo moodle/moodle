@@ -19,9 +19,10 @@
 /**
  * Numerical question definition class.
  *
- * @package qtype_numerical
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage numerical
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
@@ -30,8 +31,8 @@ require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
 /**
  * Represents a numerical question.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_numerical_question extends question_graded_by_strategy
         implements question_response_answer_comparer {
@@ -98,8 +99,8 @@ class qtype_numerical_question extends question_graded_by_strategy
  * Subclass of {@link question_answer} with the extra information required by
  * the numerical question type.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_numerical_answer extends question_answer {
     /** @var float allowable margin of error. */

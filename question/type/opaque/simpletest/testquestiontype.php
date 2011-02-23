@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Unit tests for the opaque question type class.
  *
- * @package qtype_opaque
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage opaque
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -30,6 +30,12 @@ require_once($CFG->dirroot . '/question/type/opaque/questiontype.php');
 require_once($CFG->dirroot . '/question/format/xml/format.php');
 
 
+/**
+ * Mock {@link qtype_opaque_engine_manager} for use in tests.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qtype_opaque_engine_manager_mock extends qtype_opaque_engine_manager {
     protected $knownengines = array();
 
@@ -68,8 +74,8 @@ class qtype_opaque_engine_manager_mock extends qtype_opaque_engine_manager {
 /**
  * Unit tests for the opaque question type class.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_opaque_test extends UnitTestCase {
     var $qtype;

@@ -18,9 +18,10 @@
 /**
  * Strings for component 'qtype_calculatedmulti', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   qtype_calculatedmulti
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage calculatedmulti
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['addingcalculatedmulti'] = 'Adding a Calculated multichoice question';

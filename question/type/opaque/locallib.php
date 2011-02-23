@@ -19,10 +19,10 @@
 /**
  * Library routines used by the Opaque question type.
  *
- * @package qtype
+ * @package    qtype
  * @subpackage opaque
- * @copyright 2006 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2006 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -63,8 +63,8 @@ function qtype_opaque_format_soap_fault($fault) {
 /**
  * Manages loading and saving question engine definitions to and from the database.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_opaque_engine_manager {
     /**
@@ -640,10 +640,14 @@ function qtype_opaque_browser_type() {
     return '';
 }
 
+
 /**
  * This class caches the resources belonging a particular question.
  *
  * There are synchronisation issues if two students are doing the same question at the same time.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_opaque_resource_cache {
     protected $folder; // Path to the folder where resources for this question are cached.

@@ -19,9 +19,10 @@
 /**
  * OU multiple response question type class.
  *
- * @package qtype_oumultiresponse
- * @copyright 2008 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage oumultiresponse
+ * @copyright  2008 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -38,8 +39,8 @@ require_once($CFG->dirroot . '/question/format/xml/format.php');
  * 2. The correct answer is just indicated on the editing form by a indicating
  * which choices are correct. There is no complex but flexible scoring system.
  *
- * @copyright 2008 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2008 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_oumultiresponse extends question_type {
     public function has_html_answers() {
@@ -339,8 +340,8 @@ class qtype_oumultiresponse extends question_type {
  * An extension of {@link question_hint_with_parts} for oumultirespone questions
  * with an extra option for whether to show the feedback for each choice.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_oumultiresponse_hint extends question_hint_with_parts {
     /** @var boolean whether to show the feedback for each choice. */

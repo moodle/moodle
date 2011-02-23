@@ -35,8 +35,8 @@ require_once($CFG->dirroot.'/question/type/edit_question_form.php');
 /**
  * True-false question editing form definition.
  *
- * @copyright 2007 Jamie Pratt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2007 Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_truefalse_edit_form extends question_edit_form {
     /**

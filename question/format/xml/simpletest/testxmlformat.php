@@ -19,9 +19,10 @@
 /**
  * Unit tests for the Moodle XML format.
  *
- * @package qformat_xml
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qformat
+ * @subpackage xml
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once($CFG->libdir . '/questionlib.php');
@@ -31,8 +32,8 @@ require_once($CFG->dirroot . '/question/format/xml/format.php');
 /**
  * Unit tests for the matching question definition class.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qformat_xml_test extends UnitTestCase {
     public function assert_same_xml($expectedxml, $xml) {

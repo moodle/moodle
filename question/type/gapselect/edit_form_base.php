@@ -18,18 +18,18 @@
 /**
  * Base class for editing question types like this one.
  *
- * @package qtype
+ * @package    qtype
  * @subpackage gapselect
- * @copyright 2011 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 /**
  * Elements embedded in question text editing form definition.
  *
- * @copyright 2011 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_gapselect_edit_form_base extends question_edit_form {
     const MAX_GROUPS = 8;

@@ -19,10 +19,10 @@
 /**
  * Unit tests for the question type base class.
  *
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage questiontypes
- * @copyright 2008 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2008 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -36,8 +36,8 @@ require_once($CFG->dirroot . '/question/type/questiontype.php');
 /**
  * Tests for some of ../questionbase.php
  *
- * @copyright 2008 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2008 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_type_test extends UnitTestCase {
     public static $includecoverage = array('question/type/questiontype.php');

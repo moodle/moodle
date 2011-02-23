@@ -18,9 +18,10 @@
 /**
  * Strings for component 'qtype_numerical', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   qtype_numerical
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage numerical
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['addingnumerical'] = 'Adding a Numerical question';

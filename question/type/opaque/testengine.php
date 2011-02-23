@@ -19,10 +19,10 @@
 /**
  * Page for testing that Moodle can connect to a particular Opaque engine.
  *
- * @package qtype
+ * @package    qtype
  * @subpackage opaque
- * @copyright 2006 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2006 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../../config.php');

@@ -18,9 +18,10 @@
 /**
  * Strings for component 'qformat_xhtml', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   qformat_xhtml
- * @copyright 2010 Helen Foster
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qformat
+ * @subpackage xhtml
+ * @copyright  2010 Helen Foster
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['xhtml'] = 'XHTML format';

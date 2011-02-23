@@ -19,9 +19,10 @@
 /**
  * Unit tests for the Moodle GIFT format.
  *
- * @package qformat_xml
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qformat
+ * @subpackage gift
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once($CFG->libdir . '/questionlib.php');

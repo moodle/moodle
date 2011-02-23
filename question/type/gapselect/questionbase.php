@@ -15,15 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Definition class for embedded element in question text question. Parent of
  * gap-select, drag and drop and possibly others.
  *
- * @package qtype
+ * @package    qtype
  * @subpackage gapselect
- * @copyright 2011 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -31,8 +30,8 @@
  * Represents embedded element in question text question. Parent of drag and drop and select from
  * drop down list and ?others?
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class qtype_gapselect_question_base extends question_graded_automatically_with_countback {
     /** @var boolean Whether the question stems should be shuffled. */

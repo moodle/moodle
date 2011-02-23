@@ -19,10 +19,10 @@
 /**
  * Question type class for the embedded element in question text question types.
  *
- * @package qtype
+ * @package    qtype
  * @subpackage gapselect
- * @copyright 2011 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -34,8 +34,8 @@ require_once($CFG->dirroot . '/question/format/xml/format.php');
 /**
  * The embedded element in question text question type class.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class qtype_gapselect_base extends question_type {
     /**

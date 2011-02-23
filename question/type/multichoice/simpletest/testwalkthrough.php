@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This file contains tests that walk mutichoice questions through various behaviours.
  *
@@ -23,15 +22,23 @@
  * tests. (Search for test_question_maker::make_a_multichoice.) This file only
  * contains a few additional tests for problems that were found during testing.
  *
- * @package qtype_multichoice
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage multichoice
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 
+
+/**
+ * Unit tests for the mutiple choice question type.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qtype_multichoice_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_deferredfeedback_feedback_multichoice_single() {
 

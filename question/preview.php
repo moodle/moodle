@@ -24,10 +24,10 @@
  * than in the database.
  *
  * @package    moodlecore
- * @subpackage questionbank
+ * @subpackage questionengine
  * @copyright  Alex Smith {@link http://maths.york.ac.uk/serving_maths} and
  *      numerous contributors.
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
