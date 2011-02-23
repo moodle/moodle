@@ -15,15 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This file contains tests that walks a question through the interactive
  * behaviour.
  *
- * @package qtype
+ * @package    qtype
  * @subpackage gapselect
- * @copyright 2011 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -31,6 +30,12 @@ require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 require_once($CFG->dirroot . '/question/type/gapselect/simpletest/helper.php');
 
 
+/**
+ * Unit tests for the gap-select question type.
+ *
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive_behaviour() {
 

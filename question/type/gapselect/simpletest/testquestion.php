@@ -19,10 +19,10 @@
 /**
  * Unit tests for the select missing words question definition class.
  *
- * @package qtype
+ * @package    qtype
  * @subpackage gapselect
- * @copyright 2011 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
@@ -30,10 +30,10 @@ require_once($CFG->dirroot . '/question/type/gapselect/simpletest/helper.php');
 
 
 /**
- * Unit tests for the matching question definition class.
+ * Unit tests for the select missing words question definition class.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_gapselect_question_test extends UnitTestCase {
 
