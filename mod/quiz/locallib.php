@@ -463,7 +463,7 @@ function quiz_feedback_for_grade($grade, $quiz, $context, $cm=null) {
     $feedback = $DB->get_record_select('quiz_feedback', "quizid = ? AND mingrade <= ? AND $grade < maxgrade", array($quiz->id, $grade));
 
     if (empty($feedback->feedbacktext)) {
-        $feedback->feedbacktext = '';
+        return '';
     }
 
     // Clean the text, ready for display.
