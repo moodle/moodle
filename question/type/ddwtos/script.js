@@ -30,12 +30,12 @@ var ddwtos_currentzindex = 10;
 
 /*
  * The way it seems to be, if there are more than one of this type of question
- * in a quiz, then this file is shared between them. Therefore it has to cope
+ * on a page, then this file is shared between them. Therefore it has to cope
  * with ALL the questions of this type on the page.
  */
 (function() {
 
-    // start of App object SHARED BY ALL QUESTIONS OF THIS TYPE IN THE QUIZ /////
+    // start of App object by all questions of this type on a page.
     YAHOO.example.DDApp = {
         init : function() {
             var questionspans = YAHOO.util.Dom.getElementsByClassName("ddwtos_questionid_for_javascript");
@@ -43,7 +43,7 @@ var ddwtos_currentzindex = 10;
             // we need this loop in case of more than one of this qtype on one page
             for (var i = 0; i < questionspans.length; i++) {
                 // The Questions object should now contain a QuestionDataObject
-                //object for each question of this type in the quiz.
+                // object for each question of this type on the page.
                 Questions[questionspans[i].id] = new QuestionDataObject(questionspans[i].id);
             }
 
