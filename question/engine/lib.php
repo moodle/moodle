@@ -25,6 +25,8 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/states.php');
 require_once(dirname(__FILE__) . '/datalib.php');
 require_once(dirname(__FILE__) . '/renderer.php');

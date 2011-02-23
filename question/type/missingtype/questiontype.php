@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Missing question type class
  *

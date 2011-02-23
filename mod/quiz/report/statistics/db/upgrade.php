@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Quiz statistics report upgrade code.
  */

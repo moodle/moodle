@@ -16,13 +16,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Sets up the tabs used by the quiz pages based on the users capabilites.
+ * Classes to enforce the various access rules that can apply to a quiz.
  *
  * @package    mod
  * @subpackage quiz
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * This class keeps track of the various access rules that apply to a particular

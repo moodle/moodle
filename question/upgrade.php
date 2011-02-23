@@ -27,6 +27,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * In Moodle, all random questions should have question.parent set to be the same
  * as question.id. One effect of MDL-5482 is that this will not be true for questions that

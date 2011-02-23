@@ -25,6 +25,8 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot.'/mod/quiz/report/attemptsreport.php');
 require_once($CFG->dirroot.'/mod/quiz/report/overview/overviewsettings_form.php');
 require_once($CFG->dirroot.'/mod/quiz/report/overview/overview_table.php');

@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Base class for quiz report plugins.
  *

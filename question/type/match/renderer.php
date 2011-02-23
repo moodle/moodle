@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Generates the output for matching questions.
  *

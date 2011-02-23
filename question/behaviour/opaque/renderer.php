@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Renderer for outputting parts of a question when the actual behaviour
  * used is not available.

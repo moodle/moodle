@@ -22,12 +22,12 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Define all the backup steps that will be used by the backup_quiz_activity_task
- */
+
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
- * Define the complete quiz structure for backup, with file and id annotations
+ * Define all the backup steps that will be used by the backup_quiz_activity_task
  */
 class backup_quiz_activity_structure_step extends backup_questions_activity_structure_step {
 

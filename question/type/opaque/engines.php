@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * This page lets admins manage the list of known remote Opaque engines.
  *
@@ -29,7 +28,6 @@
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once(dirname(__FILE__) . '/locallib.php');
-
 
 // Check the user is logged in.
 require_login();

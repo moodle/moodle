@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Base class for generating the bits of output common to multiple choice
  * single and multiple questions.

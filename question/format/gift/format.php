@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * The GIFT import filter was designed as an easy to use method
  * for teachers writing questions as a text file. It supports most

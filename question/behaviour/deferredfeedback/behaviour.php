@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Question behaviour for the case when the student's answer is just
  * saved until they submit the whole attempt, and then it is graded.
@@ -25,6 +24,9 @@
  * @copyright  2009 The Open University
  * @license  http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
+defined('MOODLE_INTERNAL') || die();
 
 
 /**

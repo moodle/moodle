@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Importer that imports a text file containing a single Multianswer question
  * from a text file.

@@ -25,6 +25,8 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once("$CFG->dirroot/question/format/qti_two/qt_common.php");
 
 define('CLOZE_TRAILING_TEXT_ID', 9999999);

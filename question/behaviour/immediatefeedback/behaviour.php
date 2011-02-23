@@ -26,6 +26,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Question behaviour for immediate feedback.
  *

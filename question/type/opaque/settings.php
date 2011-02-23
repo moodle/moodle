@@ -24,6 +24,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+defined('MOODLE_INTERNAL') || die();
+
 $settings = new admin_externalpage('qtypesettingopaque',
         get_string('pluginname', 'qtype_opaque'),
         new moodle_url('/question/type/opaque/engines.php'),

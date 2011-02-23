@@ -25,6 +25,8 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
 // number of categories to display on page
 define('QUESTION_PAGE_LENGTH', 25);
 

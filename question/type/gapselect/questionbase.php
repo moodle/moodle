@@ -26,6 +26,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Represents embedded element in question text question. Parent of drag and drop and select from
  * drop down list and ?others?

@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Form definition base class. This defines the common fields that
  * all question types need. Question types should define their own

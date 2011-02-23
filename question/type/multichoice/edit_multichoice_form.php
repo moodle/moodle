@@ -15,8 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Defines the editing form for the multiple choice question type.
  *
@@ -25,6 +23,10 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2007 Jamie Pratt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Multiple choice editing form definition.

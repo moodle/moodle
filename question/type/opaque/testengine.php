@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Page for testing that Moodle can connect to a particular Opaque engine.
  *
@@ -25,10 +24,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once(dirname(__FILE__) . '/locallib.php');
-
 
 $engineid = required_param('engineid', PARAM_INT);
 

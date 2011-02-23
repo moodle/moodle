@@ -30,8 +30,9 @@
  */
 
 
-require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 define('NUM_QS_TO_SHOW_IN_RANDOM', 3);
 

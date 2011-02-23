@@ -25,7 +25,10 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/../adaptive/behaviour.php');
+
 
 /**
  * Question behaviour for adaptive mode, with no penalties.

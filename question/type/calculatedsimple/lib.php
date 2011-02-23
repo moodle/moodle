@@ -26,6 +26,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Checks file access for simple calculated questions.
  */

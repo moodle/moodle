@@ -22,9 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Define all the restore steps that will be used by the restore_quiz_activity_task
- */
+
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Structure step to restore one quiz activity

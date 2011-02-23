@@ -26,6 +26,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * This class can store and compute the analysis of the responses to a particular
  * question.

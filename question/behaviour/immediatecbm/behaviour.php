@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Question behaviour where the student can submit questions one at a
  * time for immediate feedback, with certainty based marking.
@@ -27,7 +26,10 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/../immediatefeedback/behaviour.php');
+
 
 /**
  * Question behaviour for immediate feedback with CBM.

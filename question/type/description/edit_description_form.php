@@ -24,6 +24,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Description editing form definition.
  *

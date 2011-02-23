@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Generates the output for question types where the question includes embedded interactive elements in the
  * question text.

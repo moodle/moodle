@@ -29,6 +29,8 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 

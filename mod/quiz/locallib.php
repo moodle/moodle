@@ -30,13 +30,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.'); /// It must be included from a Moodle page.
-}
 
-/**
- * Include those library functions that are also used by core Moodle or other modules
- */
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
 require_once($CFG->dirroot . '/mod/quiz/accessrules.php');
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
@@ -44,7 +40,6 @@ require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->libdir  . '/eventslib.php');
 require_once($CFG->libdir . '/filelib.php');
 
-/// Constants ///////////////////////////////////////////////////////////////////
 
 /**#@+
  * Options determining how the grades from individual attempts are combined to give

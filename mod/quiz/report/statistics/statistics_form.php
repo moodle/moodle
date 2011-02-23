@@ -25,7 +25,10 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir . '/formslib.php');
+
 
 /**
  * This is the settings form for the quiz statistics report.

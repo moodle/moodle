@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Page for editing the configuration of a particular Opaque engine.
  *
@@ -30,7 +29,6 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 require_once(dirname(__FILE__) . '/edit_engine_form.php');
-
 
 $engineid = optional_param('engineid', 0, PARAM_INT);
 

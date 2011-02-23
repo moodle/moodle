@@ -28,9 +28,9 @@
  */
 
 
-/** Require {@link eventslib.php} */
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir . '/eventslib.php');
-/** Require {@link calendar/lib.php} */
 require_once($CFG->dirroot . '/calendar/lib.php');
 
 

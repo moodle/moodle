@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Code for exporting questions as Moodle XML.
  *
@@ -25,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/format.php');
 require_once($CFG->libdir . '/xmlize.php');

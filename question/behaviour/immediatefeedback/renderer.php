@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Renderer for outputting parts of a question belonging to the immediate
  * feedback behaviour.

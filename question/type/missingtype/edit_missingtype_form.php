@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * This question renderer class is used when the actual question type of this
  * question cannot be found.

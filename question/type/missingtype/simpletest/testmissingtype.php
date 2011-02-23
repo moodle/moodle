@@ -25,6 +25,8 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once(dirname(__FILE__) . '/../../../engine/simpletest/helpers.php');
 require_once(dirname(__FILE__) . '/../../../behaviour/deferredfeedback/behaviour.php');
 require_once(dirname(__FILE__) . '/../question.php');

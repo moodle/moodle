@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Serves files from the Opaque resource cache.
  *
@@ -28,7 +27,6 @@
 
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once(dirname(__FILE__) . '/locallib.php');
-
 
 $engineid = required_param('engineid', PARAM_INT);
 $remoteid = required_param('remoteid', PARAM_PATH);

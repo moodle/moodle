@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Functions used to show question editing interface
  *
@@ -26,8 +25,9 @@
  */
 
 
-require_once($CFG->libdir . '/questionlib.php');
+defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir . '/questionlib.php');
 
 define('DEFAULT_QUESTIONS_PER_PAGE', 20);
 

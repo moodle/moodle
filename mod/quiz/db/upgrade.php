@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Quiz module upgrade function.
  * @param string $oldversion the version we are upgrading from.

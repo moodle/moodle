@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Upgrade code for the calculated question type.
  * @param int $oldversion the version we are upgrading from.

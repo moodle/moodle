@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Unit tests for the matching question definition class.
  *
@@ -25,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 require_once($CFG->dirroot . '/question/type/match/questiontype.php');

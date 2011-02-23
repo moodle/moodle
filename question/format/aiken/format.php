@@ -25,6 +25,9 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
+
 /**
  * Aiken format - a simple format for creating multiple choice questions (with
  * only one correct choice, and no feedback).

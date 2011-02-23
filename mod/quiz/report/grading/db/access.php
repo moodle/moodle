@@ -24,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $capabilities = array(
     // Is the user allowed to see the student's real names while grading?
     'quiz/grading:viewstudentnames' => array(

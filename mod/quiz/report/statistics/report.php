@@ -25,19 +25,22 @@
  */
 
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/statistics_form.php');
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/statistics_table.php');
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/statistics_question_table.php');
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/qstats.php');
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/responseanalysis.php');
 
+
 /**
  * The quiz statistics report provides summary information about each question in
  * a quiz, compared to the whole quiz. It also provides a drill-down to more
  * detailed information about each question.
  *
- * @copyright 2008 Jamie Pratt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2008 Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_report extends quiz_default_report {
     /** @var integer Time after which statistics are automatically recomputed. */
