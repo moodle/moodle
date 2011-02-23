@@ -409,8 +409,8 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
     }*/
 
         $answers = fullclone($answers);
-        $strmin = get_string('min', 'quiz');
-        $strmax = get_string('max', 'quiz');
+        $strmin = get_string('min');
+        $strmax = get_string('max');
         $errors = '';
         $delimiter = ': ';
         foreach ($answers as $key => $answer) {

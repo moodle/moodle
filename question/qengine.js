@@ -165,7 +165,7 @@ M.core_question_engine.init_form = function(Y, form) {
 }
 
 /**
- * Event handler to stop the quiz form being submitted more than once.
+ * Event handler to stop a question form being submitted more than once.
  * @param e the form submit event.
  * @param form the form element.
  */

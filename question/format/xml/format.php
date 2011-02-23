@@ -152,8 +152,8 @@ class qformat_xml extends qformat_default {
         global $CFG;
 
         // get some error strings
-        $error_noname = get_string('xmlimportnoname','quiz');
-        $error_noquestion = get_string('xmlimportnoquestion','quiz');
+        $error_noname = get_string('xmlimportnoname','qformat_xml');
+        $error_noquestion = get_string('xmlimportnoquestion','qformat_xml');
 
         // this routine initialises the question object
         $qo = $this->defaultquestion();
@@ -161,7 +161,7 @@ class qformat_xml extends qformat_default {
         // Question name
         $qo->name = $this->getpath($question,
                 array('#', 'name', 0, '#', 'text', 0, '#'), '', true,
-                get_string('xmlimportnoname', 'quiz'));
+                get_string('xmlimportnoname', 'qformat_xml'));
         $qo->questiontext = $this->getpath($question,
                 array('#', 'questiontext', 0, '#', 'text', 0, '#'), '', true);
         $qo->questiontextformat = $this->trans_format($this->getpath(
@@ -514,8 +514,8 @@ class qformat_xml extends qformat_default {
         if ($warning) {
             $a = new stdClass();
             $a->questiontext = $qo->questiontext;
-            $a->answer = get_string($qo->correctanswer ? 'true' : 'false', 'quiz');
-            echo $OUTPUT->notification(get_string('truefalseimporterror', 'quiz', $a));
+            $a->answer = get_string($qo->correctanswer ? 'true' : 'false', 'qtype_truefalse');
+            echo $OUTPUT->notification(get_string('truefalseimporterror', 'qformat_xml', $a));
         }
 
         $this->import_hints($qo, $question);
@@ -954,7 +954,7 @@ class qformat_xml extends qformat_default {
                 // to handle it.
                 if (!$qo = $this->try_importing_using_qtypes(
                         $question, null, null, $questiontype)) {
-                    $this->error(get_string('xmltypeunsupported', 'quiz', $questiontype));
+                    $this->error(get_string('xmltypeunsupported', 'qformat_xml', $questiontype));
                     $qo = null;
                 }
             }

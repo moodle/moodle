@@ -232,7 +232,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
         return true;
     }
     function finished_edit_wizard(&$form) {
-        return true ; //isset($form->backtoquiz);
+        return true ;
     }
     function wizard_pages_number() {
         return 1 ;
@@ -277,9 +277,9 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
     }
 
     function tolerance_types() {
-        return array('1'  => get_string('relative', 'quiz'),
-            '2'  => get_string('nominal', 'quiz'),
-            //        '3'  => get_string('geometric', 'quiz')
+        return array('1'  => get_string('relative', 'qtype_numerical'),
+            '2'  => get_string('nominal', 'qtype_numerical'),
+            //        '3'  => get_string('geometric', 'qtype_numerical')
         );
     }
 

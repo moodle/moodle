@@ -136,7 +136,7 @@ class qformat_qti_two extends qformat_default {
     function importpreprocess() {
         global $CFG;
 
-        print_error('cannotimportformat', 'question', "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
+        print_error('cannotimportformat', 'question');
     }
 
     function exportpreprocess() {
@@ -266,7 +266,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
 
         // create a directory for the exports (if not already existing)
         if (!$export_dir = make_upload_directory($this->question_get_export_dir().'/'.$this->filename)) {
-              print_error('cannotcreatepath', 'quiz', '', $export_dir);
+              print_error('cannotcreatepath', 'question', '', $export_dir);
         }
         $path = $CFG->dataroot.'/'.$this->question_get_export_dir().'/'.$this->filename;
 
@@ -561,9 +561,9 @@ function xml_entitize(&$collection) {
         case TRUEFALSE:
             $qanswers = $question->options->answers;
             $answers[0] = (array)$qanswers['true'];
-            $answers[0]['answer'] = get_string("true", "quiz");
+            $answers[0]['answer'] = get_string('true', 'qtype_truefalse');
             $answers[1] = (array)$qanswers['false'];
-            $answers[1]['answer'] = get_string("false", "quiz");
+            $answers[1]['answer'] = get_string('false', 'qtype_truefalse');
 
             if (!empty($shuffleanswers)) {
                 $answers = $this->shuffle_things($answers);

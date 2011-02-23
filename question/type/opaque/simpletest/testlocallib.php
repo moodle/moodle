@@ -27,8 +27,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-
 
 /**
  * Unit tests for (some of) ../locallib.php.

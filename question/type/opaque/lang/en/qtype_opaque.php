@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['accessoutofsequence'] = 'You have accessed this page out of sequence. Please do not use the Back button when attempting quizzes.';
+$string['accessoutofsequence'] = 'You have accessed this page out of sequence. Please do not use the Back button when attempting questions.';
 $string['addengine'] = 'Add another engine';
 $string['addingopaque'] = 'Adding an Opaque question';
 $string['cannotaccessfile'] = 'You are not allowed to access this file.';

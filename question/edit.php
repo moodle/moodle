@@ -61,7 +61,7 @@ $questionbank->process_actions();
 // TODO log this page view.
 
 $context = $contexts->lowest();
-$streditingquestions = get_string('editquestions', "quiz");
+$streditingquestions = get_string('editquestions', 'question');
 $PAGE->set_title($streditingquestions);
 $PAGE->set_heading($COURSE->fullname);
 echo $OUTPUT->header();

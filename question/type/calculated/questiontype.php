@@ -452,16 +452,16 @@ class question_calculated_qtype extends default_questiontype {
         case 'question':
             $calculatedmessages = array();
             if (empty($form->name)) {
-                $calculatedmessages[] = get_string('missingname', 'quiz');
+                $calculatedmessages[] = get_string('missingname', 'qtype_calculated');
             }
             if (empty($form->questiontext)) {
-                $calculatedmessages[] = get_string('missingquestiontext', 'quiz');
+                $calculatedmessages[] = get_string('missingquestiontext', 'qtype_calculated');
             }
             // Verify formulas
             foreach ($form->answers as $key => $answer) {
                 if ('' === trim($answer)) {
                     $calculatedmessages[] =
-                        get_string('missingformula', 'quiz');
+                        get_string('missingformula', 'qtype_calculated');
                 }
                 if ($formulaerrors =
                     qtype_calculated_find_formula_errors($answer)) {
@@ -472,7 +472,7 @@ class question_calculated_qtype extends default_questiontype {
                 }
                 if (! is_numeric($form->tolerance[$key])) {
                     $calculatedmessages[] =
-                        get_string('tolerancemustbenumeric', 'quiz');
+                        get_string('tolerancemustbenumeric', 'qtype_calculated');
                 }
             }
 
@@ -492,10 +492,10 @@ class question_calculated_qtype extends default_questiontype {
         return true;
     }
     function finished_edit_wizard(&$form) {
-        return isset($form->backtoquiz);
+        return isset($form->savechanges);
     }
     function wizard_pages_number() {
-        return 3 ;
+        return 3;
     }
     // This gets called by editquestion.php after the standard question is saved
     function print_next_wizard_page(&$question, &$form, $course) {
@@ -1025,15 +1025,15 @@ class question_calculated_qtype extends default_questiontype {
                 for ($i = 0 ; $i<10 ; ++$i) {
                     $lengthoptions[$i] = get_string(($regs[1] == 'uniform'
                         ? 'decimals'
-                        : 'significantfigures'), 'quiz', $i);
+                        : 'significantfigures'), 'qtype_calculated', $i);
                 }
                 $menu1 = html_writer::select($lengthoptions, 'calclength[]', $regs[4], null);
 
-                $options = array('uniform' => get_string('uniform', 'quiz'), 'loguniform' => get_string('loguniform', 'quiz'));
+                $options = array('uniform' => get_string('uniformbit', 'qtype_calculated'), 'loguniform' => get_string('loguniformbit', 'qtype_calculated'));
                 $menu2 = html_writer::select($options, 'calcdistribution[]', $regs[1], null);
                 return '<input type="submit" onclick="'
                     . "getElementById('addform').regenerateddefid.value='$defid'; return true;"
-                    .'" value="'. get_string('generatevalue', 'quiz') . '"/><br/>'
+                    .'" value="'. get_string('generatevalue', 'qtype_calculated') . '"/><br/>'
                     . '<input type="text" size="3" name="calcmin[]" '
                     . " value=\"$regs[2]\"/> &amp; <input name=\"calcmax[]\" "
                     . ' type="text" size="3" value="' . $regs[3] .'"/> '
@@ -1321,8 +1321,8 @@ class question_calculated_qtype extends default_questiontype {
         }
 
         $answers = fullclone($answers);
-        $strmin = get_string('min', 'quiz');
-        $strmax = get_string('max', 'quiz');
+        $strmin = get_string('min');
+        $strmax = get_string('max');
         $errors = '';
         $delimiter = ': ';
         $virtualqtype =  $qtypeobj->get_virtual_qtype();//& $QTYPES['numerical'];
@@ -1377,8 +1377,8 @@ class question_calculated_qtype extends default_questiontype {
         }
 
         $answers = fullclone($answers);
-        $strmin = get_string('min', 'quiz');
-        $strmax = get_string('max', 'quiz');
+        $strmin = get_string('min');
+        $strmax = get_string('max');
         $errors = '';
         $delimiter = ': ';
         foreach ($answers as $key => $answer) {
@@ -1450,9 +1450,9 @@ class question_calculated_qtype extends default_questiontype {
     }
 
     function tolerance_types() {
-        return array('1'  => get_string('relative', 'quiz'),
-            '2'  => get_string('nominal', 'quiz'),
-            '3'  => get_string('geometric', 'quiz'));
+        return array('1'  => get_string('relative', 'qtype_numerical'),
+            '2'  => get_string('nominal', 'qtype_numerical'),
+            '3'  => get_string('geometric', 'qtype_numerical'));
     }
 
     function dataset_options($form, $name, $mandatory=true,$renameabledatasets=false) {
@@ -1795,7 +1795,7 @@ class question_calculated_qtype extends default_questiontype {
         return $dataset;
     }
 
-    function dataset_options_from_database($form, $name,$prefix='',$langfile='quiz') {
+    function dataset_options_from_database($form, $name,$prefix='',$langfile='qtype_calculated') {
         global $CFG, $DB;
         $type = 1 ; // only type = 1 (i.e. old 'LITERAL') has ever been used
 
@@ -1895,9 +1895,9 @@ class question_calculated_qtype extends default_questiontype {
         global $CFG, $DB;
         $datasetdefs = array();
         $lnamemax = 22;
-        $namestr =get_string('name', 'quiz');
-        $minstr=get_string('min', 'quiz');
-        $maxstr=get_string('max', 'quiz');
+        $namestr =get_string('name');
+        $minstr=get_string('min');
+        $maxstr=get_string('max');
         $rangeofvaluestr=get_string('minmax','qtype_calculated');
         $questionusingstr = get_string('usedinquestion','qtype_calculated');
         $itemscountstr = get_string('itemscount','qtype_calculated');
@@ -2050,17 +2050,6 @@ class question_calculated_qtype extends default_questiontype {
         /// Returns the possible dataset names found in the text as an array
         /// The array has the dataset name for both key and value
         $equations = array();
- /*               $qtext = "";
-        $qtextremaining = $numericalquestion->questiontext ;
-        while  (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
-      //  while  (preg_match('~\{=|%=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
-            $qtextsplits = explode($regs1[0], $qtextremaining, 2);
-            $qtext =$qtext.$qtextsplits[0];
-            $qtextremaining = $qtextsplits[1];
-            if (empty($regs1[1])) {
-                    $str = '';
-                } else {
-  */
         while (preg_match('~\{=([^[:space:]}]*)}~', $text, $regs)) {
             $equations[] = $regs[1];
             $text = str_replace($regs[0], '', $text);
@@ -2302,14 +2291,14 @@ function qtype_calculated_find_formula_errors($formula) {
             // Simple parenthesis
         case '':
             if ((isset($regs[4])&& $regs[4]) || strlen($regs[3])==0) {
-                return get_string('illegalformulasyntax', 'quiz', $regs[0]);
+                return get_string('illegalformulasyntax', 'qtype_calculated', $regs[0]);
             }
             break;
 
             // Zero argument functions
         case 'pi':
             if ($regs[3]) {
-                return get_string('functiontakesnoargs', 'quiz', $regs[2]);
+                return get_string('functiontakesnoargs', 'qtype_calculated', $regs[2]);
             }
             break;
 
@@ -2322,33 +2311,33 @@ function qtype_calculated_find_formula_errors($formula) {
         case 'octdec': case 'rad2deg': case 'sin': case 'sinh': case 'sqrt':
         case 'tan': case 'tanh':
             if (!empty($regs[4]) || empty($regs[3])) {
-                return get_string('functiontakesonearg','quiz',$regs[2]);
+                return get_string('functiontakesonearg','qtype_calculated',$regs[2]);
             }
             break;
 
             // Functions that take one or two arguments
         case 'log': case 'round':
             if (!empty($regs[5]) || empty($regs[3])) {
-                return get_string('functiontakesoneortwoargs','quiz',$regs[2]);
+                return get_string('functiontakesoneortwoargs','qtype_calculated',$regs[2]);
             }
             break;
 
             // Functions that must have two arguments
         case 'atan2': case 'fmod': case 'pow':
             if (!empty($regs[5]) || empty($regs[4])) {
-                return get_string('functiontakestwoargs', 'quiz', $regs[2]);
+                return get_string('functiontakestwoargs', 'qtype_calculated', $regs[2]);
             }
             break;
 
             // Functions that take two or more arguments
         case 'min': case 'max':
             if (empty($regs[4])) {
-                return get_string('functiontakesatleasttwo','quiz',$regs[2]);
+                return get_string('functiontakesatleasttwo','qtype_calculated',$regs[2]);
             }
             break;
 
         default:
-            return get_string('unsupportedformulafunction','quiz',$regs[2]);
+            return get_string('unsupportedformulafunction','qtype_calculated',$regs[2]);
         }
 
         // Exchange the function call with '1' and then chack for
@@ -2363,7 +2352,7 @@ function qtype_calculated_find_formula_errors($formula) {
     }
 
     if (preg_match("~[^$safeoperatorchar.0-9eE]+~", $formula, $regs)) {
-        return get_string('illegalformulasyntax', 'quiz', $regs[0]);
+        return get_string('illegalformulasyntax', 'qtype_calculated', $regs[0]);
     } else {
         // Formula just might be valid
         return false;

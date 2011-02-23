@@ -205,7 +205,7 @@ class qformat_default {
      * Handle parsing error
      */
     function error($message, $text='', $questionname='') {
-        $importerrorquestion = get_string('importerrorquestion','quiz');
+        $importerrorquestion = get_string('importerrorquestion', 'question');
 
         echo "<div class=\"importerror\">\n";
         echo "<strong>$importerrorquestion $questionname</strong>";
@@ -282,25 +282,25 @@ class qformat_default {
         set_time_limit(0);
 
         // STAGE 1: Parse the file
-        echo $OUTPUT->notification(get_string('parsingquestions','quiz'), 'notifysuccess');
+        echo $OUTPUT->notification(get_string('parsingquestions', 'question'), 'notifysuccess');
 
         if (! $lines = $this->readdata($this->filename)) {
-            echo $OUTPUT->notification(get_string('cannotread','quiz'));
+            echo $OUTPUT->notification(get_string('cannotread', 'question'));
             return false;
         }
 
         if (!$questions = $this->readquestions($lines, $context)) {   // Extract all the questions
-            echo $OUTPUT->notification(get_string('noquestionsinfile','quiz'));
+            echo $OUTPUT->notification(get_string('noquestionsinfile', 'question'));
             return false;
         }
 
         // STAGE 2: Write data to database
-        echo $OUTPUT->notification(get_string('importingquestions', 'quiz',
+        echo $OUTPUT->notification(get_string('importingquestions', 'question',
                 $this->count_questions($questions)), 'notifysuccess');
 
         // check for errors before we continue
         if ($this->stoponerror and ($this->importerrors>0)) {
-            echo $OUTPUT->notification(get_string('importparseerror','quiz'));
+            echo $OUTPUT->notification(get_string('importparseerror', 'question'));
             return true;
         }
 
@@ -326,7 +326,7 @@ class qformat_default {
                     }
                 }
                 if (!$answersvalid) {
-                    echo $OUTPUT->notification(get_string('matcherror', 'quiz'));
+                    echo $OUTPUT->notification(get_string('invalidgrade', 'question'));
                     ++$gradeerrors;
                     continue;
                 }
@@ -598,7 +598,7 @@ class qformat_default {
      */
     function readquestion($lines) {
 
-        $formatnotimplemented = get_string('formatnotimplemented','quiz');
+        $formatnotimplemented = get_string('formatnotimplemented', 'question');
         echo "<p>$formatnotimplemented</p>";
 
         return NULL;
@@ -737,7 +737,7 @@ class qformat_default {
 
         // did we actually process anything
         if ($count==0) {
-            print_error('noquestions', 'quiz', $continuepath);
+            print_error('noquestions', 'question', $continuepath);
         }
 
         // final pre-process on exported data
@@ -837,7 +837,7 @@ class qformat_default {
      */
     function writequestion($question) {
         // if not overidden, then this is an error.
-        $formatnotimplemented = get_string('formatnotimplemented','quiz');
+        $formatnotimplemented = get_string('formatnotimplemented', 'question');
         echo "<p>$formatnotimplemented</p>";
         return NULL;
     }
@@ -847,10 +847,11 @@ class qformat_default {
      * @return string file path
      */
     function question_get_export_dir() {
+        // TODO is this still used.
         global $USER;
         if ($this->canaccessbackupdata) {
-            $dirname = get_string("exportfilename","quiz");
-            $path = $this->course->id.'/backupdata/'.$dirname; // backupdata is protected directory
+            $dirname = get_string('exportfilename', 'question');
+            $path = $this->course->id . '/backupdata/' . $dirname; // backupdata is protected directory
         } else {
             $path = 'temp/questionexport/' . $USER->id;
         }

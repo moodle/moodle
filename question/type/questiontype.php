@@ -355,7 +355,7 @@ class question_type {
         }
 
         if ($question->penalty > 1 or $question->penalty < 0) {
-            $question->errors['penalty'] = get_string('invalidpenalty', 'quiz');
+            $question->errors['penalty'] = get_string('invalidpenalty', 'question');
         }
 
         if (isset($form->defaultmark)) {

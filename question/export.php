@@ -43,9 +43,7 @@ if (empty($categoryid)) {
 }
 
 list($catid, $catcontext) = explode(',', $pagevars['cat']);
-if (!$category = $DB->get_record("question_categories", array("id" => $catid, 'contextid' => $catcontext))) {
-    print_error('nocategory','quiz');
-}
+$category = $DB->get_record('question_categories', array("id" => $catid, 'contextid' => $catcontext), '*', MUST_EXIST);
 
 /// Header
 $PAGE->set_url($thispageurl->out());

@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Alton College, Hampshire, UK - Tom Flannaghan, Andrew Walker
  *
- * Imports learnwise multiple choice quizzes (single and multiple answers)
+ * Imports learnwise multiple choice questions (single and multiple answers)
  * currently ignores the deduct attribute for multiple answer questions
  * deductions are currently simply found by dividing the award for the incorrect
  * answer by the total number of options

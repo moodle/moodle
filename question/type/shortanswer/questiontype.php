@@ -118,7 +118,7 @@ class qtype_shortanswer extends question_type {
 
         // Perform sanity checks on fractional grades
         if ($maxfraction != 1) {
-            $result->noticeyesno = get_string('fractionsnomax', 'quiz', $maxfraction * 100);
+            $result->noticeyesno = get_string('fractionsnomax', 'question', $maxfraction * 100);
             return $result;
         }
     }

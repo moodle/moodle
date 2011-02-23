@@ -55,7 +55,7 @@ class question_edit_randomsamatch_form extends question_edit_form {
 
     function data_preprocessing($question) {
         if (empty($question->name)) {
-            $question->name =  get_string("randomsamatch", "quiz");
+            $question->name = get_string("randomsamatch", "quiz");
         }
 
         if (empty($question->questiontext)) {

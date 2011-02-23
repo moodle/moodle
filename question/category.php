@@ -60,7 +60,7 @@ $PAGE->set_pagelayout('standard');
 $qcobject = new question_category_object($pagevars['cpage'], $thispageurl, $contexts->having_one_edit_tab_cap('categories'), $param->edit, $pagevars['cat'], $param->delete,
                             $contexts->having_cap('moodle/question:add'));
 
-$streditingcategories = get_string('editcategories', 'quiz');
+$streditingcategories = get_string('editcategories', 'question');
 if ($param->left || $param->right || $param->moveup || $param->movedown|| $param->moveupcontext || $param->movedowncontext){
     require_sesskey();
     foreach ($qcobject->editlists as $list){

@@ -35,12 +35,12 @@ list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
 
 // get display strings
 $txt = new stdClass();
-$txt->importerror = get_string('importerror','quiz');
+$txt->importerror = get_string('importerror', 'question');
 $txt->importquestions = get_string('importquestions', 'question');
 
 list($catid, $catcontext) = explode(',', $pagevars['cat']);
-if (!$category = $DB->get_record("question_categories", array("id" => $catid))) {
-    print_error('nocategory','quiz');
+if (!$category = $DB->get_record("question_categories", array('id' => $catid))) {
+    print_error('nocategory', 'question');
 }
 
 $PAGE->set_pagelayout('standard');
@@ -94,7 +94,7 @@ if ($form = $import_form->get_data()) {
 
     $formatfile = 'format/' . $form->format . '/format.php';
     if (!is_readable($formatfile)) {
-        throw new moodle_exception('formatnotfound', 'quiz', '', $form->format);
+        throw new moodle_exception('formatnotfound', 'question', '', $form->format);
     }
 
     require_once($formatfile);

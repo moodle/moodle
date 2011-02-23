@@ -586,7 +586,7 @@ abstract class question_flags {
 /**
  * Exception thrown when the system detects that a student has done something
  * out-of-order to a question. This can happen, for example, if they click
- * the back button in a quiz, then try to submit a different response.
+ * the browser's back button in a quiz, then try to submit a different response.
  *
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

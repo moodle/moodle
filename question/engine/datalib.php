@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Code for loading and saving quiz attempts to and from the database.
+ * Code for loading and saving question attempts to and from the database.
  *
  * @package    moodlecore
  * @subpackage questionengine
@@ -311,9 +311,9 @@ WHERE
     }
 
     /**
-     * Load summary information about the state of each question in a group of attempts.
-     * This is used by the quiz manual grading report, to show how many attempts
-     * at each question need to be graded.
+     * Load summary information about the state of each question in a group of
+     * attempts. This is used, for example, by the quiz manual grading report,
+     * to show how many attempts at each question need to be graded.
      *
      * @param qubaid_condition $qubaids used to restrict which usages are included
      * in the query. See {@link qubaid_condition}.

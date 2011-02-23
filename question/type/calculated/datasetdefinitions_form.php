@@ -95,7 +95,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
                 list($options, $selected) =
                         $this->qtypeobj->dataset_options($this->question, $datasetname);
                 unset($options['0']); // Mandatory...
-                $label = get_string("wildcard", "quiz"). " <strong>$datasetname</strong> ";
+                $label = get_string("wildcard", "qtype_calculated"). " <strong>$datasetname</strong> ";
                 $mform->addElement('select', "dataset[$key]", $label, $options);
              if (isset($datadefscat[$datasetname])){
                   $mform->addElement('static', "there is a category", get_string('sharedwildcard', 'qtype_calculated',$datasetname ), get_string('dataitemdefined','qtype_calculated', $datadefscat[$datasetname]));
@@ -112,7 +112,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
             if (!isset($datasetmenus[$datasetname])) {
                 list($options, $selected) =
                         $this->qtypeobj->dataset_options($this->question, $datasetname,false);
-                $label = get_string("wildcard", "quiz"). " <strong>$datasetname</strong> ";
+                $label = get_string("wildcard", "qtype_calculated"). " <strong>$datasetname</strong> ";
                 $mform->addElement('select', "dataset[$key]", $label, $options);
                  //       $mform->addRule("dataset[$key]", null, 'required', null, 'client');
              if (isset($datadefscat[$datasetname])){

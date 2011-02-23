@@ -75,9 +75,9 @@ class question_edit_calculated_form extends question_edit_form {
         // $repeated = parent::get_per_answer_fields($mform, $label, $gradeoptions, $repeatedoptions, $answersoption);
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'answerhdr', $label);
-        $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'), array('size' => 50));
+        $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'question'), array('size' => 50));
         $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
-        $repeated[] =& $mform->createElement('editor', 'feedback', get_string('feedback', 'quiz'), null, $this->editoroptions);
+        $repeated[] =& $mform->createElement('editor', 'feedback', get_string('feedback', 'question'), null, $this->editoroptions);
         $repeatedoptions['answer']['type'] = PARAM_RAW;
         $repeatedoptions['fraction']['default'] = 0;
         $answersoption = 'answers';
@@ -86,17 +86,17 @@ class question_edit_calculated_form extends question_edit_form {
 
         $addrepeated = array();
         $addrepeated[] =& $mform->createElement('text', 'tolerance', get_string('tolerance', 'qtype_calculated'));
-        $addrepeated[] =& $mform->createElement('select', 'tolerancetype', get_string('tolerancetype', 'quiz'), $this->qtypeobj->tolerance_types());
+        $addrepeated[] =& $mform->createElement('select', 'tolerancetype', get_string('tolerancetype', 'qtype_numerical'), $this->qtypeobj->tolerance_types());
         $repeatedoptions['tolerance']['type'] = PARAM_NUMBER;
         $repeatedoptions['tolerance']['default'] = 0.01;
 
         $addrepeated[] =&  $mform->createElement('select', 'correctanswerlength', get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
         $repeatedoptions['correctanswerlength']['default'] = 2;
 
-        $answerlengthformats = array('1' => get_string('decimalformat', 'quiz'), '2' => get_string('significantfiguresformat', 'quiz'));
+        $answerlengthformats = array('1' => get_string('decimalformat', 'qtype_numerical'), '2' => get_string('significantfiguresformat', 'quiz'));
         $addrepeated[] =&  $mform->createElement('select', 'correctanswerformat', get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
         array_splice($repeated, 3, 0, $addrepeated);
-        $repeated[1]->setLabel(get_string('correctanswerformula', 'quiz').'=');
+        $repeated[1]->setLabel(get_string('correctanswerformula', 'qtype_calculated').'=');
 
         return $repeated;
     }
@@ -279,7 +279,7 @@ class question_edit_calculated_form extends question_edit_form {
             if ($trimmedanswer!=''){
                 if ('2' == $data['correctanswerformat'][$key]
                     && '0' == $data['correctanswerlength'][$key]) {
-                        $errors['correctanswerlength['.$key.']'] = get_string('zerosignificantfiguresnotallowed','quiz');
+                        $errors['correctanswerlength['.$key.']'] = get_string('zerosignificantfiguresnotallowed', 'qtype_calculated');
                     }
                 if (!is_numeric($data['tolerance'][$key])){
                     $errors['tolerance['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');

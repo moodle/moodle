@@ -26,8 +26,9 @@
 
 $string['configselectmanualquestions'] = 'Can the random question type select a manually graded question when it is making its random choice of a question from a category?';
 $string['editingrandom'] = 'Editing a random question';
+$string['includingsubcategories'] = 'Including subcategories';
 $string['random'] = 'Random';
-$string['random_help'] = 'A random question is not a question type as such, but is a way of inserting a randomly-chosen question from a specified category into a quiz.';
+$string['random_help'] = 'A random question is not a question type as such, but is a way of inserting a randomly-chosen question from a specified category into an activity.';
 $string['randomqname'] = 'Random ({$a})';
 $string['randomqplusname'] = 'Random ({$a} and sub-categories)';
 $string['selectedby'] = '{$a->questionname} selected by {$a->randomname}';

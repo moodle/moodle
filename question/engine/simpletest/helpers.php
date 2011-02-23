@@ -278,7 +278,7 @@ class test_question_maker {
         self::initialise_a_question($description);
         $description->name = 'Description question';
         $description->questiontext = 'This text tells you a bit about the next few questions in this quiz.';
-        $description->generalfeedback = 'This is what this seciton of the quiz should have taught you.';
+        $description->generalfeedback = 'This is what this section of the quiz should have taught you.';
         $description->qtype = question_bank::get_qtype('description');
 
         return $description;

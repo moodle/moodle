@@ -389,7 +389,7 @@ class question_bank_checkbox_column extends question_bank_column_base {
     protected $firstrow = true;
 
     public function init() {
-        $this->strselect = get_string('select', 'quiz');
+        $this->strselect = get_string('select');
     }
 
     public function get_name() {
@@ -1193,7 +1193,7 @@ class question_bank_view {
 
     protected function print_choose_category_message($categoryandcontext) {
         echo "<p style=\"text-align:center;\"><b>";
-        print_string("selectcategoryabove", "quiz");
+        print_string("selectcategoryabove", "question");
         echo "</b></p>";
     }
 
@@ -1245,9 +1245,9 @@ class question_bank_view {
         echo '<form method="get" action="edit.php" id="displayoptions">';
         echo "<fieldset class='invisiblefieldset'>";
         echo html_writer::input_hidden_params($this->baseurl, array('recurse', 'showhidden', 'showquestiontext'));
-        $this->display_category_form_checkbox('recurse', get_string('recurse', 'quiz'));
-        $this->display_category_form_checkbox('showhidden', get_string('showhidden', 'quiz'));
-        $this->display_category_form_checkbox('qbshowtext', get_string('showquestiontext', 'quiz'));
+        $this->display_category_form_checkbox('recurse', get_string('includesubcategories', 'question'));
+        $this->display_category_form_checkbox('showhidden', get_string('showhidden', 'question'));
+        $this->display_category_form_checkbox('qbshowtext', get_string('showquestiontext', 'question'));
         echo '<noscript><div class="centerpara"><input type="submit" value="'. get_string('go') .'" />';
         echo '</div></noscript></fieldset></form>';
     }
@@ -1301,9 +1301,9 @@ class question_bank_view {
         $cmoptions = new stdClass();
         $cmoptions->hasattempts = !empty($this->quizhasattempts);
 
-        $strselectall = get_string("selectall", "quiz");
-        $strselectnone = get_string("selectnone", "quiz");
-        $strdelete = get_string("delete");
+        $strselectall = get_string('selectall');
+        $strselectnone = get_string('selectnone');
+        $strdelete = get_string('delete');
 
         list($categoryid, $contextid) = explode(',', $categoryandcontext);
         $catcontext = get_context_instance_by_id($contextid);
@@ -1362,7 +1362,7 @@ class question_bank_view {
 
         echo '<div class="modulespecificbuttonscontainer">';
         if ($caneditall || $canmoveall || $canuseall){
-            echo '<strong>&nbsp;'.get_string('withselected', 'quiz').':</strong><br />';
+            echo '<strong>&nbsp;'.get_string('withselected', 'question').':</strong><br />';
 
             if (function_exists('module_specific_buttons')) {
                 echo module_specific_buttons($this->cm->id,$cmoptions);
@@ -1374,7 +1374,7 @@ class question_bank_view {
             }
 
             if ($canmoveall && count($addcontexts)) {
-                echo '<input type="submit" name="move" value="'.get_string('moveto', 'quiz')."\" />\n";
+                echo '<input type="submit" name="move" value="'.get_string('moveto')."\" />\n";
                 question_category_select_menu($addcontexts, false, 0, "$category->id,$category->contextid");
             }
 
@@ -1538,12 +1538,12 @@ class question_bank_view {
 
             // Add an explanation about questions in use
             if ($inuse) {
-                $questionnames .= '<br />'.get_string('questionsinuse', 'quiz');
+                $questionnames .= '<br />'.get_string('questionsinuse', 'question');
             }
             $baseurl = new moodle_url('edit.php', $this->baseurl->params());
             $deleteurl = new moodle_url($baseurl, array('deleteselected'=>$questionlist, 'confirm'=>md5($questionlist), 'sesskey'=>sesskey()));
 
-            echo $OUTPUT->confirm(get_string("deletequestionscheck", "quiz", $questionnames), $deleteurl, $baseurl);
+            echo $OUTPUT->confirm(get_string('deletequestionscheck', 'question', $questionnames), $deleteurl, $baseurl);
 
             return true;
         }
@@ -1660,7 +1660,7 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
         $catparts = explode(',', $pagevars['cat']);
         if (!$catparts[0] || (FALSE !== array_search($catparts[1], $contextlistarr)) ||
                 !$DB->count_records_select("question_categories", "id = ? AND contextid = ?", array($catparts[0], $catparts[1]))) {
-            print_error('invalidcategory', 'quiz');
+            print_error('invalidcategory', 'question');
         }
     } else {
         $category = $defaultcategory;

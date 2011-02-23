@@ -39,7 +39,7 @@ class question_edit_numerical_form extends question_edit_form {
     function get_per_answer_fields(&$mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
         $repeated = parent::get_per_answer_fields($mform, $label, $gradeoptions, $repeatedoptions, $answersoption);
 
-        $tolerance =& $mform->createElement('text', 'tolerance', get_string('acceptederror', 'quiz'));
+        $tolerance =& $mform->createElement('text', 'tolerance', get_string('acceptederror', 'qtype_numerical'));
         $repeatedoptions['tolerance']['type'] = PARAM_NUMBER;
         array_splice($repeated, 3, 0, array($tolerance));
         $repeated[1]->setSize(10);

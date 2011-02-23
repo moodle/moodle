@@ -336,7 +336,7 @@ class core_question_renderer extends plugin_renderer_base {
                 $url = new moodle_url($options->questionreviewlink, array('slot' => $qa->get_slot(), 'step' => $i));
                 $stepno = $this->output->action_link($url, $stepno,
                         new popup_action('click', $url, 'reviewquestion', array('width' => 450, 'height' => 650)),
-                        array('title' => get_string('reviewresponse', 'quiz')));
+                        array('title' => get_string('reviewresponse', 'question')));
             }
             $user = new stdClass();
             $user->id = $step->get_user_id();

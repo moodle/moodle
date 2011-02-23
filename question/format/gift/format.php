@@ -134,8 +134,7 @@ class qformat_gift extends qformat_default {
     function check_answer_count($min, $answers, $text) {
         $countanswers = count($answers);
         if ($countanswers < $min) {
-            $importminerror = get_string('importminerror', 'quiz');
-            $this->error($importminerror, $text);
+            $this->error(get_string('importminerror', 'qformat_gift'), $text);
             return false;
         }
 
@@ -227,7 +226,7 @@ class qformat_gift extends qformat_default {
             $answertext = '';
             $answerlength = 0;
         } else if (!(($answerstart !== false) and ($answerfinish !== false))) {
-            $this->error(get_string('braceerror', 'quiz'), $text);
+            $this->error(get_string('braceerror', 'qformat_gift'), $text);
             return false;
         } else {
             $answerlength = $answerfinish - $answerstart;
@@ -307,7 +306,7 @@ class qformat_gift extends qformat_default {
         }
 
         if (!isset($question->qtype)) {
-            $giftqtypenotset = get_string('giftqtypenotset', 'quiz');
+            $giftqtypenotset = get_string('giftqtypenotset', 'qformat_gift');
             $this->error($giftqtypenotset, $text);
             return false;
         }
@@ -398,7 +397,7 @@ class qformat_gift extends qformat_default {
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);
                     if (strpos($answer, "->") === false) {
-                        $giftmatchingformat = get_string('giftmatchingformat','quiz');
+                        $giftmatchingformat = get_string('giftmatchingformat','qformat_gift');
                         $this->error($giftmatchingformat, $answer);
                         return false;
                         break 2;
@@ -490,7 +489,7 @@ class qformat_gift extends qformat_default {
 
                 if (count($answers) == 0) {
                     // invalid question
-                    $giftnonumericalanswers = get_string('giftnonumericalanswers','quiz');
+                    $giftnonumericalanswers = get_string('giftnonumericalanswers','qformat_gift');
                     $this->error($giftnonumericalanswers, $text);
                     return false;
                     break;
@@ -552,7 +551,7 @@ class qformat_gift extends qformat_default {
                 break;
 
                 default:
-                    $this->error(get_string('giftnovalidquestion', 'quiz'), $text);
+                    $this->error(get_string('giftnovalidquestion', 'qformat_gift'), $text);
                 return fale;
                 break;
 

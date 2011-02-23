@@ -322,8 +322,8 @@ if ($mform->is_cancelled()) {
         echo $OUTPUT->header();
 
     } else {
-        $strediting = '<a href="edit.php?courseid='.$COURSE->id.'">'.get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
-        $PAGE->navbar->add(get_string('editquestions', 'quiz'), $returnurl);
+        $strediting = '<a href="edit.php?courseid='.$COURSE->id.'">'.get_string('editquestions', 'question').'</a> -> '.$streditingquestion;
+        $PAGE->navbar->add(get_string('editquestions', 'question'), $returnurl);
         $PAGE->navbar->add($streditingquestion);
         echo $OUTPUT->header();
     }

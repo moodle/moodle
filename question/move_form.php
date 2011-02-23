@@ -43,9 +43,9 @@ class question_move_form extends moodleform {
         $currentcat = $this->_customdata['currentcat'];
         $contexts = $this->_customdata['contexts'];
 
-        $mform->addElement('questioncategory', 'category', get_string('category','quiz'), compact('contexts', 'currentcat'));
+        $mform->addElement('questioncategory', 'category', get_string('category', 'question'), compact('contexts', 'currentcat'));
 
-        $this->add_action_buttons(true, get_string('categorymoveto', 'quiz'));
+        $this->add_action_buttons(true, get_string('categorymoveto', 'question'));
 
         $mform->addElement('hidden', 'delete', $currentcat);
         $mform->setType('delete', PARAM_INT);

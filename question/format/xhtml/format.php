@@ -76,8 +76,8 @@ function writequestion($question) {
     // selection depends on question type
     switch($question->qtype) {
     case TRUEFALSE:
-        $st_true = get_string( 'true','quiz' );
-        $st_false = get_string( 'false','quiz' );
+        $st_true = get_string('true', 'qtype_truefalse');
+        $st_false = get_string('false', 'qtype_truefalse');
         $expout .= "<ul class=\"truefalse\">\n";
         $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$st_true\" />$st_true</li>\n";
         $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$st_false\" />$st_false</li>\n";

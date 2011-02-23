@@ -159,7 +159,7 @@ class question_edit_multianswer_form extends question_edit_form {
                         $storemess = "<font class=\"error\"> STORED QTYPE ".$question_type_names[$this->savedquestiondisplay->options->questions[$sub]->qtype]."</font >";
                     }
 
-                $mform->addElement('header', 'subhdr'.$sub, get_string('questionno', 'quiz',
+                $mform->addElement('header', 'subhdr'.$sub, get_string('questionno', 'question',
                     '{#'.$sub.'}').'&nbsp;'.$question_type_names[$this->questiondisplay->options->questions[$sub]->qtype].$storemess);
 
                 $mform->addElement('static', 'sub_'.$sub."_".'questiontext', get_string('questiondefinition','qtype_multianswer'),array('cols'=>60, 'rows'=>3));
@@ -168,11 +168,11 @@ class question_edit_multianswer_form extends question_edit_form {
                     $mform->setDefault('sub_'.$sub."_".'questiontext', $this->questiondisplay->options->questions[$sub]->questiontext['text']);
                 }
 
-                $mform->addElement('static', 'sub_'.$sub."_".'defaultgrade', get_string('defaultgrade', 'quiz'));
+                $mform->addElement('static', 'sub_'.$sub."_".'defaultgrade', get_string('defaultgrade', 'question'));
                 $mform->setDefault('sub_'.$sub."_".'defaultgrade',$this->questiondisplay->options->questions[$sub]->defaultgrade);
 
                 if ($this->questiondisplay->options->questions[$sub]->qtype =='shortanswer'   ) {
-                    $mform->addElement('static', 'sub_'.$sub."_".'usecase', get_string('casesensitive', 'quiz'));
+                    $mform->addElement('static', 'sub_'.$sub."_".'usecase', get_string('casesensitive', 'question'));
                 }
 
                 if ($this->questiondisplay->options->questions[$sub]->qtype =='multichoice'   ) {
@@ -180,7 +180,7 @@ class question_edit_multianswer_form extends question_edit_form {
                 }
                 foreach ($this->questiondisplay->options->questions[$sub]->answer as $key =>$ans) {
 
-                    $mform->addElement('static', 'sub_'.$sub."_".'answer['.$key.']', get_string('answer', 'quiz'), array('cols'=>60, 'rows'=>1));
+                    $mform->addElement('static', 'sub_'.$sub."_".'answer['.$key.']', get_string('answer', 'question'), array('cols'=>60, 'rows'=>1));
 
                     if ($this->questiondisplay->options->questions[$sub]->qtype =='numerical' && $key == 0 ) {
                         $mform->addElement('static', 'sub_'.$sub."_".'tolerance['.$key.']', get_string('acceptederror', 'quiz')) ;//, $gradeoptions);
@@ -188,7 +188,7 @@ class question_edit_multianswer_form extends question_edit_form {
 
                     $mform->addElement('static', 'sub_'.$sub."_".'fraction['.$key.']', get_string('grade')) ;//, $gradeoptions);
 
-                    $mform->addElement('static', 'sub_'.$sub."_".'feedback['.$key.']', get_string('feedback', 'quiz'));
+                    $mform->addElement('static', 'sub_'.$sub."_".'feedback['.$key.']', get_string('feedback', 'question'));
                 }
 
             }
@@ -198,7 +198,6 @@ class question_edit_multianswer_form extends question_edit_form {
                 $mform->addElement('header', 'additemhdr', get_string('warningquestionmodified','qtype_multianswer'));
             }
             if($this->negative_diff > 0) {
-                //$this->used_in_quiz
                 $mform->addElement('static', 'alert1', "<strong>".get_string('questiondeleted','qtype_multianswer')."</strong>",get_string('questionsless','qtype_multianswer',$this->negative_diff));
             }
             if($this->qtype_change ) {
@@ -296,11 +295,11 @@ class question_edit_multianswer_form extends question_edit_form {
                         if ($subquestion->qtype =='shortanswer'   ) {
                             switch ($subquestion->usecase) {
                             case '1':
-                                $default_values[$prefix.'usecase']= get_string('caseyes', 'quiz');
+                                $default_values[$prefix.'usecase']= get_string('caseyes', 'qtype_shortanswer');
                                 break;
                             case '0':
                             default :
-                                $default_values[$prefix.'usecase']= get_string('caseno', 'quiz');
+                                $default_values[$prefix.'usecase']= get_string('caseno', 'qtype_shortanswer');
                             }
                         }
 
@@ -344,7 +343,7 @@ class question_edit_multianswer_form extends question_edit_form {
                             if ($subquestion->qtype == 'multichoice' ) {
                                 $this->_form->setElementError($prefix.'answer[0]' ,  get_string('notenoughanswers', 'qtype_multichoice', 2));
                             } else {
-                                $this->_form->setElementError($prefix.'answer[0]' , get_string('notenoughanswers', 'quiz', 1));
+                                $this->_form->setElementError($prefix.'answer[0]' , get_string('notenoughanswers', 'question', 1));
                             }
                         }
                         if ($maxgrade == false) {
@@ -410,7 +409,7 @@ class question_edit_multianswer_form extends question_edit_form {
                         if ( $subquestion->qtype =='multichoice' ) {
                             $errors[$prefix.'answer[0]']= get_string('notenoughanswers', 'qtype_multichoice', 2);
                         }else {
-                            $errors[$prefix.'answer[0]'] = get_string('notenoughanswers', 'quiz', 1);
+                            $errors[$prefix.'answer[0]'] = get_string('notenoughanswers', 'question', 1);
                         }
                     }
                     if ($maxgrade == false) {

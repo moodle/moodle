@@ -121,7 +121,7 @@ class question_import_form extends moodleform {
 
         $formatfile = 'format/' . $data['format'] . '/format.php';
         if (!is_readable($formatfile)) {
-            throw new moodle_exception('formatnotfound', 'quiz', '', $data['format']);
+            throw new moodle_exception('formatnotfound', 'question', '', $data['format']);
         }
 
         require_once($formatfile);

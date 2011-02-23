@@ -64,7 +64,7 @@ class qtype_match extends question_type {
                 continue;
             }
             if ($questiontext['text'] != '' && trim($question->subanswers[$key]) == '') {
-                $result->notice = get_string('nomatchinganswer', 'quiz', $questiontext);
+                $result->notice = get_string('nomatchinganswer', 'qtype_match', $questiontext);
             }
 
             // Update an existing subquestion if possible.
@@ -122,7 +122,7 @@ class qtype_match extends question_type {
         }
 
         if (count($subquestions) < 3) {
-            $result->notice = get_string('notenoughanswers', 'quiz', 3);
+            $result->notice = get_string('notenoughanswers', 'question', 3);
             return $result;
         }
 

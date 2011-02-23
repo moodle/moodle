@@ -172,13 +172,13 @@ class question_dataset_dependent_items_form extends moodleform {
                 $mform->addElement('static', 'answercomment['.($this->noofitems+$key1).']', $answer->answer);
                 $mform->addElement('text', 'tolerance['.$key.']', get_string('tolerance', 'qtype_calculated'));
                 $mform->setAdvanced('tolerance['.$key.']',true);
-                $mform->addElement('select', 'tolerancetype['.$key.']', get_string('tolerancetype', 'quiz'), $this->qtypeobj->tolerance_types());
+                $mform->addElement('select', 'tolerancetype['.$key.']', get_string('tolerancetype', 'qtype_numerical'), $this->qtypeobj->tolerance_types());
                 $mform->setAdvanced('tolerancetype['.$key.']',true);
 
                 $mform->addElement('select', 'correctanswerlength['.$key.']', get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
                 $mform->setAdvanced('correctanswerlength['.$key.']',true);
 
-                $answerlengthformats = array('1' => get_string('decimalformat', 'quiz'), '2' => get_string('significantfiguresformat', 'quiz'));
+                $answerlengthformats = array('1' => get_string('decimalformat', 'qtype_numerical'), '2' => get_string('significantfiguresformat', 'quiz'));
                 $mform->addElement('select', 'correctanswerformat['.$key.']', get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
                 $mform->setAdvanced('correctanswerformat['.$key.']',true);
                 $mform->addElement('static', 'dividertolerance', '', '<hr />');
@@ -300,8 +300,8 @@ class question_dataset_dependent_items_form extends moodleform {
 //------------------------------------------------------------------------------------------------------------------------------
         //non standard name for button element needed so not using add_action_buttons
         if ( !($this->noofitems==0) ){
-        $mform->addElement('submit', 'backtoquiz', get_string('savechanges'));
-        $mform->closeHeaderBefore('backtoquiz');
+        $mform->addElement('submit', 'savechanges', get_string('savechanges'));
+        $mform->closeHeaderBefore('savechanges');
         }
         //hidden elements
         $mform->addElement('hidden', 'id');
@@ -444,12 +444,11 @@ class question_dataset_dependent_items_form extends moodleform {
 
     function validation($data, $files) {
         $errors = array();
-        if (isset($data['backtoquiz']) && ($this->noofitems==0) ){
+        if (isset($data['savechanges']) && ($this->noofitems==0) ){
             $errors['warning'] = get_string('warning', 'mnet');
         }
         if ($this->outsidelimit){
-         //   if(!isset($errors['warning'])) $errors['warning']=' ';
-           $errors['outsidelimits'] = get_string('oneanswertrueansweroutsidelimits','qtype_calculated');
+            $errors['outsidelimits'] = get_string('oneanswertrueansweroutsidelimits','qtype_calculated');
         }
         $numbers = $data['number'];
         foreach ($numbers as $key => $number){

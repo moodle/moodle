@@ -36,7 +36,6 @@ defined('MOODLE_INTERNAL') || die();
  * @calledfrom type/<typename>/editquestion.php
  */
 function get_course_media_files($courseid) {
-// this code lifted from mod/quiz/question.php and modified
 throw new coding_exception('qti_two not converted to new fil api yet, sorry');
     /*global $CFG;
     $images = null;
@@ -146,7 +145,7 @@ function get_media_tag($file, $courseid = 0, $alt = 'media file', $width = 0, $h
         return "<img src=\"$media\" alt=\"$alt\" width=\"$width\" height=\"$height\" />";
     }
     else {
-        require_once("$CFG->dirroot/mod/quiz/format/qti/custommediafilter.php");
+        require_once("$CFG->dirroot/question/format/qti/custommediafilter.php");
         return custom_mediaplugin_filter('<a href="' . $media . '"></a>', $courseid, $width, $height);
     }
 }

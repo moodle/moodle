@@ -54,7 +54,7 @@ class qtype_truefalse extends question_type {
             $answer->id = $DB->insert_record('question_answers', $answer);
         }
 
-        $answer->answer   = get_string('true', 'quiz');
+        $answer->answer   = get_string('true', 'qtype_truefalse');
         $answer->fraction = $question->correctanswer;
         $answer->feedback = $this->import_or_save_files($question->feedbacktrue,
                 $context, 'question', 'answerfeedback', $answer->id);
@@ -72,7 +72,7 @@ class qtype_truefalse extends question_type {
             $answer->id = $DB->insert_record('question_answers', $answer);
         }
 
-        $answer->answer   = get_string('false', 'quiz');
+        $answer->answer   = get_string('false', 'qtype_truefalse');
         $answer->fraction = 1 - (int)$question->correctanswer;
         $answer->feedback = $this->import_or_save_files($question->feedbackfalse,
                 $context, 'question', 'answerfeedback', $answer->id);

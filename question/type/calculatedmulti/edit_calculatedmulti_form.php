@@ -72,9 +72,9 @@ class question_edit_calculatedmulti_form extends question_edit_form {
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'answerhdr', $label);
         //   if ($this->editasmultichoice == 1){
-        $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'quiz'), array('size' => 50));
+        $repeated[] =& $mform->createElement('text', 'answer', get_string('answer', 'question'), array('size' => 50));
         $repeated[] =& $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
-        $repeated[] =& $mform->createElement('editor', 'feedback', get_string('feedback', 'quiz'), null, $this->editoroptions);
+        $repeated[] =& $mform->createElement('editor', 'feedback', get_string('feedback', 'question'), null, $this->editoroptions);
         $repeatedoptions['answer']['type'] = PARAM_RAW;
         $repeatedoptions['fraction']['default'] = 0;
         $answersoption = 'answers';
@@ -90,7 +90,7 @@ class question_edit_calculatedmulti_form extends question_edit_form {
         $addrepeated[] =&  $mform->createElement('select', 'correctanswerlength', get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
         $repeatedoptions['correctanswerlength']['default'] = 2;
 
-        $answerlengthformats = array('1' => get_string('decimalformat', 'quiz'), '2' => get_string('significantfiguresformat', 'quiz'));
+        $answerlengthformats = array('1' => get_string('decimalformat', 'qtype_numerical'), '2' => get_string('significantfiguresformat', 'qtype_calculated'));
         $addrepeated[] =&  $mform->createElement('select', 'correctanswerformat', get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
         array_splice($repeated, 3, 0, $addrepeated);
         $repeated[1]->setLabel('...<strong>{={x}+..}</strong>...');
@@ -353,7 +353,7 @@ class question_edit_calculatedmulti_form extends question_edit_form {
                 if ($trimmedanswer!=''){
                     if ('2' == $data['correctanswerformat'][$key]
                         && '0' == $data['correctanswerlength'][$key]) {
-                            $errors['correctanswerlength['.$key.']'] = get_string('zerosignificantfiguresnotallowed','quiz');
+                            $errors['correctanswerlength['.$key.']'] = get_string('zerosignificantfiguresnotallowed','qtype_calculated');
                         }
                     if (!is_numeric($data['tolerance'][$key])){
                         $errors['tolerance['.$key.']'] = get_string('mustbenumeric', 'qtype_calculated');

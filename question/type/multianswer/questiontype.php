@@ -314,7 +314,7 @@ class embedded_cloze_qtype extends default_questiontype {
         $qtextremaining = format_text($question->questiontext,
                 $question->questiontextformat, $formatoptions, $cmoptions->course);
 
-        $strfeedback = get_string('feedback', 'quiz');
+        $strfeedback = get_string('feedback', 'question');
 
         // The regex will recognize text snippets of type {#X}
         // where the X can be any text not containg } or white-space characters.
@@ -368,7 +368,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     }
                     if ($correctanswer != '' ) {
                         $feedback = '<div class="correctness">';
-                        $feedback .= get_string('correctansweris', 'quiz', s($correctanswer));
+                        $feedback .= get_string('correctansweris', 'question', s($correctanswer));
                         $feedback .= '</div>';
                     }
                 }
@@ -409,7 +409,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     if  ($options->readonly && $options->correct_responses) {
                         $strfeedbackwrapped = get_string('correctanswerandfeedback', 'qtype_multianswer');
                     }else {
-                        $strfeedbackwrapped = get_string('feedback', 'quiz');
+                        $strfeedbackwrapped = get_string('feedback', 'question');
                     }
                     $popup = " onmouseover=\"return overlib('$feedback', STICKY, MOUSEOFF, CAPTION, '$strfeedbackwrapped', FGCOLOR, '#FFFFFF');\" ".
                              " onmouseout=\"return nd();\" ";

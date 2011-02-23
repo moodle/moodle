@@ -24,6 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['acceptederror'] = 'Accepted error';
 $string['addingnumerical'] = 'Adding a Numerical question';
 $string['addmoreanswerblanks'] = 'Blanks for {no} More Answers';
 $string['addmoreunitblanks'] = 'Blanks for {no} More Units';
@@ -31,10 +32,12 @@ $string['answermustbenumberorstar'] = 'The answer must be a number, or \'*\'.';
 $string['answerno'] = 'Answer {$a}';
 $string['decfractionofquestiongrade'] = 'as decimal fraction (0-1) of question grade';
 $string['decfractionofresponsegrade'] = 'as decimal fraction (0-1) of response grade';
+$string['decimalformat'] = 'decimals';
 $string['editableunittext'] = 'Text input element';
 $string['editingnumerical'] = 'Editing a Numerical question';
 $string['errornomultiplier'] = 'You must specify a multiplier for this unit.';
 $string['errorrepeatedunit'] = 'You cannot have two units with the same name.';
+$string['geometric'] = 'Geometric';
 $string['instructions'] = 'Instructions ';
 $string['leftexample'] = 'LEFT as $1.00';
 $string['noneditableunittext'] = 'NON editable text of Unit No1';
@@ -59,12 +62,15 @@ If you add the unit kW with a multiplier of 0.001, this will add a correct respo
 
 Note that the accepted error is also multiplied, so an allowed error of 100W would become an error of 0.1kW.';
 $string['manynumerical'] = 'Only the NUMERICAL ANSWER will be graded using optional units ';
+$string['nominal'] = 'Nominal';
 $string['onlynumerical'] = 'Only the NUMERICAL ANSWER will be graded, no units allowed';
 $string['oneunitshown'] = 'Only the NUMERICAL ANSWER will be graded, Unit1 will be shown';
+$string['relative'] = 'Relative';
 $string['rightexample'] = 'RIGHT as 1.00cm';
 $string['selectunits'] = 'Select units';
 $string['selectunit'] = 'Select one unit';
 $string['studentunitanswer'] = 'UNIT ANSWER displayed as a ';
+$string['tolerancetype'] = 'Tolerance type';
 $string['unitchoice'] = 'Multichoice (radio elements)';
 $string['unitdisplay'] = '<STRONG>Unit 1 displayed </STRONG>';
 $string['unitedit'] = 'Edit unit';

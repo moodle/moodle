@@ -266,7 +266,7 @@ class qformat_webct extends qformat_default {
                     }
                     if (strlen($question->name) > 255) {
                         $question->name = substr($question->name,0,250)."...";
-                        $warnings[] = get_string("questionnametoolong", "quiz", $nQuestionStartLine);
+                        $warnings[] = get_string("questionnametoolong", "qformat_webct", $nQuestionStartLine);
                     }
                     if (!isset($question->defaultmark)) {
                         $question->defaultmark = 1;
@@ -278,11 +278,11 @@ class qformat_webct extends qformat_default {
                     // Perform sanity checks
                     $QuestionOK = TRUE;
                     if (strlen($question->questiontext) == 0) {
-                        $warnings[] = get_string("missingquestion", "quiz", $nQuestionStartLine);
+                        $warnings[] = get_string("missingquestion", "qformat_webct", $nQuestionStartLine);
                         $QuestionOK = FALSE;
                     }
                     if (sizeof($question->answer) < 1) {  // a question must have at least 1 answer
-                       $errors[] = get_string("missinganswer", "quiz", $nQuestionStartLine);
+                       $errors[] = get_string("missinganswer", "qformat_webct", $nQuestionStartLine);
                        $QuestionOK = FALSE;
                     }
                     else {
@@ -320,7 +320,7 @@ class qformat_webct extends qformat_default {
                             case SHORTANSWER:
                                 if ($maxfraction != 1) {
                                     $maxfraction = $maxfraction * 100;
-                                    $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).' '.get_string("fractionsnomax", "quiz", $maxfraction);
+                                    $errors[] = "'$question->name': ".get_string("wronggrade", "qformat_webct", $nLineCounter).' '.get_string("fractionsnomax", "question", $maxfraction);
                                     $QuestionOK = FALSE;
                                 }
                                 break;
@@ -329,14 +329,14 @@ class qformat_webct extends qformat_default {
                                 if ($question->single) {
                                     if ($maxfraction != 1) {
                                         $maxfraction = $maxfraction * 100;
-                                        $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).' '.get_string("fractionsnomax", "quiz", $maxfraction);
+                                        $errors[] = "'$question->name': ".get_string("wronggrade", "qformat_webct", $nLineCounter).' '.get_string("fractionsnomax", "question", $maxfraction);
                                         $QuestionOK = FALSE;
                                     }
                                 } else {
                                     $totalfraction = round($totalfraction,2);
                                     if ($totalfraction != 1) {
                                         $totalfraction = $totalfraction * 100;
-                                        $errors[] = "'$question->name': ".get_string("wronggrade", "quiz", $nLineCounter).' '.get_string("fractionsaddwrong", "quiz", $totalfraction);
+                                        $errors[] = "'$question->name': ".get_string("wronggrade", "qformat_webct", $nLineCounter).' '.get_string("fractionsaddwrong", "question", $totalfraction);
                                         $QuestionOK = FALSE;
                                     }
                                 }
@@ -422,10 +422,6 @@ class qformat_webct extends qformat_default {
 
             if (preg_match("~^:TYPE:C~i",$line)) {
                 // Calculated Question
-           /*     $warnings[] = get_string("calculatedquestion", "quiz", $nLineCounter);
-                unset($question);
-                $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
-             */
                 $question = $this->defaultquestion();
                 $question->qtype = CALCULATED;
                 $question->answers = array(); // No problem as they go as :FORMULA: from webct
@@ -453,7 +449,7 @@ class qformat_webct extends qformat_default {
 
             if (preg_match("~^:TYPE:P~i",$line)) {
                 // Paragraph Question
-                $warnings[] = get_string("paragraphquestion", "quiz", $nLineCounter);
+                $warnings[] = get_string("paragraphquestion", "qformat_webct", $nLineCounter);
                 unset($question);
                 $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
                 continue;
@@ -461,7 +457,7 @@ class qformat_webct extends qformat_default {
 
             if (preg_match("~^:TYPE:~i",$line)) {
                 // Unknow Question
-                $warnings[] = get_string("unknowntype", "quiz", $nLineCounter);
+                $warnings[] = get_string("unknowntype", "qformat_webct", $nLineCounter);
                 unset($question);
                 $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
                 continue;
@@ -475,7 +471,7 @@ class qformat_webct extends qformat_default {
                 $name = trim($webct_options[1]);
                 if (strlen($name) > 255) {
                     $name = substr($name,0,250)."...";
-                    $warnings[] = get_string("questionnametoolong", "quiz", $nLineCounter);
+                    $warnings[] = get_string("questionnametoolong", "qformat_webct", $nLineCounter);
                 }
                 $question->name = $name;
                 continue;
@@ -656,7 +652,7 @@ class qformat_webct extends qformat_default {
         }
 
         if (sizeof($errors) > 0) {
-            echo "<p>".get_string("errorsdetected", "quiz", sizeof($errors))."</p><ul>";
+            echo "<p>".get_string("errorsdetected", "qformat_webct", sizeof($errors))."</p><ul>";
             foreach($errors as $error) {
                 echo "<li>$error</li>";
             }
@@ -665,7 +661,7 @@ class qformat_webct extends qformat_default {
         }
 
         if (sizeof($warnings) > 0) {
-            echo "<p>".get_string("warningsdetected", "quiz", sizeof($warnings))."</p><ul>";
+            echo "<p>".get_string("warningsdetected", "qformat_webct", sizeof($warnings))."</p><ul>";
             foreach($warnings as $warning) {
                 echo "<li>$warning</li>";
             }
