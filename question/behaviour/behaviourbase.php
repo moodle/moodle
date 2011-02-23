@@ -73,7 +73,7 @@ abstract class question_behaviour {
         $this->question = $qa->get_question();
         $requiredclass = $this->required_question_definition_type();
         if (!$this->question instanceof $requiredclass) {
-            throw new Exception('This behaviour (' . $this->get_name() .
+            throw new coding_exception('This behaviour (' . $this->get_name() .
                     ') cannot work with this question (' . get_class($this->question) . ')');
         }
     }
@@ -543,7 +543,7 @@ abstract class question_behaviour_with_save extends question_behaviour {
         if ($this->qa->get_state()->is_finished()) {
             return question_attempt::DISCARD;
         } else if (!$this->qa->get_state()->is_active()) {
-            throw new Exception('Question is not active, cannot process_actions.');
+            throw new coding_exception('Question is not active, cannot process_actions.');
         }
 
         if ($this->is_same_response($pendingstep)) {

@@ -375,7 +375,7 @@ function qtype_opaque_get_step($seq, question_attempt $qa, $pendingstep) {
     if ($seq == $qa->get_num_steps() && !is_null($pendingstep)) {
         return $pendingstep;
     }
-    throw new Exception('Sequence number ' . $seq . ' out of range.');
+    throw new coding_exception('Sequence number ' . $seq . ' out of range.');
 }
 
 /**

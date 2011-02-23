@@ -150,7 +150,7 @@ WHERE
         ", array('stepid' => $stepid));
 
         if (!$records) {
-            throw new Exception('Failed to load question_attempt_step ' . $stepid);
+            throw new coding_exception('Failed to load question_attempt_step ' . $stepid);
         }
 
         return question_attempt_step::load_from_records($records, $stepid);
@@ -202,7 +202,7 @@ ORDER BY
         ", array('questionattemptid' => $questionattemptid));
 
         if (!$records) {
-            throw new Exception('Failed to load question_attempt ' . $questionattemptid);
+            throw new coding_exception('Failed to load question_attempt ' . $questionattemptid);
         }
 
         $record = current($records);
@@ -259,7 +259,7 @@ ORDER BY
     ", array('qubaid' => $qubaid));
 
         if (!$records) {
-            throw new Exception('Failed to load questions_usage_by_activity ' . $qubaid);
+            throw new coding_exception('Failed to load questions_usage_by_activity ' . $qubaid);
         }
 
         return question_usage_by_activity::load_from_records($records, $qubaid);
@@ -599,9 +599,7 @@ ORDER BY
         $record->component = addslashes($quba->get_owning_component());
         $record->preferredbehaviour = addslashes($quba->get_preferred_behaviour());
 
-        if (!$this->db->update_record('question_usages', $record)) {
-            throw new Exception('Failed to update question_usage_by_activity ' . $record->id);
-        }
+        $this->db->update_record('question_usages', $record);
     }
 
     /**
@@ -620,9 +618,7 @@ ORDER BY
         $record->responsesummary = addslashes($qa->get_response_summary());
         $record->timemodified = time();
 
-        if (!$this->db->update_record('question_attempts', $record)) {
-            throw new Exception('Failed to update question_attempt ' . $record->id);
-        }
+        $this->db->update_record('question_attempts', $record);
     }
 
     /**
@@ -696,7 +692,7 @@ ORDER BY
     public function update_question_attempt_flag($qubaid, $questionid, $qaid, $slot, $newstate) {
         if (!$this->db->record_exists('question_attempts', array('id' => $qaid,
                 'questionusageid' => $qubaid, 'questionid' => $questionid, 'slot' => $slot))) {
-            throw new Exception('invalid ids');
+            throw new moodle_exception('errorsavingflags', 'question');
         }
 
         $this->db->set_field('question_attempts', 'flagged', $newstate, array('id' => $qaid));
@@ -1002,7 +998,7 @@ class qubaid_list extends qubaid_condition {
         global $DB;
 
         if (is_null($this->columntotest)) {
-            throw new coding_exception('Must call another method that before where().');
+            throw new coding_exception('Must call from_question_attempts before where().');
         }
         if (empty($this->qubaids)) {
             $this->params = array();

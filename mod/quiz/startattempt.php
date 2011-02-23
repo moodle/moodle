@@ -51,9 +51,7 @@ $PAGE->set_url($quizobj->view_url());
 
 // Check login and sesskey.
 require_login($quizobj->get_courseid(), false, $quizobj->get_cm());
-if (!confirm_sesskey()) {
-    throw new moodle_exception('confirmsesskeybad', 'error', $quizobj->view_url());
-}
+require_sesskey();
 $PAGE->set_pagelayout('base');
 
 // if no questions have been set up yet redirect to edit.php
@@ -188,9 +186,7 @@ if (!($quiz->attemptonlast && $lastattempt)) {
 $transaction = $DB->start_delegated_transaction();
 question_engine::save_questions_usage_by_activity($quba);
 $attempt->uniqueid = $quba->get_id();
-if (!$attempt->id = $DB->insert_record('quiz_attempts', $attempt)) {
-    throw new moodle_quiz_exception($quizobj, 'newattemptfail');
-}
+$attempt->id = $DB->insert_record('quiz_attempts', $attempt);
 
 // Log the new attempt.
 if ($attempt->preview) {

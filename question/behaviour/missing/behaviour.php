@@ -55,14 +55,14 @@ class qbehaviour_missing extends question_behaviour {
     }
 
     public function init_first_step(question_attempt_step $step) {
-        throw new Exception('The behaviour used for this question is not available. No processing is possible.');
+        throw new coding_exception('The behaviour used for this question is not available. No processing is possible.');
     }
 
     public function process_action(question_attempt_pending_step $pendingstep) {
-        throw new Exception('The behaviour used for this question is not available. No processing is possible.');
+        throw new coding_exception('The behaviour used for this question is not available. No processing is possible.');
     }
 
     public function get_min_fraction() {
-        throw new Exception('The behaviour used for this question is not available. No processing is possible.');
+        throw new coding_exception('The behaviour used for this question is not available. No processing is possible.');
     }
 }

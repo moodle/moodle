@@ -144,7 +144,7 @@ abstract class question_engine {
         question_engine::load_behaviour_class($preferredbehaviour);
         $class = 'qbehaviour_' . $preferredbehaviour;
         if (!constant($class . '::IS_ARCHETYPAL')) {
-            throw new Exception('The requested behaviour is not actually an archetypal one.');
+            throw new coding_exception('The requested behaviour is not actually an archetypal one.');
         }
         return new $class($qa, $preferredbehaviour);
     }
@@ -200,7 +200,7 @@ abstract class question_engine {
         }
         $file = $CFG->dirroot . '/question/behaviour/' . $behaviour . '/behaviour.php';
         if (!is_readable($file)) {
-            throw new Exception('Unknown question behaviour ' . $behaviour);
+            throw new coding_exception('Unknown question behaviour ' . $behaviour);
         }
         include_once($file);
         self::$loadedbehaviours[$behaviour] = 1;
@@ -545,7 +545,7 @@ abstract class question_flags {
         // probably makes it sufficiently difficult for malicious users to toggle
         // other users flags.
         if ($checksum != question_flags::get_toggle_checksum($qubaid, $questionid, $qaid, $slot)) {
-            throw new Exception('checksum failure');
+            throw new moodle_exception('errorsavingflags', 'question');
         }
 
         $dm = new question_engine_data_mapper();
@@ -785,7 +785,7 @@ class question_usage_by_activity {
      */
     protected function check_slot($slot) {
         if (!array_key_exists($slot, $this->questionattempts)) {
-            throw new exception("There is no question_attempt number $slot in this attempt.");
+            throw new coding_exception("There is no question_attempt number $slot in this attempt.");
         }
     }
 
@@ -1198,7 +1198,7 @@ class question_usage_by_activity {
         while ($record->qubaid != $qubaid) {
             $record = next($records);
             if (!$record) {
-                throw new Exception("Question usage $qubaid not found in the database.");
+                throw new coding_exception("Question usage $qubaid not found in the database.");
             }
         }
 
@@ -1280,10 +1280,10 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
         return $this->quba->get_question_attempt($slot);
     }
     public function offsetSet($slot, $value) {
-        throw new Exception('You are only allowed read-only access to question_attempt::states through a question_attempt_step_iterator. Cannot set.');
+        throw new coding_exception('You are only allowed read-only access to question_attempt::states through a question_attempt_step_iterator. Cannot set.');
     }
     public function offsetUnset($slot) {
-        throw new Exception('You are only allowed read-only access to question_attempt::states through a question_attempt_step_iterator. Cannot unset.');
+        throw new coding_exception('You are only allowed read-only access to question_attempt::states through a question_attempt_step_iterator. Cannot unset.');
     }
 }
 
@@ -1561,7 +1561,7 @@ class question_attempt {
      */
     public function get_step($i) {
         if ($i < 0 || $i >= count($this->steps)) {
-            throw new Exception('Index out of bounds in question_attempt::get_step.');
+            throw new coding_exception('Index out of bounds in question_attempt::get_step.');
         }
         return $this->steps[$i];
     }
@@ -1755,7 +1755,7 @@ class question_attempt {
     /** @return number the maximum mark possible for this question attempt. */
     public function get_min_fraction() {
         if (is_null($this->minfraction)) {
-            throw new Exception('This question_attempt has not been started yet, the min fraction is not yet konwn.');
+            throw new coding_exception('This question_attempt has not been started yet, the min fraction is not yet konwn.');
         }
         return $this->minfraction;
     }
@@ -2207,7 +2207,7 @@ class question_attempt {
         while ($record->questionattemptid != $questionattemptid) {
             $record = next($records);
             if (!$record) {
-                throw new Exception("Question attempt $questionattemptid not found in the database.");
+                throw new coding_exception("Question attempt $questionattemptid not found in the database.");
             }
         }
 
@@ -2384,10 +2384,10 @@ class question_attempt_step_iterator implements Iterator, ArrayAccess {
         return $this->qa->get_step($i);
     }
     public function offsetSet($offset, $value) {
-        throw new Exception('You are only allowed read-only access to question_attempt::states through a question_attempt_step_iterator. Cannot set.');
+        throw new coding_exception('You are only allowed read-only access to question_attempt::states through a question_attempt_step_iterator. Cannot set.');
     }
     public function offsetUnset($offset) {
-        throw new Exception('You are only allowed read-only access to question_attempt::states through a question_attempt_step_iterator. Cannot unset.');
+        throw new coding_exception('You are only allowed read-only access to question_attempt::states through a question_attempt_step_iterator. Cannot unset.');
     }
 }
 
@@ -2554,7 +2554,7 @@ class question_attempt_step {
      */
     public function set_qt_var($name, $value) {
         if ($name[0] != '_') {
-            throw new Exception('Cannot set question type data ' . $name . ' on an attempt step. You can only set variables with names begining with _.');
+            throw new coding_exception('Cannot set question type data ' . $name . ' on an attempt step. You can only set variables with names begining with _.');
         }
         $this->data[$name] = $value;
     }
@@ -2599,7 +2599,7 @@ class question_attempt_step {
      */
     public function set_behaviour_var($name, $value) {
         if ($name[0] != '_') {
-            throw new Exception('Cannot set question type data ' . $name . ' on an attempt step. You can only set variables with names begining with _.');
+            throw new coding_exception('Cannot set question type data ' . $name . ' on an attempt step. You can only set variables with names begining with _.');
         }
         return $this->data['-' . $name] = $value;
     }
@@ -2659,7 +2659,7 @@ class question_attempt_step {
         while ($currentrec->attemptstepid != $attemptstepid) {
             $currentrec = next($records);
             if (!$currentrec) {
-                throw new Exception("Question attempt step $attemptstepid not found in the database.");
+                throw new coding_exception("Question attempt step $attemptstepid not found in the database.");
             }
         }
 
@@ -2750,7 +2750,7 @@ class question_null_step {
     }
 
     public function set_state($state) {
-        throw new Exception('This question has not been started.');
+        throw new coding_exception('This question has not been started.');
     }
 
     public function get_fraction() {

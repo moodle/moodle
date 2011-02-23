@@ -117,7 +117,7 @@ class qtype_numerical_answer extends question_answer {
 
     public function get_tolerance_interval() {
         if ($this->answer === '*') {
-            throw new Exception('Cannot work out tolerance interval for answer *.');
+            throw new coding_exception('Cannot work out tolerance interval for answer *.');
         }
 
         // We need to add a tiny fraction depending on the set precision to make
@@ -140,7 +140,7 @@ class qtype_numerical_answer extends question_answer {
                 return array($this->answer / $quotient, $this->answer * $quotient);
 
             default:
-                throw new Exception('Unknown tolerance type ' . $this->tolerancetype);
+                throw new coding_exception('Unknown tolerance type ' . $this->tolerancetype);
         }
     }
 

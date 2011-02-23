@@ -104,15 +104,9 @@ class quiz {
     static public function create($quizid, $userid) {
         global $DB;
 
-        if (!$quiz = $DB->get_record('quiz', array('id' => $quizid))) {
-            throw new moodle_exception('invalidquizid', 'quiz');
-        }
-        if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
-            throw new moodle_exception('invalidcoursemodule');
-        }
-        if (!$cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id)) {
-            throw new moodle_exception('invalidcoursemodule');
-        }
+        $quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
         // Update quiz with override information
         $quiz = quiz_update_effective_access($quiz, $userid);
@@ -385,18 +379,10 @@ class quiz_attempt {
 //        quiz_upgrade_states($attempt);
 //    }
 
-        if (!$attempt = $DB->get_record('quiz_attempts', $conditions)) {
-            throw new moodle_exception('invalidattemptid', 'quiz');
-        }
-        if (!$quiz = $DB->get_record('quiz', array('id' => $attempt->quiz))) {
-            throw new moodle_exception('invalidquizid', 'quiz');
-        }
-        if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
-            throw new moodle_exception('invalidcoursemodule');
-        }
-        if (!$cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id)) {
-            throw new moodle_exception('invalidcoursemodule');
-        }
+        $attempt = $DB->get_record('quiz_attempts', $conditions, '*', MUST_EXIST);
+        $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
         // Update quiz with override information
         $quiz = quiz_update_effective_access($quiz, $attempt->userid);
@@ -1002,9 +988,8 @@ class quiz_attempt {
         if ($this->attempt->timefinish) {
             $this->attempt->sumgrades = $this->quba->get_total_mark();
         }
-        if (!$DB->update_record('quiz_attempts', $this->attempt)) {
-            throw new moodle_quiz_exception($this->get_quizobj(), 'saveattemptfailed');
-        }
+        $DB->update_record('quiz_attempts', $this->attempt);
+
         if (!$this->is_preview() && $this->attempt->timefinish) {
             quiz_save_best_grade($this->get_quiz(), $this->get_userid());
         }
@@ -1029,9 +1014,7 @@ class quiz_attempt {
         $this->attempt->timemodified = $timestamp;
         $this->attempt->timefinish = $timestamp;
         $this->attempt->sumgrades = $this->quba->get_total_mark();
-        if (!$DB->update_record('quiz_attempts', $this->attempt)) {
-            throw new moodle_quiz_exception($this->get_quizobj(), 'saveattemptfailed');
-        }
+        $DB->update_record('quiz_attempts', $this->attempt);
 
         if (!$this->is_preview()) {
             quiz_save_best_grade($this->get_quiz());

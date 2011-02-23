@@ -48,7 +48,7 @@ class qbehaviour_opaque_test extends qbehaviour_walkthrough_test_base {
         global $DB;
         $engineid = $DB->get_field('question_opaque_engines', 'MIN(id)', array());
         if (empty($engineid)) {
-            throw new Exception('Cannot test Opaque. No question engines configured.');
+            throw new coding_exception('Cannot test Opaque. No question engines configured.');
         }
 
         question_bank::load_question_definition_classes('opaque');

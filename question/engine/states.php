@@ -98,7 +98,7 @@ abstract class question_state {
             }
         }
         if (empty($states)) {
-            throw new Exception('unknown summary state ' . $summarystate);
+            throw new coding_exception('unknown summary state ' . $summarystate);
         }
         return $states;
     }
@@ -246,7 +246,7 @@ abstract class question_state {
      * @return int the new state.
      */
     public function corresponding_commented_state($fraction) {
-        throw new Exception('Unexpected question state.');
+        throw new coding_exception('Unexpected question state.');
     }
 
     /**
@@ -295,7 +295,7 @@ class question_state_notstarted extends question_state {
         return false;
     }
     public function get_state_class($showcorrectness) {
-        throw new Exception('Unexpected question state.');
+        throw new coding_exception('Unexpected question state.');
     }
 }
 class question_state_unprocessed extends question_state {
@@ -303,7 +303,7 @@ class question_state_unprocessed extends question_state {
         return false;
     }
     public function get_state_class($showcorrectness) {
-        throw new Exception('Unexpected question state.');
+        throw new coding_exception('Unexpected question state.');
     }
 }
 class question_state_todo extends question_state {

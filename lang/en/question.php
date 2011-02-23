@@ -265,6 +265,7 @@ $string['correct'] = 'Correct';
 $string['correctfeedback'] = 'For any correct response';
 $string['decimalplacesingrades'] = 'Decimal places in grades';
 $string['defaultmark'] = 'Default mark';
+$string['errorsavingflags'] = 'Error saving the flag state.';
 $string['feedback'] = 'Feedback';
 $string['fillincorrect'] = 'Fill in correct responses';
 $string['flagged'] = 'Flagged';

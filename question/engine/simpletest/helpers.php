@@ -314,7 +314,7 @@ abstract class testing_db_record_builder {
         $records = array();
         foreach ($table as $row) {
             if (count($row) != count($columns)) {
-                throw new Exception("Row contains the wrong number of fields.");
+                throw new coding_exception("Row contains the wrong number of fields.");
             }
             $rec = new stdClass();
             foreach ($columns as $i => $name) {

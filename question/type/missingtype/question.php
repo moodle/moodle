@@ -80,7 +80,7 @@ class qtype_missingtype_question extends question_definition implements question
     }
 
     public function grade_response(array $response) {
-        throw new Exception('This question is of a type that is not installed on your system. No processing is possible.');
+        throw new coding_exception('This question is of a type that is not installed on your system. No processing is possible.');
     }
 
     public function get_hint($hintnumber, question_attempt $qa) {

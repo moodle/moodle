@@ -100,7 +100,7 @@ class qbehaviour_informationitem extends question_behaviour {
 
     public function process_comment(question_attempt_pending_step $pendingstep) {
         if ($pendingstep->has_behaviour_var('mark')) {
-            throw new Exception('Information items cannot be graded.');
+            throw new coding_exception('Information items cannot be graded.');
         }
         return parent::process_comment($pendingstep);
     }

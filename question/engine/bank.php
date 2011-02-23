@@ -70,7 +70,7 @@ abstract class question_bank {
         $file = get_plugin_directory('qtype', $qtypename) . '/questiontype.php';
         if (!is_readable($file)) {
             if ($mustexist || $qtypename == 'missingtype') {
-                throw new Exception('Unknown question type ' . $qtypename);
+                throw new coding_exception('Unknown question type ' . $qtypename);
             } else {
                 return self::get_qtype('missingtype');
             }
@@ -186,7 +186,7 @@ abstract class question_bank {
         }
         $file = $CFG->dirroot . '/question/type/' . $qtypename . '/question.php';
         if (!is_readable($file)) {
-            throw new Exception('Unknown question type (no definition) ' . $qtypename);
+            throw new coding_exception('Unknown question type (no definition) ' . $qtypename);
         }
         include_once($file);
         self::$loadedqdefs[$qtypename] = 1;
@@ -256,7 +256,7 @@ abstract class question_bank {
 
     private static function return_test_question_data($questionid) {
         if (!isset(self::$testdata[$questionid])) {
-            throw new Exception('question_bank::return_test_data(' . $questionid .
+            throw new coding_exception('question_bank::return_test_data(' . $questionid .
                     ') called, but no matching question has been loaded by load_test_data.');
         }
         return self::$testdata[$questionid];
@@ -269,7 +269,7 @@ abstract class question_bank {
      */
     public static function load_test_question_data(question_definition $question) {
         if (!self::$testmode) {
-            throw new Exception('question_bank::load_test_data called when not in test mode.');
+            throw new coding_exception('question_bank::load_test_data called when not in test mode.');
         }
         self::$testdata[$question->id] = $question;
     }
