@@ -40,7 +40,6 @@ require_once("$CFG->dirroot/question/type/shortanswer/questiontype.php");
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class question_numerical_qtype extends qtype_shortanswer {
 
     public $virtualqtype = false;
@@ -753,7 +752,7 @@ class question_numerical_qtype extends qtype_shortanswer {
     * when used in a multianswer (Cloze) question.
     * This function performs response processing and grading and updates
     * the state accordingly.
-    * @return boolean         Indicates success or failure.
+    * @return bool         Indicates success or failure.
     * @param object $question The question to be graded. Question type
     *                         specific information is included.
     * @param object $state    The state of the question to grade. The current

@@ -193,7 +193,7 @@ class core_question_renderer extends plugin_renderer_base {
      * Render the question flag, assuming $flagsoption allows it.
      *
      * @param question_attempt $qa the question attempt to display.
-     * @param integer $flagsoption the option that says whether flags should be displayed.
+     * @param int $flagsoption the option that says whether flags should be displayed.
      */
     protected function question_flag(question_attempt $qa, $flagsoption) {
         global $CFG;
@@ -228,7 +228,7 @@ class core_question_renderer extends plugin_renderer_base {
     /**
      * Work out the actual img tag needed for the flag
      *
-     * @param boolean $flagged whether the question is currently flagged.
+     * @param bool $flagged whether the question is currently flagged.
      * @param string $id an id to be added as an attribute to the img (optional).
      * @return string the img tag.
      */

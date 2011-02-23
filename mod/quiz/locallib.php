@@ -67,11 +67,11 @@ define('QUIZ_SHOW_TIME_BEFORE_DEADLINE', '3600');
  * NOT written to the database.
  *
  * @param object $quiz the quiz to create an attempt for.
- * @param integer $attemptnumber the sequence number for the attempt.
+ * @param int $attemptnumber the sequence number for the attempt.
  * @param object $lastattempt the previous attempt by this user, if any. Only needed
  *         if $attemptnumber > 1 and $quiz->attemptonlast is true.
- * @param integer $timenow the time the attempt was started at.
- * @param boolean $ispreview whether this new attempt is a preview.
+ * @param int $timenow the time the attempt was started at.
+ * @param bool $ispreview whether this new attempt is a preview.
  *
  * @return object the newly created attempt object.
  */
@@ -114,8 +114,8 @@ function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $isp
  * Returns an unfinished attempt (if there is one) for the given
  * user on the given quiz. This function does not return preview attempts.
  *
- * @param integer $quizid the id of the quiz.
- * @param integer $userid the id of the user.
+ * @param int $quizid the id of the quiz.
+ * @param int $userid the id of the user.
  *
  * @return mixed the unfinished attempt if there is one, false if not.
  */
@@ -132,8 +132,8 @@ function quiz_get_user_attempt_unfinished($quizid, $userid) {
  * Returns the most recent attempt by a given user on a given quiz.
  * May be finished, or may not.
  *
- * @param integer $quizid the id of the quiz.
- * @param integer $userid the id of the user.
+ * @param int $quizid the id of the quiz.
+ * @param int $userid the id of the user.
  *
  * @return mixed the attempt if there is one, false if not.
  */
@@ -192,7 +192,7 @@ function quiz_delete_attempt($attempt, $quiz) {
  * Delete all the preview attempts at a quiz, or possibly all the attempts belonging
  * to one user.
  * @param object $quiz the quiz object.
- * @param integer $userid (optional) if given, only delete the previews belonging to this user.
+ * @param int $userid (optional) if given, only delete the previews belonging to this user.
  */
 function quiz_delete_previews($quiz, $userid = null) {
     global $DB;
@@ -207,8 +207,8 @@ function quiz_delete_previews($quiz, $userid = null) {
 }
 
 /**
- * @param integer $quizid The quiz id.
- * @return boolean whether this quiz has any (non-preview) attempts.
+ * @param int $quizid The quiz id.
+ * @return bool whether this quiz has any (non-preview) attempts.
  */
 function quiz_has_attempts($quizid) {
     global $DB;
@@ -223,7 +223,7 @@ function quiz_has_attempts($quizid) {
  * @param string $layout the string representing the quiz layout. Each page is represented as a
  *      comma separated list of question ids and 0 indicating page breaks.
  *      So 5,2,0,3,0 means questions 5 and 2 on page 1 and question 3 on page 2
- * @param integer $page the number of the current page.
+ * @param int $page the number of the current page.
  * @return string comma separated list of question ids
  */
 function quiz_questions_on_page($layout, $page) {
@@ -254,7 +254,7 @@ function quiz_questions_in_quiz($layout) {
  * Returns the number of pages in a quiz layout
  *
  * @param string $layout The string representing the quiz layout. Always ends in ,0
- * @return integer The number of pages in the quiz.
+ * @return int The number of pages in the quiz.
  */
 function quiz_number_of_pages($layout) {
     return substr_count(',' . $layout, ',0');
@@ -264,7 +264,7 @@ function quiz_number_of_pages($layout) {
  * Returns the number of questions in the quiz layout
  *
  * @param string $layout the string representing the quiz layout.
- * @return integer The number of questions in the quiz.
+ * @return int The number of questions in the quiz.
  */
 function quiz_number_of_questions_in_quiz($layout) {
     // TODO is this still used.
@@ -281,7 +281,7 @@ function quiz_number_of_questions_in_quiz($layout) {
  *
  * @param string $quizlayout The string representing the layout for the whole quiz
  * @param string $pagelayout The string representing the layout for the current page
- * @return integer the number of the first question
+ * @return int the number of the first question
  */
 function quiz_first_questionnumber($quizlayout, $pagelayout) {
     // TODO is this still used.
@@ -303,8 +303,8 @@ function quiz_first_questionnumber($quizlayout, $pagelayout) {
  * Re-paginates the quiz layout
  *
  * @param string $layout  The string representing the quiz layout.
- * @param integer $perpage The number of questions per page
- * @param boolean $shuffle Should the questions be reordered randomly?
+ * @param int $perpage The number of questions per page
+ * @param bool $shuffle Should the questions be reordered randomly?
  * @return string the new layout string
  */
 function quiz_repaginate($layout, $perpage, $shuffle = false) {
@@ -375,7 +375,7 @@ function quiz_get_all_question_grades($quiz) {
  *
  * @param float $rawgrade the unadjusted grade, fof example $attempt->sumgrades
  * @param object $quiz the quiz object. Only the fields grade, sumgrades and decimalpoints are used.
- * @param boolean|string $format whether to format the results for display
+ * @param bool|string $format whether to format the results for display
  *      or 'question' to format a question grade (different number of decimal places.
  * @return float|string the rescaled grade, or null/the lang string 'notyetgraded' if the $grade is null.
  */
@@ -429,7 +429,7 @@ function quiz_feedback_for_grade($grade, $quiz, $context) {
 
 /**
  * @param object $quiz the quiz database row.
- * @return boolean Whether this quiz has any non-blank feedback text.
+ * @return bool Whether this quiz has any non-blank feedback text.
  */
 function quiz_has_feedback($quiz) {
     global $DB;
@@ -490,7 +490,7 @@ function quiz_update_all_attempt_sumgrades($quiz) {
  *
  * @param float $newgrade the new maximum grade for the quiz.
  * @param object $quiz the quiz we are updating. Passed by reference so its grade field can be updated too.
- * @return boolean indicating success or failure.
+ * @return bool indicating success or failure.
  */
 function quiz_set_grade($newgrade, $quiz) {
     global $DB;
@@ -546,11 +546,11 @@ function quiz_set_grade($newgrade, $quiz) {
  * Save the overall grade for a user at a quiz in the quiz_grades table
  *
  * @param object $quiz The quiz for which the best grade is to be calculated and then saved.
- * @param integer $userid The userid to calculate the grade for. Defaults to the current user.
+ * @param int $userid The userid to calculate the grade for. Defaults to the current user.
  * @param array $attempts The attempts of this user. Useful if you are
  * looping through many users. Attempts can be fetched in one master query to
  * avoid repeated querying.
- * @return boolean Indicates success or failure.
+ * @return bool Indicates success or failure.
  */
 function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
     global $DB;
@@ -882,7 +882,7 @@ function quiz_upgrade_states($attempt) {
 
 /**
  * @param object $quiz the quiz.
- * @param integer $cmid the course_module object for this quiz.
+ * @param int $cmid the course_module object for this quiz.
  * @param object $question the question.
  * @param string $returnurl url to return to after action is done.
  * @return string html for a number of icons linked to action pages for a
@@ -895,7 +895,7 @@ function quiz_question_action_icons($quiz, $cmid, $question, $returnurl) {
 }
 
 /**
- * @param integer $cmid the course_module.id for this quiz.
+ * @param int $cmid the course_module.id for this quiz.
  * @param object $question the question.
  * @param string $returnurl url to return to after action is done.
  * @param string $contentbeforeicon some HTML content to be added inside the link, before the icon.
@@ -938,7 +938,7 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
 /**
  * @param object $quiz the quiz
  * @param object $question the question
- * @param boolean $label if true, show the preview question label after the icon
+ * @param bool $label if true, show the preview question label after the icon
  * @return the HTML for a preview question icon.
  */
 function quiz_question_preview_button($quiz, $question, $label = false) {
@@ -974,7 +974,7 @@ function quiz_question_preview_button($quiz, $question, $label = false) {
 /**
  * @param object $attempt the attempt.
  * @param object $context the quiz context.
- * @return integer whether flags should be shown/editable to the current user for this attempt.
+ * @return int whether flags should be shown/editable to the current user for this attempt.
  */
 function quiz_get_flag_option($attempt, $context) {
     global $USER;
@@ -991,7 +991,7 @@ function quiz_get_flag_option($attempt, $context) {
  * Work out what state this quiz attempt is in.
  * @param object $quiz the quiz settings
  * @param object $attempt the quiz_attempt database row.
- * @return integer one of the mod_quiz_display_options::DURING,
+ * @return int one of the mod_quiz_display_options::DURING,
  *      IMMEDIATELY_AFTER, LATER_WHILE_OPEN or AFTER_CLOSE constants.
  */
 function quiz_attempt_state($quiz, $attempt) {
@@ -1095,7 +1095,7 @@ function quiz_get_combined_reviewoptions($quiz, $attempts) {
  * - Finally, add a ",0" in the end if there is none
  *
  * @param $string $layout the quiz layout to clean up, usually from $quiz->questions.
- * @param boolean $removeemptypages If true, remove empty pages from the quiz. False by default.
+ * @param bool $removeemptypages If true, remove empty pages from the quiz. False by default.
  * @return $string the cleaned-up layout
  */
 function quiz_clean_layout($layout, $removeemptypages = false) {
@@ -1141,8 +1141,8 @@ function quiz_clean_layout($layout, $removeemptypages = false) {
 /**
  * Get the slot for a question with a particular id.
  * @param object $quiz the quiz settings.
- * @param integer $questionid the of a question in the quiz.
- * @return integer the corresponding slot. Null if the question is not in the quiz.
+ * @param int $questionid the of a question in the quiz.
+ * @return int the corresponding slot. Null if the question is not in the quiz.
  */
 function quiz_get_slot_for_question($quiz, $questionid) {
     $questionids = quiz_questions_in_quiz($quiz->questions);
@@ -1374,8 +1374,8 @@ function quiz_get_js_module() {
  * An extension of question_display_options that includes the extra options used
  * by the quiz.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_quiz_display_options extends question_display_options {
     /**#@+
@@ -1403,7 +1403,7 @@ class mod_quiz_display_options extends question_display_options {
     /**
      * Set up the various options from the quiz settings, and a time constant.
      * @param object $quiz the quiz settings.
-     * @param integer $one of the {@link DURING}, {@link IMMEDIATELY_AFTER},
+     * @param int $one of the {@link DURING}, {@link IMMEDIATELY_AFTER},
      * {@link LATER_WHILE_OPEN} or {@link AFTER_CLOSE} constants.
      * @return mod_quiz_display_options set up appropriately.
      */
@@ -1443,8 +1443,8 @@ class mod_quiz_display_options extends question_display_options {
  * A {@link qubaid_condition} for finding all the question usages belonging to
  * a particular quiz.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quibaid_for_quiz extends qubaid_join {
     public function __construct($quizid, $includepreviews = true, $onlyfinished = false) {

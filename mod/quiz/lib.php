@@ -135,7 +135,7 @@ function quiz_update_instance($quiz, $mform) {
  * and any data that depends on it.
  *
  * @param int $id the id of the quiz to delete.
- * @return boolean success or failure.
+ * @return bool success or failure.
  */
 function quiz_delete_instance($id) {
     global $DB;
@@ -164,7 +164,7 @@ function quiz_delete_instance($id) {
  * Deletes a quiz override from the database and clears any corresponding calendar events
  *
  * @param object $quiz The quiz object.
- * @param integer $overrideid The id of the override being deleted
+ * @param int $overrideid The id of the override being deleted
  * @return bool true on success
  */
 function quiz_delete_override($quiz, $overrideid) {
@@ -211,7 +211,7 @@ function quiz_delete_all_overrides($quiz) {
  *   passwords.
  *
  * @param object $quiz The quiz object.
- * @param integer $userid The userid.
+ * @param int $userid The userid.
  * @return object $quiz The updated quiz object.
  */
 function quiz_update_effective_access($quiz, $userid) {
@@ -316,7 +316,7 @@ function quiz_delete_all_attempts($quiz) {
  * Get the best current grade for a particular user in a quiz.
  *
  * @param object $quiz the quiz settings.
- * @param integer $userid the id of the user.
+ * @param int $userid the id of the user.
  * @return float the user's current grade for this quiz, or NULL if this user does
  * not have a grade on this quiz.
  */
@@ -338,7 +338,7 @@ function quiz_get_best_grade($quiz, $userid) {
  * divide by them).
  *
  * @param object $quiz a row from the quiz table.
- * @return boolean whether this is a graded quiz.
+ * @return bool whether this is a graded quiz.
  */
 function quiz_has_grades($quiz) {
     return $quiz->grade >= 0.000005 && $quiz->sumgrades >= 0.000005;
@@ -427,8 +427,8 @@ function quiz_cron() {
 }
 
 /**
- * @param integer $quizid the quiz id.
- * @param integer $userid the userid.
+ * @param int $quizid the quiz id.
+ * @param int $userid the userid.
  * @param string $status 'all', 'finished' or 'unfinished' to control
  * @param bool $includepreviews
  * @return an array of all the user's attempts at this quiz. Returns an empty array if there are none.
@@ -1159,7 +1159,7 @@ function quiz_get_post_actions() {
 
 /**
  * @param array $questionids of question ids.
- * @return boolean whether any of these questions are used by any instance of this module.
+ * @return bool whether any of these questions are used by any instance of this module.
  */
 function quiz_questions_in_use($questionids) {
     global $DB;
@@ -1269,7 +1269,7 @@ function quiz_reset_userdata($data) {
  *
  * @param int $attemptuniqueid int attempt id
  * @param int $questionid int question id
- * @return boolean to indicate access granted or denied
+ * @return bool to indicate access granted or denied
  */
 function quiz_check_file_access($attemptuniqueid, $questionid, $context = null) {
     global $USER, $DB, $CFG;
@@ -1380,7 +1380,7 @@ function quiz_print_overview($courses, &$htmlarray) {
  *
  * @param object $quiz the quiz object. Only $quiz->id is used at the moment.
  * @param object $cm the cm object. Only $cm->course, $cm->groupmode and $cm->groupingid fields are used at the moment.
- * @param boolean $returnzero if false (default), when no attempts have been made '' is returned instead of 'Attempts: 0'.
+ * @param bool $returnzero if false (default), when no attempts have been made '' is returned instead of 'Attempts: 0'.
  * @param int $currentgroup if there is a concept of current group where this method is being called
  *         (e.g. a report) pass it in here. Default 0 which means no current group.
  * @return string a string like "Attempts: 123", "Attemtps 123 (45 from your groups)" or
@@ -1420,7 +1420,7 @@ function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup
  * @param object $quiz the quiz object. Only $quiz->id is used at the moment.
  * @param object $cm the cm object. Only $cm->course, $cm->groupmode and $cm->groupingid fields are used at the moment.
  * @param object $context the quiz context.
- * @param boolean $returnzero if false (default), when no attempts have been made '' is returned instead of 'Attempts: 0'.
+ * @param bool $returnzero if false (default), when no attempts have been made '' is returned instead of 'Attempts: 0'.
  * @param int $currentgroup if there is a concept of current group where this method is being called
  *         (e.g. a report) pass it in here. Default 0 which means no current group.
  * @return string HTML fragment for the link.

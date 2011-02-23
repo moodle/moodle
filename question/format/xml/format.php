@@ -59,7 +59,7 @@ class qformat_xml extends qformat_default {
      * Translate human readable format name
      * into internal Moodle code number
      * @param string name format name from xml file
-     * @return integer Moodle format code
+     * @return int Moodle format code
      */
     function trans_format($name) {
         $name = trim($name);
@@ -83,7 +83,7 @@ class qformat_xml extends qformat_default {
      * Translate human readable single answer option
      * to internal code number
      * @param string name true/false
-     * @return integer internal code number
+     * @return int internal code number
      */
     function trans_single($name) {
         $name = trim($name);
@@ -114,7 +114,7 @@ class qformat_xml extends qformat_default {
      * @param array xml data to read
      * @param array path path to node expressed as array
      * @param mixed default
-     * @param boolean istext process as text
+     * @param bool istext process as text
      * @param string error if set value must exist, return false and issue message if not
      * @return mixed value
      */
@@ -280,7 +280,7 @@ class qformat_xml extends qformat_default {
      * Import the common overall feedback fields.
      * @param object $question the part of the XML relating to this question.
      * @param object $qo the question data to add the fields to.
-     * @param boolean $withshownumpartscorrect include the shownumcorrect field.
+     * @param bool $withshownumpartscorrect include the shownumcorrect field.
      */
     public function import_combined_feedback($qo, $questionxml, $withshownumpartscorrect = false) {
         foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $field) {
@@ -1049,7 +1049,7 @@ class qformat_xml extends qformat_default {
      * Generates <text></text> tags, processing raw text therein
      * @param string $raw the content to output.
      * @param int $indent the current indent level.
-     * @param boolean $short stick it on one line.
+     * @param bool $short stick it on one line.
      * @return string formatted text.
      */
     function writetext($raw, $indent = 0, $short = true) {

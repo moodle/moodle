@@ -68,7 +68,7 @@ abstract class question_engine {
 
     /**
      * Load a {@link question_usage_by_activity} from the database, based on its id.
-     * @param integer $qubaid the id of the usage to load.
+     * @param int $qubaid the id of the usage to load.
      * @return question_usage_by_activity loaded from the database.
      */
     public static function load_questions_usage_by_activity($qubaid) {
@@ -94,7 +94,7 @@ abstract class question_engine {
 
     /**
      * Delete a {@link question_usage_by_activity} from the database, based on its id.
-     * @param integer $qubaid the id of the usage to delete.
+     * @param int $qubaid the id of the usage to delete.
      */
     public static function delete_questions_usage_by_activity($qubaid) {
         global $CFG;
@@ -103,7 +103,7 @@ abstract class question_engine {
 
     /**
      * Delete a {@link question_usage_by_activity} from the database, based on its id.
-     * @param integer $qubaid the id of the usage to delete.
+     * @param int $qubaid the id of the usage to delete.
      */
     public static function delete_questions_usage_by_activities($where, $params) {
         $dm = new question_engine_data_mapper();
@@ -114,7 +114,7 @@ abstract class question_engine {
      * Change the maxmark for the question_attempt with number in usage $slot
      * for all the specified question_attempts.
      * @param qubaid_condition $qubaids Selects which usages are updated.
-     * @param integer $slot the number is usage to affect.
+     * @param int $slot the number is usage to affect.
      * @param number $newmaxmark the new max mark to set.
      */
     public static function set_max_mark_in_attempts(qubaid_condition $qubaids,
@@ -125,7 +125,7 @@ abstract class question_engine {
 
     /**
      * @param array $questionids of question ids.
-     * @return boolean whether any of these questions are being used by the question engine.
+     * @return bool whether any of these questions are being used by the question engine.
      */
     public static function questions_in_use(array $questionids) {
         $dm = new question_engine_data_mapper();
@@ -494,15 +494,15 @@ class question_display_options {
 /**
  * Contains the logic for handling question flags.
  *
- * @copyright 2010 The Open University
+ * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class question_flags {
     /**
      * Get the checksum that validates that a toggle request is valid.
-     * @param integer $qubaid the question usage id.
-     * @param integer $questionid the question id.
-     * @param integer $sessionid the question_attempt id.
+     * @param int $qubaid the question usage id.
+     * @param int $questionid the question id.
+     * @param int $sessionid the question_attempt id.
      * @param object $user the user. If null, defaults to $USER.
      * @return string that needs to be sent to question/toggleflag.php for it to work.
      */
@@ -531,12 +531,12 @@ abstract class question_flags {
     /**
      * If the request seems valid, update the flag state of a question attempt.
      * Throws exceptions if this is not a valid update request.
-     * @param integer $qubaid the question usage id.
-     * @param integer $questionid the question id.
-     * @param integer $sessionid the question_attempt id.
+     * @param int $qubaid the question usage id.
+     * @param int $questionid the question id.
+     * @param int $sessionid the question_attempt id.
      * @param string $checksum checksum, as computed by {@link get_toggle_checksum()}
      *      corresponding to the last three arguments.
-     * @param boolean $newstate the new state of the flag. true = flagged.
+     * @param bool $newstate the new state of the flag. true = flagged.
      */
     public static function update_flag($qubaid, $questionid, $qaid, $slot, $checksum, $newstate) {
         // Check the checksum - it is very hard to know who a question session belongs
@@ -583,6 +583,14 @@ abstract class question_flags {
 }
 
 
+/**
+ * Exception thrown when the system detects that a student has done something
+ * out-of-order to a question. This can happen, for example, if they click
+ * the back button in a quiz, then try to submit a different response.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_out_of_sequence_exception extends moodle_exception {
     function __construct($qubaid, $slot, $postdata) {
         if ($postdata == null) {
@@ -681,7 +689,7 @@ class question_usage_by_activity {
         return $this->owningcomponent;
     }
 
-    /** @return integer|string If this usage came from the database, then the id
+    /** @return int|string If this usage came from the database, then the id
      * from the question_usages table is returned. Otherwise a random string is
      * returned. */
     public function get_id() {
@@ -699,7 +707,7 @@ class question_usage_by_activity {
     /**
      * For internal use only. Used by {@link question_engine_data_mapper} to set
      * the id when a usage is saved to the database.
-     * @param integer $id the newly determined id for this usage.
+     * @param int $id the newly determined id for this usage.
      */
     public function set_id_from_database($id) {
         $this->id = $id;
@@ -717,7 +725,7 @@ class question_usage_by_activity {
      * @param question_definition $question the question to add.
      * @param number $maxmark the maximum this question will be marked out of in
      *      this attempt (optional). If not given, $question->defaultmark is used.
-     * @return integer the number used to identify this question within this usage.
+     * @return int the number used to identify this question within this usage.
      */
     public function add_question(question_definition $question, $maxmark = null) {
         $qa = new question_attempt($question, $this->get_id(),
@@ -734,7 +742,7 @@ class question_usage_by_activity {
 
     /**
      * Get the question_definition for a question in this attempt.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @return question_definition the requested question object.
      */
     public function get_question($slot) {
@@ -746,13 +754,13 @@ class question_usage_by_activity {
         return array_keys($this->questionattempts);
     }
 
-    /** @return integer the identifying number of the first question that was added to this usage. */
+    /** @return int the identifying number of the first question that was added to this usage. */
     public function get_first_question_number() {
         reset($this->questionattempts);
         return key($this->questionattempts);
     }
 
-    /** @return integer the number of questions that are currently in this usage. */
+    /** @return int the number of questions that are currently in this usage. */
     public function question_count() {
         return count($this->questionattempts);
     }
@@ -773,7 +781,7 @@ class question_usage_by_activity {
      * Check whether $number actually corresponds to a question attempt that is
      * part of this usage. Throws an exception if not.
      *
-     * @param integer $slot a number allegedly identifying a question within this usage.
+     * @param int $slot a number allegedly identifying a question within this usage.
      */
     protected function check_slot($slot) {
         if (!array_key_exists($slot, $this->questionattempts)) {
@@ -786,7 +794,7 @@ class question_usage_by_activity {
      * that {@link question_attempt} objects should be considered part of the inner
      * workings of the question engine, and should not, if possible, be accessed directly.
      *
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @return question_attempt the corresponding {@link question_attempt} object.
      */
     public function get_question_attempt($slot) {
@@ -796,7 +804,7 @@ class question_usage_by_activity {
 
     /**
      * Get the current state of the attempt at a question.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @return question_state.
      */
     public function get_question_state($slot) {
@@ -804,8 +812,8 @@ class question_usage_by_activity {
     }
 
     /**
-     * @param integer $slot the number used to identify this question within this usage.
-     * @param boolean $showcorrectness Whether right/partial/wrong states should
+     * @param int $slot the number used to identify this question within this usage.
+     * @param bool $showcorrectness Whether right/partial/wrong states should
      * be distinguised.
      * @return string A brief textual description of the current state.
      */
@@ -815,8 +823,8 @@ class question_usage_by_activity {
 
     /**
      * Get the time of the most recent action performed on a question.
-     * @param integer $slot the number used to identify this question within this usage.
-     * @return integer timestamp.
+     * @param int $slot the number used to identify this question within this usage.
+     * @return int timestamp.
      */
     public function get_question_action_time($slot) {
         return $this->get_question_attempt($slot)->get_last_action_time();
@@ -824,7 +832,7 @@ class question_usage_by_activity {
 
     /**
      * Get the current fraction awarded for the attempt at a question.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @return number|null The current fraction for this question, or null if one has
      * not been assigned yet.
      */
@@ -834,7 +842,7 @@ class question_usage_by_activity {
 
     /**
      * Get the current mark awarded for the attempt at a question.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @return number|null The current mark for this question, or null if one has
      * not been assigned yet.
      */
@@ -844,7 +852,7 @@ class question_usage_by_activity {
 
     /**
      * Get the maximum mark possible for the attempt at a question.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @return number the available marks for this question.
      */
     public function get_question_max_mark($slot) {
@@ -853,7 +861,7 @@ class question_usage_by_activity {
 
     /**
      * Get the current mark awarded for the attempt at a question.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @return number|null The current mark for this question, or null if one has
      * not been assigned yet.
      */
@@ -893,7 +901,7 @@ class question_usage_by_activity {
      * Get the {@link core_question_renderer}, in collaboration with appropriate
      * {@link qbehaviour_renderer} and {@link qtype_renderer} subclasses, to generate the
      * HTML to display this question.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @param question_display_options $options controls how the question is rendered.
      * @param string|null $number The question number to display. 'i' is a special
      *      value that gets displayed as Information. Null means no number is displayed.
@@ -906,7 +914,7 @@ class question_usage_by_activity {
     /**
      * Generate any bits of HTML that needs to go in the <head> tag when this question
      * is displayed in the body.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @return string HTML fragment.
      */
     public function render_question_head_html($slot) {
@@ -917,8 +925,8 @@ class question_usage_by_activity {
      * Like {@link render_question()} but displays the question at the past step
      * indicated by $seq, rather than showing the latest step.
      *
-     * @param integer $slot the number used to identify this question within this usage.
-     * @param integer $seq the seq number of the past state to display.
+     * @param int $slot the number used to identify this question within this usage.
+     * @param int $seq the seq number of the past state to display.
      * @param question_display_options $options controls how the question is rendered.
      * @param string|null $number The question number to display. 'i' is a special
      *      value that gets displayed as Information. Null means no number is displayed.
@@ -930,13 +938,13 @@ class question_usage_by_activity {
 
     /**
      * Checks whether the users is allow to be served a particular file.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @param question_display_options $options the options that control display of the question.
      * @param string $component the name of the component we are serving files for.
      * @param string $filearea the name of the file area.
      * @param array $args the remaining bits of the file path.
-     * @param boolean $forcedownload whether the user must be forced to download the file.
-     * @return boolean true if the user can access this file.
+     * @param bool $forcedownload whether the user must be forced to download the file.
+     * @return bool true if the user can access this file.
      */
     public function check_file_access($slot, $options, $component, $filearea, $args, $forcedownload) {
         return $this->get_question_attempt($slot)->check_file_access($options, $component, $filearea, $args, $forcedownload);
@@ -949,7 +957,7 @@ class question_usage_by_activity {
      * database.
      *
      * @param array $records Raw records loaded from the database.
-     * @param integer $questionattemptid The id of the question_attempt to extract.
+     * @param int $questionattemptid The id of the question_attempt to extract.
      * @return question_attempt The newly constructed question_attempt_step.
      */
     public function replace_loaded_question_attempt_info($slot, $qa) {
@@ -960,7 +968,7 @@ class question_usage_by_activity {
     /**
      * You should probably not use this method in code outside the question engine.
      * The main reason for exposing it was for the benefit of unit tests.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @return string return the prefix that is pre-pended to field names in the HTML
      * that is output.
      */
@@ -970,7 +978,7 @@ class question_usage_by_activity {
 
     /**
      * Start the attempt at a question that has been added to this usage.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      */
     public function start_question($slot) {
         $qa = $this->get_question_attempt($slot);
@@ -992,7 +1000,7 @@ class question_usage_by_activity {
      * Start the attempt at a question, starting from the point where the previous
      * question_attempt $oldqa had reached. This is used by the quiz 'Each attempt
      * builds on last' mode.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @param question_attempt $oldqa a previous attempt at this quetsion that
      *      defines the starting point.
      */
@@ -1011,7 +1019,7 @@ class question_usage_by_activity {
      *
      * This function also does {@link update_question_flags()}.
      *
-     * @param integer $timestamp optional, use this timestamp as 'now'.
+     * @param int $timestamp optional, use this timestamp as 'now'.
      * @param array $postdata optional, only intended for testing. Use this data
      * instead of the data from $_POST.
      */
@@ -1036,7 +1044,7 @@ class question_usage_by_activity {
      * Get the submitted data from the current request that belongs to this
      * particular question.
      *
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @param $postdata optional, only intended for testing. Use this data
      * instead of the data from $_POST.
      * @return array submitted data specific to this question.
@@ -1047,7 +1055,7 @@ class question_usage_by_activity {
 
     /**
      * Process a specific action on a specific question.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @param $submitteddata the submitted data that constitutes the action.
      */
     public function process_action($slot, $submitteddata, $timestamp = null) {
@@ -1059,7 +1067,7 @@ class question_usage_by_activity {
     /**
      * Check that the sequence number, that detects weird things like the student
      * clicking back, is OK.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @param array $submitteddata the submitted data that constitutes the action.
      */
     public function validate_sequence_number($slot, $postdata = null) {
@@ -1090,7 +1098,7 @@ class question_usage_by_activity {
     /**
      * Get the correct response to a particular question. Passing the results of
      * this method to {@link process_action()} will probably result in full marks.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @return array that constitutes a correct response to this question.
      */
     public function get_correct_response($slot) {
@@ -1108,7 +1116,7 @@ class question_usage_by_activity {
      * After the active phase is over, the only changes possible are things like
      * manual grading, or changing the flag state.
      *
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      */
     public function finish_question($slot, $timestamp = null) {
         $qa = $this->get_question_attempt($slot);
@@ -1129,7 +1137,7 @@ class question_usage_by_activity {
 
     /**
      * Perform a manual grading action on a question attempt.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      * @param string $comment the comment being added to the question attempt.
      * @param number $mark the mark that is being assigned. Can be null to just
      * add a comment.
@@ -1143,8 +1151,8 @@ class question_usage_by_activity {
     /**
      * Regrade a question in this usage. This replays the sequence of submitted
      * actions to recompute the outcomes.
-     * @param integer $slot the number used to identify this question within this usage.
-     * @param boolean $finished whether the question attempt should be forced to be finished
+     * @param int $slot the number used to identify this question within this usage.
+     * @param bool $finished whether the question attempt should be forced to be finished
      *      after the regrade, or whether it may still be in progress (default false).
      * @param number $newmaxmark (optional) if given, will change the max mark while regrading.
      */
@@ -1167,7 +1175,7 @@ class question_usage_by_activity {
 
     /**
      * Regrade all the questions in this usage (without changing their max mark).
-     * @param boolean $finished whether each question should be forced to be finished
+     * @param bool $finished whether each question should be forced to be finished
      *      after the regrade, or whether it may still be in progress (default false).
      */
     public function regrade_all_questions($finished = false) {
@@ -1182,7 +1190,7 @@ class question_usage_by_activity {
      * For internal use only.
      *
      * @param array $records Raw records loaded from the database.
-     * @param integer $questionattemptid The id of the question_attempt to extract.
+     * @param int $questionattemptid The id of the question_attempt to extract.
      * @return question_attempt The newly constructed question_attempt_step.
      */
     public static function load_from_records(&$records, $qubaid) {
@@ -1248,7 +1256,7 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
     public function current() {
         return $this->offsetGet(current($this->slots));
     }
-    /** @return integer */
+    /** @return int */
     public function key() {
         return current($this->slots);
     }
@@ -1258,12 +1266,12 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
     public function rewind() {
         reset($this->slots);
     }
-    /** @return boolean */
+    /** @return bool */
     public function valid() {
         return current($this->slots) !== false;
     }
 
-    /** @return boolean */
+    /** @return bool */
     public function offsetExists($slot) {
         return in_array($slot, $this->slots);
     }
@@ -1379,7 +1387,7 @@ class question_attempt {
      * indirectly, by calling {@link question_usage_by_activity::add_question()}.
      *
      * @param question_definition $question the question this is an attempt at.
-     * @param integer|string $usageid The id of the
+     * @param int|string $usageid The id of the
      *      {@link question_usage_by_activity} we belong to. Used by {@link get_field_prefix()}.
      * @param question_usage_observer $observer tracks changes to the useage this
      *      attempt is part of. (Optional, a {@link question_usage_null_observer} is
@@ -1411,19 +1419,19 @@ class question_attempt {
     /**
      * Set the number used to identify this question_attempt within the usage.
      * For internal use only.
-     * @param integer $slot
+     * @param int $slot
      */
     public function set_number_in_usage($slot) {
         $this->slot = $slot;
     }
 
-    /** @return integer the number used to identify this question_attempt within the usage. */
+    /** @return int the number used to identify this question_attempt within the usage. */
     public function get_slot() {
         return $this->slot;
     }
 
     /**
-     * @return integer the id of row for this question_attempt, if it is stored in the
+     * @return int the id of row for this question_attempt, if it is stored in the
      * database. null if not.
      */
     public function get_database_id() {
@@ -1432,14 +1440,14 @@ class question_attempt {
 
     /**
      * For internal use only. Set the id of the corresponding database row.
-     * @param integer $id the id of row for this question_attempt, if it is
+     * @param int $id the id of row for this question_attempt, if it is
      * stored in the database.
      */
     public function set_database_id($id) {
         $this->id = $id;
     }
 
-    /** @return integer|string the id of the {@link question_usage_by_activity} we belong to. */
+    /** @return int|string the id of the {@link question_usage_by_activity} we belong to. */
     public function get_usage_id() {
         return $this->usageid;
     }
@@ -1447,7 +1455,7 @@ class question_attempt {
     /**
      * Set the id of the {@link question_usage_by_activity} we belong to.
      * For internal use only.
-     * @param integer|string the new id.
+     * @param int|string the new id.
      */
     public function set_usage_id($usageid) {
         $this->usageid = $usageid;
@@ -1468,14 +1476,14 @@ class question_attempt {
 
     /**
      * Set the flagged state of this question.
-     * @param boolean $flagged the new state.
+     * @param bool $flagged the new state.
      */
     public function set_flagged($flagged) {
         $this->flagged = $flagged;
         $this->observer->notify_attempt_modified($this);
     }
 
-    /** @return boolean whether this question is currently flagged. */
+    /** @return bool whether this question is currently flagged. */
     public function is_flagged() {
         return $this->flagged;
     }
@@ -1548,7 +1556,7 @@ class question_attempt {
     /**
      * Get one of the steps in this attempt.
      * For internal/test code use only.
-     * @param integer $i the step number.
+     * @param int $i the step number.
      * @return question_attempt_step
      */
     public function get_step($i) {
@@ -1561,7 +1569,7 @@ class question_attempt {
     /**
      * Get the number of steps in this attempt.
      * For internal/test code use only.
-     * @return integer the number of steps we currently have.
+     * @return int the number of steps we currently have.
      */
     public function get_num_steps() {
         return count($this->steps);
@@ -1674,7 +1682,7 @@ class question_attempt {
     }
 
     /**
-     * @param boolean $showcorrectness Whether right/partial/wrong states should
+     * @param bool $showcorrectness Whether right/partial/wrong states should
      * be distinguised.
      * @return string A brief textual description of the current state.
      */
@@ -1683,7 +1691,7 @@ class question_attempt {
     }
 
     /**
-     * @return integer the timestamp of the most recent step in this question attempt.
+     * @return int the timestamp of the most recent step in this question attempt.
      */
     public function get_last_action_time() {
         return $this->get_last_step()->get_timecreated();
@@ -1698,7 +1706,7 @@ class question_attempt {
         return $this->get_last_step()->get_fraction();
     }
 
-    /** @return boolean whether this question attempt has a non-zero maximum mark. */
+    /** @return bool whether this question attempt has a non-zero maximum mark. */
     public function has_marks() {
         // Since grades are stored in the database as NUMBER(12,7).
         return $this->maxmark >= 0.00000005;
@@ -1755,7 +1763,7 @@ class question_attempt {
     /**
      * The current mark, formatted to the stated number of decimal places. Uses
      * {@link format_float()} to format floats according to the current locale.
-     * @param integer $dp number of decimal places.
+     * @param int $dp number of decimal places.
      * @return string formatted mark.
      */
     public function format_mark($dp) {
@@ -1765,7 +1773,7 @@ class question_attempt {
     /**
      * The current mark, formatted to the stated number of decimal places. Uses
      * {@link format_float()} to format floats according to the current locale.
-     * @param integer $dp number of decimal places.
+     * @param int $dp number of decimal places.
      * @return string formatted mark.
      */
     public function format_fraction_as_mark($fraction, $dp) {
@@ -1776,7 +1784,7 @@ class question_attempt {
      * The maximum mark for this question attempt, formatted to the stated number
      * of decimal places. Uses {@link format_float()} to format floats according
      * to the current locale.
-     * @param integer $dp number of decimal places.
+     * @param int $dp number of decimal places.
      * @return string formatted maximum mark.
      */
     public function format_max_mark($dp) {
@@ -1806,7 +1814,7 @@ class question_attempt {
      * @param string $text the content to output.
      * @param string $component the component name (normally 'question' or 'qtype_...')
      * @param string $filearea the name of the file area.
-     * @param integer $itemid the item id.
+     * @param int $itemid the item id.
      */
     public function rewrite_pluginfile_urls($text, $component, $filearea, $itemid) {
         return question_rewrite_question_urls($text,
@@ -1843,7 +1851,7 @@ class question_attempt {
      * Like {@link render_question()} but displays the question at the past step
      * indicated by $seq, rather than showing the latest step.
      *
-     * @param integer $seq the seq number of the past state to display.
+     * @param int $seq the seq number of the past state to display.
      * @param question_display_options $options controls how the question is rendered.
      * @param string|null $number The question number to display. 'i' is a special
      *      value that gets displayed as Information. Null means no number is displayed.
@@ -1860,8 +1868,8 @@ class question_attempt {
      * @param string $component the name of the component we are serving files for.
      * @param string $filearea the name of the file area.
      * @param array $args the remaining bits of the file path.
-     * @param boolean $forcedownload whether the user must be forced to download the file.
-     * @return boolean true if the user can access this file.
+     * @param bool $forcedownload whether the user must be forced to download the file.
+     * @return bool true if the user can access this file.
      */
     public function check_file_access($options, $component, $filearea, $args, $forcedownload) {
         return $this->behaviour->check_file_access($options, $component, $filearea, $args, $forcedownload);
@@ -1943,7 +1951,7 @@ class question_attempt {
      * {@link optional_param()}, except that the results is returned without
      * slashes.
      * @param string $name the paramter name.
-     * @param integer $type one of the PARAM_... constants.
+     * @param int $type one of the PARAM_... constants.
      * @param array $postdata (optional, only inteded for testing use) take the
      *      data from this array, instead of from $_POST.
      * @return mixed the requested value.
@@ -2082,8 +2090,8 @@ class question_attempt {
     /**
      * Perform the action described by $submitteddata.
      * @param array $submitteddata the submitted data the determines the action.
-     * @param integer $timestamp the time to record for the action. (If not given, use now.)
-     * @param integer $userid the user to attribute the aciton to. (If not given, use the current user.)
+     * @param int $timestamp the time to record for the action. (If not given, use now.)
+     * @param int $userid the user to attribute the aciton to. (If not given, use the current user.)
      */
     public function process_action($submitteddata, $timestamp = null, $userid = null) {
         $pendingstep = new question_attempt_pending_step($submitteddata, $timestamp, $userid);
@@ -2101,8 +2109,8 @@ class question_attempt {
      * in the quiz, rather than using one of the controls that is part of the
      * question.
      *
-     * @param integer $timestamp the time to record for the action. (If not given, use now.)
-     * @param integer $userid the user to attribute the aciton to. (If not given, use the current user.)
+     * @param int $timestamp the time to record for the action. (If not given, use now.)
+     * @param int $userid the user to attribute the aciton to. (If not given, use the current user.)
      */
     public function finish($timestamp = null, $userid = null) {
         $this->process_action(array('-finish' => 1), $timestamp, $userid);
@@ -2112,7 +2120,7 @@ class question_attempt {
      * Perform a regrade. This replays all the actions from $oldqa into this
      * attempt.
      * @param question_attempt $oldqa the attempt to regrade.
-     * @param boolean $finished whether the question attempt should be forced to be finished
+     * @param bool $finished whether the question attempt should be forced to be finished
      *      after the regrade, or whether it may still be in progress (default false).
      */
     public function regrade(question_attempt $oldqa, $finished) {
@@ -2136,8 +2144,8 @@ class question_attempt {
      * Perform a manual grading action on this attempt.
      * @param $comment the comment being added.
      * @param $mark the new mark. (Optional, if not given, then only a comment is added.)
-     * @param integer $timestamp the time to record for the action. (If not given, use now.)
-     * @param integer $userid the user to attribute the aciton to. (If not given, use the current user.)
+     * @param int $timestamp the time to record for the action. (If not given, use now.)
+     * @param int $userid the user to attribute the aciton to. (If not given, use the current user.)
      * @return unknown_type
      */
     public function manual_grade($comment, $mark, $timestamp = null, $userid = null) {
@@ -2149,7 +2157,7 @@ class question_attempt {
         $this->process_action($submitteddata, $timestamp, $userid);
     }
 
-    /** @return boolean Whether this question attempt has had a manual comment added. */
+    /** @return bool Whether this question attempt has had a manual comment added. */
     public function has_manual_comment() {
         foreach ($this->steps as $step) {
             if ($step->has_behaviour_var('comment')) {
@@ -2190,7 +2198,7 @@ class question_attempt {
      * For internal use only.
      *
      * @param array $records Raw records loaded from the database.
-     * @param integer $questionattemptid The id of the question_attempt to extract.
+     * @param int $questionattemptid The id of the question_attempt to extract.
      * @return question_attempt The newly constructed question_attempt_step.
      */
     public static function load_from_records(&$records, $questionattemptid,
@@ -2249,7 +2257,7 @@ class question_attempt {
  *
  * All methods that try to modify the question_attempt throw exceptions.
  *
- * @copyright 2010 The Open University
+ * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_attempt_with_restricted_history extends question_attempt {
@@ -2261,7 +2269,7 @@ class question_attempt_with_restricted_history extends question_attempt {
     /**
      * Create a question_attempt_with_restricted_history
      * @param question_attempt $baseqa The question_attempt to make a restricted version of.
-     * @param integer $lastseq the index of the last step to include.
+     * @param int $lastseq the index of the last step to include.
      * @param string $preferredbehaviour the preferred behaviour. It is slightly
      *      annoyting that this needs to be passed, but unavoidable for now.
      */
@@ -2352,7 +2360,7 @@ class question_attempt_step_iterator implements Iterator, ArrayAccess {
     public function current() {
         return $this->offsetGet($this->i);
     }
-    /** @return integer */
+    /** @return int */
     public function key() {
         return $this->i;
     }
@@ -2362,12 +2370,12 @@ class question_attempt_step_iterator implements Iterator, ArrayAccess {
     public function rewind() {
         $this->i = 0;
     }
-    /** @return boolean */
+    /** @return bool */
     public function valid() {
         return $this->offsetExists($this->i);
     }
 
-    /** @return boolean */
+    /** @return bool */
     public function offsetExists($i) {
         return $i >= 0 && $i < $this->qa->get_num_steps();
     }
@@ -2462,8 +2470,8 @@ class question_attempt_step {
      * normally created by {@link question_attempt} methods like
      * {@link question_attempt::process_action()}.
      * @param array $data the submitted data that defines this step.
-     * @param integer $timestamp the time to record for the action. (If not given, use now.)
-     * @param integer $userid the user to attribute the aciton to. (If not given, use the current user.)
+     * @param int $timestamp the time to record for the action. (If not given, use now.)
+     * @param int $userid the user to attribute the aciton to. (If not given, use the current user.)
      */
     public function __construct($data = array(), $timecreated = null, $userid = null) {
         global $USER;
@@ -2510,19 +2518,19 @@ class question_attempt_step {
         $this->fraction = $fraction;
     }
 
-    /** @return integer the id of the user resonsible for creating this step. */
+    /** @return int the id of the user resonsible for creating this step. */
     public function get_user_id() {
         return $this->userid;
     }
 
-    /** @return integer the timestamp when this step was created. */
+    /** @return int the timestamp when this step was created. */
     public function get_timecreated() {
         return $this->timecreated;
     }
 
     /**
      * @param string $name the name of a question type variable to look for in the submitted data.
-     * @return boolean whether a variable with this name exists in the question type data.
+     * @return bool whether a variable with this name exists in the question type data.
      */
     public function has_qt_var($name) {
         return array_key_exists($name, $this->data);
@@ -2567,7 +2575,7 @@ class question_attempt_step {
 
     /**
      * @param string $name the name of an behaviour variable to look for in the submitted data.
-     * @return boolean whether a variable with this name exists in the question type data.
+     * @return bool whether a variable with this name exists in the question type data.
      */
     public function has_behaviour_var($name) {
         return array_key_exists('-' . $name, $this->data);
@@ -2643,7 +2651,7 @@ class question_attempt_step {
     /**
      * Create a question_attempt_step from records loaded from the database.
      * @param array $records Raw records loaded from the database.
-     * @param integer $stepid The id of the records to extract.
+     * @param int $stepid The id of the records to extract.
      * @return question_attempt_step The newly constructed question_attempt_step.
      */
     public static function load_from_records(&$records, $attemptstepid) {
@@ -2677,7 +2685,7 @@ class question_attempt_step {
 /**
  * A subclass with a bit of additional funcitonality, for pending steps.
  *
- * @copyright 2010 The Open University
+ * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_attempt_pending_step extends question_attempt_step {
@@ -2828,7 +2836,7 @@ abstract class question_utils {
      * not have to be the same.
      * @param array $array1 the first array.
      * @param array $array2 the second array.
-     * @return boolean whether the two arrays have the same keys with the same
+     * @return bool whether the two arrays have the same keys with the same
      *      corresponding values.
      */
     public static function arrays_have_same_keys_and_values(array $array1, array $array2) {
@@ -2855,7 +2863,7 @@ abstract class question_utils {
      * @param array $array1 the first array.
      * @param array $array2 the second array.
      * @param string $key an array key.
-     * @return boolean whether the two arrays have the same value (or lack of
+     * @return bool whether the two arrays have the same value (or lack of
      *      one) for a given key.
      */
     public static function arrays_same_at_key(array $array1, array $array2, $key) {
@@ -2875,7 +2883,7 @@ abstract class question_utils {
      * @param array $array1 the first array.
      * @param array $array2 the second array.
      * @param string $key an array key.
-     * @return boolean whether the two arrays have the same value (or lack of
+     * @return bool whether the two arrays have the same value (or lack of
      *      one) for a given key.
      */
     public static function arrays_same_at_key_missing_is_blank(
@@ -2900,7 +2908,7 @@ abstract class question_utils {
      * @param array $array1 the first array.
      * @param array $array2 the second array.
      * @param string $key an array key.
-     * @return boolean whether the two arrays have the same value (or lack of
+     * @return bool whether the two arrays have the same value (or lack of
      *      one) for a given key.
      */
     public static function arrays_same_at_key_integer(
@@ -2925,7 +2933,7 @@ abstract class question_utils {
 
     /**
      * Convert an integer to roman numerals.
-     * @param integer $number an integer between 1 and 3999 inclusive. Anything else will throw an exception.
+     * @param int $number an integer between 1 and 3999 inclusive. Anything else will throw an exception.
      * @return string the number converted to lower case roman numerals.
      */
     public static function int_to_roman($number) {

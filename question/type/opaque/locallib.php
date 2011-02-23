@@ -70,7 +70,7 @@ function qtype_opaque_format_soap_fault($fault) {
 class qtype_opaque_engine_manager {
     /**
      * Load the definition of an engine from the database.
-     * @param integer $engineid the id of the engine to load.
+     * @param int $engineid the id of the engine to load.
      * @return mixed On success, and object with fields id, name, questionengines and questionbanks.
      * The last two fields are arrays of URLs. On an error, returns a string to look up in the
      * qtype_opaque language file as an error message.
@@ -102,7 +102,7 @@ class qtype_opaque_engine_manager {
      * will be created if $engine->id is not set, and updated if it is.
      *
      * @param object $engine the definition to save.
-     * @return integer the id of the saved definition.
+     * @return int the id of the saved definition.
      */
     public function save_engine_def($engine) {
         global $DB;
@@ -141,8 +141,8 @@ class qtype_opaque_engine_manager {
 
     /**
      * Delete the definition of an engine from the database.
-     * @param integer $engineid the id of the engine to delete.
-     * @return boolean whether the delete succeeded.
+     * @param int $engineid the id of the engine to delete.
+     * @return bool whether the delete succeeded.
      */
     public function delete_engine_def($engineid) {
         global $DB;
@@ -186,7 +186,7 @@ class qtype_opaque_engine_manager {
      * return the new engine id.
      *
      * @param object $engine the engine to ensure is in the databse.
-     * @return integer its id.
+     * @return int its id.
      */
     public function find_or_create_engineid($engine) {
         $possibleengineids = $this->get_possibly_matching_engines($engine);
@@ -210,7 +210,7 @@ class qtype_opaque_engine_manager {
      *
      * @param object $engine1 one engine definition.
      * @param object $engine2 another engine definition.
-     * @return boolean whether they are the same.
+     * @return bool whether they are the same.
      */
     public function is_same_engine($engine1, $engine2) {
         // Same passkey.
@@ -227,7 +227,7 @@ class qtype_opaque_engine_manager {
 
 /**
  * Load the definition of an engine from the database.
- * @param integer $engineid the id of the engine to load.
+ * @param int $engineid the id of the engine to load.
  * @return mixed On success, and object with fields id, name, questionengines and questionbanks.
  * The last two fields are arrays of URLs. On an error, returns a string to look up in the
  * qtype_opaque language file as an error message.
@@ -242,7 +242,7 @@ function qtype_opaque_load_engine_def($engineid) {
  * will be created if $engine->id is not set, and updated if it is.
  *
  * @param object $engine the definition to save.
- * @return integer the id of the saved definition.
+ * @return int the id of the saved definition.
  */
 function qtype_opaque_save_engine_def($engine) {
     $manager = new qtype_opaque_engine_manager();
@@ -251,8 +251,8 @@ function qtype_opaque_save_engine_def($engine) {
 
 /**
  * Delete the definition of an engine from the database.
- * @param integer $engineid the id of the engine to delete.
- * @return boolean whether the delete succeeded.
+ * @param int $engineid the id of the engine to delete.
+ * @return bool whether the delete succeeded.
  */
 function qtype_opaque_delete_engine_def($engineid) {
     $manager = new qtype_opaque_engine_manager();
@@ -265,7 +265,7 @@ function qtype_opaque_delete_engine_def($engineid) {
  * return the new engine id.
  *
  * @param object $engine the engine to ensure is in the databse.
- * @return integer its id.
+ * @return int its id.
  */
 function qtype_opaque_find_or_create_engineid($engine) {
     $manager = new qtype_opaque_engine_manager();
@@ -363,7 +363,7 @@ function qtype_opaque_stop_question_session($engine, $questionsessionid) {
 /**
  * Get a step from $qa, as if $pendingstep had already been added at the end
  * of the list, if it is not null.
- * @param integer $seq
+ * @param int $seq
  * @param question_attempt $qa
  * @param question_attempt_step|null $pendingstep
  * @return question_attempt_step
@@ -657,7 +657,7 @@ class qtype_opaque_resource_cache {
 
     /**
      * Create a new qtype_opaque_resource_cache for a particular remote question.
-     * @param integer $engineid the id of the question engine.
+     * @param int $engineid the id of the question engine.
      * @param string $remoteid remote question id, as per Opaque spec.
      * @param string $remoteversion remote question version, as per Opaque spec.
      */
@@ -811,7 +811,7 @@ class qtype_opaque_resource_cache {
      * Safe to call even if folder already exists (checks)
      * @param string $folder Folder to create
      * @param int $mode Mode for creation (default 0755)
-     * @return boolean True if folder (now) exists, false if there was a failure
+     * @return bool True if folder (now) exists, false if there was a failure
      */
     protected function mkdir_recursive($folder, $mode='') {
         if (is_dir($folder)) {

@@ -62,7 +62,7 @@ class qbehaviour_interactive extends question_behaviour_with_save {
     }
 
     /**
-     * @return boolean are we are currently in the try_again state.
+     * @return bool are we are currently in the try_again state.
      */
     protected function is_try_again_state() {
         $laststep = $this->qa->get_last_step();

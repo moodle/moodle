@@ -156,7 +156,7 @@ class qtype_match_question extends question_graded_automatically_with_countback 
     }
 
     /**
-     * @param integer $key stem number
+     * @param int $key stem number
      * @return string the question-type variable name.
      */
     protected function field($key) {

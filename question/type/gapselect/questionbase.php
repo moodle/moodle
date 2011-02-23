@@ -161,7 +161,7 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
     }
 
     /**
-     * @param integer $key stem number
+     * @param int $key stem number
      * @return string the question-type variable name.
      */
     public function field($place) {

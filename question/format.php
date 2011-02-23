@@ -58,12 +58,12 @@ class qformat_default {
 // functions to indicate import/export functionality
 // override to return true if implemented
 
-    /** @return boolean whether this plugin provides import functionality. */
+    /** @return bool whether this plugin provides import functionality. */
     function provide_import() {
         return false;
     }
 
-    /** @return boolean whether this plugin provides export functionality. */
+    /** @return bool whether this plugin provides export functionality. */
     function provide_export() {
         return false;
     }
@@ -190,7 +190,7 @@ class qformat_default {
     }
 
     /**
-     * @param boolean $canaccess Whether the current use can access the backup data folder. Determines
+     * @param bool $canaccess Whether the current use can access the backup data folder. Determines
      * where export files are saved.
      */
     function set_can_access_backupdata($canaccess) {
@@ -260,7 +260,7 @@ class qformat_default {
 
     /**
      * Perform any required pre-processing
-     * @return boolean success
+     * @return bool success
      */
     function importpreprocess() {
         return true;
@@ -270,7 +270,7 @@ class qformat_default {
      * Process the file
      * This method should not normally be overidden
      * @param object $category
-     * @return boolean success
+     * @return bool success
      */
     function importprocess($category) {
         global $USER, $CFG, $DB, $OUTPUT, $QTYPES;
@@ -606,7 +606,7 @@ class qformat_default {
 
     /**
      * Override if any post-processing is required
-     * @return boolean success
+     * @return bool success
      */
     function importpostprocess() {
         return true;
@@ -645,7 +645,7 @@ class qformat_default {
 
     /**
      * Do any pre-processing that may be required
-     * @param boolean success
+     * @param bool success
      */
     function exportpreprocess() {
         return true;
@@ -822,7 +822,7 @@ class qformat_default {
 
     /**
      * Do an post-processing that may be required
-     * @return boolean success
+     * @return bool success
      */
     function exportpostprocess() {
         return true;

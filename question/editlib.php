@@ -18,10 +18,10 @@
 /**
  * Functions used to show question editing interface
  *
- * @package moodlecore
+ * @package    moodlecore
  * @subpackage questionbank
- * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  1999 onwards Martin Dougiamas and others {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -93,8 +93,8 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
 }
 
 /**
- * @param integer $categoryid a category id.
- * @return boolean whether this is the only top-level category in a context.
+ * @param int $categoryid a category id.
+ * @return bool whether this is the only top-level category in a context.
  */
 function question_is_only_toplevel_category_in_context($categoryid) {
     global $DB;
@@ -110,7 +110,7 @@ function question_is_only_toplevel_category_in_context($categoryid) {
 /**
  * Check whether this user is allowed to delete this category.
  *
- * @param integer $todelete a category id.
+ * @param int $todelete a category id.
  */
 function question_can_delete_cat($todelete) {
     global $DB;
@@ -122,6 +122,13 @@ function question_can_delete_cat($todelete) {
     }
 }
 
+
+/**
+ * Base class for representing a column in a {@link question_bank_view}.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 abstract class question_bank_column_base {
     /**
      * @var question_bank_view
@@ -150,7 +157,7 @@ abstract class question_bank_column_base {
 
     /**
      * Output the column header cell.
-     * @param integer $currentsort 0 for none. 1 for normal sort, -1 for reverse sort.
+     * @param int $currentsort 0 for none. 1 for normal sort, -1 for reverse sort.
      */
     public function display_header() {
         echo '<th class="header ' . $this->get_classes() . '" scope="col">';
@@ -336,7 +343,7 @@ abstract class question_bank_column_base {
 
     /**
      * Helper method for building sort clauses.
-     * @param boolean $reverse whether the normal direction should be reversed.
+     * @param bool $reverse whether the normal direction should be reversed.
      * @param string $normaldir 'ASC' or 'DESC'
      * @return string 'ASC' or 'DESC'
      */
@@ -370,8 +377,12 @@ abstract class question_bank_column_base {
     }
 }
 
+
 /**
  * A column with a checkbox for each question with name q{questionid}.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_checkbox_column extends question_bank_column_base {
     protected $strselect;
@@ -409,8 +420,12 @@ class question_bank_checkbox_column extends question_bank_column_base {
     }
 }
 
+
 /**
  * A column type for the name of the question type.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_question_type_column extends question_bank_column_base {
     public function get_name() {
@@ -438,8 +453,12 @@ class question_bank_question_type_column extends question_bank_column_base {
     }
 }
 
+
 /**
  * A column type for the name of the question name.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_question_name_column extends question_bank_column_base {
     protected $checkboxespresent = null;
@@ -483,8 +502,12 @@ class question_bank_question_name_column extends question_bank_column_base {
     }
 }
 
+
 /**
  * A column type for the name of the question creator.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_creator_name_column extends question_bank_column_base {
     public function get_name() {
@@ -520,8 +543,12 @@ class question_bank_creator_name_column extends question_bank_column_base {
     }
 }
 
+
 /**
  * A column type for the name of the question last modifier.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_modifier_name_column extends question_bank_column_base {
     public function get_name() {
@@ -557,8 +584,12 @@ class question_bank_modifier_name_column extends question_bank_column_base {
     }
 }
 
+
 /**
  * A base class for actions that are an icon that lets you manipulate the question in some way.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class question_bank_action_column_base extends question_bank_column_base {
 
@@ -581,6 +612,13 @@ abstract class question_bank_action_column_base extends question_bank_column_bas
     }
 }
 
+
+/**
+ * Base class for question bank columns that just contain an action icon.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_bank_edit_action_column extends question_bank_action_column_base {
     protected $stredit;
     protected $strview;
@@ -605,6 +643,13 @@ class question_bank_edit_action_column extends question_bank_action_column_base 
     }
 }
 
+
+/**
+ * Question bank columns for the preview action icon.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_bank_preview_action_column extends question_bank_action_column_base {
     protected $strpreview;
 
@@ -636,6 +681,13 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
     }
 }
 
+
+/**
+ * Question bank columns for the move action icon.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_bank_move_action_column extends question_bank_action_column_base {
     protected $strmove;
 
@@ -655,8 +707,12 @@ class question_bank_move_action_column extends question_bank_action_column_base 
     }
 }
 
+
 /**
  * action to delete (or hide) a question, or restore a previously hidden question.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_delete_action_column extends question_bank_action_column_base {
     protected $strdelete;
@@ -691,6 +747,9 @@ class question_bank_delete_action_column extends question_bank_action_column_bas
 
 /**
  * Base class for 'columns' that are actually displayed as a row following the main question row.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class question_bank_row_base extends question_bank_column_base {
     public function is_extra_row() {
@@ -713,6 +772,9 @@ abstract class question_bank_row_base extends question_bank_column_base {
 
 /**
  * A column type for the name of the question name.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_question_text_row extends question_bank_row_base {
     protected $formatoptions;
@@ -761,6 +823,9 @@ class question_bank_question_text_row extends question_bank_row_base {
  *  + generating the right fragments of SQL to ensure the necessary data is present,
  *    and sorted in the right order.
  *  + outputting table headers.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_view {
     const MAX_SORTS = 3;
@@ -865,14 +930,14 @@ class question_bank_view {
 
     /**
      * @param string $colname a column internal name.
-     * @return boolean is this column included in the output?
+     * @return bool is this column included in the output?
      */
     public function has_column($colname) {
         return isset($this->visiblecolumns[$colname]);
     }
 
     /**
-     * @return integer The number of columns in the table.
+     * @return int The number of columns in the table.
      */
     public function get_column_count() {
         return count($this->visiblecolumns);
@@ -961,7 +1026,7 @@ class question_bank_view {
 
     /**
      * @param $sort a column or column_subsort name.
-     * @return integer the current sort order for this column -1, 0, 1
+     * @return int the current sort order for this column -1, 0, 1
      */
     public function get_primary_sort_order($sort) {
         $order = reset($this->sort);
@@ -976,7 +1041,7 @@ class question_bank_view {
     /**
      * Get a URL to redisplay the page with a new sort for the question bank.
      * @param string $sort the column, or column_subsort to sort on.
-     * @param boolean $newsortreverse whether to sort in reverse order.
+     * @param bool $newsortreverse whether to sort in reverse order.
      * @return string The new URL.
      */
     public function new_sort_url($sort, $newsortreverse) {
@@ -1222,8 +1287,8 @@ class question_bank_view {
     * @param int $recurse     This is 1 if subcategories should be included, 0 otherwise
     * @param int $page        The number of the page to be displayed
     * @param int $perpage     Number of questions to show per page
-    * @param boolean $showhidden   True if also hidden questions should be displayed
-    * @param boolean $showquestiontext whether the text of each question should be shown in the list
+    * @param bool $showhidden   True if also hidden questions should be displayed
+    * @param bool $showquestiontext whether the text of each question should be shown in the list
     */
     protected function display_question_list($contexts, $pageurl, $categoryandcontext,
             $cm = null, $recurse=1, $page=0, $perpage=100, $showhidden=false,
@@ -1489,8 +1554,8 @@ class question_bank_view {
  * Common setup for all pages for editing questions.
  * @param string $baseurl the name of the script calling this funciton. For examle 'qusetion/edit.php'.
  * @param string $edittab code for this edit tab
- * @param boolean $requirecmid require cmid? default false
- * @param boolean $requirecourseid require courseid, if cmid is not given? default true
+ * @param bool $requirecmid require cmid? default false
+ * @param bool $requirecourseid require courseid, if cmid is not given? default true
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
 function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirecourseid = true) {
@@ -1737,12 +1802,12 @@ function print_qtype_to_add_option($qtype) {
  * which in turn goes to question/question.php before getting back to $params['returnurl']
  * (by default the question bank screen).
  *
- * @param integer $categoryid The id of the category that the new question should be added to.
+ * @param int $categoryid The id of the category that the new question should be added to.
  * @param array $params Other paramters to add to the URL. You need either $params['cmid'] or
  *      $params['courseid'], and you should probably set $params['returnurl']
  * @param string $caption the text to display on the button.
  * @param string $tooltip a tooltip to add to the button (optional).
- * @param boolean $disabled if true, the button will be disabled.
+ * @param bool $disabled if true, the button will be disabled.
  */
 function create_new_question_button($categoryid, $params, $caption, $tooltip = '', $disabled = false) {
     global $CFG, $PAGE, $OUTPUT;

@@ -56,9 +56,9 @@ class quiz_report_statistics_table extends flexible_table {
      * call flexible_table::setup() method.
      *
      * @param object $quiz the quiz settings
-     * @param integer $cmid the quiz course_module id
+     * @param int $cmid the quiz course_module id
      * @param moodle_url $reporturl the URL to redisplay this report.
-     * @param integer $s number of attempts included in the statistics.
+     * @param int $s number of attempts included in the statistics.
      */
     function setup($quiz, $cmid, $reporturl, $s) {
         $this->quiz = $quiz;
@@ -326,7 +326,7 @@ class quiz_report_statistics_table extends flexible_table {
      * This method encapsulates the test for wheter a question should be considered dubious.
      * @param object question the question object with a property _stats which
      * includes all the stats for the question.
-     * @return boolean is this question possibly not pulling it's weight?
+     * @return bool is this question possibly not pulling it's weight?
      */
     protected function is_dubious_question($question) {
         if (!is_numeric($question->_stats->discriminativeefficiency)) {

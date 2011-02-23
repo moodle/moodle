@@ -82,8 +82,8 @@ class question_engine_assumption_logger {
  * This class manages upgrading all the question attempts from the old database
  * structure to the new question engine.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_engine_attempt_upgrader {
     /** @var question_engine_upgrade_question_loader */
@@ -495,8 +495,8 @@ class question_engine_attempt_upgrader {
  * This class deals with loading (and caching) question definitions during the
  * question engine upgrade.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_engine_upgrade_question_loader {
     private $cache = array();

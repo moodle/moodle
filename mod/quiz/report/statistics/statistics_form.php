@@ -33,8 +33,8 @@ require_once($CFG->libdir . '/formslib.php');
 /**
  * This is the settings form for the quiz statistics report.
  *
- * @copyright 2008 Jamie Pratt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2008 Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_statistics_settings_form extends moodleform {
     function definition() {

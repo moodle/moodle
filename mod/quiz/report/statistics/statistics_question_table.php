@@ -38,8 +38,8 @@ require_once($CFG->libdir . '/tablelib.php');
  * The responses may be grouped, either by subpart of the question, or by the
  * answer they match.
  *
- * @copyright 2008 Jamie Pratt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2008 Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_report_statistics_question_table extends flexible_table {
     /** @var object this question with a _stats field. */
@@ -60,7 +60,7 @@ class quiz_report_statistics_question_table extends flexible_table {
      *
      * @param moodle_url $reporturl the URL to redisplay this report.
      * @param object $question a question with a _stats field
-     * @param boolean $hassubqs
+     * @param bool $hassubqs
      */
     public function setup($reporturl, $questiondata, quiz_statistics_response_analyser $responesstats) {
         $this->questiondata = $questiondata;

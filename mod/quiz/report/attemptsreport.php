@@ -35,8 +35,8 @@ require_once($CFG->libdir.'/tablelib.php');
 /**
  * Base class for quiz reports that are basically a table with one row for each attempt.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class quiz_attempt_report extends quiz_default_report {
     /** @var object the quiz context. */
@@ -49,7 +49,7 @@ abstract class quiz_attempt_report extends quiz_default_report {
      * Should the grades be displayed in this report. That depends on the quiz
      * display options, and whether the quiz is graded.
      * @param object $quiz the quiz settings.
-     * @return boolean
+     * @return bool
      */
     protected function should_show_grades($quiz) {
         if (!is_null($this->showgrades)) {
@@ -108,10 +108,10 @@ abstract class quiz_attempt_report extends quiz_default_report {
 
     /**
      * Alters $attemptsmode and $pagesize if the current values are inappropriate.
-     * @param integer $attemptsmode what sort of attemtps to display (may be updated)
-     * @param integer $pagesize number of records to display per page (may be updated)
+     * @param int $attemptsmode what sort of attemtps to display (may be updated)
+     * @param int $pagesize number of records to display per page (may be updated)
      * @param object $course the course settings.
-     * @param integer $currentgroup the currently selected group. 0 for none.
+     * @param int $currentgroup the currently selected group. 0 for none.
      */
     protected function validate_common_options(&$attemptsmode, &$pagesize, $course, $currentgroup) {
         if ($currentgroup) {
@@ -136,8 +136,8 @@ abstract class quiz_attempt_report extends quiz_default_report {
      * Contruct all the parts of the main database query.
      * @param object $quiz the quiz settings.
      * @param string $qmsubselect SQL fragment from {@link quiz_report_qm_filter_select()}.
-     * @param boolean $qmfilter whether to show all, or only the final grade attempt.
-     * @param integer $attemptsmode which attemtps to show. One of the QUIZ_REPORT_ATTEMPTS_... constants.
+     * @param bool $qmfilter whether to show all, or only the final grade attempt.
+     * @param int $attemptsmode which attemtps to show. One of the QUIZ_REPORT_ATTEMPTS_... constants.
      * @param array $reportstudents list if userids of users to include in the report.
      * @return array with 4 elements ($fields, $from, $where, $params) that can be used to
      *      build the actual database query.
@@ -312,7 +312,7 @@ abstract class quiz_attempt_report extends quiz_default_report {
      * @param array $headers the columns headings.
      * @param moodle_url $reporturl the URL of this report.
      * @param array $displayoptions the display options.
-     * @param boolean $collapsible whether to allow columns in the report to be collapsed.
+     * @param bool $collapsible whether to allow columns in the report to be collapsed.
      */
     protected function set_up_table_columns($table, $columns, $headers, $reporturl, $displayoptions, $collapsible) {
         $table->define_columns($columns);
@@ -362,8 +362,8 @@ abstract class quiz_attempt_report extends quiz_default_report {
 /**
  * Base class for the table used by {@link quiz_attempt_report}s.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class quiz_attempt_report_table extends table_sql {
     public $useridfield = 'userid';
@@ -485,7 +485,7 @@ abstract class quiz_attempt_report_table extends table_sql {
      *
      * @param string $data HTML fragment. The text to make into the link.
      * @param object $attempt data for the row of the table being output.
-     * @param integer $slot the number used to identify this question within this usage.
+     * @param int $slot the number used to identify this question within this usage.
      */
     public function make_review_link($data, $attempt, $slot) {
         global $OUTPUT;
@@ -562,7 +562,7 @@ abstract class quiz_attempt_report_table extends table_sql {
     }
 
     /**
-     * @return boolean should {@link query_db()} call {@link load_question_latest_steps}?
+     * @return bool should {@link query_db()} call {@link load_question_latest_steps}?
      */
     protected function requires_latest_steps_loaded() {
         return false;
@@ -572,7 +572,7 @@ abstract class quiz_attempt_report_table extends table_sql {
      * Is this a column that depends on joining to the latest state information?
      * If so, return the corresponding slot. If not, return false.
      * @param string $column a column name
-     * @return integer false if no, else a slot.
+     * @return int false if no, else a slot.
      */
     protected function is_latest_step_column($column) {
         return false;
@@ -580,7 +580,7 @@ abstract class quiz_attempt_report_table extends table_sql {
 
     /**
      * Get any fields that might be needed when sorting on date for a particular slot.
-     * @param integer $slot the slot for the column we want.
+     * @param int $slot the slot for the column we want.
      * @param string $alias the table alias for latest state information relating to that slot.
      */
     protected function get_required_latest_state_fields($slot, $alias) {
@@ -595,7 +595,7 @@ abstract class quiz_attempt_report_table extends table_sql {
      * 'table' with alias qa$slot, with columns that are a union of
      * the columns of the question_attempts and question_attempts_states tables.
      *
-     * @param integer $slot the question to add information for.
+     * @param int $slot the question to add information for.
      */
     protected function add_latest_state_join($slot) {
         $alias = 'qa' . $slot;

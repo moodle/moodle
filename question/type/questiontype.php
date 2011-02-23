@@ -105,7 +105,7 @@ class question_type {
     }
 
     /**
-     * @return boolean override this to return false if this is not really a
+     * @return bool override this to return false if this is not really a
      *      question type, for example the description question type is not
      *      really a question type.
      */
@@ -114,7 +114,7 @@ class question_type {
     }
 
     /**
-     * @return boolean true if this question type sometimes requires manual grading.
+     * @return bool true if this question type sometimes requires manual grading.
      */
     public function is_manual_graded() {
         return false;
@@ -123,14 +123,14 @@ class question_type {
     /**
      * @param object $question a question of this type.
      * @param string $otherquestionsinuse comma-separate list of other question ids in this attempt.
-     * @return boolean true if a particular instance of this question requires manual grading.
+     * @return bool true if a particular instance of this question requires manual grading.
      */
     public function is_question_manual_graded($question, $otherquestionsinuse) {
         return $this->is_manual_graded();
     }
 
     /**
-     * @return boolean true if this question type can be used by the random question type.
+     * @return bool true if this question type can be used by the random question type.
      */
     public function is_usable_by_random() {
         return true;
@@ -144,7 +144,7 @@ class question_type {
      * method, and the question_definition class must implement the
      * classify_response method.
      *
-     * @return boolean whether this report can analyse all the student reponses
+     * @return bool whether this report can analyse all the student reponses
      * for things like the quiz statistics report.
      */
     public function can_analyse_responses() {
@@ -532,7 +532,7 @@ class question_type {
      * @param object $options the $question->options object being built.
      * @param object $formdata the data from the form.
      * @param object $context the context the quetsion is being saved into.
-     * @param boolean $withparts whether $options->shownumcorrect should be set.
+     * @param bool $withparts whether $options->shownumcorrect should be set.
      */
     protected function save_combined_feedback_helper($options, $formdata, $context, $withparts = false) {
         $options->correctfeedback = $this->import_or_save_files($formdata->correctfeedback,
@@ -691,7 +691,7 @@ class question_type {
      * Initialise the combined feedback fields.
      * @param question_definition $question the question_definition we are creating.
      * @param object $questiondata the question data loaded from the database.
-     * @param boolean $withparts whether to set the shownumcorrect field.
+     * @param bool $withparts whether to set the shownumcorrect field.
      */
     protected function initialise_combined_feedback(question_definition $question, $questiondata, $withparts = false) {
         $question->correctfeedback = $questiondata->options->correctfeedback;
@@ -723,8 +723,8 @@ class question_type {
 
     /**
      * Deletes the question-type specific data when a question is deleted.
-     * @param integer $question the question being deleted.
-     * @param integer $contextid the context this quesiotn belongs to.
+     * @param int $question the question being deleted.
+     * @param int $contextid the context this quesiotn belongs to.
      */
     public function delete_question($questionid, $contextid) {
         global $DB;
@@ -758,7 +758,7 @@ class question_type {
     * assigned one number. The 'description' type, however does not use up a
     * number and so has a length of zero. Other question types may wish to
     * handle a bundle of questions and hence return a number greater than one.
-    * @return integer         The number of question numbers which should be
+    * @return int         The number of question numbers which should be
     *                         assigned to the question.
     * @param object $question The question whose length is to be determined.
     *                         Question type specific information is included.
@@ -854,7 +854,7 @@ class question_type {
     *
     * @param object $form  The data submitted by the previous page.
     *
-    * @return boolean      Whether the wizard's last page was submitted or not.
+    * @return bool      Whether the wizard's last page was submitted or not.
     */
     public function finished_edit_wizard($form) {
         //In the default case there is only one edit page.
@@ -993,7 +993,7 @@ class question_type {
      * @param object $context the context the question is in.
      * @param string $component indentifies the file area question.
      * @param string $filearea indentifies the file area questiontext, generalfeedback,answerfeedback.
-     * @param integer $itemid identifies the file area.
+     * @param int $itemid identifies the file area.
      *
      * @return string the text for this field, after files have been processed.
      */
@@ -1014,9 +1014,9 @@ class question_type {
 
     /**
      * Move all the files belonging to this question from one context to another.
-     * @param integer $questionid the question being moved.
-     * @param integer $oldcontextid the context it is moving from.
-     * @param integer $newcontextid the context it is moving to.
+     * @param int $questionid the question being moved.
+     * @param int $oldcontextid the context it is moving from.
+     * @param int $newcontextid the context it is moving to.
      */
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         $fs = get_file_storage();
@@ -1029,10 +1029,10 @@ class question_type {
     /**
      * Move all the files belonging to this question's answers when the question
      * is moved from one context to another.
-     * @param integer $questionid the question being moved.
-     * @param integer $oldcontextid the context it is moving from.
-     * @param integer $newcontextid the context it is moving to.
-     * @param boolean $answerstoo whether there is an 'answer' question area,
+     * @param int $questionid the question being moved.
+     * @param int $oldcontextid the context it is moving from.
+     * @param int $newcontextid the context it is moving to.
+     * @param bool $answerstoo whether there is an 'answer' question area,
      *      as well as an 'answerfeedback' one. Default false.
      */
     protected function move_files_in_answers($questionid, $oldcontextid, $newcontextid, $answerstoo = false) {
@@ -1053,8 +1053,8 @@ class question_type {
 
     /**
      * Delete all the files belonging to this question.
-     * @param integer $questionid the question being deleted.
-     * @param integer $contextid the context the question is in.
+     * @param int $questionid the question being deleted.
+     * @param int $contextid the context the question is in.
      */
     protected function delete_files($questionid, $contextid) {
         $fs = get_file_storage();
@@ -1064,9 +1064,9 @@ class question_type {
 
     /**
      * Delete all the files belonging to this question's answers.
-     * @param integer $questionid the question being deleted.
-     * @param integer $contextid the context the question is in.
-     * @param boolean $answerstoo whether there is an 'answer' question area,
+     * @param int $questionid the question being deleted.
+     * @param int $contextid the context the question is in.
+     * @param bool $answerstoo whether there is an 'answer' question area,
      *      as well as an 'answerfeedback' one. Default false.
      */
     protected function delete_files_in_answers($questionid, $contextid, $answerstoo = false) {

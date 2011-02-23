@@ -44,7 +44,7 @@ define('QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS', 3);
  * including the keys passed as the next param.
  * @param array $keys Array of strings with the names of the properties on the
  * objects in datum that you want to index the multidimensional array by.
- * @param boolean $keysunique If there is not only one object for each
+ * @param bool $keysunique If there is not only one object for each
  * combination of keys you are using you should set $keysunique to true.
  * Otherwise all the object will be added to a zero based array. So the array
  * returned will have count($keys) + 1 indexs.
@@ -178,8 +178,8 @@ function quiz_report_qm_filter_select($quiz, $quizattemptsalias = 'quiza') {
 /**
  * Get the nuber of students whose score was in a particular band for this quiz.
  * @param number $bandwidth the width of each band.
- * @param integer $bands the number of bands
- * @param integer $quizid the quiz id.
+ * @param int $bands the number of bands
+ * @param int $quizid the quiz id.
  * @param array $userids list of user ids.
  * @return array band number => number of users with scores in that band.
  */
@@ -250,7 +250,7 @@ function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)
  * processed ready for display.
  *
  * @param float $grade a grade on this quiz.
- * @param integer $quizid the id of the quiz object.
+ * @param int $quizid the id of the quiz object.
  * @return string the comment that corresponds to this grade (empty string if there is not one.
  */
 function quiz_report_feedback_for_grade($grade, $quizid, $context) {
@@ -290,7 +290,7 @@ function quiz_report_feedback_for_grade($grade, $quizid, $context) {
  * Format a number as a percentage out of $quiz->sumgrades
  * @param number $rawgrade the mark to format.
  * @param object $quiz the quiz settings
- * @param boolean $round whether to round the results ot $quiz->decimalpoints.
+ * @param bool $round whether to round the results ot $quiz->decimalpoints.
  */
 function quiz_report_scale_summarks_as_percentage($rawmark, $quiz, $round = true) {
     if ($quiz->sumgrades == 0) {

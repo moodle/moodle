@@ -571,7 +571,7 @@ class qformat_gift extends qformat_default {
     }
 
     /**
-     * @param integer $format one of the FORMAT_ constants.
+     * @param int $format one of the FORMAT_ constants.
      * @return string the corresponding name.
      */
     function format_const_to_name($format) {
@@ -589,7 +589,7 @@ class qformat_gift extends qformat_default {
     }
 
     /**
-     * @param integer $format one of the FORMAT_ constants.
+     * @param int $format one of the FORMAT_ constants.
      * @return string the corresponding name.
      */
     function format_name_to_const($format) {

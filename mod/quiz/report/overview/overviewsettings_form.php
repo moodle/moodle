@@ -33,8 +33,8 @@ require_once($CFG->libdir . '/formslib.php');
 /**
  * Quiz overview report settings form.
  *
- * @copyright 2008 Jamie Pratt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2008 Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_quiz_report_overview_settings extends moodleform {
 

@@ -351,9 +351,9 @@ class qtype_oumultiresponse_hint extends question_hint_with_parts {
     /**
      * Constructor.
      * @param string $hint The hint text
-     * @param boolean $shownumcorrect whether the number of right parts should be shown
-     * @param boolean $clearwrong whether the wrong parts should be reset.
-     * @param boolean $showchoicefeedback whether to show the feedback for each choice.
+     * @param bool $shownumcorrect whether the number of right parts should be shown
+     * @param bool $clearwrong whether the wrong parts should be reset.
+     * @param bool $showchoicefeedback whether to show the feedback for each choice.
      */
     public function __construct($id, $hint, $hintformat, $shownumcorrect, $clearwrong, $showchoicefeedback) {
         parent::__construct($id, $hint, $hintformat, $shownumcorrect, $clearwrong);

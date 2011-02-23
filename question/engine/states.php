@@ -37,7 +37,6 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 abstract class question_state {
     /**#@+
      * Specific question_state instances.
@@ -122,7 +121,7 @@ abstract class question_state {
     /**
      * Is this state one of the ones that mean the question attempt is in progress?
      * That is, started, but no finished.
-     * @return boolean
+     * @return bool
      */
     public function is_active() {
         return false;
@@ -131,7 +130,7 @@ abstract class question_state {
     /**
      * Is this state one of the ones that mean the question attempt is finished?
      * That is, no further interaction possible, apart from manual grading.
-     * @return boolean
+     * @return bool
      */
     public function is_finished() {
         return true;
@@ -139,7 +138,7 @@ abstract class question_state {
 
     /**
      * Is this state one of the ones that mean the question attempt has been graded?
-     * @return boolean
+     * @return bool
      */
     public function is_graded() {
         return false;
@@ -147,7 +146,7 @@ abstract class question_state {
 
     /**
      * Is this state one of the ones that mean the question attempt has been graded?
-     * @return boolean
+     * @return bool
      */
     public function is_correct() {
         return false;
@@ -155,7 +154,7 @@ abstract class question_state {
 
     /**
      * Is this state one of the ones that mean the question attempt has been graded?
-     * @return boolean
+     * @return bool
      */
     public function is_partially_correct() {
         return false;
@@ -163,7 +162,7 @@ abstract class question_state {
 
     /**
      * Is this state one of the ones that mean the question attempt has been graded?
-     * @return boolean
+     * @return bool
      */
     public function is_incorrect() {
         return false;
@@ -171,7 +170,7 @@ abstract class question_state {
 
     /**
      * Is this state one of the ones that mean the question attempt has been graded?
-     * @return boolean
+     * @return bool
      */
     public function is_gave_up() {
         return false;
@@ -179,7 +178,7 @@ abstract class question_state {
 
     /**
      * Is this state one of the ones that mean the question attempt has had a manual comment added?
-     * @return boolean
+     * @return bool
      */
     public function is_commented() {
         return false;
@@ -208,7 +207,7 @@ abstract class question_state {
      * Appropriate allowance is made for rounding float values.
      *
      * @param number $fraction the grade, on the fraction scale.
-     * @return integer one of the state constants.
+     * @return int one of the state constants.
      */
     public static function graded_state_for_fraction($fraction) {
         if ($fraction < 0.000001) {
@@ -226,7 +225,7 @@ abstract class question_state {
      * $manually_graded_partcorrect. Appropriate allowance is made for rounding float values.
      *
      * @param number $fraction the grade, on the fraction scale.
-     * @return integer one of the state constants.
+     * @return int one of the state constants.
      */
     public static function manually_graded_state_for_fraction($fraction) {
         if (is_null($fraction)) {
@@ -244,7 +243,7 @@ abstract class question_state {
      * Compute an appropriate state to move to after a manual comment has been
      * added to this state.
      * @param number $fraction the manual grade (if any) on the fraction scale.
-     * @return integer the new state.
+     * @return int the new state.
      */
     public function corresponding_commented_state($fraction) {
         throw new Exception('Unexpected question state.');
@@ -265,7 +264,7 @@ abstract class question_state {
      * {@link question_behaviour::get_state_string()}. However, behaviours
      * sometimes change this default string for soemthing more specific.
      *
-     * @param boolean $showcorrectness Whether right/partial/wrong states should
+     * @param bool $showcorrectness Whether right/partial/wrong states should
      * be distinguised, or just treated as 'complete'.
      * @return string the name of a string that can be looked up in the 'question'
      *      lang pack, or used as a CSS class name, etc.
@@ -275,7 +274,7 @@ abstract class question_state {
     /**
      * The result of doing get_string on the result of {@link get_state_class()}.
      *
-     * @param boolean $showcorrectness Whether right/partial/wrong states should
+     * @param bool $showcorrectness Whether right/partial/wrong states should
      * be distinguised.
      * @return string a string from the lang pack that can be used in the UI.
      */

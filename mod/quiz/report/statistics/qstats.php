@@ -92,10 +92,10 @@ class quiz_statistics_question_stats {
     /**
      * Load the data that will be needed to perform the calculations.
      *
-     * @param integer $quizid the quiz id.
-     * @param integer $currentgroup the current group. 0 for none.
+     * @param int $quizid the quiz id.
+     * @param int $currentgroup the current group. 0 for none.
      * @param array $groupstudents students in this group.
-     * @param boolean $allattempts use all attempts, or just first attempts.
+     * @param bool $allattempts use all attempts, or just first attempts.
      */
     public function load_step_data($quizid, $currentgroup, $groupstudents, $allattempts) {
         global $DB;
@@ -276,7 +276,7 @@ class quiz_statistics_question_stats {
      *
      * @param object $step the state to add to the statistics.
      * @param object $stats the question statistics we are accumulating.
-     * @param boolean $positionstat whether this is a statistic of position of question.
+     * @param bool $positionstat whether this is a statistic of position of question.
      */
     protected function initial_steps_walker($step, $stats, $positionstat = true) {
         $stats->s++;
@@ -320,7 +320,7 @@ class quiz_statistics_question_stats {
      *
      * @param object $step the state to add to the statistics.
      * @param object $stats the question statistics we are accumulating.
-     * @param boolean $positionstat whether this is a statistic of position of question.
+     * @param bool $positionstat whether this is a statistic of position of question.
      */
     protected function secondary_steps_walker($step, $stats) {
         $markdifference = $step->mark - $stats->markaverage;

@@ -199,7 +199,7 @@ abstract class qtype_renderer extends plugin_renderer_base {
     /**
      * Return an appropriate icon (green tick, red cross, etc.) for a grade.
      * @param float $fraction grade on a scale 0..1.
-     * @param boolean $selected whether to show a big or small icon. (Deprecated)
+     * @param bool $selected whether to show a big or small icon. (Deprecated)
      * @return string html fragment.
      */
     function feedback_image($fraction, $selected = true) {

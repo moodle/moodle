@@ -33,8 +33,8 @@ defined('MOODLE_INTERNAL') || die();
  *
  * This is the old version of interactive mode.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_adaptive extends question_behaviour_with_save {
     const IS_ARCHETYPAL = true;

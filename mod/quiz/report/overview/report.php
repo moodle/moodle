@@ -35,8 +35,8 @@ require_once($CFG->dirroot.'/mod/quiz/report/overview/overview_table.php');
 /**
  * Quiz report subclass for the overview (grades) report.
  *
- * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  1999 onwards Martin Dougiamas and others {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_overview_report extends quiz_attempt_report {
 
@@ -338,7 +338,7 @@ class quiz_overview_report extends quiz_attempt_report {
      * However, $attempt->sumgrades is updated, if this is not a dry run.
      *
      * @param object $attempt the quiz attempt to regrade.
-     * @param boolean $dryrun if true, do a pretend regrade, otherwise do it for real.
+     * @param bool $dryrun if true, do a pretend regrade, otherwise do it for real.
      * @param array $slots if null, regrade all questions, otherwise, just regrade
      *      the quetsions with those slots.
      */
@@ -382,7 +382,7 @@ class quiz_overview_report extends quiz_attempt_report {
      * Regrade attempts for this quiz, exactly which attempts are regraded is
      * controlled by the parameters.
      * @param object $quiz the quiz settings.
-     * @param boolean $dryrun if true, do a pretend regrade, otherwise do it for real.
+     * @param bool $dryrun if true, do a pretend regrade, otherwise do it for real.
      * @param array $groupstudents blank for all attempts, otherwise regrade attempts
      * for these users.
      * @param array $attemptids blank for all attempts, otherwise only regrade

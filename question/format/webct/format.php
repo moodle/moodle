@@ -27,12 +27,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
- * Web CT question importer.
- *
- * @copyright  2004 ASP Consulting http://www.asp-consulting.net
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Manipulate HTML editites in a string. Used by WebCT import.
+ * @param string $string
+ * @return string
  */
 function unhtmlentities($string){
     $search = array ("'<script[?>]*?>.*?</script>'si",  // remove javascript
@@ -64,8 +62,10 @@ function unhtmlentities($string){
     return preg_replace ($search, $replace, $string);
 }
 
-
-
+/**
+ * Helper function for WebCT import.
+ * @param unknown_type $formula
+ */
 function qformat_webct_convert_formula($formula) {
 
     // Remove empty space, as it would cause problems otherwise:
@@ -160,6 +160,13 @@ function qformat_webct_convert_formula($formula) {
     return $formula;
 }
 
+
+/**
+ * Web CT question importer.
+ *
+ * @copyright  2004 ASP Consulting http://www.asp-consulting.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qformat_webct extends qformat_default {
 
     function provide_import() {

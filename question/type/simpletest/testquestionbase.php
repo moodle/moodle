@@ -55,8 +55,8 @@ class test_response_answer_comparer implements question_response_answer_comparer
 /**
  * Tests for {@link question_first_matching_answer_grading_strategy}.
  *
- * @copyright 2008 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2008 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_first_matching_answer_grading_strategy_test extends UnitTestCase {
     public function setUp() {
@@ -99,8 +99,8 @@ class question_first_matching_answer_grading_strategy_test extends UnitTestCase 
 /**
  * Test for question_hint and subclasses.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_hint_test extends UnitTestCase {
     public function test_basic() {

@@ -257,7 +257,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
  * The parent class method was overridden because the IMS export consists of multiple files
  *
  * @param string $filename the directory name which will hold the exported files
- * @return boolean - or errors out
+ * @return bool - or errors out
  */
     function exportprocess() {
 
@@ -515,8 +515,8 @@ function xml_entitize(&$collection) {
  *
  * @todo handle in-line media (specified in the question/subquestion/answer text) for course-level exports
  * @param object $question
- * @param boolean $shuffleanswers whether or not to shuffle the answers
- * @param boolean $courselevel whether or not this is a course-level export
+ * @param bool $shuffleanswers whether or not to shuffle the answers
+ * @param bool $courselevel whether or not this is a course-level export
  * @param string $path provide the path to copy question media files to, if $courselevel == true
  * @return string containing export text
  */
@@ -824,7 +824,7 @@ function xml_entitize(&$collection) {
  * returns whether or not a given question is scoreable
  *
  * @param object $question
- * @return boolean
+ * @return bool
  */
     function get_qti_scoreable($question) {
         switch ($question->qtype) {
@@ -841,7 +841,7 @@ function xml_entitize(&$collection) {
  * The results are based on whether or not Moodle stores answers for the given question type
  *
  * @param object $question
- * @return boolean
+ * @return bool
  */
     function get_qti_solution_available($question) {
         switch($question->qtype) {

@@ -239,7 +239,7 @@ abstract class question_definition {
      * @param question_attempt $qa the question attempt.
      * @param string $component used for rewriting file area URLs.
      * @param string $filearea used for rewriting file area URLs.
-     * @param boolean $clean Whether the HTML needs to be cleaned. Generally,
+     * @param bool $clean Whether the HTML needs to be cleaned. Generally,
      *      parts of the question do not need to be cleaned, and student input does.
      * @return string the text formatted for output by format_text.
      */
@@ -283,8 +283,8 @@ abstract class question_definition {
      * @param string $component the name of the component we are serving files for.
      * @param string $filearea the name of the file area.
      * @param array $args the remaining bits of the file path.
-     * @param boolean $forcedownload whether the user must be forced to download the file.
-     * @return boolean true if the user can access this file.
+     * @param bool $forcedownload whether the user must be forced to download the file.
+     * @return bool true if the user can access this file.
      */
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
         if ($component == 'question' && $filearea == 'questiontext') {
@@ -350,7 +350,7 @@ interface question_manually_gradable {
      * should move to the COMPLETE or INCOMPLETE state.
      *
      * @param array $response responses, as returned by {@link question_attempt_step::get_qt_data()}.
-     * @return boolean whether this response is a complete answer to this question.
+     * @return bool whether this response is a complete answer to this question.
      */
     public function is_complete_response(array $response);
 
@@ -362,7 +362,7 @@ interface question_manually_gradable {
      * @param array $prevresponse the responses previously recorded for this question,
      *      as returned by {@link question_attempt_step::get_qt_data()}
      * @param array $newresponse the new responses, in the same format.
-     * @return boolean whether the two sets of responses are the same - that is
+     * @return bool whether the two sets of responses are the same - that is
      *      whether the new set of responses can safely be discarded.
      */
     public function is_same_response(array $prevresponse, array $newresponse);
@@ -435,7 +435,7 @@ interface question_automatically_gradable extends question_manually_gradable {
      * or whether it must be considered aborted.
      *
      * @param array $response responses, as returned by {@link question_attempt_step::get_qt_data()}.
-     * @return boolean whether this response can be graded.
+     * @return bool whether this response can be graded.
      */
     public function is_gradable_response(array $response);
 
@@ -459,7 +459,7 @@ interface question_automatically_gradable extends question_manually_gradable {
      * the question type wants to do something complex. For example, the
      * multiple choice with multiple responses question type will turn off most
      * of the hint options if the student has selected too many opitions.
-     * @param integer $hintnumber Which hint to display. Indexed starting from 0
+     * @param int $hintnumber Which hint to display. Indexed starting from 0
      * @param question_attempt $qa The question_attempt.
      */
     public function get_hint($hintnumber, question_attempt $qa);
@@ -489,7 +489,7 @@ interface question_automatically_gradable_with_countback extends question_automa
      * @param array $responses the response for each try. Each element of this
      * array is a response array, as would be passed to {@link grade_response()}.
      * There may be between 1 and $totaltries responses.
-     * @param integer $totaltries The maximum number of tries allowed.
+     * @param int $totaltries The maximum number of tries allowed.
      * @return numeric the fraction that should be awarded for this
      * sequence of response.
      */
@@ -540,7 +540,7 @@ abstract class question_graded_automatically extends question_with_responses
      * @param question_attempt $qa the question attempt being displayed.
      * @param question_display_options $options the options that control display of the question.
      * @param string $filearea the name of the file area.
-     * @return boolean whether access to the file should be allowed.
+     * @return bool whether access to the file should be allowed.
      */
     protected function check_combined_feedback_file_access($qa, $options, $filearea) {
         $state = $qa->get_state();
@@ -561,7 +561,7 @@ abstract class question_graded_automatically extends question_with_responses
      * @param question_attempt $qa the question attempt being displayed.
      * @param question_display_options $options the options that control display of the question.
      * @param array $args the remaining bits of the file path.
-     * @return boolean whether access to the file should be allowed.
+     * @return bool whether access to the file should be allowed.
      */
     protected function check_hint_file_access($qa, $options, $args) {
         if (!$options->feedback) {
@@ -729,9 +729,9 @@ class question_hint {
 
     /**
      * Constructor.
-     * @param integer the hint id from the database.
+     * @param int the hint id from the database.
      * @param string $hint The hint text
-     * @param integer the corresponding text FORMAT_... type.
+     * @param int the corresponding text FORMAT_... type.
      */
     public function __construct($id, $hint, $hintformat) {
         $this->id = $id;
@@ -775,11 +775,11 @@ class question_hint_with_parts extends question_hint {
 
     /**
      * Constructor.
-     * @param integer the hint id from the database.
+     * @param int the hint id from the database.
      * @param string $hint The hint text
-     * @param integer the corresponding text FORMAT_... type.
-     * @param boolean $shownumcorrect whether the number of right parts should be shown
-     * @param boolean $clearwrong whether the wrong parts should be reset.
+     * @param int the corresponding text FORMAT_... type.
+     * @param bool $shownumcorrect whether the number of right parts should be shown
+     * @param bool $clearwrong whether the wrong parts should be reset.
      */
     public function __construct($id, $hint, $hintformat, $shownumcorrect, $clearwrong) {
         parent::__construct($id, $hint, $hintformat);
@@ -846,7 +846,7 @@ interface question_response_answer_comparer {
     /**
      * @param array $response the response.
      * @param question_answer $answer an answer.
-     * @return boolean whether the response matches the answer.
+     * @return bool whether the response matches the answer.
      */
     public function compare_response_with_answer(array $response, question_answer $answer);
 }

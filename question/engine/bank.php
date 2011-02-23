@@ -58,7 +58,7 @@ abstract class question_bank {
     /**
      * Get the question type class for a particular question type.
      * @param string $qtypename the question type name. For example 'multichoice' or 'shortanswer'.
-     * @param boolean $mustexist if false, the missing question type is returned when
+     * @param bool $mustexist if false, the missing question type is returned when
      *      the requested question type is not installed.
      * @return question_type the corresponding question type class.
      */
@@ -97,7 +97,7 @@ abstract class question_bank {
 
     /**
      * @param string $qtypename the internal name of a question type. For example multichoice.
-     * @return boolean whether users are allowed to create questions of this type.
+     * @return bool whether users are allowed to create questions of this type.
      */
     public static function qtype_enabled($qtypename) {
         $config = self::get_config();
@@ -108,7 +108,7 @@ abstract class question_bank {
 
     /**
      * @param string $qtypename the internal name of a question type. For example multichoice.
-     * @return boolean whether this question type exists.
+     * @return bool whether this question type exists.
      */
     public static function qtype_exists($qtypename) {
         return array_key_exists($qtypename, get_plugin_list('qtype'));
@@ -195,8 +195,8 @@ abstract class question_bank {
     /**
      * Load a question definition from the database. The object returned
      * will actually be of an appropriate {@link question_definition} subclass.
-     * @param integer $questionid the id of the question to load.
-     * @param boolean $allowshuffle if false, then any shuffle option on the selected quetsion is disabled.
+     * @param int $questionid the id of the question to load.
+     * @param bool $allowshuffle if false, then any shuffle option on the selected quetsion is disabled.
      * @return question_definition loaded from the database.
      */
     public static function load_question($questionid, $allowshuffle = true) {
@@ -275,10 +275,17 @@ abstract class question_bank {
     }
 }
 
+
+/**
+ * Class for loading questions according to various criteria.
+ *
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class question_finder {
     /**
      * Get the ids of all the questions in a list of categoryies.
-     * @param integer|string|array $categoryids either a categoryid, or a comma-separated list
+     * @param int|string|array $categoryids either a categoryid, or a comma-separated list
      *      category ids, or an array of them.
      * @param string $extraconditions extra conditions to AND with the rest of the where clause.
      * @return array questionid => questionid.

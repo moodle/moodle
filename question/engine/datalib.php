@@ -125,7 +125,7 @@ class question_engine_data_mapper {
 
     /**
      * Load a {@link question_attempt_step} from the database.
-     * @param integer $stepid the id of the step to load.
+     * @param int $stepid the id of the step to load.
      * @param question_attempt_step the step that was loaded.
      */
     public function load_question_attempt_step($stepid) {
@@ -159,7 +159,7 @@ WHERE
     /**
      * Load a {@link question_attempt} from the database, including all its
      * steps.
-     * @param integer $questionattemptid the id of the question attempt to load.
+     * @param int $questionattemptid the id of the question attempt to load.
      * @param question_attempt the question attempt that was loaded.
      */
     public function load_question_attempt($questionattemptid) {
@@ -213,7 +213,7 @@ ORDER BY
     /**
      * Load a {@link question_usage_by_activity} from the database, including
      * all its {@link question_attempt}s and all their steps.
-     * @param integer $qubaid the id of the usage to load.
+     * @param int $qubaid the id of the usage to load.
      * @param question_usage_by_activity the usage that was loaded.
      */
     public function load_questions_usage_by_activity($qubaid) {
@@ -394,14 +394,14 @@ ORDER BY
      *
      * @param qubaid_condition $qubaids used to restrict which usages are included
      * in the query. See {@link qubaid_condition}.
-     * @param integer $slot The slot for the questions you want to konw about.
-     * @param integer $questionid (optional) Only return attempts that were of this specific question.
+     * @param int $slot The slot for the questions you want to konw about.
+     * @param int $questionid (optional) Only return attempts that were of this specific question.
      * @param string $summarystate the summary state of interest, or 'all'.
      * @param string $orderby the column to order by.
      * @param array $params any params required by any of the SQL fragments.
-     * @param integer $limitfrom implements paging of the results.
+     * @param int $limitfrom implements paging of the results.
      *      Ignored if $orderby = random or $limitnum is null.
-     * @param integer $limitnum implements paging of the results. null = all.
+     * @param int $limitnum implements paging of the results. null = all.
      * @return array with two elements, an array of usage ids, and a count of the total number.
      */
     public function load_questions_usages_where_question_in_state(
@@ -519,7 +519,7 @@ ORDER BY qa.slot
     /**
      * Load a {@link question_attempt} from the database, including all its
      * steps.
-     * @param integer $questionid the question to load all the attempts fors.
+     * @param int $questionid the question to load all the attempts fors.
      * @param qubaid_condition $qubaids used to restrict which usages are included
      * in the query. See {@link qubaid_condition}.
      * @return array of question_attempts.
@@ -654,7 +654,7 @@ ORDER BY
 
     /**
      * Delete all the steps for a question attempt.
-     * @param integer $qaids question_attempt id.
+     * @param int $qaids question_attempt id.
      */
     public function delete_steps_for_question_attempts($qaids) {
         if (empty($qaids)) {
@@ -670,7 +670,7 @@ ORDER BY
 
     /**
      * Delete all the previews for a given question.
-     * @param integer $questionid question id.
+     * @param int $questionid question id.
      */
     public function delete_previews($questionid) {
         $previews = $this->db->get_records_sql_menu("
@@ -688,10 +688,10 @@ ORDER BY
 
     /**
      * Update the flagged state of a question in the database.
-     * @param integer $qubaid the question usage id.
-     * @param integer $questionid the question id.
-     * @param integer $sessionid the question_attempt id.
-     * @param boolean $newstate the new state of the flag. true = flagged.
+     * @param int $qubaid the question usage id.
+     * @param int $questionid the question id.
+     * @param int $sessionid the question_attempt id.
+     * @param bool $newstate the new state of the flag. true = flagged.
      */
     public function update_question_attempt_flag($qubaid, $questionid, $qaid, $slot, $newstate) {
         if (!$this->db->record_exists('question_attempts', array('id' => $qaid,
@@ -721,7 +721,7 @@ ORDER BY
      * state corresponding to $summarystate.
      * @param string $summarystate one of
      * inprogress, needsgrading, manuallygraded or autograded
-     * @param boolean $equal if false, do a NOT IN test. Default true.
+     * @param bool $equal if false, do a NOT IN test. Default true.
      * @return string SQL fragment.
      */
     public function in_summary_state_test($summarystate, $equal = true, $prefix = 'summarystates') {
@@ -733,7 +733,7 @@ ORDER BY
      * Change the maxmark for the question_attempt with number in usage $slot
      * for all the specified question_attempts.
      * @param qubaid_condition $qubaids Selects which usages are updated.
-     * @param integer $slot the number is usage to affect.
+     * @param int $slot the number is usage to affect.
      * @param number $newmaxmark the new max mark to set.
      */
     public function set_max_mark_in_attempts(qubaid_condition $qubaids, $slot, $newmaxmark) {
@@ -808,7 +808,7 @@ ORDER BY
 
     /**
      * @param array $questionids of question ids.
-     * @return boolean whether any of these questions are being used by the question engine.
+     * @return bool whether any of these questions are being used by the question engine.
      */
     public function questions_in_use(array $questionids) {
         list($test, $params) = $this->db->get_in_or_equal($questionids);
@@ -938,7 +938,7 @@ class question_engine_unit_of_work implements question_usage_observer {
  * FROM $qubaids->from_question_attempts('qa')
  * WHERE $qubaids->where() AND qa.slot = 1
  *
- * @copyright 2010 The Open University
+ * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class qubaid_condition {
@@ -976,7 +976,7 @@ abstract class qubaid_condition {
  * This class represents a restriction on the set of question_usage ids to include
  * in a larger database query based on an explicit list of ids.
  *
- * @copyright 2010 The Open University
+ * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qubaid_list extends qubaid_condition {
@@ -1046,7 +1046,7 @@ class qubaid_list extends qubaid_condition {
  *
  * where $from, $usageidcolumn and $where are the arguments to the constructor.
  *
- * @copyright 2010 The Open University
+ * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qubaid_join extends qubaid_condition {

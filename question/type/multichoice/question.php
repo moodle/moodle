@@ -265,7 +265,7 @@ class qtype_multichoice_multi_question extends qtype_multichoice_base {
     }
 
     /**
-     * @param integer $key choice number
+     * @param int $key choice number
      * @return string the question-type variable name.
      */
     protected function field($key) {
@@ -348,7 +348,7 @@ class qtype_multichoice_multi_question extends qtype_multichoice_base {
 
     /**
      * @param array $response responses, as returned by {@link question_attempt_step::get_qt_data()}.
-     * @return integer the number of choices that were selected. in this response.
+     * @return int the number of choices that were selected. in this response.
      */
     public function get_num_selected_choices(array $response) {
         $numselected = 0;
@@ -361,7 +361,7 @@ class qtype_multichoice_multi_question extends qtype_multichoice_base {
     }
 
     /**
-     * @return integer the number of choices that are correct.
+     * @return int the number of choices that are correct.
      */
     public function get_num_correct_choices() {
         $numcorrect = 0;

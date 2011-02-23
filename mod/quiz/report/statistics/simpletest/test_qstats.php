@@ -52,8 +52,8 @@ class testable_quiz_statistics_question_stats extends quiz_statistics_question_s
 /**
  * Unit tests for (some of) quiz_statistics_question_stats.
  *
- * @copyright 2008 Jamie Pratt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2008 Jamie Pratt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_question_stats_test extends UnitTestCase {
     public static $includecoverage = array('mod/quiz/report/reportlib.php');

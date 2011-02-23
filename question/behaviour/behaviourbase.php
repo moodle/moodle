@@ -130,8 +130,8 @@ abstract class question_behaviour {
      * @param string $component the name of the component we are serving files for.
      * @param string $filearea the name of the file area.
      * @param array $args the remaining bits of the file path.
-     * @param boolean $forcedownload whether the user must be forced to download the file.
-     * @return boolean true if the user can access this file.
+     * @param bool $forcedownload whether the user must be forced to download the file.
+     * @return bool true if the user can access this file.
      */
     public function check_file_access($options, $component, $filearea, $args, $forcedownload) {
         $this->adjust_display_options($options);
@@ -314,7 +314,7 @@ abstract class question_behaviour {
      * Generate a brief textual description of the current state of the question,
      * normally displayed under the question number.
      *
-     * @param boolean $showcorrectness Whether right/partial/wrong states should
+     * @param bool $showcorrectness Whether right/partial/wrong states should
      * be distinguised.
      * @return string a brief summary of the current state of the qestion attempt.
      */
@@ -341,7 +341,7 @@ abstract class question_behaviour {
      * the comment, and the mark (if given) is the same.
      *
      * @param question_attempt_step $pendingstep contains the new responses.
-     * @return boolean whether the new response is the same as we already have.
+     * @return bool whether the new response is the same as we already have.
      */
     protected function is_same_comment($pendingstep) {
         $previouscomment = $this->qa->get_last_behaviour_var('comment');
@@ -409,7 +409,7 @@ abstract class question_behaviour {
      * @param question_attempt_pending_step $pendingstep a partially initialised step
      *      containing all the information about the action that is being peformed.
      *      This information can be accessed using {@link question_attempt_step::get_behaviour_var()}.
-     * @return boolean either {@link question_attempt::KEEP} or {@link question_attempt::DISCARD}
+     * @return bool either {@link question_attempt::KEEP} or {@link question_attempt::DISCARD}
      */
     public abstract function process_action(question_attempt_pending_step $pendingstep);
 
@@ -418,7 +418,7 @@ abstract class question_behaviour {
      * be suitable for most subclasses.
      * @param question_attempt_pending_step $pendingstep a partially initialised step
      *      containing all the information about the action that is being peformed.
-     * @return boolean either {@link question_attempt::KEEP}
+     * @return bool either {@link question_attempt::KEEP}
      */
     public function process_comment(question_attempt_pending_step $pendingstep) {
         if (!$this->qa->get_state()->is_finished()) {
@@ -500,8 +500,8 @@ abstract class question_behaviour {
  * action that is suitable for most questions that implement the
  * {@link question_manually_gradable} interface.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class question_behaviour_with_save extends question_behaviour {
     public function required_question_definition_type() {
@@ -512,7 +512,7 @@ abstract class question_behaviour_with_save extends question_behaviour {
      * Work out whether the response in $pendingstep are significantly different
      * from the last set of responses we have stored.
      * @param question_attempt_step $pendingstep contains the new responses.
-     * @return boolean whether the new response is the same as we already have.
+     * @return bool whether the new response is the same as we already have.
      */
     protected function is_same_response(question_attempt_step $pendingstep) {
         return $this->question->is_same_response(
@@ -526,7 +526,7 @@ abstract class question_behaviour_with_save extends question_behaviour {
      * behaviours, for example the CBM ones, have their own parts to the
      * response.
      * @param question_attempt_step $pendingstep contains the new responses.
-     * @return boolean whether the new response is complete.
+     * @return bool whether the new response is complete.
      */
     protected function is_complete_response(question_attempt_step $pendingstep) {
         return $this->question->is_complete_response($pendingstep->get_qt_data());
@@ -537,7 +537,7 @@ abstract class question_behaviour_with_save extends question_behaviour {
      * most subclasses.
      * @param question_attempt_pending_step $pendingstep a partially initialised step
      *      containing all the information about the action that is being peformed.
-     * @return boolean either {@link question_attempt::KEEP} or {@link question_attempt::DISCARD}
+     * @return bool either {@link question_attempt::KEEP} or {@link question_attempt::DISCARD}
      */
     public function process_save(question_attempt_pending_step $pendingstep) {
         if ($this->qa->get_state()->is_finished()) {
@@ -588,8 +588,8 @@ abstract class question_behaviour_with_save extends question_behaviour {
  * This helper class contains the constants and methods required for
  * manipulating scores for certainly based marking.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class question_cbm {
     /**#@+ @var integer named constants for the certainty levels. */
@@ -615,7 +615,7 @@ abstract class question_cbm {
     /**#@-*/
 
     /**
-     * @return integer the default certaintly level that should be assuemd if
+     * @return int the default certaintly level that should be assuemd if
      * the student does not choose one.
      */
     public static function default_certainty() {
@@ -625,7 +625,7 @@ abstract class question_cbm {
     /**
      * Given a fraction, and a certainly, compute the adjusted fraction.
      * @param number $fraction the raw fraction for this question.
-     * @param integer $certainty one of the certainly level constants.
+     * @param int $certainty one of the certainly level constants.
      * @return number the adjusted fraction taking the certainly into account.
      */
     public static function adjust_fraction($fraction, $certainty) {
@@ -633,7 +633,7 @@ abstract class question_cbm {
     }
 
     /**
-     * @param integer $certainty one of the LOW/MED/HIGH constants.
+     * @param int $certainty one of the LOW/MED/HIGH constants.
      * @return string a textual desciption of this certainly.
      */
     public static function get_string($certainty) {

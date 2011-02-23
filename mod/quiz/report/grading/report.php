@@ -205,8 +205,8 @@ class quiz_grading_report extends quiz_default_report {
     }
 
     /**
-     * @param integer $slot
-     * @param integer $questionid
+     * @param int $slot
+     * @param int $questionid
      * @param string $grade
      * @param mixed $page = true, link to current page. false = omit page.
      *      number = link to specific page.
@@ -508,13 +508,13 @@ class quiz_grading_report extends quiz_default_report {
      * $limitnum. A special value 'random' can be passed as $orderby, in which case
      * $limitfrom is ignored.
      *
-     * @param integer $slot The slot for the questions you want to konw about.
-     * @param integer $questionid (optional) Only return attempts that were of this specific question.
+     * @param int $slot The slot for the questions you want to konw about.
+     * @param int $questionid (optional) Only return attempts that were of this specific question.
      * @param string $summarystate 'all', 'needsgrading', 'autograded' or 'manuallygraded'.
      * @param string $orderby 'random', 'date', 'student' or 'idnumber'.
-     * @param integer $page implements paging of the results.
+     * @param int $page implements paging of the results.
      *      Ignored if $orderby = random or $pagesize is null.
-     * @param integer $pagesize implements paging of the results. null = all.
+     * @param int $pagesize implements paging of the results. null = all.
      */
     function get_usage_ids_where_question_in_state($summarystate, $slot,
             $questionid = null, $orderby = 'random', $page = 0, $pagesize = null) {

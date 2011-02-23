@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * when the whole attempt is finished, their answer is graded.
  *
  * @copyright  2009 The Open University
- * @license  http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_deferredfeedback extends question_behaviour_with_save {
     const IS_ARCHETYPAL = true;

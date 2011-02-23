@@ -44,8 +44,8 @@ class qtype_gapselect_question extends qtype_gapselect_question_base {
 /**
  * Represents one of the choices (select box option).
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_gapselect_choice {
     public $text;

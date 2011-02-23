@@ -156,7 +156,7 @@ class quiz_report_responses_table extends quiz_attempt_report_table {
 
     /**
      * Get any fields that might be needed when sorting on date for a particular slot.
-     * @param integer $slot the slot for the column we want.
+     * @param int $slot the slot for the column we want.
      * @param string $alias the table alias for latest state information relating to that slot.
      */
     protected function get_required_latest_state_fields($slot, $alias) {

@@ -32,8 +32,8 @@ defined('MOODLE_INTERNAL') || die();
  * This class keeps track of the various access rules that apply to a particular
  * quiz, with convinient methods for seeing whether access is allowed.
  *
- * @copyright 2009 Tim Hunt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_access_manager {
     private $_quizobj;
@@ -47,8 +47,8 @@ class quiz_access_manager {
      * Create an instance for a particular quiz.
      * @param object $quizobj An instance of the class quiz from attemptlib.php.
      *      The quiz we will be controlling access to.
-     * @param integer $timenow The time to use as 'now'.
-     * @param boolean $canignoretimelimits Whether this user is exempt from time
+     * @param int $timenow The time to use as 'now'.
+     * @param bool $canignoretimelimits Whether this user is exempt from time
      *      limits (has_capability('mod/quiz:ignoretimelimits', ...)).
      */
     public function __construct($quizobj, $timenow, $canignoretimelimits) {
@@ -99,7 +99,7 @@ class quiz_access_manager {
      * Print each message in an array, surrounded by &lt;p>, &lt;/p> tags.
      *
      * @param array $messages the array of message strings.
-     * @param boolean $return if true, return a string, instead of outputting.
+     * @param bool $return if true, return a string, instead of outputting.
      *
      * @return mixed, if $return is true, return the string that would have been output, otherwise
      * return null.
@@ -137,7 +137,7 @@ class quiz_access_manager {
      * any restrictions in force now, return an array of reasons why access
      * should be blocked. If access is OK, return false.
      *
-     * @param integer $numattempts the number of previous attempts this user has made.
+     * @param int $numattempts the number of previous attempts this user has made.
      * @param object|false $lastattempt information about the user's last completed attempt.
      *      if there is not a previous attempt, the false is passed.
      * @return mixed An array of reason why access is not allowed, or an empty array
@@ -173,9 +173,9 @@ class quiz_access_manager {
      * quiz. Used, for example, to change the label by the grade displayed on the view page from
      * 'your current grade is' to 'your final grade is'.
      *
-     * @param integer $numattempts the number of previous attempts this user has made.
+     * @param int $numattempts the number of previous attempts this user has made.
      * @param object $lastattempt information about the user's last completed attempt.
-     * @return boolean true if there is no way the user will ever be allowed to attempt this quiz again.
+     * @return bool true if there is no way the user will ever be allowed to attempt this quiz again.
      */
     public function is_finished($numprevattempts, $lastattempt) {
         foreach ($this->_rules as $rule) {
@@ -233,10 +233,10 @@ class quiz_access_manager {
      * depending on the access restrictions. The link will pop up a 'secure' window, if
      * necessary.
      *
-     * @param boolean $canpreview whether this user can preview. This affects whether they must
+     * @param bool $canpreview whether this user can preview. This affects whether they must
      * use a secure window.
      * @param string $buttontext the label to put on the button.
-     * @param boolean $unfinished whether the button is to continue an existing attempt,
+     * @param bool $unfinished whether the button is to continue an existing attempt,
      * or start a new one. This affects whether a javascript alert is shown.
      */
     public function print_start_attempt_button($canpreview, $buttontext, $unfinished) {
@@ -272,7 +272,7 @@ class quiz_access_manager {
      * Send the user back to the quiz view page. Normally this is just a redirect, but
      * If we were in a secure window, we close this window, and reload the view window we came from.
      *
-     * @param boolean $canpreview This affects whether we have to worry about secure window stuff.
+     * @param bool $canpreview This affects whether we have to worry about secure window stuff.
      */
     public function back_to_view_page($canpreview, $message = '') {
         global $CFG, $OUTPUT, $PAGE;
@@ -301,7 +301,7 @@ class quiz_access_manager {
      * Print a control to finish the review. Normally this is just a link, but if we are
      * in a secure window, it needs to be a button that does M.mod_quiz.secure_window.close.
      *
-     * @param boolean $canpreview This affects whether we have to worry about secure window stuff.
+     * @param bool $canpreview This affects whether we have to worry about secure window stuff.
      */
     public function print_finish_review_link($canpreview, $return = false) {
         global $CFG;
@@ -343,7 +343,7 @@ class quiz_access_manager {
      * Actually ask the user for the password, if they have not already given it this session.
      * This function only returns is access is OK.
      *
-     * @param boolean $canpreview used to enfore securewindow stuff.
+     * @param bool $canpreview used to enfore securewindow stuff.
      */
     public function do_password_check($canpreview) {
         if (!is_null($this->_passwordrule)) {
@@ -409,9 +409,9 @@ class quiz_access_manager {
      * If $reviewoptions->attempt is false, meaning that students can't review this
      * attempt at the moment, return an appropriate string explaining why.
      *
-     * @param integer $when One of the mod_quiz_display_options::DURING,
+     * @param int $when One of the mod_quiz_display_options::DURING,
      *      IMMEDIATELY_AFTER, LATER_WHILE_OPEN or AFTER_CLOSE constants.
-     * @param boolean $short if true, return a shorter string.
+     * @param bool $short if true, return a shorter string.
      * @return string an appropraite message.
      */
     public function cannot_review_message($when, $short = false) {
@@ -444,8 +444,8 @@ class quiz_access_manager {
  * as true) if access should be blocked. Slighly unnatural, but acutally the easist
  * way to implement this.
  *
- * @copyright 2009 Tim Hunt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class quiz_access_rule_base {
     protected $_quiz;
@@ -462,7 +462,7 @@ abstract class quiz_access_rule_base {
     }
     /**
      * Whether or not a user should be allowed to start a new attempt at this quiz now.
-     * @param integer $numattempts the number of previous attempts this user has made.
+     * @param int $numattempts the number of previous attempts this user has made.
      * @param object $lastattempt information about the user's last completed attempt.
      * @return string false if access should be allowed, a message explaining the reason if access should be prevented.
      */
@@ -491,9 +491,9 @@ abstract class quiz_access_rule_base {
      * this quiz, then return true. This is used so we can know whether to display a
      * final grade on the view page. This will only be called if there is not a currently
      * active attempt for this user.
-     * @param integer $numattempts the number of previous attempts this user has made.
+     * @param int $numattempts the number of previous attempts this user has made.
      * @param object $lastattempt information about the user's last completed attempt.
-     * @return boolean true if this rule means that this user will never be allowed another
+     * @return bool true if this rule means that this user will never be allowed another
      * attempt at this quiz.
      */
     public function is_finished($numprevattempts, $lastattempt) {
@@ -504,7 +504,7 @@ abstract class quiz_access_rule_base {
      * If, becuase of this rule, the user has to finish their attempt by a certain time,
      * you should override this method to return the amount of time left in seconds.
      * @param object $attempt the current attempt
-     * @param integer $timenow the time now. We don't use $this->_timenow, so we can
+     * @param int $timenow the time now. We don't use $this->_timenow, so we can
      * give the user a more accurate indication of how much time is left.
      * @return mixed false if there is no deadline, of the time left in seconds if there is one.
      */
@@ -516,8 +516,8 @@ abstract class quiz_access_rule_base {
 /**
  * A rule controlling the number of attempts allowed.
  *
- * @copyright 2009 Tim Hunt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class num_attempts_access_rule extends quiz_access_rule_base {
     public function description() {
@@ -537,8 +537,8 @@ class num_attempts_access_rule extends quiz_access_rule_base {
 /**
  * A rule enforcing open and close dates.
  *
- * @copyright 2009 Tim Hunt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class open_close_date_access_rule extends quiz_access_rule_base {
     public function description() {
@@ -589,8 +589,8 @@ class open_close_date_access_rule extends quiz_access_rule_base {
 /**
  * A rule imposing the delay between attemtps settings.
  *
- * @copyright 2009 Tim Hunt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class inter_attempt_delay_access_rule extends quiz_access_rule_base {
     public function prevent_new_attempt($numprevattempts, $lastattempt) {
@@ -616,7 +616,7 @@ class inter_attempt_delay_access_rule extends quiz_access_rule_base {
     /**
      * Compute the next time a student would be allowed to start an attempt,
      * according to this rule.
-     * @param integer $numprevattempts number of previous attempts.
+     * @param int $numprevattempts number of previous attempts.
      * @param object $lastattempt information about the previous attempt.
      * @return number the time.
      */
@@ -649,8 +649,8 @@ class inter_attempt_delay_access_rule extends quiz_access_rule_base {
 /**
  * A rule implementing the ipaddress check against the ->submet setting.
  *
- * @copyright 2009 Tim Hunt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class ipaddress_access_rule extends quiz_access_rule_base {
     public function prevent_access() {
@@ -666,8 +666,8 @@ class ipaddress_access_rule extends quiz_access_rule_base {
  * A rule representing the password check. It does not actually implement the check,
  * that has to be done directly in attempt.php, but this facilitates telling users about it.
  *
- * @copyright 2009 Tim Hunt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class password_access_rule extends quiz_access_rule_base {
     public function description() {
@@ -686,7 +686,7 @@ class password_access_rule extends quiz_access_rule_base {
      * Actually ask the user for the password, if they have not already given it this session.
      * This function only returns is access is OK.
      *
-     * @param boolean $canpreview used to enfore securewindow stuff.
+     * @param bool $canpreview used to enfore securewindow stuff.
      * @param object $accessmanager the accessmanager calling us.
      * @return mixed return null, unless $return is true, and a form needs to be displayed.
      */
@@ -778,8 +778,8 @@ class password_access_rule extends quiz_access_rule_base {
  * A rule representing the time limit. It does not actually restrict access, but we use this
  * class to encapsulate some of the relevant code.
  *
- * @copyright 2009 Tim Hunt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class time_limit_access_rule extends quiz_access_rule_base {
     public function description() {
@@ -794,8 +794,8 @@ class time_limit_access_rule extends quiz_access_rule_base {
  * A rule for ensuring that the quiz is opened in a popup, with some JavaScript
  * to prevent copying and pasting, etc.
  *
- * @copyright 2009 Tim Hunt
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class securewindow_access_rule extends quiz_access_rule_base {
     /**
@@ -819,7 +819,7 @@ class securewindow_access_rule extends quiz_access_rule_base {
      * Make a link to the review page for an attempt.
      *
      * @param string $linktext the desired link text.
-     * @param integer $attemptid the attempt id.
+     * @param int $attemptid the attempt id.
      * @return string HTML for the link.
      */
     public function make_review_link($linktext, $attemptid) {
@@ -854,8 +854,8 @@ class securewindow_access_rule extends quiz_access_rule_base {
 /**
  * A rule representing the safe browser check.
  *
- * @copyright 2009 Oliver Rahs
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Oliver Rahs
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class safebrowser_access_rule extends quiz_access_rule_base {
     public function prevent_access() {

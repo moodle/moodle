@@ -59,7 +59,7 @@ function quiz_remove_question($quiz, $questionid) {
 /**
  * Remove an empty page from the quiz layout. If that is not possible, do nothing.
  * @param string $layout the existinng layout, $quiz->questions.
- * @param integer $index the position into $layout where the empty page should be removed.
+ * @param int $index the position into $layout where the empty page should be removed.
  * @return the updated layout
  */
 function quiz_delete_empty_page($layout, $index) {
@@ -88,7 +88,7 @@ function quiz_delete_empty_page($layout, $index) {
  * @param object $quiz The extended quiz object as used by edit.php
  *      This is updated by this function
  * @param int $page Which page in quiz to add the question on. If 0 (default), add at the end
- * @return boolean false if the question was already in the quiz
+ * @return bool false if the question was already in the quiz
  */
 function quiz_add_quiz_question($id, $quiz, $page = 0) {
     global $DB;
@@ -203,7 +203,7 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number, $inc
 /**
  * Add a page break after at particular position$.
  * @param string $layout the existinng layout, $quiz->questions.
- * @param integer $index the position into $layout where the empty page should be removed.
+ * @param int $index the position into $layout where the empty page should be removed.
  * @return the updated layout
  */
 function quiz_add_page_break_at($layout, $index) {
@@ -220,7 +220,7 @@ function quiz_add_page_break_at($layout, $index) {
 /**
  * Add a page break after a particular question.
  * @param string $layout the existinng layout, $quiz->questions.
- * @param integer $qustionid the question to add the page break after.
+ * @param int $qustionid the question to add the page break after.
  * @return the updated layout
  */
 function quiz_add_page_break_after($layout, $questionid) {
@@ -253,9 +253,9 @@ function quiz_save_new_layout($quiz) {
  * Saves changes to the question grades in the quiz_question_instances table.
  * It does not update 'sumgrades' in the quiz table.
  *
- * @param integer grade    The maximal grade for the question
- * @param integer $questionid  The id of the question
- * @param integer $quizid  The id of the quiz to update / add the instances for.
+ * @param int grade    The maximal grade for the question
+ * @param int $questionid  The id of the question
+ * @param int $quizid  The id of the quiz to update / add the instances for.
  */
 function quiz_update_question_instance($grade, $questionid, $quiz) {
     global $DB;
@@ -306,7 +306,7 @@ function _quiz_move_question($layout, $questionid, $shift) {
  * Move a particular question one space earlier in the $quiz->questions list.
  * If that is not possible, do nothing.
  * @param string $layout the existinng layout, $quiz->questions.
- * @param integer $questionid the id of a question.
+ * @param int $questionid the id of a question.
  * @return the updated layout
  */
 function quiz_move_question_up($layout, $questionid) {
@@ -317,7 +317,7 @@ function quiz_move_question_up($layout, $questionid) {
  * Move a particular question one space later in the $quiz->questions list.
  * If that is not possible, do nothing.
  * @param string $layout the existinng layout, $quiz->questions.
- * @param integer $questionid the id of a question.
+ * @param int $questionid the id of a question.
  * @return the updated layout
  */
 function quiz_move_question_down($layout, $questionid) {
@@ -334,10 +334,10 @@ function quiz_move_question_down($layout, $questionid) {
  *     $quiz->grades
  * @param object $pageurl The url of the current page with the parameters required
  *     for links returning to the current page, as a moodle_url object
- * @param boolean $allowdelete Indicates whether the delete icons should be displayed
- * @param boolean $reordertool  Indicates whether the reorder tool should be displayed
- * @param boolean $quiz_qbanktool  Indicates whether the question bank should be displayed
- * @param boolean $hasattempts  Indicates whether the quiz has attempts
+ * @param bool $allowdelete Indicates whether the delete icons should be displayed
+ * @param bool $reordertool  Indicates whether the reorder tool should be displayed
+ * @param bool $quiz_qbanktool  Indicates whether the question bank should be displayed
+ * @param bool $hasattempts  Indicates whether the quiz has attempts
  */
 function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
         $quiz_qbanktool, $hasattempts, $defaultcategoryobj) {
@@ -762,7 +762,7 @@ function quiz_print_singlequestion($question, $returnurl, $quiz) {
  * @param object $question A question object from the database questions table
  * @param object $questionurl The url of the question editing page as a moodle_url object
  * @param object $quiz The quiz in the context of which the question is being displayed
- * @param boolean $quiz_qbanktool Indicate to this function if the question bank window open
+ * @param bool $quiz_qbanktool Indicate to this function if the question bank window open
  */
 function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktool) {
     global $DB, $OUTPUT;
@@ -929,10 +929,10 @@ function print_random_option_icon($question) {
  * Creates a textual representation of a question for display.
  *
  * @param object $question A question object from the database questions table
- * @param boolean $showicon If true, show the question's icon with the question. False by default.
- * @param boolean $showquestiontext If true (default), show question text after question name.
+ * @param bool $showicon If true, show the question's icon with the question. False by default.
+ * @param bool $showquestiontext If true (default), show question text after question name.
  *       If false, show only question name.
- * @param boolean $return If true (default), return the output. If false, print it.
+ * @param bool $return If true (default), return the output. If false, print it.
  */
 function quiz_question_tostring(&$question, $showicon = false, $showquestiontext = true, $return = true) {
     global $COURSE;
@@ -970,6 +970,9 @@ function quiz_question_tostring(&$question, $showicon = false, $showquestiontext
 
 /**
  * A column type for the add this question to the quiz.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_add_to_quiz_action_column extends question_bank_action_column_base {
     protected $stradd;
@@ -1000,6 +1003,9 @@ class question_bank_add_to_quiz_action_column extends question_bank_action_colum
 
 /**
  * A column type for the name followed by the start of the question text.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_bank_question_name_text_column extends question_bank_question_name_column {
     public function get_name() {
@@ -1029,6 +1035,9 @@ class question_bank_question_name_text_column extends question_bank_question_nam
 
 /**
  * Subclass to customise the view of the question bank for the quiz editing screen.
+ *
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_question_bank_view extends question_bank_view {
     protected $quizhasattempts = false;
@@ -1048,7 +1057,7 @@ class quiz_question_bank_view extends question_bank_view {
      * Let the question bank display know whether the quiz has been attempted,
      * hence whether some bits of UI, like the add this question to the quiz icon,
      * should be displayed.
-     * @param boolean $quizhasattempts whether the quiz has attempts.
+     * @param bool $quizhasattempts whether the quiz has attempts.
      */
     public function set_quiz_has_attempts($quizhasattempts) {
         $this->quizhasattempts = $quizhasattempts;
@@ -1139,8 +1148,8 @@ class quiz_question_bank_view extends question_bank_view {
  * @param object $quiz The quiz object of the quiz in question
  * @param object $pageurl The url of the current page with the parameters required
  *     for links returning to the current page, as a moodle_url object
- * @param integer $tabindex The tabindex to start from for the form elements created
- * @return integer The tabindex from which the calling page can continue, that is,
+ * @param int $tabindex The tabindex to start from for the form elements created
+ * @return int The tabindex from which the calling page can continue, that is,
  *      the last value used +1.
  */
 function quiz_print_grading_form($quiz, $pageurl, $tabindex) {

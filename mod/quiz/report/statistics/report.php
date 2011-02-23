@@ -384,7 +384,7 @@ class quiz_statistics_report extends quiz_default_report {
 
     /**
      * Output the table that lists all the questions in the quiz with their statistics.
-     * @param integer $s number of attempts.
+     * @param int $s number of attempts.
      * @param array $questions the questions in the quiz.
      * @param array $subquestions the subquestions of any random questions.
      */
@@ -529,7 +529,7 @@ class quiz_statistics_report extends quiz_default_report {
 
     /**
      * Output the HTML needed to show the statistics graph.
-     * @param integer $quizstatsid the id of the statistics to show in the graph.
+     * @param int $quizstatsid the id of the statistics to show in the graph.
      */
     protected function output_statistics_graph($quizstatsid, $s) {
         global $OUTPUT;
@@ -550,8 +550,8 @@ class quiz_statistics_report extends quiz_default_report {
      * Return the stats data for when there are no stats to show.
      *
      * @param array $questions question definitions.
-     * @param integer $firstattemptscount number of first attempts (optional).
-     * @param integer $firstattemptscount total number of attempts (optional).
+     * @param int $firstattemptscount number of first attempts (optional).
+     * @param int $firstattemptscount total number of attempts (optional).
      * @return array with three elements:
      *      - integer $s Number of attempts included in the stats (0).
      *      - array $quizstats The statistics for overall attempt scores.
@@ -575,9 +575,9 @@ class quiz_statistics_report extends quiz_default_report {
      * Compute the quiz statistics.
      *
      * @param object $quizid the quiz id.
-     * @param integer $currentgroup the current group. 0 for none.
-     * @param boolean $nostudentsingroup true if there a no students.
-     * @param boolean $useallattempts use all attempts, or just first attempts.
+     * @param int $currentgroup the current group. 0 for none.
+     * @param bool $nostudentsingroup true if there a no students.
+     * @param bool $useallattempts use all attempts, or just first attempts.
      * @param array $groupstudents students in this group.
      * @param array $questions question definitions.
      * @return array with three elements:
@@ -735,9 +735,9 @@ class quiz_statistics_report extends quiz_default_report {
      * Load the cached statistics from the database.
      *
      * @param object $quiz the quiz settings
-     * @param integer $currentgroup the current group. 0 for none.
-     * @param boolean $nostudentsingroup true if there a no students.
-     * @param boolean $useallattempts use all attempts, or just first attempts.
+     * @param int $currentgroup the current group. 0 for none.
+     * @param bool $nostudentsingroup true if there a no students.
+     * @param bool $useallattempts use all attempts, or just first attempts.
      * @param array $groupstudents students in this group.
      * @param array $questions question definitions.
      * @return array with 4 elements:
@@ -796,8 +796,8 @@ class quiz_statistics_report extends quiz_default_report {
      * Store the statistics in the cache tables in the database.
      *
      * @param object $quizid the quiz id.
-     * @param integer $currentgroup the current group. 0 for none.
-     * @param boolean $useallattempts use all attempts, or just first attempts.
+     * @param int $currentgroup the current group. 0 for none.
+     * @param bool $useallattempts use all attempts, or just first attempts.
      * @param object $quizstats The statistics for overall attempt scores.
      * @param array $questions The questions, with an additional _stats field.
      * @param array $subquestions The subquestions, if any, with an additional _stats field.
@@ -840,9 +840,9 @@ class quiz_statistics_report extends quiz_default_report {
      * or by recomputing them.
      *
      * @param object $quiz the quiz settings.
-     * @param integer $currentgroup the current group. 0 for none.
-     * @param boolean $nostudentsingroup true if there a no students.
-     * @param boolean $useallattempts use all attempts, or just first attempts.
+     * @param int $currentgroup the current group. 0 for none.
+     * @param bool $nostudentsingroup true if there a no students.
+     * @param bool $useallattempts use all attempts, or just first attempts.
      * @param array $groupstudents students in this group.
      * @param array $questions question definitions.
      * @return array with 4 elements:
@@ -928,10 +928,10 @@ class quiz_statistics_report extends quiz_default_report {
      * Generate the snipped of HTML that says when the stats were last caculated,
      * with a recalcuate now button.
      * @param object $quizstats the overall quiz statistics.
-     * @param integer $quizid the quiz id.
-     * @param integer $currentgroup the id of the currently selected group, or 0.
+     * @param int $quizid the quiz id.
+     * @param int $currentgroup the id of the currently selected group, or 0.
      * @param array $groupstudents ids of students in the group.
-     * @param boolean $useallattempts whether to use all attempts, instead of just first attempts.
+     * @param bool $useallattempts whether to use all attempts, instead of just first attempts.
      * @return string a HTML snipped saying when the stats were last computed, or blank if that is not appropriate.
      */
     protected function output_caching_info($quizstats, $quizid, $currentgroup,
@@ -973,9 +973,9 @@ class quiz_statistics_report extends quiz_default_report {
     /**
      * Clear the cached data for a particular report configuration. This will
      * trigger a re-computation the next time the report is displayed.
-     * @param integer $quizid the quiz id.
-     * @param integer $currentgroup a group id, or 0.
-     * @param boolean $useallattempts whether all attempts, or just first attempts are included.
+     * @param int $quizid the quiz id.
+     * @param int $currentgroup a group id, or 0.
+     * @param bool $useallattempts whether all attempts, or just first attempts are included.
      */
     protected function clear_cached_data($quizid, $currentgroup, $useallattempts) {
         global $DB;
@@ -995,7 +995,7 @@ class quiz_statistics_report extends quiz_default_report {
     }
 
     /**
-     * @param boolean $useallattempts whether we are using all attempts.
+     * @param bool $useallattempts whether we are using all attempts.
      * @return the appropriate lang string to describe this option.
      */
     protected function using_attempts_string($useallattempts) {

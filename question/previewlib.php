@@ -33,8 +33,8 @@ require_once($CFG->libdir . '/formslib.php');
 /**
  * Settings form for the preview options.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class preview_options_form extends moodleform {
     public function definition() {
@@ -83,8 +83,8 @@ class preview_options_form extends moodleform {
  * Displays question preview options as default and set the options
  * Setting default, getting and setting user preferences in question preview options.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_preview_options extends question_display_options {
     /** @var string the behaviour to use for this preview. */
@@ -198,8 +198,8 @@ class question_preview_options extends question_display_options {
  * @param object $context context object
  * @param string $component the name of the component we are serving files for.
  * @param string $filearea the name of the file area.
- * @param integer $qubaid the question_usage this image belongs to.
- * @param integer $slot the relevant slot within the usage.
+ * @param int $qubaid the question_usage this image belongs to.
+ * @param int $slot the relevant slot within the usage.
  * @param array $args the remaining bits of the file path.
  * @param bool $forcedownload whether the user must be forced to download the file.
  * @return bool false if file not found, does not return if found - justsend the file
@@ -242,8 +242,8 @@ function question_preview_question_pluginfile($course, $context, $component,
 
 /**
  * The the URL to use for actions relating to this preview.
- * @param integer $questionid the question being previewed.
- * @param integer $qubaid the id of the question usage for this preview.
+ * @param int $questionid the question being previewed.
+ * @param int $qubaid the id of the question usage for this preview.
  * @param question_preview_options $options the options in use.
  */
 function question_preview_action_url($questionid, $qubaid,
@@ -255,8 +255,8 @@ function question_preview_action_url($questionid, $qubaid,
 
 /**
  * Delete the current preview, if any, and redirect to start a new preview.
- * @param integer $previewid
- * @param integer $questionid
+ * @param int $previewid
+ * @param int $questionid
  * @param object $displayoptions
  */
 function restart_preview($previewid, $questionid, $displayoptions) {

@@ -77,14 +77,14 @@ class quiz_statistics_response_analyser {
     }
 
     /**
-     * @return boolean whether this analysis has more than one subpart.
+     * @return bool whether this analysis has more than one subpart.
      */
     public function has_subparts() {
         return count($this->responseclasses) > 1;
     }
 
     /**
-     * @return boolean whether this analysis has (a subpart with) more than one
+     * @return bool whether this analysis has (a subpart with) more than one
      *      response class.
      */
     public function has_response_classes() {
@@ -97,7 +97,7 @@ class quiz_statistics_response_analyser {
     }
 
     /**
-     * @return boolean whether this analysis has a response class more than one
+     * @return bool whether this analysis has a response class more than one
      *      different acutal response.
      */
     public function has_actual_responses() {
@@ -160,9 +160,9 @@ class quiz_statistics_response_analyser {
     /**
      * Store the computed response analysis in the quiz_question_response_stats
      * table.
-     * @param integer $quizstatisticsid the cached quiz statistics to load the
+     * @param int $quizstatisticsid the cached quiz statistics to load the
      * data corresponding to.
-     * @return boolean true if cached data was found in the database and loaded,
+     * @return bool true if cached data was found in the database and loaded,
      * otherwise false, to mean no data was loaded.
      */
     public function load_cached($quizstatisticsid) {
@@ -185,7 +185,7 @@ class quiz_statistics_response_analyser {
     /**
      * Store the computed response analysis in the quiz_question_response_stats
      * table.
-     * @param integer $quizstatisticsid the cached quiz statistics this correspons to.
+     * @param int $quizstatisticsid the cached quiz statistics this correspons to.
      */
     public function store_cached($quizstatisticsid) {
         global $DB;

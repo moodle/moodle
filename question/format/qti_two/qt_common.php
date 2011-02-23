@@ -55,7 +55,7 @@ throw new coding_exception('qti_two not converted to new fil api yet, sorry');
  * determines whether or not a file is an image, based on the file extension
  *
  * @param string $file the filename
- * @return boolean
+ * @return bool
  */
 function is_image_by_extension($file) {
     $extensionsregex = '/\.(gif|jpg|jpeg|jpe|png|tif|tiff|bmp|xbm|rgb|svf)$/';
@@ -70,7 +70,7 @@ function is_image_by_extension($file) {
  * determines whether or not a file is a media file, based on the file extension
  *
  * @param string $file the filename
- * @return boolean
+ * @return bool
  */
 function is_media_by_extension($file) {
     $extensionsregex = '/\.(gif|jpg|jpeg|jpe|png|tif|tiff|bmp|xbm|rgb|svf|swf|mov|mpg|mpeg|wmf|avi|mpe|flv|mp3|ra|ram)$/';
@@ -84,7 +84,7 @@ function is_media_by_extension($file) {
  * determines whether or not a file is a multimedia file, based on the file extension
  *
  * @param string $file the filename
- * @return boolean
+ * @return bool
  */
 function is_multimedia_by_extension($file) {
     $extensionsregex = '/\.(swf|mov|mpg|mpeg|wmf|avi|mpe|flv)$/';
@@ -98,7 +98,7 @@ function is_multimedia_by_extension($file) {
  * determines whether or not a file is a multimedia file of a type php can get the dimension for, based on the file extension
  *
  * @param string $file the filename
- * @return boolean
+ * @return bool
  */
 function is_sizable_multimedia($file) {
     $extensionsregex = '/\.(swf)$/';

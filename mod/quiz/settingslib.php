@@ -74,7 +74,7 @@ class mod_quiz_admin_review_setting extends admin_setting {
     }
 
     /**
-     * @return integer all times.
+     * @return int all times.
      */
     public static function all_on() {
         return self::DURING | self::IMMEDIATELY_AFTER | self::LATER_WHILE_OPEN |

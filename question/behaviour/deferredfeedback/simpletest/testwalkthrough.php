@@ -36,7 +36,7 @@ require_once(dirname(__FILE__) . '/../../../engine/simpletest/helpers.php');
  * Unit tests for the deferred feedback behaviour.
  *
  * @copyright  2009 The Open University
- * @license  http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_deferredfeedback_feedback_truefalse() {

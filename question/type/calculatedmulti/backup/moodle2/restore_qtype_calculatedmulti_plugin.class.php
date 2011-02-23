@@ -30,7 +30,10 @@ require_once($CFG->dirroot . '/question/type/calculated/backup/moodle2/restore_q
 
 /**
  * restore plugin class that provides the necessary information
- * needed to restore one calculatedmulti qtype plugin
+ * needed to restore one calculatedmulti qtype plugin.
+ *
+ * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_qtype_calculatedmulti_plugin extends restore_qtype_calculated_plugin {
 

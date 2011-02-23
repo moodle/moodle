@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * feedback behaviour.
  *
  * @copyright  2009 The Open University
- * @license  http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_deferredfeedback_renderer extends qbehaviour_renderer {
 }
