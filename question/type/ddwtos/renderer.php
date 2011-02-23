@@ -15,14 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Drag-and-drop words into sentences question renderer class.
  *
- * @package qtype_ddwtos
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage ddwtos
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
 
@@ -30,8 +31,8 @@ require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
 /**
  * Generates the output for drag-and-drop words into sentences questions.
  *
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_renderer {
 

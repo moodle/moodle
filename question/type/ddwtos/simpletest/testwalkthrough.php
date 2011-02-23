@@ -15,14 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * This file contains tests that walks a question through the interactive
- * behaviour.
+ * Unit tests for the drag-and-drop words into sentences question type.
  *
- * @package qtype_ddwtos
- * @copyright 2010 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage ddwtos
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -30,6 +29,12 @@ require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 require_once($CFG->dirroot . '/question/type/ddwtos/simpletest/helper.php');
 
 
+/**
+ * Unit tests for the drag-and-drop words into sentences question type.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
     protected function get_contains_drop_box_expectation($place, $group, $readonly, $stateclass = '0') {

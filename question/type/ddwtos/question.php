@@ -19,9 +19,10 @@
 /**
  * Drag-and-drop words into sentences question definition class.
  *
- * @package qtype_ddwtos
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage ddwtos
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once($CFG->dirroot . '/question/type/gapselect/questionbase.php');
@@ -29,19 +30,19 @@ require_once($CFG->dirroot . '/question/type/gapselect/questionbase.php');
 /**
  * Represents a drag-and-drop words into sentences question.
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddwtos_question extends qtype_gapselect_question_base {
-//is actually exactly the same.
+    // Is actually exactly the same.
 }
 
 
 /**
  * Represents one of the choices (draggable boxes).
  *
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddwtos_choice {
     public $text;
