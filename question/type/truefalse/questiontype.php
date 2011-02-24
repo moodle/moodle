@@ -137,6 +137,8 @@ class qtype_truefalse extends question_type {
         }
         $question->truefeedback = $answers[$questiondata->options->trueanswer]->feedback;
         $question->falsefeedback = $answers[$questiondata->options->falseanswer]->feedback;
+        $question->truefeedbackformat = $answers[$questiondata->options->trueanswer]->feedbackformat;
+        $question->falsefeedbackformat = $answers[$questiondata->options->falseanswer]->feedbackformat;
         $question->trueanswerid = $questiondata->options->trueanswer;
         $question->falseanswerid = $questiondata->options->falseanswer;
     }

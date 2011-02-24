@@ -59,7 +59,8 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
             $result .= html_writer::start_tag('tr', array('class' => 'r' . $parity));
             $fieldname = 'sub' . $key;
 
-            $result .= html_writer::tag('td', $question->format_text($question->stems[$stemid],
+            $result .= html_writer::tag('td', $question->format_text(
+                    $question->stems[$stemid], $question->stemformat[$stemid],
                     $qa, 'qtype_match', 'subquestion', $stemid),
                     array('class' => 'text'));
 
@@ -120,7 +121,8 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
         $choices = $this->format_choices($question);
         $right = array();
         foreach ($stemorder as $key => $stemid) {
-            $right[] = $question->format_text($question->stems[$stemid], $qa,
+            $right[] = $question->format_text($question->stems[$stemid],
+                    $question->stemformat[$stemid], $qa,
                     'qtype_match', 'subquestion', $stemid) . ' – ' .
                     $choices[$question->get_right_choice_for($stemid)];
         }

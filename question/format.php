@@ -846,14 +846,8 @@ class qformat_default {
         global $DB;
         $formatoptions = new stdClass();
         $formatoptions->noclean = true;
-        $formatoptions->para = false;
-        if (empty($question->questiontextformat)) {
-            $format = FORMAT_MOODLE;
-        } else {
-            $format = $question->questiontextformat;
-        }
-        $text = $question->questiontext;
-        return format_text(html_to_text($text, 0, false), $format, $formatoptions);
+        return html_to_text(format_text($question->questiontext,
+                $this->questiontextformat, $formatoptions), 0, false);
     }
 
     /**

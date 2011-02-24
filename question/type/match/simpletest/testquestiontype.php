@@ -76,10 +76,26 @@ class qtype_match_test extends UnitTestCase {
         test_question_maker::set_standard_combined_feedback_fields($q->options);
 
         $q->options->subquestions = array(
-            14 => (object) array('id' => 14, 'questiontext' => 'frog', 'answertext' => 'amphibian'),
-            15 => (object) array('id' => 15, 'questiontext' => 'cat', 'answertext' => 'mammal'),
-            16 => (object) array('id' => 16, 'questiontext' => 'newt', 'answertext' => 'amphibian'),
-            17 => (object) array('id' => 17, 'questiontext' => '', 'answertext' => 'insect'),
+            14 => (object) array(
+                'id' => 14,
+                'questiontext' => 'frog',
+                'questiontextformat' => FORMAT_HTML,
+                'answertext' => 'amphibian'),
+            15 => (object) array(
+                'id' => 15,
+                'questiontext' => 'cat',
+                'questiontextformat' => FORMAT_HTML,
+                'answertext' => 'mammal'),
+            16 => (object) array(
+                'id' => 16,
+                'questiontext' => 'newt',
+                'questiontextformat' => FORMAT_HTML,
+                'answertext' => 'amphibian'),
+            17 => (object) array(
+                'id' => 17,
+                'questiontext' => '',
+                'questiontextformat' => FORMAT_HTML,
+                'answertext' => 'insect'),
         );
 
         return $q;

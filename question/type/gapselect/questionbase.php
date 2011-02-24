@@ -97,12 +97,12 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
     }
 
     public function get_question_summary() {
-        $question = $this->html_to_text($this->questiontext);
+        $question = $this->html_to_text($this->questiontext, $this->questiontextformat);
         $groups = array();
         foreach ($this->choices as $group => $choices) {
             $cs = array();
             foreach ($choices as $choice) {
-                $cs[] = $this->html_to_text($choice->text);
+                $cs[] = html_to_text($choice->text, 0, false);
             }
             $groups[] = '[[' . $group . ']] -> {' . implode(' / ', $cs) . '}';
         }
@@ -120,8 +120,8 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
         foreach ($this->places as $place => $group) {
             if (array_key_exists($this->field($place), $response) &&
                     $response[$this->field($place)]) {
-                $choices[] = '{' . $this->html_to_text($this->get_selected_choice(
-                        $group, $response[$this->field($place)])->text) . '}';
+                $choices[] = '{' . html_to_text($this->get_selected_choice(
+                        $group, $response[$this->field($place)])->text, 0, false) . '}';
                 $allblank = false;
             } else {
                 $choices[] = '{}';
@@ -286,7 +286,7 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
             $choiceno = $this->choiceorder[$group][$response[$fieldname]];
             $choice = $this->choices[$group][$choiceno];
             $parts[$place] = new question_classified_response(
-                    $choiceno, $this->html_to_text($choice->text),
+                    $choiceno, html_to_text($choice->text, 0, false),
                     $this->get_right_choice_for($place) == $response[$fieldname]);
         }
         return $parts;

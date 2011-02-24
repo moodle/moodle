@@ -1123,10 +1123,9 @@ class quiz_question_bank_view extends question_bank_view {
         echo '<div class="categoryinfo"><div class="categorynamefieldcontainer">' .
                 $strcategory;
         echo ': <span class="categorynamefield">';
-        echo shorten_text(strip_tags(format_text($category->name, FORMAT_MOODLE,
-                $formatoptions, $this->course->id)), 60);
+        echo shorten_text(strip_tags(format_string($category->name)), 60);
         echo '</span></div><div class="categoryinfofieldcontainer"><span class="categoryinfofield">';
-        echo shorten_text(strip_tags(format_text($category->info, FORMAT_MOODLE,
+        echo shorten_text(strip_tags(format_text($category->info, $category->infoformat,
                 $formatoptions, $this->course->id)), 200);
         echo '</span></div></div>';
     }

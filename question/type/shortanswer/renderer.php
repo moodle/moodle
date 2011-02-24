@@ -106,8 +106,8 @@ class qtype_shortanswer_renderer extends qtype_renderer {
             return '';
         }
 
-        return $question->format_text($answer->feedback, $qa,
-                'question', 'answerfeedback', $answer->id);
+        return $question->format_text($answer->feedback, $answer->feedbackformat,
+                $qa, 'question', 'answerfeedback', $answer->id);
     }
 
     public function correct_response(question_attempt $qa) {

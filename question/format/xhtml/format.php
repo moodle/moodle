@@ -67,11 +67,9 @@ function writequestion($question) {
     // add header
     $expout .= "<h3>$question->name</h3>\n";
 
-    // format and add question text
-    $questiontext = $question->questiontext;
-    $format = $question->questiontextformat;
-    $formatted_text = format_text($questiontext, $format);
-    $expout .= "<p class=\"questiontext\">$formatted_text</p>\n";
+    // Format and add the question text
+    $expout .= '<p class="questiontext">' . format_text($question->questiontext,
+            $question->questiontextformat); . "</p>\n";
 
     // selection depends on question type
     switch($question->qtype) {

@@ -252,10 +252,11 @@ abstract class qtype_with_combined_feedback_renderer extends qtype_renderer {
         }
 
         $feedback = '';
-        $feedbackfield = $state->get_feedback_class() . 'feedback';
-        if ($question->$feedbackfield) {
-            $feedback .= $question->format_text($question->$feedbackfield, $qa,
-                    'question', $feedbackfield, $question->id);
+        $field = $state->get_feedback_class() . 'feedback';
+        $format = $state->get_feedback_class() . 'feedbackformat';
+        if ($question->$field) {
+            $feedback .= $question->format_text($question->$field, $question->$format,
+                    $qa, 'question', $field, $question->id);
         }
 
         return $feedback;

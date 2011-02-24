@@ -188,7 +188,7 @@ abstract class question_definition {
      * @return string|null a plain text summary of this question.
      */
     public function get_question_summary() {
-        return $this->html_to_text($this->questiontext);
+        return $this->html_to_text($this->questiontext, $this->questiontextformat);
     }
 
     /**
@@ -256,6 +256,7 @@ abstract class question_definition {
      * this question.
      *
      * @param string $text some content that needs to be output.
+     * @param int $format the FORMAT_... constant.
      * @param question_attempt $qa the question attempt.
      * @param string $component used for rewriting file area URLs.
      * @param string $filearea used for rewriting file area URLs.
@@ -263,37 +264,37 @@ abstract class question_definition {
      *      parts of the question do not need to be cleaned, and student input does.
      * @return string the text formatted for output by format_text.
      */
-    public function format_text($text, $qa, $component, $filearea, $itemid, $clean = false) {
-        // TODO format.
+    public function format_text($text, $format, $qa, $component, $filearea, $itemid, $clean = false) {
         $formatoptions = new stdClass();
         $formatoptions->noclean = !$clean;
         $formatoptions->para = false;
         $text = $qa->rewrite_pluginfile_urls($text, $component, $filearea, $itemid);
-        return format_text($text, $this->questiontextformat, $formatoptions);
+        return format_text($text, $format, $formatoptions);
     }
 
     /**
      * Convert some part of the question text to plain text. This might be used,
      * for example, by get_response_summary().
      * @param string $text The HTML to reduce to plain text.
+     * @param int $format the FORMAT_... constant.
+     * @return string the equivalent plain text.
      */
-    public function html_to_text($text) {
+    public function html_to_text($text, $format) {
         $formatoptions = new stdClass();
         $formatoptions->noclean = true;
-        return html_to_text(format_text($text, $this->questiontextformat, $formatoptions),
-                0, false);
+        return html_to_text(format_text($text, $format, $formatoptions), 0, false);
     }
 
     /** @return the result of applying {@link format_text()} to the question text. */
     public function format_questiontext($qa) {
-        return $this->format_text($this->questiontext, $qa,
-                'question', 'questiontext', $this->id);
+        return $this->format_text($this->questiontext, $this->questiontextformat,
+                $qa, 'question', 'questiontext', $this->id);
     }
 
     /** @return the result of applying {@link format_text()} to the general feedback. */
     public function format_generalfeedback($qa) {
-        return $this->format_text($this->generalfeedback, $qa,
-                'question', 'generalfeedback', $this->id);
+        return $this->format_text($this->generalfeedback, $this->generalfeedbackformat,
+                $qa, 'question', 'generalfeedback', $this->id);
     }
 
     /**
@@ -600,7 +601,7 @@ abstract class question_graded_automatically extends question_with_responses
     }
 
     public function format_hint(question_hint $hint, question_attempt $qa) {
-        return $this->format_text($hint->hint, $qa, 'question', 'hint', $hint->id);
+        return $this->format_text($hint->hint, $hint->hintformat, $qa, 'question', 'hint', $hint->id);
     }
 }
 
@@ -707,6 +708,9 @@ class question_answer {
     /** @var string the answer. */
     public $answer;
 
+    /** @var integer one of the FORMAT_... constans. */
+    public $answerformat = FORMAT_PLAIN;
+
     /** @var number the fraction this answer is worth. */
     public $fraction;
 
@@ -718,9 +722,12 @@ class question_answer {
 
     /**
      * Constructor.
+     * @param int $id the answer.
      * @param string $answer the answer.
+     * @param int $answerformat the format of the answer.
      * @param number $fraction the fraction this answer is worth.
      * @param string $feedback the feedback for this answer.
+     * @param int $feedbackformat the format of the feedback.
      */
     public function __construct($id, $answer, $fraction, $feedback, $feedbackformat) {
         $this->id = $id;

@@ -149,6 +149,7 @@ class qtype_match extends question_type {
 
             if ($matchsub->questiontext !== '') {
                 $question->stems[$matchsub->id] = $matchsub->questiontext;
+                $question->stemformat[$matchsub->id] = $matchsub->questiontextformat;
                 $question->right[$matchsub->id] = $key;
             }
         }
@@ -181,7 +182,7 @@ class qtype_match extends question_type {
             $responses = array();
             foreach ($q->choices as $choiceid => $choice) {
                 $responses[$choiceid] = new question_possible_response(
-                        $q->html_to_text($stem) . ': ' . $q->html_to_text($choice),
+                        $q->html_to_text($stem, $q->stemformat[$stemid]) . ': ' . $choice,
                         ($choiceid == $q->right[$stemid]) / count($q->stems));
             }
             $responses[null] = question_possible_response::no_response();

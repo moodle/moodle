@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/engine/lib.php');
  * for, and the circumstances under which you might need to override it.
  *
  * Note: the questiontype API should NOT be considered stable yet. Very few
- * question tyeps have been produced yet, so we do not yet know all the places
+ * question types have been produced yet, so we do not yet know all the places
  * where the current API is insufficient. I would rather learn from the
  * experiences of the first few question type implementors, and improve the
  * interface to meet their needs, rather the freeze the API prematurely and

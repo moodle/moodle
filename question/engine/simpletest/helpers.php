@@ -113,6 +113,8 @@ class test_question_maker {
         $tf->rightanswer = true;
         $tf->truefeedback = 'This is the right answer.';
         $tf->falsefeedback = 'This is the wrong answer.';
+        $tf->truefeedbackformat = FORMAT_HTML;
+        $tf->falsefeedbackformat = FORMAT_HTML;
         $tf->trueanswerid = 13;
         $tf->falseanswerid = 14;
 
@@ -193,10 +195,13 @@ class test_question_maker {
 
         self::set_standard_combined_feedback_fields($match);
 
+        // Using unset to get 1-based arrays. 
         $match->stems = array('', 'Dog', 'Frog', 'Toad', 'Cat');
+        $match->stemformat = array('', FORMAT_HTML, FORMAT_HTML, FORMAT_HTML, FORMAT_HTML);
         $match->choices = array('', 'Mammal', 'Amphibian', 'Insect');
         $match->right = array('', 1, 2, 2, 1);
         unset($match->stems[0]);
+        unset($match->stemformat[0]);
         unset($match->choices[0]);
         unset($match->right[0]);
 
