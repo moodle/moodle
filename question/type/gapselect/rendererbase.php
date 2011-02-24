@@ -51,7 +51,7 @@ abstract class qtype_elements_embedded_in_question_text_renderer extends qtype_w
 
         $result = '';
         $result .= html_writer::tag('div', $question->format_text($questiontext,
-                $qa, 'question', 'questiontext', $question->id),
+                $question->questiontextformat, $qa, 'question', 'questiontext', $question->id),
                 array('class' => $this->qtext_classname(), 'id' => $qa->get_qt_field_name('')));
 
         $result .= $this->post_qtext_elements($qa, $options);
