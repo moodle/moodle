@@ -378,7 +378,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
         $itemid = reset($args);
         if ($component == 'question' && $filearea == 'answerfeedback') {
 
-            // check if answer id exists
+            // Check if answer id exists
             $result = $options->feedback && array_key_exists($itemid, $question->options->answers);
             if (!$result) {
                 return false;
@@ -389,8 +389,7 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
             }
             return true;
         } else if ($filearea == 'instruction') {
-            // TODO: should it be display all the time like questiontext?
-            // check if question id exists
+            // Displayed all the time like the question text. Check if question id exists
             if ($itemid != $question->id) {
                 return false;
             } else {

@@ -261,14 +261,15 @@ function handle_questions_media(&$questions, $path, $courseid) {
  */
     function exportprocess() {
 
-        global $CFG, $OUTPUT;
+        global $CFG, $OUTPUT, $USER;
         $courseid = $this->course->id;
 
+        $path = 'temp/qformat_qti_two/' . $USER->id . '/' . $this->filename;
         // create a directory for the exports (if not already existing)
-        if (!$export_dir = make_upload_directory($this->question_get_export_dir().'/'.$this->filename)) {
-              print_error('cannotcreatepath', 'question', '', $export_dir);
+        if (!make_upload_directory($path)) {
+              throw new moodle_exception('cannotcreatepath', 'question', '', $path);
         }
-        $path = $CFG->dataroot.'/'.$this->question_get_export_dir().'/'.$this->filename;
+        $path = $CFG->dataroot . '/' . $path;
 
         // get the questions (from database) in this category
         $questions = get_questions_category( $this->category );

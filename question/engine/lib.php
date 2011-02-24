@@ -102,8 +102,11 @@ abstract class question_engine {
     }
 
     /**
-     * Delete a {@link question_usage_by_activity} from the database, based on its id.
-     * @param int $qubaid the id of the usage to delete.
+     * Delete {@link question_usage_by_activity}s from the database that match
+     * an arbitrary SQL where clause.
+     * @param string $where a where clause. Becuase of MySQL limitations, you
+     *      must refer to {question_usages}.id in full like that.
+     * @param array $params values to substitute for placeholders in $where.
      */
     public static function delete_questions_usage_by_activities($where, $params) {
         $dm = new question_engine_data_mapper();
@@ -728,8 +731,7 @@ class question_usage_by_activity {
      * @return int the number used to identify this question within this usage.
      */
     public function add_question(question_definition $question, $maxmark = null) {
-        $qa = new question_attempt($question, $this->get_id(),
-                $this->context->id, $this->observer, $maxmark);
+        $qa = new question_attempt($question, $this->get_id(), $this->observer, $maxmark);
         if (count($this->questionattempts) == 0) {
             $this->questionattempts[1] = $qa;
         } else {
@@ -1165,7 +1167,7 @@ class question_usage_by_activity {
         $this->observer->notify_delete_attempt_steps($oldqa);
 
         $newqa = new question_attempt($oldqa->get_question(), $oldqa->get_usage_id(),
-                $this->context->id, $this->observer, $newmaxmark);
+                $this->observer, $newmaxmark);
         $newqa->set_database_id($oldqa->get_database_id());
         $newqa->regrade($oldqa, $finished);
 
@@ -1321,10 +1323,6 @@ class question_attempt {
     /** @var integer|string the id of the question_usage_by_activity we belong to. */
     protected $usageid;
 
-    /** @var integer the id of the context this question_attempt belongs to. */
-    // TODO I don't think this is actually needed.
-    protected $owningcontextid = null;
-
     /** @var integer the number used to identify this question_attempt within the usage. */
     protected $slot = null;
 
@@ -1395,11 +1393,10 @@ class question_attempt {
      * @param number $maxmark the maximum grade for this question_attempt. If not
      * passed, $question->defaultmark is used.
      */
-    public function __construct(question_definition $question, $usageid, $owningcontextid,
+    public function __construct(question_definition $question, $usageid,
             question_usage_observer $observer = null, $maxmark = null) {
         $this->question = $question;
         $this->usageid = $usageid;
-        $this->owningcontextid = $owningcontextid;
         if (is_null($observer)) {
             $observer = new question_usage_null_observer();
         }
@@ -1830,10 +1827,13 @@ class question_attempt {
      * @param string|null $number The question number to display.
      * @return string HTML fragment representing the question.
      */
-    public function render($options, $number) {
-        global $PAGE;
-        $qoutput = $PAGE->get_renderer('core', 'question');
-        $qtoutput = $this->question->get_renderer();
+    public function render($options, $number, $page = null) {
+        if (is_null($page)) {
+            global $PAGE;
+            $page = $PAGE;
+        }
+        $qoutput = $page->get_renderer('core', 'question');
+        $qtoutput = $this->question->get_renderer($page);
         return $this->behaviour->render($options, $number, $qoutput, $qtoutput);
     }
 
@@ -1842,9 +1842,14 @@ class question_attempt {
      * attempt is displayed in the body.
      * @return string HTML fragment.
      */
-    public function render_head_html() {
-        return $this->question->get_renderer()->head_code($this) .
-                $this->behaviour->get_renderer()->head_code($this);
+    public function render_head_html($page = null) {
+        if (is_null($page)) {
+            global $PAGE;
+            $page = $PAGE;
+        }
+        // TODO go via behaviour.
+        return $this->question->get_renderer($page)->head_code($this) .
+                $this->behaviour->get_renderer($page)->head_code($this);
     }
 
     /**
@@ -2221,7 +2226,7 @@ class question_attempt {
         }
 
         $qa = new question_attempt($question, $record->questionusageid,
-                $record->contextid, null, $record->maxmark + 0);
+                null, $record->maxmark + 0);
         $qa->set_database_id($record->questionattemptid);
         $qa->set_number_in_usage($record->slot);
         $qa->minfraction = $record->minfraction + 0;

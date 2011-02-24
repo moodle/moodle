@@ -2145,15 +2145,14 @@ class question_calculated_qtype extends question_type {
             }
             return true;
         } else if ($filearea == 'instruction') {
-            // TODO: should it be display all the time like questiontext?
-            // check if question id exists
+            // Displayed all the time like the question text. Check if question id exists
             if ($itemid != $question->id) {
                 return false;
             } else {
                 return true;
             }
         } else if (in_array($filearea, array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'))) {
-            // TODO: calculated type doesn't display question feedback yet
+            // Note: calculated type doesn't display question feedback yet
             return false;
         } else {
             return parent::check_file_access($question, $state, $options, $contextid, $component,

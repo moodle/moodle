@@ -109,36 +109,18 @@ class question_randomsamatch_qtype extends qtype_match {
             // recurse into subcategories
             $categorylist = question_categorylist($question->category);
         } else {
-            $categorylist = $question->category;
+            $categorylist = array($question->category);
         }
 
         $saquestions = $this->get_sa_candidates($categorylist, $cmoptions->questionsinuse);
 
         $count  = count($saquestions);
         $wanted = $question->options->choose;
-        $errorstr = '';
-        if ($count < $wanted && has_coursecontact_role($USER->id)) { //TODO: this teacher test is far from optimal
-            if ($count >= 2) {
-                $errorstr =  "Error: could not get enough Short-Answer questions!
-                 Got $count Short-Answer questions, but wanted $wanted.
-                 Reducing number to choose from to $count!";
-                $wanted = $question->options->choose = $count;
-            } else {
-                $errorstr = "Error: could not get enough Short-Answer questions!
-                 This can happen if all available Short-Answer questions are already
-                 taken up by other Random questions or Random Short-Answer question.
-                 Another possible cause for this error is that Short-Answer
-                 questions were deleted after this Random Short-Answer question was
-                 created.";
-            }
-            echo $OUTPUT->notification($errorstr);
-            $errorstr = '<span class="notifyproblem">' . $errorstr . '</span>';
-        }
 
         if ($count < $wanted) {
-            $question->questiontext = "$errorstr<br /><br />Insufficient selection options are
-             available for this question, therefore it is not available in  this
-             quiz. Please inform your teacher.";
+            $question->questiontext = "Insufficient selection options are
+                available for this question, therefore it is not available in  this
+                quiz. Please inform your teacher.";
             // Treat this as a description from this point on
             $question->qtype = DESCRIPTION;
             return true;
@@ -263,9 +245,9 @@ class question_randomsamatch_qtype extends qtype_match {
         return $response;
     }
 
-    function get_sa_candidates($categorylist, $questionsinuse=0) {
+    function get_sa_candidates($categorylist, $questionsinuse = 0) {
         global $DB;
-        list ($usql, $params) = $DB->get_in_or_equal(explode(',', $categorylist));
+        list ($usql, $params) = $DB->get_in_or_equal($categorylist);
         list ($ques_usql, $ques_params) = $DB->get_in_or_equal(explode(',', $questionsinuse), SQL_PARAMS_QM, null, false);
         $params = array_merge($params, $ques_params);
         return $DB->get_records_select('question',
@@ -310,7 +292,7 @@ class question_randomsamatch_qtype extends qtype_match {
                 // recurse into subcategories
                 $categorylist = question_categorylist($question->category);
             } else {
-                $categorylist = $question->category;
+                $categorylist = array($question->category);
             }
 
             $question->options->subquestions = $this->get_sa_candidates($categorylist);

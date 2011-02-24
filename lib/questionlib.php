@@ -777,7 +777,7 @@ function question_load_questions($questionids, $extrafields = '', $join = '') {
  */
 function _tidy_question($question, $loadtags = false) {
     global $CFG;
-    if (question_bank::is_qtype_installed($question->qtype)) {
+    if (!question_bank::is_qtype_installed($question->qtype)) {
         $question->questiontext = html_writer::tag('p', get_string('warningmissingtype',
                 'qtype_missingtype')) . $question->questiontext;
     }
@@ -1153,18 +1153,18 @@ function question_add_tops($categories, $pcontexts){
 }
 
 /**
- * Returns a comma separated list of ids of the category and all subcategories
+ * @return array of question category ids of the category and all subcategories.
  */
 function question_categorylist($categoryid) {
     global $DB;
 
-    // returns a comma separated list of ids of the category and all subcategories
-    $categorylist = $categoryid;
-    if ($subcategories = $DB->get_records('question_categories', array('parent' => $categoryid), 'sortorder ASC', 'id, 1')) {
-        foreach ($subcategories as $subcategory) {
-            $categorylist .= ','. question_categorylist($subcategory->id);
-        }
+    $subcategories = $DB->get_records('question_categories', array('parent' => $categoryid), 'sortorder ASC', 'id, 1');
+
+    $categorylist = array($categoryid);
+    foreach ($subcategories as $subcategory) {
+        $categorylist = array_merge($categorylist, question_categorylist($subcategory->id));
     }
+
     return $categorylist;
 }
 

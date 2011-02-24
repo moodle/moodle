@@ -118,7 +118,7 @@ abstract class question_behaviour {
      */
     public function render(question_display_options $options, $number,
             core_question_renderer $qoutput, qtype_renderer $qtoutput) {
-        $behaviouroutput = $this->get_renderer();
+        $behaviouroutput = $this->get_renderer($qoutput->get_page());
         $options = clone($options);
         $this->adjust_display_options($options);
         return $qoutput->question($this->qa, $behaviouroutput, $qtoutput, $options, $number);
@@ -139,11 +139,11 @@ abstract class question_behaviour {
     }
 
     /**
+     * @param moodle_page $page the page to render for.
      * @return qbehaviour_renderer get the appropriate renderer to use for this model.
      */
-    public function get_renderer() {
-        global $PAGE;
-        return $PAGE->get_renderer(get_class($this));
+    public function get_renderer(moodle_page $page) {
+        return $page->get_renderer(get_class($this));
     }
 
     /**

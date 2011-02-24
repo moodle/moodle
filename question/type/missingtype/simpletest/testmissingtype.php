@@ -95,7 +95,7 @@ class qtype_missing_test extends UnitTestCase {
     public function test_render_missing() {
         $questiondata = $this->get_unknown_questiondata();
         $q = question_bank::make_question($questiondata);
-        $qa = new testable_question_attempt($q, 0, 0);
+        $qa = new testable_question_attempt($q, 0);
 
         $step = new question_attempt_step(array('answer' => 'frog'));
         $step->set_state(question_state::$todo);

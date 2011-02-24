@@ -82,12 +82,6 @@ class backup_qtype_numerical_plugin extends backup_qtype_plugin {
      * files to be processed both in backup and restore.
      */
     public static function get_qtype_fileareas() {
-        // TODO: Discuss. Commented below are the "in theory" correct
-        // mappings for those fileareas. Instead we are using question for
-        // them, that will cause problems in the future if we want to change
-        // any of them to be 1..n (i.e. we should be always pointing to own id)
-        return array(
-            //'instruction' => 'question_numerical_option');
-            'instruction' => 'question_created');
+        return array('instruction' => 'question_created');
     }
 }

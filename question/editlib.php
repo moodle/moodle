@@ -69,17 +69,16 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
       $npsql = " and parent='0' ";
     }
 
-    // get (list) of categories
+    // Get list of categories
     if ($recurse) {
         $categorylist = question_categorylist($category->id);
-    }
-    else {
-        $categorylist = $category->id;
+    } else {
+        $categorylist = array($category->id);
     }
 
     // get the list of questions for the category
-    list ($usql, $params) = $DB->get_in_or_equal(explode(',', $categorylist));
-    if ($questions = $DB->get_records_select("question","category $usql $npsql", $params, "qtype, name ASC")) {
+    list($usql, $params) = $DB->get_in_or_equal($categorylist);
+    if ($questions = $DB->get_records_select('question', "category $usql $npsql", $params, 'qtype, name')) {
 
         // iterate through questions, getting stuff we need
         foreach($questions as $question) {
@@ -1103,7 +1102,7 @@ class question_bank_view {
         }
 
         if ($recurse) {
-            $categoryids = explode(',', question_categorylist($category->id));
+            $categoryids = question_categorylist($category->id);
         } else {
             $categoryids = array($category->id);
         }
@@ -1302,7 +1301,7 @@ class question_bank_view {
         $cmoptions->hasattempts = !empty($this->quizhasattempts);
 
         $strselectall = get_string('selectall');
-        $strselectnone = get_string('selectnone');
+        $strselectnone = get_string('deselectall');
         $strdelete = get_string('delete');
 
         list($categoryid, $contextid) = explode(',', $categoryandcontext);
@@ -1374,7 +1373,7 @@ class question_bank_view {
             }
 
             if ($canmoveall && count($addcontexts)) {
-                echo '<input type="submit" name="move" value="'.get_string('moveto')."\" />\n";
+                echo '<input type="submit" name="move" value="'.get_string('moveto', 'question')."\" />\n";
                 question_category_select_menu($addcontexts, false, 0, "$category->id,$category->contextid");
             }
 
@@ -1561,9 +1560,6 @@ class question_bank_view {
 function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirecourseid = true) {
     global $DB, $PAGE;
 
-    //$thispageurl is used to construct urls for all question edit pages we link to from this page. It contains an array
-    //of parameters that are passed from page to page.
-//    $thispageurl = new moodle_url($PAGE->url); //TODO: this looks dumb, because this method is called BEFORE $PAGE->set_page() !!!!
     $thispageurl = new moodle_url($baseurl);
     $thispageurl->remove_all_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
 

@@ -187,7 +187,10 @@ abstract class qtype_renderer extends plugin_renderer_base {
      * @return string HTML fragment.
      */
     public function head_code(question_attempt $qa) {
-        // TODO I think we can get rid of this, but what about Opaque?
+        // This method is used by the Opaque question type. The remote question
+        // engine can send back arbitrary CSS that we have to link to in the
+        // page header. If it was not for that, we might be able to eliminate
+        // this method and load the required CSS and JS some other way.
         $qa->get_question()->qtype->find_standard_scripts();
     }
 

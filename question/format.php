@@ -839,22 +839,6 @@ class qformat_default {
     }
 
     /**
-     * get directory into which export is going
-     * @return string file path
-     */
-    function question_get_export_dir() {
-        // TODO is this still used.
-        global $USER;
-        if ($this->canaccessbackupdata) {
-            $dirname = get_string('exportfilename', 'question');
-            $path = $this->course->id . '/backupdata/' . $dirname; // backupdata is protected directory
-        } else {
-            $path = 'temp/questionexport/' . $USER->id;
-        }
-        return $path;
-    }
-
-    /**
      * Convert the question text to plain text, so it can safely be displayed
      * during import to let the user see roughly what is going on.
      */

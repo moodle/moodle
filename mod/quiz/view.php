@@ -118,7 +118,6 @@ if (isguestuser()) {
 }
 
 // If they are not enrolled in this course in a good enough role, tell them to enrol.
-// TODO, review this.
 if (!($canattempt || $canpreview || $canreviewmine)) {
     echo $OUTPUT->box('<p>' . get_string('youneedtoenrol', 'quiz') . "</p>\n\n<p>" .
             $OUTPUT->continue_button($CFG->wwwroot . '/course/view.php?id=' . $course->id) .

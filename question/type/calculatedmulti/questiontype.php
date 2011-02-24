@@ -107,8 +107,6 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
 
         // Save the units.
         $virtualqtype = $this->get_virtual_qtype($question);
-        // TODO: What is this?
-        // $result = $virtualqtype->save_numerical_units($question);
         if (isset($result->error)) {
             return $result;
         } else {

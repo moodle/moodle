@@ -1067,7 +1067,7 @@ class question_numerical_qtype extends qtype_shortanswer {
         $mform->setType('unitpenalty', PARAM_NUMBER);
         $mform->setDefault('unitpenalty', 0.1);
         $mform->setDefault('unitgradingtypes', 1);
-        $mform->addHelpButton('penaltygrp', 'unitpenalty', 'qtype_numerical'); // TODO help did not exist before MDL-21695
+        $mform->addHelpButton('penaltygrp', 'unitpenalty', 'qtype_numerical');
         $mform->setDefault('unitsleft', 0);
         $mform->setType('instructions', PARAM_RAW);
         $mform->addHelpButton('instructions', 'numericalinstructions', 'qtype_numerical');

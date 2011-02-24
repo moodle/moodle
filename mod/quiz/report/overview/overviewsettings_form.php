@@ -38,8 +38,7 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class mod_quiz_report_overview_settings extends moodleform {
 
-    function definition() {
-        global $COURSE; // TODO get rid of this.
+    public function definition() {
         $mform = $this->_form;
 
         $mform->addElement('header', 'preferencespage', get_string('preferencespage', 'quiz_overview'));
@@ -60,7 +59,7 @@ class mod_quiz_report_overview_settings extends moodleform {
         if (!$this->_customdata['currentgroup']) {
             $options[QUIZ_REPORT_ATTEMPTS_ALL] = get_string('optallattempts','quiz_overview');
         }
-        if ($this->_customdata['currentgroup'] || $COURSE->id != SITEID) {
+        if ($this->_customdata['currentgroup'] || !is_inside_frontpage($this->_customdata['context'])) {
             $options[QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS] = get_string('optallstudents','quiz_overview', $studentsstring);
             $options[QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH] =
                      get_string('optattemptsonly','quiz_overview', $studentsstring);

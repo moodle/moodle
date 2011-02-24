@@ -342,8 +342,10 @@ abstract class quiz_attempt_report extends quiz_default_report {
      *      Empty means all users.
      */
     protected function delete_selected_attempts($quiz, $cm, $attemptids, $allowed) {
+        global $DB;
+
         foreach ($attemptids as $attemptid) {
-            $attempt = get_record('quiz_attempts', 'id', $attemptid);
+            $attempt = $DB->get_record('quiz_attempts', array('id' => $attemptid));
             if (!$attempt || $attempt->quiz != $quiz->id || $attempt->preview != 0) {
                 // Ensure the attempt exists, and belongs to this quiz. If not skip.
                 continue;
@@ -610,8 +612,8 @@ abstract class quiz_attempt_report_table extends table_sql {
 
         $this->sql->fields .= ",\n$fields";
         $this->sql->from .= "\nLEFT JOIN $inlineview ON " .
-                "$alias.questionusageid = quiza.uniqueid AND $alias.slot = $slot";
-        // TODO params
+                "$alias.questionusageid = quiza.uniqueid AND $alias.slot = :{$alias}slot";
+        $this->sql->params[$alias . 'slot'] = $slot;
     }
 
     /**

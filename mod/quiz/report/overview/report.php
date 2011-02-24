@@ -58,7 +58,8 @@ class quiz_overview_report extends quiz_attempt_report {
         $qmsubselect = quiz_report_qm_filter_select($quiz);
 
         $mform = new mod_quiz_report_overview_settings($reporturl,
-                array('qmsubselect' => $qmsubselect, 'quiz' => $quiz, 'currentgroup' => $currentgroup, 'context'=>$this->context));
+                array('qmsubselect' => $qmsubselect, 'quiz' => $quiz,
+                'currentgroup' => $currentgroup, 'context' => $this->context));
 
         if ($fromform = $mform->get_data()) {
             $regradeall = false;

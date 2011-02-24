@@ -218,21 +218,6 @@ function quiz_has_attempts($quizid) {
 /// Functions to do with quiz layout and pages ////////////////////////////////
 
 /**
- * Returns a comma separated list of question ids for the current page
- *
- * @param string $layout the string representing the quiz layout. Each page is represented as a
- *      comma separated list of question ids and 0 indicating page breaks.
- *      So 5,2,0,3,0 means questions 5 and 2 on page 1 and question 3 on page 2
- * @param int $page the number of the current page.
- * @return string comma separated list of question ids
- */
-function quiz_questions_on_page($layout, $page) {
-    $pages = explode(',0', $layout);
-    // TODO is this still used.
-    return trim($pages[$page], ',');
-}
-
-/**
  * Returns a comma separated list of question ids for the quiz
  *
  * @param string $layout The string representing the quiz layout. Each page is
@@ -267,36 +252,12 @@ function quiz_number_of_pages($layout) {
  * @return int The number of questions in the quiz.
  */
 function quiz_number_of_questions_in_quiz($layout) {
-    // TODO is this still used.
     $layout = quiz_questions_in_quiz(quiz_clean_layout($layout));
     $count = substr_count($layout, ',');
     if ($layout !== '') {
         $count++;
     }
     return $count;
-}
-
-/**
- * Returns the first question number for the current quiz page
- *
- * @param string $quizlayout The string representing the layout for the whole quiz
- * @param string $pagelayout The string representing the layout for the current page
- * @return int the number of the first question
- */
-function quiz_first_questionnumber($quizlayout, $pagelayout) {
-    // TODO is this still used.
-    // this works by finding all the questions from the quizlayout that
-    // come before the current page and then adding up their lengths.
-    global $CFG, $DB;
-    $start = strpos($quizlayout, ','.$pagelayout.',')-2;
-    if ($start > 0) {
-        $prevlist = substr($quizlayout, 0, $start);
-        list($usql, $params) = $DB->get_in_or_equal(explode(',', $prevlist));
-        return $DB->get_field_sql("SELECT sum(length)+1 FROM {question}
-         WHERE id $usql", $params);
-    } else {
-        return 1;
-    }
 }
 
 /**

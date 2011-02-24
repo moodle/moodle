@@ -305,9 +305,8 @@ function quiz_update_effective_access($quiz, $userid) {
 function quiz_delete_all_attempts($quiz) {
     global $CFG, $DB;
     require_once($CFG->libdir . '/questionlib.php');
-    // TODO remove $CFG->prefix
-    question_engine::delete_questions_usage_by_activities("{$CFG->prefix}question_usages.id IN (
-            SELECT uniqueid FROM {$CFG->prefix}quiz_attempts WHERE quiz = $quizid)");
+    question_engine::delete_questions_usage_by_activities("{question_usages}.id IN (
+            SELECT uniqueid FROM {quiz_attempts} WHERE quiz = :quizid)", array('quizid' => $quizid));
     $DB->delete_records('quiz_attempts', array('quiz' => $quiz->id));
     $DB->delete_records('quiz_grades', array('quiz' => $quiz->id));
 }
@@ -1232,7 +1231,7 @@ function quiz_reset_userdata($data) {
                 SELECT uniqueid
                 FROM {quiz_attempts} quiza
                 JOIN {quiz} quiz ON quiza.quiz = quiz.id
-                WHERE quiz.course = ?)', array($data->courseid));
+                WHERE quiz.course = :courseid)', array('courseid' => $data->courseid));
 
         $DB->delete_records_select('quiz_attempts',
                 'quiz IN (SELECT id FROM {quiz} WHERE course = ?)', array($data->courseid));

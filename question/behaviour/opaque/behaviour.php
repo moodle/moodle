@@ -156,7 +156,7 @@ class qbehaviour_opaque extends question_behaviour {
             $opaquestate = qtype_opaque_update_state($this->qa, $pendingstep);
         } catch (SoapFault $sf) {
             print_object($sf);
-            return question_attempt::DISCARD; // TODO
+            return question_attempt::DISCARD; // TODO better Opaque error handling.
         }
 
         if ($opaquestate->resultssequencenumber != $this->qa->get_num_steps()) {

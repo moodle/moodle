@@ -115,19 +115,16 @@ if ($form = $import_form->get_data()) {
 
     // Do anything before that we need to
     if (!$qformat->importpreprocess()) {
-        //TODO: need more detailed error info
         print_error('cannotimport', '', $thispageurl->out());
     }
 
     // Process the uploaded file
     if (!$qformat->importprocess($category)) {
-        //TODO: need more detailed error info
         print_error('cannotimport', '', $thispageurl->out());
     }
 
     // In case anything needs to be done after
     if (!$qformat->importpostprocess()) {
-        //TODO: need more detailed error info
         print_error('cannotimport', '', $thispageurl->out());
     }
 

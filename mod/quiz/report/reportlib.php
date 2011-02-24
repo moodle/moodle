@@ -188,15 +188,15 @@ function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids = array()
     global $DB;
 
     if ($userids) {
-        list($usql, $params) = $DB->get_in_or_equal($userids);
+        list($usql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'u000000');
         $usql = "qg.userid $usql AND";
     } else {
-        $usql ='';
+        $usql = '';
         $params = array();
     }
     $sql = "
 SELECT
-    FLOOR(qg.grade/$bandwidth) AS band,
+    FLOOR(qg.grade / :bandwidth1) AS band,
     COUNT(1) AS num
 
 FROM {quiz_grades} qg
@@ -204,15 +204,17 @@ JOIN {quiz} q ON qg.quiz = q.id
 
 WHERE
     $usql
-    qg.quiz = ?
+    qg.quiz = :quizid
 
 GROUP BY
-    FLOOR(qg.grade/$bandwidth)
+    FLOOR(qg.grade / :bandwidth2)
 
 ORDER BY
     band";
-// TODO bandiwth with a placeholder.
-    $params[] = $quizid;
+
+    $params['quizid'] = $quizid;
+    $params['bandwidth1'] = $bandwidth;
+    $params['bandwidth2'] = $bandwidth;
 
     $data = $DB->get_records_sql_menu($sql, $params);
 

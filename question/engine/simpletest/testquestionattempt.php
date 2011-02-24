@@ -51,7 +51,7 @@ class question_attempt_test extends UnitTestCase {
         $this->question = test_question_maker::make_a_description_question();
         $this->question->defaultmark = 3;
         $this->usageid = 13;
-        $this->qa = new question_attempt($this->question, $this->usageid, 0);
+        $this->qa = new question_attempt($this->question, $this->usageid);
     }
 
     public function tearDown() {
@@ -61,13 +61,13 @@ class question_attempt_test extends UnitTestCase {
     }
 
     public function test_constructor_sets_maxmark() {
-        $qa = new question_attempt($this->question, $this->usageid, 0);
+        $qa = new question_attempt($this->question, $this->usageid);
         $this->assertIdentical($this->question, $qa->get_question());
         $this->assertEqual(3, $qa->get_max_mark());
     }
 
     public function test_maxmark_beats_default_mark() {
-        $qa = new question_attempt($this->question, $this->usageid, 0, null, 2);
+        $qa = new question_attempt($this->question, $this->usageid, null, 2);
         $this->assertEqual(2, $qa->get_max_mark());
     }
 
@@ -143,7 +143,7 @@ class question_attempt_with_steps_test extends UnitTestCase {
 
     public function setUp() {
         $this->question = test_question_maker::make_a_description_question();
-        $this->qa = new testable_question_attempt($this->question, 0, 0, null, 2);
+        $this->qa = new testable_question_attempt($this->question, 0, null, 2);
         for ($i = 0; $i < 3; $i++) {
             $step = new question_attempt_step(array('i' => $i));
             $this->qa->add_step($step);
@@ -247,7 +247,7 @@ class question_attempt_with_steps_test extends UnitTestCase {
     }
 
     public function test_cannot_get_min_fraction_before_start() {
-        $qa = new question_attempt($this->question, null, 0);
+        $qa = new question_attempt($this->question, 0);
         $this->expectException();
         $qa->get_min_fraction();
     }

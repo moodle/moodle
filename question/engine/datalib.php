@@ -747,7 +747,8 @@ ORDER BY
      * this method.
      *
      * @param string $qubaid SQL fragment that controls which usage is summed.
-     * This might be the name of a column in the outer query.
+     * This will normally be the name of a column in the outer query. Not that this
+     * SQL fragment must not contain any placeholders.
      * @return string SQL code for the subquery.
      */
     public function sum_usage_marks_subquery($qubaid) {
@@ -763,7 +764,6 @@ ORDER BY
             JOIN {question_attempt_steps} qas ON qas.id = lateststepid.latestid
             WHERE qa.questionusageid = $qubaid
             HAVING COUNT(CASE WHEN qas.state = 'needsgrading' AND qa.maxmark > 0 THEN 1 ELSE NULL END) = 0";
-        // TODO handle $qubaid with placeholders.
     }
 
     public function question_attempt_latest_state_view($alias) {

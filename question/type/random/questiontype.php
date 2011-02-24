@@ -80,14 +80,16 @@ class qtype_random extends question_type {
         if ($question->questiontext) {
             $categorylist = question_categorylist($question->category);
         } else {
-            $categorylist = $question->category;
+            $categorylist = array($question->category);
         }
+        list($qcsql, $qcparams) = $DB->get_in_or_equal($categorylist);
+        // TODO use in_or_equal for $otherquestionsinuse and $this->manualqtypes
         return $DB->record_exists_select('question',
-                "category IN ($categorylist)
+                "category $qcsql
                      AND parent = 0
                      AND hidden = 0
                      AND id NOT IN ($otherquestionsinuse)
-                     AND qtype IN ($this->manualqtypes)");
+                     AND qtype IN ($this->manualqtypes)", $qcparams);
     }
 
     /**
@@ -186,7 +188,7 @@ class qtype_random extends question_type {
         if ($subcategories) {
             $categoryids = question_categorylist($categoryid);
         } else {
-            $categoryids = $categoryid;
+            $categoryids = array($categoryid);
         }
 
         $questionids = question_bank::get_finder()->get_questions_from_categories(

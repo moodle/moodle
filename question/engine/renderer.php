@@ -37,6 +37,9 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_question_renderer extends plugin_renderer_base {
+    public function get_page() {
+        return $this->page;
+    }
 
     /**
      * Generate the display of a question in a particular state, and with certain

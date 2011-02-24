@@ -204,9 +204,8 @@ abstract class question_definition {
     /**
      * @return qtype_renderer the renderer to use for outputting this question.
      */
-    public function get_renderer() {
-        global $PAGE; // TODO get rid of this global.
-        return $PAGE->get_renderer('qtype_' . $this->qtype->name());
+    public function get_renderer(moodle_page $page) {
+        return $page->get_renderer($this->qtype->plugin_name());
     }
 
     /**

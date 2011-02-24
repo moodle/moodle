@@ -48,21 +48,21 @@ $attemptobj = quiz_attempt::create($attemptid);
 require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
 $attemptobj->check_review_capability();
 
+echo $OUTPUT->header();
+
 // Check permissions.
 if ($attemptobj->is_own_attempt()) {
     if (!$attemptobj->is_finished()) {
-        echo $OUTPUT->header();
         echo $OUTPUT->notification(get_string('cannotreviewopen', 'quiz'));
         echo $OUTPUT->close_window_button();
         echo $OUTPUT->footer();
-        die;
+        die();
     } else if (!$options->responses) {
         $accessmanager = $attemptobj->get_access_manager(time());
-        echo $OUTPUT->header();
         echo $OUTPUT->notification($accessmanager->cannot_review_message($attemptobj->get_review_options()));
         echo $OUTPUT->close_window_button();
         echo $OUTPUT->footer();
-        die;
+        die();
     }
 
 } else if (!$attemptobj->is_review_allowed()) {

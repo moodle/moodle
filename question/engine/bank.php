@@ -139,8 +139,9 @@ abstract class question_bank {
         foreach (get_plugin_list('qtype') as $plugin => $notused) {
             try {
                 $qtypes[$plugin] = self::get_qtype($plugin);
-            } catch (Exception $e) {
-                // TODO ingore, but review this later.
+            } catch (coding_exception $e) {
+                // Catching coding_exceptions here means that incompatible
+                // question types do not cause the rest of Moodle to break.
             }
         }
         return $qtypes;
@@ -317,27 +318,26 @@ abstract class question_bank {
 class question_finder {
     /**
      * Get the ids of all the questions in a list of categoryies.
-     * @param int|string|array $categoryids either a categoryid, or a comma-separated list
+     * @param array $categoryids either a categoryid, or a comma-separated list
      *      category ids, or an array of them.
-     * @param string $extraconditions extra conditions to AND with the rest of the where clause.
+     * @param string $extraconditions extra conditions to AND with the rest of
+     *      the where clause. Must use named parameters.
+     * @param array $extraparams any parameters used by $extraconditions.
      * @return array questionid => questionid.
      */
-    public function get_questions_from_categories($categoryids, $extraconditions) {
+    public function get_questions_from_categories($categoryids, $extraconditions, $extraparams = array()) {
         global $DB;
 
-        if (is_array($categoryids)) {
-            $categoryids = implode(',', $categoryids);
-        }
+        list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc0000');
 
         if ($extraconditions) {
             $extraconditions = ' AND (' . $extraconditions . ')';
         }
-        // TODO switch to using $DB->in_or_equal.
-        $questionids = $DB->get_records_select_menu('question',
-                "category IN ($categoryids)
+
+        return $DB->get_records_select_menu('question',
+                "category $qcsql
                  AND parent = 0
                  AND hidden = 0
-                 $extraconditions", array(), '', 'id,id AS id2');
-        return $questionids;
+                 $extraconditions", $qcparams + $extraparams, '', 'id,id AS id2');
     }
 }

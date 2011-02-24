@@ -57,7 +57,6 @@ echo $OUTPUT->heading(format_string($attemptobj->get_question_name($slot)));
 // Process any data that was submitted.
 if (data_submitted() && confirm_sesskey()) {
     if (optional_param('submit', false, PARAM_BOOL)) {
-        // TODO better error handling.
         $transaction = $DB->start_delegated_transaction();
         $attemptobj->process_all_actions(time());
         $transaction->allow_commit();
