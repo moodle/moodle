@@ -28,6 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
+require_once($CFG->libdir . '/filelib.php');
 
 define('QUIZ_REPORT_DEFAULT_PAGE_SIZE', 30);
 define('QUIZ_REPORT_DEFAULT_GRADING_PAGE_SIZE', 10);
@@ -184,7 +185,7 @@ function quiz_report_qm_filter_select($quiz, $quizattemptsalias = 'quiza') {
  * @return array band number => number of users with scores in that band.
  */
 function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids = array()) {
-    global $CFG;
+    global $DB;
 
     if ($userids) {
         list($usql, $params) = $DB->get_in_or_equal($userids);
@@ -254,9 +255,7 @@ function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)
  * @return string the comment that corresponds to this grade (empty string if there is not one.
  */
 function quiz_report_feedback_for_grade($grade, $quizid, $context) {
-    global $DB, $CFG;
-
-    require_once($CFG->libdir . '/filelib.php');
+    global $DB;
 
     static $feedbackcache = array();
 

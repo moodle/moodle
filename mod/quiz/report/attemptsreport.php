@@ -166,8 +166,8 @@ abstract class quiz_attempt_report extends quiz_default_report {
                 quiza.sumgrades,
                 quiza.timefinish,
                 quiza.timestart,
-                CASE WHEN qa.timefinish = 0 THEN null
-                         WHEN qa.timefinish > qa.timestart THEN qa.timefinish - qa.timestart
+                CASE WHEN quiza.timefinish = 0 THEN null
+                         WHEN quiza.timefinish > quiza.timestart THEN quiza.timefinish - quiza.timestart
                          ELSE 0 END AS duration';
             // To explain that last bit, in MySQL, qa.timestart and qa.timefinish
             // are unsigned. Since MySQL 5.5.5, when they introduced strict mode,
