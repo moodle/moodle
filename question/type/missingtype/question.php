@@ -76,7 +76,8 @@ class qtype_missingtype_question extends question_definition implements question
         return array();
     }
 
-    public function init_first_step(question_attempt_step $step) {
+    public function start_attempt(question_attempt_step $step) {
+        throw new coding_exception('This question is of a type that is not installed on your system. No processing is possible.');
     }
 
     public function grade_response(array $response) {

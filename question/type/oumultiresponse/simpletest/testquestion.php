@@ -49,7 +49,7 @@ class qtype_oumultiresponse_question_test extends UnitTestCase {
     public function test_grade_responses_right_right() {
         $mc = qtype_oumultiresponse_test_helper::make_an_oumultiresponse_two_of_four();
         $mc->shuffleanswers = false;
-        $mc->init_first_step(new question_attempt_step());
+        $mc->start_attempt(new question_attempt_step());
 
         list($fraction, $state) = $mc->grade_response(array('choice0' => '1', 'choice2' => '1'));
         $this->assertWithinMargin(1, $fraction, $this->tolerance);
@@ -59,7 +59,7 @@ class qtype_oumultiresponse_question_test extends UnitTestCase {
     public function test_grade_responses_right() {
         $mc = qtype_oumultiresponse_test_helper::make_an_oumultiresponse_two_of_four();
         $mc->shuffleanswers = false;
-        $mc->init_first_step(new question_attempt_step());
+        $mc->start_attempt(new question_attempt_step());
 
         list($fraction, $state) = $mc->grade_response(array('choice0' => '1'));
         $this->assertWithinMargin(0.5, $fraction, $this->tolerance);
@@ -69,7 +69,7 @@ class qtype_oumultiresponse_question_test extends UnitTestCase {
     public function test_grade_responses_wrong_wrong() {
         $mc = qtype_oumultiresponse_test_helper::make_an_oumultiresponse_two_of_four();
         $mc->shuffleanswers = false;
-        $mc->init_first_step(new question_attempt_step());
+        $mc->start_attempt(new question_attempt_step());
 
         list($fraction, $state) = $mc->grade_response(array('choice1' => '1', 'choice3' => '1'));
         $this->assertWithinMargin(0, $fraction, $this->tolerance);
@@ -79,7 +79,7 @@ class qtype_oumultiresponse_question_test extends UnitTestCase {
     public function test_grade_responses_right_wrong_wrong() {
         $mc = qtype_oumultiresponse_test_helper::make_an_oumultiresponse_two_of_four();
         $mc->shuffleanswers = false;
-        $mc->init_first_step(new question_attempt_step());
+        $mc->start_attempt(new question_attempt_step());
 
         list($fraction, $state) = $mc->grade_response(array('choice0' => '1', 'choice1' => '1', 'choice3' => '1'));
         $this->assertWithinMargin(0, $fraction, $this->tolerance);
@@ -89,7 +89,7 @@ class qtype_oumultiresponse_question_test extends UnitTestCase {
     public function test_grade_responses_right_wrong() {
         $mc = qtype_oumultiresponse_test_helper::make_an_oumultiresponse_two_of_four();
         $mc->shuffleanswers = false;
-        $mc->init_first_step(new question_attempt_step());
+        $mc->start_attempt(new question_attempt_step());
 
         list($fraction, $state) = $mc->grade_response(array('choice0' => '1', 'choice1' => '1'));
         $this->assertWithinMargin(0.5, $fraction, $this->tolerance);
@@ -99,7 +99,7 @@ class qtype_oumultiresponse_question_test extends UnitTestCase {
     public function test_grade_responses_right_right_wrong() {
         $mc = qtype_oumultiresponse_test_helper::make_an_oumultiresponse_two_of_four();
         $mc->shuffleanswers = false;
-        $mc->init_first_step(new question_attempt_step());
+        $mc->start_attempt(new question_attempt_step());
 
         list($fraction, $state) = $mc->grade_response(array(
                 'choice0' => '1', 'choice2' => '1', 'choice3' => '1'));
@@ -110,7 +110,7 @@ class qtype_oumultiresponse_question_test extends UnitTestCase {
     public function test_grade_responses_right_right_wrong_wrong() {
         $mc = qtype_oumultiresponse_test_helper::make_an_oumultiresponse_two_of_four();
         $mc->shuffleanswers = false;
-        $mc->init_first_step(new question_attempt_step());
+        $mc->start_attempt(new question_attempt_step());
 
         list($fraction, $state) = $mc->grade_response(array(
                 'choice0' => '1', 'choice1' => '1', 'choice2' => '1', 'choice3' => '1'));

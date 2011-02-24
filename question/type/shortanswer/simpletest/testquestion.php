@@ -132,7 +132,7 @@ class qtype_shortanswer_question_test extends UnitTestCase {
 
     public function test_classify_response() {
         $sa = test_question_maker::make_a_shortanswer_question();
-        $sa->init_first_step(new question_attempt_step());
+        $sa->start_attempt(new question_attempt_step());
 
         $this->assertEqual(array(
                 new question_classified_response(13, 'frog', 1.0)),

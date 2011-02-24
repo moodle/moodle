@@ -65,11 +65,6 @@ class qbehaviour_opaque extends question_behaviour {
     public function init_first_step(question_attempt_step $step) {
         global $USER;
 
-        if ($step->has_behaviour_var('_randomseed')) {
-            // Reinitialising, nothing to do.
-            return;
-        }
-
         // Set up the random seed to be the current time in milliseconds.
         list($micros, $sec) = explode(' ', microtime());
         $step->set_behaviour_var('_randomseed', $sec . floor($micros * 1000));

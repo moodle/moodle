@@ -1891,16 +1891,16 @@ class question_attempt {
     }
 
     /**
-     * Start (or re-start) this question attempt.
+     * Start this question attempt.
      *
      * You should not call this method directly. Call
      * {@link question_usage_by_activity::start_question()} instead.
      *
      * @param string|question_behaviour $preferredbehaviour the name of the
      *      desired archetypal behaviour, or an actual model instance.
-     * @param $submitteddata optional, used when re-starting to keep the same initial state.
-     * @param $timestamp optional, the timstamp to record for this action. Defaults to now.
-     * @param $userid optional, the user to attribute this action to. Defaults to the current user.
+     * @param array $submitteddata optional, used when re-starting to keep the same initial state.
+     * @param int $timestamp optional, the timstamp to record for this action. Defaults to now.
+     * @param int $userid optional, the user to attribute this action to. Defaults to the current user.
      */
     public function start($preferredbehaviour, $submitteddata = array(), $timestamp = null, $userid = null) {
         // Initialise the behaviour.
@@ -1918,12 +1918,14 @@ class question_attempt {
         // Initialise the first step.
         $firststep = new question_attempt_step($submitteddata, $timestamp, $userid);
         $firststep->set_state(question_state::$todo);
-        $this->behaviour->init_first_step($firststep);
+        if ($submitteddata) {
+            $this->question->apply_attempt_state($firststep);
+        } else {
+            $this->behaviour->init_first_step($firststep);
+        }
         $this->add_step($firststep);
 
         // Record questionline and correct answer.
-        // TODO we should only really do this for new attempts, not when called
-        // via load_from_records.
         $this->questionsummary = $this->behaviour->get_question_summary();
         $this->rightanswer = $this->behaviour->get_right_answer_summary();
     }
@@ -2243,7 +2245,7 @@ class question_attempt {
         while ($record && $record->questionattemptid == $questionattemptid && !is_null($record->attemptstepid)) {
             $qa->steps[$i] = question_attempt_step::load_from_records($records, $record->attemptstepid);
             if ($i == 0) {
-                $question->init_first_step($qa->steps[0]);
+                $question->apply_attempt_state($qa->steps[0]);
             }
             $i++;
             $record = current($records);

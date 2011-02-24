@@ -179,7 +179,7 @@ abstract class question_behaviour {
 
     /**
      * What is the minimum fraction that can be scored for this question.
-     * Normally this will be based on $this->question->init_first_step($step),
+     * Normally this will be based on $this->question->get_min_fraction(),
      * but may be modified in some way by the model.
      *
      * @return number the minimum fraction when this question is attempted under
@@ -325,15 +325,17 @@ abstract class question_behaviour {
     abstract public function summarise_action(question_attempt_step $step);
 
     /**
-     * Initialise the first step in a question attempt.
+     * Initialise the first step in a question attempt when a new
+     * {@link question_attempt} is being started.
      *
-     * This method must call $this->question->init_first_step($step), and may
+     * This method must call $this->question->start_attempt($step), and may
      * perform additional processing if the model requries it.
      *
-     * @param question_attempt_step $step the step being initialised.
+     * @param question_attempt_step $step the first step of the
+     *      question_attempt being started.
      */
     public function init_first_step(question_attempt_step $step) {
-        $this->question->init_first_step($step);
+        $this->question->start_attempt($step);
     }
 
     /**

@@ -62,7 +62,7 @@ class qtype_multichoice_single_question_test extends UnitTestCase {
     public function test_grading() {
         $question = test_question_maker::make_a_multichoice_single_question();
         $question->shuffleanswers = false;
-        $question->init_first_step(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step());
 
         $this->assertEqual(array(1, question_state::$gradedright),
                 $question->grade_response(array('answer' => 0)));
@@ -95,7 +95,7 @@ class qtype_multichoice_single_question_test extends UnitTestCase {
             16 => new question_answer(16, '6', -1, '', FORMAT_HTML),
         );
 
-        $mc->init_first_step(new question_attempt_step());
+        $mc->start_attempt(new question_attempt_step());
 
         list($grade, $state) = $mc->grade_response(
                 array('choice0' => 1, 'choice2' => 1, 'choice4' => 1));
@@ -106,7 +106,7 @@ class qtype_multichoice_single_question_test extends UnitTestCase {
     public function test_get_correct_response() {
         $question = test_question_maker::make_a_multichoice_single_question();
         $question->shuffleanswers = false;
-        $question->init_first_step(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step());
 
         $this->assertEqual(array('answer' => 0),
                 $question->get_correct_response());
@@ -115,7 +115,7 @@ class qtype_multichoice_single_question_test extends UnitTestCase {
     public function test_summarise_response() {
         $mc = test_question_maker::make_a_multichoice_single_question();
         $mc->shuffleanswers = false;
-        $mc->init_first_step(new question_attempt_step());
+        $mc->start_attempt(new question_attempt_step());
 
         $summary = $mc->summarise_response(array('answer' => 0),
                 test_question_maker::get_a_qa($mc));
@@ -126,7 +126,7 @@ class qtype_multichoice_single_question_test extends UnitTestCase {
     public function test_classify_response() {
         $mc = test_question_maker::make_a_multichoice_single_question();
         $mc->shuffleanswers = false;
-        $mc->init_first_step(new question_attempt_step());
+        $mc->start_attempt(new question_attempt_step());
 
         $this->assertEqual(array(
                 $mc->id => new question_classified_response(14, 'B', -0.3333333),
@@ -149,7 +149,7 @@ class qtype_multichoice_multi_question_test extends UnitTestCase {
 
     public function test_get_expected_data() {
         $question = test_question_maker::make_a_multichoice_multi_question();
-        $question->init_first_step(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step());
 
         $this->assertEqual(array('choice0' => PARAM_BOOL, 'choice1' => PARAM_BOOL,
                 'choice2' => PARAM_BOOL, 'choice3' => PARAM_BOOL), $question->get_expected_data());
@@ -157,7 +157,7 @@ class qtype_multichoice_multi_question_test extends UnitTestCase {
 
     public function test_is_complete_response() {
         $question = test_question_maker::make_a_multichoice_multi_question();
-        $question->init_first_step(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step());
 
         $this->assertFalse($question->is_complete_response(array()));
         $this->assertFalse($question->is_complete_response(
@@ -169,7 +169,7 @@ class qtype_multichoice_multi_question_test extends UnitTestCase {
 
     public function test_is_gradable_response() {
         $question = test_question_maker::make_a_multichoice_multi_question();
-        $question->init_first_step(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step());
 
         $this->assertFalse($question->is_gradable_response(array()));
         $this->assertFalse($question->is_gradable_response(
@@ -182,7 +182,7 @@ class qtype_multichoice_multi_question_test extends UnitTestCase {
     public function test_grading() {
         $question = test_question_maker::make_a_multichoice_multi_question();
         $question->shuffleanswers = false;
-        $question->init_first_step(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step());
 
         $this->assertEqual(array(1, question_state::$gradedright),
                 $question->grade_response(array('choice0' => '1', 'choice2' => '1')));
@@ -197,7 +197,7 @@ class qtype_multichoice_multi_question_test extends UnitTestCase {
     public function test_get_correct_response() {
         $question = test_question_maker::make_a_multichoice_multi_question();
         $question->shuffleanswers = false;
-        $question->init_first_step(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step());
 
         $this->assertEqual(array('choice0' => '1', 'choice2' => '1'),
                 $question->get_correct_response());
@@ -205,7 +205,7 @@ class qtype_multichoice_multi_question_test extends UnitTestCase {
 
     public function test_get_question_summary() {
         $mc = test_question_maker::make_a_multichoice_single_question();
-        $mc->init_first_step(new question_attempt_step());
+        $mc->start_attempt(new question_attempt_step());
 
         $qsummary = $mc->get_question_summary();
 
@@ -218,7 +218,7 @@ class qtype_multichoice_multi_question_test extends UnitTestCase {
     public function test_summarise_response() {
         $mc = test_question_maker::make_a_multichoice_multi_question();
         $mc->shuffleanswers = false;
-        $mc->init_first_step(new question_attempt_step());
+        $mc->start_attempt(new question_attempt_step());
 
         $summary = $mc->summarise_response(array('choice1' => 1, 'choice2' => 1),
                 test_question_maker::get_a_qa($mc));
@@ -229,7 +229,7 @@ class qtype_multichoice_multi_question_test extends UnitTestCase {
     public function test_classify_response() {
         $mc = test_question_maker::make_a_multichoice_multi_question();
         $mc->shuffleanswers = false;
-        $mc->init_first_step(new question_attempt_step());
+        $mc->start_attempt(new question_attempt_step());
 
         $this->assertEqual(array(
                     13 => new question_classified_response(13, 'A', 0.5),

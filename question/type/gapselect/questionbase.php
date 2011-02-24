@@ -66,27 +66,33 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
     /** @var array shuffled choice indexes. */
     protected $choiceorder;
 
-    public function init_first_step(question_attempt_step $step) {
+    public function start_attempt(question_attempt_step $step) {
         foreach ($this->choices as $group => $choices) {
-            $varname = '_choiceorder' . $group;
-
-            if ($step->has_qt_var($varname)) {
-                $choiceorder = explode(',', $step->get_qt_var($varname));
-
-            } else {
-                $choiceorder = array_keys($choices);
-                if ($this->shufflechoices) {
-                    shuffle($choiceorder);
-                }
+            $choiceorder = array_keys($choices);
+            if ($this->shufflechoices) {
+                shuffle($choiceorder);
             }
+            $step->set_qt_var('_choiceorder' . $group, implode(',', $choiceorder));
+            $this->set_choiceorder($group, $choiceorder);
+        }
+    }
 
-            foreach ($choiceorder as $key => $value) {
-                $this->choiceorder[$group][$key + 1] = $value;
-            }
+    public function apply_attempt_state(question_attempt_step $step) {
+        foreach ($this->choices as $group => $choices) {
+            $this->set_choiceorder($group, explode(',',
+                    $step->get_qt_var('_choiceorder' . $group)));
+        }
+    }
 
-            if (!$step->has_qt_var($varname)) {
-                $step->set_qt_var($varname, implode(',', $this->choiceorder[$group]));
-            }
+    /**
+     * Helper method used by both {@link start_attempt()} and
+     * {@link apply_attempt_state()}.
+     * @param int $group the group number.
+     * @param array $choiceorder the choices, in order.
+     */
+    protected function set_choiceorder($group, $choiceorder) {
+        foreach ($choiceorder as $key => $value) {
+            $this->choiceorder[$group][$key + 1] = $value;
         }
     }
 

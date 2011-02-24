@@ -146,15 +146,36 @@ abstract class question_definition {
     }
 
     /**
-     * Initialise the first step of an attempt at this quetsion.
+     * Start a new attempt at this question, storing any information that will
+     * be needed later in the step.
      *
-     * For example, the multiple choice question type uses this method to
-     * randomly shuffle the choices, if that option has been set in the question.
-     * It then stores that order by calling $step->set_qt_var(...).
+     * This is where the question can do any initialisation required on a
+     * per-attempt basis. For example, this is where the multiple choice
+     * question type randomly shuffles the choices (if that option is set).
      *
-     * @param question_attempt_step $step the step to be initialised.
+     * Any information about how the question has been set up for this attempt
+     * should be stored in the $step, by calling $step->set_qt_var(...).
+     *
+     * @param question_attempt_step The first step of the {@link question_attempt}
+     *      being started. Can be used to store state.
      */
-    public function init_first_step(question_attempt_step $step) {
+    public function start_attempt(question_attempt_step $step) {
+    }
+
+    /**
+     * When an in-progress {@link question_attempt} is re-loaded from the
+     * database, this method is called so that the question can re-initialise
+     * its internal state as needed by this attempt.
+     *
+     * For example, the multiple choice question type needs to set the order
+     * of the choices to the order that was set up when start_attempt was called
+     * originally. All the information required to do this should be in the
+     * $step object, which is the first step of the question_attempt being loaded.
+     *
+     * @param question_attempt_step The first step of the {@link question_attempt}
+     *      being loaded.
+     */
+    public function apply_attempt_state(question_attempt_step $step) {
     }
 
     /**

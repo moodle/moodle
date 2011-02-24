@@ -51,14 +51,14 @@ class qtype_numerical_question extends question_graded_by_strategy
         return array('answer' => PARAM_RAW_TRIMMED);
     }
 
-    public function init_first_step(question_attempt_step $step) {
-        if ($step->has_qt_var('_separators')) {
-            list($point, $separator) = explode('$', $step->get_qt_var('_separators'));
-            $this->ap->set_characters($point, $separator);
-        } else {
-            $step->set_qt_var('_separators',
-                    $this->ap->get_point() . '$' . $this->ap->get_separator());
-        }
+    public function start_attempt(question_attempt_step $step) {
+        $step->set_qt_var('_separators',
+                $this->ap->get_point() . '$' . $this->ap->get_separator());
+    }
+
+    public function apply_attempt_state(question_attempt_step $step) {
+        list($point, $separator) = explode('$', $step->get_qt_var('_separators'));
+                $this->ap->set_characters($point, $separator);
     }
 
     public function summarise_response(array $response) {

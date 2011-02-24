@@ -57,20 +57,30 @@ class qtype_match_question extends question_graded_automatically_with_countback 
     /** @var array shuffled choice indexes. */
     protected $choiceorder;
 
-    public function init_first_step(question_attempt_step $step) {
-        if ($step->has_qt_var('_stemorder')) {
-            $this->stemorder = explode(',', $step->get_qt_var('_stemorder'));
-            $choiceorder = explode(',', $step->get_qt_var('_choiceorder'));
-        } else {
-            $this->stemorder = array_keys($this->stems);
-            $choiceorder = array_keys($this->choices);
-            if ($this->shufflestems) {
-                shuffle($this->stemorder);
-            }
-            shuffle($choiceorder);
-            $step->set_qt_var('_stemorder', implode(',', $this->stemorder));
-            $step->set_qt_var('_choiceorder', implode(',', $choiceorder));
+    public function start_attempt(question_attempt_step $step) {
+        $this->stemorder = array_keys($this->stems);
+        if ($this->shufflestems) {
+            shuffle($this->stemorder);
         }
+        $step->set_qt_var('_stemorder', implode(',', $this->stemorder));
+
+        $choiceorder = array_keys($this->choices);
+        shuffle($choiceorder);
+        $step->set_qt_var('_choiceorder', implode(',', $choiceorder));
+        $this->set_choiceorder($choiceorder);
+    }
+
+    public function apply_attempt_state(question_attempt_step $step) {
+        $this->stemorder = explode(',', $step->get_qt_var('_stemorder'));
+        $this->set_choiceorder(explode(',', $step->get_qt_var('_choiceorder')));
+    }
+
+    /**
+     * Helper method used by both {@link start_attempt()} and
+     * {@link apply_attempt_state()}.
+     * @param array $choiceorder the choices, in order.
+     */
+    protected function set_choiceorder($choiceorder) {
         $this->choiceorder = array();
         foreach ($choiceorder as $key => $value) {
             $this->choiceorder[$key + 1] = $value;

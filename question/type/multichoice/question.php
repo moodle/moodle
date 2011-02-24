@@ -55,16 +55,16 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
 
     protected $order = null;
 
-    public function init_first_step(question_attempt_step $step) {
-        if ($step->has_qt_var('_order')) {
-            $this->order = explode(',', $step->get_qt_var('_order'));
-        } else {
-            $this->order = array_keys($this->answers);
-            if ($this->shuffleanswers) {
-                shuffle($this->order);
-            }
-            $step->set_qt_var('_order', implode(',', $this->order));
+    public function start_attempt(question_attempt_step $step) {
+        $this->order = array_keys($this->answers);
+        if ($this->shuffleanswers) {
+            shuffle($this->order);
         }
+        $step->set_qt_var('_order', implode(',', $this->order));
+    }
+
+    public function apply_attempt_state(question_attempt_step $step) {
+        $this->order = explode(',', $step->get_qt_var('_order'));
     }
 
     public function get_question_summary() {
