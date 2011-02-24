@@ -80,24 +80,6 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 .que .history table {width: 100%;margin: 0;}
 .que .history .current {font-weight: bold;}
 
-.multianswer .submit {margin-top: 1em;}
-
-.multichoice td.feedback {width: auto;vertical-align: top;padding-top: 0.3em;border-style: none;}
-.multichoice .text {width: auto;}
-
-.calculated .answer,
-.numerical .answer,
-.shortanswer .answer {padding: 0.3em;width: auto;display: inline;}
-
-.calculated .answer input,
-.numerical .answer input,
-.shortanswer .answer input {width: 99%;}
-
-.multichoice .answer span.r0,
-.multichoice .answer span.r1,
-.truefalse .answer span.r0,
-.truefalse .answer span.r1 {display: block;padding: 0.3em;}
-
 .importerror {margin-top: 10px;border-bottom: 1px solid #555;}
 .mform .que.comment .fitemtitle {width: 20%;}
 
