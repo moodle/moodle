@@ -405,11 +405,3 @@ class question_calculatedsimple_qtype extends question_calculated_qtype {
 }
 //// END OF CLASS ////
 
-//////////////////////////////////////////////////////////////////////////
-//// INITIATION - Without this line the question type is not in use... ///
-//////////////////////////////////////////////////////////////////////////
-question_register_questiontype(new question_calculatedsimple_qtype());
-
-if ( ! defined ("CALCULATEDSIMPLE")) {
-    define("CALCULATEDSIMPLE",    "calculatedsimple");
-}

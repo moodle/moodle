@@ -1310,7 +1310,7 @@ class question_numerical_qtype extends qtype_shortanswer {
      */
     function generate_test($name, $courseid = null) {
         global $DB;
-        list($form, $question) = default_questiontype::generate_test($name, $courseid);
+        list($form, $question) = parent::generate_test($name, $courseid);
         $question->category = $form->category;
 
         $form->questiontext = "What is 674 * 36?";
@@ -1379,8 +1379,6 @@ class question_numerical_qtype extends qtype_shortanswer {
     }
 }
 
-// INITIATION - Without this line the question type is not in use.
-question_register_questiontype(new question_numerical_qtype());
 if ( ! defined ("NUMERICALQUESTIONUNITTEXTINPUTDISPLAY")) {
     define("NUMERICALQUESTIONUNITTEXTINPUTDISPLAY",   0);
 }

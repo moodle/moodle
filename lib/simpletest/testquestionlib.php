@@ -41,22 +41,6 @@ class questionlib_test extends UnitTestCase {
 
     public static $includecoverage = array('lib/questionlib.php');
 
-    function test_question_sort_qtype_array() {
-        $config = new stdClass();
-        $config->multichoice_sortorder = '1';
-        $config->calculated_sortorder = '2';
-        $qtypes = array(
-            'frog' => 'toad',
-            'calculated' => 'newt',
-            'multichoice' => 'eft',
-        );
-        $this->assertEqual(question_sort_qtype_array($qtypes), array(
-            'multichoice' => 'eft',
-            'calculated' => 'newt',
-            'frog' => 'toad',
-        ));
-    }
-
     function test_question_reorder_qtypes() {
         $this->assertEqual(question_reorder_qtypes(array('t1' => '', 't2' => '', 't3' => ''), 't1', +1),
                 array(0 => 't2', 1 => 't1', 2 => 't3'));

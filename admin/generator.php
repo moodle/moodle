@@ -622,7 +622,7 @@ class generator {
             require_once($CFG->libdir .'/questionlib.php');
             require_once($CFG->dirroot .'/mod/quiz/editlib.php');
             $questions = array();
-            $questionsmenu = question_type_menu();
+            $questionsmenu = question_bank::get_creatable_qtypes();
             $questiontypes = array();
             foreach ($questionsmenu as $qtype => $qname) {
                 $questiontypes[] = $qtype;

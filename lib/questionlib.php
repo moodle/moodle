@@ -83,81 +83,6 @@ define("QUESTION_NUMANS_ADD", 3);
 define('QUESTION_PREVIEW_POPUP_OPTIONS', 'scrollbars=yes,resizable=yes,width=800,height=600');
 
 /**
- * @global array holding question type objects
- * @deprecated
- */
-global $QTYPES;
-$QTYPES = question_bank::get_all_qtypes();
-function question_register_questiontype() {
-    // TODO kill this.
-}
-// TODO kill this.
-class default_questiontype {
-    function plugin_dir() {
-        return '';
-    }
-}
-
-/**
- * An array of question type names translated to the user's language, suitable for use when
- * creating a drop-down menu of options.
- *
- * Long-time Moodle programmers will realise that this replaces the old $QTYPE_MENU array.
- * The array returned will only hold the names of all the question types that the user should
- * be able to create directly. Some internal question types like random questions are excluded.
- *
- * @return array an array of question type names translated to the user's language.
- */
-function question_type_menu() {
-    static $menuoptions = null;
-    if (is_null($menuoptions)) {
-        $config = get_config('question');
-        $menuoptions = array();
-        foreach (question_bank::get_all_qtypes() as $name => $qtype) {
-            $menuname = $qtype->menu_name();
-            $enabledvar = $name . '_disabled';
-            if ($menuname && !isset($config->$enabledvar)) {
-                $menuoptions[$name] = $menuname;
-            }
-        }
-
-        $menuoptions = question_sort_qtype_array($menuoptions, $config);
-    }
-    return $menuoptions;
-}
-
-/**
- * Sort an array of question type names according to the question type sort order stored in
- * config_plugins. Entries for which there is no xxx_sortorder defined will go
- * at the end, sorted according to textlib_get_instance()->asort($inarray).
- * @param $inarray an array $qtypename => $qtype->local_name().
- * @param $config get_config('question'), if you happen to have it around, to save one DB query.
- * @return array the sorted version of $inarray.
- */
-function question_sort_qtype_array($inarray, $config = null) {
-    if (is_null($config)) {
-        $config = get_config('question');
-    }
-
-    $sortorder = array();
-    foreach ($inarray as $name => $notused) {
-        $sortvar = $name . '_sortorder';
-        if (isset($config->$sortvar)) {
-            $sortorder[$config->$sortvar] = $name;
-        }
-    }
-
-    ksort($sortorder);
-    $outarray = array();
-    foreach ($sortorder as $name) {
-        $outarray[$name] = $inarray[$name];
-        unset($inarray[$name]);
-    }
-    textlib_get_instance()->asort($inarray);
-    return array_merge($outarray, $inarray);
-}
-
-/**
  * Move one question type in a list of question types. If you try to move one element
  * off of the end, nothing will change.
  *
@@ -692,7 +617,7 @@ function question_delete_activity($cm, $feedback=true) {
  * @param integer $newcategoryid the id of the category to move to.
  */
 function question_move_questions_to_category($questionids, $newcategoryid) {
-    global $DB, $QTYPES;
+    global $DB;
 
     $newcontextid = $DB->get_field('question_categories', 'contextid',
             array('id' => $newcategoryid));
@@ -704,8 +629,8 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
              WHERE  q.id $questionidcondition", $params);
     foreach ($questions as $question) {
         if ($newcontextid != $question->contextid) {
-            $QTYPES[$question->qtype]->move_files($question->id,
-                    $question->contextid, $newcontextid);
+            question_bank::get_qtype($question->qtype)->move_files(
+                    $question->id, $question->contextid, $newcontextid);
         }
     }
 
@@ -729,12 +654,12 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
  * @param integer $newcontextid the new context id.
  */
 function question_move_category_to_context($categoryid, $oldcontextid, $newcontextid) {
-    global $DB, $QTYPES;
+    global $DB;
 
     $questionids = $DB->get_records_menu('question',
             array('category' => $categoryid), '', 'id,qtype');
     foreach ($questionids as $questionid => $qtype) {
-        $QTYPES[$qtype]->move_files($questionid, $oldcontextid, $newcontextid);
+        question_bank::get_qtype($qtype)->move_files($questionid, $oldcontextid, $newcontextid);
     }
 
     $subcatids = $DB->get_records_menu('question_categories',
@@ -851,12 +776,12 @@ function question_load_questions($questionids, $extrafields = '', $join = '') {
  * @param boolean $loadtags load the question tags from the tags table. Optional, default false.
  */
 function _tidy_question($question, $loadtags = false) {
-    global $CFG, $QTYPES;
-    if (!array_key_exists($question->qtype, $QTYPES)) {
-        $question->qtype = 'missingtype';
-        $question->questiontext = '<p>' . get_string('warningmissingtype', 'quiz') . '</p>' . $question->questiontext;
+    global $CFG;
+    if (question_bank::is_qtype_installed($question->qtype)) {
+        $question->questiontext = html_writer::tag('p', get_string('warningmissingtype',
+                'qtype_missingtype')) . $question->questiontext;
     }
-    $QTYPES[$question->qtype]->get_question_options($question);
+    question_bank::get_qtype($question->qtype)->get_question_options($question);
     if (isset($question->_partiallyloaded)) {
         unset($question->_partiallyloaded);
     }
@@ -940,9 +865,7 @@ function question_get_editing_head_contributions($question) {
  * Simply calls the question type specific save_question_options() method.
  */
 function save_question_options($question) {
-    global $QTYPES;
-
-    $QTYPES[$question->qtype]->save_question_options($question);
+    question_bank::get_qtype($question->qtype)->save_question_options($question);
 }
 
 /// CATEGORY FUNCTIONS /////////////////////////////////////////////////////////////////

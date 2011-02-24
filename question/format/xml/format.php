@@ -1082,7 +1082,7 @@ class qformat_xml extends qformat_default {
      * @return string xml segment
      */
     function writequestion($question) {
-        global $CFG, $QTYPES, $OUTPUT;
+        global $CFG, $OUTPUT;
 
         $fs = get_file_storage();
         $contextid = $question->contextid;
@@ -1168,7 +1168,7 @@ class qformat_xml extends qformat_default {
             // not a qtype really - dummy used for category switching
             break;
 
-        case TRUEFALSE:
+        case 'truefalse':
             $trueanswer = $question->options->answers[$question->options->trueanswer];
             $trueanswer->answer = 'true';
             $expout .= $this->write_answer($trueanswer);
@@ -1178,7 +1178,7 @@ class qformat_xml extends qformat_default {
             $expout .= $this->write_answer($falseanswer);
             break;
 
-        case MULTICHOICE:
+        case 'multichoice':
             $expout .= "    <single>" . $this->get_single($question->options->single) . "</single>\n";
             $expout .= "    <shuffleanswers>" . $this->get_single($question->options->shuffleanswers) . "</shuffleanswers>\n";
             $expout .= "    <answernumbering>{$question->options->answernumbering}</answernumbering>\n";
@@ -1186,12 +1186,12 @@ class qformat_xml extends qformat_default {
             $expout .= $this->write_answers($question->options->answers);
             break;
 
-        case SHORTANSWER:
+        case 'shortanswer':
             $expout .= "    <usecase>{$question->options->usecase}</usecase>\n";
             $expout .= $this->write_answers($question->options->answers);
             break;
 
-        case NUMERICAL:
+        case 'numerical':
             foreach ($question->options->answers as $answer) {
                 $expout .= $this->write_answer($answer,
                         "      <tolerance>$answer->tolerance</tolerance>\n");
@@ -1229,7 +1229,7 @@ class qformat_xml extends qformat_default {
             }
             break;
 
-        case MATCH:
+        case 'match':
             $expout .= "    <shuffleanswers>" . $this->get_single($question->options->shuffleanswers) . "</shuffleanswers>\n";
             $expout .= $this->write_combined_feedback($question->options);
             foreach ($question->options->subquestions as $subquestion) {
@@ -1244,11 +1244,11 @@ class qformat_xml extends qformat_default {
             }
             break;
 
-        case DESCRIPTION:
+        case 'description':
             // Nothing else to do.
             break;
 
-        case MULTIANSWER:
+        case 'multianswer':
             $acount = 1;
             foreach ($question->options->questions as $question) {
                 $thispattern = addslashes("{#".$acount."}");
@@ -1258,13 +1258,13 @@ class qformat_xml extends qformat_default {
             }
             break;
 
-        case ESSAY:
+        case 'essay':
             // Nothing else to do.
             break;
 
-        case CALCULATED:
-        case CALCULATEDSIMPLE:
-        case CALCULATEDMULTI:
+        case 'calculated':
+        case 'calculatedsimple':
+        case 'calculatedmulti':
             $expout .= "    <synchronize>{$question->options->synchronize}</synchronize>\n";
             $expout .= "    <single>{$question->options->single}</single>\n";
             $expout .= "    <answernumbering>{$question->options->answernumbering}</answernumbering>\n";
@@ -1342,9 +1342,11 @@ class qformat_xml extends qformat_default {
                     $expout .= "</units>\n";
                 }
             }
-            //The tag $question->export_process has been set so we get all the data items in the database
-            //   from the function $QTYPES['calculated']->get_question_options(&$question);
-            //  calculatedsimple defaults to calculated
+
+            // The tag $question->export_process has been set so we get all the
+            // data items in the database from the function
+            // qtype_calculated::get_question_options calculatedsimple defaults
+            // to calculated
             if( isset($question->options->datasets)&&count($question->options->datasets)){// there should be
                 $expout .= "<dataset_definitions>\n";
                 foreach ($question->options->datasets as $def) {

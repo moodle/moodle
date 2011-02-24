@@ -56,6 +56,15 @@ abstract class question_bank {
     private static $questionconfig = null;
 
     /**
+     * @param string $qtypename a question type name, e.g. 'multichoice'.
+     * @return bool whether that question type is installed in this Moodle.
+     */
+    public static function is_qtype_installed($qtypename) {
+        $plugindir = get_plugin_directory('qtype', $qtypename);
+        return $plugindir && is_readable($plugindir . '/questiontype.php');
+    }
+
+    /**
      * Get the question type class for a particular question type.
      * @param string $qtypename the question type name. For example 'multichoice' or 'shortanswer'.
      * @param bool $mustexist if false, the missing question type is returned when
@@ -131,10 +140,45 @@ abstract class question_bank {
             try {
                 $qtypes[$plugin] = self::get_qtype($plugin);
             } catch (Exception $e) {
-                // TODO ingore, but reivew this later.
+                // TODO ingore, but review this later.
             }
         }
         return $qtypes;
+    }
+
+    /**
+     * Sort an array of question types according to the order the admin set up,
+     * and then alphabetically for the rest.
+     * @param array qtype->name() => qtype->local_name().
+     * @return array sorted array.
+     */
+    public static function sort_qtype_array($qtypes, $config = null) {
+        if (is_null($config)) {
+            $config = self::get_config();
+        }
+
+        $sortorder = array();
+        $otherqtypes = array();
+        foreach ($qtypes as $name => $localname) {
+            $sortvar = $name . '_sortorder';
+            if (isset($config->$sortvar)) {
+                $sortorder[$config->$sortvar] = $name;
+            } else {
+                $otherqtypes[$name] = $localname;
+            }
+        }
+
+        ksort($sortorder);
+        textlib_get_instance()->asort($otherqtypes);
+
+        $sortedqtypes = array();
+        foreach ($sortorder as $name) {
+            $sortedqtypes[$name] = $qtypes[$name];
+        }
+        foreach ($otherqtypes as $name => $notused) {
+            $sortedqtypes[$name] = $qtypes[$name];
+        }
+        return $sortedqtypes;
     }
 
     /**
@@ -145,29 +189,17 @@ abstract class question_bank {
         $config = self::get_config();
         $allqtypes = self::get_all_qtypes();
 
-        $sortorder = array();
-        $otherqtypes = array();
+        $qtypenames = array();
         foreach ($allqtypes as $name => $qtype) {
-            if (!self::qtype_enabled($name)) {
-                unset($allqtypes[$name]);
-                continue;
-            }
-            $sortvar = $name . '_sortorder';
-            if (isset($config->$sortvar)) {
-                $sortorder[$config->$sortvar] = $name;
-            } else {
-                $otherqtypes[$name] = $qtype->local_name();
+            if (self::qtype_enabled($name)) {
+                $qtypenames[$name] = $qtype->local_name();
             }
         }
 
-        ksort($sortorder);
-        textlib_get_instance()->asort($otherqtypes);
+        $qtypenames = self::sort_qtype_array($qtypenames);
 
         $creatableqtypes = array();
-        foreach ($sortorder as $name) {
-            $creatableqtypes[$name] = $allqtypes[$name];
-        }
-        foreach ($otherqtypes as $name => $notused) {
+        foreach ($qtypenames as $name => $notused) {
             $creatableqtypes[$name] = $allqtypes[$name];
         }
         return $creatableqtypes;

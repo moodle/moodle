@@ -174,8 +174,6 @@ class qformat_webct extends qformat_default {
     }
 
     function readquestions ($lines) {
-        global $QTYPES ;
-        //  $qtypecalculated = new qformat_webct_modified_calculated_qtype();
         $webctnumberregex =
                 '[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)((e|E|\\*10\\*\\*)([+-]?[0-9]+|\\([+-]?[0-9]+\\)))?';
 
@@ -344,7 +342,7 @@ class qformat_webct extends qformat_default {
 
                             case CALCULATED:
                                 foreach ($question->answers as $answer) {
-                                    if ($formulaerror =qtype_calculated_find_formula_errors($answer)) { //$QTYPES['calculated']->
+                                    if ($formulaerror = qtype_calculated_find_formula_errors($answer)) {
                                         $warnings[] = "'$question->name': ". $formulaerror;
                                         $QuestionOK = FALSE;
                                     }
@@ -549,7 +547,8 @@ class qformat_webct extends qformat_default {
                 $question->feedback[$currentchoice] = '';
                 $question->correctanswerlength[$currentchoice] = 4;
 
-                $datasetnames = $QTYPES[CALCULATED]->find_dataset_names($webct_options[1]);
+                $datasetnames = question_bank::get_qtype('calculated')->
+                        find_dataset_names($webct_options[1]);
                 foreach ($datasetnames as $datasetname) {
                     $question->dataset[$datasetname] = new stdClass();
                     $question->dataset[$datasetname]->datasetitem = array();

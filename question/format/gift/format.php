@@ -619,7 +619,7 @@ class qformat_gift extends qformat_default {
     }
 
     function writequestion($question) {
-        global $QTYPES, $OUTPUT;
+        global $OUTPUT;
 
         // Start with a comment
         $expout = "// question: $question->id  name: $question->name\n";
@@ -747,7 +747,7 @@ class qformat_gift extends qformat_default {
             } else {
                 $expout .= "Question type $question->qtype is not supported\n";
                 echo $OUTPUT->notification(get_string('nohandler', 'qformat_gift',
-                        $QTYPES[$question->qtype]->local_name()));
+                        question_bank::get_qtype_name($question->qtype)));
             }
         }
 

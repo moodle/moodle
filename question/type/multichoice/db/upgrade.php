@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $oldversion the version we are upgrading from.
  */
 function xmldb_qtype_multichoice_upgrade($oldversion) {
-    global $CFG, $DB, $QTYPES;
+    global $CFG, $DB;
 
     $dbman = $DB->get_manager();
 
@@ -42,7 +42,9 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
     // is doing it.
     // Rename random questions to give them more helpful names.
     if ($oldversion < 2008021800) {
-        require_once($CFG->libdir . '/questionlib.php');
+        require_once($CFG->dirroot . '/question/type/random/questiontype.php');
+        $randomqtype = new qtype_random();
+
         // Get all categories containing random questions.
         $categories = $DB->get_recordset_sql("
                 SELECT qc.id, qc.name
@@ -55,10 +57,10 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
         $where = "qtype = 'random' AND category = ? AND " .
                 $DB->sql_compare_text('questiontext') . " = " . $DB->sql_compare_text('?');
         foreach ($categories as $cat) {
-            $randomqname = $QTYPES[RANDOM]->question_name($cat, false);
+            $randomqname = $randomqtype->question_name($cat, false);
             $DB->set_field_select('question', 'name', $randomqname, $where, array($cat->id, '0'));
 
-            $randomqname = $QTYPES[RANDOM]->question_name($cat, true);
+            $randomqname = $randomqtype->question_name($cat, true);
             $DB->set_field_select('question', 'name', $randomqname, $where, array($cat->id, '1'));
         }
 

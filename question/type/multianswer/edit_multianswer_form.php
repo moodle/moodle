@@ -80,7 +80,6 @@ class question_edit_multianswer_form extends question_edit_form {
         $mform->addElement('hidden', 'reload', 1);
    //     $mform->addElement('hidden', 'generalfeedback','');
         $mform->setType('reload', PARAM_INT);
-        $question_type_names = question_type_menu();
 
         // Remove meaningless defaultgrade field.
         $mform->removeElement('defaultgrade');
@@ -156,11 +155,11 @@ class question_edit_multianswer_form extends question_edit_form {
                 if(isset($this->savedquestiondisplay->options->questions[$sub]->qtype) &&
                     $this->savedquestiondisplay->options->questions[$sub]->qtype != $this->questiondisplay->options->questions[$sub]->qtype ){
                         $this->qtype_change = true ;
-                        $storemess = "<font class=\"error\"> STORED QTYPE ".$question_type_names[$this->savedquestiondisplay->options->questions[$sub]->qtype]."</font >";
+                        $storemess = "<font class=\"error\"> STORED QTYPE ".question_bank::get_qtype_name($this->savedquestiondisplay->options->questions[$sub]->qtype)."</font >";
                     }
 
                 $mform->addElement('header', 'subhdr'.$sub, get_string('questionno', 'question',
-                    '{#'.$sub.'}').'&nbsp;'.$question_type_names[$this->questiondisplay->options->questions[$sub]->qtype].$storemess);
+                    '{#'.$sub.'}').'&nbsp;'.question_bank::get_qtype_name($this->questiondisplay->options->questions[$sub]->qtype).$storemess);
 
                 $mform->addElement('static', 'sub_'.$sub."_".'questiontext', get_string('questiondefinition','qtype_multianswer'),array('cols'=>60, 'rows'=>3));
 
@@ -388,7 +387,7 @@ class question_edit_multianswer_form extends question_edit_form {
                     $maxfraction = -1;
                     if(isset($this->savedquestiondisplay->options->questions[$sub]->qtype) &&
                         $this->savedquestiondisplay->options->questions[$sub]->qtype != $questiondisplay->options->questions[$sub]->qtype ){
-                            $storemess = " STORED QTYPE ".$question_type_names[$this->savedquestiondisplay->options->questions[$sub]->qtype];
+                            $storemess = " STORED QTYPE ".question_bank::get_qtype_name($this->savedquestiondisplay->options->questions[$sub]->qtype);
                         }
                     foreach ( $subquestion->answer as $key=>$answer) {
                         $trimmedanswer = trim($answer);

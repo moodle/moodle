@@ -506,7 +506,7 @@ class question_engine_upgrade_question_loader {
     }
 
     protected function load_question($questionid, $quizid) {
-        global $CFG, $QTYPES;
+        global $CFG;
 
         if ($quizid) {
             $question = get_record_sql("
@@ -531,14 +531,14 @@ class question_engine_upgrade_question_loader {
             unset($question->defaultgrade);
         }
 
-        if (!array_key_exists($question->qtype, $QTYPES)) {
+        $qtype = question_bank::get_qtype($question->qtype, false);
+        if ($qtype->name() === 'missingtype') {
             $this->logger->log_assumption("Dealing with question id {$question->id}
                     that is of an unknown type {$question->qtype}.");
-            $question->qtype = 'missingtype';
             $question->questiontext = '<p>' . get_string('warningmissingtype', 'quiz') . '</p>' . $question->questiontext;
         }
 
-        $QTYPES[$question->qtype]->get_question_options($question);
+        $qtype->get_question_options($question);
 
         return $question;
     }

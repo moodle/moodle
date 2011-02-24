@@ -273,7 +273,7 @@ class qformat_default {
      * @return bool success
      */
     function importprocess($category) {
-        global $USER, $CFG, $DB, $OUTPUT, $QTYPES;
+        global $USER, $CFG, $DB, $OUTPUT;
 
         $context = $category->context;
         $this->importcontext = $context;
@@ -378,12 +378,14 @@ class qformat_default {
             $question->id = $DB->insert_record('question', $question);
             if (isset($question->questiontextfiles)) {
                 foreach ($question->questiontextfiles as $file) {
-                    $QTYPES[$question->qtype]->import_file($context, 'question', 'questiontext', $question->id, $file);
+                    question_bank::get_qtype($question->qtype)->import_file(
+                            $context, 'question', 'questiontext', $question->id, $file);
                 }
             }
             if (isset($question->generalfeedbackfiles)) {
                 foreach ($question->generalfeedbackfiles as $file) {
-                    $QTYPES[$question->qtype]->import_file($context, 'question', 'generalfeedback', $question->id, $file);
+                    question_bank::get_qtype($question->qtype)->import_file(
+                            $context, 'question', 'generalfeedback', $question->id, $file);
                 }
             }
 
@@ -391,7 +393,7 @@ class qformat_default {
 
             // Now to save all the answers and type-specific options
 
-            $result = $QTYPES[$question->qtype]->save_question_options($question);
+            $result = question_bank::get_qtype($question->qtype)->save_question_options($question);
 
             if (!empty($CFG->usetags) && isset($question->tags)) {
                 require_once($CFG->dirroot . '/tag/lib.php');
@@ -626,19 +628,13 @@ class qformat_default {
      * @return string the data to append to export or false if error (or unhandled)
      */
     function try_exporting_using_qtypes($name, $question, $extra=null) {
-        global $QTYPES;
-
         // work out the name of format in use
         $formatname = substr(get_class($this), strlen('qformat_'));
         $methodname = "export_to_$formatname";
 
-        if (array_key_exists($name, $QTYPES)) {
-            $qtype = $QTYPES[ $name ];
-            if (method_exists($qtype, $methodname)) {
-                if ($data = $qtype->$methodname($question, $this, $extra)) {
-                    return $data;
-                }
-            }
+        $qtype = question_bank::get_qtype($name, false);
+        if (method_exists($qtype, $methodname)) {
+            return $qtype->$methodname($question, $this, $extra);
         }
         return false;
     }

@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class embedded_cloze_qtype extends default_questiontype {
+class embedded_cloze_qtype extends question_type {
 
     function name() {
         return 'multianswer';
@@ -709,12 +709,6 @@ Good luck!
 
 }
 //// END OF CLASS ////
-
-
-//////////////////////////////////////////////////////////////////////////
-//// INITIATION - Without this line the question type is not in use... ///
-//////////////////////////////////////////////////////////////////////////
-question_register_questiontype(new embedded_cloze_qtype());
 
 /////////////////////////////////////////////////////////////
 //// ADDITIONAL FUNCTIONS

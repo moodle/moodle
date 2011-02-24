@@ -360,11 +360,3 @@ class question_randomsamatch_qtype extends qtype_match {
         return 1/$question->options->choose;
     }
 }
-
-//// END OF CLASS ////
-
-//////////////////////////////////////////////////////////////////////////
-//// INITIATION - Without this line the question type is not in use... ///
-//////////////////////////////////////////////////////////////////////////
-question_register_questiontype(new question_randomsamatch_qtype());
-

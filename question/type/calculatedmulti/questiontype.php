@@ -277,7 +277,7 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
     }
 
     function create_runtime_question($question, $form) {
-        $question = default_questiontype::create_runtime_question($question, $form);
+        $question = parent::create_runtime_question($question, $form);
         $question->options->answers = array();
         foreach ($form->answers as $key => $answer) {
             $a->answer              = trim($form->answer[$key]);
@@ -620,11 +620,6 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
 }
 
 //// END OF CLASS ////
-
-//////////////////////////////////////////////////////////////////////////
-//// INITIATION - Without this line the question type is not in use... ///
-//////////////////////////////////////////////////////////////////////////
-question_register_questiontype(new question_calculatedmulti_qtype());
 
 if ( ! defined ("CALCULATEDMULTI")) {
     define("CALCULATEDMULTI",    "calculatedmulti");

@@ -833,11 +833,9 @@ function process_essay($quest, &$questions) {
 // Process Matching Questions
 //----------------------------------------
 function process_matching($quest, &$questions) {
-    global $QTYPES;
-
     // renderedmatch is an optional plugin, so we need to check if it is defined
-    if (array_key_exists('renderedmatch', $QTYPES)) {
-        $question = $this->process_common( $quest );
+    if (question_bank::is_qtype_installed('renderedmatch')) {
+        $question = $this->process_common($quest);
         $question->valid = true;
         $question->qtype = 'renderedmatch';
 

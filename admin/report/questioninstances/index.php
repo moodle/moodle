@@ -22,8 +22,9 @@ echo $OUTPUT->header();
 add_to_log(SITEID, "admin", "report questioninstances", "report/questioninstances/index.php?qtype=$requestedqtype", $requestedqtype);
 
 // Prepare the list of capabilities to choose from
+$qtypes = question_bank::get_all_qtypes();
 $qtypechoices = array();
-foreach ($QTYPES as $qtype) {
+foreach ($qtypes as $qtype) {
     $qtypechoices[$qtype->name()] = $qtype->local_name();
 }
 
@@ -45,7 +46,7 @@ if ($requestedqtype) {
 
     // Work out the bits needed for the SQL WHERE clauses.
     if ($requestedqtype == 'missingtype') {
-        $othertypes = array_keys($QTYPES);
+        $othertypes = array_keys($qtypes);
         $key = array_search('missingtype', $othertypes);
         unset($othertypes[$key]);
         list($sqlqtypetest, $params) = $DB->get_in_or_equal($othertypes, SQL_PARAMS_QM, '', false);
@@ -58,7 +59,8 @@ if ($requestedqtype) {
     } else {
         $sqlqtypetest = 'WHERE qtype = ?';
         $params = array($requestedqtype);
-        $title = get_string('reportforqtype', 'report_questioninstances', $QTYPES[$requestedqtype]->local_name());
+        $title = get_string('reportforqtype', 'report_questioninstances',
+                question_bank::get_qtype($requestedqtype)->local_name());
     }
 
     // Get the question counts, and all the context information, for each
