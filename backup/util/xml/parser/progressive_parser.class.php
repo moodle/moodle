@@ -201,7 +201,12 @@ class progressive_parser {
         // Entering a new inner level, publish all the information available
         if ($this->level > $this->prevlevel) {
             if (!empty($this->currtag) && (!empty($this->currtag['attrs']) || !empty($this->currtag['cdata']))) {
-                $this->topush['tags'][$this->currtag['name']] = $this->currtag;
+                // We always add the last not-empty repetition. Empty ones are ignored.
+                if (isset($this->topush['tags'][$this->currtag['name']]) && trim($this->currtag['cdata']) === '') {
+                    // Do nothing, the tag already exists and the repetition is empty
+                } else {
+                    $this->topush['tags'][$this->currtag['name']] = $this->currtag;
+                }
             }
             if (!empty($this->topush['tags'])) {
                 $this->publish($this->topush);
@@ -233,7 +238,12 @@ class progressive_parser {
         // Ending rencently started tag, add value to current tag
         if ($this->level == $this->prevlevel) {
             $this->currtag['cdata'] = $this->postprocess_cdata($this->accum);
-            $this->topush['tags'][$this->currtag['name']] = $this->currtag;
+            // We always add the last not-empty repetition. Empty ones are ignored.
+            if (isset($this->topush['tags'][$this->currtag['name']]) && trim($this->currtag['cdata']) === '') {
+                // Do nothing, the tag already exists and the repetition is empty
+            } else {
+                $this->topush['tags'][$this->currtag['name']] = $this->currtag;
+            }
             $this->currtag = array();
         }
 

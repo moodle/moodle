@@ -124,7 +124,7 @@ class restore_workshopform_numerrors_subplugin extends restore_subplugin {
         $this->set_mapping($this->get_namefor('dimension'), $oldid, $newitemid, true);
 
         // Process files for this workshopform_numerrors->id only
-        $this->add_related_files('workshopform_numerrors', 'description', 'workshopform_numerrors', null, $oldid);
+        $this->add_related_files('workshopform_numerrors', 'description', $this->get_namefor('dimension'), null, $oldid);
     }
 
     /**

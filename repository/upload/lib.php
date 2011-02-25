@@ -105,7 +105,21 @@ class repository_upload extends repository {
         if (empty($saveas_filename)) {
             $record->filename = clean_param($_FILES[$elname]['name'], PARAM_FILE);
         } else {
-            $record->filename = $saveas_filename;
+            $ext = '';
+            $match = array();
+            $filename = clean_param($_FILES[$elname]['name'], PARAM_FILE);
+            if (preg_match('/\.([a-z0-9]+)$/i', $filename, $match)) {
+                if (isset($match[1])) {
+                    $ext = $match[1];
+                }
+            }
+            $ext = !empty($ext) ? $ext : '';
+            if (preg_match('#\.(' . $ext . ')$#i', $saveas_filename)) {
+                // saveas filename contains file extension already
+                $record->filename = $saveas_filename;
+            } else {
+                $record->filename = $saveas_filename . '.' . $ext;
+            }
         }
 
         if ($this->mimetypes != '*') {

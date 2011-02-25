@@ -92,12 +92,13 @@ if (!$ratings) {
     echo "<th class=\"header\" scope=\"col\"><a href=\"index.php?$sortargs&amp;sort=time\">$strtime</a></th>";
     echo "</tr>";
 
-    $maxrating = count($scalemenu);
+    //if the scale was changed after ratings were submitted some ratings may have a value above the current maximum
+    $maxrating = count($scalemenu) - 1;
     foreach ($ratings as $rating) {
         //Undo the aliasing of the user id column from user_picture::fields()
         //we could clone the rating object or preserve the rating id if we needed it again
         //but we don't
-        $rating->id = $rating->uid;
+        $rating->id = $rating->userid;
 
         echo '<tr class="ratingitemheader">';
         echo "<td>";

@@ -217,7 +217,7 @@ class rating_manager {
             $sortclause = "ORDER BY $options->sort";
         }
 
-        $userfields = user_picture::fields('u', null, 'uid');
+        $userfields = user_picture::fields('u', null, 'userid');
         $sql = "SELECT r.id, r.rating, r.itemid, r.userid, r.timemodified, $userfields
                 FROM {rating} r
                 LEFT JOIN {user} u ON r.userid = u.id

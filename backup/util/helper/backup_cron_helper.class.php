@@ -49,8 +49,8 @@ abstract class backup_cron_automated_helper {
 
     /** Run if required by the schedule set in config. Default. **/
     const RUN_ON_SCHEDULE = 0;
-    /** Run immediatly. **/
-    const RUN_IMMEDIATLY = 1;
+    /** Run immediately. **/
+    const RUN_IMMEDIATELY = 1;
 
     const AUTO_BACKUP_DISABLED = 0;
     const AUTO_BACKUP_ENABLED = 1;
@@ -75,7 +75,7 @@ abstract class backup_cron_automated_helper {
             return $state;
         } else if ($state === backup_cron_automated_helper::STATE_RUNNING) {
             mtrace('RUNNING');
-            if ($rundirective == self::RUN_IMMEDIATLY) {
+            if ($rundirective == self::RUN_IMMEDIATELY) {
                 mtrace('automated backups are already. If this script is being run by cron this constitues an error. You will need to increase the time between executions within cron.');
             } else {
                 mtrace("automated backup are already running. Execution delayed");
@@ -130,12 +130,12 @@ abstract class backup_cron_automated_helper {
                     $DB->update_record('backup_courses', $backupcourse);
                     mtrace('Skipping unchanged course '.$course->fullname);
                     $skipped = true;
-                } else if (($backupcourse->nextstarttime >= 0 && $backupcourse->nextstarttime < $now) || $rundirective == self::RUN_IMMEDIATLY) {
+                } else if (($backupcourse->nextstarttime >= 0 && $backupcourse->nextstarttime < $now) || $rundirective == self::RUN_IMMEDIATELY) {
                     mtrace('Backing up '.$course->fullname, '...');
 
                     //We have to send a email because we have included at least one backup
                     $emailpending = true;
-                    
+
                     //Only make the backup if laststatus isn't 2-UNFINISHED (uncontrolled error)
                     if ($backupcourse->laststatus != 2) {
                         //Set laststarttime
@@ -270,7 +270,7 @@ abstract class backup_cron_automated_helper {
         $config = get_config('backup');
         $midnight = usergetmidnight($now, $timezone);
         $date = usergetdate($now, $timezone);
-        
+
         //Get number of days (from today) to execute backups
         $automateddays = substr($config->backup_auto_weekdays,$date['wday']) . $config->backup_auto_weekdays;
         $daysfromtoday = strpos($automateddays, "1");
@@ -335,7 +335,7 @@ abstract class backup_cron_automated_helper {
             $users = $bc->get_plan()->get_setting('users')->get_value();
             $anonymised = $bc->get_plan()->get_setting('anonymize')->get_value();
             $bc->get_plan()->get_setting('filename')->set_value(backup_plan_dbops::get_default_backup_filename($format, $type, $id, $users, $anonymised));
-            
+
             $bc->set_status(backup::STATUS_AWAITING);
 
             $outcome = $bc->execute_plan();
@@ -347,7 +347,7 @@ abstract class backup_cron_automated_helper {
                 $dir = null;
             }
             if (!empty($dir) && $storage !== 0) {
-                $filename = self::get_external_filename($course->id, $format, $type, $users, $anonymised);
+                $filename = backup_plan_dbops::get_default_backup_filename($format, $type, $course->id, $users, $anonymised, true);
                 $outcome = $file->copy_content_to($dir.'/'.$filename);
                 if ($outcome && $storage === 1) {
                     $file->delete();
@@ -364,38 +364,6 @@ abstract class backup_cron_automated_helper {
         unset($bc);
 
         return true;
-    }
-
-    /**
-     * Gets the filename to use for the backup when it is being moved to an
-     * external location.
-     *
-     * Note: we use the course id in the filename rather than the course shortname
-     * because it may contain UTF-8 characters that could cause problems for the
-     * recieving filesystem.
-     *
-     * @param int $courseid
-     * @param string $format One of backup::FORMAT_
-     * @param string $type One of backup::TYPE_
-     * @param bool $users Should be true is users were included in the backup
-     * @param bool $anonymised Should be true is user information was anonymized.
-     * @return string The filename to use
-     */
-    public static function get_external_filename($courseid, $format, $type, $users, $anonymised) {
-        $backupword = str_replace(' ', '_', moodle_strtolower(get_string('backupfilename')));
-        $backupword = trim(clean_filename($backupword), '_');
-        // Calculate date
-        $backupdateformat = str_replace(' ', '_', get_string('backupnameformat', 'langconfig'));
-        $date = userdate(time(), $backupdateformat, 99, false);
-        $date = moodle_strtolower(trim(clean_filename($date), '_'));
-        // Calculate info
-        $info = '';
-        if (!$users) {
-            $info = 'nu';
-        } else if ($anonymised) {
-            $info = 'an';
-        }
-        return $backupword.'-'.$format.'-'.$type.'-'.$courseid.'-'.$date.'-'.$info.'.mbz';
     }
 
     /**
@@ -488,32 +456,39 @@ abstract class backup_cron_automated_helper {
             $filearea = 'automated';
             $itemid = 0;
             $files = array();
+            // Store all the matching files into timemodified => stored_file array
             foreach ($fs->get_area_files($context->id, $component, $filearea, $itemid) as $file) {
                 if (strpos($file->get_filename(), $backupword) !== 0) {
                     continue;
                 }
                 $files[$file->get_timemodified()] = $file;
             }
-            arsort($files);
+            if (count($files) <= $keep) {
+                // There are less matching files than the desired number to keep
+                // do there is nothing to clean up.
+                return 0;
+            }
+            // Sort by keys descending (newer to older filemodified)
+            krsort($files);
             $remove = array_splice($files, $keep);
             foreach ($remove as $file) {
                 $file->delete();
             }
-            //mtrace('Removed '.count($remove).' old backup file(s) from the data directory');
+            //mtrace('Removed '.count($remove).' old backup file(s) from the automated filearea');
         }
 
         // Clean up excess backups in the specified external directory
         if (!empty($dir) && ($storage == 1 || $storage == 2)) {
-            // Calculate backup filename regex
-            
+            // Calculate backup filename regex, ignoring the date/time/info parts that can be
+            // variable, depending of languages, formats and automated backup settings
             $filename = $backupword . '-' . backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' .$course->id . '-';
+            $regex = '#^'.preg_quote($filename, '#').'.*\.mbz$#';
 
-            $regex = '#^'.preg_quote($filename, '#').'(\d{8})\-(\d{4})\-[a-z]{2}\.mbz$#S';
-
+            // Store all the matching files into fullpath => timemodified array
             $files = array();
             foreach (scandir($dir) as $file) {
                 if (preg_match($regex, $file, $matches)) {
-                    $files[$file] = $matches[1].$matches[2];
+                    $files[$file] = filemtime($dir . '/' . $file);
                 }
             }
             if (count($files) <= $keep) {
@@ -521,10 +496,11 @@ abstract class backup_cron_automated_helper {
                 // do there is nothing to clean up.
                 return 0;
             }
+            // Sort by values descending (newer to older filemodified)
             arsort($files);
             $remove = array_splice($files, $keep);
             foreach (array_keys($remove) as $file) {
-                unlink($dir.'/'.$file);
+                unlink($dir . '/' . $file);
             }
             //mtrace('Removed '.count($remove).' old backup file(s) from external directory');
         }

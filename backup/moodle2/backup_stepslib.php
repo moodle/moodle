@@ -125,11 +125,19 @@ abstract class backup_activity_structure_step extends backup_structure_step {
             $backupfile = $subpluginsdir . '/backup/moodle2/' . $classname . '.class.php';
             if (file_exists($backupfile)) {
                 require_once($backupfile);
-                $backupsubplugin = new $classname($subplugintype, $name, $optigroup);
+                $backupsubplugin = new $classname($subplugintype, $name, $optigroup, $this);
                 // Add subplugin returned structure to optigroup
                 $backupsubplugin->define_subplugin_structure($element->get_name());
             }
         }
+    }
+
+    /**
+     * As far as activity backup steps are implementing backup_subplugin stuff, they need to
+     * have the parent task available for wrapping purposes (get course/context....)
+     */
+    public function get_task() {
+        return $this->task;
     }
 
     /**
@@ -310,6 +318,9 @@ class backup_module_structure_step extends backup_structure_step {
         $availability = new backup_nested_element('availability', array('id'), array(
             'sourcecmid', 'requiredcompletion', 'gradeitemid', 'grademin', 'grademax'));
 
+        // attach format plugin structure to $module element, only one allowed
+        $this->add_plugin_structure('format', $module, false);
+
         // Define the tree
         $module->add_child($availinfo);
         $availinfo->add_child($availability);
@@ -345,6 +356,9 @@ class backup_section_structure_step extends backup_structure_step {
 
         $section = new backup_nested_element('section', array('id'), array(
             'number', 'name', 'summary', 'summaryformat', 'sequence', 'visible'));
+
+        // attach format plugin structure to $section element, only one allowed
+        $this->add_plugin_structure('format', $section, false);
 
         // Define sources
 
@@ -394,6 +408,9 @@ class backup_course_structure_step extends backup_structure_step {
         $allowedmodules = new backup_nested_element('allowed_modules');
 
         $module = new backup_nested_element('module', array(), array('modulename'));
+
+        // attach format plugin structure to $course element, only one allowed
+        $this->add_plugin_structure('format', $course, false);
 
         // Build the tree
 

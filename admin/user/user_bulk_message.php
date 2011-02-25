@@ -30,7 +30,7 @@ if ($confirm and !empty($msg) and confirm_sesskey()) {
         //TODO we should probably support all text formats here or only FORMAT_MOODLE
         //For now bulk messaging is still using the html editor and its supplying html
         //so we have to use html format for it to be displayed correctly
-        message_post_message($USER, $user, $msg, FORMAT_HTML, 'direct');
+        message_post_message($USER, $user, $msg, FORMAT_HTML);
     }
     $rs->close();
     redirect($return);

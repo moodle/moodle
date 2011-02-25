@@ -62,6 +62,13 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->deadline = $this->apply_date_offset($data->deadline);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
+        // lesson->highscores can come both in data->highscores and
+        // data->showhighscores, handle both. MDL-26229
+        if (isset($data->showhighscores)) {
+            $data->highscores = $data->showhighscores;
+            unset($data->showhighscores);
+        }
+
         // insert the lesson record
         $newitemid = $DB->insert_record('lesson', $data);
         // immediately after inserting "activity" record, call this
@@ -178,6 +185,17 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
             $page->prevpageid = (empty($page->prevpageid)) ? 0 : $this->get_mappingid('lesson_page', $page->prevpageid);
             $page->nextpageid = (empty($page->nextpageid)) ? 0 : $this->get_mappingid('lesson_page', $page->nextpageid);
             $DB->update_record('lesson_pages', $page);
+        }
+        $rs->close();
+
+        // Remap all the restored 'jumpto' fields now that we have all the pages and their mappings
+        $rs = $DB->get_recordset('lesson_answers', array('lessonid' => $this->task->get_activityid()),
+                                 '', 'id, jumpto');
+        foreach ($rs as $answer) {
+            if ($answer->jumpto > 0) {
+                $answer->jumpto = $this->get_mappingid('lesson_page', $answer->jumpto);
+                $DB->update_record('lesson_answers', $answer);
+            }
         }
         $rs->close();
 

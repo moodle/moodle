@@ -555,7 +555,6 @@ $string['showcalculations'] = 'Show calculations';
 $string['showcalculations_help'] = 'If enabled, when editing is turned on, a calculator icon is shown for each grade item and category, with tool tips over calculated items and a visual indicator that a column is calculated.';
 $string['showeyecons'] = 'Show show/hide icons';
 $string['showeyecons_help'] = 'If enabled, when editing is turned on, a show/hide icon is shown for each grade for controlling its visibility to the student.';
-$string['showfeedback'] = 'Show feedback';
 $string['showgroups'] = 'Show groups';
 $string['showhiddenitems'] = 'Show hidden items';
 $string['showhiddenitems_help'] = 'Whether hidden grade items are hidden entirely or if the names of hidden grade items are visible to students.

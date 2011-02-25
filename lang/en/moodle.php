@@ -859,7 +859,6 @@ $string['importdata'] = 'Import course data';
 $string['importdataexported'] = 'Exported data from \'from\' course successfully.<br /> Continue to import into your \'to\' course.';
 $string['importdatafinished'] = 'Import complete! Continue to your course';
 $string['importdatafrom'] = 'Find a course to import data from:';
-$string['importgroups'] = 'Import groups';
 $string['inactive'] = 'Inactive';
 $string['include'] = 'Include';
 $string['includeallusers'] = 'Include all users';

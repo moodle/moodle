@@ -9,14 +9,12 @@
 
 /* Global 
 ------------------------*/
-
 body.splash-green {                /* Define margins and background colour/image */
     background: url([[pix:theme|bggreen]]) top left repeat-x #f4f4f4;
     margin: 0 auto;
     padding: 0;
     width: 100%;
 }
-
 
 .splash-green a:link {        /* Defining all link styles*/
     color: #446e4c;
@@ -36,7 +34,6 @@ body.splash-green {                /* Define margins and background colour/image
 
 /* Header 
 -----------------------*/
-
 .splash-green #page-header {            /* Set height for header */
     float: none;
     padding: 0;
@@ -46,7 +43,6 @@ body.splash-green {                /* Define margins and background colour/image
     background: url([[pix:theme|pageheaderbggreen]]) top center no-repeat;
 }
 
-
 .splash-green #logobox{  /* holder background for logo*/
     height: 185px;
     width: 252px;
@@ -55,8 +51,6 @@ body.splash-green {                /* Define margins and background colour/image
     background: url([[pix:theme|lbgv2green]]) no-repeat;
     float: left;
 }
-
-
 
 .splash-green #colourswitcher p{
     color:#446e4c;
@@ -83,12 +77,9 @@ body.splash-green {                /* Define margins and background colour/image
 
 }
 
-
 .splash-green .coursebox{
     padding-left:5px;
     border-bottom: 1px dashed #dae0dc;
-
-
 }
 
 /* Sideblocks
@@ -100,18 +91,18 @@ body.splash-green {                /* Define margins and background colour/image
     color: #fff;
 }
 
-
-
 /* Mini Calendar
 ------------------------*/
 .splash-green .block .minicalendar td.weekend {    /* setting weekend date colour */
     color:#446e4c;
 }
 
-
 /* Forum
 ------------------------*/
-.splash-green .forumpost .topic .subject {    /* forum subject section inside topic header */
+.splash-green .forumpost .topic .subject,
+.path-blog.splash-green .forumpost .subject a,
+.path-blog.splash-green .forumpost .subject a:link,
+.path-blog.splash-green .forumpost .subject a:visited {    /* forum subject section inside topic header */
     font-weight: bold;
     font-size: 1.1em;
     padding-left: 5px;

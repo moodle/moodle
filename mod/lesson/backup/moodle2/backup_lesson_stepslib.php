@@ -76,8 +76,11 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
             'minquestions','maxpages','timed','maxtime','retake','activitylink',
             'mediafile','mediaheight','mediawidth','mediaclose','slideshow',
             'width','height','bgcolor','displayleft','displayleftif','progressbar',
-            'highscores','maxhighscores','available','deadline','timemodified'
+            'showhighscores','maxhighscores','available','deadline','timemodified'
         ));
+        // Tell the lesson element about the showhighscores elements mapping to the highscores
+        // database field.
+        $lesson->set_source_alias('highscores', 'showhighscores');
 
         // The lesson_pages table
         // Grouped within a `pages` element, important to note that page is relational

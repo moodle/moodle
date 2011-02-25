@@ -39,7 +39,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         // Define each element separated
         $quiz = new backup_nested_element('quiz', array('id'), array(
             'name', 'intro', 'introformat', 'timeopen',
-            'timeclose', 'optionflags', 'penaltyscheme', 'attempts',
+            'timeclose', 'optionflags', 'penaltyscheme', 'attempts_number',
             'attemptonlast', 'grademethod', 'decimalpoints', 'questiondecimalpoints',
             'review', 'questionsperpage', 'shufflequestions', 'shuffleanswers',
             'questions', 'sumgrades', 'grade', 'timecreated',
@@ -119,6 +119,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         }
 
         // Define source alias
+        $quiz->set_source_alias('attempts', 'attempts_number');
         $grade->set_source_alias('grade', 'gradeval');
         $attempt->set_source_alias('attempt', 'attemptnum');
 

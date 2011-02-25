@@ -474,10 +474,11 @@ class textlib {
      */
     function asort(array &$arr) {
         if (function_exists('collator_asort')) {
-            $coll = collator_create(get_string('locale', 'langconfig'));
-            collator_asort($coll, $arr);
-        } else {
-            asort($arr, SORT_LOCALE_STRING);
+            if ($coll = collator_create(get_string('locale', 'langconfig'))) {
+                collator_asort($coll, $arr);
+                return;
+            }
         }
+        asort($arr, SORT_LOCALE_STRING);
     }
 }

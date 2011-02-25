@@ -813,59 +813,94 @@ function tag_cleanup() {
  * It works as a cache for a potentially heavy load query done at the 'tag_instance' table.
  * So, the 'tag_correlation' table stores redundant information derived from the 'tag_instance' table.
  *
- * @param number $min_correlation cutoff percentage (optional, default is 2)
+ * @global moodle_database $DB
+ * @param int $mincorrelation Only tags with more than $mincorrelation correlations will
+ *                             be identified.
+ * @return void
  */
-function tag_compute_correlations($min_correlation=2) {
+function tag_compute_correlations($mincorrelation = 2) {
     global $DB;
 
-    if (!$all_tags = $DB->get_records('tag')) {
-        return;
+    // This mighty one line query fetches a row from the database for every
+    // individual tag correlation. We then need to process the rows collecting
+    // the correlations for each tag id.
+    // The fields used by this query are as follows:
+    //   tagid         : This is the tag id, there should be at least $mincorrelation
+    //                   rows for each tag id.
+    //   correlation   : This is the tag id that correlates to the above tagid field.
+    //   correlationid : This is the id of the row in the tag_correlation table that
+    //                   relates to the tagid field and will be NULL if there are no
+    //                   existing correlations
+    $sql = 'SELECT ta.tagid, tb.tagid AS correlation, co.id AS correlationid, co.correlatedtags 
+              FROM {tag_instance} ta 
+         LEFT JOIN {tag_instance} tb 
+                ON (ta.itemtype = tb.itemtype AND ta.itemid = tb.itemid AND ta.tagid <> tb.tagid) 
+         LEFT JOIN {tag_correlation} co 
+                ON co.tagid = ta.tagid 
+             WHERE tb.tagid IS NOT NULL 
+          GROUP BY ta.tagid, tb.tagid 
+            HAVING COUNT(*) > :mincorrelation 
+          ORDER BY ta.tagid ASC, COUNT(*) DESC, tb.tagid ASC';
+    $rs = $DB->get_recordset_sql($sql, array('mincorrelation' => $mincorrelation));
+
+    // Set up an empty tag correlation object
+    $tagcorrelation = new stdClass;
+    $tagcorrelation->id = null;
+    $tagcorrelation->tagid = null;
+    $tagcorrelation->correlatedtags = array();
+
+    // Iterate each row of the result set and build them into tag correlations.
+    foreach ($rs as $row) {
+        if ($row->tagid != $tagcorrelation->tagid) {
+            // The tag id has changed so its now time to process the tag
+            // correlation information we have.
+            tag_process_computed_correlation($tagcorrelation);
+            // Now we reset the tag correlation object so we can reuse it and set it
+            // up for the current record.
+            $tagcorrelation = new stdClass;
+            $tagcorrelation->id = $row->correlationid;
+            $tagcorrelation->tagid = $row->tagid;
+            $tagcorrelation->correlatedtags = array();
+        }
+        $tagcorrelation->correlatedtags[] = $row->correlation;
+    }
+    // Update the current correlation after the last record.
+    tag_process_computed_correlation($tagcorrelation);
+
+    // Close the recordset
+    $rs->close();
+}
+
+/**
+ * This function processes a tag correlation and makes changes in the database
+ * as required.
+ *
+ * The tag correlation object needs have both a tagid property and a correlatedtags
+ * property that is an array.
+ *
+ * @param stdClass $tagcorrelation
+ * @return bool True if the function completed, false if something was wrong.
+ */
+function tag_process_computed_correlation(stdClass $tagcorrelation) {
+    global $DB;
+
+    // You must provide a tagid and correlatedtags must be set and be an array
+    if (empty($tagcorrelation->tagid) || !isset($tagcorrelation->correlatedtags) || !is_array($tagcorrelation->correlatedtags)) {
+        return false;
     }
 
-    $tag_correlation_obj = new stdClass();
-    foreach($all_tags as $tag) {
-
-        // query that counts how many times any tag appears together in items
-        // with the tag passed as argument ($tag_id)
-        $query = "SELECT tb.tagid
-                    FROM {tag_instance} ta JOIN {tag_instance} tb ON ta.itemid = tb.itemid
-                   WHERE ta.tagid = ? AND tb.tagid <> ?
-                GROUP BY tb.tagid
-                  HAVING COUNT(*) > ?
-                ORDER BY COUNT(*) DESC";
-        $params = array($tag->id, $tag->id, $min_correlation);
-
-        $correlated = array();
-
-        // Correlated tags happen when they appear together in more occasions
-        // than $min_correlation.
-        if ($tag_correlations = $DB->get_records_sql($query, $params)) {
-            foreach($tag_correlations as $correlation) {
-            // commented out - now done in query. kept here in case it breaks on some db
-            // if($correlation->nr >= $min_correlation){
-                    $correlated[] = $correlation->tagid;
-            // }
-            }
-        }
-
-        if (empty($correlated)) {
-            continue;
-        }
-
-        $correlated = implode(',', $correlated);
-        //var_dump($correlated);
-
-        //saves correlation info in the caching table
-        if ($tag_correlation_obj = $DB->get_record('tag_correlation', array('tagid'=>$tag->id), 'id')) {
-            $tag_correlation_obj->correlatedtags = $correlated;
-            $DB->update_record('tag_correlation', $tag_correlation_obj);
-        } else {
-            $tag_correlation_obj = new stdClass();
-            $tag_correlation_obj->tagid          = $tag->id;
-            $tag_correlation_obj->correlatedtags = $correlated;
-            $DB->insert_record('tag_correlation', $tag_correlation_obj);
-        }
+    // The row tagid doesn't match the current tag id which means we are onto
+    // the next tag. Before we switch over we need to either insert or update
+    // the correlation.
+    $tagcorrelation->correlatedtags = join(',', $tagcorrelation->correlatedtags);
+    if (!empty($tagcorrelation->id)) {
+        // The tag correlation already exists so update it
+        $DB->update_record('tag_correlation', $tagcorrelation);
+    } else {
+        // This is a new correlation to insert
+        $DB->insert_record('tag_correlation', $tagcorrelation);
     }
+    return true;
 }
 
 /**

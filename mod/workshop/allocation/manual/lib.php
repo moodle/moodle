@@ -335,42 +335,6 @@ class workshop_manual_allocator implements workshop_allocator {
     public static function delete_instance($workshopid) {
         return;
     }
-
-    /**
-     * Returns the list of all allocations where the given users are involved
-     *
-     * We must use recordset here because we do not have any unique identifier available
-     *
-     * @param array [userid] => whatever
-     * @return moodle_recordset|null
-     */
-    protected function get_allocations_recordset(array $users) {
-        global $DB, $PAGE;
-
-        if (empty($users)) {
-            return null;
-        }
-
-        list($authorids, $authorparams)     = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED, 'a0000');
-        list($reviewerids, $reviewerparams) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED, 'r0000');
-        $params = array_merge($authorparams, $reviewerparams);
-        $params['workshopid'] = $this->workshop->id;
-
-        $sql = "SELECT author.id AS authorid, author.firstname AS authorfirstname, author.lastname AS authorlastname,
-                       author.picture AS authorpicture, author.imagealt AS authorimagealt, author.email AS authoremail,
-                       s.id AS submissionid, s.title AS submissiontitle, s.grade AS submissiongrade,
-                       a.id AS assessmentid, a.timecreated AS timeallocated, a.reviewerid,
-                       reviewer.firstname AS reviewerfirstname, reviewer.lastname AS reviewerlastname,
-                       reviewer.picture as reviewerpicture, reviewer.imagealt AS reviewerimagealt
-                  FROM {user} author
-             LEFT JOIN {workshop_submissions} s ON (s.authorid = author.id)
-             LEFT JOIN {workshop_assessments} a ON (s.id = a.submissionid)
-             LEFT JOIN {user} reviewer ON (a.reviewerid = reviewer.id)
-                 WHERE (author.id $authorids OR reviewer.id $reviewerids) AND (s.id IS NULL OR s.workshopid = :workshopid)
-              ORDER BY author.lastname,author.firstname,author.id,reviewer.lastname,reviewer.firstname,reviewer.id";
-
-        return $DB->get_recordset_sql($sql, $params);
-    }
 }
 
 /**

@@ -106,7 +106,9 @@ class message_output_jabber extends message_output {
      * @param array $preferences preferences array
      */
     function process_form($form, &$preferences){
-        $preferences['message_processor_jabber_jabberid'] = $form->jabber_jabberid;
+        if (isset($form->jabber_jabberid)) {
+            $preferences['message_processor_jabber_jabberid'] = $form->jabber_jabberid;
+        }
     }
 
     /**

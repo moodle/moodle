@@ -142,7 +142,7 @@ if (!empty($messagebody) && !$edit && !$deluser && ($preview || $send)) {
         } else if (!empty($send)) {
             $good = 1;
             foreach ($SESSION->emailto[$id] as $user) {
-                $good = $good && message_post_message($USER,$user,$messagebody,$format,'direct');
+                $good = $good && message_post_message($USER,$user,$messagebody,$format);
             }
             if (!empty($good)) {
                 echo $OUTPUT->heading(get_string('messagedselectedusers'));

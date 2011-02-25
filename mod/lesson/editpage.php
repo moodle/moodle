@@ -56,7 +56,29 @@ if ($edit) {
 $jumpto = lesson_page::get_jumptooptions($pageid, $lesson);
 $manager = lesson_page_type_manager::get($lesson);
 $editoroptions = array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes);
+
+// If the previous page was the Question type selection form, this form
+// will have a different name (e.g. _qf__lesson_add_page_form_selection
+// versus _qf__lesson_add_page_form_multichoice). This causes confusion
+// in moodleform::_process_submission because the array key check doesn't
+// tie up with the current form name, which in turn means the "submitted"
+// check ends up evaluating as false, thus it's not possible to check whether
+// the Question type selection was cancelled. For this reason, a dummy form
+// is created here solely to check whether the selection was cancelled. 
+if ($qtype) {
+    $mformdummy = $manager->get_page_form(0, array('editoroptions'=>$editoroptions, 'jumpto'=>$jumpto, 'lesson'=>$lesson, 'edit'=>$edit, 'maxbytes'=>$PAGE->course->maxbytes));
+    if ($mformdummy->is_cancelled()) {
+        redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$id");
+        exit;
+    }
+}
+
 $mform = $manager->get_page_form($qtype, array('editoroptions'=>$editoroptions, 'jumpto'=>$jumpto, 'lesson'=>$lesson, 'edit'=>$edit, 'maxbytes'=>$PAGE->course->maxbytes));
+
+if ($mform->is_cancelled()) {
+    redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$id");
+    exit;
+}
 
 if ($edit) {
     $data = $editpage->properties();

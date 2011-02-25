@@ -232,7 +232,7 @@ class random_qtype extends default_questiontype {
         /// the other question types in that it now only needs one response
         /// record per question.
         global $QTYPES, $DB, $OUTPUT;
-        if (!preg_match('~^random([0-9]+)-(.*)$~', $state->responses[''], $answerregs)) {
+        if (!preg_match('~^random([0-9]+)-~', $state->responses[''], $matches)) {
             if (empty($state->responses[''])) {
                 // This is the case if there weren't enough questions available in the category.
                 $question->questiontext = '<span class="notifyproblem">'.
@@ -250,15 +250,16 @@ class random_qtype extends default_questiontype {
                 echo $OUTPUT->notification("Wrapped state missing");
             }
         } else {
-            if (!$wrappedquestion = $DB->get_record('question', array('id' => $answerregs[1]))) {
+            $questionid = $matches[1];
+            if (!$wrappedquestion = $DB->get_record('question', array('id' => $questionid))) {
                 // The teacher must have deleted this question by mistake
                 // Convert it into a description type question with an explanation to the student
                 $wrappedquestion = clone($question);
-                $wrappedquestion->id = $answerregs[1];
+                $wrappedquestion->id = $questionid;
                 $wrappedquestion->questiontext = get_string('questiondeleted', 'quiz');
                 $wrappedquestion->qtype = 'missingtype';
             }
-            $state->responses[''] = (false === $answerregs[2]) ? '' : $answerregs[2];
+            $state->responses[''] = substr($state->responses[''], strlen('random' . $questionid . '-'));
         }
 
         if (!$QTYPES[$wrappedquestion->qtype]

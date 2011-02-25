@@ -202,18 +202,33 @@ class quiz_overview_report extends quiz_default_report {
         if (!$nostudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)) {
 
             // Construct the SQL
-            $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, \'0\')').' AS uniqueid, ';
+            $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(qa.attempt, 0)') . ' AS uniqueid,';
             if ($qmsubselect) {
-                $fields .=
-                    "(CASE " .
-                    "   WHEN $qmsubselect THEN 1" .
-                    "   ELSE 0 " .
-                    "END) AS gradedattempt, ";
+                $fields .= "\n(CASE WHEN $qmsubselect THEN 1 ELSE 0 END) AS gradedattempt,";
             }
 
-            $fields .='qa.uniqueid AS attemptuniqueid, qa.id AS attempt, ' .
-                'u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt, u.email, '.
-                'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
+            $fields .= '
+                    qa.uniqueid AS attemptuniqueid,
+                    qa.id AS attempt,
+                    u.id AS userid,
+                    u.idnumber,
+                    u.firstname,
+                    u.lastname,
+                    u.picture,
+                    u.imagealt,
+                    u.email,
+                    qa.sumgrades,
+                    qa.timefinish,
+                    qa.timestart,
+                    CASE WHEN qa.timefinish = 0 THEN null
+                         WHEN qa.timefinish > qa.timestart THEN qa.timefinish - qa.timestart
+                         ELSE 0 END AS duration';
+            // To explain that last bit, in MySQL, qa.timestart and qa.timefinish
+            // are unsigned. Since MySQL 5.5.5, when they introduced strict mode,
+            // subtracting a larger unsigned int from a smaller one gave an error.
+            // Therefore, we avoid doing that. timefinish can be non-zero and less
+            // than timestart when you have two load-balanced servers with very
+            // badly synchronised clocks, and a student does a really quick attempt.
 
             // This part is the same for all cases - join users and quiz_attempts tables
             $from = '{user} u ';

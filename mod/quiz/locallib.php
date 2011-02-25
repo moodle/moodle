@@ -916,7 +916,8 @@ function quiz_get_reviewoptions($quiz, $attempt, $context) {
     }
 
     // Show a link to the comment box only for closed attempts
-    if ($attempt->timefinish && has_capability('mod/quiz:grade', $context)) {
+    if (!empty($attempt->id) && $attempt->timefinish &&
+            has_capability('mod/quiz:grade', $context)) {
         $options->questioncommentlink = new moodle_url('/mod/quiz/comment.php', array('attempt' => $attempt->id));
     }
 
@@ -1001,7 +1002,7 @@ function quiz_get_combined_reviewoptions($quiz, $attempts, $context) {
  *
  * @param stdClass $a associative array of replaceable fields for the templates
  *
- * @return bool|string result of events_triger
+ * @return bool
  */
 function quiz_send_confirmation($a) {
 
@@ -1033,7 +1034,7 @@ function quiz_send_confirmation($a) {
     $eventdata->contexturl        = $a->quizurl;
     $eventdata->contexturlname    = $a->quizname;
 
-    return message_send($eventdata);
+    return (bool)message_send($eventdata); // returns message id or false
 }
 
 /**
@@ -1042,7 +1043,7 @@ function quiz_send_confirmation($a) {
  * @param object $recipient user object of the intended recipient
  * @param stdClass $a associative array of replaceable fields for the templates
  *
- * @return bool|string result of events_triger()
+ * @return bool
  */
 function quiz_send_notification($recipient, $a) {
 
@@ -1074,7 +1075,7 @@ function quiz_send_notification($recipient, $a) {
     $eventdata->contexturl        = $a->quizreviewurl;
     $eventdata->contexturlname    = $a->quizname;
 
-    return message_send($eventdata);
+    return (bool)message_send($eventdata);
 }
 
 /**

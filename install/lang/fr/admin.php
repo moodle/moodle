@@ -34,7 +34,9 @@ $string['cliincorrectvalueerror'] = 'Erreur, valeur incorrecte « {$a->value} 
 $string['cliincorrectvalueretry'] = 'Valeur incorrecte, veuillez réessayer';
 $string['clitypevalue'] = 'type valeur';
 $string['clitypevaluedefault'] = 'type valeur, tapez Entrée pour utiliser la valeur par défaut ({$a})';
-$string['cliunknowoption'] = 'Options non reconnues :n  {$a}n. Utilisez l\'option --help.';
+$string['cliunknowoption'] = 'Options non reconnues :
+ {$a}.
+Utilisez l\'option --help.';
 $string['cliyesnoprompt'] = 'Tapez y (pour oui) ou n (pour non)';
 $string['environmentrequireinstall'] = 'doit être installé et activé';
 $string['environmentrequireversion'] = 'la version {$a->needed} est requise ; vous utilisez actuellement la version {$a->current}';

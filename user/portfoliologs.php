@@ -48,6 +48,8 @@ $strportfolios = get_string('portfolios', 'portfolio');
 
 $url = new moodle_url('/user/portfoliologs.php', array('courseid'=>$courseid));
 
+navigation_node::override_active_url(new moodle_url('/user/portfoliologs.php', array('courseid'=>$courseid)));
+
 if ($page !== 0) {
     $url->param('page', $page);
 }

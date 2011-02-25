@@ -85,6 +85,33 @@ class registration_manager {
     }
 
     /**
+     * Return the site secret for a given hub
+     * site identifier is assigned to Mooch
+     * each hub has a unique and personal site secret.
+     * @param string $huburl
+     * @return string site secret
+     */
+    public function get_site_secret_for_hub($huburl) {
+        global $DB;
+
+        $existingregistration = $DB->get_record('registration_hubs',
+                    array('huburl' => $huburl));
+
+        if (!empty($existingregistration)) {
+            return $existingregistration->secret;
+        }
+
+        if ($huburl == HUB_MOODLEORGHUBURL) {
+            $siteidentifier =  get_site_identifier();
+        } else {
+            $siteidentifier = random_string(32) . $_SERVER['HTTP_HOST'];
+        }
+
+        return $siteidentifier;
+
+    }
+
+    /**
      * When the site register on a hub, he must call this function
      * @param object $hub where the site is registered on
      * @return integer id of the record

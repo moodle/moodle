@@ -35,11 +35,7 @@ $topic = optional_param('topic', -1, PARAM_INT);
 if ($topic != -1) {
     $displaysection = course_set_display($course->id, $topic);
 } else {
-    if (isset($USER->display[$course->id])) {
-        $displaysection = $USER->display[$course->id];
-    } else {
-        $displaysection = course_set_display($course->id, 0);
-    }
+    $displaysection = course_get_display($course->id);
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);

@@ -216,19 +216,8 @@ abstract class session_stub implements moodle_session {
         $user = null;
 
         if (!empty($CFG->opentogoogle) and !NO_MOODLE_COOKIES) {
-            if (!empty($_SERVER['HTTP_USER_AGENT'])) {
-                // allow web spiders in as guest users
-                if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== false ) {
-                    $user = guest_user();
-                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'google.com') !== false ) { // Google
-                    $user = guest_user();
-                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Yahoo! Slurp') !== false ) {  // Yahoo
-                    $user = guest_user();
-                } else if (strpos($_SERVER['HTTP_USER_AGENT'], '[ZSEBOT]') !== false ) {  // Zoomspider
-                    $user = guest_user();
-                } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSNBOT') !== false ) {  // MSN Search
-                    $user = guest_user();
-                }
+            if (is_web_crawler()) {
+                $user = guest_user();
             }
             if (!empty($CFG->guestloginbutton) and !$user and !empty($_SERVER['HTTP_REFERER'])) {
                 // automaticaly log in users coming from search engine results

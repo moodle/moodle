@@ -104,13 +104,18 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
                     $alltagswhitespace = false;
                     continue;
                 }
+
                 // If the path including the tag name matches another selected path
-                // (registered or parent) delete it, another chunk will contain that info
+                // (registered or parent) and is null or begins with linefeed, we know it's part
+                // of another chunk, delete it, another chunk will contain that info
                 if ($this->path_is_selected($path . '/' . $key) ||
                     $this->path_is_selected_parent($path . '/' . $key)) {
-                    unset($data['tags'][$key]);
-                    continue;
+                    if (!isset($value['cdata']) || substr($value['cdata'], 0, 1) === "\n") {
+                        unset($data['tags'][$key]);
+                        continue;
+                    }
                 }
+
                 // Convert to simple name => value array
                 $data['tags'][$key] = isset($value['cdata']) ? $value['cdata'] : null;
 

@@ -24,8 +24,8 @@
  */
 
 $string['apikey'] = 'API key';
-$string['err_noapikey'] = 'No API Key';
-$string['err_noapikey_help'] = 'There is no API Key configured for this plugin.  You can get one of these from http://enabled.box.net';
+$string['err_noapikey'] = 'No API key';
+$string['err_noapikey_help'] = 'There is no API key configured for this plugin. You can get one of these from OpenBox development page.';
 $string['existingfolder'] = 'Existing folder to put file(s) into';
 $string['folderclash'] = 'The folder you asked to create already exists!';
 $string['foldercreatefailed'] = 'Failed to create your target folder on box.net';

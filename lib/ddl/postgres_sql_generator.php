@@ -56,6 +56,8 @@ class postgres_sql_generator extends sql_generator {
     public $rename_key_sql = null; //SQL sentence to rename one key (PostgreSQL doesn't support this!)
                                           //TABLENAME, OLDKEYNAME, NEWKEYNAME are dynamically replaced
 
+    protected $std_strings = null;  // '' or \' quotes
+
     /**
      * Reset a sequence to the id field of a table.
      * @param string $table name of table or xmldb_table object
@@ -402,6 +404,24 @@ class postgres_sql_generator extends sql_generator {
         }
 
         return $results;
+    }
+
+    public function addslashes($s) {
+        // Postgres is gradually switching to ANSI quotes, we need to check what is expected
+        if (!isset($this->std_strings)) {
+            $this->std_strings = ($this->mdb->get_field_sql("select setting from pg_settings where name = 'standard_conforming_strings'") === 'on');
+        }
+
+        if ($this->std_strings) {
+            $s = str_replace("'",  "''", $s);
+        } else {
+            // do not use php addslashes() because it depends on PHP quote settings!
+            $s = str_replace('\\','\\\\',$s);
+            $s = str_replace("\0","\\\0", $s);
+            $s = str_replace("'",  "\\'", $s);
+        }
+
+        return $s;
     }
 
 /**

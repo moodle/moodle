@@ -185,7 +185,7 @@ class quiz_responses_report extends quiz_default_report {
             $hasfeedback = quiz_has_feedback($quiz);
 
             // Construct the SQL
-            $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, \'0\')').' AS concattedid, ';
+            $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, 0)').' AS concattedid, ';
             if ($qmsubselect) {
                 $fields .=
                     "(CASE " .

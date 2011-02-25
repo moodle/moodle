@@ -34,21 +34,17 @@
     $accessmanager = $attemptobj->get_access_manager(time());
     $options = $attemptobj->get_review_options();
 
-/// Permissions checks for normal users who do not have quiz:viewreports capability.
-    if (!$attemptobj->has_capability('mod/quiz:viewreports')) {
-    /// Can't review other users' attempts.
-        if (!$attemptobj->is_own_attempt()) {
-            quiz_error($attemptobj->get_quiz(), 'notyourattempt');
-        }
-    /// Can't review during the attempt - send them back to the attempt page.
+    // Check permissions.
+    if ($attemptobj->is_own_attempt()) {
         if (!$attemptobj->is_finished()) {
             redirect($attemptobj->attempt_url(0, $page));
-        }
-    /// Can't review unless Students may review -> Responses option is turned on.
-        if (!$options->responses) {
+        } else if (!$options->responses) {
             $accessmanager->back_to_view_page($attemptobj->is_preview_user(),
-                    $accessmanager->cannot_review_message($options));
+                    $accessmanager->cannot_review_message($attemptobj->get_attempt_state()));
         }
+
+    } else if (!$attemptobj->is_review_allowed()) {
+        throw new moodle_quiz_exception($attemptobj, 'noreviewattempt');
     }
 
 /// Load the questions and states needed by this page.

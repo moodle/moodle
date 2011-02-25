@@ -135,12 +135,17 @@ switch ($mode) {
         } else {
             $queryadd = '';
             $params = array ("lessonid" => $lesson->id);
-            if (!$users = $DB->get_records_sql("SELECT DISTINCT u.id, u.*
-                                     FROM {user} u,
-                                          {lesson_attempts} a
-                                     WHERE a.lessonid = :lessonid and
-                                           u.id = a.userid
-                                     ORDER BY u.lastname", $params)) {
+            // Need to use inner view to avoid distinct + text
+            if (!$users = $DB->get_records_sql("
+                SELECT u.*
+                  FROM {user} u
+                  JOIN (
+                    SELECT DISTINCT u.id
+                      FROM {user} u,
+                           {lesson_attempts} a
+                     WHERE a.lessonid = :lessonid and
+                           u.id = a.userid) ui ON (u.id = ui.id)
+                  ORDER BY u.lastname", $params)) {
                 print_error('cannotfinduser', 'lesson');
             }
         }

@@ -306,7 +306,7 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
         $a = new stdClass();
         $a->parent = dirname($CFG->dataroot);
         $a->dataroot = $CFG->dataroot;
-        if (!is_writable(dirname($CFG->dataroot))) {
+        if (!is_writable($a->parent)) {
             $hint_dataroot = get_string('pathsroparentdataroot', 'install', $a);
             $config->stage = INSTALL_PATHS;
         } else {
@@ -317,7 +317,7 @@ if ($config->stage == INSTALL_DOWNLOADLANG) {
         }
 
     } else if (!install_init_dataroot($CFG->dataroot, $CFG->directorypermissions)) {
-        $hint_dataroot = get_string('pathserrcreatedataroot', 'install', $a);
+        $hint_dataroot = get_string('pathserrcreatedataroot', 'install', array('dataroot' => $CFG->dataroot));
         $config->stage = INSTALL_PATHS;
     }
 
@@ -415,7 +415,7 @@ if ($config->stage == INSTALL_DATABASE) {
 
     $disabled = empty($distro->dbhost) ? '' : 'disabled="disabled';
     echo '<div class="formrow"><label for="id_dbhost" class="formlabel">'.$strdbhost.'</label>';
-    echo '<input id="id_dbhost" name="dbhost" '.$disabled.' type="text" value="'.s($config->dbhost).'" size="30" class="forminput" />';
+    echo '<input id="id_dbhost" name="dbhost" '.$disabled.' type="text" value="'.s($config->dbhost).'" size="50" class="forminput" />';
     echo '</div>';
 
     echo '<div class="formrow"><label for="id_dbname" class="formlabel">'.$strdbname.'</label>';
@@ -552,15 +552,15 @@ if ($config->stage == INSTALL_PATHS) {
 
     echo '<div class="userinput">';
     echo '<div class="formrow"><label for="id_wwwroot" class="formlabel">'.$paths['wwwroot'].'</label>';
-    echo '<input id="id_wwwroot" name="wwwroot" type="text" value="'.s($CFG->wwwroot).'" disabled="disabled" size="45" class="forminput" />';
+    echo '<input id="id_wwwroot" name="wwwroot" type="text" value="'.s($CFG->wwwroot).'" disabled="disabled" size="70" class="forminput" />';
     echo '</div>';
 
     echo '<div class="formrow"><label for="id_dirroot" class="formlabel">'.$paths['dirroot'].'</label>';
-    echo '<input id="id_dirroot" name="dirroot" type="text" value="'.s($CFG->dirroot).'" disabled="disabled" size="45"class="forminput" />';
+    echo '<input id="id_dirroot" name="dirroot" type="text" value="'.s($CFG->dirroot).'" disabled="disabled" size="70"class="forminput" />';
     echo '</div>';
 
     echo '<div class="formrow"><label for="id_dataroot" class="formlabel">'.$paths['dataroot'].'</label>';
-    echo '<input id="id_dataroot" name="dataroot" type="text" value="'.s($config->dataroot).'" size="45" class="forminput" />';
+    echo '<input id="id_dataroot" name="dataroot" type="text" value="'.s($config->dataroot).'" size="70" class="forminput" />';
     if ($hint_dataroot !== '') {
         echo '<div class="hint">'.$hint_dataroot.'</div>';
     }

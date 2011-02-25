@@ -194,7 +194,9 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="21"');
     $mform->setType('city', PARAM_MULTILANG);
     $mform->addRule('city', $strrequired, 'required', null, 'client');
-
+    if (!empty($CFG->defaultcity)) {
+        $mform->setDefault('city', $CFG->defaultcity);
+    }
 
     $choices = get_string_manager()->get_list_of_countries();
     $choices= array(''=>get_string('selectacountry').'...') + $choices;

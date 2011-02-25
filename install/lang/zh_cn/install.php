@@ -57,13 +57,15 @@ $string['memorylimithelp'] = '<p>您的服务器的PHP内存限制是${a}。</p>
 <blockquote>php_value memory_limit 16M</blockquote>
 <p>然而，在一些服务器上这会让<b>所有</b>PHP页面无法正常工作(在访问页面时会有错误)，因此您可能不得不删除.htaccess文件。</p></li>
 </ol>';
+$string['paths'] = '路径';
 $string['pathserrcreatedataroot'] = '安装程序无法建立数据目录({$a->dataroot})。';
+$string['pathshead'] = '确认路径';
 $string['pathsrodataroot'] = '数据目录不可写';
 $string['pathsroparentdataroot'] = '父目录({$a->parent})不可写。安装程序无法建立数据目录({$a->dataroot})。';
 $string['pathssubadmindir'] = '有些网络主机使用/admin这个URL来访问控制面板或其它功能。很不幸，这个设置和Moodle管理页面的标准路径冲突。这个问题可以解决，只需在您的安装目录中把admin目录换名，然后把新名字输入到这里。例如<em>moodleadmin</em>。这么做会改变Moodle中的管理链接。';
 $string['pathssubdataroot'] = 'Moodle需要一个位置存放上传的文件。这个目录对于Web服务器用户(通常是“nobody”或“apache”)应当是可读可写的，但应当不能直接通过Web访问它。如果它不存在，安装程序会尝试建立。';
-$string['pathssubdirroot'] = 'moodle安装的完整路径。';
-$string['pathssubwwwroot'] = 'moodle的完整网址。
+$string['pathssubdirroot'] = 'Moodle安装的完整路径。';
+$string['pathssubwwwroot'] = '可以访问到Moodle的完整网址。
 Moodle不支持通过多个地址访问。如果您的网站有多个公开地址，您必须把这个地址以外的所有地址都设为永久重定向。如果您的网站既可以通过内部地址访问，也可以通过这个公开地址访问，那么请配置DNS使内部网用户也能使用公开地址。如果此地址不正确，请在浏览器中修改URL来重新安装，并设定另一个地址。';
 $string['pathsunsecuredataroot'] = '数据目录所在位置不安全';
 $string['pathswrongadmindir'] = '管理目录不存在';

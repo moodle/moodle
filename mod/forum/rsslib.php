@@ -44,25 +44,17 @@ function forum_rss_get_feed($context, $args) {
     }
 
     $forumid  = clean_param($args[3], PARAM_INT);
-
-    $uservalidated = false;
-
     $cm = get_coursemodule_from_instance('forum', $forumid, 0, false, MUST_EXIST);
     if ($cm) {
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         //context id from db should match the submitted one
-        if ($context->id==$modcontext->id && has_capability('mod/forum:viewdiscussion', $modcontext)) {
-            $uservalidated = true;
+        if ($context->id != $modcontext->id || !has_capability('mod/forum:viewdiscussion', $modcontext)) {
+            return null;
         }
     }
 
-    if (!$uservalidated) {
-        return null;
-    }
-
     $forum = $DB->get_record('forum', array('id' => $forumid), '*', MUST_EXIST);
-
     if (!rss_enabled_for_mod('forum', $forum)) {
         return null;
     }

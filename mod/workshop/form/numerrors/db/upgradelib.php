@@ -53,11 +53,10 @@ function workshopform_numerrors_upgrade_legacy() {
                  WHERE workshopid $workshopids
                        AND newid IS NULL";
         $rs = $DB->get_recordset_sql($sql, $params);
-        $newworkshopids = workshop_upgrade_workshop_id_mappings();
         foreach ($rs as $old) {
             // process the information about mapping
             $newmapping = new stdclass();
-            $newmapping->workshopid = $newworkshopids[$old->workshopid];
+            $newmapping->workshopid = $old->workshopid;
             $newmapping->nonegative = $old->elementno;
             $newmapping->grade = $old->maxscore;
             if ($old->maxscore > 0) {
@@ -70,7 +69,7 @@ function workshopform_numerrors_upgrade_legacy() {
             $DB->insert_record('workshopform_numerrors_map', $newmapping);
             // process the information about the element itself
             if (trim($old->description) and $old->description <> '@@ GRADE_MAPPING_ELEMENT @@') {
-                $new = workshopform_numerrors_upgrade_element($old, $newworkshopids[$old->workshopid]);
+                $new = workshopform_numerrors_upgrade_element($old, $old->workshopid);
                 $newid = $DB->insert_record('workshopform_numerrors', $new);
             } else {
                 $newid = 0;

@@ -393,5 +393,16 @@ class base_nested_element_test extends UnitTestCase {
             $this->assertTrue($e instanceof base_element_parent_exception);
         }
 
+        // Add child element already used by own final elements
+        $nested = new mock_base_nested_element('PARENT1', null, array('FINAL1', 'FINAL2'));
+        $child = new mock_base_nested_element('FINAL2', null, array('FINAL3', 'FINAL4'));
+        try {
+            $nested->add_child($child);
+            $this->fail("Expecting base_element_struct_exception exception, none occurred");
+        } catch (Exception $e) {
+            $this->assertTrue($e instanceof base_element_struct_exception);
+            $this->assertEqual($e->errorcode, 'baseelementchildnameconflict');
+            $this->assertEqual($e->a, 'FINAL2');
+        }
     }
 }

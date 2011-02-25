@@ -112,7 +112,7 @@ class restore_workshopform_accumulative_subplugin extends restore_subplugin {
         $this->set_mapping($this->get_namefor('dimension'), $oldid, $newitemid, true);
 
         // Process files for this workshopform_accumulative->id only
-        $this->add_related_files('workshopform_accumulative', 'description', 'workshopform_accumulative', null, $oldid);
+        $this->add_related_files('workshopform_accumulative', 'description', $this->get_namefor('dimension'), null, $oldid);
     }
 
     /**

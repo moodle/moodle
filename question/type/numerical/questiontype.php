@@ -1044,7 +1044,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $penaltygrp = array();
         $penaltygrp[] =& $mform->createElement('text', 'unitpenalty', get_string('unitpenalty', 'qtype_numerical') ,
                 array('size' => 6));
-        $unitgradingtypes = array('1' => get_string('decfractionofquestiongrade', 'qtype_numerical'), '2' => get_string('decfractionofresponsegrade', 'qtype_numerical'));
+        $unitgradingtypes = array('1' => get_string('decfractionofresponsegrade', 'qtype_numerical'), '2' => get_string('decfractionofquestiongrade', 'qtype_numerical'));
         $penaltygrp[] =& $mform->createElement('select', 'unitgradingtypes', '' , $unitgradingtypes );
         $mform->addGroup($penaltygrp, 'penaltygrp', get_string('unitpenalty', 'qtype_numerical'),' ' , false);
         $multichoicedisplaygrp = array();
@@ -1151,6 +1151,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                         break;
                     case 2 : // NUMERICALQUESTIONUNITTEXTDISPLAY
                         $default_values['unitrole'] = 1 ;
+                        break;
                     case 3 : // NUMERICALQUESTIONUNITNODISPLAY
                         $default_values['unitrole'] = 0 ;
                         //  $default_values['showunits1'] = $question->options->showunits ;

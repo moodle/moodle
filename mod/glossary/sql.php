@@ -13,6 +13,10 @@
     $sqlsortkey = NULL;
     $textlib = textlib_get_instance();
 
+    // For cases needing inner view
+    $sqlwrapheader = '';
+    $sqlwrapfooter = '';
+
 /// Calculate the SQL sortkey to be used by the SQL statements later
     switch ( $sortkey ) {
         case "CREATION":
@@ -203,7 +207,13 @@
             } else {
                 $searchcond = implode(" AND ", $searchcond);
 
-                $sqlselect  = "SELECT DISTINCT ge.*, ge.concept AS glossarypivot";
+                // Need one inner view here to avoid distinct + text
+                $sqlwrapheader = 'SELECT ge.*, ge.concept AS glossarypivot
+                                    FROM {glossary_entries} ge
+                                    JOIN ( ';
+                $sqlwrapfooter = ' ) gei ON (ge.id = gei.id)';
+
+                $sqlselect  = "SELECT DISTINCT ge.id";
                 $sqlfrom    = "FROM {glossary_entries} ge
                                LEFT JOIN {glossary_alias} al ON al.entryid = ge.id";
                 $where      = "AND ($searchcond)";
@@ -262,5 +272,6 @@
         $limitnum = $entriesbypage;
     }
 
-    $allentries = $DB->get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby", $params, $limitfrom, $limitnum);
+    $query = "$sqlwrapheader $sqlselect $sqlfrom $sqlwhere $sqlwrapfooter $sqlorderby";
+    $allentries = $DB->get_records_sql($query, $params, $limitfrom, $limitnum);
 

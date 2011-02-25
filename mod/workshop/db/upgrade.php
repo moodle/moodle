@@ -264,5 +264,49 @@ function xmldb_workshop_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010111200, 'workshop');
     }
 
+    /**
+     * Check the course_module integrity - see MDL-26312 for details
+     *
+     * Because of a bug in Workshop upgrade code, multiple workshop course_modules can
+     * potentially point to a single workshop instance. The chance is pretty low as in most cases,
+     * the upgrade failed. But under certain circumstances, workshop could be upgraded with
+     * this data integrity issue. We want to detect it now and let the admin know.
+     */
+    if ($oldversion < 2011021100) {
+        $sql = "SELECT cm.id, cm.course, cm.instance
+                  FROM {course_modules} cm
+                 WHERE cm.module IN (SELECT id
+                                       FROM {modules}
+                                      WHERE name = ?)";
+        $rs = $DB->get_recordset_sql($sql, array('workshop'));
+        $map = array(); // returned stdClasses by instance id
+        foreach ($rs as $cm) {
+            $map[$cm->instance][$cm->id] = $cm;
+        }
+        $rs->close();
+
+        $problems = array();
+        foreach ($map as $instanceid => $cms) {
+            if (count($cms) > 1) {
+                $problems[] = 'workshop instance ' . $instanceid . ' referenced by course_modules ' . implode(', ', array_keys($cms));
+            }
+        }
+        if ($problems) {
+            echo $OUTPUT->notification('¡Ay, caramba! Data integrity corruption has been detected in your workshop ' . PHP_EOL .
+                'module database tables. This might be caused by a bug in workshop upgrade code. ' . PHP_EOL .
+                'Please report this issue immediately in workshop module support forum at ' . PHP_EOL .
+                'http://moodle.org so that we can help to fix this problem. Please copy and keep ' . PHP_EOL .
+                'following information for future reference:');
+            foreach ($problems as $problem) {
+                echo $OUTPUT->notification($problem);
+                upgrade_log(UPGRADE_LOG_NOTICE, 'mod_workshop', 'course_modules integrity problem', $problem);
+            }
+        }
+
+        unset($problems);
+        unset($map);
+        upgrade_mod_savepoint(true, 2011021100, 'workshop');
+    }
+
     return true;
 }

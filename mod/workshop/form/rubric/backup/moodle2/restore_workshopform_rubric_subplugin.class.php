@@ -128,7 +128,7 @@ class restore_workshopform_rubric_subplugin extends restore_subplugin {
         $this->set_mapping($this->get_namefor('dimension'), $oldid, $newitemid, true);
 
         // Process files for this workshopform_rubric->id only
-        $this->add_related_files('workshopform_rubric', 'description', 'workshopform_rubric', null, $oldid);
+        $this->add_related_files('workshopform_rubric', 'description', $this->get_namefor('dimension'), null, $oldid);
     }
 
     /**
