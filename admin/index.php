@@ -86,7 +86,7 @@ if (!isset($CFG->version)) {
 
 $version = null;
 $release = null;
-require("$CFG->dirroot/version.php");       // defines $version and $release
+require("$CFG->dirroot/version.php");       // defines $version, $release and $maturity
 $CFG->target_release = $release;            // used during installation and upgrades
 
 if (!$version or !$release) {
@@ -135,9 +135,18 @@ if (!core_tables_exist()) {
         $PAGE->set_cacheable(false);
         echo $OUTPUT->header();
         echo $OUTPUT->heading("Moodle $release");
+
+        if (isset($maturity)) {
+            // main version.php declares moodle code maturity
+            if ($maturity < MATURITY_STABLE) {
+                $maturitylevel = get_string('maturity'.$maturity, 'admin');
+                echo $OUTPUT->box(get_string('maturitycorewarning', 'admin', $maturitylevel), 'generalbox maturitywarning');
+            }
+        }
+
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
-        echo $OUTPUT->box($releasenoteslink, 'generalbox boxaligncenter boxwidthwide');
+        echo $OUTPUT->box($releasenoteslink, 'generalbox releasenoteslink');
 
         require_once($CFG->libdir.'/environmentlib.php');
         if (!check_moodle_environment($release, $environment_results, true, ENV_SELECT_RELEASE)) {
@@ -194,6 +203,13 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_heading($stradministration);
         $PAGE->set_cacheable(false);
         echo $OUTPUT->header();
+        if (isset($maturity)) {
+            // main version.php declares moodle code maturity
+            if ($maturity < MATURITY_STABLE) {
+                $maturitylevel = get_string('maturity'.$maturity, 'admin');
+                echo $OUTPUT->box(get_string('maturitycorewarning', 'admin', $maturitylevel), 'generalbox maturitywarning');
+            }
+        }
         $continueurl = new moodle_url('index.php', array('confirmupgrade' => 1));
         $cancelurl = new moodle_url('index.php');
         echo $OUTPUT->confirm(get_string('upgradesure', 'admin', $a->newversion), $continueurl, $cancelurl);

@@ -680,6 +680,13 @@ $string['maintinprogress'] = 'Maintenance is in progress...';
 $string['managelang'] = 'Manage';
 $string['managelicenses'] = 'Manage licences';
 $string['manageqtypes'] = 'Manage question types';
+$string['maturity50'] = 'Alpha';
+$string['maturity100'] = 'Beta';
+$string['maturity150'] = 'Release candidate';
+$string['maturity200'] = 'Stable version';
+$string['maturitycorewarning'] = 'You are going to install or upgrade Moodle to a version marked as "{$a}"
+that is not considered as production-ready yet. Please make sure this is intentional
+and that you are using correct checkout of Moodle source code.';
 $string['maxbytes'] = 'Maximum uploaded file size';
 $string['maxconsecutiveidentchars'] = 'Consecutive identical characters';
 $string['maxeditingtime'] = 'Maximum time to edit posts';

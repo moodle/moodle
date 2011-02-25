@@ -54,6 +54,14 @@ define('MEMORY_EXTRA', -3);
 define('MEMORY_HUGE', -4);
 
 /**
+ * Software maturity levels used by the core and plugins
+ */
+define('MATURITY_ALPHA',    50);    // internals can be tested using white box techniques
+define('MATURITY_BETA',     100);   // feature complete, ready for preview and testing
+define('MATURITY_RC',       150);   // tested, will be released unless there are fatal bugs
+define('MATURITY_STABLE',   200);   // ready for production deployment
+
+/**
  * Simple class. It is usually used instead of stdClass because it looks
  * more familiar to Java developers ;-) Do not use for type checking of
  * function parameters. Please use stdClass instead.
