@@ -528,7 +528,8 @@ abstract class question_flags {
         $qid = $qa->get_question()->id;
         $slot = $qa->get_slot();
         $checksum = self::get_toggle_checksum($qubaid, $qid, $qaid, $slot);
-        return "qaid=$qaid&qubaid=$qubaid&qid=$qid&slot=$slot&checksum=$checksum&sesskey=" . sesskey();
+        return "qaid=$qaid&qubaid=$qubaid&qid=$qid&slot=$slot&checksum=$checksum&sesskey=" .
+                sesskey() . '&newstate=';
     }
 
     /**

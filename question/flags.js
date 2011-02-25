@@ -35,7 +35,7 @@ M.core_question_flags = {
         M.core_question_flags.actionurl = actionurl;
 
         Y.all('div.questionflag').each(function(flagdiv, i) {
-            var checkbox = flagdiv.one('input.questionflagcheckbox');
+            var checkbox = flagdiv.one('input[type=checkbox]');
             if (!checkbox) {
                 return;
             }

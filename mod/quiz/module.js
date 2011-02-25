@@ -149,7 +149,7 @@ M.mod_quiz.nav.init = function(Y) {
             } else {
                 pageno = 0;
             }
-            Y.one('#nextpagehiddeninput').set('value', pageno);
+            Y.one('#followingpage').set('value', pageno);
 
             var questionidmatch = this.get('href').match(/#q(\d+)/);
             if (questionidmatch) {
@@ -163,7 +163,7 @@ M.mod_quiz.nav.init = function(Y) {
     if (Y.one('a.endtestlink')) {
         Y.on('click', function(e) {
             e.preventDefault(e);
-            Y.one('#nextpagehiddeninput').set('value', -1);
+            Y.one('#followingpage').set('value', -1);
             Y.one('#responseform').submit();
         }, 'a.endtestlink');
     }

@@ -33,11 +33,11 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-/// Remember the current time as the time any responses were submitted
-/// (so as to make sure students don't get penalized for slow processing on this page)
+// Remember the current time as the time any responses were submitted
+// (so as to make sure students don't get penalized for slow processing on this page)
 $timenow = time();
 
-/// Get submitted parameters.
+// Get submitted parameters.
 $attemptid = required_param('attempt', PARAM_INT);
 $next = optional_param('next', false, PARAM_BOOL);
 $thispage = optional_param('thispage', 0, PARAM_INT);
@@ -49,7 +49,7 @@ $scrollpos = optional_param('scrollpos', '', PARAM_RAW);
 $transaction = $DB->start_delegated_transaction();
 $attemptobj = quiz_attempt::create($attemptid);
 
-/// Set $nexturl now.
+// Set $nexturl now.
 if ($next) {
     $page = $nextpage;
 } else {
@@ -64,34 +64,34 @@ if ($page == -1) {
     }
 }
 
-/// We treat automatically closed attempts just like normally closed attempts
+// We treat automatically closed attempts just like normally closed attempts
 if ($timeup) {
     $finishattempt = 1;
 }
 
-/// Check login.
+// Check login.
 require_login($attemptobj->get_course(), false, $attemptobj->get_cm());
 require_sesskey();
 
-/// Check that this attempt belongs to this user.
+// Check that this attempt belongs to this user.
 if ($attemptobj->get_userid() != $USER->id) {
     throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'notyourattempt');
 }
 
-/// Check capabilities.
+// Check capabilities.
 if (!$attemptobj->is_preview_user()) {
     $attemptobj->require_capability('mod/quiz:attempt');
 }
 
-/// If the attempt is already closed, send them to the review page.
+// If the attempt is already closed, send them to the review page.
 if ($attemptobj->is_finished()) {
     throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'attemptalreadyclosed', null, $attemptobj->review_url());
 }
 
-/// Don't log - we will end with a redirect to a page that is logged.
+// Don't log - we will end with a redirect to a page that is logged.
 
-/// Process the responses /////////////////////////////////////////////////
 if (!$finishattempt) {
+    // Just process the responses for this page and go to the next page.
     try {
         $attemptobj->process_all_actions($timenow);
     } catch (question_out_of_sequence_exception $e){
@@ -102,17 +102,17 @@ if (!$finishattempt) {
     redirect($nexturl);
 }
 
-/// We have been asked to finish attempt, so do that //////////////////////
+// Otherwise, we have been asked to finish attempt, so do that.
 
-/// Log the end of this attempt.
+// Log the end of this attempt.
 add_to_log($attemptobj->get_courseid(), 'quiz', 'close attempt',
         'review.php?attempt=' . $attemptobj->get_attemptid(),
         $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
-/// Update the quiz attempt record.
+// Update the quiz attempt record.
 $attemptobj->finish_attempt($timenow);
 
-/// Trigger event
+// Trigger event
 $eventdata = new stdClass();
 $eventdata->component  = 'mod_quiz';
 $eventdata->course     = $attemptobj->get_courseid();
@@ -122,10 +122,10 @@ $eventdata->user       = $USER;
 $eventdata->attempt    = $attemptobj->get_attemptid();
 events_trigger('quiz_attempt_processed', $eventdata);
 
-/// Clear the password check flag in the session.
+// Clear the password check flag in the session.
 $accessmanager = $attemptobj->get_access_manager($timenow);
 $accessmanager->clear_password_access();
 
-/// Send the user to the review page.
+// Send the user to the review page.
 $transaction->allow_commit();
 redirect($attemptobj->review_url());

@@ -231,7 +231,7 @@ if (!empty($rows)) {
 // Form for saving flags if necessary.
 if ($options->flags == question_display_options::EDITABLE) {
     echo '<form action="' . $attemptobj->review_url(0, $page, $showall) .
-            '" method="post"><div>';
+            '" method="post" class="questionflagsaveform"><div>';
     echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
 }
 
