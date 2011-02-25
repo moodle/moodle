@@ -6008,7 +6008,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2011012501);
     }
 
-
     //remove the old theme and themelegacy fields and add any stored settings to the new themes setting.
     if ($oldversion < 2011020200.01) {
         set_config('enabledevicedetection',1);
