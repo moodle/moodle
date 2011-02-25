@@ -94,10 +94,7 @@ if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
 
 // Print heading.
 echo $OUTPUT->heading(format_string($attemptobj->get_quiz_name()));
-if ($attemptobj->is_preview_user()) {
-    $attemptobj->print_restart_preview_button();
-}
-echo $OUTPUT->heading($title);
+echo $OUTPUT->heading($title, 3);
 
 // Prepare the summary table header
 $table = new html_table();

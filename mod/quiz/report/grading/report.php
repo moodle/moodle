@@ -127,7 +127,10 @@ class quiz_grading_report extends quiz_default_report {
         $this->print_header_and_tabs($cm, $course, $quiz, 'grading');
 
         // What sort of page to display?
-        if (!$slot) {
+        if (!quiz_questions_in_quiz($quiz->questions)) {
+            echo quiz_no_questions_message($quiz, $cm, $this->context);
+
+        } else if (!$slot) {
             $this->display_index($includeauto);
 
         } else {

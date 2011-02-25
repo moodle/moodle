@@ -847,14 +847,18 @@ class quiz_attempt {
     }
 
     /**
-     * Print the HTML for the start new preview button.
+     * Print the HTML for the start new preview button, if the current user
+     * is allowed to see one.
      */
-    public function print_restart_preview_button() {
-        global $CFG, $OUTPUT;
-        echo $OUTPUT->container_start('controls');
-        $url = new moodle_url($this->start_attempt_url(), array('forcenew' => true));
-        echo $OUTPUT->single_button($url, get_string('startagain', 'quiz'));
-        echo $OUTPUT->container_end();
+    public function restart_preview_button() {
+        global $OUTPUT;
+        if ($this->is_preview() && $this->is_preview_user()) {
+            return $OUTPUT->single_button(new moodle_url(
+                    $this->start_attempt_url(), array('forcenew' => true)),
+                    get_string('startnewpreview', 'quiz'));
+        } else {
+            return '';
+        }
     }
 
     /**
@@ -1221,7 +1225,8 @@ abstract class quiz_nav_panel_base {
         }
         $content .= $this->get_before_button_bits();
         $content .= $this->get_question_buttons() . "\n";
-        $content .= '<div class="othernav">' . "\n" . $this->get_end_bits() . "\n</div>\n";
+        $content .= '<div class="othernav">' . "\n" . $this->get_end_bits() .
+                $this->attemptobj->restart_preview_button() . "\n</div>\n";
 
         $bc = new block_contents();
         $bc->id = 'quiznavigation';

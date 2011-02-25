@@ -116,6 +116,8 @@ class quiz_responses_report extends quiz_attempt_report {
         $displayoptions['resp'] = $includeresp;
         $displayoptions['right'] = $includeright;
 
+        $mform->set_data($displayoptions + array('pagesize' => $pagesize));
+
         if ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL) {
             // This option is only available to users who can access all groups in
             // groups mode, so setting allowed to empty (which means all quiz attempts
@@ -159,25 +161,23 @@ class quiz_responses_report extends quiz_attempt_report {
                 echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
             }
         }
-        $nostudents = false;
-        if (!$students) {
-            if (!$table->is_downloading()) {
+
+        $hasquestions = quiz_questions_in_quiz($quiz->questions);
+        if (!$table->is_downloading()) {
+            if (!$hasquestions) {
+                echo quiz_no_questions_message($quiz, $cm, $this->context);
+            } else if (!$students) {
                 echo $OUTPUT->notification(get_string('nostudentsyet'));
-            }
-            $nostudents = true;
-        } else if ($currentgroup && !$groupstudents) {
-            if (!$table->is_downloading()) {
+            } else if ($currentgroup && !$groupstudents) {
                 echo $OUTPUT->notification(get_string('nostudentsingroup'));
             }
-            $nostudents = true;
-        }
-        if (!$table->is_downloading()) {
+
             // Print display options
-            $mform->set_data($displayoptions + array('pagesize' => $pagesize));
             $mform->display();
         }
 
-        if (!$nostudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)) {
+        $hasstudents = $students && (!$currentgroup || $groupstudents);
+        if ($hasquestions && ($hasstudents || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)) {
             // Print information on the grading method and whether we are displaying
             if (!$table->is_downloading()) { //do not print notices when downloading
                 if ($strattempthighlight = quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)) {

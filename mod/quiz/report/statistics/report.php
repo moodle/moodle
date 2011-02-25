@@ -139,10 +139,6 @@ class quiz_statistics_report extends quiz_default_report {
                         $nostudentsingroup, $useallattempts, $groupstudents, $questions);
         $quizinfo = $this->get_formatted_quiz_info_data($course, $cm, $quiz, $quizstats);
 
-        if (!$this->table->is_downloading() && $s == 0) {
-            echo $OUTPUT->heading(get_string('noattempts', 'quiz'));
-        }
-
         // Set up the table, if there is data.
         if ($s) {
             $this->table->setup($quiz, $cm->id, $reporturl, $s);
@@ -157,6 +153,12 @@ class quiz_statistics_report extends quiz_default_report {
                 if ($currentgroup && !$groupstudents) {
                     $OUTPUT->notification(get_string('nostudentsingroup', 'quiz_statistics'));
                 }
+            }
+
+            if (!quiz_questions_in_quiz($quiz->questions)) {
+                echo quiz_no_questions_message($quiz, $cm, $context);
+            } else if (!$this->table->is_downloading() && $s == 0) {
+                echo $OUTPUT->notification(get_string('noattempts', 'quiz'));
             }
 
             // Print display options form.

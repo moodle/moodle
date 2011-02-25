@@ -120,19 +120,12 @@ if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
     echo $OUTPUT->header();
 }
 
-if ($attemptobj->is_preview_user()) {
-
-    // Heading.
-    echo $OUTPUT->heading(get_string('previewquiz', 'quiz', format_string($attemptobj->get_quiz_name())));
-    $attemptobj->print_restart_preview_button();
-
+if ($attemptobj->is_preview_user() && $messages) {
     // Inform teachers of any restrictions that would apply to students at this point.
-    if ($messages) {
-        echo $OUTPUT->box_start('quizaccessnotices');
-        echo $OUTPUT->heading(get_string('accessnoticesheader', 'quiz'), 3);
-        $accessmanager->print_messages($messages);
-        echo $OUTPUT->box_end();
-    }
+    echo $OUTPUT->box_start('quizaccessnotices');
+    echo $OUTPUT->heading(get_string('accessnoticesheader', 'quiz'), 3);
+    $accessmanager->print_messages($messages);
+    echo $OUTPUT->box_end();
 }
 
 // Start the form

@@ -119,12 +119,6 @@ if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
     echo $OUTPUT->header();
 }
 
-// Print heading.
-if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {
-    $attemptobj->print_restart_preview_button();
-}
-echo $OUTPUT->heading($strreviewtitle);
-
 // Summary table start ============================================================================
 
 // Work out some time-related things.

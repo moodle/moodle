@@ -96,6 +96,10 @@ function quiz_report_get_significant_questions($quiz) {
     global $DB;
 
     $questionids = quiz_questions_in_quiz($quiz->questions);
+    if (empty($questionids)) {
+        return array();
+    }
+
     list($usql, $params) = $DB->get_in_or_equal(explode(',', $questionids));
     $params[] = $quiz->id;
     $questions = $DB->get_records_sql("

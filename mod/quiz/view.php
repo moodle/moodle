@@ -345,10 +345,9 @@ if ($numattempts && $gradecolumn && !is_null($mygrade)) {
 echo $OUTPUT->box_start('quizattempt');
 $buttontext = ''; // This will be set something if as start/continue attempt button should appear.
 if (!quiz_clean_layout($quiz->questions, true)) {
-    echo $OUTPUT->heading(get_string('noquestions', 'quiz'));
-    echo $OUTPUT->render(new single_button(new moodle_url('/mod/quiz/edit.php',
-            array('cmid' => $cm->id)), get_string('editquiz', 'quiz'), 'get'));
-    $buttontext = false;
+    echo quiz_no_questions_message($quiz, $cm, $context);
+    $buttontext = '';
+
 } else {
     if ($unfinished) {
         if ($canattempt) {
@@ -356,6 +355,7 @@ if (!quiz_clean_layout($quiz->questions, true)) {
         } else if ($canpreview) {
             $buttontext = get_string('continuepreview', 'quiz');
         }
+
     } else {
         if ($canattempt) {
             $messages = $accessmanager->prevent_new_attempt($numattempts, $lastfinishedattempt);
@@ -366,6 +366,7 @@ if (!quiz_clean_layout($quiz->questions, true)) {
             } else {
                 $buttontext = get_string('reattemptquiz', 'quiz');
             }
+
         } else if ($canpreview) {
             $buttontext = get_string('previewquiznow', 'quiz');
         }
@@ -386,7 +387,8 @@ if (!quiz_clean_layout($quiz->questions, true)) {
 if ($buttontext) {
     $accessmanager->print_start_attempt_button($canpreview, $buttontext, $unfinished);
 } else if ($buttontext === '') {
-    echo $OUTPUT->continue_button($CFG->wwwroot . '/course/view.php?id=' . $course->id);
+    echo $OUTPUT->single_button(new moodle_url('/course/view.php', array('id' => $course->id)),
+            get_string('backtocourse', 'quiz'), 'get', array('class' => 'continuebutton'));
 }
 echo $OUTPUT->box_end();
 
