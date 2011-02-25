@@ -195,7 +195,7 @@ class test_question_maker {
 
         self::set_standard_combined_feedback_fields($match);
 
-        // Using unset to get 1-based arrays. 
+        // Using unset to get 1-based arrays.
         $match->stems = array('', 'Dog', 'Frog', 'Toad', 'Cat');
         $match->stemformat = array('', FORMAT_HTML, FORMAT_HTML, FORMAT_HTML, FORMAT_HTML);
         $match->choices = array('', 'Mammal', 'Amphibian', 'Insect');

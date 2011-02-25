@@ -160,61 +160,63 @@ if ($attemptobj->has_capability('mod/quiz:viewreports')) {
     }
 }
 
-// Timing information.
-$rows[] = '<tr><th scope="row" class="cell">' . get_string('startedon', 'quiz') .
-        '</th><td class="cell">' . userdate($attempt->timestart) . '</td></tr>';
-if ($attempt->timefinish) {
-    $rows[] = '<tr><th scope="row" class="cell">' . get_string('completedon', 'quiz') . '</th><td class="cell">' .
-            userdate($attempt->timefinish) . '</td></tr>';
-    $rows[] = '<tr><th scope="row" class="cell">' . get_string('timetaken', 'quiz') . '</th><td class="cell">' .
-            $timetaken . '</td></tr>';
-}
-if (!empty($overtime)) {
-    $rows[] = '<tr><th scope="row" class="cell">' . get_string('overdue', 'quiz') . '</th><td class="cell">' . $overtime . '</td></tr>';
-}
-
-// Show marks (if the user is allowed to see marks at the moment).
-$grade = quiz_rescale_grade($attempt->sumgrades, $quiz, false);
-if ($options->marks && quiz_has_grades($quiz)) {
-
-    if (!$attempt->timefinish) {
-        $rows[] = '<tr><th scope="row" class="cell">' . get_string('grade') . '</th><td class="cell">' .
-                get_string('attemptstillinprogress', 'quiz') . '</td></tr>';
-
-    } else if (is_null($grade)) {
-        $rows[] = '<tr><th scope="row" class="cell">' . get_string('grade') . '</th><td class="cell">' .
-                quiz_format_grade($quiz, $grade) . '</td></tr>';
-
-    } else {
-        // Show raw marks only if they are different from the grade (like on the view page).
-        if ($quiz->grade != $quiz->sumgrades) {
-            $a = new stdClass();
-            $a->grade = quiz_format_grade($quiz, $attempt->sumgrades);
-            $a->maxgrade = quiz_format_grade($quiz, $quiz->sumgrades);
-            $rows[] = '<tr><th scope="row" class="cell">' . get_string('marks', 'quiz') . '</th><td class="cell">' .
-                    get_string('outofshort', 'quiz', $a) . '</td></tr>';
-        }
-
-        // Now the scaled grade.
-        $a = new stdClass();
-        $a->grade = '<b>' . quiz_format_grade($quiz, $grade) . '</b>';
-        $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
-        if ($quiz->grade != 100) {
-            $a->percent = '<b>' . round($attempt->sumgrades * 100 / $quiz->sumgrades, 0) . '</b>';
-            $formattedgrade = get_string('outofpercent', 'quiz', $a);
-        } else {
-            $formattedgrade = get_string('outof', 'quiz', $a);
-        }
-        $rows[] = '<tr><th scope="row" class="cell">' . get_string('grade') . '</th><td class="cell">' .
-                $formattedgrade . '</td></tr>';
+if ($page == 0) {
+    // Timing information.
+    $rows[] = '<tr><th scope="row" class="cell">' . get_string('startedon', 'quiz') .
+            '</th><td class="cell">' . userdate($attempt->timestart) . '</td></tr>';
+    if ($attempt->timefinish) {
+        $rows[] = '<tr><th scope="row" class="cell">' . get_string('completedon', 'quiz') . '</th><td class="cell">' .
+                userdate($attempt->timefinish) . '</td></tr>';
+        $rows[] = '<tr><th scope="row" class="cell">' . get_string('timetaken', 'quiz') . '</th><td class="cell">' .
+                $timetaken . '</td></tr>';
     }
-}
+    if (!empty($overtime)) {
+        $rows[] = '<tr><th scope="row" class="cell">' . get_string('overdue', 'quiz') . '</th><td class="cell">' . $overtime . '</td></tr>';
+    }
 
-// Feedback if there is any, and the user is allowed to see it now.
-$feedback = $attemptobj->get_overall_feedback($grade);
-if ($options->overallfeedback && $feedback) {
-    $rows[] = '<tr><th scope="row" class="cell">' . get_string('feedback', 'quiz') .
-            '</th><td class="cell">' . $feedback . '</td></tr>';
+    // Show marks (if the user is allowed to see marks at the moment).
+    $grade = quiz_rescale_grade($attempt->sumgrades, $quiz, false);
+    if ($options->marks && quiz_has_grades($quiz)) {
+
+        if (!$attempt->timefinish) {
+            $rows[] = '<tr><th scope="row" class="cell">' . get_string('grade') . '</th><td class="cell">' .
+                    get_string('attemptstillinprogress', 'quiz') . '</td></tr>';
+
+        } else if (is_null($grade)) {
+            $rows[] = '<tr><th scope="row" class="cell">' . get_string('grade') . '</th><td class="cell">' .
+                    quiz_format_grade($quiz, $grade) . '</td></tr>';
+
+        } else {
+            // Show raw marks only if they are different from the grade (like on the view page).
+            if ($quiz->grade != $quiz->sumgrades) {
+                $a = new stdClass();
+                $a->grade = quiz_format_grade($quiz, $attempt->sumgrades);
+                $a->maxgrade = quiz_format_grade($quiz, $quiz->sumgrades);
+                $rows[] = '<tr><th scope="row" class="cell">' . get_string('marks', 'quiz') . '</th><td class="cell">' .
+                        get_string('outofshort', 'quiz', $a) . '</td></tr>';
+            }
+
+            // Now the scaled grade.
+            $a = new stdClass();
+            $a->grade = '<b>' . quiz_format_grade($quiz, $grade) . '</b>';
+            $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
+            if ($quiz->grade != 100) {
+                $a->percent = '<b>' . round($attempt->sumgrades * 100 / $quiz->sumgrades, 0) . '</b>';
+                $formattedgrade = get_string('outofpercent', 'quiz', $a);
+            } else {
+                $formattedgrade = get_string('outof', 'quiz', $a);
+            }
+            $rows[] = '<tr><th scope="row" class="cell">' . get_string('grade') . '</th><td class="cell">' .
+                    $formattedgrade . '</td></tr>';
+        }
+    }
+
+    // Feedback if there is any, and the user is allowed to see it now.
+    $feedback = $attemptobj->get_overall_feedback($grade);
+    if ($options->overallfeedback && $feedback) {
+        $rows[] = '<tr><th scope="row" class="cell">' . get_string('feedback', 'quiz') .
+                '</th><td class="cell">' . $feedback . '</td></tr>';
+    }
 }
 
 // Now output the summary table, if there are any rows to be shown.
