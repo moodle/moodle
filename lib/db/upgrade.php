@@ -74,7 +74,6 @@ function xmldb_main_upgrade($oldversion) {
         $table->add_field('type', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('plugin', XMLDB_TYPE_CHAR, '100', null, null, null, null);
         $table->add_field('version', XMLDB_TYPE_CHAR, '100', null, null, null, null);
-        $table->add_field('targetversion', XMLDB_TYPE_CHAR, '100', null, null, null, null);
         $table->add_field('info', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
         $table->add_field('details', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
         $table->add_field('backtrace', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
@@ -4091,12 +4090,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
     if ($oldversion < 2010061900.10) {
-        // migrate existing setup of meta courses, ignore records referencing invalid courses
+        // migrate existing setup of meta courses
         $sql = "INSERT INTO {enrol} (enrol, status, courseid, sortorder, customint1)
-                SELECT 'meta', 0, cm.parent_course, 5, cm.child_course
-                  FROM {course_meta} cm
-                  JOIN {course} p ON p.id = cm.parent_course
-                  JOIN {course} c ON c.id = cm.child_course";
+                SELECT 'meta', 0, parent_course, 5, child_course
+                  FROM {course_meta}";
         $DB->execute($sql);
 
         upgrade_main_savepoint(true, 2010061900.10);
@@ -6006,87 +6003,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         upgrade_main_savepoint(true, 2011012501);
-    }
-
-    if ($oldversion < 2011020200.01) {
-
-        // Define field targetversion to be added to upgrade_log
-        $table = new xmldb_table('upgrade_log');
-        $field = new xmldb_field('targetversion', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'version');
-
-        // Conditionally launch add field targetversion
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Main savepoint reached
-        upgrade_main_savepoint(true, 2011020200.01);
-    }
-
-    if ($oldversion < 2011020900.07) {
-        $DB->delete_records('course_display', array('display' => 0));
-        upgrade_main_savepoint(true, 2011020900.07);
-    }
-
-    if ($oldversion < 2011020900.08) {
-         // Define field secret to be added to registration_hubs
-        $table = new xmldb_table('registration_hubs');
-        $field = new xmldb_field('secret', XMLDB_TYPE_CHAR, '255', null, null, null,
-                $CFG->siteidentifier, 'confirmed');
-
-        // Conditionally launch add field secret
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Main savepoint reached
-        upgrade_main_savepoint(true, 2011020900.08);
-    }
-
-
-    //remove the old theme and themelegacy fields and add any stored settings to the new themes setting.
-    if ($oldversion < 2011020200.01) {
-        set_config('enabledevicedetection',1);
- 
-        $table = new xmldb_table('config');
-        $field = new xmldb_field('themes');
-        $dbman->drop_field($table, $field);
-
-        $theme = $DB->get_record('config', array('name'=>'theme'));
-
-        $theme_obj = new stdClass();
-        $theme_obj->device = 'default';
-        $theme_obj->themename = $theme->value;
-
-        $config_themes[] = $theme_obj;
-
-        $themelegacy = $DB->get_record('config', array('name'=>'themelegacy'));
-
-        $theme_obj = new stdClass();
-        $theme_obj->device = 'legacy';
-        $theme_obj->themename = $themelegacy->value;
-
-        $config_themes[] = $theme_obj;
-
-        $table = new xmldb_table('config');
-        $field = new xmldb_field('theme');
-
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->drop_field($table, $field);
-        }
-
-        $field = new xmldb_field('themelegacy');
-
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->drop_field($table, $field);
-        }
-
-        $field = new xmldb_field('themes');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'big', null, null, null, null);
-        $dbman->add_field($table, $field);
-
-        set_config('themes', json_encode($config_themes));
-        set_config('enabledevicedetection', 1);
     }
 
     return true;
