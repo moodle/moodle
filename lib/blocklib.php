@@ -550,6 +550,10 @@ class block_manager {
             'contextid2' => $context->id,
             'pagetype' => $this->page->pagetype,
         );
+        if ($this->page->subpage === '') {
+            $params['subpage1'] = $DB->sql_empty();
+            $params['subpage2'] = $DB->sql_empty();
+        }
         $sql = "SELECT
                     bi.id,
                     bp.id AS blockpositionid,
