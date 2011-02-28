@@ -1,0 +1,105 @@
+/** Path: theme pagelayout **/
+
+/*********************************************************************************************
+
+	right column: 28%
+	padding left/right column: 10px
+	padding center column: 20px
+
+**********************************************************************************************/
+
+body {
+	margin: auto 0px;
+	width: auto;
+}
+
+#page {
+	width: 100%;
+	overflow: hidden;
+}
+
+#page-header {
+	float: left;
+	width: 100%;
+}
+
+#page-content {
+	clear: both;
+	float: left;
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+}
+
+#page-content #region-main-box {
+	float: left;
+	right: 28%;
+	position: relative;
+	width: 100%;
+}
+
+#page-content #region-post-box {
+	float: left;
+	right: 72%;
+	position: relative;
+	width: 100%;
+}
+
+#page-content #region-main {
+	float: left;
+	overflow: hidden;
+	position: relative;
+	margin-right: 0px;
+	left: 100%;
+	width: 72%;
+}
+
+#page-content #region-post {
+	float: left;
+	overflow: hidden;
+	position: relative;
+	left: 100%;
+	width: 28%;
+}
+
+#page-content #region-main .region-content {
+	overflow: hidden;
+	padding: 20px 25px 20px 0;
+}
+
+#page-content #region-post .region-content {
+	overflow: hidden;
+	padding: 0 0 0 0;
+}
+
+#page-footer {
+	clear: both;
+	float: left;
+	width: 100%;
+}
+
+/** No blocks whatsoever **/
+
+.content-only #page-content #region-main-box {
+	right: 0%;
+}
+
+.content-only #page-content #region-post-box {
+	right: 100%;
+}
+
+.content-only #page-content #region-main {
+	left: 100%;
+	width: 100%;
+}
+
+.content-only #page-content #region-pre {
+	width: 0%;
+}
+
+.content-only #page-content #region-post {
+	width: 0%;
+}
+
+.pagelayout-report #page-content #region-main {overflow:auto;}
+.pagelayout-report #page-content #region-main .region-content {overflow:visible;}
