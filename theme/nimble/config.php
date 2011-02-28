@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Configuration for Moodle's fusion theme.
+ * Configuration for Moodle's nimble theme.
  *
  * DO NOT MODIFY THIS THEME!
  * COPY IT FIRST, THEN RENAME THE COPY AND MODIFY IT INSTEAD.
@@ -183,7 +183,7 @@ $THEME->layouts = array(
 // specific page.
 ///////////////////////////////////////////////////////////////
 
-// $THEME->csspostprocess = 'fusion_process_css';
+// $THEME->csspostprocess = 'nimble_process_css';
 
 ////////////////////////////////////////////////////
 // Allows the user to provide the name of a function
