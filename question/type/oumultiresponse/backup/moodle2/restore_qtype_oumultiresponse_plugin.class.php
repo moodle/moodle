@@ -71,7 +71,7 @@ class restore_qtype_oumultiresponse_plugin extends restore_qtype_plugin {
         // If the question has been created by restore, we need to create its question_oumultiresponse too
         if ($questioncreated) {
             // Adjust some columns
-            $data->question = $newquestionid;
+            $data->questionid = $newquestionid;
             // Insert record
             $newitemid = $DB->insert_record('question_oumultiresponse', $data);
             // Create mapping (needed for decoding links)

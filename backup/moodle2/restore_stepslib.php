@@ -2297,10 +2297,10 @@ class restore_create_categories_and_questions extends restore_structure_step {
         $data->category = $this->get_mappingid('question_category', $questionmapping->parentitemid);
 
         // In the past, there were some very sloppy values of penalty. Fix them.
-        if ($data->penalty >= 0.33 && $question->penalty <= 0.34) {
+        if ($data->penalty >= 0.33 && $data->penalty <= 0.34) {
             $data->penalty = 0.3333333;
         }
-        if ($data->penalty >= 0.66 && $question->penalty <= 0.67) {
+        if ($data->penalty >= 0.66 && $data->penalty <= 0.67) {
             $data->penalty = 0.6666667;
         }
         if ($data->penalty >= 1) {
