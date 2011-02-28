@@ -74,11 +74,18 @@ function xmldb_qtype_match_upgrade($oldversion) {
 
         // Define field correctfeedback to be added to question_match
         $table = new xmldb_table('question_match');
-        $field = new xmldb_field('correctfeedback', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'shuffleanswers');
+        $field = new xmldb_field('correctfeedback', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'shuffleanswers');
 
         // Conditionally launch add field correctfeedback
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
+
+            // Now fill it with '';
+            $DB->set_field('question_match', 'correctfeedback', '');
+
+            // Now add the not null constraint.
+            $field = new xmldb_field('correctfeedback', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'shuffleanswers');
+            $dbman->change_field_notnull($table, $field);
         }
 
         // match savepoint reached
@@ -104,11 +111,18 @@ function xmldb_qtype_match_upgrade($oldversion) {
 
         // Define field partiallycorrectfeedback to be added to question_match
         $table = new xmldb_table('question_match');
-        $field = new xmldb_field('partiallycorrectfeedback', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'correctfeedbackformat');
+        $field = new xmldb_field('partiallycorrectfeedback', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, '', 'correctfeedbackformat');
 
         // Conditionally launch add field partiallycorrectfeedback
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
+
+            // Now fill it with '';
+            $DB->set_field('question_match', 'partiallycorrectfeedback', '');
+
+            // Now add the not null constraint.
+            $field = new xmldb_field('partiallycorrectfeedback', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'correctfeedbackformat');
+            $dbman->change_field_notnull($table, $field);
         }
 
         // match savepoint reached
@@ -139,6 +153,13 @@ function xmldb_qtype_match_upgrade($oldversion) {
         // Conditionally launch add field incorrectfeedback
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
+
+            // Now fill it with '';
+            $DB->set_field('question_match', 'incorrectfeedback', '');
+
+            // Now add the not null constraint.
+            $field = new xmldb_field('incorrectfeedback', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'partiallycorrectfeedbackformat');
+            $dbman->change_field_notnull($table, $field);
         }
 
         // match savepoint reached
