@@ -192,7 +192,7 @@ if ($id) {
 $PAGE->set_pagetype('question-type-' . $question->qtype);
 
 // Create the question editing form.
-if ($wizardnow!=='' && !$movecontext){
+if ($wizardnow !== '' && !$movecontext){
     $mform = $qtypeobj->next_wizard_form('question.php', $question, $wizardnow, $formeditable);
 } else {
     $mform = $qtypeobj->create_editing_form('question.php', $question, $category, $contexts, $formeditable);

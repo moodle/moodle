@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addcategory'] = 'Add category';
 $string['adminreport'] = 'Report on possible problems in your question database.';
 $string['availableq'] = 'Available?';
 $string['badbase'] = 'Bad base before **: {$a}**';
@@ -52,7 +53,9 @@ $string['cannotwriteto'] = 'Cannot write exported questions to {$a}';
 $string['categorycurrent'] = 'Current category';
 $string['categorycurrentuse'] = 'Use this category';
 $string['categorydoesnotexist'] = 'This category does not exist';
+$string['categoryinfo'] = 'Category info';
 $string['categorymoveto'] = 'Save in category';
+$string['categorynamecantbeblank'] = 'The category name cannot be blank.';
 $string['clicktoflag'] = 'Click to flag this question';
 $string['clicktounflag'] = 'Click to un-flag this question';
 $string['contexterror'] = 'You shouldn\'t have got here if you\'re not moving a category to another context.';
@@ -76,6 +79,8 @@ $string['cwrqpfsnoprob'] = 'No question categories in your site are affected by 
 $string['defaultfor'] = 'Default for {$a}';
 $string['defaultinfofor'] = 'The default category for questions shared in context \'{$a}\'.';
 $string['deletecoursecategorywithquestions'] = 'There are questions in the question bank associated with this course category. If you proceed, they will be deleted. You may wish to move them first, using the question bank interface.';
+$string['deletequestioncheck'] = 'Are you absolutely sure you want to delete \'{$a}\'?';
+$string['deletequestionscheck'] = 'Are you absolutely sure you want to delete the following questions?<br /><br />{$a}';
 $string['disabled'] = 'Disabled';
 $string['disterror'] = 'The distribution {$a} caused problems';
 $string['donothing'] = 'Don\'t copy or move files or change links.';
@@ -91,6 +96,7 @@ Each category has a context which determines where the questions in the category
 
 Categories are also used for random questions, as questions are selected from a particular category.';
 $string['editcategories_link'] = 'question/category';
+$string['editcategory'] = 'Edit category';
 $string['editingcategory'] = 'Editing a category';
 $string['editingquestion'] = 'Editing a question';
 $string['editthiscategory'] = 'Edit this category';
@@ -218,6 +224,7 @@ $string['questiondoesnotexist'] = 'This question does not exist';
 $string['questionname'] = 'Question name';
 $string['questionno'] = 'Question {$a}';
 $string['questionsaveerror'] = 'Errors occur during saving question - ({$a})';
+$string['questionsinuse'] = '(* Questions marked by an asterisk are already in use in some quizzes. These question will not be deleted from these quizzes but only from the category list.)';
 $string['questionsmovedto'] = 'Questions still in use moved to "{$a}" in the parent course category.';
 $string['questionsrescuedfrom'] = 'Questions saved from context {$a}.';
 $string['questionsrescuedfrominfo'] = 'These questions (some of which may be hidden) were saved when context {$a} was deleted because they are still used by some quizzes or other activities.';
@@ -288,6 +295,7 @@ $string['howquestionsbehave'] = 'How questions behave';
 $string['howquestionsbehave_help'] = 'Students can interact with the questions in the quiz in various different ways. For example, you may wish the students to enter an answer to each question and then submit the entire quiz, before anything is graded or they get any feedback. That would be \'Deferred feedback\' mode. Alternatively, you may wish for students to submit each question as they go along to get immediate feedback, and if they do not get it right immediately, have another try for fewer marks. That would be \'Interactive with multiple tries\' mode.';
 $string['importfromcoursefiles'] = '... or choose a course file to import.';
 $string['importfromupload'] = 'Select a file to upload ...';
+$string['includesubcategories'] = 'Also show questions from sub-categories';
 $string['incorrect'] = 'Incorrect';
 $string['incorrectfeedback'] = 'For any incorrect response';
 $string['information'] = 'Information';
@@ -308,6 +316,7 @@ $string['notshown'] = 'Not shown';
 $string['notyetanswered'] = 'Not yet answered';
 $string['notyourpreview'] = 'This preview does not belong to you';
 $string['options'] = 'Options';
+$string['parent'] = 'Parent';
 $string['partiallycorrect'] = 'Partially correct';
 $string['partiallycorrectfeedback'] = 'For any partially correct response';
 $string['penaltyforeachincorrecttry'] = 'Penalty for each incorrect try';
@@ -322,6 +331,7 @@ $string['questionbehavioursorder'] = 'Question behaviours order';
 $string['questionbehavioursorderexplained'] = 'Enter a comma separated list of behaviours in the order you want them to appear in dropdown menu';
 $string['questionidmismatch'] = 'Question ids mismatch';
 $string['questionname'] = 'Question name';
+$string['questions'] = 'Questions';
 $string['questionx'] = 'Question {$a}';
 $string['questiontext'] = 'Question text';
 $string['requiresgrading'] = 'Requires grading';
@@ -332,8 +342,10 @@ $string['rightanswer'] = 'Right answer';
 $string['saved'] = 'Saved: {$a}';
 $string['saveflags'] = 'Save the state of the flags';
 $string['settingsformultipletries'] = 'Settings for multiple tries';
+$string['showhidden'] = 'Also show old questions';
 $string['showmarkandmax'] = 'Show mark and max';
 $string['showmaxmarkonly'] = 'Show max mark only';
+$string['showquestiontext'] = 'Show question text in the question list';
 $string['shown'] = 'Shown';
 $string['shownumpartscorrect'] = 'Show the number of correct responses';
 $string['specificfeedback'] = 'Specific feedback';

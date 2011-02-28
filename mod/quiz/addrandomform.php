@@ -82,7 +82,7 @@ class quiz_add_random_form extends moodleform {
         $errors = parent::validation($fromform, $files);
 
         if (!empty($fromform['newcategory']) && trim($fromform['name']) == '') {
-            $errors['name'] = get_string('categorynamecantbeblank', 'quiz');
+            $errors['name'] = get_string('categorynamecantbeblank', 'question');
         }
 
         return $errors;

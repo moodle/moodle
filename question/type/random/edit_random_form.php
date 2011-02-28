@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2007 Jamie Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_edit_random_form extends question_edit_form {
+class qtype_random_edit_form extends question_edit_form {
     /**
      * Build the form definition.
      *
