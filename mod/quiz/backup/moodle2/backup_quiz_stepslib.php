@@ -42,9 +42,12 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         // Define each element separated
         $quiz = new backup_nested_element('quiz', array('id'), array(
             'name', 'intro', 'introformat', 'timeopen',
-            'timeclose', 'optionflags', 'penaltyscheme', 'attempts_number',
+            'timeclose', 'preferredbehaviour', 'attempts_number',
             'attemptonlast', 'grademethod', 'decimalpoints', 'questiondecimalpoints',
-            'review', 'questionsperpage', 'shufflequestions', 'shuffleanswers',
+            'reviewattempt', 'reviewcorrectness', 'reviewmarks',
+            'reviewspecificfeedback', 'reviewgeneralfeedback',
+            'reviewrightanswer', 'reviewoverallfeedback',
+            'questionsperpage', 'shufflequestions', 'shuffleanswers',
             'questions', 'sumgrades', 'grade', 'timecreated',
             'timemodified', 'timelimit', 'password', 'subnet',
             'popup', 'delay1', 'delay2', 'showuserpicture',

@@ -499,7 +499,7 @@ class question_type {
                 continue;
             }
 
-            // Update an existing answer if possible.
+            // Update an existing hint if possible.
             $hint = array_shift($oldhints);
             if (!$hint) {
                 $hint = new stdClass();

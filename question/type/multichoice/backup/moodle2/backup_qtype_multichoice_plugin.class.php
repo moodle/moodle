@@ -56,7 +56,7 @@ class backup_qtype_multichoice_plugin extends backup_qtype_plugin {
         $multichoice = new backup_nested_element('multichoice', array('id'), array(
             'layout', 'answers', 'single', 'shuffleanswers',
             'correctfeedback', 'correctfeedbackformat', 'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
-            'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering'));
+            'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering', 'shownumcorrect'));
 
         // Now the own qtype tree
         $pluginwrapper->add_child($multichoice);

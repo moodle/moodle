@@ -18,7 +18,7 @@
 /**
  * @package    moodlecore
  * @subpackage backup-moodle2
- * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,12 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Provides the information to backup match questions
+ * Provides the information to backup gapselect questions
  *
- * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_qtype_match_plugin extends backup_qtype_plugin {
+class backup_qtype_gapselect_plugin extends backup_qtype_plugin {
 
     /**
      * Returns the qtype information to attach to question element
@@ -40,7 +40,7 @@ class backup_qtype_match_plugin extends backup_qtype_plugin {
     protected function define_question_plugin_structure() {
 
         // Define the virtual plugin element with the condition to fulfill
-        $plugin = $this->get_plugin_element(null, '../../qtype', 'match');
+        $plugin = $this->get_plugin_element(null, '../../qtype', 'gapselect');
 
         // Create one standard named plugin element (the visible container)
         $pluginwrapper = new backup_nested_element($this->get_recommended_name());
@@ -48,25 +48,21 @@ class backup_qtype_match_plugin extends backup_qtype_plugin {
         // connect the visible container ASAP
         $plugin->add_child($pluginwrapper);
 
+        // This qtype uses standard question_answers, add them here
+        // to the tree before any other information that will use them
+        $this->add_question_question_answers($pluginwrapper);
+
         // Now create the qtype own structures
-        $matchoptions = new backup_nested_element('matchoptions', array('id'), array(
-            'subquestions', 'shuffleanswers', 'correctfeedback', 'correctfeedbackformat',
+        $gapselect = new backup_nested_element('gapselect', array('id'), array(
+            'shuffleanswers', 'correctfeedback', 'correctfeedbackformat',
             'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
             'incorrectfeedback', 'incorrectfeedbackformat', 'shownumcorrect'));
 
-        $matches = new backup_nested_element('matches');
-
-        $match = new backup_nested_element('match', array('id'), array(
-            'code', 'questiontext', 'questiontextformat', 'answertext'));
-
         // Now the own qtype tree
-        $pluginwrapper->add_child($matchoptions);
-        $pluginwrapper->add_child($matches);
-        $matches->add_child($match);
+        $pluginwrapper->add_child($gapselect);
 
         // set source to populate the data
-        $matchoptions->set_source_table('question_match', array('question' => backup::VAR_PARENTID));
-        $match->set_source_table('question_match_sub', array('question' => backup::VAR_PARENTID));
+        $gapselect->set_source_table('question_gapselect', array('questionid' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 
@@ -81,6 +77,8 @@ class backup_qtype_match_plugin extends backup_qtype_plugin {
      */
     public static function get_qtype_fileareas() {
         return array(
-            'subquestion' => 'question_match_sub');
+            'correctfeedback' => 'question_created',
+            'partiallycorrectfeedback' => 'question_created',
+            'incorrectfeedback' => 'question_created');
     }
 }

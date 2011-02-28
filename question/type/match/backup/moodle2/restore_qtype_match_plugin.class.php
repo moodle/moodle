@@ -183,6 +183,9 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
 
         $contents[] = new restore_decode_content('question_match_sub', array('questiontext'), 'question_match_sub');
 
+        $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
+        $contents[] = new restore_decode_content('question_match', $fields, 'question_match');
+
         return $contents;
     }
 }

@@ -1656,19 +1656,25 @@ class backup_questions_structure_step extends backup_structure_step {
 
         $question = new backup_nested_element('question', array('id'), array(
             'parent', 'name', 'questiontext', 'questiontextformat',
-            'generalfeedback', 'generalfeedbackformat', 'defaultgrade', 'penalty',
+            'generalfeedback', 'generalfeedbackformat', 'defaultmark', 'penalty',
             'qtype', 'length', 'stamp', 'version',
             'hidden', 'timecreated', 'timemodified', 'createdby', 'modifiedby'));
 
         // attach qtype plugin structure to $question element, only one allowed
         $this->add_plugin_structure('qtype', $question, false);
 
+        $qhints = new backup_nested_element('question_hints');
+
+        $qhint = new backup_nested_element('question_hint', array('id'), array(
+            'hint', 'hintformat', 'shownumcorrect', 'clearwrong', 'options'));
+
         // Build the tree
 
         $qcategories->add_child($qcategory);
         $qcategory->add_child($questions);
-
         $questions->add_child($question);
+        $question->add_child($qhints);
+        $qhints->add_child($qhint);
 
         // Define the sources
 
@@ -1681,6 +1687,8 @@ class backup_questions_structure_step extends backup_structure_step {
                AND bi.itemname = 'question_categoryfinal'", array(backup::VAR_BACKUPID));
 
         $question->set_source_table('question', array('category' => backup::VAR_PARENTID));
+
+        $qhint->set_source_table('question_hints', array('questionid' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
         // (already done by {@link backup_annotate_all_question_files}

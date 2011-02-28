@@ -2296,6 +2296,73 @@ class restore_create_categories_and_questions extends restore_structure_step {
         // we have loaded qcatids there for all parsed questions
         $data->category = $this->get_mappingid('question_category', $questionmapping->parentitemid);
 
+        // In the past, there were some very sloppy values of penalty. Fix them.
+        if ($data->penalty >= 0.33 && $question->penalty <= 0.34) {
+            $data->penalty = 0.3333333;
+        }
+        if ($data->penalty >= 0.66 && $question->penalty <= 0.67) {
+            $data->penalty = 0.6666667;
+        }
+        if ($data->penalty >= 1) {
+            $data->penalty = 1;
+        }
+
+        $data->timecreated  = $this->apply_date_offset($data->timecreated);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
+
+        $userid = $this->get_mappingid('user', $data->createdby);
+        $data->createdby = $userid ? $userid : $this->task->get_userid();
+
+        $userid = $this->get_mappingid('user', $data->modifiedby);
+        $data->modifiedby = $userid ? $userid : $this->task->get_userid();
+
+        // With newitemid = 0, let's create the question
+        if (!$questionmapping->newitemid) {
+            $newitemid = $DB->insert_record('question', $data);
+            $this->set_mapping('question', $oldid, $newitemid);
+            // Also annotate them as question_created, we need
+            // that later when remapping parents (keeping the old categoryid as parentid)
+            $this->set_mapping('question_created', $oldid, $newitemid, false, null, $questionmapping->parentitemid);
+        } else {
+            // By performing this set_mapping() we make get_old/new_parentid() to work for all the
+            // children elements of the 'question' one (so qtype plugins will know the question they belong to)
+            $this->set_mapping('question', $oldid, $questionmapping->newitemid);
+        }
+
+        // Note, we don't restore any question files yet
+        // as far as the CONTEXT_MODULE categories still
+        // haven't their contexts to be restored to
+        // The {@link restore_create_question_files}, executed in the final step
+        // step will be in charge of restoring all the question files
+    }
+
+        protected function process_question_hint($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        // Check we have one mapping for this question
+        if (!$hintmapping = $this->get_mapping('question_hint', $oldid)) {
+            return; // No mapping = this question doesn't need to be created/mapped
+        }
+
+        // Get the mapped category (cannot use get_new_parentid() because not
+        // all the categories have been created, so it is not always available
+        // Instead we get the mapping for the question->parentitemid because
+        // we have loaded qcatids there for all parsed questions
+        $data->questionid = $this->get_mappingid('question', $hintmapping->parentitemid);
+
+        // In the past, there were some very sloppy values of penalty. Fix them.
+        if ($data->penalty >= 0.33 && $question->penalty <= 0.34) {
+            $data->penalty = 0.3333333;
+        }
+        if ($data->penalty >= 0.66 && $question->penalty <= 0.67) {
+            $data->penalty = 0.6666667;
+        }
+        if ($data->penalty >= 1) {
+            $data->penalty = 1;
+        }
+
         $data->timecreated  = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
@@ -2447,6 +2514,8 @@ class restore_create_question_files extends restore_execution_step {
                                               $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true);
             restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'answerfeedback',
                                               $oldctxid, $this->task->get_userid(), 'question_answer', null, $newctxid, true);
+            restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'hint',
+                                              $oldctxid, $this->task->get_userid(), 'question_hint', null, $newctxid, true);
             // Add qtype dependent files
             $components = backup_qtype_plugin::get_components_and_fileareas($question->qtype);
             foreach ($components as $component => $fileareas) {
