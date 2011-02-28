@@ -514,7 +514,7 @@ function scorm_get_user_data($userid) {
 /// Gets user info required to display the table of scorm results
 /// for report.php
 
-    return $DB->get_record('user', array('id'=>$userid),'firstname, lastname, picture');
+    return $DB->get_record('user', array('id'=>$userid), user_picture::fields());
 }
 
 function scorm_grade_user_attempt($scorm, $userid, $attempt=1) {
