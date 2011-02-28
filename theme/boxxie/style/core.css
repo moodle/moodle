@@ -312,8 +312,11 @@ h2.headingblock {
 
 .course-content .current {
   background:#69804e;
-  color:#fff;
  }
+ 
+.course-content .current .left {
+    color: #fff;
+}
  
 .course-content .main .content {
     padding: 10px;
