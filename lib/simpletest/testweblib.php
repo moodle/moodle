@@ -143,6 +143,32 @@ class web_test extends UnitTestCase {
         $this->assertEqual('lala xx', clean_text($text, FORMAT_MOODLE));
         $this->assertEqual('lala xx', clean_text($text, FORMAT_HTML));
     }
+
+    /**
+     * Tests the 'allowid' option for format_text.
+     */
+    public function test_format_text_allowid() {
+        global $CFG;
+
+        // This test relates only to html purifier, so switch to it if not in use
+        $oldcfg = $CFG->enablehtmlpurifier;
+        $CFG->enablehtmlpurifier = true;
+
+        // Start off by not allowing ids (default)
+        $options = array(
+            'nocache' => true
+        );
+        $result = format_text('<div id="example">Frog</div>', FORMAT_HTML, $options);
+        $this->assertEqual('<div>Frog</div>', $result);
+
+        // Now allow ids
+        $options['allowid'] = true;
+        $result = format_text('<div id="example">Frog</div>', FORMAT_HTML, $options);
+        $this->assertEqual('<div id="example">Frog</div>', $result);
+
+        // Switch config back
+        $CFG->enablehtmlpurifier = $oldcfg;
+    }
 }
 
 
