@@ -35,7 +35,7 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 #combinedfeedbackhdr div.fhtmleditor {padding: 0;}
 #combinedfeedbackhdr div.fcheckbox {margin-bottom: 1em;}
 
-.que {text-align: left;margin: 0 auto 1.8em auto;}
+.que {clear: left;text-align: left;margin: 0 auto 1.8em auto;}
 
 .que .info {float: left;width: 6em;padding:0.5em;margin-bottom: 1.8em;background: #eee;}
 .que h2.no {margin: 0;font-size: 0.8em;line-height: 1;}
