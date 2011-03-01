@@ -485,7 +485,7 @@ function xmldb_local_qedatabase_install() {
         // for now. We will fill in the appropriate behaviour name when
         // updating all the rest of the attempt data.
         $field = new xmldb_field('preferredbehaviour');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '32', null, null, null, null, null, 'to_be_set_later', 'component');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, 'to_be_set_later', 'component');
         $dbman->add_field($table, $field);
 
         // Then remove the default value, now the column is populated.

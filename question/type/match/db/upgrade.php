@@ -111,7 +111,7 @@ function xmldb_qtype_match_upgrade($oldversion) {
 
         // Define field partiallycorrectfeedback to be added to question_match
         $table = new xmldb_table('question_match');
-        $field = new xmldb_field('partiallycorrectfeedback', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, '', 'correctfeedbackformat');
+        $field = new xmldb_field('partiallycorrectfeedback', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'correctfeedbackformat');
 
         // Conditionally launch add field partiallycorrectfeedback
         if (!$dbman->field_exists($table, $field)) {
@@ -148,7 +148,7 @@ function xmldb_qtype_match_upgrade($oldversion) {
 
         // Define field incorrectfeedback to be added to question_match
         $table = new xmldb_table('question_match');
-        $field = new xmldb_field('incorrectfeedback', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'partiallycorrectfeedbackformat');
+        $field = new xmldb_field('incorrectfeedback', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'partiallycorrectfeedbackformat');
 
         // Conditionally launch add field incorrectfeedback
         if (!$dbman->field_exists($table, $field)) {

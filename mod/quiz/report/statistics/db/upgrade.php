@@ -266,8 +266,13 @@ function xmldb_quiz_statistics_upgrade($oldversion) {
     }
 
     if ($oldversion < 2011021500) {
-        $DB->set_field('quiz_reports', 'capability', 'quiz/statistics:view',
-                array('name' => 'statistics'));
+        if ($dbman->table_exists('quiz_reports')) {
+            $DB->set_field('quiz_reports', 'capability', 'quiz/statistics:view',
+                    array('name' => 'statistics'));
+        } else {
+            $DB->set_field('quiz_report', 'capability', 'quiz/statistics:view',
+                    array('name' => 'statistics'));
+        }
 
         // statistics savepoint reached
         upgrade_plugin_savepoint(true, 2011021500, 'quiz', 'statistics');
