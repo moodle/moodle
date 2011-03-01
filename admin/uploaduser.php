@@ -538,7 +538,7 @@ if ($formdata = $mform2->is_cancelled()) {
             } else if (!empty($user->password)) {
                 if ($updatepasswords) {
                     $errmsg = null;
-                    $weak = check_password_policy($user->password, $errmsg);
+                    $weak = !check_password_policy($user->password, $errmsg);
                     if ($resetpasswords == UU_PWRESET_ALL or ($resetpasswords == UU_PWRESET_WEAK and $weak)) {
                         if ($weak) {
                             $weakpasswords++;
@@ -550,6 +550,7 @@ if ($formdata = $mform2->is_cancelled()) {
                     }
                     unset_user_preference('create_password', $existinguser); // no need to create password any more
                     $existinguser->password = hash_internal_user_password($user->password);
+                    $upt->track('password', $user->password, 'normal', false);
                 } else {
                     // do not print password when not changed
                     $upt->track('password', '', 'normal', false);
@@ -644,7 +645,7 @@ if ($formdata = $mform2->is_cancelled()) {
                     }
                 } else {
                     $errmsg = null;
-                    $weak = check_password_policy($user->password, $errmsg);
+                    $weak = !check_password_policy($user->password, $errmsg);
                     if ($resetpasswords == UU_PWRESET_ALL or ($resetpasswords == UU_PWRESET_WEAK and $weak)) {
                         if ($weak) {
                             $weakpasswords++;
