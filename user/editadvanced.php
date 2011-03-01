@@ -165,6 +165,7 @@ if ($usernew = $userform->get_data()) {
                 if (!$authplugin->user_update_password($usernew, $usernew->newpassword)){
                     print_error('cannotupdatepasswordonextauth', '', '', $usernew->auth);
                 }
+                unset_user_preference('create_password', $usernew); // prevent cron from generating the password
             }
         }
         $usercreated = false;

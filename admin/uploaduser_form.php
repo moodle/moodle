@@ -1,16 +1,44 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
+/**
+ * Bulk user upload forms
+ *
+ * @package    core
+ * @subpackage admin
+ * @copyright  2007 Dan Poltawski
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once $CFG->libdir.'/formslib.php';
 
-class admin_uploaduser_form1 extends moodleform {
-    function definition (){
-        global $CFG, $USER;
 
-        $mform =& $this->_form;
+/**
+ * Upload a file CVS file with user information.
+ *
+ * @package    core
+ * @subpackage admin
+ * @copyright  2007 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_uploaduser_form1 extends moodleform {
+    function definition () {
+        $mform = $this->_form;
 
         $mform->addElement('header', 'settingsheader', get_string('upload'));
 
@@ -36,69 +64,90 @@ class admin_uploaduser_form1 extends moodleform {
         $mform->addElement('select', 'previewrows', get_string('rowpreviewnum', 'admin'), $choices);
         $mform->setType('previewrows', PARAM_INT);
 
-        $choices = array(UU_ADDNEW    => get_string('uuoptype_addnew', 'admin'),
-                         UU_ADDINC    => get_string('uuoptype_addinc', 'admin'),
-                         UU_ADD_UPDATE => get_string('uuoptype_addupdate', 'admin'),
-                         UU_UPDATE     => get_string('uuoptype_update', 'admin'));
-        $mform->addElement('select', 'uutype', get_string('uuoptype', 'admin'), $choices);
-
         $this->add_action_buttons(false, get_string('uploadusers', 'admin'));
     }
 }
 
+
+/**
+ * Specify user upload details
+ *
+ * @package    core
+ * @subpackage admin
+ * @copyright  2007 Petr Skoda  {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class admin_uploaduser_form2 extends moodleform {
-    function definition (){
+    function definition () {
         global $CFG, $USER;
 
-        $mform   =& $this->_form;
-        $columns =& $this->_customdata;
+        $mform   = $this->_form;
+        $columns = $this->_customdata['columns'];
+        $data    = $this->_customdata['data'];
 
         // I am the template user, why should it be the administrator? we have roles now, other ppl may use this script ;-)
         $templateuser = $USER;
 
         // upload settings and file
         $mform->addElement('header', 'settingsheader', get_string('settings'));
-        $mform->addElement('static', 'uutypelabel', get_string('uuoptype', 'admin') );
+
+        $choices = array(UU_USER_ADDNEW     => get_string('uuoptype_addnew', 'admin'),
+                         UU_USER_ADDINC     => get_string('uuoptype_addinc', 'admin'),
+                         UU_USER_ADD_UPDATE => get_string('uuoptype_addupdate', 'admin'),
+                         UU_USER_UPDATE     => get_string('uuoptype_update', 'admin'));
+        $mform->addElement('select', 'uutype', get_string('uuoptype', 'admin'), $choices);
 
         $choices = array(0 => get_string('infilefield', 'auth'), 1 => get_string('createpasswordifneeded', 'auth'));
         $mform->addElement('select', 'uupasswordnew', get_string('uupasswordnew', 'admin'), $choices);
         $mform->setDefault('uupasswordnew', 1);
-        $mform->disabledIf('uupasswordnew', 'uutype', 'eq', UU_UPDATE);
+        $mform->disabledIf('uupasswordnew', 'uutype', 'eq', UU_USER_UPDATE);
 
-        $choices = array(0 => get_string('nochanges', 'admin'),
-                         1 => get_string('uuupdatefromfile', 'admin'),
-                         2 => get_string('uuupdateall', 'admin'),
-                         3 => get_string('uuupdatemissing', 'admin'));
+        $choices = array(UU_UPDATE_NOCHANGES    => get_string('nochanges', 'admin'),
+                         UU_UPDATE_FILEOVERRIDE => get_string('uuupdatefromfile', 'admin'),
+                         UU_UPDATE_ALLOVERRIDE  => get_string('uuupdateall', 'admin'),
+                         UU_UPDATE_MISSING      => get_string('uuupdatemissing', 'admin'));
         $mform->addElement('select', 'uuupdatetype', get_string('uuupdatetype', 'admin'), $choices);
-        $mform->setDefault('uuupdatetype', 0);
-        $mform->disabledIf('uuupdatetype', 'uutype', 'eq', UU_ADDNEW);
-        $mform->disabledIf('uuupdatetype', 'uutype', 'eq', UU_ADDINC);
+        $mform->setDefault('uuupdatetype', UU_UPDATE_NOCHANGES);
+        $mform->disabledIf('uuupdatetype', 'uutype', 'eq', UU_USER_ADDNEW);
+        $mform->disabledIf('uuupdatetype', 'uutype', 'eq', UU_USER_ADDINC);
 
         $choices = array(0 => get_string('nochanges', 'admin'), 1 => get_string('update'));
         $mform->addElement('select', 'uupasswordold', get_string('uupasswordold', 'admin'), $choices);
         $mform->setDefault('uupasswordold', 0);
-        $mform->disabledIf('uupasswordold', 'uutype', 'eq', UU_ADDNEW);
-        $mform->disabledIf('uupasswordold', 'uutype', 'eq', UU_ADDINC);
+        $mform->disabledIf('uupasswordold', 'uutype', 'eq', UU_USER_ADDNEW);
+        $mform->disabledIf('uupasswordold', 'uutype', 'eq', UU_USER_ADDINC);
         $mform->disabledIf('uupasswordold', 'uuupdatetype', 'eq', 0);
         $mform->disabledIf('uupasswordold', 'uuupdatetype', 'eq', 3);
 
+        $choices = array(UU_PWRESET_WEAK => get_string('usersweakpassword', 'admin'),
+                         UU_PWRESET_NONE => get_string('none'),
+                         UU_PWRESET_ALL  => get_string('all'));
+        if (empty($CFG->passwordpolicy)) {
+            unset($choices[UU_PWRESET_WEAK]);
+        }
+        $mform->addElement('select', 'uuforcepasswordchange', get_string('forcepasswordchange', 'core'), $choices);
+
+
         $mform->addElement('selectyesno', 'uuallowrenames', get_string('allowrenames', 'admin'));
         $mform->setDefault('uuallowrenames', 0);
-        $mform->disabledIf('uuallowrenames', 'uutype', 'eq', UU_ADDNEW);
-        $mform->disabledIf('uuallowrenames', 'uutype', 'eq', UU_ADDINC);
+        $mform->disabledIf('uuallowrenames', 'uutype', 'eq', UU_USER_ADDNEW);
+        $mform->disabledIf('uuallowrenames', 'uutype', 'eq', UU_USER_ADDINC);
 
         $mform->addElement('selectyesno', 'uuallowdeletes', get_string('allowdeletes', 'admin'));
         $mform->setDefault('uuallowdeletes', 0);
-        $mform->disabledIf('uuallowdeletes', 'uutype', 'eq', UU_ADDNEW);
-        $mform->disabledIf('uuallowdeletes', 'uutype', 'eq', UU_ADDINC);
+        $mform->disabledIf('uuallowdeletes', 'uutype', 'eq', UU_USER_ADDNEW);
+        $mform->disabledIf('uuallowdeletes', 'uutype', 'eq', UU_USER_ADDINC);
 
         $mform->addElement('selectyesno', 'uunoemailduplicates', get_string('uunoemailduplicates', 'admin'));
         $mform->setDefault('uunoemailduplicates', 1);
 
-        $choices = array(0 => get_string('no'),
-                         1 => get_string('uubulknew', 'admin'),
-                         2 => get_string('uubulkupdated', 'admin'),
-                         3 => get_string('uubulkall', 'admin'));
+        $mform->addElement('selectyesno', 'uustandardusernames', get_string('uustandardusernames', 'admin'));
+        $mform->setDefault('uustandardusernames', 1);
+
+        $choices = array(UU_BULK_NONE    => get_string('no'),
+                         UU_BULK_NEW     => get_string('uubulknew', 'admin'),
+                         UU_BULK_UPDATED => get_string('uubulkupdated', 'admin'),
+                         UU_BULK_ALL     => get_string('uubulkall', 'admin'));
         $mform->addElement('select', 'uubulk', get_string('uubulk', 'admin'), $choices);
         $mform->setDefault('uubulk', 0);
 
@@ -152,17 +201,21 @@ class admin_uploaduser_form2 extends moodleform {
         // default values
         $mform->addElement('header', 'defaultheader', get_string('defaultvalues', 'admin'));
 
-        $mform->addElement('text', 'username', get_string('username'), 'size="20"');
+        $mform->addElement('text', 'username', get_string('uuusernametemplate', 'admin'), 'size="20"');
         $mform->addRule('username', get_string('requiredtemplate', 'admin'), 'required', null, 'client');
+        $mform->disabledIf('username', 'uutype', 'eq', UU_USER_ADD_UPDATE);
+        $mform->disabledIf('username', 'uutype', 'eq', UU_USER_UPDATE);
+
+        $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');
+        $mform->disabledIf('email', 'uutype', 'eq', UU_USER_ADD_UPDATE);
+        $mform->disabledIf('email', 'uutype', 'eq', UU_USER_UPDATE);
 
         // only enabled and known to work plugins
-        $choices = uu_allowed_auths();
+        $choices = uu_supported_auths();
         $mform->addElement('select', 'auth', get_string('chooseauthmethod','auth'), $choices);
         $mform->setDefault('auth', 'manual'); // manual is a sensible backwards compatible default
         $mform->addHelpButton('auth', 'chooseauthmethod', 'auth');
         $mform->setAdvanced('auth');
-
-        $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');
 
         $choices = array(0 => get_string('emaildisplayno'), 1 => get_string('emaildisplayyes'), 2 => get_string('emaildisplaycourse'));
         $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
@@ -272,25 +325,28 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->addElement('hidden', 'previewrows');
         $mform->setType('previewrows', PARAM_INT);
 
-        $mform->addElement('hidden', 'readcount');
-        $mform->setType('readcount', PARAM_INT);
-
-        $mform->addElement('hidden', 'uutype');
-        $mform->setType('uutype', PARAM_INT);
-
         $this->add_action_buttons(true, get_string('uploadusers', 'admin'));
+
+        $this->set_data($data);
     }
 
     /**
      * Form tweaks that depend on current data.
      */
     function definition_after_data() {
-        $mform   =& $this->_form;
-        $columns =& $this->_customdata;
+        $mform   = $this->_form;
+        $columns = $this->_customdata['columns'];
 
         foreach ($columns as $column) {
             if ($mform->elementExists($column)) {
                 $mform->removeElement($column);
+            }
+        }
+
+        if (!in_array('password', $columns)) {
+            // password resetting makes sense only if password specified in csv file
+            if ($mform->elementExists('uuforcepasswordchange')) {
+                $mform->removeElement('uuforcepasswordchange');
             }
         }
     }
@@ -300,19 +356,19 @@ class admin_uploaduser_form2 extends moodleform {
      */
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        $columns =& $this->_customdata;
+        $columns = $this->_customdata['columns'];
         $optype  = $data['uutype'];
 
         // detect if password column needed in file
         if (!in_array('password', $columns)) {
             switch ($optype) {
-                case UU_UPDATE:
+                case UU_USER_UPDATE:
                     if (!empty($data['uupasswordold'])) {
                         $errors['uupasswordold'] = get_string('missingfield', 'error', 'password');
                     }
                     break;
 
-                case UU_ADD_UPDATE:
+                case UU_USER_ADD_UPDATE:
                     if (empty($data['uupasswordnew'])) {
                         $errors['uupasswordnew'] = get_string('missingfield', 'error', 'password');
                     }
@@ -321,12 +377,12 @@ class admin_uploaduser_form2 extends moodleform {
                     }
                     break;
 
-                case UU_ADDNEW:
+                case UU_USER_ADDNEW:
                     if (empty($data['uupasswordnew'])) {
                         $errors['uupasswordnew'] = get_string('missingfield', 'error', 'password');
                     }
                     break;
-                case UU_ADDINC:
+                case UU_USER_ADDINC:
                     if (empty($data['uupasswordnew'])) {
                         $errors['uupasswordnew'] = get_string('missingfield', 'error', 'password');
                     }
@@ -335,7 +391,7 @@ class admin_uploaduser_form2 extends moodleform {
         }
 
         // look for other required data
-        if ($optype != UU_UPDATE) {
+        if ($optype != UU_USER_UPDATE) {
             if (!in_array('firstname', $columns)) {
                 $errors['uutype'] = get_string('missingfield', 'error', 'firstname');
             }
@@ -369,19 +425,11 @@ class admin_uploaduser_form2 extends moodleform {
     function get_data() {
         $data = parent::get_data();
 
-        if ($data !== null) {
+        if ($data !== null and isset($data->description)) {
             $data->descriptionformat = $data->description['format'];
             $data->description = $data->description['text'];
         }
 
         return $data;
-    }
-}
-
-class admin_uploaduser_form3 extends moodleform {
-    function definition (){
-        global $CFG, $USER;
-        $mform =& $this->_form;
-        $this->add_action_buttons(false, get_string('uploadnewfile'));
     }
 }

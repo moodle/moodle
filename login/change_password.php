@@ -111,7 +111,8 @@ if ($mform->is_cancelled()) {
     }
 
     // register success changing password
-    unset_user_preference('auth_forcepasswordchange', $USER->id);
+    unset_user_preference('auth_forcepasswordchange', $USER);
+    unset_user_preference('create_password', $USER);
 
     $strpasswordchanged = get_string('passwordchanged');
 

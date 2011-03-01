@@ -4831,8 +4831,7 @@ function setnew_password_and_mail($user) {
 /**
  * Resets specified user's password and send the new password to the user via email.
  *
- * @global object
- * @param user $user A {@link $USER} object
+ * @param stdClass $user A {@link $USER} object
  * @return bool Returns true if mail was sent OK and false if there was an error.
  */
 function reset_password_and_mail($user) {
@@ -4865,6 +4864,8 @@ function reset_password_and_mail($user) {
     $message = get_string('newpasswordtext', '', $a);
 
     $subject  = format_string($site->fullname) .': '. get_string('changedpassword');
+
+    unset_user_preference('create_password', $user); // prevent cron from generating the password
 
     //directly email rather than using the messaging system to ensure its not routed to a popup or jabber
     return email_to_user($user, $supportuser, $subject, $message);
