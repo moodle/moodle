@@ -538,7 +538,7 @@ if ($formdata = $mform2->is_cancelled()) {
             } else if (!empty($user->password)) {
                 if ($updatepasswords) {
                     $errmsg = null;
-                    $weak = check_password_policy($user->password, $errmsg);
+                    $weak = !check_password_policy($user->password, $errmsg);
                     if ($resetpasswords == UU_PWRESET_ALL or ($resetpasswords == UU_PWRESET_WEAK and $weak)) {
                         if ($weak) {
                             $weakpasswords++;
@@ -644,7 +644,7 @@ if ($formdata = $mform2->is_cancelled()) {
                     }
                 } else {
                     $errmsg = null;
-                    $weak = check_password_policy($user->password, $errmsg);
+                    $weak = !check_password_policy($user->password, $errmsg);
                     if ($resetpasswords == UU_PWRESET_ALL or ($resetpasswords == UU_PWRESET_WEAK and $weak)) {
                         if ($weak) {
                             $weakpasswords++;
