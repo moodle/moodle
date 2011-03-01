@@ -34,9 +34,11 @@ require_once($CFG->dirroot . '/backup/moodle2/restore_default_block_task.class.p
 require_once($CFG->dirroot . '/backup/moodle2/restore_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_qtype_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_format_plugin.class.php');
+require_once($CFG->dirroot . '/backup/moodle2/restore_theme_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_qtype_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_format_plugin.class.php');
+require_once($CFG->dirroot . '/backup/moodle2/backup_theme_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_subplugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_settingslib.php');
 require_once($CFG->dirroot . '/backup/moodle2/restore_stepslib.php');

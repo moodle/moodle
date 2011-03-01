@@ -1008,6 +1008,9 @@ class restore_course_structure_step extends restore_structure_step {
         // Apply for 'format' plugins optional paths at course level
         $this->add_plugin_structure('format', $course);
 
+        // Apply for 'theme' plugins optional paths at course level
+        $this->add_plugin_structure('theme', $course);
+
         return array($course, $category, $tag, $allowed_module);
     }
 
@@ -1052,8 +1055,9 @@ class restore_course_structure_step extends restore_structure_step {
         if (!array_key_exists($data->lang, $languages)) {
             $data->lang = '';
         }
+
         $themes = get_list_of_themes(); // Get themes for quick search later
-        if (!in_array($data->theme, $themes) || empty($CFG->allowcoursethemes)) {
+        if (!array_key_exists($data->theme, $themes) || empty($CFG->allowcoursethemes)) {
             $data->theme = '';
         }
 
