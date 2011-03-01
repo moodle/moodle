@@ -550,6 +550,7 @@ if ($formdata = $mform2->is_cancelled()) {
                     }
                     unset_user_preference('create_password', $existinguser); // no need to create password any more
                     $existinguser->password = hash_internal_user_password($user->password);
+                    $upt->track('password', $user->password, 'normal', false);
                 } else {
                     // do not print password when not changed
                     $upt->track('password', '', 'normal', false);
