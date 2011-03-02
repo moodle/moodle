@@ -3610,6 +3610,118 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($records = $DB->get_records_sql($sqlnamed, array('content' => '2')));
         $this->assertEqual(1, count($records));
     }
+
+    public function test_limits_and_offsets() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        if (false) $DB = new moodle_database ();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('content', XMLDB_TYPE_TEXT, 'big', XMLDB_UNSIGNED, XMLDB_NOTNULL);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $this->assertTrue($DB->insert_record($tablename, array('name' => 'a', 'content'=>'one')));
+        $this->assertTrue($DB->insert_record($tablename, array('name' => 'b', 'content'=>'two')));
+        $this->assertTrue($DB->insert_record($tablename, array('name' => 'c', 'content'=>'three')));
+        $this->assertTrue($DB->insert_record($tablename, array('name' => 'd', 'content'=>'four')));
+        $this->assertTrue($DB->insert_record($tablename, array('name' => 'e', 'content'=>'five')));
+        $this->assertTrue($DB->insert_record($tablename, array('name' => 'f', 'content'=>'six')));
+
+        $sqlqm = "SELECT *
+                    FROM {{$tablename}}";
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm, null, 4));
+        $this->assertEqual(2, count($records));
+        $this->assertEqual('e', reset($records)->name);
+        $this->assertEqual('f', end($records)->name);
+
+        $sqlqm = "SELECT *
+                    FROM {{$tablename}}";
+        $this->assertFalse($records = $DB->get_records_sql($sqlqm, null, 8));
+
+        $sqlqm = "SELECT *
+                    FROM {{$tablename}}";
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm, null, 0, 4));
+        $this->assertEqual(4, count($records));
+        $this->assertEqual('a', reset($records)->name);
+        $this->assertEqual('d', end($records)->name);
+
+        $sqlqm = "SELECT *
+                    FROM {{$tablename}}";
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm, null, 0, 8));
+        $this->assertEqual(6, count($records));
+        $this->assertEqual('a', reset($records)->name);
+        $this->assertEqual('f', end($records)->name);
+
+        $sqlqm = "SELECT *
+                    FROM {{$tablename}}";
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm, null, 1, 4));
+        $this->assertEqual(4, count($records));
+        $this->assertEqual('b', reset($records)->name);
+        $this->assertEqual('e', end($records)->name);
+
+        $sqlqm = "SELECT *
+                    FROM {{$tablename}}";
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm, null, 4, 4));
+        $this->assertEqual(2, count($records));
+        $this->assertEqual('e', reset($records)->name);
+        $this->assertEqual('f', end($records)->name);
+
+        $sqlqm = "SELECT t.*, t.name AS test
+                    FROM {{$tablename}} t
+                    ORDER BY t.id ASC";
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm, null, 4, 4));
+        $this->assertEqual(2, count($records));
+        $this->assertEqual('e', reset($records)->name);
+        $this->assertEqual('f', end($records)->name);
+
+        $sqlqm = "SELECT DISTINCT t.name, t.name AS test
+                    FROM {{$tablename}} t
+                    ORDER BY t.name DESC";
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm, null, 4, 4));
+        $this->assertEqual(2, count($records));
+        $this->assertEqual('b', reset($records)->name);
+        $this->assertEqual('a', end($records)->name);
+
+        $sqlqm = "SELECT 1
+                    FROM {{$tablename}} t
+                    WHERE t.name = 'a'";
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm, null, 0, 1));
+        $this->assertEqual(1, count($records));
+
+        $sqlqm = "SELECT 'constant'
+                    FROM {{$tablename}} t
+                    WHERE t.name = 'a'";
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm, null, 0, 8));
+        $this->assertEqual(1, count($records));
+
+        $this->assertTrue($DB->insert_record($tablename, array('name' => 'a', 'content'=>'one')));
+        $this->assertTrue($DB->insert_record($tablename, array('name' => 'b', 'content'=>'two')));
+        $this->assertTrue($DB->insert_record($tablename, array('name' => 'c', 'content'=>'three')));
+
+        $sqlqm = "SELECT t.name, COUNT(DISTINCT t2.id) AS count, 'Test' AS teststring
+                    FROM {{$tablename}} t
+                    LEFT JOIN (
+                        SELECT t.id, t.name
+                        FROM {{$tablename}} t
+                    ) t2 ON t2.name = t.name
+                    GROUP BY t.name
+                    ORDER BY t.name ASC";
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm));
+        $this->assertEqual(6, count($records));         // a,b,c,d,e,f
+        $this->assertEqual(2, reset($records)->count);  // a has 2 records now
+        $this->assertEqual(1, end($records)->count);    // f has 1 record still
+
+        $this->assertTrue($records = $DB->get_records_sql($sqlqm, null, 0, 2));
+        $this->assertEqual(2, count($records));
+        $this->assertEqual(2, reset($records)->count);
+        $this->assertEqual(2, end($records)->count);
+    }
 }
 
 /**

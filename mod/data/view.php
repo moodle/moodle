@@ -666,7 +666,7 @@ if ($showactivity) {
                 require_once($CFG->dirroot.'/rating/lib.php');
                 if ($data->assessed!=RATING_AGGREGATE_NONE) {
                     $ratingoptions = new stdclass();
-                    $ratingoptions->context = $cm->context;
+                    $ratingoptions->context = $context;
                     $ratingoptions->items = $records;
                     $ratingoptions->aggregate = $data->assessed;//the aggregation method
                     $ratingoptions->scaleid = $data->scale;

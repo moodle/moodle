@@ -32,12 +32,14 @@ class restore_section_task extends restore_task {
 
     protected $info; // info related to section gathered from backup file
     protected $contextid; // course context id
+    protected $sectionid; // new (target) id of the course section
 
     /**
      * Constructor - instantiates one object of this class
      */
     public function __construct($name, $info, $plan = null) {
         $this->info = $info;
+        $this->sectionid = 0;
         parent::__construct($name, $plan);
     }
 
@@ -49,8 +51,16 @@ class restore_section_task extends restore_task {
         return $this->get_basepath() . '/sections/section_' . $this->info->sectionid;
     }
 
+    public function set_sectionid($sectionid) {
+        $this->sectionid = $sectionid;
+    }
+
     public function get_contextid() {
         return $this->contextid;
+    }
+
+    public function get_sectionid() {
+        return $this->sectionid;
     }
 
     /**

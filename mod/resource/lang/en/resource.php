@@ -82,6 +82,5 @@ $string['printintro'] = 'Display resource description';
 $string['printintroexplain'] = 'Display resource description bellow content? Some display types may not display description even if enabled.';
 $string['resourcecontent'] = 'Files and subfolders';
 $string['resource:exportresource'] = 'Export resource';
-$string['resource:view'] = 'View resource files';
 $string['resource:view'] = 'View resource';
 $string['selectmainfile'] = 'Please select the main file by clicking the icon next to file name.';

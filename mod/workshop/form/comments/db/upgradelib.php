@@ -49,9 +49,8 @@ function workshopform_comments_upgrade_legacy() {
                  WHERE workshopid $workshopids
                        AND newid IS NULL";
         $rs = $DB->get_recordset_sql($sql, $params);
-        $newworkshopids = workshop_upgrade_workshop_id_mappings();
         foreach ($rs as $old) {
-            $new = workshopform_comments_upgrade_element($old, $newworkshopids[$old->workshopid]);
+            $new = workshopform_comments_upgrade_element($old, $old->workshopid);
             $newid = $DB->insert_record('workshopform_comments', $new);
             $DB->set_field('workshop_elements_old', 'newplugin', 'comments', array('id' => $old->id));
             $DB->set_field('workshop_elements_old', 'newid', $newid, array('id' => $old->id));

@@ -12,13 +12,18 @@
             return null;
         }
 
-        if (!is_enrolled($context, null, 'mod/data:managetemplates') && !isguestuser()) {
-            return null;
+        $dataid = clean_param($args[3], PARAM_INT);
+        $cm = get_coursemodule_from_instance('data', $dataid, 0, false, MUST_EXIST);
+        if ($cm) {
+            $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+            //context id from db should match the submitted one
+            if ($context->id != $modcontext->id || !has_capability('mod/data:viewentry', $modcontext)) {
+                return null;
+            }
         }
 
-        $dataid = clean_param($args[3], PARAM_INT);
         $data = $DB->get_record('data', array('id' => $dataid), '*', MUST_EXIST);
-
         if (!rss_enabled_for_mod('data', $data, false, true)) {
             return null;
         }

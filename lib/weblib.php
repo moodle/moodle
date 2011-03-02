@@ -1966,7 +1966,7 @@ function get_separator() {
  * @return string|void If $return is false, returns nothing, otherwise returns a string of HTML.
  */
 function print_collapsible_region($contents, $classes, $id, $caption, $userpref = '', $default = false, $return = false) {
-    $output  = print_collapsible_region_start($classes, $id, $caption, $userpref, true, true);
+    $output  = print_collapsible_region_start($classes, $id, $caption, $userpref, $default, true);
     $output .= $contents;
     $output .= print_collapsible_region_end(true);
 
@@ -1982,21 +1982,20 @@ function print_collapsible_region($contents, $classes, $id, $caption, $userpref 
  * be clicked to expand or collapse the region. If JavaScript is off, then the region
  * will always be expanded.
  *
- * @global object
  * @param string $classes class names added to the div that is output.
  * @param string $id id added to the div that is output. Must not be blank.
  * @param string $caption text displayed at the top. Clicking on this will cause the region to expand or contract.
- * @param boolean $userpref the name of the user preference that stores the user's preferred default state.
+ * @param string $userpref the name of the user preference that stores the user's preferred default state.
  *      (May be blank if you do not wish the state to be persisted.
  * @param boolean $default Initial collapsed state to use if the user_preference it not set.
  * @param boolean $return if true, return the HTML as a string, rather than printing it.
  * @return string|void if $return is false, returns nothing, otherwise returns a string of HTML.
  */
-function print_collapsible_region_start($classes, $id, $caption, $userpref = false, $default = false, $return = false) {
+function print_collapsible_region_start($classes, $id, $caption, $userpref = '', $default = false, $return = false) {
     global $CFG, $PAGE, $OUTPUT;
 
     // Work out the initial state.
-    if (is_string($userpref)) {
+    if (!empty($userpref) and is_string($userpref)) {
         user_preference_allow_ajax_update($userpref, PARAM_BOOL);
         $collapsed = get_user_preferences($userpref, $default);
     } else {

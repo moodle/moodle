@@ -215,7 +215,7 @@ echo '<p><input type="submit" name="act_showautocreategroupsform" id="showautocr
         . get_string('autocreategroups', 'group') . '" /></p>'."\n";
 
 echo '<p><input type="submit" name="act_showimportgroups" id="showimportgroups" value="'
-        . get_string('importgroups') . '" /></p>'."\n";
+        . get_string('importgroups', 'core_group') . '" /></p>'."\n";
 
 echo '</td>'."\n";
 echo '<td>'."\n";

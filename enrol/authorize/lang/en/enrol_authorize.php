@@ -197,7 +197,7 @@ You have to accept or deny payments manually because of the admin hasn\'t enable
 
 {$a->url}';
 $string['pendingorderssubject'] = 'WARNING: {$a->course}, {$a->pending} order(s) will expire within {$a->days} day(s).';
-$string['pluginname'] = 'Authorize.net';
+$string['pluginname'] = 'Authorize.Net';
 $string['reason11'] = 'A duplicate transaction has been submitted.';
 $string['reason13'] = 'The merchant Login ID is invalid or the account is inactive.';
 $string['reason16'] = 'The transaction was not found.';
@@ -254,14 +254,13 @@ You may view your payment details or edit your profile:
  {$a->profileurl}';
 $string['youcantdo'] = 'You can\'t do this action: {$a->action}';
 $string['zipcode'] = 'Zip Code';
-$string['pluginname'] = 'Authorize';
 $string['cost'] = 'Cost';
 $string['currency'] = 'Currency';
 $string['enrolperiod'] = 'Enrolment period';
 $string['enrolstartdate'] = 'Start date';
 $string['enrolenddate'] = 'End date';
 $string['enrolenddaterror'] = 'Enrolment end date cannot be earlier than start date';
-$string['status'] = 'Allow Autorize.net enrolments';
+$string['status'] = 'Allow Autorize.Net enrolments';
 $string['nocost'] = 'There is no cost associated with enrolling in this course via Authorize.Net!';
 $string['firstnameoncard'] = 'Firstname on card';
 $string['lastnameoncard'] = 'Lastname on card';

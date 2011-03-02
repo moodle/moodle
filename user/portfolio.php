@@ -37,9 +37,7 @@ $hide     = optional_param('hide', 0, PARAM_INT);
 $courseid = optional_param('courseid', SITEID, PARAM_INT);
 
 $url = new moodle_url('/user/portfolio.php', array('courseid'=>$courseid));
-if ($hide !== 0) {
-    $url->param('hide', $hide);
-}
+
 if ($config !== 0) {
     $url->param('config', $config);
 }
@@ -69,6 +67,7 @@ echo $OUTPUT->header();
 $showroles = 1;
 
 if (!empty($config)) {
+    navigation_node::override_active_url(new moodle_url('/user/portfolio.php', array('courseid'=>$courseid)));
     $instance = portfolio_instance($config);
     $mform = new portfolio_user_form('', array('instance' => $instance, 'userid' => $user->id));
     if ($mform->is_cancelled()){

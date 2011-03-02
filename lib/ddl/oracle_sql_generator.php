@@ -396,7 +396,10 @@ class oracle_sql_generator extends sql_generator {
     ///     - drop the old column
     ///     - rename the temp column to the original name
         if (($typechanged) || (($oldmetatype == 'N' || $oldmetatype == 'I')  && ($precisionchanged || $decimalchanged))) {
-            $tempcolname = $xmldb_field->getName() . '_alter_column_tmp';
+            $tempcolname = $xmldb_field->getName() . '___tmp'; // Short tmp name, surely not conflicting ever
+            if (strlen($tempcolname) > 30) { // Safeguard we don't excess the 30cc limit
+                $tempcolname = 'ongoing_alter_column_tmp';
+            }
         /// Prevent temp field to have both NULL/NOT NULL and DEFAULT constraints
             $skip_notnull_clause = true;
             $skip_default_clause = true;

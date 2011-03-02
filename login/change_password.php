@@ -27,18 +27,28 @@
 require('../config.php');
 require_once('change_password_form.php');
 
-$id = optional_param('id', SITEID, PARAM_INT); // current course
+$id     = optional_param('id', SITEID, PARAM_INT); // current course
+$return = optional_param('return', 0, PARAM_BOOL); // redirect after password change
 
 //HTTPS is required in this page when $CFG->loginhttps enabled
 $PAGE->https_required();
 
-$uparams = array();
-if ($id != SITEID) {
-    $uparams['id'] = $id;
-}
-$PAGE->set_url('/login/change_password.php', $uparams);
+$PAGE->set_url('/login/change_password.php', array('id'=>$id));
 
 $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+
+if ($return) {
+    // this redirect prevents security warning because https can not POST to http pages
+    if (empty($SESSION->wantsurl)
+            or stripos(str_replace('https://', 'http://', $SESSION->wantsurl), str_replace('https://', 'http://', $CFG->wwwroot.'/login/change_password.php') === 0)) {
+        $returnto = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$id";
+    } else {
+        $returnto = $SESSION->wantsurl;
+    }
+    unset($SESSION->wantsurl);
+
+    redirect($returnto);
+}
 
 $strparticipants = get_string('participants');
 
@@ -115,14 +125,7 @@ if ($mform->is_cancelled()) {
     $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
 
-    if (empty($SESSION->wantsurl) or $SESSION->wantsurl == $CFG->httpswwwroot.'/login/change_password.php') {
-        $returnto = "$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$id";
-    } else {
-        $returnto = $SESSION->wantsurl;
-    }
-    unset($SESSION->wantsurl);
-
-    notice($strpasswordchanged, $returnto);
+    notice($strpasswordchanged, new moodle_url($PAGE->url, array('return'=>1)));
 
     echo $OUTPUT->footer();
     exit;

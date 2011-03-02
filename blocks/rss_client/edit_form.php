@@ -49,11 +49,12 @@ class block_rss_client_edit_form extends block_edit_form {
         }
 
         $rssfeeds = $DB->get_records_sql_menu('
-                SELECT id, CASE WHEN preferredtitle = ? THEN title ELSE preferredtitle END AS acutaltitle
+                SELECT id,
+                       CASE WHEN preferredtitle = ? THEN ' . $DB->sql_compare_text('title', 64) .' ELSE preferredtitle END
                 FROM {block_rss_client}
                 WHERE userid = ? OR shared = 1
-                ORDER BY acutaltitle',
-                array($DB->sql_empty(), $USER->id));
+                ORDER BY CASE WHEN preferredtitle = ? THEN ' . $DB->sql_compare_text('title', 64) . ' ELSE preferredtitle END ',
+                array($DB->sql_empty(), $USER->id, $DB->sql_empty()));
         if ($rssfeeds) {
             $select = $mform->addElement('select', 'config_rssid', get_string('choosefeedlabel', 'block_rss_client'), $rssfeeds);
             $select->setMultiple(true);

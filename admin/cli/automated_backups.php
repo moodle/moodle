@@ -92,7 +92,7 @@ mtrace("Server Time: ".date('r',$timenow)."\n\n");
 // Run automated backups if required.
 require_once($CFG->dirroot.'/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot.'/backup/util/helper/backup_cron_helper.class.php');
-backup_cron_automated_helper::run_automated_backup(backup_cron_automated_helper::RUN_IMMEDIATLY);
+backup_cron_automated_helper::run_automated_backup(backup_cron_automated_helper::RUN_IMMEDIATELY);
 
 mtrace("Automated cron backups completed correctly");
 

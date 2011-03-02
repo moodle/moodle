@@ -107,7 +107,6 @@ $string['field1030303']='Mining Engineering';
 $string['field1030305']='Materials Engineering';
 $string['field1030307']='Food Processing Technology';
 $string['field1030399']='Process and Resources Engineering (Other)';
-$string['field1030399']='Process and Resources Engineering (Other)';
 $string['field10305']='Automotive Engineering and Technology';
 $string['field1030501']='Automotive Engineering';
 $string['field1030503']='Vehicle Mechanics';

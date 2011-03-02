@@ -101,6 +101,14 @@ abstract class backup_structure_step extends backup_step {
         $structure->destroy();
     }
 
+    /**
+     * As far as backup structure steps are implementing backup_plugin stuff, they need to
+     * have the parent task available for wrapping purposes (get course/context....)
+     */
+    public function get_task() {
+        return $this->task;
+    }
+
 // Protected API starts here
 
     /**
@@ -133,7 +141,7 @@ abstract class backup_structure_step extends backup_step {
             $backupfile = $plugindir . '/backup/moodle2/' . $classname . '.class.php';
             if (file_exists($backupfile)) {
                 require_once($backupfile);
-                $backupplugin = new $classname($plugintype, $name, $optigroup);
+                $backupplugin = new $classname($plugintype, $name, $optigroup, $this);
                 // Add plugin returned structure to optigroup
                 $backupplugin->define_plugin_structure($element->get_name());
             }

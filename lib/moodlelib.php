@@ -3784,12 +3784,6 @@ function get_complete_user_data($field, $value, $mnethostid = null) {
 
 /// Get various settings and preferences
 
-    if ($displays = $DB->get_records('course_display', array('userid'=>$user->id))) {
-        foreach ($displays as $display) {
-            $user->display[$display->course] = $display->display;
-        }
-    }
-
     // preload preference cache
     check_user_preferences_loaded($user);
 
@@ -3808,18 +3802,23 @@ function get_complete_user_data($field, $value, $mnethostid = null) {
 
     // this is a special hack to speedup calendar display
     $user->groupmember = array();
-    if ($groups = $DB->get_records_sql($sql, array($user->id))) {
-        foreach ($groups as $group) {
-            if (!array_key_exists($group->courseid, $user->groupmember)) {
-                $user->groupmember[$group->courseid] = array();
+    if (!isguestuser($user)) {
+        if ($groups = $DB->get_records_sql($sql, array($user->id))) {
+            foreach ($groups as $group) {
+                if (!array_key_exists($group->courseid, $user->groupmember)) {
+                    $user->groupmember[$group->courseid] = array();
+                }
+                $user->groupmember[$group->courseid][$group->id] = $group->id;
             }
-            $user->groupmember[$group->courseid][$group->id] = $group->id;
         }
     }
 
 /// Add the custom profile fields to the user record
-    require_once($CFG->dirroot.'/user/profile/lib.php');
-    profile_load_custom_fields($user);
+    $user->profile = array();
+    if (!isguestuser($user)) {
+        require_once($CFG->dirroot.'/user/profile/lib.php');
+        profile_load_custom_fields($user);
+    }
 
 /// Rewrite some variables if necessary
     if (!empty($user->description)) {

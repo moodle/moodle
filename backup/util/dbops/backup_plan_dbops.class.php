@@ -120,6 +120,15 @@ abstract class backup_plan_dbops extends backup_dbops {
     }
 
     /**
+     * Given one course id, return its format in DB
+     */
+    public static function get_courseformat_from_courseid($courseid) {
+        global $DB;
+
+        return $DB->get_field('course', 'format', array('id' => $courseid));
+    }
+
+    /**
      * Return the wwwroot of the $CFG->mnet_localhost_id host
      * caching it along the request
      */
@@ -138,34 +147,49 @@ abstract class backup_plan_dbops extends backup_dbops {
     * Returns the default backup filename, based in passed params.
     *
     * Default format is (see MDL-22145)
-    *   backup word - format - type - name - date - info . mbz
+    * backup word - format - type - name - date - info . mbz
     * where name is variable (course shortname, section name/id, activity modulename + cmid)
-    * and info can be (nu = no user info, an = anonymized)
+    * and info can be (nu = no user info, an = anonymized). The last param $useidasname,
+    * defaulting to false, allows to replace the course shortname by the course id (used
+    * by automated backups, to avoid non-ascii chars in OS filesystem)
+    *
+    * @param string $format One of backup::FORMAT_
+    * @param string $type One of backup::TYPE_
+    * @param int $courseid/$sectionid/$cmid
+    * @param bool $users Should be true is users were included in the backup
+    * @param bool $anonymised Should be true is user information was anonymized.
+    * @param bool $useidasname true to use id, false to use strings (default)
+    * @return string The filename to use
     */
-    public static function get_default_backup_filename($format, $type, $id, $users, $anonymised) {
+    public static function get_default_backup_filename($format, $type, $id, $users, $anonymised, $useidasname = false) {
         global $DB;
 
         // Calculate backup word
         $backupword = str_replace(' ', '_', moodle_strtolower(get_string('backupfilename')));
         $backupword = trim(clean_filename($backupword), '_');
 
-        // Calculate proper name element (based on type)
-        switch ($type) {
-            case backup::TYPE_1COURSE:
-                $shortname = $DB->get_field('course', 'shortname', array('id' => $id));
-                break;
-            case backup::TYPE_1SECTION:
-                if (!$shortname = $DB->get_field('course_sections', 'name', array('id' => $id))) {
-                    $shortname = $DB->get_field('course_sections', 'section', array('id' => $id));
-                }
-                break;
-            case backup::TYPE_1ACTIVITY:
-                $cm = get_coursemodule_from_id(null, $id);
-                $shortname = $cm->modname . $id;
-                break;
+        $shortname = '';
+        // Not $useidasname, lets calculate it, else $id will be used
+        if (!$useidasname) {
+            // Calculate proper name element (based on type)
+            switch ($type) {
+                case backup::TYPE_1COURSE:
+                    $shortname = $DB->get_field('course', 'shortname', array('id' => $id));
+                    break;
+                case backup::TYPE_1SECTION:
+                    if (!$shortname = $DB->get_field('course_sections', 'name', array('id' => $id))) {
+                        $shortname = $DB->get_field('course_sections', 'section', array('id' => $id));
+                    }
+                    break;
+                case backup::TYPE_1ACTIVITY:
+                    $cm = get_coursemodule_from_id(null, $id);
+                    $shortname = $cm->modname . $id;
+                    break;
+            }
+            $shortname = str_replace(' ', '_', $shortname);
+            $shortname = moodle_strtolower(trim(clean_filename($shortname), '_'));
         }
-        $shortname = str_replace(' ', '_', $shortname);
-        $shortname = moodle_strtolower(trim(clean_filename($shortname), '_'));
+
         $name = empty($shortname) ? $id : $shortname;
 
         // Calculate date

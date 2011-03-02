@@ -28,6 +28,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clianswerno'] = 'No';
+$string['cliansweryes'] = 'Sí';
 $string['cliincorrectvalueerror'] = 'Error, valor incorrecte "{$a->value}" per a "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'Valor incorrecte, si us plau, torneu-ho a provar.';
 $string['clitypevalue'] = 'Valor de tipus';
@@ -35,5 +37,6 @@ $string['clitypevaluedefault'] = 'valor de tipus, premeu Intro per fer servir un
 $string['cliunknowoption'] = 'Opcions invàlides: 
  {$a}
 L\'opció --help us orientarà.';
+$string['cliyesnoprompt'] = 'Escriu y (significa Sí) o n (significa No)';
 $string['environmentrequireinstall'] = 'es requereix instal·lar/habilitar';
 $string['environmentrequireversion'] = 'esteu executant la versió {$a->current} i es requereix la {$a->needed}';

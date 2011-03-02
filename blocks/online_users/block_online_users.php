@@ -54,7 +54,7 @@ class block_online_users extends block_base {
 
         $userfields = user_picture::fields('u', array('username'));
 
-        if ($this->page->course->id == SITEID) {  // Site-level
+        if ($this->page->course->id == SITEID or $this->page->context->contextlevel < CONTEXT_COURSE) {  // Site-level
             $sql = "SELECT $userfields, MAX(u.lastaccess) AS lastaccess
                       FROM {user} u $groupmembers
                      WHERE u.lastaccess > $timefrom

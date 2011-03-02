@@ -771,7 +771,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return string sql
      */
     private function limit_to_top_n($sql, $offset, $limit) {
-        // If there is no limit we can return immediatly
+        // If there is no limit we can return immediately
         if ($limit < 1 && $offset < 1) {
             return $sql;
         }
@@ -797,23 +797,17 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $firstcolumn = 'id'; // The default first column is id
         $orderby = '';       // The order by of the main query
 
-        // We need to find all the columns so that we can request JUST the desired
-        // columns in the end transaction. We also need to do a couple of maintenance
-        // tasks on the columns seeing as they are going to be wrapped in a 
-        // sub select.
+        // We need to do a couple of maintenance tasks on the columns seeing as
+        // they are going to be wrapped in a sub select.
         //
         // 1. Collect the first column to use for an order by if there isn't an
         //    explicit order by within the query.
-        // 2. Make we use the aliases for columns that have it because of next point.
-        // 3. Strip off table aliases they will be incorrect outside of the immediate
-        //    sub select.
-        // 4. Give all constant columns a proper alias, this is required because
+        // 2. Give all constant columns a proper alias, this is required because
         //    of the subselect.
         if (preg_match('#^(\s*SELECT\s+)(DISTINCT\s+)?(.*?)(\sFROM\s)#is', $sql, $columnmatches)) {
             // Make sure we have some columns
             if (!empty($columnmatches[3])) {
                 $columns = explode(',', $columnmatches[3]);
-                $columnnames = array();
                 $firstcolumn = null;
                 $constantcount = 0;
                 foreach ($columns as $key=>$column) {
@@ -822,7 +816,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
                     if (preg_match('#\sAS\s+(\w+)\s*$#si', $column, $matches)) {
                         // Make sure we use the column alias if available.
                         $column = $matches[1];
-                    } else if (preg_match("#^'[^']*'$#", $column)) {
+                    } else if (preg_match("#^('[^']*'|\d+)$#", $column)) {
                         // Give constants an alias in the main query and use the
                         // alias for the new outer queries.
                         $constantcount++;
@@ -834,16 +828,8 @@ class sqlsrv_native_moodle_database extends moodle_database {
                     if ($firstcolumn === null) {
                         $firstcolumn = $column;
                     }
-
-                    // Remove any table aliases from the column name for the outer
-                    // queries.
-                    if (preg_match('#^\w+\.(.*)$#s', $column, $matches)) {
-                        $column = $matches[1];
-                    }
-                    $columnnames[] = $column;
                 }
                 // Glue things back together
-                $columnnames = join(', ', $columnnames);
                 $columns = join(', ', $columns);
                 // Switch out the fixed main columns (added constant aliases).
                 $sql = str_replace($columnmatches[0], $columnmatches[1].$columnmatches[2].$columns.$columnmatches[4], $sql);
@@ -867,10 +853,18 @@ class sqlsrv_native_moodle_database extends moodle_database {
             $orderby = 'id';
         }
 
+        // Now we need to build the queries up so that we collect a row count field and then sort on it.
+        // To do this we need to nest the query twice. The first nesting selects all the rows from the
+        // query and then proceeds to use OVER to generate a row number.
+        // The second nesting we limit by selecting where rownumber between offset and limit
+        // In both cases we will select the original query fields using q.* this is important
+        // as there can be any number of crafty things going on. It does however mean that we
+        // end up with the first field being sqlsrvrownumber however sqlsrv_native_moodle_recordset
+        // strips that off during processing if it exists.
         // Build the inner outer query.
-        $sql = "SELECT TOP $bigint ROW_NUMBER() OVER(ORDER BY $orderby) AS sqlsrvrownumber, $columnnames FROM ($sql) AS q";
+        $sql = "SELECT TOP $bigint ROW_NUMBER() OVER(ORDER BY $orderby) AS sqlsrvrownumber, q.* FROM ($sql) AS q";
         // Build the outer most query.
-        $sql = "SELECT $columnnames FROM ($sql) AS q WHERE q.sqlsrvrownumber > $offset AND q.sqlsrvrownumber <= $limit";
+        $sql = "SELECT q.* FROM ($sql) AS q WHERE q.sqlsrvrownumber > $offset AND q.sqlsrvrownumber <= $limit";
 
         // Return the now mangled query for use.
         return $sql;

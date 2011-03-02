@@ -1135,7 +1135,7 @@ function quiz_get_slot_for_question($quiz, $questionid) {
  *
  * @param object $a associative array of replaceable fields for the templates
  *
- * @return bool|string result of events_triger
+ * @return bool
  */
 function quiz_send_confirmation($a) {
 
@@ -1167,7 +1167,7 @@ function quiz_send_confirmation($a) {
     $eventdata->contexturl        = $a->quizurl;
     $eventdata->contexturlname    = $a->quizname;
 
-    return message_send($eventdata);
+    return (bool)message_send($eventdata); // returns message id or false
 }
 
 /**
@@ -1176,7 +1176,7 @@ function quiz_send_confirmation($a) {
  * @param object $recipient user object of the intended recipient
  * @param object $a associative array of replaceable fields for the templates
  *
- * @return bool|string result of events_triger()
+ * @return bool
  */
 function quiz_send_notification($recipient, $a) {
 
@@ -1207,7 +1207,7 @@ function quiz_send_notification($recipient, $a) {
     $eventdata->contexturl        = $a->quizreviewurl;
     $eventdata->contexturlname    = $a->quizname;
 
-    return message_send($eventdata);
+    return (bool)message_send($eventdata);
 }
 
 /**

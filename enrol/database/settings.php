@@ -108,6 +108,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('enrol_database/newcoursecategory', get_string('newcoursecategory', 'enrol_database'), '', ''));
 
     if (!during_initial_install()) {
+        require_once($CFG->dirroot.'/course/lib.php');
         $options = array();
         $parentlist = array();
         make_categories_list($options, $parentlist);

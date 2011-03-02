@@ -150,6 +150,8 @@ function blog_sync_external_entries($externalblog) {
     $rssfile = new moodle_simplepie_file($externalblog->url);
     $filetest = new SimplePie_Locator($rssfile);
 
+    $textlib = textlib_get_instance(); // Going to use textlib services
+
     if (!$filetest->is_feed($rssfile)) {
         $externalblog->failedlastsync = 1;
         $DB->update_record('blog_external', $externalblog);
@@ -197,7 +199,13 @@ function blog_sync_external_entries($externalblog) {
         $newentry->uniquehash = $entry->get_permalink();
         $newentry->publishstate = 'site';
         $newentry->format = FORMAT_HTML;
-        $newentry->subject = $entry->get_title();
+        // Clean subject of html, just in case
+        $newentry->subject = clean_param($entry->get_title(), PARAM_TEXT);
+        // Observe 128 max chars in DB
+        // TODO: +1 to raise this to 255
+        if ($textlib->strlen($newentry->subject) > 128) {
+            $newentry->subject = $textlib->substr($newentry->subject, 0, 125) . '...';
+        }
         $newentry->summary = $entry->get_description();
 
         //used to decide whether to insert or update
@@ -253,10 +261,16 @@ function blog_sync_external_entries($externalblog) {
         }
     }
 
-    //Look at the posts we have in the database to check if any of them have been deleted from the feed.
-    //Only checking posts within the time frame returned by the rss feed. Older items may have been deleted or
-    //may just not be returned anymore. We cant tell the difference so we leave older posts alone.
-    $dbposts = $DB->get_records_select('post', 'created > :ts', array('ts' => $oldesttimestamp), '', 'id, uniquehash');
+    // Look at the posts we have in the database to check if any of them have been deleted from the feed.
+    // Only checking posts within the time frame returned by the rss feed. Older items may have been deleted or
+    // may just not be returned anymore. We can't tell the difference so we leave older posts alone.
+    $sql = "SELECT id, uniquehash
+              FROM {post}
+             WHERE module = 'blog_external'
+                   AND " . $DB->sql_compare_text('content') . " = " . $DB->sql_compare_text(':blogid') . "
+                   AND created > :ts";
+    $dbposts = $DB->get_records_sql($sql, array('blogid' => $externalblog->id, 'ts' => $oldesttimestamp));
+
     $todelete = array();
     foreach($dbposts as $dbpost) {
         if ( !in_array($dbpost->uniquehash, $uniquehashes) ) {

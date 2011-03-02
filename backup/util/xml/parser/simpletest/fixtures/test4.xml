@@ -106,6 +106,9 @@
       <name>4</name><!-- Only last will be processed. We don't allow repeated final tags in our parser -->
       <value>4</value>
       <value>5</value><!-- Only last will be processed. We don't allow repeated final tags in our parser -->
+      <value>
+
+      </value><!-- If one tag already is set and the repeated is empty, the original value is kept -->
     </othertest>
   </glossary>
 </activity>

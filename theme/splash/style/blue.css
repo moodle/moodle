@@ -107,7 +107,10 @@ body.splash-blue {                /* Define margins and background colour/image 
 /* Forum
 ------------------------*/
 
-.splash-blue .forumpost .topic .subject {    /* forum subject section inside topic header */
+.splash-blue .forumpost .topic .subject,
+.path-blog.splash-blue .forumpost .subject a,
+.path-blog.splash-blue .forumpost .subject a:link,
+.path-blog.splash-blue .forumpost .subject a:visited {    /* forum subject section inside topic header */
     font-weight: bold;
     font-size: 1.1em;
     padding-left: 5px;

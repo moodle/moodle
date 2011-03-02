@@ -16,19 +16,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the version of workshop
- *
- * This code fragment is called by moodle_needs_upgrading() and
- * /admin/index.php
- *
- * @package    mod
- * @subpackage workshop
- * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
+ * @package    moodlecore
+ * @subpackage backup-moodle2
+ * @copyright  2011 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$module->version  = 2011021100;
-$module->requires = 2011020900;  // Requires this Moodle version
-//$module->cron     = 60;
+/**
+ * Class extending standard restore_plugin in order to implement some
+ * helper methods related with the course formats (format plugin)
+ *
+ * TODO: Finish phpdocs
+ */
+abstract class restore_format_plugin extends restore_plugin {
+    // Love these classes. :-) Nothing special to customize here for now
+}

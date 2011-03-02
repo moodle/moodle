@@ -56,13 +56,23 @@ class mysqli_native_moodle_database extends moodle_database {
             throw new dml_exception('dbdriverproblem', $driverstatus);
         }
 
-        if (empty($this->dboptions['dbport'])) {
-            $dbport = ini_get('mysqli.default_port');
+        if (!empty($dboptions['dbsocket'])
+                and (strpos($dboptions['dbsocket'], '/') !== false or strpos($dboptions['dbsocket'], '\\') !== false)) {
+            $dbsocket = $dboptions['dbsocket'];
         } else {
-            $dbport = (int)$this->dboptions['dbport'];
+            $dbsocket = ini_get('mysqli.default_socket');
+        }
+        if (empty($dboptions['dbport'])) {
+            $dbport = (int)ini_get('mysqli.default_port');
+        } else {
+            $dbport = (int)$dboptions['dbport'];
+        }
+        // verify ini.get does not return nonsense
+        if (empty($dbport)) {
+            $dbport = 3306;
         }
         ob_start();
-        $conn = new mysqli($dbhost, $dbuser, $dbpass, '', $dbport); /// Connect without db
+        $conn = new mysqli($dbhost, $dbuser, $dbpass, '', $dbport, $dbsocket); /// Connect without db
         $dberr = ob_get_contents();
         ob_end_clean();
         $errorno = @$conn->connect_errno;
@@ -267,15 +277,20 @@ class mysqli_native_moodle_database extends moodle_database {
 
         // dbsocket is used ONLY if host is NULL or 'localhost',
         // you can not disable it because it is always tried if dbhost is 'localhost'
-        if (!empty($this->dboptions['dbsocket']) and strpos($this->dboptions['dbsocket'], '/') !== false) {
+        if (!empty($this->dboptions['dbsocket'])
+                and (strpos($this->dboptions['dbsocket'], '/') !== false or strpos($this->dboptions['dbsocket'], '\\') !== false)) {
             $dbsocket = $this->dboptions['dbsocket'];
         } else {
             $dbsocket = ini_get('mysqli.default_socket');
         }
         if (empty($this->dboptions['dbport'])) {
-            $dbport = ini_get('mysqli.default_port');
+            $dbport = (int)ini_get('mysqli.default_port');
         } else {
             $dbport = (int)$this->dboptions['dbport'];
+        }
+        // verify ini.get does not return nonsense
+        if (empty($dbport)) {
+            $dbport = 3306;
         }
         ob_start();
         $this->mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket);

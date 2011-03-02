@@ -263,16 +263,22 @@ function enrol_category_sync_full() {
 
     // first of all add necessary enrol instances to all courses
     $parentcat = $DB->sql_concat("cat.path", "'/%'");
-    $sql = "SELECT DISTINCT c.*
+    // need whole course records to be used by add_instance(), use inner view (ci) to
+    // get distinct records only.
+    // TODO: Moodle 2.1. Improve enrol API to accept courseid / courserec
+    $sql = "SELECT c.*
               FROM {course} c
-              JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :courselevel)
-              JOIN (SELECT DISTINCT cctx.path
-                      FROM {course_categories} cc
-                      JOIN {context} cctx ON (cctx.instanceid = cc.id AND cctx.contextlevel = :catlevel)
-                      JOIN {role_assignments} ra ON (ra.contextid = cctx.id AND ra.roleid $roleids)
-                   ) cat ON (ctx.path LIKE $parentcat)
-         LEFT JOIN {enrol} e ON (e.courseid = c.id AND e.enrol = 'category')
-             WHERE e.id IS NULL";
+              JOIN (
+                SELECT DISTINCT c.id
+                  FROM {course} c
+                  JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :courselevel)
+                  JOIN (SELECT DISTINCT cctx.path
+                          FROM {course_categories} cc
+                          JOIN {context} cctx ON (cctx.instanceid = cc.id AND cctx.contextlevel = :catlevel)
+                          JOIN {role_assignments} ra ON (ra.contextid = cctx.id AND ra.roleid $roleids)
+                       ) cat ON (ctx.path LIKE $parentcat)
+             LEFT JOIN {enrol} e ON (e.courseid = c.id AND e.enrol = 'category')
+                 WHERE e.id IS NULL) ci ON (c.id = ci.id)";
 
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $course) {

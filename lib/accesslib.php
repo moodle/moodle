@@ -2352,6 +2352,10 @@ function get_context_info_array($contextid) {
  * @return int|bool related course id or false
  */
 function get_courseid_from_context($context) {
+    if (empty($context->contextlevel)) {
+        debugging('Invalid context object specified in get_courseid_from_context() call');
+        return false;
+    }
     if ($context->contextlevel == CONTEXT_COURSE) {
         return $context->instanceid;
     }
@@ -2370,7 +2374,7 @@ function get_courseid_from_context($context) {
     if ($context->contextlevel == CONTEXT_BLOCK) {
         $parentcontexts = get_parent_contexts($context, false);
         $parent = reset($parentcontexts);
-        return get_courseid_from_context($parent);
+        return get_courseid_from_context(get_context_instance_by_id($parent));
     }
 
     return false;

@@ -34,12 +34,16 @@ abstract class backup_subplugin {
     protected $subpluginname;
     protected $connectionpoint;
     protected $optigroup; // Optigroup, parent of all optigroup elements
+    protected $step;
+    protected $task;
 
-    public function __construct($subplugintype, $subpluginname, $optigroup) {
+    public function __construct($subplugintype, $subpluginname, $optigroup, $step) {
         $this->subplugintype = $subplugintype;
         $this->subpluginname = $subpluginname;
         $this->optigroup     = $optigroup;
         $this->connectionpoint = '';
+        $this->step          = $step;
+        $this->task          = $step->get_task();
     }
 
     public function define_subplugin_structure($connectionpoint) {
@@ -52,6 +56,22 @@ abstract class backup_subplugin {
             $this->$methodname();
         }
     }
+
+// Protected API starts here
+
+// backup_step/structure_step/task wrappers
+
+    /**
+     * Returns the value of one (task/plan) setting
+     */
+    protected function get_setting_value($name) {
+        if (is_null($this->task)) {
+            throw new backup_step_exception('not_specified_backup_task');
+        }
+        return $this->task->get_setting_value($name);
+    }
+
+// end of backup_step/structure_step/task wrappers
 
     /**
      * Factory method that will return one backup_subplugin_element (backup_optigroup_element)
