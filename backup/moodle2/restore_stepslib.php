@@ -2340,56 +2340,41 @@ class restore_create_categories_and_questions extends restore_structure_step {
         global $DB;
 
         $data = (object)$data;
+        $oldid = $data->id;
 
-        // Check we have one mapping for this question
-        if (!$hintmapping = $this->get_mapping('question_hint', $oldid)) {
-            return; // No mapping = this question doesn't need to be created/mapped
-        }
+        // Detect if the question is created or mapped
+        $oldquestionid   = $this->get_old_parentid('question');
+        $newquestionid   = $this->get_new_parentid('question');
+        $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
-        // Get the mapped category (cannot use get_new_parentid() because not
-        // all the categories have been created, so it is not always available
-        // Instead we get the mapping for the question->parentitemid because
-        // we have loaded qcatids there for all parsed questions
-        $data->questionid = $this->get_mappingid('question', $hintmapping->parentitemid);
+        // If the question has been created by restore, we need to create its question_answers too
+        if ($questioncreated) {
+            // Adjust some columns
+            $data->questionid = $newquestionid;
+            // Insert record
+            $newitemid = $DB->insert_record('question_answers', $data);
 
-        // In the past, there were some very sloppy values of penalty. Fix them.
-        if ($data->penalty >= 0.33 && $question->penalty <= 0.34) {
-            $data->penalty = 0.3333333;
-        }
-        if ($data->penalty >= 0.66 && $question->penalty <= 0.67) {
-            $data->penalty = 0.6666667;
-        }
-        if ($data->penalty >= 1) {
-            $data->penalty = 1;
-        }
-
-        $data->timecreated  = $this->apply_date_offset($data->timecreated);
-        $data->timemodified = $this->apply_date_offset($data->timemodified);
-
-        $userid = $this->get_mappingid('user', $data->createdby);
-        $data->createdby = $userid ? $userid : $this->task->get_userid();
-
-        $userid = $this->get_mappingid('user', $data->modifiedby);
-        $data->modifiedby = $userid ? $userid : $this->task->get_userid();
-
-        // With newitemid = 0, let's create the question
-        if (!$questionmapping->newitemid) {
-            $newitemid = $DB->insert_record('question', $data);
-            $this->set_mapping('question', $oldid, $newitemid);
-            // Also annotate them as question_created, we need
-            // that later when remapping parents (keeping the old categoryid as parentid)
-            $this->set_mapping('question_created', $oldid, $newitemid, false, null, $questionmapping->parentitemid);
+        // The question existed, we need to map the existing question_answers
         } else {
-            // By performing this set_mapping() we make get_old/new_parentid() to work for all the
-            // children elements of the 'question' one (so qtype plugins will know the question they belong to)
-            $this->set_mapping('question', $oldid, $questionmapping->newitemid);
+            // Look in question_answers by answertext matching
+            $sql = 'SELECT id
+                      FROM {question_hints}
+                     WHERE questionid = ?
+                       AND ' . $DB->sql_compare_text('hint', 255) . ' = ' . $DB->sql_compare_text('?', 255);
+            $params = array($newquestionid, $data->hint);
+            $newitemid = $DB->get_field_sql($sql, $params);
+            // If we haven't found the newitemid, something has gone really wrong, question in DB
+            // is missing answers, exception
+            if (!$newitemid) {
+                $info = new stdClass();
+                $info->filequestionid = $oldquestionid;
+                $info->dbquestionid   = $newquestionid;
+                $info->hint           = $data->hint;
+                throw new restore_step_exception('error_question_hint_missing_in_db', $info);
+            }
         }
-
-        // Note, we don't restore any question files yet
-        // as far as the CONTEXT_MODULE categories still
-        // haven't their contexts to be restored to
-        // The {@link restore_create_question_files}, executed in the final step
-        // step will be in charge of restoring all the question files
+        // Create mapping (we'll use this intensively when restoring question_states. And also answerfeedback files)
+        $this->set_mapping('question_hint', $oldid, $newitemid);
     }
 
     protected function after_execute() {

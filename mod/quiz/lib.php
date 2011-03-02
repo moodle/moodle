@@ -306,7 +306,8 @@ function quiz_delete_all_attempts($quiz) {
     global $CFG, $DB;
     require_once($CFG->libdir . '/questionlib.php');
     question_engine::delete_questions_usage_by_activities("{question_usages}.id IN (
-            SELECT uniqueid FROM {quiz_attempts} WHERE quiz = :quizid)", array('quizid' => $quizid));
+            SELECT uniqueid FROM {quiz_attempts} WHERE quiz = :quizid)",
+            array('quizid' => $quiz->id));
     $DB->delete_records('quiz_attempts', array('quiz' => $quiz->id));
     $DB->delete_records('quiz_grades', array('quiz' => $quiz->id));
 }
