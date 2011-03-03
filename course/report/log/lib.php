@@ -534,6 +534,6 @@ function log_report_extend_navigation($navigation, $course, $context) {
     global $CFG, $OUTPUT;
     if (has_capability('coursereport/log:view', $context)) {
         $url = new moodle_url('/course/report/log/index.php', array('id'=>$course->id));
-        $navigation->add(get_string('log:view', 'coursereport_log'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
+        $navigation->add(get_string('pluginname', 'coursereport_log'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }
 }
