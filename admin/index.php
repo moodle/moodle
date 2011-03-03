@@ -140,7 +140,10 @@ if (!core_tables_exist()) {
             // main version.php declares moodle code maturity
             if ($maturity < MATURITY_STABLE) {
                 $maturitylevel = get_string('maturity'.$maturity, 'admin');
-                echo $OUTPUT->box(get_string('maturitycorewarning', 'admin', $maturitylevel), 'generalbox maturitywarning');
+                echo $OUTPUT->box(
+                    $OUTPUT->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
+                    $OUTPUT->container($OUTPUT->doc_link('admin/versions', get_string('morehelp'))),
+                    'generalbox maturitywarning');
             }
         }
 
@@ -207,8 +210,11 @@ if ($version > $CFG->version) {  // upgrade
             // main version.php declares moodle code maturity
             if ($maturity < MATURITY_STABLE) {
                 $maturitylevel = get_string('maturity'.$maturity, 'admin');
-                echo $OUTPUT->box(get_string('maturitycorewarning', 'admin', $maturitylevel), 'generalbox maturitywarning');
-            }
+                echo $OUTPUT->box(
+                    $OUTPUT->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
+                    $OUTPUT->container($OUTPUT->doc_link('admin/versions', get_string('morehelp'))),
+                    'generalbox maturitywarning');
+}
         }
         $continueurl = new moodle_url('index.php', array('confirmupgrade' => 1));
         $cancelurl = new moodle_url('index.php');

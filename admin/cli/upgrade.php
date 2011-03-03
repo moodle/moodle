@@ -112,6 +112,7 @@ if (isset($maturity)) {
             cli_separator();
             cli_heading(get_string('notice'));
             echo get_string('maturitycorewarning', 'admin', $maturitylevel) . PHP_EOL;
+            echo get_string('morehelp') . ': ' . get_docs_url('admin/versions') . PHP_EOL;
             cli_separator();
         } else {
             cli_error(get_string('maturitycorewarning', 'admin', $maturitylevel));

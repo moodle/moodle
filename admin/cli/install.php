@@ -414,6 +414,7 @@ if (isset($maturity)) {
             cli_separator();
             cli_heading(get_string('notice'));
             echo get_string('maturitycorewarning', 'admin', $maturitylevel) . PHP_EOL;
+            echo get_string('morehelp') . ': ' . get_docs_url('admin/versions') . PHP_EOL;
             echo get_string('continue') . PHP_LOL;
             $prompt = get_string('cliyesnoprompt', 'admin');
             $input = cli_input($prompt, '', array(get_string('clianswerno', 'admin'), get_string('cliansweryes', 'admin')));
