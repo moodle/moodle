@@ -130,8 +130,8 @@ if (!core_tables_exist()) {
     if (empty($confirmrelease)) {
         $strcurrentrelease = get_string('currentrelease');
         $PAGE->navbar->add($strcurrentrelease);
-        $PAGE->set_title($strinstallation.' - Moodle '.$CFG->target_release);
-        $PAGE->set_heading($strinstallation);
+        $PAGE->set_title($strinstallation);
+        $PAGE->set_heading($strinstallation . ' - Moodle ' . $CFG->target_release);
         $PAGE->set_cacheable(false);
         echo $OUTPUT->header();
         echo $OUTPUT->heading("Moodle $release");
@@ -201,9 +201,8 @@ if ($version > $CFG->version) {  // upgrade
     $strdatabasechecking = get_string('databasechecking', '', $a);
 
     if (empty($confirmupgrade)) {
-        $PAGE->navbar->add($strdatabasechecking);
-        $PAGE->set_title($strdatabasechecking);
-        $PAGE->set_heading($stradministration);
+        $PAGE->set_title($stradministration);
+        $PAGE->set_heading($strdatabasechecking);
         $PAGE->set_cacheable(false);
         echo $OUTPUT->header();
         if (isset($maturity)) {

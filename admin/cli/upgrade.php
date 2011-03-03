@@ -90,6 +90,7 @@ if ($version < $CFG->version) {
     cli_error(get_string('downgradedcore', 'error'));
 }
 
+$oldversion = "$CFG->release ($CFG->version)";
 $newversion = "$release ($version)";
 
 // test environment first
@@ -101,6 +102,13 @@ if (!check_moodle_environment($version, $environment_results, false, ENV_SELECT_
         echo "!! $info !!\n$report\n\n";
     }
     exit(1);
+}
+
+if ($interactive) {
+    $a = new stdClass();
+    $a->oldversion = $oldversion;
+    $a->newversion = $newversion;
+    echo cli_heading(get_string('databasechecking', '', $a)) . PHP_EOL;
 }
 
 // make sure we are upgrading to a stable release or display a warning
