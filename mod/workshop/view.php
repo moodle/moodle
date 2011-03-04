@@ -409,7 +409,7 @@ case workshop::PHASE_EVALUATION:
         print_collapsible_region_start('', 'workshop-viewlet-ownsubmission', get_string('yoursubmission', 'workshop'));
         echo $output->box_start('generalbox ownsubmission');
         if ($submission = $workshop->get_submission_by_author($USER->id)) {
-            echo $output->render(new workshop_submission_summary($submission, true));
+            echo $output->render($workshop->prepare_submission_summary($submission, true));
         } else {
             echo $output->container(get_string('noyoursubmission', 'workshop'));
         }
