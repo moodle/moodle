@@ -68,12 +68,16 @@ To create a new page, type the new page name enclosed in double square brackets,
 $string['formatcreole'] = 'Creole format';
 $string['formatcreole_help'] = 'Creole is a common wiki markup language with an edit toolbar for inserting appropriate markup.
 
-To create a new page, type the new page name enclosed in double square brackets, for example [[Page 2]].';
+To create a new page, type the new page name enclosed in double square brackets, for example [[Page 2]].
+
+To insert image, attach the image files in file manager, then reference the file name using creole markup language.';
 $string['formatcreole_link'] = 'mod/wiki/creole';
 $string['formatnwiki'] = 'NWiki format';
 $string['formatnwiki_help'] = 'Nwiki is the Mediawiki-like markup language used in the contributed Nwiki module.
 
-To create a new page, type the new page name enclosed in double square brackets, for example [[Page 2]].';
+To create a new page, type the new page name enclosed in double square brackets, for example [[Page 2]].
+
+To insert image, attach the image files in file manager, then reference the file name using nwiki markup language.';
 $string['formatnwiki_link'] = 'mod/wiki/nwiki';
 $string['history'] = 'History';
 $string['history_help'] = 'The history lists links to previous versions of the page.';

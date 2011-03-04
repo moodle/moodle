@@ -139,8 +139,8 @@ abstract class generic_parser {
     /**
      * Initialize options
      */
-
-    protected function set_options($options) {}
+    protected function set_options($options) {
+    }
 
     /**
      * Block processing function & callbacks

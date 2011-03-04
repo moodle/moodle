@@ -367,7 +367,7 @@ class page_wiki_edit extends page_wiki {
     function __construct($wiki, $subwiki, $cm) {
         global $CFG, $PAGE;
         parent::__construct($wiki, $subwiki, $cm);
-        self::$attachmentoptions = array('subdirs' => false, 'maxfiles' => - 1, 'maxbytes' => $CFG->maxbytes, 'accepted_types' => '*');
+        self::$attachmentoptions = array('subdirs' => false, 'maxfiles' => - 1, 'maxbytes' => $CFG->maxbytes, 'accepted_types' => 'image');
         $PAGE->requires->js_init_call('M.mod_wiki.renew_lock', null, true);
         $PAGE->requires->yui2_lib('connection');
     }
@@ -540,9 +540,9 @@ class page_wiki_edit extends page_wiki {
             $data = file_prepare_standard_editor($data, 'newcontent', page_wiki_edit::$attachmentoptions, $context, 'mod_wiki', 'attachments', $this->subwiki->id);
             break;
         default:
-            //$draftitemid = file_get_submitted_draft_itemid('attachments');
-            //file_prepare_draft_area($draftitemid, $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
-            //$data->attachments = $draftitemid;
+            $draftitemid = file_get_submitted_draft_itemid('attachments');
+            file_prepare_draft_area($draftitemid, $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
+            $data->attachments = $draftitemid;
             }
 
         if ($version->contentformat != 'html') {
@@ -588,7 +588,6 @@ class page_wiki_edit extends page_wiki {
         if ($this->upload) {
             file_save_draft_area_files($this->attachments, $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
             return null;
-            //return wiki_process_attachments($this->attachments, $this->deleteuploads, $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
         }
     }
 }
@@ -1034,12 +1033,13 @@ class page_wiki_preview extends page_wiki_edit {
         $form = new mod_wiki_edit_form($url, $params);
 
 
-        $options = array('swid' => $this->page->subwikiid, 'pageid' => $this->page->id, 'pretty_print' => true);
+        $options = array('swid' => $this->page->subwikiid, 'pageid' => $this->page->id, 'pretty_print' => true, 'preview'=>true);
 
         if ($data = $form->get_data()) {
             if (isset($data->newcontent)) {
                 // wiki fromat
                 $text = $data->newcontent;
+                $options['itemid'] = $data->attachments;
             } else {
                 // html format
                 $text = $data->newcontent_editor['text'];
@@ -1047,7 +1047,7 @@ class page_wiki_preview extends page_wiki_edit {
             $parseroutput = wiki_parse_content($data->contentformat, $text, $options);
             $this->set_newcontent($text);
             echo $OUTPUT->notification(get_string('previewwarning', 'wiki'), 'notifyproblem wiki_info');
-            $content = format_text($parseroutput['parsed_text'], FORMAT_HTML, array('overflowdiv'=>true));
+            $content = format_text($parseroutput['parsed_text'], FORMAT_HTML, array('overflowdiv'=>true, 'filter'=>false));
             echo $OUTPUT->box($content, 'generalbox wiki_previewbox');
             $content = $this->newcontent;
         }
