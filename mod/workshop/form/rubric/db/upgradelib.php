@@ -92,7 +92,7 @@ function workshopform_rubric_upgrade_legacy_criterion() {
         // reload the mappings - this must be reloaded to that we can run this during recovery
         $newelementids = workshop_upgrade_element_id_mappings('rubric_levels');
 
-        // migrate all grades for these elements (it est the values that reviewers put into forms)
+        // migrate all grades for these elements (i.e. the values that reviewers put into forms)
         echo $OUTPUT->notification('Copying criterion assessment form grades', 'notifysuccess');
         $sql = "SELECT *
                   FROM {workshop_grades_old}
@@ -199,7 +199,7 @@ function workshopform_rubric_upgrade_legacy_rubric() {
         unset($oldweights);
         unset($element);
 
-        // migrate all grades for these elements (it est the values that reviewers put into forms)
+        // migrate all grades for these elements (i.e. the values that reviewers put into forms)
         echo $OUTPUT->notification('Copying rubric assessment form grades', 'notifysuccess');
         $sql = "SELECT *
                   FROM {workshop_grades_old}
