@@ -364,16 +364,25 @@ class mod_quiz_mod_form extends moodleform_mod {
             foreach ($this->_feedbacks as $feedback){
                 $draftid = file_get_submitted_draft_itemid('feedbacktext['.$key.']');
                 $toform['feedbacktext['.$key.']']['text'] = file_prepare_draft_area(
-                    $draftid,       // draftid
-                    $this->context->id,    // context
-                    'mod_quiz',   // component
+                    $draftid,               // draftid
+                    $this->context->id,     // context
+                    'mod_quiz',             // component
                     'feedback',             // filarea
-                    !empty($feedback->id)?(int)$feedback->id:null, // itemid
+                    !empty($feedback->id) ? (int) $feedback->id : null, // itemid
                     null,
-                    $feedback->feedbacktext      // text
+                    $feedback->feedbacktext // text
                 );
                 $toform['feedbacktext['.$key.']']['format'] = $feedback->feedbacktextformat;
                 $toform['feedbacktext['.$key.']']['itemid'] = $draftid;
+
+                if ($toform['grade'] == 0) {
+                    // When a quiz is un-graded, there can only be one lot of
+                    // feedback. If the quiz previously had a maximum grade and
+                    // several lots of feedback, we must now avoid putting text
+                    // into input boxes that are disabled, but which the
+                    // validation will insist are blank.
+                    break;
+                }
 
                 if ($feedback->mingrade > 0) {
                     $toform['feedbackboundaries['.$key.']'] = (100.0 * $feedback->mingrade / $toform['grade']) . '%';
