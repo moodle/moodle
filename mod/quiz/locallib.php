@@ -1390,7 +1390,7 @@ class mod_quiz_display_options extends question_display_options {
 
         $options->attempt = self::extract($quiz->reviewattempt, $when, true, false);
         $options->correctness = self::extract($quiz->reviewcorrectness, $when);
-        $options->marks = self::extract($quiz->reviewmarks, $when, self::MARK_AND_MAX);
+        $options->marks = self::extract($quiz->reviewmarks, $when, self::MARK_AND_MAX, self::MAX_ONLY);
         $options->feedback = self::extract($quiz->reviewspecificfeedback, $when);
         $options->generalfeedback = self::extract($quiz->reviewgeneralfeedback, $when);
         $options->rightanswer = self::extract($quiz->reviewrightanswer, $when);
