@@ -492,11 +492,12 @@ case workshop::PHASE_CLOSED:
         print_collapsible_region_end();
     }
     if (has_capability('mod/workshop:viewpublishedsubmissions', $workshop->context)) {
+        $shownames = has_capability('mod/workshop:viewauthorpublished', $workshop->context);
         if ($submissions = $workshop->get_published_submissions()) {
             print_collapsible_region_start('', 'workshop-viewlet-publicsubmissions', get_string('publishedsubmissions', 'workshop'));
             foreach ($submissions as $submission) {
                 echo $output->box_start('generalbox submission-summary');
-                echo $output->render($workshop->prepare_submission_summary($submission, true));
+                echo $output->render($workshop->prepare_submission_summary($submission, $shownames));
                 echo $output->box_end();
             }
             print_collapsible_region_end();

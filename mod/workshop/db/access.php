@@ -170,6 +170,18 @@ $capabilities = array(
         )
     ),
 
+    // Ability to view the authors of published submissions.
+    'mod/workshop:viewauthorpublished' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     // Ability to always view the assessments of other users' work and the calculated grades, regardless the phase.
     // Applies to the user's group only or - if the user is allowed to access all groups - applies to any assessment
     'mod/workshop:viewallassessments' => array(

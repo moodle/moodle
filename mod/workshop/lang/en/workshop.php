@@ -254,6 +254,7 @@ $string['workshop:view'] = 'View workshop';
 $string['workshop:viewallassessments'] = 'View all assessments';
 $string['workshop:viewallsubmissions'] = 'View all submissions';
 $string['workshop:viewauthornames'] = 'View author names';
+$string['workshop:viewauthorpublished'] = 'View authors of published submissions';
 $string['workshop:viewpublishedsubmissions'] = 'View published submissions';
 $string['workshop:viewreviewernames'] = 'View reviewer names';
 $string['yoursubmission'] = 'Your submission';
