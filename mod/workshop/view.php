@@ -503,6 +503,37 @@ case workshop::PHASE_CLOSED:
             print_collapsible_region_end();
         }
     }
+    if ($assessments = $workshop->get_assessments_by_reviewer($USER->id)) {
+        print_collapsible_region_start('', 'workshop-viewlet-assignedassessments', get_string('assignedassessments', 'workshop'));
+        $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
+        foreach ($assessments as $assessment) {
+            $submission                     = new stdclass();
+            $submission->id                 = $assessment->submissionid;
+            $submission->title              = $assessment->submissiontitle;
+            $submission->timecreated        = $assessment->submissioncreated;
+            $submission->timemodified       = $assessment->submissionmodified;
+            $submission->authorid           = $assessment->authorid;
+            $submission->authorfirstname    = $assessment->authorfirstname;
+            $submission->authorlastname     = $assessment->authorlastname;
+            $submission->authorpicture      = $assessment->authorpicture;
+            $submission->authorimagealt     = $assessment->authorimagealt;
+            $submission->authoremail        = $assessment->authoremail;
+
+            if (is_null($assessment->grade)) {
+                $class = ' notgraded';
+                $submission->status = 'notgraded';
+                $buttontext = get_string('assess', 'workshop');
+            } else {
+                $class = ' graded';
+                $submission->status = 'graded';
+                $buttontext = get_string('reassess', 'workshop');
+            }
+            echo $output->box_start('generalbox assessment-summary' . $class);
+            echo $output->render($workshop->prepare_submission_summary($submission, $shownames));
+            echo $output->box_end();
+        }
+        print_collapsible_region_end();
+    }
     break;
 default:
 }
