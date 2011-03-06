@@ -33,7 +33,7 @@ if ($hascustommenu) {
 if (!empty($PAGE->theme->settings->logo)) {
     $logourl = $PAGE->theme->settings->logo;
 } else {
-    $logourl = $OUTPUT->pix_url('logo_small', 'theme');
+    $logourl = $OUTPUT->pix_url('logo', 'theme');
 }
 
 $hasframe = !isset($PAGE->theme->settings->noframe) || !$PAGE->theme->settings->noframe;
