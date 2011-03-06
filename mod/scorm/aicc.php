@@ -77,7 +77,7 @@
                         if ($sco = scorm_get_sco($scoid)) {
                             $userdata->course_id = $sco->identifier;
                             $userdata->datafromlms = isset($sco->datafromlms)?$sco->datafromlms:'';
-							$userdata->mastery_score = isset($sco->mastery_score)?$sco->mastery_score:'';
+                            $userdata->mastery_score = isset($sco->mastery_score) && is_numeric($sco->mastery_score)?trim($sco->mastery_score):'';
                             $userdata->max_time_allowed = isset($sco->max_time_allowed)?$sco->max_time_allowed:'';
                             $userdata->time_limit_action = isset($sco->time_limit_action)?$sco->time_limit_action:'';
                             echo "error=0\r\nerror_text=Successful\r\naicc_data=";
@@ -135,7 +135,7 @@
                             echo "[Core_Vendor]\r\n".$userdata->datafromlms."\r\n";
                             echo "[Evaluation]\r\nCourse_ID = {".$userdata->course_id."}\r\n";
                             echo "[Student_Data]\r\n";
-							echo 'Mastery_Score='.$userdata->mastery_score."\r\n";
+                            echo 'Mastery_Score='.$userdata->mastery_score."\r\n";
                             echo 'Max_Time_Allowed='.$userdata->max_time_allowed."\r\n";
                             echo 'Time_Limit_Action='.$userdata->time_limit_action."\r\n";
                         } else {
@@ -250,7 +250,7 @@
                                             $value .= $datarow."\r\n";
                                             next($datarows);
                                         }
-										$value = rawurlencode(stripslashes($value));
+                                        $value = rawurlencode(stripslashes($value));
                                         $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
                                     }
                                 }
@@ -260,11 +260,10 @@
                                 $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, 'cmi.core.lesson_status', 'browsed');
                             }
                             if ($mode == 'normal') {
-
                                 if ($sco = scorm_get_sco($scoid)) {
-                                    if (!empty($sco->mastery_score)) {
-                                        if (!empty($score)) {
-                                            if ($score >= $sco->mastery_score) {
+                                    if (isset($sco->mastery_score) && is_numeric($sco->mastery_score)) {
+                                        if ($score != '') { // $score is correctly initialized w/ an empty string, see above
+                                            if ($score >= trim($sco->mastery_score)) {
                                                 $lessonstatus = 'passed';
                                             } else {
                                                 $lessonstatus = 'failed';
