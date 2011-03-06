@@ -196,9 +196,10 @@ abstract class restore_structure_step extends restore_step {
 
     /**
      * Return the new id of a mapping for the given itemname
-     * @param string $itemname the type of item. For example 'scale' or 'outcome'
+     *
+     * @param string $itemname the type of item
      * @param int $oldid the item ID from the backup
-     * @param $ifnotfound what to return if $oldid wasnt found
+     * @param mixed $ifnotfound what to return if $oldid wasnt found. Defaults to false
      */
     public function get_mappingid($itemname, $oldid, $ifnotfound = false) {
         $mapping = $this->get_mapping($itemname, $oldid);
