@@ -804,12 +804,15 @@ ORDER BY
 
     /**
      * @param array $questionids of question ids.
-     * @return bool whether any of these questions are being used by the question engine.
+     * @param qubaid_condition $qubaids ids of the usages to consider.
+     * @return boolean whether any of these questions are being used by any of
+     *      those usages.
      */
-    public function questions_in_use(array $questionids) {
+    public function questions_in_use(array $questionids, qubaid_condition $qubaids) {
         list($test, $params) = $this->db->get_in_or_equal($questionids);
         return $this->db->record_exists_select('question_attempts',
-                'questionid ' . $test, $params);
+                'questionid ' . $test . ' AND questionusageid ' .
+                $qubaids->usage_id_in(), $params + $qubaids->usage_id_in_params());
     }
 }
 

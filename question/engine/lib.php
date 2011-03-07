@@ -128,11 +128,16 @@ abstract class question_engine {
 
     /**
      * @param array $questionids of question ids.
-     * @return bool whether any of these questions are being used by the question engine.
+     * @param qubaid_condition $qubaids ids of the usages to consider.
+     * @return boolean whether any of these questions are being used by any of
+     *      those usages.
      */
-    public static function questions_in_use(array $questionids) {
+    public static function questions_in_use(array $questionids, qubaid_condition $qubaids = null) {
+        if (is_null($qubaids)) {
+            return false;
+        }
         $dm = new question_engine_data_mapper();
-        return $dm->questions_in_use($questionids);
+        return $dm->questions_in_use($questionids, $qubaids);
     }
 
     /**

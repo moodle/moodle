@@ -1162,10 +1162,13 @@ function quiz_get_post_actions() {
  * @return bool whether any of these questions are used by any instance of this module.
  */
 function quiz_questions_in_use($questionids) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->libdir . '/questionlib.php');
     list($test, $params) = $DB->get_in_or_equal($questionids);
     return $DB->record_exists_select('quiz_question_instances',
-            'question ' . $test, $params);
+            'question ' . $test, $params) || question_engine::questions_in_use(
+            $questionids, new qubaid_join($CFG->prefix . 'quiz_attempts quiza',
+            'quiza.uniqueid', 'quiza.preview = 0'));
 }
 
 /**
