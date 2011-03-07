@@ -9300,6 +9300,11 @@ function get_performance_info() {
         $info['txt'] .= "serverload: {$info['serverload']} ";
     }
 
+    // Display size of session
+    $info['sessionsize'] = display_size(strlen(session_encode()));
+    $info['html'] .= '<span class="sessionsize">Session: ' . $info['sessionsize'] . '</span> ';
+    $info['txt'] .= "Session: {$info['sessionsize']} ";
+
 /*    if (isset($rcache->hits) && isset($rcache->misses)) {
         $info['rcachehits'] = $rcache->hits;
         $info['rcachemisses'] = $rcache->misses;
