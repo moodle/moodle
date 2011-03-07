@@ -93,7 +93,7 @@
                         if ($sco = scorm_get_sco($scoid)) {
                             $userdata->course_id = $sco->identifier;
                             $userdata->datafromlms = isset($sco->datafromlms)?$sco->datafromlms:'';
-                            $userdata->mastery_score = isset($sco->mastery_score)?$sco->mastery_score:'';
+                            $userdata->mastery_score = isset($sco->mastery_score) && is_numeric($sco->mastery_score)?trim($sco->mastery_score):'';
                             $userdata->max_time_allowed = isset($sco->max_time_allowed)?$sco->max_time_allowed:'';
                             $userdata->time_limit_action = isset($sco->time_limit_action)?$sco->time_limit_action:'';
 
@@ -278,9 +278,9 @@
                             }
                             if ($mode == 'normal') {
                                 if ($sco = scorm_get_sco($scoid)) {
-                                    if (!empty($sco->mastery_score)) {
-                                        if (!empty($score)) {
-                                            if ($score >= $sco->mastery_score) {
+                                    if (isset($sco->mastery_score) && is_numeric($sco->mastery_score)) {
+                                        if ($score != '') { // $score is correctly initialized w/ an empty string, see above
+                                            if ($score >= trim($sco->mastery_score)) {
                                                 $lessonstatus = 'passed';
                                             } else {
                                                 $lessonstatus = 'failed';
