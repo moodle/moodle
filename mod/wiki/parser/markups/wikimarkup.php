@@ -25,6 +25,10 @@ abstract class wiki_markup_parser extends generic_parser {
 
     //header & ToC
     protected $toc = array();
+    /** @var boolean parse content for preview*/
+    protected $preview = false;
+    /** @var int if preview, itemid will be required to generate file url */
+    protected $itemid  = null;
 
     /**
      * function wiki_parser_link_callback($link = "")
@@ -142,6 +146,10 @@ abstract class wiki_markup_parser extends generic_parser {
                 if ($o) {
                     $this->printable = true;
                 }
+                break;
+            case 'preview':
+                $this->preview = $options['preview'];
+                $this->itemid  = $options['itemid'];
                 break;
             }
         }
@@ -324,7 +332,18 @@ abstract class wiki_markup_parser extends generic_parser {
     }
 
     protected function real_path($url) {
-        $callbackargs = array_merge(array($url), $this->realpathcallbackargs);
+        global $USER;
+        if ($this->preview) {
+            // when preview wiki page, images are in draft area
+            $callbackargs = array();
+            $callbackargs[] = $url;
+            $callbackargs[] = get_context_instance(CONTEXT_USER, $USER->id);
+            $callbackargs[] = 'user';
+            $callbackargs[] = 'draft';
+            $callbackargs[] = $this->itemid;
+        } else {
+            $callbackargs = array_merge(array($url), $this->realpathcallbackargs);
+        }
         return call_user_func_array($this->realpathcallback, $callbackargs);
     }
 
