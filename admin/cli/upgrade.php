@@ -40,8 +40,16 @@ require_once($CFG->libdir.'/environmentlib.php');
 
 
 // now get cli options
-list($options, $unrecognized) = cli_get_params(array('non-interactive'=>false, 'help'=>false),
-                                               array('h'=>'help'));
+list($options, $unrecognized) = cli_get_params(
+    array(
+        'non-interactive'   => false,
+        'allow-unstable'    => false,
+        'help'              => false
+    ),
+    array(
+        'h' => 'help'
+    )
+);
 
 $interactive = empty($options['non-interactive']);
 
@@ -59,6 +67,8 @@ Site defaults may be changed via local/defaults.php.
 
 Options:
 --non-interactive     No interactive questions or confirmations
+--allow-unstable      Upgrade even if the version is not marked as stable yet,
+                      required in non-interactive mode.
 -h, --help            Print out this help
 
 Example:
@@ -73,13 +83,14 @@ if (empty($CFG->version)) {
     cli_error(get_string('missingconfigversion', 'debug'));
 }
 
-require("$CFG->dirroot/version.php");       // defines $version and $release
+require("$CFG->dirroot/version.php");       // defines $version, $release and $maturity
 $CFG->target_release = $release;            // used during installation and upgrades
 
 if ($version < $CFG->version) {
     cli_error(get_string('downgradedcore', 'error'));
 }
 
+$oldversion = "$CFG->release ($CFG->version)";
 $newversion = "$release ($version)";
 
 // test environment first
@@ -91,6 +102,30 @@ if (!check_moodle_environment($version, $environment_results, false, ENV_SELECT_
         echo "!! $info !!\n$report\n\n";
     }
     exit(1);
+}
+
+if ($interactive) {
+    $a = new stdClass();
+    $a->oldversion = $oldversion;
+    $a->newversion = $newversion;
+    echo cli_heading(get_string('databasechecking', '', $a)) . PHP_EOL;
+}
+
+// make sure we are upgrading to a stable release or display a warning
+if (isset($maturity)) {
+    if (($maturity < MATURITY_STABLE) and !$options['allow-unstable']) {
+        $maturitylevel = get_string('maturity'.$maturity, 'admin');
+
+        if ($interactive) {
+            cli_separator();
+            cli_heading(get_string('notice'));
+            echo get_string('maturitycorewarning', 'admin', $maturitylevel) . PHP_EOL;
+            echo get_string('morehelp') . ': ' . get_docs_url('admin/versions') . PHP_EOL;
+            cli_separator();
+        } else {
+            cli_error(get_string('maturitycorewarning', 'admin', $maturitylevel));
+        }
+    }
 }
 
 if ($interactive) {

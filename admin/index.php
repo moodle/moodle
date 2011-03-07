@@ -86,7 +86,7 @@ if (!isset($CFG->version)) {
 
 $version = null;
 $release = null;
-require("$CFG->dirroot/version.php");       // defines $version and $release
+require("$CFG->dirroot/version.php");       // defines $version, $release and $maturity
 $CFG->target_release = $release;            // used during installation and upgrades
 
 if (!$version or !$release) {
@@ -130,14 +130,26 @@ if (!core_tables_exist()) {
     if (empty($confirmrelease)) {
         $strcurrentrelease = get_string('currentrelease');
         $PAGE->navbar->add($strcurrentrelease);
-        $PAGE->set_title($strinstallation.' - Moodle '.$CFG->target_release);
-        $PAGE->set_heading($strinstallation);
+        $PAGE->set_title($strinstallation);
+        $PAGE->set_heading($strinstallation . ' - Moodle ' . $CFG->target_release);
         $PAGE->set_cacheable(false);
         echo $OUTPUT->header();
         echo $OUTPUT->heading("Moodle $release");
+
+        if (isset($maturity)) {
+            // main version.php declares moodle code maturity
+            if ($maturity < MATURITY_STABLE) {
+                $maturitylevel = get_string('maturity'.$maturity, 'admin');
+                echo $OUTPUT->box(
+                    $OUTPUT->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
+                    $OUTPUT->container($OUTPUT->doc_link('admin/versions', get_string('morehelp'))),
+                    'generalbox maturitywarning');
+            }
+        }
+
         $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
-        echo $OUTPUT->box($releasenoteslink, 'generalbox boxaligncenter boxwidthwide');
+        echo $OUTPUT->box($releasenoteslink, 'generalbox releasenoteslink');
 
         require_once($CFG->libdir.'/environmentlib.php');
         if (!check_moodle_environment($release, $environment_results, true, ENV_SELECT_RELEASE)) {
@@ -189,11 +201,20 @@ if ($version > $CFG->version) {  // upgrade
     $strdatabasechecking = get_string('databasechecking', '', $a);
 
     if (empty($confirmupgrade)) {
-        $PAGE->navbar->add($strdatabasechecking);
-        $PAGE->set_title($strdatabasechecking);
-        $PAGE->set_heading($stradministration);
+        $PAGE->set_title($stradministration);
+        $PAGE->set_heading($strdatabasechecking);
         $PAGE->set_cacheable(false);
         echo $OUTPUT->header();
+        if (isset($maturity)) {
+            // main version.php declares moodle code maturity
+            if ($maturity < MATURITY_STABLE) {
+                $maturitylevel = get_string('maturity'.$maturity, 'admin');
+                echo $OUTPUT->box(
+                    $OUTPUT->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
+                    $OUTPUT->container($OUTPUT->doc_link('admin/versions', get_string('morehelp'))),
+                    'generalbox maturitywarning');
+}
+        }
         $continueurl = new moodle_url('index.php', array('confirmupgrade' => 1));
         $cancelurl = new moodle_url('index.php');
         echo $OUTPUT->confirm(get_string('upgradesure', 'admin', $a->newversion), $continueurl, $cancelurl);
