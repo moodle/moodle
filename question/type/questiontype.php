@@ -1354,7 +1354,7 @@ class default_questiontype {
      * @return formatted response
      */
     function format_response($response, $format) {
-        return $this->format_text($response, $format);
+        return s(html_to_text($this->format_text($response, $format), 0, false));
     }
 
     /**

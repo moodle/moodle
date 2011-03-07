@@ -134,7 +134,7 @@ class question_essay_qtype extends default_questiontype {
     function format_response($response, $format) {
         $safeformatoptions = new stdClass();
         $safeformatoptions->para = false;
-        return format_text($response, FORMAT_MOODLE, $safeformatoptions);
+        return s(html_to_text(format_text($response, FORMAT_MOODLE, $safeformatoptions), 0, false));
     }
 
     /**
