@@ -282,6 +282,14 @@ class mod_quiz_mod_form extends moodleform_mod {
             $key = 0;
             foreach ($this->_feedbacks as $feedback){
                 $default_values['feedbacktext['.$key.']'] = $feedback->feedbacktext;
+                if ($default_values['grade'] == 0) {
+                    // When a quiz is un-graded, there can only be one lot of
+                    // feedback. If the quiz previously had a maximum grade and
+                    // several lots of feedback, we must now avoid putting text
+                    // into input boxes that are disabled, but which the
+                    // validation will insist are blank.
+                    break;
+                }
                 if ($feedback->mingrade > 0) {
                     $default_values['feedbackboundaries['.$key.']'] = (100.0 * $feedback->mingrade / $default_values['grade']) . '%';
                 }
