@@ -25,7 +25,6 @@
 
 require_once($CFG->libdir.'/eventslib.php');
 
-
 define ('MESSAGE_SHORTLENGTH', 300);
 
 //$PAGE isnt set if we're being loaded by cron which doesnt display popups anyway
@@ -38,32 +37,16 @@ define ('MESSAGE_DISCUSSION_HEIGHT',500);
 
 define ('MESSAGE_SHORTVIEW_LIMIT', 8);//the maximum number of messages to show on the short message history
 
-define ('CONTACT_ID','id');
-
 define('MESSAGE_HISTORY_SHORT',0);
 define('MESSAGE_HISTORY_ALL',1);
 
-//some constants used as function arguments. Just to make function calls a bit more understandable
-define('IS_CONTACT',true);
-define('IS_NOT_CONTACT',false);
-
-define('IS_BLOCKED',true);
-define('IS_NOT_BLOCKED',false);
-
-define('VIEW_PARAM','viewing');
-
-define('VIEW_UNREAD_MESSAGES','unread');
-define('VIEW_RECENT_CONVERSATIONS','recentconversations');
-define('VIEW_RECENT_NOTIFICATIONS','recentnotifications');
-define('VIEW_CONTACTS','contacts');
-define('VIEW_BLOCKED','blockedusers');
-define('VIEW_COURSE','course_');
-define('VIEW_SEARCH','search');
-
-define('MESSAGE_USER1_PARAM','user1');
-define('MESSAGE_USER2_PARAM','user2');
-
-define('SHOW_ACTION_LINKS_IN_CONTACT_LIST', true);
+define('MESSAGE_VIEW_UNREAD_MESSAGES','unread');
+define('MESSAGE_VIEW_RECENT_CONVERSATIONS','recentconversations');
+define('MESSAGE_VIEW_RECENT_NOTIFICATIONS','recentnotifications');
+define('MESSAGE_VIEW_CONTACTS','contacts');
+define('MESSAGE_VIEW_BLOCKED','blockedusers');
+define('MESSAGE_VIEW_COURSE','course_');
+define('MESSAGE_VIEW_SEARCH','search');
 
 define('MESSAGE_SEARCH_MAX_RESULTS', 200);
 
@@ -84,7 +67,7 @@ if (!isset($CFG->message_offline_time)) {
 * Print the selector that allows the user to view their contacts, course participants, their recent
 * conversations etc
 * @param int $countunreadtotal how many unread messages does the user have?
-* @param int $viewing What is the user viewing? ie VIEW_UNREAD_MESSAGES, VIEW_SEARCH etc
+* @param int $viewing What is the user viewing? ie MESSAGE_VIEW_UNREAD_MESSAGES, MESSAGE_VIEW_SEARCH etc
 * @param object $user1 the user whose messages are being viewed
 * @param object $user2 the user $user1 is talking to
 * @param array $blockedusers an array of users blocked by $user1
@@ -101,13 +84,13 @@ function message_print_contact_selector($countunreadtotal, $viewing, $user1, $us
     echo html_writer::start_tag('div', array('class' => 'contactselector mdl-align'));
 
     //if 0 unread messages and they've requested unread messages then show contacts
-    if ($countunreadtotal == 0 && $viewing == VIEW_UNREAD_MESSAGES) {
-        $viewing = VIEW_CONTACTS;
+    if ($countunreadtotal == 0 && $viewing == MESSAGE_VIEW_UNREAD_MESSAGES) {
+        $viewing = MESSAGE_VIEW_CONTACTS;
     }
 
     //if they have no blocked users and they've requested blocked users switch them over to contacts
-    if (count($blockedusers) == 0 && $viewing == VIEW_BLOCKED) {
-        $viewing = VIEW_CONTACTS;
+    if (count($blockedusers) == 0 && $viewing == MESSAGE_VIEW_BLOCKED) {
+        $viewing = MESSAGE_VIEW_CONTACTS;
     }
 
     $onlyactivecourses = true;
@@ -121,13 +104,13 @@ function message_print_contact_selector($countunreadtotal, $viewing, $user1, $us
 
     message_print_usergroup_selector($viewing, $courses, $coursecontexts, $countunreadtotal, count($blockedusers), $strunreadmessages);
 
-    if ($viewing == VIEW_UNREAD_MESSAGES) {
+    if ($viewing == MESSAGE_VIEW_UNREAD_MESSAGES) {
         message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $PAGE->url, 1, $showcontactactionlinks,$strunreadmessages, $user2);
-    } else if ($viewing == VIEW_CONTACTS || $viewing == VIEW_SEARCH || $viewing == VIEW_RECENT_CONVERSATIONS || $viewing == VIEW_RECENT_NOTIFICATIONS) {
+    } else if ($viewing == MESSAGE_VIEW_CONTACTS || $viewing == MESSAGE_VIEW_SEARCH || $viewing == MESSAGE_VIEW_RECENT_CONVERSATIONS || $viewing == MESSAGE_VIEW_RECENT_NOTIFICATIONS) {
         message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $PAGE->url, 0, $showcontactactionlinks, $strunreadmessages, $user2);
-    } else if ($viewing == VIEW_BLOCKED) {
+    } else if ($viewing == MESSAGE_VIEW_BLOCKED) {
         message_print_blocked_users($blockedusers, $PAGE->url, $showcontactactionlinks, null, $user2);
-    } else if (substr($viewing, 0, 7) == VIEW_COURSE) {
+    } else if (substr($viewing, 0, 7) == MESSAGE_VIEW_COURSE) {
         $courseidtoshow = intval(substr($viewing, 7));
 
         if (!empty($courseidtoshow)
@@ -144,11 +127,11 @@ function message_print_contact_selector($countunreadtotal, $viewing, $user1, $us
     echo html_writer::start_tag('form', array('action' => 'index.php','method' => 'GET'));
     echo html_writer::start_tag('fieldset');
     $managebuttonclass = 'visible';
-    if ($viewing == VIEW_SEARCH) {
+    if ($viewing == MESSAGE_VIEW_SEARCH) {
         $managebuttonclass = 'hiddenelement';
     }
     $strmanagecontacts = get_string('search','message');
-    echo html_writer::empty_tag('input', array('type' => 'hidden','name' => VIEW_PARAM,'value' => VIEW_SEARCH));
+    echo html_writer::empty_tag('input', array('type' => 'hidden','name' => 'viewing','value' => MESSAGE_VIEW_SEARCH));
     echo html_writer::empty_tag('input', array('type' => 'submit','value' => $strmanagecontacts,'class' => $managebuttonclass));
     echo html_writer::end_tag('fieldset');
     echo html_writer::end_tag('form');
@@ -270,8 +253,10 @@ function message_print_blocked_users($blockedusers, $contactselecturl=null, $sho
         echo html_writer::tag('td', get_string('blockedusers', 'message', $countblocked), array('colspan' => 3, 'class' => 'heading'));
         echo html_writer::end_tag('tr');
 
+        $isuserblocked = true;
+        $isusercontact = false;
         foreach ($blockedusers as $blockeduser) {
-            message_print_contactlist_user($blockeduser, IS_NOT_CONTACT, IS_BLOCKED, $contactselecturl, $showactionlinks, $user2);
+            message_print_contactlist_user($blockeduser, $isusercontact, $isuserblocked, $contactselecturl, $showactionlinks, $user2);
         }
     }
 
@@ -377,6 +362,7 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
     $countonlinecontacts  = count($onlinecontacts);
     $countofflinecontacts = count($offlinecontacts);
     $countstrangers       = count($strangers);
+    $isuserblocked = null;
 
     if ($countonlinecontacts + $countofflinecontacts == 0) {
         echo html_writer::tag('div', get_string('contactlistempty', 'message'), array('class' => 'heading'));
@@ -395,9 +381,11 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
             message_print_heading(get_string('onlinecontacts', 'message', $countonlinecontacts));
         }
 
+        $isuserblocked = false;
+        $isusercontact = true;
         foreach ($onlinecontacts as $contact) {
             if ($minmessages == 0 || $contact->messagecount >= $minmessages) {
-                message_print_contactlist_user($contact, IS_CONTACT, IS_NOT_BLOCKED, $contactselecturl, $showactionlinks, $user2);
+                message_print_contactlist_user($contact, $isusercontact, $isuserblocked, $contactselecturl, $showactionlinks, $user2);
             }
         }
     }
@@ -409,9 +397,11 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
             message_print_heading(get_string('offlinecontacts', 'message', $countofflinecontacts));
         }
 
+        $isuserblocked = false;
+        $isusercontact = true;
         foreach ($offlinecontacts as $contact) {
             if ($minmessages == 0 || $contact->messagecount >= $minmessages) {
-                message_print_contactlist_user($contact, IS_CONTACT, IS_NOT_BLOCKED, $contactselecturl, $showactionlinks, $user2);
+                message_print_contactlist_user($contact, $isusercontact, $isuserblocked, $contactselecturl, $showactionlinks, $user2);
             }
         }
 
@@ -421,9 +411,11 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
     if ($countstrangers) {
         message_print_heading(get_string('incomingcontacts', 'message', $countstrangers));
 
+        $isuserblocked = false;
+        $isusercontact = false;
         foreach ($strangers as $stranger) {
             if ($minmessages == 0 || $stranger->messagecount >= $minmessages) {
-                message_print_contactlist_user($stranger, IS_NOT_CONTACT, IS_NOT_BLOCKED, $contactselecturl, $showactionlinks, $user2);
+                message_print_contactlist_user($stranger, $isusercontact, $isuserblocked, $contactselecturl, $showactionlinks, $user2);
             }
         }
     }
@@ -438,7 +430,7 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
 /**
 * Print a select box allowing the user to choose to view new messages, course participants etc.
 * Called by message_print_contact_selector()
-* @param int $viewing What page is the user viewing ie VIEW_UNREAD_MESSAGES, VIEW_RECENT_CONVERSATIONS etc
+* @param int $viewing What page is the user viewing ie MESSAGE_VIEW_UNREAD_MESSAGES, MESSAGE_VIEW_RECENT_CONVERSATIONS etc
 * @param array $courses array of course objects. The courses the user is enrolled in.
 * @param array $coursecontexts array of course contexts. Keyed on course id.
 * @param int $countunreadtotal how many unread messages does the user have?
@@ -451,14 +443,14 @@ function message_print_usergroup_selector($viewing, $courses, $coursecontexts, $
     $textlib = textlib_get_instance(); // going to use textlib services
 
     if ($countunreadtotal>0) { //if there are unread messages
-        $options[VIEW_UNREAD_MESSAGES] = $strunreadmessages;
+        $options[MESSAGE_VIEW_UNREAD_MESSAGES] = $strunreadmessages;
     }
 
     $str = get_string('mycontacts', 'message');
-    $options[VIEW_CONTACTS] = $str;
+    $options[MESSAGE_VIEW_CONTACTS] = $str;
 
-    $options[VIEW_RECENT_CONVERSATIONS] = get_string('mostrecentconversations', 'message');
-    $options[VIEW_RECENT_NOTIFICATIONS] = get_string('mostrecentnotifications', 'message');
+    $options[MESSAGE_VIEW_RECENT_CONVERSATIONS] = get_string('mostrecentconversations', 'message');
+    $options[MESSAGE_VIEW_RECENT_NOTIFICATIONS] = get_string('mostrecentnotifications', 'message');
 
     if (!empty($courses)) {
         $courses_options = array();
@@ -467,9 +459,9 @@ function message_print_usergroup_selector($viewing, $courses, $coursecontexts, $
             if (has_capability('moodle/course:viewparticipants', $coursecontexts[$course->id])) {
                 //Not using short_text() as we want the end of the course name. Not the beginning.
                 if ($textlib->strlen($course->shortname) > MESSAGE_MAX_COURSE_NAME_LENGTH) {
-                    $courses_options[VIEW_COURSE.$course->id] = '...'.$textlib->substr($course->shortname, -MESSAGE_MAX_COURSE_NAME_LENGTH);
+                    $courses_options[MESSAGE_VIEW_COURSE.$course->id] = '...'.$textlib->substr($course->shortname, -MESSAGE_MAX_COURSE_NAME_LENGTH);
                 } else {
-                    $courses_options[VIEW_COURSE.$course->id] = $course->shortname;
+                    $courses_options[MESSAGE_VIEW_COURSE.$course->id] = $course->shortname;
                 }
             }
         }
@@ -481,12 +473,12 @@ function message_print_usergroup_selector($viewing, $courses, $coursecontexts, $
 
     if ($countblocked>0) {
         $str = get_string('blockedusers','message', $countblocked);
-        $options[VIEW_BLOCKED] = $str;
+        $options[MESSAGE_VIEW_BLOCKED] = $str;
     }
 
     echo html_writer::start_tag('form', array('id' => 'usergroupform','method' => 'get','action' => ''));
         echo html_writer::start_tag('fieldset');
-            echo html_writer::select($options, VIEW_PARAM, $viewing, false, array('id' => VIEW_PARAM,'onchange' => 'this.form.submit()'));
+            echo html_writer::select($options, 'viewing', $viewing, false, array('id' => 'viewing','onchange' => 'this.form.submit()'));
         echo html_writer::end_tag('fieldset');
     echo html_writer::end_tag('form');
 }
@@ -2039,7 +2031,7 @@ function message_print_contactlist_user($contact, $incontactlist = true, $isbloc
 
     $link = $action = null;
     if (!empty($selectcontacturl)) {
-        $link = new moodle_url($selectcontacturl.'&'.CONTACT_ID.'='.$contact->id);
+        $link = new moodle_url($selectcontacturl.'&user2='.$contact->id);
     } else {
         //can $selectcontacturl be removed and maybe the be removed and hardcoded?
         $link = new moodle_url("/message/index.php?id=$contact->id");

@@ -37,21 +37,21 @@ if (empty($CFG->messaging)) {
     print_error('disabled', 'message');
 }
 
-//VIEW_PARAM is the preferred URL parameter but we'll still accept usergroup in case its referenced externally
-$usergroup = optional_param('usergroup', VIEW_UNREAD_MESSAGES, PARAM_ALPHANUMEXT);
-$viewing = optional_param(VIEW_PARAM, $usergroup, PARAM_ALPHANUMEXT);
+//'viewing' is the preferred URL parameter but we'll still accept usergroup in case its referenced externally
+$usergroup = optional_param('usergroup', MESSAGE_VIEW_UNREAD_MESSAGES, PARAM_ALPHANUMEXT);
+$viewing = optional_param('viewing', $usergroup, PARAM_ALPHANUMEXT);
 
 $history   = optional_param('history', MESSAGE_HISTORY_SHORT, PARAM_INT);
 $search    = optional_param('search', '', PARAM_CLEAN); //TODO: use PARAM_RAW, but make sure we use s() and p() properly
 
 //the same param as 1.9 and the param we have been logging. Use this parameter.
-$user1id   = optional_param(MESSAGE_USER1_PARAM, $USER->id, PARAM_INT);
+$user1id   = optional_param('user1', $USER->id, PARAM_INT);
 //2.0 shipped using this param. Retaining it only for compatibility. It should be removed.
 $user1id   = optional_param('user', $user1id, PARAM_INT);
 
 //the same param as 1.9 and the param we have been logging. Use this parameter.
-$user2id   = optional_param(MESSAGE_USER2_PARAM, 0, PARAM_INT);
-//2.0 shipped using this param. Retaining it only for compatibility. It should be removed.
+$user2id   = optional_param('user2', 0, PARAM_INT);
+//The class send_form supplies the receiving user id as 'id'
 $user2id   = optional_param('id', $user2id, PARAM_INT);
 
 $addcontact     = optional_param('addcontact',     0, PARAM_INT); // adding a contact
@@ -68,15 +68,15 @@ $page = optional_param('page', 0, PARAM_INT);
 $url = new moodle_url('/message/index.php');
 
 if ($user2id !== 0) {
-    $url->param('id', $user2id);
+    $url->param('user2', $user2id);
 }
 
 if ($user2id !== 0) {
     //Switch view back to contacts if:
     //1) theyve searched and selected a user
     //2) they've viewed recent messages or notifications and clicked through to a user
-    if ($viewing == VIEW_SEARCH || $viewing == VIEW_SEARCH || $viewing == VIEW_RECENT_NOTIFICATIONS) {
-        $viewing = VIEW_CONTACTS;
+    if ($viewing == MESSAGE_VIEW_SEARCH || $viewing == MESSAGE_VIEW_SEARCH || $viewing == MESSAGE_VIEW_RECENT_NOTIFICATIONS) {
+        $viewing = MESSAGE_VIEW_CONTACTS;
     }
 }
 $url->param('viewing', $viewing);
@@ -91,7 +91,7 @@ $context = get_context_instance(CONTEXT_SYSTEM);
 
 $user1 = null;
 $currentuser = true;
-$showcontactactionlinks = SHOW_ACTION_LINKS_IN_CONTACT_LIST;
+$showcontactactionlinks = true;
 if ($user1id != $USER->id) {
     $user1 = $DB->get_record('user', array('id' => $user1id));
     if (!$user1) {
@@ -122,7 +122,7 @@ if ($user1->id != $USER->id && (!empty($user2) && $user2->id != $USER->id) && !h
 if ($addcontact and confirm_sesskey()) {
     add_to_log(SITEID, 'message', 'add contact', 'index.php?user1='.$addcontact.'&amp;user2='.$USER->id, $addcontact);
     message_add_contact($addcontact);
-    redirect($CFG->wwwroot . '/message/index.php?'.VIEW_PARAM.'=contacts&id='.$addcontact);
+    redirect($CFG->wwwroot . '/message/index.php?viewing=contacts&id='.$addcontact);
 }
 if ($removecontact and confirm_sesskey()) {
     add_to_log(SITEID, 'message', 'remove contact', 'index.php?user1='.$removecontact.'&amp;user2='.$USER->id, $removecontact);
@@ -140,7 +140,6 @@ if ($unblockcontact and confirm_sesskey()) {
 //was a message sent? Do NOT allow someone looking at someone else's messages to send them.
 $messageerror = null;
 if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', $context)) {
-
     // Check that the user is not blocking us!!
     if ($contact = $DB->get_record('message_contacts', array('userid' => $user2->id, 'contactid' => $user1->id))) {
         if ($contact->blocked and !has_capability('moodle/site:readallmessages', $context)) {
@@ -167,13 +166,12 @@ if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', 
             if (!confirm_sesskey()) {
                 print_error('invalidsesskey');
             }
-
             $messageid = message_post_message($user1, $user2, $data->message, FORMAT_MOODLE);
             if (!empty($messageid)) {
                 //including the id of the user sending the message in the logged URL so the URL works for admins
                 //note message ID may be misleading as the message may potentially get a different ID when moved from message to message_read
                 add_to_log(SITEID, 'message', 'write', 'index.php?user='.$user1->id.'&id='.$user2->id.'&history=1#m'.$messageid, $user1->id);
-                redirect($CFG->wwwroot . '/message/index.php?'.VIEW_PARAM.'='.$viewing.'&id='.$user2->id);
+                redirect($CFG->wwwroot . '/message/index.php?viewing='.$viewing.'&id='.$user2->id);
             }
         }
     }
@@ -206,16 +204,16 @@ if (!empty($user2)) {
     if ($countunread>0) {
         //mark the messages we're going to display as read
         message_mark_messages_read($user1->id, $user2->id);
-         if($viewing == VIEW_UNREAD_MESSAGES) {
+         if($viewing == MESSAGE_VIEW_UNREAD_MESSAGES) {
              $viewingnewmessages = true;
          }
     }
 }
 $countunreadtotal = message_count_unread_messages($user1);
 
-if ($countunreadtotal == 0 && $viewing == VIEW_UNREAD_MESSAGES && empty($user2)) {
+if ($countunreadtotal == 0 && $viewing == MESSAGE_VIEW_UNREAD_MESSAGES && empty($user2)) {
     //default to showing the search
-    $viewing = VIEW_SEARCH;
+    $viewing = MESSAGE_VIEW_SEARCH;
 }
 
 $blockedusers = message_get_blocked_users($user1, $user2);
@@ -298,11 +296,11 @@ echo html_writer::start_tag('div', array('class' => 'messagearea mdl-align'));
                 }
             echo html_writer::end_tag('div');
         }
-    } else if ($viewing == VIEW_SEARCH) {
+    } else if ($viewing == MESSAGE_VIEW_SEARCH) {
         message_print_search($advancedsearch, $user1);
-    } else if ($viewing == VIEW_RECENT_CONVERSATIONS) {
+    } else if ($viewing == MESSAGE_VIEW_RECENT_CONVERSATIONS) {
         message_print_recent_conversations($user1);
-    } else if ($viewing == VIEW_RECENT_NOTIFICATIONS) {
+    } else if ($viewing == MESSAGE_VIEW_RECENT_NOTIFICATIONS) {
         message_print_recent_notifications($user1);
     }
 echo html_writer::end_tag('div');
