@@ -223,6 +223,14 @@ class question_shortanswer_qtype extends default_questiontype {
         return preg_match($regexp, trim($string));
     }
 
+    /**
+     * @param string response is a response.
+     * @return formatted response
+     */
+    function format_response($response, $format){
+        return s($response);
+    }
+
     /*
      * Override the parent class method, to remove escaping from asterisks.
      */
