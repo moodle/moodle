@@ -3592,6 +3592,32 @@ class admin_settings_country_select extends admin_setting_configselect {
 
 
 /**
+ * admin_setting_configselect for the default number of sections in a course,
+ * simply so we can lazy-load the choices.
+ *
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_settings_num_course_sections extends admin_setting_configselect {
+    public function __construct($name, $visiblename, $description, $defaultsetting) {
+        parent::__construct($name, $visiblename, $description, $defaultsetting, array());
+    }
+
+    /** Lazy-load the available choices for the select box */
+    public function load_choices() {
+        $max = get_config('moodlecourse', 'maxsections');
+        if (empty($max)) {
+            $max = 52;
+        }
+        for ($i = 0; $i <= $max; $i++) {
+            $this->choices[$i] = "$i";
+        }
+        return true;
+    }
+}
+
+
+/**
  * Course category selection
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
