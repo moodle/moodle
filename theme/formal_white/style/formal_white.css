@@ -3,11 +3,11 @@
  ***/
 
 html, body {
-	font-family:Arial, Verdana, Helvetica, sans-serif;
-	margin:0;
-	padding:0;
-	background-color:#EFEFEF;
-	font-size:13px;
+    font-family:Arial, Verdana, Helvetica, sans-serif;
+    margin:0;
+    padding:0;
+    background-color:#EFEFEF;
+    font-size:13px;
 }
 
 a:link {text-decoration:none;}
@@ -19,12 +19,8 @@ h2 {font-size:1.3em;}
 h3 {font-size:1.2em;}
 h4 {font-weight:bold;}
 
-/*#page-header{}*/
-/* if (displaylogo) { */
-    #headerlogo {margin:0.3em;float:left;top:1em;z-index:1;}
-/* } else { */
-    h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:2em;z-index:1;}
-/* } */
+#headerlogo {margin:0.3em;float:left;top:1em;z-index:1;}
+h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:2em;z-index:1;}
 
 /* headermenu */
 .headermenu {float:right;top:1em;z-index:2;}
@@ -57,9 +53,10 @@ table#defineroletable tr.rolecapheading {background-image:url([[pix:theme|gradie
 tr.rolecap {border-top:1px #F30 dashed;}
 tr.rolecapheading + tr.rolecap {border-top:none;}
 
-
  /* course */
 ul.topics .section span.commands {margin-left:2em;} /* distanza dei comandi dagli elementi del corso */
+
+.mform fieldset {border:1px #DDD solid;}
 
 /* block */
 .block {border:1px #C6BDA8 solid;margin-bottom:0.5em;}
@@ -78,11 +75,10 @@ th.header,
 
 /* page-footer */
 #page-footer {text-align:center;width:100%;padding:0;}
-#page-footer_noframe {background-color:#FFF;clear: both;float: left;width:100%;}
-#page-footer_noframe-content {text-align:center;border:7px #E3DFD4 double;margin:0;}
+.noframefooter {background-color:#FFF;clear: both;float: left;width:100%;}
+#page-footer-content {text-align:center;border:7px #E3DFD4 double;margin:0;padding:0.5em;}
 #page-footer .logininfo {padding:0.3em 0 0.7em 0;}
-
-.mform fieldset {border:1px #DDD solid;}
+#page-footer .moodledocs {text-align:center;background-color:#EFEFEF;padding:0.7em 0 0.8em 0;}
 
 /** Custom CSS **/
 [[setting:customcss]]

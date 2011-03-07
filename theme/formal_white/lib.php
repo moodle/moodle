@@ -11,6 +11,14 @@ defined('MOODLE_INTERNAL') || die();
  */
 function formal_white_user_settings($css, $theme) {
 
+    // Set the page header background color
+    if (empty($theme->settings->headerbgc)) {
+        $headerbgc = '#E3DFD4'; // default (o forse è meglio #FEF9F6?)
+    } else {
+        $headerbgc = $theme->settings->headerbgc;
+    }
+    $css = formal_white_set_headerbgc($css, $headerbgc);
+
     // Set the block content background color
     if (empty($theme->settings->blockcontentbgc)) {
         $blockcontentbgc = '#F6F6F6'; // default (o forse è meglio #FEF9F6?)
@@ -53,6 +61,12 @@ function formal_white_user_settings($css, $theme) {
  * Sets the link color variable in CSS
  *
  */
+function formal_white_set_headerbgc($css, $headerbgc) {
+    $tag = '[[setting:headerbgc]]';
+    $css = str_replace($tag, $headerbgc, $css);
+    return $css;
+}
+
 function formal_white_set_blockcontentbgc($css, $blockcontentbgc) {
     $tag = '[[setting:blockcontentbgc]]';
     $css = str_replace($tag, $blockcontentbgc, $css);
@@ -66,25 +80,25 @@ function formal_white_set_blockcolumnbgc($css, $blockcolumnbgc) {
 }
 
 function formal_white_set_logo($css, $logo) {
-	global $OUTPUT;
+    global $OUTPUT;
 
-	$tag = '[[setting:logo]]';
-	if (is_null($logo)) {
- 		$logo = $OUTPUT->pix_url('logo', 'theme');
- 	}
-	$css = str_replace($tag, $logo, $css);
-	return $css;
+    $tag = '[[setting:logo]]';
+    if (is_null($logo)) {
+         $logo = $OUTPUT->pix_url('logo', 'theme');
+     }
+    $css = str_replace($tag, $logo, $css);
+    return $css;
 }
 
 function formal_white_set_blockcolumnwidth($css, $blockcolumnwidth) {
-	$tag = '[[setting:blockcolumnwidth]]';
-	$css = str_replace($tag, $blockcolumnwidth.'px', $css);
+    $tag = '[[setting:blockcolumnwidth]]';
+    $css = str_replace($tag, $blockcolumnwidth.'px', $css);
 
-	$tag = '[[setting:minusdoubleblockcolumnwidth]]';
-	$css = str_replace($tag, (-2*$blockcolumnwidth).'px', $css);
+    $tag = '[[setting:minusdoubleblockcolumnwidth]]';
+    $css = str_replace($tag, (-2*$blockcolumnwidth).'px', $css);
 
-	$tag = '[[setting:doubleblockcolumnwidth]]';
-	$css = str_replace($tag, (2*$blockcolumnwidth).'px', $css);
+    $tag = '[[setting:doubleblockcolumnwidth]]';
+    $css = str_replace($tag, (2*$blockcolumnwidth).'px', $css);
 
-	return $css;
+    return $css;
 }

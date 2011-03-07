@@ -37,7 +37,7 @@
  ****/
 
 #page-header {
-    background-color:#E3DFD4;
+    background-color:[[setting:headerbgc]];
     /* arrotonadamento angoli in alto dell'header */
     -moz-border-radius:6px 6px 0px 0px;    /* Firefox */
     -webkit-border-radius:6px 6px 0px 0px; /* Safari, Chrome */

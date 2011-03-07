@@ -58,7 +58,7 @@
     margin:15px 15px 0;
     background-position:0 0;
     background-repeat:repeat-x;
-	min-width:934px;
+    min-width:934px;
 }
 
 #frametopright,
@@ -97,7 +97,7 @@
 #footerframeright { /* Frame background right */
     background-image:url([[pix:theme|roundcorner/body_r]]);
     background-repeat:repeat-y;
-	background-position:100% 0;
+    background-position:100% 0;
     background-color:transparent;
     /*margin-left:17px;*/
     /*padding-right:17px;*/
@@ -140,17 +140,17 @@
 /*******************************************************************/
 
 #footerwrapper {
-	background-color:white;
-	margin:0 17px 0 17px;
+    background-color:white;
+    margin:0 17px 0 17px;
 }
 
 #footerframetop {
-	margin-top:0;
+    margin-top:0;
 }
 
 #footerwrapper p,
 #footerwrapper div {
-	margin:0;
+    margin:0;
 }
 
 /*******************************************************************/

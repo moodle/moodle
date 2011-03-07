@@ -150,6 +150,7 @@ if ($hasframe) { ?>
 
 
 if ($hasfooter) {
+
     if ($hasframe) { ?>
 
         <!-- START OF FOOTER -->
@@ -159,37 +160,36 @@ if ($hasfooter) {
                     <div id="footerframetopright"><div>&nbsp;</div></div>
                     <div id="footerframeleft"><div id="footerframeright">
 
-                    <!-- the content to show -->
-                    <div id="footerwrapper">
-                        <?php echo $PAGE->theme->settings->footnote; ?>
-                    </div> <!-- end of footerwrapper -->
+                        <!-- the content to show -->
+                        <div id="footerwrapper">
+                            <?php echo $PAGE->theme->settings->footnote; ?>
+                        </div> <!-- end of footerwrapper -->
 
-                </div></div> <!-- </footerframeright></footerframeleft> -->
-                <div id="footerframebottomright"><div>&nbsp;</div></div>
-            </div></div> <!-- </footerframebottom></footerframetop> -->
+                    </div></div> <!-- </footerframeright></footerframeleft> -->
+                    <div id="footerframebottomright"><div>&nbsp;</div></div>
+                </div></div> <!-- </footerframebottom></footerframetop> -->
             <?php }
         //manco di una div da chiudere
 
     } else { ?>
 
         <!-- START OF FOOTER -->
-        <div id="page-footer_noframe">
-            <div id="page-footer_noframe-content">
-                <?php if (!empty($PAGE->theme->settings->footnote)) { ?>
+        <div id="page-footer" class="noframefooter">
+            <?php if (!empty($PAGE->theme->settings->footnote)) { ?>
+                <div id="page-footer-content">
 
                     <!-- the content to show -->
                     <div id="footerwrapper">
                         <?php echo $PAGE->theme->settings->footnote; ?>
                     </div> <!-- end of footerwrapper -->
 
-                </div> <!-- end of footerwrapper -->
-            </div>
+                </div> <!-- end of page-footer_noframe-content -->
             <?php }
         //manco di una div da chiudere
 
     } ?>
 
-            <div class="johndocsleft">
+            <div class="moodledocsleft">
             <?php
                 //echo $OUTPUT->login_info();
                 //echo $OUTPUT->home_link();
@@ -197,12 +197,13 @@ if ($hasfooter) {
             ?>
             </div>
 
-            <div class="johndocs">
+            <div class="moodledocs">
                 <?php echo page_doc_link(get_string('moodledocslink')); ?>
             </div>
+
         </div> <!-- end of page-footer or page-footer_noframe -->
 <?php   //ho chiuso la div di cui mancavo prima
-    }
+}
 
     echo $OUTPUT->standard_end_of_body_html(); ?>
 </body>

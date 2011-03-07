@@ -12,7 +12,17 @@ if ($ADMIN->fulltree) {
     $name = 'theme_formal_white/noframe';
     $title = get_string('noframe','theme_formal_white');
     $description = get_string('noframedesc', 'theme_formal_white');
-    $setting = new admin_setting_configcheckbox($name, $title, $description, 0);
+    $default = '0';
+    $setting = new admin_setting_configcheckbox($name, $title, $description, $default);
+    $settings->add($setting);
+
+    // page header background colour setting
+    $name = 'theme_formal_white/headerbgc';
+    $title = get_string('headerbgc','theme_formal_white');
+    $description = get_string('headerbgcdesc', 'theme_formal_white');
+    $default = '#E3DFD4';
+    $previewconfig = array('selector'=>'#page-header', 'style'=>'backgroundColor');
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
     $settings->add($setting);
 
     // Block background colour setting
