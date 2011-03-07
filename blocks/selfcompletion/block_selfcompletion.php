@@ -54,6 +54,7 @@ class block_selfcompletion extends block_base {
 
         // Don't display if completion isn't enabled!
         if (!$this->page->course->enablecompletion) {
+            $this->content->text = get_string('completionnotenabled', 'block_selfcompletion');
             return $this->content;
         }
 
@@ -68,6 +69,7 @@ class block_selfcompletion extends block_base {
 
         // Check if self completion is one of this course's criteria
         if (empty($completion)) {
+            $this->content->text = get_string('selfcompletionnotenabled', 'block_selfcompletion');
             return $this->content;
         }
 
