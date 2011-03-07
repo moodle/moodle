@@ -556,7 +556,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
         if (empty($grades)) {
             return null;
         }
-        $sumerrors  = 0;    // sum of the weighted errors (ie the negative responses)
+        $sumerrors  = 0;    // sum of the weighted errors (i.e. the negative responses)
         foreach ($grades as $grade) {
             if (grade_floats_different($grade->grade, 1.00000)) {
                 // negative reviewer's response
