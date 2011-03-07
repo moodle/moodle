@@ -318,7 +318,7 @@ class question_shortanswer_qtype extends default_questiontype {
                 // waiting for the new question engine code for a permanent one
                 if(isset($state->options->raw_unitpenalty) && $state->options->raw_unitpenalty > 0.0 ){
                     echo ' ';
-                    print_string('unitappliedpenalty','qtype_numerical',question_format_grade($cmoptions, $state->options->raw_unitpenalty ));
+                    print_string('unitappliedpenalty','qtype_numerical',question_format_grade($cmoptions, $state->options->raw_unitpenalty * $question->maxgrade ));
                 }
                 if ($cmoptions->penaltyscheme) {
                     // print details of grade adjustment due to penalties
