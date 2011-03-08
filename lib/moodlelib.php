@@ -9300,10 +9300,12 @@ function get_performance_info() {
         $info['txt'] .= "serverload: {$info['serverload']} ";
     }
 
-    // Display size of session
-    $info['sessionsize'] = display_size(strlen(session_encode()));
-    $info['html'] .= '<span class="sessionsize">Session: ' . $info['sessionsize'] . '</span> ';
-    $info['txt'] .= "Session: {$info['sessionsize']} ";
+    // Display size of session if session started
+    if (session_id()) {
+        $info['sessionsize'] = display_size(strlen(session_encode()));
+        $info['html'] .= '<span class="sessionsize">Session: ' . $info['sessionsize'] . '</span> ';
+        $info['txt'] .= "Session: {$info['sessionsize']} ";
+    }
 
 /*    if (isset($rcache->hits) && isset($rcache->misses)) {
         $info['rcachehits'] = $rcache->hits;
