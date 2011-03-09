@@ -3,11 +3,6 @@
  **/
 .formtable tbody th {font-weight: normal;text-align: right;}
 
-.plugincompattable td.nonstandard,
-.plugincompattable td.missingplugin {font-weight: bold;}
-.plugincompattable td.standard,
-.plugincompattable td.warning {font-style: normal;}
-
 .path-admin .manageauthtable {width:100%;}
 
 #page-admin-index .c0 {vertical-align: top;}
@@ -174,3 +169,26 @@
 .dir-rtl #adminsettings .form-item  .form-setting,
 .dir-rtl #adminsettings .form-item  .form-label,
 .dir-rtl #adminsettings .form-item .form-description { float: right;text-align: right}
+
+/** Plugins check */
+#page-admin-index #plugins-check-info {text-align:center;margin:1em;}
+#page-admin-index #plugins-check {margin-left:auto; margin-right:auto;}
+#page-admin-index #plugins-check .displayname .pluginicon {width:16px;}
+#page-admin-index #plugins-check .missingfromdisk .displayname {background-color:#ffd3d9;}
+#page-admin-index #plugins-check .standard .source {color:#999;}
+#page-admin-index #plugins-check .extension .source {background-color:#f3f2aa;}
+#page-admin-index #plugins-check .msg td {text-align:center;}
+#page-admin-index #plugins-check .status-downgrade .status {background-color:#ffd3d9;}
+#page-admin-index #plugins-check .status-missing .status {background-color:#ffd3d9;}
+#page-admin-index #plugins-check .status-new .status {background-color:#e7f1c3;}
+#page-admin-index #plugins-check .status-nodb .status {color:#999;}
+#page-admin-index #plugins-check .status-upgrade .status {background-color:#d2ebff;}
+#page-admin-index #plugins-check .status-uptodate .status {color:#999;}
+
+/** Plugins management */
+#page-admin-plugins #plugins-control-panel {margin-left:auto; margin-right:auto;}
+#page-admin-plugins #plugins-control-panel .displayname .pluginicon {width:16px;}
+#page-admin-plugins #plugins-control-panel .missingfromdisk .displayname {background-color:#ffd3d9;}
+#page-admin-plugins #plugins-control-panel .disabled .availability {background-color:#eee;}
+#page-admin-plugins #plugins-control-panel .extension .source {background-color:#f3f2aa;}
+#page-admin-plugins #plugins-control-panel .msg td {text-align:center;}

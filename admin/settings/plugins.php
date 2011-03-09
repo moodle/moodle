@@ -5,6 +5,7 @@
  */
 
 if ($hassiteconfig) {
+    $ADMIN->add('modules', new admin_page_pluginsoverview());
     $ADMIN->add('modules', new admin_category('modsettings', get_string('activitymodules')));
     $ADMIN->add('modsettings', new admin_page_managemods());
     $modules = $DB->get_records('modules', array(), "name ASC");

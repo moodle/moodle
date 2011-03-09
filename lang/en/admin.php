@@ -800,6 +800,7 @@ $string['pleaserefreshregistration'] = 'Your site has been registered with moodl
 $string['pleaseregister'] = 'Please register your site to remove this button';
 $string['plugin'] = 'Plugin';
 $string['plugins'] = 'Plugins';
+$string['pluginsoverview'] = 'Plugins overview';
 $string['profilecategory'] = 'Category';
 $string['profilecategoryname'] = 'Category name (must be unique)';
 $string['profilecategorynamenotunique'] = 'This category name is already in use';
