@@ -411,7 +411,7 @@ class page_requirements_manager {
                                                         array('saving', 'repository'), array('search', 'repository'), array('searching', 'repository'), array('size', 'repository'),
                                                         array('submit', 'repository'), array('sync', 'repository'), array('title', 'repository'), array('upload', 'repository'),
                                                         array('uploading', 'repository'), array('xhtmlerror', 'repository'),
-                                                        array('xhtml', 'quiz'), array('cancel'), array('chooselicense', 'repository'), array('author', 'repository'),
+                                                        array('cancel'), array('chooselicense', 'repository'), array('author', 'repository'),
                                                         array('ok', 'moodle'), array('error', 'moodle'), array('info', 'moodle'), array('norepositoriesavailable', 'repository'), array('norepositoriesexternalavailable', 'repository'),
                                                         array('nofilesattached', 'repository'), array('filepicker', 'repository'),
                                                         array('nofilesavailable', 'repository')

@@ -812,7 +812,7 @@ M.core_filepicker.init = function(Y, options) {
             try {
                 panel.set('innerHTML', str);
             } catch(e) {
-                alert(e.toString()+M.str.quiz.xhtml);
+                alert(M.str.repository.xhtmlerror);
             }
             // register buttons
             // process login action
