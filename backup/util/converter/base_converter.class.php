@@ -33,13 +33,13 @@ abstract class base_converter {
     public function get_convertdir() {
         global $CFG;
 
-        return "$CFG->dirroot/backup/temp/$this->convertdir";
+        return "$CFG->dataroot/temp/backup/$this->convertdir";
     }
 
     public function get_tempdir() {
         global $CFG;
 
-        return "$CFG->dirroot/backup/temp/$this->tempdir";
+        return "$CFG->dataroot/temp/backup/$this->tempdir";
     }
 
     public function delete_convertdir() {

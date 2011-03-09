@@ -3,14 +3,13 @@
  * Convert Plan
  */
 class convert_plan extends base_plan implements loggable {
-
+    /**
+     * @var plan_converter
+     */
     protected $converter;
 
     public function __construct(plan_converter $converter) {
-        global $CFG;
-
         $this->converter = $converter;
-        $this->basepath   = $CFG->dataroot . '/temp/backup/' . $converter->get_backupid();
         parent::__construct('convert_plan');
     }
 
@@ -21,6 +20,10 @@ class convert_plan extends base_plan implements loggable {
      */
     public function log($message, $level, $a = null, $depth = null, $display = false) {
         // TODO: Implement log() method.
+    }
+
+    public function get_basepath() {
+        return $this->converter->get_convertdir();
     }
 
     public function get_converterid() {
