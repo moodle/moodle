@@ -599,6 +599,37 @@ class embedded_cloze_qtype extends default_questiontype {
         echo '</div>';
     }
 
+    public function compare_responses($question, $state, $teststate) {
+        global $QTYPES;
+
+        foreach ($question->options->questions as $key => $wrapped) {
+            if (empty($wrapped)) {
+                continue;
+            }
+
+            $stateforquestion = clone($state);
+            if (isset($state->responses[$key])) {
+                $stateforquestion->responses[''] = $state->responses[$key];
+            } else {
+                $stateforquestion->responses[''] = '';
+            }
+
+            $teststateforquestion = clone($teststate);
+            if (isset($teststate->responses[$key])) {
+                $teststateforquestion->responses[''] = $teststate->responses[$key];
+            } else {
+                $teststateforquestion->responses[''] = '';
+            }
+
+            if (!$QTYPES[$wrapped->qtype]->compare_responses($wrapped,
+                    $stateforquestion, $teststateforquestion)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     function grade_responses(&$question, &$state, $cmoptions) {
         global $QTYPES;
         $teststate = clone($state);
