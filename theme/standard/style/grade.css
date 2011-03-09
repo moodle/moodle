@@ -18,7 +18,7 @@ td.grade div.overridden {background-color: #DDDDDD;}
 .path-grade-report-grader .graderreportoverlay {background-color:#EEEEEE;border:1px solid black;padding:10px;}
 
 .path-grade-edit-tree .moving {background-color: #E8EEF7;}
-.path-grade-edit-tree .gradetreebox {width:70%;padding-bottom:15px;overflow-x:auto;overflow-y:hidden;}
+.path-grade-edit-tree .gradetreebox {width:70%;padding-bottom:15px;}
 
 .path-grade-edit-scale .scale_options,
 #page-admin-grade-edit-scale-index .scale_options {font-size: 0.8em;}
