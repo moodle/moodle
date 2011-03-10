@@ -56,6 +56,7 @@ $THEME->parents_exclude_sheets = array(
         'core',
         'pagelayout',
         'tabs',
+        'tables',
     ),
 );
 ////////////////////////////////////////////////////

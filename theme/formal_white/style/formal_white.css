@@ -42,6 +42,30 @@ h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:2em;z-index:1;}
 /* generalbox */
 .generalbox {border-color:#E3DFD4;}
 
+/* tables */
+.editcourse th,
+.editcourse td,
+.generaltable th,
+.generaltable td,
+#page-admin-course-category .generalbox th,
+#page-admin-course-category .generalbox td,
+#attempts th,
+#attempts td,
+.plugincompattable th,
+.plugincompattable td,
+.environmenttable th,
+.environmenttable td,
+.forumheaderlist td,
+.forumheaderlist th {
+	border: 1px solid #E3DFD4;
+	border-collapse: collapse;
+}
+th.header,
+.formtable tbody th,
+.generalbox th,
+.generaltable th.header {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px #C6BDA8 solid;background-color:#E3DFD4;}
+/*#modules, .compatibleblockstable {margin-left:auto; margin-right:auto;} waiting for MDL-26760*/
+
 /* admin pages */
 div#chooseuser {border:0 transparent none;}
 table.groupmanagementtable,
@@ -52,6 +76,9 @@ table#defineroletable tr.rolecapheading {background-image:url([[pix:theme|gradie
 /*table#defineroletable tr.rolecap {border-top:1px #F30 dashed;}*/
 tr.rolecap {border-top:1px #F30 dashed;}
 tr.rolecapheading + tr.rolecap {border-top:none;}
+
+ /* course categories */
+#page-admin-course-index .editcourse td div.singleselect {text-align:left;}
 
  /* course */
 ul.topics .section span.commands {margin-left:2em;} /* distanza dei comandi dagli elementi del corso */
@@ -68,10 +95,9 @@ ul.topics .section span.commands {margin-left:2em;} /* distanza dei comandi dagl
 /* block login */
 .block_login .btn {margin-top:0.5em;text-align:center;}
 
-/* tables header */
-th.header,
-.formtable tbody th,
-.generaltable th.header {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px #C6BDA8 solid;background-color:#E3DFD4;}
+/* pagelayout-report */
+.pagelayout-report #page-header {float:left;}
+.pagelayout-report #page-content {overflow:hidden;}
 
 /* page-footer */
 #page-footer {text-align:center;width:100%;padding:0;}
