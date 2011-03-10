@@ -270,6 +270,12 @@ class test_question_maker {
         $essay->penalty = 0;
         $essay->qtype = question_bank::get_qtype('essay');
 
+        $essay->responseformat = 'editor';
+        $essay->responsefieldlines = 15;
+        $essay->attachments = 0;
+        $essay->graderinfo = '';
+        $essay->graderinfoformat = FORMAT_MOODLE;
+
         return $essay;
     }
 

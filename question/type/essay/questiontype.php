@@ -39,6 +39,77 @@ class qtype_essay extends question_type {
         return true;
     }
 
+    public function get_question_options($question) {
+        global $DB;
+        $question->options = $DB->get_record('qtype_essay_options', array('questionid' => $question->id), '*', MUST_EXIST);
+        parent::get_question_options($question);
+    }
+
+    public function save_question_options($formdata) {
+        global $DB;
+        $context = $formdata->context;
+
+        $options = $DB->get_record('qtype_essay_options', array('questionid' => $formdata->id));
+        if (!$options) {
+            $options = new stdClass();
+            $options->id = $DB->insert_record('qtype_essay_options', $options);
+        }
+
+        $options->responseformat = $formdata->responseformat;
+        $options->responsefieldlines = $formdata->responsefieldlines;
+        $options->attachments = $formdata->attachments;
+        $options->graderinfo = $this->import_or_save_files($formdata->graderinfo,
+                $context, 'qtype_essay', 'graderinfo', $formdata->id);
+        $options->graderinfoformat = $formdata->graderinfo['format'];
+        $DB->update_record('qtype_essay_options', $options);
+    }
+
+    protected function initialise_question_instance(question_definition $question, $questiondata) {
+        parent::initialise_question_instance($question, $questiondata);
+        $question->responseformat = $questiondata->options->responseformat;
+        $question->responsefieldlines = $questiondata->options->responsefieldlines;
+        $question->attachments = $questiondata->options->attachments;
+        $question->graderinfo = $questiondata->options->graderinfo;
+        $question->graderinfoformat = $questiondata->options->graderinfoformat;
+    }
+
+    /**
+     * @return array the different response formats that the question type supports.
+     * internal name => human-readable name.
+     */
+    public function respones_formats() {
+        return array(
+            'editor' => get_string('formateditor', 'qtype_essay'),
+            'editorfilepicker' => get_string('formateditorfilepicker', 'qtype_essay'),
+            'plain' => get_string('formatplain', 'qtype_essay'),
+            'monospaced' => get_string('formatmonospaced', 'qtype_essay'),
+        );
+    }
+
+    /**
+     * @return array the choices that should be offered for the input box size.
+     */
+    public function respones_sizes() {
+        $choices = array();
+        for ($lines = 5; $lines <= 40; $lines += 5) {
+            $choices[$lines] = get_string('nlines', 'qtype_essay', $lines);
+        }
+        return $choices;
+    }
+
+    /**
+     * @return array the choices that should be offered for the number of attachments.
+     */
+    public function attachment_options() {
+        return array(
+            0 => get_string('no'),
+            1 => '1',
+            2 => '2',
+            3 => '3',
+            -1 => get_string('unlimited'),
+        );
+    }
+
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
         $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);

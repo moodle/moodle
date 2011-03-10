@@ -35,6 +35,12 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_essay_question extends question_with_responses {
+    public $responseformat;
+    public $responsefieldlines;
+    public $attachments;
+    public $graderinfo;
+    public $graderinfoformat;
+
     public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
         question_engine::load_behaviour_class('manualgraded');
         return new qbehaviour_manualgraded($qa, $preferredbehaviour);

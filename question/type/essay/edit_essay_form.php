@@ -35,6 +35,54 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_essay_edit_form extends question_edit_form {
+
+    protected function definition_inner($mform) {
+        $qtype = question_bank::get_qtype('essay');
+
+        $mform->addElement('select', 'responseformat',
+                get_string('responseformat', 'qtype_essay'), $qtype->respones_formats());
+        $mform->setDefault('responseformat', 'editor');
+
+        $mform->addElement('select', 'responsefieldlines',
+                get_string('responsefieldlines', 'qtype_essay'), $qtype->respones_sizes());
+        $mform->setDefault('responsefieldlines', 15);
+
+        $mform->addElement('select', 'attachments',
+                get_string('allowattachments', 'qtype_essay'), $qtype->attachment_options());
+        $mform->setDefault('attachments', 0);
+
+        $mform->addElement('editor', 'graderinfo', get_string('graderinfo', 'qtype_essay'),
+                array('rows' => 10), $this->editoroptions);
+    }
+
+    function data_preprocessing($question) {
+        $question = parent::data_preprocessing($question);
+
+        if (empty($question->options)) {
+            return $question;
+        }
+
+        $question->responseformat = $question->options->responseformat;
+        $question->responsefieldlines = $question->options->responsefieldlines;
+        $question->attachments = $question->options->attachments;
+
+        $draftid = file_get_submitted_draft_itemid('graderinfo');
+        $question->graderinfo = array();
+        $question->graderinfo['text'] = file_prepare_draft_area(
+            $draftid,           // draftid
+            $this->context->id, // context
+            'qtype_essay',      // component
+            'graderinfo',       // filarea
+            !empty($question->id) ? (int) $question->id : null, // itemid
+            $this->fileoptions, // options
+            $question->options->graderinfo // text
+        );
+        $question->graderinfo['format'] = $question->options->graderinfoformat;
+        $question->graderinfo['itemid'] = $draftid;
+
+        return $question;
+    }
+
     public function qtype() {
         return 'essay';
     }
