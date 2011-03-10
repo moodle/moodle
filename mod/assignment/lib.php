@@ -1215,7 +1215,7 @@ class assignment_base {
         }
 
         $tableheaders = array('',
-                              get_string('fullname'),
+                              get_string('fullnameuser'),
                               get_string('grade'),
                               get_string('comment', 'assignment'),
                               get_string('lastmodified').' ('.get_string('submission', 'assignment').')',

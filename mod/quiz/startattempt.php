@@ -74,7 +74,7 @@ if ($lastattempt && !$lastattempt->timefinish) {
 
 /// Get number for the next or unfinished attempt
 if ($lastattempt && !$lastattempt->preview && !$quizobj->is_preview_user()) {
-    $lastattemptid = $lastattempt->id;
+    $lastattemptid = $lastattempt->uniqueid;
     $attemptnumber = $lastattempt->attempt + 1;
 } else {
     $lastattempt = false;

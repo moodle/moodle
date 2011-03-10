@@ -42,7 +42,7 @@ $capabilities = array(
         )
     ),
 
-    // Ability to change the current phase (stage) of the workshop, it est for example
+    // Ability to change the current phase (stage) of the workshop, for example
     // allow submitting, start assessment period, close workshop etc.
     'mod/workshop:switchphase' => array(
         'captype' => 'write',
@@ -110,7 +110,7 @@ $capabilities = array(
         )
     ),
 
-    // Ability to publish submissions, it est make them available when workshop is closed
+    // Ability to publish submissions, i.e. make them available when workshop is closed
     'mod/workshop:publishsubmissions' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
@@ -134,7 +134,7 @@ $capabilities = array(
         )
     ),
 
-    // Ability to identify the reviewer of the given submission (ie the owner of the assessment)
+    // Ability to identify the reviewer of the given submission (i.e. the owner of the assessment)
     'mod/workshop:viewreviewernames' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
@@ -160,6 +160,18 @@ $capabilities = array(
     // Ability to view published submission when the workshop is closed. Applies to the user's group only
     // or - if the user is allowed to access all groups - applies to any submission
     'mod/workshop:viewpublishedsubmissions' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    // Ability to view the authors of published submissions.
+    'mod/workshop:viewauthorpublished' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(

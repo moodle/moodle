@@ -347,7 +347,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     $table->head = array(
         get_string('time'),
         get_string('ip_address'),
-        get_string('fullname'),
+        get_string('fullnamecourse'),
         get_string('action'),
         get_string('info')
     );

@@ -129,6 +129,45 @@ abstract class backup_plan_dbops extends backup_dbops {
     }
 
     /**
+     * Given a course id, returns its theme. This can either be the course
+     * theme or (if not specified in course) the category, site theme.
+     *
+     * User, session, and inherited-from-mnet themes cannot have backed-up
+     * per course data. This is course-related data so it must be in a course
+     * theme specified as part of the course structure
+     * @param int $courseid
+     * @return string Name of course theme
+     * @see moodle_page#resolve_theme()
+     */
+    public static function get_theme_from_courseid($courseid) {
+        global $DB, $CFG;
+
+        // Course theme first
+        if (!empty($CFG->allowcoursethemes)) {
+            $theme = $DB->get_field('course', 'theme', array('id' => $courseid));
+            if ($theme) {
+                return $theme;
+            }
+        }
+
+        // Category themes in reverse order
+        if (!empty($CFG->allowcategorythemes)) {
+            $catid = $DB->get_field('course', 'category', array('id' => $courseid));
+            while($catid) {
+                $category = $DB->get_record('course_categories', array('id'=>$catid),
+                        'theme,parent', MUST_EXIST);
+                if ($category->theme) {
+                    return $category->theme;
+                }
+                $catid = $category->parent;
+            }
+        }
+
+        // Finally use site theme
+        return $CFG->theme;
+    }
+
+    /**
      * Return the wwwroot of the $CFG->mnet_localhost_id host
      * caching it along the request
      */

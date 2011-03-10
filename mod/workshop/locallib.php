@@ -458,7 +458,7 @@ class workshop {
     }
 
     /**
-     * Returns the list of all allocations (it est assigned assessments) in the workshop
+     * Returns the list of all allocations (i.e. assigned assessments) in the workshop
      *
      * Assessments of example submissions are ignored
      *
@@ -721,7 +721,7 @@ class workshop {
      * Returns the list of all assessments in the workshop with some data added
      *
      * Fetches data from {workshop_assessments} and adds some useful information from other
-     * tables. The returned object does not contain textual fields (ie comments) to prevent memory
+     * tables. The returned object does not contain textual fields (i.e. comments) to prevent memory
      * lack issues.
      *
      * @return array [assessmentid] => assessment stdclass
@@ -2397,7 +2397,7 @@ class workshop_user_plan implements renderable {
  */
 abstract class workshop_submission_base {
 
-    /** @var bool is the submission anonymous (ie contains author information) */
+    /** @var bool is the submission anonymous (i.e. contains author information) */
     protected $anonymous;
 
     /* @var array of columns from workshop_submissions that are assigned as properties */

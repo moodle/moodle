@@ -1015,6 +1015,19 @@ class dml_test extends UnitTestCase {
         $inskey6 = $DB->insert_record($tablename, array('course' => 1));
         $inskey7 = $DB->insert_record($tablename, array('course' => 0));
 
+        $table2 = $this->get_test_table("2");
+        $tablename2 = $table2->getName();
+        $table2->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table2->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table2->add_field('nametext', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
+        $table2->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table2);
+
+        $DB->insert_record($tablename2, array('course'=>3, 'nametext'=>'badabing'));
+        $DB->insert_record($tablename2, array('course'=>4, 'nametext'=>'badabang'));
+        $DB->insert_record($tablename2, array('course'=>5, 'nametext'=>'badabung'));
+        $DB->insert_record($tablename2, array('course'=>6, 'nametext'=>'badabong'));
+
         $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE course = ?", array(3));
         $this->assertEqual(2, count($records));
         $this->assertEqual($inskey1, reset($records)->id);
@@ -1067,6 +1080,28 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(2, count($records));
         $this->assertEqual($inskey3, reset($records)->id);
         $this->assertEqual($inskey2, end($records)->id);
+
+        // test 2 tables with aliases and limits with order bys
+        $sql = "SELECT t1.id, t1.course AS cid, t2.nametext FROM {{$tablename}} t1, {{$tablename2}} t2
+            WHERE t2.course=t1.course ORDER BY t1.course, ". $DB->sql_compare_text('t2.nametext');
+        $records = $DB->get_records_sql($sql, null, 2, 2); // Skip courses 3 and 6, get 4 and 5
+        $this->assertEqual(2, count($records));
+        $this->assertEqual('5', end($records)->cid);
+        $this->assertEqual('4', reset($records)->cid);
+
+        // test 2 tables with aliases and limits with order bys (limit which is out  of range)
+        $records = $DB->get_records_sql($sql, null, 2, 21098765432109876543210); // Skip course {3,6}, get {4,5}
+        $this->assertEqual(2, count($records));
+        $this->assertEqual('5', end($records)->cid);
+        $this->assertEqual('4', reset($records)->cid);
+
+        // test 2 tables with aliases and limits with order bys (limit which is out  of range)
+        $records = $DB->get_records_sql($sql, null, 21098765432109876543210, 2); // Skip all courses
+        $this->assertEqual(0, count($records));
+
+        // test 2 tables with aliases and limits with order bys (limit which is out  of range)
+        $records = $DB->get_records_sql($sql, null, 21098765432109876543210, 21098765432109876543210); // Skip all courses
+        $this->assertEqual(0, count($records));
 
         // TODO: Test limits in queries having DISTINCT clauses
 
@@ -2040,6 +2075,7 @@ class dml_test extends UnitTestCase {
         $record = $DB->get_record($tablename, array('course' => 2));
         $this->assertEqual($newclob, $record->onetext, 'Test "small" CLOB update (full contents output disabled)');
         $this->assertEqual($newblob, $record->onebinary, 'Test "small" BLOB update (full contents output disabled)');
+
     }
 
     public function test_set_field() {
@@ -2399,6 +2435,70 @@ class dml_test extends UnitTestCase {
         $DB->insert_record($tablename, array('course' => 3));
 
         $this->assertTrue($DB->record_exists_sql("SELECT * FROM {{$tablename}} WHERE course = ?", array(3)));
+    }
+
+    public function test_recordset_locks_delete() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        //Setup
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $DB->insert_record($tablename, array('course' => 1));
+        $DB->insert_record($tablename, array('course' => 2));
+        $DB->insert_record($tablename, array('course' => 3));
+        $DB->insert_record($tablename, array('course' => 4));
+        $DB->insert_record($tablename, array('course' => 5));
+        $DB->insert_record($tablename, array('course' => 6));
+
+        // Test against db write locking while on an open recordset
+        $rs = $DB->get_recordset($tablename, array(), null, 'course', 2, 2); // get courses = {3,4}
+        foreach ($rs as $record) {
+            $cid = $record->course;
+            $DB->delete_records($tablename, array('course' => $cid));
+            $this->assertFalse($DB->record_exists($tablename, array('course' => $cid)));
+        }
+        $rs->close();
+
+        $this->assertEqual(4, $DB->count_records($tablename, array()));
+    }
+
+    public function test_recordset_locks_update() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        //Setup
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $DB->insert_record($tablename, array('course' => 1));
+        $DB->insert_record($tablename, array('course' => 2));
+        $DB->insert_record($tablename, array('course' => 3));
+        $DB->insert_record($tablename, array('course' => 4));
+        $DB->insert_record($tablename, array('course' => 5));
+        $DB->insert_record($tablename, array('course' => 6));
+
+        // Test against db write locking while on an open recordset
+        $rs = $DB->get_recordset($tablename, array(), null, 'course', 2, 2); // get courses = {3,4}
+        foreach ($rs as $record) {
+            $cid = $record->course;
+            $DB->set_field($tablename, 'course', 10, array('course' => $cid));
+            $this->assertFalse($DB->record_exists($tablename, array('course' => $cid)));
+        }
+        $rs->close();
+
+        $this->assertEqual(2, $DB->count_records($tablename, array('course' => 10)));
     }
 
     public function test_delete_records() {

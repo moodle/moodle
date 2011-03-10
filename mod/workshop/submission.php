@@ -72,6 +72,9 @@ $canoverride    = (($workshop->phase == workshop::PHASE_EVALUATION) and has_capa
 $userassessment = $workshop->get_assessment_of_submission_by_user($submission->id, $USER->id);
 $isreviewer     = !empty($userassessment);
 $editable       = ($cansubmit and $ownsubmission);
+$ispublished    = ($workshop->phase == workshop::PHASE_CLOSED
+                    and $submission->published == 1
+                    and has_capability('mod/workshop:viewpublishedsubmissions', $workshop->context));
 
 if (empty($submission->id) and !$workshop->creating_submission_allowed()) {
     $editable = false;
@@ -93,8 +96,13 @@ if ($editable and $workshop->useexamples and $workshop->examplesmode == workshop
 }
 $edit = ($editable and $edit);
 
+$seenaspublished = false; // is the submission seen as a published submission?
+
 if ($submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
     // ok you can go
+} elseif ($submission->id and $ispublished) {
+    // ok you can go
+    $seenaspublished = true;
 } elseif (is_null($submission->id) and $cansubmit) {
     // ok you can go
 } else {
@@ -238,7 +246,12 @@ if ($edit) {
 // else display the submission
 
 if ($submission->id) {
-    echo $output->render($workshop->prepare_submission($submission, has_capability('mod/workshop:viewauthornames', $workshop->context)));
+    if ($seenaspublished) {
+        $showauthor = has_capability('mod/workshop:viewauthorpublished', $workshop->context);
+    } else {
+        $showauthor = has_capability('mod/workshop:viewauthornames', $workshop->context);
+    }
+    echo $output->render($workshop->prepare_submission($submission, $showauthor));
 } else {
     echo $output->box(get_string('noyoursubmission', 'workshop'));
 }

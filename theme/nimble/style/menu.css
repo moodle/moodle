@@ -1,0 +1,208 @@
+#custommenu {
+	font-size: 1.2em;
+	line-height: 1.2;
+	float: left;
+	width:60%;
+}
+
+.yui3-skin-sam .yui3-menu-content, 
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-content {
+	border: none;
+	padding: 0 !important;
+}
+
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-content {
+	
+    padding: 5px 0;
+    color: #fff;
+}
+
+
+/* Horizontal menus */
+
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-content {
+
+
+}
+
+
+.yui3-skin-sam .yui3-menu ul,
+.yui3-skin-sam .yui3-menu ul ul {
+
+}
+
+.yui3-skin-sam .yui3-menu ul.first-of-type {
+}
+
+.yui3-skin-sam .yui3-menu-horizontal ul {
+}
+
+
+.yui3-skin-sam .yui3-menu li,
+.yui3-skin-sam .yui3-menu .yui3-menu li {
+
+}
+
+.yui3-skin-sam .yui3-menu-horizontal li {
+
+}
+
+.yui3-skin-sam .yui3-menubuttonnav li {
+
+}
+
+.yui3-skin-sam .yui3-splitbuttonnav li {
+
+}
+
+.yui3-skin-sam .yui3-menubuttonnav li li,
+.yui3-skin-sam .yui3-splitbuttonnav li li {
+
+}
+
+
+/* Menuitems and menu labels */
+
+
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu {
+	background: #333 !important;
+}
+.custom_menu_submenu .custom_menu_submenu {
+	
+}
+
+
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu {
+	padding-top: 0;
+	background: none;
+}
+
+.yui3-skin-sam .yui3-menuitem-content,
+.yui3-skin-sam .yui3-menu-label {
+	color: #fff !important;
+}
+
+.yui3-skin-sam .yui3-menuitem-content,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menuitem-content {
+	padding-top: 3px;
+	padding-bottom: 4px;
+	color: #fff !important;
+
+}
+
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label,
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-content {
+	color: #fff !important;
+}
+
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu .yui3-menuitem-active .yui3-menuitem-content {
+	color: #fff;
+	background-color: #333;
+
+}
+
+.yui3-skin-sam .yui3-menu-label,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label {
+	padding-top: 3px;
+	padding-bottom: 4px;
+	border-radius:0;
+	-moz-border-radius: 0;
+	-webkit-border-radius: 0;
+	color: #fff !important;
+
+}
+
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label {
+	border: solid #555;
+	border-width: 1px 1px 0 1px;
+	padding: 0 20px 0 20px;
+	margin: 0 10px 0 0;
+	background: #333;
+	border-radius: 10px 10px 0 0;
+	-moz-border-radius: 10px 10px 0 0;
+	-webkit-border-radius: 10px 10px 0 0;	
+
+}
+
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label,
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label {
+
+
+}
+
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label {
+
+
+}
+
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label em {
+
+
+}
+
+
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label {
+
+
+}
+
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label a {
+
+
+}
+
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label .yui3-menu-toggle {
+	
+	
+}
+
+
+/* Selected menuitem */
+
+
+
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-active,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {
+ color: #fff;
+	background-color: #333 !important;
+}
+
+.yui3-skin-sam .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menuitem-active .yui3-menuitem-content {
+	color: #fff;
+	background-color: #333;
+
+}
+
+
+
+
+
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label-active,
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label-menuvisible {
+}
+
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label-active,
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label-menuvisible,
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-active,
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-menuvisible {
+
+
+}
+
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-menuvisible {
+
+
+}
+
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-menuvisible .yui3-menu-toggle {
+
+
+}
+
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .ul {border:none !important;}
+#custommenu .yui3-menu-horizontal.javascript-disabled li a {padding:0 20px 0 0;}

@@ -347,13 +347,18 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @param mixed $params array of params for binding. If NULL, they are ignored.
      * @param mixed $sql_query_type - Type of operation
      * @param mixed $free_result - Default true, transaction query will be freed.
+     * @param mixed $scrollable - Default false, to use for quickly seeking to target records
      */
-    private function do_query($sql, $params, $sql_query_type, $free_result = true) {
+    private function do_query($sql, $params, $sql_query_type, $free_result = true, $scrollable = false) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         $sql = $this->emulate_bound_params($sql, $params);
         $this->query_start($sql, $params, $sql_query_type);
-        $result = sqlsrv_query($this->sqlsrv, $sql);
+        if (!$scrollable) { // Only supporting next row
+            $result = sqlsrv_query($this->sqlsrv, $sql);
+        } else { // Suporting absolute/relative rows
+            $result = sqlsrv_query($this->sqlsrv, $sql, array(), array('Scrollable' => SQLSRV_CURSOR_STATIC));
+        }
 
         if ($result === false) {
             // TODO do something with error or just use if DEV or DEBUG?
@@ -756,118 +761,18 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $limitnum = max(0, $limitnum);
 
         if ($limitfrom or $limitnum) {
-            $sql = $this->limit_to_top_n($sql, $limitfrom, $limitnum);
-        }
-        $result = $this->do_query($sql, $params, SQL_QUERY_SELECT, false);
-        return $this->create_recordset($result);
-    }
-
-    /**
-     * Perform a emulation for LIMIT(offset, limit)
-     *
-     * @param string $sql
-     * @param int $offset
-     * @param int $limit
-     * @return string sql
-     */
-    private function limit_to_top_n($sql, $offset, $limit) {
-        // If there is no limit we can return immediately
-        if ($limit < 1 && $offset < 1) {
-            return $sql;
-        }
-
-        // Make sure they are at least 0
-        $limit = max(0, (int)$limit);
-        $offset = max(0, (int)$offset);
-        // This is an sqlserver bigint - -1 and will be used as a value
-        // for top when essentially we want everything.
-        // This needs to be a string so that it doesn't get malformed.
-        $bigint = '9223372036854775806';
-
-        // If limit is 0 set it to BITINT - 1
-        if (empty($limit)) {
-            $limit = $bigint;
-        } else {
-            $limit = $offset + $limit;
-        }
-
-        // Set up defaults for the next bit.
-        $columns = '*';      // Default to all columns
-        $columnnames = '*';  // As above
-        $firstcolumn = 'id'; // The default first column is id
-        $orderby = '';       // The order by of the main query
-
-        // We need to do a couple of maintenance tasks on the columns seeing as
-        // they are going to be wrapped in a sub select.
-        //
-        // 1. Collect the first column to use for an order by if there isn't an
-        //    explicit order by within the query.
-        // 2. Give all constant columns a proper alias, this is required because
-        //    of the subselect.
-        if (preg_match('#^(\s*SELECT\s+)(DISTINCT\s+)?(.*?)(\sFROM\s)#is', $sql, $columnmatches)) {
-            // Make sure we have some columns
-            if (!empty($columnmatches[3])) {
-                $columns = explode(',', $columnmatches[3]);
-                $firstcolumn = null;
-                $constantcount = 0;
-                foreach ($columns as $key=>$column) {
-                    // Trim, trim, trim, except during Movember.
-                    $column = trim($column);
-                    if (preg_match('#\sAS\s+(\w+)\s*$#si', $column, $matches)) {
-                        // Make sure we use the column alias if available.
-                        $column = $matches[1];
-                    } else if (preg_match("#^('[^']*'|\d+)$#", $column)) {
-                        // Give constants an alias in the main query and use the
-                        // alias for the new outer queries.
-                        $constantcount++;
-                        $column = 'constant_'.$constantcount;
-                        $columns[$key] .= ' AS '.$column;
-                    }
-
-                    // Store the first column for later abuse.
-                    if ($firstcolumn === null) {
-                        $firstcolumn = $column;
-                    }
-                }
-                // Glue things back together
-                $columns = join(', ', $columns);
-                // Switch out the fixed main columns (added constant aliases).
-                $sql = str_replace($columnmatches[0], $columnmatches[1].$columnmatches[2].$columns.$columnmatches[4], $sql);
+            if ($limitnum >= 1) { // Only apply TOP clause if we have any limitnum (limitfrom offset is handled later)
+                $fetch = $limitfrom + $limitnum;
+                $sql = preg_replace('/^([\s(])*SELECT([\s]+(DISTINCT|ALL))?(?!\s*TOP\s*\()/i',
+                                    "\\1SELECT\\2 TOP $fetch", $sql);
             }
         }
+        $result = $this->do_query($sql, $params, SQL_QUERY_SELECT, false, (bool)$limitfrom);
 
-        // Collect the orderby from the main query to use in the row number order by.
-        if (preg_match('#\sORDER\s+BY\s+([^)]+?)(GROUP\s+BY|$)#i', $sql, $matches)) {
-            // We need to remove it from the main query as well.
-            $sql = str_replace($matches[0], ' '.$matches[2], $sql);
-            $orderby = $matches[1];
-        } else {
-            // Default orderby to the first column.
-            $orderby = $firstcolumn;
+        if ($limitfrom) { // Skip $limitfrom records
+            sqlsrv_fetch($result, SQLSRV_SCROLL_ABSOLUTE, $limitfrom - 1);
         }
-        // Remove any table aliases from the order by.
-        $orderby = preg_replace('#[^\s,]*\.([^\s,]*)#', '$1', $orderby);
-
-        // If the orderby is all tables everything will break, default to id.
-        if ($orderby == '*') {
-            $orderby = 'id';
-        }
-
-        // Now we need to build the queries up so that we collect a row count field and then sort on it.
-        // To do this we need to nest the query twice. The first nesting selects all the rows from the
-        // query and then proceeds to use OVER to generate a row number.
-        // The second nesting we limit by selecting where rownumber between offset and limit
-        // In both cases we will select the original query fields using q.* this is important
-        // as there can be any number of crafty things going on. It does however mean that we
-        // end up with the first field being sqlsrvrownumber however sqlsrv_native_moodle_recordset
-        // strips that off during processing if it exists.
-        // Build the inner outer query.
-        $sql = "SELECT TOP $bigint ROW_NUMBER() OVER(ORDER BY $orderby) AS sqlsrvrownumber, q.* FROM ($sql) AS q";
-        // Build the outer most query.
-        $sql = "SELECT q.* FROM ($sql) AS q WHERE q.sqlsrvrownumber > $offset AND q.sqlsrvrownumber <= $limit";
-
-        // Return the now mangled query for use.
-        return $sql;
+        return $this->create_recordset($result);
     }
 
     /**

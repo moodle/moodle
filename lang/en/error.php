@@ -200,6 +200,7 @@ $string['dmltransactionexception'] = 'Database transaction error';
 $string['dmlwriteexception'] = 'Error writing to database';
 $string['downgradedcore'] = 'ERROR!!!  The code you are using is OLDER than the version that made these databases!';
 $string['downloadedfilecheckfailed'] = 'Downloaded file check failed';
+$string['duplicatefieldname'] = 'Duplicate field name "{$a}" detected';
 $string['duplicateparaminsql'] = 'ERROR: duplicate parameter name in query';
 $string['duplicaterolename'] = 'There is already a role with this name!';
 $string['duplicateroleshortname'] = 'There is already a role with this short name!';

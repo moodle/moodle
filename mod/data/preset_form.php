@@ -48,7 +48,7 @@ class data_save_preset_form extends moodleform {
         $this->_form->addElement('header', 'exportheading', get_string('saveaspreset', 'data'));
         $this->_form->addElement('hidden', 'd');
         $this->_form->addElement('hidden', 'action', 'save2');
-        $this->_form->addElement('text', 'name', get_string('shortname'));
+        $this->_form->addElement('text', 'name', get_string('name'));
         $this->_form->setType('name', PARAM_FILE);
         $this->_form->addRule('name', null, 'required');
         $this->_form->addElement('checkbox', 'overwrite', get_string('overwrite', 'data'), get_string('overrwritedesc', 'data'));

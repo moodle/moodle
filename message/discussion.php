@@ -27,10 +27,11 @@
     require('../config.php');
     require('lib.php');
 
+    //the same URL params as in 1.9
     $userid     = required_param('id', PARAM_INT);
     $noframesjs = optional_param('noframesjs', 0, PARAM_BOOL);
 
-    $params = array('id'=>$userid);
+    $params = array('user2'=>$userid);
     if (!empty($noframesjs)) {
         $params['noframesjs'] = $noframesjs;
     }

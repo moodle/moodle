@@ -255,5 +255,12 @@ function xmldb_resource_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010083000, 'resource');
     }
 
+    if ($oldversion < 2011022700) {
+        // refresh resource links breakage caused by invalid sortorder
+        require_once($CFG->dirroot . '/course/lib.php');
+        rebuild_course_cache(0, true);
+        upgrade_mod_savepoint(true, 2011022700, 'resource');
+    }
+
     return true;
 }

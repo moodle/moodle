@@ -260,6 +260,12 @@ class random_qtype extends default_questiontype {
                 $wrappedquestion->qtype = 'missingtype';
             }
             $state->responses[''] = substr($state->responses[''], strlen('random' . $questionid . '-'));
+            if ($state->responses[''] === false) {
+                // In PHP, if $response === $prefix, then
+                // substr($response, strlen($prefix)) returns false, not '',
+                // which is stupid, and caused MDL-26520. Fix up that case here.
+                $state->responses[''] = '';
+            }
         }
 
         if (!$QTYPES[$wrappedquestion->qtype]
