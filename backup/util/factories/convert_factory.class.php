@@ -1,0 +1,46 @@
+<?php
+
+abstract class convert_factory {
+    /**
+     * @static
+     * @throws coding_exception
+     * @param  $name The converter name
+     * @param  $tempdir The temp directory to operate on
+     * @return base_converter|plan_converter
+     */
+    public static function converter($name, $tempdir) {
+        global $CFG;
+
+        $name = clean_param($name, PARAM_SAFEDIR);
+
+        $classfile = "$CFG->dirroot/backup/converter/$name.class.php";
+        $classname = "{$name}_converter";
+
+        if (!file_exists($classfile)) {
+            throw new coding_exception("Converter factory error: class file not found $classfile");
+        }
+        require_once($classfile);
+
+        if (!class_exists($classname)) {
+            throw new coding_exception("Converter factory error: class not found $classname");
+        }
+        return new $classname($tempdir);
+    }
+
+    /**
+     * @static
+     * @param string $tempdir The temp directory to operate on
+     * @return array
+     */
+    public static function converters($tempdir) {
+        global $CFG;
+
+        $converters = array();
+        $files      = get_directory_list($CFG->dirroot.'/backup/converter');
+        foreach ($files as $file) {
+            $name = array_shift(explode('_', $file));
+            $converters[$name] = self::converter($name, $tempdir);
+        }
+        return $converters;
+    }
+}

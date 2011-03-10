@@ -380,15 +380,26 @@ class restore_controller extends backup implements loggable {
      * convert from current format to backup::MOODLE format
      */
     public function convert() {
+        global $CFG;
+
         if ($this->status != backup::STATUS_REQUIRE_CONV) {
             throw new restore_controller_exception('cannot_convert_not_required_status');
         }
+        require_once($CFG->dirroot.'/backup/util/includes/convert_includes.php');
+
+        while (!in_array($this->format, array(backup::FORMAT_MOODLE, backup::FORMAT_UNKNOWN))) {
+            $converter = convert_factory::converter($this->format, $this->get_tempdir());
+
+            if (!$converter->can_convert()) {
+                throw new coding_exception('Converter detection failed, the loaded converter cannot convert this format');
+            }
+            $converter->convert();
+
+            // Re-detect format
+            $this->format = backup_general_helper::detect_backup_format($this->get_tempdir());
+        }
         if ($this->format == backup::FORMAT_UNKNOWN) {
             throw new restore_controller_exception('cannot_convert_from_unknown_format');
-        }
-        if ($this->format == backup::FORMAT_MOODLE1) {
-            // TODO: Implement moodle1 => moodle2 conversion
-            throw new restore_controller_exception('cannot_convert_yet_from_moodle1_format');
         }
 
         // Once conversions have finished, we check again the format

@@ -255,21 +255,13 @@ abstract class backup_general_helper extends backup_helper {
             }
         }
 
-        // Then look for MOODLE1 (moodle1) format
-        $filepath = $CFG->dataroot . '/temp/backup/' . $tempdir . '/moodle.xml';
-        if (file_exists($filepath)) { // Looks promising, lets load some information
-            $handle = fopen ($filepath, "r");
-            $first_chars = fread($handle,200);
-            $status = fclose ($handle);
-            // Check if it has the required strings
-            if (strpos($first_chars,'<?xml version="1.0" encoding="UTF-8"?>') !== false &&
-                strpos($first_chars,'<MOODLE_BACKUP>') !== false &&
-                strpos($first_chars,'<INFO>') !== false) {
-                    return backup::FORMAT_MOODLE1;
+        // See if a converter can identify the format as its own
+        $converters = convert_factory::converters($tempdir);
+        foreach ($converters as $name => $converter) {
+            if ($converter->can_convert()) {
+                return $name;
             }
         }
-
-        // Other formats
 
         // Arrived here, unknown format
         return backup::FORMAT_UNKNOWN;
