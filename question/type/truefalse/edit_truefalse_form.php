@@ -61,7 +61,9 @@ class qtype_truefalse_edit_form extends question_edit_form {
         $mform->addHelpButton('penaltymessage', 'penaltyforeachincorrecttry', 'question');
     }
 
-    public function set_data($question) {
+    public function data_preprocessing($question) {
+        $question = parent::data_preprocessing($question);
+
         if (!empty($question->options->trueanswer)) {
             $trueanswer = $question->options->answers[$question->options->trueanswer];
             $question->correctanswer = ($trueanswer->fraction != 0);
@@ -83,6 +85,8 @@ class qtype_truefalse_edit_form extends question_edit_form {
                 $text      // text
             );
             $question->feedbacktrue['itemid'] = $draftid;
+
+            return $question;
         }
 
         if (!empty($question->options->falseanswer)) {
@@ -106,7 +110,6 @@ class qtype_truefalse_edit_form extends question_edit_form {
             );
             $question->feedbackfalse['itemid'] = $draftid;
         }
-        parent::set_data($question);
     }
 
     public function qtype() {
