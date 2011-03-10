@@ -128,6 +128,16 @@ class question_essay_qtype extends default_questiontype {
     }
 
     /**
+     * @param string response is a response.
+     * @return formatted response
+     */
+    function format_response($response, $format) {
+        $safeformatoptions = new stdClass();
+        $safeformatoptions->para = false;
+        return s(html_to_text(format_text($response, FORMAT_MOODLE, $safeformatoptions), 0, false));
+    }
+
+    /**
      * Runs all the code required to set up and save an essay question for testing purposes.
      * Alternate DB table prefix may be used to facilitate data deletion.
      */

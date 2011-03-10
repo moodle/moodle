@@ -1,0 +1,226 @@
+/* Core */
+
+html,body {
+	background: #f7f7f7;	
+}
+html,body {
+	font-family: Tahoma,Arial,Helvetica,sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: Georgia, Times, "Times New Roman", serif;
+	color: #333;
+}
+
+.shrinkwrapper {
+	width: 90%;
+	margin: 0 auto;
+}
+
+
+/* Header */
+
+
+
+.headermenu {
+	float: right;
+	color: #ddd;
+}
+
+.headermenu a {
+	color: #aaa;
+}
+
+.headermenu a:hover {
+	color: #fff;
+}
+
+#custommenu {
+	float: left;
+	margin-top: 40px;
+}
+
+h1.headermain {
+	margin: 0 20px 25px 0;
+	font-size: 2.5em;
+	text-shadow: 0.03em 0.03em 0.05em #333;	
+	color: #222;
+}
+
+.inside h1.headermain {
+	font-size: 2.25em;
+	margin-bottom: 15px;
+}
+
+.tagline {
+	float: left;
+	margin:13px 0 0 0;
+	font-size: 1em;
+	color: #333;
+	font-family: Georgia, Times, "Times New Roman", serif;
+	text-shadow: 0.1em 0.1em 0 #fff;		
+}
+
+.navbar {
+	margin-bottom: 15px;
+	border: 1px solid #e3e3e3;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;	
+}
+
+.navbar .wrapper {
+	border: 1px solid #fff;
+	padding: 5px;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;	
+}
+
+/* Content */
+
+h2.headingblock {
+	text-shadow: 1px 1px 3px #aaa;
+	color: #445566;
+}
+
+/* Region Post */
+
+#region-post-wrap-1 {
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;	
+	margin-top: 25px;
+}
+#region-post-wrap-2 {
+	border: 1px solid #fff;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;	
+	padding: 10px;
+}
+
+/* Blocks */
+
+.block {
+	border: none;
+}
+
+.block .title {
+	border-bottom: 1px solid #eee;
+}
+.block .title h2 {
+	text-shadow: 1px 1px 3px #aaa;
+	color: #333;
+	font-size: 1.25em;
+	border-bottom: 1px solid #fff;
+	margin: 0;
+}
+
+/* Calendar */
+
+.minicalendar td,
+.minicalendar th {
+	font-size: 0.85em;
+	padding: 0 2px;
+	border-width: 2px 0;
+	border-color: #f7f7f7;
+}
+
+.minicalendar .calendar_event_user,
+.minicalendar .duration_user {
+	border-color: #dce7ec;
+}
+
+.minicalendar .calendar_event_course,
+.minicalendar .duration_course {
+	border-color: #ffd3bd;
+}
+
+.minicalendar .calendar_event_global,
+.minicalendar .duration_global {
+	border-color: #d6f8cd;
+}
+
+.minicalendar .calendar_event_group,
+.minicalendar .duration_group {
+	border-color: #fee7ae;
+}
+
+/* Forums */
+
+.forumpost .topic {
+	border: 1px solid #ddd;
+	border-radius: 10px 10px 0 0;
+	-moz-border-radius: 10px 10px 0 0;
+	-webkit-border-radius: 10px 10px 0 0;
+	border-bottom: 0;	
+	padding: 5px 10px;
+	background: #eee;
+}
+
+.forumpost .topic .subject {
+	font-weight: bold;
+	font-size: 1.2em;
+	color: #444;
+}
+
+.forumpost .content {
+	border-width: 0 1px 0;
+	border-color: #ddd;
+	border-style: solid;
+	padding: 5px 10px;
+}
+
+.forumpost .options {
+	border-width: 0 1px 1px;
+	border-color: #ddd;
+	border-style: solid;
+	border-radius: 0 0 10px 10px;
+	-moz-border-radius: 0 0 10px 10px;
+	-webkit-border-radius: 0 0 10px 10px;
+	font-size: 0.9em;
+	color: #333;
+	padding: 5px 10px;
+	background: #eee;	
+}
+
+/* Course */
+
+.path-course-view .course-content li.section {
+	border-bottom: 1px solid #ddd;
+	border-top: 1px solid #fff;
+	margin-top: 0 !important;
+}
+
+.path-course-view .course-content #section-0 {
+	border-top: 0;
+}
+
+#page-course-view-weeks .course-content .section .content {
+	margin-left: 0;
+}
+
+#page-course-view-weeks .course-content .left {
+	display: none;
+}
+
+.path-course-view .course-content .current {
+	background: #fcfde0;
+}
+
+#page-course-view-topics .course-content .section .left {
+	font-family: Georgia, Times, "Times New Roman", serif;
+	font-size: 1.5em;
+	text-shadow: 2px 2px 5px #fff;
+	font-weight: bold;
+	color: #445566;
+}
+
+
+/* Footer */
+
+#page-footer {
+	margin-bottom: 25px;
+}

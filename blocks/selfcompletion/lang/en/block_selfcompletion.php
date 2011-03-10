@@ -26,3 +26,5 @@
 $string['selfcompletion'] = 'Self completion';
 $string['pluginname'] = 'Self completion';
 $string['completecourse'] = 'Complete course';
+$string['completionnotenabled'] = 'Course completion is not enabled';
+$string['selfcompletionnotenabled'] = 'The self completion criteria has not been enabled for this course';

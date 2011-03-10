@@ -60,7 +60,7 @@ function workshopform_comments_upgrade_legacy() {
         // now we need to reload the legacy element ids
         $newelementids = workshop_upgrade_element_id_mappings('comments');
 
-        // migrate all comments for these elements (it est the values that reviewers put into forms)
+        // migrate all comments for these elements (i.e. the values that reviewers put into forms)
         echo $OUTPUT->notification('Copying assessment form comments', 'notifysuccess');
         $sql = "SELECT *
                   FROM {workshop_grades_old}

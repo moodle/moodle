@@ -148,14 +148,14 @@ class restore_gradebook_structure_step extends restore_structure_step {
 
         //manual grade items store category id in categoryid
         if ($data->itemtype=='manual') {
-            $data->categoryid = $this->get_mappingid('grade_category', $data->categoryid);
+            $data->categoryid = $this->get_mappingid('grade_category', $data->categoryid, NULL);
         } //course and category grade items store their category id in iteminstance
         else if ($data->itemtype=='course' || $data->itemtype=='category') {
-            $data->iteminstance = $this->get_mappingid('grade_category', $data->iteminstance);
+            $data->iteminstance = $this->get_mappingid('grade_category', $data->iteminstance, NULL);
         }
 
-        $data->scaleid   = $this->get_mappingid('scale', $data->scaleid);
-        $data->outcomeid = $this->get_mappingid('outcome', $data->outcomeid);
+        $data->scaleid   = $this->get_mappingid('scale', $data->scaleid, NULL);
+        $data->outcomeid = $this->get_mappingid('outcome', $data->outcomeid, NULL);
 
         $data->locktime     = $this->apply_date_offset($data->locktime);
         $data->timecreated  = $this->apply_date_offset($data->timecreated);
@@ -164,23 +164,19 @@ class restore_gradebook_structure_step extends restore_structure_step {
         $coursecategory = $newitemid = null;
         //course grade item should already exist so updating instead of inserting
         if($data->itemtype=='course') {
-
             //get the ID of the already created grade item
             $gi = new stdclass();
             $gi->courseid  = $this->get_courseid();
-
             $gi->itemtype  = $data->itemtype;
-            if ($data->itemtype=='course') {
-                //need to get the id of the grade_category that was automatically created for the course
-                $category = new stdclass();
-                $category->courseid  = $this->get_courseid();
-                $category->parent  = null;
-                //course category fullname starts out as ? but may be edited
-                //$category->fullname  = '?';
 
-                $coursecategory = $DB->get_record('grade_categories', (array)$category);
-                $gi->iteminstance = $coursecategory->id;
-            }
+            //need to get the id of the grade_category that was automatically created for the course
+            $category = new stdclass();
+            $category->courseid  = $this->get_courseid();
+            $category->parent  = null;
+            //course category fullname starts out as ? but may be edited
+            //$category->fullname  = '?';
+            $coursecategory = $DB->get_record('grade_categories', (array)$category);
+            $gi->iteminstance = $coursecategory->id;
 
             $existinggradeitem = $DB->get_record('grade_items', (array)$gi);
             if (!empty($existinggradeitem)) {
@@ -208,8 +204,8 @@ class restore_gradebook_structure_step extends restore_structure_step {
 
         $data->itemid = $this->get_new_parentid('grade_item');
 
-        $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->usermodified = $this->get_mappingid('user', $data->usermodified);
+        $data->userid = $this->get_mappingid('user', $data->userid, NULL);
+        $data->usermodified = $this->get_mappingid('user', $data->usermodified, NULL);
         $data->locktime     = $this->apply_date_offset($data->locktime);
         // TODO: Ask, all the rest of locktime/exported... work with time... to be rolled?
         $data->overridden = $this->apply_date_offset($data->overridden);
@@ -337,6 +333,9 @@ class restore_gradebook_structure_step extends restore_structure_step {
             }
         }
         $rs->close();
+
+        //Restore marks items as needing update. Update everything now.
+        grade_regrade_final_grades($this->get_courseid());
     }
 }
 
@@ -1008,6 +1007,9 @@ class restore_course_structure_step extends restore_structure_step {
         // Apply for 'format' plugins optional paths at course level
         $this->add_plugin_structure('format', $course);
 
+        // Apply for 'theme' plugins optional paths at course level
+        $this->add_plugin_structure('theme', $course);
+
         return array($course, $category, $tag, $allowed_module);
     }
 
@@ -1052,8 +1054,9 @@ class restore_course_structure_step extends restore_structure_step {
         if (!array_key_exists($data->lang, $languages)) {
             $data->lang = '';
         }
+
         $themes = get_list_of_themes(); // Get themes for quick search later
-        if (!in_array($data->theme, $themes) || empty($CFG->allowcoursethemes)) {
+        if (!array_key_exists($data->theme, $themes) || empty($CFG->allowcoursethemes)) {
             $data->theme = '';
         }
 

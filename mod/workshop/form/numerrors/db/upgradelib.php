@@ -83,7 +83,7 @@ function workshopform_numerrors_upgrade_legacy() {
         // refetch them from DB so that this function can be called during recovery
         $newelementids = workshop_upgrade_element_id_mappings('numerrors');
 
-        // migrate all grades for these elements (it est the values that reviewers put into forms)
+        // migrate all grades for these elements (i.e. the values that reviewers put into forms)
         echo $OUTPUT->notification('Copying assessment form grades', 'notifysuccess');
         $sql = "SELECT *
                   FROM {workshop_grades_old}

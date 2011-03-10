@@ -178,7 +178,7 @@ class workshop_best_evaluation implements workshop_evaluation {
             $distances[$asid] = $this->assessments_distance($assessment, $average, $diminfo, $settings);
         }
 
-        // identify the best assessments - it est those with the shortest distance from the best assessment
+        // identify the best assessments - that is those with the shortest distance from the best assessment
         $bestids = array_keys($distances, min($distances));
 
         // for every assessment, calculate its distance from the nearest best assessment

@@ -194,7 +194,7 @@
     $table->head = array(
         get_string('role') . ' ' . $OUTPUT->help_icon('roles', 'role'),
         get_string('description'),
-        get_string('shortname'),
+        get_string('roleshortname', 'role'),
         get_string('edit')
     );
 

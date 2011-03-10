@@ -4831,8 +4831,7 @@ function setnew_password_and_mail($user) {
 /**
  * Resets specified user's password and send the new password to the user via email.
  *
- * @global object
- * @param user $user A {@link $USER} object
+ * @param stdClass $user A {@link $USER} object
  * @return bool Returns true if mail was sent OK and false if there was an error.
  */
 function reset_password_and_mail($user) {
@@ -4865,6 +4864,8 @@ function reset_password_and_mail($user) {
     $message = get_string('newpasswordtext', '', $a);
 
     $subject  = format_string($site->fullname) .': '. get_string('changedpassword');
+
+    unset_user_preference('create_password', $user); // prevent cron from generating the password
 
     //directly email rather than using the messaging system to ensure its not routed to a popup or jabber
     return email_to_user($user, $supportuser, $subject, $message);
@@ -9297,6 +9298,13 @@ function get_performance_info() {
         $info['serverload'] = $server_load;
         $info['html'] .= '<span class="serverload">Load average: '.$info['serverload'].'</span> ';
         $info['txt'] .= "serverload: {$info['serverload']} ";
+    }
+
+    // Display size of session if session started
+    if (session_id()) {
+        $info['sessionsize'] = display_size(strlen(session_encode()));
+        $info['html'] .= '<span class="sessionsize">Session: ' . $info['sessionsize'] . '</span> ';
+        $info['txt'] .= "Session: {$info['sessionsize']} ";
     }
 
 /*    if (isset($rcache->hits) && isset($rcache->misses)) {

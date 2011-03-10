@@ -1348,13 +1348,15 @@ class default_questiontype {
         }
         return $toreturn;
     }
+
     /**
      * @param string response is a response.
      * @return formatted response
      */
-    function format_response($response, $format){
-        return s($response);
+    function format_response($response, $format) {
+        return s(html_to_text($this->format_text($response, $format), 0, false));
     }
+
     /**
     * Renders the question for printing and returns the LaTeX source produced
     *

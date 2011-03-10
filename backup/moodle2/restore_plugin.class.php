@@ -174,9 +174,12 @@ abstract class restore_plugin {
     /**
      * Return the new id of a mapping for the given itemname
      *
+     * @param string $itemname the type of item
+     * @param int $oldid the item ID from the backup
+     * @param mixed $ifnotfound what to return if $oldid wasnt found. Defaults to false
      */
-    protected function get_mappingid($itemname, $oldid) {
-        return $this->step->get_mappingid($itemname, $oldid);
+    protected function get_mappingid($itemname, $oldid, $ifnotfound = false) {
+        return $this->step->get_mappingid($itemname, $oldid, $ifnotfound);
     }
 
     /**

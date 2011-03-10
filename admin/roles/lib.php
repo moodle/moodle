@@ -780,8 +780,8 @@ class define_role_table_advanced extends capability_table_with_risks {
         global $OUTPUT;
         // Extra fields at the top of the page.
         echo '<div class="topfields clearfix">';
-        $this->print_field('name', get_string('name'), $this->get_name_field('name'));
-        $this->print_field('shortname', get_string('shortname'), $this->get_shortname_field('shortname'));
+        $this->print_field('name', get_string('rolefullname', 'role'), $this->get_name_field('name'));
+        $this->print_field('shortname', get_string('roleshortname', 'role'), $this->get_shortname_field('shortname'));
         $this->print_field('edit-description', get_string('description'), $this->get_description_field('description'));
         $this->print_field('menuarchetype', get_string('archetype', 'role').'&nbsp;'.$OUTPUT->help_icon('archetype', 'role'), $this->get_archetype_field('archetype'));
         $this->print_field('', get_string('maybeassignedin', 'role'), $this->get_assignable_levels_control());
