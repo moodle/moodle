@@ -387,39 +387,22 @@ class restore_controller extends backup implements loggable {
         }
         require_once($CFG->dirroot.'/backup/util/includes/convert_includes.php');
 
-        while (!in_array($this->format, array(backup::FORMAT_MOODLE, backup::FORMAT_UNKNOWN))) {
-            $converter = convert_factory::converter($this->format, $this->get_tempdir());
+        // Run conversion until we have the proper format
+        convert_helper::to_moodle2_format($this->get_tempdir(), $this->format);
 
-            if (!$converter->can_convert()) {
-                throw new coding_exception('Converter detection failed, the loaded converter cannot convert this format');
-            }
-            $converter->convert();
+        // If no exceptions were thrown, then we are in the proper format
+        $this->format = backup::FORMAT_MOODLE;
 
-            // Re-detect format
-            $this->format = backup_general_helper::detect_backup_format($this->get_tempdir());
-        }
-        if ($this->format == backup::FORMAT_UNKNOWN) {
-            throw new restore_controller_exception('cannot_convert_from_unknown_format');
-        }
+        // Load plan, apply security and set status based on interactivity
+        $this->load_plan();
 
-        // Once conversions have finished, we check again the format
-        $newformat = backup_general_helper::detect_backup_format($tempdir);
+        // Perform all initial security checks and apply (2nd param) them to settings automatically
+        restore_check::check_security($this, true);
 
-        // If format is moodle2, load plan, apply security and set status based on interactivity
-        if ($newformat === backup::FORMAT_MOODLE) {
-            // Load plan
-            $this->load_plan();
-
-            // Perform all initial security checks and apply (2nd param) them to settings automatically
-            restore_check::check_security($this, true);
-
-            if ($this->interactive == backup::INTERACTIVE_YES) {
-                $this->set_status(backup::STATUS_SETTING_UI);
-            } else {
-                $this->set_status(backup::STATUS_NEED_PRECHECK);
-            }
+        if ($this->interactive == backup::INTERACTIVE_YES) {
+            $this->set_status(backup::STATUS_SETTING_UI);
         } else {
-            throw new restore_controller_exception('conversion_ended_with_wrong_format', $newformat);
+            $this->set_status(backup::STATUS_NEED_PRECHECK);
         }
     }
 
