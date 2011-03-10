@@ -6043,8 +6043,18 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2011020900.08);
     }
 
+
+    if ($oldversion < 2011022100.01) {
+        // hack alert: inject missing version of manual auth_plugin,
+        //             we need to do it so that we may use upgrade.php there
+
+        set_config('version', 2011022100, 'auth_manual');
+        upgrade_main_savepoint(true, 2011022100.01);
+    }
+
+
     //remove the old theme and themelegacy fields and add any stored settings to the new themes setting.
-    if ($oldversion < 2011020200.01) {
+    if ($oldversion < 2011022100.01) {
         set_config('enabledevicedetection',1);
  
         $table = new xmldb_table('config');
