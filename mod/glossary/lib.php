@@ -301,12 +301,11 @@ function glossary_print_recent_activity($course, $viewfullnames, $timestart) {
         if ($entrycount < GLOSSARY_RECENT_ACTIVITY_LIMIT) {
             if ($entry->approved) {
                 $dimmed = '';
-                $urlparams = array('g' => $entry->glossaryid, 'mode' => 'entry', 'hook' => $entry->id);
+                $link = $CFG->wwwroot.'/mod/glossary/view.php?g='.$entry->glossaryid.'&amp;mode=entry&amp;hook='.$entry->id;
             } else {
                 $dimmed = ' dimmed_text';
-                $urlparams = array('id' => $ids[$entry->glossaryid], 'mode' => 'approval', 'hook' => format_text($entry->concept, true));
+                $link = $CFG->wwwroot.'/mod/glossary/view.php?id='.$ids[$entry->glossaryid].'&amp;mode=approval&amp;hook='.format_text($entry->concept, true);
             }
-            $link = new moodle_url($CFG->wwwroot.'/mod/glossary/view.php' , $urlparams);
             echo '<div class="head'.$dimmed.'">';
             echo '<div class="date">'.userdate($entry->timemodified, $strftimerecent).'</div>';
             echo '<div class="name">'.fullname($entry, $viewfullnames).'</div>';
