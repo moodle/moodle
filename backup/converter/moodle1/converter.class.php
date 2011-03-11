@@ -2,7 +2,7 @@
 /**
  * This will be the Moodle 1 to Moodle 2 Converter
  */
-abstract class moodle1_converter extends plan_converter {
+class moodle1_converter extends plan_converter {
     /**
      * @return boolean
      */
@@ -32,6 +32,6 @@ abstract class moodle1_converter extends plan_converter {
         $this->xmlparser->set_processor($this->xmlprocessor);
 
 
-        $xmlparser->process(); // @todo When to really do this?
+        $this->xmlparser->process(); // @todo When to really do this?
     }
 }

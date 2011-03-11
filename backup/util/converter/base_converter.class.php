@@ -48,7 +48,9 @@ abstract class base_converter {
 
     public function create_convertdir() {
         $this->delete_convertdir();
-        make_upload_directory($this->get_convertdir());
+        if (!check_dir_exists($this->get_convertdir())) {
+            throw new backup_exception('failedtomakeconvertdir'); // @todo Define this string
+        }
     }
 
     public function replace_tempdir() {

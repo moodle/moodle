@@ -6,6 +6,9 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 // Include all the convert stuff needed
+require_once($CFG->dirroot . '/backup/util/interfaces/checksumable.class.php');
+require_once($CFG->dirroot . '/backup/util/interfaces/executable.class.php');
+require_once($CFG->dirroot . '/backup/util/interfaces/loggable.class.php');
 require_once($CFG->dirroot.'/backup/backup.class.php');
 require_once($CFG->dirroot.'/backup/util/factories/convert_factory.class.php');
 require_once($CFG->dirroot.'/backup/util/converter/base_converter.class.php');
@@ -28,4 +31,4 @@ require_once($CFG->dirroot.'/backup/moodle2/convert_stepslib.php');
 require_once($CFG->dirroot.'/backup/util/xml/parser/progressive_parser.class.php');
 
 // And some moodle stuff too
-require_once($CFG->libdir.'/fileslib.php');
+require_once($CFG->libdir.'/filelib.php');
