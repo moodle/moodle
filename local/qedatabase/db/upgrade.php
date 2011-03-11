@@ -53,4 +53,17 @@ function xmldb_local_qedatabase_upgrade($oldversion) {
 
         upgrade_plugin_savepoint(true, 2008000703, 'local', 'qedatabase');
     }
+
+    if ($oldversion < 2008000704) {
+
+        // Changing nullability of field sumgrades on table quiz_attempts to null
+        $table = new xmldb_table('quiz_attempts');
+        $field = new xmldb_field('sumgrades', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, 'attempt');
+
+        // Launch change of nullability for field sumgrades
+        $dbman->change_field_notnull($table, $field);
+
+        // quiz savepoint reached
+        upgrade_plugin_savepoint(true, 2008000704, 'local', 'qedatabase');
+    }
 }
