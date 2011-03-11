@@ -1502,7 +1502,7 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
     static $croncache = array();
 
-    if ($text === '') {
+    if ($text === '' || is_null($text)) {
         return ''; // no need to do any filters and cleaning
     }
 
