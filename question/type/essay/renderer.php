@@ -45,7 +45,7 @@ class qtype_essay_renderer extends qtype_renderer {
         $inputname = $qa->get_qt_field_name('answer');
         $response = $qa->get_last_qt_var('answer', '');
         if (empty($options->readonly)) {
-            $answer =$responseoutput->response_area_input($inputname,
+            $answer = $responseoutput->response_area_input($inputname,
                     $response, $question->responsefieldlines);
 
         } else {
@@ -56,13 +56,13 @@ class qtype_essay_renderer extends qtype_renderer {
         $files = '';
         if (empty($options->readonly)) {
             if ($question->attachments == 1) {
-                $files = $this->filepicker_input();
+                $files = $this->filepicker_input($qa, $options);
             } else if ($question->attachments != 0) {
-                $files = $this->filemanager_input();
+                $files = $this->filemanager_input($qa, $options);
             }
 
         } else if ($question->attachments != 0) {
-            $files = $this->files_read_only();
+            $files = $this->files_read_only($qa, $options);
         }
 
         $result = '';
@@ -71,6 +71,7 @@ class qtype_essay_renderer extends qtype_renderer {
 
         $result .= html_writer::start_tag('div', array('class' => 'ablock'));
         $result .= html_writer::tag('div', $answer, array('class' => 'answer'));
+        $result .= html_writer::tag('div', $files, array('class' => 'attachments'));
         $result .= html_writer::end_tag('div');
 
         return $result;
@@ -79,21 +80,30 @@ class qtype_essay_renderer extends qtype_renderer {
     /**
      * Displays any attached files when the question is in read-only mode.
      */
-    public function files_read_only() {
-        return '';
+    public function files_read_only(question_attempt $qa, question_display_options $options) {
+        $files = $qa->get_last_qt_files('attachments', $options->contextid);
+        $output = array();
+
+        foreach ($files as $file) {
+            $mimetype = $file->get_mimetype();
+            $output[] = html_writer::tag('p', html_writer::link($qa->get_response_file_url($file),
+                    $this->output->pix_icon(file_mimetype_icon($mimetype), $mimetype,
+                    'moodle', array('class' => 'icon')) . ' ' . s($file->get_filename())));
+        }
+        return implode($output);
     }
 
     /**
      * Displays the input control for when the student should upload a single file.
      */
-    public function filepicker_input() {
+    public function filepicker_input(question_attempt $qa, question_display_options $options) {
         return '';
     }
 
     /**
      * Displays the input control for when the student should upload a number of files.
      */
-    public function filemanager_input() {
+    public function filemanager_input(question_attempt $qa, question_display_options $options) {
         return '';
     }
 }

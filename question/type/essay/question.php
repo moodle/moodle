@@ -55,7 +55,11 @@ class qtype_essay_question extends question_with_responses {
     }
 
     public function get_expected_data() {
-        return array('answer' => PARAM_CLEANHTML);
+        $expecteddata = array('answer' => PARAM_CLEANHTML);
+        if ($this->attachments != 0) {
+            $expecteddata['attachments'] = question_attempt::PARAM_FILES;
+        }
+        return $expecteddata;
     }
 
     public function summarise_response(array $response) {
@@ -79,5 +83,15 @@ class qtype_essay_question extends question_with_responses {
     public function is_same_response(array $prevresponse, array $newresponse) {
         return question_utils::arrays_same_at_key_missing_is_blank(
                 $prevresponse, $newresponse, 'answer');
+    }
+
+    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
+        if ($component == 'question' && $filearea == 'response_attachments') {
+            // Response attachments visible if the question has them.
+            return $this->attachments != 0;
+
+        } else {
+            return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
+        }
     }
 }

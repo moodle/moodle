@@ -11,4 +11,5 @@
 }
 .que.essay .qtype_essay_response.qtype_essay_editor {
     background-color: white;
+    min-height: 3em;
 }

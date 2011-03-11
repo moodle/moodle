@@ -467,6 +467,11 @@ class question_display_options {
     public $history = self::HIDDEN;
 
     /**
+     * @var int the context the attempt being output belongs to.
+     */
+    public $contextid;
+
+    /**
      * Set all the feedback-related fields {@link $feedback}, {@link generalfeedback},
      * {@link rightanswer} and {@link manualcomment} to
      * {@link question_display_options::HIDDEN}.
@@ -916,6 +921,7 @@ class question_usage_by_activity {
      * @return string HTML fragment representing the question.
      */
     public function render_question($slot, $options, $number = null) {
+        $options->contextid = $this->context->id;
         return $this->get_question_attempt($slot)->render($options, $number);
     }
 
@@ -926,6 +932,7 @@ class question_usage_by_activity {
      * @return string HTML fragment.
      */
     public function render_question_head_html($slot) {
+        $options->contextid = $this->context->id;
         return $this->get_question_attempt($slot)->render_head_html();
     }
 
@@ -941,6 +948,7 @@ class question_usage_by_activity {
      * @return string HTML fragment representing the question.
      */
     public function render_question_at_step($slot, $seq, $options, $number = null) {
+        $options->contextid = $this->context->id;
         return $this->get_question_attempt($slot)->render_at_step($seq, $options, $number, $this->preferredbehaviour);
     }
 
@@ -1333,6 +1341,12 @@ class question_attempt {
      */
     const PARAM_MARK = 'parammark';
 
+    /**
+     * @var string special value used by manual grading because {@link PARAM_NUMBER}
+     * converts '' to 0.
+     */
+    const PARAM_FILES = 'paramfiles';
+
     /** @var integer if this attempts is stored in the question_attempts table, the id of that row. */
     protected $id = null;
 
@@ -1667,6 +1681,39 @@ class question_attempt {
     }
 
     /**
+     * Get the latest set of files for a particular question type variable of
+     * type question_attempt::PARAM_FILES.
+     *
+     * @param string $name the name of the associated variable.
+     * @return array of {@link stored_files}.
+     */
+    public function get_last_qt_files($name, $contextid) {
+        foreach ($this->get_reverse_step_iterator() as $step) {
+            if ($step->has_qt_var($name)) {
+                return $step->get_qt_files($name, $contextid);
+            }
+        }
+        return array();
+    }
+
+    /**
+     * Get the URL of a file that belongs to a response variable of this
+     * question_attempt.
+     * @param stored_file $file the file to link to.
+     * @return string the URL of that file.
+     */
+    public function get_response_file_url(stored_file $file) {
+        return file_encode_url(new moodle_url('/pluginfile.php'), '/' . implode('/', array(
+                $file->get_contextid(),
+                $file->get_component(),
+                $file->get_filearea(),
+                $this->usageid,
+                $this->slot,
+                $file->get_itemid())) .
+                $file->get_filepath() . $file->get_filename());
+    }
+
+    /**
      * Get the latest value of a particular behaviour variable. That is,
      * get the value from the latest step that has it set. Return null if it is
      * not set in any step.
@@ -1997,9 +2044,11 @@ class question_attempt {
         } else {
             $var = null;
         }
+
         if (is_string($var)) {
-            $var = stripslashes($var);
+            $var = $var;
         }
+
         return $var;
     }
 
@@ -2488,6 +2537,9 @@ class question_attempt_step {
     /** @var array name => value pairs. The submitted data. */
     private $data;
 
+    /** @var array name => array of {@link stored_file}s. Caches the contents of file areas. */
+    private $files = array();
+
     /**
      * You should not need to call this constructor in your own code. Steps are
      * normally created by {@link question_attempt} methods like
@@ -2580,6 +2632,30 @@ class question_attempt_step {
             throw new coding_exception('Cannot set question type data ' . $name . ' on an attempt step. You can only set variables with names begining with _.');
         }
         $this->data[$name] = $value;
+    }
+
+    /**
+     * Get the latest set of files for a particular question type variable of
+     * type question_attempt::PARAM_FILES.
+     *
+     * @param string $name the name of the associated variable.
+     * @return array of {@link stored_files}.
+     */
+    public function get_qt_files($name, $contextid) {
+        if (array_key_exists($name, $this->files)) {
+            return $this->files[$name];
+        }
+
+        if (!$this->has_qt_var($name)) {
+            $this->files[$name] = array();
+            return array();
+        }
+
+        $fs = get_file_storage();
+        $this->files[$name] = $fs->get_area_files($contextid, 'question',
+                'response_' . $name, $this->id, 'sortorder', false);
+
+        return $this->files[$name];
     }
 
     /**
@@ -2697,6 +2773,7 @@ class question_attempt_step {
 
         $step = new question_attempt_step_read_only($data, $record->timecreated, $record->userid);
         $step->state = question_state::get($record->state);
+        $step->id = $record->attemptstepid;
         if (!is_null($record->fraction)) {
             $step->fraction = $record->fraction + 0;
         }
