@@ -1933,15 +1933,25 @@ function data_print_header($course, $cm, $data, $currenttab='') {
  * @param int $groupmode
  * @return bool
  */
-function data_user_can_add_entry($data, $currentgroup, $groupmode) {
+function data_user_can_add_entry($data, $currentgroup, $groupmode, $context = null) {
     global $USER;
 
-    if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
-        print_error('invalidcoursemodule');
+    if (empty($context)) {
+        if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
+            print_error('invalidcoursemodule');
+        }
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if (!has_capability('mod/data:writeentry', $context) and !has_capability('mod/data:manageentries',$context)) {
+    $haswritecapability = has_capability('mod/data:writeentry', $context);
+    $hasmanagecapability = has_capability('mod/data:manageentries', $context);
+
+    if (!$haswritecapability && !$hasmanagecapability) {
+        return false;
+    }
+
+    //check for maximum number of entries
+    if ($haswritecapability && !$hasmanagecapability && data_atmaxentries($data)) {
         return false;
     }
 
@@ -2836,7 +2846,7 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
     $currentgroup = groups_get_activity_group($PAGE->cm);
     $groupmode = groups_get_activity_groupmode($PAGE->cm);
 
-    if (data_user_can_add_entry($data, $currentgroup, $groupmode)) { // took out participation list here!
+    if (data_user_can_add_entry($data, $currentgroup, $groupmode, $PAGE->cm->context)) { // took out participation list here!
         if (empty($editentry)) { //TODO: undefined
             $addstring = get_string('add', 'data');
         } else {
