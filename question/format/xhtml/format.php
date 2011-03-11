@@ -69,7 +69,7 @@ function writequestion($question) {
 
     // Format and add the question text
     $expout .= '<p class="questiontext">' . format_text($question->questiontext,
-            $question->questiontextformat); . "</p>\n";
+            $question->questiontextformat) . "</p>\n";
 
     // selection depends on question type
     switch($question->qtype) {
