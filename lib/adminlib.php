@@ -7394,7 +7394,11 @@ class admin_setting_devicedetectregex extends admin_setting {
      * @return bool
      */
     public function write_setting($data) {
-    	if ($this->config_write($this->name, $this->process_form_data($data))) {
+        if (empty($data)) {
+            $data = array();
+        }
+
+        if ($this->config_write($this->name, $this->process_form_data($data))) {
             return ''; // success
         } else {
             return get_string('errorsetting', 'admin') . $this->visiblename . html_writer::empty_tag('br');
@@ -7461,13 +7465,13 @@ class admin_setting_devicedetectregex extends admin_setting {
                     )
                 ), array('class' => 'c'.$i)
             );
-            
+
             $out .= html_writer::end_tag('tr');
         }
-        
+
         $out .= html_writer::end_tag('tbody');
         $out .= html_writer::end_tag('table');
- 
+
         return format_admin_setting($this, $this->visiblename, $out, $this->description, false, '', NULL, $query);
     }
 
@@ -7485,7 +7489,7 @@ class admin_setting_devicedetectregex extends admin_setting {
         $form = array();
 
         $i = 0;
-        
+
         foreach($regexes as $regex) {
             $expressionname  = 'expression'.$i;
             $valuename = 'value'.$i;
@@ -7530,7 +7534,7 @@ class admin_setting_devicedetectregex extends admin_setting {
             $regex->expression = $expression;
             $regex->value = $value;
 
-            $regexes[] = $regex;        
+            $regexes[] = $regex;
         }
 
         $regexes = json_encode($regexes);

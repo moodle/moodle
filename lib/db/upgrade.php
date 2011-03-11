@@ -6063,44 +6063,29 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     //remove the old theme and themelegacy fields and add any stored settings to the new themes setting.
     if ($oldversion < 2011022100.01) {
-        set_config('enabledevicedetection',1);
- 
-        $table = new xmldb_table('config');
-        $field = new xmldb_field('themes');
-        $dbman->drop_field($table, $field);
-
-        $theme = $DB->get_record('config', array('name'=>'theme'));
-
-        $theme_obj = new stdClass();
-        $theme_obj->device = 'default';
-        $theme_obj->themename = $theme->value;
-
-        $config_themes[] = $theme_obj;
-
-        $themelegacy = $DB->get_record('config', array('name'=>'themelegacy'));
-
-        $theme_obj = new stdClass();
-        $theme_obj->device = 'legacy';
-        $theme_obj->themename = $themelegacy->value;
-
-        $config_themes[] = $theme_obj;
-
-        $table = new xmldb_table('config');
-        $field = new xmldb_field('theme');
-
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->drop_field($table, $field);
+        if (!empty($CFG->themes)) {
+            unset_config('themes');
         }
 
-        $field = new xmldb_field('themelegacy');
+        if (!empty($CFG->theme)) {
+            $theme_obj = new stdClass();
+            $theme_obj->device = 'default';
+            $theme_obj->themename = $CFG->theme;
 
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->drop_field($table, $field);
+            $config_themes[] = $theme_obj;
+
+            unset_config('theme');
         }
 
-        $field = new xmldb_field('themes');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'big', null, null, null, null);
-        $dbman->add_field($table, $field);
+        if (!empty($CFG->themelegacy)) {
+            $theme_obj = new stdClass();
+            $theme_obj->device = 'legacy';
+            $theme_obj->themename = $CFG->themelegacy;
+
+            $config_themes[] = $theme_obj;
+
+            unset_config('themelegacy');
+        }
 
         set_config('themes', json_encode($config_themes));
         set_config('enabledevicedetection', 1);

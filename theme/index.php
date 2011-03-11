@@ -96,14 +96,14 @@ echo $OUTPUT->heading(get_string('themes'));
 
 echo $OUTPUT->single_button(new moodle_url('index.php', array('sesskey'=>sesskey(),'reset'=>1)), get_string('themeresetcaches', 'admin'));
 
-if($CFG->enabledevicedetection && empty($device)){
+if ($CFG->enabledevicedetection && empty($device)) {
     $table = new html_table();
     $table->id = 'devicethemeselector';
     $table->head = array(get_string('devicetype','admin'), get_string('theme'), get_string('info'));
 
     $devices = get_device_type_list();
 
-    foreach($devices as $device){
+    foreach ($devices as $device) {
         $row = array();
         $row[] = $device;
 
@@ -118,7 +118,7 @@ if($CFG->enabledevicedetection && empty($device)){
             // link to the screenshot, now mandatory - the image path is hardcoded because we need image from other themes, not the current one
             $screenshotpath = new moodle_url('/theme/image.php', array('theme'=>$themename, 'image'=>'screenshot','component'=>'theme'));
             // Contents of the first screenshot/preview cell.
-            $row[] = html_writer::empty_tag('img', array('src'=>$screenshotpath, 'alt'=>$strthemename));			
+            $row[] = html_writer::empty_tag('img', array('src'=>$screenshotpath, 'alt'=>$strthemename));
         } else {
             $row[] = get_string('themenoselected','admin');
         }

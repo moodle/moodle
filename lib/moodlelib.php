@@ -7595,10 +7595,10 @@ function get_device_type_list($inc_user_types = true){
 
     $types = array('default','legacy','mobile','tablet');
 
-    if($inc_user_types && !empty($CFG->devicedetectregex)){ 
+    if($inc_user_types && !empty($CFG->devicedetectregex)){
         $regexes = json_decode($CFG->devicedetectregex);
 
-        foreach($regexes as $regex){		
+        foreach($regexes as $regex){
             $types[] = $regex->value;
         }
     }
@@ -7614,15 +7614,13 @@ function get_device_type_list($inc_user_types = true){
  * @return string $theme or boolean false
  */
 function get_selected_theme_for_device_type($themes, $device_type = null){
-
     if(empty($device_type)){
         $device_type = get_device_type();
     }
 
-    //If a non-default device type is being used, and the user has switched theme, changr $device_type to default and we'll get the theme for that.
-
+    //If a non-default device type is being used, and the user has switched theme, change $device_type to default and we'll get the theme for that.
     if(get_user_switched_theme($device_type)){
-        $device_type = 'default';      
+        $device_type = 'default';
     }
 
     $themes = json_decode($themes);
@@ -7644,21 +7642,83 @@ function get_selected_theme_for_device_type($themes, $device_type = null){
  * @param string $device_type
  */
 function get_user_switched_theme($device_type = null){
+    global $CFG;
 
-	if(empty($device_type)){
+    if (empty($CFG->themes)) {
+        return null;
+    }
+
+    if (empty($device_type)) {
         $device_type = get_device_type();
     }
 
     $switchthemes = get_user_preferences('switchthemes');
     $switchthemes = json_decode($switchthemes);
 
-    foreach($switchthemes as $switch){
-        if($switch->device == $device_type && !empty($switch->switched)){
+    if (!is_array($switchthemes)) {
+        return false;
+    }
+
+    foreach ($switchthemes as $switch) {
+        if ($switch->device == $device_type && !empty($switch->switched)) {
             return true;
         }
     }
 
     return false;
+}
+
+
+function switch_theme($device_type = null) {
+    global $USER;
+
+    $current_prefs = get_user_preferences('switchthemes');
+    $current_prefs = json_decode($current_prefs, true);
+
+    if (is_null($device_type)) {
+        $device_type = get_device_type();
+    }
+
+    if(!empty($current_prefs)){
+        $i = 0;
+
+        foreach($current_prefs as $current){
+            if($current['device'] == $device_type){
+               $switched = $current['switched'];
+               array_splice($current_prefs,$i,1);
+               break;
+            }
+
+            $i++;
+        }
+    } else {
+        $current_prefs = array();
+    }
+
+    if(!empty($switched)){
+        $switched = 0;
+    } else {
+        $switched = 1;
+    }
+
+    $device_pref = array();
+    $device_pref['device'] = $device_type;
+    $device_pref['switched'] = $switched;
+
+    $current_prefs[] = $device_pref;
+
+    set_user_preference('switchthemes',json_encode($current_prefs),$USER->id);
+
+    //this is an OU customisation to support the OU mobile cookie - at present users cannot switch from the desktop view.
+    if ($device_type == 'mobile' && $switched == 1) {
+        ou_unset_mobile_cookie();
+        ou_set_fullsize_cookie();
+    }
+
+    if ($device_type == 'mobile' && $switched == 0) {
+        ou_set_mobile_cookie();
+        ou_unset_fullsize_cookie();
+    }
 }
 
 

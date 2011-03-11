@@ -2595,7 +2595,6 @@ EOD;
      * Renders theme links for switching between default and other themes.
      */
     protected function theme_switch_links(){
-
         if($this->switchlinkdisplayed){
             return '';
         }
@@ -2603,21 +2602,25 @@ EOD;
         global $USER, $PAGE;
 
         $switched = get_user_switched_theme();
+        $type = get_device_type();
 
-        $content = html_writer::start_tag('div', array('id'=>'theme_switch_link'));
+        $this->switchlinkdisplayed = true;
 
-        if($switched){
+        if (is_null($switched)) {
+            return '';
+        } else if(!$switched && $type == 'default') {
+            return '';
+        } else if ($switched) {
             $link_text = get_string('switchdevicerecommended');
         } else {
-            $link_text = get_string('switchdevicedefault'); 
+            $link_text = get_string('switchdevicedefault');
         }
 
+        $content = html_writer::start_tag('div', array('id'=>'theme_switch_link'));
         $link_url = new moodle_url('/theme/switch.php', array('url' => $PAGE->url));
 
         $content .= html_writer::link($link_url, $link_text);
         $content .= html_writer::end_tag('div');
-
-        $this->switchlinkdisplayed = true;
 
         return $content;
     }
