@@ -206,7 +206,7 @@ class quiz_statistics_response_analyser {
                     } else {
                         $row->aid = $responseclassid;
                     }
-                    $row->response = addslashes($response);
+                    $row->response = $response;
                     $row->rcount = $data->count;
                     $row->credit = $data->fraction;
                     $DB->insert_record('quiz_question_response_stats', $row, false);

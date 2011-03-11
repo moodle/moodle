@@ -195,7 +195,7 @@ class qtype_opaque_engine_manager {
         if ($possibleengineids) {
             foreach ($possibleengineids as $engineid => $ignored) {
                 $testengine = $this->load_engine_def($engineid);
-                $testengine->passkey = addslashes($testengine->passkey);
+                $testengine->passkey = $testengine->passkey;
                 if ($this->is_same_engine($engine, $testengine)) {
                     return $engineid;
                 }

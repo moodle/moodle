@@ -62,8 +62,8 @@ class question_engine_data_mapper {
     public function insert_questions_usage_by_activity(question_usage_by_activity $quba) {
         $record = new stdClass();
         $record->contextid = $quba->get_owning_context()->id;
-        $record->component = addslashes($quba->get_owning_component());
-        $record->preferredbehaviour = addslashes($quba->get_preferred_behaviour());
+        $record->component = $quba->get_owning_component();
+        $record->preferredbehaviour = $quba->get_preferred_behaviour();
 
         $newid = $this->db->insert_record('question_usages', $record);
         $quba->set_id_from_database($newid);
@@ -82,14 +82,14 @@ class question_engine_data_mapper {
         $record = new stdClass();
         $record->questionusageid = $qa->get_usage_id();
         $record->slot = $qa->get_slot();
-        $record->behaviour = addslashes($qa->get_behaviour_name());
+        $record->behaviour = $qa->get_behaviour_name();
         $record->questionid = $qa->get_question()->id;
         $record->maxmark = $qa->get_max_mark();
         $record->minfraction = $qa->get_min_fraction();
         $record->flagged = $qa->is_flagged();
-        $record->questionsummary = addslashes($qa->get_question_summary());
-        $record->rightanswer = addslashes($qa->get_right_answer_summary());
-        $record->responsesummary = addslashes($qa->get_response_summary());
+        $record->questionsummary = $qa->get_question_summary();
+        $record->rightanswer = $qa->get_right_answer_summary();
+        $record->responsesummary = $qa->get_response_summary();
         $record->timemodified = time();
         $record->id = $this->db->insert_record('question_attempts', $record);
 
@@ -107,7 +107,7 @@ class question_engine_data_mapper {
         $record = new stdClass();
         $record->questionattemptid = $questionattemptid;
         $record->sequencenumber = $seq;
-        $record->state = addslashes('' . $step->get_state());
+        $record->state = '' . $step->get_state();
         $record->fraction = $step->get_fraction();
         $record->timecreated = $step->get_timecreated();
         $record->userid = $step->get_user_id();
@@ -117,8 +117,8 @@ class question_engine_data_mapper {
         foreach ($step->get_all_data() as $name => $value) {
             $data = new stdClass();
             $data->attemptstepid = $record->id;
-            $data->name = addslashes($name);
-            $data->value = addslashes($value);
+            $data->name = $name;
+            $data->value = $value;
             $this->db->insert_record('question_attempt_step_data', $data, false);
         }
     }
@@ -596,8 +596,8 @@ ORDER BY
         $record = new stdClass();
         $record->id = $quba->get_id();
         $record->contextid = $quba->get_owning_context()->id;
-        $record->component = addslashes($quba->get_owning_component());
-        $record->preferredbehaviour = addslashes($quba->get_preferred_behaviour());
+        $record->component = $quba->get_owning_component();
+        $record->preferredbehaviour = $quba->get_preferred_behaviour();
 
         $this->db->update_record('question_usages', $record);
     }
@@ -613,9 +613,9 @@ ORDER BY
         $record->maxmark = $qa->get_max_mark();
         $record->minfraction = $qa->get_min_fraction();
         $record->flagged = $qa->is_flagged();
-        $record->questionsummary = addslashes($qa->get_question_summary());
-        $record->rightanswer = addslashes($qa->get_right_answer_summary());
-        $record->responsesummary = addslashes($qa->get_response_summary());
+        $record->questionsummary = $qa->get_question_summary();
+        $record->rightanswer = $qa->get_right_answer_summary();
+        $record->responsesummary = $qa->get_response_summary();
         $record->timemodified = time();
 
         $this->db->update_record('question_attempts', $record);

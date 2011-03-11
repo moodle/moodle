@@ -338,7 +338,7 @@ class question_engine_attempt_upgrader {
     protected function escape_fields($record) {
         foreach (get_object_vars($record) as $field => $value) {
             if (is_string($value)) {
-                $record->$field = addslashes($value);
+                $record->$field = $value;
             }
         }
     }
@@ -747,7 +747,7 @@ abstract class qbehaviour_converter {
             $this->process_state($submitstate);
         }
 
-        $step->data['-comment'] = addslashes($this->qsession->manualcomment);
+        $step->data['-comment'] = $this->qsession->manualcomment;
         if ($this->question->maxmark > 0) {
             $step->fraction = $state->grade / $this->question->maxmark;
             $step->state = $this->manual_graded_state_for_fraction($step->fraction);
