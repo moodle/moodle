@@ -81,7 +81,7 @@ class qtype_essay_renderer extends qtype_renderer {
      * Displays any attached files when the question is in read-only mode.
      */
     public function files_read_only(question_attempt $qa, question_display_options $options) {
-        $files = $qa->get_last_qt_files('attachments', $options->contextid);
+        $files = $qa->get_last_qt_files('attachments', $options->context->id);
         $output = array();
 
         foreach ($files as $file) {
@@ -97,7 +97,17 @@ class qtype_essay_renderer extends qtype_renderer {
      * Displays the input control for when the student should upload a single file.
      */
     public function filepicker_input(question_attempt $qa, question_display_options $options) {
-        return '';
+        global $CFG;
+        require_once($CFG->dirroot . '/lib/form/filemanager.php');
+
+        $pickeroptions = new stdClass();
+        $pickeroptions->mainfile = null;
+        $pickeroptions->maxfiles = 1;
+        $pickeroptions->itemid = $qa->prepare_response_files_draft_itemid(
+                'attachments', $options->context->id);
+        $pickeroptions->context = $options->context;
+
+        return form_filemanager_render($pickeroptions);
     }
 
     /**

@@ -469,7 +469,7 @@ class question_display_options {
     /**
      * @var int the context the attempt being output belongs to.
      */
-    public $contextid;
+    public $context;
 
     /**
      * Set all the feedback-related fields {@link $feedback}, {@link generalfeedback},
@@ -921,7 +921,7 @@ class question_usage_by_activity {
      * @return string HTML fragment representing the question.
      */
     public function render_question($slot, $options, $number = null) {
-        $options->contextid = $this->context->id;
+        $options->context = $this->context;
         return $this->get_question_attempt($slot)->render($options, $number);
     }
 
@@ -932,7 +932,7 @@ class question_usage_by_activity {
      * @return string HTML fragment.
      */
     public function render_question_head_html($slot) {
-        $options->contextid = $this->context->id;
+        $options->context = $this->context;
         return $this->get_question_attempt($slot)->render_head_html();
     }
 
@@ -948,7 +948,7 @@ class question_usage_by_activity {
      * @return string HTML fragment representing the question.
      */
     public function render_question_at_step($slot, $seq, $options, $number = null) {
-        $options->contextid = $this->context->id;
+        $options->context = $this->context;
         return $this->get_question_attempt($slot)->render_at_step($seq, $options, $number, $this->preferredbehaviour);
     }
 
@@ -1711,6 +1711,18 @@ class question_attempt {
                 $this->slot,
                 $file->get_itemid())) .
                 $file->get_filepath() . $file->get_filename());
+    }
+
+    /**
+     * Get the URL of a file that belongs to a response variable of this
+     * question_attempt.
+     * @param stored_file $file the file to link to.
+     * @return int the draft itemid.
+     */
+    public function prepare_response_files_draft_itemid($name, $contextid) {
+        $draftid = file_get_submitted_draft_itemid($this->get_qt_field_name($name));
+        file_prepare_draft_area($draftid, $contextid, 'question', 'response_' . $name, $this->id);
+        return $draftid;
     }
 
     /**
