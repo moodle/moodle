@@ -19,10 +19,13 @@ require_once($CFG->dirroot.'/backup/util/plan/convert_step.class.php');
 require_once($CFG->dirroot.'/backup/util/plan/convert_task.class.php');
 require_once($CFG->dirroot.'/backup/util/plan/convert_structure_step.class.php');
 require_once($CFG->dirroot.'/backup/util/plan/convert_execution_step.class.php');
-require_once($CFG->dirroot.'/backup/util/plan/convert_.class.php');
-require_once($CFG->dirroot.'/backup/util/plan/convert_.class.php');
-require_once($CFG->dirroot.'/backup/util/plan/convert_.class.php');
+require_once($CFG->dirroot.'/backup/util/structure/restore_path_element.class.php');
+require_once($CFG->dirroot.'/backup/util/structure/convert_path_element.class.php');
+require_once($CFG->dirroot.'/backup/util/plan/convert_execution_step.class.php');
+require_once($CFG->dirroot.'/backup/util/xml/parser/processors/grouped_parser_processor.class.php');
+require_once($CFG->dirroot.'/backup/util/helper/convert_structure_parser_processor.class.php');
 require_once($CFG->dirroot.'/backup/moodle2/convert_stepslib.php');
+require_once($CFG->dirroot.'/backup/util/xml/parser/progressive_parser.class.php');
 
 // And some moodle stuff too
 require_once($CFG->libdir.'/fileslib.php');

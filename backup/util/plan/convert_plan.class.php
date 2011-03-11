@@ -26,6 +26,13 @@ class convert_plan extends base_plan implements loggable {
         return $this->converter->get_convertdir();
     }
 
+    /**
+     * @return plan_converter
+     */
+    public function get_converter() {
+        return $this->converter;
+    }
+
     public function get_converterid() {
         return $this->converter->get_id();
     }

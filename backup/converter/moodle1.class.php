@@ -25,4 +25,13 @@ abstract class moodle1_converter extends plan_converter {
         return false;
     }
 
+    public function build_plan() {
+        $this->xmlparser = new progressive_parser();
+        $this->xmlparser->set_file($this->get_tempdir() . '/moodle.xml');
+        $this->xmlprocessor = new convert_structure_parser_processor($this); // @todo Probably move this
+        $this->xmlparser->set_processor($this->xmlprocessor);
+
+
+        $xmlparser->process(); // @todo When to really do this?
+    }
 }
