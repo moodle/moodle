@@ -46,6 +46,14 @@ class qtype_essay_question extends question_with_responses {
         return new qbehaviour_manualgraded($qa, $preferredbehaviour);
     }
 
+    /**
+     * @param moodle_page the page we are outputting to.
+     * @return qtype_essay_format_renderer_base the response-format-specific renderer.
+     */
+    public function get_format_renderer(moodle_page $page) {
+        return $page->get_renderer('qtype_essay', 'format_' . $this->responseformat);
+    }
+
     public function get_expected_data() {
         return array('answer' => PARAM_CLEANHTML);
     }

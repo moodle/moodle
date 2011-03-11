@@ -52,6 +52,7 @@ class qtype_essay extends question_type {
         $options = $DB->get_record('qtype_essay_options', array('questionid' => $formdata->id));
         if (!$options) {
             $options = new stdClass();
+            $options->questionid = $formdata->id;
             $options->id = $DB->insert_record('qtype_essay_options', $options);
         }
 
