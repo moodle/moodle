@@ -194,10 +194,30 @@ class quiz_responses_report extends quiz_default_report {
                     "END) AS gradedattempt, ";
             }
 
-            $fields .='qa.uniqueid, qa.id AS attempt, u.id AS userid, u.idnumber, u.firstname,'.
-                ' u.lastname, u.institution, u.department, u.email, u.picture, u.imagealt, '.
-                'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration, ' .
-                'qa.layout ';
+            $fields .='qa.uniqueid,
+                    qa.id AS attempt,
+                    u.id AS userid,
+                    u.idnumber,
+                    u.firstname,
+                    u.lastname,
+                    u.picture,
+                    u.imagealt,
+                    u.email,
+                    u.institution,
+                    u.department,
+                    qa.sumgrades,
+                    qa.timefinish,
+                    qa.timestart,
+                    qa.timefinish - qa.timestart AS duration,
+                    CASE WHEN qa.timefinish = 0 THEN null
+                         WHEN qa.timefinish > qa.timestart THEN qa.timefinish - qa.timestart
+                         ELSE 0 END AS duration';
+            // To explain that last bit, in MySQL, qa.timestart and qa.timefinish
+            // are unsigned. Since MySQL 5.5.5, when they introduced strict mode,
+            // subtracting a larger unsigned int from a smaller one gave an error.
+            // Therefore, we avoid doing that. timefinish can be non-zero and less
+            // than timestart when you have two load-balanced servers with very
+            // badly synchronised clocks, and a student does a really quick attempt.
 
             // This part is the same for all cases - join users and quiz_attempts tables
             $from = '{user} u ';
