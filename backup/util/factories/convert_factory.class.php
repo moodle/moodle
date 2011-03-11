@@ -13,7 +13,7 @@ abstract class convert_factory {
 
         $name = clean_param($name, PARAM_SAFEDIR);
 
-        $classfile = "$CFG->dirroot/backup/converter/$name.class.php";
+        $classfile = "$CFG->dirroot/backup/converter/$name/converter.class.php";
         $classname = "{$name}_converter";
 
         if (!file_exists($classfile)) {
@@ -36,9 +36,8 @@ abstract class convert_factory {
         global $CFG;
 
         $converters = array();
-        $files      = get_directory_list($CFG->dirroot.'/backup/converter');
-        foreach ($files as $file) {
-            $name = array_shift(explode('_', $file));
+        $plugins    = get_list_of_plugins('backup/converter');
+        foreach ($plugins as $name) {
             $converters[$name] = self::converter($name, $tempdir);
         }
         return $converters;
