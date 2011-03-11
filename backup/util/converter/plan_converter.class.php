@@ -22,16 +22,20 @@ abstract class plan_converter extends base_converter {
     /**
      * @var array
      */
-    protected $pathelements;  // Array of pathelements to process
+    protected $pathelements = array();  // Array of pathelements to process
 
     // @todo needed? redo?
     protected $pathlock;      // Path currently locking processing of children
+
+    // @todo IDK what this is really...
+    const SKIP_ALL_CHILDREN = -991399; // To instruct the dispatcher about to ignore
+                                       // all children below path processor returning it
 
     /**
      * @return convert_plan
      */
     public function get_plan() {
-        if ($this->plan instanceof convert_plan) {
+        if (!$this->plan instanceof convert_plan) {
             $this->plan = new convert_plan($this);
         }
         return $this->plan;
@@ -42,6 +46,7 @@ abstract class plan_converter extends base_converter {
     public function execute() {
         $this->get_plan()->build();  // Ends up calling $this->build_plan()
         $this->get_plan()->execute();
+        $this->xmlparser->process(); // @todo When to really do this?
     }
 
     public function destroy() {

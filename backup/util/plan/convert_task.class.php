@@ -17,4 +17,8 @@ abstract class convert_task  extends base_task {
     public function get_converter() {
         return $this->plan->get_converter();
     }
+
+    protected function define_settings() {
+        // None
+    }
 }

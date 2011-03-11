@@ -31,7 +31,38 @@ class moodle1_converter extends plan_converter {
         $this->xmlprocessor = new convert_structure_parser_processor($this); // @todo Probably move this
         $this->xmlparser->set_processor($this->xmlprocessor);
 
+        $this->get_plan()->add_task(new moodle1_course_task('courseinfo'));
+    }
+}
 
-        $this->xmlparser->process(); // @todo When to really do this?
+// @todo Where to store these classes?
+
+class moodle1_course_task extends convert_task {
+    /**
+     * Create all the steps that will be part of this task
+     */
+    public function build() {
+
+        $this->add_step(new moodle1_course_structure_step('course_info', $this));
+
+        // At the end, mark it as built
+        $this->built = true;
+    }
+}
+
+class moodle1_course_structure_step extends convert_structure_step {
+    /**
+     * Function that will return the structure to be processed by this convert_step.
+     * Must return one array of @convert_path_element elements
+     */
+    protected function define_structure() {
+        $paths   = array();
+        $paths[] = new convert_path_element('courseinfo', '/MOODLE_BACKUP/COURSE/HEADER');
+
+        return $paths;
+    }
+
+    public function convert_courseinfo($data) {
+        print_object($data);
     }
 }
