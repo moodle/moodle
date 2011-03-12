@@ -591,7 +591,7 @@ if ($mform->is_cancelled()) {
     if (get_string_manager()->string_exists('modulename_help', $module->name)) {
         echo $OUTPUT->heading_with_help($pageheading, 'modulename', $module->name, 'icon');
     } else {
-        echo $OUTPUT->heading_with_help($pageheading, '', '', 'icon');
+        echo $OUTPUT->heading_with_help($pageheading, '', $module->name, 'icon');
     }
 
     $mform->display();
