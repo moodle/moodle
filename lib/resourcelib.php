@@ -146,7 +146,12 @@ function resourcelib_guess_url_mimetype($fullurl) {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
 
-    if (preg_match("|^(.*)/[a-z]*file.php(\?file=)?(/[^&\?]*)|", $fullurl, $matches)) {
+    if ($fullurl instanceof moodle_url) {
+        $fullurl = $fullurl->out(false);
+    }
+
+    $matches = null;
+    if (preg_match("|^(.*)/[a-z]*file.php(\?file=)?(/[^&\?#]*)|", $fullurl, $matches)) {
         // remove the special moodle file serving hacks so that the *file.php is ignored
         $fullurl = $matches[1].$matches[3];
     }
@@ -165,8 +170,36 @@ function resourcelib_guess_url_mimetype($fullurl) {
 
     } else {
         // ok, this finally looks like a real file
-        return mimeinfo('type', $fullurl);
+        $parts = explode('?', $fullurl);
+        $url = reset($parts);
+        return mimeinfo('type', $url);
     }
+}
+
+/**
+ * Looks for the extension.
+ *
+ * @param string $fullurl
+ * @return string file extension
+ */
+function resourcelib_get_extension($fullurl) {
+
+    if ($fullurl instanceof moodle_url) {
+        $fullurl = $fullurl->out(false);
+    }
+
+    $matches = null;
+    if (preg_match("|^(.*)/[a-z]*file.php(\?file=)?(/.*)|", $fullurl, $matches)) {
+        // remove the special moodle file serving hacks so that the *file.php is ignored
+        $fullurl = $matches[1].$matches[3];
+    }
+
+    $matches = null;
+    if (preg_match('/^[^#\?]+\.([a-z0-9]+)([#\?].*)?$/i', $fullurl, $matches)) {
+        return strtolower($matches[1]);
+    }
+
+    return '';
 }
 
 /**
@@ -192,46 +225,21 @@ function resourcelib_embed_image($fullurl, $title) {
  * @return string html
  */
 function resourcelib_embed_mp3($fullurl, $title, $clicktoopen) {
-    global $CFG, $OUTPUT, $PAGE;
 
-    $c = $OUTPUT->resource_mp3player_colors();   // You can set this up in your theme/xxx/config.php
-    $colors = explode('&', $c);
-    $playercolors = array();
-    foreach ($colors as $color) {
-        $color = explode('=', $color);
-        $playercolors[$color[0]] = $color[1];
+    if ($fullurl instanceof moodle_url) {
+        $fullurl = $fullurl->out(false);
     }
 
-    $id = 'filter_mp3_'.time(); //we need something unique because it might be stored in text cache
+    $id = 'resource_mp3_'.time(); //we need something unique because it might be stored in text cache
 
-    $playerpath = $CFG->wwwroot .'/filter/mediaplugin/mp3player.swf';
-    $audioplayerpath = $CFG->wwwroot .'/filter/mediaplugin/flowplayer.audio.swf';
+    // note: size is specified in theme, it can be made as wide as necessary, but the height can not be changed
 
-    $code = <<<OET
-<div class="resourcecontent resourcemp3">
-  <span class="resourcemediaplugin resourcemediaplugin_mp3" id="$id"></span>
-  <noscript><div>
-    <object width="251" height="25" id="nonjsmp3plugin" name="undefined" data="$playerpath" type="application/x-shockwave-flash">
-    <param name="movie" value="$playerpath" />
-    <param name="allowfullscreen" value="false" />
-    <param name="allowscriptaccess" value="always" />
-    <param name="flashvars" value='config={"plugins": {"controls": {
-                                                            "fullscreen": false,
-                                                            "height": 25,
-                                                            "autoHide": false
-                                                            }
-                                                      },
-                                           "clip":{"url":"$fullurl",
-                                                   "autoPlay": false},
-                                           "content":{"url":"$playerpath"}}}' />
-    </object>
-  </div></noscript>
-</div>
-OET;
-    $PAGE->requires->js('/lib/flowplayer.js');
-    $code .= $PAGE->requires->js_function_call('M.util.init_mp3flowplayer', array('id'=>$id, 'playerpath'=>$playerpath, 'audioplayerpath'=>$audioplayerpath, 'fileurl'=>$fullurl, 'color'=>$playercolors));
+    $output = '<div class="resourcecontent resourcemp3">';
+    $output .= html_writer::tag('span', $clicktoopen, array('id'=>$id, 'class'=>'resourcemediaplugin resourcemediaplugin_mp3', 'title'=>$title));
+    $output .= html_writer::script(js_writer::function_call('M.util.add_audio_player', array($id, $fullurl, false)));
+    $output .= '</div>';
 
-    return $code;
+    return $output;
 }
 
 /**
@@ -244,29 +252,29 @@ OET;
 function resourcelib_embed_flashvideo($fullurl, $title, $clicktoopen) {
     global $CFG, $PAGE;
 
-    $id = 'filter_flv_'.time(); //we need something unique because it might be stored in text cache
+    if ($fullurl instanceof moodle_url) {
+        $fullurl = $fullurl->out(false);
+    }
 
-    $playerpath = $CFG->wwwroot .'/filter/mediaplugin/flvplayer.swf';
+    $id = 'resource_flv_'.time(); //we need something unique because it might be stored in text cache
 
-    $code = <<<EOT
-<div class="resourcecontent resourceflv">
-  <span class="mediaplugin mediaplugin_flv" id="$id"></span>
-  <noscript><div>
-    <object width="800" height="600" id="undefined" name="undefined" data="$playerpath" type="application/x-shockwave-flash">
-    <param name="movie" value="$playerpath" />
-    <param name="allowfullscreen" value="true" />
-    <param name="allowscriptaccess" value="always" />
-    <param name="flashvars" value='config={"clip":{"url":"$fullurl",
-                                                   "autoPlay": false},
-                                           "content":{"url":"$playerpath"}}}' />
-    </object>
-  </div></noscript>
-</div>
-EOT;
+    //note: nobody should be adding any dimensions to themes!!!
 
-    $PAGE->requires->js('/lib/flowplayer.js');
-    $code .= $PAGE->requires->js_function_call('M.util.init_flvflowplayer', array('id'=>$id, 'playerpath'=>$playerpath, 'fileurl'=>$fullurl));
-    return $code;
+    if (preg_match('/\?d=([\d]{1,4}%?)x([\d]{1,4}%?)/', $fullurl, $matches)) {
+        $width    = $matches[1];
+        $height   = $matches[2];
+        $autosize = false;
+    } else {
+        $width    = 400;
+        $height   = 300;
+        $autosize = true;
+    }
+    $output = '<div class="resourcecontent resourceflv">';
+    $output .= html_writer::tag('span', $clicktoopen, array('id'=>$id, 'class'=>'resourcemediaplugin resourcemediaplugin_flv', 'title'=>$title));
+    $output .= html_writer::script(js_writer::function_call('M.util.add_video_player', array($id, $fullurl, $width, $height, $autosize)));
+    $output .= '</div>';
+
+    return $output;
 }
 
 /**
@@ -406,11 +414,12 @@ EOT;
 function resourcelib_embed_real($fullurl, $title, $clicktoopen) {
     $code = <<<EOT
 <div class="resourcecontent resourcerm">
-  <object classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" width="320" height="240">
+  <object classid="clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA" data="$fullurl" width="320" height="240">
     <param name="src" value="$fullurl" />
     <param name="controls" value="All" />
 <!--[if !IE]>-->
     <object type="audio/x-pn-realaudio-plugin" data="$fullurl" width="320" height="240">
+    <param name="src" value="$fullurl" />
       <param name="controls" value="All" />
 <!--<![endif]-->
 $clicktoopen
@@ -436,13 +445,15 @@ function resourcelib_embed_pdf($fullurl, $title, $clicktoopen) {
 
     $code = <<<EOT
 <div class="resourcecontent resourcepdf">
-  <object id="resourceobject" data="$fullurl" type="application/pdf">
+  <object id="resourceobject" data="$fullurl" type="application/pdf" width="800" height="600">
     <param name="src" value="$fullurl" />
     $clicktoopen
   </object>
 </div>
 EOT;
-    //$PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
+
+    // the size is hardcoded in the boject obove intentionally because it is adjusted by the following function on-the-fly
+    $PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
 
     return $code;
 }
@@ -457,6 +468,10 @@ EOT;
  */
 function resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype) {
     global $CFG, $PAGE;
+
+    if ($fullurl instanceof moodle_url) {
+        $fullurl = $fullurl->out();
+    }
 
     $iframe = false;
     // IE can not embed stuff properly if stored on different server
@@ -481,7 +496,7 @@ EOT;
     } else {
         $code = <<<EOT
 <div class="resourcecontent resourcegeneral">
-  <object id="resourceobject" data="$fullurl" type="$mimetype">
+  <object id="resourceobject" data="$fullurl" type="$mimetype"  width="800" height="600">
     <param name="src" value="$fullurl" />
     $clicktoopen
   </object>
@@ -489,6 +504,7 @@ EOT;
 EOT;
     }
 
+    // the size is hardcoded in the boject obove intentionally because it is adjusted by the following function on-the-fly
     $PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
 
     return $code;

@@ -2,7 +2,7 @@ html, body#tinymce {background-color:#FAFAFA;}
 body {font-family:Arial, Verdana, Helvetica, sans-serif;padding: 4px;}
 body.lang-vi {font-family:Arial, Verdana, Helvetica, sans-serif !important;}
 
-/** 
+/**
  * Links
  */
 a {text-decoration:none;color:#0000FF;}
@@ -15,7 +15,7 @@ a:hover {text-decoration:underline;color:#FF0000;}
 .homelink a {color: #000;text-decoration: none;border-top: 1px solid #cecece;border-bottom: 2px solid #4a4a4a;border-left: 1px solid #cecece;border-right: 2px solid #4a4a4a;}
 .homelink a:hover {text-decoration: none;border-bottom: 1px solid #cecece;border-top: 2px solid #4a4a4a;border-right: 1px solid #cecece;border-left: 2px solid #4a4a4a;}
 
-/** 
+/**
  * Headings
  */
 h1.main,
@@ -92,13 +92,13 @@ table.formtable tbody th {background-color: transparent;background-image: none;}
 
 .mod_introbox {border-color:#DDDDDD;}
 
-/** 
+/**
  * Docs
  */
 #doc-contents h1 {font-size: 0.9em;}
 #doc-contents ul {font-size: 0.8em;}
 
-/** 
+/**
  * Login
  */
 #page-login-index #content {font-size: 0.85em;}
@@ -219,10 +219,6 @@ form.popupform label {margin-right: 0.5em;}
 /**
  * Filters
  */
-.mediaplugin {display:block;clear:both;margin-top:5px;margin-bottom:5px;}
-.mediaplugin_mp3,
-.mediaplugin_swf,
-.mediaplugin_flv {display:inline;clear:none;margin:0px;margin-left:0.5em;}
 .texrender {border:0px;vertical-align:middle;}
 
 /**
@@ -282,7 +278,7 @@ h2.tag-heading {text-align:center;margin-left:auto;margin-right:auto;width:95%;}
 .tag .managelink {text-align:right;}
 table#tag-management-list {margin: 10px auto;width: 80%;}
 
-/** 
+/**
  * Overriding base
  */
 #page-header .headermain {font-size:1.5em;}

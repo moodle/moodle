@@ -1,11 +1,1 @@
-.path-mod-resource .popupnotice {text-align:center;margin:40px;}
-
-.resourcecontent object {height:600px;width:800px;}
-.resourcecontent.resourcepdf object{height: 800px;width: 100%;}
-
-.resourcecontent .resourcemediaplugin_mp3 object {height:25px; }
-.path-mod-resource .resourcemediaplugin_mp3 {width: 800px;margin:10px auto;}
-.resourcecontent.resourcemp3 object#nonjsmp3plugin {height:25px;}
-
-.ie .resourcecontent .resourcemediaplugin_mp3 object {height:34px;}
-
+.path-mod-resource .resourcecontent {text-align: center;}
