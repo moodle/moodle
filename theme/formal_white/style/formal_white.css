@@ -19,15 +19,17 @@ h2 {font-size:1.3em;}
 h3 {font-size:1.2em;}
 h4 {font-weight:bold;}
 
+h2.main, h3.main, h4.main {
+    margin:0;
+    padding:0;
+    text-align: center;
+}
+
 #headerlogo {margin:0.3em;float:left;top:1em;z-index:1;}
 h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:2em;z-index:1;}
 
 /* headermenu */
 .headermenu {float:right;top:1em;z-index:2;}
-
-/* debug */
-/* #headerlogo  {border:1px red solid;} */
-/* .headermenu {border:1px red solid;} */
 
 #dock {background-color:#E3DFD4;border-right:1px #000 dashed;}
 
@@ -35,6 +37,10 @@ h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:2em;z-index:1;}
 .navbar {width:auto;padding-top:0.35em;padding-bottom:0.15em;background-image:url([[pix:theme|bg_bread]]);}
 .navbar li span {color:#E3DFD4;}
 .navbar li a:link, .navbar li a:visited {color:white;}
+
+/* navbutton */
+.navbutton {padding-right:0.5em;}
+.navbutton table td {padding:0;}
 
 /* breadcrumb */
 .breadcrumb {margin-left:0.8em;}
