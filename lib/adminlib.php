@@ -5967,10 +5967,14 @@ function any_new_admin_settings($node) {
  * @return bool success or fail
  */
 function db_replace($search, $replace) {
+    global $DB, $CFG, $OUTPUT;
 
-    global $DB, $CFG;
+    // TODO: this is horrible hack, we should do whitelisting and each plugin should be responsible for proper replacing...
+    $skiptables = array('config', 'config_plugins', 'config_log', 'upgrade_log',
+                        'filter_config', 'sessions', 'events_queue', 'repository_instance_config',
+                        'block_instances', 'block_pinned_old', 'block_instance_old', '');
 
-    /// Turn off time limits, sometimes upgrades can be slow.
+    // Turn off time limits, sometimes upgrades can be slow.
     @set_time_limit(0);
 
     if (!$tables = $DB->get_tables() ) {    // No tables yet at all.
@@ -5978,7 +5982,7 @@ function db_replace($search, $replace) {
     }
     foreach ($tables as $table) {
 
-        if (in_array($table, array('config'))) {      // Don't process these
+        if (in_array($table, $skiptables)) {      // Don't process these
             continue;
         }
 
@@ -5986,11 +5990,37 @@ function db_replace($search, $replace) {
             $DB->set_debug(true);
             foreach ($columns as $column => $data) {
                 if (in_array($data->meta_type, array('C', 'X'))) {  // Text stuff only
+                    //TODO: this should be definitively moved to DML driver to do the actual replace, this is not going to work for MSSQL and Oracle...
                     $DB->execute("UPDATE {".$table."} SET $column = REPLACE($column, ?, ?)", array($search, $replace));
                 }
             }
             $DB->set_debug(false);
         }
+    }
+
+    // delete modinfo caches
+    rebuild_course_cache(0, true);
+
+    // TODO: we should ask all plugins to do the search&replace, for now let's do only blocks...
+    $blocks = get_plugin_list('block');
+    foreach ($blocks as $blockname=>$fullblock) {
+        if ($blockname === 'NEWBLOCK') {   // Someone has unzipped the template, ignore it
+            continue;
+        }
+
+        if (!is_readable($fullblock.'/lib.php')) {
+            continue;
+        }
+
+        $function = 'block_'.$blockname.'_global_db_replace';
+        include_once($fullblock.'/lib.php');
+        if (!function_exists($function)) {
+            continue;
+        }
+
+        echo $OUTPUT->notification("Replacing in $blockname blocks...", 'notifysuccess');
+        $function($search, $replace);
+        echo $OUTPUT->notification("...finished", 'notifysuccess');
     }
 
     return true;
