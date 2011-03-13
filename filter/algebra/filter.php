@@ -50,15 +50,11 @@ function filter_algebra_image($imagefile, $tex= "", $height="", $width="", $alig
   global $CFG, $OUTPUT;
 
   $output = "";
-  $origtex = $tex;
   $style = 'style="border:0px; vertical-align:'.$align.';';
+  $title = '';
   if ($tex) {
-    $tex = str_replace('&','&amp;',$tex);
-    $tex = str_replace('<','&lt;',$tex);
-    $tex = str_replace('>','&gt;',$tex);
-    $tex = str_replace('"','&quot;',$tex);
-    $tex = str_replace("\'",'&#39;',$tex);
-    $title = "title=\"$tex\"";
+    $tex = html_entity_decode($tex, ENT_QUOTES, 'UTF-8');
+    $title = 'title="'.s($tex).'"';
   }
   if ($height) {
     $style .= " height:{$height}px;";
@@ -69,7 +65,7 @@ function filter_algebra_image($imagefile, $tex= "", $height="", $width="", $alig
   $style .= '"';
   $anchorcontents = '';
   if ($imagefile) {
-    $anchorcontents .= "<img $title alt=\"".s($origtex)."\" src=\"";
+    $anchorcontents .= "<img $title alt=\"".s($tex)."\" src=\"";
     if ($CFG->slasharguments) {        // Use this method if possible for better caching
       $anchorcontents .= "$CFG->wwwroot/filter/algebra/pix.php/$imagefile";
     } else {
@@ -77,12 +73,12 @@ function filter_algebra_image($imagefile, $tex= "", $height="", $width="", $alig
     }
     $anchorcontents .= "\" $style />";
 
-    $link = $action = null;
     if (!file_exists("$CFG->dataroot/filter/algebra/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
         $link = '/filter/algebra/algebradebug.php';
+        $action = null;
     } else {
-        $link = '/filter/algebra/displaytex.php?'.urlencode($tex);
-        $action = new popup_action('click', $link, 'popup', array('height'=>300,'width'=>240));
+        $link = new moodle_url('/filter/tex/displaytex.php', array('texexp'=>$tex));
+        $action = new popup_action('click', $link, 'popup', array('width'=>320,'height'=>240)); //TODO: the popups do not work when text caching is enabled!!
     }
     $output .= $OUTPUT->action_link($link, $anchorcontents, $action, array('title'=>'TeX'));
 
