@@ -40,7 +40,7 @@
             redirect($attemptobj->attempt_url(0, $page));
         } else if (!$options->responses) {
             $accessmanager->back_to_view_page($attemptobj->is_preview_user(),
-                    $accessmanager->cannot_review_message($attemptobj->get_attempt_state()));
+                    $accessmanager->cannot_review_message($options));
         }
 
     } else if (!$attemptobj->is_review_allowed()) {
