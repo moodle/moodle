@@ -462,30 +462,41 @@ class quiz_attempt extends quiz {
     }
 
     /**
-     * Static function to create a new quiz_attempt object given an attemptid.
-     *
-     * @param integer $attemptid the attempt id.
-     * @return quiz_attempt the new quiz_attempt object
+     * Used by {create()} and {create_from_usage_id()}.
+     * @param array $conditions passed to $DB->get_record('quiz_attempts', $conditions).
      */
-    static public function create($attemptid) {
+    static protected function create_helper($conditions) {
         global $DB;
 
-        if (!$attempt = quiz_load_attempt($attemptid)) {
-            throw new moodle_exception('invalidattemptid', 'quiz');
-        }
-        if (!$quiz = $DB->get_record('quiz', array('id' => $attempt->quiz))) {
-            throw new moodle_exception('invalidquizid', 'quiz');
-        }
-        if (!$course = $DB->get_record('course', array('id' => $quiz->course))) {
-            throw new moodle_exception('invalidcoursemodule');
-        }
-        if (!$cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id)) {
-            throw new moodle_exception('invalidcoursemodule');
-        }
+        $attempt = $DB->get_record('quiz_attempts', $conditions, '*', MUST_EXIST);
+        $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
+
         // Update quiz with override information
         $quiz = quiz_update_effective_access($quiz, $attempt->userid);
 
         return new quiz_attempt($attempt, $quiz, $cm, $course);
+    }
+
+    /**
+     * Static function to create a new quiz_attempt object given an attemptid.
+     *
+     * @param int $attemptid the attempt id.
+     * @return quiz_attempt the new quiz_attempt object
+     */
+    static public function create($attemptid) {
+        return self::create_helper(array('id' => $attemptid));
+    }
+
+    /**
+     * Static function to create a new quiz_attempt object given a usage id.
+     *
+     * @param int $usageid the attempt usage id.
+     * @return quiz_attempt the new quiz_attempt object
+     */
+    static public function create_from_unique_id($usageid) {
+        return self::create_helper(array('uniqueid' => $usageid));
     }
 
     // Functions for loading more data =====================================================
