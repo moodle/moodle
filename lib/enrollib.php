@@ -221,6 +221,47 @@ function enrol_check_plugins($user) {
 }
 
 /**
+ * Do these two students share any course?
+ *
+ * The courses has to be visible and enrolments has to be active,
+ * timestart and timeend restrictions are ignored.
+ *
+ * @param stdClass|int $user1
+ * @param stdClass|int $user2
+ * @return bool
+ */
+function enrol_sharing_course($user1, $user2) {
+    global $DB, $CFG;
+
+    $user1 = !empty($user1->id) ? $user1->id : $user1;
+    $user2 = !empty($user2->id) ? $user2->id : $user2;
+
+    if (empty($user1) or empty($user2)) {
+        return false;
+    }
+
+    if (!$plugins = explode(',', $CFG->enrol_plugins_enabled)) {
+        return false;
+    }
+
+    list($plugins, $params) = $DB->get_in_or_equal($plugins, SQL_PARAMS_NAMED, 'ee00');
+    $params['enabled'] = ENROL_INSTANCE_ENABLED;
+    $params['active1'] = ENROL_USER_ACTIVE;
+    $params['active2'] = ENROL_USER_ACTIVE;
+    $params['user1']   = $user1;
+    $params['user2']   = $user2;
+
+    $sql = "SELECT DISTINCT 'x'
+              FROM {enrol} e
+              JOIN {user_enrolments} ue1 ON (ue1.enrolid = e.id AND ue1.status = :active1 AND ue1.userid = :user1)
+              JOIN {user_enrolments} ue2 ON (ue1.enrolid = e.id AND ue1.status = :active2 AND ue2.userid = :user2)
+              JOIN {course} c ON (c.id = e.courseid AND c.visible = 1)
+             WHERE e.status = :enabled AND e.enrol $plugins";
+
+    return $DB->record_exists_sql($sql, $params);
+}
+
+/**
  * This function adds necessary enrol plugins UI into the course edit form.
  *
  * @param MoodleQuickForm $mform
