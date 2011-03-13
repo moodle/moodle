@@ -1648,8 +1648,8 @@ class core_renderer extends renderer_base {
             $output .= $helpicon->linktext;
         }
 
-        // now create the link around it
-        $url = new moodle_url('/help.php', array('component' => $helpicon->component, 'identifier' => $helpicon->helpidentifier, 'lang'=>current_language()));
+        // now create the link around it - we need https on loginhttps pages
+        $url = new moodle_url($CFG->httpswwwroot.'/help.php', array('component' => $helpicon->component, 'identifier' => $helpicon->helpidentifier, 'lang'=>current_language()));
 
         // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
         $title = get_string('helpprefix2', '', trim($helpicon->title, ". \t"));
@@ -1712,8 +1712,8 @@ class core_renderer extends renderer_base {
             $output .= $helpicon->linktext;
         }
 
-        // now create the link around it
-        $url = new moodle_url('/help.php', array('component' => $helpicon->component, 'identifier' => $helpicon->identifier, 'lang'=>current_language()));
+        // now create the link around it - we need https on loginhttps pages
+        $url = new moodle_url($CFG->httpswwwroot.'/help.php', array('component' => $helpicon->component, 'identifier' => $helpicon->identifier, 'lang'=>current_language()));
 
         // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
         $title = get_string('helpprefix2', '', trim($title, ". \t"));
