@@ -4642,8 +4642,7 @@ function forum_user_can_see_discussion($forum, $discussion, $context, $user=NULL
  *
  */
 function forum_user_can_see_post($forum, $discussion, $post, $user=NULL, $cm=NULL) {
-    global $USER;
-    global $CFG;
+    global $CFG, $USER;
 
     // retrieve objects (yuk)
     if (is_numeric($forum)) {
