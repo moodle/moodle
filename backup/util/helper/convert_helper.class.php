@@ -57,6 +57,16 @@ abstract class convert_helper {
         return implode(", ", array_map($mapper, array_keys($fields), array_values($fields)));
     }
 
+    /**
+     * Generate an artificial context ID
+     *
+     * @static
+     * @throws Exception
+     * @param int $instance The moodle component instance ID, same value used for get_context_instance()
+     * @param string $component The moodle component, like block_html, mod_quiz, etc
+     * @param string $converterid The converter ID
+     * @return int
+     */
     public static function get_contextid($instance, $component = 'moodle', $converterid = NULL) {
         global $DB;
 
