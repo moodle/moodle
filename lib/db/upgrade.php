@@ -6087,7 +6087,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             unset_config('themelegacy');
         }
 
-        set_config('themes', json_encode($config_themes));
+        if ($config_themes) {
+            set_config('themes', json_encode($config_themes));
+        }
+
         set_config('enabledevicedetection', 1);
     }
 

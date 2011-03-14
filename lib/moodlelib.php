@@ -7642,7 +7642,11 @@ function get_selected_theme_for_device_type($themes, $device_type = null){
  * @param string $device_type
  */
 function get_user_switched_theme($device_type = null){
-    global $CFG;
+    global $CFG, $USER;
+
+    if (empty($USER)) {
+        return false;
+    }
 
     if (empty($CFG->themes)) {
         return null;

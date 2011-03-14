@@ -698,8 +698,10 @@ unset($urlthemename);
 
 // Ensure a valid theme is set.
 if (!isset($CFG->themes)) {
-    $theme = 'standardwhite';
-    $current_prefs[] = array('default',$theme);
+    $theme_obj = new stdClass();
+    $theme_obj->device = 'default';
+    $theme_obj->theme = 'standardwhite';
+    $current_prefs[] = $theme_obj;
     $CFG->themes = json_encode($current_prefs);
 }
 
