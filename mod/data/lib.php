@@ -1927,31 +1927,29 @@ function data_print_header($course, $cm, $data, $currenttab='') {
 }
 
 /**
- * @global object
+ * Can user add more entries?
+ *
  * @param object $data
  * @param mixed $currentgroup
  * @param int $groupmode
+ * @param stdClass $context
  * @return bool
  */
 function data_user_can_add_entry($data, $currentgroup, $groupmode, $context = null) {
     global $USER;
 
     if (empty($context)) {
-        if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
-            print_error('invalidcoursemodule');
-        }
+        $cm = get_coursemodule_from_instance('data', $data->id, 0, false, MUST_EXIST);
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
 
-    $haswritecapability = has_capability('mod/data:writeentry', $context);
-    $hasmanagecapability = has_capability('mod/data:manageentries', $context);
+    if (has_capability('mod/data:manageentries', $context)) {
+        // no entry limits apply if user can manage
 
-    if (!$haswritecapability && !$hasmanagecapability) {
+    } else if (!has_capability('mod/data:writeentry', $context)) {
         return false;
-    }
 
-    //check for maximum number of entries
-    if ($haswritecapability && !$hasmanagecapability && data_atmaxentries($data)) {
+    } else if (data_atmaxentries($data)) {
         return false;
     }
 
