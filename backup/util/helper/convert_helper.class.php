@@ -66,6 +66,8 @@ abstract class convert_helper {
      * @param string $component The moodle component, like block_html, mod_quiz, etc
      * @param string $converterid The converter ID
      * @return int
+     * @todo Add caching?
+     * @todo Can we make the lookup faster?  Not taking advantage of indexes
      */
     public static function get_contextid($instance, $component = 'moodle', $converterid = NULL) {
         global $DB;
