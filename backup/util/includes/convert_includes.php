@@ -13,6 +13,8 @@ require_once($CFG->dirroot.'/backup/backup.class.php');
 require_once($CFG->dirroot.'/backup/util/xml/xml_writer.class.php');
 require_once($CFG->dirroot.'/backup/util/xml/output/xml_output.class.php');
 require_once($CFG->dirroot.'/backup/util/xml/output/file_xml_output.class.php');
+require_once($CFG->dirroot.'/backup/util/dbops/backup_dbops.class.php');
+require_once($CFG->dirroot.'/backup/util/dbops/backup_controller_dbops.class.php');
 require_once($CFG->dirroot.'/backup/util/factories/convert_factory.class.php');
 require_once($CFG->dirroot.'/backup/util/converter/base_converter.class.php');
 require_once($CFG->dirroot.'/backup/util/converter/plan_converter.class.php');

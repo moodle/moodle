@@ -31,11 +31,40 @@ class moodle1_converter extends plan_converter {
         $this->xmlprocessor = new convert_structure_parser_processor($this); // @todo Probably move this
         $this->xmlparser->set_processor($this->xmlprocessor);
 
+        $this->get_plan()->add_task(new moodle1_root_task('root_task'));
         $this->get_plan()->add_task(new moodle1_course_task('courseinfo'));
+        $this->get_plan()->add_task(new moodle1_final_task('final_task'));
     }
 }
 
 // @todo Where to store these classes?
+
+class moodle1_root_task extends convert_task {
+    /**
+     * Function responsible for building the steps of any task
+     * (must set the $built property to true)
+     */
+    public function build() {
+        $this->add_step(new convert_create_and_clean_temp_stuff('create_and_clean_temp_stuff'));
+
+        // At the end, mark it as built
+        $this->built = true;
+    }
+
+}
+
+class moodle1_final_task extends convert_task {
+    /**
+     * Function responsible for building the steps of any task
+     * (must set the $built property to true)
+     */
+    public function build() {
+        $this->add_step(new convert_drop_and_clean_temp_stuff('drop_and_clean_temp_stuff'));
+
+        // At the end, mark it as built
+        $this->built = true;
+    }
+}
 
 class moodle1_course_task extends convert_task {
     /**

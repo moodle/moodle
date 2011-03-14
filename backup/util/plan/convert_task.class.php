@@ -8,7 +8,7 @@ abstract class convert_task  extends base_task {
     }
 
     public function get_convertid() {
-        return $this->plan->get_backupid();
+        return $this->plan->get_converterid();
     }
 
     /**
