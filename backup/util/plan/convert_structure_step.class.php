@@ -25,17 +25,6 @@ abstract class convert_structure_step extends convert_step {
     }
 
     /**
-     * This method will be executed after the whole structure step have been processed
-     *
-     * After execution method for code needed to be executed after the whole structure
-     * has been processed. Useful for cleaning tasks, files process and others. Simply
-     * overwrite in in your steps if needed
-     */
-    protected function after_execute() {
-        // do nothing by default
-    }
-
-    /**
      * To conditionally decide if one step will be executed or no
      *
      * For steps needing to be executed conditionally, based in dynamic

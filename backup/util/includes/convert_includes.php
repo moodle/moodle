@@ -6,10 +6,13 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 // Include all the convert stuff needed
-require_once($CFG->dirroot . '/backup/util/interfaces/checksumable.class.php');
-require_once($CFG->dirroot . '/backup/util/interfaces/executable.class.php');
-require_once($CFG->dirroot . '/backup/util/interfaces/loggable.class.php');
+require_once($CFG->dirroot.'/backup/util/interfaces/checksumable.class.php');
+require_once($CFG->dirroot.'/backup/util/interfaces/executable.class.php');
+require_once($CFG->dirroot.'/backup/util/interfaces/loggable.class.php');
 require_once($CFG->dirroot.'/backup/backup.class.php');
+require_once($CFG->dirroot.'/backup/util/xml/xml_writer.class.php');
+require_once($CFG->dirroot.'/backup/util/xml/output/xml_output.class.php');
+require_once($CFG->dirroot.'/backup/util/xml/output/file_xml_output.class.php');
 require_once($CFG->dirroot.'/backup/util/factories/convert_factory.class.php');
 require_once($CFG->dirroot.'/backup/util/converter/base_converter.class.php');
 require_once($CFG->dirroot.'/backup/util/converter/plan_converter.class.php');

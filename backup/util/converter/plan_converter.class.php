@@ -47,6 +47,7 @@ abstract class plan_converter extends base_converter {
         $this->get_plan()->build();  // Ends up calling $this->build_plan()
         $this->get_plan()->execute();
         $this->xmlparser->process(); // @todo When to really do this?
+        $this->get_plan()->execute_after_convert();
     }
 
     public function destroy() {

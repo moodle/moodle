@@ -21,4 +21,12 @@ abstract class convert_task  extends base_task {
     protected function define_settings() {
         // None
     }
+
+    public function execute_after_convert() {
+        if ($this->executed) {
+            foreach ($this->steps as $step) {
+                $step->execute_after_convert();
+            }
+        }
+    }
 }

@@ -27,4 +27,8 @@ abstract class convert_step extends base_step {
         }
         return $this->task->get_converter();
     }
+
+    public function execute_after_convert() {
+        // Default nothing
+    }
 }

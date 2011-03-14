@@ -47,4 +47,14 @@ class convert_plan extends base_plan implements loggable {
         $this->converter->build_plan();
         $this->built = true;
     }
+
+    /**
+     * Execute the after_restore methods of all the executed tasks in the plan
+     */
+    public function execute_after_convert() {
+        // Simply iterate over each task in the plan and delegate to them the execution
+        foreach ($this->tasks as $task) {
+            $task->execute_after_convert();
+        }
+    }
 }
