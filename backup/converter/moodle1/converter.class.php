@@ -33,8 +33,17 @@ class moodle1_converter extends plan_converter {
 
         $this->get_plan()->add_task(new moodle1_root_task('root_task'));
         $this->get_plan()->add_task(new moodle1_course_task('courseinfo'));
-        $this->get_plan()->add_task(new moodle1_final_task('final_task'));
+        // $this->get_plan()->add_task(new moodle1_final_task('final_task')); // @todo OK, cannot do this here because things get processed after we parse xml...
     }
+
+    public function destroy() {
+        parent::destroy();
+
+        // @todo Doing this here for now instead of via a task/step
+        backup_controller_dbops::drop_backup_ids_temp_table($this->get_id()); // Drop ids temp table
+    }
+
+
 }
 
 // @todo Where to store these classes?
@@ -134,7 +143,10 @@ class moodle1_course_structure_step extends convert_structure_step {
                 new file_xml_output($directory.'/course.xml')
             );
             $this->xmlwriter->start();
-            $this->xmlwriter->begin_tag('course', array('id' => $this->id, 'contextid' => 'TODO')); // @todo make contextid
+            $this->xmlwriter->begin_tag('course', array(
+                'id' => $this->id,
+                'contextid' => convert_helper::get_contextid($this->id, 'course')
+            ));
         }
     }
 

@@ -73,7 +73,10 @@ abstract class convert_helper {
         global $DB;
 
         // Attempt to retrieve the contextid
-        $contextid = $DB->get_field('backup_ids_temp', 'id', array('itemid' => $instance, 'info' => $component));
+        $contextid = $DB->get_field_select('backup_ids_temp', 'id',
+                        $DB->sql_compare_text('info', 100).' = ? AND itemid = ? AND itemname = ?',
+                        array($component, $instance, 'context')
+        );
 
         if (!empty($contextid)) {
             return $contextid;
@@ -87,7 +90,7 @@ abstract class convert_helper {
         if (!is_null($converterid)) {
             $context->backupid = $converterid;
         }
-        if ($id = $DB->insert('backup_ids_temp', $context)) {
+        if ($id = $DB->insert_record('backup_ids_temp', $context)) {
             return $id;
         } else {
             $msg = self::obj_to_readable($context);
