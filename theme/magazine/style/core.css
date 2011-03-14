@@ -273,13 +273,12 @@ div.johndocsleft {
 /** breadcrumb image replacement **/
 
 div#jcontrols_button span.arrow.sep {
-    font-size: 1px;
+    font-size: .01em;
     color: #fafafa;
     background: url([[pix:theme|breadcrumb_separator_arrow_2_dots]]) no-repeat;
-    background-position: 50% 9px;
+    background-position: 50% 7px;
     display: inline-block;
     width: 16px;
-    line-height: 40px;
 }
 
 /** Block styles **/
