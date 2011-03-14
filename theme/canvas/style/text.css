@@ -150,6 +150,10 @@ tt {
 	display: none;
 }
 
+.icon.hide {
+	display: inline;
+}
+
 .highlight {
 	background: #ffc;
 }
