@@ -2468,6 +2468,11 @@ function redirect($url, $message='', $delay=-1) {
     $encodedurl = preg_replace('/^.*href="([^"]*)".*$/', "\\1", clean_text('<a href="'.$encodedurl.'" />'));
 
     if ($delay == 0 && !$debugdisableredirect && !headers_sent()) {
+        // workaround for IIS bug http://support.microsoft.com/kb/q176113/
+        if (session_id()) {
+            session_get_instance()->write_close();
+        }
+
         //302 might not work for POST requests, 303 is ignored by obsolete clients.
         @header($_SERVER['SERVER_PROTOCOL'] . ' 303 See Other');
         @header('Location: '.$url);
