@@ -61,10 +61,10 @@ abstract class convert_helper {
         global $DB;
 
         // Attempt to retrieve the contextid
-        $context = $DB->get_record('backup_ids_temp', array('itemid' => $instance, 'info' => $component));
+        $contextid = $DB->get_field('backup_ids_temp', 'id', array('itemid' => $instance, 'info' => $component));
 
-        if ($context) {
-            return $context->id;
+        if (!empty($contextid)) {
+            return $contextid;
         }
 
         $context = new stdClass;
