@@ -75,6 +75,18 @@ abstract class moodle1_structure_step extends convert_structure_step {
     }
 
     /**
+     * Return new fields and their values
+     *
+     * The key is the new field name and the value
+     * is the value to write to the XML file.
+     *
+     * @return array
+     */
+    public function get_new() {
+        return array();
+    }
+
+    /**
      * Last chance to modify the datum before
      * it is written to the XML file.
      *
@@ -114,6 +126,9 @@ abstract class moodle1_structure_step extends convert_structure_step {
                 $name = $renamed[$name];
             }
             $this->xmlwriter->full_tag($name, $this->mutate_datum($name, $datum));
+        }
+        foreach ($this->get_new() as $name => $datum) {
+            $this->xmlwriter->full_tag($name, $datum);
         }
     }
 }
