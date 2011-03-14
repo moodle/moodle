@@ -15,13 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'filter_tex', language 'en', branch 'MOODLE_20_STABLE'
+ * TeX filter upgrade code.
  *
  * @package    filter
  * @subpackage tex
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright  2011 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['filtername'] = 'TeX notation';
-$string['source'] = 'TeX source';
+/**
+ * @param int $oldversion the version we are upgrading from
+ * @return bool result
+ */
+function xmldb_filter_tex_upgrade($oldversion) {
+    global $CFG, $DB, $OUTPUT;
+
+    if ($oldversion < 2011031301) {
+        // clear caches
+        require_once("$CFG->dirroot/filter/tex/lib.php");
+        filter_tex_updatedcallback(null);
+
+        upgrade_plugin_savepoint(true, 2011031301, 'filter', 'tex');
+    }
+
+    return true;
+}

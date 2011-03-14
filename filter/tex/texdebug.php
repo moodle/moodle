@@ -1,7 +1,30 @@
 <?php
-      // This function fetches math. images from the data directory
-      // If not, it obtains the corresponding TeX expression from the cache_tex db table
-      // and uses mimeTeX to create the image file
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This function fetches math. images from the data directory
+ * If not, it obtains the corresponding TeX expression from the cache_tex db table
+ * and uses mimeTeX to create the image file
+ *
+ * @package    filter
+ * @subpackage tex
+ * @copyright  2004 Zbigniew Fiedorowicz fiedorow@math.ohio-state.edu
+ *             Originally based on code provided by Bruno Vernier bruno@vsbeducation.ca
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
     require_once("../../config.php");
 
@@ -19,7 +42,6 @@
     require_login();
     require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM), $USER->id); /// Required cap to run this. MDL-18552
 
-    $query = urldecode($_SERVER['QUERY_STRING']);
     $output = '';
 
     // look up in cache if required
@@ -99,10 +121,7 @@
         header("Content-type: text/html; charset=utf-8");
         echo "<html><body><pre>\n";
         if ($texexp) {
-            $texexp = str_replace('<', '&lt;', $texexp);
-            $texexp = str_replace('>', '&gt;', $texexp);
-            $texexp = str_replace('"', '&quot;', $texexp);
-            echo "$texexp\n\n";
+            echo s($texexp)."\n\n";
         } else {
             echo "No text output available\n\n";
         }
@@ -237,10 +256,12 @@
         $output .= execute($cmd);
 
         if (!$graphic) {
-            echo($output);
-        } else {
+            echo $output;
+        } else if (file_exists($img)){
             send_file($img, "$md5.{$CFG->filter_tex_convertformat}");
-         }
+        } else {
+            echo "Error creating image, see command execution output for more details.";
+        }
     }
 
     function execute($cmd) {
