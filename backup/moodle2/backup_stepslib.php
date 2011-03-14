@@ -321,6 +321,9 @@ class backup_module_structure_step extends backup_structure_step {
         // attach format plugin structure to $module element, only one allowed
         $this->add_plugin_structure('format', $module, false);
 
+        // attach plagiarism plugin structure to $module element, only one allowed
+        $this->add_plugin_structure('plagiarism', $module, false);
+
         // Define the tree
         $module->add_child($availinfo);
         $availinfo->add_child($availability);
@@ -415,6 +418,9 @@ class backup_course_structure_step extends backup_structure_step {
         // attach theme plugin structure to $course element; multiple themes can
         // save course data (in case of user theme, legacy theme, etc)
         $this->add_plugin_structure('theme', $course, true);
+
+        // attach plagiarism plugin structure to $course element, only one allowed
+        $this->add_plugin_structure('plagiarism', $course, false);
 
         // Build the tree
 
