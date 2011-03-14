@@ -1,0 +1,53 @@
+/* i nomi dei mesi */
+.path-calendar .minicalendarblock h3 {font-size:1.0em;margin:0;text-align:center;}
+
+/* spaziatura fra nome del mese e minicalendar corrispondente */
+.path-calendar .block .minicalendar {margin:5px 0 10px 0;}
+
+/* la quadrettatura del calendario */
+.path-calendar .calendartable th,
+.path-calendar .calendartable td {border:1px [[setting:blockcolumnbgc]] solid;}
+
+/* il rilievo del giorno corrente nel minicalendar */
+/*.path-calendar .calendartable td.today {border:2px #444444 solid;}*/
+.path-calendar .minicalendar td.today {border:2px #444444 solid;}
+
+/* il bordo del generico evento nella lista a centro pagina */
+.path-calendar .maincalendar .eventlist .event {border: 1px [[setting:blockcolumnbgc]] solid;}
+
+/* se c'è una duration... nel minicalendar */
+.path-calendar .minicalendar .calendar_event_user,
+.path-calendar .minicalendar .duration_user {border-bottom:2px #A1BECB dotted;}
+.path-calendar .minicalendar .calendar_event_course,
+.path-calendar .minicalendar .duration_course {border-bottom:2px #FF9966 dotted;}
+.path-calendar .minicalendar .calendar_event_global,
+.path-calendar .minicalendar .duration_global {border-bottom:2px #66D14D dotted;}
+.path-calendar .minicalendar .calendar_event_group,
+.path-calendar .minicalendar .duration_group {border-bottom:2px #FBBB23 dotted;}
+
+/* se c'è una duration... nel calendartable */
+/* attento: non servono perché potrei avere più di una duration */
+/* per questo la casella non va segnata con un border-bottom    */
+/* ma vanno riporati gli eventi al suo interno                  */
+
+.path-calendar .maincalendar .calendarmonth th,
+.path-calendar .minicalendar th {background:url([[pix:theme|gradient-sb]]) repeat-x 0 0;}
+
+/* i settaggi del calendario del blocco */
+
+/* la quadrettatura del calendario */
+.calendartable th,
+.calendartable td {border:1px [[setting:blockcolumnbgc]] solid;}
+
+/* il rilievo del giorno corrente nel calendario del blocco */
+.calendartable .today {border:2px #444444 solid;}
+
+/* se c'è una duration... nel minicalendar */
+.calendartable .calendar_event_user,
+.calendartable .duration_user {border-bottom:2px #A1BECB dotted;}
+.calendartable .calendar_event_course,
+.calendartable .duration_course {border-bottom:2px #FF9966 dotted;}
+.calendartable .calendar_event_global,
+.calendartable .duration_global {border-bottom:2px #66D14D dotted;}
+.calendartable .calendar_event_group,
+.calendartable .duration_group {border-bottom:2px #FBBB23 dotted;}

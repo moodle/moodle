@@ -32,7 +32,7 @@ if ($hascustommenu) {
 if (!empty($PAGE->theme->settings->logo)) {
     $logourl = $PAGE->theme->settings->logo;
 } else {
-    $logourl = $OUTPUT->pix_url('logo_small', 'theme');
+    $logourl = $OUTPUT->pix_url('logo', 'theme');
 }
 
 $hasframe = !isset($PAGE->theme->settings->noframe) || !$PAGE->theme->settings->noframe;
@@ -168,7 +168,7 @@ if ($hasfooter) {
                     </div>
                     <div id="footerframeleft">
                         <div id="footerframeright">
-                            <!-- the content to show -->
+                    <!-- the content to show -->
                             <div id="footerwrapper">
                                 <?php echo $PAGE->theme->settings->footnote; ?>
                             </div> <!-- end of footerwrapper -->
@@ -180,6 +180,7 @@ if ($hasfooter) {
                 </div>
             </div> <!-- </footerframebottom></footerframetop> -->
         <?php }
+        //manco di una div da chiudere
 
     } else { ?>
 
@@ -187,15 +188,16 @@ if ($hasfooter) {
         <div id="page-footer" class="noframefooter">
             <?php if (!empty($PAGE->theme->settings->footnote)) { ?>
                 <div id="page-footer-content">
+
                     <!-- the content to show -->
                     <div id="footerwrapper">
                         <?php echo $PAGE->theme->settings->footnote; ?>
                     </div> <!-- end of footerwrapper -->
+
                 </div> <!-- end of page-footer_noframe-content -->
             <?php }
-
+        //manco di una div da chiudere
     } ?>
-
             <div class="moodledocsleft">
             <?php
                 //echo $OUTPUT->login_info();
@@ -209,7 +211,6 @@ if ($hasfooter) {
         </div> <!-- end of page-footer or page-footer_noframe -->
 <?php   //ho chiuso la div di cui mancavo prima
 }
-
     echo $OUTPUT->standard_end_of_body_html(); ?>
 </body>
 </html>

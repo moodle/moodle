@@ -1,0 +1,116 @@
+/***
+ *** Core
+ ***/
+
+html, body {
+    font-family:Arial, Verdana, Helvetica, sans-serif;
+    margin:0;
+    padding:0;
+    background-color:#EFEFEF;
+    font-size:13px;
+}
+
+a:link {text-decoration:none;}
+a:visited {text-decoration:none;}
+a:hover {text-decoration:underline;}
+
+h1 {font-size:1.4em;font-weight:bold;}
+h2 {font-size:1.3em;}
+h3 {font-size:1.2em;}
+h4 {font-weight:bold;}
+
+h2.main, h3.main, h4.main {
+    margin:0;
+    padding:0;
+    text-align: center;
+}
+
+#headerlogo {margin:0.3em;float:left;top:1em;z-index:1;}
+h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:2em;z-index:1;}
+
+/* headermenu */
+.headermenu {float:right;top:1em;z-index:2;}
+
+#dock {background-color:#E3DFD4;border-right:1px #000 dashed;}
+
+/* navbar */
+.navbar {width:auto;padding-top:0.35em;padding-bottom:0.15em;background-image:url([[pix:theme|bg_bread]]);}
+.navbar li span {color:#E3DFD4;}
+.navbar li a:link, .navbar li a:visited {color:white;}
+
+/* navbutton */
+.navbutton {padding-right:0.5em;}
+.navbutton table td {padding:0;}
+
+/* breadcrumb */
+.breadcrumb {margin-left:0.8em;}
+
+/* generalbox */
+.generalbox {border-color:#E3DFD4;}
+
+/* tables */
+.editcourse th,
+.editcourse td,
+.generaltable th,
+.generaltable td,
+#page-admin-course-category .generalbox th,
+#page-admin-course-category .generalbox td,
+#attempts th,
+#attempts td,
+.plugincompattable th,
+.plugincompattable td,
+.environmenttable th,
+.environmenttable td,
+.forumheaderlist td,
+.forumheaderlist th {
+	border: 1px solid #E3DFD4;
+	border-collapse: collapse;
+}
+th.header,
+.formtable tbody th,
+.generalbox th,
+.generaltable th.header {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px #C6BDA8 solid;background-color:#E3DFD4;}
+/*#modules, .compatibleblockstable {margin-left:auto; margin-right:auto;} waiting for MDL-26760*/
+
+/* admin pages */
+div#chooseuser {border:0 transparent none;}
+table.groupmanagementtable,
+table.groupmanagementtable tr,
+table.groupmanagementtable td {border-width:0px;}
+table.groupmanagementtable td#buttonscell {vertical-align:middle;text-align:center;}
+table#defineroletable tr.rolecapheading {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;}
+/*table#defineroletable tr.rolecap {border-top:1px #F30 dashed;}*/
+tr.rolecap {border-top:1px #F30 dashed;}
+tr.rolecapheading + tr.rolecap {border-top:none;}
+
+ /* course categories */
+#page-admin-course-index .editcourse td div.singleselect {text-align:left;}
+
+ /* course */
+ul.topics .section span.commands {margin-left:2em;} /* distanza dei comandi dagli elementi del corso */
+
+.mform fieldset {border:1px #DDD solid;}
+
+/* block */
+.block {border:1px #C6BDA8 solid;margin-bottom:0.5em;}
+.block .header h2 {margin:0;padding-left:0.3em;}
+.block .header .title {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;clear:both;line-height:2em;}
+.block .header .title .commands {padding-left:0.3em;text-align:right;}
+.block .content {background-color:[[setting:blockcontentbgc]];}
+
+/* block login */
+.block_login .btn {margin-top:0.5em;text-align:center;}
+
+/* pagelayout-report */
+.pagelayout-report #page-header {float:left;}
+.pagelayout-report #page-content {overflow:hidden;}
+
+/* page-footer */
+#page-footer {text-align:center;width:100%;padding:0;}
+.noframefooter {background-color:#FFF;clear: both;float: left;width:100%;}
+#page-footer-content {text-align:center;border:7px #E3DFD4 double;margin:0;padding:0.5em;}
+#page-footer .logininfo {padding:0.3em 0 0.7em 0;}
+#page-footer .moodledocs {text-align:center;background-color:#EFEFEF;padding:0.7em 0 0.8em 0;}
+
+/** Custom CSS **/
+[[setting:customcss]]
