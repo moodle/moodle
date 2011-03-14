@@ -39,8 +39,8 @@ abstract class convert_helper {
     */
     public static function set_inforef($contextid) {
         global $DB;
-        
-        
+
+
     }
 
     public static function get_inforef($contextid) {
@@ -57,28 +57,29 @@ abstract class convert_helper {
         return implode(", ", array_map($mapper, array_keys($fields), array_values($fields)));
     }
 
-    public static function get_contextid($converterid, $itemid, $info='component') {
+    public static function get_contextid($instance, $component = 'moodle', $converterid = NULL) {
         global $DB;
 
         // Attempt to retrieve the contextid
-        $context = $DB->get_record('backup_ids_temp', array('backupid' => $converterid, 
-                                                            'itemid' => $itemid));
-    
-        if($context) {
+        $context = $DB->get_record('backup_ids_temp', array('itemid' => $instance, 'info' => $component));
+
+        if ($context) {
             return $context->id;
         }
 
         $context = new stdClass;
-        $context->itemid = $itemid;
-        $context->backupid = $converterid;
+        $context->itemid   = $instance;
         $context->itemname = 'context';
-        $context->info = $info;
-        
-        if($id = $DB->insert('backup_ids_temp', $context)) {
+        $context->info     = $component;
+
+        if (!is_null($converterid)) {
+            $context->backupid = $converterid;
+        }
+        if ($id = $DB->insert('backup_ids_temp', $context)) {
             return $id;
         } else {
             $msg = self::obj_to_readable($context);
             throw new Exception(sprintf("Could not insert context record into temp table: %s", $msg));
-        }  
+        }
     }
 }
