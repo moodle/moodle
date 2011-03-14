@@ -66,6 +66,21 @@ class MoodleQuickForm_radio extends HTML_QuickForm_radio{
             return 'default';
         }
     }
+    /**
+     * Returns the disabled field. Accessibility: the return "( )" from parent
+     * class is not acceptable for screenreader users, and we DO want a label.
+     * @return string
+     */
+    function getFrozenHtml()
+    {
+        $output = '<input type="radio" disabled="disabled" id="'.$this->getAttribute('id').'" ';
+        if ($this->getChecked()) {
+            $output .= 'checked="checked" />'.$this->_getPersistantData();
+        } else {
+            $output .= '/>';
+        }
+        return $output;
+    }
     function toHtml()
     {
         return '<span>' . parent::toHtml() . '</span>';
