@@ -33,4 +33,52 @@ abstract class convert_helper {
             throw new restore_controller_exception('cannot_convert_from_unknown_format');  // @todo Change exception class
         }
     }
+
+   /**
+    * Inserts an inforef into the conversion temp table
+    */
+    public static function set_inforef($contextid) {
+        global $DB;
+        
+        
+    }
+
+    public static function get_inforef($contextid) {
+    }
+
+    /**
+     * Converts a plain old php object (popo?) into a string...
+     * Useful for debuging failed db inserts, or anything like that
+     */
+    public static function obj_to_readable($obj) {
+        $mapper = function($field, $value) { return "$field=$value"; };
+        $fields = get_object_vars($obj);
+
+        return implode(", ", array_map($mapper, array_keys($fields), array_values($fields)));
+    }
+
+    public static function get_contextid($converterid, $itemid, $info='component') {
+        global $DB;
+
+        // Attempt to retrieve the contextid
+        $context = $DB->get_record('backup_ids_temp', array('backupid' => $converterid, 
+                                                            'itemid' => $itemid));
+    
+        if($context) {
+            return $context->id;
+        }
+
+        $context = new stdClass;
+        $context->itemid = $itemid;
+        $context->backupid = $converterid;
+        $context->itemname = 'context';
+        $context->info = $info;
+        
+        if($id = $DB->insert('backup_ids_temp', $context)) {
+            return $id;
+        } else {
+            $msg = self::obj_to_readable($context);
+            throw new Exception(sprintf("Could not insert context record into temp table: %s", $msg));
+        }  
+    }
 }
