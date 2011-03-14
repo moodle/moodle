@@ -26,7 +26,7 @@ if ($DB->get_dbfamily() !== 'mysql' and $DB->get_dbfamily() !== 'postgres') {
 }
 
 if (!data_submitted() or !$search or !$replace or !confirm_sesskey() or !$sure) {   /// Print a form
-    echo $OUTPUT->notification('This script is not supported, always make complete backup before proceeding!<br />This operations can not be rewerted!');
+    echo $OUTPUT->notification('This script is not supported, always make complete backup before proceeding!<br />This operation can not be reverted!');
 
     echo $OUTPUT->box_start();
     echo '<div class="mdl-align">';
