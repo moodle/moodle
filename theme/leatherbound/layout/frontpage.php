@@ -9,6 +9,8 @@ $hassidepost = $PAGE->blocks->region_has_content('side-post', $OUTPUT);
 
 $showsidepre = ($hassidepre && !$PAGE->blocks->region_completely_docked('side-pre', $OUTPUT));
 $showsidepost = ($hassidepost && !$PAGE->blocks->region_completely_docked('side-post', $OUTPUT));
+$custommenu = $OUTPUT->custom_menu();
+$hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
 $bodyclasses = array();
 if ($showsidepre && !$showsidepost) {
@@ -18,7 +20,9 @@ if ($showsidepre && !$showsidepost) {
 } else if (!$showsidepost && !$showsidepre) {
     $bodyclasses[] = 'content-only';
 }
-
+if ($hascustommenu) {
+    $bodyclasses[] = 'has_custom_menu';
+}
 
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes() ?>>
@@ -50,9 +54,17 @@ echo $OUTPUT->doctype() ?>
         
 <!-- END OF HEADER -->
 
+<?php if ($hascustommenu) { ?>
+<div id="custommenuwrap"><div id="custommenu"><?php echo $custommenu; ?></div></div>
+<?php } ?>
+
 <!-- START OF CONTENT -->
 
 <div id="page-content-wrapper" class="wrapper clearfix">
+
+
+
+
     <div id="page-content">
         <div id="region-main-box">
             <div id="region-post-box">
