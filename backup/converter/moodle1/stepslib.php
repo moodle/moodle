@@ -1,4 +1,123 @@
 <?php
+
+/**
+ * An attempt at a general/abstract moodle1 structure step converter
+ */
+abstract class moodle1_structure_step extends convert_structure_step {
+    /**
+     * @var xml_writer
+     */
+    protected $xmlwriter;
+
+    /**
+     * Return the relative path to the XML file that
+     * this step writes out to.  Example: course/course.xml
+     *
+     * @abstract
+     * @return string
+     */
+    abstract public function get_xml_filename();
+
+    /**
+     * Opens the XML writer - after calling, one is free
+     * to use $xmlwriter
+     *
+     * @return void
+     */
+    public function open_xml_writer() {
+        if (!$this->xmlwriter instanceof xml_writer) {
+            $fullpath  = $this->get_basepath().'/'.$this->get_xml_filename();
+            $directory = pathinfo($fullpath, PATHINFO_DIRNAME);
+
+            if (!check_dir_exists($directory)) {
+                throw new backup_exception('failedtomakeconvertdir'); // @todo Define this string
+            }
+            $this->xmlwriter = new xml_writer(
+                new file_xml_output($fullpath)
+            );
+            $this->xmlwriter->start();
+        }
+    }
+
+    /**
+     * Close the XML writer
+     *
+     * At the moment, must close all tags before calling
+     *
+     * @return void
+     */
+    public function close_xml_writer() {
+        if ($this->xmlwriter instanceof xml_writer) {
+            $this->xmlwriter->stop();
+            unset($this->xmlwriter);
+            // var_dump(file_get_contents($this->get_basepath().'/'.$this->get_xml_filename())); // DEBUG
+        }
+    }
+
+    /**
+     * Return deprecated fields
+     *
+     * @return array
+     */
+    public function get_deprecated() {
+        return array();
+    }
+
+    /**
+     * Return renamed fields
+     *
+     * The key is the old name and the value is the new name.
+     *
+     * @return array
+     */
+    public function get_renamed() {
+        return array();
+    }
+
+    /**
+     * Last chance to modify the datum before
+     * it is written to the XML file.
+     *
+     * @param string $name The tag/field name
+     * @param mixed $datum The data belonging to $name
+     * @return mixed
+     */
+    public function mutate_datum($name, $datum) {
+        return $datum;
+    }
+
+    /**
+     * General data converter
+     *
+     * Can remove deprecated fields, rename fields,
+     * and manipulate data values before writing
+     * to the XML file.
+     *
+     * @param array $data The array of data to process
+     * @return void
+     */
+    public function convert_data(array $data) {
+        // print_object($data);  // DEBUG
+
+        $this->open_xml_writer();
+
+        $deprecated = $this->get_deprecated();
+        $renamed    = $this->get_renamed();
+
+        foreach ($data as $name => $datum) {
+            $name = strtolower($name);
+
+            if (in_array($name, $deprecated)) {
+                continue;
+            }
+            if (array_key_exists($name, $renamed)) {
+                $name = $renamed[$name];
+            }
+            $this->xmlwriter->full_tag($name, $this->mutate_datum($name, $datum));
+        }
+    }
+}
+
 class moodle1_course_structure_step extends convert_structure_step {
     protected $id;
     /**
