@@ -181,6 +181,18 @@ abstract class qtype_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Display any extra question-type specific content that should be visible
+     * when grading, if appropriate.
+     *
+     * @param question_attempt $qa a question attempt.
+     * @param question_display_options $options controls what should and should not be displayed.
+     * @return string HTML fragment.
+     */
+    public function manual_comment(question_attempt $qa, question_display_options $options) {
+        return '';
+    }
+
+    /**
      * Return any HTML that needs to be included in the page's <head> when this
      * question is used.
      * @param $qa the question attempt that will be displayed on the page.

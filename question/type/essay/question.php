@@ -90,6 +90,9 @@ class qtype_essay_question extends question_with_responses {
             // Response attachments visible if the question has them.
             return $this->attachments != 0;
 
+        } else if ($component == 'qtype_essay' && $filearea == 'graderinfo') {
+            return $options->manualcomment;
+
         } else {
             return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
         }

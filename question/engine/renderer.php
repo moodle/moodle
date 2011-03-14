@@ -83,7 +83,8 @@ class core_question_renderer extends plugin_renderer_base {
                 array('class' => 'outcome'));
         $output .= html_writer::nonempty_tag('div',
                 $this->add_part_heading(get_string('comments', 'question'),
-                $behaviouroutput->manual_comment($qa, $options)), array('class' => 'comment'));
+                $this->manual_comment($qa, $behaviouroutput, $qtoutput, $options)),
+                array('class' => 'comment'));
         $output .= html_writer::nonempty_tag('div',
                 $this->response_history($qa, $behaviouroutput, $qtoutput, $options),
                 array('class' => 'history'));
@@ -298,6 +299,12 @@ class core_question_renderer extends plugin_renderer_base {
         $output .= html_writer::nonempty_tag('div',
                 $behaviouroutput->feedback($qa, $options), array('class' => 'im-feedback'));
         return $output;
+    }
+
+    protected function manual_comment(question_attempt $qa, qbehaviour_renderer $behaviouroutput,
+            qtype_renderer $qtoutput, question_display_options $options) {
+        return $qtoutput->manual_comment($qa, $options) .
+                $behaviouroutput->manual_comment($qa, $options);
     }
 
     /**

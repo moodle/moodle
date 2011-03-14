@@ -116,6 +116,17 @@ class qtype_essay_renderer extends qtype_renderer {
     public function filemanager_input(question_attempt $qa, question_display_options $options) {
         return '';
     }
+
+    public function manual_comment(question_attempt $qa, question_display_options $options) {
+        if ($options->manualcomment != question_display_options::EDITABLE) {
+            return '';
+        }
+
+        $question = $qa->get_question();
+        return html_writer::nonempty_tag('div', $question->format_text(
+                $question->graderinfo, $question->graderinfo, $qa, 'qtype_essay',
+                'graderinfo', $question->id), array('class' => 'graderinfo'));
+    }
 }
 
 
