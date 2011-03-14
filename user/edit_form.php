@@ -27,7 +27,6 @@ class user_edit_form extends moodleform {
         useredit_shared_definition($mform);
 
         /// extra settigs
-        $mform->addRule('description', $strrequired, 'required', null, 'client');
         if (!empty($CFG->gdversion) and !empty($CFG->disableuserimages)) {
             $mform->removeElement('deletepicture');
             $mform->removeElement('imagefile');
