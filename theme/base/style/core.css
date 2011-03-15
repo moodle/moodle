@@ -675,14 +675,6 @@ body.tag .managelink {padding: 5px;}
 .ie.dir-rtl .mform .fitem .felement {margin-right:0;text-align:right;float:right;}
 
 /**
- * Filters
- */
-.jsenabled .mediaplugin.mediaplugin_mp3 object {height:15px;width:100px; }
-.jsenabled .mediaplugin.mediaplugin_flv object {height:600px;width:800px;}
-
-.ie .mediaplugin.mediaplugin_mp3 object{height:20px;}
-
-/**
  * Fix for broken YUI images in the menunav component
  */
 .yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label,
@@ -704,3 +696,6 @@ body.tag .managelink {padding: 5px;}
 .mod-indent-14 {margin-left:280px;}
 .mod-indent-15,
 .mod-indent-huge {margin-left:300px;}
+
+/* Resourcelib mp3 player size: only width could be changed here, height hardcoded in JS */
+.resourcecontent .resourcemediaplugin_mp3 object {height:25px; width: 600px}

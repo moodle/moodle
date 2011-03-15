@@ -279,6 +279,9 @@ class core_renderer extends renderer_base {
             $output .= '<meta http-equiv="refresh" content="'.$this->page->periodicrefreshdelay.';url='.$this->page->url->out().'" />';
         }
 
+        // flow player embedding support
+        $this->page->requires->js_function_call('M.util.load_flowplayer');
+
         $this->page->requires->js_function_call('setTimeout', array('fix_column_widths()', 20));
 
         $focus = $this->page->focuscontrol;
@@ -2462,22 +2465,6 @@ EOD;
      */
     public function larrow() {
         return $this->page->theme->larrow;
-    }
-
-    /**
-     * Returns the colours of the small MP3 player
-     * @return string
-     */
-    public function filter_mediaplugin_colors() {
-        return $this->page->theme->filter_mediaplugin_colors;
-    }
-
-    /**
-     * Returns the colours of the big MP3 player
-     * @return string
-     */
-    public function resource_mp3player_colors() {
-        return $this->page->theme->resource_mp3player_colors;
     }
 
     /**

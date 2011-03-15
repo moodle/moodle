@@ -287,6 +287,7 @@ class page_requirements_manager {
             'loadingicon'         => $renderer->pix_url('i/loading_small', 'moodle')->out(false),
             'themerev'            => theme_get_revision(),
             'theme'               => $page->theme->name,
+            'jsrev'               => ((empty($CFG->cachejs) or empty($CFG->jsrev)) ? -1 : $CFG->jsrev),
         );
         if (debugging('', DEBUG_DEVELOPER)) {
             $this->M_cfg['developerdebug'] = true;

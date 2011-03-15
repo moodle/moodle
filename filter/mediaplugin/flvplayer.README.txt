@@ -1,4 +1,0 @@
-The FLV player is by Jeroen Wijering - www.jeroenwijering.com
-and included in Moodle by his permission under the GNU GPL version 2 or later.
-
-Thanks, Jeroen!
