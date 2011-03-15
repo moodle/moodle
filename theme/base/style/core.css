@@ -704,3 +704,10 @@ body.tag .managelink {padding: 5px;}
 .mod-indent-14 {margin-left:280px;}
 .mod-indent-15,
 .mod-indent-huge {margin-left:300px;}
+
+/* 
+Fix for SubScript & SuperScript
+------------------------------*/
+
+sub { vertical-align: sub;}
+sup { vertical-align: super;}
