@@ -521,7 +521,7 @@ abstract class moodle_database {
                 if ($allowed_types & SQL_PARAMS_NAMED) {
                     // Need to verify key names because they can contain, originally,
                     // spaces and other forbidden chars when using sql_xxx() functions and friends.
-                    $normkey = trim(preg_replace('/[^a-zA-Z0-9-_]/', '_', $key), '-_');
+                    $normkey = trim(preg_replace('/[^a-zA-Z0-9_-]/', '_', $key), '-_');
                     if ($normkey !== $key) {
                         debugging('Invalid key found in the conditions array.');
                     }
