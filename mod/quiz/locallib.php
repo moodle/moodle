@@ -1043,13 +1043,16 @@ function quiz_get_review_options($quiz, $attempt, $context) {
  *          for all attempts.
  */
 function quiz_get_combined_reviewoptions($quiz, $attempts) {
-    $fields = array('marks', 'feedback', 'generalfeedback', 'rightanswer', 'overallfeedback');
+    $fields = array('feedback', 'generalfeedback', 'rightanswer', 'overallfeedback');
     $someoptions = new stdClass();
     $alloptions = new stdClass();
     foreach ($fields as $field) {
         $someoptions->$field = false;
         $alloptions->$field = true;
     }
+    $someoptions->marks = question_display_options::HIDDEN;
+    $alloptions->marks = question_display_options::MARK_AND_MAX;
+
     foreach ($attempts as $attempt) {
         $attemptoptions = mod_quiz_display_options::make_from_quiz($quiz,
                 quiz_attempt_state($quiz, $attempt));
@@ -1057,6 +1060,8 @@ function quiz_get_combined_reviewoptions($quiz, $attempts) {
             $someoptions->$field = $someoptions->$field || $attemptoptions->$field;
             $alloptions->$field = $alloptions->$field && $attemptoptions->$field;
         }
+        $someoptions->marks = max($someoptions->marks, $attemptoptions->marks);
+        $alloptions->marks = min($alloptions->marks, $attemptoptions->marks);
     }
     return array($someoptions, $alloptions);
 }

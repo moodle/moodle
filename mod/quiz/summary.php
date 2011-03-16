@@ -102,7 +102,7 @@ $table->attributes['class'] = 'generaltable quizsummaryofattempt boxaligncenter'
 $table->head = array(get_string('question', 'quiz'), get_string('status', 'quiz'));
 $table->align = array('left', 'left');
 $table->size = array('', '');
-$markscolumn = $displayoptions->marks;
+$markscolumn = $displayoptions->marks >= question_display_options::MARK_AND_MAX;
 if ($markscolumn) {
     $table->head[] = get_string('marks', 'quiz');
     $table->align[] = 'left';

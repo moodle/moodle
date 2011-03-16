@@ -606,10 +606,12 @@ function quiz_grade_item_update($quiz, $grades = NULL) {
             mod_quiz_display_options::LATER_WHILE_OPEN);
     $closedreviewoptions = mod_quiz_display_options::make_from_quiz($quiz,
             mod_quiz_display_options::AFTER_CLOSE);
-    if (!$openreviewoptions->marks && !$closedreviewoptions->marks) {
+    if ($openreviewoptions->marks < question_display_options::MARK_AND_MAX &&
+            $closedreviewoptions->marks < question_display_options::MARK_AND_MAX) {
         $params['hidden'] = 1;
 
-    } else if (!$openreviewoptions->marks && $closedreviewoptions->marks) {
+    } else if ($openreviewoptions->marks < question_display_options::MARK_AND_MAX &&
+            $closedreviewoptions->marks >= question_display_options::MARK_AND_MAX) {
         if ($quiz->timeclose) {
             $params['hidden'] = $quiz->timeclose;
         } else {
@@ -810,7 +812,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
 
         $tmpactivity->content->attemptid = $attempt->id;
         $tmpactivity->content->attempt   = $attempt->attempt;
-        if (quiz_has_grades($quiz) && $options->marks) {
+        if (quiz_has_grades($quiz) && $options->marks >= question_display_options::MARK_AND_MAX) {
             $tmpactivity->content->sumgrades = quiz_format_grade($quiz, $attempt->sumgrades);
             $tmpactivity->content->maxgrade  = quiz_format_grade($quiz, $quiz->sumgrades);
         } else {

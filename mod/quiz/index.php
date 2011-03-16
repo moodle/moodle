@@ -168,7 +168,7 @@ foreach ($quizzes as $quiz) {
         $grade = '';
         $feedback = '';
         if ($quiz->grade && array_key_exists($quiz->id, grades)) {
-            if ($alloptions->marks) {
+            if ($alloptions->marks >= question_display_options::MARK_AND_MAX) {
                 $a = new stdClass();
                 $a->grade = quiz_format_grade($quiz, $grades[$quiz->id]);
                 $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);

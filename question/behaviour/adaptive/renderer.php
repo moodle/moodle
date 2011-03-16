@@ -53,7 +53,8 @@ class qbehaviour_adaptive_renderer extends qbehaviour_renderer {
         // Try to find the last graded step.
 
         $gradedstep = $this->get_graded_step($qa);
-        if (is_null($gradedstep) || $qa->get_max_mark() == 0 || !$options->marks) {
+        if (is_null($gradedstep) || $qa->get_max_mark() == 0 ||
+                $options->marks < question_display_options::MARK_AND_MAX) {
             return '';
         }
 

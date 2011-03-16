@@ -176,7 +176,7 @@ if ($page == 0) {
 
     // Show marks (if the user is allowed to see marks at the moment).
     $grade = quiz_rescale_grade($attempt->sumgrades, $quiz, false);
-    if ($options->marks && quiz_has_grades($quiz)) {
+    if ($options->marks >= question_display_options::MARK_AND_MAX && quiz_has_grades($quiz)) {
 
         if (!$attempt->timefinish) {
             $rows[] = '<tr><th scope="row" class="cell">' . get_string('grade') . '</th><td class="cell">' .

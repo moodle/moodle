@@ -63,7 +63,8 @@ abstract class quiz_attempt_report extends quiz_default_report {
         }
         $reviewoptions = mod_quiz_display_options::make_from_quiz($quiz, $when);
 
-        $this->showgrades = quiz_has_grades($quiz) && ($reviewoptions->marks ||
+        $this->showgrades = quiz_has_grades($quiz) &&
+                ($reviewoptions->marks >= question_display_options::MARK_AND_MAX ||
                 has_capability('moodle/grade:viewhidden', $this->context));
 
         return $this->showgrades;
