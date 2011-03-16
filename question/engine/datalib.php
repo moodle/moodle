@@ -69,7 +69,7 @@ class question_engine_data_mapper {
         $quba->set_id_from_database($newid);
 
         foreach ($quba->get_attempt_iterator() as $qa) {
-            $this->insert_question_attempt($qa);
+            $this->insert_question_attempt($qa, $quba->get_owning_context());
         }
     }
 
@@ -77,8 +77,9 @@ class question_engine_data_mapper {
      * Store an entire {@link question_attempt} in the database,
      * including all the question_attempt_steps that comprise it.
      * @param question_attempt $qa the question attempt to store.
+     * @param object $context the context of the owning question_usage_by_activity.
      */
-    public function insert_question_attempt(question_attempt $qa) {
+    public function insert_question_attempt(question_attempt $qa, $context) {
         $record = new stdClass();
         $record->questionusageid = $qa->get_usage_id();
         $record->slot = $qa->get_slot();
@@ -94,16 +95,19 @@ class question_engine_data_mapper {
         $record->id = $this->db->insert_record('question_attempts', $record);
 
         foreach ($qa->get_step_iterator() as $seq => $step) {
-            $this->insert_question_attempt_step($step, $record->id, $seq);
+            $this->insert_question_attempt_step($step, $record->id, $seq, $context);
         }
     }
 
     /**
      * Store a {@link question_attempt_step} in the database.
      * @param question_attempt_step $qa the step to store.
+     * @param int $questionattemptid the question attept id this step belongs to.
+     * @param int $seq the sequence number of this stop.
+     * @param object $context the context of the owning question_usage_by_activity.
      */
     public function insert_question_attempt_step(question_attempt_step $step,
-            $questionattemptid, $seq) {
+            $questionattemptid, $seq, $context) {
         $record = new stdClass();
         $record->questionattemptid = $questionattemptid;
         $record->sequencenumber = $seq;
@@ -120,6 +124,10 @@ class question_engine_data_mapper {
             $data->name = $name;
             $data->value = $value;
             $this->db->insert_record('question_attempt_step_data', $data, false);
+
+            if ($value instanceof question_file_saver) {
+                $value->save_files($record->id, $context);
+            }
         }
     }
 
@@ -911,10 +919,11 @@ class question_engine_unit_of_work implements question_usage_observer {
         $dm->delete_steps_for_question_attempts(array_keys($this->attemptstodeletestepsfor));
         foreach ($this->stepsadded as $stepinfo) {
             list($step, $questionattemptid, $seq) = $stepinfo;
-            $dm->insert_question_attempt_step($step, $questionattemptid, $seq);
+            $dm->insert_question_attempt_step($step, $questionattemptid, $seq,
+                    $this->quba->get_owning_context());
         }
         foreach ($this->attemptsadded as $qa) {
-            $dm->insert_question_attempt($qa);
+            $dm->insert_question_attempt($qa, $this->quba->get_owning_context());
         }
         foreach ($this->attemptsmodified as $qa) {
             $dm->update_question_attempt($qa);
@@ -922,6 +931,53 @@ class question_engine_unit_of_work implements question_usage_observer {
         if ($this->modified) {
             $dm->update_questions_usage_by_activity($this->quba);
         }
+    }
+}
+
+
+/**
+ * This class represents the promise to save some files from a particular draft
+ * file area into a particular file area. It is used beause the necessary
+ * information about what to save is to hand in the
+ * {@link question_attempt::process_response_files()} method, but we don't know
+ * if this question attempt will actually be saved in the database until later,
+ * when the {@link question_engine_unit_of_work} is saved, if it is.
+ *
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_file_saver {
+    /** @var int the id of the draft file area to save files from. */
+    protected $draftitemid;
+    /** @var string the owning component name. */
+    protected $component;
+    /** @var string the file area name. */
+    protected $filearea;
+
+    /**
+     * Constuctor.
+     * @param int $draftitemid the draft area to save the files from.
+     * @param string $component the component for the file area to save into.
+     * @param string $filearea the name of the file area to save into.
+     */
+    public function __construct($draftitemid, $component, $filearea) {
+        $this->draftitemid = $draftitemid;
+        $this->component = $component;
+        $this->filearea = $filearea;
+    }
+
+    public function __toString() {
+        // When stored in the database, we want this value to appear as 1.
+        return '1';
+    }
+
+    /**
+     * Actually save the files.
+     * @param integer $itemid the item id for the file area to save into.
+     */
+    public function save_files($itemid, $context) {
+        file_save_draft_area_files($this->draftitemid, $context->id,
+                $this->component, $this->filearea, $itemid);
     }
 }
 

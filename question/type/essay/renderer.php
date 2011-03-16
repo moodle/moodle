@@ -49,7 +49,7 @@ class qtype_essay_renderer extends qtype_renderer {
                     $response, $question->responsefieldlines);
 
         } else {
-            $answer =$responseoutput->response_area_read_only($inputname,
+            $answer = $responseoutput->response_area_read_only($inputname,
                     $response, $question->responsefieldlines);
         }
 
@@ -107,7 +107,9 @@ class qtype_essay_renderer extends qtype_renderer {
                 'attachments', $options->context->id);
         $pickeroptions->context = $options->context;
 
-        return form_filemanager_render($pickeroptions);
+        return form_filemanager_render($pickeroptions) . html_writer::empty_tag(
+                'input', array('type' => 'hidden', 'name' => $qa->get_qt_field_name('attachments'),
+                'value' => $pickeroptions->itemid));
     }
 
     /**

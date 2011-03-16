@@ -105,27 +105,27 @@ class question_attempt_test extends UnitTestCase {
     }
 
     public function test_get_submitted_var_not_present_var_returns_null() {
-        $this->assertNull(question_attempt::get_submitted_var(
+        $this->assertNull($this->qa->get_submitted_var(
                 'reallyunlikelyvariablename', PARAM_BOOL));
     }
 
     public function test_get_submitted_var_param_mark_not_present() {
-        $this->assertNull(question_attempt::get_submitted_var(
+        $this->assertNull($this->qa->get_submitted_var(
                 'name', question_attempt::PARAM_MARK, array()));
     }
 
     public function test_get_submitted_var_param_mark_blank() {
-        $this->assertIdentical('', question_attempt::get_submitted_var(
+        $this->assertIdentical('', $this->qa->get_submitted_var(
                 'name', question_attempt::PARAM_MARK, array('name' => '')));
     }
 
     public function test_get_submitted_var_param_mark_number() {
-        $this->assertIdentical(123.0, question_attempt::get_submitted_var(
+        $this->assertIdentical(123.0, $this->qa->get_submitted_var(
                 'name', question_attempt::PARAM_MARK, array('name' => '123')));
     }
 
     public function test_get_submitted_var_param_mark_invalid() {
-        $this->assertIdentical(0.0, question_attempt::get_submitted_var(
+        $this->assertIdentical(0.0, $this->qa->get_submitted_var(
                 'name', question_attempt::PARAM_MARK, array('name' => 'frog')));
     }
 }

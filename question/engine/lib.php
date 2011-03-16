@@ -1094,7 +1094,7 @@ class question_usage_by_activity {
      */
     public function validate_sequence_number($slot, $postdata = null) {
         $qa = $this->get_question_attempt($slot);
-        $sequencecheck = question_attempt::get_submitted_var(
+        $sequencecheck = $qa->get_submitted_var(
                 $qa->get_control_field_name('sequencecheck'), PARAM_INT, $postdata);
         if (is_null($sequencecheck)) {
             return false;
@@ -1113,7 +1113,7 @@ class question_usage_by_activity {
      */
     public function update_question_flags($postdata = null) {
         foreach ($this->questionattempts as $qa) {
-            $flagged = question_attempt::get_submitted_var(
+            $flagged = $qa->get_submitted_var(
                     $qa->get_flag_field_name(), PARAM_BOOL, $postdata);
             if (!is_null($flagged) && $flagged != $qa->is_flagged()) {
                 $qa->set_flagged($flagged);
@@ -1342,8 +1342,8 @@ class question_attempt {
     const PARAM_MARK = 'parammark';
 
     /**
-     * @var string special value used by manual grading because {@link PARAM_NUMBER}
-     * converts '' to 0.
+     * @var string special value to indicate a response variable that is uploaded
+     * files.
      */
     const PARAM_FILES = 'paramfiles';
 
@@ -1710,18 +1710,28 @@ class question_attempt {
                 $this->usageid,
                 $this->slot,
                 $file->get_itemid())) .
-                $file->get_filepath() . $file->get_filename());
+                $file->get_filepath() . $file->get_filename(), true);
     }
 
     /**
-     * Get the URL of a file that belongs to a response variable of this
-     * question_attempt.
-     * @param stored_file $file the file to link to.
+     * Prepare a draft file are for the files belonging the a response variable
+     * of this question attempt. The draft area is populated with the files from
+     * the most recent step having files.
+     *
+     * @param string $name the variable name the files belong to.
+     * @param int $contextid the id of the context the quba belongs to.
      * @return int the draft itemid.
      */
     public function prepare_response_files_draft_itemid($name, $contextid) {
-        $draftid = file_get_submitted_draft_itemid($this->get_qt_field_name($name));
-        file_prepare_draft_area($draftid, $contextid, 'question', 'response_' . $name, $this->id);
+        foreach ($this->get_reverse_step_iterator() as $step) {
+            if ($step->has_qt_var($name)) {
+                return $step->prepare_response_files_draft_itemid($name, $contextid);
+            }
+        }
+
+        // No files yet.
+        $draftid = 0; // Will be filled in by file_prepare_draft_area.
+        file_prepare_draft_area($draftid, $contextid, 'question', 'response_' . $name, null);
         return $draftid;
     }
 
@@ -1800,7 +1810,7 @@ class question_attempt {
      * {@link get_fraction()} * {@link get_max_mark()}.
      */
     public function get_current_manual_mark() {
-        $mark = self::get_submitted_var($this->get_behaviour_field_name('mark'), question_attempt::PARAM_MARK);
+        $mark = $this->get_submitted_var($this->get_behaviour_field_name('mark'), question_attempt::PARAM_MARK);
         if (is_null($mark)) {
             return $this->get_mark();
         } else {
@@ -2038,15 +2048,19 @@ class question_attempt {
      *      data from this array, instead of from $_POST.
      * @return mixed the requested value.
      */
-    public static function get_submitted_var($name, $type, $postdata = null) {
+    public function get_submitted_var($name, $type, $postdata = null) {
         // Special case to work around PARAM_NUMBER converting '' to 0.
         if ($type == self::PARAM_MARK) {
-            $mark = self::get_submitted_var($name, PARAM_RAW_TRIMMED, $postdata);
+            $mark = $this->get_submitted_var($name, PARAM_RAW_TRIMMED, $postdata);
             if ($mark === '') {
                 return $mark;
             } else {
-                return self::get_submitted_var($name, PARAM_NUMBER, $postdata);
+                return $this->get_submitted_var($name, PARAM_NUMBER, $postdata);
             }
+        }
+
+        if ($type == self::PARAM_FILES) {
+            return $this->process_response_files($name, $postdata);
         }
 
         if (is_null($postdata)) {
@@ -2065,6 +2079,37 @@ class question_attempt {
     }
 
     /**
+     * Handle a submitted variable representing uploaded files.
+     * @param string $name the field name.
+     * @param array $postdata (optional, only inteded for testing use) take the
+     *      data from this array, instead of from $_POST. At the moment, this
+     *      behaves as if there were no files.
+     */
+    protected function process_response_files($name, $postdata = null) {
+        global $USER;
+
+        if ($postdata) {
+            // There can be no files with test data (at the moment).
+            return null;
+        }
+
+        $draftitemid = file_get_submitted_draft_itemid($name);
+        if (!$draftitemid) {
+            return null;
+        }
+
+        $fs = get_file_storage();
+        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+
+        if ($fs->is_area_empty($usercontext->id, 'user', 'draft', $draftitemid)) {
+            return null;
+        }
+
+        return new question_file_saver($draftitemid, 'question', 'response_' .
+                str_replace($this->get_field_prefix(), '', $name));
+    }
+
+    /**
      * Get any data from the request that matches the list of expected params.
      * @param array $expected variable name => PARAM_... constant.
      * @param string $extraprefix '-' or ''.
@@ -2073,7 +2118,7 @@ class question_attempt {
     protected function get_expected_data($expected, $postdata, $extraprefix) {
         $submitteddata = array();
         foreach ($expected as $name => $type) {
-            $value = self::get_submitted_var(
+            $value = $this->get_submitted_var(
                     $this->get_field_prefix() . $extraprefix . $name, $type, $postdata);
             if (!is_null($value)) {
                 $submitteddata[$extraprefix . $name] = $value;
@@ -2576,6 +2621,10 @@ class question_attempt_step {
         }
     }
 
+    public function get_id() {
+        return $this->id; // TODO get rid of this.
+    }
+
     /** @return question_state The state after this step. */
     public function get_state() {
         return $this->state;
@@ -2671,6 +2720,21 @@ class question_attempt_step {
     }
 
     /**
+     * Prepare a draft file are for the files belonging the a response variable
+     * of this step.
+     *
+     * @param string $name the variable name the files belong to.
+     * @param int $contextid the id of the context the quba belongs to.
+     * @return int the draft itemid.
+     */
+    public function prepare_response_files_draft_itemid($name, $contextid) {
+    $draftid = 0; // Will be filled in by file_prepare_draft_area.
+        file_prepare_draft_area($draftid, $contextid, 'question',
+                'response_' . $name, $this->id);
+        return $draftid;
+    }
+
+    /**
      * Get all the question type variables.
      * @param array name => value pairs.
      */
@@ -2748,7 +2812,7 @@ class question_attempt_step {
     }
 
     /**
-     * Get all the data. behaviour variables have the ! at the start of
+     * Get all the data. behaviour variables have the - at the start of
      * their name. This is only intended for internal use, for example by
      * {@link question_engine_data_mapper::insert_question_attempt_step()},
      * however, it can ocasionally be useful in test code. It should not be
