@@ -187,9 +187,20 @@ class question_type {
      *
      * @return mixed array as above, or null to tell the base class to do nothing.
      */
-     protected function extra_answer_fields() {
-         return null;
-     }
+    protected function extra_answer_fields() {
+        return null;
+    }
+
+    /**
+     * If the quetsion type uses files in responses, then this method should
+     * return an array of all the response variables that might have corresponding
+     * files. For example, the essay qtype returns array('attachments', 'answers').
+     *
+     * @return array response variable names that may have associated files.
+     */
+    public function response_file_areas() {
+        return array();
+    }
 
     /**
      * Return an instance of the question editing form definition. This looks for a

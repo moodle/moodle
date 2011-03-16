@@ -274,7 +274,7 @@ function quiz_update_question_instance($grade, $questionid, $quiz) {
 
     $instance->grade = $grade;
     $DB->update_record('quiz_question_instances', $instance);
-    question_engine::set_max_mark_in_attempts(new quibaid_for_quiz($quiz->id),
+    question_engine::set_max_mark_in_attempts(new qubaids_for_quiz($quiz->id),
             $slot, $grade);
 }
 

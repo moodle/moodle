@@ -171,13 +171,12 @@ function quiz_delete_attempt($attempt, $quiz) {
         return;
     }
 
-    $DB->delete_records('quiz_attempts', array('id' => $attempt->id));
     question_engine::delete_questions_usage_by_activity($attempt->uniqueid);
+    $DB->delete_records('quiz_attempts', array('id' => $attempt->id));
 
     // Search quiz_attempts for other instances by this user.
     // If none, then delete record for this quiz, this user from quiz_grades
     // else recalculate best grade
-
     $userid = $attempt->userid;
     if (!$DB->record_exists('quiz_attempts', array('userid' => $userid, 'quiz' => $quiz->id))) {
         $DB->delete_records('quiz_grades', array('userid' => $userid,'quiz' => $quiz->id));
@@ -1425,22 +1424,17 @@ class mod_quiz_display_options extends question_display_options {
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quibaid_for_quiz extends qubaid_join {
+class qubaids_for_quiz extends qubaid_join {
     public function __construct($quizid, $includepreviews = true, $onlyfinished = false) {
-        global $CFG;
-
-        $from = $CFG->prefix . 'quiz_attempts quiza';
-
-        $where = 'quiza.quiz = ' . $quizid;
-
+        $where = 'quiza.quiz = :quizaquiz';
         if (!$includepreviews) {
             $where .= ' AND preview = 0';
         }
-
         if ($onlyfinished) {
             $where .= ' AND timefinish <> 0';
         }
 
-        parent::__construct($from, 'quiza.uniqueid', $where);
+        parent::__construct('{quiz_attempts} quiza', 'quiza.uniqueid', $where,
+                array('quizaquiz' => $quizid));
     }
 }

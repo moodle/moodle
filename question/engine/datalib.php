@@ -633,43 +633,78 @@ ORDER BY
      * Delete a question_usage_by_activity and all its associated
      * {@link question_attempts} and {@link question_attempt_steps} from the
      * database.
-     * @param string $where a where clause. Becuase of MySQL limitations, you
-     *      must refer to {question_usages}.id in full like that.
-     * @param array $params values to substitute for placeholders in $where.
+     * @param qubaid_condition $qubaids identifies which question useages to delete.
      */
-    public function delete_questions_usage_by_activities($where, $params) {
+    public function delete_questions_usage_by_activities(qubaid_condition $qubaids) {
+        $where = "qa.questionusageid {$qubaids->usage_id_in()}";
+        $params = $qubaids->usage_id_in_params();
+
+        $contextids = $this->db->get_records_sql_menu("
+                SELECT DISTINCT contextid, 1
+                FROM {question_usages}
+                WHERE id {$qubaids->usage_id_in()}", $params);
+        foreach ($contextids as $contextid => $notused) {
+            $this->delete_response_files($contextid, "IN (
+                    SELECT qas.id
+                    FROM {question_attempts} qa
+                    JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+                    WHERE $where)", $params);
+        }
+
         $this->db->delete_records_select('question_attempt_step_data', "attemptstepid IN (
                 SELECT qas.id
                 FROM {question_attempts} qa
                 JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
-                JOIN {question_usages} ON qa.questionusageid = {question_usages}.id
                 WHERE $where)", $params);
+
         $this->db->delete_records_select('question_attempt_steps', "questionattemptid IN (
                 SELECT qa.id
                 FROM {question_attempts} qa
-                JOIN {question_usages} ON qa.questionusageid = {question_usages}.id
                 WHERE $where)", $params);
-        $this->db->delete_records_select('question_attempts', "questionusageid IN (
-                SELECT id
-                FROM {question_usages}
-                WHERE $where)", $params);
-        $this->db->delete_records_select('question_usages', $where, $params);
+
+        $this->db->delete_records_select('question_attempts',
+                "{question_attempts}.questionusageid {$qubaids->usage_id_in()}", $params);
+
+        $this->db->delete_records_select('question_usages',
+                "{question_usages}.id {$qubaids->usage_id_in()}", $params);
     }
 
     /**
      * Delete all the steps for a question attempt.
      * @param int $qaids question_attempt id.
      */
-    public function delete_steps_for_question_attempts($qaids) {
+    public function delete_steps_for_question_attempts($qaids, $context) {
         if (empty($qaids)) {
             return;
         }
-        list($test, $params) = $this->db->get_in_or_equal($qaids);
+        list($test, $params) = $this->db->get_in_or_equal($qaids, SQL_PARAMS_NAMED);
+
+        $this->delete_response_files($context->id, "IN (
+                SELECT id
+                FROM question_attempt_step
+                WHERE questionattemptid $test)", $params);
+
         $this->db->delete_records_select('question_attempt_step_data', "attemptstepid IN (
                 SELECT qas.id
                 FROM {question_attempt_steps} qas
                 WHERE questionattemptid $test)", $params);
         $this->db->delete_records_select('question_attempt_steps', 'questionattemptid ' . $test, $params);
+    }
+
+    /**
+     * Delete all the files belonging to the response variables in the gives
+     * question attempt steps.
+     * @param int $contextid the context these attempts belong to.
+     * @param string $itemidstest a bit of SQL that can be used in a
+     *      WHERE itemid $itemidstest clause. Must use named params.
+     * @param array $params any query parameters used in $itemidstest.
+     */
+    protected function delete_response_files($contextid, $itemidstest, $params) {
+        $fs = get_file_storage();
+        foreach ($this->get_all_response_file_areas() as $filearea) {
+            $fs->delete_area_files_select($contextid, 'question', $filearea,
+                    $itemidstest, $params);
+        }
     }
 
     /**
@@ -686,8 +721,7 @@ ORDER BY
         if (empty($previews)) {
             return;
         }
-        list($test, $params) = $this->db->get_in_or_equal(array_keys($previews));
-        $this->delete_questions_usage_by_activities('question_usages.id ' . $test, $params);
+        $this->delete_questions_usage_by_activities(new qubaid_list($previews));
     }
 
     /**
@@ -822,7 +856,24 @@ ORDER BY
                 'questionid ' . $test . ' AND questionusageid ' .
                 $qubaids->usage_id_in(), $params + $qubaids->usage_id_in_params());
     }
+
+    /**
+     * @return array all the file area names that may contain response files.
+     */
+    public static function get_all_response_file_areas() {
+        $variables = array();
+        foreach (question_bank::get_all_qtypes() as $qtype) {
+            $variables += $qtype->response_file_areas();
+        }
+
+        $areas = array();
+        foreach (array_unique($variables) as $variable) {
+            $areas[] = 'response_' . $variable;
+        }
+        return $areas;
+    }
 }
+
 
 /**
  * Implementation of the unit of work pattern for the question engine.
@@ -916,18 +967,23 @@ class question_engine_unit_of_work implements question_usage_observer {
      * @param question_engine_data_mapper $dm the mapper to use to update the database.
      */
     public function save(question_engine_data_mapper $dm) {
-        $dm->delete_steps_for_question_attempts(array_keys($this->attemptstodeletestepsfor));
+        $dm->delete_steps_for_question_attempts(array_keys($this->attemptstodeletestepsfor),
+                $this->quba->get_owning_context());
+
         foreach ($this->stepsadded as $stepinfo) {
             list($step, $questionattemptid, $seq) = $stepinfo;
             $dm->insert_question_attempt_step($step, $questionattemptid, $seq,
                     $this->quba->get_owning_context());
         }
+
         foreach ($this->attemptsadded as $qa) {
             $dm->insert_question_attempt($qa, $this->quba->get_owning_context());
         }
+
         foreach ($this->attemptsmodified as $qa) {
             $dm->update_question_attempt($qa);
         }
+
         if ($this->modified) {
             $dm->update_questions_usage_by_activity($this->quba);
         }

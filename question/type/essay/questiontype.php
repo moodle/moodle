@@ -39,6 +39,10 @@ class qtype_essay extends question_type {
         return true;
     }
 
+    public function response_file_areas() {
+        return array('attachments', 'answers');
+    }
+
     public function get_question_options($question) {
         global $DB;
         $question->options = $DB->get_record('qtype_essay_options', array('questionid' => $question->id), '*', MUST_EXIST);

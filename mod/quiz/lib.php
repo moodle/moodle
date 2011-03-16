@@ -304,10 +304,8 @@ function quiz_update_effective_access($quiz, $userid) {
  */
 function quiz_delete_all_attempts($quiz) {
     global $CFG, $DB;
-    require_once($CFG->libdir . '/questionlib.php');
-    question_engine::delete_questions_usage_by_activities("{question_usages}.id IN (
-            SELECT uniqueid FROM {quiz_attempts} WHERE quiz = :quizid)",
-            array('quizid' => $quiz->id));
+    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+    question_engine::delete_questions_usage_by_activities(new qubaids_for_quiz($quiz->id));
     $DB->delete_records('quiz_attempts', array('quiz' => $quiz->id));
     $DB->delete_records('quiz_grades', array('quiz' => $quiz->id));
 }
@@ -1169,7 +1167,7 @@ function quiz_questions_in_use($questionids) {
     list($test, $params) = $DB->get_in_or_equal($questionids);
     return $DB->record_exists_select('quiz_question_instances',
             'question ' . $test, $params) || question_engine::questions_in_use(
-            $questionids, new qubaid_join($CFG->prefix . 'quiz_attempts quiza',
+            $questionids, new qubaid_join('{quiz_attempts} quiza',
             'quiza.uniqueid', 'quiza.preview = 0'));
 }
 
@@ -1232,12 +1230,12 @@ function quiz_reset_userdata($data) {
 
     /// Delete attempts.
     if (!empty($data->reset_quiz_attempts)) {
-        require_once($CFG->libdir.'/questionlib.php');
-        question_engine::delete_questions_usage_by_activities('{question_usages}.id IN (
-                SELECT uniqueid
-                FROM {quiz_attempts} quiza
-                JOIN {quiz} quiz ON quiza.quiz = quiz.id
-                WHERE quiz.course = :courseid)', array('courseid' => $data->courseid));
+        require_once($CFG->libdir . '/questionlib.php');
+
+        question_engine::delete_questions_usage_by_activities(new qubaid_join(
+                '{quiz_attempts} quiza JOIN {quiz} quiz ON quiza.quiz = quiz.id',
+                'quiza.uniqueid', 'quiz.course = :quizcourseid',
+                array('quizcourseid' => $data->courseid)));
 
         $DB->delete_records_select('quiz_attempts',
                 'quiz IN (SELECT id FROM {quiz} WHERE course = ?)', array($data->courseid));

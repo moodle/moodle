@@ -98,19 +98,16 @@ abstract class question_engine {
      */
     public static function delete_questions_usage_by_activity($qubaid) {
         global $CFG;
-        self::delete_questions_usage_by_activities('{question_usages}.id = :qubaid', array('qubaid' => $qubaid));
+        self::delete_questions_usage_by_activities(new qubaid_list(array($qubaid)));
     }
 
     /**
-     * Delete {@link question_usage_by_activity}s from the database that match
-     * an arbitrary SQL where clause.
-     * @param string $where a where clause. Becuase of MySQL limitations, you
-     *      must refer to {question_usages}.id in full like that.
-     * @param array $params values to substitute for placeholders in $where.
+     * Delete {@link question_usage_by_activity}s from the database.
+     * @param qubaid_condition $qubaids identifies which questions usages to delete.
      */
-    public static function delete_questions_usage_by_activities($where, $params) {
+    public static function delete_questions_usage_by_activities(qubaid_condition $qubaids) {
         $dm = new question_engine_data_mapper();
-        $dm->delete_questions_usage_by_activities($where, $params);
+        $dm->delete_questions_usage_by_activities($qubaids);
     }
 
     /**
@@ -327,6 +324,9 @@ abstract class question_engine {
         return question_display_options::get_dp_options();
     }
 
+    /**
+     * Initialise the JavaScript required on pages where questions will be displayed.
+     */
     public static function initialise_js() {
         return question_flags::initialise_js();
     }
