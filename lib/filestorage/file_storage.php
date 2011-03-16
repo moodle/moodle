@@ -432,13 +432,43 @@ class file_storage {
             $conditions['itemid'] = $itemid;
         }
 
-        $file_records = $DB->get_records('files', $conditions);
-        foreach ($file_records as $file_record) {
-            $stored_file = $this->get_file_instance($file_record);
-            $stored_file->delete();
+        $filerecords = $DB->get_records('files', $conditions);
+        foreach ($filerecords as $filerecord) {
+            $this->get_file_instance($filerecord)->delete();
         }
 
         return true; // BC only
+    }
+
+    /**
+     * Delete all the files from certain areas where itemid is limited by an
+     * arbitrary bit of SQL.
+     *
+     * @param int $contextid the context the files belong to.
+     * @param string $component the owning component.
+     * @param string $filearea the file area name. false for all.
+     * @param string $itemidstest an SQL fragment that the itemid must match. Used
+     *      in the query like WHERE itemid $itemidstest. Must used named parameters,
+     *      and may not used named parameters called contextid, component or filearea.
+     * @param array $params any query params used by $itemidstest.
+     */
+    public function delete_area_files_select($contextid, $component,
+            $filearea, $itemidstest, $params = null) {
+        global $DB;
+
+        $where = 'contextid = :contextid AND component = :component AND itemid ' . $itemidstest;
+        $params['contextid'] = $contextid;
+        $params['component'] = $component;
+        if ($filearea !== false) {
+            $where .= ' AND filearea = :filearea';
+            $params['filearea'] = $filearea;
+        }
+
+        $filerecords = $DB->get_recordset_select('files', $where, $params);
+        foreach ($filerecords as $filerecord) {
+            $this->get_file_instance($filerecord)->delete();
+        }
+        $filerecords->close();
     }
 
     /**
