@@ -2086,8 +2086,6 @@ class question_attempt {
      *      behaves as if there were no files.
      */
     protected function process_response_files($name, $postdata = null) {
-        global $USER;
-
         if ($postdata) {
             // There can be no files with test data (at the moment).
             return null;
@@ -2095,13 +2093,6 @@ class question_attempt {
 
         $draftitemid = file_get_submitted_draft_itemid($name);
         if (!$draftitemid) {
-            return null;
-        }
-
-        $fs = get_file_storage();
-        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-
-        if ($fs->is_area_empty($usercontext->id, 'user', 'draft', $draftitemid)) {
             return null;
         }
 

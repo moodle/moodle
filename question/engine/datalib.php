@@ -955,6 +955,12 @@ class question_file_saver {
     protected $filearea;
 
     /**
+     * @var string the value to store in the question_attempt_step_data to
+     * represent these files.
+     */
+    protected $value = null;
+
+    /**
      * Constuctor.
      * @param int $draftitemid the draft area to save the files from.
      * @param string $component the component for the file area to save into.
@@ -966,9 +972,36 @@ class question_file_saver {
         $this->filearea = $filearea;
     }
 
+    protected function get_value() {
+        global $USER;
+
+        if (!is_null($this->value)) {
+            return $this->value;
+        }
+
+        $fs = get_file_storage();
+        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+
+        $files = $fs->get_area_files($usercontext->id, 'user', 'draft',
+                $this->draftitemid, 'sortorder, filepath, filename', false);
+
+        $string = '';
+        foreach ($files as $file) {
+            $string .= $file->get_filepath() . $file->get_filename() . '|' .
+                    $file->get_contenthash() . '|';
+        }
+
+        if ($string) {
+            $this->value = md5($string);
+        } else {
+            $this->value = '';
+        }
+
+        return $this->value;
+    }
+
     public function __toString() {
-        // When stored in the database, we want this value to appear as 1.
-        return '1';
+        return $this->get_value();
     }
 
     /**

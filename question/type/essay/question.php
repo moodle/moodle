@@ -82,7 +82,9 @@ class qtype_essay_question extends question_with_responses {
 
     public function is_same_response(array $prevresponse, array $newresponse) {
         return question_utils::arrays_same_at_key_missing_is_blank(
-                $prevresponse, $newresponse, 'answer');
+                $prevresponse, $newresponse, 'answer') && ($this->attachments == 0 ||
+                question_utils::arrays_same_at_key_missing_is_blank(
+                $prevresponse, $newresponse, 'attachments'));
     }
 
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
