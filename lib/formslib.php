@@ -954,12 +954,14 @@ abstract class moodleform {
      *
      * @global object
      * @param int    $groupid The id of the group of advcheckboxes this element controls
-     * @param string $buttontext The text of the link. Defaults to "select all/none"
+     * @param string $text The text of the link. Defaults to selectallornone ("select all/none")
      * @param array  $attributes associative array of HTML attributes
      * @param int    $originalValue The original general state of the checkboxes before the user first clicks this element
      */
-    function add_checkbox_controller($groupid, $buttontext, $attributes, $originalValue = 0) {
+    function add_checkbox_controller($groupid, $text = null, $attributes = null, $originalValue = 0) {
         global $CFG;
+
+        // Set the default text if none was specified
         if (empty($text)) {
             $text = get_string('selectallornone', 'form');
         }
