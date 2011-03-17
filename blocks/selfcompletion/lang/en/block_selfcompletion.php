@@ -23,8 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['selfcompletion'] = 'Self completion';
-$string['pluginname'] = 'Self completion';
+$string['alreadyselfcompleted'] = 'You have already marked yourself as complete in this course';
 $string['completecourse'] = 'Complete course';
-$string['completionnotenabled'] = 'Course completion is not enabled';
+$string['pluginname'] = 'Self completion';
+$string['selfcompletion'] = 'Self completion';
 $string['selfcompletionnotenabled'] = 'The self completion criteria has not been enabled for this course';
