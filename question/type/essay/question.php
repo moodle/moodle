@@ -55,7 +55,7 @@ class qtype_essay_question extends question_with_responses {
     }
 
     public function get_expected_data() {
-        $expecteddata = array('answer' => PARAM_CLEANHTML);
+        $expecteddata = array('answer' => PARAM_CLEANHTML, 'answerformat' => PARAM_FORMAT);
         if ($this->attachments != 0) {
             $expecteddata['attachments'] = question_attempt::PARAM_FILES;
         }

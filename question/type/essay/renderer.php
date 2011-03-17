@@ -44,13 +44,15 @@ class qtype_essay_renderer extends qtype_renderer {
         // Answer field.
         $inputname = $qa->get_qt_field_name('answer');
         $response = $qa->get_last_qt_var('answer', '');
+        $responseformat = $qa->get_last_qt_var('answerformat', FORMAT_HTML);
         if (empty($options->readonly)) {
             $answer = $responseoutput->response_area_input($inputname,
-                    $response, $question->responsefieldlines);
+                    $response, $responseformat, $question->responsefieldlines,
+                    $options->context);
 
         } else {
             $answer = $responseoutput->response_area_read_only($inputname,
-                    $response, $question->responsefieldlines);
+                    $response, $responseformat, $question->responsefieldlines);
         }
 
         $files = '';
@@ -144,7 +146,8 @@ abstract class qtype_essay_format_renderer_base extends plugin_renderer_base {
      * @param string $response the student's current response.
      * @param int $lines approximate size of input box to display.
      */
-    public abstract function response_area_read_only($inputname, $response, $lines);
+    public abstract function response_area_read_only($inputname, $response,
+            $responseformat, $lines);
 
     /**
      * Render the students respone when the question is in read-only mode.
@@ -152,7 +155,8 @@ abstract class qtype_essay_format_renderer_base extends plugin_renderer_base {
      * @param string $response the student's current response.
      * @param int $lines approximate size of input box to display.
      */
-    public abstract function response_area_input($inputname, $response, $lines);
+    public abstract function response_area_input($inputname, $response,
+            $responseformat, $lines, $contex);
 }
 
 
@@ -164,15 +168,80 @@ abstract class qtype_essay_format_renderer_base extends plugin_renderer_base {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_essay_format_editor_renderer extends plugin_renderer_base {
-    public function response_area_read_only($inputname, $response, $lines) {
+    public function response_area_read_only($inputname, $response, $responseformat, $lines) {
         $formatoptions = new stdClass();
         $formatoptions->para = false;
-        return html_writer::tag('div', format_text($response, FORMAT_HTML, $formatoptions),
+        $response = $this->rewrite_pluginfile_urls($response);
+        return html_writer::tag('div', format_text($response, $responseformat, $formatoptions),
                 array('class' => 'qtype_essay_editor qtype_essay_response'));
     }
 
-    public function response_area_input($inputname, $response, $lines) {
-        return print_textarea(can_use_html_editor(), 18, 80, 630, 400, $inputname, $response, 0, true);
+    public function response_area_input($inputname, $response, $responseformat, $lines, $context) {
+        global $CFG, $PAGE;
+        require_once($CFG->dirroot.'/repository/lib.php');
+
+        $id = $inputname . '_id';
+
+        $editor = editors_get_preferred_editor($responseformat);
+        $strformats = format_text_menu();
+        $formats = $editor->get_supported_formats();
+        foreach ($formats as $fid) {
+            $formats[$fid] = $strformats[$fid];
+        }
+
+        $editor->use_editor($id, $this->get_editor_options($context),
+                $this->get_filepicker_options());
+
+        $output = '';
+        $output .= html_writer::start_tag('div');
+
+        $output .= html_writer::tag('div', html_writer::tag('textarea', s($response),
+                array('id' => $id, 'name' => $inputname, 'rows' => $lines)));
+
+        $output .= html_writer::start_tag('div');
+        if (count($formats == 1)) {
+            reset($formats);
+            $output .= html_writer::empty_tag('input', array('type' => 'hidden',
+                    'name' => $inputname . 'format', 'value' => key($formats)));
+
+        } else {
+            $output .= html_writer::select($formats, $inputname . 'format', $responseformat, '');
+        }
+        $output .= html_writer::end_tag('div');
+
+        $output .= $this->nonjs_filepicker();
+
+        $output .= html_writer::end_tag('div');
+        return $output;
+    }
+
+    /**
+     * @param string $response the student's response.
+     * @return string the response with file URLs processed.
+     */
+    protected function rewrite_pluginfile_urls($response) {
+        return $response;
+    }
+
+    /**
+     * @return array filepicker options for the editor.
+     */
+    protected function get_filepicker_options() {
+        return array();
+    }
+
+    /**
+     * @return array options for the editor.
+     */
+    protected function get_editor_options($context) {
+        return array('context' => $context);
+    }
+
+    /**
+     * Extra output for the filepicker, if used.
+     */
+    protected function nonjs_filepicker() {
+        return '';
     }
 }
 
@@ -184,13 +253,18 @@ class qtype_essay_format_editor_renderer extends plugin_renderer_base {
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_essay_format_editorfilepicker_renderer extends plugin_renderer_base {
-    public function response_area_read_only($inputname, $response, $lines) {
-        return 'Not yet implemented.';
+class qtype_essay_format_editorfilepicker_renderer extends qtype_essay_format_editor_renderer {
+
+    protected function rewrite_pluginfile_urls($response) {
+        return $response;
     }
 
-    public function response_area_input($inputname, $response, $lines) {
-        return 'Not yet implemented.';
+    protected function get_filepicker_options() {
+        return array();
+    }
+
+    protected function nonjs_filepicker() {
+        return '';
     }
 }
 
@@ -216,12 +290,14 @@ class qtype_essay_format_plain_renderer extends plugin_renderer_base {
         return 'qtype_essay_plain';
     }
 
-    public function response_area_read_only($inputname, $response, $lines) {
+    public function response_area_read_only($inputname, $response, $responseformat, $lines) {
         return $this->textarea($response, $lines, array('readonly' => 'readonly'));
     }
 
-    public function response_area_input($inputname, $response, $lines) {
-        return $this->textarea($response, $lines, array('name' => $inputname));
+    public function response_area_input($inputname, $response, $responseformat, $lines, $contex) {
+        return $this->textarea($response, $lines, array('name' => $inputname)) .
+                html_writer::empty_tag('input', array('type' => 'hidden',
+                    'name' => $inputname . 'format', 'value' => FORMAT_PLAIN));
     }
 }
 
