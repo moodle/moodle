@@ -1089,13 +1089,13 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
     // JCross quiztype
 
     function v6_expand_CluesAcrossLabel() {
-        $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',clues-across');
+        return $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',clues-across');
     }
     function v6_expand_CluesDownLabel() {
-        $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',clues-down');
+        return $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',clues-down');
     }
     function v6_expand_EnterCaption() {
-        $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',enter-caption');
+        return $this->parent->xml_value('hotpot-config-file,'.$this->parent->quiztype.',enter-caption');
     }
     function v6_expand_ShowHideClueList() {
         $value = $this->int_value('hotpot-config-file,'.$this->parent->quiztype.',include-clue-list');
