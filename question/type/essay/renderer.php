@@ -54,15 +54,13 @@ class qtype_essay_renderer extends qtype_renderer {
         }
 
         $files = '';
-        if (empty($options->readonly)) {
-            if ($question->attachments == 1) {
-                $files = $this->filepicker_input($qa, $options);
-            } else if ($question->attachments != 0) {
-                $files = $this->filemanager_input($qa, $options);
-            }
+        if ($question->attachments) {
+            if (empty($options->readonly)) {
+                $files = $this->files_input($qa, $question->attachments, $options);
 
-        } else if ($question->attachments != 0) {
-            $files = $this->files_read_only($qa, $options);
+            } else {
+                $files = $this->files_read_only($qa, $options);
+            }
         }
 
         $result = '';
@@ -79,6 +77,9 @@ class qtype_essay_renderer extends qtype_renderer {
 
     /**
      * Displays any attached files when the question is in read-only mode.
+     * @param question_attempt $qa the question attempt to display.
+     * @param question_display_options $options controls what should and should
+     *      not be displayed. Used to get the context.
      */
     public function files_read_only(question_attempt $qa, question_display_options $options) {
         $files = $qa->get_last_qt_files('attachments', $options->context->id);
@@ -95,14 +96,18 @@ class qtype_essay_renderer extends qtype_renderer {
 
     /**
      * Displays the input control for when the student should upload a single file.
+     * @param question_attempt $qa the question attempt to display.
+     * @param int $numallowed the maximum number of attachments allowed. -1 = unlimited.
+     * @param question_display_options $options controls what should and should
+     *      not be displayed. Used to get the context.
      */
-    public function filepicker_input(question_attempt $qa, question_display_options $options) {
+    public function files_input(question_attempt $qa, $numallowed, question_display_options $options) {
         global $CFG;
         require_once($CFG->dirroot . '/lib/form/filemanager.php');
 
         $pickeroptions = new stdClass();
         $pickeroptions->mainfile = null;
-        $pickeroptions->maxfiles = 1;
+        $pickeroptions->maxfiles = $numallowed;
         $pickeroptions->itemid = $qa->prepare_response_files_draft_itemid(
                 'attachments', $options->context->id);
         $pickeroptions->context = $options->context;
@@ -110,13 +115,6 @@ class qtype_essay_renderer extends qtype_renderer {
         return form_filemanager_render($pickeroptions) . html_writer::empty_tag(
                 'input', array('type' => 'hidden', 'name' => $qa->get_qt_field_name('attachments'),
                 'value' => $pickeroptions->itemid));
-    }
-
-    /**
-     * Displays the input control for when the student should upload a number of files.
-     */
-    public function filemanager_input(question_attempt $qa, question_display_options $options) {
-        return '';
     }
 
     public function manual_comment(question_attempt $qa, question_display_options $options) {
