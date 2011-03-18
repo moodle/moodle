@@ -94,6 +94,7 @@ if (!empty($dataid)) {
         if ($cancelsure) {
             $exporter->cancel_request($logreturn);
         } else {
+            portfolio_export_pagesetup($PAGE, $exporter->get('caller'));
             $exporter->print_header(get_string('confirmcancel', 'portfolio'));
             echo $OUTPUT->box_start();
             $yesbutton = new single_button(new moodle_url('/portfolio/add.php', array('id' => $dataid, 'cancel' => 1, 'cancelsure' => 1, 'logreturn' => $logreturn)), get_string('yes'));
