@@ -297,6 +297,13 @@ $CFG->admin = 'admin';
 //   Print to footer (works with the default theme)
 //   define('MDL_PERFTOFOOT', true);
 //
+//   Enable earlier profiling that causes more code to be covered
+//   on every request (db connections, config load, other inits...).
+//   Requires extra configuration to be defined in config.php like:
+//   profilingincluded, profilingexcluded, profilingautofrec,
+//   profilingallowme, profilingallowall, profilinglifetime
+//       $CFG->earlyprofilingenabled = true;
+//
 // Force displayed usernames
 //   A little hack to anonymise user names for all students.  If you set these
 //   then all non-teachers will always see these for every person.
