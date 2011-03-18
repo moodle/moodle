@@ -89,7 +89,7 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
         handle_keyup : function(e) {
             //  Trigger an ajax search after a delay.
             this.cancel_timeout();
-            this.timeoutid = setTimeout(function(obj){obj.send_query(false)}, this.querydelay*1000, this);
+            this.timeoutid = Y.later(this.querydelay*1000, e, function(obj){obj.send_query(false)}, this);
 
             // Enable or diable the clear button.
             this.clearbutton.set('disabled', (this.get_search_text() == ''));
