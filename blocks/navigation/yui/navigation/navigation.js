@@ -310,10 +310,17 @@ BRANCH.prototype = {
         try {
             var object = Y.JSON.parse(outcome.responseText);
             if (object.children && object.children.length > 0) {
+                var count = 0;
                 for (var i in object.children) {
+                    if (object.children[i].type == 20) {
+                        count++;
+                    }
                     if (typeof(object.children[i])=='object') {
                         this.addChild(object.children[i]);
                     }
+                }
+                if (this.get('type') == 10 && count >= M.block_navigation.courselimit) {
+                    this.addViewAllCoursesChild(this);
                 }
                 this.get('tree').toggleExpansion({target:this.node});
                 return true;
@@ -345,16 +352,23 @@ BRANCH.prototype = {
                 }
             }
             if (branch.get('type') == 10 && count >= M.block_navigation.courselimit) {
-                branch.addChild({
-                    name : M.str.moodle.viewallcourses,
-                    title : M.str.moodle.viewallcourses,
-                    link : M.cfg.wwwroot+'/course/category.php?id='+branch.get('key'),
-                    haschildren : false,
-                    icon : {'pix':"i/navigationitem",'component':'moodle'}
-                }, branch);
+                this.addViewAllCoursesChild(branch);
             }
         }
         return true;
+    },
+    
+    /**
+     * Add a link to view all courses in a category
+     */
+    addViewAllCoursesChild: function(branch) {
+        branch.addChild({
+            name : M.str.moodle.viewallcourses,
+            title : M.str.moodle.viewallcourses,
+            link : M.cfg.wwwroot+'/course/category.php?id='+branch.get('key'),
+            haschildren : false,
+            icon : {'pix':"i/navigationitem",'component':'moodle'}
+        });
     }
 }
 Y.extend(BRANCH, Y.Base, BRANCH.prototype, {
