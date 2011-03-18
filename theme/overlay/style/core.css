@@ -1,265 +1,282 @@
 /* Global
 --------------------------*/
-
 body {
-	background: #fff;
-	margin: 0;
-	padding: 0;
-	color: #281f18;
+    background: #fff;
+    margin: 0;
+    padding: 0;
+    color: #281f18;
 }
 
 html {
-	height: 100%;
+    height: 100%;
 }
 body {
-	margin: 0;
-	padding: 0;
-	height: 100%;
+    margin: 0;
+    padding: 0;
+    height: 100%;
 }
 
 body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {
-  font-family: 'Myriad Pro', 'Myriad', helvetica, arial, sans-serif;
+    font-family: 'Myriad Pro', 'Myriad', helvetica, arial, sans-serif;
 }
 
 .wrapper {
-	margin: 0 35px;
-	min-width: 910px;
+    margin: 0 35px;
+    min-width: 910px;
 }
 
 a:hover,a:active {
-	color: #000;
+    color: #000;
 }
 
 a img {
-	border: none;
+    border: none;
 }
 
 a:active {
-	outline: none;
+    outline: none;
 }
 
 /* Header
 ---------------------------*/
-
 #page-header {
-	background: #333;
-	color: #fff;
-	height: 30px;
-	z-index: 99999;
-	position: relative;
+    background: #333;
+    color: #fff;
+    height: 30px;
+    z-index: 99999;
+    position: relative;
 }
 
 #page-header div.headermenu {
-	height: 30px;
-	padding-bottom: 0px;
-	margin-bottom: 0px;
-	padding-top: 0px;
-	margin-top: 0px;
-	line-height: 30px;
+    height: 30px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    padding-top: 0px;
+    margin-top: 0px;
+    line-height: 30px;
 }
+
 #page-header a:link,
 #page-header a:visited {
-	color: #fff;
-	text-decoration: underline;
+    color: #fff;
+    text-decoration: underline;
 }
 
-
 #newheader {
-	height: 100px;
-	position: relative;
+    height: 100px;
+    position: relative;
 }
 
 #newheaderleft {
-	height: 100px;
-	width: 50px;
-	position: absolute;
-	left: -50px;
+    height: 100px;
+    width: 50px;
+    position: absolute;
+    left: -50px;
 }
+
 h1.headermain {
-	margin-left: 0px;
-	padding-left: 0px;
-	color: #fff;
-	margin-top: 35px;
-	font-family: 'Myriad Pro', 'Myriad', helvetica, arial, sans-serif;
-	text-shadow: 2px 3px 3px #292929;
-	letter-spacing: -1px;
-	-webkit-text-stroke: 1px white;
+    margin-left: 0px;
+    padding-left: 0px;
+    color: #fff;
+    margin-top: 35px;
+    font-family: 'Myriad Pro', 'Myriad', helvetica, arial, sans-serif;
+    text-shadow: 2px 3px 3px #292929;
+    letter-spacing: -1px;
+    -webkit-text-stroke: 1px white;
+}
+
+.headermenu .logininfo, 
+.headermenu .langmenu, 
+.headermenu .langmenu div, 
+.headermenu .langmenu form, 
+.headermenu .langmenu select, 
+.headermenu .langmenu label {
+    display: inline !important;
+}
+
+.headermenu .logininfo {
+    padding-right: 5px;
 }
 
 #region-main-box {
-	background: #eee;
+    background: #eee;
 }
 
 #region-post-box {
-	background: #fff;
+    background: #fff;
 }
 
 #page-footer {
-	background: #333;
-	color: #fff;
+    background: #333;
+    color: #fff;
 }
 
 #page-content, #region-main-box, #region-main-wrap, #page-content-wrapper, #top, div.region-content {
-	min-height: 100%;
-	position: relative;
+    min-height: 100%;
+    position: relative;
 }
 
 #region-main-box {
-	-webkit-box-shadow: 6px 0px 8px #ccc;
-	-moz-box-shadow: 6px 0px 8px #ccc;
-	box-shadow: 6px 0px 8px #ccc;
+    -webkit-box-shadow: 6px 0px 8px #ccc;
+    -moz-box-shadow: 6px 0px 8px #ccc;
+    box-shadow: 6px 0px 8px #ccc;
  }
 
  #region-main {
-	-webkit-box-shadow: 6px 0px 8px #ccc;
-	-moz-box-shadow: 6px 0px 8px #ccc;
-	box-shadow: 6px 0px 8px #ccc;
+    -webkit-box-shadow: 6px 0px 8px #ccc;
+    -moz-box-shadow: 6px 0px 8px #ccc;
+    box-shadow: 6px 0px 8px #ccc;
  }
 
 .side-pre-only  #region-main, .content-only #region-main, .content-only #region-main-box  {
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
-	box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
  }
 
 /* Navbar
 --------------------------*/
-
 .navbar {
-	margin-top: 10px;
-
+    margin-top: 10px;
 }
 
 .navbar .wrapper {
-	margin-left: 0px !important;
-	padding-left: 0px !important;
-
+    margin-left: 0px !important;
+    padding-left: 0px !important;
 }
 
 .breadcrumb .sep {
-	color: #777;
-	font-size: 0.8em;
+    color: #777;
+    font-size: 0.8em;
 }
 
 .navbutton {
-	margin-top: 40px;
-	margin-right: 10px;
-	font-size: 12px;
+    margin-top: 40px;
+    margin-right: 10px;
+    font-size: 12px;
 }
-
 
 /* Blocks
 ---------------------------*/
-
 .block {
-	border: none;
-	margin-bottom: 25px;
+    border: none;
+    margin-bottom: 25px;
 }
 
 .block .header {
-	border-bottom:none;
-	text-transform: uppercase;
+    border-bottom:none;
+    text-transform: uppercase;
 }
 
 .block.hidden .header {
-	border-top: 1px solid #dadada;
-	border-bottom: 1px solid #dadada;
+    border-top: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
 }
 .block .title h2 {
-	font-weight: normal;
-	font-size: 1.1em;
-	margin: 0;
+    font-weight: normal;
+    font-size: 1.1em;
+    margin: 0;
 }
 
 .block .content {
-	font-size: 0.95em;
+    font-size: 0.95em;
 }
 
 .
 /* Forums
 ---------------------------*/
-
 .forumpost .subject {
-	font-size: 1.2em;
+    font-size: 1.2em;
 }
 
 .forumpost .author {
-	font-size: 0.9em;
+    font-size: 0.9em;
 }
 
 .forumpost .content {
-  border-bottom:5px solid #aaa;
-  padding:5px 7px 10px 7px;
+    border-bottom:5px solid #aaa;
+    padding:5px 7px 10px 7px;
 }
 
 .forumpost .topic {
-	background: #eee;
-	border-bottom: 1px solid #aaa;
+    background: #eee;
+    border-bottom: 1px solid #aaa;
 }
 
 /* Course
 -------------------------------*/
-
 .course-content .main {
-	border: 1px solid #eee;
-	background: #eee;
+    border: 1px solid #eee;
+    background: #eee;
 }
 
 .course-content .current {
-	background: #1f5480;
-	color: #fff;
+    background: #1f5480;
+    color: #fff;
 }
 
 .course-content .main .content {
-	background: #fff;
+    background: #fff;
 }
 
-/* YUI Menu
+/* YUI Menu - custom menu
 -------------------------------*/
-
 #custommenu {
-	width: 70%;
-	float: left;
+    width: 60%;
+    float: left;
 }
 
-div.yui3-menu-content {
-	border: none !important;
+#custommenu .yui3-menu-label-active,
+#custommenu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label-active,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menuitem-active .yui3-menuitem-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menuitem-active .yui3-menuitem-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled li a:hover {
+    background-color:#666;
 }
 
-.yui3-menu-content li a {
-	font-size: 11px;
-	font-weight: 200;
-	line-height: 30px;
-	text-transform: uppercase;
-	cursor: pointer;
-	border-right: none !important;
-	border-top: none !important;
-	border-bottom: none !important;
-	text-decoration: none !important;
-	margin-left: 0px !important;
-	padding-left: 0px !important;
-	margin-right: 10px !important;
+#custommenu .yui3-menu-content, 
+#custommenu .yui3-menu .yui3-menu .yui3-menu-content {
+    background-image:none;
+    background-color:#333;
+    border-width:0;
+    padding:0;
 }
 
-.yui3-menu-content li a:hover {
-	text-decoration: underline;
+#custommenu .yui3-menu-label,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label {
+    background-image:url([[pix:theme|vertical-menu-submenu-indicator]]);
+    background-position:right center;
+    background-repeat:no-repeat;
 }
 
-div.custom_menu_submenu li a {
-	line-height: 30px;
-	text-shadow: none !important;
-	color: #333 !important;
-	margin-left: 5px !important;
+#custommenu .yui3-menu-label.yui3-menu-label-menuvisible,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label.yui3-menu-label-menuvisible {
+    background-image:url([[pix:theme|horizontal-menu-submenu-indicator]]);
 }
 
-div.firstdockitem {
-	margin-top: 30px;
+#custommenu .yui3-menu-horizontal .yui3-menu-label,
+#custommenu .yui3-menu-horizontal .yui3-menuitem-content {
+    border-width:0;
+    text-transform: uppercase;
+    text-decoration:none;
+    font-size:1em;
+    font-weight: 200;
+    line-height:30px;
+    cursor: pointer;
+    padding:0 20px;
 }
 
-.headermenu .logininfo, .headermenu div, .headermenu form {
-	display: inline;
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content, 
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .ul {
+    border-width:0;
 }
 
-.headermenu .logininfo {
-	padding-right: 5px;
+#custommenu .yui3-menu-horizontal.javascript-disabled li a {
+    padding: 0 20px;
+    display: block;
 }
+
+/** Dock **/
+#dock .firstdockitem {margin-top: 30px;}
