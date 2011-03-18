@@ -167,10 +167,10 @@ class navigation_node_test extends UnitTestCase {
         $this->node->find_expandable($expandable);
         $this->assertEqual(count($expandable), 4);
         if (count($expandable) === 4) {
-            $name = $expandable[0]['branchid'];
-            $name .= $expandable[1]['branchid'];
-            $name .= $expandable[2]['branchid'];
-            $name .= $expandable[3]['branchid'];
+            $name = $expandable[0]['key'];
+            $name .= $expandable[1]['key'];
+            $name .= $expandable[2]['key'];
+            $name .= $expandable[3]['key'];
             $this->assertEqual($name, 'demo1demo2demo4hiddendemo2');
         }
     }
