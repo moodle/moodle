@@ -310,16 +310,16 @@ BRANCH.prototype = {
         try {
             var object = Y.JSON.parse(outcome.responseText);
             if (object.children && object.children.length > 0) {
-                var count = 0;
+                var coursecount = 0;
                 for (var i in object.children) {
-                    if (object.children[i].type == 20) {
-                        count++;
-                    }
                     if (typeof(object.children[i])=='object') {
+                        if (object.children[i].type == 20) {
+                            coursecount++;
+                        }
                         this.addChild(object.children[i]);
                     }
                 }
-                if (this.get('type') == 10 && count >= M.block_navigation.courselimit) {
+                if (this.get('type') == 10 && coursecount >= M.block_navigation.courselimit) {
                     this.addViewAllCoursesChild(this);
                 }
                 this.get('tree').toggleExpansion({target:this.node});
@@ -357,7 +357,7 @@ BRANCH.prototype = {
         }
         return true;
     },
-    
+
     /**
      * Add a link to view all courses in a category
      */

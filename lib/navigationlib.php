@@ -1097,8 +1097,6 @@ class global_navigation extends navigation_node {
         } else if ($this->rootnodes['courses']->children->count() >= $limit) {
             $this->rootnodes['courses']->add(get_string('viewallcoursescategories'), new moodle_url('/course/index.php'), self::TYPE_SETTING);
         }
-        
-        $this->page->requires->string_for_js('viewallcourses', 'moodle');
 
         // Load for the current user
         $this->load_for_user();
