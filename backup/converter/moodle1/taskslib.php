@@ -36,6 +36,7 @@ class moodle1_course_task extends convert_task {
     public function build() {
 
         $this->add_step(new moodle1_course_structure_step('course_info'));
+        $this->add_step(new moodle1_section_structure_step('course_section'));
 
         // At the end, mark it as built
         $this->built = true;

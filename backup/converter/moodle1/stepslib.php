@@ -7,7 +7,7 @@ abstract class moodle1_structure_step extends convert_structure_step {
     /**
      * @var xml_writer
      */
-    protected $xmlwriter;
+    protected $xmlwriter = NULL;
 
     /**
      * Return the relative path to the XML file that
@@ -50,6 +50,7 @@ abstract class moodle1_structure_step extends convert_structure_step {
         if ($this->xmlwriter instanceof xml_writer) {
             $this->xmlwriter->stop();
             unset($this->xmlwriter);
+            $this->xmlwriter = NULL;
             // var_dump(file_get_contents($this->get_basepath().'/'.$this->get_xml_filename())); // DEBUG
         }
     }
@@ -239,6 +240,138 @@ class moodle1_course_structure_step extends convert_structure_step {
             $this->xmlwriter->stop();
             unset($this->xmlwriter);
             // var_dump(file_get_contents($this->get_converter()->get_convertdir().'/course/course.xml')); // DEBUG
+        }
+    }
+}
+
+/**
+ * Converts all of the sections
+ */
+class moodle1_section_structure_step extends moodle1_structure_step {
+    /**
+     * Section ID
+     * @var int
+     */
+    protected $id;
+
+    /**
+     * Module ID sequence
+     * @var array
+     */
+    protected $sequence = array();
+
+    /**
+     * Section data array
+     * @var array
+     */
+    protected $data = array();
+
+    /**
+     * Return the relative path to the XML file that
+     * this step writes out to.  Example: course/course.xml
+     *
+     * @return string
+     */
+    public function get_xml_filename() {
+        return "sections/section_$this->id/section.xml";
+    }
+
+    /**
+     * Function that will return the structure to be processed by this convert_step.
+     * Must return one array of @convert_path_element elements
+     */
+    protected function define_structure() {
+        $paths   = array();
+        $paths[] = new convert_path_element('section', '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION');
+        $paths[] = new convert_path_element('mod', '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+
+        return $paths;
+    }
+
+    /**
+     * This grabs section ID and stores data.
+     * We must process the section's modules before
+     * the section can be written out to XML
+     *
+     * @param  $data
+     * @return void
+     */
+    public function convert_section($data) {
+        if (!empty($this->id)) {
+            $this->write_section_xml();
+        }
+        // print_object($data); // DEBUG
+        $this->id   = $data['ID'];
+        $this->data = $data;
+    }
+
+    /**
+     * Writes out section XML
+     *
+     * @return void
+     */
+    public function write_section_xml() {
+        $this->open_xml_writer();
+
+        $this->xmlwriter->begin_tag('section', array('id' => $this->data['ID']));
+        $this->xmlwriter->full_tag('number', $this->data['NUMBER']);
+        $this->xmlwriter->full_tag('name', NULL);
+        $this->xmlwriter->full_tag('summary', $this->data['SUMMARY']);
+        $this->xmlwriter->full_tag('summaryformat', 1);
+        $this->xmlwriter->full_tag('sequence', implode(',', $this->sequence));
+        $this->xmlwriter->full_tag('visible', $this->data['VISIBLE']);
+        $this->xmlwriter->end_tag('section');
+
+        $this->close_xml_writer();
+
+        // Reset
+        $this->id = 0;
+        $this->sequence = array();
+        $this->data = array();
+    }
+
+    /**
+     * Converting section module data - store
+     * id for section sequence then throw all the
+     * module data in the database for later use.
+     *
+     * @param  $data
+     * @return void
+     */
+    public function convert_mod($data) {
+        global $DB;
+
+        // print_object($data); // DEBUG
+
+        unset(
+            $data['ROLES_OVERRIDES'],
+            $data['ROLES_ASSIGNMENTS']
+        );
+
+        $this->sequence[] = $data['ID'];
+
+        $info = new stdClass;
+        $info->section = $this->id;
+        foreach ($data as $name => $value) {
+            $name = strtolower($name);
+            $info->$name = $value;
+        }
+
+        $temp = new stdClass;
+        $temp->itemname     = $data['TYPE'];
+        $temp->itemid       = $data['INSTANCE'];
+        $temp->parentitemid = $data['ID'];
+        $temp->info         = base64_encode(serialize($info));
+
+        $DB->insert_record('backup_ids_temp', $temp);
+    }
+
+    /**
+     * Write out any section still left in memory
+     */
+    public function execute_after_convert() {
+        if (!empty($this->id)) {
+            $this->write_section_xml();
         }
     }
 }
