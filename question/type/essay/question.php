@@ -55,7 +55,12 @@ class qtype_essay_question extends question_with_responses {
     }
 
     public function get_expected_data() {
-        $expecteddata = array('answer' => PARAM_CLEANHTML, 'answerformat' => PARAM_FORMAT);
+        if ($this->responseformat == 'editorfilepicker') {
+            $expecteddata = array('answer' => question_attempt::PARAM_CLEANHTML_FILES);
+        } else {
+            $expecteddata = array('answer' => PARAM_CLEANHTML);
+        }
+        $expecteddata['answerformat'] = PARAM_FORMAT;
         if ($this->attachments != 0) {
             $expecteddata['attachments'] = question_attempt::PARAM_FILES;
         }
@@ -91,6 +96,10 @@ class qtype_essay_question extends question_with_responses {
         if ($component == 'question' && $filearea == 'response_attachments') {
             // Response attachments visible if the question has them.
             return $this->attachments != 0;
+
+        } else if ($component == 'question' && $filearea == 'response_answer') {
+            // Response attachments visible if the question has them.
+            return $this->responseformat === 'editorfilepicker';
 
         } else if ($component == 'qtype_essay' && $filearea == 'graderinfo') {
             return $options->manualcomment;

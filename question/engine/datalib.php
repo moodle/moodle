@@ -119,15 +119,15 @@ class question_engine_data_mapper {
         $record->id = $this->db->insert_record('question_attempt_steps', $record);
 
         foreach ($step->get_all_data() as $name => $value) {
+            if ($value instanceof question_file_saver) {
+                $value->save_files($record->id, $context);
+            }
+
             $data = new stdClass();
             $data->attemptstepid = $record->id;
             $data->name = $name;
             $data->value = $value;
             $this->db->insert_record('question_attempt_step_data', $data, false);
-
-            if ($value instanceof question_file_saver) {
-                $value->save_files($record->id, $context);
-            }
         }
     }
 
@@ -1022,24 +1022,27 @@ class question_file_saver {
      * @param string $component the component for the file area to save into.
      * @param string $filearea the name of the file area to save into.
      */
-    public function __construct($draftitemid, $component, $filearea) {
+    public function __construct($draftitemid, $component, $filearea, $text = null) {
         $this->draftitemid = $draftitemid;
         $this->component = $component;
         $this->filearea = $filearea;
+        $this->value = $this->compute_value($draftitemid, $text);
     }
 
-    protected function get_value() {
+    /**
+     * Compute the value that should be stored in the question_attempt_step_data
+     * table. Contains a hash that (almost) uniquely encodes all the files.
+     * @param int $draftitemid the draft file area itemid.
+     * @param string $text optional content containing file links.
+     */
+    protected function compute_value($draftitemid, $text) {
         global $USER;
-
-        if (!is_null($this->value)) {
-            return $this->value;
-        }
 
         $fs = get_file_storage();
         $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
 
         $files = $fs->get_area_files($usercontext->id, 'user', 'draft',
-                $this->draftitemid, 'sortorder, filepath, filename', false);
+                $draftitemid, 'sortorder, filepath, filename', false);
 
         $string = '';
         foreach ($files as $file) {
@@ -1048,16 +1051,27 @@ class question_file_saver {
         }
 
         if ($string) {
-            $this->value = md5($string);
+            $hash = md5($string);
         } else {
-            $this->value = '';
+            $hash = '';
         }
 
-        return $this->value;
+        if (is_null($text)) {
+            return $hash;
+        }
+
+        // We add the file hash so a simple string comparison will say if the
+        // files have been changed. First strip off any existing file hash.
+        $text = preg_replace('/\s*<!-- File hash: \w+ -->\s*$/', '', $text);
+        $text = file_rewrite_urls_to_pluginfile($text, $draftitemid);
+        if ($hash) {
+            $text .= '<!-- File hash: ' . $hash . ' -->';
+        }
+        return $text;
     }
 
     public function __toString() {
-        return $this->get_value();
+        return $this->value;
     }
 
     /**
