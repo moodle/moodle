@@ -207,7 +207,10 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
         }
 
         if ($play) {
-            $sco = $DB->get_record('scorm_scoes', array('id'=>$scoid));
+            // it is possible that $scoid is still not set, in this case we don't want an empty object
+            if ($scoid) {
+                $sco = scorm_get_sco($scoid);
+            }
             $sco->previd = $previd;
             $sco->nextid = $nextid;
             $result->sco = $sco;
