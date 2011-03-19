@@ -15,7 +15,7 @@ GNU General Public License for more details:
 http:www.gnu.org/copyleft/gpl.html
 
 
-Book module for Moodle - version 2.0dev
+Book module for Moodle - version 2.0rc
 ===============================================================================
 Created by:
       Petr Skoda (skodak) - most of the coding & design
@@ -110,11 +110,13 @@ CHANGELOG:
     * Moodle 2.0 conversion
     * removed "Disable printing" option, please use capabilities instead
     * completion tracking supported
+== 2.0rc ============================================================
+    * backup fixed
+    * print links open in new window
 
 Known issues, please do not file tracker reports:
     * upgrade imscp export code (disabled for now)
     * upgrade import code (disabled for now)
-    * open print links in new windows (needs fix in navlib)
 
 
 Petr

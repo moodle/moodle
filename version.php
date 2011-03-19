@@ -23,9 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$module->version   = 2011020800; // The current module version (Date: YYYYMMDDXX)
+defined('MOODLE_INTERNAL') || die;
+
+$module->version   = 2011031900; // The current module version (Date: YYYYMMDDXX)
 $module->requires  = 2010120700; // Requires this Moodle version
 $module->cron      = 0;          // Period for cron to check this module (secs)
 $module->component = 'mod_book'; // Full name of the plugin (used for diagnostics)
 
-$release = "2.0dev (20110208)"; // User-friendly version number
+$maturity          = 150; //MATURITY_RC
+$release           = "2.0rc (20110319)"; // User-friendly version number
