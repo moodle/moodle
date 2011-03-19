@@ -42,7 +42,7 @@ class backup_book_activity_structure_step extends backup_activity_structure_step
 
         // Define sources
         $book->set_source_table('book', array('id' => backup::VAR_ACTIVITYID));
-
+        $chapter->set_source_table('book_chapters', array('bookid' => backup::VAR_PARENTID));
 
         // Define file annotations
         $book->annotate_files('mod_book', 'intro', null); // This file area hasn't itemid
