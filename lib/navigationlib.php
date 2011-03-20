@@ -1967,7 +1967,6 @@ class global_navigation extends navigation_node {
 
         //Participants
         if (has_capability('moodle/course:viewparticipants', $this->page->context)) {
-            require_once($CFG->dirroot.'/blog/lib.php');
             $participants = $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id), self::TYPE_CONTAINER, get_string('participants'), 'participants');
             $currentgroup = groups_get_course_group($course, true);
             if ($course->id == SITEID) {
@@ -1978,7 +1977,8 @@ class global_navigation extends navigation_node {
                 $filterselect = $currentgroup;
             }
             $filterselect = clean_param($filterselect, PARAM_INT);
-            if ($CFG->bloglevel >= 3) {
+            if (($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
+               and has_capability('moodle/blog:view', get_context_instance(CONTEXT_SYSTEM))) {
                 $blogsurls = new moodle_url('/blog/index.php', array('courseid' => $filterselect));
                 $participants->add(get_string('blogs','blog'), $blogsurls->out());
             }
@@ -2036,12 +2036,11 @@ class global_navigation extends navigation_node {
         $filterselect = 0;
 
         // Blogs
-        if (has_capability('moodle/blog:view', $this->page->context)) {
-            require_once($CFG->dirroot.'/blog/lib.php');
-            if (blog_is_enabled_for_user()) {
-                $blogsurls = new moodle_url('/blog/index.php', array('courseid' => $filterselect));
-                $coursenode->add(get_string('blogs','blog'), $blogsurls->out());
-            }
+        if (!empty($CFG->bloglevel)
+          and ($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
+          and has_capability('moodle/blog:view', get_context_instance(CONTEXT_SYSTEM))) {
+            $blogsurls = new moodle_url('/blog/index.php', array('courseid' => $filterselect));
+            $coursenode->add(get_string('blogs','blog'), $blogsurls->out());
         }
 
         // Notes
