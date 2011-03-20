@@ -40,14 +40,14 @@ class core_enrol_renderer extends plugin_renderer_base {
      */
     protected function render_course_enrolment_users_table(course_enrolment_users_table $table) {
 
-        $table->initialise_javascript($this->page);
+        $table->initialise_javascript();
 
         $content = '';
-        $enrolmentselector = $table->get_enrolment_selector($this->page);
+        $enrolmentselector = $table->get_enrolment_selector();
         if ($enrolmentselector) {
             $content .= $this->output->render($enrolmentselector);
         }
-        $cohortenroller = $table->get_cohort_enrolment_control($this->page);
+        $cohortenroller = $table->get_cohort_enrolment_control();
         if ($cohortenroller) {
             $content .= $this->output->render($cohortenroller);
         }
@@ -55,11 +55,11 @@ class core_enrol_renderer extends plugin_renderer_base {
         $content .= $this->output->render($table->get_paging_bar());
         $content .= html_writer::table($table);
         $content .= $this->output->render($table->get_paging_bar());
-        $enrolmentselector = $table->get_enrolment_selector($this->page);
+        $enrolmentselector = $table->get_enrolment_selector();
         if ($enrolmentselector) {
             $content .= $this->output->render($enrolmentselector);
         }
-        $cohortenroller = $table->get_cohort_enrolment_control($this->page);
+        $cohortenroller = $table->get_cohort_enrolment_control();
         if ($cohortenroller) {
             $content .= $this->output->render($cohortenroller);
         }
@@ -74,10 +74,10 @@ class core_enrol_renderer extends plugin_renderer_base {
      */
     protected function render_course_enrolment_other_users_table(course_enrolment_other_users_table $table) {
 
-        $table->initialise_javascript($this->page);
+        $table->initialise_javascript();
 
         $content = '';
-        $searchbutton = $table->get_user_search_button($this->page);
+        $searchbutton = $table->get_user_search_button();
         if ($searchbutton) {
             $content .= $this->output->render($searchbutton);
         }
@@ -85,7 +85,7 @@ class core_enrol_renderer extends plugin_renderer_base {
         $content .= $this->output->render($table->get_paging_bar());
         $content .= html_writer::table($table);
         $content .= $this->output->render($table->get_paging_bar());
-        $searchbutton = $table->get_user_search_button($this->page);
+        $searchbutton = $table->get_user_search_button();
         if ($searchbutton) {
             $content .= $this->output->render($searchbutton);
         }
@@ -287,9 +287,9 @@ class course_enrolment_table extends html_table implements renderable {
 
     /**
      * The URL of the page for this table
-     * @var moodle_url
+     * @var moodle_page
      */
-    public $pageurl;
+    public $moodlepage;
 
     /**
      * The sort field for this table, should be one of course_enrolment_table::$sortablefields
@@ -345,14 +345,14 @@ class course_enrolment_table extends html_table implements renderable {
      *
      * @param course_enrolment_manager $manager
      */
-    public function __construct(course_enrolment_manager $manager, moodle_url $pageurl) {
+    public function __construct(course_enrolment_manager $manager, moodle_page $moodlepage) {
 
-        $this->manager = $manager;
-        $this->pageurl = $pageurl;
+        $this->manager        = $manager;
+        $this->moodlepage     = $moodlepage;
 
-        $this->page =           optional_param(self::PAGEVAR, 0, PARAM_INT);
-        $this->perpage =        optional_param(self::PERPAGEVAR, self::DEFAULTPERPAGE, PARAM_INT);
-        $this->sort =           optional_param(self::SORTVAR, self::DEFAULTSORT, PARAM_ALPHA);
+        $this->page           = optional_param(self::PAGEVAR, 0, PARAM_INT);
+        $this->perpage        = optional_param(self::PERPAGEVAR, self::DEFAULTPERPAGE, PARAM_INT);
+        $this->sort           = optional_param(self::SORTVAR, self::DEFAULTSORT, PARAM_ALPHA);
         $this->sortdirection  = optional_param(self::SORTDIRECTIONVAR, self::DEFAULTSORTDIRECTION, PARAM_ALPHA);
 
         $this->attributes = array('class'=>'userenrolment');
@@ -396,7 +396,7 @@ class course_enrolment_table extends html_table implements renderable {
         $this->head = array();
         $this->colclasses = array();
         $this->align = array();
-        $url = new moodle_url($this->pageurl, $this->get_url_params()+$this->manager->get_url_params());
+        $url = $this->moodlepage->url;
         foreach ($fields as $name => $label) {
             $newlabel = '';
             if (is_array($label)) {
@@ -450,7 +450,7 @@ class course_enrolment_table extends html_table implements renderable {
      * Sets the users for this table
      *
      * @param array $users
-     * @param moodle_page $page
+     * @return void
      */
     public function set_users(array $users) {
         $this->users = $users;
@@ -483,9 +483,9 @@ class course_enrolment_table extends html_table implements renderable {
         }
     }
 
-    public function initialise_javascript(moodle_page $page) {
+    public function initialise_javascript() {
         if (has_capability('moodle/role:assign', $this->manager->get_context())) {
-            $page->requires->strings_for_js(array(
+            $this->moodlepage->requires->strings_for_js(array(
                 'assignroles',
                 'confirmunassign',
                 'confirmunassigntitle',
@@ -499,7 +499,7 @@ class course_enrolment_table extends html_table implements renderable {
                 'userIds'=>array_keys($this->users),
                 'courseId'=>$this->manager->get_course()->id,
                 'otherusers'=>isset($this->otherusers));
-            $page->requires->yui_module($modules, $function, array($arguments));
+            $this->moodlepage->requires->yui_module($modules, $function, array($arguments));
         }
     }
 
@@ -510,7 +510,7 @@ class course_enrolment_table extends html_table implements renderable {
      */
     public function get_paging_bar() {
         if ($this->pagingbar == null) {
-            $this->pagingbar = new paging_bar($this->totalusers, $this->page, $this->perpage, $this->pageurl, self::PAGEVAR);
+            $this->pagingbar = new paging_bar($this->totalusers, $this->page, $this->perpage, $this->moodlepage->url, self::PAGEVAR);
         }
         return $this->pagingbar;
     }
@@ -568,10 +568,9 @@ class course_enrolment_users_table extends course_enrolment_table {
      * Returns a button to enrol cohorts or thier users
      *
      * @staticvar int $count
-     * @param moodle_page $page
      * @return single_button|false
      */
-    public function get_cohort_enrolment_control(moodle_page $page) {
+    public function get_cohort_enrolment_control() {
         static $count = 0;
 
         // First make sure that cohorts is enabled
@@ -590,11 +589,10 @@ class course_enrolment_users_table extends course_enrolment_table {
         $control->class = 'singlebutton enrolcohortbutton instance'.$count;
         $control->formid = 'manuallyenrol_single_'+$count;
         if ($count == 1) {
-            $page->requires->strings_for_js(array('enrol','synced','enrolcohort','enrolcohortusers'), 'enrol');
-            $page->requires->string_for_js('assignroles', 'role');
-            $page->requires->string_for_js('cohort', 'cohort');
-            $page->requires->string_for_js('users', 'moodle');
-            $url = new moodle_url($this->pageurl, $this->manager->get_url_params()+$this->get_url_params());
+            $this->moodlepage->requires->strings_for_js(array('enrol','synced','enrolcohort','enrolcohortusers'), 'enrol');
+            $this->moodlepage->requires->string_for_js('assignroles', 'role');
+            $this->moodlepage->requires->string_for_js('cohort', 'cohort');
+            $this->moodlepage->requires->string_for_js('users', 'moodle');
 
             $hasmanualinstance = false;
             // No point showing this at all if the user cant manually enrol users
@@ -614,9 +612,9 @@ class course_enrolment_users_table extends course_enrolment_table {
             $arguments = array(
                 'courseid'=>$course->id,
                 'ajaxurl'=>'/enrol/ajax.php',
-                'url'=>$url->out(false),
+                'url'=>$this->moodlepage->url->out(false),
                 'manualEnrolment'=>$hasmanualinstance);
-            $page->requires->yui_module($modules, $function, array($arguments));
+            $this->moodlepage->requires->yui_module($modules, $function, array($arguments));
         }
         return $control;
     }
@@ -627,7 +625,7 @@ class course_enrolment_users_table extends course_enrolment_table {
      *
      * @return single_button|url_select
      */
-    public function get_enrolment_selector(moodle_page $page) {
+    public function get_enrolment_selector() {
         static $count = 0;
 
         $instances  = $this->manager->get_enrolment_instances();
@@ -662,7 +660,6 @@ class course_enrolment_users_table extends course_enrolment_table {
                 $control->formid = 'manuallyenrol_select_'+$count;
             }
             $course = $this->manager->get_course();
-            $url = new moodle_url($this->pageurl, $this->manager->get_url_params()+$this->get_url_params());
             $timeformat = get_string('strftimedatefullshort');
             $today = time();
             $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
@@ -674,7 +671,7 @@ class course_enrolment_users_table extends course_enrolment_table {
 
             if ($count == 1) {
                 $instance = reset($manuals);
-                $page->requires->strings_for_js(array(
+                $this->moodlepage->requires->strings_for_js(array(
                     'ajaxoneuserfound',
                     'ajaxxusersfound',
                     'ajaxnext25',
@@ -689,8 +686,8 @@ class course_enrolment_users_table extends course_enrolment_table {
                     'startdatetoday',
                     'durationdays',
                     'enrolperiod'), 'enrol');
-                $page->requires->string_for_js('assignroles', 'role');
-                $page->requires->string_for_js('startingfrom', 'moodle');
+                $this->moodlepage->requires->string_for_js('assignroles', 'role');
+                $this->moodlepage->requires->string_for_js('startingfrom', 'moodle');
 
                 $modules = array('moodle-enrol-enrolmentmanager', 'moodle-enrol-enrolmentmanager-skin');
                 $function = 'M.enrol.enrolmentmanager.init';
@@ -698,10 +695,10 @@ class course_enrolment_users_table extends course_enrolment_table {
                     'instances'=>$arguments,
                     'courseid'=>$course->id,
                     'ajaxurl'=>'/enrol/ajax.php',
-                    'url'=>$url->out(false),
+                    'url'=>$this->moodlepage->url->out(false),
                     'optionsStartDate'=>$startdateoptions,
                     'defaultRole'=>$instance->roleid);
-                $page->requires->yui_module($modules, $function, array($arguments));
+                $this->moodlepage->requires->yui_module($modules, $function, array($arguments));
             }
             return $control;
         }
@@ -713,8 +710,7 @@ class course_enrolment_users_table extends course_enrolment_table {
      * @return single_select
      */
     public function get_enrolment_type_filter() {
-        $url = new moodle_url($this->pageurl, $this->manager->get_url_params()+$this->get_url_params());
-        $selector = new single_select($url, 'ifilter', array(0=>get_string('all')) + (array)$this->manager->get_enrolment_instance_names(), $this->manager->get_enrolment_filter(), array());
+        $selector = new single_select($this->moodlepage->url, 'ifilter', array(0=>get_string('all')) + (array)$this->manager->get_enrolment_instance_names(), $this->manager->get_enrolment_filter(), array());
         $selector->set_label( get_string('enrolmentinstances', 'enrol'));
         return $selector;
     }
@@ -736,10 +732,10 @@ class course_enrolment_other_users_table extends course_enrolment_table {
      * Constructs the table
      *
      * @param course_enrolment_manager $manager
-     * @param moodle_url $pageurl
+     * @param moodle_page $moodlepage
      */
-    public function __construct(course_enrolment_manager $manager, moodle_url $pageurl) {
-        parent::__construct($manager, $pageurl);
+    public function __construct(course_enrolment_manager $manager, moodle_page $moodlepage) {
+        parent::__construct($manager, $moodlepage);
         $this->attributes = array('class'=>'userenrolment otheruserenrolment');
     }
 
@@ -750,18 +746,17 @@ class course_enrolment_other_users_table extends course_enrolment_table {
      * @param int $page
      * @return single_button
      */
-    public function get_user_search_button($page) {
-        global $CFG;
+    public function get_user_search_button() {
         static $count = 0;
         if (!has_capability('moodle/role:assign', $this->manager->get_context())) {
             return false;
         }
         $count++;
-        $url = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$this->manager->get_context()->id, 'sesskey'=>sesskey()));
+        $url = new moodle_url('/admin/roles/assign.php', array('contextid'=>$this->manager->get_context()->id, 'sesskey'=>sesskey()));
         $control = new single_button($url, get_string('assignroles', 'role'), 'get');
         $control->class = 'singlebutton assignuserrole instance'.$count;
         if ($count == 1) {
-            $page->requires->strings_for_js(array(
+            $this->moodlepage->requires->strings_for_js(array(
                     'ajaxoneuserfound',
                     'ajaxxusersfound',
                     'ajaxnext25',
@@ -776,16 +771,15 @@ class course_enrolment_other_users_table extends course_enrolment_table {
                     'startdatetoday',
                     'durationdays',
                     'enrolperiod'), 'enrol');
-            $page->requires->string_for_js('assignrole', 'role');
+            $this->moodlepage->requires->string_for_js('assignrole', 'role');
 
             $modules = array('moodle-enrol-otherusersmanager', 'moodle-enrol-otherusersmanager-skin');
             $function = 'M.enrol.otherusersmanager.init';
-            $url = new moodle_url($this->pageurl, $this->manager->get_url_params()+$this->get_url_params());
             $arguments = array(
                 'courseId'=> $this->manager->get_course()->id,
                 'ajaxUrl' => '/enrol/ajax.php',
-                'url' => $url->out(false));
-            $page->requires->yui_module($modules, $function, array($arguments));
+                'url' => $this->moodlepage->url->out(false));
+            $this->moodlepage->requires->yui_module($modules, $function, array($arguments));
         }
         return $control;
     }
