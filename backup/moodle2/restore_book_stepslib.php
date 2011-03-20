@@ -60,7 +60,7 @@ class restore_book_activity_structure_step extends restore_activity_structure_st
         $data->bookid = $this->get_new_parentid('book');
 
         $newitemid = $DB->insert_record('book_chapters', $data);
-        $this->set_mapping('book_chapter', $oldid, $newitemid);
+        $this->set_mapping('book_chapter', $oldid, $newitemid, true);
     }
 
     protected function after_execute() {
