@@ -117,6 +117,6 @@ CHANGELOG:
 Known issues, please do not file tracker reports:
     * upgrade imscp export code (disabled for now)
     * upgrade import code (disabled for now)
-
+    * legacy files were not upgraded yet
 
 Petr
