@@ -340,11 +340,33 @@ class cm_info extends stdClass  {
     public $idnumber;
 
     /**
-     * Visible setting (0 or 1; if this is 0, students cannot see/access the activity)  - from
+     * Time that this course-module was added (unix time) - from course_modules table
+     * @var int
+     */
+    public $added;
+
+    /**
+     * This variable is not used and is included here only so it can be documented.
+     * Once the database entry is removed from course_modules, it should be deleted
+     * here too.
+     * @var int
+     * @deprecated Do not use this variable
+     */
+    public $score;
+
+    /**
+     * Visible setting (0 or 1; if this is 0, students cannot see/access the activity) - from
      * course_modules table
      * @var int
      */
     public $visible;
+
+    /**
+     * Old visible setting (if the entire section is hidden, the previous value for
+     * visible is stored in this field) - from course_modules table
+     * @var int
+     */
+    public $visibleold;
 
     /**
      * Group mode (one of the constants NONE, SEPARATEGROUPS, or VISIBLEGROUPS) - from
@@ -379,6 +401,27 @@ class cm_info extends stdClass  {
      * @var int
      */
     public $completion;
+
+    /**
+     * Set to the item number (usually 0) if completion depends on a particular
+     * grade of this activity, or null if completion does not depend on a grade - from
+     * course_modules table
+     * @var mixed
+     */
+    public $completiongradeitemnumber;
+
+    /**
+     * 1 if 'on view' completion is enabled, 0 otherwise - from course_modules table
+     * @var int
+     */
+    public $completionview;
+
+    /**
+     * Set to a unix time if completion of this activity is expected at a
+     * particular time, 0 if no time set - from course_modules table
+     * @var int
+     */
+    public $completionexpected;
 
     /**
      * Available date for this activity (0 if not set, or set to seconds since epoch; before this
@@ -430,6 +473,12 @@ class cm_info extends stdClass  {
     public $modname;
 
     /**
+     * ID of module - from course_modules table
+     * @var int
+     */
+    public $module;
+
+    /**
      * Name of module instance for display on page e.g. 'General discussion forum' - from cached
      * data in modinfo field
      * @var string
@@ -442,6 +491,12 @@ class cm_info extends stdClass  {
      * @var string
      */
     public $sectionnum;
+
+    /**
+     * Section id - from course_modules table
+     * @var int
+     */
+    public $section;
 
     /**
      * Availability conditions for this course-module based on the completion of other
@@ -786,12 +841,11 @@ class cm_info extends stdClass  {
         $this->idnumber         = isset($mod->idnumber) ? $mod->idnumber : '';
         $this->name             = $mod->name;
         $this->visible          = $mod->visible;
-        $this->sectionnum       = $mod->section;
+        $this->sectionnum       = $mod->section; // Note weirdness with name here
         $this->groupmode        = isset($mod->groupmode) ? $mod->groupmode : 0;
         $this->groupingid       = isset($mod->groupingid) ? $mod->groupingid : 0;
         $this->groupmembersonly = isset($mod->groupmembersonly) ? $mod->groupmembersonly : 0;
         $this->indent           = isset($mod->indent) ? $mod->indent : 0;
-        $this->completion       = isset($mod->completion) ? $mod->completion : 0;
         $this->extra            = isset($mod->extra) ? $mod->extra : '';
         $this->extraclasses     = isset($mod->extraclasses) ? $mod->extraclasses : '';
         $this->onclick          = isset($mod->onclick) ? $mod->onclick : '';
@@ -809,22 +863,32 @@ class cm_info extends stdClass  {
             $this->extra = '';
         }
 
-        if (!empty($CFG->enableavailability)) {
-            // We must have completion information from modinfo. If it's not
-            // there, cache needs rebuilding
-            if (!isset($mod->showavailability)) {
-                throw new modinfo_rebuild_cache_exception(
-                        'enableavailability option was changed; rebuilding '.
-                        'cache for course ' . $course->id);
-            }
-            $this->showavailability = $mod->showavailability;
-            $this->availablefrom = isset($mod->availablefrom) ? $mod->availablefrom : 0;
-            $this->availableuntil = isset($mod->availableuntil) ? $mod->availableuntil : 0;
-            $this->conditionscompletion = isset($mod->conditionscompletion)
-                    ? $mod->conditionscompletion : array();
-            $this->conditionsgrade = isset($mod->conditionsgrade)
-                    ? $mod->conditionsgrade : array();
-        }
+        // Note: These fields from $cm were not present in cm_info in Moodle
+        // 2.0.2 and prior. They may not be available if course cache hasn't
+        // been rebuilt since then.
+        $this->section = isset($mod->sectionid) ? $mod->sectionid : 0;
+        $this->module = isset($mod->module) ? $mod->module : 0;
+        $this->added = isset($mod->added) ? $mod->added : 0;
+        $this->score = isset($mod->score) ? $mod->score : 0;
+        $this->visibleold = isset($mod->visibleold) ? $mod->visibleold : 0;
+
+        // Note: it saves effort and database space to always include the
+        // availability and completion fields, even if availability or completion
+        // are actually disabled
+        $this->completion = isset($mod->completion) ? $mod->completion : 0;
+        $this->completiongradeitemnumber = isset($mod->completiongradeitemnumber)
+                ? $mod->completiongradeitemnumber : null;
+        $this->completionview = isset($mod->completionview)
+                ? $mod->completionview : 0;
+        $this->completionexpected = isset($mod->completionexpected)
+                ? $mod->completionexpected : 0;
+        $this->showavailability = isset($mod->showavailability) ? $mod->showavailability : 0;
+        $this->availablefrom = isset($mod->availablefrom) ? $mod->availablefrom : 0;
+        $this->availableuntil = isset($mod->availableuntil) ? $mod->availableuntil : 0;
+        $this->conditionscompletion = isset($mod->conditionscompletion)
+                ? $mod->conditionscompletion : array();
+        $this->conditionsgrade = isset($mod->conditionsgrade)
+                ? $mod->conditionsgrade : array();
 
         // Get module plural name.
         // TODO This was a very old performance hack and should now be removed as the information
@@ -964,18 +1028,6 @@ class cm_info extends stdClass  {
 
 
 /**
- * Special exception that may only be thrown within the constructor for course_modinfo to
- * indicate that the cache needs to be rebuilt. Not for use anywhere else.
- */
-class modinfo_rebuild_cache_exception extends coding_exception {
-    function __construct($why) {
-        // If it ever escapes, that's a code bug
-        parent::__construct('This exception should be caught by code', $why);
-    }
-}
-
-
-/**
  * Returns reference to full info about modules in course (including visibility).
  * Cached and as fast as possible (0 or 1 db query).
  *
@@ -1016,16 +1068,7 @@ function get_fast_modinfo(&$course, $userid=0) {
 
     unset($cache[$course->id]); // prevent potential reference problems when switching users
 
-    try {
-        $cache[$course->id] = new course_modinfo($course, $userid);
-    } catch (modinfo_rebuild_cache_exception $e) {
-        debugging($e->debuginfo);
-        rebuild_course_cache($course->id, true);
-        $course = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
-        // This second time we don't catch the exception - if you request cache rebuild twice
-        // in a row, that's a bug => coding_exception
-        $cache[$course->id] = new course_modinfo($course, $userid);
-    }
+    $cache[$course->id] = new course_modinfo($course, $userid);
 
     // Ensure cache does not use too much RAM
     if (count($cache) > MAX_MODINFO_CACHE_SIZE) {
