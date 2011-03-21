@@ -460,3 +460,106 @@ class moodle1_module_structure_step extends moodle1_structure_step {
         }
     }
 }
+
+/**
+ * Write out a block's block.xml file
+ */
+class moodle1_block_structure_step extends moodle1_structure_step {
+    /**
+     * The block's instance ID
+     *
+     * @var int
+     */
+    protected $instanceid;
+
+    /**
+     * The block's name
+     *
+     * @var string
+     */
+    protected $blockname;
+
+    /**
+     * Function that will return the structure to be processed by this convert_step.
+     * Must return one array of @convert_path_element elements
+     */
+    protected function define_structure() {
+        return array(
+            new convert_path_element('block', '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK'),
+        );
+    }
+
+    /**
+     * Return the relative path to the XML file that
+     * this step writes out to.  Example: course/course.xml
+     *
+     * @return string
+     */
+    public function get_xml_filename() {
+        return "course/blocks/{$this->blockname}_{$this->instanceid}/block.xml";
+    }
+
+    public function get_new() {
+        return array(
+            'showinsubcontexts' => 0,
+            'subpagepattern' => NULL,
+            'block_positions' => NULL,
+        );
+    }
+
+    public function get_renamed() {
+        return array(
+            'name' => 'blockname',
+            'pageid' => 'parentcontextid',
+            'pagetype' => 'pagetypepattern',
+            'position' => 'defaultregion',
+            'weight' => 'defaultweight',
+        );
+    }
+
+    public function get_deprecated() {
+        return array(
+            'id',
+            'visible',
+            'roles_overrides',
+            'roles_assignments',
+        );
+    }
+
+    public function mutate_datum($name, $datum) {
+        if ($name == 'pagetypepattern') {
+            if ($datum == 'course-view') {
+                $datum = 'course-view-*';
+            }
+
+        } else if ($name == 'defaultregion') {
+            if ($datum == 'r') {
+                $datum = BLOCK_POS_RIGHT;
+            } else {
+                $datum = BLOCK_POS_LEFT;
+            }
+        }
+        return $datum;
+    }
+
+    public function convert_block($data) {
+        $this->instanceid = $data['ID'];
+        $this->blockname  = $data['NAME'];
+
+        $contextid = convert_helper::get_contextid($this->instanceid, "block_$this->name", $this->get_convertid());
+
+        // Map PAGEID to context ID
+        if ($data['PAGETYPE'] == 'course-view') {
+            $data['PAGEID'] = convert_helper::get_contextid($data['PAGEID'], 'course', $this->get_convertid());
+        } else if (strpos($data['PAGETYPE'], 'mod-') === 0) {  // EG: mod-quiz-view
+            $parts = explode('-', $data['PAGETYPE']);
+            $data['PAGEID'] = convert_helper::get_contextid($data['PAGEID'], $parts[1], $this->get_convertid());
+        }
+
+        $this->open_xml_writer();
+        $this->xmlwriter->begin_tag('block', array('id' => $this->instanceid, 'contextid' => $contextid));
+        $this->convert_data($data);
+        $this->xmlwriter->end_tag('block');
+        $this->close_xml_writer();
+    }
+}
