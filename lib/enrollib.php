@@ -1015,12 +1015,11 @@ abstract class enrol_plugin {
         $inserted = false;
         if ($ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$userid))) {
             //only update if timestart or timeend or status are different.
-            if ($ue->timestart != $timestart or $ue->timeend != $timeend or 
-                    (!is_null($status) and $ue->status != $status)) {
-                $ue->timestart    = $timestart;              
+            if ($ue->timestart != $timestart or $ue->timeend != $timeend or (!is_null($status) and $ue->status != $status)) {
+                $ue->timestart    = $timestart;
                 $ue->timeend      = $timeend;
                 if (!is_null($status)) {
-                    $ue->status = $status;
+                    $ue->status   = $status;
                 }
                 $ue->modifier     = $USER->id;
                 $ue->timemodified = time();
@@ -1029,7 +1028,7 @@ abstract class enrol_plugin {
         } else {
             $ue = new stdClass();
             $ue->enrolid      = $instance->id;
-            $ue->status       = is_null($status)?ENROL_USER_ACTIVE:$status;        
+            $ue->status       = is_null($status) ? ENROL_USER_ACTIVE : $status;
             $ue->userid       = $userid;
             $ue->timestart    = $timestart;
             $ue->timeend      = $timeend;
