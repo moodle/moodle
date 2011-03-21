@@ -231,7 +231,7 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->setDefault('maildigest', 0);
         $mform->setAdvanced('maildigest');
 
-        $choices = array(0 => get_string('autosubscribeyes'), 1 => get_string('autosubscribeno'));
+        $choices = array(1 => get_string('autosubscribeyes'), 0 => get_string('autosubscribeno'));
         $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
         $mform->setDefault('autosubscribe', 1);
 
