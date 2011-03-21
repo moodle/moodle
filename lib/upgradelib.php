@@ -1290,7 +1290,6 @@ function upgrade_language_pack($lang='') {
         $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
 
         if ($status == COMPONENT_INSTALLED) {
-            remove_dir($CFG->dataroot.'/cache/languages');
             if ($parentlang = get_parent_language($lang)) {
                 if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0', $parentlang.'.zip', 'languages.md5', 'lang')) {
                     $cd->install();
