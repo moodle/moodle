@@ -53,11 +53,6 @@ define('INSTALLATION_OF_SELECTED_LANG', 2);
 define('DELETION_OF_SELECTED_LANG', 4);
 define('UPDATE_ALL_LANG', 5);
 
-//reset and diagnose lang cache permissions
-remove_dir($CFG->dataroot.'/cache/languages');
-if (file_exists($CFG->dataroot.'/cache/languages')) {
-    print_error('cannotdeletelangcache', 'error');
-}
 get_string_manager()->reset_caches();
 
 $notice_ok    = array();
