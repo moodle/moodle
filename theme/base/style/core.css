@@ -704,4 +704,4 @@ body.tag .managelink {padding: 5px;}
 Fix for SubScript & SuperScript
 ------------------------------*/
 sub { vertical-align: sub;}
-sup { vertical-align: super;
+sup { vertical-align: super;}
