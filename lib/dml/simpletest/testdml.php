@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 class dml_test extends UnitTestCase {
     private $tables = array();
+    /** @var moodle_database */
     private $tdb;
     private $data;
     public  static $includecoverage = array('lib/dml');
@@ -1082,25 +1083,27 @@ class dml_test extends UnitTestCase {
         $this->assertEqual($inskey2, end($records)->id);
 
         // test 2 tables with aliases and limits with order bys
-        $sql = "SELECT t1.id, t1.course AS cid, t2.nametext FROM {{$tablename}} t1, {{$tablename2}} t2
-            WHERE t2.course=t1.course ORDER BY t1.course, ". $DB->sql_compare_text('t2.nametext');
+        $sql = "SELECT t1.id, t1.course AS cid, t2.nametext
+                  FROM {{$tablename}} t1, {{$tablename2}} t2
+                 WHERE t2.course=t1.course
+              ORDER BY t1.course, ". $DB->sql_compare_text('t2.nametext');
         $records = $DB->get_records_sql($sql, null, 2, 2); // Skip courses 3 and 6, get 4 and 5
         $this->assertEqual(2, count($records));
         $this->assertEqual('5', end($records)->cid);
         $this->assertEqual('4', reset($records)->cid);
 
-        // test 2 tables with aliases and limits with order bys (limit which is out  of range)
-        $records = $DB->get_records_sql($sql, null, 2, 21098765432109876543210); // Skip course {3,6}, get {4,5}
+        // test 2 tables with aliases and limits with the highest INT limit works
+        $records = $DB->get_records_sql($sql, null, 2, PHP_INT_MAX); // Skip course {3,6}, get {4,5}
         $this->assertEqual(2, count($records));
         $this->assertEqual('5', end($records)->cid);
         $this->assertEqual('4', reset($records)->cid);
 
-        // test 2 tables with aliases and limits with order bys (limit which is out  of range)
-        $records = $DB->get_records_sql($sql, null, 21098765432109876543210, 2); // Skip all courses
+        // test 2 tables with aliases and limits with order bys (limit which is highest INT number)
+        $records = $DB->get_records_sql($sql, null, PHP_INT_MAX, 2); // Skip all courses
         $this->assertEqual(0, count($records));
 
-        // test 2 tables with aliases and limits with order bys (limit which is out  of range)
-        $records = $DB->get_records_sql($sql, null, 21098765432109876543210, 21098765432109876543210); // Skip all courses
+        // test 2 tables with aliases and limits with order bys (limit which s highest INT number)
+        $records = $DB->get_records_sql($sql, null, PHP_INT_MAX, PHP_INT_MAX); // Skip all courses
         $this->assertEqual(0, count($records));
 
         // TODO: Test limits in queries having DISTINCT clauses
