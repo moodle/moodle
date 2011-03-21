@@ -387,7 +387,7 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value,$fo
 
     if ($track = $DB->get_record('scorm_scoes_track',array('userid'=>$userid, 'scormid'=>$scormid, 'scoid'=>$scoid, 'attempt'=>$attempt, 'element'=>$element))) {
         if ($element != 'x.start.time' ) { //don't update x.start.time - keep the original value.
-            $track->value = addslashes_js($value);
+            $track->value = $value;
             $track->timemodified = time();
             $DB->update_record('scorm_scoes_track',$track);
             $id = $track->id;
@@ -398,7 +398,7 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value,$fo
         $track->scoid = $scoid;
         $track->attempt = $attempt;
         $track->element = $element;
-        $track->value = addslashes_js($value);
+        $track->value = $value;
         $track->timemodified = time();
         $id = $DB->insert_record('scorm_scoes_track',$track);
     }
@@ -436,7 +436,6 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
         $usertrack->timemodified = 0;
         foreach ($tracks as $track) {
             $element = $track->element;
-            $track->value = stripslashes($track->value); // TODO: this is probably wrong, the stripslashes() has undefined meaning now; was this related to JS quoting or magic quotes?
             $usertrack->{$element} = $track->value;
             switch ($element) {
                 case 'cmi.core.lesson_status':
