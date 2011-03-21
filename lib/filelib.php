@@ -608,7 +608,7 @@ function file_get_submitted_draft_itemid($elname) {
  * @return string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
 function file_save_draft_area_files($draftitemid, $contextid, $component, $filearea, $itemid, array $options=null, $text=null, $forcehttps=false) {
-    global $CFG, $USER;
+    global $USER;
 
     $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
     $fs = get_file_storage();
@@ -717,7 +717,24 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
 
     if (is_null($text)) {
         return null;
+    } else {
+        return file_rewrite_urls_to_pluginfile($text, $draftitemid, $forcehttps);
     }
+}
+
+/**
+ * Convert the draft file area URLs in some content to @@PLUGINFILE@@ tokens
+ * ready to be saved in the database. Normally, this is done automatically by
+ * {@link file_save_draft_area_files()}.
+ * @param string $text the content to process.
+ * @param int $draftitemid the draft file area the content was using.
+ * @param bool $forcehttps whether the content contains https URLs. Default false.
+ * @return string the processed content.
+ */
+function file_rewrite_urls_to_pluginfile($text, $draftitemid, $forcehttps = false) {
+    global $CFG, $USER;
+
+    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
 
     $wwwroot = $CFG->wwwroot;
     if ($forcehttps) {
@@ -738,7 +755,6 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         }
         $text = str_ireplace("$wwwroot/draftfile.php?file=/$usercontext->id/user/draft/$draftitemid/", '@@PLUGINFILE@@/', $text);
     }
-
 
     return $text;
 }
