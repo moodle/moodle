@@ -1117,7 +1117,7 @@ M.core_filepicker.init = function(Y, options) {
 
                             var dlg_title = document.createElement('DIV');
                             dlg_title.className = 'hd';
-                            dlg_title.innerHTML = 'filepicker';
+                            dlg_title.innerHTML = M.str.repository.search;
 
                             var dlg_body = document.createElement('DIV');
                             dlg_body.className = 'bd';
@@ -1147,11 +1147,18 @@ M.core_filepicker.init = function(Y, options) {
                                 }, true);
                                 search_dialog.cancel();
                             }
+                            Y.one('#fp-search-form').on('keydown', function(e){
+                                if (e.keyCode == 13) {
+                                    dialog_handler();
+                                    e.preventDefault();
+                                }
+                            }, this);
 
                             search_dialog = new YAHOO.widget.Dialog("fp-search-dlg", {
                                postmethod: 'async',
                                draggable: true,
                                width : "30em",
+                               modal: true,
                                fixedcenter : true,
                                zindex: 9999991,
                                visible : false,
