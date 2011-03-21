@@ -496,7 +496,6 @@ function forum_cron() {
             $userto->viewfullnames = array();
             $userto->canpost       = array();
             $userto->markposts     = array();
-            $userto->enrolledin    = array();
 
             // reset the caches
             foreach ($coursemodules as $forumid=>$unused) {
@@ -514,18 +513,11 @@ function forum_cron() {
                 $cm         =& $coursemodules[$forum->id];
 
                 // Do some checks  to see if we can bail out now
+                // Only active enrolled users are in the list of subscribers
                 if (!isset($subscribedusers[$forum->id][$userto->id])) {
                     continue; // user does not subscribe to this forum
                 }
 
-                // Verify user is enrollend in course - if not do not send any email
-                if (!isset($userto->enrolledin[$course->id])) {
-                    $userto->enrolledin[$course->id] = is_enrolled(get_context_instance(CONTEXT_COURSE, $course->id));
-                }
-                if (!$userto->enrolledin[$course->id]) {
-                    // oops - this user should not receive anything from this course
-                    continue;
-                }
                 // Don't send email if the forum is Q&A and the user has not posted
                 if ($forum->type == 'qanda' && !forum_get_user_posted_time($discussion->id, $userto->id)) {
                     mtrace('Did not email '.$userto->id.' because user has not posted in discussion');
@@ -2796,7 +2788,21 @@ function forum_get_user_discussions($courseid, $userid, $groupid=0) {
  * @return array list of users.
  */
 function forum_get_potential_subscribers($forumcontext, $groupid, $fields, $sort) {
-    return get_users_by_capability($forumcontext, 'mod/forum:initialsubscriptions', $fields, $sort, '', '', $groupid, '', false, true);
+    global $DB;
+
+    // only active enrolled users or everybody on the frontpage with this capability
+    list($esql, $params) = get_enrolled_sql($forumcontext, 'mod/forum:initialsubscriptions', $groupid, true);
+
+    $sql = "SELECT $fields
+              FROM {user} u
+              JOIN ($esql) je ON je.id = u.id";
+    if ($sort) {
+        $sql = "$sql ORDER BY $sort";
+    } else {
+        $sql = "$sql ORDER BY u.lastname ASC, u.firstname ASC";
+    }
+
+    return $DB->get_records_sql($sql, $params);
 }
 
 /**
@@ -2813,16 +2819,6 @@ function forum_get_potential_subscribers($forumcontext, $groupid, $fields, $sort
  */
 function forum_subscribed_users($course, $forum, $groupid=0, $context = null, $fields = null) {
     global $CFG, $DB;
-    $params = array($forum->id);
-
-    if ($groupid) {
-        $grouptables = ", {groups_members} gm ";
-        $groupselect = "AND gm.groupid = ? AND u.id = gm.userid";
-        $params[] = $groupid;
-    } else  {
-        $grouptables = '';
-        $groupselect = '';
-    }
 
     if (empty($fields)) {
         $fields ="u.id,
@@ -2846,35 +2842,28 @@ function forum_subscribed_users($course, $forum, $groupid=0, $context = null, $f
                   u.mnethostid";
     }
 
-    if (forum_is_forcesubscribed($forum)) {
-        if (empty($context)) {
-            $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id);
-            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        }
-        $sort = "u.email ASC";
-        $results = forum_get_potential_subscribers($context, $groupid, $fields, $sort);
-    } else {
-        $results = $DB->get_records_sql("SELECT $fields
-                              FROM {user} u,
-                                   {forum_subscriptions} s $grouptables
-                             WHERE s.forum = ?
-                               AND s.userid = u.id
-                               AND u.deleted = 0  $groupselect
-                          ORDER BY u.email ASC", $params);
+    if (empty($context)) {
+        $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
 
-    static $guestid = null;
+    if (forum_is_forcesubscribed($forum)) {
+        $results = forum_get_potential_subscribers($context, $groupid, $fields, "u.email ASC");
 
-    if (is_null($guestid)) {
-        if ($guest = guest_user()) {
-            $guestid = $guest->id;
-        } else {
-            $guestid = 0;
-        }
+    } else {
+        // only active enrolled users or everybody on the frontpage
+        list($esql, $params) = get_enrolled_sql($context, '', $groupid, true);
+        $params['forumid'] = $forum->id;
+        $results = $DB->get_records_sql("SELECT $fields
+                                           FROM {user} u
+                                           JOIN ($esql) je ON je.id = u.id
+                                           JOIN {forum_subscriptions} s ON s.userid = u.id
+                                          WHERE s.forum = :forumid
+                                       ORDER BY u.email ASC", $params);
     }
 
     // Guest user should never be subscribed to a forum.
-    unset($results[$guestid]);
+    unset($results[$CFG->siteguest]);
 
     return $results;
 }
@@ -4457,9 +4446,6 @@ function forum_post_subscription($post, $forum) {
 /**
  * Generate and return the subscribe or unsubscribe link for a forum.
  *
- * @global object
- * @global object
- * @global object
  * @param object $forum the forum. Fields used are $forum->id and $forum->forcesubscribe.
  * @param object $context the context object for this forum.
  * @param array $messages text used for the link in its various states
@@ -4490,6 +4476,9 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
     } else if ($cantaccessagroup) {
         return $messages['cantaccessgroup'];
     } else {
+        if (!is_enrolled($context, $USER, '', true)) {
+            return get_string('no');
+        }
         if (is_null($subscribed_forums)) {
             $subscribed = forum_is_subscribed($USER->id, $forum);
         } else {
@@ -4782,8 +4771,8 @@ function forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
 
-    // normal users with temporary guest access can not post
-    if (!is_enrolled($context, $user->id) and !is_viewing($context, $user->id)) {
+    // normal users with temporary guest access can not post, suspended users can not post either
+    if (!is_viewing($context, $user->id) and !is_enrolled($context, $user->id, '', true)) {
         return false;
     }
 
@@ -5066,6 +5055,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=-1, $di
         if (!is_enrolled($context) and !is_viewing($context)) {
             // allow guests and not-logged-in to see the button - they are prompted to log in after clicking the link
             // normal users with temporary guest access see this button too, they are asked to enrol instead
+            // do not show the button to users with suspended enrolments here
             $canstart = enrol_selfenrol_available($course->id);
         }
     }
@@ -7516,11 +7506,12 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
     }
 
     // for some actions you need to be enrolled, beiing admin is not enough sometimes here
-    $enrolled = is_enrolled($PAGE->cm->context);
+    $enrolled = is_enrolled($PAGE->cm->context, $USER, '', false);
+    $activeenrolled = is_enrolled($PAGE->cm->context, $USER, '', true);
 
     $canmanage  = has_capability('mod/forum:managesubscriptions', $PAGE->cm->context);
     $subscriptionmode = forum_get_forcesubscribed($forumobject);
-    $cansubscribe = ($enrolled && $subscriptionmode != FORUM_FORCESUBSCRIBE && ($subscriptionmode != FORUM_DISALLOWSUBSCRIBE || $canmanage));
+    $cansubscribe = ($activeenrolled && $subscriptionmode != FORUM_FORCESUBSCRIBE && ($subscriptionmode != FORUM_DISALLOWSUBSCRIBE || $canmanage));
 
     if ($canmanage) {
         $mode = $forumnode->add(get_string('subscriptionmode', 'forum'), null, navigation_node::TYPE_CONTAINER);
@@ -7549,7 +7540,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
                 break;
         }
 
-    } else if ($enrolled) {
+    } else if ($activeenrolled) {
 
         switch ($subscriptionmode) {
             case FORUM_CHOOSESUBSCRIBE : // 0
@@ -7582,7 +7573,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
         $forumnode->add(get_string('showsubscribers', 'forum'), $url, navigation_node::TYPE_SETTING);
     }
 
-    if ($enrolled && forum_tp_can_track_forums($forumobject)) {
+    if ($enrolled && forum_tp_can_track_forums($forumobject)) { // keep tracking info for users with suspended enrolments
         if ($forumobject->trackingtype != FORUM_TRACKING_OPTIONAL) {
             //tracking forced on or off in forum settings so dont provide a link here to change it
             //could add unclickable text like for forced subscription but not sure this justifies adding another menu item
@@ -7732,7 +7723,7 @@ class forum_potential_subscriber_selector extends forum_subscriber_selector_base
     public function find_users($search) {
         global $DB;
 
-        $availableusers = forum_get_potential_subscribers($this->context, $this->currentgroup, $this->required_fields_sql('u'), 'firstname ASC, lastname ASC');
+        $availableusers = forum_get_potential_subscribers($this->context, $this->currentgroup, $this->required_fields_sql('u'), 'u.firstname ASC, u.lastname ASC');
 
         if (empty($availableusers)) {
             $availableusers = array();
@@ -7796,21 +7787,20 @@ class forum_existing_subscriber_selector extends forum_subscriber_selector_base 
     public function find_users($search) {
         global $DB;
         list($wherecondition, $params) = $this->search_sql($search, 'u');
-
-        $fields = 'SELECT ' . $this->required_fields_sql('u');
-        $from = ' FROM {user} u LEFT JOIN {forum_subscriptions} s ON s.userid=u.id';
-        $wherecondition .= ' AND s.forum=:forumid';
         $params['forumid'] = $this->forumid;
-        $order = ' ORDER BY lastname ASC, firstname ASC';
 
-        if ($this->currentgroup) {
-            $from .= ", {groups_members} gm ";
-            $wherecondition .= " AND gm.groupid = :groupid AND u.id = gm.userid";
-            $params['groupid'] = $this->currentgroup;
-        }
-        if (!$subscribers = $DB->get_records_sql($fields.$from.' WHERE '.$wherecondition.$order, $params)) {
-            $subscribers = array();
-        }
+        // only active enrolled or everybody on the frontpage
+        list($esql, $eparams) = get_enrolled_sql($this->context, '', $this->currentgroup, true);
+        $params = array_merge($params, $eparams);
+
+        $fields = $this->required_fields_sql('u');
+
+        $subscribers = $DB->get_records_sql("SELECT $fields
+                                               FROM {user} u
+                                               JOIN ($esql) je ON je.id = u.id
+                                               JOIN {forum_subscriptions} s ON s.userid = u.id
+                                              WHERE $wherecondition AND s.forum = :forumid
+                                           ORDER BY u.lastname ASC, u.firstname ASC", $params);
 
         return array(get_string("existingsubscribers", 'forum') => $subscribers);
     }
