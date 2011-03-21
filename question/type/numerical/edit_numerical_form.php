@@ -47,19 +47,23 @@ class question_edit_numerical_form extends question_edit_form {
         return $repeated;
     }
 
+    /**
+     * Add question-type specific form fields.
+     *
+     * @param MoodleQuickForm $mform the form being built.
+     */
     protected function definition_inner($mform) {
-        global $QTYPES ;
 
+//------------------------------------------------------------------------------------------
         $creategrades = get_grade_options();
         $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_numerical', '{no}'),
                 $creategrades->gradeoptions);
-
-        $QTYPES['numerical']->add_units_options($mform,$this);
-        $QTYPES['numerical']->add_units_elements($mform,$this);
+//------------------------------------------------------------------------------------------
+        question_bank::get_qtype('numerical')->add_units_options($mform, $this);
+        question_bank::get_qtype('numerical')->add_units_elements($mform, $this);
     }
 
     protected function data_preprocessing($question) {
-        global $QTYPES ;
         if (isset($question->options)){
             $answers = $question->options->answers;
             if (count($answers)) {
@@ -84,15 +88,15 @@ class question_edit_numerical_form extends question_edit_form {
                     $key++;
                 }
             }
-            $QTYPES['numerical']->set_numerical_unit_data($this, $question, $default_values);
+            question_bank::get_qtype('numerical')->set_numerical_unit_data($this, $question, $default_values);
 
             $question = (object)((array)$question + $default_values);
         }
+
         return $question;
     }
 
     public function validation($data, $files) {
-        global $QTYPES;
         $errors = parent::validation($data, $files);
 
         // Check the answers.
@@ -120,7 +124,7 @@ class question_edit_numerical_form extends question_edit_form {
         if ($maxgrade == false) {
             $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
         }
-        $QTYPES['numerical']->validate_numerical_options($data, $errors) ;
+        question_bank::get_qtype('numerical')->validate_numerical_options($data, $errors);
 
         return $errors;
     }

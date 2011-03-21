@@ -15,7 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
 /**
+ * Question type class for the numerical question type.
+ *
  * @package    qtype
  * @subpackage numerical
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
@@ -25,42 +28,43 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->dirroot/question/type/shortanswer/questiontype.php");
+require_once($CFG->dirroot . '/question/type/numerical/question.php');
+
+
+if ( ! defined ("NUMERICALQUESTIONUNITTEXTINPUTDISPLAY")) {
+    define("NUMERICALQUESTIONUNITTEXTINPUTDISPLAY",   0);
+}
+if ( ! defined ("NUMERICALQUESTIONUNITMULTICHOICEDISPLAY")) {
+    define("NUMERICALQUESTIONUNITMULTICHOICEDISPLAY",   1);
+}
+if ( ! defined ("NUMERICALQUESTIONUNITTEXTDISPLAY")) {
+    define("NUMERICALQUESTIONUNITTEXTDISPLAY",   2);
+}
+if ( ! defined ("NUMERICALQUESTIONUNITNODISPLAY")) {
+    define("NUMERICALQUESTIONUNITNODISPLAY",    3);
+}
 
 
 /**
- * NUMERICAL QUESTION TYPE CLASS
+ * The numerical question type class.
  *
  * This class contains some special features in order to make the
  * question type embeddable within a multianswer (cloze) question
  *
- * This question type behaves like shortanswer in most cases.
- * Therefore, it extends the shortanswer question type...
- *
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_numerical_qtype extends qtype_shortanswer {
-
-    public $virtualqtype = false;
-    function name() {
-        return 'numerical';
-    }
-
-    function has_wildcards_in_responses() {
+class qtype_numerical extends question_type {
+    public function has_wildcards_in_responses() {
         return true;
     }
 
-    function requires_qtypes() {
-        return array('shortanswer');
-    }
-
-    function get_question_options(&$question) {
+    public function get_question_options($question) {
+        global $CFG, $DB, $OUTPUT;
         // Get the question answers and their respective tolerances
         // Note: question_numerical is an extension of the answer table rather than
         //       the question table as is usually the case for qtype
         //       specific tables.
-        global $CFG, $DB, $OUTPUT;
         if (!$question->options->answers = $DB->get_records_sql(
                                 "SELECT a.*, n.tolerance " .
                                 "FROM {question_answers} a, " .
@@ -71,6 +75,9 @@ class question_numerical_qtype extends qtype_shortanswer {
             echo $OUTPUT->notification('Error: Missing question answer for numerical question ' . $question->id . '!');
             return false;
         }
+
+        $question->hints = get_records('question_hints', 'questionid', $question->id, 'id ASC');
+
         $this->get_numerical_units($question);
         //get_numerical_options() need to know if there are units
         // to set correctly default values
@@ -91,10 +98,13 @@ class question_numerical_qtype extends qtype_shortanswer {
 
         return true;
     }
-    function get_numerical_units(&$question) {
+
+    public function get_numerical_units(&$question) {
         global $DB;
-        if ($units = $DB->get_records('question_numerical_units', array('question' => $question->id), 'id ASC')) {
-            $units  = array_values($units);
+
+        if ($units = $DB->get_records('question_numerical_units',
+                array('question' => $question->id), 'id ASC')) {
+            $units = array_values($units);
         } else {
             $units = array();
         }
@@ -105,7 +115,7 @@ class question_numerical_qtype extends qtype_shortanswer {
         return true;
     }
 
-    function get_default_numerical_unit(&$question) {
+    public function get_default_numerical_unit(&$question) {
         if (isset($question->options->units[0])) {
             foreach ($question->options->units as $unit) {
                 if (abs($unit->multiplier - 1.0) < '1.0e-' . ini_get('precision')) {
@@ -116,7 +126,7 @@ class question_numerical_qtype extends qtype_shortanswer {
         return false;
     }
 
-    function get_numerical_options(&$question) {
+    public function get_numerical_options(&$question) {
         global $DB;
         if (!$options = $DB->get_record('question_numerical_options', array('question' => $question->id))) {
             $question->options->unitgradingtype = 0; // total grade
@@ -144,11 +154,10 @@ class question_numerical_qtype extends qtype_shortanswer {
         return true;
     }
 
-
     /**
      * Save the units and the answers associated with this question.
      */
-    function save_question_options($question) {
+    public function save_question_options($question) {
         global $DB;
         $context = $question->context;
 
@@ -309,10 +318,17 @@ class question_numerical_qtype extends qtype_shortanswer {
 
         $DB->update_record('question_numerical_options', $options);
 
-        return $result;
+        $this->save_hints($question);
+
+        // Report any problems.
+        if (!empty($result->notice)) {
+            return $result;
+        }
+
+        return true;
     }
 
-    function save_numerical_units($question) {
+    public function save_numerical_units($question) {
         global $DB;
         $result = new stdClass();
 
@@ -345,27 +361,6 @@ class question_numerical_qtype extends qtype_shortanswer {
         return $result;
     }
 
-    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
-        $state->responses = array();
-        $state->responses['answer'] =  '';
-        $state->responses['unit'] = '';
-
-        return true;
-    }
-    function restore_session_and_responses(&$question, &$state) {
-       if(false === strpos($state->responses[''], '|||||')){
-             $state->responses['answer']= $state->responses[''];
-             $state->responses['unit'] = '';
-             $this->split_old_answer($state->responses[''], $question->options->units, $state->responses['answer'] ,$state->responses['unit'] );
-       }else {
-            $responses = explode('|||||', $state->responses['']);
-            $state->responses['answer']= $responses[0];
-            $state->responses['unit'] = $responses[1];
-       }
-
-       return true;
-    }
-
     function find_unit_index(&$question,$value){
             $length = 0;
             $goodkey = 0 ;
@@ -377,39 +372,33 @@ class question_numerical_qtype extends qtype_shortanswer {
         return 0 ;
     }
 
-    function split_old_answer($rawresponse, $units, &$answer ,&$unit ) {
-        $answer = $rawresponse ;
-        // remove spaces and normalise decimal places.
-        $search  = array(' ', ',');
-        $replace = array('', '.');
-        $rawresponse = str_replace($search, $replace, trim($rawresponse));
-        if (preg_match('~^([+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?)([^0-9].*)?$~',
-                $rawresponse, $responseparts)) {
-            if(isset($responseparts[5]) ){
-                $unit = $responseparts[5] ;
-            }
-            if(isset($responseparts[1]) ){
-                $answer = $responseparts[1] ;
-            }
-        }
-        return ;
+    protected function initialise_question_instance(question_definition $question, $questiondata) {
+        parent::initialise_question_instance($question, $questiondata);
+        $this->initialise_numerical_answers($question, $questiondata);
+        $this->initialise_numerical_units($question, $questiondata);
     }
 
-
-    function save_session_and_responses(&$question, &$state) {
-        global $DB;
-
-        $responses = '';
-        if(isset($state->responses['unit']) && isset($question->options->units[$state->responses['unit']])){
-            $responses = $state->responses['answer'].'|||||'.$question->options->units[$state->responses['unit']]->unit;
-        }else if(isset($state->responses['unit'])){
-            $responses = $state->responses['answer'].'|||||'.$state->responses['unit'] ;
-        }else {
-            $responses = $state->responses['answer'].'|||||';
+    protected function initialise_numerical_answers(question_definition $question, $questiondata) {
+        $question->answers = array();
+        if (empty($questiondata->options->answers)) {
+            return;
         }
-        // Set the legacy answer field
-        $DB->set_field('question_states', 'answer', $responses, array('id' => $state->id));
-        return true;
+        foreach ($questiondata->options->answers as $a) {
+            $question->answers[$a->id] = new qtype_numerical_answer($a->answer,
+                    $a->fraction, $a->feedback, $a->tolerance);
+        }
+    }
+
+    protected function initialise_numerical_units(question_definition $question, $questiondata) {
+        if (empty($questiondata->options->units)) {
+            $question->ap = new qtype_numerical_answer_processor(array());
+            return;
+        }
+        $units = array();
+        foreach ($questiondata->options->units as $unit) {
+            $units[$unit->unit] = $unit->multiplier;
+        }
+        $question->ap = new qtype_numerical_answer_processor($units);
     }
 
     function delete_question($questionid, $contextid) {
@@ -840,8 +829,7 @@ class question_numerical_qtype extends qtype_shortanswer {
         return true;
     }
 
-
-    function get_correct_responses(&$question, &$state) {
+    public function get_correct_responses($question, $state) {
         $correct = parent::get_correct_responses($question, $state);
         $unit = $this->get_default_numerical_unit($question);
         if (isset($correct['']) && $correct[''] != '*' && $unit) {
@@ -849,48 +837,6 @@ class question_numerical_qtype extends qtype_shortanswer {
         }
         return $correct;
     }
-
-    // ULPGC ecastro
-    function get_all_responses(&$question, &$state) {
-        $result = new stdClass();
-        $answers = array();
-        $unit = $this->get_default_numerical_unit($question);
-        if (is_array($question->options->answers)) {
-            foreach ($question->options->answers as $aid=>$answer) {
-                $r = new stdClass();
-                $r->answer = $answer->answer;
-                $r->credit = $answer->fraction;
-                $this->get_tolerance_interval($answer);
-                if ($r->answer != '*' && $unit) {
-                    $r->answer .= ' ' . $unit->unit;
-                }
-                if ($answer->max != $answer->min) {
-                    $max = "$answer->max"; //format_float($answer->max, 2);
-                    $min = "$answer->min"; //format_float($answer->max, 2);
-                    $r->answer .= ' ('.$min.'..'.$max.')';
-                }
-                $answers[$aid] = $r;
-            }
-        }
-        $result->id = $question->id;
-        $result->responses = $answers;
-        return $result;
-    }
-    function get_actual_response($question, $state) {
-       if (!empty($state->responses) && !empty($state->responses[''])) {
-           if(false === strpos($state->responses[''], '|||||')){
-                $responses[] = $state->responses[''];
-            }else {
-                $resp = explode('|||||', $state->responses['']);
-                $responses[] = $resp[0].$resp[1];
-            }
-       } else {
-           $responses[] = '';
-        }
-
-       return $responses;
-    }
-
 
     function get_tolerance_interval(&$answer) {
         // No tolerance
@@ -1378,17 +1324,4 @@ class question_numerical_qtype extends qtype_shortanswer {
                     $filearea, $args);
         }
     }
-}
-
-if ( ! defined ("NUMERICALQUESTIONUNITTEXTINPUTDISPLAY")) {
-    define("NUMERICALQUESTIONUNITTEXTINPUTDISPLAY",   0);
-}
-if ( ! defined ("NUMERICALQUESTIONUNITMULTICHOICEDISPLAY")) {
-    define("NUMERICALQUESTIONUNITMULTICHOICEDISPLAY",   1);
-}
-if ( ! defined ("NUMERICALQUESTIONUNITTEXTDISPLAY")) {
-    define("NUMERICALQUESTIONUNITTEXTDISPLAY",   2);
-}
-if ( ! defined ("NUMERICALQUESTIONUNITNODISPLAY")) {
-    define("NUMERICALQUESTIONUNITNODISPLAY",    3);
 }

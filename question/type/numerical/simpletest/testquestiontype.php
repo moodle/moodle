@@ -36,93 +36,64 @@ require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
  * @copyright  2006 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_numerical_qtype_test extends UnitTestCase {
+class qtype_numerical_test extends UnitTestCase {
     public static $includecoverage = array('question/type/questiontype.php', 'question/type/numerical/questiontype.php');
-    var $tolerance = 0.00000001;
-    var $qtype;
+    protected $tolerance = 0.00000001;
+    protected $qtype;
 
     public function setUp() {
-        $this->qtype = new question_numerical_qtype();
+        $this->qtype = new qtype_numerical();
     }
 
     public function tearDown() {
-        $this->qtype = null;
+        $this->qtype = null;   
+    }
+
+    protected function get_test_question_data() {
+        $q = new stdClass;
+        $q->id = 1;
+        $q->options->answers[1] = (object) array(
+            'answer' => 42,
+            'fraction' => 1,
+            'feedback' => 'yes',
+            'tolerance' => 0.5
+        );
+        $q->options->answers[2] = (object) array(
+            'answer' => '*',
+            'fraction' => 0.1,
+            'feedback' => 'no',
+            'tolerance' => ''
+        );
+
+        $q->options->units = array(
+            (object) array('unit' => 'm', 'multiplier' => 1),
+            (object) array('unit' => 'cm', 'multiplier' => 0.01)
+        );
+
+        return $q;
     }
 
     public function test_name() {
         $this->assertEqual($this->qtype->name(), 'numerical');
     }
 
-    public function test_get_tolerance_interval() {
-        $answer = new stdClass();
-        $answer->tolerance = 0.01;
-        $answer->tolerancetype = 'relative';
-        $answer->answer = 1.0;
-        $this->qtype->get_tolerance_interval($answer);
-        $this->assertWithinMargin($answer->min, 0.99, $this->tolerance);
-        $this->assertWithinMargin($answer->max, 1.01, $this->tolerance);
-
-        $answer = new stdClass();
-        $answer->tolerance = 0.01;
-        $answer->tolerancetype = 'relative';
-        $answer->answer = 10.0;
-        $this->qtype->get_tolerance_interval($answer);
-        $this->assertWithinMargin($answer->min, 9.9, $this->tolerance);
-        $this->assertWithinMargin($answer->max, 10.1, $this->tolerance);
-
-        $answer = new stdClass();
-        $answer->tolerance = 0.01;
-        $answer->tolerancetype = 'nominal';
-        $answer->answer = 1.0;
-        $this->qtype->get_tolerance_interval($answer);
-        $this->assertWithinMargin($answer->min, 0.99, $this->tolerance);
-        $this->assertWithinMargin($answer->max, 1.01, $this->tolerance);
-
-        $answer = new stdClass();
-        $answer->tolerance = 2.0;
-        $answer->tolerancetype = 'nominal';
-        $answer->answer = 10.0;
-        $this->qtype->get_tolerance_interval($answer);
-        $this->assertWithinMargin($answer->min, 8, $this->tolerance);
-        $this->assertWithinMargin($answer->max, 12, $this->tolerance);
-
-        $answer = new stdClass(); // Test default tolerance 0.
-        $answer->tolerancetype = 'nominal';
-        $answer->answer = 0.0;
-        $this->qtype->get_tolerance_interval($answer);
-        $this->assertWithinMargin($answer->min, 0, $this->tolerance);
-        $this->assertWithinMargin($answer->max, 0, $this->tolerance);
-
-        $answer = new stdClass(); // Test default type nominal.
-        $answer->tolerance = 1.0;
-        $answer->answer = 1.0;
-        $this->qtype->get_tolerance_interval($answer);
-        $this->assertWithinMargin($answer->min, 0, $this->tolerance);
-        $this->assertWithinMargin($answer->max, 2, $this->tolerance);
-
-        $answer = new stdClass();
-        $answer->tolerance = 1.0;
-        $answer->tolerancetype = 'geometric';
-        $answer->answer = 1.0;
-        $this->qtype->get_tolerance_interval($answer);
-        $this->assertWithinMargin($answer->min, 0.5, $this->tolerance);
-        $this->assertWithinMargin($answer->max, 2.0, $this->tolerance);
+    public function test_can_analyse_responses() {
+        $this->assertTrue($this->qtype->can_analyse_responses());
     }
 
-    public function test_apply_unit() {
-        $units = array(
-            (object) array('unit' => 'm', 'multiplier' => 1),
-            (object) array('unit' => 'cm', 'multiplier' => 100),
-            (object) array('unit' => 'mm', 'multiplier' => 1000),
-            (object) array('unit' => 'inch', 'multiplier' => 1.0/0.0254)
-        );
+    public function test_get_random_guess_score() {
+        $q = $this->get_test_question_data();
+        $this->assertEqual(0.1, $this->qtype->get_random_guess_score($q));
+    }
 
-        $this->assertWithinMargin($this->qtype->apply_unit('1', $units), 1, $this->tolerance);
-        $this->assertWithinMargin($this->qtype->apply_unit('1.0', $units), 1, $this->tolerance);
-        $this->assertWithinMargin($this->qtype->apply_unit('-1e0', $units), -1, $this->tolerance);
-        $this->assertWithinMargin($this->qtype->apply_unit('100m', $units), 100, $this->tolerance);
-        $this->assertWithinMargin($this->qtype->apply_unit('1cm', $units), 0.01, $this->tolerance);
-        $this->assertWithinMargin($this->qtype->apply_unit('12inch', $units), .3048, $this->tolerance);
-        $this->assertWithinMargin($this->qtype->apply_unit('-100', array()), -100, $this->tolerance);
+    public function test_get_possible_responses() {
+        $q = $this->get_test_question_data();
+
+        $this->assertEqual(array(
+            $q->id => array(
+                1 => new question_possible_response('42 m (41.5..42.5)', 1),
+                2 => new question_possible_response('*', 0.1),
+                null => question_possible_response::no_response()),
+        ), $this->qtype->get_possible_responses($q));
     }
 }
