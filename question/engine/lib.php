@@ -1041,7 +1041,9 @@ class question_usage_by_activity {
             $slots = explode(',', $slots);
         }
         foreach ($slots as $slot) {
-            $this->validate_sequence_number($slot, $postdata);
+            if (!$this->validate_sequence_number($slot, $postdata)) {
+                continue;
+            }
             $submitteddata = $this->extract_responses($slot, $postdata);
             $this->process_action($slot, $submitteddata, $timestamp);
         }
@@ -1074,16 +1076,24 @@ class question_usage_by_activity {
 
     /**
      * Check that the sequence number, that detects weird things like the student
-     * clicking back, is OK.
+     * clicking back, is OK. If the sequence check variable is not present, returns
+     * false. If the check variable is present and correct, returns true. If the
+     * variable is present and wrong, throws an exception.
      * @param int $slot the number used to identify this question within this usage.
      * @param array $submitteddata the submitted data that constitutes the action.
+     * @return bool true if the check variable is present and correct. False if it
+     * is missing. (Throws an exception if the check fails.)
      */
     public function validate_sequence_number($slot, $postdata = null) {
         $qa = $this->get_question_attempt($slot);
         $sequencecheck = question_attempt::get_submitted_var(
                 $qa->get_control_field_name('sequencecheck'), PARAM_INT, $postdata);
-        if (!is_null($sequencecheck) && $sequencecheck != $qa->get_num_steps()) {
+        if (is_null($sequencecheck)) {
+            return false;
+        } else if ($sequencecheck != $qa->get_num_steps()) {
             throw new question_out_of_sequence_exception($this->id, $slot, $postdata);
+        } else {
+            return true;
         }
     }
     /**
