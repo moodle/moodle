@@ -867,11 +867,12 @@ class oci_native_moodle_database extends moodle_database {
             }
             foreach($params as $key => $value) {
                 // Decouple column name and param name as far as sometimes they aren't the same
-                $columnname = $key; // Default columnname (for DB introspecting is key), but...
-                if ($key == 'newfieldtoset') { // found case where column and key diverge, handle that
+                if ($key == 'o_newfieldtoset') { // found case where column and key diverge, handle that
                     $columnname   = key($value);    // columnname is the key of the array
                     $params[$key] = $value[$columnname]; // set the proper value in the $params array and
                     $value        = $value[$columnname]; // set the proper value in the $value variable
+                } else {
+                    $columnname = preg_replace('/^o_/', '', $key); // Default columnname (for DB introspecting is key), but...
                 }
                 // Continue processing
                 // Now, handle already detected LOBs
