@@ -1002,6 +1002,9 @@ class mssql_native_moodle_database extends moodle_database {
             $params = array();
         }
 
+        // convert params to ? types
+        list($select, $params, $type) = $this->fix_sql_params($select, $params);
+
     /// Get column metadata
         $columns = $this->get_columns($table);
         $column = $columns[$newfield];
