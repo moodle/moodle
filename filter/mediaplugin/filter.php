@@ -84,21 +84,21 @@ class filter_mediaplugin extends moodle_text_filter {
         // YouTube and Vimeo are great because the files are not served by Moodle server
 
         if (!empty($CFG->filter_mediaplugin_enable_youtube)) {
-            $search = '/<a\s[^>]*href="(https?:\/\/www\.youtube(-nocookie)?\.com)\/watch\?v=([a-z0-9\-_]+)[^>]*>([^>]*)<\/a>/is';
+            $search = '/<a\s[^>]*href="(https?:\/\/www\.youtube(-nocookie)?\.com)\/watch\?v=([a-z0-9\-_]+)[^"#]*(#d=([\d]{1,4})x([\d]{1,4}))?"[^>]*>([^>]*)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_callback', $newtext);
 
-            $search = '/<a\s[^>]*href="(https?:\/\/www\.youtube(-nocookie)?\.com)\/v\/([a-z0-9\-_]*)[^>]+>([^>]*)<\/a>/is';
+            $search = '/<a\s[^>]*href="(https?:\/\/www\.youtube(-nocookie)?\.com)\/v\/([a-z0-9\-_]+)[^"#]*(#d=([\d]{1,4})x([\d]{1,4}))?[^>]*>([^>]*)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_callback', $newtext);
 
-            $search = '/<a\s[^>]*href="(https?:\/\/www\.youtube(-nocookie)?\.com)\/view_play_list\?p=([a-z0-9\-_]+)[^>]*>([^>]*)<\/a>/is';
+            $search = '/<a\s[^>]*href="(https?:\/\/www\.youtube(-nocookie)?\.com)\/view_play_list\?p=([a-z0-9\-_]+)[^"#]*(#d=([\d]{1,4})x([\d]{1,4}))?[^>]*>([^>]*)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_playlist_callback', $newtext);
 
-            $search = '/<a\s[^>]*href="(https?:\/\/www\.youtube(-nocookie)?\.com)\/p\/([a-z0-9\-_]*)[^>]+>([^>]*)<\/a>/is';
+            $search = '/<a\s[^>]*href="(https?:\/\/www\.youtube(-nocookie)?\.com)\/p\/([a-z0-9\-_]+)[^"#]*(#d=([\d]{1,4})x([\d]{1,4}))?[^>]*>([^>]*)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_youtube_playlist_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_vimeo)) {
-            $search = '/<a\s[^>]*href="http:\/\/vimeo\.com\/([0-9]+)"[^>]*>([^>]*)<\/a>/is';
+            $search = '/<a\s[^>]*href="http:\/\/vimeo\.com\/([0-9]+)[^"#]*(#d=([\d]{1,4})x([\d]{1,4}))?[^>]*>([^>]*)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_vimeo_callback', $newtext);
         }
 
@@ -124,7 +124,7 @@ class filter_mediaplugin extends moodle_text_filter {
         }
 
         if ((!empty($options['noclean']) or !empty($CFG->allowobjectembed)) and !empty($CFG->filter_mediaplugin_enable_swf)) {
-            $search = '/<a\s[^>]*href="([^"#\?]+\.swf)([#\?]d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>([^>]*)<\/a>/is';
+            $search = '/<a\s[^>]*href="([^"#\?]+\.swf)([#\?]d=([\d]{1,4})x([\d]{1,4}))?"[^>]*>([^>]*)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_swf_callback', $newtext);
         }
 
@@ -137,13 +137,13 @@ class filter_mediaplugin extends moodle_text_filter {
         // The rest of legacy formats - these should not be used if possible
 
         if (!empty($CFG->filter_mediaplugin_enable_wmp)) {
-            $search = '/<a\s[^>]*href="([^"#\?]+\.(wmv|avi))(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>([^>]*)<\/a>/is';
+            $search = '/<a\s[^>]*href="([^"#\?]+\.(wmv|avi))(\?d=([\d]{1,4})x([\d]{1,4}))?"[^>]*>([^>]*)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_wmp_callback', $newtext);
         }
 
         if (!empty($CFG->filter_mediaplugin_enable_qt)) {
             // HTML5 filtering may steal mpeg 4 formats
-            $search = '/<a\s[^>]*href="([^"#\?]+\.(mpg|mpeg|mov|mp4|m4v|m4a))(\?d=([\d]{1,4}%?)x([\d]{1,4}%?))?"[^>]*>([^>]*)<\/a>/is';
+            $search = '/<a\s[^>]*href="([^"#\?]+\.(mpg|mpeg|mov|mp4|m4v|m4a))(\?d=([\d]{1,4})x([\d]{1,4}))?"[^>]*>([^>]*)<\/a>/is';
             $newtext = preg_replace_callback($search, 'filter_mediaplugin_qt_callback', $newtext);
         }
 
@@ -186,12 +186,12 @@ function filter_mediaplugin_parse_alternatives($url, $defaultwidth = 0, $default
     foreach ($urls as $url) {
         $matches = null;
 
-        if (preg_match('/^d=([\d]{1,4}%?)x([\d]{1,4}%?)$/i', $url, $matches)) { // #d=640x480
+        if (preg_match('/^d=([\d]{1,4})x([\d]{1,4})$/i', $url, $matches)) { // #d=640x480
             $width  = $matches[1];
             $height = $matches[2];
             continue;
         }
-        if (preg_match('/\?d=([\d]{1,4}%?)x([\d]{1,4}%?)$/i', $url, $matches)) { // old style file.ext?d=640x480
+        if (preg_match('/\?d=([\d]{1,4})x([\d]{1,4})$/i', $url, $matches)) { // old style file.ext?d=640x480
             $width  = $matches[1];
             $height = $matches[2];
             $url = str_replace($matches[0], '', $url);
@@ -663,14 +663,14 @@ function filter_mediaplugin_youtube_callback($link) {
     $site    = $link[1];
     $videoid = $link[3];
 
-    $info = trim($link[4]);
+    $info = trim($link[7]);
     if (empty($info) or strpos($info, 'http') === 0) {
         $info = get_string('siteyoutube', 'filter_mediaplugin');
     }
     $info = s($info);
 
-    $width  = FILTER_MEDIAPLUGIN_VIDEO_WIDTH;
-    $height = FILTER_MEDIAPLUGIN_VIDEO_HEIGHT;
+    $width  = empty($link[5]) ? FILTER_MEDIAPLUGIN_VIDEO_WIDTH  : $link[5];
+    $height = empty($link[6]) ? FILTER_MEDIAPLUGIN_VIDEO_HEIGHT : $link[6];
 
     if (false and empty($CFG->xmlstrictheaders)) {
         // TODO: remove this once iframe playback starts to work properly in iPads
@@ -712,15 +712,15 @@ function filter_mediaplugin_youtube_playlist_callback($link) {
     $site     = $link[1];
     $playlist = $link[3];
 
-    $info = trim($link[4]);
+    $info = trim($link[7]);
     if (empty($info) or strpos($info, 'http') === 0) {
         $info = get_string('siteyoutube', 'filter_mediaplugin');
     }
     $printlink = html_writer::link("$site/view_play_list\?p=$playlist", $info, array('class'=>'mediafallbacklink'));
     $info = s($info);
 
-    $width  = FILTER_MEDIAPLUGIN_VIDEO_WIDTH;
-    $height = FILTER_MEDIAPLUGIN_VIDEO_HEIGHT;
+    $width  = empty($link[5]) ? FILTER_MEDIAPLUGIN_VIDEO_WIDTH  : $link[5];
+    $height = empty($link[6]) ? FILTER_MEDIAPLUGIN_VIDEO_HEIGHT : $link[6];
 
     // TODO: iframe HTML 5 video not implemented and object does work on iOS devices
 
@@ -751,13 +751,13 @@ function filter_mediaplugin_vimeo_callback($link) {
     }
 
     $videoid = $link[1];
-    $info    = s(strip_tags($link[2]));
+    $info    = s(strip_tags($link[5]));
 
     //Note: resizing via url is not supported, user can click the fullscreen button instead
     //      iframe embedding is not xhtml strict but it is the only option that seems to work on most devices
 
-    $width  = FILTER_MEDIAPLUGIN_VIDEO_WIDTH;
-    $height = FILTER_MEDIAPLUGIN_VIDEO_HEIGHT;
+    $width  = empty($link[3]) ? FILTER_MEDIAPLUGIN_VIDEO_WIDTH  : $link[3];
+    $height = empty($link[4]) ? FILTER_MEDIAPLUGIN_VIDEO_HEIGHT : $link[4];
 
     $output = <<<OET
 <span class="mediaplugin mediaplugin_vimeo">
