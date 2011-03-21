@@ -368,7 +368,7 @@
     // we are looking for all users with this role assigned in this context or higher
     $contextlist = get_related_contexts_string($context);
 
-    list($esql, $params) = get_enrolled_sql($context, NULL, $currentgroup);
+    list($esql, $params) = get_enrolled_sql($context, NULL, $currentgroup, true);
     $joins = array("FROM {user} u");
     $wheres = array();
 
