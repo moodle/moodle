@@ -10,8 +10,7 @@ class moodle1_forum_activity_task extends moodle1_activity_task {
      * Function responsible for building the steps of any task
      * (must set the $built property to true)
      */
-    public function build() {
+    public function define_my_steps() {
         $this->add_step(new moodle1_forum_activity_structure_step('forum'));
-        $this->built = true;
     }
 }

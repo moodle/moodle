@@ -351,7 +351,8 @@ class moodle1_section_structure_step extends moodle1_structure_step {
         $this->sequence[] = $data['ID'];
 
         $info = new stdClass;
-        $info->section = $this->id;
+        $info->sectionid     = $this->id;
+        $info->sectionnumber = $this->data['NUMBER'];
         foreach ($data as $name => $value) {
             $name = strtolower($name);
             $info->$name = $value;
@@ -372,6 +373,90 @@ class moodle1_section_structure_step extends moodle1_structure_step {
     public function execute_after_convert() {
         if (!empty($this->id)) {
             $this->write_section_xml();
+        }
+    }
+}
+
+/**
+ * Writes out an activity's module.xml file
+ */
+class moodle1_module_structure_step extends moodle1_structure_step {
+    /**
+     * Module name
+     *
+     * @var string
+     */
+    protected $type;
+
+    /**
+     * The current Module ID
+     *
+     * @var int
+     */
+    protected $moduleid;
+
+    /**
+     * @param string $type The module name
+     */
+    public function __construct($name, $type, convert_task $task = null) {
+        $this->type = $type;
+        parent::__construct($name, $task);
+    }
+
+    /**
+     * Function that will return the structure to be processed by this convert_step.
+     * Must return one array of @convert_path_element elements
+     */
+    protected function define_structure() {
+        return array();  // @todo Hack?
+    }
+
+    /**
+     * Return the relative path to the XML file that
+     * this step writes out to.  Example: course/course.xml
+     *
+     * @return string
+     */
+    public function get_xml_filename() {
+        return "activities/{$this->type}_{$this->moduleid}/module.xml";
+    }
+
+    public function get_new() {
+        return array(
+            'visibleold' => 1,
+            'completion' => 0,
+            'completiongradeitemnumber' => NULL,
+            'completionview' => 0,
+            'completionexpected' => 0,
+            'availablefrom' => 0,
+            'availableuntil' => 0,
+            'showavailability' => 1,
+            'availability_info' => NULL,
+        );
+    }
+
+    public function get_renamed() {
+        return array(
+            'type' => 'modulename',
+        );
+    }
+
+    public function get_deprecated() {
+        return array('id', 'instance');
+    }
+
+    public function execute_after_convert() {
+        global $DB;
+
+        $records = $DB->get_records('backup_ids_temp', array('backupid' => $this->get_convertid(), 'itemname' => $this->type));
+        foreach ($records as $record) {
+            $this->moduleid = $record->parentitemid;
+
+            $this->open_xml_writer();
+            $this->xmlwriter->begin_tag('module', array('id' => $this->moduleid, 'version' => '?'));  // @todo What to do for version?
+            $this->convert_data((array) unserialize(base64_decode($record->info)));
+            $this->xmlwriter->end_tag('module');
+            $this->close_xml_writer();
         }
     }
 }

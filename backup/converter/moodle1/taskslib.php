@@ -43,11 +43,36 @@ class moodle1_course_task extends convert_task {
     }
 }
 
-// @todo finnish this class...
-abstract class moodle1_activity_task extends convert_task {
-    // @todo Implement methods that will for example write out the activities/type_cmid/module.xml
+abstract class moodle1_plugin_task extends convert_task {
+    /**
+     * Plugin specific steps
+     */
+    abstract protected function define_my_steps();
 }
 
-// @todo finnish this class...
-abstract class moodle1_block_task extends convert_task {
+abstract class moodle1_activity_task extends moodle1_plugin_task {
+    /**
+     * Function responsible for building the steps of any task
+     * (must set the $built property to true)
+     */
+    public function build() {
+        $this->define_my_steps();
+
+        // @todo Risky?
+        list($plugin, $name) = explode('_', $this->name);
+
+        $this->add_step(new moodle1_module_structure_step("{$this->name}_module", $name));
+        $this->built = true;
+    }
+}
+
+abstract class moodle1_block_task extends moodle1_plugin_task {
+    /**
+     * Function responsible for building the steps of any task
+     * (must set the $built property to true)
+     */
+    public function build() {
+        $this->define_my_steps();
+        $this->built = true;
+    }
 }
