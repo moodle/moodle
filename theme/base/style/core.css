@@ -699,3 +699,9 @@ body.tag .managelink {padding: 5px;}
 
 /* Resourcelib mp3 player size: only width could be changed here, height hardcoded in JS */
 .resourcecontent .resourcemediaplugin_mp3 object {height:25px; width: 600px}
+
+/*
+Fix for SubScript & SuperScript
+------------------------------*/
+sub { vertical-align: sub;}
+sup { vertical-align: super;
