@@ -476,12 +476,12 @@ abstract class moodleform {
      *
      * note: $slashed param removed
      *
-     * @return object submitted data; NULL if not valid or not submitted
+     * @return object submitted data; NULL if not valid or not submitted or cancelled
      */
     function get_data() {
         $mform =& $this->_form;
 
-        if ($this->is_submitted() and $this->is_validated()) {
+        if (!$this->is_cancelled() and $this->is_submitted() and $this->is_validated()) {
             $data = $mform->exportValues();
             unset($data['sesskey']); // we do not need to return sesskey
             unset($data['_qf__'.$this->_formname]);   // we do not need the submission marker too
