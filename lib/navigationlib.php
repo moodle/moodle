@@ -2246,23 +2246,22 @@ class global_navigation_for_ajax extends global_navigation {
                 $this->load_section_activities($sections[$course->sectionnumber]->sectionnode, $course->sectionnumber, get_fast_modinfo($course));
                 break;
             case self::TYPE_ACTIVITY :
-                $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+                $sql = "SELECT c.*
+                          FROM {course} c
+                          JOIN {course_modules} cm ON cm.course = c.id
+                         WHERE cm.id = :cmid";
+                $params = array('cmid' => $this->instanceid);
+                $course = $DB->get_record_sql($sql, $params, MUST_EXIST);
                 $modinfo = get_fast_modinfo($course);
                 $cm = $modinfo->get_cm($this->instanceid);
                 require_course_login($course, true, $cm);
                 $this->page->set_context(get_context_instance(CONTEXT_MODULE, $cm->id));
                 $coursenode = $this->load_course($course);
-                $sections = $this->load_course_sections($course, $coursenode);
-                foreach ($sections as $section) {
-                    if ($section->id == $cm->section) {
-                        $cm->sectionnumber = $section->section;
-                        break;
-                    }
-                }
                 if ($course->id == SITEID) {
                     $modulenode = $this->load_activity($cm, $course, $coursenode->find($cm->id, self::TYPE_ACTIVITY));
                 } else {
-                    $activities = $this->load_section_activities($sections[$cm->sectionnumber]->sectionnode, $cm->sectionnumber, get_fast_modinfo($course));
+                    $sections   = $this->load_course_sections($course, $coursenode);
+                    $activities = $this->load_section_activities($sections[$cm->sectionnum]->sectionnode, $cm->sectionnum, get_fast_modinfo($course));
                     $modulenode = $this->load_activity($cm, $course, $activities[$cm->id]);
                 }
                 break;
