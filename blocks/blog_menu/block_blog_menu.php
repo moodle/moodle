@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,20 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Blog Menu Block page.
  *
- * @package    moodlecore
- * @subpackage blog
+ * @package    block
+ * @subpackage blog_menu
  * @copyright  2009 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Require the blog lib file, several useful functions in there
- */
-require_once($CFG->dirroot .'/blog/lib.php');
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * The blog menu block class
@@ -56,26 +51,36 @@ class block_blog_menu extends block_base {
     }
 
     function get_content() {
+        global $CFG;
 
-        // Check if we've already generated content
-        if (!empty($this->content)) {
+        // detect if blog enabled
+        if ($this->content !== NULL) {
             return $this->content;
         }
 
-        // Prep the content
-        $this->content = new stdClass;
-
-        /**
-         * Prepare the content for this block
-         */
-        $options = blog_get_all_options($this->page);
-        if (count($options)==0) {
-            // Don't display menu block if block is set at site level, and user is not logged in
+        if (empty($CFG->bloglevel)) {
+            $this->content = new stdClass();
             $this->content->text = '';
             if ($this->page->user_is_editing()) {
-                // If editing is enabled show an informative message
                 $this->content->text = get_string('blogdisable', 'blog');
             }
+            return $this->content;
+
+        } else if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL and (!isloggedin() or isguestuser())) {
+            $this->content = new stdClass();
+            $this->content->text = '';
+            return $this->content;
+        }
+
+        // require necessary libs and get content
+        require_once($CFG->dirroot .'/blog/lib.php');
+
+        // Prep the content
+        $this->content = new stdClass();
+
+        $options = blog_get_all_options($this->page);
+        if (count($options) == 0) {
+            $this->content->text = '';
             return $this->content;
         }
 
@@ -92,9 +97,7 @@ class block_blog_menu extends block_base {
         // Display the content as a list
         $this->content->text = html_writer::alist($menulist, array('class'=>'list'));
 
-        /**
-         * Prepare the footer for this block
-         */
+        // Prepare the footer for this block
         if (has_capability('moodle/blog:search', get_context_instance(CONTEXT_SYSTEM))) {
             // Full-text search field
             $form  = html_writer::tag('label', get_string('search', 'admin'), array('for'=>'blogsearchquery', 'class'=>'accesshide'));

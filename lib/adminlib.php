@@ -3002,11 +3002,20 @@ class admin_setting_bloglevel extends admin_setting_configselect {
      * @return string empty or error message
      */
     public function write_setting($data) {
-        global $DB;
+        global $DB, $CFG;
         if ($data['bloglevel'] == 0) {
-            $DB->set_field('block', 'visible', 0, array('name' => 'blog_menu'));
+            $blogblocks = $DB->get_records_select('block', "name LIKE 'blog_%' AND visible = 1");
+            foreach ($blogblocks as $block) {
+                $DB->set_field('block', 'visible', 0, array('id' => $block->id));
+            }
         } else {
-            $DB->set_field('block', 'visible', 1, array('name' => 'blog_menu'));
+            // reenable all blocks only when switching from disabled blogs
+            if (isset($CFG->bloglevel) and $CFG->bloglevel == 0) {
+                $blogblocks = $DB->get_records_select('block', "name LIKE 'blog_%' AND visible = 0");
+                foreach ($blogblocks as $block) {
+                    $DB->set_field('block', 'visible', 1, array('id' => $block->id));
+                }
+            }
         }
         return parent::write_setting($data);
     }
