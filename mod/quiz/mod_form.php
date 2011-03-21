@@ -168,7 +168,6 @@ class mod_quiz_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'reviewoptionshdr', get_string('reviewoptionsheading', 'quiz'));
         $mform->addHelpButton('reviewoptionshdr', 'reviewoptionsheading', 'quiz');
-        $mform->setAdvanced('reviewoptionshdr', $quizconfig->review_adv);
 
     /// Review options.
         $this->add_review_options_group($mform, $quizconfig, 'during', mod_quiz_display_options::DURING);

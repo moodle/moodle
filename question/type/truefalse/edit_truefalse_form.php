@@ -110,6 +110,8 @@ class qtype_truefalse_edit_form extends question_edit_form {
             );
             $question->feedbackfalse['itemid'] = $draftid;
         }
+
+        return $question;
     }
 
     public function qtype() {
