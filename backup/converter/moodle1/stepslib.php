@@ -375,3 +375,27 @@ class moodle1_section_structure_step extends moodle1_structure_step {
         }
     }
 }
+
+// @todo DELETE, NOT USED ANYMORE - OLD PROTOTYPE CODE
+class moodle1_mod_structure_step extends convert_structure_step {
+    /**
+     * Function that will return the structure to be processed by this convert_step.
+     * Must return one array of @convert_path_element elements
+     */
+    protected function define_structure() {
+        $paths   = array();
+        $paths[] = new convert_path_element('mod', '/MOODLE_BACKUP/COURSE/MODULES/MOD');
+
+        return $paths;
+    }
+
+    public function convert_mod($data) {
+        // What this will do...
+        $task = convert_factory::activity_task($this->get_converter(), $data['MODTYPE'], $data);
+        $this->get_converter()->get_plan()->add_task($task);
+
+        // Build and execute now
+        $task->build();
+        $task->execute();
+    }
+}

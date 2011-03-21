@@ -55,26 +55,13 @@ abstract class plan_converter extends base_converter {
         $this->get_plan()->destroy();
     }
 
+    // @todo Validation here is weak, probably should validate against a data members that keep track of all names/paths
     public function add_structures($processingobject, array $structures) {
-        // Override if using class convert_structure_step
-        $this->prepare_pathelements($processingobject, $structures);
-
-        // Add pathelements to processor
-        foreach ($this->pathelements as $element) {
-            $this->xmlprocessor->add_path($element->get_path(), $element->is_grouped());
-        }
-    }
-
-    /**
-     * Prepare the pathelements for processing, looking for duplicates, applying
-     * processing objects and other adjustments
-     */
-    protected function prepare_pathelements($processingobject, $elementsarr) {
         // First iteration, push them to new array, indexed by name
         // detecting duplicates in names or paths
         $names = array();
         $paths = array();
-        foreach($elementsarr as $element) {
+        foreach($structures as $element) {
             if (!$element instanceof convert_path_element) {
                 throw new restore_step_exception('restore_path_element_wrong_class', get_class($element)); // @todo Change exception
             }
@@ -90,10 +77,12 @@ abstract class plan_converter extends base_converter {
         // Now, for each element not having one processing object, if
         // not child of grouped element, assign $this (the step itself) as processing element
         // Note method must exist or we'll get one @restore_path_element_exception
-        foreach($paths as $key => $pelement) {
-            if ($pelement->get_processing_object() === null && !$this->grouped_parent_exists($pelement, $paths)) {
+        foreach($paths as $key => $element) {
+            if ($element->get_processing_object() === null && !$this->grouped_parent_exists($element, $paths)) {
                 $paths[$key]->set_processing_object($processingobject);
             }
+            // Add element path to the processor
+            $this->xmlprocessor->add_path($element->get_path(), $element->is_grouped());
         }
         // Done, add them to pathelements (dupes by key - path - are discarded)
         $this->pathelements = array_merge($this->pathelements, $paths);
@@ -119,7 +108,7 @@ abstract class plan_converter extends base_converter {
      * Receive one chunk of information form the xml parser processor and
      * dispatch it, following the naming rules
      */
-    final public function process($data) {
+    public function process($data) {
         if (!array_key_exists($data['path'], $this->pathelements)) { // Incorrect path, must not happen
             throw new restore_step_exception('restore_structure_step_missing_path', $data['path']); // @todo Change exception
         }
