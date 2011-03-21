@@ -1382,6 +1382,8 @@ abstract class admin_setting {
     public $plugin; // null means main config table
     /** @var bool true indicates this setting does not actually save anything, just information */
     public $nosave = false;
+    /** @var bool if set, indicates that a change to this setting requires rebuild course cache */
+    public $affectsmodinfo = false;
 
     /**
      * Constructor
@@ -1444,6 +1446,14 @@ abstract class admin_setting {
     }
 
     /**
+     * @param bool $affectsmodinfo If true, changes to this setting will
+     *   cause the course cache to be rebuilt
+     */
+    public function set_affects_modinfo($affectsmodinfo) {
+        $this->affectsmodinfo = $affectsmodinfo;
+    }
+
+    /**
      * Returns the config if possible
      *
      * @return mixed returns config if successful else null
@@ -1488,6 +1498,12 @@ abstract class admin_setting {
 
         // store change
         set_config($name, $value, $this->plugin);
+
+        // Some admin settings affect course modinfo
+        if ($this->affectsmodinfo) {
+            // Clear course cache for all courses
+            rebuild_course_cache(0, true);
+        }
 
         // log change
         $log = new stdClass();
