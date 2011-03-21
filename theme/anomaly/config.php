@@ -32,44 +32,52 @@ $THEME->layouts = array(
     'standard' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
+        'options' => array('langmenu' => true)
     ),
     // Course page
     'course' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
+        'options' => array('langmenu' => true)
     ),
     // Course page
     'coursecategory' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
+        'options' => array('langmenu' => true)
     ),
     'incourse' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
+        'options' => array('langmenu' => true)
     ),
     'frontpage' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
+        'options' => array('langmenu' => true)
     ),
     'admin' => array(
         'file' => 'general.php',
         'regions' => array('side-pre'),
-        'defaultregion' => 'side-pre'
+        'defaultregion' => 'side-pre',
+        'options' => array('langmenu' => true)
     ),
     'mydashboard' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
+        'options' => array('langmenu' => true)
     ),
     'mypublic' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
+        'options' => array('langmenu' => true)
     ),
     'login' => array(
         'file' => 'general.php',
@@ -110,7 +118,8 @@ $THEME->layouts = array(
     'report' => array(
         'file' => 'report.php',
         'regions' => array('side-pre'),
-        'defaultregion' => 'side-pre'
+        'defaultregion' => 'side-pre',
+        'options' => array('langmenu' => true)
     ),
 );
 
