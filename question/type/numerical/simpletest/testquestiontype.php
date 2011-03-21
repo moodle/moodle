@@ -52,16 +52,20 @@ class qtype_numerical_test extends UnitTestCase {
     protected function get_test_question_data() {
         $q = new stdClass;
         $q->id = 1;
-        $q->options->answers[1] = (object) array(
+        $q->options->answers[13] = (object) array(
+            'id' => 13,
             'answer' => 42,
             'fraction' => 1,
             'feedback' => 'yes',
+            'feedbackformat' => FORMAT_MOODLE,
             'tolerance' => 0.5
         );
-        $q->options->answers[2] = (object) array(
+        $q->options->answers[14] = (object) array(
+            'id' => 14,
             'answer' => '*',
             'fraction' => 0.1,
             'feedback' => 'no',
+            'feedbackformat' => FORMAT_MOODLE,
             'tolerance' => ''
         );
 
@@ -91,8 +95,8 @@ class qtype_numerical_test extends UnitTestCase {
 
         $this->assertEqual(array(
             $q->id => array(
-                1 => new question_possible_response('42 m (41.5..42.5)', 1),
-                2 => new question_possible_response('*', 0.1),
+                13 => new question_possible_response('42 m (41.5..42.5)', 1),
+                14 => new question_possible_response('*', 0.1),
                 null => question_possible_response::no_response()),
         ), $this->qtype->get_possible_responses($q));
     }

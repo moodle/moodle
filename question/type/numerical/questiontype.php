@@ -838,6 +838,42 @@ class qtype_numerical extends question_type {
         return $correct;
     }
 
+    public function get_random_guess_score($questiondata) {
+        foreach ($questiondata->options->answers as $aid => $answer) {
+            if ('*' == trim($answer->answer)) {
+                return $answer->fraction;
+            }
+        }
+        return 0;
+    }
+
+    public function get_possible_responses($questiondata) {
+        $responses = array();
+
+        $unit = $this->get_default_numerical_unit($questiondata);
+
+        foreach ($questiondata->options->answers as $aid => $answer) {
+            $responseclass = $answer->answer;
+
+            if ($responseclass != '*') {
+                if ($unit) {
+                    $responseclass .= ' ' . $unit->unit;
+                }
+
+                $ans = new qtype_numerical_answer($answer->id, $answer->answer, $answer->fraction,
+                        $answer->feedback, $answer->feedbackformat, $answer->tolerance);
+                list($min, $max) = $ans->get_tolerance_interval();
+                $responseclass .= " ($min..$max)";
+            }
+
+            $responses[$aid] = new question_possible_response($responseclass,
+                    $answer->fraction);
+        }
+        $responses[null] = question_possible_response::no_response();
+
+        return array($questiondata->id => $responses);
+    }
+
     function get_tolerance_interval(&$answer) {
         // No tolerance
         if (empty($answer->tolerance)) {
@@ -1323,5 +1359,140 @@ class qtype_numerical extends question_type {
             return parent::check_file_access($question, $state, $options, $contextid, $component,
                     $filearea, $args);
         }
+    }
+}
+
+
+/**
+ * This class processes numbers with units.
+ *
+ * @copyright 2010 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class qtype_numerical_answer_processor {
+    /** @var array unit name => multiplier. */
+    protected $units;
+    /** @var string character used as decimal point. */
+    protected $decsep;
+    /** @var string character used as thousands separator. */
+    protected $thousandssep;
+
+    protected $regex = null;
+
+    public function __construct($units, $decsep = null, $thousandssep = null) {
+        if (is_null($decsep)) {
+            $decsep = get_string('decsep', 'langconfig');
+        }
+        $this->decsep = $decsep;
+
+        if (is_null($thousandssep)) {
+            $thousandssep = get_string('thousandssep', 'langconfig');
+        }
+        $this->thousandssep = $thousandssep;
+
+        $this->units = $units;
+    }
+
+    /**
+     * Set the decimal point and thousands separator character that should be used.
+     * @param string $decsep
+     * @param string $thousandssep
+     */
+    public function set_characters($decsep, $thousandssep) {
+        $this->decsep = $decsep;
+        $this->thousandssep = $thousandssep;
+        $this->regex = null;
+    }
+
+    /** @return string the decimal point character used. */
+    public function get_point() {
+        return $this->decsep;
+    }
+
+    /** @return string the thousands separator character used. */
+    public function get_separator() {
+        return $this->thousandssep;
+    }
+
+    /**
+     * Create the regular expression that {@link parse_response()} requires.
+     * @return string
+     */
+    protected function build_regex() {
+        if (!is_null($this->regex)) {
+            return $this->regex;
+        }
+
+        $beforepointre = '([+-]?[' . preg_quote($this->thousandssep, '/') . '\d]*)';
+        $decimalsre = preg_quote($this->decsep, '/') . '(\d*)';
+        $exponentre = '(?:e|E|(?:x|\*|×)10(?:\^|\*\*))([+-]?\d+)';
+
+        $escapedunits = array();
+        foreach ($this->units as $unit => $notused) {
+            $escapedunits[] = preg_quote($unit, '/');
+        }
+        $unitre = '(' . implode('|', $escapedunits) . ')';
+
+        $this->regex = "/^$beforepointre(?:$decimalsre)?(?:$exponentre)?\s*(?:$unitre)?$/U";
+        return $this->regex;
+    }
+
+    /**
+     * Take a string which is a number with or without a decimal point and exponent,
+     * and possibly followed by one of the units, and split it into bits.
+     * @param string $response a value, optionally with a unit.
+     * @return array four strings (some of which may be blank) the digits before
+     * and after the decimal point, the exponent, and the unit. All four will be
+     * null if the response cannot be parsed.
+     */
+    protected function parse_response($response) {
+        if (!preg_match($this->build_regex(), $response, $matches)) {
+            return array(null, null, null, null);
+        }
+
+        $matches += array('', '', '', '', ''); // Fill in any missing matches.
+        list($notused, $beforepoint, $decimals, $exponent, $unit) = $matches;
+
+        // Strip out thousands separators.
+        $beforepoint = str_replace($this->thousandssep, '', $beforepoint);
+
+        // Must be either something before, or something after the decimal point.
+        // (The only way to do this in the regex would make it much more complicated.)
+        if ($beforepoint === '' && $decimals === '') {
+            return array(null, null, null, null);
+        }
+
+        return array($beforepoint, $decimals, $exponent, $unit);
+    }
+
+    /**
+     * Takes a number in localised form, that is, using the decsep and thousandssep
+     * defined in the lanuage pack, and possibly with a unit after it. It separates
+     * off the unit, if present, and converts to the default unit, by using the
+     * given unit multiplier.
+     *
+     * @param string $response a value, optionally with a unit.
+     * @return array(numeric, sting) the value with the unit stripped, and normalised
+     *      by the unit multiplier, if any, and the unit string, for reference.
+     */
+    public function apply_units($response) {
+        list($beforepoint, $decimals, $exponent, $unit) = $this->parse_response($response);
+
+        if (is_null($beforepoint)) {
+            return array(null, null);
+        }
+
+        $numberstring = $beforepoint . '.' . $decimals;
+        if ($exponent) {
+            $numberstring .= 'e' . $exponent;
+        }
+
+        if ($unit) {
+            $value = $numberstring * $this->units[$unit];
+        } else {
+            $value = $numberstring * 1;
+        }
+
+        return array($value, $unit);
     }
 }
