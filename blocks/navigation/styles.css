@@ -3,6 +3,8 @@
 .block_navigation .block_tree li {margin:3px;list-style: none;padding:0;}
 .block_navigation .block_tree li.item_with_icon > p {position:relative;}
 .block_navigation .block_tree li.item_with_icon > p img {vertical-align:middle;position:absolute;left:0;top:3px}
+.block_navigation .block_tree li.item_with_icon.contains_branch > p img {left:16px;}
+.block_navigation .block_tree li.item_with_icon.contains_branch .tree_item {padding-left:34px;}
 
 .block_navigation .block_tree li ul {padding-left:0;margin:0;}
 .block_navigation .block_tree li.depth_2 ul {padding-left:16px;margin:0;}
