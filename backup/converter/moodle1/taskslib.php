@@ -45,15 +45,9 @@ class moodle1_course_task extends convert_task {
 
 // @todo finnish this class...
 abstract class moodle1_activity_task extends convert_task {
-    /**
-     * @var array
-     */
-//    protected $instancedata;
-/*
-    public function __construct($name, array $data, convert_plan $plan = null) {
-        $this->instancedata = $data;
-        print_object($data);
-        parent::__construct($name, $plan);
-    }
- */
+    // @todo Implement methods that will for example write out the activities/type_cmid/module.xml
+}
+
+// @todo finnish this class...
+abstract class moodle1_block_task extends convert_task {
 }

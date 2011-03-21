@@ -43,39 +43,6 @@ abstract class convert_factory {
         return $converters;
     }
 
-    // @todo DELETE part of prototype code
-    public static function activity_task(base_converter $converter, $name, array $data) {
-        global $CFG;
-
-        static $classmap = array();
-
-        $convertname = $converter->get_name();
-
-        if (!array_key_exists($convertname, $classmap)) {
-            $classmap[$convertname] = array();
-        }
-        if (!array_key_exists($name, $classmap[$convertname])) {
-            // @TODO include the class file and make sure class exists
-            $classfile = "$CFG->dirroot/mod/$name/backup/$convertname/convert_{$name}_activity_task.class.php";
-            $classname = "{$convertname}_{$name}_activity_task";
-
-            if (!class_exists($classname)) {
-                if (!file_exists($classfile)) {
-                    throw new coding_exception("Conversion for $name for format $convertname not supported: class file not found $classfile");
-                }
-                require_once($classfile);
-
-                if (!class_exists($classname)) {
-                    throw new coding_exception("Conversion for $name for format $convertname not supported: class not found $classname");
-                }
-            }
-            $classmap[$convertname][$name] = $classname;
-        }
-        $classname = $classmap[$convertname][$name];
-
-        return new $classname($name, $data);
-    }
-
     /**
      * Runs through all plugins of a specific type and instantiates
      * their task class.
