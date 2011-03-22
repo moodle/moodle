@@ -217,7 +217,7 @@ function xmldb_quiz_statistics_upgrade($oldversion) {
     }
 
     if ($oldversion < 2008112103) {
-        // Removed stupid UNSIGNED from all NUMBER columns in the quiz_question_response_stats table.
+        // Removed UNSIGNED from all NUMBER columns in the quiz_question_response_stats table.
         $table = new xmldb_table('quiz_question_response_stats');
 
         // Change of sign for field credit
