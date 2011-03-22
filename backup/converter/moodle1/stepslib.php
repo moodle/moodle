@@ -134,66 +134,288 @@ abstract class moodle1_structure_step extends convert_structure_step {
     }
 }
 
-class moodle1_course_structure_step extends convert_structure_step {
-    protected $id;
+class moodle1_info_structure_step extends moodle1_structure_step {
     /**
-     * @var xml_writer
+     * @var array
      */
-    protected $xmlwriter;
+    protected $info = array();
 
-    protected $deprecated = array(
-        'roles_overrides',
-        'roles_assignments',
-        'cost',
-        'currancy',
-        'defaultrole',
-        'enrol',
-        'enrolenddate',
-        'enrollable',
-        'enrolperiod',
-        'enrolstartdate',
-        'expirynotify',
-        'expirythreshold',
-        'guest',
-        'notifystudents',
-        'password',
-        'student',
-        'students',
-        'teacher',
-        'teachers',
-        'metacourse',
-    );
+    /**
+     * @var array
+     */
+    protected $details = array();
+
+    /**
+     * @var array
+     */
+    protected $mods = array();
+
+    /**
+     * @var string
+     */
+    protected $currentmod;
 
     /**
      * Function that will return the structure to be processed by this convert_step.
      * Must return one array of @convert_path_element elements
      */
     protected function define_structure() {
-        $paths   = array();
-        $paths[] = new convert_path_element('course', '/MOODLE_BACKUP/COURSE/HEADER');
-        $paths[] = new convert_path_element('category', '/MOODLE_BACKUP/COURSE/HEADER/CATEGORY');
-
-        return $paths;
+        return array(
+            new convert_path_element('info', '/MOODLE_BACKUP/INFO'),
+            new convert_path_element('details', '/MOODLE_BACKUP/INFO/DETAILS'),
+            new convert_path_element('mod', '/MOODLE_BACKUP/INFO/DETAILS/MOD'),
+            new convert_path_element('instance', '/MOODLE_BACKUP/INFO/DETAILS/MOD/INSTANCES/INSTANCE'),
+        );
     }
 
-    public function open_writer() {
-        if (!$this->xmlwriter instanceof xml_writer) {
-            if (empty($this->id)) {
-               throw new backup_exception('noidfound'); // @todo define string or dynamically make id
-            }
-            $directory = $this->get_converter()->get_convertdir().'/course';
-            if (!check_dir_exists($directory)) {
-                throw new backup_exception('failedtomakeconvertdir'); // @todo Define this string
-            }
-            $this->xmlwriter = new xml_writer(
-                new file_xml_output($directory.'/course.xml')
+    /**
+     * Return the relative path to the XML file that
+     * this step writes out to.  Example: course/course.xml
+     *
+     * @return string
+     */
+    public function get_xml_filename() {
+        return 'moodle_backup.xml';
+    }
+
+    public function get_new() {
+        global $DB;
+
+        $course = $DB->get_record('backup_ids_temp', array('itemname' => 'course'), '*', MUST_EXIST);
+        $info   = unserialize(base64_decode($course->info));
+
+        return array(
+            'mnet_remoteusers' => 0,
+            'original_site_identifier_hash' => '?', // @todo What is this?
+            'original_course_id' => $course->itemid,
+            'original_course_fullname' => $info['fullname'],
+            'original_course_shortname' => $info['shortname'],
+            'original_course_startdate' => $info['startdate'],
+            'original_course_contextid' => $info['contextid'],
+            'original_system_contextid' => convert_helper::get_contextid(0, 'system', $this->get_convertid()),
+        );
+    }
+
+    public function get_renamed() {
+        return parent::get_renamed();
+    }
+
+    public function get_deprecated() {
+        return parent::get_deprecated();
+    }
+
+    public function convert_info($data) {
+        // print_object($data); // DEBUG
+        $this->info = $data;
+    }
+
+    public function convert_details($data) {
+        // print_object($data); // DEBUG
+        $this->details = $data;
+    }
+
+    public function convert_mod($data) {
+        // print_object($data); // DEBUG
+        $this->currentmod = $data['NAME'];
+        $this->mods[$this->currentmod] = array();
+    }
+
+    public function convert_instance($data) {
+        // print_object($data); // DEBUG
+        $this->mods[$this->currentmod][$data['ID']] = $data;
+    }
+
+    public function execute_after_convert() {
+        global $DB;
+
+        $rootsettings = array(
+            'filename'         => $this->info['NAME'],
+            'users'            => 0, // @todo Add support for users
+            'anonymize'        => 0, // @todo Correct?
+            'role_assignments' => 0, // @todo Add support for users
+            'user_files'       => 0, // @todo Add support for users
+            'activities'       => 1,
+            'blocks'           => 1,
+            'filters'          => 0, // @todo Add support for filters
+            'comments'         => 0,
+            'userscompletion'  => 0,
+            'logs'             => 0,
+            'grade_histories'  => 0, // @todo Add support for users
+        );
+
+        $settings = array();
+        foreach ($rootsettings as $name => $value) {
+            $settings[] = array(
+                'level' => 'root',
+                'name' => $name,
+                'value' => $value,
             );
-            $this->xmlwriter->start();
-            $this->xmlwriter->begin_tag('course', array(
-                'id' => $this->id,
-                'contextid' => convert_helper::get_contextid($this->id, 'course')
-            ));
         }
+
+        $this->open_xml_writer();
+        $this->xmlwriter->begin_tag('moodle_backup');
+        $this->xmlwriter->begin_tag('information');
+
+        $this->convert_data($this->info);
+
+        $this->xmlwriter->begin_tag('details');
+        $this->xmlwriter->begin_tag('detail', array('backup_id' => $this->get_convertid()));
+        $this->xmlwriter->full_tag('type', 'course');
+        $this->xmlwriter->full_tag('format', 'moodle2');
+        $this->xmlwriter->full_tag('interactive', 0); // @todo Correct?
+        $this->xmlwriter->full_tag('mode', backup::MODE_GENERAL);
+        $this->xmlwriter->full_tag('execution', 1);  // @todo Correct?
+        $this->xmlwriter->full_tag('executiontime', 0);
+        $this->xmlwriter->end_tag('detail');
+        $this->xmlwriter->end_tag('details');
+
+        $this->xmlwriter->begin_tag('contents');
+        $this->xmlwriter->begin_tag('activities');
+
+        foreach ($this->mods as $type => $instances) {
+            $records = $DB->get_records('backup_ids_temp', array('backupid' => $this->get_convertid(), 'itemname' => $type));
+
+            foreach ($records as $record) {
+                $info = unserialize(base64_decode($record->info));
+                $key  = "{$record->itemname}_{$record->parentitemid}";
+
+                if (array_key_exists($record->itemid, $instances)) {
+                    $title    = $instances[$record->itemid]['NAME'];
+                    $included = (int) $instances[$record->itemid]['INCLUDED'];
+                } else {
+                    $title    = 'UNKNOWN';
+                    $included = 1;
+                }
+                $settings[] = array(
+                    'level'    => 'activity',
+                    'activity' => $key,
+                    'name'     => "{$key}_included",
+                    'value'    => $included,
+                );
+                $this->xmlwriter->begin_tag('activity');
+                $this->xmlwriter->full_tag('moduleid', $record->parentitemid);
+                $this->xmlwriter->full_tag('sectionid', $info['sectionid']);
+                $this->xmlwriter->full_tag('modulename', $record->itemname);
+                $this->xmlwriter->full_tag('title', $title);
+                $this->xmlwriter->full_tag('directory', "activities/$key");
+                $this->xmlwriter->end_tag('activity');
+            }
+        }
+        $this->xmlwriter->end_tag('activities');
+        $this->xmlwriter->begin_tag('sections');
+
+        $records = $DB->get_records('backup_ids_temp', array('backupid' => $this->get_convertid(), 'itemname' => 'section'));
+        foreach ($records as $record) {
+            $info = unserialize(base64_decode($record->info));
+
+            $settings[] = array(
+                'level'   => 'section',
+                'section' => "section_$record->itemid",
+                'name'    => "section_{$record->itemid}_userinfo",
+                'value'   => 0, // @todo Add support for user info
+            );
+
+            $this->xmlwriter->begin_tag('section');
+            $this->xmlwriter->full_tag('sectionid', $record->itemid);
+            $this->xmlwriter->full_tag('title', $info['title']);
+            $this->xmlwriter->full_tag('directory', $info['directory']);
+            $this->xmlwriter->end_tag('section');
+        }
+        $this->xmlwriter->end_tag('sections');
+
+        $course = $DB->get_record('backup_ids_temp', array('itemname' => 'course'), '*', MUST_EXIST);
+        $info   = unserialize(base64_decode($course->info));
+
+        $this->xmlwriter->begin_tag('course');
+        $this->xmlwriter->full_tag('courseid', $course->itemid);
+        $this->xmlwriter->full_tag('title', $info['fullname']);
+        $this->xmlwriter->full_tag('directory', 'course');
+        $this->xmlwriter->end_tag('course');
+
+        $this->xmlwriter->end_tag('contents');
+
+        $this->xmlwriter->begin_tag('settings');
+        foreach ($settings as $setting) {
+            $this->xmlwriter->begin_tag('setting');
+            foreach ($setting as $name => $value) {
+                $this->xmlwriter->full_tag($name, $value);
+            }
+            $this->xmlwriter->end_tag('setting');
+        }
+        $this->xmlwriter->end_tag('settings');
+        $this->xmlwriter->end_tag('information');
+        $this->xmlwriter->end_tag('moodle_backup');
+        $this->close_xml_writer();
+    }
+}
+
+class moodle1_course_structure_step extends moodle1_structure_step {
+    /**
+     * @var array
+     */
+    protected $course = array();
+
+    /**
+     * @var array
+     */
+    protected $category = array();
+
+    /**
+     * Function that will return the structure to be processed by this convert_step.
+     * Must return one array of @convert_path_element elements
+     */
+    protected function define_structure() {
+        return array(
+            new convert_path_element('course', '/MOODLE_BACKUP/COURSE/HEADER'),
+            new convert_path_element('category', '/MOODLE_BACKUP/COURSE/HEADER/CATEGORY'),
+        );
+    }
+
+    /**
+     * Return the relative path to the XML file that
+     * this step writes out to.  Example: course/course.xml
+     *
+     * @return string
+     */
+    public function get_xml_filename() {
+        return 'course/course.xml';
+    }
+
+    public function get_new() {
+        return array(
+            'summaryformat' => 1,
+            'legacyfiles' => 1, // @todo I think this is correct
+            'requested' => 0, // @todo Not really new, but maybe never backed up?
+            'restrictmodules' => 0,
+            'enablecompletion' => 0,
+            'completionstartonenrol' => 0,
+            'completionnotify' => 0,
+        );
+    }
+
+    public function get_deprecated() {
+        return array(
+            'roles_overrides',
+            'roles_assignments',
+            'cost',
+            'currancy',
+            'defaultrole',
+            'enrol',
+            'enrolenddate',
+            'enrollable',
+            'enrolperiod',
+            'enrolstartdate',
+            'expirynotify',
+            'expirythreshold',
+            'guest',
+            'notifystudents',
+            'password',
+            'student',
+            'students',
+            'teacher',
+            'teachers',
+            'metacourse',
+        );
     }
 
     /**
@@ -207,40 +429,48 @@ class moodle1_course_structure_step extends convert_structure_step {
      */
     public function convert_course($data) {
         // print_object($data);  // DEBUG
-        if (array_key_exists('ID', $data)) {
-            $this->id = $data['ID'];
-            unset($data['ID']);
-        }
-        if (empty($data)) {
-            return;
-        }
-        $this->open_writer();
-
-        foreach ($data as $name => $value) {
-            $name = strtolower($name);
-
-            if (in_array($name, $this->deprecated)) {
-                continue;
-            }
-            $this->xmlwriter->full_tag($name, $value);
-        }
+        $this->course = array_merge($this->course, $data);
     }
 
     public function convert_category($data) {
         // print_object($data);  // DEBUG
-        $this->open_writer();
-        $this->xmlwriter->begin_tag('category', array('id' => $data['ID']));
-        $this->xmlwriter->full_tag('name', $data['NAME']);
-        $this->xmlwriter->end_tag('category');
+        $this->category = $data;
     }
 
     public function execute_after_convert() {
-        if ($this->xmlwriter instanceof xml_writer) {
-            $this->xmlwriter->end_tag('course');
-            $this->xmlwriter->stop();
-            unset($this->xmlwriter);
-            // var_dump(file_get_contents($this->get_converter()->get_convertdir().'/course/course.xml')); // DEBUG
-        }
+        global $DB;
+
+        $this->open_xml_writer();
+
+        $contextid = convert_helper::get_contextid($this->course['ID'], 'course');
+
+        $this->xmlwriter->begin_tag('course', array(
+            'id' => $this->course['ID'],
+            'contextid' => $contextid,
+        ));
+
+        $this->convert_data($this->course);
+
+        $DB->insert_record('backup_ids_temp', (object) array(
+            'backupid' => $this->get_convertid(),
+            'itemname' => 'course',
+            'itemid'   => $this->course['ID'],
+            'info'     => base64_encode(serialize(array(
+                'fullname'  => $this->course['FULLNAME'],
+                'shortname' => $this->course['SHORTNAME'],
+                'startdate' => $this->course['STARTDATE'],
+                'contextid' => $contextid,
+            ))),
+        ));
+
+        $this->xmlwriter->begin_tag('category', array('id' => $this->category['ID']));
+        $this->xmlwriter->full_tag('name', $this->category['NAME']);
+        $this->xmlwriter->full_tag('description', NULL);
+        $this->xmlwriter->end_tag('category');
+        $this->xmlwriter->full_tag('tags', NULL);
+        $this->xmlwriter->full_tag('allowed_modules', NULL);
+        $this->xmlwriter->end_tag('course');
+        $this->close_xml_writer();
     }
 }
 
@@ -311,6 +541,8 @@ class moodle1_section_structure_step extends moodle1_structure_step {
      * @return void
      */
     public function write_section_xml() {
+        global $DB;
+
         $this->open_xml_writer();
 
         $this->xmlwriter->begin_tag('section', array('id' => $this->data['ID']));
@@ -323,6 +555,16 @@ class moodle1_section_structure_step extends moodle1_structure_step {
         $this->xmlwriter->end_tag('section');
 
         $this->close_xml_writer();
+
+        $DB->insert_record('backup_ids_temp', (object) array(
+            'backupid' => $this->get_convertid(),
+            'itemname' => 'section',
+            'itemid' => $this->data['ID'],
+            'info' => base64_encode(serialize(array(
+                'title' => $this->data['NUMBER'], // @todo Correct?
+                'directory' => pathinfo($this->get_xml_filename(), PATHINFO_DIRNAME),
+            ))),
+        ));
 
         // Reset
         $this->id = 0;
@@ -350,12 +592,11 @@ class moodle1_section_structure_step extends moodle1_structure_step {
 
         $this->sequence[] = $data['ID'];
 
-        $info = new stdClass;
-        $info->sectionid     = $this->id;
-        $info->sectionnumber = $this->data['NUMBER'];
+        $info = array();
+        $info['sectionid']     = $this->id;
+        $info['sectionnumber'] = $this->data['NUMBER'];
         foreach ($data as $name => $value) {
-            $name = strtolower($name);
-            $info->$name = $value;
+            $info[strtolower($name)] = $value;
         }
 
         $temp = new stdClass;
@@ -454,7 +695,7 @@ class moodle1_module_structure_step extends moodle1_structure_step {
 
             $this->open_xml_writer();
             $this->xmlwriter->begin_tag('module', array('id' => $this->moduleid, 'version' => '?'));  // @todo What to do for version?
-            $this->convert_data((array) unserialize(base64_decode($record->info)));
+            $this->convert_data(unserialize(base64_decode($record->info)));
             $this->xmlwriter->end_tag('module');
             $this->close_xml_writer();
         }
