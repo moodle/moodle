@@ -207,7 +207,9 @@ class qtype_oumultiresponse_test extends UnitTestCase {
             array('text' => 'Specific feedback to wrong answer.', 'format' => FORMAT_MOODLE, 'files' => array()),
         );
 
-        $expectedq->hint = array('Try again.', 'Hint 2.');
+        $expectedq->hint = array(
+                array('text' => 'Try again.', 'format' => FORMAT_MOODLE, 'files' => array()),
+                array('text' => 'Hint 2.', 'format' => FORMAT_MOODLE, 'files' => array()));
         $expectedq->hintshownumcorrect = array(true, true);
         $expectedq->hintclearwrong = array(false, true);
         $expectedq->hintshowchoicefeedback = array(false, true);
@@ -327,7 +329,9 @@ class qtype_oumultiresponse_test extends UnitTestCase {
             array('text' => '<p>Specific feedback to wrong answer.</p>', 'format' => FORMAT_MOODLE, 'files' => array()),
         );
 
-        $expectedq->hint = array('Hint 1.', 'Hint 2.');
+        $expectedq->hint = array(
+                array('text' => 'Hint 1.', 'format' => FORMAT_HTML, 'files' => array()),
+                array('text' => 'Hint 2.', 'format' => FORMAT_HTML, 'files' => array()));
         $expectedq->hintshownumcorrect = array(false, false);
         $expectedq->hintclearwrong = array(false, false);
         $expectedq->hintshowchoicefeedback = array(true, true);
@@ -368,25 +372,25 @@ class qtype_oumultiresponse_test extends UnitTestCase {
       <text>That is not right at all.</text>
     </incorrectfeedback>
     <shownumcorrect/>
-    <answer fraction="100">
+    <answer fraction="100" format="plain_text">
       <text>One</text>
       <feedback format="html">
         <text>One is odd.</text>
       </feedback>
     </answer>
-    <answer fraction="0">
+    <answer fraction="0" format="plain_text">
       <text>Two</text>
       <feedback format="html">
         <text>Two is even.</text>
       </feedback>
     </answer>
-    <answer fraction="100">
+    <answer fraction="100" format="plain_text">
       <text>Three</text>
       <feedback format="html">
         <text>Three is odd.</text>
       </feedback>
     </answer>
-    <answer fraction="0">
+    <answer fraction="0" format="plain_text">
       <text>Four</text>
       <feedback format="html">
         <text>Four is even.</text>

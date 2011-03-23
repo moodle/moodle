@@ -144,8 +144,10 @@ END;
         $importer = new qformat_xml();
         $importer->import_hints($qo, $questionxml['question']);
 
-        $this->assertEqual(array('This is the first hint', 'This is the second hint'),
-                $qo->hint);
+        $this->assertEqual(array(
+                array('text' => 'This is the first hint', 'format' => FORMAT_MOODLE, 'files' => array()),
+                array('text' => 'This is the second hint', 'format' => FORMAT_MOODLE, 'files' => array()),
+                ), $qo->hint);
         $this->assertFalse(isset($qo->hintclearwrong));
         $this->assertFalse(isset($qo->hintshownumcorrect));
     }
@@ -170,8 +172,10 @@ END;
         $importer = new qformat_xml();
         $importer->import_hints($qo, $questionxml['question'], true, true);
 
-        $this->assertEqual(array('This is the first hint', 'This is the second hint'),
-                $qo->hint);
+        $this->assertEqual(array(
+                array('text' => 'This is the first hint', 'format' => FORMAT_MOODLE, 'files' => array()),
+                array('text' => 'This is the second hint', 'format' => FORMAT_MOODLE, 'files' => array()),
+                ), $qo->hint);
         $this->assertEqual(array(1, 0), $qo->hintclearwrong);
         $this->assertEqual(array(0, 1), $qo->hintshownumcorrect);
     }
@@ -417,7 +421,10 @@ END;
             array('text' => 'C', 'format' => FORMAT_MOODLE, 'files' => array()),
             array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()));
         $expectedq->subanswers = array('a', 'b', 'c', 'd');
-        $expectedq->hint = array('Hint 1', '');
+        $expectedq->hint = array(
+            array('text' => 'Hint 1', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()),
+        );
         $expectedq->hintshownumcorrect = array(true, true);
         $expectedq->hintclearwrong = array(false, true);
 
@@ -639,7 +646,10 @@ END;
             array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()),
             array('text' => '', 'format' => FORMAT_MOODLE, 'files' => array()));
 
-        $expectedq->hint = array('Hint 1.', 'Hint 2.');
+        $expectedq->hint = array(
+            array('text' => 'Hint 1.', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => 'Hint 2.', 'format' => FORMAT_MOODLE, 'files' => array()),
+        );
         $expectedq->hintshownumcorrect = array(false, false);
         $expectedq->hintclearwrong = array(false, false);
 
@@ -715,25 +725,25 @@ END;
       <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
     </incorrectfeedback>
     <shownumcorrect/>
-    <answer fraction="0">
+    <answer fraction="0" format="plain_text">
       <text>1</text>
       <feedback format="html">
         <text></text>
       </feedback>
     </answer>
-    <answer fraction="100">
+    <answer fraction="100" format="plain_text">
       <text>2</text>
       <feedback format="html">
         <text></text>
       </feedback>
     </answer>
-    <answer fraction="0">
+    <answer fraction="0" format="plain_text">
       <text>3</text>
       <feedback format="html">
         <text></text>
       </feedback>
     </answer>
-    <answer fraction="100">
+    <answer fraction="100" format="plain_text">
       <text>4</text>
       <feedback format="html">
         <text></text>
@@ -856,21 +866,21 @@ END;
     <defaultgrade>1</defaultgrade>
     <penalty>0.1</penalty>
     <hidden>0</hidden>
-    <answer fraction="100">
+    <answer fraction="100" format="plain_text">
       <text>42</text>
       <feedback format="html">
         <text>Well done!</text>
       </feedback>
       <tolerance>0.001</tolerance>
     </answer>
-    <answer fraction="0">
+    <answer fraction="0" format="plain_text">
       <text>13</text>
       <feedback format="html">
         <text>What were you thinking?!</text>
       </feedback>
       <tolerance>1</tolerance>
     </answer>
-    <answer fraction="0">
+    <answer fraction="0" format="plain_text">
       <text>*</text>
       <feedback format="html">
         <text>Completely wrong.</text>
@@ -898,13 +908,13 @@ END;
     <penalty>0.3333333</penalty>
     <hidden>0</hidden>
     <usecase>0</usecase>
-    <answer fraction="100">
+    <answer fraction="100" format="plain_text">
       <text>Beta</text>
       <feedback>
         <text>Well done!</text>
       </feedback>
     </answer>
-    <answer fraction="0">
+    <answer fraction="0" format="plain_text">
       <text>*</text>
       <feedback>
         <text>Doh!</text>
@@ -987,13 +997,13 @@ END;
     <penalty>0.3333333</penalty>
     <hidden>0</hidden>
     <usecase>0</usecase>
-    <answer fraction="100">
+    <answer fraction="100" format="plain_text">
       <text>Beta</text>
       <feedback format="html">
         <text>Well done!</text>
       </feedback>
     </answer>
-    <answer fraction="0">
+    <answer fraction="0" format="plain_text">
       <text>*</text>
       <feedback format="html">
         <text>Doh!</text>
@@ -1099,13 +1109,13 @@ END;
     <defaultgrade>1</defaultgrade>
     <penalty>1</penalty>
     <hidden>0</hidden>
-    <answer fraction="100">
+    <answer fraction="100" format="plain_text">
       <text>true</text>
       <feedback format="html">
         <text>Well done!</text>
       </feedback>
     </answer>
-    <answer fraction="0">
+    <answer fraction="0" format="plain_text">
       <text>false</text>
       <feedback format="html">
         <text>Doh!</text>

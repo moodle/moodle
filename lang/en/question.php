@@ -150,6 +150,8 @@ $string['importcategory'] = 'Import category';
 $string['importcategory_help'] = 'This setting determines the category into which the imported questions will go.
 
 Certain import formats, such as GIFT and Moodle XML, may include category and context data in the import file. To make use of this data, rather than the selected category, the appropriate checkboxes should be ticked. If categories specified in the import file do not exist, they will be created.';
+$string['importerror'] = 'An error occurred during import processing';
+$string['importingquestions'] = 'Importing {$a} questions from file';
 $string['importquestions'] = 'Import questions from file';
 $string['importquestions_help'] = 'This function enables questions in a variety of formats to be imported via text file. Note that the file must use UTF-8 encoding.';
 $string['importquestions_link'] = 'question/import';
@@ -206,6 +208,7 @@ $string['parentcategory_help'] = 'The parent category is the one in which the ne
 $string['parentcategory_link'] = 'question/category';
 $string['parenthesisinproperclose'] = 'Parenthesis before ** is not properly closed in {$a}**';
 $string['parenthesisinproperstart'] = 'Parenthesis before ** is not properly started in {$a}**';
+$string['parsingquestions'] = 'Parsing questions from import file.';
 $string['penaltyfactor'] = 'Penalty factor';
 $string['penaltyfactor_help'] = 'This setting determines what fraction of the achieved score is subtracted for each wrong response. It is only applicable if the quiz is run in adaptive mode.
 

@@ -113,6 +113,7 @@ class qtype_oumultiresponse_test_helper {
             13 => (object) array(
                 'id' => 13,
                 'answer' => 'One',
+                'answerformat' => FORMAT_PLAIN,
                 'fraction' => 1,
                 'feedback' => 'One is odd.',
                 'feedbackformat' => FORMAT_HTML,
@@ -120,6 +121,7 @@ class qtype_oumultiresponse_test_helper {
             14 => (object) array(
                 'id' => 14,
                 'answer' => 'Two',
+                'answerformat' => FORMAT_PLAIN,
                 'fraction' => 0,
                 'feedback' => 'Two is even.',
                 'feedbackformat' => FORMAT_HTML,
@@ -127,6 +129,7 @@ class qtype_oumultiresponse_test_helper {
             15 => (object) array(
                 'id' => 15,
                 'answer' => 'Three',
+                'answerformat' => FORMAT_PLAIN,
                 'fraction' => 1,
                 'feedback' => 'Three is odd.',
                 'feedbackformat' => FORMAT_HTML,
@@ -134,6 +137,7 @@ class qtype_oumultiresponse_test_helper {
             16 => (object) array(
                 'id' => 16,
                 'answer' => 'Four',
+                'answerformat' => FORMAT_PLAIN,
                 'fraction' => 0,
                 'feedback' => 'Four is even.',
                 'feedbackformat' => FORMAT_HTML,

@@ -520,7 +520,7 @@ class question_type {
 
         // Delete any remaining old hints.
         $fs = get_file_storage();
-        foreach($oldhints as $oldhint) {
+        foreach ($oldhints as $oldhint) {
             $fs->delete_area_files($context->id, 'question', 'hint', $oldhint->id);
             $DB->delete_records('question_hints', array('id' => $oldhint->id));
         }

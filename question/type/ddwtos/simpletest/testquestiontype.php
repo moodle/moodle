@@ -215,12 +215,14 @@ class qtype_ddwtos_test extends UnitTestCase {
         $expectedq->incorrectfeedback = array('text' => '<p>Your answer is incorrect.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
 
         $expectedq->choices = array(
-            array('answer' => 'Alpha', 'draggroup' => 1, 'infinite' => false),
-            array('answer' => 'Beta', 'draggroup' => 1, 'infinite' => false),
-            array('answer' => 'Gamma', 'draggroup' => 1, 'infinite' => true),
+            array('answer' => 'Alpha', 'choicegroup' => 1, 'infinite' => false),
+            array('answer' => 'Beta', 'choicegroup' => 1, 'infinite' => false),
+            array('answer' => 'Gamma', 'choicegroup' => 1, 'infinite' => true),
         );
 
-        $expectedq->hint = array('Try again.', 'These are the first three letters of the Greek alphabet.');
+        $expectedq->hint = array(
+                array('text' => 'Try again.', 'format' => FORMAT_MOODLE, 'files' => array()),
+                array('text' => 'These are the first three letters of the Greek alphabet.', 'format' => FORMAT_MOODLE, 'files' => array()));
         $expectedq->hintshownumcorrect = array(true, true);
         $expectedq->hintclearwrong = array(false, true);
 
@@ -364,26 +366,29 @@ class qtype_ddwtos_test extends UnitTestCase {
         $expectedq->incorrectfeedback = array('text' => 'Your answer is incorrect.', 'format' => FORMAT_MOODLE, 'files' => array());
 
         $expectedq->choices = array(
-            array('answer' => array('text' => 'hydrogen', 'format' => FORMAT_MOODLE, 'files' => array()), 'draggroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => 'positive', 'format' => FORMAT_MOODLE, 'files' => array()), 'draggroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => 'hydroxide', 'format' => FORMAT_MOODLE, 'files' => array()), 'draggroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => 'negative', 'format' => FORMAT_MOODLE, 'files' => array()), 'draggroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => '10<sup>7</sup>', 'format' => FORMAT_MOODLE, 'files' => array()), 'draggroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => '7', 'format' => FORMAT_MOODLE, 'files' => array()), 'draggroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => '1', 'format' => FORMAT_MOODLE, 'files' => array()), 'draggroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => '10<sup>-7</sup>', 'format' => FORMAT_MOODLE, 'files' => array()), 'draggroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => 'greater', 'format' => FORMAT_MOODLE, 'files' => array()), 'draggroup' => 3, 'infinite' => false),
-            array('answer' => array('text' => 'less', 'format' => FORMAT_MOODLE, 'files' => array()), 'draggroup' => 3, 'infinite' => false),
+            array('answer' => array('text' => 'hydrogen', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 1, 'infinite' => false),
+            array('answer' => array('text' => 'positive', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 1, 'infinite' => false),
+            array('answer' => array('text' => 'hydroxide', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 1, 'infinite' => false),
+            array('answer' => array('text' => 'negative', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 1, 'infinite' => false),
+            array('answer' => array('text' => '10<sup>7</sup>', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 2, 'infinite' => false),
+            array('answer' => array('text' => '7', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 2, 'infinite' => false),
+            array('answer' => array('text' => '1', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 2, 'infinite' => false),
+            array('answer' => array('text' => '10<sup>-7</sup>', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 2, 'infinite' => false),
+            array('answer' => array('text' => 'greater', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 3, 'infinite' => false),
+            array('answer' => array('text' => 'less', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 3, 'infinite' => false),
         );
 
         $expectedq->hint = array(
-            'You may wish to read Section 9 of <em class="italic">Discovering Science</em> Block 8.',
-            'Any incorrect choices will be removed before your final try.'
+            array('text' => 'You may wish to read Section 9 of <em class="italic">Discovering Science</em> Block 8.',
+                    'format' => FORMAT_HTML, 'files' => array()),
+            array('text' => 'Any incorrect choices will be removed before your final try.',
+                    'format' => FORMAT_HTML, 'files' => array()),
         );
         $expectedq->hintshownumcorrect = array(true, true);
         $expectedq->hintclearwrong = array(false, true);
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
+        $this->assertEqual($expectedq->hint, $q->hint);
     }
 
     public function test_xml_export() {

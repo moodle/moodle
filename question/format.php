@@ -847,7 +847,7 @@ class qformat_default {
         $formatoptions = new stdClass();
         $formatoptions->noclean = true;
         return html_to_text(format_text($question->questiontext,
-                $this->questiontextformat, $formatoptions), 0, false);
+                $question->questiontextformat, $formatoptions), 0, false);
     }
 
     /**
