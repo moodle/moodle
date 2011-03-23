@@ -110,7 +110,7 @@ class qtype_ddwtos extends qtype_gapselect_base {
         return $question;
     }
 
-    function export_to_xml($question, $format, $extra = null) {
+    public function export_to_xml($question, $format, $extra = null) {
         $output = '';
 
         $output .= '    <shuffleanswers>' . $question->options->shuffleanswers . "</shuffleanswers>\n";
