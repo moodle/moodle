@@ -40,7 +40,7 @@ require_once($CFG->dirroot.'/mod/quiz/report/overview/overview_table.php');
  */
 class quiz_overview_report extends quiz_attempt_report {
 
-    function display($quiz, $cm, $course) {
+    public function display($quiz, $cm, $course) {
         global $CFG, $COURSE, $DB, $OUTPUT;
 
         $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);

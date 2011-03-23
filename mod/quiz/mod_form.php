@@ -54,7 +54,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         parent::__construct($current, $section, $cm, $course);
     }
 
-    function definition() {
+    protected function definition() {
         global $COURSE, $CFG, $DB, $PAGE;
         $quizconfig = get_config('quiz');
         $mform = $this->_form;
@@ -353,7 +353,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
     }
 
-    function data_preprocessing(&$toform) {
+    protected function data_preprocessing(&$toform) {
         if (isset($toform['grade'])) {
             $toform['grade'] = $toform['grade'] + 0; // Convert to a real number, so we don't get 0.0000.
         }
@@ -409,7 +409,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
         // Check open and close times are consistent.

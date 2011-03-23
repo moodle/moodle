@@ -37,11 +37,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qformat_multianswer extends qformat_default {
 
-    function provide_import() {
+    public function provide_import() {
       return true;
     }
 
-    function readquestions($lines) {
+    protected function readquestions($lines) {
         // For this class the method has been simplified as
         // there can never be more than one question for a
         // multianswer import

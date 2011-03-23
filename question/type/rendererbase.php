@@ -205,7 +205,7 @@ abstract class qtype_renderer extends plugin_renderer_base {
      * @param bool $selected whether to show a big or small icon. (Deprecated)
      * @return string html fragment.
      */
-    function feedback_image($fraction, $selected = true) {
+    protected function feedback_image($fraction, $selected = true) {
         $state = question_state::graded_state_for_fraction($fraction);
 
         if ($state == question_state::$gradedright) {

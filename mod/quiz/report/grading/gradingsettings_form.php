@@ -53,7 +53,7 @@ class quiz_grading_settings extends moodleform {
         parent::__construct($CFG->wwwroot . '/mod/quiz/report.php', null, 'get');
     }
 
-    public function definition() {
+    protected function definition() {
         $mform =& $this->_form;
 
         $mform->addElement('header', 'options', get_string('options', 'quiz_grading'));

@@ -193,7 +193,7 @@ class qtype_multichoice extends question_type {
         return $totalfraction / count($questiondata->options->answers);
     }
 
-    function get_possible_responses($questiondata) {
+    public function get_possible_responses($questiondata) {
         if ($questiondata->options->single) {
             $responses = array();
 
@@ -230,7 +230,7 @@ class qtype_multichoice extends question_type {
         return $styles;
     }
 
-    function move_files($questionid, $oldcontextid, $newcontextid) {
+    public function move_files($questionid, $oldcontextid, $newcontextid) {
         $fs = get_file_storage();
 
         parent::move_files($questionid, $oldcontextid, $newcontextid);

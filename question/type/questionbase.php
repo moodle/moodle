@@ -527,7 +527,7 @@ interface question_automatically_gradable_with_countback extends question_automa
  */
 abstract class question_with_responses extends question_definition
         implements question_manually_gradable {
-    function classify_response(array $response) {
+    public function classify_response(array $response) {
         return array();
     }
 }

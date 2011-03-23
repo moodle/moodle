@@ -66,7 +66,8 @@ class question_dataset_dependent_definitions_form extends moodleform {
         $this->categorycontext = get_context_instance_by_id($category->contextid);
         parent::moodleform($submiturl);
     }
-    function definition() {
+
+    protected function definition() {
         global $SESSION;
         $mform =& $this->_form;
         $possibledatasets = $this->qtypeobj->find_dataset_names($this->question->questiontext);

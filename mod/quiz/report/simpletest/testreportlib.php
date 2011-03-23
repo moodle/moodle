@@ -43,7 +43,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php'); // Include the c
 class question_reportlib_test extends UnitTestCase {
     public static $includecoverage = array('mod/quiz/report/reportlib.php');
 
-    function test_quiz_report_index_by_keys() {
+    public function test_quiz_report_index_by_keys() {
         $datum = array();
         $object = new stdClass();
         $object->qid = 3;
@@ -67,7 +67,7 @@ class question_reportlib_test extends UnitTestCase {
         $this->assertEqual($indexed[101][3][0]->grade, 3);
     }
 
-    function test_quiz_report_scale_summarks_as_percentage() {
+    public function test_quiz_report_scale_summarks_as_percentage() {
         $quiz = new stdClass();
         $quiz->sumgrades = 10;
         $quiz->decimalpoints = 2;

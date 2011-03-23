@@ -322,7 +322,7 @@ abstract class question_behaviour {
         return $this->qa->get_state()->default_string($showcorrectness);
     }
 
-    abstract public function summarise_action(question_attempt_step $step);
+    public abstract function summarise_action(question_attempt_step $step);
 
     /**
      * Initialise the first step in a question attempt when a new

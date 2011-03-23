@@ -41,19 +41,19 @@ class question_numerical_qtype_test extends UnitTestCase {
     var $tolerance = 0.00000001;
     var $qtype;
 
-    function setUp() {
+    public function setUp() {
         $this->qtype = new question_numerical_qtype();
     }
 
-    function tearDown() {
+    public function tearDown() {
         $this->qtype = null;
     }
 
-    function test_name() {
+    public function test_name() {
         $this->assertEqual($this->qtype->name(), 'numerical');
     }
 
-    function test_get_tolerance_interval() {
+    public function test_get_tolerance_interval() {
         $answer = new stdClass();
         $answer->tolerance = 0.01;
         $answer->tolerancetype = 'relative';
@@ -109,7 +109,7 @@ class question_numerical_qtype_test extends UnitTestCase {
         $this->assertWithinMargin($answer->max, 2.0, $this->tolerance);
     }
 
-    function test_apply_unit() {
+    public function test_apply_unit() {
         $units = array(
             (object) array('unit' => 'm', 'multiplier' => 1),
             (object) array('unit' => 'cm', 'multiplier' => 100),
@@ -123,16 +123,6 @@ class question_numerical_qtype_test extends UnitTestCase {
         $this->assertWithinMargin($this->qtype->apply_unit('100m', $units), 100, $this->tolerance);
         $this->assertWithinMargin($this->qtype->apply_unit('1cm', $units), 0.01, $this->tolerance);
         $this->assertWithinMargin($this->qtype->apply_unit('12inch', $units), .3048, $this->tolerance);
-    //    $this->assertIdentical($this->qtype->apply_unit('1km', $units), false);
         $this->assertWithinMargin($this->qtype->apply_unit('-100', array()), -100, $this->tolerance);
-    //    $this->assertIdentical($this->qtype->apply_unit('1000 miles', array()), false);
     }
-
-//    function test_backup() {
-//    }
-//
-//    function test_restore() {
-//    }
 }
-
-

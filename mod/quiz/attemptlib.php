@@ -40,7 +40,7 @@ defined('MOODLE_INTERNAL') || die();
  * @since      Moodle 2.0
  */
 class moodle_quiz_exception extends moodle_exception {
-    function __construct($quizobj, $errorcode, $a = NULL, $link = '', $debuginfo = null) {
+    public function __construct($quizobj, $errorcode, $a = NULL, $link = '', $debuginfo = null) {
         if (!$link) {
             $link = $quizobj->view_url();
         }
@@ -83,7 +83,7 @@ class quiz {
      * @param object $course the row from the course table for the course we belong to.
      * @param bool $getcontext intended for testing - stops the constructor getting the context.
      */
-    function __construct($quiz, $cm, $course, $getcontext = true) {
+    public function __construct($quiz, $cm, $course, $getcontext = true) {
         $this->quiz = $quiz;
         $this->cm = $cm;
         $this->quiz->cmid = $this->cm->id;
@@ -101,7 +101,7 @@ class quiz {
      * @param int $userid the the userid.
      * @return quiz the new quiz object
      */
-    static public function create($quizid, $userid) {
+    public static function create($quizid, $userid) {
         global $DB;
 
         $quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
@@ -358,7 +358,7 @@ class quiz_attempt {
      * @param object $cm the course_module object for this quiz.
      * @param object $course the row from the course table for the course we belong to.
      */
-    function __construct($attempt, $quiz, $cm, $course) {
+    public function __construct($attempt, $quiz, $cm, $course) {
         $this->attempt = $attempt;
         $this->quizobj = new quiz($quiz, $cm, $course);
         $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
@@ -370,7 +370,7 @@ class quiz_attempt {
      * Used by {create()} and {create_from_usage_id()}.
      * @param array $conditions passed to $DB->get_record('quiz_attempts', $conditions).
      */
-    static protected function create_helper($conditions) {
+    protected static function create_helper($conditions) {
         global $DB;
 
 // TODO deal with the issue that makes this necessary.
@@ -396,7 +396,7 @@ class quiz_attempt {
      * @param int $attemptid the attempt id.
      * @return quiz_attempt the new quiz_attempt object
      */
-    static public function create($attemptid) {
+    public static function create($attemptid) {
         return self::create_helper(array('id' => $attemptid));
     }
 
@@ -406,7 +406,7 @@ class quiz_attempt {
      * @param int $usageid the attempt usage id.
      * @return quiz_attempt the new quiz_attempt object
      */
-    static public function create_from_usage_id($usageid) {
+    public static function create_from_usage_id($usageid) {
         return self::create_helper(array('uniqueid' => $usageid));
     }
 
@@ -1200,9 +1200,9 @@ abstract class quiz_nav_panel_base {
         return '';
     }
 
-    abstract protected function get_end_bits();
+    protected abstract function get_end_bits();
 
-    abstract protected function get_question_url($slot);
+    protected abstract function get_question_url($slot);
 
     protected function get_user_picture() {
         global $DB, $OUTPUT;

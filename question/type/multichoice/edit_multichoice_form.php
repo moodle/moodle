@@ -63,7 +63,7 @@ class qtype_multichoice_edit_form extends question_edit_form {
         $this->add_interactive_settings(true, true);
     }
 
-    function data_preprocessing($question) {
+    protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_answers($question, true);
         $question = $this->data_preprocessing_combined_feedback($question, true);

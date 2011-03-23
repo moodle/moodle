@@ -38,7 +38,7 @@ require_once($CFG->libdir.'/formslib.php');
  */
 class quiz_add_random_form extends moodleform {
 
-    function definition() {
+    protected function definition() {
         global $CFG, $DB;
         $mform =& $this->_form;
 
@@ -78,7 +78,7 @@ class quiz_add_random_form extends moodleform {
         $mform->setType('returnurl', PARAM_LOCALURL);
     }
 
-    function validation($fromform, $files) {
+    public function validation($fromform, $files) {
         $errors = parent::validation($fromform, $files);
 
         if (!empty($fromform['newcategory']) && trim($fromform['name']) == '') {

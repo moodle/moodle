@@ -308,7 +308,7 @@ abstract class qtype_gapselect_base extends question_type {
         return $parts;
     }
 
-    function move_files($questionid, $oldcontextid, $newcontextid) {
+    public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
 
         $fs = get_file_storage();

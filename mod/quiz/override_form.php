@@ -58,7 +58,7 @@ class quiz_override_form extends moodleform {
 
     }
 
-    public function definition() {
+    protected function definition() {
         global $CFG, $USER, $DB;
 
         $cm = $this->cm;

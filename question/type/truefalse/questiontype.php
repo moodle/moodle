@@ -143,14 +143,14 @@ class qtype_truefalse extends question_type {
         $question->falseanswerid = $questiondata->options->falseanswer;
     }
 
-    function delete_question($questionid, $contextid) {
+    public function delete_question($questionid, $contextid) {
         global $DB;
         $DB->delete_records('question_truefalse', array('question' => $questionid));
 
         parent::delete_question($questionid, $contextid);
     }
 
-    function move_files($questionid, $oldcontextid, $newcontextid) {
+    public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
         $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
     }
@@ -160,11 +160,11 @@ class qtype_truefalse extends question_type {
         $this->delete_files_in_answers($questionid, $contextid);
     }
 
-    function get_random_guess_score($questiondata) {
+    public function get_random_guess_score($questiondata) {
         return 0.5;
     }
 
-    function get_possible_responses($questiondata) {
+    public function get_possible_responses($questiondata) {
         return array(
             $questiondata->id => array(
                 0 => new question_possible_response(get_string('false', 'qtype_truefalse'),

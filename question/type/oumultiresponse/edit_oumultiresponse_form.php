@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_oumultiresponse_edit_form extends question_edit_form {
 
-    public function definition_inner($mform) {
+    protected function definition_inner($mform) {
         $mform->addElement('advcheckbox', 'shuffleanswers', get_string('shuffleanswers', 'qtype_multichoice'), null, null, array(0,1));
         $mform->addHelpButton('shuffleanswers', 'shuffleanswers', 'qtype_multichoice');
         $mform->setDefault('shuffleanswers', 1);
@@ -74,7 +74,7 @@ class qtype_oumultiresponse_edit_form extends question_edit_form {
         return array($repeated, $repeatedoptions);
     }
 
-    function data_preprocessing($question) {
+    protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_answers($question, true);
         $question = $this->data_preprocessing_combined_feedback($question, true);

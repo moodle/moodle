@@ -35,11 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_shortanswer_edit_form extends question_edit_form {
-    /**
-     * Add question-type specific form fields.
-     *
-     * @param MoodleQuickForm $mform the form being built.
-     */
+
     protected function definition_inner($mform) {
         $menu = array(
             get_string('caseno', 'qtype_shortanswer'),
@@ -58,7 +54,7 @@ class qtype_shortanswer_edit_form extends question_edit_form {
         $this->add_interactive_settings();
     }
 
-    function data_preprocessing($question) {
+    protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_answers($question);
         $question = $this->data_preprocessing_hints($question);

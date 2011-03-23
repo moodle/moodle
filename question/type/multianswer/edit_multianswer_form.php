@@ -76,7 +76,7 @@ class question_edit_multianswer_form extends question_edit_form {
         parent::question_edit_form($submiturl, $question, $category, $contexts, $formeditable);
     }
 
-    function definition_inner(&$mform) {
+    protected function definition_inner($mform) {
         $mform->addElement('hidden', 'reload', 1);
    //     $mform->addElement('hidden', 'generalfeedback','');
         $mform->setType('reload', PARAM_INT);

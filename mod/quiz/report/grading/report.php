@@ -52,7 +52,7 @@ class quiz_grading_report extends quiz_default_report {
     protected $quiz;
     protected $context;
 
-    function display($quiz, $cm, $course) {
+    public function display($quiz, $cm, $course) {
         global $CFG, $DB, $PAGE;
 
         $this->quiz = $quiz;
@@ -519,7 +519,7 @@ class quiz_grading_report extends quiz_default_report {
      *      Ignored if $orderby = random or $pagesize is null.
      * @param int $pagesize implements paging of the results. null = all.
      */
-    function get_usage_ids_where_question_in_state($summarystate, $slot,
+    protected function get_usage_ids_where_question_in_state($summarystate, $slot,
             $questionid = null, $orderby = 'random', $page = 0, $pagesize = null) {
         global $CFG;
         $dm = new question_engine_data_mapper();

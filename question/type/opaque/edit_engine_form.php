@@ -38,7 +38,7 @@ include_once($CFG->libdir . '/validateurlsyntax.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_opaque_engine_edit_form extends moodleform {
-    public function definition() {
+    protected function definition() {
         $mform = $this->_form;
 
         $mform->addElement('text', 'enginename', get_string('enginename', 'qtype_opaque'));

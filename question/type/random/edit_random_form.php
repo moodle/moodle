@@ -42,7 +42,7 @@ class qtype_random_edit_form extends question_edit_form {
      * If your question type does not support all these fields, then you can
      * override this method and remove the ones you don't want with $mform->removeElement().
      */
-    public function definition() {
+    protected function definition() {
         global $COURSE, $CFG;
 
         $qtype = $this->qtype();

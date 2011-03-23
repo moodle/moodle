@@ -44,7 +44,7 @@ class question_bank_test extends UnitTestCase {
     public function tearDown() {
     }
 
-    function test_sort_qtype_array() {
+    public function test_sort_qtype_array() {
         $config = new stdClass();
         $config->multichoice_sortorder = '1';
         $config->calculated_sortorder = '2';

@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_match_edit_form extends question_edit_form {
 
-    function get_per_answer_fields($mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
+    protected function get_per_answer_fields($mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
         $repeated = array();
         $repeated[] = $mform->createElement('header', 'answerhdr', $label);
         $repeated[] = $mform->createElement('editor', 'subquestions', get_string('question'), array('rows'=>40), $this->editoroptions);
@@ -66,7 +66,7 @@ class qtype_match_edit_form extends question_edit_form {
         $this->add_interactive_settings(true, true);
     }
 
-    function data_preprocessing($question) {
+    protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
         $question = $this->data_preprocessing_combined_feedback($question, true);
         $question = $this->data_preprocessing_hints($question, true, true);
@@ -134,7 +134,7 @@ class qtype_match_edit_form extends question_edit_form {
         return $errors;
     }
 
-    function qtype() {
+    public function qtype() {
         return 'match';
     }
 }

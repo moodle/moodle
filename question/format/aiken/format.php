@@ -55,11 +55,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qformat_aiken extends qformat_default {
 
-  function provide_import() {
-    return true;
-  }
+    public function provide_import() {
+        return true;
+    }
 
-    function readquestions($lines) {
+    public function readquestions($lines) {
         $questions = array();
         $question = $this->defaultquestion();
         $endchar = chr(13);
@@ -107,7 +107,7 @@ class qformat_aiken extends qformat_default {
         return $questions;
     }
 
-    function readquestion($lines) {
+    public function readquestion($lines) {
         //this is no longer needed but might still be called by default.php
         return;
     }

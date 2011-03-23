@@ -601,7 +601,7 @@ abstract class question_flags {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_out_of_sequence_exception extends moodle_exception {
-    function __construct($qubaid, $slot, $postdata) {
+    public function __construct($qubaid, $slot, $postdata) {
         if ($postdata == null) {
             $postdata = data_submitted();
         }
@@ -1624,7 +1624,7 @@ class question_attempt {
      * @return question_attempt_reverse_step_iterator for iterating over the steps in
      * this attempt, in reverse order.
      */
-        public function get_reverse_step_iterator() {
+    public function get_reverse_step_iterator() {
         return new question_attempt_reverse_step_iterator($this);
     }
 

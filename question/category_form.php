@@ -38,7 +38,7 @@ require_once($CFG->libdir.'/formslib.php');
  */
 class question_category_edit_form extends moodleform {
 
-    function definition() {
+    protected function definition() {
         global $CFG, $DB;
         $mform    = $this->_form;
 

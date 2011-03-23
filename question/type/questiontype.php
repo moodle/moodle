@@ -318,7 +318,7 @@ class question_type {
     *       redisplayed with validation errors, from validation_errors field, which
     *       is itself an object, shown next to the form fields. (I don't think this is accurate any more.)
     */
-    function save_question($question, $form) {
+    public function save_question($question, $form) {
         global $USER, $DB, $OUTPUT;
 
         list($question->category) = explode(',', $form->category);
@@ -773,7 +773,7 @@ class question_type {
      * @return number|null either a fraction estimating what the student would
      * score by guessing, or null, if it is not possible to estimate.
      */
-    function get_random_guess_score($questiondata) {
+    public function get_random_guess_score($questiondata) {
         return 0;
     }
 
@@ -804,7 +804,7 @@ class question_type {
      * @return array keys are subquestionid, values are arrays of possible
      *      responses to that subquestion.
      */
-    function get_possible_responses($questiondata) {
+    public function get_possible_responses($questiondata) {
         return array();
     }
 
@@ -976,7 +976,7 @@ class question_type {
      * @param int $category
      * @return object $context
      */
-    function get_context_by_category_id($category) {
+    protected function get_context_by_category_id($category) {
         global $DB;
         $contextid = $DB->get_field('question_categories', 'contextid', array('id'=>$category));
         $context = get_context_instance_by_id($contextid);
@@ -1083,7 +1083,7 @@ class question_type {
         }
     }
 
-    function import_file($context, $component, $filearea, $itemid, $file) {
+    protected function import_file($context, $component, $filearea, $itemid, $file) {
         $fs = get_file_storage();
         $record = new stdClass();
         if (is_object($context)) {
@@ -1099,7 +1099,7 @@ class question_type {
         return $fs->create_file_from_string($record, $this->decode_file($file));
     }
 
-    function decode_file($file) {
+    protected function decode_file($file) {
         switch ($file->encoding) {
         case 'base64':
         default:

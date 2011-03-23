@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class question_edit_numerical_form extends question_edit_form {
 
-    function get_per_answer_fields(&$mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
+    protected function get_per_answer_fields($mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
         $repeated = parent::get_per_answer_fields($mform, $label, $gradeoptions, $repeatedoptions, $answersoption);
 
         $tolerance =& $mform->createElement('text', 'tolerance', get_string('acceptederror', 'qtype_numerical'));
@@ -47,24 +47,18 @@ class question_edit_numerical_form extends question_edit_form {
         return $repeated;
     }
 
-    /**
-     * Add question-type specific form fields.
-     *
-     * @param MoodleQuickForm $mform the form being built.
-     */
-    function definition_inner(&$mform) {
+    protected function definition_inner($mform) {
         global $QTYPES ;
 
-//------------------------------------------------------------------------------------------
         $creategrades = get_grade_options();
         $this->add_per_answer_fields($mform, get_string('answerno', 'qtype_numerical', '{no}'),
                 $creategrades->gradeoptions);
-//------------------------------------------------------------------------------------------
+
         $QTYPES['numerical']->add_units_options($mform,$this);
         $QTYPES['numerical']->add_units_elements($mform,$this);
     }
 
-    function data_preprocessing($question) {
+    protected function data_preprocessing($question) {
         global $QTYPES ;
         if (isset($question->options)){
             $answers = $question->options->answers;
@@ -97,7 +91,7 @@ class question_edit_numerical_form extends question_edit_form {
         return $question;
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
         global $QTYPES;
         $errors = parent::validation($data, $files);
 
@@ -131,7 +125,7 @@ class question_edit_numerical_form extends question_edit_form {
         return $errors;
     }
 
-    function qtype() {
+    public function qtype() {
         return 'numerical';
     }
 }

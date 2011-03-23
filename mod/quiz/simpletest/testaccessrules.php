@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  */
 class simple_rules_test extends UnitTestCase {
     public static $includecoverage = array('mod/quiz/locallib.php');
-    function test_num_attempts_access_rule() {
+    public function test_num_attempts_access_rule() {
         $quiz = new stdClass();
         $quiz->attempts = 3;
         $quiz->questions = '';
@@ -64,7 +64,7 @@ class simple_rules_test extends UnitTestCase {
         $this->assertFalse($rule->time_left($attempt, 1));
     }
 
-    function test_ipaddress_access_rule() {
+    public function test_ipaddress_access_rule() {
         $quiz = new stdClass();
         $attempt = new stdClass();
         $cm = new stdClass();
@@ -95,7 +95,7 @@ class simple_rules_test extends UnitTestCase {
         $this->assertFalse($rule->time_left($attempt, 1));
     }
 
-    function test_time_limit_access_rule() {
+    public function test_time_limit_access_rule() {
         $quiz = new stdClass();
         $quiz->timelimit = 3600;
         $quiz->questions = '';
@@ -124,7 +124,7 @@ class simple_rules_test extends UnitTestCase {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class open_close_date_access_rule_test extends UnitTestCase {
-    function test_no_dates() {
+    public function test_no_dates() {
         $quiz = new stdClass();
         $quiz->timeopen = 0;
         $quiz->timeclose = 0;
@@ -151,7 +151,7 @@ class open_close_date_access_rule_test extends UnitTestCase {
         $this->assertFalse($rule->time_left($attempt, 0));
     }
 
-    function test_start_date() {
+    public function test_start_date() {
         $quiz = new stdClass();
         $quiz->timeopen = 10000;
         $quiz->timeclose = 0;
@@ -177,7 +177,7 @@ class open_close_date_access_rule_test extends UnitTestCase {
         $this->assertFalse($rule->time_left($attempt, 0));
     }
 
-    function test_close_date() {
+    public function test_close_date() {
         $quiz = new stdClass();
         $quiz->timeopen = 0;
         $quiz->timeclose = 20000;
@@ -209,7 +209,7 @@ class open_close_date_access_rule_test extends UnitTestCase {
         $this->assertEqual($rule->time_left($attempt, 20100), -100);
     }
 
-    function test_both_dates() {
+    public function test_both_dates() {
         $quiz = new stdClass();
         $quiz->timeopen = 10000;
         $quiz->timeclose = 20000;
@@ -259,7 +259,7 @@ class open_close_date_access_rule_test extends UnitTestCase {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class inter_attempt_delay_access_rule_test extends UnitTestCase {
-    function test_just_first_delay() {
+    public function test_just_first_delay() {
         $quiz = new stdClass();
         $quiz->attempts = 3;
         $quiz->timelimit = 0;
@@ -291,7 +291,7 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
     }
 
-    function test_just_second_delay() {
+    public function test_just_second_delay() {
         $quiz = new stdClass();
         $quiz->attempts = 5;
         $quiz->timelimit = 0;
@@ -326,7 +326,7 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
         $this->assertEqual($rule->prevent_new_attempt(4, $attempt), get_string('youmustwait', 'quiz', userdate(10001)));
     }
 
-    function test_just_both_delays() {
+    public function test_just_both_delays() {
         $quiz = new stdClass();
         $quiz->attempts = 5;
         $quiz->timelimit = 0;
@@ -369,7 +369,7 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
         $this->assertEqual($rule->prevent_new_attempt(4, $attempt), get_string('youmustwait', 'quiz', userdate(10001)));
     }
 
-    function test_with_close_date() {
+    public function test_with_close_date() {
         $quiz = new stdClass();
         $quiz->attempts = 5;
         $quiz->timelimit = 0;
@@ -419,7 +419,7 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
     }
 
-    function test_time_limit_and_overdue() {
+    public function test_time_limit_and_overdue() {
         $quiz = new stdClass();
         $quiz->attempts = 5;
         $quiz->timelimit = 100;
@@ -484,7 +484,7 @@ class inter_attempt_delay_access_rule_test extends UnitTestCase {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class password_access_rule_test extends UnitTestCase {
-    function test_password_access_rule() {
+    public function test_password_access_rule() {
         $quiz = new stdClass();
         $quiz->password = 'frog';
         $quiz->questions = '';
@@ -510,7 +510,7 @@ class password_access_rule_test extends UnitTestCase {
 class securewindow_access_rule_test extends UnitTestCase {
     // Nothing very testable in this class, just test that it obeys the general access rule contact.
 
-    function test_securewindow_access_rule() {
+    public function test_securewindow_access_rule() {
         $quiz = new stdClass();
         $quiz->popup = 1;
         $quiz->questions = '';

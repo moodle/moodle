@@ -48,7 +48,7 @@ require_once($CFG->dirroot.'/mod/quiz/report/responses/responses_table.php');
  */
 class quiz_responses_report extends quiz_attempt_report {
 
-    function display($quiz, $cm, $course) {
+    public function display($quiz, $cm, $course) {
         global $CFG, $COURSE, $DB, $PAGE, $OUTPUT;
 
         $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);

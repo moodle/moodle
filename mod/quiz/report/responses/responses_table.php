@@ -50,7 +50,7 @@ class quiz_report_responses_table extends quiz_attempt_report_table {
         }
     }
 
-    function wrap_html_start() {
+    public function wrap_html_start() {
         global $PAGE;
         if ($this->is_downloading() || !$this->candelete) {
             return;

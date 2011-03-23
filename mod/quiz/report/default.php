@@ -50,17 +50,14 @@ abstract class quiz_default_report {
      * @param $course the coures we are in.
      * @param $quiz this quiz.
      */
-    abstract function display($cm, $course, $quiz);
+    public abstract function display($cm, $course, $quiz);
 
-    function print_header_and_tabs($cm, $course, $quiz, $reportmode = "overview") {
+    public function print_header_and_tabs($cm, $course, $quiz, $reportmode = 'overview') {
         global $PAGE, $OUTPUT;
-    /// Define some strings
-        $strquizzes = get_string("modulenameplural", "quiz");
-        $strquiz  = get_string("modulename", "quiz");
-    /// Print the page header
+
+        // Print the page header
         $PAGE->set_title(format_string($quiz->name));
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
-        $course_context = get_context_instance(CONTEXT_COURSE, $course->id);
     }
 }

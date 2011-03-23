@@ -40,7 +40,7 @@ require_once(dirname(__FILE__) . '/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_opaque_edit_form extends question_edit_form {
-    function definition() {
+    protected function definition() {
         parent::definition();
         $mform = $this->_form;
         $mform->removeElement('questiontext');
@@ -51,7 +51,7 @@ class qtype_opaque_edit_form extends question_edit_form {
         $mform->setDefault('defaultmark', 1);
     }
 
-    function definition_inner($mform) {
+    protected function definition_inner($mform) {
         $mform->addElement('select', 'engineid', get_string('questionengine', 'qtype_opaque'),
                 qtype_opaque_installed_engine_choices());
         $mform->setType('engineid', PARAM_INT);
@@ -68,7 +68,7 @@ class qtype_opaque_edit_form extends question_edit_form {
         $mform->addRule('remoteversion', null, 'required', null, 'client');
     }
 
-    function validation($data, $files) {
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
         // Check we can connect to this questoin engine.
@@ -104,7 +104,7 @@ class qtype_opaque_edit_form extends question_edit_form {
         return $errors;
     }
 
-    function get_data($slashed = true) {
+    public function get_data($slashed = true) {
         // We override get_data to to add the defaultmark, which was determined during validation,
         // to the data that is returned.
         $data = parent::get_data($slashed);
@@ -114,7 +114,7 @@ class qtype_opaque_edit_form extends question_edit_form {
         return $data;
     }
 
-    function qtype() {
+    public function qtype() {
         return 'opaque';
     }
 }

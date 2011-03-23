@@ -47,7 +47,7 @@ class quiz_report_statistics_table extends flexible_table {
     /**
      * Constructor.
      */
-    function __construct() {
+    public function __construct() {
         parent::__construct('mod-quiz-report-statistics-report');
     }
 
@@ -60,7 +60,7 @@ class quiz_report_statistics_table extends flexible_table {
      * @param moodle_url $reporturl the URL to redisplay this report.
      * @param int $s number of attempts included in the statistics.
      */
-    function setup($quiz, $cmid, $reporturl, $s) {
+    public function setup($quiz, $cmid, $reporturl, $s) {
         $this->quiz = $quiz;
         $this->cmid = $cmid;
 

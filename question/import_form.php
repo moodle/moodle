@@ -38,7 +38,7 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class question_import_form extends moodleform {
 
-    function definition() {
+    protected function definition() {
         global $COURSE;
         $mform = $this->_form;
 

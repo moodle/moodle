@@ -63,19 +63,19 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qformat_gift extends qformat_default {
 
-    function provide_import() {
+    public function provide_import() {
         return true;
     }
 
-    function provide_export() {
+    public function provide_export() {
         return true;
     }
 
-    function export_file_extension() {
+    public function export_file_extension() {
         return '.txt';
     }
 
-    function answerweightparser(&$answer) {
+    protected function answerweightparser(&$answer) {
         $answer = substr($answer, 1);                        // removes initial %
         $end_position  = strpos($answer, "%");
         $answer_weight = substr($answer, 0, $end_position);  // gets weight as integer
@@ -84,7 +84,7 @@ class qformat_gift extends qformat_default {
         return $answer_weight;
     }
 
-    function commentparser($answer, $defaultformat) {
+    protected function commentparser($answer, $defaultformat) {
         $bits = explode('#', $answer, 2);
         $ans = $this->parse_text_with_format(trim($bits[0]), $defaultformat);
         if (count($bits) > 1) {
@@ -95,7 +95,7 @@ class qformat_gift extends qformat_default {
         return array($ans, $feedback);
     }
 
-    function split_truefalse_comment($answer, $defaultformat) {
+    protected function split_truefalse_comment($answer, $defaultformat) {
         $bits = explode('#', $answer, 3);
         $ans = $this->parse_text_with_format(trim($bits[0]), $defaultformat);
         if (count($bits) > 1) {
@@ -111,7 +111,7 @@ class qformat_gift extends qformat_default {
         return array($ans, $wrongfeedback, $rightfeedback);
     }
 
-    function escapedchar_pre($string) {
+    protected function escapedchar_pre($string) {
         //Replaces escaped control characters with a placeholder BEFORE processing
 
         $escapedcharacters = array("\\:",    "\\#",    "\\=",    "\\{",    "\\}",    "\\~",    "\\n"  );  //dlnsk
@@ -123,7 +123,7 @@ class qformat_gift extends qformat_default {
         return $string;
     }
 
-    function escapedchar_post($string) {
+    protected function escapedchar_post($string) {
         //Replaces placeholders with corresponding character AFTER processing is done
         $placeholders = array("&&058;", "&&035;", "&&061;", "&&123;", "&&125;", "&&126;", "&&010"); //dlnsk
         $characters   = array(":",     "#",      "=",      "{",      "}",      "~",      "\n"  ); //dlnsk
@@ -131,7 +131,7 @@ class qformat_gift extends qformat_default {
         return $string;
     }
 
-    function check_answer_count($min, $answers, $text) {
+    protected function check_answer_count($min, $answers, $text) {
         $countanswers = count($answers);
         if ($countanswers < $min) {
             $this->error(get_string('importminerror', 'qformat_gift'), $text);
@@ -160,7 +160,7 @@ class qformat_gift extends qformat_default {
         return $result;
     }
 
-    function readquestion($lines) {
+    public function readquestion($lines) {
     // Given an array of lines known to define a question in this format, this function
     // converts it into a question object suitable for processing and insertion into Moodle.
 
@@ -559,7 +559,7 @@ class qformat_gift extends qformat_default {
 
     }
 
-    function repchar($text, $notused = 0) {
+    protected function repchar($text, $notused = 0) {
         // Escapes 'reserved' characters # = ~ {) :
         // Removes new lines
         $reserved = array( '#', '=', '~', '{', '}', ':', "\n", "\r");
@@ -573,7 +573,7 @@ class qformat_gift extends qformat_default {
      * @param int $format one of the FORMAT_ constants.
      * @return string the corresponding name.
      */
-    function format_const_to_name($format) {
+    protected function format_const_to_name($format) {
         if ($format == FORMAT_MOODLE) {
             return 'moodle';
         } else if ($format == FORMAT_HTML) {
@@ -591,7 +591,7 @@ class qformat_gift extends qformat_default {
      * @param int $format one of the FORMAT_ constants.
      * @return string the corresponding name.
      */
-    function format_name_to_const($format) {
+    protected function format_name_to_const($format) {
         if ($format == 'moodle') {
             return FORMAT_MOODLE;
         } else if ($format == 'html') {
@@ -618,7 +618,7 @@ class qformat_gift extends qformat_default {
         return $output;
     }
 
-    function writequestion($question) {
+    public function writequestion($question) {
         global $OUTPUT;
 
         // Start with a comment

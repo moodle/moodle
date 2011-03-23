@@ -114,7 +114,7 @@ class qtype_random extends question_type {
         $this->manualqtypes = implode(',', $manualqtypes);
     }
 
-    function display_question_editing_page(&$mform, $question, $wizardnow){
+    public function display_question_editing_page(&$mform, $question, $wizardnow){
         global $OUTPUT;
         $heading = $this->get_heading(empty($question->id));
         echo $OUTPUT->heading_with_help($heading, $this->name(), $this->plugin_name());
@@ -226,7 +226,7 @@ class qtype_random extends question_type {
         return null;
     }
 
-    function get_random_guess_score($questiondata) {
+    public function get_random_guess_score($questiondata) {
         return null;
     }
 }

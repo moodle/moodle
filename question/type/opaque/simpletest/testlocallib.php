@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_opaque_locallib_test extends UnitTestCase {
-    function test_is_same_engine() {
+    public function test_is_same_engine() {
         $manager = new qtype_opaque_engine_manager();
 
         $engine1 = new stdClass();

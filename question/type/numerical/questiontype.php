@@ -1037,7 +1037,7 @@ class question_numerical_qtype extends qtype_shortanswer {
      * of edit_..._form.php for
      * numerical, calculated, calculatedsimple
      */
-    function add_units_options(&$mform, &$that){
+    protected function add_units_options(&$mform, &$that){
         // Units are graded
         $mform->addElement('header', 'unithandling', get_string('unitshandling', 'qtype_numerical'));
         $mform->addElement('radio', 'unitrole', get_string('unitnotused', 'qtype_numerical'), get_string('onlynumerical', 'qtype_numerical'),0);
@@ -1085,7 +1085,7 @@ class question_numerical_qtype extends qtype_shortanswer {
      * of edit_..._form.php for
      * numerical, calculated, calculatedsimple
      */
-    function add_units_elements(& $mform,& $that) {
+    protected function add_units_elements(& $mform,& $that) {
         $repeated = array();
         $repeated[] =& $mform->createElement('header', 'unithdr', get_string('unithdr', 'qtype_numerical', '{no}'));
 

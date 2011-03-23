@@ -58,11 +58,11 @@ class qtype_opaque extends question_type {
         return false;
     }
 
-    function extra_question_fields() {
+    public function extra_question_fields() {
         return array('question_opaque', 'engineid', 'remoteid', 'remoteversion');
     }
 
-    function save_question($question, $form) {
+    public function save_question($question, $form) {
         $form->questiontext = '';
         $form->questiontextformat = FORMAT_MOODLE;
         $form->unlimited = 0;
@@ -81,7 +81,7 @@ class qtype_opaque extends question_type {
         return null;
     }
 
-    function export_to_xml($question, $format, $extra=null) {
+    public function export_to_xml($question, $format, $extra=null) {
         $expout = '';
         $expout .= '    <remoteid>' . $question->options->remoteid . "</remoteid>\n";
         $expout .= '    <remoteversion>' . $question->options->remoteversion . "</remoteversion>\n";
@@ -99,7 +99,7 @@ class qtype_opaque extends question_type {
         return $expout;
     }
 
-    function import_from_xml($data, $question, $format, $extra = null) {
+    public function import_from_xml($data, $question, $format, $extra = null) {
         if (!isset($data['@']['type']) || $data['@']['type'] != 'opaque') {
             return false;
         }

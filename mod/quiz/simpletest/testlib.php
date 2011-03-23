@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/mod/quiz/lib.php');
  */
 class quiz_lib_test extends UnitTestCase {
     public static $includecoverage = array('mod/quiz/lib.php');
-    function test_quiz_has_grades() {
+    public function test_quiz_has_grades() {
         $quiz = new stdClass();
         $quiz->grade = '100.0000';
         $quiz->sumgrades = '100.0000';
@@ -49,7 +49,7 @@ class quiz_lib_test extends UnitTestCase {
         $this->assertFalse(quiz_has_grades($quiz));
     }
 
-    function test_quiz_format_grade() {
+    public function test_quiz_format_grade() {
         $quiz = new stdClass();
         $quiz->decimalpoints = 2;
         $this->assertEqual(quiz_format_grade($quiz, 0.12345678), format_float(0.12, 2));
@@ -59,7 +59,7 @@ class quiz_lib_test extends UnitTestCase {
         $this->assertEqual(quiz_format_grade($quiz, 0.12345678), '0');
     }
 
-    function test_quiz_format_question_grade() {
+    public function test_quiz_format_question_grade() {
         $quiz = new stdClass();
         $quiz->decimalpoints = 2;
         $quiz->questiondecimalpoints = 2;

@@ -38,7 +38,7 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class question_export_form extends moodleform {
 
-    function definition() {
+    protected function definition() {
         $mform = $this->_form;
 
         $defaultcategory = $this->_customdata['defaultcategory'];

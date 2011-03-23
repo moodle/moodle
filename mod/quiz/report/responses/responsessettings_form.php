@@ -38,7 +38,7 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class mod_quiz_report_responses_settings extends moodleform {
 
-    public function definition() {
+    protected function definition() {
         $mform = $this->_form;
 
         $mform->addElement('header', 'preferencespage', get_string('preferencespage', 'quiz_overview'));

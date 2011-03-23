@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/question/type/oumultiresponse/simpletest/helper.p
 class qtype_oumultiresponse_question_test extends UnitTestCase {
     private $tolerance = 0.000001;
 
-    function replace_char_at() {
+    public function test_replace_char_at() {
         $this->assertEqual(qtype_oumultiresponse_question::replace_char_at('220', 0, '0'), '020');
     }
 
@@ -118,7 +118,7 @@ class qtype_oumultiresponse_question_test extends UnitTestCase {
         $this->assertEqual($state, question_state::$gradedpartial);
     }
 
-    function test_grade_computation() {
+    public function test_grade_computation() {
         $right = new stdClass();
         $right->fraction = 1.0;
         $wrong = new stdClass();

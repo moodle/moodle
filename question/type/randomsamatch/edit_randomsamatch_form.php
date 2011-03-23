@@ -40,7 +40,7 @@ class question_edit_randomsamatch_form extends question_edit_form {
      *
      * @param MoodleQuickForm $mform the form being built.
      */
-    function definition_inner(&$mform) {
+    protected function definition_inner(&$mform) {
         $questionstoselect = array();
         for ($i=2; $i<=QUESTION_NUMANS; $i++){
             $questionstoselect[$i] = $i;
@@ -53,7 +53,7 @@ class question_edit_randomsamatch_form extends question_edit_form {
         $mform->setType('fraction', PARAM_RAW);
     }
 
-    function data_preprocessing($question) {
+    protected function data_preprocessing($question) {
         if (empty($question->name)) {
             $question->name = get_string("randomsamatch", "quiz");
         }
@@ -64,7 +64,7 @@ class question_edit_randomsamatch_form extends question_edit_form {
         return $question;
     }
 
-    function qtype() {
+    public function qtype() {
         return 'randomsamatch';
     }
 

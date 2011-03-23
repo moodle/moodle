@@ -475,7 +475,7 @@ abstract class quiz_attempt_report_table extends table_sql {
         }
     }
 
-    function get_row_class($attempt) {
+    protected function get_row_class($attempt) {
         if ($this->qmsubselect && $attempt->gradedattempt) {
             return 'gradedattempt';
         } else {
@@ -525,7 +525,7 @@ abstract class quiz_attempt_report_table extends table_sql {
      * @param float $fraction grade on a scale 0..1.
      * @return string html fragment.
      */
-    function icon_for_fraction($fraction) {
+    protected function icon_for_fraction($fraction) {
         global $OUTPUT;
 
         $state = question_state::graded_state_for_fraction($fraction);
@@ -551,7 +551,7 @@ abstract class quiz_attempt_report_table extends table_sql {
      * @param array $slots A list of slots for the questions you want to konw about.
      * @return array of records. See the SQL in this function to see the fields available.
      */
-    function load_question_latest_steps(qubaid_condition $qubaids) {
+    protected function load_question_latest_steps(qubaid_condition $qubaids) {
         $dm = new question_engine_data_mapper();
         $latesstepdata = $dm->load_questions_usages_latest_steps(
                 $qubaids, array_keys($this->questions));

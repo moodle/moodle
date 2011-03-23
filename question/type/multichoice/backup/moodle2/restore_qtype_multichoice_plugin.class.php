@@ -130,7 +130,7 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
     /**
      * Return the contents of this qtype to be processed by the links decoder
      */
-    static public function define_decode_contents() {
+    public static function define_decode_contents() {
 
         $contents = array();
 

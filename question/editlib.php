@@ -193,7 +193,7 @@ abstract class question_bank_column_base {
      * @param object $question the row from the $question table, augmented with extra information.
      * @param string $rowclasses CSS class names that should be applied to this row of output.
      */
-    abstract protected function get_title();
+    protected abstract function get_title();
 
     /**
      * @return string a fuller version of the name. Use this when get_title() returns
@@ -277,7 +277,7 @@ abstract class question_bank_column_base {
      * @return string internal name for this column. Used as a CSS class name,
      *     and to store information about the current sort. Must match PARAM_ALPHA.
      */
-    abstract public function get_name();
+    public abstract function get_name();
 
     /**
      * @return array any extra class names you would like applied to every cell in this column.
@@ -291,7 +291,7 @@ abstract class question_bank_column_base {
      * @param object $question the row from the $question table, augmented with extra information.
      * @param string $rowclasses CSS class names that should be applied to this row of output.
      */
-    abstract protected function display_content($question, $rowclasses);
+    protected abstract function display_content($question, $rowclasses);
 
     protected function display_end($question, $rowclasses) {
         echo "</td>\n";

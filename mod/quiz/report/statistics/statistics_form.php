@@ -37,7 +37,7 @@ require_once($CFG->libdir . '/formslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_statistics_settings_form extends moodleform {
-    function definition() {
+    protected function definition() {
         $mform = $this->_form;
 
         $mform->addElement('header', 'preferencespage', get_string('preferencespage', 'quiz_overview'));

@@ -164,7 +164,7 @@ class qtype_oumultiresponse_question extends qtype_multichoice_multi_question
         return array_sum($scores);
     }
 
-    protected static function replace_char_at($string, $pos, $newchar) {
+    public static function replace_char_at($string, $pos, $newchar) {
         return substr($string, 0, $pos) . $newchar . substr($string, $pos + 1);
     }
 }

@@ -100,7 +100,7 @@ class question_dataset_dependent_items_form extends moodleform {
         }
         parent::moodleform($submiturl);
     }
-    function definition() {
+    protected function definition() {
                 $labelsharedwildcard = get_string("sharedwildcard", "qtype_calculated");
 
         $mform =& $this->_form;

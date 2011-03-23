@@ -40,7 +40,7 @@ class qtype_gapselect_edit_form extends qtype_gapselect_edit_form_base {
     // HTML tags allowed in answers (choices).
     protected $allowedhtmltags = array();
 
-    function qtype() {
+    public function qtype() {
         return 'gapselect';
     }
 }

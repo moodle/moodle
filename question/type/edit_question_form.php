@@ -86,7 +86,7 @@ abstract class question_edit_form extends moodleform {
      * If your question type does not support all these fields, then you can
      * override this method and remove the ones you don't want with $mform->removeElement().
      */
-    public function definition() {
+    protected function definition() {
         global $COURSE, $CFG, $DB;
 
         $qtype = $this->qtype();
@@ -442,7 +442,7 @@ abstract class question_edit_form extends moodleform {
      *
      * @param array $question - array to fill in with the default values
      */
-    function data_preprocessing($question) {
+    protected function data_preprocessing($question) {
         return $question;
     }
 

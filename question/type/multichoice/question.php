@@ -88,9 +88,9 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
         }
     }
 
-    abstract public function get_response(question_attempt $qa);
+    public abstract function get_response(question_attempt $qa);
 
-    abstract public function is_choice_selected($response, $value);
+    public abstract function is_choice_selected($response, $value);
 
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
         if ($component == 'question' && in_array($filearea,

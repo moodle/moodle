@@ -139,7 +139,7 @@ class qformat_qti_two extends qformat_default {
         print_error('cannotimportformat', 'question');
     }
 
-    function exportpreprocess() {
+    public function exportpreprocess() {
         global $CFG;
 
         require_once("{$CFG->libdir}/smarty/Smarty.class.php");
@@ -251,15 +251,15 @@ function handle_questions_media(&$questions, $path, $courseid) {
     return empty($errors) ? true : $errors;
 }
 
-/**
- * exports the questions in a question category to the given location
- *
- * The parent class method was overridden because the IMS export consists of multiple files
- *
- * @param string $filename the directory name which will hold the exported files
- * @return bool - or errors out
- */
-    function exportprocess() {
+    /**
+     * exports the questions in a question category to the given location
+     *
+     * The parent class method was overridden because the IMS export consists of multiple files
+     *
+     * @param string $filename the directory name which will hold the exported files
+     * @return bool - or errors out
+     */
+    public function exportprocess() {
 
         global $CFG, $OUTPUT, $USER;
         $courseid = $this->course->id;
@@ -355,13 +355,13 @@ function handle_questions_media(&$questions, $path, $courseid) {
         $this->xml_entitize($questions);
         $this->xml_entitize($result);
         $this->xml_entitize($submiturl);
-        if (! $this->exportpreprocess(0, $course)) {   // Do anything before that we need to
+        if (!$this->exportpreprocess(0, $course)) { // Do anything before that we need to
             print_error('errorpreprocess', 'question', $redirect);
         }
-        if (! $this->exportprocess_quiz($quiz, $questions, $result, $submiturl, $course)) {         // Process the export data
+        if (!$this->exportprocess_quiz($quiz, $questions, $result, $submiturl, $course)) {         // Process the export data
             print_error('errorprocess','question', $redirect);
         }
-        if (! $this->exportpostprocess()) {                    // In case anything needs to be done after
+        if (!$this->exportpostprocess()) { // In case anything needs to be done after
             print_error('errorpostprocess', 'question', $redirect);
         }
 

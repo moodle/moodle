@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/question/engine/lib.php');
  */
 class qtype_match extends question_type {
 
-    function get_question_options($question) {
+    public function get_question_options($question) {
         global $DB;
         parent::get_question_options($question);
         $question->options = $DB->get_record('question_match', array('question' => $question->id));
@@ -47,7 +47,7 @@ class qtype_match extends question_type {
         return true;
     }
 
-    function save_question_options($question) {
+    public function save_question_options($question) {
         global $DB;
         $context = $question->context;
         $result = new stdClass();
@@ -159,7 +159,7 @@ class qtype_match extends question_type {
         return question_hint_with_parts::load_from_record($hint);
     }
 
-    function delete_question($questionid, $contextid) {
+    public function delete_question($questionid, $contextid) {
         global $DB;
         $DB->delete_records('question_match', array('question' => $questionid));
         $DB->delete_records('question_match_sub', array('question' => $questionid));
@@ -172,7 +172,7 @@ class qtype_match extends question_type {
         return 1 / count($q->choices);
     }
 
-    function get_possible_responses($questiondata) {
+    public function get_possible_responses($questiondata) {
         $subqs = array();
 
         $q = $this->make_question($questiondata);
@@ -193,7 +193,7 @@ class qtype_match extends question_type {
         return $subqs;
     }
 
-    function move_files($questionid, $oldcontextid, $newcontextid) {
+    public function move_files($questionid, $oldcontextid, $newcontextid) {
         global $DB;
         $fs = get_file_storage();
 
