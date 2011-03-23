@@ -262,7 +262,7 @@ class qformat_default {
      * Perform any required pre-processing
      * @return bool success
      */
-    protected function importpreprocess() {
+    public function importpreprocess() {
         return true;
     }
 
@@ -272,7 +272,7 @@ class qformat_default {
      * @param object $category
      * @return bool success
      */
-    protected function importprocess($category) {
+    public function importprocess($category) {
         global $USER, $CFG, $DB, $OUTPUT;
 
         $context = $category->context;
@@ -610,7 +610,7 @@ class qformat_default {
      * Override if any post-processing is required
      * @return bool success
      */
-    protected function importpostprocess() {
+    public function importpostprocess() {
         return true;
     }
 
