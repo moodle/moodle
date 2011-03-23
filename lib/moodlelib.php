@@ -9112,7 +9112,7 @@ WHERE m.useridto = :userid AND p.name='popup'";
                 $smallmessage = get_string('unreadnewnotification', 'message');
             }
             if (!empty($smallmessage)) {
-                $strmessages .= '<div id="usermessage">'.$smallmessage.'</div>';
+                $strmessages .= '<div id="usermessage">'.s($smallmessage).'</div>';
             }
         }
 
