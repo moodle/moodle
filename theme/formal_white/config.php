@@ -143,7 +143,7 @@ $THEME->layouts = array(
     ),
     // Pages that appear in pop-up windows - no navigation, no blocks, no header.
     'popup' => array(
-        'file' => 'embedded.php',
+        'file' => 'general.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'noblocks'=>true, 'nonavbar'=>true),
     ),
