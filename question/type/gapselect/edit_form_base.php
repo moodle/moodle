@@ -92,7 +92,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
      * definition_inner adds all specific fields to the form.
      * @param object $mform (the form being built).
      */
-    function definition_inner($mform) {
+    protected function definition_inner($mform) {
         global $CFG;
 
         //add the answer (choice) fields to the form
@@ -242,7 +242,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         return false;
     }
 
-    function qtype() {
+    public function qtype() {
         return '';
     }
 }
