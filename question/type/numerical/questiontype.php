@@ -61,6 +61,7 @@ class qtype_numerical extends question_type {
 
     public function get_question_options($question) {
         global $CFG, $DB, $OUTPUT;
+        parent::get_question_options($question);
         // Get the question answers and their respective tolerances
         // Note: question_numerical is an extension of the answer table rather than
         //       the question table as is usually the case for qtype
@@ -76,7 +77,7 @@ class qtype_numerical extends question_type {
             return false;
         }
 
-        $question->hints = get_records('question_hints', 'questionid', $question->id, 'id ASC');
+        $question->hints = $DB->get_records('question_hints', array('questionid' => $question->id), 'id ASC');
 
         $this->get_numerical_units($question);
         //get_numerical_options() need to know if there are units
