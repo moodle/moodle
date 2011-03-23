@@ -86,7 +86,7 @@ class qtype_ddwtos extends qtype_gapselect_base {
             foreach ($data['#']['dragbox'] as $dragboxxml) {
                 $question->choices[] = array(
                     'answer' => $format->getpath($dragboxxml, array('#', 'text', 0, '#'), '', true),
-                    'draggroup' => $format->getpath($dragboxxml, array('#', 'group', 0, '#'), 1),
+                    'choicegroup' => $format->getpath($dragboxxml, array('#', 'group', 0, '#'), 1),
                     'infinite' => array_key_exists('infinite', $dragboxxml['#']),
                 );
             }
@@ -98,7 +98,7 @@ class qtype_ddwtos extends qtype_gapselect_base {
                 $options = unserialize(stripslashes($ans->feedback['text']));
                 $question->choices[] = array(
                     'answer' => $ans->answer,
-                    'draggroup' => $options->draggroup,
+                    'choicegroup' => $options->draggroup,
                     'infinite' => $options->infinite,
                 );
             }
