@@ -77,7 +77,7 @@ class qtype_gapselect extends qtype_gapselect_base {
             foreach ($data['#']['selectoption'] as $selectoptionxml) {
                 $question->choices[] = array(
                     'answer' => $format->getpath($selectoptionxml, array('#', 'text', 0, '#'), '', true),
-                    'selectgroup' => $format->getpath($selectoptionxml, array('#', 'group', 0, '#'), 1),
+                    'choicegroup' => $format->getpath($selectoptionxml, array('#', 'group', 0, '#'), 1),
                 );
             }
 
@@ -87,7 +87,7 @@ class qtype_gapselect extends qtype_gapselect_base {
                 $ans = $format->import_answer($answerxml);
                 $question->choices[] = array(
                     'answer' => $ans->answer,
-                    'selectgroup' => $ans->feedback,
+                    'choicegroup' => $ans->feedback,
                 );
             }
         }

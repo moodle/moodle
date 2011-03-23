@@ -214,16 +214,19 @@ class qtype_gapselect_test extends UnitTestCase {
         $expectedq->incorrectfeedback = array('text' => '<p>Your answer is incorrect.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
 
         $expectedq->choices = array(
-            array('answer' => 'Alpha', 'selectgroup' => 1),
-            array('answer' => 'Beta', 'selectgroup' => 1),
-            array('answer' => 'Gamma', 'selectgroup' => 1),
+            array('answer' => 'Alpha', 'choicegroup' => 1),
+            array('answer' => 'Beta', 'choicegroup' => 1),
+            array('answer' => 'Gamma', 'choicegroup' => 1),
         );
 
-        $expectedq->hint = array('Try again.', 'These are the first three letters of the Greek alphabet.');
+        $expectedq->hint = array(
+                array('text' => 'Try again.', 'format' => FORMAT_MOODLE, 'files' => array()),
+                array('text' => 'These are the first three letters of the Greek alphabet.', 'format' => FORMAT_MOODLE, 'files' => array()));
         $expectedq->hintshownumcorrect = array(true, true);
         $expectedq->hintclearwrong = array(false, true);
 
         $this->assert(new CheckSpecifiedFieldsExpectation($expectedq), $q);
+        $this->assertEqual($expectedq->hint, $q->hint);
     }
 
     public function test_xml_export() {
