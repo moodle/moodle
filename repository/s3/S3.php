@@ -1116,7 +1116,7 @@ final class S3Request {
 	*/
 	public function getResponse() {
 		$query = '';
-		if (sizeof($this->parameters) > 0) {
+		if (count($this->parameters) > 0) {
 			$query = substr($this->uri, -1) !== '?' ? '?' : '&';
 			foreach ($this->parameters as $var => $value)
 				if ($value == null || $value == '') $query .= $var.'&';
@@ -1158,7 +1158,7 @@ final class S3Request {
 			if (strlen($value) > 0) $amz[] = strToLower($header).':'.$value;
 
 		// AMZ headers must be sorted
-		if (sizeof($amz) > 0) {
+		if (count($amz) > 0) {
 			sort($amz);
 			$amz = "\n".implode("\n", $amz);
 		} else $amz = '';

@@ -120,7 +120,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         //schleife ueber den Werten und ueber die Antwortmoeglichkeiten
 
         $analysedAnswer = array();
-        $sizeoflines = sizeof($lines);
+        $sizeoflines = count($lines);
         for($i = 1; $i <= $sizeoflines; $i++) {
             $item_values = explode(FEEDBACK_MULTICHOICERATED_VALUE_SEP, $lines[$i-1]);
             $ans = null;
@@ -135,9 +135,9 @@ class feedback_item_multichoicerated extends feedback_item_base {
                 }
             }
             $ans->answercount = $anscount;
-            $ans->avg = doubleval($avg) / doubleval(sizeof($values));
+            $ans->avg = doubleval($avg) / doubleval(count($values));
             $ans->value = $item_values[0];
-            $ans->quotient = $ans->answercount / sizeof($values);
+            $ans->quotient = $ans->answercount / count($values);
             $analysedAnswer[] = $ans;
         }
         $analysedItem[] = $analysedAnswer;
@@ -215,7 +215,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $worksheet->write_string($rowOffset, 1, $analysed_item[1], $xlsFormats->head2);
         if(is_array($data)) {
             $avg = 0.0;
-            $sizeofdata = sizeof($data);
+            $sizeofdata = count($data);
             for($i = 0; $i < $sizeofdata; $i++) {
                 $aData = $data[$i];
 
@@ -230,10 +230,10 @@ class feedback_item_multichoicerated extends feedback_item_base {
             }
             //mittelwert anzeigen
             // $worksheet->setFormat("<l><f><ro2><vo><c:red>");
-            $worksheet->write_string($rowOffset, sizeof($data) + 2, get_string('average', 'feedback'), $xlsFormats->value_bold);
+            $worksheet->write_string($rowOffset, count($data) + 2, get_string('average', 'feedback'), $xlsFormats->value_bold);
 
             // $worksheet->setFormat("<l><f><vo>");
-            $worksheet->write_number($rowOffset + 1, sizeof($data) + 2, $avg, $xlsFormats->value_bold);
+            $worksheet->write_number($rowOffset + 1, count($data) + 2, $avg, $xlsFormats->value_bold);
         }
         $rowOffset +=2 ;
         return $rowOffset;

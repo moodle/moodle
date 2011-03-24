@@ -309,7 +309,7 @@ class qformat_default {
             return false;
         }
 
-        echo $OUTPUT->notification(get_string('importcount', 'lesson', sizeof($questions)));
+        echo $OUTPUT->notification(get_string('importcount', 'lesson', count($questions)));
 
         $count = 0;
 

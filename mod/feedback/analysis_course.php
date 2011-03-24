@@ -101,7 +101,7 @@ echo '<b>'.get_string('completed_feedbacks', 'feedback').': '.$completedscount. 
 $items = $DB->get_records('feedback_item', array('feedback'=>$feedback->id, 'hasvalue'=>1), 'position');
 //show the count
 if(is_array($items)){
-    echo '<b>'.get_string('questions', 'feedback').': ' .sizeof($items). ' </b><hr />';
+    echo '<b>'.get_string('questions', 'feedback').': ' .count($items). ' </b><hr />';
     echo '<a href="analysis_course.php?id=' . $id . '&courseid='.$courseid.'">'.get_string('show_all', 'feedback').'</a>';
 } else {
     $items=array();

@@ -91,7 +91,7 @@ function process_tf($xml, &$questions) {
         return;
     }
 
-    for ($i = 0; $i < sizeof ($tfquestions); $i++) {
+    for ($i = 0; $i < count ($tfquestions); $i++) {
 
         $question = $this->defaultquestion();
 
@@ -144,7 +144,7 @@ function process_mc($xml, &$questions) {
         return;
     }
 
-    for ($i = 0; $i < sizeof ($mcquestions); $i++) {
+    for ($i = 0; $i < count ($mcquestions); $i++) {
 
         $question = $this->defaultquestion();
 
@@ -166,7 +166,7 @@ function process_mc($xml, &$questions) {
         $question->name = shorten_text($question->questiontext, 254);
 
         $choices = $thisquestion["#"]["ANSWER"];
-        for ($j = 0; $j < sizeof ($choices); $j++) {
+        for ($j = 0; $j < count ($choices); $j++) {
 
             $choice = trim($choices[$j]["#"]["TEXT"][0]["#"]);
             // put this choice in the question object.
@@ -208,7 +208,7 @@ function process_ma($xml, &$questions) {
         return;
     }
 
-    for ($i = 0; $i < sizeof ($maquestions); $i++) {
+    for ($i = 0; $i < count ($maquestions); $i++) {
 
         $question = $this->defaultquestion();
 
@@ -233,13 +233,13 @@ function process_ma($xml, &$questions) {
         $choices = $thisquestion["#"]["ANSWER"];
         $correctanswers = $thisquestion["#"]["GRADABLE"][0]["#"]["CORRECTANSWER"];
 
-        for ($j = 0; $j < sizeof ($choices); $j++) {
+        for ($j = 0; $j < count ($choices); $j++) {
 
             $choice = trim($choices[$j]["#"]["TEXT"][0]["#"]);
             // put this choice in the question object.
             $question->answer[$j] = $choice;
 
-            $correctanswercount = sizeof($correctanswers);
+            $correctanswercount = count($correctanswers);
             $id = $choices[$j]["@"]["id"];
             $iscorrect = 0;
             for ($k = 0; $k < $correctanswercount; $k++) {
@@ -275,7 +275,7 @@ function process_fib($xml, &$questions) {
         return;
     }
 
-    for ($i = 0; $i < sizeof ($fibquestions); $i++) {
+    for ($i = 0; $i < count ($fibquestions); $i++) {
         $question = $this->defaultquestion();
 
         $question->qtype = SHORTANSWER;
@@ -329,7 +329,7 @@ function process_matching($xml, &$questions) {
         return;
     }
 
-    for ($i = 0; $i < sizeof ($matchquestions); $i++) {
+    for ($i = 0; $i < count ($matchquestions); $i++) {
 
         $question = $this->defaultquestion();
 
@@ -349,7 +349,7 @@ function process_matching($xml, &$questions) {
         $question->name = shorten_text($question->questiontext, 254);
 
         $choices = $thisquestion["#"]["CHOICE"];
-        for ($j = 0; $j < sizeof ($choices); $j++) {
+        for ($j = 0; $j < count ($choices); $j++) {
 
             $subquestion = NULL;
 
@@ -359,14 +359,14 @@ function process_matching($xml, &$questions) {
             $question->subanswers[] = trim($choice);
 
             $correctanswers = $thisquestion["#"]["GRADABLE"][0]["#"]["CORRECTANSWER"];
-            for ($k = 0; $k < sizeof ($correctanswers); $k++) {
+            for ($k = 0; $k < count ($correctanswers); $k++) {
 
                 if (strcmp($choice_id, $correctanswers[$k]["@"]["choice_id"]) == 0) {
 
                     $answer_id = $correctanswers[$k]["@"]["answer_id"];
 
                     $answers = $thisquestion["#"]["ANSWER"];
-                    for ($m = 0; $m < sizeof ($answers); $m++) {
+                    for ($m = 0; $m < count ($answers); $m++) {
 
                         $answer = $answers[$m];
                         $current_ans_id = $answer["@"]["id"];

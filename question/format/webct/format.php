@@ -272,7 +272,7 @@ class qformat_webct extends qformat_default {
                         $warnings[] = get_string("missingquestion", "quiz", $nQuestionStartLine);
                         $QuestionOK = FALSE;
                     }
-                    if (sizeof($question->answer) < 1) {  // a question must have at least 1 answer
+                    if (count($question->answer) < 1) {  // a question must have at least 1 answer
                        $errors[] = get_string("missinganswer", "quiz", $nQuestionStartLine);
                        $QuestionOK = FALSE;
                     }
@@ -646,8 +646,8 @@ class qformat_webct extends qformat_default {
             }
         }
 
-        if (sizeof($errors) > 0) {
-            echo "<p>".get_string("errorsdetected", "quiz", sizeof($errors))."</p><ul>";
+        if (count($errors) > 0) {
+            echo "<p>".get_string("errorsdetected", "quiz", count($errors))."</p><ul>";
             foreach($errors as $error) {
                 echo "<li>$error</li>";
             }
@@ -655,8 +655,8 @@ class qformat_webct extends qformat_default {
             unset($questions);     // no questions imported
         }
 
-        if (sizeof($warnings) > 0) {
-            echo "<p>".get_string("warningsdetected", "quiz", sizeof($warnings))."</p><ul>";
+        if (count($warnings) > 0) {
+            echo "<p>".get_string("warningsdetected", "quiz", count($warnings))."</p><ul>";
             foreach($warnings as $warning) {
                 echo "<li>$warning</li>";
             }

@@ -523,7 +523,7 @@ class phpCAS {
 		$file = '?';
 		$line = '?';
 		if (is_array($dbg)) {
-			for ($i = 1; $i < sizeof($dbg); $i++) {
+			for ($i = 1; $i < count($dbg); $i++) {
 				if (is_array($dbg[$i])) {
 					if ($dbg[$i]['class'] == __CLASS__) {
 						$function = $dbg[$i]['function'];

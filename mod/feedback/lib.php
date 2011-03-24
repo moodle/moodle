@@ -2300,7 +2300,7 @@ function feedback_get_completeds_group_count($feedback, $groupid = false, $cours
         return false;
     }
     if($values = feedback_get_completeds_group($feedback, $groupid)) {
-        return sizeof($values);
+        return count($values);
     }else {
         return false;
     }

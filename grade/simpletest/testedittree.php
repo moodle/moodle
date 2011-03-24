@@ -46,7 +46,7 @@ class gradeedittreelib_test extends UnitTestCase {
         $numinput = array( 0,   1,   1.01, '1.010', 1.2345);
         $numoutput = array(0.0, 1.0, 1.01,  1.01,   1.2345);
 
-        for ($i=0; $i<sizeof($numinput); $i++) {
+        for ($i=0; $i<count($numinput); $i++) {
             $msg = 'format_number() testing '.$numinput[$i].' %s';
             $this->assertEqual(grade_edit_tree::format_number($numinput[$i]),$numoutput[$i],$msg);
         }

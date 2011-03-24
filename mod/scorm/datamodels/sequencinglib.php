@@ -459,7 +459,7 @@ function scorm_seq_rule_check ($sco, $rule){
         return $cond;
     }
 
-    $size= sizeof($bag);
+    $size= count($bag);
     $i=0;
 
     if ($rule->conditioncombination = 'all'){
@@ -819,7 +819,7 @@ function scorm_seq_rollup_rule_check ($sco,$userid,$action){
                         if($itm === true){
                             $cont++;
                         }
-                        if(($cont/sizeof($childrenbag)) >= $rolluprule->minimumcount){
+                        if(($cont/count($childrenbag)) >= $rolluprule->minimumcount){
                             $change = true;
                         }
                     }
@@ -1384,7 +1384,7 @@ function scorm_seq_flow_tree_traversal ($activity,$direction,$childrenflag,$prev
     $revdirection = false;
     $parent = scorm_get_parent ($activity);
     $children = scorm_get_available_children ($parent);
-    $siz = sizeof ($children);
+    $siz = count ($children);
 
     if (($prevdirection != null && $prevdirection == 'backward') && ($children[$siz-1]->id == $activity->id)){
         $direction = 'backward';
@@ -1396,7 +1396,7 @@ function scorm_seq_flow_tree_traversal ($activity,$direction,$childrenflag,$prev
         $ancestors = scorm_get_ancestors($activity);
         $ancestorsroot = array_reverse($ancestors);
         $preorder = scorm_get_preorder ($ancestorsroot);
-        $siz= sizeof ($preorder);
+        $siz= count ($preorder);
         if (($activity->id == $preorder[$siz-1]->id) || (($activity->parent == '/') && !($childrenflag))){
             scorm_seq_terminate_descent($ancestorsroot,$userid);
             $seq->endsession = true;
@@ -1416,7 +1416,7 @@ function scorm_seq_flow_tree_traversal ($activity,$direction,$childrenflag,$prev
                 $sib = scorm_get_siblings($activity);
                 $pos = array_search($sib, $activity);
                 if ($pos !== false) {
-                    if ($pos != sizeof ($sib)){
+                    if ($pos != count ($sib)){
                         $seq->nextactivity = $sib [$pos+1];
                         return $seq;
                     }
@@ -1490,7 +1490,7 @@ function scorm_seq_flow_tree_traversal ($activity,$direction,$childrenflag,$prev
                  else{
                      $children = scorm_get_children ($activity);
                      $seq->traversaldir = 'backward';
-                     $seq->nextactivity = $children[sizeof($children)-1];
+                     $seq->nextactivity = $children[count($children)-1];
                      return $seq;
                  }
 
@@ -1729,7 +1729,7 @@ function scorm_seq_choice_sequencing($sco,$userid,$seq){
         $i=0;
         foreach ($curtarget as $activ){
             $i++;
-            if ($i != sizeof($curtarget)){
+            if ($i != count($curtarget)){
                 if ( isset($activ->choiceexit) && ($activ->choiceexit == false)){
                     $seq->delivery = null;
                     $seq->exception = 'SB.2.9-7';
@@ -1866,7 +1866,7 @@ function scorm_seq_choice_flow_tree ($constrained, $traverse, $seq){
     $parent = scorm_get_parent ($constrained);
     if ($traverse== 'forward'){
         $preord = scorm_get_preorder ($constrained);
-        if (sizeof($preorder) == 0 || (sizeof($preorder) == 0 && $preorder[0]->id = $constrained->id)){ // TODO: undefined
+        if (count($preorder) == 0 || (count($preorder) == 0 && $preorder[0]->id = $constrained->id)){ // TODO: undefined
             $islast = true;//the function is the last activity available
         }
         if ($constrained->parent == '/' || $islast){
@@ -1874,13 +1874,13 @@ function scorm_seq_choice_flow_tree ($constrained, $traverse, $seq){
             return $seq;
         }
         $avchildren = scorm_get_available_children ($parent);//available children
-        if ($avchildren [sizeof($avchildren)-1]->id == $constrained->id){
+        if ($avchildren [count($avchildren)-1]->id == $constrained->id){
             $seq = scorm_seq_choice_flow_tree ($parent, 'forward', $seq);
             return $seq;
         }
         else{
             $i=0;
-            while($i < sizeof($avchildren)){
+            while($i < count($avchildren)){
                 if ($avchildren [$i]->id == $constrained->id){
                     $seq->nextactivity = $avchildren [$i+1];
                     return $seq;
@@ -1905,7 +1905,7 @@ function scorm_seq_choice_flow_tree ($constrained, $traverse, $seq){
             return $seq;
         }
         else{
-            $i=sizeof($avchildren)-1;
+            $i=count($avchildren)-1;
             while($i >=0){
                 if ($avchildren [$i]->id == $constrained->id){
                     $seq->nextactivity = $avchildren [$i-1];
@@ -2141,7 +2141,7 @@ function scorm_randomize_children_process($scoid,$userid){
                         if(scorm_seq_is('randomizechildren',$scoid,$userid)){
                             $childlist = array();
                             $res = scorm_get_available_children($sco);
-                            $i = sizeof($res)-1;
+                            $i = count($res)-1;
                             $children = $res->value;
 
                             while ($i>=0){

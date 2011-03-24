@@ -228,7 +228,7 @@ function tag_print_search_results($query,  $page, $perpage, $return=false) {
 
     $query = array_shift(tag_normalize($query, TAG_CASE_ORIGINAL));
 
-    $count = sizeof(tag_find_tags($query, false));
+    $count = count(tag_find_tags($query, false));
     $tags = array();
 
     if ( $found_tags = tag_find_tags($query, true,  $page * $perpage, $perpage) ) {
@@ -254,7 +254,7 @@ function tag_print_search_results($query,  $page, $perpage, $return=false) {
         }
 
         $nr_of_lis_per_ul = 6;
-        $nr_of_uls = ceil( sizeof($tags) / $nr_of_lis_per_ul );
+        $nr_of_uls = ceil( count($tags) / $nr_of_lis_per_ul );
 
         $output .= '<ul id="tag-search-results">';
         for($i = 0; $i < $nr_of_uls; $i++) {

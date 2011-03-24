@@ -109,7 +109,7 @@ echo '<b>'.get_string('completed_feedbacks', 'feedback').': '.$completedscount. 
 $items = $DB->get_records('feedback_item', array('feedback'=>$feedback->id, 'hasvalue'=>1), 'position');
 //show the count
 if(is_array($items)){
-    echo '<b>'.get_string('questions', 'feedback').': ' .sizeof($items). ' </b><hr />';
+    echo '<b>'.get_string('questions', 'feedback').': ' .count($items). ' </b><hr />';
 } else {
     $items=array();
 }

@@ -130,7 +130,7 @@ class feedback_item_info extends feedback_item_base {
         $data = $analysed_item->data;
         if (is_array($data)) {
             echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;('. $item->label .') ' . $item->name .'</th></tr>';
-            $sizeofdata = sizeof($data);
+            $sizeofdata = count($data);
             for ($i = 0; $i < $sizeofdata; $i++) {
                 echo '<tr><td colspan="2" valign="top" align="left">-&nbsp;&nbsp;' . str_replace("\n", '<br />', $data[$i]->show) . '</td></tr>';
             }
@@ -149,7 +149,7 @@ class feedback_item_info extends feedback_item_base {
             // $worksheet->setFormat("<l><ro2><vo>");
             $worksheet->write_string($rowOffset, 2, $data[0]->show, $xlsFormats->value_bold);
             $rowOffset++;
-            $sizeofdata = sizeof($data);
+            $sizeofdata = count($data);
             for ($i = 1; $i < $sizeofdata; $i++) {
                 // $worksheet->setFormat("<l><vo>");
                 $worksheet->write_string($rowOffset, 2, $data[$i]->show, $xlsFormats->default);

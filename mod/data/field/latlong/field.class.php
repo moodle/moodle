@@ -145,11 +145,11 @@ class data_field_latlong extends data_field_base {
                 '@recordid@'=> $content->recordid,
             );
 
-            if(sizeof($servicesshown)==1 && $servicesshown[0]) {
+            if(count($servicesshown)==1 && $servicesshown[0]) {
                 $str .= " <a href='"
                           . str_replace(array_keys($urlreplacements), array_values($urlreplacements), $this->linkoutservices[$servicesshown[0]])
                           ."' title='$servicesshown[0]'>$compasslat, $compasslong</a>";
-            } elseif (sizeof($servicesshown)>1) {
+            } elseif (count($servicesshown)>1) {
                 $str .= "$compasslat, $compasslong\n<select name='jumpto'>";
                 foreach($servicesshown as $servicename){
                     // Add a link to a service

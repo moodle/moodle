@@ -1450,9 +1450,9 @@ class CASClient
 						TRUE/*$bad_response*/,
 						$text_response);
 				}
-				if ( sizeof($success_elements = $tree_response->get_elements_by_tagname("authenticationSuccess")) != 0) {
+				if ( count($success_elements = $tree_response->get_elements_by_tagname("authenticationSuccess")) != 0) {
 					// authentication succeded, extract the user name
-					if ( sizeof($user_elements = $success_elements[0]->get_elements_by_tagname("user")) == 0) {
+					if ( count($user_elements = $success_elements[0]->get_elements_by_tagname("user")) == 0) {
 						phpCAS::trace('<authenticationSuccess> found, but no <user>');
 						$this->authError('ST not validated',
 							$validate_url,
@@ -1464,7 +1464,7 @@ class CASClient
 					phpCAS::trace('user = `'.$user);
 					$this->setUser($user);
 					
-				} else if ( sizeof($failure_elements = $tree_response->get_elements_by_tagname("authenticationFailure")) != 0) {
+				} else if ( count($failure_elements = $tree_response->get_elements_by_tagname("authenticationFailure")) != 0) {
 					phpCAS::trace('<authenticationFailure> found');
 					// authentication failed, extract the error code and message
 					$this->authError('ST not validated',
@@ -1558,7 +1558,7 @@ class CASClient
 						$text_response);
 				}
 				// check for the NameIdentifier tag in the SAML response
-				if ( sizeof($success_elements = $tree_response->get_elements_by_tagname("NameIdentifier")) != 0) {
+				if ( count($success_elements = $tree_response->get_elements_by_tagname("NameIdentifier")) != 0) {
 					phpCAS::trace('NameIdentifier found');
 					$user = trim($success_elements[0]->get_content());
 					phpCAS::trace('user = `'.$user.'`');
@@ -1971,7 +1971,7 @@ class CASClient
 		{
 		// here cannot use phpCAS::traceBegin(); alongside domxml-php4-to-php5.php
 		phpCAS::log('start validatePGT()');
-		if ( sizeof($arr = $tree_response->get_elements_by_tagname("proxyGrantingTicket")) == 0) {
+		if ( count($arr = $tree_response->get_elements_by_tagname("proxyGrantingTicket")) == 0) {
 			phpCAS::trace('<proxyGrantingTicket> not found');
 			// authentication succeded, but no PGT Iou was transmitted
 			$this->authError('Ticket validated but no PGT Iou transmitted',
@@ -2077,9 +2077,9 @@ class CASClient
 		
 		if ( !$bad_response ) {
 			// look for a proxySuccess tag
-			if ( sizeof($arr = $root->get_elements_by_tagname("proxySuccess")) != 0) {
+			if ( count($arr = $root->get_elements_by_tagname("proxySuccess")) != 0) {
 				// authentication succeded, look for a proxyTicket tag
-				if ( sizeof($arr = $root->get_elements_by_tagname("proxyTicket")) != 0) {
+				if ( count($arr = $root->get_elements_by_tagname("proxyTicket")) != 0) {
 					$err_code = PHPCAS_SERVICE_OK;
 					$err_msg = '';
 					phpCAS::trace('original PT: '.trim($arr[0]->get_content()));
@@ -2091,7 +2091,7 @@ class CASClient
 				}
 			} 
 			// look for a proxyFailure tag
-			else if ( sizeof($arr = $root->get_elements_by_tagname("proxyFailure")) != 0) {
+			else if ( count($arr = $root->get_elements_by_tagname("proxyFailure")) != 0) {
 				// authentication failed, extract the error
 				$err_code = PHPCAS_SERVICE_PT_FAILURE;
 				$err_msg = 'PT retrieving failed (code=`'
@@ -2567,9 +2567,9 @@ class CASClient
 				TRUE/*$bad_response*/,
 				$text_response);
 		}
-		if ( sizeof($arr = $tree_response->get_elements_by_tagname("authenticationSuccess")) != 0) {
+		if ( count($arr = $tree_response->get_elements_by_tagname("authenticationSuccess")) != 0) {
 			// authentication succeded, extract the user name
-			if ( sizeof($arr = $tree_response->get_elements_by_tagname("user")) == 0) {
+			if ( count($arr = $tree_response->get_elements_by_tagname("user")) == 0) {
 				// no user specified => error
 				$this->authError('PT not validated',
 					$validate_url,
@@ -2579,7 +2579,7 @@ class CASClient
 			}
 			$this->setUser(trim($arr[0]->get_content()));
 			
-		} else if ( sizeof($arr = $tree_response->get_elements_by_tagname("authenticationFailure")) != 0) {
+		} else if ( count($arr = $tree_response->get_elements_by_tagname("authenticationFailure")) != 0) {
 			// authentication succeded, extract the error code and message
 			$this->authError('PT not validated',
 				$validate_url,

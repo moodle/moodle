@@ -139,7 +139,7 @@ function xml_depth($vals, &$i) {
 
                 if ( isset ( $children[$tagname] ) )
                 {
-                    $size = sizeof($children[$tagname]);
+                    $size = count($children[$tagname]);
                 } else {
                     $size = 0;
                 }
@@ -163,7 +163,7 @@ function xml_depth($vals, &$i) {
 
                 if( isset ($children[$tagname]) )
                 {
-                    $size = sizeof($children[$tagname]);
+                    $size = count($children[$tagname]);
                 } else {
                     $size = 0;
                 }

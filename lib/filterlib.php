@@ -1024,7 +1024,7 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
     filter_save_tags($text,$tags);
 
 /// Time to cycle through each phrase to be linked
-    $size = sizeof($link_array);
+    $size = count($link_array);
     for ($n=0; $n < $size; $n++) {
         $linkobject =& $link_array[$n];
 

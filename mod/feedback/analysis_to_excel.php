@@ -171,7 +171,7 @@ if($completedscount > 0){
 
 if(is_array($items)){
     $rowOffset1++;
-    $worksheet1->write_string($rowOffset1, 0, $fstring->questions.': '. strval(sizeof($items)), $xlsFormats->head1);
+    $worksheet1->write_string($rowOffset1, 0, $fstring->questions.': '. strval(count($items)), $xlsFormats->head1);
 }
 
 $rowOffset1 += 2;

@@ -21,11 +21,11 @@ class _WikiDiffOp {
     }
 
     function norig() {
-    	return $this->orig ? sizeof($this->orig) : 0;
+    	return $this->orig ? count($this->orig) : 0;
     }
 
     function nclosing() {
-    	return $this->closing ? sizeof($this->closing) : 0;
+    	return $this->closing ? count($this->closing) : 0;
     }
 }
 
@@ -107,8 +107,8 @@ class _WikiDiffOp_Change extends _WikiDiffOp {
 class _WikiDiffEngine
 {
     function diff ($from_lines, $to_lines) {
-    	$n_from = sizeof($from_lines);
-    	$n_to = sizeof($to_lines);
+    	$n_from = count($from_lines);
+    	$n_to = count($to_lines);
 
     	$this->xchanged = $this->ychanged = array();
     	$this->xv = $this->yv = array();
@@ -151,7 +151,7 @@ class _WikiDiffEngine
     	}
 
     	// Find the LCS.
-    	$this->_compareseq(0, sizeof($this->xv), 0, sizeof($this->yv));
+    	$this->_compareseq(0, count($this->xv), 0, count($this->yv));
 
     	// Merge edits when possible
     	$this->_shift_boundaries($from_lines, $this->xchanged, $this->ychanged);
@@ -381,9 +381,9 @@ class _WikiDiffEngine
     $i = 0;
     $j = 0;
 
-    USE_ASSERTS_IN_WIKI && assert('sizeof($lines) == sizeof($changed)');
-    $len = sizeof($lines);
-    $other_len = sizeof($other_changed);
+    USE_ASSERTS_IN_WIKI && assert('count($lines) == count($changed)');
+    $len = count($lines);
+    $other_len = count($other_changed);
 
     while (1) {
     	/*
@@ -549,7 +549,7 @@ class WikiDiff
     $lcs = 0;
     	foreach ($this->edits as $edit) {
     		if ($edit->type == 'copy')
-    			$lcs += sizeof($edit->orig);
+    			$lcs += count($edit->orig);
     	}
     return $lcs;
     }
@@ -567,7 +567,7 @@ class WikiDiff
 
     	foreach ($this->edits as $edit) {
     		if ($edit->orig)
-    			array_splice($lines, sizeof($lines), 0, $edit->orig);
+    			array_splice($lines, count($lines), 0, $edit->orig);
     	}
     	return $lines;
     }
@@ -585,7 +585,7 @@ class WikiDiff
 
     	foreach ($this->edits as $edit) {
     		if ($edit->closing)
-    			array_splice($lines, sizeof($lines), 0, $edit->closing);
+    			array_splice($lines, count($lines), 0, $edit->closing);
     	}
     	return $lines;
     }
@@ -653,23 +653,23 @@ extends WikiDiff
     function MappedWikiDiff($from_lines, $to_lines,
     					$mapped_from_lines, $mapped_to_lines) {
 
-    	assert(sizeof($from_lines) == sizeof($mapped_from_lines));
-    	assert(sizeof($to_lines) == sizeof($mapped_to_lines));
+    	assert(count($from_lines) == count($mapped_from_lines));
+    	assert(count($to_lines) == count($mapped_to_lines));
 
     	$this->WikiDiff($mapped_from_lines, $mapped_to_lines);
 
     	$xi = $yi = 0;
-    	for ($i = 0; $i < sizeof($this->edits); $i++) {
+    	for ($i = 0; $i < count($this->edits); $i++) {
     		$orig = &$this->edits[$i]->orig;
     		if (is_array($orig)) {
-    			$orig = array_slice($from_lines, $xi, sizeof($orig));
-    			$xi += sizeof($orig);
+    			$orig = array_slice($from_lines, $xi, count($orig));
+    			$xi += count($orig);
     		}
 
     		$closing = &$this->edits[$i]->closing;
     		if (is_array($closing)) {
-    			$closing = array_slice($to_lines, $yi, sizeof($closing));
-    			$yi += sizeof($closing);
+    			$closing = array_slice($to_lines, $yi, count($closing));
+    			$yi += count($closing);
     		}
     	}
     }
@@ -720,7 +720,7 @@ class WikiDiffFormatter
     	foreach ($diff->edits as $edit) {
     		if ($edit->type == 'copy') {
     			if (is_array($block)) {
-    				if (sizeof($edit->orig) <= $nlead + $ntrail) {
+    				if (count($edit->orig) <= $nlead + $ntrail) {
     					$block[] = $edit;
     				}
     				else{
@@ -738,9 +738,9 @@ class WikiDiffFormatter
     		}
     		else {
     			if (! is_array($block)) {
-    				$context = array_slice($context, sizeof($context) - $nlead);
-    				$x0 = $xi - sizeof($context);
-    				$y0 = $yi - sizeof($context);
+    				$context = array_slice($context, count($context) - $nlead);
+    				$x0 = $xi - count($context);
+    				$y0 = $yi - count($context);
     				$block = array();
     				if ($context)
     					$block[] = new _WikiWikiDiffOp_Copy($context);
@@ -749,9 +749,9 @@ class WikiDiffFormatter
     		}
 
     		if ($edit->orig)
-    			$xi += sizeof($edit->orig);
+    			$xi += count($edit->orig);
     		if ($edit->closing)
-    			$yi += sizeof($edit->closing);
+    			$yi += count($edit->closing);
     	}
 
     	if (is_array($block))
