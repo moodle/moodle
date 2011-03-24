@@ -1209,7 +1209,7 @@ function wiki_print_page_content($page, $context, $subwikiid) {
             $url = new moodle_url('/tag/index.php', array('tag'=>$tag));
             $links[] = html_writer::link($url, $tag, array('title'=>get_string('tagtitle', 'wiki', $tag)));
         }
-        echo join($links, ", ");
+        echo implode($links, ", ");
         echo $OUTPUT->container_end();
     }
 

@@ -1819,7 +1819,7 @@ class page_wiki_map extends page_wiki {
             if ($item->isactive === true) {
                 $liclasses[] = 'current_branch';
             }
-            $liattr = array('class' => join(' ', $liclasses));
+            $liattr = array('class' => implode(' ', $liclasses));
             // class attribute on the div item which only contains the item content
             $divclasses = array('tree_item');
             if ((empty($expansionlimit) || $item->type != $expansionlimit) && ($item->children->count() > 0 || ($item->nodetype == navigation_node::NODETYPE_BRANCH && $item->children->count() == 0 && isloggedin()))) {
@@ -1828,9 +1828,9 @@ class page_wiki_map extends page_wiki {
                 $divclasses[] = 'leaf';
             }
             if (!empty($item->classes) && count($item->classes) > 0) {
-                $divclasses[] = join(' ', $item->classes);
+                $divclasses[] = implode(' ', $item->classes);
             }
-            $divattr = array('class' => join(' ', $divclasses));
+            $divattr = array('class' => implode(' ', $divclasses));
             if (!empty($item->id)) {
                 $divattr['id'] = $item->id;
             }

@@ -220,7 +220,7 @@ class restore_ui extends base_ui {
             } else if ($stage < $currentstage) {
                 $classes[] = 'backup_stage_complete';
             }
-            $item = array('text' => strlen(decbin($stage)).'. '.get_string('restorestage'.$stage, 'backup'),'class' => join(' ', $classes));
+            $item = array('text' => strlen(decbin($stage)).'. '.get_string('restorestage'.$stage, 'backup'),'class' => implode(' ', $classes));
             if ($stage < $currentstage && $currentstage < self::STAGE_COMPLETE && $stage > self::STAGE_DESTINATION) {
                 $item['link'] = new moodle_url($PAGE->url, array('restore'=>$this->get_restoreid(), 'stage'=>$stage));
             }

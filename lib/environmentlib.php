@@ -274,7 +274,7 @@ function print_moodle_environment($result, $environment_results) {
             if (empty($CFG->docroot)) {
                 $report = get_string($stringtouse, 'admin', $rec);
             } else {
-                $report = $OUTPUT->doc_link(join($linkparts, '/'), get_string($stringtouse, 'admin', $rec));
+                $report = $OUTPUT->doc_link(implode($linkparts, '/'), get_string($stringtouse, 'admin', $rec));
             }
 
 

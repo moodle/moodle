@@ -40,7 +40,7 @@ if ($version == 'moodle' && count($parts) >= 3) {
     $frankenstyle = array_shift($parts);
     $module = array_shift($parts);
     $image = array_pop($parts);
-    $subdir = join('/', $parts);
+    $subdir = implode('/', $parts);
     $dir = get_component_directory($frankenstyle);
     $imagepath = $dir.'/yui/'.$module.'/assets/skins/sam/'.$image;
 } else if ($version == 'gallery' && count($parts)==3) {

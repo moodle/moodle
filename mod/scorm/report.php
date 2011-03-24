@@ -169,7 +169,7 @@
                         $nostudents = true;
                         $allowedlist = '';
                     } else {
-                        $allowedlist = join(',',array_keys($students));
+                        $allowedlist = implode(',',array_keys($students));
                     }
                 } else {
                     // all users who can attempt scoes and who are in the currently selected group
@@ -178,7 +178,7 @@
                         $nostudents = true;
                         $groupstudents = array();
                     }
-                    $allowedlist = join(',', array_keys($groupstudents));
+                    $allowedlist = implode(',', array_keys($groupstudents));
                 }
 
                 if( !$nostudents ) {

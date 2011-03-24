@@ -1772,7 +1772,7 @@ function validate_' . $this->_formName . '_' . $escapedElementName . '(element) 
   while (frm && frm.nodeName.toUpperCase() != "FORM") {
     frm = frm.parentNode;
   }
-' . join("\n", $jsArr) . '
+' . implode("\n", $jsArr) . '
   return qf_errorHandler(element, _qfMsg);
 }
 ';

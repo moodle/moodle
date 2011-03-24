@@ -486,7 +486,7 @@ class core_calendar_renderer extends plugin_renderer_base {
             } else {
                 $cellclasses[] = 'nottoday';
             }
-            $cell->attributes = array('class'=>join(' ',$cellclasses));
+            $cell->attributes = array('class'=>implode(' ',$cellclasses));
 
             if (isset($eventsbyday[$calendar->day])) {
                 $cell->text .= html_writer::start_tag('ul', array('class'=>'events-new'));

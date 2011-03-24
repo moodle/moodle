@@ -141,7 +141,7 @@ foreach ($themes as $themename => $themedir) {
     $row[] = $infocell;
 
     $table->data[$themename] = $row;
-    $table->rowclasses[$themename] = join(' ', $rowclasses);
+    $table->rowclasses[$themename] = implode(' ', $rowclasses);
 }
 
 echo html_writer::table($table);

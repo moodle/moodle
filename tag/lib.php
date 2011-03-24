@@ -892,7 +892,7 @@ function tag_process_computed_correlation(stdClass $tagcorrelation) {
     // The row tagid doesn't match the current tag id which means we are onto
     // the next tag. Before we switch over we need to either insert or update
     // the correlation.
-    $tagcorrelation->correlatedtags = join(',', $tagcorrelation->correlatedtags);
+    $tagcorrelation->correlatedtags = implode(',', $tagcorrelation->correlatedtags);
     if (!empty($tagcorrelation->id)) {
         // The tag correlation already exists so update it
         $DB->update_record('tag_correlation', $tagcorrelation);

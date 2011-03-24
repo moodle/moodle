@@ -77,7 +77,7 @@ foreach ($parts as $part) {
             $bits[] = 'skins';
             $bits[] = 'sam';
         }
-        $contentfile = $dir.'/yui/'.join('/', $bits).'/'.$filename;
+        $contentfile = $dir.'/yui/'.implode('/', $bits).'/'.$filename;
     } else {
         if ($version != $CFG->yui3version and $version != $CFG->yui2version and $version != 'gallery') {
             $content .= "\n// Wrong yui version $part!\n";

@@ -457,7 +457,7 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
                 }
             }
         }
-        $html = empty($value)? '&nbsp;': join('<br />', $value);
+        $html = empty($value)? '&nbsp;': implode('<br />', $value);
         if ($this->_persistantFreeze) {
             $name = $this->getPrivateName();
             // Only use id attribute if doing single hidden input

@@ -162,7 +162,7 @@ class backup_ui extends base_ui {
             } else if ($stage < $currentstage) {
                 $classes[] = 'backup_stage_complete';
             }
-            $item = array('text' => strlen(decbin($stage)).'. '.get_string('currentstage'.$stage, 'backup'),'class' => join(' ', $classes));
+            $item = array('text' => strlen(decbin($stage)).'. '.get_string('currentstage'.$stage, 'backup'),'class' => implode(' ', $classes));
             if ($stage < $currentstage && $currentstage < self::STAGE_COMPLETE && (!self::$skipcurrentstage || ($stage*2) != $currentstage)) {
                 $params = $this->stage->get_params();
                 if (empty($params)) {

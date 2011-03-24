@@ -525,7 +525,7 @@ function enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortorder AS
         $params['loginas'] = $USER->loginascontext->instanceid;
     }
 
-    $coursefields = 'c.' .join(',c.', $fields);
+    $coursefields = 'c.' .implode(',c.', $fields);
     list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
     $wheres = implode(" AND ", $wheres);
 
@@ -694,7 +694,7 @@ function enrol_get_users_courses($userid, $onlyactive = false, $fields = NULL, $
         $subwhere = "";
     }
 
-    $coursefields = 'c.' .join(',c.', $fields);
+    $coursefields = 'c.' .implode(',c.', $fields);
     list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
 
     //note: we can not use DISTINCT + text fields due to Oracle and MS limitations, that is why we have the subselect there

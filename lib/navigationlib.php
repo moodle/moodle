@@ -3749,7 +3749,7 @@ class navigation_json {
         }
 
         if (count($child->classes)>0) {
-            $attributes['class'] .= ' '.join(' ',$child->classes);
+            $attributes['class'] .= ' '.implode(' ',$child->classes);
         }
         if (is_string($child->action)) {
             $attributes['link'] = $child->action;

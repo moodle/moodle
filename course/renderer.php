@@ -107,7 +107,7 @@ class core_course_renderer extends plugin_renderer_base {
                 $classes[] = 'collapsed';
             }
         }
-        $content .= html_writer::start_tag('div', array('class'=>join(' ', $classes)));
+        $content .= html_writer::start_tag('div', array('class'=>implode(' ', $classes)));
         $content .= html_writer::start_tag('div', array('class'=>'category_label'));
         $content .= html_writer::link(new moodle_url('/course/category.php', array('id'=>$category->id)), $category->name, array('class'=>'category_link'));
         $content .= html_writer::end_tag('div');
@@ -129,7 +129,7 @@ class core_course_renderer extends plugin_renderer_base {
                 }
                 $coursecount ++;
                 $classes[] = ($coursecount%2)?'odd':'even';
-                $content .= html_writer::start_tag('div', array('class'=>join(' ', $classes)));
+                $content .= html_writer::start_tag('div', array('class'=>implode(' ', $classes)));
                 $content .= html_writer::link(new moodle_url('/course/view.php', array('id'=>$course->id)), format_string($course->fullname), array('class'=>$linkclass));
                 $content .= html_writer::start_tag('div', array('class'=>'course_info clearfix'));
 

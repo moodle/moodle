@@ -1081,7 +1081,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         if ($user_info_result) {
             $user_entry = ldap_get_entries_moodle($ldapconnection, $user_info_result);
             if (empty($user_entry)) {
-                $attribs = join (', ', $search_attribs);
+                $attribs = implode (', ', $search_attribs);
                 error_log($this->errorlogtag.get_string('updateusernotfound', 'auth_ldap',
                                                           array('userdn'=>$user_dn,
                                                                 'attribs'=>$attribs)));

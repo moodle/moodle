@@ -545,7 +545,7 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
     } elseif (is_array($fields)) {
         $fields = array_merge($basefields,$fields);
     }
-    $coursefields = 'c.' .join(',c.', $fields);
+    $coursefields = 'c.' .implode(',c.', $fields);
 
     if (empty($sort)) {
         $sortstatement = "";

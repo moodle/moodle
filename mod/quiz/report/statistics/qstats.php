@@ -214,7 +214,7 @@ class qstats{
             }
             if ($this->subquestions[$qid]->_stats->usedin){
                 sort($this->subquestions[$qid]->_stats->usedin, SORT_NUMERIC);
-                $this->subquestions[$qid]->_stats->positions = join($this->subquestions[$qid]->_stats->usedin, ',');
+                $this->subquestions[$qid]->_stats->positions = implode($this->subquestions[$qid]->_stats->usedin, ',');
             } else {
                 $this->subquestions[$qid]->_stats->positions = '';
             }
@@ -236,7 +236,7 @@ class qstats{
                     }
                 }
                 if (isset($this->randomselectors[$randomselectorstring])){
-                    $question->_stats->subquestions = join($this->randomselectors[$randomselectorstring], ',');
+                    $question->_stats->subquestions = implode($this->randomselectors[$randomselectorstring], ',');
                 }
             }
         } while ($nextquestion);

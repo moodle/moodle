@@ -2344,7 +2344,7 @@ EOD;
             if ($item->isactive === true) {
                 $liclasses[] = 'current_branch';
             }
-            $liattr = array('class'=>join(' ',$liclasses));
+            $liattr = array('class'=>implode(' ',$liclasses));
             // class attribute on the div item which only contains the item content
             $divclasses = array('tree_item');
             if ($item->children->count()>0  || $item->nodetype==navigation_node::NODETYPE_BRANCH) {
@@ -2353,9 +2353,9 @@ EOD;
                 $divclasses[] = 'leaf';
             }
             if (!empty($item->classes) && count($item->classes)>0) {
-                $divclasses[] = join(' ', $item->classes);
+                $divclasses[] = implode(' ', $item->classes);
             }
-            $divattr = array('class'=>join(' ', $divclasses));
+            $divattr = array('class'=>implode(' ', $divclasses));
             if (!empty($item->id)) {
                 $divattr['id'] = $item->id;
             }
@@ -2393,7 +2393,7 @@ EOD;
 
         //accessibility: heading for navbar list  (MDL-20446)
         $navbarcontent = html_writer::tag('span', get_string('pagepath'), array('class'=>'accesshide'));
-        $navbarcontent .= html_writer::tag('ul', join('', $htmlblocks));
+        $navbarcontent .= html_writer::tag('ul', implode('', $htmlblocks));
         // XHTML
         return $navbarcontent;
     }

@@ -369,7 +369,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                                cc.name AS cat_name, cc.description AS cat_description
                           FROM {course} c
                           JOIN {course_categories} cc ON c.category = cc.id
-                         WHERE c.id IN (" . join(',',array_keys($courses)) . ')';
+                         WHERE c.id IN (" . implode(',',array_keys($courses)) . ')';
                 $extra = $DB->get_records_sql($sql);
 
                 $keys = array_keys($courses);
@@ -742,7 +742,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 }
             } else {
                 debugging("Server side error has occured on host $mnethostid: " .
-                          join("\n", $mnet_request->error));
+                          implode("\n", $mnet_request->error));
                 break;
             }
             $mnethostlogssql = "
@@ -821,7 +821,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                     debugging($mnet_request->response['message']);
                 }
             } else {
-                debugging("Server side error has occured on host $mnet_peer->ip: " .join("\n", $mnet_request->error));
+                debugging("Server side error has occured on host $mnet_peer->ip: " .implode("\n", $mnet_request->error));
             }
         }
     }
@@ -1006,7 +1006,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnet_request->add_param($username);
             $mnet_request->add_param($useragent);
             if ($mnet_request->send($mnet_peer) === false) {
-                debugging(join("\n", $mnet_request->error));
+                debugging(implode("\n", $mnet_request->error));
                 return false;
             }
         }
@@ -1060,7 +1060,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnet_request->add_param($useragent);
             if ($mnet_request->send($mnet_peer) === false) {
                 debugging("Server side error has occured on host $mnetsession->mnethostid: " .
-                          join("\n", $mnet_request->error));
+                          implode("\n", $mnet_request->error));
             }
         }
 

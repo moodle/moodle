@@ -416,7 +416,7 @@ class course_enrolment_table extends html_table implements renderable {
 
                     }
                 }
-                $newlabel = join(' / ', $bits);
+                $newlabel = implode(' / ', $bits);
             } else {
                 if (!in_array($name, self::$sortablefields)) {
                     $newlabel = $label;
@@ -471,7 +471,7 @@ class course_enrolment_table extends html_table implements renderable {
                     if (empty($bits)) {
                         $bits[] = '&nbsp;';
                     }
-                    $row->cells[] = new html_table_cell(join(' ', $bits));
+                    $row->cells[] = new html_table_cell(implode(' ', $bits));
                 } else {
                     if (!array_key_exists($field, $user)) {
                         $user[$field] = '&nbsp;';

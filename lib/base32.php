@@ -190,7 +190,7 @@ function Base32_decode($inString) {
         $deArr[$i] = chr(bindec(substr($deCompBits, $i*8, 8)));
     }
     
-    $outString = join('',$deArr);
+    $outString = implode('',$deArr);
     
     return $outString;
 }

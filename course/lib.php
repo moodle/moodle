@@ -1503,7 +1503,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             if ($extraclasses) {
                 $liclasses = array_merge($liclasses, explode(' ', $extraclasses));
             }
-            echo html_writer::start_tag('li', array('class'=>join(' ', $liclasses), 'id'=>'module-'.$modnumber));
+            echo html_writer::start_tag('li', array('class'=>implode(' ', $liclasses), 'id'=>'module-'.$modnumber));
             if ($ismoving) {
                 echo '<a title="'.$strmovefull.'"'.
                      ' href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.sesskey().'">'.
@@ -1519,7 +1519,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     $classes[] = 'mod-indent-huge';
                 }
             }
-            echo html_writer::start_tag('div', array('class'=>join(' ', $classes)));
+            echo html_writer::start_tag('div', array('class'=>implode(' ', $classes)));
 
             // Get data about this course-module
             list($content, $instancename) =

@@ -51,7 +51,7 @@ class block_settings_renderer extends plugin_renderer_base {
             if ($item->isactive === true) {
                 $liclasses[] = 'current_branch';
             }
-            $liattr = array('class'=>join(' ',$liclasses));
+            $liattr = array('class'=>implode(' ',$liclasses));
             // class attribute on the div item which only contains the item content
             $divclasses = array('tree_item');
             if ($isbranch) {
@@ -60,9 +60,9 @@ class block_settings_renderer extends plugin_renderer_base {
                 $divclasses[] = 'leaf';
             }
             if (!empty($item->classes) && count($item->classes)>0) {
-                $divclasses[] = join(' ', $item->classes);
+                $divclasses[] = implode(' ', $item->classes);
             }
-            $divattr = array('class'=>join(' ', $divclasses));
+            $divattr = array('class'=>implode(' ', $divclasses));
             if (!empty($item->id)) {
                 $divattr['id'] = $item->id;
             }

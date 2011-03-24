@@ -116,7 +116,7 @@ abstract class restore_ui_independent_stage {
             } else if ($stage < $currentstage) {
                 $classes[] = 'backup_stage_complete';
             }
-            $item = array('text' => strlen(decbin($stage)).'. '.get_string('restorestage'.$stage, 'backup'),'class' => join(' ', $classes));
+            $item = array('text' => strlen(decbin($stage)).'. '.get_string('restorestage'.$stage, 'backup'),'class' => implode(' ', $classes));
             if ($stage < $currentstage && $currentstage < restore_ui::STAGE_COMPLETE) {
                 //$item['link'] = new moodle_url($PAGE->url, array('restore'=>$this->get_restoreid(), 'stage'=>$stage));
             }

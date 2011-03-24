@@ -1818,7 +1818,7 @@ function highlightfast($needle, $haystack) {
         $pos += strlen($needle);
     }
 
-    return str_replace('<span class="highlight"></span>', '', join('', $parts));
+    return str_replace('<span class="highlight"></span>', '', implode('', $parts));
 }
 
 /**
@@ -3277,7 +3277,7 @@ function print_password_policy() {
             $messages[] = get_string('informminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum);
         }
 
-        $messages = join(', ', $messages); // this is ugly but we do not have anything better yet...
+        $messages = implode(', ', $messages); // this is ugly but we do not have anything better yet...
         $message = get_string('informpasswordpolicy', 'auth', $messages);
     }
     return $message;

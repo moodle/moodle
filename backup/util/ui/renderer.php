@@ -53,7 +53,7 @@ class core_backup_renderer extends plugin_renderer_base {
                 $item = html_writer::tag('span', $text, $item);
             }
         }
-        return html_writer::tag('div', join(get_separator(), $items), array('class'=>'backup_progress clearfix'));
+        return html_writer::tag('div', implode(get_separator(), $items), array('class'=>'backup_progress clearfix'));
     }
     /**
      * Prints a dependency notification

@@ -515,7 +515,7 @@ abstract class list_item {
         } elseif (is_object($this->item)) {
             //for debug purposes only. You should create a sub class to
             //properly handle the record
-            $html = join(', ', (array)$this->item);
+            $html = implode(', ', (array)$this->item);
         }
         return $html;
     }
@@ -539,7 +539,7 @@ abstract class list_item {
         } else {
             $childrenhtml = '';
         }
-        return $this->item_html($extraargs).'&nbsp;'.(join($this->icons, '')).(($childrenhtml !='')?("\n".$childrenhtml):'');
+        return $this->item_html($extraargs).'&nbsp;'.(implode($this->icons, '')).(($childrenhtml !='')?("\n".$childrenhtml):'');
     }
 
     public function set_icon_html($first, $last, $lastitem) {

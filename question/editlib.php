@@ -1595,7 +1595,7 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
     foreach ($contexts->having_one_edit_tab_cap($edittab) as $context){
         $contextlistarr[] = "'$context->id'";
     }
-    $contextlist = join($contextlistarr, ' ,');
+    $contextlist = implode($contextlistarr, ' ,');
     if (!empty($pagevars['cat'])){
         $catparts = explode(',', $pagevars['cat']);
         if (!$catparts[0] || (FALSE !== array_search($catparts[1], $contextlistarr)) ||

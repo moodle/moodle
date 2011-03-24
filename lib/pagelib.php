@@ -1388,7 +1388,7 @@ class moodle_page {
 
         $pathbits = explode('-', trim($pagetype));
         for ($i=1;$i<count($pathbits);$i++) {
-            $this->add_body_class('path-'.join('-',array_slice($pathbits, 0, $i)));
+            $this->add_body_class('path-'.implode('-',array_slice($pathbits, 0, $i)));
         }
 
         $this->add_body_classes(get_browser_version_classes());

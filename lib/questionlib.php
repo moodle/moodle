@@ -2487,7 +2487,7 @@ function question_category_options($contexts, $top = false, $currentcat = 0, $po
     foreach($contexts as $context){
         $pcontexts[] = $context->id;
     }
-    $contextslist = join($pcontexts, ', ');
+    $contextslist = implode($pcontexts, ', ');
 
     $categories = get_categories_for_contexts($contextslist);
 
@@ -3049,7 +3049,7 @@ class question_edit_contexts {
      */
      public function require_one_cap($caps) {
         if (!$this->have_one_cap($caps)) {
-            $capsstring = join($caps, ', ');
+            $capsstring = implode($caps, ', ');
             print_error('nopermissions', '', '', $capsstring);
         }
     }

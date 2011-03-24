@@ -580,7 +580,7 @@ function upgrade_cleanup_unwanted_block_contexts($contextidarray) {
         return;
     }
 
-    $contextidstring = join(',', $contextidarray);
+    $contextidstring = implode(',', $contextidarray);
 
     $blockcontexts = $DB->get_recordset_select('context', 'contextlevel = '.CONTEXT_BLOCK.' AND id IN ('.$contextidstring.')', array(), '', 'id, contextlevel');
     $blockcontextids = array();
@@ -593,7 +593,7 @@ function upgrade_cleanup_unwanted_block_contexts($contextidarray) {
         return;
     }
 
-    $blockcontextidsstring = join(',', $blockcontextids);
+    $blockcontextidsstring = implode(',', $blockcontextids);
 
     $DB->delete_records_select('role_assignments', 'contextid IN ('.$blockcontextidsstring.')');
     $DB->delete_records_select('role_capabilities', 'contextid IN ('.$blockcontextidsstring.')');
