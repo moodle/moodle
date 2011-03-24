@@ -1005,7 +1005,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
 
         // Apply any unit that is present.
-        if (ereg('^([+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?)([^0-9].*)?$',
+        if (preg_match('/^([+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?)([^0-9].*)?$/',
                 $rawresponse, $responseparts)) {
            //     echo"<p> responseparts <pre>";print_r($responseparts) ;echo"</pre></p>";
 
