@@ -37,7 +37,7 @@ class mnet_xmlrpc_client {
      * $return  bool            True if param is an integer or integer string
      */
     function set_timeout($timeout) {
-        if (!is_integer($timeout)) {
+        if (!is_int($timeout)) {
             if (is_numeric($timeout)) {
                 $this->timeout = (integer)$timeout;
                 return true;
