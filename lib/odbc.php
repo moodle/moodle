@@ -60,7 +60,7 @@ class ODBCSocketServer {
             $sSQL = HTMLSpecialChars($sSQL);
             $sSend = "<?xml version=\"1.0\"?>\r\n<request>\r\n<connectionstring>$this->sConnectionString</connectionstring>\r\n<sql>$sSQL</sql>\r\n</request>\r\n";
             //write request
-            fputs($fToOpen, $sSend);
+            fwrite($fToOpen, $sSend);
             //now read response
             while (!feof($fToOpen))
             {

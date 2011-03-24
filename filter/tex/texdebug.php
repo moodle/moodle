@@ -237,7 +237,7 @@
         $output .= "<p>Processing TeX expression:</p><pre>$expression</pre>\n";
         $doc = $latex->construct_latex_document($expression);
         $fh = fopen($tex, 'w');
-        fputs($fh, $doc);
+      	fwrite($fh, $doc);
         fclose($fh);
 
         // cd to temp dir

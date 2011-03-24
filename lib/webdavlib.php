@@ -304,7 +304,7 @@ class webdav_client {
         // send header
         $this->send_request();
         // send the rest (data)
-        fputs($this->sock, $data);
+        fwrite($this->sock, $data);
         $this->get_respond();
         $response = $this->process_respond();
 
@@ -350,7 +350,7 @@ class webdav_client {
             // send header
             $this->send_request();
             while (!feof($handle)) {
-                fputs($this->sock,fgets($handle,4096));
+                fwrite($this->sock,fgets($handle,4096));
             }
             fclose($handle);
             $this->get_respond();
@@ -480,7 +480,7 @@ class webdav_client {
         $this->header_add('Content-type: application/xml');
         $this->send_request();
         // send also xml
-        fputs($this->sock, $xml);
+        fwrite($this->sock, $xml);
         $this->get_respond();
         $response = $this->process_respond();
         // validate the response ...
@@ -591,7 +591,7 @@ class webdav_client {
         $this->header_add('Content-length: ' . strlen($xml));
         $this->send_request();
         // send also xml
-        fputs($this->sock, $xml);
+        fwrite($this->sock, $xml);
         $this->get_respond();
         $response = $this->process_respond();
         // validate the response ... (only basic validation)
@@ -784,7 +784,7 @@ EOD;
         $this->header_add('Content-length: ' . strlen($xml));
         $this->send_request();
         $this->_error_log($xml);
-        fputs($this->sock, $xml);
+        fwrite($this->sock, $xml);
         $this->get_respond();
         $response = $this->process_respond();
         // validate the response ... (only basic validation)
@@ -1323,7 +1323,7 @@ EOD;
         $buffer = implode("\r\n", $this->_req);
         $buffer .= "\r\n\r\n";
         $this->_error_log($buffer);
-        fputs($this->sock, $buffer);
+        fwrite($this->sock, $buffer);
     }
 
     /**

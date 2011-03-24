@@ -94,14 +94,14 @@ class fcFPP
         if ($this->_conn)
     {
         # Send username
-        fputs($this->_conn,"$userid\r\n");
+        fwrite($this->_conn,"$userid\r\n");
 
         $line = fgets ($this->_conn);        //new line
         $line = fgets ($this->_conn);        //+0
         $line = fgets ($this->_conn);        //new line
 
         # Send password
-        fputs($this->_conn,"$passwd\r\n");
+        fwrite($this->_conn,"$passwd\r\n");
         $line = fgets ($this->_conn);        //new line
         $line = fgets ($this->_conn);        //+0
         $line = fgets ($this->_conn);        //+0 or message
@@ -132,7 +132,7 @@ class fcFPP
     // we must be logged in as a user with subadmin privileges
     if ($this->_conn AND $this->_user) {
         # Send BA-command to get groups
-        fputs($this->_conn,"GET USER '" . $userid . "' 4 -1\r");
+        fwrite($this->_conn,"GET USER '" . $userid . "' 4 -1\r");
         $line = "";
         while (!$line) {
         $line = trim(fgets ($this->_conn));
@@ -169,7 +169,7 @@ class fcFPP
 
     if ($this->_conn AND $this->_user) {
         # Send BA-command to get data
-        fputs($this->_conn,"GET USER '" . $userid . "' " . $field . "\r");
+        fwrite($this->_conn,"GET USER '" . $userid . "' " . $field . "\r");
         $line = "";
         while (!$line) {
             $line = trim(fgets ($this->_conn));
@@ -194,7 +194,7 @@ class fcFPP
 
     if ($this->_conn AND $this->_user) {
         # Send BA-command to get data
-        fputs($this->_conn,"GET RESUME '" . $userid . "' 6\r");
+        fwrite($this->_conn,"GET RESUME '" . $userid . "' 6\r");
         $line = "";
         while (!$line) {
                $line = trim(fgets ($this->_conn));

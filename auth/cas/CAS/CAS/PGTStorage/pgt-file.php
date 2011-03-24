@@ -228,7 +228,7 @@ class PGTStorageFile extends PGTStorage
 	  $fname = $this->getPGTIouFilename($pgt_iou);
 	  if(!file_exists($fname)){
 		  if ( $f=fopen($fname,"w") ) {
-			  if ( fputs($f,$pgt) === FALSE ) {
+			  if ( fwrite($f,$pgt) === FALSE ) {
 				  phpCAS::error('could not write PGT to `'.$fname.'\'');
 			  }
 			  fclose($f);

@@ -119,7 +119,7 @@ class moodle_phpmailer extends PHPMailer {
         $string = preg_replace('/\r\n?/', $this->LE, $string); //Normalise line breaks
         $params = array('line-length' => $line_max, 'line-break-chars' => $this->LE);
         $s = stream_filter_append($fp, 'convert.quoted-printable-encode', STREAM_FILTER_READ, $params);
-        fputs($fp, $string);
+        fwrite($fp, $string);
         rewind($fp);
         $out = stream_get_contents($fp);
         stream_filter_remove($s);

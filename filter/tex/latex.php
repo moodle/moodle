@@ -104,7 +104,7 @@
 
             // turn the latex doc into a .tex file in the temp area
             $fh = fopen( $tex, 'w' );
-            fputs( $fh, $doc );
+            fwrite( $fh, $doc );
             fclose( $fh );
 
             // run latex on document

@@ -104,7 +104,7 @@ if (!$fp) {  /// Could not open a socket to PayPal - FAIL
 
 /// Connection is OK, so now we post the data to validate it
 
-fputs ($fp, $header.$req);
+fwrite ($fp, $header.$req);
 
 /// Now read the response and check if everything is OK.
 
