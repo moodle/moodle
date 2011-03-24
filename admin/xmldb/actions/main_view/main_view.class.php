@@ -153,7 +153,7 @@ class main_view extends XMLDBAction {
             /// The create button
                 if ($dbdir->path_exists &&
                     !file_exists($key . '/install.xml') &&
-                    is_writeable($key)) {
+                    is_writable($key)) {
                     $b .= '<a href="index.php?action=create_xml_file&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['create'] . ']</a>';
                 } else {
                     $b .= '[' . $this->str['create'] . ']';
@@ -183,8 +183,8 @@ class main_view extends XMLDBAction {
             /// The save button
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
-                    is_writeable($key . '/install.xml') &&
-                    is_writeable($key) &&
+                    is_writable($key . '/install.xml') &&
+                    is_writable($key) &&
                     !empty($dbdir->xml_loaded) &&
                     !empty($dbdir->xml_changed)) {
                     $b .= '<a href="index.php?action=save_xml_file&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '&amp;time=' . time() . '&amp;postaction=main_view#lastused">[' . $this->str['save'] . ']</a>';
@@ -222,7 +222,7 @@ class main_view extends XMLDBAction {
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
                     is_readable($key . '/install.xml') &&
-                    is_writeable($key) &&
+                    is_writable($key) &&
                     !empty($dbdir->xml_loaded) &&
                     !empty($dbdir->xml_changed)) {
                     $b .= '<a href="index.php?action=revert_changes&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '">[' . $this->str['revert'] . ']</a>';
@@ -245,7 +245,7 @@ class main_view extends XMLDBAction {
                 if ($dbdir->path_exists &&
                     file_exists($key . '/install.xml') &&
                     is_readable($key . '/install.xml') &&
-                    is_writeable($key) &&
+                    is_writable($key) &&
                     empty($dbdir->xml_loaded)) {
                     $b .= '<a href="index.php?action=delete_xml_file&amp;sesskey=' . sesskey() . '&amp;dir=' . urlencode(str_replace($CFG->dirroot, '', $key)) . '">[' . $this->str['delete'] . ']</a>';
                 } else {
@@ -310,7 +310,7 @@ class main_view extends XMLDBAction {
                     file_exists($key . '/install.xml') &&
                     !empty($dbdir->xml_loaded) &&
                     !empty($dbdir->xml_changed) &&
-                    (!is_writeable($key . '/install.xml') || !is_writeable($key))) {
+                    (!is_writable($key . '/install.xml') || !is_writeable($key))) {
 
                     if ($hithis) {
                         $o .= '<tr class="highlight"><td class="error cell" colspan="10">';

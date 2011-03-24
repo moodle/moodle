@@ -128,7 +128,7 @@ class edit_xml_file extends XMLDBAction {
                 $e = '';
                 $cansavenow = false;
                 if ($structure->hasChanged()) {
-                    if (!is_writeable($dirpath . '/install.xml') || !is_writeable($dirpath)) {
+                    if (!is_writable($dirpath . '/install.xml') || !is_writable($dirpath)) {
                         $e .= '<p class="centerpara error">' . $this->str['pendingchangescannotbesaved'] . '</p>';
                     } else {
                         $e .= '<p class="centerpara warning">' . $this->str['pendingchanges'] . '</p>';

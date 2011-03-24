@@ -8302,7 +8302,7 @@ class SimplePie_Cache_File
 
 	public function save($data)
 	{
-		if (file_exists($this->name) && is_writeable($this->name) || file_exists($this->location) && is_writeable($this->location))
+		if (file_exists($this->name) && is_writable($this->name) || file_exists($this->location) && is_writable($this->location))
 		{
 			if (is_a($data, 'SimplePie'))
 			{

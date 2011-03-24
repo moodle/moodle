@@ -87,7 +87,7 @@ class save_xml_file extends XMLDBAction {
         }
 
     /// Chech for perms
-        if (!is_writeable($dirpath . '/install.xml')) {
+        if (!is_writable($dirpath . '/install.xml')) {
             $this->errormsg = $this->str['filenotwriteable'] . '(' . $dirpath . '/install.xml)';
             return false;
         }

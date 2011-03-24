@@ -56,7 +56,7 @@ class xmldb_file extends xmldb_object {
      * Determine if the XML is writeable
      */
     function fileWriteable() {
-        if (is_writeable(dirname($this->path))) {
+        if (is_writable(dirname($this->path))) {
             return true;
         }
         return false;
