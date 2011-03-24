@@ -1291,10 +1291,10 @@ function forum_print_overview($courses,&$htmlarray) {
         if ($count > 0 || $thisunread > 0) {
             $str .= '<div class="overview forum"><div class="name">'.$strforum.': <a title="'.$strforum.'" href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'.
                 $forum->name.'</a></div>';
-            $str .= '<div class="info">';
-            $str .= $count.' '.$strnumpostssince;
+            $str .= '<div class="info"><span class="postsincelogin">';
+            $str .= $count.' '.$strnumpostssince."</span>";
             if (!empty($showunread)) {
-                $str .= '<br />'.$thisunread .' '.$strnumunread;
+                $str .= '<div class="unreadposts">'.$thisunread .' '.$strnumunread.'</div>';
             }
             $str .= '</div></div>';
         }
