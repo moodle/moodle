@@ -1707,7 +1707,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                             $extraclass = '';
                         }
                         echo "
-<form class='togglecompletion$extraclass' method='post' action='togglecompletion.php'><div>
+<form class='togglecompletion$extraclass' method='post' action='".$CFG->wwwroot."/course/togglecompletion.php'><div>
 <input type='hidden' name='id' value='{$mod->id}' />
 <input type='hidden' name='sesskey' value='".sesskey()."' />
 <input type='hidden' name='completionstate' value='$newstate' />
