@@ -88,6 +88,9 @@
     $PAGE->set_heading($SITE->fullname);
     echo $OUTPUT->header();
 
+    //TODO: remove this notice once admins know they need to switch CVS and git branches, the reason is once we start changing DB there will not be any way back!
+    echo $OUTPUT->box('WARNING: this site is using 2.1dev codebase, please make sure this is is not a production server!!!', 'errorbox');
+
 /// Print Section
     if ($SITE->numsections > 0) {
 
