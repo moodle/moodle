@@ -114,6 +114,7 @@ $string['morethanoneuser'] = 'Strange! More than one user record found in ldap. 
 $string['needbcmath'] = 'You need the BCMath extension to use grace logins with Active Directory';
 $string['needmbstring'] = 'You need the mbstring extension to change passwords in Active Directory';
 $string['nodnforusername'] = 'Error in user_update_password(). No DN for: {$a->username}';
+$string['noemail'] = 'Tried to send you an email but failed!';
 $string['notcalledfromserver'] = 'Should not be called from the web server!';
 $string['noupdatestobedone'] = "No updates to be done\n";
 $string['nouserentriestoremove'] = "No user entries to be removed\n";
