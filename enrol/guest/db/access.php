@@ -31,7 +31,7 @@ $capabilities = array(
     'enrol/guest:config' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
+        'archetypes' => array(
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
         )
