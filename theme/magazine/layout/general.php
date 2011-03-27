@@ -29,7 +29,7 @@ echo $OUTPUT->doctype() ?>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
-<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
@@ -38,20 +38,20 @@ echo $OUTPUT->doctype() ?>
 	<div id="header-wrap">
 		<div id="header-container">
 			<div id="headerinner">
-			
+
 				<div id="headleft">
-					<?php if ($hasheading && !empty($PAGE->theme->settings->logo)) { 
+					<?php if ($hasheading && !empty($PAGE->theme->settings->logo)) {
 					echo $PAGE->heading;
 					} ?>
 				</div>
 				<div id="headright">
-				<?php if ($hasheading) { 
+				<?php if ($hasheading) {
             		echo $OUTPUT->lang_menu();
             		echo $OUTPUT->login_info();
             		echo $PAGE->headingmenu;
             	} ?>
 				</div>
-			
+
 			</div>
 		</div>
 	</div>
@@ -93,90 +93,90 @@ echo $OUTPUT->doctype() ?>
 		<div id="outercontainer">
 			<div id="container">
 				<div id="innercontainer">
-	
+
 					<div id="jcontrols_button">
 						<div class="jcontrolsleft">
 						<?php if ($hasnavbar) { ?>
         					<div class="navbar clearfix">
             					<div class="breadcrumb"> <?php echo $OUTPUT->navbar();  ?></div>
-            
+
         					</div>
         				<?php } ?>
 						</div>
-	
+
 						<div class="jcontrolsright">
-	  					<?php if ($hasnavbar) { 
-	   						echo $PAGE->button; 
+	  					<?php if ($hasnavbar) {
+	   						echo $PAGE->button;
 	   					} ?>
 						</div>
 					</div>
-	
+
 	<!-- start OF moodle CONTENT -->
 				<div id="page-content">
         			<div id="region-main-box">
             			<div id="region-post-box">
-            
+
                 				<div id="region-main-wrap">
                     				<div id="region-main">
                         				<div class="region-content">
-         
+
                             			<?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
                         				</div>
                     				</div>
                 				</div>
-                
+
                 	<?php if ($hassidepre) { ?>
                		<div id="region-pre" class="block-region">
                     	<div class="region-content">
-                   
-        
+
+
                         	<?php echo $OUTPUT->blocks_for_region('side-pre') ?>
                     	</div>
                 	</div>
                 	<?php } ?>
-                
+
                 	<?php if ($hassidepost) { ?>
                  	<div id="region-post" class="block-region">
                     	<div class="region-content">
-                   
+
                         	<?php echo $OUTPUT->blocks_for_region('side-post') ?>
                     	</div>
                 	</div>
                 	<?php } ?>
-                
+
             			</div>
         			</div>
    				 </div>
-    <!-- END OF CONTENT --> 
-      
+    <!-- END OF CONTENT -->
+
      			 <div id="jcontrols_bottom">
       			</div>
-	
+
 	<!-- Containers end div above clears both -->
 				</div>
 			</div>
-		</div>	
+		</div>
 	</div>
 
 <!-- START OF FOOTER -->
 	<div id="footer-wrap">
 		<div id="footer-container">
 			<div id="footer">
-		
-			 <?php if ($hasfooter) { 
+
+			 <?php if ($hasfooter) {
 		 		echo "<div class='johndocsleft'>";
         		echo $OUTPUT->login_info();
        			echo $OUTPUT->home_link();
         		echo $OUTPUT->standard_footer_html();
         		echo "</div>";
        			} ?>
-         
+
     			<?php if ($hasfooter) { ?>
     			<div class="johndocs">
       				<?php echo page_doc_link(get_string('moodledocslink')) ?>
        			</div>
     			<?php } ?>
-        
+
 			</div>
 		</div>
 	</div>

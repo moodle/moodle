@@ -22,7 +22,7 @@ echo $OUTPUT->doctype() ?>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
-<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
@@ -66,7 +66,7 @@ echo $OUTPUT->doctype() ?>
             <div id="page-content">
                 <div id="region-main-box">
                     <div id="region-post-box">
-            
+
                         <div id="region-main-wrap">
                             <div id="region-main">
                                 <div class="region-content">
@@ -74,7 +74,7 @@ echo $OUTPUT->doctype() ?>
                                 </div>
                             </div>
                         </div>
-                
+
                         <?php if ($hassidepre) { ?>
                         <div id="region-pre">
                             <div class="region-content">
@@ -82,7 +82,7 @@ echo $OUTPUT->doctype() ?>
                             </div>
                         </div>
                         <?php } ?>
-                
+
                         <?php if ($hassidepost) { ?>
                         <div id="region-post">
                             <div class="region-content">
@@ -90,7 +90,7 @@ echo $OUTPUT->doctype() ?>
                             </div>
                         </div>
                         <?php } ?>
-                
+
                     </div>
                 </div>
             </div>

@@ -2,7 +2,7 @@
 
 $hassidepre = (empty($PAGE->layout_options['noblocks']) && $PAGE->blocks->region_has_content('side-pre', $OUTPUT));
 $hassidepost = (empty($PAGE->layout_options['noblocks']) && $PAGE->blocks->region_has_content('side-post', $OUTPUT));
-	
+
 $showsidepre = ($hassidepre && !$PAGE->blocks->region_completely_docked('side-pre', $OUTPUT));
 $showsidepost = ($hassidepost && !$PAGE->blocks->region_completely_docked('side-post', $OUTPUT));
 
@@ -38,17 +38,17 @@ echo $OUTPUT->doctype() ?>
 <head>
     <title><?php echo $PAGE->title ?></title>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
-    <meta name="description" content="<?php echo strip_tags(format_text($SITE->summary, FORMAT_HTML)) ?>" />
+    <meta name="description" content="<?php p(strip_tags(format_text($SITE->summary, FORMAT_HTML))) ?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
-<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
 	<div id="wrapper" class="clearfix">
-	
+
 <!-- START OF HEADER -->
-   
+
     <div id="page-header" class="clearfix">
 		<div id="page-header-wrapper">
 			<?php if($logourl == NULL) { ?>
@@ -58,30 +58,30 @@ echo $OUTPUT->doctype() ?>
 	        <?php } else { ?>
 	        <img class="logo" src="<?php echo $logourl;?>" alt="Custom logo here" />
 	        <?php } ?>
-	      
-	        
+
+
     	    <div class="headermenu">
         		<?php
 	        	    echo $OUTPUT->login_info();
             			echo $OUTPUT->lang_menu();
           			echo $PAGE->headingmenu;
-		        ?>	    
+		        ?>
 	    	</div>
 	    </div>
     </div>
-      	  
+
 <!-- END OF HEADER -->
 
 <!-- START OF CONTENT -->
 <?php if ($hascustommenu) { ?>
       <div id="custommenu"><?php echo $custommenu; ?></div>
 <?php } ?>
-  	
+
 <div id="page-content-wrapper">
     <div id="page-content">
         <div id="region-main-box">
             <div id="region-post-box">
-            
+
                 <div id="region-main-wrap">
                     <div id="region-main">
                         <div class="region-content">
@@ -89,7 +89,7 @@ echo $OUTPUT->doctype() ?>
                         </div>
                     </div>
                 </div>
-                
+
                 <?php if ($hassidepre) { ?>
                 <div id="region-pre" class="block-region">
                     <div class="region-content">
@@ -97,7 +97,7 @@ echo $OUTPUT->doctype() ?>
                     </div>
                 </div>
                 <?php } ?>
-                
+
                 <?php if ($hassidepost) { ?>
                 <div id="region-post" class="block-region">
                     <div class="region-content">
@@ -105,7 +105,7 @@ echo $OUTPUT->doctype() ?>
                     </div>
                 </div>
                 <?php } ?>
-                
+
             </div>
         </div>
     </div>
@@ -113,7 +113,7 @@ echo $OUTPUT->doctype() ?>
 
 <!-- END OF CONTENT -->
 
-	
+
 
 <!-- START OF FOOTER -->
 
@@ -131,7 +131,7 @@ echo $OUTPUT->doctype() ?>
 	<p class="helplink">
         <?php echo page_doc_link(get_string('moodledocslink')) ?>
     </p><center>
-        <?php 
+        <?php
 	echo $OUTPUT->home_link();
 	echo $OUTPUT->standard_end_of_body_html() ?>
 </center>
