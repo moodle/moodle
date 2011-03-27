@@ -151,19 +151,21 @@ function search_spammers($keywords) {
     $params = array('userid'=>$USER->id);
 
     $keywordfull = array();
+    $i = 0;
     foreach ($keywords as $keyword) {
-        $keywordfull[] = $DB->sql_like('description', ':descpat', false);
-        $params['descpat'] = "%$keyword%";
-        $keywordfull2[] = $DB->sql_like('p.summary', ':sumpat', false);
-        $params['sumpat'] = "%$keyword%";
+        $keywordfull[] = $DB->sql_like('description', ':descpat'.$i, false);
+        $params['descpat'.$i] = "%$keyword%";
+        $keywordfull2[] = $DB->sql_like('p.summary', ':sumpat'.$i, false);
+        $params['sumpat'.$i] = "%$keyword%";
+        $i++;
     }
     $conditions = '( '.implode(' OR ', $keywordfull).' )';
     $conditions2 = '( '.implode(' OR ', $keywordfull2).' )';
 
     $sql  = "SELECT * FROM {user} WHERE deleted = 0 AND id <> :userid AND $conditions";  // Exclude oneself
     $sql2 = "SELECT u.*, p.summary FROM {user} AS u, {post} AS p WHERE $conditions2 AND u.deleted = 0 AND u.id=p.userid AND u.id <> :userid";
-    $spamusers_desc = $DB->get_recordset_sql($sql);
-    $spamusers_blog = $DB->get_recordset_sql($sql2);
+    $spamusers_desc = $DB->get_recordset_sql($sql, $params);
+    $spamusers_blog = $DB->get_recordset_sql($sql2, $params);
 
     $keywordlist = implode(', ', $keywords);
     echo $OUTPUT->box(get_string('spamresult', 'report_spamcleaner').s($keywordlist)).' ...';
