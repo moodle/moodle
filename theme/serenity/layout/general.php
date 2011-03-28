@@ -25,7 +25,7 @@ echo $OUTPUT->doctype() ?>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
-<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
@@ -33,7 +33,7 @@ echo $OUTPUT->doctype() ?>
 <?php if ($hasheading || $hasnavbar) { ?>
 
     <div id="page-header" class="clearfix">
-	        
+
 	        <?php if ($hasheading) { ?>
 		    	<h1 class="headermain"><?php echo $PAGE->heading ?></h1>
     		    <div class="headermenu">
@@ -45,17 +45,17 @@ echo $OUTPUT->doctype() ?>
     			       	echo $PAGE->headingmenu
         			?>
 	        	</div>
-	        <?php } ?>        
-        	
+	        <?php } ?>
+
     </div>
-    
+
     <?php if ($hasnavbar) { ?>
 	    <div class="navbar clearfix">
     	    <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
             <div class="navbutton"> <?php echo $PAGE->button; ?></div>
       </div>
     <?php } ?>
-    
+
 <?php } ?>
 
 <!-- END OF HEADER -->
@@ -64,7 +64,7 @@ echo $OUTPUT->doctype() ?>
     <div id="page-content">
         <div id="region-main-box">
             <div id="region-post-box">
-            
+
                 <div id="region-main-wrap">
                     <div id="region-main">
                         <div class="region-content">
@@ -72,7 +72,7 @@ echo $OUTPUT->doctype() ?>
                         </div>
                     </div>
                 </div>
-                
+
                 <?php if ($hassidepre) { ?>
                 <div id="region-pre" class="block-region">
                     <div class="region-content">
@@ -80,7 +80,7 @@ echo $OUTPUT->doctype() ?>
                     </div>
                 </div>
                 <?php } ?>
-                
+
                 <?php if ($hassidepost) { ?>
                 <div id="region-post" class="block-region">
                     <div class="region-content">
@@ -88,7 +88,7 @@ echo $OUTPUT->doctype() ?>
                     </div>
                 </div>
                 <?php } ?>
-                
+
             </div>
         </div>
     </div>
