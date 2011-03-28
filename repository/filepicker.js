@@ -248,14 +248,21 @@ M.core_filepicker.init = function(Y, options) {
                 tmpNode.isLeaf = true;
             }
         },
-        view_files: function() {
-            this.viewbar.set('disabled', false);
-            if (this.viewmode == 1) {
+        view_files: function(page) {
+            var p= page?page:null;
+            if (this.active_repo.issearchresult) {
+                // list view is desiged to display treeview
+                // it is not working well with search result
                 this.view_as_icons();
-            } else if (this.viewmode ==2) {
-                this.view_as_list();
             } else {
-                this.view_as_icons();
+                this.viewbar.set('disabled', false);
+                if (this.viewmode == 1) {
+                    this.view_as_icons();
+                } else if (this.viewmode == 2) {
+                    this.view_as_list(p);
+                } else {
+                    this.view_as_icons();
+                }
             }
         },
         treeview_dynload: function(node, cb) {
@@ -280,15 +287,29 @@ M.core_filepicker.init = function(Y, options) {
                 }
             }, false);
         },
-        view_as_list: function() {
+        view_as_list: function(p) {
             var scope = this;
+            var page = null;
+            if (!p) {
+                if (scope.active_repo.page) {
+                    page = scope.active_repo.page;
+                }
+            } else {
+                page = p;
+            }
             scope.request({
                 action:'list',
                 client_id: scope.options.client_id,
                 repository_id: scope.active_repo.id,
                 path:'',
-                page:'',
+                page:page,
                 callback: function(id, obj, args) {
+                    scope.parse_repository_options(obj);
+                    if (obj.login) {
+                        scope.viewbar.set('disabled', true);
+                        scope.print_login(obj);
+                        return;
+                    }
                     var client_id = scope.options.client_id;
                     var dynload = scope.active_repo.dynload;
                     var list = obj.list;
@@ -299,14 +320,14 @@ M.core_filepicker.init = function(Y, options) {
                     scope.print_header();
 
                     var html = '<div class="fp-tree-panel" id="treeview-'+client_id+'">';
-                    if (list.length==0) {
+                    if (list && list.length==0) {
                         html += '<div class="fp-emptylist mdl-align">' +M.str.repository.nofilesavailable+'</div>';
                     }
                     html += '</div>';
 
                     var tree = Y.Node.create(html);
                     Y.one(panel_id).appendChild(tree);
-                    if (list.length==0) {
+                    if (!list || list.length==0) {
                         return;
                     }
 
@@ -342,7 +363,7 @@ M.core_filepicker.init = function(Y, options) {
             this.print_header();
 
             var html = '<div class="fp-grid-panel" id="fp-grid-panel-'+client_id+'">';
-            if (list.length==0) {
+            if (list && list.length==0) {
                 html += '<div class="fp-emptylist mdl-align">' +M.str.repository.nofilesavailable+'</div>';
             }
             html += '</div>';
@@ -646,7 +667,7 @@ M.core_filepicker.init = function(Y, options) {
 
             var scope = this;
             // adding buttons
-            var view_icons = {label: M.str.repository.iconview, value: 't',
+            var view_icons = {label: M.str.repository.iconview, value: 't', 'checked': true,
                 onclick: {
                     fn: function(){
                         scope.view_as_icons();
@@ -1307,12 +1328,16 @@ M.core_filepicker.init = function(Y, options) {
                                         callback: function(id, o, args) {
                                             o.issearchresult = true;
                                             scope.parse_repository_options(o);
-                                            scope.view_files();
+                                            scope.view_files(result[1]);
                                         }
                                 }, true);
 
                             } else {
-                                scope.list(args);
+                                if (scope.viewmode == 2) {
+                                    scope.view_as_list(result[1]);
+                                } else {
+                                    scope.list(args);
+                                }
                             }
                         });
                     });
