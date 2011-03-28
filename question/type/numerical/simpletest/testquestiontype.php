@@ -46,7 +46,7 @@ class qtype_numerical_test extends UnitTestCase {
     }
 
     public function tearDown() {
-        $this->qtype = null;   
+        $this->qtype = null;
     }
 
     protected function get_test_question_data() {

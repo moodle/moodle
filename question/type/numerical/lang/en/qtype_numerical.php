@@ -30,10 +30,10 @@ $string['addmoreanswerblanks'] = 'Blanks for {no} More Answers';
 $string['addmoreunitblanks'] = 'Blanks for {no} More Units';
 $string['answermustbenumberorstar'] = 'The answer must be a number, or \'*\'.';
 $string['answerno'] = 'Answer {$a}';
-$string['decfractionofquestiongrade'] = 'as decimal fraction (0-1) of question grade';
-$string['decfractionofresponsegrade'] = 'as decimal fraction (0-1) of response grade';
+$string['decfractionofquestiongrade'] = 'as a fraction (0-1) of the question grade';
+$string['decfractionofresponsegrade'] = 'as a fraction (0-1) of the response grade';
 $string['decimalformat'] = 'decimals';
-$string['editableunittext'] = 'Text input element';
+$string['editableunittext'] = 'a text input element';
 $string['editingnumerical'] = 'Editing a Numerical question';
 $string['errornomultiplier'] = 'You must specify a multiplier for this unit.';
 $string['errorrepeatedunit'] = 'You cannot have two units with the same name.';
@@ -41,7 +41,7 @@ $string['geometric'] = 'Geometric';
 $string['instructions'] = 'Instructions ';
 $string['invalidnumericanswer'] = 'One of the answers you entered was not a valid number.';
 $string['invalidnumerictolerance'] = 'One of the tolerances you entered was not a valid number.';
-$string['leftexample'] = 'LEFT as $1.00';
+$string['leftexample'] = 'on the left, for example $1.00 or £1.00';
 $string['multiplier'] = 'Multiplier';
 $string['noneditableunittext'] = 'NON editable text of Unit No1';
 $string['nonvalidcharactersinnumber'] = 'NON valid characters in number';
@@ -52,10 +52,7 @@ $string['numerical_help'] = 'From the student perspective, a numerical question 
 $string['numerical_link'] = 'question/type/numerical';
 $string['numericalsummary'] = 'Allows a numerical response, possibly with units, that is graded by comparing against various model answers, possibly with tolerances.';
 $string['numericalinstructions'] = 'Instructions';
-$string['numericalinstructions_help'] = 'Specific instructions related to the question as
-
-* Examples of number formats
-* Complex units';
+$string['numericalinstructions_help'] = 'Enter any instructions you would like to give the student about how to complete their response.';
 $string['numericalmultiplier'] = 'Multiplier';
 $string['numericalmultiplier_help'] = 'The multiplier is the factor by which the correct numerical response will be multiplied.
 
@@ -64,24 +61,21 @@ The first unit (Unit 1) has a default multiplier of 1. Thus if the correct numer
 If you add the unit kW with a multiplier of 0.001, this will add a correct response of 5.5 kW. This means that the answers 5500W or 5.5kW would be marked correct.
 
 Note that the accepted error is also multiplied, so an allowed error of 100W would become an error of 0.1kW.';
-$string['manynumerical'] = 'Only the NUMERICAL ANSWER will be graded using optional units ';
+$string['manynumerical'] = 'Units are optional. If a unit is entered, it is used to convert the reponse to Unit 1 before grading.';
 $string['nominal'] = 'Nominal';
-$string['onlynumerical'] = 'Only the NUMERICAL ANSWER will be graded, no units allowed';
-$string['oneunitshown'] = 'Only the NUMERICAL ANSWER will be graded, Unit1 will be shown';
+$string['onlynumerical'] = 'Units are not used at all. Only the numerical value is graded.';
+$string['oneunitshown'] = 'Unit 1 is automatically displayed beside the answer box.';
 $string['pleaseenterananswer'] = 'Please enter an answer.';
 $string['relative'] = 'Relative';
-$string['rightexample'] = 'RIGHT as 1.00cm';
+$string['rightexample'] = 'on the right, for example 1.00cm or 1.00km';
 $string['selectunits'] = 'Select units';
 $string['selectunit'] = 'Select one unit';
-$string['studentunitanswer'] = 'UNIT ANSWER displayed as a ';
+$string['studentunitanswer'] = 'Units are input using';
 $string['tolerancetype'] = 'Tolerance type';
 $string['unit'] = 'Unit';
-$string['unitchoice'] = 'Multichoice (radio elements)';
-$string['unitdisplay'] = '<STRONG>Unit 1 displayed </STRONG>';
+$string['unitchoice'] = 'a multiple choice selection';
 $string['unitedit'] = 'Edit unit';
-$string['unitgraded'] = ' NUMERICAL ANSWER and UNIT ANSWER will be graded ';
-$string['unitgraded1'] = '<STRONG>UNIT GRADED</STRONG>';
-$string['unitsused'] = '<STRONG>UNIT USED</STRONG>';
+$string['unitgraded'] = 'The unit must be given, and will be graded.';
 $string['unithdr'] = 'Unit {$a}';
 $string['unitmandatory'] = 'Mandatory';
 $string['unitmandatory_help'] = '
@@ -91,32 +85,24 @@ $string['unitmandatory_help'] = '
 * The unit penalty will be applied if the unit field is empty
 
 ';
-$string['unitnotgraded'] = '<STRONG>UNIT NOT GRADED</STRONG>';
-$string['unitnotused'] = '<STRONG>UNIT NOT USED</STRONG>';
+$string['unitonerequired'] = 'You must enter at least one unit';
 $string['unitoptional'] = 'Optional unit';
 $string['unitoptional_help'] = '
 * If the unit field is not empty, the response will be graded using this unit.
 
 * If the unit is badly written or unknown, the response will be considered as non valid.
 ';
-$string['unitused'] = '<STRONG>UNIT USED</STRONG>';
-$string['unituses'] = 'Unit uses';
-$string['unituses_help'] = 'The unit(s) are uses as in pre 2,0 Moodle version
-
-* The student can answer using units predefined by the teacher
-* in which case the constant will be applied to the student value.
-* If the student does not add any unit, his numerical answer is used as is.';
 $string['unitnotvalid'] = ' Unit not valid with this numerical value';
 $string['unitunknown'] = ' Undefined unit ';
 $string['unitpenalty'] = 'Unit penalty';
 $string['unitpenalty_help'] = 'The penalty is applied if
 
-* An undefined unit name is put in the Unit answer element or
-* An unit name is put in the Number answer element ';
+* the wrong unit name is entered into the unit input, or
+* a unit is entered into the value input box';
 $string['unitappliedpenalty'] = 'These marks include a penalty of {$a} for bad unit.';
-$string['unitposition'] = 'Unit position';
+$string['unitposition'] = 'Units are displayed';
 $string['unitnotselected'] = 'No unit selected';
-$string['unitshandling'] = 'Units handling';
+$string['unithandling'] = 'Unit handling';
 $string['validnumberformats'] = 'Valid number formats';
 $string['validnumberformats_help'] = '
 * regular numbers  13500.67 : 13 500.67 : 13500,67: 13 500,67

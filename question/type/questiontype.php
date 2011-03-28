@@ -214,16 +214,19 @@ class question_type {
     public function create_editing_form($submiturl, $question, $category,
             $contexts, $formeditable) {
         global $CFG;
-        require_once("{$CFG->dirroot}/question/type/edit_question_form.php");
-        $definition_file = $CFG->dirroot . '/question/type/' . $this->name() .
+        require_once($CFG->dirroot . '/question/type/edit_question_form.php');
+        $definitionfile = $CFG->dirroot . '/question/type/' . $this->name() .
                 '/edit_' . $this->name() . '_form.php';
-        if (!(is_readable($definition_file) && is_file($definition_file))) {
-            return null;
+        if (!is_readable($definitionfile) || !is_file($definitionfile)) {
+            throw new coding_exception($this->plugin_name() .
+                    ' is missing the definition of its editing formin file ' . $definitionfile . '.');
         }
-        require_once($definition_file);
+        require_once($definitionfile);
         $classname = $this->plugin_name() . '_edit_form';
         if (!class_exists($classname)) {
-            return null;
+            throw new coding_exception($this->plugin_name() .
+                    ' does not define the class ' . $this->plugin_name() .
+                    '_edit_form.');
         }
         return new $classname($submiturl, $question, $category, $contexts, $formeditable);
     }

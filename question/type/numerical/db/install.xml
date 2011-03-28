@@ -27,7 +27,7 @@
         <FIELD NAME="instructionsformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="instructions" NEXT="showunits"/>
         <FIELD NAME="showunits" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="display units as multichoice" PREVIOUS="instructionsformat" NEXT="unitsleft"/>
         <FIELD NAME="unitsleft" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="display the unit at left as in $1.00" PREVIOUS="showunits" NEXT="unitgradingtype"/>
-        <FIELD NAME="unitgradingtype" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 no penalty, 1 total grade, 2 response grade" PREVIOUS="unitsleft" NEXT="unitpenalty"/>
+        <FIELD NAME="unitgradingtype" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="0 no penalty, 1 response grade, 2 total grade" PREVIOUS="unitsleft" NEXT="unitpenalty"/>
         <FIELD NAME="unitpenalty" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="true" DEFAULT="0.1" SEQUENCE="false" DECIMALS="7" PREVIOUS="unitgradingtype"/>
       </FIELDS>
       <KEYS>
