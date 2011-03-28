@@ -5484,17 +5484,28 @@ function get_string_manager($forcereload=false) {
     }
     if ($singleton === null) {
         if (empty($CFG->early_install_lang)) {
+
             if (empty($CFG->langcacheroot)) {
                 $langcacheroot = $CFG->dataroot . '/cache/lang';
             } else {
                 $langcacheroot = $CFG->langcacheroot;
             }
+
             if (empty($CFG->langlist)) {
                  $translist = array();
             } else {
                 $translist = explode(',', $CFG->langlist);
             }
-            $singleton = new core_string_manager($CFG->langotherroot, $CFG->langlocalroot, $langcacheroot, !empty($CFG->langstringcache), $translist);
+
+            if (empty($CFG->langmenucachefile)) {
+                $langmenucache = $CFG->dataroot . '/cache/languages';
+            } else {
+                $langmenucache = $CFG->langmenucachefile;
+            }
+
+            $singleton = new core_string_manager($CFG->langotherroot, $CFG->langlocalroot, $langcacheroot,
+                                                 !empty($CFG->langstringcache), $translist, $langmenucache);
+
         } else {
             $singleton = new install_string_manager();
         }
@@ -5624,22 +5635,26 @@ class core_string_manager implements string_manager {
     protected $usediskcache;
     /* @var array limit list of translations */
     protected $translist;
+    /** @var string location of a file that caches the list of available translations */
+    protected $menucache;
 
     /**
-     * Crate new instance of string manager
+     * Create new instance of string manager
      *
      * @param string $otherroot location of downlaoded lang packs - usually $CFG->dataroot/lang
      * @param string $localroot usually the same as $otherroot
      * @param string $cacheroot usually lang dir in cache folder
      * @param bool $usediskcache use disk cache
      * @param array $translist limit list of visible translations
+     * @param string $menucache the location of a file that caches the list of available translations
      */
-    public function __construct($otherroot, $localroot, $cacheroot, $usediskcache, $translist) {
+    public function __construct($otherroot, $localroot, $cacheroot, $usediskcache, $translist, $menucache) {
         $this->otherroot    = $otherroot;
         $this->localroot    = $localroot;
         $this->cacheroot    = $cacheroot;
         $this->usediskcache = $usediskcache;
         $this->translist    = $translist;
+        $this->menucache    = $menucache;
     }
 
     /**
@@ -6007,15 +6022,13 @@ class core_string_manager implements string_manager {
      * @return boot true if exists
      */
     public function translation_exists($lang, $includeall = true) {
-        global $CFG;
 
         if (strpos($lang, '_local') !== false) {
             // _local packs are not real translations
             return false;
         }
-        if (!$includeall and !empty($CFG->langlist)) {
-            $enabled = explode(',', $CFG->langlist);
-            if (!in_array($lang, $enabled)) {
+        if (!$includeall and !empty($this->translist)) {
+            if (!in_array($lang, $this->translist)) {
                 return false;
             }
         }
@@ -6036,7 +6049,30 @@ class core_string_manager implements string_manager {
 
         $languages = array();
 
-        //TODO: add some translist cache stored in normal cache dir
+        if ($CFG->langcache and is_readable($this->menucache)) {
+            // try to re-use the cached list of all available languages
+            $cachedlist = json_decode(file_get_contents($this->menucache), true);
+
+            if (is_array($cachedlist) and !empty($cachedlist)) {
+                // the cache file is restored correctly
+
+                if (!$returnall and !empty($this->translist)) {
+                    // return just enabled translations
+                    foreach ($cachedlist as $langcode => $langname) {
+                        if (in_array($langcode, $this->translist)) {
+                            $languages[$langcode] = $langname;
+                        }
+                    }
+                    return $languages;
+
+                } else {
+                    // return all translations
+                    return $cachedlist;
+                }
+            }
+        }
+
+        // the cached list of languages is not available, let us populate the list
 
         if (!$returnall and !empty($this->translist)) {
             // return only some translations
@@ -6080,6 +6116,12 @@ class core_string_manager implements string_manager {
                 }
                 unset($string);
             }
+
+            if ($CFG->langcache and !empty($this->menucache)) {
+                // cache the list so that it can be used next time
+                textlib_get_instance()->asort($languages);
+                file_put_contents($this->menucache, json_encode($languages));
+            }
         }
 
         textlib_get_instance()->asort($languages);
@@ -6111,8 +6153,16 @@ class core_string_manager implements string_manager {
         global $CFG;
         require_once("$CFG->libdir/filelib.php");
 
+        // clear the on-disk disk with aggregated string files
         fulldelete($this->cacheroot);
+
+        // clear the in-memory cache of loaded strings
         $this->cache = array();
+
+        // clear the cache containing the list of available translations
+        // and re-populate it again
+        fulldelete($this->menucache);
+        $this->get_list_of_translations(true);
     }
 }
 

@@ -357,6 +357,13 @@ $CFG->admin = 'admin';
 //
 //     $CFG->langcacheroot = '/var/www/moodle/htdocs/altcache/lang';
 //
+// If $CFG->langcache is enabled (which should always be in production
+// environment), Moodle stores the list of available languages in a cache file.
+// By default, the file $CFG->dataroot/languages is used. You may wish to
+// specify an alternative location of this cache file.
+//
+//     $CFG->langmenucachefile = '/var/www/moodle/htdocs/altcache/languages';
+//
 // Site default language can be set via standard administration interface. If you
 // want to have initial error messages for eventual database connection problems
 // localized too, you have to set your language code here.
