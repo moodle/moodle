@@ -391,7 +391,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             }
             var node = null;
             for (var i in this.roles) {
-                if (node = this.get('contentNode').one('#add_assignable_role_'+i)) {
+                if (node = this.get('contentNode').one('#add_assignable_role_'+this.roles[i])) {
                     node.removeAttribute('disabled');
                 }
             }
