@@ -628,7 +628,7 @@ class define_role_table_advanced extends capability_table_with_risks {
 
         // Legacy type.
         $archetype = optional_param('archetype', null, PARAM_RAW);
-        if ($archetype) {
+        if (isset($archetype)) {
             $archetypes = get_role_archetypes();
             if (isset($archetypes[$archetype])){
                 $this->role->archetype = $archetype;
@@ -716,7 +716,6 @@ class define_role_table_advanced extends capability_table_with_risks {
     }
 
     protected function get_archetype_field($id) {
-        global $OUTPUT;
         $options = array();
         $options[''] = get_string('none');
         foreach(get_role_archetypes() as $type) {
