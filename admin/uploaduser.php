@@ -307,6 +307,9 @@ if ($formdata = $mform2->is_cancelled()) {
                 // process templates
                 $user->$field = uu_process_template($formdata->$field, $user);
                 $formdefaults[$field] = true;
+                if (in_array($field, $upt->columns)) {
+                    $upt->track($field, s($user->$field), 'normal');
+                }
             }
         }
         foreach ($PRF_FIELDS as $field) {
@@ -614,7 +617,13 @@ if ($formdata = $mform2->is_cancelled()) {
 
             $isinternalauth = $auth->is_internal();
 
-            if ($DB->record_exists('user', array('email'=>$user->email))) {
+            if (empty($user->email)) {
+                $upt->track('email', get_string('invalidemail'), 'error');
+                $upt->track('status', $strusernotaddederror, 'error');
+                $userserrors++;
+                continue;
+
+            } else if ($DB->record_exists('user', array('email'=>$user->email))) {
                 if ($noemailduplicates) {
                     $upt->track('email', $stremailduplicate, 'error');
                     $upt->track('status', $strusernotaddederror, 'error');
@@ -898,11 +907,13 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
         $rowcols['status'][] = get_string('missingusername');
     }
 
-    if (!validate_email($rowcols['email'])) {
-        $rowcols['status'][] = get_string('invalidemail');
-    }
-    if ($DB->record_exists('user', array('email'=>$rowcols['email']))) {
-        $rowcols['status'][] = $stremailduplicate;
+    if (isset($rowcols['email'])) {
+        if (!validate_email($rowcols['email'])) {
+            $rowcols['status'][] = get_string('invalidemail');
+        }
+        if ($DB->record_exists('user', array('email'=>$rowcols['email']))) {
+            $rowcols['status'][] = $stremailduplicate;
+        }
     }
     $rowcols['status'] = implode('<br />', $rowcols['status']);
     $data[] = $rowcols;
