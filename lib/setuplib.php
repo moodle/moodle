@@ -691,7 +691,6 @@ function initialise_fullme() {
     $FULLSCRIPT = $hostandport . $rurl['path'];
     $FULLME = $hostandport . $rurl['fullpath'];
     $ME = $rurl['fullpath'];
-    $rurl['path'] = $rurl['fullpath'];
 }
 
 /**
@@ -776,6 +775,11 @@ function setup_get_remote_url() {
      } else {
         throw new moodle_exception('unsupportedwebserver', 'error', '', $_SERVER['SERVER_SOFTWARE']);
     }
+
+    // sanitize the url a bit more, the encoding style may be different in vars above
+    $rurl['fullpath'] = str_replace('"', '%22', $rurl['fullpath']);
+    $rurl['fullpath'] = str_replace('\'', '%27', $rurl['fullpath']);
+
     return $rurl;
 }
 
