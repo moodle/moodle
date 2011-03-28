@@ -248,33 +248,48 @@ function uu_process_template($template, $user) {
 
     if (is_null($result)) {
         return $template; //error during regex processing??
+    }
+
+    if (is_array($template)) {
+        $template['text'] = $result;
+        return $t;
     } else {
-        if (array($template)) {
-            $template['text'] = $t;
-            return $t;
-        } else {
-            return $t;
-        }
+        return $result;
     }
 }
 
 /**
  * Internal callback function.
  */
-function uu_process_template_callback($block, $username, $firstname, $lastname) {
+function uu_process_template_callback($username, $firstname, $lastname, $block) {
     $textlib = textlib_get_instance();
-    $repl = $block[0];
 
     switch ($block[3]) {
-        case 'u': $repl = $username; break;
-        case 'f': $repl = $firstname; break;
-        case 'l': $repl = $lastname; break;
+        case 'u':
+            $repl = $username;
+            break;
+        case 'f':
+            $repl = $firstname;
+            break;
+        case 'l':
+            $repl = $lastname;
+            break;
+        default:
+            return $block[0];
     }
+
     switch ($block[1]) {
-        case '+': $repl = $textlib->strtoupper($repl); break;
-        case '-': $repl = $textlib->strtolower($repl); break;
-        case '~': $repl = $textlib->strtotitle($repl); break;
+        case '+':
+            $repl = $textlib->strtoupper($repl);
+            break;
+        case '-':
+            $repl = $textlib->strtolower($repl);
+            break;
+        case '~':
+            $repl = $textlib->strtotitle($repl);
+            break;
     }
+
     if (!empty($block[2])) {
         $repl = $textlib->substr($repl, 0 , $block[2]);
     }
