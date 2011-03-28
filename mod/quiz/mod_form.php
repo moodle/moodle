@@ -353,7 +353,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
     }
 
-    protected function data_preprocessing(&$toform) {
+    public function data_preprocessing(&$toform) {
         if (isset($toform['grade'])) {
             $toform['grade'] = $toform['grade'] + 0; // Convert to a real number, so we don't get 0.0000.
         }
