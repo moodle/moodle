@@ -216,33 +216,41 @@ function get_referer($stripquery=true) {
  *
  * @return string
  */
- function me() {
-
+function me() {
     if (!empty($_SERVER['REQUEST_URI'])) {
-        return $_SERVER['REQUEST_URI'];
+        $return = $_SERVER['REQUEST_URI'];
 
     } else if (!empty($_SERVER['PHP_SELF'])) {
         if (!empty($_SERVER['QUERY_STRING'])) {
-            return $_SERVER['PHP_SELF'] .'?'. $_SERVER['QUERY_STRING'];
+            $return = $_SERVER['PHP_SELF'] .'?'. $_SERVER['QUERY_STRING'];
+        } else {
+            $return = $_SERVER['PHP_SELF'];
         }
-        return $_SERVER['PHP_SELF'];
 
     } else if (!empty($_SERVER['SCRIPT_NAME'])) {
         if (!empty($_SERVER['QUERY_STRING'])) {
-            return $_SERVER['SCRIPT_NAME'] .'?'. $_SERVER['QUERY_STRING'];
+            $return = $_SERVER['SCRIPT_NAME'] .'?'. $_SERVER['QUERY_STRING'];
+        } else {
+            $return = $_SERVER['SCRIPT_NAME'];
         }
-        return $_SERVER['SCRIPT_NAME'];
 
     } else if (!empty($_SERVER['URL'])) {     // May help IIS (not well tested)
         if (!empty($_SERVER['QUERY_STRING'])) {
-            return $_SERVER['URL'] .'?'. $_SERVER['QUERY_STRING'];
+            $return = $_SERVER['URL'] .'?'. $_SERVER['QUERY_STRING'];
+        } else {
+            $return = $_SERVER['URL'];
         }
-        return $_SERVER['URL'];
 
     } else {
         notify('Warning: Could not find any of these web server variables: $REQUEST_URI, $PHP_SELF, $SCRIPT_NAME or $URL');
         return false;
     }
+
+    // sanitize the url a bit more, the encoding style may be different in vars above
+    $return = str_replace('"', '%22', $return);
+    $return = str_replace('\'', '%27', $return);
+
+    return $return;
 }
 
 /**
@@ -2757,9 +2765,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     $pageclass .= ' dir-'.get_string('thisdirection');
 
-    $pageclass .= ' lang-'.$currentlanguage;
+    $pageclass .= ' lang-'.s($currentlanguage);
 
-    $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
+    $bodytags .= ' class="'.s($pageclass).'" id="'.s($pageid).'"';
 
     ob_start();
     include($CFG->header);
