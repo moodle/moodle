@@ -1,5 +1,7 @@
 <?php
 
+defined('MOODLE_INTERNAL') || die();
+
 $THEME->name = 'magazine';
 
 ////////////////////////////////////////////////////
@@ -95,7 +97,7 @@ $THEME->layouts = array(
         'options' => array('langmenu'=>true),
     ),
     'popup' => array(
-        'file' => 'embedded.php',
+        'file' => 'general.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'noblocks'=>true, 'nonavbar'=>true),
     ),
