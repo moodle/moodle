@@ -1080,6 +1080,58 @@ function get_fast_modinfo(&$course, $userid=0) {
     return $cache[$course->id];
 }
 
+/**
+ * Rebuilds the cached list of course activities stored in the database
+ * @param int $courseid - id of course to rebuild, empty means all
+ * @param boolean $clearonly - only clear the modinfo fields, gets rebuild automatically on the fly
+ */
+function rebuild_course_cache($courseid=0, $clearonly=false) {
+    global $COURSE, $DB, $CFG;
+
+    // Destroy navigation caches
+    navigation_cache::destroy_volatile_caches();
+
+    if ($clearonly) {
+        if (empty($courseid)) {
+            $courseselect = array();
+        } else {
+            $courseselect = array('id'=>$courseid);
+        }
+        $DB->set_field('course', 'modinfo', null, $courseselect);
+        // update cached global COURSE too ;-)
+        if ($courseid == $COURSE->id or empty($courseid)) {
+            $COURSE->modinfo = null;
+        }
+        // reset the fast modinfo cache
+        $reset = 'reset';
+        get_fast_modinfo($reset);
+        return;
+    }
+
+    require_once("$CFG->dirroot/course/lib.php");
+
+    if ($courseid) {
+        $select = array('id'=>$courseid);
+    } else {
+        $select = array();
+        @set_time_limit(0);  // this could take a while!   MDL-10954
+    }
+
+    $rs = $DB->get_recordset("course", $select,'','id,fullname');
+    foreach ($rs as $course) {
+        $modinfo = serialize(get_array_of_activities($course->id));
+        $DB->set_field("course", "modinfo", $modinfo, array("id"=>$course->id));
+        // update cached global COURSE too ;-)
+        if ($course->id == $COURSE->id) {
+            $COURSE->modinfo = $modinfo;
+        }
+    }
+    $rs->close();
+    // reset the fast modinfo cache
+    $reset = 'reset';
+    get_fast_modinfo($reset);
+}
+
 
 /**
  * Class that is the return value for the _get_coursemodule_info module API function.
