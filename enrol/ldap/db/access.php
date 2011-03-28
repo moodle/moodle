@@ -31,7 +31,7 @@ $capabilities = array(
     'enrol/ldap:manage' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
+        'archetypes' => array(
             'manager' => CAP_ALLOW,
         )
     ),
