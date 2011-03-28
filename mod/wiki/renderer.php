@@ -52,7 +52,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
         return $this->output->container($this->output->render($select), 'wiki_index');
     }
 
-    public function search_result($records) {
+    public function search_result($records, $subwiki) {
         global $CFG, $PAGE;
         $table = new html_table();
         $context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id);
@@ -63,7 +63,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
             $table->head = array('title' => format_string($page->title) . ' (' . html_writer::link($CFG->wwwroot . '/mod/wiki/view.php?pageid=' . $page->id, get_string('view', 'wiki')) . ')');
             $table->align = array('title' => 'left');
             $table->width = '100%';
-            $table->data = array(array(file_rewrite_pluginfile_urls(format_text($page->cachedcontent, FORMAT_HTML), 'pluginfile.php', $context->id, 'mod_wiki', 'attachments', $page->id)));
+            $table->data = array(array(file_rewrite_pluginfile_urls(format_text($page->cachedcontent, FORMAT_HTML), 'pluginfile.php', $context->id, 'mod_wiki', 'attachments', $subwiki->id)));
             $table->colclasses = array('wikisearchresults');
             $html .= html_writer::table($table);
         }

@@ -66,7 +66,7 @@ if (!empty($section) && !$sectioncontent = wiki_get_section_page($page, $section
     print_error('invalidsection', 'wiki');
 }
 
-require_course_login($course->id);
+require_course_login($course->id, false, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/wiki:editpage', $context);
