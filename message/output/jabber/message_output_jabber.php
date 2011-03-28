@@ -59,6 +59,7 @@ class message_output_jabber extends message_output {
             }
             $jabberaddress = $jabberaddresses[$eventdata->userto->id];
 
+            //calling s() on smallmessage causes Jabber to display things like &lt; Jabber != a browser
             $jabbermessage = fullname($eventdata->userfrom).': '.$eventdata->smallmessage;
 
             if (!empty($eventdata->contexturl)) {
