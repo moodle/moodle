@@ -186,7 +186,7 @@ function scorm_parse($scorm, $full) {
             if ($scorm->reference !== '' and (!$full or $scorm->sha1hash !== sha1($scorm->reference))) {
                 $fs->delete_area_files($context->id, 'mod_scorm', 'package');
                 $file_record = array('contextid'=>$context->id, 'component'=>'mod_scorm', 'filearea'=>'package', 'itemid'=>0, 'filepath'=>'/');
-                if ($packagefile = $fs->create_file_from_url($file_record, $scorm->reference)) {
+                if ($packagefile = $fs->create_file_from_url($file_record, $scorm->reference, array('calctimeout' => true))) {
                     $newhash = sha1($scorm->reference);
                 } else {
                     $newhash = null;
