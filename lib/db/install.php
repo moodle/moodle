@@ -45,7 +45,8 @@ function xmldb_main_install() {
     $newsite->numsections  = 0;
     $newsite->category     = 0;
     $newsite->format       = 'site';  // Only for this course
-    $newsite->timemodified = time();
+    $newsite->timecreated  = time();
+    $newsite->timemodified = $newsite->timecreated;
 
     $newsite->id = $DB->insert_record('course', $newsite);
     $SITE = get_site();
