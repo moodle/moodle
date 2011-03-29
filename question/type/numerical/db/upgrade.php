@@ -98,5 +98,3 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
 
     return true;
 }
-
-

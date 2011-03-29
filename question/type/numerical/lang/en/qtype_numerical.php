@@ -105,7 +105,7 @@ $string['unitnotselected'] = 'No unit selected';
 $string['unithandling'] = 'Unit handling';
 $string['validnumberformats'] = 'Valid number formats';
 $string['validnumberformats_help'] = '
-* regular numbers  13500.67 : 13 500.67 : 13500,67: 13 500,67
+* regular numbers 13500.67, 13 500.67, 13500,67 or 13 500,67
 
 * if you use , as thousand separator *always* put the decimal . as in
  13,500.67 : 13,500.
@@ -113,4 +113,4 @@ $string['validnumberformats_help'] = '
 * for exponent form, say 1.350067 * 10<sup>4</sup>, use
  1.350067 E4 : 1.350067 E04 ';
 
-$string['validnumbers'] = ' 13500.67 : 13 500.67 : 13,500.67 : 13500,67: 13 500,67 : 1.350067 E4 : 1.350067 E04 ';
+$string['validnumbers'] = '13500.67, 13 500.67, 13,500.67, 13500,67, 13 500,67, 1.350067 E4 or 1.350067 E04';

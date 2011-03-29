@@ -51,7 +51,7 @@ class restore_qtype_numerical_plugin extends restore_qtype_plugin {
 
         // Add own qtype stuff
         $elename = 'numerical';
-        $elepath = $this->get_pathfor('/numerical_records/numerical_record'); // we used get_recommended_name() so this works
+        $elepath = $this->get_pathfor('/numerical_records/numerical_record');
         $paths[] = new restore_path_element($elename, $elepath);
 
 
@@ -72,7 +72,8 @@ class restore_qtype_numerical_plugin extends restore_qtype_plugin {
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
-        // If the question has been created by restore, we need to create its question_numerical too
+        // If the question has been created by restore, we need to create its
+        // question_numerical too.
         if ($questioncreated) {
             // Adjust some columns
             $data->question = $newquestionid;

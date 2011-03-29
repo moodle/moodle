@@ -70,11 +70,13 @@ class qtype_numerical extends question_type {
                                 "WHERE a.question = ? " .
                                 "    AND   a.id = n.answer " .
                                 "ORDER BY a.id ASC", array($question->id))) {
-            echo $OUTPUT->notification('Error: Missing question answer for numerical question ' . $question->id . '!');
+            echo $OUTPUT->notification('Error: Missing question answer for numerical question ' .
+                    $question->id . '!');
             return false;
         }
 
-        $question->hints = $DB->get_records('question_hints', array('questionid' => $question->id), 'id ASC');
+        $question->hints = $DB->get_records('question_hints',
+                array('questionid' => $question->id), 'id ASC');
 
         $this->get_numerical_units($question);
         //get_numerical_options() need to know if there are units
@@ -84,7 +86,7 @@ class qtype_numerical extends question_type {
         // If units are defined we strip off the default unit from the answer, if
         // it is present. (Required for compatibility with the old code and DB).
         if ($defaultunit = $this->get_default_numerical_unit($question)) {
-            foreach($question->options->answers as $key => $val) {
+            foreach ($question->options->answers as $key => $val) {
                 $answer = trim($val->answer);
                 $length = strlen($defaultunit->unit);
                 if ($length && substr($answer, -$length) == $defaultunit->unit) {
@@ -113,7 +115,7 @@ class qtype_numerical extends question_type {
         return true;
     }
 
-    public function get_default_numerical_unit(&$question) {
+    public function get_default_numerical_unit($question) {
         if (isset($question->options->units[0])) {
             foreach ($question->options->units as $unit) {
                 if (abs($unit->multiplier - 1.0) < '1.0e-' . ini_get('precision')) {
@@ -124,16 +126,17 @@ class qtype_numerical extends question_type {
         return false;
     }
 
-    public function get_numerical_options(&$question) {
+    public function get_numerical_options($question) {
         global $DB;
-        if (!$options = $DB->get_record('question_numerical_options', array('question' => $question->id))) {
+        if (!$options = $DB->get_record('question_numerical_options',
+                array('question' => $question->id))) {
             $question->options->unitgradingtype = 0; // total grade
             $question->options->unitpenalty = 0.1; // default for old questions
             // the default
             if ($defaultunit = $this->get_default_numerical_unit($question)) {
                 // so units can be graded
                 $question->options->showunits = NUMERICALQUESTIONUNITTEXTINPUTDISPLAY ;
-            }else {
+            } else {
                 // only numerical will be graded
                 $question->options->showunits = NUMERICALQUESTIONUNITNODISPLAY ;
             }
@@ -166,7 +169,7 @@ class qtype_numerical extends question_type {
                 array('question' => $question->id), 'answer ASC');
 
         // Save the units.
-        $result = $this->save_numerical_units($question);
+        $result = $this->save_units($question);
         if (isset($result->error)) {
             return $result;
         } else {
@@ -228,15 +231,15 @@ class qtype_numerical extends question_type {
 
         // Delete any left over old answer records.
         $fs = get_file_storage();
-        foreach($oldanswers as $oldanswer) {
+        foreach ($oldanswers as $oldanswer) {
             $fs->delete_area_files($context->id, 'question', 'answerfeedback', $oldanswer->id);
             $DB->delete_records('question_answers', array('id' => $oldanswer->id));
         }
-        foreach($oldoptions as $oldoption) {
+        foreach ($oldoptions as $oldoption) {
             $DB->delete_records('question_numerical', array('id' => $oldoption->id));
         }
 
-        $result = $this->save_numerical_options($question);
+        $result = $this->save_unit_options($question);
         if (!empty($result->error) || !empty($result->notice)) {
             return $result;
         }
@@ -249,14 +252,13 @@ class qtype_numerical extends question_type {
     /**
      * The numerical options control the display and the grading of the unit
      * part of the numerical question and related types (calculateds)
-     * Questions previous to 2,0 do not have this table as multianswer questions
-     * in all versions including 2,0. The default values are set to give the same grade
+     * Questions previous to 2.0 do not have this table as multianswer questions
+     * in all versions including 2.0. The default values are set to give the same grade
      * as old question.
      *
      */
-    function save_numerical_options($question) {
+    function save_unit_options($question) {
         global $DB;
-
         $result = new stdClass();
 
         $update = true ;
@@ -281,6 +283,7 @@ class qtype_numerical extends question_type {
             $options->showunits = $question->unitrole;
             if ($question->unitrole == self::UNITGRADED) {
                 $options->unitgradingtype = $question->unitgradingtypes;
+                $options->showunits = $question->multichoicedisplay;
             }
 
         } else if (isset($question->showunits)) {
@@ -312,7 +315,7 @@ class qtype_numerical extends question_type {
         return true;
     }
 
-    public function save_numerical_units($question) {
+    public function save_units($question) {
         global $DB;
         $result = new stdClass();
 
@@ -330,8 +333,9 @@ class qtype_numerical extends question_type {
         $unitalreadyinsert = array();
         foreach ($question->multiplier as $i => $multiplier) {
             // Discard any unit which doesn't specify the unit or the multiplier
-            if (!empty($question->multiplier[$i]) && !empty($question->unit[$i])&& !array_key_exists($question->unit[$i],$unitalreadyinsert)) {
-                $unitalreadyinsert[$question->unit[$i]] = 1 ;
+            if (!empty($question->multiplier[$i]) && !empty($question->unit[$i]) &&
+                    !array_key_exists($question->unit[$i], $unitalreadyinsert)) {
+                $unitalreadyinsert[$question->unit[$i]] = 1;
                 $units[$i] = new stdClass();
                 $units[$i]->question = $question->id;
                 $units[$i]->multiplier = $this->apply_unit($question->multiplier[$i], array());
@@ -349,7 +353,7 @@ class qtype_numerical extends question_type {
             $length = 0;
             $goodkey = 0 ;
             foreach ($question->options->units as $key => $unit) {
-                    if($unit->unit ==$value ) {
+                if ($unit->unit == $value) {
                     return $key ;
                 }
             }
@@ -409,12 +413,13 @@ class qtype_numerical extends question_type {
         $nameprefix = $question->name_prefix;
         $component = 'qtype_' . $question->qtype;
         // rewrite instructions text
-        $question->options->instructions = quiz_rewrite_question_urls($question->options->instructions, 'pluginfile.php', $context->id, $component, 'instruction', array($state->attempt, $state->question), $question->id);
+        $question->options->instructions = quiz_rewrite_question_urls(
+                $question->options->instructions, 'pluginfile.php', $context->id, $component,
+                'instruction', array($state->attempt, $state->question), $question->id);
         /// Print question text and media
 
         $questiontext = format_text($question->questiontext,
-                $question->questiontextformat,
-                $formatoptions, $cmoptions->course);
+                $question->questiontextformat, $formatoptions, $cmoptions->course);
 
         /// Print input controls
         // as the entry is controlled the question type here is numerical
@@ -1054,7 +1059,7 @@ class qtype_numerical extends question_type {
             if (!$result) {
                 return false;
             }
-            foreach($question->options->answers as $answer) {
+            foreach ($question->options->answers as $answer) {
                 if ($this->test_response($question, $state, $answer)) {
                     return true;
                 }

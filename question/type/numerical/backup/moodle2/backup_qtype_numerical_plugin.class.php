@@ -68,7 +68,8 @@ class backup_qtype_numerical_plugin extends backup_qtype_plugin {
         $numericalrecords->add_child($numericalrecord);
 
         // set source to populate the data
-        $numericalrecord->set_source_table('question_numerical', array('question' => backup::VAR_PARENTID));
+        $numericalrecord->set_source_table('question_numerical',
+                array('question' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 

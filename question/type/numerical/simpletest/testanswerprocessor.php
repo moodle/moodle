@@ -71,8 +71,10 @@ class qtype_numerical_answer_processor_test extends UnitTestCase {
         $this->assertEqual(array('1', '', '-1', 'm'), $ap->parse_response('1.e-1 m'));
         $this->assertEqual(array('1', '0', '0', 'cm'), $ap->parse_response('1.0e0cm'));
 
-        $this->assertEqual(array('1000000', '', '', ''), $ap->parse_response('1,000,000'));
-        $this->assertEqual(array('1000', '00', '', 'm'), $ap->parse_response('1,000.00 m'));
+        $this->assertEqual(array('1000000', '', '', ''),
+                $ap->parse_response('1,000,000'));
+        $this->assertEqual(array('1000', '00', '', 'm'),
+                $ap->parse_response('1,000.00 m'));
 
         $this->assertEqual(array(null, null, null, null), $ap->parse_response('frog'));
         $this->assertEqual(array(null, null, null, null), $ap->parse_response('3 frogs'));

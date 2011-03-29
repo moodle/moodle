@@ -98,7 +98,8 @@ class qtype_numerical_renderer extends qtype_renderer {
     public function specific_feedback(question_attempt $qa) {
         $question = $qa->get_question();
 
-        $answer = $question->get_matching_answer(array('answer' => $qa->get_last_qt_var('answer')));
+        $answer = $question->get_matching_answer(
+                array('answer' => $qa->get_last_qt_var('answer')));
         if (!$answer || !$answer->feedback) {
             return '';
         }
