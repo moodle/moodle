@@ -42,19 +42,35 @@
  */
 abstract class backup_theme_plugin extends backup_plugin {
 
-    // Stores current theme for course. Lazily initialised.
-    protected $theme;
+    /**
+     * @var string Current theme for course (may not be the same as plugin).
+     */
+    protected $coursetheme;
 
     /**
-     * Checks if an expected theme is actually the current theme for the course.
-     * @param string $expected Name of theme you are expecting e.g. 'standard'
-     * @return bool True if that theme is the current course theme
+     * @param string $plugintype Plugin type (always 'theme')
+     * @param string $pluginname Plugin name (name of theme)
+     * @param backup_optigroup $optigroup Group that will contain this data
+     * @param backup_course_structure_step $step Backup step that this is part of
      */
-    protected function is_current_theme($expected) {
-        if (!$this->theme) {
-            $this->theme = backup_plan_dbops::get_theme_from_courseid(
+    public function __construct($plugintype, $pluginname, $optigroup, $step) {
+
+        parent::__construct($plugintype, $pluginname, $optigroup, $step);
+
+        $this->coursetheme = backup_plan_dbops::get_theme_from_courseid(
                     $this->task->get_courseid());
-        }
-        return $this->theme === $expected;
+
+    }
+
+    /**
+     * Return condition for whether this theme should be backed up (= if it
+     * is the same theme as the one used in this course). This condition has
+     * the theme used in the course. It will be compared against the name
+     * of the theme, by use of third parameter in get_plugin_element; in
+     * subclass, you should do:
+     * $plugin = $this->get_plugin_element(null, $this->get_theme_condition(), 'mytheme');
+     */
+    protected function get_theme_condition() {
+        return array('sqlparam' => $this->coursetheme);
     }
 }

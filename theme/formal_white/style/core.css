@@ -1,0 +1,543 @@
+/************************************************************************
+    Non sono riuscito a trovare un modo per sovrascrivere la regola
+        border: 2px solid #ddd;
+    presente nel file
+        /theme/canvas/style/core.css
+    Per questo questo file è stato creato a partire dalla copia del
+    foglio di stile core.css del tema canvas, ed è stato adeguato alle
+    esigenze del tema corrente.
+************************************************************************/
+
+.sitetopic {
+    border: none;
+}
+
+.headingblock {
+    border-bottom: 1px solid #ddd;
+    font-size: 1.3em;
+    color: #333;
+}
+
+#notice {
+    text-align: center;
+}
+
+.noticebox,
+.expired,
+.notopenyet,
+.notifysuccess,
+.notifyproblem,
+.errorbox,
+.continuebutton,
+.singlebutton,
+.buttons,
+.singleselect {
+    text-align: center;
+    margin: 1em 0;
+}
+
+.navbutton .singlebutton {
+    margin: 0;
+}
+
+.generalbox {
+    border-color: #ddd;
+}
+
+.noticebox .generalbox {
+    border: none;
+    margin:2em 0;
+}
+
+.expired,
+.notopenyet {
+    border: none;
+    color: #f00;
+}
+
+.buttons .singlebutton input {
+    margin: 0 1em;
+}
+
+.initialbar {
+    text-align: center;
+}
+
+.side-pre-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+    padding-right: 0;
+}
+
+.side-post-only #page-content #region-main-box #region-post-box #region-main-wrap #region-main {
+    padding-left: 0;
+}
+
+input[type="text"],
+input[type="password"],
+textarea {
+    width: auto;
+    padding: 2px 0 2px 0;
+    margin: 5px 0 5px 0;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    margin-right: 7px;
+}
+
+/* Login
+------------------------*/
+
+.loginbox {
+    margin: 15px 25%;
+}
+
+.loginbox .loginerrors {
+    color: #f00;
+}
+
+.loginbox .loginform {
+    margin: 15px auto 0;
+    width: 50%;
+}
+
+.loginbox .loginform .form-label {
+    float: none;
+    width: 100%;
+    margin: 0 auto;
+    text-align: left;
+}
+.dir-rtl .loginbox .loginform .form-label {
+    text-align: right;
+}
+.loginbox .loginform .form-input {
+    float: none;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.loginbox .loginform .form-input #username,
+.loginbox .loginform .form-input #password {
+    width: 50%;
+    color: #000;
+}
+
+.loginbox .loginform .form-input #loginbtn {
+    margin: 0.5em auto;
+}
+
+.loginbox .forgetpass {
+    margin: 1em 0 0;
+    font-size: 0.95em;
+}
+
+.loginbox.twocolumns {
+    width: 90%;
+    margin-left: 5%;
+}
+
+.loginbox .guestsub {
+    border-top: 1px solid #DDDDDD;
+    margin: 5px 20%
+}
+
+.loginbox.twocolumns .loginpanel {
+    border-color: #ddd;
+    padding-right: 0.5%;
+}
+
+.loginbox.twocolumns .signuppanel {
+    padding-left: 1%;
+    width: 48%;
+}
+
+#page-course-loginas #notice {
+    border: none;
+}
+
+#page-login-forgot_password .generalbox {
+    margin: 0 auto 1.5em;
+    width: 75%;
+    padding: 10px;
+}
+
+#page-login-signup .mform {
+    width: 85%;
+    margin: 0 auto;
+}
+
+#page-login-signup .mform .fitem .fitemtitle {
+    width: 20%;
+}
+
+#page-login-signup .mform .fitem .felement {
+    margin-left: 21%;
+}
+
+/* Admin management
+-----------------------*/
+.plugincompattable {
+    font-size: 100%;
+    text-align: left;
+}
+
+/* User
+-----------------------*/
+
+.userinfobox {
+border-color: #ddd;
+padding: 0
+}
+
+.userinfobox .content {
+    text-align: left;
+    padding-left:10px
+}
+
+.userinfobox .links {
+    vertical-align: top;
+    background: #f4f4f4;
+    padding-left: 10px;
+}
+
+.userinfobox .links a {
+    display: block;
+    text-align: left;
+
+}
+
+.profilepicture {
+    float: left;
+    margin-right: 10px;
+}
+
+.descriptionbox {
+    margin-left: 110px;
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+.path-user .description {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.userprofile .list {
+    margin-top: 10px;
+}
+
+.userprofile .list td {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.userprofile .list .c0 {
+    padding-left: 0;
+    font-weight: bold;
+}
+
+#page-user-view .buttons {
+    text-align: center;
+    width: 70%;
+    margin: 0 auto;
+}
+
+#page-user-view .buttons div {
+    padding: 0 0 10px;
+}
+
+#page-user-index .controls {
+    width: 100%
+}
+
+#page-user-index .controls .singleselect {
+    margin: 0;
+}
+
+.rolesform {
+    text-align: center;
+    margin: 1em 0;
+}
+
+#participantsform {
+    text-align: center;
+}
+
+#participants {
+    width: 100%;
+    margin: 1em auto 0;
+}
+
+#participants th,
+#participants td {
+    vertical-align: middle;
+}
+
+.groupinfobox {border-color: #DDDDDD;width: 60%;margin-left: 20%;margin-right: 20%;}
+
+/* Notes
+------------------------*/
+
+.path-notes .generalbox {
+    border: none;
+}
+
+/* Roles
+------------------------*/
+
+.path-admin-roles .generaltable {
+    /* width: 65%; hiding because it's causing problems on role/assign */
+}
+
+.path-admin-roles .generaltable th {
+    vertical-align: middle;
+}
+
+.path-admin-roles .generaltable .lastcol {
+    width: 15%;
+}
+
+.path-admin-roles .backlink {
+    text-align: center;
+}
+
+/* Blogs
+------------------------*/
+
+.blog_entry .audience {
+    color: #444;
+    margin: 0 0 0.5em;
+    font-size: 0.9em;
+}
+
+.blog_entry .tags {
+    margin-bottom: 0.5em;
+}
+
+/* Tags
+------------------------*/
+
+#big-tag-cloud-box {
+    padding: 10px;
+}
+
+#tag-management-box {
+    text-align: center;
+}
+
+.tag-management-form {
+    border: none;
+    padding: 0 0 1em;
+}
+
+#tag-management-list {
+    margin: 1em 0
+}
+
+#page-tag-index #tag-blogs {
+    border-width: 0 0 1px;
+    width: 65%;
+    margin: 1em auto;
+}
+
+#tagblogentries {
+    margin: 0 0 1em;
+}
+
+#tagblogentries li {
+    list-style: none;
+    padding: 0.25em 0;
+    margin: 0
+}
+
+#big-tag-cloud-box {
+    border: none;
+}
+
+#tag-user-table {
+    width: 95%;
+    margin: 0 auto;
+    border-width: 0 0 1px;
+}
+
+.managelink {
+    text-align: right;
+}
+
+#page-tag-index .headingblock {
+    text-align: center;
+    margin-bottom: 0;
+}
+
+#page-tag-index #tag-management-box {
+    border-bottom: 1px solid #ddd;
+    padding: 4px 0;
+}
+
+#page-tag-index .relatedpages {
+    text-align: center;
+}
+
+#page-tag-manage .lastinitial {
+    margin-bottom: 0.5em;
+}
+
+#page-tag-manage .green {
+    text-align: center;
+    padding: 0 0 1em;
+}
+
+/* YUI overlays
+------------------------*/
+#helppopupbox {
+    z-index: 99999 !important;
+}
+
+
+/* Embedded Pages
+------------------------*/
+
+.pagelayout-embedded {
+    text-align: center;
+    background-color: #fff;
+    background-image: none;
+}
+
+.pagelayout-embedded #content {
+    padding-top: 30px;
+}
+
+/* Forms
+-----------------------*/
+
+.mform .fsubmit {
+    text-align: center;
+    padding: 2px;
+}
+
+.form-label .form-shortname {
+    font-size: 0.8em;
+    color: #777;
+}
+
+.form-description {
+    font-size: 0.95em;
+    color: #444;
+}
+
+.mform .hidden .fitem .fgroup {
+    width: 100%;
+    text-align: center;
+    margin: 1em 0;
+}
+
+.path-backup .mform .hidden .fitem .fgroup {
+    text-align: left;
+}
+
+.path-backup .mform .grouped_settings {
+    margin:1em;
+}
+.path-backup .mform .grouped_settings .grouped_settings {
+    margin:0;
+}
+
+/* Comments
+-----------------------*/
+
+.comment-list li {
+    background: #eee !important;
+    list-style: none;
+}
+
+/* Gradebook
+----------------------*/
+
+.path-grade h1.headerheading {
+    text-align: left; /* Strangely necessary TODO: find bug */
+}
+
+.gradestable .lastrow th.header {
+    background: #ddd;
+}
+
+.gradestable .lastrow td.cell {
+    background: #eee !important;
+}
+
+.user-grade td.b1t,
+.user-grade td.baggt {
+    background: #ddd !important;
+}
+
+#page-grade-edit-scale-index .generaltable {
+    margin: 1em auto;
+}
+
+#page-grade-report-grader-preferences .generalbox {
+    border: none;
+}
+
+.path-grade-report-grader form {
+    text-align: left;
+}
+
+/* Footer
+-----------------------*/
+
+#page-footer .logininfo {
+    padding: 1em 0;
+}
+
+#page-footer .homelink,
+#page-footer .sitelink {
+    padding: 1em 0;
+}
+
+.homelink a {
+    text-decoration: none;
+    border-top: 1px solid #cecece;
+    border-bottom: 2px solid #8a8a8a;
+    border-left: 1px solid #cecece;
+    border-right: 2px solid #8a8a8a;
+}
+
+.homelink a:hover {
+    text-decoration: none;
+    border-bottom: 1px solid #cecece;
+    border-top: 2px solid #8a8a8a;
+    border-right: 1px solid #cecece;
+    border-left: 2px solid #8a8a8a;
+}
+
+/**
+ * Enrol   - TODO: tidy up styles here
+ */
+.userenrolment {font-size:90%;border:1px solid #E3DFD4;}
+.userenrolment tr.r0 {background-color:#F9F9F9;}
+.userenrolment tr.r1 {background-color:#F3F3F3;}
+.userenrolment td {border:1px solid #E9E9E9;border-top-color:#F6F6F6;border-right-color:#EEE;border-left-color:#F3F3F3;}
+.userenrolment td.c0 {border-left-color:#E3DFD4;}
+.userenrolment td.c4 {border-right-color:#E3DFD4;}
+.userenrolment .col_userdetails {padding:3px;min-width:35%;}
+.userenrolment .col_role .roles {position:relative;}
+.userenrolment .col_role .role {line-height:10px;font-size:10px;}
+.userenrolment .col_role .role a img {height:8px;}
+.userenrolment .col_role .addrole {background-color:#DDD;border:1px outset #EEE;-moz-border-radius:5px;}
+.userenrolment .col_group {max-width:300px;}
+.userenrolment .col_group .group {line-height:10px;font-size:10px;}
+.userenrolment .col_group .group a img {height:8px;}
+.userenrolment .col_group .addgroup {background-color:#DDD;border:1px outset #EEE;-moz-border-radius:5px;}
+.userenrolment .col_enrol {max-width:300px;}
+.userenrolment .col_enrol .enrolment {border:1px outset #E6E6E6;background-color:#EEE;line-height:10px;font-size:10px;-moz-border-radius:5px;}
+.path-enrol .enrolusersbutton,
+.path-enrol .enrolcohortbutton {float:left;}
+.path-enrol .enrolusersbutton.instance1,
+.path-enrol .enrolcohortbutton.instance1 {float:right;}
+
+/* Registration */
+#page-admin-registration-hubselector .registration_textfield {width: 400px;}
+
+/**
+ * Redirect
+ */
+.pagelayout-redirect #content {text-align:center;margin-top:10%;margin-bottom:10%;}

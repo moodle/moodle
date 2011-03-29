@@ -5484,12 +5484,17 @@ function get_string_manager($forcereload=false) {
     }
     if ($singleton === null) {
         if (empty($CFG->early_install_lang)) {
+            if (empty($CFG->langcacheroot)) {
+                $langcacheroot = $CFG->dataroot . '/cache/lang';
+            } else {
+                $langcacheroot = $CFG->langcacheroot;
+            }
             if (empty($CFG->langlist)) {
                  $translist = array();
             } else {
                 $translist = explode(',', $CFG->langlist);
             }
-            $singleton = new core_string_manager($CFG->langotherroot, $CFG->langlocalroot, "$CFG->dataroot/cache/lang", !empty($CFG->langstringcache), $translist);
+            $singleton = new core_string_manager($CFG->langotherroot, $CFG->langlocalroot, $langcacheroot, !empty($CFG->langstringcache), $translist);
         } else {
             $singleton = new install_string_manager();
         }

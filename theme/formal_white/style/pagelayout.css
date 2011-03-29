@@ -1,0 +1,105 @@
+/************************************************************************
+    questo file sovrascrive parzialmente
+    il corrispondente foglio di stile nel tema "base"
+    Lo ho ottenuto
+    - duplicando l'originale
+    - modificando quanto necessario
+    - cancellando quanto conservato dell'originale
+************************************************************************/
+
+/****
+ * Three column floating div layout with 2,1,3 column order
+ * Based on: http://matthewjamestaylor.com/blog/holy-grail-no-quirks-mode.htm
+ * And:  http://matthewjamestaylor.com/blog/ultimate-3-column-holy-grail-pixels.htm
+ *
+ * #page
+ *   #page-header
+ *   #page-content
+ *   |  #region-main-box
+ *   |    #region-post-box
+ *   |      #region-main-wrap
+ *   |      |  #region-main
+ *   |      |    .region-content
+ *   |      #region-pre
+ *   |      |  .region-content
+ *   |      #region-post
+ *   |      |  .region-content
+ *   #page-footer
+ *
+ * The body tag may also contain one of three layout specific classes that describe
+ * the regions of the page and allow us to theme more easily.
+ *
+ *   default (no class) = Content + side pre + side post
+ *   side-pre-only      = Content + side pre
+ *   side-post-only     = Content + side post
+ *   content-only       = Content
+ *
+ ****/
+
+#page-header {
+    background-color:[[setting:headerbgc]];
+    /* arrotonadamento angoli in alto dell'header */
+    -moz-border-radius:6px 6px 0px 0px;    /* Firefox */
+    -webkit-border-radius:6px 6px 0px 0px; /* Safari, Chrome */
+    border-radius:6px 6px 0px 0px;         /* CSS3 */
+}
+#page-content {
+    /* arrotonadamento angolo in basso a sx */
+    /* -moz-border-radius:0px 0px 0px 6px;    /* Firefox */
+    /* -webkit-border-radius:0px 0px 0px 6px; /* Safari, Chrome */
+    /* border-radius:0px 0px 0px 6px;         /* CSS3 */
+    background-color:[[setting:blockcolumnbgc]]; /* colore della colonna di sinistra */
+    float:none;
+}
+#page-content #region-main-box {
+    left:[[setting:blockcolumnwidth]];
+    background-color:#FFF;
+}
+#page-content #region-post-box {
+    margin-left:[[setting:minusdoubleblockcolumnwidth]]; /*-2*[[setting:blockcolumnwidth]]*/
+    /* arrotonadamento angolo in basso a dx */
+    /* -moz-border-radius:0px 0px 6px 0px;    /* Firefox */
+    /* -webkit-border-radius:0px 0px 6px 0px; /* Safari, Chrome */
+    /* border-radius:0px 0px 6px 0px;         /* CSS3 */
+    background-color:[[setting:blockcolumnbgc]]; /* colore del fondo della parte occupata dai contenuti della colonna centrale e della colonna dx */
+}
+#page-content #region-main {
+    margin-left:[[setting:doubleblockcolumnwidth]];/*2*[[setting:blockcolumnwidth]]*/
+    background-color:white; /* questo serve a togliere la curvatura dagli angoli della zona centrale */
+}
+#page-content #region-pre {
+    left:[[setting:blockcolumnwidth]]; /*400-[[setting:blockcolumnwidth]]*/
+    width:[[setting:blockcolumnwidth]];
+    background-color:[[setting:blockcolumnbgc]]; /* colore della colonna di sx */
+}
+#page-content #region-post {
+    width:[[setting:blockcolumnwidth]];
+    /* arrotonadamento angolo in basso a dx */
+    /* -moz-border-radius:0px 0px 6px 0px;    /* Firefox */
+    /* -webkit-border-radius:0px 0px 6px 0px; /* Safari, Chrome */
+    /* border-radius:0px 0px 6px 0px;         /* CSS3 */
+    background-color:[[setting:blockcolumnbgc]]; /* colore del fondo della parte occupata dai contenuti della colonna centrale e della colonna dx */
+}
+#page-content .region-content {
+    padding:0.6em 8px 0.1em 8px; /* definisco lo spazio sopra e sotto ai blocchi */
+}
+
+/** Only side pre **/
+    .side-pre-only #page-content #region-post-box {margin-left:-[[setting:blockcolumnwidth]];}
+    .side-pre-only #page-content #region-main {margin-left:[[setting:blockcolumnwidth]];}
+
+/** Only side post **/
+    .side-post-only #page-content #region-post-box {margin-left:-[[setting:blockcolumnwidth]];}
+    .side-post-only #page-content #region-main {margin-left:[[setting:blockcolumnwidth]];}
+    .has_dock.side-post-only .page-middle #region-main {margin-left:[[setting:blockcolumnwidth]];}
+
+/** Report layout **/
+    .pagelayout-report #report-main-content .region-content {margin-left:[[setting:blockcolumnwidth]];}
+    .pagelayout-report #report-region-pre {width:[[setting:blockcolumnwidth]];}
+
+/** Correct for right to left languages **/
+    .dir-rtl.pagelayout-report #report-main-content .region-content {margin-left:0;margin-right:[[setting:blockcolumnwidth]];}
+
+/** Stabalise IE6 behaviour on the report layout **/
+/* aggiunti/sovrascritti da me */
+    .ie6.pagelayout-report #report-region-wrap {float:none;width:[[setting:blockcolumnwidth]];left:auto;position:absolute;top:0;}

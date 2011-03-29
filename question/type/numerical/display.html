@@ -63,9 +63,9 @@
     ?> size="<?php echo $textlength;?>"/>
     <?php if ($state->responses['unit'] != '') echo $feedbackimgunit; 
     if ($options->feedback &&  $question->options->unitgradingtype == 1 && ! $valid_numerical_unit && ! $answerasterisk ){
-        if ( $empty_unit) {
+        if (!empty($empty_unit)) {
             print_string('unitmandatory', 'qtype_numerical'); 
-        }else {
+        } else {
             if(isset($question->options->units) && count($question->options->units) > 0){
                 $found = 0 ;
                 $valid_unit_found = 0 ;

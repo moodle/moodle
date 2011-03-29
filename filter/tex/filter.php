@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -17,6 +16,15 @@
 
 /**
  * Moodle - Filter for converting TeX expressions to cached gif images
+ *
+ * This Moodle text filter converts TeX expressions delimited
+ * by either $$...$$ or by <tex...>...</tex> tags to gif images using
+ * mimetex.cgi obtained from http: *www.forkosh.com/mimetex.html authored by
+ * John Forkosh john@forkosh.com.  Several binaries of this areincluded with
+ * this distribution.
+ * Note that there may be patent restrictions on the production of gif images
+ * in Canada and some parts of Western Europe and Japan until July 2004.
+ *
  * @package    filter
  * @subpackage tex
  * @copyright  2004 Zbigniew Fiedorowicz fiedorow@math.ohio-state.edu
@@ -24,27 +32,24 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-//-------------------------------------------------------------------------
-// NOTE: This Moodle text filter converts TeX expressions delimited
-// by either $$...$$ or by <tex...>...</tex> tags to gif images using
-// mimetex.cgi obtained from http://www.forkosh.com/mimetex.html authored by
-// John Forkosh john@forkosh.com.  Several binaries of this areincluded with
-// this distribution.
-// Note that there may be patent restrictions on the production of gif images
-// in Canada and some parts of Western Europe and Japan until July 2004.
-//-------------------------------------------------------------------------
-/////////////////////////////////////////////////////////////////////////////
-//  To activate this filter, add a line like this to your                  //
-//  list of filters in your Filter configuration:                          //
-//                                                                         //
-//       filter/tex/filter.php                                             //
-/////////////////////////////////////////////////////////////////////////////
+defined('MOODLE_INTERNAL') || die;
 
-function filter_text_image($imagefile, $tex= "", $height="", $width="", $align="middle", $alt='') {
+/**
+ * Create TeX image link.
+ *
+ * @param string $imagefile name of file
+ * @param string $tex TeX notation (html entities already decoded)
+ * @param int $height O means automatic
+ * @param int $width O means automatic
+ * @param string $align
+ * @param string $alt
+ * @return string HTML markup
+ */
+function filter_text_image($imagefile, $tex, $height, $width, $align, $alt) {
     global $CFG, $OUTPUT;
 
-    if ($alt==='') {
-        $alt = s($tex);
+    if (!$imagefile) {
+        throw new coding_exception('image file argument empty in filter_text_image()');
     }
 
     // Work out any necessary inline style.
@@ -65,47 +70,46 @@ function filter_text_image($imagefile, $tex= "", $height="", $width="", $align="
     }
 
     // Prepare the title attribute.
-    if ($tex) {
-        $tex = str_replace('&','&amp;',$tex);
-        $tex = str_replace('<','&lt;',$tex);
-        $tex = str_replace('>','&gt;',$tex);
-        $tex = str_replace('"','&quot;',$tex);
-        $tex = str_replace("\'",'&#39;',$tex);
-        // Note that we retain the title tag as TeX format rather than using
-        // the alt text, even if supplied. The alt text is intended for blind
-        // users (to provide a text equivalent to the equation) while the title
-        // is there as a convenience for sighted users who want to see the TeX
-        // code.
-        $title = "title=\"$tex\"";
+    // Note that we retain the title tag as TeX format rather than using
+    // the alt text, even if supplied. The alt text is intended for blind
+    // users (to provide a text equivalent to the equation) while the title
+    // is there as a convenience for sighted users who want to see the TeX
+    // code.
+    $title = 'title="'.s($tex).'"';
+
+    if ($alt === '') {
+        $alt = s($tex);
+    } else {
+        $alt = s(html_entity_decode($tex, ENT_QUOTES, 'UTF-8'));
     }
 
     // Build the output.
-    $output = "";
-    if ($imagefile) {
-        $anchorcontents = "<img class=\"texrender\" $title alt=\"$alt\" src=\"";
-        if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $anchorcontents .= "$CFG->wwwroot/filter/tex/pix.php/$imagefile";
-        } else {
-            $anchorcontents .= "$CFG->wwwroot/filter/tex/pix.php?file=$imagefile";
-        }
-        $anchorcontents .= "\" $style/>";
-
-        $link = $action = null;
-        if (!file_exists("$CFG->dataroot/filter/tex/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
-            $link = '/filter/tex/texdebug.php';
-        } else {
-            $link = '/filter/tex/displaytex.php?'.urlencode($tex);
-            $action = new popup_action('click', $link, 'popup', array('height'=>300,'width'=>240));
-        }
-        $output .= $OUTPUT->action_link($link, $anchorcontents, $action, array('title'=>'TeX'));
+    $anchorcontents = "<img class=\"texrender\" $title alt=\"$alt\" src=\"";
+    if ($CFG->slasharguments) {        // Use this method if possible for better caching
+        $anchorcontents .= "$CFG->wwwroot/filter/tex/pix.php/$imagefile";
     } else {
-        $output .= "Error: must pass URL or course";
+        $anchorcontents .= "$CFG->wwwroot/filter/tex/pix.php?file=$imagefile";
     }
+    $anchorcontents .= "\" $style/>";
+
+    if (!file_exists("$CFG->dataroot/filter/tex/$imagefile") && has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+        $link = '/filter/tex/texdebug.php';
+        $action = null;
+    } else {
+        $link = new moodle_url('/filter/tex/displaytex.php', array('texexp'=>$tex));
+        $action = new popup_action('click', $link, 'popup', array('width'=>320,'height'=>240));
+    }
+    $output = $OUTPUT->action_link($link, $anchorcontents, $action, array('title'=>'TeX')); //TODO: the popups do not work when text caching is enabled!!
+
     return $output;
 }
 
+
+/**
+ * TeX filtering class.
+ */
 class filter_tex extends moodle_text_filter {
-    function filter ($text, array $options = array()) {
+    function filter($text, array $options = array()) {
 
         global $CFG, $DB;
 
@@ -132,9 +136,9 @@ class filter_tex extends moodle_text_filter {
 #    }
         $text .= ' ';
         preg_match_all('/\$(\$\$+?)([^\$])/s',$text,$matches);
-        for ($i=0;$i<count($matches[0]);$i++) {
-            $replacement = str_replace('$','&#x00024;',$matches[1][$i]).$matches[2][$i];
-            $text = str_replace($matches[0][$i],$replacement,$text);
+        for ($i=0; $i<count($matches[0]); $i++) {
+            $replacement = str_replace('$','&#x00024;', $matches[1][$i]).$matches[2][$i];
+            $text = str_replace($matches[0][$i], $replacement, $text);
         }
 
         // <tex> TeX expression </tex>
@@ -159,8 +163,17 @@ class filter_tex extends moodle_text_filter {
               $align = "text-top";
               $texexp = preg_replace('/^align=top /','',$texexp);
             }
+
+            // decode entities encoded by editor, luckily there is very little chance of double decoding
+            $texexp = html_entity_decode($texexp, ENT_QUOTES, 'UTF-8');
+
+            if ($texexp === '') {
+                contninue;
+            }
+
             $md5 = md5($texexp);
-            if (! $texcache = $DB->get_record("cache_filters", array("filter"=>"tex", "md5key"=>$md5))) {
+            if (!$DB->record_exists("cache_filters", array("filter"=>"tex", "md5key"=>$md5))) {
+                $texcache = new stdClass();
                 $texcache->filter = 'tex';
                 $texcache->version = 1;
                 $texcache->md5key = $md5;
@@ -169,7 +182,7 @@ class filter_tex extends moodle_text_filter {
                 $DB->insert_record("cache_filters", $texcache, false);
             }
             $filename = $md5 . ".{$CFG->filter_tex_convertformat}";
-            $text = str_replace( $matches[0][$i], filter_text_image($filename, $texexp, '', '', $align, $alt), $text);
+            $text = str_replace( $matches[0][$i], filter_text_image($filename, $texexp, 0, 0, $align, $alt), $text);
         }
         return $text;
     }

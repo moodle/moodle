@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 class dml_test extends UnitTestCase {
     private $tables = array();
+    /** @var moodle_database */
     private $tdb;
     private $data;
     public  static $includecoverage = array('lib/dml');
@@ -1082,25 +1083,27 @@ class dml_test extends UnitTestCase {
         $this->assertEqual($inskey2, end($records)->id);
 
         // test 2 tables with aliases and limits with order bys
-        $sql = "SELECT t1.id, t1.course AS cid, t2.nametext FROM {{$tablename}} t1, {{$tablename2}} t2
-            WHERE t2.course=t1.course ORDER BY t1.course, ". $DB->sql_compare_text('t2.nametext');
+        $sql = "SELECT t1.id, t1.course AS cid, t2.nametext
+                  FROM {{$tablename}} t1, {{$tablename2}} t2
+                 WHERE t2.course=t1.course
+              ORDER BY t1.course, ". $DB->sql_compare_text('t2.nametext');
         $records = $DB->get_records_sql($sql, null, 2, 2); // Skip courses 3 and 6, get 4 and 5
         $this->assertEqual(2, count($records));
         $this->assertEqual('5', end($records)->cid);
         $this->assertEqual('4', reset($records)->cid);
 
-        // test 2 tables with aliases and limits with order bys (limit which is out  of range)
-        $records = $DB->get_records_sql($sql, null, 2, 21098765432109876543210); // Skip course {3,6}, get {4,5}
+        // test 2 tables with aliases and limits with the highest INT limit works
+        $records = $DB->get_records_sql($sql, null, 2, PHP_INT_MAX); // Skip course {3,6}, get {4,5}
         $this->assertEqual(2, count($records));
         $this->assertEqual('5', end($records)->cid);
         $this->assertEqual('4', reset($records)->cid);
 
-        // test 2 tables with aliases and limits with order bys (limit which is out  of range)
-        $records = $DB->get_records_sql($sql, null, 21098765432109876543210, 2); // Skip all courses
+        // test 2 tables with aliases and limits with order bys (limit which is highest INT number)
+        $records = $DB->get_records_sql($sql, null, PHP_INT_MAX, 2); // Skip all courses
         $this->assertEqual(0, count($records));
 
-        // test 2 tables with aliases and limits with order bys (limit which is out  of range)
-        $records = $DB->get_records_sql($sql, null, 21098765432109876543210, 21098765432109876543210); // Skip all courses
+        // test 2 tables with aliases and limits with order bys (limit which s highest INT number)
+        $records = $DB->get_records_sql($sql, null, PHP_INT_MAX, PHP_INT_MAX); // Skip all courses
         $this->assertEqual(0, count($records));
 
         // TODO: Test limits in queries having DISTINCT clauses
@@ -3709,6 +3712,31 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1, count($records));
         $this->assertTrue($records = $DB->get_records_sql($sqlnamed, array('content' => '2')));
         $this->assertEqual(1, count($records));
+    }
+
+    public function test_bound_param_reserved() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $DB->insert_record($tablename, array('course' => '1'));
+
+        // make sure reserved words do not cause fatal problems in query parameters
+
+        $DB->execute("UPDATE {{$tablename}} SET course = 1 WHERE ID = :select", array('select'=>1));
+        $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE course = :select", array('select'=>1));
+        $rs = $DB->get_recordset_sql("SELECT * FROM {{$tablename}} WHERE course = :select", array('select'=>1));
+        $rs->close();
+        $DB->get_fieldset_sql("SELECT id FROM {{$tablename}} WHERE course = :select", array('select'=>1));
+        $DB->set_field_select($tablename, 'course', '1', "id = :select", array('select'=>1));
+        $DB->delete_records_select($tablename, "id = :select", array('select'=>1));
     }
 
     public function test_limits_and_offsets() {

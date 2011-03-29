@@ -167,10 +167,10 @@ class navigation_node_test extends UnitTestCase {
         $this->node->find_expandable($expandable);
         $this->assertEqual(count($expandable), 4);
         if (count($expandable) === 4) {
-            $name = $expandable[0]['branchid'];
-            $name .= $expandable[1]['branchid'];
-            $name .= $expandable[2]['branchid'];
-            $name .= $expandable[3]['branchid'];
+            $name = $expandable[0]['key'];
+            $name .= $expandable[1]['key'];
+            $name .= $expandable[2]['key'];
+            $name .= $expandable[3]['key'];
             $this->assertEqual($name, 'demo1demo2demo4hiddendemo2');
         }
     }
@@ -344,39 +344,6 @@ class global_navigation_test extends UnitTestCase {
         $this->assertTrue($this->node->exposed_format_display_course_content('topic'));
         $this->assertFalse($this->node->exposed_format_display_course_content('scorm'));
         $this->assertTrue($this->node->exposed_format_display_course_content('dummy'));
-    }
-    public function test_load_section_activities() {
-        $node = $this->node->find('5', navigation_node::TYPE_COURSE);
-        $course = new stdClass;
-        $course->id = '5';
-        $course->numsections = 10;
-        $section = $node->add('Test Section 1', null, navigation_node::TYPE_SECTION, null, $this->cache->coursesections5[1]->id);
-        $modinfo = $this->cache->modinfo5;
-        $modinfo->sections[1] = array(289, 290);
-        $modinfo->cms[289] = clone($modinfo->cms[288]);
-        $modinfo->cms[289]->id = 289;
-        $modinfo->cms[289]->sectionnum = 1;
-        $modinfo->cms[290]->modname = 'forum';
-        $modinfo->cms[289]->instance = 20;
-        $modinfo->cms[290] = clone($modinfo->cms[288]);
-        $modinfo->cms[290]->id = 290;
-        $modinfo->cms[290]->modname = 'resource';
-        $modinfo->cms[290]->sectionnum = 1;
-        $modinfo->cms[290]->instance = 21;
-        $modinfo->instances['forum'][20] = clone($modinfo->instances['forum'][19]);
-        $modinfo->instances['forum'][20]->id = 20;
-        $modinfo->instances['resource'] = array();
-        $modinfo->instances['resource'][21] = clone($modinfo->instances['forum'][19]);
-        $modinfo->instances['resource'][21]->id = 21;
-        $this->cache->modinfo5 = $modinfo;
-        $course->modinfo = serialize($modinfo);
-        $activities = $this->node->exposed_load_section_activities($section, 1, $modinfo);
-        foreach ($activities as $activity) {
-            if ($this->assertIsA($activity, 'navigation_node')) {
-                $this->assertEqual($activity->type, navigation_node::TYPE_ACTIVITY);
-                $this->assertReference($activity, $section->get($activity->key));
-            }
-        }
     }
     public function test_module_extends_navigation() {
         $this->cache->test1_extends_navigation = true;

@@ -287,22 +287,23 @@ function cron_run() {
         mtrace('checking for create_password');
         if ($DB->count_records('user_preferences', array('name'=>'create_password', 'value'=>'1'))) {
             mtrace('creating passwords for new users');
-            $newusers = $DB->get_records_sql("SELECT u.id as id, u.email, u.firstname,
+            $newusers = $DB->get_recordset_sql("SELECT u.id as id, u.email, u.firstname,
                                                      u.lastname, u.username,
                                                      p.id as prefid
                                                 FROM {user} u
                                                 JOIN {user_preferences} p ON u.id=p.userid
                                                WHERE p.name='create_password' AND p.value='1' AND u.email !='' ");
 
-            foreach ($newusers as $newuserid => $newuser) {
+            foreach ($newusers as $newuser) {
                 // email user
                 if (setnew_password_and_mail($newuser)) {
-                    // remove user pref
-                    $DB->delete_records('user_preferences', array('id'=>$newuser->prefid));
+                    unset_user_preference('create_password', $newuser);
+                    set_user_preference('auth_forcepasswordchange', 1, $newuser);
                 } else {
                     trigger_error("Could not create and mail new user password!");
                 }
             }
+            $newusers->close();
         }
 
         if (!empty($CFG->usetags)) {

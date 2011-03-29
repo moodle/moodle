@@ -279,6 +279,9 @@ class core_renderer extends renderer_base {
             $output .= '<meta http-equiv="refresh" content="'.$this->page->periodicrefreshdelay.';url='.$this->page->url->out().'" />';
         }
 
+        // flow player embedding support
+        $this->page->requires->js_function_call('M.util.load_flowplayer');
+
         $this->page->requires->js_function_call('setTimeout', array('fix_column_widths()', 20));
 
         $focus = $this->page->focuscontrol;
@@ -1648,8 +1651,8 @@ class core_renderer extends renderer_base {
             $output .= $helpicon->linktext;
         }
 
-        // now create the link around it
-        $url = new moodle_url('/help.php', array('component' => $helpicon->component, 'identifier' => $helpicon->helpidentifier, 'lang'=>current_language()));
+        // now create the link around it - we need https on loginhttps pages
+        $url = new moodle_url($CFG->httpswwwroot.'/help.php', array('component' => $helpicon->component, 'identifier' => $helpicon->helpidentifier, 'lang'=>current_language()));
 
         // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
         $title = get_string('helpprefix2', '', trim($helpicon->title, ". \t"));
@@ -1712,8 +1715,8 @@ class core_renderer extends renderer_base {
             $output .= $helpicon->linktext;
         }
 
-        // now create the link around it
-        $url = new moodle_url('/help.php', array('component' => $helpicon->component, 'identifier' => $helpicon->identifier, 'lang'=>current_language()));
+        // now create the link around it - we need https on loginhttps pages
+        $url = new moodle_url($CFG->httpswwwroot.'/help.php', array('component' => $helpicon->component, 'identifier' => $helpicon->identifier, 'lang'=>current_language()));
 
         // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
         $title = get_string('helpprefix2', '', trim($title, ". \t"));
@@ -2462,22 +2465,6 @@ EOD;
      */
     public function larrow() {
         return $this->page->theme->larrow;
-    }
-
-    /**
-     * Returns the colours of the small MP3 player
-     * @return string
-     */
-    public function filter_mediaplugin_colors() {
-        return $this->page->theme->filter_mediaplugin_colors;
-    }
-
-    /**
-     * Returns the colours of the big MP3 player
-     * @return string
-     */
-    public function resource_mp3player_colors() {
-        return $this->page->theme->resource_mp3player_colors;
     }
 
     /**

@@ -180,7 +180,7 @@
         }
 
         foreach ($users as $key => $user) {
-            if (!empty($user->country)) {
+            if (isset($countries[$user->country])) {
                 $users[$key]->country = $countries[$user->country];
             }
         }

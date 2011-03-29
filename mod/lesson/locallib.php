@@ -603,6 +603,8 @@ function lesson_get_media_html($lesson, $context) {
 
     $mimetype = resourcelib_guess_url_mimetype($url);
 
+    $extension = resourcelib_get_extension($url->out(false));
+
     // find the correct type and print it out
     if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
         $code = resourcelib_embed_image($url, $title);
@@ -611,7 +613,7 @@ function lesson_get_media_html($lesson, $context) {
         // MP3 audio file
         $code = resourcelib_embed_mp3($url, $title, $clicktoopen);
 
-    } else if ($mimetype == 'video/x-flv') {
+    } else if ($mimetype == 'video/x-flv' or $extension === 'f4v') {
         // Flash video file
         $code = resourcelib_embed_flashvideo($url, $title, $clicktoopen);
 

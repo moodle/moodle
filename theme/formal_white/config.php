@@ -1,5 +1,7 @@
 <?php
 
+defined('MOODLE_INTERNAL') || die();
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -29,13 +31,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 $THEME->name = 'formal_white';
 ////////////////////////////////////////////////////
 // Name of the theme. Most likely the name of
 // the directory in which this file resides.
 ////////////////////////////////////////////////////
 
-$THEME->parents = array('canvas','base');
+
+$THEME->parents = array('base','canvas');
 /////////////////////////////////////////////////////
 // Which existing theme(s) in the /theme/ directory
 // do you want this theme to extend. A theme can
@@ -46,101 +50,114 @@ $THEME->parents = array('canvas','base');
 // changes you want to your theme.
 ////////////////////////////////////////////////////
 
-$THEME->sheets = array('dock','base','general','fw_corners','formalwhite','settings');
+
+$THEME->parents_exclude_sheets = array(
+    'canvas'=>array(
+        'core',
+        'pagelayout',
+        'tabs',
+        'tables',
+    ),
+);
+////////////////////////////////////////////////////
+// An array of stylesheets not to inherit from the
+// themes parents
+////////////////////////////////////////////////////
+
+
+$THEME->sheets = array('frame'     ,'menu', 'course',
+                       'pagelayout','core', 'calendar',
+                       'tabs'      ,'quiz', 'formal_white');
 ////////////////////////////////////////////////////
 // Name of the stylesheet(s) you've including in
 // this theme's /styles/ directory.
 ////////////////////////////////////////////////////
 
-$THEME->parents_exclude_sheets = array(
-    'canvas'=>array(
-        'tabs',
-    ),
-);
 
-$THEME->resource_mp3player_colors =
- 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
- 'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
- 'font=Arial&fontColour=3333FF&buffer=10&waitForPlay=no&autoPlay=yes';
-/// With this you can control the colours of the "big" MP3 player
-/// that is used for MP3 resources.
+$THEME->enable_dock = true;
+////////////////////////////////////////////////////
+// Do you want to use the new navigation dock?
+////////////////////////////////////////////////////
 
 
-$THEME->filter_mediaplugin_colors =
- 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
- 'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
- 'waitForPlay=yes';
-/// ...And this controls the small embedded player
+$THEME->editor_sheets = array('editor');
+////////////////////////////////////////////////////
+// An array of stylesheets to include within the
+// body of the editor.
+////////////////////////////////////////////////////
+
 
 $THEME->layouts = array(
-    // Most pages - if we encounter an unknown or a missing page type, this one is used.
     'base' => array(
         'file' => 'general.php',
-        'regions' => array()
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post',
     ),
-    'standard' => array(
+    'general' => array(
         'file' => 'general.php',
-        'regions' => array('side-post'),
-        'defaultregion' => 'side-post'
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-post',
     ),
-    // Course page
     'course' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
+        'options' => array('langmenu'=>true),
     ),
-    // Course page
     'coursecategory' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
     ),
     'incourse' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
     ),
     'frontpage' => array(
-        'file' => 'general.php',
+        'file' => 'frontpage.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-pre'
+        'defaultregion' => 'side-post',
+        'options' => array('langmenu'=>true),
     ),
     'admin' => array(
         'file' => 'general.php',
         'regions' => array('side-pre'),
-        'defaultregion' => 'side-pre'
+        'defaultregion' => 'side-pre',
     ),
     'mydashboard' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
+        'options' => array('langmenu'=>true),
     ),
     'mypublic' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post'
+        'defaultregion' => 'side-post',
     ),
     'login' => array(
         'file' => 'general.php',
-        'regions' => array()
+        'regions' => array(),
+        'options' => array('langmenu'=>true),
     ),
     // Pages that appear in pop-up windows - no navigation, no blocks, no header.
     'popup' => array(
-        'file' => 'general.php',
+        'file' => 'embedded.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>true),
+        'options' => array('nofooter'=>true, 'noblocks'=>true, 'nonavbar'=>true),
     ),
     // No blocks and minimal footer - used for legacy frame layouts only!
     'frametop' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter', 'noblocks'=>true),
+        'options' => array('nofooter'=>true),
     ),
-    // Embeded pages, like iframe embeded in moodleform
+    // Embeded pages, like iframe embeded in moodleform (chat)
     'embedded' => array(
-        'file' => 'general.php',
+        'file' => 'embedded.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocustommenu'=>true),
     ),
     // Used during upgrade and install, and for the 'This site is undergoing maintenance' message.
     // This must not have any blocks, and it is good idea if it does not have links to
@@ -148,7 +165,7 @@ $THEME->layouts = array(
     'maintenance' => array(
         'file' => 'general.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'noblocks'=>true),
+        'options' => array('nofooter'=>true, 'nonavbar'=>true),
     ),
     // Should display the content and basic headers only.
     'print' => array(
@@ -157,19 +174,85 @@ $THEME->layouts = array(
         'options' => array('nofooter'=>true, 'nonavbar'=>false, 'noblocks'=>true),
     ),
     'report' => array(
-        'file' => 'report.php',
+        'file' => 'general.php',
         'regions' => array('side-pre'),
-        'defaultregion' => 'side-pre'
+        'defaultregion' => 'side-pre',
     ),
 );
+///////////////////////////////////////////////////////////////
+// These are all of the possible layouts in Moodle. The
+// simplest way to do this is to keep the theme and file
+// variables the same for every layout. Including them
+// all in this way allows some flexibility down the road
+// if you want to add a different layout template to a
+// specific page.
+///////////////////////////////////////////////////////////////
 
-$THEME->rendererfactory = 'theme_overridden_renderer_factory';
-$THEME->enable_dock = true;
-$THEME->javascripts_footer = array('navigation');
 
-/**
- * Sets the function that will replace our settings within the CSS
- */
-$THEME->csspostprocess = 'formalwhite_process_css';
+$THEME->csspostprocess = 'formal_white_user_settings';
+////////////////////////////////////////////////////
+// Allows the user to provide the name of a function
+// that all CSS should be passed to before being
+// delivered.
+////////////////////////////////////////////////////
 
-$THEME->editor_sheets = array('editor');
+
+// $THEME->javascripts
+////////////////////////////////////////////////////
+// An array containing the names of JavaScript files
+// located in /javascript/ to include in the theme.
+// (gets included in the head)
+////////////////////////////////////////////////////
+
+
+// $THEME->javascripts_footer
+////////////////////////////////////////////////////
+// As above but will be included in the page footer.
+////////////////////////////////////////////////////
+
+
+//$THEME->larrow = "&#60";
+////////////////////////////////////////////////////
+// Overrides the left arrow image used throughout
+// Moodle
+////////////////////////////////////////////////////
+
+
+//$THEME->rarrow = "&#62";
+////////////////////////////////////////////////////
+// Overrides the right arrow image used throughout Moodle
+////////////////////////////////////////////////////
+
+
+// $THEME->layouts
+////////////////////////////////////////////////////
+// An array setting the layouts for the theme
+////////////////////////////////////////////////////
+
+
+// $THEME->parents_exclude_javascripts
+////////////////////////////////////////////////////
+// An array of JavaScript files NOT to inherit from
+// the themes parents
+////////////////////////////////////////////////////
+
+
+// $THEME->parents_exclude_sheets
+////////////////////////////////////////////////////
+// An array of stylesheets not to inherit from the
+// themes parents
+////////////////////////////////////////////////////
+
+
+// $THEME->plugins_exclude_sheets
+////////////////////////////////////////////////////
+// An array of plugin sheets to ignore and not
+// include.
+////////////////////////////////////////////////////
+
+
+// $THEME->rendererfactory
+////////////////////////////////////////////////////
+// Sets a custom render factory to use with the
+// theme, used when working with custom renderers.
+////////////////////////////////////////////////////

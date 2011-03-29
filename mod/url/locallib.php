@@ -234,6 +234,8 @@ function url_display_embed($url, $cm, $course) {
     $link = html_writer::tag('a', $fullurl, array('href'=>str_replace('&amp;', '&', $fullurl)));
     $clicktoopen = get_string('clicktoopen', 'url', $link);
 
+    $extension = resourcelib_get_extension($url->externalurl);
+
     if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
         $code = resourcelib_embed_image($fullurl, $title);
 
@@ -241,7 +243,7 @@ function url_display_embed($url, $cm, $course) {
         // MP3 audio file
         $code = resourcelib_embed_mp3($fullurl, $title, $clicktoopen);
 
-    } else if ($mimetype == 'video/x-flv') {
+    } else if ($mimetype == 'video/x-flv' or $extension === 'f4v') {
         // Flash video file
         $code = resourcelib_embed_flashvideo($fullurl, $title, $clicktoopen);
 
@@ -305,7 +307,7 @@ function url_get_final_display_type($url) {
                              'application/pdf', 'text/html');  // these are known to cause trouble for external links, sorry
     static $embed    = array('image/gif', 'image/jpeg', 'image/png', 'image/svg+xml',         // images
                              'application/x-shockwave-flash', 'video/x-flv', 'video/x-ms-wm', // video formats
-                             'video/quicktime', 'video/mpeg',
+                             'video/quicktime', 'video/mpeg', 'video/mp4',
                              'audio/mp3', 'audio/x-realaudio-plugin', 'x-realaudio-plugin',   // audio formats,
                             );
 

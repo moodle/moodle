@@ -367,7 +367,7 @@ if ($hassiteconfig) {
     }
     $ADMIN->add('webservicesettings', $temp);
 
-
+// Question type settings
 if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) {
     // Question type settings.
     $ADMIN->add('modules', new admin_category('qtypesettings', get_string('questiontypes', 'admin')));
@@ -385,6 +385,8 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
         }
     }
 }
+
+// Plagiarism plugin settings
 if ($hassiteconfig && !empty($CFG->enableplagiarism)) {
     $ADMIN->add('modules', new admin_category('plagiarism', get_string('plagiarism', 'plagiarism')));
     $temp = new admin_settingpage('plagiarismsettings', get_string('plagiarismsettings', 'plagiarism'));
@@ -397,8 +399,31 @@ if ($hassiteconfig && !empty($CFG->enableplagiarism)) {
     }
 }
 $ADMIN->add('reports', new admin_externalpage('comments', get_string('comments'), $CFG->wwwroot.'/comment/', 'moodle/site:viewreports'));
-/// Now add reports
 
+// Course reports settings
+if ($hassiteconfig) {
+    $pages = array();
+    foreach (get_plugin_list('coursereport') as $report => $path) {
+        $file = $CFG->dirroot . '/course/report/' . $report . '/settings.php';
+        if (file_exists($file)) {
+            $settings = new admin_settingpage('coursereport' . $report,
+                    get_string('pluginname', 'coursereport_' . $report), 'moodle/site:config');
+            // settings.php may create a subcategory or unset the settings completely
+            include($file);
+            if ($settings) {
+                $pages[] = $settings;
+            }
+        }
+    }
+    if (!empty($pages)) {
+        $ADMIN->add('modules', new admin_category('coursereports', get_string('coursereports')));
+        foreach ($pages as $page) {
+            $ADMIN->add('coursereports', $page);
+        }
+    }
+}
+
+// Now add reports
 foreach (get_plugin_list('report') as $plugin => $plugindir) {
     $settings_path = "$plugindir/settings.php";
     if (file_exists($settings_path)) {

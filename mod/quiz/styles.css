@@ -53,6 +53,7 @@ table#categoryquestions td,
 #page-mod-quiz-view #page .quizgradefeedback,
 #page-mod-quiz-view #page .quizattempt {text-align: center;}
 #page-mod-quiz-view #page .quizattemptsummary td p {margin-top: 0;}
+#page-mod-quiz-view .generaltable.quizattemptsummary {margin-left:auto;margin-right:auto;}
 #page-mod-quiz-view .generalbox#feedback {width:70%;margin-left:auto;margin-right:auto;padding-bottom:15px;}
 #page-mod-quiz-view .generalbox#feedback h2 {margin: 0;}
 #page-mod-quiz-view .generalbox#feedback h3 {text-align: left;}

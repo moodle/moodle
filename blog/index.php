@@ -34,6 +34,10 @@ foreach ($url_params as $var => $val) {
 }
 $PAGE->set_url('/blog/index.php', $url_params);
 
+if (empty($CFG->bloglevel)) {
+    print_error('blogdisable', 'blog');
+}
+
 //correct tagid if a text tag is provided as a param
 if (!empty($tag)) {
     if ($tagrec = $DB->get_record_sql("SELECT * FROM {tag} WHERE ". $DB->sql_like('name', '?', false), array("%$tag%"))) {
@@ -52,11 +56,32 @@ if (!empty($groupid) && empty($courseid)) {
     $courseid = $DB->get_field('groups', 'courseid', array('id'=>$groupid));
 }
 
-if (empty($CFG->bloglevel)) {
+$sitecontext = get_context_instance(CONTEXT_SYSTEM);
+
+// check basic permissions
+if ($CFG->bloglevel == BLOG_GLOBAL_LEVEL) {
+    // everybody can see anything - no login required unless site is locked down using forcelogin
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
+} else if ($CFG->bloglevel == BLOG_SITE_LEVEL) {
+    // users must log in and can not be guests
+    require_login();
+    if (isguestuser()) {
+        // they must have entered the url manually...
+        print_error('blogdisable', 'blog');
+    }
+
+} else if ($CFG->bloglevel == BLOG_USER_LEVEL) {
+    // users can see own blogs only! with the exception of ppl with special cap
+    require_login();
+
+} else {
+    // weird!
     print_error('blogdisable', 'blog');
 }
 
-$sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
 if (!$userid && has_capability('moodle/blog:view', $sitecontext) && $CFG->bloglevel > BLOG_USER_LEVEL) {
     if ($entryid) {
@@ -82,9 +107,6 @@ if (!empty($modid)) {
 if ((empty($courseid) ? true : $courseid == SITEID) && empty($userid)) {
     if ($CFG->bloglevel < BLOG_SITE_LEVEL) {
         print_error('siteblogdisable', 'blog');
-    }
-    if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL) {
-        require_login();
     }
     if (!has_capability('moodle/blog:view', $sitecontext)) {
         print_error('cannotviewsiteblog', 'blog');

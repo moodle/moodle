@@ -1,0 +1,158 @@
+/****
+ *
+ * #frametop
+ *    #framebottom
+ *    !   #frametopright
+ *    |   |   <div>---/<div>
+ *    !   /#frametopright
+ *    |   #frameleft
+ *    |   |   #frameright
+ *    |   |   |   #wrapper
+ *    |   |   |   |   #page-header
+ *    |   |   |   |   |   #headerlogo
+ *    |   |   |   |   |   |   <img>
+ *    |   |   |   |   |   h1#headerheading---/h1#headerheading
+ *    |   |   |   |   |   #headermenu---/#headermenu
+ *    |   |   |   |   /#page-header
+ *    |   |   |   |   #custommenu---/#custommenu
+ *    |   |   |   |   .navbar clearfix---/.navbar clearfix
+ *    |   |   |   |       .breadcrumb---/.breadcrumb
+ *    |   |   |   |       .navbutton---/.navbutton
+ *    |   |   |   |   /.navbar clearfix
+ *    |   |   |   |   #page-content
+ *    |   |   |   |   .
+ *    |   |   |   |   .
+ *    |   |   |   |   .
+ *    |   |   |   |   /#page-content
+ *    |   |   |   |   .clearfix---/.clearfix
+ *    |   |   |   /#wrapper
+ *    |   |   #frameright
+ *    |   /#frameleft
+ *    |   #framebottomright
+ *    |   |   <div>---/<div>
+ *    !   /#framebottomright
+ *    /#framebottom
+ * /#frametop
+ *
+ * The body tag may also contain one of three layout specific classes that describe
+ * the regions of the page and allow us to theme more easily.
+ *
+ *   default (no class) = Content + side pre + side post
+ *   side-pre-only      = Content + side pre
+ *   side-post-only     = Content + side post
+ *   content-only       = Content
+ *
+ ****/
+
+#wrapper,
+#footerwrapper {
+    padding:0 17px 0 17px;
+    float:none; /* serve a qualcosa? */
+    /*clear:both;*/
+    /*overflow:hidden;*/
+}
+
+#frametop,
+#footerframetop {
+    background-image:url([[pix:theme|roundcorner/header]]);
+    margin:15px 15px 0;
+    background-position:0 0;
+    background-repeat:repeat-x;
+    min-width:934px;
+}
+
+#frametopright,
+#footerframetopright { /* Frame background top right */
+    background-image:url([[pix:theme|roundcorner/header_r]]);
+    background-repeat:no-repeat;
+    background-position:100% 0;
+    text-align:left;
+    height:17px;
+    margin:0 0 0 17px;
+}
+
+#frametopright div,
+#footerframetopright div { /* Frame background top left */
+    background-image:url([[pix:theme|roundcorner/header_l]]);
+    font-size:1px;
+    line-height:1%;
+    height:17px;
+    background-repeat:no-repeat;
+    background-position:0 0;
+    background-color:transparent;
+    position:relative;
+    width:17px;
+    margin-left:-17px;
+}
+
+#frameleft,
+#footerframeleft { /* Frame background left */
+    background-image:url([[pix:theme|roundcorner/body_l]]);
+    background-repeat:repeat-y;
+    background-position:0 0;
+    background-color:#FFF;
+}
+
+#frameright,
+#footerframeright { /* Frame background right */
+    background-image:url([[pix:theme|roundcorner/body_r]]);
+    background-repeat:repeat-y;
+    background-position:100% 0;
+    background-color:transparent;
+    /*margin-left:17px;*/
+    /*padding-right:17px;*/
+}
+
+#framebottomright,
+#footerframebottomright { /* Frame background bottom right */
+    background-image:url([[pix:theme|roundcorner/footer_r]]);
+    background-repeat:no-repeat;
+    background-position:100% 0;
+    text-align:left;
+    margin:0 0 0 17px;
+}
+
+#framebottomright div,
+#footerframebottomright div {  /* Frame background bottom left */
+    background-image:url([[pix:theme|roundcorner/footer_l]]);
+    font-size:1px;
+    line-height:1%;
+    height:17px;
+    background-repeat:no-repeat;
+    background-position:0 0;
+    background-color:transparent;
+    position:relative;
+    width:17px;
+    margin-left:-17px;
+}
+
+#framebottom,
+#footerframebottom { /* Bottom Middle */
+    background-image:url([[pix:theme|roundcorner/footer]]);
+    background-repeat:repeat-x;
+    background-position:0 100%;
+    background-attachment:scroll;
+    background-color:transparent;
+}
+
+/*******************************************************************/
+/* Footer section                                                  */
+/*******************************************************************/
+
+#footerwrapper {
+    background-color:white;
+    margin:0 17px 0 17px;
+}
+
+#footerframetop {
+    margin-top:0;
+}
+
+#footerwrapper p,
+#footerwrapper div {
+    margin:0;
+}
+
+/*******************************************************************/
+/* End of footer section                                           */
+/*******************************************************************/

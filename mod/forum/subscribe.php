@@ -80,14 +80,19 @@ if ($groupmode && !forum_is_subscribed($user->id, $forum) && !has_capability('mo
 
 require_login($course->id, false, $cm);
 
-if (is_null($mode) and !is_enrolled($context)) {   // Guests and visitors can't subscribe - only enrolled
+if (is_null($mode) and !is_enrolled($context, $USER, '', true)) {   // Guests and visitors can't subscribe - only enrolled
     $PAGE->set_title($course->shortname);
     $PAGE->set_heading($course->fullname);
-    echo $OUTPUT->header();
-    echo $OUTPUT->confirm(get_string('subscribeenrolledonly', 'forum').'<br /><br />'.get_string('liketologin'),
-                 get_login_url(), new moodle_url('/mod/forum/view.php', array('f'=>$id)));
-    echo $OUTPUT->footer();
-    exit;
+    if (isguestuser()) {
+        echo $OUTPUT->header();
+        echo $OUTPUT->confirm(get_string('subscribeenrolledonly', 'forum').'<br /><br />'.get_string('liketologin'),
+                     get_login_url(), new moodle_url('/mod/forum/view.php', array('f'=>$id)));
+        echo $OUTPUT->footer();
+        exit;
+    } else {
+        // there should not be any links leading to this place, just redirect
+        redirect(new moodle_url('/mod/forum/view.php', array('f'=>$id)), get_string('subscribeenrolledonly', 'forum'));
+    }
 }
 
 $returnto = optional_param('backtoindex',0,PARAM_INT)

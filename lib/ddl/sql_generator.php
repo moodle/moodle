@@ -1140,7 +1140,7 @@ abstract class sql_generator {
     /**
      * Returns the code (array of statements) needed to execute extra statements on table rename
      */
-    public function getRenameTableExtraSQL($xmldb_table) {
+    public function getRenameTableExtraSQL($xmldb_table, $newname) {
         return array();
     }
 

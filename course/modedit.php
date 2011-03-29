@@ -325,7 +325,7 @@ if ($mform->is_cancelled()) {
         }
 
         if (!$updateinstancefunction($fromform, $mform)) {
-            print_error('cannotupdatemod', '', 'view.php?id=$course->id', $fromform->modulename);
+            print_error('cannotupdatemod', '', "view.php?id={$course->id}#section-{$cw->section}", $fromform->modulename);
         }
 
         // make sure visibility is set correctly (in particular in calendar)
@@ -416,9 +416,9 @@ if ($mform->is_cancelled()) {
             $DB->delete_records('course_modules', array('id'=>$fromform->coursemodule));
 
             if (!is_number($returnfromfunc)) {
-                print_error('invalidfunction', '', 'view.php?id=$course->id');
+                print_error('invalidfunction', '', "view.php?id={$course->id}#section-{$cw->section}");
             } else {
-                print_error('cannotaddnewmodule', '', "view.php?id=$course->id", $fromform->modulename);
+                print_error('cannotaddnewmodule', '', "view.php?id={$course->id}#section-{$cw->section}", $fromform->modulename);
             }
         }
 
@@ -568,7 +568,7 @@ if ($mform->is_cancelled()) {
     if (isset($fromform->submitbutton)) {
         redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$fromform->coursemodule");
     } else {
-        redirect("$CFG->wwwroot/course/view.php?id=$course->id");
+        redirect("$CFG->wwwroot/course/view.php?id={$course->id}#section-{$cw->section}");
     }
     exit;
 
@@ -591,7 +591,7 @@ if ($mform->is_cancelled()) {
     if (get_string_manager()->string_exists('modulename_help', $module->name)) {
         echo $OUTPUT->heading_with_help($pageheading, 'modulename', $module->name, 'icon');
     } else {
-        echo $OUTPUT->heading_with_help($pageheading, '', '', 'icon');
+        echo $OUTPUT->heading_with_help($pageheading, '', $module->name, 'icon');
     }
 
     $mform->display();

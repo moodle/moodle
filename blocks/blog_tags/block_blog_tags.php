@@ -1,12 +1,33 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-//TODO: fix these sloppy constant names or move them elsewhere!
+/**
+ * Blog tags block.
+ *
+ * @package    block
+ * @subpackage blog_tags
+ * @copyright  2006 Shane Elliott
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-define('BLOGDEFAULTTIMEWITHIN', 90);
-define('BLOGDEFAULTNUMBEROFTAGS', 20);
-define('BLOGDEFAULTSORT', 'name');
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot .'/blog/lib.php');
+define('BLOCK_BLOG_TAGS_DEFAULTTIMEWITHIN', 90);
+define('BLOCK_BLOG_TAGS_DEFAULTNUMBEROFTAGS', 20);
+define('BLOCK_BLOG_TAGS_DEFAULTSORT', 'name');
 
 class block_blog_tags extends block_base {
     function init() {
@@ -42,29 +63,47 @@ class block_blog_tags extends block_base {
     function get_content() {
         global $CFG, $SITE, $USER, $DB, $OUTPUT;
 
-        if (empty($CFG->usetags) || empty($CFG->bloglevel)) {
+        if ($this->content !== NULL) {
+            return $this->content;
+        }
+
+        // make sure blog and tags are actually enabled
+        if (empty($CFG->bloglevel)) {
+            $this->content = new stdClass();
+            $this->content->text = '';
+            if ($this->page->user_is_editing()) {
+                $this->content->text = get_string('blogdisable', 'blog');
+            }
+            return $this->content;
+
+        } else if (empty($CFG->usetags)) {
+            $this->content = new stdClass();
             $this->content->text = '';
             if ($this->page->user_is_editing()) {
                 $this->content->text = get_string('tagsaredisabled', 'tag');
             }
             return $this->content;
-        }
 
-        if (empty($this->config->timewithin)) {
-            $this->config->timewithin = BLOGDEFAULTTIMEWITHIN;
-        }
-        if (empty($this->config->numberoftags)) {
-            $this->config->numberoftags = BLOGDEFAULTNUMBEROFTAGS;
-        }
-        if (empty($this->config->sort)) {
-            $this->config->sort = BLOGDEFAULTSORT;
-        }
-
-        if ($this->content !== NULL) {
+        } else if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL and (!isloggedin() or isguestuser())) {
+            $this->content = new stdClass();
+            $this->content->text = '';
             return $this->content;
         }
 
-        $this->content = new stdClass;
+        // require the libs and do the work
+        require_once($CFG->dirroot .'/blog/lib.php');
+
+        if (empty($this->config->timewithin)) {
+            $this->config->timewithin = BLOCK_BLOG_TAGS_DEFAULTTIMEWITHIN;
+        }
+        if (empty($this->config->numberoftags)) {
+            $this->config->numberoftags = BLOCK_BLOG_TAGS_DEFAULTNUMBEROFTAGS;
+        }
+        if (empty($this->config->sort)) {
+            $this->config->sort = BLOCK_BLOG_TAGS_DEFAULTSORT;
+        }
+
+        $this->content = new stdClass();
         $this->content->text = '';
         $this->content->footer = '';
 
@@ -129,7 +168,7 @@ class block_blog_tags extends block_base {
 
         /// Now we sort the tag display order
             $CFG->tagsort = $this->config->sort;
-            usort($etags, "blog_tags_sort");
+            usort($etags, "block_blog_tags_sort");
 
         /// Finally we create the output
         /// Accessibility: markup as a list.
@@ -163,7 +202,7 @@ class block_blog_tags extends block_base {
     }
 }
 
-function blog_tags_sort($a, $b) {
+function block_blog_tags_sort($a, $b) {
     global $CFG;
 
     if (empty($CFG->tagsort)) {
@@ -175,7 +214,7 @@ function blog_tags_sort($a, $b) {
     if (is_numeric($a->$tagsort)) {
         return ($a->$tagsort == $b->$tagsort) ? 0 : ($a->$tagsort > $b->$tagsort) ? 1 : -1;
     } elseif (is_string($a->$tagsort)) {
-        return strcmp($a->$tagsort, $b->$tagsort);
+        return strcmp($a->$tagsort, $b->$tagsort); //TODO: this is not compatible with UTF-8!!
     } else {
         return 0;
     }

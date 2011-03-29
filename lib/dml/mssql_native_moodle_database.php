@@ -694,6 +694,9 @@ class mssql_native_moodle_database extends moodle_database {
         if ($limitfrom or $limitnum) {
             if ($limitnum >= 1) { // Only apply TOP clause if we have any limitnum (limitfrom offset is handled later)
                 $fetch = $limitfrom + $limitnum;
+                if (PHP_INT_MAX - $limitnum < $limitfrom) { // Check PHP_INT_MAX overflow
+                    $fetch = PHP_INT_MAX;
+                }
                 $sql = preg_replace('/^([\s(])*SELECT([\s]+(DISTINCT|ALL))?(?!\s*TOP\s*\()/i',
                                     "\\1SELECT\\2 TOP $fetch", $sql);
             }
@@ -1001,6 +1004,9 @@ class mssql_native_moodle_database extends moodle_database {
         if (is_null($params)) {
             $params = array();
         }
+
+        // convert params to ? types
+        list($select, $params, $type) = $this->fix_sql_params($select, $params);
 
     /// Get column metadata
         $columns = $this->get_columns($table);

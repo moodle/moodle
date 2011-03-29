@@ -1,13 +1,16 @@
 <?php
 
-$hasheading = ($PAGE->heading);
+defined('MOODLE_INTERNAL') || die();
+
+$hasheading = $PAGE->heading;
 $hasnavbar = (empty($PAGE->layout_options['nonavbar']) && $PAGE->has_navbar());
 $hasfooter = (empty($PAGE->layout_options['nofooter']));
-$hassidepre = (empty($PAGE->layout_options['noblocks']) && $PAGE->blocks->region_has_content('side-pre', $OUTPUT));
-$hassidepost = (empty($PAGE->layout_options['noblocks']) && $PAGE->blocks->region_has_content('side-post', $OUTPUT));
 
-$showsidepre = ($hassidepre && !$PAGE->blocks->region_completely_docked('side-pre', $OUTPUT));
-$showsidepost = ($hassidepost && !$PAGE->blocks->region_completely_docked('side-post', $OUTPUT));
+$hassidepre = $PAGE->blocks->region_has_content('side-pre', $OUTPUT);
+$hassidepost = $PAGE->blocks->region_has_content('side-post', $OUTPUT);
+
+$showsidepre = $hassidepre && !$PAGE->blocks->region_completely_docked('side-pre', $OUTPUT);
+$showsidepost = $hassidepost && !$PAGE->blocks->region_completely_docked('side-post', $OUTPUT);
 
 $custommenu = $OUTPUT->custom_menu();
 $hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
@@ -20,21 +23,22 @@ if ($showsidepre && !$showsidepost) {
 } else if (!$showsidepost && !$showsidepre) {
     $bodyclasses[] = 'content-only';
 }
+
 if ($hascustommenu) {
     $bodyclasses[] = 'has_custom_menu';
 }
 
+/************************************************************************************************/
 if (!empty($PAGE->theme->settings->logo)) {
     $logourl = $PAGE->theme->settings->logo;
 } else {
-    $logourl = $OUTPUT->pix_url('logo', 'theme');
+    $logourl = $OUTPUT->pix_url('logo_small', 'theme');
 }
 
-if (!empty($PAGE->theme->settings->footnote)) {
-    $footnote = $PAGE->theme->settings->footnote;
-} else {
-    $footnote = '<!-- There was no custom footnote set -->';
-}
+$hasframe = !isset($PAGE->theme->settings->noframe) || !$PAGE->theme->settings->noframe;
+
+$displaylogo = !isset($PAGE->theme->settings->displaylogo) || $PAGE->theme->settings->displaylogo;
+/************************************************************************************************/
 
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes() ?>>
@@ -44,101 +48,168 @@ echo $OUTPUT->doctype() ?>
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
 <body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
-<?php echo $OUTPUT->standard_top_of_body_html() ?>
-<div id="page">
-    <div id="page2">
-        <div id="headerleft" class="headerleft"><div>&nbsp;</div></div>
-        <div id="bodyleft" class="bodyleft">
-            <div id="bodyright" class="bodyright">
-                <div id="header-i3" class="i3">
-                <?php  if ($hasheading || $hasnavbar) {  // This is what gets printed on the home page only
-                ?>
-                    <div id="header-home" class="clearfix">
-                        <div id="headerenvelop">
+    <?php echo $OUTPUT->standard_top_of_body_html();
 
-                            <!-- //echo '<h1 class="logo headermain">'.$PAGE->heading.'</h1>'; -->
-                            <?php echo '<div id="logo"><img class="sitelogo" src="'.$logourl.'" alt="Custom logo here" /></div>';
-                            echo '<div class="headermenu">';
-                                echo $OUTPUT->login_info();
-                                if (!empty($PAGE->theme->settings->alwayslangmenu)) {
-                                    echo $OUTPUT->lang_menu();
-                                }
-                                echo $PAGE->headingmenu;
-                            echo '</div>'; // closes: <div class="headermenu">
-
-                        echo '</div>'; // closes: <div id="headerenvelop">
-                    echo '</div>'; // closes: <div id="header-home" class="clearfix">
-
-                    if ($hascustommenu) {
-                        echo '<div id="custommenu">'.$custommenu.'</div>';
-                    }
-
-                    //Accessibility: breadcrumb trail/navbar now a DIV, not a table.
-                    if ($hasnavbar) {
-                        echo '<div class="navbar clearfix">';
-                        echo '    <div class="breadcrumb">'.$OUTPUT->navbar().'</div>';
-                        echo '    <div class="navbutton">'.$PAGE->button.'</div>';
-                        echo '</div>';
-                    }
-
-                } ?>
-
-<!-- END OF HEADER -->
-
-                    <div id="page-content" class="shrinker">
-                    <!-- <div id="content" class="shrinker"> -->
-                        <div id="region-main-box">
-                            <div id="region-post-box">
-
-                                <div id="region-main-wrap">
-                                    <div id="region-main">
-                                        <div class="region-content">
-                                            <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <?php if ($hassidepre) { ?>
-                                <div id="region-pre" class="block-region">
-                                    <div class="region-content">
-                                        <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                                <?php if ($hassidepost) { ?>
-                                <div id="region-post" class="block-region">
-                                    <div class="region-content">
-                                        <?php echo $OUTPUT->blocks_for_region('side-post') ?>
-                                    </div>
-                                </div>
-                                <?php } ?>
-
-                            </div>
-                        </div>
-                    <!-- </div> -->
-                    </div>
-
-				</div> <!-- closes: <div id="header-i3" class="i3"> -->
-			</div> <!-- closes: <div id="bodyright" class="bodyright"> -->
-		</div> <!-- closes: <div id="bodyleft" class="bodyleft"> -->
-        <div id="contentfooter" class="contentfooter"><div>&nbsp;</div></div>
-    </div>  <!-- closes: <div id="page2"> -->
-</div> <!-- closes:<div id="page"> -->
-
-<!-- START OF FOOTER -->
-<?php if ($hasfooter) { ?>
-    <div id="page-footer" class="clearfix">
-        <?php echo $footnote; ?>
-        <p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
-        <?php
-        echo $OUTPUT->login_info();
-        echo $OUTPUT->home_link();
-        echo $OUTPUT->standard_footer_html();
-        ?>
-    </div>
+if ($hasframe) { ?>
+    <div id="frametop">
+        <div id="framebottom">
+            <div id="frametopright">
+                <div>&nbsp;</div>
+            </div>
+            <div id="frameleft">
+                <div id="frameright">
+                    <div id="wrapper">
 <?php } ?>
 
-<?php echo $OUTPUT->standard_end_of_body_html() ?>
+<!-- begin of page-header -->
+            <?php if ($hasheading) { ?>
+                <div id="page-header">
+                    <?php if ($displaylogo) { ?>
+                        <div id="headerlogo">
+                            <img src="<?php echo $logourl ?>" alt="Custom logo here" />
+                        </div>
+                    <?php } else { ?>
+                        <h1 class="headerheading"><?php echo $PAGE->heading ?></h1>
+                    <?php } ?>
+
+                    <div class="headermenu">
+                        <?php
+                            echo $OUTPUT->login_info();
+                            if (($CFG->langmenu) && (!empty($PAGE->layout_options['langmenu']))) {
+                                echo $OUTPUT->lang_menu();
+                            }
+                            echo $PAGE->headingmenu;
+                        ?>
+                    </div>
+                </div>
+            <?php } ?>
+<!-- end of page-header -->
+
+<!-- begin of custom menu -->
+            <?php if ($hascustommenu) { ?>
+                <div id="custommenu"><?php echo $custommenu; ?></div>
+            <?php } ?>
+<!-- end of custom menu -->
+
+<!-- begin of navigation bar -->
+            <?php if ($hasnavbar) { ?>
+                <div class="navbar clearfix">
+                    <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
+                    <div class="navbutton"><?php echo $PAGE->button; ?></div>
+                </div>
+            <?php } ?>
+<!-- end of navigation bar -->
+
+<!-- start of moodle content -->
+            <div id="page-content">
+                <div id="region-main-box">
+                    <div id="region-post-box">
+
+                        <!-- main mandatory content of the moodle page  -->
+                        <div id="region-main-wrap">
+                            <div id="region-main">
+                                <div class="region-content">
+                                    <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end of main mandatory content of the moodle page -->
+
+
+                        <!-- left column block - diplayed only if... -->
+                        <?php if ($hassidepre) { ?>
+                        <div id="region-pre" class="block-region">
+                            <div class="region-content">
+                                <?php echo $OUTPUT->blocks_for_region('side-pre') ?>
+                            </div>
+                        </div>
+                        <?php } ?>
+                        <!-- end of left column block - diplayed only if... -->
+
+                        <!-- right column block - diplayed only if... -->
+                        <?php if ($hassidepost) { ?>
+                        <div id="region-post" class="block-region">
+                            <div class="region-content">
+                                <?php echo $OUTPUT->blocks_for_region('side-post') ?>
+                            </div>
+                        </div>
+                        <?php } ?>
+                        <!-- end of right column block - diplayed only if... -->
+
+                    </div>
+                </div>
+            </div>
+<!-- end of moodle content -->
+
+            <div class="clearfix"></div>
+
+<?php if ($hasframe) { ?>
+                    </div> <!-- end of wrapper -->
+                </div> <!-- </frameright> -->
+            </div> <!-- </frameleft> -->
+            <div id="framebottomright">
+                <div>&nbsp;</div>
+            </div>
+        </div> <!-- </framebottom> -->
+    </div> <!-- </frametop> -->
+
+<?php }
+
+if ($hasfooter) {
+    if ($hasframe) { ?>
+
+        <!-- START OF FOOTER -->
+        <div id="page-footer">
+        <?php if (!empty($PAGE->theme->settings->footnote)) { ?>
+            <div id="footerframetop">
+                <div id="footerframebottom">
+                    <div id="footerframetopright">
+                        <div>&nbsp;</div>
+                    </div>
+                    <div id="footerframeleft">
+                        <div id="footerframeright">
+                            <!-- the content to show -->
+                            <div id="footerwrapper">
+                                <?php echo $PAGE->theme->settings->footnote; ?>
+                            </div> <!-- end of footerwrapper -->
+                        </div>
+                    </div> <!-- </footerframeright></footerframeleft> -->
+                    <div id="footerframebottomright">
+                        <div>&nbsp;</div>
+                    </div>
+                </div>
+            </div> <!-- </footerframebottom></footerframetop> -->
+        <?php }
+
+    } else { ?>
+
+        <!-- START OF FOOTER -->
+        <div id="page-footer" class="noframefooter">
+            <?php if (!empty($PAGE->theme->settings->footnote)) { ?>
+                <div id="page-footer-content">
+                    <!-- the content to show -->
+                    <div id="footerwrapper">
+                        <?php echo $PAGE->theme->settings->footnote; ?>
+                    </div> <!-- end of footerwrapper -->
+                </div> <!-- end of page-footer_noframe-content -->
+            <?php }
+
+    } ?>
+
+            <div class="moodledocsleft">
+            <?php
+                //echo $OUTPUT->login_info();
+                //echo $OUTPUT->home_link();
+                echo $OUTPUT->standard_footer_html();
+            ?>
+            </div>
+            <div class="moodledocs">
+                <?php echo page_doc_link(get_string('moodledocslink')); ?>
+            </div>
+        </div> <!-- end of page-footer or page-footer_noframe -->
+<?php   //ho chiuso la div di cui mancavo prima
+}
+
+    echo $OUTPUT->standard_end_of_body_html(); ?>
 </body>
 </html>

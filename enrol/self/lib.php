@@ -209,12 +209,12 @@ class enrol_self_plugin extends enrol_plugin {
                 $enrol = enrol_get_plugin('self');
                 $timestart = time();
                 if ($instance->enrolperiod) {
-                    $tineend = $timestart + $instance->enrolperiod;
+                    $timeend = $timestart + $instance->enrolperiod;
                 } else {
-                    $tineend = 0;
+                    $timeend = 0;
                 }
 
-                $this->enrol_user($instance, $USER->id, $instance->roleid, $timestart, $tineend);
+                $this->enrol_user($instance, $USER->id, $instance->roleid, $timestart, $timeend);
                 add_to_log($instance->courseid, 'course', 'enrol', '../enrol/users.php?id='.$instance->courseid, $instance->courseid); //there should be userid somewhere!
 
                 if ($instance->password and $instance->customint1 and $data->enrolpassword !== $instance->password) {
