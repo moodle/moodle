@@ -104,12 +104,12 @@ class qtype_numerical_edit_form extends question_edit_form {
         $mform->addElement('select', 'multichoicedisplay',
                 get_string('studentunitanswer', 'qtype_numerical'), $unitinputoptions);
 
-        $unitslefts = array(
+        $unitsleftoptions = array(
             0 => get_string('rightexample', 'qtype_numerical'),
             1 => get_string('leftexample', 'qtype_numerical')
         );
         $mform->addElement('select', 'unitsleft',
-                get_string('unitposition', 'qtype_numerical'), $unitslefts);
+                get_string('unitposition', 'qtype_numerical'), $unitsleftoptions);
         $mform->setDefault('unitsleft', 0);
 
         $mform->addElement('editor', 'instructions',

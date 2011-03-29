@@ -53,7 +53,8 @@ class qtype_numerical_renderer extends qtype_renderer {
 
         $feedbackimg = '';
         if ($options->correctness) {
-            $answer = $question->get_matching_answer(array('answer' => $currentanswer));
+            list($value, $unit) = $question->ap->apply_units($currentanswer);
+            $answer = $question->get_matching_answer($value);
             if ($answer) {
                 $fraction = $answer->fraction;
             } else {
@@ -63,7 +64,7 @@ class qtype_numerical_renderer extends qtype_renderer {
             $feedbackimg = $this->feedback_image($fraction);
         }
 
-        $questiontext = $question->format_questiontext();
+        $questiontext = $question->format_questiontext($qa);
         $placeholder = false;
         if (preg_match('/_____+/', $questiontext, $matches)) {
             $placeholder = $matches[0];
@@ -98,13 +99,14 @@ class qtype_numerical_renderer extends qtype_renderer {
     public function specific_feedback(question_attempt $qa) {
         $question = $qa->get_question();
 
-        $answer = $question->get_matching_answer(
-                array('answer' => $qa->get_last_qt_var('answer')));
+        list($value, $unit) = $question->ap->apply_units($qa->get_last_qt_var('answer'));
+        $answer = $question->get_matching_answer($value);
         if (!$answer || !$answer->feedback) {
             return '';
         }
 
-        return $question->format_text($answer->feedback);
+        return $question->format_text($answer->feedback, $answer->feedbackformat,
+                $qa, 'question', 'answerfeedback', $answer->id);
     }
 
     public function correct_response(question_attempt $qa) {

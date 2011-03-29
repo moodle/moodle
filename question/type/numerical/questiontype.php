@@ -363,6 +363,9 @@ class qtype_numerical extends question_type {
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
         $this->initialise_numerical_answers($question, $questiondata);
+        $question->unitdisplay = $questiondata->options->showunits;
+        $question->unitgradingtype = $questiondata->options->unitgradingtype;
+        $question->unitpenalty = $questiondata->options->unitpenalty;
         $this->initialise_numerical_units($question, $questiondata);
     }
 
@@ -372,8 +375,8 @@ class qtype_numerical extends question_type {
             return;
         }
         foreach ($questiondata->options->answers as $a) {
-            $question->answers[$a->id] = new qtype_numerical_answer($a->answer,
-                    $a->fraction, $a->feedback, $a->tolerance);
+            $question->answers[$a->id] = new qtype_numerical_answer($a->id, $a->answer,
+                    $a->fraction, $a->feedback, $a->feedbackformat, $a->tolerance);
         }
     }
 
@@ -386,7 +389,8 @@ class qtype_numerical extends question_type {
         foreach ($questiondata->options->units as $unit) {
             $units[$unit->unit] = $unit->multiplier;
         }
-        $question->ap = new qtype_numerical_answer_processor($units);
+        $question->ap = new qtype_numerical_answer_processor($units,
+                $questiondata->options->unitsleft);
     }
 
     function delete_question($questionid, $contextid) {
@@ -836,6 +840,28 @@ class qtype_numerical extends question_type {
         return 0;
     }
 
+    /**
+     * @param object $questiondata the data defining the quetsion.
+     * @param string $answer a response.
+     * @param object $unit a unit. If null, {@link get_default_numerical_unit()}
+     * is used.
+     */
+    public function add_unit($questiondata, $answer, $unit = null) {
+        if (is_null($unit)) {
+            $unit = $this->get_default_numerical_unit($questiondata);
+        }
+
+        if (!$unit) {
+            return $answer;
+        }
+
+        if (!empty($questiondata->options->unitsleft)) {
+            return $unit->unit . ' ' . $answer;
+        } else {
+            return $answer . ' ' . $unit->unit;
+        }
+    }
+
     public function get_possible_responses($questiondata) {
         $responses = array();
 
@@ -845,9 +871,7 @@ class qtype_numerical extends question_type {
             $responseclass = $answer->answer;
 
             if ($responseclass != '*') {
-                if ($unit) {
-                    $responseclass .= ' ' . $unit->unit;
-                }
+                $responseclass = $this->add_unit($questiondata, $responseclass, $unit);
 
                 $ans = new qtype_numerical_answer($answer->id, $answer->answer, $answer->fraction,
                         $answer->feedback, $answer->feedbackformat, $answer->tolerance);
@@ -861,57 +885,6 @@ class qtype_numerical extends question_type {
         $responses[null] = question_possible_response::no_response();
 
         return array($questiondata->id => $responses);
-    }
-
-    function get_tolerance_interval(&$answer) {
-        // No tolerance
-        if (empty($answer->tolerance)) {
-            $answer->tolerance = 0;
-        }
-
-        // Calculate the interval of correct responses (min/max)
-        if (!isset($answer->tolerancetype)) {
-            $answer->tolerancetype = 2; // nominal
-        }
-
-        // We need to add a tiny fraction depending on the set precision to make the
-        // comparison work correctly. Otherwise seemingly equal values can yield
-        // false. (fixes bug #3225)
-        $tolerance = (float)$answer->tolerance + ("1.0e-".ini_get('precision'));
-        switch ($answer->tolerancetype) {
-            case '1': case 'relative':
-                /// Recalculate the tolerance and fall through
-                /// to the nominal case:
-                $tolerance = $answer->answer * $tolerance;
-                // Do not fall through to the nominal case because the tiny fraction is a factor of the answer
-                 $tolerance = abs($tolerance); // important - otherwise min and max are swapped
-                $max = $answer->answer + $tolerance;
-                $min = $answer->answer - $tolerance;
-                break;
-            case '2': case 'nominal':
-                $tolerance = abs($tolerance); // important - otherwise min and max are swapped
-                // $answer->tolerance 0 or something else
-                if ((float)$answer->tolerance == 0.0  &&  abs((float)$answer->answer) <= $tolerance ) {
-                    $tolerance = (float) ("1.0e-".ini_get('precision')) * abs((float)$answer->answer) ; //tiny fraction
-                } else if ((float)$answer->tolerance != 0.0 && abs((float)$answer->tolerance) < abs((float)$answer->answer) &&  abs((float)$answer->answer) <= $tolerance) {
-                    $tolerance = (1+("1.0e-".ini_get('precision')) )* abs((float) $answer->tolerance) ;//tiny fraction
-               }
-
-                $max = $answer->answer + $tolerance;
-                $min = $answer->answer - $tolerance;
-                break;
-            case '3': case 'geometric':
-                $quotient = 1 + abs($tolerance);
-                $max = $answer->answer * $quotient;
-                $min = $answer->answer / $quotient;
-                break;
-            default:
-                print_error('unknowntolerance', 'question', '', $answer->tolerancetype);
-        }
-
-        $answer->min = $min;
-        $answer->max = $max;
-        return true;
     }
 
     /**
@@ -1091,10 +1064,12 @@ class qtype_numerical_answer_processor {
     protected $decsep;
     /** @var string character used as thousands separator. */
     protected $thousandssep;
+    /** @var boolean whether the units come before or after the number. */
+    protected $unitsbefore;
 
     protected $regex = null;
 
-    public function __construct($units, $decsep = null, $thousandssep = null) {
+    public function __construct($units, $unitsbefore = false, $decsep = null, $thousandssep = null) {
         if (is_null($decsep)) {
             $decsep = get_string('decsep', 'langconfig');
         }
@@ -1106,6 +1081,7 @@ class qtype_numerical_answer_processor {
         $this->thousandssep = $thousandssep;
 
         $this->units = $units;
+        $this->unitsbefore = $unitsbefore;
     }
 
     /**
@@ -1138,17 +1114,20 @@ class qtype_numerical_answer_processor {
             return $this->regex;
         }
 
-        $beforepointre = '([+-]?[' . preg_quote($this->thousandssep, '/') . '\d]*)';
-        $decimalsre = preg_quote($this->decsep, '/') . '(\d*)';
+        $decsep = preg_quote($this->decsep, '/');
+        $thousandssep = preg_quote($this->thousandssep, '/');
+        $beforepointre = '([+-]?[' . $thousandssep . '\d]*)';
+        $decimalsre = $decsep . '(\d*)';
         $exponentre = '(?:e|E|(?:x|\*|×)10(?:\^|\*\*))([+-]?\d+)';
 
-        $escapedunits = array();
-        foreach ($this->units as $unit => $notused) {
-            $escapedunits[] = preg_quote($unit, '/');
+        $validunitendchars = "[^-$decsep\deEx*×^+$thousandssep]";
+        if ($this->unitsbefore) {
+            $unitre = "(.*)(?:(?=\s)|(?<=$validunitendchars))\s*";
+            $this->regex = "/^(?:$unitre)?$beforepointre(?:$decimalsre)?(?:$exponentre)?$/U";
+        } else {
+            $unitre = "\s*(?:(?<=\s)|(?=$validunitendchars))(.*)";
+            $this->regex = "/^$beforepointre(?:$decimalsre)?(?:$exponentre)?(?:$unitre)?$/U";
         }
-        $unitre = '(' . implode('|', $escapedunits) . ')';
-
-        $this->regex = "/^$beforepointre(?:$decimalsre)?(?:$exponentre)?\s*(?:$unitre)?$/U";
         return $this->regex;
     }
 
@@ -1166,7 +1145,11 @@ class qtype_numerical_answer_processor {
         }
 
         $matches += array('', '', '', '', ''); // Fill in any missing matches.
-        list($notused, $beforepoint, $decimals, $exponent, $unit) = $matches;
+        if ($this->unitsbefore) {
+            list($notused, $unit, $beforepoint, $decimals, $exponent) = $matches;
+        } else {
+            list($notused, $beforepoint, $decimals, $exponent, $unit) = $matches;
+        }
 
         // Strip out thousands separators.
         $beforepoint = str_replace($this->thousandssep, '', $beforepoint);
@@ -1175,6 +1158,11 @@ class qtype_numerical_answer_processor {
         // (The only way to do this in the regex would make it much more complicated.)
         if ($beforepoint === '' && $decimals === '') {
             return array(null, null, null, null);
+        }
+
+        $unit = trim($unit);
+        if ($unit && !array_key_exists($unit, $this->units)) {
+            $unit = '';
         }
 
         return array($beforepoint, $decimals, $exponent, $unit);
@@ -1209,5 +1197,21 @@ class qtype_numerical_answer_processor {
         }
 
         return array($value, $unit);
+    }
+
+    /**
+     * @param string $answer a response.
+     * @param string $unit a unit.
+     */
+    public function add_unit($answer, $unit) {
+        if (!$unit) {
+            return $answer;
+        }
+
+        if ($this->unitsbefore) {
+            return $unit . ' ' . $answer;
+        } else {
+            return $answer . ' ' . $unit;
+        }
     }
 }

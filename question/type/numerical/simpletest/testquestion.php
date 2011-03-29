@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
  */
 class qtype_numerical_question_test extends UnitTestCase {
     public function test_is_complete_response() {
-        $question = test_question_maker::make_a_numerical_question();
+        $question = test_question_maker::make_question('numerical');
 
         $this->assertFalse($question->is_complete_response(array()));
         $this->assertTrue($question->is_complete_response(array('answer' => '0')));
@@ -43,7 +43,7 @@ class qtype_numerical_question_test extends UnitTestCase {
     }
 
     public function test_is_gradable_response() {
-        $question = test_question_maker::make_a_numerical_question();
+        $question = test_question_maker::make_question('numerical');
 
         $this->assertFalse($question->is_gradable_response(array()));
         $this->assertTrue($question->is_gradable_response(array('answer' => '0')));
@@ -52,7 +52,7 @@ class qtype_numerical_question_test extends UnitTestCase {
     }
 
     public function test_grading() {
-        $question = test_question_maker::make_a_numerical_question();
+        $question = test_question_maker::make_question('numerical');
 
         $this->assertEqual(array(0, question_state::$gradedwrong),
                 $question->grade_response(array('answer' => '1.0')));
@@ -61,11 +61,11 @@ class qtype_numerical_question_test extends UnitTestCase {
     }
 
     public function test_grading_with_units() {
-        $question = test_question_maker::make_a_numerical_question();
+        $question = test_question_maker::make_question('numerical');
         $question->ap = new qtype_numerical_answer_processor(
-                array('m' => 1, 'cm' => 0.01), '.', ',');
+                array('m' => 1, 'cm' => 0.01), false, '.', ',');
 
-        $this->assertEqual(array(0, question_state::$gradedwrong),
+        $this->assertEqual(array(1, question_state::$gradedright),
                 $question->grade_response(array('answer' => '3.14 frogs')));
         $this->assertEqual(array(1, question_state::$gradedright),
                 $question->grade_response(array('answer' => '3.14')));
@@ -77,27 +77,74 @@ class qtype_numerical_question_test extends UnitTestCase {
                 $question->grade_response(array('answer' => '314000000x10^-8m')));
     }
 
+    public function test_grading_unit() {
+        $question = test_question_maker::make_question('numerical', 'unit');
+
+        $this->assertEqual(array(0, question_state::$gradedwrong),
+                $question->grade_response(array('answer' => '2 m')));
+        $this->assertEqual(array(0, question_state::$gradedwrong),
+                $question->grade_response(array('answer' => '2cm')));
+        $this->assertEqual(array(0, question_state::$gradedwrong),
+                $question->grade_response(array('answer' => '2')));
+
+        $this->assertEqual(array(1, question_state::$gradedright),
+                $question->grade_response(array('answer' => '1.25 m')));
+        $this->assertEqual(array(1, question_state::$gradedright),
+                $question->grade_response(array('answer' => '125 cm')));
+        $this->assertEqual(array(0.5, question_state::$gradedpartial),
+                $question->grade_response(array('answer' => '1.25')));
+
+        $this->assertEqual(array(0.5, question_state::$gradedpartial),
+                $question->grade_response(array('answer' => '1.23m')));
+        $this->assertEqual(array(0.5, question_state::$gradedpartial),
+                $question->grade_response(array('answer' => '123  cm')));
+        $this->assertEqual(array(0.25, question_state::$gradedpartial),
+                $question->grade_response(array('answer' => '1.23')));
+
+        $this->assertEqual(array(0.25, question_state::$gradedpartial),
+                $question->grade_response(array('answer' => '1.23 frogs')));
+    }
+
+    public function test_grading_currency() {
+        $question = test_question_maker::make_question('numerical', 'currency');
+
+        $this->assertEqual(array(1, question_state::$gradedright),
+                $question->grade_response(array('answer' => '$1332')));
+        $this->assertEqual(array(1, question_state::$gradedright),
+                $question->grade_response(array('answer' => '$ 1,332')));
+        $this->assertEqual(array(0.8, question_state::$gradedpartial),
+                $question->grade_response(array('answer' => '1332')));
+        $this->assertEqual(array(0.8, question_state::$gradedpartial),
+                $question->grade_response(array('answer' => ' 1,332')));
+        $this->assertEqual(array(0, question_state::$gradedwrong),
+                $question->grade_response(array('answer' => '1332 $')));
+        $this->assertEqual(array(0, question_state::$gradedwrong),
+                $question->grade_response(array('answer' => '1,332 frogs')));
+        $this->assertEqual(array(0, question_state::$gradedwrong),
+                $question->grade_response(array('answer' => '$1')));
+    }
+
     public function test_get_correct_response() {
-        $question = test_question_maker::make_a_numerical_question();
+        $question = test_question_maker::make_question('numerical');
 
         $this->assertEqual(array('answer' => '3.14'),
                 $question->get_correct_response());
     }
 
     public function test_get_question_summary() {
-        $num = test_question_maker::make_a_numerical_question();
+        $num = test_question_maker::make_question('numerical');
         $qsummary = $num->get_question_summary();
         $this->assertEqual('What is pi to two d.p.?', $qsummary);
     }
 
     public function test_summarise_response() {
-        $num = test_question_maker::make_a_numerical_question();
+        $num = test_question_maker::make_question('numerical');
         $summary = $num->summarise_response(array('answer' => '3.1'));
         $this->assertEqual('3.1', $summary);
     }
 
     public function test_classify_response() {
-        $num = test_question_maker::make_a_numerical_question();
+        $num = test_question_maker::make_question('numerical');
         $num->start_attempt(new question_attempt_step());
 
         $this->assertEqual(array(

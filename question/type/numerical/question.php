@@ -36,15 +36,22 @@ require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_numerical_question extends question_graded_by_strategy
-        implements question_response_answer_comparer {
+class qtype_numerical_question extends question_graded_automatically {
     /** @var array of question_answer. */
     public $answers = array();
+
+    /** @var int one of the constants UNITNONE, UNITDISPLAY, UNITSELECT or UNITINPUT. */
+    public $unitdisplay;
+    /** @var int one of the constants UNITGRADEDOUTOFMARK or UNITGRADEDOUTOFMAX. */
+    public $unitgradingtype;
+    /** @var number the penalty for a missing or unrecognised unit. */
+    public $unitpenalty;
+
     /** @var qtype_numerical_answer_processor */
     public $ap;
 
     public function __construct() {
-        parent::__construct(new question_first_matching_answer_grading_strategy($this));
+        parent::__construct();
     }
 
     public function get_expected_data() {
@@ -86,13 +93,73 @@ class qtype_numerical_question extends question_graded_by_strategy
                 $prevresponse, $newresponse, 'answer');
     }
 
-    public function get_answers() {
-        return $this->answers;
+    public function get_correct_response() {
+        $answer = $this->get_correct_answer();
+        if (!$answer) {
+            return array();
+        }
+
+        return array('answer' => $answer->answer);
     }
 
-    public function compare_response_with_answer(array $response, question_answer $answer) {
+    /**
+     * Get an answer that contains the feedback and fraction that should be
+     * awarded for this resonse.
+     * @param number $value the numerical value of a response.
+     * @return question_answer the matching answer.
+     */
+    public function get_matching_answer($value) {
+        foreach ($this->answers as $aid => $answer) {
+            if ($answer->within_tolerance($value)) {
+                $answer->id = $aid;
+                return $answer;
+            }
+        }
+        return null;
+    }
+
+    public function get_correct_answer() {
+        foreach ($this->answers as $answer) {
+            $state = question_state::graded_state_for_fraction($answer->fraction);
+            if ($state == question_state::$gradedright) {
+                return $answer;
+            }
+        }
+        return null;
+    }
+
+    public function grade_response(array $response) {
         list($value, $unit) = $this->ap->apply_units($response['answer']);
-        return $answer->within_tolerance($value);
+        $answer = $this->get_matching_answer($value);
+        if (!$answer) {
+            return array(0, question_state::$gradedwrong);
+        }
+
+        $fraction = $answer->fraction;
+        if (empty($unit)) {
+            if ($this->unitgradingtype == qtype_numerical::UNITGRADEDOUTOFMARK) {
+                $fraction -= $this->unitpenalty * $fraction;
+            } else if ($this->unitgradingtype == qtype_numerical::UNITGRADEDOUTOFMAX) {
+                $fraction -= $this->unitpenalty;
+            }
+            $fraction = max($fraction, 0);
+        }
+
+        return array($fraction, question_state::graded_state_for_fraction($fraction));
+    }
+
+    public function classify_response(array $response) {
+        if (empty($response['answer'])) {
+            return array($this->id => question_classified_response::no_response());
+        }
+
+        list($value, $unit) = $this->ap->apply_units($response['answer']);
+        $ans = $this->get_matching_answer($value);
+        if (!$ans) {
+            return array($this->id => question_classified_response::no_response());
+        }
+        return array($this->id => new question_classified_response(
+                $ans->id, $response['answer'], $ans->fraction));
     }
 }
 
