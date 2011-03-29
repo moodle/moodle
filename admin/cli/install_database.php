@@ -121,26 +121,17 @@ if (!file_exists($CFG->dirroot.'/install/lang/'.$options['lang'])) {
 }
 $CFG->lang = $options['lang'];
 
-//download lang pack with optional notification
-if ($CFG->lang != 'en') {
+// download required lang packs
+if ($CFG->lang !== 'en') {
     make_upload_directory('lang');
-    if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0', $CFG->lang.'.zip', 'languages.md5', 'lang')) {
-        if ($cd->install() == COMPONENT_ERROR) {
-            if ($cd->get_error() == 'remotedownloaderror') {
-                $a = new stdClass();
-                $a->url  = 'http://download.moodle.org/langpack/2.0/'.$CFG->lang.'.zip';
-                $a->dest = $CFG->dataroot.'/lang';
-                cli_problem(get_string($cd->get_error(), 'error', $a));
-            } else {
-                cli_problem(get_string($cd->get_error(), 'error'));
-            }
-        } else {
-            // install parent lang if defined
-            if ($parentlang = get_parent_language()) {
-                if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0', $parentlang.'.zip', 'languages.md5', 'lang')) {
-                    $cd->install();
-                }
-            }
+    $installer = new lang_installer($CFG->lang);
+    $results = $installer->run();
+    foreach ($results as $langcode => $langstatus) {
+        if ($langstatus === lang_installer::RESULT_DOWNLOADERROR) {
+            $a       = new stdClass();
+            $a->url  = $installer->lang_pack_url($langcode);
+            $a->dest = $CFG->dataroot.'/lang';
+            cli_problem(get_string('remotedownloaderror', 'error', $a));
         }
     }
 }
