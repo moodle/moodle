@@ -56,7 +56,7 @@ class qtype_ddwtos_test extends UnitTestCase {
 
     /**
      * @return object the data to construct a question like
-     * {@link qtype_ddwtos_test_helper::make_a_ddwtos_question()}.
+     * {@link qtype_ddwtos_test_helper::make_ddwtos_question_fox()}.
      */
     protected function get_test_question_data() {
         global $USER;
@@ -117,7 +117,7 @@ class qtype_ddwtos_test extends UnitTestCase {
     public function test_initialise_question_instance() {
         $qdata = $this->get_test_question_data();
 
-        $expected = qtype_ddwtos_test_helper::make_a_ddwtos_question();
+        $expected = test_question_maker::make_question('ddwtos');
         $expected->stamp = $qdata->stamp;
         $expected->version = $qdata->version;
 
