@@ -34,11 +34,15 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddwtos_test_helper {
+class qtype_ddwtos_test_helper extends question_test_helper {
+    public function get_test_questions() {
+        return array('fox', 'maths');
+    }
+
     /**
      * @return qtype_ddwtos_question
      */
-    public static function make_a_ddwtos_question() {
+    public function make_ddwtos_question_fox() {
         question_bank::load_question_definition_classes('ddwtos');
         $dd = new qtype_ddwtos_question();
 
@@ -75,7 +79,7 @@ class qtype_ddwtos_test_helper {
     /**
      * @return qtype_ddwtos_question
      */
-    public static function make_a_maths_ddwtos_question() {
+    public function make_ddwtos_question_maths() {
         question_bank::load_question_definition_classes('ddwtos');
         $dd = new qtype_ddwtos_question();
 
