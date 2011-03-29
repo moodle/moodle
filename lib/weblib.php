@@ -541,14 +541,21 @@ class moodle_url {
 
     /**
      * Returns url without parameters, everything before '?'.
+     *
+     * @param bool $includeanchor if {@link self::anchor} is defined, should it be returned?
      * @return string
      */
-    public function out_omit_querystring() {
+    public function out_omit_querystring($includeanchor = false) {
+
         $uri = $this->scheme ? $this->scheme.':'.((strtolower($this->scheme) == 'mailto') ? '':'//'): '';
         $uri .= $this->user ? $this->user.($this->pass? ':'.$this->pass:'').'@':'';
         $uri .= $this->host ? $this->host : '';
         $uri .= $this->port ? ':'.$this->port : '';
         $uri .= $this->path ? $this->path : '';
+        if ($includeanchor and !is_null($this->anchor)) {
+            $uri .= '#' . $this->anchor;
+        }
+
         return $uri;
     }
 
