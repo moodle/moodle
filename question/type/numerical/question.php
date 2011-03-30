@@ -166,6 +166,25 @@ class qtype_numerical_question extends question_graded_automatically {
                 $response['answer'],
                 $this->apply_unit_penalty($ans->fraction, $unit)));
     }
+
+    function check_file_access($question, $state, $options, $contextid, $component,
+            $filearea, $args) {
+        if ($component == 'question' && $filearea == 'answerfeedback') {
+            $currentanswer = $qa->get_last_qt_var('answer');
+            $answer = $qa->get_question()->get_matching_answer(array('answer' => $currentanswer));
+            $answerid = reset($args); // itemid is answer id.
+            return $options->feedback && $answerid == $answer->id;
+
+        } else if ($component == 'question' && $filearea == 'hint') {
+            return $this->check_hint_file_access($qa, $options, $args);
+
+        } else if ($component == 'qtype_numerical' && $filearea == 'instruction') {
+            return true;
+
+        } else {
+            return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
+        }
+    }
 }
 
 

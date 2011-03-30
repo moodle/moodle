@@ -56,6 +56,7 @@ class qtype_numerical_test extends UnitTestCase {
     protected function get_test_question_data() {
         $q = new stdClass;
         $q->id = 1;
+        $q->options->unitpenalty = 0;
         $q->options->answers[13] = (object) array(
             'id' => 13,
             'answer' => 42,
