@@ -47,6 +47,8 @@ class block_comments extends block_base {
         $args->env       = 'block_comments';
         $args->component = 'block_comments';
         $args->linktext  = get_string('showcomments');
+        $args->notoggle  = true;
+        $args->autostart = true;
         $comment = new comment($args);
         $comment->set_view_permission(true);
 

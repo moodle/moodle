@@ -80,6 +80,20 @@ class comment {
      */
     private $linktext;
 
+    /**
+     * If set to true then comment sections won't be able to be opened and closed
+     * instead they will always be visible.
+     * @var bool
+     */
+    protected $notoggle = false;
+    
+    /**
+     * If set to true comments are automatically loaded as soon as the page loads.
+     * Normally this happens when the user expands the comment section.
+     * @var bool
+     */
+    protected $autostart = false;
+    
     // static variable will be used by non-js comments UI
     private static $nonjs = false;
     private static $comment_itemid = null;
@@ -172,6 +186,16 @@ class comment {
             $this->ignore_permission = true;
         } else {
             $this->ignore_permission = false;
+        }
+        
+        // setup notoggle
+        if (!empty($options->notoggle)) {
+            $this->set_notoggle($options->notoggle);
+        }
+        
+        // setup notoggle
+        if (!empty($options->autostart)) {
+            $this->set_autostart($options->autostart);
         }
 
         if (!empty($options->showcount)) {
@@ -287,6 +311,55 @@ EOD;
         $link->remove_params(array('nonjscomment', 'comment_page'));
         return $link;
     }
+    
+    /**
+     * Sets the value of the notoggle option.
+     * 
+     * If set to true then the user will not be able to expand and collase
+     * the comment section.
+     *
+     * @param bool $newvalue 
+     */
+    public function set_notoggle($newvalue = true) {
+        $this->notoggle = (bool)$newvalue;
+    }
+    
+    /**
+     * Sets the value of the autostart option.
+     * 
+     * If set to true then the comments will be loaded during page load.
+     * Normally this happens only once the user expands the comment section.
+     *
+     * @param bool $newvalue 
+     */
+    public function set_autostart($newvalue = true) {
+        $this->autostart = (bool)$newvalue;
+    }
+
+    /**
+     * Initialises the JavaScript that enchances the comment API.
+     * 
+     * @param moodle_page $page The moodle page object that the JavaScript should be
+     *                          initialised for.
+     */
+    public function initialise_javascript(moodle_page $page) {
+
+        $options = new stdClass;
+        $options->client_id   = $this->cid;
+        $options->commentarea = $this->commentarea;
+        $options->itemid      = $this->itemid;
+        $options->page        = 0;
+        $options->courseid    = $this->courseid;
+        $options->contextid   = $this->contextid;
+        $options->env         = $this->env;
+        $options->component   = $this->component;
+        $options->notoggle    = $this->notoggle;
+        $options->autostart   = $this->autostart;
+
+        $page->requires->js_init_call('M.core_comment.init', array($options), true);
+
+        return true;
+    }
 
     /**
      * Prepare comment code in html
@@ -296,22 +369,8 @@ EOD;
     public function output($return = true) {
         global $PAGE, $OUTPUT;
         static $template_printed;
-
-        $options = new stdClass();
-        $options->client_id = $this->cid;
-        $options->commentarea = $this->commentarea;
-        $options->itemid = $this->itemid;
-        $options->page   = 0;
-        $options->courseid = $this->courseid;
-        $options->contextid = $this->contextid;
-        $options->env = $this->env;
-        $options->component = $this->component;
-        if ($this->env == 'block_comments') {
-            $options->notoggle = true;
-            $options->autostart = true;
-        }
-
-        $PAGE->requires->js_init_call('M.core_comment.init', array($options), true);
+        
+        $this->initialise_javascript($PAGE);
 
         if (!empty(self::$nonjs)) {
             // return non js comments interface
