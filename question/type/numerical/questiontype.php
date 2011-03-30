@@ -1120,13 +1120,12 @@ class qtype_numerical_answer_processor {
         $decimalsre = $decsep . '(\d*)';
         $exponentre = '(?:e|E|(?:x|\*|×)10(?:\^|\*\*))([+-]?\d+)';
 
-        $validunitendchars = "[^-$decsep\deEx*×^+$thousandssep]";
+        $numberbit = "$beforepointre(?:$decimalsre)?(?:$exponentre)?";
+
         if ($this->unitsbefore) {
-            $unitre = "(.*)(?:(?=\s)|(?<=$validunitendchars))\s*";
-            $this->regex = "/^(?:$unitre)?$beforepointre(?:$decimalsre)?(?:$exponentre)?$/U";
+            $this->regex = "/$numberbit$/";
         } else {
-            $unitre = "\s*(?:(?<=\s)|(?=$validunitendchars))(.*)";
-            $this->regex = "/^$beforepointre(?:$decimalsre)?(?:$exponentre)?(?:$unitre)?$/U";
+            $this->regex = "/^$numberbit/";
         }
         return $this->regex;
     }
@@ -1144,12 +1143,8 @@ class qtype_numerical_answer_processor {
             return array(null, null, null, null);
         }
 
-        $matches += array('', '', '', '', ''); // Fill in any missing matches.
-        if ($this->unitsbefore) {
-            list($notused, $unit, $beforepoint, $decimals, $exponent) = $matches;
-        } else {
-            list($notused, $beforepoint, $decimals, $exponent, $unit) = $matches;
-        }
+        $matches += array('', '', '', ''); // Fill in any missing matches.
+        list($matchedpart, $beforepoint, $decimals, $exponent) = $matches;
 
         // Strip out thousands separators.
         $beforepoint = str_replace($this->thousandssep, '', $beforepoint);
@@ -1160,6 +1155,11 @@ class qtype_numerical_answer_processor {
             return array(null, null, null, null);
         }
 
+        if ($this->unitsbefore) {
+            $unit = substr($response, 0, -strlen($matchedpart));
+        } else {
+            $unit = substr($response, strlen($matchedpart));
+        }
         $unit = trim($unit);
         if ($unit && !array_key_exists($unit, $this->units)) {
             $unit = '';
