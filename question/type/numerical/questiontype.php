@@ -1203,7 +1203,12 @@ class qtype_numerical_answer_processor {
      * @param string $answer a response.
      * @param string $unit a unit.
      */
-    public function add_unit($answer, $unit) {
+    public function add_unit($answer, $unit = null) {
+        if (is_null($unit)) {
+            reset($this->units);
+            $unit = key($this->units);
+        }
+
         if (!$unit) {
             return $answer;
         }

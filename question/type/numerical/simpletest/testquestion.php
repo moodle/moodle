@@ -131,6 +131,20 @@ class qtype_numerical_question_test extends UnitTestCase {
                 $question->get_correct_response());
     }
 
+    public function test_get_correct_response_units() {
+        $question = test_question_maker::make_question('numerical', 'unit');
+
+        $this->assertEqual(array('answer' => '1.25 m'),
+                $question->get_correct_response());
+    }
+
+    public function test_get_correct_response_currency() {
+        $question = test_question_maker::make_question('numerical', 'currency');
+
+        $this->assertEqual(array('answer' => '$ 1332'),
+                $question->get_correct_response());
+    }
+
     public function test_get_question_summary() {
         $num = test_question_maker::make_question('numerical');
         $qsummary = $num->get_question_summary();
@@ -139,8 +153,22 @@ class qtype_numerical_question_test extends UnitTestCase {
 
     public function test_summarise_response() {
         $num = test_question_maker::make_question('numerical');
-        $summary = $num->summarise_response(array('answer' => '3.1'));
-        $this->assertEqual('3.1', $summary);
+        $this->assertEqual('3.1', $num->summarise_response(array('answer' => '3.1')));
+            }
+
+    public function test_summarise_response_unit() {
+        $num = test_question_maker::make_question('numerical', 'unit');
+        $this->assertEqual('3.1', $num->summarise_response(array('answer' => '3.1')));
+        $this->assertEqual('3.1m', $num->summarise_response(array('answer' => '3.1m')));
+        $this->assertEqual('3.1 cm', $num->summarise_response(array('answer' => '3.1 cm')));
+    }
+
+    public function test_summarise_response_currency() {
+        $num = test_question_maker::make_question('numerical', 'currency');
+        $this->assertEqual('100', $num->summarise_response(array('answer' => '100')));
+        $this->assertEqual('$100', $num->summarise_response(array('answer' => '$100')));
+        $this->assertEqual('$ 100', $num->summarise_response(array('answer' => '$ 100')));
+        $this->assertEqual('100 frogs', $num->summarise_response(array('answer' => '100 frogs')));
     }
 
     public function test_classify_response() {
@@ -159,5 +187,50 @@ class qtype_numerical_question_test extends UnitTestCase {
         $this->assertEqual(array(
                 question_classified_response::no_response()),
                 $num->classify_response(array('answer' => '')));
+    }
+
+    public function test_classify_response_unit() {
+        $num = test_question_maker::make_question('numerical', 'unit');
+        $num->start_attempt(new question_attempt_step());
+
+        $this->assertEqual(array(
+                new question_classified_response(13, '1.25', 0.5)),
+                $num->classify_response(array('answer' => '1.25')));
+        $this->assertEqual(array(
+                new question_classified_response(13, '1.25 m', 1.0)),
+                $num->classify_response(array('answer' => '1.25 m')));
+        $this->assertEqual(array(
+                new question_classified_response(13, '125cm', 1.0)),
+                $num->classify_response(array('answer' => '125cm')));
+        $this->assertEqual(array(
+                new question_classified_response(14, '123  cm', 0.5)),
+                $num->classify_response(array('answer' => '123  cm')));
+        $this->assertEqual(array(
+                new question_classified_response(14, '1.27m', 0.5)),
+                $num->classify_response(array('answer' => '1.27m')));
+        $this->assertEqual(array(
+                new question_classified_response(13, '1.25 frogs', 0.5)),
+                $num->classify_response(array('answer' => '1.25 frogs')));
+        $this->assertEqual(array(
+                new question_classified_response(17, '3 frogs', 0)),
+                $num->classify_response(array('answer' => '3 frogs')));
+        $this->assertEqual(array(
+                new question_classified_response(17, '3.0 m', 0)),
+                $num->classify_response(array('answer' => '3.0 m')));
+        $this->assertEqual(array(
+                question_classified_response::no_response()),
+                $num->classify_response(array('answer' => '')));
+    }
+
+    public function test_classify_response_currency() {
+        $num = test_question_maker::make_question('numerical', 'currency');
+        $num->start_attempt(new question_attempt_step());
+
+        $this->assertEqual(array(
+                new question_classified_response(14, '$100', 0)),
+                $num->classify_response(array('answer' => '$100')));
+        $this->assertEqual(array(
+                new question_classified_response(13, '1,332', 0.8)),
+                $num->classify_response(array('answer' => '1,332')));
     }
 }

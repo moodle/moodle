@@ -99,7 +99,7 @@ class qtype_numerical_question extends question_graded_automatically {
             return array();
         }
 
-        return array('answer' => $answer->answer);
+        return array('answer' => $this->ap->add_unit($answer->answer));
     }
 
     /**
@@ -128,6 +128,19 @@ class qtype_numerical_question extends question_graded_automatically {
         return null;
     }
 
+    protected function apply_unit_penalty($fraction, $unit) {
+        if (!empty($unit)) {
+            return $fraction;
+        }
+
+        if ($this->unitgradingtype == qtype_numerical::UNITGRADEDOUTOFMARK) {
+            $fraction -= $this->unitpenalty * $fraction;
+        } else if ($this->unitgradingtype == qtype_numerical::UNITGRADEDOUTOFMAX) {
+            $fraction -= $this->unitpenalty;
+        }
+        return max($fraction, 0);
+    }
+
     public function grade_response(array $response) {
         list($value, $unit) = $this->ap->apply_units($response['answer']);
         $answer = $this->get_matching_answer($value);
@@ -135,16 +148,7 @@ class qtype_numerical_question extends question_graded_automatically {
             return array(0, question_state::$gradedwrong);
         }
 
-        $fraction = $answer->fraction;
-        if (empty($unit)) {
-            if ($this->unitgradingtype == qtype_numerical::UNITGRADEDOUTOFMARK) {
-                $fraction -= $this->unitpenalty * $fraction;
-            } else if ($this->unitgradingtype == qtype_numerical::UNITGRADEDOUTOFMAX) {
-                $fraction -= $this->unitpenalty;
-            }
-            $fraction = max($fraction, 0);
-        }
-
+        $fraction = $this->apply_unit_penalty($answer->fraction, $unit);
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
 
@@ -158,8 +162,9 @@ class qtype_numerical_question extends question_graded_automatically {
         if (!$ans) {
             return array($this->id => question_classified_response::no_response());
         }
-        return array($this->id => new question_classified_response(
-                $ans->id, $response['answer'], $ans->fraction));
+        return array($this->id => new question_classified_response($ans->id,
+                $response['answer'],
+                $this->apply_unit_penalty($ans->fraction, $unit)));
     }
 }
 

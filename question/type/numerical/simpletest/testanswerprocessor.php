@@ -120,5 +120,6 @@ class qtype_numerical_answer_processor_test extends UnitTestCase {
         $this->assertEqual(array('100', '$'), $ap->apply_units('$100.'));
         $this->assertEqual(array('100.00', '$'), $ap->apply_units('$100.00'));
         $this->assertEqual(array('100', ''), $ap->apply_units('100'));
+        $this->assertEqual(array('100', ''), $ap->apply_units('frog 100'));
     }
 }
