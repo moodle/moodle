@@ -543,7 +543,7 @@ EOD;
         $count = $this->count();
         $pages = (int)ceil($count/$CFG->commentsperpage);
         if ($pages == 1 || $pages == 0) {
-            return '';
+            return html_writer::tag('div', '', array('id' => 'comment-pagination-'.$this->cid, 'class' => 'comment-pagination'));
         }
         if (!empty(self::$nonjs)) {
             // used in non-js interface
