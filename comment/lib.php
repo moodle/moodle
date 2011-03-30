@@ -318,76 +318,63 @@ EOD;
             return $this->print_comments(self::$comment_page, $return, true);
         }
 
-        $strsubmit = get_string('savecomment');
-        $strcancel = get_string('cancel');
-        $strshowcomments = get_string('showcommentsnonjs');
-        $sesskey = sesskey();
         $html = '';
+
         // print html template
         // Javascript will use the template to render new comments
         if (empty($template_printed) && !empty($this->viewcap)) {
-            $html .= '<div style="display:none" id="cmt-tmpl">' . $this->template . '</div>';
+            $html .= html_writer::tag('div', $this->template, array('style' => 'display:none', 'id' => 'cmt-tmpl'));
             $template_printed = true;
         }
 
         if (!empty($this->viewcap)) {
             // print commenting icon and tooltip
-            $icon = $OUTPUT->pix_url('t/collapsed');
-            $link = $this->get_nojslink($PAGE)->out();
-            $html .= <<<EOD
-<div class="mdl-left">
-<a class="showcommentsnonjs" href="{$link}">{$strshowcomments}</a>
-EOD;
+            $html .= html_writer::start_tag('div', array('class' => 'mdl-left'));
+            $html .= html_writer::link($this->get_nojslink($PAGE), get_string('showcommentsnonjs'), array('class' => 'showcommentsnonjs'));
+
             if ($this->env != 'block_comments') {
-                $html .= <<<EOD
-<a id="comment-link-{$this->cid}" class="comment-link" href="#">
-    <img id="comment-img-{$this->cid}" src="$icon" alt="{$this->linktext}" title="{$this->linktext}" />
-    <span id="comment-link-text-{$this->cid}">{$this->linktext} {$this->count}</span>
-</a>
-EOD;
+                $html .= html_writer::start_tag('a', array('class' => 'comment-link', 'id' => 'comment-link-'.$this->cid, 'href' => '#'));
+                $html .= html_writer::empty_tag('img', array('id' => 'comment-img-'.$this->cid, 'src' => $OUTPUT->pix_url('t/collapsed'), 'alt' => $this->linktext, 'title' => $this->linktext));
+                $html .= html_writer::tag('span', $this->linktext.' '.$this->count, array('id' => 'comment-link-text-'.$this->cid));
+                $html .= html_writer::end_tag('a');
             }
 
-            $html .= <<<EOD
-<div id="comment-ctrl-{$this->cid}" class="comment-ctrl">
-    <ul id="comment-list-{$this->cid}" class="comment-list">
-        <li class="first"></li>
-EOD;
-            // in comments block, we print comments list right away
+            $html .= html_writer::start_tag('div', array('id' => 'comment-ctrl-'.$this->cid, 'class' => 'comment-ctrl'));
+            $html .= html_writer::start_tag('ul', array('id' => 'comment-list-'.$this->cid, 'class' => 'comment-list'));
+            $html .= html_writer::tag('li', '', array('class' => 'first'));
+
             if ($this->env == 'block_comments') {
+                // in comments block, we print comments list right away
                 $html .= $this->print_comments(0, true, false);
-                $html .= '</ul>';
+                $html .= html_writer::end_tag('ul'); // .comment-list
                 $html .= $this->get_pagination(0);
             } else {
-                $html .= <<<EOD
-    </ul>
-    <div id="comment-pagination-{$this->cid}" class="comment-pagination"></div>
-EOD;
+                $html .= html_writer::end_tag('ul'); // .comment-list
+                $html .= html_writer::tag('div', '', array('id' => 'comment-pagination-'.$this->cid, 'class' => 'comment-pagination'));
             }
 
-            // print posting textarea
             if (!empty($this->postcap)) {
-                $html .= <<<EOD
-<div class='comment-area'>
-    <div class="bd">
-        <textarea name="content" rows="2" cols="20" id="dlg-content-{$this->cid}"></textarea>
-    </div>
-    <div class="fd" id="comment-action-{$this->cid}">
-        <a href="#" id="comment-action-post-{$this->cid}"> {$strsubmit} </a>
-EOD;
+                // print posting textarea
+                $html .= html_writer::start_tag('div', array('class' => 'comment-area'));
+                $html .= html_writer::start_tag('div', array('class' => 'db'));
+                $html .= html_writer::tag('textarea', '', array('name' => 'content', 'rows' => 2, 'cols' => 20, 'id' => 'dlg-content-'.$this->cid));
+                $html .= html_writer::end_tag('div'); // .db
+
+                $html .= html_writer::start_tag('div', array('class' => 'fd', 'id' => 'comment-action-'.$this->cid));
+                $html .= html_writer::link('#', get_string('savecomment'), array('id' => 'comment-action-post-'.$this->cid));
+
                 if ($this->env != 'block_comments') {
-                    $html .= "<span> | </span><a href=\"#\" id=\"comment-action-cancel-{$this->cid}\"> {$strcancel} </a>";
+                    $html .= html_writer::tag('span', ' | ');
+                    $html .= html_writer::link('#', get_string('cancel'), array('id' => 'comment-action-cancel-'.$this->cid));
                 }
-                $html .= <<<EOD
-    </div>
-</div>
-<div class="clearer"></div>
-EOD;
+
+                $html .= html_writer::end_tag('div'); // .fd
+                $html .= html_writer::end_tag('div'); // .comment-area
+                $html .= html_writer::tag('div', '', array('class' => 'clearer'));
             }
 
-            $html .= <<<EOD
-</div><!-- end of comment-ctrl -->
-</div>
-EOD;
+            $html .= html_writer::end_tag('div'); // .comment-ctrl
+            $html .= html_writer::end_tag('div'); // .mdl-left
         } else {
             $html = '';
         }
