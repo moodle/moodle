@@ -87,6 +87,7 @@ class comment {
     private static $comment_area = null;
     private static $comment_page = null;
     private static $comment_component = null;
+
     /**
      * Construct function of comment class, initialise
      * class members
@@ -265,23 +266,36 @@ EOD;
     }
 
     /**
+     * Gets a link for this page that will work with JS disabled.
+     *
+     * @global moodle_page $PAGE
+     * @param moodle_page $page
+     * @return moodle_url
+     */
+    public function get_nojslink(moodle_page $page = null) {
+        if ($page === null) {
+            global $PAGE;
+            $page = $PAGE;
+        }
+
+        $link = new moodle_url($page->url, array(
+            'nonjscomment'    => true,
+            'comment_itemid'  => $this->itemid,
+            'comment_context' => $this->context->id,
+            'comment_area'    => $this->commentarea,
+        ));
+        $link->remove_params(array('nonjscomment', 'comment_page'));
+        return $link;
+    }
+
+    /**
      * Prepare comment code in html
      * @param  boolean $return
      * @return mixed
      */
     public function output($return = true) {
         global $PAGE, $OUTPUT;
-		static $template_printed;
-
-        $this->link = $PAGE->url;
-        $murl = new moodle_url($this->link);
-        $murl->remove_params('nonjscomment');
-        $murl->param('nonjscomment', 'true');
-        $murl->param('comment_itemid', $this->itemid);
-        $murl->param('comment_context', $this->context->id);
-        $murl->param('comment_area', $this->commentarea);
-        $murl->remove_params('comment_page');
-        $this->link = $murl->out();
+        static $template_printed;
 
         $options = new stdClass();
         $options->client_id = $this->cid;
@@ -319,9 +333,10 @@ EOD;
         if (!empty($this->viewcap)) {
             // print commenting icon and tooltip
             $icon = $OUTPUT->pix_url('t/collapsed');
+            $link = $this->get_nojslink($PAGE)->out();
             $html .= <<<EOD
 <div class="mdl-left">
-<a class="showcommentsnonjs" href="{$this->link}">{$strshowcomments}</a>
+<a class="showcommentsnonjs" href="{$link}">{$strshowcomments}</a>
 EOD;
             if ($this->env != 'block_comments') {
                 $html .= <<<EOD
@@ -461,7 +476,7 @@ EOD;
         }
         if (!empty(self::$nonjs)) {
             // used in non-js interface
-            return $OUTPUT->paging_bar($count, $page, $CFG->commentsperpage, $this->link, 'comment_page');
+            return $OUTPUT->paging_bar($count, $page, $CFG->commentsperpage, $this->get_nojslink(), 'comment_page');
         } else {
             // return ajax paging bar
             $str = '';
