@@ -109,13 +109,13 @@ class graded_users_iterator {
         $users_sql = "SELECT u.* $ofields
                         FROM {$CFG->prefix}user u
                              $groupsql
-                       WHERE u.id IN (
+                        JOIN (
                                  SELECT DISTINCT ra.userid
                                    FROM {$CFG->prefix}role_assignments ra
                                   WHERE ra.roleid $gradebookroles
                                     AND ra.contextid $relatedcontexts
-                             )
-                             AND u.deleted = 0
+                             ) rainner ON rainner.userid = u.id
+                       WHERE u.deleted = 0
                              $groupwheresql
                     ORDER BY $order";
 
@@ -129,13 +129,13 @@ class graded_users_iterator {
                              FROM {$CFG->prefix}grade_grades g
                              JOIN {$CFG->prefix}user u ON g.userid = u.id
                                   $groupsql
-                            WHERE u.id IN (
+                             JOIN (
                                       SELECT DISTINCT ra.userid
                                         FROM {$CFG->prefix}role_assignments ra
                                        WHERE ra.roleid $gradebookroles
                                          AND ra.contextid $relatedcontexts
-                                  )
-                              AND u.deleted = 0
+                                  ) rainner ON rainner.userid = u.id
+                            WHERE u.deleted = 0
                               AND g.itemid IN ($itemids)
                               $groupwheresql
                          ORDER BY $order, g.itemid ASC";
