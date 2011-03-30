@@ -747,7 +747,7 @@ function quiz_update_all_final_grades($quiz) {
     }
 
     if (!empty($todelete)) {
-        list($test, $params) = $DB->get_in_or_equals($todelete);
+        list($test, $params) = $DB->get_in_or_equal($todelete);
         $DB->delete_records_select('quiz_grades',
                 'quiz = ? AND userid ', array($quiz->id) + $params);
     }
