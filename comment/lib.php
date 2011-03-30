@@ -94,6 +94,12 @@ class comment {
      */
     protected $autostart = false;
 
+    /**
+     * If set to true a cancel button will be shown on the form used to submit comments.
+     * @var bool
+     */
+    protected $displaycancel = false;
+
     // static variable will be used by non-js comments UI
     private static $nonjs = false;
     private static $comment_itemid = null;
@@ -196,6 +202,11 @@ class comment {
         // setup notoggle
         if (!empty($options->autostart)) {
             $this->set_autostart($options->autostart);
+        }
+
+        // setup displaycancel
+        if (!empty($options->displaycancel)) {
+            $this->set_displaycancel($options->displaycancel);
         }
 
         if (!empty($options->showcount)) {
@@ -337,6 +348,18 @@ EOD;
     }
 
     /**
+     * Sets the displaycancel option
+     *
+     * If set to true then a cancel button will be shown when using the form
+     * to post comments.
+     *
+     * @param bool $newvalue
+     */
+    public function set_displaycancel($newvalue = true) {
+        $this->displaycancel = (bool)$newvalue;
+    }
+
+    /**
      * Initialises the JavaScript that enchances the comment API.
      *
      * @param moodle_page $page The moodle page object that the JavaScript should be
@@ -391,7 +414,9 @@ EOD;
             $html .= html_writer::start_tag('div', array('class' => 'mdl-left'));
             $html .= html_writer::link($this->get_nojslink($PAGE), get_string('showcommentsnonjs'), array('class' => 'showcommentsnonjs'));
 
-            if ($this->env != 'block_comments') {
+            if (!$this->notoggle) {
+                // If toggling is enabled (notoggle=false) then print the controls to toggle
+                // comments open and closed
                 $html .= html_writer::start_tag('a', array('class' => 'comment-link', 'id' => 'comment-link-'.$this->cid, 'href' => '#'));
                 $html .= html_writer::empty_tag('img', array('id' => 'comment-img-'.$this->cid, 'src' => $OUTPUT->pix_url('t/collapsed'), 'alt' => $this->linktext, 'title' => $this->linktext));
                 $html .= html_writer::tag('span', $this->linktext.' '.$this->count, array('id' => 'comment-link-text-'.$this->cid));
@@ -402,8 +427,8 @@ EOD;
             $html .= html_writer::start_tag('ul', array('id' => 'comment-list-'.$this->cid, 'class' => 'comment-list'));
             $html .= html_writer::tag('li', '', array('class' => 'first'));
 
-            if ($this->env == 'block_comments') {
-                // in comments block, we print comments list right away
+            if ($this->autostart) {
+                // If autostart has been enabled print the comments list immediatly
                 $html .= $this->print_comments(0, true, false);
                 $html .= html_writer::end_tag('ul'); // .comment-list
                 $html .= $this->get_pagination(0);
@@ -422,7 +447,7 @@ EOD;
                 $html .= html_writer::start_tag('div', array('class' => 'fd', 'id' => 'comment-action-'.$this->cid));
                 $html .= html_writer::link('#', get_string('savecomment'), array('id' => 'comment-action-post-'.$this->cid));
 
-                if ($this->env != 'block_comments') {
+                if ($this->displaycancel) {
                     $html .= html_writer::tag('span', ' | ');
                     $html .= html_writer::link('#', get_string('cancel'), array('id' => 'comment-action-cancel-'.$this->cid));
                 }
