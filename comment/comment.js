@@ -41,8 +41,9 @@ M.core_comment = {
                 this.courseid = args.courseid;
                 this.contextid = args.contextid;
                 this.env = args.env;
+                this.autostart = (args.autostart);
                 // expand comments?
-                if (args.autostart) {
+                if (this.autostart) {
                     this.view(args.page);
                 }
                 // load comments
@@ -347,7 +348,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                 var d = container.getStyle('display');
                 if (d=='none'||d=='') {
                     // show
-                    if (this.env != 'block_comments') {
+                    if (this.autostart) {
                         this.load(page);
                     } else {
                         this.register_delete_buttons();
