@@ -39,7 +39,7 @@ class qtype_match_edit_form extends question_edit_form {
     protected function get_per_answer_fields($mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
         $repeated = array();
         $repeated[] = $mform->createElement('header', 'answerhdr', $label);
-        $repeated[] = $mform->createElement('editor', 'subquestions', get_string('question'), array('rows'=>40), $this->editoroptions);
+        $repeated[] = $mform->createElement('editor', 'subquestions', get_string('question'), array('rows'=>3), $this->editoroptions);
         $repeated[] = $mform->createElement('text', 'subanswers', get_string('answer', 'question'), array('size'=>50));
         $repeatedoptions['subquestions']['type'] = PARAM_RAW;
         $repeatedoptions['subanswers']['type'] = PARAM_TEXT;
