@@ -1653,8 +1653,8 @@ class global_navigation extends navigation_node {
             $usernode->add(get_string('messages', 'message'), $url, self::TYPE_SETTING, null, 'messages');
         }
 
-        // TODO: Private file capability check
-        if ($iscurrentuser) {
+        $context = get_context_instance(CONTEXT_USER, $USER->id);
+        if ($iscurrentuser && has_capability('moodle/user:manageownfiles', $context)) {
             $url = new moodle_url('/user/files.php');
             $usernode->add(get_string('myfiles'), $url, self::TYPE_SETTING);
         }
