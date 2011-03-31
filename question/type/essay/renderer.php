@@ -214,7 +214,7 @@ class qtype_essay_format_editor_renderer extends plugin_renderer_base {
                 $this->class_name() . ' qtype_essay_response'));
 
         $output .= html_writer::tag('div', html_writer::tag('textarea', s($reponse),
-                array('id' => $id, 'name' => $inputname, 'rows' => $lines)));
+                array('id' => $id, 'name' => $inputname, 'rows' => $lines, 'cols' => 60)));
 
         $output .= html_writer::start_tag('div');
         if (count($formats == 1)) {
@@ -406,6 +406,7 @@ class qtype_essay_format_plain_renderer extends plugin_renderer_base {
     protected function textarea($response, $lines, $attributes) {
         $attributes['class'] = $this->class_name() . ' qtype_essay_response';
         $attributes['rows'] = $lines;
+        $attributes['cols'] = 60;
         return html_writer::tag('textarea', s($response), $attributes);
     }
 
