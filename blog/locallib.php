@@ -718,7 +718,7 @@ class blog_listing {
         global $DB;
 
         if (empty($this->entries)) {
-            if ($sqlarray = $this->get_entry_fetch_sql()) {
+            if ($sqlarray = $this->get_entry_fetch_sql(false, 'created DESC')) {
                 $this->entries = $DB->get_records_sql($sqlarray['sql'], $sqlarray['params'], $start, $limit);
             } else {
                 return false;
