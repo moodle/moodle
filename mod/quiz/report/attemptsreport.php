@@ -475,7 +475,7 @@ abstract class quiz_attempt_report_table extends table_sql {
         }
     }
 
-    protected function get_row_class($attempt) {
+    public function get_row_class($attempt) {
         if ($this->qmsubselect && $attempt->gradedattempt) {
             return 'gradedattempt';
         } else {
