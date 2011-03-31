@@ -143,12 +143,9 @@ class quiz_overview_report extends quiz_default_report {
             }
         }
 
+        $questions = quiz_report_load_questions($quiz);
+
         //work out the sql for this table.
-        if ($detailedmarks) {
-            $questions = quiz_report_load_questions($quiz);
-        } else {
-            $questions = array();
-        }
         $table = new quiz_report_overview_table($quiz , $qmsubselect, $groupstudents,
                 $students, $detailedmarks, $questions, $candelete, $reporturl,
                 $displayoptions, $this->context);
