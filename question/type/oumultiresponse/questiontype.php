@@ -28,6 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/engine/lib.php');
+require_once($CFG->dirroot . '/question/type/multichoice/questiontype.php');
 require_once($CFG->dirroot . '/question/format/xml/format.php');
 
 
