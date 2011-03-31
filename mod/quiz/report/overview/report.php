@@ -117,11 +117,7 @@ class quiz_overview_report extends quiz_attempt_report {
         }
 
         // Load the required questions.
-        if ($detailedmarks) {
-            $questions = quiz_report_get_significant_questions($quiz);
-        } else {
-            $questions = array();
-        }
+        $questions = quiz_report_get_significant_questions($quiz);
 
         $table = new quiz_report_overview_table($quiz, $this->context, $qmsubselect,
                 $groupstudents, $students, $detailedmarks, $questions, $candelete,
