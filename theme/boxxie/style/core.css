@@ -7,6 +7,7 @@ body {
     margin: 10px 5%;
     background: #5b7439;
     padding: 5px;
+    min-width: 930px; /* fixes minimum page width */
 }
 
 #page {
@@ -14,6 +15,10 @@ body {
     padding: 5px;
     width: auto;
     
+}
+
+#page-content {
+	min-width: inherit;
 }
 
 a:link,
