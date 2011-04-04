@@ -9660,41 +9660,6 @@ function object_array_unique($array, $keep_key_assoc = true) {
 }
 
 /**
- * Returns the language string for the given plugin.
- *
- * @param string $plugin the plugin code name
- * @param string $type the type of plugin (mod, block, filter)
- * @return string The plugin language string
- */
-function get_plugin_name($plugin, $type='mod') {
-    $plugin_name = '';
-
-    switch ($type) {
-        case 'mod':
-            $plugin_name = get_string('modulename', $plugin);
-            break;
-        case 'blocks':
-            $plugin_name = get_string('pluginname', "block_$plugin");
-            if (empty($plugin_name) || $plugin_name == '[[pluginname]]') {
-                if (($block = block_instance($plugin)) !== false) {
-                    $plugin_name = $block->get_title();
-                } else {
-                    $plugin_name = "[[$plugin]]";
-                }
-            }
-            break;
-        case 'filter':
-            $plugin_name = filter_get_name('filter/' . $plugin);
-            break;
-        default:
-            $plugin_name = $plugin;
-            break;
-    }
-
-    return $plugin_name;
-}
-
-/**
  * Is a userid the primary administrator?
  *
  * @param int $userid int id of user to check

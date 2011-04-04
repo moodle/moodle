@@ -4587,6 +4587,21 @@ class admin_setting_special_registerauth extends admin_setting_configselect {
 
 
 /**
+ * General plugins manager
+ */
+class admin_page_pluginsoverview extends admin_externalpage {
+
+    /**
+     * Sets basic information about the external page
+     */
+    public function __construct() {
+        global $CFG;
+        parent::__construct('pluginsoverview', get_string('pluginsoverview', 'core_admin'),
+            "$CFG->wwwroot/$CFG->admin/plugins.php");
+    }
+}
+
+/**
  * Module manage page
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -6115,194 +6130,6 @@ function db_replace($search, $replace) {
 
     return true;
 }
-
-/**
- * Prints tables of detected plugins, one table per plugin type,
- * and prints whether they are part of the standard Moodle
- * distribution or not.
- */
-function print_plugin_tables() {
-    global $DB;
-    $plugins_standard = array();
-    $plugins_standard['mod'] = array('assignment',
-        'chat',
-        'choice',
-        'data',
-        'feedback',
-        'folder',
-        'forum',
-        'glossary',
-        'imscp',
-        'label',
-        'lesson',
-        'page',
-        'quiz',
-        'resource',
-        'scorm',
-        'survey',
-        'url',
-        'wiki',
-        'workshop');
-
-    $plugins_standard['blocks'] = array('activity_modules',
-        'admin_bookmarks',
-        'blog_menu',
-        'blog_recent',
-        'blog_tags',
-        'calendar_month',
-        'calendar_upcoming',
-        'comments',
-        'community',
-        'completionstatus',
-        'course_list',
-        'course_overview',
-        'course_summary',
-        'feedback',
-        'glossary_random',
-        'html',
-        'login',
-        'mentees',
-        'messages',
-        'mnet_hosts',
-        'myprofile',
-        'navigation',
-        'news_items',
-        'online_users',
-        'participants',
-        'private_files',
-        'quiz_results',
-        'recent_activity',
-        'rss_client',
-        'search',
-        'search_forums',
-        'section_links',
-        'selfcompletion',
-        'settings',
-        'site_main_menu',
-        'social_activities',
-        'tag_flickr',
-        'tag_youtube',
-        'tags');
-
-    $plugins_standard['filter'] = array('activitynames',
-        'algebra',
-        'censor',
-        'emailprotect',
-        'emoticon',
-        'filter',
-        'mediaplugin',
-        'multilang',
-        'tex',
-        'tidy',
-        'urltolink');
-
-    $plugins_installed = array();
-    $installed_mods = $DB->get_records('modules', null, 'name');
-    $installed_blocks = $DB->get_records('block', null, 'name');
-
-    foreach($installed_mods as $mod) {
-        $plugins_installed['mod'][] = $mod->name;
-    }
-
-    foreach($installed_blocks as $block) {
-        $plugins_installed['blocks'][] = $block->name;
-    }
-    $plugins_installed['filter'] = array();
-
-    $plugins_ondisk = array();
-    $plugins_ondisk['mod']    = array_keys(get_plugin_list('mod'));
-    $plugins_ondisk['blocks'] = array_keys(get_plugin_list('block'));
-    $plugins_ondisk['filter'] = array_keys(get_plugin_list('filter'));
-
-    $strstandard    = get_string('standard');
-    $strnonstandard = get_string('nonstandard');
-    $strmissingfromdisk = '(' . get_string('missingfromdisk') . ')';
-    $strabouttobeinstalled = '(' . get_string('abouttobeinstalled') . ')';
-
-    $html = '';
-
-    $html .= '<table class="generaltable plugincheckwrapper" cellspacing="4" cellpadding="1"><tr valign="top">';
-
-    foreach ($plugins_ondisk as $cat => $list_ondisk) {
-        if ($cat == 'mod') {
-            $strcaption = get_string('activitymodule');
-        } elseif ($cat == 'filter') {
-            $strcaption = get_string('managefilters');
-        } else {
-            $strcaption = get_string($cat);
-        }
-
-        $html .= '<td><table class="plugincompattable generaltable boxaligncenter" cellspacing="1" cellpadding="5" '
-            . 'id="' . $cat . 'compattable" summary="compatibility table"><caption>' . $strcaption . '</caption>' . "\n";
-        $html .= '<tr class="r0"><th class="header c0">' . get_string('directory') . "</th>\n"
-            . '<th class="header c1">' . get_string('name') . "</th>\n"
-            . '<th class="header c2">' . get_string('status') . "</th>\n</tr>\n";
-
-        $row = 1;
-
-        foreach ($list_ondisk as $k => $plugin) {
-            $status = 'ok';
-            $standard = 'standard';
-            $note = '';
-
-            if (!in_array($plugin, $plugins_standard[$cat])) {
-                $standard = 'nonstandard';
-                $status = 'warning';
-            }
-
-            // Get real name and full path of plugin
-            $plugin_name = "[[$plugin]]";
-
-            $plugin_path = "$cat/$plugin";
-
-            $plugin_name = get_plugin_name($plugin, $cat);
-
-            // Determine if the plugin is about to be installed
-            if ($cat != 'filter' && !in_array($plugin, $plugins_installed[$cat])) {
-                $note = $strabouttobeinstalled;
-                $plugin_name = $plugin;
-            }
-
-            $html .= "<tr class=\"r$row\">\n"
-                .  "<td class=\"cell c0\">$plugin_path</td>\n"
-                .  "<td class=\"cell c1\">$plugin_name</td>\n"
-                .  "<td class=\"$standard $status cell c2\">" . ${'str' . $standard} . " $note</td>\n</tr>\n";
-            $row++;
-
-            // If the plugin was both on disk and in the db, unset the value from the installed plugins list
-            if ($key = array_search($plugin, $plugins_installed[$cat])) {
-                unset($plugins_installed[$cat][$key]);
-            }
-        }
-
-        // If there are plugins left in the plugins_installed list, it means they are missing from disk
-        foreach ($plugins_installed[$cat] as $k => $missing_plugin) {
-        // Make sure the plugin really is missing from disk
-            if (!in_array($missing_plugin, $plugins_ondisk[$cat])) {
-                $standard = 'standard';
-                $status = 'warning';
-
-                if (!in_array($missing_plugin, $plugins_standard[$cat])) {
-                    $standard = 'nonstandard';
-                }
-
-                $plugin_name = $missing_plugin;
-                $html .= "<tr class=\"r$row\">\n"
-                    .  "<td class=\"cell c0\">?</td>\n"
-                    .  "<td class=\"cell c1\">$plugin_name</td>\n"
-                    .  "<td class=\"$standard $status cell c2\">" . ${'str' . $standard} . " $strmissingfromdisk</td>\n</tr>\n";
-                $row++;
-            }
-        }
-
-        $html .= '</table></td>';
-    }
-
-    $html .= '</tr></table><br />';
-
-    echo $html;
-}
-
 
 /**
  * Manage repository settings

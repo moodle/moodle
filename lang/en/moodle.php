@@ -1263,9 +1263,6 @@ $string['pleaseusesearch'] = 'Please use the search';
 $string['plugin'] = 'Plugin';
 $string['plugindeletefiles'] = 'All data associated with the plugin \'{$a->name}\' has been deleted from the database. To prevent the plugin re-installing itself, you should now delete this directory from your server: {$a->directory}';
 $string['plugincheck'] = 'Plugins check';
-$string['pluginchecknotice'] = 'The following tables show the modules, blocks and filters that have been detected in your current Moodle installation;
-They indicate which plugins are standard, and which are not. All non-standard plugins should be checked and upgraded to their most recent versions
-before continuing with this Moodle upgrade.';
 $string['pluginsetup'] = 'Setting up plugin tables';
 $string['policyaccept'] = 'I understand and agree';
 $string['policyagree'] = 'You must agree to this policy to continue using this site.  Do you agree?';

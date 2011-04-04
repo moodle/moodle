@@ -847,13 +847,13 @@ class page_requirements_manager {
      * passed in $module.
      *
      * <code>
-     * $PAGE->strings_for_js(Array('one', 'two', 'three'), 'mymod', Array('a', null, 3));
+     * $PAGE->requires->strings_for_js(array('one', 'two', 'three'), 'mymod', array('a', null, 3));
      *
      * // The above is identitical to calling
      *
-     * $PAGE->string_for_js('one', 'mymod', 'a');
-     * $PAGE->string_for_js('two', 'mymod');
-     * $PAGE->string_for_js('three', 'mymod', 3);
+     * $PAGE->requires->string_for_js('one', 'mymod', 'a');
+     * $PAGE->requires->string_for_js('two', 'mymod');
+     * $PAGE->requires->string_for_js('three', 'mymod', 3);
      * </code>
      *
      * @param array $identifiers An array of desired strings
