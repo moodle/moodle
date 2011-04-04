@@ -648,6 +648,7 @@ $string['langpackremoved'] = 'Language pack was uninstalled';
 $string['langpacks'] = 'Language packs';
 $string['langpackupdated'] = 'Language pack {$a} was successfully updated';
 $string['langpackupdateskipped'] = 'Update of {$a} language pack skipped';
+$string['langpackuptodate'] = 'Language pack {$a} is up-to-date';
 $string['langpackwillbeupdated'] = 'NOTE: Moodle will try to download updates for your language packs during the upgrade.';
 $string['langrmyourself'] = 'To prevent data loss, lang.php is not able to overwrite existing file with empty content. Please, remove the file manually in order to get rid of it.';
 $string['langstringcache'] = 'Cache all language strings';
