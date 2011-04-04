@@ -121,8 +121,6 @@ html, body {background-color:#C8C9C7;}
 .group .r1 .cell,
 .admin table .r1 .cell {background-color:#EEE;}
 
-.admin .plugincompattable .r1 .cell {background-color:#FFF;}
-
 .singlebutton,
 .buttons {text-align:center;margin:20px;}
 .buttons form {display:inline;}

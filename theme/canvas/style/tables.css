@@ -6,8 +6,6 @@
 #page-admin-course-category .generalbox td,
 #attempts th,
 #attempts td,
-.plugincompattable th,
-.plugincompattable td,
 .environmenttable th,
 .environmenttable td,
 .forumheaderlist td,
@@ -22,7 +20,6 @@
 .results .header,
 #attempts .header,
 .generaltable .header,
-.plugincompattable th,
 .environmenttable th,
 .forumheaderlist th {
 	background: #f3f3f3;

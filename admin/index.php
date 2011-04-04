@@ -48,6 +48,7 @@ $id             = optional_param('id', '', PARAM_TEXT);
 $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
 $confirmrelease = optional_param('confirmrelease', 0, PARAM_BOOL);
 $confirmplugins = optional_param('confirmplugincheck', 0, PARAM_BOOL);
+$showallplugins = optional_param('showallplugins', 0, PARAM_BOOL);
 $agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
 
 // Check some PHP server settings
@@ -255,17 +256,19 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_title($strplugincheck);
         $PAGE->set_heading($strplugincheck);
         $PAGE->set_cacheable(false);
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading($strplugincheck);
-        echo $OUTPUT->box_start('generalbox', 'notice');
-        print_string('pluginchecknotice');
-        echo $OUTPUT->box_end();
-        print_plugin_tables();
+        $output = $PAGE->get_renderer('core', 'admin');
+        $pluginman = plugin_manager::instance();
+
+        echo $output->header();
+        echo $output->box_start('generalbox');
+        echo $output->container(get_string('pluginchecknotice', 'core_plugin'), 'generalbox', 'notice');
+        echo $output->plugins_check($pluginman->get_plugins(), array('full' => $showallplugins));
+        echo $output->box_end();
         print_upgrade_reload('index.php?confirmupgrade=1&amp;confirmrelease=1');
         $button = new single_button(new moodle_url('index.php', array('confirmupgrade'=>1, 'confirmrelease'=>1, 'confirmplugincheck'=>1)), get_string('upgradestart', 'admin'), 'get');
         $button->class = 'continuebutton';
-        echo $OUTPUT->render($button);
-        echo $OUTPUT->footer();
+        echo $output->render($button);
+        echo $output->footer();
         die();
 
     } else {
@@ -293,17 +296,19 @@ if (moodle_needs_upgrading()) {
             $PAGE->set_title($strplugincheck);
             $PAGE->set_heading($strplugincheck);
             $PAGE->set_cacheable(false);
-            echo $OUTPUT->header();
-            echo $OUTPUT->heading($strplugincheck);
-            echo $OUTPUT->box_start('generalbox', 'notice');
-            print_string('pluginchecknotice');
-            echo $OUTPUT->box_end();
-            print_plugin_tables();
+            $output = $PAGE->get_renderer('core', 'admin');
+            $pluginman = plugin_manager::instance();
+
+            echo $output->header();
+            echo $output->box_start('generalbox');
+            echo $output->container(get_string('pluginchecknotice', 'core_plugin'), 'generalbox', 'notice');
+            echo $output->plugins_check($pluginman->get_plugins(), array('full' => $showallplugins));
+            echo $output->box_end();
             print_upgrade_reload('index.php');
             $button = new single_button(new moodle_url('index.php', array('confirmplugincheck'=>1)), get_string('upgradestart', 'admin'), 'get');
             $button->class = 'continuebutton';
-            echo $OUTPUT->render($button);
-            echo $OUTPUT->footer();
+            echo $output->render($button);
+            echo $output->footer();
             die();
         }
     }
