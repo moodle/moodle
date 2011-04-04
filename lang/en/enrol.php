@@ -60,6 +60,7 @@ $string['errajaxfailedenrol'] = 'Failed to enrol user';
 $string['errajaxsearch'] = 'Error when searching users';
 $string['errorenrolcohort'] = 'Error creating cohort sync enrolment instance in this course.';
 $string['errorenrolcohortusers'] = 'Error enrolling cohort members in this course.';
+$string['finishenrollingusers'] = 'Finish enrolling users';
 $string['invalidenrolinstance'] = 'Invalid enrolment instance';
 $string['invalidrole'] = 'Invalid role';
 $string['manageenrols'] = 'Manage enrol plugins';
