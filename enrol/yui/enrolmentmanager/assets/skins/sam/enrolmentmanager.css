@@ -60,7 +60,7 @@ Structure of the user enroller panel
 .user-enroller-panel .uep-loading-lightbox.hidden {display:none;}
 .user-enroller-panel .uep-loading-lightbox .loading-icon {margin:auto;vertical-align:middle;margin-top:125px;}
 
-.user-enroller-panel .uep-footer {padding:3px;background-color:#ddd;}
+.user-enroller-panel .uep-footer {padding:3px;background-color:#ddd;text-align:center;}
 .user-enroller-panel .uep-search {margin:3px;}
 .user-enroller-panel .uep-search label {padding-right:8px;}
 .user-enroller-panel .uep-search input {width:70%;}
