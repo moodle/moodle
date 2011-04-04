@@ -327,41 +327,38 @@ class grade_report_grader extends grade_report {
         global $CFG;
 
         if (is_numeric($this->sortitemid)) {
-            // the MAX() magic is required in order to please PG
-            $sort = "MAX(g.finalgrade) $this->sortorder";
-
-            $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
-                      FROM {$CFG->prefix}user u
-                           JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
-                           $this->groupsql
-                           LEFT JOIN {$CFG->prefix}grade_grades g ON (g.userid = u.id AND g.itemid = $this->sortitemid)
-                     WHERE ra.roleid in ($this->gradebookroles) AND u.deleted = 0
-                           $this->groupwheresql
-                           AND ra.contextid ".get_related_contexts_string($this->context)."
-                  GROUP BY u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
-                  ORDER BY $sort";
-
+            $sortjoin = "LEFT JOIN {$CFG->prefix}grade_grades g ON " .
+                    "g.userid = u.id AND g.itemid = $this->sortitemid";
+            $sort = "g.finalgrade $this->sortorder";
         } else {
+            $sortjoin = '';
             switch($this->sortitemid) {
                 case 'lastname':
-                    $sort = "u.lastname $this->sortorder, u.firstname $this->sortorder"; break;
+                    $sort = "u.lastname $this->sortorder, u.firstname $this->sortorder";
+                    break;
                 case 'firstname':
-                    $sort = "u.firstname $this->sortorder, u.lastname $this->sortorder"; break;
+                    $sort = "u.firstname $this->sortorder, u.lastname $this->sortorder";
+                    break;
                 case 'idnumber':
                 default:
-                    $sort = "u.idnumber $this->sortorder"; break;
+                    $sort = "u.idnumber $this->sortorder";
+                    break;
             }
-
-            $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
-                      FROM {$CFG->prefix}user u
-                           JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
-                           $this->groupsql
-                     WHERE ra.roleid in ($this->gradebookroles)
-                           $this->groupwheresql
-                           AND ra.contextid ".get_related_contexts_string($this->context)."
-                  ORDER BY $sort";
         }
 
+        $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
+                  FROM {$CFG->prefix}user u
+                       $this->groupsql
+                       $sortjoin
+                  JOIN (
+                           SELECT DISTINCT ra.userid
+                             FROM {$CFG->prefix}role_assignments ra
+                            WHERE ra.roleid IN ($this->gradebookroles)
+                              AND ra.contextid " . get_related_contexts_string($this->context) . "
+                       ) rainner ON rainner.userid = u.id
+                 WHERE u.deleted = 0
+                   $this->groupwheresql
+              ORDER BY $sort";
 
         $this->users = get_records_sql($sql, $this->get_pref('studentsperpage') * $this->page,
                             $this->get_pref('studentsperpage'));
@@ -1152,20 +1149,24 @@ class grade_report_grader extends grade_report {
         if ($showaverages) {
 
             // find sums of all grade items in course
-            $SQL = "SELECT g.itemid, SUM(g.finalgrade) AS sum
+            $sql = "SELECT g.itemid, SUM(g.finalgrade) AS sum
                       FROM {$CFG->prefix}grade_items gi
-                           JOIN {$CFG->prefix}grade_grades g      ON g.itemid = gi.id
-                           JOIN {$CFG->prefix}user u              ON u.id = g.userid
-                           JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
+                           JOIN {$CFG->prefix}grade_grades g ON g.itemid = gi.id
+                           JOIN {$CFG->prefix}user u ON u.id = g.userid
                            $groupsql
-                     WHERE gi.courseid = $this->courseid
-                           AND ra.roleid in ($this->gradebookroles)
-                           AND ra.contextid ".get_related_contexts_string($this->context)."
-                           AND g.finalgrade IS NOT NULL
-                           $groupwheresql
+                           JOIN (
+                               SELECT DISTINCT ra.userid
+                                 FROM {$CFG->prefix}role_assignments ra
+                                WHERE ra.roleid IN ($this->gradebookroles)
+                                  AND ra.contextid " . get_related_contexts_string($this->context) . "
+                           ) rainner ON rainner.userid = u.id
+                       WHERE gi.courseid = $this->courseid
+                       AND u.deleted = 0
+                       AND g.finalgrade IS NOT NULL
+                       $groupwheresql
                   GROUP BY g.itemid";
             $sum_array = array();
-            if ($sums = get_records_sql($SQL)) {
+            if ($sums = get_records_sql($sql)) {
                 foreach ($sums as $itemid => $csum) {
                     $sum_array[$itemid] = $csum->sum;
                 }
@@ -1177,20 +1178,21 @@ class grade_report_grader extends grade_report {
 
             // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
             // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
-            $SQL = "SELECT gi.id, COUNT(u.id) AS count
+            $sql = "SELECT gi.id, COUNT(DISTINCT u.id) AS count
                       FROM {$CFG->prefix}grade_items gi
                            CROSS JOIN {$CFG->prefix}user u
-                           JOIN {$CFG->prefix}role_assignments ra        ON ra.userid = u.id
-                           LEFT OUTER JOIN  {$CFG->prefix}grade_grades g ON (g.itemid = gi.id AND g.userid = u.id AND g.finalgrade IS NOT NULL)
+                           JOIN {$CFG->prefix}role_assignments ra       ON ra.userid = u.id
+                           LEFT OUTER JOIN {$CFG->prefix}grade_grades g ON g.itemid = gi.id AND g.userid = u.id AND g.finalgrade IS NOT NULL
                            $groupsql
                      WHERE gi.courseid = $this->courseid
-                           AND ra.roleid in ($this->gradebookroles)
-                           AND ra.contextid ".get_related_contexts_string($this->context)."
+                           AND ra.roleid IN ($this->gradebookroles)
+                           AND u.deleted = 0
+                           AND ra.contextid " . get_related_contexts_string($this->context) . "
                            AND g.id IS NULL
                            $groupwheresql
                   GROUP BY gi.id";
 
-            $ungraded_counts = get_records_sql($SQL);
+            $ungraded_counts = get_records_sql($sql);
 
             $fixedstudents = $this->is_fixed_students();
             if (!$fixedstudents) {

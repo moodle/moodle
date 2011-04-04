@@ -108,10 +108,14 @@ class graded_users_iterator {
 
         $users_sql = "SELECT u.* $ofields
                         FROM {$CFG->prefix}user u
-                             INNER JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
                              $groupsql
-                       WHERE ra.roleid $gradebookroles
-                             AND ra.contextid $relatedcontexts
+                        JOIN (
+                                 SELECT DISTINCT ra.userid
+                                   FROM {$CFG->prefix}role_assignments ra
+                                  WHERE ra.roleid $gradebookroles
+                                    AND ra.contextid $relatedcontexts
+                             ) rainner ON rainner.userid = u.id
+                       WHERE u.deleted = 0
                              $groupwheresql
                     ORDER BY $order";
 
@@ -123,13 +127,17 @@ class graded_users_iterator {
 
             $grades_sql = "SELECT g.* $ofields
                              FROM {$CFG->prefix}grade_grades g
-                                  INNER JOIN {$CFG->prefix}user u ON g.userid = u.id
-                                  INNER JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                             JOIN {$CFG->prefix}user u ON g.userid = u.id
                                   $groupsql
-                            WHERE ra.roleid $gradebookroles
-                                  AND ra.contextid $relatedcontexts
-                                  AND g.itemid IN ($itemids)
-                                  $groupwheresql
+                             JOIN (
+                                      SELECT DISTINCT ra.userid
+                                        FROM {$CFG->prefix}role_assignments ra
+                                       WHERE ra.roleid $gradebookroles
+                                         AND ra.contextid $relatedcontexts
+                                  ) rainner ON rainner.userid = u.id
+                            WHERE u.deleted = 0
+                              AND g.itemid IN ($itemids)
+                              $groupwheresql
                          ORDER BY $order, g.itemid ASC";
             $this->grades_rs = get_recordset_sql($grades_sql);
         } else {
