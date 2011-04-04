@@ -58,7 +58,8 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
         DURATION : 'duration',
         ACTIVE : 'active',
         SEARCH : 'uep-search',
-        CLOSE : 'close'
+        CLOSE : 'close',
+        CLOSEBTN : 'close-button'
     };
 
     var USERENROLLER = function(config) {
@@ -98,6 +99,9 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
                         .append(Y.Node.create('<div class="'+CSS.SEARCH+'"><label>'+M.str.enrol.usersearch+'</label></div>')
                             .append(Y.Node.create('<input type="text" id="enrolusersearch" value="" />'))
                         )
+                        .append(Y.Node.create('<div class="'+CSS.CLOSEBTN+'"></div>')
+                            .append(Y.Node.create('<input type="button" value="'+M.str.enrol.finishenrollingusers+'" />'))
+                        )
                     )
                 )
             );
@@ -109,6 +113,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
                 }
             }, this);
             this.get(UEP.BASE).one('.'+CSS.HEADER+' .'+CSS.CLOSE).on('click', this.hide, this);
+            this.get(UEP.BASE).one('.'+CSS.FOOTER+' .'+CSS.CLOSEBTN+' input').on('click', this.hide, this);
             this._loadingNode = this.get(UEP.BASE).one('.'+CSS.CONTENT+' .'+CSS.LIGHTBOX);
             var params = this.get(UEP.PARAMS);
             params['id'] = this.get(UEP.COURSEID);

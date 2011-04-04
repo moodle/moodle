@@ -685,7 +685,8 @@ class course_enrolment_users_table extends course_enrolment_table {
                     'unlimitedduration',
                     'startdatetoday',
                     'durationdays',
-                    'enrolperiod'), 'enrol');
+                    'enrolperiod',
+                    'finishenrollingusers'), 'enrol');
                 $this->moodlepage->requires->string_for_js('assignroles', 'role');
                 $this->moodlepage->requires->string_for_js('startingfrom', 'moodle');
 
