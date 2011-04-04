@@ -67,7 +67,8 @@ if (data_submitted() && confirm_sesskey()) {
 }
 
 // Print the comment form.
-echo '<form method="post" class="mform" id="manualgradingform" action="' . $CFG->wwwroot . '/mod/quiz/comment.php">';
+echo '<form method="post" class="mform" id="manualgradingform" action="' .
+        $CFG->wwwroot . '/mod/quiz/comment.php">';
 echo $attemptobj->render_question_for_commenting($slot);
 ?>
 <div>
@@ -83,8 +84,10 @@ echo $attemptobj->render_question_for_commenting($slot);
                 <div class="fgrouplabel"><label> </label></div>
             </div>
             <fieldset class="felement fgroup">
-                <input id="id_submitbutton" type="submit" name="submit" value="<?php print_string('save', 'quiz'); ?>"/>
-                <input id="id_cancel" type="button" value="<?php print_string('cancel'); ?>" onclick="close_window()"/>
+                <input id="id_submitbutton" type="submit" name="submit" value="<?php
+                        print_string('save', 'quiz'); ?>"/>
+                <input id="id_cancel" type="button" value="<?php
+                        print_string('cancel'); ?>" onclick="close_window()"/>
             </fieldset>
         </div>
     </div>

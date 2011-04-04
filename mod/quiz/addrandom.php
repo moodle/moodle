@@ -92,7 +92,8 @@ if ($data = $mform->get_data()) {
         $returnurl->param('cat', $categoryid . ',' . $contextid);
 
     } else {
-        throw new coding_exception('It seems a form was submitted without any button being pressed???');
+        throw new coding_exception(
+                'It seems a form was submitted without any button being pressed???');
     }
 
     quiz_add_random_questions($quiz, $addonpage, $categoryid, 1, $includesubcategories);

@@ -534,7 +534,8 @@ class quiz_grading_report extends quiz_default_report {
 
         $params = array();
         if ($orderby == 'date') {
-            list($statetest, $params) = $dm->in_summary_state_test('manuallygraded', false, 'mangrstate');
+            list($statetest, $params) = $dm->in_summary_state_test(
+                    'manuallygraded', false, 'mangrstate');
             $orderby = "(
                     SELECT MAX(sortqas.timecreated)
                     FROM {question_attempt_steps} sortqas

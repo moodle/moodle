@@ -106,9 +106,11 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         // Define sources
         $quiz->set_source_table('quiz', array('id' => backup::VAR_ACTIVITYID));
 
-        $qinstance->set_source_table('quiz_question_instances', array('quiz' => backup::VAR_PARENTID));
+        $qinstance->set_source_table('quiz_question_instances',
+                array('quiz' => backup::VAR_PARENTID));
 
-        $feedback->set_source_table('quiz_feedback', array('quizid' => backup::VAR_PARENTID));
+        $feedback->set_source_table('quiz_feedback',
+                array('quizid' => backup::VAR_PARENTID));
 
         // Quiz overrides to backup are different depending of user info
         $overrideparams = array('quiz' => backup::VAR_PARENTID);

@@ -66,11 +66,14 @@ class quiz_grading_settings extends moodleform {
             if ($type == 'autograded' && !$this->includeauto) {
                 continue;
             }
-            $gradeoptions[$type] = get_string('gradeattempts' . $type, 'quiz_grading', $this->counts->$type);
+            $gradeoptions[$type] = get_string('gradeattempts' . $type, 'quiz_grading',
+                    $this->counts->$type);
         }
-        $mform->addElement('select', 'grade', get_string('attemptstograde', 'quiz_grading'), $gradeoptions);
+        $mform->addElement('select', 'grade', get_string('attemptstograde', 'quiz_grading'),
+                $gradeoptions);
 
-        $mform->addElement('text', 'pagesize', get_string('questionsperpage', 'quiz_grading'), array('size' => 3));
+        $mform->addElement('text', 'pagesize', get_string('questionsperpage', 'quiz_grading'),
+                array('size' => 3));
         $mform->setType('pagesize', PARAM_INT);
 
         $orderoptions = array(
@@ -83,7 +86,8 @@ class quiz_grading_settings extends moodleform {
         if ($this->showidnumbers) {
             $orderoptions['idnumber'] = get_string('bystudentidnumber', 'quiz_grading');
         }
-        $mform->addElement('select', 'order', get_string('orderattempts', 'quiz_grading'), $orderoptions);
+        $mform->addElement('select', 'order', get_string('orderattempts', 'quiz_grading'),
+                $orderoptions);
 
         foreach ($this->hidden as $name => $value) {
             $mform->addElement('hidden', $name, $value);

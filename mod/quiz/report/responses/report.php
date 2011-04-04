@@ -180,7 +180,8 @@ class quiz_responses_report extends quiz_attempt_report {
         if ($hasquestions && ($hasstudents || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)) {
             // Print information on the grading method and whether we are displaying
             if (!$table->is_downloading()) { //do not print notices when downloading
-                if ($strattempthighlight = quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)) {
+                if ($strattempthighlight = quiz_report_highlighting_grading_method(
+                        $quiz, $qmsubselect, $qmfilter)) {
                     echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
                 }
             }
@@ -198,7 +199,7 @@ class quiz_responses_report extends quiz_attempt_report {
 
             if (!$table->is_downloading() && $candelete) {
                 $columns[] = 'checkbox';
-                $headers[] = NULL;
+                $headers[] = null;
             }
 
             $this->add_user_columns($table, $columns, $headers);

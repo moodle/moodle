@@ -85,7 +85,8 @@ if (!$attemptobj->is_preview_user()) {
 
 // If the attempt is already closed, send them to the review page.
 if ($attemptobj->is_finished()) {
-    throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'attemptalreadyclosed', null, $attemptobj->review_url());
+    throw new moodle_quiz_exception($attemptobj->get_quizobj(),
+            'attemptalreadyclosed', null, $attemptobj->review_url());
 }
 
 // Don't log - we will end with a redirect to a page that is logged.
@@ -94,7 +95,7 @@ if (!$finishattempt) {
     // Just process the responses for this page and go to the next page.
     try {
         $attemptobj->process_all_actions($timenow);
-    } catch (question_out_of_sequence_exception $e){
+    } catch (question_out_of_sequence_exception $e) {
         print_error('submissionoutofsequencefriendlymessage', 'question',
                 $attemptobj->attempt_url(0, $thispage));
     }

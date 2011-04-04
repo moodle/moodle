@@ -68,7 +68,8 @@ class mod_quiz_admin_review_setting extends admin_setting {
         );
     }
 
-    public function __construct($name, $visiblename, $description, $defaultsetting, $duringstate = null) {
+    public function __construct($name, $visiblename, $description,
+            $defaultsetting, $duringstate = null) {
         $this->duringstate = $duringstate;
         parent::__construct($name, $visiblename, $description, $defaultsetting);
     }

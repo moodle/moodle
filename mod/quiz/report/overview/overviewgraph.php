@@ -48,7 +48,9 @@ if ($groupid && $groupmode = groups_get_activity_groupmode($cm)) {
         print_error('errorinvalidgroup', 'group', null, $groupid);
     }
     $group = $groups[$groupid];
-    $groupusers = get_users_by_capability($modcontext, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),'','','','',$group->id,'',false);
+    $groupusers = get_users_by_capability($modcontext,
+            array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),
+            '', '', '', '', $group->id, '', false);
     if (!$groupusers) {
         print_error('nostudentsingroup');
     }
@@ -57,7 +59,7 @@ if ($groupid && $groupmode = groups_get_activity_groupmode($cm)) {
     $groupusers = array();
 }
 
-$line = new graph(800,600);
+$line = new graph(800, 600);
 $line->parameter['title'] = '';
 $line->parameter['y_label_left'] = get_string('participants');
 $line->parameter['x_label'] = get_string('grade');
@@ -69,8 +71,10 @@ $line->parameter['x_axis_angle'] = 60;
 $line->y_tick_labels = null;
 $line->offset_relation = null;
 
-$line->parameter['bar_size'] = 1; // will make size > 1 to get overlap effect when showing groups
-$line->parameter['bar_spacing'] = 10; // don't forget to increase spacing so that graph doesn't become one big block of colour
+// will make size > 1 to get overlap effect when showing groups
+$line->parameter['bar_size'] = 1;
+// don't forget to increase spacing so that graph doesn't become one big block of colour
+$line->parameter['bar_spacing'] = 10;
 
 //pick a sensible number of bands depending on quiz maximum grade.
 $bands = $quiz->grade;

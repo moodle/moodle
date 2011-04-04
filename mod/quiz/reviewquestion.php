@@ -59,7 +59,8 @@ if ($attemptobj->is_own_attempt()) {
         die();
     } else if (!$options->responses) {
         $accessmanager = $attemptobj->get_access_manager(time());
-        echo $OUTPUT->notification($accessmanager->cannot_review_message($attemptobj->get_review_options()));
+        echo $OUTPUT->notification($accessmanager->cannot_review_message(
+                $attemptobj->get_review_options()));
         echo $OUTPUT->close_window_button();
         echo $OUTPUT->footer();
         die();

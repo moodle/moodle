@@ -81,7 +81,7 @@ $questionstatistics = $DB->get_records_select('quiz_question_statistics',
         'quizstatisticsid = ? AND slot IS NOT NULL', array($quizstatistics->id));
 
 // Create the graph, and set the basic options.
-$graph = new graph(800,600);
+$graph = new graph(800, 600);
 $graph->parameter['title']   = '';
 
 $graph->parameter['y_label_left'] = '%';

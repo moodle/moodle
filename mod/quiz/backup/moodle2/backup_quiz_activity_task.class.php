@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/quiz/backup/moodle2/backup_quiz_stepslib.php'); // Because it exists (must)
+require_once($CFG->dirroot . '/mod/quiz/backup/moodle2/backup_quiz_stepslib.php');
 
 
 /**
@@ -74,7 +74,7 @@ class backup_quiz_activity_task extends backup_activity_task {
     public static function encode_content_links($content) {
         global $CFG;
 
-        $base = preg_quote($CFG->wwwroot,"/");
+        $base = preg_quote($CFG->wwwroot, '/');
 
         // Link to the list of quizzes
         $search="/(".$base."\/mod\/quiz\/index.php\?id\=)([0-9]+)/";

@@ -116,11 +116,13 @@ $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/penaltys
 
 // Each attempt builds on last.
 $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/attemptonlast',
-        get_string('eachattemptbuildsonthelast', 'quiz'), get_string('configeachattemptbuildsonthelast', 'quiz'),
+        get_string('eachattemptbuildsonthelast', 'quiz'),
+        get_string('configeachattemptbuildsonthelast', 'quiz'),
         array('value' => 0, 'adv' => true)));
 
 // Review options.
-$quizsettings->add(new admin_setting_heading('reviewheading', get_string('reviewoptionsheading', 'quiz'), ''));
+$quizsettings->add(new admin_setting_heading('reviewheading',
+        get_string('reviewoptionsheading', 'quiz'), ''));
 foreach (mod_quiz_admin_review_setting::fields() as $field => $name) {
     $default = mod_quiz_admin_review_setting::all_on();
     $forceduring = null;
@@ -154,7 +156,8 @@ for ($i = 0; $i <= QUIZ_MAX_Q_DECIMAL_OPTION; $i++) {
     $options[$i] = $i;
 }
 $quizsettings->add(new admin_setting_configselect_with_advanced('quiz/questiondecimalpoints',
-        get_string('decimalplacesquestion', 'quiz'), get_string('configdecimalplacesquestion', 'quiz'),
+        get_string('decimalplacesquestion', 'quiz'),
+        get_string('configdecimalplacesquestion', 'quiz'),
         array('value' => -1, 'fix' => true), $options));
 
 // Show blocks during quiz attempts
@@ -185,19 +188,21 @@ $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/popup',
         get_string('showinsecurepopup', 'quiz'), get_string('configpopup', 'quiz'),
         array('value' => 0, 'adv' => true)));
 
-/// Now, depending on whether any reports have their own settings page, add
-/// the quiz setting page to the appropriate place in the tree.
+// Now, depending on whether any reports have their own settings page, add
+// the quiz setting page to the appropriate place in the tree.
 if (empty($reportsbyname)) {
     $ADMIN->add('modsettings', $quizsettings);
 } else {
-    $ADMIN->add('modsettings', new admin_category('modsettingsquizcat', get_string('modulename', 'quiz'), !$module->visible));
+    $ADMIN->add('modsettings', new admin_category('modsettingsquizcat',
+            get_string('modulename', 'quiz'), !$module->visible));
     $ADMIN->add('modsettingsquizcat', $quizsettings);
 
-/// Add the report pages for the settings.php files in sub directories of mod/quiz/report
+    // Add the report pages for the settings.php files in sub directories of mod/quiz/report
     foreach ($reportsbyname as $strreportname => $report) {
         $reportname = $report;
 
-        $settings = new admin_settingpage('modsettingsquizcat'.$reportname, $strreportname, 'moodle/site:config', !$module->visible);
+        $settings = new admin_settingpage('modsettingsquizcat'.$reportname,
+                $strreportname, 'moodle/site:config', !$module->visible);
         if ($ADMIN->fulltree) {
             include($CFG->dirroot."/mod/quiz/report/$reportname/settings.php");
         }
@@ -205,4 +210,4 @@ if (empty($reportsbyname)) {
     }
 }
 
-$settings = NULL; // we do not want standard settings link
+$settings = null; // we do not want standard settings link

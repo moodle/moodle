@@ -88,13 +88,17 @@ add_to_log($course->id, 'quiz', 'report', 'report.php?id=' . $cm->id . '&mode=' 
         $quiz->id, $cm->id);
 
 // Open the selected quiz report and display it
-include("report/$mode/report.php");
+$file = $CFG->dirroot . '/mod/quiz/report/' . $mode . '/report.php';
+if (is_readable($file)) {
+    include_once($file);
+}
 $reportclassname = 'quiz_' . $mode . '_report';
-$report = new $reportclassname();
-
-if (!$report->display($quiz, $cm, $course)) {
+if (!class_exists($reportclassname)) {
     print_error('preprocesserror', 'quiz');
 }
+
+$report = new $reportclassname();
+$report->display($quiz, $cm, $course);
 
 // Print footer
 echo $OUTPUT->footer();

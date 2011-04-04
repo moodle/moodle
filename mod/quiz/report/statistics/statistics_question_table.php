@@ -62,7 +62,8 @@ class quiz_report_statistics_question_table extends flexible_table {
      * @param object $question a question with a _stats field
      * @param bool $hassubqs
      */
-    public function setup($reporturl, $questiondata, quiz_statistics_response_analyser $responesstats) {
+    public function setup($reporturl, $questiondata,
+            quiz_statistics_response_analyser $responesstats) {
         $this->questiondata = $questiondata;
 
         $this->define_baseurl($reporturl->out());

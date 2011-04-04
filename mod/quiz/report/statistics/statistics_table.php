@@ -284,7 +284,8 @@ class quiz_report_statistics_table extends flexible_table {
             $negcovar = get_string('negcovar', 'quiz_statistics');
 
             if (!$this->is_downloading()) {
-                $negcovar .= helpbutton('negcovar', $negcovar, 'quiz_statistics', true, false, '', true);
+                $negcovar .= helpbutton('negcovar', $negcovar, 'quiz_statistics',
+                        true, false, '', true);
                 $negcovar = '<div class="negcovar">' . $negcovar . '</div>';
             }
 

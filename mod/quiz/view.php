@@ -69,7 +69,7 @@ $canpreview = has_capability('mod/quiz:preview', $context);
 // Create an object to manage all the other (non-roles) access rules.
 $timenow = time();
 $accessmanager = new quiz_access_manager(quiz::create($quiz->id, $USER->id), $timenow,
-        has_capability('mod/quiz:ignoretimelimits', $context, NULL, false));
+        has_capability('mod/quiz:ignoretimelimits', $context, null, false));
 
 // Log this request.
 add_to_log($course->id, 'quiz', 'view', 'view.php?id=' . $cm->id, $quiz->id, $cm->id);
@@ -96,7 +96,8 @@ if (trim(strip_tags($quiz->intro))) {
 // Display information about this quiz.
 $messages = $accessmanager->describe_rules();
 if ($quiz->attempts != 1) {
-    $messages[] = get_string('gradingmethod', 'quiz', quiz_get_grading_option_name($quiz->grademethod));
+    $messages[] = get_string('gradingmethod', 'quiz',
+            quiz_get_grading_option_name($quiz->grademethod));
 }
 echo $OUTPUT->box_start('quizinfo');
 $accessmanager->print_messages($messages);
@@ -170,7 +171,8 @@ if ($attempts) {
 
     $attemptcolumn = $quiz->attempts != 1;
 
-    $gradecolumn = $someoptions->marks >= question_display_options::MARK_AND_MAX && quiz_has_grades($quiz);
+    $gradecolumn = $someoptions->marks >= question_display_options::MARK_AND_MAX &&
+            quiz_has_grades($quiz);
     $markcolumn = $gradecolumn && ($quiz->grade != $quiz->sumgrades);
     $overallstats = $alloptions->marks >= question_display_options::MARK_AND_MAX;
 
@@ -191,12 +193,14 @@ if ($attempts) {
     $table->align[] = 'left';
     $table->size[] = '';
     if ($markcolumn) {
-        $table->head[] = get_string('marks', 'quiz') . ' / ' . quiz_format_grade($quiz, $quiz->sumgrades);
+        $table->head[] = get_string('marks', 'quiz') . ' / ' .
+                quiz_format_grade($quiz, $quiz->sumgrades);
         $table->align[] = 'center';
         $table->size[] = '';
     }
     if ($gradecolumn) {
-        $table->head[] = get_string('grade') . ' / ' . quiz_format_grade($quiz, $quiz->grade);
+        $table->head[] = get_string('grade') . ' / ' .
+                quiz_format_grade($quiz, $quiz->grade);
         $table->align[] = 'center';
         $table->size[] = '';
     }
@@ -259,7 +263,8 @@ if ($attempts) {
         $attemptgrade = quiz_rescale_grade($attempt->sumgrades, $quiz, false);
 
         if ($gradecolumn) {
-            if ($attemptoptions->marks >= question_display_options::MARK_AND_MAX && $attempt->timefinish > 0) {
+            if ($attemptoptions->marks >= question_display_options::MARK_AND_MAX &&
+                    $attempt->timefinish > 0) {
                 $formattedgrade = quiz_format_grade($quiz, $attemptgrade);
                 // highlight the highest grade if appropriate
                 if ($overallstats && !$attempt->preview && $numattempts > 1 && !is_null($mygrade) &&
@@ -324,7 +329,8 @@ if ($numattempts && $gradecolumn && !is_null($mygrade)) {
     }
 
     if ($mygradeoverridden) {
-        $resultinfo .= '<p class="overriddennotice">'.get_string('overriddennotice', 'grades')."</p>\n";
+        $resultinfo .= '<p class="overriddennotice">' .
+                get_string('overriddennotice', 'grades') . "</p>\n";
     }
     if ($gradebookfeedback) {
         $resultinfo .= $OUTPUT->heading(get_string('comment', 'quiz'), 3, 'main');
@@ -332,7 +338,8 @@ if ($numattempts && $gradecolumn && !is_null($mygrade)) {
     }
     if ($feedbackcolumn) {
         $resultinfo .= $OUTPUT->heading(get_string('overallfeedback', 'quiz'), 3, 'main');
-        $resultinfo .= '<p class="quizgradefeedback">'.quiz_feedback_for_grade($mygrade, $quiz, $context, $cm)."</p>\n";
+        $resultinfo .= '<p class="quizgradefeedback">' .
+                quiz_feedback_for_grade($mygrade, $quiz, $context, $cm) . "</p>\n";
     }
 
     if ($resultinfo) {
@@ -372,7 +379,8 @@ if (!quiz_clean_layout($quiz->questions, true)) {
         }
     }
 
-    // If, so far, we think a button should be printed, so check if they will be allowed to access it.
+    // If, so far, we think a button should be printed, so check if they will be
+    // allowed to access it.
     if ($buttontext) {
         if (!$moreattempts) {
             $buttontext = '';

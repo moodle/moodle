@@ -65,7 +65,7 @@ class quiz_report_responses_table extends quiz_attempt_report_table {
         echo html_writer::input_hidden_params($url);
         echo '<div>';
         $PAGE->requires->event_handler('#attemptsform', 'submit', 'M.util.show_confirm_dialog',
-                array('message' => get_string('deleteattemptcheck','quiz')));
+                array('message' => get_string('deleteattemptcheck', 'quiz')));
     }
 
     public function wrap_html_finish() {
@@ -97,7 +97,8 @@ class quiz_report_responses_table extends quiz_attempt_report_table {
             return $grade;
         }
 
-        $gradehtml = '<a href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$grade.'</a>';
+        $gradehtml = '<a href="review.php?q=' . $this->quiz->id . '&amp;attempt=' .
+                $attempt->attempt . '">' . $grade . '</a>';
         return $gradehtml;
     }
 
@@ -139,7 +140,7 @@ class quiz_report_responses_table extends quiz_attempt_report_table {
             return $this->data_col($matches[1], 'rightanswer', $attempt);
 
         } else {
-            return NULL;
+            return null;
         }
     }
 

@@ -34,7 +34,8 @@ if ($id = optional_param('id', 0, PARAM_INTEGER)) {
     if (!$cm = get_coursemodule_from_instance('quiz', $qid)) {
         print_error('invalidquizid', 'quiz');
     }
-    redirect($CFG->wwwroot . '/mod/quiz/startattempt.php?cmid=' . $cm->id . '&sesskey=' . sesskey());
+    redirect(new moodle_url('/mod/quiz/startattempt.php',
+            array('cmid' => $cm->id, 'sesskey' => sesskey())));
 }
 
 // Get submitted parameters.
@@ -111,7 +112,8 @@ if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
             format_string($attemptobj->get_quiz_name()));
 
 } else if ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
-    $PAGE->set_title($attemptobj->get_course()->shortname . ': '.format_string($attemptobj->get_quiz_name()));
+    $PAGE->set_title($attemptobj->get_course()->shortname . ': ' .
+            format_string($attemptobj->get_quiz_name()));
     $PAGE->set_cacheable(false);
     echo $OUTPUT->header();
 

@@ -49,7 +49,8 @@ class mod_quiz_display_options_test extends UnitTestCase {
         $quiz->reviewrightanswer      = 0x00100;
         $quiz->reviewoverallfeedback  = 0x00010;
 
-        $options = mod_quiz_display_options::make_from_quiz($quiz, mod_quiz_display_options::DURING);
+        $options = mod_quiz_display_options::make_from_quiz($quiz,
+                mod_quiz_display_options::DURING);
 
         $this->assertEqual(true, $options->attempt);
         $this->assertEqual(mod_quiz_display_options::VISIBLE, $options->correctness);
@@ -57,19 +58,22 @@ class mod_quiz_display_options_test extends UnitTestCase {
         $this->assertEqual(2, $options->markdp);
 
         $quiz->questiondecimalpoints = 5;
-        $options = mod_quiz_display_options::make_from_quiz($quiz, mod_quiz_display_options::IMMEDIATELY_AFTER);
+        $options = mod_quiz_display_options::make_from_quiz($quiz,
+                mod_quiz_display_options::IMMEDIATELY_AFTER);
 
         $this->assertEqual(mod_quiz_display_options::MARK_AND_MAX, $options->marks);
         $this->assertEqual(mod_quiz_display_options::VISIBLE, $options->generalfeedback);
         $this->assertEqual(mod_quiz_display_options::HIDDEN, $options->feedback);
         $this->assertEqual(5, $options->markdp);
 
-        $options = mod_quiz_display_options::make_from_quiz($quiz, mod_quiz_display_options::LATER_WHILE_OPEN);
+        $options = mod_quiz_display_options::make_from_quiz($quiz,
+                mod_quiz_display_options::LATER_WHILE_OPEN);
 
         $this->assertEqual(mod_quiz_display_options::VISIBLE, $options->rightanswer);
         $this->assertEqual(mod_quiz_display_options::HIDDEN, $options->generalfeedback);
 
-        $options = mod_quiz_display_options::make_from_quiz($quiz, mod_quiz_display_options::AFTER_CLOSE);
+        $options = mod_quiz_display_options::make_from_quiz($quiz,
+                mod_quiz_display_options::AFTER_CLOSE);
 
         $this->assertEqual(mod_quiz_display_options::VISIBLE, $options->overallfeedback);
         $this->assertEqual(mod_quiz_display_options::HIDDEN, $options->rightanswer);

@@ -31,10 +31,10 @@ require_once($CFG->dirroot.'/mod/quiz/locallib.php');
 require_once($CFG->dirroot.'/mod/quiz/override_form.php');
 
 
-$cmid = optional_param('cmid', 0, PARAM_INT);            // course module ID, if new override
-$overrideid = optional_param('id', 0, PARAM_INT);        // override ID, if editing existing override
-$action = optional_param('action', null, PARAM_ALPHA);   // if creating new override, one of 'adduser','addgroup', or 'duplicate'
-$reset = optional_param('reset', false, PARAM_BOOL);     // reset form to defaults
+$cmid = optional_param('cmid', 0, PARAM_INT);
+$overrideid = optional_param('id', 0, PARAM_INT);
+$action = optional_param('action', null, PARAM_ALPHA);
+$reset = optional_param('reset', false, PARAM_BOOL);
 
 $override = null;
 if ($overrideid) {
@@ -84,28 +84,29 @@ require_capability('mod/quiz:manageoverrides', $context);
 if ($overrideid) {
     // editing override
     $data = clone $override;
-}
-else {
+} else {
     // new override
     $data = new stdClass();
 }
 
 // merge quiz defaults with data
-$keys = array('timeopen','timeclose', 'timelimit', 'attempts', 'password');
+$keys = array('timeopen', 'timeclose', 'timelimit', 'attempts', 'password');
 foreach ($keys as $key) {
     if (!isset($data->{$key}) || $reset) {
         $data->{$key} = $quiz->{$key};
     }
 }
 
-// If we are duplicating an override, then clear the user/group and override id since they will change
+// If we are duplicating an override, then clear the user/group and override id
+// since they will change.
 if ($action === 'duplicate') {
     $override->id = null;
     $override->userid = null;
     $override->groupid = null;
 }
 
-$groupmode = !empty($data->groupid) || ($action === 'addgroup' && empty($overrideid)); // true if group-based override
+// true if group-based override
+$groupmode = !empty($data->groupid) || ($action === 'addgroup' && empty($overrideid));
 
 $overridelisturl = new moodle_url('/mod/quiz/overrides.php', array('cmid'=>$cm->id));
 if (!$groupmode) {
@@ -151,7 +152,7 @@ if ($mform->is_cancelled()) {
         if ($oldoverride = $DB->get_record('quiz_overrides', $conditions)) {
             // There is an old override, so we merge any new settings on top of
             // the older override
-             foreach ($keys as $key) {
+            foreach ($keys as $key) {
                 if (is_null($fromform->{$key})) {
                     $fromform->{$key} = $oldoverride->{$key};
                 }
@@ -164,8 +165,7 @@ if ($mform->is_cancelled()) {
     if (!empty($override->id)) {
         $fromform->id = $override->id;
         $DB->update_record('quiz_overrides', $fromform);
-    }
-    else {
+    } else {
         unset($fromform->id);
         $fromform->id = $DB->insert_record('quiz_overrides', $fromform);
     }

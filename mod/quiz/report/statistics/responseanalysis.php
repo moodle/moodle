@@ -67,8 +67,9 @@ class quiz_statistics_response_analyser {
     public function __construct($questiondata) {
         $this->questiondata = $questiondata;
 
-        $this->responseclasses = question_bank::get_qtype($questiondata->qtype)->
-                get_possible_responses($questiondata);
+        $this->responseclasses =
+                question_bank::get_qtype($questiondata->qtype)->get_possible_responses(
+                        $questiondata);
         foreach ($this->responseclasses as $subpartid => $responseclasses) {
             foreach ($responseclasses as $responseclassid => $notused) {
                 $this->responses[$subpartid][$responseclassid] = array();
@@ -138,7 +139,8 @@ class quiz_statistics_response_analyser {
 
         $partresponses = $qa->classify_response();
         foreach ($partresponses as $subpartid => $partresponse) {
-            if (!isset($this->responses[$subpartid][$partresponse->responseclassid][$partresponse->response])) {
+            if (!isset($this->responses[$subpartid][$partresponse->responseclassid]
+                    [$partresponse->response])) {
                 $resp = new stdClass();
                 $resp->count = 0;
                 if (!is_null($partresponse->fraction)) {
@@ -169,7 +171,8 @@ class quiz_statistics_response_analyser {
         global $DB;
 
         $rows = $DB->get_records('quiz_question_response_stats',
-                array('quizstatisticsid' => $quizstatisticsid, 'questionid' => $this->questiondata->id));
+                array('quizstatisticsid' => $quizstatisticsid,
+                        'questionid' => $this->questiondata->id));
         if (!$rows) {
             return false;
         }
@@ -191,7 +194,8 @@ class quiz_statistics_response_analyser {
         global $DB;
 
         if (!$this->loaded) {
-            throw new coding_exception('Question responses have not been analyised. Cannot store in the database.');
+            throw new coding_exception(
+                    'Question responses have not been analyised. Cannot store in the database.');
         }
 
         foreach ($this->responses as $subpartid => $partdata) {

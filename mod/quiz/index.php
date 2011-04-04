@@ -75,7 +75,7 @@ foreach ($quizzes as $quiz) {
     if (quiz_has_feedback($quiz)) {
         $showfeedback=true;
     }
-    if($showclosingheader && $showfeedback) {
+    if ($showclosingheader && $showfeedback) {
         break;
     }
 }
@@ -99,7 +99,8 @@ if (has_capability('mod/quiz:viewreports', $coursecontext)) {
     array_push($align, 'left');
     $showing = 'stats';
 
-} else if (has_any_capability(array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $coursecontext)) {
+} else if (has_any_capability(array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),
+        $coursecontext)) {
     array_push($headings, get_string('grade', 'quiz'));
     array_push($align, 'left');
     if ($showfeedback) {
@@ -146,7 +147,8 @@ foreach ($quizzes as $quiz) {
     if (!$quiz->visible) {
         $class = ' class="dimmed"';
     }
-    $data[] = "<a$class href=\"view.php?id=$quiz->coursemodule\">" . format_string($quiz->name, true) . '</a>';
+    $data[] = "<a$class href=\"view.php?id=$quiz->coursemodule\">" .
+            format_string($quiz->name, true) . '</a>';
 
     // Close date.
     if ($quiz->timeclose) {
@@ -163,11 +165,12 @@ foreach ($quizzes as $quiz) {
     } else if ($showing == 'grades') {
         // Grade and feedback.
         $attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'all');
-        list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts, $context);
+        list($someoptions, $alloptions) = quiz_get_combined_reviewoptions(
+                $quiz, $attempts, $context);
 
         $grade = '';
         $feedback = '';
-        if ($quiz->grade && array_key_exists($quiz->id, grades)) {
+        if ($quiz->grade && array_key_exists($quiz->id, $grades)) {
             if ($alloptions->marks >= question_display_options::MARK_AND_MAX) {
                 $a = new stdClass();
                 $a->grade = quiz_format_grade($quiz, $grades[$quiz->id]);

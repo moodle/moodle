@@ -72,16 +72,17 @@ if (!$quizobj->is_preview_user()) {
 
 // Check to see if a new preview was requested.
 if ($quizobj->is_preview_user() && $forcenew) {
-// To force the creation of a new preview, we set a finish time on the
-// current attempt (if any). It will then automatically be deleted below
-    $DB->set_field('quiz_attempts', 'timefinish', time(), array('quiz' => $quiz->id, 'userid' => $USER->id));
+    // To force the creation of a new preview, we set a finish time on the
+    // current attempt (if any). It will then automatically be deleted below
+    $DB->set_field('quiz_attempts', 'timefinish', time(),
+            array('quiz' => $quiz->id, 'userid' => $USER->id));
 }
 
 // Look for an existing attempt.
 $lastattempt = quiz_get_latest_attempt_by_user($quiz->id, $USER->id);
 
 if ($lastattempt && !$lastattempt->timefinish) {
-// Continuation of an attempt - check password then redirect.
+    // Continuation of an attempt - check password then redirect.
     $accessmanager->do_password_check($quizobj->is_preview_user());
     redirect($quizobj->attempt_url($lastattempt->id));
 }
@@ -110,7 +111,8 @@ $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->
 $quba->set_preferred_behaviour($quiz->preferredbehaviour);
 
 // Create the new attempt and initialize the question sessions
-$attempt = quiz_create_attempt($quiz, $attemptnumber, $lastattempt, time(), $quizobj->is_preview_user());
+$attempt = quiz_create_attempt($quiz, $attemptnumber, $lastattempt, time(),
+        $quizobj->is_preview_user());
 
 if (!($quiz->attemptonlast && $lastattempt)) {
     // Starting a normal, new, quiz attempt.

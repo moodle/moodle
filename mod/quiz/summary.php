@@ -68,7 +68,8 @@ $accessmanager->do_password_check($attemptobj->is_preview_user());
 $displayoptions = $attemptobj->get_display_options(false);
 
 // Log this page view.
-add_to_log($attemptobj->get_courseid(), 'quiz', 'view summary', 'summary.php?attempt=' . $attemptobj->get_attemptid(),
+add_to_log($attemptobj->get_courseid(), 'quiz', 'view summary',
+        'summary.php?attempt=' . $attemptobj->get_attemptid(),
         $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
 // Print the page header
@@ -80,8 +81,9 @@ $title = get_string('summaryofattempt', 'quiz');
 if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
     $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .
             format_string($attemptobj->get_quiz_name()), '');
-} elseif ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
-    $PAGE->set_title($attemptobj->get_course()->shortname . ': '.format_string($attemptobj->get_quiz_name()));
+} else if ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
+    $PAGE->set_title($attemptobj->get_course()->shortname . ': ' .
+            format_string($attemptobj->get_quiz_name()));
     $PAGE->set_heading($attemptobj->get_course()->fullname);
     $PAGE->set_cacheable(false);
     echo $OUTPUT->header();

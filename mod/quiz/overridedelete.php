@@ -88,8 +88,7 @@ echo $OUTPUT->header();
 if ($override->groupid) {
     $group = $DB->get_record('groups', array('id' => $override->groupid), 'id,name');
     $confirmstr = get_string("overridedeletegroupsure", "quiz", $group->name);
-}
-else {
+} else {
     $user = $DB->get_record('user', array('id' => $override->userid), 'id,firstname,lastname');
     $confirmstr = get_string("overridedeleteusersure", "quiz", fullname($user));
 }
