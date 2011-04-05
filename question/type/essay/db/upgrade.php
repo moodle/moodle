@@ -42,17 +42,25 @@ function xmldb_qtype_essay_upgrade($oldversion) {
         $table = new xmldb_table('qtype_essay_options');
 
         // Adding fields to table qtype_essay_options
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('questionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('responseformat', XMLDB_TYPE_CHAR, '16', null, XMLDB_NOTNULL, null, 'editor');
-        $table->add_field('responsefieldlines', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '15');
-        $table->add_field('attachments', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('graderinfo', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
-        $table->add_field('graderinfoformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('questionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, null, null);
+        $table->add_field('responseformat', XMLDB_TYPE_CHAR, '16', null,
+                XMLDB_NOTNULL, null, 'editor');
+        $table->add_field('responsefieldlines', XMLDB_TYPE_INTEGER, '4', null,
+                XMLDB_NOTNULL, null, '15');
+        $table->add_field('attachments', XMLDB_TYPE_INTEGER, '4', null,
+                XMLDB_NOTNULL, null, '0');
+        $table->add_field('graderinfo', XMLDB_TYPE_TEXT, 'small', null,
+                null, null, null);
+        $table->add_field('graderinfoformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, null, '0');
 
         // Adding keys to table qtype_essay_options
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('questionid', XMLDB_KEY_FOREIGN_UNIQUE, array('questionid'), 'question', array('id'));
+        $table->add_key('questionid', XMLDB_KEY_FOREIGN_UNIQUE,
+                array('questionid'), 'question', array('id'));
 
         // Conditionally launch create table for qtype_essay_options
         if (!$dbman->table_exists($table)) {

@@ -100,7 +100,8 @@ class qtype_essay_renderer extends qtype_renderer {
      * @param question_display_options $options controls what should and should
      *      not be displayed. Used to get the context.
      */
-    public function files_input(question_attempt $qa, $numallowed, question_display_options $options) {
+    public function files_input(question_attempt $qa, $numallowed,
+            question_display_options $options) {
         global $CFG;
         require_once($CFG->dirroot . '/lib/form/filemanager.php');
 

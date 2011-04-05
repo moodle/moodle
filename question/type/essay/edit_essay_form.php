@@ -55,7 +55,7 @@ class qtype_essay_edit_form extends question_edit_form {
                 array('rows' => 10), $this->editoroptions);
     }
 
-    function data_preprocessing($question) {
+    protected function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
 
         if (empty($question->options)) {
