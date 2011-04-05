@@ -40,7 +40,7 @@ require_once($CFG->dirroot . '/question/type/gapselect/questiontypebase.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddwtos extends qtype_gapselect_base {
-    protected function choice_group_key(){
+    protected function choice_group_key() {
         return 'draggroup';
     }
 
@@ -48,21 +48,22 @@ class qtype_ddwtos extends qtype_gapselect_base {
         return array('gapselect');
     }
 
-    protected function choice_options_to_feedback($choice){
+    protected function choice_options_to_feedback($choice) {
         $output = new stdClass();
         $output->draggroup = $choice['choicegroup'];
         $output->infinite = !empty($choice['infinite']);
         return serialize($output);
     }
 
-    protected function feedback_to_choice_options($feedback){
+    protected function feedback_to_choice_options($feedback) {
         $feedbackobj = unserialize($feedback);
-        return array('draggroup'=> $feedbackobj->draggroup, 'infinite'=> $feedbackobj->infinite);
+        return array('draggroup' => $feedbackobj->draggroup, 'infinite' => $feedbackobj->infinite);
     }
 
-    protected function make_choice($choicedata){
+    protected function make_choice($choicedata) {
         $options = unserialize($choicedata->feedback);
-        return new qtype_ddwtos_choice($choicedata->answer, $options->draggroup, $options->infinite);
+        return new qtype_ddwtos_choice(
+                $choicedata->answer, $options->draggroup, $options->infinite);
     }
 
     public function import_from_xml($data, $question, $format, $extra=null) {
@@ -113,7 +114,8 @@ class qtype_ddwtos extends qtype_gapselect_base {
     public function export_to_xml($question, $format, $extra = null) {
         $output = '';
 
-        $output .= '    <shuffleanswers>' . $question->options->shuffleanswers . "</shuffleanswers>\n";
+        $output .= '    <shuffleanswers>' . $question->options->shuffleanswers .
+                "</shuffleanswers>\n";
 
         $output .= $format->write_combined_feedback($question->options);
 
@@ -131,95 +133,4 @@ class qtype_ddwtos extends qtype_gapselect_base {
 
         return $output;
     }
-
-    /*
-     * Backup the data in the question
-     *
-     * This is used in question/backuplib.php
-     */
-    public function backup($bf, $preferences, $question, $level = 6) {
-        $status = true;
-        $ddwtos = get_records("question_ddwtos", "questionid", $question, "id");
-
-        //If there are ddwtos
-        if ($ddwtos) {
-            //Iterate over each ddwtos
-            foreach ($ddwtos as $ddws) {
-                $status = fwrite ($bf,start_tag("DDWORDSSENTENCES",$level,true));
-                //Print oumultiresponse contents
-                fwrite ($bf,full_tag("SHUFFLEANSWERS",$level+1,false,$ddws->shuffleanswers));
-                fwrite ($bf,full_tag("CORRECTFEEDBACK",$level+1,false,$ddws->correctfeedback));
-                fwrite ($bf,full_tag("PARTIALLYCORRECTFEEDBACK",$level+1,false,$ddws->partiallycorrectfeedback));
-                fwrite ($bf,full_tag("INCORRECTFEEDBACK",$level+1,false,$ddws->incorrectfeedback));
-                fwrite ($bf,full_tag("SHOWNUMCORRECT",$level+1,false,$ddws->shownumcorrect));
-                $status = fwrite ($bf,end_tag("DDWORDSSENTENCES",$level,true));
-            }
-
-            //Now print question_answers
-            $status = question_backup_answers($bf,$preferences,$question);
-        }
-        return $status;
-    }
-
-    /**
-     * Restores the data in the question (This is used in question/restorelib.php)
-     *
-     */
-    public function restore($old_question_id,$new_question_id,$info,$restore) {
-        $status = true;
-
-        //Get the ddwtos array
-        $ddwtos = $info['#']['DDWORDSSENTENCES'];
-
-        //Iterate over oumultiresponses
-        for($i = 0; $i < sizeof($ddwtos); $i++) {
-            $mul_info = $ddwtos[$i];
-
-            //Now, build the question_ddwtos record structure
-            $ddwtos = new stdClass();
-            $ddwtos->questionid = $new_question_id;
-            $ddwtos->shuffleanswers = isset($mul_info['#']['SHUFFLEANSWERS']['0']['#'])?backup_todb($mul_info['#']['SHUFFLEANSWERS']['0']['#']):'';
-            if (array_key_exists("CORRECTFEEDBACK", $mul_info['#'])) {
-                $ddwtos->correctfeedback = backup_todb($mul_info['#']['CORRECTFEEDBACK']['0']['#']);
-            } else {
-                $ddwtos->correctfeedback = '';
-            }
-            if (array_key_exists("PARTIALLYCORRECTFEEDBACK", $mul_info['#'])) {
-                $ddwtos->partiallycorrectfeedback = backup_todb($mul_info['#']['PARTIALLYCORRECTFEEDBACK']['0']['#']);
-            } else {
-                $ddwtos->partiallycorrectfeedback = '';
-            }
-            if (array_key_exists("INCORRECTFEEDBACK", $mul_info['#'])) {
-                $ddwtos->incorrectfeedback = backup_todb($mul_info['#']['INCORRECTFEEDBACK']['0']['#']);
-            } else {
-                $ddwtos->incorrectfeedback = '';
-            }
-            if (array_key_exists('SHOWNUMCORRECT', $mul_info['#'])) {
-                $ddwtos->shownumcorrect = backup_todb($mul_info['#']['SHOWNUMCORRECT']['0']['#']);
-            } else if (array_key_exists('CORRECTRESPONSESFEEDBACK', $mul_info['#'])) {
-                $ddwtos->shownumcorrect = backup_todb($mul_info['#']['CORRECTRESPONSESFEEDBACK']['0']['#']);
-            } else {
-                $ddwtos->shownumcorrect = 0;
-            }
-
-            $newid = insert_record ("question_ddwtos",$ddwtos);
-
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
-                }
-                backup_flush(300);
-            }
-
-            if (!$newid) {
-                $status = false;
-            }
-        }
-        return $status;
-    }
-
 }

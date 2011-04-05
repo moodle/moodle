@@ -51,7 +51,9 @@ class qtype_ddwtos_edit_form extends qtype_gapselect_edit_form_base {
 
     protected function choice_group($mform) {
         $grouparray = parent::choice_group($mform);
-        $grouparray[] = $mform->createElement('checkbox', 'infinite', ' ', get_string('infinite', 'qtype_ddwtos'), null, array('size'=>1, 'class'=>'tweakcss'));
+        $grouparray[] = $mform->createElement('checkbox', 'infinite', ' ',
+                get_string('infinite', 'qtype_ddwtos'), null,
+                array('size' => 1, 'class' => 'tweakcss'));
         return $grouparray;
     }
 }

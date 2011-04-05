@@ -104,7 +104,6 @@ var ddwtos_currentzindex = 10;
         initPlayer : function(id, sGroup, config) {
             this.isTarget = false;
             this.currentPos = YAHOO.util.Dom.getXY(this.getEl());
-
         },
 
         //Abstract method called after a drag/drop object is clicked and the drag or mousedown time thresholds have beeen met.
@@ -177,7 +176,6 @@ var ddwtos_currentzindex = 10;
     // end of Player object (the draggable item) ////////////////////////////////
 
     YAHOO.util.Event.onDOMReady(YAHOO.example.DDApp.init, YAHOO.example.DDApp, true);
-
 
     // Objects///////////////////////////////////////////////////////////////////
     var Questions = new Object();
@@ -300,7 +298,9 @@ var ddwtos_currentzindex = 10;
             var slot = slots[i];
 
             var hiddenElement = document.getElementById(slot.id + '_hidden');
-            if (!hiddenElement) continue;
+            if (!hiddenElement) {
+                continue;
+            }
 
             // get group
             var group = getGroupForThis(slot.id);

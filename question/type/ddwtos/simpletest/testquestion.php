@@ -41,7 +41,8 @@ class qtype_ddwtos_question_test extends UnitTestCase {
 
     public function test_get_question_summary() {
         $dd = qtype_ddwtos_test_helper::make_a_ddwtos_question();
-        $this->assertEqual('The [[1]] brown [[2]] jumped over the [[3]] dog.; [[1]] -> {quick / slow}; [[2]] -> {fox / dog}; [[3]] -> {lazy / assiduous}',
+        $this->assertEqual('The [[1]] brown [[2]] jumped over the [[3]] dog.; ' .
+                '[[1]] -> {quick / slow}; [[2]] -> {fox / dog}; [[3]] -> {lazy / assiduous}',
                 $dd->get_question_summary());
     }
 
@@ -125,7 +126,8 @@ class qtype_ddwtos_question_test extends UnitTestCase {
         $dd->start_attempt(new question_attempt_step());
 
         $this->assertEqual(array(2, 4),
-                $dd->get_num_parts_right(array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
+                $dd->get_num_parts_right(array(
+                        'p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
     }
 
     public function test_get_expected_data() {
