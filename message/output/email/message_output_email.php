@@ -47,7 +47,10 @@ class message_output_email extends message_output {
         }
 
         //check user preference for where user wants email sent
-        $eventdata->userto->email = get_user_preferences('message_processor_email_email', $eventdata->userto->email, $eventdata->userto->id);
+        $preferedemail = get_user_preferences('message_processor_email_email', null, $eventdata->userto->id);
+        if (!empty($preferedemail)) {
+            $eventdata->userto->email = $preferedemail;
+        }
 
         $result = email_to_user($eventdata->userto, $eventdata->userfrom,
             $eventdata->subject, $eventdata->fullmessage, $eventdata->fullmessagehtml);
