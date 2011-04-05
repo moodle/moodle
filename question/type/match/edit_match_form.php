@@ -36,11 +36,14 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_match_edit_form extends question_edit_form {
 
-    protected function get_per_answer_fields($mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
+    protected function get_per_answer_fields($mform, $label, $gradeoptions,
+            &$repeatedoptions, &$answersoption) {
         $repeated = array();
         $repeated[] = $mform->createElement('header', 'answerhdr', $label);
-        $repeated[] = $mform->createElement('editor', 'subquestions', get_string('question'), array('rows'=>3), $this->editoroptions);
-        $repeated[] = $mform->createElement('text', 'subanswers', get_string('answer', 'question'), array('size'=>50));
+        $repeated[] = $mform->createElement('editor', 'subquestions',
+                get_string('question'), array('rows'=>3), $this->editoroptions);
+        $repeated[] = $mform->createElement('text', 'subanswers',
+                get_string('answer', 'question'), array('size'=>50));
         $repeatedoptions['subquestions']['type'] = PARAM_RAW;
         $repeatedoptions['subanswers']['type'] = PARAM_TEXT;
         $answersoption = 'subquestions';
@@ -53,11 +56,14 @@ class qtype_match_edit_form extends question_edit_form {
      * @param object $mform the form being built.
      */
     protected function definition_inner($mform) {
-        $mform->addElement('advcheckbox', 'shuffleanswers', get_string('shuffle', 'qtype_match'), null, null, array(0,1));
+        $mform->addElement('advcheckbox', 'shuffleanswers',
+                get_string('shuffle', 'qtype_match'), null, null, array(0, 1));
         $mform->addHelpButton('shuffleanswers', 'shuffle', 'qtype_match');
         $mform->setDefault('shuffleanswers', 1);
 
-        $mform->addElement('static', 'answersinstruct', get_string('availablechoices', 'qtype_match'), get_string('filloutthreeqsandtwoas', 'qtype_match'));
+        $mform->addElement('static', 'answersinstruct',
+                get_string('availablechoices', 'qtype_match'),
+                get_string('filloutthreeqsandtwoas', 'qtype_match'));
         $mform->closeHeaderBefore('answersinstruct');
 
         $this->add_per_answer_fields($mform, get_string('questionno', 'question', '{no}'), 0);
@@ -78,7 +84,7 @@ class qtype_match_edit_form extends question_edit_form {
         $question->shuffleanswers = $question->options->shuffleanswers;
 
         $key = 0;
-        foreach ($question->options->subquestions as $subquestion){
+        foreach ($question->options->subquestions as $subquestion) {
             $question->subanswers[$key] = $subquestion->answertext;
 
             $draftid = file_get_submitted_draft_itemid('subquestions[' . $key . ']');
@@ -106,30 +112,34 @@ class qtype_match_edit_form extends question_edit_form {
         $questions = $data['subquestions'];
         $questioncount = 0;
         $answercount = 0;
-        foreach ($questions as $key => $question){
+        foreach ($questions as $key => $question) {
             $trimmedquestion = trim($question['text']);
             $trimmedanswer = trim($answers[$key]);
-            if ($trimmedquestion != ''){
+            if ($trimmedquestion != '') {
                 $questioncount++;
             }
-            if ($trimmedanswer != '' || $trimmedquestion != ''){
+            if ($trimmedanswer != '' || $trimmedquestion != '') {
                 $answercount++;
             }
-            if ($trimmedquestion != '' && $trimmedanswer == ''){
-                $errors['subanswers['.$key.']'] = get_string('nomatchinganswerforq', 'qtype_match', $trimmedquestion);
+            if ($trimmedquestion != '' && $trimmedanswer == '') {
+                $errors['subanswers['.$key.']'] =
+                        get_string('nomatchinganswerforq', 'qtype_match', $trimmedquestion);
             }
         }
         $numberqanda = new stdClass();
         $numberqanda->q = 2;
         $numberqanda->a = 3;
-        if ($questioncount < 1){
-            $errors['subquestions[0]'] = get_string('notenoughqsandas', 'qtype_match', $numberqanda);
+        if ($questioncount < 1) {
+            $errors['subquestions[0]'] =
+                    get_string('notenoughqsandas', 'qtype_match', $numberqanda);
         }
-        if ($questioncount < 2){
-            $errors['subquestions[1]'] = get_string('notenoughqsandas', 'qtype_match', $numberqanda);
+        if ($questioncount < 2) {
+            $errors['subquestions[1]'] =
+                    get_string('notenoughqsandas', 'qtype_match', $numberqanda);
         }
-        if ($answercount < 3){
-            $errors['subanswers[2]'] = get_string('notenoughqsandas', 'qtype_match', $numberqanda);
+        if ($answercount < 3) {
+            $errors['subanswers[2]'] =
+                    get_string('notenoughqsandas', 'qtype_match', $numberqanda);
         }
         return $errors;
     }

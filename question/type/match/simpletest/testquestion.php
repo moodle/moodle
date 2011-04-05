@@ -107,11 +107,14 @@ class qtype_match_question_test extends UnitTestCase {
 
         $this->assertEqual(array(1, question_state::$gradedright),
                 $question->grade_response(array('sub0' => $orderforchoice[1],
-                        'sub1' => $orderforchoice[2], 'sub2' => $orderforchoice[2], 'sub3' => $orderforchoice[1])));
+                        'sub1' => $orderforchoice[2], 'sub2' => $orderforchoice[2],
+                        'sub3' => $orderforchoice[1])));
         $this->assertEqual(array(0.25, question_state::$gradedpartial),
                 $question->grade_response(array('sub0' => $orderforchoice[1])));
         $this->assertEqual(array(0, question_state::$gradedwrong),
-                $question->grade_response(array('sub0' => $orderforchoice[2], 'sub1' => $orderforchoice[3], 'sub2' => $orderforchoice[1], 'sub3' => $orderforchoice[2])));
+                $question->grade_response(array('sub0' => $orderforchoice[2],
+                        'sub1' => $orderforchoice[3], 'sub2' => $orderforchoice[1],
+                        'sub3' => $orderforchoice[2])));
     }
 
     public function test_get_correct_response() {
@@ -122,7 +125,8 @@ class qtype_match_question_test extends UnitTestCase {
         $choiceorder = $question->get_choice_order();
         $orderforchoice = array_combine(array_values($choiceorder), array_keys($choiceorder));
 
-        $this->assertEqual(array('sub0' => $orderforchoice[1], 'sub1' => $orderforchoice[2], 'sub2' => $orderforchoice[2], 'sub3' => $orderforchoice[1]),
+        $this->assertEqual(array('sub0' => $orderforchoice[1], 'sub1' => $orderforchoice[2],
+                'sub2' => $orderforchoice[2], 'sub3' => $orderforchoice[1]),
                 $question->get_correct_response());
     }
 

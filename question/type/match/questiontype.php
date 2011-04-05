@@ -43,7 +43,8 @@ class qtype_match extends question_type {
         global $DB;
         parent::get_question_options($question);
         $question->options = $DB->get_record('question_match', array('question' => $question->id));
-        $question->options->subquestions = $DB->get_records('question_match_sub', array('question' => $question->id), 'id ASC');
+        $question->options->subquestions = $DB->get_records('question_match_sub',
+                array('question' => $question->id), 'id ASC');
         return true;
     }
 
@@ -73,7 +74,8 @@ class qtype_match extends question_type {
                 $subquestion = new stdClass();
                 // Determine a unique random code
                 $subquestion->code = rand(1, 999999999);
-                while ($DB->record_exists('question_match_sub', array('code' => $subquestion->code, 'question' => $question->id))) {
+                while ($DB->record_exists('question_match_sub',
+                        array('code' => $subquestion->code, 'question' => $question->id))) {
                     $subquestion->code = rand(1, 999999999);
                 }
                 $subquestion->question = $question->id;
@@ -94,7 +96,7 @@ class qtype_match extends question_type {
 
         // Delete old subquestions records
         $fs = get_file_storage();
-        foreach($oldsubquestions as $oldsub) {
+        foreach ($oldsubquestions as $oldsub) {
             $fs->delete_area_files($context->id, 'qtype_match', 'subquestion', $oldsub->id);
             $DB->delete_records('question_match_sub', array('id' => $oldsub->id));
         }
@@ -219,8 +221,11 @@ class qtype_match extends question_type {
             $fs->delete_area_files($contextid, 'qtype_match', 'subquestion', $subquestionid);
         }
 
-        $fs->delete_area_files($contextid, 'qtype_multichoice', 'correctfeedback', $questionid);
-        $fs->delete_area_files($contextid, 'qtype_multichoice', 'partiallycorrectfeedback', $questionid);
-        $fs->delete_area_files($contextid, 'qtype_multichoice', 'incorrectfeedback', $questionid);
+        $fs->delete_area_files($contextid, 'qtype_multichoice',
+                'correctfeedback', $questionid);
+        $fs->delete_area_files($contextid, 'qtype_multichoice',
+                'partiallycorrectfeedback', $questionid);
+        $fs->delete_area_files($contextid, 'qtype_multichoice',
+                'incorrectfeedback', $questionid);
     }
 }

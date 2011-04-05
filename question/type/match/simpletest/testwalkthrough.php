@@ -357,7 +357,8 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
         $rightresponese = array('sub0' => $orderforchoice[1],
                 'sub1' => $orderforchoice[2], 'sub2' => $orderforchoice[3]);
-        $rightresponesesummary = '(1, 2] -> 1 < x ≤ 2; [1, 2] -> 1 ≤ x ≤ 2; [1, 2) -> 1 ≤ x < 2';
+        $rightresponesesummary =
+                '(1, 2] -> 1 < x ≤ 2; [1, 2] -> 1 ≤ x ≤ 2; [1, 2) -> 1 ≤ x < 2';
 
         $this->process_submission($rightresponese);
         $this->process_submission(array('-finish' => 1));
@@ -366,7 +367,8 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
 
         $this->displayoptions->history = 1;
         $this->check_current_output(
-                new PatternExpectation('/' . preg_quote(htmlspecialchars($rightresponesesummary), '/') . '/'));
+                new PatternExpectation('/' .
+                        preg_quote(htmlspecialchars($rightresponesesummary), '/') . '/'));
     }
 
     public function test_match_clear_wrong() {
@@ -413,10 +415,14 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub1', $choices, 3, false),
                 $this->get_contains_select_expectation('sub2', $choices, 3, false),
                 $this->get_contains_select_expectation('sub3', $choices, 3, false),
-                $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'sub0', '0'),
-                $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'sub1', '0'),
-                $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'sub2', '0'),
-                $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'sub3', '0'),
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . 'sub0', '0'),
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . 'sub1', '0'),
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . 'sub2', '0'),
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . 'sub3', '0'),
                 $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_hint_expectation('This is the first hint.'));
 
@@ -438,7 +444,6 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_tries_remaining_expectation(2),
                 $this->get_no_hint_visible_expectation());
 
-
         // Submit a partially wrong response.
         $this->process_submission(array('sub0' => $orderforchoice[3],
                 'sub1' => $orderforchoice[3], 'sub2' => $orderforchoice[2],
@@ -452,10 +457,14 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub1', $choices, 3, false),
                 $this->get_contains_select_expectation('sub2', $choices, 2, false),
                 $this->get_contains_select_expectation('sub3', $choices, 1, false),
-                $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'sub0', '0'),
-                $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'sub1', '0'),
-                $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'sub2', $orderforchoice[2]),
-                $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'sub3', $orderforchoice[1]),
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . 'sub0', '0'),
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . 'sub1', '0'),
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . 'sub2', $orderforchoice[2]),
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . 'sub3', $orderforchoice[1]),
                 $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_hint_expectation('This is the second hint.'));
 

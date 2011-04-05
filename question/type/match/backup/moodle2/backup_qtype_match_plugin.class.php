@@ -65,8 +65,10 @@ class backup_qtype_match_plugin extends backup_qtype_plugin {
         $matches->add_child($match);
 
         // set source to populate the data
-        $matchoptions->set_source_table('question_match', array('question' => backup::VAR_PARENTID));
-        $match->set_source_table('question_match_sub', array('question' => backup::VAR_PARENTID));
+        $matchoptions->set_source_table('question_match',
+                array('question' => backup::VAR_PARENTID));
+        $match->set_source_table('question_match_sub',
+                array('question' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 

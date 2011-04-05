@@ -105,8 +105,9 @@ class qtype_match_question extends question_graded_automatically_with_countback 
         $matches = array();
         foreach ($this->stemorder as $key => $stemid) {
             if (array_key_exists($this->field($key), $response) && $response[$this->field($key)]) {
-                $matches[] = $this->html_to_text($this->stems[$stemid], $this->stemformat[$stemid]) .
-                        ' -> ' . $this->choices[$this->choiceorder[$response[$this->field($key)]]];
+                $matches[] = $this->html_to_text($this->stems[$stemid],
+                        $this->stemformat[$stemid]) . ' -> ' .
+                        $this->choices[$this->choiceorder[$response[$this->field($key)]]];
             }
         }
         if (empty($matches)) {
@@ -224,7 +225,8 @@ class qtype_match_question extends question_graded_automatically_with_countback 
     public function is_same_response(array $prevresponse, array $newresponse) {
         foreach ($this->stemorder as $key => $notused) {
             $fieldname = $this->field($key);
-            if (!question_utils::arrays_same_at_key_integer($prevresponse, $newresponse, $fieldname)) {
+            if (!question_utils::arrays_same_at_key_integer(
+                    $prevresponse, $newresponse, $fieldname)) {
                 return false;
             }
         }
@@ -283,7 +285,8 @@ class qtype_match_question extends question_graded_automatically_with_countback 
             return $this->check_hint_file_access($qa, $options, $args);
 
         } else {
-            return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
+            return parent::check_file_access($qa, $options, $component, $filearea,
+                    $args, $forcedownload);
         }
     }
 }

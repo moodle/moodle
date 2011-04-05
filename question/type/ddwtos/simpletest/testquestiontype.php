@@ -89,12 +89,18 @@ class qtype_ddwtos_test extends UnitTestCase {
         test_question_maker::set_standard_combined_feedback_fields($dd->options);
 
         $dd->options->answers = array(
-            (object) array('answer' => 'quick', 'feedback' => 'O:8:"stdClass":2:{s:9:"draggroup";s:1:"1";s:8:"infinite";i:0;}'),
-            (object) array('answer' => 'fox', 'feedback' => 'O:8:"stdClass":2:{s:9:"draggroup";s:1:"2";s:8:"infinite";i:0;}'),
-            (object) array('answer' => 'lazy', 'feedback' => 'O:8:"stdClass":2:{s:9:"draggroup";s:1:"3";s:8:"infinite";i:0;}'),
-            (object) array('answer' => 'assiduous', 'feedback' => 'O:8:"stdClass":2:{s:9:"draggroup";s:1:"3";s:8:"infinite";i:0;}'),
-            (object) array('answer' => 'dog', 'feedback' => 'O:8:"stdClass":2:{s:9:"draggroup";s:1:"2";s:8:"infinite";i:0;}'),
-            (object) array('answer' => 'slow', 'feedback' => 'O:8:"stdClass":2:{s:9:"draggroup";s:1:"1";s:8:"infinite";i:0;}'),
+            (object) array('answer' => 'quick', 'feedback' =>
+                    'O:8:"stdClass":2:{s:9:"draggroup";s:1:"1";s:8:"infinite";i:0;}'),
+            (object) array('answer' => 'fox', 'feedback' =>
+                    'O:8:"stdClass":2:{s:9:"draggroup";s:1:"2";s:8:"infinite";i:0;}'),
+            (object) array('answer' => 'lazy', 'feedback' =>
+                    'O:8:"stdClass":2:{s:9:"draggroup";s:1:"3";s:8:"infinite";i:0;}'),
+            (object) array('answer' => 'assiduous', 'feedback' =>
+                    'O:8:"stdClass":2:{s:9:"draggroup";s:1:"3";s:8:"infinite";i:0;}'),
+            (object) array('answer' => 'dog', 'feedback' =>
+                    'O:8:"stdClass":2:{s:9:"draggroup";s:1:"2";s:8:"infinite";i:0;}'),
+            (object) array('answer' => 'slow', 'feedback' =>
+                    'O:8:"stdClass":2:{s:9:"draggroup";s:1:"1";s:8:"infinite";i:0;}'),
         );
 
         return $dd;
@@ -209,10 +215,14 @@ class qtype_ddwtos_test extends UnitTestCase {
         $expectedq->penalty = 0.3333333;
 
         $expectedq->shuffleanswers = 1;
-        $expectedq->correctfeedback = array('text' => '<p>Your answer is correct.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
-        $expectedq->partiallycorrectfeedback = array('text' => '<p>Your answer is partially correct.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->correctfeedback = array('text' => '<p>Your answer is correct.</p>',
+                'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->partiallycorrectfeedback = array(
+                'text' => '<p>Your answer is partially correct.</p>',
+                'format' => FORMAT_MOODLE, 'files' => array());
         $expectedq->shownumcorrect = true;
-        $expectedq->incorrectfeedback = array('text' => '<p>Your answer is incorrect.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->incorrectfeedback = array('text' => '<p>Your answer is incorrect.</p>',
+                'format' => FORMAT_MOODLE, 'files' => array());
 
         $expectedq->choices = array(
             array('answer' => 'Alpha', 'choicegroup' => 1, 'infinite' => false),
@@ -222,7 +232,8 @@ class qtype_ddwtos_test extends UnitTestCase {
 
         $expectedq->hint = array(
                 array('text' => 'Try again.', 'format' => FORMAT_MOODLE, 'files' => array()),
-                array('text' => 'These are the first three letters of the Greek alphabet.', 'format' => FORMAT_MOODLE, 'files' => array()));
+                array('text' => 'These are the first three letters of the Greek alphabet.',
+                        'format' => FORMAT_MOODLE, 'files' => array()));
         $expectedq->hintshownumcorrect = array(true, true);
         $expectedq->hintclearwrong = array(false, true);
 
@@ -235,11 +246,19 @@ class qtype_ddwtos_test extends UnitTestCase {
       <text>QDandD1 Base definition</text>
     </name>
     <questiontext format="html">
-      <text>&lt;p&gt;Drag and drop the words from the list below to fill the blank spaces and correctly complete the sentence.&lt;/p&gt; &lt;p&gt;At 25°C all aqueous basic solutions have [[1]]&#160;ion concentrations less than [[8]]&lt;br /&gt;mol litre&lt;sup&gt;-1&lt;/sup&gt; and pH values [[9]] than [[6]].&lt;/p&gt; &lt;!--DONOTCLEAN--&gt;</text>
+      <text>&lt;p&gt;Drag and drop the words from the list below to fill the blank spaces ' .
+            'and correctly complete the sentence.&lt;/p&gt; &lt;p&gt;At 25°C all aqueous basic ' .
+            'solutions have [[1]]&#160;ion concentrations less than [[8]]&lt;br /&gt;mol ' .
+            'litre&lt;sup&gt;-1&lt;/sup&gt; and pH values [[9]] than [[6]].&lt;/p&gt; ' .
+            '&lt;!--DONOTCLEAN--&gt;</text>
     </questiontext>
     <image></image>
     <generalfeedback>
-      <text>&lt;p&gt;At 25 &amp;#xB0;C all aqueous basic solutions have hydrogen ion concentrations less than 10&lt;sup&gt;&amp;#x2212;7&lt;/sup&gt; mol litre&lt;sup&gt;&amp;#x2212;1&lt;/sup&gt; and pH values greater than 7.&lt;/p&gt; &lt;p&gt;See Section 9 of S103 &lt;em class="italic"&gt;Discovering Science&lt;/em&gt; Block 8.&lt;/p&gt;</text>
+      <text>&lt;p&gt;At 25 &amp;#xB0;C all aqueous basic solutions have hydrogen ion ' .
+            'concentrations less than 10&lt;sup&gt;&amp;#x2212;7&lt;/sup&gt; mol ' .
+            'litre&lt;sup&gt;&amp;#x2212;1&lt;/sup&gt; and pH values greater than 7.&lt;/p&gt; ' .
+            '&lt;p&gt;See Section 9 of S103 &lt;em class="italic"&gt;Discovering ' .
+            'Science&lt;/em&gt; Block 8.&lt;/p&gt;</text>
     </generalfeedback>
     <defaultgrade>1</defaultgrade>
     <penalty>0.33</penalty>
@@ -332,7 +351,8 @@ class qtype_ddwtos_test extends UnitTestCase {
       <statenumberofcorrectresponses>1</statenumberofcorrectresponses>
       <clearincorrectresponses>0</clearincorrectresponses>
       <hintcontent>
-        <text>You may wish to read&#160;Section 9 of&#160;&lt;em class="italic"&gt;Discovering Science&lt;/em&gt; Block 8.</text>
+        <text>You may wish to read&#160;Section 9 of&#160;&lt;em ' .
+            'class="italic"&gt;Discovering Science&lt;/em&gt; Block 8.</text>
       </hintcontent>
     </hint>
     <hint>
@@ -352,36 +372,57 @@ class qtype_ddwtos_test extends UnitTestCase {
         $expectedq = new stdClass();
         $expectedq->qtype = 'ddwtos';
         $expectedq->name = 'QDandD1 Base definition';
-        $expectedq->questiontext = '<p>Drag and drop the words from the list below to fill the blank spaces and correctly complete the sentence.</p><p>At 25°C all aqueous basic solutions have [[1]] ion concentrations less than [[8]]<br />mol litre<sup>-1</sup> and pH values [[9]] than [[6]].</p><!--DONOTCLEAN-->';
+        $expectedq->questiontext = '<p>Drag and drop the words from the list below ' .
+                'to fill the blank spaces and correctly complete the sentence.</p>' .
+                '<p>At 25°C all aqueous basic solutions have [[1]] ion concentrations ' .
+                'less than [[8]]<br />mol litre<sup>-1</sup> and pH values [[9]] than [[6]].</p>' .
+                '<!--DONOTCLEAN-->';
         $expectedq->questiontextformat = FORMAT_HTML;
-        $expectedq->generalfeedback = '<p>At 25 &#xB0;C all aqueous basic solutions have hydrogen ion concentrations less than 10<sup>&#x2212;7</sup> mol litre<sup>&#x2212;1</sup> and pH values greater than 7.</p><p>See Section 9 of S103 <em class="italic">Discovering Science</em> Block 8.</p>';
+        $expectedq->generalfeedback = '<p>At 25 &#xB0;C all aqueous basic solutions ' .
+                'have hydrogen ion concentrations less than 10<sup>&#x2212;7</sup> ' .
+                'mol litre<sup>&#x2212;1</sup> and pH values greater than 7.</p><p>See ' .
+                'Section 9 of S103 <em class="italic">Discovering Science</em> Block 8.</p>';
         $expectedq->defaultmark = 1;
         $expectedq->length = 1;
         $expectedq->penalty = 0.3333333;
 
         $expectedq->shuffleanswers = 0;
-        $expectedq->correctfeedback = array('text' => 'Your answer is correct.', 'format' => FORMAT_MOODLE, 'files' => array());
-        $expectedq->partiallycorrectfeedback = array('text' => 'Your answer is partially correct.', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->correctfeedback = array('text' => 'Your answer is correct.',
+                'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->partiallycorrectfeedback = array(
+                'text' => 'Your answer is partially correct.',
+                'format' => FORMAT_MOODLE, 'files' => array());
         $expectedq->shownumcorrect = true;
-        $expectedq->incorrectfeedback = array('text' => 'Your answer is incorrect.', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->incorrectfeedback = array('text' => 'Your answer is incorrect.',
+                'format' => FORMAT_MOODLE, 'files' => array());
 
         $expectedq->choices = array(
-            array('answer' => array('text' => 'hydrogen', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => 'positive', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => 'hydroxide', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => 'negative', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 1, 'infinite' => false),
-            array('answer' => array('text' => '10<sup>7</sup>', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => '7', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => '1', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => '10<sup>-7</sup>', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 2, 'infinite' => false),
-            array('answer' => array('text' => 'greater', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 3, 'infinite' => false),
-            array('answer' => array('text' => 'less', 'format' => FORMAT_MOODLE, 'files' => array()), 'choicegroup' => 3, 'infinite' => false),
+            array('answer' => array('text' => 'hydrogen',        'format' => FORMAT_MOODLE,
+                    'files' => array()), 'choicegroup' => 1, 'infinite' => false),
+            array('answer' => array('text' => 'positive',        'format' => FORMAT_MOODLE,
+                    'files' => array()), 'choicegroup' => 1, 'infinite' => false),
+            array('answer' => array('text' => 'hydroxide',       'format' => FORMAT_MOODLE,
+                    'files' => array()), 'choicegroup' => 1, 'infinite' => false),
+            array('answer' => array('text' => 'negative',        'format' => FORMAT_MOODLE,
+                    'files' => array()), 'choicegroup' => 1, 'infinite' => false),
+            array('answer' => array('text' => '10<sup>7</sup>',  'format' => FORMAT_MOODLE,
+                    'files' => array()), 'choicegroup' => 2, 'infinite' => false),
+            array('answer' => array('text' => '7',               'format' => FORMAT_MOODLE,
+                    'files' => array()), 'choicegroup' => 2, 'infinite' => false),
+            array('answer' => array('text' => '1',               'format' => FORMAT_MOODLE,
+                    'files' => array()), 'choicegroup' => 2, 'infinite' => false),
+            array('answer' => array('text' => '10<sup>-7</sup>', 'format' => FORMAT_MOODLE,
+                    'files' => array()), 'choicegroup' => 2, 'infinite' => false),
+            array('answer' => array('text' => 'greater',         'format' => FORMAT_MOODLE,
+                    'files' => array()), 'choicegroup' => 3, 'infinite' => false),
+            array('answer' => array('text' => 'less',            'format' => FORMAT_MOODLE,
+                    'files' => array()), 'choicegroup' => 3, 'infinite' => false),
         );
 
-        $expectedq->hint = array(
-            array('text' => 'You may wish to read Section 9 of <em class="italic">Discovering Science</em> Block 8.',
+        $expectedq->hint = array(array('text' => 'You may wish to read Section 9 of ' .
+                '<em class="italic">Discovering Science</em> Block 8.',
                     'format' => FORMAT_HTML, 'files' => array()),
-            array('text' => 'Any incorrect choices will be removed before your final try.',
+                array('text' => 'Any incorrect choices will be removed before your final try.',
                     'format' => FORMAT_HTML, 'files' => array()),
         );
         $expectedq->hintshownumcorrect = array(true, true);
@@ -416,14 +457,22 @@ class qtype_ddwtos_test extends UnitTestCase {
         $qdata->options->incorrectfeedbackformat = FORMAT_MOODLE;
 
         $qdata->options->answers = array(
-            13 => new question_answer(13, 'Alpha', 0, 'O:8:"stdClass":2:{s:9:"draggroup";s:1:"1";s:8:"infinite";b:0;}', FORMAT_MOODLE),
-            14 => new question_answer(14, 'Beta', 0, 'O:8:"stdClass":2:{s:9:"draggroup";s:1:"1";s:8:"infinite";b:0;}', FORMAT_MOODLE),
-            15 => new question_answer(15, 'Gamma', 0, 'O:8:"stdClass":2:{s:9:"draggroup";s:1:"1";s:8:"infinite";b:1;}', FORMAT_MOODLE),
+            13 => new question_answer(13, 'Alpha', 0,
+                    'O:8:"stdClass":2:{s:9:"draggroup";s:1:"1";s:8:"infinite";b:0;}',
+                    FORMAT_MOODLE),
+            14 => new question_answer(14, 'Beta', 0,
+                    'O:8:"stdClass":2:{s:9:"draggroup";s:1:"1";s:8:"infinite";b:0;}',
+                    FORMAT_MOODLE),
+            15 => new question_answer(15, 'Gamma', 0,
+                    'O:8:"stdClass":2:{s:9:"draggroup";s:1:"1";s:8:"infinite";b:1;}',
+                    FORMAT_MOODLE),
         );
 
         $qdata->hints = array(
             1 => new question_hint_with_parts(1, 'Try again.', FORMAT_MOODLE, true, false),
-            2 => new question_hint_with_parts(2, 'These are the first three letters of the Greek alphabet.', FORMAT_MOODLE, true, true),
+            2 => new question_hint_with_parts(2,
+                    'These are the first three letters of the Greek alphabet.',
+                    FORMAT_MOODLE, true, true),
         );
 
         $exporter = new qformat_xml();

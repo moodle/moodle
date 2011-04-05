@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/type/description/questiontype.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_description_test extends UnitTestCase {
-    var $qtype;
+    protected $qtype;
 
     public function setUp() {
         $this->qtype = new qtype_description();

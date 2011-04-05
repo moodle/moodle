@@ -38,11 +38,12 @@ require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
  */
 class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_renderer {
 
-    protected function qtext_classname(){
+    protected function qtext_classname() {
         return 'qtext ddwtos_questionid_for_javascript';
     }
 
-    protected function post_qtext_elements(question_attempt $qa, question_display_options $options){
+    protected function post_qtext_elements(question_attempt $qa,
+            question_display_options $options) {
         $result = '';
         $question = $qa->get_question();
         $dragboxs = '';
@@ -71,7 +72,8 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
         return '<sub>&#160;</sub>' . $string . '<sup>&#160;</sup>';
     }
 
-    protected function embedded_element(question_attempt $qa, $place, question_display_options $options) {
+    protected function embedded_element(question_attempt $qa, $place,
+            question_display_options $options) {
         $question = $qa->get_question();
         $group = $question->places[$place];
         $boxcontents = $this->dodgy_ie_fix('&#160;');
@@ -94,7 +96,8 @@ class qtype_ddwtos_renderer extends qtype_elements_embedded_in_question_text_ren
             $response = $qa->get_last_qt_data();
             $fieldname = $question->field($place);
             if (array_key_exists($fieldname, $response)) {
-                $fraction = (int) ($response[$fieldname] == $question->get_right_choice_for($place));
+                $fraction = (int) ($response[$fieldname] ==
+                        $question->get_right_choice_for($place));
                 $attributes['class'] .= ' ' . $this->feedback_class($fraction);
                 $feedbackimage = $this->feedback_image($fraction);
             }
