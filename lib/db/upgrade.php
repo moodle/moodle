@@ -5000,6 +5000,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $textlib = textlib_get_instance();
 
             foreach ($rs as $question) {
+                // may take awhile
+                upgrade_set_timeout();
                 if (empty($question->image)) {
                     continue;
                 }
@@ -5078,6 +5080,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                 FROM {question_answers} qa
                 JOIN {question} q ON qa.question = q.id');
         foreach ($rs as $record) {
+            // may take awhile
+            upgrade_set_timeout();
             // Convert question_answers.answer
             if ($record->qtype !== 'multichoice') {
                 $record->answerformat = FORMAT_PLAIN;
@@ -5116,6 +5120,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         if ($CFG->texteditors !== 'textarea') {
             $rs = $DB->get_recordset('question', array('questiontextformat'=>FORMAT_MOODLE));
             foreach ($rs as $record) {
+                // may take awhile
+                upgrade_set_timeout();
                 $record->questiontext = text_to_html($record->questiontext, false, false, true);
                 $record->questiontextformat = FORMAT_HTML;
                 $record->generalfeedback = text_to_html($record->generalfeedback, false, false, true);
