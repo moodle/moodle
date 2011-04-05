@@ -4073,6 +4073,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // unfortunately there may be still some leftovers
         // after reconfigured, uninstalled or borked enrol plugins,
         // unfortunately this may be a bit slow - but there should not be many of these
+        upgrade_set_timeout();
         $sqlempty = $DB->sql_empty();
         $sql = "SELECT DISTINCT c.id AS courseid, ra.enrol, c.timecreated, c.timemodified
                   FROM {course} c
@@ -4083,6 +4084,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $params = array('siteid'=>SITEID);
         $rs = $DB->get_recordset_sql($sql, $params);
         foreach ($rs as $enrol) {
+            upgrade_set_timeout();
             $enrol->status = 1; // better disable them
             $DB->insert_record('enrol', $enrol);
         }
@@ -4275,6 +4277,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                  WHERE c.visible = 1";
         while ($categories = $DB->get_records_sql($sql)) {
             foreach ($categories as $cat) {
+                upgrade_set_timeout();
                 $DB->set_field('course_categories', 'visible', 0, array('id'=>$cat->id));
             }
         }
@@ -4568,6 +4571,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                 // Update all hashes
                 $rs = $DB->get_recordset('files', array());
                 foreach ($rs as $file) {
+                    upgrade_set_timeout();
                     $pathnamehash = sha1("/$file->contextid/$file->component/$file->filearea/$file->itemid".$file->filepath.$file->filename);
                     $DB->set_field('files', 'pathnamehash', $pathnamehash, array('id'=>$file->id));
                 }
@@ -4894,6 +4898,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     if ($oldversion < 2010080303) {
         $rs = $DB->get_recordset_sql('SELECT i.id, i.name, r.type FROM {repository_instances} i, {repository} r WHERE i.typeid = r.id');
         foreach ($rs as $record) {
+            upgrade_set_timeout();
             if ($record->name == $record->type) {
                 // repository_instances was saving type name as in name field
                 // which should be empty, the repository api will try to find
