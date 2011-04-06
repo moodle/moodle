@@ -50,6 +50,10 @@
     $PAGE->set_title(format_string($choice->name));
     $PAGE->set_heading($course->fullname);
 
+    // Mark viewed by user (if required)
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+
 /// Submit any new data if there is any
     if (data_submitted() && is_enrolled($context, NULL, 'mod/choice:choose') && confirm_sesskey()) {
         $timenow = time();
@@ -168,8 +172,3 @@
     }
 
     echo $OUTPUT->footer();
-
-/// Mark as viewed
-    $completion=new completion_info($course);
-    $completion->set_module_viewed($cm);
-
