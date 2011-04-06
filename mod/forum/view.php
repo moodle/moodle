@@ -97,6 +97,10 @@
         rss_add_http_header($context, 'mod_forum', $forum, $rsstitle);
     }
 
+    // Mark viewed if required
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+
 /// Print header.
     /// Add ajax-related libs for ratings if required  MDL-20119
     $PAGE->requires->yui2_lib('event');
@@ -239,8 +243,7 @@
 
             break;
     }
-    $completion=new completion_info($course);
-    $completion->set_module_viewed($cm);
+
     echo $OUTPUT->footer($course);
 
 

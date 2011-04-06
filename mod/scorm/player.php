@@ -146,6 +146,10 @@
     $SESSION->scorm_mode = $mode;
     $SESSION->scorm_attempt = $attempt;
 
+    // Mark module viewed
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+
     //
     // Print the page header
     //
@@ -248,10 +252,6 @@ if (!isset($result->toctitle)) {
 }
 
 $PAGE->requires->js_init_call('M.mod_scorm.init', array($scorm->hidenav, $scorm->hidetoc, $result->toctitle, $name, $sco->id));
-
-
-$completion=new completion_info($course);
-$completion->set_module_viewed($cm);
 
 if (!empty($forcejs)) {
     echo $OUTPUT->box(get_string("forcejavascriptmessage", "scorm"), "generalbox boxaligncenter forcejavascriptmessage");
