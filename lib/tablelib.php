@@ -967,7 +967,7 @@ class flexible_table {
             $rowclasses[] = $classname;
         }
 
-        echo html_writer::start_tag('tr', array('class', implode(' ', $rowclasses)));
+        echo html_writer::start_tag('tr', array('class' => implode(' ', $rowclasses)));
 
         // If we have a separator, print it
         if ($row === NULL) {
