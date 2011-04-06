@@ -6049,7 +6049,7 @@ class core_string_manager implements string_manager {
 
         $languages = array();
 
-        if ($CFG->langcache and is_readable($this->menucache)) {
+        if (!empty($CFG->langcache) and is_readable($this->menucache)) {
             // try to re-use the cached list of all available languages
             $cachedlist = json_decode(file_get_contents($this->menucache), true);
 
@@ -6117,7 +6117,7 @@ class core_string_manager implements string_manager {
                 unset($string);
             }
 
-            if ($CFG->langcache and !empty($this->menucache)) {
+            if (!empty($CFG->langcache) and !empty($this->menucache)) {
                 // cache the list so that it can be used next time
                 textlib_get_instance()->asort($languages);
                 file_put_contents($this->menucache, json_encode($languages));
