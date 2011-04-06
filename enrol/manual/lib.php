@@ -216,7 +216,7 @@ class enrol_manual_plugin extends enrol_plugin {
         $arguments = array(
             'instances'         => $instances,
             'courseid'          => $instance->courseid,
-            'ajaxurl'           => '/enrol/ajax.php',
+            'ajaxurl'           => '/enrol/manual/ajax.php',
             'url'               => $PAGE->url->out(false),
             'optionsStartDate'  => $startdateoptions,
             'defaultRole'       => $instance->roleid

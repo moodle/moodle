@@ -172,7 +172,7 @@ class enrol_cohort_plugin extends enrol_plugin {
         $function = 'M.enrol_cohort.quickenrolment.init';
         $arguments = array(
             'courseid'        => $course->id,
-            'ajaxurl'         => '/enrol/ajax.php',
+            'ajaxurl'         => '/enrol/cohort/ajax.php',
             'url'             => $PAGE->url->out(false),
             'manualEnrolment' => $hasmanualinstance);
         $button->require_yui_module($modules, $function, array($arguments));
