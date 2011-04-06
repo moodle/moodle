@@ -871,7 +871,7 @@ class plugintype_filter extends plugintype_base implements plugintype_interface 
      * @see plugintype_interface::get_plugins()
      */
     public static function get_plugins($type, $typerootdir, $typeclass) {
-        global $CFG;
+        global $CFG, $DB;
 
         $filters = array();
 
@@ -894,17 +894,21 @@ class plugintype_filter extends plugintype_base implements plugintype_interface 
             $filters[$plugin->name] = $plugin;
         }
 
-        // make sure that all installed filters are registered
         $globalstates = self::get_global_states();
-        $needsreload  = false;
-        foreach (array_keys($installed) as $filterlegacyname) {
-            if (!isset($globalstates[self::normalize_legacy_name($filterlegacyname)])) {
-                filter_set_global_state($filterlegacyname, TEXTFILTER_DISABLED);
-                $needsreload = true;
+
+        if ($DB->get_manager()->table_exists('filter_active')) {
+            // if we're upgrading from 1.9, the table does not exist yet
+            // if it does, make sure that all installed filters are registered
+            $needsreload  = false;
+            foreach (array_keys($installed) as $filterlegacyname) {
+                if (!isset($globalstates[self::normalize_legacy_name($filterlegacyname)])) {
+                    filter_set_global_state($filterlegacyname, TEXTFILTER_DISABLED);
+                    $needsreload = true;
+                }
             }
-        }
-        if ($needsreload) {
-            $globalstates = self::get_global_states(true);
+            if ($needsreload) {
+                $globalstates = self::get_global_states(true);
+            }
         }
 
         // make sure that all registered filters are installed, just in case
