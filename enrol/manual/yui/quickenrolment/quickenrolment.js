@@ -1,4 +1,4 @@
-YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
+YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
 
     var UEP = {
         NAME : 'Enrolment Manager',
@@ -116,7 +116,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
             );
 
             this.set(UEP.SEARCH, this.get(UEP.BASE).one('#enrolusersearch'));
-            Y.all('.enrolusersbutton input').each(function(node){
+            Y.all('.enrol_manual_plugin input').each(function(node){
                 if (node.getAttribute('type', 'submit')) {
                     node.on('click', this.show, this);
                 }
@@ -506,9 +506,8 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
     });
     Y.augment(USERENROLLER, Y.EventTarget);
 
-
-    M.enrol = M.enrol || {};
-    M.enrol.enrolmentmanager = {
+    M.enrol_manual = M.enrol_manual || {};
+    M.enrol_manual.quickenrolment = {
         init : function(cfg) {
             new USERENROLLER(cfg);
         }

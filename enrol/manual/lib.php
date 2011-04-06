@@ -168,6 +168,81 @@ class enrol_manual_plugin extends enrol_plugin {
 
         return parent::add_instance($course, $fields);
     }
+
+    /**
+     * Returns a button to manually enrol users through the manual enrolment plugin.
+     *
+     * By default the first manual enrolment plugin instance available in the course is used.
+     * If no manual enrolment instances exist within the course then false is returned.
+     *
+     * This function also adds a quickenrolment JS ui to the page so that users can be enrolled
+     * via AJAX.
+     *
+     * @global moodle_page $PAGE
+     * @param course_enrolment_manager $manager
+     * @return enrol_user_button
+     */
+    public function get_manual_enrol_button(course_enrolment_manager $manager) {
+        global $PAGE;
+
+        $instance = null;
+        $instances = array();
+        foreach ($manager->get_enrolment_instances() as $tempinstance) {
+            if ($tempinstance->enrol == 'manual') {
+                if ($instance === null) {
+                    $instance = $tempinstance;
+                }
+                $instances[] = array('id' => $tempinstance->id, 'name' => $this->get_instance_name($tempinstance));
+            }
+        }
+        if (empty($instance)) {
+            return false;
+        }
+
+        $button = new enrol_user_button($this->get_manual_enrol_link($instance), get_string('enrolusers', 'enrol_manual'), 'get');
+        $button->class .= ' enrol_manual_plugin';
+
+        $startdate = $manager->get_course()->startdate;
+        $startdateoptions = array();
+        $timeformat = get_string('strftimedatefullshort');
+        if ($startdate > 0) {
+            $today = time();
+            $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
+            $startdateoptions[2] = get_string('coursestart') . ' (' . userdate($startdate, $timeformat) . ')';
+        }
+        $startdateoptions[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
+
+        $modules = array('moodle-enrol_manual-quickenrolment', 'moodle-enrol_manual-quickenrolment-skin');
+        $arguments = array(
+            'instances'         => $instances,
+            'courseid'          => $instance->courseid,
+            'ajaxurl'           => '/enrol/ajax.php',
+            'url'               => $PAGE->url->out(false),
+            'optionsStartDate'  => $startdateoptions,
+            'defaultRole'       => $instance->roleid
+        );
+        $function = 'M.enrol_manual.quickenrolment.init';
+        $button->require_yui_module($modules, $function, array($arguments));
+        $button->strings_for_js(array(
+            'ajaxoneuserfound',
+            'ajaxxusersfound',
+            'ajaxnext25',
+            'enrol',
+            'enrolmentoptions',
+            'enrolusers',
+            'errajaxfailedenrol',
+            'errajaxsearch',
+            'none',
+            'usersearch',
+            'unlimitedduration',
+            'startdatetoday',
+            'durationdays',
+            'enrolperiod'), 'enrol');
+        $button->strings_for_js('assignroles', 'role');
+        $button->strings_for_js('startingfrom', 'moodle');
+
+        return $button;
+    }
 }
 
 /**
