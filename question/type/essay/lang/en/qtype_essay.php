@@ -38,4 +38,4 @@ $string['formatplain'] = 'Plain text';
 $string['graderinfo'] = 'Information for graders';
 $string['nlines'] = '{$a} lines';
 $string['responsefieldlines'] = 'Input box size';
-$string['responseformat'] = 'Respones format';
+$string['responseformat'] = 'Response format';

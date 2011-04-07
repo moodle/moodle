@@ -83,7 +83,7 @@ class qtype_essay extends question_type {
      * @return array the different response formats that the question type supports.
      * internal name => human-readable name.
      */
-    public function respones_formats() {
+    public function response_formats() {
         return array(
             'editor' => get_string('formateditor', 'qtype_essay'),
             'editorfilepicker' => get_string('formateditorfilepicker', 'qtype_essay'),
@@ -95,7 +95,7 @@ class qtype_essay extends question_type {
     /**
      * @return array the choices that should be offered for the input box size.
      */
-    public function respones_sizes() {
+    public function response_sizes() {
         $choices = array();
         for ($lines = 5; $lines <= 40; $lines += 5) {
             $choices[$lines] = get_string('nlines', 'qtype_essay', $lines);

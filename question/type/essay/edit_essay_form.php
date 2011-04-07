@@ -40,11 +40,11 @@ class qtype_essay_edit_form extends question_edit_form {
         $qtype = question_bank::get_qtype('essay');
 
         $mform->addElement('select', 'responseformat',
-                get_string('responseformat', 'qtype_essay'), $qtype->respones_formats());
+                get_string('responseformat', 'qtype_essay'), $qtype->response_formats());
         $mform->setDefault('responseformat', 'editor');
 
         $mform->addElement('select', 'responsefieldlines',
-                get_string('responsefieldlines', 'qtype_essay'), $qtype->respones_sizes());
+                get_string('responsefieldlines', 'qtype_essay'), $qtype->response_sizes());
         $mform->setDefault('responsefieldlines', 15);
 
         $mform->addElement('select', 'attachments',

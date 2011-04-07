@@ -355,20 +355,20 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 $this->get_does_not_contain_feedback_expectation());
         $this->check_step_count(1);
 
-        $rightresponese = array('sub0' => $orderforchoice[1],
+        $rightresponse = array('sub0' => $orderforchoice[1],
                 'sub1' => $orderforchoice[2], 'sub2' => $orderforchoice[3]);
-        $rightresponesesummary =
+        $rightresponsesummary =
                 '(1, 2] -> 1 < x ≤ 2; [1, 2] -> 1 ≤ x ≤ 2; [1, 2) -> 1 ≤ x < 2';
 
-        $this->process_submission($rightresponese);
+        $this->process_submission($rightresponse);
         $this->process_submission(array('-finish' => 1));
 
-        $this->assertEqual($rightresponesesummary, $m->summarise_response($rightresponese));
+        $this->assertEqual($rightresponsesummary, $m->summarise_response($rightresponse));
 
         $this->displayoptions->history = 1;
         $this->check_current_output(
                 new PatternExpectation('/' .
-                        preg_quote(htmlspecialchars($rightresponesesummary), '/') . '/'));
+                        preg_quote(htmlspecialchars($rightresponsesummary), '/') . '/'));
     }
 
     public function test_match_clear_wrong() {
