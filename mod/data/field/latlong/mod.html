@@ -29,7 +29,7 @@
             <option value="-2"<?php if($this->field->param2==-2) echo ' selected="selected"' ?>><?php echo get_string('latitude', 'data').'/'.get_string('longitude', 'data') ?></option>
             <?php
                 // Fetch all "suitable" other fields that exist for this database
-                $textfields = get_records_select('data_fields', 'dataid='.$this->data->id.' AND type="text"');
+                $textfields = get_records_select('data_fields', 'dataid='.$this->data->id." AND type='text'");
                 echo '<optgroup label="'.get_string('latlongotherfields', 'data').':">';
                 if(sizeof($textfields)>0) {
                     foreach($textfields as $textfield) {
