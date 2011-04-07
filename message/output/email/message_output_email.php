@@ -46,21 +46,19 @@ class message_output_email extends message_output {
             return true;
         }
 
-        //hold onto email preference because /admin/cron.php sends a lot of messages at once
-        static $useremailaddresses = array();
+        //the user the email is going to
+        $recipient = null;
 
-        //check user preference for where user wants email sent
-        if (!array_key_exists($eventdata->userto->id, $useremailaddresses)) {
-            $useremailaddresses[$eventdata->userto->id] = get_user_preferences('message_processor_email_email', $eventdata->userto->email, $eventdata->userto->id);
+        //check if the recipient has a different email address specified in their messaging preferences Vs their user profile
+        $emailmessagingpreference = get_user_preferences('message_processor_email_email', null, $eventdata->userto);
+        if (!empty($emailmessagingpreference)) {
+            //clone to avoid altering the actual user object
+            $recipient = clone($eventdata->userto);
+            $recipient->email = $emailmessagingpreference;
+        } else {
+            $recipient = $eventdata->userto;
         }
-        $usertoemailaddress = $useremailaddresses[$eventdata->userto->id];
-
-        if ( !empty($usertoemailaddress)) {
-            $userto->email = $usertoemailaddress;
-        }
-
-        $result = email_to_user($eventdata->userto, $eventdata->userfrom,
-            $eventdata->subject, $eventdata->fullmessage, $eventdata->fullmessagehtml);
+        $result = email_to_user($recipient, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage, $eventdata->fullmessagehtml);
 
         return $result;
     }
