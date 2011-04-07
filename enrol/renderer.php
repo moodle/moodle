@@ -233,33 +233,31 @@ class core_enrol_renderer extends plugin_renderer_base {
      * @param moodle_url $pageurl
      * @return string
      */
-    public function user_enrolments_and_actions($userid, $enrolments, $pageurl) {
-        $iconedit        = $this->output->pix_url('t/edit');
-        $iconenrolremove = $this->output->pix_url('t/delete');
-        $strunenrol = get_string('unenrol', 'enrol');
-        $stredit = get_string('edit');
-
+    public function user_enrolments_and_actions($enrolments) {
         $output = '';
-        foreach ($enrolments as $ueid=>$enrolment) {
-            $enrolmentoutput = $enrolment['text'].' '.$enrolment['period'];
-            if ($enrolment['dimmed']) {
+        foreach ($enrolments as $ue) {
+            $enrolmentoutput = $ue['text'].' '.$ue['period'];
+            if ($ue['dimmed']) {
                 $enrolmentoutput = html_writer::tag('span', $enrolmentoutput, array('class'=>'dimmed_text'));
+            } else {
+                $enrolmentoutput = html_writer::tag('span', $enrolmentoutput);
             }
-            if ($enrolment['canunenrol']) {
-                $icon = html_writer::empty_tag('img', array('alt'=>$strunenrol, 'src'=>$iconenrolremove));
-                $url = new moodle_url($pageurl, array('action'=>'unenrol', 'ue'=>$ueid));
-                $enrolmentoutput .= html_writer::link($url, $icon, array('class'=>'unenrollink', 'rel'=>$ueid));
-            }
-            if ($enrolment['canmanage']) {
-                $icon = html_writer::empty_tag('img', array('alt'=>$stredit, 'src'=>$iconedit));
-                $url = new moodle_url($url, array('action'=>'edit', 'ue'=>$ueid));
-                $enrolmentoutput .= html_writer::link($url, $icon, array('class'=>'editenrollink', 'rel'=>$ueid));
+            foreach ($ue['actions'] as $action) {
+                $enrolmentoutput .= $this->render($action);
             }
             $output .= html_writer::tag('div', $enrolmentoutput, array('class'=>'enrolment'));
         }
         return $output;
     }
 
+    /**
+     * Renders a user enrolment action
+     * @param user_enrolment_action $icon
+     * @return string
+     */
+    protected function render_user_enrolment_action(user_enrolment_action $icon) {
+        return html_writer::link($icon->get_url(), $this->output->render($icon->get_icon()), $icon->get_attributes());
+    }
 }
 
 /**

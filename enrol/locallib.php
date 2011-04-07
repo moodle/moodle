@@ -817,7 +817,8 @@ class course_enrolment_manager {
      * @param int $perpage
      * @return array
      */
-    public function get_users_for_display(core_enrol_renderer $renderer, moodle_url $pageurl, $sort, $direction, $page, $perpage) {
+    public function get_users_for_display(course_enrolment_manager $manager, $sort, $direction, $page, $perpage) {
+        $pageurl = $manager->get_moodlepage()->url;
         $users = $this->get_users($sort, $direction, $page, $perpage);
 
         $now = time();
@@ -825,10 +826,6 @@ class course_enrolment_manager {
         $straddgroup = get_string('addgroup', 'group');
         $strunenrol = get_string('unenrol', 'enrol');
         $stredit = get_string('edit');
-
-        $iconedit        = $renderer->pix_url('t/edit');
-        $iconenroladd    = $renderer->pix_url('t/enroladd');
-        $iconenrolremove = $renderer->pix_url('t/delete');
 
         $allroles   = $this->get_all_roles();
         $assignable = $this->get_assignable_roles();
@@ -887,8 +884,7 @@ class course_enrolment_manager {
                     'text' => $ue->enrolmentinstancename,
                     'period' => $period,
                     'dimmed' =>  ($periodoutside || $ue->status != ENROL_USER_ACTIVE),
-                    'canunenrol' => ($ue->enrolmentplugin->allow_unenrol($ue->enrolmentinstance) && has_capability("enrol/".$ue->enrolmentinstance->enrol.":unenrol", $context)),
-                    'canmanage' => ($ue->enrolmentplugin->allow_manage($ue->enrolmentinstance) && has_capability("enrol/".$ue->enrolmentinstance->enrol.":manage", $context))
+                    'actions' => $ue->enrolmentplugin->get_user_enrolment_actions($manager, $ue)
                 );
             }
             $userdetails[$user->id] = $details;
@@ -1029,6 +1025,91 @@ class enrol_user_button extends single_button {
         foreach ($this->jsstrings as $string) {
             $page->requires->strings_for_js($string->identifiers, $string->component, $string->a);
         }
+    }
+}
+
+/**
+ * User enrolment action
+ *
+ * This class is used to manage a renderable ue action such as editing an user enrolment or deleting
+ * a user enrolment.
+ *
+ * @copyright  2011 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class user_enrolment_action implements renderable {
+
+    /**
+     * The icon to display for the action
+     * @var pix_icon
+     */
+    protected $icon;
+
+    /**
+     * The title for the action
+     * @var string
+     */
+    protected $title;
+
+    /**
+     * The URL to the action
+     * @var moodle_url
+     */
+    protected $url;
+
+    /**
+     * An array of HTML attributes
+     * @var array
+     */
+    protected $attributes = array();
+
+    /**
+     * Constructor
+     * @param pix_icon $icon
+     * @param string $title
+     * @param moodle_url $url
+     * @param array $attributes
+     */
+    public function __construct(pix_icon $icon, $title, $url, array $attributes = null) {
+        $this->icon = $icon;
+        $this->title = $title;
+        $this->url = new moodle_url($url);
+        if (!empty($attributes)) {
+            $this->attributes = $attributes;
+        }
+        $this->attributes['title'] = $title;
+    }
+
+    /**
+     * Returns the icon for this action
+     * @return pix_icon
+     */
+    public function get_icon() {
+        return $this->icon;
+    }
+
+    /**
+     * Returns the title for this action
+     * @return string
+     */
+    public function get_title() {
+        return $this->title;
+    }
+
+    /**
+     * Returns the URL for this action
+     * @return moodle_url
+     */
+    public function get_url() {
+        return $this->url;
+    }
+
+    /**
+     * Returns the attributes to use for this action
+     * @return array
+     */
+    public function get_attributes() {
+        return $this->attributes;
     }
 }
 

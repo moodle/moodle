@@ -221,12 +221,12 @@ $fields = array(
 $table->set_fields($fields, $renderer);
 
 $canassign = has_capability('moodle/role:assign', $manager->get_context());
-$users = $manager->get_users_for_display($renderer, $PAGE->url, $table->sort, $table->sortdirection, $table->page, $table->perpage);
+$users = $manager->get_users_for_display($manager, $table->sort, $table->sortdirection, $table->page, $table->perpage);
 foreach ($users as $userid=>&$user) {
     $user['picture'] = $OUTPUT->render($user['picture']);
     $user['role'] = $renderer->user_roles_and_actions($userid, $user['roles'], $manager->get_assignable_roles(), $canassign, $PAGE->url);
     $user['group'] = $renderer->user_groups_and_actions($userid, $user['groups'], $manager->get_all_groups(), has_capability('moodle/course:managegroups', $manager->get_context()), $PAGE->url);
-    $user['enrol'] = $renderer->user_enrolments_and_actions($userid, $user['enrolments'], $PAGE->url);
+    $user['enrol'] = $renderer->user_enrolments_and_actions($user['enrolments']);;
 }
 $table->set_total_users($manager->get_total_users());
 $table->set_users($users);
