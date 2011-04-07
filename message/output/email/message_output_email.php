@@ -46,11 +46,19 @@ class message_output_email extends message_output {
             return true;
         }
 
-        //check user preference for where user wants email sent
-        $eventdata->userto->email = get_user_preferences('message_processor_email_email', $eventdata->userto->email, $eventdata->userto->id);
+        //the user the email is going to
+        $recipient = null;
 
-        $result = email_to_user($eventdata->userto, $eventdata->userfrom,
-            $eventdata->subject, $eventdata->fullmessage, $eventdata->fullmessagehtml);
+        //check if the recipient has a different email address specified in their messaging preferences Vs their user profile
+        $emailmessagingpreference = get_user_preferences('message_processor_email_email', null, $eventdata->userto);
+        if (!empty($emailmessagingpreference)) {
+            //clone to avoid altering the actual user object
+            $recipient = clone($eventdata->userto);
+            $recipient->email = $emailmessagingpreference;
+        } else {
+            $recipient = $eventdata->userto;
+        }
+        $result = email_to_user($recipient, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage, $eventdata->fullmessagehtml);
 
         return $result;
     }
