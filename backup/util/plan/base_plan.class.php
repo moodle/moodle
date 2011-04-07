@@ -61,7 +61,12 @@ abstract class base_plan implements checksumable, executable {
         // Append task settings to plan array, if not present, for comodity
         foreach ($task->get_settings() as $key => $setting) {
             if (!in_array($setting, $this->settings)) {
-                $this->settings[] = $setting;
+                $name = $setting->get_name();
+                if(!isset($this->settings[$name])) {
+                    $this->settings[$name] = $setting;
+                } else {
+                    throw new base_plan_exception('multiple_settings_by_name_found', $name);
+                }
             }
         }
     }
@@ -91,17 +96,10 @@ abstract class base_plan implements checksumable, executable {
      */
     public function get_setting($name) {
         $result = null;
-        foreach ($this->settings as $key => $setting) {
-            if ($setting->get_name() == $name) {
-                if ($result != null) {
-                    throw new base_plan_exception('multiple_settings_by_name_found', $name);
-                } else {
-                    $result = $setting;
-                }
-            }
-        }
-        if (!$result) {
-            throw new base_plan_exception('setting_by_name_not_found', $name);
+        if(isset($this->settings[$name])) {
+           $result = $this->settings[$name];
+        } else {
+           throw new base_plan_exception('setting_by_name_not_found', $name);
         }
         return $result;
     }
