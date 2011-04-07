@@ -44,7 +44,7 @@ require_login($course);
 require_capability('moodle/course:enrolreview', $context);
 $PAGE->set_pagelayout('admin');
 
-$manager = new course_enrolment_manager($course, $filter);
+$manager = new course_enrolment_manager($PAGE, $course, $filter);
 $table = new course_enrolment_users_table($manager, $PAGE);
 $PAGE->set_url('/enrol/users.php', $manager->get_url_params()+$table->get_url_params());
 

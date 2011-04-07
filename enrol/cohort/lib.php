@@ -144,13 +144,10 @@ class enrol_cohort_plugin extends enrol_plugin {
      * This function also adds a quickenrolment JS ui to the page so that users can be enrolled
      * via AJAX.
      *
-     * @global moodle_page $PAGE
      * @param course_enrolment_manager $manager
      * @return enrol_user_button
      */
     public function get_manual_enrol_button(course_enrolment_manager $manager) {
-        global $PAGE;
-
         $course = $manager->get_course();
         if (!$this->can_add_new_instances($course->id)) {
             return false;
@@ -173,7 +170,7 @@ class enrol_cohort_plugin extends enrol_plugin {
         $arguments = array(
             'courseid'        => $course->id,
             'ajaxurl'         => '/enrol/cohort/ajax.php',
-            'url'             => $PAGE->url->out(false),
+            'url'             => $manager->get_moodlepage()->url->out(false),
             'manualEnrolment' => $hasmanualinstance);
         $button->require_yui_module($modules, $function, array($arguments));
 

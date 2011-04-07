@@ -178,13 +178,10 @@ class enrol_manual_plugin extends enrol_plugin {
      * This function also adds a quickenrolment JS ui to the page so that users can be enrolled
      * via AJAX.
      *
-     * @global moodle_page $PAGE
      * @param course_enrolment_manager $manager
      * @return enrol_user_button
      */
     public function get_manual_enrol_button(course_enrolment_manager $manager) {
-        global $PAGE;
-
         $instance = null;
         $instances = array();
         foreach ($manager->get_enrolment_instances() as $tempinstance) {
@@ -217,7 +214,7 @@ class enrol_manual_plugin extends enrol_plugin {
             'instances'         => $instances,
             'courseid'          => $instance->courseid,
             'ajaxurl'           => '/enrol/manual/ajax.php',
-            'url'               => $PAGE->url->out(false),
+            'url'               => $manager->get_moodlepage()->url->out(false),
             'optionsStartDate'  => $startdateoptions,
             'defaultRole'       => $instance->roleid
         );

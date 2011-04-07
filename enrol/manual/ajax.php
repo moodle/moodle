@@ -51,7 +51,7 @@ require_sesskey();
 
 echo $OUTPUT->header(); // send headers
 
-$manager = new course_enrolment_manager($course);
+$manager = new course_enrolment_manager($PAGE, $course);
 
 $outcome = new stdClass;
 $outcome->success = true;

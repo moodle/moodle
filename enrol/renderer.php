@@ -340,12 +340,6 @@ class course_enrolment_table extends html_table implements renderable {
     public $perpage = 0;
 
     /**
-     * The URL of the page for this table
-     * @var moodle_page
-     */
-    public $moodlepage;
-
-    /**
      * The sort field for this table, should be one of course_enrolment_table::$sortablefields
      * @var string
      */
@@ -399,10 +393,9 @@ class course_enrolment_table extends html_table implements renderable {
      *
      * @param course_enrolment_manager $manager
      */
-    public function __construct(course_enrolment_manager $manager, moodle_page $moodlepage) {
+    public function __construct(course_enrolment_manager $manager) {
 
         $this->manager        = $manager;
-        $this->moodlepage     = $moodlepage;
 
         $this->page           = optional_param(self::PAGEVAR, 0, PARAM_INT);
         $this->perpage        = optional_param(self::PERPAGEVAR, self::DEFAULTPERPAGE, PARAM_INT);
@@ -460,7 +453,7 @@ class course_enrolment_table extends html_table implements renderable {
         $this->head = array();
         $this->colclasses = array();
         $this->align = array();
-        $url = $this->moodlepage->url;
+        $url = $this->manager->get_moodlepage()->url;
         foreach ($fields as $name => $label) {
             $newlabel = '';
             if (is_array($label)) {
@@ -546,7 +539,7 @@ class course_enrolment_table extends html_table implements renderable {
 
     public function initialise_javascript() {
         if (has_capability('moodle/role:assign', $this->manager->get_context())) {
-            $this->moodlepage->requires->strings_for_js(array(
+            $this->manager->get_moodlepage()->requires->strings_for_js(array(
                 'assignroles',
                 'confirmunassign',
                 'confirmunassigntitle',
@@ -560,7 +553,7 @@ class course_enrolment_table extends html_table implements renderable {
                 'userIds'=>array_keys($this->users),
                 'courseId'=>$this->manager->get_course()->id,
                 'otherusers'=>isset($this->otherusers));
-            $this->moodlepage->requires->yui_module($modules, $function, array($arguments));
+            $this->manager->get_moodlepage()->requires->yui_module($modules, $function, array($arguments));
         }
     }
 
@@ -571,7 +564,7 @@ class course_enrolment_table extends html_table implements renderable {
      */
     public function get_paging_bar() {
         if ($this->pagingbar == null) {
-            $this->pagingbar = new paging_bar($this->totalusers, $this->page, $this->perpage, $this->moodlepage->url, self::PAGEVAR);
+            $this->pagingbar = new paging_bar($this->totalusers, $this->page, $this->perpage, $this->manager->get_moodlepage()->url, self::PAGEVAR);
         }
         return $this->pagingbar;
     }
@@ -631,7 +624,7 @@ class course_enrolment_users_table extends course_enrolment_table {
      * @return single_select
      */
     public function get_enrolment_type_filter() {
-        $selector = new single_select($this->moodlepage->url, 'ifilter', array(0=>get_string('all')) + (array)$this->manager->get_enrolment_instance_names(), $this->manager->get_enrolment_filter(), array());
+        $selector = new single_select($this->manager->get_moodlepage()->url, 'ifilter', array(0=>get_string('all')) + (array)$this->manager->get_enrolment_instance_names(), $this->manager->get_enrolment_filter(), array());
         $selector->set_label( get_string('enrolmentinstances', 'enrol'));
         return $selector;
     }
@@ -653,10 +646,9 @@ class course_enrolment_other_users_table extends course_enrolment_table {
      * Constructs the table
      *
      * @param course_enrolment_manager $manager
-     * @param moodle_page $moodlepage
      */
-    public function __construct(course_enrolment_manager $manager, moodle_page $moodlepage) {
-        parent::__construct($manager, $moodlepage);
+    public function __construct(course_enrolment_manager $manager) {
+        parent::__construct($manager);
         $this->attributes = array('class'=>'userenrolment otheruserenrolment');
     }
 
@@ -677,7 +669,7 @@ class course_enrolment_other_users_table extends course_enrolment_table {
         $control = new single_button($url, get_string('assignroles', 'role'), 'get');
         $control->class = 'singlebutton assignuserrole instance'.$count;
         if ($count == 1) {
-            $this->moodlepage->requires->strings_for_js(array(
+            $this->manager->get_moodlepage()->requires->strings_for_js(array(
                     'ajaxoneuserfound',
                     'ajaxxusersfound',
                     'ajaxnext25',
@@ -692,15 +684,15 @@ class course_enrolment_other_users_table extends course_enrolment_table {
                     'startdatetoday',
                     'durationdays',
                     'enrolperiod'), 'enrol');
-            $this->moodlepage->requires->string_for_js('assignrole', 'role');
+            $this->manager->get_moodlepage()->requires->string_for_js('assignrole', 'role');
 
             $modules = array('moodle-enrol-otherusersmanager', 'moodle-enrol-otherusersmanager-skin');
             $function = 'M.enrol.otherusersmanager.init';
             $arguments = array(
                 'courseId'=> $this->manager->get_course()->id,
                 'ajaxUrl' => '/enrol/ajax.php',
-                'url' => $this->moodlepage->url->out(false));
-            $this->moodlepage->requires->yui_module($modules, $function, array($arguments));
+                'url' => $this->manager->get_moodlepage()->url->out(false));
+            $this->manager->get_moodlepage()->requires->yui_module($modules, $function, array($arguments));
         }
         return $control;
     }

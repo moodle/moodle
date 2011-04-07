@@ -79,6 +79,12 @@ class course_enrolment_manager {
      */
     protected $totalotherusers = null;
 
+    /**
+     * The current moodle_page object
+     * @var moodle_page
+     */
+    protected $moodlepage = null;
+
     /**#@+
      * These variables are used to cache the information this class uses
      * please never use these directly instead use their get_ counterparts.
@@ -98,13 +104,23 @@ class course_enrolment_manager {
     /**
      * Constructs the course enrolment manager
      *
+     * @param moodle_page $moodlepage
      * @param stdClass $course
      * @param string $instancefilter
      */
-    public function __construct($course, $instancefilter = null) {
+    public function __construct(moodle_page $moodlepage, $course, $instancefilter = null) {
+        $this->moodlepage = $moodlepage;
         $this->context = get_context_instance(CONTEXT_COURSE, $course->id);
         $this->course = $course;
         $this->instancefilter = $instancefilter;
+    }
+
+    /**
+     * Returns the current moodle page
+     * @return moodle_page 
+     */
+    public function get_moodlepage() {
+        return $this->moodlepage;
     }
 
     /**
