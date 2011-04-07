@@ -628,6 +628,11 @@ body.tag .managelink {padding: 5px;}
 .userenrolment .col_group .addgroup a img {vertical-align:bottom;}
 .userenrolment .col_enrol .enrolment {float:left;padding:3px;margin:3px;}
 .userenrolment .col_enrol .enrolment a {float:right;margin-left:3px;}
+#page-enrol-users .enrol_user_buttons {float:right;}
+#page-enrol-users .enrol_user_buttons .enrolusersbutton {margin-left:1em;display:inline;}
+#page-enrol-users .enrol_user_buttons .enrolusersbutton div,
+#page-enrol-users .enrol_user_buttons .enrolusersbutton form {display:inline;}
+#page-enrol-users .enrol_user_buttons .enrolusersbutton input {padding-left:6px;padding-right:6px;}
 
 /**
 * Overide for RTL layout
