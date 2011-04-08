@@ -61,7 +61,8 @@ class qtype_oumultiresponse extends question_type {
         $context = $question->context;
         $result = new stdClass();
 
-        $oldanswers = $DB->get_records('question_answers', array('question' => $question->id), 'id ASC');
+        $oldanswers = $DB->get_records('question_answers',
+                array('question' => $question->id), 'id ASC');
 
         // following hack to check at least two answers exist
         $answercount = 0;
@@ -113,12 +114,13 @@ class qtype_oumultiresponse extends question_type {
 
         // Delete any left over old answer records.
         $fs = get_file_storage();
-        foreach($oldanswers as $oldanswer) {
+        foreach ($oldanswers as $oldanswer) {
             $fs->delete_area_files($context->id, 'question', 'answerfeedback', $oldanswer->id);
             $DB->delete_records('question_answers', array('id' => $oldanswer->id));
         }
 
-        $options = $DB->get_record('question_oumultiresponse', array('questionid' => $question->id));
+        $options = $DB->get_record('question_oumultiresponse',
+                array('questionid' => $question->id));
         if (!$options) {
             $options = new stdClass();
             $options->questionid = $question->id;
@@ -303,7 +305,8 @@ class qtype_oumultiresponse extends question_type {
     public function export_to_xml($question, $format, $extra = null) {
         $output = '';
 
-        $output .= "    <shuffleanswers>" . $format->get_single($question->options->shuffleanswers) . "</shuffleanswers>\n";
+        $output .= "    <shuffleanswers>" . $format->get_single(
+                $question->options->shuffleanswers) . "</shuffleanswers>\n";
         $output .= "    <answernumbering>{$question->options->answernumbering}</answernumbering>\n";
 
         $output .= $format->write_combined_feedback($question->options);
@@ -356,7 +359,8 @@ class qtype_oumultiresponse_hint extends question_hint_with_parts {
      * @param bool $clearwrong whether the wrong parts should be reset.
      * @param bool $showchoicefeedback whether to show the feedback for each choice.
      */
-    public function __construct($id, $hint, $hintformat, $shownumcorrect, $clearwrong, $showchoicefeedback) {
+    public function __construct($id, $hint, $hintformat, $shownumcorrect,
+            $clearwrong, $showchoicefeedback) {
         parent::__construct($id, $hint, $hintformat, $shownumcorrect, $clearwrong);
         $this->showchoicefeedback = $showchoicefeedback;
     }

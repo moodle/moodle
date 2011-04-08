@@ -81,7 +81,8 @@ class qtype_oumultiresponse_question_test extends UnitTestCase {
         $mc->shuffleanswers = false;
         $mc->start_attempt(new question_attempt_step());
 
-        list($fraction, $state) = $mc->grade_response(array('choice0' => '1', 'choice1' => '1', 'choice3' => '1'));
+        list($fraction, $state) = $mc->grade_response(
+                array('choice0' => '1', 'choice1' => '1', 'choice3' => '1'));
         $this->assertWithinMargin(0, $fraction, $this->tolerance);
         $this->assertEqual($state, question_state::$gradedpartial);
     }
@@ -221,7 +222,8 @@ class qtype_oumultiresponse_question_test extends UnitTestCase {
 
         $penalty = 0.2;
         $answers = array($right, $right, $right, $right, $wrong, $wrong, $wrong, $wrong);
-        $response_history = array('11111', '10111', '11100', '11011', '10011', '01010', '01000', '00100');
+        $response_history = array(
+                '11111', '10111', '11100', '11011', '10011', '01010', '01000', '00100');
         $this->assertWithinMargin(qtype_oumultiresponse_question::grade_computation(
                 $response_history, $answers, $penalty, 5), 0.45, $this->tolerance);
 

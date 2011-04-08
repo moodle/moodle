@@ -101,12 +101,15 @@ class qtype_oumultiresponse_test_helper {
 
         $qdata->options->shuffleanswers = 1;
         $qdata->options->answernumbering = '123';
-        $qdata->options->correctfeedback = test_question_maker::STANDARD_OVERALL_CORRECT_FEEDBACK;
+        $qdata->options->correctfeedback =
+                test_question_maker::STANDARD_OVERALL_CORRECT_FEEDBACK;
         $qdata->options->correctfeedbackformat = FORMAT_HTML;
-        $qdata->options->partiallycorrectfeedback = test_question_maker::STANDARD_OVERALL_PARTIALLYCORRECT_FEEDBACK;
+        $qdata->options->partiallycorrectfeedback =
+                test_question_maker::STANDARD_OVERALL_PARTIALLYCORRECT_FEEDBACK;
         $qdata->options->partiallycorrectfeedbackformat = FORMAT_HTML;
         $qdata->options->shownumcorrect = 1;
-        $qdata->options->incorrectfeedback = test_question_maker::STANDARD_OVERALL_INCORRECT_FEEDBACK;
+        $qdata->options->incorrectfeedback =
+                test_question_maker::STANDARD_OVERALL_INCORRECT_FEEDBACK;
         $qdata->options->incorrectfeedbackformat = FORMAT_HTML;
 
         $qdata->options->answers = array(

@@ -71,7 +71,6 @@ class qtype_oumultiresponse_test extends UnitTestCase {
 
         $question = $this->qtype->make_question($qdata);
 
-
         $this->assertEqual($expectedq, $question);
     }
 
@@ -101,13 +100,16 @@ class qtype_oumultiresponse_test extends UnitTestCase {
             2 => new question_answer(2, 'B', 0, '', FORMAT_HTML),
             3 => new question_answer(3, 'C', 0, '', FORMAT_HTML),
         );
-        $this->assertWithinMargin(1/3, $this->qtype->get_random_guess_score($questiondata), 0.000001);
+        $this->assertWithinMargin(1/3,
+                $this->qtype->get_random_guess_score($questiondata), 0.000001);
 
         $questiondata->options->answers[2]->fraction = 1;
-        $this->assertWithinMargin(2/3, $this->qtype->get_random_guess_score($questiondata), 0.000001);
+        $this->assertWithinMargin(2/3,
+                $this->qtype->get_random_guess_score($questiondata), 0.000001);
 
         $questiondata->options->answers[4] = new question_answer(4, 'D', 0, '', FORMAT_HTML);
-        $this->assertWithinMargin(1/2, $this->qtype->get_random_guess_score($questiondata), 0.000001);
+        $this->assertWithinMargin(1/2,
+                $this->qtype->get_random_guess_score($questiondata), 0.000001);
     }
 
     public function test_xml_import() {
@@ -188,10 +190,13 @@ class qtype_oumultiresponse_test extends UnitTestCase {
         $expectedq->penalty = 0.3333333;
 
         $expectedq->shuffleanswers = 1;
-        $expectedq->correctfeedback = array('text' => 'Well done.', 'format' => FORMAT_MOODLE, 'files' => array());
-        $expectedq->partiallycorrectfeedback = array('text' => 'Not entirely.', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->correctfeedback = array('text' => 'Well done.',
+                'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->partiallycorrectfeedback = array('text' => 'Not entirely.',
+                'format' => FORMAT_MOODLE, 'files' => array());
         $expectedq->shownumcorrect = false;
-        $expectedq->incorrectfeedback = array('text' => 'Completely wrong!', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->incorrectfeedback = array('text' => 'Completely wrong!',
+                'format' => FORMAT_MOODLE, 'files' => array());
 
         $expectedq->answer = array(
             array('text' => 'One', 'format' => FORMAT_MOODLE, 'files' => array()),
@@ -201,10 +206,14 @@ class qtype_oumultiresponse_test extends UnitTestCase {
         );
         $expectedq->correctanswer = array(1, 0, 1, 0);
         $expectedq->feedback = array(
-            array('text' => 'Specific feedback to correct answer.', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => 'Specific feedback to wrong answer.', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => 'Specific feedback to correct answer.', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => 'Specific feedback to wrong answer.', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => 'Specific feedback to correct answer.',
+                    'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => 'Specific feedback to wrong answer.',
+                    'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => 'Specific feedback to correct answer.',
+                    'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => 'Specific feedback to wrong answer.',
+                    'format' => FORMAT_MOODLE, 'files' => array()),
         );
 
         $expectedq->hint = array(
@@ -223,7 +232,8 @@ class qtype_oumultiresponse_test extends UnitTestCase {
       <text>008 OUMR feedback test</text>
     </name>
     <questiontext format="html">
-      <text>&lt;p&gt;OUMR question.&lt;/p&gt; &lt;p&gt;Right answers are eighta and eightb.&lt;/p&gt;</text>
+      <text>&lt;p&gt;OUMR question.&lt;/p&gt; &lt;p&gt;Right answers are eighta ' .
+                'and eightb.&lt;/p&gt;</text>
     </questiontext>
     <image></image>
     <generalfeedback>
@@ -301,7 +311,8 @@ class qtype_oumultiresponse_test extends UnitTestCase {
         $expectedq = new stdClass();
         $expectedq->qtype = 'oumultiresponse';
         $expectedq->name = '008 OUMR feedback test';
-        $expectedq->questiontext = '<p>OUMR question.</p><p>Right answers are eighta and eightb.</p>';
+        $expectedq->questiontext = '<p>OUMR question.</p><p>Right answers are ' .
+                'eighta and eightb.</p>';
         $expectedq->questiontextformat = FORMAT_HTML;
         $expectedq->generalfeedback = 'General feedback.';
         $expectedq->generalfeedbackformat = FORMAT_MOODLE;
@@ -311,10 +322,14 @@ class qtype_oumultiresponse_test extends UnitTestCase {
 
         $expectedq->shuffleanswers = 1;
         $expectedq->answernumbering = 'abc';
-        $expectedq->correctfeedback = array('text' => 'Correct overall feedback', 'format' => FORMAT_MOODLE, 'files' => array());
-        $expectedq->partiallycorrectfeedback = array('text' => 'Partially correct overall feedback.', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->correctfeedback = array('text' => 'Correct overall feedback',
+                'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->partiallycorrectfeedback = array(
+                'text' => 'Partially correct overall feedback.',
+                'format' => FORMAT_MOODLE, 'files' => array());
         $expectedq->shownumcorrect = false;
-        $expectedq->incorrectfeedback = array('text' => 'Incorrect overall feedback.', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->incorrectfeedback = array('text' => 'Incorrect overall feedback.',
+                'format' => FORMAT_MOODLE, 'files' => array());
 
         $expectedq->answer = array(
             array('text' => 'eighta', 'format' => FORMAT_MOODLE, 'files' => array()),
@@ -323,10 +338,14 @@ class qtype_oumultiresponse_test extends UnitTestCase {
             array('text' => 'two', 'format' => FORMAT_MOODLE, 'files' => array()));
         $expectedq->correctanswer = array(1, 1, 0, 0);
         $expectedq->feedback = array(
-            array('text' => '<p>Specific feedback to correct answer.</p>', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => '<p>Specific feedback to correct answer.</p>', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => '<p>Specific feedback to wrong answer.</p>', 'format' => FORMAT_MOODLE, 'files' => array()),
-            array('text' => '<p>Specific feedback to wrong answer.</p>', 'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => '<p>Specific feedback to correct answer.</p>',
+                    'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => '<p>Specific feedback to correct answer.</p>',
+                    'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => '<p>Specific feedback to wrong answer.</p>',
+                    'format' => FORMAT_MOODLE, 'files' => array()),
+            array('text' => '<p>Specific feedback to wrong answer.</p>',
+                    'format' => FORMAT_MOODLE, 'files' => array()),
         );
 
         $expectedq->hint = array(

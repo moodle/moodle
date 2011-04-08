@@ -37,11 +37,13 @@ defined('MOODLE_INTERNAL') || die();
 class qtype_oumultiresponse_edit_form extends question_edit_form {
 
     protected function definition_inner($mform) {
-        $mform->addElement('advcheckbox', 'shuffleanswers', get_string('shuffleanswers', 'qtype_multichoice'), null, null, array(0,1));
+        $mform->addElement('advcheckbox', 'shuffleanswers',
+                get_string('shuffleanswers', 'qtype_multichoice'), null, null, array(0, 1));
         $mform->addHelpButton('shuffleanswers', 'shuffleanswers', 'qtype_multichoice');
         $mform->setDefault('shuffleanswers', 1);
 
-        $mform->addElement('select', 'answernumbering', get_string('answernumbering', 'qtype_multichoice'),
+        $mform->addElement('select', 'answernumbering',
+                get_string('answernumbering', 'qtype_multichoice'),
                 qtype_multichoice::get_numbering_styles());
         $mform->setDefault('answernumbering', 'abc');
 
@@ -53,13 +55,17 @@ class qtype_oumultiresponse_edit_form extends question_edit_form {
         $this->add_interactive_settings(true, true);
     }
 
-    protected function get_per_answer_fields(&$mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
+    protected function get_per_answer_fields(&$mform, $label, $gradeoptions,
+            &$repeatedoptions, &$answersoption) {
         $repeated = array();
-        $repeated[] = $mform->createElement('header', 'choicehdr', get_string('choiceno', 'qtype_multichoice', '{no}'));
-        $repeated[] = $mform->createElement('text', 'answer', get_string('answer', 'question'), array('size' => 50));
-        $repeated[] = $mform->createElement('checkbox', 'correctanswer', get_string('correctanswer', 'qtype_oumultiresponse'));
-        $repeated[] = $mform->createElement('editor', 'feedback', get_string('feedback', 'question'),
-                                array('rows' => 5), $this->editoroptions);
+        $repeated[] = $mform->createElement('header', 'choicehdr',
+                get_string('choiceno', 'qtype_multichoice', '{no}'));
+        $repeated[] = $mform->createElement('text', 'answer',
+                get_string('answer', 'question'), array('size' => 50));
+        $repeated[] = $mform->createElement('checkbox', 'correctanswer',
+                get_string('correctanswer', 'qtype_oumultiresponse'));
+        $repeated[] = $mform->createElement('editor', 'feedback',
+                get_string('feedback', 'question'), array('rows' => 5), $this->editoroptions);
 
         // These are returned by arguments passed by reference.
         $repeatedoptions['answer']['type'] = PARAM_RAW;
@@ -69,8 +75,10 @@ class qtype_oumultiresponse_edit_form extends question_edit_form {
     }
 
     protected function get_hint_fields($withclearwrong = false, $withshownumpartscorrect = false) {
-        list($repeated, $repeatedoptions) = parent::get_hint_fields($withclearwrong, $withshownumpartscorrect);
-        $repeated[] = $this->_form->createElement('checkbox', 'hintshowchoicefeedback', '', get_string('showeachanswerfeedback', 'qtype_oumultiresponse'));
+        list($repeated, $repeatedoptions) =
+                parent::get_hint_fields($withclearwrong, $withshownumpartscorrect);
+        $repeated[] = $this->_form->createElement('checkbox', 'hintshowchoicefeedback', '',
+                get_string('showeachanswerfeedback', 'qtype_oumultiresponse'));
         return array($repeated, $repeatedoptions);
     }
 
@@ -82,7 +90,7 @@ class qtype_oumultiresponse_edit_form extends question_edit_form {
 
         if (!empty($question->options->answers)) {
             $key = 0;
-            foreach ($question->options->answers as $answer){
+            foreach ($question->options->answers as $answer) {
                 $question->correctanswer[$key] = $answer->fraction > 0;
                 $key++;
             }
@@ -104,15 +112,15 @@ class qtype_oumultiresponse_edit_form extends question_edit_form {
         return $question;
     }
 
-    public function validation($data, $files){
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
         $answers = $data['answer'];
         $answercount = 0;
         $numberofcorrectanswers = 0;
-        foreach ($answers as $key => $answer){
+        foreach ($answers as $key => $answer) {
             $trimmedanswer = trim($answer);
-            if (empty($trimmedanswer)){
+            if (empty($trimmedanswer)) {
                 continue;
             }
 
@@ -128,10 +136,10 @@ class qtype_oumultiresponse_edit_form extends question_edit_form {
         }
 
         // Perform sanity checks on number of answers
-        if ($answercount==0){
+        if ($answercount == 0) {
             $errors['answer[0]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
             $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
-        } elseif ($answercount==1){
+        } else if ($answercount == 1) {
             $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_multichoice', 2);
         }
 

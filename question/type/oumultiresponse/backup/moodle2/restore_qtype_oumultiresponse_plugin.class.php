@@ -47,9 +47,9 @@ class restore_qtype_oumultiresponse_plugin extends restore_qtype_plugin {
 
         // Add own qtype stuff
         $elename = 'oumultiresponse';
-        $elepath = $this->get_pathfor('/oumultiresponse'); // we used get_recommended_name() so this works
+        // we used get_recommended_name() so this works
+        $elepath = $this->get_pathfor('/oumultiresponse');
         $paths[] = new restore_path_element($elename, $elepath);
-
 
         return $paths; // And we return the interesting paths
     }
@@ -66,9 +66,10 @@ class restore_qtype_oumultiresponse_plugin extends restore_qtype_plugin {
         // Detect if the question is created or mapped
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
-        $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
+        $questioncreated = (bool) $this->get_mappingid('question_created', $oldquestionid);
 
-        // If the question has been created by restore, we need to create its question_oumultiresponse too
+        // If the question has been created by restore, we need to create its
+        // question_oumultiresponse too
         if ($questioncreated) {
             // Adjust some columns
             $data->questionid = $newquestionid;
@@ -76,8 +77,6 @@ class restore_qtype_oumultiresponse_plugin extends restore_qtype_plugin {
             $newitemid = $DB->insert_record('question_oumultiresponse', $data);
             // Create mapping (needed for decoding links)
             $this->set_mapping('question_oumultiresponse', $oldid, $newitemid);
-        } else {
-            // Nothing to remap if the question already existed
         }
     }
 
@@ -129,7 +128,8 @@ class restore_qtype_oumultiresponse_plugin extends restore_qtype_plugin {
         $contents = array();
 
         $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
-        $contents[] = new restore_decode_content('question_oumultiresponse', $fields, 'question_oumultiresponse');
+        $contents[] = new restore_decode_content('question_oumultiresponse',
+                $fields, 'question_oumultiresponse');
 
         return $contents;
     }

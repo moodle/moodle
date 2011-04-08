@@ -41,7 +41,8 @@ class qtype_oumultiresponse_question extends qtype_multichoice_multi_question
 
     public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
         if ($preferredbehaviour == 'interactive') {
-            return question_engine::make_behaviour('interactivecountback', $qa, $preferredbehaviour);
+            return question_engine::make_behaviour(
+                    'interactivecountback', $qa, $preferredbehaviour);
         }
         return question_engine::make_archetypal_behaviour($preferredbehaviour, $qa);
     }
@@ -70,7 +71,8 @@ class qtype_oumultiresponse_question extends qtype_multichoice_multi_question
         return array($fraction, $state);
     }
 
-    protected function disable_hint_settings_when_too_many_selected(question_hint_with_parts $hint) {
+    protected function disable_hint_settings_when_too_many_selected(
+            question_hint_with_parts $hint) {
         parent::disable_hint_settings_when_too_many_selected($hint);
         $hint->showchoicefeedback = false;
     }
@@ -96,21 +98,24 @@ class qtype_oumultiresponse_question extends qtype_multichoice_multi_question
     /**
      * Implement the scoring rules.
      *
-     * @param array $responsehistory an array $answerid -> string of 1s and 0s. The 1s and 0s are
-     * the history of which tries this answer was selected on, so 011 means not selected on the
-     * first try, then selected on the second and third tries. All the strings must be the same length.
-     * @param array $answers $question->options->answers, that is an array $answerid => $answer,
-     * where $answer->fraction is 0 or 1. The key fields are
+     * @param array $responsehistory an array $answerid -> string of 1s and 0s.
+     *      The 1s and 0s are the history of which tries this answer was selected
+     *      on, so 011 means not selected on the first try, then selected on the
+     *      second and third tries. All the strings must be the same length.
+     * @param array $answers $question->options->answers, that is an array
+     *      $answerid => $answer, where $answer->fraction is 0 or 1. The key fields are
      * @return float the score.
      */
-    public static function grade_computation($responsehistory, $answers, $penalty, $questionnumtries) {
+    public static function grade_computation($responsehistory, $answers,
+            $penalty, $questionnumtries) {
         // First we reverse the strings to get the most recent responses to the start, then
         // distinguish right and wrong by replacing 1 with 2 for right answers.
         $workspace = array();
         $numright = 0;
         foreach ($responsehistory as $id => $string) {
             $workspace[$id] = strrev($string);
-            if (!question_state::graded_state_for_fraction($answers[$id]->fraction)->is_incorrect()) {
+            if (!question_state::graded_state_for_fraction(
+                    $answers[$id]->fraction)->is_incorrect()) {
                 $workspace[$id] = str_replace('1', '2', $workspace[$id]);
                 $numright++;
             }
@@ -150,7 +155,8 @@ class qtype_oumultiresponse_question extends qtype_multichoice_multi_question
         // permitted number of tries.
         $triesnotused = $questionnumtries - $actualnumtries;
         foreach ($workspace as $string) {
-            $string = str_replace('1', '0', $string); // Turn any remaining 1s to 0s for convinience.
+            // Turn any remaining 1s to 0s for convinience.
+            $string = str_replace('1', '0', $string);
             $num2s = strpos($string . '0', '0');
             if ($num2s > 0) {
                 $num2s += $triesnotused;

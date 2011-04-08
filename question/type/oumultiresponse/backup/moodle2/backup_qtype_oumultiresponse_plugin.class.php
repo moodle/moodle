@@ -62,7 +62,8 @@ class backup_qtype_oumultiresponse_plugin extends backup_qtype_plugin {
         $pluginwrapper->add_child($oumultiresponse);
 
         // set source to populate the data
-        $oumultiresponse->set_source_table('question_oumultiresponse', array('questionid' => backup::VAR_PARENTID));
+        $oumultiresponse->set_source_table('question_oumultiresponse',
+                array('questionid' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 
