@@ -60,7 +60,8 @@ class backup_qtype_truefalse_plugin extends backup_qtype_plugin {
         $pluginwrapper->add_child($truefalse);
 
         // set source to populate the data
-        $truefalse->set_source_table('question_truefalse', array('question' => backup::VAR_PARENTID));
+        $truefalse->set_source_table('question_truefalse',
+                array('question' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 

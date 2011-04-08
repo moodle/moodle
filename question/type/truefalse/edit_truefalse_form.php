@@ -44,20 +44,26 @@ class qtype_truefalse_edit_form extends question_edit_form {
      * @param object $mform the form being built.
      */
     protected function definition_inner($mform) {
-        $mform->addElement('select', 'correctanswer', get_string('correctanswer', 'qtype_truefalse'),
-                array(0 => get_string('false', 'qtype_truefalse'), 1 => get_string('true', 'qtype_truefalse')));
+        $mform->addElement('select', 'correctanswer',
+                get_string('correctanswer', 'qtype_truefalse'), array(
+                0 => get_string('false', 'qtype_truefalse'),
+                1 => get_string('true', 'qtype_truefalse')));
 
-        $mform->addElement('editor', 'feedbacktrue', get_string('feedbacktrue', 'qtype_truefalse'), null, $this->editoroptions);;
+        $mform->addElement('editor', 'feedbacktrue',
+                get_string('feedbacktrue', 'qtype_truefalse'), null, $this->editoroptions);
         $mform->setType('feedbacktrue', PARAM_RAW);
 
-        $mform->addElement('editor', 'feedbackfalse', get_string('feedbackfalse', 'qtype_truefalse'), null, $this->editoroptions);
+        $mform->addElement('editor', 'feedbackfalse',
+                get_string('feedbackfalse', 'qtype_truefalse'), null, $this->editoroptions);
         $mform->setType('feedbackfalse', PARAM_RAW);
 
-        $mform->addElement('header', 'multitriesheader', get_string('settingsformultipletries', 'question'));
+        $mform->addElement('header', 'multitriesheader',
+                get_string('settingsformultipletries', 'question'));
 
         $mform->addElement('hidden', 'penalty', 1);
 
-        $mform->addElement('static', 'penaltymessage', get_string('penaltyforeachincorrecttry', 'question'), 1);
+        $mform->addElement('static', 'penaltymessage',
+                get_string('penaltyforeachincorrecttry', 'question'), 1);
         $mform->addHelpButton('penaltymessage', 'penaltyforeachincorrecttry', 'question');
     }
 

@@ -50,7 +50,6 @@ class restore_qtype_truefalse_plugin extends restore_qtype_plugin {
         $elepath = $this->get_pathfor('/truefalse'); // we used get_recommended_name() so this works
         $paths[] = new restore_path_element($elename, $elepath);
 
-
         return $paths; // And we return the interesting paths
     }
 
@@ -78,8 +77,6 @@ class restore_qtype_truefalse_plugin extends restore_qtype_plugin {
             $newitemid = $DB->insert_record('question_truefalse', $data);
             // Create mapping
             $this->set_mapping('question_truefalse', $oldid, $newitemid);
-        } else {
-            // Nothing to remap if the question already existed
         }
     }
 

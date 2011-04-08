@@ -109,7 +109,8 @@ class qtype_truefalse_question extends question_graded_automatically {
                     ($answerid == $this->falseanswerid && $response !== ''));
 
         } else {
-            return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
+            return parent::check_file_access($qa, $options, $component, $filearea,
+                    $args, $forcedownload);
         }
     }
 }

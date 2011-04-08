@@ -82,7 +82,7 @@ class qtype_truefalse extends question_type {
 
         // Delete any left over old answer records.
         $fs = get_file_storage();
-        foreach($oldanswers as $oldanswer) {
+        foreach ($oldanswers as $oldanswer) {
             $fs->delete_area_files($context->id, 'question', 'answerfeedback', $oldanswer->id);
             $DB->delete_records('question_answers', array('id' => $oldanswer->id));
         }
@@ -114,14 +114,17 @@ class qtype_truefalse extends question_type {
         global $DB, $OUTPUT;
         // Get additional information from database
         // and attach it to the question object
-        if (!$question->options = $DB->get_record('question_truefalse', array('question' => $question->id))) {
+        if (!$question->options = $DB->get_record('question_truefalse',
+                array('question' => $question->id))) {
             echo $OUTPUT->notification('Error: Missing question options!');
             return false;
         }
         // Load the answers
-        if (!$question->options->answers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
-           echo $OUTPUT->notification('Error: Missing question answers for truefalse question ' . $question->id . '!');
-           return false;
+        if (!$question->options->answers = $DB->get_records('question_answers',
+                array('question' =>  $question->id), 'id ASC')) {
+            echo $OUTPUT->notification('Error: Missing question answers for truefalse question ' .
+                    $question->id . '!');
+            return false;
         }
 
         return true;
@@ -135,11 +138,13 @@ class qtype_truefalse extends question_type {
         } else {
             $question->rightanswer = false;
         }
-        $question->truefeedback = $answers[$questiondata->options->trueanswer]->feedback;
+        $question->truefeedback =  $answers[$questiondata->options->trueanswer]->feedback;
         $question->falsefeedback = $answers[$questiondata->options->falseanswer]->feedback;
-        $question->truefeedbackformat = $answers[$questiondata->options->trueanswer]->feedbackformat;
-        $question->falsefeedbackformat = $answers[$questiondata->options->falseanswer]->feedbackformat;
-        $question->trueanswerid = $questiondata->options->trueanswer;
+        $question->truefeedbackformat =
+                $answers[$questiondata->options->trueanswer]->feedbackformat;
+        $question->falsefeedbackformat =
+                $answers[$questiondata->options->falseanswer]->feedbackformat;
+        $question->trueanswerid =  $questiondata->options->trueanswer;
         $question->falseanswerid = $questiondata->options->falseanswer;
     }
 
