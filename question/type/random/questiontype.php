@@ -114,7 +114,7 @@ class qtype_random extends question_type {
         $this->manualqtypes = implode(',', $manualqtypes);
     }
 
-    public function display_question_editing_page(&$mform, $question, $wizardnow){
+    public function display_question_editing_page(&$mform, $question, $wizardnow) {
         global $OUTPUT;
         $heading = $this->get_heading(empty($question->id));
         echo $OUTPUT->heading_with_help($heading, $this->name(), $this->plugin_name());
@@ -128,7 +128,7 @@ class qtype_random extends question_type {
     /**
      * Random questions always get a question name that is Random (cateogryname).
      * This function is a centralised place to calculate that, given the category.
-     * @param object $category the category this question picks from. (Only $category->name is used.)
+     * @param object $category the category this question picks from. (Only ->name is used.)
      * @param bool $includesubcategories whether this question also picks from subcategories.
      * @return string the name this question should have.
      */
@@ -166,7 +166,8 @@ class qtype_random extends question_type {
         $updateobject->parent = $question->id;
 
         // We also force the question name to be 'Random (categoryname)'.
-        $category = $DB->get_record('question_categories', array('id' => $question->category), '*', MUST_EXIST);
+        $category = $DB->get_record('question_categories',
+                array('id' => $question->category), '*', MUST_EXIST);
         $updateobject->name = $this->question_name($category, !empty($question->questiontext));
         return $DB->update_record('question', $updateobject);
     }
@@ -176,7 +177,8 @@ class qtype_random extends question_type {
      *
      * @param int $categoryid the id of a question category.
      * @param bool whether to include questions from subcategories.
-     * @param string $questionsinuse comma-separated list of question ids to exclude from consideration.
+     * @param string $questionsinuse comma-separated list of question ids to
+     *      exclude from consideration.
      * @return array of question records.
      */
     public function get_available_questions_from_category($categoryid, $subcategories) {
@@ -204,8 +206,10 @@ class qtype_random extends question_type {
     /**
      * Load the definition of another question picked randomly by this question.
      * @param object $questiondata the data defining a random question.
-     * @param array $excludedquestions of question ids. We will no pick any question whose id is in this list.
-     * @param bool $allowshuffle if false, then any shuffle option on the selected quetsion is disabled.
+     * @param array $excludedquestions of question ids. We will no pick any
+     *      question whose id is in this list.
+     * @param bool $allowshuffle if false, then any shuffle option on the
+     *      selected quetsion is disabled.
      * @return question_definition|null the definition of the question that was
      *      selected, or null if no suitable question could be found.
      */
