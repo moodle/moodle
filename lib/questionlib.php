@@ -389,7 +389,7 @@ function question_delete_question($questionid) {
     if ($children = $DB->get_records('question', array('parent' => $questionid), '', 'id,qtype')) {
         foreach ($children as $child) {
             if ($child->id != $questionid) {
-                delete_question($child->id);
+                question_delete_question($child->id);
             }
         }
     }
@@ -428,7 +428,7 @@ function question_delete_course($course, $feedback=true) {
             //deleting questions
             if ($questions = $DB->get_records('question', array('category' => $category->id), '', 'id,qtype')) {
                 foreach ($questions as $question) {
-                    delete_question($question->id);
+                    question_delete_question($question->id);
                 }
                 $DB->delete_records("question", array("category"=>$category->id));
             }
@@ -477,7 +477,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
 
                     // Try to delete each question.
                     foreach ($questions as $question) {
-                        delete_question($question->id);
+                        question_delete_question($question->id);
                     }
 
                     // Check to see if there were any questions that were kept because they are
@@ -586,7 +586,7 @@ function question_delete_activity($cm, $feedback=true) {
             //deleting questions
             if ($questions = $DB->get_records('question', array('category' => $category->id), '', 'id,qtype')) {
                 foreach ($questions as $question) {
-                    delete_question($question->id);
+                    question_delete_question($question->id);
                 }
                 $DB->delete_records("question", array("category"=>$category->id));
             }
