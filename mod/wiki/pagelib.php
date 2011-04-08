@@ -155,6 +155,7 @@ abstract class page_wiki {
      */
     protected function setup_tabs($options = array()) {
         global $CFG, $PAGE;
+        $groupmode = groups_get_activity_groupmode($PAGE->cm);
 
         if (empty($CFG->usecomments) || !has_capability('mod/wiki:viewcomment', $PAGE->context)){
             unset($this->tabs['comments']);
@@ -162,6 +163,19 @@ abstract class page_wiki {
 
         if (!has_capability('mod/wiki:editpage', $PAGE->context)){
             unset($this->tabs['edit']);
+        }
+
+        if ($groupmode and $groupmode == VISIBLEGROUPS) {
+            $currentgroup = groups_get_activity_group($PAGE->cm);
+            $manage = has_capability('mod/wiki:managewiki', $PAGE->cm->context);
+            $edit = has_capability('mod/wiki:editpage', $PAGE->context);
+            if (!$manage and !($edit and groups_is_member($currentgroup))) { 
+                unset($this->tabs['edit']);
+            }
+        } else {
+            if (!has_capability('mod/wiki:editpage', $PAGE->context)) {
+                unset($this->tabs['edit']);
+            }
         }
 
 

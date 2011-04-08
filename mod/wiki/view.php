@@ -189,6 +189,19 @@ if ($id) {
 
     // Getting subwiki instance. If it does not exists, redirect to create page
     if (!$subwiki = wiki_get_subwiki_by_group($wiki->id, $gid, $uid)) {
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        $modeanduser = $wiki->wikimode == 'individual' && $uid != $USER->id;
+        $modeandgroupmember = $wiki->wikimode == 'collaborative' && !groups_is_member($gid);
+
+        $manage = has_capability('mod/wiki:managewiki', $context);
+        $edit = has_capability('mod/wiki:editpage', $context);
+        $manageandedit = $manage && $edit;
+
+        if ($groupmode == VISIBLEGROUPS and ($modeanduser || $modeandgroupmember) and !$manageandedit) {
+            print_error('nocontent','wiki');
+        }
+
         $params = array('wid' => $wiki->id, 'gid' => $gid, 'uid' => $uid, 'title' => $title);
         $url = new moodle_url('/mod/wiki/create.php', $params);
         redirect($url);
