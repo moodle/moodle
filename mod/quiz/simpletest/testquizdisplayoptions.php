@@ -54,7 +54,7 @@ class mod_quiz_display_options_test extends UnitTestCase {
 
         $this->assertEqual(true, $options->attempt);
         $this->assertEqual(mod_quiz_display_options::VISIBLE, $options->correctness);
-        $this->assertEqual(mod_quiz_display_options::HIDDEN, $options->marks);
+        $this->assertEqual(mod_quiz_display_options::MAX_ONLY, $options->marks);
         $this->assertEqual(2, $options->markdp);
 
         $quiz->questiondecimalpoints = 5;
