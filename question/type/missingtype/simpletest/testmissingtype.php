@@ -104,9 +104,12 @@ class qtype_missing_test extends UnitTestCase {
 
         $output = $qa->render(new question_display_options(), '1');
 
-        $this->assertPattern('/' . preg_quote($qa->get_question()->questiontext, '/') . '/', $output);
-        $this->assertPattern('/' . preg_quote(get_string('missingqtypewarning', 'qtype_missingtype')) . '/', $output);
-        $this->assert(new ContainsTagWithAttribute('div', 'class', 'warning missingqtypewarning'), $output);
+        $this->assertPattern('/' .
+                preg_quote($qa->get_question()->questiontext, '/') . '/', $output);
+        $this->assertPattern('/' .
+                preg_quote(get_string('missingqtypewarning', 'qtype_missingtype')) . '/', $output);
+        $this->assert(new ContainsTagWithAttribute(
+                'div', 'class', 'warning missingqtypewarning'), $output);
     }
 
     public function test_get_question_summary() {

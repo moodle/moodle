@@ -39,7 +39,8 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_missingtype_question extends question_definition implements question_automatically_gradable {
+class qtype_missingtype_question extends question_definition
+        implements question_automatically_gradable {
     public function get_expected_data() {
         return array();
     }
@@ -77,11 +78,13 @@ class qtype_missingtype_question extends question_definition implements question
     }
 
     public function start_attempt(question_attempt_step $step) {
-        throw new coding_exception('This question is of a type that is not installed on your system. No processing is possible.');
+        throw new coding_exception('This question is of a type that is not installed ' .
+                'on your system. No processing is possible.');
     }
 
     public function grade_response(array $response) {
-        throw new coding_exception('This question is of a type that is not installed on your system. No processing is possible.');
+        throw new coding_exception('This question is of a type that is not installed ' .
+                'on your system. No processing is possible.');
     }
 
     public function get_hint($hintnumber, question_attempt $qa) {

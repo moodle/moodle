@@ -56,7 +56,7 @@ class qtype_missingtype_edit_form extends question_edit_form {
             $answers = $question->options->answers;
             $default_values = array();
             $key = 0;
-            foreach ($answers as $answer){
+            foreach ($answers as $answer) {
                 $default_values['answer['.$key.']'] = $answer->answer;
                 $default_values['fraction['.$key.']'] = $answer->fraction;
                 $default_values['feedback['.$key.']'] = $answer->feedback;
