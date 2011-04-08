@@ -37,7 +37,8 @@ defined('MOODLE_INTERNAL') || die();
 class qtype_multichoice extends question_type {
     public function get_question_options($question) {
         global $DB, $OUTPUT;
-        $question->options = $DB->get_record('question_multichoice', array('question' => $question->id), '*', MUST_EXIST);
+        $question->options = $DB->get_record('question_multichoice',
+                array('question' => $question->id), '*', MUST_EXIST);
         parent::get_question_options($question);
     }
 
@@ -108,7 +109,7 @@ class qtype_multichoice extends question_type {
 
         // Delete any left over old answer records.
         $fs = get_file_storage();
-        foreach($oldanswers as $oldanswer) {
+        foreach ($oldanswers as $oldanswer) {
             $fs->delete_area_files($context->id, 'question', 'answerfeedback', $oldanswer->id);
             $DB->delete_records('question_answers', array('id' => $oldanswer->id));
         }
@@ -138,13 +139,15 @@ class qtype_multichoice extends question_type {
         /// Perform sanity checks on fractional grades
         if ($options->single) {
             if ($maxfraction != 1) {
-                $result->noticeyesno = get_string('fractionsnomax', 'qtype_multichoice', $maxfraction * 100);
+                $result->noticeyesno = get_string('fractionsnomax', 'qtype_multichoice',
+                        $maxfraction * 100);
                 return $result;
             }
         } else {
             $totalfraction = round($totalfraction, 2);
             if ($totalfraction != 1) {
-                $result->noticeyesno = get_string('fractionsaddwrong', 'qtype_multichoice', $totalfraction * 100);
+                $result->noticeyesno = get_string('fractionsaddwrong', 'qtype_multichoice',
+                        $totalfraction * 100);
                 return $result;
             }
         }
@@ -225,7 +228,8 @@ class qtype_multichoice extends question_type {
     public static function get_numbering_styles() {
         $styles = array();
         foreach (array('abc', 'ABCD', '123', 'iii', 'IIII', 'none') as $numberingoption) {
-            $styles[$numberingoption] = get_string('answernumbering' . $numberingoption, 'qtype_multichoice');
+            $styles[$numberingoption] =
+                    get_string('answernumbering' . $numberingoption, 'qtype_multichoice');
         }
         return $styles;
     }
@@ -249,8 +253,11 @@ class qtype_multichoice extends question_type {
 
         parent::delete_files($questionid, $contextid);
         $this->delete_files_in_answers($questionid, $contextid, true);
-        $fs->delete_area_files($contextid, 'qtype_multichoice', 'correctfeedback', $questionid);
-        $fs->delete_area_files($contextid, 'qtype_multichoice', 'partiallycorrectfeedback', $questionid);
-        $fs->delete_area_files($contextid, 'qtype_multichoice', 'incorrectfeedback', $questionid);
+        $fs->delete_area_files($contextid,
+                'qtype_multichoice', 'correctfeedback', $questionid);
+        $fs->delete_area_files($contextid,
+                'qtype_multichoice', 'partiallycorrectfeedback', $questionid);
+        $fs->delete_area_files($contextid,
+                'qtype_multichoice', 'incorrectfeedback', $questionid);
     }
 }

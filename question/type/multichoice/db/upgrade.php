@@ -69,27 +69,30 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
 
     if ($oldversion < 2009021801) {
 
-    /// Define field correctfeedbackformat to be added to question_multichoice
+        // Define field correctfeedbackformat to be added to question_multichoice
         $table = new xmldb_table('question_multichoice');
-        $field = new xmldb_field('correctfeedbackformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'correctfeedback');
+        $field = new xmldb_field('correctfeedbackformat', XMLDB_TYPE_INTEGER, '2', null,
+                XMLDB_NOTNULL, null, '0', 'correctfeedback');
 
-    /// Conditionally launch add field correctfeedbackformat
+        // Conditionally launch add field correctfeedbackformat
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-    /// Define field partiallycorrectfeedbackformat to be added to question_multichoice
-        $field = new xmldb_field('partiallycorrectfeedbackformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'partiallycorrectfeedback');
+        // Define field partiallycorrectfeedbackformat to be added to question_multichoice
+        $field = new xmldb_field('partiallycorrectfeedbackformat', XMLDB_TYPE_INTEGER, '2', null,
+                XMLDB_NOTNULL, null, '0', 'partiallycorrectfeedback');
 
-    /// Conditionally launch add field partiallycorrectfeedbackformat
+        // Conditionally launch add field partiallycorrectfeedbackformat
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-    /// Define field incorrectfeedbackformat to be added to question_multichoice
-        $field = new xmldb_field('incorrectfeedbackformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'incorrectfeedback');
+        // Define field incorrectfeedbackformat to be added to question_multichoice
+        $field = new xmldb_field('incorrectfeedbackformat', XMLDB_TYPE_INTEGER, '2', null,
+                XMLDB_NOTNULL, null, '0', 'incorrectfeedback');
 
-    /// Conditionally launch add field incorrectfeedbackformat
+        // Conditionally launch add field incorrectfeedbackformat
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -103,12 +106,16 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
                 FROM {question_multichoice} qm
                 JOIN {question} q ON qm.question = q.id');
         foreach ($rs as $record) {
-            if ($CFG->texteditors !== 'textarea' && $record->oldquestiontextformat == FORMAT_MOODLE) {
-                $record->correctfeedback = text_to_html($record->correctfeedback, false, false, true);
+            if ($CFG->texteditors !== 'textarea' &&
+                    $record->oldquestiontextformat == FORMAT_MOODLE) {
+                $record->correctfeedback = text_to_html(
+                        $record->correctfeedback, false, false, true);
                 $record->correctfeedbackformat = FORMAT_HTML;
-                $record->partiallycorrectfeedback = text_to_html($record->partiallycorrectfeedback, false, false, true);
+                $record->partiallycorrectfeedback = text_to_html(
+                        $record->partiallycorrectfeedback, false, false, true);
                 $record->partiallycorrectfeedbackformat = FORMAT_HTML;
-                $record->incorrectfeedback = text_to_html($record->incorrectfeedback, false, false, true);
+                $record->incorrectfeedback = text_to_html(
+                        $record->incorrectfeedback, false, false, true);
                 $record->incorrectfeedbackformat = FORMAT_HTML;
             } else {
                 $record->correctfeedbackformat = $record->oldquestiontextformat;
@@ -119,7 +126,7 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
         }
         $rs->close();
 
-    /// multichoice savepoint reached
+        // multichoice savepoint reached
         upgrade_plugin_savepoint(true, 2009021801, 'qtype', 'multichoice');
     }
 
@@ -130,7 +137,8 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
 
         // Define field shownumcorrect to be added to question_multichoice
         $table = new xmldb_table('question_multichoice');
-        $field = new xmldb_field('shownumcorrect', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'answernumbering');
+        $field = new xmldb_field('shownumcorrect', XMLDB_TYPE_INTEGER, '2', null,
+                XMLDB_NOTNULL, null, '0', 'answernumbering');
 
         // Launch add field shownumcorrect
         if (!$dbman->field_exists($table, $field)) {

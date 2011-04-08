@@ -189,7 +189,8 @@ class qtype_multichoice_multi_question_test extends UnitTestCase {
         $this->assertEqual(array(0.5, question_state::$gradedpartial),
                 $question->grade_response(array('choice0' => '1')));
         $this->assertEqual(array(0, question_state::$gradedwrong),
-                $question->grade_response(array('choice0' => '1', 'choice1' => '1', 'choice2' => '1')));
+                $question->grade_response(
+                        array('choice0' => '1', 'choice1' => '1', 'choice2' => '1')));
         $this->assertEqual(array(0, question_state::$gradedwrong),
                 $question->grade_response(array('choice1' => '1')));
     }

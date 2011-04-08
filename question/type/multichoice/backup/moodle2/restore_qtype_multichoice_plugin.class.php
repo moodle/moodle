@@ -47,9 +47,9 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
 
         // Add own qtype stuff
         $elename = 'multichoice';
-        $elepath = $this->get_pathfor('/multichoice'); // we used get_recommended_name() so this works
+        // we used get_recommended_name() so this works
+        $elepath = $this->get_pathfor('/multichoice');
         $paths[] = new restore_path_element($elename, $elepath);
-
 
         return $paths; // And we return the interesting paths
     }
@@ -66,9 +66,10 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
         // Detect if the question is created or mapped
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
-        $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
+        $questioncreated = (bool) $this->get_mappingid('question_created', $oldquestionid);
 
-        // If the question has been created by restore, we need to create its question_multichoice too
+        // If the question has been created by restore, we need to create its
+        // question_multichoice too
         if ($questioncreated) {
             // Adjust some columns
             $data->question = $newquestionid;
@@ -82,8 +83,6 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
             $newitemid = $DB->insert_record('question_multichoice', $data);
             // Create mapping (needed for decoding links)
             $this->set_mapping('question_multichoice', $oldid, $newitemid);
-        } else {
-            // Nothing to remap if the question already existed
         }
     }
 
@@ -135,7 +134,8 @@ class restore_qtype_multichoice_plugin extends restore_qtype_plugin {
         $contents = array();
 
         $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
-        $contents[] = new restore_decode_content('question_multichoice', $fields, 'question_multichoice');
+        $contents[] = new restore_decode_content('question_multichoice',
+                $fields, 'question_multichoice');
 
         return $contents;
     }

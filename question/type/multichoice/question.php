@@ -117,7 +117,8 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
             return $this->check_hint_file_access($qa, $options, $args);
 
         } else {
-            return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
+            return parent::check_file_access($qa, $options, $component, $filearea,
+                    $args, $forcedownload);
         }
     }
 }
@@ -348,7 +349,8 @@ class qtype_multichoice_multi_question extends qtype_multichoice_base {
     }
 
     /**
-     * @param array $response responses, as returned by {@link question_attempt_step::get_qt_data()}.
+     * @param array $response responses, as returned by
+     *      {@link question_attempt_step::get_qt_data()}.
      * @return int the number of choices that were selected. in this response.
      */
     public function get_num_selected_choices(array $response) {
@@ -397,7 +399,8 @@ class qtype_multichoice_multi_question extends qtype_multichoice_base {
      * more choices than the number of right choices. This avoids giving the game away.
      * @param question_hint_with_parts $hint a hint.
      */
-    protected function disable_hint_settings_when_too_many_selected(question_hint_with_parts $hint) {
+    protected function disable_hint_settings_when_too_many_selected(
+            question_hint_with_parts $hint) {
         $hint->clearwrong = false;
     }
 
