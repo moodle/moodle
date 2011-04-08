@@ -79,7 +79,8 @@ class qtype_shortanswer_question extends question_graded_by_strategy
     }
 
     public function compare_response_with_answer(array $response, question_answer $answer) {
-        return self::compare_string_with_wildcard($response['answer'], $answer->answer, !$this->usecase);
+        return self::compare_string_with_wildcard(
+                $response['answer'], $answer->answer, !$this->usecase);
     }
 
     public static function compare_string_with_wildcard($string, $pattern, $ignorecase) {
@@ -112,7 +113,8 @@ class qtype_shortanswer_question extends question_graded_by_strategy
             return $this->check_hint_file_access($qa, $options, $args);
 
         } else {
-            return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
+            return parent::check_file_access($qa, $options, $component, $filearea,
+                    $args, $forcedownload);
         }
     }
 }

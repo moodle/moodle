@@ -37,8 +37,12 @@ require_once($CFG->dirroot . '/question/type/shortanswer/questiontype.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_shortanswer_test extends UnitTestCase {
-    public static $includecoverage = array('question/type/questiontype.php', 'question/type/shortanswer/questiontype.php');
-    var $qtype;
+    public static $includecoverage = array(
+        'question/type/questiontype.php',
+        'question/type/shortanswer/questiontype.php',
+    );
+
+    protected $qtype;
 
     public function setUp() {
         $this->qtype = new qtype_shortanswer();

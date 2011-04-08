@@ -41,9 +41,11 @@ class qtype_shortanswer_edit_form extends question_edit_form {
             get_string('caseno', 'qtype_shortanswer'),
             get_string('caseyes', 'qtype_shortanswer')
         );
-        $mform->addElement('select', 'usecase', get_string('casesensitive', 'qtype_shortanswer'), $menu);
+        $mform->addElement('select', 'usecase',
+                get_string('casesensitive', 'qtype_shortanswer'), $menu);
 
-        $mform->addElement('static', 'answersinstruct', get_string('correctanswers', 'qtype_shortanswer'),
+        $mform->addElement('static', 'answersinstruct',
+                get_string('correctanswers', 'qtype_shortanswer'),
                 get_string('filloutoneanswer', 'qtype_shortanswer'));
         $mform->closeHeaderBefore('answersinstruct');
 
@@ -69,17 +71,18 @@ class qtype_shortanswer_edit_form extends question_edit_form {
         $maxgrade = false;
         foreach ($answers as $key => $answer) {
             $trimmedanswer = trim($answer);
-            if ($trimmedanswer !== ''){
+            if ($trimmedanswer !== '') {
                 $answercount++;
                 if ($data['fraction'][$key] == 1) {
                     $maxgrade = true;
                 }
-            } else if ($data['fraction'][$key] != 0 || !html_is_blank($data['feedback'][$key]['text'])) {
+            } else if ($data['fraction'][$key] != 0 ||
+                    !html_is_blank($data['feedback'][$key]['text'])) {
                 $errors["answer[$key]"] = get_string('answermustbegiven', 'qtype_shortanswer');
                 $answercount++;
             }
         }
-        if ($answercount==0){
+        if ($answercount==0) {
             $errors['answer[0]'] = get_string('notenoughanswers', 'qtype_shortanswer', 1);
         }
         if ($maxgrade == false) {

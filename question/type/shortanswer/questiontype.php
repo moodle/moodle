@@ -109,7 +109,7 @@ class qtype_shortanswer extends question_type {
 
         // Delete any left over old answer records.
         $fs = get_file_storage();
-        foreach($oldanswers as $oldanswer) {
+        foreach ($oldanswers as $oldanswer) {
             $fs->delete_area_files($context->id, 'question', 'answerfeedback', $oldanswer->id);
             $DB->delete_records('question_answers', array('id' => $oldanswer->id));
         }

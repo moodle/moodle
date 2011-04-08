@@ -40,44 +40,72 @@ require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 class qtype_shortanswer_question_test extends UnitTestCase {
     public function test_compare_string_with_wildcard() {
         // Test case sensitive literal matches.
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('Frog', 'Frog', false));
-        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard('Frog', 'frog', false));
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('   Frog   ', 'Frog', false));
-        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard('Frogs', 'Frog', false));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                'Frog', 'Frog', false));
+        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard(
+                'Frog', 'frog', false));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                '   Frog   ', 'Frog', false));
+        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard(
+                'Frogs', 'Frog', false));
 
         // Test case insensitive literal matches.
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('Frog', 'frog', true));
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('   FROG   ', 'Frog', true));
-        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard('Frogs', 'Frog', true));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                'Frog', 'frog', true));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                '   FROG   ', 'Frog', true));
+        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard(
+                'Frogs', 'Frog', true));
 
         // Test case sensitive wildcard matches.
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('Frog', 'F*og', false));
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('Fog', 'F*og', false));
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('   Fat dog   ', 'F*og', false));
-        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard('Frogs', 'F*og', false));
-        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard('Fg', 'F*og', false));
-        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard('frog', 'F*og', false));
-        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard('   fat dog   ', 'F*og', false));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                'Frog', 'F*og', false));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                'Fog', 'F*og', false));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                '   Fat dog   ', 'F*og', false));
+        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard(
+                'Frogs', 'F*og', false));
+        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard(
+                'Fg', 'F*og', false));
+        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard(
+                'frog', 'F*og', false));
+        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard(
+                '   fat dog   ', 'F*og', false));
 
         // Test case insensitive wildcard matches.
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('Frog', 'F*og', true));
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('Fog', 'F*og', true));
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('   Fat dog   ', 'F*og', true));
-        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard('Frogs', 'F*og', true));
-        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard('Fg', 'F*og', true));
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('frog', 'F*og', true));
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('   fat dog   ', 'F*og', true));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                'Frog', 'F*og', true));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                'Fog', 'F*og', true));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                '   Fat dog   ', 'F*og', true));
+        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard(
+                'Frogs', 'F*og', true));
+        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard(
+                'Fg', 'F*og', true));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                'frog', 'F*og', true));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                '   fat dog   ', 'F*og', true));
 
         // Test match using regexp special chars.
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('   *   ', '\*', false));
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('*', '\*', false));
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('Frog*toad', 'Frog\*toad', false));
-        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard('a', '[a-z]', false));
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('[a-z]', '[a-z]', false));
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('\{}/', '\{}/', true));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                '   *   ', '\*', false));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                '*', '\*', false));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                'Frog*toad', 'Frog\*toad', false));
+        $this->assertFalse(qtype_shortanswer_question::compare_string_with_wildcard(
+                'a', '[a-z]', false));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                '[a-z]', '[a-z]', false));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                '\{}/', '\{}/', true));
 
         // See http://moodle.org/mod/forum/discuss.php?d=120557
-        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard('ITÁLIE', 'Itálie', true));
+        $this->assertTrue(qtype_shortanswer_question::compare_string_with_wildcard(
+                'ITÁLIE', 'Itálie', true));
     }
 
     public function test_is_complete_response() {

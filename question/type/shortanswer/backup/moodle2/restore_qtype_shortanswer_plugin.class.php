@@ -47,9 +47,9 @@ class restore_qtype_shortanswer_plugin extends restore_qtype_plugin {
 
         // Add own qtype stuff
         $elename = 'shortanswer';
-        $elepath = $this->get_pathfor('/shortanswer'); // we used get_recommended_name() so this works
+        // we used get_recommended_name() so this works
+        $elepath = $this->get_pathfor('/shortanswer');
         $paths[] = new restore_path_element($elename, $elepath);
-
 
         return $paths; // And we return the interesting paths
     }
@@ -68,7 +68,8 @@ class restore_qtype_shortanswer_plugin extends restore_qtype_plugin {
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
-        // If the question has been created by restore, we need to create its question_shortanswer too
+        // If the question has been created by restore, we need to create its
+        // question_shortanswer too
         if ($questioncreated) {
             // Adjust some columns
             $data->question = $newquestionid;
@@ -82,8 +83,6 @@ class restore_qtype_shortanswer_plugin extends restore_qtype_plugin {
             $newitemid = $DB->insert_record('question_shortanswer', $data);
             // Create mapping
             $this->set_mapping('question_shortanswer', $oldid, $newitemid);
-        } else {
-            // Nothing to remap if the question already existed
         }
     }
 }
