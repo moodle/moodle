@@ -7633,12 +7633,25 @@ function get_selected_theme_for_device_type($themes, $device_type = null){
     if(!empty($themes)){
         foreach($themes as $theme){
             if($theme->device == $device_type){
-                return $theme->themename;
+                $selected_theme = $theme->themename;
             }
         }
     }
 
-    return false;
+    if (!isset($selected_theme)) {
+        return false;
+    }
+
+    //prevent problems if a user installs themes 
+    if (!is_dir($CFG->theme.'/'.$selected_theme)) {
+        if ($device_type == 'default') {
+            return 'standardwhite';
+        } else {
+            return false;
+        }
+    }
+
+    return $selected_theme;
 }
 
 

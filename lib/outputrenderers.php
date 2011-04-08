@@ -369,7 +369,7 @@ class core_renderer extends renderer_base {
             $output .= html_writer::tag('div', get_string('legacythemeinuse'), array('class'=>'legacythemeinuse'));
         }
 
-        $output = $this->theme_switch_links();
+        $output .= $this->theme_switch_links();
 
         if (!empty($CFG->debugpageinfo)) {
             $output .= '<div class="performanceinfo pageinfo">This page is: ' . $this->page->debug_summary() . '</div>';
