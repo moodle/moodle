@@ -173,9 +173,9 @@ class question_type {
     }
 
     /**
-        * If you use extra_question_fields, overload this function to return question id field name
-        *  in case you table use another name for this column
-        */
+     * If you use extra_question_fields, overload this function to return question id field name
+     *  in case you table use another name for this column
+     */
     protected function questionid_column_name() {
         return 'questionid';
     }
@@ -211,10 +211,12 @@ class question_type {
      * @param string $submiturl passed on to the constructor call.
      * @return object an instance of the form definition, or null if one could not be found.
      */
-    public function create_editing_form($submiturl, $question, $category, $contexts, $formeditable) {
+    public function create_editing_form($submiturl, $question, $category,
+            $contexts, $formeditable) {
         global $CFG;
         require_once("{$CFG->dirroot}/question/type/edit_question_form.php");
-        $definition_file = $CFG->dirroot.'/question/type/'.$this->name().'/edit_'.$this->name().'_form.php';
+        $definition_file = $CFG->dirroot . '/question/type/' . $this->name() .
+                '/edit_' . $this->name() . '_form.php';
         if (!(is_readable($definition_file) && is_file($definition_file))) {
             return null;
         }
@@ -257,21 +259,21 @@ class question_type {
         echo $OUTPUT->heading_with_help($heading, $this->name(), $this->plugin_name());
 
         $permissionstrs = array();
-        if (!empty($question->id)){
-            if ($question->formoptions->canedit){
+        if (!empty($question->id)) {
+            if ($question->formoptions->canedit) {
                 $permissionstrs[] = get_string('permissionedit', 'question');
             }
-            if ($question->formoptions->canmove){
+            if ($question->formoptions->canmove) {
                 $permissionstrs[] = get_string('permissionmove', 'question');
             }
-            if ($question->formoptions->cansaveasnew){
+            if ($question->formoptions->cansaveasnew) {
                 $permissionstrs[] = get_string('permissionsaveasnew', 'question');
             }
         }
-        if (!$question->formoptions->movecontext  && count($permissionstrs)){
+        if (!$question->formoptions->movecontext  && count($permissionstrs)) {
             echo $OUTPUT->heading(get_string('permissionto', 'question'), 3);
             $html = '<ul>';
-            foreach ($permissionstrs as $permissionstr){
+            foreach ($permissionstrs as $permissionstr) {
                 $html .= '<li>'.$permissionstr.'</li>';
             }
             $html .= '</ul>';
@@ -281,11 +283,12 @@ class question_type {
     }
 
     /**
-     * Method called by display_question_editing_page and by question.php to get heading for breadcrumbs.
+     * Method called by display_question_editing_page and by question.php to get
+     * heading for breadcrumbs.
      *
      * @return string the heading
      */
-    public function get_heading($adding = false){
+    public function get_heading($adding = false) {
         if ($adding) {
             $action = 'adding';
         } else {
@@ -306,29 +309,32 @@ class question_type {
     }
 
     /**
-    * Saves (creates or updates) a question.
-    *
-    * Given some question info and some data about the answers
-    * this function parses, organises and saves the question
-    * It is used by {@link question.php} when saving new data from
-    * a form, and also by {@link import.php} when importing questions
-    * This function in turn calls {@link save_question_options}
-    * to save question-type specific data.
-    *
-    * Whether we are saving a new question or updating an existing one can be
-    * determined by testing !empty($question->id). If it is not empty, we are updating.
-    *
-    * The question will be saved in category $form->category.
-    *
-    * @param object $question the question object which should be updated. For a new question will be mostly empty.
-    * @param object $form the object containing the information to save, as if from the question editing form.
-    * @param object $course not really used any more.
-    * @return object On success, return the new question object. On failure,
-    *       return an object as follows. If the error object has an errors field,
-    *       display that as an error message. Otherwise, the editing form will be
-    *       redisplayed with validation errors, from validation_errors field, which
-    *       is itself an object, shown next to the form fields. (I don't think this is accurate any more.)
-    */
+     * Saves (creates or updates) a question.
+     *
+     * Given some question info and some data about the answers
+     * this function parses, organises and saves the question
+     * It is used by {@link question.php} when saving new data from
+     * a form, and also by {@link import.php} when importing questions
+     * This function in turn calls {@link save_question_options}
+     * to save question-type specific data.
+     *
+     * Whether we are saving a new question or updating an existing one can be
+     * determined by testing !empty($question->id). If it is not empty, we are updating.
+     *
+     * The question will be saved in category $form->category.
+     *
+     * @param object $question the question object which should be updated. For a
+     *      new question will be mostly empty.
+     * @param object $form the object containing the information to save, as if
+     *      from the question editing form.
+     * @param object $course not really used any more.
+     * @return object On success, return the new question object. On failure,
+     *       return an object as follows. If the error object has an errors field,
+     *       display that as an error message. Otherwise, the editing form will be
+     *       redisplayed with validation errors, from validation_errors field, which
+     *       is itself an object, shown next to the form fields. (I don't think this
+     *       is accurate any more.)
+     */
     public function save_question($question, $form) {
         global $USER, $DB, $OUTPUT;
 
@@ -349,14 +355,16 @@ class question_type {
         } else {
             $question->questiontext = trim($form->questiontext['text']);;
         }
-        $question->questiontextformat = !empty($form->questiontext['format'])?$form->questiontext['format']:0;
+        $question->questiontextformat = !empty($form->questiontext['format']) ?
+                $form->questiontext['format'] : 0;
 
         if (empty($form->generalfeedback['text'])) {
             $question->generalfeedback = '';
         } else {
             $question->generalfeedback = trim($form->generalfeedback['text']);
         }
-        $question->generalfeedbackformat = !empty($form->generalfeedback['format'])?$form->generalfeedback['format']:0;
+        $question->generalfeedbackformat = !empty($form->generalfeedback['format']) ?
+                $form->generalfeedback['format'] : 0;
 
         if (empty($question->name)) {
             $question->name = shorten_text(strip_tags($form->questiontext['text']), 15);
@@ -389,10 +397,15 @@ class question_type {
         $question->timemodified = time();
 
         if (!empty($question->questiontext) && !empty($form->questiontext['itemid'])) {
-            $question->questiontext = file_save_draft_area_files($form->questiontext['itemid'], $context->id, 'question', 'questiontext', (int)$question->id, $this->fileoptions, $question->questiontext);
+            $question->questiontext = file_save_draft_area_files($form->questiontext['itemid'],
+                    $context->id, 'question', 'questiontext', (int)$question->id,
+                    $this->fileoptions, $question->questiontext);
         }
         if (!empty($question->generalfeedback) && !empty($form->generalfeedback['itemid'])) {
-            $question->generalfeedback = file_save_draft_area_files($form->generalfeedback['itemid'], $context->id, 'question', 'generalfeedback', (int)$question->id, $this->fileoptions, $question->generalfeedback);
+            $question->generalfeedback = file_save_draft_area_files(
+                    $form->generalfeedback['itemid'], $context->id,
+                    'question', 'generalfeedback', (int)$question->id,
+                    $this->fileoptions, $question->generalfeedback);
         }
         $DB->update_record('question', $question);
 
@@ -416,11 +429,13 @@ class question_type {
         }
 
         if (!empty($result->noticeyesno)) {
-            throw new coding_exception('$result->noticeyesno no longer supported in save_question.');
+            throw new coding_exception(
+                    '$result->noticeyesno no longer supported in save_question.');
         }
 
         // Give the question a unique version stamp determined by question_hash()
-        $DB->set_field('question', 'version', question_hash($question), array('id' => $question->id));
+        $DB->set_field('question', 'version', question_hash($question),
+                array('id' => $question->id));
 
         return $question;
     }
@@ -435,20 +450,21 @@ class question_type {
      */
     public function save_question_options($question) {
         global $DB;
-        $extra_question_fields = $this->extra_question_fields();
+        $extraquestionfields = $this->extra_question_fields();
 
-        if (is_array($extra_question_fields)) {
-            $question_extension_table = array_shift($extra_question_fields);
+        if (is_array($extraquestionfields)) {
+            $question_extension_table = array_shift($extraquestionfields);
 
             $function = 'update_record';
             $questionidcolname = $this->questionid_column_name();
-            $options = $DB->get_record($question_extension_table, array($questionidcolname => $question->id));
+            $options = $DB->get_record($question_extension_table,
+                    array($questionidcolname => $question->id));
             if (!$options) {
                 $function = 'insert_record';
                 $options = new stdClass();
                 $options->$questionidcolname = $question->id;
             }
-            foreach ($extra_question_fields as $field) {
+            foreach ($extraquestionfields as $field) {
                 if (!isset($question->$field)) {
                     $result = new stdClass();
                     $result->error = "No data for field $field when saving " .
@@ -466,7 +482,7 @@ class question_type {
             }
         }
 
-        $extra_answer_fields = $this->extra_answer_fields();
+        $extraanswerfields = $this->extra_answer_fields();
         // TODO save the answers, with any extra data.
     }
 
@@ -506,7 +522,8 @@ class question_type {
                 $shownumcorrect = !empty($formdata->hintshownumcorrect[$i]);
             }
 
-            if (empty($formdata->hint[$i]['text']) && empty($clearwrong) && empty($shownumcorrect)) {
+            if (empty($formdata->hint[$i]['text']) && empty($clearwrong) &&
+                    empty($shownumcorrect)) {
                 continue;
             }
 
@@ -545,13 +562,17 @@ class question_type {
      * @param object $context the context the quetsion is being saved into.
      * @param bool $withparts whether $options->shownumcorrect should be set.
      */
-    protected function save_combined_feedback_helper($options, $formdata, $context, $withparts = false) {
+    protected function save_combined_feedback_helper($options, $formdata,
+            $context, $withparts = false) {
         $options->correctfeedback = $this->import_or_save_files($formdata->correctfeedback,
                 $context, 'question', 'correctfeedback', $formdata->id);
         $options->correctfeedbackformat = $formdata->correctfeedback['format'];
-        $options->partiallycorrectfeedback = $this->import_or_save_files($formdata->partiallycorrectfeedback,
+
+        $options->partiallycorrectfeedback = $this->import_or_save_files(
+                $formdata->partiallycorrectfeedback,
                 $context, 'question', 'partiallycorrectfeedback', $formdata->id);
         $options->partiallycorrectfeedbackformat = $formdata->partiallycorrectfeedback['format'];
+
         $options->incorrectfeedback = $this->import_or_save_files($formdata->incorrectfeedback,
                 $context, 'question', 'incorrectfeedback', $formdata->id);
         $options->incorrectfeedbackformat = $formdata->incorrectfeedback['format'];
@@ -582,39 +603,44 @@ class question_type {
             $question->options = new stdClass();
         }
 
-        $extra_question_fields = $this->extra_question_fields();
-        if (is_array($extra_question_fields)) {
-            $question_extension_table = array_shift($extra_question_fields);
-            $extra_data = $DB->get_record($question_extension_table, array($this->questionid_column_name() => $question->id), implode(', ', $extra_question_fields));
+        $extraquestionfields = $this->extra_question_fields();
+        if (is_array($extraquestionfields)) {
+            $question_extension_table = array_shift($extraquestionfields);
+            $extra_data = $DB->get_record($question_extension_table,
+                    array($this->questionid_column_name() => $question->id),
+                    implode(', ', $extraquestionfields));
             if ($extra_data) {
-                foreach ($extra_question_fields as $field) {
+                foreach ($extraquestionfields as $field) {
                     $question->options->$field = $extra_data->$field;
                 }
             } else {
-                echo $OUTPUT->notification("Failed to load question options from the table $question_extension_table for questionid " .
-                        $question->id);
+                echo $OUTPUT->notification('Failed to load question options from the table ' .
+                        $question_extension_table . ' for questionid ' . $question->id);
                 return false;
             }
         }
 
-        $extra_answer_fields = $this->extra_answer_fields();
-        if (is_array($extra_answer_fields)) {
-            $answer_extension_table = array_shift($extra_answer_fields);
+        $extraanswerfields = $this->extra_answer_fields();
+        if (is_array($extraanswerfields)) {
+            $answer_extension_table = array_shift($extraanswerfields);
             $question->options->answers = $DB->get_records_sql("
-                    SELECT qa.*, qax." . implode(', qax.', $extra_answer_fields) . "
+                    SELECT qa.*, qax." . implode(', qax.', $extraanswerfields) . "
                     FROM {question_answers} qa, {$answer_extension_table} qax
                     WHERE qa.questionid = ? AND qax.answerid = qa.id", array($question->id));
             if (!$question->options->answers) {
-                echo $OUTPUT->notification("Failed to load question answers from the table $answer_extension_table for questionid " .
-                        $question->id);
+                echo $OUTPUT->notification('Failed to load question answers from the table ' .
+                        $answer_extension_table . 'for questionid ' . $question->id);
                 return false;
             }
         } else {
-            // Don't check for success or failure because some question types do not use the answers table.
-            $question->options->answers = $DB->get_records('question_answers', array('question' => $question->id), 'id ASC');
+            // Don't check for success or failure because some question types do
+            // not use the answers table.
+            $question->options->answers = $DB->get_records('question_answers',
+                    array('question' => $question->id), 'id ASC');
         }
 
-        $question->hints = $DB->get_records('question_hints', array('questionid' => $question->id), 'id ASC');
+        $question->hints = $DB->get_records('question_hints',
+                array('questionid' => $question->id), 'id ASC');
 
         return true;
     }
@@ -704,11 +730,13 @@ class question_type {
      * @param object $questiondata the question data loaded from the database.
      * @param bool $withparts whether to set the shownumcorrect field.
      */
-    protected function initialise_combined_feedback(question_definition $question, $questiondata, $withparts = false) {
+    protected function initialise_combined_feedback(question_definition $question,
+            $questiondata, $withparts = false) {
         $question->correctfeedback = $questiondata->options->correctfeedback;
         $question->correctfeedbackformat = $questiondata->options->correctfeedbackformat;
         $question->partiallycorrectfeedback = $questiondata->options->partiallycorrectfeedback;
-        $question->partiallycorrectfeedbackformat = $questiondata->options->partiallycorrectfeedbackformat;
+        $question->partiallycorrectfeedbackformat =
+                $questiondata->options->partiallycorrectfeedbackformat;
         $question->incorrectfeedback = $questiondata->options->incorrectfeedback;
         $question->incorrectfeedbackformat = $questiondata->options->incorrectfeedbackformat;
         if ($withparts) {
@@ -742,18 +770,19 @@ class question_type {
 
         $this->delete_files($questionid, $contextid);
 
-        $extra_question_fields = $this->extra_question_fields();
-        if (is_array($extra_question_fields)) {
-            $question_extension_table = array_shift($extra_question_fields);
+        $extraquestionfields = $this->extra_question_fields();
+        if (is_array($extraquestionfields)) {
+            $question_extension_table = array_shift($extraquestionfields);
             $DB->delete_records($question_extension_table,
                     array($this->questionid_column_name() => $questionid));
         }
 
-        $extra_answer_fields = $this->extra_answer_fields();
-        if (is_array($extra_answer_fields)) {
-            $answer_extension_table = array_shift($extra_answer_fields);
+        $extraanswerfields = $this->extra_answer_fields();
+        if (is_array($extraanswerfields)) {
+            $answer_extension_table = array_shift($extraanswerfields);
             $DB->delete_records_select($answer_extension_table,
-                "answerid IN (SELECT qa.id FROM {question_answers} qa WHERE qa.question = ?)", array($questionid));
+                    'answerid IN (SELECT qa.id FROM {question_answers} qa WHERE qa.question = ?)',
+                    array($questionid));
         }
 
         $DB->delete_records('question_answers', array('question' => $questionid));
@@ -762,18 +791,18 @@ class question_type {
     }
 
     /**
-    * Returns the number of question numbers which are used by the question
-    *
-    * This function returns the number of question numbers to be assigned
-    * to the question. Most question types will have length one; they will be
-    * assigned one number. The 'description' type, however does not use up a
-    * number and so has a length of zero. Other question types may wish to
-    * handle a bundle of questions and hence return a number greater than one.
-    * @return int         The number of question numbers which should be
-    *                         assigned to the question.
-    * @param object $question The question whose length is to be determined.
-    *                         Question type specific information is included.
-    */
+     * Returns the number of question numbers which are used by the question
+     *
+     * This function returns the number of question numbers to be assigned
+     * to the question. Most question types will have length one; they will be
+     * assigned one number. The 'description' type, however does not use up a
+     * number and so has a length of zero. Other question types may wish to
+     * handle a bundle of questions and hence return a number greater than one.
+     * @return int         The number of question numbers which should be
+     *                         assigned to the question.
+     * @param object $question The question whose length is to be determined.
+     *                         Question type specific information is included.
+     */
     public function actual_number_of_questions($question) {
         // By default, each question is given one number
         return 1;
@@ -852,27 +881,27 @@ class question_type {
     }
 
     /**
-    * Returns true if the editing wizard is finished, false otherwise.
-    *
-    * The default implementation returns true, which is suitable for all question-
-    * types that only use one editing form. This function is used in
-    * question.php to decide whether we can regrade any states of the edited
-    * question and redirect to edit.php.
-    *
-    * The dataset dependent question-type, which is extended by the calculated
-    * question-type, overwrites this method because it uses multiple pages (i.e.
-    * a wizard) to set up the question and associated datasets.
-    *
-    * @param object $form  The data submitted by the previous page.
-    *
-    * @return bool      Whether the wizard's last page was submitted or not.
-    */
+     * Returns true if the editing wizard is finished, false otherwise.
+     *
+     * The default implementation returns true, which is suitable for all question-
+     * types that only use one editing form. This function is used in
+     * question.php to decide whether we can regrade any states of the edited
+     * question and redirect to edit.php.
+     *
+     * The dataset dependent question-type, which is extended by the calculated
+     * question-type, overwrites this method because it uses multiple pages (i.e.
+     * a wizard) to set up the question and associated datasets.
+     *
+     * @param object $form  The data submitted by the previous page.
+     *
+     * @return bool      Whether the wizard's last page was submitted or not.
+     */
     public function finished_edit_wizard($form) {
         //In the default case there is only one edit page.
         return true;
     }
 
-/// IMPORT/EXPORT FUNCTIONS /////////////////
+    /// IMPORT/EXPORT FUNCTIONS /////////////////
 
     /*
      * Imports question from the Moodle XML format
@@ -897,7 +926,7 @@ class question_type {
         $qo->qtype = $question_type;
 
         foreach ($extraquestionfields as $field) {
-            $qo->$field = $format->getpath($data, array('#',$field,0,'#'), $qo->$field);
+            $qo->$field = $format->getpath($data, array('#', $field, 0, '#'), $qo->$field);
         }
 
         // run through the answers
@@ -905,7 +934,7 @@ class question_type {
         $a_count = 0;
         $extraasnwersfields = $this->extra_answer_fields();
         if (is_array($extraasnwersfields)) {
-            //TODO import the answers, with any extra data.
+            // TODO import the answers, with any extra data.
         } else {
             foreach ($answers as $answer) {
                 $ans = $format->import_answer($answer);
@@ -943,7 +972,7 @@ class question_type {
 
         $extraasnwersfields = $this->extra_answer_fields();
         if (is_array($extraasnwersfields)) {
-            //TODO export answers with any extra data
+            // TODO export answers with any extra data
         } else {
             foreach ($question->options->answers as $answer) {
                 $percent = 100 * $answer->fraction;
@@ -1003,7 +1032,8 @@ class question_type {
      *      importing, it will be an array with keys 'text', 'format' and 'files'
      * @param object $context the context the question is in.
      * @param string $component indentifies the file area question.
-     * @param string $filearea indentifies the file area questiontext, generalfeedback,answerfeedback.
+     * @param string $filearea indentifies the file area questiontext,
+     *      generalfeedback, answerfeedback, etc.
      * @param int $itemid identifies the file area.
      *
      * @return string the text for this field, after files have been processed.
@@ -1046,7 +1076,8 @@ class question_type {
      * @param bool $answerstoo whether there is an 'answer' question area,
      *      as well as an 'answerfeedback' one. Default false.
      */
-    protected function move_files_in_answers($questionid, $oldcontextid, $newcontextid, $answerstoo = false) {
+    protected function move_files_in_answers($questionid, $oldcontextid,
+            $newcontextid, $answerstoo = false) {
         global $DB;
         $fs = get_file_storage();
 
@@ -1112,9 +1143,9 @@ class question_type {
 
     protected function decode_file($file) {
         switch ($file->encoding) {
-        case 'base64':
-        default:
-            return base64_decode($file->content);
+            case 'base64':
+            default:
+                return base64_decode($file->content);
         }
     }
 }

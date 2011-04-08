@@ -265,7 +265,8 @@ abstract class question_definition {
      *      parts of the question do not need to be cleaned, and student input does.
      * @return string the text formatted for output by format_text.
      */
-    public function format_text($text, $format, $qa, $component, $filearea, $itemid, $clean = false) {
+    public function format_text($text, $format, $qa, $component, $filearea, $itemid,
+            $clean = false) {
         $formatoptions = new stdClass();
         $formatoptions->noclean = !$clean;
         $formatoptions->para = false;
@@ -371,7 +372,8 @@ interface question_manually_gradable {
      * response to the question is complete. That is, whether the question attempt
      * should move to the COMPLETE or INCOMPLETE state.
      *
-     * @param array $response responses, as returned by {@link question_attempt_step::get_qt_data()}.
+     * @param array $response responses, as returned by
+     *      {@link question_attempt_step::get_qt_data()}.
      * @return bool whether this response is a complete answer to this question.
      */
     public function is_complete_response(array $response);
@@ -456,7 +458,8 @@ interface question_automatically_gradable extends question_manually_gradable {
      * has provided enough of an answer for the question to be graded automatically,
      * or whether it must be considered aborted.
      *
-     * @param array $response responses, as returned by {@link question_attempt_step::get_qt_data()}.
+     * @param array $response responses, as returned by
+     *      {@link question_attempt_step::get_qt_data()}.
      * @return bool whether this response can be graded.
      */
     public function is_gradable_response(array $response);
@@ -469,9 +472,11 @@ interface question_automatically_gradable extends question_manually_gradable {
     public function get_validation_error(array $response);
 
     /**
-     * Grade a response to the question, returning a fraction between get_min_fraction() and 1.0,
-     * and the corresponding state CORRECT, PARTIALLY_CORRECT or INCORRECT.
-     * @param array $response responses, as returned by {@link question_attempt_step::get_qt_data()}.
+     * Grade a response to the question, returning a fraction between
+     * get_min_fraction() and 1.0, and the corresponding {@link question_state}
+     * right, partial or wrong.
+     * @param array $response responses, as returned by
+     *      {@link question_attempt_step::get_qt_data()}.
      * @return array (number, integer) the fraction, and the state.
      */
     public function grade_response(array $response);
@@ -602,7 +607,8 @@ abstract class question_graded_automatically extends question_with_responses
     }
 
     public function format_hint(question_hint $hint, question_attempt $qa) {
-        return $this->format_text($hint->hint, $hint->hintformat, $qa, 'question', 'hint', $hint->id);
+        return $this->format_text($hint->hint, $hint->hintformat, $qa,
+                'question', 'hint', $hint->id);
     }
 }
 
@@ -620,7 +626,8 @@ abstract class question_graded_automatically_with_countback
 
     public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
         if ($preferredbehaviour == 'interactive') {
-            return question_engine::make_behaviour('interactivecountback', $qa, $preferredbehaviour);
+            return question_engine::make_behaviour('interactivecountback',
+                    $qa, $preferredbehaviour);
         }
         return question_engine::make_archetypal_behaviour($preferredbehaviour, $qa);
     }
@@ -674,7 +681,8 @@ abstract class question_graded_by_strategy extends question_graded_automatically
     public function grade_response(array $response) {
         $answer = $this->get_matching_answer($response);
         if ($answer) {
-            return array($answer->fraction, question_state::graded_state_for_fraction($answer->fraction));
+            return array($answer->fraction,
+                    question_state::graded_state_for_fraction($answer->fraction));
         } else {
             return array(0, question_state::$gradedwrong);
         }

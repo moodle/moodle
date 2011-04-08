@@ -67,10 +67,12 @@ abstract class question_edit_form extends moodleform {
         $this->question = $question;
         $this->contexts = $contexts;
 
-        $record = $DB->get_record('question_categories', array('id' => $question->category), 'contextid');
+        $record = $DB->get_record('question_categories',
+                array('id' => $question->category), 'contextid');
         $this->context = get_context_instance_by_id($record->contextid);
 
-        $this->editoroptions = array('subdirs' => 1,'maxfiles' => EDITOR_UNLIMITED_FILES, 'context' => $this->context);
+        $this->editoroptions = array('subdirs' => 1, 'maxfiles' => EDITOR_UNLIMITED_FILES,
+                'context' => $this->context);
         $this->fileoptions = array('subdirs' => 1, 'maxfiles' => -1, 'maxbytes' => -1);
 
         $this->category = $category;
@@ -101,38 +103,47 @@ abstract class question_edit_form extends moodleform {
             // Adding question
             $mform->addElement('questioncategory', 'category', get_string('category', 'question'),
                     array('contexts' => $this->contexts->having_cap('moodle/question:add')));
-        } elseif (!($this->question->formoptions->canmove || $this->question->formoptions->cansaveasnew)) {
+        } else if (!($this->question->formoptions->canmove ||
+                $this->question->formoptions->cansaveasnew)) {
             // Editing question with no permission to move from category.
             $mform->addElement('questioncategory', 'category', get_string('category', 'question'),
                     array('contexts' => array($this->categorycontext)));
-        } elseif ($this->question->formoptions->movecontext) {
+        } else if ($this->question->formoptions->movecontext) {
             // Moving question to another context.
-            $mform->addElement('questioncategory', 'categorymoveto', get_string('category', 'question'),
+            $mform->addElement('questioncategory', 'categorymoveto',
+                    get_string('category', 'question'),
                     array('contexts' => $this->contexts->having_cap('moodle/question:add')));
 
         } else {
             // Editing question with permission to move from category or save as new q
             $currentgrp = array();
-            $currentgrp[0] =& $mform->createElement('questioncategory', 'category', get_string('categorycurrent', 'question'),
+            $currentgrp[0] = $mform->createElement('questioncategory', 'category',
+                    get_string('categorycurrent', 'question'),
                     array('contexts' => array($this->categorycontext)));
-            if ($this->question->formoptions->canedit || $this->question->formoptions->cansaveasnew) {
+            if ($this->question->formoptions->canedit ||
+                    $this->question->formoptions->cansaveasnew) {
                 //not move only form
-                $currentgrp[1] =& $mform->createElement('checkbox', 'usecurrentcat', '', get_string('categorycurrentuse', 'question'));
+                $currentgrp[1] = $mform->createElement('checkbox', 'usecurrentcat', '',
+                        get_string('categorycurrentuse', 'question'));
                 $mform->setDefault('usecurrentcat', 1);
             }
             $currentgrp[0]->freeze();
             $currentgrp[0]->setPersistantFreeze(false);
-            $mform->addGroup($currentgrp, 'currentgrp', get_string('categorycurrent', 'question'), null, false);
+            $mform->addGroup($currentgrp, 'currentgrp',
+                    get_string('categorycurrent', 'question'), null, false);
 
-            $mform->addElement('questioncategory', 'categorymoveto', get_string('categorymoveto', 'question'),
+            $mform->addElement('questioncategory', 'categorymoveto',
+                    get_string('categorymoveto', 'question'),
                     array('contexts' => array($this->categorycontext)));
-            if ($this->question->formoptions->canedit || $this->question->formoptions->cansaveasnew) {
+            if ($this->question->formoptions->canedit ||
+                    $this->question->formoptions->cansaveasnew) {
                 //not move only form
                 $mform->disabledIf('categorymoveto', 'usecurrentcat', 'checked');
             }
         }
 
-        $mform->addElement('text', 'name', get_string('questionname', 'question'), array('size' => 50));
+        $mform->addElement('text', 'name', get_string('questionname', 'question'),
+                array('size' => 50));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
@@ -160,21 +171,26 @@ abstract class question_edit_form extends moodleform {
         }
 
         if (!empty($this->question->id)) {
-            $mform->addElement('header', 'createdmodifiedheader', get_string('createdmodifiedheader', 'question'));
+            $mform->addElement('header', 'createdmodifiedheader',
+                    get_string('createdmodifiedheader', 'question'));
             $a = new stdClass();
             if (!empty($this->question->createdby)) {
                 $a->time = userdate($this->question->timecreated);
-                $a->user = fullname($DB->get_record('user', array('id' => $this->question->createdby)));
+                $a->user = fullname($DB->get_record(
+                        'user', array('id' => $this->question->createdby)));
             } else {
                 $a->time = get_string('unknown', 'question');
                 $a->user = get_string('unknown', 'question');
             }
-            $mform->addElement('static', 'created', get_string('created', 'question'), get_string('byandon', 'question', $a));
+            $mform->addElement('static', 'created', get_string('created', 'question'),
+                     get_string('byandon', 'question', $a));
             if (!empty($this->question->modifiedby)) {
                 $a = new stdClass();
                 $a->time = userdate($this->question->timemodified);
-                $a->user = fullname($DB->get_record('user', array('id' => $this->question->modifiedby)));
-                $mform->addElement('static', 'modified', get_string('modified', 'question'), get_string('byandon', 'question', $a));
+                $a->user = fullname($DB->get_record(
+                        'user', array('id' => $this->question->modifiedby)));
+                $mform->addElement('static', 'modified', get_string('modified', 'question'),
+                        get_string('byandon', 'question', $a));
             }
         }
 
@@ -218,25 +234,32 @@ abstract class question_edit_form extends moodleform {
         if (!empty($this->question->id)) {
             //editing / moving question
             if ($this->question->formoptions->movecontext) {
-                $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('moveq', 'question'));
-            } elseif ($this->question->formoptions->canedit || $this->question->formoptions->canmove ||$this->question->formoptions->movecontext) {
-                $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
+                $buttonarray[] = $mform->createElement('submit', 'submitbutton',
+                        get_string('moveq', 'question'));
+            } else if ($this->question->formoptions->canedit ||
+                    $this->question->formoptions->canmove ||
+                    $this->question->formoptions->movecontext) {
+                $buttonarray[] = $mform->createElement('submit', 'submitbutton',
+                        get_string('savechanges'));
             }
             if ($this->question->formoptions->cansaveasnew) {
-                $buttonarray[] = &$mform->createElement('submit', 'makecopy', get_string('makecopy', 'question'));
+                $buttonarray[] = $mform->createElement('submit', 'makecopy',
+                        get_string('makecopy', 'question'));
             }
-            $buttonarray[] = &$mform->createElement('cancel');
+            $buttonarray[] = $mform->createElement('cancel');
         } else {
             // adding new question
-            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('savechanges'));
-            $buttonarray[] = &$mform->createElement('cancel');
+            $buttonarray[] = $mform->createElement('submit', 'submitbutton',
+                    get_string('savechanges'));
+            $buttonarray[] = $mform->createElement('cancel');
         }
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
 
         if ($this->question->formoptions->movecontext) {
             $mform->hardFreezeAllVisibleExcept(array('categorymoveto', 'buttonar'));
-        } else if ((!empty($this->question->id)) && (!($this->question->formoptions->canedit || $this->question->formoptions->cansaveasnew))) {
+        } else if ((!empty($this->question->id)) && (!($this->question->formoptions->canedit ||
+                $this->question->formoptions->cansaveasnew))) {
             $mform->hardFreezeAllVisibleExcept(array('categorymoveto', 'buttonar', 'currentgrp'));
         }
     }
@@ -256,16 +279,20 @@ abstract class question_edit_form extends moodleform {
      * @param $label the label to use for each option.
      * @param $gradeoptions the possible grades for each answer.
      * @param $repeatedoptions reference to array of repeated options to fill
-     * @param $answersoption reference to return the name of $question->options field holding an array of answers
+     * @param $answersoption reference to return the name of $question->options
+     *      field holding an array of answers
      * @return array of form fields.
      */
-    protected function get_per_answer_fields(&$mform, $label, $gradeoptions, &$repeatedoptions, &$answersoption) {
+    protected function get_per_answer_fields(&$mform, $label, $gradeoptions,
+            &$repeatedoptions, &$answersoption) {
         $repeated = array();
         $repeated[] = $mform->createElement('header', 'answerhdr', $label);
-        $repeated[] = $mform->createElement('text', 'answer', get_string('answer', 'question'), array('size' => 80));
-        $repeated[] = $mform->createElement('select', 'fraction', get_string('grade'), $gradeoptions);
-        $repeated[] = $mform->createElement('editor', 'feedback', get_string('feedback', 'question'),
-                                array('rows' => 5), $this->editoroptions);
+        $repeated[] = $mform->createElement('text', 'answer',
+                get_string('answer', 'question'), array('size' => 80));
+        $repeated[] = $mform->createElement('select', 'fraction',
+                get_string('grade'), $gradeoptions);
+        $repeated[] = $mform->createElement('editor', 'feedback',
+                get_string('feedback', 'question'), array('rows' => 5), $this->editoroptions);
         $repeatedoptions['answer']['type'] = PARAM_RAW;
         $repeatedoptions['fraction']['default'] = 0;
         $answersoption = 'answers';
@@ -278,13 +305,16 @@ abstract class question_edit_form extends moodleform {
      * @param object $mform the form being built.
      * @param $label the label to use for each option.
      * @param $gradeoptions the possible grades for each answer.
-     * @param $minoptions the minimum number of answer blanks to display. Default QUESTION_NUMANS_START.
+     * @param $minoptions the minimum number of answer blanks to display.
+     *      Default QUESTION_NUMANS_START.
      * @param $addoptions the number of answer blanks to add. Default QUESTION_NUMANS_ADD.
      */
-    protected function add_per_answer_fields(&$mform, $label, $gradeoptions, $minoptions = QUESTION_NUMANS_START, $addoptions = QUESTION_NUMANS_ADD) {
+    protected function add_per_answer_fields(&$mform, $label, $gradeoptions,
+            $minoptions = QUESTION_NUMANS_START, $addoptions = QUESTION_NUMANS_ADD) {
         $answersoption = '';
         $repeatedoptions = array();
-        $repeated = $this->get_per_answer_fields($mform, $label, $gradeoptions, $repeatedoptions, $answersoption);
+        $repeated = $this->get_per_answer_fields($mform, $label, $gradeoptions,
+                $repeatedoptions, $answersoption);
 
         if (isset($this->question->options)) {
             $countanswers = count($this->question->options->$answersoption);
@@ -297,21 +327,27 @@ abstract class question_edit_form extends moodleform {
             $repeatsatstart = $countanswers;
         }
 
-        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', $addoptions, get_string('addmorechoiceblanks', 'qtype_multichoice'));
+        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions,
+                'noanswers', 'addanswers', $addoptions,
+                get_string('addmorechoiceblanks', 'qtype_multichoice'));
     }
 
     protected function add_combined_feedback_fields($withshownumpartscorrect = false) {
         $mform = $this->_form;
 
-        $mform->addElement('header', 'combinedfeedbackhdr', get_string('combinedfeedback', 'question'));
+        $mform->addElement('header', 'combinedfeedbackhdr',
+                get_string('combinedfeedback', 'question'));
 
-        foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
+        $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
+        foreach ($fields as $feedbackname) {
             $mform->addElement('editor', $feedbackname, get_string($feedbackname, 'question'),
                                 array('rows' => 5), $this->editoroptions);
             $mform->setType($feedbackname, PARAM_RAW);
 
             if ($withshownumpartscorrect && $feedbackname == 'partiallycorrectfeedback') {
-                $mform->addElement('checkbox', 'shownumcorrect', get_string('options', 'question'), get_string('shownumpartscorrect', 'question'));
+                $mform->addElement('checkbox', 'shownumcorrect',
+                        get_string('options', 'question'),
+                        get_string('shownumpartscorrect', 'question'));
             }
         }
     }
@@ -326,19 +362,23 @@ abstract class question_edit_form extends moodleform {
         $repeatedoptions['hint']['type'] = PARAM_RAW;
 
         if ($withclearwrong) {
-            $repeated[] = $mform->createElement('checkbox', 'hintclearwrong', get_string('options', 'question'), get_string('clearwrongparts', 'question'));
+            $repeated[] = $mform->createElement('checkbox', 'hintclearwrong',
+                    get_string('options', 'question'), get_string('clearwrongparts', 'question'));
         }
         if ($withshownumpartscorrect) {
-            $repeated[] = $mform->createElement('checkbox', 'hintshownumcorrect', '', get_string('shownumpartscorrect', 'question'));
+            $repeated[] = $mform->createElement('checkbox', 'hintshownumcorrect', '',
+                    get_string('shownumpartscorrect', 'question'));
         }
 
         return array($repeated, $repeatedoptions);
     }
 
-    protected function add_interactive_settings($withclearwrong = false, $withshownumpartscorrect = false) {
+    protected function add_interactive_settings($withclearwrong = false,
+            $withshownumpartscorrect = false) {
         $mform = $this->_form;
 
-        $mform->addElement('header', 'multitriesheader', get_string('settingsformultipletries', 'question'));
+        $mform->addElement('header', 'multitriesheader',
+                get_string('settingsformultipletries', 'question'));
 
         $penalties = array(
             1.0000000,
@@ -357,8 +397,8 @@ abstract class question_edit_form extends moodleform {
         foreach ($penalties as $penalty) {
             $penaltyoptions["$penalty"] = (100 * $penalty) . '%';
         }
-        $mform->addElement('select', 'penalty', get_string('penaltyforeachincorrecttry', 'question'),
-                $penaltyoptions);
+        $mform->addElement('select', 'penalty',
+                get_string('penaltyforeachincorrecttry', 'question'), $penaltyoptions);
         $mform->addRule('penalty', null, 'required', null, 'client');
         $mform->addHelpButton('penalty', 'penaltyforeachincorrecttry', 'question');
         $mform->setDefault('penalty', 0.3333333);
@@ -392,11 +432,14 @@ abstract class question_edit_form extends moodleform {
         } else {
             $questiontext = '';
         }
-        $questiontext = file_prepare_draft_area($draftid, $this->context->id, 'question', 'questiontext', empty($question->id)?null:(int)$question->id, $this->fileoptions, $questiontext);
+        $questiontext = file_prepare_draft_area($draftid, $this->context->id,
+                'question', 'questiontext', empty($question->id) ? null : (int) $question->id,
+                $this->fileoptions, $questiontext);
 
         $question->questiontext = array();
         $question->questiontext['text'] = $questiontext;
-        $question->questiontext['format'] = empty($question->questiontextformat) ? editors_get_preferred_format() : $question->questiontextformat;
+        $question->questiontext['format'] = empty($question->questiontextformat) ?
+                editors_get_preferred_format() : $question->questiontextformat;
         $question->questiontext['itemid'] = $draftid;
 
         // prepare general feedback
@@ -406,10 +449,13 @@ abstract class question_edit_form extends moodleform {
             $question->generalfeedback = '';
         }
 
-        $feedback = file_prepare_draft_area($draftid, $this->context->id, 'question', 'generalfeedback', empty($question->id)?null:(int)$question->id, $this->fileoptions, $question->generalfeedback);
+        $feedback = file_prepare_draft_area($draftid, $this->context->id,
+                'question', 'generalfeedback', empty($question->id) ? null : (int) $question->id,
+                $this->fileoptions, $question->generalfeedback);
         $question->generalfeedback = array();
         $question->generalfeedback['text'] = $feedback;
-        $question->generalfeedback['format'] = empty($question->generalfeedbackformat) ? editors_get_preferred_format() : $question->generalfeedbackformat;
+        $question->generalfeedback['format'] = empty($question->generalfeedbackformat) ?
+                editors_get_preferred_format() : $question->generalfeedbackformat;
         $question->generalfeedback['itemid'] = $draftid;
 
         // Remove unnecessary trailing 0s form grade fields.
@@ -421,10 +467,10 @@ abstract class question_edit_form extends moodleform {
         }
 
         // Set any options.
-        $extra_question_fields = question_bank::get_qtype($question->qtype)->extra_question_fields();
-        if (is_array($extra_question_fields) && !empty($question->options)) {
-            array_shift($extra_question_fields);
-            foreach ($extra_question_fields as $field) {
+        $extraquestionfields = question_bank::get_qtype($question->qtype)->extra_question_fields();
+        if (is_array($extraquestionfields) && !empty($question->options)) {
+            array_shift($extraquestionfields);
+            foreach ($extraquestionfields as $field) {
                 if (isset($question->options->$field)) {
                     $question->$field = $question->options->$field;
                 }
@@ -452,18 +498,20 @@ abstract class question_edit_form extends moodleform {
         }
 
         $key = 0;
-        foreach ($question->options->answers as $answer){
+        foreach ($question->options->answers as $answer) {
             $question->answer[$key] = $answer->answer;
             $question->fraction[$key] = 0 + $answer->fraction;
             $question->feedback[$key] = array();
 
             // Evil hack alert. Formslib can store defaults in two ways for
-            // repeat elements: ->_defaultValues['fraction[0]'] and
-            // ->_defaultValues['fraction'][0]. The $repeatedoptions['fraction']['default'] = 0;
-            // bit above means that ->_defaultValues['fraction[0]'] has already
-            // been set, but we are using object notation here, so we will be setting
-            // ->_defaultValues['fraction'][0]. That does not work, so we have to unset
-            // ->_defaultValues['fraction[0]']
+            // repeat elements:
+            //   ->_defaultValues['fraction[0]'] and
+            //   ->_defaultValues['fraction'][0].
+            // The $repeatedoptions['fraction']['default'] = 0 bit above means
+            // that ->_defaultValues['fraction[0]'] has already been set, but we
+            // are using object notation here, so we will be setting
+            // ->_defaultValues['fraction'][0]. That does not work, so we have
+            // to unset ->_defaultValues['fraction[0]']
             unset($this->_form->_defaultValues["fraction[$key]"]);
 
             // Prepare the feedback editor to display files in draft area
@@ -484,12 +532,14 @@ abstract class question_edit_form extends moodleform {
         return $question;
     }
 
-    protected function data_preprocessing_combined_feedback($question, $withshownumcorrect = false) {
+    protected function data_preprocessing_combined_feedback($question,
+            $withshownumcorrect = false) {
         if (empty($question->options)) {
             return $question;
         }
 
-        foreach (array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback') as $feedbackname) {
+        $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
+        foreach ($fields as $feedbackname) {
             $draftid = file_get_submitted_draft_itemid($feedbackname);
             $feedback = array();
             $feedback['text'] = file_prepare_draft_area(
@@ -515,13 +565,14 @@ abstract class question_edit_form extends moodleform {
         return $question;
     }
 
-    protected function data_preprocessing_hints($question, $withclearwrong = false, $withshownumpartscorrect = false) {
+    protected function data_preprocessing_hints($question, $withclearwrong = false,
+            $withshownumpartscorrect = false) {
         if (empty($question->hints)) {
             return $question;
         }
 
         $key = 0;
-        foreach ($question->hints as $hint){
+        foreach ($question->hints as $hint) {
             $question->hint[$key] = array();
 
             // prepare feedback editor to display files in draft area
@@ -553,7 +604,8 @@ abstract class question_edit_form extends moodleform {
     public function validation($fromform, $files) {
         $errors = parent::validation($fromform, $files);
         if (empty($fromform->makecopy) && isset($this->question->id)
-                && ($this->question->formoptions->canedit || $this->question->formoptions->cansaveasnew)
+                && ($this->question->formoptions->canedit ||
+                        $this->question->formoptions->cansaveasnew)
                 && empty($fromform->usecurrentcat) && !$this->question->formoptions->canmove) {
             $errors['currentgrp'] = get_string('nopermissionmove', 'question');
         }
@@ -562,7 +614,8 @@ abstract class question_edit_form extends moodleform {
 
     /**
      * Override this in the subclass to question type name.
-     * @return the question type name, should be the same as the name() method in the question type class.
+     * @return the question type name, should be the same as the name() method
+     *      in the question type class.
      */
     public abstract function qtype();
 }

@@ -207,8 +207,7 @@ abstract class qtype_renderer extends plugin_renderer_base {
     }
 
     protected function feedback_class($fraction) {
-        return question_state::graded_state_for_fraction($fraction)
-                ->get_feedback_class();
+        return question_state::graded_state_for_fraction($fraction)->get_feedback_class();
     }
 
     /**
