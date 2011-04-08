@@ -199,26 +199,22 @@ function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids = array()
         $params = array();
     }
     $sql = "
-SELECT
-    FLOOR(qg.grade / :bandwidth1) AS band,
-    COUNT(1) AS num
+SELECT band, COUNT(1)
 
-FROM {quiz_grades} qg
-JOIN {quiz} q ON qg.quiz = q.id
-
-WHERE
-    $usql
-    qg.quiz = :quizid
+FROM (
+    SELECT FLOOR(qg.grade / :bandwidth) AS band
+      FROM {quiz_grades} qg
+     WHERE $usql qg.quiz = :quizid
+) subquery
 
 GROUP BY
-    FLOOR(qg.grade / :bandwidth2)
+    band
 
 ORDER BY
     band";
 
     $params['quizid'] = $quizid;
-    $params['bandwidth1'] = $bandwidth;
-    $params['bandwidth2'] = $bandwidth;
+    $params['bandwidth'] = $bandwidth;
 
     $data = $DB->get_records_sql_menu($sql, $params);
 
