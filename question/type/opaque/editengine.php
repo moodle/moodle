@@ -45,10 +45,10 @@ $PAGE->navbar->add(get_string('editquestionengineshort', 'qtype_opaque'));
 // Create form.
 $mform = new qtype_opaque_engine_edit_form('editengine.php');
 
-if ($mform->is_cancelled()){
+if ($mform->is_cancelled()) {
     redirect(new moodle_url('/question/type/opaque/engines.php'));
 
-} else if ($data = $mform->get_data()){
+} else if ($data = $mform->get_data()) {
     $engine = new stdClass();
     if (!empty($data->engineid)) {
         $engine->id = $data->engineid;

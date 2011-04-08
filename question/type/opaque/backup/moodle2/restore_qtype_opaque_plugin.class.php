@@ -65,7 +65,8 @@ class restore_qtype_opaque_plugin extends restore_qtype_plugin {
             }
         }
         if (empty($engine->questionengines)) {
-            throw new coding_exception('Missing question engine URLs in an Opaque question backup.');
+            throw new coding_exception(
+                    'Missing question engine URLs in an Opaque question backup.');
         }
 
         // Detect if the question is created or mapped

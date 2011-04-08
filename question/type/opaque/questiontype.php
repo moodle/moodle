@@ -88,7 +88,8 @@ class qtype_opaque extends question_type {
         $expout .= "    <engine>\n";
         $engine = $this->enginemanager->load_engine_def($question->options->engineid);
         $expout .= "      <name>\n" . $format->writetext($engine->name, 4) . "      </name>\n";
-        $expout .= "      <passkey>\n" . $format->writetext($engine->passkey, 4) . "      </passkey>\n";
+        $expout .= "      <passkey>\n" . $format->writetext($engine->passkey, 4) .
+                "      </passkey>\n";
         foreach ($engine->questionengines as $qe) {
             $expout .= "      <qe>\n" . $format->writetext($qe, 4) . "      </qe>\n";
         }

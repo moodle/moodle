@@ -58,12 +58,14 @@ class qtype_opaque_edit_form extends question_edit_form {
         $mform->addRule('engineid', null, 'required', null, 'client');
         $mform->addHelpButton('engineid', 'questionengine', 'qtype_opaque');
 
-        $mform->addElement('text', 'remoteid', get_string('questionid', 'qtype_opaque'), array('size' => 50));
+        $mform->addElement('text', 'remoteid',
+                get_string('questionid', 'qtype_opaque'), array('size' => 50));
         $mform->setType('remoteid', PARAM_RAW);
         $mform->addRule('remoteid', null, 'required', null, 'client');
         $mform->addHelpButton('remoteid', 'questionid', 'qtype_opaque');
 
-        $mform->addElement('text', 'remoteversion', get_string('questionversion', 'qtype_opaque'), array('size' => 3));
+        $mform->addElement('text', 'remoteversion',
+                get_string('questionversion', 'qtype_opaque'), array('size' => 3));
         $mform->setType('remoteversion', PARAM_RAW);
         $mform->addRule('remoteversion', null, 'required', null, 'client');
     }
@@ -91,13 +93,16 @@ class qtype_opaque_edit_form extends question_edit_form {
         // Try connecting to the remote question engine both as extra validation of the id, and
         // also to get the default grade.
         if ($remoteidok) {
-            $metadata = qtype_opaque_get_question_metadata($engine, $data['remoteid'], $data['remoteversion']);
+            $metadata = qtype_opaque_get_question_metadata($engine,
+                    $data['remoteid'], $data['remoteversion']);
             if (is_string($metadata)) {
                 $errors['remoteid'] = $metadata;
-            } else if (!isset($metadata['questionmetadata']['#']['scoring'][0]['#']['marks'][0]['#'])) {
+            } else if (!isset($metadata['questionmetadata']['#']['scoring']
+                    [0]['#']['marks'][0]['#'])) {
                 $errors['remoteid'] = get_string('maxgradenotreturned');
             } else {
-                $this->_defaultmark = $metadata['questionmetadata']['#']['scoring'][0]['#']['marks'][0]['#'];
+                $this->_defaultmark = $metadata['questionmetadata']['#']['scoring']
+                        [0]['#']['marks'][0]['#'];
             }
         }
 
@@ -105,8 +110,8 @@ class qtype_opaque_edit_form extends question_edit_form {
     }
 
     public function get_data($slashed = true) {
-        // We override get_data to to add the defaultmark, which was determined during validation,
-        // to the data that is returned.
+        // We override get_data to to add the defaultmark, which was determined
+        // during validation, to the data that is returned.
         $data = parent::get_data($slashed);
         if (is_object($data) && isset($this->_defaultmark)) {
             $data->defaultmark = $this->_defaultmark;

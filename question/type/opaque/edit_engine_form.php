@@ -28,7 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
-include_once($CFG->libdir . '/validateurlsyntax.php');
+require_once($CFG->libdir . '/validateurlsyntax.php');
 
 
 /**
@@ -42,16 +42,18 @@ class qtype_opaque_engine_edit_form extends moodleform {
         $mform = $this->_form;
 
         $mform->addElement('text', 'enginename', get_string('enginename', 'qtype_opaque'));
-        $mform->addRule('enginename', get_string('missingenginename', 'qtype_opaque'), 'required', null, 'client');
+        $mform->addRule('enginename', get_string('missingenginename', 'qtype_opaque'),
+                'required', null, 'client');
         $mform->setType('enginename', PARAM_MULTILANG);
 
-        $mform->addElement('textarea', 'questionengineurls', get_string('questionengineurls', 'qtype_opaque'),
-                'rows="5" cols="80"');
-        $mform->addRule('questionengineurls', get_string('missingengineurls', 'qtype_opaque'), 'required', null, 'client');
+        $mform->addElement('textarea', 'questionengineurls',
+                get_string('questionengineurls', 'qtype_opaque'), 'rows="5" cols="80"');
+        $mform->addRule('questionengineurls', get_string('missingengineurls', 'qtype_opaque'),
+                'required', null, 'client');
         $mform->setType('questionengineurls', PARAM_RAW);
 
-        $mform->addElement('textarea', 'questionbankurls', get_string('questionbankurls', 'qtype_opaque'),
-                'rows="5" cols="80"');
+        $mform->addElement('textarea', 'questionbankurls',
+                get_string('questionbankurls', 'qtype_opaque'), array('rows' => 5, 'cols' => 80));
         $mform->setType('questionbankurls', PARAM_RAW);
 
         $mform->addElement('text', 'passkey', get_string('passkey', 'qtype_opaque'));
@@ -65,7 +67,8 @@ class qtype_opaque_engine_edit_form extends moodleform {
     }
 
     /**
-     * Validate the contents of a textarea field, which should be a newline-separated list of URLs.
+     * Validate the contents of a textarea field, which should be a
+     * newline-separated list of URLs.
      *
      * @param $data the form data.
      * @param $field the field to validate.
@@ -82,7 +85,8 @@ class qtype_opaque_engine_edit_form extends moodleform {
     }
 
     /**
-     * Extract the contents of a textarea field, which should be a newline-separated list of URLs.
+     * Extract the contents of a textarea field, which should be a
+     * newline-separated list of URLs.
      *
      * @param $data the form data.
      * @param $field the field to extract.

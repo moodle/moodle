@@ -45,8 +45,10 @@ if ($delete) {
         redirect($PAGE->url);
     } else {
         echo $OUTPUT->header();
-        echo $OUTPUT->confirm(get_string('deleteconfigareyousure', 'qtype_opaque', format_string($engine->name)),
-                new moodle_url('/question/type/opaque/engines.php', array('delete' => $delete, 'confirm' => 'yes', 'sesskey' => sesskey())),
+        echo $OUTPUT->confirm(get_string('deleteconfigareyousure', 'qtype_opaque',
+                format_string($engine->name)),
+                new moodle_url('/question/type/opaque/engines.php',
+                        array('delete' => $delete, 'confirm' => 'yes', 'sesskey' => sesskey())),
                 $PAGE->url);
         echo $OUTPUT->footer();
         exit;
@@ -69,11 +71,14 @@ if ($engines) {
 
     foreach ($engines as $engine) {
         echo html_writer::tag('p', format_string($engine->name) .
-                $OUTPUT->action_icon(new moodle_url('/question/type/opaque/testengine.php', array('engineid' => $engine->id)),
+                $OUTPUT->action_icon(new moodle_url('/question/type/opaque/testengine.php',
+                        array('engineid' => $engine->id)),
                         new pix_icon('t/preview', $strtest)) .
-                $OUTPUT->action_icon(new moodle_url('/question/type/opaque/editengine.php', array('engineid' => $engine->id)),
+                $OUTPUT->action_icon(new moodle_url('/question/type/opaque/editengine.php',
+                        array('engineid' => $engine->id)),
                         new pix_icon('t/edit', $stredit)) .
-                $OUTPUT->action_icon(new moodle_url('/question/type/opaque/engines.php', array('delete' => $engine->id)),
+                $OUTPUT->action_icon(new moodle_url('/question/type/opaque/engines.php',
+                        array('delete' => $engine->id)),
                         new pix_icon('t/delete', $strdelete)));
     }
 } else {
@@ -86,5 +91,3 @@ echo html_writer::tag('p', html_writer::link(new moodle_url('/question/type/opaq
 
 // Footer.
 echo $OUTPUT->footer();
-
-?>

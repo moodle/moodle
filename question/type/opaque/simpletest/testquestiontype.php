@@ -80,7 +80,7 @@ class qtype_opaque_engine_manager_mock extends qtype_opaque_engine_manager {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_opaque_test extends UnitTestCase {
-    var $qtype;
+    protected $qtype;
 
     public function setUp() {
         $this->qtype = new qtype_opaque();

@@ -33,9 +33,15 @@ require_once($CFG->libdir . '/xmlize.php');
 
 /** User passed on question. Should match the definition in Om.question.Results. */
 define('OPAQUE_ATTEMPTS_PASS', 0);
-/** User got question wrong after all attempts. Should match the definition in om.question.Results. */
+/**
+ * User got question wrong after all attempts. Should match the definition in
+ * om.question.Results.
+ */
 define('OPAQUE_ATTEMPTS_WRONG', -1);
-/** User got question partially correct after all attempts. Should match the definition in om.question.Results. */
+/**
+ * User got question partially correct after all attempts. Should match the
+ * definition in om.question.Results.
+ */
 define('OPAQUE_ATTEMPTS_PARTIALLYCORRECT', -2);
 /** If developer hasn't set the value. Should match the definition in om.question.Results. */
 define('OPAQUE_ATTEMPTS_UNSET', -99);
@@ -71,17 +77,20 @@ class qtype_opaque_engine_manager {
     /**
      * Load the definition of an engine from the database.
      * @param int $engineid the id of the engine to load.
-     * @return mixed On success, and object with fields id, name, questionengines and questionbanks.
-     * The last two fields are arrays of URLs. On an error, returns a string to look up in the
-     * qtype_opaque language file as an error message.
+     * @return mixed On success, and object with fields id, name, questionengines
+     *      and questionbanks. The last two fields are arrays of URLs. On an error,
+     *      returns a string to look up in the qtype_opaque language file as an
+     *      error message.
      */
     public function load_engine_def($engineid) {
         global $DB;
-        $engine = $DB->get_record('question_opaque_engines', array('id' => $engineid), '*', MUST_EXIST);
+        $engine = $DB->get_record('question_opaque_engines',
+                array('id' => $engineid), '*', MUST_EXIST);
 
         $engine->questionengines = array();
         $engine->questionbanks = array();
-        $servers = $DB->get_records('question_opaque_servers', array('engineid' => $engineid), 'id ASC');
+        $servers = $DB->get_records('question_opaque_servers',
+                array('engineid' => $engineid), 'id ASC');
         if (!$servers) {
             throw new moodle_exception('couldnotloadengineservers', 'qtype_opaque', '', $engineid);
         }
@@ -273,10 +282,12 @@ function qtype_opaque_find_or_create_engineid($engine) {
 }
 
 /**
- * @param mixed $engine either an $engine object, or the URL of a particular question engine server.
- * @return a soap connection, either to the specific URL give, or to to one of the question engine servers
- * of this $engine object picked at random. returns a string to look up in the qtype_opaque
- * language file as an error message if a problem arises.
+ * @param mixed $engine either an $engine object, or the URL of a particular
+ *      question engine server.
+ * @return a soap connection, either to the specific URL give, or to to one of
+ *      the question engine servers of this $engine object picked at random.
+ *      returns a string to look up in the qtype_opaque language file as an error
+ *      message if a problem arises.
  */
 function qtype_opaque_connect($engine) {
     if (is_string($engine)) {
@@ -286,7 +297,8 @@ function qtype_opaque_connect($engine) {
     } else {
         $url = $engine->questionengines[array_rand($engine->questionengines)];
     }
-    $connection = new SoapClient($url . '?wsdl', array('soap_version'=>SOAP_1_1, 'exceptions'=>true));
+    $connection = new SoapClient($url . '?wsdl',
+            array('soap_version'=>SOAP_1_1, 'exceptions'=>true));
     if (!is_string($engine)) {
         $engine->urlused = $url;
     }
@@ -294,9 +306,10 @@ function qtype_opaque_connect($engine) {
 }
 
 /**
- * @param mixed $engine either an $engine object, or the URL of a particular question engine server.
- * @return some XML, as parsed by xmlize, on success, or a string to look up in the qtype_opaque
- * language file as an error message.
+ * @param mixed $engine either an $engine object, or the URL of a particular
+ *      question engine server.
+ * @return some XML, as parsed by xmlize, on success, or a string to look up in
+ *      the qtype_opaque language file as an error message.
  */
 function qtype_opaque_get_engine_info($engine) {
     $connection = qtype_opaque_connect($engine);
@@ -305,15 +318,17 @@ function qtype_opaque_get_engine_info($engine) {
 }
 
 /**
- * @param mixed $engine either an $engine object, or the URL of a particular question engine server.
+ * @param mixed $engine either an $engine object, or the URL of a particular
+ *      question engine server.
  * @return The question metadata, as an xmlised array, so, for example,
- * $metadata[questionmetadata][@][#][scoring][0][#][marks][0][#] is the maximum possible score for
- * this question.
+ *      $metadata[questionmetadata][@][#][scoring][0][#][marks][0][#] is the
+ *      maximum possible score for this question.
  */
 function qtype_opaque_get_question_metadata($engine, $remoteid, $remoteversion) {
     $connection = qtype_opaque_connect($engine);
     $questionbaseurl = $engine->questionbanks[array_rand($engine->questionbanks)];
-    $getmetadataresult = $connection->getQuestionMetadata($remoteid, $remoteversion, $questionbaseurl);
+    $getmetadataresult = $connection->getQuestionMetadata(
+            $remoteid, $remoteversion, $questionbaseurl);
     return xmlize($getmetadataresult);
 }
 
@@ -324,7 +339,8 @@ function qtype_opaque_get_question_metadata($engine, $remoteid, $remoteversion) 
  * @param int $randomseed
  * @return mixed the result of the soap call on success, or a string error message on failure.
  */
-function qtype_opaque_start_question_session($engine, $remoteid, $remoteversion, $data, $cached_resources) {
+function qtype_opaque_start_question_session($engine, $remoteid, $remoteversion,
+        $data, $cached_resources) {
     $connection = qtype_opaque_connect($engine);
 
     $questionbaseurl = '';
@@ -402,7 +418,8 @@ function qtype_opaque_get_submitted_data(question_attempt_step $step) {
  * @param object $state
  * @return mixed $SESSION->cached_opaque_state on success, a string error message on failure.
  */
-function qtype_opaque_update_state(question_attempt $qa, question_attempt_step $pendingstep = null) {
+function qtype_opaque_update_state(question_attempt $qa,
+        question_attempt_step $pendingstep = null) {
     global $SESSION;
 
     $question = $qa->get_question();
@@ -457,7 +474,8 @@ function qtype_opaque_update_state(question_attempt $qa, question_attempt_step $
 
         $step = qtype_opaque_get_step(0, $qa, $pendingstep);
         $startreturn = qtype_opaque_start_question_session($engine, $question->remoteid,
-                $question->remoteversion, $step->get_all_data(), $resourcecache->list_cached_resources());
+                $question->remoteversion, $step->get_all_data(),
+                $resourcecache->list_cached_resources());
         if (is_string($startreturn)) {
             unset($SESSION->cached_opaque_state);
             return $startreturn;
@@ -478,8 +496,8 @@ function qtype_opaque_update_state(question_attempt $qa, question_attempt_step $
         while ($opaquestate->sequencenumber < $targetseq) {
             $step = qtype_opaque_get_step($opaquestate->sequencenumber + 1, $qa, $pendingstep);
 
-            $processreturn = qtype_opaque_process($opaquestate->engine, $opaquestate->questionsessionid,
-                    qtype_opaque_get_submitted_data($step));
+            $processreturn = qtype_opaque_process($opaquestate->engine,
+                    $opaquestate->questionsessionid, qtype_opaque_get_submitted_data($step));
             if (is_string($processreturn)) {
                 unset($SESSION->cached_opaque_state);
                 return $processreturn;
@@ -553,8 +571,9 @@ function qtype_opaque_extract_stuff_from_response($opaquestate, $response, $reso
             create_function('$matches', 'return str_replace("&amp;", "%26", $matches[0]);'),
             $xhtml);
 
-    // Another hack to take out the next button that most OM questions include, but which does not work in Moodle.
-    // Actually, we remove any non-disabled buttons, and the following script tag.
+    // Another hack to take out the next button that most OM questions include,
+    // but which does not work in Moodle. Actually, we remove any non-disabled
+    // buttons, and the following script tag.
     // TODO think of a better way to do this.
     if ($opaquestate->resultssequencenumber >= 0) {
         $xhtml = qtype_opaque_strip_omact_buttons($xhtml);
@@ -565,7 +584,8 @@ function qtype_opaque_extract_stuff_from_response($opaquestate, $response, $reso
     // Process the CSS (only when we have a StartResponse).
     if (!empty($response->CSS)) {
         $opaquestate->cssfilename = qtype_opaque_stylesheet_filename($response->questionSession);
-        $resourcecache->cache_file($opaquestate->cssfilename, 'text/css;charset=UTF-8', $response->CSS);
+        $resourcecache->cache_file($opaquestate->cssfilename,
+                'text/css;charset=UTF-8', $response->CSS);
     }
 
     // Process the resources.
@@ -575,7 +595,8 @@ function qtype_opaque_extract_stuff_from_response($opaquestate, $response, $reso
     foreach ($response->resources as $key => $resource) {
         if ($resource->filename == 'script.js') {
             $response->resources[$key]->content = preg_replace(
-                    '/(?<=window\.open\(\"\", idprefix|window\.open\(\"\",idprefix)\+(?=\"\w+\"\+id,)/',
+                    '/(?<=' . preg_quote('window.open("", idprefix') . '|' .
+                            preg_quote('window.open("",idprefix') . ')\+(?=\"\w+\"\+id,)/',
                     '.replace(/\W/g,"_")+', $resource->content);
         }
     }
@@ -587,7 +608,7 @@ function qtype_opaque_extract_stuff_from_response($opaquestate, $response, $reso
         $opaquestate->questionsessionid = $response->questionSession;
     }
 
-    if(!empty($response->head)) {
+    if (!empty($response->head)) {
         $opaquestate->headXHTML = $response->head;
     }
 
@@ -595,17 +616,20 @@ function qtype_opaque_extract_stuff_from_response($opaquestate, $response, $reso
 }
 
 /**
- * Strip any buttons, followed by script tags, where the button has an id containing _omact_, and is not disabled.
+ * Strip any buttons, followed by script tags, where the button has an id
+ * containing _omact_, and is not disabled.
  */
 function qtype_opaque_strip_omact_buttons($xhtml) {
-    return preg_replace('|<input(?:(?!disabled=)[^>])*? id="[^"]*_omact_[^"]*"(?:(?!disabled=)[^>])*?><script type="text/javascript">[^<]*</script>|', '', $xhtml);
+    return preg_replace(
+            '|<input(?:(?!disabled=)[^>])*? id="[^"]*_omact_[^"]*"(?:(?!disabled=)[^>])*?>' .
+            '<script type="text/javascript">[^<]*</script>|', '', $xhtml);
 }
 
 /**
  * @param string $secret the secret string for this question engine.
  * @param int $userid the id of the user attempting this question.
- * @return string the passkey that needs to be sent to the quetion engine to show that
- *      we are allowed to start a question session for this user.
+ * @return string the passkey that needs to be sent to the quetion engine to
+ *      show that we are allowed to start a question session for this user.
  */
 function qtype_opaque_generate_passkey($secret, $userid) {
     return md5($secret . $userid);
@@ -615,7 +639,7 @@ function qtype_opaque_generate_passkey($secret, $userid) {
  * OpenMark relies on certain browser-specific class names to be present in the
  * HTML outside the question, in order to apply certian browser-specific layout
  * work-arounds. This function re-implements Om's browser sniffing rules. See
- * https://openmark.dev.java.net/source/browse/openmark/trunk/src/util/misc/UserAgent.java?view=markup
+ * http://java.net/projects/openmark/sources/svn/content/trunk/src/util/misc/UserAgent.java
  * @return string class to add to the HTML.
  */
 function qtype_opaque_browser_type() {
@@ -645,7 +669,8 @@ function qtype_opaque_browser_type() {
 /**
  * This class caches the resources belonging a particular question.
  *
- * There are synchronisation issues if two students are doing the same question at the same time.
+ * There are synchronisation issues if two students are doing the same question
+ * at the same time.
  *
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -663,7 +688,8 @@ class qtype_opaque_resource_cache {
      */
     public function __construct($engineid, $remoteid, $remoteversion) {
         global $CFG;
-        $folderstart = $CFG->dataroot . '/opaqueresources/' . $engineid . '/' . $remoteid . '/' . $remoteversion;
+        $folderstart = $CFG->dataroot . '/opaqueresources/' . $engineid . '/' .
+                $remoteid . '/' . $remoteversion;
         $this->folder = $folderstart . '/files';
         if (!is_dir($this->folder)) {
             $this->mkdir_recursive($this->folder);
@@ -672,8 +698,9 @@ class qtype_opaque_resource_cache {
         if (!is_dir($this->metadatafolder)) {
             $this->mkdir_recursive($this->metadatafolder);
         }
-        $this->baseurl = new moodle_url('/question/type/opaque/file.php', array(
-                'engineid' => $engineid, 'remoteid' => $remoteid, 'remoteversion' => $remoteversion));
+        $this->baseurl = new moodle_url('/question/type/opaque/file.php',
+                array('engineid' => $engineid, 'remoteid' => $remoteid,
+                      'remoteversion' => $remoteversion));
     }
 
     /**
@@ -736,17 +763,13 @@ class qtype_opaque_resource_cache {
         // Handle If-Modified-Since
         $file = $this->file_path($filename);
         $filedate = filemtime($file);
-        $ifmodifiedsince = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] : false;
-        if($ifmodifiedsince && strtotime($ifmodifiedsince)>=$filedate) {
+        $ifmodifiedsince = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ?
+                $_SERVER['HTTP_IF_MODIFIED_SINCE'] : false;
+        if ($ifmodifiedsince && strtotime($ifmodifiedsince) >= $filedate) {
             header('HTTP/1.0 304 Not Modified');
             exit;
         }
-        header('Last-Modified: '.gmdate('D, d M Y H:i:s',$filedate).' GMT');
-
-//        // Send expire headers
-//        $lifetime=4*60*60;
-//        header('Cache-Control: max-age='.$lifetime);
-//        header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+        header('Last-Modified: '.gmdate('D, d M Y H:i:s', $filedate).' GMT');
 
         // Type
         header('Content-Type: ' . $mimetype);
@@ -774,7 +797,7 @@ class qtype_opaque_resource_cache {
      * @param array $resources as returned from start or process Opaque methods.
      */
     public function cache_resources($resources) {
-        if(!empty($resources)) {
+        if (!empty($resources)) {
             foreach ($resources as $resource) {
                 $mimetype = $resource->mimeType;
                 if (strpos($resource->mimeType, 'text/') === 0 && !empty($resource->encoding)) {
@@ -821,9 +844,9 @@ class qtype_opaque_resource_cache {
             global $CFG;
             $mode = $CFG->directorypermissions;
         }
-        if (!$this->mkdir_recursive(dirname($folder),$mode)) {
+        if (!$this->mkdir_recursive(dirname($folder), $mode)) {
             return false;
         }
-        return mkdir($folder,$mode);
+        return mkdir($folder, $mode);
     }
 }
