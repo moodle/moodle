@@ -7645,7 +7645,7 @@ function get_selected_theme_for_device_type($themes, $device_type = null){
     //prevent problems if a user installs themes 
     if (!is_dir($CFG->theme.'/'.$selected_theme)) {
         if ($device_type == 'default') {
-            return 'standardwhite';
+            return 'standard';
         } else {
             return false;
         }

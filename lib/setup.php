@@ -700,7 +700,7 @@ unset($urlthemename);
 if (!isset($CFG->themes)) {
     $theme_obj = new stdClass();
     $theme_obj->device = 'default';
-    $theme = $theme_obj->themename = 'standardwhite';
+    $theme = $theme_obj->themename = 'standard';
     $current_prefs[] = $theme_obj;
     $CFG->themes = json_encode($current_prefs);
 }
