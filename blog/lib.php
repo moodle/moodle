@@ -398,12 +398,14 @@ function blog_get_all_options(moodle_page $page, stdClass $userid = null) {
         }
 
         // Get the options for the user
-        if ($user !== null) {
+        if ($user !== null and !isguestuser($user)) {
             // Load for the requested user
             $options[CONTEXT_USER+1] = blog_get_options_for_user($user);
         }
         // Load for the current user
-        $options[CONTEXT_USER] = blog_get_options_for_user();
+        if (isloggedin() and !isguestuser()) {
+            $options[CONTEXT_USER] = blog_get_options_for_user();
+        }
     }
 
     // If blog level is global then display a link to view all site entries

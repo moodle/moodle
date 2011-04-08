@@ -49,7 +49,7 @@
     $row[] = new tabobject('asearch', $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;mode=asearch', get_string('search', 'data'));
 
     if (isloggedin()) { // just a perf shortcut
-        if (data_user_can_add_entry($data, $currentgroup, $groupmode) && !data_atmaxentries($data)) { // took out participation list here!
+        if (data_user_can_add_entry($data, $currentgroup, $groupmode, $context)) { // took out participation list here!
             $addstring = empty($editentry) ? get_string('add', 'data') : get_string('editentry', 'data');
             $row[] = new tabobject('add', $CFG->wwwroot.'/mod/data/edit.php?d='.$data->id, $addstring);
         }

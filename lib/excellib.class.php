@@ -138,6 +138,15 @@ class MoodleExcelWorksheet {
      */
     function MoodleExcelWorksheet($name, &$workbook, $latin_output=false) {
 
+        if (strlen($name) > 31) {
+            // Excel does not seem able to cope with sheet names > 31 chars.
+            // With $latin_output = false, it does not cope at all.
+            // With $latin_output = true it is supposed to work, but in our experience,
+            // it doesn't. Therefore, truncate in all circumstances.
+            $textlib = textlib_get_instance();
+            $name = $textlib->substr($name, 0, 31);
+        }
+
     /// Internally, add one sheet to the workbook
         $this->pear_excel_worksheet =& $workbook->addWorksheet($name);
         $this->latin_output = $latin_output;

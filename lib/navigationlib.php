@@ -1967,7 +1967,6 @@ class global_navigation extends navigation_node {
 
         //Participants
         if (has_capability('moodle/course:viewparticipants', $this->page->context)) {
-            require_once($CFG->dirroot.'/blog/lib.php');
             $participants = $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id), self::TYPE_CONTAINER, get_string('participants'), 'participants');
             $currentgroup = groups_get_course_group($course, true);
             if ($course->id == SITEID) {
@@ -1978,7 +1977,8 @@ class global_navigation extends navigation_node {
                 $filterselect = $currentgroup;
             }
             $filterselect = clean_param($filterselect, PARAM_INT);
-            if ($CFG->bloglevel >= 3) {
+            if (($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
+               and has_capability('moodle/blog:view', get_context_instance(CONTEXT_SYSTEM))) {
                 $blogsurls = new moodle_url('/blog/index.php', array('courseid' => $filterselect));
                 $participants->add(get_string('blogs','blog'), $blogsurls->out());
             }
@@ -2036,12 +2036,11 @@ class global_navigation extends navigation_node {
         $filterselect = 0;
 
         // Blogs
-        if (has_capability('moodle/blog:view', $this->page->context)) {
-            require_once($CFG->dirroot.'/blog/lib.php');
-            if (blog_is_enabled_for_user()) {
-                $blogsurls = new moodle_url('/blog/index.php', array('courseid' => $filterselect));
-                $coursenode->add(get_string('blogs','blog'), $blogsurls->out());
-            }
+        if (!empty($CFG->bloglevel)
+          and ($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
+          and has_capability('moodle/blog:view', get_context_instance(CONTEXT_SYSTEM))) {
+            $blogsurls = new moodle_url('/blog/index.php', array('courseid' => $filterselect));
+            $coursenode->add(get_string('blogs','blog'), $blogsurls->out());
         }
 
         // Notes
@@ -2247,23 +2246,22 @@ class global_navigation_for_ajax extends global_navigation {
                 $this->load_section_activities($sections[$course->sectionnumber]->sectionnode, $course->sectionnumber, get_fast_modinfo($course));
                 break;
             case self::TYPE_ACTIVITY :
-                $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+                $sql = "SELECT c.*
+                          FROM {course} c
+                          JOIN {course_modules} cm ON cm.course = c.id
+                         WHERE cm.id = :cmid";
+                $params = array('cmid' => $this->instanceid);
+                $course = $DB->get_record_sql($sql, $params, MUST_EXIST);
                 $modinfo = get_fast_modinfo($course);
                 $cm = $modinfo->get_cm($this->instanceid);
                 require_course_login($course, true, $cm);
                 $this->page->set_context(get_context_instance(CONTEXT_MODULE, $cm->id));
                 $coursenode = $this->load_course($course);
-                $sections = $this->load_course_sections($course, $coursenode);
-                foreach ($sections as $section) {
-                    if ($section->id == $cm->section) {
-                        $cm->sectionnumber = $section->section;
-                        break;
-                    }
-                }
                 if ($course->id == SITEID) {
                     $modulenode = $this->load_activity($cm, $course, $coursenode->find($cm->id, self::TYPE_ACTIVITY));
                 } else {
-                    $activities = $this->load_section_activities($sections[$cm->sectionnumber]->sectionnode, $cm->sectionnumber, get_fast_modinfo($course));
+                    $sections   = $this->load_course_sections($course, $coursenode);
+                    $activities = $this->load_section_activities($sections[$cm->sectionnum]->sectionnode, $cm->sectionnum, get_fast_modinfo($course));
                     $modulenode = $this->load_activity($cm, $course, $activities[$cm->id]);
                 }
                 break;

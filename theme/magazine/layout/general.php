@@ -37,7 +37,7 @@ echo $OUTPUT->doctype() ?>
 <!-- start of header -->
 	<div id="header-wrap">
 		<div id="header-container">
-			<div id="header">
+			<div id="headerinner">
 			
 				<div id="headleft">
 					<?php if ($hasheading && !empty($PAGE->theme->settings->logo)) { 

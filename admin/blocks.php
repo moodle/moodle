@@ -147,7 +147,11 @@
 
         $settings = ''; // By default, no configuration
         if ($blockobject and $blockobject->has_config()) {
-            if (file_exists($CFG->dirroot.'/blocks/'.$block->name.'/settings.php')) {
+            $blocksettings = admin_get_root()->locate('blocksetting' . $block->name);
+
+            if ($blocksettings instanceof admin_externalpage) {
+                $settings = '<a href="' . $blocksettings->url .  '">' . get_string('settings') . '</a>';
+            } else if ($blocksettings instanceof admin_settingpage) {
                 $settings = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=blocksetting'.$block->name.'">'.$strsettings.'</a>';
             } else {
                 $settings = '<a href="block.php?block='.$blockid.'">'.$strsettings.'</a>';

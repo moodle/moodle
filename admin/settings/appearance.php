@@ -63,10 +63,10 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // blog
     $temp = new admin_settingpage('blog', get_string('blog','blog'));
     $temp->add(new admin_setting_configcheckbox('useblogassociations', get_string('useblogassociations', 'blog'), get_string('configuseblogassociations','blog'), 1));
-    $temp->add(new admin_setting_bloglevel('bloglevel', get_string('bloglevel', 'admin'), get_string('configbloglevel', 'admin'), 4, array(5 => get_string('worldblogs','blog'),
-                                                                                                                                              4 => get_string('siteblogs','blog'),
-                                                                                                                                              1 => get_string('personalblogs','blog'),
-                                                                                                                                              0 => get_string('disableblogs','blog'))));
+    $temp->add(new admin_setting_bloglevel('bloglevel', get_string('bloglevel', 'admin'), get_string('configbloglevel', 'admin'), 4, array(BLOG_GLOBAL_LEVEL => get_string('worldblogs','blog'),
+                                                                                                                                           BLOG_SITE_LEVEL => get_string('siteblogs','blog'),
+                                                                                                                                           BLOG_USER_LEVEL => get_string('personalblogs','blog'),
+                                                                                                                                           0 => get_string('disableblogs','blog'))));
     $temp->add(new admin_setting_configcheckbox('useexternalblogs', get_string('useexternalblogs', 'blog'), get_string('configuseexternalblogs','blog'), 1));
     $temp->add(new admin_setting_configselect('externalblogcrontime', get_string('externalblogcrontime', 'blog'), get_string('configexternalblogcrontime', 'blog'), 86400,
         array(43200 => get_string('numhours', '', 12),
@@ -130,7 +130,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     // link to tag management interface
     $ADMIN->add('appearance', new admin_externalpage('managetags', get_string('managetags', 'tag'), "$CFG->wwwroot/tag/manage.php"));
-    
+
     $temp = new admin_settingpage('additionalhtml', get_string('additionalhtml', 'admin'));
     $temp->add(new admin_setting_heading('additionalhtml_heading', get_string('additionalhtml_heading', 'admin'), get_string('additionalhtml_desc', 'admin')));
     $temp->add(new admin_setting_configtextarea('additionalhtmlhead', get_string('additionalhtmlhead', 'admin'), get_string('additionalhtmlhead_desc', 'admin'), '', PARAM_RAW));

@@ -33,8 +33,6 @@ $id      = required_param('id', PARAM_INT); // course id
 $action  = optional_param('action', '', PARAM_ACTION);
 $filter  = optional_param('ifilter', 0, PARAM_INT);
 
-$PAGE->set_url(new moodle_url('/enrol/users.php', array('id'=>$id)));
-
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 $context = get_context_instance(CONTEXT_COURSE, $course->id, MUST_EXIST);
 
@@ -47,8 +45,8 @@ require_capability('moodle/course:enrolreview', $context);
 $PAGE->set_pagelayout('admin');
 
 $manager = new course_enrolment_manager($course, $filter);
-$table = new course_enrolment_users_table($manager, $PAGE->url);
-$pageurl = new moodle_url($PAGE->url, $manager->get_url_params()+$table->get_url_params());
+$table = new course_enrolment_users_table($manager, $PAGE);
+$PAGE->set_url('/enrol/users.php', $manager->get_url_params()+$table->get_url_params());
 
 // Check if there is an action to take
 if ($action) {
@@ -71,13 +69,13 @@ if ($action) {
             list ($instance, $plugin) = $manager->get_user_enrolment_components($ue);
             if ($instance && $plugin && $plugin->allow_unenrol($instance) && has_capability("enrol/$instance->enrol:unenrol", $manager->get_context())) {
                 if ($confirm && $manager->unenrol_user($ue)) {
-                    redirect($pageurl);
+                    redirect($PAGE->url);
                 } else {
                     $user = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
-                    $yesurl = new moodle_url($pageurl, array('action'=>'unenrol', 'ue'=>$ue->id, 'confirm'=>1, 'sesskey'=>sesskey()));
+                    $yesurl = new moodle_url($PAGE->url, array('action'=>'unenrol', 'ue'=>$ue->id, 'confirm'=>1, 'sesskey'=>sesskey()));
                     $message = get_string('unenrolconfirm', 'enrol', array('user'=>fullname($user, true), 'course'=>format_string($course->fullname)));
                     $pagetitle = get_string('unenrol', 'enrol');
-                    $pagecontent = $OUTPUT->confirm($message, $yesurl, $pageurl);
+                    $pagecontent = $OUTPUT->confirm($message, $yesurl, $PAGE->url);
                 }
                 $actiontaken = true;
             }
@@ -90,15 +88,15 @@ if ($action) {
                 $role = required_param('role', PARAM_INT);
                 $user = required_param('user', PARAM_INT);
                 if ($confirm && $manager->unassign_role_from_user($user, $role)) {
-                    redirect($pageurl);
+                    redirect($PAGE->url);
                 } else {
                     $user = $DB->get_record('user', array('id'=>$user), '*', MUST_EXIST);
                     $allroles = $manager->get_all_roles();
                     $role = $allroles[$role];
-                    $yesurl = new moodle_url($pageurl, array('action'=>'unassign', 'role'=>$role->id, 'user'=>$user->id, 'confirm'=>1, 'sesskey'=>sesskey()));
+                    $yesurl = new moodle_url($PAGE->url, array('action'=>'unassign', 'role'=>$role->id, 'user'=>$user->id, 'confirm'=>1, 'sesskey'=>sesskey()));
                     $message = get_string('unassignconfirm', 'role', array('user'=>fullname($user, true), 'role'=>$role->localname));
                     $pagetitle = get_string('unassignarole', 'role', $role->localname);
-                    $pagecontent = $OUTPUT->confirm($message, $yesurl, $pageurl);
+                    $pagecontent = $OUTPUT->confirm($message, $yesurl, $PAGE->url);
                 }
                 $actiontaken = true;
             }
@@ -111,10 +109,10 @@ if ($action) {
             $user = $DB->get_record('user', array('id'=>required_param('user', PARAM_INT)), '*', MUST_EXIST);
             if (is_enrolled($context, $user) && has_capability('moodle/role:assign', $manager->get_context())) {
                 $mform = new enrol_users_assign_form(NULL, array('user'=>$user, 'course'=>$course, 'assignable'=>$manager->get_assignable_roles()));
-                $mform->set_data($pageurl->params());
+                $mform->set_data($PAGE->url->params());
                 $data = $mform->get_data();
                 if ($mform->is_cancelled() || ($data && array_key_exists($data->roleid, $manager->get_assignable_roles()) && $manager->assign_role_to_user($data->roleid, $user->id))) {
-                    redirect($pageurl);
+                    redirect($PAGE->url);
                 } else {
                     $pagetitle = get_string('assignroles', 'role');
                 }
@@ -130,16 +128,16 @@ if ($action) {
                 $userid  = required_param('user', PARAM_INT);
                 $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
                 if ($confirm && $manager->remove_user_from_group($user, $groupid)) {
-                    redirect($pageurl);
+                    redirect($PAGE->url);
                 } else {
                     $group = $manager->get_group($groupid);
                     if (!$group) {
                         break;
                     }
-                    $yesurl = new moodle_url($pageurl, array('action'=>'removemember', 'group'=>$groupid, 'user'=>$userid, 'confirm'=>1, 'sesskey'=>sesskey()));
+                    $yesurl = new moodle_url($PAGE->url, array('action'=>'removemember', 'group'=>$groupid, 'user'=>$userid, 'confirm'=>1, 'sesskey'=>sesskey()));
                     $message = get_string('removefromgroupconfirm', 'group', array('user'=>fullname($user, true), 'group'=>$group->name));
                     $pagetitle = get_string('removefromgroup', 'group', $group->name);
-                    $pagecontent = $OUTPUT->confirm($message, $yesurl, $pageurl);
+                    $pagecontent = $OUTPUT->confirm($message, $yesurl, $PAGE->url);
                 }
                 $actiontaken = true;
             }
@@ -153,10 +151,10 @@ if ($action) {
                 $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
 
                 $mform = new enrol_users_addmember_form(NULL, array('user'=>$user, 'course'=>$course, 'allgroups'=>$manager->get_all_groups()));
-                $mform->set_data($pageurl->params());
+                $mform->set_data($PAGE->url->params());
                 $data = $mform->get_data();
                 if ($mform->is_cancelled() || ($data && $manager->add_user_to_group($user, $data->groupid))) {
-                    redirect($pageurl);
+                    redirect($PAGE->url);
                 } else {
                     $pagetitle = get_string('addgroup', 'group');
                 }
@@ -172,10 +170,10 @@ if ($action) {
             if ($instance && $plugin && $plugin->allow_manage($instance) && has_capability("enrol/$instance->enrol:manage", $manager->get_context())) {
                 $user = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
                 $mform = new enrol_users_edit_form(NULL, array('user'=>$user, 'course'=>$course, 'ue'=>$ue));
-                $mform->set_data($pageurl->params());
+                $mform->set_data($PAGE->url->params());
                 $data = $mform->get_data();
                 if ($mform->is_cancelled() || ($data && $manager->edit_enrolment($ue, $data))) {
-                    redirect($pageurl);
+                    redirect($PAGE->url);
                 } else {
                     $pagetitle = fullname($user);
                 }
@@ -220,12 +218,12 @@ $fields = array(
 $table->set_fields($fields, $renderer);
 
 $canassign = has_capability('moodle/role:assign', $manager->get_context());
-$users = $manager->get_users_for_display($renderer, $pageurl, $table->sort, $table->sortdirection, $table->page, $table->perpage);
+$users = $manager->get_users_for_display($renderer, $PAGE->url, $table->sort, $table->sortdirection, $table->page, $table->perpage);
 foreach ($users as $userid=>&$user) {
     $user['picture'] = $OUTPUT->render($user['picture']);
-    $user['role'] = $renderer->user_roles_and_actions($userid, $user['roles'], $manager->get_assignable_roles(), $canassign, $pageurl);
-    $user['group'] = $renderer->user_groups_and_actions($userid, $user['groups'], $manager->get_all_groups(), has_capability('moodle/course:managegroups', $manager->get_context()), $pageurl);
-    $user['enrol'] = $renderer->user_enrolments_and_actions($userid, $user['enrolments'], $pageurl);
+    $user['role'] = $renderer->user_roles_and_actions($userid, $user['roles'], $manager->get_assignable_roles(), $canassign, $PAGE->url);
+    $user['group'] = $renderer->user_groups_and_actions($userid, $user['groups'], $manager->get_all_groups(), has_capability('moodle/course:managegroups', $manager->get_context()), $PAGE->url);
+    $user['enrol'] = $renderer->user_enrolments_and_actions($userid, $user['enrolments'], $PAGE->url);
 }
 $table->set_total_users($manager->get_total_users());
 $table->set_users($users);

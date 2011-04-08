@@ -989,10 +989,10 @@ class completion_info {
 
         $sql  = "SELECT u.id ";
         $sql .= $tracked->sql;
-        $sql .= ' AND u.id = :user';
+        $sql .= ' AND u.id = :userid';
 
         $params = $tracked->data;
-        $params['user'] = (int)$userid;
+        $params['userid'] = (int)$userid;
         return $DB->record_exists_sql($sql, $params);
     }
 

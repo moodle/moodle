@@ -1770,11 +1770,11 @@ function quiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
  * @return bool false if file not found, does not return if found - justsend the file
  */
 function quiz_question_pluginfile($course, $context, $component,
-        $filearea, $attemptid, $questionid, $args, $forcedownload) {
+        $filearea, $uniqueid, $questionid, $args, $forcedownload) {
     global $USER, $CFG;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-    $attemptobj = quiz_attempt::create($attemptid);
+    $attemptobj = quiz_attempt::create_from_unique_id($uniqueid);
     require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
     $questionids = array($questionid);
     $attemptobj->load_questions($questionids);

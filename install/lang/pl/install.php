@@ -32,12 +32,14 @@ $string['admindirname'] = 'Katalog admin';
 $string['availablelangs'] = 'Dostępne paczki językowe';
 $string['chooselanguagehead'] = 'Wybierz język';
 $string['chooselanguagesub'] = 'Proszę wybrać język TYLKO do instalacji. Stronę i języki dla użytkowników będzie można wybrać na następnym ekranie.';
+$string['clialreadyinstalled'] = 'Plik config.php już istnieje, użyj admin/cli/upgrade.php jeśli chcesz uaktualnić witrynę.';
 $string['databasehost'] = 'Host bazy danych';
 $string['databasename'] = 'Nazwa bazy danych';
 $string['dataroot'] = 'Katalog z danymi';
 $string['dbprefix'] = 'Prefiks tabel';
 $string['dirroot'] = 'Katalog Moodle';
 $string['environmenthead'] = 'Sprawdzam środowisko (ustawienia) ...';
+$string['errorsinenvironment'] = 'Kontrola środowiska zakończona niepowodzeniem!';
 $string['installation'] = 'Instalacja';
 $string['langdownloaderror'] = 'Niestety język "{$a}" nie może zostać pobrany. Proces instalacji będzie kontynuowany w języku angielskim.';
 $string['memorylimithelp'] = '<p>Limit pamięci PHP dla Twojego serwera jest ustawiony obecnie na {$a}.</p>
@@ -54,7 +56,13 @@ Pozwoli to Moodle ustawić samoczynnie limit pamięci.</li>
 <blockquote><div>php_value memory_limit 40M</div></blockquote>
 <p>Jednakże na niektórych serwerach będzie uniemożliwiało to poprawne działanie <b>wszystkich</b> stron PHP (ujrzysz błędy na wyświetlanych stronach), wtedy będziesz musiał usunąć plik .htaccess.</p></li>
 </ol>';
+$string['paths'] = 'Ścieżki';
+$string['pathserrcreatedataroot'] = 'Katalog danych ({$a->dataroot}) nie może zostać utworzony przez instalator.';
+$string['pathshead'] = 'Potwierdź ścieżki';
+$string['pathsrodataroot'] = 'Główny katalog danych nie ma uprawnień do zapisu. ';
 $string['pathsroparentdataroot'] = 'Nadrzędny katalog ({$a->parent}) jest tylko do odczytu. Katalog danych ({$a->dataroot}) nie może zostać utworzony przez instalator. ';
+$string['pathssubdirroot'] = 'Pełna ścieżka do katalogu z instalacją Moodle.';
+$string['pathsunsecuredataroot'] = 'Lokalizacja głównego katalogu danych nie jest bezpieczna';
 $string['pathswrongadmindir'] = 'Katalog admin nie istnieje';
 $string['phpextension'] = '{$a} rozszerzenie PHP';
 $string['phpversion'] = 'Wersja PHP';

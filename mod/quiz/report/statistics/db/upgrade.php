@@ -160,6 +160,74 @@ function xmldb_quiz_statistics_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2008112100, 'quizreport', 'statistics');
     }
 
+    if ($oldversion < 2008112101) {
+        // Removed UNSIGNED from all NUMBER columns in the quiz_statistics table.
+        $table = new xmldb_table('quiz_statistics');
+
+        // Change of sign for field firstattemptsavg
+        $field = new xmldb_field('firstattemptsavg', XMLDB_TYPE_NUMBER, '15, 5', null, null, null, null, 'allattemptscount');
+        $dbman->change_field_unsigned($table, $field);
+
+        // Change of sign for field allattemptsavg
+        $field = new xmldb_field('allattemptsavg', XMLDB_TYPE_NUMBER, '15, 5', null, null, null, null, 'firstattemptsavg');
+        $dbman->change_field_unsigned($table, $field);
+
+        // Change of sign for field median
+        $field = new xmldb_field('median', XMLDB_TYPE_NUMBER, '15, 5', null, null, null, null, 'allattemptsavg');
+        $dbman->change_field_unsigned($table, $field);
+
+        // Change of sign for field standarddeviation
+        $field = new xmldb_field('standarddeviation', XMLDB_TYPE_NUMBER, '15, 5', null, null, null, null, 'median');
+        $dbman->change_field_unsigned($table, $field);
+
+        // Change of sign for field errorratio
+        $field = new xmldb_field('errorratio', XMLDB_TYPE_NUMBER, '15, 10', null, null, null, null, 'cic');
+        $dbman->change_field_unsigned($table, $field);
+
+        // Change of sign for field standarderror
+        $field = new xmldb_field('standarderror', XMLDB_TYPE_NUMBER, '15, 10', null, null, null, null, 'errorratio');
+        $dbman->change_field_unsigned($table, $field);
+
+        // statistics savepoint reached
+        upgrade_plugin_savepoint(true, 2008112101, 'quiz', 'statistics');
+    }
+
+    if ($oldversion < 2008112102) {
+        // Removed UNSIGNED from all NUMBER columns in the quiz_question_statistics table.
+        $table = new xmldb_table('quiz_question_statistics');
+
+        // Change of sign for field effectiveweight
+        $field = new xmldb_field('effectiveweight', XMLDB_TYPE_NUMBER, '15, 5', null, null, null, null, 's');
+        $dbman->change_field_unsigned($table, $field);
+
+        // Change of sign for field sd
+        $field = new xmldb_field('sd', XMLDB_TYPE_NUMBER, '15, 10', null, null, null, null, 'discriminativeefficiency');
+        $dbman->change_field_unsigned($table, $field);
+
+        // Change of sign for field facility
+        $field = new xmldb_field('facility', XMLDB_TYPE_NUMBER, '15, 10', null, null, null, null, 'sd');
+        $dbman->change_field_unsigned($table, $field);
+
+        // Change of sign for field maxgrade
+        $field = new xmldb_field('maxgrade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'subquestions');
+        $dbman->change_field_unsigned($table, $field);
+
+        // statistics savepoint reached
+        upgrade_plugin_savepoint(true, 2008112102, 'quiz', 'statistics');
+    }
+
+    if ($oldversion < 2008112103) {
+        // Removed UNSIGNED from all NUMBER columns in the quiz_question_response_stats table.
+        $table = new xmldb_table('quiz_question_response_stats');
+
+        // Change of sign for field credit
+        $field = new xmldb_field('credit', XMLDB_TYPE_NUMBER, '15, 5', null, XMLDB_NOTNULL, null, null, 'rcount');
+        $dbman->change_field_unsigned($table, $field);
+
+        // statistics savepoint reached
+        upgrade_plugin_savepoint(true, 2008112103, 'quiz', 'statistics');
+    }
+
     return true;
 }
 

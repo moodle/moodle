@@ -1082,20 +1082,32 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->id               = $rawmods[$seq]->instance;
                    $mod[$seq]->cm               = $rawmods[$seq]->id;
                    $mod[$seq]->mod              = $rawmods[$seq]->modname;
+
+                    // Oh dear. Inconsistent names left here for backward compatibility.
                    $mod[$seq]->section          = $section->section;
+                   $mod[$seq]->sectionid        = $rawmods[$seq]->section;
+
+                   $mod[$seq]->module           = $rawmods[$seq]->module;
+                   $mod[$seq]->added            = $rawmods[$seq]->added;
+                   $mod[$seq]->score            = $rawmods[$seq]->score;
                    $mod[$seq]->idnumber         = $rawmods[$seq]->idnumber;
                    $mod[$seq]->visible          = $rawmods[$seq]->visible;
+                   $mod[$seq]->visibleold       = $rawmods[$seq]->visibleold;
                    $mod[$seq]->groupmode        = $rawmods[$seq]->groupmode;
                    $mod[$seq]->groupingid       = $rawmods[$seq]->groupingid;
                    $mod[$seq]->groupmembersonly = $rawmods[$seq]->groupmembersonly;
                    $mod[$seq]->indent           = $rawmods[$seq]->indent;
                    $mod[$seq]->completion       = $rawmods[$seq]->completion;
                    $mod[$seq]->extra            = "";
-                   if(!empty($CFG->enableavailability)) {
+                   $mod[$seq]->completiongradeitemnumber =
+                           $rawmods[$seq]->completiongradeitemnumber;
+                   $mod[$seq]->completionview   = $rawmods[$seq]->completionview;
+                   $mod[$seq]->completionexpected = $rawmods[$seq]->completionexpected;
+                   $mod[$seq]->availablefrom    = $rawmods[$seq]->availablefrom;
+                   $mod[$seq]->availableuntil   = $rawmods[$seq]->availableuntil;
+                   $mod[$seq]->showavailability = $rawmods[$seq]->showavailability;
+                   if (!empty($CFG->enableavailability)) {
                        condition_info::fill_availability_conditions($rawmods[$seq]);
-                       $mod[$seq]->availablefrom    = $rawmods[$seq]->availablefrom;
-                       $mod[$seq]->availableuntil   = $rawmods[$seq]->availableuntil;
-                       $mod[$seq]->showavailability = $rawmods[$seq]->showavailability;
                        $mod[$seq]->conditionscompletion = $rawmods[$seq]->conditionscompletion;
                        $mod[$seq]->conditionsgrade  = $rawmods[$seq]->conditionsgrade;
                    }
@@ -1152,12 +1164,18 @@ function get_array_of_activities($courseid) {
                    // 'empty'. This list corresponds to code in the cm_info constructor.
                    foreach(array('idnumber', 'groupmode', 'groupingid', 'groupmembersonly',
                            'indent', 'completion', 'extra', 'extraclasses', 'onclick', 'content',
-                           'icon', 'iconcomponent', 'customdata', 'availablefrom', 'availableuntil',
-                           'conditionscompletion', 'conditionsgrade') as $property) {
+                           'icon', 'iconcomponent', 'customdata', 'showavailability', 'availablefrom',
+                           'availableuntil', 'conditionscompletion', 'conditionsgrade',
+                           'completionview', 'completionexpected', 'score') as $property) {
                        if (property_exists($mod[$seq], $property) &&
                                empty($mod[$seq]->{$property})) {
                            unset($mod[$seq]->{$property});
                        }
+                   }
+                   // Special case: this value is usually set to null, but may be 0
+                   if (property_exists($mod[$seq], 'completiongradeitemnumber') &&
+                           is_null($mod[$seq]->completiongradeitemnumber)) {
+                       unset($mod[$seq]->completiongradeitemnumber);
                    }
                }
             }

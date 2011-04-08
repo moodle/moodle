@@ -139,5 +139,31 @@ class filter_urltolink extends moodle_text_filter {
             $ignoretags = array_reverse($ignoretags); /// Reversed so "progressive" str_replace() will solve some nesting problems.
             $text = str_replace(array_keys($ignoretags),$ignoretags,$text);
         }
+
+        if ($this->get_global_config('embedimages')) {
+            // now try to inject the images, this code was originally in the mediapluing filter
+            // this may be useful only if somebody relies on the fact the links in FORMAT_MOODLE get converted
+            // to URLs which in turn change to real images
+            $search = '/<a href="([^"]+\.(jpg|png|gif))" class="_blanktarget">([^>]*)<\/a>/is';
+            $text = preg_replace_callback($search, 'filter_urltolink_img_callback', $text);
+        }
     }
 }
+
+
+/**
+ * Change links to images into embedded images.
+ *
+ * This plugin is intended for automatic conversion of image URLs when FORMAT_MOODLE used.
+ *
+ * @param  $link
+ * @return string
+ */
+function filter_urltolink_img_callback($link) {
+    if ($link[1] !== $link[3]) {
+        // this is not a link created by this filter, because the url does not match the text
+        return $link[0];
+    }
+    return '<img class="filter_urltolink_image" alt="" src="'.$link[1].'" />';
+}
+

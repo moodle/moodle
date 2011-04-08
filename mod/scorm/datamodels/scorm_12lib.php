@@ -313,7 +313,7 @@ function scorm_get_toc($user,$scorm,$cmid,$toclink=TOCJSLINK,$currentorg='',$sco
         }
 
         if ($play) {
-            // it is possible that scoid is still not set, in this case we dont want an empty object
+            // it is possible that $scoid is still not set, in this case we don't want an empty object
             if ($scoid) {
                 $sco = scorm_get_sco($scoid);
             }

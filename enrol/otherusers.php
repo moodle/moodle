@@ -42,12 +42,11 @@ if ($course->id == SITEID) {
     redirect("$CFG->wwwroot/");
 }
 
-$PAGE->set_url('/enrol/otherusers.php', array('id'=>$course->id));
 $PAGE->set_pagelayout('admin');
 
 $manager = new course_enrolment_manager($course, $filter);
-$table = new course_enrolment_other_users_table($manager, $PAGE->url);
-$pageurl = new moodle_url($PAGE->url, $manager->get_url_params()+$table->get_url_params());
+$table = new course_enrolment_other_users_table($manager, $PAGE);
+$PAGE->set_url('/enrol/otherusers.php', $manager->get_url_params()+$table->get_url_params());
 
 /***
  * Actions will go here
@@ -82,11 +81,11 @@ $table->set_fields($fields, $OUTPUT);
 
 $renderer = $PAGE->get_renderer('core_enrol');
 $canassign = has_capability('moodle/role:assign', $manager->get_context());
-$users = $manager->get_other_users_for_display($renderer, $pageurl, $table->sort, $table->sortdirection, $table->page, $table->perpage);
+$users = $manager->get_other_users_for_display($renderer, $PAGE->url, $table->sort, $table->sortdirection, $table->page, $table->perpage);
 $assignableroles = $manager->get_assignable_roles(true);
 foreach ($users as $userid=>&$user) {
     $user['picture'] = $OUTPUT->render($user['picture']);
-    $user['role'] = $renderer->user_roles_and_actions($userid, $user['roles'], $assignableroles, $canassign, $pageurl);
+    $user['role'] = $renderer->user_roles_and_actions($userid, $user['roles'], $assignableroles, $canassign, $PAGE->url);
 }
 
 $table->set_total_users($manager->get_total_other_users());

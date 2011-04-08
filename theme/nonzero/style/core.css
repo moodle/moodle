@@ -48,7 +48,7 @@ a:active {
 ---------------------------*/
 
 #page-header {
-	background: url([[pix:theme|n1]]) repeat-x 0 100%;
+	background: url([[pix:theme|n1]]) repeat-x 0 0;
 	color: #fff;
 	height: 122px;
 }
@@ -57,6 +57,11 @@ a:active {
   font-size:2.5em;
   padding-top:70px;
   margin: 0;
+  text-shadow: 0 -1px 1px #000;
+}
+
+.has_custom_menu #page-header h1 {
+  padding-top:60px;
 }
 
 #page-header.inside {
@@ -148,12 +153,99 @@ a:active {
 
 .course-content .current {
 	background: #1f5480;
-}
-
-.course-content .current .left {
 	color: #fff;
 }
 
 .course-content .main .content {
 	background: #fff;
 }
+
+/* Custom Menu */
+/*custom menu styles */
+#custommenuwrap {
+    clear: both;
+    padding-top: 4px;
+}    
+
+#custommenu {
+    border: none !important;
+    border: 0px solid #fff !important;
+}
+
+#custommenu * {
+    border: none !important;
+}
+
+/*YUI Reset */
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-content{ 
+   background-position: -10000px -10000px; 
+}
+
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label{ 
+    background-position: -10000px -10000px; 
+}
+
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label-active,.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menuitem-active .yui3-menuitem-content,.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label-menuvisible{
+    background-position: -10000px -10000px; 
+}
+
+.yui3-skin-sam #page .yui3-menu-label,
+.yui3-skin-sam #page .yui3-menu .yui3-menu .yui3-menu-label {
+    background-position: right center; 
+}
+
+.yui3-skin-sam #page .yui3-menubuttonnav .yui3-menu-label em {
+    background-position: right center; 
+}
+
+.yui3-skin-sam #page .yui3-splitbuttonnav .yui3-menu-label .yui3-menu-toggle { 
+    background-position: 3px center;
+}
+
+.yui3-skin-sam #page .yui3-splitbuttonnav .yui3-menu-label-menuvisible .yui3-menu-toggle {
+    background-position: 0% 50%; 
+}
+
+.yui3-skin-sam #page .yui3-menu-label, .yui3-skin-sam #page .yui3-menuitem-content  {
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    padding-left: 0px;
+    padding-right: 20px !important;
+    text-shadow: 0 -1px 1px #000;
+}
+
+.custom_menu_submenu .yui3-menu-label, .custom_menu_submenu .yui3-menuitem-content {
+    color: #333 !important;
+    padding-left: 5px !important;
+    text-shadow:none !important;
+}
+
+.yui3-skin-sam #page .yui3-menu-label.yui3-menu-label-active, .yui3-skin-sam #page .yui3-menuitem-active .yui3-menuitem-content {
+    color: #ccc;
+}
+
+.yui3-skin-sam #page .yui3-menu-content, .yui3-skin-sam #page .yui3-menu-content, .yui3-skin-sam #page .yui3-menu .yui3-menu .yui3-menu-content, .yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label, .yui3-skin-sam #page .yui3-menu-horizontal .yui3-menuitem-content  {
+    border: none;
+}
+
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label, .yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-content {
+    border-color:#808080;
+    border-style:solid;
+    border-width:0px 0;
+}
+
+#page .custom_menu_submenu {
+    border: 1px solid #27608d !important;
+    border-top: none !important;
+    background: #fff;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    -webkit-box-shadow: 0px 1px 3px #ccc;
+    -moz-box-shadow: 0px 1px 3px #ccc;
+    box-shadow: 0px 1px 3px #ccc;
+}
+
+/** Custom CSS **/
+[[setting:customcss]]

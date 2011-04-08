@@ -608,7 +608,7 @@ function file_get_submitted_draft_itemid($elname) {
  * @return string if $text was passed in, the rewritten $text is returned. Otherwise NULL.
  */
 function file_save_draft_area_files($draftitemid, $contextid, $component, $filearea, $itemid, array $options=null, $text=null, $forcehttps=false) {
-    global $CFG, $USER;
+    global $USER;
 
     $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
     $fs = get_file_storage();
@@ -717,7 +717,24 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
 
     if (is_null($text)) {
         return null;
+    } else {
+        return file_rewrite_urls_to_pluginfile($text, $draftitemid, $forcehttps);
     }
+}
+
+/**
+ * Convert the draft file area URLs in some content to @@PLUGINFILE@@ tokens
+ * ready to be saved in the database. Normally, this is done automatically by
+ * {@link file_save_draft_area_files()}.
+ * @param string $text the content to process.
+ * @param int $draftitemid the draft file area the content was using.
+ * @param bool $forcehttps whether the content contains https URLs. Default false.
+ * @return string the processed content.
+ */
+function file_rewrite_urls_to_pluginfile($text, $draftitemid, $forcehttps = false) {
+    global $CFG, $USER;
+
+    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
 
     $wwwroot = $CFG->wwwroot;
     if ($forcehttps) {
@@ -738,7 +755,6 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         }
         $text = str_ireplace("$wwwroot/draftfile.php?file=/$usercontext->id/user/draft/$draftitemid/", '@@PLUGINFILE@@/', $text);
     }
-
 
     return $text;
 }
@@ -1120,6 +1136,7 @@ function get_mimetypes_array() {
     static $mimearray = array (
         'xxx'  => array ('type'=>'document/unknown', 'icon'=>'unknown'),
         '3gp'  => array ('type'=>'video/quicktime', 'icon'=>'video'),
+        'aac'  => array ('type'=>'audio/aac', 'icon'=>'audio'),
         'ai'   => array ('type'=>'application/postscript', 'icon'=>'image'),
         'aif'  => array ('type'=>'audio/x-aiff', 'icon'=>'audio'),
         'aiff' => array ('type'=>'audio/x-aiff', 'icon'=>'audio'),
@@ -1152,6 +1169,7 @@ function get_mimetypes_array() {
         'eps'  => array ('type'=>'application/postscript', 'icon'=>'pdf'),
         'fdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
         'flv'  => array ('type'=>'video/x-flv', 'icon'=>'video'),
+        'f4v'  => array ('type'=>'video/mp4', 'icon'=>'video'),
         'gif'  => array ('type'=>'image/gif', 'icon'=>'image'),
         'gtar' => array ('type'=>'application/x-gtar', 'icon'=>'zip'),
         'tgz'  => array ('type'=>'application/g-zip', 'icon'=>'zip'),
@@ -1207,6 +1225,7 @@ function get_mimetypes_array() {
         'odf'  => array ('type'=>'application/vnd.oasis.opendocument.formula', 'icon'=>'odf'),
         'odb'  => array ('type'=>'application/vnd.oasis.opendocument.database', 'icon'=>'odb'),
         'odi'  => array ('type'=>'application/vnd.oasis.opendocument.image', 'icon'=>'odi'),
+        'oga'  => array ('type'=>'audio/ogg', 'icon'=>'audio'),
         'ogg'  => array ('type'=>'audio/ogg', 'icon'=>'audio'),
         'ogv'  => array ('type'=>'video/ogg', 'icon'=>'video'),
 
@@ -1233,8 +1252,10 @@ function get_mimetypes_array() {
         'ram'  => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio'),
         'rhb'  => array ('type'=>'text/xml', 'icon'=>'xml'),
         'rm'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'audio'),
+        'rmvb' => array ('type'=>'application/vnd.rn-realmedia-vbr', 'icon'=>'video'),
         'rtf'  => array ('type'=>'text/rtf', 'icon'=>'text'),
         'rtx'  => array ('type'=>'text/richtext', 'icon'=>'text'),
+        'rv'   => array ('type'=>'audio/x-pn-realaudio-plugin', 'icon'=>'video'),
         'sh'   => array ('type'=>'application/x-sh', 'icon'=>'text'),
         'sit'  => array ('type'=>'application/x-stuffit', 'icon'=>'zip'),
         'smi'  => array ('type'=>'application/smil', 'icon'=>'text'),
@@ -1266,6 +1287,7 @@ function get_mimetypes_array() {
         'tsv'  => array ('type'=>'text/tab-separated-values', 'icon'=>'text'),
         'txt'  => array ('type'=>'text/plain', 'icon'=>'text'),
         'wav'  => array ('type'=>'audio/wav', 'icon'=>'audio'),
+        'webm'  => array ('type'=>'video/webm', 'icon'=>'video'),
         'wmv'  => array ('type'=>'video/x-ms-wmv', 'icon'=>'avi'),
         'asf'  => array ('type'=>'video/x-ms-asf', 'icon'=>'avi'),
         'xdp'  => array ('type'=>'application/pdf', 'icon'=>'pdf'),
