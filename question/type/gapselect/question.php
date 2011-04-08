@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/type/gapselect/questionbase.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_gapselect_question extends qtype_gapselect_question_base {
-//is actually exactly the same.
+    // Is actually exactly the same.
 }
 
 

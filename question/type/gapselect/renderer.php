@@ -37,7 +37,8 @@ require_once($CFG->dirroot . '/question/type/gapselect/rendererbase.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_renderer {
-    protected function embedded_element(question_attempt $qa, $place, question_display_options $options) {
+    protected function embedded_element(question_attempt $qa, $place,
+            question_display_options $options) {
         $question = $qa->get_question();
         $group = $question->places[$place];
 
@@ -64,13 +65,15 @@ class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_
         if ($options->correctness) {
             $response = $qa->get_last_qt_data();
             if (array_key_exists($fieldname, $response)) {
-                $fraction = (int) ($response[$fieldname] == $question->get_right_choice_for($place));
+                $fraction = (int) ($response[$fieldname] ==
+                        $question->get_right_choice_for($place));
                 $attributes['class'] = $this->feedback_class($fraction);
                 $feedbackimage = $this->feedback_image($fraction);
             }
         }
 
-        $selecthtml = html_writer::select($selectoptions, $qa->get_qt_field_name($fieldname), $value, ' ', $attributes) . ' ' . $feedbackimage;
+        $selecthtml = html_writer::select($selectoptions, $qa->get_qt_field_name($fieldname),
+                $value, ' ', $attributes) . ' ' . $feedbackimage;
         return html_writer::tag('span', $selecthtml, array('class' => 'control '.$groupclass));
     }
 

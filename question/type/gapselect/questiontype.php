@@ -76,8 +76,10 @@ class qtype_gapselect extends qtype_gapselect_base {
 
             foreach ($data['#']['selectoption'] as $selectoptionxml) {
                 $question->choices[] = array(
-                    'answer' => $format->getpath($selectoptionxml, array('#', 'text', 0, '#'), '', true),
-                    'choicegroup' => $format->getpath($selectoptionxml, array('#', 'group', 0, '#'), 1),
+                    'answer'      => $format->getpath($selectoptionxml,
+                                                      array('#', 'text', 0, '#'), '', true),
+                    'choicegroup' => $format->getpath($selectoptionxml,
+                                                      array('#', 'group', 0, '#'), 1),
                 );
             }
 
@@ -101,7 +103,8 @@ class qtype_gapselect extends qtype_gapselect_base {
     public function export_to_xml($question, $format, $extra = null) {
         $output = '';
 
-        $output .= '    <shuffleanswers>' . $question->options->shuffleanswers . "</shuffleanswers>\n";
+        $output .= '    <shuffleanswers>' . $question->options->shuffleanswers .
+                "</shuffleanswers>\n";
 
         $output .= $format->write_combined_feedback($question->options);
 
@@ -114,95 +117,4 @@ class qtype_gapselect extends qtype_gapselect_base {
 
         return $output;
     }
-
-    /*
-     * Backup the data in the question
-     *
-     * This is used in question/backuplib.php
-     */
-    public function backup($bf, $preferences, $question, $level = 6) {
-        $status = true;
-        $gapselects = get_records("question_gapselect", "questionid", $question, "id");
-
-        //If there are gapselect
-        if ($gapselects) {
-            //Iterate over each gapselect
-            foreach ($gapselects as $gapselect) {
-                $status = fwrite ($bf,start_tag("SDDLS",$level,true));
-                //Print oumultiresponse contents
-                fwrite ($bf,full_tag("SHUFFLEANSWERS",$level+1,false,$gapselect->shuffleanswers));
-                fwrite ($bf,full_tag("CORRECTFEEDBACK",$level+1,false,$gapselect->correctfeedback));
-                fwrite ($bf,full_tag("PARTIALLYCORRECTFEEDBACK",$level+1,false,$gapselect->partiallycorrectfeedback));
-                fwrite ($bf,full_tag("INCORRECTFEEDBACK",$level+1,false,$gapselect->incorrectfeedback));
-                fwrite ($bf,full_tag("SHOWNUMCORRECT",$level+1,false,$gapselect->shownumcorrect));
-                $status = fwrite ($bf,end_tag("SDDLS",$level,true));
-            }
-
-            //Now print question_answers
-            $status = question_backup_answers($bf,$preferences,$question);
-        }
-        return $status;
-    }
-
-    /**
-     * Restores the data in the question (This is used in question/restorelib.php)
-     *
-     */
-    public function restore($old_question_id,$new_question_id,$info,$restore) {
-        $status = true;
-
-        //Get the gapselect array
-        $gapselects = $info['#']['SDDLS'];
-
-        //Iterate over oumultiresponses
-        for($i = 0; $i < sizeof($gapselects); $i++) {
-            $mul_info = $gapselects[$i];
-
-            //Now, build the question_gapselect record structure
-            $gapselect = new stdClass();
-            $gapselect->questionid = $new_question_id;
-            $gapselect->shuffleanswers = isset($mul_info['#']['SHUFFLEANSWERS']['0']['#'])?backup_todb($mul_info['#']['SHUFFLEANSWERS']['0']['#']):'';
-            if (array_key_exists("CORRECTFEEDBACK", $mul_info['#'])) {
-                $gapselect->correctfeedback = backup_todb($mul_info['#']['CORRECTFEEDBACK']['0']['#']);
-            } else {
-                $gapselect->correctfeedback = '';
-            }
-            if (array_key_exists("PARTIALLYCORRECTFEEDBACK", $mul_info['#'])) {
-                $gapselect->partiallycorrectfeedback = backup_todb($mul_info['#']['PARTIALLYCORRECTFEEDBACK']['0']['#']);
-            } else {
-                $gapselect->partiallycorrectfeedback = '';
-            }
-            if (array_key_exists("INCORRECTFEEDBACK", $mul_info['#'])) {
-                $gapselect->incorrectfeedback = backup_todb($mul_info['#']['INCORRECTFEEDBACK']['0']['#']);
-            } else {
-                $gapselect->incorrectfeedback = '';
-            }
-            if (array_key_exists('SHOWNUMCORRECT', $mul_info['#'])) {
-                $gapselect->shownumcorrect = backup_todb($mul_info['#']['SHOWNUMCORRECT']['0']['#']);
-            } else if (array_key_exists('CORRECTRESPONSESFEEDBACK', $mul_info['#'])) {
-                $gapselect->shownumcorrect = backup_todb($mul_info['#']['CORRECTRESPONSESFEEDBACK']['0']['#']);
-            } else {
-                $gapselect->shownumcorrect = 0;
-            }
-
-            $newid = insert_record ("question_gapselect",$gapselect);
-
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
-                }
-                backup_flush(300);
-            }
-
-            if (!$newid) {
-                $status = false;
-            }
-        }
-        return $status;
-    }
-
 }

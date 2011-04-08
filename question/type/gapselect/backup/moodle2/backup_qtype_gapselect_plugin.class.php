@@ -62,7 +62,8 @@ class backup_qtype_gapselect_plugin extends backup_qtype_plugin {
         $pluginwrapper->add_child($gapselect);
 
         // set source to populate the data
-        $gapselect->set_source_table('question_gapselect', array('questionid' => backup::VAR_PARENTID));
+        $gapselect->set_source_table('question_gapselect',
+                array('questionid' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 

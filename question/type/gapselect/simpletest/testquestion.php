@@ -41,7 +41,8 @@ class qtype_gapselect_question_test extends UnitTestCase {
 
     public function test_get_question_summary() {
         $gapselect = qtype_gapselect_test_helper::make_a_gapselect_question();
-        $this->assertEqual('The [[1]] brown [[2]] jumped over the [[3]] dog.; [[1]] -> {quick / slow}; [[2]] -> {fox / dog}; [[3]] -> {lazy / assiduous}',
+        $this->assertEqual('The [[1]] brown [[2]] jumped over the [[3]] dog.; ' .
+                '[[1]] -> {quick / slow}; [[2]] -> {fox / dog}; [[3]] -> {lazy / assiduous}',
                 $gapselect->get_question_summary());
     }
 
@@ -66,8 +67,8 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step());
 
-        $this->assertEqual('{+} {-} {+} {-}',
-                $gapselect->summarise_response(array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2')));
+        $this->assertEqual('{+} {-} {+} {-}', $gapselect->summarise_response(
+                array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2')));
     }
 
     public function test_get_random_guess_score() {
@@ -124,8 +125,8 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step());
 
-        $this->assertEqual(array(2, 4),
-                $gapselect->get_num_parts_right(array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
+        $this->assertEqual(array(2, 4), $gapselect->get_num_parts_right(
+                array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
     }
 
     public function test_get_expected_data() {
@@ -222,12 +223,12 @@ class qtype_gapselect_question_test extends UnitTestCase {
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step());
 
-        $this->assertEqual(array(1, question_state::$gradedright),
-                $gapselect->grade_response(array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2')));
-        $this->assertEqual(array(0.5, question_state::$gradedpartial),
-                $gapselect->grade_response(array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
-        $this->assertEqual(array(0, question_state::$gradedwrong),
-                $gapselect->grade_response(array('p1' => '0', 'p2' => '1', 'p3' => '2', 'p4' => '1')));
+        $this->assertEqual(array(1, question_state::$gradedright), $gapselect->grade_response(
+                array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2')));
+        $this->assertEqual(array(0.5, question_state::$gradedpartial), $gapselect->grade_response(
+                array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
+        $this->assertEqual(array(0, question_state::$gradedwrong), $gapselect->grade_response(
+                array('p1' => '0', 'p2' => '1', 'p3' => '2', 'p4' => '1')));
     }
 
     public function test_classify_response() {

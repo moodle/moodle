@@ -208,10 +208,14 @@ class qtype_gapselect_test extends UnitTestCase {
         $expectedq->penalty = 0.3333333;
 
         $expectedq->shuffleanswers = 1;
-        $expectedq->correctfeedback = array('text' => '<p>Your answer is correct.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
-        $expectedq->partiallycorrectfeedback = array('text' => '<p>Your answer is partially correct.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->correctfeedback = array('text' => '<p>Your answer is correct.</p>',
+                'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->partiallycorrectfeedback = array(
+                'text' => '<p>Your answer is partially correct.</p>',
+                'format' => FORMAT_MOODLE, 'files' => array());
         $expectedq->shownumcorrect = true;
-        $expectedq->incorrectfeedback = array('text' => '<p>Your answer is incorrect.</p>', 'format' => FORMAT_MOODLE, 'files' => array());
+        $expectedq->incorrectfeedback = array('text' => '<p>Your answer is incorrect.</p>',
+                'format' => FORMAT_MOODLE, 'files' => array());
 
         $expectedq->choices = array(
             array('answer' => 'Alpha', 'choicegroup' => 1),
@@ -221,7 +225,8 @@ class qtype_gapselect_test extends UnitTestCase {
 
         $expectedq->hint = array(
                 array('text' => 'Try again.', 'format' => FORMAT_MOODLE, 'files' => array()),
-                array('text' => 'These are the first three letters of the Greek alphabet.', 'format' => FORMAT_MOODLE, 'files' => array()));
+                array('text' => 'These are the first three letters of the Greek alphabet.',
+                        'format' => FORMAT_MOODLE, 'files' => array()));
         $expectedq->hintshownumcorrect = array(true, true);
         $expectedq->hintclearwrong = array(false, true);
 
@@ -261,7 +266,9 @@ class qtype_gapselect_test extends UnitTestCase {
 
         $qdata->hints = array(
             1 => new question_hint_with_parts(1, 'Try again.', FORMAT_MOODLE, true, false),
-            2 => new question_hint_with_parts(2, 'These are the first three letters of the Greek alphabet.', FORMAT_MOODLE, true, true),
+            2 => new question_hint_with_parts(2,
+                    'These are the first three letters of the Greek alphabet.',
+                    FORMAT_MOODLE, true, true),
         );
 
         $exporter = new qformat_xml();

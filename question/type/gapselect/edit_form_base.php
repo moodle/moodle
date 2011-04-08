@@ -54,7 +54,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
     private $htmltclosetags = '~<\s*/\s*\w\s*.*?>|<\s*br\s*>~';
 
     /** @var string regex to select text like [[cat]] (including the square brackets). */
-    private $squareBracketsRegex = '/\[\[[^]]*?\]\]/';
+    private $squarebracketsregex = '/\[\[[^]]*?\]\]/';
 
     private function get_html_tags($text) {
         $textarray = array();
@@ -65,18 +65,23 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
                 return $textarray[0];
             }
         }
+
         preg_match_all($this->htmltstarttagsandattributes, $text, $textarray);
         if ($textarray[0]) {
             $tag = htmlspecialchars($textarray[0][0]);
             $allowedtaglist = $this->get_list_of_printable_allowed_tags($this->allowedhtmltags);
-            return $tag . " is not allowed (only $allowedtaglist and corresponsing closing tags are allowed)";
+            return $tag . ' is not allowed (only ' . $allowedtaglist .
+                    ' and corresponsing closing tags are allowed)';
         }
+
         preg_match_all($this->htmltclosetags, $text, $textarray);
         if ($textarray[0]) {
             $tag = htmlspecialchars($textarray[0][0]);
             $allowedtaglist=$this->get_list_of_printable_allowed_tags($this->allowedhtmltags);
-            return $tag . " is not allowed HTML tag! (only $allowedtaglist and corresponsing closing tags are allowed)";
+            return $tag . ' is not allowed (only ' . $allowedtaglist .
+                    ' and corresponsing closing tags are allowed)';
         }
+
         return false;
     }
 
@@ -120,14 +125,17 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
 
         if ($this->question->formoptions->repeatelements) {
             $defaultstartnumbers = QUESTION_NUMANS_START * 2;
-            $repeatsatstart = max($defaultstartnumbers, QUESTION_NUMANS_START, $countanswers + QUESTION_NUMANS_ADD);
+            $repeatsatstart = max($defaultstartnumbers, QUESTION_NUMANS_START,
+                    $countanswers + QUESTION_NUMANS_ADD);
         } else {
             $repeatsatstart = $countanswers;
         }
 
         $repeatedoptions = $this->repeated_options();
         $mform->setType('answer', PARAM_RAW);
-        $this->repeat_elements($textboxgroup, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', QUESTION_NUMANS_ADD, get_string('addmorechoiceblanks', 'qtype_gapselect'));
+        $this->repeat_elements($textboxgroup, $repeatsatstart, $repeatedoptions,
+                'noanswers', 'addanswers', QUESTION_NUMANS_ADD,
+                get_string('addmorechoiceblanks', 'qtype_gapselect'));
     }
 
     protected function choice_group($mform) {
@@ -136,9 +144,12 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
             $options[$i] = $i;
         }
         $grouparray = array();
-        $grouparray[] = $mform->createElement('text', 'answer', get_string('answer', 'qtype_gapselect'), array('size'=>30, 'class'=>'tweakcss'));
-        $grouparray[] = $mform->createElement('static', '', '',' '.get_string('group', 'qtype_gapselect').' ');
-        $grouparray[] = $mform->createElement('select', 'choicegroup', get_string('group', 'qtype_gapselect'), $options);
+        $grouparray[] = $mform->createElement('text', 'answer',
+                get_string('answer', 'qtype_gapselect'), array('size'=>30, 'class'=>'tweakcss'));
+        $grouparray[] = $mform->createElement('static', '', '', ' ' .
+                get_string('group', 'qtype_gapselect').' ');
+        $grouparray[] = $mform->createElement('select', 'choicegroup',
+                get_string('group', 'qtype_gapselect'), $options);
         return $grouparray;
     }
 
@@ -209,7 +220,7 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
         }
 
         $matches = array();
-        preg_match_all($this->squareBracketsRegex, $questiontext, $matches);
+        preg_match_all($this->squarebracketsregex, $questiontext, $matches);
         $slots = $matches[0];
 
         if (!$slots) {
@@ -236,7 +247,9 @@ class qtype_gapselect_edit_form_base extends question_edit_form {
                 }
             }
             if (!$found) {
-                return $error . "<b>$slot</b> was not found in Choices! (only the choice numbers that exist in choices are allowed to be used a place holders!";
+                return $error . '<b>' . $slot . '</b> was not found in Choices! ' .
+                        '(only the choice numbers that exist in choices are allowed ' .
+                        'to be used a place holders!';
             }
         }
         return false;
