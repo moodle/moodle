@@ -301,7 +301,8 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
             return $this->check_hint_file_access($qa, $options, $args);
 
         } else {
-            return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
+            return parent::check_file_access($qa, $options, $component, $filearea,
+                    $args, $forcedownload);
         }
     }
 }

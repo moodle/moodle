@@ -84,11 +84,12 @@ abstract class qtype_gapselect_base extends question_type {
         }
 
         // Delete old answer records
-        foreach($oldanswers as $oa) {
+        foreach ($oldanswers as $oa) {
             delete_records('question_answers', 'id', $oa->id);
         }
 
-        $options = $DB->get_record('question_' . $this->name(), array('questionid' => $question->id));
+        $options = $DB->get_record('question_' . $this->name(),
+                array('questionid' => $question->id));
         if (!$options) {
             $options = new stdClass();
             $options->questionid = $question->id;
@@ -157,7 +158,8 @@ abstract class qtype_gapselect_base extends question_type {
         $question->rightchoices = array();
         // Break up the question text, and store the fragments, places and right answers.
 
-        $bits = preg_split('/\[\[(\d+)]]/', $question->questiontext, null, PREG_SPLIT_DELIM_CAPTURE);
+        $bits = preg_split('/\[\[(\d+)]]/', $question->questiontext,
+                null, PREG_SPLIT_DELIM_CAPTURE);
         $question->textfragments[0] = array_shift($bits);
         $i = 1;
 
@@ -199,7 +201,7 @@ abstract class qtype_gapselect_base extends question_type {
     protected function get_array_of_choices($question) {
         $subquestions = $question->options->answers;
         $count = 0;
-        foreach ($subquestions as $key=>$subquestion) {
+        foreach ($subquestions as $key => $subquestion) {
             $answers[$count]['id'] = $subquestion->id;
             $answers[$count]['answer'] = $subquestion->answer;
             $answers[$count]['fraction'] = $subquestion->fraction;
@@ -240,9 +242,9 @@ abstract class qtype_gapselect_base extends question_type {
         $arrayofplaceholdeers = $this->get_array_of_placeholders($question);
 
         $correctplayers = array();
-        foreach($arrayofplaceholdeers as $ph) {
-            foreach($arrayofchoices as $key=>$choice) {
-                if(($key+1) == $ph) {
+        foreach ($arrayofplaceholdeers as $ph) {
+            foreach ($arrayofchoices as $key => $choice) {
+                if ($key + 1 == $ph) {
                     $correctplayers[]= $choice;
                 }
             }
@@ -253,7 +255,7 @@ abstract class qtype_gapselect_base extends question_type {
     protected function get_array_of_placeholders($question) {
         $qtext = $question->questiontext;
         $error = '<b> ERROR</b>: Please check the form for this question. ';
-        if(!$qtext) {
+        if (!$qtext) {
             echo $error . 'The question text is empty!';
             return false;
         }
@@ -261,7 +263,7 @@ abstract class qtype_gapselect_base extends question_type {
         //get the slots
         $slots = $this->getEmbeddedTextArray($question);
 
-        if(!$slots) {
+        if (!$slots) {
             echo $error . 'The question text is not in the correct format!';
             return false;
         }
@@ -271,7 +273,7 @@ abstract class qtype_gapselect_base extends question_type {
             $output[] = substr($slot, 2, strlen($slot) - 4); //2 is for '[[' and 4 is for '[[]]'.
         }
         return $output;
-     }
+    }
 
     protected function get_group_of_players($question, $state, $subquestions, $group) {
         $goupofanswers = array();

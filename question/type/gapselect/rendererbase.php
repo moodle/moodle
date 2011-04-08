@@ -29,13 +29,14 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Generates the output for question types where the question includes embedded interactive elements in the
- * question text.
+ * Generates the output for question types where the question includes embedded
+ * interactive elements in the question text.
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class qtype_elements_embedded_in_question_text_renderer extends qtype_with_combined_feedback_renderer {
+abstract class qtype_elements_embedded_in_question_text_renderer
+        extends qtype_with_combined_feedback_renderer {
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
 
@@ -69,9 +70,11 @@ abstract class qtype_elements_embedded_in_question_text_renderer extends qtype_w
         return 'qtext';
     }
 
-    protected abstract function embedded_element(question_attempt $qa, $place, question_display_options $options);
+    protected abstract function embedded_element(question_attempt $qa, $place,
+            question_display_options $options);
 
-    protected function post_qtext_elements(question_attempt $qa, question_display_options $options) {
+    protected function post_qtext_elements(question_attempt $qa,
+            question_display_options $options) {
         return '';
     }
 

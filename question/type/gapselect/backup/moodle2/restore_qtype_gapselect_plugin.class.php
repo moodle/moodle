@@ -47,9 +47,9 @@ class restore_qtype_gapselect_plugin extends restore_qtype_plugin {
 
         // Add own qtype stuff
         $elename = 'gapselect';
-        $elepath = $this->get_pathfor('/gapselect'); // we used get_recommended_name() so this works
+        // we used get_recommended_name() so this works
+        $elepath = $this->get_pathfor('/gapselect');
         $paths[] = new restore_path_element($elename, $elepath);
-
 
         return $paths; // And we return the interesting paths
     }
@@ -76,8 +76,6 @@ class restore_qtype_gapselect_plugin extends restore_qtype_plugin {
             $newitemid = $DB->insert_record('question_gapselect', $data);
             // Create mapping (needed for decoding links)
             $this->set_mapping('question_gapselect', $oldid, $newitemid);
-        } else {
-            // Nothing to remap if the question already existed
         }
     }
 
@@ -129,7 +127,8 @@ class restore_qtype_gapselect_plugin extends restore_qtype_plugin {
         $contents = array();
 
         $fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
-        $contents[] = new restore_decode_content('question_gapselect', $fields, 'question_gapselect');
+        $contents[] = new restore_decode_content('question_gapselect',
+                $fields, 'question_gapselect');
 
         return $contents;
     }
