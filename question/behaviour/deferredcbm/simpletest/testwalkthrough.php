@@ -100,7 +100,8 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
         // Verify.
         $this->check_current_state(question_state::$mangrpartial);
         $this->check_current_mark(1);
-        $this->check_current_output(new PatternExpectation('/' . preg_quote('Not good enough!') . '/'));
+        $this->check_current_output(new PatternExpectation('/' .
+                preg_quote('Not good enough!') . '/'));
 
         // Now change the correct answer to the question, and regrade.
         $tf->rightanswer = false;
@@ -145,7 +146,8 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
         $this->check_current_mark(0.6666667);
         $this->check_current_output($this->get_contains_correct_expectation(),
                 $this->get_contains_cbm_radio_expectation(1, false, true));
-        $this->assertEqual(get_string('true', 'qtype_truefalse') . ' [' . question_cbm::get_string(1) . ']',
+        $this->assertEqual(get_string('true', 'qtype_truefalse') . ' [' .
+                question_cbm::get_string(1) . ']',
                 $this->quba->get_response_summary($this->slot));
     }
 
@@ -173,8 +175,10 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
         $this->check_current_mark(0.6666667);
         $this->check_current_output($this->get_contains_correct_expectation(),
                 $this->get_contains_cbm_radio_expectation(1, false, false),
-                new PatternExpectation('/' . preg_quote(get_string('assumingcertainty', 'qbehaviour_deferredcbm',
-                    question_cbm::get_string($qa->get_last_behaviour_var('_assumedcertainty')))) . '/'));
+                new PatternExpectation('/' . preg_quote(
+                        get_string('assumingcertainty', 'qbehaviour_deferredcbm',
+                        question_cbm::get_string(
+                            $qa->get_last_behaviour_var('_assumedcertainty')))) . '/'));
         $this->assertEqual(get_string('true', 'qtype_truefalse'),
                 $this->quba->get_response_summary($this->slot));
     }

@@ -90,14 +90,19 @@ class qbehaviour_interactivecountback_walkthrough_test extends qbehaviour_walkth
                 $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
-                new PatternExpectation('/' . preg_quote(get_string('notcomplete', 'qbehaviour_interactive')) . '/'),
+                new PatternExpectation('/' .
+                        preg_quote(get_string('notcomplete', 'qbehaviour_interactive')) . '/'),
                 $this->get_contains_hint_expectation('This is the first hint'),
                 $this->get_contains_num_parts_correct(2),
                 $this->get_contains_standard_partiallycorrect_combined_feedback_expectation(),
-                $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'sub0', $orderforchoice[1]),
-                $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'sub1', '0'),
-                $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'sub2', '0'),
-                $this->get_contains_hidden_expectation($this->quba->get_field_prefix($this->slot) . 'sub3', $orderforchoice[1]));
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . 'sub0', $orderforchoice[1]),
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . 'sub1', '0'),
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . 'sub2', '0'),
+                $this->get_contains_hidden_expectation(
+                        $this->quba->get_field_prefix($this->slot) . 'sub3', $orderforchoice[1]));
 
         // Check that extract responses will return the reset data.
         $prefix = $this->quba->get_field_prefix($this->slot);
@@ -105,7 +110,8 @@ class qbehaviour_interactivecountback_walkthrough_test extends qbehaviour_walkth
                 $this->quba->extract_responses($this->slot, array($prefix . 'sub0' => 1)));
 
         // Do try again.
-        $this->process_submission(array('sub0' => $orderforchoice[1], 'sub3' => $orderforchoice[1], '-tryagain' => 1));
+        $this->process_submission(array('sub0' => $orderforchoice[1],
+                'sub3' => $orderforchoice[1], '-tryagain' => 1));
 
         // Verify.
         $this->check_current_state(question_state::$todo);

@@ -83,11 +83,13 @@ class qbehaviour_immediatecbm extends qbehaviour_immediatefeedback {
 
     protected function is_same_response($pendingstep) {
         return parent::is_same_response($pendingstep) &&
-                $this->qa->get_last_behaviour_var('certainty') == $pendingstep->get_behaviour_var('certainty');
+                $this->qa->get_last_behaviour_var('certainty') ==
+                        $pendingstep->get_behaviour_var('certainty');
     }
 
     protected function is_complete_response($pendingstep) {
-        return parent::is_complete_response($pendingstep) && $pendingstep->has_behaviour_var('certainty');
+        return parent::is_complete_response($pendingstep) &&
+                $pendingstep->has_behaviour_var('certainty');
     }
 
     public function process_submit(question_attempt_pending_step $pendingstep) {
@@ -132,9 +134,9 @@ class qbehaviour_immediatecbm extends qbehaviour_immediatefeedback {
             $pendingstep->set_behaviour_var('_rawfraction', $fraction);
             $pendingstep->set_fraction(question_cbm::adjust_fraction($fraction, $certainty));
             $pendingstep->set_state($state);
-            $pendingstep->set_new_response_summary(
-                    question_cbm::summary_with_certainty(
-                    $this->question->summarise_response($response), $responsesstep->get_behaviour_var('certainty')));
+            $pendingstep->set_new_response_summary(question_cbm::summary_with_certainty(
+                    $this->question->summarise_response($response),
+                    $responsesstep->get_behaviour_var('certainty')));
         }
         return question_attempt::KEEP;
     }

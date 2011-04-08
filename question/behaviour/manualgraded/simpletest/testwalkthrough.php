@@ -46,8 +46,8 @@ class qbehaviour_manualgraded_walkthrough_test extends qbehaviour_walkthrough_te
         $this->start_attempt_at_question($essay, 'deferredfeedback', 10);
 
         // Check the right model is being used.
-        $this->assertEqual('manualgraded', $this->quba->
-                get_question_attempt($this->slot)->get_behaviour_name());
+        $this->assertEqual('manualgraded', $this->quba->get_question_attempt(
+                $this->slot)->get_behaviour_name());
 
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
@@ -156,8 +156,8 @@ class qbehaviour_manualgraded_walkthrough_test extends qbehaviour_walkthrough_te
         $this->start_attempt_at_question($essay, 'deferredfeedback', 10);
 
         // Check the right model is being used.
-        $this->assertEqual('manualgraded', $this->quba->
-                get_question_attempt($this->slot)->get_behaviour_name());
+        $this->assertEqual('manualgraded', $this->quba->get_question_attempt(
+                $this->slot)->get_behaviour_name());
 
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
@@ -193,7 +193,8 @@ class qbehaviour_manualgraded_walkthrough_test extends qbehaviour_walkthrough_te
         $this->check_current_state(question_state::$needsgrading);
         $this->check_current_mark(null);
         $this->check_current_output(
-                new PatternExpectation('/' . preg_quote('I am not sure what grade to award.') . '/'));
+                new PatternExpectation('/' .
+                        preg_quote('I am not sure what grade to award.') . '/'));
 
         // Now grade it.
         $this->manual_grade('Pretty good!', '9.00000');
@@ -215,7 +216,8 @@ class qbehaviour_manualgraded_walkthrough_test extends qbehaviour_walkthrough_te
         $this->check_current_state(question_state::$needsgrading);
         $this->check_current_mark(null);
         $this->check_current_output(
-                new PatternExpectation('/' . preg_quote('Actually, I am not sure any more.') . '/'));
+                new PatternExpectation('/' .
+                        preg_quote('Actually, I am not sure any more.') . '/'));
 
         $qa = $this->quba->get_question_attempt($this->slot);
         $this->assertEqual('Commented: Actually, I am not sure any more.',
@@ -229,8 +231,8 @@ class qbehaviour_manualgraded_walkthrough_test extends qbehaviour_walkthrough_te
         $this->start_attempt_at_question($essay, 'deferredfeedback', 10);
 
         // Check the right model is being used.
-        $this->assertEqual('manualgraded', $this->quba->
-                get_question_attempt($this->slot)->get_behaviour_name());
+        $this->assertEqual('manualgraded', $this->quba->get_question_attempt(
+                $this->slot)->get_behaviour_name());
 
         // Check the initial state.
         $this->check_current_state(question_state::$todo);

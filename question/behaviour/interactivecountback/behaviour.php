@@ -75,7 +75,8 @@ class qbehaviour_interactivecountback extends qbehaviour_interactive {
         $responses = array();
         $lastsave = array();
         foreach ($this->qa->get_step_iterator() as $step) {
-            if ($step->has_behaviour_var('submit') && $step->get_state() != question_state::$invalid) {
+            if ($step->has_behaviour_var('submit') &&
+                    $step->get_state() != question_state::$invalid) {
                 $responses[] = $step->get_qt_data();
                 $lastsave = array();
             } else {

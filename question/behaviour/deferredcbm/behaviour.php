@@ -85,11 +85,13 @@ class qbehaviour_deferredcbm extends qbehaviour_deferredfeedback {
 
     protected function is_same_response($pendingstep) {
         return parent::is_same_response($pendingstep) &&
-                $this->qa->get_last_behaviour_var('certainty') == $pendingstep->get_behaviour_var('certainty');
+                $this->qa->get_last_behaviour_var('certainty') ==
+                        $pendingstep->get_behaviour_var('certainty');
     }
 
     protected function is_complete_response($pendingstep) {
-        return parent::is_complete_response($pendingstep) && $pendingstep->has_behaviour_var('certainty');
+        return parent::is_complete_response($pendingstep) &&
+                $pendingstep->has_behaviour_var('certainty');
     }
 
     public function process_finish(question_attempt_pending_step $pendingstep) {

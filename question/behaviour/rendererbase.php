@@ -74,10 +74,11 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
         $commentfield = $qa->get_behaviour_field_name('comment');
 
         list($commenttext, $commentformat) = $qa->get_manual_comment();
-        $comment = print_textarea(can_use_html_editor(), 10, 80, null, null, $commentfield, $commenttext, 0, true);
+        $comment = print_textarea(can_use_html_editor(), 10, 80, null, null,
+                $commentfield, $commenttext, 0, true);
         $comment = html_writer::tag('div', html_writer::tag('div',
-                html_writer::tag('label', get_string('comment', 'question'), array('for' => $commentfield)),
-                array('class' => 'fitemtitle')) .
+                html_writer::tag('label', get_string('comment', 'question'),
+                array('for' => $commentfield)), array('class' => 'fitemtitle')) .
                 html_writer::tag('div', $comment, array('class' => 'felement fhtmleditor')),
                 array('class' => 'fitem'));
 
@@ -95,7 +96,8 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
                 'name' => $markfield,
             );
             if (!is_null($currentmark)) {
-                $attributes['value'] = $qa->format_fraction_as_mark($currentmark / $maxmark, $options->markdp);
+                $attributes['value'] = $qa->format_fraction_as_mark(
+                        $currentmark / $maxmark, $options->markdp);
             }
             $a = new stdClass();
             $a->max = $qa->format_max_mark($options->markdp);
@@ -120,7 +122,8 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
             }
 
             $mark = html_writer::tag('div', html_writer::tag('div',
-                    html_writer::tag('label', get_string('mark', 'question'), array('for' => $markfield)),
+                        html_writer::tag('label', get_string('mark', 'question'),
+                        array('for' => $markfield)),
                     array('class' => 'fitemtitle')) .
                     html_writer::tag('div', $error . get_string('xoutofmax', 'question', $a) .
                         $markrange, array('class' => 'felement ftext' . $errorclass)
@@ -139,7 +142,8 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
         if ($options->manualcommentlink) {
             $url = new moodle_url($options->manualcommentlink, array('slot' => $qa->get_slot()));
             $link = $this->output->action_link($url, get_string('commentormark', 'question'),
-                    new popup_action('click', $url, 'commentquestion', array('width' => 600, 'height' => 800)));
+                    new popup_action('click', $url, 'commentquestion',
+                    array('width' => 600, 'height' => 800)));
             $output .= html_writer::tag('div', $link, array('class' => 'commentlink'));
         }
         return $output;

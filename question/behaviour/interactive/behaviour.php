@@ -66,8 +66,8 @@ class qbehaviour_interactive extends question_behaviour_with_save {
      */
     protected function is_try_again_state() {
         $laststep = $this->qa->get_last_step();
-        return $this->qa->get_state()->is_active() &&
-                $laststep->has_behaviour_var('submit') && $laststep->has_behaviour_var('_triesleft');
+        return $this->qa->get_state()->is_active() && $laststep->has_behaviour_var('submit') &&
+                $laststep->has_behaviour_var('_triesleft');
     }
 
     public function adjust_display_options(question_display_options $options) {
@@ -238,7 +238,8 @@ class qbehaviour_interactive extends question_behaviour_with_save {
 
     public function process_save(question_attempt_pending_step $pendingstep) {
         $status = parent::process_save($pendingstep);
-        if ($status == question_attempt::KEEP && $pendingstep->get_state() == question_state::$complete) {
+        if ($status == question_attempt::KEEP &&
+                $pendingstep->get_state() == question_state::$complete) {
             $pendingstep->set_state(question_state::$todo);
         }
         return $status;

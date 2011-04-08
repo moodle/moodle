@@ -75,21 +75,25 @@ class qbehaviour_deferredcbm_renderer extends qbehaviour_renderer {
             return '';
         }
 
-        if ($qa->get_state() == question_state::$gaveup || $qa->get_state() == question_state::$mangaveup) {
+        if ($qa->get_state() == question_state::$gaveup || $qa->get_state() ==
+                question_state::$mangaveup) {
             return '';
         }
 
         $feedback = '';
-        if (!$qa->get_last_behaviour_var('certainty') && $qa->get_last_behaviour_var('_assumedcertainty')) {
-            $feedback .= html_writer::tag('p', get_string('assumingcertainty', 'qbehaviour_deferredcbm',
+        if (!$qa->get_last_behaviour_var('certainty') &&
+                $qa->get_last_behaviour_var('_assumedcertainty')) {
+            $feedback .= html_writer::tag('p',
+                    get_string('assumingcertainty', 'qbehaviour_deferredcbm',
                     question_cbm::get_string($qa->get_last_behaviour_var('_assumedcertainty'))));
         }
 
         if ($options->marks >= question_display_options::MARK_AND_MAX) {
-            $a->rawmark = format_float(
-                    $qa->get_last_behaviour_var('_rawfraction') * $qa->get_max_mark(), $options->markdp);
+            $a->rawmark = format_float($qa->get_last_behaviour_var('_rawfraction') *
+                    $qa->get_max_mark(), $options->markdp);
             $a->mark = $qa->format_mark($options->markdp);
-            $feedback .= html_writer::tag('p', get_string('markadjustment', 'qbehaviour_deferredcbm', $a));
+            $feedback .= html_writer::tag('p',
+                    get_string('markadjustment', 'qbehaviour_deferredcbm', $a));
         }
 
         return $feedback;

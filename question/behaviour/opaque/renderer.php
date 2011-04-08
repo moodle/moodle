@@ -46,7 +46,8 @@ class qbehaviour_opaque_renderer extends qbehaviour_renderer {
             $opaquestate = qtype_opaque_update_state($qa);
         } catch (SoapFault $sf) {
             return html_writer::tag('div', get_string('errorconnecting', 'qtype_opaque') .
-                    html_writer::tag('pre', get_string('soapfault', 'qtype_opaque', $sf), array('class' => 'notifytiny')),
+                    html_writer::tag('pre', get_string('soapfault', 'qtype_opaque', $sf),
+                            array('class' => 'notifytiny')),
                     array('class' => 'opaqueerror'));
         }
 
@@ -67,7 +68,8 @@ class qbehaviour_opaque_renderer extends qbehaviour_renderer {
         $resourcecache = new qtype_opaque_resource_cache($question->engineid,
                 $question->remoteid, $question->remoteversion);
 
-        if (!empty($opaquestate->cssfilename) && $resourcecache->file_in_cache($opaquestate->cssfilename)) {
+        if (!empty($opaquestate->cssfilename) &&
+                $resourcecache->file_in_cache($opaquestate->cssfilename)) {
             $this->page->requires->css($resourcecache->file_url($opaquestate->cssfilename));
         }
 

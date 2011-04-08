@@ -135,7 +135,8 @@ abstract class question_behaviour {
      */
     public function check_file_access($options, $component, $filearea, $args, $forcedownload) {
         $this->adjust_display_options($options);
-        return $this->question->check_file_access($this->qa, $options, $component, $filearea, $args, $forcedownload);
+        return $this->question->check_file_access($this->qa, $options, $component,
+                $filearea, $args, $forcedownload);
     }
 
     /**
@@ -301,7 +302,8 @@ abstract class question_behaviour {
 
     /**
      * @return array subpartid => object with fields
-     *      ->responseclassid matches one of the values returned from quetion_type::get_possible_responses.
+     *      ->responseclassid matches one of the values returned from
+     *                        quetion_type::get_possible_responses.
      *      ->response the actual response the student gave to this part, as a string.
      *      ->fraction the credit awarded for this subpart, may be null.
      *      returns an empty array if no analysis is possible.
@@ -409,8 +411,8 @@ abstract class question_behaviour {
      * for examples.
      *
      * @param question_attempt_pending_step $pendingstep a partially initialised step
-     *      containing all the information about the action that is being peformed.
-     *      This information can be accessed using {@link question_attempt_step::get_behaviour_var()}.
+     *      containing all the information about the action that is being peformed. This
+     *      information can be accessed using {@link question_attempt_step::get_behaviour_var()}.
      * @return bool either {@link question_attempt::KEEP} or {@link question_attempt::DISCARD}
      */
     public abstract function process_action(question_attempt_pending_step $pendingstep);
@@ -432,7 +434,8 @@ abstract class question_behaviour {
         }
 
         if ($pendingstep->has_behaviour_var('mark')) {
-            $fraction = $pendingstep->get_behaviour_var('mark') / $pendingstep->get_behaviour_var('maxmark');
+            $fraction = $pendingstep->get_behaviour_var('mark') /
+                            $pendingstep->get_behaviour_var('maxmark');
             if ($pendingstep->get_behaviour_var('mark') === '') {
                 $fraction = null;
             } else if ($fraction > 1 || $fraction < $this->qa->get_min_fraction()) {
@@ -442,8 +445,8 @@ abstract class question_behaviour {
             $pendingstep->set_fraction($fraction);
         }
 
-        $pendingstep->set_state($this->qa->get_state()->
-                corresponding_commented_state($pendingstep->get_fraction()));
+        $pendingstep->set_state($this->qa->get_state()->corresponding_commented_state(
+                $pendingstep->get_fraction()));
         return question_attempt::KEEP;
     }
 

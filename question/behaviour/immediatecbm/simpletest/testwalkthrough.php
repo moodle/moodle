@@ -79,7 +79,8 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
                 $this->get_does_not_contain_feedback_expectation());
 
         // Submit the right answer.
-        $this->process_submission(array('answer' => $rightindex, '-certainty' => 2, '-submit' => 1));
+        $this->process_submission(
+                array('answer' => $rightindex, '-certainty' => 2, '-submit' => 1));
 
         // Verify.
         $this->check_current_state(question_state::$gradedright);

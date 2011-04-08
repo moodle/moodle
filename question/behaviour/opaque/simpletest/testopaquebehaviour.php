@@ -77,7 +77,8 @@ class qbehaviour_opaque_test extends qbehaviour_walkthrough_test_base {
         $this->check_current_output(
                 new PatternExpectation('/Below is a plan of a proposed garden/'),
                 new PatternExpectation('/You have 3 attempts/'),
-                $this->get_contains_button_expectation($qa->get_qt_field_name('omact_gen_14'), 'Check'));
+                $this->get_contains_button_expectation(
+                        $qa->get_qt_field_name('omact_gen_14'), 'Check'));
         $this->assertPattern('/^\s*Below is a plan of a proposed garden./',
                 $qa->get_question_summary());
         $this->assertNull($qa->get_right_answer_summary());
@@ -92,8 +93,10 @@ class qbehaviour_opaque_test extends qbehaviour_walkthrough_test_base {
         $this->check_current_output(
                 new PatternExpectation('/Below is a plan of a proposed garden/'),
                 new PatternExpectation('/incorrect/'),
-                new PatternExpectation('/' . preg_quote(get_string('notcomplete', 'qbehaviour_opaque')) . '/'),
-                $this->get_contains_button_expectation($qa->get_qt_field_name('omact_ok'), 'Try again'));
+                new PatternExpectation('/' .
+                        preg_quote(get_string('notcomplete', 'qbehaviour_opaque')) . '/'),
+                $this->get_contains_button_expectation(
+                        $qa->get_qt_field_name('omact_ok'), 'Try again'));
 
         // Try again.
         $this->process_submission(array('omact_ok' => 'Try again'));
@@ -114,7 +117,8 @@ class qbehaviour_opaque_test extends qbehaviour_walkthrough_test_base {
         $this->check_current_output(
                 new PatternExpectation('/Below is a plan of a proposed garden/'),
                 new PatternExpectation('/still incorrect/'),
-                new PatternExpectation('/' . preg_quote(get_string('notcomplete', 'qbehaviour_opaque')) . '/'));
+                new PatternExpectation('/' .
+                        preg_quote(get_string('notcomplete', 'qbehaviour_opaque')) . '/'));
 
         // Try again.
         $this->process_submission(array('omact_ok' => 'Try again'));
@@ -133,9 +137,11 @@ class qbehaviour_opaque_test extends qbehaviour_walkthrough_test_base {
         $this->check_current_state(question_state::$gradedwrong);
         $this->check_current_mark(0);
         $this->check_current_output(
-                new PatternExpectation('/Please see MU120 Preparatory Resource Book B section 5.1/'),
+                new PatternExpectation(
+                        '/Please see MU120 Preparatory Resource Book B section 5.1/'),
                 new PatternExpectation('/still incorrect/'));
-        $this->assertTrue(preg_match('/What is \(X\*W\) (\d+\.\d+)\*(\d+), \(X\*L\)(\d+\.\d+)\*(\d+)\?/',
+        $this->assertTrue(preg_match(
+                '/What is \(X\*W\) (\d+\.\d+)\*(\d+), \(X\*L\)(\d+\.\d+)\*(\d+)\?/',
                 $qa->get_question_summary(), $matches));
         $this->assertNull($qa->get_right_answer_summary());
         $this->assertPattern('/' . $matches[1]*$matches[2] . '.*, ' . $matches[3]*$matches[4] . '/',
@@ -168,7 +174,8 @@ class qbehaviour_opaque_test extends qbehaviour_walkthrough_test_base {
         $this->check_current_output(
                 new PatternExpectation('/Below is a plan of a proposed garden/'),
                 new PatternExpectation('/You have 3 attempts/'),
-                $this->get_contains_button_expectation($qa->get_qt_field_name('omact_gen_14'), 'Check'));
+                $this->get_contains_button_expectation(
+                        $qa->get_qt_field_name('omact_gen_14'), 'Check'));
 
         // Submit the right answer.
         $this->process_submission(array('omval_response1' => $size[0] * $scale,
@@ -208,7 +215,8 @@ class qbehaviour_opaque_test extends qbehaviour_walkthrough_test_base {
         $this->check_current_output(
                 new PatternExpectation('/Below is a plan of a proposed garden/'),
                 new PatternExpectation('/You have 3 attempts/'),
-                $this->get_contains_button_expectation($qa->get_qt_field_name('omact_gen_14'), 'Check'));
+                $this->get_contains_button_expectation(
+                        $qa->get_qt_field_name('omact_gen_14'), 'Check'));
 
         // Submit the right answer.
         $this->process_submission(array('omval_response1' => $size[0] * $scale,

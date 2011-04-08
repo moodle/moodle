@@ -233,7 +233,6 @@ class qbehaviour_adaptive_walkthrough_test extends qbehaviour_walkthrough_test_b
                 $this->get_contains_partcorrect_expectation(),
                 $this->get_does_not_contain_validation_error_expectation());
 
-
         // Now submit blank again.
         $this->process_submission(array('-submit' => 1, 'answer' => ''));
 
