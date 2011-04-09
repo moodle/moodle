@@ -94,7 +94,7 @@ $oldversion = "$CFG->release ($CFG->version)";
 $newversion = "$release ($version)";
 
 // test environment first
-if (!check_moodle_environment($version, $environment_results, false, ENV_SELECT_RELEASE)) {
+if (!check_moodle_environment(normalize_version($release), $environment_results, false, ENV_SELECT_RELEASE)) {
     $errors = environment_get_errors($environment_results);
     cli_heading(get_string('environment', 'admin'));
     foreach ($errors as $error) {

@@ -152,7 +152,7 @@ if (!core_tables_exist()) {
         echo $OUTPUT->box($releasenoteslink, 'generalbox releasenoteslink');
 
         require_once($CFG->libdir.'/environmentlib.php');
-        if (!check_moodle_environment($release, $environment_results, true, ENV_SELECT_RELEASE)) {
+        if (!check_moodle_environment(normalize_version($release), $environment_results, true, ENV_SELECT_RELEASE)) {
             print_upgrade_reload("index.php?agreelicense=1&amp;lang=$CFG->lang");
         } else {
             echo $OUTPUT->notification(get_string('environmentok', 'admin'), 'notifysuccess');
