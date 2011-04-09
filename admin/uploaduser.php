@@ -774,7 +774,7 @@ if ($formdata = $mform2->is_cancelled()) {
                         }
                     }
 
-                    $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today, $timeend, true);
+                    $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today, $timeend);
 
                     $a = new stdClass();
                     $a->course = $shortname;
