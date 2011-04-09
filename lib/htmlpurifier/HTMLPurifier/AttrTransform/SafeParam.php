@@ -19,6 +19,7 @@ class HTMLPurifier_AttrTransform_SafeParam extends HTMLPurifier_AttrTransform
 
     public function __construct() {
         $this->uri = new HTMLPurifier_AttrDef_URI(true); // embedded
+        $this->wmode = new HTMLPurifier_AttrDef_Enum(array('window', 'opaque', 'transparent'));
     }
 
     public function transform($attr, $config, $context) {
@@ -41,7 +42,7 @@ class HTMLPurifier_AttrTransform_SafeParam extends HTMLPurifier_AttrTransform
                 }
                 break;
             case 'wmode':
-                $attr['value'] = 'window';
+                $attr['value'] = $this->wmode->validate($attr['value'], $config, $context);
                 break;
             case 'movie':
             case 'src':
