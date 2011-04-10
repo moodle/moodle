@@ -308,7 +308,7 @@ form.mform div.textarea textarea {
   width:30px
 }
 #course-view .section .left a {
-  display:none
+  /* display:none */
 }
 #course-view .section .spacer {
   height:2em
