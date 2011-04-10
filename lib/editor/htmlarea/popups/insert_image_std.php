@@ -2,8 +2,10 @@
     require("../../../../config.php");
 
     $id = optional_param('id', SITEID, PARAM_INT);
+    $httpsrequired = optional_param('httpsrequired', 0, PARAM_BOOL);
 
     require_course_login($id);
+
     @header('Content-Type: text/html; charset=utf-8');
 
     if ($httpsrequired or (!empty($_SERVER['HTTPS']) and $_SERVER['HTTPS'] != 'off')) {
