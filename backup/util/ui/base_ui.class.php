@@ -226,6 +226,21 @@ abstract class base_ui {
     public static function load_controller($uniqueid=false) {
         throw new coding_exception('load_controller() method needs to be overridden in each subclass of base_ui');
     }
+
+    /**
+     * Cancels the current backup/restore and redirects the user back to the relevant place
+     */
+    public function cancel_process() {
+        global $PAGE;
+        // Determine the appropriate URL to redirect the user to
+        if ($PAGE->context->contextlevel == CONTEXT_MODULE && $PAGE->cm !== null) {
+            $relevanturl = new moodle_url('/mod/'.$PAGE->cm->modname.'/view.php', array('id'=>$PAGE->cm->id));
+        } else {
+            $relevanturl = new moodle_url('/course/view.php', array('id'=>$PAGE->course->id));
+        }
+        redirect($relevanturl);
+    }
+
     /**
      * Gets an array of progress bar items that can be displayed through the backup renderer.
      * @return array Array of items for the progress bar

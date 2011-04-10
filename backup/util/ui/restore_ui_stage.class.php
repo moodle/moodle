@@ -392,7 +392,7 @@ class restore_ui_stage_schema extends restore_ui_stage {
         $form = $this->initialise_stage_form();
         // Check it wasn't cancelled
         if ($form->is_cancelled()) {
-            $this->ui->cancel_backup();
+            $this->ui->cancel_process();
         }
 
         // Check it has been submit
@@ -500,7 +500,7 @@ class restore_ui_stage_review extends restore_ui_stage {
         $form = $this->initialise_stage_form();
         // Check it hasn't been cancelled
         if ($form->is_cancelled()) {
-            $this->ui->cancel_backup();
+            $this->ui->cancel_process();
         }
 
         $data = $form->get_data();
