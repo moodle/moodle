@@ -3,6 +3,7 @@
     require("../../../../config.php");
 
     $id = optional_param('id', SITEID, PARAM_INT);
+    $httpsrequired = optional_param('httpsrequired', 0, PARAM_BOOL);
 
     require_login($id);
     require_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $id));
