@@ -114,7 +114,7 @@ class mod_assignment_mod_form extends moodleform_mod {
     }
 
 
-    function validataion($data, $files) {
+    function validation($data, $files) {
         // Allow plugin assignment types to do any extra validation after the form has been submitted
         $errors = parent::validation($data, $files);
         $errors = array_merge($errors, $this->get_assignment_instance()->form_validation($data, $files));
