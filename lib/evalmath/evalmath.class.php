@@ -291,6 +291,7 @@ class EvalMath {
                         return $this->trigger("wrong number of arguments ($arg_count given, " . implode('/',$this->fc[$fnn]) . " expected)");
                     $output[] = array('fn'=>$fn, 'fnn'=>$fnn, 'argcount'=>0); // send function to output
                     $index++;
+                    $expecting_op = true;
                 } else {
                     return $this->trigger("unexpected ')'");
                 }
