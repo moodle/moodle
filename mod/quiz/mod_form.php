@@ -284,28 +284,33 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addElement('static', 'gradeboundarystatic1', get_string('gradeboundary', 'quiz'), '100%');
 
         $repeatarray = array();
+        $repeatedoptions = array();
         $repeatarray[] = MoodleQuickForm::createElement('editor', 'feedbacktext', get_string('feedback', 'quiz'), null, array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'noclean'=>true, 'context'=>$this->context));
-        $mform->setType('feedbacktext', PARAM_RAW);
         $repeatarray[] = MoodleQuickForm::createElement('text', 'feedbackboundaries', get_string('gradeboundary', 'quiz'), array('size' => 10));
-        $mform->setType('feedbackboundaries', PARAM_NOTAGS);
+        $repeatedoptions['feedbacktext']['type'] = PARAM_RAW;
+        $repeatedoptions['feedbackboundaries']['type'] = PARAM_RAW;
 
         if (!empty($this->_instance)) {
-            $this->_feedbacks = $DB->get_records('quiz_feedback', array('quizid'=>$this->_instance), 'mingrade DESC');
+            $this->_feedbacks = $DB->get_records('quiz_feedback',
+                    array('quizid' => $this->_instance), 'mingrade DESC');
         } else {
             $this->_feedbacks = array();
         }
         $numfeedbacks = max(count($this->_feedbacks) * 1.5, 5);
 
-        $nextel=$this->repeat_elements($repeatarray, $numfeedbacks - 1,
-                array(), 'boundary_repeats', 'boundary_add_fields', 3,
+        $nextel = $this->repeat_elements($repeatarray, $numfeedbacks - 1,
+                $repeatedoptions, 'boundary_repeats', 'boundary_add_fields', 3,
                 get_string('addmoreoverallfeedbacks', 'quiz'), true);
 
         // Put some extra elements in before the button
-        $insertEl = MoodleQuickForm::createElement('editor', "feedbacktext[$nextel]", get_string('feedback', 'quiz'), null, array('maxfiles'=>EDITOR_UNLIMITED_FILES, 'noclean'=>true, 'context'=>$this->context));
-        $mform->insertElementBefore($insertEl, 'boundary_add_fields');
-
-        $insertEl = MoodleQuickForm::createElement('static', 'gradeboundarystatic2', get_string('gradeboundary', 'quiz'), '0%');
-        $mform->insertElementBefore($insertEl, 'boundary_add_fields');
+        $mform->insertElementBefore(MoodleQuickForm::createElement('editor',
+                "feedbacktext[$nextel]", get_string('feedback', 'quiz'), null,
+                array('maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean' => true,
+                      'context' => $this->context)),
+                'boundary_add_fields');
+        $mform->insertElementBefore(MoodleQuickForm::createElement('static',
+                'gradeboundarystatic2', get_string('gradeboundary', 'quiz'), '0%'),
+                'boundary_add_fields');
 
         // Add the disabledif rules. We cannot do this using the $repeatoptions parameter to
         // repeat_elements becuase we don't want to dissable the first feedbacktext.
