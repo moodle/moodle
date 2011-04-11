@@ -391,9 +391,26 @@ class grade_report_grader extends grade_report {
             $this->users = array();
             $this->userselect_params = array();
         } else {
-            list($usql, $params) = $DB->get_in_or_equal(array_keys($this->users), SQL_PARAMS_NAMED, 'usid0');
+            list($usql, $uparams) = $DB->get_in_or_equal(array_keys($this->users), SQL_PARAMS_NAMED, 'usid0');
             $this->userselect = "AND g.userid $usql";
-            $this->userselect_params = $params;
+            $this->userselect_params = $uparams;
+
+            //add a flag to each user indicating whether their enrolment is active
+            $sql = "SELECT ue.userid
+                      FROM {user_enrolments} ue
+                      JOIN {enrol} e ON e.id = ue.enrolid
+                     WHERE ue.userid $usql
+                           AND ue.status = :uestatus
+                           AND e.status = :estatus
+                           AND e.courseid = :courseid
+                  GROUP BY ue.userid";
+            $coursecontext = get_course_context($this->context);
+            $params = array_merge($uparams, array('estatus'=>ENROL_INSTANCE_ENABLED, 'uestatus'=>ENROL_USER_ACTIVE, 'courseid'=>$coursecontext->instanceid));
+            $useractiveenrolments = $DB->get_records_sql($sql, $params);
+
+            foreach ($this->users as $user) {
+                $this->users[$user->id]->suspendedenrolment = !array_key_exists($user->id, $useractiveenrolments);
+            }
         }
 
         return $this->users;
@@ -602,6 +619,7 @@ class grade_report_grader extends grade_report {
 
         $rowclasses = array('even', 'odd');
 
+        $suspendedstring = null;
         foreach ($this->users as $userid => $user) {
             $userrow = new html_table_row();
             $userrow->id = 'fixed_user_'.$userid;
@@ -609,6 +627,7 @@ class grade_report_grader extends grade_report {
 
             $usercell = new html_table_cell();
             $usercell->attributes['class'] = 'user';
+
             $usercell->header = true;
             $usercell->scope = 'row';
 
@@ -617,6 +636,16 @@ class grade_report_grader extends grade_report {
             }
 
             $usercell->text .= html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $this->course->id)), fullname($user));
+
+            if (!empty($user->suspendedenrolment)) {
+                $usercell->attributes['class'] .= ' usersuspended';
+
+                //may be lots of suspended users so only get the string once
+                if (empty($suspendedstring)) {
+                    $suspendedstring = get_string('userenrolmentsuspended', 'grades');
+                }
+                $usercell->text .= html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('i/enrolmentsuspended'), 'title'=>$suspendedstring, 'alt'=>$suspendedstring, 'class'=>'usersuspendedicon'));
+            }
 
             $userrow->cells[] = $usercell;
 
