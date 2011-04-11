@@ -55,6 +55,10 @@
 /// Log this request.
     add_to_log($course->id, "quiz", "view", "view.php?id=$cm->id", $quiz->id, $cm->id);
 
+    // Mark module as viewed
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+
 /// Initialize $PAGE, compute blocks
     $PAGE->set_url('/mod/quiz/view.php', array('id' => $cm->id));
 
@@ -381,11 +385,5 @@
         echo $OUTPUT->continue_button($CFG->wwwroot . '/course/view.php?id=' . $course->id);
     }
     echo $OUTPUT->box_end();
-
-    // Mark module as viewed (note, we do this here and not in finish_page,
-    // otherwise the 'not enrolled' error conditions would result in marking
-    // 'viewed', I think it's better if they don't.)
-    $completion=new completion_info($course);
-    $completion->set_module_viewed($cm);
 
     echo $OUTPUT->footer();

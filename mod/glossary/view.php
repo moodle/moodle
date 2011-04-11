@@ -125,6 +125,10 @@ if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $con
 }
 add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id&amp;tab=$tab", $glossary->id, $cm->id);
 
+// Mark as viewed
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+
 /// stablishing flag variables
 if ( $sortorder = strtolower($sortorder) ) {
     if ($sortorder != 'asc' and $sortorder != 'desc') {
@@ -495,8 +499,3 @@ glossary_print_tabbed_table_end();
 
 /// Finish the page
 echo $OUTPUT->footer();
-
-/// Mark as viewed
-$completion=new completion_info($course);
-$completion->set_module_viewed($cm);
-
