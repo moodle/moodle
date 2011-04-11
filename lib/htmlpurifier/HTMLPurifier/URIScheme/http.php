@@ -9,8 +9,7 @@ class HTMLPurifier_URIScheme_http extends HTMLPurifier_URIScheme {
     public $browsable = true;
     public $hierarchical = true;
 
-    public function validate(&$uri, $config, $context) {
-        parent::validate($uri, $config, $context);
+    public function doValidate(&$uri, $config, $context) {
         $uri->userinfo = null;
         return true;
     }

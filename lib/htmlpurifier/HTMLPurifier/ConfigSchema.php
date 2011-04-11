@@ -60,7 +60,13 @@ class HTMLPurifier_ConfigSchema {
      * Unserializes the default ConfigSchema.
      */
     public static function makeFromSerial() {
-        return unserialize(file_get_contents(HTMLPURIFIER_PREFIX . '/HTMLPurifier/ConfigSchema/schema.ser'));
+        $contents = file_get_contents(HTMLPURIFIER_PREFIX . '/HTMLPurifier/ConfigSchema/schema.ser');
+        $r = unserialize($contents);
+        if (!$r) {
+            $hash = sha1($contents);
+            trigger_error("Unserialization of configuration schema failed, sha1 of file was $hash", E_USER_ERROR);
+        }
+        return $r;
     }
 
     /**
