@@ -71,7 +71,18 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
     }
 
     /**
-     * Dispatch grouped chunks safely once their end tag happens
+     * Notify start of path if selected and not under grouped
+     */
+    public function before_path($path) {
+        if ($this->path_is_selected($path) && !$this->grouped_parent_exists($path)) {
+            parent::before_path($path);
+        }
+    }
+
+
+    /**
+     * Dispatch grouped chunks safely once their end tag happens.
+     * Also notify end of path if selected and not under grouped
      */
     public function after_path($path) {
         if ($this->path_is_grouped($path)) {
@@ -81,6 +92,11 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
             unset($this->currentdata[$path]);
             // TODO: If running under DEBUG_DEVELOPER notice about >1MB grouped chunks
             $this->dispatch_chunk($data);
+        }
+        // Normal notification of path end
+        // Only if path is selected and not child of grouped
+        if ($this->path_is_selected($path) && !$this->grouped_parent_exists($path)) {
+            parent::after_path($path);
         }
     }
 
@@ -110,23 +126,6 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
     protected function path_is_grouped($path) {
         return in_array($path, $this->groupedpaths);
     }
-
-    /**
-     * Function that will look for any
-     * parent for the given path, returning it if found,
-     * false if not
-     */
-    protected function processed_parent_exists($path) {
-        $parentpath = progressive_parser::dirname($path);
-        while ($parentpath != '/') {
-            if ($this->path_is_selected($parentpath)) {
-                return $parentpath;
-            }
-            $parentpath = progressive_parser::dirname($parentpath);
-        }
-        return false;
-    }
-
 
     /**
      * Function that will look for any grouped

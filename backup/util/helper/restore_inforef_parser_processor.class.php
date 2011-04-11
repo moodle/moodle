@@ -53,4 +53,12 @@ class restore_inforef_parser_processor extends grouped_parser_processor {
         $itemid   = $data['tags']['id'];
         restore_dbops::set_backup_ids_record($this->restoreid, $itemname, $itemid);
     }
+
+    protected function notify_path_start($path) {
+        // nothing to do
+    }
+
+    protected function notify_path_end($path) {
+        // nothing to do
+    }
 }
