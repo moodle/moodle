@@ -246,7 +246,7 @@ function form_filemanager_render($options) {
 
     $html = '';
     $options = $fm->options;
-    $straddfile  = get_string('add', 'repository') . '...';
+    $straddfile  = get_string('addfile', 'repository');
     $strmakedir  = get_string('makeafolder', 'moodle');
     $strdownload = get_string('downloadfolder', 'repository');
     $strloading  = get_string('loading', 'repository');
@@ -280,9 +280,9 @@ $icon_progress
 <div id="filemanager-wrapper-{$client_id}" style="display:none">
     <div class="fm-breadcrumb" id="fm-path-{$client_id}"></div>
     <div class="filemanager-toolbar">
-        <input type="button" class="fm-btn-add" id="btnadd-{$client_id}" onclick="return false" value=" {$straddfile}" />
-        <input type="button" class="fm-btn-mkdir" id="btncrt-{$client_id}" onclick="return false" value=" $strmakedir" />
-        <input type="button" class="fm-btn-download" id="btndwn-{$client_id}" onclick="return false" {$extra} value=" $strdownload" />
+        <input type="button" class="fm-btn-add" id="btnadd-{$client_id}" onclick="return false" value="{$straddfile}" />
+        <input type="button" class="fm-btn-mkdir" id="btncrt-{$client_id}" onclick="return false" value="{$strmakedir}" />
+        <input type="button" class="fm-btn-download" id="btndwn-{$client_id}" onclick="return false" {$extra} value="{$strdownload}" />
         <span> $maxsize </span>
     </div>
     <div class="filemanager-container" id="filemanager-{$client_id}">
@@ -311,7 +311,8 @@ FMHTML;
              array('zip', 'editor'), array('unzip', 'moodle'), array('rename', 'moodle'), array('delete', 'moodle'),
              array('cannotdeletefile', 'error'), array('confirmdeletefile', 'repository'),
              array('nopathselected', 'repository'), array('popupblockeddownload', 'repository'),
-             array('draftareanofiles', 'repository'), array('path', 'moodle'), array('setmainfile', 'repository')
+             array('draftareanofiles', 'repository'), array('path', 'moodle'), array('setmainfile', 'repository'),
+             array('moving', 'repository'), array('files', 'moodle')
         )
     );
     $PAGE->requires->js_module($module);
