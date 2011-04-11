@@ -52,13 +52,22 @@ if (!during_initial_install()) { //do not use during installation
         $temp->add(new admin_setting_configtext('coursesperpage', get_string('coursesperpage', 'admin'), get_string('configcoursesperpage', 'admin'), 20, PARAM_INT));
 
         // front page default role
-        $roleoptions = array(0=>get_string('none')); // roles to choose from
-        if ($roles = get_all_roles()) {
-            foreach ($roles as $role) {
-                $roleoptions[$role->id] = strip_tags(format_string($role->name, true));
+        $options = array(0=>get_string('none')); // roles to choose from
+        $defaultfrontpageroleid = 0;
+        foreach (get_all_roles() as $role) {
+            if (empty($role->archetype) or $role->archetype === 'guest' or $role->archetype === 'frontpage' or $role->archetype === 'student') {
+                $options[$role->id] = strip_tags(format_string($role->name)) . ' ('. $role->shortname . ')';
+                if ($role->archetype === 'frontpage') {
+                    $defaultfrontpageroleid = $role->id;
+                }
             }
         }
-        $temp->add(new admin_setting_configselect('defaultfrontpageroleid', get_string('frontpagedefaultrole', 'admin'), '', 0, $roleoptions));
+        if ($defaultfrontpageroleid and (!isset($CFG->defaultfrontpageroleid) or $CFG->defaultfrontpageroleid)) {
+            //frotpage role may not exist in old upgraded sites
+            unset($options[0]);
+        }
+        $temp->add(new admin_setting_configselect('defaultfrontpageroleid', get_string('frontpagedefaultrole', 'admin'), '', $defaultfrontpageroleid, $options));
+
 
         $ADMIN->add('frontpage', $temp);
 
