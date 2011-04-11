@@ -45,6 +45,10 @@ if ($backtocourse) {
     redirect(new moodle_url('/course/view.php', array('id'=>$course->id)));
 }
 
+// Mark as viewed
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+
 $url = new moodle_url('/mod/lesson/view.php', array('id'=>$id));
 if ($pageid !== null) {
     $url->param('pageid', $pageid);
@@ -564,7 +568,3 @@ if ($pageid != LESSON_EOL) {
     echo $lessoncontent;
     echo $lessonoutput->footer();
 }
-
-/// Mark as viewed
-$completion=new completion_info($course);
-$completion->set_module_viewed($cm);
