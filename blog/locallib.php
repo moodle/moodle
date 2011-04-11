@@ -187,7 +187,7 @@ class blog_entry {
         $contentcell = new html_table_cell();
         $contentcell->attributes['class'] = 'content';
 
-        $attachedimages = $OUTPUT->container($this->print_attachments(), 'attachments');
+        $attachedimages = $OUTPUT->container($this->print_attachments('html'), 'attachments');
 
         // retrieve associations in case they're needed early
         $blogassociations = $DB->get_records('blog_association', array('blogid' => $this->id));
