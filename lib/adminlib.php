@@ -7309,3 +7309,38 @@ class admin_setting_configcolourpicker extends admin_setting {
     }
 
 }
+
+/**
+ * Multiselect for current modules
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_configmultiselect_modules extends admin_setting_configmultiselect {
+/**
+ * Calls parent::__construct - note array $choices is not required
+ */
+    public function __construct($name, $visiblename, $description) {
+        parent::__construct($name, $visiblename, $description, array(), null);
+    }
+
+    /**
+     * Loads an array of current module choices
+     *
+     * @return bool always return true
+     */
+    public function load_choices() {
+        if (is_array($this->choices)) {
+            return true;
+        }
+        $this->choices = array();
+
+        global $CFG, $DB;
+        $records = $DB->get_records('modules', array('visible'=>1), 'name');
+        foreach ($records as $record) {
+            if (file_exists("$CFG->dirroot/mod/$record->name/lib.php")) {
+                $this->choices[$record->id] = $record->name;
+            }
+        }
+        return true;
+    }
+}
