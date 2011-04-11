@@ -307,6 +307,29 @@ class progressive_parser_test extends UnitTestCase {
         $this->assertEqual(count($tags), 2);
         $this->assertEqual($tags['name'], 4);
         $this->assertEqual($tags['value'], 5);
+
+        // Now check start notifications
+        $snotifs = $pr->get_start_notifications();
+        // Check we have received the correct number of notifications
+        $this->assertEqual(count($snotifs), 12);
+        // Check first, sixth and last notifications
+        $this->assertEqual($snotifs[0], '/activity');
+        $this->assertEqual($snotifs[5], '/activity/glossary/entries/entry');
+        $this->assertEqual($snotifs[11], '/activity/glossary/othertest');
+
+        // Now check end notifications
+        $enotifs = $pr->get_end_notifications();
+        // Check we have received the correct number of notifications
+        $this->assertEqual(count($snotifs), 12);
+        // Check first, sixth and last notifications
+        $this->assertEqual($enotifs[0], '/activity/glossary/entries/entry/aliases/alias');
+        $this->assertEqual($enotifs[5], '/activity/glossary/entries/entry/ratings/rating');
+        $this->assertEqual($enotifs[11], '/activity');
+
+        // Check start and end notifications are balanced
+        sort($snotifs);
+        sort($enotifs);
+        $this->assertEqual($snotifs, $enotifs);
     }
 
     /*
@@ -454,6 +477,27 @@ class progressive_parser_test extends UnitTestCase {
         $this->assertEqual(count($othertest[0]), 2);
         $this->assertEqual($othertest[0]['name'], 4);
         $this->assertEqual($othertest[0]['value'], 5);
+
+        // Now check start notifications
+        $snotifs = $pr->get_start_notifications();
+        // Check we have received the correct number of notifications
+        $this->assertEqual(count($snotifs), 2);
+        // Check first and last notifications
+        $this->assertEqual($snotifs[0], '/activity');
+        $this->assertEqual($snotifs[1], '/activity/glossary');
+
+        // Now check end notifications
+        $enotifs = $pr->get_end_notifications();
+        // Check we have received the correct number of notifications
+        $this->assertEqual(count($snotifs), 2);
+        // Check first, and last notifications
+        $this->assertEqual($enotifs[0], '/activity/glossary');
+        $this->assertEqual($enotifs[1], '/activity');
+
+        // Check start and end notifications are balanced
+        sort($snotifs);
+        sort($enotifs);
+        $this->assertEqual($snotifs, $enotifs);
     }
 }
 
@@ -526,13 +570,31 @@ class mock_parser_processor extends progressive_parser_processor {
 class mock_simplified_parser_processor extends simplified_parser_processor {
 
     private $chunksarr = array(); // To accumulate the found chunks
+    private $startarr  = array(); // To accumulate all the notified path starts
+    private $endarr    = array(); // To accumulate all the notified path ends
 
     public function dispatch_chunk($data) {
         $this->chunksarr[] = $data;
     }
 
+    public function notify_path_start($path) {
+        $this->startarr[] = $path;
+    }
+
+    public function notify_path_end($path) {
+        $this->endarr[] = $path;
+    }
+
     public function get_chunks() {
         return $this->chunksarr;
+    }
+
+    public function get_start_notifications() {
+        return $this->startarr;
+    }
+
+    public function get_end_notifications() {
+        return $this->endarr;
     }
 }
 
@@ -542,12 +604,30 @@ class mock_simplified_parser_processor extends simplified_parser_processor {
 class mock_grouped_parser_processor extends grouped_parser_processor {
 
     private $chunksarr = array(); // To accumulate the found chunks
+    private $startarr  = array(); // To accumulate all the notified path starts
+    private $endarr    = array(); // To accumulate all the notified path ends
 
     public function dispatch_chunk($data) {
         $this->chunksarr[] = $data;
     }
 
+    public function notify_path_start($path) {
+        $this->startarr[] = $path;
+    }
+
+    public function notify_path_end($path) {
+        $this->endarr[] = $path;
+    }
+
     public function get_chunks() {
         return $this->chunksarr;
+    }
+
+    public function get_start_notifications() {
+        return $this->startarr;
+    }
+
+    public function get_end_notifications() {
+        return $this->endarr;
     }
 }
