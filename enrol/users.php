@@ -62,7 +62,7 @@ if ($action) {
 
     switch ($action) {
         /**
-         * Unenrols a user from this course
+         * Unenrols a user from this course (including removing all of their grades)
          */
         case 'unenrol':
             $ue = $DB->get_record('user_enrolments', array('id'=>required_param('ue', PARAM_INT)), '*', MUST_EXIST);
@@ -166,6 +166,8 @@ if ($action) {
          */
         case 'edit':
             $ue = $DB->get_record('user_enrolments', array('id'=>required_param('ue', PARAM_INT)), '*', MUST_EXIST);
+
+            //Only show the edit form if the user has the appropriate capability
             list($instance, $plugin) = $manager->get_user_enrolment_components($ue);
             if ($instance && $plugin && $plugin->allow_manage($instance) && has_capability("enrol/$instance->enrol:manage", $manager->get_context())) {
                 $user = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
