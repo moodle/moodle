@@ -942,9 +942,10 @@ function grade_recover_history_grades($userid, $courseid) {
     //Check for existing grades for this user in this course
     //Recovering grades when the user already has grades can lead to duplicate indexes and bad data
     //In the future we could move the existing grades to the history table then recover the grades from before then
-    $sql = "SELECT gg.id FROM {grade_grades} gg
-                    JOIN {grade_items} gi ON gi.id = gg.itemid
-                   WHERE gi.courseid = :courseid AND gg.userid = :userid";
+    $sql = "SELECT gg.id
+              FROM {grade_grades} gg
+              JOIN {grade_items} gi ON gi.id = gg.itemid
+             WHERE gi.courseid = :courseid AND gg.userid = :userid";
     $params = array('userid' => $userid, 'courseid' => $courseid);
     if ($DB->record_exists_sql($sql, $params)) {
         debugging('Attempting to recover the grades of a user who already has grades. Skipping recover.');
@@ -952,12 +953,19 @@ function grade_recover_history_grades($userid, $courseid) {
     } else {
         //Retrieve the user's old grades
         //have history ID as first column to guarantee we a unique first column
-        $sql = "SELECT h.id, gi.itemtype, gi.itemmodule, gi.iteminstance as iteminstance, gi.itemnumber, h.source, h.itemid, h.userid, h.rawgrade, h.rawgrademax, h.rawgrademin, h.rawscaleid, h.usermodified, h.finalgrade, h.hidden, h.locked, h.locktime, h.exported, h.overridden, h.excluded, h.feedback, h.feedbackformat, h.information, h.informationformat, h.timemodified, itemcreated.tm AS timecreated
+        $sql = "SELECT h.id, gi.itemtype, gi.itemmodule, gi.iteminstance as iteminstance, gi.itemnumber, h.source, h.itemid, h.userid, h.rawgrade, h.rawgrademax,
+                       h.rawgrademin, h.rawscaleid, h.usermodified, h.finalgrade, h.hidden, h.locked, h.locktime, h.exported, h.overridden, h.excluded, h.feedback,
+                       h.feedbackformat, h.information, h.informationformat, h.timemodified, itemcreated.tm AS timecreated
                   FROM {grade_grades_history} h
-                  JOIN (SELECT itemid, MAX(id) AS id FROM {grade_grades_history}
-                         WHERE userid = :userid1 GROUP BY itemid) maxquery ON h.id = maxquery.id AND h.itemid = maxquery.itemid
+                  JOIN (SELECT itemid, MAX(id) AS id
+                          FROM {grade_grades_history}
+                         WHERE userid = :userid1
+                      GROUP BY itemid) maxquery ON h.id = maxquery.id AND h.itemid = maxquery.itemid
                   JOIN {grade_items} gi ON gi.id = h.itemid
-                  JOIN (SELECT itemid, MAX(timemodified) AS tm FROM {grade_grades_history} WHERE userid = :userid2 AND action = :insertaction GROUP BY itemid) itemcreated ON itemcreated.itemid = h.itemid
+                  JOIN (SELECT itemid, MAX(timemodified) AS tm
+                          FROM {grade_grades_history}
+                         WHERE userid = :userid2 AND action = :insertaction
+                      GROUP BY itemid) itemcreated ON itemcreated.itemid = h.itemid
                  WHERE gi.courseid = :courseid";
         $params = array('userid1' => $userid, 'userid2' => $userid , 'insertaction' => GRADE_HISTORY_INSERT, 'courseid' => $courseid);
         $oldgrades = $DB->get_records_sql($sql, $params);
@@ -970,7 +978,7 @@ function grade_recover_history_grades($userid, $courseid) {
             $grade->insert($oldgrade->source);
 
             //dont include default empty grades created when activities are created
-            if (!empty($oldgrade->finalgrade) || !empty($oldgrade->feedback)) {
+            if (!is_null($oldgrade->finalgrade) || !is_null($oldgrade->feedback)) {
                 $recoveredgrades = true;
             }
         }
