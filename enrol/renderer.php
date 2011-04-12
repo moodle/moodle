@@ -626,6 +626,7 @@ class course_enrolment_users_table extends course_enrolment_table {
      * @return single_button|url_select
      */
     public function get_enrolment_selector() {
+        global $CFG;
         static $count = 0;
 
         $instances  = $this->manager->get_enrolment_instances();
@@ -686,7 +687,8 @@ class course_enrolment_users_table extends course_enrolment_table {
                     'startdatetoday',
                     'durationdays',
                     'enrolperiod',
-                    'finishenrollingusers'), 'enrol');
+                    'finishenrollingusers',
+                    'recovergrades'), 'enrol');
                 $this->moodlepage->requires->string_for_js('assignroles', 'role');
                 $this->moodlepage->requires->string_for_js('startingfrom', 'moodle');
 
@@ -698,7 +700,8 @@ class course_enrolment_users_table extends course_enrolment_table {
                     'ajaxurl'=>'/enrol/ajax.php',
                     'url'=>$this->moodlepage->url->out(false),
                     'optionsStartDate'=>$startdateoptions,
-                    'defaultRole'=>$instance->roleid);
+                    'defaultRole'=>$instance->roleid,
+                    'disableGradeHistory'=>$CFG->disablegradehistory);
                 $this->moodlepage->requires->yui_module($modules, $function, array($arguments));
             }
             return $control;
