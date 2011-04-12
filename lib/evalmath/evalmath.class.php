@@ -111,7 +111,14 @@ class EvalMath {
         'mod'=>array(2),      'pi'=>array(0),    'power'=>array(2),
         'round'=>array(1, 2), 'sum'=>array(-1));
 
-    function EvalMath() {
+    var $allowimplicitmultiplication;
+
+    function EvalMath($allowconstants = false, $allowimplicitmultiplication = false) {
+        if ($allowconstants){
+            $this->v['pi'] = pi();
+            $this->v['e'] = exp(1);
+        }
+        $this->allowimplicitmultiplication = $allowimplicitmultiplication;
     }
 
     function e($expr) {
@@ -203,8 +210,12 @@ class EvalMath {
             //===============
             } elseif ((in_array($op, $ops) or $ex) and $expecting_op) { // are we putting an operator on the stack?
                 if ($ex) { // are we expecting an operator but have a number/variable/function/opening parethesis?
-                    return $this->trigger("expecting operand");
-                    //$op = '*'; $index--; // it's an implicit multiplication
+                    if (!$this->allowimplicitmultiplication){
+                        return $this->trigger("expecting operator, implicit multiplication not allowed.");
+                    } else {// it's an implicit multiplication
+                        $op = '*';
+                        $index--;
+                    }
                 }
                 // heart of the algorithm:
                 while($stack->count > 0 and ($o2 = $stack->last()) and in_array($o2, $ops) and ($ops_r[$op] ? $ops_p[$op] < $ops_p[$o2] : $ops_p[$op] <= $ops_p[$o2])) {
