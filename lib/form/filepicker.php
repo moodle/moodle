@@ -77,13 +77,14 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_input {
         $args->itemid = $draftitemid;
         $args->maxbytes = $this->_options['maxbytes'];
         $args->context = $PAGE->context;
+        $args->buttonname = $elname.'choose';
 
         $html = $this->_getTabs();
         $fp = new file_picker($args);
         $options = $fp->options;
         $options->context = $PAGE->context;
         $html .= $OUTPUT->render($fp);
-        $html .= '<input type="hidden" name="'.$elname.'" id="'.$id.'" value="'.$draftitemid.'" />';
+        $html .= '<input type="hidden" name="'.$elname.'" id="'.$id.'" value="'.$draftitemid.'" class="filepickerhidden"/>';
 
         $module = array('name'=>'form_filepicker', 'fullpath'=>'/lib/form/filepicker.js', 'requires'=>array('core_filepicker'));
         $PAGE->requires->js_init_call('M.form_filepicker.init', array($fp->options), true, $module);
