@@ -358,14 +358,12 @@ Import and Export formats are a pluggable resource. Other optional formats may b
 $string['import_link'] = 'question/import';
 $string['importcategory'] = 'import category';
 $string['importerror'] = 'An error occurred during import processing';
-$string['importerrorquestion'] = 'Error importing question';
 $string['importfilearea'] = 'Import from file already in course files...';
 $string['importfileupload'] = 'Import from file upload...';
 $string['importfromthisfile'] = 'Import from this file';
 $string['importingquestions'] = 'Importing {$a} questions from file';
 $string['importmaxerror'] = 'There is an error in the question. There are too many answers.';
 $string['importmax10error'] = 'There is an error in the question. You may not have more than ten answers';
-$string['importparseerror'] = 'Error(s) found parsing the import file. No questions have been imported. To import any good questions try again setting \'Stop on error\' to \'No\'';
 $string['importquestions'] = 'Import questions from file';
 $string['inactiveoverridehelp'] = '* Student does not have the correct group or role to attempt the quiz';
 $string['incorrect'] = 'Incorrect';

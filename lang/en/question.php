@@ -151,7 +151,9 @@ $string['importcategory_help'] = 'This setting determines the category into whic
 
 Certain import formats, such as GIFT and Moodle XML, may include category and context data in the import file. To make use of this data, rather than the selected category, the appropriate checkboxes should be ticked. If categories specified in the import file do not exist, they will be created.';
 $string['importerror'] = 'An error occurred during import processing';
+$string['importerrorquestion'] = 'Error importing question';
 $string['importingquestions'] = 'Importing {$a} questions from file';
+$string['importparseerror'] = 'Error(s) found parsing the import file. No questions have been imported. To import any good questions try again setting \'Stop on error\' to \'No\'';
 $string['importquestions'] = 'Import questions from file';
 $string['importquestions_help'] = 'This function enables questions in a variety of formats to be imported via text file. Note that the file must use UTF-8 encoding.';
 $string['importquestions_link'] = 'question/import';
