@@ -166,7 +166,9 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group
                 }
                 break;
             case 'createElement':
-                if($arg[2]['optional']) {
+                // Optional is an optional param, if its set we need to add a disabledIf rule.
+                // If its empty or not specified then its not an optional dateselector.
+                if (!empty($arg[2]['optional']) && !empty($arg[0])) {
                     $caller->disabledIf($arg[0], $arg[0].'[enabled]');
                 }
                 return parent::onQuickFormEvent($event, $arg, $caller);
