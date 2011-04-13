@@ -3142,8 +3142,8 @@ function get_enrolled_sql($context, $withcapability = '', $groupid = 0, $onlyact
             }
         }
 
-        $defaultuserroleid      = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : null;
-        $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : null;
+        $defaultuserroleid      = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : 0;
+        $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : 0;
 
         $nobody = false;
 
@@ -4851,8 +4851,8 @@ function get_users_by_capability($context, $capability, $fields = '', $sort = ''
         throw new coding_exception('Invalid context specified');
     }
 
-    $defaultuserroleid      = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : null;
-    $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : null;
+    $defaultuserroleid      = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : 0;
+    $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : 0;
 
     $ctxids = trim($context->path, '/');
     $ctxids = str_replace('/', ',', $ctxids);

@@ -123,6 +123,7 @@ $string['logout'] = 'Logout';
 $string['manage'] = 'Manage repositories';
 $string['manageurl'] = 'Manage';
 $string['manageuserrepository'] = 'Manage individual repository';
+$string['moving'] = 'Moving';
 $string['noenter'] = 'Nothing entered';
 $string['nofilesattached'] = 'No files attached';
 $string['nofilesavailable'] = 'No files available';

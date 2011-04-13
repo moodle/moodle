@@ -464,18 +464,10 @@ class xhprof_table_sql extends table_sql {
     protected $listurlmode = false;
 
     /**
-     * Overwrite this method to be able to inject extra class to
-     * some (reference rows). Original API doesn't seem to allow that
+     * Get row classes to be applied based on row contents
      */
-    function build_table(){
-        if ($this->rawdata){
-            foreach($this->rawdata as $row){
-                $formattedrow = $this->format_row($row);
-                // reference row, add 'referencerun' class
-                $classname = $row->runreference ? 'referencerun' : '';
-                $this->add_data_keyed($formattedrow, $classname);
-            }
-        }
+    function get_row_class($row) {
+        return $row->runreference ? 'referencerun' : ''; // apply class to reference runs
     }
 
     /**

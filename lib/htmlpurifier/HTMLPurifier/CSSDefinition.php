@@ -219,6 +219,10 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
             $this->doSetupTricky($config);
         }
 
+        if ($config->get('CSS.Trusted')) {
+            $this->doSetupTrusted($config);
+        }
+
         $allow_important = $config->get('CSS.AllowImportant');
         // wrap all attr-defs with decorator that handles !important
         foreach ($this->info as $k => $v) {
@@ -260,6 +264,23 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
         $this->info['overflow'] = new HTMLPurifier_AttrDef_Enum(array('visible', 'hidden', 'auto', 'scroll'));
     }
 
+    protected function doSetupTrusted($config) {
+        $this->info['position'] = new HTMLPurifier_AttrDef_Enum(array(
+            'static', 'relative', 'absolute', 'fixed'
+        ));
+        $this->info['top'] =
+        $this->info['left'] =
+        $this->info['right'] =
+        $this->info['bottom'] = new HTMLPurifier_AttrDef_CSS_Composite(array(
+            new HTMLPurifier_AttrDef_CSS_Length(),
+            new HTMLPurifier_AttrDef_CSS_Percentage(),
+            new HTMLPurifier_AttrDef_Enum(array('auto')),
+        ));
+        $this->info['z-index'] = new HTMLPurifier_AttrDef_CSS_Composite(array(
+            new HTMLPurifier_AttrDef_Integer(),
+            new HTMLPurifier_AttrDef_Enum(array('auto')),
+        ));
+    }
 
     /**
      * Performs extra config-based processing. Based off of
