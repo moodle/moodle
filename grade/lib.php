@@ -158,7 +158,7 @@ class graded_users_iterator {
                                         FROM {role_assignments} ra
                                        WHERE ra.roleid $gradebookroles_sql
                                          AND ra.contextid $relatedcontexts
-                                  ) rainnner ON rainner.userid = u.id
+                                  ) rainner ON rainner.userid = u.id
                               WHERE u.deleted = 0
                               AND g.itemid $itemidsql
                               $groupwheresql
