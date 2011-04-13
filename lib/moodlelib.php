@@ -3355,6 +3355,88 @@ function fullname($user, $override=false) {
 }
 
 /**
+ * Checks if current user is shown any extra fields when listing users.
+ * @param object $context Context
+ * @param array $already Array of fields that we're going to show anyway
+ *   so don't bother listing them
+ * @return array Array of field names from user table, not including anything
+ *   listed in $already
+ */
+function get_extra_user_fields($context, $already = array()) {
+    global $CFG;
+
+    // Only users with permission get the extra fields
+    if (!has_capability('moodle/site:viewuseridentity', $context)) {
+        return array();
+    }
+
+    // Split showuseridentity on comma
+    if ($CFG->showuseridentity === '') {
+        // Explode gives wrong result with empty string
+        $extra = array();
+    } else {
+        $extra =  explode(',', $CFG->showuseridentity);
+    }
+    $renumber = false;
+    foreach ($extra as $key => $field) {
+        if (in_array($field, $already)) {
+            unset($extra[$key]);
+            $renumber = true;
+        }
+    }
+    if ($renumber) {
+        // For consistency, if entries are removed from array, renumber it
+        // so they are numbered as you would expect
+        $extra = array_merge($extra);
+    }
+    return $extra;
+}
+
+/**
+ * If the current user is to be shown extra user fields when listing or
+ * selecting users, returns a string suitable for including in an SQL select
+ * clause to retrieve those fields.
+ * @param object $context Context
+ * @param string $alias Alias of user table, e.g. 'u' (default none)
+ * @param string $prefix Prefix for field names using AS, e.g. 'u_' (default none)
+ * @param array $already Array of fields that we're going to include anyway
+ *   so don't list them (default none)
+ * @return string Partial SQL select clause, beginning with comma, for example
+ *   ',u.idnumber,u.department' unless it is blank
+ */
+function get_extra_user_fields_sql($context, $alias='', $prefix='',
+        $already = array()) {
+    $fields = get_extra_user_fields($context, $already);
+    $result = '';
+    // Add punctuation for alias
+    if ($alias !== '') {
+        $alias .= '.';
+    }
+    foreach ($fields as $field) {
+        $result .= ', ' . $alias . $field;
+        if ($prefix) {
+            $result .= ' AS ' . $prefix . $field;
+        }
+    }
+    return $result;
+}
+
+/**
+ * Returns the display name of a field in the user table. Works for most fields
+ * that are commonly displayed to users.
+ * @param string $field Field name, e.g. 'phone1'
+ * @return string Text description taken from language file, e.g. 'Phone number'
+ */
+function get_user_field_name($field) {
+    // Some fields have language strings which are not the same as field name
+    switch ($field) {
+        case 'phone1' : return get_string('phone');
+    }
+    // Otherwise just use the same lang string
+    return get_string($field);
+}
+
+/**
  * Returns whether a given authentication plugin exists.
  *
  * @global object
