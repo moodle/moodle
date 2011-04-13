@@ -684,9 +684,11 @@ $string['maturity50'] = 'Alpha';
 $string['maturity100'] = 'Beta';
 $string['maturity150'] = 'Release candidate';
 $string['maturity200'] = 'Stable version';
-$string['maturitycorewarning'] = 'You are going to install or upgrade Moodle to a version marked as "{$a}"
-that is not considered as production-ready yet. Please make sure this is intentional
-and that you are using correct checkout of Moodle source code.';
+$string['maturitycoreinfo'] = 'Your site is currently running unstable "{$a}" development code.';
+$string['maturitycorewarning'] = 'The version of Moodle that you are about to install or upgrade to contains
+unstable "{$a}" development code that is not suitable for use on most production
+sites. If this is not what you wanted then you should make sure you are updating
+from a STABLE branch of the Moodle code. See Moodle Docs for more details.';
 $string['maxbytes'] = 'Maximum uploaded file size';
 $string['maxconsecutiveidentchars'] = 'Consecutive identical characters';
 $string['maxeditingtime'] = 'Maximum time to edit posts';
