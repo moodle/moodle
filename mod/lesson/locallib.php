@@ -2030,7 +2030,7 @@ abstract class lesson_page extends lesson_base {
                     $result->feedback = $OUTPUT->box(format_text($this->get_contents(), $this->properties->contentsformat, $options), 'generalbox boxaligncenter');
                     $result->feedback .= '<div class="correctanswer generalbox"><em>'.get_string("youranswer", "lesson").'</em> : '.$result->studentanswer; // already in clean html
                     $result->feedback .= $OUTPUT->box($result->response, $class); // already conerted to HTML
-                    echo "</div>";
+                    $result->feedback .= '</div>';
                 }
             }
         }

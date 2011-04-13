@@ -183,7 +183,7 @@ $string['configdefaultallowedmodules'] = 'For the courses which fall into the ab
 $string['configdefaulthomepage'] = 'This determines the home page for logged in users';
 $string['configdefaultrequestcategory'] = 'Courses requested by users will be automatically placed in this category.';
 $string['configdefaultrequestedcategory'] = 'Default category to put courses that were requested into, if they\'re approved.';
-$string['configdefaultuserroleid'] = 'All logged in users will be given the capabilities of the role you specify here, at the site level, in ADDITION to any other roles they may have been given.  The default is the Authenticated user role (or Guest role in older versions).  Note that this will not conflict with other roles they have, it just ensures that all users have capabilities that are not assignable at the course level (eg post blog entries, manage own calendar, etc).';
+$string['configdefaultuserroleid'] = 'All logged in users will be given the capabilities of the role you specify here, at the site level, in ADDITION to any other roles they may have been given.  The default is the Authenticated user role.  Note that this will not conflict with other roles they have unless you prohibit capabilities, it just ensures that all users have capabilities that are not assignable at the course level (eg post blog entries, manage own calendar, etc).';
 $string['configdeleteincompleteusers'] = 'After this period, old not fully setup accounts are deleted.';
 $string['configdeleteunconfirmed'] = 'If you are using email authentication, this is the period within which a response will be accepted from users.  After this period, old unconfirmed accounts are deleted.';
 $string['configdenyemailaddresses'] = 'To deny email addresses from particular domains list them here in the same way.  All other domains will be accepted. To deny subdomains add the domain with a preceding \'.\'. eg <strong>hotmail.com yahoo.co.uk .live.com</strong>';
@@ -226,7 +226,7 @@ $string['configfrontpage'] = 'The items selected above will be displayed on the 
 $string['configfrontpageloggedin'] = 'The items selected above will be displayed on the site\'s front page when a user is logged in.';
 $string['configfullnamedisplay'] = 'This defines how names are shown when they are displayed in full. For most mono-lingual sites the most efficient setting is the default "First name + Surname", but you may choose to hide surnames altogether, or to leave it up to the current language pack to decide (some languages have different conventions).';
 $string['configgdversion'] = 'Indicate the version of GD that is installed.  The version shown by default is the one that has been auto-detected.  Don\'t change this unless you really know what you\'re doing.';
-$string['configgeoipfile'] = 'Location of GeoIP City binary data file. This file is not part of Moodle distribution and must be obtained separately from <a href="http://www.maxmind.com/">MaxMind</a>. You can either buy a commercial version or use the free version.<br />Simply download <a href="http://www.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz" >http://www.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz</a> and extract it into "{$a}" directory on your server.';
+$string['configgeoipfile'] = 'Location of GeoIP City binary data file. This file is not part of Moodle distribution and must be obtained separately from <a href="http://www.maxmind.com/">MaxMind</a>. You can either buy a commercial version or use the free version.<br />Simply download <a href="http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz" >http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz</a> and extract it into "{$a}" directory on your server.';
 $string['configgetremoteaddrconf'] = 'If your server is behind a reverse proxy, you can use this setting to specify which HTTP headers can be trusted to contain the remote IP address. The headers are read in order, using the first one that is available.';
 $string['configgooglemapkey'] = 'You need to enter a special key to use Google Maps for IP address lookup visualization. You can obtain the key free of charge at <a href="http://code.google.com/apis/maps/signup.html" >http://code.google.com/apis/maps/signup.html</a>.<br />Your web site URL is: {$a}';
 $string['configgradebookroles'] = 'This setting allows you to control who appears on the gradebook.  Users need to have at least one of these roles in a course to be shown in the gradebook for that course.';
@@ -276,7 +276,6 @@ $string['configmypagelocked'] = 'This setting prevents the default page from bei
 $string['confignavcourselimit'] = 'Limits the number of courses shown to the user when they are either not logged in or are not enrolled in any courses.';
 $string['confignavshowallcourses'] = 'Setting this ensures that all courses on the site are shown in the navigation at all times.';
 $string['confignavshowcategories'] = 'Show course categories in the navigation bar and navigation blocks. This does not occur with courses the user is currently enrolled in, they will still be listed under mycourses without categories.';
-$string['confignodefaultuserrolelists'] = 'This setting prevents all users from being returned from the database from deprecated calls of get_course_user, etc., for the site course if the default role provides that access. Check this, if you suffer a performance hit.';
 $string['confignoreplyaddress'] = 'Emails are sometimes sent out on behalf of a user (eg forum posts). The email address you specify here will be used as the "From" address in those cases when the recipients should not be able to reply directly to the user (eg when a user chooses to keep their address private).';
 $string['confignotifyloginfailures'] = 'If login failures have been recorded, email notifications can be sent out.  Who should see these notifications?';
 $string['confignotifyloginthreshold'] = 'If notifications about failed logins are active, how many failed login attempts by one user or one IP address is it worth notifying about?';
@@ -685,9 +684,11 @@ $string['maturity50'] = 'Alpha';
 $string['maturity100'] = 'Beta';
 $string['maturity150'] = 'Release candidate';
 $string['maturity200'] = 'Stable version';
-$string['maturitycorewarning'] = 'You are going to install or upgrade Moodle to a version marked as "{$a}"
-that is not considered as production-ready yet. Please make sure this is intentional
-and that you are using correct checkout of Moodle source code.';
+$string['maturitycoreinfo'] = 'Your site is currently running unstable "{$a}" development code.';
+$string['maturitycorewarning'] = 'The version of Moodle that you are about to install or upgrade to contains
+unstable "{$a}" development code that is not suitable for use on most production
+sites. If this is not what you wanted then you should make sure you are updating
+from a STABLE branch of the Moodle code. See Moodle Docs for more details.';
 $string['maxbytes'] = 'Maximum uploaded file size';
 $string['maxconsecutiveidentchars'] = 'Consecutive identical characters';
 $string['maxeditingtime'] = 'Maximum time to edit posts';
@@ -748,7 +749,6 @@ $string['navshowcategories'] = 'Show course categories';
 $string['neverdeleteruns'] = 'Never delete runs';
 $string['nobookmarksforuser'] = 'You do not have any bookmarks.';
 $string['nodatabase'] = 'No database';
-$string['nodefaultuserrolelists'] = 'Don\'t return all default role users';
 $string['nochanges'] = 'No changes';
 $string['nolangupdateneeded'] = 'All your language packs are up to date, no update is needed';
 $string['nomissingstrings'] = 'No missing strings';

@@ -51,6 +51,14 @@ class restore_moodlexml_parser_processor extends grouped_parser_processor {
         $this->accumchunks[] = $data;
     }
 
+    protected function notify_path_start($path) {
+        // nothing to do
+    }
+
+    protected function notify_path_end($path) {
+        // nothing to do
+    }
+
     public function get_all_chunks() {
         return $this->accumchunks;
     }

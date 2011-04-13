@@ -9,8 +9,14 @@ class HTMLPurifier_URIScheme_file extends HTMLPurifier_URIScheme {
     // machines, so placing them as an img src is incorrect.
     public $browsable = false;
 
-    public function validate(&$uri, $config, $context) {
-        parent::validate($uri, $config, $context);
+    // Basically the *only* URI scheme for which this is true, since
+    // accessing files on the local machine is very common.  In fact,
+    // browsers on some operating systems don't understand the
+    // authority, though I hear it is used on Windows to refer to
+    // network shares.
+    public $may_omit_host = true;
+
+    public function doValidate(&$uri, $config, $context) {
         // Authentication method is not supported
         $uri->userinfo = null;
         // file:// makes no provisions for accessing the resource

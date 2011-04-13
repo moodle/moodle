@@ -72,23 +72,57 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
     }
 
     /**
-     * Recursive function that tokenizes a node, putting it into an accumulator.
-     *
+     * Iterative function that tokenizes a node, putting it into an accumulator.
+     * To iterate is human, to recurse divine - L. Peter Deutsch
      * @param $node     DOMNode to be tokenized.
      * @param $tokens   Array-list of already tokenized tokens.
-     * @param $collect  Says whether or start and close are collected, set to
-     *                  false at first recursion because it's the implicit DIV
-     *                  tag you're dealing with.
      * @returns Tokens of node appended to previously passed tokens.
      */
-    protected function tokenizeDOM($node, &$tokens, $collect = false) {
+    protected function tokenizeDOM($node, &$tokens) {
 
+        $level = 0;
+        $nodes = array($level => array($node));
+        $closingNodes = array();
+        do {
+            while (!empty($nodes[$level])) {
+                $node = array_shift($nodes[$level]); // FIFO
+                $collect = $level > 0 ? true : false;
+                $needEndingTag = $this->createStartNode($node, $tokens, $collect);
+                if ($needEndingTag) {
+                    $closingNodes[$level][] = $node;
+                }
+                if ($node->childNodes && $node->childNodes->length) {
+                    $level++;
+                    $nodes[$level] = array();
+                    foreach ($node->childNodes as $childNode) {
+                        array_push($nodes[$level], $childNode);
+                    }
+                }
+            }
+            $level--;
+            if ($level && isset($closingNodes[$level])) {
+                while($node = array_pop($closingNodes[$level])) {
+                    $this->createEndNode($node, $tokens);
+                }
+            }
+        } while ($level > 0);
+    }
+
+    /**
+     * @param $node  DOMNode to be tokenized.
+     * @param $tokens   Array-list of already tokenized tokens.
+     * @param $collect  Says whether or start and close are collected, set to
+     *                    false at first recursion because it's the implicit DIV
+     *                    tag you're dealing with.
+     * @returns bool if the token needs an endtoken
+     */
+    protected function createStartNode($node, &$tokens, $collect) {
         // intercept non element nodes. WE MUST catch all of them,
         // but we're not getting the character reference nodes because
         // those should have been preprocessed
         if ($node->nodeType === XML_TEXT_NODE) {
             $tokens[] = $this->factory->createText($node->data);
-            return;
+            return false;
         } elseif ($node->nodeType === XML_CDATA_SECTION_NODE) {
             // undo libxml's special treatment of <script> and <style> tags
             $last = end($tokens);
@@ -106,47 +140,43 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
                 }
             }
             $tokens[] = $this->factory->createText($this->parseData($data));
-            return;
+            return false;
         } elseif ($node->nodeType === XML_COMMENT_NODE) {
             // this is code is only invoked for comments in script/style in versions
             // of libxml pre-2.6.28 (regular comments, of course, are still
             // handled regularly)
             $tokens[] = $this->factory->createComment($node->data);
-            return;
+            return false;
         } elseif (
             // not-well tested: there may be other nodes we have to grab
             $node->nodeType !== XML_ELEMENT_NODE
         ) {
-            return;
+            return false;
         }
 
-        $attr = $node->hasAttributes() ?
-            $this->transformAttrToAssoc($node->attributes) :
-            array();
+        $attr = $node->hasAttributes() ? $this->transformAttrToAssoc($node->attributes) : array();
 
         // We still have to make sure that the element actually IS empty
         if (!$node->childNodes->length) {
             if ($collect) {
                 $tokens[] = $this->factory->createEmpty($node->tagName, $attr);
             }
+            return false;
         } else {
-            if ($collect) { // don't wrap on first iteration
+            if ($collect) {
                 $tokens[] = $this->factory->createStart(
                     $tag_name = $node->tagName, // somehow, it get's dropped
                     $attr
                 );
             }
-            foreach ($node->childNodes as $node) {
-                // remember, it's an accumulator. Otherwise, we'd have
-                // to use array_merge
-                $this->tokenizeDOM($node, $tokens, true);
-            }
-            if ($collect) {
-                $tokens[] = $this->factory->createEnd($tag_name);
-            }
+            return true;
         }
-
     }
+
+    protected function createEndNode($node, &$tokens) {
+        $tokens[] = $this->factory->createEnd($node->tagName);
+    }
+
 
     /**
      * Converts a DOMNamedNodeMap of DOMAttr objects into an assoc array.

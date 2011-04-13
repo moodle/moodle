@@ -64,6 +64,16 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
     abstract protected function dispatch_chunk($data);
 
     /**
+     * Get one selected path and notify about start
+     */
+    abstract protected function notify_path_start($path);
+
+    /**
+     * Get one selected path and notify about end
+     */
+    abstract protected function notify_path_end($path);
+
+    /**
      * Get one chunk of parsed data and make it simpler
      * adding attributes as tags and delegating to
      * dispatch_chunk() the procesing of the resulting chunk
@@ -139,6 +149,24 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
         return true;
     }
 
+    /**
+     * The parser fires this each time one path is going to be parsed
+     */
+    public function before_path($path) {
+        if ($this->path_is_selected($path)) {
+            $this->notify_path_start($path);
+        }
+    }
+
+    /**
+     * The parser fires this each time one path has been parsed
+     */
+    public function after_path($path) {
+        if ($this->path_is_selected($path)) {
+            $this->notify_path_end($path);
+        }
+    }
+
 // Protected API starts here
 
     protected function postprocess_chunk($data) {
@@ -151,5 +179,19 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
 
     protected function path_is_selected_parent($path) {
         return in_array($path, $this->parentpaths);
+    }
+
+    /**
+     * Returns the first selected parent if available or false
+     */
+    protected function selected_parent_exists($path) {
+        $parentpath = progressive_parser::dirname($path);
+        while ($parentpath != '/') {
+            if ($this->path_is_selected($parentpath)) {
+                return $parentpath;
+            }
+            $parentpath = progressive_parser::dirname($parentpath);
+        }
+        return false;
     }
 }
