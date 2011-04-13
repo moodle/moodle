@@ -7,7 +7,7 @@
     $delete       = optional_param('delete', 0, PARAM_INT);
     $confirm      = optional_param('confirm', '', PARAM_ALPHANUM);   //md5 confirmation hash
     $confirmuser  = optional_param('confirmuser', 0, PARAM_INT);
-    $sort         = optional_param('sort', 'name', PARAM_ALPHA);
+    $sort         = optional_param('sort', 'name', PARAM_ALPHANUM);
     $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
     $page         = optional_param('page', 0, PARAM_INT);
     $perpage      = optional_param('perpage', 30, PARAM_INT);        // how many per page
@@ -117,11 +117,13 @@
     echo $OUTPUT->header();
 
     // Carry on with the user listing
-
-    $columns = array("firstname", "lastname", "email", "city", "country", "lastaccess");
+    $context = context_system::instance();
+    $extracolumns = get_extra_user_fields($context);
+    $columns = array_merge(array('firstname', 'lastname'), $extracolumns,
+            array('city', 'country', 'lastaccess'));
 
     foreach ($columns as $column) {
-        $string[$column] = get_string("$column");
+        $string[$column] = get_user_field_name($column);
         if ($sort != $column) {
             $columnicon = "";
             if ($column == "lastaccess") {
@@ -147,7 +149,8 @@
     }
 
     list($extrasql, $params) = $ufiltering->get_sql_filter();
-    $users = get_users_listing($sort, $dir, $page*$perpage, $perpage, '', '', '', $extrasql, $params);
+    $users = get_users_listing($sort, $dir, $page*$perpage, $perpage, '', '', '',
+            $extrasql, $params, $context);
     $usercount = get_users(false);
     $usersearchcount = get_users(false, '', true, null, "", '', '', '', '', '*', $extrasql, $params);
 
@@ -208,8 +211,27 @@
         }
 
         $table = new html_table();
-        $table->head = array ($fullnamedisplay, $email, $city, $country, $lastaccess, "", "", "");
-        $table->align = array ("left", "left", "left", "left", "left", "center", "center", "center");
+        $table->head = array ();
+        $table->align = array();
+        $table->head[] = $fullnamedisplay;
+        $table->align[] = 'left';
+        foreach ($extracolumns as $field) {
+            $table->head[] = ${$field};
+            $table->align[] = 'left';
+        }
+        $table->head[] = $city;
+        $table->align[] = 'left';
+        $table->head[] = $country;
+        $table->align[] = 'left';
+        $table->head[] = $lastaccess;
+        $table->align[] = 'left';
+        $table->head[] = "";
+        $table->align[] = 'center';
+        $table->head[] = "";
+        $table->align[] = 'center';
+        $table->head[] = "";
+        $table->align[] = 'center';
+
         $table->width = "95%";
         foreach ($users as $user) {
             if (isguestuser($user)) {
@@ -272,14 +294,18 @@
             }
             $fullname = fullname($user, true);
 
-            $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&amp;course=$site->id\">$fullname</a>",
-                                "$user->email",
-                                "$user->city",
-                                "$user->country",
-                                $strlastaccess,
-                                $editbutton,
-                                $deletebutton,
-                                $confirmbutton);
+            $row = array ();
+            $row[] = "<a href=\"../user/view.php?id=$user->id&amp;course=$site->id\">$fullname</a>";
+            foreach ($extracolumns as $field) {
+                $row[] = $user->{$field};
+            }
+            $row[] = $user->city;
+            $row[] = $user->country;
+            $row[] = $strlastaccess;
+            $row[] = $editbutton;
+            $row[] = $deletebutton;
+            $row[] = $confirmbutton;
+            $table->data[] = $row;
         }
     }
 

@@ -249,11 +249,13 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
  * @param string $lastinitial Users whose last name starts with $lastinitial
  * @param string $extraselect An additional SQL select statement to append to the query
  * @param array $extraparams Additional parameters to use for the above $extraselect
+ * @param object $extracontext If specified, will include user 'extra fields'
+ *   as appropriate for current user and given context
  * @return array Array of {@link $USER} records
  */
-
 function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperpage=0,
-                           $search='', $firstinitial='', $lastinitial='', $extraselect='', array $extraparams=null) {
+                           $search='', $firstinitial='', $lastinitial='', $extraselect='',
+                           array $extraparams=null, $extracontext = null) {
     global $DB;
 
     $fullname  = $DB->sql_fullname();
@@ -289,8 +291,18 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
         $sort = " ORDER BY $sort $dir";
     }
 
-/// warning: will return UNCONFIRMED USERS
-    return $DB->get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess, confirmed, mnethostid
+    // If a context is specified, get extra user fields that the current user
+    // is supposed to see.
+    $extrafields = '';
+    if ($extracontext) {
+        $extrafields = get_extra_user_fields_sql($extracontext, '', '',
+                array('id', 'username', 'email', 'firstname', 'lastname', 'city', 'country',
+                'lastaccess', 'confirmed', 'mnethostid'));
+    }
+
+    // warning: will return UNCONFIRMED USERS
+    return $DB->get_records_sql("SELECT id, username, email, firstname, lastname, city, country,
+                                        lastaccess, confirmed, mnethostid$extrafields
                                    FROM {user}
                                   WHERE $select
                                   $sort", $params, $page, $recordsperpage);
