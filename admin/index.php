@@ -194,6 +194,7 @@ if (empty($CFG->version)) {
 }
 
 if ($version > $CFG->version) {  // upgrade
+    purge_all_caches();
     $PAGE->set_pagelayout('maintenance');
     $PAGE->set_popup_notification_allowed(false);
 
@@ -406,6 +407,17 @@ if (any_new_admin_settings($adminroot)){
 // Print default admin page with notifications.
 admin_externalpage_setup('adminnotifications');
 echo $OUTPUT->header();
+
+// Unstable code warning
+if (isset($maturity)) {
+    if ($maturity < MATURITY_STABLE) {
+        $maturitylevel = get_string('maturity'.$maturity, 'admin');
+        echo $OUTPUT->box(
+            get_string('maturitycoreinfo', 'admin', $maturitylevel) . ' ' .
+            $OUTPUT->doc_link('admin/versions', get_string('morehelp')),
+            'generalbox adminwarning maturityinfo');
+    }
+}
 
 if ($insecuredataroot == INSECURE_DATAROOT_WARNING) {
     echo $OUTPUT->box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot), 'generalbox adminwarning');
