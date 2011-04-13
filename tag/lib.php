@@ -831,16 +831,17 @@ function tag_compute_correlations($mincorrelation = 2) {
     //   correlationid : This is the id of the row in the tag_correlation table that
     //                   relates to the tagid field and will be NULL if there are no
     //                   existing correlations
-    $sql = 'SELECT ta.tagid, tb.tagid AS correlation, co.id AS correlationid, co.correlatedtags 
-              FROM {tag_instance} ta 
-         LEFT JOIN {tag_instance} tb 
-                ON (ta.itemtype = tb.itemtype AND ta.itemid = tb.itemid AND ta.tagid <> tb.tagid) 
-         LEFT JOIN {tag_correlation} co 
-                ON co.tagid = ta.tagid 
-             WHERE tb.tagid IS NOT NULL 
-          GROUP BY ta.tagid, tb.tagid 
-            HAVING COUNT(*) > :mincorrelation 
-          ORDER BY ta.tagid ASC, COUNT(*) DESC, tb.tagid ASC';
+    $sql = 'SELECT pairs.tagid, pairs.correlation, pairs.ocurrences,
+                   co.id AS correlationid, co.correlatedtags
+              FROM (
+                       SELECT ta.tagid, tb.tagid AS correlation, COUNT(*) AS ocurrences
+                         FROM {tag_instance} ta
+                         JOIN {tag_instance} tb ON (ta.itemtype = tb.itemtype AND ta.itemid = tb.itemid AND ta.tagid <> tb.tagid)
+                     GROUP BY ta.tagid, tb.tagid
+                       HAVING COUNT(*) > :mincorrelation
+                   ) pairs
+         LEFT JOIN {tag_correlation} co ON co.tagid = pairs.tagid
+          ORDER BY pairs.tagid ASC, pairs.ocurrences DESC, pairs.correlation ASC';
     $rs = $DB->get_recordset_sql($sql, array('mincorrelation' => $mincorrelation));
 
     // Set up an empty tag correlation object
