@@ -730,6 +730,11 @@ function scorm_simple_play($scorm,$user, $context) {
     $result = false;
 
     if ($scorm->updatefreq == UPDATE_EVERYTIME) {
+        if (strpos($scorm->version, 'AICC') !== false) {
+            $scorm->pkgtype = 'AICC';
+        } else {
+            $scorm->pkgtype = 'SCORM';
+        }
         scorm_parse($scorm);
     }
     if (has_capability('mod/scorm:viewreport', $context)) { //if this user can view reports, don't skipview so they can see links to reports. 
