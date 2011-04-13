@@ -157,14 +157,14 @@ class uu_progress_tracker {
 
 /**
  * Validation callback function - verified the column line of csv file.
- * Converts column names to lowercase too.
+ * Converts standard column names to lowercase.
  * @param csv_import_reader $cir
- * @param array standard user fields
- * @param array custom profile fields
+ * @param array $stdfields standard user fields
+ * @param array $profilefields custom profile fields
  * @param moodle_url $returnurl return url in case of any error
  * @return array list of fields
  */
-function uu_validate_user_upload_columns(csv_import_reader $cir, $stdfields, $frofilefields, moodle_url $returnurl) {
+function uu_validate_user_upload_columns(csv_import_reader $cir, $stdfields, $profilefields, moodle_url $returnurl) {
     $columns = $cir->get_columns();
 
     if (empty($columns)) {
@@ -178,22 +178,40 @@ function uu_validate_user_upload_columns(csv_import_reader $cir, $stdfields, $fr
         print_error('csvfewcolumns', 'error', $returnurl);
     }
 
+    $textlib = textlib_get_instance(); // profile fields may contain unicode chars
+
     // test columns
     $processed = array();
     foreach ($columns as $key=>$unused) {
-        $field = strtolower($columns[$key]); // no unicode expected here, ignore case
-        if (!in_array($field, $stdfields) && !in_array($field, $frofilefields) &&// if not a standard field and not an enrolment field, then we have an error
-            !preg_match('/^course\d+$/', $field) && !preg_match('/^group\d+$/', $field) &&
-            !preg_match('/^type\d+$/', $field) && !preg_match('/^role\d+$/', $field) &&
-            !preg_match('/^enrolperiod\d+$/', $field)) {
-            print_error('invalidfieldname', 'error', $returnurl, $field);
-        }
-        if (in_array($field, $processed)) {
+        $field = $columns[$key];
+        $lcfield = $textlib->strtolower($field);
+        if (in_array($field, $stdfields) or in_array($lcfield, $stdfields)) {
+            // standard fields are only lowercase
+            $newfield = $lcfield;
+
+        } else if (in_array($field, $profilefields)) {
+            // exact profile field name match - these are case sensitive
+            $newfield = $field;
+
+        } else if (in_array($lcfield, $profilefields)) {
+            // hack: somebody wrote uppercase in csv file, but the system knows only lowercase profile field
+            $newfield = $lcfield;
+
+        } else if (preg_match('/^(course|group|type|role|enrolperiod)\d+$/', $lcfield)) {
+            // special fields for enrolments
+            $newfield = $lcfield;
+
+        } else {
             $cir->close();
             $cir->cleanup();
-            print_error('duplicatefieldname', 'error', $returnurl, $field);
+            print_error('invalidfieldname', 'error', $returnurl, $field);
         }
-        $processed[$key] = $field;
+        if (in_array($newfield, $processed)) {
+            $cir->close();
+            $cir->cleanup();
+            print_error('duplicatefieldname', 'error', $returnurl, $newfield);
+        }
+        $processed[$key] = $newfield;
     }
 
     return $processed;
