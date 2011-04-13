@@ -10,6 +10,7 @@ $course=$DB->get_record('course',array('id'=>$id));
 if(!$course) {
     print_error('invalidcourseid');
 }
+$context = context_course::instance($course->id);
 
 // Sort (default lastname, optionally firstname)
 $sort = optional_param('sort','',PARAM_ALPHA);
@@ -26,11 +27,9 @@ $sifirst = optional_param('sifirst', 'all', PARAM_ALPHA);
 $silast  = optional_param('silast', 'all', PARAM_ALPHA);
 $start = optional_param('start',0,PARAM_INT);
 
-// Whether to show idnumber
-// TODO: This should really not be using a config option 'intended' for
-// gradebook, but that option is also used in quiz reports as well. There ought
-// to be a generic option somewhere.
-$idnumbers = $CFG->grade_report_showuseridnumber;
+// Whether to show extra user identity information
+$extrafields = get_extra_user_fields($context);
+$leftcols = 1 + count($extrafields);
 
 function csv_quote($value) {
     global $excel;
@@ -58,7 +57,6 @@ $PAGE->set_pagelayout('report');
 require_login($course);
 
 // Check basic permission
-$context=get_context_instance(CONTEXT_COURSE,$course->id);
 require_capability('coursereport/progress:view',$context);
 
 // Get group mode
@@ -103,7 +101,8 @@ if ($total) {
         $group,
         $firstnamesort ? 'u.firstname ASC' : 'u.lastname ASC',
         $csv ? 0 : COMPLETION_REPORT_PAGE,
-        $csv ? 0 : $start
+        $csv ? 0 : $start,
+        $context
     );
 }
 
@@ -277,13 +276,14 @@ if(!$csv) {
     }
     print '</th>';
 
-    if($idnumbers) {
-        print '<th>'.get_string('idnumber').'</th>';
+    // Print user identity columns
+    foreach ($extrafields as $field) {
+        echo '<th scope="col" class="completion-identifyfield">' .
+                get_user_field_name($field) . '</th>';
     }
-
 } else {
-    if($idnumbers) {
-        print $sep;
+    foreach ($extrafields as $field) {
+        echo $sep . csv_quote(get_user_field_name($field));
     }
 }
 
@@ -328,14 +328,14 @@ foreach($progress as $user) {
     // User name
     if($csv) {
         print csv_quote(fullname($user));
-        if($idnumbers) {
-            print $sep.csv_quote($user->idnumber);
+        foreach ($extrafields as $field) {
+            echo $sep . csv_quote($user->{$field});
         }
     } else {
         print '<tr><th scope="row"><a href="'.$CFG->wwwroot.'/user/view.php?id='.
             $user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></th>';
-        if($idnumbers) {
-            print '<td>'.htmlspecialchars($user->idnumber).'</td>';
+        foreach ($extrafields as $field) {
+            echo '<td>' . s($user->{$field}) . '</td>';
         }
     }
 
