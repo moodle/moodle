@@ -6808,6 +6808,16 @@ FROM
         upgrade_main_savepoint(true, 2011101900.02);
     }
 
+    if ($oldversion < 2011102700.01) {
+        // Rename 'extrauserselectorfields' to 'showuseridentity' as it is
+        // being used more widely
+        if (isset($CFG->extrauserselectorfields)) {
+            set_config('showuseridentity', $CFG->extrauserselectorfields);
+            unset_config('extrauserselectorfields');
+        }
+        upgrade_main_savepoint(true, 2011102700.01);
+    }
+
     return true;
 }
 

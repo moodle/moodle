@@ -996,13 +996,14 @@ abstract class role_assign_user_selector_base extends user_selector_base {
      */
     public function __construct($name, $options) {
         global $CFG;
-        parent::__construct($name, $options);
-        $this->roleid = $options['roleid'];
         if (isset($options['context'])) {
             $this->context = $options['context'];
         } else {
             $this->context = get_context_instance_by_id($options['contextid']);
         }
+        $options['accesscontext'] = $this->context;
+        parent::__construct($name, $options);
+        $this->roleid = $options['roleid'];
         require_once($CFG->dirroot . '/group/lib.php');
     }
 
