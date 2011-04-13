@@ -27,6 +27,7 @@
 $string['assignrole'] = 'Assignrole';
 $string['defaultperiod'] = 'Default enrolment period';
 $string['defaultperiod_desc'] = 'Default length of the default enrolment period setting (in seconds).'; //TODO: fixme
+$string['editenrolment'] = 'Edit enrolment';
 $string['enrolledincourserole'] = 'Enrolled in "{$a->course}" as "{$a->role}"';
 $string['enrolusers'] = 'Enrol users';
 $string['manual:config'] = 'Configure manual enrol instances';
@@ -41,4 +42,6 @@ $string['status_desc'] = 'Allow course access of internally enrolled users. This
 $string['status_help'] = 'This setting determines whether users can be enrolled manually, via a link in the course administration settings, by a user with appropriate permissions such as a teacher.';
 $string['statusenabled'] = 'Enabled';
 $string['statusdisabled'] = 'Disabled';
+$string['unenrol'] = 'Unenrol user';
 $string['unenrolselfconfirm'] = 'Do you really want to unenrol yourself from course "{$a}"?';
+$string['unenroluser'] = 'Do you really want to unenrol "{$a->user}" from course "{$a->course}"?';
