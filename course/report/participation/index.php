@@ -196,7 +196,7 @@
                 $actions = array_merge($viewnames, $postnames);
         }
 
-        list($actionsql, $params) = $DB->get_in_or_equal($actions, SQL_PARAMS_NAMED, 'action0');
+        list($actionsql, $params) = $DB->get_in_or_equal($actions, SQL_PARAMS_NAMED, 'action');
         $actionsql = "action $actionsql";
 
         $relatedcontexts = get_related_contexts_string($context);

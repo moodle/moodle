@@ -208,7 +208,7 @@ function enrol_meta_sync($courseid = NULL) {
 
     // iterate through all not enrolled yet users
     if (enrol_is_enabled('meta')) {
-        list($enabled, $params) = $DB->get_in_or_equal(explode(',', $CFG->enrol_plugins_enabled), SQL_PARAMS_NAMED, 'e00');
+        list($enabled, $params) = $DB->get_in_or_equal(explode(',', $CFG->enrol_plugins_enabled), SQL_PARAMS_NAMED, 'e');
         $onecourse = "";
         if ($courseid) {
             $params['courseid'] = $courseid;
@@ -267,7 +267,7 @@ function enrol_meta_sync($courseid = NULL) {
         }
         $enabled[] = $DB->sql_empty(); // manual assignments are replicated too
 
-        list($enabled, $params) = $DB->get_in_or_equal($enabled, SQL_PARAMS_NAMED, 'e00');
+        list($enabled, $params) = $DB->get_in_or_equal($enabled, SQL_PARAMS_NAMED, 'e');
         $sql = "SELECT DISTINCT pra.roleid, pra.userid, c.id AS contextid, e.id AS enrolid
                   FROM {role_assignments} pra
                   JOIN {user} u ON (u.id = pra.userid AND u.deleted = 0)
@@ -281,7 +281,7 @@ function enrol_meta_sync($courseid = NULL) {
         $params['courseid'] = $courseid;
 
         if ($ignored = $meta->get_config('nosyncroleids')) {
-            list($notignored, $xparams) = $DB->get_in_or_equal(explode(',', $ignored), SQL_PARAMS_NAMED, 'i00', false);
+            list($notignored, $xparams) = $DB->get_in_or_equal(explode(',', $ignored), SQL_PARAMS_NAMED, 'ig', false);
             $params = array_merge($params, $xparams);
             $sql = "$sql AND pra.roleid $notignored";
         }
@@ -296,7 +296,7 @@ function enrol_meta_sync($courseid = NULL) {
     // remove unwanted roles - include ignored roles and disabled plugins too
     $params = array('coursecontext' => CONTEXT_COURSE, 'courseid' => $courseid);
     if ($ignored = $meta->get_config('nosyncroleids')) {
-        list($notignored, $xparams) = $DB->get_in_or_equal(explode(',', $ignored), SQL_PARAMS_NAMED, 'i00', false);
+        list($notignored, $xparams) = $DB->get_in_or_equal(explode(',', $ignored), SQL_PARAMS_NAMED, 'ig', false);
         $params = array_merge($params, $xparams);
         $notignored = "AND pra.roleid $notignored";
     } else {

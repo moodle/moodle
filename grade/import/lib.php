@@ -164,7 +164,7 @@ function get_unenrolled_users_in_import($importcode, $courseid) {
     $relatedctxcondition = get_related_contexts_string(get_context_instance(CONTEXT_COURSE, $courseid));
 
     //users with a gradeable role
-    list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $CFG->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
+    list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $CFG->gradebookroles), SQL_PARAMS_NAMED, 'grbr');
 
     //enrolled users
     $context = get_context_instance(CONTEXT_COURSE, $courseid);

@@ -38,7 +38,7 @@ class qstats{
     }
     function get_records($quizid, $currentgroup, $groupstudents, $allattempts){
         global $DB;
-        list($qsql, $qparams) = $DB->get_in_or_equal(array_keys($this->questions), SQL_PARAMS_NAMED, 'q0000');
+        list($qsql, $qparams) = $DB->get_in_or_equal(array_keys($this->questions), SQL_PARAMS_NAMED, 'q');
         list($fromqa, $whereqa, $qaparams) = quiz_report_attempts_sql($quizid, $currentgroup, $groupstudents, $allattempts);
         $sql = 'SELECT qs.id, ' .
             'qs.question, ' .

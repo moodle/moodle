@@ -3037,7 +3037,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // add roles without archetypes, it may contain weird things, but we can not fix them
-        list($narsql, $params) = $DB->get_in_or_equal(array_keys($defaults), SQL_PARAMS_NAMED, 'ar000', false);
+        list($narsql, $params) = $DB->get_in_or_equal(array_keys($defaults), SQL_PARAMS_NAMED, 'ar', false);
         $sql = "SELECT DISTINCT ra.roleid, con.contextlevel
                   FROM {role_assignments} ra
                   JOIN {context} con ON ra.contextid = con.id
@@ -4030,7 +4030,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
         // enabled
             $enabledplugins = explode(',', $CFG->enrol_plugins_enabled);
-        list($sqlenabled, $params) = $DB->get_in_or_equal($enabledplugins, SQL_PARAMS_NAMED, 'ena00');
+        list($sqlenabled, $params) = $DB->get_in_or_equal($enabledplugins, SQL_PARAMS_NAMED, 'ena');
         $params['siteid'] = SITEID;
         $sql = "INSERT INTO {enrol} (enrol, status, courseid, sortorder, enrolperiod, enrolstartdate, enrolenddate, expirynotify, expirythreshold,
                                      notifyall, password, cost, currency, roleid, timecreated, timemodified)
@@ -4042,7 +4042,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                  WHERE c.id <> :siteid AND ra.enrol $sqlenabled";
         $processed = $DB->get_fieldset_sql("SELECT DISTINCT enrol FROM {enrol}");
         if ($processed) {
-            list($sqlnotprocessed, $params2) = $DB->get_in_or_equal($processed, SQL_PARAMS_NAMED, 'np00', false);
+            list($sqlnotprocessed, $params2) = $DB->get_in_or_equal($processed, SQL_PARAMS_NAMED, 'np', false);
             $params = array_merge($params, $params2);
             $sql = "$sql AND ra.enrol $sqlnotprocessed";
         }
@@ -4060,7 +4060,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                  WHERE c.id <> :siteid";
         $processed = $DB->get_fieldset_sql("SELECT DISTINCT enrol FROM {enrol}");
         if ($processed) {
-            list($sqlnotprocessed, $params2) = $DB->get_in_or_equal($processed, SQL_PARAMS_NAMED, 'np00', false);
+            list($sqlnotprocessed, $params2) = $DB->get_in_or_equal($processed, SQL_PARAMS_NAMED, 'np', false);
             $params = array_merge($params, $params2);
             $sql = "$sql AND ra.enrol $sqlnotprocessed";
         }
@@ -4310,7 +4310,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $params = array('syscontext'=>$syscontext->id, 'participate'=>'moodle/course:participate');
         $roles = $DB->get_fieldset_sql("SELECT DISTINCT roleid FROM {role_capabilities} WHERE contextid = :syscontext AND capability = :participate AND permission = 1", $params);
         if ($roles) {
-            list($sqlroles, $params) = $DB->get_in_or_equal($roles, SQL_PARAMS_NAMED, 'r00');
+            list($sqlroles, $params) = $DB->get_in_or_equal($roles, SQL_PARAMS_NAMED, 'r');
 
             $sql = "INSERT INTO {user_enrolments} (status, enrolid, userid, timestart, timeend, modifierid, timecreated, timemodified)
 

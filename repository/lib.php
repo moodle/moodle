@@ -653,7 +653,7 @@ abstract class repository {
                  WHERE i.typeid = r.id ";
 
         if (!empty($args['disable_types']) && is_array($args['disable_types'])) {
-            list($types, $p) = $DB->get_in_or_equal($args['disable_types'], SQL_PARAMS_QM, 'param0000', false);
+            list($types, $p) = $DB->get_in_or_equal($args['disable_types'], SQL_PARAMS_QM, 'param', false);
             $sql .= " AND r.type $types";
             $params = array_merge($params, $p);
         }
