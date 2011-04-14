@@ -22,11 +22,15 @@ abbr {cursor: help;}
 .centerpara,
 .mdl-align {text-align: center;}
 a.dimmed,
+a.dimmed:link,
+a.dimmed:visited,
 a.dimmed_text,
 .dimmed_text,
 .dimmed_text a,
 .dimmed_category,
 .dimmed_category a {color:#AAAAAA;}
+
+ fieldset#general {border-color: #ddd;}
 
 .unlist,
 .unlist li,
