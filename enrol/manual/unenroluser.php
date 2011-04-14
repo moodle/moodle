@@ -17,6 +17,8 @@
 /**
  * Unenrol a user who was enrolled through a manual enrolment.
  *
+ * Please note when unenrolling a user all of their grades are removed as well.
+ *
  * @package    enrol
  * @subpackage manual
  * @copyright  2011 Sam Hemelryk

@@ -182,6 +182,8 @@ class enrol_manual_plugin extends enrol_plugin {
      * @return enrol_user_button
      */
     public function get_manual_enrol_button(course_enrolment_manager $manager) {
+        global $CFG;
+
         $instance = null;
         $instances = array();
         foreach ($manager->get_enrolment_instances() as $tempinstance) {
@@ -211,12 +213,13 @@ class enrol_manual_plugin extends enrol_plugin {
 
         $modules = array('moodle-enrol_manual-quickenrolment', 'moodle-enrol_manual-quickenrolment-skin');
         $arguments = array(
-            'instances'         => $instances,
-            'courseid'          => $instance->courseid,
-            'ajaxurl'           => '/enrol/manual/ajax.php',
-            'url'               => $manager->get_moodlepage()->url->out(false),
-            'optionsStartDate'  => $startdateoptions,
-            'defaultRole'       => $instance->roleid
+            'instances'           => $instances,
+            'courseid'            => $instance->courseid,
+            'ajaxurl'             => '/enrol/manual/ajax.php',
+            'url'                 => $manager->get_moodlepage()->url->out(false),
+            'optionsStartDate'    => $startdateoptions,
+            'defaultRole'         => $instance->roleid,
+            'disableGradeHistory' => $CFG->disablegradehistory
         );
         $function = 'M.enrol_manual.quickenrolment.init';
         $button->require_yui_module($modules, $function, array($arguments));
@@ -234,7 +237,9 @@ class enrol_manual_plugin extends enrol_plugin {
             'unlimitedduration',
             'startdatetoday',
             'durationdays',
-            'enrolperiod'), 'enrol');
+            'enrolperiod',
+            'finishenrollingusers',
+            'recovergrades'), 'enrol');
         $button->strings_for_js('assignroles', 'role');
         $button->strings_for_js('startingfrom', 'moodle');
 
