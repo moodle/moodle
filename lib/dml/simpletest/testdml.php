@@ -178,56 +178,75 @@ class dml_test extends UnitTestCase {
 
         // Correct usage of multiple values
         $in_values = array('value1', 'value2', 'value3', 'value4');
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', true);
-        $this->assertEqual("IN (:param01,:param02,:param03,:param04)", $usql);
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param', true);
         $this->assertEqual(4, count($params));
         reset($in_values);
+        $ps = array();
         foreach ($params as $key => $value) {
             $this->assertEqual(current($in_values), $value);
             next($in_values);
+            $ps[] = ':'.$key;
         }
+        $this->assertEqual("IN (".implode(',', $ps).")", $usql);
 
         // Correct usage of single values (in array)
         $in_values = array('value1');
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', true);
-        $this->assertEqual("= :param01", $usql);
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param', true);
         $this->assertEqual(1, count($params));
-        $this->assertEqual($in_values[0], $params['param01']);
+        $value = reset($params);
+        $key = key($params);
+        $this->assertEqual("= :$key", $usql);
+        $this->assertEqual($in_value, $value);
 
         // Correct usage of single value
         $in_value = 'value1';
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', true);
-        $this->assertEqual("= :param01", $usql);
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param', true);
         $this->assertEqual(1, count($params));
-        $this->assertEqual($in_value, $params['param01']);
+        $value = reset($params);
+        $key = key($params);
+        $this->assertEqual("= :$key", $usql);
+        $this->assertEqual($in_value, $value);
 
         // SQL_PARAMS_NAMED - NOT IN or <>
 
         // Correct usage of multiple values
         $in_values = array('value1', 'value2', 'value3', 'value4');
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', false);
-        $this->assertEqual("NOT IN (:param01,:param02,:param03,:param04)", $usql);
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param', false);
         $this->assertEqual(4, count($params));
         reset($in_values);
+        $ps = array();
         foreach ($params as $key => $value) {
             $this->assertEqual(current($in_values), $value);
             next($in_values);
+            $ps[] = ':'.$key;
         }
+        $this->assertEqual("NOT IN (".implode(',', $ps).")", $usql);
 
         // Correct usage of single values (in array)
         $in_values = array('value1');
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', false);
-        $this->assertEqual("<> :param01", $usql);
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param', false);
         $this->assertEqual(1, count($params));
-        $this->assertEqual($in_values[0], $params['param01']);
+        $value = reset($params);
+        $key = key($params);
+        $this->assertEqual("<> :$key", $usql);
+        $this->assertEqual($in_value, $value);
 
         // Correct usage of single value
         $in_value = 'value1';
-        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', false);
-        $this->assertEqual("<> :param01", $usql);
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param', false);
         $this->assertEqual(1, count($params));
-        $this->assertEqual($in_value, $params['param01']);
+        $value = reset($params);
+        $key = key($params);
+        $this->assertEqual("<> :$key", $usql);
+        $this->assertEqual($in_value, $value);
 
+        // make sure the param names are unique
+        list($usql1, $params1) = $DB->get_in_or_equal(array(1,2,3), SQL_PARAMS_NAMED, 'param');
+        list($usql2, $params2) = $DB->get_in_or_equal(array(1,2,3), SQL_PARAMS_NAMED, 'param');
+        $params1 = array_keys($params1);
+        $params2 = array_keys($params2);
+        $common = array_intersect($params1, $params2);
+        $this->assertEqual(count($common), 0);
     }
 
     public function test_fix_table_names() {
