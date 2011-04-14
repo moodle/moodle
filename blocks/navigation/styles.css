@@ -35,16 +35,18 @@
 .ie6 .block_navigation .block_tree .tree_item {width:100%;}
 
 /** Overide for RTL layout **/
-.dir-rtl .block_navigation .block_tree {padding-right:0px;}
-.dir-rtl .block_navigation .block_tree li.item_with_icon > p img {right:0;}
-
-.dir-rtl .block_navigation .block_tree li ul {padding-right:0;}
-.dir-rtl .block_navigation .block_tree li.depth_2 ul {padding-right:16px;}
+.dir-rtl .block_navigation .block_tree li.depth_2 ul {padding-left:0;padding-right: 7px;}
 .dir-rtl .block_navigation .block_tree .tree_item {padding-right: 18px;text-align:right;}
 
 .dir-rtl .block_navigation .block_tree .tree_item.branch {background-position: center right;}
-.dir-rtl .block_navigation .block_tree .navigation_node.tree_item.branch {padding-right:0;}
-.dir-rtl .block_navigation .block_tree .root_node.leaf {padding-right:0px;}
+
+.dir-rtl .block_navigation .block_tree,
+.dir-rtl .block_navigation .block_tree li ul,
+.dir-rtl .block_navigation .block_tree .navigation_node.tree_item.branch,
+.dir-rtl .block_navigation .block_tree .root_node.leaf {padding-right:0;}
+
+.dir-rtl .block_navigation .block_tree li.item_with_icon > p img,
+.dir-rtl .block_navigation .block_tree .type_activity > .tree_item.branch img {right:0;left:auto;}
 
 .jsenabled.dir-rtl .block_navigation .block_tree .tree_item.emptybranch {background-image: url([[pix:t/collapsed_empty_rtl]]);background-position: center right;}
 .jsenabled.dir-rtl .block_navigation .block_tree .collapsed .tree_item.branch {background-image: url([[pix:t/collapsed_rtl]]);}

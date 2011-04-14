@@ -1,5 +1,5 @@
 .yui-skin-sam .yui-layout .yui-layout-hd { border:0; }
-.yui-skin-sam  .yui-layout .yui-layout-unit div.yui-layout-bd-nohd { border:0; }
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd-nohd { border:0; }
 .yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd { border:0; }
 .yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-unit-right { background: white; }
 .yui-skin-sam .yui-layout-unit-bottom  { background: #F2F2F2; }
@@ -8,44 +8,46 @@
 .yui-skin-sam .yui-layout-unit-top { background: #FFE39D; }
 .yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd { background: transparent; }
 
-#input-message {
-    background:#FFFFFF url(input.png) repeat-x scroll 0 0;
-    padding:0 9px;
-    border: 1px solid #999;
-    border-radius: 9px;
-    -moz-border-radius: 9px;
-}
-.mdl-chat-entry, .mdl-chat-my-entry {
-    clear:both;
-}
-.chat-message td {
-    padding: 0;
-}
+#input-message {background:#FFFFFF url(input.png) repeat-x scroll 0 0;padding:0 9px;border: 1px solid #999;border-radius: 9px;-moz-border-radius: 9px;}
+.mdl-chat-entry,
+.mdl-chat-my-entry {clear:both;}
+.chat-message td {padding: 0;}
 
-.mdl-chat-entry .topleft { background:transparent url(bubbles.png) no-repeat scroll left top; height:9px; width:18px; }
-.mdl-chat-entry .top { background:transparent url(horizontal.png) repeat-x scroll center top; font-size:1px; height:9px; }
-.mdl-chat-entry .topright { background:transparent url(bubbles.png) no-repeat scroll -18px top; height:9px; width:11px; }
-.mdl-chat-entry .left { background:transparent url(vertical.png) repeat-y scroll left center; width:18px; }
-.mdl-chat-entry .conmts { background:#DCDCDC none repeat scroll 0 0; color:#000000; text-shadow:0 1px 0 #EEEEEE; }
-.mdl-chat-entry .right { background:transparent url(vertical.png) repeat-y scroll -18px 0; width:11px; }
-.mdl-chat-entry .bottomleft { background:transparent url(bubbles.png) no-repeat scroll left -9px; height:12px; width:18px; }
-.mdl-chat-entry .bottomright { background:transparent url(bubbles.png) no-repeat scroll right -9px; height:12px; width:11px; }
-.mdl-chat-entry .bottom { background:transparent url(horizontal.png) repeat-x scroll 0 -9px; height:12px; }
+.mdl-chat-entry .topleft {background:transparent url(bubbles.png) no-repeat scroll left top; height:9px; width:18px;}
+.mdl-chat-entry .top {background:transparent url(horizontal.png) repeat-x scroll center top; font-size:1px; height:9px;}
+.mdl-chat-entry .topright {background:transparent url(bubbles.png) no-repeat scroll -18px top; height:9px; width:11px;}
+.mdl-chat-entry .left {background:transparent url(vertical.png) repeat-y scroll left center; width:18px;}
+.mdl-chat-entry .conmts {background:#DCDCDC none repeat scroll 0 0; color:#000000; text-shadow:0 1px 0 #EEEEEE;}
+.mdl-chat-entry .right {background:transparent url(vertical.png) repeat-y scroll -18px 0; width:11px;}
+.mdl-chat-entry .bottomleft {background:transparent url(bubbles.png) no-repeat scroll left -9px; height:12px; width:18px;}
+.mdl-chat-entry .bottomright {background:transparent url(bubbles.png) no-repeat scroll right -9px; height:12px; width:11px;}
+.mdl-chat-entry .bottom {background:transparent url(horizontal.png) repeat-x scroll 0 -9px; height:12px;}
 
-.mdl-chat-my-entry .topleft{background:url(bubbles.png) no-repeat 0 -21px;height:9px;width:11px;}
-.mdl-chat-my-entry .topright{background:url(bubbles.png) no-repeat -11px -21px;height:9px;width:18px;}
-.mdl-chat-my-entry .bottomleft{background:url(bubbles.png) no-repeat 0 bottom;width:11px;height:12px;}
-.mdl-chat-my-entry .bottomright{background:url(bubbles.png) no-repeat right bottom;width:18px;height:12px;}
-.mdl-chat-my-entry .top{background:url(horizontal.png) repeat-x 0 -21px;font-size:1px;height:9px;}
-.mdl-chat-my-entry .bottom{background:url(horizontal.png) repeat-x bottom;height:12px;}
-.mdl-chat-my-entry .left{background:url(vertical.png) repeat-y -29px 0;width:11px;}
-.mdl-chat-my-entry .right{background:url(vertical.png) repeat-y right;width:18px;}
-.mdl-chat-my-entry .conmts{background:#C0E668;color:#000;}
-#chat-input-area ,#chat-input-area table.generaltable, #chat-input-area table.generaltable td.cell {
-    background: #92B3E8;
-    border: 0;
-}
-#chat-userlist {
-    background: #E3E8F0;
-    height: 100%;
-}
+.mdl-chat-my-entry .topleft {background:url(bubbles.png) no-repeat 0 -21px;height:9px;width:11px;}
+.mdl-chat-my-entry .topright {background:url(bubbles.png) no-repeat -11px -21px;height:9px;width:18px;}
+.mdl-chat-my-entry .bottomleft {background:url(bubbles.png) no-repeat 0 bottom;width:11px;height:12px;}
+.mdl-chat-my-entry .bottomright {background:url(bubbles.png) no-repeat right bottom;width:18px;height:12px;}
+.mdl-chat-my-entry .top {background:url(horizontal.png) repeat-x 0 -21px;font-size:1px;height:9px;}
+.mdl-chat-my-entry .bottom {background:url(horizontal.png) repeat-x bottom;height:12px;}
+.mdl-chat-my-entry .left {background:url(vertical.png) repeat-y -29px 0;width:11px;}
+.mdl-chat-my-entry .right {background:url(vertical.png) repeat-y right;width:18px;}
+.mdl-chat-my-entry .conmts {background:#C0E668;color:#000;}
+
+#chat-input-area,
+#chat-input-area table.generaltable,
+#chat-input-area table.generaltable td.cell {background: #92B3E8;border: 0;}
+#chat-userlist {background: #E3E8F0;height: 100%;}
+
+.dir-rtl .mdl-chat-entry .topleft {background-position: -18px 0;width:11px;}
+.dir-rtl .mdl-chat-entry .topright {background-position: 0 0;width:18px;}
+.dir-rtl .mdl-chat-entry .bottomleft {background-position: -18px -9px;width:11px;}
+.dir-rtl .mdl-chat-entry .bottomright {background-position: 0 -9px;width:18px;}
+.dir-rtl .mdl-chat-entry .right {background-position: 0 0;width:18px;}
+.dir-rtl .mdl-chat-entry .left {background-position: -18px 0;width:11px;}
+
+.dir-rtl .mdl-chat-my-entry .topleft {background-position: -13px -21px;width:18px;}
+.dir-rtl .mdl-chat-my-entry .topright {background-position: 0 -21px;width:11px;}
+.dir-rtl .mdl-chat-my-entry .bottomleft {background-position: -13px -30px;width:18px;}
+.dir-rtl .mdl-chat-my-entry .bottomright {background-position: 0 -30px;width:11px;}
+.dir-rtl .mdl-chat-my-entry .right {background-position: -29px 0;width:11px;}
+.dir-rtl .mdl-chat-my-entry .left {background-position: -42px 0;width:18px;}

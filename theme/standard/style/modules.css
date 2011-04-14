@@ -103,12 +103,16 @@ table.mod_index {width:90%;margin:1em auto;}
 #page-mod-forum-view .forumheaderlist  {border-color:#DDDDDD;} /** border around posts in */
 #email .unsubscribelink {border-width: 0px 1px 0px 0px;border-style: solid;text-align:center;}
 #page-mod-forum-view .highlight2 {color:#AA0000;}
+#page-mod-forum-view.dir-rtl .forumheaderlist .discussion .starter {text-align:right;}
 
 /** Glossary **/
 .path-mod-glossary .glossarypost {border:1px solid #DDD;}
+#page-mod-glossary-view.dir-rtl .glossarypost {text-align: right;}
 .path-mod-glossary .glossarypost .entry {padding: 3px;}
 .path-mod-glossary .glossarypost .concept h3 {font-size: 1em;margin: 0;font-weight: normal;text-align: left;}
+#page-mod-glossary-view.dir-rtl .glossarypost .concept h3 {text-align: right;}
 .path-mod-glossary .glossarypost .entryheader {font-weight: normal;text-align: left;}
+#page-mod-glossary-view.dir-rtl .glossarypost .entryheader {text-align:right;}
 .path-mod-glossary .glossarypost .entryheader h3 {display:inline;}
 .path-mod-glossary .glossarypost .entryheader,
 .path-mod-glossary .glossarypost .entryapproval,
@@ -131,6 +135,7 @@ table.mod_index {width:90%;margin:1em auto;}
 #page-mod-glossary-report table tr.teacher {background: #F0F0F0;}
 #page-mod-glossary-view table.glossarycategoryheader {background-color: #DDD;}
 #page-mod-glossary-view table.glossarycategoryheader h2 {font-size: 1em;margin: 0;}
+#page-mod-glossary-view .tabtree {margin-bottom: -12px;}
 
 /** Lesson **/
 .path-mod-lesson .compacttable,
