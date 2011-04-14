@@ -228,7 +228,7 @@ class auth_plugin_db extends auth_plugin_base {
 
             // find obsolete users
             if (count($userlist)) {
-        		list($notin_sql, $params) = $DB->get_in_or_equal($userlist, SQL_PARAMS_NAMED, 'u0000', false);
+        		list($notin_sql, $params) = $DB->get_in_or_equal($userlist, SQL_PARAMS_NAMED, 'u', false);
         		$params['authtype'] = $this->authtype;
             	$sql = "SELECT u.id, u.username, u.email, u.auth
                           FROM {user} u
@@ -290,7 +290,7 @@ class auth_plugin_db extends auth_plugin_base {
             // only go ahead if we actually
             // have fields to update locally
             if (!empty($updatekeys)) {
-            	list($in_sql, $params) = $DB->get_in_or_equal($userlist, SQL_PARAMS_NAMED, 'u0000', true);
+            	list($in_sql, $params) = $DB->get_in_or_equal($userlist, SQL_PARAMS_NAMED, 'u', true);
                 $params['authtype'] = $this->authtype;
                 $sql = "SELECT u.id, u.username
                           FROM {user} u

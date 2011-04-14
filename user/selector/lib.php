@@ -451,14 +451,14 @@ abstract class user_selector_base {
 
         // If we are being asked to exclude any users, do that.
         if (!empty($this->exclude)) {
-            list($usertest, $userparams) = $DB->get_in_or_equal($this->exclude, SQL_PARAMS_NAMED, 'ex000', false);
+            list($usertest, $userparams) = $DB->get_in_or_equal($this->exclude, SQL_PARAMS_NAMED, 'ex', false);
             $tests[] = $u . 'id ' . $usertest;
             $params = array_merge($params, $userparams);
         }
 
         // If we are validating a set list of userids, add an id IN (...) test.
         if (!empty($this->validatinguserids)) {
-            list($usertest, $userparams) = $DB->get_in_or_equal($this->validatinguserids, SQL_PARAMS_NAMED, 'val000');
+            list($usertest, $userparams) = $DB->get_in_or_equal($this->validatinguserids, SQL_PARAMS_NAMED, 'val');
             $tests[] = $u . 'id ' . $usertest;
             $params = array_merge($params, $userparams);
         }
@@ -756,7 +756,7 @@ class group_non_members_selector extends groups_user_selector_base {
         $usergroups = array();
         $potentialmembersids = $this->potentialmembersids;
         if( empty($potentialmembersids)==false ) {
-            list($membersidsclause, $params) = $DB->get_in_or_equal($potentialmembersids, SQL_PARAMS_NAMED, 'pm0');
+            list($membersidsclause, $params) = $DB->get_in_or_equal($potentialmembersids, SQL_PARAMS_NAMED, 'pm');
             $sql = "SELECT u.id AS userid, g.*
                     FROM {user} u
                     JOIN {groups_members} gm ON u.id = gm.userid
@@ -792,7 +792,7 @@ class group_non_members_selector extends groups_user_selector_base {
         // Get list of allowed roles.
         $context = get_context_instance(CONTEXT_COURSE, $this->courseid);
         if ($validroleids = groups_get_possible_roles($context)) {
-            list($roleids, $roleparams) = $DB->get_in_or_equal($validroleids, SQL_PARAMS_NAMED, 'r00');
+            list($roleids, $roleparams) = $DB->get_in_or_equal($validroleids, SQL_PARAMS_NAMED, 'r');
         } else {
             $roleids = " = -1";
             $roleparams = array();

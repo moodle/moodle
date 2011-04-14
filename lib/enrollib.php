@@ -244,7 +244,7 @@ function enrol_sharing_course($user1, $user2) {
         return false;
     }
 
-    list($plugins, $params) = $DB->get_in_or_equal($plugins, SQL_PARAMS_NAMED, 'ee00');
+    list($plugins, $params) = $DB->get_in_or_equal($plugins, SQL_PARAMS_NAMED, 'ee');
     $params['enabled'] = ENROL_INSTANCE_ENABLED;
     $params['active1'] = ENROL_USER_ACTIVE;
     $params['active2'] = ENROL_USER_ACTIVE;
