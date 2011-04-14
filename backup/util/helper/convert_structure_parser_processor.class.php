@@ -69,4 +69,12 @@ class convert_structure_parser_processor extends grouped_parser_processor {
     protected function dispatch_chunk($data) {
         $this->converter->process($data);
     }
+
+    protected function notify_path_start($path) {
+        // Do nothing
+    }
+
+    protected function notify_path_end($path) {
+        // Do nothing
+    }
 }

@@ -24,7 +24,9 @@ class moodle1_converter_test extends UnitTestCase {
 
     public function tearDown() {
         global $CFG;
-        fulldelete("$CFG->dataroot/temp/backup/$this->tempdir");
+        if (empty($CFG->keeptempdirectoriesonbackup)) {
+            fulldelete("$CFG->dataroot/temp/backup/$this->tempdir");
+        }
     }
 
     public function test_can_convert() {
