@@ -16,6 +16,7 @@
 .block h2.header {text-align: left;margin:0;padding:4px;padding-top:0;border-bottom-width: 0;}
 .block .content h2 {text-align: left;margin:1.5em 0 0;padding:0;}
 .block .content h3 {text-align: left;}
+.dir-rtl .block .content h3 {text-align: right;}
 .block .content hr {height:1px;margin-top:4px;margin-bottom:4px;border:none;border-top:1px solid;padding:0;}
 .block .content .head {margin-top: 10px;}
 .block .header .icon.hide,

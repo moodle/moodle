@@ -37,3 +37,9 @@
 
 #page-mod-assignment-submissions .optionspref {width: 50%;}
 #page-mod-assignment-submissions .fastgbutton {text-align: center;}
+
+#page-mod-assignment-submissions.dir-rtl .fullname,
+#page-mod-assignment-submissions.dir-rtl .timemodified,
+#page-mod-assignment-submissions.dir-rtl .timemarked {text-align:right;}
+#page-mod-assignment-submissions.dir-rtl .mform.optionspref .fitem .fitemtitle {text-align:left;}
+#page-mod-assignment-type-uploadsingle-upload.dir-rtl .mdl-left {text-align:right;}

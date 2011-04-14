@@ -500,50 +500,46 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
     // get all the fields for that database
     if ($fields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id')) {
 
-        $str = '<div class="defaulttemplate">';
-        $str .= '<table cellpadding="5">';
-
+        $table = new html_table();
+        $table->attributes['class'] = 'mod-data-default-template';
+        $table->colclasses = array('template-field', 'template-token');
+        $table->data = array();
         foreach ($fields as $field) {
-
-            $str .= '<tr><td valign="top" align="right">';
-            // Yu: commenting this out, the id was wrong and will fix later
-            //if ($template == 'addtemplate') {
-                //$str .= '<label';
-                //if (!in_array($field->type, array('picture', 'checkbox', 'date', 'latlong', 'radiobutton'))) {
-                //    $str .= ' for="[['.$field->name.'#id]]"';
-                //}
-                //$str .= '>'.$field->name.'</label>';
-
-            //} else {
-                $str .= $field->name.': ';
-            //}
-            $str .= '</td>';
-
-            $str .='<td  align="left">';
             if ($form) {   // Print forms instead of data
                 $fieldobj = data_get_field($field, $data);
-                $str .= $fieldobj->display_add_field($recordid);
-
+                $token = $fieldobj->display_add_field($recordid);
             } else {           // Just print the tag
-                $str .= '[['.$field->name.']]';
+                $token = '[['.$field->name.']]';
             }
-            $str .= '</td></tr>';
-
+            $table->data[] = array(
+                $field->name.': ',
+                $token
+            );
         }
         if ($template == 'listtemplate') {
-            $str .= '<tr><td align="center" colspan="2">##edit##  ##more##  ##delete##  ##approve##  ##export##</td></tr>';
+            $cell = new html_table_cell('##edit##  ##more##  ##delete##  ##approve##  ##export##');
+            $cell->colspan = 2;
+            $cell->attributes['class'] = 'controls';
+            $table->data[] = new html_table_row(array($cell));
         } else if ($template == 'singletemplate') {
-            $str .= '<tr><td align="center" colspan="2">##edit##  ##delete##  ##approve##  ##export##</td></tr>';
+            $cell = new html_table_cell('##edit##  ##delete##  ##approve##  ##export##');
+            $cell->colspan = 2;
+            $cell->attributes['class'] = 'controls';
+            $table->data[] = new html_table_row(array($cell));
         } else if ($template == 'asearchtemplate') {
-            $str .= '<tr><td valign="top" align="right">'.get_string('authorfirstname', 'data').': </td><td>##firstname##</td></tr>';
-            $str .= '<tr><td valign="top" align="right">'.get_string('authorlastname', 'data').': </td><td>##lastname##</td></tr>';
+            $row = new html_table_row(get_string('authorfirstname', 'data').': ', '##firstname##');
+            $row->attributes['class'] = 'searchcontrols';
+            $table->data[] = $row;
+            $row = new html_table_row(get_string('authorlastname', 'data').': ', '##lastname##');
+            $row->attributes['class'] = 'searchcontrols';
+            $table->data[] = $row;
         }
 
-        $str .= '</table>';
-        $str .= '</div>';
-
+        $str  = html_writer::start_tag('div', array('class' => 'defaulttemplate'));
+        $str .= html_writer::table($table);
+        $str .= html_writer::end_tag('div');
         if ($template == 'listtemplate'){
-            $str .= '<hr />';
+            $str .= html_writer::empty_tag('hr');
         }
 
         if ($update) {

@@ -20,3 +20,17 @@
 .path-mod-data-field .sortdefault select {margin-left: 1em;}
 .path-mod-data-field .fieldname,
 .path-mod-data-field .fielddescription {width:300px;}
+
+/** UI Usability Hacks **/
+#page-mod-data-export #notice span {padding:0 10px;}
+#page-mod-data-edit input[id*="url"] {text-align:left;direction:ltr;}
+
+.mod-data-default-template td {vertical-align:top;}
+.mod-data-default-template .template-field {text-align:right;}
+.mod-data-default-template .template-token {text-align:left;}
+.mod-data-default-template .controls {text-align:center;}
+.mod-data-default-template searchcontrols {text-align:right;}
+
+.dir-rtl .mod-data-default-template .template-field {text-align:left;}
+.dir-rtl .mod-data-default-template .template-token {text-align:right;}
+.dir-rtl .mod-data-default-template searchcontrols {text-align:left;}

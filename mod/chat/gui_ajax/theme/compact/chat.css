@@ -1,5 +1,5 @@
 .yui-skin-sam .yui-layout .yui-layout-hd { border:0; }
-.yui-skin-sam  .yui-layout .yui-layout-unit div.yui-layout-bd-nohd { border:0; }
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd-nohd { border:0; }
 .yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd { border:0; }
 .yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-unit-right { background: white; }
 .yui-skin-sam .yui-layout-unit-bottom  { background: #F2F2F2; }
@@ -59,3 +59,6 @@
     background: #E3E8F0;
     height: 100%;
 }
+
+.dir-rtl .chat-message {text-align:right;}
+.dir-rtl .mdl-chat-my-entry .chat-message .text {text-align:right;}
