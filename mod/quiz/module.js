@@ -216,6 +216,12 @@ M.mod_quiz.secure_window = {
         e.halt();
     },
 
+    init_close_button: function(Y, url) {
+        Y.on('click', function(e) {
+            M.mod_quiz.secure_window.close(url, 0)
+        }, '#secureclosebutton');
+    },
+
     close: function(url, delay) {
         setTimeout(function() {
             if (window.opener) {

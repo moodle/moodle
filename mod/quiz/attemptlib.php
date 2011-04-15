@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -563,6 +562,15 @@ class quiz_attempt {
     }
 
     /**
+     * @return bool whether this attempt is a preview belonging to the current user.
+     */
+    public function is_own_preview() {
+        global $USER;
+        return $this->attempt->userid == $USER->id &&
+                $this->is_preview_user() && $this->attempt->preview;
+    }
+
+    /**
      * Is the current user allowed to review this attempt. This applies when
      * {@link is_own_attempt()} returns false.
      * @return bool whether the review should be allowed.
@@ -862,15 +870,6 @@ class quiz_attempt {
     }
 
     /**
-     * Return the HTML of the quiz timer.
-     * @return string HTML content.
-     */
-    public function get_timer_html() {
-        return '<div id="quiz-timer">' . get_string('timeleft', 'quiz') .
-                ' <span id="quiz-time-left"></span></div>';
-    }
-
-    /**
      * Generate the HTML that displayes the question in its current state, with
      * the appropriate display options.
      *
@@ -945,34 +944,39 @@ class quiz_attempt {
      * @param $showall whether we are showing the whole quiz on one page. (Used by review.php)
      * @return quiz_nav_panel_base the requested object.
      */
-    public function get_navigation_panel($panelclass, $page, $showall = false) {
+    public function get_navigation_panel(mod_quiz_renderer $output,
+             $panelclass, $page, $showall = false) {
         $panel = new $panelclass($this, $this->get_display_options(true), $page, $showall);
-        return $panel->get_contents();
+
+        $bc = new block_contents();
+        $bc->id = 'quiznavigation';
+        $bc->title = get_string('quiznavigation', 'quiz');
+        $bc->content = $output->navigation_panel($panel);
+        return $bc;
     }
 
     /**
      * Given a URL containing attempt={this attempt id}, return an array of variant URLs
-     * @param $url a URL.
+     * @param moodle_url $url a URL.
      * @return string HTML fragment. Comma-separated list of links to the other
      * attempts with the attempt number as the link text. The curent attempt is
      * included but is not a link.
      */
-    public function links_to_other_attempts($url) {
-        $search = '/\battempt=' . $this->attempt->id . '\b/';
+    public function links_to_other_attempts(moodle_url $url) {
         $attempts = quiz_get_user_attempts($this->get_quiz()->id, $this->attempt->userid, 'all');
         if (count($attempts) <= 1) {
             return false;
         }
-        $attemptlist = array();
+
+        $links = new mod_quiz_links_to_other_attempts();
         foreach ($attempts as $at) {
             if ($at->id == $this->attempt->id) {
-                $attemptlist[] = '<strong>' . $at->attempt . '</strong>';
+                $links->links[$at->attempt] = null;
             } else {
-                $changedurl = preg_replace($search, 'attempt=' . $at->id, $url);
-                $attemptlist[] = '<a href="' . s($changedurl) . '">' . $at->attempt . '</a>';
+                $links->links[$at->attempt] = new moodle_url($url, array('attempt' => $at->id));
             }
         }
-        return implode(', ', $attemptlist);
+        return $links;
     }
 
     // Methods for processing ==================================================
@@ -1101,6 +1105,24 @@ class quiz_attempt {
 
 
 /**
+ * Represents a single link in the navigation panel.
+ *
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 2.1
+ */
+class quiz_nav_question_button implements renderable {
+    public $id;
+    public $number;
+    public $stateclass;
+    public $statestring;
+    public $currentpage;
+    public $flagged;
+    public $url;
+}
+
+
+/**
  * Represents the navigation panel, and builds a {@link block_contents} to allow
  * it to be output.
  *
@@ -1126,113 +1148,49 @@ abstract class quiz_nav_panel_base {
         $this->showall = $showall;
     }
 
-    protected function get_question_buttons() {
-        $html = '<div class="qn_buttons">' . "\n";
+    public function get_question_buttons() {
+        $buttons = array();
         foreach ($this->attemptobj->get_slots() as $slot) {
             $qa = $this->attemptobj->get_question_attempt($slot);
             $showcorrectness = $this->options->correctness && $qa->has_marks();
-            $html .= $this->get_question_button($qa, $qa->get_question()->_number,
-                    $showcorrectness) . "\n";
+
+            $button = new quiz_nav_question_button();
+            $button->id          = 'quiznavbutton' . $slot;
+            $button->number      = $qa->get_question()->_number;
+            $button->stateclass  = $qa->get_state()->get_state_class($showcorrectness);
+            if (!$showcorrectness && $button->stateclass == 'notanswered') {
+                $button->stateclass = 'complete';
+            }
+            $button->statestring = $qa->get_state_string($showcorrectness);
+            $button->currentpage = $qa->get_question()->_page == $this->page;
+            $button->flagged     = $qa->is_flagged();
+            $button->url         = $this->get_question_url($slot);
+            $buttons[] = $button;
         }
-        $html .= "</div>\n";
-        return $html;
+
+        return $buttons;
     }
 
-    protected function get_button_id(question_attempt $qa) {
-        // The id to put on the button element in the HTML.
-        return 'quiznavbutton' . $qa->get_slot();
-    }
-
-    protected function get_question_button(question_attempt $qa, $number, $showcorrectness) {
-        $attributes = $this->get_attributes($qa, $showcorrectness);
-
-        if (is_numeric($number)) {
-            $qnostring = 'questionnonav';
-        } else {
-            $qnostring = 'questionnonavinfo';
-        }
-
-        $a = new stdClass();
-        $a->number = $number;
-        $a->attributes = implode(' ', $attributes);
-
-        return '<a href="' . $this->get_question_url($qa->get_slot()) .
-                '" class="qnbutton ' . implode(' ', array_keys($attributes)) .
-                '" id="' . $this->get_button_id($qa) . '" title="' .
-                $qa->get_state_string($showcorrectness) . '">' .
-                '<span class="thispageholder"></span><span class="trafficlight"></span>' .
-                get_string($qnostring, 'quiz', $a) . '</a>';
-    }
-
-    /**
-     * @param question_attempt $qa
-     * @param bool $showcorrectness
-     * @return array class name => descriptive string.
-     */
-    protected function get_attributes(question_attempt $qa, $showcorrectness) {
-        // The current status of the question.
-        $attributes = array();
-
-        // On the current page?
-        if ($qa->get_question()->_page == $this->page) {
-            $attributes['thispage'] = get_string('onthispage', 'quiz');
-        }
-
-        // Question state.
-        $stateclass = $qa->get_state()->get_state_class($showcorrectness);
-        if (!$showcorrectness && $stateclass == 'notanswered') {
-            $stateclass = 'complete';
-        }
-        $attributes[$stateclass] = $qa->get_state_string($showcorrectness);
-
-        // Flagged?
-        if ($qa->is_flagged()) {
-            $attributes['flagged'] = '<span class="flagstate">' .
-                    get_string('flagged', 'question') . '</span>';
-        } else {
-            $attributes[''] = '<span class="flagstate"></span>';
-        }
-
-        return $attributes;
-    }
-
-    protected function get_before_button_bits() {
+    public function render_before_button_bits(mod_quiz_renderer $output) {
         return '';
     }
 
-    protected abstract function get_end_bits();
+    public function render_end_bits(mod_quiz_renderer $output) {
+        if (!$this->attemptobj->is_own_preview()) {
+            return '';
+        }
+        return $output->restart_preview_button(new moodle_url(
+                $this->attemptobj->start_attempt_url(), array('forcenew' => true)));
+    }
 
     protected abstract function get_question_url($slot);
 
-    protected function get_user_picture() {
-        global $DB, $OUTPUT;
+    public function user_picture() {
+        global $DB;
         $user = $DB->get_record('user', array('id' => $this->attemptobj->get_userid()));
-        $output = '';
-        $output .= '<div id="user-picture" class="clearfix">';
-        $output .= $OUTPUT->user_picture($user, array('courseid'=>$this->attemptobj->get_courseid()));
-        $output .= ' ' . fullname($user);
-        $output .= '</div>';
-        return $output;
-    }
-
-    public function get_contents() {
-        global $PAGE;
-        $PAGE->requires->js_init_call('M.mod_quiz.nav.init', null, false, quiz_get_js_module());
-
-        $content = '';
-        if (!empty($this->attemptobj->get_quiz()->showuserpicture)) {
-            $content .= $this->get_user_picture() . "\n";
-        }
-        $content .= $this->get_before_button_bits();
-        $content .= $this->get_question_buttons() . "\n";
-        $content .= '<div class="othernav">' . "\n" . $this->get_end_bits() .
-                $this->attemptobj->restart_preview_button() . "\n</div>\n";
-
-        $bc = new block_contents();
-        $bc->id = 'quiznavigation';
-        $bc->title = get_string('quiznavigation', 'quiz');
-        $bc->content = $content;
-        return $bc;
+        $userpicture = new user_picture($user);
+        $userpicture->courseid = $this->attemptobj->get_courseid();
+        return $userpicture;
     }
 }
 
@@ -1245,20 +1203,19 @@ abstract class quiz_nav_panel_base {
  * @since      Moodle 2.0
  */
 class quiz_attempt_nav_panel extends quiz_nav_panel_base {
-    protected function get_question_url($slot) {
+    public function get_question_url($slot) {
         return $this->attemptobj->attempt_url($slot, -1, $this->page);
     }
 
-    protected function get_before_button_bits() {
-        return '<div id="quiznojswarning">' . get_string('navnojswarning', 'quiz') . "</div>\n";
+    public function render_before_button_bits(mod_quiz_renderer $output) {
+        return html_writer::tag('div', get_string('navnojswarning', 'quiz'),
+                array('id' => 'quiznojswarning'));
     }
 
-    protected function get_end_bits() {
-        global $PAGE;
-        $output = '';
-        $output .= '<a href="' . s($this->attemptobj->summary_url()) . '" id="endtestlink">' . get_string('endtest', 'quiz') . '</a>';
-        $output .= $this->attemptobj->get_timer_html();
-        return $output;
+    public function render_end_bits(mod_quiz_renderer $output) {
+        return html_writer::link($this->attemptobj->summary_url(),
+                get_string('endtest', 'quiz'), array('id' => 'endtestlink')) .
+                $output->countdown_timer();
     }
 }
 
@@ -1271,21 +1228,22 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
  * @since      Moodle 2.0
  */
 class quiz_review_nav_panel extends quiz_nav_panel_base {
-    protected function get_question_url($slot) {
+    public function get_question_url($slot) {
         return $this->attemptobj->review_url($slot, -1, $this->showall, $this->page);
     }
 
-    protected function get_end_bits() {
+    public function render_end_bits(mod_quiz_renderer $output) {
         $html = '';
         if ($this->attemptobj->get_num_pages() > 1) {
             if ($this->showall) {
-                $html .= '<a href="' . $this->attemptobj->review_url(null, 0, false) . '">' . get_string('showeachpage', 'quiz') . '</a>';
+                $html .= html_writer::link($this->attemptobj->review_url(null, 0, false),
+                        get_string('showeachpage', 'quiz'));
             } else {
-                $html .= '<a href="' . $this->attemptobj->review_url(null, 0, true) . '">' . get_string('showall', 'quiz') . '</a>';
+                $html .= html_writer::link($this->attemptobj->review_url(null, 0, true),
+                        get_string('showall', 'quiz'));
             }
         }
-        $accessmanager = $this->attemptobj->get_access_manager(time());
-        $html .= $accessmanager->print_finish_review_link($this->attemptobj->is_preview_user(), true);
+        $html .= $output->finish_review_link($this->attemptobj->view_url());
         return $html;
     }
 }
