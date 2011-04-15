@@ -7673,11 +7673,11 @@ function get_selected_theme_for_device_type($themes, $device_type = null){
 
     if(empty($device_type)){
         $device_type = get_device_type();
-    }
 
-    //If a non-default device type is being used, and the user has switched theme, change $device_type to default and we'll get the theme for that.
-    if(get_user_switched_theme($device_type)){
-        $device_type = 'default';
+        //If a non-default device type is being used, and the user has switched theme, change $device_type to default.
+        if(get_user_switched_theme($device_type)){
+            $device_type = 'default';
+        }
     }
 
     $themes = json_decode($themes);
