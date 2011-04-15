@@ -115,19 +115,13 @@ dfn {
 }
 
 pre, code {
-	margin: 1.5em 0;
 	white-space: pre;
 }
 
 pre, code, tt {
 	font: 1.2em monospace;
 	line-height: 1.5;
-}
-
-tt {
-	display: block;
 	margin: 1.5em 0;
-	line-height: 1.5;
 }
 
 .small {

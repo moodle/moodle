@@ -549,3 +549,267 @@ class component_installer {
     }
 
 } /// End of component_installer class
+
+
+/**
+ * Language packs installer
+ *
+ * This class wraps the functionality provided by {@link component_installer}
+ * and adds support for installing a set of language packs.
+ *
+ * Given an array of required language packs, this class fetches them all
+ * and installs them. It detects eventual dependencies and installs
+ * all parent languages, too.
+ *
+ * @copyright 2011 David Mudrak <david@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class lang_installer {
+
+    /** lang pack was successfully downloaded and deployed */
+    const RESULT_INSTALLED      = 'installed';
+    /** lang pack was up-to-date so no download was needed */
+    const RESULT_UPTODATE       = 'uptodate';
+    /** there was a problem with downloading the lang pack */
+    const RESULT_DOWNLOADERROR  = 'downloaderror';
+
+    /** @var array of languages to install */
+    protected $queue = array();
+    /** @var string the code of language being currently installed */
+    protected $current;
+    /** @var array of languages already installed by this instance */
+    protected $done = array();
+    /** @var string this Moodle major version */
+    protected $version;
+
+    /**
+     * Prepare the installer
+     *
+     * @todo Moodle major version is hardcoded here, should be obtained from version.php or so
+     * @param string|array $langcode a code of the language to install
+     */
+    public function __construct($langcode = '') {
+        global $CFG;
+
+        $this->set_queue($langcode);
+        $this->version = '2.0';
+
+        if (!empty($CFG->langotherroot) and $CFG->langotherroot !== $CFG->dataroot . '/lang') {
+            debugging('The in-built language pack installer does not support alternative location ' .
+                'of languages root directory. You are supposed to install and update your language '.
+                'packs on your own.');
+        }
+    }
+
+    /**
+     * Sets the queue of language packs to be installed
+     *
+     * @param string|array $langcodes language code like 'cs' or a list of them
+     */
+    public function set_queue($langcodes) {
+        if (is_array($langcodes)) {
+            $this->queue = $langcodes;
+        } else if (!empty($langcodes)) {
+            $this->queue = array($langcodes);
+        }
+    }
+
+    /**
+     * Runs the installer
+     *
+     * This method calls {@link self::install_language_pack} for every language in the
+     * queue. If a dependency is detected, the parent language is added to the queue.
+     *
+     * @return array results, array of self::RESULT_xxx constants indexed by language code
+     */
+    public function run() {
+
+        $results = array();
+
+        while ($this->current = array_shift($this->queue)) {
+
+            if ($this->was_processed($this->current)) {
+                // do not repeat yourself
+                continue;
+            }
+
+            if ($this->current === 'en') {
+                $this->mark_processed($this->current);
+                continue;
+            }
+
+            $results[$this->current] = $this->install_language_pack($this->current);
+
+            if (in_array($results[$this->current], array(self::RESULT_INSTALLED, self::RESULT_UPTODATE))) {
+                if ($parentlang = $this->get_parent_language($this->current)) {
+                    if (!$this->is_queued($parentlang) and !$this->was_processed($parentlang)) {
+                        $this->add_to_queue($parentlang);
+                    }
+                }
+            }
+
+            $this->mark_processed($this->current);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Returns the URL where a given language pack can be downloaded
+     *
+     * Alternatively, if the parameter is empty, returns URL of the page with the
+     * list of all available language packs.
+     *
+     * @param string $langcode language code like 'cs' or empty for unknown
+     * @return string URL
+     */
+    public function lang_pack_url($langcode = '') {
+
+        $baseurl = 'http://download.moodle.org/langpack/' . $this->version . '/';
+
+        if (empty($langcode)) {
+            return $baseurl;
+        } else {
+            return $baseurl . $langcode . '.zip';
+        }
+    }
+
+    /**
+     * Returns the list of available language packs from download.moodle.org
+     *
+     * @return array|bool false if can not download
+     */
+    public function get_remote_list_of_languages() {
+        $source = 'http://download.moodle.org/langpack/' . $this->version . '/languages.md5';
+        $availablelangs = array();
+
+        if ($content = download_file_content($source)) {
+            $alllines = explode("\n", $content);
+            foreach($alllines as $line) {
+                if (!empty($line)){
+                    $availablelangs[] = explode(',', $line);
+                }
+            }
+            return $availablelangs;
+
+        } else {
+            return false;
+        }
+    }
+
+    // Internal implementation /////////////////////////////////////////////////
+
+    /**
+     * Adds a language pack (or a list of them) to the queue
+     *
+     * @param string|array $langcodes code of the language to install or a list of them
+     */
+    protected function add_to_queue($langcodes) {
+        if (is_array($langcodes)) {
+            $this->queue = array_merge($this->queue, $langcodes);
+        } else if (!empty($langcodes)) {
+            $this->queue[] = $langcodes;
+        }
+    }
+
+    /**
+     * Checks if the given language is queued or if the queue is empty
+     *
+     * @example $installer->is_queued('es');    // is Spanish going to be installed?
+     * @example $installer->is_queued();        // is there a language queued?
+     *
+     * @param string $langcode language code or empty string for "any"
+     * @return boolean
+     */
+    protected function is_queued($langcode = '') {
+
+        if (empty($langcode)) {
+            return !empty($this->queue);
+
+        } else {
+            return in_array($langcode, $this->queue);
+        }
+    }
+
+    /**
+     * Checks if the given language has already been processed by this instance
+     *
+     * @see self::mark_processed()
+     * @param string $langcode
+     * @return boolean
+     */
+    protected function was_processed($langcode) {
+        return isset($this->done[$langcode]);
+    }
+
+    /**
+     * Mark the given language pack as processed
+     *
+     * @see self::was_processed()
+     * @param string $langcode
+     */
+    protected function mark_processed($langcode) {
+        $this->done[$langcode] = 1;
+    }
+
+    /**
+     * Returns a parent language of the given installed language
+     *
+     * @param string $langcode
+     * @return string parent language's code
+     */
+    protected function get_parent_language($langcode) {
+        return get_parent_language($langcode);
+    }
+
+    /**
+     * Perform the actual language pack installation
+     *
+     * @uses component_installer
+     * @param string $langcode
+     * @return int return status
+     */
+    protected function install_language_pack($langcode) {
+
+        // initialise new component installer to process this language
+        $installer = new component_installer('http://download.moodle.org', 'langpack/' . $this->version,
+            $langcode . '.zip', 'languages.md5', 'lang');
+
+        if (!$installer->requisitesok) {
+            throw new lang_installer_exception('installer_requisites_check_failed');
+        }
+
+        $status = $installer->install();
+
+        if ($status == COMPONENT_ERROR) {
+            if ($installer->get_error() === 'remotedownloaderror') {
+                return self::RESULT_DOWNLOADERROR;
+            } else {
+                throw new lang_installer_exception($installer->get_error(), $langcode);
+            }
+
+        } else if ($status == COMPONENT_UPTODATE) {
+            return self::RESULT_UPTODATE;
+
+        } else if ($status == COMPONENT_INSTALLED) {
+            return self::RESULT_INSTALLED;
+
+        } else {
+            throw new lang_installer_exception('unexpected_installer_result', $status);
+        }
+    }
+}
+
+
+/**
+ * Exception thrown by {@link lang_installer}
+ *
+ * @copyright 2011 David Mudrak <david@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class lang_installer_exception extends moodle_exception {
+
+    public function __construct($errorcode, $debuginfo = null) {
+        parent::__construct($errorcode, 'error', '', null, $debuginfo);
+    }
+}

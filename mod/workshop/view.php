@@ -51,6 +51,10 @@ require_capability('mod/workshop:view', $PAGE->context);
 $workshop = new workshop($workshop, $cm, $course);
 $workshop->log('view');
 
+// Mark viewed
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+
 if (!is_null($editmode) && $PAGE->user_allowed_editing()) {
     $USER->editing = $editmode;
 }
@@ -537,8 +541,5 @@ case workshop::PHASE_CLOSED:
     break;
 default:
 }
-
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
 
 echo $output->footer();

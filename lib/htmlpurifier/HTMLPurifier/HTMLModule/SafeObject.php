@@ -29,7 +29,6 @@ class HTMLPurifier_HTMLModule_SafeObject extends HTMLPurifier_HTMLModule
                 'width'  => 'Pixels#' . $max,
                 'height' => 'Pixels#' . $max,
                 'data'   => 'URI#embedded',
-                'classid' => 'Enum#clsid:d27cdb6e-ae6d-11cf-96b8-444553540000',
                 'codebase' => new HTMLPurifier_AttrDef_Enum(array(
                     'http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0')),
             )

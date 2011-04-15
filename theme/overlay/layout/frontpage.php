@@ -33,11 +33,11 @@ echo $OUTPUT->doctype() ?>
 <head>
     <title><?php echo $PAGE->title ?></title>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
-    <meta name="description" content="<?php echo strip_tags(format_text($SITE->summary, FORMAT_HTML)) ?>" />
+    <meta name="description" content="<?php p(strip_tags(format_text($SITE->summary, FORMAT_HTML))) ?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
 
-<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
@@ -54,7 +54,7 @@ echo $OUTPUT->doctype() ?>
 	        	    echo $OUTPUT->login_info();
     	        	echo $OUTPUT->lang_menu();
 	        	    echo $PAGE->headingmenu;
-		        ?>	    
+		        ?>
 	    	</div>
 	    </div>
     </div>
@@ -67,24 +67,24 @@ echo $OUTPUT->doctype() ?>
 	    <div id="page-content">
     	    <div id="region-main-box">
         	    <div id="region-post-box">
-        
+
             	    <div id="region-main-wrap">
-                	   
+
                 	    <div id="region-main">
                     	    <div id="newheader">
                     	    	<div id="newheaderleft"></div>
                     	    	<h1 class="headermain"><?php echo $PAGE->heading ?></h1>
-                    	    	
-                    	    </div>                    	    
+
+                    	    </div>
                     	    <div class="region-content">
-                    	    
-                    	    
-                    	    
+
+
+
                         	    <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
 	                        </div>
     	                </div>
         	        </div>
-                
+
             	    <?php if ($hassidepre) { ?>
 	                <div id="region-pre" class="block-region">
     	                <div class="region-content">
@@ -92,7 +92,7 @@ echo $OUTPUT->doctype() ?>
             	        </div>
                 	</div>
 	                <?php } ?>
-                
+
     	            <?php if ($hassidepost) { ?>
         	        <div id="region-post" class="block-region">
             	        <div class="region-content">
@@ -100,7 +100,7 @@ echo $OUTPUT->doctype() ?>
                     	</div>
 	                </div>
     	            <?php } ?>
-                
+
         	    </div>
 	        </div>
     	</div>
@@ -117,7 +117,7 @@ echo $OUTPUT->doctype() ?>
         <p class="helplink">
         <?php echo page_doc_link(get_string('moodledocslink')) ?>
         </p>
-        
+
         <?php echo $footnote ?>
 
         <?php

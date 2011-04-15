@@ -35,7 +35,7 @@ echo $OUTPUT->doctype() ?>
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
 
-<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
@@ -51,7 +51,7 @@ echo $OUTPUT->doctype() ?>
 
 		    	<div id="page-header" class="inside">
 					<div id="page-header-wrapper" class="wrapper clearfix">
-		        
+
 			        	<?php if ($hasheading) { ?>
 				    	    <div id="headermenus" class="shrinkwrapper clearfix">
 		    				    <?php if ($hascustommenu) { ?>
@@ -64,13 +64,13 @@ echo $OUTPUT->doctype() ?>
 				        			<?php if (!empty($PAGE->layout_options['langmenu'])) {
 	        		    	   			echo $OUTPUT->lang_menu();
 			    			        }
-			    			        echo $OUTPUT->login_info();	
-					            	echo $PAGE->headingmenu 
+			    			        echo $OUTPUT->login_info();
+					            	echo $PAGE->headingmenu
 					        	    ?>
 					        	</div>
 				            </div>
 		    		    <?php } ?>
-	    	    
+
 			    	</div>
 				</div>
 
@@ -85,7 +85,7 @@ echo $OUTPUT->doctype() ?>
 		    <div id="page-content">
     		    <div id="region-main-box">
         		    <div id="region-post-box">
-            
+
 	            	    <div id="region-main-wrap">
     	            	    <div id="region-main">
         	            	    <div class="region-content">
@@ -106,12 +106,12 @@ echo $OUTPUT->doctype() ?>
 								    	    </div>
 							    	    </div>
 						        	<?php } ?>
-        	            	    
+
             	            	    <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
 	                	        </div>
     	                	</div>
 	    	            </div>
-                
+
 		                <?php if ($hassidepost) { ?>
     		            <div id="region-post" class="block-region">
         	    	    	<div id="region-post-wrap-1">
@@ -123,7 +123,7 @@ echo $OUTPUT->doctype() ?>
         		       		</div>
 	                	</div>
 	    	            <?php } ?>
-                
+
     	    	    </div>
 	    	    </div>
 	    	</div>
@@ -137,9 +137,9 @@ echo $OUTPUT->doctype() ?>
 		</div>
 	</div>
 
-		
+
 	<?php } ?>
-	
+
 <!-- START OF FOOTER -->
 
     	<?php if ($hasfooter) { ?>
@@ -153,7 +153,7 @@ echo $OUTPUT->doctype() ?>
 		        ?>
 		    </div>
 	    <?php } ?>
-	    
+
 </div>
 <?php echo $OUTPUT->standard_end_of_body_html() ?>
 </body>

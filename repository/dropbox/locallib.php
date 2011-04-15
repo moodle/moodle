@@ -70,7 +70,8 @@ class dropbox extends oauth_helper {
         $basename = $info['basename'];
         $filepath = $dirname . rawurlencode($basename);
         if ($dirname != '/') {
-            $filepath = $dirname . '/' . rawurlencode($basename);
+            $filepath = $dirname . '/' . $basename;
+            $filepath = str_replace("%2F", "/", rawurlencode($filepath));
         }
 
         $url = $this->dropbox_content_api.'/files/'.$this->mode.$filepath;

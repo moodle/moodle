@@ -672,8 +672,7 @@ function filter_mediaplugin_youtube_callback($link) {
     $width  = empty($link[5]) ? FILTER_MEDIAPLUGIN_VIDEO_WIDTH  : $link[5];
     $height = empty($link[6]) ? FILTER_MEDIAPLUGIN_VIDEO_HEIGHT : $link[6];
 
-    if (false and empty($CFG->xmlstrictheaders)) {
-        // TODO: remove this once iframe playback starts to work properly in iPads
+    if (empty($CFG->xmlstrictheaders)) {
         return <<<OET
 <iframe title="$info" width="$width" height="$height" src="$site/embed/$videoid?rel=0" frameborder="0" allowfullscreen></iframe>
 OET;

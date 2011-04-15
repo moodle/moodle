@@ -85,10 +85,16 @@ class graded_users_iterator {
             return false;
         }
 
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $this->course->id);
+        $relatedcontexts = get_related_contexts_string($coursecontext);
+
         list($gradebookroles_sql, $params) =
             $DB->get_in_or_equal(explode(',', $CFG->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
-        $relatedcontexts = get_related_contexts_string(get_context_instance(CONTEXT_COURSE, $this->course->id));
+        //limit to users with an active enrolment
+        list($enrolledsql, $enrolledparams) = get_enrolled_sql($coursecontext);
+
+        $params = array_merge($params, $enrolledparams);
 
         if ($this->groupid) {
             $groupsql = "INNER JOIN {groups_members} gm ON gm.userid = u.id";
@@ -123,31 +129,39 @@ class graded_users_iterator {
         // $params contents: gradebookroles and groupid (for $groupwheresql)
         $users_sql = "SELECT u.* $ofields
                         FROM {user} u
-                             INNER JOIN {role_assignments} ra ON u.id = ra.userid
+                        JOIN ($enrolledsql) je ON je.id = u.id
                              $groupsql
-                       WHERE u.deleted=0
-                             AND ra.roleid $gradebookroles_sql
-                             AND ra.contextid $relatedcontexts
+                        JOIN (
+                                  SELECT DISTINCT ra.userid
+                                    FROM {role_assignments} ra
+                                   WHERE ra.roleid $gradebookroles_sql
+                                     AND ra.contextid $relatedcontexts
+                             ) rainner ON rainner.userid = u.id
+                         WHERE u.deleted = 0
                              $groupwheresql
                     ORDER BY $order";
-
         $this->users_rs = $DB->get_recordset_sql($users_sql, $params);
 
         if (!empty($this->grade_items)) {
             $itemids = array_keys($this->grade_items);
             list($itemidsql, $grades_params) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED, 'items0');
             $params = array_merge($params, $grades_params);
+            // $params contents: gradebookroles, enrolledparams, groupid (for $groupwheresql) and itemids
 
-            // $params contents: gradebookroles, groupid (for $groupwheresql) and itemids
             $grades_sql = "SELECT g.* $ofields
                              FROM {grade_grades} g
-                                  INNER JOIN {user} u ON g.userid = u.id
-                                  INNER JOIN {role_assignments} ra ON u.id = ra.userid
+                             JOIN {user} u ON g.userid = u.id
+                             JOIN ($enrolledsql) je ON je.id = u.id
                                   $groupsql
-                            WHERE ra.roleid $gradebookroles_sql
-                                  AND ra.contextid $relatedcontexts
-                                  $groupwheresql
-                                  AND g.itemid $itemidsql
+                             JOIN (
+                                      SELECT DISTINCT ra.userid
+                                        FROM {role_assignments} ra
+                                       WHERE ra.roleid $gradebookroles_sql
+                                         AND ra.contextid $relatedcontexts
+                                  ) rainnner ON rainner.userid = u.id
+                              WHERE u.deleted = 0
+                              AND g.itemid $itemidsql
+                              $groupwheresql
                          ORDER BY $order, g.itemid ASC";
             $this->grades_rs = $DB->get_recordset_sql($grades_sql, $params);
         } else {

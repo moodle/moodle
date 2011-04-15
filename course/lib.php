@@ -1707,7 +1707,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                             $extraclass = '';
                         }
                         echo "
-<form class='togglecompletion$extraclass' method='post' action='togglecompletion.php'><div>
+<form class='togglecompletion$extraclass' method='post' action='".$CFG->wwwroot."/course/togglecompletion.php'><div>
 <input type='hidden' name='id' value='{$mod->id}' />
 <input type='hidden' name='sesskey' value='".sesskey()."' />
 <input type='hidden' name='completionstate' value='$newstate' />
@@ -1878,56 +1878,6 @@ function get_category_or_system_context($categoryid) {
     } else {
         return get_context_instance(CONTEXT_SYSTEM);
     }
-}
-
-/**
- * Rebuilds the cached list of course activities stored in the database
- * @param int $courseid - id of course to rebuild, empty means all
- * @param boolean $clearonly - only clear the modinfo fields, gets rebuild automatically on the fly
- */
-function rebuild_course_cache($courseid=0, $clearonly=false) {
-    global $COURSE, $DB, $OUTPUT;
-
-    // Destroy navigation caches
-    navigation_cache::destroy_volatile_caches();
-
-    if ($clearonly) {
-        if (empty($courseid)) {
-            $courseselect = array();
-        } else {
-            $courseselect = array('id'=>$courseid);
-        }
-        $DB->set_field('course', 'modinfo', null, $courseselect);
-        // update cached global COURSE too ;-)
-        if ($courseid == $COURSE->id or empty($courseid)) {
-            $COURSE->modinfo = null;
-        }
-        // reset the fast modinfo cache
-        $reset = 'reset';
-        get_fast_modinfo($reset);
-        return;
-    }
-
-    if ($courseid) {
-        $select = array('id'=>$courseid);
-    } else {
-        $select = array();
-        @set_time_limit(0);  // this could take a while!   MDL-10954
-    }
-
-    $rs = $DB->get_recordset("course", $select,'','id,fullname');
-    foreach ($rs as $course) {
-        $modinfo = serialize(get_array_of_activities($course->id));
-        $DB->set_field("course", "modinfo", $modinfo, array("id"=>$course->id));
-        // update cached global COURSE too ;-)
-        if ($course->id == $COURSE->id) {
-            $COURSE->modinfo = $modinfo;
-        }
-    }
-    $rs->close();
-    // reset the fast modinfo cache
-    $reset = 'reset';
-    get_fast_modinfo($reset);
 }
 
 /**
@@ -3210,6 +3160,10 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
            '&amp;sesskey='.$sesskey.$section.'"><img'.
            ' src="'.$OUTPUT->pix_url('t/edit') . '" class="iconsmall" '.
            ' alt="'.$str->update.'" /></a>'."\n".
+           '<a class="editing_duplicate" title="'.$str->duplicate.'" href="'.$path.'/mod.php?duplicate='.$mod->id.
+           '&amp;sesskey='.$sesskey.$section.'"><img'.
+           ' src="'.$OUTPUT->pix_url('t/copy') . '" class="iconsmall" '.
+           ' alt="'.$str->duplicate.'" /></a>'."\n".
            '<a class="editing_delete" title="'.$str->delete.'" href="'.$path.'/mod.php?delete='.$mod->id.
            '&amp;sesskey='.$sesskey.$section.'"><img'.
            ' src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" '.

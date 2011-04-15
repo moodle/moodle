@@ -618,19 +618,21 @@ class grade_report_user extends grade_report {
             // find sums of all grade items in course
             $sql = "SELECT gg.itemid, SUM(gg.finalgrade) AS sum
                       FROM {grade_items} gi
-                      JOIN {grade_grades} gg
-                           ON gg.itemid = gi.id
-                      JOIN ($enrolledsql) je
-                           ON je.id = gg.userid
-                      JOIN {role_assignments} ra
-                           ON ra.userid = gg.userid
+                      JOIN {grade_grades} gg ON gg.itemid = gi.id
+                      JOIN {user} u ON u.id = gg.userid
+                      JOIN ($enrolledsql) je ON je.id = gg.userid
+                      JOIN (
+                                   SELECT DISTINCT ra.userid
+                                     FROM {role_assignments} ra
+                                    WHERE ra.roleid $gradebookrolessql
+                                      AND ra.contextid " . get_related_contexts_string($this->context) . "
+                           ) rainner ON rainner.userid = u.id
                       $groupsql
                      WHERE gi.courseid = :courseid
-                           AND ra.roleid $gradebookrolessql
-                           AND ra.contextid ".get_related_contexts_string($this->context)."
-                           AND gg.finalgrade IS NOT NULL
-                           AND gg.hidden = 0
-                           $groupwheresql
+                       AND u.deleted = 0
+                       AND gg.finalgrade IS NOT NULL
+                       AND gg.hidden = 0
+                       $groupwheresql
                   GROUP BY gg.itemid";
 
             $sum_array = array();
@@ -649,19 +651,21 @@ class grade_report_user extends grade_report {
             $sql = "SELECT gi.id, COUNT(u.id) AS count
                       FROM {grade_items} gi
                       JOIN {user} u
-                      JOIN ($enrolledsql) je
-                           ON je.id = u.id
-                      JOIN {role_assignments} ra
-                           ON ra.userid = u.id
+                      JOIN ($enrolledsql) je ON je.id = u.id
+                      JOIN (
+                               SELECT DISTINCT ra.userid
+                                 FROM {role_assignments} ra
+                                WHERE ra.roleid $gradebookrolessql
+                                  AND ra.contextid " . get_related_contexts_string($this->context) . "
+                           ) rainner ON rainner.userid = u.id
                       LEFT JOIN {grade_grades} gg
                            ON (gg.itemid = gi.id AND gg.userid = u.id AND gg.finalgrade IS NOT NULL AND gg.hidden = 0)
                       $groupsql
-                    WHERE gi.courseid = :courseid
-                          AND ra.roleid $gradebookrolessql
-                          AND ra.contextid ".get_related_contexts_string($this->context)."
-                          AND gg.finalgrade IS NULL
-                          $groupwheresql
-                    GROUP BY gi.id";
+                     WHERE gi.courseid = :courseid
+                           AND u.deleted = 0
+                           AND gg.finalgrade IS NULL
+                           $groupwheresql
+                  GROUP BY gi.id";
 
             $ungraded_counts = $DB->get_records_sql($sql, $params);
 

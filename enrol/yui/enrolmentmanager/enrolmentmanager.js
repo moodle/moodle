@@ -20,7 +20,8 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
         DEFAULTROLE : 'defaultRole',
         DEFAULTSTARTDATE : 'defaultStartDate',
         DEFAULTDURATION : 'defaultDuration',
-        ASSIGNABLEROLES : 'assignableRoles'
+        ASSIGNABLEROLES : 'assignableRoles',
+        DISABLEGRADEHISTORY : 'disableGradeHistory'
     };
     /** CSS classes for nodes in structure **/
     var CSS = {
@@ -48,6 +49,8 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
         ODD  : 'odd',
         EVEN : 'even',
         HIDDEN : 'hidden',
+        RECOVERGRADESCHECK : 'uep-recovergradescheck',
+        RECOVERGRADESCHECKTITLE : 'uep-recovergradeschecktitle',
         SEARCHOPTIONS : 'uep-searchoptions',
         COLLAPSIBLEHEADING : 'collapsibleheading',
         COLLAPSIBLEAREA : 'collapsiblearea',
@@ -58,7 +61,8 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
         DURATION : 'duration',
         ACTIVE : 'active',
         SEARCH : 'uep-search',
-        CLOSE : 'close'
+        CLOSE : 'close',
+        CLOSEBTN : 'close-button'
     };
 
     var USERENROLLER = function(config) {
@@ -69,6 +73,11 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
         _loadingNode : null,
         _escCloseEvent : null,
         initializer : function(config) {
+            recovergradescheckbox = null;
+            if (this.get(UEP.DISABLEGRADEHISTORY) != true) {
+                recovergradescheckbox = Y.Node.create('<div class="'+CSS.RECOVERGRADESCHECK+'"><input type="checkbox" id="recovergrades" name="recovergrades" /><span class="'+CSS.RECOVERGRADESCHECKTITLE+'"><label for="recovergrades">'+M.str.enrol.recovergrades+'</label></span></div>');
+            }
+
             this.set(UEP.BASE, Y.Node.create('<div class="'+CSS.PANEL+' '+CSS.HIDDEN+'"></div>')
                 .append(Y.Node.create('<div class="'+CSS.WRAP+'"></div>')
                     .append(Y.Node.create('<div class="'+CSS.HEADER+' header"></div>')
@@ -79,6 +88,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
                             .append(Y.Node.create('<div class="'+CSS.SEARCHOPTION+' '+CSS.ROLE+'">'+M.str.role.assignroles+'</div>')
                                     .append(Y.Node.create('<select><option value="">'+M.str.enrol.none+'</option></select>'))
                             )
+                            .append(recovergradescheckbox)
                             .append(Y.Node.create('<div class="'+CSS.SEARCHOPTIONS+'"></div>')
                                 .append(Y.Node.create('<div class="'+CSS.COLLAPSIBLEHEADING+'"><img alt="" />'+M.str.enrol.enrolmentoptions+'</div>'))
                                 .append(Y.Node.create('<div class="'+CSS.COLLAPSIBLEAREA+' '+CSS.HIDDEN+'"></div>')
@@ -98,6 +108,9 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
                         .append(Y.Node.create('<div class="'+CSS.SEARCH+'"><label>'+M.str.enrol.usersearch+'</label></div>')
                             .append(Y.Node.create('<input type="text" id="enrolusersearch" value="" />'))
                         )
+                        .append(Y.Node.create('<div class="'+CSS.CLOSEBTN+'"></div>')
+                            .append(Y.Node.create('<input type="button" value="'+M.str.enrol.finishenrollingusers+'" />'))
+                        )
                     )
                 )
             );
@@ -109,6 +122,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
                 }
             }, this);
             this.get(UEP.BASE).one('.'+CSS.HEADER+' .'+CSS.CLOSE).on('click', this.hide, this);
+            this.get(UEP.BASE).one('.'+CSS.FOOTER+' .'+CSS.CLOSEBTN+' input').on('click', this.hide, this);
             this._loadingNode = this.get(UEP.BASE).one('.'+CSS.CONTENT+' .'+CSS.LIGHTBOX);
             var params = this.get(UEP.PARAMS);
             params['id'] = this.get(UEP.COURSEID);
@@ -362,6 +376,8 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
             params['role'] = this.get(UEP.BASE).one('.'+CSS.SEARCHOPTION+'.'+CSS.ROLE+' select').get('value');
             params['startdate'] = this.get(UEP.BASE).one('.'+CSS.SEARCHOPTION+'.'+CSS.STARTDATE+' select').get('value');
             params['duration'] = this.get(UEP.BASE).one('.'+CSS.SEARCHOPTION+'.'+CSS.DURATION+' select').get('value');
+            params['recovergrades'] = this.get(UEP.BASE).one('#recovergrades').get('checked')?1:0;
+
             Y.io(M.cfg.wwwroot+this.get(UEP.AJAXURL), {
                 method:'POST',
                 data:build_querystring(params),
@@ -482,6 +498,9 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
             },
             optionsStartDate : {
                 value : []
+            },
+            disableGradeHistory : {
+                value : 0
             }
         }
     });

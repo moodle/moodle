@@ -19,11 +19,6 @@
  * repository_dropbox class
  * This plugin is used to access user's dropbox files
  *
- * TODO:
- * Dropbox has problems to process filepath with spaces, tried to use
- * urlencode filepath, still doesn't work
- * http://code.google.com/p/dropbox-php/ has the same problem
- *
  * @since 2.0
  * @package    repository
  * @subpackage dropbox
@@ -130,18 +125,19 @@ class repository_dropbox extends repository {
         } else {
             $path = file_correct_filepath($path);
         }
+        $encoded_path = str_replace("%2F", "/", rawurlencode($path));
 
         $list = array();
         $list['list'] = array();
         $list['manage'] = false;
         $list['dynload'] = true;
         $list['nosearch'] = true;
-        // process breacrumb trail
+        // process breadcrumb trail
         $list['path'] = array(
             array('name'=>get_string('dropbox', 'repository_dropbox'), 'path'=>'/')
         );
 
-        $result = $this->dropbox->get_listing($path, $this->access_key, $this->access_secret);
+        $result = $this->dropbox->get_listing($encoded_path, $this->access_key, $this->access_secret);
 
         if (!is_object($result) || empty($result)) {
             return $list;

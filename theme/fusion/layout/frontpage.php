@@ -37,11 +37,11 @@ echo $OUTPUT->doctype() ?>
 <head>
     <title><?php echo $PAGE->title ?></title>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
-    <meta name="description" content="<?php echo strip_tags(format_text($SITE->summary, FORMAT_HTML)) ?>" />
+    <meta name="description" content="<?php p(strip_tags(format_text($SITE->summary, FORMAT_HTML))) ?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
 
-<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
@@ -69,12 +69,12 @@ echo $OUTPUT->doctype() ?>
 					<?php } else { ?>
 						<div id="custommenu" style="line-height:1em;">&nbsp;</div> <!-- temporary until I find a better fix -->
 					<?php } ?>
-			    	
+
 	    		</div>
 
 	    	</div>
 	    </div>
-        
+
 <!-- END OF HEADER -->
 
 <!-- START OF CONTENT -->
@@ -83,22 +83,22 @@ echo $OUTPUT->doctype() ?>
 		    <div id="page-content">
     		    <div id="region-main-box">
         		    <div id="region-post-box">
-            
+
             		    <div id="region-main-wrap">
                 		    <div id="region-main">
                     		    <div class="region-content">
-									
+
 									<div id="region-header">
 							    	    <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
 							    	    <p class="tagline"><?php echo $tagline ?></p>
 							    	</div>
-						    	    
+
                         		    <?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
-		                       
+
 		                        </div>
     		                </div>
         		        </div>
-                
+
     	    	        <?php if ($hassidepost) { ?>
         	    	    <div id="region-post" class="block-region">
         	    	    	<div id="region-post-wrap-1">
@@ -110,8 +110,8 @@ echo $OUTPUT->doctype() ?>
 		                	</div>
 		                </div>
     		            <?php } ?>
-    		            
-            		</div>    
+
+            		</div>
         	    </div>
 	        </div>
     	</div>
@@ -135,8 +135,8 @@ echo $OUTPUT->doctype() ?>
    	</div>
 
 <!-- END OF FOOTER -->
-		
-	
+
+
 </div> <!-- END #page -->
 
 <?php echo $OUTPUT->standard_end_of_body_html() ?>

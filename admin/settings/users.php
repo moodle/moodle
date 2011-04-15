@@ -38,17 +38,18 @@ if ($hassiteconfig
     if ($ADMIN->fulltree) {
         if (!during_initial_install()) {
             $context = get_context_instance(CONTEXT_SYSTEM);
-            $allroles        = array();
-            $generalroles    = array();
+
+            $otherroles      = array();
             $guestroles      = array();
             $userroles       = array();
-            $studentroles    = array();
-            $teacherroles    = array();
             $creatornewroles = array();
+
+            $defaultteacherid = null;
+            $defaultuserid    = null;
+            $defaultguestid   = null;
 
             foreach (get_all_roles() as $role) {
                 $rolename = strip_tags(format_string($role->name)) . ' ('. $role->shortname . ')';
-                $allroles[$role->id] = $rolename;
                 switch ($role->archetype) {
                     case 'manager':
                         $creatornewroles[$role->id] = $rolename;
@@ -56,58 +57,55 @@ if ($hassiteconfig
                     case 'coursecreator':
                         break;
                     case 'editingteacher':
-                        $teacherroles[$role->id] = $rolename;
+                        $defaultteacherid = isset($defaultteacherid) ? $defaultteacherid : $role->id;
                         $creatornewroles[$role->id] = $rolename;
                         break;
                     case 'teacher':
                         $creatornewroles[$role->id] = $rolename;
                         break;
                     case 'student':
-                        $studentroles[$role->id] = $rolename;
                         break;
                     case 'guest':
+                        $defaultguestid = isset($defaultguestid) ? $defaultguestid : $role->id;
                         $guestroles[$role->id] = $rolename;
                         break;
                     case 'user':
+                        $defaultuserid = isset($defaultuserid) ? $defaultuserid : $role->id;
                         $userroles[$role->id] = $rolename;
                         break;
                     case 'frontpage':
                         break;
                     default:
                         $creatornewroles[$role->id] = $rolename;
-                        $generalroles[$role->id] = $rolename;
+                        $otherroles[$role->id] = $rolename;
                         break;
                 }
             }
 
-            reset($guestroles);
-            $defaultguestid = key($guestroles);
-            reset($studentroles);
-            $defaultstudentid = key($studentroles);
-            reset($teacherroles);
-            $defaultteacherid = key($teacherroles);
+            if (empty($guestroles)) {
+                $guestroles[0] = get_string('none');
+                $defaultguestid = 0;
+            }
 
-            if ($userroles) {
-                reset($userroles);
-                $defaultuserid = key($userroles);
-            } else {
-                $userroles = array('0'=>get_string('none'));
+            if (empty($userroles)) {
+                $userroles[0] = get_string('none');
                 $defaultuserid = 0;
             }
 
             $temp->add(new admin_setting_configselect('notloggedinroleid', get_string('notloggedinroleid', 'admin'),
-                          get_string('confignotloggedinroleid', 'admin'), $defaultguestid, ($guestroles + $generalroles)));
+                          get_string('confignotloggedinroleid', 'admin'), $defaultguestid, ($guestroles + $otherroles)));
             $temp->add(new admin_setting_configselect('guestroleid', get_string('guestroleid', 'admin'),
-                          get_string('guestroleid_help', 'admin'), $defaultguestid, ($guestroles + $generalroles)));
+                          get_string('guestroleid_help', 'admin'), $defaultguestid, ($guestroles + $otherroles)));
             $temp->add(new admin_setting_configselect('defaultuserroleid', get_string('defaultuserroleid', 'admin'),
-                          get_string('configdefaultuserroleid', 'admin'), $defaultuserid, ($userroles + $generalroles)));
-        }
-
-        $temp->add(new admin_setting_configcheckbox('nodefaultuserrolelists', get_string('nodefaultuserrolelists', 'admin'), get_string('confignodefaultuserrolelists', 'admin'), 0));
-
-        if (!during_initial_install()) {
+                          get_string('configdefaultuserroleid', 'admin'), $defaultuserid, ($userroles + $otherroles)));
             $temp->add(new admin_setting_configselect('creatornewroleid', get_string('creatornewroleid', 'admin'),
                           get_string('creatornewroleid_help', 'admin'), $defaultteacherid, $creatornewroles));
+
+            // release memory
+            unset($otherroles);
+            unset($guestroles);
+            unset($userroles);
+            unset($creatornewroles);
         }
 
         $temp->add(new admin_setting_configcheckbox('autologinguests', get_string('autologinguests', 'admin'), get_string('configautologinguests', 'admin'), 0));

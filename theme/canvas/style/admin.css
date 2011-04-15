@@ -110,11 +110,6 @@
 }
 
 .plugincheckwrapper {text-align: center;}
-.plugincompattable {font-size: 70%;text-align: left;}
-.plugincompattable caption {text-align: center;width: 100%;font-weight: bold;font-size: 130%;}
-.plugincompattable td.ok {color: #008000;}
-.plugincompattable td.warning {color: #DF7800;}
-.plugincompattable td.error {color: #DF0000;}
 
 /**
 * Web services

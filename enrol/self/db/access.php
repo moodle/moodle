@@ -32,7 +32,7 @@ $capabilities = array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
+        'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
         )
@@ -42,7 +42,7 @@ $capabilities = array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
+        'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
         )
@@ -51,7 +51,7 @@ $capabilities = array(
     'enrol/self:unenrolself' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
+        'archetypes' => array(
             'student' => CAP_ALLOW,
         )
     ),
@@ -59,7 +59,7 @@ $capabilities = array(
     'enrol/self:unenrol' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
+        'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
         )

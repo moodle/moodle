@@ -24,7 +24,7 @@ if (!empty($PAGE->theme->settings->tagline)) {
 } else {
     $tagline = '<!-- There was no custom tagline set -->';
 }
-if (!empty($PAGE->theme->settings->logo)) { 
+if (!empty($PAGE->theme->settings->logo)) {
     $logourl = $PAGE->theme->settings->logo;
 }
 
@@ -33,11 +33,11 @@ echo $OUTPUT->doctype() ?>
 <head>
     <title><?php echo $PAGE->title ?></title>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
-    <meta name="description" content="<?php echo strip_tags(format_text($SITE->summary, FORMAT_HTML)) ?>" />
+    <meta name="description" content="<?php p(strip_tags(format_text($SITE->summary, FORMAT_HTML))) ?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
 
-<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <?php if ($hascustommenu) { ?>
@@ -70,7 +70,7 @@ echo $OUTPUT->doctype() ?>
                 </div>
             </div>
         </div>
-        
+
 <!-- END OF HEADER -->
 
 <!-- START OF CONTENT -->
@@ -79,7 +79,7 @@ echo $OUTPUT->doctype() ?>
             <div id="page-content">
                 <div id="region-main-box">
                     <div id="region-post-box">
-            
+
                         <div id="region-main-wrap">
                             <div id="region-main">
                                 <div class="region-content">
@@ -87,7 +87,7 @@ echo $OUTPUT->doctype() ?>
                                 </div>
                             </div>
                         </div>
-                
+
                         <?php if ($hassidepost) { ?>
                         <div id="region-post" class="block-region">
                             <div class="region-content">

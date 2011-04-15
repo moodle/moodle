@@ -61,7 +61,6 @@ $string['cannotdeletecourse'] = 'You do not have the permission to delete this c
 $string['cannotdeletecustomfield'] = 'Error deleting custom field data';
 $string['cannotdeletedir'] = 'Cannot delete ({$a})';
 $string['cannotdeletefile'] = 'Cannot delete this file';
-$string['cannotdeletelangcache'] = 'Language cache cannot be deleted, please fix permissions in dataroot/cache/languages!';
 $string['cannotdeleterole'] = 'It cannot be deleted, because {$a}';
 $string['cannotdeleterolewithid'] = 'Could not delete role with ID {$a}';
 $string['cannotdeletethisrole'] = 'You cannot delete this role because it is used by the system, or because it is the last role with administrator capabilities.';

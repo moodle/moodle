@@ -25,9 +25,6 @@ TODO:
  * export/import profiling runs: Allow to pick any profile record, encapsulate
        it into some serialized/encoded way and allow download/upload. It requires
        DB changes in order to be able to specify the source of each record (own/imported).
- * move profiling start to earlier place: detect if all the needed $CFG->profilingXXX variables
-       have been defined in config.php file and if that condition is fullfilled, start profiling
-       @ the very first lines of setup.php (as early as possible).
  * improvements to the listing mode: various commodity details like:
        - allow to filter by various criteria
        - inline (and ajax) editing of reference/comment and deleting
@@ -38,4 +35,5 @@ TODO:
        - cpu times
        (all them are right now enabled for everybody by default)
 
-20101122 - Eloy Lafuente (stronk7): Original import of 0.9.2 release
+20101122 - MDL-24600 - Eloy Lafuente (stronk7): Original import of 0.9.2 release
+20110318 - MDL-26891 - Eloy Lafuente (stronk7): Implemented earlier profiling runs

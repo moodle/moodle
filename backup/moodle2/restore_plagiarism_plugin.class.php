@@ -41,6 +41,6 @@ abstract class restore_plagiarism_plugin extends restore_plugin {
         if (!array_key_exists($this->pluginname, $enabledplugins)) {
             return;
         }
-        parent::define_plugin_structure($connectionpoint);
+        return parent::define_plugin_structure($connectionpoint);
     }
 }
