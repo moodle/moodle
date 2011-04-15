@@ -69,7 +69,7 @@ function profiling_start() {
     }
 
     // If profiling isn't enabled, nothing to start
-    if (!$CFG->profilingenabled) {
+    if (empty($CFG->profilingenabled) && empty($CFG->earlyprofilingenabled)) {
         return false;
     }
 
@@ -78,19 +78,22 @@ function profiling_start() {
         return false;
     }
 
+    // Set script (from global if available, else our own)
+    $script = !empty($SCRIPT) ? $SCRIPT : profiling_get_script();
+
     // Get PGC variables
     $check = 'PROFILEME';
     $profileme = isset($_POST[$check]) || isset($_GET[$check]) || isset($_COOKIE[$check]) ? true : false;
-    $profileme = $profileme && $CFG->profilingallowme;
+    $profileme = $profileme && !empty($CFG->profilingallowme);
     $check = 'DONTPROFILEME';
     $dontprofileme = isset($_POST[$check]) || isset($_GET[$check]) || isset($_COOKIE[$check]) ? true : false;
-    $dontprofileme = $dontprofileme && $CFG->profilingallowme;
+    $dontprofileme = $dontprofileme && !empty($CFG->profilingallowme);
     $check = 'PROFILEALL';
     $profileall = isset($_POST[$check]) || isset($_GET[$check]) || isset($_COOKIE[$check]) ? true : false;
-    $profileall = $profileall && $CFG->profilingallowall;
+    $profileall = $profileall && !empty($CFG->profilingallowall);
     $check = 'PROFILEALLSTOP';
     $profileallstop = isset($_POST[$check]) || isset($_GET[$check]) || isset($_COOKIE[$check]) ? true : false;
-    $profileallstop = $profileallstop && $CFG->profilingallowall;
+    $profileallstop = $profileallstop && !empty($CFG->profilingallowall);
 
     // DONTPROFILEME detected, nothing to start
     if ($dontprofileme) {
@@ -98,12 +101,12 @@ function profiling_start() {
     }
 
     // PROFILEALLSTOP detected, clean the mark in seesion and continue
-    if ($profileallstop) {
+    if ($profileallstop && !empty($SESSION)) {
         unset($SESSION->profileall);
     }
 
     // PROFILEALL detected, set the mark in session and continue
-    if ($profileall) {
+    if ($profileall && !empty($SESSION)) {
         $SESSION->profileall = true;
 
     // SESSION->profileall detected, set $profileall
@@ -113,21 +116,23 @@ function profiling_start() {
 
     // Evaluate automatic (random) profiling if necessary
     $profileauto = false;
-    if ($CFG->profilingautofrec) {
+    if (!empty($CFG->profilingautofrec)) {
         $profileauto = (mt_rand(1, $CFG->profilingautofrec) === 1);
     }
 
-    // See if the $SCRIPT matches any of the included patterns
-    $profileincluded = profiling_string_matches($SCRIPT, $CFG->profilingincluded);
+    // See if the $script matches any of the included patterns
+    $included = empty($CFG->profilingincluded) ? '' : $CFG->profilingincluded;
+    $profileincluded = profiling_string_matches($script, $included);
 
-    // See if the $SCRIPT matches any of the excluded patterns
-    $profileexcluded = profiling_string_matches($SCRIPT, $CFG->profilingexcluded);
+    // See if the $script matches any of the excluded patterns
+    $excluded = empty($CFG->profilingexcluded) ? '' : $CFG->profilingexcluded;
+    $profileexcluded = profiling_string_matches($script, $excluded);
 
     // Decide if profile auto must happen (observe matchings)
     $profileauto = $profileauto && $profileincluded && !$profileexcluded;
 
     // Decide if profile by match must happen (only if profileauto is disabled)
-    $profilematch = $profileincluded && !$profileexcluded && !$CFG->profilingautofrec;
+    $profilematch = $profileincluded && !$profileexcluded && empty($CFG->profilingautofrec);
 
     // If not auto, me, all, match have been detected, nothing to do
     if (!$profileauto && !$profileme && !$profileall && !$profilematch) {
@@ -138,6 +143,9 @@ function profiling_start() {
     $ignore = array('call_user_func', 'call_user_func_array');
     xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY, array('ignored_functions' =>  $ignore));
     profiling_is_running(true);
+
+    // Started, return true
+    return true;
 }
 
 /**
@@ -152,7 +160,7 @@ function profiling_stop() {
     }
 
     // If profiling isn't enabled, nothing to stop
-    if (!$CFG->profilingenabled) {
+    if (empty($CFG->profilingenabled) && empty($CFG->earlyprofilingenabled)) {
         return false;
     }
 
@@ -161,17 +169,23 @@ function profiling_stop() {
         return false;
     }
 
+    // Set script (from global if available, else our own)
+    $script = !empty($SCRIPT) ? $SCRIPT : profiling_get_script();
+
     // Arrived here, profiling is running, stop and save everything
     profiling_is_running(false);
     $data = xhprof_disable();
 
     $run = new moodle_xhprofrun();
-    $run->prepare_run($SCRIPT);
+    $run->prepare_run($script);
     $runid = $run->save_run($data, null);
     profiling_is_saved(true);
 
     // Prune old runs
     profiling_prune_old_runs($runid);
+
+    // Finished, return true
+    return true;
 }
 
 function profiling_prune_old_runs($exception = 0) {
@@ -188,6 +202,34 @@ function profiling_prune_old_runs($exception = 0) {
     $DB->delete_records_select('profiling', 'runreference = 0 AND
                                              timecreated < :cuttime AND
                                              runid != :exception', $params);
+}
+
+/**
+ * Returns the path to the php script being requested
+ *
+ * Note this function is a partial copy of initialise_fullme() and
+ * setup_get_remote_url(), in charge of setting $FULLME, $SCRIPT and
+ * friends. To be used by early profiling runs in situations where
+ * $SCRIPT isn't defined yet
+ *
+ * @return string absolute path (wwwroot based) of the script being executed
+ */
+function profiling_get_script() {
+    global $CFG;
+
+    $wwwroot = parse_url($CFG->wwwroot);
+
+    if (!isset($wwwroot['path'])) {
+        $wwwroot['path'] = '';
+    }
+    $wwwroot['path'] .= '/';
+
+    $path = $_SERVER['SCRIPT_NAME'];
+
+    if (strpos($path, $wwwroot['path']) === 0) {
+        return substr($path, strlen($wwwroot['path']) - 1);
+    }
+    return '';
 }
 
 function profiling_urls($report, $runid, $runid2 = null) {
@@ -464,18 +506,10 @@ class xhprof_table_sql extends table_sql {
     protected $listurlmode = false;
 
     /**
-     * Overwrite this method to be able to inject extra class to
-     * some (reference rows). Original API doesn't seem to allow that
+     * Get row classes to be applied based on row contents
      */
-    function build_table(){
-        if ($this->rawdata){
-            foreach($this->rawdata as $row){
-                $formattedrow = $this->format_row($row);
-                // reference row, add 'referencerun' class
-                $classname = $row->runreference ? 'referencerun' : '';
-                $this->add_data_keyed($formattedrow, $classname);
-            }
-        }
+    function get_row_class($row) {
+        return $row->runreference ? 'referencerun' : ''; // apply class to reference runs
     }
 
     /**

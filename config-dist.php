@@ -297,6 +297,13 @@ $CFG->admin = 'admin';
 //   Print to footer (works with the default theme)
 //   define('MDL_PERFTOFOOT', true);
 //
+//   Enable earlier profiling that causes more code to be covered
+//   on every request (db connections, config load, other inits...).
+//   Requires extra configuration to be defined in config.php like:
+//   profilingincluded, profilingexcluded, profilingautofrec,
+//   profilingallowme, profilingallowall, profilinglifetime
+//       $CFG->earlyprofilingenabled = true;
+//
 // Force displayed usernames
 //   A little hack to anonymise user names for all students.  If you set these
 //   then all non-teachers will always see these for every person.
@@ -356,6 +363,13 @@ $CFG->admin = 'admin';
 // be pruned).
 //
 //     $CFG->langcacheroot = '/var/www/moodle/htdocs/altcache/lang';
+//
+// If $CFG->langcache is enabled (which should always be in production
+// environment), Moodle stores the list of available languages in a cache file.
+// By default, the file $CFG->dataroot/languages is used. You may wish to
+// specify an alternative location of this cache file.
+//
+//     $CFG->langmenucachefile = '/var/www/moodle/htdocs/altcache/languages';
 //
 // Site default language can be set via standard administration interface. If you
 // want to have initial error messages for eventual database connection problems

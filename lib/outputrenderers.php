@@ -1129,7 +1129,11 @@ class core_renderer extends renderer_base {
         $output = html_writer::tag('div', $output);
 
         // now the form itself around it
-        $url = $button->url->out_omit_querystring(); // url without params
+        if ($button->method === 'get') {
+            $url = $button->url->out_omit_querystring(true); // url without params, the anchor part allowed
+        } else {
+            $url = $button->url->out_omit_querystring();     // url without params, the anchor part not allowed
+        }
         if ($url === '') {
             $url = '#'; // there has to be always some action
         }
@@ -1215,8 +1219,13 @@ class core_renderer extends renderer_base {
         $output = html_writer::tag('div', $output);
 
         // now the form itself around it
+        if ($select->method === 'get') {
+            $url = $select->url->out_omit_querystring(true); // url without params, the anchor part allowed
+        } else {
+            $url = $select->url->out_omit_querystring();     // url without params, the anchor part not allowed
+        }
         $formattributes = array('method' => $select->method,
-                                'action' => $select->url->out_omit_querystring(),
+                                'action' => $url,
                                 'id'     => $select->formid);
         $output = html_writer::tag('form', $output, $formattributes);
 

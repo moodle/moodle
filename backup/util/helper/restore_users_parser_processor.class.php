@@ -66,6 +66,14 @@ class restore_users_parser_processor extends grouped_parser_processor {
         }
     }
 
+    protected function notify_path_start($path) {
+        // nothing to do
+    }
+
+    protected function notify_path_end($path) {
+        // nothing to do
+    }
+
     /**
      * Provide NULL decoding
      */

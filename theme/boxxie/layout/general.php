@@ -29,8 +29,8 @@ echo $OUTPUT->doctype() ?>
   <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
   <?php echo $OUTPUT->standard_head_html() ?>
 </head>
- 
-<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
+
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
@@ -38,7 +38,7 @@ echo $OUTPUT->doctype() ?>
 
 <div id="page-wrapper">
   <div id="page" class="clearfix">
-    
+
     <div id="page-header" class="clearfix">
       <?php if ($PAGE->heading) { ?>
         <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
@@ -56,20 +56,20 @@ echo $OUTPUT->doctype() ?>
     </div>
 
  <div class="myclear"></div>
-      
+
       <?php if ($hasnavbar) { ?>
         <div class="navbar clearfix">
           <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
           <div class="navbutton"> <?php echo $PAGE->button; ?></div>
         </div>
       <?php } ?>
-  
+
 <?php } ?>
-      
+
     <div id="page-content">
         <div id="region-main-box">
             <div id="region-post-box">
-            
+
                 <div id="region-main-wrap">
                     <div id="region-main">
                         <div class="region-content">
@@ -77,7 +77,7 @@ echo $OUTPUT->doctype() ?>
                         </div>
                     </div>
                 </div>
-                
+
                 <?php if ($hassidepre) { ?>
                 <div id="region-pre">
                     <div class="region-content">
@@ -85,7 +85,7 @@ echo $OUTPUT->doctype() ?>
                     </div>
                 </div>
                 <?php } ?>
-                
+
                 <?php if ($hassidepost) { ?>
                 <div id="region-post">
                     <div class="region-content">
@@ -93,14 +93,14 @@ echo $OUTPUT->doctype() ?>
                     </div>
                 </div>
                 <?php } ?>
-                
+
             </div>
         </div>
     </div>
-    
+
     <div class="myclear"></div>
 <?php if ($hasfooter) { ?>
-  
+
     <div id="page-footer" class="clearfix">
       <p class="helplink"><?php echo page_doc_link(get_string('moodledocslink')) ?></p>
       <?php echo $OUTPUT->login_info(); ?>
@@ -111,7 +111,7 @@ echo $OUTPUT->doctype() ?>
 if ($hasheading || $hasnavbar) { ?>
    <div class="myclear"></div>
   </div> <!-- END #page -->
- 
+
 </div> <!-- END #page-wrapper -->
 
 <?php } ?>
@@ -122,11 +122,11 @@ if ($hasheading || $hasnavbar) { ?>
 
   echo $OUTPUT->home_link();
   echo $OUTPUT->standard_footer_html();
-  
+
 } ?>
 
-</div>     
-     
+</div>
+
 
 <?php echo $OUTPUT->standard_end_of_body_html() ?>
 </body>

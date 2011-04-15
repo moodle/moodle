@@ -20,7 +20,7 @@ class HTMLPurifier_Config
     /**
      * HTML Purifier's version
      */
-    public $version = '4.2.0';
+    public $version = '4.3.0';
 
     /**
      * Bool indicator whether or not to automatically finalize
@@ -76,7 +76,8 @@ class HTMLPurifier_Config
 
     /**
      * Set to false if you do not want line and file numbers in errors
-     * (useful when unit testing)
+     * (useful when unit testing).  This will also compress some errors
+     * and exceptions.
      */
     public $chatty = true;
 
@@ -318,26 +319,64 @@ class HTMLPurifier_Config
      * Retrieves object reference to the HTML definition.
      * @param $raw Return a copy that has not been setup yet. Must be
      *             called before it's been setup, otherwise won't work.
+     * @param $optimized If true, this method may return null, to
+     *             indicate that a cached version of the modified
+     *             definition object is available and no further edits
+     *             are necessary.  Consider using
+     *             maybeGetRawHTMLDefinition, which is more explicitly
+     *             named, instead.
      */
-    public function getHTMLDefinition($raw = false) {
-        return $this->getDefinition('HTML', $raw);
+    public function getHTMLDefinition($raw = false, $optimized = false) {
+        return $this->getDefinition('HTML', $raw, $optimized);
     }
 
     /**
      * Retrieves object reference to the CSS definition
      * @param $raw Return a copy that has not been setup yet. Must be
      *             called before it's been setup, otherwise won't work.
+     * @param $optimized If true, this method may return null, to
+     *             indicate that a cached version of the modified
+     *             definition object is available and no further edits
+     *             are necessary.  Consider using
+     *             maybeGetRawCSSDefinition, which is more explicitly
+     *             named, instead.
      */
-    public function getCSSDefinition($raw = false) {
-        return $this->getDefinition('CSS', $raw);
+    public function getCSSDefinition($raw = false, $optimized = false) {
+        return $this->getDefinition('CSS', $raw, $optimized);
+    }
+
+    /**
+     * Retrieves object reference to the URI definition
+     * @param $raw Return a copy that has not been setup yet. Must be
+     *             called before it's been setup, otherwise won't work.
+     * @param $optimized If true, this method may return null, to
+     *             indicate that a cached version of the modified
+     *             definition object is available and no further edits
+     *             are necessary.  Consider using
+     *             maybeGetRawURIDefinition, which is more explicitly
+     *             named, instead.
+     */
+    public function getURIDefinition($raw = false, $optimized = false) {
+        return $this->getDefinition('URI', $raw, $optimized);
     }
 
     /**
      * Retrieves a definition
      * @param $type Type of definition: HTML, CSS, etc
      * @param $raw  Whether or not definition should be returned raw
+     * @param $optimized Only has an effect when $raw is true.  Whether
+     *        or not to return null if the result is already present in
+     *        the cache.  This is off by default for backwards
+     *        compatibility reasons, but you need to do things this
+     *        way in order to ensure that caching is done properly.
+     *        Check out enduser-customize.html for more details.
+     *        We probably won't ever change this default, as much as the
+     *        maybe semantics is the "right thing to do."
      */
-    public function getDefinition($type, $raw = false) {
+    public function getDefinition($type, $raw = false, $optimized = false) {
+        if ($optimized && !$raw) {
+            throw new HTMLPurifier_Exception("Cannot set optimized = true when raw = false");
+        }
         if (!$this->finalized) $this->autoFinalize();
         // temporarily suspend locks, so we can handle recursive definition calls
         $lock = $this->lock;
@@ -346,52 +385,137 @@ class HTMLPurifier_Config
         $cache = $factory->create($type, $this);
         $this->lock = $lock;
         if (!$raw) {
-            // see if we can quickly supply a definition
+            // full definition
+            // ---------------
+            // check if definition is in memory
             if (!empty($this->definitions[$type])) {
-                if (!$this->definitions[$type]->setup) {
-                    $this->definitions[$type]->setup($this);
-                    $cache->set($this->definitions[$type], $this);
+                $def = $this->definitions[$type];
+                // check if the definition is setup
+                if ($def->setup) {
+                    return $def;
+                } else {
+                    $def->setup($this);
+                    if ($def->optimized) $cache->add($def, $this);
+                    return $def;
                 }
-                return $this->definitions[$type];
             }
-            // memory check missed, try cache
-            $this->definitions[$type] = $cache->get($this);
-            if ($this->definitions[$type]) {
-                // definition in cache, return it
-                return $this->definitions[$type];
+            // check if definition is in cache
+            $def = $cache->get($this);
+            if ($def) {
+                // definition in cache, save to memory and return it
+                $this->definitions[$type] = $def;
+                return $def;
             }
-        } elseif (
-            !empty($this->definitions[$type]) &&
-            !$this->definitions[$type]->setup
-        ) {
-            // raw requested, raw in memory, quick return
-            return $this->definitions[$type];
+            // initialize it
+            $def = $this->initDefinition($type);
+            // set it up
+            $this->lock = $type;
+            $def->setup($this);
+            $this->lock = null;
+            // save in cache
+            $cache->add($def, $this);
+            // return it
+            return $def;
+        } else {
+            // raw definition
+            // --------------
+            // check preconditions
+            $def = null;
+            if ($optimized) {
+                if (is_null($this->get($type . '.DefinitionID'))) {
+                    // fatally error out if definition ID not set
+                    throw new HTMLPurifier_Exception("Cannot retrieve raw version without specifying %$type.DefinitionID");
+                }
+            }
+            if (!empty($this->definitions[$type])) {
+                $def = $this->definitions[$type];
+                if ($def->setup && !$optimized) {
+                    $extra = $this->chatty ? " (try moving this code block earlier in your initialization)" : "";
+                    throw new HTMLPurifier_Exception("Cannot retrieve raw definition after it has already been setup" . $extra);
+                }
+                if ($def->optimized === null) {
+                    $extra = $this->chatty ? " (try flushing your cache)" : "";
+                    throw new HTMLPurifier_Exception("Optimization status of definition is unknown" . $extra);
+                }
+                if ($def->optimized !== $optimized) {
+                    $msg = $optimized ? "optimized" : "unoptimized";
+                    $extra = $this->chatty ? " (this backtrace is for the first inconsistent call, which was for a $msg raw definition)" : "";
+                    throw new HTMLPurifier_Exception("Inconsistent use of optimized and unoptimized raw definition retrievals" . $extra);
+                }
+            }
+            // check if definition was in memory
+            if ($def) {
+                if ($def->setup) {
+                    // invariant: $optimized === true (checked above)
+                    return null;
+                } else {
+                    return $def;
+                }
+            }
+            // if optimized, check if definition was in cache
+            // (because we do the memory check first, this formulation
+            // is prone to cache slamming, but I think
+            // guaranteeing that either /all/ of the raw
+            // setup code or /none/ of it is run is more important.)
+            if ($optimized) {
+                // This code path only gets run once; once we put
+                // something in $definitions (which is guaranteed by the
+                // trailing code), we always short-circuit above.
+                $def = $cache->get($this);
+                if ($def) {
+                    // save the full definition for later, but don't
+                    // return it yet
+                    $this->definitions[$type] = $def;
+                    return null;
+                }
+            }
+            // check invariants for creation
+            if (!$optimized) {
+                if (!is_null($this->get($type . '.DefinitionID'))) {
+                    if ($this->chatty) {
+                        $this->triggerError("Due to a documentation error in previous version of HTML Purifier, your definitions are not being cached.  If this is OK, you can remove the %$type.DefinitionRev and %$type.DefinitionID declaration.  Otherwise, modify your code to use maybeGetRawDefinition, and test if the returned value is null before making any edits (if it is null, that means that a cached version is available, and no raw operations are necessary).  See <a href='http://htmlpurifier.org/docs/enduser-customize.html#optimized'>Customize</a> for more details", E_USER_WARNING);
+                    } else {
+                        $this->triggerError("Useless DefinitionID declaration", E_USER_WARNING);
+                    }
+                }
+            }
+            // initialize it
+            $def = $this->initDefinition($type);
+            $def->optimized = $optimized;
+            return $def;
         }
+        throw new HTMLPurifier_Exception("The impossible happened!");
+    }
+
+    private function initDefinition($type) {
         // quick checks failed, let's create the object
         if ($type == 'HTML') {
-            $this->definitions[$type] = new HTMLPurifier_HTMLDefinition();
+            $def = new HTMLPurifier_HTMLDefinition();
         } elseif ($type == 'CSS') {
-            $this->definitions[$type] = new HTMLPurifier_CSSDefinition();
+            $def = new HTMLPurifier_CSSDefinition();
         } elseif ($type == 'URI') {
-            $this->definitions[$type] = new HTMLPurifier_URIDefinition();
+            $def = new HTMLPurifier_URIDefinition();
         } else {
             throw new HTMLPurifier_Exception("Definition of $type type not supported");
         }
-        // quick abort if raw
-        if ($raw) {
-            if (is_null($this->get($type . '.DefinitionID'))) {
-                // fatally error out if definition ID not set
-                throw new HTMLPurifier_Exception("Cannot retrieve raw version without specifying %$type.DefinitionID");
-            }
-            return $this->definitions[$type];
-        }
-        // set it up
-        $this->lock = $type;
-        $this->definitions[$type]->setup($this);
-        $this->lock = null;
-        // save in cache
-        $cache->set($this->definitions[$type], $this);
-        return $this->definitions[$type];
+        $this->definitions[$type] = $def;
+        return $def;
+    }
+
+    public function maybeGetRawDefinition($name) {
+        return $this->getDefinition($name, true, true);
+    }
+
+    public function maybeGetRawHTMLDefinition() {
+        return $this->getDefinition('HTML', true, true);
+    }
+
+    public function maybeGetRawCSSDefinition() {
+        return $this->getDefinition('CSS', true, true);
+    }
+
+    public function maybeGetRawURIDefinition() {
+        return $this->getDefinition('URI', true, true);
     }
 
     /**
@@ -549,17 +673,22 @@ class HTMLPurifier_Config
 
     /**
      * Produces a nicely formatted error message by supplying the
-     * stack frame information from two levels up and OUTSIDE of
-     * HTMLPurifier_Config.
+     * stack frame information OUTSIDE of HTMLPurifier_Config.
      */
     protected function triggerError($msg, $no) {
         // determine previous stack frame
-        $backtrace = debug_backtrace();
-        if ($this->chatty && isset($backtrace[1])) {
-            $frame = $backtrace[1];
-            $extra = " on line {$frame['line']} in file {$frame['file']}";
-        } else {
-            $extra = '';
+        $extra = '';
+        if ($this->chatty) {
+            $trace = debug_backtrace();
+            // zip(tail(trace), trace) -- but PHP is not Haskell har har
+            for ($i = 0, $c = count($trace); $i < $c - 1; $i++) {
+                if ($trace[$i + 1]['class'] === 'HTMLPurifier_Config') {
+                    continue;
+                }
+                $frame = $trace[$i];
+                $extra = " invoked on line {$frame['line']} in file {$frame['file']}";
+                break;
+            }
         }
         trigger_error($msg . $extra, $no);
     }

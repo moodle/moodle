@@ -80,6 +80,26 @@ class comment {
      */
     private $linktext;
 
+    /**
+     * If set to true then comment sections won't be able to be opened and closed
+     * instead they will always be visible.
+     * @var bool
+     */
+    protected $notoggle = false;
+
+    /**
+     * If set to true comments are automatically loaded as soon as the page loads.
+     * Normally this happens when the user expands the comment section.
+     * @var bool
+     */
+    protected $autostart = false;
+
+    /**
+     * If set to true a cancel button will be shown on the form used to submit comments.
+     * @var bool
+     */
+    protected $displaycancel = false;
+
     // static variable will be used by non-js comments UI
     private static $nonjs = false;
     private static $comment_itemid = null;
@@ -87,6 +107,7 @@ class comment {
     private static $comment_area = null;
     private static $comment_page = null;
     private static $comment_component = null;
+
     /**
      * Construct function of comment class, initialise
      * class members
@@ -171,6 +192,21 @@ class comment {
             $this->ignore_permission = true;
         } else {
             $this->ignore_permission = false;
+        }
+
+        // setup notoggle
+        if (!empty($options->notoggle)) {
+            $this->set_notoggle($options->notoggle);
+        }
+
+        // setup notoggle
+        if (!empty($options->autostart)) {
+            $this->set_autostart($options->autostart);
+        }
+
+        // setup displaycancel
+        if (!empty($options->displaycancel)) {
+            $this->set_displaycancel($options->displaycancel);
         }
 
         if (!empty($options->showcount)) {
@@ -265,114 +301,164 @@ EOD;
     }
 
     /**
+     * Gets a link for this page that will work with JS disabled.
+     *
+     * @global moodle_page $PAGE
+     * @param moodle_page $page
+     * @return moodle_url
+     */
+    public function get_nojslink(moodle_page $page = null) {
+        if ($page === null) {
+            global $PAGE;
+            $page = $PAGE;
+        }
+
+        $link = new moodle_url($page->url, array(
+            'nonjscomment'    => true,
+            'comment_itemid'  => $this->itemid,
+            'comment_context' => $this->context->id,
+            'comment_area'    => $this->commentarea,
+        ));
+        $link->remove_params(array('nonjscomment', 'comment_page'));
+        return $link;
+    }
+
+    /**
+     * Sets the value of the notoggle option.
+     *
+     * If set to true then the user will not be able to expand and collase
+     * the comment section.
+     *
+     * @param bool $newvalue
+     */
+    public function set_notoggle($newvalue = true) {
+        $this->notoggle = (bool)$newvalue;
+    }
+
+    /**
+     * Sets the value of the autostart option.
+     *
+     * If set to true then the comments will be loaded during page load.
+     * Normally this happens only once the user expands the comment section.
+     *
+     * @param bool $newvalue
+     */
+    public function set_autostart($newvalue = true) {
+        $this->autostart = (bool)$newvalue;
+    }
+
+    /**
+     * Sets the displaycancel option
+     *
+     * If set to true then a cancel button will be shown when using the form
+     * to post comments.
+     *
+     * @param bool $newvalue
+     */
+    public function set_displaycancel($newvalue = true) {
+        $this->displaycancel = (bool)$newvalue;
+    }
+
+    /**
+     * Initialises the JavaScript that enchances the comment API.
+     *
+     * @param moodle_page $page The moodle page object that the JavaScript should be
+     *                          initialised for.
+     */
+    public function initialise_javascript(moodle_page $page) {
+
+        $options = new stdClass;
+        $options->client_id   = $this->cid;
+        $options->commentarea = $this->commentarea;
+        $options->itemid      = $this->itemid;
+        $options->page        = 0;
+        $options->courseid    = $this->courseid;
+        $options->contextid   = $this->contextid;
+        $options->env         = $this->env;
+        $options->component   = $this->component;
+        $options->notoggle    = $this->notoggle;
+        $options->autostart   = $this->autostart;
+
+        $page->requires->js_init_call('M.core_comment.init', array($options), true);
+
+        return true;
+    }
+
+    /**
      * Prepare comment code in html
      * @param  boolean $return
      * @return mixed
      */
     public function output($return = true) {
         global $PAGE, $OUTPUT;
-		static $template_printed;
+        static $template_printed;
 
-        $this->link = $PAGE->url;
-        $murl = new moodle_url($this->link);
-        $murl->remove_params('nonjscomment');
-        $murl->param('nonjscomment', 'true');
-        $murl->param('comment_itemid', $this->itemid);
-        $murl->param('comment_context', $this->context->id);
-        $murl->param('comment_area', $this->commentarea);
-        $murl->remove_params('comment_page');
-        $this->link = $murl->out();
-
-        $options = new stdClass();
-        $options->client_id = $this->cid;
-        $options->commentarea = $this->commentarea;
-        $options->itemid = $this->itemid;
-        $options->page   = 0;
-        $options->courseid = $this->courseid;
-        $options->contextid = $this->contextid;
-        $options->env = $this->env;
-        $options->component = $this->component;
-        if ($this->env == 'block_comments') {
-            $options->notoggle = true;
-            $options->autostart = true;
-        }
-
-        $PAGE->requires->js_init_call('M.core_comment.init', array($options), true);
+        $this->initialise_javascript($PAGE);
 
         if (!empty(self::$nonjs)) {
             // return non js comments interface
             return $this->print_comments(self::$comment_page, $return, true);
         }
 
-        $strsubmit = get_string('savecomment');
-        $strcancel = get_string('cancel');
-        $strshowcomments = get_string('showcommentsnonjs');
-        $sesskey = sesskey();
         $html = '';
+
         // print html template
         // Javascript will use the template to render new comments
         if (empty($template_printed) && !empty($this->viewcap)) {
-            $html .= '<div style="display:none" id="cmt-tmpl">' . $this->template . '</div>';
+            $html .= html_writer::tag('div', $this->template, array('style' => 'display:none', 'id' => 'cmt-tmpl'));
             $template_printed = true;
         }
 
         if (!empty($this->viewcap)) {
             // print commenting icon and tooltip
-            $icon = $OUTPUT->pix_url('t/collapsed');
-            $html .= <<<EOD
-<div class="mdl-left">
-<a class="showcommentsnonjs" href="{$this->link}">{$strshowcomments}</a>
-EOD;
-            if ($this->env != 'block_comments') {
-                $html .= <<<EOD
-<a id="comment-link-{$this->cid}" class="comment-link" href="#">
-    <img id="comment-img-{$this->cid}" src="$icon" alt="{$this->linktext}" title="{$this->linktext}" />
-    <span id="comment-link-text-{$this->cid}">{$this->linktext} {$this->count}</span>
-</a>
-EOD;
+            $html .= html_writer::start_tag('div', array('class' => 'mdl-left'));
+            $html .= html_writer::link($this->get_nojslink($PAGE), get_string('showcommentsnonjs'), array('class' => 'showcommentsnonjs'));
+
+            if (!$this->notoggle) {
+                // If toggling is enabled (notoggle=false) then print the controls to toggle
+                // comments open and closed
+                $html .= html_writer::start_tag('a', array('class' => 'comment-link', 'id' => 'comment-link-'.$this->cid, 'href' => '#'));
+                $html .= html_writer::empty_tag('img', array('id' => 'comment-img-'.$this->cid, 'src' => $OUTPUT->pix_url('t/collapsed'), 'alt' => $this->linktext, 'title' => $this->linktext));
+                $html .= html_writer::tag('span', $this->linktext.' '.$this->count, array('id' => 'comment-link-text-'.$this->cid));
+                $html .= html_writer::end_tag('a');
             }
 
-            $html .= <<<EOD
-<div id="comment-ctrl-{$this->cid}" class="comment-ctrl">
-    <ul id="comment-list-{$this->cid}" class="comment-list">
-        <li class="first"></li>
-EOD;
-            // in comments block, we print comments list right away
-            if ($this->env == 'block_comments') {
+            $html .= html_writer::start_tag('div', array('id' => 'comment-ctrl-'.$this->cid, 'class' => 'comment-ctrl'));
+            $html .= html_writer::start_tag('ul', array('id' => 'comment-list-'.$this->cid, 'class' => 'comment-list'));
+            $html .= html_writer::tag('li', '', array('class' => 'first'));
+
+            if ($this->autostart) {
+                // If autostart has been enabled print the comments list immediatly
                 $html .= $this->print_comments(0, true, false);
-                $html .= '</ul>';
+                $html .= html_writer::end_tag('ul'); // .comment-list
                 $html .= $this->get_pagination(0);
             } else {
-                $html .= <<<EOD
-    </ul>
-    <div id="comment-pagination-{$this->cid}" class="comment-pagination"></div>
-EOD;
+                $html .= html_writer::end_tag('ul'); // .comment-list
+                $html .= html_writer::tag('div', '', array('id' => 'comment-pagination-'.$this->cid, 'class' => 'comment-pagination'));
             }
 
-            // print posting textarea
             if (!empty($this->postcap)) {
-                $html .= <<<EOD
-<div class='comment-area'>
-    <div class="bd">
-        <textarea name="content" rows="2" cols="20" id="dlg-content-{$this->cid}"></textarea>
-    </div>
-    <div class="fd" id="comment-action-{$this->cid}">
-        <a href="#" id="comment-action-post-{$this->cid}"> {$strsubmit} </a>
-EOD;
-                if ($this->env != 'block_comments') {
-                    $html .= "<span> | </span><a href=\"#\" id=\"comment-action-cancel-{$this->cid}\"> {$strcancel} </a>";
+                // print posting textarea
+                $html .= html_writer::start_tag('div', array('class' => 'comment-area'));
+                $html .= html_writer::start_tag('div', array('class' => 'db'));
+                $html .= html_writer::tag('textarea', '', array('name' => 'content', 'rows' => 2, 'cols' => 20, 'id' => 'dlg-content-'.$this->cid));
+                $html .= html_writer::end_tag('div'); // .db
+
+                $html .= html_writer::start_tag('div', array('class' => 'fd', 'id' => 'comment-action-'.$this->cid));
+                $html .= html_writer::link('#', get_string('savecomment'), array('id' => 'comment-action-post-'.$this->cid));
+
+                if ($this->displaycancel) {
+                    $html .= html_writer::tag('span', ' | ');
+                    $html .= html_writer::link('#', get_string('cancel'), array('id' => 'comment-action-cancel-'.$this->cid));
                 }
-                $html .= <<<EOD
-    </div>
-</div>
-<div class="clearer"></div>
-EOD;
+
+                $html .= html_writer::end_tag('div'); // .fd
+                $html .= html_writer::end_tag('div'); // .comment-area
+                $html .= html_writer::tag('div', '', array('class' => 'clearer'));
             }
 
-            $html .= <<<EOD
-</div><!-- end of comment-ctrl -->
-</div>
-EOD;
+            $html .= html_writer::end_tag('div'); // .comment-ctrl
+            $html .= html_writer::end_tag('div'); // .mdl-left
         } else {
             $html = '';
         }
@@ -457,11 +543,11 @@ EOD;
         $count = $this->count();
         $pages = (int)ceil($count/$CFG->commentsperpage);
         if ($pages == 1 || $pages == 0) {
-            return '';
+            return html_writer::tag('div', '', array('id' => 'comment-pagination-'.$this->cid, 'class' => 'comment-pagination'));
         }
         if (!empty(self::$nonjs)) {
             // used in non-js interface
-            return $OUTPUT->paging_bar($count, $page, $CFG->commentsperpage, $this->link, 'comment_page');
+            return $OUTPUT->paging_bar($count, $page, $CFG->commentsperpage, $this->get_nojslink(), 'comment_page');
         } else {
             // return ajax paging bar
             $str = '';

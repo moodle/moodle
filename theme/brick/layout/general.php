@@ -26,19 +26,19 @@ echo $OUTPUT->doctype() ?>
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
 
-<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <!-- START OF HEADER -->
 
 <div id="headerwrap">
 	<div id="header">
-	
+
 		<?php if (!empty($PAGE->theme->settings->logo)) { ?>
-		
+
 			<div id="logo">
 			</div>
-		
+
 		<?php } else { ?>
 
 			<div id="nologo">
@@ -46,9 +46,9 @@ echo $OUTPUT->doctype() ?>
 			</div>
 
 		<?php } ?>
-		
+
 			<div id="loggedinas">
-			<?php if ($hasheading) { 
+			<?php if ($hasheading) {
             	echo $OUTPUT->lang_menu();
             	echo $OUTPUT->login_info();
             	echo $PAGE->headingmenu;
@@ -56,7 +56,7 @@ echo $OUTPUT->doctype() ?>
 			</div>
 
 		<div id="headerbottom">
-			
+
 			<div id="menu">
 				<?php if ($hascustommenu) { ?>
  					<div id="custommenu"><?php echo $custommenu; ?></div>
@@ -67,7 +67,7 @@ echo $OUTPUT->doctype() ?>
 	    			<h1><?php echo $PAGE->heading ?></h1>
 	    		</div>
 	    	<?php } ?>
-	    	
+
 		</div>
 
 	</div>
@@ -87,11 +87,11 @@ echo $OUTPUT->doctype() ?>
 		    	<div id="page-content">
     		    	<div id="region-main-box">
         		    	<div id="region-post-box">
-            
+
 	            	    	<div id="region-main-wrap">
     	            	    	<div id="region-main">
         	            	    	<div class="region-content">
-        	            	          
+
         	            	             <?php if ($hasnavbar) { ?>
         	    							<div class="navbar">
             									<div class="wrapper">
@@ -99,29 +99,29 @@ echo $OUTPUT->doctype() ?>
 	    	        							</div>
     	        							</div>
         								<?php } ?>
-	            	    
+
             	            	    	<?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
-	                	        	
+
 	                	        	</div>
     	                		</div>
 	    	            	</div>
-                
+
 		                	<?php if ($hassidepost) { ?>
-    
+
     		            	<div id="region-post" class="block-region">
         		            	<div class="region-content">
-    
+
         		             		<?php if ($hasnavbutton) { ?>
 		        		           		<div class="navbutton"><?php echo $PAGE->button; ?></div>
 	        		            	<?php } ?>
-    
+
             		            	<?php echo $OUTPUT->blocks_for_region('side-post') ?>
-            		             
+
                 		    	</div>
 	                		</div>
-	    	          
+
 	    	            	<?php } ?>
-                
+
     	    	    	</div>
 	    	    	</div>
 	    		</div>
@@ -129,7 +129,7 @@ echo $OUTPUT->doctype() ?>
 
 <!-- END OF CONTENT -->
 
-	
+
 		</div>
 	</div>
 </div>

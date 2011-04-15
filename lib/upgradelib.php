@@ -1259,11 +1259,10 @@ function upgrade_init_javascript() {
     $PAGE->requires->js_init_code($js);
 }
 
-
 /**
  * Try to upgrade the given language pack (or current language)
  *
- * @todo hardcoded Moodle version here - shall be provided by version.php or similar script
+ * @param string $lang the code of the language to update, defaults to the current language
  */
 function upgrade_language_pack($lang='') {
     global $CFG, $OUTPUT;
@@ -1286,17 +1285,19 @@ function upgrade_language_pack($lang='') {
 
     require_once($CFG->libdir.'/componentlib.class.php');
 
-    if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0', $lang.'.zip', 'languages.md5', 'lang')) {
-        $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
-
-        if ($status == COMPONENT_INSTALLED) {
-            remove_dir($CFG->dataroot.'/cache/languages');
-            if ($parentlang = get_parent_language($lang)) {
-                if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0', $parentlang.'.zip', 'languages.md5', 'lang')) {
-                    $cd->install();
-                }
-            }
-            echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
+    $installer = new lang_installer($pack);
+    $results = $installer->run();
+    foreach ($results as $langcode => $langstatus) {
+        switch ($langstatus) {
+        case lang_installer::RESULT_DOWNLOADERROR:
+            echo $OUTPUT->notification($pack . '.zip');
+            break;
+        case lang_installer::RESULT_INSTALLED:
+            echo $OUTPUT->notification(get_string('langpackinstalled', 'admin', $langcode), 'notifysuccess');
+            break;
+        case lang_installer::RESULT_UPTODATE:
+            echo $OUTPUT->notification(get_string('langpackuptodate', 'admin', $langcode), 'notifysuccess');
+            break;
         }
     }
 

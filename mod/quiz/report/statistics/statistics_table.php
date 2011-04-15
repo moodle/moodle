@@ -6,7 +6,7 @@ class quiz_report_statistics_table extends flexible_table {
     var $quiz;
 
     function quiz_report_statistics_table(){
-        parent::flexible_table('mod-quiz-report-statistics-report');
+        parent::__construct('mod-quiz-report-statistics-report');
     }
 
     /**

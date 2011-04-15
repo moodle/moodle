@@ -569,12 +569,25 @@ abstract class moodle_database {
      * @param int $type bound param type SQL_PARAMS_QM or SQL_PARAMS_NAMED
      * @param string named param placeholder start
      * @param bool true means equal, false not equal
+     * @param mixed $onemptyitems defines the behavior when the array of items is empty. Defaults to false,
+     *              meaning throw exceptions. Other values will become part of the returned SQL fragment.
      * @return array - $sql and $params
      */
-    public function get_in_or_equal($items, $type=SQL_PARAMS_QM, $start='param0000', $equal=true) {
-        if (is_array($items) and empty($items)) {
+    public function get_in_or_equal($items, $type=SQL_PARAMS_QM, $start='param0000', $equal=true, $onemptyitems=false) {
+        // default behavior, throw exception on empty array
+        if (is_array($items) and empty($items) and $onemptyitems === false) {
             throw new coding_exception('moodle_database::get_in_or_equal() does not accept empty arrays');
         }
+        // handle $onemptyitems on empty array of items
+        if (is_array($items) and empty($items)) {
+            if (is_null($onemptyitems)) {             // Special case, NULL value
+                $sql = $equal ? ' IS NULL' : ' IS NOT NULL';
+                return (array($sql, array()));
+            } else {
+                $items = array($onemptyitems);        // Rest of cases, prepare $items for std processing
+            }
+        }
+
         if ($type == SQL_PARAMS_QM) {
             if (!is_array($items) or count($items) == 1) {
                 $sql = $equal ? '= ?' : '<> ?';

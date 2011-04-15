@@ -31,7 +31,7 @@ $capabilities = array(
     'enrol/paypal:config' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
+        'archetypes' => array(
             'manager' => CAP_ALLOW,
         )
     ),
@@ -39,7 +39,7 @@ $capabilities = array(
     'enrol/paypal:manage' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
+        'archetypes' => array(
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
         )
@@ -48,7 +48,7 @@ $capabilities = array(
     'enrol/paypal:unenrol' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
+        'archetypes' => array(
             'manager' => CAP_ALLOW,
         )
     ),
@@ -56,7 +56,7 @@ $capabilities = array(
     'enrol/paypal:unenrolself' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'legacy' => array(
+        'archetypes' => array(
         )
     ),
 

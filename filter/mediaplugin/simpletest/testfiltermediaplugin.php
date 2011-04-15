@@ -38,20 +38,16 @@ class filter_mediaplugin_test extends UnitTestCase {
 
         // we need to enable the plugins somehow
         $oldcfg = clone($CFG); // very, very ugly hack
-        $CFG->filter_mediaplugin_enable_mp3     = 1;
-        $CFG->filter_mediaplugin_enable_ogg     = 1;
-        $CFG->filter_mediaplugin_enable_ogv     = 1;
-        $CFG->filter_mediaplugin_enable_swf     = 1;
-        $CFG->filter_mediaplugin_enable_flv     = 1;
-        $CFG->filter_mediaplugin_enable_mov     = 1;
-        $CFG->filter_mediaplugin_enable_wmv     = 1;
-        $CFG->filter_mediaplugin_enable_mpg     = 1;
-        $CFG->filter_mediaplugin_enable_avi     = 1;
-        $CFG->filter_mediaplugin_enable_ram     = 1;
-        $CFG->filter_mediaplugin_enable_rpm     = 1;
-        $CFG->filter_mediaplugin_enable_rm      = 1;
-        $CFG->filter_mediaplugin_enable_youtube = 1;
-        $CFG->filter_mediaplugin_enable_img     = 1;
+        $CFG->filter_mediaplugin_enable_youtube    = 1;
+        $CFG->filter_mediaplugin_enable_vimeo      = 1;
+        $CFG->filter_mediaplugin_enable_mp3        = 1;
+        $CFG->filter_mediaplugin_enable_flv        = 1;
+        $CFG->filter_mediaplugin_enable_swf        = 1;
+        $CFG->filter_mediaplugin_enable_html5audio = 1;
+        $CFG->filter_mediaplugin_enable_html5video = 1;
+        $CFG->filter_mediaplugin_enable_qt         = 1;
+        $CFG->filter_mediaplugin_enable_wmp        = 1;
+        $CFG->filter_mediaplugin_enable_rm         = 1;
 
 
         $filterplugin = new filter_mediaplugin(null, array());
@@ -65,8 +61,6 @@ class filter_mediaplugin_test extends UnitTestCase {
                         '<a class="youtube" href="http://www.youtube.com/watch?v=JghQgA2HMX8">test file</a>',
                         '<a class="_blanktarget" href="http://moodle.org/testfile/test.flv?d=100x100">test flv</a>',
                         '<a class="hrefcss" href="http://www.youtube.com/watch?v=JghQgA2HMX8">test file</a>',
-                        '<a href="http://www.moodle.org/logo.jpg"><img src="http://moodle.org/test.jpg" /></a>',
-                        '<a href="http://www.moodle.org/logo.rpm">rpm file</a>',
                         '<a  class="content"     href="http://moodle.org/testfile/test.avi">test mp3</a>',
                         '<a     id="audio"      href="http://moodle.org/testfile/test.mp3">test mp3</a>',
                         '<a  href="http://moodle.org/testfile/test.mp3">test mp3</a>',
@@ -103,12 +97,9 @@ class filter_mediaplugin_test extends UnitTestCase {
                             '<a href="http://moodle.org/testfile/test.mp3">test mp3',
                             '<a href="http://moodle.org/testfile/test.mp3"test</a>',
                             '<a href="http://moodle.org/testfile/">test</a>',
-                            '<a href="http://www.moodle.org/path/to/test.flv#param2=1?d=100x100">test</a>',
                             '<href="http://moodle.org/testfile/test.avi">test</a>',
-                            '<a ahref="http://moodle.org/testfile/test.mp3">test mp3</a>',
                             '<abbr href="http://moodle.org/testfile/test.mp3">test mp3</abbr>',
                             '<ahref="http://moodle.org/testfile/test.mp3">test mp3</a>',
-                            '<a class="content"href="http://moodle.org/testfile/test.mp3">test mp3</a>',
                             '<aclass="content" href="http://moodle.org/testfile/test.mp3">test mp3</a>'
                         );
 

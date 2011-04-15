@@ -121,6 +121,10 @@
         print_error('error');
     }
 
+    // Mark activity viewed for completion-tracking
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+
     /// Print the page header
     $strfeedbacks = get_string("modulenameplural", "feedback");
     $strfeedback  = get_string("modulename", "feedback");
@@ -501,10 +505,6 @@
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
-
-    // Mark activity viewed for completion-tracking
-    $completion=new completion_info($course);
-    $completion->set_module_viewed($cm);
 
     echo $OUTPUT->footer();
 

@@ -25,7 +25,7 @@ echo $OUTPUT->doctype() ?>
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
 
-<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <!-- START OF HEADER -->
@@ -41,9 +41,9 @@ echo $OUTPUT->doctype() ?>
 				<a href="<?php echo $CFG->wwwroot; ?>" title="Home"><?php echo $PAGE->heading ?></a>
 			</div>
 		<?php } ?>
-		
+
 		<div id="loggedinas">
-			<?php if ($hasheading) { 
+			<?php if ($hasheading) {
    	        	echo $OUTPUT->lang_menu();
        	    	echo $OUTPUT->login_info();
            		echo $PAGE->headingmenu;
@@ -51,13 +51,13 @@ echo $OUTPUT->doctype() ?>
 		</div>
 
 		<div id="headerbottom">
-		
+
 			<div id="menu">
 				<?php if ($hascustommenu) { ?>
  					<div id="custommenu"><?php echo $custommenu; ?></div>
 				<?php } ?>
 			</div>
-			
+
 		</div>
 
 	</div>
@@ -78,26 +78,26 @@ echo $OUTPUT->doctype() ?>
 		    	<div id="page-content">
     		    	<div id="region-main-box">
         		    	<div id="region-post-box">
-            
+
 	            	    	<div id="region-main-wrap">
     	            	    	<div id="region-main">
         	            	    	<div class="region-content">
-        	            	            	            	    
+
             	            	    	<?php echo core_renderer::MAIN_CONTENT_TOKEN ?>
 	                	        	</div>
     	                		</div>
 	    	            	</div>
-                
+
 		                	<?php if ($hassidepost) { ?>
     		            	<div id="region-post" class="block-region">
         		            	<div class="region-content">
-        		        
+
             		            	<?php echo $OUTPUT->blocks_for_region('side-post') ?>
-            		             
+
                 		    	</div>
 	                		</div>
 	    	            	<?php } ?>
-                
+
     	    	    	</div>
 	    	    	</div>
 	    		</div>
@@ -105,7 +105,7 @@ echo $OUTPUT->doctype() ?>
 
 <!-- END OF CONTENT -->
 
-	
+
 		</div>
 	</div>
 </div>

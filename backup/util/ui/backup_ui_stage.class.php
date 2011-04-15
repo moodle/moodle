@@ -81,7 +81,7 @@ class backup_ui_stage_initial extends backup_ui_stage {
         $form = $this->initialise_stage_form();
 
         if ($form->is_cancelled()) {
-            $this->ui->cancel_backup();
+            $this->ui->cancel_process();
         }
 
         $data = $form->get_data();
@@ -180,7 +180,7 @@ class backup_ui_stage_schema extends backup_ui_stage {
         $form = $this->initialise_stage_form();
         // Check it wasn't cancelled
         if ($form->is_cancelled()) {
-            $this->ui->cancel_backup();
+            $this->ui->cancel_process();
         }
 
         // Check it has been submit
@@ -288,7 +288,7 @@ class backup_ui_stage_confirmation extends backup_ui_stage {
         $form = $this->initialise_stage_form();
         // Check it hasn't been cancelled
         if ($form->is_cancelled()) {
-            $this->ui->cancel_backup();
+            $this->ui->cancel_process();
         }
 
         $data = $form->get_data();

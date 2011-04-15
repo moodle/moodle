@@ -33,7 +33,7 @@ $capabilities = array(
     'enrol/category:synchronised' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'legacy' => array(
+        'archetypes' => array(
         )
     ),
 );

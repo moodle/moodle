@@ -762,6 +762,8 @@ class moodle_page {
                 // fine - no change needed
             } else if ($this->_context->contextlevel == CONTEXT_SYSTEM or $this->_context->contextlevel == CONTEXT_COURSE) {
                 // hmm - not ideal, but it might produce too many warnings due to the design of require_login
+            } else if ($this->_context->contextlevel == CONTEXT_MODULE and $this->_context->id == get_parent_contextid($context)) {
+                // hmm - most probably somebody did require_login() and after that set the block context
             } else {
                 // we do not want devs to do weird switching of context levels on the fly,
                 // because we might have used the context already such as in text filter in page title
@@ -803,8 +805,12 @@ class moodle_page {
             $cm = $modinfo->get_cm($cm->id);
         }
         $this->_cm = $cm;
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $this->set_context($context); // the content of page MUST match the cm, this prints warning if there is any problem
+
+        // unfortunately the context setting is a mess, let's try to work around some common block problems and show some debug messages
+        if (empty($this->_context) or $this->_context->contextlevel != CONTEXT_BLOCK) {
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $this->set_context($context);
+        }
 
         if ($module) {
             $this->set_activity_record($module);

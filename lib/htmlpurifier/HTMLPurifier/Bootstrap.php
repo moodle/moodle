@@ -37,7 +37,12 @@ class HTMLPurifier_Bootstrap
     public static function autoload($class) {
         $file = HTMLPurifier_Bootstrap::getPath($class);
         if (!$file) return false;
-        require HTMLPURIFIER_PREFIX . '/' . $file;
+        // Technically speaking, it should be ok and more efficient to
+        // just do 'require', but Antonio Parraga reports that with
+        // Zend extensions such as Zend debugger and APC, this invariant
+        // may be broken.  Since we have efficient alternatives, pay
+        // the cost here and avoid the bug.
+        require_once HTMLPURIFIER_PREFIX . '/' . $file;
         return true;
     }
 
@@ -65,10 +70,11 @@ class HTMLPurifier_Bootstrap
         if ( ($funcs = spl_autoload_functions()) === false ) {
             spl_autoload_register($autoload);
         } elseif (function_exists('spl_autoload_unregister')) {
+            $buggy  = version_compare(PHP_VERSION, '5.2.11', '<');
             $compat = version_compare(PHP_VERSION, '5.1.2', '<=') &&
                       version_compare(PHP_VERSION, '5.1.0', '>=');
             foreach ($funcs as $func) {
-                if (is_array($func)) {
+                if ($buggy && is_array($func)) {
                     // :TRICKY: There are some compatibility issues and some
                     // places where we need to error out
                     $reflector = new ReflectionMethod($func[0], $func[1]);
