@@ -28,6 +28,8 @@
  * TODO: Finish phpdocs
  */
 abstract class restore_dbops {
+    static $BACKUP_IDS_CACHE = array();
+    static $BACKUP_IDS_EXIST = array();
 
     /**
      * Return one array containing all the tasks that have been included
@@ -149,6 +151,65 @@ abstract class restore_dbops {
         }
         $rs->close();
         return $problems;
+    }
+
+    protected static function get_backup_ids_cached($restoreid, $itemname, $itemid) {
+        global $DB;
+
+        $key = "$itemid $itemname $restoreid";
+
+        if (!isset(self::$BACKUP_IDS_EXIST[$key])) {
+            return false;
+        }
+
+        if (isset(self::$BACKUP_IDS_CACHE[$key])) {
+            return self::$BACKUP_IDS_CACHE[$key];
+        }
+
+        $record = array(
+            'backupid' => $restoreid,
+            'itemname' => $itemname,
+            'itemid'   => $itemid
+        );
+
+        if (count(self::$BACKUP_IDS_CACHE) > 2048) {
+            $BACKUP_IDS_CACHE = array();
+        }
+
+        return self::$BACKUP_IDS_CACHE[$key] = $DB->get_record('backup_ids_temp', $record);
+    }
+
+    protected static function set_backup_ids_cached($restoreid, $itemname, $itemid, $extrarecord) {
+        global $DB;
+
+        $key = "$itemid $itemname $restoreid";
+
+        if (!isset(self::$BACKUP_IDS_EXIST[$key])) {
+            $record = array(
+                'backupid' => $restoreid,
+                'itemname' => $itemname,
+                'itemid'   => $itemid,
+                'newitemid' => 0,
+                'parentitemid' => null,
+                'info' => null
+            );
+            $record = array_merge($record, $extrarecord);
+            $record['id'] = $DB->insert_record_raw('backup_ids_temp', $record);
+            self::$BACKUP_IDS_EXIST[$key] = $record['id'];
+            if (count(self::$BACKUP_IDS_CACHE) < 2048) {
+                // cache new records if we haven't got many yet
+                self::$BACKUP_IDS_CACHE[$key] = (object) $record;
+            }
+        } else {
+            if (!empty($extrarecord)) {
+                $extrarecord['id'] = self::$BACKUP_IDS_EXIST[$key];
+                $DB->update_record('backup_ids_temp', $extrarecord);
+                if (isset(self::$BACKUP_IDS_CACHE[$key])) {
+                    $record = array_merge((array)self::$BACKUP_IDS_CACHE[$key], $extrarecord);
+                    self::$BACKUP_IDS_CACHE[$key] = (object) $record;
+                }
+            }
+        }
     }
 
     /**
@@ -1219,16 +1280,7 @@ abstract class restore_dbops {
         $DB->insert_record('backup_files_temp', $filerec);
     }
 
-
     public static function set_backup_ids_record($restoreid, $itemname, $itemid, $newitemid = 0, $parentitemid = null, $info = null) {
-        global $DB;
-
-        // Build the basic (mandatory) record info
-        $record = array(
-            'backupid' => $restoreid,
-            'itemname' => $itemname,
-            'itemid'   => $itemid
-        );
         // Build conditionally the extra record info
         $extrarecord = array();
         if ($newitemid != 0) {
@@ -1241,34 +1293,16 @@ abstract class restore_dbops {
             $extrarecord['info'] = base64_encode(serialize($info));
         }
 
-        // TODO: Analyze if some static (and limited) cache by the 3 params could save us a bunch of get_record() calls
-        // Note: Sure it will! And also will improve getter
-        if (!$dbrec = $DB->get_record('backup_ids_temp', $record)) { // Need to insert the complete record
-            $DB->insert_record('backup_ids_temp', array_merge($record, $extrarecord));
-
-        } else { // Need to update the extra record info if there is something to
-            if (!empty($extrarecord)) {
-                $extrarecord['id'] = $dbrec->id;
-                $DB->update_record('backup_ids_temp', $extrarecord);
-            }
-        }
+        self::set_backup_ids_cached($restoreid, $itemname, $itemid, $extrarecord);
     }
 
     public static function get_backup_ids_record($restoreid, $itemname, $itemid) {
-        global $DB;
+        $dbrec = self::get_backup_ids_cached($restoreid, $itemname, $itemid);
 
-        // Build the basic (mandatory) record info to look for
-        $record = array(
-            'backupid' => $restoreid,
-            'itemname' => $itemname,
-            'itemid'   => $itemid
-        );
-        // TODO: Analyze if some static (and limited) cache by the 3 params could save us a bunch of get_record() calls
-        if ($dbrec = $DB->get_record('backup_ids_temp', $record)) {
-            if ($dbrec->info != null) {
-                $dbrec->info = unserialize(base64_decode($dbrec->info));
-            }
+        if ($dbrec && isset($dbrec->info) && is_string($dbrec->info)) {
+            $dbrec->info = unserialize(base64_decode($dbrec->info));
         }
+
         return $dbrec;
     }
 
