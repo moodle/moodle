@@ -32,19 +32,25 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 .questionbank .singleselect { margin: 0; }
 
 .que {text-align: left;margin: 0 auto 1.8em auto;border: 1px solid;}
+.dir-rtl .que {text-align: right;}
 .que .info {float: left;margin: 0.5em 0;width: 11.9%;}
+.dir-rtl .que .info {float: right;}
 .que .info h2 {margin: 0 0 0 0.64em;}
 .que .info div {margin-left: 1em;}
 .que .info .questionflag {margin-top: 1em;margin-right: 1em;text-align: center;}
 
 .que .ablock {margin: 0.7em 0 0.3em 0;}
 .que .answer {float: left;width: 83%;margin-bottom: 0.5em;}
+.dir-rtl .que .answer {float: right;}
 .que .content {float: left;margin: 0.5em 0;width: 88%;}
+.dir-rtl .que .content {float: right;}
 .que .control {width: 5%;}
 .que .feedback {clear: both;padding: 0 0 0.3em 0.3em;margin-bottom: 0.5em;border: 1px solid;}
 .que .prompt {float: left;width: 15%;height: 2em;padding-top: 0.3em;}
+.dir-rtl .que .prompt {float: right;}
 .que .qtext {margin-bottom: 1.5em;}
 .que .submit {position: relative;clear: both;float: left;}
+.dir-rtl .que .submit {float: right;}
 
 .que .grading,
 .que .comment,

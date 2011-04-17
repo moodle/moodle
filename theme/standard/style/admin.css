@@ -148,3 +148,15 @@ table.flexible .r1 {background-color: #FAFAFA;}
 #page-admin-webservice-service_users .missingcaps {color: #ff6600;font-size: 90%;}
 #page-admin-setting-webservicetokens .missingcaps {color: #ff6600;font-size: 90%;}
 #page-admin-webservice-service_functions .functiondesc {font-size: 90%;}
+
+/**
+ * Right to left fixes
+ */
+#page-admin-blocks.dir-rtl .generaltable th.c0,
+#page-admin-blocks.dir-rtl .generaltable td.c0,
+#page-admin-filters.dir-rtl .generaltable th.c0,
+#page-admin-filters.dir-rtl .generaltable td.c0,
+#page-admin-modules.dir-rtl .generaltable th.c0,
+#page-admin-modules.dir-rtl .generaltable td.c0,
+#page-admin-auth.dir-rtl .generaltable th.c0,
+#page-admin-auth.dir-rtl .generaltable td.c0 {text-align: right;}
