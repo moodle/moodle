@@ -27,5 +27,6 @@
 .block.hidden .block-hider-show {display:inline;}
 
 /** Overide for RTL layout **/
-.dir-rtl .block .header .block_action {float:left;}
+.dir-rtl .block .header, 
+.dir-rtl .block h2.header {text-align:right;}
 .dir-rtl .block .header .commands { text-align: right;}

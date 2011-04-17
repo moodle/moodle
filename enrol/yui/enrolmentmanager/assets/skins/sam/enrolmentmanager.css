@@ -70,3 +70,7 @@ Structure of the user enroller panel
 .user-enroller-panel .collapsiblearea {border:1px solid #bbb;background-color:#f6f6f6;}
 .user-enroller-panel .collapsiblearea.hidden {display:none;}
 .user-enroller-panel .collapsiblearea .uep-enrolment-option {margin:5px 1em;}
+
+.dir-rtl .user-enroller-panel .uep-header .close {right: auto;left:1em;}
+.dir-rtl .user-enroller-panel .uep-search-results .user { text-align: right;}
+.dir-rtl .user-enroller-panel .uep-content .uep-controls { text-align: right;}
