@@ -391,7 +391,7 @@ class grade_report_grader extends grade_report {
             $this->users = array();
             $this->userselect_params = array();
         } else {
-            list($usql, $params) = $DB->get_in_or_equal(array_keys($this->users), SQL_PARAMS_NAMED, 'usid0');
+            list($usql, $params) = $DB->get_in_or_equal(array_keys($this->users), SQL_PARAMS_NAMED, 'usid');
             $this->userselect = "AND g.userid $usql";
             $this->userselect_params = $params;
         }

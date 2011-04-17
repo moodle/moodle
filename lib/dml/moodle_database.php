@@ -567,11 +567,13 @@ abstract class moodle_database {
      * Constructs IN() or = sql fragment
      * @param mixed $items single or array of values
      * @param int $type bound param type SQL_PARAMS_QM or SQL_PARAMS_NAMED
-     * @param string named param placeholder start
-     * @param bool true means equal, false not equal
+     * @param string $prefix named parameter placeholder prefix (unique counter value is appended to each parameter name)
+     * @param bool $equal true means equal, false not equal
      * @return array - $sql and $params
      */
-    public function get_in_or_equal($items, $type=SQL_PARAMS_QM, $start='param0000', $equal=true) {
+    public function get_in_or_equal($items, $type=SQL_PARAMS_QM, $prefix='param', $equal=true) {
+        static $counter = 1; // guarantees unique parameters in each request
+
         if (is_array($items) and empty($items)) {
             throw new coding_exception('moodle_database::get_in_or_equal() does not accept empty arrays');
         }
@@ -590,19 +592,26 @@ abstract class moodle_database {
             }
 
         } else if ($type == SQL_PARAMS_NAMED) {
+            if (empty($prefix)) {
+                $prefix = 'param';
+            }
+
             if (!is_array($items)){
-                $sql = $equal ? "= :$start" : "<> :$start";
-                $params = array($start=>$items);
+                $param = $prefix.$counter++;
+                $sql = $equal ? "= :$param" : "<> :$param";
+                $params = array($param=>$items);
             } else if (count($items) == 1) {
-                $sql = $equal ? "= :$start" : "<> :$start";
+                $param = $prefix.$counter++;
+                $sql = $equal ? "= :$param" : "<> :$param";
                 $item = reset($items);
-                $params = array($start=>$item);
+                $params = array($param=>$item);
             } else {
                 $params = array();
                 $sql = array();
                 foreach ($items as $item) {
-                    $params[$start] = $item;
-                    $sql[] = ':'.$start++;
+                    $param = $prefix.$counter++;
+                    $params[$param] = $item;
+                    $sql[] = ':'.$param;
                 }
                 if ($equal) {
                     $sql = 'IN ('.implode(',', $sql).')';

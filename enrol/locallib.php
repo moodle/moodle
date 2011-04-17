@@ -141,7 +141,7 @@ class course_enrolment_manager {
     public function get_total_other_users() {
         global $DB;
         if ($this->totalotherusers === null) {
-            list($ctxcondition, $params) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx00');
+            list($ctxcondition, $params) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx');
             $params['courseid'] = $this->course->id;
             $sql = "SELECT COUNT(DISTINCT u.id)
                     FROM {role_assignments} ra
@@ -222,7 +222,7 @@ class course_enrolment_manager {
         }
         $key = md5("$sort-$direction-$page-$perpage");
         if (!array_key_exists($key, $this->otherusers)) {
-            list($ctxcondition, $params) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx00');
+            list($ctxcondition, $params) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx');
             $params['courseid'] = $this->course->id;
             $params['cid'] = $this->course->id;
             $sql = "SELECT ra.id as raid, ra.contextid, ra.component, ctx.contextlevel, ra.roleid, u.*, ue.lastseen

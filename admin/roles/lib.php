@@ -1142,7 +1142,7 @@ class existing_role_holders extends role_assign_user_selector_base {
         global $DB;
 
         list($wherecondition, $params) = $this->search_sql($search, 'u');
-        list($ctxcondition, $ctxparams) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx00');
+        list($ctxcondition, $ctxparams) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx');
         $params = array_merge($params, $ctxparams);
         $params['roleid'] = $this->roleid;
 
