@@ -1008,11 +1008,11 @@ function scorm_get_attempt_status($user, $scorm) {
 
     $result = '<p>'.get_string('noattemptsallowed', 'scorm').': ';
     if ($scorm->maxattempt > 0) {
-        $result .= $scorm->maxattempt . '<BR>';
+        $result .= $scorm->maxattempt . '<br />';
     } else {
-        $result .= get_string('unlimited').'<BR>';
+        $result .= get_string('unlimited').'<br />';
     }
-    $result .= get_string('noattemptsmade', 'scorm').': ' . $attemptcount . '<BR>';
+    $result .= get_string('noattemptsmade', 'scorm').': ' . $attemptcount . '<br />';
 
     if ($scorm->maxattempt == 1) {
         switch ($scorm->grademethod) {
@@ -1050,16 +1050,24 @@ function scorm_get_attempt_status($user, $scorm) {
         $i = 1;
         foreach($attempts as $attempt) {
             $gradereported = scorm_grade_user_attempt($scorm, $user->id, $attempt->attemptnumber);
-            $result .= get_string('gradeforattempt', 'scorm').' ' . $i . ': ' . $gradereported .'%<BR>';
+            if ($scorm->grademethod !== GRADESCOES && !empty($scorm->maxgrade)) {
+                $gradereported = $gradereported/$scorm->maxgrade;
+                $gradereported = number_format($gradereported*100, 0) .'%';
+            }
+            $result .= get_string('gradeforattempt', 'scorm').' ' . $i . ': ' . $gradereported .'<br />';
             $i++;
         }
     }
     $calculatedgrade = scorm_grade_user($scorm, $user->id);
+    if ($scorm->grademethod !== GRADESCOES && !empty($scorm->maxgrade)) {
+        $calculatedgrade = $calculatedgrade/$scorm->maxgrade;
+        $calculatedgrade = number_format($calculatedgrade*100, 0) .'%';
+    }
     $result .= get_string('grademethod', 'scorm'). ': ' . $grademethod;
     if(empty($attempts)) {
-        $result .= '<BR>' . get_string('gradereported','scorm') . ': ' . get_string('none') . '<BR>';
+        $result .= '<br />' . get_string('gradereported','scorm') . ': ' . get_string('none') . '<br />';
     } else {
-        $result .= '<BR>' . get_string('gradereported','scorm') . ': ' . $calculatedgrade . ($scorm->grademethod == GRADESCOES ? '' : '%') .'<BR>';
+        $result .= '<br />' . get_string('gradereported','scorm') . ': ' . $calculatedgrade . '<br />';
     }
     $result .= '</p>';
     if ($attemptcount >= $scorm->maxattempt and $scorm->maxattempt > 0) {
