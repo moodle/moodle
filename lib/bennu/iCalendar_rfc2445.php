@@ -26,6 +26,9 @@ define('RFC2445_WSP',                "\t ");
 define('RFC2445_WEEKDAYS',           'MO,TU,WE,TH,FR,SA,SU');
 define('RFC2445_FOLDED_LINE_LENGTH', 75);
 
+define('RFC2445_PARAMETER_SEPARATOR',	';');
+define('RFC2445_VALUE_SEPARATOR',    	':');
+
 define('RFC2445_REQUIRED', 0x01);
 define('RFC2445_OPTIONAL', 0x02);
 define('RFC2445_ONCE',     0x04);
@@ -740,6 +743,7 @@ function rfc2445_is_valid_value($value, $type) {
                 return false;
             }
 
+            $s = 0;
             if(strlen($value) == 7) {
                 $s = intval(substr($value, 5, 2));
                 $value = substr($value, 0, 5);
