@@ -245,19 +245,19 @@ class quiz_overview_report extends quiz_default_report {
                      break;
                  case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
                      // Show only students with attempts
-                     list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
+                     list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u');
                      $params += $allowed_params;
                     $where = "u.id $allowed_usql AND qa.preview = 0 AND qa.id IS NOT NULL";
                      break;
                  case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
                      // Show only students without attempts
-                     list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
+                     list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u');
                      $params += $allowed_params;
                     $where = "u.id $allowed_usql AND qa.id IS NULL";
                      break;
                  case QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS:
                      // Show all students with or without attempts
-                     list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
+                     list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u');
                      $params += $allowed_params;
                     $where = "u.id $allowed_usql AND (qa.preview = 0 OR qa.preview IS NULL)";
                      break;

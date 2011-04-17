@@ -533,13 +533,13 @@ class block_manager {
         $parentcontextids = get_parent_contexts($context);
         if ($parentcontextids) {
             list($parentcontexttest, $parentcontextparams) =
-                    $DB->get_in_or_equal($parentcontextids, SQL_PARAMS_NAMED, 'parentcontext0000');
+                    $DB->get_in_or_equal($parentcontextids, SQL_PARAMS_NAMED, 'parentcontext');
             $contexttest = "($contexttest OR (bi.showinsubcontexts = 1 AND bi.parentcontextid $parentcontexttest))";
         }
 
         $pagetypepatterns = matching_page_type_patterns($this->page->pagetype);
         list($pagetypepatterntest, $pagetypepatternparams) =
-                $DB->get_in_or_equal($pagetypepatterns, SQL_PARAMS_NAMED, 'pagetypepatterntest0000');
+                $DB->get_in_or_equal($pagetypepatterns, SQL_PARAMS_NAMED, 'pagetypepatterntest');
 
         list($ccselect, $ccjoin) = context_instance_preload_sql('b.id', CONTEXT_BLOCK, 'ctx');
 
