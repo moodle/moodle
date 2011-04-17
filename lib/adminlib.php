@@ -7310,15 +7310,20 @@ class admin_setting_configcolourpicker extends admin_setting {
 
 }
 
+
 /**
  * Multiselect for current modules
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_setting_configmultiselect_modules extends admin_setting_configmultiselect {
-/**
- * Calls parent::__construct - note array $choices is not required
- */
+    /**
+     * Calls parent::__construct - note array $choices is not required
+     *
+     * @param string $name setting name
+     * @param string $visiblename localised setting name
+     * @param string $description setting description
+     */
     public function __construct($name, $visiblename, $description) {
         parent::__construct($name, $visiblename, $description, array(), null);
     }
