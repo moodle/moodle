@@ -5400,7 +5400,7 @@ class admin_setting_manageeditors extends admin_setting {
 
             // settings link
             if (file_exists($CFG->dirroot.'/lib/editor/'.$editor.'/settings.php')) {
-                $eurl = new moodle_url('/admin/settings.php', array('section'=>'editorsettingstinymce'));
+                $eurl = new moodle_url('/admin/settings.php', array('section'=>'editorsettings'.$editor));
                 $settings = "<a href='$eurl'>{$txt->settings}</a>";
             } else {
                 $settings = '';
