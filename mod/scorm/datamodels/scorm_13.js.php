@@ -266,6 +266,7 @@ function SCORMapi1_3() {
     var Initialized = false;
     var Terminated = false;
     var diagnostic = "";
+    var errorCode = "0";
 
     function Initialize (param) {
         errorCode = "0";
@@ -275,7 +276,6 @@ function SCORMapi1_3() {
                 errorCode = "0";
                 <?php
                     if (scorm_debugging($scorm)) {
-//                        echo 'alert("Initialized SCORM 1.3");';
                         echo 'LogAPICall("Initialize", param, "", errorCode);';
                     }
                 ?>
@@ -292,7 +292,6 @@ function SCORMapi1_3() {
         }
         <?php
             if (scorm_debugging($scorm)) {
-//                echo 'alert("Initialize: "+GetErrorString(errorCode));';
                 echo 'LogAPICall("Initialize", param, "", errorCode);';
             }
         ?>
@@ -310,43 +309,53 @@ function SCORMapi1_3() {
         errorCode = "0";
         if (param == "") {
             if ((Initialized) && (!Terminated)) {
+                var AJAXResult = StoreData(cmi,true);
                 <?php
                     if (scorm_debugging($scorm)) {
-//                        echo 'alert("Terminated SCORM 1.3");';
-                        echo 'LogAPICall("Terminate", param, "", 0);';
+                        echo 'LogAPICall("Terminate", "AJAXResult", AJAXResult, 0);';
                     }
                 ?>
-                Initialized = false;
-                Terminated = true;
-                var result = StoreData(cmi,true);
-                if (adl.nav.request != '_none_') {
-                    switch (adl.nav.request) {
-                        case 'continue':
+                result = ('true' == AJAXResult) ? 'true' : 'false';
+                errorCode = ('true' == result)? '0' : '101'; // General exception for any AJAX fault
+                <?php
+                    if (scorm_debugging($scorm)) {
+                        echo 'LogAPICall("Terminate", "result", result, errorCode);';
+                    }
+                ?>
+                if ('true' == result) {
+                    Initialized = false;
+                    Terminated = true;
+                    if (adl.nav.request != '_none_') {
+                        switch (adl.nav.request) {
+                            case 'continue':
+                                setTimeout('scorm_get_next();',500);
+                            break;
+                            case 'previous':
+                                setTimeout('scorm_get_prev();',500);
+                            break;
+                            case 'choice':
+                            break;
+                            case 'exit':
+                            break;
+                            case 'exitAll':
+                            break;
+                            case 'abandon':
+                            break;
+                            case 'abandonAll':
+                            break;
+                        }
+                    } else {
+                        if (<?php echo $scorm->auto ?> == 1) {
                             setTimeout('scorm_get_next();',500);
-                        break;
-                        case 'previous':
-                            setTimeout('scorm_get_prev();',500);
-                        break;
-                        case 'choice':
-                        break;
-                        case 'exit':
-                        break;
-                        case 'exitAll':
-                        break;
-                        case 'abandon':
-                        break;
-                        case 'abandonAll':
-                        break;
+                        }
                     }
+                    // trigger TOC update
+                    var sURL = "<?php echo $CFG->wwwroot; ?>" + "/mod/scorm/prereqs.php?a=<?php echo $scorm->id ?>&scoid=<?php echo $scoid ?>&attempt=<?php echo $attempt ?>&mode=<?php echo $mode ?>&currentorg=<?php echo $currentorg ?>&sesskey=<?php echo sesskey(); ?>";
+                    YAHOO.util.Connect.asyncRequest('GET', sURL, this.connectPrereqCallback, null);
                 } else {
-                    if (<?php echo $scorm->auto ?> == 1) {
-                        setTimeout('scorm_get_next();',500);
-                    }
+                    diagnostic = "Failure calling the Terminate remote callback: the server replied with HTTP Status " + AJAXResult;
                 }
-                // trigger TOC update
-                var sURL = "<?php echo $CFG->wwwroot; ?>" + "/mod/scorm/prereqs.php?a=<?php echo $scorm->id ?>&scoid=<?php echo $scoid ?>&attempt=<?php echo $attempt ?>&mode=<?php echo $mode ?>&currentorg=<?php echo $currentorg ?>&sesskey=<?php echo sesskey(); ?>";
-                YAHOO.util.Connect.asyncRequest('GET', sURL, this.connectPrereqCallback, null);
-                return "true";
+                return result;
             } else {
                 if (Terminated) {
                     errorCode = "113";
@@ -359,7 +368,7 @@ function SCORMapi1_3() {
         }
         <?php
             if (scorm_debugging($scorm)) {
-                echo 'alert("Terminate: "+GetErrorString(errorCode));';
+                echo 'LogAPICall("Terminate", param, "", errorCode);';
             }
         ?>
         return "false";
@@ -391,7 +400,6 @@ function SCORMapi1_3() {
                                 errorCode = "0";
                                 <?php
                                     if (scorm_debugging($scorm)) {
-//                                        echo 'alert("GetValue("+element+") -> "+eval(element));';
                                         echo 'LogAPICall("GetValue", element, eval(element), 0);';
                                     }
                                 ?>
@@ -457,7 +465,6 @@ function SCORMapi1_3() {
         }
         <?php
             if (scorm_debugging($scorm)) {
-//                echo 'alert("GetValue("+element+") -> "+GetErrorString(errorCode));';
                 echo 'LogAPICall("GetValue", element, "", errorCode);';
             }
         ?>
@@ -754,7 +761,6 @@ function SCORMapi1_3() {
                                             errorCode = "0";
                                             <?php
                                                 if (scorm_debugging($scorm)) {
-//                                                    echo 'alert("SetValue("+element+","+value+") -> OK");';
                                                     echo 'LogAPICall("SetValue", element, value, errorCode);';
                                                 }
                                             ?>
@@ -770,7 +776,6 @@ function SCORMapi1_3() {
                                     errorCode = "0";
                                     <?php
                                         if (scorm_debugging($scorm)) {
-//                                           echo 'alert("SetValue("+element+","+value+") -> OK");';
                                             echo 'LogAPICall("SetValue", element, value, errorCode);';
                                         }
                                     ?>
@@ -922,14 +927,23 @@ function SCORMapi1_3() {
         errorCode = "0";
         if (param == "") {
             if ((Initialized) && (!Terminated)) {
-                result = StoreData(cmi,false);
+                var AJAXResult = StoreData(cmi,false);
                 <?php
                     if (scorm_debugging($scorm)) {
-                        echo 'LogAPICall("Commit", param, "", 0);';
-                        //echo 'alert("Data Commited");';
+                        echo 'LogAPICall("Commit", "AJAXResult", AJAXResult, 0);';
                     }
                 ?>
-                return "true";
+                var result = ('true' == AJAXResult) ? 'true' : 'false';
+                errorCode = ('true' == result)? '0' : '101'; // General exception for any AJAX fault
+                <?php
+                    if (scorm_debugging($scorm)) {
+                        echo 'LogAPICall("Commit", "result", result, errorCode);';
+                    }
+                ?>
+                if ('false' == result) {
+                    diagnostic = "Failure calling the Commit remote callback: the server replied with HTTP Status " + AJAXResult;
+                }
+                return result;
             } else {
                 if (Terminated) {
                     errorCode = "143";
@@ -942,15 +956,14 @@ function SCORMapi1_3() {
         }
         <?php
             if (scorm_debugging($scorm)) {
-                echo 'LogAPICall("Commit", param, "", 0);';
-//                echo 'alert("Commit: "+GetErrorString(errorCode));';
+                echo 'LogAPICall("Commit", param, "", errorCode);';
             }
         ?>
         return "false";
     }
 
     function GetLastError () {
-     <?php
+    <?php
         if (scorm_debugging($scorm)) {
             echo 'LogAPICall("GetLastError", "", "", errorCode);';
         }
@@ -1241,18 +1254,8 @@ function SCORMapi1_3() {
         datastring += navrequest;
         datastring += '&attempt=<?php echo $attempt ?>';
         datastring += '&scoid=<?php echo $scoid ?>';
-        <?php
-//            if (scorm_debugging($scorm)) {
-//                echo 'popupwin(datastring);';
-//            }
-        ?>
         var myRequest = NewHttpReq();
-        var result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php echo sesskey() ?>"+datastring);
-        <?php
-//            if (scorm_debugging($scorm)) {
-//                echo 'popupwin(result);';
-//            }
-        ?>
+        var result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&a=<?php p($a) ?>&sesskey=<?php echo sesskey() ?>"+datastring);
         var results = String(result).split('\n');
         if ((results.length > 2) && (navrequest != '')) {
             eval(results[2]);
