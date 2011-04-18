@@ -53,11 +53,11 @@ class enrol_manual_potential_participant extends user_selector_base {
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user} u
-                WHERE $wherecondition
-                      AND u.id NOT IN (SELECT ue.userid
-                                         FROM {user_enrolments} ue
-                                         JOIN {enrol} e ON (e.id = ue.enrolid AND e.id = :enrolid))";
-
+                WHERE $wherecondition AND 
+                      u.id NOT IN (
+                          SELECT ue.userid
+                            FROM {user_enrolments} ue
+                            JOIN {enrol} e ON (e.id = ue.enrolid AND e.id = :enrolid))";
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
         if (!$this->is_validating()) {

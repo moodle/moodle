@@ -75,7 +75,8 @@ if (!$plugin->allow_unenrol($instance) || $instance->enrol != 'manual' || !($plu
     print_error('erroreditenrolment', 'enrol');
 }
 
-if ($confirm && $manager->unenrol_user($ue)) {
+// If the unenrolment has been confirmed and the sesskey is valid unenrol the user.
+if ($confirm && confirm_sesskey() && $manager->unenrol_user($ue)) {
     redirect($returnurl);
 }
 

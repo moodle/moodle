@@ -84,9 +84,16 @@ if (!$plugin->allow_manage($instance) || $instance->enrol != 'manual' || !($plug
 
 $mform = new enrol_manual_user_enrolment_form($url, array('user'=>$user, 'course'=>$course, 'ue'=>$ue));
 $mform->set_data($PAGE->url->params());
-$data = $mform->get_data();
-if ($mform->is_cancelled() || ($data && $manager->edit_enrolment($ue, $data))) {
+
+// Check the form hasn't been cancelled
+if ($mform->is_cancelled()) {
     redirect($returnurl);
+} else if ($mform->is_submitted() && $mform->is_validated() && confirm_sesskey()) {
+    // The forms been submit, validated and the sesskey has been checked ... edit the enrolment.
+    $data = $mform->get_data();
+    if ($manager->edit_enrolment($ue, $data)) {
+        redirect($returnurl);
+    }
 }
 
 $fullname = fullname($user);

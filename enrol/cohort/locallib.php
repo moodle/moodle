@@ -219,13 +219,13 @@ function enrol_cohort_enrol_all_users(course_enrolment_manager $manager, $cohort
         return false;
     }
     $sql = "SELECT com.userid
-            FROM {cohort_members} com
-            LEFT JOIN (
+              FROM {cohort_members} com
+         LEFT JOIN (
                 SELECT *
                 FROM {user_enrolments} ue
                 WHERE ue.enrolid = :enrolid
-            ) ue ON ue.userid=com.userid
-            WHERE com.cohortid = :cohortid AND ue.id IS NULL";
+                 ) ue ON ue.userid=com.userid
+             WHERE com.cohortid = :cohortid AND ue.id IS NULL";
     $params = array('cohortid' => $cohortid, 'enrolid' => $instance->id);
     $rs = $DB->get_recordset_sql($sql, $params);
     $count = 0;

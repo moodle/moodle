@@ -160,18 +160,17 @@ class course_enrolment_manager {
             list($ctxcondition, $params) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx');
             $params['courseid'] = $this->course->id;
             $sql = "SELECT COUNT(DISTINCT u.id)
-                    FROM {role_assignments} ra
-                    JOIN {user} u ON u.id = ra.userid
-                    JOIN {context} ctx ON ra.contextid = ctx.id
-                    LEFT JOIN (
-                        SELECT ue.id, ue.userid
-                        FROM {user_enrolments} ue
+                      FROM {role_assignments} ra
+                      JOIN {user} u ON u.id = ra.userid
+                      JOIN {context} ctx ON ra.contextid = ctx.id
+                 LEFT JOIN (
+                           SELECT ue.id, ue.userid
+                             FROM {user_enrolments} ue
                         LEFT JOIN {enrol} e ON e.id=ue.enrolid
-                        WHERE e.courseid = :courseid
-                    ) ue ON ue.userid=u.id
-                    WHERE
-                        ctx.id $ctxcondition AND
-                        ue.id IS NULL";
+                            WHERE e.courseid = :courseid
+                         ) ue ON ue.userid=u.id
+                     WHERE ctx.id $ctxcondition AND
+                           ue.id IS NULL";
             $this->totalotherusers = (int)$DB->count_records_sql($sql, $params);
         }
         return $this->totalotherusers;
@@ -245,17 +244,16 @@ class course_enrolment_manager {
                     FROM {role_assignments} ra
                     JOIN {user} u ON u.id = ra.userid
                     JOIN {context} ctx ON ra.contextid = ctx.id
-                    LEFT JOIN (
-                        SELECT ue.id, ue.userid, ul.timeaccess AS lastseen
-                        FROM {user_enrolments} ue
-                        LEFT JOIN {enrol} e ON e.id=ue.enrolid
-                        LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = ue.userid)
+               LEFT JOIN (
+                       SELECT ue.id, ue.userid, ul.timeaccess AS lastseen
+                         FROM {user_enrolments} ue
+                    LEFT JOIN {enrol} e ON e.id=ue.enrolid
+                    LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = ue.userid)
                         WHERE e.courseid = :courseid
-                    ) ue ON ue.userid=u.id
-                    WHERE
-                        ctx.id $ctxcondition AND
-                        ue.id IS NULL
-                    ORDER BY u.$sort $direction, ctx.depth DESC";
+                       ) ue ON ue.userid=u.id
+                   WHERE ctx.id $ctxcondition AND
+                         ue.id IS NULL
+                ORDER BY u.$sort $direction, ctx.depth DESC";
             $this->otherusers[$key] = $DB->get_records_sql($sql, $params, $page*$perpage, $perpage);
         }
         return $this->otherusers[$key];
@@ -351,11 +349,11 @@ class course_enrolment_manager {
         $countfields = 'SELECT COUNT(u.id)';
         $sql   = " FROM {user} u
                   WHERE $wherecondition
-                        AND u.id NOT IN (
+                    AND u.id NOT IN (
                            SELECT u.id
                              FROM {role_assignments} r, {user} u
-                            WHERE r.contextid = :contextid
-                                  AND u.id = r.userid)";
+                            WHERE r.contextid = :contextid AND
+                                  u.id = r.userid)";
         $order = ' ORDER BY lastname ASC, firstname ASC';
 
         $params['contextid'] = $this->context->id;
