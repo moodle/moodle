@@ -1979,7 +1979,7 @@ class core_renderer extends renderer_base {
         } else {
             $maxsize = get_string('maxfilesize', 'moodle', display_size($size));
         }
-        if ($options->buttonname){
+        if ($options->buttonname) {
             $buttonname = ' name="' . $options->buttonname . '"';
         } else {
             $buttonname = '';
