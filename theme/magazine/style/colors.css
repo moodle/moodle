@@ -14,7 +14,7 @@ html a:hover,body a:hover {
 
 /** header and dock, default #002f2f and #092323 **/
 
-#header-wrap, #dock {
+#page-header, #dock {
     background: [[setting:maincolor]];
     border-bottom: 1px solid [[setting:maincoloraccent]];
 }

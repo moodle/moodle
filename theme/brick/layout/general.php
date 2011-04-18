@@ -31,7 +31,7 @@ echo $OUTPUT->doctype() ?>
 
 <!-- START OF HEADER -->
 
-<div id="headerwrap">
+<div id="page-header">
 	<div id="header">
 
 		<?php if (!empty($PAGE->theme->settings->logo)) { ?>
