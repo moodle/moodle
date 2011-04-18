@@ -22,6 +22,8 @@ abbr {cursor: help;}
 .centerpara,
 .mdl-align {text-align: center;}
 a.dimmed,
+a.dimmed:link,
+a.dimmed:visited,
 a.dimmed_text,
 .dimmed_text,
 .dimmed_text a,
