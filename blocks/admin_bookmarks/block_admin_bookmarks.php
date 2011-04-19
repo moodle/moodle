@@ -90,7 +90,7 @@ class block_admin_bookmarks extends block_base {
             foreach($bookmarks as $bookmark) {
                 $temp = $adminroot->locate($bookmark);
                 if ($temp instanceof admin_settingpage) {
-                    $contenturl = new moodle_url('settings.php', array('section'=>$bookmark));
+                    $contenturl = new moodle_url('/admin/settings.php', array('section'=>$bookmark));
                     $contentlink = html_writer::link($contenturl, $temp->visiblename);
                     $contents[] = html_writer::tag('li', $contentlink);
                 } else if ($temp instanceof admin_externalpage) {
