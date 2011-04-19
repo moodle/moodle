@@ -565,6 +565,14 @@ text-align:left;
 vertical-align:middle;
 }
 
+.path-grade-report-grader table th.usersuspended a:link {
+    color:#111111;
+}
+
+.path-grade-report-grader table th.usersuspended img.usersuspendedicon {
+vertical-align:middle;
+}
+
 .path-grade-report-grader .yui-overlay {
     background-color: #FFEE69;
     border-color: #D4C237 #A6982B #A6982B;
