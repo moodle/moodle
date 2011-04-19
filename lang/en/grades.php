@@ -634,6 +634,7 @@ $string['usepercent'] = 'Use percent';
 $string['user'] = 'User';
 $string['usergrade'] = 'User {$a->fullname} ({$a->useridnumber}) on item {$a->gradeidnumber}';
 $string['userpreferences'] = 'User preferences';
+$string['userenrolmentsuspended'] = 'User enrolment suspended';
 $string['useweighted'] = 'Use weighted';
 $string['verbosescales'] = 'Verbose scales';
 $string['viewbygroup'] = 'Group';
