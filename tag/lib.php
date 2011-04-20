@@ -536,14 +536,14 @@ function tag_delete($tagids) {
 
     $success = true;
     $context = get_context_instance(CONTEXT_SYSTEM);
-    foreach( $tagids as $tagid ) {
+    foreach ($tagids as $tagid) {
         if (is_null($tagid)) { // can happen if tag doesn't exists
             continue;
         }
         // only delete the main entry if there were no problems deleting all the
         // instances - that (and the fact we won't often delete lots of tags)
         // is the reason for not using $DB->delete_records_select()
-        if ($DB->delete_records('tag_instance', array('tagid'=>$tagid)) ) {
+        if ($DB->delete_records('tag_instance', array('tagid'=>$tagid)) && $DB->delete_records('tag_correlation', array('tagid' => $tagid))) {
             $success &= (bool) $DB->delete_records('tag', array('id'=>$tagid));
             // Delete all files associated with this tag
             $fs = get_file_storage();
@@ -997,9 +997,11 @@ function tag_get_correlated($tag_id, $limitnum=null) {
     }
 
     // this is (and has to) return the same fields as the query in tag_get_tags
-    if ( !$result = $DB->get_records_sql("SELECT DISTINCT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
-                                            FROM {tag} tg INNER JOIN {tag_instance} ti ON tg.id = ti.tagid
-                                           WHERE tg.id IN ({$tag_correlation->correlatedtags})") ) {
+    $sql = "SELECT DISTINCT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag
+              FROM {tag} tg
+             WHERE tg.id IN ({$tag_correlation->correlatedtags})";
+    $result = $DB->get_records_sql($sql);
+    if (!$result) {
         return array();
     }
 
