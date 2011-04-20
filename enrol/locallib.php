@@ -25,6 +25,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * This class provides a targeted tied together means of interfacing the enrolment
  * tasks together with a course.
@@ -913,6 +915,76 @@ class course_enrolment_manager {
         }
         return false;
     }
+
+    /**
+     * Returns the enrolment plugin that the course manager was being filtered to.
+     *
+     * If no filter was being applied then this function returns false.
+     *
+     * @return enrol_plugin
+     */
+    public function get_filtered_enrolment_plugin() {
+        $instances = $this->get_enrolment_instances();
+        $plugins = $this->get_enrolment_plugins();
+
+        if (empty($this->instancefilter) || !array_key_exists($this->instancefilter, $instances)) {
+            return false;
+        }
+
+        $instance = $instances[$this->instancefilter];
+        return $plugins[$instance->enrol];
+    }
+
+    /**
+     * Returns and array of users + enrolment details.
+     *
+     * Given an array of user id's this function returns and array of user enrolments for those users
+     * as well as enough user information to display the users name and picture for each enrolment.
+     *
+     * @global moodle_database $DB
+     * @param array $userids
+     * @return array
+     */
+    public function get_users_enrolments(array $userids) {
+        global $DB;
+
+        $instances = $this->get_enrolment_instances();
+        $plugins = $this->get_enrolment_plugins();
+
+        if  (!empty($this->instancefilter)) {
+            $instancesql = ' = :instanceid';
+            $instanceparams = array('instanceid' => $this->instancefilter);
+        } else {
+            list($instancesql, $instanceparams) = $DB->get_in_or_equal(array_keys($instances), SQL_PARAMS_NAMED, 'instanceid0000');
+        }
+
+        $userfields = user_picture::fields('u');
+        list($idsql, $idparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'userid0000');
+
+        $sql = "SELECT ue.id AS ueid, ue.status, ue.enrolid, ue.userid, ue.timestart, ue.timeend, ue.modifierid, ue.timecreated, ue.timemodified, $userfields
+                  FROM {user_enrolments} ue
+             LEFT JOIN {user} u ON u.id = ue.userid
+                 WHERE ue.enrolid $instancesql AND
+                       u.id $idsql
+              ORDER BY u.firstname ASC, u.lastname ASC";
+
+        $rs = $DB->get_recordset_sql($sql, $idparams + $instanceparams);
+        $users = array();
+        foreach ($rs as $ue) {
+            $user = user_picture::unalias($ue);
+            $ue->id = $ue->ueid;
+            unset($ue->ueid);
+            if (!array_key_exists($user->id, $users)) {
+                $user->enrolments = array();
+                $users[$user->id] = $user;
+            }
+            $ue->enrolmentinstance = $instances[$ue->enrolid];
+            $ue->enrolmentplugin = $plugins[$ue->enrolmentinstance->enrol];
+            $users[$user->id]->enrolments[$ue->id] = $ue;
+        }
+        $rs->close();
+        return $users;
+    }
 }
 
 /**
@@ -1123,4 +1195,72 @@ class enrol_ajax_exception extends moodle_exception {
     public function __construct($errorcode, $link = '', $a = NULL, $debuginfo = null) {
         parent::__construct($errorcode, 'enrol', $link, $a, $debuginfo);
     }
+}
+
+/**
+ * This class is used to manage a bulk operations for enrolment plugins.
+ *
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class enrol_bulk_enrolment_operation {
+
+    /**
+     * The course enrolment manager
+     * @var course_enrolment_manager
+     */
+    protected $manager;
+
+    /**
+     * The enrolment plugin to which this operation belongs
+     * @var enrol_plugin
+     */
+    protected $plugin;
+
+    /**
+     * Contructor
+     * @param course_enrolment_manager $manager
+     * @param stdClass $plugin
+     */
+    public function __construct(course_enrolment_manager $manager, enrol_plugin $plugin = null) {
+        $this->manager = $manager;
+        $this->plugin = $plugin;
+    }
+
+    /**
+     * Returns a moodleform used for this operation, or false if no form is required and the action
+     * should be immediatly processed.
+     *
+     * @param moodle_url|string $defaultaction
+     * @param mixed $defaultcustomdata
+     * @return enrol_bulk_enrolment_change_form|moodleform|false
+     */
+    public function get_form($defaultaction = null, $defaultcustomdata = null) {
+        return false;
+    }
+
+    /**
+     * Returns the title to use for this bulk operation
+     *
+     * @return string
+     */
+    abstract public function get_title();
+
+    /**
+     * Returns the identifier for this bulk operation.
+     * This should be the same identifier used by the plugins function when returning
+     * all of its bulk operations.
+     *
+     * @return string
+     */
+    abstract public function get_identifier();
+
+    /**
+     * Processes the bulk operation on the given users
+     *
+     * @param course_enrolment_manager $manager
+     * @param array $users
+     * @param stdClass $properties
+     */
+    abstract public function process(course_enrolment_manager $manager, array $users, stdClass $properties);
 }
