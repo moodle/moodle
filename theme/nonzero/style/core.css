@@ -153,6 +153,9 @@ a:active {
 
 .course-content .current {
 	background: #1f5480;
+}
+
+.course-content .current .left.side {
 	color: #fff;
 }
 
