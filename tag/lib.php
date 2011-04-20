@@ -831,8 +831,7 @@ function tag_compute_correlations($mincorrelation = 2) {
     //   correlationid : This is the id of the row in the tag_correlation table that
     //                   relates to the tagid field and will be NULL if there are no
     //                   existing correlations
-    $sql = 'SELECT pairs.tagid, pairs.correlation, pairs.ocurrences,
-                   co.id AS correlationid, co.correlatedtags
+    $sql = 'SELECT pairs.tagid, pairs.correlation, pairs.ocurrences, co.id AS correlationid
               FROM (
                        SELECT ta.tagid, tb.tagid AS correlation, COUNT(*) AS ocurrences
                          FROM {tag_instance} ta
@@ -850,12 +849,19 @@ function tag_compute_correlations($mincorrelation = 2) {
     $tagcorrelation->tagid = null;
     $tagcorrelation->correlatedtags = array();
 
+    // We store each correction id in this array so we can remove any correlations
+    // that no longer exist.
+    $correlations = array();
+
     // Iterate each row of the result set and build them into tag correlations.
     foreach ($rs as $row) {
         if ($row->tagid != $tagcorrelation->tagid) {
             // The tag id has changed so its now time to process the tag
             // correlation information we have.
-            tag_process_computed_correlation($tagcorrelation);
+            $tagcorrelationid = tag_process_computed_correlation($tagcorrelation);
+            if ($tagcorrelationid) {
+                $correlations[] = $tagcorrelationid;
+            }
             // Now we reset the tag correlation object so we can reuse it and set it
             // up for the current record.
             $tagcorrelation = new stdClass;
@@ -866,10 +872,18 @@ function tag_compute_correlations($mincorrelation = 2) {
         $tagcorrelation->correlatedtags[] = $row->correlation;
     }
     // Update the current correlation after the last record.
-    tag_process_computed_correlation($tagcorrelation);
+    $tagcorrelationid = tag_process_computed_correlation($tagcorrelation);
+    if ($tagcorrelationid) {
+        $correlations[] = $tagcorrelationid;
+    }
+
 
     // Close the recordset
     $rs->close();
+
+    // Remove any correlations that weren't just identified
+    list($sql, $params) = $DB->get_in_or_equal($correlations, SQL_PARAMS_NAMED, 'param0000', false);
+    $DB->delete_records_select('tag_correlation', 'id '.$sql, $params);
 }
 
 /**
@@ -880,7 +894,7 @@ function tag_compute_correlations($mincorrelation = 2) {
  * property that is an array.
  *
  * @param stdClass $tagcorrelation
- * @return bool True if the function completed, false if something was wrong.
+ * @return int The id of the tag correlation that was just processed.
  */
 function tag_process_computed_correlation(stdClass $tagcorrelation) {
     global $DB;
@@ -899,9 +913,9 @@ function tag_process_computed_correlation(stdClass $tagcorrelation) {
         $DB->update_record('tag_correlation', $tagcorrelation);
     } else {
         // This is a new correlation to insert
-        $DB->insert_record('tag_correlation', $tagcorrelation);
+        $tagcorrelation->id = $DB->insert_record('tag_correlation', $tagcorrelation);
     }
-    return true;
+    return $tagcorrelation->id;
 }
 
 /**
