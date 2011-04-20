@@ -495,14 +495,14 @@ function tag_delete($tagids) {
     }
 
     $success = true;
-    foreach( $tagids as $tagid ) {
+    foreach ($tagids as $tagid) {
         if (is_null($tagid)) { // can happen if tag doesn't exists
             continue;
         }
         // only delete the main entry if there were no problems deleting all the
         // instances - that (and the fact we won't often delete lots of tags)
         // is the reason for not using delete_records_select()
-        if ( delete_records('tag_instance', 'tagid', $tagid) ) {
+        if (delete_records('tag_instance', 'tagid', $tagid) && delete_records('tag_correlation', 'tagid', $tagid)) {
             $success &= (bool) delete_records('tag', 'id', $tagid);
         }
     }
@@ -939,9 +939,12 @@ function tag_get_correlated($tag_id, $limitnum=null) {
     }
 
     // this is (and has to) return the same fields as the query in tag_get_tags
-    if ( !$result = get_records_sql("SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
-        "FROM {$CFG->prefix}tag tg INNER JOIN {$CFG->prefix}tag_instance ti ON tg.id = ti.tagid ".
-        "WHERE tg.id IN ({$tag_correlation->correlatedtags})") ) {
+    $sql = "SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
+              FROM {$CFG->prefix}tag tg
+        INNER JOIN {$CFG->prefix}tag_instance ti ON tg.id = ti.tagid
+             WHERE tg.id IN ({$tag_correlation->correlatedtags})";
+    $result = get_records_sql($sql);
+    if (!$result) {
         return array();
     }
 
