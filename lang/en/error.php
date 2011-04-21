@@ -514,5 +514,5 @@ $string['wscouldnotcreateecoursenopermission'] = 'WS - Could not create course -
 $string['wwwrootmismatch'] = 'Incorrect access detected, this server may be accessed only through "{$a}" address, sorry.<br />Please notify server administrator.';
 $string['wwwrootslash'] = 'Detected incorrect $CFG->wwwroot in config.php, it must not contain trailing slash.<br />Please notify server administrator.';
 $string['xmldberror'] = 'XMLDB error!';
-$string['alreadyloggedin'] = 'You are already logged in as {$a}, you need to log out before logging is as different user.';
+$string['alreadyloggedin'] = 'You are already logged in as {$a}, you need to log out before logging in as different user.';
 $string['youcannotdeletecategory'] = 'You cannot delete category \'{$a}\' because you can neither delete the contents, nor move them elsewhere.';
