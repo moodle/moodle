@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/report/customlang/db" VERSION="20101115" COMMENT="XMLDB file for Moodle admin/report/customlang"
+<XMLDB PATH="admin/report/customlang/db" VERSION="20110419" COMMENT="XMLDB file for Moodle admin/report/customlang"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -30,7 +30,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The normalized name of the plugin" PREVIOUS="id" NEXT="version"/>
-        <FIELD NAME="version" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The checked out version of the plugin, null of the version is unknown" PREVIOUS="name"/>
+        <FIELD NAME="version" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="The checked out version of the plugin, null if the version is unknown" PREVIOUS="name"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
