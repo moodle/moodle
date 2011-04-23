@@ -31,7 +31,7 @@ function xmldb_book_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2004081100) {
-        new upgrade_exception('mod_book', $oldversion, 'Can not upgrade such an old book module, sorry, you should have upgraded it long time ago in 1.9 already.');
+        throw new upgrade_exception('mod_book', $oldversion, 'Can not upgrade such an old book module, sorry, you should have upgraded it long time ago in 1.9 already.');
     }
 
     if ($oldversion < 2007052001) {
