@@ -1125,7 +1125,7 @@ class question_type {
         }
     }
 
-    protected function import_file($context, $component, $filearea, $itemid, $file) {
+    public function import_file($context, $component, $filearea, $itemid, $file) {
         $fs = get_file_storage();
         $record = new stdClass();
         if (is_object($context)) {
