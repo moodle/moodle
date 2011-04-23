@@ -796,14 +796,11 @@ ORDER BY
     public function sum_usage_marks_subquery($qubaid) {
         return "SELECT SUM(qa.maxmark * qas.fraction)
             FROM {question_attempts} qa
-            JOIN (
-                SELECT summarks_qa.id AS questionattemptid, MAX(summarks_qas.id) AS latestid
-                FROM {question_attempt_steps} summarks_qas
-                JOIN {question_attempts} summarks_qa ON summarks_qa.id = summarks_qas.questionattemptid
-                WHERE summarks_qa.questionusageid = $qubaid
-                GROUP BY summarks_qa.id
-            ) lateststepid ON lateststepid.questionattemptid = qa.id
-            JOIN {question_attempt_steps} qas ON qas.id = lateststepid.latestid
+            JOIN {question_attempt_steps} qas ON qas.id = (
+                SELECT MAX(summarks_qas.id)
+                  FROM {question_attempt_steps} summarks_qas
+                 WHERE summarks_qas.questionattemptid = qa.id
+            )
             WHERE qa.questionusageid = $qubaid
             HAVING COUNT(CASE WHEN qas.state = 'needsgrading' AND qa.maxmark > 0 THEN 1 ELSE NULL END) = 0";
     }
