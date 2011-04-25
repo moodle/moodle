@@ -58,6 +58,7 @@ $string['enroltimeend'] = 'Enrolment ends';
 $string['enroltimestart'] = 'Enrolment starts';
 $string['errajaxfailedenrol'] = 'Failed to enrol user';
 $string['errajaxsearch'] = 'Error when searching users';
+$string['erroreditenrolment'] = 'An error occurred while trying to edit a users enrolment';
 $string['errorenrolcohort'] = 'Error creating cohort sync enrolment instance in this course.';
 $string['errorenrolcohortusers'] = 'Error enrolling cohort members in this course.';
 $string['finishenrollingusers'] = 'Finish enrolling users';

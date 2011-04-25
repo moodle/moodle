@@ -1517,5 +1517,29 @@ abstract class enrol_plugin {
         }
         $rs->close();
     }
-}
 
+    /**
+     * Returns an enrol_user_button that takes the user to a page where they are able to
+     * enrol users into the managers course through this plugin.
+     *
+     * Optional: If the plugin supports manual enrolments it can choose to override this
+     * otherwise it shouldn't
+     *
+     * @param course_enrolment_manager $manager
+     * @return enrol_user_button|false
+     */
+    public function get_manual_enrol_button(course_enrolment_manager $manager) {
+        return false;
+    }
+
+    /**
+     * Gets an array of the user enrolment actions
+     *
+     * @param course_enrolment_manager $manager
+     * @param stdClass $ue
+     * @return array An array of user_enrolment_actions
+     */
+    public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
+        return array();
+    }
+}
