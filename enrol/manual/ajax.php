@@ -129,4 +129,3 @@ switch ($action) {
 }
 
 echo json_encode($outcome);
-die();

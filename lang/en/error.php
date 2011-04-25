@@ -258,6 +258,7 @@ $string['invalidadminsettingname'] = 'Invalid admin setting ({$a})';
 $string['invalidargorconf'] = 'No valid arguments supplied or incorrect server configuration';
 $string['invalidarguments'] = 'No valid arguments supplied';
 $string['invalidblockinstance'] = 'Invalid block instance for: {$a}';
+$string['invalidbulkenrolop'] = 'Invalid bulk enrolment operation requested.';
 $string['invalidcategory'] = 'Incorrect category!';
 $string['invalidcategoryid'] = 'Incorrect category id!';
 $string['invalidcomment'] = 'Comment is incorrect';

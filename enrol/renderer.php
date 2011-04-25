@@ -58,7 +58,34 @@ class core_enrol_renderer extends plugin_renderer_base {
         }
         $content .= $this->output->render($table->get_enrolment_type_filter());
         $content .= $this->output->render($table->get_paging_bar());
-        $content .= html_writer::table($table);
+
+        // Check if the table has any bulk operations. If it does we want to wrap the table in a
+        // form so that we can capture and perform any required bulk operations.
+        if ($table->has_bulk_user_enrolment_operations()) {
+            $content .= html_writer::start_tag('form', array('action' => new moodle_url('/enrol/bulkchange.php'), 'method' => 'post'));
+            foreach ($table->get_combined_url_params() as $key => $value) {
+                if ($key == 'action') {
+                    continue;
+                }
+                $content .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $key, 'value' => $value));
+            }
+            $content .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'action', 'value' => 'bulkchange'));
+            $content .= html_writer::table($table);
+            $content .= html_writer::start_tag('div', array('class' => 'singleselect bulkuserop'));
+            $content .= html_writer::start_tag('select', array('name' => 'bulkuserop'));
+            $content .= html_writer::tag('option', get_string('withselectedusers', 'enrol'), array('value' => ''));
+            $options = array('' => get_string('withselectedusers', 'enrol'));
+            foreach ($table->get_bulk_user_enrolment_operations() as $operation) {
+                $content .= html_writer::tag('option', $operation->get_title(), array('value' => $operation->get_identifier()));
+            }
+            $content .= html_writer::end_tag('select');
+            $content .= html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('go')));
+            $content .= html_writer::end_tag('div');
+
+            $content .= html_writer::end_tag('form');
+        } else {
+            $content .= html_writer::table($table);
+        }
         $content .= $this->output->render($table->get_paging_bar());
         if (!empty($buttonhtml)) {
             $content .= $buttonhtml;
@@ -380,6 +407,12 @@ class course_enrolment_table extends html_table implements renderable {
     protected $fields = array();
 
     /**
+     * An array of bulk user enrolment operations
+     * @var array
+     */
+    protected $bulkoperations = array();
+
+    /**
      * An array of sortable fields
      * @static
      * @var array
@@ -412,6 +445,12 @@ class course_enrolment_table extends html_table implements renderable {
         }
 
         $this->id = html_writer::random_id();
+
+        // Collect the bulk operations for the currently filtered plugin if there is one.
+        $plugin = $manager->get_filtered_enrolment_plugin();
+        if ($plugin) {
+            $this->bulkoperations = $plugin->get_bulk_operations($manager);
+        }
     }
 
     /**
@@ -452,6 +491,13 @@ class course_enrolment_table extends html_table implements renderable {
         $this->colclasses = array();
         $this->align = array();
         $url = $this->manager->get_moodlepage()->url;
+
+        if (!empty($this->bulkoperations)) {
+            // If there are bulk operations add a column for checkboxes.
+            $this->head[] = '';
+            $this->colclasses[] = 'field col_bulkops';
+        }
+
         foreach ($fields as $name => $label) {
             $newlabel = '';
             if (is_array($label)) {
@@ -506,12 +552,18 @@ class course_enrolment_table extends html_table implements renderable {
      */
     public function set_users(array $users) {
         $this->users = $users;
+        $hasbulkops = !empty($this->bulkoperations);
         foreach ($users as $userid=>$user) {
             $user = (array)$user;
             $row = new html_table_row();
             $row->attributes = array('class' => 'userinforow');
             $row->id = 'user_'.$userid;
             $row->cells = array();
+            if ($hasbulkops) {
+                // Add a checkbox into the first column.
+                $input = html_writer::empty_tag('input', array('type' => 'checkbox', 'name' => 'bulkuser[]', 'value' => $userid));
+                $row->cells[] = new html_table_cell($input);
+            }
             foreach ($this->fields as $field => $label) {
                 if (is_array($label)) {
                     $bits = array();
@@ -598,6 +650,43 @@ class course_enrolment_table extends html_table implements renderable {
             self::SORTVAR => $this->sort,
             self::SORTDIRECTIONVAR => $this->sortdirection
         );
+    }
+
+    /**
+     * Returns an array of URL params for both the table and the manager.
+     *
+     * @return array
+     */
+    public function get_combined_url_params() {
+        return $this->get_url_params() + $this->manager->get_url_params();
+    }
+
+    /**
+     * Sets the bulk operations for this table.
+     *
+     * @param array $bulkoperations
+     */
+    public function set_bulk_user_enrolment_operations(array $bulkoperations) {
+        $this->bulkoperations = $bulkoperations;
+    }
+
+    /**
+     * Returns an array of bulk operations.
+     *
+     * @return array
+     */
+    public function get_bulk_user_enrolment_operations() {
+        return $this->bulkoperations;
+    }
+
+    /**
+     * Returns true fi the table is aware of any bulk operations that can be performed on users
+     * selected from the currently filtered enrolment plugins.
+     *
+     * @return bool
+     */
+    public function has_bulk_user_enrolment_operations() {
+        return !empty($this->bulkoperations);
     }
 }
 
