@@ -1035,6 +1035,9 @@ class theme_config {
         if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
             $dir = "$CFG->dirroot/theme/$themename";
 
+        } else if (!empty($CFG->themedir) and file_exists("$CFG->themedir/$themename/config.php")) {
+            $dir = "$CFG->themedir/$themename";
+
         } else {
             return null;
         }
