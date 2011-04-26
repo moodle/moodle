@@ -34,6 +34,7 @@ require_once("$CFG->libdir/externallib.php");
 
 class moodle_enrol_external extends external_api {
 
+
     /**
      * Returns description of method parameters
      * @return external_function_parameters
@@ -128,6 +129,74 @@ class moodle_enrol_external extends external_api {
                 array(
                     'courseid' => new external_value(PARAM_INT, 'id of course'),
                     'userid' => new external_value(PARAM_INT, 'id of user'),
+                )
+            )
+        );
+    }
+
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+    public static function get_users_courses_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'user id'),
+            )
+        );
+    }
+
+    /**
+     * Get list of courses user is enrolled in (only active enrolments are returned).
+     *
+     * Please note the current user must be able to access the course, otherwise the course is not included.
+     *
+     * @param int $userid
+     * @return array of courses
+     */
+    public static function get_users_courses($userid) {
+        global $USER;
+
+        // Do basic automatic PARAM checks on incoming data, using params description
+        // If any problems are found then exceptions are thrown with helpful error messages
+        $params = self::validate_parameters(self::get_users_courses_parameters(), array('userid'=>$userid));
+
+        $courses = enrol_get_users_courses($params['userid'], true, 'id, shortname, fullname, idnumber, visible');
+        $result = array();
+
+        foreach ($courses as $course) {
+            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+            try {
+                self::validate_context($context);
+            } catch (Exception $e) {
+                // current user can not access this course, sorry we can not disclose who is enrolled in this course!
+                continue;
+            }
+            if ($userid != $USER->id and !has_capability('moodle/course:viewparticipants', $context)) {
+                // we need capability to view participants
+                continue;
+            }
+
+            $result[] = array('id'=>$course->id, 'shortname'=>$course->shortname, 'fullname'=>$course->fullname, 'idnumber'=>$course->idnumber,'visible'=>$course->visible);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     * @return external_description
+     */
+    public static function get_users_courses_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id'        => new external_value(PARAM_INT, 'id of course'),
+                    'shortname' => new external_value(PARAM_RAW, 'short name of course'),
+                    'fullname'  => new external_value(PARAM_RAW, 'long name of course'),
+                    'idnumber'  => new external_value(PARAM_RAW, 'id number of course'),
+                    'visible'   => new external_value(PARAM_INT, '1 means visible, 0 means hidden course'),
                 )
             )
         );
