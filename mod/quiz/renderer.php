@@ -32,7 +32,7 @@
  */
 class mod_quiz_renderer extends plugin_renderer_base {
     public function review_page(quiz_attempt $attemptobj, $slots, $page, $showall,
-            $lastpage, mod_quiz_display_options $displayoptions, $summarydata) {
+        $lastpage, mod_quiz_display_options $displayoptions, $summarydata) {
 
         $output = '';
         $output .= $this->header();
@@ -236,6 +236,99 @@ class mod_quiz_renderer extends plugin_renderer_base {
             }
         }
         return implode(', ', $attemptlinks);
+    }
+    
+    /*
+     * Attempt Page
+     */
+    public function attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id){
+        $output = '';
+        $output .= $this->attempt_header($attemptobj, $page, $accessmanager);
+        $output .= $this->quiz_notices($attemptobj, $accessmanager, $messages);
+        $output .= $this->attempt_form($attemptobj, $page, $slots, $id);
+        $output .= $this->attempt_footer($attemptobj, $accessmanager);
+        return $output;
+    }
+    
+    protected function attempt_header($attemptobj, $page, $accessmanager){
+        global $PAGE, $OUTPUT;
+         
+        $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
+        $headtags = $attemptobj->get_html_head_contributions($page);
+        $PAGE->set_heading($attemptobj->get_course()->fullname);
+        if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
+            $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .
+                    format_string($attemptobj->get_quiz_name()));
+        
+        } else if ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
+            $PAGE->set_title($attemptobj->get_course()->shortname . ': ' .
+                    format_string($attemptobj->get_quiz_name()));
+            $PAGE->set_cacheable(false);
+            echo $OUTPUT->header();
+        
+        } else {
+            $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
+            echo $OUTPUT->header();
+        }
+    }
+    
+        
+    private function quiz_notices($attemptobj, $accessmanager, $messages){
+        if ($attemptobj->is_preview_user() && $messages) {
+            // Inform teachers of any restrictions that would apply to students at this point.
+            echo $OUTPUT->box_start('quizaccessnotices');
+            echo $OUTPUT->heading(get_string('accessnoticesheader', 'quiz'), 3);
+            $accessmanager->print_messages($messages);
+            echo $OUTPUT->box_end();
+        }
+    }
+    
+    private function attempt_form($attemptobj, $page, $slots, $id){
+        // Start the form
+        //TODO: Convert all html to html:writer
+        echo '<form id="responseform" method="post" action="', s($attemptobj->processattempt_url()),
+                '" enctype="multipart/form-data" accept-charset="utf-8">', "\n";
+        echo '<div>';
+        
+        // Print all the questions
+        foreach ($slots as $slot) {
+            echo $attemptobj->render_question($slot, false, $attemptobj->attempt_url($id, $page));
+        }
+        
+        // Print a link to the next page.
+        echo '<div class="submitbtns">';
+        if ($attemptobj->is_last_page($page)) {
+            $nextpage = -1;
+        } else {
+            $nextpage = $page + 1;
+        }
+        echo '<input type="submit" name="next" value="' . get_string('next') . '" />';
+        echo "</div>";
+        
+        // Some hidden fields to trach what is going on.
+        echo '<input type="hidden" name="attempt" value="' . $attemptobj->get_attemptid() . '" />';
+        echo '<input type="hidden" name="thispage" id="followingpage" value="' . $page . '" />';
+        echo '<input type="hidden" name="nextpage" value="' . $nextpage . '" />';
+        echo '<input type="hidden" name="timeup" id="timeup" value="0" />';
+        echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
+        echo '<input type="hidden" name="scrollpos" id="scrollpos" value="" />';
+        
+        // Add a hidden field with questionids. Do this at the end of the form, so
+        // if you navigate before the form has finished loading, it does not wipe all
+        // the student's answers.
+        echo '<input type="hidden" name="slots" value="' .
+                implode(',', $slots) . "\" />\n";
+        
+        // Finish the form
+        echo '</div>';
+        echo "</form>\n";
+    }
+    
+    protected function attempt_footer($attemptobj, $accessmanager){
+        global $OUTPUT;
+        
+        $accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());
+        echo $OUTPUT->footer();
     }
 }
 
