@@ -97,10 +97,11 @@ if ($lastattempt && !$lastattempt->preview && !$quizobj->is_preview_user()) {
 
 // Check access.
 $messages = $accessmanager->prevent_access() +
-        $accessmanager->prevent_new_attempt($attemptnumber - 1, $lastattempt);
+$accessmanager->prevent_new_attempt($attemptnumber - 1, $lastattempt);
+$output = $PAGE->get_renderer('mod_quiz');
 if (!$quizobj->is_preview_user() && $messages) {
     print_error('attempterror', 'quiz', $quizobj->view_url(),
-            $accessmanager->print_messages($messages, true));
+            $output->print_messages($messages));
 }
 $accessmanager->do_password_check($quizobj->is_preview_user());
 

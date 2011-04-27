@@ -27,8 +27,6 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-$output = $PAGE->get_renderer('mod_quiz');
-
 // Look for old-style URLs, such as may be in the logs, and redirect them to startattemtp.php
 if ($id = optional_param('id', 0, PARAM_INTEGER)) {
     redirect($CFG->wwwroot . '/mod/quiz/startattempt.php?cmid=' . $id . '&sesskey=' . sesskey());
@@ -78,8 +76,10 @@ if ($attemptobj->is_finished()) {
 // Check the access rules.
 $accessmanager = $attemptobj->get_access_manager(time());
 $messages = $accessmanager->prevent_access();
+$output = $PAGE->get_renderer('mod_quiz');
 if (!$attemptobj->is_preview_user() && $messages) {
-    $output->print_message($attemptobj, $accessmanager, $messages);
+print_error('attempterror', 'quiz', $attemptobj->view_url(),
+    $output->print_messages($messages));
 }
 $accessmanager->do_password_check($attemptobj->is_preview_user());
 

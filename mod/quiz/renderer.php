@@ -62,8 +62,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     public function review_summary_table($summarydata, $page) {
-                                        $summarydata = $this->filter_summary_table($summarydata,
-                                        $page);
+                                         $summarydata = $this->filter_summary_table($summarydata,
+                                         $page);
         if (empty($summarydata)) {
             return '';
         }
@@ -97,7 +97,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     public function questions(quiz_attempt $attemptobj, $reviewing, $slots, $page, $showall,
-                             mod_quiz_display_options $displayoptions) {
+                              mod_quiz_display_options $displayoptions) {
         $output = '';
         foreach ($slots as $slot) {
             $output .= $attemptobj->render_question($slot, $reviewing,
@@ -116,15 +116,18 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         // TODO fix this to use html_writer.
         $output = '';
-        $output .= '<form action="' . $attemptobj->review_url(0, $page, $showall) .
-                '" method="post" class="questionflagsaveform"><div>';
-        $output .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
-        $output .= $content;
-        $output .= '<div class="submitbtns">' . "\n" .
-                '<input type="submit" class="questionflagsavebutton" name="savingflags" value="' .
-                get_string('saveflags', 'question') . '" />' .
-                "</div>\n" .
-                "\n</div></form>\n";
+        $output .= html_writer::start_tag('form', array('action' => $attemptobj->review_url(0,
+                $page, $showall), 'method' => 'post', 'class' => 'questionflagsaveform'));
+        $output .= html_writer::start_tag('div');
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey',
+                'value' => sesskey()));
+        $output .= html_writer::start_tag('div', array('class' => 'submitbtns'));
+        $output .= html_writer::empty_tag('input', array('type' => 'submit',
+                'class' => 'questionflagsavebutton', 'name' => 'savingflags',
+                'value' => get_string('saveflags', 'question')));
+        $output .= html_writer::eng_tag('div');
+        $output .= html_writer::eng_tag('div');
+        $output .= html_writer::eng_tag('form');
 
         return $output;
     }
@@ -229,8 +232,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     protected function render_mod_quiz_links_to_other_attempts(
-                                                              mod_quiz_links_to_other_attempts
-                                                              $links) {
+            mod_quiz_links_to_other_attempts $links) {
         $attemptlinks = array();
         foreach ($links->links as $attempt => $url) {
             if ($url) {
@@ -246,33 +248,29 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * Attempt Page
      */
     public function attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id,
-                                $nextpage) {
+            $nextpage) {
         $output = '';
-        $output .= $this->quiz_notices($attemptobj, $accessmanager, $messages);
+        $output .= $this->quiz_notices($messages);
         $output .= $this->attempt_form($attemptobj, $page, $slots, $id, $nextpage);
         return $output;
     }
 
-    private function quiz_notices($attemptobj, $accessmanager, $messages) {
-        if ($attemptobj->is_preview_user() && $messages) {
-            // Inform teachers of any restrictions that would apply to students at this point.
-            $output = $this->box_start('quizaccessnotices');
-            $output .= $this->heading(get_string('accessnoticesheader', 'quiz'), 3);
-            $accessmanager->print_messages($messages);
-            $output .= $this->box_end();
-
-            return $output;
+    private function quiz_notices($messages) {
+        if (!$messages) {
+            return '';
         }
+        return $this->box($this->heading(get_string('accessnoticesheader', 'quiz'), 3) .
+        $this->access_messages($messages), 'quizaccessnotices');
     }
 
     private function attempt_form($attemptobj, $page, $slots, $id, $nextpage) {
         // Start the form
         //TODO: Convert all html to html:writer
         $output = '';
-        $output .= '<form id="responseform" method="post" action="'.
-                s($attemptobj->processattempt_url()).
-                '" enctype="multipart/form-data" accept-charset="utf-8">'. "\n";
-        $output .= '<div>';
+
+        //Start Form
+        $output .= html_writer::start_tag('form', array('action' => s($attemptobj->processattempt_url()), 'method' => 'post', 'enctype' => 'multipart/form-data', 'accept-charset' => 'utf-8', 'id' => 'responseform'));
+        $output .= html_writer::start_tag('div');
 
         // Print all the questions
         foreach ($slots as $slot) {
@@ -280,37 +278,45 @@ class mod_quiz_renderer extends plugin_renderer_base {
                     $page));
         }
 
-        // Print a link to the next page.
-        $output .= '<div class="submitbtns">';
-        $output .= '<input type="submit" name="next" value="' . get_string('next') . '" />';
-        $output .= "</div>";
+        $output .= html_writer::start_tag('div', array('class' => 'submitbtns'));
+        $output .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'next', 'value' => get_string('next')));
+        $output .= html_writer::end_tag('div');
 
         // Some hidden fields to trach what is going on.
-        $output .= '<input type="hidden" name="attempt" value="' . $attemptobj->get_attemptid() .
-                '" />';
-        $output .= '<input type="hidden" name="thispage" id="followingpage" value="' . $page .
-                '" />';
-        $output .= '<input type="hidden" name="nextpage" value="' . $nextpage . '" />';
-        $output .= '<input type="hidden" name="timeup" id="timeup" value="0" />';
-        $output .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
-        $output .= '<input type="hidden" name="scrollpos" id="scrollpos" value="" />';
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'attempt', 'value' => $attemptobj->get_attemptid()));
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'thispage', 'value' => $page, 'id' => 'followingpage'));
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'nextpage', 'value' => $nextpage));
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'timeup', 'value' => '0', 'id' => 'timeup'));
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'scrollpos', 'value' => '', 'id' => 'scrollpos'));
 
         // Add a hidden field with questionids. Do this at the end of the form, so
         // if you navigate before the form has finished loading, it does not wipe all
         // the student's answers.
-        $output .= '<input type="hidden" name="slots" value="' .
-                implode(',', $slots) . "\" />\n";
-
-        // Finish the form
-        $output .= '</div>';
-        $output .= "</form>\n";
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'slots', 'value' => implode(',', $slots)));
+        
+        //Finish form
+        $output .= html_writer::end_tag('div');
+        $output .= html_writer::end_tag('form');
 
         return $output;
     }
 
-    public function print_message($attemptobj, $accessmanager, $messages) {
-        print_error('attempterror', 'quiz', $attemptobj->view_url(),
-                $accessmanager->print_messages($messages, true));
+    /**
+     * Print each message in an array, surrounded by &lt;p>, &lt;/p> tags.
+     *
+     * @param array $messages the array of message strings.
+     * @param bool $return if true, return a string, instead of outputting.
+     *
+     * @return mixed, if $return is true, return the string that would have been output, otherwise
+     * return null.
+     */
+    public function print_messages($messages) {
+        $output = '';
+        foreach ($messages as $message) {
+            $output .= html_writer::tag('p', $message) . "\n";
+        }
+        return $output;
     }
 }
 

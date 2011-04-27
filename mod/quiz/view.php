@@ -85,6 +85,7 @@ if ($edit != -1 && $PAGE->user_allowed_editing()) {
 $title = $course->shortname . ': ' . format_string($quiz->name);
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
+$output = $PAGE->get_renderer('mod_quiz');
 echo $OUTPUT->header();
 
 // Print quiz name and description
@@ -100,7 +101,7 @@ if ($quiz->attempts != 1) {
             quiz_get_grading_option_name($quiz->grademethod));
 }
 echo $OUTPUT->box_start('quizinfo');
-$accessmanager->print_messages($messages);
+$output->print_messages($messages);
 echo $OUTPUT->box_end();
 
 // Show number of attempts summary to those who can view reports.
@@ -367,7 +368,7 @@ if (!quiz_clean_layout($quiz->questions, true)) {
         if ($canattempt) {
             $messages = $accessmanager->prevent_new_attempt($numattempts, $lastfinishedattempt);
             if ($messages) {
-                $accessmanager->print_messages($messages);
+                $output->print_messages($messages);
             } else if ($numattempts == 0) {
                 $buttontext = get_string('attemptquiznow', 'quiz');
             } else {
@@ -385,7 +386,7 @@ if (!quiz_clean_layout($quiz->questions, true)) {
         if (!$moreattempts) {
             $buttontext = '';
         } else if ($canattempt && $messages = $accessmanager->prevent_access()) {
-            $accessmanager->print_messages($messages);
+            $output->print_messages($messages);
             $buttontext = '';
         }
     }

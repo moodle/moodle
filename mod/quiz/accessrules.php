@@ -96,27 +96,6 @@ class quiz_access_manager {
     }
 
     /**
-     * Print each message in an array, surrounded by &lt;p>, &lt;/p> tags.
-     *
-     * @param array $messages the array of message strings.
-     * @param bool $return if true, return a string, instead of outputting.
-     *
-     * @return mixed, if $return is true, return the string that would have been output, otherwise
-     * return null.
-     */
-    public function print_messages($messages, $return=false) {
-        $output = '';
-        foreach ($messages as $message) {
-            $output .= '<p>' . $message . "</p>\n";
-        }
-        if ($return) {
-            return $output;
-        } else {
-            echo $output;
-        }
-    }
-
-    /**
      * Provide a description of the rules that apply to this quiz, such
      * as is shown at the top of the quiz view page. Note that not all
      * rules consider themselves important enough to output a description.
