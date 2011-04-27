@@ -177,7 +177,6 @@ class completion_criteria_grade extends completion_criteria {
         $sql = '
             SELECT DISTINCT
                 c.id AS course,
-                cr.timeend AS date,
                 cr.id AS criteriaid,
                 ra.userid AS userid,
                 gg.finalgrade AS gradefinal,
