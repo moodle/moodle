@@ -198,7 +198,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
         $this->process_submission(array('p1' => '1', 'p2' => '2'));
 
         // Verify.
-        $this->check_current_state(question_state::$todo);
+        $this->check_current_state(question_state::$invalid);
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
@@ -338,7 +338,7 @@ class qtype_ddwtos_walkthrough_test extends qbehaviour_walkthrough_test_base {
         $this->process_submission(array('p1' => '1', 'p2' => '0', 'p3' => '0'));
 
         // Verify.
-        $this->check_current_state(question_state::$todo);
+        $this->check_current_state(question_state::$invalid);
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_drop_box_expectation('p1', 1, false),
