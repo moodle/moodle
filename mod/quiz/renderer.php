@@ -114,7 +114,6 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $this->page->requires->js_init_call('M.mod_quiz.init_review_form', null, false,
                 quiz_get_js_module());
 
-        // TODO fix this to use html_writer.
         $output = '';
         $output .= html_writer::start_tag('form', array('action' => $attemptobj->review_url(0,
                 $page, $showall), 'method' => 'post', 'class' => 'questionflagsaveform'));
@@ -264,12 +263,13 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     private function attempt_form($attemptobj, $page, $slots, $id, $nextpage) {
-        // Start the form
-        //TODO: Convert all html to html:writer
         $output = '';
 
         //Start Form
-        $output .= html_writer::start_tag('form', array('action' => s($attemptobj->processattempt_url()), 'method' => 'post', 'enctype' => 'multipart/form-data', 'accept-charset' => 'utf-8', 'id' => 'responseform'));
+        $output .= html_writer::start_tag('form',
+                array('action' => s($attemptobj->processattempt_url()), 'method' => 'post',
+                'enctype' => 'multipart/form-data', 'accept-charset' => 'utf-8',
+                'id' => 'responseform'));
         $output .= html_writer::start_tag('div');
 
         // Print all the questions
@@ -279,25 +279,114 @@ class mod_quiz_renderer extends plugin_renderer_base {
         }
 
         $output .= html_writer::start_tag('div', array('class' => 'submitbtns'));
-        $output .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'next', 'value' => get_string('next')));
+        $output .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'next',
+                'value' => get_string('next')));
         $output .= html_writer::end_tag('div');
 
         // Some hidden fields to trach what is going on.
-        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'attempt', 'value' => $attemptobj->get_attemptid()));
-        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'thispage', 'value' => $page, 'id' => 'followingpage'));
-        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'nextpage', 'value' => $nextpage));
-        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'timeup', 'value' => '0', 'id' => 'timeup'));
-        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
-        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'scrollpos', 'value' => '', 'id' => 'scrollpos'));
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'attempt',
+                'value' => $attemptobj->get_attemptid()));
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'thispage',
+                'value' => $page, 'id' => 'followingpage'));
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'nextpage',
+                'value' => $nextpage));
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'timeup',
+                'value' => '0', 'id' => 'timeup'));
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey',
+                'value' => sesskey()));
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'scrollpos',
+                'value' => '', 'id' => 'scrollpos'));
 
         // Add a hidden field with questionids. Do this at the end of the form, so
         // if you navigate before the form has finished loading, it does not wipe all
         // the student's answers.
-        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'slots', 'value' => implode(',', $slots)));
-        
+        $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'slots',
+                'value' => implode(',', $slots)));
+
         //Finish form
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('form');
+
+        return $output;
+    }
+
+    /*
+     * Summary Page
+     */
+    public function summary_page($attemptobj, $displayoptions) {
+        $output = '';
+        $output .= $this->summary_table($attemptobj, $displayoptions);
+        $output .= $this->summary_container($attemptobj);
+        return $output;
+    }
+
+    private function summary_table($attemptobj, $displayoptions) {
+        // Prepare the summary table header
+        $table = new html_table();
+        $table->attributes['class'] = 'generaltable quizsummaryofattempt boxaligncenter';
+        $table->head = array(get_string('question', 'quiz'), get_string('status', 'quiz'));
+        $table->align = array('left', 'left');
+        $table->size = array('', '');
+        $markscolumn = $displayoptions->marks >= question_display_options::MARK_AND_MAX;
+        if ($markscolumn) {
+            $table->head[] = get_string('marks', 'quiz');
+            $table->align[] = 'left';
+            $table->size[] = '';
+        }
+        $table->data = array();
+
+        // Get the summary info for each question.
+        $slots = $attemptobj->get_slots();
+        foreach ($slots as $slot) {
+            if (!$attemptobj->is_real_question($slot)) {
+                continue;
+            }
+            $flag = '';
+            if ($attemptobj->is_question_flagged($slot)) {
+                $flag = html_writer::empty_tag('img', array('src' => $this->pix_url('i/flagged'),
+                        'alt' => get_string('flagged', 'question'), 'class' => 'questionflag'));
+            }
+            $row = array(html_writer::start_tag('a',
+                    array('href' => $attemptobj->attempt_url($slot))).
+                    $attemptobj->get_question_number($slot).$flag.html_writer::end_tag('a'),
+                    $displayoptions->correctness);
+            if ($markscolumn) {
+                $row[] = $attemptobj->get_question_mark($slot);
+            }
+            $table->data[] = $row;
+        }
+
+        // Print the summary table.
+        $output = html_writer::table($table);
+
+        return $output;
+    }
+
+    private function summary_container($attemptobj) {
+        $output = '';
+        // countdown timer
+        $output .= $attemptobj->get_timer_html();
+
+        // Finish attempt button.
+        $output .= $this->container_start('submitbtns mdl-align');
+        $options = array(
+            'attempt' => $attemptobj->get_attemptid(),
+            'finishattempt' => 1,
+            'timeup' => 0,
+            'slots' => '',
+            'sesskey' => sesskey(),
+        );
+
+        $button = new single_button(
+                new moodle_url($attemptobj->processattempt_url(), $options),
+                get_string('submitallandfinish', 'quiz'));
+        $button->id = 'responseform';
+        $button->add_confirm_action(get_string('confirmclose', 'quiz'));
+
+        $output .= $this->container_start('controls');
+        $output .= $this->render($button);
+        $output .= $this->container_end();
+        $output .= $this->container_end();
 
         return $output;
     }

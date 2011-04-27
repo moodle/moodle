@@ -99,66 +99,7 @@ if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
 echo $OUTPUT->heading(format_string($attemptobj->get_quiz_name()));
 echo $OUTPUT->heading($title, 3);
 
-// Prepare the summary table header
-$table = new html_table();
-$table->attributes['class'] = 'generaltable quizsummaryofattempt boxaligncenter';
-$table->head = array(get_string('question', 'quiz'), get_string('status', 'quiz'));
-$table->align = array('left', 'left');
-$table->size = array('', '');
-$markscolumn = $displayoptions->marks >= question_display_options::MARK_AND_MAX;
-if ($markscolumn) {
-    $table->head[] = get_string('marks', 'quiz');
-    $table->align[] = 'left';
-    $table->size[] = '';
-}
-$table->data = array();
-
-// Get the summary info for each question.
-$slots = $attemptobj->get_slots();
-foreach ($slots as $slot) {
-    if (!$attemptobj->is_real_question($slot)) {
-        continue;
-    }
-    $flag = '';
-    if ($attemptobj->is_question_flagged($slot)) {
-        $flag = ' <img src="' . $OUTPUT->pix_url('i/flagged') . '" alt="' .
-                get_string('flagged', 'question') . '" class="questionflag" />';
-    }
-    $row = array('<a href="' . $attemptobj->attempt_url($slot) . '">' .
-            $attemptobj->get_question_number($slot) . $flag . '</a>',
-            $attemptobj->get_question_status($slot, $displayoptions->correctness));
-    if ($markscolumn) {
-        $row[] = $attemptobj->get_question_mark($slot);
-    }
-    $table->data[] = $row;
-}
-
-// Print the summary table.
-echo html_writer::table($table);
-
-// countdown timer
-echo $attemptobj->get_timer_html();
-
-// Finish attempt button.
-echo $OUTPUT->container_start('submitbtns mdl-align');
-$options = array(
-    'attempt' => $attemptobj->get_attemptid(),
-    'finishattempt' => 1,
-    'timeup' => 0,
-    'slots' => '',
-    'sesskey' => sesskey(),
-);
-
-$button = new single_button(
-        new moodle_url($attemptobj->processattempt_url(), $options),
-        get_string('submitallandfinish', 'quiz'));
-$button->id = 'responseform';
-$button->add_confirm_action(get_string('confirmclose', 'quiz'));
-
-echo $OUTPUT->container_start('controls');
-echo $OUTPUT->render($button);
-echo $OUTPUT->container_end();
-echo $OUTPUT->container_end();
+$output->summary_page($attemptobj, $displayoptions);
 
 // Finish the page
 $accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());
