@@ -32,7 +32,8 @@
  */
 class mod_quiz_renderer extends plugin_renderer_base {
     public function review_page(quiz_attempt $attemptobj, $slots, $page, $showall,
-        $lastpage, mod_quiz_display_options $displayoptions, $summarydata) {
+                                $lastpage, mod_quiz_display_options $displayoptions,
+                                $summarydata) {
 
         $output = '';
         $output .= $this->header();
@@ -61,7 +62,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     public function review_summary_table($summarydata, $page) {
-        $summarydata = $this->filter_summary_table($summarydata, $page);
+                                        $summarydata = $this->filter_summary_table($summarydata,
+                                        $page);
         if (empty($summarydata)) {
             return '';
         }
@@ -85,7 +87,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
             $output .= html_writer::tag('tr',
                 html_writer::tag('th', $title, array('class' => 'cell', 'scope' => 'row')) .
-                html_writer::tag('td', $content, array('class' => 'cell'))
+                        html_writer::tag('td', $content, array('class' => 'cell'))
             );
         }
 
@@ -95,7 +97,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     public function questions(quiz_attempt $attemptobj, $reviewing, $slots, $page, $showall,
-            mod_quiz_display_options $displayoptions) {
+                             mod_quiz_display_options $displayoptions) {
         $output = '';
         foreach ($slots as $slot) {
             $output .= $attemptobj->render_question($slot, $reviewing,
@@ -109,12 +111,13 @@ class mod_quiz_renderer extends plugin_renderer_base {
             return $content;
         }
 
-        $this->page->requires->js_init_call('M.mod_quiz.init_review_form', null, false, quiz_get_js_module());
+        $this->page->requires->js_init_call('M.mod_quiz.init_review_form', null, false,
+                quiz_get_js_module());
 
         // TODO fix this to use html_writer.
         $output = '';
         $output .= '<form action="' . $attemptobj->review_url(0, $page, $showall) .
-            '" method="post" class="questionflagsaveform"><div>';
+                '" method="post" class="questionflagsaveform"><div>';
         $output .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
         $output .= $content;
         $output .= '<div class="submitbtns">' . "\n" .
@@ -127,17 +130,16 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     public function finish_review_link($url) {
-            if ($this->page->pagelayout == 'popup') {
-                // In a 'secure' popup window.
-                $this->page->requires->js_init_call('M.mod_quiz.secure_window.init_close_button',
-                        array($url), quiz_get_js_module());
-                return html_writer::empty_tag('input', array('type' => 'button',
-                        'value' => get_string('finishreview', 'quiz'),
-                        'id' => 'secureclosebutton'));
-            } else {
-                return html_writer::link($url, get_string('finishreview', 'quiz'));
-            }
-        
+        if ($this->page->pagelayout == 'popup') {
+            // In a 'secure' popup window.
+            $this->page->requires->js_init_call('M.mod_quiz.secure_window.init_close_button',
+                    array($url), quiz_get_js_module());
+            return html_writer::empty_tag('input', array('type' => 'button',
+                    'value' => get_string('finishreview', 'quiz'),
+                    'id' => 'secureclosebutton'));
+        } else {
+            return html_writer::link($url, get_string('finishreview', 'quiz'));
+        }
     }
 
     public function review_next_navigation(quiz_attempt $attemptobj, $page, $lastpage) {
@@ -182,7 +184,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= html_writer::tag('div', $panel->render_end_bits($this),
                 array('class' => 'othernav'));
 
-        $this->page->requires->js_init_call('M.mod_quiz.nav.init', null, false, quiz_get_js_module());
+        $this->page->requires->js_init_call('M.mod_quiz.nav.init', null, false,
+                quiz_get_js_module());
 
         return $output;
     }
@@ -226,7 +229,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     protected function render_mod_quiz_links_to_other_attempts(
-            mod_quiz_links_to_other_attempts $links) {
+                                                              mod_quiz_links_to_other_attempts
+                                                              $links) {
         $attemptlinks = array();
         foreach ($links->links as $attempt => $url) {
             if ($url) {
@@ -237,101 +241,78 @@ class mod_quiz_renderer extends plugin_renderer_base {
         }
         return implode(', ', $attemptlinks);
     }
-    
+
     /*
      * Attempt Page
      */
-    public function attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id){
+    public function attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id,
+                                $nextpage) {
         $output = '';
-        $output .= $this->attempt_header($attemptobj, $page, $accessmanager);
         $output .= $this->quiz_notices($attemptobj, $accessmanager, $messages);
-        $output .= $this->attempt_form($attemptobj, $page, $slots, $id);
-        $output .= $this->attempt_footer($attemptobj, $accessmanager);
+        $output .= $this->attempt_form($attemptobj, $page, $slots, $id, $nextpage);
         return $output;
     }
-    
-    protected function attempt_header($attemptobj, $page, $accessmanager){
-        global $PAGE, $OUTPUT;
-         
-        $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
-        $headtags = $attemptobj->get_html_head_contributions($page);
-        $PAGE->set_heading($attemptobj->get_course()->fullname);
-        if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
-            $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .
-                    format_string($attemptobj->get_quiz_name()));
-        
-        } else if ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
-            $PAGE->set_title($attemptobj->get_course()->shortname . ': ' .
-                    format_string($attemptobj->get_quiz_name()));
-            $PAGE->set_cacheable(false);
-            echo $OUTPUT->header();
-        
-        } else {
-            $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
-            echo $OUTPUT->header();
-        }
-    }
-    
-        
-    private function quiz_notices($attemptobj, $accessmanager, $messages){
+
+    private function quiz_notices($attemptobj, $accessmanager, $messages) {
         if ($attemptobj->is_preview_user() && $messages) {
             // Inform teachers of any restrictions that would apply to students at this point.
-            echo $OUTPUT->box_start('quizaccessnotices');
-            echo $OUTPUT->heading(get_string('accessnoticesheader', 'quiz'), 3);
+            $output = $this->box_start('quizaccessnotices');
+            $output .= $this->heading(get_string('accessnoticesheader', 'quiz'), 3);
             $accessmanager->print_messages($messages);
-            echo $OUTPUT->box_end();
+            $output .= $this->box_end();
+
+            return $output;
         }
     }
-    
-    private function attempt_form($attemptobj, $page, $slots, $id){
+
+    private function attempt_form($attemptobj, $page, $slots, $id, $nextpage) {
         // Start the form
         //TODO: Convert all html to html:writer
-        echo '<form id="responseform" method="post" action="', s($attemptobj->processattempt_url()),
-                '" enctype="multipart/form-data" accept-charset="utf-8">', "\n";
-        echo '<div>';
-        
+        $output = '';
+        $output .= '<form id="responseform" method="post" action="'.
+                s($attemptobj->processattempt_url()).
+                '" enctype="multipart/form-data" accept-charset="utf-8">'. "\n";
+        $output .= '<div>';
+
         // Print all the questions
         foreach ($slots as $slot) {
-            echo $attemptobj->render_question($slot, false, $attemptobj->attempt_url($id, $page));
+            $output .= $attemptobj->render_question($slot, false, $attemptobj->attempt_url($id,
+                    $page));
         }
-        
+
         // Print a link to the next page.
-        echo '<div class="submitbtns">';
-        if ($attemptobj->is_last_page($page)) {
-            $nextpage = -1;
-        } else {
-            $nextpage = $page + 1;
-        }
-        echo '<input type="submit" name="next" value="' . get_string('next') . '" />';
-        echo "</div>";
-        
+        $output .= '<div class="submitbtns">';
+        $output .= '<input type="submit" name="next" value="' . get_string('next') . '" />';
+        $output .= "</div>";
+
         // Some hidden fields to trach what is going on.
-        echo '<input type="hidden" name="attempt" value="' . $attemptobj->get_attemptid() . '" />';
-        echo '<input type="hidden" name="thispage" id="followingpage" value="' . $page . '" />';
-        echo '<input type="hidden" name="nextpage" value="' . $nextpage . '" />';
-        echo '<input type="hidden" name="timeup" id="timeup" value="0" />';
-        echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
-        echo '<input type="hidden" name="scrollpos" id="scrollpos" value="" />';
-        
+        $output .= '<input type="hidden" name="attempt" value="' . $attemptobj->get_attemptid() .
+                '" />';
+        $output .= '<input type="hidden" name="thispage" id="followingpage" value="' . $page .
+                '" />';
+        $output .= '<input type="hidden" name="nextpage" value="' . $nextpage . '" />';
+        $output .= '<input type="hidden" name="timeup" id="timeup" value="0" />';
+        $output .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
+        $output .= '<input type="hidden" name="scrollpos" id="scrollpos" value="" />';
+
         // Add a hidden field with questionids. Do this at the end of the form, so
         // if you navigate before the form has finished loading, it does not wipe all
         // the student's answers.
-        echo '<input type="hidden" name="slots" value="' .
+        $output .= '<input type="hidden" name="slots" value="' .
                 implode(',', $slots) . "\" />\n";
-        
+
         // Finish the form
-        echo '</div>';
-        echo "</form>\n";
+        $output .= '</div>';
+        $output .= "</form>\n";
+
+        return $output;
     }
-    
-    protected function attempt_footer($attemptobj, $accessmanager){
-        global $OUTPUT;
-        
-        $accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());
-        echo $OUTPUT->footer();
+
+    public function print_message($attemptobj, $accessmanager, $messages) {
+        print_error('attempterror', 'quiz', $attemptobj->view_url(),
+                $accessmanager->print_messages($messages, true));
     }
 }
-
 
 class mod_quiz_links_to_other_attempts implements renderable {
     /**

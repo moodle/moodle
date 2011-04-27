@@ -27,6 +27,8 @@
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
+$output = $PAGE->get_renderer('mod_quiz');
+
 // Look for old-style URLs, such as may be in the logs, and redirect them to startattemtp.php
 if ($id = optional_param('id', 0, PARAM_INTEGER)) {
     redirect($CFG->wwwroot . '/mod/quiz/startattempt.php?cmid=' . $id . '&sesskey=' . sesskey());
@@ -77,8 +79,7 @@ if ($attemptobj->is_finished()) {
 $accessmanager = $attemptobj->get_access_manager(time());
 $messages = $accessmanager->prevent_access();
 if (!$attemptobj->is_preview_user() && $messages) {
-    print_error('attempterror', 'quiz', $attemptobj->view_url(),
-            $accessmanager->print_messages($messages, true));
+    $output->print_message($attemptobj, $accessmanager, $messages);
 }
 $accessmanager->do_password_check($attemptobj->is_preview_user());
 
@@ -103,6 +104,31 @@ $navbc = $attemptobj->get_navigation_panel('quiz_attempt_nav_panel', $page);
 $firstregion = reset($PAGE->blocks->get_regions());
 $PAGE->blocks->add_fake_block($navbc, $firstregion);
 
-$output = $PAGE->get_renderer('mod_quiz');
+$title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
+$headtags = $attemptobj->get_html_head_contributions($page);
+$PAGE->set_heading($attemptobj->get_course()->fullname);
+if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
+    $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .
+            format_string($attemptobj->get_quiz_name()));
 
-$output->attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id);
+} else if ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
+    $PAGE->set_title($attemptobj->get_course()->shortname . ': ' .
+            format_string($attemptobj->get_quiz_name()));
+    $PAGE->set_cacheable(false);
+    echo $OUTPUT->header();
+
+} else {
+    $PAGE->set_title(format_string($attemptobj->get_quiz_name()));
+    echo $OUTPUT->header();
+}
+
+if ($attemptobj->is_last_page($page)) {
+    $nextpage = -1;
+} else {
+    $nextpage = $page + 1;
+}
+
+echo $output->attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id, $nextpage);
+
+$accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());
+echo $OUTPUT->footer();
