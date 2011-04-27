@@ -33,12 +33,13 @@ $string['answerno'] = 'Answer {$a}';
 $string['decfractionofquestiongrade'] = 'as a fraction (0-1) of the question grade';
 $string['decfractionofresponsegrade'] = 'as a fraction (0-1) of the response grade';
 $string['decimalformat'] = 'decimals';
-$string['editableunittext'] = 'a text input element';
+$string['editableunittext'] = 'the text input element';
 $string['editingnumerical'] = 'Editing a Numerical question';
 $string['errornomultiplier'] = 'You must specify a multiplier for this unit.';
 $string['errorrepeatedunit'] = 'You cannot have two units with the same name.';
 $string['geometric'] = 'Geometric';
-$string['instructions'] = 'Instructions ';
+$string['invalidnumber'] = 'You must enter a valid number.';
+$string['invalidnumbernounit'] = 'You must enter a valid number. Do not include a unit in your response.';
 $string['invalidnumericanswer'] = 'One of the answers you entered was not a valid number.';
 $string['invalidnumerictolerance'] = 'One of the tolerances you entered was not a valid number.';
 $string['leftexample'] = 'on the left, for example $1.00 or £1.00';
@@ -51,8 +52,6 @@ $string['numerical'] = 'Numerical';
 $string['numerical_help'] = 'From the student perspective, a numerical question looks just like a short-answer question. The difference is that numerical answers are allowed to have an accepted error. This allows a fixed range of answers to be evaluated as one answer. For example, if the answer is 10 with an accepted error of 2, then any number between 8 and 12 will be accepted as correct. ';
 $string['numerical_link'] = 'question/type/numerical';
 $string['numericalsummary'] = 'Allows a numerical response, possibly with units, that is graded by comparing against various model answers, possibly with tolerances.';
-$string['numericalinstructions'] = 'Instructions';
-$string['numericalinstructions_help'] = 'Enter any instructions you would like to give the student about how to complete their response.';
 $string['numericalmultiplier'] = 'Multiplier';
 $string['numericalmultiplier_help'] = 'The multiplier is the factor by which the correct numerical response will be multiplied.
 
@@ -100,7 +99,7 @@ $string['unitpenalty_help'] = 'The penalty is applied if
 * the wrong unit name is entered into the unit input, or
 * a unit is entered into the value input box';
 $string['unitappliedpenalty'] = 'These marks include a penalty of {$a} for bad unit.';
-$string['unitposition'] = 'Units are displayed';
+$string['unitposition'] = 'Units go';
 $string['unitnotselected'] = 'No unit selected';
 $string['unithandling'] = 'Unit handling';
 $string['validnumberformats'] = 'Valid number formats';

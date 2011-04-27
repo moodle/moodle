@@ -45,7 +45,6 @@ class qtype_numerical extends question_type {
     const UNITSELECT = 1;
 
     const UNITNONE = 3;
-    const UNITDISPLAY = 2;
     const UNITGRADED = 1;
     const UNITOPTIONAL = 0;
 
@@ -79,7 +78,7 @@ class qtype_numerical extends question_type {
                 array('questionid' => $question->id), 'id ASC');
 
         $this->get_numerical_units($question);
-        //get_numerical_options() need to know if there are units
+        // get_numerical_options() need to know if there are units
         // to set correctly default values
         $this->get_numerical_options($question);
 
@@ -139,16 +138,12 @@ class qtype_numerical extends question_type {
                 $question->options->showunits = self::UNITNONE ;
             }
             $question->options->unitsleft = 0;
-            $question->options->instructions = '';
-            $question->options->instructionsformat = editors_get_preferred_format();
 
         } else {
             $question->options->unitgradingtype = $options->unitgradingtype;
             $question->options->unitpenalty = $options->unitpenalty;
             $question->options->showunits = $options->showunits;
             $question->options->unitsleft = $options->unitsleft;
-            $question->options->instructions = $options->instructions;
-            $question->options->instructionsformat = $options->instructionsformat;
         }
 
         return true;
@@ -267,7 +262,6 @@ class qtype_numerical extends question_type {
         if (!$options) {
             $options = new stdClass();
             $options->question = $question->id;
-            $options->instructions = '';
             $options->id = $DB->insert_record('question_numerical_options', $options);
         }
 
@@ -301,10 +295,6 @@ class qtype_numerical extends question_type {
         }
 
         $options->unitsleft = !empty($question->unitsleft);
-
-        $options->instructions = $this->import_or_save_files($question->instructions,
-                    $question->context, 'qtype_'.$question->qtype , 'instruction', $question->id);
-        $options->instructionsformat = $question->instructions['format'];
 
         $DB->update_record('question_numerical_options', $options);
 
@@ -407,11 +397,6 @@ class qtype_numerical extends question_type {
         $formatoptions->noclean = true;
         $formatoptions->para = false;
         $nameprefix = $question->name_prefix;
-        $component = 'qtype_' . $question->qtype;
-        // rewrite instructions text
-        $question->options->instructions = quiz_rewrite_question_urls(
-                $question->options->instructions, 'pluginfile.php', $context->id, $component,
-                'instruction', array($state->attempt, $state->question), $question->id);
         /// Print question text and media
 
         $questiontext = format_text($question->questiontext,
@@ -672,9 +657,6 @@ class qtype_numerical extends question_type {
 
         parent::move_files($questionid, $oldcontextid, $newcontextid);
         $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
-
-        $fs->move_area_files_to_new_context($oldcontextid,
-                $newcontextid, 'qtype_numerical', 'instruction', $questionid);
     }
 
     protected function delete_files($questionid, $contextid) {
@@ -682,7 +664,6 @@ class qtype_numerical extends question_type {
 
         parent::delete_files($questionid, $contextid);
         $this->delete_files_in_answers($questionid, $contextid);
-        $fs->delete_area_files($contextid, 'qtype_numerical', 'instruction', $questionid);
     }
 }
 
@@ -797,9 +778,6 @@ class qtype_numerical_answer_processor {
             $unit = substr($response, strlen($matchedpart));
         }
         $unit = trim($unit);
-        if ($unit && !array_key_exists($unit, $this->units)) {
-            $unit = '';
-        }
 
         return array($beforepoint, $decimals, $exponent, $unit);
     }
@@ -826,7 +804,7 @@ class qtype_numerical_answer_processor {
             $numberstring .= 'e' . $exponent;
         }
 
-        if ($unit) {
+        if ($unit && $this->is_known_unit($unit)) {
             $value = $numberstring * $this->units[$unit];
         } else {
             $value = $numberstring * 1;
@@ -854,5 +832,14 @@ class qtype_numerical_answer_processor {
         } else {
             return $answer . ' ' . $unit;
         }
+    }
+
+    /**
+     * Is this unit recognised.
+     * @param string $unit the unit
+     * @return bool whether this is a unit we recognise.
+     */
+    public function is_known_unit($unit) {
+        return array_key_exists($unit, $this->units);
     }
 }

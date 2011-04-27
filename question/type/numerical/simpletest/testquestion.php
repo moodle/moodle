@@ -39,7 +39,7 @@ class qtype_numerical_question_test extends UnitTestCase {
         $this->assertFalse($question->is_complete_response(array()));
         $this->assertTrue($question->is_complete_response(array('answer' => '0')));
         $this->assertTrue($question->is_complete_response(array('answer' => 0)));
-        $this->assertTrue($question->is_complete_response(array('answer' => 'test')));
+        $this->assertFalse($question->is_complete_response(array('answer' => 'test')));
     }
 
     public function test_is_gradable_response() {

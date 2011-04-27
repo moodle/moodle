@@ -83,6 +83,6 @@ class backup_qtype_numerical_plugin extends backup_qtype_plugin {
      * files to be processed both in backup and restore.
      */
     public static function get_qtype_fileareas() {
-        return array('instruction' => 'question_created');
+        return array();
     }
 }

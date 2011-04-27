@@ -77,7 +77,7 @@ class qtype_numerical_answer_processor_test extends UnitTestCase {
                 $ap->parse_response('1,000.00 m'));
 
         $this->assertEqual(array(null, null, null, null), $ap->parse_response('frog'));
-        $this->assertEqual(array('3', '', '', ''), $ap->parse_response('3 frogs'));
+        $this->assertEqual(array('3', '', '', 'frogs'), $ap->parse_response('3 frogs'));
         $this->assertEqual(array(null, null, null, null), $ap->parse_response('. m'));
         $this->assertEqual(array(null, null, null, null), $ap->parse_response('.e8 m'));
         $this->assertEqual(array(null, null, null, null), $ap->parse_response(','));
@@ -92,7 +92,7 @@ class qtype_numerical_answer_processor_test extends UnitTestCase {
         $this->assertEqual(array(299792458, 'c'), $ap->apply_units('1c'));
         $this->assertEqual(array(0.44704, 'mph'), $ap->apply_units('0001.000 mph'));
 
-        $this->assertEqual(array(1, ''), $ap->apply_units('1 frogs'));
+        $this->assertEqual(array(1, 'frogs'), $ap->apply_units('1 frogs'));
         $this->assertEqual(array(null, null), $ap->apply_units('. m/s'));
     }
 
@@ -120,6 +120,6 @@ class qtype_numerical_answer_processor_test extends UnitTestCase {
         $this->assertEqual(array('100', '$'), $ap->apply_units('$100.'));
         $this->assertEqual(array('100.00', '$'), $ap->apply_units('$100.00'));
         $this->assertEqual(array('100', ''), $ap->apply_units('100'));
-        $this->assertEqual(array('100', ''), $ap->apply_units('frog 100'));
+        $this->assertEqual(array('100', 'frog'), $ap->apply_units('frog 100'));
     }
 }

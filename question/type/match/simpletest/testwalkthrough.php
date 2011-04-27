@@ -124,7 +124,7 @@ class qtype_match_walkthrough_test extends qbehaviour_walkthrough_test_base {
                 'sub1' => $orderforchoice[2], 'sub2' => '0', 'sub3' => '0'));
 
         // Verify.
-        $this->check_current_state(question_state::$todo);
+        $this->check_current_state(question_state::$invalid);
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_select_expectation('sub0', $choices, 1, true),

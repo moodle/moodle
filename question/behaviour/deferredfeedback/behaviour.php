@@ -68,6 +68,33 @@ class qbehaviour_deferredfeedback extends question_behaviour_with_save {
         }
     }
 
+    /*
+     * Like the parent method, except that when a respones is gradable, but not
+     * completely, we move it to the invalid state.
+     *
+     * TODO refactor, to remove the duplication.
+     */
+    public function process_save(question_attempt_pending_step $pendingstep) {
+        if ($this->qa->get_state()->is_finished()) {
+            return question_attempt::DISCARD;
+        } else if (!$this->qa->get_state()->is_active()) {
+            throw new coding_exception('Question is not active, cannot process_actions.');
+        }
+
+        if ($this->is_same_response($pendingstep)) {
+            return question_attempt::DISCARD;
+        }
+
+        if ($this->is_complete_response($pendingstep)) {
+            $pendingstep->set_state(question_state::$complete);
+        } else if ($this->question->is_gradable_response($pendingstep->get_qt_data())) {
+            $pendingstep->set_state(question_state::$invalid);
+        } else {
+            $pendingstep->set_state(question_state::$todo);
+        }
+        return question_attempt::KEEP;
+    }
+
     public function summarise_action(question_attempt_step $step) {
         if ($step->has_behaviour_var('comment')) {
             return $this->summarise_manual_comment($step);

@@ -59,7 +59,7 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
         if (!$dbman->table_exists($table)) {
             // $dbman->create_table doesnt return a result, we just have to trust it
             $dbman->create_table($table);
-        }//else
+        }
         upgrade_plugin_savepoint(true, 2009100100, 'qtype', 'numerical');
     }
 
@@ -96,5 +96,176 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2009100101, 'qtype', 'numerical');
     }
 
+    if ($oldversion < 2011042600) {
+        // Get rid of the instructions field by adding it to the qestion
+        // text. Also, if the unit was set to be displayed beside the input,
+        // deal with that within the question text too.
+
+        // The hard-coded constants used here are:
+        // 2 = the old qtype_numerical::UNITDISPLAY for ->showunits
+        // 3 = qtype_numerical::UNITNONE
+
+        $fs = get_file_storage();
+
+        $rs = $DB->get_recordset_sql('
+                SELECT q.id AS questionid,
+                       q.questiontext,
+                       q.questiontextformat,
+                       qc.contextid,
+                       qno.id AS qnoid,
+                       qno.instructions,
+                       qno.instructionsformat,
+                       qno.showunits,
+                       qno.unitsleft,
+                       qnu.unit AS defaultunit
+
+                  FROM {question} q
+                  FROM {question_categories} qc ON qc.id = q.category
+                  JOIN {question_numerical_options} qno ON qno.question = q.id
+                  JOIN {question_numerical_units} qnu ON qnu.id = (
+                            SELECT min(id)
+                              FROM {question_numerical_units}
+                             WHERE question = q.id AND ABS(multiplier - 1) < 0.0000000001)');
+        foreach ($rs as $numericaloptions) {
+            if ($numericaloptions->showunits != 2 && empty($numericaloptions->instructions)) {
+                // Nothing to do for this question.
+                continue;
+            }
+
+            $ishtml = qtype_numerical_convert_text_format($numericaloptions);
+
+            $response = '_______________';
+            if ($numericaloptions->showunits == 2) {
+                if ($numericaloptions->unitsleft) {
+                    $response = $numericaloptions->defaultunit . ' _______________';
+                } else {
+                    $response = '_______________ ' . $numericaloptions->defaultunit;
+                }
+
+                $DB->set_field('question_numerical_options', 'showunits', 3,
+                        array('id' => $numericaloptions->qnoid));
+            }
+
+            if ($ishtml) {
+                $numericaloptions->questiontext .= '<p>' . $response . '</p>';
+            } else {
+                $numericaloptions->questiontext .= "\n\n" . $response;
+            }
+
+            if (!empty($numericaloptions->instructions)) {
+                if ($ishtml) {
+                    $numericaloptions->questiontext .= $numericaloptions->instructions;
+                } else {
+                    $numericaloptions->questiontext .= "\n\n" . $numericaloptions->instructions;
+                }
+
+                $oldfiles = $fs->get_area_files($numericaloptions->contextid,
+                        'qtype_numerical', 'instruction', $numericaloptions->questionid, 'id', false);
+                foreach ($oldfiles as $oldfile) {
+                    $filerecord = new stdClass();
+                    $filerecord->component = 'question';
+                    $filerecord->filearea = 'questiontext';
+                    $fs->create_file_from_storedfile($filerecord, $oldfile);
+                }
+
+                if ($oldfiles) {
+                    $fs->delete_area_files($numericaloptions->contextid,
+                        'qtype_numerical', 'instruction', $numericaloptions->questionid);
+                }
+            }
+
+            $updaterecord = new stdClass();
+            $updaterecord->id = $numericaloptions->questionid;
+            $updaterecord->questiontext = $numericaloptions->questiontext;
+            $updaterecord->questiontextformat = $numericaloptions->questiontextformat;
+            $DB->update_record('question', $updaterecord);
+        }
+        $rs->close();
+    }
+
+    if ($oldversion < 2011042601) {
+        // Define field instructions to be dropped from question_numerical_options
+        $table = new xmldb_table('question_numerical_options');
+        $field = new xmldb_field('instructions');
+
+        // Conditionally launch drop field instructions
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // numerical savepoint reached
+        upgrade_plugin_savepoint(true, 2011042601, 'qtype', 'numerical');
+    }
+
+    if ($oldversion < 2011042602) {
+        // Define field instructionsformat to be dropped from question_numerical_options
+        $table = new xmldb_table('question_numerical_options');
+        $field = new xmldb_field('instructionsformat');
+
+        // Conditionally launch drop field instructionsformat
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // numerical savepoint reached
+        upgrade_plugin_savepoint(true, 2011042602, 'qtype', 'numerical');
+    }
+
     return true;
+}
+
+
+/**
+ * Convert the ->questiontext and ->instructions fields to have the same text format.
+ * If they are already the same, do nothing. Otherwise, this method works by
+ * converting both to HTML.
+ * @param $numericaloptions the data to convert.
+ * @return bool true if the resulting fields are in HTML, as opposed to one of
+ * the text-based formats.
+ */
+function qtype_numerical_convert_text_format($numericaloptions) {
+    if ($numericaloptions->questiontextformat == $numericaloptions->instructionsformat) {
+        // Nothing to do:
+        return $numericaloptions->questiontextformat == FORMAT_HTML;
+    }
+
+    if ($numericaloptions->questiontextformat != FORMAT_HTML) {
+        $numericaloptions->questiontext = qtype_numerical_convert_to_html(
+                $numericaloptions->questiontext, $numericaloptions->questiontextformat);
+        $numericaloptions->questiontextformat = FORMAT_HTML;
+    }
+
+    if ($numericaloptions->instructionsformat != FORMAT_HTML) {
+        $numericaloptions->instructions = qtype_numerical_convert_to_html(
+                $numericaloptions->instructions, $numericaloptions->instructionsformat);
+        $numericaloptions->instructionsformat = FORMAT_HTML;
+    }
+
+    return true;
+}
+
+/**
+ * Convert some content to HTML.
+ * @param string $text the content to convert to HTML
+ * @param int $oldformat One of the FORMAT_... constants.
+ */
+function qtype_numerical_convert_to_html($text, $oldformat) {
+    switch ($oldformat) {
+        // Similar to format_text.
+
+        case FORMAT_PLAIN:
+            $text = s($text);
+            $text = str_replace('  ', '&nbsp; ', $text);
+            $text = nl2br($text);
+            return $text;
+
+        case FORMAT_MARKDOWN:
+            return markdown_to_html($text);
+
+        case FORMAT_MOODLE:
+            return text_to_html($text, null, $options['para'], $options['newlines']);
+
+        default:
+            throw new coding_exception('Unexpected text format when upgrading numerical questions.');
+    }
 }

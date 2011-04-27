@@ -71,7 +71,6 @@ class qtype_numerical_edit_form extends question_edit_form {
 
         $unitoptions = array(
             qtype_numerical::UNITNONE     => get_string('onlynumerical', 'qtype_numerical'),
-            qtype_numerical::UNITDISPLAY  => get_string('oneunitshown', 'qtype_numerical'),
             qtype_numerical::UNITOPTIONAL => get_string('manynumerical', 'qtype_numerical'),
             qtype_numerical::UNITGRADED   => get_string('unitgraded', 'qtype_numerical'),
         );
@@ -112,19 +111,12 @@ class qtype_numerical_edit_form extends question_edit_form {
                 get_string('unitposition', 'qtype_numerical'), $unitsleftoptions);
         $mform->setDefault('unitsleft', 0);
 
-        $mform->addElement('editor', 'instructions',
-                get_string('instructions', 'qtype_numerical'), null, $this->editoroptions);
-        $mform->setType('instructions', PARAM_RAW);
-        $mform->addHelpButton('instructions', 'numericalinstructions', 'qtype_numerical');
-
         $mform->disabledIf('penaltygrp', 'unitrole', 'eq', qtype_numerical::UNITNONE);
-        $mform->disabledIf('penaltygrp', 'unitrole', 'eq', qtype_numerical::UNITDISPLAY);
         $mform->disabledIf('penaltygrp', 'unitrole', 'eq', qtype_numerical::UNITOPTIONAL);
 
         $mform->disabledIf('unitsleft', 'unitrole', 'eq', qtype_numerical::UNITNONE);
 
         $mform->disabledIf('multichoicedisplay', 'unitrole', 'eq', qtype_numerical::UNITNONE);
-        $mform->disabledIf('multichoicedisplay', 'unitrole', 'eq', qtype_numerical::UNITDISPLAY);
         $mform->disabledIf('multichoicedisplay', 'unitrole', 'eq', qtype_numerical::UNITOPTIONAL);
     }
 
@@ -233,20 +225,6 @@ class qtype_numerical_edit_form extends question_edit_form {
         } else {
             $question->unitrole = $question->options->showunits;
         }
-
-        // Instructions field.
-        $draftitemid = file_get_submitted_draft_itemid('instruction');
-        $question->instructions['text'] = file_prepare_draft_area(
-            $draftitemid,                    // draftid
-            $this->context->id,              // context
-            'qtype_' . $this->qtype(),       // component
-            'instruction',                   // filarea
-            !empty($question->id) ? (int) $question->id : null, // itemid
-            $this->fileoptions,              // options
-            $question->options->instructions // text
-        );
-        $question->instructions['itemid'] = $draftitemid ;
-        $question->instructions['format'] = $question->options->instructionsformat;
 
         return $question;
     }
