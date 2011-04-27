@@ -26,6 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/enrol/locallib.php');
+
+
 /**
  * Event handler for cohort enrolment plugin.
  *
@@ -191,7 +194,7 @@ function enrol_cohort_sync($courseid = NULL) {
 
 /**
  * Enrols all of the users in a cohort through a manual plugin instance.
- * 
+ *
  * In order for this to succeed the course must contain a valid manual
  * enrolment plugin instance that the user has permission to enrol users through.
  *
@@ -199,7 +202,7 @@ function enrol_cohort_sync($courseid = NULL) {
  * @param course_enrolment_manager $manager
  * @param int $cohortid
  * @param int $roleid
- * @return int 
+ * @return int
  */
 function enrol_cohort_enrol_all_users(course_enrolment_manager $manager, $cohortid, $roleid) {
     global $DB;

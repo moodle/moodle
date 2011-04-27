@@ -26,6 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/user/selector/lib.php');
+require_once($CFG->dirroot . '/enrol/locallib.php');
+
 
 /**
  * Enrol candidates
@@ -53,7 +55,7 @@ class enrol_manual_potential_participant extends user_selector_base {
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user} u
-                WHERE $wherecondition AND 
+                WHERE $wherecondition AND
                       u.id NOT IN (
                           SELECT ue.userid
                             FROM {user_enrolments} ue
