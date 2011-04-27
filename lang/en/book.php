@@ -35,7 +35,7 @@ Either rephrase your titles or ask your site admin to change TOC
 width. It is defined globally for all books in module configuration
 page.';
 
-$string['customtitles'] = 'Custom citles';
+$string['customtitles'] = 'Custom titles';
 $string['customtitles_help'] = 'Chapter titles are displayed automatically only in TOC.';
 
 $string['editingchapter'] = 'Editing chapter';
