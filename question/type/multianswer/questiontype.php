@@ -617,9 +617,17 @@ class embedded_cloze_qtype extends default_questiontype {
                 $teststateforquestion->responses[''] = '';
             }
 
-            if (!$QTYPES[$wrapped->qtype]->compare_responses($wrapped,
-                    $stateforquestion, $teststateforquestion)) {
-                return false;
+            if ($wrapped->qtype == 'numerical') {
+                // Use shortanswer
+                if (!$QTYPES['shortanswer']->compare_responses($wrapped,
+                        $stateforquestion, $teststateforquestion)) {
+                    return false;
+                }
+            } else {
+                if (!$QTYPES[$wrapped->qtype]->compare_responses($wrapped,
+                        $stateforquestion, $teststateforquestion)) {
+                    return false;
+                }
             }
         }
 
