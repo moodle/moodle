@@ -54,7 +54,6 @@ class restore_qtype_numerical_plugin extends restore_qtype_plugin {
         $elepath = $this->get_pathfor('/numerical_records/numerical_record');
         $paths[] = new restore_path_element($elename, $elepath);
 
-
         return $paths; // And we return the interesting paths
     }
 
