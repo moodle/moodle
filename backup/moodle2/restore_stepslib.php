@@ -2524,9 +2524,9 @@ abstract class restore_questions_activity_structure_step extends restore_activit
 
     /**
      * Attach below $element (usually attempts) the needed restore_path_elements
-     * to restore question_states
+     * to restore question_usages and all they contain.
      */
-    protected function add_question_attempts_states($element, &$paths) {
+    protected function add_question_usages($element, &$paths) {
         // Check $element is restore_path_element
         if (! $element instanceof restore_path_element) {
             throw new restore_step_exception('element_must_be_restore_path_element', $element);
@@ -2535,31 +2535,22 @@ abstract class restore_questions_activity_structure_step extends restore_activit
         if (!is_array($paths)) {
             throw new restore_step_exception('paths_must_be_array', $paths);
         }
-        $paths[] = new restore_path_element('question_state', $element->get_path() . '/states/state');
+        $paths[] = new restore_path_element('question_usage',
+                $element->get_path() . '/question_usage');
+        $paths[] = new restore_path_element('question_attempt',
+                $element->get_path() . '/question_usage/question_attempts/question_attempt');
+        $paths[] = new restore_path_element('question_attempt_step',
+                $element->get_path() . '/question_usage/question_attempts/question_attempt/steps/step');
+        $paths[] = new restore_path_element('question_attempt_step_data',
+                $element->get_path() . '/question_usage/question_attempts/question_attempt/steps/step/data/value');
     }
 
     /**
-     * Attach below $element (usually attempts) the needed restore_path_elements
-     * to restore question_sessions
+     * Process question_usages
      */
-    protected function add_question_attempts_sessions($element, &$paths) {
-        // Check $element is restore_path_element
-        if (! $element instanceof restore_path_element) {
-            throw new restore_step_exception('element_must_be_restore_path_element', $element);
-        }
-        // Check $paths is one array
-        if (!is_array($paths)) {
-            throw new restore_step_exception('paths_must_be_array', $paths);
-        }
-        $paths[] = new restore_path_element('question_session', $element->get_path() . '/sessions/session');
-    }
-
-    /**
-     * Process question_states
-     */
-    protected function process_question_state($data) {
+    protected function process_question_usage($data) {
         global $DB;
-
+// TODO
         $data = (object)$data;
         $oldid = $data->id;
 
@@ -2579,11 +2570,11 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     }
 
     /**
-     * Process question_sessions
+     * Process question_attempts
      */
-    protected function process_question_session($data) {
+    protected function process_question_attempt($data) {
         global $DB;
-
+// TODO
         $data = (object)$data;
         $oldid = $data->id;
 
@@ -2599,6 +2590,22 @@ abstract class restore_questions_activity_structure_step extends restore_activit
 
         // Note: question_sessions haven't files associated. On purpose manualcomment is lacking
         // support for them, so we don't need to handle them here.
+    }
+
+    /**
+     * Process question_attempt_steps
+     */
+    protected function process_question_attempt_step($data) {
+        global $DB;
+// TODO
+    }
+
+    /**
+     * Process question_attempt_step_data
+     */
+    protected function process_question_attempt_step_data($data) {
+        global $DB;
+// TODO
     }
 
     /**
@@ -2618,28 +2625,5 @@ abstract class restore_questions_activity_structure_step extends restore_activit
             }
         }
         return implode(',', $questionids);
-    }
-
-    /**
-     * Given one question_states record, return the answer
-     * recoded pointing to all the restored stuff
-     */
-    public function restore_recode_answer($state, $qtype) {
-        // Build one static cache to store {@link restore_qtype_plugin}
-        // while we are needing them, just to save zillions of instantiations
-        // or using static stuff that will break our nice API
-        static $qtypeplugins = array();
-
-        // If we haven't the corresponding restore_qtype_plugin for current qtype
-        // instantiate it and add to cache
-        if (!isset($qtypeplugins[$qtype])) {
-            $classname = 'restore_qtype_' . $qtype . '_plugin';
-            if (class_exists($classname)) {
-                $qtypeplugins[$qtype] = new $classname('qtype', $qtype, $this);
-            } else {
-                $qtypeplugins[$qtype] = false;
-            }
-        }
-        return !empty($qtypeplugins[$qtype]) ? $qtypeplugins[$qtype]->recode_state_answer($state) : $state->answer;
     }
 }

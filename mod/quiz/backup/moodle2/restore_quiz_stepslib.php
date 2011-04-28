@@ -50,8 +50,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
                     '/activity/quiz/attempts/attempt');
             $paths[] = $quizattempt;
             // Add states and sessions
-            $this->add_question_attempts_states($quizattempt, $paths);
-            $this->add_question_attempts_sessions($quizattempt, $paths);
+            $this->add_question_usages($quizattempt, $paths);
         }
 
         // Return the paths wrapped into standard activity structure
@@ -273,8 +272,6 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->timestart = $this->apply_date_offset($data->timestart);
         $data->timefinish = $this->apply_date_offset($data->timefinish);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
-
-        $data->layout = $this->questions_recode_layout($data->layout);
 
         $newitemid = $DB->insert_record('quiz_attempts', $data);
 

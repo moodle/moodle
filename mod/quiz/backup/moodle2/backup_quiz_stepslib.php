@@ -83,8 +83,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
 
         // This module is using questions, so produce the related question states and sessions
         // attaching them to the $attempt element based in 'uniqueid' matching
-        $this->add_question_attempts_states($attempt, 'uniqueid');
-        $this->add_question_attempts_sessions($attempt, 'uniqueid');
+        $this->add_question_usages($attempt, 'uniqueid');
 
         // Build the tree
 
