@@ -92,7 +92,7 @@ $string['unitoptional_help'] = '
 
 * If the unit is badly written or unknown, the response will be considered as non valid.
 ';
-$string['unitnotvalid'] = ' Unit not valid with this numerical value';
+$string['unitnotselected'] = 'You must select a unit.';
 $string['unitpenalty'] = 'Unit penalty';
 $string['unitpenalty_help'] = 'The penalty is applied if
 
@@ -100,7 +100,6 @@ $string['unitpenalty_help'] = 'The penalty is applied if
 * a unit is entered into the value input box';
 $string['unitappliedpenalty'] = 'These marks include a penalty of {$a} for bad unit.';
 $string['unitposition'] = 'Units go';
-$string['unitnotselected'] = 'No unit selected';
 $string['unithandling'] = 'Unit handling';
 $string['validnumberformats'] = 'Valid number formats';
 $string['validnumberformats_help'] = '

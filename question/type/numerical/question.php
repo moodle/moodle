@@ -55,7 +55,11 @@ class qtype_numerical_question extends question_graded_automatically {
     }
 
     public function get_expected_data() {
-        return array('answer' => PARAM_RAW_TRIMMED);
+        $expected = array('answer' => PARAM_RAW_TRIMMED);
+        if ($this->unitdisplay == qtype_numerical::UNITSELECT) {
+            $expected['unit'] = PARAM_RAW_TRIMMED;
+        }
+        return $expected;
     }
 
     public function start_attempt(question_attempt_step $step) {
@@ -70,10 +74,16 @@ class qtype_numerical_question extends question_graded_automatically {
 
     public function summarise_response(array $response) {
         if (isset($response['answer'])) {
-            return $response['answer'];
+            $resp = $response['answer'];
         } else {
-            return null;
+            $resp = null;
         }
+
+        if ($this->unitdisplay == qtype_numerical::UNITSELECT && !empty($response['unit'])) {
+            $resp = $this->ap->add_unit($resp, $response['unit']);
+        }
+
+        return $resp;
     }
 
     public function is_gradable_response(array $response) {
@@ -91,7 +101,11 @@ class qtype_numerical_question extends question_graded_automatically {
             return false;
         }
 
-        if ($this->unitdisplay == qtype_numerical::UNITNONE && $unit) {
+        if ($this->unitdisplay != qtype_numerical::UNITINPUT && $unit) {
+            return false;
+        }
+
+        if ($this->unitdisplay == qtype_numerical::UNITSELECT && empty($response['unit'])) {
             return false;
         }
 
@@ -108,16 +122,29 @@ class qtype_numerical_question extends question_graded_automatically {
             return get_string('invalidnumber', 'qtype_numerical');
         }
 
-        if ($this->unitdisplay == qtype_numerical::UNITNONE && $unit) {
+        if ($this->unitdisplay != qtype_numerical::UNITINPUT && $unit) {
             return get_string('invalidnumbernounit', 'qtype_numerical');
+        }
+
+        if ($this->unitdisplay == qtype_numerical::UNITSELECT && empty($response['unit'])) {
+            return get_string('unitnotselected', 'qtype_numerical');
         }
 
         return '';
     }
 
     public function is_same_response(array $prevresponse, array $newresponse) {
-        return question_utils::arrays_same_at_key_missing_is_blank(
-                $prevresponse, $newresponse, 'answer');
+        if (!question_utils::arrays_same_at_key_missing_is_blank(
+                $prevresponse, $newresponse, 'answer')) {
+            return false;
+        }
+
+        if ($this->unitdisplay == qtype_numerical::UNITSELECT) {
+            return question_utils::arrays_same_at_key_missing_is_blank(
+                $prevresponse, $newresponse, 'unit');
+        }
+
+        return false;
     }
 
     public function get_correct_response() {
@@ -126,7 +153,15 @@ class qtype_numerical_question extends question_graded_automatically {
             return array();
         }
 
-        return array('answer' => $this->ap->add_unit($answer->answer));
+        $response = array('answer' => $answer->answer);
+
+        if ($this->unitdisplay == qtype_numerical::UNITSELECT) {
+            $response['unit'] = $this->ap->get_default_unit();
+        } else if ($this->unitdisplay == qtype_numerical::UNITINPUT) {
+            $response['answer'] = $this->ap->add_unit($answer->answer);
+        }
+
+        return $response;
     }
 
     /**
@@ -169,7 +204,12 @@ class qtype_numerical_question extends question_graded_automatically {
     }
 
     public function grade_response(array $response) {
-        list($value, $unit) = $this->ap->apply_units($response['answer']);
+        if ($this->unitdisplay == qtype_numerical::UNITSELECT) {
+            $selectedunit = $response['unit'];
+        } else {
+            $selectedunit = null;
+        }
+        list($value, $unit) = $this->ap->apply_units($response['answer'], $selectedunit);
         $answer = $this->get_matching_answer($value);
         if (!$answer) {
             return array(0, question_state::$gradedwrong);
@@ -184,13 +224,24 @@ class qtype_numerical_question extends question_graded_automatically {
             return array($this->id => question_classified_response::no_response());
         }
 
-        list($value, $unit) = $this->ap->apply_units($response['answer']);
+        if ($this->unitdisplay == qtype_numerical::UNITSELECT) {
+            $selectedunit = $response['unit'];
+        } else {
+            $selectedunit = null;
+        }
+        list($value, $unit) = $this->ap->apply_units($response['answer'], $selectedunit);
         $ans = $this->get_matching_answer($value);
         if (!$ans) {
             return array($this->id => question_classified_response::no_response());
         }
+
+        $resp = $response['answer'];
+        if ($this->unitdisplay == qtype_numerical::UNITSELECT) {
+            $resp = $this->ap->add_unit($resp, $unit);
+        }
+
         return array($this->id => new question_classified_response($ans->id,
-                $response['answer'],
+                $resp,
                 $this->apply_unit_penalty($ans->fraction, $unit)));
     }
 

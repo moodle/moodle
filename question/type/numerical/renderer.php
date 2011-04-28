@@ -37,6 +37,11 @@ class qtype_numerical_renderer extends qtype_renderer {
 
         $question = $qa->get_question();
         $currentanswer = $qa->get_last_qt_var('answer');
+        if ($question->unitdisplay == qtype_numerical::UNITSELECT) {
+            $selectedunit = $qa->get_last_qt_var('unit');
+        } else {
+            $selectedunit = null;
+        }
 
         $inputname = $qa->get_qt_field_name('answer');
         $inputattributes = array(
@@ -53,7 +58,7 @@ class qtype_numerical_renderer extends qtype_renderer {
 
         $feedbackimg = '';
         if ($options->correctness) {
-            list($value, $unit) = $question->ap->apply_units($currentanswer);
+            list($value, $unit) = $question->ap->apply_units($currentanswer, $selectedunit);
             $answer = $question->get_matching_answer($value);
             if ($answer) {
                 $fraction = $question->apply_unit_penalty($answer->fraction, $unit);
@@ -72,6 +77,17 @@ class qtype_numerical_renderer extends qtype_renderer {
         }
 
         $input = html_writer::empty_tag('input', $inputattributes) . $feedbackimg;
+
+        if ($question->unitdisplay == qtype_numerical::UNITSELECT) {
+            $unitselect = html_writer::select($question->ap->get_unit_options(),
+                    $qa->get_qt_field_name('unit'), $selectedunit, array(''=>'choosedots'),
+                    array('disabled' => $options->readonly));
+            if ($question->ap->are_units_before()) {
+                $input = $unitselect . ' ' . $input;
+            } else {
+                $input = $input . ' ' . $unitselect;
+            }
+        }
 
         if ($placeholder) {
             $questiontext = substr_replace($questiontext, $input,
@@ -99,7 +115,13 @@ class qtype_numerical_renderer extends qtype_renderer {
     public function specific_feedback(question_attempt $qa) {
         $question = $qa->get_question();
 
-        list($value, $unit) = $question->ap->apply_units($qa->get_last_qt_var('answer'));
+        if ($question->unitdisplay == qtype_numerical::UNITSELECT) {
+            $selectedunit = $qa->get_last_qt_var('unit');
+        } else {
+            $selectedunit = null;
+        }
+        list($value, $unit) = $question->ap->apply_units(
+                $qa->get_last_qt_var('answer'), $selectedunit);
         $answer = $question->get_matching_answer($value);
 
         if ($answer && $answer->feedback) {
@@ -117,11 +139,17 @@ class qtype_numerical_renderer extends qtype_renderer {
     }
 
     public function correct_response(question_attempt $qa) {
-        $answer = $qa->get_question()->get_correct_answer();
+        $question = $qa->get_question();
+        $answer = $question->get_correct_answer();
         if (!$answer) {
             return '';
         }
 
-        return get_string('correctansweris', 'qtype_shortanswer', s($answer->answer));
+        $response = $answer->answer;
+        if ($question->unitdisplay != qtype_numerical::UNITNONE) {
+            $response = $question->ap->add_unit($response);
+        }
+
+        return get_string('correctansweris', 'qtype_shortanswer', s($response));
     }
 }

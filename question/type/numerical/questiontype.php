@@ -792,7 +792,7 @@ class qtype_numerical_answer_processor {
      * @return array(numeric, sting) the value with the unit stripped, and normalised
      *      by the unit multiplier, if any, and the unit string, for reference.
      */
-    public function apply_units($response) {
+    public function apply_units($response, $separateunit = null) {
         list($beforepoint, $decimals, $exponent, $unit) = $this->parse_response($response);
 
         if (is_null($beforepoint)) {
@@ -802,6 +802,10 @@ class qtype_numerical_answer_processor {
         $numberstring = $beforepoint . '.' . $decimals;
         if ($exponent) {
             $numberstring .= 'e' . $exponent;
+        }
+
+        if (!is_null($separateunit)) {
+            $unit = $separateunit;
         }
 
         if ($unit && $this->is_known_unit($unit)) {
@@ -814,13 +818,20 @@ class qtype_numerical_answer_processor {
     }
 
     /**
+     * @return string the default unit.
+     */
+    public function get_default_unit() {
+        reset($this->units);
+        return key($this->units);
+    }
+
+    /**
      * @param string $answer a response.
      * @param string $unit a unit.
      */
     public function add_unit($answer, $unit = null) {
         if (is_null($unit)) {
-            reset($this->units);
-            $unit = key($this->units);
+            $unit = $this->get_default_unit();
         }
 
         if (!$unit) {
@@ -841,5 +852,25 @@ class qtype_numerical_answer_processor {
      */
     public function is_known_unit($unit) {
         return array_key_exists($unit, $this->units);
+    }
+
+    /**
+     * Whether the units go before or after the number.
+     * @return true = before, false = after.
+     */
+    public function are_units_before() {
+        return $this->unitsbefore;
+    }
+
+    /**
+     * Get the units as an array suitably for passing to html_writer::select.
+     * @return array of unit choices.
+     */
+    public function get_unit_options() {
+        $options = array();
+        foreach ($this->units as $unit => $notused) {
+            $options[$unit] = $unit;
+        }
+        return $options;
     }
 }

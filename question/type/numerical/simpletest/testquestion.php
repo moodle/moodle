@@ -81,28 +81,25 @@ class qtype_numerical_question_test extends UnitTestCase {
         $question = test_question_maker::make_question('numerical', 'unit');
 
         $this->assertEqual(array(0, question_state::$gradedwrong),
-                $question->grade_response(array('answer' => '2 m')));
+                $question->grade_response(array('answer' => '2', 'unit' => 'm')));
         $this->assertEqual(array(0, question_state::$gradedwrong),
-                $question->grade_response(array('answer' => '2cm')));
+                $question->grade_response(array('answer' => '2', 'unit' => 'cm')));
         $this->assertEqual(array(0, question_state::$gradedwrong),
-                $question->grade_response(array('answer' => '2')));
+                $question->grade_response(array('answer' => '2', 'unit' => '')));
 
         $this->assertEqual(array(1, question_state::$gradedright),
-                $question->grade_response(array('answer' => '1.25 m')));
+                $question->grade_response(array('answer' => '1.25', 'unit' => 'm')));
         $this->assertEqual(array(1, question_state::$gradedright),
-                $question->grade_response(array('answer' => '125 cm')));
+                $question->grade_response(array('answer' => '125', 'unit' => 'cm')));
         $this->assertEqual(array(0.5, question_state::$gradedpartial),
-                $question->grade_response(array('answer' => '1.25')));
+                $question->grade_response(array('answer' => '1.25', 'unit' => '')));
 
         $this->assertEqual(array(0.5, question_state::$gradedpartial),
-                $question->grade_response(array('answer' => '1.23m')));
+                $question->grade_response(array('answer' => '1.23', 'unit' => 'm')));
         $this->assertEqual(array(0.5, question_state::$gradedpartial),
-                $question->grade_response(array('answer' => '123  cm')));
+                $question->grade_response(array('answer' => '123', 'unit' => 'cm')));
         $this->assertEqual(array(0.25, question_state::$gradedpartial),
-                $question->grade_response(array('answer' => '1.23')));
-
-        $this->assertEqual(array(0.25, question_state::$gradedpartial),
-                $question->grade_response(array('answer' => '1.23 frogs')));
+                $question->grade_response(array('answer' => '1.23', 'unit' => '')));
     }
 
     public function test_grading_currency() {
@@ -112,6 +109,8 @@ class qtype_numerical_question_test extends UnitTestCase {
                 $question->grade_response(array('answer' => '$1332')));
         $this->assertEqual(array(1, question_state::$gradedright),
                 $question->grade_response(array('answer' => '$ 1,332')));
+        $this->assertEqual(array(0.8, question_state::$gradedpartial),
+                $question->grade_response(array('answer' => 'frog 1332')));
         $this->assertEqual(array(0.8, question_state::$gradedpartial),
                 $question->grade_response(array('answer' => '1332')));
         $this->assertEqual(array(0.8, question_state::$gradedpartial),
@@ -134,7 +133,7 @@ class qtype_numerical_question_test extends UnitTestCase {
     public function test_get_correct_response_units() {
         $question = test_question_maker::make_question('numerical', 'unit');
 
-        $this->assertEqual(array('answer' => '1.25 m'),
+        $this->assertEqual(array('answer' => '1.25', 'unit' => 'm'),
                 $question->get_correct_response());
     }
 
@@ -195,28 +194,22 @@ class qtype_numerical_question_test extends UnitTestCase {
 
         $this->assertEqual(array(
                 new question_classified_response(13, '1.25', 0.5)),
-                $num->classify_response(array('answer' => '1.25')));
+                $num->classify_response(array('answer' => '1.25', 'unit' => '')));
         $this->assertEqual(array(
                 new question_classified_response(13, '1.25 m', 1.0)),
-                $num->classify_response(array('answer' => '1.25 m')));
+                $num->classify_response(array('answer' => '1.25', 'unit' => 'm')));
         $this->assertEqual(array(
-                new question_classified_response(13, '125cm', 1.0)),
-                $num->classify_response(array('answer' => '125cm')));
+                new question_classified_response(13, '125 cm', 1.0)),
+                $num->classify_response(array('answer' => '125', 'unit' => 'cm')));
         $this->assertEqual(array(
-                new question_classified_response(14, '123  cm', 0.5)),
-                $num->classify_response(array('answer' => '123  cm')));
+                new question_classified_response(14, '123 cm', 0.5)),
+                $num->classify_response(array('answer' => '123', 'unit' => 'cm')));
         $this->assertEqual(array(
-                new question_classified_response(14, '1.27m', 0.5)),
-                $num->classify_response(array('answer' => '1.27m')));
-        $this->assertEqual(array(
-                new question_classified_response(13, '1.25 frogs', 0.5)),
-                $num->classify_response(array('answer' => '1.25 frogs')));
-        $this->assertEqual(array(
-                new question_classified_response(17, '3 frogs', 0)),
-                $num->classify_response(array('answer' => '3 frogs')));
+                new question_classified_response(14, '1.27 m', 0.5)),
+                $num->classify_response(array('answer' => '1.27', 'unit' => 'm')));
         $this->assertEqual(array(
                 new question_classified_response(17, '3.0 m', 0)),
-                $num->classify_response(array('answer' => '3.0 m')));
+                $num->classify_response(array('answer' => '3.0', 'unit' => 'm')));
         $this->assertEqual(array(
                 question_classified_response::no_response()),
                 $num->classify_response(array('answer' => '')));

@@ -96,6 +96,19 @@ class qtype_numerical_answer_processor_test extends UnitTestCase {
         $this->assertEqual(array(null, null), $ap->apply_units('. m/s'));
     }
 
+    public function test_apply_units_separate_unit() {
+        $ap = new qtype_numerical_answer_processor(
+                array('m/s' => 1, 'c' => 299792458, 'mph' => 0.44704), false, '.', ',');
+
+        $this->assertEqual(array(3e8, 'm/s'), $ap->apply_units('3x10^8', 'm/s'));
+        $this->assertEqual(array(3e8, ''), $ap->apply_units('3x10^8', ''));
+        $this->assertEqual(array(299792458, 'c'), $ap->apply_units('1', 'c'));
+        $this->assertEqual(array(0.44704, 'mph'), $ap->apply_units('0001.000', 'mph'));
+
+        $this->assertEqual(array(1, 'frogs'), $ap->apply_units('1', 'frogs'));
+        $this->assertEqual(array(null, null), $ap->apply_units('.', 'm/s'));
+    }
+
     public function test_euro_style() {
         $ap = new qtype_numerical_answer_processor(array(), false, ',', ' ');
 
