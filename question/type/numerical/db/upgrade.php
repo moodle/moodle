@@ -120,7 +120,7 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
                        qnu.unit AS defaultunit
 
                   FROM {question} q
-                  FROM {question_categories} qc ON qc.id = q.category
+                  JOIN {question_categories} qc ON qc.id = q.category
                   JOIN {question_numerical_options} qno ON qno.question = q.id
                   JOIN {question_numerical_units} qnu ON qnu.id = (
                             SELECT min(id)

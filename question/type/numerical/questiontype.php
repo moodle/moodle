@@ -363,16 +363,16 @@ class qtype_numerical extends question_type {
     }
 
     protected function make_answer_processor($units, $unitsleft) {
-        if (empty($questiondata->options->units)) {
+        if (empty($units)) {
             return new qtype_numerical_answer_processor(array());
         }
 
-        $units = array();
-        foreach ($questiondata->options->units as $unit) {
-            $units[$unit->unit] = $unit->multiplier;
+        $cleanedunits = array();
+        foreach ($units as $unit) {
+            $cleanedunits[$unit->unit] = $unit->multiplier;
         }
 
-        return new qtype_numerical_answer_processor($units, $questiondata->options->unitsleft);
+        return new qtype_numerical_answer_processor($cleanedunits, $unitsleft);
     }
 
     function delete_question($questionid, $contextid) {

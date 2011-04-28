@@ -155,7 +155,7 @@ class qtype_numerical_question extends question_graded_automatically {
         return null;
     }
 
-    protected function apply_unit_penalty($fraction, $unit) {
+    public function apply_unit_penalty($fraction, $unit) {
         if (!empty($unit) && $this->ap->is_known_unit($unit)) {
             return $fraction;
         }

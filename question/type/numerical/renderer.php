@@ -56,7 +56,7 @@ class qtype_numerical_renderer extends qtype_renderer {
             list($value, $unit) = $question->ap->apply_units($currentanswer);
             $answer = $question->get_matching_answer($value);
             if ($answer) {
-                $fraction = $answer->fraction;
+                $fraction = $question->apply_unit_penalty($answer->fraction, $unit);
             } else {
                 $fraction = 0;
             }
@@ -101,12 +101,19 @@ class qtype_numerical_renderer extends qtype_renderer {
 
         list($value, $unit) = $question->ap->apply_units($qa->get_last_qt_var('answer'));
         $answer = $question->get_matching_answer($value);
-        if (!$answer || !$answer->feedback) {
-            return '';
+
+        if ($answer && $answer->feedback) {
+            $feedback = $question->format_text($answer->feedback, $answer->feedbackformat,
+                    $qa, 'question', 'answerfeedback', $answer->id);
+        } else {
+            $feedback = '';
         }
 
-        return $question->format_text($answer->feedback, $answer->feedbackformat,
-                $qa, 'question', 'answerfeedback', $answer->id);
+        if ($question->unitgradingtype && !$question->ap->is_known_unit($unit)) {
+            $feedback .= html_writer::tag('p', get_string('unitincorrect', 'qtype_numerical'));
+        }
+
+        return $feedback;
     }
 
     public function correct_response(question_attempt $qa) {

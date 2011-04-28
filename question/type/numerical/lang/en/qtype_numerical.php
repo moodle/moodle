@@ -76,6 +76,7 @@ $string['unitchoice'] = 'a multiple choice selection';
 $string['unitedit'] = 'Edit unit';
 $string['unitgraded'] = 'The unit must be given, and will be graded.';
 $string['unithdr'] = 'Unit {$a}';
+$string['unitincorrect'] = 'You did not give the correct unit.';
 $string['unitmandatory'] = 'Mandatory';
 $string['unitmandatory_help'] = '
 
@@ -92,7 +93,6 @@ $string['unitoptional_help'] = '
 * If the unit is badly written or unknown, the response will be considered as non valid.
 ';
 $string['unitnotvalid'] = ' Unit not valid with this numerical value';
-$string['unitunknown'] = ' Undefined unit ';
 $string['unitpenalty'] = 'Unit penalty';
 $string['unitpenalty_help'] = 'The penalty is applied if
 
