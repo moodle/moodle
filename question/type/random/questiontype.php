@@ -373,7 +373,7 @@ class random_qtype extends default_questiontype {
               echo 'Could not get qtype while recoding question random-'.$answerregs[1].'<br />';
               return($answer_field);
             }
-            $newstate = $state;
+            $newstate = clone($state);
             $newstate->question = $wrapped->new_id;
             $newstate->answer = $answerregs[2];
             $answer_field = 'random'.$wrapped->new_id.'-';
