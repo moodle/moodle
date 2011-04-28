@@ -7954,3 +7954,18 @@ function forum_cm_info_view(cm_info $cm) {
         }
     }
 }
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function forum_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+    $forum_pagetype = array(
+        'mod-forum-*'=>get_string('page-mod-forum-x', 'forum'),
+        'mod-forum-view'=>get_string('page-mod-forum-view', 'forum'),
+        'mod-forum-discuss'=>get_string('page-mod-forum-discuss', 'forum')
+    );
+    return $forum_pagetype;
+}

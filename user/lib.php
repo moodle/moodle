@@ -95,3 +95,16 @@ function user_get_users_by_id($userids) {
     global $DB;
     return $DB->get_records_list('user', 'id', $userids);
 }
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function user_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+    return array(
+        'user-profile'=>get_string('page-user-profile', 'pagetype'),
+        'my-index'=>get_string('page-my-index', 'pagetype')
+    );
+}

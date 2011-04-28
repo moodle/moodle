@@ -90,6 +90,7 @@ $string['notallowenter'] = 'You are not allow to enter the chat room.';
 $string['notlogged'] = 'You are not logged in!';
 $string['nopermissiontoseethechatlog'] = 'You don\'t have permission to see the chat logs.';
 $string['oldping'] = 'Disconnect timeout';
+$string['page-mod-chat-x'] = 'Any chat module page';
 $string['pastchats'] = 'Past chat sessions';
 $string['pluginadministration'] = 'Chat administration';
 $string['pluginname'] = 'Chat';

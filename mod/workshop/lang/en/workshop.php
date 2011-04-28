@@ -162,6 +162,7 @@ $string['notoverridden'] = 'Not overriden';
 $string['noworkshops'] = 'There are no workshops in this course';
 $string['noyoursubmission'] = 'You have not submitted your work yet';
 $string['nullgrade'] = '-';
+$string['page-mod-workshop-x'] = 'Any workshop module page';
 $string['participant'] = 'Participant';
 $string['participantrevierof'] = 'Participant is reviewer of';
 $string['participantreviewedby'] = 'Participant is reviewed by';

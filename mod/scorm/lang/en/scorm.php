@@ -186,6 +186,7 @@ $string['organization'] = 'Organization';
 $string['organizations'] = 'Organizations';
 $string['othersettings'] = 'Additional settings';
 $string['othertracks'] = 'Other tracks';
+$string['page-mod-scorm-x'] = 'Any scorm module page';
 $string['pagesize'] = 'Page size';
 $string['package'] = 'Package file';
 $string['package_help'] = 'The package file is a zip (or pif) file containing SCORM/AICC course definition files.';

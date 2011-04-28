@@ -37,6 +37,7 @@ $string['modulename_help'] = 'A page enables a web page to be displayed and edit
 $string['modulenameplural'] = 'Pages';
 $string['neverseen'] = 'Never seen';
 $string['optionsheader'] = 'Options';
+$string['page-mod-page-x'] = 'Any page module page';
 $string['page:view'] = 'View page content';
 $string['pluginadministration'] = 'Page module administration';
 $string['pluginname'] = 'Page';

@@ -864,3 +864,14 @@ function survey_extend_settings_navigation($settings, $surveynode) {
         }
     }
 }
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function survey_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+    $module_pagetype = array('mod-survey-*'=>get_string('page-mod-survey-x', 'survey'));
+    return $module_pagetype;
+}

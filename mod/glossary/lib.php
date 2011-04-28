@@ -2856,3 +2856,14 @@ function glossary_comment_validate($comment_param) {
     }
     return true;
 }
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function glossary_pagetypelist($pagetype, $parentcontext, $currentcontext) {
+    $module_pagetype = array('mod-glossary-*'=>get_string('page-mod-glossary-x', 'glossary'));
+    return $module_pagetype;
+}

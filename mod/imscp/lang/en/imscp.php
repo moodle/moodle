@@ -35,6 +35,7 @@ $string['modulename'] = 'IMS content package';
 $string['modulename_help'] = 'An IMS content package allows for packages created according to the IMS Content Packaging specification to be displayed in the course.';
 $string['modulenameplural'] = 'IMS content packages';
 $string['navigation'] = 'Navigation';
+$string['page-mod-imscp-x'] = 'Any imscp module page';
 $string['packagefile'] = 'Package file';
 $string['pluginadministration'] = 'IMSCP administration';
 $string['pluginname'] = 'IMS content package';

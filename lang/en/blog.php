@@ -176,3 +176,6 @@ $string['viewsiteentries'] = 'View all entries';
 $string['viewuserentries'] = 'View all entries by {$a}';
 $string['worldblogs'] = 'The world can read entries set to be world-accessible';
 $string['wrongpostid'] = 'Wrong blog post id';
+$string['page-blog-edit'] = 'Blog editing pages';
+$string['page-blog-index'] = 'Blog listing pages';
+$string['page-blog-x'] = 'All blog pages';
