@@ -1806,6 +1806,26 @@ class dml_test extends UnitTestCase {
         $DB->delete_records($tablename, array());
         $id4 = $DB->insert_record($tablename, array('course' => 3));
         $this->assertTrue($id3 < $id4);
+
+        // Test saving a float in a CHAR column, and reading it back.
+        $id = $DB->insert_record($tablename, array('onechar' => 1.0));
+        $this->assertEqual(1.0, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $id = $DB->insert_record($tablename, array('onechar' => 1e20));
+        $this->assertEqual(1e20, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $id = $DB->insert_record($tablename, array('onechar' => 1e-4));
+        $this->assertEqual(1e-4, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $id = $DB->insert_record($tablename, array('onechar' => 1e-5));
+        $this->assertEqual(1e-5, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+
+        // Test saving a float in a TEXT column, and reading it back.
+        $id = $DB->insert_record($tablename, array('onetext' => 1.0));
+        $this->assertEqual(1.0, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $id = $DB->insert_record($tablename, array('onetext' => 1e20));
+        $this->assertEqual(1e20, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $id = $DB->insert_record($tablename, array('onetext' => 1e-4));
+        $this->assertEqual(1e-4, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $id = $DB->insert_record($tablename, array('onetext' => 1e-5));
+        $this->assertEqual(1e-5, $DB->get_field($tablename, 'onetext', array('id' => $id)));
     }
 
     public function test_import_record() {
