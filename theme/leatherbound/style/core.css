@@ -167,8 +167,11 @@ h2.headingblock {
 
 .course-content .current {
     background: #da5013;
-    color: #fff;
 }
+
+.course-content .current .left.side {
+  color: #fff;
+} 
 
 .course-content .main .content {
     background: #fff;
