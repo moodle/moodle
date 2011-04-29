@@ -348,9 +348,22 @@ class quiz_report extends quiz_default_report {
                     "END) AS gradedattempt, ";
             }
 
-            $select .= 'qa.uniqueid AS attemptuniqueid, qa.id AS attempt, ' .
-                    'u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt, ' .
-                    'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
+            $select .= '
+                    qa.uniqueid AS attemptuniqueid,
+                    qa.id AS attempt,
+                    u.id AS userid,
+                    u.idnumber,
+                    u.firstname,
+                    u.lastname,
+                    u.picture,
+                    u.imagealt,
+                    u.email,
+                    qa.sumgrades,
+                    qa.timefinish,
+                    qa.timestart,
+                    CASE WHEN qa.timefinish = 0 THEN null
+                         WHEN qa.timefinish > qa.timestart THEN qa.timefinish - qa.timestart
+                         ELSE 0 END AS duration ';
 
             // This part is the same for all cases - join users and quiz_attempts tables
             $from = 'FROM '.$CFG->prefix.'user u ';
