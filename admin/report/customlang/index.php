@@ -24,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('NO_OUTPUT_BUFFERING', true); // progress bar is used here
+
 require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 require_once($CFG->dirroot.'/'.$CFG->admin.'/report/customlang/locallib.php');
 require_once($CFG->libdir.'/adminlib.php');
@@ -45,8 +47,22 @@ if ($action === 'checkout') {
     if (empty($lng)) {
         print_error('missingparameter');
     }
-    report_customlang_utils::checkout($lng);
-    redirect(new moodle_url('/admin/report/customlang/edit.php', array('lng' => $lng)));
+
+    $PAGE->set_cacheable(false);    // progress bar is used here
+    $output = $PAGE->get_renderer('report_customlang');
+    echo $output->header();
+    echo $output->heading(get_string('pluginname', 'report_customlang'));
+    $progressbar = new progress_bar();
+    $progressbar->create();         // prints the HTML code of the progress bar
+
+    // we may need a bit of extra execution time and memory here
+    @set_time_limit(HOURSECS);
+    raise_memory_limit(MEMORY_EXTRA);
+    report_customlang_utils::checkout($lng, $progressbar);
+
+    echo $output->continue_button(new moodle_url('/admin/report/customlang/edit.php', array('lng' => $lng)), 'get');
+    echo $output->footer();
+    exit;
 }
 
 if ($action === 'checkin') {
