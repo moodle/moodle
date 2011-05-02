@@ -33,6 +33,7 @@ require_once($CFG->libdir . '/formslib.php');
 
 define('FILE_EXTERNAL', 1);
 define('FILE_INTERNAL', 2);
+define('RENAME_SUFFIX', '_2');
 
 /**
  * This class is used to manage repository plugins
@@ -587,6 +588,125 @@ abstract class repository {
     }
 
     /**
+     * Check if file already exists in draft area
+     *
+     * @param int $itemid
+     * @param string $filepath
+     * @param string $filename
+     * @return boolean
+     */
+    public static function draftfile_exists($itemid, $filepath, $filename) {
+        global $USER;
+        $fs = get_file_storage();
+        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+        if ($fs->get_file($usercontext->id, 'user', 'draft', $itemid, $filepath, $filename)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Does this repository used to browse moodle files?
+     *
+     * @return boolean
+     */
+    public function has_moodle_files() {
+        return false;
+    }
+    /**
+     * This function is used to copy a moodle file to draft area
+     *
+     * @global object $USER
+     * @global object $DB
+     * @param string $encoded The metainfo of file, it is base64 encoded php serialized data
+     * @param string $draftitemid itemid
+     * @param string $new_filename The intended name of file
+     * @param string $new_filepath the new path in draft area
+     * @return array The information of file
+     */
+    public function copy_to_area($encoded, $draftitemid, $new_filepath, $new_filename) {
+        global $USER, $DB;
+
+        if ($this->has_moodle_files() == false) {
+            throw new coding_exception('Only repository used to browse moodle files can use copy_to_area');
+        }
+
+        $browser = get_file_browser();
+        $params = unserialize(base64_decode($encoded));
+        $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+
+        $contextid  = clean_param($params['contextid'], PARAM_INT);
+        $fileitemid = clean_param($params['itemid'],    PARAM_INT);
+        $filename   = clean_param($params['filename'],  PARAM_FILE);
+        $filepath   = clean_param($params['filepath'],  PARAM_PATH);;
+        $filearea   = clean_param($params['filearea'],  PARAM_ALPHAEXT);
+        $component  = clean_param($params['component'], PARAM_ALPHAEXT);
+
+        $context    = get_context_instance_by_id($contextid);
+        // the file needs to copied to draft area
+        $file_info  = $browser->get_file_info($context, $component, $filearea, $fileitemid, $filepath, $filename);
+
+        if (repository::draftfile_exists($draftitemid, $new_filepath, $new_filename)) {
+            // create new file
+            $unused_filename = repository::get_unused_filename($draftitemid, $new_filepath, $new_filename);
+            $file_info->copy_to_storage($user_context->id, 'user', 'draft', $draftitemid, $new_filepath, $unused_filename);
+            $event = array();
+            $event['event'] = 'fileexists';
+            $event['newfile'] = new stdClass;
+            $event['newfile']->filepath = $new_filepath;
+            $event['newfile']->filename = $unused_filename;
+            $event['newfile']->url = moodle_url::make_draftfile_url($draftitemid, $new_filepath, $unused_filename)->out();
+            $event['existingfile'] = new stdClass;
+            $event['existingfile']->filepath = $new_filepath;
+            $event['existingfile']->filename = $new_filename;
+            $event['existingfile']->url      = moodle_url::make_draftfile_url($draftitemid, $filepath, $filename)->out();;
+            return $event;
+        } else {
+            $file_info->copy_to_storage($user_context->id, 'user', 'draft', $draftitemid, $new_filepath, $new_filename);
+            $info = array();
+            $info['itemid'] = $draftitemid;
+            $info['title']  = $new_filename;
+            $info['contextid'] = $user_context->id;
+            $info['url'] = moodle_url::make_draftfile_url($draftitemid, $new_filepath, $new_filename)->out();;
+            $info['filesize'] = $file_info->get_filesize();
+            return $info;
+        }
+    }
+
+    /**
+     * Get unused filename by appending suffix
+     *
+     * @param int $itemid
+     * @param string $filepath
+     * @param string $filename
+     * @return string
+     */
+    public static function get_unused_filename($itemid, $filepath, $filename) {
+        global $USER;
+        $fs = get_file_storage();
+        while (repository::draftfile_exists($itemid, $filepath, $filename)) {
+            $filename = repository::append_suffix($filename);
+        }
+        return $filename;
+    }
+
+    /**
+     * Append a suffix to filename
+     *
+     * @param string $filename
+     * @return string
+     */
+    function append_suffix($filename) {
+        $pathinfo = pathinfo($filename);
+        if (empty($pathinfo['extension'])) {
+            return $filename . RENAME_SUFFIX;
+        } else {
+            return $pathinfo['filename'] . RENAME_SUFFIX . '.' . $pathinfo['extension'];
+        }
+    }
+
+    /**
      * Return all types that you a user can create/edit and which are also visible
      * Note: Mostly used in order to know if at least one editable type can be set
      * @param object $context the context for which we want the editable types
@@ -861,7 +981,24 @@ abstract class repository {
         }
         $fs = get_file_storage();
         if ($existingfile = $fs->get_file($context->id, $record->component, $record->filearea, $record->itemid, $record->filepath, $record->filename)) {
-            throw new moodle_exception('fileexists');
+            $draftitemid = $record->itemid;
+            $new_filename = repository::get_unused_filename($draftitemid, $record->filepath, $record->filename);
+            $old_filename = $record->filename;
+            // create a tmp file
+            $record->filename = $new_filename;
+            $newfile = $fs->create_file_from_pathname($record, $thefile);
+            $event = array();
+            $event['event'] = 'fileexists';
+            $event['newfile'] = new stdClass;
+            $event['newfile']->filepath = $record->filepath;
+            $event['newfile']->filename = $new_filename;
+            $event['newfile']->url = moodle_url::make_draftfile_url($draftitemid, $record->filepath, $new_filename)->out();
+
+            $event['existingfile'] = new stdClass;
+            $event['existingfile']->filepath = $record->filepath;
+            $event['existingfile']->filename = $old_filename;
+            $event['existingfile']->url      = moodle_url::make_draftfile_url($draftitemid, $record->filepath, $old_filename)->out();;
+            return $event;
         }
         if ($file = $fs->create_file_from_pathname($record, $thefile)) {
             if (empty($CFG->repository_no_delete)) {
@@ -1552,6 +1689,54 @@ abstract class repository {
             return $str;
         }
     }
+
+    /**
+     * Overwrite an existing file
+     *
+     * @param int $itemid
+     * @param string $filepath
+     * @param string $filename
+     * @param string $newfilepath
+     * @param string $newfilename
+     * @return boolean
+     */
+    function overwrite_existing_draftfile($itemid, $filepath, $filename, $newfilepath, $newfilename) {
+        global $USER;
+        $fs = get_file_storage();
+        $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+        if ($file = $fs->get_file($user_context->id, 'user', 'draft', $itemid, $filepath, $filename)) {
+            if ($tempfile = $fs->get_file($user_context->id, 'user', 'draft', $itemid, $newfilepath, $newfilename)) {
+                // delete existing file to release filename
+                $file->delete();
+                // create new file
+                $newfile = $fs->create_file_from_storedfile(array('filepath'=>$filepath, 'filename'=>$filename), $tempfile);
+                // remove temp file
+                $tempfile->delete();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Delete a temp file from draft area
+     *
+     * @param int $draftitemid
+     * @param string $filepath
+     * @param string $filename
+     * @return boolean
+     */
+    function delete_tempfile_from_draft($draftitemid, $filepath, $filename) {
+        global $USER;
+        $fs = get_file_storage();
+        $user_context = get_context_instance(CONTEXT_USER, $USER->id);
+        if ($file = $fs->get_file($user_context->id, 'user', 'draft', $draftitemid, $filepath, $filename)) {
+            $file->delete();
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 /**
@@ -1834,4 +2019,13 @@ function initialise_filepicker($args) {
         $return->repositories[$repository->id] = $meta;
     }
     return $return;
+}
+/**
+ * Small function to walk an array to attach repository ID
+ * @param array $value
+ * @param string $key
+ * @param int $id
+ */
+function repository_attach_id(&$value, $key, $id){
+    $value['repo_id'] = $id;
 }

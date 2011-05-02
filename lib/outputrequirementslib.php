@@ -415,7 +415,10 @@ class page_requirements_manager {
                                                         array('cancel'), array('chooselicense', 'repository'), array('author', 'repository'),
                                                         array('ok', 'moodle'), array('error', 'moodle'), array('info', 'moodle'), array('norepositoriesavailable', 'repository'), array('norepositoriesexternalavailable', 'repository'),
                                                         array('nofilesattached', 'repository'), array('filepicker', 'repository'),
-                                                        array('nofilesavailable', 'repository')
+                                                        array('nofilesavailable', 'repository'), array('overwrite', 'repository'),
+                                                        array('renameto', 'repository'), array('fileexists', 'repository'),
+                                                        array('fileexistsdialogheader', 'repository'), array('fileexistsdialog_editor', 'repository'),
+                                                        array('fileexistsdialog_filemanager', 'repository')
                                                     ));
                     break;
                 case 'core_comment':
