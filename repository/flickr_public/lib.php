@@ -280,19 +280,19 @@ class repository_flickr_public extends repository {
 
         $licenses = implode(',', $licenses);
 
-        if (!empty($SESSION->{$this->sess_tag})         // use tag to search
-            or !empty($SESSION->{$this->sess_text})     // use keyword to search
-            or !empty($this->nsid)/*use pre-defined accound*/) {
-            $photos = $this->flickr->photos_search(array(
-                'tags'=>$SESSION->{$this->sess_tag},
-                'page'=>$page,
-                'per_page'=>24,
-                'user_id'=>$this->nsid,
-                'license'=>$licenses,
-                'text'=>$SESSION->{$this->sess_text}
-                )
-            );
-        }
+        $tag  = !empty($SESSION->{$this->sess_tag})  ? $SESSION->{$this->sess_tag}  : null;
+        $text = !empty($SESSION->{$this->sess_text}) ? $SESSION->{$this->sess_text} : null;
+        $nsid = !empty($this->nsid) ? $this->nsid : null;
+
+        $photos = $this->flickr->photos_search(array(
+            'tags'=>$tag,
+            'page'=>$page,
+            'per_page'=>24,
+            'user_id'=>$nsid,
+            'license'=>$licenses,
+            'text'=>$text
+            )
+        );
         $ret['total'] = $photos['total'];
         $ret['perpage'] = $photos['perpage'];
         if (empty($photos)) {
