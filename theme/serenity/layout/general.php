@@ -8,6 +8,8 @@ $hassidepost = (empty($PAGE->layout_options['noblocks']) && $PAGE->blocks->regio
 
 $showsidepre = ($hassidepre && !$PAGE->blocks->region_completely_docked('side-pre', $OUTPUT));
 $showsidepost = ($hassidepost && !$PAGE->blocks->region_completely_docked('side-post', $OUTPUT));
+$custommenu = $OUTPUT->custom_menu();
+$hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
 $bodyclasses = array();
 if ($showsidepre && !$showsidepost) {
@@ -17,7 +19,9 @@ if ($showsidepre && !$showsidepost) {
 } else if (!$showsidepost && !$showsidepre) {
     $bodyclasses[] = 'content-only';
 }
-
+if ($hascustommenu) {
+    $bodyclasses[] = 'has_custom_menu';
+}
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes() ?>>
 <head>
@@ -29,29 +33,33 @@ echo $OUTPUT->doctype() ?>
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
-	<div id="wrapper" class="clearfix">
+    <div id="wrapper" class="clearfix">
 <?php if ($hasheading || $hasnavbar) { ?>
 
     <div id="page-header" class="clearfix">
 
-	        <?php if ($hasheading) { ?>
-		    	<h1 class="headermain"><?php echo $PAGE->heading ?></h1>
-    		    <div class="headermenu">
-        			<?php
-            			echo $OUTPUT->login_info();
-		           		if (!empty($PAGE->layout_options['langmenu'])) {
-		        	       	echo $OUTPUT->lang_menu();
-			    	    }
-    			       	echo $PAGE->headingmenu
-        			?>
-	        	</div>
-	        <?php } ?>
+            <?php if ($hasheading) { ?>
+                <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
+                <div class="headermenu">
+                    <?php
+                        echo $OUTPUT->login_info();
+                           if (!empty($PAGE->layout_options['langmenu'])) {
+                               echo $OUTPUT->lang_menu();
+                        }
+                           echo $PAGE->headingmenu
+                    ?>
+                </div>
+            <?php } ?>
 
     </div>
 
+    <?php if ($hascustommenu) { ?>
+     <div id="custommenu"><?php echo $custommenu; ?></div>
+    <?php } ?>
+
     <?php if ($hasnavbar) { ?>
-	    <div class="navbar clearfix">
-    	    <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
+        <div class="navbar clearfix">
+            <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
             <div class="navbutton"> <?php echo $PAGE->button; ?></div>
       </div>
     <?php } ?>

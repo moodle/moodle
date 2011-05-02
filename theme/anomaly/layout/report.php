@@ -5,11 +5,15 @@ $hasnavbar = (empty($PAGE->layout_options['nonavbar']) && $PAGE->has_navbar());
 $hasfooter = (empty($PAGE->layout_options['nofooter']));
 $hassidepre = $PAGE->blocks->region_has_content('side-pre', $OUTPUT);
 $showsidepre = $hassidepre && !$PAGE->blocks->region_completely_docked('side-pre', $OUTPUT);
-
+$custommenu = $OUTPUT->custom_menu();
+$hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
 $bodyclasses = array();
 if (!$showsidepre) {
     $bodyclasses[] = 'content-only';
+}
+if ($hascustommenu) {
+    $bodyclasses[] = 'has_custom_menu';
 }
 
 echo $OUTPUT->doctype() ?>
@@ -36,6 +40,11 @@ echo $OUTPUT->doctype() ?>
             }
             echo $PAGE->headingmenu
         ?></div><?php } ?>
+
+        <?php if ($hascustommenu) { ?>
+        <div id="custommenu"><?php echo $custommenu; ?></div>
+        <?php } ?>
+
         <?php if ($hasnavbar) { ?>
             <div class="navbar clearfix">
                 <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>

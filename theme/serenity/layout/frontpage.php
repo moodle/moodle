@@ -5,6 +5,8 @@ $hassidepost = (empty($PAGE->layout_options['noblocks']) && $PAGE->blocks->regio
 
 $showsidepre = ($hassidepre && !$PAGE->blocks->region_completely_docked('side-pre', $OUTPUT));
 $showsidepost = ($hassidepost && !$PAGE->blocks->region_completely_docked('side-post', $OUTPUT));
+$custommenu = $OUTPUT->custom_menu();
+$hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
 $bodyclasses = array();
 if ($showsidepre && !$showsidepost) {
@@ -15,7 +17,10 @@ if ($showsidepre && !$showsidepost) {
     $bodyclasses[] = 'content-only';
 }
 if ($hassidepre || $hassidepost) {
-	$bodyclasses[] = 'background';
+    $bodyclasses[] = 'background';
+}
+if ($hascustommenu) {
+    $bodyclasses[] = 'has_custom_menu';
 }
 
 echo $OUTPUT->doctype() ?>
@@ -30,23 +35,25 @@ echo $OUTPUT->doctype() ?>
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
-	<div id="wrapper" class="clearfix">
+    <div id="wrapper" class="clearfix">
 
 <!-- START OF HEADER -->
 
     <div id="page-header" class="clearfix">
-		<div id="page-header-wrapper">
-	        <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
-    	    <div class="headermenu">
-        		<?php
-	        	    echo $OUTPUT->login_info();
-    	        	echo $OUTPUT->lang_menu();
-	        	    echo $PAGE->headingmenu;
-		        ?>
-	    	</div>
-	    </div>
+        <div id="page-header-wrapper">
+            <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
+            <div class="headermenu">
+                <?php
+                    echo $OUTPUT->login_info();
+                    echo $OUTPUT->lang_menu();
+                    echo $PAGE->headingmenu;
+                ?>
+            </div>
+        </div>
     </div>
-
+<?php if ($hascustommenu) { ?>
+     <div id="custommenu"><?php echo $custommenu; ?></div>
+<?php } ?>
 <!-- END OF HEADER -->
 
 <!-- START OF CONTENT -->
@@ -87,7 +94,7 @@ echo $OUTPUT->doctype() ?>
 
 <!-- END OF CONTENT -->
 
-	</div>
+    </div>
 
 <!-- START OF FOOTER -->
 

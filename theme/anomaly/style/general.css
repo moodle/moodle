@@ -121,8 +121,6 @@ html, body {background-color:#C8C9C7;}
 .group .r1 .cell,
 .admin table .r1 .cell {background-color:#EEE;}
 
-.admin .plugincompattable .r1 .cell {background-color:#FFF;}
-
 .singlebutton,
 .buttons {text-align:center;margin:20px;}
 .buttons form {display:inline;}
@@ -223,3 +221,31 @@ html, body {background-color:#C8C9C7;}
 /** Overide for RTL layout **/
 .dir-rtl #page-header .navbar .breadcrumb {float:right;}
 .dir-rtl #page-header .navbar .navbutton {float:left;}
+
+/** Custom menu **/
+/*YUI Reset */
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-content,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label-active,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label-menuvisible {background-position: -10000px -10000px;}
+.yui3-skin-sam #page .yui3-menu-label,
+.yui3-skin-sam #page .yui3-menu .yui3-menu .yui3-menu-label,
+.yui3-skin-sam #page .yui3-menubuttonnav .yui3-menu-label em { background-position: right center; }
+.yui3-skin-sam #page .yui3-splitbuttonnav .yui3-menu-label .yui3-menu-toggle {background-position: 3px center;}
+.yui3-skin-sam #page .yui3-splitbuttonnav .yui3-menu-label-menuvisible .yui3-menu-toggle {background-position: 0% 50%;}
+#custommenu {clear: both;padding-left: 4px;margin-bottom: 0px;padding-bottom: 2px;}
+.yui3-skin-sam #page .yui3-menu-label,
+.yui3-skin-sam #page .yui3-menuitem-content  {color: #fff;font-weight: 800;line-height: 30px;}
+.yui3-skin-sam #page .custom_menu_submenu .yui3-menu-label,
+.yui3-skin-sam #page .custom_menu_submenu .yui3-menuitem-content {color: #000 !important;text-shadow: none !important;line-height: 25px;}
+.yui3-skin-sam #page .yui3-menu-label.yui3-menu-label-active,
+.yui3-skin-sam #page .yui3-menuitem-active .yui3-menuitem-content {color: #000;background-color: #697F55;}
+.yui3-skin-sam #page .yui3-menu-content,
+.yui3-skin-sam #page .yui3-menu .yui3-menu .yui3-menu-content,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menuitem-content  {border: none !important;}
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label,
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-content {border-color:#808080;border-style:solid;border-width:0px 0;}
+
+#page .custom_menu_submenu {border: 1px solid #697F55 !important;-webkit-border-bottom-right-radius: 5px;-webkit-border-bottom-left-radius: 5px;-moz-border-radius-bottomright: 5px;-moz-border-radius-bottomleft: 5px;border-bottom-right-radius: 5px;border-bottom-left-radius: 5px;}

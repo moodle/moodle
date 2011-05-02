@@ -48,9 +48,17 @@ a:hover {
     margin-bottom: 5px;
 }
 
+.has_custom_menu #page-header {
+    margin-bottom: 0px;
+}
+
 .headermain { 
     font-weight: normal;
     margin: 1em 0.5em 0.75em;
+}
+
+#page-content {
+    float: none;
 }
 
 /* Footer
@@ -230,4 +238,70 @@ body.has_dock {
 #dockeditempanel .dockeditempanel_hd h2 { 
     font-size: 1em;
     color: #fff;
+}
+
+/*cutom menu */
+/*YUI Reset */
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-content,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label-active,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label-menuvisible {background-position: -10000px -10000px;}
+.yui3-skin-sam #page .yui3-menu-label,
+.yui3-skin-sam #page .yui3-menu .yui3-menu .yui3-menu-label,
+.yui3-skin-sam #page .yui3-menubuttonnav .yui3-menu-label em {background-position: right center;}
+.yui3-skin-sam #page .yui3-splitbuttonnav .yui3-menu-label .yui3-menu-toggle {background-position: 3px center;}
+.yui3-skin-sam #page .yui3-splitbuttonnav .yui3-menu-label-menuvisible .yui3-menu-toggle {background-position: 0% 50%;}
+
+#custommenu {
+    clear: both;
+    background-image: url([[pix:theme|headingblock]]);
+    margin-bottom: 5px;
+}
+
+.yui3-skin-sam #page .yui3-menu-label,
+.yui3-skin-sam #page .yui3-menuitem-content  {
+    color: #fff;
+    font-weight: 800;
+    line-height: 30px;
+}
+
+.custom_menu_submenu .yui3-menu-label,
+.custom_menu_submenu .yui3-menuitem-content {
+    color: #000 !important;
+    text-shadow: none !important;
+    line-height: 25px;
+}
+
+.yui3-skin-sam #page .yui3-menu-label.yui3-menu-label-active,
+.yui3-skin-sam #page .yui3-menu-label.yui3-menu-label-menuvisible,
+.yui3-skin-sam #page .yui3-menuitem-active .yui3-menuitem-content {
+    color: #000;
+    background-color: #d8d2c6;
+}
+
+.yui3-skin-sam #page .yui3-menu-content,
+.yui3-skin-sam #page .yui3-menu-content,
+.yui3-skin-sam #page .yui3-menu .yui3-menu .yui3-menu-content,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menuitem-content  {
+    border: none !important;
+}
+
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label,
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-content {
+    border-color:#808080;
+    border-style:solid;
+    border-width:0px 0;
+}
+
+#page .custom_menu_submenu {
+    border: 2px solid #d8d2c6 !important;
+    background: #fff;
+     -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    -webkit-box-shadow: 0px 1px 3px #ccc;
+    -moz-box-shadow: 0px 1px 3px #ccc;
+    box-shadow: 0px 1px 3px #ccc;
 }
