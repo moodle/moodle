@@ -57,5 +57,18 @@ function xmldb_report_customlang_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2010111500, 'report', 'customlang');
     }
 
+    /**
+     * Change the version field from integer to varchar
+     */
+    if ($oldversion < 2011041900) {
+        $table = new xmldb_table('report_customlang_components');
+        $field = new xmldb_field('version', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'name');
+
+        $dbman->change_field_type($table, $field);
+
+        upgrade_plugin_savepoint(true, 2011041900, 'report', 'customlang');
+    }
+
+
     return $result;
 }
