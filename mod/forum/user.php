@@ -86,6 +86,7 @@ if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEX
 }
 
 $PAGE->navigation->extend_for_user($user);
+$PAGE->navigation->set_userid_for_parent_checks($id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.
 $PAGE->set_title("$course->shortname: $fullname: $strmode");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
