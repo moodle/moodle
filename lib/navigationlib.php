@@ -830,7 +830,7 @@ class global_navigation extends navigation_node {
     /** @var int */
     protected $expansionlimit = 0;
     /** @var int */
-    protected $uglyunsupportedparenthack_userid = 0;
+    protected $useridtouseforparentchecks = 0;
 
     /**
      * Constructs a new global navigation
@@ -885,8 +885,8 @@ class global_navigation extends navigation_node {
      *
      * @param int $userid userid of profile page that parent wants to navigate around. 
      */
-    public function set_userid_for_parent_nav_hack($userid) {
-        $this->uglyunsupportedparenthack_userid = $userid;
+    public function set_userid_for_parent_checks($userid) {
+        $this->useridtouseforparentchecks = $userid;
     }
 
 
@@ -1007,10 +1007,10 @@ class global_navigation extends navigation_node {
                     // TODO: very ugly hack - do not force "parents" to enrol into course their child is enrolled in,
                     // this hack has been propagated from user/view.php to display the navigation node. (MDL-25805)
                     $isparent = false;
-                    if ($this->uglyunsupportedparenthack_userid) {
-                        $currentuser = ($this->uglyunsupportedparenthack_userid == $USER->id);
+                    if ($this->useridtouseforparentchecks) {
+                        $currentuser = ($this->useridtouseforparentchecks == $USER->id);
                         if (!$currentuser) {
-                            $usercontext   = get_context_instance(CONTEXT_USER, $this->uglyunsupportedparenthack_userid, MUST_EXIST);
+                            $usercontext   = get_context_instance(CONTEXT_USER, $this->useridtouseforparentchecks, MUST_EXIST);
                             if ($DB->record_exists('role_assignments', array('userid'=>$USER->id, 'contextid'=>$usercontext->id))
                                     and has_capability('moodle/user:viewdetails', $usercontext)) {
                                 $isparent = true;
