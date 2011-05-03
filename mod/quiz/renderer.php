@@ -660,7 +660,6 @@ class mod_quiz_renderer extends plugin_renderer_base {
         // Determine if we should be showing a start/continue attempt button,
         // or a button to go back to the course page.
         $output .= $this->box_start('quizattempt');
-        $output .= 'TEST';
         $buttontext = ''; // This will be set something if as start/continue attempt button should appear.
         if (!quiz_clean_layout($quiz->questions, true)) {
             $output .= quiz_no_questions_message($quiz, $cm, $context);

@@ -218,6 +218,7 @@ class quiz_access_manager {
      * @param bool $unfinished whether the button is to continue an existing attempt,
      * or start a new one. This affects whether a javascript alert is shown.
      */
+    //TODO: Add this function to renderer
     public function print_start_attempt_button($canpreview, $buttontext, $unfinished) {
         global $OUTPUT;
 
@@ -244,7 +245,7 @@ class quiz_access_manager {
                     $OUTPUT->heading(get_string('noscript', 'quiz')));
         }
 
-        echo $OUTPUT->render($button) . $warning;
+        return $OUTPUT->render($button) . $warning;
     }
 
     /**
