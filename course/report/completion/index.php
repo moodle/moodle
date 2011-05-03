@@ -384,7 +384,7 @@ if(!$csv) {
                 // Try load a aggregation method
                 $method = $completion->get_aggregation_method($current_group->criteriatype);
 
-                $method = $method == 1 ? 'All' : 'Any';
+                $method = $method == 1 ? get_string('all') : get_string('any');
 
             } else {
                 $method = '-';
@@ -406,7 +406,7 @@ if(!$csv) {
     // Get course aggregation
     $method = $completion->get_aggregation_method();
 
-    print $method == 1 ? 'All' : 'Any';
+    print $method == 1 ? get_string('all') : get_string('any');
     print '</th>';
 
     print '</tr>';
@@ -515,7 +515,7 @@ if(!$csv) {
 
     // Overall course completion status
     print '<th class="criteriaicon">';
-    print '<img src="'.$OUTPUT->pix_url('i/course').'" class="icon" alt="Course" title="Course Complete" />'; //TODO: localize
+    print '<img src="'.$OUTPUT->pix_url('i/course').'" class="icon" alt="'.get_string('course').'" title="'.get_string('coursecomplete', 'completion').'" />';
     print '</th>';
 
     print '</tr>';
@@ -634,7 +634,7 @@ foreach ($progress as $user) {
                 print '<td class="completion-progresscell">'.
                     '<a href="'.$CFG->wwwroot.'/course/togglecompletion.php?user='.$user->id.'&amp;course='.$course->id.'&amp;rolec='.$allow_marking_criteria.'&amp;sesskey='.sesskey().'">'.
                     '<img src="'.$OUTPUT->pix_url('i/completion-manual-'.($is_complete ? 'y' : 'n')).
-                    '" alt="'.$describe.'" class="icon" title="Mark as complete" /></a></td>'; //TODO: localize
+                    '" alt="'.$describe.'" class="icon" title="'.get_string('markcomplete', 'completion').'" /></a></td>';
             } else {
                 print '<td class="completion-progresscell">'.
                     '<img src="'.$OUTPUT->pix_url('i/'.$completionicon).
