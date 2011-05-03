@@ -133,12 +133,9 @@ if ($attempts) {
 
 $moreattempts = $unfinished || !$accessmanager->is_finished($numattempts, $lastfinishedattempt);
 
-$title = $course->shortname . ': ' . format_string($quiz->name);
-$PAGE->set_title($title);
-$PAGE->set_heading($course->fullname);
-$output = $PAGE->get_renderer('mod_quiz');
-echo $OUTPUT->header();
-
+/*
+ * Create view object for use within renderers file
+ */
 $viewobj->attempts = $attempts;
 $viewobj->accessmanager = $accessmanager;
 $viewobj->canattempt = $canattempt;
@@ -159,6 +156,12 @@ $viewobj->gradebookfeedback = $gradebookfeedback;
 $viewobj->feedbackcolumn = $feedbackcolumn;
 $viewobj->unfinished = $unfinished;
 $viewobj->lastfinishedattempt = $lastfinishedattempt;
+
+$title = $course->shortname . ': ' . format_string($quiz->name);
+$PAGE->set_title($title);
+$PAGE->set_heading($course->fullname);
+$output = $PAGE->get_renderer('mod_quiz');
+echo $OUTPUT->header();
 
 echo $output->view_page($course, $quiz, $cm, $context, $viewobj);
 
