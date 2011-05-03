@@ -99,7 +99,7 @@ if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
 echo $OUTPUT->heading(format_string($attemptobj->get_quiz_name()));
 echo $OUTPUT->heading($title, 3);
 
-$output->summary_page($attemptobj, $displayoptions);
+echo $output->summary_page($attemptobj, $displayoptions);
 
 // Finish the page
 $accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());

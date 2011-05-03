@@ -39,7 +39,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $this->header();
         $output .= $this->review_summary_table($summarydata, $page);
         $output .= $this->review_form($page, $showall, $displayoptions,
-                $this->questions($attemptobj, true, $slots, $page, $showall, $displayoptions));
+                $this->questions($attemptobj, true, $slots, $page, $showall, $displayoptions),
+                $attemptobj, $showall);
 
         $output .= $this->review_next_navigation($attemptobj, $page, $lastpage);
         $output .= $this->footer();
@@ -106,7 +107,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
-    public function review_form($summarydata, $page, $displayoptions, $content) {
+    public function review_form($summarydata, $page, $displayoptions, $content, $attemptobj,
+                                $showall) {
         if ($displayoptions->flags != question_display_options::EDITABLE) {
             return $content;
         }
@@ -124,9 +126,9 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= html_writer::empty_tag('input', array('type' => 'submit',
                 'class' => 'questionflagsavebutton', 'name' => 'savingflags',
                 'value' => get_string('saveflags', 'question')));
-        $output .= html_writer::eng_tag('div');
-        $output .= html_writer::eng_tag('div');
-        $output .= html_writer::eng_tag('form');
+        $output .= html_writer::end_tag('div');
+        $output .= html_writer::end_tag('div');
+        $output .= html_writer::end_tag('form');
 
         return $output;
     }
@@ -410,6 +412,305 @@ class mod_quiz_renderer extends plugin_renderer_base {
     
     private function summary_get_timer($attemptobj){
         return $attemptobj->get_timer_html();
+    }
+
+    /*
+     * View Page
+     */
+    public function view_page($course, $quiz, $cm, $context, $viewobj){
+        $output = '';
+        $output .= $this->view_information($quiz, $cm, $context, $viewobj);
+        $output .= $this->view_table($quiz, $context, $viewobj);
+        $output .= $this->view_best_score($viewobj);
+        $output .= $this->view_result_info($quiz, $context, $cm, $viewobj);
+        $output .= $this->view_attempt_button($course, $quiz, $cm, $context, $viewobj);
+        return $output;
+    }
+    
+    private function view_information($quiz, $cm, $context, $viewobj){
+        global $CFG;
+        $output = '';
+        // Print quiz name and description
+        $output .= $this->heading(format_string($quiz->name));
+        if (trim(strip_tags($quiz->intro))) {
+            $output .= $this->box(format_module_intro('quiz', $quiz, $cm->id), 'generalbox', 'intro');
+        }
+
+        // Display information about this quiz.
+        $messages = $viewobj->accessmanager->describe_rules();
+        if ($quiz->attempts != 1) {
+            $messages[] = get_string('gradingmethod', 'quiz',
+                    quiz_get_grading_option_name($quiz->grademethod));
+        }
+        $output .= $this->box_start('quizinfo');
+        $this->access_messages($messages);
+        $output .= $this->box_end();
+
+        // Show number of attempts summary to those who can view reports.
+        if (has_capability('mod/quiz:viewreports', $context)) {
+            if ($strattemptnum = quiz_attempt_summary_link_to_reports($quiz, $cm, $context)) {
+                $output .= '<div class="quizattemptcounts">' . $strattemptnum . "</div>\n";
+            }
+        }
+
+        // Guests can't do a quiz, so offer them a choice of logging in or going back.
+        if (isguestuser()) {
+            echo $this->confirm('<p>' . get_string('guestsno', 'quiz') . "</p>\n\n<p>" .
+                    get_string('liketologin') . "</p>\n", get_login_url(), get_referer(false));
+            echo $this->footer();
+            exit;
+        }
+
+        // If they are not enrolled in this course in a good enough role, tell them to enrol.
+        if (!($viewobj->canattempt || $viewobj->canpreview || $viewobj->canreviewmine)) {
+            echo $this->box('<p>' . get_string('youneedtoenrol', 'quiz') . "</p>\n\n<p>" .
+                    $this->continue_button($CFG->wwwroot . '/course/view.php?id=' . $course->id) .
+                    "</p>\n", 'generalbox', 'notice');
+            echo $this->footer();
+            exit;
+        }
+        return $output;
+    }
+
+    private function view_table($quiz, $context, $viewobj){
+        $output = '';
+        if ($viewobj->attempts) {
+            $output .= $this->heading(get_string('summaryofattempts', 'quiz'));
+
+            // Prepare table header
+            $table = new html_table();
+            $table->attributes['class'] = 'generaltable quizattemptsummary';
+            $table->head = array();
+            $table->align = array();
+            $table->size = array();
+            if ($viewobj->attemptcolumn) {
+                $table->head[] = get_string('attemptnumber', 'quiz');
+                $table->align[] = 'center';
+                $table->size[] = '';
+            }
+            $table->head[] = get_string('timecompleted', 'quiz');
+            $table->align[] = 'left';
+            $table->size[] = '';
+            if ($viewobj->markcolumn) {
+                $table->head[] = get_string('marks', 'quiz') . ' / ' .
+                        quiz_format_grade($quiz, $quiz->sumgrades);
+                $table->align[] = 'center';
+                $table->size[] = '';
+            }
+            if ($viewobj->gradecolumn) {
+                $table->head[] = get_string('grade') . ' / ' .
+                        quiz_format_grade($quiz, $quiz->grade);
+                $table->align[] = 'center';
+                $table->size[] = '';
+            }
+            if ($viewobj->canreviewmine) {
+                $table->head[] = get_string('review', 'quiz');
+                $table->align[] = 'center';
+                $table->size[] = '';
+            }
+            if ($viewobj->feedbackcolumn) {
+                $table->head[] = get_string('feedback', 'quiz');
+                $table->align[] = 'left';
+                $table->size[] = '';
+            }
+            if (isset($quiz->showtimetaken)) {
+                $table->head[] = get_string('timetaken', 'quiz');
+                $table->align[] = 'left';
+                $table->size[] = '';
+            }
+
+            // One row for each attempt
+            foreach ($viewobj->attempts as $attempt) {
+                $attemptoptions = quiz_get_review_options($quiz, $attempt, $context);
+                $row = array();
+        
+                // Add the attempt number, making it a link, if appropriate.
+                if ($viewobj->attemptcolumn) {
+                    if ($attempt->preview) {
+                        $row[] = get_string('preview', 'quiz');
+                    } else {
+                        $row[] = $attempt->attempt;
+                    }
+                }
+
+                // prepare strings for time taken and date completed
+                $timetaken = '';
+                $datecompleted = '';
+                if ($attempt->timefinish > 0) {
+                    // attempt has finished
+                    $timetaken = format_time($attempt->timefinish - $attempt->timestart);
+                    $datecompleted = userdate($attempt->timefinish);
+                } else if (!$quiz->timeclose || $viewobj->timenow < $quiz->timeclose) {
+                    // The attempt is still in progress.
+                    $timetaken = format_time($viewobj->timenow - $attempt->timestart);
+                    $datecompleted = get_string('inprogress', 'quiz');
+                } else {
+                    $timetaken = format_time($quiz->timeclose - $attempt->timestart);
+                    $datecompleted = userdate($quiz->timeclose);
+                }
+                $row[] = $datecompleted;
+
+                if ($viewobj->markcolumn && $attempt->timefinish > 0) {
+                    if ($attemptoptions->marks >= question_display_options::MARK_AND_MAX) {
+                        $row[] = quiz_format_grade($quiz, $attempt->sumgrades);
+                    } else {
+                        $row[] = '';
+                    }
+                }
+
+                // Ouside the if because we may be showing feedback but not grades.
+                $attemptgrade = quiz_rescale_grade($attempt->sumgrades, $quiz, false);
+
+                if ($viewobj->gradecolumn) {
+                    if ($attemptoptions->marks >= question_display_options::MARK_AND_MAX &&
+                            $attempt->timefinish > 0) {
+                        $formattedgrade = quiz_format_grade($quiz, $attemptgrade);
+                        // highlight the highest grade if appropriate
+                        if ($viewobj->overallstats && !$attempt->preview && $viewobj->numattempts > 1 && !is_null($viewobj->mygrade) &&
+                                $attemptgrade == $viewobj->mygrade && $quiz->grademethod == QUIZ_GRADEHIGHEST) {
+                            $table->rowclasses[$attempt->attempt] = 'bestrow';
+                        }
+        
+                        $row[] = $formattedgrade;
+                    } else {
+                        $row[] = '';
+                    }
+                }
+
+                if ($viewobj->canreviewmine) {
+                    $row[] = $viewobj->accessmanager->make_review_link($attempt, $viewobj->canpreview, $attemptoptions);
+                }
+
+                if ($viewobj->feedbackcolumn && $attempt->timefinish > 0) {
+                    if ($attemptoptions->overallfeedback) {
+                        $row[] = quiz_feedback_for_grade($attemptgrade, $quiz, $context, $cm);
+                    } else {
+                        $row[] = '';
+                    }
+                }
+
+                if (isset($quiz->showtimetaken)) {
+                    $row[] = $timetaken;
+                }
+
+                if ($attempt->preview) {
+                    $table->data['preview'] = $row;
+                } else {
+                    $table->data[$attempt->attempt] = $row;
+                }
+            } // End of loop over attempts.
+            $output .= html_writer::table($table);
+        }
+        return $output;
+    }
+
+    private function view_best_score($viewobj){
+        $output = '';
+        // Print information about the student's best score for this quiz if possible.
+        if (!$viewobj->moreattempts) {
+            $output .= $this->heading(get_string('nomoreattempts', 'quiz'));
+        }
+        return $output;
+    }
+
+    private function view_result_info($quiz, $context, $cm, $viewobj){
+        $output = '';
+        if ($viewobj->numattempts && $viewobj->gradecolumn && !is_null($viewobj->mygrade)) {
+            $resultinfo = '';
+        
+            if ($viewobj->overallstats) {
+                if ($viewobj->moreattempts) {
+                    $a = new stdClass();
+                    $a->method = quiz_get_grading_option_name($quiz->grademethod);
+                    $a->mygrade = quiz_format_grade($quiz, $viewobj->mygrade);
+                    $a->quizgrade = quiz_format_grade($quiz, $quiz->grade);
+                    $resultinfo .= $this->heading(get_string('gradesofar', 'quiz', $a), 2, 'main');
+                } else {
+                    $a = new stdClass();
+                    $a->grade = quiz_format_grade($quiz, $viewobj->mygrade);
+                    $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
+                    $a = get_string('outofshort', 'quiz', $a);
+                    $resultinfo .= $this->heading(get_string('yourfinalgradeis', 'quiz', $a), 2, 'main');
+                }
+            }
+        
+            if ($viewobj->mygradeoverridden) {
+                $resultinfo .= '<p class="overriddennotice">' .
+                        get_string('overriddennotice', 'grades') . "</p>\n";
+            }
+            if ($viewobj->gradebookfeedback) {
+                $resultinfo .= $this->heading(get_string('comment', 'quiz'), 3, 'main');
+                $resultinfo .= '<p class="quizteacherfeedback">'.$viewobj->gradebookfeedback."</p>\n";
+            }
+            if ($viewobj->feedbackcolumn) {
+                $resultinfo .= $this->heading(get_string('overallfeedback', 'quiz'), 3, 'main');
+                $resultinfo .= '<p class="quizgradefeedback">' .
+                        quiz_feedback_for_grade($viewobj->mygrade, $quiz, $context, $cm) . "</p>\n";
+            }
+        
+            if ($resultinfo) {
+                $output .= $this->box($resultinfo, 'generalbox', 'feedback');
+            }
+        }
+        return $output;
+    }
+
+    private function view_attempt_button($course, $quiz, $cm, $context, $viewobj){
+        $output = '';
+        // Determine if we should be showing a start/continue attempt button,
+        // or a button to go back to the course page.
+        $output .= $this->box_start('quizattempt');
+        $buttontext = ''; // This will be set something if as start/continue attempt button should appear.
+        if (!quiz_clean_layout($quiz->questions, true)) {
+            $output .= quiz_no_questions_message($quiz, $cm, $context);
+            $buttontext = '';
+        
+        } else {
+            if ($viewobj->unfinished) {
+                if ($viewobj->canattempt) {
+                    $buttontext = get_string('continueattemptquiz', 'quiz');
+                } else if ($viewobj->canpreview) {
+                    $buttontext = get_string('continuepreview', 'quiz');
+                }
+        
+            } else {
+                if ($viewobj->canattempt) {
+                    $messages = $viewobj->accessmanager->prevent_new_attempt($viewobj->numattempts, $viewobj->lastfinishedattempt);
+                    if ($messages) {
+                        $this->access_messages($messages);
+                    } else if ($viewobj->numattempts == 0) {
+                        $buttontext = get_string('attemptquiznow', 'quiz');
+                    } else {
+                        $buttontext = get_string('reattemptquiz', 'quiz');
+                    }
+        
+                } else if ($viewobj->canpreview) {
+                    $buttontext = get_string('previewquiznow', 'quiz');
+                }
+            }
+        
+            // If, so far, we think a button should be printed, so check if they will be
+            // allowed to access it.
+            if ($buttontext) {
+                if (!$viewobj->moreattempts) {
+                    $buttontext = '';
+                } else if ($viewobj->canattempt && $messages = $viewobj->accessmanager->prevent_access()) {
+                    $this->access_messages($messages);
+                    $buttontext = '';
+                }
+            }
+        }
+        
+        // Now actually print the appropriate button.
+        if ($buttontext) {
+            $viewobj->accessmanager->print_start_attempt_button($viewobj->canpreview, $buttontext, $viewobj->unfinished);
+        } else if ($buttontext === '') {
+            $output .= $this->single_button(new moodle_url('/course/view.php', array('id' => $course->id)),
+                    get_string('backtocourse', 'quiz'), 'get', array('class' => 'continuebutton'));
+        }
+        $output .= $this->box_end();
+
+        return $output;
     }
 }
 
