@@ -75,7 +75,8 @@ if ($showall) {
 }
 
 // Save the flag states, if they are being changed.
-if ($options->flags == question_display_options::EDITABLE && optional_param('savingflags', false, PARAM_BOOL)) {
+if ($options->flags == question_display_options::EDITABLE && optional_param('savingflags', false,
+        PARAM_BOOL)) {
     require_sesskey();
     $attemptobj->save_question_flags();
     redirect($attemptobj->review_url(0, $page, $showall));
@@ -100,9 +101,11 @@ if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {
 // Set up the page header
 $headtags = $attemptobj->get_html_head_contributions($page, $showall);
 if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
-    $accessmanager->setup_secure_page($attemptobj->get_course()->shortname.': '.format_string($attemptobj->get_quiz_name()), $headtags);
+    $accessmanager->setup_secure_page($attemptobj->get_course()->shortname.': '.
+            format_string($attemptobj->get_quiz_name()), $headtags);
 } else if ($accessmanager->safebrowser_required($attemptobj->is_preview_user())) {
-    $PAGE->set_title($attemptobj->get_course()->shortname . ': '.format_string($attemptobj->get_quiz_name()));
+    $PAGE->set_title($attemptobj->get_course()->shortname . ': '.
+            format_string($attemptobj->get_quiz_name()));
     $PAGE->set_heading($attemptobj->get_course()->fullname);
     $PAGE->set_cacheable(false);
 } else {
@@ -149,7 +152,8 @@ if (!$attemptobj->get_quiz()->showuserpicture && $attemptobj->get_userid() != $U
     );
 }
 if ($attemptobj->has_capability('mod/quiz:viewreports')) {
-    $attemptlist = $attemptobj->links_to_other_attempts($attemptobj->review_url(0, $page, $showall));
+    $attemptlist = $attemptobj->links_to_other_attempts($attemptobj->review_url(0, $page,
+            $showall));
     if ($attemptlist) {
         $summarydata['attemptlist'] = array(
             'title'   => get_string('attempts', 'quiz'),
