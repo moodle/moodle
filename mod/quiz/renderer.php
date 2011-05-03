@@ -267,7 +267,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         //Start Form
         $output .= html_writer::start_tag('form',
-                array('action' => s($attemptobj->processattempt_url()), 'method' => 'post',
+                array('action' => $attemptobj->processattempt_url(), 'method' => 'post',
                 'enctype' => 'multipart/form-data', 'accept-charset' => 'utf-8',
                 'id' => 'responseform'));
         $output .= html_writer::start_tag('div');
@@ -309,6 +309,23 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         return $output;
     }
+    
+    /**
+     * Print each message in an array, surrounded by &lt;p>, &lt;/p> tags.
+     *
+     * @param array $messages the array of message strings.
+     * @param bool $return if true, return a string, instead of outputting.
+     *
+     * @return mixed, if $return is true, return the string that would have been output, otherwise
+     * return null.
+     */
+    public function access_messages($messages) {
+        $output = '';
+        foreach ($messages as $message) {
+            $output .= html_writer::tag('p', $message) . "\n";
+        }
+        return $output;
+    }
 
     /*
      * Summary Page
@@ -316,7 +333,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
     public function summary_page($attemptobj, $displayoptions) {
         $output = '';
         $output .= $this->summary_table($attemptobj, $displayoptions);
-        $output .= $this->summary_container($attemptobj);
+        $output .= $this->summary_page_controls($attemptobj);
         return $output;
     }
 
@@ -362,10 +379,10 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
-    private function summary_container($attemptobj) {
+    private function summary_page_controls($attemptobj) {
         $output = '';
         // countdown timer
-        $output .= $attemptobj->get_timer_html();
+        $output .= $this->summary_get_timer($attemptobj);
 
         // Finish attempt button.
         $output .= $this->container_start('submitbtns mdl-align');
@@ -390,22 +407,9 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         return $output;
     }
-
-    /**
-     * Print each message in an array, surrounded by &lt;p>, &lt;/p> tags.
-     *
-     * @param array $messages the array of message strings.
-     * @param bool $return if true, return a string, instead of outputting.
-     *
-     * @return mixed, if $return is true, return the string that would have been output, otherwise
-     * return null.
-     */
-    public function print_messages($messages) {
-        $output = '';
-        foreach ($messages as $message) {
-            $output .= html_writer::tag('p', $message) . "\n";
-        }
-        return $output;
+    
+    private function summary_get_timer($attemptobj){
+        return $attemptobj->get_timer_html();
     }
 }
 

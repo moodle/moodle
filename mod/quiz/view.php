@@ -101,7 +101,7 @@ if ($quiz->attempts != 1) {
             quiz_get_grading_option_name($quiz->grademethod));
 }
 echo $OUTPUT->box_start('quizinfo');
-$output->print_messages($messages);
+$output->access_messages($messages);
 echo $OUTPUT->box_end();
 
 // Show number of attempts summary to those who can view reports.
@@ -368,7 +368,7 @@ if (!quiz_clean_layout($quiz->questions, true)) {
         if ($canattempt) {
             $messages = $accessmanager->prevent_new_attempt($numattempts, $lastfinishedattempt);
             if ($messages) {
-                $output->print_messages($messages);
+                $output->access_messages($messages);
             } else if ($numattempts == 0) {
                 $buttontext = get_string('attemptquiznow', 'quiz');
             } else {
@@ -386,7 +386,7 @@ if (!quiz_clean_layout($quiz->questions, true)) {
         if (!$moreattempts) {
             $buttontext = '';
         } else if ($canattempt && $messages = $accessmanager->prevent_access()) {
-            $output->print_messages($messages);
+            $output->access_messages($messages);
             $buttontext = '';
         }
     }
