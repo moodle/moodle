@@ -66,7 +66,7 @@ class repository_dropbox extends repository {
             'oauth_consumer_key'=>$this->dropbox_key,
             'oauth_consumer_secret'=>$this->dropbox_secret,
             'oauth_callback' => $this->callback->out(false),
-            'api_root' => 'http://api.dropbox.com/0/oauth',
+            'api_root' => 'http://www.dropbox.com/0/oauth',
         );
 
         $this->dropbox = new dropbox($args);
@@ -163,10 +163,16 @@ class repository_dropbox extends repository {
             }
         }
 
-        $files = $result->contents;
-        if (!is_array($files) || empty($files)) {
+        if (!empty($result->error)) {
+            // reset access key
+            set_user_preference($this->setting.'_access_key', '');
+            set_user_preference($this->setting.'_access_secret', '');
+            throw new repository_exception('repositoryerror', 'repository', '', $result->error);
+        }
+        if (empty($result->contents) or !is_array($result->contents)) {
             return $list;
         }
+        $files = $result->contents;
         foreach ($files as $file) {
             if ($file->is_dir) {
                 $list['list'][] = array(
