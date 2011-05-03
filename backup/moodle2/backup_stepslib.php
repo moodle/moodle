@@ -177,12 +177,15 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
      * for question_usages and all the associated data.
      */
     protected function add_question_usages($element, $usageidname) {
+        global $CFG;
+        require_once($CFG->dirroot . '/question/engine/lib.php');
+
         // Check $element is one nested_backup_element
         if (! $element instanceof backup_nested_element) {
             throw new backup_step_exception('question_states_bad_parent_element', $element);
         }
-        if (! $element->get_final_element($questionattemptname)) {
-            throw new backup_step_exception('question_states_bad_question_attempt_element', $questionattemptname);
+        if (! $element->get_final_element($usageidname)) {
+            throw new backup_step_exception('question_states_bad_question_attempt_element', $usageidname);
         }
 
         $quba = new backup_nested_element('question_usage', array('id'),
@@ -199,8 +202,7 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
                 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid'));
 
         $data = new backup_nested_element('data');
-        $value = new backup_nested_element('value', array('name'),
-                array('value'));
+        $value = new backup_nested_element('value', array('name', 'value'));
 
         // Build the tree
         $element->add_child($quba);
@@ -213,7 +215,7 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
 
         // Set the sources
         $quba->set_source_table('question_usages',
-                array('id'                => '../../' . $usageidname));
+                array('id'                => '../' . $usageidname));
         $qa->set_source_table('question_attempts',
                 array('questionusageid'   => backup::VAR_PARENTID));
         $step->set_source_table('question_attempt_steps',
