@@ -85,7 +85,11 @@ M.core_filepicker.init = function(Y, options) {
 
         request: function(args, redraw) {
             var client_id = args.client_id;
-            var api = this.api + '?action='+args.action;
+            if (!args.api) {
+                var api = this.api + '?action='+args.action;
+            } else {
+                var api = args.api + '?action='+args.action;
+            }
             var params = {};
             var scope = this;
             if (args['scope']) {
@@ -147,6 +151,14 @@ M.core_filepicker.init = function(Y, options) {
                             scope.print_msg(data.error, 'error');
                             scope.list();
                             return;
+                        } else if (data && data.event) {
+                            switch (data.event) {
+                                case 'fileexists':
+                                    scope.process_existing_file(data);
+                                    break;
+                                default:
+                                    break;
+                            }
                         } else {
                             if (data.msg) {
                                 scope.print_msg(data.msg, 'info');
@@ -171,6 +183,94 @@ M.core_filepicker.init = function(Y, options) {
             if (redraw) {
                 this.wait('load');
             }
+        },
+        process_existing_file: function(data) {
+            var scope = this;
+            var repository_id = scope.active_repo.id;
+            var client_id = scope.options.client_id;
+            var handleOverwrite = function() {
+                // overwrite
+                var dialog = this;
+                var params = {}
+                params['existingfilename'] = data.existingfile.filename;
+                params['existingfilepath'] = data.existingfile.filepath;
+                params['newfilename'] = data.newfile.filename;
+                params['newfilepath'] = data.newfile.filepath;
+                scope.request({
+                    'params': params,
+                    'scope': scope,
+                    'action':'overwrite',
+                    'path': '',
+                    'client_id': client_id,
+                    'repository_id': repository_id,
+                    'callback': function(id, o, args) {
+                        dialog.cancel();
+                        scope.hide();
+                        // editor needs to update url
+                        // filemanager do nothing
+                        if (scope.options.editor_target && scope.options.env == 'editor') {
+                            scope.options.editor_target.value = data.existingfile.url;
+                            scope.options.editor_target.onchange();
+                        }
+                    }
+                }, true);
+            }
+            var handleRename = function() {
+                if (scope.options.editor_target && scope.options.env == 'editor') {
+                    scope.options.editor_target.value = data.newfile.url;
+                    scope.options.editor_target.onchange();
+                }
+                this.cancel();
+                scope.hide();
+                data.client_id = client_id;
+                var formcallback_scope = null;
+                if (scope.options.magicscope) {
+                    formcallback_scope = scope.options.magicscope;
+                } else {
+                    formcallback_scope = scope;
+                }
+                scope.options.formcallback.apply(formcallback_scope, [data]);
+            }
+            var handleCancel = function() {
+                // Delete tmp file
+                var dialog = this;
+                var params = {};
+                params['newfilename'] = data.newfile.filename;
+                params['newfilepath'] = data.newfile.filepath;
+                scope.request({
+                    'params': params,
+                    'scope': scope,
+                    'action':'deletetmpfile',
+                    'path': '',
+                    'client_id': client_id,
+                    'repository_id': repository_id,
+                    'callback': function(id, o, args) {
+                        scope.hide();
+                        dialog.cancel();
+                    }
+                }, true);
+            }
+            var dialog = new YAHOO.widget.SimpleDialog("dlg", {
+                width: "50em",
+                fixedcenter: true,
+                modal: true,
+                close: false,
+                icon: YAHOO.widget.SimpleDialog.ICON_HELP,
+                visible: true,
+                draggable: true,
+                buttons: [{ text: M.str.repository.overwrite, handler: handleOverwrite },
+                { text: M.str.repository.renameto + ' "' + data.newfile.filename + '"', handler: handleRename },
+                { text: M.str.moodle.cancel, handler: handleCancel, isDefault: true}]
+            });
+            dialog.setHeader(M.str.repository.fileexistsdialogheader);
+            if (scope.options.env == 'editor') {
+                dialog.setBody(M.str.repository.fileexistsdialog_editor);
+            } else {
+                dialog.setBody(M.str.repository.fileexistsdialog_filemanager);
+            }
+
+            dialog.render(document.body);
+            dialog.show();
         },
         print_msg: function(msg, type) {
             var client_id = this.options.client_id;
@@ -1112,7 +1212,6 @@ M.core_filepicker.init = function(Y, options) {
             //if(this.active_repo.pages < 8){
                 this.print_paging('header');
             //}
-
 
             var toolbar = Y.one('#repo-tb-'+client_id);
 
