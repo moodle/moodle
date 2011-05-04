@@ -16,14 +16,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Manual enrolment plugin version specification.
+ * Manual plugin external functions and service definitions.
  *
  * @package    enrol
  * @subpackage manual
- * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @author 2011 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+$functions = array(
 
-$plugin->version = 2010071201;
+    // === enrol related functions ===
+    'moodle_enrol_manual_enrol_users' => array(
+        'classname'   => 'moodle_enrol_manual_external',
+        'methodname'  => 'manual_enrol_users',
+        'classpath'   => 'enrol/manual/externallib.php',
+        'description' => 'Manual enrol users',
+        'capabilities'=> 'enrol/manual:enrol',
+        'type'        => 'write',
+    ),
+
+);
