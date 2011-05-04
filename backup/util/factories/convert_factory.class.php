@@ -1,8 +1,37 @@
 <?php
 
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package    core
+ * @subpackage backup-convert
+ * @copyright  2011 Mark Nielsen <mark@moodlerooms.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Factory class to create new instances of backup converters
+ */
 abstract class convert_factory {
+
     /**
-     * @static
+     * Instantinates the given converter operating on a given directory
+     *
      * @throws coding_exception
      * @param  $name The converter name
      * @param  $tempdir The temp directory to operate on
@@ -26,9 +55,10 @@ abstract class convert_factory {
         }
         return new $classname($tempdir);
     }
-
+    
     /**
-     * @static
+     * Instantiates a list of all installed converters operating on a given directory
+     *
      * @param string $tempdir The temp directory to operate on
      * @return array
      */
@@ -44,10 +74,8 @@ abstract class convert_factory {
     }
 
     /**
-     * Runs through all plugins of a specific type and instantiates
-     * their task class.
+     * Runs through all plugins of a specific type and instantiates their task class
      *
-     * @static
      * @throws coding_exception
      * @param string $type The plugin type
      * @param string $format The convert format
@@ -79,9 +107,8 @@ abstract class convert_factory {
     }
 
     /**
-     * This will add all of the plugin tasks to the converter's plan
+     * Adds all of the plugin tasks to the given converter's plan
      *
-     * @static
      * @param plan_converter $converter The converter to add the plugin tasks to
      * @param string $type The plugin type
      * @param string $extra Extra naming structure
