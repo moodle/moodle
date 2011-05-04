@@ -141,19 +141,26 @@ $viewobj->accessmanager = $accessmanager;
 $viewobj->canattempt = $canattempt;
 $viewobj->canpreview = $canpreview;
 $viewobj->canreviewmine = $canreviewmine;
-$viewobj->attemptcolumn = $attemptcolumn;
-$viewobj->markcolumn = $markcolumn;
-$viewobj->gradecolumn = $gradecolumn;
-$viewobj->feedbackcolumn = $feedbackcolumn;
+if ($attempts) {
+    $viewobj->attemptcolumn = $attemptcolumn;
+    $viewobj->gradecolumn = $gradecolumn;
+    $viewobj->markcolumn = $markcolumn;
+    $viewobj->feedbackcolumn = $feedbackcolumn;
+    $viewobj->overallstats = $overallstats;
+} else {
+    $viewobj->attemptcolumn = 1;
+    //$viewobj->gradecolumn = 1;
+    //$viewobj->markcolumn = 1;
+    //$viewobj->feedbackcolumn = 1;
+    //$viewobj->overallstats = 1;
+}
 $viewobj->timenow = $timenow;
-$viewobj->overallstats = $overallstats;
 $viewobj->numattempts = $numattempts;
 $viewobj->mygrade = $mygrade;
 $viewobj->moreattempts = $moreattempts;
 $viewobj->numattempts = $numattempts;
 $viewobj->mygradeoverridden = $mygradeoverridden;
 $viewobj->gradebookfeedback = $gradebookfeedback;
-$viewobj->feedbackcolumn = $feedbackcolumn;
 $viewobj->unfinished = $unfinished;
 $viewobj->lastfinishedattempt = $lastfinishedattempt;
 

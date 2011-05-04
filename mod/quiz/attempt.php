@@ -100,7 +100,7 @@ $headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->requires->js_init_call('M.mod_quiz.init_attempt_form', null, false, quiz_get_js_module());
 
 // Arrange for the navigation to be displayed.
-$navbc = $attemptobj->get_navigation_panel('quiz_attempt_nav_panel', $page);
+$navbc = $attemptobj->get_navigation_panel($output, 'quiz_attempt_nav_panel', $page);
 $firstregion = reset($PAGE->blocks->get_regions());
 $PAGE->blocks->add_fake_block($navbc, $firstregion);
 

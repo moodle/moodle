@@ -411,7 +411,9 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     private function summary_get_timer($attemptobj) {
-        return $attemptobj->get_timer_html();
+        return html_writer::tag('div', get_string('timeleft', 'quiz') .
+                html_writer::tag('span', '', array('id' => 'quiz-time-left')),
+                array('id' => 'quiz-timer'));
     }
 
     /*
