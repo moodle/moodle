@@ -3465,13 +3465,13 @@ function forum_rating_permissions($contextid) {
  *            rating => int the submitted rating [required]
  *            rateduserid => int the id of the user whose items have been rated. NOT the user who submitted the ratings. 0 to update all. [required]
  *            aggregation => int the aggregation method to apply when calculating grades ie RATING_AGGREGATE_AVERAGE [required]
- * @return boolean true if the rating is valid
+ * @return boolean true if the rating is valid. Will throw rating_exception if not
  */
-function forum_rating_add($params) {
+function forum_rating_validate($params) {
     global $DB, $USER;
 
-    if (!array_key_exists('itemid', $params) || !array_key_exists('context', $params)) {
-        return false;
+    if (!array_key_exists('itemid', $params) || !array_key_exists('context', $params) || !array_key_exists('rateduserid', $params)) {
+        throw new rating_exception('missingparameter');
     }
 
     $forumsql = "SELECT f.id as fid, f.course, d.id as did, p.userid as userid, p.created, f.assesstimestart, f.assesstimefinish, d.groupid
@@ -3481,19 +3481,24 @@ function forum_rating_add($params) {
                   WHERE p.id = :itemid";
     $forumparams = array('itemid'=>$params['itemid']);
     if (!$info = $DB->get_record_sql($forumsql, $forumparams)) {
-        //item id doesn't exist
-        return false;
+        //item doesn't exist
+        throw new rating_exception('invaliditemid');
     }
 
     if ($info->userid == $USER->id) {
         //user is attempting to rate their own post
-        return false;
+        throw new rating_exception('nopermissiontorate');
+    }
+
+    if ($params['rateduserid'] != $info->userid) {
+        //supplied user ID doesnt match the user ID from the database
+        throw new rating_exception('invaliduserid');
     }
 
     //check the item we're rating was created in the assessable time window
     if (!empty($info->assesstimestart) && !empty($info->assesstimefinish)) {
         if ($info->timecreated < $info->assesstimestart || $info->timecreated > $info->assesstimefinish) {
-            return false;
+            throw new rating_exception('notavailable');
         }
     }
 
@@ -3504,43 +3509,43 @@ function forum_rating_add($params) {
 
     $cm = get_coursemodule_from_instance('forum', $forumid);
     if (empty($cm)) {
-        return false;
+        throw new rating_exception('unknowncontext');
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     //if the supplied context doesnt match the item's context
     if (empty($context) || $context->id != $params['context']->id) {
-        return false;
+        throw new rating_exception('invalidcontext');
     }
 
     // Make sure groups allow this user to see the item they're rating
     $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
     if ($groupid > 0 and $groupmode = groups_get_activity_groupmode($cm, $course)) {   // Groups are being used
         if (!groups_group_exists($groupid)) { // Can't find group
-            return false;//something is wrong
+            throw new rating_exception('cannotfindgroup');//something is wrong
         }
 
         if (!groups_is_member($groupid) and !has_capability('moodle/site:accessallgroups', $context)) {
             // do not allow rating of posts from other groups when in SEPARATEGROUPS or VISIBLEGROUPS
-            return false;
+            throw new rating_exception('notmemberofgroup');
         }
     }
 
     //need to load the full objects here as ajax scripts don't like
     //the debugging messages produced by forum_user_can_see_post() if you just supply IDs
     if (!$forum = $DB->get_record('forum',array('id'=>$forumid))) {
-        return false;
+        throw new rating_exception('invalidrecordunknown');
     }
     if (!$post = $DB->get_record('forum_posts',array('id'=>$params['itemid']))) {
-        return false;
+        throw new rating_exception('invalidrecordunknown');
     }
     if (!$discussion = $DB->get_record('forum_discussions',array('id'=>$discussionid))) {
-        return false;
+        throw new rating_exception('invalidrecordunknown');
     }
 
     //perform some final capability checks
     if( !forum_user_can_see_post($forum, $discussion, $post, $USER, $cm)) {
-        return false;
+        throw new rating_exception('nopermissiontorate');
     }
 
     return true;

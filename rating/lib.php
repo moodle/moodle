@@ -607,14 +607,14 @@ class rating_manager {
     }
 
     /**
-    * Looks for a callback and retrieves permissions from the plugin whose items are being rated
+    * Looks for a callback like forum_rating_permissions() to retrieve permissions from the plugin whose items are being rated
     * @param int $contextid The current context id
     * @param string component the name of the component that is using ratings ie 'mod_forum'
     * @return array rating related permissions
     */
     public function get_plugin_permissions_array($contextid, $component=null) {
         $pluginpermissionsarray = null;
-        $defaultpluginpermissions = array('rate'=>true,'view'=>true,'viewany'=>true,'viewall'=>true);//all true == rely on system level permissions if no plugin callback is defined
+        $defaultpluginpermissions = array('rate'=>false,'view'=>false,'viewany'=>false,'viewall'=>false);//deny by default
         if (!empty($component)) {
             list($type, $name) = normalize_component($component);
             $pluginpermissionsarray = plugin_callback($type, $name, 'rating', 'permissions', array($contextid), $defaultpluginpermissions);
@@ -633,14 +633,14 @@ class rating_manager {
      *            rating => int the submitted rating
      *            rateduserid => int the id of the user whose items have been rated. NOT the user who submitted the ratings. 0 to update all. [required]
      *            aggregation => int the aggregation method to apply when calculating grades ie RATING_AGGREGATE_AVERAGE [optional]
-     * @return boolean true if the rating is valid
+     * @return boolean true if the rating is valid. False if callback wasnt found and will throw rating_exception if rating is invalid
      */
     public function check_rating_is_valid($component, $params) {
         list($plugintype, $pluginname) = normalize_component($component);
 
         //this looks for a function like forum_rating_is_valid() in mod_forum lib.php
         //wrapping the params array in another array as call_user_func_array() expands arrays into multiple arguments
-        $isvalid = plugin_callback($plugintype, $pluginname, 'rating', 'add', array($params), null);
+        $isvalid = plugin_callback($plugintype, $pluginname, 'rating', 'validate', array($params), null);
 
         //if null then the callback doesn't exist
         if ($isvalid === null) {
@@ -651,3 +651,11 @@ class rating_manager {
         return $isvalid;
     }
 }//end rating_manager class definition
+
+class rating_exception extends moodle_exception {
+    public $message;
+    function __construct($errorcode) {
+        $this->errorcode = $errorcode;
+        $this->message = get_string($errorcode, 'error');
+    }
+}
