@@ -59,7 +59,7 @@ class webservice_test extends UnitTestCase {
 
     function setUp() {
         //token to test
-        $this->testtoken = '72d338d58ff881cc293f8cd1d96d7a57';
+        $this->testtoken = 'acabec9d20933913f14309785324f579';
 
         //protocols to test
         $this->testrest = false; //Does not work till XML => PHP is implemented (MDL-22965)
@@ -87,7 +87,8 @@ class webservice_test extends UnitTestCase {
             'moodle_group_add_groupmembers' => false,
             'moodle_group_delete_groupmembers' => false,
             'moodle_group_create_groups' => false,
-            'moodle_group_delete_groups' => false
+            'moodle_group_delete_groups' => false,
+            'moodle_enrol_manual_enrol_users' => false
         );
 
         //performance testing: number of time the web service are run
@@ -230,6 +231,88 @@ class webservice_test extends UnitTestCase {
 
         $this->assertEqual(count($users), count($userids));
     }
+
+    /**
+     * This test will:
+     * 1- create a user (core call)
+     * 2- enrol this user in the courses supporting enrolment
+     * 3- unenrol this user (core call)
+     */
+    function moodle_enrol_manual_enrol_users($client) {
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot . "/user/lib.php");
+        require_once($CFG->dirroot . "/user/profile/lib.php");
+        require_once($CFG->dirroot . "/lib/enrollib.php");
+
+        //Delete some previous test data
+        if ($user = $DB->get_record('user', array('username' => 'veryimprobabletestusername2'))) {
+            $DB->delete_records('user', array('id' => $user->id));
+        }
+        if ($role = $DB->get_record('role', array('shortname' => 'role1thatshouldnotexist'))) {
+            set_role_contextlevels($role->id, array(CONTEXT_COURSE));
+            delete_role($role->id);
+        }
+
+        //create a user
+        $user = new stdClass();
+        $user->username = 'veryimprobabletestusername2';
+        $user->password = 'testpassword2';
+        $user->firstname = 'testfirstname2';
+        $user->lastname = 'testlastname2';
+        $user->email = 'testemail1@moodle.com';
+        $user->id = user_create_user($user);
+
+        $roleid = create_role('role1thatshouldnotexist', 'role1thatshouldnotexist', '');
+        set_role_contextlevels($roleid, array(CONTEXT_COURSE));
+
+        $enrolments = array();
+        $courses = $DB->get_records('course');
+
+        foreach ($courses as $course) {
+            if ($course->id > 1) {
+                $enrolments[] = array('roleid' => $roleid,
+                    'userid' => $user->id, 'courseid' => $course->id);
+                $enrolledcourses[] = $course;
+            }
+        }
+
+        //web service call
+        $function = 'moodle_enrol_manual_enrol_users';
+        $wsparams = array('enrolments' => $enrolments);
+        $enrolmentsresult = $client->call($function, $wsparams);
+
+        //get instance that can unenrol
+        $enrols = enrol_get_plugins(true);
+        $enrolinstances = enrol_get_instances($course->id, true);
+        $unenrolled = false;
+        foreach ($enrolinstances as $instance) {
+            if (!$unenrolled and $enrols[$instance->enrol]->allow_unenrol($instance)) {
+                $unenrolinstance = $instance;
+                $unenrolled = true;
+            }
+        }
+
+        //test and unenrol the user
+        $enrolledusercourses = enrol_get_users_courses($user->id);
+        foreach ($enrolledcourses as $course) {
+            //test
+            $this->assertEqual(true, isset($enrolledusercourses[$course->id]));
+
+            //unenrol the user
+            $enrols[$unenrolinstance->enrol]->unenrol_user($unenrolinstance, $user->id, $roleid);
+        }
+
+        //delete user
+        $DB->delete_records('user', array('id' => $user->id));
+
+        //delete the context level
+        set_role_contextlevels($roleid, array(CONTEXT_COURSE));
+
+        //delete role
+        delete_role($roleid);
+    }
+
 
     function moodle_enrol_get_enrolled_users($client) {
         global $DB;
