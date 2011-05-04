@@ -20,7 +20,7 @@
  */
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once('locallib.php');
+require_once($CFG->dirroot.'/comment/locallib.php');
 
 require_login();
 admin_externalpage_setup('comments', '', null, '', array('pagelayout'=>'report'));
@@ -81,8 +81,11 @@ if (!empty($err)) {
 }
 if (empty($action)) {
     echo '<form method="post">';
-    $manager->print_comments($page);
-    echo '<input type="submit" id="comments_delete" name="batchdelete" value="'.get_string('delete').'" />';
+    $return = $manager->print_comments($page);
+    // if no comments available, $return will be false
+    if ($return) {
+        echo '<input type="submit" id="comments_delete" name="batchdelete" value="'.get_string('delete').'" />';
+    }
     echo '</form>';
 }
 

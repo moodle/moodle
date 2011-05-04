@@ -966,3 +966,65 @@ function blog_get_associated_count($courseid, $cmid=null) {
     }
     return $DB->count_records('blog_association', array('contextid' => $context->id));
 }
+
+/**
+ * Running addtional permission check on plugin, for example, plugins
+ * may have switch to turn on/off comments option, this callback will
+ * affect UI display, not like pluginname_comment_validate only throw
+ * exceptions.
+ * Capability check has been done in comment->check_permissions(), we
+ * don't need to do it again here.
+ *
+ * @param stdClass $comment_param {
+ *              context  => context the context object
+ *              courseid => int course id
+ *              cm       => stdClass course module object
+ *              commentarea => string comment area
+ *              itemid      => int itemid
+ * }
+ * @return array
+ */
+function blog_comment_permissions($comment_param) {
+    return array('post'=>true, 'view'=>true);
+}
+
+/**
+ * Validate comment parameter before perform other comments actions
+ *
+ * @param stdClass $comment {
+ *              context  => context the context object
+ *              courseid => int course id
+ *              cm       => stdClass course module object
+ *              commentarea => string comment area
+ *              itemid      => int itemid
+ * }
+ * @return boolean
+ */
+function blog_comment_validate($comment_param) {
+    global $DB;
+    // validate comment itemid
+    if (!$entry = $DB->get_record('post', array('id'=>$comment_param->itemid))) {
+        throw new comment_exception('invalidcommentitemid');
+    }
+    // validate comment area
+    if ($comment_param->commentarea != 'format_blog') {
+        throw new comment_exception('invalidcommentarea');
+    }
+    // validation for comment deletion
+    if (!empty($comment_param->commentid)) {
+        if ($record = $DB->get_record('comments', array('id'=>$comment_param->commentid))) {
+            if ($record->commentarea != 'format_blog') {
+                throw new comment_exception('invalidcommentarea');
+            }
+            if ($record->contextid != $comment_param->context->id) {
+                throw new comment_exception('invalidcontext');
+            }
+            if ($record->itemid != $comment_param->itemid) {
+                throw new comment_exception('invalidcommentitemid');
+            }
+        } else {
+            throw new comment_exception('invalidcommentid');
+        }
+    }
+    return true;
+}
