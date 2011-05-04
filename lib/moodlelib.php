@@ -7284,7 +7284,7 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
 
     $name = clean_param($name, PARAM_SAFEDIR);
     $function = $name.'_'.$feature.'_'.$action;
-    $file = get_plugin_directory($type, $name) . '/lib.php';
+    $file = get_component_directory($type . '_' . $name) . '/lib.php';
 
     // Load library and look for function
     if (file_exists($file)) {
