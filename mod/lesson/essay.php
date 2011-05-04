@@ -46,6 +46,21 @@ if ($mode !== 'display') {
 }
 $PAGE->set_url($url);
 
+$attemptid = optional_param('attemptid', PARAM_INT);
+$attempt = $DB->get_record('lesson_attempts', array('id' => $attemptid));
+$answer = $DB->get_record('lesson_answers', array('lessonid' => $lesson->id, 'pageid' => $attempt->pageid));
+$scoreoptions = array();
+if ($lesson->custom) {
+    $i = $answer->score;
+    while ($i >= 0) {
+        $scoreoptions[$i] = (string)$i;
+        $i--;
+    }
+} else {
+    $scoreoptions[0] = get_string('nocredit', 'lesson');
+    $scoreoptions[1] = get_string('credit', 'lesson');
+}
+        
 /// Handle any preprocessing before header is printed - based on $mode
 switch ($mode) {
     case 'grade':
@@ -57,30 +72,26 @@ switch ($mode) {
         if (!$attempt = $DB->get_record('lesson_attempts', array('id' => $attemptid))) {
             print_error('cannotfindattempt', 'lesson');
         }
-        $page = $lesson->load_page($attempt->pageid);
         if (!$user = $DB->get_record('user', array('id' => $attempt->userid))) {
             print_error('cannotfinduser', 'lesson');
         }
-        if (!$answer = $DB->get_record('lesson_answers', array('lessonid' => $lesson->id, 'pageid' => $page->id))) {
+        if (!$answer = $DB->record_exists('lesson_answers', array('lessonid' => $lesson->id, 'pageid' => $attempt->pageid))) {
             print_error('cannotfindanswer', 'lesson');
         }
         break;
 
     case 'update':
         require_sesskey();
-        $mform = new essay_grading_form();
+        $attemptid = required_param('attemptid', PARAM_INT);
+        $attempt = $DB->get_record('lesson_attempts', array('id' => $attemptid), '*', MUST_EXIST);
+        $user = $DB->get_record('user', array('id' => $attempt->userid), '*', MUST_EXIST);
+        $mform = new essay_grading_form(null, array('scoreoptions'=>$scoreoptions, 'user'=>$user));
+        if ($mform->is_cancelled()) {
+            redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id");
+        }
         if ($form = $mform->get_data()) {
+            error_log(print_r($form,true));
 
-            if (optional_param('cancel', false, PARAM_RAW)) {
-                redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id");
-            }
-
-            $attemptid = required_param('attemptid', PARAM_INT);
-            $score = optional_param('score', 0, PARAM_INT);
-
-            if (!$attempt = $DB->get_record('lesson_attempts', array('id' => $attemptid))) {
-                print_error('cannotfindattempt', 'lesson');
-            }
             if (!$grades = $DB->get_records('lesson_grades', array("lessonid"=>$lesson->id, "userid"=>$attempt->userid), 'completed', '*', $attempt->retry, 1)) {
                 print_error('cannotfindgrade', 'lesson');
             }
@@ -371,18 +382,8 @@ switch ($mode) {
 
 
         $essayinfo = unserialize($attempt->useranswer);
-        $options = array();
-        if ($lesson->custom) {
-            $i = $answer->score;
-            while ($i >= 0) {
-                $options[$i] = (string)$i;
-                $i--;
-            }
-        } else {
-            $options[0] = get_string('nocredit', 'lesson');
-            $options[1] = get_string('credit', 'lesson');
-        }
-        $mform = new essay_grading_form(null, array('scoreoptions'=>$options, 'user'=>$user));
+
+        $mform = new essay_grading_form(null, array('scoreoptions'=>$scoreoptions, 'user'=>$user));
 
         $data = new stdClass;
         $data->id = $cm->id;
