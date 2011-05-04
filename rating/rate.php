@@ -46,7 +46,7 @@ $contextid = null;//now we have a context object throw away the id from the user
 $PAGE->set_context($context);
 $PAGE->set_url('/rating/rate.php', array('contextid'=>$context->id));
 
-if (!confirm_sesskey() || $USER->id==$rateduserid || !has_capability('moodle/rating:rate',$context)) {
+if (!confirm_sesskey() || !has_capability('moodle/rating:rate',$context)) {
     echo $OUTPUT->header();
     echo get_string('ratepermissiondenied', 'rating');
     echo $OUTPUT->footer();

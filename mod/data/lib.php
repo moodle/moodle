@@ -1373,14 +1373,13 @@ function data_rating_permissions($options) {
  *            rating => int the submitted rating
  *            rateduserid => int the id of the user whose items have been rated. NOT the user who submitted the ratings. 0 to update all. [required]
  *            aggregation => int the aggregation method to apply when calculating grades ie RATING_AGGREGATE_AVERAGE [required]
- * @return boolean true if the rating is valid
+ * @return boolean true if the rating is valid. Will throw rating_exception if not
  */
-function data_rating_add($params) {
+function data_rating_validate($params) {
     global $DB, $USER;
 
-    if (!array_key_exists('itemid', $params) || !array_key_exists('context', $params)) {
-        debugging('itemid or context not supplied');
-        return false;
+    if (!array_key_exists('itemid', $params) || !array_key_exists('context', $params) || !array_key_exists('rateduserid', $params)) {
+        throw new rating_exception('missingparameter');
     }
 
     $datasql = "SELECT d.id as did, d.course, r.userid as userid, d.approval, r.approved, r.timecreated, d.assesstimestart, d.assesstimefinish, r.groupid
@@ -1389,24 +1388,29 @@ function data_rating_add($params) {
                  WHERE r.id = :itemid";
     $dataparams = array('itemid'=>$params['itemid']);
     if (!$info = $DB->get_record_sql($datasql, $dataparams)) {
-        //item id doesn't exist
-        return false;
+        //item doesn't exist
+        throw new rating_exception('invaliditemid');
     }
 
     if ($info->userid == $USER->id) {
         //user is attempting to rate their own glossary entry
-        return false;
+        throw new rating_exception('nopermissiontorate');
+    }
+
+    if ($params['rateduserid'] != $info->userid) {
+        //supplied user ID doesnt match the user ID from the database
+        throw new rating_exception('invaliduserid');
     }
 
     if ($info->approval && !$info->approved) {
         //database requires approval but this item isnt approved
-        return false;
+        throw new rating_exception('nopermissiontorate');
     }
 
     //check the item we're rating was created in the assessable time window
     if (!empty($info->assesstimestart) && !empty($info->assesstimefinish)) {
         if ($info->timecreated < $info->assesstimestart || $info->timecreated > $info->assesstimefinish) {
-            return false;
+            throw new rating_exception('notavailable');
         }
     }
 
@@ -1416,25 +1420,25 @@ function data_rating_add($params) {
 
     $cm = get_coursemodule_from_instance('data', $dataid);
     if (empty($cm)) {
-        return false;
+        throw new rating_exception('unknowncontext');
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     //if the supplied context doesnt match the item's context
     if (empty($context) || $context->id != $params['context']->id) {
-        return false;
+        throw new rating_exception('invalidcontext');
     }
 
     // Make sure groups allow this user to see the item they're rating
     $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
     if ($groupid > 0 and $groupmode = groups_get_activity_groupmode($cm, $course)) {   // Groups are being used
         if (!groups_group_exists($groupid)) { // Can't find group
-            return false;//something is wrong
+            throw new rating_exception('cannotfindgroup');//something is wrong
         }
 
         if (!groups_is_member($groupid) and !has_capability('moodle/site:accessallgroups', $context)) {
             // do not allow rating of posts from other groups when in SEPARATEGROUPS or VISIBLEGROUPS
-            return false;
+            throw new rating_exception('notmemberofgroup');
         }
     }
 

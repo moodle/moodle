@@ -479,13 +479,13 @@ function glossary_rating_permissions($options) {
  *            rating => int the submitted rating
  *            rateduserid => int the id of the user whose items have been rated. NOT the user who submitted the ratings. 0 to update all. [required]
  *            aggregation => int the aggregation method to apply when calculating grades ie RATING_AGGREGATE_AVERAGE [optional]
- * @return boolean true if the rating is valid
+ * @return boolean true if the rating is valid. Will throw rating_exception if not
  */
-function glossary_rating_add($params) {
+function glossary_rating_validate($params) {
     global $DB, $USER;
 
-    if (!array_key_exists('itemid', $params) || !array_key_exists('context', $params)) {
-        return false;
+    if (!array_key_exists('itemid', $params) || !array_key_exists('context', $params) || !array_key_exists('rateduserid', $params)) {
+        throw new rating_exception('missingparameter');
     }
 
     $glossarysql = "SELECT g.id as gid, e.userid as userid, e.approved, e.timecreated, g.assesstimestart, g.assesstimefinish
@@ -494,24 +494,29 @@ function glossary_rating_add($params) {
                      WHERE e.id = :itemid";
     $glossaryparams = array('itemid'=>$params['itemid']);
     if (!$info = $DB->get_record_sql($glossarysql, $glossaryparams)) {
-        //item id doesn't exist
-        return false;
+        //item doesn't exist
+        throw new rating_exception('invaliditemid');
     }
 
     if ($info->userid == $USER->id) {
         //user is attempting to rate their own glossary entry
-        return false;
+        throw new rating_exception('nopermissiontorate');
+    }
+
+    if ($params['rateduserid'] != $info->userid) {
+        //supplied user ID doesnt match the user ID from the database
+        throw new rating_exception('invaliduserid');
     }
 
     if (!$info->approved) {
         //item isnt approved
-        return false;
+        throw new rating_exception('nopermissiontorate');
     }
 
     //check the item we're rating was created in the assessable time window
     if (!empty($info->assesstimestart) && !empty($info->assesstimefinish)) {
         if ($info->timecreated < $info->assesstimestart || $info->timecreated > $info->assesstimefinish) {
-            return false;
+            throw new rating_exception('notavailable');
         }
     }
 
@@ -519,13 +524,13 @@ function glossary_rating_add($params) {
 
     $cm = get_coursemodule_from_instance('glossary', $glossaryid);
     if (empty($cm)) {
-        return false;
+        throw new rating_exception('unknowncontext');
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     //if the supplied context doesnt match the item's context
     if (empty($context) || $context->id != $params['context']->id) {
-        return false;
+        throw new rating_exception('invalidcontext');
     }
 
     return true;
