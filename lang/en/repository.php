@@ -156,6 +156,7 @@ $string['renameto'] = 'Rename to';
 $string['repositories'] = 'Repositories';
 $string['repository'] = 'Repository';
 $string['repositorycourse'] = 'Course repositories';
+$string['repositoryerror'] = 'Remote repository returned error: {$a}';
 $string['save'] = 'Save';
 $string['saveas'] = 'Save as';
 $string['saved'] = 'Saved';
