@@ -181,7 +181,6 @@ class completion_criteria_duration extends completion_criteria {
         $sql = '
             SELECT
                 c.id AS course,
-                cr.timeend AS date,
                 cr.id AS criteriaid,
                 u.id AS userid,
                 ue.timestart AS otimestart,
