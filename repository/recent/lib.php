@@ -202,6 +202,7 @@ class repository_recent extends repository {
                 $info['title']  = $new_filename;
                 $info['itemid'] = $draftitemid;
                 $info['filesize']  = $stored_file->get_filesize();
+                $info['url'] = moodle_url::make_draftfile_url($draftitemid, $new_filepath, $new_filename)->out();;
                 $info['contextid'] = $user_context->id;
                 return $info;
             }
