@@ -701,7 +701,7 @@ ORDER BY
      */
     protected function delete_response_files($contextid, $itemidstest, $params) {
         $fs = get_file_storage();
-        foreach ($this->get_all_response_file_areas() as $filearea) {
+        foreach (question_engine::get_all_response_file_areas() as $filearea) {
             $fs->delete_area_files_select($contextid, 'question', $filearea,
                     $itemidstest, $params);
         }
@@ -852,22 +852,6 @@ ORDER BY
         return $this->db->record_exists_select('question_attempts',
                 'questionid ' . $test . ' AND questionusageid ' .
                 $qubaids->usage_id_in(), $params + $qubaids->usage_id_in_params());
-    }
-
-    /**
-     * @return array all the file area names that may contain response files.
-     */
-    public static function get_all_response_file_areas() {
-        $variables = array();
-        foreach (question_bank::get_all_qtypes() as $qtype) {
-            $variables += $qtype->response_file_areas();
-        }
-
-        $areas = array();
-        foreach (array_unique($variables) as $variable) {
-            $areas[] = 'response_' . $variable;
-        }
-        return $areas;
     }
 }
 

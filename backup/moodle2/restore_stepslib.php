@@ -2522,6 +2522,10 @@ class restore_create_question_files extends restore_execution_step {
  * (like the quiz module), to support qtype plugins, states and sessions
  */
 abstract class restore_questions_activity_structure_step extends restore_activity_structure_step {
+    /** @var array question_attempt->id to qtype. */
+    protected $qtypes = array();
+    /** @var array question_attempt->id to questionid. */
+    protected $newquestionids = array();
 
     /**
      * Attach below $element (usually attempts) the needed restore_path_elements
@@ -2541,9 +2545,14 @@ abstract class restore_questions_activity_structure_step extends restore_activit
         $paths[] = new restore_path_element('question_attempt',
                 $element->get_path() . '/question_usage/question_attempts/question_attempt');
         $paths[] = new restore_path_element('question_attempt_step',
-                $element->get_path() . '/question_usage/question_attempts/question_attempt/steps/step');
+                $element->get_path() . '/question_usage/question_attempts/question_attempt/steps/step',
+                true);
         $paths[] = new restore_path_element('question_attempt_step_data',
-                $element->get_path() . '/question_usage/question_attempts/question_attempt/steps/step/data/value');
+                $element->get_path() . '/question_usage/question_attempts/question_attempt/steps/step/response/variable');
+
+        // TODO Put back code for restoring legacy 2.0 backups.
+        // $paths[] = new restore_path_element('question_state', $element->get_path() . '/states/state');
+        // $paths[] = new restore_path_element('question_session', $element->get_path() . '/sessions/session');
     }
 
     /**
@@ -2551,46 +2560,52 @@ abstract class restore_questions_activity_structure_step extends restore_activit
      */
     protected function process_question_usage($data) {
         global $DB;
-// TODO
+
+        // Clear our caches.
+        $this->qtypes = array();
+        $this->newquestionids = array();
+
         $data = (object)$data;
         $oldid = $data->id;
 
-        // Get complete question mapping, we'll need info
-        $question = $this->get_mapping('question', $data->question);
+        $oldcontextid = $this->get_task()->get_old_contextid();
+        $data->contextid  = $this->get_mappingid('context', $this->task->get_old_contextid());
 
-        // In the quiz_attempt mapping we are storing uniqueid
-        // and not id, so this gets the correct question_attempt to point to
-        $data->attempt  = $this->get_new_parentid('quiz_attempt');
-        $data->question = $question->newitemid;
-        $data->answer   = $this->restore_recode_answer($data, $question->info->qtype); // Delegate recoding of answer
-        $data->timestamp= $this->apply_date_offset($data->timestamp);
+        // Everything ready, insert (no mapping needed)
+        $newitemid = $DB->insert_record('question_usages', $data);
 
-        // Everything ready, insert and create mapping (needed by question_sessions)
-        $newitemid = $DB->insert_record('question_states', $data);
-        $this->set_mapping('question_state', $oldid, $newitemid);
+        $this->inform_new_usage_id($newitemid);
+
+        $this->set_mapping('question_usage', $oldid, $newitemid, false);
     }
+
+    /**
+     * When process_question_usage creates the new usage, it calls this method
+     * to let the activity link to the new usage. For example, the quiz uses
+     * this method to set quiz_attempts.uniqueid to the new usage id.
+     * @param integer $newusageid
+     */
+    abstract protected function inform_new_usage_id($newusageid);
 
     /**
      * Process question_attempts
      */
     protected function process_question_attempt($data) {
         global $DB;
-// TODO
+
         $data = (object)$data;
         $oldid = $data->id;
+        $question = $this->get_mapping('question', $data->questionid);
 
-        // In the quiz_attempt mapping we are storing uniqueid
-        // and not id, so this gets the correct question_attempt to point to
-        $data->attemptid  = $this->get_new_parentid('quiz_attempt');
-        $data->questionid = $this->get_mappingid('question', $data->questionid);
-        $data->newest     = $this->get_mappingid('question_state', $data->newest);
-        $data->newgraded  = $this->get_mappingid('question_state', $data->newgraded);
+        $data->questionusageid = $this->get_new_parentid('question_usage');
+        $data->questionid      = $question->newitemid;
+        $data->timemodified    = $this->apply_date_offset($data->timemodified);
 
-        // Everything ready, insert (no mapping needed)
-        $newitemid = $DB->insert_record('question_sessions', $data);
+        $newitemid = $DB->insert_record('question_attempts', $data);
 
-        // Note: question_sessions haven't files associated. On purpose manualcomment is lacking
-        // support for them, so we don't need to handle them here.
+        $this->set_mapping('question_attempt', $oldid, $newitemid);
+        $this->qtypes[$newitemid] = $question->info->qtype;
+        $this->newquestionids[$newitemid] = $data->questionid;
     }
 
     /**
@@ -2598,15 +2613,41 @@ abstract class restore_questions_activity_structure_step extends restore_activit
      */
     protected function process_question_attempt_step($data) {
         global $DB;
-// TODO
-    }
 
-    /**
-     * Process question_attempt_step_data
-     */
-    protected function process_question_attempt_step_data($data) {
-        global $DB;
-// TODO
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        // Pull out the response data.
+        $response = array();
+        if (!empty($data->response['variable'])) {
+            foreach ($data->response['variable'] as $variable) {
+                $response[$variable['name']] = $variable['value'];
+            }
+        }
+        unset($data->response);
+
+        $data->questionattemptid = $this->get_new_parentid('question_attempt');
+        $data->timecreated = $this->apply_date_offset($data->timecreated);
+        $data->userid      = $this->get_mappingid('user', $data->userid);
+
+        // Everything ready, insert and create mapping (needed by question_sessions)
+        $newitemid = $DB->insert_record('question_attempt_steps', $data);
+        $this->set_mapping('question_attempt_step', $oldid, $newitemid, true);
+
+        // Now process the response data.
+        $qtyperestorer = $this->get_qtype_restorer($this->qtypes[$data->questionattemptid]);
+        if ($qtyperestorer) {
+            $response = $qtyperestorer->recode_response(
+                    $this->newquestionids[$data->questionattemptid],
+                    $data->sequencenumber, $response);
+        }
+        foreach ($response as $name => $value) {
+            $row = new stdClass();
+            $row->attemptstepid = $newitemid;
+            $row->name = $name;
+            $row->value = $value;
+            $DB->insert_record('question_attempt_step_data', $row, false);
+        }
     }
 
     /**
@@ -2626,5 +2667,36 @@ abstract class restore_questions_activity_structure_step extends restore_activit
             }
         }
         return implode(',', $questionids);
+    }
+
+    /**
+     * Get the restore_qtype_plugin subclass for a specific question type.
+     * @param string $qtype e.g. multichoice.
+     * @return restore_qtype_plugin instance.
+     */
+    public function get_qtype_restorer($qtype) {
+        // Build one static cache to store {@link restore_qtype_plugin}
+        // while we are needing them, just to save zillions of instantiations
+        // or using static stuff that will break our nice API
+        static $qtypeplugins = array();
+
+        if (!isset($qtypeplugins[$qtype])) {
+            $classname = 'restore_qtype_' . $qtype . '_plugin';
+            if (class_exists($classname)) {
+                $qtypeplugins[$qtype] = new $classname('qtype', $qtype, $this);
+            } else {
+                $qtypeplugins[$qtype] = null;
+            }
+        }
+        return $qtypeplugins[$qtype];
+    }
+
+    protected function after_execute() {
+        parent::after_execute();
+
+        // Restore any files belonging to responses.
+        foreach (question_engine::get_all_response_file_areas() as $filearea) {
+            $this->add_related_files('question', $filearea, 'question_attempt_step');
+        }
     }
 }

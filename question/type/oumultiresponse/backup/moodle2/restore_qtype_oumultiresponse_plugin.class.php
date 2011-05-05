@@ -80,44 +80,26 @@ class restore_qtype_oumultiresponse_plugin extends restore_qtype_plugin {
         }
     }
 
+    public function recode_response($questionid, $sequencenumber, array $response) {
+        if (array_key_exists('_order', $response)) {
+            $response['_order'] = $this->recode_choice_order($response['_order']);
+        }
+        return $response;
+    }
+
     /**
-     * Given one question_states record, return the answer
-     * recoded pointing to all the restored stuff for oumultiresponse questions
-     *
-     * answer are two (hypen speparated) lists of comma separated question_answers
-     * the first to specify the order of the answers and the second to specify the
-     * responses. Note the order list (the first one) can be optional
+     * Recode the choice order as stored in the response.
+     * @param string $order the original order.
+     * @return string the recoded order.
      */
-    public function recode_state_answer($state) {
-        $answer = $state->answer;
-        $orderarr = array();
-        $responsesarr = array();
-        $lists = explode(':', $answer);
-        // if only 1 list, answer is missing the order list, adjust
-        if (count($lists) == 1) {
-            $lists[1] = $lists[0]; // here we have the responses
-            $lists[0] = '';        // here we have the order
-        }
-        // Map order
-        foreach (explode(',', $lists[0]) as $id) {
-            if (!empty($id) && $newid = $this->get_mappingid('question_answer', $id)) {
-                $orderarr[] = $newid;
+    protected function recode_choice_order($order) {
+        $neworder = array();
+        foreach (explode(',', $order) as $id) {
+            if ($newid = $this->get_mappingid('question_answer', $id)) {
+                $neworder[] = $newid;
             }
         }
-        // Map responses
-        foreach (explode(',', $lists[1]) as $id) {
-            if (!empty($id) && $newid = $this->get_mappingid('question_answer', $id)) {
-                $responsesarr[] = $newid;
-            }
-        }
-        // Build the final answer, if not order, only responses
-        $result = '';
-        if (empty($orderarr)) {
-            $result = implode(',', $responsesarr);
-        } else {
-            $result = implode(',', $orderarr) . ':' . implode(',', $responsesarr);
-        }
-        return $result;
+        return implode(',', $neworder);
     }
 
     /**

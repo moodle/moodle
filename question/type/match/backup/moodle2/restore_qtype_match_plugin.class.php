@@ -162,24 +162,29 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
         $rs->close();
     }
 
-    /**
-     * Given one question_states record, return the answer
-     * recoded pointing to all the restored stuff for match questions
-     *
-     * answer is one comma separated list of hypen separated pairs
-     * containing question_match_sub->id and question_match_sub->code
-     */
-    public function recode_state_answer($state) {
-        $answer = $state->answer;
-        $resultarr = array();
-        foreach (explode(',', $answer) as $pair) {
-            $pairarr = explode('-', $pair);
-            $id = $pairarr[0];
-            $code = $pairarr[1];
-            $newid = $this->get_mappingid('question_match_sub', $id);
-            $resultarr[] = implode('-', array($newid, $code));
+    public function recode_response($questionid, $sequencenumber, array $response) {
+        if (array_key_exists('_stemorder', $response)) {
+            $response['_stemorder'] = $this->recode_match_sub_order($response['_stemorder']);
         }
-        return implode(',', $resultarr);
+        if (array_key_exists('_choiceorder', $response)) {
+            $response['_choiceorder'] = $this->recode_match_sub_order($response['_choiceorder']);
+        }
+        return $response;
+    }
+
+    /**
+     * Recode the choice order as stored in the response.
+     * @param string $order the original order.
+     * @return string the recoded order.
+     */
+    protected function recode_match_sub_order($order) {
+        $neworder = array();
+        foreach (explode(',', $order) as $id) {
+            if ($newid = $this->get_mappingid('question_match_sub', $id)) {
+                $neworder[] = $newid;
+            }
+        }
+        return implode(',', $neworder);
     }
 
     /**

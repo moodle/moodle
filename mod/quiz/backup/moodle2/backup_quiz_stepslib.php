@@ -122,7 +122,11 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         // All the rest of elements only happen if we are including user info
         if ($userinfo) {
             $grade->set_source_table('quiz_grades', array('quiz' => backup::VAR_PARENTID));
-            $attempt->set_source_table('quiz_attempts', array('quiz' => backup::VAR_PARENTID));
+            $attempt->set_source_sql('
+                    SELECT *
+                    FROM {quiz_attempts}
+                    WHERE quiz = :quiz AND preview = 0',
+                    array('quiz' => backup::VAR_PARENTID));
         }
 
         // Define source alias

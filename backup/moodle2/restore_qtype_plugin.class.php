@@ -315,11 +315,14 @@ abstract class restore_qtype_plugin extends restore_plugin {
     }
 
     /**
-     * Decode one question_states for this qtype (default impl)
+     * Do any re-coding necessary in the student response.
+     * @param int $questionid the new id of the question
+     * @param int $sequencenumber of the step within the qusetion attempt.
+     * @param array the response data from the backup.
+     * @return array the recoded response.
      */
-    public function recode_state_answer($state) {
-        // By default, return answer unmodified, qtypes needing recode will override this
-        return $state->answer;
+    public function recode_response($questionid, $sequencenumber, array $response) {
+        return $response;
     }
 
     /**

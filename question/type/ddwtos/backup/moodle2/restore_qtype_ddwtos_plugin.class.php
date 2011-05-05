@@ -79,46 +79,6 @@ class restore_qtype_ddwtos_plugin extends restore_qtype_plugin {
     }
 
     /**
-     * Given one question_states record, return the answer
-     * recoded pointing to all the restored stuff for ddwtos questions
-     *
-     * answer are two (hypen speparated) lists of comma separated question_answers
-     * the first to specify the order of the answers and the second to specify the
-     * responses. Note the order list (the first one) can be optional
-     */
-    public function recode_state_answer($state) {
-        $answer = $state->answer;
-        $orderarr = array();
-        $responsesarr = array();
-        $lists = explode(':', $answer);
-        // if only 1 list, answer is missing the order list, adjust
-        if (count($lists) == 1) {
-            $lists[1] = $lists[0]; // here we have the responses
-            $lists[0] = '';        // here we have the order
-        }
-        // Map order
-        foreach (explode(',', $lists[0]) as $id) {
-            if (!empty($id) && $newid = $this->get_mappingid('question_answer', $id)) {
-                $orderarr[] = $newid;
-            }
-        }
-        // Map responses
-        foreach (explode(',', $lists[1]) as $id) {
-            if (!empty($id) && $newid = $this->get_mappingid('question_answer', $id)) {
-                $responsesarr[] = $newid;
-            }
-        }
-        // Build the final answer, if not order, only responses
-        $result = '';
-        if (empty($orderarr)) {
-            $result = implode(',', $responsesarr);
-        } else {
-            $result = implode(',', $orderarr) . ':' . implode(',', $responsesarr);
-        }
-        return $result;
-    }
-
-    /**
      * Return the contents of this qtype to be processed by the links decoder
      */
     public static function define_decode_contents() {

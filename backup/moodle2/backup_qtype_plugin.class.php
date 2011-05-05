@@ -205,9 +205,11 @@ abstract class backup_qtype_plugin extends backup_plugin {
     /**
      * Returns one array with filearea => mappingname elements for the qtype
      *
-     * Used by {@link get_components_and_fileareas} to know about all the qtype-     * files to be processed both in backup and restore.
+     * Used by {@link get_components_and_fileareas} to know about all the qtype
+     * files to be processed both in backup and restore.
      */
     public static function get_qtype_fileareas() {
-        // By default, return empty array, only qtypes having own fileareas wil-        return array();
+        // By default, return empty array, only qtypes having own fileareas will override this
+        return array();
     }
 }

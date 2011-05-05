@@ -189,7 +189,7 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
         }
 
         $quba = new backup_nested_element('question_usage', array('id'),
-                array('preferredbehaviour'));
+                array('component', 'preferredbehaviour'));
 
         $qas = new backup_nested_element('question_attempts');
         $qa = new backup_nested_element('question_attempt', array('id'), array(
@@ -201,8 +201,8 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
         $step = new backup_nested_element('step', array('id'), array(
                 'sequencenumber', 'state', 'fraction', 'timecreated', 'userid'));
 
-        $data = new backup_nested_element('data');
-        $value = new backup_nested_element('value', array('name', 'value'));
+        $response = new backup_nested_element('response');
+        $variable = new backup_nested_element('variable', null,  array('name', 'value'));
 
         // Build the tree
         $element->add_child($quba);
@@ -210,24 +210,33 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
         $qas->add_child($qa);
         $qa->add_child($steps);
         $steps->add_child($step);
-        $step->add_child($data);
-        $data->add_child($value);
+        $step->add_child($response);
+        $response->add_child($variable);
 
         // Set the sources
         $quba->set_source_table('question_usages',
                 array('id'                => '../' . $usageidname));
-        $qa->set_source_table('question_attempts',
+        $qa->set_source_sql('
+                SELECT *
+                FROM {question_attempts}
+                WHERE questionusageid = :questionusageid
+                ORDER BY slot',
                 array('questionusageid'   => backup::VAR_PARENTID));
-        $step->set_source_table('question_attempt_steps',
+        $step->set_source_sql('
+                SELECT *
+                FROM {question_attempt_steps}
+                WHERE questionattemptid = :questionattemptid
+                ORDER BY sequencenumber',
                 array('questionattemptid' => backup::VAR_PARENTID));
-        $value->set_source_table('question_attempt_step_data',
+        $variable->set_source_table('question_attempt_step_data',
                 array('attemptstepid'     => backup::VAR_PARENTID));
 
         // Annotate ids
         $qa->annotate_ids('question', 'questionid');
+        $step->annotate_ids('user', 'userid');
 
         // Annotate files
-        $fileareas = question_engine_data_mapper::get_all_response_file_areas();
+        $fileareas = question_engine::get_all_response_file_areas();
         foreach ($fileareas as $filearea) {
             $step->annotate_files('question', $filearea, 'id');
         }
@@ -1677,7 +1686,12 @@ class backup_questions_structure_step extends backup_structure_step {
 
         $question->set_source_table('question', array('category' => backup::VAR_PARENTID));
 
-        $qhint->set_source_table('question_hints', array('questionid' => backup::VAR_PARENTID));
+        $qhint->set_source_sql('
+                SELECT *
+                FROM {question_hints}
+                WHERE questionid = :questionid
+                ORDER BY id',
+                array('questionid' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
         // (already done by {@link backup_annotate_all_question_files}

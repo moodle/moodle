@@ -316,6 +316,22 @@ abstract class question_engine {
     }
 
     /**
+     * @return array all the file area names that may contain response files.
+     */
+    public static function get_all_response_file_areas() {
+        $variables = array();
+        foreach (question_bank::get_all_qtypes() as $qtype) {
+            $variables += $qtype->response_file_areas();
+        }
+
+        $areas = array();
+        foreach (array_unique($variables) as $variable) {
+            $areas[] = 'response_' . $variable;
+        }
+        return $areas;
+    }
+
+    /**
      * Returns the valid choices for the number of decimal places for showing
      * question marks. For use in the user interface.
      * @return array suitable for passing to {@link choose_from_menu()} or similar.
