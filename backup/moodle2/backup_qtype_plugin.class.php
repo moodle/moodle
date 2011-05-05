@@ -53,7 +53,12 @@ abstract class backup_qtype_plugin extends backup_plugin {
         $answers->add_child($answer);
 
         // Set the sources
-        $answer->set_source_table('question_answers', array('question' => backup::VAR_PARENTID));
+        $answer->set_source_sql('
+                SELECT *
+                FROM {question_answers}
+                WHERE question = :question
+                ORDER BY id',
+                array('question' => backup::VAR_PARENTID));
 
         // Aliases
         $answer->set_source_alias('answer', 'answertext');
@@ -82,7 +87,12 @@ abstract class backup_qtype_plugin extends backup_plugin {
         $units->add_child($unit);
 
         // Set the sources
-        $unit->set_source_table('question_numerical_units', array('question' => backup::VAR_PARENTID));
+        $unit->set_source_sql('
+                SELECT *
+                FROM {question_numerical_units}
+                WHERE question = :question
+                ORDER BY id',
+                array('question' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
     }
