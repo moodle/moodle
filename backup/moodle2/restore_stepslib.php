@@ -2194,6 +2194,7 @@ abstract class restore_activity_structure_step extends restore_structure_step {
     /**
      * As far as activity restore steps are implementing restore_subplugin stuff, they need to
      * have the parent task available for wrapping purposes (get course/context....)
+     * @return restore_task
      */
     public function get_task() {
         return $this->task;
