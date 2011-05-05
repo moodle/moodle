@@ -40,7 +40,6 @@ M.core_comment = {
                 this.component = args.component;
                 this.courseid = args.courseid;
                 this.contextid = args.contextid;
-                this.env = args.env;
                 this.autostart = (args.autostart);
                 // expand comments?
                 if (this.autostart) {
@@ -116,7 +115,6 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                     scope = args['scope'];
                 }
                 //params['page'] = args.page?args.page:'';
-                params['env']       = '';
                 // the form element only accept certain file types
                 params['sesskey']   = M.cfg.sesskey;
                 params['action']    = args.action?args.action:'';
@@ -348,7 +346,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                 var d = container.getStyle('display');
                 if (d=='none'||d=='') {
                     // show
-                    if (this.autostart) {
+                    if (!this.autostart) {
                         this.load(page);
                     } else {
                         this.register_delete_buttons();

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,35 +20,40 @@
 require_once('../config.php');
 require_once($CFG->dirroot . '/comment/lib.php');
 
+if (empty($CFG->usecomments)) {
+    throw new comment_exception('commentsnotenabled', 'moodle');
+}
+
 $contextid = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
 list($context, $course, $cm) = get_context_info_array($contextid);
 
 require_login($course, true, $cm);
 require_sesskey();
 
-$action    = optional_param('action',    '',     PARAM_ALPHA);
-$area      = optional_param('area',      '',     PARAM_ALPHAEXT);
-$commentid = optional_param('commentid', -1,     PARAM_INT);
-$content   = optional_param('content',   '',     PARAM_RAW);
-$itemid    = optional_param('itemid',    '',     PARAM_INT);
-$returnurl = optional_param('returnurl', '',     PARAM_URL);
-$component = optional_param('component', '', PARAM_ALPHAEXT);
+$action    = optional_param('action',    '',  PARAM_ALPHA);
+$area      = optional_param('area',      '',  PARAM_ALPHAEXT);
+$content   = optional_param('content',   '',  PARAM_RAW);
+$itemid    = optional_param('itemid',    '',  PARAM_INT);
+$returnurl = optional_param('returnurl', '/', PARAM_URL);
+$component = optional_param('component', '',  PARAM_ALPHAEXT);
 
-$cmt = new stdClass();
+// Currently this script can only add comments
+if ($action !== 'add') {
+    redirect($returnurl);
+}
+
+$cmt = new stdClass;
 $cmt->contextid = $contextid;
 $cmt->courseid  = $course->id;
+$cmt->cm        = $cm;
 $cmt->area      = $area;
 $cmt->itemid    = $itemid;
 $cmt->component = $component;
 $comment = new comment($cmt);
 
-switch ($action) {
-case 'add':
+if ($comment->can_post()) {
     $cmt = $comment->add($content);
     if (!empty($cmt) && is_object($cmt)) {
         redirect($returnurl);
     }
-    break;
-default:
-    exit;
 }
