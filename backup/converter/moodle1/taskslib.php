@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/backup/util/includes/convert_includes.php');
+
 class moodle1_root_task extends convert_task {
     /**
      * Function responsible for building the steps of any task

@@ -377,17 +377,17 @@ class restore_controller extends backup implements loggable {
     }
 
     /**
-     * convert from current format to backup::MOODLE format
+     * Converts from current format to backup::MOODLE format
      */
     public function convert() {
         global $CFG;
+        require_once($CFG->dirroot . '/backup/util/includes/convert_includes.php');
 
         if ($this->status != backup::STATUS_REQUIRE_CONV) {
             throw new restore_controller_exception('cannot_convert_not_required_status');
         }
-        require_once($CFG->dirroot.'/backup/util/includes/convert_includes.php');
 
-        // Run conversion until we have the proper format
+        // Run conversion to the proper format
         convert_helper::to_moodle2_format($this->get_tempdir(), $this->format);
 
         // If no exceptions were thrown, then we are in the proper format

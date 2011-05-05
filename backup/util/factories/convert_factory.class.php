@@ -55,23 +55,6 @@ abstract class convert_factory {
         }
         return new $classname($tempdir);
     }
-    
-    /**
-     * Instantiates a list of all installed converters operating on a given directory
-     *
-     * @param string $tempdir The temp directory to operate on
-     * @return array
-     */
-    public static function converters($tempdir) {
-        global $CFG;
-
-        $converters = array();
-        $plugins    = get_list_of_plugins('backup/converter');
-        foreach ($plugins as $name) {
-            $converters[$name] = self::converter($name, $tempdir);
-        }
-        return $converters;
-    }
 
     /**
      * Runs through all plugins of a specific type and instantiates their task class

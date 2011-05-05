@@ -48,7 +48,7 @@ class convert_plan extends base_plan implements loggable {
     }
 
     public function get_basepath() {
-        return $this->converter->get_convertdir();
+        return $this->converter->get_workdir_path();
     }
 
     /**

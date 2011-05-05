@@ -16,8 +16,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * All of the task and step classes specific to moodle1 conversion
- *
  * @package    core
  * @subpackage backup-convert
  * @copyright  2011 Mark Nielsen <mark@moodlerooms.com>
@@ -26,49 +24,47 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/backup/converter/moodle1/taskslib.php');
-require_once($CFG->dirroot.'/backup/converter/moodle1/stepslib.php');
+require_once($CFG->dirroot . '/backup/converter/moodle1/taskslib.php');
+require_once($CFG->dirroot . '/backup/converter/moodle1/stepslib.php');
 
 /**
- * This will be the Moodle 1 to Moodle 2 Converter
+ * Converter of Moodle 1.9 backup into Moodle 2.x format
  */
 class moodle1_converter extends plan_converter {
-    /**
-     * The current module being processed
-     *
-     * @var string
-     */
+
+    /** @var string the current module being processed */
     protected $currentmod = '';
 
-    /**
-     * The current block being processed
-     *
-     * @var string
-     */
+    /** @var string the current block being processed */
     protected $currentblock = '';
 
     /**
-     * @return boolean
+     * Detects the Moodle 1.9 format of the backup directory
+     *
+     * @param string $tempdir the name of the backup directory
+     * @return null|string backup::FORMAT_MOODLE1 if the Moodle 1.9 is detected, null otherwise
      */
-    public function can_convert() {
-        // Then look for MOODLE1 (moodle1) format
-        $filepath = $this->get_tempdir() . '/moodle.xml';
-        if (file_exists($filepath)) { // Looks promising, lets load some information
-            $handle = fopen($filepath, "r");
-            $first_chars = fread($handle,200);
+    public static function detect_format($tempdir) {
+        global $CFG;
+
+        $filepath = $CFG->dataroot . '/temp/backup/' . $tempdir . '/moodle.xml';
+        if (file_exists($filepath)) {
+            // looks promising, lets load some information
+            $handle = fopen($filepath, 'r');
+            $first_chars = fread($handle, 200);
             fclose($handle);
 
-            // Check if it has the required strings
-            if (strpos($first_chars,'<?xml version="1.0" encoding="UTF-8"?>') !== false &&
-                strpos($first_chars,'<MOODLE_BACKUP>') !== false &&
+            // check if it has the required strings
+            if (strpos($first_chars,'<?xml version="1.0" encoding="UTF-8"?>') !== false and
+                strpos($first_chars,'<MOODLE_BACKUP>') !== false and
                 strpos($first_chars,'<INFO>') !== false) {
 
-                return true;
+                return backup::FORMAT_MOODLE1;
             }
         }
-        return false;
-    }
 
+        return null;
+    }
 
     /**
      * Path transformation for modules and blocks.  Here we
@@ -116,7 +112,7 @@ class moodle1_converter extends plan_converter {
 
     public function build_plan() {
         $this->xmlparser = new progressive_parser();
-        $this->xmlparser->set_file($this->get_tempdir() . '/moodle.xml');
+        $this->xmlparser->set_file($this->get_tempdir_path() . '/moodle.xml');
         $this->xmlprocessor = new convert_structure_parser_processor($this); // @todo Probably move this
         $this->xmlparser->set_processor($this->xmlprocessor);
 

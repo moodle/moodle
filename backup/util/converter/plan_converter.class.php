@@ -25,40 +25,31 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Plan based abstract converter
+ * Base class for all converters using plan/tasks/steps pattern
  *
- * All backup converters that use {@link convert_plan} should extend this class.
+ * All converters that use {@link convert_plan} must extend this class.
  */
-abstract class plan_converter extends base_converter {
+abstract class planned_converter extends base_converter {
 
-    /**
-     * @var convert_plan
-     */
+    /** @var convert_plan */
     protected $plan;
-
-    /**
-     * @var progressive_parser
-     */
+    /** @var progressive_parser */
     protected $xmlparser;
-
-    /**
-     * @var convert_structure_parser_processor
-     */
+    /** @var convert_structure_parser_processor */
     protected $xmlprocessor;
+    /** @var array path elements to process */
+    protected $pathelements = array();
+    /** @todo needed? redo? path currently locking processing of children */
+    protected $pathlock;
 
     /**
-     * @var array
+     * Instructs the dispatcher to ignore all children below path processor returning it
      */
-    protected $pathelements = array();  // Array of pathelements to process
-
-    // @todo needed? redo?
-    protected $pathlock;      // Path currently locking processing of children
-
-    // @todo IDK what this is really...
-    const SKIP_ALL_CHILDREN = -991399; // To instruct the dispatcher about to ignore
-                                       // all children below path processor returning it
+    const SKIP_ALL_CHILDREN = -991399;
 
     /**
+     * Return the plan instance, instatinate it if it does not exist yet
+     *
      * @return convert_plan
      */
     public function get_plan() {

@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * Convert forum
  */
 class moodle1_forum_activity_structure_step extends convert_structure_step {
+
     /**
      * Function that will return the structure to be processed by this convert_step.
      * Must return one array of @convert_path_element elements

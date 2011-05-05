@@ -228,42 +228,34 @@ abstract class backup_general_helper extends backup_helper {
     }
 
     /**
-     * Given one temp/backup/xxx dir, detect its format
+     * Detects the format of the given unpacked backup directory
      *
-     * TODO: Move harcoded detection here to delegated classes under backup/format (moodle1, imscc..)
-     *       conversion code will be there too.
+     * @param string $tempdir the name of the backup directory
+     * @return string one of backup::FORMAT_xxx constants
      */
     public static function detect_backup_format($tempdir) {
         global $CFG;
-        $filepath = $CFG->dataroot . '/temp/backup/' . $tempdir . '/moodle_backup.xml';
+        require_once($CFG->dirroot . '/backup/util/includes/convert_includes.php');
 
-        // Does tempdir exist and is dir
-        if (!is_dir(dirname($filepath))) {
-            throw new backup_helper_exception('tmp_backup_directory_not_found', dirname($filepath));
+        if (convert_helper::detect_moodle2_format($tempdir)) {
+            return backup::FORMAT_MOODLE;
         }
 
-        // First look for MOODLE (moodle2) format
-        if (file_exists($filepath)) { // Looks promising, lets load some information
-            $handle = fopen ($filepath, "r");
-            $first_chars = fread($handle,200);
-            $status = fclose ($handle);
-            // Check if it has the required strings
-            if (strpos($first_chars,'<?xml version="1.0" encoding="UTF-8"?>') !== false &&
-                strpos($first_chars,'<moodle_backup>') !== false &&
-                strpos($first_chars,'<information>') !== false) {
-                    return backup::FORMAT_MOODLE;
+        // see if a converter can identify the format
+        $converters = convert_factory::available_converters();
+        foreach ($converters as $name) {
+            $classname = "{$name}_converter";
+            if (!class_exists($classname)) {
+                throw new coding_exception("available_converters() is supposed to load
+                    converter classes but class $classname not found");
+            }
+
+            $detected = call_user_func($classname .'::detect_format', $tempdir);
+            if (!empty($detected)) {
+                return $detected;
             }
         }
 
-        // See if a converter can identify the format as its own
-        $converters = convert_factory::converters($tempdir);
-        foreach ($converters as $name => $converter) {
-            if ($converter->can_convert()) {
-                return $name;
-            }
-        }
-
-        // Arrived here, unknown format
         return backup::FORMAT_UNKNOWN;
     }
 }
