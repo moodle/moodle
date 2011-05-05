@@ -2198,6 +2198,27 @@ class dml_test extends UnitTestCase {
         $this->assertEqual($newclob, $record->onetext, 'Test "small" CLOB update (full contents output disabled)');
         $this->assertEqual($newblob, $record->onebinary, 'Test "small" BLOB update (full contents output disabled)');
 
+        // Test saving a float in a CHAR column, and reading it back.
+        $id = $DB->insert_record($tablename, array('onechar' => 'X'));
+        $DB->update_record($tablename, array('id' => $id, 'onechar' => 1.0));
+        $this->assertEqual(1.0, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $DB->update_record($tablename, array('id' => $id, 'onechar' => 1e20));
+        $this->assertEqual(1e20, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $DB->update_record($tablename, array('id' => $id, 'onechar' => 1e-4));
+        $this->assertEqual(1e-4, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $DB->update_record($tablename, array('id' => $id, 'onechar' => 1e-5));
+        $this->assertEqual(1e-5, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+
+        // Test saving a float in a TEXT column, and reading it back.
+        $id = $DB->insert_record($tablename, array('onetext' => 'X'));
+        $DB->update_record($tablename, array('id' => $id, 'onetext' => 1.0));
+        $this->assertEqual(1.0, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $DB->update_record($tablename, array('id' => $id, 'onetext' => 1e20));
+        $this->assertEqual(1e20, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $DB->update_record($tablename, array('id' => $id, 'onetext' => 1e-4));
+        $this->assertEqual(1e-4, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $DB->update_record($tablename, array('id' => $id, 'onetext' => 1e-5));
+        $this->assertEqual(1e-5, $DB->get_field($tablename, 'onetext', array('id' => $id)));
     }
 
     public function test_set_field() {
@@ -2262,6 +2283,28 @@ class dml_test extends UnitTestCase {
             $this->assertTrue($e instanceof dml_exception);
             $this->assertEqual($e->errorcode, 'textconditionsnotallowed');
         }
+
+        // Test saving a float in a CHAR column, and reading it back.
+        $id = $DB->insert_record($tablename, array('onechar' => 'X'));
+        $DB->set_field($tablename, 'onechar', 1.0, array('id' => $id));
+        $this->assertEqual(1.0, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $DB->set_field($tablename, 'onechar', 1e20, array('id' => $id));
+        $this->assertEqual(1e20, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $DB->set_field($tablename, 'onechar', 1e-4, array('id' => $id));
+        $this->assertEqual(1e-4, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $DB->set_field($tablename, 'onechar', 1e-5, array('id' => $id));
+        $this->assertEqual(1e-5, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+
+        // Test saving a float in a TEXT column, and reading it back.
+        $id = $DB->insert_record($tablename, array('onetext' => 'X'));
+        $DB->set_field($tablename, 'onetext', 1.0, array('id' => $id));
+        $this->assertEqual(1.0, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $DB->set_field($tablename, 'onetext', 1e20, array('id' => $id));
+        $this->assertEqual(1e20, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $DB->set_field($tablename, 'onetext', 1e-4, array('id' => $id));
+        $this->assertEqual(1e-4, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $DB->set_field($tablename, 'onetext', 1e-5, array('id' => $id));
+        $this->assertEqual(1e-5, $DB->get_field($tablename, 'onetext', array('id' => $id)));
 
         // Note: All the nulls, booleans, empties, quoted and backslashes tests
         // go to set_field_select() because set_field() is just one wrapper over it
