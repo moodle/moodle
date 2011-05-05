@@ -51,6 +51,12 @@ class rating implements renderable {
     public $context;
 
     /**
+     * The component using ratings. For example "mod_forum"
+     * @var component
+     */
+    public $component;
+
+    /**
      * The id of the item (forum post, glossary item etc) being rated
      * @var int
      */
@@ -78,6 +84,7 @@ class rating implements renderable {
     * Constructor.
     * @param object $options {
     *            context => context context to use for the rating [required]
+    *            component => component using ratings ie mod_forum [required]
     *            itemid  => int the id of the associated item (forum post, glossary item etc) [required]
     *            scaleid => int The scale in use when the rating was submitted [required]
     *            userid  => int The id of the user who submitted the rating [required]
@@ -85,6 +92,7 @@ class rating implements renderable {
     */
     public function __construct($options) {
         $this->context = $options->context;
+        $this->component = $options->component;
         $this->itemid = $options->itemid;
         $this->scaleid = $options->scaleid;
         $this->userid = $options->userid;
@@ -107,6 +115,7 @@ class rating implements renderable {
 
         $ratingoptions = new stdclass();
         $ratingoptions->context = $this->context;
+        $ratingoptions->component = $this->component;
         $ratingoptions->items = $items;
         $ratingoptions->aggregate = RATING_AGGREGATE_AVERAGE;//we dont actually care what aggregation method is applied
         $ratingoptions->scaleid = $this->scaleid;
@@ -236,6 +245,7 @@ class rating_manager {
     * Rating objects are available at $item->rating
     * @param object $options {
     *            context => context the context in which the ratings exists [required]
+    *            component => the component name ie mod_forum [required]
     *            items  => array an array of items such as forum posts or glossary items. They must have an 'id' member ie $items[0]->id[required]
     *            aggregate    => int what aggregation method should be applied. RATING_AGGREGATE_AVERAGE, RATING_AGGREGATE_MAXIMUM etc [required]
     *            scaleid => int the scale from which the user can select a rating [required]
@@ -243,8 +253,6 @@ class rating_manager {
     *            returnurl => string the url to return the user to after submitting a rating. Can be left null for ajax requests [optional]
     *            assesstimestart => int only allow rating of items created after this timestamp [optional]
     *            assesstimefinish => int only allow rating of items created before this timestamp [optional]
-    *            plugintype => string plugin type ie 'mod' Used to find the permissions callback [optional]
-    *            pluginname => string plugin name ie 'forum' Used to find the permissions callback [optional]
     * @return array the array of items with their ratings attached at $items[0]->rating
     */
     public function get_ratings($options) {
@@ -335,6 +343,7 @@ class rating_manager {
 
         //should $settings and $settings->permissions be declared as proper classes?
         $settings = new stdclass(); //settings that are common to all ratings objects in this context
+        $settings->component =$options->component;
         $settings->scale = $scaleobj; //the scale to use now
         $settings->aggregationmethod = $options->aggregate;
         if( !empty($options->returnurl) ) {
@@ -357,9 +366,7 @@ class rating_manager {
         $settings->permissions->rate = has_capability('moodle/rating:rate',$options->context);//can submit ratings
 
         //check module capabilities (mostly for backwards compatability with old modules that previously implemented their own ratings)
-        $plugintype = !empty($options->plugintype) ? $options->plugintype : null;
-        $pluginname = !empty($options->pluginname) ? $options->pluginname : null;
-        $pluginpermissionsarray = $this->get_plugin_permissions_array($options->context->id, $plugintype, $pluginname);
+        $pluginpermissionsarray = $this->get_plugin_permissions_array($options->context->id, $options->component);
 
         $settings->pluginpermissions = new stdclass();
         $settings->pluginpermissions->view = $pluginpermissionsarray['view'];
@@ -370,6 +377,7 @@ class rating_manager {
         $rating = null;
         $ratingoptions = new stdclass();
         $ratingoptions->context = $options->context;//context is common to all ratings in the set
+        $ratingoptions->component = $options->component;
         foreach($options->items as $item) {
             $rating = null;
             //match the item with its corresponding rating
@@ -599,17 +607,17 @@ class rating_manager {
     }
 
     /**
-    * Looks for a callback and retrieves permissions from the plugin whose items are being rated
+    * Looks for a callback like forum_rating_permissions() to retrieve permissions from the plugin whose items are being rated
     * @param int $contextid The current context id
-    * @param string plugintype the type of plugin ie 'mod'
-    * @param string pluginname the name of the plugin ie 'forum'
+    * @param string component the name of the component that is using ratings ie 'mod_forum'
     * @return array rating related permissions
     */
-    public function get_plugin_permissions_array($contextid, $plugintype=null, $pluginname=null) {
+    public function get_plugin_permissions_array($contextid, $component=null) {
         $pluginpermissionsarray = null;
-        $defaultpluginpermissions = array('rate'=>true,'view'=>true,'viewany'=>true,'viewall'=>true);//all true == rely on system level permissions if no plugin callback is defined
-        if ($plugintype && $pluginname) {
-            $pluginpermissionsarray = plugin_callback($plugintype, $pluginname, 'rating', 'permissions', array($contextid), $defaultpluginpermissions);
+        $defaultpluginpermissions = array('rate'=>false,'view'=>false,'viewany'=>false,'viewall'=>false);//deny by default
+        if (!empty($component)) {
+            list($type, $name) = normalize_component($component);
+            $pluginpermissionsarray = plugin_callback($type, $name, 'rating', 'permissions', array($contextid), $defaultpluginpermissions);
         } else {
             $pluginpermissionsarray = $defaultpluginpermissions;
         }
@@ -617,27 +625,37 @@ class rating_manager {
     }
 
     /**
-    * Checks if the item exists and is NOT owned by the current owner. Uses a callback to find out what table to look in.
-    * @param string plugintype the type of plugin ie 'mod'
-    * @param string pluginname the name of the plugin ie 'forum'
-    * @return boolean True if the callback doesn't exist. True if the item exists and doesn't belong to the current user. False otherwise.
-    */
-    public function check_item_and_owner($plugintype, $pluginname, $itemid) {
-        global $DB, $USER;
+     * Validates a submitted rating
+     * @param array $params submitted data
+     *            context => object the context in which the rated items exists [required]
+     *            itemid => int the ID of the object being rated
+     *            scaleid => int the scale from which the user can select a rating. Used for bounds checking. [required]
+     *            rating => int the submitted rating
+     *            rateduserid => int the id of the user whose items have been rated. NOT the user who submitted the ratings. 0 to update all. [required]
+     *            aggregation => int the aggregation method to apply when calculating grades ie RATING_AGGREGATE_AVERAGE [optional]
+     * @return boolean true if the rating is valid. False if callback wasnt found and will throw rating_exception if rating is invalid
+     */
+    public function check_rating_is_valid($component, $params) {
+        list($plugintype, $pluginname) = normalize_component($component);
 
-        list($tablename,$itemidcol,$useridcol) = plugin_callback($plugintype, $pluginname, 'rating', 'item_check_info');
+        //this looks for a function like forum_rating_is_valid() in mod_forum lib.php
+        //wrapping the params array in another array as call_user_func_array() expands arrays into multiple arguments
+        $isvalid = plugin_callback($plugintype, $pluginname, 'rating', 'validate', array($params), null);
 
-        if (!empty($tablename)) {
-            $item = $DB->get_record($tablename, array($itemidcol=>$itemid), $useridcol);
-            if ($item) {
-                if ($item->userid!=$USER->id) {
-                    return true;
-                }
-            }
-
-            return false;//item doesn't exist or belongs to the current user
-        } else {
-            return true;//callback doesn't exist
+        //if null then the callback doesn't exist
+        if ($isvalid === null) {
+            $isvalid = false;
+            debugging('plugin rating_add() function not found');
         }
+
+        return $isvalid;
     }
 }//end rating_manager class definition
+
+class rating_exception extends moodle_exception {
+    public $message;
+    function __construct($errorcode) {
+        $this->errorcode = $errorcode;
+        $this->message = get_string($errorcode, 'error');
+    }
+}

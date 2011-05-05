@@ -400,6 +400,7 @@ if ($allentries) {
     if ($glossary->assessed!=RATING_AGGREGATE_NONE) {
         $ratingoptions = new stdclass();
         $ratingoptions->context = $context;
+        $ratingoptions->component = 'mod_glossary';
         $ratingoptions->items = $allentries;
         $ratingoptions->aggregate = $glossary->assessed;//the aggregation method
         $ratingoptions->scaleid = $glossary->scale;
@@ -407,8 +408,6 @@ if ($allentries) {
         $ratingoptions->returnurl = $CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id;
         $ratingoptions->assesstimestart = $glossary->assesstimestart;
         $ratingoptions->assesstimefinish = $glossary->assesstimefinish;
-        $ratingoptions->plugintype = 'mod';
-        $ratingoptions->pluginname = 'glossary';
 
         $rm = new rating_manager();
         $allentries = $rm->get_ratings($ratingoptions);
