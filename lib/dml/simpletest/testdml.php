@@ -1736,6 +1736,10 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1e-4, $DB->get_field($tablename, 'onechar', array('id' => $id)));
         $id = $DB->insert_record($tablename, array('onechar' => 1e-5));
         $this->assertEqual(1e-5, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $id = $DB->insert_record($tablename, array('onechar' => 1e-300));
+        $this->assertEqual(1e-300, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $id = $DB->insert_record($tablename, array('onechar' => 1e300));
+        $this->assertEqual(1e300, $DB->get_field($tablename, 'onechar', array('id' => $id)));
 
         // Test saving a float in a TEXT column, and reading it back.
         $id = $DB->insert_record($tablename, array('onetext' => 1.0));
@@ -1746,6 +1750,10 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1e-4, $DB->get_field($tablename, 'onetext', array('id' => $id)));
         $id = $DB->insert_record($tablename, array('onetext' => 1e-5));
         $this->assertEqual(1e-5, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $id = $DB->insert_record($tablename, array('onetext' => 1e-300));
+        $this->assertEqual(1e-300, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $id = $DB->insert_record($tablename, array('onetext' => 1e300));
+        $this->assertEqual(1e300, $DB->get_field($tablename, 'onetext', array('id' => $id)));
     }
 
     public function test_import_record() {
@@ -2128,6 +2136,10 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1e-4, $DB->get_field($tablename, 'onechar', array('id' => $id)));
         $DB->update_record($tablename, array('id' => $id, 'onechar' => 1e-5));
         $this->assertEqual(1e-5, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $DB->update_record($tablename, array('id' => $id, 'onechar' => 1e-300));
+        $this->assertEqual(1e-300, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $DB->update_record($tablename, array('id' => $id, 'onechar' => 1e300));
+        $this->assertEqual(1e300, $DB->get_field($tablename, 'onechar', array('id' => $id)));
 
         // Test saving a float in a TEXT column, and reading it back.
         $id = $DB->insert_record($tablename, array('onetext' => 'X'));
@@ -2139,6 +2151,10 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1e-4, $DB->get_field($tablename, 'onetext', array('id' => $id)));
         $DB->update_record($tablename, array('id' => $id, 'onetext' => 1e-5));
         $this->assertEqual(1e-5, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $DB->update_record($tablename, array('id' => $id, 'onetext' => 1e-300));
+        $this->assertEqual(1e-300, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $DB->update_record($tablename, array('id' => $id, 'onetext' => 1e300));
+        $this->assertEqual(1e300, $DB->get_field($tablename, 'onetext', array('id' => $id)));
     }
 
     public function test_set_field() {
@@ -2214,6 +2230,10 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1e-4, $DB->get_field($tablename, 'onechar', array('id' => $id)));
         $DB->set_field($tablename, 'onechar', 1e-5, array('id' => $id));
         $this->assertEqual(1e-5, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $DB->set_field($tablename, 'onechar', 1e-300, array('id' => $id));
+        $this->assertEqual(1e-300, $DB->get_field($tablename, 'onechar', array('id' => $id)));
+        $DB->set_field($tablename, 'onechar', 1e300, array('id' => $id));
+        $this->assertEqual(1e300, $DB->get_field($tablename, 'onechar', array('id' => $id)));
 
         // Test saving a float in a TEXT column, and reading it back.
         $id = $DB->insert_record($tablename, array('onetext' => 'X'));
@@ -2225,6 +2245,10 @@ class dml_test extends UnitTestCase {
         $this->assertEqual(1e-4, $DB->get_field($tablename, 'onetext', array('id' => $id)));
         $DB->set_field($tablename, 'onetext', 1e-5, array('id' => $id));
         $this->assertEqual(1e-5, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $DB->set_field($tablename, 'onetext', 1e-300, array('id' => $id));
+        $this->assertEqual(1e-300, $DB->get_field($tablename, 'onetext', array('id' => $id)));
+        $DB->set_field($tablename, 'onetext', 1e300, array('id' => $id));
+        $this->assertEqual(1e300, $DB->get_field($tablename, 'onetext', array('id' => $id)));
 
         // Note: All the nulls, booleans, empties, quoted and backslashes tests
         // go to set_field_select() because set_field() is just one wrapper over it
