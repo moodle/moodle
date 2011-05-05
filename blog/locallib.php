@@ -117,7 +117,7 @@ class blog_entry {
         $this->summary = file_rewrite_pluginfile_urls($this->summary, 'pluginfile.php', SYSCONTEXTID, 'blog', 'post', $this->id);
 
         $options = array('overflowdiv'=>true);
-        $template['body'] = format_text($this->summary, $this->summaryformat, $options).$cmttext;
+        $template['body'] = format_text($this->summary, $this->summaryformat, $options);
         $template['title'] = format_string($this->subject);
         $template['userid'] = $user->id;
         $template['author'] = fullname($user);
@@ -306,6 +306,9 @@ class blog_entry {
             $contentcell->text .= ' [ '.get_string('modified').': '.$template['lastmod'].' ]';
             $contentcell->text .= '</div>';
         }
+
+        //add comments under everything
+        $contentcell->text .= $cmttext;
 
         $mainrow->cells[] = $contentcell;
         $table->data = array($mainrow);
