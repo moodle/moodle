@@ -253,10 +253,10 @@ M.core_filepicker.init = function(Y, options) {
             var dialog = new YAHOO.widget.SimpleDialog("dlg", {
                 width: "50em",
                 fixedcenter: true,
-                modal: true,
                 close: false,
                 icon: YAHOO.widget.SimpleDialog.ICON_HELP,
                 visible: true,
+                zIndex: 9999993,
                 draggable: true,
                 buttons: [{ text: M.str.repository.overwrite, handler: handleOverwrite },
                 { text: M.str.repository.renameto + ' "' + data.newfile.filename + '"', handler: handleRename },
