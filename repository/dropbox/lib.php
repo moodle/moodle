@@ -251,6 +251,7 @@ class repository_dropbox extends repository {
      */
     public function get_file($filepath, $saveas = '') {
         $this->dropbox->set_access_token($this->access_key, $this->access_secret);
+        $saveas = $this->prepare_file($saveas);
         return $this->dropbox->get_file($filepath, $saveas);
     }
     /**
