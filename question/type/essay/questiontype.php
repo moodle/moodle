@@ -40,7 +40,7 @@ class qtype_essay extends question_type {
     }
 
     public function response_file_areas() {
-        return array('attachments', 'answers');
+        return array('attachments', 'answer');
     }
 
     public function get_question_options($question) {
@@ -118,11 +118,14 @@ class qtype_essay extends question_type {
 
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         parent::move_files($questionid, $oldcontextid, $newcontextid);
-        $this->move_files_in_answers($questionid, $oldcontextid, $newcontextid);
+        $fs = get_file_storage();
+        $fs->move_area_files_to_new_context($oldcontextid,
+                $newcontextid, 'qtype_essay', 'graderinfo', $questionid);
     }
 
     protected function delete_files($questionid, $contextid) {
         parent::delete_files($questionid, $contextid);
-        $this->delete_files_in_answers($questionid, $contextid);
+        $fs = get_file_storage();
+        $fs->delete_area_files($contextid, 'qtype_essay', 'graderinfo', $questionid);
     }
 }

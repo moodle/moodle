@@ -48,15 +48,32 @@ class backup_qtype_essay_plugin extends backup_qtype_plugin {
         // connect the visible container ASAP
         $plugin->add_child($pluginwrapper);
 
-        // This qtype uses standard question_answers, add them here
-        // to the tree before any other information that will use them
-        $this->add_question_question_answers($pluginwrapper);
-
         // Now create the qtype own structures
-        // No own structures!
+        $essay = new backup_nested_element('essay', array('id'), array(
+                'responseformat', 'responsefieldlines', 'attachments',
+                'graderinfo', 'graderinfoformat'));
+
+        // Now the own qtype tree
+        $pluginwrapper->add_child($essay);
+
+        // set source to populate the data
+        $essay->set_source_table('qtype_essay_options',
+                array('questionid' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 
         return $plugin;
+    }
+
+    /**
+     * Returns one array with filearea => mappingname elements for the qtype
+     *
+     * Used by {@link get_components_and_fileareas} to know about all the qtype
+     * files to be processed both in backup and restore.
+     */
+    public static function get_qtype_fileareas() {
+        return array(
+            'graderinfo' => 'question_created',
+        );
     }
 }
