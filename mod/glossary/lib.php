@@ -471,11 +471,69 @@ function glossary_rating_permissions($options) {
 }
 
 /**
- * Returns the names of the table and columns necessary to check items for ratings
- * @return array an array containing the item table, item id and user id columns
+ * Validates a submitted rating
+ * @param array $params submitted data
+ *            context => object the context in which the rated items exists [required]
+ *            itemid => int the ID of the object being rated
+ *            scaleid => int the scale from which the user can select a rating. Used for bounds checking. [required]
+ *            rating => int the submitted rating
+ *            rateduserid => int the id of the user whose items have been rated. NOT the user who submitted the ratings. 0 to update all. [required]
+ *            aggregation => int the aggregation method to apply when calculating grades ie RATING_AGGREGATE_AVERAGE [optional]
+ * @return boolean true if the rating is valid. Will throw rating_exception if not
  */
-function glossary_rating_item_check_info() {
-    return array('glossary_entries','id','userid');
+function glossary_rating_validate($params) {
+    global $DB, $USER;
+
+    if (!array_key_exists('itemid', $params) || !array_key_exists('context', $params) || !array_key_exists('rateduserid', $params)) {
+        throw new rating_exception('missingparameter');
+    }
+
+    $glossarysql = "SELECT g.id as gid, e.userid as userid, e.approved, e.timecreated, g.assesstimestart, g.assesstimefinish
+                      FROM {glossary_entries} e
+                      JOIN {glossary} g ON e.glossaryid = g.id
+                     WHERE e.id = :itemid";
+    $glossaryparams = array('itemid'=>$params['itemid']);
+    if (!$info = $DB->get_record_sql($glossarysql, $glossaryparams)) {
+        //item doesn't exist
+        throw new rating_exception('invaliditemid');
+    }
+
+    if ($info->userid == $USER->id) {
+        //user is attempting to rate their own glossary entry
+        throw new rating_exception('nopermissiontorate');
+    }
+
+    if ($params['rateduserid'] != $info->userid) {
+        //supplied user ID doesnt match the user ID from the database
+        throw new rating_exception('invaliduserid');
+    }
+
+    if (!$info->approved) {
+        //item isnt approved
+        throw new rating_exception('nopermissiontorate');
+    }
+
+    //check the item we're rating was created in the assessable time window
+    if (!empty($info->assesstimestart) && !empty($info->assesstimefinish)) {
+        if ($info->timecreated < $info->assesstimestart || $info->timecreated > $info->assesstimefinish) {
+            throw new rating_exception('notavailable');
+        }
+    }
+
+    $glossaryid = $info->gid;
+
+    $cm = get_coursemodule_from_instance('glossary', $glossaryid);
+    if (empty($cm)) {
+        throw new rating_exception('unknowncontext');
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    //if the supplied context doesnt match the item's context
+    if (empty($context) || $context->id != $params['context']->id) {
+        throw new rating_exception('invalidcontext');
+    }
+
+    return true;
 }
 
 /**
