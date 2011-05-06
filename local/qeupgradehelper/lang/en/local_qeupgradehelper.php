@@ -24,7 +24,7 @@
  */
 
 
-$string['actions'] = 'Actions';
+$string['action'] = 'Action';
 $string['alreadydone'] = 'Everything has already been converted';
 $string['areyousure'] = 'Are you sure?';
 $string['areyousuremessage'] = 'Do you wish to proceed with upgrading all {$a->numtoconvert} attempts at quiz \'{$a->name}\' in course {$a->shortname}?';
@@ -49,12 +49,14 @@ $string['listtodo_desc'] = 'This will show a report of all the quizzes on the sy
 $string['listtodointro'] = 'These are all the quizzes with attempt data that still needs to be converted. You can convert the attempts by clicking the link.';
 $string['listupgraded'] = 'List already upgrade quizzes that can be reset';
 $string['listupgraded_desc'] = 'This will show a report of all the quizzes on the system whose attepmts have been upgraded, and where the old data is still present so the upgrade could be reset and redone.';
+$string['listupgradedintro'] = 'These are all the quizzes that have attempts that were upgraded, and where the old attempt data is so there, so they could be reset, and the upgrade re-done.';
 $string['noquizattempts'] = 'Your site does not have any quiz attempts at all!';
 $string['nothingupgradedyet'] = 'No upgraded attempts that can be reset';
 $string['notupgradedsiterequired'] = 'This script can only work before the site has been upgraded.';
 $string['numberofattempts'] = 'Number of quiz attempts';
 $string['oldsitedetected'] = 'This appears to be a site that has not yet been upgraded to include the new question engine.';
 $string['pluginname'] = 'Question engine upgrade helper';
+$string['questionsessions'] = 'Question sessions';
 $string['quizid'] = 'Quiz id';
 $string['quizupgrade'] = 'Quiz upgrade status';
 $string['quizzesthatcanbereset'] = 'The following quizzes have converted attempts that you may be able to reset';

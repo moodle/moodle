@@ -72,94 +72,23 @@ class local_qeupgradehelper_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Render a table listing quizzes with other information.
-     * @param array $quizzes of data about quizzes.
-     * @param string $countheader
-     * @param unknown_type $actionscript
-     * @return string
-     */
-    public function quizzes_table($quizzes, $countheader, $actionscript = null) {
-        $table = new html_table();
-        $table->head = array(
-            get_string('quizid', 'local_qeupgradehelper'),
-            get_string('course'),
-            get_string('pluginname', 'quiz'),
-            $countheader,
-        );
-        if ($actionscript) {
-            $table->head[] = get_string('actions', 'local_qeupgradehelper');
-        }
-
-        foreach ($quizzes as $quiz) {
-            $row = array(
-                $quiz->id,
-                html_writer::link(new moodle_url('/course/view.php',
-                        array('id' => $quiz->courseid)), format_string($quiz->shortname)),
-                html_writer::link(new moodle_url('/mod/quiz/view.php',
-                        array('id' => $quiz->name)), format_string($quiz->name)),
-                $quiz->attemptcount,
-            );
-            if ($actionscript) {
-                $row[] = html_writer::link(local_qeupgradehelper_url($actionscript, array('quizid' => $quiz->id)),
-                        get_string($actionscript, 'local_qeupgradehelper'));
-            }
-            $table->data[] = $row;
-        }
-
-        return html_writer::table($table);
-    }
-
-    /**
      * Render the list of quizzes that still need to be upgraded page.
      * @param array $quizzes of data about quizzes.
      * @return string html to output.
      */
-    public function list_quizzes_todo($quizzes) {
+    public function quiz_list_page(local_qeupgradehelper_quiz_list $quizzes) {
         $output = '';
         $output .= $this->header();
-        $output .= $this->heading(get_string('quizzeswithunconverted', 'local_qeupgradehelper'));
-        $output .= $this->box(get_string('listtodointro', 'local_qeupgradehelper'));
+        $output .= $this->heading($quizzes->title);
+        $output .= $this->box($quizzes->intro);
 
-        $output .= $this->quizzes_table($quizzes,
-                get_string('attemptstoconvert', 'local_qeupgradehelper'), 'convertquiz');
-
-        $output .= $this->back_to_index();
-        $output .= $this->footer();
-        return $output;
-    }
-
-    /**
-     * Render the list of quizzes that can have the upgrade reset.
-     * @param array $quizzes of data about quizzes.
-     * @return string html to output.
-     */
-    public function list_quizzes_upgraded($quizzes) {
-        $output = '';
-        $output .= $this->header();
-        $output .= $this->heading(get_string('quizzesthatcanbereset', 'local_qeupgradehelper'));
-        $output .= $this->box(get_string('listupgradedintro', 'local_qeupgradehelper'));
-
-        $output .= $this->quizzes_table($quizzes,
-                get_string('convertedattempts', 'local_qeupgradehelper'), 'resetattempts');
-
-        $output .= $this->back_to_index();
-        $output .= $this->footer();
-        return $output;
-    }
-
-    /**
-     * Render the list of quizzes that will need to be processed during the upgrade.
-     * @param array $quizzes of data about quizzes.
-     * @return string html to output.
-     */
-    public function list_quizzes_pre_upgrade($quizzes) {
-        $output = '';
-        $output .= $this->header();
-        $output .= $this->heading(get_string('quizzestobeupgraded', 'local_qeupgradehelper'));
-        $output .= $this->box(get_string('listpreupgradeintro', 'local_qeupgradehelper'));
-
-        $output .= $this->quizzes_table($quizzes,
-                get_string('numberofattempts', 'local_qeupgradehelper'));
+        $table = new html_table();
+        $table->head = $quizzes->get_col_headings();
+        foreach ($quizzes->quizlist as $quizinfo) {
+            $table->data[] = $quizzes->get_row($quizinfo);
+        }
+        $table->data[] = $quizzes->get_total_row();
+        $output .= html_writer::table($table);
 
         $output .= $this->back_to_index();
         $output .= $this->footer();

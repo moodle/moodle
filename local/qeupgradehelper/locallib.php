@@ -70,6 +70,7 @@ function local_qeupgradehelper_url($script, $params = array()) {
 
 /**
  * Class to encapsulate one of the functionalities that this plugin offers.
+ *
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -106,12 +107,162 @@ class local_qeupgradehelper_action {
 
 
 /**
- * Get the information about a quizzes that can be upgraded.
- * @return array of objects with information about the quizzes that need upgrading.
- *      has fields quiz id, quiz name, course shortname, couresid and number of
- *      attempts that need converting.
+ * A class to represent a list of quizzes with various information about
+ * attempts that can be displayed as a table.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-function local_qeupgradehelper_get_upgradable_quizzes() {
+abstract class local_qeupgradehelper_quiz_list {
+    public $title;
+    public $intro;
+    public $quizacolheader;
+    public $sql;
+    public $quizlist = null;
+    public $totalquizas = 0;
+    public $totalqas = 0;
+
+    protected function __construct($title, $intro, $quizacolheader) {
+        global $DB;
+        $this->title = get_string($title, 'local_qeupgradehelper');
+        $this->intro = get_string($intro, 'local_qeupgradehelper');
+        $this->quizacolheader = get_string($quizacolheader, 'local_qeupgradehelper');
+        $this->build_sql();
+        $this->quizlist = $DB->get_records_sql($this->sql);
+    }
+
+    protected function build_sql() {
+        $this->sql = '
+            SELECT
+                quiz.id,
+                quiz.name,
+                c.shortname,
+                c.id AS courseid,
+                COUNT(1) AS attemptcount,
+                SUM(qsesscounts.num) AS questionattempts
+
+            FROM {quiz_attempts} quiza
+            JOIN {quiz} quiz ON quiz.id = quiza.quiz
+            JOIN {course} c ON c.id = quiz.course
+            LEFT JOIN (
+                SELECT attemptid, COUNT(1) AS num
+                FROM {question_sessions}
+                GROUP BY attemptid
+            ) qsesscounts ON qsesscounts.attemptid = quiza.uniqueid
+
+            WHERE quiza.preview = 0
+                ' . $this->extra_where_clause() . '
+
+            GROUP BY quiz.id, quiz.name, c.shortname, c.id
+
+            ORDER BY c.shortname, quiz.name, quiz.id';
+    }
+
+    abstract protected function extra_where_clause();
+
+    public function get_col_headings() {
+        return array(
+            get_string('quizid', 'local_qeupgradehelper'),
+            get_string('course'),
+            get_string('pluginname', 'quiz'),
+            $this->quizacolheader,
+            get_string('questionsessions', 'local_qeupgradehelper'),
+        );
+    }
+
+    public function get_row($quizinfo) {
+        $this->totalquizas += $quizinfo->attemptcount;
+        $this->totalqas += $quizinfo->questionattempts;
+        return array(
+            $quizinfo->id,
+            html_writer::link(new moodle_url('/course/view.php',
+                    array('id' => $quizinfo->courseid)), format_string($quizinfo->shortname)),
+            html_writer::link(new moodle_url('/mod/quiz/view.php',
+                    array('id' => $quizinfo->name)), format_string($quizinfo->name)),
+            $quizinfo->attemptcount,
+            $quizinfo->questionattempts ? $quizinfo->questionattempts : 0,
+        );
+    }
+
+    public function get_total_row() {
+        return array(
+            '',
+            html_writer::tag('b', get_string('total')),
+            '',
+            html_writer::tag('b', $this->totalquizas),
+            html_writer::tag('b', $this->totalqas),
+        );
+    }
+
+    public function is_empty() {
+        return empty($this->quizlist);
+    }
+}
+
+
+/**
+ * A list of quizzes that still need to be upgraded after the main upgrade.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class local_qeupgradehelper_upgradable_quiz_list extends local_qeupgradehelper_quiz_list {
+    public function __construct() {
+        parent::__construct('quizzeswithunconverted', 'listtodointro', 'attemptstoconvert');
+    }
+
+    protected function extra_where_clause() {
+        return 'AND quiza.needsupgradetonewqe = 1';
+    }
+
+    public function get_col_headings() {
+        $headings = parent::get_col_headings();
+        $headings[] = get_string('action', 'local_qeupgradehelper');
+        return $headings;
+    }
+
+    public function get_row($quizinfo) {
+        $row = parent::get_row($quizinfo);
+        $row[] = html_writer::link(local_qeupgradehelper_url('convertquiz', array('quizid' => $quizinfo->id)),
+                        get_string('convertquiz', 'local_qeupgradehelper'));
+        return $row;
+    }
+}
+
+
+/**
+ * A list of quizzes that still need to be upgraded after the main upgrade.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class local_qeupgradehelper_resettable_quiz_list extends local_qeupgradehelper_quiz_list {
+    public function __construct() {
+        parent::__construct('quizzesthatcanbereset', 'listupgradedintro', 'convertedattempts');
+    }
+
+    protected function extra_where_clause() {
+        return 'AND quiza.needsupgradetonewqe = 0
+              AND EXISTS(SELECT 1 FROM {question_states}
+                    WHERE attempt = quiza.uniqueid)';
+    }
+
+    public function get_col_headings() {
+        $headings = parent::get_col_headings();
+        $headings[] = get_string('action', 'local_qeupgradehelper');
+        return $headings;
+    }
+
+    public function get_row($quizinfo) {
+        $row = parent::get_row($quizinfo);
+        $row[] = html_writer::link(local_qeupgradehelper_url('resetattempts', array('quizid' => $quizinfo->id)),
+                        get_string('resetattempts', 'local_qeupgradehelper'));
+        return $row;
+    }
+}
+
+
+function local_qeupgradehelper_get_pre_upgrade_quizzes() {
     global $DB;
     return $DB->get_records_sql("
             SELECT
@@ -126,12 +277,27 @@ function local_qeupgradehelper_get_upgradable_quizzes() {
             JOIN {course} c ON c.id = quiz.course
 
             WHERE quiza.preview = 0
-              AND quiza.needsupgradetonewqe = 1
 
             GROUP BY quiz.id, quiz.name, c.shortname, c.id
-
             ORDER BY c.shortname, quiz.name, quiz.id");
 }
+
+/**
+ * A list of quizzes that still need to be upgraded after the main upgrade.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class local_qeupgradehelper_pre_upgrade_quiz_list extends local_qeupgradehelper_quiz_list {
+    public function __construct() {
+        parent::__construct('quizzestobeupgraded', 'listpreupgradeintro', 'numberofattempts');
+    }
+
+    protected function extra_where_clause() {
+        return '';
+    }
+}
+
 
 /**
  * Get the information about a quiz to be upgraded.
@@ -160,35 +326,6 @@ function local_qeupgradehelper_get_quiz($quizid) {
             GROUP BY quiz.id, quiz.name, c.shortname, c.id
 
             ORDER BY c.shortname, quiz.name, quiz.id", array($quizid));
-}
-
-/**
- * Get the information about quizzes that can be reset.
- * @return array of objects with information about the quizzes that need upgrading.
- *      has fields quiz id, quiz name, course shortname, couresid and number of
- *      converted attempts.
- */
-function local_qeupgradehelper_get_resettable_quizzes() {
-    global $DB;
-    return $DB->get_records_sql("
-            SELECT
-                quiz.id,
-                quiz.name,
-                c.shortname,
-                c.id AS courseid,
-                COUNT(1) AS attemptcount
-
-            FROM {quiz_attempts} quiza
-            JOIN {quiz} quiz ON quiz.id = quiza.quiz
-            JOIN {course} c ON c.id = quiz.course
-
-            WHERE quiza.preview = 0
-              AND quiza.needsupgradetonewqe = 0
-              AND EXISTS(SELECT 1 FROM {question_states}
-                    WHERE attempt = quiza.uniqueid)
-
-            GROUP BY quiz.id, quiz.name, c.shortname, c.id
-            ORDER BY c.shortname, quiz.name, quiz.id");
 }
 
 /**
@@ -232,24 +369,3 @@ function local_qeupgradehelper_get_resettable_quiz($quizid) {
 
             GROUP BY quiz.id, quiz.name, c.shortname, c.id", array($quizid));
 }
-
-function local_qeupgradehelper_get_pre_upgrade_quizzes() {
-    global $DB;
-    return $DB->get_records_sql("
-            SELECT
-                quiz.id,
-                quiz.name,
-                c.shortname,
-                c.id AS courseid,
-                COUNT(1) AS attemptcount
-
-            FROM {quiz_attempts} quiza
-            JOIN {quiz} quiz ON quiz.id = quiza.quiz
-            JOIN {course} c ON c.id = quiz.course
-
-            WHERE quiza.preview = 0
-
-            GROUP BY quiz.id, quiz.name, c.shortname, c.id
-            ORDER BY c.shortname, quiz.name, quiz.id");
-}
-

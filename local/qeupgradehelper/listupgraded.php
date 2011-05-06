@@ -40,11 +40,11 @@ $PAGE->navbar->add(get_string('listupgraded', 'local_qeupgradehelper'));
 
 $renderer = $PAGE->get_renderer('local_qeupgradehelper');
 
-$quizzes = local_qeupgradehelper_get_resettable_quizzes();
+$quizzes = new local_qeupgradehelper_resettable_quiz_list();
 
-if (empty($quizzes)) {
+if ($quizzes->is_empty()) {
     echo $renderer->simple_message_page(get_string('nothingupgradedyet', 'local_qeupgradehelper'));
 
 } else {
-    echo $renderer->list_quizzes_upgraded($quizzes);
+    echo $renderer->quiz_list_page($quizzes);
 }

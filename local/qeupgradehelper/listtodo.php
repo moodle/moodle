@@ -39,11 +39,11 @@ $PAGE->navbar->add(get_string('listtodo', 'local_qeupgradehelper'));
 
 $renderer = $PAGE->get_renderer('local_qeupgradehelper');
 
-$quizzes = local_qeupgradehelper_get_upgradable_quizzes();
+$quizzes = new local_qeupgradehelper_upgradable_quiz_list();
 
-if (empty($quizzes)) {
+if ($quizzes->is_empty()) {
     echo $renderer->simple_message_page(get_string('alreadydone', 'local_qeupgradehelper'));
 
 } else {
-    echo $renderer->list_quizzes_todo($quizzes);
+    echo $renderer->quiz_list_page($quizzes);
 }
