@@ -78,27 +78,32 @@ class local_qeupgradehelper_renderer extends plugin_renderer_base {
      * @param unknown_type $actionscript
      * @return string
      */
-    public function quizzes_table($quizzes, $countheader, $actionscript) {
+    public function quizzes_table($quizzes, $countheader, $actionscript = null) {
         $table = new html_table();
         $table->head = array(
             get_string('quizid', 'local_qeupgradehelper'),
             get_string('course'),
             get_string('pluginname', 'quiz'),
             $countheader,
-            get_string('actions', 'local_qeupgradehelper'),
         );
+        if ($actionscript) {
+            $table->head[] = get_string('actions', 'local_qeupgradehelper');
+        }
 
         foreach ($quizzes as $quiz) {
-            $table->data[] = array(
+            $row = array(
                 $quiz->id,
                 html_writer::link(new moodle_url('/course/view.php',
                         array('id' => $quiz->courseid)), format_string($quiz->shortname)),
                 html_writer::link(new moodle_url('/mod/quiz/view.php',
                         array('id' => $quiz->name)), format_string($quiz->name)),
                 $quiz->attemptcount,
-                html_writer::link(local_qeupgradehelper_url($actionscript, array('quizid' => $quiz->id)),
-                        get_string($actionscript, 'local_qeupgradehelper')),
             );
+            if ($actionscript) {
+                $row[] = html_writer::link(local_qeupgradehelper_url($actionscript, array('quizid' => $quiz->id)),
+                        get_string($actionscript, 'local_qeupgradehelper'));
+            }
+            $table->data[] = $row;
         }
 
         return html_writer::table($table);
@@ -136,6 +141,25 @@ class local_qeupgradehelper_renderer extends plugin_renderer_base {
 
         $output .= $this->quizzes_table($quizzes,
                 get_string('convertedattempts', 'local_qeupgradehelper'), 'resetattempts');
+
+        $output .= $this->back_to_index();
+        $output .= $this->footer();
+        return $output;
+    }
+
+    /**
+     * Render the list of quizzes that will need to be processed during the upgrade.
+     * @param array $quizzes of data about quizzes.
+     * @return string html to output.
+     */
+    public function list_quizzes_pre_upgrade($quizzes) {
+        $output = '';
+        $output .= $this->header();
+        $output .= $this->heading(get_string('quizzestobeupgraded', 'local_qeupgradehelper'));
+        $output .= $this->box(get_string('listpreupgradeintro', 'local_qeupgradehelper'));
+
+        $output .= $this->quizzes_table($quizzes,
+                get_string('numberofattempts', 'local_qeupgradehelper'));
 
         $output .= $this->back_to_index();
         $output .= $this->footer();

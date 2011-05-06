@@ -34,16 +34,18 @@ require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 local_qeupgradehelper_require_not_upgraded();
 
 admin_externalpage_setup('qeupgradehelper', '', array(),
-        local_qeupgradehelper_url('listpreupgrade'));
+        local_qeupgradehelper_url(''));
 $PAGE->navbar->add(get_string('listpreupgrade', 'local_qeupgradehelper'));
 
 $renderer = $PAGE->get_renderer('local_qeupgradehelper');
 
-$quizzes = local_qeupgradehelper_get_upgradable_quizzes();
+$quizzes = local_qeupgradehelper_get_pre_upgrade_quizzes();
 
 if (empty($quizzes)) {
     echo $renderer->simple_message_page(get_string('noquizattempts', 'local_qeupgradehelper'));
 
 } else {
+    // TODO, once we have a way to limit which quizzes will be included in the upgrade,
+    // display that information too.
     echo $renderer->list_quizzes_pre_upgrade($quizzes);
 }

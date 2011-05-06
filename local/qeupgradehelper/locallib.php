@@ -52,7 +52,7 @@ function local_qeupgradehelper_require_upgraded() {
  * If the site has been upgraded, display an error.
  */
 function local_qeupgradehelper_require_not_upgraded() {
-    if (!local_qeupgradehelper_is_upgraded()) {
+    if (local_qeupgradehelper_is_upgraded()) {
         throw new moodle_exception('notupgradedsiterequired', 'local_qeupgradehelper',
                 local_qeupgradehelper_url('index'));
     }
@@ -199,8 +199,8 @@ function local_qeupgradehelper_get_resettable_quizzes() {
  *      totalattempts and resettableattempts.
  */
 function local_qeupgradehelper_get_resettable_quiz($quizid) {
-    global $CFG;
-    return get_record_sql("
+    global $DB;
+    return $DB->get_record_sql("
             SELECT
                 quiz.id,
                 quiz.name,
@@ -212,25 +212,44 @@ function local_qeupgradehelper_get_resettable_quiz($quizid) {
                 SUM(CASE WHEN quiza.needsupgradetonewqe = 0 AND
                     oldtimemodified.time >= newtimemodified.time THEN 1 ELSE 0 END) AS resettableattempts
 
-            FROM {$CFG->prefix}quiz_attempts quiza
-            JOIN {$CFG->prefix}quiz quiz ON quiz.id = quiza.quiz
-            JOIN {$CFG->prefix}course c ON c.id = quiz.course
+            FROM {quiz_attempts} quiza
+            JOIN {quiz} quiz ON quiz.id = quiza.quiz
+            JOIN {course} c ON c.id = quiz.course
             LEFT JOIN (
                 SELECT attempt, MAX(timestamp) AS time
-                FROM {$CFG->prefix}question_states
+                FROM {question_states}
                 GROUP BY attempt
             ) AS oldtimemodified ON oldtimemodified.attempt = quiza.uniqueid
             LEFT JOIN (
                 SELECT qa.questionusageid, MAX(qas.timecreated) AS time
-                FROM {$CFG->prefix}question_attempts qa
-                JOIN {$CFG->prefix}question_attempt_steps qas ON qas.questionattemptid = qa.id
+                FROM {question_attempts} qa
+                JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
                 GROUP BY qa.questionusageid
             ) AS newtimemodified ON newtimemodified.questionusageid = quiza.uniqueid
 
             WHERE quiza.preview = 0
-              AND quiz.id = {$quizid}
+              AND quiz.id = ?
 
-            GROUP BY quiz.id, quiz.name, c.shortname, c.id");
+            GROUP BY quiz.id, quiz.name, c.shortname, c.id", array($quizid));
 }
 
+function local_qeupgradehelper_get_pre_upgrade_quizzes() {
+    global $DB;
+    return $DB->get_records_sql("
+            SELECT
+                quiz.id,
+                quiz.name,
+                c.shortname,
+                c.id AS courseid,
+                COUNT(1) AS attemptcount
+
+            FROM {quiz_attempts} quiza
+            JOIN {quiz} quiz ON quiz.id = quiza.quiz
+            JOIN {course} c ON c.id = quiz.course
+
+            WHERE quiza.preview = 0
+
+            GROUP BY quiz.id, quiz.name, c.shortname, c.id
+            ORDER BY c.shortname, quiz.name, quiz.id");
+}
 
