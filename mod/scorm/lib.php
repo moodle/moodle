@@ -225,7 +225,7 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
         $grade = reset($grades->items[0]->grades);
         $result = new object();
         $result->info = get_string('grade') . ': '. $grade->str_long_grade;
-        $result->time = $grade->datesubmitted;
+        $result->time = $grade->dategraded;
         return $result;
     }
     return null;

@@ -209,7 +209,7 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
 
     $result = new stdClass;
     $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
-    $result->time = $grade->datesubmitted;
+    $result->time = $grade->dategraded;
     return $result;
 }
 
