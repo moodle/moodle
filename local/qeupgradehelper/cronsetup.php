@@ -15,18 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Adds this plugin to the admin menu.
+ * Script to set up cron to complete the upgrade automatically.
  *
  * @package    local
  * @subpackage qeupgradehelper
- * @copyright  2011 The Open University
+ * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
 
-if ($hassiteconfig) { // needs this condition or there is error on login page
-    $ADMIN->add('root', new admin_externalpage('qeupgradehelper',
-            get_string('pluginname', 'local_qeupgradehelper'),
-            new moodle_url('/local/qeupgradehelper/index.php')));
-}
+require_once(dirname(__FILE__) . '/../../config.php');
+require_once(dirname(__FILE__) . '/locallib.php');
+require_once($CFG->libdir . '/adminlib.php');
+
+require_login();
+require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+admin_externalpage_setup('qeupgradehelper', '', array(),
+        local_qeupgradehelper_url('cronsetup'));
+$PAGE->navbar->add(get_string('cronsetup', 'local_qeupgradehelper'));
+
+
+$renderer = $PAGE->get_renderer('local_qeupgradehelper');
+
+echo $renderer->simple_message_page('Not implemented yet. Sorry.');

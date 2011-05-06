@@ -15,11 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This plugin can help upgrade site with a large number of question attempts
- * from Moodle 2.0 to 2.1.
- *
- * This screen is the main entry-point to the plugin, it gives the admin a list
- * of options available to them.
+ * Script to show all the quizzes with attempts that still need to be upgraded
+ * after the main upgrade.
  *
  * @package    local
  * @subpackage qeupgradehelper
@@ -27,29 +24,24 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
-admin_externalpage_setup('qeupgradehelper');
+admin_externalpage_setup('qeupgradehelper', '', array(),
+        local_qeupgradehelper_url('listtodo'));
+$PAGE->navbar->add(get_string('listtodo', 'local_qeupgradehelper'));
 
 $renderer = $PAGE->get_renderer('local_qeupgradehelper');
 
-$actions = array();
-if (local_qeupgradehelper_isupgraded()) {
-    $detected = get_string('upgradedsitedetected', 'local_qeupgradehelper');
-    $actions[] = local_qeupgradehelper_action::make('listtodo');
-    $actions[] = local_qeupgradehelper_action::make('listupgraded');
-    $actions[] = local_qeupgradehelper_action::make('cronsetup');
+$quizzes = local_qeupgradehelper_get_upgradable_quizzes();
+
+if (empty($quizzes)) {
+    echo $renderer->simple_message_page(get_string('alreadydone', 'local_qeupgradehelper'));
 
 } else {
-    $detected = get_string('oldsitedetected', 'local_qeupgradehelper');
-    $actions[] = local_qeupgradehelper_action::make('listpreupgrade');
-    $actions[] = local_qeupgradehelper_action::make('extracttestcase');
-    $actions[] = local_qeupgradehelper_action::make('pretendupgrade');
-    $actions[] = local_qeupgradehelper_action::make('cronsetup');
+    echo $renderer->list_quizzes_todo($quizzes);
 }
-
-echo $renderer->index_page($detected, $actions);

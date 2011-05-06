@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,9 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Script to reset the attempts at a particular quiz, after confirmation.
+ * Script to reset the upgrade of attempts at a particular quiz, after confirmation.
  *
  * @package    local
  * @subpackage qeupgradehelper
@@ -35,37 +33,38 @@ $confirmed = optional_param('confirmed', false, PARAM_BOOL);
 
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+admin_externalpage_setup('qeupgradehelper', '', array(),
+        local_qeupgradehelper_url('resetquiz', array('quizid' => $quizid)));
+$PAGE->navbar->add(get_string('listupgraded', 'local_qeupgradehelper'),
+        local_qeupgradehelper_url('listtodo'));
+$PAGE->navbar->add(get_string('resetattempts', 'local_qeupgradehelper'));
 
-$quizsummary = report_quizupgrade_get_resettable_quiz($quizid);
+$renderer = $PAGE->get_renderer('local_qeupgradehelper');
+
+$quizsummary = local_qeupgradehelper_get_resettable_quiz($quizid);
 if (!$quizsummary) {
-    print_error('invalidquizid', 'report_quizupgrade', report_quizupgrade_url('index.php'));
+    print_error('invalidquizid', 'local_qeupgradehelper',
+            local_qeupgradehelper_url('listupgraded'));
 }
-$quizsummary->name = format_string($quizsummary->name);
 
-admin_externalpage_setup('reportquizupgrade');
+$quizsummary->name = format_string($quizsummary->name);
 
 if ($confirmed && data_submitted() && confirm_sesskey()) {
     // Actually do the conversion.
-    admin_externalpage_print_header();
-    print_heading(get_string('resettingquizattempts', 'report_quizupgrade', $quizsummary));
+    echo $renderer->header();
+    echo $renderer->heading(get_string(
+            'resettingquizattempts', 'local_qeupgradehelper', $quizsummary));
 
-    $upgrader = new report_quizupgrade_attempt_upgrader($quizsummary->id, $quizsummary->resettableattempts);
+    $upgrader = new local_qeupgradehelper_attempt_upgrader(
+            $quizsummary->id, $quizsummary->resettableattempts);
     $upgrader->reset_all_resettable_attempts();
 
-    print_heading(get_string('resetcomplete', 'report_quizupgrade'));
-    print_continue(report_quizupgrade_url('resetindex.php'));
+    echo $renderer->heading(get_string('resetcomplete', 'local_qeupgradehelper'));
+    echo $renderer->end_of_page_link(local_qeupgradehelper_url('listupgraded'),
+            get_string('listupgraded', 'local_qeupgradehelper'));
 
-    admin_externalpage_print_footer();
+    echo $renderer->footer();
     exit;
 }
 
-// Print an are-you-sure page.
-admin_externalpage_print_header();
-print_heading(get_string('areyousure', 'report_quizupgrade'));
-
-$message = get_string('areyousureresetmessage', 'report_quizupgrade', $quizsummary);
-$params = array('quizid' => $quizsummary->id, 'confirmed' => 1, 'sesskey' => sesskey());
-notice_yesno($message, report_quizupgrade_url('resetquiz.php'),
-        report_quizupgrade_url('resetindex.php'), $params, null, 'post', 'get');
-
-admin_externalpage_print_footer();
+echo $renderer->reset_quiz_are_you_sure($quizsummary);
