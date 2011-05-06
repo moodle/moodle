@@ -711,3 +711,24 @@ class mod_quiz_links_to_other_attempts implements renderable {
      */
     public $links = array();
 }
+
+class mod_quiz_view_object {
+    public $attempts;
+    public $accessmanager;
+    public $canattempt;
+    public $canpreview;
+    public $canreviewmine;
+    public $attemptcolumn;
+    public $gradecolumn;
+    public $markcolumn;
+    public $overallstats;
+    public $feedbackcolumn;
+    public $timenow;
+    public $numattempts;
+    public $mygrade;
+    public $moreattempts;
+    public $mygradeoverridden;
+    public $gradebookfeedback;
+    public $unfinished;
+    public $lastfinishedattempt;
+}

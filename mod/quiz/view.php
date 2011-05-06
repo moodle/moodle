@@ -30,6 +30,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->dirroot.'/mod/quiz/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
+require_once($CFG->dirroot.'/mod/quiz/renderer.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
 $q = optional_param('q',  0, PARAM_INT);  // quiz ID
@@ -119,7 +120,7 @@ if (!empty($grading_info->items)) {
 /*
  * Create view object for use within renderers file
  */
-$viewobj = new stdClass();
+$viewobj = new mod_quiz_view_object;
 $viewobj->attempts = $attempts;
 $viewobj->accessmanager = $accessmanager;
 $viewobj->canattempt = $canattempt;
