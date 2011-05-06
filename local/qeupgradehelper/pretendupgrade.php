@@ -25,57 +25,12 @@
  * The idea is that this should find most of the logic errors, since the code to
  * save the new data to the DB is quite simple.
  *
- * To make this work, you need to fill in the details below, and add
- *
- * if (defined('NASTY_HACK_IGNORE_CONFIGPHP')) {
- *     return;
- * }
- *
- * to the very top of your config.php file.
- *
  * @package moodlecore
  * @subpackage questionengine
  * @copyright 2010 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-define('NASTY_HACK_IGNORE_CONFIGPHP', true);
-
-// Clone config.php to point at the learnacct DB read-only.
-unset($CFG);  // Ignore this line
-$CFG = new stdClass();
-
-$CFG->debug = 6143; 
-$CFG->debugdisplay = 1;
-
-// The following block points this site at learnacct database, read-only.
-$CFG->dbtype    = 'postgres7';
-$CFG->dbhost    = ''; // TODO to use this script, complete this section
-$CFG->dbname    = ''; // with details of the database you want to
-$CFG->dbuser    = ''; // connect to.
-$CFG->dbpass    = '';
-$CFG->prefix    = '';
-
-$CFG->wwwroot   = ''; // TODO to use this script, complete this section
-$CFG->dirroot   = ''; // with data copied from this Moodle's config.php
-$CFG->dataroot  = '';
-$CFG->directorypermissions = 02777;
-
-$CFG->admin = 'admin';
-
-require_once($CFG->dirroot . '/local/ouflags/ouflags.class.php');
-$OUFLAGS = new ouflags('vle','dev');
-
-require_once($CFG->dirroot . '/lib/setup.php');
-require_once($CFG->libdir . '/formslib.php');
-require_once($CFG->dirroot . '/question/engine/lib.php');
-require_once($CFG->dirroot . '/question/engine/upgradefromoldqe/upgrade.php');
-
-$CFG->querylog = '';
-$CFG->rcache = false;
 raise_memory_limit('1024M');
 
 // =============================================================
@@ -213,12 +168,7 @@ function do_pretend_upgrade($fromquiz, $toquiz) {
     $upgrader->fromquiz = $fromquiz;
     $upgrader->toquiz = $toquiz;
 
-//    xhprof_enable(XHPROF_FLAGS_MEMORY + XHPROF_FLAGS_NO_BUILTINS);
-
     $upgrader->convert_all_quiz_attempts();
-
-//    $xhprof_data = xhprof_disable();
-//    print_object($xhprof_data);
 
     return $upgrader->qsdone;
 }

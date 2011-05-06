@@ -30,6 +30,7 @@ require_once($CFG->libdir . '/adminlib.php');
 
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+
 admin_externalpage_setup('qeupgradehelper', '', array(),
         local_qeupgradehelper_url('cronsetup'));
 $PAGE->navbar->add(get_string('cronsetup', 'local_qeupgradehelper'));

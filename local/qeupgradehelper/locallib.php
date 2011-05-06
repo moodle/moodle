@@ -29,10 +29,33 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Detect whether this site has been upgraded to the new question engine yet.
+ * @return bool whether the site has been upgraded.
  */
-function local_qeupgradehelper_isupgraded() {
-    global $CFG;
-    return is_readable($CFG->dirroot . '/question/engine/upgrade/upgradelib.php');
+function local_qeupgradehelper_is_upgraded() {
+    global $CFG, $DB;
+    $dbman = $DB->get_manager();
+    return is_readable($CFG->dirroot . '/question/engine/upgrade/upgradelib.php') &&
+            $dbman->table_exists('question_usages');
+}
+
+/**
+ * If the site has not yet been upgraded, display an error.
+ */
+function local_qeupgradehelper_require_upgraded() {
+    if (!local_qeupgradehelper_is_upgraded()) {
+        throw new moodle_exception('upgradedsiterequired', 'local_qeupgradehelper',
+                local_qeupgradehelper_url('index'));
+    }
+}
+
+/**
+ * If the site has been upgraded, display an error.
+ */
+function local_qeupgradehelper_require_not_upgraded() {
+    if (!local_qeupgradehelper_is_upgraded()) {
+        throw new moodle_exception('notupgradedsiterequired', 'local_qeupgradehelper',
+                local_qeupgradehelper_url('index'));
+    }
 }
 
 /**

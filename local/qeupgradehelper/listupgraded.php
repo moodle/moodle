@@ -32,6 +32,8 @@ require_once($CFG->libdir . '/adminlib.php');
 
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
+local_qeupgradehelper_require_upgraded();
+
 admin_externalpage_setup('qeupgradehelper', '', array(),
         local_qeupgradehelper_url('listupgraded'));
 $PAGE->navbar->add(get_string('listupgraded', 'local_qeupgradehelper'));
