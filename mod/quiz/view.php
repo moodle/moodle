@@ -116,44 +116,35 @@ if (!empty($grading_info->items)) {
     }
 }
 
-// Print table with existing attempts
-if ($attempts) {
-    // Work out which columns we need, taking account what data is available in each attempt.
-    list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts, $context);
-
-    $attemptcolumn = $quiz->attempts != 1;
-
-    $gradecolumn = $someoptions->marks >= question_display_options::MARK_AND_MAX &&
-            quiz_has_grades($quiz);
-    $markcolumn = $gradecolumn && ($quiz->grade != $quiz->sumgrades);
-    $overallstats = $alloptions->marks >= question_display_options::MARK_AND_MAX;
-
-    $feedbackcolumn = quiz_has_feedback($quiz) && $alloptions->overallfeedback;
-}
-
-$moreattempts = $unfinished || !$accessmanager->is_finished($numattempts, $lastfinishedattempt);
-
 /*
  * Create view object for use within renderers file
  */
+$viewobj = new stdClass();
 $viewobj->attempts = $attempts;
 $viewobj->accessmanager = $accessmanager;
 $viewobj->canattempt = $canattempt;
 $viewobj->canpreview = $canpreview;
 $viewobj->canreviewmine = $canreviewmine;
+
+// Print table with existing attempts
 if ($attempts) {
-    $viewobj->attemptcolumn = $attemptcolumn;
-    $viewobj->gradecolumn = $gradecolumn;
-    $viewobj->markcolumn = $markcolumn;
-    $viewobj->feedbackcolumn = $feedbackcolumn;
-    $viewobj->overallstats = $overallstats;
+    // Work out which columns we need, taking account what data is available in each attempt.
+    list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts, $context);
+
+    $viewobj->attemptcolumn = $quiz->attempts != 1;
+
+    $viewobj->gradecolumn = $someoptions->marks >= question_display_options::MARK_AND_MAX &&
+            quiz_has_grades($quiz);
+    $viewobj->markcolumn = $viewobj->gradecolumn && ($quiz->grade != $quiz->sumgrades);
+    $viewobj->overallstats = $alloptions->marks >= question_display_options::MARK_AND_MAX;
+
+    $viewobj->feedbackcolumn = quiz_has_feedback($quiz) && $alloptions->overallfeedback;
 } else {
     $viewobj->attemptcolumn = 1;
-    //$viewobj->gradecolumn = 1;
-    //$viewobj->markcolumn = 1;
-    //$viewobj->feedbackcolumn = 1;
-    //$viewobj->overallstats = 1;
 }
+
+$moreattempts = $unfinished || !$accessmanager->is_finished($numattempts, $lastfinishedattempt);
+
 $viewobj->timenow = $timenow;
 $viewobj->numattempts = $numattempts;
 $viewobj->mygrade = $mygrade;
@@ -164,13 +155,64 @@ $viewobj->gradebookfeedback = $gradebookfeedback;
 $viewobj->unfinished = $unfinished;
 $viewobj->lastfinishedattempt = $lastfinishedattempt;
 
+// Display information about this quiz.
+$messages = $viewobj->accessmanager->describe_rules();
+if ($quiz->attempts != 1) {
+    $messages[] = get_string('gradingmethod', 'quiz',
+            quiz_get_grading_option_name($quiz->grademethod));
+}
+
+// This will be set something if as start/continue attempt button should appear.
+$buttontext = '';
+if (!quiz_clean_layout($quiz->questions, true)) {
+    $output .= quiz_no_questions_message($quiz, $cm, $context);
+    $buttontext = '';
+
+} else {
+    if ($viewobj->unfinished) {
+        if ($viewobj->canattempt) {
+            $buttontext = get_string('continueattemptquiz', 'quiz');
+        } else if ($viewobj->canpreview) {
+            $buttontext = get_string('continuepreview', 'quiz');
+        }
+
+    } else {
+        if ($viewobj->canattempt) {
+            $messages = $viewobj->accessmanager->prevent_new_attempt($viewobj->numattempts,
+                    $viewobj->lastfinishedattempt);
+            if ($messages) {
+                $this->access_messages($messages);
+            } else if ($viewobj->numattempts == 0) {
+                $buttontext = get_string('attemptquiznow', 'quiz');
+            } else {
+                $buttontext = get_string('reattemptquiz', 'quiz');
+            }
+
+        } else if ($viewobj->canpreview) {
+            $buttontext = get_string('previewquiznow', 'quiz');
+        }
+    }
+
+    // If, so far, we think a button should be printed, so check if they will be
+    // allowed to access it.
+    if ($buttontext) {
+        if (!$viewobj->moreattempts) {
+            $buttontext = '';
+        } else if ($viewobj->canattempt
+                && $messages = $viewobj->accessmanager->prevent_access()) {
+            $this->access_messages($messages);
+            $buttontext = '';
+        }
+    }
+}
+
 $title = $course->shortname . ': ' . format_string($quiz->name);
 $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 $output = $PAGE->get_renderer('mod_quiz');
 echo $OUTPUT->header();
 
-echo $output->view_page($course, $quiz, $cm, $context, $viewobj);
+echo $output->view_page($course, $quiz, $cm, $context, $messages, $viewobj, $buttontext);
 
 // Mark module as viewed (note, we do this here and not in finish_page,
 // otherwise the 'not enrolled' error conditions would result in marking
