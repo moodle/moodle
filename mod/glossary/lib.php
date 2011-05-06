@@ -162,6 +162,7 @@ function glossary_delete_instance($id) {
 
 function glossary_user_outline($course, $user, $mod, $glossary) {
     global $CFG;
+    var_dump('glossary_user_outline');
 /// Return a small object with summary information about what a
 /// user has done with a given particular instance of this module
 /// Used for user activity reports.
@@ -189,7 +190,7 @@ function glossary_user_outline($course, $user, $mod, $glossary) {
     } else if ($grade) {
         $result = new object();
         $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
-        $result->time = $grade->dategraded;
+        $result->time = $grade->datesubmitted;
         return $result;
     }
 

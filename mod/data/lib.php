@@ -729,7 +729,7 @@ function data_user_outline($course, $user, $mod, $data) {
     } else if ($grade) {
         $result = new object();
         $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
-        $result->time = $grade->dategraded;
+        $result->time = $grade->datesubmitted;
         return $result;
     }
     return NULL;

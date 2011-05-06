@@ -155,7 +155,7 @@ function lesson_user_outline($course, $user, $mod, $lesson) {
     } else {
         $grade = reset($grades->items[0]->grades);
         $return->info = get_string("grade") . ': ' . $grade->str_long_grade;
-        $return->time = $grade->dategraded;
+        $return->time = $grade->datesubmitted;
     }
     return $return;
 }

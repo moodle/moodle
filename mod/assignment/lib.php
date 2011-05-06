@@ -1802,7 +1802,7 @@ class assignment_base {
     function user_outline($grade) {
         $result = new object();
         $result->info = get_string('grade').': '.$grade->str_long_grade;
-        $result->time = $grade->dategraded;
+        $result->time = $grade->datesubmitted;
         return $result;
     }
 
