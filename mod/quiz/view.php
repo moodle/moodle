@@ -120,7 +120,7 @@ if (!empty($grading_info->items)) {
 /*
  * Create view object for use within renderers file
  */
-$viewobj = new mod_quiz_view_object;
+$viewobj = new mod_quiz_view_object();
 $viewobj->attempts = $attempts;
 $viewobj->accessmanager = $accessmanager;
 $viewobj->canattempt = $canattempt;
@@ -150,7 +150,6 @@ $viewobj->timenow = $timenow;
 $viewobj->numattempts = $numattempts;
 $viewobj->mygrade = $mygrade;
 $viewobj->moreattempts = $moreattempts;
-$viewobj->numattempts = $numattempts;
 $viewobj->mygradeoverridden = $mygradeoverridden;
 $viewobj->gradebookfeedback = $gradebookfeedback;
 $viewobj->unfinished = $unfinished;

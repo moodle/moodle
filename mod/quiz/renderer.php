@@ -713,22 +713,76 @@ class mod_quiz_links_to_other_attempts implements renderable {
 }
 
 class mod_quiz_view_object {
+    /**
+     * @var array $attempt contains all the user's attempts at this quiz.
+     */
     public $attempts;
+    /**
+     * @var object $accessmanager contains various access rules.
+     */
     public $accessmanager;
+    /**
+     * @var int $canattempt determins capability for attempting a quiz.
+     */
     public $canattempt;
+    /**
+     * @var int $canpreview determins capability for previewing a quiz.
+     */
     public $canpreview;
+    /**
+     * @var int $canreviewmine determins capability for reviwing own quiz.
+     */
     public $canreviewmine;
+    /**
+     * @var int $attemptcolumn contains the number of attempts done.
+     */
     public $attemptcolumn;
+    /**
+     * @var int $gradecolumn contains the grades of any attempts.
+     */
     public $gradecolumn;
+    /**
+     * @var int $markcolumn contains the marks of any attempt.
+     */
     public $markcolumn;
+    /**
+     * @var int $overallstats contains all marks for any attempt.
+     */
     public $overallstats;
+    /**
+     * @var string $feedbackcolumn contains any feedback for and attempt.
+     */
     public $feedbackcolumn;
+    /**
+     * @var string $timenow contains a timestamp in string format.
+     */
     public $timenow;
+    /**
+     * @var int $numattempts contains the total number of attempts.
+     */
     public $numattempts;
+    /**
+     * @var int $mygrade contains the current users final grade for a quiz.
+     */
     public $mygrade;
+    /**
+     * @var int $moreattempts total attempts left.
+     */
     public $moreattempts;
+    /**
+     * @var int $mygradeoverridden contains an overriden grade.
+     */
     public $mygradeoverridden;
+    /**
+     * @var string $gradebookfeedback contains any feedback for a gradebook.
+     */
     public $gradebookfeedback;
+    /**
+     * @var int $unfinished contains 1 if an attempt is unfinished.
+     */
     public $unfinished;
+    /**
+     * @var int $lastfinishedattempt contains a pointer to the last attempt in the attempts array.
+     */
     public $lastfinishedattempt;
 }
