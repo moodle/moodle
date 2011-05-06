@@ -439,7 +439,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         // Show number of attempts summary to those who can view reports.
         if (has_capability('mod/quiz:viewreports', $context)) {
-            if ($strattemptnum = $this->quiz_attempt_summary_link_to_reports($quiz, $cm, $context)) {
+            if ($strattemptnum = $this->quiz_attempt_summary_link_to_reports($quiz, $cm,
+                    $context)) {
                 $output .= '<div class="quizattemptcounts">' . $strattemptnum . "</div>\n";
             }
         }
@@ -679,20 +680,24 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * to the quiz reports.
      *
      * @param object $quiz the quiz object. Only $quiz->id is used at the moment.
-     * @param object $cm the cm object. Only $cm->course, $cm->groupmode and $cm->groupingid fields are used at the moment.
+     * @param object $cm the cm object. Only $cm->course, $cm->groupmode and $cm->groupingid
+     * fields are used at the moment.
      * @param object $context the quiz context.
-     * @param bool $returnzero if false (default), when no attempts have been made '' is returned instead of 'Attempts: 0'.
-     * @param int $currentgroup if there is a concept of current group where this method is being called
+     * @param bool $returnzero if false (default), when no attempts have been made '' is returned
+     * instead of 'Attempts: 0'.
+     * @param int $currentgroup if there is a concept of current group where this method is being
+     * called
      *         (e.g. a report) pass it in here. Default 0 which means no current group.
      * @return string HTML fragment for the link.
      */
-    private function quiz_attempt_summary_link_to_reports($quiz, $cm, $context, $returnzero = false, $currentgroup = 0) {
+    private function quiz_attempt_summary_link_to_reports($quiz, $cm, $context,
+                                                          $returnzero = false, $currentgroup = 0) {
         global $CFG;
         $summary = quiz_num_attempt_summary($quiz, $cm, $returnzero, $currentgroup);
         if (!$summary) {
             return '';
         }
-    
+
         require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
         $url = new moodle_url('/mod/quiz/report.php', array(
                 'id' => $cm->id, 'mode' => quiz_report_default_report($context)));
