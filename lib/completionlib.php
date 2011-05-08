@@ -603,8 +603,8 @@ class completion_info {
      * @return void
      */
     public function set_module_viewed($cm, $userid=0) {
-        global $PAGE;
-        if ($PAGE->headerprinted) {
+        global $PAGE, $UNITTEST;
+        if ($PAGE->headerprinted && empty($UNITTEST->running)) {
             debugging('set_module_viewed must be called before header is printed',
                     DEBUG_DEVELOPER);
         }
