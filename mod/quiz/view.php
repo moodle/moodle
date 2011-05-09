@@ -212,7 +212,15 @@ $PAGE->set_heading($course->fullname);
 $output = $PAGE->get_renderer('mod_quiz');
 echo $OUTPUT->header();
 
-echo $output->view_page($course, $quiz, $cm, $context, $messages, $viewobj, $buttontext);
+        // Guests can't do a quiz, so offer them a choice of logging in or going back.
+        if (isguestuser()) {
+            echo $output->view_page_guest($course, $quiz, $cm, $context, $messages, $viewobj);
+        } elseif (!isguestuser() && !($viewobj->canattempt || $viewobj->canpreview || $viewobj->canreviewmine)) {
+            // If they are not enrolled in this course in a good enough role, tell them to enrol.
+            echo $output->view_page_notenrolled($course, $quiz, $cm, $context, $messages, $viewobj);
+        } else {
+            echo $output->view_page($course, $quiz, $cm, $context, $messages, $viewobj, $buttontext);
+        }
 
 // Mark module as viewed (note, we do this here and not in finish_page,
 // otherwise the 'not enrolled' error conditions would result in marking

@@ -415,15 +415,33 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     public function view_page($course, $quiz, $cm, $context, $messages, $viewobj, $buttontext) {
         $output = '';
-        $output .= $this->view_information($course, $quiz, $cm, $context, $messages, $viewobj);
+        $output .= $this->view_information($course, $quiz, $cm, $context, $messages);
         $output .= $this->view_table($quiz, $context, $viewobj);
         $output .= $this->view_best_score($viewobj);
         $output .= $this->view_result_info($quiz, $context, $cm, $viewobj);
         $output .= $this->view_attempt_button($course, $quiz, $cm, $context, $viewobj, $buttontext);
         return $output;
     }
+    
+    public function view_page_guest($course, $quiz, $cm, $context, $messages){
+        $output = '';
+        $output .= $this->view_information($course, $quiz, $cm, $context, $messages);
+        $output .= $this->confirm('<p>' . get_string('guestsno', 'quiz') . "</p>\n\n<p>" .
+                get_string('liketologin') . "</p>\n", get_login_url(), get_referer(false));
+        return $output;
+    }
+    
+    public function view_page_notenrolled($course, $quiz, $cm, $context, $messages){
+        global $CFG;
+        $output = '';
+        $output .= $this->view_information($course, $quiz, $cm, $context, $messages);
+        $output .= $this->box('<p>' . get_string('youneedtoenrol', 'quiz') . "</p>\n\n<p>" .
+                    $this->continue_button($CFG->wwwroot . '/course/view.php?id=' . $course->id) .
+                    "</p>\n", 'generalbox', 'notice');
+        return $output;
+    }
 
-    private function view_information($course, $quiz, $cm, $context, $messages, $viewobj) {
+    private function view_information($course, $quiz, $cm, $context, $messages) {
         global $CFG;
         $output = '';
         // Print quiz name and description
@@ -443,23 +461,6 @@ class mod_quiz_renderer extends plugin_renderer_base {
                     $context)) {
                 $output .= '<div class="quizattemptcounts">' . $strattemptnum . "</div>\n";
             }
-        }
-
-        // Guests can't do a quiz, so offer them a choice of logging in or going back.
-        if (isguestuser()) {
-            echo $this->confirm('<p>' . get_string('guestsno', 'quiz') . "</p>\n\n<p>" .
-                    get_string('liketologin') . "</p>\n", get_login_url(), get_referer(false));
-            echo $this->footer();
-            exit;
-        }
-
-        // If they are not enrolled in this course in a good enough role, tell them to enrol.
-        if (!($viewobj->canattempt || $viewobj->canpreview || $viewobj->canreviewmine)) {
-            echo $this->box('<p>' . get_string('youneedtoenrol', 'quiz') . "</p>\n\n<p>" .
-                    $this->continue_button($CFG->wwwroot . '/course/view.php?id=' . $course->id) .
-                    "</p>\n", 'generalbox', 'notice');
-            echo $this->footer();
-            exit;
         }
         return $output;
     }
