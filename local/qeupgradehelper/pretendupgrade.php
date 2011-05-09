@@ -45,20 +45,17 @@ class pretend_question_engine_attempt_upgrader extends question_engine_attempt_u
                 "id >= {$this->fromquiz} AND id < {$this->toquiz}", 'id', 'id,1');
     }
 
-    public function get_attemtps_where($quizid) {
-        return "quiz = {$quizid} AND preview = 0";
+    public function get_attempts_where($quizid) {
+        return '';
     }
 
     protected function set_quba_preferred_behaviour($qubaid, $preferredbehaviour) {
-        return true;
     }
 
     protected function set_quiz_attempt_layout($qubaid, $layout) {
-        return true;
     }
 
     protected function delete_quiz_attempt($qubaid) {
-        return true;
     }
 
     protected function insert_record($table, $record, $saveid = true) {
@@ -76,7 +73,6 @@ class pretend_question_engine_attempt_upgrader extends question_engine_attempt_u
         if ($saveid) {
             $record->id = 666;
         }
-        return true;
     }
 
     protected function convert_quiz_attempt($quiz, $attempt, $questionsessionsrs, $questionsstatesrs) {

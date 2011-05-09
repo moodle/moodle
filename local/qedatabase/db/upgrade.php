@@ -67,7 +67,7 @@ function xmldb_local_qedatabase_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2008000704, 'local', 'qedatabase');
     }
 
-    if ($oldversion < 2008000800) {
+    if ($oldversion < 2008000799) {
         // Define field needsupgradetonewqe to be added to quiz_attempts
         $table = new xmldb_table('quiz_attempts');
         $field = new xmldb_field('needsupgradetonewqe', XMLDB_TYPE_INTEGER, '3', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'preview');
@@ -83,30 +83,28 @@ function xmldb_local_qedatabase_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2008000800, 'local', 'qedatabase');
     }
 
-//    if ($oldversion < 2008000551) {
-//        $table = new xmldb_table('question_states');
-//        if ($dbman->table_exists($table)) {
-//            // First delete all data from preview attempts.
-//            delete_records_select('question_states',
-//                    "attempt IN (SELECT uniqueid FROM {quiz_attempts} WHERE preview = 1)");
-//            delete_records_select('question_sessions',
-//                    "attemptid IN (SELECT uniqueid FROM {quiz_attempts} WHERE preview = 1)");
-//            delete_records('quiz_attempts', 'preview', 1);
-//
-//            // Now update all the old attempt data.
-//            $db->debug = false;
-//            $oldrcachesetting = $CFG->rcache;
-//            $CFG->rcache = false;
-//
-//            require_once($CFG->dirroot . '/question/engine/upgradefromoldqe/upgrade.php');
-//            $upgrader = new question_engine_attempt_upgrader();
-//            $upgrader->convert_all_quiz_attempts();
-//
-//            $CFG->rcache = $oldrcachesetting;
-//            $db->debug = true;
-//        }
-//
-//        // quiz savepoint reached
-//        upgrade_plugin_savepoint(true, 2008000551, 'local', 'qedatabase');
-//    }
+    if ($oldversion < 2008000800) {
+        $table = new xmldb_table('question_states');
+        if ($dbman->table_exists($table)) {
+            // First delete all data from preview attempts.
+            delete_records_select('question_states',
+                    "attempt IN (SELECT uniqueid FROM {quiz_attempts} WHERE preview = 1)");
+            delete_records_select('question_sessions',
+                    "attemptid IN (SELECT uniqueid FROM {quiz_attempts} WHERE preview = 1)");
+            delete_records('quiz_attempts', 'preview', 1);
+
+            // Now update all the old attempt data.
+            $oldrcachesetting = $CFG->rcache;
+            $CFG->rcache = false;
+
+            require_once($CFG->dirroot . '/question/engine/upgradefromoldqe/upgrade.php');
+            $upgrader = new question_engine_attempt_upgrader();
+            $upgrader->convert_all_quiz_attempts();
+
+            $CFG->rcache = $oldrcachesetting;
+        }
+
+        // quiz savepoint reached
+        upgrade_plugin_savepoint(true, 2008000800, 'local', 'qedatabase');
+    }
 }

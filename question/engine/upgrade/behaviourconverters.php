@@ -28,21 +28,50 @@
 defined('MOODLE_INTERNAL') || die();
 
 
+/**
+ * Base class for managing the upgrade of a question using a particular behaviour.
+ *
+ * This class takes as input:
+ * 1. Various backgroud data like $quiz, $attempt and $question.
+ * 2. The data about the question session to upgrade $qsession and $qstates.
+ * Working through that data, it builds up
+ * 3. The equivalent new data $qa. This has roughly the same data as a
+ * question_attempt object belonging to the new question engine would have, but
+ * $this->qa is built up from stdClass objects.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 abstract class question_behaviour_attempt_updater {
+    /** @var question_qtype_attempt_updater */
     protected $qtypeupdater;
+    /** @var question_engine_assumption_logger */
     protected $logger;
 
+    /**
+     * @var object this is the data for the upgraded questions attempt that
+     * we are building.
+     */
     protected $qa;
 
+    /** @var object the quiz settings. */
     protected $quiz;
+    /** @var object the quiz attempt data. */
     protected $attempt;
+    /** @var object the question definition data. */
     protected $question;
+    /** @var object the question session to be upgraded. */
     protected $qsession;
+    /** @var array the question states for the session to be upgraded. */
     protected $qstates;
 
+    /**
+     * @var int counts the question_steps as they are converted to
+     * question_attempt_steps.
+     */
     protected $sequencenumber;
+    /** @var object pointer to the state that has already finished this attempt. */
     protected $finishstate;
-    protected $alreadystarted;
 
     public function __construct($quiz, $attempt, $question, $qsession, $qstates, $logger) {
         $this->quiz = $quiz;
@@ -390,7 +419,8 @@ class qbehaviour_informationitem_converter extends question_behaviour_attempt_up
 }
 
 
-class qbehaviour_interactive_converter extends question_behaviour_attempt_updater {
+// TODO
+class qbehaviour_adaptive_converter extends question_behaviour_attempt_updater {
     protected $triesleft;
 
     protected function behaviour_name() {
@@ -506,4 +536,3 @@ class qbehaviour_interactive_converter extends question_behaviour_attempt_update
         $this->add_step($step);
     }
 }
-

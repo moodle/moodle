@@ -42,53 +42,43 @@ require_once($CFG->dirroot . '/question/engine/upgrade/behaviourconverters.php')
 class question_engine_attempt_upgrader {
     /** @var question_engine_upgrade_question_loader */
     protected $questionloader;
+    /** @var question_engine_assumption_logger */
     protected $logger;
+    /** @var int used by {@link prevent_timeout()}. */
+    protected $dotcounter = 0;
 
+    /**
+     * Called before starting to upgrade all the attempts at a particular quiz.
+     * @param int $done the number of quizzes processed so far.
+     * @param int $outof the total number of quizzes to process.
+     * @param int $quizid the id of the quiz that is about to be processed.
+     */
     protected function print_progress($done, $outof, $quizid) {
-        gc_collect_cycles();
+        gc_collect_cycles(); // This was really helpful in PHP 5.2. Perhaps remove.
         print_progress($done, $outof);
     }
 
     protected function prevent_timeout() {
         set_time_limit(300);
-    }
-
-    protected function table_exists($tablename) {
-        global $db;
-        $metatables = $db->MetaTables();
-        $metatables = array_flip($metatables);
-        $metatables = array_change_key_case($metatables, CASE_LOWER);
-        return array_key_exists($tablename, $metatables);
-    }
-
-    protected function get_quiz_ids() {
-        global $CFG;
-        if ($this->table_exists('vl_v_crs_version_pres')) {
-            $quizmoduleid = get_field('modules', 'id', 'name', 'quiz');
-
-            return get_records_sql_menu("
-                SELECT quiz.id,1
-
-                FROM {$CFG->prefix}quiz quiz
-                JOIN {$CFG->prefix}course_modules cm ON cm.module = {$quizmoduleid}
-                        AND cm.instance = quiz.id
-                JOIN {$CFG->prefix}course c ON quiz.course = c.id
-                LEFT JOIN vl_v_crs_version_pres v ON v.vle_course_short_name = c.shortname
-                        AND v.vle_control_course = 'Y'
-
-                WHERE cm.idnumber <> ''
-                   OR v.vle_student_close_date IS NULL
-                   OR (v.vle_student_close_date > '2010-12-01' AND c.shortname <> 'MU123-10B')
-            ");
-
-        } else {
-            return get_records_menu('quiz', '', '', 'id', 'id,1');
+        echo '.';
+        $this->dotcounter += 1;
+        if ($this->dotcounter % 100 == 0) {
+            echo '<br />';
         }
     }
 
+    protected function get_quiz_ids() {
+        global $DB;
+        // TODO, if local/qeupgradehelper/ is installed, and defines the right
+        // function, use that to get the lest of quizzes instead.
+        return $DB->get_records_menu('quiz', '', '', 'id', 'id,1');
+    }
+
     public function convert_all_quiz_attempts() {
+        global $DB;
+
         $quizids = $this->get_quiz_ids();
-        if (!$quizids) {
+        if (empty($quizids)) {
             return true;
         }
 
@@ -96,75 +86,67 @@ class question_engine_attempt_upgrader {
         $outof = count($quizids);
         $this->logger = new question_engine_assumption_logger();
 
-        $success = true;
         foreach ($quizids as $quizid => $notused) {
             $this->print_progress($done, $outof, $quizid);
 
-            $quiz = get_record('quiz', 'id', $quizid);
-            $success = $success && $this->update_all_attemtps_at_quiz($quiz);
-            if (!$success) {
-                return false;
-            }
+            $quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
+            $this->update_all_attempts_at_quiz($quiz);
 
             $done += 1;
         }
 
         $this->print_progress($outof, $outof, 'All done!');
         $this->logger = null;
-        return $success;
     }
 
-    public function get_attemtps_where($quizid) {
-        return "quiz = {$quizid} AND preview = 0 AND needsupgradetonewqe = 1";
+    public function get_attempts_extra_where() {
+        return ' AND needsupgradetonewqe = 1';
     }
 
-    public function update_all_attemtps_at_quiz($quiz) {
-        global $CFG;
+    public function update_all_attempts_at_quiz($quiz) {
+        global $DB;
 
         // Wipe question loader cache.
         $this->questionloader = new question_engine_upgrade_question_loader($this->logger);
 
-        begin_sql();
+        $transaction = $DB->start_delegated_transaction();
 
-        $where = $this->get_attemtps_where($quiz->id);
+        $params = array('quizid' => $quiz->id);
+        $where = 'quiz = :quizid AND preview = 0' . $this->get_attempts_extra_where();
 
-        $quizattemptsrs = get_recordset_select('quiz_attempts', $where, 'uniqueid');
-        $questionsessionsrs = get_recordset_sql("
+        $quizattemptsrs = $DB->get_recordset_select('quiz_attempts', $where, $params, 'uniqueid');
+        $questionsessionsrs = $DB->get_recordset_sql("
                 SELECT *
-                FROM {$CFG->prefix}question_sessions
+                FROM {question_sessions}
                 WHERE attemptid IN (
-                    SELECT uniqueid FROM {$CFG->prefix}quiz_attempts WHERE $where)
+                    SELECT uniqueid FROM {quiz_attempts} WHERE $where)
                 ORDER BY attemptid, questionid
-        ");
+        ", $params);
 
-        $questionsstatesrs = get_recordset_sql("
+        $questionsstatesrs = $DB->get_recordset_sql("
                 SELECT *
-                FROM {$CFG->prefix}question_states
+                FROM {question_states}
                 WHERE attempt IN (
-                    SELECT uniqueid FROM {$CFG->prefix}quiz_attempts WHERE $where)
+                    SELECT uniqueid FROM {quiz_attempts} WHERE $where)
                 ORDER BY attempt, question, seq_number, id
-        ");
+        ", $params);
 
-        $success = $quizattemptsrs && $questionsessionsrs && $questionsstatesrs;
-        while ($success && ($attempt = rs_fetch_next_record($quizattemptsrs))) {
-            $success = $success && $this->convert_quiz_attempt(
-                    $quiz, $attempt, $questionsessionsrs, $questionsstatesrs);
+        $datatodo = $quizattemptsrs && $questionsessionsrs && $questionsstatesrs;
+        while ($datatodo && $quizattemptsrs->valid()) {
+            $attempt = $quizattemptsrs->current();
+            $quizattemptsrs->next();
+            $this->convert_quiz_attempt($quiz, $attempt, $questionsessionsrs, $questionsstatesrs);
         }
 
-        rs_close($quizattemptsrs);
-        rs_close($questionsessionsrs);
-        rs_close($questionsstatesrs);
+        $quizattemptsrs->close();
+        $questionsessionsrs->close();
+        $questionsstatesrs->close();
 
-        if ($success) {
-            commit_sql();
-        } else {
-            rollback_sql();
-        }
-
-        return $success;
+        $transaction->allow_commit();
     }
 
-    protected function convert_quiz_attempt($quiz, $attempt, $questionsessionsrs, $questionsstatesrs) {
+    protected function convert_quiz_attempt($quiz, $attempt, moodle_recordset $questionsessionsrs,
+            moodle_recordset $questionsstatesrs) {
         $qas = array();
         $this->logger->set_current_attempt_id($attempt->id);
         while ($qsession = $this->get_next_question_session($attempt, $questionsessionsrs)) {
@@ -211,15 +193,11 @@ class question_engine_attempt_upgrader {
 
     protected function save_usage($preferredbehaviour, $attempt, $qas, $quizlayout) {
         $missing = array();
-        $success = true;
 
         $layout = explode(',', $attempt->layout);
         $questionkeys = array_combine(array_values($layout), array_keys($layout));
 
-        $success = $success && $this->set_quba_preferred_behaviour($attempt->uniqueid, $preferredbehaviour);
-        if (!$success) {
-            return false;
-        }
+        $this->set_quba_preferred_behaviour($attempt->uniqueid, $preferredbehaviour);
 
         $i = 0;
         foreach (explode(',', $quizlayout) as $questionid) {
@@ -236,70 +214,53 @@ class question_engine_attempt_upgrader {
             $qa = $qas[$questionid];
             $qa->questionusageid = $attempt->uniqueid;
             $qa->slot = $i;
-            $success = $success && $this->insert_record('question_attempts', $qa);
-            if (!$success) {
-                return false;
-            }
+            $this->insert_record('question_attempts', $qa);
             $layout[$questionkeys[$questionid]] = $qa->slot;
 
             foreach ($qa->steps as $step) {
                 $step->questionattemptid = $qa->id;
-                $success = $success && $this->insert_record('question_attempt_steps', $step);
-                if (!$success) {
-                    return false;
-                }
+                $this->insert_record('question_attempt_steps', $step);
 
                 foreach ($step->data as $name => $value) {
                     $datum = new stdClass();
                     $datum->attemptstepid = $step->id;
                     $datum->name = $name;
                     $datum->value = $value;
-                    $success = $success && $this->insert_record(
-                            'question_attempt_step_data', $datum, false);
+                    $this->insert_record('question_attempt_step_data', $datum, false);
                 }
             }
         }
 
-        $success = $success && $this->set_quiz_attempt_layout($attempt->uniqueid, implode(',', $layout));
+        $this->set_quiz_attempt_layout($attempt->uniqueid, implode(',', $layout));
 
         if ($missing) {
             notify("Question sessions for questions " .
                     implode(', ', $missing) .
                     " were missing when upgrading question usage {$attempt->uniqueid}.");
         }
-
-        return $success;
     }
 
     protected function set_quba_preferred_behaviour($qubaid, $preferredbehaviour) {
-        return set_field('question_usages', 'preferredbehaviour', $preferredbehaviour, 'id', $qubaid);
+        global $DB;
+        $DB->set_field('question_usages', 'preferredbehaviour', $preferredbehaviour,
+                array('id' => $qubaid));
     }
 
     protected function set_quiz_attempt_layout($qubaid, $layout) {
-        $success = true;
-        $success = $success && set_field('quiz_attempts', 'layout', $layout, 'uniqueid', $qubaid);
-        $success = $success && set_field('quiz_attempts', 'needsupgradetonewqe', 0, 'uniqueid', $qubaid);
-        return $success;
+        global $DB;
+        $DB->set_field('quiz_attempts', 'layout', $layout, array('uniqueid' => $qubaid));
+        $DB->set_field('quiz_attempts', 'needsupgradetonewqe', 0, array('uniqueid' => $qubaid));
     }
 
     protected function delete_quiz_attempt($qubaid) {
-        $success = true;
-        $success = $success && delete_records('quiz_attempts', 'uniqueid', $qubaid);
-        $success = $success && delete_records('question_attempts', 'id', $qubaid);
-        return $success;
-    }
-
-    protected function escape_fields($record) {
-        foreach (get_object_vars($record) as $field => $value) {
-            if (is_string($value)) {
-                $record->$field = $value;
-            }
-        }
+        global $DB;
+        $DB->delete_records('quiz_attempts', array('uniqueid' => $qubaid));
+        $DB->delete_records('question_attempts', array('id' => $qubaid));
     }
 
     protected function insert_record($table, $record, $saveid = true) {
-        $this->escape_fields($record);
-        $newid = insert_record($table, $record, $saveid);
+        global $DB;
+        $newid = $DB->insert_record($table, $record, $saveid);
         if ($saveid) {
             $record->id = $newid;
         }
@@ -310,8 +271,8 @@ class question_engine_attempt_upgrader {
         return $this->questionloader->get_question($questionid, $quizid);
     }
 
-    public function get_next_question_session($attempt, $questionsessionsrs) {
-        $qsession = rs_fetch_record($questionsessionsrs);
+    public function get_next_question_session($attempt, moodle_recordset $questionsessionsrs) {
+        $qsession = $questionsessionsrs->current();
 
         if (!$qsession || $qsession->attemptid != $attempt->uniqueid) {
             // No more question sessions belonging to this attempt.
@@ -319,14 +280,14 @@ class question_engine_attempt_upgrader {
         }
 
         // Session found, move the pointer in the RS and return the record.
-        rs_next_record($questionsessionsrs);
+        $questionsessionsrs->next();
         return $qsession;
     }
 
-    public function get_question_states($attempt, $question, $questionsstatesrs) {
+    public function get_question_states($attempt, $question, moodle_recordset $questionsstatesrs) {
         $qstates = array();
 
-        while ($state = rs_fetch_record($questionsstatesrs)) {
+        while ($state = $questionsstatesrs->current()) {
             if (!$state || $state->attempt != $attempt->uniqueid ||
                     $state->question != $question->id) {
                 // We have found all the states for this attempt. Stop.
@@ -335,38 +296,39 @@ class question_engine_attempt_upgrader {
 
             // Add the new state to the array, and advance.
             $qstates[$state->seq_number] = $state;
-            rs_next_record($questionsstatesrs);
+            $questionsstatesrs->next();
         }
 
         return $qstates;
     }
 
     protected function get_converter_class_name($question, $quiz, $qsessionid) {
-        if (in_array($question->qtype, array('calculated', 'multianswer', 'randomsamatch'))) {
-            throw new coding_exception("Question session {$qsessionid} uses unsupported question type {$question->qtype}.");
-        } else if ($question->qtype == 'essay') {
+        if ($question->qtype == 'essay') {
             return 'qbehaviour_manualgraded_converter';
         } else if ($question->qtype == 'description') {
             return 'qbehaviour_informationitem_converter';
-        } else if ($question->qtype == 'opaque') {
-            return 'qbehaviour_opaque_converter';
-        } else if ($quiz->preferredbehaviour == 'interactive') {
-            return 'qbehaviour_interactive_converter';
         } else if ($quiz->preferredbehaviour == 'deferredfeedback') {
             return 'qbehaviour_deferredfeedback_converter';
+        } else if ($quiz->preferredbehaviour == 'adaptive') {
+            return 'qbehaviour_adaptive_converter';
+        } else if ($quiz->preferredbehaviour == 'adaptivenopenalty') {
+            return 'qbehaviour_adaptivenopenalty_converter';
         } else {
-            throw new coding_exception("Question session {$qsessionid} has an unexpected preferred behaviour {$quiz->preferredbehaviour}.");
+            throw new coding_exception("Question session {$qsessionid}
+                    has an unexpected preferred behaviour {$quiz->preferredbehaviour}.");
         }
     }
 
     public function supply_missing_question_attempt($quiz, $attempt, $question) {
         if ($question->qtype == 'random') {
-            throw new coding_exception("Cannot supply a missing qsession for question {$question->id} in attempt {$attempt->id}.");
+            throw new coding_exception("Cannot supply a missing qsession for question
+                    {$question->id} in attempt {$attempt->id}.");
         }
 
         $converterclass = $this->get_converter_class_name($question, $quiz, 'missing');
 
-        $qbehaviourupdater = new $converterclass($quiz, $attempt, $question, null, null, $this->logger);
+        $qbehaviourupdater = new $converterclass($quiz, $attempt, $question,
+                null, null, $this->logger);
         $qa = $qbehaviourupdater->supply_missing_qa();
         $qbehaviourupdater->discard();
         return $qa;
@@ -382,7 +344,8 @@ class question_engine_attempt_upgrader {
 
         $converterclass = $this->get_converter_class_name($question, $quiz, $qsession->id);
 
-        $qbehaviourupdater = new $converterclass($quiz, $attempt, $question, $qsession, $qstates, $this->logger);
+        $qbehaviourupdater = new $converterclass($quiz, $attempt, $question, $qsession,
+                $qstates, $this->logger);
         $qa = $qbehaviourupdater->get_converted_qa();
         $qbehaviourupdater->discard();
         return $qa;
@@ -401,7 +364,9 @@ class question_engine_attempt_upgrader {
             list($randombit, $realanswer) = explode('-', $state->answer, 2);
             $newquestionid = substr($randombit, 6);
             if ($realquestionid && $realquestionid != $newquestionid) {
-                throw new coding_exception("Question session {$this->qsession->id} for random question points to two different real questions {$realquestionid} and {$newquestionid}.");
+                throw new coding_exception("Question session {$this->qsession->id}
+                        for random question points to two different real questions
+                        {$realquestionid} and {$newquestionid}.");
             }
             $qstates[$i]->answer = $realanswer;
         }
@@ -434,16 +399,16 @@ class question_engine_upgrade_question_loader {
     }
 
     protected function load_question($questionid, $quizid) {
-        global $CFG;
+        global $DB;
 
         if ($quizid) {
-            $question = get_record_sql("
+            $question = $DB->get_record_sql("
                 SELECT q.*, qqi.grade AS maxmark
-                FROM {$CFG->prefix}question q
-                JOIN {$CFG->prefix}quiz_question_instances qqi ON qqi.question = q.id
+                FROM {question} q
+                JOIN {quiz_question_instances} qqi ON qqi.question = q.id
                 WHERE q.id = $questionid AND qqi.quiz = $quizid");
         } else {
-            $question = get_record('question', 'id', $questionid);
+            $question = $DB->get_record('question', array('id' => $questionid));
         }
 
         if (!$question) {
@@ -463,7 +428,8 @@ class question_engine_upgrade_question_loader {
         if ($qtype->name() === 'missingtype') {
             $this->logger->log_assumption("Dealing with question id {$question->id}
                     that is of an unknown type {$question->qtype}.");
-            $question->questiontext = '<p>' . get_string('warningmissingtype', 'quiz') . '</p>' . $question->questiontext;
+            $question->questiontext = '<p>' . get_string('warningmissingtype', 'quiz') .
+                    '</p>' . $question->questiontext;
         }
 
         $qtype->get_question_options($question);
@@ -494,9 +460,17 @@ class question_engine_upgrade_question_loader {
 }
 
 
+/**
+ * Base class for the classes that convert the question-type specific bits of
+ * the attempt data.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 abstract class question_qtype_attempt_updater {
-    /** @var question_engine_attempt_upgrader */
+    /** @var object the question definition data. */
     protected $question;
+    /** @var question_behaviour_attempt_updater */
     protected $updater;
     /** @var question_engine_assumption_logger */
     protected $logger;

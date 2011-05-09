@@ -26,9 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once($CFG->libdir . '/questionlib.php');
-
 
 /**
  * This class serves to record all the assumptions that the code had to make
@@ -45,11 +42,12 @@ class question_engine_assumption_logger {
     public function __construct() {
         global $CFG;
         make_upload_directory('upgradelogs');
+        $date = date('Ymd-His');
         $this->handle = fopen($CFG->dataroot . '/upgradelogs/qe_' .
-                date('Ymd-Hi') . '.html', 'a');
+                $date . '.html', 'a');
         fwrite($this->handle, '<html><head><title>Question engine upgrade assumptions ' .
-                date('Ymd-Hi') . '</title></head><body><h2>Question engine upgrade assumptions ' .
-                date('Ymd-Hi') . "</h2>\n\n");
+                $date . '</title></head><body><h2>Question engine upgrade assumptions ' .
+                $date . "</h2>\n\n");
     }
 
     public function set_current_attempt_id($id) {

@@ -109,7 +109,7 @@ abstract class quiz_attempt_report extends quiz_default_report {
 
     /**
      * Alters $attemptsmode and $pagesize if the current values are inappropriate.
-     * @param int $attemptsmode what sort of attemtps to display (may be updated)
+     * @param int $attemptsmode what sort of attempts to display (may be updated)
      * @param int $pagesize number of records to display per page (may be updated)
      * @param object $course the course settings.
      * @param int $currentgroup the currently selected group. 0 for none.
@@ -138,7 +138,7 @@ abstract class quiz_attempt_report extends quiz_default_report {
      * @param object $quiz the quiz settings.
      * @param string $qmsubselect SQL fragment from {@link quiz_report_qm_filter_select()}.
      * @param bool $qmfilter whether to show all, or only the final grade attempt.
-     * @param int $attemptsmode which attemtps to show. One of the QUIZ_REPORT_ATTEMPTS_... constants.
+     * @param int $attemptsmode which attempts to show. One of the QUIZ_REPORT_ATTEMPTS_... constants.
      * @param array $reportstudents list if userids of users to include in the report.
      * @return array with 4 elements ($fields, $from, $where, $params) that can be used to
      *      build the actual database query.

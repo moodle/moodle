@@ -1379,7 +1379,7 @@ function quiz_print_overview($courses, &$htmlarray) {
 
 /**
  * Return a textual summary of the number of attempts that have been made at a particular quiz,
- * returns '' if no attemtps have been made yet, unless $returnzero is passed as true.
+ * returns '' if no attempts have been made yet, unless $returnzero is passed as true.
  *
  * @param object $quiz the quiz object. Only $quiz->id is used at the moment.
  * @param object $cm the cm object. Only $cm->course, $cm->groupmode and $cm->groupingid fields are used at the moment.

@@ -567,7 +567,7 @@ class open_close_date_access_rule extends quiz_access_rule_base {
 }
 
 /**
- * A rule imposing the delay between attemtps settings.
+ * A rule imposing the delay between attempts settings.
  *
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
