@@ -121,6 +121,65 @@ class mathsslib_test extends UnitTestCase {
 
     }
 
+    function test_rounding_function() {
+        $formula = new calc_formula('=round(2.5)');
+        $this->assertEqual($formula->evaluate(), 3);
+
+        $formula = new calc_formula('=round(1.5)');
+        $this->assertEqual($formula->evaluate(), 2);
+
+        $formula = new calc_formula('=round(-1.49)');
+        $this->assertEqual($formula->evaluate(), -1);
+
+        $formula = new calc_formula('=round(-2.49)');
+        $this->assertEqual($formula->evaluate(), -2);
+
+        $formula = new calc_formula('=round(-1.5)');
+        $this->assertEqual($formula->evaluate(), -2);
+
+        $formula = new calc_formula('=round(-2.5)');
+        $this->assertEqual($formula->evaluate(), -3);
+
+
+        $formula = new calc_formula('=ceil(2.5)');
+        $this->assertEqual($formula->evaluate(), 3);
+
+        $formula = new calc_formula('=ceil(1.5)');
+        $this->assertEqual($formula->evaluate(), 2);
+
+        $formula = new calc_formula('=ceil(-1.49)');
+        $this->assertEqual($formula->evaluate(), -1);
+
+        $formula = new calc_formula('=ceil(-2.49)');
+        $this->assertEqual($formula->evaluate(), -2);
+
+        $formula = new calc_formula('=ceil(-1.5)');
+        $this->assertEqual($formula->evaluate(), -1);
+
+        $formula = new calc_formula('=ceil(-2.5)');
+        $this->assertEqual($formula->evaluate(), -2);
+
+
+        $formula = new calc_formula('=floor(2.5)');
+        $this->assertEqual($formula->evaluate(), 2);
+
+        $formula = new calc_formula('=floor(1.5)');
+        $this->assertEqual($formula->evaluate(), 1);
+
+        $formula = new calc_formula('=floor(-1.49)');
+        $this->assertEqual($formula->evaluate(), -2);
+
+        $formula = new calc_formula('=floor(-2.49)');
+        $this->assertEqual($formula->evaluate(), -3);
+
+        $formula = new calc_formula('=floor(-1.5)');
+        $this->assertEqual($formula->evaluate(), -2);
+
+        $formula = new calc_formula('=floor(-2.5)');
+        $this->assertEqual($formula->evaluate(), -3);
+
+    }
+
 }
 
 

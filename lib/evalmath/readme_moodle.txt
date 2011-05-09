@@ -10,6 +10,7 @@ Our changes:
 * moved pattern for func and var names into a static var
 * made a function to test a string to see if it is a valid func or var name.
 * localized strings
+* added round, ceil and floor functions.
 
 To see all changes diff against version 1.1, available from:
 http://www.phpclasses.org/browse/package/2695.html
