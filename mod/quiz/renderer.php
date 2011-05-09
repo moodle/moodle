@@ -31,6 +31,18 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_quiz_renderer extends plugin_renderer_base {
+    /**
+     * Builds the review page
+     *
+     * @param quiz_attempt $attemptobj an instance of quiz_attempt.
+     * @param array $slots an array of intgers relating to questions.
+     * @param int $page the current page number
+     * @param bool $showall whether to show entire attempt on one page.
+     * @param bool $lastpage if true the current page is the last page.
+     * @param mod_quiz_display_options $displayoptions instance of mod_quiz_display_options.
+     * @param array $summarydata contains all table data
+     * @return $output containing html data.
+     */
     public function review_page(quiz_attempt $attemptobj, $slots, $page, $showall,
                                 $lastpage, mod_quiz_display_options $displayoptions,
                                 $summarydata) {
@@ -47,6 +59,13 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Filters the summarydata array.
+     *
+     * @param array $summarydata contains row data for table
+     * @param int $page the current page number
+     * @return $summarydata containing filtered row data
+     */
     protected function filter_summary_table($summarydata, $page) {
         if ($page == 0) {
             return $summarydata;
@@ -62,6 +81,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $summarydata;
     }
 
+    /**
+     * Outputs the table containing data from summary data array
+     *
+     * @param array $summarydata contains row data for table
+     * @param int $page contains the current page number
+     */
     public function review_summary_table($summarydata, $page) {
                                          $summarydata = $this->filter_summary_table($summarydata,
                                          $page);
@@ -97,6 +122,16 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Renders each question
+     *
+     * @param quiz_attempt $attemptobj instance of quiz_attempt
+     * @param bool $reviewing
+     * @param array $slots array of intgers relating to questions
+     * @param int $page current page number
+     * @param bool $showall if true shows attempt on single page
+     * @param mod_quiz_display_options $displayoptions instance of mod_quiz_display_options
+     */
     public function questions(quiz_attempt $attemptobj, $reviewing, $slots, $page, $showall,
                               mod_quiz_display_options $displayoptions) {
         $output = '';
@@ -107,6 +142,16 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Renders the main bit of the review page.
+     *
+     * @param array $summarydata contain row data for table
+     * @param int $page current page number
+     * @param mod_quiz_display_options $displayoptions instance of mod_quiz_display_options
+     * @param $content contains each question
+     * @param quiz_attempt $attemptobj instance of quiz_attempt
+     * @param bool $showall if true display attempt on one page
+     */
     public function review_form($summarydata, $page, $displayoptions, $content, $attemptobj,
                                 $showall) {
         if ($displayoptions->flags != question_display_options::EDITABLE) {
@@ -120,6 +165,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('form', array('action' => $attemptobj->review_url(0,
                 $page, $showall), 'method' => 'post', 'class' => 'questionflagsaveform'));
         $output .= html_writer::start_tag('div');
+        $output .= $content;
         $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey',
                 'value' => sesskey()));
         $output .= html_writer::start_tag('div', array('class' => 'submitbtns'));
@@ -133,6 +179,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Returns either a liink or button
+     *
+     * @param $url contains a url for the review link
+     */
     public function finish_review_link($url) {
         if ($this->page->pagelayout == 'popup') {
             // In a 'secure' popup window.
@@ -146,6 +197,13 @@ class mod_quiz_renderer extends plugin_renderer_base {
         }
     }
 
+    /**
+     * Creates a next page arrow or the finishing link
+     *
+     * @param quiz_attempt $attemptobj instance of quiz_attempt
+     * @param int $page the current page
+     * @param bool $lastpage if true current page is the last page
+     */
     public function review_next_navigation(quiz_attempt $attemptobj, $page, $lastpage) {
         if ($lastpage) {
             $nav = $this->finish_review_link($attemptobj->view_url());
@@ -165,10 +223,20 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 array('id' => 'quiz-timer'));
     }
 
+    /**
+     * Create a preview link
+     *
+     * @param $url contains a url to the given page
+     */
     public function restart_preview_button($url) {
         return $this->single_button($url, get_string('startnewpreview', 'quiz'));
     }
 
+    /**
+     * Outputs the navigation block panel
+     *
+     * @param quiz_nav_panel_base $panel instance of quiz_nav_panel_base
+     */
     public function navigation_panel(quiz_nav_panel_base $panel) {
 
         $output = '';
@@ -194,6 +262,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Returns the quizzes navigation button
+     *
+     * @param quiz_nav_question_button $button
+     */
     protected function render_quiz_nav_question_button(quiz_nav_question_button $button) {
         $classes = array('qnbutton', $button->stateclass);
         $attributes = array();
@@ -232,6 +305,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
                         'title' => $button->statestring));
     }
 
+    /**
+     * outputs the link the other attempts.
+     *
+     * @param mod_quiz_links_to_other_attempts $links
+     */
     protected function render_mod_quiz_links_to_other_attempts(
             mod_quiz_links_to_other_attempts $links) {
         $attemptlinks = array();
@@ -245,8 +323,16 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return implode(', ', $attemptlinks);
     }
 
-    /*
+    /**
      * Attempt Page
+     *
+     * @param quiz_attempt $attemptobj Instance of quiz_attempt
+     * @param int $page Current page number
+     * @param quiz_access_manager $accessmanager Instance of quiz_access_manager
+     * @param array $messages An array of messages
+     * @param array $slots Contains an array of integers that relate to questions
+     * @param int $id The ID of an attempt
+     * @param int $nextpage The number of the next page
      */
     public function attempt_page($attemptobj, $page, $accessmanager, $messages, $slots, $id,
             $nextpage) {
@@ -256,6 +342,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Returns any notices.
+     *
+     * @param array $messages
+     */
     private function quiz_notices($messages) {
         if (!$messages) {
             return '';
@@ -264,6 +355,15 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $this->access_messages($messages), 'quizaccessnotices');
     }
 
+    /**
+     * Ouputs the form for making an attempt
+     *
+     * @param quiz_attempt $attemptobj
+     * @param int $page Current page number
+     * @param array $slots Array of integers relating to questions
+     * @param int $id ID of the attempt
+     * @param int $nextpage Next page number
+     */
     private function attempt_form($attemptobj, $page, $slots, $id, $nextpage) {
         $output = '';
 
@@ -332,6 +432,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
     /*
      * Summary Page
      */
+    /**
+     * Create the summary page
+     *
+     * @param quiz_attempt $attemptobj
+     * @param mod_quiz_display_options $displayoptions
+     */
     public function summary_page($attemptobj, $displayoptions) {
         $output = '';
         $output .= $this->summary_table($attemptobj, $displayoptions);
@@ -339,6 +445,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Generates the table of summarydata
+     *
+     * @param quiz_attempt $attemptobj
+     * @param mod_quiz_display_options $displayoptions
+     */
     private function summary_table($attemptobj, $displayoptions) {
         // Prepare the summary table header
         $table = new html_table();
@@ -381,6 +493,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Creates any controls a the page should have.
+     *
+     * @param quiz_attempt $attemptobj
+     */
     private function summary_page_controls($attemptobj) {
         $output = '';
         // countdown timer
@@ -413,6 +530,17 @@ class mod_quiz_renderer extends plugin_renderer_base {
     /*
      * View Page
      */
+    /**
+     * Generates the view page
+     *
+     * @param int $course The id of the course
+     * @param array $quiz Array conting quiz data
+     * @param int $cm Course Module ID
+     * @param int $context The page context ID
+     * @param array $messages Array contining any maeeages
+     * @param mod_quiz_view_object $viewobj
+     * @param string $buttontext
+     */
     public function view_page($course, $quiz, $cm, $context, $messages, $viewobj, $buttontext) {
         $output = '';
         $output .= $this->view_information($course, $quiz, $cm, $context, $messages);
@@ -423,6 +551,15 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Outputs an error message for any guests accessing the quiz
+     *
+     * @param int $course The course ID
+     * @param array $quiz Array contingin quiz data
+     * @param int $cm Course Module ID
+     * @param int $context The page contect ID
+     * @param array $messages Array containing any messages
+     */
     public function view_page_guest($course, $quiz, $cm, $context, $messages) {
         $output = '';
         $output .= $this->view_information($course, $quiz, $cm, $context, $messages);
@@ -433,6 +570,15 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Outputs and error message for anyone who is not enrolle don the course
+     *
+     * @param int $course The course ID
+     * @param array $quiz Array contingin quiz data
+     * @param int $cm Course Module ID
+     * @param int $context The page contect ID
+     * @param array $messages Array containing any messages
+     */
     public function view_page_notenrolled($course, $quiz, $cm, $context, $messages) {
         global $CFG;
         $output = '';
@@ -444,6 +590,15 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Output the page information
+     *
+     * @param int $course The course ID
+     * @param array $quiz Array contingin quiz data
+     * @param int $cm Course Module ID
+     * @param int $context The page contect ID
+     * @param array $messages Array containing any messages
+     */
     private function view_information($course, $quiz, $cm, $context, $messages) {
         global $CFG;
         $output = '';
@@ -469,6 +624,13 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Generates the table of data
+     *
+     * @param array $quiz Array contining quiz data
+     * @param int $context The page context ID
+     * @param mod_quiz_view_object $viewobj
+     */
     private function view_table($quiz, $context, $viewobj) {
         $output = '';
         if (!$viewobj->attempts) {
@@ -606,6 +768,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Prints the students best score
+     *
+     * @param mod_quiz_view_object $viewobj
+     */
     private function view_best_score($viewobj) {
         $output = '';
         // Print information about the student's best score for this quiz if possible.
@@ -615,6 +782,14 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Generates data pertaining to quiz results
+     *
+     * @param array $quiz Array containing quiz data
+     * @param int $context The page context ID
+     * @param int $cm The Course Module Id
+     * @param mod_quiz_view_object $viewobj
+     */
     private function view_result_info($quiz, $context, $cm, $viewobj) {
         $output = '';
         if (!$viewobj->numattempts && !$viewobj->gradecolumn && is_null($viewobj->mygrade)) {
@@ -662,6 +837,16 @@ class mod_quiz_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Generates the view attempt button
+     *
+     * @param int $course The course ID
+     * @param array $quiz Array containging quiz date
+     * @param int $cm The Course Module ID
+     * @param int $context The page Context ID
+     * @param mod_quiz_view_object $viewobj
+     * @param string $buttontext
+     */
     private function view_attempt_button($course, $quiz, $cm, $context, $viewobj, $buttontext) {
         $output = '';
         // Determine if we should be showing a start/continue attempt button,
