@@ -579,6 +579,10 @@ class mysqli_native_moodle_database extends moodle_database {
             if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
                 $value = 0; // prevent '' problems in numeric fields
             }
+        // Any float value being stored in varchar or text field is converted to string to avoid
+        // any implicit conversion by MySQL
+        } else if (is_float($value) and ($column->meta_type == 'C' or $column->meta_type == 'X')) {
+            $value = "$value";
         }
         // workaround for problem with wrong enums in mysql - TODO: Out in Moodle 2.1
         if (!empty($column->enums)) {
