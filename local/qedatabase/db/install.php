@@ -4,13 +4,6 @@ function xmldb_local_qedatabase_install() {
     global $DB;
     $dbman = $DB->get_manager();
 
-    // TODO quiz default settings are now in config_plugins.
-
-    // Bit of a hack to prevent errors like "Cannot downgrade local_qedatabase from ... to ...".
-    $oldversion = 2008000000;
-    $DB->set_field('config_plugins', 'value', $oldversion,
-            array('plugin' => 'local_qedatabase', 'name' => 'version'));
-
     // Add new preferredbehaviour column to the quiz table.
     if ($oldversion < 2008000100) {
         $table = new xmldb_table('quiz');
@@ -33,8 +26,8 @@ function xmldb_local_qedatabase_install() {
         $DB->set_field_select('quiz', 'preferredbehaviour', 'adaptivenopenalty',
                 'optionflags <> 0 AND penaltyscheme = 0');
 
-        set_config('quiz_preferredbehaviour', 'deferredfeedback');
-        set_config('quiz_fix_preferredbehaviour', 0);
+        set_config('preferredbehaviour', 'deferredfeedback', 'quiz');
+        set_config('fix_preferredbehaviour', 0, 'quiz');
 
         // quiz savepoint reached
         upgrade_plugin_savepoint(true, 2008000101, 'local', 'qedatabase');
@@ -58,8 +51,8 @@ function xmldb_local_qedatabase_install() {
         $field = new xmldb_field('optionflags');
         $dbman->drop_field($table, $field);
 
-        unset_config('quiz_optionflags');
-        unset_config('quiz_fix_optionflags');
+        unset_config('optionflags', 'quiz');
+        unset_config('fix_optionflags', 'quiz');
 
         // quiz savepoint reached
         upgrade_plugin_savepoint(true, 2008000103, 'local', 'qedatabase');
@@ -71,8 +64,8 @@ function xmldb_local_qedatabase_install() {
         $field = new xmldb_field('penaltyscheme');
         $dbman->drop_field($table, $field);
 
-        unset_config('quiz_penaltyscheme');
-        unset_config('quiz_fix_penaltyscheme');
+        unset_config('penaltyscheme', 'quiz');
+        unset_config('fix_penaltyscheme', 'quiz');
 
         // quiz savepoint reached
         upgrade_plugin_savepoint(true, 2008000104, 'local', 'qedatabase');
@@ -355,47 +348,54 @@ function xmldb_local_qedatabase_install() {
             $CFG->quiz_review = 0;
         }
 
-        set_config('quiz_reviewattempt',
+        set_config('reviewattempt',
                 QUIZ_NEW_DURING |
                 ($CFG->quiz_review & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_RESPONSES ? QUIZ_NEW_IMMEDIATELY_AFTER : 0) |
                 ($CFG->quiz_review & QUIZ_OLD_OPEN & QUIZ_OLD_RESPONSES ? QUIZ_NEW_LATER_WHILE_OPEN : 0) |
-                ($CFG->quiz_review & QUIZ_OLD_CLOSED & QUIZ_OLD_RESPONSES ? QUIZ_NEW_AFTER_CLOSE : 0));
+                ($CFG->quiz_review & QUIZ_OLD_CLOSED & QUIZ_OLD_RESPONSES ? QUIZ_NEW_AFTER_CLOSE : 0),
+                'quiz');
 
-        set_config('quiz_reviewcorrectness',
+        set_config('reviewcorrectness',
                 QUIZ_NEW_DURING |
                 ($CFG->quiz_review & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_SCORES ? QUIZ_NEW_IMMEDIATELY_AFTER : 0) |
                 ($CFG->quiz_review & QUIZ_OLD_OPEN & QUIZ_OLD_SCORES ? QUIZ_NEW_LATER_WHILE_OPEN : 0) |
-                ($CFG->quiz_review & QUIZ_OLD_CLOSED & QUIZ_OLD_SCORES ? QUIZ_NEW_AFTER_CLOSE : 0));
+                ($CFG->quiz_review & QUIZ_OLD_CLOSED & QUIZ_OLD_SCORES ? QUIZ_NEW_AFTER_CLOSE : 0),
+                'quiz');
 
-        set_config('quiz_reviewmarks',
+        set_config('reviewmarks',
                 QUIZ_NEW_DURING |
                 ($CFG->quiz_review & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_SCORES ? QUIZ_NEW_IMMEDIATELY_AFTER : 0) |
                 ($CFG->quiz_review & QUIZ_OLD_OPEN & QUIZ_OLD_SCORES ? QUIZ_NEW_LATER_WHILE_OPEN : 0) |
-                ($CFG->quiz_review & QUIZ_OLD_CLOSED & QUIZ_OLD_SCORES ? QUIZ_NEW_AFTER_CLOSE : 0));
+                ($CFG->quiz_review & QUIZ_OLD_CLOSED & QUIZ_OLD_SCORES ? QUIZ_NEW_AFTER_CLOSE : 0),
+                'quiz');
 
-        set_config('quiz_reviewspecificfeedback',
+        set_config('reviewspecificfeedback',
                 ($CFG->quiz_review & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_FEEDBACK ? QUIZ_NEW_DURING : 0) |
                 ($CFG->quiz_review & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_FEEDBACK ? QUIZ_NEW_IMMEDIATELY_AFTER : 0) |
                 ($CFG->quiz_review & QUIZ_OLD_OPEN & QUIZ_OLD_FEEDBACK ? QUIZ_NEW_LATER_WHILE_OPEN : 0) |
-                ($CFG->quiz_review & QUIZ_OLD_CLOSED & QUIZ_OLD_FEEDBACK ? QUIZ_NEW_AFTER_CLOSE : 0));
+                ($CFG->quiz_review & QUIZ_OLD_CLOSED & QUIZ_OLD_FEEDBACK ? QUIZ_NEW_AFTER_CLOSE : 0),
+                'quiz');
 
-        set_config('quiz_reviewgeneralfeedback',
+        set_config('reviewgeneralfeedback',
                 ($CFG->quiz_review & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_GENERALFEEDBACK ? QUIZ_NEW_DURING : 0) |
                 ($CFG->quiz_review & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_GENERALFEEDBACK ? QUIZ_NEW_IMMEDIATELY_AFTER : 0) |
                 ($CFG->quiz_review & QUIZ_OLD_OPEN & QUIZ_OLD_GENERALFEEDBACK ? QUIZ_NEW_LATER_WHILE_OPEN : 0) |
-                ($CFG->quiz_review & QUIZ_OLD_CLOSED & QUIZ_OLD_GENERALFEEDBACK ? QUIZ_NEW_AFTER_CLOSE : 0));
+                ($CFG->quiz_review & QUIZ_OLD_CLOSED & QUIZ_OLD_GENERALFEEDBACK ? QUIZ_NEW_AFTER_CLOSE : 0),
+                'quiz');
 
-        set_config('quiz_reviewrightanswer',
+        set_config('reviewrightanswer',
                 ($CFG->quiz_review & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_ANSWERS ? QUIZ_NEW_DURING : 0) |
                 ($CFG->quiz_review & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_ANSWERS ? QUIZ_NEW_IMMEDIATELY_AFTER : 0) |
                 ($CFG->quiz_review & QUIZ_OLD_OPEN & QUIZ_OLD_ANSWERS ? QUIZ_NEW_LATER_WHILE_OPEN : 0) |
-                ($CFG->quiz_review & QUIZ_OLD_CLOSED & QUIZ_OLD_ANSWERS ? QUIZ_NEW_AFTER_CLOSE : 0));
+                ($CFG->quiz_review & QUIZ_OLD_CLOSED & QUIZ_OLD_ANSWERS ? QUIZ_NEW_AFTER_CLOSE : 0),
+                'quiz');
 
-        set_config('quiz_reviewoverallfeedback',
+        set_config('reviewoverallfeedback',
                 0 |
                 ($CFG->quiz_review & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_OVERALLFEEDBACK ? QUIZ_NEW_IMMEDIATELY_AFTER : 0) |
                 ($CFG->quiz_review & QUIZ_OLD_OPEN & QUIZ_OLD_OVERALLFEEDBACK ? QUIZ_NEW_LATER_WHILE_OPEN : 0) |
-                ($CFG->quiz_review & QUIZ_OLD_CLOSED & QUIZ_OLD_OVERALLFEEDBACK ? QUIZ_NEW_AFTER_CLOSE : 0));
+                ($CFG->quiz_review & QUIZ_OLD_CLOSED & QUIZ_OLD_OVERALLFEEDBACK ? QUIZ_NEW_AFTER_CLOSE : 0),
+                'quiz');
 
         // quiz savepoint reached
         upgrade_plugin_savepoint(true, 2008000217, 'local', 'qedatabase');
@@ -415,7 +415,7 @@ function xmldb_local_qedatabase_install() {
     }
 
     if ($oldversion < 2008000221) {
-        unset_config('quiz_review');
+        unset_config('review', 'quiz');
 
         // quiz savepoint reached
         upgrade_plugin_savepoint(true, 2008000221, 'local', 'qedatabase');
