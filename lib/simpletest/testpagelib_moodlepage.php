@@ -525,7 +525,7 @@ class moodle_page_cm_test extends UnitTestCaseUsingDatabase {
         parent::setUp();
         $this->originalcourse = $COURSE;
         $this->testpage = new moodle_page();
-        $this->create_test_tables(array('course', 'context'), 'lib');
+        $this->create_test_tables(array('course', 'context', 'modules', 'course_modules', 'course_modules_availability', 'grade_items', 'course_sections'), 'lib');
         $this->create_test_table('forum', 'mod/forum');
         $this->switch_to_test_db();
 
@@ -551,6 +551,7 @@ class moodle_page_cm_test extends UnitTestCaseUsingDatabase {
         $course->fullname = 'Anonymous test course';
         $course->shortname = 'ANON';
         $course->summary = '';
+        $course->modinfo = null;
         $course->id = $this->testdb->insert_record('course', $course);
 
         $forum = new stdClass;
@@ -559,12 +560,23 @@ class moodle_page_cm_test extends UnitTestCaseUsingDatabase {
         $forum->intro = '';
         $forum->id = $this->testdb->insert_record('forum', $forum);
 
+        $module = new stdClass;
+        $module->name = 'forum';
+        $module->id = $this->testdb->insert_record('modules', $module);
+
         $cm = new stdClass;
-        $cm->id = 13;
         $cm->course = $course->id;
         $cm->instance = $forum->id;
         $cm->modname = 'forum';
+        $cm->module = $module->id;
         $cm->name = $forum->name;
+        $cm->id = $this->testdb->insert_record('course_modules', $cm);
+
+        $section = new stdClass;
+        $section->course = $course->id;
+        $section->section = 0;
+        $section->sequence = $cm->id;
+        $section->id = $this->testdb->insert_record('course_sections', $section);
 
         $context = new stdClass;
         $context->contextlevel = CONTEXT_MODULE;
@@ -588,26 +600,6 @@ class moodle_page_cm_test extends UnitTestCaseUsingDatabase {
         $this->testpage->set_cm($cm);
         // Validate
         $this->assert(new CheckSpecifiedFieldsExpectation($cm), $this->testpage->cm);
-    }
-
-    public function test_cannot_set_cm_without_name() {
-        // Setup fixture
-        list($cm) = $this->create_a_forum_with_context();
-        // Set expectation
-        $this->expectException();
-        // Exercise SUT
-        unset($cm->name);
-        $this->testpage->set_cm($cm);
-    }
-
-    public function test_cannot_set_cm_without_modname() {
-        // Setup fixture
-        list($cm) = $this->create_a_forum_with_context();
-        // Set expectation
-        $this->expectException();
-        // Exercise SUT
-        unset($cm->modname);
-        $this->testpage->set_cm($cm);
     }
 
     public function test_cannot_set_activity_record_before_cm() {
@@ -672,18 +664,21 @@ class moodle_page_cm_test extends UnitTestCaseUsingDatabase {
         $this->testpage->set_activity_record($forum);
     }
 
-    public function test_settin_cm_sets_course() {
+    public function test_setting_cm_sets_course() {
         // Setup fixture
         list($cm, $course) = $this->create_a_forum_with_context();
         // Exercise SUT
         $this->testpage->set_cm($cm);
         // Validate
+        unset($course->modinfo); // This changed, but we don't care
         $this->assert(new CheckSpecifiedFieldsExpectation($course), $this->testpage->course);
     }
 
     public function test_set_cm_with_course_and_activity_no_db() {
         // Setup fixture
         list($cm, $course, $forum) = $this->create_a_forum_with_context();
+        // This only works without db if we already have modinfo cache
+        $modinfo = get_fast_modinfo($course);
         $this->drop_test_table('forum');
         $this->drop_test_table('course');
         // Exercise SUT
