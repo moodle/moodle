@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/backup/converter/moodle1/converter.class.php');
+require_once($CFG->dirroot . '/backup/converter/moodle1/lib.php');
 
 class moodle1_converter_test extends UnitTestCase {
 
@@ -58,7 +58,7 @@ class moodle1_converter_test extends UnitTestCase {
         $this->assertEqual(backup::FORMAT_MOODLE1, $detected);
     }
 
-    public function test_convert() {
+    public function test_convert_factory() {
         $converter = convert_factory::converter('moodle1', $this->tempdir);
         $this->assertIsA($converter, 'moodle1_converter');
         $converter->convert();

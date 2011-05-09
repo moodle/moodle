@@ -27,29 +27,38 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Convert forum
+ * Forum conversion handler
  */
-class moodle1_forum_activity_structure_step extends convert_structure_step {
+class moodle1_mod_forum_handler extends moodle1_mod_handler {
 
     /**
-     * Function that will return the structure to be processed by this convert_step.
-     * Must return one array of @convert_path_element elements
+     * Declare the paths in moodle.xml we are able to convert
      *
-     * NOTE: /MOD/ACTIVITYNAME XML path does not actually exist.  The moodle1_converter
-     * class automatically transforms the /MOD path to include the activity name.
+     * The method returns list of {@link convert_path} instances.
+     * For each path returned, the corresponding conversion method must be
+     * defined.
+     *
+     * Note that the paths /MOODLE_BACKUP/COURSE/MODULES/MOD/FORUM do not
+     * actually exist in the file. The last element with the module name was
+     * appended by the moodle1_converter class.
+     *
+     * @return array of {@link convert_path} instances
      */
-    protected function define_structure() {
+    public function get_paths() {
         return array(
-            new convert_path_element('forum', '/MOODLE_BACKUP/COURSE/MODULES/MOD/FORUM'),
-            // new convert_path_element('foo', '/MOODLE_BACKUP/COURSE/MODULES/MOD/FORUM/FOO'),  // Example of sub-path
+            new convert_path('forum', '/MOODLE_BACKUP/COURSE/MODULES/MOD/FORUM'),
+            // new convert_path('foo', '/MOODLE_BACKUP/COURSE/MODULES/MOD/FORUM/FOO'),  // Example of sub-path
         );
     }
 
-    public function convert_forum($data) {
+    /**
+     * Converts /MOODLE_BACKUP/COURSE/MODULES/MOD/FORUM data
+     */
+    public function process_forum($data) {
         print_object($data);
     }
 
-    public function convert_foo($data) {
+    public function process_foo($data) {
         print_object($data);
     }
 }

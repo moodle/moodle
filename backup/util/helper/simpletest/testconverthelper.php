@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/backup/util/includes/convert_includes.php');
+require_once($CFG->dirroot . '/backup/util/helper/convert_helper.class.php');
 
 /**
  * Provides access to the protected methods we need to test

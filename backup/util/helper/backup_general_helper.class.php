@@ -235,7 +235,8 @@ abstract class backup_general_helper extends backup_helper {
      */
     public static function detect_backup_format($tempdir) {
         global $CFG;
-        require_once($CFG->dirroot . '/backup/util/includes/convert_includes.php');
+        require_once($CFG->dirroot . '/backup/util/helper/convert_helper.class.php');
+        require_once($CFG->dirroot . '/backup/util/factories/convert_factory.class.php');
 
         if (convert_helper::detect_moodle2_format($tempdir)) {
             return backup::FORMAT_MOODLE;

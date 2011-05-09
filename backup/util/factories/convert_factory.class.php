@@ -35,14 +35,14 @@ abstract class convert_factory {
      * @throws coding_exception
      * @param  $name The converter name
      * @param  $tempdir The temp directory to operate on
-     * @return base_converter|plan_converter
+     * @return base_converter
      */
     public static function converter($name, $tempdir) {
         global $CFG;
 
         $name = clean_param($name, PARAM_SAFEDIR);
 
-        $classfile = "$CFG->dirroot/backup/converter/$name/converter.class.php";
+        $classfile = "$CFG->dirroot/backup/converter/$name/lib.php";
         $classname = "{$name}_converter";
 
         if (!file_exists($classfile)) {
@@ -54,53 +54,5 @@ abstract class convert_factory {
             throw new coding_exception("Converter factory error: class not found $classname");
         }
         return new $classname($tempdir);
-    }
-
-    /**
-     * Runs through all plugins of a specific type and instantiates their task class
-     *
-     * @throws coding_exception
-     * @param string $type The plugin type
-     * @param string $format The convert format
-     * @param string $extra Extra naming structure
-     * @return array
-     */
-    public static function get_plugin_tasks($type, $format, $extra = NULL) {
-        global $CFG; // REQUIRED by task file includes
-
-        if (is_null($extra)) {
-            $extra = $type;
-        }
-        $tasks   = array();
-        $plugins = get_plugin_list($type);
-        foreach ($plugins as $name => $dir) {
-            $taskfile  = "$dir/backup/$format/convert_{$name}_{$extra}_task.class.php";
-            $taskclass = "{$format}_{$name}_{$extra}_task";
-            if (!file_exists($taskfile)) {
-                continue;
-            }
-            require_once($taskfile);
-
-            if (!class_exists($taskclass)) {
-                throw new coding_exception("The class name should be $taskclass in $taskfile");
-            }
-            $tasks[] = new $taskclass("{$type}_$name");
-        }
-        return $tasks;
-    }
-
-    /**
-     * Adds all of the plugin tasks to the given converter's plan
-     *
-     * @param plan_converter $converter The converter to add the plugin tasks to
-     * @param string $type The plugin type
-     * @param string $extra Extra naming structure
-     * @return void
-     */
-    public static function build_plugin_tasks(plan_converter $converter, $type, $extra = NULL) {
-        $tasks = self::get_plugin_tasks($type, $converter->get_name(), $extra);
-        foreach ($tasks as $task) {
-            $converter->get_plan()->add_task($task);
-        }
     }
 }

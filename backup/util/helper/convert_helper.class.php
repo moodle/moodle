@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Provides {@link convert_helper} class
+ * Provides {@link convert_helper} and {@link convert_helper_exception} classes
  *
  * @package    core
  * @subpackage backup-convert
@@ -25,6 +25,8 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/backup/util/includes/convert_includes.php');
 
 /**
  * Provides various functionality via its static methods
@@ -54,16 +56,16 @@ abstract class convert_helper {
         $converters = array();
         $plugins    = get_list_of_plugins('backup/converter');
         foreach ($plugins as $name) {
-            $classfile = "$CFG->dirroot/backup/converter/$name/converter.class.php";
+            $classfile = "$CFG->dirroot/backup/converter/$name/lib.php";
             $classname = "{$name}_converter";
 
             if (!file_exists($classfile)) {
-                throw new coding_exception("Converter factory error: class file not found $classfile");
+                throw new convert_helper_exception('converter_classfile_not_found', $classfile);
             }
             require_once($classfile);
 
             if (!class_exists($classname)) {
-                throw new coding_exception("Converter factory error: class not found $classname");
+                throw new convert_helper_exception('converter_classname_not_found', $classname);
             }
 
             if (call_user_func($classname .'::is_available')) {
@@ -87,7 +89,7 @@ abstract class convert_helper {
         $filepath   = $dirpath . '/moodle_backup.xml';
 
         if (!is_dir($dirpath)) {
-            throw new backup_helper_exception('tmp_backup_directory_not_found', $dirpath);
+            throw new converter_helper_exception('tmp_backup_directory_not_found', $dirpath);
         }
 
         if (!file_exists($filepath)) {
@@ -110,10 +112,10 @@ abstract class convert_helper {
     /**
      * Converts the given directory with the backup into moodle2 format
      *
-     * @throws coding_exception|restore_controller_exception
      * @param string $tempdir The directory to convert
      * @param string $format The current format, if already detected
-     * @return void
+     * @throws convert_helper_exception
+     * @return bool false if unable to find the conversion path, true otherwise
      */
     public static function to_moodle2_format($tempdir, $format = null) {
 
@@ -127,8 +129,7 @@ abstract class convert_helper {
         foreach ($converters as $name) {
             $classname = "{$name}_converter";
             if (!class_exists($classname)) {
-                throw new coding_exception("available_converters() is supposed to load
-                    converter classes but class $classname not found");
+                throw new convert_helper_exception('class_not_loaded', $classname);
             }
             $descriptions[$name] = call_user_func($classname .'::description');
         }
@@ -138,8 +139,7 @@ abstract class convert_helper {
 
         if (empty($path)) {
             // unable to convert
-            // todo throwing exception is not a good way to control the flow here
-            throw new coding_exception('Unable to find conversion path');
+            return false;
         }
 
         foreach ($path as $name) {
@@ -149,8 +149,10 @@ abstract class convert_helper {
 
         // make sure we ended with moodle2 format
         if (!self::detect_moodle2_format($tempdir)) {
-            throw new coding_exception('Conversion failed');
+            throw new convert_helper_exception('conversion_failed');
         }
+
+        return true;
     }
 
    /**
@@ -177,8 +179,6 @@ abstract class convert_helper {
     /**
      * Generate an artificial context ID
      *
-     * @static
-     * @throws Exception
      * @param int $instance The moodle component instance ID, same value used for get_context_instance()
      * @param string $component The moodle component, like block_html, mod_quiz, etc
      * @param string $converterid The converter ID
@@ -191,15 +191,14 @@ abstract class convert_helper {
 
         // Attempt to retrieve the contextid
         $contextid = $DB->get_field_select('backup_ids_temp', 'id',
-                        $DB->sql_compare_text('info', 100).' = ? AND itemid = ? AND itemname = ?',
-                        array($component, $instance, 'context')
-        );
+                        $DB->sql_compare_text('info', 100).' = '.$DB->sql_compare_text('?', 100).' AND itemid = ? AND itemname = ?',
+                        array($component, $instance, 'context'));
 
         if (!empty($contextid)) {
             return $contextid;
         }
 
-        $context = new stdClass;
+        $context = new stdClass();
         $context->itemid   = $instance;
         $context->itemname = 'context';
         $context->info     = $component;
@@ -211,7 +210,7 @@ abstract class convert_helper {
             return $id;
         } else {
             $msg = self::obj_to_readable($context);
-            throw new Exception(sprintf("Could not insert context record into temp table: %s", $msg));
+            throw new convert_helper_exception('failed_insert_record', $msg);
         }
     }
 
@@ -229,6 +228,7 @@ abstract class convert_helper {
      * the oriented graph.
      *
      * @see http://en.wikipedia.org/wiki/Dijkstra's_algorithm
+     * @author David Mudrak <david@moodle.com>
      * @param string $format the source backup format, one of backup::FORMAT_xxx
      * @param array $descriptions list of {@link base_converter::description()} indexed by the converter name
      * @return array ordered list of converter names to call (may be empty if not reachable)
@@ -246,7 +246,7 @@ abstract class convert_helper {
             if (is_null($from) or $from === backup::FORMAT_UNKNOWN or
                 is_null($to) or $to === backup::FORMAT_UNKNOWN or
                 is_null($cost) or $cost <= 0) {
-                    throw new coding_exception('Invalid converter description:' . $converter);
+                    throw new convert_helper_exception('invalid_converter_description', $converter);
             }
 
             if (!isset($paths[$from][$to])) {
@@ -352,5 +352,24 @@ abstract class convert_helper {
         }
 
         return $conversionpath;
+    }
+}
+
+/**
+ * General convert_helper related exception
+ *
+ * @author David Mudrak <david@moodle.com>
+ */
+class convert_helper_exception extends moodle_exception {
+
+    /**
+     * Constructor
+     *
+     * @param string $errorcode key for the corresponding error string
+     * @param object $a extra words and phrases that might be required in the error string
+     * @param string $debuginfo optional debugging information
+     */
+    public function __construct($errorcode, $a = null, $debuginfo = null) {
+        parent::__construct($errorcode, '', '', $a, $debuginfo);
     }
 }

@@ -16,6 +16,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Provides base converter classes
+ *
  * @package    core
  * @subpackage backup-convert
  * @copyright  2011 Mark Nielsen <mark@moodlerooms.com>
@@ -24,10 +26,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/backup/util/includes/convert_includes.php');
+
 /**
- * Base abstract converter
+ * Base converter class
  *
- * @throws backup_exception|Exception|null
+ * All Moodle backup converters are supposed to extend this base class.
+ *
+ * @throws convert_exception
  */
 abstract class base_converter {
 
@@ -74,9 +80,6 @@ abstract class base_converter {
      */
     public function convert() {
 
-        $e = null;
-
-        // try to execute the converter
         try {
             $this->create_workdir();
             $this->execute();
@@ -88,7 +91,7 @@ abstract class base_converter {
         $this->destroy();
 
         // eventually re-throw the execution exception
-        if ($e instanceof Exception) {
+        if (isset($e) and ($e instanceof Exception)) {
             throw $e;
         }
     }
@@ -139,6 +142,24 @@ abstract class base_converter {
         );
     }
 
+    /**
+     * @return string the full path to the working directory
+     */
+    public function get_workdir_path() {
+        global $CFG;
+
+        return "$CFG->dataroot/temp/backup/$this->workdir";
+    }
+
+    /**
+     * @return string the full path to the directory with the source backup
+     */
+    public function get_tempdir_path() {
+        global $CFG;
+
+        return "$CFG->dataroot/temp/backup/$this->tempdir";
+    }
+
     /// end of public API //////////////////////////////////////////////////////
 
     /**
@@ -153,31 +174,13 @@ abstract class base_converter {
     protected abstract function execute();
 
     /**
-     * @return string the full path to the working directory
-     */
-    protected function get_workdir_path() {
-        global $CFG;
-
-        return "$CFG->dataroot/temp/backup/$this->workdir";
-    }
-
-    /**
-     * @return string the full path to the directory with the source backup
-     */
-    protected function get_tempdir_path() {
-        global $CFG;
-
-        return "$CFG->dataroot/temp/backup/$this->tempdir";
-    }
-
-    /**
      * Prepares a new empty working directory
      */
     protected function create_workdir() {
 
         fulldelete($this->get_workdir_path());
         if (!check_dir_exists($this->get_workdir_path())) {
-            throw new backup_exception('failedtocreateworkdir');
+            throw new convert_exception('failed_create_workdir');
         }
     }
 
@@ -191,15 +194,15 @@ abstract class base_converter {
         global $CFG;
 
         if (empty($CFG->keeptempdirectoriesonbackup)) {
-            fulldelete($this->get_tempdir_path);
+            fulldelete($this->get_tempdir_path());
         } else {
-            if (!rename($this->get_tempdir_path, $this->get_tempdir_path  . '_' . $this->get_name() . '_' . $this->id . '_source')) {
-                throw new backup_exception('failedrenamesourcetempdir');
+            if (!rename($this->get_tempdir_path(), $this->get_tempdir_path()  . '_' . $this->get_name() . '_' . $this->id . '_source')) {
+                throw new convert_exception('failed_rename_source_tempdir');
             }
         }
 
         if (!rename($this->get_workdir_path(), $this->get_tempdir_path())) {
-            throw new backup_exception('failedmoveconvertedintoplace');
+            throw new convert_exception('failed_move_converted_into_place');
         }
     }
 
@@ -213,7 +216,26 @@ abstract class base_converter {
         global $CFG;
 
         if (empty($CFG->keeptempdirectoriesonbackup)) {
-            fulldelete($this->get_workdir_path);
+            fulldelete($this->get_workdir_path());
         }
+    }
+}
+
+/**
+ * General convert-related exception
+ *
+ * @author David Mudrak <david@moodle.com>
+ */
+class convert_exception extends moodle_exception {
+
+    /**
+     * Constructor
+     *
+     * @param string $errorcode key for the corresponding error string
+     * @param object $a extra words and phrases that might be required in the error string
+     * @param string $debuginfo optional debugging information
+     */
+    public function __construct($errorcode, $a = null, $debuginfo = null) {
+        parent::__construct($errorcode, '', '', $a, $debuginfo);
     }
 }

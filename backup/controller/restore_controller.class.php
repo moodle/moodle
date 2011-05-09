@@ -381,14 +381,18 @@ class restore_controller extends backup implements loggable {
      */
     public function convert() {
         global $CFG;
-        require_once($CFG->dirroot . '/backup/util/includes/convert_includes.php');
+        require_once($CFG->dirroot . '/backup/util/helper/convert_helper.class.php');
 
         if ($this->status != backup::STATUS_REQUIRE_CONV) {
             throw new restore_controller_exception('cannot_convert_not_required_status');
         }
 
         // Run conversion to the proper format
-        convert_helper::to_moodle2_format($this->get_tempdir(), $this->format);
+        if (!convert_helper::to_moodle2_format($this->get_tempdir(), $this->format)) {
+            // todo - unable to find the conversion path, what to do now?
+            // throwing the exception as a temporary solution
+            throw new restore_controller_exception('unable_to_find_conversion_path');
+        }
 
         // If no exceptions were thrown, then we are in the proper format
         $this->format = backup::FORMAT_MOODLE;

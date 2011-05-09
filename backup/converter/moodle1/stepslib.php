@@ -50,7 +50,7 @@ abstract class moodle1_structure_step extends convert_structure_step {
      */
     public function open_xml_writer() {
         if (!$this->xmlwriter instanceof xml_writer) {
-            $fullpath  = $this->get_basepath().'/'.$this->get_xml_filename();
+            $fullpath  = $this->get_basepath() . '/' . $this->get_xml_filename();
             $directory = pathinfo($fullpath, PATHINFO_DIRNAME);
 
             if (!check_dir_exists($directory)) {
