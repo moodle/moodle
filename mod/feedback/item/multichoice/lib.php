@@ -235,15 +235,15 @@ class feedback_item_multichoice extends feedback_item_base {
 
         // $worksheet->setFormat("<l><f><ro2><vo><c:green>");
         //frage schreiben
-        $worksheet->write_string($rowOffset, 0, $item->label, $xlsFormats->head2_green);
-        $worksheet->write_string($rowOffset, 1, $analysed_item[1], $xlsFormats->head2_green);
+        $worksheet->write_string($rowOffset, 0, $item->label, $xlsFormats->head2);
+        $worksheet->write_string($rowOffset, 1, $analysed_item[1], $xlsFormats->head2);
         if (is_array($data)) {
             $sizeofdata = sizeof($data);
             for ($i = 0; $i < $sizeofdata; $i++) {
                 $aData = $data[$i];
 
                 // $worksheet->setFormat("<l><f><ro2><vo><c:blue>");
-                $worksheet->write_string($rowOffset, $i + 2, trim($aData->answertext), $xlsFormats->value_blue);
+                $worksheet->write_string($rowOffset, $i + 2, trim($aData->answertext), $xlsFormats->head2);
 
                 // $worksheet->setFormat("<l><vo>");
                 $worksheet->write_number($rowOffset + 1, $i + 2, $aData->answercount, $xlsFormats->default);
