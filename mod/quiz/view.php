@@ -30,7 +30,6 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->dirroot.'/mod/quiz/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
-require_once($CFG->dirroot.'/mod/quiz/renderer.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
 $q = optional_param('q',  0, PARAM_INT);  // quiz ID
@@ -116,6 +115,11 @@ if (!empty($grading_info->items)) {
         }
     }
 }
+
+$title = $course->shortname . ': ' . format_string($quiz->name);
+$PAGE->set_title($title);
+$PAGE->set_heading($course->fullname);
+$output = $PAGE->get_renderer('mod_quiz');
 
 /*
  * Create view object for use within renderers file
@@ -206,10 +210,6 @@ if (!quiz_clean_layout($quiz->questions, true)) {
     }
 }
 
-$title = $course->shortname . ': ' . format_string($quiz->name);
-$PAGE->set_title($title);
-$PAGE->set_heading($course->fullname);
-$output = $PAGE->get_renderer('mod_quiz');
 echo $OUTPUT->header();
 
 // Guests can't do a quiz, so offer them a choice of logging in or going back.
