@@ -640,7 +640,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         }
 
         if ($viewobj->mygradeoverridden) {
-            
+
             $resultinfo .= html_writer::tag('p', get_string('overriddennotice', 'grades'),
                     array('class' => 'overriddennotice')).'\n';
         }
