@@ -541,7 +541,7 @@ class block_manager {
         list($pagetypepatterntest, $pagetypepatternparams) =
                 $DB->get_in_or_equal($pagetypepatterns, SQL_PARAMS_NAMED, 'pagetypepatterntest');
 
-        list($ccselect, $ccjoin) = context_instance_preload_sql('b.id', CONTEXT_BLOCK, 'ctx');
+        list($ccselect, $ccjoin) = context_instance_preload_sql('bi.id', CONTEXT_BLOCK, 'ctx');
 
         $params = array(
             'subpage1' => $this->page->subpage,
