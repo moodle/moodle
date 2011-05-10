@@ -1,5 +1,50 @@
 YUI.add('moodle-block_navigation-navigation', function(Y){
 
+/**
+ * A 'actionkey' Event to help with Y.delegate().
+ * The event consists of the left arrow, right arrow, enter and space keys.
+ * This is used below to delegate an Event listener to the multiple possible branches in a menu.
+ */
+Y.Event.define("actionkey", {
+    // Webkit and IE repeat keydown when you hold down arrow keys.
+    // Opera links keypress to page scroll; others keydown.
+    // Firefox prevents page scroll via preventDefault() on either
+    // keydown or keypress.
+    _event: (Y.UA.webkit || Y.UA.ie) ? 'keydown' : 'keypress',
+
+    _keys: {
+            //arrows
+            '37': 'collapse',
+            '39': 'expand',
+            //(@todo: lrt/rtl decision to assign arrow to meanings)
+            '32': 'toggle',
+            '13': 'enter'
+    },
+
+    _keyHandler: function (e, notifier) {
+        if (this._keys[e.keyCode]) {
+            e.action = this._keys[e.keyCode];
+            notifier.fire(e);
+        }
+    },
+
+    on: function (node, sub, notifier) {
+        sub._detacher = node.on(this._event, this._keyHandler,this, notifier);
+    },
+
+    detach: function (node, sub, notifier) {
+        sub._detacher.detach();
+    },
+
+    delegate: function (node, sub, notifier, filter) {
+        sub._delegateDetacher = node.delegate(this._event, this._keyHandler,filter, this, notifier);
+    },
+
+    detachDelegate: function (node, sub, notifier) {
+        sub._delegateDetacher.detach();
+    }
+});
+
 var EXPANSIONLIMIT_EVERYTHING = 0,
     EXPANSIONLIMIT_COURSE     = 20,
     EXPANSIONLIMIT_SECTION    = 30,
@@ -36,6 +81,7 @@ TREE.prototype = {
         // Delegate event to toggle expansion
         var self = this;
         Y.delegate('click', function(e){self.toggleExpansion(e);}, node.one('.block_tree'), '.tree_item.branch');
+        Y.delegate('actionkey', function(e){self.toggleExpansion(e);}, node.one('.block_tree'), '.tree_item.branch');
 
         // Gather the expandable branches ready for initialisation.
         var expansions = [];
@@ -71,8 +117,8 @@ TREE.prototype = {
         // First check if they managed to click on the li iteslf, then find the closest
         // LI ancestor and use that
 
-        if (e.target.test('a')) {
-            // A link has been clicked don't fire any more events just do the default.
+        if (e.target.test('a') && (e.keyCode == 0 || e.keyCode == 13)) {
+            // A link has been clicked (or keypress is 'enter') don't fire any more events just do the default.
             e.stopPropagation();
             return;
         }
@@ -88,7 +134,21 @@ TREE.prototype = {
 
         // Toggle expand/collapse providing its not a root level branch.
         if (!target.hasClass('depth_1')) {
-            target.toggleClass('collapsed');
+            if (e.type == 'actionkey') {
+                switch (e.action) {
+                    case 'expand' :
+                        target.removeClass('collapsed');
+                        break;
+                    case 'collapse' :
+                        target.addClass('collapsed');
+                        break;
+                    default :
+                        target.toggleClass('collapsed');
+                }
+                e.halt();
+            } else {
+                target.toggleClass('collapsed');
+            }
         }
 
         // If the accordian feature has been enabled collapse all siblings.
