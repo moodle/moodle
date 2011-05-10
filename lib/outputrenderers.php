@@ -2424,7 +2424,7 @@ EOD;
             $content = $icon.$content; // use CSS for spacing of icons
         }
         if ($item->helpbutton !== null) {
-            $content = trim($item->helpbutton).html_writer::tag('span', $content, array('class'=>'clearhelpbutton'));
+            $content = trim($item->helpbutton).html_writer::tag('span', $content, array('class'=>'clearhelpbutton', 'tabindex'=>'0'));
         }
         if ($content === '') {
             return '';
@@ -2447,7 +2447,7 @@ EOD;
             $content = html_writer::link($item->action, $content, $attributes);
 
         } else if (is_string($item->action) || empty($item->action)) {
-            $attributes = array();
+            $attributes = array('tabindex'=>'0'); //add tab support to span but still maintain character stream sequence.
             if ($title !== '') {
                 $attributes['title'] = $title;
             }
