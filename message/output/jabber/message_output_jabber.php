@@ -44,7 +44,7 @@ class message_output_jabber extends message_output {
     function send_message($eventdata){
         global $CFG;
 
-        if (message_output_jabber::_jabber_configured()) {
+        if ($this->is_system_configured()) {
             if (!empty($CFG->noemailever)) {
                 // hidden setting for development sites, set in config.php if needed
                 debugging('$CFG->noemailever active, no jabber message sent.', DEBUG_MINIMAL);
@@ -94,7 +94,7 @@ class message_output_jabber extends message_output {
     function config_form($preferences){
         global $CFG;
 
-        if (!message_output_jabber::_jabber_configured()) {
+        if (!$this->is_system_configured()) {
             return get_string('notconfigured','message_jabber');
         } else {
             return get_string('jabberid', 'message_jabber').': <input size="30" name="jabber_jabberid" value="'.$preferences->jabber_jabberid.'" />';
@@ -125,7 +125,7 @@ class message_output_jabber extends message_output {
      * Tests whether the Jabber settings have been configured
      * @return boolean true if Jabber is configured
      */
-    private function _jabber_configured() {
+    function is_system_configured() {
         global $CFG;
         return (!empty($CFG->jabberhost) && !empty($CFG->jabberport) && !empty($CFG->jabberusername) && !empty($CFG->jabberpassword));
     }
