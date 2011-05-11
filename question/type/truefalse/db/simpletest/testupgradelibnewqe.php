@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/question/engine/upgrade/simpletest/helper.php');
 
 
 /**
- * Subclass of question_engine_attempt_upgrader to help with testing.
+ * Testing the upgrade of truefalse question attempts.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
