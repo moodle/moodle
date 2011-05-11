@@ -671,6 +671,7 @@ if ($showactivity) {
                 if ($data->assessed!=RATING_AGGREGATE_NONE) {
                     $ratingoptions = new stdclass();
                     $ratingoptions->context = $context;
+                    $ratingoptions->component = 'mod_data';
                     $ratingoptions->items = $records;
                     $ratingoptions->aggregate = $data->assessed;//the aggregation method
                     $ratingoptions->scaleid = $data->scale;
@@ -678,8 +679,6 @@ if ($showactivity) {
                     $ratingoptions->returnurl = $CFG->wwwroot.'/mod/data/'.$baseurl;
                     $ratingoptions->assesstimestart = $data->assesstimestart;
                     $ratingoptions->assesstimefinish = $data->assesstimefinish;
-                    $ratingoptions->plugintype = 'mod';
-                    $ratingoptions->pluginname = 'data';
 
                     $rm = new rating_manager();
                     $records = $rm->get_ratings($ratingoptions);

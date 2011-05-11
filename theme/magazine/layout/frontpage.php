@@ -35,7 +35,7 @@ echo $OUTPUT->doctype() ?>
 <div id="page">
 
 <!-- start of header -->
-	<div id="header-wrap">
+	<div id="page-header">
 		<div id="header-container">
 			<div id="headerinner">
 
@@ -158,7 +158,7 @@ echo $OUTPUT->doctype() ?>
 	</div>
 
 <!-- START OF FOOTER -->
-	<div id="footer-wrap">
+	<div id="page-footer">
 		<div id="footer-container">
 			<div id="footer">
 

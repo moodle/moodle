@@ -140,21 +140,35 @@ class repository_upload extends repository {
         if (($maxbytes!==-1) && (filesize($_FILES[$elname]['tmp_name']) > $maxbytes)) {
             throw new file_exception('maxbytes');
         }
-
-        if ($file = $fs->get_file($context->id, $record->component, $record->filearea, $record->itemid, $record->filepath, $record->filename)) {
-            throw new moodle_exception('fileexists', 'repository');
-        }
-
         $record->contextid = $context->id;
         $record->userid    = $USER->id;
         $record->source    = '';
 
-        $stored_file = $fs->create_file_from_pathname($record, $_FILES[$elname]['tmp_name']);
+        if (repository::draftfile_exists($record->itemid, $record->filepath, $record->filename)) {
+            $existingfilename = $record->filename;
+            $unused_filename = repository::get_unused_filename($record->itemid, $record->filepath, $record->filename);
+            $record->filename = $unused_filename;
+            $stored_file = $fs->create_file_from_pathname($record, $_FILES[$elname]['tmp_name']);
+            $event = array();
+            $event['event'] = 'fileexists';
+            $event['newfile'] = new stdClass;
+            $event['newfile']->filepath = $record->filepath;
+            $event['newfile']->filename = $unused_filename;
+            $event['newfile']->url = moodle_url::make_draftfile_url($record->itemid, $record->filepath, $unused_filename)->out();
 
-        return array(
-            'url'=>moodle_url::make_draftfile_url($record->itemid, $record->filepath, $record->filename)->out(),
-            'id'=>$record->itemid,
-            'file'=>$record->filename);
+            $event['existingfile'] = new stdClass;
+            $event['existingfile']->filepath = $record->filepath;
+            $event['existingfile']->filename = $existingfilename;
+            $event['existingfile']->url      = moodle_url::make_draftfile_url($record->itemid, $record->filepath, $existingfilename)->out();;
+            return $event;
+        } else {
+            $stored_file = $fs->create_file_from_pathname($record, $_FILES[$elname]['tmp_name']);
+
+            return array(
+                'url'=>moodle_url::make_draftfile_url($record->itemid, $record->filepath, $record->filename)->out(),
+                'id'=>$record->itemid,
+                'file'=>$record->filename);
+        }
     }
 
     /**
@@ -179,17 +193,5 @@ class repository_upload extends repository {
      */
     public function supported_returntypes() {
         return FILE_INTERNAL;
-    }
-
-    /**
-     * Upload file to local filesystem pool
-     * @param string $elname name of element
-     * @param string $filearea
-     * @param string $filepath
-     * @param string $filename - use specified filename, if not specified name of uploaded file used
-     * @param bool $override override file if exists
-     * @return mixed stored_file object or false if error; may throw exception if duplicate found
-     */
-    public function upload_to_filepool($elname, $record, $override = true) {
     }
 }

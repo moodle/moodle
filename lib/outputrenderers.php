@@ -1526,6 +1526,10 @@ class core_renderer extends renderer_base {
             $attributes = array('type'=>'hidden', 'class'=>'ratinginput', 'name'=>'contextid', 'value'=>$rating->context->id);
             $formstart .= html_writer::empty_tag('input', $attributes);
 
+            $attributes['name'] = 'component';
+            $attributes['value'] = $rating->settings->component;
+            $formstart .= html_writer::empty_tag('input', $attributes);
+
             $attributes['name'] = 'itemid';
             $attributes['value'] = $rating->itemid;
             $formstart .= html_writer::empty_tag('input', $attributes);
@@ -1979,13 +1983,18 @@ class core_renderer extends renderer_base {
         } else {
             $maxsize = get_string('maxfilesize', 'moodle', display_size($size));
         }
+        if ($options->buttonname) {
+            $buttonname = ' name="' . $options->buttonname . '"';
+        } else {
+            $buttonname = '';
+        }
         $html = <<<EOD
 <div class="filemanager-loading mdl-align" id='filepicker-loading-{$client_id}'>
 $icon_progress
 </div>
 <div id="filepicker-wrapper-{$client_id}" class="mdl-left" style="display:none">
     <div>
-        <input type="button" id="filepicker-button-{$client_id}" value="{$straddfile}" />
+        <input type="button" id="filepicker-button-{$client_id}" value="{$straddfile}"{$buttonname}/>
         <span> $maxsize </span>
     </div>
 EOD;

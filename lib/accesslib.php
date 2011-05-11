@@ -2540,7 +2540,7 @@ function get_roles_with_capability($capability, $permission = null, $context = n
 
     if ($context) {
         $contexts = get_parent_contexts($context, true);
-        list($insql, $params) = $DB->get_in_or_equal($contexts, SQL_PARAMS_NAMED, 'ctx000');
+        list($insql, $params) = $DB->get_in_or_equal($contexts, SQL_PARAMS_NAMED, 'ctx');
         $contextsql = "AND rc.contextid $insql";
     } else {
         $params = array();
@@ -3097,7 +3097,7 @@ function get_enrolled_sql($context, $withcapability = '', $groupid = 0, $onlyact
 
     // get all relevant capability info for all roles
     if ($withcapability) {
-        list($incontexts, $cparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'ctx00');
+        list($incontexts, $cparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'ctx');
         $cparams['cap'] = $withcapability;
 
         $defs = array();
@@ -3741,7 +3741,7 @@ function fetch_context_capabilities($context) {
 
         case CONTEXT_USER:
             $extracaps = array('moodle/grade:viewall');
-            list($extra, $params) = $DB->get_in_or_equal($extracaps, SQL_PARAMS_NAMED, 'cap0');
+            list($extra, $params) = $DB->get_in_or_equal($extracaps, SQL_PARAMS_NAMED, 'cap');
             $SQL = "SELECT *
                       FROM {capabilities}
                      WHERE contextlevel = ".CONTEXT_USER."
@@ -3814,7 +3814,7 @@ function fetch_context_capabilities($context) {
             $extra = '';
             $extracaps = block_method_result($bi->blockname, 'get_extra_capabilities');
             if ($extracaps) {
-                list($extra, $params) = $DB->get_in_or_equal($extracaps, SQL_PARAMS_NAMED, 'cap0');
+                list($extra, $params) = $DB->get_in_or_equal($extracaps, SQL_PARAMS_NAMED, 'cap');
                 $extra = "OR name $extra";
             }
 
@@ -4876,8 +4876,8 @@ function get_users_by_capability($context, $capability, $fields = '', $sort = ''
 
     // we need to find out all roles that have these capabilities either in definition or in overrides
     $defs = array();
-    list($incontexts, $params) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'con000');
-    list($incaps, $params2) = $DB->get_in_or_equal($caps, SQL_PARAMS_NAMED, 'cap000');
+    list($incontexts, $params) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'con');
+    list($incaps, $params2) = $DB->get_in_or_equal($caps, SQL_PARAMS_NAMED, 'cap');
     $params = array_merge($params, $params2);
     $sql = "SELECT rc.id, rc.roleid, rc.permission, rc.capability, ctx.path
               FROM {role_capabilities} rc
@@ -5001,7 +5001,7 @@ function get_users_by_capability($context, $capability, $fields = '', $sort = ''
     /// Groups
     if ($groups) {
         $groups = (array)$groups;
-        list($grouptest, $grpparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED, 'grp000');
+        list($grouptest, $grpparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED, 'grp');
         $grouptest = "u.id IN (SELECT userid FROM {groups_members} gm WHERE gm.groupid $grouptest)";
         $params = array_merge($params, $grpparams);
 
@@ -5016,7 +5016,7 @@ function get_users_by_capability($context, $capability, $fields = '', $sort = ''
     /// User exceptions
     if (!empty($exceptions)) {
         $exceptions = (array)$exceptions;
-        list($exsql, $exparams) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'exc000', false);
+        list($exsql, $exparams) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'exc', false);
         $params = array_merge($params, $exparams);
         $wherecond[] = "u.id $exsql";
     }
@@ -5538,7 +5538,7 @@ function user_has_role_assignment($userid, $roleid, $contextid = 0) {
             return false;
         }
         $parents = get_parent_contexts($context, true);
-        list($contexts, $params) = $DB->get_in_or_equal($parents, SQL_PARAMS_NAMED, 'r0000');
+        list($contexts, $params) = $DB->get_in_or_equal($parents, SQL_PARAMS_NAMED, 'r');
         $params['userid'] = $userid;
         $params['roleid'] = $roleid;
 

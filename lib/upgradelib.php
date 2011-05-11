@@ -1285,12 +1285,12 @@ function upgrade_language_pack($lang='') {
 
     require_once($CFG->libdir.'/componentlib.class.php');
 
-    $installer = new lang_installer($pack);
+    $installer = new lang_installer($lang);
     $results = $installer->run();
     foreach ($results as $langcode => $langstatus) {
         switch ($langstatus) {
         case lang_installer::RESULT_DOWNLOADERROR:
-            echo $OUTPUT->notification($pack . '.zip');
+            echo $OUTPUT->notification($langcode . '.zip');
             break;
         case lang_installer::RESULT_INSTALLED:
             echo $OUTPUT->notification(get_string('langpackinstalled', 'admin', $langcode), 'notifysuccess');

@@ -6873,6 +6873,8 @@ function endecrypt ($pwd, $data, $case) {
  * @return string full path to plugin directory; NULL if not found
  */
 function get_plugin_directory($plugintype, $name) {
+    global $CFG;
+
     if ($plugintype === '') {
         $plugintype = 'mod';
     }
@@ -6882,6 +6884,13 @@ function get_plugin_directory($plugintype, $name) {
         return NULL;
     }
     $name = clean_param($name, PARAM_SAFEDIR); // just in case ;-)
+
+    if (!empty($CFG->themedir) and $plugintype === 'theme') {
+        if (!is_dir($types['theme'] . '/' . $name)) {
+            // ok, so the theme is supposed to be in the $CFG->themedir
+            return $CFG->themedir . '/' . $name;
+        }
+    }
 
     return $types[$plugintype].'/'.$name;
 }
@@ -7079,7 +7088,7 @@ function get_plugin_types($fullpaths=true) {
                       'qtype'         => 'question/type',
                       'qformat'       => 'question/format',
                       'plagiarism'    => 'plagiarism',
-                      'theme'         => 'theme'); // this is a bit hacky, themes may be in dataroot too
+                      'theme'         => 'theme'); // this is a bit hacky, themes may be in $CFG->themedir too
 
         $mods = get_plugin_list('mod');
         foreach ($mods as $mod => $moddir) {
@@ -7284,7 +7293,7 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
 
     $name = clean_param($name, PARAM_SAFEDIR);
     $function = $name.'_'.$feature.'_'.$action;
-    $file = get_plugin_directory($type, $name) . '/lib.php';
+    $file = get_component_directory($type . '_' . $name) . '/lib.php';
 
     // Load library and look for function
     if (file_exists($file)) {

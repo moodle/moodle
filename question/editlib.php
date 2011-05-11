@@ -1047,7 +1047,7 @@ class question_bank_view {
         } else {
             $categoryids = array($category->id);
         }
-        list($catidtest, $params) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'cat0000');
+        list($catidtest, $params) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'cat');
         $tests[] = 'q.category ' . $catidtest;
         $this->sqlparams = $params;
 

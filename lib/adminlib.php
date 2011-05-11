@@ -5415,7 +5415,7 @@ class admin_setting_manageeditors extends admin_setting {
 
             // settings link
             if (file_exists($CFG->dirroot.'/lib/editor/'.$editor.'/settings.php')) {
-                $eurl = new moodle_url('/admin/settings.php', array('section'=>'editorsettingstinymce'));
+                $eurl = new moodle_url('/admin/settings.php', array('section'=>'editorsettings'.$editor));
                 $settings = "<a href='$eurl'>{$txt->settings}</a>";
             } else {
                 $settings = '';
@@ -7308,4 +7308,44 @@ class admin_setting_configcolourpicker extends admin_setting {
         return format_admin_setting($this, $this->visiblename, $content, $this->description, false, '', $this->get_defaultsetting(), $query);
     }
 
+}
+
+
+/**
+ * Multiselect for current modules
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_configmultiselect_modules extends admin_setting_configmultiselect {
+    /**
+     * Calls parent::__construct - note array $choices is not required
+     *
+     * @param string $name setting name
+     * @param string $visiblename localised setting name
+     * @param string $description setting description
+     */
+    public function __construct($name, $visiblename, $description) {
+        parent::__construct($name, $visiblename, $description, array(), null);
+    }
+
+    /**
+     * Loads an array of current module choices
+     *
+     * @return bool always return true
+     */
+    public function load_choices() {
+        if (is_array($this->choices)) {
+            return true;
+        }
+        $this->choices = array();
+
+        global $CFG, $DB;
+        $records = $DB->get_records('modules', array('visible'=>1), 'name');
+        foreach ($records as $record) {
+            if (file_exists("$CFG->dirroot/mod/$record->name/lib.php")) {
+                $this->choices[$record->id] = $record->name;
+            }
+        }
+        return true;
+    }
 }

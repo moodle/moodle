@@ -30,7 +30,7 @@ a:focus {
 
 /**header divs **/
 
-#header-wrap {
+#page-header {
     top: 0;
     left: 0;
     width: 100%;
@@ -216,7 +216,7 @@ div.jcontrolsright div.singlebutton, div.jcontrolsright div.forumsearch {
     margin: 0 auto;
 }
 
-#footer-wrap {
+#page-footer {
     position: relative;
     bottom: 0;
     left: 0;

@@ -149,7 +149,7 @@ if ($eventid !== 0) {
 } else {
     $title = get_string('newevent', 'calendar');
     calendar_get_allowed_types($formoptions->eventtypes, $USER->id);
-    $event = new calendar_event();
+    $event = new stdClass();
     $event->action = $action;
     $event->course = $courseid;
     $event->timeduration = 0;
@@ -171,6 +171,7 @@ if ($eventid !== 0) {
             $event->timestart = make_timestamp($cal_y, $cal_m, 1, 0, 0, 0);
         }
     }
+    $event = new calendar_event($event);
     if (!calendar_add_event_allowed($event)) {
         print_error('nopermissions');
     }

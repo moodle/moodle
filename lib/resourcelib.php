@@ -156,6 +156,11 @@ function resourcelib_guess_url_mimetype($fullurl) {
         $fullurl = $matches[1].$matches[3];
     }
 
+    if (preg_match("|^(.*)#.*|", $fullurl, $matches)) {
+        // ignore all anchors
+        $fullurl = $matches[1];
+    }
+
     if (strpos($fullurl, '.php')){
         // we do not really know what is in general php script
         return 'text/html';
@@ -285,9 +290,17 @@ function resourcelib_embed_flashvideo($fullurl, $title, $clicktoopen) {
  * @return string html
  */
 function resourcelib_embed_flash($fullurl, $title, $clicktoopen) {
+    if (preg_match('/[#\?]d=([\d]{1,4}%?)x([\d]{1,4}%?)/', $fullurl, $matches)) {
+        $width    = $matches[1];
+        $height   = $matches[2];
+    } else {
+        $width    = 400;
+        $height   = 300;
+    }
+
     $code = <<<EOT
 <div class="resourcecontent resourceswf">
-  <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">
+  <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="$width" height="$height">
     <param name="movie" value="$fullurl" />
     <param name="autoplay" value="true" />
     <param name="loop" value="true" />
@@ -295,7 +308,7 @@ function resourcelib_embed_flash($fullurl, $title, $clicktoopen) {
     <param name="scale" value="aspect" />
     <param name="base" value="." />
 <!--[if !IE]>-->
-    <object type="application/x-shockwave-flash" data="$fullurl">
+    <object type="application/x-shockwave-flash" data="$fullurl" width="$width" height="$height">
       <param name="controller" value="true" />
       <param name="autoplay" value="true" />
       <param name="loop" value="true" />

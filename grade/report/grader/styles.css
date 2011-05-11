@@ -555,14 +555,23 @@ background-color:#f3ead8;
 .path-grade-report-grader div.right_scroller td,
 .path-grade-report-grader div.left_scroller th,
 .path-grade-report-grader div.right_scroller th {
-height:4.5em;
-font-size:10px;
+    height:4.5em;
+    font-size:10px;
 }
 
 .path-grade-report-grader table th.user,
 .path-grade-report-grader table td.useridnumber {
-text-align:left;
-vertical-align:middle;
+    text-align:left;
+    vertical-align:middle;
+}
+
+.path-grade-report-grader .usersuspended a:link,
+.path-grade-report-grader .usersuspended a:visited {
+    color: #666;
+}
+
+.path-grade-report-grader table th.usersuspended img.usersuspendedicon {
+    vertical-align:middle;
 }
 
 .path-grade-report-grader .yui-overlay {

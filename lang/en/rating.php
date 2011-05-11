@@ -50,6 +50,7 @@ $string['noviewrate'] = 'You do not have the capability to view item ratings';
 $string['rate'] = 'Rate';
 $string['ratepermissiondenied'] = 'You do not have permission to rate this item';
 $string['rating'] = 'Rating';
+$string['ratinginvalid'] = 'Rating is invalid';
 $string['ratingtime'] = 'Restrict ratings to items with dates in this range:';
 $string['ratings'] = 'Ratings';
 $string['rolewarning'] = 'Roles with permission to rate';

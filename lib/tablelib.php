@@ -1348,9 +1348,9 @@ class table_sql extends flexible_table {
                 $this->countsql = 'SELECT COUNT(1) FROM '.$this->sql->from.' WHERE '.$this->sql->where;
                 $this->countparams = $this->sql->params;
             }
+            $grandtotal = $DB->count_records_sql($this->countsql, $this->countparams);
             if ($useinitialsbar && !$this->is_downloading()) {
-                $totalinitials = $DB->count_records_sql($this->countsql, $this->countparams);
-                $this->initialbars($totalinitials>$pagesize);
+                $this->initialbars($grandtotal > $pagesize);
             }
 
             list($wsql, $wparams) = $this->get_sql_where();
@@ -1363,7 +1363,7 @@ class table_sql extends flexible_table {
 
                 $total  = $DB->count_records_sql($this->countsql, $this->countparams);
             } else {
-                $total = $totalinitials;
+                $total = $grandtotal;
             }
 
             $this->pagesize($pagesize, $total);

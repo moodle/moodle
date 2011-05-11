@@ -137,7 +137,7 @@ class repository_recent extends repository {
         return FILE_INTERNAL;
     }
     /**
-     * Copy a file to file area
+     * This function overwrite the default implement to copying file using file_storage
      *
      * @global object $USER
      * @global object $DB
@@ -157,11 +157,11 @@ class repository_recent extends repository {
         $params = unserialize(base64_decode($encoded));
 
         $contextid  = clean_param($params['contextid'], PARAM_INT);
-        $fileitemid = clean_param($params['itemid'], PARAM_INT);
-        $filename = clean_param($params['filename'], PARAM_FILE);
-        $filepath = clean_param($params['filepath'], PARAM_PATH);;
-        $filearea = clean_param($params['filearea'], PARAM_ALPHAEXT);
-        $component = clean_param($params['component'], PARAM_ALPHAEXT);
+        $fileitemid = clean_param($params['itemid'],    PARAM_INT);
+        $filename   = clean_param($params['filename'],  PARAM_FILE);
+        $filepath   = clean_param($params['filepath'],  PARAM_PATH);;
+        $filearea   = clean_param($params['filearea'],  PARAM_ALPHAEXT);
+        $component  = clean_param($params['component'], PARAM_ALPHAEXT);
 
         // XXX:
         // When user try to pick a file from other filearea, normally file api will use file browse to
@@ -171,28 +171,52 @@ class repository_recent extends repository {
         // To get 'recent' plugin working, we need to use lower level file_stoarge class to bypass the
         // capability check, we will use a better workaround to improve it.
         if ($stored_file = $fs->get_file($contextid, $component, $filearea, $fileitemid, $filepath, $filename)) {
+            // verify user id
             if ($USER->id != $stored_file->get_userid()) {
                 throw new moodle_exception('errornotyourfile', 'repository');
             }
             $file_record = array('contextid'=>$user_context->id, 'component'=>'user', 'filearea'=>'draft',
                 'itemid'=>$draftitemid, 'filepath'=>$new_filepath, 'filename'=>$new_filename, 'sortorder'=>0);
-            if ($file = $fs->get_file($user_context->id, 'user', 'draft', $draftitemid, $new_filepath, $new_filename)) {
+
+            // test if file already exists
+            if (repository::draftfile_exists($draftitemid, $new_filepath, $new_filename)) {
+                // create new file
+                $unused_filename = repository::get_unused_filename($draftitemid, $new_filepath, $new_filename);
+                $file_record['filename'] = $unused_filename;
+                // create a tmp file
+                $fs->create_file_from_storedfile($file_record, $stored_file);
+                $event = array();
+                $event['event'] = 'fileexists';
+                $event['newfile'] = new stdClass;
+                $event['newfile']->filepath = $new_filepath;
+                $event['newfile']->filename = $unused_filename;
+                $event['newfile']->url = moodle_url::make_draftfile_url($draftitemid, $new_filepath, $unused_filename)->out();
+                $event['existingfile'] = new stdClass;
+                $event['existingfile']->filepath = $new_filepath;
+                $event['existingfile']->filename = $new_filename;
+                $event['existingfile']->url      = moodle_url::make_draftfile_url($draftitemid, $new_filepath, $new_filename)->out();;
+                return $event;
+            } else {
+                $fs->create_file_from_storedfile($file_record, $stored_file);
                 $info = array();
-                $info['title']  = $file->get_filename();
-                $info['itemid'] = $file->get_itemid();
-                $info['filesize']  = $file->get_filesize();
-                $info['contextid'] = $file->get_contextid();
+                $info['title']  = $new_filename;
+                $info['itemid'] = $draftitemid;
+                $info['filesize']  = $stored_file->get_filesize();
+                $info['url'] = moodle_url::make_draftfile_url($draftitemid, $new_filepath, $new_filename)->out();;
+                $info['contextid'] = $user_context->id;
                 return $info;
             }
-            $fs->create_file_from_storedfile($file_record, $stored_file);
         }
+        return false;
 
-        $info = array();
-        $info['title']  = $new_filename;
-        $info['itemid'] = $draftitemid;
-        $info['filesize']  = $stored_file->get_filesize();
-        $info['contextid'] = $user_context->id;
+    }
 
-        return $info;
+    /**
+     * Does this repository used to browse moodle files?
+     *
+     * @return boolean
+     */
+    public function has_moodle_files() {
+        return true;
     }
 }

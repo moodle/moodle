@@ -80,6 +80,7 @@ if (!$currentuser
     //       please note this is just a guess!
     require_login();
     $isparent = true;
+    $PAGE->navigation->set_userid_for_parent_checks($id);
 } else {
     // normal course
     require_login($course);

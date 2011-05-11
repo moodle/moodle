@@ -12,14 +12,18 @@ a img {border-width:0;}
 acronym,
 abbr {cursor: help;}
 .dir-ltr,
-.mdl-left {text-align: left;}
+.mdl-left,
+.dir-rtl .mdl-right {text-align: left;}
 .dir-rtl,
-.mdl-right {text-align: right;}
+.mdl-right,
+.dir-rtl .mdl-left {text-align: right;}
 #add,
 #remove,
 .centerpara,
 .mdl-align {text-align: center;}
 a.dimmed,
+a.dimmed:link,
+a.dimmed:visited,
 a.dimmed_text,
 .dimmed_text,
 .dimmed_text a,
@@ -247,6 +251,7 @@ a.skip:active {position: static;display: block;}
 .groupmanagementtable #addselect_wrapper {width: 100%;}
 .groupmanagementtable #removeselect_wrapper label,
 .groupmanagementtable #addselect_wrapper label {font-weight: normal;}
+.dir-rtl .groupmanagementtable p {text-align: right;}
 #group-usersummary {width: 14em;}
 .groupselector {margin-top: 3px;margin-bottom: 3px;}
 
@@ -474,6 +479,7 @@ body.tag .managelink {padding: 5px;}
 .file-picker .fp-toolbar {padding: .8em;background: #FFFFCC;text-align:center;margin: 3px;}
 .file-picker .fp-toolbar a {padding: 0 .5em;}
 .file-picker .fp-list {list-style-type:none;padding:0;float:left;width:100%;margin:0;}
+.dir-rtl .file-picker .fp-list {text-align:right;}
 .file-picker .fp-list li {border-bottom:1px dotted gray;margin-bottom: 1em;}
 .file-picker .fp-repo-name {display:block;padding: .5em;margin-bottom: .5em;}
 .file-picker .fp-pathbar {margin: .4em;border-bottom: 1px dotted gray;}
@@ -622,6 +628,11 @@ body.tag .managelink {padding: 5px;}
 .userenrolment .col_group .addgroup a img {vertical-align:bottom;}
 .userenrolment .col_enrol .enrolment {float:left;padding:3px;margin:3px;}
 .userenrolment .col_enrol .enrolment a {float:right;margin-left:3px;}
+#page-enrol-users .enrol_user_buttons {float:right;}
+#page-enrol-users .enrol_user_buttons .enrolusersbutton {margin-left:1em;display:inline;}
+#page-enrol-users .enrol_user_buttons .enrolusersbutton div,
+#page-enrol-users .enrol_user_buttons .enrolusersbutton form {display:inline;}
+#page-enrol-users .enrol_user_buttons .enrolusersbutton input {padding-left:6px;padding-right:6px;}
 
 /**
 * Overide for RTL layout
@@ -697,11 +708,74 @@ body.tag .managelink {padding: 5px;}
 .mod-indent-15,
 .mod-indent-huge {margin-left:300px;}
 
+.dir-rtl .felement.feditor select {margin-right:18.75%;}
+
 /* Resourcelib mp3 player size: only width could be changed here, height hardcoded in JS */
 .resourcecontent .resourcemediaplugin_mp3 object {height:25px; width: 600px}
 
 /*
 Fix for SubScript & SuperScript
 ------------------------------*/
-sub { vertical-align: sub;}
-sup { vertical-align: super;}
+sub {vertical-align: sub;}
+sup {vertical-align: super;}
+
+/** Fix YUI 2 Treeview for Right to left languages **/
+.dir-rtl .ygtvtn,
+.dir-rtl .ygtvtm,
+.dir-rtl .ygtvtmh,
+.dir-rtl .ygtvtmhh,
+.dir-rtl .ygtvtp,
+.dir-rtl .ygtvtph,
+.dir-rtl .ygtvtphh,
+.dir-rtl .ygtvln,
+.dir-rtl .ygtvlm,
+.dir-rtl .ygtvlmh,
+.dir-rtl .ygtvlmhh,
+.dir-rtl .ygtvlp,
+.dir-rtl .ygtvlph,
+.dir-rtl .ygtvlphh,
+.dir-rtl .ygtvdepthcell,
+.dir-rtl .ygtvok,
+.dir-rtl .ygtvok:hover,
+.dir-rtl .ygtvcancel,
+.dir-rtl .ygtvcancel:hover {width:18px; height:22px; background-image:url([[pix:theme|yui2-treeview-sprite-rtl]]); background-repeat: no-repeat; cursor:pointer;}
+
+.dir-rtl .ygtvtn {background-position: 0 -5600px;}
+.dir-rtl .ygtvtm {background-position: 0 -4000px;}
+.dir-rtl .ygtvtmh,
+.dir-rtl .ygtvtmhh {background-position: 0 -4800px;}
+.dir-rtl .ygtvtp {background-position: 0 -6400px;}
+.dir-rtl .ygtvtph,
+.dir-rtl .ygtvtphh {background-position: 0 -7200px;}
+.dir-rtl .ygtvln {background-position: 0 -1600px;}
+.dir-rtl .ygtvlm {background-position: 0 0;}
+.dir-rtl .ygtvlmh,
+.dir-rtl .ygtvlmhh {background-position: 0 -800px;}
+.dir-rtl .ygtvlp {background-position: 0 -2400px;}
+.dir-rtl .ygtvlph,
+.dir-rtl .ygtvlphh {background-position: 0 -3200px}
+.dir-rtl .ygtvdepthcell {background-position: 0 -8000px;}
+.dir-rtl .ygtvok {background-position: 0 -8800px;}
+.dir-rtl .ygtvok:hover {background-position: 0 -8844px;}
+.dir-rtl .ygtvcancel {background-position: 0 -8822px;}
+.dir-rtl .ygtvcancel:hover {background-position: 0 -8866px;}
+
+.dir-rtl #yui-gen4.yui-layout-unit-left  {left:500px !important;}
+.dir-rtl #yui-gen6.yui-layout-unit-center {left:0px !important;}
+.dir-rtl.yui-skin-sam .yui-panel .hd {text-align:left;}
+.dir-rtl .yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd {text-align:right;}
+
+/** Fix TinyMCE editor right to left **/
+.dir-rtl .clearlooks2.ie9 .mceAlert .mceMiddle span,.dir-rtl .clearlooks2 .mceConfirm .mceMiddle span {top: 44px;}
+.dir-rtl .o2k7Skin table, 
+.dir-rtl .o2k7Skin tbody, 
+.dir-rtl .o2k7Skin a, 
+.dir-rtl .o2k7Skin img, 
+.dir-rtl .o2k7Skin tr, 
+.dir-rtl .o2k7Skin div, 
+.dir-rtl .o2k7Skin td, 
+.dir-rtl .o2k7Skin iframe, 
+.dir-rtl .o2k7Skin span, 
+.dir-rtl .o2k7Skin *, 
+.dir-rtl .o2k7Skin .mceText,
+.dir-rtl .o2k7Skin .mceListBox .mceText {text-align:right;}

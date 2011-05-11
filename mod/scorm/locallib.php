@@ -186,7 +186,7 @@ function scorm_parse($scorm, $full) {
             if ($scorm->reference !== '' and (!$full or $scorm->sha1hash !== sha1($scorm->reference))) {
                 $fs->delete_area_files($context->id, 'mod_scorm', 'package');
                 $file_record = array('contextid'=>$context->id, 'component'=>'mod_scorm', 'filearea'=>'package', 'itemid'=>0, 'filepath'=>'/');
-                if ($packagefile = $fs->create_file_from_url($file_record, $scorm->reference)) {
+                if ($packagefile = $fs->create_file_from_url($file_record, $scorm->reference, array('calctimeout' => true))) {
                     $newhash = sha1($scorm->reference);
                 } else {
                     $newhash = null;
@@ -387,7 +387,7 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value,$fo
 
     if ($track = $DB->get_record('scorm_scoes_track',array('userid'=>$userid, 'scormid'=>$scormid, 'scoid'=>$scoid, 'attempt'=>$attempt, 'element'=>$element))) {
         if ($element != 'x.start.time' ) { //don't update x.start.time - keep the original value.
-            $track->value = addslashes_js($value);
+            $track->value = $value;
             $track->timemodified = time();
             $DB->update_record('scorm_scoes_track',$track);
             $id = $track->id;
@@ -398,7 +398,7 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value,$fo
         $track->scoid = $scoid;
         $track->attempt = $attempt;
         $track->element = $element;
-        $track->value = addslashes_js($value);
+        $track->value = $value;
         $track->timemodified = time();
         $id = $DB->insert_record('scorm_scoes_track',$track);
     }
@@ -436,7 +436,6 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
         $usertrack->timemodified = 0;
         foreach ($tracks as $track) {
             $element = $track->element;
-            $track->value = stripslashes($track->value); // TODO: this is probably wrong, the stripslashes() has undefined meaning now; was this related to JS quoting or magic quotes?
             $usertrack->{$element} = $track->value;
             switch ($element) {
                 case 'cmi.core.lesson_status':
@@ -1009,11 +1008,11 @@ function scorm_get_attempt_status($user, $scorm) {
 
     $result = '<p>'.get_string('noattemptsallowed', 'scorm').': ';
     if ($scorm->maxattempt > 0) {
-        $result .= $scorm->maxattempt . '<BR>';
+        $result .= $scorm->maxattempt . '<br />';
     } else {
-        $result .= get_string('unlimited').'<BR>';
+        $result .= get_string('unlimited').'<br />';
     }
-    $result .= get_string('noattemptsmade', 'scorm').': ' . $attemptcount . '<BR>';
+    $result .= get_string('noattemptsmade', 'scorm').': ' . $attemptcount . '<br />';
 
     if ($scorm->maxattempt == 1) {
         switch ($scorm->grademethod) {
@@ -1051,16 +1050,24 @@ function scorm_get_attempt_status($user, $scorm) {
         $i = 1;
         foreach($attempts as $attempt) {
             $gradereported = scorm_grade_user_attempt($scorm, $user->id, $attempt->attemptnumber);
-            $result .= get_string('gradeforattempt', 'scorm').' ' . $i . ': ' . $gradereported .'%<BR>';
+            if ($scorm->grademethod !== GRADESCOES && !empty($scorm->maxgrade)) {
+                $gradereported = $gradereported/$scorm->maxgrade;
+                $gradereported = number_format($gradereported*100, 0) .'%';
+            }
+            $result .= get_string('gradeforattempt', 'scorm').' ' . $i . ': ' . $gradereported .'<br />';
             $i++;
         }
     }
     $calculatedgrade = scorm_grade_user($scorm, $user->id);
+    if ($scorm->grademethod !== GRADESCOES && !empty($scorm->maxgrade)) {
+        $calculatedgrade = $calculatedgrade/$scorm->maxgrade;
+        $calculatedgrade = number_format($calculatedgrade*100, 0) .'%';
+    }
     $result .= get_string('grademethod', 'scorm'). ': ' . $grademethod;
     if(empty($attempts)) {
-        $result .= '<BR>' . get_string('gradereported','scorm') . ': ' . get_string('none') . '<BR>';
+        $result .= '<br />' . get_string('gradereported','scorm') . ': ' . get_string('none') . '<br />';
     } else {
-        $result .= '<BR>' . get_string('gradereported','scorm') . ': ' . $calculatedgrade . ($scorm->grademethod == GRADESCOES ? '' : '%') .'<BR>';
+        $result .= '<br />' . get_string('gradereported','scorm') . ': ' . $calculatedgrade . '<br />';
     }
     $result .= '</p>';
     if ($attemptcount >= $scorm->maxattempt and $scorm->maxattempt > 0) {

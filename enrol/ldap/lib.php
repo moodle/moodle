@@ -449,7 +449,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                                 WHERE u.deleted = 0 AND e.courseid = :courseid ";
                         $params = array('roleid'=>$role->id, 'courseid'=>$course_obj->id);
                         if (!empty($ldapmembers)) {
-                            list($ldapml, $params2) = $DB->get_in_or_equal($ldapmembers, SQL_PARAMS_NAMED, 'm0', false);
+                            list($ldapml, $params2) = $DB->get_in_or_equal($ldapmembers, SQL_PARAMS_NAMED, 'm', false);
                             $sql .= "AND u.idnumber $ldapml";
                             $params = array_merge($params, $params2);
                             unset($params2);

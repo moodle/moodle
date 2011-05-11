@@ -244,7 +244,7 @@ function enrol_sharing_course($user1, $user2) {
         return false;
     }
 
-    list($plugins, $params) = $DB->get_in_or_equal($plugins, SQL_PARAMS_NAMED, 'ee00');
+    list($plugins, $params) = $DB->get_in_or_equal($plugins, SQL_PARAMS_NAMED, 'ee');
     $params['enabled'] = ENROL_INSTANCE_ENABLED;
     $params['active1'] = ENROL_USER_ACTIVE;
     $params['active2'] = ENROL_USER_ACTIVE;
@@ -1517,5 +1517,49 @@ abstract class enrol_plugin {
         }
         $rs->close();
     }
-}
 
+    /**
+     * Returns an enrol_user_button that takes the user to a page where they are able to
+     * enrol users into the managers course through this plugin.
+     *
+     * Optional: If the plugin supports manual enrolments it can choose to override this
+     * otherwise it shouldn't
+     *
+     * @param course_enrolment_manager $manager
+     * @return enrol_user_button|false
+     */
+    public function get_manual_enrol_button(course_enrolment_manager $manager) {
+        return false;
+    }
+
+    /**
+     * Gets an array of the user enrolment actions
+     *
+     * @param course_enrolment_manager $manager
+     * @param stdClass $ue
+     * @return array An array of user_enrolment_actions
+     */
+    public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
+        return array();
+    }
+
+    /**
+     * Returns true if the plugin has one or more bulk operations that can be performed on
+     * user enrolments.
+     *
+     * @return bool
+     */
+    public function has_bulk_operations() {
+       return false;
+    }
+
+    /**
+     * Return an array of enrol_bulk_enrolment_operation objects that define
+     * the bulk actions that can be performed on user enrolments by the plugin.
+     *
+     * @return array
+     */
+    public function get_bulk_operations() {
+        return array();
+    }
+}
