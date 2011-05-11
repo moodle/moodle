@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -37,7 +36,7 @@ function xmldb_quiz_overview_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-//===== 1.9.0 upgrade line ======//
+    //===== 1.9.0 upgrade line ======//
 
     if ($oldversion < 2009091400) {
 
@@ -45,13 +44,20 @@ function xmldb_quiz_overview_upgrade($oldversion) {
         $table = new xmldb_table('quiz_question_regrade');
 
         // Adding fields to table quiz_question_regrade
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('questionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('attemptid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('newgrade', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('oldgrade', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('regraded', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('questionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, null, null);
+        $table->add_field('attemptid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, null, null);
+        $table->add_field('newgrade', XMLDB_TYPE_NUMBER, '12, 7', null,
+                XMLDB_NOTNULL, null, null);
+        $table->add_field('oldgrade', XMLDB_TYPE_NUMBER, '12, 7', null,
+                XMLDB_NOTNULL, null, null);
+        $table->add_field('regraded', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, null, null);
 
         // Adding keys to table quiz_question_regrade
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -79,7 +85,8 @@ function xmldb_quiz_overview_upgrade($oldversion) {
 
         // Rename field attemptid on table quiz_question_regrade to questionusageid
         $table = new xmldb_table('quiz_question_regrade');
-        $field = new xmldb_field('attemptid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'id');
+        $field = new xmldb_field('attemptid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, null, null, 'id');
 
         // Launch rename field questionusageid
         $dbman->rename_field($table, $field, 'questionusageid');
@@ -92,7 +99,8 @@ function xmldb_quiz_overview_upgrade($oldversion) {
 
         // Define field slot to be added to quiz_question_regrade
         $table = new xmldb_table('quiz_question_regrade');
-        $field = new xmldb_field('slot', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'questionusageid');
+        $field = new xmldb_field('slot', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, null, null, 'questionusageid');
 
         // Conditionally launch add field slot
         if (!$dbman->field_exists($table, $field)) {
@@ -122,7 +130,8 @@ function xmldb_quiz_overview_upgrade($oldversion) {
 
         // Rename field newgrade on table quiz_question_regrade to newfraction
         $table = new xmldb_table('quiz_question_regrade');
-        $field = new xmldb_field('newgrade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'slot');
+        $field = new xmldb_field('newgrade', XMLDB_TYPE_NUMBER, '12, 7', null,
+                null, null, null, 'slot');
 
         // Launch rename field newfraction
         $dbman->rename_field($table, $field, 'newfraction');
@@ -135,7 +144,8 @@ function xmldb_quiz_overview_upgrade($oldversion) {
 
         // Rename field oldgrade on table quiz_question_regrade to oldfraction
         $table = new xmldb_table('quiz_question_regrade');
-        $field = new xmldb_field('oldgrade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'slot');
+        $field = new xmldb_field('oldgrade', XMLDB_TYPE_NUMBER, '12, 7', null,
+                null, null, null, 'slot');
 
         // Launch rename field newfraction
         $dbman->rename_field($table, $field, 'oldfraction');
@@ -148,20 +158,22 @@ function xmldb_quiz_overview_upgrade($oldversion) {
 
         // Changing precision of field newfraction on table quiz_question_regrade to (12, 7)
         $table = new xmldb_table('quiz_question_regrade');
-        $field = new xmldb_field('newfraction', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'slot');
+        $field = new xmldb_field('newfraction', XMLDB_TYPE_NUMBER, '12, 7', null,
+                null, null, null, 'slot');
 
         // Launch change of precision for field newfraction
         $dbman->change_field_precision($table, $field);
 
         // overview savepoint reached
         upgrade_plugin_savepoint(true, 2010040606, 'quiz', 'overview');
-            }
+    }
 
     if ($oldversion < 2010040607) {
 
         // Changing precision of field oldfraction on table quiz_question_regrade to (12, 7)
         $table = new xmldb_table('quiz_question_regrade');
-        $field = new xmldb_field('oldfraction', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'slot');
+        $field = new xmldb_field('oldfraction', XMLDB_TYPE_NUMBER, '12, 7', null,
+                null, null, null, 'slot');
 
         // Launch change of precision for field newfraction
         $dbman->change_field_precision($table, $field);
@@ -174,7 +186,8 @@ function xmldb_quiz_overview_upgrade($oldversion) {
 
         // Changing nullability of field newfraction on table quiz_question_regrade to null
         $table = new xmldb_table('quiz_question_regrade');
-        $field = new xmldb_field('newfraction', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'slot');
+        $field = new xmldb_field('newfraction', XMLDB_TYPE_NUMBER, '12, 7', null,
+                null, null, null, 'slot');
 
         // Launch change of nullability for field newfraction
         $dbman->change_field_notnull($table, $field);
@@ -187,7 +200,8 @@ function xmldb_quiz_overview_upgrade($oldversion) {
 
         // Changing nullability of field oldfraction on table quiz_question_regrade to null
         $table = new xmldb_table('quiz_question_regrade');
-        $field = new xmldb_field('oldfraction', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, 'slot');
+        $field = new xmldb_field('oldfraction', XMLDB_TYPE_NUMBER, '12, 7', null,
+                null, null, null, 'slot');
 
         // Launch change of nullability for field newfraction
         $dbman->change_field_notnull($table, $field);
@@ -196,7 +210,7 @@ function xmldb_quiz_overview_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2010082701, 'quiz', 'overview');
     }
 
-     if ($oldversion < 2011021600) {
+    if ($oldversion < 2011021600) {
 
         // Define table quiz_question_regrade to be renamed to quiz_overview_regrades
         // so that it follows the Moodle coding guidelines.

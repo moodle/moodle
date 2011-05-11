@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -165,7 +164,7 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number, $inc
     // Find existing random questions in this category that are
     // not used by any quiz.
     if ($existingquestions = $DB->get_records_sql(
-            "SELECT q.id,q.qtype FROM {question} q
+            "SELECT q.id, q.qtype FROM {question} q
             WHERE qtype = 'random'
                 AND category = ?
                 AND " . $DB->sql_compare_text('questiontext') . " = ?
@@ -815,7 +814,7 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktoo
         // Get a sample from the database,
         $questionidstoshow = array_slice($questionids, 0, NUM_QS_TO_SHOW_IN_RANDOM);
         $questionstoshow = $DB->get_records_list('question', 'id', $questionidstoshow,
-                '', 'id,qtype,name,questiontext,questiontextformat');
+                '', 'id, qtype, name, questiontext, questiontextformat');
 
         // list them,
         echo '<ul>';
@@ -1183,7 +1182,6 @@ function quiz_print_status_bar($quiz) {
     echo get_string('numquestionsx', 'quiz', $numberofquestions);
     ?></span>
     <?php
-
 // Current status of the quiz, with open an close dates as a tool tip.
     $currentstatus = get_string('quizisopen', 'quiz');
     $dates = array();

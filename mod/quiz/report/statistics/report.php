@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -75,7 +74,8 @@ class quiz_statistics_report extends quiz_default_report {
         if ($fromform = $mform->get_data()) {
             $useallattempts = $fromform->useallattempts;
             if ($fromform->useallattempts) {
-                set_user_preference('quiz_report_statistics_useallattempts', $fromform->useallattempts);
+                set_user_preference('quiz_report_statistics_useallattempts',
+                        $fromform->useallattempts);
             } else {
                 unset_user_preference('quiz_report_statistics_useallattempts');
             }
@@ -116,7 +116,8 @@ class quiz_statistics_report extends quiz_default_report {
             $report = get_string('questionstatsfilename', 'quiz_statistics');
         }
         $filename = quiz_report_download_filename($report, $course->shortname, $quiz->name);
-        $this->table->is_downloading($download, $filename, get_string('quizstructureanalysis', 'quiz_statistics'));
+        $this->table->is_downloading($download, $filename,
+                get_string('quizstructureanalysis', 'quiz_statistics'));
 
         // Load the questions.
         $questions = quiz_report_get_significant_questions($quiz);
@@ -178,7 +179,8 @@ class quiz_statistics_report extends quiz_default_report {
                 }
 
                 foreach ($questions as $question) {
-                    if (question_bank::get_qtype($question->qtype, false)->can_analyse_responses()) {
+                    if (question_bank::get_qtype(
+                            $question->qtype, false)->can_analyse_responses()) {
                         $this->output_individual_question_response_analysis(
                                 $question, $reporturl, $quizstats);
 
@@ -233,7 +235,8 @@ class quiz_statistics_report extends quiz_default_report {
         } else {
             // On-screen display of overview report.
             echo $OUTPUT->heading(get_string('quizinformation', 'quiz_statistics'));
-            echo $this->output_caching_info($quizstats, $quiz->id, $currentgroup, $groupstudents, $useallattempts, $reporturl);
+            echo $this->output_caching_info($quizstats, $quiz->id, $currentgroup,
+                    $groupstudents, $useallattempts, $reporturl);
             echo $this->everything_download_options();
             echo $this->output_quiz_info_table($quizinfo);
             if ($s) {
@@ -289,14 +292,17 @@ class quiz_statistics_report extends quiz_default_report {
         $actions = $datumfromtable['actions'];
         unset($datumfromtable['actions']);
         unset($datumfromtable['name']);
-        $labels = array('s' => get_string('attempts', 'quiz_statistics'),
-                        'facility' => get_string('facility', 'quiz_statistics'),
-                        'sd' => get_string('standarddeviationq', 'quiz_statistics'),
-                        'random_guess_score' => get_string('random_guess_score', 'quiz_statistics'),
-                        'intended_weight' => get_string('intended_weight', 'quiz_statistics'),
-                        'effective_weight' => get_string('effective_weight', 'quiz_statistics'),
-                        'discrimination_index' => get_string('discrimination_index', 'quiz_statistics'),
-                        'discriminative_efficiency' => get_string('discriminative_efficiency', 'quiz_statistics'));
+        $labels = array(
+            's' => get_string('attempts', 'quiz_statistics'),
+            'facility' => get_string('facility', 'quiz_statistics'),
+            'sd' => get_string('standarddeviationq', 'quiz_statistics'),
+            'random_guess_score' => get_string('random_guess_score', 'quiz_statistics'),
+            'intended_weight' => get_string('intended_weight', 'quiz_statistics'),
+            'effective_weight' => get_string('effective_weight', 'quiz_statistics'),
+            'discrimination_index' => get_string('discrimination_index', 'quiz_statistics'),
+            'discriminative_efficiency' =>
+                                get_string('discriminative_efficiency', 'quiz_statistics')
+        );
         foreach ($datumfromtable as $item => $value) {
             $questionstatstable->data[] = array($labels[$item], $value);
         }
@@ -305,7 +311,9 @@ class quiz_statistics_report extends quiz_default_report {
         echo $OUTPUT->heading(get_string('questioninformation', 'quiz_statistics'));
         echo html_writer::table($questioninfotable);
 
-        echo $OUTPUT->box(format_text($question->questiontext, $question->questiontextformat, array('overflowdiv'=>true)).$actions, 'boxaligncenter generalbox boxwidthnormal mdl-align');
+        echo $OUTPUT->box(format_text($question->questiontext, $question->questiontextformat,
+                array('overflowdiv' => true)) . $actions,
+                'boxaligncenter generalbox boxwidthnormal mdl-align');
 
         echo $OUTPUT->heading(get_string('questionstatistics', 'quiz_statistics'));
         echo html_writer::table($questionstatstable);
@@ -317,7 +325,8 @@ class quiz_statistics_report extends quiz_default_report {
      * @param moodle_url $reporturl the URL to resisplay this report.
      * @param object $quizstats Holds the quiz statistics.
      */
-    protected function output_individual_question_response_analysis($question, $reporturl, $quizstats) {
+    protected function output_individual_question_response_analysis($question,
+            $reporturl, $quizstats) {
         global $OUTPUT;
 
         if (!question_bank::get_qtype($question->qtype, false)->can_analyse_responses()) {
@@ -338,7 +347,8 @@ class quiz_statistics_report extends quiz_default_report {
                 $questiontabletitle = '(' . $question->number . ') ' . $questiontabletitle;
             }
             if ($this->table->is_downloading() == 'xhtml') {
-                $questiontabletitle = get_string('analysisofresponsesfor', 'quiz_statistics', $questiontabletitle);
+                $questiontabletitle = get_string('analysisofresponsesfor',
+                        'quiz_statistics', $questiontabletitle);
             }
 
             // Set up the table.
@@ -443,7 +453,8 @@ class quiz_statistics_report extends quiz_default_report {
             $quizinfo[get_string('quizclose', 'quiz')] = userdate($quiz->timeclose);
         }
         if ($quiz->timeopen && $quiz->timeclose) {
-            $quizinfo[get_string('duration', 'quiz_statistics')] = format_time($quiz->timeclose - $quiz->timeopen);
+            $quizinfo[get_string('duration', 'quiz_statistics')] =
+                    format_time($quiz->timeclose - $quiz->timeopen);
         }
 
         // The statistics.
@@ -461,7 +472,8 @@ class quiz_statistics_report extends quiz_default_report {
                     $formattedvalue = quiz_format_grade($quiz, $value) . '%';
                     break;
                 case 'number_format':
-                    // + 2 decimal places, since not a percentage, and we want the same number of sig figs.
+                    // + 2 decimal places, since not a percentage,
+                    // and we want the same number of sig figs.
                     $formattedvalue = format_float($value, $quiz->decimalpoints + 2);
                     break;
                 case 'number':
@@ -543,8 +555,8 @@ class quiz_statistics_report extends quiz_default_report {
         $imageurl = new moodle_url('/mod/quiz/report/statistics/statistics_graph.php',
                 array('id' => $quizstatsid));
         $OUTPUT->heading(get_string('statisticsreportgraph', 'quiz_statistics'));
-        echo html_writer::tag('div', html_writer::empty_tag('img',
-                array('src' => $imageurl, 'alt' => get_string('statisticsreportgraph', 'quiz_statistics'))),
+        echo html_writer::tag('div', html_writer::empty_tag('img', array('src' => $imageurl,
+                'alt' => get_string('statisticsreportgraph', 'quiz_statistics'))),
                 array('class' => 'graph'));
     }
 
@@ -592,7 +604,8 @@ class quiz_statistics_report extends quiz_default_report {
         global $DB;
 
         // Calculating MEAN of marks for all attempts by students
-        // http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Calculating_MEAN_of_grades_for_all_attempts_by_students
+        // http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise
+        //        #Calculating_MEAN_of_grades_for_all_attempts_by_students
         if ($nostudentsingroup) {
             return $this->get_emtpy_stats($questions);
         }
@@ -680,9 +693,9 @@ class quiz_statistics_report extends quiz_default_report {
             //differences between marks and mean mark
             $mean = $usingattempts->total / $s;
             $sql = "SELECT
-                    SUM(POWER((quiza.sumgrades - $mean),2)) AS power2,
-                    SUM(POWER((quiza.sumgrades - $mean),3)) AS power3,
-                    SUM(POWER((quiza.sumgrades - $mean),4)) AS power4
+                    SUM(POWER((quiza.sumgrades - $mean), 2)) AS power2,
+                    SUM(POWER((quiza.sumgrades - $mean), 3)) AS power3,
+                    SUM(POWER((quiza.sumgrades - $mean), 4)) AS power4
                     FROM $fromqa
                     WHERE $whereqa";
             $params = array('mean1' => $mean, 'mean2' => $mean, 'mean3' => $mean)+$qaparams;
@@ -690,13 +703,15 @@ class quiz_statistics_report extends quiz_default_report {
             $powers = $DB->get_record_sql($sql, $params, MUST_EXIST);
 
             // Standard_Deviation
-            //see http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Standard_Deviation
+            // see http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise
+            //         #Standard_Deviation
 
             $quizstats->standarddeviation = sqrt($powers->power2 / ($s - 1));
 
             // Skewness
             if ($s > 2) {
-                //see http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis
+                // see http://docs.moodle.org/en/Development:
+                //      Quiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis
                 $m2= $powers->power2 / $s;
                 $m3= $powers->power3 / $s;
                 $m4= $powers->power4 / $s;
@@ -724,9 +739,11 @@ class quiz_statistics_report extends quiz_default_report {
         if ($s > 1) {
             $p = count($qstats->questions); // No of positions
             if ($p > 1 && isset($k2)) {
-                $quizstats->cic = (100 * $p / ($p -1)) * (1 - ($qstats->get_sum_of_mark_variance())/$k2);
-                $quizstats->errorratio = 100 * sqrt(1-($quizstats->cic/100));
-                $quizstats->standarderror = ($quizstats->errorratio * $quizstats->standarddeviation / 100);
+                $quizstats->cic = (100 * $p / ($p -1)) *
+                        (1 - ($qstats->get_sum_of_mark_variance()) / $k2);
+                $quizstats->errorratio = 100 * sqrt(1 - ($quizstats->cic / 100));
+                $quizstats->standarderror = $quizstats->errorratio *
+                        $quizstats->standarddeviation / 100;
             }
         }
 
@@ -883,7 +900,8 @@ class quiz_statistics_report extends quiz_default_report {
     protected function analyse_responses($quizstatisticsid, $quizid, $currentgroup,
             $nostudentsingroup, $useallattempts, $groupstudents, $questions, $subquestions) {
 
-        $qubaids = quiz_statistics_qubaids_condition($quizid, $currentgroup, $groupstudents, $useallattempts);
+        $qubaids = quiz_statistics_qubaids_condition(
+                $quizid, $currentgroup, $groupstudents, $useallattempts);
 
         $done = array();
         foreach ($questions as $question) {
@@ -919,8 +937,10 @@ class quiz_statistics_report extends quiz_default_report {
         $output = '<form action="'. $this->table->baseurl .'" method="post">';
         $output .= '<div class="mdl-align">';
         $output .= '<input type="hidden" name="everything" value="1"/>';
-        $output .= '<input type="submit" value="'.get_string('downloadeverything', 'quiz_statistics').'"/>';
-        $output .= html_writer::select($downloadoptions, 'download', $this->table->defaultdownloadformat, false);
+        $output .= '<input type="submit" value="' .
+                get_string('downloadeverything', 'quiz_statistics') . '"/>';
+        $output .= html_writer::select($downloadoptions, 'download',
+                $this->table->defaultdownloadformat, false);
         $output .= '</div></form>';
 
         return $output;
@@ -933,8 +953,10 @@ class quiz_statistics_report extends quiz_default_report {
      * @param int $quizid the quiz id.
      * @param int $currentgroup the id of the currently selected group, or 0.
      * @param array $groupstudents ids of students in the group.
-     * @param bool $useallattempts whether to use all attempts, instead of just first attempts.
-     * @return string a HTML snipped saying when the stats were last computed, or blank if that is not appropriate.
+     * @param bool $useallattempts whether to use all attempts, instead of just
+     *      first attempts.
+     * @return string a HTML snipped saying when the stats were last computed,
+     *      or blank if that is not appropriate.
      */
     protected function output_caching_info($quizstats, $quizid, $currentgroup,
             $groupstudents, $useallattempts, $reporturl) {
@@ -962,11 +984,14 @@ class quiz_statistics_report extends quiz_default_report {
         $a->lastcalculated = format_time(time() - $quizstats->timemodified);
         $a->count = $count;
 
-        $recalcualteurl = new moodle_url($reporturl, array('recalculate' => 1, 'sesskey' => sesskey()));
+        $recalcualteurl = new moodle_url($reporturl,
+                array('recalculate' => 1, 'sesskey' => sesskey()));
         $output = '';
-        $output .= $OUTPUT->box_start('boxaligncenter generalbox boxwidthnormal mdl-align', 'cachingnotice');
+        $output .= $OUTPUT->box_start(
+                'boxaligncenter generalbox boxwidthnormal mdl-align', 'cachingnotice');
         $output .= get_string('lastcalculated', 'quiz_statistics', $a);
-        $output .= $OUTPUT->single_button($recalcualteurl, get_string('recalculatenow', 'quiz_statistics'));
+        $output .= $OUTPUT->single_button($recalcualteurl,
+                get_string('recalculatenow', 'quiz_statistics'));
         $output .= $OUTPUT->box_end(true);
 
         return $output;
@@ -983,7 +1008,7 @@ class quiz_statistics_report extends quiz_default_report {
         global $DB;
 
         $todelete = $DB->get_records_menu('quiz_statistics', array('quizid' => $quizid,
-                'groupid' => $currentgroup, 'allattempts' => $useallattempts), '', 'id,1');
+                'groupid' => $currentgroup, 'allattempts' => $useallattempts), '', 'id, 1');
 
         if (!$todelete) {
             return;
@@ -991,9 +1016,12 @@ class quiz_statistics_report extends quiz_default_report {
 
         list($todeletesql, $todeleteparams) = $DB->get_in_or_equal(array_keys($todelete));
 
-        $DB->delete_records_select('quiz_question_statistics', 'quizstatisticsid ' . $todeletesql, $todeleteparams);
-        $DB->delete_records_select('quiz_question_response_stats', 'quizstatisticsid ' . $todeletesql, $todeleteparams);
-        $DB->delete_records_select('quiz_statistics', 'id ' . $todeletesql, $todeleteparams);
+        $DB->delete_records_select('quiz_question_statistics',
+                'quizstatisticsid ' . $todeletesql, $todeleteparams);
+        $DB->delete_records_select('quiz_question_response_stats',
+                'quizstatisticsid ' . $todeletesql, $todeleteparams);
+        $DB->delete_records_select('quiz_statistics',
+                'id ' . $todeletesql, $todeleteparams);
     }
 
     /**

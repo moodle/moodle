@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -41,7 +40,8 @@ class mod_quiz_report_responses_settings extends moodleform {
     protected function definition() {
         $mform = $this->_form;
 
-        $mform->addElement('header', 'preferencespage', get_string('preferencespage', 'quiz_overview'));
+        $mform->addElement('header', 'preferencespage',
+                get_string('preferencespage', 'quiz_overview'));
 
         if (!$this->_customdata['currentgroup']) {
             $studentsstring = get_string('participants');
@@ -57,32 +57,46 @@ class mod_quiz_report_responses_settings extends moodleform {
         }
         $options = array();
         if (!$this->_customdata['currentgroup']) {
-            $options[QUIZ_REPORT_ATTEMPTS_ALL] = get_string('optallattempts','quiz_overview');
+            $options[QUIZ_REPORT_ATTEMPTS_ALL] = get_string('optallattempts', 'quiz_overview');
         }
-        if ($this->_customdata['currentgroup'] || !is_inside_frontpage($this->_customdata['context'])) {
-            $options[QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS] = get_string('optallstudents','quiz_overview', $studentsstring);
+        if ($this->_customdata['currentgroup'] ||
+                !is_inside_frontpage($this->_customdata['context'])) {
+            $options[QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS] =
+                    get_string('optallstudents', 'quiz_overview', $studentsstring);
             $options[QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH] =
-                     get_string('optattemptsonly','quiz_overview', $studentsstring);
-            $options[QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO] = get_string('optnoattemptsonly', 'quiz_overview', $studentsstring);
+                     get_string('optattemptsonly', 'quiz_overview', $studentsstring);
+            $options[QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO] =
+                    get_string('optnoattemptsonly', 'quiz_overview', $studentsstring);
         }
-        $mform->addElement('select', 'attemptsmode', get_string('show', 'quiz_overview'), $options);
+        $mform->addElement('select', 'attemptsmode',
+                get_string('show', 'quiz_overview'), $options);
 
         if ($this->_customdata['qmsubselect']) {
-            $gm = '<span class="gradedattempt">'.quiz_get_grading_option_name($this->_customdata['quiz']->grademethod).'</span>';
-            $mform->addElement('advcheckbox', 'qmfilter', get_string('showattempts', 'quiz_overview'), get_string('optonlygradedattempts', 'quiz_overview', $gm), null, array(0,1));
+            $gm = '<span class="gradedattempt">' .
+                    quiz_get_grading_option_name($this->_customdata['quiz']->grademethod) .
+                    '</span>';
+            $mform->addElement('advcheckbox', 'qmfilter',
+                    get_string('showattempts', 'quiz_overview'),
+                    get_string('optonlygradedattempts', 'quiz_overview', $gm), null, array(0, 1));
         }
 
         $colsgroup = array();
-        $colsgroup[] = $mform->createElement('advcheckbox', 'qtext', '', get_string('summaryofquestiontext', 'quiz_responses'));
-        $colsgroup[] = $mform->createElement('advcheckbox', 'resp', '', get_string('summaryofresponse', 'quiz_responses'));
-        $colsgroup[] = $mform->createElement('advcheckbox', 'right', '', get_string('summaryofrightanswer', 'quiz_responses'));
-        $mform->addGroup($colsgroup, null, get_string('include', 'quiz_responses'), '<br />', false);
+        $colsgroup[] = $mform->createElement('advcheckbox', 'qtext', '',
+                get_string('summaryofquestiontext', 'quiz_responses'));
+        $colsgroup[] = $mform->createElement('advcheckbox', 'resp', '',
+                get_string('summaryofresponse', 'quiz_responses'));
+        $colsgroup[] = $mform->createElement('advcheckbox', 'right', '',
+                get_string('summaryofrightanswer', 'quiz_responses'));
+        $mform->addGroup($colsgroup, null,
+                get_string('include', 'quiz_responses'), '<br />', false);
 
-        $mform->addElement('header', 'preferencesuser', get_string('preferencesuser', 'quiz_overview'));
+        $mform->addElement('header', 'preferencesuser',
+                get_string('preferencesuser', 'quiz_overview'));
 
         $mform->addElement('text', 'pagesize', get_string('pagesize', 'quiz_overview'));
         $mform->setType('pagesize', PARAM_INT);
 
-        $mform->addElement('submit', 'submitbutton', get_string('preferencessave', 'quiz_overview'));
+        $mform->addElement('submit', 'submitbutton',
+                get_string('preferencessave', 'quiz_overview'));
     }
 }

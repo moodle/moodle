@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -212,7 +211,7 @@ class mod_quiz_mod_form extends moodleform_mod {
             $options[$i] = $i;
         }
         $mform->addElement('select', 'questiondecimalpoints', get_string('decimalplacesquestion', 'quiz'), $options);
-        $mform->addHelpButton('questiondecimalpoints', 'decimalplacesquestion','quiz');
+        $mform->addHelpButton('questiondecimalpoints', 'decimalplacesquestion', 'quiz');
         $mform->setAdvanced('questiondecimalpoints', $quizconfig->questiondecimalpoints_adv);
         $mform->setDefault('questiondecimalpoints', $quizconfig->questiondecimalpoints);
 

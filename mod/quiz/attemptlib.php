@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  * @since      Moodle 2.0
  */
 class moodle_quiz_exception extends moodle_exception {
-    public function __construct($quizobj, $errorcode, $a = NULL, $link = '', $debuginfo = null) {
+    public function __construct($quizobj, $errorcode, $a = null, $link = '', $debuginfo = null) {
         if (!$link) {
             $link = $quizobj->view_url();
         }
@@ -128,8 +128,9 @@ class quiz {
                 array('quizid' => $this->quiz->id));
     }
 
-   /**
-     * Fully load some or all of the questions for this quiz. You must call {@link preload_questions()} first.
+    /**
+     * Fully load some or all of the questions for this quiz. You must call
+     * {@link preload_questions()} first.
      *
      * @param array $questionids question ids of the questions to load. null for all.
      */
@@ -238,12 +239,13 @@ class quiz {
 
     /**
      * @param int $timenow the current time as a unix timestamp.
-     * @return quiz_access_manager and instance of the quiz_access_manager class for this quiz at this time.
+     * @return quiz_access_manager and instance of the quiz_access_manager class
+     *      for this quiz at this time.
      */
     public function get_access_manager($timenow) {
         if (is_null($this->accessmanager)) {
             $this->accessmanager = new quiz_access_manager($this, $timenow,
-                    has_capability('mod/quiz:ignoretimelimits', $this->context, NULL, false));
+                    has_capability('mod/quiz:ignoretimelimits', $this->context, null, false));
         }
         return $this->accessmanager;
     }
@@ -251,14 +253,14 @@ class quiz {
     /**
      * Wrapper round the has_capability funciton that automatically passes in the quiz context.
      */
-    public function has_capability($capability, $userid = NULL, $doanything = true) {
+    public function has_capability($capability, $userid = null, $doanything = true) {
         return has_capability($capability, $this->context, $userid, $doanything);
     }
 
     /**
      * Wrapper round the require_capability funciton that automatically passes in the quiz context.
      */
-    public function require_capability($capability, $userid = NULL, $doanything = true) {
+    public function require_capability($capability, $userid = null, $doanything = true) {
         return require_capability($capability, $this->context, $userid, $doanything);
     }
 
@@ -319,8 +321,8 @@ class quiz {
 
     // Private methods =====================================================================
     /**
-     *  Check that the definition of a particular question is loaded, and if not throw an exception.
-     *  @param $id a questionid.
+     * Check that the definition of a particular question is loaded, and if not throw an exception.
+     * @param $id a questionid.
      */
     protected function ensure_question_loaded($id) {
         if (isset($this->questions[$id]->_partiallyloaded)) {
@@ -372,11 +374,11 @@ class quiz_attempt {
     protected static function create_helper($conditions) {
         global $DB;
 
-// TODO deal with the issue that makes this necessary.
-//    if (!$DB->record_exists('question_sessions', array('attemptid' => $attempt->uniqueid))) {
-//        // this attempt has not yet been upgraded to the new model
-//        quiz_upgrade_states($attempt);
-//    }
+        // TODO deal with the issue that makes this necessary.
+        // if (!$DB->record_exists('question_sessions', array('attemptid' => $attempt->uniqueid))) {
+        //     // this attempt has not yet been upgraded to the new model
+        //     quiz_upgrade_states($attempt);
+        // }
 
         $attempt = $DB->get_record('quiz_attempts', $conditions, '*', MUST_EXIST);
         $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz), '*', MUST_EXIST);
@@ -507,7 +509,8 @@ class quiz_attempt {
 
     /**
      * @param int $timenow the current time as a unix timestamp.
-     * @return quiz_access_manager and instance of the quiz_access_manager class for this quiz at this time.
+     * @return quiz_access_manager and instance of the quiz_access_manager class
+     *      for this quiz at this time.
      */
     public function get_access_manager($timenow) {
         return $this->quizobj->get_access_manager($timenow);
@@ -538,7 +541,10 @@ class quiz_attempt {
         return $this->attempt->userid;
     }
 
-    /** @return bool whether this attempt has been finished (true) or is still in progress (false). */
+    /**
+     * @return bool whether this attempt has been finished (true) or is still
+     *     in progress (false).
+     */
     public function is_finished() {
         return $this->attempt->timefinish != 0;
     }
@@ -588,7 +594,8 @@ class quiz_attempt {
 
         // Check the users have at least one group in common.
         $teachersgroups = groups_get_activity_allowed_groups($cm);
-        $studentsgroups = groups_get_all_groups($cm->course, $this->attempt->userid, $cm->groupingid);
+        $studentsgroups = groups_get_all_groups(
+                $cm->course, $this->attempt->userid, $cm->groupingid);
         return $teachersgroups && $studentsgroups &&
                 array_intersect(array_keys($teachersgroups), array_keys($studentsgroups));
     }
@@ -605,14 +612,14 @@ class quiz_attempt {
     /**
      * Wrapper round the has_capability funciton that automatically passes in the quiz context.
      */
-    public function has_capability($capability, $userid = NULL, $doanything = true) {
+    public function has_capability($capability, $userid = null, $doanything = true) {
         return $this->quizobj->has_capability($capability, $userid, $doanything);
     }
 
     /**
      * Wrapper round the require_capability funciton that automatically passes in the quiz context.
      */
-    public function require_capability($capability, $userid = NULL, $doanything = true) {
+    public function require_capability($capability, $userid = null, $doanything = true) {
         return $this->quizobj->require_capability($capability, $userid, $doanything);
     }
 
@@ -715,35 +722,41 @@ class quiz_attempt {
     }
 
     /**
-     * Return the grade obtained on a particular question, if the user is permitted to see it.
-     * You must previously have called load_question_states to load the state data about this question.
+     * Return the grade obtained on a particular question, if the user is permitted
+     * to see it. You must previously have called load_question_states to load the
+     * state data about this question.
      *
      * @param int $slot the number used to identify this question within this attempt.
-     * @return string the formatted grade, to the number of decimal places specified by the quiz.
+     * @return string the formatted grade, to the number of decimal places specified
+     *      by the quiz.
      */
     public function get_question_number($slot) {
         return $this->quba->get_question($slot)->_number;
     }
 
     /**
-     * Return the grade obtained on a particular question, if the user is permitted to see it.
-     * You must previously have called load_question_states to load the state data about this question.
+     * Return the grade obtained on a particular question, if the user is permitted
+     * to see it. You must previously have called load_question_states to load the
+     * state data about this question.
      *
      * @param int $slot the number used to identify this question within this attempt.
-     * @return string the formatted grade, to the number of decimal places specified by the quiz.
+     * @return string the formatted grade, to the number of decimal places specified
+     *      by the quiz.
      */
     public function get_question_name($slot) {
         return $this->quba->get_question($slot)->name;
     }
 
     /**
-     * Return the grade obtained on a particular question, if the user is permitted to see it.
-     * You must previously have called load_question_states to load the state data about this question.
+     * Return the grade obtained on a particular question, if the user is permitted
+     * to see it. You must previously have called load_question_states to load the
+     * state data about this question.
      *
      * @param int $slot the number used to identify this question within this attempt.
      * @param bool $showcorrectness Whether right/partial/wrong states should
      * be distinguised.
-     * @return string the formatted grade, to the number of decimal places specified by the quiz.
+     * @return string the formatted grade, to the number of decimal places specified
+     *      by the quiz.
      */
     public function get_question_status($slot, $showcorrectness) {
         return $this->quba->get_question_state_string($slot, $showcorrectness);
@@ -911,7 +924,8 @@ class quiz_attempt {
         $options = $this->get_display_options(true);
         $options->hide_all_feedback();
         $options->manualcomment = question_display_options::EDITABLE;
-        return $this->quba->render_question($slot, $options, $this->quba->get_question($slot)->_number);
+        return $this->quba->render_question($slot, $options,
+                $this->quba->get_question($slot)->_number);
     }
 
     /**
@@ -1054,8 +1068,10 @@ class quiz_attempt {
      * Used by {@link attempt_url()} and {@link review_url()}.
      *
      * @param string $script. Used in the URL like /mod/quiz/$script.php
-     * @param int $slot identifies the specific question on the page to jump to. 0 to just use the $page parameter.
-     * @param int $page -1 to look up the page number from the slot, otherwise the page number to go to.
+     * @param int $slot identifies the specific question on the page to jump to.
+     *      0 to just use the $page parameter.
+     * @param int $page -1 to look up the page number from the slot, otherwise
+     *      the page number to go to.
      * @param bool $showall if true, return a URL with showall=1, and not page number
      * @param int $thispage the page we are currently on. Links to questions on this
      *      page will just be a fragment #q123. -1 to disable this.

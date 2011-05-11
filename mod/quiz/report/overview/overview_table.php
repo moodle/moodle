@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -70,11 +69,13 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
             }
             if ($this->groupstudents) {
                 list($usql, $uparams) = $DB->get_in_or_equal($this->groupstudents);
-                $record = $DB->get_record_sql($averagesql . ' AND qg.userid ' . $usql, array_merge($params, $uparams));
+                $record = $DB->get_record_sql($averagesql . ' AND qg.userid ' . $usql,
+                        array_merge($params, $uparams));
                 $groupaveragerow = array(
                         $namekey => get_string('groupavg', 'grades'),
                         'sumgrades' => $this->format_average($record),
-                        'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade($record->grade, $this->quiz->id)));
+                        'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade(
+                                                    $record->grade, $this->quiz->id)));
                 if ($this->detailedmarks && ($this->quiz->attempts == 1 || $this->qmsubselect)) {
                     $avggradebyq = $this->load_average_question_grades($this->groupstudents);
                     $groupaveragerow += $this->format_average_grade_for_questions($avggradebyq);
@@ -84,11 +85,13 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
 
             if ($this->students) {
                 list($usql, $uparams) = $DB->get_in_or_equal($this->students);
-                $record = $DB->get_record_sql($averagesql . ' AND qg.userid ' . $usql, array_merge($params, $uparams));
+                $record = $DB->get_record_sql($averagesql . ' AND qg.userid ' . $usql,
+                        array_merge($params, $uparams));
                 $overallaveragerow = array(
                         $namekey => get_string('overallaverage', 'grades'),
                         'sumgrades' => $this->format_average($record),
-                        'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade($record->grade, $this->quiz->id, $this->context)));
+                        'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade(
+                                            $record->grade, $this->quiz->id, $this->context)));
                 if ($this->detailedmarks && ($this->quiz->attempts == 1 || $this->qmsubselect)) {
                     $avggradebyq = $this->load_average_question_grades($this->students);
                     $overallaveragerow += $this->format_average_grade_for_questions($avggradebyq);
@@ -106,7 +109,8 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
         foreach ($this->questions as $question) {
             if (isset($gradeaverages[$question->slot]) && $question->maxmark > 0) {
                 $record = $gradeaverages[$question->slot];
-                $record->grade = quiz_rescale_grade($record->averagefraction * $question->maxmark, $this->quiz, false);
+                $record->grade = quiz_rescale_grade(
+                        $record->averagefraction * $question->maxmark, $this->quiz, false);
             } else {
                 $record = new stdClass();
                 $record->grade = null;
@@ -138,7 +142,8 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
         } else {
             return html_writer::tag('span', html_writer::tag('span',
                     $average, array('class' => 'average')) . ' ' . html_writer::tag('span',
-                    '(' . $record->numaveraged . ')', array('class' => 'count')), array('class' => 'avgcell'));
+                    '(' . $record->numaveraged . ')', array('class' => 'count')),
+                    array('class' => 'avgcell'));
         }
     }
 
@@ -148,9 +153,11 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
         }
 
         // Start form
-        $url = new moodle_url($this->reporturl, $this->displayoptions + array('sesskey' => sesskey()));
+        $url = new moodle_url($this->reporturl, $this->displayoptions +
+                array('sesskey' => sesskey()));
         echo '<div id="tablecontainer" class="overview-tablecontainer">';
-        echo '<form id="attemptsform" method="post" action="' . $this->reporturl->out_omit_querystring() . '">';
+        echo '<form id="attemptsform" method="post" action="' .
+                $this->reporturl->out_omit_querystring() . '">';
         echo '<div style="display: none;">';
         echo html_writer::input_hidden_params($url);
         echo '</div>';
@@ -164,15 +171,17 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
 
         // TODO add back are you sure, and convert to html_writer.
         echo '<div id="commands">';
-        echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.
-                get_string('selectall', 'quiz').'</a> / ';
-        echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.
-                get_string('selectnone', 'quiz').'</a> ';
+        echo '<a href="javascript:select_all_in(\'DIV\', null, \'tablecontainer\');">' .
+                get_string('selectall', 'quiz') . '</a> / ';
+        echo '<a href="javascript:deselect_all_in(\'DIV\', null, \'tablecontainer\');">' .
+                get_string('selectnone', 'quiz') . '</a> ';
         echo '&nbsp;&nbsp;';
         if (has_capability('mod/quiz:regrade', $this->context)) {
-            echo '<input type="submit" name="regrade" value="'.get_string('regradeselected', 'quiz_overview').'"/>';
+            echo '<input type="submit" name="regrade" value="' .
+                    get_string('regradeselected', 'quiz_overview') . '"/>';
         }
-        echo '<input type="submit" name="delete" value="'.get_string('deleteselected', 'quiz_overview').'"/>';
+        echo '<input type="submit" name="delete" value="' .
+                get_string('deleteselected', 'quiz_overview') . '"/>';
         echo '</div>';
         // Close form
         echo '</div>';
@@ -194,11 +203,15 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
             $oldsumgrade = 0;
             foreach ($this->questions as $question) {
                 if (isset($this->regradedqs[$attempt->usageid][$question->slot])) {
-                    $newsumgrade += $this->regradedqs[$attempt->usageid][$question->slot]->newfraction * $question->maxmark;
-                    $oldsumgrade += $this->regradedqs[$attempt->usageid][$question->slot]->oldfraction * $question->maxmark;
+                    $newsumgrade += $this->regradedqs[$attempt->usageid]
+                            [$question->slot]->newfraction * $question->maxmark;
+                    $oldsumgrade += $this->regradedqs[$attempt->usageid]
+                            [$question->slot]->oldfraction * $question->maxmark;
                 } else {
-                    $newsumgrade += $this->lateststeps[$attempt->usageid][$question->slot]->fraction * $question->maxmark;
-                    $oldsumgrade += $this->lateststeps[$attempt->usageid][$question->slot]->fraction * $question->maxmark;
+                    $newsumgrade += $this->lateststeps[$attempt->usageid]
+                            [$question->slot]->fraction * $question->maxmark;
+                    $oldsumgrade += $this->lateststeps[$attempt->usageid]
+                            [$question->slot]->fraction * $question->maxmark;
                 }
             }
             $newsumgrade = quiz_rescale_grade($newsumgrade, $this->quiz);
@@ -220,7 +233,7 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
      */
     public function other_cols($colname, $attempt) {
         if (!preg_match('/^qsgrade(\d+)$/', $colname, $matches)) {
-            return NULL;
+            return null;
         }
         $slot = $matches[1];
         $question = $this->questions[$slot];
@@ -240,7 +253,8 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
                 $grade = '-';
             }
         } else {
-            $grade = quiz_rescale_grade($stepdata->fraction * $question->maxmark, $this->quiz, 'question');
+            $grade = quiz_rescale_grade(
+                    $stepdata->fraction * $question->maxmark, $this->quiz, 'question');
         }
 
         if ($this->is_downloading()) {

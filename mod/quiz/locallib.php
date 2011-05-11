@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -79,18 +78,19 @@ function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $isp
     global $USER;
 
     if ($attemptnumber == 1 || !$quiz->attemptonlast) {
-    /// We are not building on last attempt so create a new attempt.
+        // We are not building on last attempt so create a new attempt.
         $attempt = new stdClass();
         $attempt->quiz = $quiz->id;
         $attempt->userid = $USER->id;
         $attempt->preview = 0;
         if ($quiz->shufflequestions) {
-            $attempt->layout = quiz_clean_layout(quiz_repaginate($quiz->questions, $quiz->questionsperpage, true),true);
+            $attempt->layout = quiz_clean_layout(quiz_repaginate(
+                    $quiz->questions, $quiz->questionsperpage, true), true);
         } else {
-            $attempt->layout = quiz_clean_layout($quiz->questions,true);
+            $attempt->layout = quiz_clean_layout($quiz->questions, true);
         }
     } else {
-    /// Build on last attempt.
+        // Build on last attempt.
         if (empty($lastattempt)) {
             print_error('cannotfindprevattempt', 'quiz');
         }
@@ -102,7 +102,7 @@ function quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $isp
     $attempt->timefinish = 0;
     $attempt->timemodified = $timenow;
 
-/// If this is a preview, mark it as such.
+    // If this is a preview, mark it as such.
     if ($ispreview) {
         $attempt->preview = 1;
     }
@@ -154,7 +154,8 @@ function quiz_get_latest_attempt_by_user($quizid, $userid) {
 
 /**
  * Delete a quiz attempt.
- * @param mixed $attempt an integer attempt id or an attempt object (row of the quiz_attempts table).
+ * @param mixed $attempt an integer attempt id or an attempt object
+ *      (row of the quiz_attempts table).
  * @param object $quiz the quiz object.
  */
 function quiz_delete_attempt($attempt, $quiz) {
@@ -179,7 +180,7 @@ function quiz_delete_attempt($attempt, $quiz) {
     // else recalculate best grade
     $userid = $attempt->userid;
     if (!$DB->record_exists('quiz_attempts', array('userid' => $userid, 'quiz' => $quiz->id))) {
-        $DB->delete_records('quiz_grades', array('userid' => $userid,'quiz' => $quiz->id));
+        $DB->delete_records('quiz_grades', array('userid' => $userid, 'quiz' => $quiz->id));
     } else {
         quiz_save_best_grade($quiz, $userid);
     }
@@ -312,7 +313,7 @@ function quiz_get_all_question_grades($quiz) {
         $params = array_merge($params, $question_params);
     }
 
-    $instances = $DB->get_records_sql("SELECT question,grade,id
+    $instances = $DB->get_records_sql("SELECT question, grade, id
                                     FROM {quiz_question_instances}
                                     WHERE quiz = ? $wheresql", $params);
 
@@ -337,7 +338,8 @@ function quiz_get_all_question_grades($quiz) {
  * @param object $quiz the quiz object. Only the fields grade, sumgrades and decimalpoints are used.
  * @param bool|string $format whether to format the results for display
  *      or 'question' to format a question grade (different number of decimal places.
- * @return float|string the rescaled grade, or null/the lang string 'notyetgraded' if the $grade is null.
+ * @return float|string the rescaled grade, or null/the lang string 'notyetgraded'
+ *      if the $grade is null.
  */
 function quiz_rescale_grade($rawgrade, $quiz, $format = true) {
     if (is_null($rawgrade)) {
@@ -381,7 +383,8 @@ function quiz_feedback_for_grade($grade, $quiz, $context) {
     // Clean the text, ready for display.
     $formatoptions = new stdClass();
     $formatoptions->noclean = true;
-    $feedbacktext = file_rewrite_pluginfile_urls($feedback->feedbacktext, 'pluginfile.php', $context->id, 'mod_quiz', 'feedback', $feedback->id);
+    $feedbacktext = file_rewrite_pluginfile_urls($feedback->feedbacktext, 'pluginfile.php',
+            $context->id, 'mod_quiz', 'feedback', $feedback->id);
     $feedbacktext = format_text($feedbacktext, $feedback->feedbacktextformat, $formatoptions);
 
     return $feedbacktext;
@@ -462,7 +465,8 @@ function quiz_update_all_attempt_sumgrades($quiz) {
  * quiz_update_grades.
  *
  * @param float $newgrade the new maximum grade for the quiz.
- * @param object $quiz the quiz we are updating. Passed by reference so its grade field can be updated too.
+ * @param object $quiz the quiz we are updating. Passed by reference so its
+ *      grade field can be updated too.
  * @return bool indicating success or failure.
  */
 function quiz_set_grade($newgrade, $quiz) {
@@ -533,7 +537,7 @@ function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
         $userid = $USER->id;
     }
 
-    if (!$attempts){
+    if (!$attempts) {
         // Get all the attempts made by the user
         $attempts = quiz_get_user_attempts($quiz->id, $userid);
     }
@@ -546,7 +550,8 @@ function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
     if (is_null($bestgrade)) {
         $DB->delete_records('quiz_grades', array('quiz' => $quiz->id, 'userid' => $userid));
 
-    } else if ($grade = $DB->get_record('quiz_grades', array('quiz' => $quiz->id, 'userid' => $userid))) {
+    } else if ($grade = $DB->get_record('quiz_grades',
+            array('quiz' => $quiz->id, 'userid' => $userid))) {
         $grade->grade = $bestgrade;
         $grade->timemodified = time();
         $DB->update_record('quiz_grades', $grade);
@@ -804,7 +809,8 @@ function quiz_get_grading_options() {
 }
 
 /**
- * @param int $option one of the values QUIZ_GRADEHIGHEST, QUIZ_GRADEAVERAGE, QUIZ_ATTEMPTFIRST or QUIZ_ATTEMPTLAST.
+ * @param int $option one of the values QUIZ_GRADEHIGHEST, QUIZ_GRADEAVERAGE,
+ *      QUIZ_ATTEMPTFIRST or QUIZ_ATTEMPTLAST.
  * @return the lang string for that option.
  */
 function quiz_get_grading_option_name($option) {
@@ -817,10 +823,10 @@ function quiz_get_grading_option_name($option) {
 /**
  * Upgrade states for an attempt to Moodle 1.5 model
  *
- * Any state that does not yet have its timestamp set to nonzero has not yet been upgraded from Moodle 1.4
- * The reason these are still around is that for large sites it would have taken too long to
- * upgrade all states at once. This function sets the timestamp field and creates an entry in the
- * question_sessions table.
+ * Any state that does not yet have its timestamp set to nonzero has not yet been
+ * upgraded from Moodle 1.4. The reason these are still around is that for large
+ * sites it would have taken too long to upgrade all states at once. This function
+ * sets the timestamp field and creates an entry in the question_sessions table.
  * @param object $attempt  The attempt whose states need upgrading
  */
 function quiz_upgrade_states($attempt) {
@@ -829,7 +835,8 @@ function quiz_upgrade_states($attempt) {
     // only one state record per question for this attempt.
 
     // We set the timestamp of all states to the timemodified field of the attempt.
-    $DB->execute("UPDATE {question_states} SET timestamp = ? WHERE attempt = ?", array($attempt->timemodified, $attempt->uniqueid));
+    $DB->execute("UPDATE {question_states} SET timestamp = ? WHERE attempt = ?",
+            array($attempt->timemodified, $attempt->uniqueid));
 
     // For each state we create an entry in the question_sessions table, with both newest and
     // newgraded pointing to this state.
@@ -840,10 +847,11 @@ function quiz_upgrade_states($attempt) {
     $session->attemptid = $attempt->uniqueid;
     $questionlist = quiz_questions_in_quiz($attempt->layout);
     $params = array($attempt->uniqueid);
-    list($usql, $question_params) = $DB->get_in_or_equal(explode(',',$questionlist));
+    list($usql, $question_params) = $DB->get_in_or_equal(explode(',', $questionlist));
     $params = array_merge($params, $question_params);
 
-    if ($questionlist and $states = $DB->get_records_select('question_states', "attempt = ? AND question $usql", $params)) {
+    if ($questionlist and $states = $DB->get_records_select('question_states',
+            "attempt = ? AND question $usql", $params)) {
         foreach ($states as $state) {
             $session->newgraded = $state->id;
             $session->newest = $state->id;
@@ -872,7 +880,8 @@ function quiz_question_action_icons($quiz, $cmid, $question, $returnurl) {
  * @param object $question the question.
  * @param string $returnurl url to return to after action is done.
  * @param string $contentbeforeicon some HTML content to be added inside the link, before the icon.
- * @return the HTML for an edit icon, view icon, or nothing for a question (depending on permissions).
+ * @return the HTML for an edit icon, view icon, or nothing for a question
+ *      (depending on permissions).
  */
 function quiz_question_edit_button($cmid, $question, $returnurl, $contentaftericon = '') {
     global $CFG, $OUTPUT;
@@ -880,18 +889,20 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
     // Minor efficiency saving. Only get strings once, even if there are a lot of icons on one page.
     static $stredit = null;
     static $strview = null;
-    if ($stredit === null){
+    if ($stredit === null) {
         $stredit = get_string('edit');
         $strview = get_string('view');
     }
 
     // What sort of icon should we show?
     $action = '';
-    if (!empty($question->id) && (question_has_capability_on($question, 'edit', $question->category) ||
-            question_has_capability_on($question, 'move', $question->category))) {
+    if (!empty($question->id) &&
+            (question_has_capability_on($question, 'edit', $question->category) ||
+                    question_has_capability_on($question, 'move', $question->category))) {
         $action = $stredit;
         $icon = '/t/edit';
-    } else if (!empty($question->id) && question_has_capability_on($question, 'view', $question->category)) {
+    } else if (!empty($question->id) &&
+            question_has_capability_on($question, 'view', $question->category)) {
         $action = $strview;
         $icon = '/i/info';
     }
@@ -1007,7 +1018,8 @@ function quiz_get_review_options($quiz, $attempt, $context) {
                 array('attempt' => $attempt->id));
     }
 
-    if (!is_null($context) && !$attempt->preview && has_capability('mod/quiz:viewreports', $context) &&
+    if (!is_null($context) && !$attempt->preview &&
+            has_capability('mod/quiz:viewreports', $context) &&
             has_capability('moodle/grade:viewhidden', $context)) {
         // People who can see reports and hidden grades should be shown everything,
         // except during preview when teachers want to see what students see.
@@ -1241,7 +1253,7 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
     // check for confirmation required
     $sendconfirm = false;
     $notifyexcludeusers = '';
-    if (has_capability('mod/quiz:emailconfirmsubmission', $context, NULL, false)) {
+    if (has_capability('mod/quiz:emailconfirmsubmission', $context, null, false)) {
         // exclude from notify emails later
         $notifyexcludeusers = $USER->id;
         // send the email
@@ -1249,7 +1261,8 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
     }
 
     // check for notifications required
-    $notifyfields = 'u.id, u.username, u.firstname, u.lastname, u.email, u.lang, u.timezone, u.mailformat, u.maildisplay';
+    $notifyfields = 'u.id, u.username, u.firstname, u.lastname, u.email, u.lang, ' .
+            'u.timezone, u.mailformat, u.maildisplay';
     $groups = groups_get_all_groups($course->id, $USER->id);
     if (is_array($groups) && count($groups) > 0) {
         $groups = array_keys($groups);
@@ -1273,9 +1286,11 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
         // quiz info
         $a->quizname = $quiz->name;
         $a->quizreporturl = $CFG->wwwroot . '/mod/quiz/report.php?id=' . $cm->id;
-        $a->quizreportlink = '<a href="' . $a->quizreporturl . '">' . format_string($quiz->name) . ' report</a>';
+        $a->quizreportlink = '<a href="' . $a->quizreporturl . '">' .
+                format_string($quiz->name) . ' report</a>';
         $a->quizreviewurl = $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attempt->id;
-        $a->quizreviewlink = '<a href="' . $a->quizreviewurl . '">' . format_string($quiz->name) . ' review</a>';
+        $a->quizreviewlink = '<a href="' . $a->quizreviewurl . '">' .
+                format_string($quiz->name) . ' review</a>';
         $a->quizurl = $CFG->wwwroot . '/mod/quiz/view.php?id=' . $cm->id;
         $a->quizlink = '<a href="' . $a->quizurl . '">' . format_string($quiz->name) . '</a>';
         // attempt info
@@ -1317,7 +1332,8 @@ function quiz_send_notification_emails($course, $quiz, $attempt, $context, $cm) 
 
     // log errors sending emails if any
     if (! empty($emailresult['fail'])) {
-        debugging('quiz_send_notification_emails:: '.$emailresult['fail'].' email(s) failed to be sent.', DEBUG_DEVELOPER);
+        debugging('quiz_send_notification_emails:: ' . $emailresult['fail'] .
+                ' email(s) failed to be sent.', DEBUG_DEVELOPER);
     }
 
     // return the number of successfully sent emails
@@ -1338,7 +1354,8 @@ function quiz_get_js_module() {
     return array(
         'name' => 'mod_quiz',
         'fullpath' => '/mod/quiz/module.js',
-        'requires' => array('base', 'dom', 'event-delegate', 'event-key', 'core_question_engine'),
+        'requires' => array('base', 'dom', 'event-delegate', 'event-key',
+                'core_question_engine'),
         'strings' => array(
             array('timesup', 'quiz'),
             array('functiondisabledbysecuremode', 'quiz'),
@@ -1390,7 +1407,8 @@ class mod_quiz_display_options extends question_display_options {
 
         $options->attempt = self::extract($quiz->reviewattempt, $when, true, false);
         $options->correctness = self::extract($quiz->reviewcorrectness, $when);
-        $options->marks = self::extract($quiz->reviewmarks, $when, self::MARK_AND_MAX, self::MAX_ONLY);
+        $options->marks = self::extract($quiz->reviewmarks, $when,
+                self::MARK_AND_MAX, self::MAX_ONLY);
         $options->feedback = self::extract($quiz->reviewspecificfeedback, $when);
         $options->generalfeedback = self::extract($quiz->reviewgeneralfeedback, $when);
         $options->rightanswer = self::extract($quiz->reviewrightanswer, $when);
@@ -1407,7 +1425,8 @@ class mod_quiz_display_options extends question_display_options {
         return $options;
     }
 
-    protected static function extract($bitmask, $bit, $whenset = self::VISIBLE, $whennotset = self::HIDDEN) {
+    protected static function extract($bitmask, $bit,
+            $whenset = self::VISIBLE, $whennotset = self::HIDDEN) {
         if ($bitmask & $bit) {
             return $whenset;
         } else {

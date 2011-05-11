@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -90,7 +89,8 @@ function quiz_report_unindex($datum) {
 /**
  * Get the slots of real questions (not descriptions) in this quiz, in order.
  * @param object $quiz the quiz.
- * @return array of slot => $question object with fields ->slot, ->id, ->maxmark, ->number, ->length.
+ * @return array of slot => $question object with fields
+ *      ->slot, ->id, ->maxmark, ->number, ->length.
  */
 function quiz_report_get_significant_questions($quiz) {
     global $DB;
@@ -147,36 +147,36 @@ function quiz_report_qm_filter_select($quiz, $quizattemptsalias = 'quiza') {
     }
 
     switch ($quiz->grademethod) {
-    case QUIZ_GRADEHIGHEST :
-        return "$quizattemptsalias.id = (
-                SELECT MIN(qa2.id)
-                FROM {quiz_attempts} qa2
-                WHERE qa2.quiz = $quizattemptsalias.quiz AND
-                    qa2.userid = $quizattemptsalias.userid AND
-                    COALESCE(qa2.sumgrades, 0) = (
-                        SELECT MAX(COALESCE(qa3.sumgrades, 0))
-                        FROM {quiz_attempts} qa3
-                        WHERE qa3.quiz = $quizattemptsalias.quiz AND
-                            qa3.userid = $quizattemptsalias.userid
-                    )
-                )";
+        case QUIZ_GRADEHIGHEST :
+            return "$quizattemptsalias.id = (
+                    SELECT MIN(qa2.id)
+                    FROM {quiz_attempts} qa2
+                    WHERE qa2.quiz = $quizattemptsalias.quiz AND
+                        qa2.userid = $quizattemptsalias.userid AND
+                        COALESCE(qa2.sumgrades, 0) = (
+                            SELECT MAX(COALESCE(qa3.sumgrades, 0))
+                            FROM {quiz_attempts} qa3
+                            WHERE qa3.quiz = $quizattemptsalias.quiz AND
+                                qa3.userid = $quizattemptsalias.userid
+                        )
+                    )";
 
-    case QUIZ_GRADEAVERAGE :
-        return '';
+        case QUIZ_GRADEAVERAGE :
+            return '';
 
-    case QUIZ_ATTEMPTFIRST :
-        return "$quizattemptsalias.id = (
-                SELECT MIN(qa2.id)
-                FROM {quiz_attempts} qa2
-                WHERE qa2.quiz = $quizattemptsalias.quiz AND
-                    qa2.userid = $quizattemptsalias.userid)";
+        case QUIZ_ATTEMPTFIRST :
+            return "$quizattemptsalias.id = (
+                    SELECT MIN(qa2.id)
+                    FROM {quiz_attempts} qa2
+                    WHERE qa2.quiz = $quizattemptsalias.quiz AND
+                        qa2.userid = $quizattemptsalias.userid)";
 
-    case QUIZ_ATTEMPTLAST :
-        return "$quizattemptsalias.id = (
-                SELECT MAX(qa2.id)
-                FROM {quiz_attempts} qa2
-                WHERE qa2.quiz = $quizattemptsalias.quiz AND
-                    qa2.userid = $quizattemptsalias.userid)";
+        case QUIZ_ATTEMPTLAST :
+            return "$quizattemptsalias.id = (
+                    SELECT MAX(qa2.id)
+                    FROM {quiz_attempts} qa2
+                    WHERE qa2.quiz = $quizattemptsalias.quiz AND
+                        qa2.userid = $quizattemptsalias.userid)";
     }
 }
 
@@ -270,7 +270,7 @@ function quiz_report_feedback_for_grade($grade, $quizid, $context) {
     $feedbacktext = '';
     $feedbacktextformat = FORMAT_MOODLE;
     foreach ($feedbacks as $feedback) {
-        if ($feedback->mingrade <= $grade && $grade < $feedback->maxgrade){
+        if ($feedback->mingrade <= $grade && $grade < $feedback->maxgrade) {
             $feedbackid = $feedback->id;
             $feedbacktext = $feedback->feedbacktext;
             $feedbacktextformat = $feedback->feedbacktextformat;
@@ -281,7 +281,8 @@ function quiz_report_feedback_for_grade($grade, $quizid, $context) {
     // Clean the text, ready for display.
     $formatoptions = new stdClass();
     $formatoptions->noclean = true;
-    $feedbacktext = file_rewrite_pluginfile_urls($feedbacktext, 'pluginfile.php', $context->id, 'mod_quiz', 'feedback', $feedbackid);
+    $feedbacktext = file_rewrite_pluginfile_urls($feedbacktext, 'pluginfile.php',
+            $context->id, 'mod_quiz', 'feedback', $feedbackid);
     $feedbacktext = format_text($feedbacktext, $feedbacktextformat, $formatoptions);
 
     return $feedbacktext;

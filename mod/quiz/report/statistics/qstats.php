@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -119,7 +118,9 @@ class quiz_statistics_question_stats {
                 FROM $fromqa
                 JOIN {question_attempts} qa ON qa.questionusageid = quiza.uniqueid
                 JOIN (
-                    SELECT questionattemptid, MAX(id) AS latestid FROM {question_attempt_steps} GROUP BY questionattemptid
+                    SELECT questionattemptid, MAX(id) AS latestid
+                      FROM {question_attempt_steps}
+                  GROUP BY questionattemptid
                 ) lateststepid ON lateststepid.questionattemptid = qa.id
                 JOIN {question_attempt_steps} qas ON qas.id = lateststepid.latestid
 
@@ -184,7 +185,8 @@ class quiz_statistics_question_stats {
             if ($subquestionstats[$qid]->differentweights) {
                 // TODO output here really sucks, but throwing is too severe.
                 global $OUTPUT;
-                echo $OUTPUT->notification(get_string('erroritemappearsmorethanoncewithdifferentweight',
+                echo $OUTPUT->notification(
+                        get_string('erroritemappearsmorethanoncewithdifferentweight',
                         'quiz_statistics', $this->subquestions[$qid]->name));
             }
 
@@ -215,13 +217,15 @@ class quiz_statistics_question_stats {
             if ($question->qtype == 'random') {
                 $randomselectorstring = $question->category.'/'.$question->questiontext;
                 if ($nextquestion && $nextquestion->qtype == 'random') {
-                    $nextrandomselectorstring = $nextquestion->category.'/'.$nextquestion->questiontext;
+                    $nextrandomselectorstring = $nextquestion->category . '/' .
+                            $nextquestion->questiontext;
                     if ($randomselectorstring == $nextrandomselectorstring) {
                         continue; // Next loop iteration
                     }
                 }
                 if (isset($this->randomselectors[$randomselectorstring])) {
-                    $question->_stats->subquestions = implode(',', $this->randomselectors[$randomselectorstring]);
+                    $question->_stats->subquestions = implode(',',
+                            $this->randomselectors[$randomselectorstring]);
                 }
             }
         }
@@ -328,12 +332,14 @@ class quiz_statistics_question_stats {
         if ($stats->subquestion) {
             $othermarkdifference = $step->sumgrades - $stats->othermarkaverage;
         } else {
-            $othermarkdifference = $step->sumgrades - $step->mark - $stats->othermarkaverage;
+            $othermarkdifference = $step->sumgrades - $step->mark -
+                    $stats->othermarkaverage;
         }
         $overallmarkdifference = $step->sumgrades - $this->summarksavg;
 
         $sortedmarkdifference = array_shift($stats->markarray) - $stats->markaverage;
-        $sortedothermarkdifference = array_shift($stats->othermarksarray) - $stats->othermarkaverage;
+        $sortedothermarkdifference = array_shift($stats->othermarksarray) -
+                $stats->othermarkaverage;
 
         $stats->markvariancesum += pow($markdifference, 2);
         $stats->othermarkvariancesum += pow($othermarkdifference, 2);
@@ -353,7 +359,8 @@ class quiz_statistics_question_stats {
             $stats->othermarkvariance = $stats->othermarkvariancesum / ($stats->s - 1);
             $stats->covariance = $stats->covariancesum / ($stats->s - 1);
             $stats->covariancemax = $stats->covariancemaxsum / ($stats->s - 1);
-            $stats->covariancewithoverallmark = $stats->covariancewithoverallmarksum / ($stats->s - 1);
+            $stats->covariancewithoverallmark = $stats->covariancewithoverallmarksum /
+                    ($stats->s - 1);
             $stats->sd = sqrt($stats->markvariancesum / ($stats->s - 1));
 
         } else {
@@ -385,7 +392,8 @@ class quiz_statistics_question_stats {
      * @return number the random guess score for this question.
      */
     protected function get_random_guess_score($questiondata) {
-        return question_bank::get_qtype($questiondata->qtype, false)->get_random_guess_score($questiondata);
+        return question_bank::get_qtype(
+                $questiondata->qtype, false)->get_random_guess_score($questiondata);
     }
 
     /**

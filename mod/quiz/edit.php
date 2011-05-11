@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -61,8 +60,8 @@ function module_specific_buttons($cmid, $cmoptions) {
     } else {
         $disabled = '';
     }
-    $out = '<input type="submit" name="add" value="' . $OUTPUT->larrow() . ' ' . get_string('addtoquiz', 'quiz') .
-            '" ' . $disabled . "/>\n";
+    $out = '<input type="submit" name="add" value="' . $OUTPUT->larrow() . ' ' .
+            get_string('addtoquiz', 'quiz') . '" ' . $disabled . "/>\n";
     return $out;
 }
 
@@ -212,7 +211,7 @@ if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
 }
 
 if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sesskey()) {
-/// Add a single question to the current quiz
+    // Add a single question to the current quiz
     $addonpage = optional_param('addonpage', 0, PARAM_INT);
     quiz_add_quiz_question($addquestion, $quiz, $addonpage);
     quiz_delete_previews($quiz);
@@ -222,7 +221,7 @@ if (($addquestion = optional_param('addquestion', 0, PARAM_INT)) && confirm_sess
 }
 
 if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
-/// Add selected questions to the current quiz
+    // Add selected questions to the current quiz
     $rawdata = (array) data_submitted();
     foreach ($rawdata as $key => $value) { // Parse input for question ids
         if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
@@ -248,7 +247,8 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     redirect($afteractionurl);
 }
 
-if (optional_param('addnewpagesafterselected', null, PARAM_CLEAN) && !empty($selectedquestionids) && confirm_sesskey()) {
+if (optional_param('addnewpagesafterselected', null, PARAM_CLEAN) &&
+        !empty($selectedquestionids) && confirm_sesskey()) {
     foreach ($selectedquestionids as $questionid) {
         $quiz->questions = quiz_add_page_break_after($quiz->questions, $questionid);
     }
@@ -281,7 +281,8 @@ if (($remove = optional_param('remove', false, PARAM_INT)) && confirm_sesskey())
     redirect($afteractionurl);
 }
 
-if (optional_param('quizdeleteselected', false, PARAM_BOOL) && !empty($selectedquestionids) && confirm_sesskey()) {
+if (optional_param('quizdeleteselected', false, PARAM_BOOL) &&
+        !empty($selectedquestionids) && confirm_sesskey()) {
     foreach ($selectedquestionids as $questionid) {
         quiz_remove_question($quiz, $questionid);
     }
@@ -305,7 +306,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
 
     foreach ($rawdata as $key => $value) {
         if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
-            /// Parse input for question -> grades
+            // Parse input for question -> grades
             $questionid = $matches[1];
             $quiz->grades[$questionid] = clean_param($value, PARAM_FLOAT);
             quiz_update_question_instance($quiz->grades[$questionid], $questionid, $quiz);
@@ -313,7 +314,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
             $recomputesummarks = true;
 
         } else if (preg_match('!^o(pg)?([0-9]+)$!', $key, $matches)) {
-            /// Parse input for ordering info
+            // Parse input for ordering info
             $questionid = $matches[2];
             // Make sure two questions don't overwrite each other. If we get a second
             // question with the same position, shift the second one along to the next gap.
@@ -389,8 +390,10 @@ $questionbank->process_actions($thispageurl, $cm);
 
 $PAGE->requires->yui2_lib('container');
 $PAGE->requires->yui2_lib('dragdrop');
-$PAGE->requires->skip_link_to('questionbank',  get_string('skipto', 'access', get_string('questionbank', 'question')));
-$PAGE->requires->skip_link_to('quizcontentsblock',  get_string('skipto', 'access', get_string('questionsinthisquiz', 'quiz')));
+$PAGE->requires->skip_link_to('questionbank',
+        get_string('skipto', 'access', get_string('questionbank', 'question')));
+$PAGE->requires->skip_link_to('quizcontentsblock',
+        get_string('skipto', 'access', get_string('questionsinthisquiz', 'quiz')));
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 $node = $PAGE->settingsnav->find('mod_quiz_edit', navigation_node::TYPE_SETTING);
@@ -419,8 +422,10 @@ if ($quiz_reordertool) {
     $currenttab = 'edit';
 }
 $tabs = array(array(
-    new tabobject('edit', new moodle_url($thispageurl, array('reordertool' => 0)), get_string('editingquiz', 'quiz')),
-    new tabobject('reorder', new moodle_url($thispageurl, array('reordertool' => 1)), get_string('orderingquiz', 'quiz')),
+    new tabobject('edit', new moodle_url($thispageurl,
+            array('reordertool' => 0)), get_string('editingquiz', 'quiz')),
+    new tabobject('reorder', new moodle_url($thispageurl,
+            array('reordertool' => 1)), get_string('orderingquiz', 'quiz')),
 ));
 print_tabs($tabs, $currenttab);
 
@@ -469,7 +474,8 @@ if ($quiz->shufflequestions) {
     $repaginatingdisabled = false;
 }
 if ($quiz_reordertool) {
-    echo '<div class="repaginatecommand"><button id="repaginatecommand" '.$repaginatingdisabledhtml.'>'.
+    echo '<div class="repaginatecommand"><button id="repaginatecommand" ' .
+            $repaginatingdisabledhtml.'>'.
             get_string('repaginatecommand', 'quiz').'...</button>';
     echo '</div>';
 }
@@ -523,10 +529,12 @@ if ($quiz_reordertool) {
     echo '<input type="hidden" name="repaginate" value="'.$gostring.'" />';
     $attributes = array();
     $attributes['disabled'] = $repaginatingdisabledhtml ? 'disabled' : null;
-    $select = html_writer::select($perpage, 'questionsperpage', $quiz->questionsperpage, null, $attributes);
+    $select = html_writer::select(
+            $perpage, 'questionsperpage', $quiz->questionsperpage, null, $attributes);
     print_string('repaginate', 'quiz', $select);
     echo '<div class="quizquestionlistcontrols">';
-    echo ' <input type="submit" name="repaginate" value="'. $gostring .'" '.$repaginatingdisabledhtml.' />';
+    echo ' <input type="submit" name="repaginate" value="'. $gostring . '" ' .
+            $repaginatingdisabledhtml.' />';
     echo '</div></fieldset></form></div></div>';
 }
 
@@ -551,16 +559,15 @@ if (!$quiz_reordertool) {
         'cmid' => $cm->id,
     ));
     ?>
-<div id="randomquestiondialog">
-<div class="hd"><?php print_string('addrandomquestiontoquiz', 'quiz', $quiz->name); ?>
-<span id="pagenumber"><!-- JavaScript will insert the page number here. -->
-</span>
-</div>
-<div class="bd"><?php
-$randomform->display();
-?></div>
-</div>
+    <div id="randomquestiondialog">
+    <div class="hd"><?php print_string('addrandomquestiontoquiz', 'quiz', $quiz->name); ?>
+    <span id="pagenumber"><!-- JavaScript will insert the page number here. -->
+    </span>
+    </div>
+    <div class="bd"><?php
+    $randomform->display();
+    ?></div>
+    </div>
     <?php
 }
 echo $OUTPUT->footer();
-?>

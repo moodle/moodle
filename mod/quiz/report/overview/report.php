@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -98,7 +97,8 @@ class quiz_overview_report extends quiz_attempt_report {
         $displayoptions['qmfilter'] = $qmfilter;
         $displayoptions['regradefilter'] = $regradefilter;
 
-        $mform->set_data($displayoptions + array('detailedmarks' => $detailedmarks, 'pagesize' => $pagesize));
+        $mform->set_data($displayoptions +
+                array('detailedmarks' => $detailedmarks, 'pagesize' => $pagesize));
 
         if (!$this->should_show_grades($quiz)) {
             $detailedmarks = 0;
@@ -204,7 +204,8 @@ class quiz_overview_report extends quiz_attempt_report {
         $hasstudents = $students && (!$currentgroup || $groupstudents);
         if ($hasquestions && ($hasstudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL))) {
             // Construct the SQL
-            $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') . ' AS uniqueid, ';
+            $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') .
+                    ' AS uniqueid, ';
             if ($qmsubselect) {
                 $fields .=
                     "(CASE " .
@@ -219,9 +220,17 @@ class quiz_overview_report extends quiz_attempt_report {
             $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
 
             // Test to see if there are any regraded attempts to be listed.
-            $fields .= ", COALESCE((SELECT MAX(qqr.regraded) FROM {quiz_overview_regrades} qqr WHERE qqr.questionusageid = quiza.uniqueid), -1) AS regraded";
+            $fields .= ", COALESCE((
+                                SELECT MAX(qqr.regraded)
+                                  FROM {quiz_overview_regrades} qqr
+                                 WHERE qqr.questionusageid = quiza.uniqueid
+                          ), -1) AS regraded";
             if ($regradefilter) {
-                $where .= " AND COALESCE((SELECT MAX(qqr.regraded) FROM {quiz_overview_regrades} qqr WHERE qqr.questionusageid = quiza.uniqueid), -1) <> -1";
+                $where .= " AND COALESCE((
+                                    SELECT MAX(qqr.regraded)
+                                      FROM {quiz_overview_regrades} qqr
+                                     WHERE qqr.questionusageid = quiza.uniqueid
+                                ), -1) <> -1";
             }
             $table->set_sql($fields, $from, $where, $params);
 
@@ -235,30 +244,40 @@ class quiz_overview_report extends quiz_attempt_report {
                         $a->groupname = groups_get_group_name($currentgroup);
                         $a->coursestudents = get_string('participants');
                         $a->countregradeneeded = $regradesneeded;
-                        $regradealldrydolabel = get_string('regradealldrydogroup', 'quiz_overview', $a);
-                        $regradealldrylabel = get_string('regradealldrygroup', 'quiz_overview', $a);
-                        $regradealllabel = get_string('regradeallgroup', 'quiz_overview', $a);
+                        $regradealldrydolabel =
+                                get_string('regradealldrydogroup', 'quiz_overview', $a);
+                        $regradealldrylabel =
+                                get_string('regradealldrygroup', 'quiz_overview', $a);
+                        $regradealllabel =
+                                get_string('regradeallgroup', 'quiz_overview', $a);
                     } else {
-                        $regradealldrydolabel = get_string('regradealldrydo', 'quiz_overview', $regradesneeded);
-                        $regradealldrylabel = get_string('regradealldry', 'quiz_overview');
-                        $regradealllabel = get_string('regradeall', 'quiz_overview');
+                        $regradealldrydolabel =
+                                get_string('regradealldrydo', 'quiz_overview', $regradesneeded);
+                        $regradealldrylabel =
+                                get_string('regradealldry', 'quiz_overview');
+                        $regradealllabel =
+                                get_string('regradeall', 'quiz_overview');
                     }
-                    $displayurl = new moodle_url($reporturl, $displayoptions + array('sesskey' => sesskey()));
+                    $displayurl = new moodle_url($reporturl,
+                            $displayoptions + array('sesskey' => sesskey()));
                     echo '<div class="mdl-align">';
                     echo '<form action="'.$displayurl->out_omit_querystring().'">';
                     echo '<div>';
                     echo html_writer::input_hidden_params($displayurl);
                     echo '<input type="submit" name="regradeall" value="'.$regradealllabel.'"/>';
-                    echo '<input type="submit" name="regradealldry" value="'.$regradealldrylabel.'"/>';
+                    echo '<input type="submit" name="regradealldry" value="' .
+                            $regradealldrylabel . '"/>';
                     if ($regradesneeded) {
-                        echo '<input type="submit" name="regradealldrydo" value="'.$regradealldrydolabel.'"/>';
+                        echo '<input type="submit" name="regradealldrydo" value="' .
+                                $regradealldrydolabel . '"/>';
                     }
                     echo '</div>';
                     echo '</form>';
                     echo '</div>';
                 }
                 // Print information on the grading method
-                if ($strattempthighlight = quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)) {
+                if ($strattempthighlight = quiz_report_highlighting_grading_method(
+                        $quiz, $qmsubselect, $qmfilter)) {
                     echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
                 }
             }
@@ -269,7 +288,7 @@ class quiz_overview_report extends quiz_attempt_report {
 
             if (!$table->is_downloading() && $candelete) {
                 $columns[] = 'checkbox';
-                $headers[] = NULL;
+                $headers[] = null;
             }
 
             $this->add_user_columns($table, $columns, $headers);
@@ -299,7 +318,8 @@ class quiz_overview_report extends quiz_attempt_report {
 
             $this->add_grade_columns($quiz, $columns, $headers);
 
-            $this->set_up_table_columns($table, $columns, $headers, $reporturl, $displayoptions, false);
+            $this->set_up_table_columns(
+                    $table, $columns, $headers, $reporturl, $displayoptions, false);
             $table->set_attribute('class', 'generaltable generalbox grades');
 
             $table->out($pagesize, true);
@@ -309,19 +329,27 @@ class quiz_overview_report extends quiz_attempt_report {
             if ($currentgroup && $groupstudents) {
                 list($usql, $params) = $DB->get_in_or_equal($groupstudents);
                 $params[] = $quiz->id;
-                if ($DB->record_exists_select('quiz_grades', "userid $usql AND quiz = ?", $params)) {
-                     $imageurl = "{$CFG->wwwroot}/mod/quiz/report/overview/overviewgraph.php?id={$quiz->id}&amp;groupid=$currentgroup";
-                     $graphname = get_string('overviewreportgraphgroup', 'quiz_overview', groups_get_group_name($currentgroup));
+                if ($DB->record_exists_select('quiz_grades', "userid $usql AND quiz = ?",
+                        $params)) {
+                     $imageurl = new moodle_url('/mod/quiz/report/overview/overviewgraph.php',
+                            array('id' => $quiz->id, 'groupid' => $currentgroup));
+                     $graphname = get_string('overviewreportgraphgroup', 'quiz_overview',
+                            groups_get_group_name($currentgroup));
                      echo $OUTPUT->heading($graphname);
-                     echo '<div class="graph"><img src="'.$imageurl.'" alt="'.$graphname.'" /></div>';
+                     echo html_writer::tag('div', html_writer::empty_tag('img',
+                            array('src' => $imageurl, 'alt' => $graphname)),
+                            array('class' => 'graph'));
                 }
             }
 
             if ($DB->record_exists('quiz_grades', array('quiz'=> $quiz->id))) {
                  $graphname = get_string('overviewreportgraph', 'quiz_overview');
-                 $imageurl = $CFG->wwwroot.'/mod/quiz/report/overview/overviewgraph.php?id='.$quiz->id;
+                 $imageurl = new moodle_url('/mod/quiz/report/overview/overviewgraph.php',
+                        array('id' => $quiz->id));
                  echo $OUTPUT->heading($graphname);
-                 echo '<div class="graph"><img src="'.$imageurl.'" alt="'.$graphname.'" /></div>';
+                 echo html_writer::tag('div', html_writer::empty_tag('img',
+                        array('src' => $imageurl, 'alt' => $graphname)),
+                        array('class' => 'graph'));
             }
         }
         return true;
@@ -456,7 +484,8 @@ class quiz_overview_report extends quiz_attempt_report {
         foreach ($toregrade as $row) {
             $attemptquestions[$row->uniqueid][] = $row->slot;
         }
-        $attempts = $DB->get_records_list('quiz_attempts', 'uniqueid', array_keys($attemptquestions));
+        $attempts = $DB->get_records_list('quiz_attempts', 'uniqueid',
+                array_keys($attemptquestions));
 
         $this->clear_regrade_table($quiz, $groupstudents);
 
@@ -507,7 +536,8 @@ class quiz_overview_report extends quiz_attempt_report {
         global $DB;
         $qubaids = new qubaid_join($from, 'uniqueid', $where, $params);
         return $DB->record_exists_select('quiz_overview_regrades',
-                'questionusageid ' . $qubaids->usage_id_in(), $qubaids->usage_id_in_params());
+                'questionusageid ' . $qubaids->usage_id_in(),
+                $qubaids->usage_id_in_params());
     }
 
     /**

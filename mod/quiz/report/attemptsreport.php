@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -85,7 +84,7 @@ abstract class quiz_attempt_report extends quiz_default_report {
 
         if (!$students = get_users_by_capability($this->context,
                 array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),
-                'u.id,1', '', '', '', '', '', false)) {
+                'u.id, 1', '', '', '', '', '', false)) {
             $students = array();
         } else {
             $students = array_keys($students);
@@ -98,7 +97,7 @@ abstract class quiz_attempt_report extends quiz_default_report {
         // We have a currently selected group.
         if (!$groupstudents = get_users_by_capability($this->context,
                 array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),
-                'u.id,1', '', '', '', $currentgroup, '', false)) {
+                'u.id, 1', '', '', '', $currentgroup, '', false)) {
             $groupstudents = array();
         } else {
             $groupstudents = array_keys($groupstudents);
@@ -138,7 +137,8 @@ abstract class quiz_attempt_report extends quiz_default_report {
      * @param object $quiz the quiz settings.
      * @param string $qmsubselect SQL fragment from {@link quiz_report_qm_filter_select()}.
      * @param bool $qmfilter whether to show all, or only the final grade attempt.
-     * @param int $attemptsmode which attempts to show. One of the QUIZ_REPORT_ATTEMPTS_... constants.
+     * @param int $attemptsmode which attempts to show.
+     *      One of the QUIZ_REPORT_ATTEMPTS_... constants.
      * @param array $reportstudents list if userids of users to include in the report.
      * @return array with 4 elements ($fields, $from, $where, $params) that can be used to
      *      build the actual database query.
@@ -168,8 +168,8 @@ abstract class quiz_attempt_report extends quiz_default_report {
                 quiza.timefinish,
                 quiza.timestart,
                 CASE WHEN quiza.timefinish = 0 THEN null
-                         WHEN quiza.timefinish > quiza.timestart THEN quiza.timefinish - quiza.timestart
-                         ELSE 0 END AS duration';
+                     WHEN quiza.timefinish > quiza.timestart THEN quiza.timefinish - quiza.timestart
+                     ELSE 0 END AS duration';
             // To explain that last bit, in MySQL, qa.timestart and qa.timefinish
             // are unsigned. Since MySQL 5.5.5, when they introduced strict mode,
             // subtracting a larger unsigned int from a smaller one gave an error.
@@ -179,7 +179,8 @@ abstract class quiz_attempt_report extends quiz_default_report {
 
         // This part is the same for all cases - join users and quiz_attempts tables
         $from = "\n{user} u";
-        $from .= "\nLEFT JOIN {quiz_attempts} quiza ON quiza.userid = u.id AND quiza.quiz = :quizid";
+        $from .= "\nLEFT JOIN {quiz_attempts} quiza ON
+                                    quiza.userid = u.id AND quiza.quiz = :quizid";
         $params = array('quizid' => $quiz->id);
 
         if ($qmsubselect && $qmfilter) {
@@ -280,7 +281,7 @@ abstract class quiz_attempt_report extends quiz_default_report {
         $headers[] = get_string('startedon', 'quiz');
 
         $columns[] = 'timefinish';
-        $headers[] = get_string('timecompleted','quiz');
+        $headers[] = get_string('timecompleted', 'quiz');
 
         $columns[] = 'duration';
         $headers[] = get_string('attemptduration', 'quiz');
@@ -315,7 +316,8 @@ abstract class quiz_attempt_report extends quiz_default_report {
      * @param array $displayoptions the display options.
      * @param bool $collapsible whether to allow columns in the report to be collapsed.
      */
-    protected function set_up_table_columns($table, $columns, $headers, $reporturl, $displayoptions, $collapsible) {
+    protected function set_up_table_columns($table, $columns, $headers, $reporturl,
+            $displayoptions, $collapsible) {
         $table->define_columns($columns);
         $table->define_headers($headers);
         $table->sortable(true, 'uniqueid');
@@ -455,7 +457,7 @@ abstract class quiz_attempt_report_table extends table_sql {
     public function col_duration($attempt) {
         if ($attempt->timefinish) {
             return format_time($attempt->timefinish - $attempt->timestart);
-        } elseif ($attempt->timestart) {
+        } else if ($attempt->timestart) {
             return get_string('unfinished', 'quiz');
         } else {
             return '-';
@@ -468,10 +470,13 @@ abstract class quiz_attempt_report_table extends table_sql {
         }
 
         if (!$this->is_downloading()) {
-            return quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz, false),
+            return quiz_report_feedback_for_grade(
+                    quiz_rescale_grade($attempt->sumgrades, $this->quiz, false),
                     $this->quiz->id, $this->context);
         } else {
-            return strip_tags(quiz_report_feedback_for_grade(quiz_rescale_grade($attempt->sumgrades, $this->quiz, false), $this->quiz->id));
+            return strip_tags(quiz_report_feedback_for_grade(
+                    quiz_rescale_grade($attempt->sumgrades, $this->quiz, false),
+                    $this->quiz->id));
         }
     }
 
@@ -514,7 +519,8 @@ abstract class quiz_attempt_report_table extends table_sql {
         $url = new moodle_url('/mod/quiz/reviewquestion.php',
                 array('attempt' => $attempt->attempt, 'slot' => $slot));
         $output = $OUTPUT->action_link($url, $output,
-                new popup_action('click', $url, 'reviewquestion', array('height' => 450, 'width' => 650)),
+                new popup_action('click', $url, 'reviewquestion',
+                        array('height' => 450, 'width' => 650)),
                 array('title' => get_string('reviewresponse', 'quiz')));
 
         return $output;

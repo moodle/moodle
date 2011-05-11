@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -75,9 +74,9 @@ class quiz_report_responses_table extends quiz_attempt_report_table {
 
         // TODO add back are you sure, and convert to html_writer.
         echo '<div id="commands">';
-        echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.
+        echo '<a href="javascript:select_all_in(\'DIV\', null, \'tablecontainer\');">'.
                 get_string('selectall', 'quiz').'</a> / ';
-        echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.
+        echo '<a href="javascript:deselect_all_in(\'DIV\', null, \'tablecontainer\');">'.
                 get_string('selectnone', 'quiz').'</a> ';
         echo '&nbsp;&nbsp;';
         echo '<input type="submit" value="'.get_string('deleteselected', 'quiz_overview').'"/>';
