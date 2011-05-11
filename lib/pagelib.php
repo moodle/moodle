@@ -1280,7 +1280,7 @@ class moodle_page {
             }
         }
 
-            if(!empty($USER->themeswitch) || !empty($SESSION->themeswitch)){
+        if (!empty($USER->themeswitch) || !empty($SESSION->themeswitch)) {
             $device_type = 'default';
         } else {
             $device_type = get_device_type();
@@ -1329,7 +1329,7 @@ class moodle_page {
                         return $mnetpeertheme;
                     }
 
-                    if($device_type == 'legacy'){
+                    if ($device_type == 'legacy') {
                         $this->_legacythemeinuse = true;
                     }
 

@@ -1,5 +1,4 @@
 <?php
-// ou-specific begins #212
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,4 +25,3 @@ $url = required_param('url', PARAM_TEXT);
 switch_theme();
 
 redirect($url);
-// ou-specific ends #212

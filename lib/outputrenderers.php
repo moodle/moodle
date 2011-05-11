@@ -2599,8 +2599,8 @@ EOD;
     /*
      * Renders theme links for switching between default and other themes.
      */
-    protected function theme_switch_links(){
-        if($this->switchlinkdisplayed){
+    protected function theme_switch_links() {
+        if ($this->switchlinkdisplayed) {
             return '';
         }
 
@@ -2613,7 +2613,7 @@ EOD;
 
         if (is_null($switched)) {
             return '';
-        } else if(!$switched && $type == 'default') {
+        } else if (!$switched && $type == 'default') {
             return '';
         } else if ($switched) {
             $link_text = get_string('switchdevicerecommended');

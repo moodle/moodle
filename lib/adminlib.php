@@ -7316,7 +7316,7 @@ class admin_setting_configcolourpicker extends admin_setting {
  */
 class admin_setting_devicedetectregex extends admin_setting {
 
-   /**
+    /**
     * Calls parent::__construct with specific args
     */
     public function __construct() {
@@ -7380,15 +7380,15 @@ class admin_setting_devicedetectregex extends admin_setting {
         if (empty($data)) {
             $loop_limit = 1;
         } else {
-            $loop_limit = (sizeof($data)/2)+1;
+            $loop_limit = (count($data)/2)+1;
         }
 
-        for($i=0; $i<$loop_limit; $i++) {
+        for ($i=0; $i<$loop_limit; $i++) {
             $out .= html_writer::start_tag('tr');
 
             $expressionname = 'expression'.$i;
 
-            if(!empty($data[$expressionname])){
+            if (!empty($data[$expressionname])){
                 $expression = $data[$expressionname];
             } else {
                 $expression = '';
@@ -7407,7 +7407,7 @@ class admin_setting_devicedetectregex extends admin_setting {
 
             $valuename = 'value'.$i;
 
-            if(!empty($data[$valuename])){
+            if (!empty($data[$valuename])){
                 $value = $data[$valuename];
             } else {
                 $value= '';
@@ -7430,7 +7430,7 @@ class admin_setting_devicedetectregex extends admin_setting {
         $out .= html_writer::end_tag('tbody');
         $out .= html_writer::end_tag('table');
 
-        return format_admin_setting($this, $this->visiblename, $out, $this->description, false, '', NULL, $query);
+        return format_admin_setting($this, $this->visiblename, $out, $this->description, false, '', null, $query);
     }
 
     /**
@@ -7448,7 +7448,7 @@ class admin_setting_devicedetectregex extends admin_setting {
 
         $i = 0;
 
-        foreach($regexes as $regex) {
+        foreach ($regexes as $regex) {
             $expressionname  = 'expression'.$i;
             $valuename = 'value'.$i;
 
@@ -7484,7 +7484,7 @@ class admin_setting_devicedetectregex extends admin_setting {
             $expression = trim($form['expression'.$i]);
             $value      = trim($form['value'.$i]);
 
-            if(empty($expression)){
+            if (empty($expression)){
                 continue;
             }
 
