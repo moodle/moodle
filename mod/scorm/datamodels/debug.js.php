@@ -735,5 +735,4 @@ if (getLoggingActive() == "A") {
 }
 var content = safeGetElement(document, 'scormpage');
 content.insertBefore(logButton, content.firstChild);
-AppendToLog("Moodle SCORM 1.2 API Loaded, Activity: <?php echo $scorm->name; ?>, SCO: <?php echo $sco->identifier; ?>", 0);
 

@@ -105,6 +105,7 @@ div.editq div.question div.content .singlequestion a .questiontext{text-decorati
 #page-mod-quiz-view #page .quizattemptsummary td p {margin-top: 0;}
 table.quizattemptsummary .bestrow td {background-color: #e8e8e8;}
 table.quizattemptsummary .noreviewmessage {color: gray;}
+#page-mod-quiz-view .generaltable.quizattemptsummary {margin-left:auto;margin-right:auto;}
 #page-mod-quiz-view .generalbox#feedback {width:70%;margin-left:auto;margin-right:auto;padding-bottom:15px;}
 #page-mod-quiz-view .generalbox#feedback h2 {margin: 0;}
 #page-mod-quiz-view .generalbox#feedback h3 {text-align: left;}

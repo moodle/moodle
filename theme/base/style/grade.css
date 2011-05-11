@@ -15,7 +15,7 @@
 #grade-aggregation-help code {display: block;margin-top: 7px;}
 .gradeexportlink {padding: 2em;text-align: center;}
 
-.gradetreebox {margin-top:10px;}
+.gradetreebox {margin-top:10px;overflow-x:auto;overflow-y:hidden;}
 .gradetreebox table {font-size: 0.8em;width: 100%;}
 .gradetreebox td.colspan,
 .gradetreebox tr.category .cell {background-color: #DDD;}

@@ -70,6 +70,8 @@ Options:
                       problem encountered.
 --agree-license       Indicates agreement with software license,
                       required in non-interactive mode.
+--allow-unstable      Install even if the version is not marked as stable yet,
+                      required in non-interactive mode.
 -h, --help            Print out this help
 
 Example:
@@ -136,9 +138,6 @@ $CFG->early_install_lang   = true;
 $parts = explode('/', str_replace('\\', '/', dirname(dirname(__FILE__))));
 $CFG->admin                = array_pop($parts);
 
-require($CFG->dirroot.'/version.php');
-$CFG->target_release = $release;
-
 //point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
 //the problem is that we need specific version of quickforms and hacked excel files :-(
 ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
@@ -153,6 +152,9 @@ require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->libdir.'/deprecatedlib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/componentlib.class.php');
+
+require($CFG->dirroot.'/version.php');
+$CFG->target_release = $release;
 
 //Database types
 $databases = array('mysqli' => moodle_database::get_driver_instance('mysqli', 'native'),
@@ -193,6 +195,7 @@ list($options, $unrecognized) = cli_get_params(
         'adminpass'         => '',
         'non-interactive'   => false,
         'agree-license'     => false,
+        'allow-unstable'    => false,
         'help'              => false
     ),
     array(
@@ -373,25 +376,16 @@ if ($interactive) {
     }
 }
 
-//download lang pack with optional notification
-if ($CFG->lang != 'en') {
-    if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0', $CFG->lang.'.zip', 'languages.md5', 'lang')) {
-        if ($cd->install() == COMPONENT_ERROR) {
-            if ($cd->get_error() == 'remotedownloaderror') {
-                $a = new stdClass();
-                $a->url  = 'http://download.moodle.org/langpack/2.0/'.$CFG->lang.'.zip';
-                $a->dest = $CFG->dataroot.'/lang';
-                cli_problem(get_string($cd->get_error(), 'error', $a));
-            } else {
-                cli_problem(get_string($cd->get_error(), 'error'));
-            }
-        } else {
-            // install parent lang if defined
-            if ($parentlang = get_parent_language()) {
-                if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0', $parentlang.'.zip', 'languages.md5', 'lang')) {
-                    $cd->install();
-                }
-            }
+// download required lang packs
+if ($CFG->lang !== 'en') {
+    $installer = new lang_installer($CFG->lang);
+    $results = $installer->run();
+    foreach ($results as $langcode => $langstatus) {
+        if ($langstatus === lang_installer::RESULT_DOWNLOADERROR) {
+            $a       = new stdClass();
+            $a->url  = $installer->lang_pack_url($langcode);
+            $a->dest = $CFG->dataroot.'/lang';
+            cli_problem(get_string('remotedownloaderror', 'error', $a));
         }
     }
 }
@@ -401,6 +395,28 @@ $CFG->early_install_lang = false;
 $CFG->langotherroot      = $CFG->dataroot.'/lang';
 $CFG->langlocalroot      = $CFG->dataroot.'/lang';
 get_string_manager(true);
+
+// make sure we are installing stable release or require a confirmation
+if (isset($maturity)) {
+    if (($maturity < MATURITY_STABLE) and !$options['allow-unstable']) {
+        $maturitylevel = get_string('maturity'.$maturity, 'admin');
+
+        if ($interactive) {
+            cli_separator();
+            cli_heading(get_string('notice'));
+            echo get_string('maturitycorewarning', 'admin', $maturitylevel) . PHP_EOL;
+            echo get_string('morehelp') . ': ' . get_docs_url('admin/versions') . PHP_EOL;
+            echo get_string('continue') . PHP_EOL;
+            $prompt = get_string('cliyesnoprompt', 'admin');
+            $input = cli_input($prompt, '', array(get_string('clianswerno', 'admin'), get_string('cliansweryes', 'admin')));
+            if ($input == get_string('clianswerno', 'admin')) {
+                exit(1);
+            }
+        } else {
+            cli_error(get_string('maturitycorewarning', 'admin'));
+        }
+    }
+}
 
 // ask for db type - show only drivers available
 if ($interactive) {

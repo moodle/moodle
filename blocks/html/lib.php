@@ -59,3 +59,24 @@ function block_html_pluginfile($course, $birecord_or_cm, $context, $filearea, $a
     session_get_instance()->write_close();
     send_stored_file($file, 60*60, 0, $forcedownload);
 }
+
+/**
+ * Perform global search replace such as when migrating site to new URL.
+ * @param  $search
+ * @param  $replace
+ * @return void
+ */
+function block_html_global_db_replace($search, $replace) {
+    global $DB;
+
+    $instances = $DB->get_recordset('block_instances', array('blockname' => 'html'));
+    foreach ($instances as $instance) {
+        // TODO: intentionally hardcoded until MDL-26800 is fixed
+        $config = unserialize(base64_decode($instance->configdata));
+        if (isset($config->text) and is_string($config->text)) {
+            $config->text = str_replace($search, $replace, $config->text);
+            $DB->set_field('block_instances', 'configdata', base64_encode(serialize($config)), array('id' => $instance->id));
+        }
+    }
+    $instances->close();
+}

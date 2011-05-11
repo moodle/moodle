@@ -354,24 +354,15 @@ if ($config->stage == INSTALL_DATABASETYPE) {
 if ($config->stage == INSTALL_DOWNLOADLANG) {
     $downloaderror = '';
 
-// Download and install lang component, lang dir was already created in install_init_dataroot
-    if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0', $CFG->lang.'.zip', 'languages.md5', 'lang')) {
-        if ($cd->install() == COMPONENT_ERROR) {
-            if ($cd->get_error() == 'remotedownloaderror') {
-                $a = new stdClass();
-                $a->url  = 'http://download.moodle.org/langpack/2.0/'.$config->lang.'.zip';
-                $a->dest = $CFG->dataroot.'/lang';
-                $downloaderror = get_string($cd->get_error(), 'error', $a);
-            } else {
-                $downloaderror = get_string($cd->get_error(), 'error');
-            }
-        } else {
-            // install parent lang if defined
-            if ($parentlang = get_parent_language()) {
-                if ($cd = new component_installer('http://download.moodle.org', 'langpack/2.0', $parentlang.'.zip', 'languages.md5', 'lang')) {
-                    $cd->install();
-                }
-            }
+    // download and install required lang packs, the lang dir has already been created in install_init_dataroot
+    $installer = new lang_installer($CFG->lang);
+    $results = $installer->run();
+    foreach ($results as $langcode => $langstatus) {
+        if ($langstatus === lang_installer::RESULT_DOWNLOADERROR) {
+            $a       = new stdClass();
+            $a->url  = $installer->lang_pack_url($langcode);
+            $a->dest = $CFG->dataroot.'/lang';
+            $downloaderror = get_string('remotedownloaderror', 'error', $a);
         }
     }
 

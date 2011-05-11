@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Definition of classes used by Langugae customization admin report
+ * Definition of classes used by language customization admin report
  *
  * @package    report
  * @subpackage customlang
@@ -32,6 +32,12 @@ defined('MOODLE_INTERNAL') || die();
  * All the public methods here are static ones, this class can not be instantiated
  */
 class report_customlang_utils {
+
+    /**
+     * Rough number of strings that are being processed during a full checkout.
+     * This is used to estimate the progress of the checkout.
+     */
+    const ROUGH_NUMBER_OF_STRINGS = 16500;
 
     /** @var array cache of {@link self::list_components()} results */
     protected static $components = null;
@@ -83,8 +89,9 @@ class report_customlang_utils {
      * This should be executed each time before going to the translation page
      *
      * @param string $lang language code to checkout
+     * @param progress_bar $progressbar optionally, the given progress bar can be updated
      */
-    public static function checkout($lang) {
+    public static function checkout($lang, progress_bar $progressbar = null) {
         global $DB;
 
         // make sure that all components are registered
@@ -107,6 +114,10 @@ class report_customlang_utils {
         }
         unset($current);
 
+        // initialize the progress counter - stores the number of processed strings
+        $done = 0;
+        $strinprogress = get_string('checkoutinprogress', 'report_customlang');
+
         // reload components and fetch their strings
         $stringman  = get_string_manager();
         $components = $DB->get_records('report_customlang_components');
@@ -128,6 +139,12 @@ class report_customlang_utils {
                 $stringmaster = isset($master[$stringid]) ? $master[$stringid] : null;
                 $stringlocal = isset($local[$stringid]) ? $local[$stringid] : null;
                 $now = time();
+
+                if (!is_null($progressbar)) {
+                    $done++;
+                    $donepercent = floor(min($done, self::ROUGH_NUMBER_OF_STRINGS) / self::ROUGH_NUMBER_OF_STRINGS * 100);
+                    $progressbar->update_full($donepercent, $strinprogress);
+                }
 
                 if (isset($current[$stringid])) {
                     $needsupdate     = false;
@@ -174,6 +191,10 @@ class report_customlang_utils {
                     $DB->insert_record('report_customlang', $record);
                 }
             }
+        }
+
+        if (!is_null($progressbar)) {
+            $progressbar->update_full(100, get_string('checkoutdone', 'report_customlang'));
         }
     }
 

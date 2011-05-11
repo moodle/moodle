@@ -282,7 +282,7 @@ ORDER BY
      * @return array of records. See the SQL in this function to see the fields available.
      */
     public function load_questions_usages_latest_steps(qubaid_condition $qubaids, $slots) {
-        list($slottest, $params) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot0000');
+        list($slottest, $params) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
 
         $records = $this->db->get_records_sql("
 SELECT
@@ -331,7 +331,7 @@ WHERE
      * $manuallygraded and $all.
      */
     public function load_questions_usages_question_state_summary(qubaid_condition $qubaids, $slots) {
-        list($slottest, $params) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot0000');
+        list($slottest, $params) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
 
         $rs = $this->db->get_recordset_sql("
 SELECT
@@ -486,7 +486,7 @@ $sqlorderby
      */
     public function load_average_marks(qubaid_condition $qubaids, $slots = null) {
         if (!empty($slots)) {
-            list($slottest, $slotsparams) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot0000');
+            list($slottest, $slotsparams) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
             $slotwhere = " AND qa.slot $slottest";
         } else {
             $slotwhere = '';
@@ -501,7 +501,7 @@ $sqlorderby
                 question_state::$mangaveup,
                 question_state::$mangrwrong,
                 question_state::$mangrpartial,
-                question_state::$mangrright), SQL_PARAMS_NAMED, 'st00');
+                question_state::$mangrright), SQL_PARAMS_NAMED, 'st');
 
         return $this->db->get_records_sql("
 SELECT
@@ -642,7 +642,7 @@ ORDER BY
         $contextids = $this->db->get_records_sql_menu("
                 SELECT DISTINCT contextid, 1
                 FROM {question_usages}
-                WHERE id {$qubaids->usage_id_in()}", $params);
+                WHERE id {$qubaids->usage_id_in()}", $qubaids->usage_id_in_params());
         foreach ($contextids as $contextid => $notused) {
             $this->delete_response_files($contextid, "IN (
                     SELECT qas.id
@@ -663,10 +663,11 @@ ORDER BY
                 WHERE $where)", $params);
 
         $this->db->delete_records_select('question_attempts',
-                "{question_attempts}.questionusageid {$qubaids->usage_id_in()}", $params);
+                "{question_attempts}.questionusageid {$qubaids->usage_id_in()}",
+                $qubaids->usage_id_in_params());
 
         $this->db->delete_records_select('question_usages',
-                "{question_usages}.id {$qubaids->usage_id_in()}", $params);
+                "{question_usages}.id {$qubaids->usage_id_in()}", $qubaids->usage_id_in_params());
     }
 
     /**
@@ -764,7 +765,7 @@ ORDER BY
      */
     public function in_summary_state_test($summarystate, $equal = true, $prefix = 'summarystates') {
         $states = question_state::get_all_for_summary_state($summarystate);
-        return $this->db->get_in_or_equal($states, SQL_PARAMS_NAMED, $prefix . '00', $equal);
+        return $this->db->get_in_or_equal($states, SQL_PARAMS_NAMED, $prefix, $equal);
     }
 
     /**
@@ -1147,7 +1148,7 @@ class qubaid_list extends qubaid_condition {
             $this->params = array();
             return '1 = 0';
         }
-        list($where, $this->params) = $DB->get_in_or_equal($this->qubaids, SQL_PARAMS_NAMED, 'qubaid0000');
+        list($where, $this->params) = $DB->get_in_or_equal($this->qubaids, SQL_PARAMS_NAMED, 'qubaid');
 
         return $this->columntotest . ' ' . $this->usage_id_in();
     }
@@ -1162,7 +1163,7 @@ class qubaid_list extends qubaid_condition {
         if (empty($this->qubaids)) {
             return '= 0';
         }
-        list($where, $this->params) = $DB->get_in_or_equal($this->qubaids, SQL_PARAMS_NAMED, 'qubaid0000');
+        list($where, $this->params) = $DB->get_in_or_equal($this->qubaids, SQL_PARAMS_NAMED, 'qubaid');
         return $where;
     }
 

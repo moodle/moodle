@@ -85,7 +85,11 @@ M.core_filepicker.init = function(Y, options) {
 
         request: function(args, redraw) {
             var client_id = args.client_id;
-            var api = this.api + '?action='+args.action;
+            if (!args.api) {
+                var api = this.api + '?action='+args.action;
+            } else {
+                var api = args.api + '?action='+args.action;
+            }
             var params = {};
             var scope = this;
             if (args['scope']) {
@@ -147,6 +151,14 @@ M.core_filepicker.init = function(Y, options) {
                             scope.print_msg(data.error, 'error');
                             scope.list();
                             return;
+                        } else if (data && data.event) {
+                            switch (data.event) {
+                                case 'fileexists':
+                                    scope.process_existing_file(data);
+                                    break;
+                                default:
+                                    break;
+                            }
                         } else {
                             if (data.msg) {
                                 scope.print_msg(data.msg, 'info');
@@ -171,6 +183,94 @@ M.core_filepicker.init = function(Y, options) {
             if (redraw) {
                 this.wait('load');
             }
+        },
+        process_existing_file: function(data) {
+            var scope = this;
+            var repository_id = scope.active_repo.id;
+            var client_id = scope.options.client_id;
+            var handleOverwrite = function() {
+                // overwrite
+                var dialog = this;
+                var params = {}
+                params['existingfilename'] = data.existingfile.filename;
+                params['existingfilepath'] = data.existingfile.filepath;
+                params['newfilename'] = data.newfile.filename;
+                params['newfilepath'] = data.newfile.filepath;
+                scope.request({
+                    'params': params,
+                    'scope': scope,
+                    'action':'overwrite',
+                    'path': '',
+                    'client_id': client_id,
+                    'repository_id': repository_id,
+                    'callback': function(id, o, args) {
+                        dialog.cancel();
+                        scope.hide();
+                        // editor needs to update url
+                        // filemanager do nothing
+                        if (scope.options.editor_target && scope.options.env == 'editor') {
+                            scope.options.editor_target.value = data.existingfile.url;
+                            scope.options.editor_target.onchange();
+                        }
+                    }
+                }, true);
+            }
+            var handleRename = function() {
+                if (scope.options.editor_target && scope.options.env == 'editor') {
+                    scope.options.editor_target.value = data.newfile.url;
+                    scope.options.editor_target.onchange();
+                }
+                this.cancel();
+                scope.hide();
+                data.client_id = client_id;
+                var formcallback_scope = null;
+                if (scope.options.magicscope) {
+                    formcallback_scope = scope.options.magicscope;
+                } else {
+                    formcallback_scope = scope;
+                }
+                scope.options.formcallback.apply(formcallback_scope, [data]);
+            }
+            var handleCancel = function() {
+                // Delete tmp file
+                var dialog = this;
+                var params = {};
+                params['newfilename'] = data.newfile.filename;
+                params['newfilepath'] = data.newfile.filepath;
+                scope.request({
+                    'params': params,
+                    'scope': scope,
+                    'action':'deletetmpfile',
+                    'path': '',
+                    'client_id': client_id,
+                    'repository_id': repository_id,
+                    'callback': function(id, o, args) {
+                        scope.hide();
+                        dialog.cancel();
+                    }
+                }, true);
+            }
+            var dialog = new YAHOO.widget.SimpleDialog("dlg", {
+                width: "50em",
+                fixedcenter: true,
+                close: false,
+                icon: YAHOO.widget.SimpleDialog.ICON_HELP,
+                visible: true,
+                zIndex: 9999993,
+                draggable: true,
+                buttons: [{ text: M.str.repository.overwrite, handler: handleOverwrite },
+                { text: M.str.repository.renameto + ' "' + data.newfile.filename + '"', handler: handleRename },
+                { text: M.str.moodle.cancel, handler: handleCancel, isDefault: true}]
+            });
+            dialog.setHeader(M.str.repository.fileexistsdialogheader);
+            if (scope.options.env == 'editor') {
+                dialog.setBody(M.str.repository.fileexistsdialog_editor);
+            } else {
+                dialog.setBody(M.str.repository.fileexistsdialog_filemanager);
+            }
+
+            dialog.render(document.body);
+            dialog.show();
         },
         print_msg: function(msg, type) {
             var client_id = this.options.client_id;
@@ -248,14 +348,21 @@ M.core_filepicker.init = function(Y, options) {
                 tmpNode.isLeaf = true;
             }
         },
-        view_files: function() {
-            this.viewbar.set('disabled', false);
-            if (this.viewmode == 1) {
+        view_files: function(page) {
+            var p= page?page:null;
+            if (this.active_repo.issearchresult) {
+                // list view is desiged to display treeview
+                // it is not working well with search result
                 this.view_as_icons();
-            } else if (this.viewmode ==2) {
-                this.view_as_list();
             } else {
-                this.view_as_icons();
+                this.viewbar.set('disabled', false);
+                if (this.viewmode == 1) {
+                    this.view_as_icons();
+                } else if (this.viewmode == 2) {
+                    this.view_as_list(p);
+                } else {
+                    this.view_as_icons();
+                }
             }
         },
         treeview_dynload: function(node, cb) {
@@ -280,15 +387,29 @@ M.core_filepicker.init = function(Y, options) {
                 }
             }, false);
         },
-        view_as_list: function() {
+        view_as_list: function(p) {
             var scope = this;
+            var page = null;
+            if (!p) {
+                if (scope.active_repo.page) {
+                    page = scope.active_repo.page;
+                }
+            } else {
+                page = p;
+            }
             scope.request({
                 action:'list',
                 client_id: scope.options.client_id,
                 repository_id: scope.active_repo.id,
                 path:'',
-                page:'',
+                page:page,
                 callback: function(id, obj, args) {
+                    scope.parse_repository_options(obj);
+                    if (obj.login) {
+                        scope.viewbar.set('disabled', true);
+                        scope.print_login(obj);
+                        return;
+                    }
                     var client_id = scope.options.client_id;
                     var dynload = scope.active_repo.dynload;
                     var list = obj.list;
@@ -299,14 +420,14 @@ M.core_filepicker.init = function(Y, options) {
                     scope.print_header();
 
                     var html = '<div class="fp-tree-panel" id="treeview-'+client_id+'">';
-                    if (list.length==0) {
+                    if (list && list.length==0) {
                         html += '<div class="fp-emptylist mdl-align">' +M.str.repository.nofilesavailable+'</div>';
                     }
                     html += '</div>';
 
                     var tree = Y.Node.create(html);
                     Y.one(panel_id).appendChild(tree);
-                    if (list.length==0) {
+                    if (!list || list.length==0) {
                         return;
                     }
 
@@ -342,7 +463,7 @@ M.core_filepicker.init = function(Y, options) {
             this.print_header();
 
             var html = '<div class="fp-grid-panel" id="fp-grid-panel-'+client_id+'">';
-            if (list.length==0) {
+            if (list && list.length==0) {
                 html += '<div class="fp-emptylist mdl-align">' +M.str.repository.nofilesavailable+'</div>';
             }
             html += '</div>';
@@ -646,7 +767,7 @@ M.core_filepicker.init = function(Y, options) {
 
             var scope = this;
             // adding buttons
-            var view_icons = {label: M.str.repository.iconview, value: 't',
+            var view_icons = {label: M.str.repository.iconview, value: 't', 'checked': true,
                 onclick: {
                     fn: function(){
                         scope.view_as_icons();
@@ -812,7 +933,7 @@ M.core_filepicker.init = function(Y, options) {
             try {
                 panel.set('innerHTML', str);
             } catch(e) {
-                alert(e.toString()+M.str.quiz.xhtml);
+                alert(M.str.repository.xhtmlerror);
             }
             // register buttons
             // process login action
@@ -1092,7 +1213,6 @@ M.core_filepicker.init = function(Y, options) {
                 this.print_paging('header');
             //}
 
-
             var toolbar = Y.one('#repo-tb-'+client_id);
 
             if(!r.nosearch) {
@@ -1117,7 +1237,7 @@ M.core_filepicker.init = function(Y, options) {
 
                             var dlg_title = document.createElement('DIV');
                             dlg_title.className = 'hd';
-                            dlg_title.innerHTML = 'filepicker';
+                            dlg_title.innerHTML = M.str.repository.search;
 
                             var dlg_body = document.createElement('DIV');
                             dlg_body.className = 'bd';
@@ -1147,11 +1267,18 @@ M.core_filepicker.init = function(Y, options) {
                                 }, true);
                                 search_dialog.cancel();
                             }
+                            Y.one('#fp-search-form').on('keydown', function(e){
+                                if (e.keyCode == 13) {
+                                    dialog_handler();
+                                    e.preventDefault();
+                                }
+                            }, this);
 
                             search_dialog = new YAHOO.widget.Dialog("fp-search-dlg", {
                                postmethod: 'async',
                                draggable: true,
                                width : "30em",
+                               modal: true,
                                fixedcenter : true,
                                zindex: 9999991,
                                visible : false,
@@ -1300,12 +1427,16 @@ M.core_filepicker.init = function(Y, options) {
                                         callback: function(id, o, args) {
                                             o.issearchresult = true;
                                             scope.parse_repository_options(o);
-                                            scope.view_files();
+                                            scope.view_files(result[1]);
                                         }
                                 }, true);
 
                             } else {
-                                scope.list(args);
+                                if (scope.viewmode == 2) {
+                                    scope.view_as_list(result[1]);
+                                } else {
+                                    scope.list(args);
+                                }
                             }
                         });
                     });

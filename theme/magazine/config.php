@@ -1,5 +1,7 @@
 <?php
 
+defined('MOODLE_INTERNAL') || die();
+
 $THEME->name = 'magazine';
 
 ////////////////////////////////////////////////////
@@ -95,7 +97,7 @@ $THEME->layouts = array(
         'options' => array('langmenu'=>true),
     ),
     'popup' => array(
-        'file' => 'embedded.php',
+        'file' => 'general.php',
         'regions' => array(),
         'options' => array('nofooter'=>true, 'noblocks'=>true, 'nonavbar'=>true),
     ),
@@ -141,13 +143,6 @@ $THEME->layouts = array(
 // Allows the user to provide the name of a function
 // that all CSS should be passed to before being
 // delivered.
-////////////////////////////////////////////////////
-
-// $THEME->filter_mediaplugin_colors
-
-////////////////////////////////////////////////////
-// Used to control the colours used in the small
-// media player for the filters
 ////////////////////////////////////////////////////
 
 // $THEME->javascripts
@@ -211,9 +206,4 @@ $THEME->layouts = array(
 // theme, used when working with custom renderers.
 ////////////////////////////////////////////////////
 
-// $THEME->resource_mp3player_colors
-
-////////////////////////////////////////////////////
-// Controls the colours for the MP3 player
-////////////////////////////////////////////////////
 $THEME->csspostprocess = 'magazine_process_css';

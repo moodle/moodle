@@ -342,55 +342,47 @@ class grade_report_grader extends grade_report {
         //fields we need from the user table
         $userfields = user_picture::fields('u', array('idnumber'));
 
+        $sortjoin = $sort = $params = null;
+
         //if the user has clicked one of the sort asc/desc arrows
         if (is_numeric($this->sortitemid)) {
             $params = array_merge(array('gitemid'=>$this->sortitemid), $gradebookrolesparams, $this->groupwheresql_params, $enrolledparams);
-            // the MAX() magic is required in order to please PG
-            $sort = "MAX(g.finalgrade) $this->sortorder";
 
-            $sql = "SELECT $userfields
-                      FROM {user} u
-                      JOIN ($enrolledsql) je
-                           ON je.id = u.id
-                      JOIN {role_assignments} ra
-                           ON ra.userid = u.id
-                      $this->groupsql
-                      LEFT JOIN {grade_grades} g
-                                ON (g.userid = u.id AND g.itemid = :gitemid)
-                     WHERE ra.roleid $gradebookrolessql
-                           AND u.deleted = 0
-                           AND ra.contextid ".get_related_contexts_string($this->context)."
-                           $this->groupwheresql
-                  GROUP BY $userfields
-                  ORDER BY $sort";
+            $sortjoin = "LEFT JOIN {grade_grades} g ON g.userid = u.id AND g.itemid = $this->sortitemid";
+            $sort = "g.finalgrade $this->sortorder";
 
         } else {
+            $sortjoin = '';
             switch($this->sortitemid) {
                 case 'lastname':
-                    $sort = "u.lastname $this->sortorder, u.firstname $this->sortorder"; break;
+                    $sort = "u.lastname $this->sortorder, u.firstname $this->sortorder";
+                    break;
                 case 'firstname':
-                    $sort = "u.firstname $this->sortorder, u.lastname $this->sortorder"; break;
+                    $sort = "u.firstname $this->sortorder, u.lastname $this->sortorder";
+                    break;
                 case 'idnumber':
                 default:
-                    $sort = "u.idnumber $this->sortorder"; break;
+                    $sort = "u.idnumber $this->sortorder";
+                    break;
             }
 
             $params = array_merge($gradebookrolesparams, $this->groupwheresql_params, $enrolledparams);
-
-            $sql = "SELECT DISTINCT $userfields
-                      FROM {user} u
-                      JOIN ($enrolledsql) je
-                           ON je.id = u.id
-                      JOIN {role_assignments} ra
-                           ON u.id = ra.userid
-                           $this->groupsql
-                     WHERE ra.roleid $gradebookrolessql
-                           AND u.deleted = 0
-                           AND ra.contextid ".get_related_contexts_string($this->context)."
-                           $this->groupwheresql
-                  ORDER BY $sort";
         }
 
+        $sql = "SELECT $userfields
+                  FROM {user} u
+                  JOIN ($enrolledsql) je ON je.id = u.id
+                       $this->groupsql
+                       $sortjoin
+                  JOIN (
+                           SELECT DISTINCT ra.userid
+                             FROM {role_assignments} ra
+                            WHERE ra.roleid IN ($this->gradebookroles)
+                              AND ra.contextid " . get_related_contexts_string($this->context) . "
+                       ) rainner ON rainner.userid = u.id
+                   AND u.deleted = 0
+                   $this->groupwheresql
+              ORDER BY $sort";
 
         $this->users = $DB->get_records_sql($sql, $params, $this->get_pref('studentsperpage') * $this->page, $this->get_pref('studentsperpage'));
 
@@ -399,9 +391,26 @@ class grade_report_grader extends grade_report {
             $this->users = array();
             $this->userselect_params = array();
         } else {
-            list($usql, $params) = $DB->get_in_or_equal(array_keys($this->users), SQL_PARAMS_NAMED, 'usid0');
+            list($usql, $uparams) = $DB->get_in_or_equal(array_keys($this->users), SQL_PARAMS_NAMED, 'usid0');
             $this->userselect = "AND g.userid $usql";
-            $this->userselect_params = $params;
+            $this->userselect_params = $uparams;
+
+            //add a flag to each user indicating whether their enrolment is active
+            $sql = "SELECT ue.userid
+                      FROM {user_enrolments} ue
+                      JOIN {enrol} e ON e.id = ue.enrolid
+                     WHERE ue.userid $usql
+                           AND ue.status = :uestatus
+                           AND e.status = :estatus
+                           AND e.courseid = :courseid
+                  GROUP BY ue.userid";
+            $coursecontext = get_course_context($this->context);
+            $params = array_merge($uparams, array('estatus'=>ENROL_INSTANCE_ENABLED, 'uestatus'=>ENROL_USER_ACTIVE, 'courseid'=>$coursecontext->instanceid));
+            $useractiveenrolments = $DB->get_records_sql($sql, $params);
+
+            foreach ($this->users as $user) {
+                $this->users[$user->id]->suspendedenrolment = !array_key_exists($user->id, $useractiveenrolments);
+            }
         }
 
         return $this->users;
@@ -610,6 +619,7 @@ class grade_report_grader extends grade_report {
 
         $rowclasses = array('even', 'odd');
 
+        $suspendedstring = null;
         foreach ($this->users as $userid => $user) {
             $userrow = new html_table_row();
             $userrow->id = 'fixed_user_'.$userid;
@@ -617,6 +627,7 @@ class grade_report_grader extends grade_report {
 
             $usercell = new html_table_cell();
             $usercell->attributes['class'] = 'user';
+
             $usercell->header = true;
             $usercell->scope = 'row';
 
@@ -625,6 +636,16 @@ class grade_report_grader extends grade_report {
             }
 
             $usercell->text .= html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $this->course->id)), fullname($user));
+
+            if (!empty($user->suspendedenrolment)) {
+                $usercell->attributes['class'] .= ' usersuspended';
+
+                //may be lots of suspended users so only get the string once
+                if (empty($suspendedstring)) {
+                    $suspendedstring = get_string('userenrolmentsuspended', 'grades');
+                }
+                $usercell->text .= html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('i/enrolmentsuspended'), 'title'=>$suspendedstring, 'alt'=>$suspendedstring, 'class'=>'usersuspendedicon'));
+            }
 
             $userrow->cells[] = $usercell;
 
@@ -1294,25 +1315,25 @@ class grade_report_grader extends grade_report {
             $params = array_merge(array('courseid'=>$this->courseid), $gradebookrolesparams, $enrolledparams, $groupwheresqlparams);
 
             // find sums of all grade items in course
-            $SQL = "SELECT g.itemid, SUM(g.finalgrade) AS sum
+            $sql = "SELECT g.itemid, SUM(g.finalgrade) AS sum
                       FROM {grade_items} gi
-                      JOIN {grade_grades} g
-                           ON g.itemid = gi.id
-                      JOIN {user} u
-                           ON u.id = g.userid
-                      JOIN ($enrolledsql) je
-                           ON je.id = u.id
-                      JOIN {role_assignments} ra
-                           ON ra.userid = u.id
+                      JOIN {grade_grades} g ON g.itemid = gi.id
+                      JOIN {user} u ON u.id = g.userid
+                      JOIN ($enrolledsql) je ON je.id = u.id
+                      JOIN (
+                               SELECT DISTINCT ra.userid
+                                 FROM {role_assignments} ra
+                                WHERE ra.roleid $gradebookrolessql
+                                  AND ra.contextid " . get_related_contexts_string($this->context) . "
+                           ) rainner ON rainner.userid = u.id
                       $groupsql
                      WHERE gi.courseid = :courseid
-                           AND ra.roleid $gradebookrolessql
-                           AND ra.contextid ".get_related_contexts_string($this->context)."
-                           AND g.finalgrade IS NOT NULL
-                           $groupwheresql
-                  GROUP BY g.itemid";
+                       AND u.deleted = 0
+                       AND g.finalgrade IS NOT NULL
+                       $groupwheresql
+                     GROUP BY g.itemid";
             $sumarray = array();
-            if ($sums = $DB->get_records_sql($SQL, $params)) {
+            if ($sums = $DB->get_records_sql($sql, $params)) {
                 foreach ($sums as $itemid => $csum) {
                     $sumarray[$itemid] = $csum->sum;
                 }
@@ -1320,7 +1341,7 @@ class grade_report_grader extends grade_report {
 
             // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
             // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
-            $SQL = "SELECT gi.id, COUNT(u.id) AS count
+            $sql = "SELECT gi.id, COUNT(DISTINCT u.id) AS count
                       FROM {grade_items} gi
                       CROSS JOIN {user} u
                       JOIN ($enrolledsql) je
@@ -1333,11 +1354,12 @@ class grade_report_grader extends grade_report {
                      WHERE gi.courseid = :courseid
                            AND ra.roleid $gradebookrolessql
                            AND ra.contextid ".get_related_contexts_string($this->context)."
+                           AND u.deleted = 0
                            AND g.id IS NULL
                            $groupwheresql
                   GROUP BY gi.id";
 
-            $ungradedcounts = $DB->get_records_sql($SQL, $params);
+            $ungradedcounts = $DB->get_records_sql($sql, $params);
 
             $avgrow = new html_table_row();
             $avgrow->attributes['class'] = 'avg';

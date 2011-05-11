@@ -1786,10 +1786,10 @@ function feedback_get_page_to_continue($feedbackid, $courseid = false, $guestid 
 
     $params = array();
     if($courseid) {
-        $courseselect = "fv.course_id = :courseid";
+        $courseselect = "AND fv.course_id = :courseid";
         $params['courseid'] = $courseid;
     }else {
-        $courseselect = "1";
+        $courseselect = '';
     }
 
     if($guestid) {
@@ -1807,7 +1807,7 @@ function feedback_get_page_to_continue($feedbackid, $courseid = false, $guestid 
               WHERE fc.id = fv.completed
                     $userselect
                     AND fc.feedback = :feedbackid
-                    AND $courseselect
+                    $courseselect
                     AND fi.id = fv.item
          $usergroup";
     $params['feedbackid'] = $feedbackid;
@@ -2111,7 +2111,7 @@ function feedback_get_group_values($item, $groupid = false, $courseid = false, $
     //if the groupid is given?
     if (intval($groupid) > 0) {
         if($ignore_empty) {
-            $ignore_empty_select = "AND fbc.value != ''";
+            $ignore_empty_select = "AND fbv.value != ''";
         }
         else {
             $ignore_empty_select = "";

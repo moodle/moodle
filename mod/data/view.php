@@ -289,6 +289,10 @@
         $PAGE->requires->js('/mod/data/js.php?d='.$data->id, true);
     }
 
+    // Mark as viewed
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+
 /// Print the page header
     // Note: MDL-19010 there will be further changes to printing header and blocks.
     // The code will be much nicer than this eventually.
@@ -667,6 +671,7 @@ if ($showactivity) {
                 if ($data->assessed!=RATING_AGGREGATE_NONE) {
                     $ratingoptions = new stdclass();
                     $ratingoptions->context = $context;
+                    $ratingoptions->component = 'mod_data';
                     $ratingoptions->items = $records;
                     $ratingoptions->aggregate = $data->assessed;//the aggregation method
                     $ratingoptions->scaleid = $data->scale;
@@ -674,8 +679,6 @@ if ($showactivity) {
                     $ratingoptions->returnurl = $CFG->wwwroot.'/mod/data/'.$baseurl;
                     $ratingoptions->assesstimestart = $data->assesstimestart;
                     $ratingoptions->assesstimefinish = $data->assesstimefinish;
-                    $ratingoptions->plugintype = 'mod';
-                    $ratingoptions->pluginname = 'data';
 
                     $rm = new rating_manager();
                     $records = $rm->get_ratings($ratingoptions);
@@ -730,11 +733,6 @@ if ($showactivity) {
     if (($maxcount || $mode == 'asearch') && $mode != 'single') {
         data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
     }
-
-/// Mark as viewed
-    $completion=new completion_info($course);
-    $completion->set_module_viewed($cm);
 }
 
 echo $OUTPUT->footer();
-

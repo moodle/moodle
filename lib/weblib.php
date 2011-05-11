@@ -541,14 +541,21 @@ class moodle_url {
 
     /**
      * Returns url without parameters, everything before '?'.
+     *
+     * @param bool $includeanchor if {@link self::anchor} is defined, should it be returned?
      * @return string
      */
-    public function out_omit_querystring() {
+    public function out_omit_querystring($includeanchor = false) {
+
         $uri = $this->scheme ? $this->scheme.':'.((strtolower($this->scheme) == 'mailto') ? '':'//'): '';
         $uri .= $this->user ? $this->user.($this->pass? ':'.$this->pass:'').'@':'';
         $uri .= $this->host ? $this->host : '';
         $uri .= $this->port ? ':'.$this->port : '';
         $uri .= $this->path ? $this->path : '';
+        if ($includeanchor and !is_null($this->anchor)) {
+            $uri .= '#' . $this->anchor;
+        }
+
         return $uri;
     }
 
@@ -958,6 +965,8 @@ function format_text_menu() {
  *      context     :   The context that will be used for filtering.
  *      overflowdiv :   If set to true the formatted text will be encased in a div
  *                      with the class no-overflow before being returned. Default false.
+ *      allowid     :   If true then id attributes will not be removed, even when
+ *                      using htmlpurifier. Default false.
  * </pre>
  *
  * @todo Finish documenting this function
@@ -974,7 +983,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
     global $CFG, $COURSE, $DB, $PAGE;
     static $croncache = array();
 
-    if ($text === '') {
+    if ($text === '' || is_null($text)) {
         return ''; // no need to do any filters and cleaning
     }
 
@@ -1016,7 +1025,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
         if (is_object($options['context'])) {
             $context = $options['context'];
         } else {
-            $context = get_context_instance_by_id($context);
+            $context = get_context_instance_by_id($options['context']);
         }
     } else if ($courseid_do_not_use) {
         // legacy courseid
@@ -1069,9 +1078,9 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
     switch ($format) {
         case FORMAT_HTML:
             if (!$options['noclean']) {
-                $text = clean_text($text, FORMAT_HTML);
+                $text = clean_text($text, FORMAT_HTML, $options);
             }
-            $text = $filtermanager->filter_text($text, $context, array('originalformat' => FORMAT_HTML));
+            $text = $filtermanager->filter_text($text, $context, array('originalformat' => FORMAT_HTML, 'noclean' => $options['noclean']));
             break;
 
         case FORMAT_PLAIN:
@@ -1092,17 +1101,17 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
         case FORMAT_MARKDOWN:
             $text = markdown_to_html($text);
             if (!$options['noclean']) {
-                $text = clean_text($text, FORMAT_HTML);
+                $text = clean_text($text, FORMAT_HTML, $options);
             }
-            $text = $filtermanager->filter_text($text, $context, array('originalformat' => FORMAT_MARKDOWN));
+            $text = $filtermanager->filter_text($text, $context, array('originalformat' => FORMAT_MARKDOWN, 'noclean' => $options['noclean']));
             break;
 
         default:  // FORMAT_MOODLE or anything else
             $text = text_to_html($text, null, $options['para'], $options['newlines']);
             if (!$options['noclean']) {
-                $text = clean_text($text, FORMAT_HTML);
+                $text = clean_text($text, FORMAT_HTML, $options);
             }
-            $text = $filtermanager->filter_text($text, $context, array('originalformat' => $format));
+            $text = $filtermanager->filter_text($text, $context, array('originalformat' => $format, 'noclean' => $options['noclean']));
             break;
     }
     if ($options['filter']) {
@@ -1445,9 +1454,11 @@ function trusttext_active() {
  *
  * @param string $text The text to be cleaned
  * @param int $format deprecated parameter, should always contain FORMAT_HTML or FORMAT_MOODLE
+ * @param array $options Array of options; currently only option supported is 'allowid' (if true,
+ *   does not remove id attributes when cleaning)
  * @return string The cleaned up text
  */
-function clean_text($text, $format = FORMAT_HTML) {
+function clean_text($text, $format = FORMAT_HTML, $options = array()) {
     global $ALLOWED_TAGS, $CFG;
 
     if (empty($text) or is_numeric($text)) {
@@ -1464,7 +1475,7 @@ function clean_text($text, $format = FORMAT_HTML) {
     }
 
     if (!empty($CFG->enablehtmlpurifier)) {
-        $text = purify_html($text);
+        $text = purify_html($text, $options);
     } else {
     /// Fix non standard entity notations
         $text = fix_non_standard_entities($text);
@@ -1492,23 +1503,27 @@ function clean_text($text, $format = FORMAT_HTML) {
  *
  * @global object
  * @param string $text The (X)HTML string to purify
+ * @param array $options Array of options; currently only option supported is 'allowid' (if set,
+ *   does not remove id attributes when cleaning)
  */
-function purify_html($text) {
+function purify_html($text, $options = array()) {
     global $CFG;
 
-    // this can not be done only once because we sometimes need to reset the cache
-    $cachedir = $CFG->dataroot.'/cache/htmlpurifier';
-    check_dir_exists($cachedir);
+    $type = !empty($options['allowid']) ? 'allowid' : 'normal';
+    static $purifiers = array();
+    if (empty($purifiers[$type])) {
 
-    static $purifier = false;
-    if ($purifier === false) {
+        // make sure the serializer dir exists, it should be fine if it disappears later during cache reset
+        $cachedir = $CFG->dataroot.'/cache/htmlpurifier';
+        check_dir_exists($cachedir);
+
         require_once $CFG->libdir.'/htmlpurifier/HTMLPurifier.safe-includes.php';
         $config = HTMLPurifier_Config::createDefault();
 
         $config->set('HTML.DefinitionID', 'moodlehtml');
-        $config->set('HTML.DefinitionRev', 1);
+        $config->set('HTML.DefinitionRev', 2);
         $config->set('Cache.SerializerPath', $cachedir);
-        //$config->set('Cache.SerializerPermission', $CFG->directorypermissions); // it would be nice to get this upstream
+        $config->set('Cache.SerializerPermissions', $CFG->directorypermissions);
         $config->set('Core.NormalizeNewlines', false);
         $config->set('Core.ConvertDocumentToFragment', true);
         $config->set('Core.Encoding', 'UTF-8');
@@ -1522,14 +1537,22 @@ function purify_html($text) {
             $config->set('HTML.SafeEmbed', true);
         }
 
-        $def = $config->getHTMLDefinition(true);
-        $def->addElement('nolink', 'Block', 'Flow', array());                       // skip our filters inside
-        $def->addElement('tex', 'Inline', 'Inline', array());                       // tex syntax, equivalent to $$xx$$
-        $def->addElement('algebra', 'Inline', 'Inline', array());                   // algebra syntax, equivalent to @@xx@@
-        $def->addElement('lang', 'Block', 'Flow', array(), array('lang'=>'CDATA')); // old anf future style multilang - only our hacked lang attribute
-        $def->addAttribute('span', 'xxxlang', 'CDATA');                             // current problematic multilang
+        if ($type === 'allowid') {
+            $config->set('Attr.EnableID', true);
+        }
+
+        if ($def = $config->maybeGetRawHTMLDefinition()) {
+            $def->addElement('nolink', 'Block', 'Flow', array());                       // skip our filters inside
+            $def->addElement('tex', 'Inline', 'Inline', array());                       // tex syntax, equivalent to $$xx$$
+            $def->addElement('algebra', 'Inline', 'Inline', array());                   // algebra syntax, equivalent to @@xx@@
+            $def->addElement('lang', 'Block', 'Flow', array(), array('lang'=>'CDATA')); // old and future style multilang - only our hacked lang attribute
+            $def->addAttribute('span', 'xxxlang', 'CDATA');                             // current problematic multilang
+        }
 
         $purifier = new HTMLPurifier($config);
+        $purifiers[$type] = $purifier;
+    } else {
+        $purifier = $purifiers[$type];
     }
 
     $multilang = (strpos($text, 'class="multilang"') !== false);
@@ -2454,6 +2477,11 @@ function redirect($url, $message='', $delay=-1) {
     $encodedurl = preg_replace('/^.*href="([^"]*)".*$/', "\\1", clean_text('<a href="'.$encodedurl.'" />'));
 
     if ($delay == 0 && !$debugdisableredirect && !headers_sent()) {
+        // workaround for IIS bug http://support.microsoft.com/kb/q176113/
+        if (session_id()) {
+            session_get_instance()->write_close();
+        }
+
         //302 might not work for POST requests, 303 is ignored by obsolete clients.
         @header($_SERVER['SERVER_PROTOCOL'] . ' 303 See Other');
         @header('Location: '.$url);
@@ -3262,29 +3290,4 @@ function print_password_policy() {
         $message = get_string('informpasswordpolicy', 'auth', $messages);
     }
     return $message;
-}
-
-function create_ufo_inline($id, $args) {
-    global $CFG;
-    // must not use $PAGE, $THEME, $COURSE etc. because the result is cached!
-    // unfortunately this ufo.js can not be cached properly because we do not have access to current $CFG either
-    $jsoutput = html_writer::script('', $CFG->wwwroot.'/lib/ufo.js');
-    $jsoutput .= html_writer::script(js_writer::function_call('M.util.create_UFO_object', array($id, $args)));
-    return $jsoutput;
-}
-
-function create_flowplayer($id, $fileurl, $type='flv', $color='#000000') {
-    global $CFG;
-
-    $playerpath = $CFG->wwwroot.'/filter/mediaplugin/'.$type.'player.swf';
-    $jsoutput = html_writer::script('', $CFG->wwwroot.'/lib/flowplayer.js');
-
-    if ($type == 'flv') {
-        $jsoutput .= html_writer::script(js_writer::function_call('M.util.init_flvflowplayer', array($id, $playerpath, $fileurl)));
-    } else if ($type == 'mp3') {
-        $audioplayerpath = $CFG->wwwroot .'/filter/mediaplugin/flowplayer.audio.swf';
-        $jsoutput .= html_writer::script(js_writer::function_call('M.util.init_mp3flowplayerplugin', array($id, $playerpath, $audioplayerpath, $fileurl, $color)));
-    }
-
-    return $jsoutput;
 }

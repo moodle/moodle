@@ -297,9 +297,8 @@ h2.headingblock {
 
 .forumpost .topic {
 	background: #fff url([[pix:theme|grad]]) repeat-x 0 100%;
-	border-width: 1px 1px 0;
-	border-color: #eee;
 	padding: 0 10px 0;
+	border: 1px solid #eee;
 }
 
 .forumpost .subject {

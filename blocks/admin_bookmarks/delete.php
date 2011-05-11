@@ -5,6 +5,8 @@ require('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 require_login();
+$context = get_context_instance(CONTEXT_SYSTEM);
+$PAGE->set_context($context);
 $adminroot = admin_get_root(false, false); // settings not required - only pages
 
 if ($section = optional_param('section', '', PARAM_SAFEDIR) and confirm_sesskey()) {

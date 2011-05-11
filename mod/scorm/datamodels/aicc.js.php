@@ -10,6 +10,9 @@
             }
         }
     }
+    if (!isset($currentorg)) {
+        $currentorg = '';
+    }
 ?>
 //
 // SCORM 1.2 API Implementation

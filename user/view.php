@@ -80,6 +80,7 @@ if (!$currentuser
     //       please note this is just a guess!
     require_login();
     $isparent = true;
+    $PAGE->navigation->set_userid_for_parent_checks($id);
 } else {
     // normal course
     require_login($course);
@@ -235,6 +236,15 @@ echo '</div>';
 // Print all the little details in a list
 
 echo '<table class="list" summary="">';
+
+//checks were performed above that ensure that if we've got to here either the user
+//is viewing their own profile ($USER->id == $user->id) or $user is enrolled in the course
+if ($currentuser
+   or $user->maildisplay == 1 //allow everyone to see email address
+   or ($user->maildisplay == 2 && is_enrolled($coursecontext, $USER)) //fellow course members can see email. Already know $user is enrolled
+   or has_capability('moodle/course:useremail', $coursecontext)) {
+    print_row(get_string("email").":", obfuscate_mailto($user->email, ''));
+}
 
 // Show last time this user accessed this course
 if (!isset($hiddenfields['lastaccess'])) {

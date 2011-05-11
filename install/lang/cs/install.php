@@ -64,6 +64,10 @@ $string['pathserrcreatedataroot'] = 'Datový adresář ({$a->dataroot}) nemůže
 $string['pathshead'] = 'Potvrdit cesty';
 $string['pathsrodataroot'] = 'Do datového adresáře nelze zapisovat.';
 $string['pathsroparentdataroot'] = 'Do nadřazeného adresáře ({$a->parent}) nelze zapisovat. Datový adresář ({$a->dataroot}) nemůže být tímto průvodcem instalací vytvořen.';
+$string['pathssubdirroot'] = 'Absolutní cesta k adresáři s instalací Moodle';
+$string['pathsunsecuredataroot'] = 'Umístění datového adresáře není bezpečné';
+$string['pathswrongadmindir'] = 'Adresář pro správu serveru (admin) neexistuje';
+$string['phpextension'] = '{$a} PHP rozšíření';
 $string['phpversion'] = 'Verze PHP';
 $string['phpversionhelp'] = '<p>Moodle vyžaduje PHP alespoň verze 4.3.0 nebo 5.1.0 (PHP 5.0.x obsahuje množství chyb).</p>
 <p>Nyní používáte PHP verze {$a}.</p>

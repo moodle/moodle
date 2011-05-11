@@ -1,0 +1,77 @@
+/**************************************
+
+Structure of the user enroller panel
+
+.user-enroller-panel(.visible)
+    .uep-wrap
+        .uep-header
+        .uep-content
+            .uep-ajax-content
+                .uep-search-results
+                    .totalusers
+                    .users
+                        .user.clearfix(.odd|.even)(.enrolled)
+                            .count
+                            .picture
+                            .details
+                                .fullname
+                                .email
+                            .options
+                                .enrol
+                    .uep-more-results
+            .uep-loading-lightbox(.hidden)
+                .loading-icon
+        .uep-footer
+            .uep-search
+                input
+            .uep-searchoptions
+                .collapsibleheading
+                .collapsiblearea(.hidden)
+                    .uep-enrolment-option
+                        .role
+                        .startdate
+                        .duration
+
+**************************************/
+
+.user-enroller-panel {width:400px;background-color:#666;position:absolute;top:10%;left:10%;border:1px solid #666;border-width:0 5px 5px 0;}
+.user-enroller-panel.hidden {display:none;}
+.user-enroller-panel .uep-wrap {margin-top:-5px;margin-left:-5px;background-color:#FFF;border:1px solid #999;height:inherit;}
+
+.user-enroller-panel .uep-header {background-color:#eee;padding:1px;}
+.user-enroller-panel .uep-header h2 {margin:3px 1em 0.5em 1em;font-size:1em;}
+.user-enroller-panel .uep-header .close {width:25px;height:15px;position:absolute;top:2px;right:1em;cursor:pointer;background:url("sprite.png") no-repeat scroll 0 0 transparent;}
+
+.user-enroller-panel .uep-content {text-align:center;position:relative;width:100%;border-top:1px solid #999;border-bottom:1px solid #999;}
+.user-enroller-panel .uep-content .uep-controls {margin:0;padding:3px;background-color:#ddd;text-align:left;border-bottom:1px solid #BBB;}
+.user-enroller-panel .uep-content .uep-controls .uep-enrolment-option input {vertical-align:middle;margin-left:1em;}
+.user-enroller-panel .uep-ajax-content {height:375px;overflow:auto;}
+.user-enroller-panel .uep-search-results .totalusers {background-color:#eee;padding:5px;border-bottom:1px solid #BBB;font-size:7pt;font-weight: bold;}
+.user-enroller-panel .uep-search-results .user {width:100%;text-align:left;font-size:9pt;border-bottom:1px solid #ddd;border-top:1px solid #eee;}
+.user-enroller-panel .uep-search-results .user.odd {border-bottom:1px solid #ddd;border-top:1px solid #eee;background-color:#f9f9f9;}
+.user-enroller-panel .uep-search-results .user .count {width:20px;float:left;font-size:7pt;line-height:41px;border-right:1px solid #ddd;background-color:#EEE;text-align:right;padding:2px;}
+.user-enroller-panel .uep-search-results .user .picture {width:45px;float:left;margin:3px;}
+.user-enroller-panel .uep-search-results .user .details {width:250px;float:left;margin:3px;}
+.user-enroller-panel .uep-search-results .user .options {padding-right:7px;font-size:8pt;margin:3px;}
+.user-enroller-panel .uep-search-results .user .options .enrol {margin:3px;float:right;cursor:pointer;}
+.user-enroller-panel .uep-search-results .user.enrolled .count {width:40px;color:#eee;}
+.user-enroller-panel .uep-search-results .uep-more-results {background-color:#eee;padding:5px;border-top:1px solid #BBB;}
+
+.user-enroller-panel .uep-loading-lightbox {position:absolute;width:100%;height:100%;top:0;left:0;background-color:#FFF;min-width:50px;min-height:50px;}
+.user-enroller-panel .uep-loading-lightbox.hidden {display:none;}
+.user-enroller-panel .uep-loading-lightbox .loading-icon {margin:auto;vertical-align:middle;margin-top:125px;}
+
+.user-enroller-panel .uep-footer {padding:3px;background-color:#ddd;text-align:center;}
+.user-enroller-panel .uep-search {margin:3px;}
+.user-enroller-panel .uep-search label {padding-right:8px;}
+.user-enroller-panel .uep-search input {width:70%;}
+.user-enroller-panel .uep-searchoptions {margin:3px;cursor:pointer;}
+.user-enroller-panel .uep-searchoptions select {margin-left:1em;}
+.user-enroller-panel .collapsibleheading img {margin-right:8px;}
+.user-enroller-panel .collapsiblearea {border:1px solid #bbb;background-color:#f6f6f6;}
+.user-enroller-panel .collapsiblearea.hidden {display:none;}
+.user-enroller-panel .collapsiblearea .uep-enrolment-option {margin:5px 1em;}
+
+.dir-rtl .user-enroller-panel .uep-header .close {right: auto;left:1em;}
+.dir-rtl .user-enroller-panel .uep-search-results .user { text-align: right;}
+.dir-rtl .user-enroller-panel .uep-content .uep-controls { text-align: right;}

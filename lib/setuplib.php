@@ -54,6 +54,14 @@ define('MEMORY_EXTRA', -3);
 define('MEMORY_HUGE', -4);
 
 /**
+ * Software maturity levels used by the core and plugins
+ */
+define('MATURITY_ALPHA',    50);    // internals can be tested using white box techniques
+define('MATURITY_BETA',     100);   // feature complete, ready for preview and testing
+define('MATURITY_RC',       150);   // tested, will be released unless there are fatal bugs
+define('MATURITY_STABLE',   200);   // ready for production deployment
+
+/**
  * Simple class. It is usually used instead of stdClass because it looks
  * more familiar to Java developers ;-) Do not use for type checking of
  * function parameters. Please use stdClass instead.
@@ -683,7 +691,6 @@ function initialise_fullme() {
     $FULLSCRIPT = $hostandport . $rurl['path'];
     $FULLME = $hostandport . $rurl['fullpath'];
     $ME = $rurl['fullpath'];
-    $rurl['path'] = $rurl['fullpath'];
 }
 
 /**
@@ -765,9 +772,18 @@ function setup_get_remote_url() {
         //LiteSpeed - not officially supported
         $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
 
+    } else if ($_SERVER['SERVER_SOFTWARE'] === 'HTTPD') {
+        //obscure name found on some servers - this is definitely not supported
+        $rurl['fullpath'] = $_SERVER['REQUEST_URI']; // TODO: verify this is always properly encoded
+
      } else {
         throw new moodle_exception('unsupportedwebserver', 'error', '', $_SERVER['SERVER_SOFTWARE']);
     }
+
+    // sanitize the url a bit more, the encoding style may be different in vars above
+    $rurl['fullpath'] = str_replace('"', '%22', $rurl['fullpath']);
+    $rurl['fullpath'] = str_replace('\'', '%27', $rurl['fullpath']);
+
     return $rurl;
 }
 

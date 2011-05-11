@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,9 +17,11 @@
 /**
  * Strings for component 'filter_tex', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   filter_tex
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    filter
+ * @subpackage tex
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['filtername'] = 'TeX notation';
+$string['source'] = 'TeX source';

@@ -287,6 +287,7 @@ class page_requirements_manager {
             'loadingicon'         => $renderer->pix_url('i/loading_small', 'moodle')->out(false),
             'themerev'            => theme_get_revision(),
             'theme'               => $page->theme->name,
+            'jsrev'               => ((empty($CFG->cachejs) or empty($CFG->jsrev)) ? -1 : $CFG->jsrev),
         );
         if (debugging('', DEBUG_DEVELOPER)) {
             $this->M_cfg['developerdebug'] = true;
@@ -411,10 +412,13 @@ class page_requirements_manager {
                                                         array('saving', 'repository'), array('search', 'repository'), array('searching', 'repository'), array('size', 'repository'),
                                                         array('submit', 'repository'), array('sync', 'repository'), array('title', 'repository'), array('upload', 'repository'),
                                                         array('uploading', 'repository'), array('xhtmlerror', 'repository'),
-                                                        array('xhtml', 'quiz'), array('cancel'), array('chooselicense', 'repository'), array('author', 'repository'),
+                                                        array('cancel'), array('chooselicense', 'repository'), array('author', 'repository'),
                                                         array('ok', 'moodle'), array('error', 'moodle'), array('info', 'moodle'), array('norepositoriesavailable', 'repository'), array('norepositoriesexternalavailable', 'repository'),
                                                         array('nofilesattached', 'repository'), array('filepicker', 'repository'),
-                                                        array('nofilesavailable', 'repository')
+                                                        array('nofilesavailable', 'repository'), array('overwrite', 'repository'),
+                                                        array('renameto', 'repository'), array('fileexists', 'repository'),
+                                                        array('fileexistsdialogheader', 'repository'), array('fileexistsdialog_editor', 'repository'),
+                                                        array('fileexistsdialog_filemanager', 'repository')
                                                     ));
                     break;
                 case 'core_comment':
@@ -846,13 +850,13 @@ class page_requirements_manager {
      * passed in $module.
      *
      * <code>
-     * $PAGE->strings_for_js(Array('one', 'two', 'three'), 'mymod', Array('a', null, 3));
+     * $PAGE->requires->strings_for_js(array('one', 'two', 'three'), 'mymod', array('a', null, 3));
      *
      * // The above is identitical to calling
      *
-     * $PAGE->string_for_js('one', 'mymod', 'a');
-     * $PAGE->string_for_js('two', 'mymod');
-     * $PAGE->string_for_js('three', 'mymod', 3);
+     * $PAGE->requires->string_for_js('one', 'mymod', 'a');
+     * $PAGE->requires->string_for_js('two', 'mymod');
+     * $PAGE->requires->string_for_js('three', 'mymod', 3);
      * </code>
      *
      * @param array $identifiers An array of desired strings

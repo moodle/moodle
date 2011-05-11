@@ -93,7 +93,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
                             if (o.error) {
                                 new M.core.ajaxException(o);
                             } else {
-                                panel.user.addRoleToDisplay(args.roleid, this.get(ASSIGNABLEROLES)[args.roleid]);
+                                this.users[userid].addRoleToDisplay(args.roleid, this.get(ASSIGNABLEROLES)[args.roleid]);
                             }
                         } catch (e) {
                             new M.core.exception(e);
@@ -391,7 +391,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             }
             var node = null;
             for (var i in this.roles) {
-                if (node = this.get('contentNode').one('#add_assignable_role_'+i)) {
+                if (node = this.get('contentNode').one('#add_assignable_role_'+this.roles[i])) {
                     node.removeAttribute('disabled');
                 }
             }

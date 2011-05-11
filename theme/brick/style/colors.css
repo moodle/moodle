@@ -10,7 +10,7 @@ html a:hover,body a:hover, ul.dropdown li.hover, ul.dropdown li:hover, ul.dropdo
 	background: url([[setting:logo]]) no-repeat;
 }
 
-#headerwrap {
+#page-header {
 	background: [[setting:maincolor]] url([[pix:theme|header]]) repeat-x;
 	border-bottom: 1px solid [[setting:maincolor]];
 }

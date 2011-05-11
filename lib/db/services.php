@@ -126,7 +126,7 @@ $functions = array(
         'classpath'   => 'user/externallib.php',
         'description' => 'Get users by id.',
         'type'        => 'read',
-        'capabilities'=> 'moodle/user:viewdetails',
+        'capabilities'=> 'moodle/user:viewalldetails',
     ),
 
     'moodle_user_delete_users' => array(
@@ -157,6 +157,15 @@ $functions = array(
         'type'        => 'read',
         'capabilities'=> 'moodle/site:viewparticipants, moodle/course:viewparticipants,
             moodle/role:review, moodle/site:accessallgroups, moodle/course:enrolreview',
+    ),
+
+    'moodle_enrol_get_users_courses' => array(
+        'classname'   => 'moodle_enrol_external',
+        'methodname'  => 'get_users_courses',
+        'classpath'   => 'enrol/externallib.php',
+        'description' => 'Get list of courses user is enrolled in',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/course:viewparticipants',
     ),
 
     'moodle_role_assign' => array(

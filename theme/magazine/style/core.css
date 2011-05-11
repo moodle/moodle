@@ -30,13 +30,13 @@ a:focus {
 
 /**header divs **/
 
-#header-wrap {
+#page-header {
     top: 0;
     left: 0;
     width: 100%;
 }
 
-div#header {
+div#headerinner {
     width: 91%;
     min-width: 910px;
     height: 30px;
@@ -216,7 +216,7 @@ div.jcontrolsright div.singlebutton, div.jcontrolsright div.forumsearch {
     margin: 0 auto;
 }
 
-#footer-wrap {
+#page-footer {
     position: relative;
     bottom: 0;
     left: 0;
@@ -273,13 +273,12 @@ div.johndocsleft {
 /** breadcrumb image replacement **/
 
 div#jcontrols_button span.arrow.sep {
-    font-size: 1px;
+    font-size: .01em;
     color: #fafafa;
     background: url([[pix:theme|breadcrumb_separator_arrow_2_dots]]) no-repeat;
-    background-position: 50% 9px;
+    background-position: 50% 7px;
     display: inline-block;
     width: 16px;
-    line-height: 40px;
 }
 
 /** Block styles **/

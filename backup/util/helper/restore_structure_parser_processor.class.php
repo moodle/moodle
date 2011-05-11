@@ -102,4 +102,12 @@ class restore_structure_parser_processor extends grouped_parser_processor {
     protected function dispatch_chunk($data) {
         $this->step->process($data);
     }
+
+    protected function notify_path_start($path) {
+        // nothing to do
+    }
+
+    protected function notify_path_end($path) {
+        // nothing to do
+    }
 }

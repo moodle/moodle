@@ -106,9 +106,9 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
 
     // Do not show email field if change confirmation is pending
     if (!empty($CFG->emailchangeconfirmation) and !empty($user->preference_newemail)) {
-        $notice = get_string('auth_emailchangepending', 'auth_email', $user);
+        $notice = get_string('emailchangepending', 'auth', $user);
         $notice .= '<br /><a href="edit.php?cancelemailchange=1&amp;id='.$user->id.'">'
-                . get_string('auth_emailchangecancel', 'auth_email') . '</a>';
+                . get_string('emailchangecancel', 'auth') . '</a>';
         $mform->addElement('static', 'emailpending', get_string('email'), $notice);
     } else {
         $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');

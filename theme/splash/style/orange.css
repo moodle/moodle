@@ -110,3 +110,21 @@ body.splash-orange {                /* Define margins and background colour/imag
     color: #fff;
 }
 
+/* Blog
+------------------------*/
+
+.splash-orange .blog_entry .subject a:link {        /* Defining all link styles*/
+    color: #000;
+}
+
+.splash-orange .blog_entry .subject a:visited {        /* Setting all visited link styles */
+    color: #000;
+}
+
+.splash-orange .blog_entry .subject a:hover {        /* Setting all rollover link styles */
+    color: #000;
+}
+
+.splash-orange .blog_entry .subject a:active {        /* Setting all active link styles */
+    color: #000;
+}

@@ -227,6 +227,8 @@ $ADMIN->add('server', new admin_externalpage('phpinfo', get_string('phpinfo'), "
 // "performance" settingpage
 $temp = new admin_settingpage('performance', get_string('performance', 'admin'));
 
+$temp->add(new admin_setting_configtext('numcoursesincombo', get_string('numcoursesincombo', 'admin'), get_string('numcoursesincombo_help', 'admin'), 500));
+
 $temp->add(new admin_setting_configselect('extramemorylimit', get_string('extramemorylimit', 'admin'),
                                           get_string('configextramemorylimit', 'admin'), '512M',
                                           // if this option is set to 0, default 128M will be used
@@ -239,6 +241,8 @@ $temp->add(new admin_setting_configselect('extramemorylimit', get_string('extram
 $temp->add(new admin_setting_configtext('curlcache', get_string('curlcache', 'admin'),
                                         get_string('configcurlcache', 'admin'), 120, PARAM_INT));
 
+$temp->add(new admin_setting_configtext('curltimeoutkbitrate', get_string('curltimeoutkbitrate', 'admin'),
+                                        get_string('curltimeoutkbitrate_help', 'admin'), 56, PARAM_INT));
 /* //TODO: we need to fix code instead of relying on slow rcache, enable this once we have some code that is actually using it
 $temp->add(new admin_setting_special_selectsetup('cachetype', get_string('cachetype', 'admin'),
                                           get_string('configcachetype', 'admin'), '',

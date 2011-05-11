@@ -7,7 +7,8 @@ $hassidepre = $PAGE->blocks->region_has_content('side-pre', $OUTPUT);
 $hassidepost = $PAGE->blocks->region_has_content('side-post', $OUTPUT);
 $showsidepre = $hassidepre && !$PAGE->blocks->region_completely_docked('side-pre', $OUTPUT);
 $showsidepost = $hassidepost && !$PAGE->blocks->region_completely_docked('side-post', $OUTPUT);
-
+$custommenu = $OUTPUT->custom_menu();
+$hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
 $bodyclasses = array();
 if ($showsidepre && !$showsidepost) {
@@ -17,6 +18,9 @@ if ($showsidepre && !$showsidepost) {
 } else if (!$showsidepost && !$showsidepre) {
     $bodyclasses[] = 'content-only';
 }
+if ($hascustommenu) {
+    $bodyclasses[] = 'has_custom_menu';
+}
 
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes() ?>>
@@ -25,7 +29,7 @@ echo $OUTPUT->doctype() ?>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
-<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
@@ -42,6 +46,11 @@ echo $OUTPUT->doctype() ?>
             }
             echo $PAGE->headingmenu
         ?></div><?php } ?>
+        
+        <?php if ($hascustommenu) { ?>
+ 	<div id="custommenu"><?php echo $custommenu; ?></div>
+		<?php } ?>
+        
         <?php if ($hasnavbar) { ?>
             <div class="navbar clearfix">
                 <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>

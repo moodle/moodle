@@ -19,11 +19,6 @@
  * repository_dropbox class
  * This plugin is used to access user's dropbox files
  *
- * TODO:
- * Dropbox has problems to process filepath with spaces, tried to use
- * urlencode filepath, still doesn't work
- * http://code.google.com/p/dropbox-php/ has the same problem
- *
  * @since 2.0
  * @package    repository
  * @subpackage dropbox
@@ -71,7 +66,7 @@ class repository_dropbox extends repository {
             'oauth_consumer_key'=>$this->dropbox_key,
             'oauth_consumer_secret'=>$this->dropbox_secret,
             'oauth_callback' => $this->callback->out(false),
-            'api_root' => 'http://api.dropbox.com/0/oauth',
+            'api_root' => 'http://www.dropbox.com/0/oauth',
         );
 
         $this->dropbox = new dropbox($args);
@@ -130,18 +125,19 @@ class repository_dropbox extends repository {
         } else {
             $path = file_correct_filepath($path);
         }
+        $encoded_path = str_replace("%2F", "/", rawurlencode($path));
 
         $list = array();
         $list['list'] = array();
         $list['manage'] = false;
         $list['dynload'] = true;
         $list['nosearch'] = true;
-        // process breacrumb trail
+        // process breadcrumb trail
         $list['path'] = array(
             array('name'=>get_string('dropbox', 'repository_dropbox'), 'path'=>'/')
         );
 
-        $result = $this->dropbox->get_listing($path, $this->access_key, $this->access_secret);
+        $result = $this->dropbox->get_listing($encoded_path, $this->access_key, $this->access_secret);
 
         if (!is_object($result) || empty($result)) {
             return $list;
@@ -167,10 +163,16 @@ class repository_dropbox extends repository {
             }
         }
 
-        $files = $result->contents;
-        if (!is_array($files) || empty($files)) {
+        if (!empty($result->error)) {
+            // reset access key
+            set_user_preference($this->setting.'_access_key', '');
+            set_user_preference($this->setting.'_access_secret', '');
+            throw new repository_exception('repositoryerror', 'repository', '', $result->error);
+        }
+        if (empty($result->contents) or !is_array($result->contents)) {
             return $list;
         }
+        $files = $result->contents;
         foreach ($files as $file) {
             if ($file->is_dir) {
                 $list['list'][] = array(
@@ -249,6 +251,7 @@ class repository_dropbox extends repository {
      */
     public function get_file($filepath, $saveas = '') {
         $this->dropbox->set_access_token($this->access_key, $this->access_secret);
+        $saveas = $this->prepare_file($saveas);
         return $this->dropbox->get_file($filepath, $saveas);
     }
     /**

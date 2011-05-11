@@ -8,6 +8,8 @@ $hassidepost = (empty($PAGE->layout_options['noblocks']) && $PAGE->blocks->regio
 
 $showsidepre = ($hassidepre && !$PAGE->blocks->region_completely_docked('side-pre', $OUTPUT));
 $showsidepost = ($hassidepost && !$PAGE->blocks->region_completely_docked('side-post', $OUTPUT));
+$custommenu = $OUTPUT->custom_menu();
+$hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
 $bodyclasses = array();
 if ($showsidepre && !$showsidepost) {
@@ -17,7 +19,9 @@ if ($showsidepre && !$showsidepost) {
 } else if (!$showsidepost && !$showsidepre) {
     $bodyclasses[] = 'content-only';
 }
-
+if ($hascustommenu) {
+    $bodyclasses[] = 'has_custom_menu';
+}
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes() ?>>
 <head>
@@ -25,7 +29,7 @@ echo $OUTPUT->doctype() ?>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
-<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
@@ -33,7 +37,7 @@ echo $OUTPUT->doctype() ?>
 <?php if ($hasheading || $hasnavbar) { ?>
 
     <div id="page-header" class="clearfix">
-	        
+
 	        <?php if ($hasheading) { ?>
 		    	<h1 class="headermain"><?php echo $PAGE->heading ?></h1>
     		    <div class="headermenu">
@@ -45,17 +49,21 @@ echo $OUTPUT->doctype() ?>
     			       	echo $PAGE->headingmenu
         			?>
 	        	</div>
-	        <?php } ?>        
-        	
+	        <?php } ?>
+
     </div>
     
+	<?php if ($hascustommenu) { ?>
+ 	<div id="custommenu"><?php echo $custommenu; ?></div>
+	<?php } ?>
+
     <?php if ($hasnavbar) { ?>
 	    <div class="navbar clearfix">
     	    <div class="breadcrumb"><?php echo $OUTPUT->navbar(); ?></div>
             <div class="navbutton"> <?php echo $PAGE->button; ?></div>
       </div>
     <?php } ?>
-    
+
 <?php } ?>
 
 <!-- END OF HEADER -->
@@ -64,7 +72,7 @@ echo $OUTPUT->doctype() ?>
     <div id="page-content">
         <div id="region-main-box">
             <div id="region-post-box">
-            
+
                 <div id="region-main-wrap">
                     <div id="region-main">
                         <div class="region-content">
@@ -72,7 +80,7 @@ echo $OUTPUT->doctype() ?>
                         </div>
                     </div>
                 </div>
-                
+
                 <?php if ($hassidepre) { ?>
                 <div id="region-pre" class="block-region">
                     <div class="region-content">
@@ -80,7 +88,7 @@ echo $OUTPUT->doctype() ?>
                     </div>
                 </div>
                 <?php } ?>
-                
+
                 <?php if ($hassidepost) { ?>
                 <div id="region-post" class="block-region">
                     <div class="region-content">
@@ -88,7 +96,7 @@ echo $OUTPUT->doctype() ?>
                     </div>
                 </div>
                 <?php } ?>
-                
+
             </div>
         </div>
     </div>

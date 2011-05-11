@@ -99,7 +99,7 @@ if ($groupmode) {
 }
 else {
     $colname = get_string('user');
-    $sql = 'SELECT o.*, u.firstname, u.lastname, u.id as uid
+    $sql = 'SELECT o.*, u.firstname, u.lastname
                 FROM {quiz_overrides} o JOIN {user} u
                 ON o.userid = u.id
                 WHERE o.quiz = ?

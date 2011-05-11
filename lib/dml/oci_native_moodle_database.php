@@ -340,12 +340,36 @@ class oci_native_moodle_database extends moodle_database {
         return $error;
     }
 
+    /**
+     * Prepare the statement for execution
+     * @throws dml_connection_exception
+     * @param string $sql
+     * @return resource
+     */
     protected function parse_query($sql) {
         $stmt = oci_parse($this->oci, $sql);
         if ($stmt == false) {
             throw new dml_connection_exception('Can not parse sql query'); //TODO: maybe add better info
         }
         return $stmt;
+    }
+
+    /**
+     * Make sure there are no reserved words in param names...
+     * @param string $sql
+     * @param array $params
+     * @return array ($sql, $params) updated query and parameters
+     */
+    protected function tweak_param_names($sql, array $params) {
+        if (empty($params)) {
+            return array($sql, $params);
+        }
+        $newparams = array();
+        foreach ($params as $name=>$value) {
+            $newparams['o_'.$name] = $value;
+        }
+        $sql = preg_replace('/:([a-z0-9_-]+[$a-z0-9_-])/', ':o_$1', $sql);
+        return array($sql, $newparams);
     }
 
     /**
@@ -843,11 +867,12 @@ class oci_native_moodle_database extends moodle_database {
             }
             foreach($params as $key => $value) {
                 // Decouple column name and param name as far as sometimes they aren't the same
-                $columnname = $key; // Default columnname (for DB introspecting is key), but...
-                if ($key == 'newfieldtoset') { // found case where column and key diverge, handle that
+                if ($key == 'o_newfieldtoset') { // found case where column and key diverge, handle that
                     $columnname   = key($value);    // columnname is the key of the array
                     $params[$key] = $value[$columnname]; // set the proper value in the $params array and
                     $value        = $value[$columnname]; // set the proper value in the $value variable
+                } else {
+                    $columnname = preg_replace('/^o_/', '', $key); // Default columnname (for DB introspecting is key), but...
                 }
                 // Continue processing
                 // Now, handle already detected LOBs
@@ -940,6 +965,7 @@ class oci_native_moodle_database extends moodle_database {
             throw new coding_exception('moodle_database::execute() Multiple sql statements found or bound parameters not used properly in query!');
         }
 
+        list($sql, $params) = $this->tweak_param_names($sql, $params);
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $stmt = $this->parse_query($sql);
         $this->bind_params($stmt, $params);
@@ -1002,7 +1028,8 @@ class oci_native_moodle_database extends moodle_database {
 
         list($rawsql, $params) = $this->get_limit_sql($sql, $params, $limitfrom, $limitnum);
 
-        $this->query_start($sql, $params, SQL_QUERY_SELECT);
+        list($rawsql, $params) = $this->tweak_param_names($rawsql, $params);
+        $this->query_start($rawsql, $params, SQL_QUERY_SELECT);
         $stmt = $this->parse_query($rawsql);
         $this->bind_params($stmt, $params);
         $result = oci_execute($stmt, $this->commit_status);
@@ -1035,7 +1062,8 @@ class oci_native_moodle_database extends moodle_database {
 
         list($rawsql, $params) = $this->get_limit_sql($sql, $params, $limitfrom, $limitnum);
 
-        $this->query_start($sql, $params, SQL_QUERY_SELECT);
+        list($rawsql, $params) = $this->tweak_param_names($rawsql, $params);
+        $this->query_start($rawsql, $params, SQL_QUERY_SELECT);
         $stmt = $this->parse_query($rawsql);
         $this->bind_params($stmt, $params);
         $result = oci_execute($stmt, $this->commit_status);
@@ -1073,6 +1101,7 @@ class oci_native_moodle_database extends moodle_database {
     public function get_fieldset_sql($sql, array $params=null) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
+        list($sql, $params) = $this->tweak_param_names($sql, $params);
         $this->query_start($sql, $params, SQL_QUERY_SELECT);
         $stmt = $this->parse_query($sql);
         $this->bind_params($stmt, $params);
@@ -1135,11 +1164,12 @@ class oci_native_moodle_database extends moodle_database {
 
         $id = null;
 
+        list($sql, $params) = $this->tweak_param_names($sql, $params);
         $this->query_start($sql, $params, SQL_QUERY_INSERT);
         $stmt = $this->parse_query($sql);
         $descriptors = $this->bind_params($stmt, $params, $table);
         if ($returning) {
-            oci_bind_by_name($stmt, ":oracle_id", $id, 10, SQLT_INT);
+            oci_bind_by_name($stmt, ":o_oracle_id", $id, 10, SQLT_INT); // :o_ prefix added in tweak_param_names()
         }
         $result = oci_execute($stmt, $this->commit_status);
         $this->free_descriptors($descriptors);
@@ -1246,6 +1276,7 @@ class oci_native_moodle_database extends moodle_database {
         $sql = "UPDATE {" . $table . "} SET $sets WHERE id=:id";
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
+        list($sql, $params) = $this->tweak_param_names($sql, $params);
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $stmt = $this->parse_query($sql);
         $descriptors = $this->bind_params($stmt, $params, $table);
@@ -1335,6 +1366,7 @@ class oci_native_moodle_database extends moodle_database {
         $sql = "UPDATE {" . $table . "} SET $newsql $select";
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
+        list($sql, $params) = $this->tweak_param_names($sql, $params);
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $stmt = $this->parse_query($sql);
         $descriptors = $this->bind_params($stmt, $params, $table);
@@ -1365,6 +1397,7 @@ class oci_native_moodle_database extends moodle_database {
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
+        list($sql, $params) = $this->tweak_param_names($sql, $params);
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
         $stmt = $this->parse_query($sql);
         $this->bind_params($stmt, $params);

@@ -208,7 +208,7 @@ class postgres_sql_generator extends sql_generator {
      *     - Changes in null/not null require the SET/DROP NOT NULL clause
      *     - Changes in default require the SET/DROP DEFAULT clause
      */
-    public function getAlterFieldSQL($xmldb_table, $xmldb_field) {
+    public function getAlterFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
         $results = array(); /// To store all the needed SQL commands
 
     /// Get the normla names of the table and field

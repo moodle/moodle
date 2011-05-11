@@ -1215,7 +1215,7 @@ class assignment_base {
         }
 
         $tableheaders = array('',
-                              get_string('fullname'),
+                              get_string('fullnameuser'),
                               get_string('grade'),
                               get_string('comment', 'assignment'),
                               get_string('lastmodified').' ('.get_string('submission', 'assignment').')',
@@ -2612,6 +2612,11 @@ function assignment_cron () {
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml  = $posthtml;
             $eventdata->smallmessage     = '';
+
+            $eventdata->name            = 'assignment_updates';
+            $eventdata->component       = 'mod_assignment';
+            $eventdata->notification    = 1;
+
             message_send($eventdata);
         }
 

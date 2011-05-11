@@ -861,6 +861,10 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $this->box_start('quizattempt');
 
         // Now actually print the appropriate button.
+        if (!quiz_clean_layout($quiz->questions, true)) {
+            $output .= quiz_no_questions_message($quiz, $cm, $context);
+        }
+
         if ($buttontext) {
             $output .= $viewobj->accessmanager->print_start_attempt_button($viewobj->canpreview,
                     $buttontext, $viewobj->unfinished);

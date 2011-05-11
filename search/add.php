@@ -14,7 +14,7 @@
     *
     * Major chages in this review is passing the xxxx_db_names return to
     * multiple arity to handle multiple document types modules
-    * 
+    *
     * changes are in implementing new $DB access
     */
 
@@ -114,7 +114,7 @@
                             $docIds = $DB->get_records_sql_menu($query, array($mod->name));
 
                             if (!empty($docIds)){
-                                list($usql, $params) = $DB->get_in_or_equal(array_keys($docIds), SQL_PARAMS_QM, 'param0000', false); // negative IN
+                                list($usql, $params) = $DB->get_in_or_equal(array_keys($docIds), SQL_PARAMS_QM, 'param', false); // negative IN
                                 $query =  "
                                     SELECT id,
                                         $values[0] as docid

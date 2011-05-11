@@ -328,7 +328,7 @@ class question_finder {
     public function get_questions_from_categories($categoryids, $extraconditions, $extraparams = array()) {
         global $DB;
 
-        list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc0000');
+        list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
 
         if ($extraconditions) {
             $extraconditions = ' AND (' . $extraconditions . ')';

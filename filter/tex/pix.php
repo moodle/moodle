@@ -42,7 +42,7 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
             $latex = new latex();
             $density = $CFG->filter_tex_density;
             $background = $CFG->filter_tex_latexbackground;
-            $texexp = html_entity_decode($texcache->rawtext);
+            $texexp = $texcache->rawtext; // the entities are now decoded before inserting to DB
             $latex_path = $latex->render($texexp, $md5, 12, $density, $background);
             if ($latex_path) {
                 copy($latex_path, $pathname);

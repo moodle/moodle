@@ -67,19 +67,26 @@ class HTMLPurifier_URI
         $chars_gen_delims = ':/?#[]@';
         $chars_pchar = $chars_sub_delims . ':@';
 
-        // validate scheme (MUST BE FIRST!)
-        if (!is_null($this->scheme) && is_null($this->host)) {
-            $def = $config->getDefinition('URI');
-            if ($def->defaultScheme === $this->scheme) {
-                $this->scheme = null;
-            }
-        }
-
         // validate host
         if (!is_null($this->host)) {
             $host_def = new HTMLPurifier_AttrDef_URI_Host();
             $this->host = $host_def->validate($this->host, $config, $context);
             if ($this->host === false) $this->host = null;
+        }
+
+        // validate scheme
+        // NOTE: It's not appropriate to check whether or not this
+        // scheme is in our registry, since a URIFilter may convert a
+        // URI that we don't allow into one we do.  So instead, we just
+        // check if the scheme can be dropped because there is no host
+        // and it is our default scheme.
+        if (!is_null($this->scheme) && is_null($this->host) || $this->host === '') {
+            // support for relative paths is pretty abysmal when the
+            // scheme is present, so axe it when possible
+            $def = $config->getDefinition('URI');
+            if ($def->defaultScheme === $this->scheme) {
+                $this->scheme = null;
+            }
         }
 
         // validate username
@@ -96,32 +103,48 @@ class HTMLPurifier_URI
         // validate path
         $path_parts = array();
         $segments_encoder = new HTMLPurifier_PercentEncoder($chars_pchar . '/');
-        if (!is_null($this->host)) {
+        if (!is_null($this->host)) { // this catches $this->host === ''
             // path-abempty (hier and relative)
+            // http://www.example.com/my/path
+            // //www.example.com/my/path (looks odd, but works, and
+            //                            recognized by most browsers)
+            // (this set is valid or invalid on a scheme by scheme
+            // basis, so we'll deal with it later)
+            // file:///my/path
+            // ///my/path
             $this->path = $segments_encoder->encode($this->path);
-        } elseif ($this->path !== '' && $this->path[0] === '/') {
-            // path-absolute (hier and relative)
-            if (strlen($this->path) >= 2 && $this->path[1] === '/') {
-                // This shouldn't ever happen!
-                $this->path = '';
-            } else {
+        } elseif ($this->path !== '') {
+            if ($this->path[0] === '/') {
+                // path-absolute (hier and relative)
+                // http:/my/path
+                // /my/path
+                if (strlen($this->path) >= 2 && $this->path[1] === '/') {
+                    // This could happen if both the host gets stripped
+                    // out
+                    // http://my/path
+                    // //my/path
+                    $this->path = '';
+                } else {
+                    $this->path = $segments_encoder->encode($this->path);
+                }
+            } elseif (!is_null($this->scheme)) {
+                // path-rootless (hier)
+                // http:my/path
+                // Short circuit evaluation means we don't need to check nz
                 $this->path = $segments_encoder->encode($this->path);
-            }
-        } elseif (!is_null($this->scheme) && $this->path !== '') {
-            // path-rootless (hier)
-            // Short circuit evaluation means we don't need to check nz
-            $this->path = $segments_encoder->encode($this->path);
-        } elseif (is_null($this->scheme) && $this->path !== '') {
-            // path-noscheme (relative)
-            // (once again, not checking nz)
-            $segment_nc_encoder = new HTMLPurifier_PercentEncoder($chars_sub_delims . '@');
-            $c = strpos($this->path, '/');
-            if ($c !== false) {
-                $this->path =
-                    $segment_nc_encoder->encode(substr($this->path, 0, $c)) .
-                    $segments_encoder->encode(substr($this->path, $c));
             } else {
-                $this->path = $segment_nc_encoder->encode($this->path);
+                // path-noscheme (relative)
+                // my/path
+                // (once again, not checking nz)
+                $segment_nc_encoder = new HTMLPurifier_PercentEncoder($chars_sub_delims . '@');
+                $c = strpos($this->path, '/');
+                if ($c !== false) {
+                    $this->path =
+                        $segment_nc_encoder->encode(substr($this->path, 0, $c)) .
+                        $segments_encoder->encode(substr($this->path, $c));
+                } else {
+                    $this->path = $segment_nc_encoder->encode($this->path);
+                }
             }
         } else {
             // path-empty (hier and relative)
@@ -150,6 +173,9 @@ class HTMLPurifier_URI
     public function toString() {
         // reconstruct authority
         $authority = null;
+        // there is a rendering difference between a null authority
+        // (http:foo-bar) and an empty string authority
+        // (http:///foo-bar).
         if (!is_null($this->host)) {
             $authority = '';
             if(!is_null($this->userinfo)) $authority .= $this->userinfo . '@';
@@ -157,7 +183,12 @@ class HTMLPurifier_URI
             if(!is_null($this->port))     $authority .= ':' . $this->port;
         }
 
-        // reconstruct the result
+        // Reconstruct the result
+        // One might wonder about parsing quirks from browsers after
+        // this reconstruction.  Unfortunately, parsing behavior depends
+        // on what *scheme* was employed (file:///foo is handled *very*
+        // differently than http:///foo), so unfortunately we have to
+        // defer to the schemes to do the right thing.
         $result = '';
         if (!is_null($this->scheme))    $result .= $this->scheme . ':';
         if (!is_null($authority))       $result .=  '//' . $authority;

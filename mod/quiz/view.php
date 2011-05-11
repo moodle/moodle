@@ -74,6 +74,9 @@ $accessmanager = new quiz_access_manager(quiz::create($quiz->id, $USER->id), $ti
 // Log this request.
 add_to_log($course->id, 'quiz', 'view', 'view.php?id=' . $cm->id, $quiz->id, $cm->id);
 
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+
 // Initialize $PAGE, compute blocks
 $PAGE->set_url('/mod/quiz/view.php', array('id' => $cm->id));
 
@@ -169,7 +172,6 @@ if ($quiz->attempts != 1) {
 // This will be set something if as start/continue attempt button should appear.
 $buttontext = '';
 if (!quiz_clean_layout($quiz->questions, true)) {
-    $output .= quiz_no_questions_message($quiz, $cm, $context);
     $buttontext = '';
 
 } else {
@@ -222,11 +224,5 @@ if (isguestuser()) {
 } else {
     echo $output->view_page($course, $quiz, $cm, $context, $messages, $viewobj, $buttontext);
 }
-
-// Mark module as viewed (note, we do this here and not in finish_page,
-// otherwise the 'not enrolled' error conditions would result in marking
-// 'viewed', I think it's better if they don't.)
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
 
 echo $OUTPUT->footer();

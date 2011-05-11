@@ -118,6 +118,7 @@ class block_navigation extends block_base {
             'courselimit'    => $limit,
             'expansionlimit' => $expansionlimit
         );
+        $this->page->requires->string_for_js('viewallcourses', 'moodle');
         $this->page->requires->yui_module(array('core_dock', 'moodle-block_navigation-navigation'), 'M.block_navigation.init_add_tree', array($arguments));
     }
 

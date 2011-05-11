@@ -60,6 +60,17 @@ $string['auth_user_creation'] = 'New (anonymous) users can create user accounts 
 $string['auth_usernameexists'] = 'Selected username already exists. Please choose a new one.';
 $string['auto_add_remote_users'] = 'Auto add remote users';
 $string['createpasswordifneeded'] = 'Create password if needed';
+$string['emailchangecancel'] = 'Cancel email change';
+$string['emailchangepending'] = 'Change pending. Open the link sent to you at {$a->preference_newemail}.';
+$string['emailnowexists'] = 'The email address you tried to assign to your profile has been assigned to someone else since your original request. Your request for change of email address is hereby cancelled, but you may try again with a different address.';
+$string['emailupdate'] = 'Email address update';
+$string['emailupdatemessage'] = 'Dear {$a->fullname},
+
+You have requested a change of your email address for your user account at {$a->site}. Please open the following URL in your browser in order to confirm this change.
+
+{$a->url}';
+$string['emailupdatesuccess'] = 'Email address of user <em>{$a->fullname}</em> was successfully updated to <em>{$a->email}</em>.';
+$string['emailupdatetitle'] = 'Confirmation of email update at {$a->site}';
 $string['enterthenumbersyouhear'] = 'Enter the numbers you hear';
 $string['enterthewordsabove'] = 'Enter the words above';
 $string['errormaxconsecutiveidentchars'] = 'Passwords must have at most {$a} consecutive identical characters.';

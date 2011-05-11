@@ -283,7 +283,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
             $cell = new html_table_cell();
             $cell->colspan = 2;
-            $cell->style = 'text-align:center';
+            $cell->style = 'text-align:left';
             $cell->text = $page->contents;
             $pagetable->data[] = new html_table_row(array($cell));
 

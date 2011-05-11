@@ -67,7 +67,7 @@
     <location>htmlpurifier</location>
     <name>HTML Purifier</name>
     <license>LGPL</license>
-    <version>4.2.0</version>
+    <version>4.3.0</version>
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
@@ -85,11 +85,11 @@
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>mp3player</location>
-    <name></name>
-    <license></license>
-    <version></version>
-    <licenseversion></licenseversion>
+    <location>flowplayer</location>
+    <name>Flowplayer</name>
+    <license>GPL</license>
+    <version>3.2.7</version>
+    <licenseversion>3</licenseversion>
   </library>
   <library>
     <location>overlib</location>

@@ -336,7 +336,7 @@ class mnetservice_enrol {
             if (empty($list)) {
                 $DB->delete_records('mnetservice_enrol_enrolments', array('hostid'=>$mnethostid, 'remotecourseid'=>$remotecourseid));
             } else {
-                list($isql, $params) = $DB->get_in_or_equal(array_keys($list), SQL_PARAMS_NAMED, 'param0000', false);
+                list($isql, $params) = $DB->get_in_or_equal(array_keys($list), SQL_PARAMS_NAMED, 'param', false);
                 $params['hostid'] = $mnethostid;
                 $params['remotecourseid'] = $remotecourseid;
                 $select = "hostid = :hostid AND remotecourseid = :remotecourseid AND id $isql";
@@ -556,7 +556,7 @@ class mnetservice_enrol_potential_users_selector extends user_selector_base {
             return array();
         }
 
-        list($usql, $uparams) = $DB->get_in_or_equal(array_keys($userids), SQL_PARAMS_NAMED, 'uid0000');
+        list($usql, $uparams) = $DB->get_in_or_equal(array_keys($userids), SQL_PARAMS_NAMED, 'uid');
 
         list($wherecondition, $params) = $this->search_sql($search, 'u');
 

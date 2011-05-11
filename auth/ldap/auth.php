@@ -502,7 +502,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         events_trigger('user_created', $user);
 
         if (! send_confirmation_email($user)) {
-            print_error('auth_emailnoemail', 'auth_email');
+            print_error('noemail', 'auth_ldap');
         }
 
         if ($notify) {

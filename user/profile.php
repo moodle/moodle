@@ -36,6 +36,7 @@
 
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->dirroot . '/my/lib.php');
+require_once($CFG->dirroot . '/tag/lib.php');
 require_once($CFG->dirroot . '/user/profile/lib.php');
 require_once($CFG->libdir.'/filelib.php');
 
@@ -63,8 +64,10 @@ if (!$currentuser &&
     !empty($CFG->forceloginforprofiles) &&
     !has_capability('moodle/user:viewdetails', $context) &&
     !has_coursecontact_role($userid)) {
+
     // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
     $struser = get_string('user');
+    $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
     $PAGE->set_title("$SITE->shortname: $struser");  // Do not leak the name
     $PAGE->set_heading("$SITE->shortname: $struser");
     $PAGE->set_url('/user/profile.php', array('id'=>$userid));
@@ -247,9 +250,10 @@ if (has_capability('moodle/user:viewhiddendetails', $context)) {
     }
 }
 
-if ($user->maildisplay == 1
-   or ($user->maildisplay == 2 && !isguestuser())
-   or has_capability('moodle/course:useremail', $context)) {
+if ($currentuser
+  or $user->maildisplay == 1
+  or has_capability('moodle/course:useremail', $context)
+  or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER))) {
 
     print_row(get_string("email").":", obfuscate_mailto($user->email, ''));
 }

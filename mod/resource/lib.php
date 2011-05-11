@@ -247,7 +247,7 @@ function resource_get_coursemodule_info($coursemodule) {
         return $info;
     }
     $fs = get_file_storage();
-    $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder');
+    $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false); // TODO: this is not very efficient!!
     if (count($files) >= 1) {
         $mainfile = array_pop($files);
         $info->icon = file_extension_icon($mainfile->get_filename());

@@ -432,9 +432,9 @@ class file_storage {
             $conditions['itemid'] = $itemid;
         }
 
-        $filerecords = $DB->get_records('files', $conditions);
-        foreach ($filerecords as $filerecord) {
-            $this->get_file_instance($filerecord)->delete();
+        $file_records = $DB->get_records('files', $conditions);
+        foreach ($file_records as $file_record) {
+            $this->get_file_instance($file_record)->delete();
         }
 
         return true; // BC only
@@ -444,31 +444,31 @@ class file_storage {
      * Delete all the files from certain areas where itemid is limited by an
      * arbitrary bit of SQL.
      *
-     * @param int $contextid the context the files belong to.
-     * @param string $component the owning component.
-     * @param string $filearea the file area name. false for all.
+     * @param int $contextid the id of the context the files belong to. Must be given.
+     * @param string $component the owning component. Must be given.
+     * @param string $filearea the file area name. Must be given.
      * @param string $itemidstest an SQL fragment that the itemid must match. Used
      *      in the query like WHERE itemid $itemidstest. Must used named parameters,
      *      and may not used named parameters called contextid, component or filearea.
      * @param array $params any query params used by $itemidstest.
      */
     public function delete_area_files_select($contextid, $component,
-            $filearea, $itemidstest, $params = null) {
+            $filearea, $itemidstest, array $params = null) {
         global $DB;
 
-        $where = 'contextid = :contextid AND component = :component AND itemid ' . $itemidstest;
+        $where = "contextid = :contextid
+                AND component = :component
+                AND filearea = :filearea
+                AND itemid $itemidstest";
         $params['contextid'] = $contextid;
         $params['component'] = $component;
-        if ($filearea !== false) {
-            $where .= ' AND filearea = :filearea';
-            $params['filearea'] = $filearea;
-        }
+        $params['filearea'] = $filearea;
 
-        $filerecords = $DB->get_recordset_select('files', $where, $params);
-        foreach ($filerecords as $filerecord) {
-            $this->get_file_instance($filerecord)->delete();
+        $file_records = $DB->get_recordset_select('files', $where, $params);
+        foreach ($file_records as $file_record) {
+            $this->get_file_instance($file_record)->delete();
         }
-        $filerecords->close();
+        $file_records->close();
     }
 
     /**
@@ -702,6 +702,7 @@ class file_storage {
         $timeout        = isset($options['timeout'])        ? $options['timeout'] : 300;
         $connecttimeout = isset($options['connecttimeout']) ? $options['connecttimeout'] : 20;
         $skipcertverify = isset($options['skipcertverify']) ? $options['skipcertverify'] : false;
+        $calctimeout    = isset($options['calctimeout'])    ? $options['calctimeout'] : false;
 
         if (!isset($file_record->filename)) {
             $parts = explode('/', $url);
@@ -714,7 +715,7 @@ class file_storage {
         if ($usetempfile) {
             check_dir_exists($this->tempdir);
             $tmpfile = tempnam($this->tempdir, 'newfromurl');
-            $content = download_file_content($url, $headers, $postdata, $fullresponse, $timeout, $connecttimeout, $skipcertverify, $tmpfile);
+            $content = download_file_content($url, $headers, $postdata, $fullresponse, $timeout, $connecttimeout, $skipcertverify, $tmpfile, $calctimeout);
             if ($content === false) {
                 throw new file_exception('storedfileproblem', 'Can not fetch file form URL');
             }
@@ -728,7 +729,7 @@ class file_storage {
             }
 
         } else {
-            $content = download_file_content($url, $headers, $postdata, $fullresponse, $timeout, $connecttimeout, $skipcertverify);
+            $content = download_file_content($url, $headers, $postdata, $fullresponse, $timeout, $connecttimeout, $skipcertverify, NULL, $calctimeout);
             if ($content === false) {
                 throw new file_exception('storedfileproblem', 'Can not fetch file form URL');
             }

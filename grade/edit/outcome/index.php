@@ -56,8 +56,8 @@ if ($courseid) {
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'outcome', 'courseid'=>$courseid));
 
-$strshortname        = get_string('shortname');
-$strfullname         = get_string('fullname');
+$strshortname        = get_string('outcomeshortname', 'grades');
+$strfullname         = get_string('outcomefullname', 'grades');
 $strscale            = get_string('scale');
 $strstandardoutcome  = get_string('outcomesstandard', 'grades');
 $strcustomoutcomes   = get_string('outcomescustom', 'grades');

@@ -5,6 +5,8 @@ $hasnavbar = (empty($PAGE->layout_options['nonavbar']) && $PAGE->has_navbar());
 $hasfooter = (empty($PAGE->layout_options['nofooter']));
 $hassidepre = $PAGE->blocks->region_has_content('side-pre', $OUTPUT);
 $hassidepost = $PAGE->blocks->region_has_content('side-post', $OUTPUT);
+$custommenu = $OUTPUT->custom_menu();
+$hascustommenu = (empty($PAGE->layout_options['nocustommenu']) && !empty($custommenu));
 
 $bodyclasses = array();
 if ($hassidepre && !$hassidepost) {
@@ -13,6 +15,9 @@ if ($hassidepre && !$hassidepost) {
     $bodyclasses[] = 'side-post-only';
 } else if (!$hassidepost && !$hassidepre) {
     $bodyclasses[] = 'content-only';
+}
+if ($hascustommenu) {
+    $bodyclasses[] = 'has_custom_menu';
 }
 
 echo $OUTPUT->doctype() ?>
@@ -23,12 +28,12 @@ echo $OUTPUT->doctype() ?>
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
 
-<body id="<?php echo $PAGE->bodyid ?>" class="<?php echo $PAGE->bodyclasses.' '.join(' ', $bodyclasses) ?>">
+<body id="<?php p($PAGE->bodyid) ?>" class="<?php p($PAGE->bodyclasses.' '.join(' ', $bodyclasses)) ?>">
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
 <div id="page">
 <?php if ($hasheading || $hasnavbar) { ?>
-    <div id="page-header" class="inside">
+    <div id="page-header" >
 		<div id="page-header-wrapper" class="wrapper clearfix">
 	        <?php if ($hasheading) { ?>
     		    <h1 class="headermain"><?php echo $PAGE->heading ?></h1>
@@ -39,7 +44,9 @@ echo $OUTPUT->doctype() ?>
 	    		        }
 		            echo $PAGE->headingmenu ?>
 	            </div>
-	        <?php } ?>
+	        <?php } if ($hascustommenu) { ?>
+			<div id="custommenuwrap"><div id="custommenu"><?php echo $custommenu; ?></div></div>
+			<?php } ?>
 	    </div>
     </div>
 
@@ -61,7 +68,7 @@ echo $OUTPUT->doctype() ?>
 	    <div id="page-content">
     	    <div id="region-main-box">
         	    <div id="region-post-box">
-            
+
 	                <div id="region-main-wrap">
     	                <div id="region-main">
         	                <div class="region-content">
@@ -69,7 +76,7 @@ echo $OUTPUT->doctype() ?>
                 	        </div>
                     	</div>
 	                </div>
-                
+
 	                <?php if ($hassidepre) { ?>
     	            <div id="region-pre" class="block-region">
         	            <div class="region-content">
@@ -77,7 +84,7 @@ echo $OUTPUT->doctype() ?>
                 	    </div>
 	                </div>
     	            <?php } ?>
-                
+
 	                <?php if ($hassidepost) { ?>
     	            <div id="region-post" class="block-region">
         	            <div class="region-content">
@@ -85,7 +92,7 @@ echo $OUTPUT->doctype() ?>
                 	    </div>
 	                </div>
     	            <?php } ?>
-                
+
         	    </div>
 	        </div>
     	</div>

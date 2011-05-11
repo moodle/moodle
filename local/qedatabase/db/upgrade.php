@@ -87,11 +87,11 @@ function xmldb_local_qedatabase_upgrade($oldversion) {
         $table = new xmldb_table('question_states');
         if ($dbman->table_exists($table)) {
             // First delete all data from preview attempts.
-            delete_records_select('question_states',
+            $DB->delete_records_select('question_states',
                     "attempt IN (SELECT uniqueid FROM {quiz_attempts} WHERE preview = 1)");
-            delete_records_select('question_sessions',
+            $DB->delete_records_select('question_sessions',
                     "attemptid IN (SELECT uniqueid FROM {quiz_attempts} WHERE preview = 1)");
-            delete_records('quiz_attempts', 'preview', 1);
+            $DB->delete_records('quiz_attempts', array('preview' => 1));
 
             // Now update all the old attempt data.
             $oldrcachesetting = $CFG->rcache;

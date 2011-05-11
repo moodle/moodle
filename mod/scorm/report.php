@@ -602,8 +602,7 @@
                     if (!empty($userdata)) {
                         echo $OUTPUT->box_start('generalbox boxaligncenter');
                         echo '<div class="mdl-align">'."\n";
-                        $userrec = (object)array('id'=>$user);
-                        echo $OUTPUT->user_picture($userrec, array('courseid'=>$course->id));
+                        echo $OUTPUT->user_picture($userdata, array('courseid'=>$course->id));
                         echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
                              "$userdata->firstname $userdata->lastname</a><br />";
                         echo get_string('attempt','scorm').': '.$attempt;
@@ -665,8 +664,7 @@
             //print_heading(format_string($sco->title));
             echo $OUTPUT->heading('<a href="'.$CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;mode=browse&amp;scoid='.$sco->id.'" target="_new">'.format_string($sco->title).'</a>');
             echo '<div class="mdl-align">'."\n";
-            $userrec = (object)array('id'=>$user);
-            echo $OUTPUT->user_picture($userrec, array('courseid'=>$course->id));
+            echo $OUTPUT->user_picture($userdata, array('courseid'=>$course->id));
             echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
                  "$userdata->firstname $userdata->lastname</a><br />";
             $scoreview = '';

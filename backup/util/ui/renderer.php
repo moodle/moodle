@@ -181,7 +181,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $hasrestoreoption = false;
 
         $html  = html_writer::start_tag('div', array('class'=>'backup-course-selector backup-restore'));
-        if (!empty($categories) && ($categories->get_count() > 0 || $categories->get_search())) {
+        if ($details->type == backup::TYPE_1COURSE && !empty($categories) && ($categories->get_count() > 0 || $categories->get_search())) {
             // New course
             $hasrestoreoption = true;
             $html .= $form;
@@ -194,7 +194,7 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= html_writer::end_tag('form');
         }
 
-        if (!empty($currentcourse)) {
+        if ($details->type == backup::TYPE_1COURSE && !empty($currentcourse)) {
             // Current course
             $hasrestoreoption = true;
             $html .= $form;
@@ -214,9 +214,17 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= $form;
             $html .= html_writer::start_tag('div', array('class'=>'bcs-existing-course backup-section'));
             $html .= $this->output->heading(get_string('restoretoexistingcourse', 'backup'), 2, array('class'=>'header'));
-            $html .= $this->backup_detail_input(get_string('restoretoexistingcourseadding', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_ADDING, array('checked'=>'checked'));
-            $html .= $this->backup_detail_input(get_string('restoretoexistingcoursedeleting', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_DELETING);
-            $html .= $this->backup_detail_pair(get_string('selectacourse', 'backup'), $this->render($courses));
+            if ($details->type == backup::TYPE_1COURSE) {
+                $html .= $this->backup_detail_input(get_string('restoretoexistingcourseadding', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_ADDING, array('checked'=>'checked'));
+                $html .= $this->backup_detail_input(get_string('restoretoexistingcoursedeleting', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_DELETING);
+                $html .= $this->backup_detail_pair(get_string('selectacourse', 'backup'), $this->render($courses));
+            } else {
+                // We only allow restore adding to existing for now. Enforce it here.
+                $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'target', 'value'=>backup::TARGET_EXISTING_ADDING));
+                $courses->invalidate_results(); // Clean list of courses
+                $courses->set_include_currentcourse(); // Show current course in the list
+                $html .= $this->backup_detail_pair(get_string('selectacourse', 'backup'), $this->render($courses));
+            }
             $html .= $this->backup_detail_pair('', html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('continue'))));
             $html .= html_writer::end_tag('div');
             $html .= html_writer::end_tag('form');
@@ -461,7 +469,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div', array('class' => 'rcs-results'));
 
         $table = new html_table();
-        $table->head = array('', get_string('shortname'), get_string('fullname'));
+        $table->head = array('', get_string('shortnamecourse'), get_string('fullnamecourse'));
         $table->data = array();
         if ($component->get_count() !== 0) {
             foreach ($component->get_results() as $course) {
@@ -526,7 +534,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div', array('class' => 'ics-results'));
 
         $table = new html_table();
-        $table->head = array('', get_string('shortname'), get_string('fullname'));
+        $table->head = array('', get_string('shortnamecourse'), get_string('fullnamecourse'));
         $table->data = array();
         foreach ($component->get_results() as $course) {
             $row = new html_table_row();

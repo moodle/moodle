@@ -471,11 +471,69 @@ function glossary_rating_permissions($options) {
 }
 
 /**
- * Returns the names of the table and columns necessary to check items for ratings
- * @return array an array containing the item table, item id and user id columns
+ * Validates a submitted rating
+ * @param array $params submitted data
+ *            context => object the context in which the rated items exists [required]
+ *            itemid => int the ID of the object being rated
+ *            scaleid => int the scale from which the user can select a rating. Used for bounds checking. [required]
+ *            rating => int the submitted rating
+ *            rateduserid => int the id of the user whose items have been rated. NOT the user who submitted the ratings. 0 to update all. [required]
+ *            aggregation => int the aggregation method to apply when calculating grades ie RATING_AGGREGATE_AVERAGE [optional]
+ * @return boolean true if the rating is valid. Will throw rating_exception if not
  */
-function glossary_rating_item_check_info() {
-    return array('glossary_entries','id','userid');
+function glossary_rating_validate($params) {
+    global $DB, $USER;
+
+    if (!array_key_exists('itemid', $params) || !array_key_exists('context', $params) || !array_key_exists('rateduserid', $params)) {
+        throw new rating_exception('missingparameter');
+    }
+
+    $glossarysql = "SELECT g.id as gid, e.userid as userid, e.approved, e.timecreated, g.assesstimestart, g.assesstimefinish
+                      FROM {glossary_entries} e
+                      JOIN {glossary} g ON e.glossaryid = g.id
+                     WHERE e.id = :itemid";
+    $glossaryparams = array('itemid'=>$params['itemid']);
+    if (!$info = $DB->get_record_sql($glossarysql, $glossaryparams)) {
+        //item doesn't exist
+        throw new rating_exception('invaliditemid');
+    }
+
+    if ($info->userid == $USER->id) {
+        //user is attempting to rate their own glossary entry
+        throw new rating_exception('nopermissiontorate');
+    }
+
+    if ($params['rateduserid'] != $info->userid) {
+        //supplied user ID doesnt match the user ID from the database
+        throw new rating_exception('invaliduserid');
+    }
+
+    if (!$info->approved) {
+        //item isnt approved
+        throw new rating_exception('nopermissiontorate');
+    }
+
+    //check the item we're rating was created in the assessable time window
+    if (!empty($info->assesstimestart) && !empty($info->assesstimefinish)) {
+        if ($info->timecreated < $info->assesstimestart || $info->timecreated > $info->assesstimefinish) {
+            throw new rating_exception('notavailable');
+        }
+    }
+
+    $glossaryid = $info->gid;
+
+    $cm = get_coursemodule_from_instance('glossary', $glossaryid);
+    if (empty($cm)) {
+        throw new rating_exception('unknowncontext');
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    //if the supplied context doesnt match the item's context
+    if (empty($context) || $context->id != $params['context']->id) {
+        throw new rating_exception('invalidcontext');
+    }
+
+    return true;
 }
 
 /**
@@ -2653,4 +2711,83 @@ function glossary_extend_settings_navigation(settings_navigation $settings, navi
         $url = new moodle_url(rss_get_url($PAGE->cm->context->id, $USER->id, 'mod_glossary', $glossary->id));
         $glossarynode->add($string, $url, settings_navigation::TYPE_SETTING, null, null, new pix_icon('i/rss', ''));
     }
+}
+
+/**
+ * Running addtional permission check on plugin, for example, plugins
+ * may have switch to turn on/off comments option, this callback will
+ * affect UI display, not like pluginname_comment_validate only throw
+ * exceptions.
+ * Capability check has been done in comment->check_permissions(), we
+ * don't need to do it again here.
+ *
+ * @param stdClass $comment_param {
+ *              context  => context the context object
+ *              courseid => int course id
+ *              cm       => stdClass course module object
+ *              commentarea => string comment area
+ *              itemid      => int itemid
+ * }
+ * @return array
+ */
+function glossary_comment_permissions($comment_param) {
+    return array('post'=>true, 'view'=>true);
+}
+
+/**
+ * Validate comment parameter before perform other comments actions
+ *
+ * @param stdClass $comment_param {
+ *              context  => context the context object
+ *              courseid => int course id
+ *              cm       => stdClass course module object
+ *              commentarea => string comment area
+ *              itemid      => int itemid
+ * }
+ * @return boolean
+ */
+function glossary_comment_validate($comment_param) {
+    global $DB;
+    // validate comment area
+    if ($comment_param->commentarea != 'glossary_entry') {
+        throw new comment_exception('invalidcommentarea');
+    }
+    if (!$record = $DB->get_record('glossary_entries', array('id'=>$comment_param->itemid))) {
+        throw new comment_exception('invalidcommentitemid');
+    }
+    if (!$glossary = $DB->get_record('glossary', array('id'=>$record->glossaryid))) {
+        throw new comment_exception('invalidid', 'data');
+    }
+    if (!$course = $DB->get_record('course', array('id'=>$glossary->course))) {
+        throw new comment_exception('coursemisconf');
+    }
+    if (!$cm = get_coursemodule_from_instance('glossary', $glossary->id, $course->id)) {
+        throw new comment_exception('invalidcoursemodule');
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    if ($glossary->defaultapproval and !$record->approved and !has_capability('mod/glossary:approve', $context)) {
+        throw new comment_exception('notapproved', 'glossary');
+    }
+    // validate context id
+    if ($context->id != $comment_param->context->id) {
+        throw new comment_exception('invalidcontext');
+    }
+    // validation for comment deletion
+    if (!empty($comment_param->commentid)) {
+        if ($comment = $DB->get_record('comments', array('id'=>$comment_param->commentid))) {
+            if ($comment->commentarea != 'glossary_entry') {
+                throw new comment_exception('invalidcommentarea');
+            }
+            if ($comment->contextid != $comment_param->context->id) {
+                throw new comment_exception('invalidcontext');
+            }
+            if ($comment->itemid != $comment_param->itemid) {
+                throw new comment_exception('invalidcommentitemid');
+            }
+        } else {
+            throw new comment_exception('invalidcommentid');
+        }
+    }
+    return true;
 }

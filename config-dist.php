@@ -297,6 +297,13 @@ $CFG->admin = 'admin';
 //   Print to footer (works with the default theme)
 //   define('MDL_PERFTOFOOT', true);
 //
+//   Enable earlier profiling that causes more code to be covered
+//   on every request (db connections, config load, other inits...).
+//   Requires extra configuration to be defined in config.php like:
+//   profilingincluded, profilingexcluded, profilingautofrec,
+//   profilingallowme, profilingallowall, profilinglifetime
+//       $CFG->earlyprofilingenabled = true;
+//
 // Force displayed usernames
 //   A little hack to anonymise user names for all students.  If you set these
 //   then all non-teachers will always see these for every person.
@@ -344,6 +351,25 @@ $CFG->admin = 'admin';
 // This local directory does not have to be accessible from internet.
 //
 //     $CFG->themedir = '/location/of/extra/themes';
+//
+// If $CFG->langstringcache is enabled (which should always be in production
+// environment), Moodle keeps aggregated strings in its own internal format
+// optimised for performance. By default, this on-disk cache is created in
+// $CFG->dataroot/cache/lang. In cluster environment, you may wish to specify
+// an alternative location of this cache so that each web server in the cluster
+// uses its own local cache and does not need to access the shared dataroot.
+// Make sure that the web server process has write permission to this location
+// and that it has permission to remove the folder, too (so that the cache can
+// be pruned).
+//
+//     $CFG->langcacheroot = '/var/www/moodle/htdocs/altcache/lang';
+//
+// If $CFG->langcache is enabled (which should always be in production
+// environment), Moodle stores the list of available languages in a cache file.
+// By default, the file $CFG->dataroot/languages is used. You may wish to
+// specify an alternative location of this cache file.
+//
+//     $CFG->langmenucachefile = '/var/www/moodle/htdocs/altcache/languages';
 //
 // Site default language can be set via standard administration interface. If you
 // want to have initial error messages for eventual database connection problems

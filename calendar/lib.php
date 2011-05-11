@@ -460,8 +460,11 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                     }
                 }
                 if ($event->modulename == 'assignment'){
+                    // create calendar_event to test edit_event capability
+                    // this new event will also prevent double creation of calendar_event object
+                    $checkevent = new calendar_event($event);
                     // TODO: rewrite this hack somehow
-                    if (!calendar_edit_event_allowed($event)){ // cannot manage entries, eg. student
+                    if (!calendar_edit_event_allowed($checkevent)){ // cannot manage entries, eg. student
                         if (!$assignment = $DB->get_record('assignment', array('id'=>$event->instance))) {
                             // print_error("invalidid", 'assignment');
                             continue;
@@ -1435,16 +1438,18 @@ function calendar_edit_event_allowed($event) {
         // 2) They have managegroupentries AND are in the group
         $group = $DB->get_record('groups', array('id'=>$event->groupid));
         return $group && (
-            has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $group->courseid)) ||
-            (has_capability('moodle/calendar:managegroupentries', get_context_instance(CONTEXT_COURSE, $group->courseid))
+            has_capability('moodle/calendar:manageentries', $event->context) ||
+            (has_capability('moodle/calendar:managegroupentries', $event->context)
                 && groups_is_member($event->groupid)));
     } else if (!empty($event->courseid)) {
     // if groupid is not set, but course is set,
     // it's definiely a course event
-        return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid));
+        return has_capability('moodle/calendar:manageentries', $event->context);
     } else if (!empty($event->userid) && $event->userid == $USER->id) {
     // if course is not set, but userid id set, it's a user event
-        return (has_capability('moodle/calendar:manageownentries', $sitecontext));
+        return (has_capability('moodle/calendar:manageownentries', $event->context));
+    } else if (!empty($event->userid)) {
+        return (has_capability('moodle/calendar:manageentries', $event->context));
     }
     return false;
 }
@@ -1675,7 +1680,7 @@ function calendar_add_event_allowed($event) {
 
     switch ($event->eventtype) {
         case 'course':
-            return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid));
+            return has_capability('moodle/calendar:manageentries', $event->context);
 
         case 'group':
             // Allow users to add/edit group events if:
@@ -1683,24 +1688,21 @@ function calendar_add_event_allowed($event) {
             // 2) They have managegroupentries AND are in the group
             $group = $DB->get_record('groups', array('id'=>$event->groupid));
             return $group && (
-                has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $group->courseid)) ||
-                (has_capability('moodle/calendar:managegroupentries', get_context_instance(CONTEXT_COURSE, $group->courseid))
+                has_capability('moodle/calendar:manageentries', $event->context) ||
+                (has_capability('moodle/calendar:managegroupentries', $event->context)
                     && groups_is_member($event->groupid)));
 
         case 'user':
             if ($event->userid == $USER->id) {
-                return (has_capability('moodle/calendar:manageownentries', $sitecontext));
+                return (has_capability('moodle/calendar:manageownentries', $event->context));
             }
             //there is no 'break;' intentionally
 
         case 'site':
-            return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, SITEID));
+            return has_capability('moodle/calendar:manageentries', $event->context);
 
         default:
-            if (isset($event->courseid) && $event->courseid > 0) {
-                return has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $event->courseid));
-            }
-            return false;
+            return has_capability('moodle/calendar:manageentries', $event->context);
     }
 }
 
@@ -1809,6 +1811,9 @@ class calendar_event {
             $data->format = editors_get_preferred_format();
         }
 
+        if (empty($data->context)) {
+            $data->context = $this->calculate_context($data);
+        }
         $this->properties = $data;
     }
 
@@ -1859,6 +1864,39 @@ class calendar_event {
     }
 
     /**
+     * Calculate the context value needed for calendar_event.
+     * Event's type can be determine by the available value store in $data
+     * It is important to check for the existence of course/courseid to determine
+     * the course event.
+     * Default value is set to CONTEXT_USER
+     *
+     * @return stdClass
+     */
+    protected function calculate_context(stdClass $data) {
+        global $USER;
+
+        $context = null;
+        if (isset($data->courseid) && $data->courseid > 0) {
+            $context =  get_context_instance(CONTEXT_COURSE, $data->courseid);
+        } else if (isset($data->course) && $data->course > 0) {
+            $context =  get_context_instance(CONTEXT_COURSE, $data->course);
+        } else if (isset($data->groupid) && $data->groupid > 0) {
+            $group = $DB->get_record('groups', array('id'=>$data->groupid));
+            $context = get_context_instance(CONTEXT_COURSE, $group->courseid);
+        } else if (isset($data->userid) && $data->userid > 0 && $data->userid == $USER->id) {
+            $context =  get_context_instance(CONTEXT_USER);
+        } else if (isset($data->userid) && $data->userid > 0 && $data->userid != $USER->id &&
+                   isset($data->instance) && $data->instance > 0) {
+            $cm = get_coursemodule_from_id('', $data->instance, 0, false, MUST_EXIST);
+            $context =  get_context_instance(CONTEXT_COURSE, $cm->course);
+        } else {
+            $context =  get_context_instance(CONTEXT_USER);
+        }
+
+        return $context;
+    }
+
+    /**
      * Returns an array of editoroptions for this event: Called by __get
      * Please use $blah = $event->editoroptions;
      * @return array
@@ -1874,7 +1912,7 @@ class calendar_event {
      * @return string
      */
     protected function get_description() {
-        global $USER, $CFG;
+        global $CFG;
 
         require_once($CFG->libdir . '/filelib.php');
 
@@ -1883,28 +1921,10 @@ class calendar_event {
             if ($this->editorcontext === null) {
                 // Switch on the event type to decide upon the appropriate context
                 // to use for this event
-                switch ($this->properties->eventtype) {
-                    case 'course':
-                    case 'group':
-                        // Course and group event files are served from the course context
-                        // and there are checks in plugin.php to ensure permissions are
-                        // followed
-                        $this->editorcontext = get_context_instance(CONTEXT_COURSE, $this->properties->courseid);
-                        break;
-                    case 'user':
-                        // User context
-                        $this->editorcontext = get_context_instance(CONTEXT_USER, $USER->id);
-                        break;
-                    case 'site':
-                        // Site context
-                        $this->editorcontext = get_context_instance(CONTEXT_SYSTEM);
-                        break;
-                    default:
-                        // Hmmmm some modules use custom eventtype strings, if that is the
-                        // case we are going to abandon using files. Anything that uses a
-                        // custom type is being added manually through code
-                        return clean_text($this->properties->description, $this->properties->format);
-                        break;
+                $this->editorcontext = $this->properties->context;
+                if ($this->properties->eventtype != 'user' && $this->properties->eventtype != 'course'
+                        && $this->properties->eventtype != 'site' && $this->properties->eventtype != 'group') {
+                    return clean_text($this->properties->description, $this->properties->format);
                 }
             }
 
@@ -1973,24 +1993,24 @@ class calendar_event {
             if ($usingeditor) {
                 switch ($this->properties->eventtype) {
                     case 'user':
-                        $this->editorcontext = get_context_instance(CONTEXT_USER, $USER->id);
+                        $this->editorcontext = $this->properties->context;
                         $this->properties->courseid = 0;
                         $this->properties->groupid = 0;
                         $this->properties->userid = $USER->id;
                         break;
                     case 'site':
-                        $this->editorcontext = get_context_instance(CONTEXT_SYSTEM);
+                        $this->editorcontext = $this->properties->context;
                         $this->properties->courseid = SITEID;
                         $this->properties->groupid = 0;
                         $this->properties->userid = $USER->id;
                         break;
                     case 'course':
-                        $this->editorcontext = get_context_instance(CONTEXT_COURSE, $this->properties->courseid);
+                        $this->editorcontext = $this->properties->context;
                         $this->properties->groupid = 0;
                         $this->properties->userid = $USER->id;
                         break;
                     case 'group':
-                        $this->editorcontext = get_context_instance(CONTEXT_COURSE, $this->properties->courseid);
+                        $this->editorcontext = $this->properties->context;
                         $this->properties->userid = $USER->id;
                         break;
                     default:
@@ -2133,7 +2153,7 @@ class calendar_event {
      * @return bool
      */
     public function delete($deleterepeated=false) {
-        global $DB, $USER, $CFG;
+        global $DB;
 
         // If $this->properties->id is not set then something is wrong
         if (empty($this->properties->id)) {
@@ -2146,23 +2166,7 @@ class calendar_event {
 
         // If the editor context hasn't already been set then set it now
         if ($this->editorcontext === null) {
-            switch ($this->properties->eventtype) {
-                case 'course':
-                case 'group':
-                    $this->editorcontext = get_context_instance(CONTEXT_COURSE, $this->properties->courseid);
-                    break;
-                case 'user':
-                    $this->editorcontext = get_context_instance(CONTEXT_USER, $USER->id);
-                    break;
-                case 'site':
-                    $this->editorcontext = get_context_instance(CONTEXT_SYSTEM);
-                    break;
-                default:
-                    // There is a chance we can get here as some modules use there own
-                    // eventtype strings. In this case the event has been added by code
-                    // and we don't need to worry about it anyway
-                    break;
-            }
+            $this->editorcontext = $this->properties->context;
         }
 
         // If the context has been set delete all associated files
@@ -2224,10 +2228,10 @@ class calendar_event {
 
                 if ($properties->eventtype === 'site') {
                     // Site context
-                    $this->editorcontext = get_context_instance(CONTEXT_SYSTEM);
+                    $this->editorcontext = $this->properties->context;
                 } else if ($properties->eventtype === 'user') {
                     // User context
-                    $this->editorcontext = get_context_instance(CONTEXT_USER, $USER->id);
+                    $this->editorcontext = $this->properties->context;
                 } else if ($properties->eventtype === 'group' || $properties->eventtype === 'course') {
                     // First check the course is valid
                     $course = $DB->get_record('course', array('id'=>$properties->courseid));
@@ -2235,7 +2239,7 @@ class calendar_event {
                         print_error('invalidcourse');
                     }
                     // Course context
-                    $this->editorcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                    $this->editorcontext = $this->properties->context;
                     // We have a course and are within the course context so we had
                     // better use the courses max bytes value
                     $this->editoroptions['maxbytes'] = $course->maxbytes;
@@ -2375,7 +2379,7 @@ class calendar_event {
         if (!is_object($properties)) {
             throw new coding_exception('When creating an event properties should be either an object or an assoc array');
         }
-        $event = new calendar_event();
+        $event = new calendar_event($properties);
         if ($event->update($properties)) {
             return $event;
         } else {

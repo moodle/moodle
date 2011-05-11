@@ -64,8 +64,8 @@ class qubaid_condition_test extends UnitTestCase {
         $this->check_typical_question_attempts_query($qubaids,
                 "SELECT qa.id, qa.maxmark
             FROM {question_attempts} qa
-            WHERE qa.questionusageid = :qubaid0000 AND qa.slot = :slot",
-            array('qubaid0000' => 1, 'slot' => 1));
+            WHERE qa.questionusageid = :qubaid8 AND qa.slot = :slot",
+            array('qubaid8' => 1, 'slot' => 1));
     }
 
     public function test_qubaid_list_several_join() {
@@ -73,8 +73,8 @@ class qubaid_condition_test extends UnitTestCase {
         $this->check_typical_question_attempts_query($qubaids,
                 "SELECT qa.id, qa.maxmark
             FROM {question_attempts} qa
-            WHERE qa.questionusageid IN (:qubaid0000,:qubaid0001,:qubaid0002) AND qa.slot = :slot",
-            array('qubaid0000' => 1, 'qubaid0001' => 3, 'qubaid0002' => 7, 'slot' => 1));
+            WHERE qa.questionusageid IN (:qubaid12,:qubaid13,:qubaid14) AND qa.slot = :slot",
+            array('qubaid12' => 1, 'qubaid13' => 3, 'qubaid14' => 7, 'slot' => 1));
     }
 
     public function test_qubaid_join() {
@@ -103,7 +103,7 @@ class qubaid_condition_test extends UnitTestCase {
         $this->check_typical_in_query($qubaids,
                 "SELECT qa.id, qa.maxmark
             FROM {question_attempts} qa
-            WHERE qa.questionusageid = :qubaid0000", array('qubaid0000' => 1));
+            WHERE qa.questionusageid = :qubaid15", array('qubaid15' => 1));
     }
 
     public function test_qubaid_list_several_in() {
@@ -112,8 +112,8 @@ class qubaid_condition_test extends UnitTestCase {
         $this->check_typical_in_query($qubaids,
                 "SELECT qa.id, qa.maxmark
             FROM {question_attempts} qa
-            WHERE qa.questionusageid IN (:qubaid0000,:qubaid0001,:qubaid0002)",
-                array('qubaid0000' => 1, 'qubaid0001' => 2, 'qubaid0002' => 3));
+            WHERE qa.questionusageid IN (:qubaid16,:qubaid17,:qubaid18)",
+                array('qubaid16' => 1, 'qubaid17' => 2, 'qubaid18' => 3));
     }
 
     public function test_qubaid_join_in() {

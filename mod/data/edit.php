@@ -190,7 +190,7 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
 
     } else { /// Add some new records
 
-        if (!data_user_can_add_entry($data, $currentgroup, $groupmode)) {
+        if (!data_user_can_add_entry($data, $currentgroup, $groupmode, $context)) {
             print_error('cannotadd', 'data');
         }
 
@@ -317,7 +317,7 @@ echo '<div class="mdl-align"><input type="submit" name="saveandview" value="'.ge
 if ($rid) {
     echo '&nbsp;<input type="submit" name="cancel" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
 } else {
-    if ( (!$data->maxentries) || (data_numentries($data)<($data->maxentries-1)) ) {
+    if ((!$data->maxentries) || has_capability('mod/data:manageentries', $context) || (data_numentries($data) < ($data->maxentries - 1))) {
         echo '&nbsp;<input type="submit" value="'.get_string('saveandadd','data').'" />';
     }
 }

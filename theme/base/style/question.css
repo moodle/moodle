@@ -36,6 +36,7 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 #combinedfeedbackhdr div.fcheckbox {margin-bottom: 1em;}
 
 .que {clear: left;text-align: left;margin: 0 auto 1.8em auto;}
+.dir-rtl .que {text-align: right;}
 
 .que .info {float: left;width: 6em;padding:0.5em;margin-bottom: 1.8em;background: #eee;}
 .que h2.no {margin: 0;font-size: 0.8em;line-height: 1;}
@@ -57,6 +58,7 @@ body.jsenabled #qtypechoicecontainer {display: block;}
 
 .que .ablock {margin: 0.7em 0 0.3em 0;}
 .que .im-controls {margin-top: 0.5em;text-align: left;}
+.dir-rtl .que .im-controls {text-align: right;}
 
 .que .specificfeedback,
 .que .generalfeedback,

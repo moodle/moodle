@@ -192,7 +192,7 @@ function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids = array()
     global $DB;
 
     if ($userids) {
-        list($usql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'u000000');
+        list($usql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'u');
         $usql = "qg.userid $usql AND";
     } else {
         $usql = '';

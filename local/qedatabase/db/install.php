@@ -4,6 +4,11 @@ function xmldb_local_qedatabase_install() {
     global $DB;
     $dbman = $DB->get_manager();
 
+    // Bit of a hack to prevent errors like "Cannot downgrade local_qedatabase from ... to ...".
+    $oldversion = 2008000000;
+    $DB->set_field('config_plugins', 'value', $oldversion,
+            array('plugin' => 'local_qedatabase', 'name' => 'version'));
+
     // Add new preferredbehaviour column to the quiz table.
     if ($oldversion < 2008000100) {
         $table = new xmldb_table('quiz');

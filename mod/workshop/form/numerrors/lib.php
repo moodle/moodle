@@ -124,7 +124,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
         for ($i = 0; $i < $nodimensions; $i++) {
             // prepare all editor elements
             $fields = file_prepare_standard_editor($fields, 'description__idx_'.$i, $this->descriptionopts,
-                $PAGE->context, 'workshopform_numerror', 'description', $fields->{'dimensionid__idx_'.$i});
+                $PAGE->context, 'workshopform_numerrors', 'description', $fields->{'dimensionid__idx_'.$i});
         }
 
         $customdata = array();
@@ -556,7 +556,7 @@ class workshop_numerrors_strategy implements workshop_strategy {
         if (empty($grades)) {
             return null;
         }
-        $sumerrors  = 0;    // sum of the weighted errors (ie the negative responses)
+        $sumerrors  = 0;    // sum of the weighted errors (i.e. the negative responses)
         foreach ($grades as $grade) {
             if (grade_floats_different($grade->grade, 1.00000)) {
                 // negative reviewer's response

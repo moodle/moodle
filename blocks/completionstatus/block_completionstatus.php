@@ -47,17 +47,34 @@ class block_completionstatus extends block_base {
         // Create empty content
         $this->content = new stdClass;
 
+        // Can edit settings?
+        $can_edit = has_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $this->page->course->id));
+
+        // Get course completion data
+        $info = new completion_info($this->page->course);
+
         // Don't display if completion isn't enabled!
-        if (!$this->page->course->enablecompletion) {
+        if (!completion_info::is_enabled_for_site()) {
+            if ($can_edit) {
+                $this->content->text = get_string('completionnotenabledforsite', 'completion');
+            }
+            return $this->content;
+
+        } else if (!$info->is_enabled()) {
+            if ($can_edit) {
+                $this->content->text = get_string('completionnotenabledforcourse', 'completion');
+            }
             return $this->content;
         }
 
         // Load criteria to display
-        $info = new completion_info($this->page->course);
         $completions = $info->get_completions($USER->id);
 
         // Check if this course has any criteria
         if (empty($completions)) {
+            if ($can_edit) {
+                $this->content->text = get_string('nocriteriaset', 'completion');
+            }
             return $this->content;
         }
 
@@ -157,7 +174,7 @@ class block_completionstatus extends block_base {
 
         // Is course complete?
         $coursecomplete = $info->is_course_complete($USER->id);
-		
+
         // Load course completion
         $params = array(
             'userid' => $USER->id,

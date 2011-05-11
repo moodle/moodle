@@ -1,0 +1,31 @@
+/***
+ *** Core
+ ***/
+
+/* quiz */
+#page-mod-quiz-edit div.quizpage .pagecontent {background-color:[[setting:blockcolumnbgc]];}
+.questionbankwindow h2 {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px #C6BDA8 solid;background-color:[[setting:blockcolumnbgc]];border-top:1px #C6BDA8 solid;}
+#page-mod-quiz-edit .questionbankwindow div.header {background-color:transparent;}
+#page-mod-quiz-edit .questionbankwindow div.header .title {color:#000;}
+#page-mod-quiz-edit .questionbankwindow div.header a:link,
+#page-mod-quiz-edit .questionbankwindow div.header a:visited {color:#0000EF}
+#page-mod-quiz-edit div.container div.generalbox {background-color:[[setting:blockcolumnbgc]];padding:1.5em;}
+#page-mod-quiz-edit div.questionbank .categoryquestionscontainer,
+#page-mod-quiz-edit div.questionbank .categorysortopotionscontainer,
+#page-mod-quiz-edit div.questionbank .categorypagingbarcontainer,
+#page-mod-quiz-edit div.questionbank .categoryselectallcontainer {padding:0 0 1.5em 0;}
+#page-mod-quiz-edit div.questionbank .categorypagingbarcontainer {padding:1em;background-color:[[setting:blockcolumnbgc]];margin:0 -1.2em;border-top:1px [[setting:blockcolumnbgc]] solid;border-bottom:1px [[setting:blockcolumnbgc]] solid;} /* spaziatura sopra e sotto alla tabella con le domande da spostare */
+#page-mod-quiz-edit div.questionbank .categoryquestionscontainer {margin:0 -1.2em -1em -1.2em;} /* tabella con le domande da spostare nel quiz*/
+
+#page-mod-quiz-edit div.editq div.question div.content {background-color:[[setting:blockcontentbgc]];} /* la signola domanda nel modello della pagina*/
+
+#page-mod-quiz-edit div.question div.content div.questioncontrols {background-color:[[setting:blockcontentbgc]];} /* la X per eliminare la domanda dal modello della pagina */
+
+#page-mod-quiz-edit div.question div.content div.points {margin-top:-0.5em;padding-bottom:0.5em;background-color:#EEE;} /* il quadratino del grade */
+#page-mod-quiz-edit div.question div.content div.points {border-color:[[setting:blockcontentbgc]];}
+
+#page-mod-quiz-edit div.quizpage .pagecontent .pagestatus {background-color:[[setting:blockcontentbgc]];}
+#page-mod-quiz-edit .quizpagedelete,
+#page-mod-quiz-edit .quizpagedelete img {background-color:transparent;}
+
+#page-mod-quiz-edit #page-footer {padding:0;}

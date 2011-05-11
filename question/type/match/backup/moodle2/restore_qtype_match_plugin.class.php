@@ -124,8 +124,7 @@ class restore_qtype_match_plugin extends restore_qtype_plugin {
             if ($sub) {
                 $this->set_mapping('question_match_sub', $oldid, $sub->id);
             } else {
-                // Something went really wrong, cannot map subquestion for one match question
-                throw restore_step_exception('error_question_match_sub_missing_in_db', $data);
+                throw new restore_step_exception('error_question_match_sub_missing_in_db', $data);
             }
         }
     }

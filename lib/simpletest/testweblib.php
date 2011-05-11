@@ -143,6 +143,7 @@ class web_test extends UnitTestCase {
         $this->assertEqual('lala xx', clean_text($text, FORMAT_MOODLE));
         $this->assertEqual('lala xx', clean_text($text, FORMAT_HTML));
     }
+
 }
 
 

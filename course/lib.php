@@ -347,7 +347,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     $table->head = array(
         get_string('time'),
         get_string('ip_address'),
-        get_string('fullname'),
+        get_string('fullnamecourse'),
         get_string('action'),
         get_string('info')
     );
@@ -1082,20 +1082,32 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->id               = $rawmods[$seq]->instance;
                    $mod[$seq]->cm               = $rawmods[$seq]->id;
                    $mod[$seq]->mod              = $rawmods[$seq]->modname;
+
+                    // Oh dear. Inconsistent names left here for backward compatibility.
                    $mod[$seq]->section          = $section->section;
+                   $mod[$seq]->sectionid        = $rawmods[$seq]->section;
+
+                   $mod[$seq]->module           = $rawmods[$seq]->module;
+                   $mod[$seq]->added            = $rawmods[$seq]->added;
+                   $mod[$seq]->score            = $rawmods[$seq]->score;
                    $mod[$seq]->idnumber         = $rawmods[$seq]->idnumber;
                    $mod[$seq]->visible          = $rawmods[$seq]->visible;
+                   $mod[$seq]->visibleold       = $rawmods[$seq]->visibleold;
                    $mod[$seq]->groupmode        = $rawmods[$seq]->groupmode;
                    $mod[$seq]->groupingid       = $rawmods[$seq]->groupingid;
                    $mod[$seq]->groupmembersonly = $rawmods[$seq]->groupmembersonly;
                    $mod[$seq]->indent           = $rawmods[$seq]->indent;
                    $mod[$seq]->completion       = $rawmods[$seq]->completion;
                    $mod[$seq]->extra            = "";
-                   if(!empty($CFG->enableavailability)) {
+                   $mod[$seq]->completiongradeitemnumber =
+                           $rawmods[$seq]->completiongradeitemnumber;
+                   $mod[$seq]->completionview   = $rawmods[$seq]->completionview;
+                   $mod[$seq]->completionexpected = $rawmods[$seq]->completionexpected;
+                   $mod[$seq]->availablefrom    = $rawmods[$seq]->availablefrom;
+                   $mod[$seq]->availableuntil   = $rawmods[$seq]->availableuntil;
+                   $mod[$seq]->showavailability = $rawmods[$seq]->showavailability;
+                   if (!empty($CFG->enableavailability)) {
                        condition_info::fill_availability_conditions($rawmods[$seq]);
-                       $mod[$seq]->availablefrom    = $rawmods[$seq]->availablefrom;
-                       $mod[$seq]->availableuntil   = $rawmods[$seq]->availableuntil;
-                       $mod[$seq]->showavailability = $rawmods[$seq]->showavailability;
                        $mod[$seq]->conditionscompletion = $rawmods[$seq]->conditionscompletion;
                        $mod[$seq]->conditionsgrade  = $rawmods[$seq]->conditionsgrade;
                    }
@@ -1152,12 +1164,18 @@ function get_array_of_activities($courseid) {
                    // 'empty'. This list corresponds to code in the cm_info constructor.
                    foreach(array('idnumber', 'groupmode', 'groupingid', 'groupmembersonly',
                            'indent', 'completion', 'extra', 'extraclasses', 'onclick', 'content',
-                           'icon', 'iconcomponent', 'customdata', 'availablefrom', 'availableuntil',
-                           'conditionscompletion', 'conditionsgrade') as $property) {
+                           'icon', 'iconcomponent', 'customdata', 'showavailability', 'availablefrom',
+                           'availableuntil', 'conditionscompletion', 'conditionsgrade',
+                           'completionview', 'completionexpected', 'score') as $property) {
                        if (property_exists($mod[$seq], $property) &&
                                empty($mod[$seq]->{$property})) {
                            unset($mod[$seq]->{$property});
                        }
+                   }
+                   // Special case: this value is usually set to null, but may be 0
+                   if (property_exists($mod[$seq], 'completiongradeitemnumber') &&
+                           is_null($mod[$seq]->completiongradeitemnumber)) {
+                       unset($mod[$seq]->completiongradeitemnumber);
                    }
                }
             }
@@ -1619,6 +1637,16 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             // Module can put text after the link (e.g. forum unread)
             echo $mod->get_after_link();
 
+            // If there is content but NO link (eg label), then display the
+            // content here (BEFORE any icons). In this case cons must be
+            // displayed after the content so that it makes more sense visually
+            // and for accessibility reasons, e.g. if you have a one-line label
+            // it should work similarly (at least in terms of ordering) to an
+            // activity.
+            if (empty($url)) {
+                echo $contentpart;
+            }
+
             if ($isediting) {
                 if ($groupbuttons and plugin_supports('mod', $mod->modname, FEATURE_GROUPS, 0)) {
                     if (! $mod->groupmodelink = $groupbuttonslink) {
@@ -1689,7 +1717,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                             $extraclass = '';
                         }
                         echo "
-<form class='togglecompletion$extraclass' method='post' action='togglecompletion.php'><div>
+<form class='togglecompletion$extraclass' method='post' action='".$CFG->wwwroot."/course/togglecompletion.php'><div>
 <input type='hidden' name='id' value='{$mod->id}' />
 <input type='hidden' name='sesskey' value='".sesskey()."' />
 <input type='hidden' name='completionstate' value='$newstate' />
@@ -1703,8 +1731,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
             }
 
-            // Display the content (if any) at this part of the html
-            echo $contentpart;
+            // If there is content AND a link, then display the content here
+            // (AFTER any icons). Otherwise it was displayed before
+            if (!empty($url)) {
+                echo $contentpart;
+            }
 
             // Show availability information (for someone who isn't allowed to
             // see the activity itself, or for staff)
@@ -1860,56 +1891,6 @@ function get_category_or_system_context($categoryid) {
     } else {
         return get_context_instance(CONTEXT_SYSTEM);
     }
-}
-
-/**
- * Rebuilds the cached list of course activities stored in the database
- * @param int $courseid - id of course to rebuild, empty means all
- * @param boolean $clearonly - only clear the modinfo fields, gets rebuild automatically on the fly
- */
-function rebuild_course_cache($courseid=0, $clearonly=false) {
-    global $COURSE, $DB, $OUTPUT;
-
-    // Destroy navigation caches
-    navigation_cache::destroy_volatile_caches();
-
-    if ($clearonly) {
-        if (empty($courseid)) {
-            $courseselect = array();
-        } else {
-            $courseselect = array('id'=>$courseid);
-        }
-        $DB->set_field('course', 'modinfo', null, $courseselect);
-        // update cached global COURSE too ;-)
-        if ($courseid == $COURSE->id or empty($courseid)) {
-            $COURSE->modinfo = null;
-        }
-        // reset the fast modinfo cache
-        $reset = 'reset';
-        get_fast_modinfo($reset);
-        return;
-    }
-
-    if ($courseid) {
-        $select = array('id'=>$courseid);
-    } else {
-        $select = array();
-        @set_time_limit(0);  // this could take a while!   MDL-10954
-    }
-
-    $rs = $DB->get_recordset("course", $select,'','id,fullname');
-    foreach ($rs as $course) {
-        $modinfo = serialize(get_array_of_activities($course->id));
-        $DB->set_field("course", "modinfo", $modinfo, array("id"=>$course->id));
-        // update cached global COURSE too ;-)
-        if ($course->id == $COURSE->id) {
-            $COURSE->modinfo = $modinfo;
-        }
-    }
-    $rs->close();
-    // reset the fast modinfo cache
-    $reset = 'reset';
-    get_fast_modinfo($reset);
 }
 
 /**
@@ -3192,6 +3173,10 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
            '&amp;sesskey='.$sesskey.$section.'"><img'.
            ' src="'.$OUTPUT->pix_url('t/edit') . '" class="iconsmall" '.
            ' alt="'.$str->update.'" /></a>'."\n".
+           '<a class="editing_duplicate" title="'.$str->duplicate.'" href="'.$path.'/mod.php?duplicate='.$mod->id.
+           '&amp;sesskey='.$sesskey.$section.'"><img'.
+           ' src="'.$OUTPUT->pix_url('t/copy') . '" class="iconsmall" '.
+           ' alt="'.$str->duplicate.'" /></a>'."\n".
            '<a class="editing_delete" title="'.$str->delete.'" href="'.$path.'/mod.php?delete='.$mod->id.
            '&amp;sesskey='.$sesskey.$section.'"><img'.
            ' src="'.$OUTPUT->pix_url('t/delete') . '" class="iconsmall" '.

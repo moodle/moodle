@@ -2,7 +2,7 @@ html, body#tinymce {background-color:#FAFAFA;}
 body {font-family:Arial, Verdana, Helvetica, sans-serif;padding: 4px;}
 body.lang-vi {font-family:Arial, Verdana, Helvetica, sans-serif !important;}
 
-/** 
+/**
  * Links
  */
 a {text-decoration:none;color:#0000FF;}
@@ -15,7 +15,7 @@ a:hover {text-decoration:underline;color:#FF0000;}
 .homelink a {color: #000;text-decoration: none;border-top: 1px solid #cecece;border-bottom: 2px solid #4a4a4a;border-left: 1px solid #cecece;border-right: 2px solid #4a4a4a;}
 .homelink a:hover {text-decoration: none;border-bottom: 1px solid #cecece;border-top: 2px solid #4a4a4a;border-right: 1px solid #cecece;border-left: 2px solid #4a4a4a;}
 
-/** 
+/**
  * Headings
  */
 h1.main,
@@ -92,13 +92,13 @@ table.formtable tbody th {background-color: transparent;background-image: none;}
 
 .mod_introbox {border-color:#DDDDDD;}
 
-/** 
+/**
  * Docs
  */
 #doc-contents h1 {font-size: 0.9em;}
 #doc-contents ul {font-size: 0.8em;}
 
-/** 
+/**
  * Login
  */
 #page-login-index #content {font-size: 0.85em;}
@@ -219,10 +219,6 @@ form.popupform label {margin-right: 0.5em;}
 /**
  * Filters
  */
-.mediaplugin {display:block;clear:both;margin-top:5px;margin-bottom:5px;}
-.mediaplugin_mp3,
-.mediaplugin_swf,
-.mediaplugin_flv {display:inline;clear:none;margin:0px;margin-left:0.5em;}
 .texrender {border:0px;vertical-align:middle;}
 
 /**
@@ -282,7 +278,7 @@ h2.tag-heading {text-align:center;margin-left:auto;margin-right:auto;width:95%;}
 .tag .managelink {text-align:right;}
 table#tag-management-list {margin: 10px auto;width: 80%;}
 
-/** 
+/**
  * Overriding base
  */
 #page-header .headermain {font-size:1.5em;}
@@ -417,8 +413,12 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
 .userenrolment tr.r0 {background-color:#F9F9F9;}
 .userenrolment tr.r1 {background-color:#F3F3F3;}
 .userenrolment td {border:1px solid #E9E9E9;border-top-color:#F6F6F6;border-right-color:#EEE;border-left-color:#F3F3F3;}
-.userenrolment td.c0 {border-left-color:#999;}
-.userenrolment td.c4 {border-right-color:#999;}
+.userenrolment td.c0 {border-left-width:0;}
+.userenrolment td.lastcol {border-right-color:#999;}
+.userenrolment .col_bulkops {vertical-align:middle;text-align:center;}
+.userenrolment .r0 .col_bulkops {background-color:#FFFFFF;}
+.userenrolment .r1 .col_bulkops {background-color:#F9F9F9;}
+.userenrolment tr.lastrow td {border-bottom-width:0;}
 .userenrolment .col_userdetails {padding:3px;min-width:35%;}
 .userenrolment .col_role .roles {position:relative;}
 .userenrolment .col_role .role {line-height:10px;font-size:10px;}
@@ -436,6 +436,7 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
 .path-enrol .enrolusersbutton.instance1,
 .path-enrol .enrolcohortbutton.instance1,
 .path-enrol .assignuserrole.instance1 {float:right;}
+.path-enrol .singleselect.bulkuserop {float:left;}
 
 /* Registration */
 #page-admin-registration-hubselector .registration_textfield {width: 400px;}

@@ -469,6 +469,9 @@ function lesson_grade_item_update($lesson, $grades=NULL) {
         $params['gradetype']  = GRADE_TYPE_VALUE;
         $params['grademax']   = $lesson->grade;
         $params['grademin']   = 0;
+    } else if ($lesson->grade < 0) {
+        $params['gradetype']  = GRADE_TYPE_SCALE;
+        $params['scaleid']   = -$lesson->grade;
     } else {
         $params['gradetype']  = GRADE_TYPE_NONE;
     }
@@ -487,7 +490,13 @@ function lesson_grade_item_update($lesson, $grades=NULL) {
             if (!is_array($grade)) {
                 $grades[$key] = $grade = (array) $grade;
             }
-            $grades[$key]['rawgrade'] = ($grade['rawgrade'] * $lesson->grade / 100);
+            //check raw grade isnt null otherwise we erroneously insert a grade of 0
+            if ($grade['rawgrade'] !== null) {
+                $grades[$key]['rawgrade'] = ($grade['rawgrade'] * $lesson->grade / 100);
+            } else {
+                //setting rawgrade to null just in case user is deleting a grade
+                $grades[$key]['rawgrade'] = null;
+            }
         }
     }
 

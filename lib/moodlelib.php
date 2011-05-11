@@ -4831,8 +4831,7 @@ function setnew_password_and_mail($user) {
 /**
  * Resets specified user's password and send the new password to the user via email.
  *
- * @global object
- * @param user $user A {@link $USER} object
+ * @param stdClass $user A {@link $USER} object
  * @return bool Returns true if mail was sent OK and false if there was an error.
  */
 function reset_password_and_mail($user) {
@@ -4865,6 +4864,8 @@ function reset_password_and_mail($user) {
     $message = get_string('newpasswordtext', '', $a);
 
     $subject  = format_string($site->fullname) .': '. get_string('changedpassword');
+
+    unset_user_preference('create_password', $user); // prevent cron from generating the password
 
     //directly email rather than using the messaging system to ensure its not routed to a popup or jabber
     return email_to_user($user, $supportuser, $subject, $message);
@@ -5483,12 +5484,28 @@ function get_string_manager($forcereload=false) {
     }
     if ($singleton === null) {
         if (empty($CFG->early_install_lang)) {
+
+            if (empty($CFG->langcacheroot)) {
+                $langcacheroot = $CFG->dataroot . '/cache/lang';
+            } else {
+                $langcacheroot = $CFG->langcacheroot;
+            }
+
             if (empty($CFG->langlist)) {
                  $translist = array();
             } else {
                 $translist = explode(',', $CFG->langlist);
             }
-            $singleton = new core_string_manager($CFG->langotherroot, $CFG->langlocalroot, "$CFG->dataroot/cache/lang", !empty($CFG->langstringcache), $translist);
+
+            if (empty($CFG->langmenucachefile)) {
+                $langmenucache = $CFG->dataroot . '/cache/languages';
+            } else {
+                $langmenucache = $CFG->langmenucachefile;
+            }
+
+            $singleton = new core_string_manager($CFG->langotherroot, $CFG->langlocalroot, $langcacheroot,
+                                                 !empty($CFG->langstringcache), $translist, $langmenucache);
+
         } else {
             $singleton = new install_string_manager();
         }
@@ -5618,22 +5635,26 @@ class core_string_manager implements string_manager {
     protected $usediskcache;
     /* @var array limit list of translations */
     protected $translist;
+    /** @var string location of a file that caches the list of available translations */
+    protected $menucache;
 
     /**
-     * Crate new instance of string manager
+     * Create new instance of string manager
      *
      * @param string $otherroot location of downlaoded lang packs - usually $CFG->dataroot/lang
      * @param string $localroot usually the same as $otherroot
      * @param string $cacheroot usually lang dir in cache folder
      * @param bool $usediskcache use disk cache
      * @param array $translist limit list of visible translations
+     * @param string $menucache the location of a file that caches the list of available translations
      */
-    public function __construct($otherroot, $localroot, $cacheroot, $usediskcache, $translist) {
+    public function __construct($otherroot, $localroot, $cacheroot, $usediskcache, $translist, $menucache) {
         $this->otherroot    = $otherroot;
         $this->localroot    = $localroot;
         $this->cacheroot    = $cacheroot;
         $this->usediskcache = $usediskcache;
         $this->translist    = $translist;
+        $this->menucache    = $menucache;
     }
 
     /**
@@ -6001,15 +6022,13 @@ class core_string_manager implements string_manager {
      * @return boot true if exists
      */
     public function translation_exists($lang, $includeall = true) {
-        global $CFG;
 
         if (strpos($lang, '_local') !== false) {
             // _local packs are not real translations
             return false;
         }
-        if (!$includeall and !empty($CFG->langlist)) {
-            $enabled = explode(',', $CFG->langlist);
-            if (!in_array($lang, $enabled)) {
+        if (!$includeall and !empty($this->translist)) {
+            if (!in_array($lang, $this->translist)) {
                 return false;
             }
         }
@@ -6030,7 +6049,30 @@ class core_string_manager implements string_manager {
 
         $languages = array();
 
-        //TODO: add some translist cache stored in normal cache dir
+        if (!empty($CFG->langcache) and is_readable($this->menucache)) {
+            // try to re-use the cached list of all available languages
+            $cachedlist = json_decode(file_get_contents($this->menucache), true);
+
+            if (is_array($cachedlist) and !empty($cachedlist)) {
+                // the cache file is restored correctly
+
+                if (!$returnall and !empty($this->translist)) {
+                    // return just enabled translations
+                    foreach ($cachedlist as $langcode => $langname) {
+                        if (in_array($langcode, $this->translist)) {
+                            $languages[$langcode] = $langname;
+                        }
+                    }
+                    return $languages;
+
+                } else {
+                    // return all translations
+                    return $cachedlist;
+                }
+            }
+        }
+
+        // the cached list of languages is not available, let us populate the list
 
         if (!$returnall and !empty($this->translist)) {
             // return only some translations
@@ -6074,6 +6116,12 @@ class core_string_manager implements string_manager {
                 }
                 unset($string);
             }
+
+            if (!empty($CFG->langcache) and !empty($this->menucache)) {
+                // cache the list so that it can be used next time
+                textlib_get_instance()->asort($languages);
+                file_put_contents($this->menucache, json_encode($languages));
+            }
         }
 
         textlib_get_instance()->asort($languages);
@@ -6105,8 +6153,16 @@ class core_string_manager implements string_manager {
         global $CFG;
         require_once("$CFG->libdir/filelib.php");
 
+        // clear the on-disk disk with aggregated string files
         fulldelete($this->cacheroot);
+
+        // clear the in-memory cache of loaded strings
         $this->cache = array();
+
+        // clear the cache containing the list of available translations
+        // and re-populate it again
+        fulldelete($this->menucache);
+        $this->get_list_of_translations(true);
     }
 }
 
@@ -6817,6 +6873,8 @@ function endecrypt ($pwd, $data, $case) {
  * @return string full path to plugin directory; NULL if not found
  */
 function get_plugin_directory($plugintype, $name) {
+    global $CFG;
+
     if ($plugintype === '') {
         $plugintype = 'mod';
     }
@@ -6826,6 +6884,13 @@ function get_plugin_directory($plugintype, $name) {
         return NULL;
     }
     $name = clean_param($name, PARAM_SAFEDIR); // just in case ;-)
+
+    if (!empty($CFG->themedir) and $plugintype === 'theme') {
+        if (!is_dir($types['theme'] . '/' . $name)) {
+            // ok, so the theme is supposed to be in the $CFG->themedir
+            return $CFG->themedir . '/' . $name;
+        }
+    }
 
     return $types[$plugintype].'/'.$name;
 }
@@ -7024,7 +7089,7 @@ function get_plugin_types($fullpaths=true) {
                       'qformat'       => 'question/format',
                       'qtype'         => 'question/type',
                       'plagiarism'    => 'plagiarism',
-                      'theme'         => 'theme'); // this is a bit hacky, themes may be in dataroot too
+                      'theme'         => 'theme'); // this is a bit hacky, themes may be in $CFG->themedir too
 
         $mods = get_plugin_list('mod');
         foreach ($mods as $mod => $moddir) {
@@ -7229,7 +7294,7 @@ function plugin_callback($type, $name, $feature, $action, $options = null, $defa
 
     $name = clean_param($name, PARAM_SAFEDIR);
     $function = $name.'_'.$feature.'_'.$action;
-    $file = get_plugin_directory($type, $name) . '/lib.php';
+    $file = get_component_directory($type . '_' . $name) . '/lib.php';
 
     // Load library and look for function
     if (file_exists($file)) {
@@ -7455,14 +7520,14 @@ function check_php_version($version='5.2.4') {
           if (strpos($agent, 'AppleWebKit') === false) {
               return false;
           }
-          // Look for AppleWebKit, excluding strings with OmniWeb, Shiira and SimbianOS and any other mobile devices
+          // Look for AppleWebKit, excluding strings with OmniWeb, Shiira and SymbianOS and any other mobile devices
           if (strpos($agent, 'OmniWeb')) { // Reject OmniWeb
               return false;
           }
           if (strpos($agent, 'Shiira')) { // Reject Shiira
               return false;
           }
-          if (strpos($agent, 'SimbianOS')) { // Reject SimbianOS
+          if (strpos($agent, 'SymbianOS')) { // Reject SymbianOS
               return false;
           }
           if (strpos($agent, 'Android')) { // Reject Androids too
@@ -9107,7 +9172,7 @@ WHERE m.useridto = :userid AND p.name='popup'";
                 $smallmessage = get_string('unreadnewnotification', 'message');
             }
             if (!empty($smallmessage)) {
-                $strmessages .= '<div id="usermessage">'.$smallmessage.'</div>';
+                $strmessages .= '<div id="usermessage">'.s($smallmessage).'</div>';
             }
         }
 
@@ -9298,6 +9363,13 @@ function get_performance_info() {
         $info['serverload'] = $server_load;
         $info['html'] .= '<span class="serverload">Load average: '.$info['serverload'].'</span> ';
         $info['txt'] .= "serverload: {$info['serverload']} ";
+    }
+
+    // Display size of session if session started
+    if (session_id()) {
+        $info['sessionsize'] = display_size(strlen(session_encode()));
+        $info['html'] .= '<span class="sessionsize">Session: ' . $info['sessionsize'] . '</span> ';
+        $info['txt'] .= "Session: {$info['sessionsize']} ";
     }
 
 /*    if (isset($rcache->hits) && isset($rcache->misses)) {
@@ -9595,41 +9667,6 @@ function object_array_unique($array, $keep_key_assoc = true) {
     }
 
     return $keep_key_assoc ? $array : array_values($array);
-}
-
-/**
- * Returns the language string for the given plugin.
- *
- * @param string $plugin the plugin code name
- * @param string $type the type of plugin (mod, block, filter)
- * @return string The plugin language string
- */
-function get_plugin_name($plugin, $type='mod') {
-    $plugin_name = '';
-
-    switch ($type) {
-        case 'mod':
-            $plugin_name = get_string('modulename', $plugin);
-            break;
-        case 'blocks':
-            $plugin_name = get_string('pluginname', "block_$plugin");
-            if (empty($plugin_name) || $plugin_name == '[[pluginname]]') {
-                if (($block = block_instance($plugin)) !== false) {
-                    $plugin_name = $block->get_title();
-                } else {
-                    $plugin_name = "[[$plugin]]";
-                }
-            }
-            break;
-        case 'filter':
-            $plugin_name = filter_get_name('filter/' . $plugin);
-            break;
-        default:
-            $plugin_name = $plugin;
-            break;
-    }
-
-    return $plugin_name;
 }
 
 /**

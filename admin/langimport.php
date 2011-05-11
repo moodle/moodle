@@ -18,7 +18,7 @@
 /**
  * Fetches language packages from download.moodle.org server
  *
- * Language packages are available at http://download.moodle.org/langpack/2.0/
+ * Language packages are available at http://download.moodle.org/langpack/
  * in ZIP format together with a file languages.md5 containing their hashes
  * and meta info.
  * Locally, language packs are saved into $CFG->dataroot/lang/
@@ -32,8 +32,6 @@ require_once(dirname(dirname(__FILE__)).'/config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/componentlib.class.php');
-
-$thisversion = '2.0'; // TODO this information should be taken from version.php or similar source
 
 admin_externalpage_setup('langimport');
 
@@ -53,11 +51,6 @@ define('INSTALLATION_OF_SELECTED_LANG', 2);
 define('DELETION_OF_SELECTED_LANG', 4);
 define('UPDATE_ALL_LANG', 5);
 
-//reset and diagnose lang cache permissions
-remove_dir($CFG->dataroot.'/cache/languages');
-if (file_exists($CFG->dataroot.'/cache/languages')) {
-    print_error('cannotdeletelangcache', 'error');
-}
 get_string_manager()->reset_caches();
 
 $notice_ok    = array();
@@ -68,41 +61,22 @@ if (($mode == INSTALLATION_OF_SELECTED_LANG) and confirm_sesskey() and !empty($p
     make_upload_directory('temp');
     make_upload_directory('lang');
 
-    if (is_array($pack)) {
-        $packs = $pack;
-    } else {
-        $packs = array($pack);
-    }
-
-    foreach ($packs as $pack) {
-        if ($cd = new component_installer('http://download.moodle.org', 'langpack/'.$thisversion, $pack.'.zip', 'languages.md5', 'lang')) {
-            $status = $cd->install();
-            switch ($status) {
-            case COMPONENT_ERROR:
-                if ($cd->get_error() == 'remotedownloaderror') {
-                    $a = new stdClass();
-                    $a->url = 'http://download.moodle.org/langpack/'.$thisversion.'/'.$pack.'.zip';
-                    $a->dest = $CFG->dataroot.'/lang';
-                    print_error($cd->get_error(), 'error', 'langimport.php', $a);
-                } else {
-                    print_error($cd->get_error(), 'error', 'langimport.php');
-                }
-                break;
-            case COMPONENT_INSTALLED:
-                $notice_ok[] = get_string('langpackinstalled','admin',$pack);
-                if ($parentlang = get_parent_language($pack)) {
-                    // install also parent pack if specified
-                    if ($cd = new component_installer('http://download.moodle.org', 'langpack/'.$thisversion,
-                            $parentlang.'.zip', 'languages.md5', 'lang')) {
-                        $cd->install();
-                    }
-                }
-                break;
-            case COMPONENT_UPTODATE:
-                break;
-            }
-        } else {
-            echo $OUTPUT->notification('Had an unspecified error with the component installer, sorry.');
+    $installer = new lang_installer($pack);
+    $results = $installer->run();
+    foreach ($results as $langcode => $langstatus) {
+        switch ($langstatus) {
+        case lang_installer::RESULT_DOWNLOADERROR:
+            $a       = new stdClass();
+            $a->url  = $installer->lang_pack_url($langcode);
+            $a->dest = $CFG->dataroot.'/lang';
+            print_error('remotedownloaderror', 'error', 'langimport.php', $a);
+            break;
+        case lang_installer::RESULT_INSTALLED:
+            $notice_ok[] = get_string('langpackinstalled', 'admin', $langcode);
+            break;
+        case lang_installer::RESULT_UPTODATE:
+            $notice_ok[] = get_string('langpackuptodate', 'admin', $langcode);
+            break;
         }
     }
 }
@@ -141,7 +115,9 @@ if ($mode == DELETION_OF_SELECTED_LANG and !empty($uninstalllang)) {
 if ($mode == UPDATE_ALL_LANG) {
     set_time_limit(0);
 
-    if (!$availablelangs = get_remote_list_of_languages()) {
+    $installer = new lang_installer();
+
+    if (!$availablelangs = $installer->get_remote_list_of_languages()) {
         print_error('cannotdownloadlanguageupdatelist', 'error');
     }
     $md5array = array();    // (string)langcode => (string)md5
@@ -176,8 +152,8 @@ if ($mode == UPDATE_ALL_LANG) {
     make_upload_directory('temp');
     make_upload_directory('lang');
 
-    $updated = false;       // any packs updated?
-    foreach ($neededlangs as $pack) {
+    // clean-up currently installed versions of the packs
+    foreach ($neededlangs as $packindex => $pack) {
         if ($pack == 'en') {
             continue;
         }
@@ -190,41 +166,38 @@ if ($mode == UPDATE_ALL_LANG) {
         if (file_exists($dest1)) {
             if (!remove_dir($dest1)) {
                 $notice_error[] = 'Could not delete old directory '.$dest1.', update of '.$pack.' failed, please check permissions.';
+                unset($neededlangs[$packindex]);
                 continue;
             }
         }
         if (file_exists($dest2)) {
             if (!remove_dir($dest2)) {
                 $notice_error[] = 'Could not delete old directory '.$dest2.', update of '.$pack.' failed, please check permissions.';
+                unset($neededlangs[$packindex]);
                 continue;
             }
         }
+    }
 
-        // copy and unzip new version
-        if ($cd = new component_installer('http://download.moodle.org', 'langpack/'.$thisversion, $pack.'.zip', 'languages.md5', 'lang')) {
-        $status = $cd->install();
-        switch ($status) {
-
-            case COMPONENT_ERROR:
-                if ($cd->get_error() == 'remotedownloaderror') {
-                    $a = new stdClass();
-                    $a->url = 'http://download.moodle.org/langpack/'.$thisversion.'/'.$pack.'.zip';
-                    $a->dest = $CFG->dataroot.'/lang';
-                    print_error($cd->get_error(), 'error', 'langimport.php', $a);
-                } else {
-                    print_error($cd->get_error(), 'error', 'langimport.php');
-                }
-                break;
-
-            case COMPONENT_UPTODATE:
-                // should not get here
-                break;
-
-            case COMPONENT_INSTALLED:
-                $notice_ok[] = get_string('langpackupdated', 'admin', $pack);
-                $updated = true;
-                break;
-            }
+    // install all needed language packs
+    $installer->set_queue($neededlangs);
+    $results = $installer->run();
+    $updated = false;    // any packs updated?
+    foreach ($results as $langcode => $langstatus) {
+        switch ($langstatus) {
+        case lang_installer::RESULT_DOWNLOADERROR:
+            $a       = new stdClass();
+            $a->url  = $installer->lang_pack_url($langcode);
+            $a->dest = $CFG->dataroot.'/lang';
+            print_error('remotedownloaderror', 'error', 'langimport.php', $a);
+            break;
+        case lang_installer::RESULT_INSTALLED:
+            $updated = true;
+            $notice_ok[] = get_string('langpackinstalled', 'admin', $langcode);
+            break;
+        case lang_installer::RESULT_UPTODATE:
+            $notice_ok[] = get_string('langpackuptodate', 'admin', $langcode);
+            break;
         }
     }
 
@@ -233,6 +206,8 @@ if ($mode == UPDATE_ALL_LANG) {
     } else {
         $notice_ok[] = get_string('nolangupdateneeded','admin');
     }
+
+    unset($installer);
 }
 get_string_manager()->reset_caches();
 
@@ -244,7 +219,7 @@ $installedlangs = get_string_manager()->get_list_of_translations(true);
 $missingparents = array();
 foreach ($installedlangs as $installedlang => $unused) {
     $parent = get_parent_language($installedlang);
-    if (empty($parent) or ($parent === 'en')) {
+    if (empty($parent)) {
         continue;
     }
     if (!isset($installedlangs[$parent])) {
@@ -252,7 +227,9 @@ foreach ($installedlangs as $installedlang => $unused) {
     }
 }
 
-if ($availablelangs = get_remote_list_of_languages()) {
+$installer = new lang_installer();
+
+if ($availablelangs = $installer->get_remote_list_of_languages()) {
     $remote = true;
 } else {
     $remote = false;
@@ -361,27 +338,4 @@ function is_installed_lang($lang, $md5check) {
         return (file_get_contents($md5file) == $md5check);
     }
     return false;
-}
-
-/**
- * Returns the list of available language packs from download.moodle.org
- *
- * @return array|bool false if can not download
- */
-function get_remote_list_of_languages() {
-    $source = 'http://download.moodle.org/langpack/2.0/languages.md5';
-    $availablelangs = array();
-
-    if ($content = download_file_content($source)) {
-        $alllines = explode("\n", $content);
-        foreach($alllines as $line) {
-            if (!empty($line)){
-                $availablelangs[] = explode(',', $line);
-            }
-        }
-        return $availablelangs;
-
-    } else {
-        return false;
-    }
 }

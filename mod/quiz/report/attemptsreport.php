@@ -193,21 +193,21 @@ abstract class quiz_attempt_report extends quiz_default_report {
             case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
                 // Show only students with attempts
                 list($usql, $uparams) = $DB->get_in_or_equal(
-                        $reportstudents, SQL_PARAMS_NAMED, 'u00000');
+                        $reportstudents, SQL_PARAMS_NAMED, 'u');
                 $params += $uparams;
                 $where = "u.id $usql AND quiza.preview = 0 AND quiza.id IS NOT NULL";
                 break;
             case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
                 // Show only students without attempts
                 list($usql, $uparams) = $DB->get_in_or_equal(
-                        $reportstudents, SQL_PARAMS_NAMED, 'u00000');
+                        $reportstudents, SQL_PARAMS_NAMED, 'u');
                 $params += $uparams;
                 $where = "u.id $usql AND quiza.id IS NULL";
                 break;
             case QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS:
                 // Show all students with or without attempts
                 list($usql, $uparams) = $DB->get_in_or_equal(
-                        $reportstudents, SQL_PARAMS_NAMED, 'u00000');
+                        $reportstudents, SQL_PARAMS_NAMED, 'u');
                 $params += $uparams;
                 $where = "u.id $usql AND (quiza.preview = 0 OR quiza.preview IS NULL)";
                 break;

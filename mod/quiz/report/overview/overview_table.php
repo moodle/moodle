@@ -308,7 +308,7 @@ class quiz_report_overview_table extends quiz_attempt_report_table {
             $qmfilter = '(' . quiz_report_qm_filter_select($this->quiz, 'quiza') . ') AND ';
         }
 
-        list($usql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'u0000');
+        list($usql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'u');
         $params['quizid'] = $this->quiz->id;
         $qubaids = new qubaid_join(
                 '{quiz_attempts} quiza',
