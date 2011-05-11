@@ -46,6 +46,11 @@ if ($hassiteconfig) {
         }
     }
 
+    // message outputs
+    $ADMIN->add('modules', new admin_category('messageoutputs', get_string('messageoutputs', 'message')));
+    $ADMIN->add('messageoutputs', new admin_page_managemessageoutputs());
+
+
     // authentication plugins
     $ADMIN->add('modules', new admin_category('authsettings', get_string('authentication', 'admin')));
 

@@ -2167,3 +2167,34 @@ function message_print_heading($title, $colspan=3) {
     echo html_writer::tag('td', $title, array('colspan' => $colspan, 'class' => 'heading'));
     echo html_writer::end_tag('tr');
 }
+
+/**
+ * Get all message processors and validate corresponding plugin existance and
+ * configuration
+ * @return array $processors array of objects containing information on message processors
+ */
+function get_message_processors() {
+    global $DB, $CFG;
+
+    $processors = $DB->get_records('message_processors', null, 'name');
+    foreach ($processors as &$processor){
+        $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';
+        if (is_readable($processorfile)) {
+            include_once($processorfile);
+            $processclass = 'message_output_' . $processor->name;
+            if (class_exists($processclass)) {
+                $pclass = new $processclass();
+                $processor->configured = 0;
+                if ($pclass->is_system_configured()) {
+                    $processor->configured = 1;
+                }
+                $processor->available = 1;
+            } else {
+                print_error('errorcallingprocessor', 'message');
+            }
+        } else {
+            $processor->available = 0;
+        }
+    }
+    return $processors;
+}

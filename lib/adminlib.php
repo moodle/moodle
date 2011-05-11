@@ -4909,6 +4909,60 @@ class admin_page_manageblocks extends admin_externalpage {
     }
 }
 
+/**
+ * Message outputs configuration
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_page_managemessageoutputs extends admin_externalpage {
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        global $CFG;
+        parent::__construct('managemessageoutputs', get_string('managemessageoutputs', 'message'), "$CFG->wwwroot/$CFG->admin/message.php");
+    }
+
+    /**
+     * Search for a specific block
+     *
+     * @param string $query The string to search for
+     * @return array
+     */
+    public function search($query) {
+        global $CFG, $DB;
+        if ($result = parent::search($query)) {
+            return $result;
+        }
+
+        $found = false;
+        if ($blocks = $DB->get_records('block')) {
+            $textlib = textlib_get_instance();
+            foreach ($blocks as $block) {
+                if (!file_exists("$CFG->dirroot/blocks/$block->name/")) {
+                    continue;
+                }
+                if (strpos($block->name, $query) !== false) {
+                    $found = true;
+                    break;
+                }
+                $strblockname = get_string('pluginname', 'block_'.$block->name);
+                if (strpos($textlib->strtolower($strblockname), $query) !== false) {
+                    $found = true;
+                    break;
+                }
+            }
+        }
+        if ($found) {
+            $result = new stdClass();
+            $result->page     = $this;
+            $result->settings = array();
+            return array($this->name => $result);
+        } else {
+            return array();
+        }
+    }
+}
 
 /**
  * Question type manage page

@@ -6112,6 +6112,17 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2011052300.02);
     }
 
+    if ($oldversion < 2011052500.01) {
+        // Add enabled filed to message_processors
+        $table = new xmldb_table('message_processors');
+        $field = new xmldb_field('enabled');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'name');
+
+        // Launch add field addition
+        if (!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+    }
 
     return true;
 }
