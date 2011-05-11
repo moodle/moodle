@@ -625,6 +625,13 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Generates the table heading.
+     */
+    public function view_table_heading() {
+        return $this->heading(get_string('summaryofattempts', 'quiz'));
+    }
+
+    /**
      * Generates the table of data
      *
      * @param array $quiz Array contining quiz data
@@ -636,7 +643,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         if (!$viewobj->attempts) {
             return $output;
         }
-        $output .= $this->heading(get_string('summaryofattempts', 'quiz'));
+        $output .= $this->view_table_heading();
 
         // Prepare table header
         $table = new html_table();
