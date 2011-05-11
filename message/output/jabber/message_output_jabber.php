@@ -44,7 +44,7 @@ class message_output_jabber extends message_output {
     function send_message($eventdata){
         global $CFG;
 
-        if ($this->is_system_configured()) {
+        if ($this->is_system_configured() && $this->is_user_configured($eventdata->userto)) {
             if (!empty($CFG->noemailever)) {
                 // hidden setting for development sites, set in config.php if needed
                 debugging('$CFG->noemailever active, no jabber message sent.', DEBUG_MINIMAL);
@@ -55,7 +55,7 @@ class message_output_jabber extends message_output {
             static $jabberaddresses = array();
 
             if (!array_key_exists($eventdata->userto->id, $jabberaddresses)) {
-                $jabberaddresses[$eventdata->userto->id] = get_user_preferences('message_processor_jabber_jabberid', $eventdata->userto->email, $eventdata->userto->id);
+                $jabberaddresses[$eventdata->userto->id] = get_user_preferences('message_processor_jabber_jabberid', null, $eventdata->userto->id);
             }
             $jabberaddress = $jabberaddresses[$eventdata->userto->id];
 
@@ -130,6 +130,20 @@ class message_output_jabber extends message_output {
         return (!empty($CFG->jabberhost) && !empty($CFG->jabberport) && !empty($CFG->jabberusername) && !empty($CFG->jabberpassword));
     }
 
+    /**
+     * Tests whether the Jabber settings have been configured on user level
+     * @param  object $user the user object, defaults to $USER.
+     * @return bool has the user made all the necessary settings
+     * in their profile to allow this plugin to be used.
+     */
+    function is_user_configured($user = null) {
+        global $USER;
+
+        if (is_null($user)) {
+            $user = $USER;
+        }
+        return (bool)get_user_preferences('message_processor_jabber_jabberid', null, $user->id);
+    }
 }
 
 /*
