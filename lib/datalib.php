@@ -111,7 +111,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
     $fullname  = $DB->sql_fullname('u.firstname', 'u.lastname');
 
     if (!empty($exceptions)) {
-        list($exceptions, $params) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'ex0000', false);
+        list($exceptions, $params) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'ex', false);
         $except = "AND u.id $exceptions";
     } else {
         $except = "";
@@ -210,7 +210,7 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
     }
 
     if ($exceptions) {
-        list($exceptions, $eparams) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'ex0000', false);
+        list($exceptions, $eparams) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'ex', false);
         $params = $params + $eparams;
         $except = " AND id $exceptions";
     }

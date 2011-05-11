@@ -208,7 +208,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 
     $count = count($grades);
     if ($count > 0 and $count < 200) {
-        list($uids, $params) = $DB->get_in_or_equal(array_keys($grades), SQL_PARAMS_NAMED, $start='uid0');
+        list($uids, $params) = $DB->get_in_or_equal(array_keys($grades), SQL_PARAMS_NAMED, $start='uid');
         $params['gid'] = $grade_item->id;
         $sql = "SELECT * FROM {grade_grades} WHERE itemid = :gid AND userid $uids";
 

@@ -311,7 +311,7 @@ function url_get_final_display_type($url) {
                              'audio/mp3', 'audio/x-realaudio-plugin', 'x-realaudio-plugin',   // audio formats,
                             );
 
-    $mimetype = mimeinfo('type', $url->externalurl);
+    $mimetype = resourcelib_guess_url_mimetype($url->externalurl);
 
     if (in_array($mimetype, $download)) {
         return RESOURCELIB_DISPLAY_DOWNLOAD;

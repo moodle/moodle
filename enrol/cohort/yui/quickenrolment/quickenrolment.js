@@ -1,4 +1,4 @@
-YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
+YUI.add('moodle-enrol_cohort-quickenrolment', function(Y) {
 
     var CONTROLLERNAME = 'Quick cohort enrolment controller',
         COHORTNAME = 'Cohort',
@@ -71,7 +71,7 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
             this.on('defaultcohortroleloaded', this.updateContent, this, panel);
             close.on('click', this.hide, this);
 
-            Y.all('.enrolcohortbutton input').each(function(node){
+            Y.all('.enrol_cohort_plugin input').each(function(node){
                 if (node.getAttribute('type', 'submit')) {
                     node.on('click', this.show, this);
                 }
@@ -332,8 +332,8 @@ YUI.add('moodle-enrol-quickcohortenrolment', function(Y) {
     });
     Y.augment(COHORT, Y.EventTarget);
 
-    M.enrol = M.enrol || {};
-    M.enrol.quickcohortenrolment = {
+    M.enrol_cohort = M.enrol || {};
+    M.enrol_cohort.quickenrolment = {
         init : function(cfg) {
             new CONTROLLER(cfg);
         }

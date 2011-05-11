@@ -159,6 +159,15 @@ $functions = array(
             moodle/role:review, moodle/site:accessallgroups, moodle/course:enrolreview',
     ),
 
+    'moodle_enrol_get_users_courses' => array(
+        'classname'   => 'moodle_enrol_external',
+        'methodname'  => 'get_users_courses',
+        'classpath'   => 'enrol/externallib.php',
+        'description' => 'Get list of courses user is enrolled in',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/course:viewparticipants',
+    ),
+
     'moodle_role_assign' => array(
         'classname'   => 'moodle_enrol_external',
         'methodname'  => 'role_assign',

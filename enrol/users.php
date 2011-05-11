@@ -44,9 +44,10 @@ require_login($course);
 require_capability('moodle/course:enrolreview', $context);
 $PAGE->set_pagelayout('admin');
 
-$manager = new course_enrolment_manager($course, $filter);
+$manager = new course_enrolment_manager($PAGE, $course, $filter);
 $table = new course_enrolment_users_table($manager, $PAGE);
 $PAGE->set_url('/enrol/users.php', $manager->get_url_params()+$table->get_url_params());
+navigation_node::override_active_url(new moodle_url('/enrol/users.php', array('id' => $id)));
 
 // Check if there is an action to take
 if ($action) {
@@ -61,26 +62,6 @@ if ($action) {
     $pagecontent = null;
 
     switch ($action) {
-        /**
-         * Unenrols a user from this course (includes removing all of their grades)
-         */
-        case 'unenrol':
-            $ue = $DB->get_record('user_enrolments', array('id'=>required_param('ue', PARAM_INT)), '*', MUST_EXIST);
-            list ($instance, $plugin) = $manager->get_user_enrolment_components($ue);
-            if ($instance && $plugin && $plugin->allow_unenrol($instance) && has_capability("enrol/$instance->enrol:unenrol", $manager->get_context())) {
-                if ($confirm && $manager->unenrol_user($ue)) {
-                    redirect($PAGE->url);
-                } else {
-                    $user = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
-                    $yesurl = new moodle_url($PAGE->url, array('action'=>'unenrol', 'ue'=>$ue->id, 'confirm'=>1, 'sesskey'=>sesskey()));
-
-                    $message = get_string('unenrolconfirm', 'enrol', array('user'=>fullname($user, true), 'course'=>format_string($course->fullname)));
-                    $pagetitle = get_string('unenrol', 'enrol');
-                    $pagecontent = $OUTPUT->confirm($message, $yesurl, $PAGE->url);
-                }
-                $actiontaken = true;
-            }
-            break;
         /**
          * Removes a role from the user with this course
          */
@@ -162,27 +143,6 @@ if ($action) {
                 $actiontaken = true;
             }
             break;
-        /**
-         * Edits the details of a users enrolment in the course
-         */
-        case 'edit':
-            $ue = $DB->get_record('user_enrolments', array('id'=>required_param('ue', PARAM_INT)), '*', MUST_EXIST);
-
-            //Only show the edit form if the user has the appropriate capability
-            list($instance, $plugin) = $manager->get_user_enrolment_components($ue);
-            if ($instance && $plugin && $plugin->allow_manage($instance) && has_capability("enrol/$instance->enrol:manage", $manager->get_context())) {
-                $user = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
-                $mform = new enrol_users_edit_form(NULL, array('user'=>$user, 'course'=>$course, 'ue'=>$ue));
-                $mform->set_data($PAGE->url->params());
-                $data = $mform->get_data();
-                if ($mform->is_cancelled() || ($data && $manager->edit_enrolment($ue, $data))) {
-                    redirect($PAGE->url);
-                } else {
-                    $pagetitle = fullname($user);
-                }
-                $actiontaken = true;
-            }
-            break;
     }
 
     // If we took an action display we need to display something special.
@@ -221,12 +181,12 @@ $fields = array(
 $table->set_fields($fields, $renderer);
 
 $canassign = has_capability('moodle/role:assign', $manager->get_context());
-$users = $manager->get_users_for_display($renderer, $PAGE->url, $table->sort, $table->sortdirection, $table->page, $table->perpage);
+$users = $manager->get_users_for_display($manager, $table->sort, $table->sortdirection, $table->page, $table->perpage);
 foreach ($users as $userid=>&$user) {
     $user['picture'] = $OUTPUT->render($user['picture']);
     $user['role'] = $renderer->user_roles_and_actions($userid, $user['roles'], $manager->get_assignable_roles(), $canassign, $PAGE->url);
     $user['group'] = $renderer->user_groups_and_actions($userid, $user['groups'], $manager->get_all_groups(), has_capability('moodle/course:managegroups', $manager->get_context()), $PAGE->url);
-    $user['enrol'] = $renderer->user_enrolments_and_actions($userid, $user['enrolments'], $PAGE->url);
+    $user['enrol'] = $renderer->user_enrolments_and_actions($user['enrolments']);;
 }
 $table->set_total_users($manager->get_total_users());
 $table->set_users($users);

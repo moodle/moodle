@@ -26,6 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/enrol/locallib.php');
+
+
 /**
  * Event handler for cohort enrolment plugin.
  *
@@ -187,4 +190,91 @@ function enrol_cohort_sync($courseid = NULL) {
     }
     $rs->close();
 
+}
+
+/**
+ * Enrols all of the users in a cohort through a manual plugin instance.
+ *
+ * In order for this to succeed the course must contain a valid manual
+ * enrolment plugin instance that the user has permission to enrol users through.
+ *
+ * @global moodle_database $DB
+ * @param course_enrolment_manager $manager
+ * @param int $cohortid
+ * @param int $roleid
+ * @return int
+ */
+function enrol_cohort_enrol_all_users(course_enrolment_manager $manager, $cohortid, $roleid) {
+    global $DB;
+    $context = $manager->get_context();
+    require_capability('moodle/course:enrolconfig', $context);
+
+    $instance = false;
+    $instances = $manager->get_enrolment_instances();
+    foreach ($instances as $i) {
+        if ($i->enrol == 'manual') {
+            $instance = $i;
+            break;
+        }
+    }
+    $plugin = enrol_get_plugin('manual');
+    if (!$instance || !$plugin || !$plugin->allow_enrol($instance) || !has_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
+        return false;
+    }
+    $sql = "SELECT com.userid
+              FROM {cohort_members} com
+         LEFT JOIN (
+                SELECT *
+                FROM {user_enrolments} ue
+                WHERE ue.enrolid = :enrolid
+                 ) ue ON ue.userid=com.userid
+             WHERE com.cohortid = :cohortid AND ue.id IS NULL";
+    $params = array('cohortid' => $cohortid, 'enrolid' => $instance->id);
+    $rs = $DB->get_recordset_sql($sql, $params);
+    $count = 0;
+    foreach ($rs as $user) {
+        $count++;
+        $plugin->enrol_user($instance, $user->userid, $roleid);
+    }
+    $rs->close();
+    return $count;
+}
+
+/**
+ * Gets all the cohorts the user is able to view.
+ *
+ * @global moodle_database $DB
+ * @return array
+ */
+function enrol_cohort_get_cohorts(course_enrolment_manager $manager) {
+    global $DB;
+    $context = $manager->get_context();
+    $cohorts = array();
+    $instances = $manager->get_enrolment_instances();
+    $enrolled = array();
+    foreach ($instances as $instance) {
+        if ($instance->enrol == 'cohort') {
+            $enrolled[] = $instance->customint1;
+        }
+    }
+    list($sqlparents, $params) = $DB->get_in_or_equal(get_parent_contexts($context));
+    $sql = "SELECT id, name, contextid
+              FROM {cohort}
+             WHERE contextid $sqlparents
+          ORDER BY name ASC";
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $c) {
+        $context = get_context_instance_by_id($c->contextid);
+        if (!has_capability('moodle/cohort:view', $context)) {
+            continue;
+        }
+        $cohorts[$c->id] = array(
+            'cohortid'=>$c->id,
+            'name'=>format_string($c->name),
+            'users'=>$DB->count_records('cohort_members', array('cohortid'=>$c->id)),
+            'enrolled'=>in_array($c->id, $enrolled)
+        );
+    }
+    $rs->close();
+    return $cohorts;
 }

@@ -76,6 +76,8 @@ switch ($mode) {
             }
 
             $attemptid = required_param('attemptid', PARAM_INT);
+            $score = optional_param('score', 0, PARAM_INT);
+
             if (!$attempt = $DB->get_record('lesson_attempts', array('id' => $attemptid))) {
                 print_error('cannotfindattempt', 'lesson');
             }
@@ -87,7 +89,7 @@ switch ($mode) {
             $essayinfo = unserialize($attempt->useranswer);
 
             $essayinfo->graded = 1;
-            $essayinfo->score = clean_param($form->score, PARAM_INT);
+            $essayinfo->score = $score;
             $essayinfo->response = clean_param($form->response, PARAM_RAW);
             $essayinfo->sent = 0;
             if (!$lesson->custom && $essayinfo->score == 1) {

@@ -86,6 +86,7 @@ if (has_capability('moodle/course:viewparticipants', get_context_instance(CONTEX
 }
 
 $PAGE->navigation->extend_for_user($user);
+$PAGE->navigation->set_userid_for_parent_checks($id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.
 $PAGE->set_title("$course->shortname: $fullname: $strmode");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
@@ -165,6 +166,7 @@ if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $pe
         //load ratings
         if ($forum->assessed!=RATING_AGGREGATE_NONE) {
             $ratingoptions->context = $forum->context;
+            $ratingoptions->component = 'mod_forum';
             $ratingoptions->items = array($post);
             $ratingoptions->aggregate = $forum->assessed;//the aggregation method
             $ratingoptions->scaleid = $forum->scale;

@@ -314,6 +314,10 @@ a.wiki_edit_section {
     text-align: left;
 }
 
+.dir-rtl #wiki_printable_content {
+    text-align: right;
+}
+
 #wiki_printable_content a {
     color: black;
 }

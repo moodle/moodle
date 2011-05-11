@@ -125,40 +125,11 @@ class repository_user extends repository {
     }
 
     /**
-     * Copy a file to file area
+     * Does this repository used to browse moodle files?
      *
-     * @global object $USER
-     * @global object $DB
-     * @param string $encoded The metainfo of file, it is base64 encoded php serialized data
-     * @param string $draftitemid itemid
-     * @param string $new_filename The intended name of file
-     * @param string $new_filepath the new path in draft area
-     * @return array The information of file
+     * @return boolean
      */
-    public function copy_to_area($encoded, $draftitemid, $new_filepath, $new_filename) {
-        global $USER, $DB;
-
-        $browser = get_file_browser();
-        $params = unserialize(base64_decode($encoded));
-        $user_context = get_context_instance(CONTEXT_USER, $USER->id);
-
-        $contextid  = clean_param($params['contextid'], PARAM_INT);
-        $fileitemid = clean_param($params['itemid'], PARAM_INT);
-        $filename = clean_param($params['filename'], PARAM_FILE);
-        $filepath = clean_param($params['filepath'], PARAM_PATH);;
-        $filearea = clean_param($params['filearea'], PARAM_ALPHAEXT);
-        $component = clean_param($params['component'], PARAM_ALPHAEXT);
-
-        $context    = get_context_instance_by_id($contextid);
-        $file_info = $browser->get_file_info($context, $component, $filearea, $fileitemid, $filepath, $filename);
-        $file_info->copy_to_storage($user_context->id, 'user', 'draft', $draftitemid, $new_filepath, $new_filename);
-
-        $info = array();
-        $info['itemid'] = $draftitemid;
-        $info['title']  = $new_filename;
-        $info['contextid'] = $user_context->id;
-        $info['filesize'] = $file_info->get_filesize();
-
-        return $info;
+    public function has_moodle_files() {
+        return true;
     }
 }

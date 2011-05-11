@@ -378,8 +378,8 @@ function stats_cron_daily($maxdays=1) {
 
 
     /// individual user stats (including not-logged-in) in each course, this is slow - reuse this data if possible
-        list($viewactionssql, $params1) = $DB->get_in_or_equal($viewactions, SQL_PARAMS_NAMED, 'view000');
-        list($postactionssql, $params2) = $DB->get_in_or_equal($postactions, SQL_PARAMS_NAMED, 'post000');
+        list($viewactionssql, $params1) = $DB->get_in_or_equal($viewactions, SQL_PARAMS_NAMED, 'view');
+        list($postactionssql, $params2) = $DB->get_in_or_equal($postactions, SQL_PARAMS_NAMED, 'post');
         $sql = "INSERT INTO {stats_user_daily} (stattype, timeend, courseid, userid, statsreads, statswrites)
 
                 SELECT 'activity' AS stattype, $nextmidnight AS timeend, d.courseid, d.userid,

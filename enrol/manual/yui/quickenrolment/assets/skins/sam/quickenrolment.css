@@ -44,6 +44,7 @@ Structure of the user enroller panel
 
 .user-enroller-panel .uep-content {text-align:center;position:relative;width:100%;border-top:1px solid #999;border-bottom:1px solid #999;}
 .user-enroller-panel .uep-content .uep-controls {margin:0;padding:3px;background-color:#ddd;text-align:left;border-bottom:1px solid #BBB;}
+.user-enroller-panel .uep-content .uep-controls .uep-enrolment-option input {vertical-align:middle;margin-left:1em;}
 .user-enroller-panel .uep-ajax-content {height:375px;overflow:auto;}
 .user-enroller-panel .uep-search-results .totalusers {background-color:#eee;padding:5px;border-bottom:1px solid #BBB;font-size:7pt;font-weight: bold;}
 .user-enroller-panel .uep-search-results .user {width:100%;text-align:left;font-size:9pt;border-bottom:1px solid #ddd;border-top:1px solid #eee;}
@@ -70,3 +71,7 @@ Structure of the user enroller panel
 .user-enroller-panel .collapsiblearea {border:1px solid #bbb;background-color:#f6f6f6;}
 .user-enroller-panel .collapsiblearea.hidden {display:none;}
 .user-enroller-panel .collapsiblearea .uep-enrolment-option {margin:5px 1em;}
+
+.dir-rtl .user-enroller-panel .uep-header .close {right: auto;left:1em;}
+.dir-rtl .user-enroller-panel .uep-search-results .user { text-align: right;}
+.dir-rtl .user-enroller-panel .uep-content .uep-controls { text-align: right;}

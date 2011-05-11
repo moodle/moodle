@@ -39,10 +39,11 @@ html, body {
 /* Header
 ----------------------------*/
 
-#headerwrap {
+#page-header {
 	width: 100%;
 	top: 0px;
 	height: 140px;
+	float: none;
 }
 
 #header {

@@ -318,7 +318,10 @@ function lesson_grade($lesson, $ntries, $userid = 0) {
                 $attempt = end($attempts);
                 // If essay question, handle it, otherwise add to score
                 if ($page->requires_manual_grading()) {
-                    $earned += $page->earned_score($answers, $attempt);
+                    $useranswerobj = unserialize($attempt->useranswer);
+                    if (isset($useranswerobj->score)) {
+                        $earned += $useranswerobj->score;
+                    }
                     $nmanual++;
                     $manualpoints += $answers[$attempt->answerid]->score;
                 } else if (!empty($attempt->answerid)) {

@@ -42,28 +42,109 @@ class core_enrol_renderer extends plugin_renderer_base {
 
         $table->initialise_javascript();
 
+        $buttons = $table->get_manual_enrol_buttons();
+        $buttonhtml = '';
+        if (count($buttons) > 0) {
+            $buttonhtml .= html_writer::start_tag('div', array('class' => 'enrol_user_buttons'));
+            foreach ($buttons as $button) {
+                $buttonhtml .= $this->render($button);
+            }
+            $buttonhtml .= html_writer::end_tag('div');
+        }
+
         $content = '';
-        $enrolmentselector = $table->get_enrolment_selector();
-        if ($enrolmentselector) {
-            $content .= $this->output->render($enrolmentselector);
+        if (!empty($buttonhtml)) {
+            $content .= $buttonhtml;
         }
-        $cohortenroller = $table->get_cohort_enrolment_control();
-        if ($cohortenroller) {
-            $content .= $this->output->render($cohortenroller);
-        }
-        $content  .= $this->output->render($table->get_enrolment_type_filter());
+        $content .= $this->output->render($table->get_enrolment_type_filter());
         $content .= $this->output->render($table->get_paging_bar());
-        $content .= html_writer::table($table);
-        $content .= $this->output->render($table->get_paging_bar());
-        $enrolmentselector = $table->get_enrolment_selector();
-        if ($enrolmentselector) {
-            $content .= $this->output->render($enrolmentselector);
+
+        // Check if the table has any bulk operations. If it does we want to wrap the table in a
+        // form so that we can capture and perform any required bulk operations.
+        if ($table->has_bulk_user_enrolment_operations()) {
+            $content .= html_writer::start_tag('form', array('action' => new moodle_url('/enrol/bulkchange.php'), 'method' => 'post'));
+            foreach ($table->get_combined_url_params() as $key => $value) {
+                if ($key == 'action') {
+                    continue;
+                }
+                $content .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $key, 'value' => $value));
+            }
+            $content .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'action', 'value' => 'bulkchange'));
+            $content .= html_writer::table($table);
+            $content .= html_writer::start_tag('div', array('class' => 'singleselect bulkuserop'));
+            $content .= html_writer::start_tag('select', array('name' => 'bulkuserop'));
+            $content .= html_writer::tag('option', get_string('withselectedusers', 'enrol'), array('value' => ''));
+            $options = array('' => get_string('withselectedusers', 'enrol'));
+            foreach ($table->get_bulk_user_enrolment_operations() as $operation) {
+                $content .= html_writer::tag('option', $operation->get_title(), array('value' => $operation->get_identifier()));
+            }
+            $content .= html_writer::end_tag('select');
+            $content .= html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('go')));
+            $content .= html_writer::end_tag('div');
+
+            $content .= html_writer::end_tag('form');
+        } else {
+            $content .= html_writer::table($table);
         }
-        $cohortenroller = $table->get_cohort_enrolment_control();
-        if ($cohortenroller) {
-            $content .= $this->output->render($cohortenroller);
+        $content .= $this->output->render($table->get_paging_bar());
+        if (!empty($buttonhtml)) {
+            $content .= $buttonhtml;
         }
         return $content;
+    }
+
+    /**
+     * Renderers the enrol_user_button.
+     *
+     * @param enrol_user_button $button
+     * @return string XHTML
+     */
+    protected function render_enrol_user_button(enrol_user_button $button) {
+        $attributes = array('type'     => 'submit',
+                            'value'    => $button->label,
+                            'disabled' => $button->disabled ? 'disabled' : null,
+                            'title'    => $button->tooltip);
+
+        if ($button->actions) {
+            $id = html_writer::random_id('single_button');
+            $attributes['id'] = $id;
+            foreach ($button->actions as $action) {
+                $this->add_action_handler($action, $id);
+            }
+        }
+        $button->initialise_js($this->page);
+
+        // first the input element
+        $output = html_writer::empty_tag('input', $attributes);
+
+        // then hidden fields
+        $params = $button->url->params();
+        if ($button->method === 'post') {
+            $params['sesskey'] = sesskey();
+        }
+        foreach ($params as $var => $val) {
+            $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $var, 'value' => $val));
+        }
+
+        // then div wrapper for xhtml strictness
+        $output = html_writer::tag('div', $output);
+
+        // now the form itself around it
+        if ($button->method === 'get') {
+            $url = $button->url->out_omit_querystring(true); // url without params, the anchor part allowed
+        } else {
+            $url = $button->url->out_omit_querystring();     // url without params, the anchor part not allowed
+        }
+        if ($url === '') {
+            $url = '#'; // there has to be always some action
+        }
+        $attributes = array('method' => $button->method,
+                            'action' => $url,
+                            'id'     => $button->formid);
+        $output = html_writer::tag('form', $output, $attributes);
+
+        // and finally one more wrapper with class
+        return html_writer::tag('div', $output, array('class' => $button->class));
     }
 
     /**
@@ -179,33 +260,31 @@ class core_enrol_renderer extends plugin_renderer_base {
      * @param moodle_url $pageurl
      * @return string
      */
-    public function user_enrolments_and_actions($userid, $enrolments, $pageurl) {
-        $iconedit        = $this->output->pix_url('t/edit');
-        $iconenrolremove = $this->output->pix_url('t/delete');
-        $strunenrol = get_string('unenrol', 'enrol');
-        $stredit = get_string('edit');
-
+    public function user_enrolments_and_actions($enrolments) {
         $output = '';
-        foreach ($enrolments as $ueid=>$enrolment) {
-            $enrolmentoutput = $enrolment['text'].' '.$enrolment['period'];
-            if ($enrolment['dimmed']) {
+        foreach ($enrolments as $ue) {
+            $enrolmentoutput = $ue['text'].' '.$ue['period'];
+            if ($ue['dimmed']) {
                 $enrolmentoutput = html_writer::tag('span', $enrolmentoutput, array('class'=>'dimmed_text'));
+            } else {
+                $enrolmentoutput = html_writer::tag('span', $enrolmentoutput);
             }
-            if ($enrolment['canunenrol']) {
-                $icon = html_writer::empty_tag('img', array('alt'=>$strunenrol, 'src'=>$iconenrolremove));
-                $url = new moodle_url($pageurl, array('action'=>'unenrol', 'ue'=>$ueid));
-                $enrolmentoutput .= html_writer::link($url, $icon, array('class'=>'unenrollink', 'rel'=>$ueid));
-            }
-            if ($enrolment['canmanage']) {
-                $icon = html_writer::empty_tag('img', array('alt'=>$stredit, 'src'=>$iconedit));
-                $url = new moodle_url($url, array('action'=>'edit', 'ue'=>$ueid));
-                $enrolmentoutput .= html_writer::link($url, $icon, array('class'=>'editenrollink', 'rel'=>$ueid));
+            foreach ($ue['actions'] as $action) {
+                $enrolmentoutput .= $this->render($action);
             }
             $output .= html_writer::tag('div', $enrolmentoutput, array('class'=>'enrolment'));
         }
         return $output;
     }
 
+    /**
+     * Renders a user enrolment action
+     * @param user_enrolment_action $icon
+     * @return string
+     */
+    protected function render_user_enrolment_action(user_enrolment_action $icon) {
+        return html_writer::link($icon->get_url(), $this->output->render($icon->get_icon()), $icon->get_attributes());
+    }
 }
 
 /**
@@ -286,12 +365,6 @@ class course_enrolment_table extends html_table implements renderable {
     public $perpage = 0;
 
     /**
-     * The URL of the page for this table
-     * @var moodle_page
-     */
-    public $moodlepage;
-
-    /**
      * The sort field for this table, should be one of course_enrolment_table::$sortablefields
      * @var string
      */
@@ -334,6 +407,12 @@ class course_enrolment_table extends html_table implements renderable {
     protected $fields = array();
 
     /**
+     * An array of bulk user enrolment operations
+     * @var array
+     */
+    protected $bulkoperations = array();
+
+    /**
      * An array of sortable fields
      * @static
      * @var array
@@ -345,10 +424,9 @@ class course_enrolment_table extends html_table implements renderable {
      *
      * @param course_enrolment_manager $manager
      */
-    public function __construct(course_enrolment_manager $manager, moodle_page $moodlepage) {
+    public function __construct(course_enrolment_manager $manager) {
 
         $this->manager        = $manager;
-        $this->moodlepage     = $moodlepage;
 
         $this->page           = optional_param(self::PAGEVAR, 0, PARAM_INT);
         $this->perpage        = optional_param(self::PERPAGEVAR, self::DEFAULTPERPAGE, PARAM_INT);
@@ -367,6 +445,22 @@ class course_enrolment_table extends html_table implements renderable {
         }
 
         $this->id = html_writer::random_id();
+
+        // Collect the bulk operations for the currently filtered plugin if there is one.
+        $plugin = $manager->get_filtered_enrolment_plugin();
+        if ($plugin) {
+            $this->bulkoperations = $plugin->get_bulk_operations($manager);
+        }
+    }
+
+    /**
+     * Returns an array of enrol_user_buttons that are created by the different
+     * enrolment plugins available.
+     *
+     * @return array
+     */
+    public function get_manual_enrol_buttons() {
+        return $this->manager->get_manual_enrol_buttons();
     }
 
     /**
@@ -396,7 +490,14 @@ class course_enrolment_table extends html_table implements renderable {
         $this->head = array();
         $this->colclasses = array();
         $this->align = array();
-        $url = $this->moodlepage->url;
+        $url = $this->manager->get_moodlepage()->url;
+
+        if (!empty($this->bulkoperations)) {
+            // If there are bulk operations add a column for checkboxes.
+            $this->head[] = '';
+            $this->colclasses[] = 'field col_bulkops';
+        }
+
         foreach ($fields as $name => $label) {
             $newlabel = '';
             if (is_array($label)) {
@@ -444,9 +545,6 @@ class course_enrolment_table extends html_table implements renderable {
         }
     }
     /**
-
-     */
-    /**
      * Sets the users for this table
      *
      * @param array $users
@@ -454,12 +552,18 @@ class course_enrolment_table extends html_table implements renderable {
      */
     public function set_users(array $users) {
         $this->users = $users;
+        $hasbulkops = !empty($this->bulkoperations);
         foreach ($users as $userid=>$user) {
             $user = (array)$user;
             $row = new html_table_row();
             $row->attributes = array('class' => 'userinforow');
             $row->id = 'user_'.$userid;
             $row->cells = array();
+            if ($hasbulkops) {
+                // Add a checkbox into the first column.
+                $input = html_writer::empty_tag('input', array('type' => 'checkbox', 'name' => 'bulkuser[]', 'value' => $userid));
+                $row->cells[] = new html_table_cell($input);
+            }
             foreach ($this->fields as $field => $label) {
                 if (is_array($label)) {
                     $bits = array();
@@ -485,7 +589,7 @@ class course_enrolment_table extends html_table implements renderable {
 
     public function initialise_javascript() {
         if (has_capability('moodle/role:assign', $this->manager->get_context())) {
-            $this->moodlepage->requires->strings_for_js(array(
+            $this->manager->get_moodlepage()->requires->strings_for_js(array(
                 'assignroles',
                 'confirmunassign',
                 'confirmunassigntitle',
@@ -499,7 +603,7 @@ class course_enrolment_table extends html_table implements renderable {
                 'userIds'=>array_keys($this->users),
                 'courseId'=>$this->manager->get_course()->id,
                 'otherusers'=>isset($this->otherusers));
-            $this->moodlepage->requires->yui_module($modules, $function, array($arguments));
+            $this->manager->get_moodlepage()->requires->yui_module($modules, $function, array($arguments));
         }
     }
 
@@ -510,7 +614,7 @@ class course_enrolment_table extends html_table implements renderable {
      */
     public function get_paging_bar() {
         if ($this->pagingbar == null) {
-            $this->pagingbar = new paging_bar($this->totalusers, $this->page, $this->perpage, $this->moodlepage->url, self::PAGEVAR);
+            $this->pagingbar = new paging_bar($this->totalusers, $this->page, $this->perpage, $this->manager->get_moodlepage()->url, self::PAGEVAR);
         }
         return $this->pagingbar;
     }
@@ -547,6 +651,43 @@ class course_enrolment_table extends html_table implements renderable {
             self::SORTDIRECTIONVAR => $this->sortdirection
         );
     }
+
+    /**
+     * Returns an array of URL params for both the table and the manager.
+     *
+     * @return array
+     */
+    public function get_combined_url_params() {
+        return $this->get_url_params() + $this->manager->get_url_params();
+    }
+
+    /**
+     * Sets the bulk operations for this table.
+     *
+     * @param array $bulkoperations
+     */
+    public function set_bulk_user_enrolment_operations(array $bulkoperations) {
+        $this->bulkoperations = $bulkoperations;
+    }
+
+    /**
+     * Returns an array of bulk operations.
+     *
+     * @return array
+     */
+    public function get_bulk_user_enrolment_operations() {
+        return $this->bulkoperations;
+    }
+
+    /**
+     * Returns true fi the table is aware of any bulk operations that can be performed on users
+     * selected from the currently filtered enrolment plugins.
+     *
+     * @return bool
+     */
+    public function has_bulk_user_enrolment_operations() {
+        return !empty($this->bulkoperations);
+    }
 }
 
 /**
@@ -565,156 +706,12 @@ class course_enrolment_users_table extends course_enrolment_table {
     protected static $sortablefields = array('firstname', 'lastname', 'email', 'lastaccess');
 
     /**
-     * Returns a button to enrol cohorts or thier users
-     *
-     * @staticvar int $count
-     * @return single_button|false
-     */
-    public function get_cohort_enrolment_control() {
-        static $count = 0;
-
-        // First make sure that cohorts is enabled
-        $plugins = $this->manager->get_enrolment_plugins();
-        if (!array_key_exists('cohort', $plugins)) {
-            return false;
-        }
-        $course = $this->manager->get_course();
-        if (!$plugins['cohort']->get_newinstance_link($course->id)) {
-            // user can not see any cohort === can not use this
-            return false;
-        }
-        $count ++;
-        $cohorturl = new moodle_url('/enrol/cohort/addinstance.php', array('id'=>$course->id));
-        $control = new single_button($cohorturl, get_string('enrolcohort', 'enrol'), 'get');
-        $control->class = 'singlebutton enrolcohortbutton instance'.$count;
-        $control->formid = 'manuallyenrol_single_'+$count;
-        if ($count == 1) {
-            $this->moodlepage->requires->strings_for_js(array('enrol','synced','enrolcohort','enrolcohortusers'), 'enrol');
-            $this->moodlepage->requires->string_for_js('assignroles', 'role');
-            $this->moodlepage->requires->string_for_js('cohort', 'cohort');
-            $this->moodlepage->requires->string_for_js('users', 'moodle');
-
-            $hasmanualinstance = false;
-            // No point showing this at all if the user cant manually enrol users
-            if (has_capability('enrol/manual:manage', $this->manager->get_context())) {
-                // Make sure manual enrolments instance exists
-                $instances = $this->manager->get_enrolment_instances();
-                foreach ($instances as $instance) {
-                    if ($instance->enrol == 'manual') {
-                        $hasmanualinstance = true;
-                        break;
-                    }
-                }
-            }
-
-            $modules = array('moodle-enrol-quickcohortenrolment', 'moodle-enrol-quickcohortenrolment-skin');
-            $function = 'M.enrol.quickcohortenrolment.init';
-            $arguments = array(
-                'courseid'=>$course->id,
-                'ajaxurl'=>'/enrol/ajax.php',
-                'url'=>$this->moodlepage->url->out(false),
-                'manualEnrolment'=>$hasmanualinstance);
-            $this->moodlepage->requires->yui_module($modules, $function, array($arguments));
-        }
-        return $control;
-    }
-
-    /**
-     * Gets the enrolment selector control for this table and initialises its
-     * JavaScript
-     *
-     * @return single_button|url_select
-     */
-    public function get_enrolment_selector() {
-        global $CFG;
-        static $count = 0;
-
-        $instances  = $this->manager->get_enrolment_instances();
-        $plugins    = $this->manager->get_enrolment_plugins();
-        $manuals    = array();
-        // print enrol link or selection
-        $links = array();
-        foreach($instances as $instance) {
-            $plugin = $plugins[$instance->enrol];
-            if ($link = $plugin->get_manual_enrol_link($instance)) {
-                $links[$instance->id] = $link;
-                $manuals[$instance->id] = $instance;
-            }
-        }
-        if (!empty($links)) {
-            $arguments = array();
-            $count ++;
-            if (count($links) == 1) {
-                $control = new single_button(reset($links), get_string('enrolusers', 'enrol_manual'), 'get');
-                $control->class = 'singlebutton enrolusersbutton instance'.$count;
-                $control->formid = 'manuallyenrol_single_'+$count;
-                $arguments[] = array('id'=>key($links), 'name'=>$plugins[$instances[key($links)]->enrol]->get_instance_name($instances[key($links)]));
-            } else if (count($links) > 1) {
-                $inames     = $this->manager->get_enrolment_instance_names();
-                $options = array();
-                foreach ($links as $i=>$link) {
-                    $options[$link->out(false)] = $inames[$i];
-                    $arguments[] = array('id'=>$i, 'name'=>$plugins[$instances[$i]->enrol]->get_instance_name($instances[$i]));
-                }
-                $control = new url_select($options, '', array(''=>get_string('enrolusers', 'enrol_manual').'...'));
-                $control->class = 'singlebutton enrolusersbutton instance'.$count;
-                $control->formid = 'manuallyenrol_select_'+$count;
-            }
-            $course = $this->manager->get_course();
-            $timeformat = get_string('strftimedatefullshort');
-            $today = time();
-            $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
-            $startdateoptions = array();
-            if ($course->startdate > 0) {
-                $startdateoptions[2] = get_string('coursestart') . ' (' . userdate($course->startdate, $timeformat) . ')';
-            }
-            $startdateoptions[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
-
-            if ($count == 1) {
-                $instance = reset($manuals);
-                $this->moodlepage->requires->strings_for_js(array(
-                    'ajaxoneuserfound',
-                    'ajaxxusersfound',
-                    'ajaxnext25',
-                    'enrol',
-                    'enrolmentoptions',
-                    'enrolusers',
-                    'errajaxfailedenrol',
-                    'errajaxsearch',
-                    'none',
-                    'usersearch',
-                    'unlimitedduration',
-                    'startdatetoday',
-                    'durationdays',
-                    'enrolperiod',
-                    'finishenrollingusers',
-                    'recovergrades'), 'enrol');
-                $this->moodlepage->requires->string_for_js('assignroles', 'role');
-                $this->moodlepage->requires->string_for_js('startingfrom', 'moodle');
-
-                $modules = array('moodle-enrol-enrolmentmanager', 'moodle-enrol-enrolmentmanager-skin');
-                $function = 'M.enrol.enrolmentmanager.init';
-                $arguments = array(
-                    'instances'=>$arguments,
-                    'courseid'=>$course->id,
-                    'ajaxurl'=>'/enrol/ajax.php',
-                    'url'=>$this->moodlepage->url->out(false),
-                    'optionsStartDate'=>$startdateoptions,
-                    'defaultRole'=>$instance->roleid,
-                    'disableGradeHistory'=>$CFG->disablegradehistory);
-                $this->moodlepage->requires->yui_module($modules, $function, array($arguments));
-            }
-            return $control;
-        }
-        return null;
-    }
-    /**
      * Gets the enrolment type filter control for this table
      *
      * @return single_select
      */
     public function get_enrolment_type_filter() {
-        $selector = new single_select($this->moodlepage->url, 'ifilter', array(0=>get_string('all')) + (array)$this->manager->get_enrolment_instance_names(), $this->manager->get_enrolment_filter(), array());
+        $selector = new single_select($this->manager->get_moodlepage()->url, 'ifilter', array(0=>get_string('all')) + (array)$this->manager->get_enrolment_instance_names(), $this->manager->get_enrolment_filter(), array());
         $selector->set_label( get_string('enrolmentinstances', 'enrol'));
         return $selector;
     }
@@ -736,10 +733,9 @@ class course_enrolment_other_users_table extends course_enrolment_table {
      * Constructs the table
      *
      * @param course_enrolment_manager $manager
-     * @param moodle_page $moodlepage
      */
-    public function __construct(course_enrolment_manager $manager, moodle_page $moodlepage) {
-        parent::__construct($manager, $moodlepage);
+    public function __construct(course_enrolment_manager $manager) {
+        parent::__construct($manager);
         $this->attributes = array('class'=>'userenrolment otheruserenrolment');
     }
 
@@ -760,7 +756,7 @@ class course_enrolment_other_users_table extends course_enrolment_table {
         $control = new single_button($url, get_string('assignroles', 'role'), 'get');
         $control->class = 'singlebutton assignuserrole instance'.$count;
         if ($count == 1) {
-            $this->moodlepage->requires->strings_for_js(array(
+            $this->manager->get_moodlepage()->requires->strings_for_js(array(
                     'ajaxoneuserfound',
                     'ajaxxusersfound',
                     'ajaxnext25',
@@ -775,15 +771,15 @@ class course_enrolment_other_users_table extends course_enrolment_table {
                     'startdatetoday',
                     'durationdays',
                     'enrolperiod'), 'enrol');
-            $this->moodlepage->requires->string_for_js('assignrole', 'role');
+            $this->manager->get_moodlepage()->requires->string_for_js('assignrole', 'role');
 
             $modules = array('moodle-enrol-otherusersmanager', 'moodle-enrol-otherusersmanager-skin');
             $function = 'M.enrol.otherusersmanager.init';
             $arguments = array(
                 'courseId'=> $this->manager->get_course()->id,
                 'ajaxUrl' => '/enrol/ajax.php',
-                'url' => $this->moodlepage->url->out(false));
-            $this->moodlepage->requires->yui_module($modules, $function, array($arguments));
+                'url' => $this->manager->get_moodlepage()->url->out(false));
+            $this->manager->get_moodlepage()->requires->yui_module($modules, $function, array($arguments));
         }
         return $control;
     }

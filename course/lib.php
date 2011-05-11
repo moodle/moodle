@@ -1637,6 +1637,16 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             // Module can put text after the link (e.g. forum unread)
             echo $mod->get_after_link();
 
+            // If there is content but NO link (eg label), then display the
+            // content here (BEFORE any icons). In this case cons must be
+            // displayed after the content so that it makes more sense visually
+            // and for accessibility reasons, e.g. if you have a one-line label
+            // it should work similarly (at least in terms of ordering) to an
+            // activity.
+            if (empty($url)) {
+                echo $contentpart;
+            }
+
             if ($isediting) {
                 if ($groupbuttons and plugin_supports('mod', $mod->modname, FEATURE_GROUPS, 0)) {
                     if (! $mod->groupmodelink = $groupbuttonslink) {
@@ -1721,8 +1731,11 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
             }
 
-            // Display the content (if any) at this part of the html
-            echo $contentpart;
+            // If there is content AND a link, then display the content here
+            // (AFTER any icons). Otherwise it was displayed before
+            if (!empty($url)) {
+                echo $contentpart;
+            }
 
             // Show availability information (for someone who isn't allowed to
             // see the activity itself, or for staff)

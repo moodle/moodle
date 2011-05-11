@@ -34,7 +34,6 @@ require_once("$CFG->dirroot/enrol/renderer.php");
 require_once("$CFG->dirroot/group/lib.php");
 
 // Must have the sesskey
-require_sesskey();
 $id      = required_param('id', PARAM_INT); // course id
 $action  = required_param('action', PARAM_ACTION);
 
@@ -53,7 +52,7 @@ require_sesskey();
 
 echo $OUTPUT->header(); // send headers
 
-$manager = new course_enrolment_manager($course);
+$manager = new course_enrolment_manager($PAGE, $course);
 
 $outcome = new stdClass;
 $outcome->success = true;
@@ -75,7 +74,6 @@ switch ($action) {
             throw new enrol_ajax_exception('unassignnotpermitted');
         }
         break;
-
     case 'assign':
         $user = $DB->get_record('user', array('id'=>required_param('user', PARAM_INT)), '*', MUST_EXIST);
         $roleid = required_param('roleid', PARAM_INT);
@@ -87,53 +85,10 @@ switch ($action) {
         }
         $outcome->response->roleid = $roleid;
         break;
-
     case 'getassignable':
         $otheruserroles = optional_param('otherusers', false, PARAM_BOOL);
         $outcome->response = array_reverse($manager->get_assignable_roles($otheruserroles), true);
         break;
-    case 'getdefaultcohortrole': //TODO: use in ajax UI MDL-24280
-        $cohortenrol = enrol_get_plugin('cohort');
-        $outcome->response = $cohortenrol->get_config('roleid');
-        break;
-    case 'getcohorts':
-        require_capability('moodle/course:enrolconfig', $context);
-        $outcome->response = $manager->get_cohorts();
-        break;
-    case 'enrolcohort':
-        require_capability('moodle/course:enrolconfig', $context);
-        $roleid = required_param('roleid', PARAM_INT);
-        $cohortid = required_param('cohortid', PARAM_INT);
-        if (!$manager->enrol_cohort($cohortid, $roleid)) {
-            throw new enrol_ajax_exception('errorenrolcohort');
-        }
-        break;
-    case 'enrolcohortusers':
-        require_capability('moodle/course:enrolconfig', $context);
-        $roleid = required_param('roleid', PARAM_INT);
-        $cohortid = required_param('cohortid', PARAM_INT);
-        $result = $manager->enrol_cohort_users($cohortid, $roleid);
-        if ($result === false) {
-            throw new enrol_ajax_exception('errorenrolcohortusers');
-        }
-        $outcome->success = true;
-        $outcome->response->users = $result;
-        $outcome->response->title = get_string('success');
-        $outcome->response->message = get_string('enrollednewusers', 'enrol', $result);
-        $outcome->response->yesLabel = get_string('ok');
-        break;
-    case 'searchusers':
-        $enrolid = required_param('enrolid', PARAM_INT);
-        $search  = optional_param('search', '', PARAM_RAW);
-        $page = optional_param('page', 0, PARAM_INT);
-        $outcome->response = $manager->get_potential_users($enrolid, $search, true, $page);
-        foreach ($outcome->response['users'] as &$user) {
-            $user->picture = $OUTPUT->user_picture($user);
-            $user->fullname = fullname($user);
-        }
-        $outcome->success = true;
-        break;
-
     case 'searchotherusers':
         $search  = optional_param('search', '', PARAM_RAW);
         $page = optional_param('page', 0, PARAM_INT);
@@ -146,57 +101,6 @@ switch ($action) {
         }
         $outcome->success = true;
         break;
-
-    case 'enrol':
-        $enrolid = required_param('enrolid', PARAM_INT);
-        $userid = required_param('userid', PARAM_INT);
-
-        $roleid = optional_param('role', null, PARAM_INT);
-        $duration = optional_param('duration', 0, PARAM_INT);
-        $startdate = optional_param('startdate', 0, PARAM_INT);
-        $recovergrades = optional_param('recovergrades', 0, PARAM_INT);
-
-        if (empty($roleid)) {
-            $roleid = null;
-        }
-
-        switch($startdate) {
-            case 2:
-                $timestart = $course->startdate;
-                break;
-            case 3:
-            default:
-                $today = time();
-                $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
-                $timestart = $today;
-                break;
-        }
-        if ($duration <= 0) {
-            $timeend = 0;
-        } else {
-            $timeend = $timestart + ($duration*24*60*60);
-        }
-
-        $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
-        $instances = $manager->get_enrolment_instances();
-        $plugins = $manager->get_enrolment_plugins();
-        if (!array_key_exists($enrolid, $instances)) {
-            throw new enrol_ajax_exception('invalidenrolinstance');
-        }
-        $instance = $instances[$enrolid];
-        $plugin = $plugins[$instance->enrol];
-        if ($plugin->allow_enrol($instance) && has_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
-            $plugin->enrol_user($instance, $user->id, $roleid, $timestart, $timeend);
-            if ($recovergrades) {
-                require_once($CFG->libdir.'/gradelib.php');
-                grade_recover_history_grades($user->id, $instance->courseid);
-            }
-        } else {
-            throw new enrol_ajax_exception('enrolnotpermitted');
-        }
-        $outcome->success = true;
-        break;
-
     default:
         throw new enrol_ajax_exception('unknowajaxaction');
 }

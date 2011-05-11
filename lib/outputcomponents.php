@@ -57,6 +57,7 @@ class file_picker implements renderable {
             'itemid' => 0,
             'maxbytes'=>-1,
             'maxfiles'=>1,
+            'buttonname'=>false
         );
         foreach ($defaults as $key=>$value) {
             if (empty($options->$key)) {

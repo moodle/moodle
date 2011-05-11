@@ -168,6 +168,121 @@ class enrol_manual_plugin extends enrol_plugin {
 
         return parent::add_instance($course, $fields);
     }
+
+    /**
+     * Returns a button to manually enrol users through the manual enrolment plugin.
+     *
+     * By default the first manual enrolment plugin instance available in the course is used.
+     * If no manual enrolment instances exist within the course then false is returned.
+     *
+     * This function also adds a quickenrolment JS ui to the page so that users can be enrolled
+     * via AJAX.
+     *
+     * @param course_enrolment_manager $manager
+     * @return enrol_user_button
+     */
+    public function get_manual_enrol_button(course_enrolment_manager $manager) {
+        global $CFG;
+
+        $instance = null;
+        $instances = array();
+        foreach ($manager->get_enrolment_instances() as $tempinstance) {
+            if ($tempinstance->enrol == 'manual') {
+                if ($instance === null) {
+                    $instance = $tempinstance;
+                }
+                $instances[] = array('id' => $tempinstance->id, 'name' => $this->get_instance_name($tempinstance));
+            }
+        }
+        if (empty($instance)) {
+            return false;
+        }
+
+        $button = new enrol_user_button($this->get_manual_enrol_link($instance), get_string('enrolusers', 'enrol_manual'), 'get');
+        $button->class .= ' enrol_manual_plugin';
+
+        $startdate = $manager->get_course()->startdate;
+        $startdateoptions = array();
+        $timeformat = get_string('strftimedatefullshort');
+        if ($startdate > 0) {
+            $today = time();
+            $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
+            $startdateoptions[2] = get_string('coursestart') . ' (' . userdate($startdate, $timeformat) . ')';
+        }
+        $startdateoptions[3] = get_string('today') . ' (' . userdate($today, $timeformat) . ')' ;
+
+        $modules = array('moodle-enrol_manual-quickenrolment', 'moodle-enrol_manual-quickenrolment-skin');
+        $arguments = array(
+            'instances'           => $instances,
+            'courseid'            => $instance->courseid,
+            'ajaxurl'             => '/enrol/manual/ajax.php',
+            'url'                 => $manager->get_moodlepage()->url->out(false),
+            'optionsStartDate'    => $startdateoptions,
+            'defaultRole'         => $instance->roleid,
+            'disableGradeHistory' => $CFG->disablegradehistory
+        );
+        $function = 'M.enrol_manual.quickenrolment.init';
+        $button->require_yui_module($modules, $function, array($arguments));
+        $button->strings_for_js(array(
+            'ajaxoneuserfound',
+            'ajaxxusersfound',
+            'ajaxnext25',
+            'enrol',
+            'enrolmentoptions',
+            'enrolusers',
+            'errajaxfailedenrol',
+            'errajaxsearch',
+            'none',
+            'usersearch',
+            'unlimitedduration',
+            'startdatetoday',
+            'durationdays',
+            'enrolperiod',
+            'finishenrollingusers',
+            'recovergrades'), 'enrol');
+        $button->strings_for_js('assignroles', 'role');
+        $button->strings_for_js('startingfrom', 'moodle');
+
+        return $button;
+    }
+
+    /**
+     * Gets an array of the user enrolment actions
+     *
+     * @param course_enrolment_manager $manager
+     * @param stdClass $ue A user enrolment object
+     * @return array An array of user_enrolment_actions
+     */
+    public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
+        $actions = array();
+        $context = $manager->get_context();
+        $instance = $ue->enrolmentinstance;
+        $params = $manager->get_moodlepage()->url->params();
+        $params['ue'] = $ue->id;
+        if ($this->allow_unenrol($instance) && has_capability("enrol/manual:unenrol", $context)) {
+            $url = new moodle_url('/enrol/manual/unenroluser.php', $params);
+            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url, array('class'=>'unenrollink', 'rel'=>$ue->id));
+        }
+        if ($this->allow_manage($instance) && has_capability("enrol/manual:manage", $context)) {
+            $url = new moodle_url('/enrol/manual/editenrolment.php', $params);
+            $actions[] = new user_enrolment_action(new pix_icon('t/edit', ''), get_string('edit'), $url, array('class'=>'editenrollink', 'rel'=>$ue->id));
+        }
+        return $actions;
+    }
+
+    /**
+     * The manual plugin has several bulk operations that can be performed
+     * @return array
+     */
+    public function get_bulk_operations(course_enrolment_manager $manager) {
+        global $CFG;
+        require_once($CFG->dirroot.'/enrol/manual/locallib.php');
+        $bulkoperations = array(
+            'editselectedusers' => new enrol_manual_editselectedusers_operation($manager, $this),
+            'deleteselectedusers' => new enrol_manual_deleteselectedusers_operation($manager, $this)
+        );
+        return $bulkoperations;
+    }
 }
 
 /**

@@ -1,4 +1,4 @@
-YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
+YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
 
     var UEP = {
         NAME : 'Enrolment Manager',
@@ -49,12 +49,12 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
         ODD  : 'odd',
         EVEN : 'even',
         HIDDEN : 'hidden',
-        RECOVERGRADESCHECK : 'uep-recovergradescheck',
-        RECOVERGRADESCHECKTITLE : 'uep-recovergradeschecktitle',
+        RECOVERGRADES : 'recovergrades',
+        RECOVERGRADESTITLE : 'recovergradestitle',
         SEARCHOPTIONS : 'uep-searchoptions',
         COLLAPSIBLEHEADING : 'collapsibleheading',
         COLLAPSIBLEAREA : 'collapsiblearea',
-        SEARCHOPTION : 'uep-enrolment-option',
+        ENROLMENTOPTION : 'uep-enrolment-option',
         SEARCHCONTROLS : 'uep-controls',
         ROLE : 'role',
         STARTDATE : 'startdate',
@@ -64,6 +64,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
         CLOSE : 'close',
         CLOSEBTN : 'close-button'
     };
+    var create = Y.Node.create;
 
     var USERENROLLER = function(config) {
         USERENROLLER.superclass.constructor.apply(this, arguments);
@@ -73,50 +74,52 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
         _loadingNode : null,
         _escCloseEvent : null,
         initializer : function(config) {
-            recovergradescheckbox = null;
+            var recovergrades = null;
             if (this.get(UEP.DISABLEGRADEHISTORY) != true) {
-                recovergradescheckbox = Y.Node.create('<div class="'+CSS.RECOVERGRADESCHECK+'"><input type="checkbox" id="recovergrades" name="recovergrades" /><span class="'+CSS.RECOVERGRADESCHECKTITLE+'"><label for="recovergrades">'+M.str.enrol.recovergrades+'</label></span></div>');
+                recovergrades = create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.RECOVERGRADES+'"></div>')
+                    .append(create('<label class="'+CSS.RECOVERGRADESTITLE+'" for="'+CSS.RECOVERGRADES+'">'+M.str.enrol.recovergrades+'</label>'))
+                    .append(create('<input type="checkbox" id="'+CSS.RECOVERGRADES+'" name="'+CSS.RECOVERGRADES+'" />'))
             }
 
-            this.set(UEP.BASE, Y.Node.create('<div class="'+CSS.PANEL+' '+CSS.HIDDEN+'"></div>')
-                .append(Y.Node.create('<div class="'+CSS.WRAP+'"></div>')
-                    .append(Y.Node.create('<div class="'+CSS.HEADER+' header"></div>')
-                        .append(Y.Node.create('<div class="'+CSS.CLOSE+'"></div>'))
-                        .append(Y.Node.create('<h2>'+M.str.enrol.enrolusers+'</h2>')))
-                    .append(Y.Node.create('<div class="'+CSS.CONTENT+'"></div>')
-                        .append(Y.Node.create('<div class="'+CSS.SEARCHCONTROLS+'"></div>')
-                            .append(Y.Node.create('<div class="'+CSS.SEARCHOPTION+' '+CSS.ROLE+'">'+M.str.role.assignroles+'</div>')
-                                    .append(Y.Node.create('<select><option value="">'+M.str.enrol.none+'</option></select>'))
+            this.set(UEP.BASE, create('<div class="'+CSS.PANEL+' '+CSS.HIDDEN+'"></div>')
+                .append(create('<div class="'+CSS.WRAP+'"></div>')
+                    .append(create('<div class="'+CSS.HEADER+' header"></div>')
+                        .append(create('<div class="'+CSS.CLOSE+'"></div>'))
+                        .append(create('<h2>'+M.str.enrol.enrolusers+'</h2>')))
+                    .append(create('<div class="'+CSS.CONTENT+'"></div>')
+                        .append(create('<div class="'+CSS.SEARCHCONTROLS+'"></div>')
+                            .append(create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.ROLE+'">'+M.str.role.assignroles+'</div>')
+                                    .append(create('<select><option value="">'+M.str.enrol.none+'</option></select>'))
                             )
-                            .append(recovergradescheckbox)
-                            .append(Y.Node.create('<div class="'+CSS.SEARCHOPTIONS+'"></div>')
-                                .append(Y.Node.create('<div class="'+CSS.COLLAPSIBLEHEADING+'"><img alt="" />'+M.str.enrol.enrolmentoptions+'</div>'))
-                                .append(Y.Node.create('<div class="'+CSS.COLLAPSIBLEAREA+' '+CSS.HIDDEN+'"></div>')
-                                    .append(Y.Node.create('<div class="'+CSS.SEARCHOPTION+' '+CSS.STARTDATE+'">'+M.str.moodle.startingfrom+'</div>')
-                                        .append(Y.Node.create('<select></select>')))
-                                    .append(Y.Node.create('<div class="'+CSS.SEARCHOPTION+' '+CSS.DURATION+'">'+M.str.enrol.enrolperiod+'</div>')
-                                        .append(Y.Node.create('<select><option value="0" selected="selected">'+M.str.enrol.unlimitedduration+'</option></select>')))
+                            .append(create('<div class="'+CSS.SEARCHOPTIONS+'"></div>')
+                                .append(create('<div class="'+CSS.COLLAPSIBLEHEADING+'"><img alt="" />'+M.str.enrol.enrolmentoptions+'</div>'))
+                                .append(create('<div class="'+CSS.COLLAPSIBLEAREA+' '+CSS.HIDDEN+'"></div>')
+                                    .append(recovergrades)
+                                    .append(create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.STARTDATE+'">'+M.str.moodle.startingfrom+'</div>')
+                                        .append(create('<select></select>')))
+                                    .append(create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.DURATION+'">'+M.str.enrol.enrolperiod+'</div>')
+                                        .append(create('<select><option value="0" selected="selected">'+M.str.enrol.unlimitedduration+'</option></select>')))
                                 )
                             )
                         )
-                        .append(Y.Node.create('<div class="'+CSS.AJAXCONTENT+'"></div>'))
-                        .append(Y.Node.create('<div class="'+CSS.LIGHTBOX+' '+CSS.HIDDEN+'"></div>')
-                            .append(Y.Node.create('<img alt="loading" class="'+CSS.LOADINGICON+'" />')
+                        .append(create('<div class="'+CSS.AJAXCONTENT+'"></div>'))
+                        .append(create('<div class="'+CSS.LIGHTBOX+' '+CSS.HIDDEN+'"></div>')
+                            .append(create('<img alt="loading" class="'+CSS.LOADINGICON+'" />')
                                 .setAttribute('src', M.util.image_url('i/loading', 'moodle')))
                             .setStyle('opacity', 0.5)))
-                    .append(Y.Node.create('<div class="'+CSS.FOOTER+'"></div>')
-                        .append(Y.Node.create('<div class="'+CSS.SEARCH+'"><label>'+M.str.enrol.usersearch+'</label></div>')
-                            .append(Y.Node.create('<input type="text" id="enrolusersearch" value="" />'))
+                    .append(create('<div class="'+CSS.FOOTER+'"></div>')
+                        .append(create('<div class="'+CSS.SEARCH+'"><label>'+M.str.enrol.usersearch+'</label></div>')
+                            .append(create('<input type="text" id="enrolusersearch" value="" />'))
                         )
-                        .append(Y.Node.create('<div class="'+CSS.CLOSEBTN+'"></div>')
-                            .append(Y.Node.create('<input type="button" value="'+M.str.enrol.finishenrollingusers+'" />'))
+                        .append(create('<div class="'+CSS.CLOSEBTN+'"></div>')
+                            .append(create('<input type="button" value="'+M.str.enrol.finishenrollingusers+'" />'))
                         )
                     )
                 )
             );
 
             this.set(UEP.SEARCH, this.get(UEP.BASE).one('#enrolusersearch'));
-            Y.all('.enrolusersbutton input').each(function(node){
+            Y.all('.enrol_manual_plugin input').each(function(node){
                 if (node.getAttribute('type', 'submit')) {
                     node.on('click', this.show, this);
                 }
@@ -137,7 +140,6 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
             base.dd.addHandle('.'+CSS.HEADER+' h2');
             base.one('.'+CSS.HEADER+' h2').setStyle('cursor', 'move');
 
-
             this.get(UEP.BASE).one('.'+CSS.SEARCHOPTIONS+' .'+CSS.COLLAPSIBLEHEADING).one('img').setAttribute('src', M.util.image_url('t/collapsed', 'moodle'));
             this.get(UEP.BASE).one('.'+CSS.SEARCHOPTIONS+' .'+CSS.COLLAPSIBLEHEADING).on('click', function(){
                 this.get(UEP.BASE).one('.'+CSS.SEARCHOPTIONS+' .'+CSS.COLLAPSIBLEHEADING).toggleClass(CSS.ACTIVE);
@@ -156,12 +158,12 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
         populateAssignableRoles : function() {
             this.on('assignablerolesloaded', function(){
                 var roles = this.get(UEP.ASSIGNABLEROLES);
-                var s = this.get(UEP.BASE).one('.'+CSS.SEARCHOPTION+'.'+CSS.ROLE+' select');
+                var s = this.get(UEP.BASE).one('.'+CSS.ENROLMENTOPTION+'.'+CSS.ROLE+' select');
                 var v = this.get(UEP.DEFAULTROLE);
                 var index = 0, count = 0;
                 for (var i in roles) {
                     count++;
-                    var option = Y.Node.create('<option value="'+i+'">'+roles[i]+'</option>');
+                    var option = create('<option value="'+i+'">'+roles[i]+'</option>');
                     if (i == v) {
                         index = count;
                     }
@@ -172,13 +174,13 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
             this.getAssignableRoles();
         },
         populateStartDates : function() {
-            var select = this.get(UEP.BASE).one('.'+CSS.SEARCHOPTION+'.'+CSS.STARTDATE+' select');
+            var select = this.get(UEP.BASE).one('.'+CSS.ENROLMENTOPTION+'.'+CSS.STARTDATE+' select');
             var defaultvalue = this.get(UEP.DEFAULTSTARTDATE);
             var options = this.get(UEP.OPTIONSTARTDATE);
             var index = 0, count = 0;
             for (var i in options) {
                 count++;
-                var option = Y.Node.create('<option value="'+i+'">'+options[i]+'</option>');
+                var option = create('<option value="'+i+'">'+options[i]+'</option>');
                 if (i == defaultvalue) {
                     index = count;
                 }
@@ -187,12 +189,12 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
             select.set('selectedIndex', index);
         },
         populateDuration : function() {
-            var select = this.get(UEP.BASE).one('.'+CSS.SEARCHOPTION+'.'+CSS.DURATION+' select');
+            var select = this.get(UEP.BASE).one('.'+CSS.ENROLMENTOPTION+'.'+CSS.DURATION+' select');
             var defaultvalue = this.get(UEP.DEFAULTDURATION);
             var index = 0, count = 0;
             for (var i = 1; i <= 365; i++) {
                 count++;
-                var option = Y.Node.create('<option value="'+i+'">'+M.util.get_string('durationdays', 'enrol', i)+'</option>');
+                var option = create('<option value="'+i+'">'+M.util.get_string('durationdays', 'enrol', i)+'</option>');
                 if (i == defaultvalue) {
                     index = count;
                 }
@@ -326,7 +328,7 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
             }
             var users;
             if (!args.append) {
-                users = Y.Node.create('<div class="'+CSS.USERS+'"></div>');
+                users = create('<div class="'+CSS.USERS+'"></div>');
             } else {
                 users = this.get(UEP.BASE).one('.'+CSS.SEARCHRESULTS+' .'+CSS.USERS);
             }
@@ -334,26 +336,26 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
             for (var i in result.response.users) {
                 count++;
                 var user = result.response.users[i];
-                users.append(Y.Node.create('<div class="'+CSS.USER+' clearfix" rel="'+user.id+'"></div>')
+                users.append(create('<div class="'+CSS.USER+' clearfix" rel="'+user.id+'"></div>')
                     .addClass((i%2)?CSS.ODD:CSS.EVEN)
-                    .append(Y.Node.create('<div class="'+CSS.COUNT+'">'+count+'</div>'))
-                    .append(Y.Node.create('<div class="'+CSS.PICTURE+'"></div>')
-                        .append(Y.Node.create(user.picture)))
-                    .append(Y.Node.create('<div class="'+CSS.DETAILS+'"></div>')
-                        .append(Y.Node.create('<div class="'+CSS.FULLNAME+'">'+user.fullname+'</div>'))
-                        .append(Y.Node.create('<div class="'+CSS.EMAIL+'">'+user.email+'</div>')))
-                    .append(Y.Node.create('<div class="'+CSS.OPTIONS+'"></div>')
-                        .append(Y.Node.create('<input type="button" class="'+CSS.ENROL+'" value="'+M.str.enrol.enrol+'" />')))
+                    .append(create('<div class="'+CSS.COUNT+'">'+count+'</div>'))
+                    .append(create('<div class="'+CSS.PICTURE+'"></div>')
+                        .append(create(user.picture)))
+                    .append(create('<div class="'+CSS.DETAILS+'"></div>')
+                        .append(create('<div class="'+CSS.FULLNAME+'">'+user.fullname+'</div>'))
+                        .append(create('<div class="'+CSS.EMAIL+'">'+user.email+'</div>')))
+                    .append(create('<div class="'+CSS.OPTIONS+'"></div>')
+                        .append(create('<input type="button" class="'+CSS.ENROL+'" value="'+M.str.enrol.enrol+'" />')))
                 );
             }
             this.set(UEP.USERCOUNT, count);
             if (!args.append) {
                 var usersstr = (result.response.totalusers == '1')?M.str.enrol.ajaxoneuserfound:M.util.get_string('ajaxxusersfound','enrol', result.response.totalusers);
-                var content = Y.Node.create('<div class="'+CSS.SEARCHRESULTS+'"></div>')
-                    .append(Y.Node.create('<div class="'+CSS.TOTALUSERS+'">'+usersstr+'</div>'))
+                var content = create('<div class="'+CSS.SEARCHRESULTS+'"></div>')
+                    .append(create('<div class="'+CSS.TOTALUSERS+'">'+usersstr+'</div>'))
                     .append(users);
                 if (result.response.totalusers > (this.get(UEP.PAGE)+1)*25) {
-                    var fetchmore = Y.Node.create('<div class="'+CSS.MORERESULTS+'"><a href="#">'+M.str.enrol.ajaxnext25+'</a></div>');
+                    var fetchmore = create('<div class="'+CSS.MORERESULTS+'"><a href="#">'+M.str.enrol.ajaxnext25+'</a></div>');
                     fetchmore.on('click', this.search, this, true);
                     content.append(fetchmore)
                 }
@@ -373,10 +375,10 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
             params['enrolid'] = args.enrolid;
             params['sesskey'] = M.cfg.sesskey;
             params['action'] = 'enrol';
-            params['role'] = this.get(UEP.BASE).one('.'+CSS.SEARCHOPTION+'.'+CSS.ROLE+' select').get('value');
-            params['startdate'] = this.get(UEP.BASE).one('.'+CSS.SEARCHOPTION+'.'+CSS.STARTDATE+' select').get('value');
-            params['duration'] = this.get(UEP.BASE).one('.'+CSS.SEARCHOPTION+'.'+CSS.DURATION+' select').get('value');
-            params['recovergrades'] = this.get(UEP.BASE).one('#recovergrades').get('checked')?1:0;
+            params['role'] = this.get(UEP.BASE).one('.'+CSS.ENROLMENTOPTION+'.'+CSS.ROLE+' select').get('value');
+            params['startdate'] = this.get(UEP.BASE).one('.'+CSS.ENROLMENTOPTION+'.'+CSS.STARTDATE+' select').get('value');
+            params['duration'] = this.get(UEP.BASE).one('.'+CSS.ENROLMENTOPTION+'.'+CSS.DURATION+' select').get('value');
+            params['recovergrades'] = this.get(UEP.BASE).one('#'+CSS.RECOVERGRADES).get('checked')?1:0;
 
             Y.io(M.cfg.wwwroot+this.get(UEP.AJAXURL), {
                 method:'POST',
@@ -506,9 +508,8 @@ YUI.add('moodle-enrol-enrolmentmanager', function(Y) {
     });
     Y.augment(USERENROLLER, Y.EventTarget);
 
-
-    M.enrol = M.enrol || {};
-    M.enrol.enrolmentmanager = {
+    M.enrol_manual = M.enrol_manual || {};
+    M.enrol_manual.quickenrolment = {
         init : function(cfg) {
             new USERENROLLER(cfg);
         }

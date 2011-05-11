@@ -117,7 +117,7 @@ class blog_entry {
         $this->summary = file_rewrite_pluginfile_urls($this->summary, 'pluginfile.php', SYSCONTEXTID, 'blog', 'post', $this->id);
 
         $options = array('overflowdiv'=>true);
-        $template['body'] = format_text($this->summary, $this->summaryformat, $options).$cmttext;
+        $template['body'] = format_text($this->summary, $this->summaryformat, $options);
         $template['title'] = format_string($this->subject);
         $template['userid'] = $user->id;
         $template['author'] = fullname($user);
@@ -306,6 +306,9 @@ class blog_entry {
             $contentcell->text .= ' [ '.get_string('modified').': '.$template['lastmod'].' ]';
             $contentcell->text .= '</div>';
         }
+
+        //add comments under everything
+        $contentcell->text .= $cmttext;
 
         $mainrow->cells[] = $contentcell;
         $table->data = array($mainrow);
@@ -517,7 +520,7 @@ class blog_entry {
 
             } else {
                 if (in_array($type, array('image/gif', 'image/jpeg', 'image/png'))) {    // Image attachments don't get printed as links
-                    $imagereturn .= "<br />" . $OUTPUT->pix_icon($ffurl, $filename);
+                    $imagereturn .= '<br /><img src="'.$ffurl.'" alt="" />';
                 } else {
                     $imagereturn .= html_writer::link($ffurl, $image);
                     $imagereturn .= format_text(html_writer::link($ffurl, $filename), FORMAT_HTML, array('context'=>$syscontext));

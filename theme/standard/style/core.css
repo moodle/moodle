@@ -413,8 +413,12 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
 .userenrolment tr.r0 {background-color:#F9F9F9;}
 .userenrolment tr.r1 {background-color:#F3F3F3;}
 .userenrolment td {border:1px solid #E9E9E9;border-top-color:#F6F6F6;border-right-color:#EEE;border-left-color:#F3F3F3;}
-.userenrolment td.c0 {border-left-color:#999;}
-.userenrolment td.c4 {border-right-color:#999;}
+.userenrolment td.c0 {border-left-width:0;}
+.userenrolment td.lastcol {border-right-color:#999;}
+.userenrolment .col_bulkops {vertical-align:middle;text-align:center;}
+.userenrolment .r0 .col_bulkops {background-color:#FFFFFF;}
+.userenrolment .r1 .col_bulkops {background-color:#F9F9F9;}
+.userenrolment tr.lastrow td {border-bottom-width:0;}
 .userenrolment .col_userdetails {padding:3px;min-width:35%;}
 .userenrolment .col_role .roles {position:relative;}
 .userenrolment .col_role .role {line-height:10px;font-size:10px;}
@@ -432,6 +436,7 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
 .path-enrol .enrolusersbutton.instance1,
 .path-enrol .enrolcohortbutton.instance1,
 .path-enrol .assignuserrole.instance1 {float:right;}
+.path-enrol .singleselect.bulkuserop {float:left;}
 
 /* Registration */
 #page-admin-registration-hubselector .registration_textfield {width: 400px;}

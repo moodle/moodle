@@ -659,7 +659,7 @@ function quiz_report_attempts_sql($quizid, $currentgroup, $groupstudents, $allat
     $whereqa = 'qa.quiz = :quizid AND qa.preview=0 AND qa.timefinish !=0 ';
     $qaparams = array('quizid'=>$quizid);
     if (!empty($currentgroup) && $groupstudents) {
-        list($grpsql, $grpparams) = $DB->get_in_or_equal(array_keys($groupstudents), SQL_PARAMS_NAMED, 'u0000');
+        list($grpsql, $grpparams) = $DB->get_in_or_equal(array_keys($groupstudents), SQL_PARAMS_NAMED, 'u');
         $whereqa .= 'AND qa.userid '.$grpsql.' ';
         $qaparams += $grpparams;
     }

@@ -91,14 +91,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
                                                                                                                                                                               'all' => get_string('fulllistofcourses'),
                                                                                                                                                                               'requested' => get_string('requestedcourses'))));
     $temp->add(new admin_setting_configcheckbox('restrictbydefault', get_string('restrictbydefault', 'admin'), get_string('configrestrictbydefault', 'admin'), 0));
-    if (!$options = $DB->get_records('modules')) {
-        $options = array();
-    }
-    $options2 = array();
-    foreach ($options as $option) {
-        $options2[$option->id] = $option->name;
-    }
-    $temp->add(new admin_setting_configmultiselect('defaultallowedmodules', get_string('defaultallowedmodules', 'admin'), get_string('configdefaultallowedmodules', 'admin'), array(), $options2));
+    $temp->add(new admin_setting_configmultiselect_modules('defaultallowedmodules',
+            get_string('defaultallowedmodules', 'admin'),
+            get_string('configdefaultallowedmodules', 'admin')));
     $ADMIN->add('security', $temp);
 
 

@@ -387,10 +387,10 @@ class generator {
             .$this->get('number_of_modules')." modules in each section, for each course...");
 
         list($modules_list_sql, $modules_params) =
-            $DB->get_in_or_equal($this->get('modules_list'), SQL_PARAMS_NAMED, 'param0000', true);
+            $DB->get_in_or_equal($this->get('modules_list'), SQL_PARAMS_NAMED, 'mod', true);
 
         list($modules_ignored_sql, $ignore_params) =
-            $DB->get_in_or_equal($this->modules_to_ignore, SQL_PARAMS_NAMED, 'param2000', false);
+            $DB->get_in_or_equal($this->modules_to_ignore, SQL_PARAMS_NAMED, 'ignore', false);
 
         $wheresql = "name $modules_list_sql AND name $modules_ignored_sql";
         $modules = $DB->get_records_select('modules', $wheresql, array_merge($modules_params, $ignore_params));

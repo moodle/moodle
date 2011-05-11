@@ -25,6 +25,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * This class provides a targeted tied together means of interfacing the enrolment
  * tasks together with a course.
@@ -79,6 +81,12 @@ class course_enrolment_manager {
      */
     protected $totalotherusers = null;
 
+    /**
+     * The current moodle_page object
+     * @var moodle_page
+     */
+    protected $moodlepage = null;
+
     /**#@+
      * These variables are used to cache the information this class uses
      * please never use these directly instead use their get_ counterparts.
@@ -98,13 +106,23 @@ class course_enrolment_manager {
     /**
      * Constructs the course enrolment manager
      *
+     * @param moodle_page $moodlepage
      * @param stdClass $course
      * @param string $instancefilter
      */
-    public function __construct($course, $instancefilter = null) {
+    public function __construct(moodle_page $moodlepage, $course, $instancefilter = null) {
+        $this->moodlepage = $moodlepage;
         $this->context = get_context_instance(CONTEXT_COURSE, $course->id);
         $this->course = $course;
         $this->instancefilter = $instancefilter;
+    }
+
+    /**
+     * Returns the current moodle page
+     * @return moodle_page 
+     */
+    public function get_moodlepage() {
+        return $this->moodlepage;
     }
 
     /**
@@ -141,21 +159,20 @@ class course_enrolment_manager {
     public function get_total_other_users() {
         global $DB;
         if ($this->totalotherusers === null) {
-            list($ctxcondition, $params) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx00');
+            list($ctxcondition, $params) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx');
             $params['courseid'] = $this->course->id;
             $sql = "SELECT COUNT(DISTINCT u.id)
-                    FROM {role_assignments} ra
-                    JOIN {user} u ON u.id = ra.userid
-                    JOIN {context} ctx ON ra.contextid = ctx.id
-                    LEFT JOIN (
-                        SELECT ue.id, ue.userid
-                        FROM {user_enrolments} ue
+                      FROM {role_assignments} ra
+                      JOIN {user} u ON u.id = ra.userid
+                      JOIN {context} ctx ON ra.contextid = ctx.id
+                 LEFT JOIN (
+                           SELECT ue.id, ue.userid
+                             FROM {user_enrolments} ue
                         LEFT JOIN {enrol} e ON e.id=ue.enrolid
-                        WHERE e.courseid = :courseid
-                    ) ue ON ue.userid=u.id
-                    WHERE
-                        ctx.id $ctxcondition AND
-                        ue.id IS NULL";
+                            WHERE e.courseid = :courseid
+                         ) ue ON ue.userid=u.id
+                     WHERE ctx.id $ctxcondition AND
+                           ue.id IS NULL";
             $this->totalotherusers = (int)$DB->count_records_sql($sql, $params);
         }
         return $this->totalotherusers;
@@ -222,24 +239,23 @@ class course_enrolment_manager {
         }
         $key = md5("$sort-$direction-$page-$perpage");
         if (!array_key_exists($key, $this->otherusers)) {
-            list($ctxcondition, $params) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx00');
+            list($ctxcondition, $params) = $DB->get_in_or_equal(get_parent_contexts($this->context, true), SQL_PARAMS_NAMED, 'ctx');
             $params['courseid'] = $this->course->id;
             $params['cid'] = $this->course->id;
             $sql = "SELECT ra.id as raid, ra.contextid, ra.component, ctx.contextlevel, ra.roleid, u.*, ue.lastseen
                     FROM {role_assignments} ra
                     JOIN {user} u ON u.id = ra.userid
                     JOIN {context} ctx ON ra.contextid = ctx.id
-                    LEFT JOIN (
-                        SELECT ue.id, ue.userid, ul.timeaccess AS lastseen
-                        FROM {user_enrolments} ue
-                        LEFT JOIN {enrol} e ON e.id=ue.enrolid
-                        LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = ue.userid)
+               LEFT JOIN (
+                       SELECT ue.id, ue.userid, ul.timeaccess AS lastseen
+                         FROM {user_enrolments} ue
+                    LEFT JOIN {enrol} e ON e.id=ue.enrolid
+                    LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = ue.userid)
                         WHERE e.courseid = :courseid
-                    ) ue ON ue.userid=u.id
-                    WHERE
-                        ctx.id $ctxcondition AND
-                        ue.id IS NULL
-                    ORDER BY u.$sort $direction, ctx.depth DESC";
+                       ) ue ON ue.userid=u.id
+                   WHERE ctx.id $ctxcondition AND
+                         ue.id IS NULL
+                ORDER BY u.$sort $direction, ctx.depth DESC";
             $this->otherusers[$key] = $DB->get_records_sql($sql, $params, $page*$perpage, $perpage);
         }
         return $this->otherusers[$key];
@@ -335,11 +351,11 @@ class course_enrolment_manager {
         $countfields = 'SELECT COUNT(u.id)';
         $sql   = " FROM {user} u
                   WHERE $wherecondition
-                        AND u.id NOT IN (
+                    AND u.id NOT IN (
                            SELECT u.id
                              FROM {role_assignments} r, {user} u
-                            WHERE r.contextid = :contextid
-                                  AND u.id = r.userid)";
+                            WHERE r.contextid = :contextid AND
+                                  u.id = r.userid)";
         $order = ' ORDER BY lastname ASC, firstname ASC';
 
         $params['contextid'] = $this->context->id;
@@ -790,113 +806,6 @@ class course_enrolment_manager {
     }
 
     /**
-     * Gets all the cohorts the user is able to view.
-     *
-     * @global moodle_database $DB
-     * @return array
-     */
-    public function get_cohorts() {
-        global $DB;
-        $context = $this->get_context();
-        $cohorts = array();
-        $instances = $this->get_enrolment_instances();
-        $enrolled = array();
-        foreach ($instances as $instance) {
-            if ($instance->enrol == 'cohort') {
-                $enrolled[] = $instance->customint1;
-            }
-        }
-        list($sqlparents, $params) = $DB->get_in_or_equal(get_parent_contexts($context));
-        $sql = "SELECT id, name, contextid
-                  FROM {cohort}
-                 WHERE contextid $sqlparents
-              ORDER BY name ASC";
-        $rs = $DB->get_recordset_sql($sql, $params);
-        foreach ($rs as $c) {
-            $context = get_context_instance_by_id($c->contextid);
-            if (!has_capability('moodle/cohort:view', $context)) {
-                continue;
-            }
-            $cohorts[$c->id] = array(
-                'cohortid'=>$c->id,
-                'name'=>format_string($c->name),
-                'users'=>$DB->count_records('cohort_members', array('cohortid'=>$c->id)),
-                'enrolled'=>in_array($c->id, $enrolled)
-            );
-        }
-        $rs->close();
-        return $cohorts;
-    }
-
-    /**
-     * Enrols a cohort in a course.
-     *
-     * Essentially this just adds a cohort enrolment plugin instance to the course
-     *
-     * @param int $cohortid
-     * @param int $roleid
-     * @return bool
-     */
-    public function enrol_cohort($cohortid, $roleid) {
-        global $CFG;
-        require_capability('moodle/course:enrolconfig', $this->get_context());
-        require_once($CFG->dirroot.'/enrol/cohort/locallib.php');
-        $roles = $this->get_assignable_roles();
-        $cohorts = $this->get_cohorts();
-        if (!array_key_exists($cohortid, $cohorts) || !array_key_exists($roleid, $roles)) {
-            return false;
-        }
-        $enrol = enrol_get_plugin('cohort');
-        $enrol->add_instance($this->course, array('customint1'=>$cohortid, 'roleid'=>$roleid));
-        enrol_cohort_sync($this->course->id);
-        return true;
-    }
-
-    /**
-     * Enrols all of the users in a cohort within this course.
-     *
-     * Note this is VERY different from creating an enrolment instance for a cohort.
-     *
-     * @global moodle_database $DB
-     * @param int $cohortid
-     * @param int $roleid
-     * @return bool
-     */
-    public function enrol_cohort_users($cohortid, $roleid) {
-        global $DB;
-        require_capability('moodle/course:enrolconfig', $this->get_context());
-        $instance = false;
-        $instances = $this->get_enrolment_instances();
-        foreach ($instances as $i) {
-            if ($i->enrol == 'manual') {
-                $instance = $i;
-                break;
-            }
-        }
-        $plugin = enrol_get_plugin('manual');
-        if (!$instance || !$plugin || !$plugin->allow_enrol($instance) || !has_capability('enrol/'.$plugin->get_name().':enrol', $this->get_context())) {
-            return false;
-        }
-        $sql = "SELECT com.userid
-                FROM {cohort_members} com
-                LEFT JOIN (
-                    SELECT *
-                    FROM {user_enrolments} ue
-                    WHERE ue.enrolid = :enrolid
-                ) ue ON ue.userid=com.userid
-                WHERE com.cohortid = :cohortid AND ue.id IS NULL";
-        $params = array('cohortid'=>$cohortid, 'enrolid'=>$instance->id);
-        $rs = $DB->get_recordset_sql($sql, $params);
-        $count = 0;
-        foreach ($rs as $user) {
-            $count++;
-            $plugin->enrol_user($instance, $user->userid, $roleid);
-        }
-        $rs->close();
-        return $count;
-    }
-
-    /**
      * Gets an array of users for display, this includes minimal user information
      * as well as minimal information on the users roles, groups, and enrolments.
      *
@@ -908,7 +817,8 @@ class course_enrolment_manager {
      * @param int $perpage
      * @return array
      */
-    public function get_users_for_display(core_enrol_renderer $renderer, moodle_url $pageurl, $sort, $direction, $page, $perpage) {
+    public function get_users_for_display(course_enrolment_manager $manager, $sort, $direction, $page, $perpage) {
+        $pageurl = $manager->get_moodlepage()->url;
         $users = $this->get_users($sort, $direction, $page, $perpage);
 
         $now = time();
@@ -916,10 +826,6 @@ class course_enrolment_manager {
         $straddgroup = get_string('addgroup', 'group');
         $strunenrol = get_string('unenrol', 'enrol');
         $stredit = get_string('edit');
-
-        $iconedit        = $renderer->pix_url('t/edit');
-        $iconenroladd    = $renderer->pix_url('t/enroladd');
-        $iconenrolremove = $renderer->pix_url('t/delete');
 
         $allroles   = $this->get_all_roles();
         $assignable = $this->get_assignable_roles();
@@ -978,13 +884,302 @@ class course_enrolment_manager {
                     'text' => $ue->enrolmentinstancename,
                     'period' => $period,
                     'dimmed' =>  ($periodoutside || $ue->status != ENROL_USER_ACTIVE),
-                    'canunenrol' => ($ue->enrolmentplugin->allow_unenrol($ue->enrolmentinstance) && has_capability("enrol/".$ue->enrolmentinstance->enrol.":unenrol", $context)),
-                    'canmanage' => ($ue->enrolmentplugin->allow_manage($ue->enrolmentinstance) && has_capability("enrol/".$ue->enrolmentinstance->enrol.":manage", $context))
+                    'actions' => $ue->enrolmentplugin->get_user_enrolment_actions($manager, $ue)
                 );
             }
             $userdetails[$user->id] = $details;
         }
         return $userdetails;
+    }
+
+    public function get_manual_enrol_buttons() {
+        $plugins = $this->get_enrolment_plugins();
+        $buttons = array();
+        foreach ($plugins as $plugin) {
+            $newbutton = $plugin->get_manual_enrol_button($this);
+            if (is_array($newbutton)) {
+                $buttons += $newbutton;
+            } else if ($newbutton instanceof enrol_user_button) {
+                $buttons[] = $newbutton;
+            }
+        }
+        return $buttons;
+    }
+
+    public function has_instance($enrolpluginname) {
+        // Make sure manual enrolments instance exists
+        foreach ($this->get_enrolment_instances() as $instance) {
+            if ($instance->enrol == $enrolpluginname) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the enrolment plugin that the course manager was being filtered to.
+     *
+     * If no filter was being applied then this function returns false.
+     *
+     * @return enrol_plugin
+     */
+    public function get_filtered_enrolment_plugin() {
+        $instances = $this->get_enrolment_instances();
+        $plugins = $this->get_enrolment_plugins();
+
+        if (empty($this->instancefilter) || !array_key_exists($this->instancefilter, $instances)) {
+            return false;
+        }
+
+        $instance = $instances[$this->instancefilter];
+        return $plugins[$instance->enrol];
+    }
+
+    /**
+     * Returns and array of users + enrolment details.
+     *
+     * Given an array of user id's this function returns and array of user enrolments for those users
+     * as well as enough user information to display the users name and picture for each enrolment.
+     *
+     * @global moodle_database $DB
+     * @param array $userids
+     * @return array
+     */
+    public function get_users_enrolments(array $userids) {
+        global $DB;
+
+        $instances = $this->get_enrolment_instances();
+        $plugins = $this->get_enrolment_plugins();
+
+        if  (!empty($this->instancefilter)) {
+            $instancesql = ' = :instanceid';
+            $instanceparams = array('instanceid' => $this->instancefilter);
+        } else {
+            list($instancesql, $instanceparams) = $DB->get_in_or_equal(array_keys($instances), SQL_PARAMS_NAMED, 'instanceid0000');
+        }
+
+        $userfields = user_picture::fields('u');
+        list($idsql, $idparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'userid0000');
+
+        $sql = "SELECT ue.id AS ueid, ue.status, ue.enrolid, ue.userid, ue.timestart, ue.timeend, ue.modifierid, ue.timecreated, ue.timemodified, $userfields
+                  FROM {user_enrolments} ue
+             LEFT JOIN {user} u ON u.id = ue.userid
+                 WHERE ue.enrolid $instancesql AND
+                       u.id $idsql
+              ORDER BY u.firstname ASC, u.lastname ASC";
+
+        $rs = $DB->get_recordset_sql($sql, $idparams + $instanceparams);
+        $users = array();
+        foreach ($rs as $ue) {
+            $user = user_picture::unalias($ue);
+            $ue->id = $ue->ueid;
+            unset($ue->ueid);
+            if (!array_key_exists($user->id, $users)) {
+                $user->enrolments = array();
+                $users[$user->id] = $user;
+            }
+            $ue->enrolmentinstance = $instances[$ue->enrolid];
+            $ue->enrolmentplugin = $plugins[$ue->enrolmentinstance->enrol];
+            $users[$user->id]->enrolments[$ue->id] = $ue;
+        }
+        $rs->close();
+        return $users;
+    }
+}
+
+/**
+ * A button that is used to enrol users in a course
+ *
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class enrol_user_button extends single_button {
+
+    /**
+     * An array containing JS YUI modules required by this button
+     * @var array
+     */
+    protected $jsyuimodules = array();
+
+    /**
+     * An array containing JS initialisation calls required by this button
+     * @var array
+     */
+    protected $jsinitcalls = array();
+
+    /**
+     * An array strings required by JS for this button
+     * @var array
+     */
+    protected $jsstrings = array();
+
+    /**
+     * Initialises the new enrol_user_button
+     *
+     * @staticvar int $count The number of enrol user buttons already created
+     * @param moodle_url $url
+     * @param string $label The text to display in the button
+     * @param string $method Either post or get
+     */
+    public function __construct(moodle_url $url, $label, $method = 'post') {
+        static $count = 0;
+        $count ++;
+        parent::__construct($url, $label, $method);
+        $this->class = 'singlebutton enrolusersbutton';
+        $this->formid = 'enrolusersbutton-'.$count;
+    }
+
+    /**
+     * Adds a YUI module call that will be added to the page when the button is used.
+     *
+     * @param string|array $modules One or more modules to require
+     * @param string $function The JS function to call
+     * @param array $arguments An array of arguments to pass to the function
+     * @param string $galleryversion The YUI gallery version of any modules required
+     * @param bool $ondomready If true the call is postponed until the DOM is finished loading
+     */
+    public function require_yui_module($modules, $function, array $arguments = null, $galleryversion = '2010.04.08-12-35', $ondomready = false) {
+        $js = new stdClass;
+        $js->modules = (array)$modules;
+        $js->function = $function;
+        $js->arguments = $arguments;
+        $js->galleryversion = $galleryversion;
+        $js->ondomready = $ondomready;
+        $this->jsyuimodules[] = $js;
+    }
+
+    /**
+     * Adds a JS initialisation call to the page when the button is used.
+     *
+     * @param string $function The function to call
+     * @param array $extraarguments An array of arguments to pass to the function
+     * @param bool $ondomready If true the call is postponed until the DOM is finished loading
+     * @param array $module A module definition
+     */
+    public function require_js_init_call($function, array $extraarguments = null, $ondomready = false, array $module = null) {
+        $js = new stdClass;
+        $js->function = $function;
+        $js->extraarguments = $extraarguments;
+        $js->ondomready = $ondomready;
+        $js->module = $module;
+        $this->jsinitcalls[] = $js;
+    }
+
+    /**
+     * Requires strings for JS that will be loaded when the button is used.
+     *
+     * @param type $identifiers
+     * @param string $component
+     * @param mixed $a
+     */
+    public function strings_for_js($identifiers, $component = 'moodle', $a = null) {
+        $string = new stdClass;
+        $string->identifiers = (array)$identifiers;
+        $string->component = $component;
+        $string->a = $a;
+        $this->jsstrings[] = $string;
+    }
+
+    /**
+     * Initialises the JS that is required by this button
+     *
+     * @param moodle_page $page
+     */
+    public function initialise_js(moodle_page $page) {
+        foreach ($this->jsyuimodules as $js) {
+            $page->requires->yui_module($js->modules, $js->function, $js->arguments, $js->galleryversion, $js->ondomready);
+        }
+        foreach ($this->jsinitcalls as $js) {
+            $page->requires->js_init_call($js->function, $js->extraarguments, $js->ondomready, $js->module);
+        }
+        foreach ($this->jsstrings as $string) {
+            $page->requires->strings_for_js($string->identifiers, $string->component, $string->a);
+        }
+    }
+}
+
+/**
+ * User enrolment action
+ *
+ * This class is used to manage a renderable ue action such as editing an user enrolment or deleting
+ * a user enrolment.
+ *
+ * @copyright  2011 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class user_enrolment_action implements renderable {
+
+    /**
+     * The icon to display for the action
+     * @var pix_icon
+     */
+    protected $icon;
+
+    /**
+     * The title for the action
+     * @var string
+     */
+    protected $title;
+
+    /**
+     * The URL to the action
+     * @var moodle_url
+     */
+    protected $url;
+
+    /**
+     * An array of HTML attributes
+     * @var array
+     */
+    protected $attributes = array();
+
+    /**
+     * Constructor
+     * @param pix_icon $icon
+     * @param string $title
+     * @param moodle_url $url
+     * @param array $attributes
+     */
+    public function __construct(pix_icon $icon, $title, $url, array $attributes = null) {
+        $this->icon = $icon;
+        $this->title = $title;
+        $this->url = new moodle_url($url);
+        if (!empty($attributes)) {
+            $this->attributes = $attributes;
+        }
+        $this->attributes['title'] = $title;
+    }
+
+    /**
+     * Returns the icon for this action
+     * @return pix_icon
+     */
+    public function get_icon() {
+        return $this->icon;
+    }
+
+    /**
+     * Returns the title for this action
+     * @return string
+     */
+    public function get_title() {
+        return $this->title;
+    }
+
+    /**
+     * Returns the URL for this action
+     * @return moodle_url
+     */
+    public function get_url() {
+        return $this->url;
+    }
+
+    /**
+     * Returns the attributes to use for this action
+     * @return array
+     */
+    public function get_attributes() {
+        return $this->attributes;
     }
 }
 
@@ -1000,4 +1195,72 @@ class enrol_ajax_exception extends moodle_exception {
     public function __construct($errorcode, $link = '', $a = NULL, $debuginfo = null) {
         parent::__construct($errorcode, 'enrol', $link, $a, $debuginfo);
     }
+}
+
+/**
+ * This class is used to manage a bulk operations for enrolment plugins.
+ *
+ * @copyright 2011 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class enrol_bulk_enrolment_operation {
+
+    /**
+     * The course enrolment manager
+     * @var course_enrolment_manager
+     */
+    protected $manager;
+
+    /**
+     * The enrolment plugin to which this operation belongs
+     * @var enrol_plugin
+     */
+    protected $plugin;
+
+    /**
+     * Contructor
+     * @param course_enrolment_manager $manager
+     * @param stdClass $plugin
+     */
+    public function __construct(course_enrolment_manager $manager, enrol_plugin $plugin = null) {
+        $this->manager = $manager;
+        $this->plugin = $plugin;
+    }
+
+    /**
+     * Returns a moodleform used for this operation, or false if no form is required and the action
+     * should be immediatly processed.
+     *
+     * @param moodle_url|string $defaultaction
+     * @param mixed $defaultcustomdata
+     * @return enrol_bulk_enrolment_change_form|moodleform|false
+     */
+    public function get_form($defaultaction = null, $defaultcustomdata = null) {
+        return false;
+    }
+
+    /**
+     * Returns the title to use for this bulk operation
+     *
+     * @return string
+     */
+    abstract public function get_title();
+
+    /**
+     * Returns the identifier for this bulk operation.
+     * This should be the same identifier used by the plugins function when returning
+     * all of its bulk operations.
+     *
+     * @return string
+     */
+    abstract public function get_identifier();
+
+    /**
+     * Processes the bulk operation on the given users
+     *
+     * @param course_enrolment_manager $manager
+     * @param array $users
+     * @param stdClass $properties
+     */
+    abstract public function process(course_enrolment_manager $manager, array $users, stdClass $properties);
 }

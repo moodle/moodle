@@ -702,6 +702,7 @@ class file_storage {
         $timeout        = isset($options['timeout'])        ? $options['timeout'] : 300;
         $connecttimeout = isset($options['connecttimeout']) ? $options['connecttimeout'] : 20;
         $skipcertverify = isset($options['skipcertverify']) ? $options['skipcertverify'] : false;
+        $calctimeout    = isset($options['calctimeout'])    ? $options['calctimeout'] : false;
 
         if (!isset($file_record->filename)) {
             $parts = explode('/', $url);
@@ -714,7 +715,7 @@ class file_storage {
         if ($usetempfile) {
             check_dir_exists($this->tempdir);
             $tmpfile = tempnam($this->tempdir, 'newfromurl');
-            $content = download_file_content($url, $headers, $postdata, $fullresponse, $timeout, $connecttimeout, $skipcertverify, $tmpfile);
+            $content = download_file_content($url, $headers, $postdata, $fullresponse, $timeout, $connecttimeout, $skipcertverify, $tmpfile, $calctimeout);
             if ($content === false) {
                 throw new file_exception('storedfileproblem', 'Can not fetch file form URL');
             }
@@ -728,7 +729,7 @@ class file_storage {
             }
 
         } else {
-            $content = download_file_content($url, $headers, $postdata, $fullresponse, $timeout, $connecttimeout, $skipcertverify);
+            $content = download_file_content($url, $headers, $postdata, $fullresponse, $timeout, $connecttimeout, $skipcertverify, NULL, $calctimeout);
             if ($content === false) {
                 throw new file_exception('storedfileproblem', 'Can not fetch file form URL');
             }
