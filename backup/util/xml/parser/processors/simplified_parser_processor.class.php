@@ -150,15 +150,6 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
     }
 
     /**
-     * The parser fires this each time one path is going to be parsed
-     */
-    public function before_path($path) {
-        if ($this->path_is_selected($path)) {
-            $this->notify_path_start($path);
-        }
-    }
-
-    /**
      * The parser fires this each time one path has been parsed
      */
     public function after_path($path) {
@@ -170,6 +161,7 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
 // Protected API starts here
 
     protected function postprocess_chunk($data) {
+        $this->notify_path_start($data['path']);
         $this->dispatch_chunk($data);
     }
 
