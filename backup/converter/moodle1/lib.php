@@ -29,6 +29,9 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/backup/converter/convertlib.php');
 require_once($CFG->dirroot . '/backup/util/xml/parser/progressive_parser.class.php');
 require_once($CFG->dirroot . '/backup/util/xml/parser/processors/grouped_parser_processor.class.php');
+require_once($CFG->dirroot . '/backup/util/dbops/backup_dbops.class.php');
+require_once($CFG->dirroot . '/backup/util/dbops/backup_controller_dbops.class.php');
+require_once($CFG->dirroot . '/backup/util/dbops/restore_dbops.class.php');
 require_once(dirname(__FILE__) . '/handlerlib.php');
 
 /**
@@ -109,9 +112,6 @@ class moodle1_converter extends base_converter {
 
         // register the conversion handlers
         foreach (moodle1_handlers_factory::get_handlers($this) as $handler) {
-            if (!$handler instanceof moodle1_handler) {
-                throw new convert_exception('wrong_handler_class', get_class($handler));
-            }
             $this->register_handler($handler, $handler->get_paths());
         }
     }
@@ -261,8 +261,8 @@ class moodle1_converter extends base_converter {
         // if the path is not locked, apply the element's recipes and dispatch
         // the cooked tags to the processing method
         if (is_null($this->pathlock)) {
-            $data['tags'] = $element->apply_recipes($data['tags']);
-            $rdata        = $object->$method($data['tags']);
+            $cooked = $element->apply_recipes($data['tags']);
+            $rdata  = $object->$method($cooked, $data['tags']);
         }
 
         // if the dispatched method returned SKIP_ALL_CHILDREN, remember the current path
@@ -289,24 +289,101 @@ class moodle1_converter extends base_converter {
      * Executes operations required at the start of a watched path
      *
      * Note that this is called before the MOD and BLOCK paths are expanded
-     * so the current plugin is not known yet.
+     * so the current plugin is not known yet. Also note that this is
+     * triggered before the previous path is actually dispatched.
      *
-     * @todo dispatch the message to the interested handlers
      * @param string $path in the original file
      */
     public function path_start_reached($path) {
-        print_object("start reached: $path"); // DONOTCOMMIT
+
+        if (empty($this->pathelements[$path])) {
+            return;
+        }
+
+        $element = $this->pathelements[$path];
+        $pobject = $element->get_processing_object();
+        $method  = 'on_' . $element->get_name() . '_start';
+
+        if (method_exists($pobject, $method)) {
+            $pobject->$method();
+        }
     }
 
     /**
      * Executes operations required at the end of a watched path
      *
-     * @todo dispatch the message to the interested handlers
      * @param string $path in the original file
      */
     public function path_end_reached($path) {
-        print_object("end reached: $path"); // DONOTCOMMIT
+
+        // expand the MOD paths so that they contain the current module name
+        if ($path === '/MOODLE_BACKUP/COURSE/MODULES/MOD') {
+            $path = '/MOODLE_BACKUP/COURSE/MODULES/MOD/' . $this->currentmod;
+
+        } else if (strpos($path, '/MOODLE_BACKUP/COURSE/MODULES/MOD') === 0) {
+            $path = str_replace('/MOODLE_BACKUP/COURSE/MODULES/MOD', '/MOODLE_BACKUP/COURSE/MODULES/MOD/' . $this->currentmod, $path);
+        }
+
+        // expand the BLOCK paths so that they contain the module name
+        if ($path === '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK') {
+            $path = '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK/' . $this->currentblock;
+
+        } else if (strpos($path, '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK') === 0) {
+            $path = str_replace('/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK', '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK/' . $this->currentmod, $path);
+        }
+
+        if (empty($this->pathelements[$path])) {
+            return;
+        }
+
+        $element = $this->pathelements[$path];
+        $pobject = $element->get_processing_object();
+        $method  = 'on_' . $element->get_name() . '_end';
+
+        if (method_exists($pobject, $method)) {
+            $pobject->$method();
+        }
     }
+
+    /**
+     * Creates the backup_ids_temp table
+     */
+    public function create_backup_ids_temp_table() {
+        backup_controller_dbops::create_backup_ids_temp_table($this->get_id());
+    }
+
+    /**
+     * Drops the backup_ids_temp table
+     */
+    public function drop_backup_ids_temp_table() {
+        backup_controller_dbops::drop_backup_ids_temp_table($this->get_id());
+    }
+
+    /**
+     * Stores a record in the temporary backup_ids table
+     *
+     * @param string $itemname
+     * @param int $itemid
+     * @param int $newitemid
+     * @param int $parentitemid
+     * @param mixed $info
+     * @return void
+     */
+    public function set_backup_ids_record($itemname, $itemid, $newitemid = 0, $parentitemid = null, $info = null) {
+        restore_dbops::set_backup_ids_record($this->get_id(), $itemname, $itemid, $newitemid, $parentitemid, $info);
+    }
+
+    /**
+     * Restores a previously saved record from backup_ids temporary table
+     *
+     * @param string $itemname
+     * @param int $itemid
+     * @return stdClass
+     */
+    public function get_backup_ids_record($itemname, $itemid) {
+        return restore_dbops::get_backup_ids_record($this->get_id(), $itemname, $itemid);
+    }
+
 }
 
 
@@ -434,8 +511,8 @@ class convert_path {
     /** @var mixed last data read for this element or returned data by processing method */
     protected $data = null;
 
-    /** @var array of deprecated fields that are skipped and not converted */
-    protected $skipfields = array();
+    /** @var array of deprecated fields that are dropped */
+    protected $dropfields = array();
 
     /** @var array of fields renaming */
     protected $renamefields = array();
@@ -462,8 +539,8 @@ class convert_path {
         // set the default processing method name
         $this->set_processing_method('process_' . $name);
 
-        if (isset($recipe['skipfields']) and is_array($recipe['skipfields'])) {
-            $this->set_skipped_fields($recipe['skipfields']);
+        if (isset($recipe['dropfields']) and is_array($recipe['dropfields'])) {
+            $this->set_dropped_fields($recipe['dropfields']);
         }
         if (isset($recipe['renamefields']) and is_array($recipe['renamefields'])) {
             $this->set_renamed_fields($recipe['renamefields']);
@@ -502,12 +579,12 @@ class convert_path {
     }
 
     /**
-     * Sets the list of deprecated fields to skip
+     * Sets the list of deprecated fields to drop
      *
      * @param array $fields
      */
-    public function set_skipped_fields(array $fields) {
-        $this->skipfields = $fields;
+    public function set_dropped_fields(array $fields) {
+        $this->dropfields = $fields;
     }
 
     /**
@@ -545,6 +622,11 @@ class convert_path {
         foreach ($data as $name => $value) {
             // lower case rocks!
             $name = strtolower($name);
+
+            // drop legacy fields
+            if (in_array($name, $this->dropfields)) {
+                continue;
+            }
 
             // fields renaming
             if (array_key_exists($name, $this->renamefields)) {
