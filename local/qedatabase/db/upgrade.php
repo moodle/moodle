@@ -97,7 +97,7 @@ function xmldb_local_qedatabase_upgrade($oldversion) {
             $oldrcachesetting = $CFG->rcache;
             $CFG->rcache = false;
 
-            require_once($CFG->dirroot . '/question/engine/upgradefromoldqe/upgrade.php');
+            require_once($CFG->dirroot . '/question/engine/upgrade/upgradelib.php');
             $upgrader = new question_engine_attempt_upgrader();
             $upgrader->convert_all_quiz_attempts();
 
