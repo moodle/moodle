@@ -528,8 +528,8 @@ function lesson_grade_item_delete($lesson) {
  * for a given instance of lesson. Must include every user involved
  * in the instance, independent of his role (student, teacher, admin...)
  *
- * @global stdClass
- * @global object
+ * @todo: deprecated - to be deleted in 2.2
+ *
  * @param int $lessonid
  * @return array
  */

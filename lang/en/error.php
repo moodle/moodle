@@ -303,6 +303,7 @@ $string['invalidpagesize'] = 'Invalid page size';
 $string['invalidpasswordpolicy'] = 'Invalid password policy';
 $string['invalidpaymentmethod'] = 'Invalid payment method: {$a}';
 $string['invalidqueryparam'] = 'ERROR: Incorrect number of query parameters. Expected {$a->expected}, got {$a->actual}.';
+$string['invalidratingarea'] = 'Invalid rating area';
 $string['invalidrecord'] = 'Can not find data record in database table {$a}.';
 $string['invalidrecordunknown'] = 'Can not find data record in database.';
 $string['invalidrequest'] = 'Invalid request';

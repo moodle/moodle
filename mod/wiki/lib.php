@@ -382,6 +382,8 @@ function wiki_grades($wikiid) {
  * in the instance, independient of his role (student, teacher, admin...)
  * See other modules as example.
  *
+ * @todo: deprecated - to be deleted in 2.2
+ *
  * @param int $wikiid ID of an instance of this module
  * @return mixed boolean/array of students
  **/

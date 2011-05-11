@@ -138,6 +138,14 @@ class restore_data_activity_structure_step extends restore_activity_structure_st
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
+        // We need to check that component and ratingarea are both set here.
+        if (empty($data->component)) {
+            $data->component = 'mod_data';
+        }
+        if (empty($data->ratingarea)) {
+            $data->ratingarea = 'entry';
+        }
+
         $newitemid = $DB->insert_record('rating', $data);
     }
 

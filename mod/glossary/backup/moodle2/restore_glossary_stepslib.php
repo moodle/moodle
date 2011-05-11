@@ -117,6 +117,15 @@ class restore_glossary_activity_structure_step extends restore_activity_structur
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
+        // Make sure that we have both component and ratingarea set. These were added in 2.1.
+        // Prior to that all ratings were for entries so we know what to set them too.
+        if (empty($data->component)) {
+            $data->component = 'mod_glossary';
+        }
+        if (empty($data->ratingarea)) {
+            $data->ratingarea = 'entry';
+        }
+
         $newitemid = $DB->insert_record('rating', $data);
     }
 

@@ -527,10 +527,10 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
             $cell->attributes['class'] = 'controls';
             $table->data[] = new html_table_row(array($cell));
         } else if ($template == 'asearchtemplate') {
-            $row = new html_table_row(get_string('authorfirstname', 'data').': ', '##firstname##');
+            $row = new html_table_row(array(get_string('authorfirstname', 'data').': ', '##firstname##'));
             $row->attributes['class'] = 'searchcontrols';
             $table->data[] = $row;
-            $row = new html_table_row(get_string('authorlastname', 'data').': ', '##lastname##');
+            $row = new html_table_row(array(get_string('authorlastname', 'data').': ', '##lastname##'));
             $row->attributes['class'] = 'searchcontrols';
             $table->data[] = $row;
         }
@@ -1016,9 +1016,10 @@ function data_get_user_grades($data, $userid=0) {
     global $CFG;
 
     require_once($CFG->dirroot.'/rating/lib.php');
-    $rm = new rating_manager();
 
-    $ratingoptions = new stdclass();
+    $ratingoptions = new stdClass;
+    $ratingoptions->component = 'mod_data';
+    $ratingoptions->ratingarea = 'entry';
     $ratingoptions->modulename = 'data';
     $ratingoptions->moduleid   = $data->id;
 
@@ -1028,6 +1029,7 @@ function data_get_user_grades($data, $userid=0) {
     $ratingoptions->itemtable = 'data_records';
     $ratingoptions->itemtableusercolumn = 'userid';
 
+    $rm = new rating_manager();
     return $rm->get_user_grades($ratingoptions);
 }
 
@@ -1144,25 +1146,46 @@ function data_grade_item_delete($data) {
 /**
  * returns a list of participants of this database
  *
- * @global object
+ * Returns the users with data in one data
+ * (users with records in data_records, data_comments and ratings)
+ *
+ * @todo: deprecated - to be deleted in 2.2
+ *
+ * @param int $dataid
  * @return array
  */
 function data_get_participants($dataid) {
-// Returns the users with data in one data
-// (users with records in data_records, data_comments and ratings)
     global $DB;
 
-    $records = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
-                                       FROM {user} u, {data_records} r
-                                      WHERE r.dataid = ? AND u.id = r.userid", array($dataid));
+    $params = array('dataid' => $dataid);
 
-    $comments = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
-                                        FROM {user} u, {data_records} r, {comments} c
-                                       WHERE r.dataid = ? AND u.id = r.userid AND r.id = c.itemid AND c.commentarea='database_entry'", array($dataid));
+    $sql = "SELECT DISTINCT u.id, u.id
+              FROM {user} u,
+                   {data_records} r
+             WHERE r.dataid = :dataid AND
+                   u.id = r.userid";
+    $records = $DB->get_records_sql($sql, $params);
 
-    $ratings = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
-                                       FROM {user} u, {data_records} r, {ratings} a
-                                      WHERE r.dataid = ? AND u.id = r.userid AND r.id = a.itemid", array($dataid));
+    $sql = "SELECT DISTINCT u.id, u.id
+              FROM {user} u,
+                   {data_records} r,
+                   {comments} c
+             WHERE r.dataid = ? AND
+                   u.id = r.userid AND
+                   r.id = c.itemid AND
+                   c.commentarea = 'database_entry'";
+    $comments = $DB->get_records_sql($sql, $params);
+
+    $sql = "SELECT DISTINCT u.id, u.id
+              FROM {user} u,
+                   {data_records} r,
+                   {ratings} a
+             WHERE r.dataid = ? AND
+                   u.id = r.userid AND
+                   r.id = a.itemid AND
+                   a.component = 'mod_data' AND
+                   a.ratingarea = 'entry'";
+    $ratings = $DB->get_records_sql($sql, $params);
 
     $participants = array();
 
@@ -1357,20 +1380,23 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
 
 /**
  * Return rating related permissions
- * @param string $options the context id
+ *
+ * @param string $contextid the context id
+ * @param string $component the component to get rating permissions for
+ * @param string $ratingarea the rating area to get permissions for
  * @return array an associative array of the user's rating permissions
  */
-function data_rating_permissions($options) {
-    $contextid = $options;
-    $context = get_context_instance_by_id($contextid);
-
-    if (!$context) {
-        print_error('invalidcontext');
+function data_rating_permissions($contextid, $component, $ratingarea) {
+    $context = get_context_instance_by_id($contextid, MUST_EXIST);
+    if ($component != 'mod_data' || $ratingarea != 'entry') {
         return null;
-    } else {
-        $ret = new stdclass();
-        return array('view'=>has_capability('mod/data:viewrating',$context), 'viewany'=>has_capability('mod/data:viewanyrating',$context), 'viewall'=>has_capability('mod/data:viewallratings',$context), 'rate'=>has_capability('mod/data:rate',$context));
     }
+    return array(
+        'view'    => has_capability('mod/data:viewrating',$context),
+        'viewany' => has_capability('mod/data:viewanyrating',$context),
+        'viewall' => has_capability('mod/data:viewallratings',$context),
+        'rate'    => has_capability('mod/data:rate',$context)
+    );
 }
 
 /**
@@ -1387,14 +1413,22 @@ function data_rating_permissions($options) {
 function data_rating_validate($params) {
     global $DB, $USER;
 
-    if (!array_key_exists('itemid', $params)
-            || !array_key_exists('context', $params)
-            || !array_key_exists('rateduserid', $params)
-            || !array_key_exists('scaleid', $params)) {
-        throw new rating_exception('missingparameter');
+    // Check the component is mod_data
+    if ($params['component'] != 'mod_data') {
+        throw new rating_exception('invalidcomponent');
     }
 
-    $datasql = "SELECT d.id as did, d.scale, d.course, r.userid as userid, d.approval, r.approved, r.timecreated, d.assesstimestart, d.assesstimefinish, r.groupid
+    // Check the ratingarea is entry (the only rating area in data module)
+    if ($params['ratingarea'] != 'entry') {
+        throw new rating_exception('invalidratingarea');
+    }
+
+    // Check the rateduserid is not the current user .. you can't rate your own entries
+    if ($params['rateduserid'] == $USER->id) {
+        throw new rating_exception('nopermissiontorate');
+    }
+
+    $datasql = "SELECT d.id as dataid, d.scale, d.course, r.userid as userid, d.approval, r.approved, r.timecreated, d.assesstimestart, d.assesstimefinish, r.groupid
                   FROM {data_records} r
                   JOIN {data} d ON r.dataid = d.id
                  WHERE r.id = :itemid";
@@ -1409,22 +1443,12 @@ function data_rating_validate($params) {
         throw new rating_exception('invalidscaleid');
     }
 
-    if ($info->userid == $USER->id) {
-        //user is attempting to rate their own glossary entry
-        throw new rating_exception('nopermissiontorate');
-    }
-
-    if ($info->userid != $params['rateduserid']) {
-        //supplied user ID doesnt match the user ID from the database
-        throw new rating_exception('invaliduserid');
-    }
-
     //check that the submitted rating is valid for the scale
     if ($params['rating'] < 0) {
         throw new rating_exception('invalidnum');
     } else if ($info->scale < 0) {
         //its a custom scale
-        $scalerecord = $DB->get_record('scale', array('id' => -$params['scaleid']));
+        $scalerecord = $DB->get_record('scale', array('id' => -$info->scale));
         if ($scalerecord) {
             $scalearray = explode(',', $scalerecord->scale);
             if ($params['rating'] > count($scalearray)) {
@@ -1443,30 +1467,24 @@ function data_rating_validate($params) {
         throw new rating_exception('nopermissiontorate');
     }
 
-    //check the item we're rating was created in the assessable time window
+    // check the item we're rating was created in the assessable time window
     if (!empty($info->assesstimestart) && !empty($info->assesstimefinish)) {
         if ($info->timecreated < $info->assesstimestart || $info->timecreated > $info->assesstimefinish) {
             throw new rating_exception('notavailable');
         }
     }
 
-    $dataid = $info->did;
-    $groupid = $info->groupid;
-    $courseid = $info->course;
+    $course = $DB->get_record('course', array('id'=>$info->course), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('data', $info->dataid, $course->id, false, MUST_EXIST);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id, MUST_EXIST);
 
-    $cm = get_coursemodule_from_instance('data', $dataid);
-    if (empty($cm)) {
-        throw new rating_exception('unknowncontext');
-    }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-    //if the supplied context doesnt match the item's context
-    if (empty($context) || $context->id != $params['context']->id) {
+    // if the supplied context doesnt match the item's context
+    if ($context->id != $params['context']->id) {
         throw new rating_exception('invalidcontext');
     }
 
     // Make sure groups allow this user to see the item they're rating
-    $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+    $groupid = $info->groupid;
     if ($groupid > 0 and $groupmode = groups_get_activity_groupmode($cm, $course)) {   // Groups are being used
         if (!groups_group_exists($groupid)) { // Can't find group
             throw new rating_exception('cannotfindgroup');//something is wrong
@@ -1676,7 +1694,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
  */
 function data_print_ratings($data, $record) {
     global $OUTPUT;
-    if( !empty($record->rating) ){
+    if (!empty($record->rating)){
         echo $OUTPUT->render($record->rating);
     }
 }
@@ -2523,7 +2541,9 @@ function data_reset_userdata($data) {
                      WHERE d.course=?";
 
     $rm = new rating_manager();
-    $ratingdeloptions = new stdclass();
+    $ratingdeloptions = new stdClass;
+    $ratingdeloptions->component = 'mod_data';
+    $ratingdeloptions->ratingarea = 'entry';
 
     // delete entries if requested
     if (!empty($data->reset_data)) {

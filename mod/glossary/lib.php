@@ -23,7 +23,6 @@
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once($CFG->dirroot . '/rating/lib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
 define("GLOSSARY_SHOW_ALL_CATEGORIES", 0);
@@ -445,13 +444,14 @@ function glossary_get_user_grades($glossary, $userid=0) {
     global $CFG;
 
     require_once($CFG->dirroot.'/rating/lib.php');
-    $rm = new rating_manager();
 
-    $ratingoptions = new stdclass();
+    $ratingoptions = new stdClass;
 
     //need these to work backwards to get a context id. Is there a better way to get contextid from a module instance?
     $ratingoptions->modulename = 'glossary';
     $ratingoptions->moduleid   = $glossary->id;
+    $ratingoptions->component  = 'mod_glossary';
+    $ratingoptions->ratingarea = 'entry';
 
     $ratingoptions->userid = $userid;
     $ratingoptions->aggregationmethod = $glossary->assessed;
@@ -459,31 +459,40 @@ function glossary_get_user_grades($glossary, $userid=0) {
     $ratingoptions->itemtable = 'glossary_entries';
     $ratingoptions->itemtableusercolumn = 'userid';
 
+    $rm = new rating_manager();
     return $rm->get_user_grades($ratingoptions);
 }
 
 /**
  * Return rating related permissions
- * @param string $options the context id
+ *
+ * @param int $contextid the context id
+ * @param string $component The component we want to get permissions for
+ * @param string $ratingarea The ratingarea that we want to get permissions for
  * @return array an associative array of the user's rating permissions
  */
-function glossary_rating_permissions($options) {
-    $contextid = $options;
-    $context = get_context_instance_by_id($contextid);
-
-    if (!$context) {
-        print_error('invalidcontext');
+function glossary_rating_permissions($contextid, $component, $ratingarea) {
+    if ($component != 'mod_glossary' || $ratingarea != 'entry') {
+        // We don't know about this component/ratingarea so just return null to get the
+        // default restrictive permissions.
         return null;
-    } else {
-        return array('view'=>has_capability('mod/glossary:viewrating',$context), 'viewany'=>has_capability('mod/glossary:viewanyrating',$context), 'viewall'=>has_capability('mod/glossary:viewallratings',$context), 'rate'=>has_capability('mod/glossary:rate',$context));
     }
+    $context = get_context_instance_by_id($contextid);
+    return array(
+        'view'    => has_capability('mod/glossary:viewrating', $context),
+        'viewany' => has_capability('mod/glossary:viewanyrating', $context),
+        'viewall' => has_capability('mod/glossary:viewallratings', $context),
+        'rate'    => has_capability('mod/glossary:rate', $context)
+    );
 }
 
 /**
  * Validates a submitted rating
  * @param array $params submitted data
  *            context => object the context in which the rated items exists [required]
- *            itemid => int the ID of the object being rated
+ *            component => The component for this module - should always be mod_forum [required]
+ *            ratingarea => object the context in which the rated items exists [required]
+ *            itemid => int the ID of the object being rated [required]
  *            scaleid => int the scale from which the user can select a rating. Used for bounds checking. [required]
  *            rating => int the submitted rating
  *            rateduserid => int the id of the user whose items have been rated. NOT the user who submitted the ratings. 0 to update all. [required]
@@ -493,36 +502,35 @@ function glossary_rating_permissions($options) {
 function glossary_rating_validate($params) {
     global $DB, $USER;
 
-    if (!array_key_exists('itemid', $params)
-            || !array_key_exists('context', $params)
-            || !array_key_exists('rateduserid', $params)
-            || !array_key_exists('scaleid', $params)) {
-        throw new rating_exception('missingparameter');
+    // Check the component is mod_forum
+    if ($params['component'] != 'mod_glossary') {
+        throw new rating_exception('invalidcomponent');
     }
 
-    $glossarysql = "SELECT g.id as gid, g.scale, e.userid as userid, e.approved, e.timecreated, g.assesstimestart, g.assesstimefinish
-                      FROM {glossary_entries} e
-                      JOIN {glossary} g ON e.glossaryid = g.id
-                     WHERE e.id = :itemid";
-    $glossaryparams = array('itemid'=>$params['itemid']);
-    if (!$info = $DB->get_record_sql($glossarysql, $glossaryparams)) {
-        //item doesn't exist
-        throw new rating_exception('invaliditemid');
+    // Check the ratingarea is post (the only rating area in forum)
+    if ($params['ratingarea'] != 'entry') {
+        throw new rating_exception('invalidratingarea');
     }
 
-    if ($info->scale != $params['scaleid']) {
-        //the scale being submitted doesnt match the one in the database
-        throw new rating_exception('invalidscaleid');
-    }
-
-    if ($info->userid == $USER->id) {
-        //user is attempting to rate their own glossary entry
+    // Check the rateduserid is not the current user .. you can't rate your own posts
+    if ($params['rateduserid'] == $USER->id) {
         throw new rating_exception('nopermissiontorate');
     }
 
-    if ($info->userid != $params['rateduserid']) {
-        //supplied user ID doesnt match the user ID from the database
-        throw new rating_exception('invaliduserid');
+    $glossarysql = "SELECT g.id as glossaryid, g.scale, g.course, e.userid as userid, e.approved, e.timecreated, g.assesstimestart, g.assesstimefinish
+                      FROM {glossary_entries} e
+                      JOIN {glossary} g ON e.glossaryid = g.id
+                     WHERE e.id = :itemid";
+    $glossaryparams = array('itemid' => $params['itemid']);
+    $info = $DB->get_record_sql($glossarysql, $glossaryparams);
+    if (!$info) {
+        //item doesn't exist
+        throw new rating_exception('invaliditemid');
+    }
+        
+    if ($info->scale != $params['scaleid']) {
+        //the scale being submitted doesnt match the one in the database
+        throw new rating_exception('invalidscaleid');
     }
 
     //check that the submitted rating is valid for the scale
@@ -530,7 +538,7 @@ function glossary_rating_validate($params) {
         throw new rating_exception('invalidnum');
     } else if ($info->scale < 0) {
         //its a custom scale
-        $scalerecord = $DB->get_record('scale', array('id' => -$params['scaleid']));
+        $scalerecord = $DB->get_record('scale', array('id' => -$info->scale));
         if ($scalerecord) {
             $scalearray = explode(',', $scalerecord->scale);
             if ($params['rating'] > count($scalearray)) {
@@ -556,16 +564,11 @@ function glossary_rating_validate($params) {
         }
     }
 
-    $glossaryid = $info->gid;
+    $cm = get_coursemodule_from_instance('glossary', $info->glossaryid, $info->course, false, MUST_EXIST);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id, MUST_EXIST);
 
-    $cm = get_coursemodule_from_instance('glossary', $glossaryid);
-    if (empty($cm)) {
-        throw new rating_exception('unknowncontext');
-    }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-    //if the supplied context doesnt match the item's context
-    if (empty($context) || $context->id != $params['context']->id) {
+    // if the supplied context doesnt match the item's context
+    if ($context->id != $params['context']->id) {
         throw new rating_exception('invalidcontext');
     }
 
@@ -683,7 +686,8 @@ function glossary_grade_item_delete($glossary) {
  * Returns the users with data in one glossary
  * (users with records in glossary_entries, students)
  *
- * @global object
+ * @todo: deprecated - to be deleted in 2.2
+ *
  * @param int $glossaryid
  * @return array
  */
@@ -2190,31 +2194,49 @@ function glossary_full_tag($tag,$level=0,$endline=true,$content) {
 /**
  * How many unrated entries are in the given glossary for a given user?
  *
- * @global object
+ * @global moodle_database $DB
  * @param int $glossaryid
  * @param int $userid
  * @return int
  */
 function glossary_count_unrated_entries($glossaryid, $userid) {
     global $DB;
-    if ($entries = $DB->get_record_sql("SELECT count('x') as num
-                                          FROM {glossary_entries}
-                                         WHERE glossaryid = ? AND userid <> ?", array($glossaryid, $userid))) {
 
-        if (!$cm = get_coursemodule_from_instance('glossary', $glossaryid)) {
-            return 0;
-        }
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $sql = "SELECT COUNT('x') as num
+              FROM {glossary_entries}
+             WHERE glossaryid = :glossaryid AND
+                   userid <> :userid";
+    $params = array('glossaryid' => $glossaryid, 'userid' => $userid);
+    $entries = $DB->count_records_sql($sql, $params);
 
-        if ($rated = $DB->get_record_sql("SELECT count(*) as num
-                                            FROM {glossary_entries} e, {ratings} r
-                                           WHERE e.glossaryid = :glossaryid AND e.id = r.itemid
-                                                 AND r.userid = :userid and r.contextid = :contextid",
-                array('glossaryid'=>$glossaryid, 'userid'=>$userid, 'contextid'=>$context->id))) {
+    if ($entries) {
+        // We need to get the contextid for the glossaryid we have been given.
+        $sql = "SELECT ctx.id
+                  FROM {context} ctx
+                  JOIN {course_modules} cm ON cm.id = ctx.instanceid
+                  JOIN {modules} m ON m.id = cm.module
+                  JOIN {glossary} g ON g.id = cm.instance
+                 WHERE ctx.contextlevel = :contextlevel AND
+                       m.name = 'glossary' AND
+                       g.id = :glossaryid";
+        $contextid = $DB->get_field_sql($sql, array('glossaryid' => $glossaryid, 'contextlevel' => CONTEXT_MODULE));
 
-            $difference = $entries->num - $rated->num;
-            if ($difference > 0) {
-                return $difference;
+        // Now we need to count the ratings that this user has made
+        $sql = "SELECT COUNT('x') AS num
+                  FROM {glossary_entries} e
+                  JOIN {ratings} r ON r.itemid = e.id
+                 WHERE e.glossaryid = :glossaryid AND
+                       r.userid = :userid AND
+                       r.component = 'mod_glossary' AND
+                       r.ratingarea = 'entry' AND
+                       r.contextid = :contextid";
+        $params = array('glossaryid' => $glossaryid, 'userid' => $userid, 'contextid' => $context->id);
+        $rated = $DB->count_records_sql($sql, $params);
+        if ($rated) {
+            // The number or enties minus the number or rated entries equals the number of unrated
+            // entries
+            if ($entries->num > $rated->num) {
+                return $entries->num - $rated->num;
             } else {
                 return 0;    // Just in case there was a counting error
             }
@@ -2466,7 +2488,9 @@ function glossary_reset_userdata($data) {
     $fs = get_file_storage();
 
     $rm = new rating_manager();
-    $ratingdeloptions = new stdclass();
+    $ratingdeloptions = new stdClass;
+    $ratingdeloptions->component = 'mod_glossary';
+    $ratingdeloptions->ratingarea = 'entry';
 
     // delete entries if requested
     if (!empty($data->reset_glossary_all)
