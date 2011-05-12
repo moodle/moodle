@@ -111,6 +111,29 @@ class moodle1_converter_test extends UnitTestCase {
         $converter->drop_stash_storage();
     }
 
+    public function test_get_contextid() {
+        $converter = convert_factory::converter('moodle1', $this->tempdir);
+
+        // stash storage must be created in advance
+        $converter->create_stash_storage();
+
+        // ids are generated on the first call
+        $id1 = $converter->get_contextid(CONTEXT_COURSE, 10);
+        $id2 = $converter->get_contextid(CONTEXT_COURSE, 11);
+        $id3 = $converter->get_contextid(CONTEXT_MODULE, 10);
+
+        $this->assertNotEqual($id1, $id2);
+        $this->assertNotEqual($id1, $id3);
+        $this->assertNotEqual($id2, $id3);
+
+        // and then re-used if called with the same params
+        $this->assertEqual($id1, $converter->get_contextid(CONTEXT_COURSE, 10));
+        $this->assertEqual($id2, $converter->get_contextid(CONTEXT_COURSE, 11));
+        $this->assertEqual($id3, $converter->get_contextid(CONTEXT_MODULE, 10));
+
+        $converter->drop_stash_storage();
+    }
+
     public function test_convert_run_convert() {
         $converter = convert_factory::converter('moodle1', $this->tempdir);
         //$converter->convert();

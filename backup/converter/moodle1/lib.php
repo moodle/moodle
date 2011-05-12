@@ -421,16 +421,14 @@ class moodle1_converter extends base_converter {
 
         $stashname = 'context' . $level;
 
-        $existing = $this->get_stash($stashname, $instance);
+        try {
+            // try the previously stashed id
+            return $this->get_stash($stashname, $instance);
 
-        if (empty($existing)) {
+        } catch (moodle1_convert_empty_storage_exception $e) {
             // this context level + instance is required for the first time
-            // store it and re-read to obtain its record id
-            $this->set_stash($stashname, $autoincrement++, $instance);
+            $this->set_stash($stashname, ++$autoincrement, $instance);
             return $autoincrement;
-
-        } else {
-            return $existing;
         }
     }
 }
