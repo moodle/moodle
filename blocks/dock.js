@@ -66,7 +66,52 @@ M.core_dock.init = function(Y) {
     // Give the dock item class the event properties/methods
     Y.augment(this.item, Y.EventTarget);
     Y.augment(this, Y.EventTarget, true);
+    /**
+     * A 'actionkey' Event to help with Y.delegate().
+     * The event consists of the left arrow, right arrow, enter and space keys.
+     * Possibly more keys can be mapped to the action meanings
+     * This is used by the dock to listen to this event and act on.
+     * Todo: This could be centralised, a similar Event is defined in blocks/navigation/yui/navigation/navigation.js
+     */
+    Y.Event.define("dock:actionkey", {
+        // Webkit and IE repeat keydown when you hold down arrow keys.
+        // Opera links keypress to page scroll; others keydown.
+        // Firefox prevents page scroll via preventDefault() on either
+        // keydown or keypress.
+        _event: (Y.UA.webkit || Y.UA.ie) ? 'keydown' : 'keypress',
 
+        _keys: {
+            //arrows
+            '37': 'collapse',
+            '39': 'expand',
+            //(@todo: lrt/rtl/M.core_dock.cfg.orientation decision to assign arrow to meanings)
+            '32': 'toggle',
+            '13': 'enter'
+        },
+
+        _keyHandler: function (e, notifier) {
+            if (this._keys[e.keyCode]) {
+                e.action = this._keys[e.keyCode];
+                notifier.fire(e);
+            }
+        },
+
+        on: function (node, sub, notifier) {
+            sub._detacher = node.on(this._event, this._keyHandler,this, notifier);
+        },
+
+        detach: function (node, sub, notifier) {
+            sub._detacher.detach();
+        },
+
+        delegate: function (node, sub, notifier, filter) {
+            sub._delegateDetacher = node.delegate(this._event, this._keyHandler,filter, this, notifier);
+        },
+
+        detachDelegate: function (node, sub, notifier) {
+            sub._delegateDetacher.detach();
+        }
+    });
     // Publish the events the dock has
     this.publish('dock:beforedraw', {prefix:'dock'});
     this.publish('dock:beforeshow', {prefix:'dock'});
@@ -125,9 +170,10 @@ M.core_dock.init = function(Y) {
 
     // Add a removeall button
     // Must set the image src seperatly of we get an error with XML strict headers
-    var removeall = Y.Node.create('<img alt="'+M.str.block.undockall+'" title="'+M.str.block.undockall+'" />');
+    var removeall = Y.Node.create('<img alt="'+M.str.block.undockall+'" title="'+M.str.block.undockall+'" tabindex="0"/>');
     removeall.setAttribute('src',this.cfg.removeallicon);
     removeall.on('removeall|click', this.remove_all, this);
+    removeall.on('dock:actionkey', this.remove_all, this);
     this.nodes.buttons.appendChild(Y.Node.create('<div class="'+css.controls+'"></div>').append(removeall));
 
     // Create a manager for the height of the tabs. Once set this can be forgotten about
@@ -590,9 +636,11 @@ M.core_dock.resetFirstItem = function() {
  * @function
  * @return {boolean}
  */
-M.core_dock.remove_all = function() {
-    for (var i in this.items) {
-        this.remove(i);
+M.core_dock.remove_all = function(e) {
+    if (!(e.type == 'dock:actionkey' && e.action=='collapse')) {
+        for (var i in this.items) {
+            this.remove(i);
+        }
     }
     return true;
 };
@@ -840,9 +888,10 @@ M.core_dock.genericblock.prototype = {
             }, this);
             // Add a close icon
             // Must set the image src seperatly of we get an error with XML strict headers
-            var closeicon = Y.Node.create('<span class="hidepanelicon"><img alt="" style="width:11px;height:11px;cursor:pointer;" /></span>');
+            var closeicon = Y.Node.create('<span class="hidepanelicon" tabindex="0"><img alt="" style="width:11px;height:11px;cursor:pointer;" /></span>');
             closeicon.one('img').setAttribute('src', M.util.image_url('t/dockclose', 'moodle'));
             closeicon.on('forceclose|click', this.hide, this);
+            closeicon.on('dock:actionkey',this.close, this);
             this.commands.append(closeicon);
         }, dockitem);
         // Register an event so that when it is removed we can put it back as a block
@@ -955,7 +1004,8 @@ M.core_dock.item.prototype = {
 
         this.nodes.docktitle = Y.Node.create('<div id="dock_item_'+this.id+'_title" class="'+css.dockedtitle+'"></div>');
         this.nodes.docktitle.append(this.title);
-        this.nodes.dockitem = Y.Node.create('<div id="dock_item_'+this.id+'" class="'+css.dockeditem+'"></div>');
+        this.nodes.dockitem = Y.Node.create('<div id="dock_item_'+this.id+'" class="'+css.dockeditem+'" tabindex="0"></div>');
+        this.nodes.dockitem.on('dock:actionkey', this.toggle, this);
         if (M.core_dock.count === 1) {
             this.nodes.dockitem.addClass('firstdockitem');
         }
@@ -998,6 +1048,28 @@ M.core_dock.item.prototype = {
         // Hide the panel
         M.core_dock.getPanel().hide();
         this.fire('dockeditem:hidecomplete');
+    },
+    /**
+     * A toggle between calling show and hide functions based on css.activeitem
+     * Applies rules to key press events (dock:actionkey)
+     * @param {Event} e
+     */
+    toggle : function(e) {
+        var css = M.core_dock.css;
+        if (this.nodes.docktitle.hasClass(css.activeitem) && !(e.type == 'dock:actionkey' && e.action=='expand')) {
+            this.hide();
+        } else if (!this.nodes.docktitle.hasClass(css.activeitem) && !(e.type == 'dock:actionkey' && e.action=='collapse'))  {
+            this.show();
+        }
+    },
+    /**
+     * A hide() wrapper that applies rules to key press events (dock:actionkey)
+     * @param {Event} e
+     */
+    close : function(e) {
+        if (!(e.type == 'dock:actionkey' && (e.action=='expand' || e.action=='collapse'))) {
+            this.hide();
+        }
     },
     /**
      * This function removes the node and destroys it's bits
