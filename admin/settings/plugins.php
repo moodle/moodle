@@ -49,7 +49,22 @@ if ($hassiteconfig) {
     // message outputs
     $ADMIN->add('modules', new admin_category('messageoutputs', get_string('messageoutputs', 'message')));
     $ADMIN->add('messageoutputs', new admin_page_managemessageoutputs());
-
+    require_once($CFG->dirroot.'/message/lib.php');
+    $processors = get_message_processors();
+    foreach ($processors as $processor) {
+        $processorname = $processor->name;
+        if (!$processor->available) {
+            continue;
+        }
+        $strprocessorname = get_string('pluginname', 'message_'.$processorname);
+        if (file_exists($CFG->dirroot.'/message/output/'.$processor->name.'/settings.php')) {
+            $settings = new admin_settingpage('messagesetting'.$processorname, $strprocessorname, 'moodle/site:config', !$processor->enabled);
+            include($CFG->dirroot.'/message/output/'.$processor->name.'/settings.php');
+            if ($settings) {
+                $ADMIN->add('messageoutputs', $settings);
+            }
+        }
+    }
 
     // authentication plugins
     $ADMIN->add('modules', new admin_category('authsettings', get_string('authentication', 'admin')));

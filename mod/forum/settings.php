@@ -73,6 +73,10 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('forum_cleanreadtime', get_string('cleanreadtime', 'forum'),
                        get_string('configcleanreadtime', 'forum'), 2, $options));
 
+    for ($i = 0; $i < 23; $i++) {
+        $options[$i] = sprintf("%02d",$i);
+    }
+    $settings->add(new admin_setting_configselect('digestmailtime', get_string('digestmailtime', 'forum'), get_string('configdigestmailtime', 'forum'), 17, $options));
 
     if (empty($CFG->enablerssfeeds)) {
         $options = array(0 => get_string('rssglobaldisabled', 'admin'));

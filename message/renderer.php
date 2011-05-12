@@ -1,4 +1,18 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Messaging libraries
@@ -28,6 +42,7 @@ class core_message_renderer extends plugin_renderer_base {
      * @return  string              The text to render
      */
     public function manage_messageoutputs($processors) {
+        global $CFG;
         // Display the current workflows
         $table = new html_table();
         $table->attributes['class'] = 'generaltable';
@@ -45,19 +60,19 @@ class core_message_renderer extends plugin_renderer_base {
 
         foreach ( $processors as $processor ){
             $row = new html_table_row();
-            $row->attributes['class'] = 'workflow';
+            $row->attributes['class'] = 'messageoutputs';
 
             // Name
             $name = new html_table_cell($processor->name);
 
             // Enable
             $enable = new html_table_cell();
+            $enable->attributes['class'] = 'mdl-align';
             if (!$processor->available) {
                 $enable->text = html_writer::nonempty_tag('span', get_string('outputnotavailable', 'message'), array('class' => 'error'));
             } else if (!$processor->configured) {
                 $enable->text = html_writer::nonempty_tag('span', get_string('outputnotconfigured', 'message'), array('class' => 'error'));
             } else if ($processor->enabled) {
-                $row->attributes['class'] .= 'enabled';
                 $url = new moodle_url('/admin/message.php', array('disable' => $processor->id, 'sesskey' => sesskey()));
                 $enable->text = html_writer::link($url, html_writer::empty_tag('img',
                     array('src'   => $this->output->pix_url('i/hide'),
@@ -67,7 +82,7 @@ class core_message_renderer extends plugin_renderer_base {
                     )
                 ));
             } else {
-                $row->attributes['class'] .= 'disabled';
+                $name->attributes['class'] = 'dimmed_text';
                 $url = new moodle_url('/admin/message.php', array('enable' => $processor->id, 'sesskey' => sesskey()));
                 $enable->text = html_writer::link($url, html_writer::empty_tag('img',
                     array('src'   => $this->output->pix_url('i/show'),
@@ -77,10 +92,10 @@ class core_message_renderer extends plugin_renderer_base {
                     )
                 ));
             }
-
+            // Settings
             $settings = new html_table_cell();
-            if ($processor->available) {
-                $settingsurl = new moodle_url('/message/output/'.$processor->name.'/settings.php');
+            if ($processor->available && file_exists($CFG->dirroot.'/message/output/'.$processor->name.'/settings.php')) {
+                $settingsurl = new moodle_url('settings.php', array('section' => 'messagesetting'.$processor->name));
                 $settings->text = html_writer::link($settingsurl, get_string('settings', 'message'));
             }
 

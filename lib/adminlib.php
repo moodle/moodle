@@ -4924,7 +4924,7 @@ class admin_page_managemessageoutputs extends admin_externalpage {
     }
 
     /**
-     * Search for a specific block
+     * Search for a specific message processor
      *
      * @param string $query The string to search for
      * @return array
@@ -4936,18 +4936,19 @@ class admin_page_managemessageoutputs extends admin_externalpage {
         }
 
         $found = false;
-        if ($blocks = $DB->get_records('block')) {
+        require_once($CFG->dirroot.'/message/lib.php');
+        if ($processors = get_message_processors()) {
             $textlib = textlib_get_instance();
-            foreach ($blocks as $block) {
-                if (!file_exists("$CFG->dirroot/blocks/$block->name/")) {
+            foreach ($processors as $processor) {
+                if (!$processor->available) {
                     continue;
                 }
-                if (strpos($block->name, $query) !== false) {
+                if (strpos($processor->name, $query) !== false) {
                     $found = true;
                     break;
                 }
-                $strblockname = get_string('pluginname', 'block_'.$block->name);
-                if (strpos($textlib->strtolower($strblockname), $query) !== false) {
+                $strprocessorname = get_string('pluginname', 'message_'.$processor->name);
+                if (strpos($textlib->strtolower($strprocessorname), $query) !== false) {
                     $found = true;
                     break;
                 }
