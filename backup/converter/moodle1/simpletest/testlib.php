@@ -61,6 +61,58 @@ class moodle1_converter_test extends UnitTestCase {
     public function test_convert_factory() {
         $converter = convert_factory::converter('moodle1', $this->tempdir);
         $this->assertIsA($converter, 'moodle1_converter');
-        $converter->convert();
+    }
+
+    public function test_stash_storage_not_created() {
+        $converter = convert_factory::converter('moodle1', $this->tempdir);
+        $this->expectException('moodle1_convert_storage_exception');
+        $converter->set_stash('tempinfo', 12);
+    }
+
+    public function test_stash_requiring_empty_stash() {
+        $converter = convert_factory::converter('moodle1', $this->tempdir);
+        $converter->create_stash_storage();
+        $converter->set_stash('tempinfo', 12);
+        $this->expectException('moodle1_convert_empty_storage_exception');
+        try {
+            $converter->get_stash('anothertempinfo');
+
+        } catch (moodle1_convert_empty_storage_exception $e) {
+            // we must drop the storage here so we are able to re-create it in the next test
+            $converter->drop_stash_storage();
+            throw new moodle1_convert_empty_storage_exception('rethrowing');
+        }
+    }
+
+    public function test_stash_storage() {
+        $converter = convert_factory::converter('moodle1', $this->tempdir);
+        $converter->create_stash_storage();
+
+        // test stashes without itemid
+        $converter->set_stash('tempinfo1', 12);
+        $converter->set_stash('tempinfo2', array('a' => 2, 'b' => 3));
+        $this->assertIdentical(12, $converter->get_stash('tempinfo1'));
+        $this->assertIdentical(array('a' => 2, 'b' => 3), $converter->get_stash('tempinfo2'));
+
+        // overwriting a stashed value is allowed
+        $converter->set_stash('tempinfo1', '13');
+        $this->assertNotIdentical(13, $converter->get_stash('tempinfo1'));
+        $this->assertIdentical('13', $converter->get_stash('tempinfo1'));
+
+        // repeated reading is allowed
+        $this->assertIdentical('13', $converter->get_stash('tempinfo1'));
+
+        // test stashes with itemid
+        $converter->set_stash('tempinfo', 'Hello', 1);
+        $converter->set_stash('tempinfo', 'World', 2);
+        $this->assertIdentical('Hello', $converter->get_stash('tempinfo', 1));
+        $this->assertIdentical('World', $converter->get_stash('tempinfo', 2));
+
+        $converter->drop_stash_storage();
+    }
+
+    public function test_convert_run_convert() {
+        $converter = convert_factory::converter('moodle1', $this->tempdir);
+        //$converter->convert();
     }
 }

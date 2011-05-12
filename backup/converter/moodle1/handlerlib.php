@@ -44,10 +44,12 @@ abstract class moodle1_handlers_factory {
      */
     public static function get_handlers(moodle1_converter $converter) {
 
-        $handlers = array();
-        $handlers[] = new moodle1_root_handler($converter);
-        $handlers[] = new moodle1_info_handler($converter);
-        $handlers[] = new moodle1_course_header_handler($converter);
+        $handlers = array(
+            new moodle1_root_handler($converter),
+            new moodle1_info_handler($converter),
+            new moodle1_course_header_handler($converter),
+            new moodle1_course_outline_handler($converter),
+        );
 
         $handlers = array_merge($handlers, self::get_plugin_handlers('mod', $converter));
         $handlers = array_merge($handlers, self::get_plugin_handlers('block', $converter));
@@ -292,14 +294,12 @@ class moodle1_root_handler extends moodle1_handler {
      * This is executed at the very start of the moodle.xml parsing
      */
     public function on_root_element_start() {
-        $this->converter->create_backup_ids_temp_table();
     }
 
     /**
      * This is executed at the end of the moodle.xml parsing
      */
     public function on_root_element_end() {
-        $this->converter->drop_backup_ids_temp_table();
     }
 }
 
@@ -434,5 +434,79 @@ class moodle1_course_header_handler extends moodle1_xml_handler {
         $this->open_xml_writer('course/course.xml');
         $this->write_xml('course', $this->course, array('/course/contextid'));
         $this->close_xml_writer();
+    }
+}
+
+
+/**
+ * Handles the conversion of course sections and course modules
+ */
+class moodle1_course_outline_handler extends moodle1_xml_handler {
+
+    /** @var array current section data */
+    protected $currentsection;
+
+    /**
+     * This handler is interested in course sections and course modules within them
+     */
+    public function get_paths() {
+        return array(
+            new convert_path(
+                'course_section', '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION',
+                array(
+                    'newfields' => array(
+                        'name'          => null,
+                        'summaryformat' => 1,
+                        'sequence'      => null,
+                    ),
+                )
+            ),
+            new convert_path(
+                'course_module', '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD',
+                array(
+                    'dropfields' => array(
+                        'roles_overrides',
+                        'roles_assignments',
+                    ),
+                )
+            )
+        );
+    }
+
+    public function process_course_section($data) {
+        $this->currentsection = $data;
+    }
+
+    /**
+     * Populates the section sequence field (order of course modules) and stashes the
+     * course module info so that is can be dumped to activities/xxxx_x/module.xml later
+     */
+    public function process_course_module($data) {
+
+        // add the course module id into the section's sequence
+        if (is_null($this->currentsection['sequence'])) {
+            $this->currentsection['sequence'] = $data['id'];
+        } else {
+            $this->currentsection['sequence'] .= ',' . $data['id'];
+        }
+
+        // add the sectionid and sectionnumber
+        $data['sectionid']      = $this->currentsection['id'];
+        $data['sectionnumber']  = $this->currentsection['number'];
+
+        // stash the course module info in stashes like 'cminfo_forum' with
+        // itemid set to the instance id
+        $this->converter->set_stash('cminfo_'.$data['type'], $data, $data['instance']);
+    }
+
+    /**
+     * Writes sections/section_xxx/section.xml file
+     */
+    public function on_course_section_end() {
+
+        $this->open_xml_writer('sections/section_' . $this->currentsection['id'] . '/section.xml');
+        $this->write_xml('section', $this->currentsection);
+        $this->close_xml_writer();
+        unset($this->currentsection);
     }
 }

@@ -120,7 +120,9 @@ class moodle1_converter extends base_converter {
      * Converts the contents of the tempdir into the target format in the workdir
      */
     protected function execute() {
+        $this->create_stash_storage();
         $this->xmlparser->process();
+        $this->drop_stash_storage();
     }
 
     /**
@@ -347,65 +349,59 @@ class moodle1_converter extends base_converter {
     }
 
     /**
-     * Creates the backup_ids_temp table
+     * Creates the temporary storage for stashed data
+     *
+     * This implementation uses backup_ids_temp table.
      */
-    public function create_backup_ids_temp_table() {
+    public function create_stash_storage() {
         backup_controller_dbops::create_backup_ids_temp_table($this->get_id());
     }
 
     /**
-     * Drops the backup_ids_temp table
+     * Drops the temporary storage of stashed data
+     *
+     * This implementation uses backup_ids_temp table.
      */
-    public function drop_backup_ids_temp_table() {
+    public function drop_stash_storage() {
         backup_controller_dbops::drop_backup_ids_temp_table($this->get_id());
     }
 
     /**
-     * Stores a record in the temporary backup_ids table
+     * Stores some information for later processing
      *
-     * @param string $itemname
-     * @param int $itemid
-     * @param int $newitemid
-     * @param int $parentitemid
-     * @param mixed $info
-     * @return void
-     */
-    public function set_backup_ids_record($itemname, $itemid, $newitemid = 0, $parentitemid = null, $info = null) {
-        restore_dbops::set_backup_ids_record($this->get_id(), $itemname, $itemid, $newitemid, $parentitemid, $info);
-    }
-
-    /**
-     * Restores a previously saved record from backup_ids temporary table
-     *
-     * @param string $itemname
-     * @param int $itemid
-     * @return stdClass
-     */
-    public function get_backup_ids_record($itemname, $itemid) {
-        return restore_dbops::get_backup_ids_record($this->get_id(), $itemname, $itemid);
-    }
-
-    /**
-     * Store some information for later processing
-     *
-     * This implenentation uses backup_ids_temp table to store data. Make
-     * sure that the stash name is unique.
+     * This implementation uses backup_ids_temp table to store data. Make
+     * sure that the $stashname + $itemid combo is unique.
      *
      * @param string $stashname name of the stash
      * @param mixed $info information to stash
+     * @param int $itemid optional id for multiple infos within the same stashname
      */
-    public function set_stash($stashname, $info) {
-        $this->set_backup_ids_record($stashname, 0, 0, null, $info);
+    public function set_stash($stashname, $info, $itemid = 0) {
+        try {
+            restore_dbops::set_backup_ids_record($this->get_id(), $stashname, $itemid, 0, null, $info);
+
+        } catch (dml_exception $e) {
+            throw new moodle1_convert_storage_exception('unable_to_restore_stash', null, $e->getMessage());
+        }
     }
 
     /**
      * Restores a given stash stored previously by {@link self::set_stash()}
      *
      * @param string $stashname name of the stash
+     * @param int $itemid optional id for multiple infos within the same stashname
+     * @throws moodle1_convert_empty_storage_exception if the info has not been stashed previously
      * @return mixed stashed data
      */
-    public function get_stash($stashname) {
-        return $this->get_backup_ids_record($stashname, 0);
+    public function get_stash($stashname, $itemid = 0) {
+
+        $record = restore_dbops::get_backup_ids_record($this->get_id(), $stashname, $itemid);
+
+        if (empty($record)) {
+            throw new moodle1_convert_empty_storage_exception('required_not_stashed_data');
+        } else {
+            return $record->info;
+        }
     }
 
     /**
@@ -415,31 +411,49 @@ class moodle1_converter extends base_converter {
      * in Moodle 2.x format so here we generate fictive context id for every given
      * context level + instance combo.
      *
-     * This implementation maps context level and instanceid to the columns
-     * of the backup_ids_temp table and uses the id of the record in that table
-     * as the context id.
-     *
      * @see get_context_instance()
      * @param int $level the context level, like CONTEXT_COURSE or CONTEXT_MODULE
      * @param int $instance the instance id, for example $course->id for courses or $cm->id for activity modules
      * @return int the context id
      */
     public function get_contextid($level, $instance) {
+        static $autoincrement = 0;
 
-        $itemname = 'context' . $level;
-        $itemid   = $instance;
+        $stashname = 'context' . $level;
 
-        $existing = $this->get_backup_ids_record($itemname, $itemid);
+        $existing = $this->get_stash($stashname, $instance);
 
         if (empty($existing)) {
             // this context level + instance is required for the first time
             // store it and re-read to obtain its record id
-            $this->set_backup_ids_record($itemname, $itemid);
-            $existing = $this->get_backup_ids_record($itemname, $itemid);
-        }
+            $this->set_stash($stashname, $autoincrement++, $instance);
+            return $autoincrement;
 
-        return $existing->id;
+        } else {
+            return $existing;
+        }
     }
+}
+
+
+/**
+ * Exception thrown by this converter
+ */
+class moodle1_convert_exception extends convert_exception {
+}
+
+
+/**
+ * Exception thrown by the temporary storage subsystem of moodle1_converter
+ */
+class moodle1_convert_storage_exception extends moodle1_convert_exception {
+}
+
+
+/**
+ * Exception thrown by the temporary storage subsystem of moodle1_converter
+ */
+class moodle1_convert_empty_storage_exception extends moodle1_convert_exception {
 }
 
 
