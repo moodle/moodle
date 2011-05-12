@@ -5,6 +5,15 @@ With a lot of question attempts, doing the whole conversion on upgrade is very
 slow. The plugin can help with that in various ways.
 
 
+To install using git, type this command in the root of your Moodle install
+    git clone git://github.com/timhunt/moodle-local_qeupgradehelper.git local/qeupgradehelper
+Then add /local/qeupgradehelper to your git ignore.
+
+Alternatively, download the zip from
+    https://github.com/timhunt/moodle-local_qeupgradehelper/zipball/master
+unzip it into the local folder, and then rename the new folder to qeupgradehelper.
+
+
 When installed in a Moodle 2.0 site:
 
 1. It provies a report of how much data there is to upgrade.

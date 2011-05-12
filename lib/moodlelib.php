@@ -7067,7 +7067,8 @@ function get_plugin_types($fullpaths=true) {
     static $fullinfo = null;
 
     if (!$info) {
-        $info = array('mod'           => 'mod',
+        $info = array('qtype'         => 'question/type',
+                      'mod'           => 'mod',
                       'auth'          => 'auth',
                       'enrol'         => 'enrol',
                       'message'       => 'message/output',
@@ -7087,7 +7088,6 @@ function get_plugin_types($fullpaths=true) {
                       'portfolio'     => 'portfolio',
                       'qbehaviour'    => 'question/behaviour',
                       'qformat'       => 'question/format',
-                      'qtype'         => 'question/type',
                       'plagiarism'    => 'plagiarism',
                       'theme'         => 'theme'); // this is a bit hacky, themes may be in $CFG->themedir too
 

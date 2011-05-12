@@ -28,6 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
+require_once($CFG->dirroot . '/question/engine/bank.php');
 require_once($CFG->dirroot . '/question/engine/upgrade/logger.php');
 require_once($CFG->dirroot . '/question/engine/upgrade/behaviourconverters.php');
 
@@ -282,9 +283,12 @@ class question_engine_attempt_upgrader {
     }
 
     public function get_next_question_session($attempt, moodle_recordset $questionsessionsrs) {
+        if (!$questionsessionsrs->valid()) {
+            return false;
+        }
+
         $qsession = $questionsessionsrs->current();
-print_object($qsession); // DONOTCOMMIT
-        if (!$qsession || $qsession->attemptid != $attempt->uniqueid) {
+        if ($qsession->attemptid != $attempt->uniqueid) {
             // No more question sessions belonging to this attempt.
             return false;
         }
@@ -297,8 +301,9 @@ print_object($qsession); // DONOTCOMMIT
     public function get_question_states($attempt, $question, moodle_recordset $questionsstatesrs) {
         $qstates = array();
 
-        while ($state = $questionsstatesrs->current()) {
-            if (!$state || $state->attempt != $attempt->uniqueid ||
+        while ($questionsstatesrs->valid()) {
+            $state = $questionsstatesrs->current();
+            if ($state->attempt != $attempt->uniqueid ||
                     $state->question != $question->id) {
                 // We have found all the states for this attempt. Stop.
                 break;

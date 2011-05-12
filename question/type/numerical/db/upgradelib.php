@@ -68,8 +68,30 @@ class qtype_numerical_qe2_attempt_updater extends question_qtype_attempt_updater
     }
 
     public function set_data_elements_for_step($state, &$data) {
-        if (!empty($state->answer)) {
+        if (empty($state->answer)) {
+            return;
+        }
+        if (strpos($state->answer, '|||||') === false) {
             $data['answer'] = $state->answer;
+        } else {
+            list($answer, $unit) = explode('|||||', $state->answer, 2);
+            if ($this->question->options->showunits == 1) {
+                // Multichoice units.
+                $data['answer'] = $answer;
+                $data['unit'] = $unit;
+            } else if (!empty($this->question->options->unitsleft)) {
+                if (!empty($unit)) {
+                    $data['answer'] = $unit . ' ' . $answer;
+                } else {
+                    $data['answer'] = $answer;
+                }
+            } else {
+                if (!empty($unit)) {
+                    $data['answer'] = $answer . ' ' . $unit;
+                } else {
+                    $data['answer'] = $answer;
+                }
+            }
         }
     }
 }

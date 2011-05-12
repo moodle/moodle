@@ -96,6 +96,7 @@ $string['attemptsnum'] = 'Attempts: {$a}';
 $string['attemptsnumthisgroup'] = 'Attempts: {$a->total} ({$a->group} from this group)';
 $string['attemptsnumyourgroups'] = 'Attempts: {$a->total} ({$a->group} from your groups)';
 $string['attemptsonly'] = 'Show only students with attempts';
+$string['attemptstillinprogress'] = 'Attempt still in progress';
 $string['attemptsunlimited'] = 'Unlimited attempts';
 $string['back'] = 'Back to preview question';
 $string['backtocourse'] = 'Back to the course';
