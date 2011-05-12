@@ -25,6 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2010122304;   // The (date) version of this module
-$module->requires = 2010080300;   // Requires this Moodle version
+$module->version  = 2011051250;   // The (date) version of this module
+$module->requires = 2011051212;   // Requires this Moodle version
 $module->cron     = 0;            // How often should cron check this module (seconds)?

@@ -154,8 +154,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $behaviours = question_engine::get_behaviour_options($currentbehaviour);
         $mform->addElement('select', 'preferredbehaviour', get_string('howquestionsbehave', 'question'), $behaviours);
         $mform->addHelpButton('preferredbehaviour', 'howquestionsbehave', 'question');
-        $mform->setAdvanced('preferredbehaviour', $CFG->quiz_fix_preferredbehaviour);
-        $mform->setDefault('preferredbehaviour', $CFG->quiz_preferredbehaviour);
+        $mform->setDefault('preferredbehaviour', $quizconfig->preferredbehaviour);
 
     /// Each attempt builds on last.
         $mform->addElement('selectyesno', 'attemptonlast', get_string('eachattemptbuildsonthelast', 'quiz'));

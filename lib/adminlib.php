@@ -3763,6 +3763,35 @@ class admin_setting_special_calendar_weekend extends admin_setting {
 
 
 /**
+ * Admin setting that allows a user to pick a behaviour.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_question_behaviour extends admin_setting_configselect {
+    /**
+     * @param string $name name of config variable
+     * @param string $visiblename display name
+     * @param string $description description
+     * @param string $default default.
+     */
+    public function __construct($name, $visiblename, $description, $default) {
+        parent::__construct($name, $visiblename, $description, $default, NULL);
+    }
+
+    /**
+     * Load list of behaviours as choices
+     * @return bool true => success, false => error.
+     */
+    public function load_choices() {
+        global $CFG;
+        require_once($CFG->dirroot . '/question/engine/lib.php');
+        $this->choices = question_engine::get_archetypal_behaviours();
+        return true;
+    }
+}
+
+
+/**
  * Admin setting that allows a user to pick appropriate roles for something.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

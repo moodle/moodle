@@ -103,15 +103,10 @@ $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/shufflea
         get_string('shufflewithin', 'quiz'), get_string('configshufflewithin', 'quiz'),
         array('value' => 1, 'adv' => false)));
 
-// Adaptive mode.
-$quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/optionflags',
-        get_string('adaptive', 'quiz'), get_string('configadaptive', 'quiz'),
-        array('value' => 1, 'adv' => false)));
-
-// Apply penalties.
-$quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/penaltyscheme',
-        get_string('penaltyscheme', 'quiz'), get_string('configpenaltyscheme', 'quiz'),
-        array('value' => 1, 'adv' => true)));
+// Preferred behaviour.
+$quizsettings->add(new admin_setting_question_behaviour('quiz/preferredbehaviour',
+        get_string('howquestionsbehave', 'question'), get_string('howquestionsbehave_desc', 'quiz'),
+        'deferredfeedback'));
 
 // Each attempt builds on last.
 $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/attemptonlast',

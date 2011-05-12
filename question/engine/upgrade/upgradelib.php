@@ -46,6 +46,8 @@ class question_engine_attempt_upgrader {
     protected $logger;
     /** @var int used by {@link prevent_timeout()}. */
     protected $dotcounter = 0;
+    /** @var progress_bar */
+    protected $progressbar = null;
 
     /**
      * Called before starting to upgrade all the attempts at a particular quiz.
@@ -54,8 +56,16 @@ class question_engine_attempt_upgrader {
      * @param int $quizid the id of the quiz that is about to be processed.
      */
     protected function print_progress($done, $outof, $quizid) {
+        if (is_null($this->progressbar)) {
+            $this->progressbar = new progress_bar('qe2upgrade');
+        }
+
         gc_collect_cycles(); // This was really helpful in PHP 5.2. Perhaps remove.
-        print_progress($done, $outof);
+        $a = new stdClass();
+        $a->done = $done;
+        $a->todo = $outof;
+        $a->info = $quizid;
+        $this->progressbar->update($done, $outof, get_string('upgradingquizattempts', 'quiz', $a));
     }
 
     protected function prevent_timeout() {
@@ -71,7 +81,7 @@ class question_engine_attempt_upgrader {
         global $DB;
         // TODO, if local/qeupgradehelper/ is installed, and defines the right
         // function, use that to get the lest of quizzes instead.
-        return $DB->get_records_menu('quiz', '', '', 'id', 'id,1');
+        return $DB->get_records_menu('quiz', array(), '', 'id', 'id, 1');
     }
 
     public function convert_all_quiz_attempts() {
@@ -273,7 +283,7 @@ class question_engine_attempt_upgrader {
 
     public function get_next_question_session($attempt, moodle_recordset $questionsessionsrs) {
         $qsession = $questionsessionsrs->current();
-
+print_object($qsession); // DONOTCOMMIT
         if (!$qsession || $qsession->attemptid != $attempt->uniqueid) {
             // No more question sessions belonging to this attempt.
             return false;

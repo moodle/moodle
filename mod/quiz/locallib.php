@@ -821,47 +821,6 @@ function quiz_get_grading_option_name($option) {
 /// Other quiz functions ////////////////////////////////////////////////////
 
 /**
- * Upgrade states for an attempt to Moodle 1.5 model
- *
- * Any state that does not yet have its timestamp set to nonzero has not yet been
- * upgraded from Moodle 1.4. The reason these are still around is that for large
- * sites it would have taken too long to upgrade all states at once. This function
- * sets the timestamp field and creates an entry in the question_sessions table.
- * @param object $attempt  The attempt whose states need upgrading
- */
-function quiz_upgrade_states($attempt) {
-    global $DB;
-    // The old quiz model only allowed a single response per quiz attempt so that there will be
-    // only one state record per question for this attempt.
-
-    // We set the timestamp of all states to the timemodified field of the attempt.
-    $DB->execute("UPDATE {question_states} SET timestamp = ? WHERE attempt = ?",
-            array($attempt->timemodified, $attempt->uniqueid));
-
-    // For each state we create an entry in the question_sessions table, with both newest and
-    // newgraded pointing to this state.
-    // Actually we only do this for states whose question is actually listed in $attempt->layout.
-    // We do not do it for states associated to wrapped questions like for example the questions
-    // used by a RANDOM question
-    $session = new stdClass();
-    $session->attemptid = $attempt->uniqueid;
-    $questionlist = quiz_questions_in_quiz($attempt->layout);
-    $params = array($attempt->uniqueid);
-    list($usql, $question_params) = $DB->get_in_or_equal(explode(',', $questionlist));
-    $params = array_merge($params, $question_params);
-
-    if ($questionlist and $states = $DB->get_records_select('question_states',
-            "attempt = ? AND question $usql", $params)) {
-        foreach ($states as $state) {
-            $session->newgraded = $state->id;
-            $session->newest = $state->id;
-            $session->questionid = $state->question;
-            $DB->insert_record('question_sessions', $session, false);
-        }
-    }
-}
-
-/**
  * @param object $quiz the quiz.
  * @param int $cmid the course_module object for this quiz.
  * @param object $question the question.

@@ -374,12 +374,6 @@ class quiz_attempt {
     protected static function create_helper($conditions) {
         global $DB;
 
-        // TODO deal with the issue that makes this necessary.
-        // if (!$DB->record_exists('question_sessions', array('attemptid' => $attempt->uniqueid))) {
-        //     // this attempt has not yet been upgraded to the new model
-        //     quiz_upgrade_states($attempt);
-        // }
-
         $attempt = $DB->get_record('quiz_attempts', $conditions, '*', MUST_EXIST);
         $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz), '*', MUST_EXIST);
         $course = $DB->get_record('course', array('id' => $quiz->course), '*', MUST_EXIST);

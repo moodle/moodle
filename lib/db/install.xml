@@ -1279,9 +1279,9 @@
         <FIELD NAME="questiontext" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="questiontextformat"/>
         <FIELD NAME="questiontextformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="questiontext" NEXT="generalfeedback"/>
         <FIELD NAME="generalfeedback" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="to store the question feedback" PREVIOUS="questiontextformat" NEXT="generalfeedbackformat"/>
-        <FIELD NAME="generalfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="generalfeedback" NEXT="defaultgrade"/>
-        <FIELD NAME="defaultgrade" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" DECIMALS="7" PREVIOUS="generalfeedbackformat" NEXT="penalty"/>
-        <FIELD NAME="penalty" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="false" DEFAULT="0.1" SEQUENCE="false" DECIMALS="7" PREVIOUS="defaultgrade" NEXT="qtype"/>
+        <FIELD NAME="generalfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="generalfeedback" NEXT="defaultmark"/>
+        <FIELD NAME="defaultmark" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" DECIMALS="7" PREVIOUS="generalfeedbackformat" NEXT="penalty"/>
+        <FIELD NAME="penalty" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="false" DEFAULT="0.1" SEQUENCE="false" DECIMALS="7" PREVIOUS="defaultmark" NEXT="qtype"/>
         <FIELD NAME="qtype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" PREVIOUS="penalty" NEXT="length"/>
         <FIELD NAME="length" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="qtype" NEXT="stamp"/>
         <FIELD NAME="stamp" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="length" NEXT="version"/>
@@ -1300,7 +1300,7 @@
         <KEY NAME="modifiedby" TYPE="foreign" FIELDS="modifiedby" REFTABLE="user" REFFIELDS="id" COMMENT="foreign (modifiedby) references user (id)" PREVIOUS="createdby"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="question_answers" COMMENT="Answers, with a fractional grade (0-1) and feedback" PREVIOUS="question" NEXT="question_attempts">
+    <TABLE NAME="question_answers" COMMENT="Answers, with a fractional grade (0-1) and feedback" PREVIOUS="question" NEXT="question_hints">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="question"/>
         <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="answer"/>
@@ -1315,16 +1315,91 @@
         <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="question_attempts" COMMENT="Student attempts. This table gets extended by the modules" PREVIOUS="question_answers" NEXT="question_states">
+    <TABLE NAME="question_hints" COMMENT="Stores the the part of the question definition that gives different feedback after each try in interactive and similar behaviours." PREVIOUS="question_answers" NEXT="question_usages">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="modulename"/>
-        <FIELD NAME="modulename" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="quiz" SEQUENCE="false" PREVIOUS="id"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="questionid"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="hint"/>
+        <FIELD NAME="hint" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" COMMENT="The text of the feedback to be given." PREVIOUS="questionid" NEXT="shownumcorrect"/>
+        <FIELD NAME="shownumcorrect" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Whether the feedback should include a message about how many things the student got right. This is only applicable to certain question types (for example matching or multiple choice multiple-response)." PREVIOUS="hint" NEXT="clearwrong"/>
+        <FIELD NAME="clearwrong" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Whether any wrong choices should be cleared before the next try. Whether this is applicable, and what it means, depends on the question type, as with the shownumright option." PREVIOUS="shownumcorrect" NEXT="options"/>
+        <FIELD NAME="options" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="A space for any other question-type specific options." PREVIOUS="clearwrong"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="questionid"/>
+        <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="question_states" COMMENT="Stores user responses to an attempt, and percentage grades" PREVIOUS="question_attempts" NEXT="question_sessions">
+    <TABLE NAME="question_usages" COMMENT="This table's main purpose it to assign a unique id to each attempt at a set of questions by some part of Moodle. A question usage is made up of a number of question_attempts." PREVIOUS="question_hints" NEXT="question_attempts">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="contextid"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Every question usage must be associated with some context." PREVIOUS="id" NEXT="component"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The plugin this attempt belongs to, e.g. 'mod_quiz', 'block_questionoftheday', 'filter_embedquestion'." PREVIOUS="contextid" NEXT="preferredbehaviour"/>
+        <FIELD NAME="preferredbehaviour" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The archetypal behaviour that should be used for question attempts in this usage." PREVIOUS="component"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="contextid"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="question_attempts" COMMENT="Each row here corresponds to an attempt at one question, as part of a question_usage. A question_attempt will have some question_attempt_steps" PREVIOUS="question_usages" NEXT="question_attempt_steps">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="questionusageid"/>
+        <FIELD NAME="questionusageid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key, references question_usages.id" PREVIOUS="id" NEXT="slot"/>
+        <FIELD NAME="slot" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Used to number the questions in one attempt sequentially." PREVIOUS="questionusageid" NEXT="behaviour"/>
+        <FIELD NAME="behaviour" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the question behaviour that is managing this question attempt." PREVIOUS="slot" NEXT="questionid"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The id of the question being attempted. Foreign key references question.id." PREVIOUS="behaviour" NEXT="maxmark"/>
+        <FIELD NAME="maxmark" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" DECIMALS="7" COMMENT="The grade this question is marked out of in this attempt." PREVIOUS="questionid" NEXT="minfraction"/>
+        <FIELD NAME="minfraction" TYPE="number" LENGTH="12" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DECIMALS="7" COMMENT="Some questions can award negative marks. This indicates the most negative mark that can be awarded, on the faction scale where the maximum positive mark is 1." PREVIOUS="maxmark" NEXT="flagged"/>
+        <FIELD NAME="flagged" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether this question has been flagged within the attempt." PREVIOUS="minfraction" NEXT="questionsummary"/>
+        <FIELD NAME="questionsummary" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="If this question uses randomisation, it should set this field to summarise what random version the student actually saw. This is a human-readable textual summary of the student's response which might, for example, be used in a report." PREVIOUS="flagged" NEXT="rightanswer"/>
+        <FIELD NAME="rightanswer" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="This is a human-readable textual summary of the right answer to this question. Might be used, for example on the quiz preview, to help people who are testing the question. Or might be used in reports." PREVIOUS="questionsummary" NEXT="responsesummary"/>
+        <FIELD NAME="responsesummary" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="This is a textual summary of the student's response (basically what you would expect to in the Quiz responses report)." PREVIOUS="rightanswer" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The time this record was last changed." PREVIOUS="responsesummary"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="questionid"/>
+        <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id" PREVIOUS="primary" NEXT="questionusageid"/>
+        <KEY NAME="questionusageid" TYPE="foreign" FIELDS="questionusageid" REFTABLE="question_usages" REFFIELDS="id" PREVIOUS="questionid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="questionusageid-slot" UNIQUE="true" FIELDS="questionusageid, slot"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="question_attempt_steps" COMMENT="Stores one step in in a question attempt. As well as the data here, the step will have some data in the question_attempt_step_data table." PREVIOUS="question_attempts" NEXT="question_attempt_step_data">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="questionattemptid"/>
+        <FIELD NAME="questionattemptid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key, references question_attempt.id" PREVIOUS="id" NEXT="sequencenumber"/>
+        <FIELD NAME="sequencenumber" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Numbers the steps in a question attempt sequentially." PREVIOUS="questionattemptid" NEXT="state"/>
+        <FIELD NAME="state" TYPE="char" LENGTH="13" NOTNULL="true" SEQUENCE="false" COMMENT="One of the constants defined by the question_state class, giving the state of the question at the end of this step." PREVIOUS="sequencenumber" NEXT="fraction"/>
+        <FIELD NAME="fraction" TYPE="number" LENGTH="12" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="7" COMMENT="The grade for this question, when graded out of 1. Needs to be multiplied by question_attempt.maxmark to get the actual mark for the question." PREVIOUS="state" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Time-stamp of the action that lead to this state being created." PREVIOUS="fraction" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The user whose action lead to this state being created." PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="questionattemptid"/>
+        <KEY NAME="questionattemptid" TYPE="foreign" FIELDS="questionattemptid" REFTABLE="question_attempts" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="questionattemptid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="questionattemptid-sequencenumber" UNIQUE="true" FIELDS="questionattemptid, sequencenumber"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="question_attempt_step_data" COMMENT="Each question_attempt_step has an associative array of the data that was submitted by the user in the POST request. It can also contain extra data from the question type or behaviour to avoid re-computation. The convention is that names belonging to the behaviour start with -, and cached values added to the submitted data start with _, or _-" PREVIOUS="question_attempt_steps" NEXT="question_states">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="attemptstepid"/>
+        <FIELD NAME="attemptstepid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key, references question_attempt_steps.id" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The name of this bit of data." PREVIOUS="attemptstepid" NEXT="value"/>
+        <FIELD NAME="value" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="The corresponding value" PREVIOUS="name"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="attemptstepid"/>
+        <KEY NAME="attemptstepid" TYPE="foreign" FIELDS="attemptstepid" REFTABLE="question_attempt_steps" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="attemptstepid-name" UNIQUE="true" FIELDS="attemptstepid, name"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="question_states" COMMENT="Stores user responses to an attempt, and percentage grades" PREVIOUS="question_attempt_step_data" NEXT="question_sessions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="attempt"/>
         <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="question"/>
