@@ -75,8 +75,8 @@
             foreach ($messageuser as $userid) {
                 $senduser = $DB->get_record('user', array('id'=>$userid));
                 $eventdata = new stdClass();
-                $eventdata->name             = 'feedback';
-                $eventdata->component        = 'mod';
+                $eventdata->name             = 'message';
+                $eventdata->component        = 'mod_feedback';
                 $eventdata->userfrom         = $USER;
                 $eventdata->userto           = $senduser;
                 $eventdata->subject          = $subject;
