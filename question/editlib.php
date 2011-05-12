@@ -1697,7 +1697,7 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
  * Required for legacy reasons. Was originally global then changed to class static
  * as of Moodle 2.0
  */
-$QUESTION_EDITTABCAPS = question_edit_contexts::$CAPS;
+$QUESTION_EDITTABCAPS = question_edit_contexts::$caps;
 
 /**
  * Make sure user is logged in as required in this context.

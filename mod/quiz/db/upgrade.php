@@ -806,13 +806,13 @@ function xmldb_quiz_upgrade($oldversion) {
     define('QUIZ_OLD_OPEN',        0x3c00fc0);
     define('QUIZ_OLD_CLOSED',      0x3c03f000);
 
-    define('QUIZ_OLD_RESPONSES',       1*0x1041); // Show responses
-    define('QUIZ_OLD_SCORES',          2*0x1041); // Show scores
-    define('QUIZ_OLD_FEEDBACK',        4*0x1041); // Show question feedback
-    define('QUIZ_OLD_ANSWERS',         8*0x1041); // Show correct answers
-    define('QUIZ_OLD_SOLUTIONS',      16*0x1041); // Show solutions
-    define('QUIZ_OLD_GENERALFEEDBACK',32*0x1041); // Show question general feedback
-    define('QUIZ_OLD_OVERALLFEEDBACK', 1*0x4440000); // Show quiz overall feedback
+    define('QUIZ_OLD_RESPONSES',        1*0x1041); // Show responses
+    define('QUIZ_OLD_SCORES',           2*0x1041); // Show scores
+    define('QUIZ_OLD_FEEDBACK',         4*0x1041); // Show question feedback
+    define('QUIZ_OLD_ANSWERS',          8*0x1041); // Show correct answers
+    define('QUIZ_OLD_SOLUTIONS',       16*0x1041); // Show solutions
+    define('QUIZ_OLD_GENERALFEEDBACK', 32*0x1041); // Show question general feedback
+    define('QUIZ_OLD_OVERALLFEEDBACK',  1*0x4440000); // Show quiz overall feedback
 
     // Copy the old review settings
     if ($oldversion < 2011051214) {
@@ -820,13 +820,13 @@ function xmldb_quiz_upgrade($oldversion) {
             $DB->execute("
             UPDATE {quiz}
             SET reviewattempt = " . $DB->sql_bitor($DB->sql_bitor(
-                    QUIZ_NEW_DURING,
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_RESPONSES) .
-                        ' <> 0 THEN ' . QUIZ_NEW_IMMEDIATELY_AFTER . ' ELSE 0 END'), $DB->sql_bitor(
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_OPEN & QUIZ_OLD_RESPONSES) .
-                        ' <> 0 THEN ' . QUIZ_NEW_LATER_WHILE_OPEN . ' ELSE 0 END',
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_CLOSED & QUIZ_OLD_RESPONSES) .
-                        ' <> 0 THEN ' . QUIZ_NEW_AFTER_CLOSE . ' ELSE 0 END')) . "
+                QUIZ_NEW_DURING,
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_RESPONSES) .
+                    ' <> 0 THEN ' . QUIZ_NEW_IMMEDIATELY_AFTER . ' ELSE 0 END'), $DB->sql_bitor(
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_OPEN & QUIZ_OLD_RESPONSES) .
+                    ' <> 0 THEN ' . QUIZ_NEW_LATER_WHILE_OPEN . ' ELSE 0 END',
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_CLOSED & QUIZ_OLD_RESPONSES) .
+                    ' <> 0 THEN ' . QUIZ_NEW_AFTER_CLOSE . ' ELSE 0 END')) . "
             ");
         }
 
@@ -839,13 +839,13 @@ function xmldb_quiz_upgrade($oldversion) {
             $DB->execute("
             UPDATE {quiz}
             SET reviewcorrectness = " . $DB->sql_bitor($DB->sql_bitor(
-                    QUIZ_NEW_DURING,
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_SCORES) .
-                        ' <> 0 THEN ' . QUIZ_NEW_IMMEDIATELY_AFTER . ' ELSE 0 END'), $DB->sql_bitor(
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_OPEN & QUIZ_OLD_SCORES) .
-                        ' <> 0 THEN ' . QUIZ_NEW_LATER_WHILE_OPEN . ' ELSE 0 END',
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_CLOSED & QUIZ_OLD_SCORES) .
-                        ' <> 0 THEN ' . QUIZ_NEW_AFTER_CLOSE . ' ELSE 0 END')) . "
+                QUIZ_NEW_DURING,
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_SCORES) .
+                    ' <> 0 THEN ' . QUIZ_NEW_IMMEDIATELY_AFTER . ' ELSE 0 END'), $DB->sql_bitor(
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_OPEN & QUIZ_OLD_SCORES) .
+                    ' <> 0 THEN ' . QUIZ_NEW_LATER_WHILE_OPEN . ' ELSE 0 END',
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_CLOSED & QUIZ_OLD_SCORES) .
+                    ' <> 0 THEN ' . QUIZ_NEW_AFTER_CLOSE . ' ELSE 0 END')) . "
             ");
         }
 
@@ -858,13 +858,13 @@ function xmldb_quiz_upgrade($oldversion) {
             $DB->execute("
             UPDATE {quiz}
             SET reviewmarks = " . $DB->sql_bitor($DB->sql_bitor(
-                    QUIZ_NEW_DURING,
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_SCORES) .
-                        ' <> 0 THEN ' . QUIZ_NEW_IMMEDIATELY_AFTER . ' ELSE 0 END'), $DB->sql_bitor(
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_OPEN & QUIZ_OLD_SCORES) .
-                        ' <> 0 THEN ' . QUIZ_NEW_LATER_WHILE_OPEN . ' ELSE 0 END',
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_CLOSED & QUIZ_OLD_SCORES) .
-                        ' <> 0 THEN ' . QUIZ_NEW_AFTER_CLOSE . ' ELSE 0 END')) . "
+                QUIZ_NEW_DURING,
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_SCORES) .
+                    ' <> 0 THEN ' . QUIZ_NEW_IMMEDIATELY_AFTER . ' ELSE 0 END'), $DB->sql_bitor(
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_OPEN & QUIZ_OLD_SCORES) .
+                    ' <> 0 THEN ' . QUIZ_NEW_LATER_WHILE_OPEN . ' ELSE 0 END',
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_CLOSED & QUIZ_OLD_SCORES) .
+                    ' <> 0 THEN ' . QUIZ_NEW_AFTER_CLOSE . ' ELSE 0 END')) . "
             ");
         }
 
@@ -877,14 +877,14 @@ function xmldb_quiz_upgrade($oldversion) {
             $DB->execute("
             UPDATE {quiz}
             SET reviewspecificfeedback = " . $DB->sql_bitor($DB->sql_bitor(
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_FEEDBACK) .
-                        ' <> 0 THEN ' . QUIZ_NEW_DURING . ' ELSE 0 END',
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_FEEDBACK) .
-                        ' <> 0 THEN ' . QUIZ_NEW_IMMEDIATELY_AFTER . ' ELSE 0 END'), $DB->sql_bitor(
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_OPEN & QUIZ_OLD_FEEDBACK) .
-                        ' <> 0 THEN ' . QUIZ_NEW_LATER_WHILE_OPEN . ' ELSE 0 END',
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_CLOSED & QUIZ_OLD_FEEDBACK) .
-                        ' <> 0 THEN ' . QUIZ_NEW_AFTER_CLOSE . ' ELSE 0 END')) . "
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_FEEDBACK) .
+                    ' <> 0 THEN ' . QUIZ_NEW_DURING . ' ELSE 0 END',
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_FEEDBACK) .
+                    ' <> 0 THEN ' . QUIZ_NEW_IMMEDIATELY_AFTER . ' ELSE 0 END'), $DB->sql_bitor(
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_OPEN & QUIZ_OLD_FEEDBACK) .
+                    ' <> 0 THEN ' . QUIZ_NEW_LATER_WHILE_OPEN . ' ELSE 0 END',
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_CLOSED & QUIZ_OLD_FEEDBACK) .
+                    ' <> 0 THEN ' . QUIZ_NEW_AFTER_CLOSE . ' ELSE 0 END')) . "
             ");
         }
 
@@ -897,14 +897,14 @@ function xmldb_quiz_upgrade($oldversion) {
             $DB->execute("
             UPDATE {quiz}
             SET reviewgeneralfeedback = " . $DB->sql_bitor($DB->sql_bitor(
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_GENERALFEEDBACK) .
-                        ' <> 0 THEN ' . QUIZ_NEW_DURING . ' ELSE 0 END',
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_GENERALFEEDBACK) .
-                        ' <> 0 THEN ' . QUIZ_NEW_IMMEDIATELY_AFTER . ' ELSE 0 END'), $DB->sql_bitor(
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_OPEN & QUIZ_OLD_GENERALFEEDBACK) .
-                        ' <> 0 THEN ' . QUIZ_NEW_LATER_WHILE_OPEN . ' ELSE 0 END',
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_CLOSED & QUIZ_OLD_GENERALFEEDBACK) .
-                        ' <> 0 THEN ' . QUIZ_NEW_AFTER_CLOSE . ' ELSE 0 END')) . "
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_GENERALFEEDBACK) .
+                    ' <> 0 THEN ' . QUIZ_NEW_DURING . ' ELSE 0 END',
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_GENERALFEEDBACK) .
+                    ' <> 0 THEN ' . QUIZ_NEW_IMMEDIATELY_AFTER . ' ELSE 0 END'), $DB->sql_bitor(
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_OPEN & QUIZ_OLD_GENERALFEEDBACK) .
+                    ' <> 0 THEN ' . QUIZ_NEW_LATER_WHILE_OPEN . ' ELSE 0 END',
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_CLOSED & QUIZ_OLD_GENERALFEEDBACK) .
+                    ' <> 0 THEN ' . QUIZ_NEW_AFTER_CLOSE . ' ELSE 0 END')) . "
             ");
         }
 
@@ -917,14 +917,14 @@ function xmldb_quiz_upgrade($oldversion) {
             $DB->execute("
             UPDATE {quiz}
             SET reviewrightanswer = " . $DB->sql_bitor($DB->sql_bitor(
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_ANSWERS) .
-                        ' <> 0 THEN ' . QUIZ_NEW_DURING . ' ELSE 0 END',
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_ANSWERS) .
-                        ' <> 0 THEN ' . QUIZ_NEW_IMMEDIATELY_AFTER . ' ELSE 0 END'), $DB->sql_bitor(
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_OPEN & QUIZ_OLD_ANSWERS) .
-                        ' <> 0 THEN ' . QUIZ_NEW_LATER_WHILE_OPEN . ' ELSE 0 END',
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_CLOSED & QUIZ_OLD_ANSWERS) .
-                        ' <> 0 THEN ' . QUIZ_NEW_AFTER_CLOSE . ' ELSE 0 END')) . "
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_ANSWERS) .
+                    ' <> 0 THEN ' . QUIZ_NEW_DURING . ' ELSE 0 END',
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_ANSWERS) .
+                    ' <> 0 THEN ' . QUIZ_NEW_IMMEDIATELY_AFTER . ' ELSE 0 END'), $DB->sql_bitor(
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_OPEN & QUIZ_OLD_ANSWERS) .
+                    ' <> 0 THEN ' . QUIZ_NEW_LATER_WHILE_OPEN . ' ELSE 0 END',
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_CLOSED & QUIZ_OLD_ANSWERS) .
+                    ' <> 0 THEN ' . QUIZ_NEW_AFTER_CLOSE . ' ELSE 0 END')) . "
             ");
         }
 
@@ -937,13 +937,13 @@ function xmldb_quiz_upgrade($oldversion) {
             $DB->execute("
             UPDATE {quiz}
             SET reviewoverallfeedback = " . $DB->sql_bitor($DB->sql_bitor(
-                    0,
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_OVERALLFEEDBACK) .
-                        ' <> 0 THEN ' . QUIZ_NEW_IMMEDIATELY_AFTER . ' ELSE 0 END'), $DB->sql_bitor(
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_OPEN & QUIZ_OLD_OVERALLFEEDBACK) .
-                        ' <> 0 THEN ' . QUIZ_NEW_LATER_WHILE_OPEN . ' ELSE 0 END',
-                    'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_CLOSED & QUIZ_OLD_OVERALLFEEDBACK) .
-                        ' <> 0 THEN ' . QUIZ_NEW_AFTER_CLOSE . ' ELSE 0 END')) . "
+                0,
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_OVERALLFEEDBACK) .
+                    ' <> 0 THEN ' . QUIZ_NEW_IMMEDIATELY_AFTER . ' ELSE 0 END'), $DB->sql_bitor(
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_OPEN & QUIZ_OLD_OVERALLFEEDBACK) .
+                    ' <> 0 THEN ' . QUIZ_NEW_LATER_WHILE_OPEN . ' ELSE 0 END',
+                'CASE WHEN ' . $DB->sql_bitand('review', QUIZ_OLD_CLOSED & QUIZ_OLD_OVERALLFEEDBACK) .
+                    ' <> 0 THEN ' . QUIZ_NEW_AFTER_CLOSE . ' ELSE 0 END')) . "
             ");
         }
 
@@ -1048,7 +1048,7 @@ function xmldb_quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2011051225) {
-       // Define table quiz_report to be renamed to quiz_reports
+        // Define table quiz_report to be renamed to quiz_reports
         $table = new xmldb_table('quiz_report');
 
         // Launch rename table for quiz_reports

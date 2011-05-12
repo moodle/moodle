@@ -52,7 +52,8 @@ function quiz_remove_question($quiz, $questionid) {
     unset($questionids[$key]);
     $quiz->questions = implode(',', $questionids);
     $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
-    $DB->delete_records('quiz_question_instances', array('quiz' => $quiz->instance, 'question' => $questionid));
+    $DB->delete_records('quiz_question_instances',
+            array('quiz' => $quiz->instance, 'question' => $questionid));
 }
 
 /**
@@ -86,7 +87,8 @@ function quiz_delete_empty_page($layout, $index) {
  * @param int $id The id of the question to be added
  * @param object $quiz The extended quiz object as used by edit.php
  *      This is updated by this function
- * @param int $page Which page in quiz to add the question on. If 0 (default), add at the end
+ * @param int $page Which page in quiz to add the question on. If 0 (default),
+ *      add at the end
  * @return bool false if the question was already in the quiz
  */
 function quiz_add_quiz_question($id, $quiz, $page = 0) {
@@ -150,7 +152,8 @@ function quiz_add_quiz_question($id, $quiz, $page = 0) {
     $DB->insert_record('quiz_question_instances', $instance);
 }
 
-function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number, $includesubcategories) {
+function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
+        $includesubcategories) {
     global $DB;
 
     $category = $DB->get_record('question_categories', array('id' => $categoryid));
@@ -168,7 +171,10 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number, $inc
             WHERE qtype = 'random'
                 AND category = ?
                 AND " . $DB->sql_compare_text('questiontext') . " = ?
-                AND NOT EXISTS (SELECT * FROM {quiz_question_instances} WHERE question = q.id)
+                AND NOT EXISTS (
+                        SELECT *
+                          FROM {quiz_question_instances}
+                         WHERE question = q.id)
             ORDER BY id", array($category->id, $includesubcategories))) {
         // Take as many of these as needed.
         while (($existingquestion = array_shift($existingquestions)) && $number > 0) {
@@ -464,7 +470,8 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
             $fakequestion->id = 0;
             $fakequestion->qtype = 'missingtype';
             $fakequestion->name = get_string('deletedquestion', 'qtype_missingtype');
-            $fakequestion->questiontext = '<p>' . get_string('deletedquestion', 'qtype_missing') . '</p>';
+            $fakequestion->questiontext = '<p>' .
+                    get_string('deletedquestion', 'qtype_missing') . '</p>';
             $fakequestion->length = 0;
             $questions[$qnum] = $fakequestion;
             $quiz->grades[$qnum] = 0;
@@ -491,9 +498,11 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                 echo '</div>';
                 if ($allowdelete) {
                     echo '<div class="quizpagedelete">';
-                    echo $OUTPUT->action_icon($pageurl->out(true, array('deleteemptypage' => $count - 1, 'sesskey'=>sesskey())),
+                    echo $OUTPUT->action_icon($pageurl->out(true,
+                            array('deleteemptypage' => $count - 1, 'sesskey'=>sesskey())),
                             new pix_icon('t/delete', $strremove),
-                            new component_action('click', 'M.core_scroll_manager.save_scroll_action'),
+                            new component_action('click',
+                                    'M.core_scroll_manager.save_scroll_action'),
                             array('title' => $strremove));
                     echo '</div>';
                 }
@@ -511,77 +520,84 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
                 //this is an actual question
 
                 /* Display question start */
-?>
+                ?>
 <div class="question">
     <div class="questioncontainer <?php echo $question->qtype; ?>">
         <div class="qnum">
-        <?php
-            $reordercheckbox = '';
-            $reordercheckboxlabel = '';
-            $reordercheckboxlabelclose = '';
-            if ($reordertool) {
-                $reordercheckbox = '<input type="checkbox" name="s' . $question->id .
-                    '" id="s' . $question->id . '" />';
-                $reordercheckboxlabel = '<label for="s' . $question->id . '">';
-                $reordercheckboxlabelclose = '</label>';
-            }
-            if (!$quiz->shufflequestions) {
-                // Print and increment question number
-                $questioncountstring = '';
-                if ($questioncount>999 || ($reordertool && $questioncount>99)) {
-                    $questioncountstring =
-                            "$reordercheckboxlabel<small>$questioncount</small>" .
-                            $reordercheckboxlabelclose . $reordercheckbox;
-                } else {
-                    $questioncountstring = $reordercheckboxlabel . $questioncount .
-                            $reordercheckboxlabelclose . $reordercheckbox;
+                <?php
+                $reordercheckbox = '';
+                $reordercheckboxlabel = '';
+                $reordercheckboxlabelclose = '';
+                if ($reordertool) {
+                    $reordercheckbox = '<input type="checkbox" name="s' . $question->id .
+                        '" id="s' . $question->id . '" />';
+                    $reordercheckboxlabel = '<label for="s' . $question->id . '">';
+                    $reordercheckboxlabelclose = '</label>';
                 }
-                echo $questioncountstring;
-                $qno += $question->length;
-            } else {
-                echo "$reordercheckboxlabel ? $reordercheckboxlabelclose" .
-                        " $reordercheckbox";
-            }
+                if (!$quiz->shufflequestions) {
+                    // Print and increment question number
+                    $questioncountstring = '';
+                    if ($questioncount>999 || ($reordertool && $questioncount>99)) {
+                        $questioncountstring =
+                                "$reordercheckboxlabel<small>$questioncount</small>" .
+                                $reordercheckboxlabelclose . $reordercheckbox;
+                    } else {
+                        $questioncountstring = $reordercheckboxlabel . $questioncount .
+                                $reordercheckboxlabelclose . $reordercheckbox;
+                    }
+                    echo $questioncountstring;
+                    $qno += $question->length;
+                } else {
+                    echo "$reordercheckboxlabel ? $reordercheckboxlabelclose" .
+                            " $reordercheckbox";
+                }
 
-            ?>
+                ?>
         </div>
         <div class="content">
             <div class="questioncontrols">
                 <?php
-            if ($count != 0) {
-                if (!$hasattempts) {
-                    $upbuttonclass = '';
-                    if ($count >= $lastindex - 1) {
-                        $upbuttonclass = 'upwithoutdown';
+                if ($count != 0) {
+                    if (!$hasattempts) {
+                        $upbuttonclass = '';
+                        if ($count >= $lastindex - 1) {
+                            $upbuttonclass = 'upwithoutdown';
+                        }
+                        echo $OUTPUT->action_icon($pageurl->out(true,
+                                array('up' => $question->id, 'sesskey'=>sesskey())),
+                                new pix_icon('t/up', $strmoveup),
+                                new component_action('click',
+                                        'M.core_scroll_manager.save_scroll_action'),
+                                array('title' => $strmoveup));
                     }
-                    echo $OUTPUT->action_icon($pageurl->out(true, array('up' => $question->id, 'sesskey'=>sesskey())),
-                            new pix_icon('t/up', $strmoveup),
-                            new component_action('click', 'M.core_scroll_manager.save_scroll_action'),
-                            array('title' => $strmoveup));
-                }
 
-            }
-            if ($count < $lastindex - 1) {
-                if (!$hasattempts) {
-                    echo $OUTPUT->action_icon($pageurl->out(true, array('down' => $question->id, 'sesskey'=>sesskey())),
-                            new pix_icon('t/down', $strmovedown),
-                            new component_action('click', 'M.core_scroll_manager.save_scroll_action'),
-                            array('title' => $strmovedown));
                 }
-            }
-            if ($allowdelete && (empty($question->id) || question_has_capability_on($question, 'use', $question->category))) {
-            // remove from quiz, not question delete.
-                if (!$hasattempts) {
-                    echo $OUTPUT->action_icon($pageurl->out(true, array('remove' => $question->id, 'sesskey'=>sesskey())),
-                            new pix_icon('t/delete', $strremove),
-                            new component_action('click', 'M.core_scroll_manager.save_scroll_action'),
-                            array('title' => $strremove));
+                if ($count < $lastindex - 1) {
+                    if (!$hasattempts) {
+                        echo $OUTPUT->action_icon($pageurl->out(true,
+                                array('down' => $question->id, 'sesskey'=>sesskey())),
+                                new pix_icon('t/down', $strmovedown),
+                                new component_action('click',
+                                        'M.core_scroll_manager.save_scroll_action'),
+                                array('title' => $strmovedown));
+                    }
                 }
-            }
+                if ($allowdelete && (empty($question->id) ||
+                        question_has_capability_on($question, 'use', $question->category))) {
+                    // remove from quiz, not question delete.
+                    if (!$hasattempts) {
+                        echo $OUTPUT->action_icon($pageurl->out(true,
+                                array('remove' => $question->id, 'sesskey'=>sesskey())),
+                                new pix_icon('t/delete', $strremove),
+                                new component_action('click',
+                                        'M.core_scroll_manager.save_scroll_action'),
+                                array('title' => $strremove));
+                    }
+                }
                 ?>
             </div><?php
-            if ($question->qtype != 'description' && !$reordertool) {
-                ?>
+                if ($question->qtype != 'description' && !$reordertool) {
+                    ?>
 <div class="points">
 <form method="post" action="edit.php" class="quizsavegradesform"><div>
     <fieldset class="invisiblefieldset" style="display: block;">
@@ -589,66 +605,71 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
     <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
     <?php echo html_writer::input_hidden_params($pageurl); ?>
     <input type="hidden" name="savechanges" value="save" />
-        <?php
-            echo '<input type="text" name="g' . $question->id . '" id="inputq' . $question->id .
-                    '" size="' . ($quiz->decimalpoints + 2) . '" value="' . (0 + $quiz->grades[$qnum]) .
-                    '" tabindex="' . ($lastindex + $qno) . '" />';
-            ?>
+                    <?php
+                    echo '<input type="text" name="g' . $question->id .
+                            '" id="inputq' . $question->id .
+                            '" size="' . ($quiz->decimalpoints + 2) .
+                            '" value="' . (0 + $quiz->grades[$qnum]) .
+                            '" tabindex="' . ($lastindex + $qno) . '" />';
+                    ?>
         <input type="submit" class="pointssubmitbutton" value="<?php echo $strsave; ?>" />
     </fieldset>
-<?php if ($question->qtype == 'random') {
-    echo '<a href="' . $questionurl->out() . '" class="configurerandomquestion">' . get_string("configurerandomquestion", "quiz") . '</a>';
-}
+                    <?php
+                    if ($question->qtype == 'random') {
+                        echo '<a href="' . $questionurl->out() .
+                                '" class="configurerandomquestion">' .
+                                get_string("configurerandomquestion", "quiz") . '</a>';
+                    }
 
-?>
+                    ?>
 </div>
 </form>
 
             </div>
-<?php
-            } else if ($reordertool) {
-                if ($qnum) {
-                ?>
+                    <?php
+                } else if ($reordertool) {
+                    if ($qnum) {
+                        ?>
 <div class="qorder">
-        <?php
-                    echo '<input type="text" name="o' . $question->id . '" size="2" value="' .
-                            (10*$count + 10) .
-                             '" tabindex="' . ($lastindex + $qno) .
-                             '" />';
-        ?>
+                        <?php
+                        echo '<input type="text" name="o' . $question->id .
+                                '" size="2" value="' . (10*$count + 10) .
+                                '" tabindex="' . ($lastindex + $qno) . '" />';
+                        ?>
 </div>
-<?php
+                        <?php
+                    }
                 }
-            }
-?>
+                ?>
             <div class="questioncontentcontainer">
-<?php
-            if ($question->qtype == 'random') { // it is a random question
-                if (!$reordertool) {
-                    quiz_print_randomquestion($question, $pageurl, $quiz, $quiz_qbanktool);
-                } else {
-                    quiz_print_randomquestion_reordertool($question, $pageurl, $quiz);
+                <?php
+                if ($question->qtype == 'random') { // it is a random question
+                    if (!$reordertool) {
+                        quiz_print_randomquestion($question, $pageurl, $quiz, $quiz_qbanktool);
+                    } else {
+                        quiz_print_randomquestion_reordertool($question, $pageurl, $quiz);
+                    }
+                } else { // it is a single question
+                    if (!$reordertool) {
+                        quiz_print_singlequestion($question, $returnurl, $quiz);
+                    } else {
+                        quiz_print_singlequestion_reordertool($question, $returnurl, $quiz);
+                    }
                 }
-            } else { // it is a single question
-                if (!$reordertool) {
-                    quiz_print_singlequestion($question, $returnurl, $quiz);
-                } else {
-                    quiz_print_singlequestion_reordertool($question, $returnurl, $quiz);
-                }
-            }
                 ?>
             </div>
         </div>
     </div>
 </div>
 
-    <?php
+                <?php
             }
         }
         //a page break: end the existing page.
         if ($qnum == 0) {
             if ($pageopen) {
-                if (!$reordertool && !($quiz->shufflequestions && $count < $questiontotalcount - 1)) {
+                if (!$reordertool && !($quiz->shufflequestions &&
+                        $count < $questiontotalcount - 1)) {
                     quiz_print_pagecontrols($quiz, $pageurl, $pagecount,
                             $hasattempts, $defaultcategoryobj);
                 } else if ($count < $questiontotalcount - 1) {
@@ -661,10 +682,13 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
 
                 if (!$reordertool && !$quiz->shufflequestions) {
                     echo $OUTPUT->container_start('addpage');
-                    $url = new moodle_url($pageurl->out_omit_querystring(), array('cmid' => $quiz->cmid, 'courseid' => $quiz->course, 'addpage' => $count, 'sesskey' => sesskey()));
+                    $url = new moodle_url($pageurl->out_omit_querystring(),
+                            array('cmid' => $quiz->cmid, 'courseid' => $quiz->course,
+                                    'addpage' => $count, 'sesskey' => sesskey()));
                     echo $OUTPUT->single_button($url, get_string('addpagehere', 'quiz'), 'post',
                             array('disabled' => $hasattempts,
-                            'actions' => array(new component_action('click', 'M.core_scroll_manager.save_scroll_action'))));
+                            'actions' => array(new component_action('click',
+                                    'M.core_scroll_manager.save_scroll_action'))));
                     echo $OUTPUT->container_end();
                 }
                 $pageopen = false;
@@ -711,7 +735,8 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts, $defaultc
     $returnurladdtoquiz = str_replace($CFG->wwwroot, '', $returnurladdtoquiz->out(false));
     $newquestionparams = array('returnurl' => $returnurladdtoquiz,
             'cmid' => $quiz->cmid, 'appendqnumstring' => 'addquestion');
-    create_new_question_button($defaultcategoryid, $newquestionparams, get_string('addaquestion', 'quiz'),
+    create_new_question_button($defaultcategoryid, $newquestionparams,
+            get_string('addaquestion', 'quiz'),
             get_string('createquestionandadd', 'quiz'), $hasattempts);
 
     if ($hasattempts) {
@@ -721,14 +746,21 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts, $defaultc
     }
     ?>
     <div class="singlebutton">
-        <form class="randomquestionform" action="<?php echo $CFG->wwwroot; ?>/mod/quiz/addrandom.php" method="get">
+        <form class="randomquestionform" action="<?php echo $CFG->wwwroot;
+                ?>/mod/quiz/addrandom.php" method="get">
             <div>
-                <input type="hidden" class="addonpage_formelement" name="addonpage" value="<?php echo $page; ?>" />
+                <input type="hidden" class="addonpage_formelement" name="addonpage" value="<?php
+                        echo $page; ?>" />
                 <input type="hidden" name="cmid" value="<?php echo $quiz->cmid; ?>" />
                 <input type="hidden" name="courseid" value="<?php echo $quiz->course; ?>" />
-                <input type="hidden" name="category" value="<?php echo $pageurl->param('cat'); ?>" />
-                <input type="hidden" name="returnurl" value="<?php echo s(str_replace($CFG->wwwroot, '', $pageurl->out(false))); ?>" />
-                <input type="submit" id="addrandomdialoglaunch_<?php echo $randombuttoncount; ?>" value="<?php echo get_string('addarandomquestion', 'quiz'); ?>" <?php echo " $disabled"; ?> />
+                <input type="hidden" name="category" value="<?php
+                        echo $pageurl->param('cat'); ?>" />
+                <input type="hidden" name="returnurl" value="<?php
+                        echo s(str_replace($CFG->wwwroot, '', $pageurl->out(false))); ?>" />
+                <input type="submit" id="addrandomdialoglaunch_<?php
+                        echo $randombuttoncount; ?>" value="<?php
+                        echo get_string('addarandomquestion', 'quiz'); ?>" <?php
+                        echo " $disabled"; ?> />
             </div>
         </form>
     </div>
@@ -747,11 +779,13 @@ function quiz_print_pagecontrols($quiz, $pageurl, $page, $hasattempts, $defaultc
  */
 function quiz_print_singlequestion($question, $returnurl, $quiz) {
     echo '<div class="singlequestion">';
-    echo quiz_question_edit_button($quiz->cmid, $question, $returnurl, quiz_question_tostring($question) . ' ');
+    echo quiz_question_edit_button($quiz->cmid, $question, $returnurl,
+            quiz_question_tostring($question) . ' ');
     echo '<span class="questiontype">';
     print_question_icon($question);
     echo ' ' . question_bank::get_qtype_name($question->qtype) . '</span>';
-    echo '<span class="questionpreview">' . quiz_question_preview_button($quiz, $question, true) . '</span>';
+    echo '<span class="questionpreview">' .
+            quiz_question_preview_button($quiz, $question, true) . '</span>';
     echo "</div>\n";
 }
 /**
@@ -767,7 +801,8 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktoo
     global $DB, $OUTPUT;
     echo '<div class="quiz_randomquestion">';
 
-    if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
+    if (!$category = $DB->get_record('question_categories',
+            array('id' => $question->category))) {
         echo $OUTPUT->notification('Random question category not found!');
         return;
     }
@@ -786,8 +821,10 @@ function quiz_print_randomquestion(&$question, &$pageurl, &$quiz, $quiz_qbanktoo
     $linkcategorycontents = ' <a href="' . $openqbankurl . '">' . $strshowcategorycontents . '</a>';
 
     echo '<div class="randomquestioncategory">';
-    echo '<a href="' . $openqbankurl . '" title="' . $strshowcategorycontents . '">' . $category->name . '</a>';
-    echo '<span class="questionpreview">' . quiz_question_preview_button($quiz, $question, true) . '</span>';
+    echo '<a href="' . $openqbankurl . '" title="' . $strshowcategorycontents . '">' .
+            $category->name . '</a>';
+    echo '<span class="questionpreview">' .
+            quiz_question_preview_button($quiz, $question, true) . '</span>';
     echo '</div>';
 
     $questionids = question_bank::get_qtype('random')->get_available_questions_from_category(
@@ -874,7 +911,8 @@ function quiz_print_randomquestion_reordertool(&$question, &$pageurl, &$quiz) {
         echo $OUTPUT->notification('Random question category not found!');
         return;
     }
-    $questioncount = count(question_bank::get_qtype('random')->get_available_questions_from_category(
+    $questioncount = count(question_bank::get_qtype(
+            'random')->get_available_questions_from_category(
             $category->id, $question->questiontext == '1', '0'));
 
     $reordercheckboxlabel = '<label for="s' . $question->id . '">';
@@ -933,7 +971,8 @@ function print_random_option_icon($question) {
  *       If false, show only question name.
  * @param bool $return If true (default), return the output. If false, print it.
  */
-function quiz_question_tostring(&$question, $showicon = false, $showquestiontext = true, $return = true) {
+function quiz_question_tostring($question, $showicon = false,
+        $showquestiontext = true, $return = true) {
     global $COURSE;
     $result = '';
     $result .= '<span class="questionname">';
@@ -1049,7 +1088,8 @@ class quiz_question_bank_view extends question_bank_view {
     }
 
     protected function wanted_columns() {
-        return array('addtoquizaction', 'checkbox', 'qtype', 'questionnametext', 'editaction', 'previewaction');
+        return array('addtoquizaction', 'checkbox', 'qtype', 'questionnametext',
+                'editaction', 'previewaction');
     }
 
     /**
@@ -1097,8 +1137,9 @@ class quiz_question_bank_view extends question_bank_view {
                 $this->baseurl, $cat);
 
         // continues with list of questions
-        $this->display_question_list($this->contexts->having_one_edit_tab_cap($tabname), $this->baseurl, $cat, $this->cm,
-                $recurse, $page, $perpage, $showhidden, $sortorder, $sortorderdecoded, $showquestiontext,
+        $this->display_question_list($this->contexts->having_one_edit_tab_cap($tabname),
+                $this->baseurl, $cat, $this->cm, $recurse, $page,
+                $perpage, $showhidden, $sortorder, $sortorderdecoded, $showquestiontext,
                 $this->contexts->having_cap('moodle/question:add'));
 
         $this->display_options($recurse, $showhidden, $showquestiontext);
@@ -1108,7 +1149,8 @@ class quiz_question_bank_view extends question_bank_view {
     protected function print_choose_category_message($categoryandcontext) {
         global $OUTPUT;
         echo $OUTPUT->box_start('generalbox questionbank');
-        $this->display_category_form($this->contexts->having_one_edit_tab_cap('edit'), $this->baseurl, $categoryandcontext);
+        $this->display_category_form($this->contexts->having_one_edit_tab_cap('edit'),
+                $this->baseurl, $categoryandcontext);
         echo "<p style=\"text-align:center;\"><b>";
         print_string('selectcategoryabove', 'quiz');
         echo "</b></p>";
@@ -1123,19 +1165,25 @@ class quiz_question_bank_view extends question_bank_view {
                 $strcategory;
         echo ': <span class="categorynamefield">';
         echo shorten_text(strip_tags(format_string($category->name)), 60);
-        echo '</span></div><div class="categoryinfofieldcontainer"><span class="categoryinfofield">';
+        echo '</span></div><div class="categoryinfofieldcontainer">' .
+                '<span class="categoryinfofield">';
         echo shorten_text(strip_tags(format_text($category->info, $category->infoformat,
                 $formatoptions, $this->course->id)), 200);
         echo '</span></div></div>';
     }
 
-    protected function display_options($recurse = 1, $showhidden = false, $showquestiontext = false) {
+    protected function display_options($recurse = 1, $showhidden = false,
+            $showquestiontext = false) {
         echo '<form method="get" action="edit.php" id="displayoptions">';
         echo "<fieldset class='invisiblefieldset'>";
-        echo html_writer::input_hidden_params($this->baseurl, array('recurse', 'showhidden', 'showquestiontext'));
-        $this->display_category_form_checkbox('recurse', get_string('includesubcategories', 'question'));
-        $this->display_category_form_checkbox('showhidden', get_string('showhidden', 'question'));
-        echo '<noscript><div class="centerpara"><input type="submit" value="'. get_string('go')  . '" />';
+        echo html_writer::input_hidden_params($this->baseurl,
+                array('recurse', 'showhidden', 'showquestiontext'));
+        $this->display_category_form_checkbox('recurse',
+                get_string('includesubcategories', 'question'));
+        $this->display_category_form_checkbox('showhidden',
+                get_string('showhidden', 'question'));
+        echo '<noscript><div class="centerpara"><input type="submit" value="' .
+                get_string('go') . '" />';
         echo '</div></noscript></fieldset></form>';
     }
 }
@@ -1157,7 +1205,8 @@ function quiz_print_grading_form($quiz, $pageurl, $tabindex) {
     echo '<fieldset class="invisiblefieldset" style="display: block;">';
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />";
     echo html_writer::input_hidden_params($pageurl);
-    $a = '<input type="text" id="inputmaxgrade" name="maxgrade" size="' . ($quiz->decimalpoints + 2) . '" tabindex="' . $tabindex
+    $a = '<input type="text" id="inputmaxgrade" name="maxgrade" size="' .
+            ($quiz->decimalpoints + 2) . '" tabindex="' . $tabindex
          . '" value="' . quiz_format_grade($quiz, $quiz->grade) . '" />';
     echo '<label for="inputmaxgrade">' . get_string('maximumgradex', '', $a) . "</label>";
     echo '<input type="hidden" name="savechanges" value="save" />';
@@ -1176,13 +1225,14 @@ function quiz_print_status_bar($quiz) {
     global $CFG;
     $numberofquestions = quiz_number_of_questions_in_quiz($quiz->questions);
     ?><div class="statusbar"><span class="totalpoints">
-    <?php echo get_string('totalpointsx', 'quiz', quiz_format_grade($quiz, $quiz->sumgrades)) ?></span>
+    <?php echo get_string('totalpointsx', 'quiz',
+            quiz_format_grade($quiz, $quiz->sumgrades)) ?></span>
     | <span class="numberofquestions">
     <?php
     echo get_string('numquestionsx', 'quiz', $numberofquestions);
     ?></span>
     <?php
-// Current status of the quiz, with open an close dates as a tool tip.
+    // Current status of the quiz, with open an close dates as a tool tip.
     $currentstatus = get_string('quizisopen', 'quiz');
     $dates = array();
     $timenow = time();
@@ -1200,7 +1250,8 @@ function quiz_print_status_bar($quiz) {
             print_string('quizisclosed', 'quiz');
         } else {
             $dates[] = get_string('quizcloseson', 'quiz', userdate($quiz->timeclose));
-            $currentstatus = get_string('quizisopenwillclose', 'quiz', userdate($quiz->timeclose, get_string('strftimedatetimeshort', 'langconfig')));
+            $currentstatus = get_string('quizisopenwillclose', 'quiz',
+                    userdate($quiz->timeclose, get_string('strftimedatetimeshort', 'langconfig')));
         }
     }
     if (empty($dates)) {

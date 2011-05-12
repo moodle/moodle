@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -139,12 +138,13 @@ function question_save_qtype_order($neworder, $config = null) {
  * Returns an array of names of activity modules that use this question
  *
  * @deprecated since Moodle 2.1. Use {@link questions_in_use} instead.
-
+ *
  * @param object $questionid
  * @return array of strings
  */
 function question_list_instances($questionid) {
-    throw new coding_exception('question_list_instances has been deprectated. Please use questions_in_use instead.');
+    throw new coding_exception('question_list_instances has been deprectated. ' .
+            'Please use questions_in_use instead.');
 }
 
 /**
@@ -277,21 +277,20 @@ function get_grade_options() {
  * @return mixed either 'fixed' value or false if erro
  */
 function match_grade_options($gradeoptionsfull, $grade, $matchgrades='error') {
-    // if we just need an error...
-    if ($matchgrades=='error') {
-        foreach($gradeoptionsfull as $value => $option) {
+    if ($matchgrades == 'error') {
+        // if we just need an error...
+        foreach ($gradeoptionsfull as $value => $option) {
             // slightly fuzzy test, never check floats for equality :-)
-            if (abs($grade-$value)<0.00001) {
+            if (abs($grade - $value) < 0.00001) {
                 return $grade;
             }
         }
         // didn't find a match so that's an error
         return false;
-    }
-    // work out nearest value
-    else if ($matchgrades=='nearest') {
+    } else if ($matchgrades == 'nearest') {
+        // work out nearest value
         $hownear = array();
-        foreach($gradeoptionsfull as $value => $option) {
+        foreach ($gradeoptionsfull as $value => $option) {
             if ($grade==$value) {
                 return $grade;
             }
@@ -301,8 +300,7 @@ function match_grade_options($gradeoptionsfull, $grade, $matchgrades='error') {
         asort( $hownear, SORT_NUMERIC );
         reset( $hownear );
         return key( $hownear );
-    }
-    else {
+    } else {
         return false;
     }
 }
@@ -314,7 +312,8 @@ function match_grade_options($gradeoptionsfull, $grade, $matchgrades='error') {
  * @return boolean whether any question in this category is in use.
  */
 function question_category_isused($categoryid, $recursive = false) {
-    throw new coding_exception('question_category_isused has been deprectated. Please use question_category_in_use instead.');
+    throw new coding_exception('question_category_isused has been deprectated. ' .
+            'Please use question_category_in_use instead.');
 }
 
 /**
@@ -328,7 +327,8 @@ function question_category_in_use($categoryid, $recursive = false) {
     global $DB;
 
     //Look at each question in the category
-    if ($questions = $DB->get_records_menu('question', array('category' => $categoryid), '', 'id,1')) {
+    if ($questions = $DB->get_records_menu('question',
+            array('category' => $categoryid), '', 'id, 1')) {
         if (questions_in_use(array_keys($questions))) {
             return true;
         }
@@ -338,7 +338,8 @@ function question_category_in_use($categoryid, $recursive = false) {
     }
 
     //Look under child categories recursively
-    if ($children = $DB->get_records('question_categories', array('parent' => $categoryid), '', 'id,1')) {
+    if ($children = $DB->get_records('question_categories',
+            array('parent' => $categoryid), '', 'id, 1')) {
         foreach ($children as $child) {
             if (question_category_in_use($child->id, $recursive)) {
                 return true;
@@ -386,7 +387,8 @@ function question_delete_question($questionid) {
             $questionid, $question->contextid);
 
     // Now recursively delete all child questions
-    if ($children = $DB->get_records('question', array('parent' => $questionid), '', 'id,qtype')) {
+    if ($children = $DB->get_records('question',
+            array('parent' => $questionid), '', 'id, qtype')) {
         foreach ($children as $child) {
             if ($child->id != $questionid) {
                 question_delete_question($child->id);
@@ -414,7 +416,8 @@ function question_delete_course($course, $feedback=true) {
     //Cache some strings
     $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-    $categoriescourse = $DB->get_records('question_categories', array('contextid'=>$coursecontext->id), 'parent', 'id, parent, name, contextid');
+    $categoriescourse = $DB->get_records('question_categories',
+            array('contextid' => $coursecontext->id), 'parent', 'id, parent, name, contextid');
 
     if ($categoriescourse) {
 
@@ -426,14 +429,15 @@ function question_delete_course($course, $feedback=true) {
 
             //Delete it completely (questions and category itself)
             //deleting questions
-            if ($questions = $DB->get_records('question', array('category' => $category->id), '', 'id,qtype')) {
+            if ($questions = $DB->get_records('question',
+                    array('category' => $category->id), '', 'id,qtype')) {
                 foreach ($questions as $question) {
                     question_delete_question($question->id);
                 }
-                $DB->delete_records("question", array("category"=>$category->id));
+                $DB->delete_records("question", array("category" => $category->id));
             }
             //delete the category
-            $DB->delete_records('question_categories', array('id'=>$category->id));
+            $DB->delete_records('question_categories', array('id' => $category->id));
 
             //Fill feedback
             $feedbackdata[] = array($category->name, $strcatdeleted);
@@ -441,7 +445,7 @@ function question_delete_course($course, $feedback=true) {
         //Inform about changes performed if feedback is enabled
         if ($feedback) {
             $table = new html_table();
-            $table->head = array(get_string('category','quiz'), get_string('action'));
+            $table->head = array(get_string('category', 'quiz'), get_string('action'));
             $table->data = $feedbackdata;
             echo html_writer::table($table);
         }
@@ -455,7 +459,8 @@ function question_delete_course($course, $feedback=true) {
  * 2/ All questions are moved to new category
  *
  * @param object $category course category object
- * @param object $newcategory empty means everything deleted, otherwise id of category where content moved
+ * @param object $newcategory empty means everything deleted, otherwise id of
+ *      category where content moved
  * @param boolean $feedback to specify if the process must output a summary of its work
  * @return boolean
  */
@@ -469,28 +474,34 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
 
         // Loop over question categories.
-        if ($categories = $DB->get_records('question_categories', array('contextid'=>$context->id), 'parent', 'id, parent, name')) {
+        if ($categories = $DB->get_records('question_categories',
+                array('contextid'=>$context->id), 'parent', 'id, parent, name')) {
             foreach ($categories as $category) {
 
                 // Deal with any questions in the category.
-                if ($questions = $DB->get_records('question', array('category' => $category->id), '', 'id,qtype')) {
+                if ($questions = $DB->get_records('question',
+                        array('category' => $category->id), '', 'id,qtype')) {
 
                     // Try to delete each question.
                     foreach ($questions as $question) {
                         question_delete_question($question->id);
                     }
 
-                    // Check to see if there were any questions that were kept because they are
-                    // still in use somehow, even though quizzes in courses in this category will
-                    // already have been deteted. This could happen, for example, if questions are
-                    // added to a course, and then that course is moved to another category (MDL-14802).
-                    $questionids = $DB->get_records_menu('question', array('category'=>$category->id), '', 'id,1');
+                    // Check to see if there were any questions that were kept because
+                    // they are still in use somehow, even though quizzes in courses
+                    // in this category will already have been deteted. This could
+                    // happen, for example, if questions are added to a course,
+                    // and then that course is moved to another category (MDL-14802).
+                    $questionids = $DB->get_records_menu('question',
+                            array('category'=>$category->id), '', 'id, 1');
                     if (!empty($questionids)) {
-                        if (!$rescueqcategory = question_save_from_deletion(array_keys($questionids),
-                                get_parent_contextid($context), print_context_name($context), $rescueqcategory)) {
+                        if (!$rescueqcategory = question_save_from_deletion(
+                                array_keys($questionids), get_parent_contextid($context),
+                                print_context_name($context), $rescueqcategory)) {
                             return false;
-                       }
-                       $feedbackdata[] = array($category->name, get_string('questionsmovedto', 'question', $rescueqcategory->name));
+                        }
+                        $feedbackdata[] = array($category->name,
+                            get_string('questionsmovedto', 'question', $rescueqcategory->name));
                     }
                 }
 
@@ -506,7 +517,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         // Output feedback if requested.
         if ($feedback and $feedbackdata) {
             $table = new html_table();
-            $table->head = array(get_string('questioncategory','question'), get_string('action'));
+            $table->head = array(get_string('questioncategory', 'question'), get_string('action'));
             $table->data = $feedbackdata;
             echo html_writer::table($table);
         }
@@ -516,12 +527,14 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         if (!$newcontext = get_context_instance(CONTEXT_COURSECAT, $newcategory->id)) {
             return false;
         }
-        $DB->set_field('question_categories', 'contextid', $newcontext->id, array('contextid'=>$context->id));
+        $DB->set_field('question_categories', 'contextid', $newcontext->id,
+                array('contextid'=>$context->id));
         if ($feedback) {
             $a = new stdClass();
             $a->oldplace = print_context_name($context);
             $a->newplace = print_context_name($newcontext);
-            echo $OUTPUT->notification(get_string('movedquestionsandcategories', 'question', $a), 'notifysuccess');
+            echo $OUTPUT->notification(
+                    get_string('movedquestionsandcategories', 'question', $a), 'notifysuccess');
         }
     }
 
@@ -533,11 +546,13 @@ function question_delete_course_category($category, $newcategory, $feedback=true
  *
  * @param string $questionids list of questionids
  * @param object $newcontext the context to create the saved category in.
- * @param string $oldplace a textual description of the think being deleted, e.g. from get_context_name
+ * @param string $oldplace a textual description of the think being deleted,
+ *      e.g. from get_context_name
  * @param object $newcategory
  * @return mixed false on
  */
-function question_save_from_deletion($questionids, $newcontextid, $oldplace, $newcategory = null) {
+function question_save_from_deletion($questionids, $newcontextid, $oldplace,
+        $newcategory = null) {
     global $DB;
 
     // Make a category in the parent context to move the questions to.
@@ -575,7 +590,8 @@ function question_delete_activity($cm, $feedback=true) {
     //Cache some strings
     $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    if ($categoriesmods = $DB->get_records('question_categories', array('contextid'=>$modcontext->id), 'parent', 'id, parent, name, contextid')){
+    if ($categoriesmods = $DB->get_records('question_categories',
+            array('contextid' => $modcontext->id), 'parent', 'id, parent, name, contextid')) {
         //Sort categories following their tree (parent-child) relationships
         //this will make the feedback more readable
         $categoriesmods = sort_categories_by_tree($categoriesmods);
@@ -584,7 +600,8 @@ function question_delete_activity($cm, $feedback=true) {
 
             //Delete it completely (questions and category itself)
             //deleting questions
-            if ($questions = $DB->get_records('question', array('category' => $category->id), '', 'id,qtype')) {
+            if ($questions = $DB->get_records('question',
+                    array('category' => $category->id), '', 'id,qtype')) {
                 foreach ($questions as $question) {
                     question_delete_question($question->id);
                 }
@@ -599,7 +616,7 @@ function question_delete_activity($cm, $feedback=true) {
         //Inform about changes performed if feedback is enabled
         if ($feedback) {
             $table = new html_table();
-            $table->head = array(get_string('category','quiz'), get_string('action'));
+            $table->head = array(get_string('category', 'quiz'), get_string('action'));
             $table->data = $feedbackdata;
             echo html_writer::table($table);
         }
@@ -609,9 +626,10 @@ function question_delete_activity($cm, $feedback=true) {
 
 /**
  * This function should be considered private to the question bank, it is called from
- * question/editlib.php question/contextmoveq.php and a few similar places to to the work of
- * acutally moving questions and associated data. However, callers of this function also have to
- * do other work, which is why you should not call this method directly from outside the questionbank.
+ * question/editlib.php question/contextmoveq.php and a few similar places to to the
+ * work of acutally moving questions and associated data. However, callers of this
+ * function also have to do other work, which is why you should not call this method
+ * directly from outside the questionbank.
  *
  * @param string $questionids a comma-separated list of question ids.
  * @param integer $newcategoryid the id of the category to move to.
@@ -635,10 +653,12 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
     }
 
     // Move the questions themselves.
-    $DB->set_field_select('question', 'category', $newcategoryid, "id $questionidcondition", $params);
+    $DB->set_field_select('question', 'category', $newcategoryid,
+            "id $questionidcondition", $params);
 
     // Move any subquestions belonging to them.
-    $DB->set_field_select('question', 'category', $newcategoryid, "parent $questionidcondition", $params);
+    $DB->set_field_select('question', 'category', $newcategoryid,
+            "parent $questionidcondition", $params);
 
     // TODO Deal with datasets.
 
@@ -659,13 +679,15 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
     $questionids = $DB->get_records_menu('question',
             array('category' => $categoryid), '', 'id,qtype');
     foreach ($questionids as $questionid => $qtype) {
-        question_bank::get_qtype($qtype)->move_files($questionid, $oldcontextid, $newcontextid);
+        question_bank::get_qtype($qtype)->move_files(
+                $questionid, $oldcontextid, $newcontextid);
     }
 
     $subcatids = $DB->get_records_menu('question_categories',
             array('parent' => $categoryid), '', 'id,1');
     foreach ($subcatids as $subcatid => $notused) {
-        $DB->set_field('question_categories', 'contextid', $newcontextid, array('id' => $subcatid));
+        $DB->set_field('question_categories', 'contextid', $newcontextid,
+                array('id' => $subcatid));
         question_move_category_to_context($subcatid, $oldcontextid, $newcontextid);
     }
 }
@@ -693,9 +715,9 @@ function question_preview_url($questionid, $preferredbehaviour, $maxmark, $displ
 }
 
 /**
- * Given a list of ids, load the basic information about a set of questions from the questions table.
- * The $join and $extrafields arguments can be used together to pull in extra data.
- * See, for example, the usage in mod/quiz/attemptlib.php, and
+ * Given a list of ids, load the basic information about a set of questions from
+ * the questions table. The $join and $extrafields arguments can be used together
+ * to pull in extra data. See, for example, the usage in mod/quiz/attemptlib.php, and
  * read the code below to see how the SQL is assembled. Throws exceptions on error.
  *
  * @global object
@@ -709,7 +731,8 @@ function question_preview_url($questionid, $preferredbehaviour, $maxmark, $displ
  * @return array partially complete question objects. You need to call get_question_options
  * on them before they can be properly used.
  */
-function question_preload_questions($questionids, $extrafields = '', $join = '', $extraparams = array()) {
+function question_preload_questions($questionids, $extrafields = '', $join = '',
+        $extraparams = array()) {
     global $DB;
     if (empty($questionids)) {
         return array();
@@ -815,12 +838,12 @@ function get_question_options(&$questions, $loadtags = false) {
 }
 
 /**
-* Print the icon for the question type
-*
-* @param object $question The question object for which the icon is required.
-*       Only $question->qtype is used.
-* @return string the HTML for the img tag.
-*/
+ * Print the icon for the question type
+ *
+ * @param object $question The question object for which the icon is required.
+ *       Only $question->qtype is used.
+ * @return string the HTML for the img tag.
+ */
 function print_question_icon($question) {
     global $OUTPUT;
 
@@ -885,18 +908,23 @@ function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
         if (!isset($categories[$key]->processed) && $categories[$key]->parent == $id) {
             $children[$key] = $categories[$key];
             $categories[$key]->processed = true;
-            $children = $children + sort_categories_by_tree($categories, $children[$key]->id, $level+1);
+            $children = $children + sort_categories_by_tree(
+                    $categories, $children[$key]->id, $level+1);
         }
     }
-    //If level = 1, we have finished, try to look for non processed categories (bad parent) and sort them too
+    //If level = 1, we have finished, try to look for non processed categories
+    // (bad parent) and sort them too
     if ($level == 1) {
         foreach ($keys as $key) {
-            // If not processed and it's a good candidate to start (because its parent doesn't exist in the course)
-            if (!isset($categories[$key]->processed) && !$DB->record_exists(
-                    'question_categories', array('contextid'=>$categories[$key]->contextid, 'id'=>$categories[$key]->parent))) {
+            // If not processed and it's a good candidate to start (because its
+            // parent doesn't exist in the course)
+            if (!isset($categories[$key]->processed) && !$DB->record_exists('question_categories',
+                    array('contextid' => $categories[$key]->contextid,
+                            'id' => $categories[$key]->parent))) {
                 $children[$key] = $categories[$key];
                 $categories[$key]->processed = true;
-                $children = $children + sort_categories_by_tree($categories, $children[$key]->id, $level+1);
+                $children = $children + sort_categories_by_tree(
+                        $categories, $children[$key]->id, $level + 1);
             }
         }
     }
@@ -922,12 +950,14 @@ function flatten_category_tree(&$categories, $id, $depth = 0, $nochildrenof = -1
     // Indent the name of this category.
     $newcategories = array();
     $newcategories[$id] = $categories[$id];
-    $newcategories[$id]->indentedname = str_repeat('&nbsp;&nbsp;&nbsp;', $depth) . $categories[$id]->name;
+    $newcategories[$id]->indentedname = str_repeat('&nbsp;&nbsp;&nbsp;', $depth) .
+            $categories[$id]->name;
 
     // Recursively indent the children.
     foreach ($categories[$id]->childids as $childid) {
-        if ($childid != $nochildrenof){
-            $newcategories = $newcategories + flatten_category_tree($categories, $childid, $depth + 1, $nochildrenof);
+        if ($childid != $nochildrenof) {
+            $newcategories = $newcategories + flatten_category_tree(
+                    $categories, $childid, $depth + 1, $nochildrenof);
         }
     }
 
@@ -945,8 +975,9 @@ function flatten_category_tree(&$categories, $id, $depth = 0, $nochildrenof = -1
  */
 function add_indented_names($categories, $nochildrenof = -1) {
 
-    // Add an array to each category to hold the child category ids. This array will be removed
-    // again by flatten_category_tree(). It should not be used outside these two functions.
+    // Add an array to each category to hold the child category ids. This array
+    // will be removed again by flatten_category_tree(). It should not be used
+    // outside these two functions.
     foreach (array_keys($categories) as $id) {
         $categories[$id]->childids = array();
     }
@@ -956,7 +987,8 @@ function add_indented_names($categories, $nochildrenof = -1) {
     // categories from other courses, but not their parents.
     $toplevelcategoryids = array();
     foreach (array_keys($categories) as $id) {
-        if (!empty($categories[$id]->parent) && array_key_exists($categories[$id]->parent, $categories)) {
+        if (!empty($categories[$id]->parent) &&
+                array_key_exists($categories[$id]->parent, $categories)) {
             $categories[$categories[$id]->parent]->childids[] = $id;
         } else {
             $toplevelcategoryids[] = $id;
@@ -966,7 +998,8 @@ function add_indented_names($categories, $nochildrenof = -1) {
     // Flatten the tree to and add the indents.
     $newcategories = array();
     foreach ($toplevelcategoryids as $id) {
-        $newcategories = $newcategories + flatten_category_tree($categories, $id, 0, $nochildrenof);
+        $newcategories = $newcategories + flatten_category_tree(
+                $categories, $id, 0, $nochildrenof);
     }
 
     return $newcategories;
@@ -981,19 +1014,22 @@ function add_indented_names($categories, $nochildrenof = -1) {
  * @param integer $courseid the id of the course to get the categories for.
  * @param integer $published if true, include publised categories from other courses.
  * @param integer $only_editable if true, exclude categories this user is not allowed to edit.
- * @param integer $selected optionally, the id of a category to be selected by default in the dropdown.
+ * @param integer $selected optionally, the id of a category to be selected by
+ *      default in the dropdown.
  */
-function question_category_select_menu($contexts, $top = false, $currentcat = 0, $selected = "", $nochildrenof = -1) {
+function question_category_select_menu($contexts, $top = false, $currentcat = 0,
+        $selected = "", $nochildrenof = -1) {
     global $OUTPUT;
-    $categoriesarray = question_category_options($contexts, $top, $currentcat, false, $nochildrenof);
+    $categoriesarray = question_category_options($contexts, $top, $currentcat,
+            false, $nochildrenof);
     if ($selected) {
         $choose = '';
     } else {
         $choose = 'choosedots';
     }
     $options = array();
-    foreach($categoriesarray as $group=>$opts) {
-        $options[] = array($group=>$opts);
+    foreach ($categoriesarray as $group => $opts) {
+        $options[] = array($group => $opts);
     }
 
     echo html_writer::select($options, 'category', $selected, $choose);
@@ -1005,7 +1041,8 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
  */
 function question_get_default_category($contextid) {
     global $DB;
-    $category = $DB->get_records('question_categories', array('contextid' => $contextid),'id','*',0,1);
+    $category = $DB->get_records('question_categories',
+            array('contextid' => $contextid), 'id', '*', 0, 1);
     if (!empty($category)) {
         return reset($category);
     } else {
@@ -1014,12 +1051,12 @@ function question_get_default_category($contextid) {
 }
 
 /**
-* Gets the default category in the most specific context.
-* If no categories exist yet then default ones are created in all contexts.
-*
-* @param array $contexts  The context objects for this context and all parent contexts.
-* @return object The default category - the category in the course context
-*/
+ * Gets the default category in the most specific context.
+ * If no categories exist yet then default ones are created in all contexts.
+ *
+ * @param array $contexts  The context objects for this context and all parent contexts.
+ * @return object The default category - the category in the course context
+ */
 function question_make_default_categories($contexts) {
     global $DB;
     static $preferredlevels = array(
@@ -1033,7 +1070,8 @@ function question_make_default_categories($contexts) {
     $preferredness = 0;
     // If it already exists, just return it.
     foreach ($contexts as $key => $context) {
-        if (!$exists = $DB->record_exists("question_categories", array('contextid'=>$context->id))) {
+        if (!$exists = $DB->record_exists("question_categories",
+                array('contextid' => $context->id))) {
             // Otherwise, we need to make one
             $category = new stdClass();
             $contextname = print_context_name($context, false, true);
@@ -1041,14 +1079,15 @@ function question_make_default_categories($contexts) {
             $category->info = get_string('defaultinfofor', 'question', $contextname);
             $category->contextid = $context->id;
             $category->parent = 0;
-            $category->sortorder = 999; // By default, all categories get this number, and are sorted alphabetically.
+            // By default, all categories get this number, and are sorted alphabetically.
+            $category->sortorder = 999;
             $category->stamp = make_unique_id_code();
             $category->id = $DB->insert_record('question_categories', $category);
         } else {
             $category = question_get_default_category($context->id);
         }
-        if ($preferredlevels[$context->contextlevel] > $preferredness &&
-                has_any_capability(array('moodle/question:usemine', 'moodle/question:useall'), $context)) {
+        if ($preferredlevels[$context->contextlevel] > $preferredness && has_any_capability(
+                array('moodle/question:usemine', 'moodle/question:useall'), $context)) {
             $toreturn = $category;
             $preferredness = $preferredlevels[$context->contextlevel];
         }
@@ -1081,10 +1120,11 @@ function get_categories_for_contexts($contexts, $sortorder = 'parent, sortorder,
 /**
  * Output an array of question categories.
  */
-function question_category_options($contexts, $top = false, $currentcat = 0, $popupform = false, $nochildrenof = -1) {
+function question_category_options($contexts, $top = false, $currentcat = 0,
+        $popupform = false, $nochildrenof = -1) {
     global $CFG;
     $pcontexts = array();
-    foreach($contexts as $context){
+    foreach ($contexts as $context) {
         $pcontexts[] = $context->id;
     }
     $contextslist = join($pcontexts, ', ');
@@ -1093,34 +1133,36 @@ function question_category_options($contexts, $top = false, $currentcat = 0, $po
 
     $categories = question_add_context_in_key($categories);
 
-    if ($top){
+    if ($top) {
         $categories = question_add_tops($categories, $pcontexts);
     }
     $categories = add_indented_names($categories, $nochildrenof);
 
-    //sort cats out into different contexts
+    // sort cats out into different contexts
     $categoriesarray = array();
-    foreach ($pcontexts as $pcontext){
-        $contextstring = print_context_name(get_context_instance_by_id($pcontext), true, true);
+    foreach ($pcontexts as $pcontext) {
+        $contextstring = print_context_name(
+                get_context_instance_by_id($pcontext), true, true);
         foreach ($categories as $category) {
-            if ($category->contextid == $pcontext){
+            if ($category->contextid == $pcontext) {
                 $cid = $category->id;
-                if ($currentcat!= $cid || $currentcat==0) {
-                    $countstring = (!empty($category->questioncount))?" ($category->questioncount)":'';
+                if ($currentcat != $cid || $currentcat == 0) {
+                    $countstring = !empty($category->questioncount) ?
+                            " ($category->questioncount)" : '';
                     $categoriesarray[$contextstring][$cid] = $category->indentedname.$countstring;
                 }
             }
         }
     }
-    if ($popupform){
+    if ($popupform) {
         $popupcats = array();
-        foreach ($categoriesarray as $contextstring => $optgroup){
+        foreach ($categoriesarray as $contextstring => $optgroup) {
             $group = array();
-            foreach ($optgroup as $key=>$value) {
+            foreach ($optgroup as $key => $value) {
                 $key = str_replace($CFG->wwwroot, '', $key);
                 $group[$key] = $value;
             }
-            $popupcats[] = array($contextstring=>$group);
+            $popupcats[] = array($contextstring => $group);
         }
         return $popupcats;
     } else {
@@ -1128,7 +1170,7 @@ function question_category_options($contexts, $top = false, $currentcat = 0, $po
     }
 }
 
-function question_add_context_in_key($categories){
+function question_add_context_in_key($categories) {
     $newcatarray = array();
     foreach ($categories as $id => $category) {
         $category->parent = "$category->parent,$category->contextid";
@@ -1138,9 +1180,9 @@ function question_add_context_in_key($categories){
     return $newcatarray;
 }
 
-function question_add_tops($categories, $pcontexts){
+function question_add_tops($categories, $pcontexts) {
     $topcats = array();
-    foreach ($pcontexts as $context){
+    foreach ($pcontexts as $context) {
         $newcat = new stdClass();
         $newcat->id = "0,$context";
         $newcat->name = get_string('top');
@@ -1158,7 +1200,8 @@ function question_add_tops($categories, $pcontexts){
 function question_categorylist($categoryid) {
     global $DB;
 
-    $subcategories = $DB->get_records('question_categories', array('parent' => $categoryid), 'sortorder ASC', 'id, 1');
+    $subcategories = $DB->get_records('question_categories',
+            array('parent' => $categoryid), 'sortorder ASC', 'id, 1');
 
     $categorylist = array($categoryid);
     foreach ($subcategories as $subcategory) {
@@ -1211,12 +1254,12 @@ function get_import_export_formats($type) {
 
 
 /**
-* Create a reasonable default file name for exporting questions from a particular
-* category.
-* @param object $course the course the questions are in.
-* @param object $category the question category.
-* @return string the filename.
-*/
+ * Create a reasonable default file name for exporting questions from a particular
+ * category.
+ * @param object $course the course the questions are in.
+ * @param object $category the question category.
+ * @return string the filename.
+ */
 function question_default_export_filename($course, $category) {
     // We build a string that is an appropriate name (questions) from the lang pack,
     // then the corse shortname, then the question category name, then a timestamp.
@@ -1265,10 +1308,10 @@ class context_to_string_translator{
     }
 
     protected function generate_context_to_string_array($contexts) {
-        if (!$this->contexttostringarray){
+        if (!$this->contexttostringarray) {
             $catno = 1;
-            foreach ($contexts as $context){
-                switch ($context->contextlevel){
+            foreach ($contexts as $context) {
+                switch ($context->contextlevel) {
                     case CONTEXT_MODULE :
                         $contextstring = 'module';
                         break;
@@ -1298,7 +1341,7 @@ class context_to_string_translator{
  * @param integer $cachecat useful to cache all question records in a category
  * @return boolean this user has the capability $cap for this question $question?
  */
-function question_has_capability_on($question, $cap, $cachecat = -1){
+function question_has_capability_on($question, $cap, $cachecat = -1) {
     global $USER, $DB;
 
     // these are capabilities on existing questions capabilties are
@@ -1311,26 +1354,28 @@ function question_has_capability_on($question, $cap, $cachecat = -1){
         $questions += $DB->get_records('question', array('category' => $cachecat));
         $cachedcat[] = $cachecat;
     }
-    if (!is_object($question)){
-        if (!isset($questions[$question])){
-            if (!$questions[$question] = $DB->get_record('question', array('id' => $question), 'id,category,createdby')) {
+    if (!is_object($question)) {
+        if (!isset($questions[$question])) {
+            if (!$questions[$question] = $DB->get_record('question',
+                    array('id' => $question), 'id,category,createdby')) {
                 print_error('questiondoesnotexist', 'question');
             }
         }
         $question = $questions[$question];
     }
-    if (!isset($categories[$question->category])){
-        if (!$categories[$question->category] = $DB->get_record('question_categories', array('id'=>$question->category))) {
+    if (!isset($categories[$question->category])) {
+        if (!$categories[$question->category] = $DB->get_record('question_categories',
+                array('id'=>$question->category))) {
             print_error('invalidcategory', 'quiz');
         }
     }
     $category = $categories[$question->category];
     $context = get_context_instance_by_id($category->contextid);
 
-    if (array_search($cap, $question_questioncaps)!== FALSE){
-        if (!has_capability('moodle/question:'.$cap.'all', $context)){
-            if ($question->createdby == $USER->id){
-                return has_capability('moodle/question:'.$cap.'mine', $context);
+    if (array_search($cap, $question_questioncaps)!== false) {
+        if (!has_capability('moodle/question:' . $cap . 'all', $context)) {
+            if ($question->createdby == $USER->id) {
+                return has_capability('moodle/question:' . $cap . 'mine', $context);
             } else {
                 return false;
             }
@@ -1338,7 +1383,7 @@ function question_has_capability_on($question, $cap, $cachecat = -1){
             return true;
         }
     } else {
-        return has_capability('moodle/question:'.$cap, $context);
+        return has_capability('moodle/question:' . $cap, $context);
     }
 
 }
@@ -1346,8 +1391,8 @@ function question_has_capability_on($question, $cap, $cachecat = -1){
 /**
  * Require capability on question.
  */
-function question_require_capability_on($question, $cap){
-    if (!question_has_capability_on($question, $cap)){
+function question_require_capability_on($question, $cap) {
+    if (!question_has_capability_on($question, $cap)) {
         print_error('nopermissions', '', '', $cap);
     }
     return true;
@@ -1364,7 +1409,7 @@ function question_get_real_state($state) {
     global $OUTPUT;
     $realstate = clone($state);
     $matches = array();
-    if (!preg_match('|^random([0-9]+)-(.*)|', $state->answer, $matches)){
+    if (!preg_match('|^random([0-9]+)-(.*)|', $state->answer, $matches)) {
         echo $OUTPUT->notification(get_string('errorrandom', 'quiz_statistics'));
         return false;
     } else {
@@ -1421,20 +1466,25 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
         return;
     }
 
-    $questionnode = $navigationnode->add(get_string('questionbank','question'), new moodle_url('/question/edit.php', $params), navigation_node::TYPE_CONTAINER);
+    $questionnode = $navigationnode->add(get_string('questionbank', 'question'),
+            new moodle_url('/question/edit.php', $params), navigation_node::TYPE_CONTAINER);
 
     $contexts = new question_edit_contexts($context);
     if ($contexts->have_one_edit_tab_cap('questions')) {
-        $questionnode->add(get_string('questions', 'quiz'), new moodle_url('/question/edit.php', $params), navigation_node::TYPE_SETTING);
+        $questionnode->add(get_string('questions', 'quiz'), new moodle_url(
+                '/question/edit.php', $params), navigation_node::TYPE_SETTING);
     }
     if ($contexts->have_one_edit_tab_cap('categories')) {
-        $questionnode->add(get_string('categories', 'quiz'), new moodle_url('/question/category.php', $params), navigation_node::TYPE_SETTING);
+        $questionnode->add(get_string('categories', 'quiz'), new moodle_url(
+                '/question/category.php', $params), navigation_node::TYPE_SETTING);
     }
     if ($contexts->have_one_edit_tab_cap('import')) {
-        $questionnode->add(get_string('import', 'quiz'), new moodle_url('/question/import.php', $params), navigation_node::TYPE_SETTING);
+        $questionnode->add(get_string('import', 'quiz'), new moodle_url(
+                '/question/import.php', $params), navigation_node::TYPE_SETTING);
     }
     if ($contexts->have_one_edit_tab_cap('export')) {
-        $questionnode->add(get_string('export', 'quiz'), new moodle_url('/question/export.php', $params), navigation_node::TYPE_SETTING);
+        $questionnode->add(get_string('export', 'quiz'), new moodle_url(
+                '/question/export.php', $params), navigation_node::TYPE_SETTING);
     }
 
     return $questionnode;
@@ -1469,7 +1519,7 @@ function question_get_all_capabilities() {
 
 class question_edit_contexts {
 
-    public static $CAPS = array(
+    public static $caps = array(
         'editq' => array('moodle/question:add',
             'moodle/question:editmine',
             'moodle/question:editall',
@@ -1495,10 +1545,10 @@ class question_edit_contexts {
     /**
      * @param current context
      */
-    public function question_edit_contexts($thiscontext) {
+    public function __construct($thiscontext) {
         $pcontextids = get_parent_contexts($thiscontext);
         $contexts = array($thiscontext);
-        foreach ($pcontextids as $pcontextid){
+        foreach ($pcontextids as $pcontextid) {
             $contexts[] = get_context_instance_by_id($pcontextid);
         }
         $this->allcontexts = $contexts;
@@ -1521,8 +1571,8 @@ class question_edit_contexts {
      */
     public function having_cap($cap) {
         $contextswithcap = array();
-        foreach ($this->allcontexts as $context){
-            if (has_capability($cap, $context)){
+        foreach ($this->allcontexts as $context) {
+            if (has_capability($cap, $context)) {
                 $contextswithcap[] = $context;
             }
         }
@@ -1534,9 +1584,9 @@ class question_edit_contexts {
      */
     public function having_one_cap($caps) {
         $contextswithacap = array();
-        foreach ($this->allcontexts as $context){
-            foreach ($caps as $cap){
-                if (has_capability($cap, $context)){
+        foreach ($this->allcontexts as $context) {
+            foreach ($caps as $cap) {
+                if (has_capability($cap, $context)) {
                     $contextswithacap[] = $context;
                     break; //done with caps loop
                 }
@@ -1549,7 +1599,7 @@ class question_edit_contexts {
      * @return array parent contexts having at least one of $caps, zero based index
      */
     public function having_one_edit_tab_cap($tabname) {
-        return $this->having_one_cap(self::$CAPS[$tabname]);
+        return $this->having_one_cap(self::$caps[$tabname]);
     }
     /**
      * Has at least one parent context got the cap $cap?
@@ -1582,8 +1632,8 @@ class question_edit_contexts {
      * @param string $tabname edit tab name
      * @return boolean
      */
-    public function have_one_edit_tab_cap($tabname){
-        return $this->have_one_cap(self::$CAPS[$tabname]);
+    public function have_one_edit_tab_cap($tabname) {
+        return $this->have_one_cap(self::$caps[$tabname]);
     }
 
     /**
@@ -1591,8 +1641,8 @@ class question_edit_contexts {
      *
      * @param string $cap capability
      */
-    public function require_cap($cap){
-        if (!$this->have_cap($cap)){
+    public function require_cap($cap) {
+        if (!$this->have_cap($cap)) {
             print_error('nopermissions', '', '', $cap);
         }
     }
@@ -1602,7 +1652,7 @@ class question_edit_contexts {
      *
      * @param array $cap capabilities
      */
-     public function require_one_cap($caps) {
+    public function require_one_cap($caps) {
         if (!$this->have_one_cap($caps)) {
             $capsstring = join($caps, ', ');
             print_error('nopermissions', '', '', $capsstring);
@@ -1614,7 +1664,7 @@ class question_edit_contexts {
      *
      * @param string $tabname edit tab name
      */
-    public function require_one_edit_tab_cap($tabname){
+    public function require_one_edit_tab_cap($tabname) {
         if (!$this->have_one_edit_tab_cap($tabname)) {
             print_error('nopermissions', '', '', 'access question edit tab '.$tabname);
         }
@@ -1637,7 +1687,8 @@ class question_edit_contexts {
  * @param array $options
  * @return string
  */
-function question_rewrite_question_urls($text, $file, $contextid, $component, $filearea, array $ids, $itemid, array $options=null) {
+function question_rewrite_question_urls($text, $file, $contextid, $component,
+        $filearea, array $ids, $itemid, array $options=null) {
     global $CFG;
 
     $options = (array)$options;
@@ -1745,11 +1796,6 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
             send_file_not_found();
         }
 
-        //DEBUG
-        //echo '<textarea cols=90 rows=20>';
-        //echo $content;
-        //echo '</textarea>';
-        //die;
         send_file($content, $filename, 0, 0, true, true, $qformat->mime_type());
     }
 
@@ -1793,8 +1839,11 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
  * @param string $ithcontexts
  * @param moodle_url export file url
  */
-function question_make_export_url($contextid, $categoryid, $format, $withcategories, $withcontexts, $filename) {
+function question_make_export_url($contextid, $categoryid, $format, $withcategories,
+        $withcontexts, $filename) {
     global $CFG;
     $urlbase = "$CFG->httpswwwroot/pluginfile.php";
-    return moodle_url::make_file_url($urlbase, "/$contextid/question/export/{$categoryid}/{$format}/{$withcategories}/{$withcontexts}/{$filename}", true);
+    return moodle_url::make_file_url($urlbase,
+            "/$contextid/question/export/{$categoryid}/{$format}/{$withcategories}" .
+            "/{$withcontexts}/{$filename}", true);
 }
