@@ -176,44 +176,6 @@ abstract class convert_helper {
         return implode(", ", array_map($mapper, array_keys($fields), array_values($fields)));
     }
 
-    /**
-     * Generate an artificial context ID
-     *
-     * @param int $instance The moodle component instance ID, same value used for get_context_instance()
-     * @param string $component The moodle component, like block_html, mod_quiz, etc
-     * @param string $converterid The converter ID
-     * @return int
-     * @todo Add caching?
-     * @todo Can we make the lookup faster?  Not taking advantage of indexes
-     */
-    public static function get_contextid($instance, $component = 'moodle', $converterid = NULL) {
-        global $DB;
-
-        // Attempt to retrieve the contextid
-        $contextid = $DB->get_field_select('backup_ids_temp', 'id',
-                        $DB->sql_compare_text('info', 100).' = '.$DB->sql_compare_text('?', 100).' AND itemid = ? AND itemname = ?',
-                        array($component, $instance, 'context'));
-
-        if (!empty($contextid)) {
-            return $contextid;
-        }
-
-        $context = new stdClass();
-        $context->itemid   = $instance;
-        $context->itemname = 'context';
-        $context->info     = $component;
-
-        if (!is_null($converterid)) {
-            $context->backupid = $converterid;
-        }
-        if ($id = $DB->insert_record('backup_ids_temp', $context)) {
-            return $id;
-        } else {
-            $msg = self::obj_to_readable($context);
-            throw new convert_helper_exception('failed_insert_record', $msg);
-        }
-    }
-
     /// end of public API //////////////////////////////////////////////////////
 
     /**

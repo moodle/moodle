@@ -174,12 +174,51 @@ abstract class moodle1_xml_handler extends moodle1_handler {
 
     /**
      * Dumps the data into the XML file
+     *
+     * @param string $element the name of the root element of the tree
+     * @param array $data the associative array of data to write
+     * @param array $attribs list of additional fields written as attributes instead of nested elements (all 'id' are there automatically)
+     * @param string $parent used internally during the recursion, do not set yourself
      */
-    public function write_xml(array $data) {
+    public function write_xml($element, array $data, array $attribs = array(), $parent = '/') {
+
+        $mypath    = $parent . $element;
+        $myattribs = array();
+
+        // detect properties that should be rendered as element's attributes instead of children
+        foreach ($data as $name => $value) {
+            if (!is_array($value)) {
+                if ($name === 'id' or in_array($mypath . '/' . $name, $attribs)) {
+                    $myattribs[$name] = $value;
+                    unset($data[$name]);
+                }
+            }
+        }
+
+        // reorder the $data so that all sub-branches are at the end (needed by our parser)
+        $leaves   = array();
+        $branches = array();
+        foreach ($data as $name => $value) {
+            if (is_array($value)) {
+                $branches[$name] = $value;
+            } else {
+                $leaves[$name] = $value;
+            }
+        }
+        $data = array_merge($leaves, $branches);
+
+        $this->xmlwriter->begin_tag($element, $myattribs);
 
         foreach ($data as $name => $value) {
-            $this->xmlwriter->full_tag($name, $value);
+            if (is_array($value)) {
+                // recursively call self
+                $this->write_xml($name, $value, $attribs, $mypath);
+            } else {
+                $this->xmlwriter->full_tag($name, $value);
+            }
         }
+
+        $this->xmlwriter->end_tag($element);
     }
 }
 
@@ -267,19 +306,15 @@ class moodle1_root_handler extends moodle1_handler {
 
 /**
  * Handles the conversion of /MOODLE_BACKUP/INFO paths
+ *
+ * We do not produce any XML file here, just storing the data in the temp
+ * table so thay can be used by a later handler.
  */
 class moodle1_info_handler extends moodle1_handler {
 
     public function get_paths() {
         return array(
-            new convert_path(
-                'info', '/MOODLE_BACKUP/INFO',
-                array(
-                    'newfields' => array(
-                        'mnet_remoteusers' => 0,
-                    ),
-                )
-            ),
+            new convert_path('info', '/MOODLE_BACKUP/INFO'),
             new convert_path('info_details', '/MOODLE_BACKUP/INFO/DETAILS'),
             new convert_path('info_details_mod', '/MOODLE_BACKUP/INFO/DETAILS/MOD'),
             new convert_path('info_details_mod_instance', '/MOODLE_BACKUP/INFO/DETAILS/MOD/INSTANCES/INSTANCE'),
@@ -327,6 +362,8 @@ class moodle1_course_header_handler extends moodle1_xml_handler {
                         'enablecompletion'       => 0,
                         'completionstartonenrol' => 0,
                         'completionnotify'       => 0,
+                        'tags'                   => array(),
+                        'allowed_modules'        => array(),
                     ),
                     'dropfields' => array(
                         'roles_overrides',
@@ -352,7 +389,14 @@ class moodle1_course_header_handler extends moodle1_xml_handler {
                     )
                 )
             ),
-            new convert_path('course_header_category', '/MOODLE_BACKUP/COURSE/HEADER/CATEGORY'),
+            new convert_path(
+                'course_header_category', '/MOODLE_BACKUP/COURSE/HEADER/CATEGORY',
+                array(
+                    'newfields' => array(
+                        'description' => null,
+                    )
+                )
+            ),
         );
     }
 
@@ -372,22 +416,23 @@ class moodle1_course_header_handler extends moodle1_xml_handler {
 
     public function on_course_header_end() {
 
-        $contextid = convert_helper::get_contextid($this->course['id'], 'course', $this->converter->get_id());
+        $contextid = $this->converter->get_contextid(CONTEXT_COURSE, $this->course['id']);
+
+        // stash the information needed by other handlers
+        $info = array(
+            'original_course_id'        => $this->course['id'],
+            'original_course_fullname'  => $this->course['fullname'],
+            'original_course_shortname' => $this->course['shortname'],
+            'original_course_startdate' => $this->course['startdate'],
+            'original_course_contextid' => $contextid
+        );
+        $this->converter->set_stash('original_course_info', $info);
+
+        $this->course['contextid'] = $contextid;
+        $this->course['category'] = $this->category;
 
         $this->open_xml_writer('course/course.xml');
-        $this->xmlwriter->begin_tag('course', array(
-            'id'        => $this->course['id'],
-            'contextid' => $contextid,
-        ));
-        $this->write_xml($this->course);
-        $this->xmlwriter->begin_tag('category', array('id' => $this->category['id']));
-        $this->xmlwriter->full_tag('name', $this->category['name']);
-        $this->xmlwriter->full_tag('description', null);
-        $this->xmlwriter->end_tag('category');
-        $this->xmlwriter->full_tag('tags', null);
-        $this->xmlwriter->full_tag('allowed_modules', null);
-        $this->xmlwriter->end_tag('course');
+        $this->write_xml('course', $this->course, array('/course/contextid'));
         $this->close_xml_writer();
-
     }
 }

@@ -244,10 +244,10 @@ class moodle1_converter extends base_converter {
             throw new convert_exception('missing_path_handler', $data['path']);
         }
 
-        $element = $this->pathelements[$data['path']];
-        $object  = $element->get_processing_object();
-        $method  = $element->get_processing_method();
-        $rdata   = null; // data returned by the processing method, if any
+        $element  = $this->pathelements[$data['path']];
+        $object   = $element->get_processing_object();
+        $method   = $element->get_processing_method();
+        $returned = null; // data returned by the processing method, if any
 
         if (empty($object)) {
             throw new convert_exception('missing_processing_object', $object);
@@ -261,13 +261,14 @@ class moodle1_converter extends base_converter {
         // if the path is not locked, apply the element's recipes and dispatch
         // the cooked tags to the processing method
         if (is_null($this->pathlock)) {
-            $cooked = $element->apply_recipes($data['tags']);
-            $rdata  = $object->$method($cooked, $data['tags']);
+            $rawdatatags  = $data['tags'];
+            $data['tags'] = $element->apply_recipes($data['tags']);
+            $returned     = $object->$method($data['tags'], $rawdatatags);
         }
 
         // if the dispatched method returned SKIP_ALL_CHILDREN, remember the current path
         // and lock it so that its children are not dispatched
-        if ($rdata === self::SKIP_ALL_CHILDREN) {
+        if ($returned === self::SKIP_ALL_CHILDREN) {
             // check we haven't any previous lock
             if (!is_null($this->pathlock)) {
                 throw new convert_exception('already_locked_path', $data['path']);
@@ -276,8 +277,8 @@ class moodle1_converter extends base_converter {
             $this->pathlock = $data['path'] . '/';
 
         // if the method has returned any info, set element data to it
-        } else if (!is_null($rdata)) {
-            $element->set_data($rdata);
+        } else if (!is_null($returned)) {
+            $element->set_data($returned);
 
         // use just the cooked parsed data otherwise
         } else {
@@ -384,6 +385,61 @@ class moodle1_converter extends base_converter {
         return restore_dbops::get_backup_ids_record($this->get_id(), $itemname, $itemid);
     }
 
+    /**
+     * Store some information for later processing
+     *
+     * This implenentation uses backup_ids_temp table to store data. Make
+     * sure that the stash name is unique.
+     *
+     * @param string $stashname name of the stash
+     * @param mixed $info information to stash
+     */
+    public function set_stash($stashname, $info) {
+        $this->set_backup_ids_record($stashname, 0, 0, null, $info);
+    }
+
+    /**
+     * Restores a given stash stored previously by {@link self::set_stash()}
+     *
+     * @param string $stashname name of the stash
+     * @return mixed stashed data
+     */
+    public function get_stash($stashname) {
+        return $this->get_backup_ids_record($stashname, 0);
+    }
+
+    /**
+     * Generates an artificial context id
+     *
+     * Moodle 1.9 backups do not contain any context information. But we need them
+     * in Moodle 2.x format so here we generate fictive context id for every given
+     * context level + instance combo.
+     *
+     * This implementation maps context level and instanceid to the columns
+     * of the backup_ids_temp table and uses the id of the record in that table
+     * as the context id.
+     *
+     * @see get_context_instance()
+     * @param int $level the context level, like CONTEXT_COURSE or CONTEXT_MODULE
+     * @param int $instance the instance id, for example $course->id for courses or $cm->id for activity modules
+     * @return int the context id
+     */
+    public function get_contextid($level, $instance) {
+
+        $itemname = 'context' . $level;
+        $itemid   = $instance;
+
+        $existing = $this->get_backup_ids_record($itemname, $itemid);
+
+        if (empty($existing)) {
+            // this context level + instance is required for the first time
+            // store it and re-read to obtain its record id
+            $this->set_backup_ids_record($itemname, $itemid);
+            $existing = $this->get_backup_ids_record($itemname, $itemid);
+        }
+
+        return $existing->id;
+    }
 }
 
 
