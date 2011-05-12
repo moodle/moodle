@@ -6063,12 +6063,11 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
     if ($oldversion < 2011051200) {
-
         // Changing the default of field penalty on table question to 0.3333333
         $table = new xmldb_table('question');
         $field = new xmldb_field('penalty');
         $field->set_attributes(XMLDB_TYPE_FLOAT, null, null,
-                XMLDB_NOTNULL, null, '0.3333333', 'defaultgrade');
+                XMLDB_NOTNULL, null, '0.3333333');
 
         // Launch change of default for field penalty
         $dbman->change_field_default($table, $field);
@@ -6083,7 +6082,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $table = new xmldb_table('question');
         $field = new xmldb_field('defaultgrade');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
-                XMLDB_NOTNULL, null, '1', 'generalfeedback');
+                XMLDB_NOTNULL, null, '1');
 
         // Launch rename field defaultmark
         if ($dbman->field_exists($table, $field)) {

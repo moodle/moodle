@@ -548,7 +548,7 @@ function xmldb_quiz_upgrade($oldversion) {
             $transaction = $DB->start_delegated_transaction();
 
             $oldattempts = $DB->get_records_sql('
-                SELECT quiza
+                SELECT *
                   FROM {quiz_attempts} quiza
                  WHERE uniqueid IN (
                     SELECT DISTINCT qst.attempt
@@ -677,23 +677,6 @@ function xmldb_quiz_upgrade($oldversion) {
         // quiz savepoint reached
         upgrade_mod_savepoint(true, 2011051205, 'quiz');
     }
-
-    if ($oldversion < 2011051206) {
-
-        // Changing the default of field penalty on table question to 0.3333333
-        $table = new xmldb_table('question');
-        $field = new xmldb_field('penalty');
-        $field->set_attributes(XMLDB_TYPE_FLOAT, null, null,
-                XMLDB_NOTNULL, null, '0.3333333', 'defaultgrade');
-
-        // Launch change of default for field penalty
-        $dbman->change_field_default($table, $field);
-
-        // quiz savepoint reached
-        upgrade_mod_savepoint(true, 2011051206, 'quiz');
-    }
-
-// Update the quiz from the old single review column to seven new columns.
 
     if ($oldversion < 2011051207) {
 
