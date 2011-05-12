@@ -23,6 +23,7 @@
 #page-mod-assignment-submissions .submissions .grade,
 #page-mod-assignment-submissions .submissions .outcome,
 #page-mod-assignment-submissions .submissions .finalgrade {text-align: right;}
+#page-mod-assignment-submissions .submissions .header.noheader {display:none;}
 #page-mod-assignment-submissions .qgprefs #optiontable {text-align:right;margin-left:auto;}
 
 /** Styles for view.php **/
