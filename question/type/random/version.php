@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,16 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Quiz statistics report version information.
+ * Version information for the random question type.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @package    qtype
+ * @subpackage random
+ * @copyright  2005 Mark Nielsen
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2011051250;
-$module->requires = 2011051212;
-$module->cron     = 0;
+$plugin->version  = 2011051200;
+$plugin->requires = 2011051212;

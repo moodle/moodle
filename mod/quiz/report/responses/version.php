@@ -15,16 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Quiz statistics report version information.
+ * Quiz responses report version information.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @package    quiz
+ * @subpackage responses
+ * @copyright  2011 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version  = 2011051250;
-$module->requires = 2011051212;
-$module->cron     = 0;
+$plugin->version  = 2011051200;
+$plugin->requires = 2011051212;
