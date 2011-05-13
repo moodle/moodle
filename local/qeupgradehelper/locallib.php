@@ -463,20 +463,22 @@ function local_qeupgradehelper_generate_unit_test($questionsessionid, $namesuffi
 
     $question = local_qeupgradehelper_load_question($qsession->questionid, $quiz->id);
 
-    if (!$quiz->optionflags) {
-        $quiz->preferredbehaviour = 'deferredfeedback';
-    } else if (!$quiz->penaltyscheme) {
-        $quiz->preferredbehaviour = 'adaptive';
-    } else {
-        $quiz->preferredbehaviour = 'adaptivenopenalty';
+    if (!local_qeupgradehelper_is_upgraded()) {
+        if (!$quiz->optionflags) {
+            $quiz->preferredbehaviour = 'deferredfeedback';
+        } else if (!$quiz->penaltyscheme) {
+            $quiz->preferredbehaviour = 'adaptive';
+        } else {
+            $quiz->preferredbehaviour = 'adaptivenopenalty';
+        }
+        unset($quiz->optionflags);
+        unset($quiz->penaltyscheme);
+
+        $question->defaultmark = $question->defaultgrade;
+        unset($question->defaultgrade);
     }
-    unset($quiz->optionflags);
-    unset($quiz->penaltyscheme);
 
     $attempt->needsupgradetonewqe = 1;
-
-    $question->defaultmark = $question->defaultgrade;
-    unset($question->defaultgrade);
 
     echo "<pre>
     public function test_{$question->qtype}_{$quiz->preferredbehaviour}_{$namesuffix}() {
@@ -560,7 +562,7 @@ function local_qeupgradehelper_display_convert_attempt_input($quiz, $attempt,
 }
 
 function local_qeupgradehelper_load_question($questionid, $quizid) {
-    global $DB, $QTYPES;
+    global $CFG, $DB;
 
     $question = $DB->get_record_sql('
             SELECT q.*, qqi.grade AS maxmark
@@ -569,12 +571,19 @@ function local_qeupgradehelper_load_question($questionid, $quizid) {
             WHERE q.id = :questionid AND qqi.quiz = :quizid',
             array('questionid' => $questionid, 'quizid' => $quizid));
 
-    if (!array_key_exists($question->qtype, $QTYPES)) {
-        $question->qtype = 'missingtype';
-        $question->questiontext = '<p>' . get_string('warningmissingtype', 'quiz') . '</p>' . $question->questiontext;
+    if (local_qeupgradehelper_is_upgraded()) {
+        require_once($CFG->dirroot . '/question/engine/bank.php');
+        $qtype = question_bank::get_qtype($question->qtype, false);
+    } else {
+        global $QTYPES;
+        if (!array_key_exists($question->qtype, $QTYPES)) {
+            $question->qtype = 'missingtype';
+            $question->questiontext = '<p>' . get_string('warningmissingtype', 'quiz') . '</p>' . $question->questiontext;
+        }
+        $qtype = $QTYPES[$question->qtype];
     }
 
-    $QTYPES[$question->qtype]->get_question_options($question);
+    $qtype->get_question_options($question);
 
     return $question;
 }
