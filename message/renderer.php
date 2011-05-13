@@ -46,8 +46,6 @@ class core_message_renderer extends plugin_renderer_base {
         // Display the current workflows
         $table = new html_table();
         $table->attributes['class'] = 'generaltable';
-        $table->head        = array();
-        $table->colclasses  = array();
         $table->data        = array();
         $table->head        = array(
             get_string('name'),
@@ -58,7 +56,7 @@ class core_message_renderer extends plugin_renderer_base {
             'displayname', 'availability', 'settings',
         );
 
-        foreach ( $processors as $processor ){
+        foreach ($processors as $processor) {
             $row = new html_table_row();
             $row->attributes['class'] = 'messageoutputs';
 
@@ -94,7 +92,7 @@ class core_message_renderer extends plugin_renderer_base {
             }
             // Settings
             $settings = new html_table_cell();
-            if ($processor->available && file_exists($CFG->dirroot.'/message/output/'.$processor->name.'/settings.php')) {
+            if ($processor->available && $processor->hassettings) {
                 $settingsurl = new moodle_url('settings.php', array('section' => 'messagesetting'.$processor->name));
                 $settings->text = html_writer::link($settingsurl, get_string('settings', 'message'));
             }
@@ -104,4 +102,105 @@ class core_message_renderer extends plugin_renderer_base {
         }
         return html_writer::table($table);
     }
+
+    /**
+     * Display the interface to manage default message outputs
+     *
+     * @param   array   $processors The list of message processors
+     * @param   array   $providers The list of message providers
+     * @param   array   $preferences The list of current preferences
+     * @return  string              The text to render
+     */
+    public function manage_defaultmessageoutputs($processors, $providers, $preferences) {
+        global $CFG;
+
+        // Prepare list of options for dropdown menu
+        $options = array();
+        foreach (array('disallowed', 'permitted', 'forced') as $setting) {
+            $options[$setting] = get_string($setting, 'message');
+        }
+
+        $output = html_writer::start_tag('form', array('id'=>'defaultmessageoutputs', 'method'=>'post'));
+        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
+
+        // Display users outputs table
+        $table = new html_table();
+        $table->attributes['class'] = 'generaltable';
+        $table->data        = array();
+        $table->head        = array('');
+
+        // Populate the header row
+        foreach ($processors as $processor) {
+            $table->head[]  = get_string('pluginname', 'message_'.$processor->name);
+        }
+        // Generate the matrix of settings for each provider and processor
+        foreach ($providers as $provider) {
+            $row = new html_table_row();
+            $row->attributes['class'] = 'defaultmessageoutputs';
+            $row->cells = array();
+
+            // Provider Name
+            $providername = get_string('messageprovider:'.$provider->name, $provider->component);
+            $row->cells[] = new html_table_cell($providername);
+
+            // Settings for each processor
+            foreach ($processors as $processor) {
+                $cellcontent = '';
+                foreach (array('permitted', 'loggedin', 'loggedoff') as $setting) {
+                    // pepare element and preference names
+                    $elementname = $provider->component.'_'.$provider->name.'_'.$setting.'['.$processor->name.']';
+                    $preferencebase = $provider->component.'_'.$provider->name.'_'.$setting;
+                    // prepare language bits
+                    $processorname = get_string('pluginname', 'message_'.$processor->name);
+                    $statename = get_string($setting, 'message');
+                    $labelparams = array(
+                        'provider'  => $providername,
+                        'processor' => $processorname,
+                        'state'     => $statename
+                    );
+                    if ($setting == 'permitted') {
+                        $label = get_string('sendingvia', 'message', $labelparams);
+                        // determine the current setting or use default
+                        $select = MESSAGE_DEFAULT_PERMITTED_VALUE;
+                        $preference = $processor->name.'_provider_'.$preferencebase;
+                        if (array_key_exists($preference, $preferences)) {
+                            $select = $preferences->{$preference};
+                        }
+                        // dropdown menu
+                        $cellcontent = html_writer::select($options, $elementname, $select, false, array('id' => $elementname));
+                        $cellcontent .= html_writer::label($label, $elementname, true, array('class' => 'accesshide'));
+                        $cellcontent .= html_writer::tag('div', get_string('defaults', 'message'));
+                    } else {
+                        $label = get_string('sendingviawhen', 'message', $labelparams);
+                        // determine the current setting based on the 'permitted' setting above
+                        $checked = false;
+                        if ($select == 'forced') {
+                            $checked = true;
+                        } else if ($select == 'permitted') {
+                            $preference = 'message_provider_'.$preferencebase;
+                            if (array_key_exists($preference, $preferences)) {
+                                $checked = (int)in_array($processor->name, explode(',', $preferences->{$preference}));
+                            }
+                        }
+                        // generate content
+                        $cellcontent .= html_writer::start_tag('div');
+                        $cellcontent .= html_writer::checkbox($elementname, 1, $checked, '', array('id' => $elementname));
+                        $cellcontent .= html_writer::label($label, $elementname, true, array('class' => 'accesshide'));
+                        $cellcontent .= $statename;
+                        $cellcontent .= html_writer::end_tag('div');
+                    }
+                }
+                $row->cells[] = new html_table_cell($cellcontent);
+            }
+            $table->data[] = $row;
+        }
+
+        $output .= html_writer::table($table);
+        $output .= html_writer::start_tag('div', array('class' => 'form-buttons'));
+        $output .= html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('savechanges','admin'), 'class' => 'form-submit'));
+        $output .= html_writer::end_tag('div');
+        $output .= html_writer::end_tag('form');
+        return $output;
+    }
+
 }

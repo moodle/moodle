@@ -49,6 +49,7 @@ if ($hassiteconfig) {
     // message outputs
     $ADMIN->add('modules', new admin_category('messageoutputs', get_string('messageoutputs', 'message')));
     $ADMIN->add('messageoutputs', new admin_page_managemessageoutputs());
+    $ADMIN->add('messageoutputs', new admin_page_defaultmessageoutputs());
     require_once($CFG->dirroot.'/message/lib.php');
     $processors = get_message_processors();
     foreach ($processors as $processor) {
@@ -56,8 +57,8 @@ if ($hassiteconfig) {
         if (!$processor->available) {
             continue;
         }
-        $strprocessorname = get_string('pluginname', 'message_'.$processorname);
-        if (file_exists($CFG->dirroot.'/message/output/'.$processor->name.'/settings.php')) {
+        if ($processor->hassettings) {
+            $strprocessorname = get_string('pluginname', 'message_'.$processorname);
             $settings = new admin_settingpage('messagesetting'.$processorname, $strprocessorname, 'moodle/site:config', !$processor->enabled);
             include($CFG->dirroot.'/message/output/'.$processor->name.'/settings.php');
             if ($settings) {

@@ -4966,6 +4966,21 @@ class admin_page_managemessageoutputs extends admin_externalpage {
 }
 
 /**
+ * Default message outputs configuration
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_page_defaultmessageoutputs extends admin_page_managemessageoutputs {
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        global $CFG;
+        admin_externalpage::__construct('defaultmessageoutputs', get_string('defaultmessageoutputs', 'message'), "$CFG->wwwroot/message/defaultoutputs.php");
+    }
+}
+
+/**
  * Question type manage page
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

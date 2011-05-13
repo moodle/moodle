@@ -53,6 +53,11 @@ define('MESSAGE_SEARCH_MAX_RESULTS', 200);
 define('MESSAGE_CONTACTS_PER_PAGE',10);
 define('MESSAGE_MAX_COURSE_NAME_LENGTH', 30);
 
+/**
+ * Set default value for default outputs permitted setting
+ */
+define('MESSAGE_DEFAULT_PERMITTED_VALUE', 'disallowed');
+
 if (!isset($CFG->message_contacts_refresh)) {  // Refresh the contacts list every 60 seconds
     $CFG->message_contacts_refresh = 60;
 }
@@ -2171,30 +2176,45 @@ function message_print_heading($title, $colspan=3) {
 /**
  * Get all message processors and validate corresponding plugin existance and
  * configuration
+ * @param bool $enabled only return enabled processors
  * @return array $processors array of objects containing information on message processors
  */
-function get_message_processors() {
+function get_message_processors($enabled = false) {
     global $DB, $CFG;
 
-    $processors = $DB->get_records('message_processors', null, 'name');
-    foreach ($processors as &$processor){
-        $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';
-        if (is_readable($processorfile)) {
-            include_once($processorfile);
-            $processclass = 'message_output_' . $processor->name;
-            if (class_exists($processclass)) {
-                $pclass = new $processclass();
-                $processor->configured = 0;
-                if ($pclass->is_system_configured()) {
-                    $processor->configured = 1;
+    static $processors;
+
+    if (empty($processors)) {
+        $processors = $DB->get_records('message_processors', null, 'name');
+        foreach ($processors as &$processor){
+            $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';
+            if (is_readable($processorfile)) {
+                include_once($processorfile);
+                $processclass = 'message_output_' . $processor->name;
+                if (class_exists($processclass)) {
+                    $pclass = new $processclass();
+                    $processor->configured = 0;
+                    if ($pclass->is_system_configured()) {
+                        $processor->configured = 1;
+                    }
+                    $processor->hassettings = 0;
+                    if (is_readable($CFG->dirroot.'/message/output/'.$processor->name.'/settings.php')) {
+                        $processor->hassettings = 1;
+                    }
+                    $processor->available = 1;
+                } else {
+                    print_error('errorcallingprocessor', 'message');
                 }
-                $processor->available = 1;
             } else {
-                print_error('errorcallingprocessor', 'message');
+                $processor->available = 0;
             }
-        } else {
-            $processor->available = 0;
         }
     }
+    if ($enabled) {
+        // Filter out enabled processors only, the reason of not doing this in
+        // database request is caching the result.
+        $processors = array_filter($processors, create_function('$a', 'return $a->enabled;'));
+    }
+
     return $processors;
 }
