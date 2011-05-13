@@ -212,9 +212,10 @@ BRANCH.prototype = {
      */
     node : null,
     /**
-     * A reference to the ajax load event handle when created.
+     * A reference to the ajax load event handlers when created.
      */
     event_ajaxload : null,
+    event_ajaxload_actionkey : null,
     /**
      * Initialises the branch when it is first created.
      */
@@ -253,7 +254,14 @@ BRANCH.prototype = {
 
         var isbranch = (this.get('expandable') || this.get('haschildren'));
         var branchli = Y.Node.create('<li></li>');
-        var branchp = Y.Node.create('<p class="tree_item"></p>').setAttribute('id', this.get('id'));
+        var link = this.get('link');
+        if (!link) {
+            //add tab focus if not link (so still one focus per menu node).
+            // it was suggested to have 2 foci. one for the node and one for the link in MDL-27428.
+            var branchp = Y.Node.create('<p class="tree_item" tabindex="0"></p>').setAttribute('id', this.get('id'));
+        } else {
+            var branchp = Y.Node.create('<p class="tree_item"></p>').setAttribute('id', this.get('id'));
+        }
 
         if (isbranch) {
             branchli.addClass('collapsed').addClass('contains_branch');
@@ -280,7 +288,6 @@ BRANCH.prototype = {
             }
         }
 
-        var link = this.get('link');
         if (!link) {
             if (branchicon) {
                 branchp.appendChild(branchicon);
@@ -313,6 +320,7 @@ BRANCH.prototype = {
         }
         if (this.get('expandable')) {
             this.event_ajaxload = this.node.on('ajaxload|click', this.ajaxLoad, this);
+            this.event_ajaxload_actionkey = this.node.on('actionkey', this.ajaxLoad, this);
         }
         return this;
     },
@@ -334,7 +342,16 @@ BRANCH.prototype = {
      * request made here.
      */
     ajaxLoad : function(e) {
-        e.stopPropagation();
+        if (e.type = 'actionkey' && e.action != 'enter') {
+            e.halt();
+        } else {
+            e.stopPropagation();
+        }
+        if (e.type = 'actionkey' && e.action == 'enter' && e.target.test('A')) {
+            this.event_ajaxload_actionkey.detach();
+            this.event_ajaxload.detach();
+            return; // no ajaxLoad for enter
+        }
 
         if (this.node.hasClass('loadingbranch')) {
             return true;
@@ -367,6 +384,7 @@ BRANCH.prototype = {
     ajaxProcessResponse : function(tid, outcome) {
         this.node.removeClass('loadingbranch');
         this.event_ajaxload.detach();
+        this.event_ajaxload_actionkey.detach();
         try {
             var object = Y.JSON.parse(outcome.responseText);
             if (object.children && object.children.length > 0) {
