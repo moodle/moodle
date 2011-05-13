@@ -715,6 +715,8 @@ class UnitTestCaseUsingDatabase extends UnitTestCase {
 
         if ($cleanmore) {
             accesslib_clear_all_caches_for_unit_testing();
+            $course = 'reset';
+            get_fast_modinfo($course);
         }
     }
 
