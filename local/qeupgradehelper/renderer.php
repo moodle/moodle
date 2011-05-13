@@ -137,6 +137,7 @@ class local_qeupgradehelper_renderer extends plugin_renderer_base {
                 local_qeupgradehelper_url('listupgraded'));
 
         $output .= $this->footer();
+        return $output;
     }
 
     /**

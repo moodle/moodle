@@ -255,8 +255,8 @@ class local_qeupgradehelper_resettable_quiz_list extends local_qeupgradehelper_q
 
     public function get_row($quizinfo) {
         $row = parent::get_row($quizinfo);
-        $row[] = html_writer::link(local_qeupgradehelper_url('resetattempts', array('quizid' => $quizinfo->id)),
-                        get_string('resetattempts', 'local_qeupgradehelper'));
+        $row[] = html_writer::link(local_qeupgradehelper_url('resetquiz', array('quizid' => $quizinfo->id)),
+                        get_string('resetquiz', 'local_qeupgradehelper'));
         return $row;
     }
 }

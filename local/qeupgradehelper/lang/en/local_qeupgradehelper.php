@@ -69,6 +69,7 @@ $string['quizzeswithunconverted'] = 'The following quizzes have attempts that ne
 $string['resetquiz'] = 'Reset attempts...';
 $string['resetcomplete'] = 'Reset complete';
 $string['resettingquizattempts'] = 'Resetting quiz attempts';
+$string['resettingquizattemptsprogress'] = 'Resetting attempt {$a->done} / {$a->outof}';
 $string['upgradingquizattempts'] = 'Upgrading the attempts for quiz \'{$a->name}\' in course {$a->shortname}';
 $string['upgradedsitedetected'] = 'This appears to be a site that has been upgraded to include the new question engine.';
 $string['upgradedsiterequired'] = 'This script can only work after the site has been upgraded.';

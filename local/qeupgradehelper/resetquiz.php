@@ -23,9 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-require_once(dirname(__FILE__) . '/../../../config.php');
+require_once(dirname(__FILE__) . '/../../config.php');
 require_once(dirname(__FILE__) . '/locallib.php');
+require_once(dirname(__FILE__) . '/afterupgradelib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 $quizid = required_param('quizid', PARAM_INT);
@@ -39,7 +39,7 @@ admin_externalpage_setup('qeupgradehelper', '', array(),
         local_qeupgradehelper_url('resetquiz', array('quizid' => $quizid)));
 $PAGE->navbar->add(get_string('listupgraded', 'local_qeupgradehelper'),
         local_qeupgradehelper_url('listtodo'));
-$PAGE->navbar->add(get_string('resetattempts', 'local_qeupgradehelper'));
+$PAGE->navbar->add(get_string('resetquiz', 'local_qeupgradehelper'));
 
 $renderer = $PAGE->get_renderer('local_qeupgradehelper');
 
