@@ -252,10 +252,6 @@ abstract class question_behaviour_attempt_updater {
         $this->add_step($step);
     }
 
-    protected function process10($step, $state) {
-        $this->unexpected_event($state);
-    }
-
     /**
      * @param object $question a question definition
      * @return qtype_updater
@@ -384,7 +380,7 @@ class qbehaviour_manualgraded_converter extends question_behaviour_attempt_updat
     }
 
     protected function process7($step, $state) {
-        return $this->process6($step, $state);
+        return $this->process2($step, $state);
     }
 }
 
@@ -432,56 +428,70 @@ class qbehaviour_informationitem_converter extends question_behaviour_attempt_up
 }
 
 
-// TODO
 class qbehaviour_adaptive_converter extends question_behaviour_attempt_updater {
-    protected $triesleft;
+    protected $try;
+    protected $finished = false;
+    protected $bestrawgrade = 0;
 
     protected function behaviour_name() {
-        return 'interactive';
+        return 'adaptive';
     }
 
     protected function finish_up() {
-        if ($this->triesleft == 0 || !$this->attempt->timefinish) {
+        if ($this->finishstate || !$this->attempt->timefinish) {
             return;
         }
 
         $state = end($this->qstates);
         $step = $this->make_step($state);
-        $step->data['-finish'] = 1;
-
-        if ($this->question->maxmark > 0) {
-            $step->fraction = $state->grade / $this->question->maxmark;
-            $step->state = $this->graded_state_for_fraction($step->fraction);
-        } else {
-            $step->state = 'finished';
-        }
-
-        $this->add_step($step);
+        $this->process6($step, $state);
     }
 
     protected function process0($step, $state) {
-        $this->triesleft = 1;
-        if (!empty($this->question->hints)) {
-            $this->triesleft += count($this->question->hints);
-        }
-        $step->data['-_triesleft'] = $this->triesleft;
+        $this->try = 1;
+        $step->data['-_try'] = $this->try;
         parent::process0($step, $state);
     }
 
     protected function process2($step, $state) {
         if ($this->finishstate) {
-            $this->logger->log_assumption("Ignoring bogus save after submit, and before try again, in interactive attempt at question {$state->question} (question session {$this->qsession->id})");
+            $this->logger->log_assumption("Ignoring bogus save after submit in an " .
+                    "adaptive attempt at question {$state->question} " .
+                    "(question session {$this->qsession->id})");
             return;
         }
+
+        if ($this->question->maxmark > 0) {
+            $step->fraction = $state->grade / $this->question->maxmark;
+        }
+
         parent::process2($step, $state);
     }
 
     protected function process3($step, $state) {
-        if ($state->id == $this->qsession->newgraded) {
-            return $this->process6($step, $state);
+        if ($this->question->maxmark > 0) {
+            $step->fraction = $state->grade / $this->question->maxmark;
+            if ($this->graded_state_for_fraction($step->fraction) == 'gradedright') {
+                $step->state = 'complete';
+            } else {
+                $step->state = 'todo';
+            }
         } else {
-            return;
+            $step->state = 'complete';
         }
+
+        $this->bestrawgrade = max($state->raw_grade, $this->bestrawgrade);
+
+        $this->try += 1;
+        $step->data['-_try'] = $this->try;
+        if ($this->question->maxmark > 0) {
+            $step->data['-_rawfraction'] = $state->raw_grade / $this->question->maxmark;
+        } else {
+            $step->data['-_rawfraction'] = 0;
+        }
+        $step->data['-submit'] = 1;
+
+        $this->add_step($step);
     }
 
     protected function process6($step, $state) {
@@ -491,40 +501,30 @@ class qbehaviour_adaptive_converter extends question_behaviour_attempt_updater {
                     $this->finishstate->raw_grade != $state->raw_grade ||
                     $this->finishstate->penalty != $state->penalty) {
                 throw new coding_exception("Two inconsistent finish states found for question session {$this->qsession->id}.");
-            } else if ($this->triesleft) {
-                $step->data = array('-finish' => '1');
-                if ($this->question->maxmark > 0) {
-                    $step->fraction = $state->grade / $this->question->maxmark;
-                    $step->state = $this->graded_state_for_fraction($step->fraction);
-                } else {
-                    $step->state = 'finished';
-                }
-                $this->finishstate = $state;
-                $this->add_step($step);
-                $this->triesleft = 0;
-                return;
             } else {
                 $this->logger->log_assumption("Ignoring extra finish states in attempt at question {$state->question}");
                 return;
             }
         }
 
+        $this->bestrawgrade = max($state->raw_grade, $this->bestrawgrade);
+
         if ($this->question->maxmark > 0) {
             $step->fraction = $state->grade / $this->question->maxmark;
-            $step->state = $this->graded_state_for_fraction($state->raw_grade / $this->question->maxmark);
+            $step->state = $this->graded_state_for_fraction(
+                    $this->bestrawgrade / $this->question->maxmark);
         } else {
             $step->state = 'finished';
         }
 
-        $this->triesleft--;
-        $step->data['-submit'] = '1';
-        if ($this->triesleft && $step->state != 'gradedright') {
-            $step->state = 'todo';
-            $step->fraction = null;
-            $step->data['-_triesleft'] = $this->triesleft;
+        $step->data['-finish'] = 1;
+        $step->data['-_try'] = $this->try;
+        if ($this->question->maxmark > 0) {
+            $step->data['-_rawfraction'] = $state->raw_grade / $this->question->maxmark;
         } else {
-            $this->triesleft = 0;
+            $step->data['-_rawfraction'] = 0;
         }
+
         $this->finishstate = $state;
         $this->add_step($step);
     }
@@ -532,20 +532,11 @@ class qbehaviour_adaptive_converter extends question_behaviour_attempt_updater {
     protected function process7($step, $state) {
         $this->unexpected_event($state);
     }
+}
 
-    protected function process10($step, $state) {
-        if (!$this->finishstate) {
-            $oldcount = $this->sequencenumber;
-            $this->process6($step, $state);
-            if ($this->sequencenumber != $oldcount + 1) {
-                throw new coding_exception('Submit before try again did not keep the step.');
-            }
-            $step = $this->make_step($state);
-        }
 
-        $step->state = 'todo';
-        $step->data = array('-tryagain' => 1);
-        $this->finishstate = null;
-        $this->add_step($step);
+class qbehaviour_adaptivenopenalty_converter extends qbehaviour_adaptive_converter {
+    protected function behaviour_name() {
+        return 'adaptivenopenalty';
     }
 }

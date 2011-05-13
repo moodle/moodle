@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/question/engine/upgrade/simpletest/helper.php');
  */
 class qtype_essay_attempt_upgrader_test extends question_attempt_upgrader_test_base {
 
-    public function test_essay_deferredfeedback_history97220() {
+    public function test_essay_deferredfeedback_history98220() {
         $quiz = (object) array(
             'id' => '4140',
             'course' => '5012',
@@ -187,7 +187,7 @@ class qtype_essay_attempt_upgrader_test extends question_attempt_upgrader_test_b
                 'answer' => '<p>Variable can be typed</p>
         <p>xml Schemas fully support Namespaces</p>',
                 'timestamp' => '1271671440',
-                'event' => '7',
+                'event' => '8',
                 'grade' => '0',
                 'raw_grade' => '0',
                 'penalty' => '0',
