@@ -37,7 +37,7 @@ abstract class convert_factory {
      * @param  $tempdir The temp directory to operate on
      * @return base_converter
      */
-    public static function converter($name, $tempdir) {
+    public static function get_converter($name, $tempdir) {
         global $CFG;
 
         $name = clean_param($name, PARAM_SAFEDIR);

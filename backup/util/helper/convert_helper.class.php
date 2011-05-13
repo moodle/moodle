@@ -143,7 +143,7 @@ abstract class convert_helper {
         }
 
         foreach ($path as $name) {
-            $converter = convert_factory::converter($name, $tempdir);
+            $converter = convert_factory::get_converter($name, $tempdir);
             $converter->convert();
         }
 

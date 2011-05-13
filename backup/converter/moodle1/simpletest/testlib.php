@@ -59,18 +59,18 @@ class moodle1_converter_test extends UnitTestCase {
     }
 
     public function test_convert_factory() {
-        $converter = convert_factory::converter('moodle1', $this->tempdir);
+        $converter = convert_factory::get_converter('moodle1', $this->tempdir);
         $this->assertIsA($converter, 'moodle1_converter');
     }
 
     public function test_stash_storage_not_created() {
-        $converter = convert_factory::converter('moodle1', $this->tempdir);
+        $converter = convert_factory::get_converter('moodle1', $this->tempdir);
         $this->expectException('moodle1_convert_storage_exception');
         $converter->set_stash('tempinfo', 12);
     }
 
     public function test_stash_requiring_empty_stash() {
-        $converter = convert_factory::converter('moodle1', $this->tempdir);
+        $converter = convert_factory::get_converter('moodle1', $this->tempdir);
         $converter->create_stash_storage();
         $converter->set_stash('tempinfo', 12);
         $this->expectException('moodle1_convert_empty_storage_exception');
@@ -85,7 +85,7 @@ class moodle1_converter_test extends UnitTestCase {
     }
 
     public function test_stash_storage() {
-        $converter = convert_factory::converter('moodle1', $this->tempdir);
+        $converter = convert_factory::get_converter('moodle1', $this->tempdir);
         $converter->create_stash_storage();
 
         // test stashes without itemid
@@ -112,7 +112,7 @@ class moodle1_converter_test extends UnitTestCase {
     }
 
     public function test_get_contextid() {
-        $converter = convert_factory::converter('moodle1', $this->tempdir);
+        $converter = convert_factory::get_converter('moodle1', $this->tempdir);
 
         // stash storage must be created in advance
         $converter->create_stash_storage();
@@ -135,7 +135,7 @@ class moodle1_converter_test extends UnitTestCase {
     }
 
     public function test_convert_run_convert() {
-        $converter = convert_factory::converter('moodle1', $this->tempdir);
+        $converter = convert_factory::get_converter('moodle1', $this->tempdir);
         $converter->convert();
     }
 }
