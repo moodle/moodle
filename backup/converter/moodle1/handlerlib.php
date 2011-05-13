@@ -175,7 +175,7 @@ abstract class moodle1_xml_handler extends moodle1_handler {
     }
 
     /**
-     * Dumps the data into the XML file
+     * Writes the given XML tree data into the currently opened file
      *
      * @param string $element the name of the root element of the tree
      * @param array $data the associative array of data to write
@@ -222,59 +222,6 @@ abstract class moodle1_xml_handler extends moodle1_handler {
 
         $this->xmlwriter->end_tag($element);
     }
-}
-
-
-/**
- * Shared base class for activity modules and blocks handlers
- */
-abstract class moodle1_plugin_handler extends moodle1_xml_handler {
-
-    /** @var string */
-    protected $plugintype;
-
-    /** @var string */
-    protected $pluginname;
-
-    /**
-     * @param moodle1_converter $converter the converter that requires us
-     * @param string plugintype
-     * @param string pluginname
-     */
-    public function __construct(moodle1_converter $converter, $plugintype, $pluginname) {
-
-        parent::__construct($converter);
-        $this->plugintype = $plugintype;
-        $this->pluginname = $pluginname;
-    }
-}
-
-
-/**
- * Base class for activity module handlers
- */
-abstract class moodle1_mod_handler extends moodle1_plugin_handler {
-
-    /** @var int module id */
-    protected $moduleid;
-
-    /**
-     * Return the relative path to the XML file that
-     * this step writes out to.  Example: course/course.xml
-     *
-     * @return string
-     */
-    public function get_xml_filename() {
-        return "activities/{$this->pluginname}_{$this->moduleid}/module.xml";
-    }
-}
-
-
-/**
- * Base class for activity module handlers
- */
-abstract class moodle1_block_handler extends moodle1_plugin_handler {
-
 }
 
 
@@ -464,9 +411,24 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
             new convert_path(
                 'course_module', '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD',
                 array(
+                    'newfields' => array(
+                        'completion'                => 0,
+                        'completiongradeitemnumber' => null,
+                        'completionview'            => 0,
+                        'completionexpected'        => 0,
+                        'availablefrom'             => 0,
+                        'availableuntil'            => 0,
+                        'showavailability'          => 0,
+                        'availability_info'         => array(),
+                        'visibleold'                => 1,
+                    ),
                     'dropfields' => array(
+                        'instance',
                         'roles_overrides',
                         'roles_assignments',
+                    ),
+                    'renamefields' => array(
+                        'type' => 'modulename',
                     ),
                 )
             )
@@ -481,7 +443,8 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
      * Populates the section sequence field (order of course modules) and stashes the
      * course module info so that is can be dumped to activities/xxxx_x/module.xml later
      */
-    public function process_course_module($data) {
+    public function process_course_module($data, $raw) {
+        global $CFG;
 
         // add the course module id into the section's sequence
         if (is_null($this->currentsection['sequence'])) {
@@ -494,9 +457,28 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
         $data['sectionid']      = $this->currentsection['id'];
         $data['sectionnumber']  = $this->currentsection['number'];
 
+        // generate the module version - this is a bit tricky as this information
+        // is not present in 1.9 backups. we will use the currently installed version
+        // whenever we can but that might not be accurate for some modules.
+        // also there might be problem with modules that are not present at the target
+        // host...
+        $versionfile = $CFG->dirroot.'/mod/'.$data['modulename'].'/version.php';
+        if (file_exists($versionfile)) {
+            include($versionfile);
+            $data['version'] = $module->version;
+        } else {
+            $data['version'] = null;
+        }
+
         // stash the course module info in stashes like 'cminfo_forum' with
-        // itemid set to the instance id
-        $this->converter->set_stash('cminfo_'.$data['type'], $data, $data['instance']);
+        // itemid set to the instance id. this is needed so that module handlers
+        // can later obtain information about the course module.
+        $this->converter->set_stash('cminfo_'.$data['modulename'], $data, $raw['INSTANCE']);
+
+        // write the module.xml file
+        $this->open_xml_writer('activities/'.$data['modulename'].'_'.$data['id'].'/module.xml');
+        $this->write_xml('module', $data, array('/module/version'));
+        $this->close_xml_writer();
     }
 
     /**
@@ -509,4 +491,59 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
         $this->close_xml_writer();
         unset($this->currentsection);
     }
+}
+
+
+/**
+ * Shared base class for activity modules and blocks handlers
+ */
+abstract class moodle1_plugin_handler extends moodle1_xml_handler {
+
+    /** @var string */
+    protected $plugintype;
+
+    /** @var string */
+    protected $pluginname;
+
+    /**
+     * @param moodle1_converter $converter the converter that requires us
+     * @param string plugintype
+     * @param string pluginname
+     */
+    public function __construct(moodle1_converter $converter, $plugintype, $pluginname) {
+
+        parent::__construct($converter);
+        $this->plugintype = $plugintype;
+        $this->pluginname = $pluginname;
+    }
+}
+
+
+/**
+ * Base class for activity module handlers
+ */
+abstract class moodle1_mod_handler extends moodle1_plugin_handler {
+
+    /**
+     * Returns course module id for the given instance id
+     *
+     * The mapping from instance id to course module id has been stashed by
+     * {@link moodle1_course_outline_handler::process_course_module()}
+     *
+     * @param int $instance the module instance id
+     * @return int
+     */
+    protected function get_moduleid($instance) {
+
+        $stashed = $this->converter->get_stash('cminfo_'.$this->pluginname, $instance);
+        return $stashed['id'];
+    }
+}
+
+
+/**
+ * Base class for activity module handlers
+ */
+abstract class moodle1_block_handler extends moodle1_plugin_handler {
+
 }

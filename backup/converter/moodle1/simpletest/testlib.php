@@ -136,6 +136,6 @@ class moodle1_converter_test extends UnitTestCase {
 
     public function test_convert_run_convert() {
         $converter = convert_factory::converter('moodle1', $this->tempdir);
-        //$converter->convert();
+        $converter->convert();
     }
 }

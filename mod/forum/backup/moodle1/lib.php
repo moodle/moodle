@@ -47,7 +47,6 @@ class moodle1_mod_forum_handler extends moodle1_mod_handler {
     public function get_paths() {
         return array(
             new convert_path('forum', '/MOODLE_BACKUP/COURSE/MODULES/MOD/FORUM'),
-            // new convert_path('foo', '/MOODLE_BACKUP/COURSE/MODULES/MOD/FORUM/FOO'),  // Example of sub-path
         );
     }
 
@@ -55,10 +54,5 @@ class moodle1_mod_forum_handler extends moodle1_mod_handler {
      * Converts /MOODLE_BACKUP/COURSE/MODULES/MOD/FORUM data
      */
     public function process_forum($data) {
-        print_object($data);
-    }
-
-    public function process_foo($data) {
-        print_object($data);
     }
 }
