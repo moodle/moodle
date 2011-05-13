@@ -63,7 +63,7 @@ class qtype_numerical_question_test extends UnitTestCase {
     public function test_grading_with_units() {
         $question = test_question_maker::make_question('numerical');
         $question->ap = new qtype_numerical_answer_processor(
-                array('m' => 1, 'cm' => 0.01), false, '.', ',');
+                array('m' => 1, 'cm' => 100), false, '.', ',');
 
         $this->assertEqual(array(1, question_state::$gradedright),
                 $question->grade_response(array('answer' => '3.14 frogs')));

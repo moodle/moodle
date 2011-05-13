@@ -88,7 +88,7 @@ class qtype_numerical_test_helper extends question_test_helper {
         $num->unitdisplay = qtype_numerical::UNITSELECT;
         $num->unitgradingtype = qtype_numerical::UNITGRADEDOUTOFMARK;
         $num->unitpenalty = 0.5;
-        $num->ap = new qtype_numerical_answer_processor(array('m' => 1, 'cm' => 0.01));
+        $num->ap = new qtype_numerical_answer_processor(array('m' => 1, 'cm' => 100));
 
         return $num;
     }

@@ -28,7 +28,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/type/numerical/question.php');
+//require_once($CFG->dirroot . '/question/type/numerical/question.php');
 
 
 /**
@@ -809,7 +809,7 @@ class qtype_numerical_answer_processor {
         }
 
         if ($unit && $this->is_known_unit($unit)) {
-            $value = $numberstring * $this->units[$unit];
+            $value = $numberstring / $this->units[$unit];
         } else {
             $value = $numberstring * 1;
         }

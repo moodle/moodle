@@ -31,6 +31,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(dirname(__FILE__) . '/../type/questiontype.php');
+
 
 /**
  * This static class provides access to the other question bank.

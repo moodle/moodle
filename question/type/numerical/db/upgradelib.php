@@ -42,17 +42,46 @@ class qtype_numerical_qe2_attempt_updater extends question_qtype_attempt_updater
     public function right_answer() {
         foreach ($this->question->options->answers as $ans) {
             if ($ans->fraction > 0.999) {
-                return $ans->answer;
+                $right = $ans->answer;
+
+                if (empty($this->question->options->units)) {
+                    return $right;
+                }
+
+                $unit = reset($this->question->options->units);
+                $unit = $unit->unit;
+                if (!empty($this->question->options->unitsleft)) {
+                    return $unit . ' ' . $right;
+                } else {
+                    return $right . ' ' . $unit;
+                }
             }
         }
     }
 
     public function response_summary($state) {
-        if (!empty($state->answer)) {
-            return $state->answer;
+        if (strpos($state->answer, '|||||') === false) {
+            $answer = $state->answer;
+            $unit = '';
         } else {
-            return null;
+            list($answer, $unit) = explode('|||||', $state->answer, 2);
         }
+
+        if (empty($answer) && empty($unit)) {
+            $resp = null;
+        } else {
+            $resp = $answer;
+        }
+
+        if (!empty($unit)) {
+            if (!empty($this->question->options->unitsleft)) {
+                $resp = trim($unit . ' ' . $resp);
+            } else {
+                $resp = trim($resp . ' ' . $unit);
+            }
+        }
+
+        return $resp;
     }
 
     public function was_answered($state) {
@@ -75,7 +104,8 @@ class qtype_numerical_qe2_attempt_updater extends question_qtype_attempt_updater
             $data['answer'] = $state->answer;
         } else {
             list($answer, $unit) = explode('|||||', $state->answer, 2);
-            if ($this->question->options->showunits == 1) {
+            if (!empty($this->question->options->showunits) &&
+                    $this->question->options->showunits == 1) {
                 // Multichoice units.
                 $data['answer'] = $answer;
                 $data['unit'] = $unit;

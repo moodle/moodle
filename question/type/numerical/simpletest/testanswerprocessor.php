@@ -36,7 +36,7 @@ class testable_qtype_numerical_answer_processor extends qtype_numerical_answer_p
 class qtype_numerical_answer_processor_test extends UnitTestCase {
     public function test_parse_response() {
         $ap = new testable_qtype_numerical_answer_processor(
-                array('m' => 1, 'cm' => 0.01), false, '.', ',');
+                array('m' => 1, 'cm' => 100), false, '.', ',');
 
         $this->assertEqual(array('3', '142', '', ''), $ap->parse_response('3.142'));
         $this->assertEqual(array('', '2', '', ''), $ap->parse_response('.2'));
@@ -83,30 +83,41 @@ class qtype_numerical_answer_processor_test extends UnitTestCase {
         $this->assertEqual(array(null, null, null, null), $ap->parse_response(','));
     }
 
+    protected function verify_value_and_unit($exectedval, $expectedunit,
+            qtype_numerical_answer_processor $ap, $input, $separateunit = null) {
+        list($val, $unit) = $ap->apply_units($input, $separateunit);
+        if (is_null($exectedval)) {
+            $this->assertNull($val);
+        } else {
+            $this->assertWithinMargin($exectedval, $val, 0.0001);
+        }
+        $this->assertEqual($expectedunit, $unit);
+    }
+
     public function test_apply_units() {
         $ap = new qtype_numerical_answer_processor(
-                array('m/s' => 1, 'c' => 299792458, 'mph' => 0.44704), false, '.', ',');
+                array('m/s' => 1, 'c' => 3.3356409519815E-9, 'mph' => 2.2369362920544), false, '.', ',');
 
-        $this->assertEqual(array(3e8, 'm/s'), $ap->apply_units('3x10^8 m/s'));
-        $this->assertEqual(array(3e8, ''), $ap->apply_units('3x10^8'));
-        $this->assertEqual(array(299792458, 'c'), $ap->apply_units('1c'));
-        $this->assertEqual(array(0.44704, 'mph'), $ap->apply_units('0001.000 mph'));
+        $this->verify_value_and_unit(3e8, 'm/s', $ap, '3x10^8 m/s');
+        $this->verify_value_and_unit(3e8, '', $ap, '3x10^8');
+        $this->verify_value_and_unit(299792458, 'c', $ap, '1c');
+        $this->verify_value_and_unit(0.44704, 'mph', $ap, '0001.000 mph');
 
-        $this->assertEqual(array(1, 'frogs'), $ap->apply_units('1 frogs'));
-        $this->assertEqual(array(null, null), $ap->apply_units('. m/s'));
+        $this->verify_value_and_unit(1, 'frogs', $ap, '1 frogs');
+        $this->verify_value_and_unit(null, null, $ap, '. m/s');
     }
 
     public function test_apply_units_separate_unit() {
         $ap = new qtype_numerical_answer_processor(
-                array('m/s' => 1, 'c' => 299792458, 'mph' => 0.44704), false, '.', ',');
+                array('m/s' => 1, 'c' => 3.3356409519815E-9, 'mph' => 2.2369362920544), false, '.', ',');
 
-        $this->assertEqual(array(3e8, 'm/s'), $ap->apply_units('3x10^8', 'm/s'));
-        $this->assertEqual(array(3e8, ''), $ap->apply_units('3x10^8', ''));
-        $this->assertEqual(array(299792458, 'c'), $ap->apply_units('1', 'c'));
-        $this->assertEqual(array(0.44704, 'mph'), $ap->apply_units('0001.000', 'mph'));
+        $this->verify_value_and_unit(3e8, 'm/s', $ap, '3x10^8', 'm/s');
+        $this->verify_value_and_unit(3e8, '', $ap, '3x10^8', '');
+        $this->verify_value_and_unit(299792458, 'c', $ap, '1', 'c');
+        $this->verify_value_and_unit(0.44704, 'mph', $ap, '0001.000', 'mph');
 
-        $this->assertEqual(array(1, 'frogs'), $ap->apply_units('1', 'frogs'));
-        $this->assertEqual(array(null, null), $ap->apply_units('.', 'm/s'));
+        $this->verify_value_and_unit(1, 'frogs', $ap, '1', 'frogs');
+        $this->verify_value_and_unit(null, null, $ap, '.', 'm/s');
     }
 
     public function test_euro_style() {
@@ -117,7 +128,7 @@ class qtype_numerical_answer_processor_test extends UnitTestCase {
     }
 
     public function test_percent() {
-        $ap = new qtype_numerical_answer_processor(array('%' => 0.01), false, '.', ',');
+        $ap = new qtype_numerical_answer_processor(array('%' => 100), false, '.', ',');
 
         $this->assertEqual(array('0.03', '%'), $ap->apply_units('3%'));
         $this->assertEqual(array('1e-8', '%'), $ap->apply_units('1e-6 %'));
