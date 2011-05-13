@@ -298,7 +298,6 @@ class local_qeupgradehelper_pre_upgrade_quiz_list extends local_qeupgradehelper_
     }
 }
 
-
 /**
  * Get the information about a quiz to be upgraded.
  * @param integer $quizid the quiz id.
@@ -368,4 +367,214 @@ function local_qeupgradehelper_get_resettable_quiz($quizid) {
               AND quiz.id = ?
 
             GROUP BY quiz.id, quiz.name, c.shortname, c.id", array($quizid));
+}
+
+/**
+ * Get a question session id form a quiz attempt id and a question id.
+ * @param int $attemptid a quiz attempt id.
+ * @param int $questionid a question id.
+ * @return int the question session id.
+ */
+function local_qeupgradehelper_get_session_id($attemptid, $questionid) {
+    global $DB;
+    $attempt = $DB->get_record('quiz_attempts', array('id' => $attemptid));
+    if (!$attempt) {
+        return null;
+    }
+    return $DB->get_field('question_sessions', 'id',
+            array('attemptid' => $attempt->uniqueid, 'questionid' => $questionid));
+}
+
+/**
+ * Identify the question session id of a question attempt matching certain
+ * requirements.
+ * @param integer $behaviour 0 = deferred feedback, 1 = interactive.
+ * @param string $statehistory of states, last first. E.g. 620.
+ * @param string $qtype question type.
+ * @return integer question_session.id.
+ */
+function local_qeupgradehelper_find_test_case($behaviour, $statehistory, $qtype, $extratests) {
+    global $DB;
+
+    $params = array(
+        'qtype' => $qtype,
+        'statehistory' => $statehistory
+    );
+
+    if ($behaviour == 'deferredfeedback') {
+        $extrawhere = '';
+        $params['optionflags'] = 0;
+
+    } else if ($behaviour == 'adaptive') {
+        $extrawhere = 'AND penaltyscheme = :penaltyscheme';
+        $params['optionflags'] = 0;
+        $params['penaltyscheme'] = 0;
+
+    } else {
+        $extrawhere = 'AND penaltyscheme = :penaltyscheme';
+        $params['optionflags'] = 0;
+        $params['penaltyscheme'] = 1;
+    }
+
+    $possibleids = $DB->get_records_sql_menu('
+            SELECT
+                qsess.id,
+                1
+
+            FROM {question_sessions} qsess
+            JOIN {question_states} qst ON qst.attempt = qsess.attemptid
+                    AND qst.question = qsess.questionid
+            JOIN {quiz_attempts} quiza ON quiza.uniqueid = qsess.attemptid
+            JOIN {quiz} quiz ON quiz.id = quiza.quiz
+            JOIN {question} q ON q.id = qsess.questionid
+
+            WHERE q.qtype = :qtype
+            AND quiz.optionflags = :optionflags
+            ' . $extrawhere . '
+
+            GROUP BY
+                qsess.id
+
+            HAVING SUM(
+                (CASE WHEN qst.event = 10 THEN 1 ELSE qst.event END) *
+                POWER(10, CAST(qst.seq_number AS NUMERIC(110,0)))
+            ) = :statehistory' . $extratests, $params, 0, 100);
+
+    if (!$possibleids) {
+        return null;
+    }
+
+    return array_rand($possibleids);
+}
+
+/**
+ * Grab all the data that upgrade will need for upgrading one
+ * attempt at one question from the old DB.
+ */
+function local_qeupgradehelper_generate_unit_test($questionsessionid, $namesuffix) {
+    global $DB;
+
+    $qsession = $DB->get_record('question_sessions', array('id' => $questionsessionid));
+    $attempt = $DB->get_record('quiz_attempts', array('uniqueid' => $qsession->attemptid));
+    $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz));
+    $qstates = $DB->get_records('question_states',
+            array('attempt' => $qsession->attemptid, 'question' => $qsession->questionid),
+            'seq_number, id');
+
+    $question = local_qeupgradehelper_load_question($qsession->questionid, $quiz->id);
+
+    if (!$quiz->optionflags) {
+        $quiz->preferredbehaviour = 'deferredfeedback';
+    } else if (!$quiz->penaltyscheme) {
+        $quiz->preferredbehaviour = 'adaptive';
+    } else {
+        $quiz->preferredbehaviour = 'adaptivenopenalty';
+    }
+    unset($quiz->optionflags);
+    unset($quiz->penaltyscheme);
+
+    $attempt->needsupgradetonewqe = 1;
+
+    $question->defaultmark = $question->defaultgrade;
+    unset($question->defaultgrade);
+
+    echo "<pre>
+    public function test_{$question->qtype}_{$quiz->preferredbehaviour}_{$namesuffix}() {
+";
+    local_qeupgradehelper_display_convert_attempt_input($quiz, $attempt,
+            $question, $qsession, $qstates);
+
+    if ($question->qtype == 'random') {
+        list($randombit, $realanswer) = explode('-', reset($qstates)->answer, 2);
+        $newquestionid = substr($randombit, 6);
+        $newquestion = local_qeupgradehelper_load_question($newquestionid);
+        $newquestion->maxmark = $question->maxmark;
+
+        echo local_qeupgradehelper_format_var('$realquestion', $newquestion);
+        echo '        $this->loader->put_question_in_cache($realquestion);
+';
+    }
+
+    echo '
+        $qa = $this->updater->convert_question_attempt($quiz, $attempt, $question, $qsession, $qstates);
+
+        $expectedqa = (object) array(';
+    echo "
+            'behaviour' => '{$quiz->preferredbehaviour}',
+            'questionid' => {$question->id},
+            'maxmark' => {$question->maxmark},
+            'minfraction' => 0,
+            'flagged' => 0,
+            'questionsummary' => '',
+            'rightanswer' => '',
+            'responsesummary' => '',
+            'timemodified' => 0,
+            'steps' => array(";
+    foreach ($qstates as $state) {
+        echo "
+                {$state->seq_number} => (object) array(
+                    'sequencenumber' => {$state->seq_number},
+                    'state' => '',
+                    'fraction' => null,
+                    'timecreated' => {$state->timestamp},
+                    'userid' => {$attempt->userid},
+                    'data' => array(),
+                ),";
+    }
+    echo '
+            ),
+        );
+
+        $this->assertEqual($expectedqa, $qa);
+    }
+</pre>';
+}
+
+function local_qeupgradehelper_format_var($name, $var) {
+    $out = var_export($var, true);
+    $out = str_replace('<', '&lt;', $out);
+    $out = str_replace('ADOFetchObj::__set_state(array(', '(object) array(', $out);
+    $out = str_replace('stdClass::__set_state(array(', '(object) array(', $out);
+    $out = str_replace('array (', 'array(', $out);
+    $out = preg_replace('/=> \n\s*/', '=> ', $out);
+    $out = str_replace(')),', '),', $out);
+    $out = str_replace('))', ')', $out);
+    $out = preg_replace('/\n         (?! )/', "\n                        ", $out);
+    $out = preg_replace('/\n       (?! )/',   "\n                        ", $out);
+    $out = preg_replace('/\n      (?! )/',    "\n                    ", $out);
+    $out = preg_replace('/\n     (?! )/',     "\n                ", $out);
+    $out = preg_replace('/\n    (?! )/',      "\n                ", $out);
+    $out = preg_replace('/\n   (?! )/',       "\n            ", $out);
+    $out = preg_replace('/\n  (?! )/',        "\n            ", $out);
+    $out = preg_replace('/\n(?! )/',          "\n        ", $out);
+    return "        $name = $out;\n";
+}
+
+function local_qeupgradehelper_display_convert_attempt_input($quiz, $attempt,
+        $question, $qsession, $qstates) {
+    echo local_qeupgradehelper_format_var('$quiz', $quiz);
+    echo local_qeupgradehelper_format_var('$attempt', $attempt);
+    echo local_qeupgradehelper_format_var('$question', $question);
+    echo local_qeupgradehelper_format_var('$qsession', $qsession);
+    echo local_qeupgradehelper_format_var('$qstates', $qstates);
+}
+
+function local_qeupgradehelper_load_question($questionid, $quizid) {
+    global $DB, $QTYPES;
+
+    $question = $DB->get_record_sql('
+            SELECT q.*, qqi.grade AS maxmark
+            FROM {question} q
+            JOIN {quiz_question_instances} qqi ON qqi.question = q.id
+            WHERE q.id = :questionid AND qqi.quiz = :quizid',
+            array('questionid' => $questionid, 'quizid' => $quizid));
+
+    if (!array_key_exists($question->qtype, $QTYPES)) {
+        $question->qtype = 'missingtype';
+        $question->questiontext = '<p>' . get_string('warningmissingtype', 'quiz') . '</p>' . $question->questiontext;
+    }
+
+    $QTYPES[$question->qtype]->get_question_options($question);
+
+    return $question;
 }
