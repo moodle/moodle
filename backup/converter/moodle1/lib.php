@@ -341,10 +341,11 @@ class moodle1_converter extends base_converter {
 
         $element = $this->pathelements[$path];
         $pobject = $element->get_processing_object();
+        $data    = $element->get_data();
         $method  = 'on_' . $element->get_name() . '_end';
 
         if (method_exists($pobject, $method)) {
-            $pobject->$method();
+            $pobject->$method($data['tags']);
         }
     }
 
