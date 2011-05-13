@@ -40,6 +40,7 @@ $PAGE->navbar->add(get_string('listpreupgrade', 'local_qeupgradehelper'));
 $renderer = $PAGE->get_renderer('local_qeupgradehelper');
 
 $quizzes = new local_qeupgradehelper_pre_upgrade_quiz_list();
+$numveryoldattemtps = local_qeupgradehelper_get_num_very_old_attempts();
 
 if ($quizzes->is_empty()) {
     echo $renderer->simple_message_page(get_string('noquizattempts', 'local_qeupgradehelper'));
@@ -47,5 +48,5 @@ if ($quizzes->is_empty()) {
 } else {
     // TODO, once we have a way to limit which quizzes will be included in the upgrade,
     // display that information too.
-    echo $renderer->quiz_list_page($quizzes);
+    echo $renderer->quiz_list_page($quizzes, $numveryoldattemtps);
 }

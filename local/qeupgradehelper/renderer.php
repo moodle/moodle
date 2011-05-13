@@ -74,9 +74,11 @@ class local_qeupgradehelper_renderer extends plugin_renderer_base {
     /**
      * Render the list of quizzes that still need to be upgraded page.
      * @param array $quizzes of data about quizzes.
+     * @param int $numveryoldattemtps only relevant before upgrade.
      * @return string html to output.
      */
-    public function quiz_list_page(local_qeupgradehelper_quiz_list $quizzes) {
+    public function quiz_list_page(local_qeupgradehelper_quiz_list $quizzes,
+            $numveryoldattemtps = null) {
         $output = '';
         $output .= $this->header();
         $output .= $this->heading($quizzes->title);
@@ -89,6 +91,11 @@ class local_qeupgradehelper_renderer extends plugin_renderer_base {
         }
         $table->data[] = $quizzes->get_total_row();
         $output .= html_writer::table($table);
+
+        if ($numveryoldattemtps) {
+            $output .= $this->box(get_string('veryoldattemtps', 'local_qeupgradehelper',
+                    $numveryoldattemtps));
+        }
 
         $output .= $this->back_to_index();
         $output .= $this->footer();

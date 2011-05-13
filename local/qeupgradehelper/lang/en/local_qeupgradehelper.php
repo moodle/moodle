@@ -45,7 +45,7 @@ $string['gotoresetlink'] = 'Go to the list of quizzes that can be reset';
 $string['invalidquizid'] = 'Invaid quiz id. Either the quiz does not exist, or it has no attempts to convert.';
 $string['listpreupgrade'] = 'List quizzes and attempts';
 $string['listpreupgrade_desc'] = 'This will show a report of all the quizzes on the system and how many attempts they have. This will give you an idea of the scope of the upgrade you have to do.';
-$string['listpreupgradeintro'] = 'These are the number of quiz attempts that will need to be processed when you upgrade your site. A few tens of thousands is no worry. Much beyond that and you need to think carefully.';
+$string['listpreupgradeintro'] = 'These are the number of quiz attempts that will need to be processed when you upgrade your site. A few tens of thousands is no worry. Much beyond that and you need to think about how long the upgrade will take.';
 $string['listtodo'] = 'List quizzes still to upgrade';
 $string['listtodo_desc'] = 'This will show a report of all the quizzes on the system (if any) that have attempts that still need to be upgraded to the new question engine.';
 $string['listtodointro'] = 'These are all the quizzes with attempt data that still needs to be converted. You can convert the attempts by clicking the link.';
@@ -72,4 +72,4 @@ $string['resettingquizattempts'] = 'Resetting quiz attempts';
 $string['upgradingquizattempts'] = 'Upgrading the attempts for quiz \'{$a->name}\' in course {$a->shortname}';
 $string['upgradedsitedetected'] = 'This appears to be a site that has been upgraded to include the new question engine.';
 $string['upgradedsiterequired'] = 'This script can only work after the site has been upgraded.';
-
+$string['veryoldattemtps'] = 'Your site has {$a} quiz attempts that were never completely updated during the upgrade from Moodle 1.4 to Moodle 1.5. These attempts will be dealt wiht before the main upgrade. You need to to consider the extra time required for this.';

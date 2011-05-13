@@ -262,26 +262,6 @@ class local_qeupgradehelper_resettable_quiz_list extends local_qeupgradehelper_q
 }
 
 
-function local_qeupgradehelper_get_pre_upgrade_quizzes() {
-    global $DB;
-    return $DB->get_records_sql("
-            SELECT
-                quiz.id,
-                quiz.name,
-                c.shortname,
-                c.id AS courseid,
-                COUNT(1) AS attemptcount
-
-            FROM {quiz_attempts} quiza
-            JOIN {quiz} quiz ON quiz.id = quiza.quiz
-            JOIN {course} c ON c.id = quiz.course
-
-            WHERE quiza.preview = 0
-
-            GROUP BY quiz.id, quiz.name, c.shortname, c.id
-            ORDER BY c.shortname, quiz.name, quiz.id");
-}
-
 /**
  * A list of quizzes that still need to be upgraded after the main upgrade.
  *
@@ -296,6 +276,24 @@ class local_qeupgradehelper_pre_upgrade_quiz_list extends local_qeupgradehelper_
     protected function extra_where_clause() {
         return '';
     }
+}
+
+
+/**
+ * List the number of quiz attempts that were never upgraded from 1.4 -> 1.5.
+ * @return int the number of such attempts.
+ */
+function local_qeupgradehelper_get_num_very_old_attempts() {
+    global $DB;
+    return $DB->count_records_sql('
+            SELECT COUNT(1)
+              FROM {quiz_attempts} quiza
+             WHERE uniqueid IN (
+                SELECT DISTINCT qst.attempt
+                  FROM {question_states} qst
+                  LEFT JOIN {question_sessions} qsess ON
+                        qst.question = qsess.questionid AND qst.attempt = qsess.attemptid
+                 WHERE qsess.id IS NULL)');
 }
 
 /**
