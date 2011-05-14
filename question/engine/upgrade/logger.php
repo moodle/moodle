@@ -61,8 +61,8 @@ class question_engine_assumption_logger {
             $quizattemptid = $this->attemptid;
         }
         if ($quizattemptid) {
-        $message .= ' (<a href="' . $CFG->wwwroot . '/mod/quiz/review.php?attempt=' .
-                $quizattemptid . '">Review this attempt</a>)';
+            $message .= ' (<a href="' . $CFG->wwwroot . '/mod/quiz/review.php?attempt=' .
+                    $quizattemptid . '">Review this attempt</a>)';
         }
         $message .= "</p>\n";
         fwrite($this->handle, $message);

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -50,7 +49,8 @@ class qubaid_condition_test extends UnitTestCase {
         $this->assertEqual($expectedparams, $params);
     }
 
-    protected function check_typical_in_query(qubaid_condition $qubaids, $expectedsql, $expectedparams) {
+    protected function check_typical_in_query(qubaid_condition $qubaids,
+            $expectedsql, $expectedparams) {
         $sql = "SELECT qa.id, qa.maxmark
             FROM {question_attempts} qa
             WHERE qa.questionusageid {$qubaids->usage_id_in()}";

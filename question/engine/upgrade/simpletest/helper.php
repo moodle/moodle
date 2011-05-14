@@ -80,7 +80,7 @@ class test_question_engine_upgrade_question_loader extends question_engine_upgra
     }
 
     public function load_question($questionid, $quizid) {
-        global $CFG, $QTYPES;
+        global $CFG;
 
         if (isset($this->cache[$questionid])) {
             return $this->cache[$questionid];

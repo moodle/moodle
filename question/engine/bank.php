@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -231,7 +230,8 @@ abstract class question_bank {
      * Load a question definition from the database. The object returned
      * will actually be of an appropriate {@link question_definition} subclass.
      * @param int $questionid the id of the question to load.
-     * @param bool $allowshuffle if false, then any shuffle option on the selected quetsion is disabled.
+     * @param bool $allowshuffle if false, then any shuffle option on the selected
+     *      quetsion is disabled.
      * @return question_definition loaded from the database.
      */
     public static function load_question($questionid, $allowshuffle = true) {
@@ -304,7 +304,8 @@ abstract class question_bank {
      */
     public static function load_test_question_data(question_definition $question) {
         if (!self::$testmode) {
-            throw new coding_exception('question_bank::load_test_data called when not in test mode.');
+            throw new coding_exception('question_bank::load_test_data called when ' .
+                    'not in test mode.');
         }
         self::$testdata[$question->id] = $question;
     }
@@ -327,7 +328,8 @@ class question_finder {
      * @param array $extraparams any parameters used by $extraconditions.
      * @return array questionid => questionid.
      */
-    public function get_questions_from_categories($categoryids, $extraconditions, $extraparams = array()) {
+    public function get_questions_from_categories($categoryids, $extraconditions,
+            $extraparams = array()) {
         global $DB;
 
         list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');

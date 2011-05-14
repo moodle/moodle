@@ -164,7 +164,8 @@ class question_engine_attempt_upgrader {
             $question = $this->load_question($qsession->questionid, $quiz->id);
             $qstates = $this->get_question_states($attempt, $question, $questionsstatesrs);
             try {
-                $qas[$qsession->questionid] = $this->convert_question_attempt($quiz, $attempt, $question, $qsession, $qstates);
+                $qas[$qsession->questionid] = $this->convert_question_attempt(
+                        $quiz, $attempt, $question, $qsession, $qstates);
             } catch (Exception $e) {
                 notify($e->getMessage());
             }

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -65,10 +64,16 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_attempt_step {
-    /** @var integer if this attempts is stored in the question_attempts table, the id of that row. */
+    /**
+     * @var integer if this attempts is stored in the question_attempts table,
+     * the id of that row.
+     */
     private $id = null;
 
-    /** @var question_state one of the {@link question_state} constants. The state after this step. */
+    /**
+     * @var question_state one of the {@link question_state} constants.
+     * The state after this step.
+     */
     private $state;
 
     /** @var null|number the fraction (grade on a scale of minfraction .. 1.0) or null. */
@@ -175,7 +180,8 @@ class question_attempt_step {
      */
     public function set_qt_var($name, $value) {
         if ($name[0] != '_') {
-            throw new coding_exception('Cannot set question type data ' . $name . ' on an attempt step. You can only set variables with names begining with _.');
+            throw new coding_exception('Cannot set question type data ' . $name .
+                    ' on an attempt step. You can only set variables with names begining with _.');
         }
         $this->data[$name] = $value;
     }
@@ -291,7 +297,8 @@ class question_attempt_step {
      */
     public function set_behaviour_var($name, $value) {
         if ($name[0] != '_') {
-            throw new coding_exception('Cannot set question type data ' . $name . ' on an attempt step. You can only set variables with names begining with _.');
+            throw new coding_exception('Cannot set question type data ' . $name .
+                    ' on an attempt step. You can only set variables with names begining with _.');
         }
         return $this->data['-' . $name] = $value;
     }
@@ -351,7 +358,8 @@ class question_attempt_step {
         while ($currentrec->attemptstepid != $attemptstepid) {
             $currentrec = next($records);
             if (!$currentrec) {
-                throw new coding_exception("Question attempt step $attemptstepid not found in the database.");
+                throw new coding_exception('Question attempt step ' . $attemptstepid .
+                        ' not found in the database.');
             }
         }
 

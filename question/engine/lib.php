@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -149,10 +148,11 @@ abstract class question_engine {
      * @return question_behaviour an instance of appropriate behaviour class.
      */
     public static function make_archetypal_behaviour($preferredbehaviour, question_attempt $qa) {
-        question_engine::load_behaviour_class($preferredbehaviour);
+        self::load_behaviour_class($preferredbehaviour);
         $class = 'qbehaviour_' . $preferredbehaviour;
         if (!constant($class . '::IS_ARCHETYPAL')) {
-            throw new coding_exception('The requested behaviour is not actually an archetypal one.');
+            throw new coding_exception('The requested behaviour is not actually ' .
+                    'an archetypal one.');
         }
         return new $class($qa, $preferredbehaviour);
     }
@@ -188,7 +188,7 @@ abstract class question_engine {
         try {
             self::load_behaviour_class($behaviour);
         } catch (Exception $e) {
-            question_engine::load_behaviour_class('missing');
+            self::load_behaviour_class('missing');
             return new qbehaviour_missing($qa, $preferredbehaviour);
         }
         $class = 'qbehaviour_' . $behaviour;
@@ -538,7 +538,8 @@ abstract class question_flags {
      * @param object $user the user. If null, defaults to $USER.
      * @return string that needs to be sent to question/toggleflag.php for it to work.
      */
-    protected static function get_toggle_checksum($qubaid, $questionid, $qaid, $slot, $user = null) {
+    protected static function get_toggle_checksum($qubaid, $questionid,
+            $qaid, $slot, $user = null) {
         if (is_null($user)) {
             global $USER;
             $user = $USER;
@@ -577,7 +578,7 @@ abstract class question_flags {
         // three ids and the users username. Since we are only updating a flag, that
         // probably makes it sufficiently difficult for malicious users to toggle
         // other users flags.
-        if ($checksum != question_flags::get_toggle_checksum($qubaid, $questionid, $qaid, $slot)) {
+        if ($checksum != self::get_toggle_checksum($qubaid, $questionid, $qaid, $slot)) {
             throw new moodle_exception('errorsavingflags', 'question');
         }
 
@@ -738,14 +739,15 @@ abstract class question_utils {
         return ((integer) $value1) === ((integer) $value2);
     }
 
-    private static $units = array('', 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix');
-    private static $tens = array('', 'x', 'xx', 'xxx', 'xl', 'l', 'lx', 'lxx', 'lxxx', 'xc');
-    private static $hundreds = array('', 'c', 'cc', 'ccc', 'cd', 'd', 'dc', 'dcc', 'dccc', 'cm');
+    private static $units     = array('', 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix');
+    private static $tens      = array('', 'x', 'xx', 'xxx', 'xl', 'l', 'lx', 'lxx', 'lxxx', 'xc');
+    private static $hundreds  = array('', 'c', 'cc', 'ccc', 'cd', 'd', 'dc', 'dcc', 'dccc', 'cm');
     private static $thousands = array('', 'm', 'mm', 'mmm');
 
     /**
      * Convert an integer to roman numerals.
-     * @param int $number an integer between 1 and 3999 inclusive. Anything else will throw an exception.
+     * @param int $number an integer between 1 and 3999 inclusive. Anything else
+     *      will throw an exception.
      * @return string the number converted to lower case roman numerals.
      */
     public static function int_to_roman($number) {

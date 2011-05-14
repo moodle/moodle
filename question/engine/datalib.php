@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -330,7 +329,8 @@ WHERE
      * fields $slot, $questionid, $inprogress, $name, $needsgrading, $autograded,
      * $manuallygraded and $all.
      */
-    public function load_questions_usages_question_state_summary(qubaid_condition $qubaids, $slots) {
+    public function load_questions_usages_question_state_summary(
+            qubaid_condition $qubaids, $slots) {
         list($slottest, $params) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
 
         $rs = $this->db->get_recordset_sql("
@@ -486,7 +486,8 @@ $sqlorderby
      */
     public function load_average_marks(qubaid_condition $qubaids, $slots = null) {
         if (!empty($slots)) {
-            list($slottest, $slotsparams) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
+            list($slottest, $slotsparams) = $this->db->get_in_or_equal(
+                    $slots, SQL_PARAMS_NAMED, 'slot');
             $slotwhere = " AND qa.slot $slottest";
         } else {
             $slotwhere = '';
@@ -689,7 +690,8 @@ ORDER BY
                 SELECT qas.id
                 FROM {question_attempt_steps} qas
                 WHERE questionattemptid $test)", $params);
-        $this->db->delete_records_select('question_attempt_steps', 'questionattemptid ' . $test, $params);
+        $this->db->delete_records_select('question_attempt_steps',
+                'questionattemptid ' . $test, $params);
     }
 
     /**
@@ -803,7 +805,10 @@ ORDER BY
                  WHERE summarks_qas.questionattemptid = qa.id
             )
             WHERE qa.questionusageid = $qubaid
-            HAVING COUNT(CASE WHEN qas.state = 'needsgrading' AND qa.maxmark > 0 THEN 1 ELSE NULL END) = 0";
+            HAVING COUNT(CASE
+                WHEN qas.state = 'needsgrading' AND qa.maxmark > 0 THEN 1
+                ELSE NULL
+            END) = 0";
     }
 
     public function question_attempt_latest_state_view($alias) {
@@ -1148,7 +1153,8 @@ class qubaid_list extends qubaid_condition {
             $this->params = array();
             return '1 = 0';
         }
-        list($where, $this->params) = $DB->get_in_or_equal($this->qubaids, SQL_PARAMS_NAMED, 'qubaid');
+        list($where, $this->params) = $DB->get_in_or_equal(
+                $this->qubaids, SQL_PARAMS_NAMED, 'qubaid');
 
         return $this->columntotest . ' ' . $this->usage_id_in();
     }
@@ -1163,7 +1169,8 @@ class qubaid_list extends qubaid_condition {
         if (empty($this->qubaids)) {
             return '= 0';
         }
-        list($where, $this->params) = $DB->get_in_or_equal($this->qubaids, SQL_PARAMS_NAMED, 'qubaid');
+        list($where, $this->params) = $DB->get_in_or_equal(
+                $this->qubaids, SQL_PARAMS_NAMED, 'qubaid');
         return $where;
     }
 

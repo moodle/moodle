@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -160,7 +159,8 @@ class core_question_renderer extends plugin_renderer_base {
      * @param question_display_options $options controls what should and should not be displayed.
      * @return HTML fragment.
      */
-    protected function status(question_attempt $qa, qbehaviour_renderer $behaviouroutput, question_display_options $options) {
+    protected function status(question_attempt $qa, qbehaviour_renderer $behaviouroutput,
+            question_display_options $options) {
         return html_writer::tag('div', $qa->get_state_string($options->correctness),
                 array('class' => 'state'));
     }
@@ -181,7 +181,8 @@ class core_question_renderer extends plugin_renderer_base {
 
         } else if ($options->marks == question_display_options::MAX_ONLY ||
                 is_null($qa->get_fraction())) {
-            $summary = get_string('markedoutofmax', 'question', $qa->format_max_mark($options->markdp));
+            $summary = get_string('markedoutofmax', 'question',
+                    $qa->format_max_mark($options->markdp));
 
         } else {
             $a = new stdClass();
@@ -213,13 +214,17 @@ class core_question_renderer extends plugin_renderer_base {
                     $checked = '';
                 }
                 $postdata = question_flags::get_postdata($qa);
-                // The checkbox id must be different from any element name, becuase
-                // of a stupid IE bug: http://www.456bereastreet.com/archive/200802/beware_of_id_and_name_attribute_mixups_when_using_getelementbyid_in_internet_explorer/
+                // The checkbox id must be different from any element name, because
+                // of a stupid IE bug:
+                // http://www.456bereastreet.com/archive/200802/beware_of_id_and_name_attribute_mixups_when_using_getelementbyid_in_internet_explorer/
                 $flagcontent = '<input type="hidden" name="' . $id . '" value="0" />' .
-                        '<input type="checkbox" id="' . $id . 'checkbox" name="' . $id . '" value="1" ' . $checked . ' />' .
-                        '<input type="hidden" value="' . s($postdata) . '" class="questionflagpostdata" />' .
-                        '<label id="' . $id . 'label" for="' . $id . 'checkbox">' . $this->get_flag_html(
-                        $qa->is_flagged(), $id . 'img') . '</label>' . "\n";
+                        '<input type="checkbox" id="' . $id . 'checkbox" name="' . $id .
+                                '" value="1" ' . $checked . ' />' .
+                        '<input type="hidden" value="' . s($postdata) .
+                                '" class="questionflagpostdata" />' .
+                        '<label id="' . $id . 'label" for="' . $id . 'checkbox">' .
+                                $this->get_flag_html($qa->is_flagged(), $id . 'img') .
+                                '</label>' . "\n";
                 break;
             default:
                 $flagcontent = '';
@@ -343,9 +348,11 @@ class core_question_renderer extends plugin_renderer_base {
             if ($stepno == $qa->get_num_steps()) {
                 $rowclass = 'current';
             } else if (!empty($options->questionreviewlink)) {
-                $url = new moodle_url($options->questionreviewlink, array('slot' => $qa->get_slot(), 'step' => $i));
+                $url = new moodle_url($options->questionreviewlink,
+                        array('slot' => $qa->get_slot(), 'step' => $i));
                 $stepno = $this->output->action_link($url, $stepno,
-                        new popup_action('click', $url, 'reviewquestion', array('width' => 450, 'height' => 650)),
+                        new popup_action('click', $url, 'reviewquestion',
+                                array('width' => 450, 'height' => 650)),
                         array('title' => get_string('reviewresponse', 'question')));
             }
             $user = new stdClass();

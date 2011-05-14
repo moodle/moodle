@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -210,7 +209,8 @@ class question_usage_by_activity {
      */
     protected function check_slot($slot) {
         if (!array_key_exists($slot, $this->questionattempts)) {
-            throw new coding_exception("There is no question_attempt number $slot in this attempt.");
+            throw new coding_exception('There is no question_attempt number ' . $slot .
+                    ' in this attempt.');
         }
     }
 
@@ -361,7 +361,8 @@ class question_usage_by_activity {
      */
     public function render_question_at_step($slot, $seq, $options, $number = null) {
         $options->context = $this->context;
-        return $this->get_question_attempt($slot)->render_at_step($seq, $options, $number, $this->preferredbehaviour);
+        return $this->get_question_attempt($slot)->render_at_step(
+                $seq, $options, $number, $this->preferredbehaviour);
     }
 
     /**
@@ -374,8 +375,10 @@ class question_usage_by_activity {
      * @param bool $forcedownload whether the user must be forced to download the file.
      * @return bool true if the user can access this file.
      */
-    public function check_file_access($slot, $options, $component, $filearea, $args, $forcedownload) {
-        return $this->get_question_attempt($slot)->check_file_access($options, $component, $filearea, $args, $forcedownload);
+    public function check_file_access($slot, $options, $component, $filearea,
+            $args, $forcedownload) {
+        return $this->get_question_attempt($slot)->check_file_access(
+                $options, $component, $filearea, $args, $forcedownload);
     }
 
     /**
@@ -681,7 +684,8 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
     protected $slots;
 
     /**
-     * To create an instance of this class, use {@link question_usage_by_activity::get_attempt_iterator()}.
+     * To create an instance of this class, use
+     * {@link question_usage_by_activity::get_attempt_iterator()}.
      * @param $quba the usage to iterate over.
      */
     public function __construct(question_usage_by_activity $quba) {
@@ -718,10 +722,12 @@ class question_attempt_iterator implements Iterator, ArrayAccess {
         return $this->quba->get_question_attempt($slot);
     }
     public function offsetSet($slot, $value) {
-        throw new coding_exception('You are only allowed read-only access to question_attempt::states through a question_attempt_step_iterator. Cannot set.');
+        throw new coding_exception('You are only allowed read-only access to ' .
+                'question_attempt::states through a question_attempt_step_iterator. Cannot set.');
     }
     public function offsetUnset($slot) {
-        throw new coding_exception('You are only allowed read-only access to question_attempt::states through a question_attempt_step_iterator. Cannot unset.');
+        throw new coding_exception('You are only allowed read-only access to ' .
+                'question_attempt::states through a question_attempt_step_iterator. Cannot unset.');
     }
 }
 
