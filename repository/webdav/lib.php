@@ -61,15 +61,15 @@ class repository_webdav extends repository {
     public function check_login() {
         return true;
     }
-    public function get_file($path, $title) {
+    public function get_file($url, $title) {
         global $CFG;
-        $path = urldecode($path);
+        $url = urldecode($url);
         $path = $this->prepare_file($title);
         $buffer = '';
         if (!$this->dav->open()) {
             return false;
         }
-        $this->dav->get($path, $buffer);
+        $this->dav->get($url, $buffer);
         $fp = fopen($path, 'wb');
         fwrite($fp, $buffer);
         return array('path'=>$path);
