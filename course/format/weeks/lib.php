@@ -89,7 +89,7 @@ function callback_weeks_get_section_name($course, $section) {
         foreach ($sections as $sec) {
             if ($sec->id == $section->id) {
                 break;
-            } else if ($sec->visible && $sec->section != 0) {
+            } else if ($sec->section != 0) {
                 $weekdate += 604800;
             }
         }
