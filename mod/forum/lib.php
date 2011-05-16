@@ -3470,11 +3470,14 @@ function forum_rating_permissions($contextid) {
 function forum_rating_validate($params) {
     global $DB, $USER;
 
-    if (!array_key_exists('itemid', $params) || !array_key_exists('context', $params) || !array_key_exists('rateduserid', $params)) {
+    if (!array_key_exists('itemid', $params)
+            || !array_key_exists('context', $params)
+            || !array_key_exists('rateduserid', $params)
+            || !array_key_exists('scaleid', $params)) {
         throw new rating_exception('missingparameter');
     }
 
-    $forumsql = "SELECT f.id as fid, f.course, d.id as did, p.userid as userid, p.created, f.assesstimestart, f.assesstimefinish, d.groupid
+    $forumsql = "SELECT f.id as fid, f.course, f.scale, d.id as did, p.userid as userid, p.created, f.assesstimestart, f.assesstimefinish, d.groupid
                    FROM {forum_posts} p
                    JOIN {forum_discussions} d ON p.discussion = d.id
                    JOIN {forum} f ON d.forum = f.id
@@ -3485,14 +3488,38 @@ function forum_rating_validate($params) {
         throw new rating_exception('invaliditemid');
     }
 
+    if ($info->scale != $params['scaleid']) {
+        //the scale being submitted doesnt match the one in the database
+        throw new rating_exception('invalidscaleid');
+    }
+
     if ($info->userid == $USER->id) {
         //user is attempting to rate their own post
         throw new rating_exception('nopermissiontorate');
     }
 
-    if ($params['rateduserid'] != $info->userid) {
+    if ($info->userid != $params['rateduserid']) {
         //supplied user ID doesnt match the user ID from the database
         throw new rating_exception('invaliduserid');
+    }
+
+    //check that the submitted rating is valid for the scale
+    if ($params['rating'] < 0) {
+        throw new rating_exception('invalidnum');
+    } else if ($info->scale < 0) {
+        //its a custom scale
+        $scalerecord = $DB->get_record('scale', array('id' => -$options->scaleid));
+        if ($scalerecord) {
+            $scalearray = explode(',', $scalerecord->scale);
+            if ($params['rating'] > count($scalearray)) {
+                throw new rating_exception('invalidnum');
+            }
+        } else {
+            throw new rating_exception('invalidscaleid');
+        }
+    } else if ($params['rating'] > $info->scale) {
+        //if its numeric and submitted rating is above maximum
+        throw new rating_exception('invalidnum');
     }
 
     //check the item we're rating was created in the assessable time window
