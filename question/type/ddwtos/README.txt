@@ -9,3 +9,15 @@ the Open University (http://www.open.ac.uk/).
 It was updated to work with the Moodle 2.1 question engine by Tim Hunt.
 It was then refactored extenstively by Jamie Pratt (http://jamiep.org/)
 as part of creating the gapselect question type.
+
+
+This question type is compatible with Moodle 2.1+.
+
+To install using git, type this command in the root of your Moodle install
+    git clone git://github.com/timhunt/moodle-qtype_ddwtos.git question/type/ddwtos
+Then add question/type/ddwtosto your git ignore.
+
+Alternatively, download the zip from
+    https://github.com/timhunt/moodle-qtype_ddwtos/zipball/master
+unzip it into the question/type folder, and then rename the new folder to
+ddwtos.
