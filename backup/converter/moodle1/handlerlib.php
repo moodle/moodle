@@ -228,7 +228,7 @@ abstract class moodle1_xml_handler extends moodle1_handler {
 /**
  * Process the root element of the backup file
  */
-class moodle1_root_handler extends moodle1_handler {
+class moodle1_root_handler extends moodle1_xml_handler {
 
     public function get_paths() {
         return array(new convert_path('root_element', '/MOODLE_BACKUP'));
@@ -247,6 +247,164 @@ class moodle1_root_handler extends moodle1_handler {
      * This is executed at the end of the moodle.xml parsing
      */
     public function on_root_element_end() {
+        global $CFG;
+
+        // restore the stashes prepared by other handlers for us
+        $backupinfo         = $this->converter->get_stash('backup_info');
+        $originalcourseinfo = $this->converter->get_stash('original_course_info');
+
+        // start writing to the main XML file data
+        $this->open_xml_writer('moodle_backup.xml');
+
+        $this->xmlwriter->begin_tag('moodle_backup');
+        $this->xmlwriter->begin_tag('information');
+
+        // moodle_backup/information
+        $this->xmlwriter->full_tag('name', $backupinfo['name']);
+        $this->xmlwriter->full_tag('moodle_version', $backupinfo['moodle_version']);
+        $this->xmlwriter->full_tag('moodle_release', $backupinfo['moodle_release']);
+        $this->xmlwriter->full_tag('backup_version', $CFG->backup_version); // {@see restore_prechecks_helper::execute_prechecks}
+        $this->xmlwriter->full_tag('backup_release', $CFG->backup_release);
+        $this->xmlwriter->full_tag('backup_date', $backupinfo['date']);
+        // see the commit c0543b - all backups created in 1.9 and later declare the
+        // information or it is considered as false
+        if (isset($backupinfo['mnet_remoteusers'])) {
+            $this->xmlwriter->full_tag('mnet_remoteusers', $backupinfo['mnet_remoteusers']);
+        } else {
+            $this->xmlwriter->full_tag('mnet_remoteusers', false);
+        }
+        $this->xmlwriter->full_tag('original_wwwroot', $backupinfo['original_wwwroot']);
+        // {@see backup_general_helper::backup_is_samesite()}
+        if (isset($backupinfo['original_site_identifier_hash'])) {
+            $this->xmlwriter->full_tag('original_site_identifier_hash', $backupinfo['original_site_identifier_hash']);
+        }
+        $this->xmlwriter->full_tag('original_course_id', $originalcourseinfo['original_course_id']);
+        $this->xmlwriter->full_tag('original_course_fullname', $originalcourseinfo['original_course_fullname']);
+        $this->xmlwriter->full_tag('original_course_shortname', $originalcourseinfo['original_course_shortname']);
+        $this->xmlwriter->full_tag('original_course_startdate', $originalcourseinfo['original_course_startdate']);
+        $this->xmlwriter->full_tag('original_course_contextid', $originalcourseinfo['original_course_contextid']);
+        $this->xmlwriter->full_tag('original_system_contextid', $this->converter->get_contextid(CONTEXT_SYSTEM, 0));
+
+        // moodle_backup/information/details
+        $this->xmlwriter->begin_tag('details');
+        $this->write_xml('detail', array(
+            'backup_id'     => $this->converter->get_id(),
+            'type'          => backup::TYPE_1COURSE,
+            'format'        => backup::FORMAT_MOODLE,
+            'interactive'   => backup::INTERACTIVE_YES,
+            'mode'          => backup::MODE_CONVERTED,
+            'execution'     => backup::EXECUTION_INMEDIATE,
+            'executiontime' => 0,
+        ), array('/detail/backup_id'));
+        $this->xmlwriter->end_tag('details');
+
+        // moodle_backup/information/contents
+        $this->xmlwriter->begin_tag('contents');
+
+        // moodle_backup/information/contents/activities
+        $this->xmlwriter->begin_tag('activities');
+        $activitysettings = array();
+        foreach ($this->converter->get_stash('modnameslist') as $modname) {
+            $modinfo = $this->converter->get_stash('modinfo_'.$modname);
+            foreach ($modinfo['instances'] as $modinstanceid => $modinstance) {
+                $cminfo = $this->converter->get_stash('cminfo_'.$modname, $modinstanceid);
+                $activitysettings[] = array(
+                    'level'     => 'activity',
+                    'activity'  => $cminfo['modulename'].'_'.$cminfo['id'],
+                    'name'      => $cminfo['modulename'].'_'.$cminfo['id'].'_included',
+                    'value'     => (($modinfo['included'] === 'true' and $modinstance['included'] === 'true') ? 1 : 0));
+                $activitysettings[] = array(
+                    'level'     => 'activity',
+                    'activity'  => $cminfo['modulename'].'_'.$cminfo['id'],
+                    'name'      => $cminfo['modulename'].'_'.$cminfo['id'].'_userinfo',
+                    'value'     => (($modinfo['userinfo'] === 'true' and $modinstance['userinfo'] === 'true') ? 1 : 0));
+                $this->write_xml('activity', array(
+                    'moduleid'      => $cminfo['id'],
+                    'sectionid'     => $cminfo['sectionid'],
+                    'modulename'    => $cminfo['modulename'],
+                    'title'         => $modinstance['name'],
+                    'directory'     => 'activities/'.$cminfo['modulename'].'_'.$cminfo['id']));
+
+            }
+        }
+        $this->xmlwriter->end_tag('activities');
+
+        // moodle_backup/information/contents/sections
+        $this->xmlwriter->begin_tag('sections');
+        $sectionsettings = array();
+        foreach ($this->converter->get_stash('sectionidslist') as $sectionid) {
+            $sectioninfo = $this->converter->get_stash('sectioninfo', $sectionid);
+            $sectionsettings[] = array(
+                'level'     => 'section',
+                'section'   => 'section_'.$sectionid,
+                'name'      => 'section_'.$sectionid.'_included',
+                'value'     => 1);
+            $sectionsettings[] = array(
+                'level'     => 'section',
+                'section'   => 'section_'.$sectionid,
+                'name'      => 'section_'.$sectionid.'_userinfo',
+                'value'     => 0); // @todo how to detect this from moodle.xml?
+            $this->write_xml('section', array(
+                'sectionid' => $sectionid,
+                'title'     => $sectioninfo['number'], // because the title is not available
+                'directory' => 'sections/section_'.$sectionid));
+        }
+        $this->xmlwriter->end_tag('sections');
+
+        // moodle_backup/information/contents/course
+        $this->write_xml('course', array(
+            'courseid'  => $originalcourseinfo['original_course_id'],
+            'title'     => $originalcourseinfo['original_course_shortname'],
+            'directory' => 'course'));
+        unset($originalcourseinfo);
+
+        $this->xmlwriter->end_tag('contents');
+
+        // moodle_backup/information/settings
+        $this->xmlwriter->begin_tag('settings');
+
+        // fake backup root seetings
+        $rootsettings = array(
+            'filename'         => $backupinfo['name'],
+            'users'            => 0, // @todo how to detect this from moodle.xml?
+            'anonymize'        => 0,
+            'role_assignments' => 0,
+            'user_files'       => 0,
+            'activities'       => 1,
+            'blocks'           => 1,
+            'filters'          => 0,
+            'comments'         => 0,
+            'userscompletion'  => 0,
+            'logs'             => 0,
+            'grade_histories'  => 0,
+        );
+        unset($backupinfo);
+        foreach ($rootsettings as $name => $value) {
+            $this->write_xml('setting', array(
+                'level' => 'root',
+                'name'  => $name,
+                'value' => $value));
+        }
+        unset($rootsettings);
+
+        // activity settings populated above
+        foreach ($activitysettings as $activitysetting) {
+            $this->write_xml('setting', $activitysetting);
+        }
+        unset($activitysettings);
+
+        // section settings populated above
+        foreach ($sectionsettings as $sectionsetting) {
+            $this->write_xml('setting', $sectionsetting);
+        }
+        unset($sectionsettings);
+
+        $this->xmlwriter->end_tag('settings');
+
+        $this->xmlwriter->end_tag('information');
+        $this->xmlwriter->end_tag('moodle_backup');
+
+        $this->close_xml_writer();
     }
 }
 
@@ -259,6 +417,12 @@ class moodle1_root_handler extends moodle1_handler {
  */
 class moodle1_info_handler extends moodle1_handler {
 
+    /** @var array list of mod names included in info_details */
+    protected $modnames = array();
+
+    /** @var array the in-memory cache of the currently parsed info_details_mod element */
+    protected $currentmod;
+
     public function get_paths() {
         return array(
             new convert_path('info', '/MOODLE_BACKUP/INFO'),
@@ -268,16 +432,44 @@ class moodle1_info_handler extends moodle1_handler {
         );
     }
 
+    /**
+     * Stashes the backup info for later processing by {@link moodle1_root_handler}
+     */
     public function process_info($data) {
+        $this->converter->set_stash('backup_info', $data);
     }
 
-    public function process_info_details($data) {
+    public function process_info_details() {
     }
 
+    /**
+     * Initializes the in-memory cache for the current mod
+     */
     public function process_info_details_mod($data) {
+        $this->currentmod = $data;
     }
 
+    /**
+     * Appends the current instance data to the temporary in-memory cache
+     */
     public function process_info_details_mod_instance($data) {
+        $this->currentmod['instances'][$data['id']] = $data;
+    }
+
+    /**
+     * Stashes the backup info for later processing by {@link moodle1_root_handler}
+     */
+    public function on_info_details_mod_end($data) {
+        $this->converter->set_stash('modinfo_'.$this->currentmod['name'], $this->currentmod);
+        $this->modnames[] = $this->currentmod['name'];
+        $this->currentmod = array();
+    }
+
+    /**
+     * Stashes the list of activity module types for later processing by {@link moodle1_root_handler}
+     */
+    public function on_info_details_end() {
+        $this->converter->set_stash('modnameslist', $this->modnames);
     }
 }
 
@@ -390,6 +582,9 @@ class moodle1_course_header_handler extends moodle1_xml_handler {
  */
 class moodle1_course_outline_handler extends moodle1_xml_handler {
 
+    /** @var array list of section ids */
+    protected $sectionids = array();
+
     /** @var array current section data */
     protected $currentsection;
 
@@ -398,6 +593,7 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
      */
     public function get_paths() {
         return array(
+            new convert_path('course_sections', '/MOODLE_BACKUP/COURSE/SECTIONS'),
             new convert_path(
                 'course_section', '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION',
                 array(
@@ -435,7 +631,11 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
         );
     }
 
+    public function process_course_sections() {
+    }
+
     public function process_course_section($data) {
+        $this->sectionids[]   = $data['id'];
         $this->currentsection = $data;
     }
 
@@ -482,14 +682,23 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
     }
 
     /**
-     * Writes sections/section_xxx/section.xml file
+     * Writes sections/section_xxx/section.xml file and stashes it, too
      */
     public function on_course_section_end() {
 
+        $this->converter->set_stash('sectioninfo', $this->currentsection, $this->currentsection['id']);
         $this->open_xml_writer('sections/section_' . $this->currentsection['id'] . '/section.xml');
         $this->write_xml('section', $this->currentsection);
         $this->close_xml_writer();
         unset($this->currentsection);
+    }
+
+    /**
+     * Stashes the list of section ids
+     */
+    public function on_course_sections_end() {
+        $this->converter->set_stash('sectionidslist', $this->sectionids);
+        unset($this->sectionids);
     }
 }
 

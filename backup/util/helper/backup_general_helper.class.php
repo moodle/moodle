@@ -214,8 +214,10 @@ abstract class backup_general_helper extends backup_helper {
      * generated or no. Behavior of various parts of restore are
      * dependent of this.
      *
-     * Use site_identifier (hashed) and fallback to wwwroot, thought
-     * any 2.0 backup should have the former. See MDL-16614
+     * Backups created natively in 2.0 and later declare the hashed
+     * site identifier. Backups created by conversion from a 1.9
+     * backup do not declare such identifier, so there is a fallback
+     * to wwwroot comparison. See MDL-16614.
      */
     public static function backup_is_samesite($info) {
         global $CFG;
