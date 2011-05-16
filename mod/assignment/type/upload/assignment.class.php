@@ -918,9 +918,14 @@ class assignment_upload extends assignment_base {
     }
 
     function can_unfinalize($submission) {
+        if(is_bool($submission)) {
+            return false;
+        }
+
         if (!$this->drafts_tracked()) {
             return false;
         }
+
         if (has_capability('mod/assignment:grade', $this->context)
           and $this->isopen()
           and $this->is_finalized($submission)) {
@@ -932,6 +937,11 @@ class assignment_upload extends assignment_base {
 
     function can_finalize($submission) {
         global $USER;
+
+        if(is_bool($submission)) {
+            return false;
+        }
+
         if (!$this->drafts_tracked()) {
             return false;
         }
