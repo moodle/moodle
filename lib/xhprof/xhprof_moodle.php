@@ -152,7 +152,7 @@ function profiling_start() {
  * Stop profiling, gathering results and storing them
  */
 function profiling_stop() {
-    global $CFG, $SCRIPT;
+    global $CFG, $DB, $SCRIPT;
 
     // If profiling isn't available, nothing to stop
     if (!extension_loaded('xhprof') || !function_exists('xhprof_enable')) {
@@ -175,6 +175,14 @@ function profiling_stop() {
     // Arrived here, profiling is running, stop and save everything
     profiling_is_running(false);
     $data = xhprof_disable();
+
+    // We only save the run after ensuring the DB table exists
+    // (this prevents problems with profiling runs enabled in
+    // config.php before Moodle is installed. Rare but...
+    $tables = $DB->get_tables();
+    if (!in_array('profiling', $tables)) {
+        return false;
+    }
 
     $run = new moodle_xhprofrun();
     $run->prepare_run($script);
