@@ -330,6 +330,13 @@ class progressive_parser_test extends UnitTestCase {
         sort($snotifs);
         sort($enotifs);
         $this->assertEqual($snotifs, $enotifs);
+
+        // Now verify that the start/process/end order is correct
+        $allnotifs = $pr->get_all_notifications();
+        $this->assertEqual(count($allnotifs), count($snotifs) + count($enotifs) + count($chunks)); // The count
+        // Check integrity of the notifications
+        $errcount = $this->helper_check_notifications_order_integrity($allnotifs);
+        $this->assertEqual($errcount, 0); // No errors found, plz
     }
 
     /*
@@ -498,6 +505,67 @@ class progressive_parser_test extends UnitTestCase {
         sort($snotifs);
         sort($enotifs);
         $this->assertEqual($snotifs, $enotifs);
+
+        // Now verify that the start/process/end order is correct
+        $allnotifs = $pr->get_all_notifications();
+        $this->assertEqual(count($allnotifs), count($snotifs) + count($enotifs) + count($chunks)); // The count
+        // Check integrity of the notifications
+        $errcount = $this->helper_check_notifications_order_integrity($allnotifs);
+        $this->assertEqual($errcount, 0); // No errors found, plz
+    }
+
+    /**
+     * Helper function that given one array of ordered start/process/end notifications will
+     * check it of integrity like:
+     *    - process only happens if start is the previous notification
+     *    - end only happens if dispatch is the previous notification
+     *    - start only happen with level > than last one and if there is no already started like that
+     *
+     * @param array $notifications ordered array of notifications with format [start|process|end]:path
+     * @return int number of integrity problems found (errors)
+     */
+    function helper_check_notifications_order_integrity($notifications) {
+        $numerrors = 0;
+        $notifpile = array('pilebase' => 'start');
+        $lastpile = 'start:pilebase';
+        foreach ($notifications as $notif) {
+            $lastpilelevel = strlen(preg_replace('/[^\/]/', '', $lastpile));
+            $lastpiletype  = preg_replace('/:.*/', '', $lastpile);
+            $lastpilepath  = preg_replace('/.*:/', '', $lastpile);
+
+            $notiflevel = strlen(preg_replace('/[^\/]/', '', $notif));
+            $notiftype  = preg_replace('/:.*/', '', $notif);
+            $notifpath  = preg_replace('/.*:/', '', $notif);
+
+            switch ($notiftype) {
+                case 'process':
+                    if ($lastpilepath != $notifpath or $lastpiletype != 'start') {
+                        $numerrors++; // Only start for same path is allowed before process
+                    }
+                    $notifpile[$notifpath] = 'process'; // Update the status in the pile
+                    break;
+                case 'end':
+                    if ($lastpilepath != $notifpath or $lastpiletype != 'process') {
+                        $numerrors++; // Only process for same path is allowed before end
+                    }
+                    unset($notifpile[$notifpath]); // Delete from the pile
+                    break;
+                case 'start':
+                    if (array_key_exists($notifpath, $notifpile) or $notiflevel <= $lastpilelevel) {
+                        $numerrors++; // If same path exists or the level is < than the last one
+                    }
+                    $notifpile[$notifpath] = 'start'; // Add to the pile
+                    break;
+                default:
+                    $numerrors++; // Incorrect type of notification => error
+            }
+            // Update lastpile
+            end($notifpile);
+            $path = key($notifpile);
+            $type = $notifpile[$path];
+            $lastpile = $type. ':' . $path;
+        }
+        return $numerrors;
     }
 }
 
@@ -572,17 +640,21 @@ class mock_simplified_parser_processor extends simplified_parser_processor {
     private $chunksarr = array(); // To accumulate the found chunks
     private $startarr  = array(); // To accumulate all the notified path starts
     private $endarr    = array(); // To accumulate all the notified path ends
+    private $allnotif  = array(); // To accumulate all the notified and dispatched events in an ordered way
 
     public function dispatch_chunk($data) {
         $this->chunksarr[] = $data;
+        $this->allnotif[] = 'process:' . $data['path'];
     }
 
     public function notify_path_start($path) {
         $this->startarr[] = $path;
+        $this->allnotif[] = 'start:' . $path;
     }
 
     public function notify_path_end($path) {
         $this->endarr[] = $path;
+        $this->allnotif[] = 'end:' . $path;
     }
 
     public function get_chunks() {
@@ -595,6 +667,10 @@ class mock_simplified_parser_processor extends simplified_parser_processor {
 
     public function get_end_notifications() {
         return $this->endarr;
+    }
+
+    public function get_all_notifications() {
+        return $this->allnotif;
     }
 }
 
@@ -606,17 +682,21 @@ class mock_grouped_parser_processor extends grouped_parser_processor {
     private $chunksarr = array(); // To accumulate the found chunks
     private $startarr  = array(); // To accumulate all the notified path starts
     private $endarr    = array(); // To accumulate all the notified path ends
+    private $allnotif  = array(); // To accumulate all the notified and dispatched events in an ordered way
 
     public function dispatch_chunk($data) {
         $this->chunksarr[] = $data;
+        $this->allnotif[] = 'process:' . $data['path'];
     }
 
     public function notify_path_start($path) {
         $this->startarr[] = $path;
+        $this->allnotif[] = 'start:' . $path;
     }
 
     public function notify_path_end($path) {
         $this->endarr[] = $path;
+        $this->allnotif[] = 'end:' . $path;
     }
 
     public function get_chunks() {
@@ -629,5 +709,9 @@ class mock_grouped_parser_processor extends grouped_parser_processor {
 
     public function get_end_notifications() {
         return $this->endarr;
+    }
+
+    public function get_all_notifications() {
+        return $this->allnotif;
     }
 }
