@@ -67,10 +67,15 @@ M.core_dock.init = function(Y) {
     Y.augment(this.item, Y.EventTarget);
     Y.augment(this, Y.EventTarget, true);
     /**
-     * A 'actionkey' Event to help with Y.delegate().
+     * A 'dock:actionkey' Event.
      * The event consists of the left arrow, right arrow, enter and space keys.
-     * Possibly more keys can be mapped to the action meanings
-     * This is used by the dock to listen to this event and act on.
+     * More keys can be mapped to action meanings.
+     * actions: collapse , expand, toggle, enter.
+     *
+     * This event is subscribed to by dockitems.
+     * The on() method to subscribe allows specifying the desired trigger actions as JSON.
+     *
+     * This event can also be delegated if needed.
      * Todo: This could be centralised, a similar Event is defined in blocks/navigation/yui/navigation/navigation.js
      */
     Y.Event.define("dock:actionkey", {
@@ -89,23 +94,41 @@ M.core_dock.init = function(Y) {
             '13': 'enter'
         },
 
-        _keyHandler: function (e, notifier) {
-            if (this._keys[e.keyCode]) {
+        _keyHandler: function (e, notifier, args) {
+            if (!args.actions) {
+                var actObj = {collapse:true, expand:true, toggle:true, enter:true};
+            } else {
+                var actObj = args.actions;
+            }
+            if (this._keys[e.keyCode] && actObj[this._keys[e.keyCode]]) {
                 e.action = this._keys[e.keyCode];
                 notifier.fire(e);
             }
         },
 
         on: function (node, sub, notifier) {
-            sub._detacher = node.on(this._event, this._keyHandler,this, notifier);
+            // subscribe to _event and ask keyHandler to handle with given args[0] (the desired actions).
+            if (sub.args == null) {
+                //no actions given
+                sub._detacher = node.on(this._event, this._keyHandler,this, notifier, {actions:false});
+            } else {
+                sub._detacher = node.on(this._event, this._keyHandler,this, notifier, sub.args[0]);
+            }
         },
 
         detach: function (node, sub, notifier) {
+            //detach our _detacher handle of the subscription made in on()
             sub._detacher.detach();
         },
 
         delegate: function (node, sub, notifier, filter) {
-            sub._delegateDetacher = node.delegate(this._event, this._keyHandler,filter, this, notifier);
+            // subscribe to _event and ask keyHandler to handle with given args[0] (the desired actions).
+            if (sub.args == null) {
+                //no actions given
+                sub._delegateDetacher = node.delegate(this._event, this._keyHandler,filter, this, notifier, {actions:false});
+            } else {
+                sub._delegateDetacher = node.delegate(this._event, this._keyHandler,filter, this, notifier, sub.args[0]);
+            }
         },
 
         detachDelegate: function (node, sub, notifier) {
@@ -173,7 +196,7 @@ M.core_dock.init = function(Y) {
     var removeall = Y.Node.create('<img alt="'+M.str.block.undockall+'" title="'+M.str.block.undockall+'" tabindex="0"/>');
     removeall.setAttribute('src',this.cfg.removeallicon);
     removeall.on('removeall|click', this.remove_all, this);
-    removeall.on('dock:actionkey', this.remove_all, this);
+    removeall.on('dock:actionkey', this.remove_all, this, {actions:{enter:true}});
     this.nodes.buttons.appendChild(Y.Node.create('<div class="'+css.controls+'"></div>').append(removeall));
 
     // Create a manager for the height of the tabs. Once set this can be forgotten about
@@ -637,10 +660,8 @@ M.core_dock.resetFirstItem = function() {
  * @return {boolean}
  */
 M.core_dock.remove_all = function(e) {
-    if (!(e.type == 'dock:actionkey' && e.action=='collapse')) {
-        for (var i in this.items) {
-            this.remove(i);
-        }
+    for (var i in this.items) {
+        this.remove(i);
     }
     return true;
 };
@@ -891,7 +912,7 @@ M.core_dock.genericblock.prototype = {
             var closeicon = Y.Node.create('<span class="hidepanelicon" tabindex="0"><img alt="" style="width:11px;height:11px;cursor:pointer;" /></span>');
             closeicon.one('img').setAttribute('src', M.util.image_url('t/dockclose', 'moodle'));
             closeicon.on('forceclose|click', this.hide, this);
-            closeicon.on('dock:actionkey',this.close, this);
+            closeicon.on('dock:actionkey',this.hide, this, {actions:{enter:true,toggle:true}});
             this.commands.append(closeicon);
         }, dockitem);
         // Register an event so that when it is removed we can put it back as a block
@@ -1060,15 +1081,6 @@ M.core_dock.item.prototype = {
             this.hide();
         } else if (!this.nodes.docktitle.hasClass(css.activeitem) && !(e.type == 'dock:actionkey' && e.action=='collapse'))  {
             this.show();
-        }
-    },
-    /**
-     * A hide() wrapper that applies rules to key press events (dock:actionkey)
-     * @param {Event} e
-     */
-    close : function(e) {
-        if (!(e.type == 'dock:actionkey' && (e.action=='expand' || e.action=='collapse'))) {
-            this.hide();
         }
     },
     /**

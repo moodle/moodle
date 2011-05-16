@@ -3,41 +3,65 @@ YUI.add('moodle-block_navigation-navigation', function(Y){
 /**
  * A 'actionkey' Event to help with Y.delegate().
  * The event consists of the left arrow, right arrow, enter and space keys.
- * This is used below to delegate an Event listener to the multiple possible branches in a menu.
+ * More keys can be mapped to action meanings.
+ * actions: collapse , expand, toggle, enter.
+ *
+ * This event is delegated to branches in the navigation tree.
+ * The on() method to subscribe allows specifying the desired trigger actions as JSON.
+ *
+ * Todo: This could be centralised, a similar Event is defined in blocks/dock.js
  */
 Y.Event.define("actionkey", {
-    // Webkit and IE repeat keydown when you hold down arrow keys.
+   // Webkit and IE repeat keydown when you hold down arrow keys.
     // Opera links keypress to page scroll; others keydown.
     // Firefox prevents page scroll via preventDefault() on either
     // keydown or keypress.
     _event: (Y.UA.webkit || Y.UA.ie) ? 'keydown' : 'keypress',
 
     _keys: {
-            //arrows
-            '37': 'collapse',
-            '39': 'expand',
-            //(@todo: lrt/rtl decision to assign arrow to meanings)
-            '32': 'toggle',
-            '13': 'enter'
+        //arrows
+        '37': 'collapse',
+        '39': 'expand',
+        //(@todo: lrt/rtl/M.core_dock.cfg.orientation decision to assign arrow to meanings)
+        '32': 'toggle',
+        '13': 'enter'
     },
 
-    _keyHandler: function (e, notifier) {
-        if (this._keys[e.keyCode]) {
+    _keyHandler: function (e, notifier, args) {
+        if (!args.actions) {
+            var actObj = {collapse:true, expand:true, toggle:true, enter:true};
+        } else {
+            var actObj = args.actions;
+        }
+        if (this._keys[e.keyCode] && actObj[this._keys[e.keyCode]]) {
             e.action = this._keys[e.keyCode];
             notifier.fire(e);
         }
     },
 
     on: function (node, sub, notifier) {
-        sub._detacher = node.on(this._event, this._keyHandler,this, notifier);
+        // subscribe to _event and ask keyHandler to handle with given args[0] (the desired actions).
+        if (sub.args == null) {
+            //no actions given
+            sub._detacher = node.on(this._event, this._keyHandler,this, notifier, {actions:false});
+        } else {
+            sub._detacher = node.on(this._event, this._keyHandler,this, notifier, sub.args[0]);
+        }
     },
 
     detach: function (node, sub, notifier) {
+        //detach our _detacher handle of the subscription made in on()
         sub._detacher.detach();
     },
 
     delegate: function (node, sub, notifier, filter) {
-        sub._delegateDetacher = node.delegate(this._event, this._keyHandler,filter, this, notifier);
+        // subscribe to _event and ask keyHandler to handle with given args[0] (the desired actions).
+        if (sub.args == null) {
+            //no actions given
+            sub._delegateDetacher = node.delegate(this._event, this._keyHandler,filter, this, notifier, {actions:false});
+        } else {
+            sub._delegateDetacher = node.delegate(this._event, this._keyHandler,filter, this, notifier, sub.args[0]);
+        }
     },
 
     detachDelegate: function (node, sub, notifier) {
@@ -255,14 +279,12 @@ BRANCH.prototype = {
         var isbranch = (this.get('expandable') || this.get('haschildren'));
         var branchli = Y.Node.create('<li></li>');
         var link = this.get('link');
+        var branchp = Y.Node.create('<p class="tree_item"></p>').setAttribute('id', this.get('id'));
         if (!link) {
             //add tab focus if not link (so still one focus per menu node).
             // it was suggested to have 2 foci. one for the node and one for the link in MDL-27428.
-            var branchp = Y.Node.create('<p class="tree_item" tabindex="0"></p>').setAttribute('id', this.get('id'));
-        } else {
-            var branchp = Y.Node.create('<p class="tree_item"></p>').setAttribute('id', this.get('id'));
+            branchp.setAttribute('tabindex', '0');
         }
-
         if (isbranch) {
             branchli.addClass('collapsed').addClass('contains_branch');
             branchp.addClass('branch');
@@ -342,7 +364,7 @@ BRANCH.prototype = {
      * request made here.
      */
     ajaxLoad : function(e) {
-        if (e.type = 'actionkey' && e.action != 'enter') {
+        if (e.type == 'actionkey' && e.action != 'enter') {
             e.halt();
         } else {
             e.stopPropagation();
@@ -350,7 +372,7 @@ BRANCH.prototype = {
         if (e.type = 'actionkey' && e.action == 'enter' && e.target.test('A')) {
             this.event_ajaxload_actionkey.detach();
             this.event_ajaxload.detach();
-            return; // no ajaxLoad for enter
+            return true; // no ajaxLoad for enter
         }
 
         if (this.node.hasClass('loadingbranch')) {
