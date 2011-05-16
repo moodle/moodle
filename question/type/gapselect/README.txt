@@ -7,3 +7,17 @@ presents the feedback in a more accessible way.
 
 The question type was created by Jamie Pratt (http://jamiep.org/) paid for by
 the Open University (http://www.open.ac.uk/).
+
+
+This question type is compatible with Moodle 2.1+.
+
+To install using git, type this command in the root of your Moodle install
+    git clone git://github.com/timhunt/moodle-qtype_gapselect.git question/type/gapselect
+Then add question/type/gapselect to your git ignore.
+
+Alternatively, download the zip from
+    https://github.com/timhunt/moodle-qtype_gapselect/zipball/master
+unzip it into the question/type folder, and then rename the new folder to
+gapselect.
+
+
