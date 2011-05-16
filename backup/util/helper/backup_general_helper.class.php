@@ -238,14 +238,13 @@ abstract class backup_general_helper extends backup_helper {
     public static function detect_backup_format($tempdir) {
         global $CFG;
         require_once($CFG->dirroot . '/backup/util/helper/convert_helper.class.php');
-        require_once($CFG->dirroot . '/backup/util/factories/convert_factory.class.php');
 
         if (convert_helper::detect_moodle2_format($tempdir)) {
             return backup::FORMAT_MOODLE;
         }
 
         // see if a converter can identify the format
-        $converters = convert_factory::available_converters();
+        $converters = convert_helper::available_converters();
         foreach ($converters as $name) {
             $classname = "{$name}_converter";
             if (!class_exists($classname)) {
