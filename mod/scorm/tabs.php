@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Sets up the tabs used by the scorm pages based on the users capabilities.
- *
- * @author Dan Marsden and others.
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package scorm
- */
+* Sets up the tabs used by the scorm pages based on the users capabilities.
+*
+* @author Dan Marsden and others.
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package scorm
+*/
 
 if (empty($scorm)) {
     error('You cannot call this script in that way');
@@ -36,7 +36,7 @@ if (!isset($cm)) {
 $contextmodule = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 $tabs = array();
-$row  = array();
+$row = array();
 $inactive = array();
 $activated = array();
 
@@ -44,7 +44,7 @@ if (has_capability('mod/scorm:savetrack', $contextmodule)) {
     $row[] = new tabobject('info', "$CFG->wwwroot/mod/scorm/view.php?id=$cm->id", get_string('info', 'scorm'));
 }
 if (has_capability('mod/scorm:viewreport', $contextmodule)) {
-    $row[] = new tabobject('reports', "$CFG->wwwroot/mod/scorm/report.php?id=$cm->id", get_string('results', 'scorm'));
+    $row[] = new tabobject('reports', "$CFG->wwwroot/mod/scorm/report.php?id=$cm->id", get_string('reports', 'scorm'));
 }
 
 if ($currenttab == 'info' && count($row) == 1) {
