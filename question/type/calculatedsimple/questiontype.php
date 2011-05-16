@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2009 Pierre Pichet
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_calculatedsimple_qtype extends question_calculated_qtype {
+class question_calculatedsimple_qtype extends qtype_calculated {
 
     // Used by the function custom_generator_tools:
     public $calcgenerateidhasbeenadded = false;

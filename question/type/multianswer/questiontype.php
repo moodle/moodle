@@ -39,17 +39,6 @@ class embedded_cloze_qtype extends question_type {
         return 'multianswer';
     }
 
-    function has_wildcards_in_responses($question, $subqid) {
-        global $QTYPES, $OUTPUT;
-        foreach ($question->options->questions as $subq){
-            if ($subq->id == $subqid){
-                return $QTYPES[$subq->qtype]->has_wildcards_in_responses($subq, $subqid);
-            }
-        }
-        echo $OUTPUT->notification('Could not find sub question!');
-        return true;
-    }
-
     function requires_qtypes() {
         return array('shortanswer', 'numerical', 'multichoice');
     }

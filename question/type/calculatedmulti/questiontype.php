@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2009 Pierre Pichet
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_calculatedmulti_qtype extends question_calculated_qtype {
+class question_calculatedmulti_qtype extends qtype_calculated {
 
 
     // Used by the function custom_generator_tools:
@@ -44,14 +44,9 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
         return 'calculatedmulti';
     }
 
-    function has_wildcards_in_responses($question, $subqid) {
-        return true;
-    }
-
     function requires_qtypes() {
         return array('multichoice');
     }
-
 
     function save_question_options($question) {
         global $CFG, $DB, $QTYPES ;
@@ -229,8 +224,8 @@ class question_calculatedmulti_qtype extends question_calculated_qtype {
 
         // Choose a random dataset
         // maxnumber sould not be breater than 100
-        if ($maxnumber > CALCULATEDQUESTIONMAXITEMNUMBER ){
-            $maxnumber = CALCULATEDQUESTIONMAXITEMNUMBER ;
+        if ($maxnumber > qtype_calculated::MAX_DATASET_ITEMS) {
+            $maxnumber = qtype_calculated::MAX_DATASET_ITEMS;
         }
         if ( $synchronize_calculated === false ) {
             $state->options->datasetitem = rand(1, $maxnumber);

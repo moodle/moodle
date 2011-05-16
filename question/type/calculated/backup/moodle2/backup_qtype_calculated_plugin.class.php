@@ -71,8 +71,8 @@ class backup_qtype_calculated_plugin extends backup_qtype_plugin {
         $calculatedoptions = new backup_nested_element('calculated_options');
         $calculatedoption = new backup_nested_element('calculated_option', array('id'), array(
             'synchronize', 'single', 'shuffleanswers', 'correctfeedback',
-            'correctfeedbackformat', 'partiallycorrectfeedback', 'partiallycorrectfeedbackformat', 'incorrectfeedback',
-            'incorrectfeedbackformat', 'answernumbering'));
+            'correctfeedbackformat', 'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
+            'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering'));
 
         // Now the own qtype tree
         $pluginwrapper->add_child($calculatedrecords);
@@ -82,8 +82,10 @@ class backup_qtype_calculated_plugin extends backup_qtype_plugin {
         $calculatedoptions->add_child($calculatedoption);
 
         // set source to populate the data
-        $calculatedrecord->set_source_table('question_calculated', array('question' => backup::VAR_PARENTID));
-        $calculatedoption->set_source_table('question_calculated_options', array('question' => backup::VAR_PARENTID));
+        $calculatedrecord->set_source_table('question_calculated',
+                array('question' => backup::VAR_PARENTID));
+        $calculatedoption->set_source_table('question_calculated_options',
+                array('question' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 

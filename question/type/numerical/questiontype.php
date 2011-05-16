@@ -50,10 +50,6 @@ class qtype_numerical extends question_type {
     const UNITGRADEDOUTOFMARK = 1;
     const UNITGRADEDOUTOFMAX = 2;
 
-    public function has_wildcards_in_responses() {
-        return true;
-    }
-
     public function get_question_options($question) {
         global $CFG, $DB, $OUTPUT;
         parent::get_question_options($question);
