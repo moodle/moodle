@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Sets up the tabs used by the scorm pages based on the users capabilities.
- *
- * @author Dan Marsden and others.
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package scorm
- */
+* Sets up the tabs used by the scorm pages based on the users capabilities.
+*
+* @author Dan Marsden and others.
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package scorm
+*/
 
 if (empty($scorm)) {
     error('You cannot call this script in that way');

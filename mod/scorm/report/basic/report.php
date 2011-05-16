@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * Core Report class of basic reporting plugin
+<<<<<<< HEAD
  * @package    scormreport
  * @subpackage basic
  * @author     Dan Marsden and Ankit Kumar Agarwal
@@ -147,6 +148,7 @@ class scorm_basic_report extends scorm_default_report {
                 $table->define_columns($columns);
                 $table->define_headers($headers);
                 $table->define_baseurl($PAGE->url);
+
 
                 $table->sortable(true);
                 $table->collapsible(true);
