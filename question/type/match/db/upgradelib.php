@@ -157,14 +157,16 @@ class qtype_match_qe2_attempt_updater extends question_qtype_attempt_updater {
 
         $this->choiceorder = array_keys($this->choices);
         shuffle($this->choiceorder);
-        $this->flippedchoiceorder = array_combine(array_values($this->choiceorder), array_keys($this->choiceorder));
+        $this->flippedchoiceorder = array_combine(
+                array_values($this->choiceorder), array_keys($this->choiceorder));
 
         $data['_stemorder'] = implode(',', $this->stemorder);
         $data['_choiceorder'] = implode(',', $this->choiceorder);
     }
 
-    public function supply_missing_first_step_data(&$data) {
-        throw new coding_exception('qtype_match_updater::supply_missing_first_step_data not tested');
+    public function supply_missing_first_step_data($data) {
+        throw new coding_exception('qtype_match_updater::supply_missing_first_step_data ' .
+                'not tested');
         $data['_stemorder'] = array_keys($this->stems);
         $data['_choiceorder'] = shuffle(array_keys($this->choices));
     }

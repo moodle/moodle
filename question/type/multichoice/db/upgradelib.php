@@ -93,7 +93,8 @@ class qtype_multichoice_qe2_attempt_updater extends question_qtype_attempt_updat
                 $bits = array();
                 foreach ($responses as $response) {
                     if (array_key_exists($response, $this->question->options->answers)) {
-                        $bits[] = $this->to_text($this->question->options->answers[$response]->answer);
+                        $bits[] = $this->to_text(
+                                $this->question->options->answers[$response]->answer);
                     } else {
                         $this->logger->log_assumption("Dealing with a place where the
                                 student selected a choice that was later deleted for

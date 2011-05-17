@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2007 Jamie Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_edit_calculated_form extends question_edit_form {
+class qtype_calculated_edit_form extends question_edit_form {
     /**
      * Handle to the question type for this question.
      *

@@ -33,7 +33,7 @@ require_once(dirname(__FILE__) . '/states.php');
 require_once(dirname(__FILE__) . '/datalib.php');
 require_once(dirname(__FILE__) . '/renderer.php');
 require_once(dirname(__FILE__) . '/bank.php');
-require_once(dirname(__FILE__) . '/../type/questiontype.php');
+require_once(dirname(__FILE__) . '/../type/questiontypebase.php');
 require_once(dirname(__FILE__) . '/../type/questionbase.php');
 require_once(dirname(__FILE__) . '/../type/rendererbase.php');
 require_once(dirname(__FILE__) . '/../behaviour/behaviourbase.php');

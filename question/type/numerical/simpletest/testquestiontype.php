@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
  */
 class qtype_numerical_test extends UnitTestCase {
     public static $includecoverage = array(
-        'question/type/questiontype.php',
+        'question/type/questiontypebase.php',
         'question/type/numerical/questiontype.php'
     );
 

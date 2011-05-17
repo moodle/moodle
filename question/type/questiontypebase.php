@@ -218,7 +218,8 @@ class question_type {
                 '/edit_' . $this->name() . '_form.php';
         if (!is_readable($definitionfile) || !is_file($definitionfile)) {
             throw new coding_exception($this->plugin_name() .
-                    ' is missing the definition of its editing formin file ' . $definitionfile . '.');
+                    ' is missing the definition of its editing formin file ' .
+                    $definitionfile . '.');
         }
         require_once($definitionfile);
         $classname = $this->plugin_name() . '_edit_form';

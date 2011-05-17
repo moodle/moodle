@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/type/questiontype.php');
+require_once($CFG->dirroot . '/question/type/questiontypebase.php');
 
 
 /**
@@ -36,5 +36,5 @@ require_once($CFG->dirroot . '/question/type/questiontype.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_type_test extends UnitTestCase {
-    public static $includecoverage = array('question/type/questiontype.php');
+    public static $includecoverage = array('question/type/questiontypebase.php');
 }
