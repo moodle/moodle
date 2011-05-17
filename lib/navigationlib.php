@@ -1700,9 +1700,16 @@ class global_navigation extends navigation_node {
         }
 
         // Add a reports tab and then add reports the the user has permission to see.
-        $anyreport  = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
+        $anyreport      = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
 
-        $viewreports = ($anyreport || ($course->showreports && $iscurrentuser && $forceforcontext));
+        $outlinetreport = ($anyreport || has_capability('coursereport/outline:view', $coursecontext));
+        $logtodayreport = ($anyreport || has_capability('coursereport/log:viewtoday', $coursecontext));
+        $logreport      = ($anyreport || has_capability('coursereport/log:view', $coursecontext));
+        $statsreport    = ($anyreport || has_capability('coursereport/stats:view', $coursecontext));
+
+        $somereport     = $outlinetreport || $logtodayreport || $logreport || $statsreport;
+
+        $viewreports = ($anyreport || $somereport || ($course->showreports && $iscurrentuser && $forceforcontext));
         if ($viewreports) {
             $reporttab = $usernode->add(get_string('activityreports'));
             $reportargs = array('user'=>$user->id);
@@ -1711,21 +1718,21 @@ class global_navigation extends navigation_node {
             } else {
                 $reportargs['id'] = SITEID;
             }
-            if ($viewreports || has_capability('coursereport/outline:view', $coursecontext)) {
+            if ($viewreports || $outlinetreport) {
                 $reporttab->add(get_string('outlinereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'outline'))));
                 $reporttab->add(get_string('completereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'complete'))));
             }
 
-            if ($viewreports || has_capability('coursereport/log:viewtoday', $coursecontext)) {
+            if ($viewreports || $logtodayreport) {
                 $reporttab->add(get_string('todaylogs'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'todaylogs'))));
             }
 
-            if ($viewreports || has_capability('coursereport/log:view', $coursecontext)) {
+            if ($viewreports || $logreport ) {
                 $reporttab->add(get_string('alllogs'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'alllogs'))));
             }
 
             if (!empty($CFG->enablestats)) {
-                if ($viewreports || has_capability('coursereport/stats:view', $coursecontext)) {
+                if ($viewreports || $statsreport) {
                     $reporttab->add(get_string('stats'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'stats'))));
                 }
             }
