@@ -432,6 +432,18 @@ class moodle1_converter extends base_converter {
             return $autoincrement;
         }
     }
+
+    /**
+     * @see parent::description()
+     */
+    public static function description() {
+
+        return array(
+            'from'  => backup::FORMAT_MOODLE1,
+            'to'    => backup::FORMAT_MOODLE,
+            'cost'  => 10,
+        );
+    }
 }
 
 
