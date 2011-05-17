@@ -11,7 +11,7 @@ $authtoken = required_param('authtoken', PARAM_ALPHANUM);
 if (empty($CFG->enablecalendarexport)) {
     die('no export');
 }
-global $DB;
+
 //Fetch user information
 if (!$user = $DB->get_record('user', array('username' => $username), 'id,password')) {
    //No such user
