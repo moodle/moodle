@@ -56,7 +56,7 @@ define('MESSAGE_MAX_COURSE_NAME_LENGTH', 30);
 /**
  * Set default value for default outputs permitted setting
  */
-define('MESSAGE_DEFAULT_PERMITTED_VALUE', 'disallowed');
+define('MESSAGE_DEFAULT_PERMITTED', 'permitted');
 
 if (!isset($CFG->message_contacts_refresh)) {  // Refresh the contacts list every 60 seconds
     $CFG->message_contacts_refresh = 60;
@@ -2174,18 +2174,19 @@ function message_print_heading($title, $colspan=3) {
 }
 
 /**
- * Get all message processors and validate corresponding plugin existance and
- * configuration
- * @param bool $enabled only return enabled processors
- * @return array $processors array of objects containing information on message processors
+ * Get all message processors, validate corresponding plugin existance and
+ * system configuration
+ * @param bool $ready only return ready-to-use processors
+ * @return mixed $processors array of objects containing information on message processors
  */
-function get_message_processors($enabled = false) {
+function get_message_processors($ready = false) {
     global $DB, $CFG;
 
     static $processors;
 
     if (empty($processors)) {
-        $processors = $DB->get_records('message_processors', null, 'name');
+        // Get all processors, ensure the name column is the first so it will be the array key
+        $processors = $DB->get_records('message_processors', null, 'name DESC', 'name, id, enabled');
         foreach ($processors as &$processor){
             $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';
             if (is_readable($processorfile)) {
@@ -2193,6 +2194,7 @@ function get_message_processors($enabled = false) {
                 $processclass = 'message_output_' . $processor->name;
                 if (class_exists($processclass)) {
                     $pclass = new $processclass();
+                    $processor->object = $pclass;
                     $processor->configured = 0;
                     if ($pclass->is_system_configured()) {
                         $processor->configured = 1;
@@ -2210,11 +2212,22 @@ function get_message_processors($enabled = false) {
             }
         }
     }
-    if ($enabled) {
-        // Filter out enabled processors only, the reason of not doing this in
-        // database request is caching the result.
-        $processors = array_filter($processors, create_function('$a', 'return $a->enabled;'));
+    if ($ready) {
+        // Filter out enabled, available and system_configured processors only.
+        $processors = array_filter($processors, create_function('$a', 'return $a->enabled && $a->configured;'));
     }
 
     return $processors;
+}
+
+/**
+ * Get messaging outputs default (site) preferences
+ * @return object $processors object containing information on message processors
+ */
+function get_message_output_default_preferences() {
+    $preferences = get_config('message');
+    if (!$preferences) {
+        $preferences = (object) array();
+    }
+    return $preferences;
 }

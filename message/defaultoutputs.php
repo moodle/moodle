@@ -105,7 +105,7 @@ $PAGE->requires->js_init_call('M.core_message.init_defaultoutputs');
 $renderer = $PAGE->get_renderer('core', 'message');
 
 // Display the manage message outputs interface
-$preferences = get_config('message');
+$preferences = get_message_output_default_preferences();
 $messageoutputs = $renderer->manage_defaultmessageoutputs($processors, $providers, $preferences);
 
 // Display the page

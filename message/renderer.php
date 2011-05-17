@@ -38,7 +38,7 @@ class core_message_renderer extends plugin_renderer_base {
     /**
      * Display the interface to manage message outputs
      *
-     * @param   array   $processors The list of message processors
+     * @param   mixed   $processors array of objects containing message processors
      * @return  string              The text to render
      */
     public function manage_messageoutputs($processors) {
@@ -106,10 +106,10 @@ class core_message_renderer extends plugin_renderer_base {
     /**
      * Display the interface to manage default message outputs
      *
-     * @param   array   $processors The list of message processors
-     * @param   array   $providers The list of message providers
-     * @param   array   $preferences The list of current preferences
-     * @return  string              The text to render
+     * @param   mixed   $processors  array of objects containing message processors
+     * @param   mixed   $providers   array of objects containing message providers
+     * @param   mixed   $preferences array of objects containing current preferences
+     * @return  string               The text to render
      */
     public function manage_defaultmessageoutputs($processors, $providers, $preferences) {
         global $CFG;
@@ -161,14 +161,14 @@ class core_message_renderer extends plugin_renderer_base {
                     if ($setting == 'permitted') {
                         $label = get_string('sendingvia', 'message', $labelparams);
                         // determine the current setting or use default
-                        $select = MESSAGE_DEFAULT_PERMITTED_VALUE;
+                        $select = MESSAGE_DEFAULT_PERMITTED;
                         $preference = $processor->name.'_provider_'.$preferencebase;
                         if (array_key_exists($preference, $preferences)) {
                             $select = $preferences->{$preference};
                         }
                         // dropdown menu
-                        $cellcontent = html_writer::select($options, $elementname, $select, false, array('id' => $elementname));
-                        $cellcontent .= html_writer::label($label, $elementname, true, array('class' => 'accesshide'));
+                        $cellcontent = html_writer::label($label, $elementname, true, array('class' => 'accesshide'));
+                        $cellcontent .= html_writer::select($options, $elementname, $select, false, array('id' => $elementname));
                         $cellcontent .= html_writer::tag('div', get_string('defaults', 'message'));
                     } else {
                         $label = get_string('sendingviawhen', 'message', $labelparams);
@@ -184,8 +184,8 @@ class core_message_renderer extends plugin_renderer_base {
                         }
                         // generate content
                         $cellcontent .= html_writer::start_tag('div');
-                        $cellcontent .= html_writer::checkbox($elementname, 1, $checked, '', array('id' => $elementname));
                         $cellcontent .= html_writer::label($label, $elementname, true, array('class' => 'accesshide'));
+                        $cellcontent .= html_writer::checkbox($elementname, 1, $checked, '', array('id' => $elementname));
                         $cellcontent .= $statename;
                         $cellcontent .= html_writer::end_tag('div');
                     }
@@ -198,6 +198,146 @@ class core_message_renderer extends plugin_renderer_base {
         $output .= html_writer::table($table);
         $output .= html_writer::start_tag('div', array('class' => 'form-buttons'));
         $output .= html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('savechanges','admin'), 'class' => 'form-submit'));
+        $output .= html_writer::end_tag('div');
+        $output .= html_writer::end_tag('form');
+        return $output;
+    }
+
+    /**
+     * Display the interface for messaging options
+     *
+     * @param   mixed   $processors         array of objects containing message processors
+     * @param   mixed   $providers          array of objects containing message providers
+     * @param   mixed   $preferences        array of objects containing current preferences
+     * @param   mixed   $defaultpreferences array of objects containing site default preferences
+     * @return  string                      The text to render
+     */
+    public function manage_messagingoptions($processors, $providers, $preferences, $defaultpreferences) {
+        // Filter out enabled, available system_configured and user_configured processors only.
+        $readyprocessors = array_filter($processors, create_function('$a', 'return $a->enabled && $a->configured && $a->object->is_user_configured();'));
+
+        // Start the form.  We're not using mform here because of our special formatting needs ...
+        $output = html_writer::start_tag('form', array('method'=>'post', 'class' => 'mform'));
+        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
+
+        /// Settings table...
+        $output .= html_writer::start_tag('fieldset', array('id' => 'providers', 'class' => 'clearfix'));
+        $output .= html_writer::nonempty_tag('legend', get_string('providers_config', 'message'), array('class' => 'ftoggler'));
+
+        // Display the messging options table
+        $table = new html_table();
+        $table->attributes['class'] = 'generaltable';
+        $table->data        = array();
+        $table->head        = array('');
+
+        foreach ($readyprocessors as $processor) {
+            $table->head[]  = get_string('pluginname', 'message_'.$processor->name);
+        }
+
+        $number_procs = count($processors);
+        // Populate the table with rows
+        foreach ( $providers as $provider) {
+            $preferencebase = $provider->component.'_'.$provider->name;
+
+            $headerrow = new html_table_row();
+            $providername = get_string('messageprovider:'.$provider->name, $provider->component);
+            $providercell = new html_table_cell($providername);
+            $providercell->header = true;
+            $providercell->colspan = $number_procs + 1;
+            $providercell->attributes['class'] = 'c0';
+            $headerrow->cells = array($providercell);
+            $table->data[] = $headerrow;
+
+            foreach (array('loggedin', 'loggedoff') as $state) {
+                $optionrow = new html_table_row();
+                $optionname = new html_table_cell(get_string($state.'description', 'message'));
+                $optionname->attributes['class'] = 'c0';
+                $optionrow->cells = array($optionname);
+                foreach ($readyprocessors as $processor) {
+                    // determine the default setting
+                    $permitted = MESSAGE_DEFAULT_PERMITTED;
+                    $defaultpreference = $processor->name.'_provider_'.$preferencebase.'_permitted';
+                    if (array_key_exists($defaultpreference, $defaultpreferences)) {
+                        $permitted = $defaultpreferences->{$defaultpreference};
+                    }
+                    // If settings are disallowed, just display the message that
+                    // the setting is not permitted, if not use user settings or
+                    // force them.
+                    if ($permitted == 'disallowed') {
+                        if ($state == 'loggedoff') {
+                            // skip if we are rendering the second line
+                            continue;
+                        }
+                        $cellcontent = html_writer::nonempty_tag('div', get_string('notpermitted', 'message'), array('class' => 'dimmed_text'));
+                        $optioncell = new html_table_cell($cellcontent);
+                        $optioncell->rowspan = 2;
+                        $optioncell->attributes['class'] = 'disallowed';
+                    } else {
+                        // determine user preferences and use then unless we force
+                        // the preferences.
+                        $disabled = array();
+                        if ($permitted == 'forced') {
+                            $checked = true;
+                            $disabled['disabled'] = 1;
+                        } else {
+                            $checked = false;
+                            // See if hser has touched this preference
+                            if (isset($preferences->{$preferencebase.'_'.$state})) {
+                                // User have some preferneces for this state in the database, use them
+                                $checked = isset($preferences->{$preferencebase.'_'.$state}[$processor->name]);
+                            } else {
+                                // User has not set this preference yet, using site default preferences set by admin
+                                $defaultpreference = 'message_provider_'.$preferencebase.'_'.$state;
+                                if (array_key_exists($defaultpreference, $defaultpreferences)) {
+                                    $checked = (int)in_array($processor->name, explode(',', $defaultpreferences->{$defaultpreference}));
+                                }
+                            }
+                        }
+                        $elementname = $preferencebase.'_'.$state.'['.$processor->name.']';
+                        // prepare language bits
+                        $processorname = get_string('pluginname', 'message_'.$processor->name);
+                        $statename = get_string($state, 'message');
+                        $labelparams = array(
+                            'provider'  => $providername,
+                            'processor' => $processorname,
+                            'state'     => $statename
+                        );
+                        $label = get_string('sendingviawhen', 'message', $labelparams);
+                        $cellcontent = html_writer::label($label, $elementname, true, array('class' => 'accesshide'));
+                        $cellcontent .= html_writer::checkbox($elementname, 1, $checked, '', array_merge(array('id' => $elementname), $disabled));
+                        $optioncell = new html_table_cell($cellcontent);
+                        $optioncell->attributes['class'] = 'mdl-align';
+                    }
+                    $optionrow->cells[] = $optioncell;
+                }
+                $table->data[] = $optionrow;
+            }
+        }
+        $output .= html_writer::start_tag('div');
+        $output .= html_writer::table($table);
+        $output .= html_writer::end_tag('div');
+        $output .= html_writer::end_tag('fieldset');
+
+        foreach ($processors as $processor) {
+            if (($processorconfigform = $processor->object->config_form($preferences)) && $processor->enabled) {
+                $output .= html_writer::start_tag('fieldset', array('id' => 'messageprocessor_'.$processor->name, 'class' => 'clearfix'));
+                $output .= html_writer::nonempty_tag('legend', get_string('pluginname', 'message_'.$processor->name), array('class' => 'ftoggler'));
+                $output .= html_writer::start_tag('div');
+                $output .= $processorconfigform;
+                $output .= html_writer::end_tag('div');
+                $output .= html_writer::end_tag('fieldset');
+            }
+        }
+
+        $output .= html_writer::start_tag('fieldset', array('id' => 'messageprocessor_general', 'class' => 'clearfix'));
+        $output .= html_writer::nonempty_tag('legend', get_string('generalsettings','admin'), array('class' => 'ftoggler'));
+        $output .= html_writer::start_tag('div');
+        $output .= get_string('blocknoncontacts', 'message').': ';
+        $output .= html_writer::checkbox('blocknoncontacts', 1, $preferences->blocknoncontacts, '');
+        $output .= html_writer::end_tag('div');
+        $output .= html_writer::end_tag('fieldset');
+        $output .= html_writer::start_tag('div', array('class' => 'mdl-align'));
+        $output .= html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('updatemyprofile'), 'class' => 'form-submit'));
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('form');
         return $output;
