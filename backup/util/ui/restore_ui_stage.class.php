@@ -1,6 +1,5 @@
 <?php
 
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -171,17 +170,38 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage {
         $fb = get_file_packer();
         return ($fb->extract_to_pathname("$CFG->dataroot/temp/backup/".$this->filename, "$CFG->dataroot/temp/backup/$this->filepath/"));
     }
+
+    /**
+     * Renders the confirmation stage screen
+     *
+     * @param core_backup_renderer $renderer renderer instance to use
+     * @return string HTML code
+     */
     public function display($renderer) {
 
-        // TODO: Remove this when backup formats are better supported
-        $format = backup_general_helper::detect_backup_format($this->filepath);
-        if ($format !== 'moodle2') {
-            return $renderer->invalid_format($format);
-        }
+        $prevstageurl = new moodle_url('/backup/restorefile.php', array('contextid' => $this->contextid));
+        $nextstageurl = new moodle_url('/backup/restore.php', array(
+            'contextid' => $this->contextid,
+            'filepath'  => $this->filepath,
+            'stage'     => restore_ui::STAGE_DESTINATION));
 
-        $this->details = backup_general_helper::get_backup_information($this->filepath);
-        return $renderer->backup_details($this->details, new moodle_url('/backup/restore.php', array('contextid'=>$this->contextid, 'filepath'=>$this->filepath, 'stage'=>restore_ui::STAGE_DESTINATION)));
+        $format = backup_general_helper::detect_backup_format($this->filepath);
+
+        if ($format === backup::FORMAT_UNKNOWN) {
+            // unknown format - we can't do anything here
+            return $renderer->backup_details_unknown($prevstageurl);
+
+        } else if ($format !== backup::FORMAT_MOODLE) {
+            // non-standard format to be converted
+            return $renderer->backup_details_nonstandard($format, $nextstageurl);
+
+        } else {
+            // standard MBZ backup, let us get information from it and display
+            $this->details = backup_general_helper::get_backup_information($this->filepath);
+            return $renderer->backup_details($this->details, $nextstageurl);
+        }
     }
+
     public function get_stage_name() {
         return get_string('restorestage'.restore_ui::STAGE_CONFIRM, 'backup');
     }
@@ -198,7 +218,6 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage {
 class restore_ui_stage_destination extends restore_ui_independent_stage {
     protected $contextid;
     protected $filepath = null;
-    protected $details;
     protected $courseid = null;
     protected $target = backup::TARGET_NEW_COURSE;
     protected $coursesearch = null;
@@ -235,29 +254,48 @@ class restore_ui_stage_destination extends restore_ui_independent_stage {
         }
         return false;
     }
+
     /**
+     * Renders the destination stage screen
      *
-     * @global moodle_database $DB
-     * @param core_backup_renderer $renderer
-     * @return string
+     * @param core_backup_renderer $renderer renderer instance to use
+     * @return string HTML code
      */
     public function display($renderer) {
-        global $DB, $USER, $PAGE;
 
         $format = backup_general_helper::detect_backup_format($this->filepath);
-        if ($format !== 'moodle2') {
-            return $renderer->invalid_format($format);
+
+        if ($format === backup::FORMAT_MOODLE) {
+            // standard Moodle 2 format, let use get the type of the backup
+            $details = backup_general_helper::get_backup_information($this->filepath);
+            if ($details->type === backup::TYPE_1COURSE) {
+                $wholecourse = true;
+            } else {
+                $wholecourse = false;
+            }
+
+        } else {
+            // non-standard format to be converted. We assume it contains the
+            // whole course for now. However, in the future there might be a callback
+            // to the installed converters
+            $wholecourse = true;
         }
 
-        $this->details = backup_general_helper::get_backup_information($this->filepath);
-        $url = new moodle_url('/backup/restore.php', array('contextid'=>$this->contextid, 'filepath'=>$this->filepath, 'stage'=>restore_ui::STAGE_SETTINGS));
-        
+        $nextstageurl = new moodle_url('/backup/restore.php', array(
+            'contextid' => $this->contextid,
+            'filepath'  => $this->filepath,
+            'stage'     => restore_ui::STAGE_SETTINGS));
         $context = get_context_instance_by_id($this->contextid);
-        $currentcourse = ($context->contextlevel == CONTEXT_COURSE && has_capability('moodle/restore:restorecourse', $context))?$context->instanceid:false;
 
-        $html = $renderer->course_selector($url, $this->details, $this->categorysearch, $this->coursesearch, $currentcourse);
-        return $html;
+        if ($context->contextlevel == CONTEXT_COURSE and has_capability('moodle/restore:restorecourse', $context)) {
+            $currentcourse = $context->instanceid;
+        } else {
+            $currentcourse = false;
+        }
+
+        return $renderer->course_selector($nextstageurl, $wholecourse, $this->categorysearch, $this->coursesearch, $currentcourse);
     }
+
     public function get_stage_name() {
         return get_string('restorestage'.restore_ui::STAGE_DESTINATION, 'backup');
     }
@@ -564,7 +602,6 @@ class restore_ui_stage_review extends restore_ui_stage {
 class restore_ui_stage_process extends restore_ui_stage {
 
     const SUBSTAGE_NONE = 0;
-    const SUBSTAGE_CONVERT = 1;
     const SUBSTAGE_PRECHECKS = 2;
 
     protected $substage = 0;
@@ -592,20 +629,16 @@ class restore_ui_stage_process extends restore_ui_stage {
 
         // First decide whether a substage is needed
         $rc = $this->ui->get_controller();
-        if ($rc->get_status() == backup::STATUS_REQUIRE_CONV) {
-            $this->substage = self::SUBSTAGE_CONVERT;
-        } else {
-            if ($rc->get_status() == backup::STATUS_SETTING_UI) {
-                $rc->finish_ui();
+        if ($rc->get_status() == backup::STATUS_SETTING_UI) {
+            $rc->finish_ui();
+        }
+        if ($rc->get_status() == backup::STATUS_NEED_PRECHECK) {
+            if (!$rc->precheck_executed()) {
+                $rc->execute_precheck(true);
             }
-            if ($rc->get_status() == backup::STATUS_NEED_PRECHECK) {
-                if (!$rc->precheck_executed()) {
-                    $rc->execute_precheck(true);
-                }
-                $results = $rc->get_precheck_results();
-                if (!empty($results)) {
-                    $this->substage = self::SUBSTAGE_PRECHECKS;
-                }
+            $results = $rc->get_precheck_results();
+            if (!empty($results)) {
+                $this->substage = self::SUBSTAGE_PRECHECKS;
             }
         }
 
@@ -635,37 +668,52 @@ class restore_ui_stage_process extends restore_ui_stage {
     protected function initialise_stage_form() {
         throw new backup_ui_exception('backup_ui_must_execute_first');
     }
+
     /**
-     * should NEVER be called... throws an exception
+     * Renders the process stage screen
+     *
+     * @param core_backup_renderer $renderer renderer instance to use
+     * @return string HTML code
      */
     public function display($renderer) {
         global $PAGE;
+
+        $html = '';
         $haserrors = false;
-        $url = new moodle_url($PAGE->url, array('restore'=>$this->get_uniqueid(), 'stage'=>restore_ui::STAGE_PROCESS, 'substage'=>$this->substage, 'sesskey'=>sesskey()));
-        echo html_writer::start_tag('form', array('action'=>$url->out_omit_querystring(), 'class'=>'backup-restore', 'method'=>'post'));
-        foreach ($url->params() as $name=>$value) {
-            echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>$name, 'value'=>$value));
+        $url = new moodle_url($PAGE->url, array(
+            'restore'   => $this->get_uniqueid(),
+            'stage'     => restore_ui::STAGE_PROCESS,
+            'substage'  => $this->substage,
+            'sesskey'   => sesskey()));
+        $html .= html_writer::start_tag('form', array(
+            'action'    => $url->out_omit_querystring(),
+            'class'     => 'backup-restore',
+            'method'    => 'post'));
+        foreach ($url->params() as $name => $value) {
+            $html .= html_writer::empty_tag('input', array(
+                'type'  => 'hidden',
+                'name'  => $name,
+                'value' => $value));
         }
         switch ($this->substage) {
-            case self::SUBSTAGE_CONVERT :
-                echo '<h2>Need to show the conversion screens here</h2>';
-                break;
             case self::SUBSTAGE_PRECHECKS :
                 $results = $this->ui->get_controller()->get_precheck_results();
                 $info = $this->ui->get_controller()->get_info();
                 $haserrors = (!empty($results['errors']));
-                echo $renderer->precheck_notices($results);
+                $html .= $renderer->precheck_notices($results);
                 if (!empty($info->role_mappings->mappings)) {
                     $context = get_context_instance(CONTEXT_COURSE, $this->ui->get_controller()->get_courseid());
                     $assignableroles = get_assignable_roles($context, ROLENAME_ALIAS, false);
-                    echo $renderer->role_mappings($info->role_mappings->mappings, $assignableroles);
+                    $html .= $renderer->role_mappings($info->role_mappings->mappings, $assignableroles);
                 }
                 break;
             default:
                 throw new restore_ui_exception('backup_ui_must_execute_first');
         }
-        echo $renderer->substage_buttons($haserrors);
-        echo html_writer::end_tag('form');
+        $html .= $renderer->substage_buttons($haserrors);
+        $html .= html_writer::end_tag('form');
+
+        return $html;
     }
 
     public function has_sub_stages() {
@@ -695,20 +743,24 @@ class restore_ui_stage_complete extends restore_ui_stage_process {
         parent::__construct($ui, $params);
         $this->stage = restore_ui::STAGE_COMPLETE;
     }
+
     /**
      * Displays the completed backup stage.
      *
      * Currently this just envolves redirecting to the file browser with an
      * appropriate message.
      *
-     * @global core_renderer $OUTPUT
      * @param core_backup_renderer $renderer
      */
     public function display(core_backup_renderer $renderer) {
-        global $OUTPUT;
-        echo $OUTPUT->box_start();
-        echo $OUTPUT->notification(get_string('restoreexecutionsuccess', 'backup'), 'notifysuccess');
-        echo $renderer->continue_button(new moodle_url('/course/view.php', array('id'=>$this->get_ui()->get_controller()->get_courseid())), 'get');
-        echo $OUTPUT->box_end();
+
+        $html  = '';
+        $html .= $renderer->box_start();
+        $html .= $renderer->notification(get_string('restoreexecutionsuccess', 'backup'), 'notifysuccess');
+        $html .= $renderer->continue_button(new moodle_url('/course/view.php', array(
+            'id' => $this->get_ui()->get_controller()->get_courseid())), 'get');
+        $html .= $renderer->box_end();
+
+        return $html;
     }
 }
