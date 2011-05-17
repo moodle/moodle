@@ -31,8 +31,10 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Checks file access for simple calculated questions.
  */
-function qtype_calculatedsimple_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function qtype_calculatedsimple_pluginfile($course, $cm, $context, $filearea,
+        $args, $forcedownload) {
     global $CFG;
     require_once($CFG->libdir . '/questionlib.php');
-    question_pluginfile($course, $context, 'qtype_calculatedsimple', $filearea, $args, $forcedownload);
+    question_pluginfile($course, $context, 'qtype_calculatedsimple', $filearea,
+            $args, $forcedownload);
 }
