@@ -1259,7 +1259,8 @@ function execute_sql($command, $feedback=true) {
     error('execute_sql() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->record_exists_select() instead
+ * @see moodle_database::record_exists_select()
  * @param mixed $table
  * @param mixed $select
  * @return void Throws an error and does nothing
@@ -1268,7 +1269,8 @@ function record_exists_select($table, $select='') {
     error('record_exists_select() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->record_exists_sql() instead
+ * @see moodle_database::record_exists_sql()
  * @param mixed $sql
  * @return void Throws an error and does nothing
  */
@@ -1276,7 +1278,8 @@ function record_exists_sql($sql) {
     error('record_exists_sql() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->count_records_select() instead
+ * @see moodle_database::count_records_select()
  * @param mixed $table
  * @param mixed $select
  * @param mixed $countitem
@@ -1286,7 +1289,8 @@ function count_records_select($table, $select='', $countitem='COUNT(*)') {
     error('count_records_select() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->count_records_sql() instead
+ * @see moodle_database::count_records_sql()
  * @param mixed $sql
  * @return void Throws an error and does nothing
  */
@@ -1294,7 +1298,8 @@ function count_records_sql($sql) {
     error('count_records_sql() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_record_sql() instead
+ * @see moodle_database::get_record_sql()
  * @param mixed $sql
  * @param bool $expectmultiple
  * @param bool $nolimit
@@ -1304,7 +1309,8 @@ function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
     error('get_record_sql() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_record_select() instead
+ * @see moodle_database::get_record_select()
  * @param mixed $table
  * @param mixed $select
  * @param mixed $fields
@@ -1314,7 +1320,8 @@ function get_record_select($table, $select='', $fields='*') {
     error('get_record_select() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_recordset() instead
+ * @see moodle_database::get_recordset()
  * @param mixed $table
  * @param mixed $field
  * @param mixed $value
@@ -1328,7 +1335,8 @@ function get_recordset($table, $field='', $value='', $sort='', $fields='*', $lim
     error('get_recordset() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_recordset_sql() instead
+ * @see moodle_database::get_recordset_sql()
  * @param mixed $sql
  * @param mixed $limitfrom
  * @param mixed $limitnum
@@ -1378,7 +1386,8 @@ function rs_close(&$rs) {
     error('rs_close() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_records_select() instead
+ * @see moodle_database::get_records_select()
  * @param mixed $table
  * @param mixed $select
  * @param mixed $sort
@@ -1391,7 +1400,8 @@ function get_records_select($table, $select='', $sort='', $fields='*', $limitfro
     error('get_records_select() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_field_select() instead
+ * @see moodle_database::get_field_select()
  * @param mixed $table
  * @param mixed $return
  * @param mixed $select
@@ -1401,7 +1411,8 @@ function get_field_select($table, $return, $select) {
     error('get_field_select() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_field_sql() instead
+ * @see moodle_database::get_field_sql()
  * @param mixed $sql
  * @return void Throws an error and does nothing
  */
@@ -1409,7 +1420,8 @@ function get_field_sql($sql) {
     error('get_field_sql() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->delete_records_select() instead
+ * @see moodle_database::delete_records_select()
  * @param mixed $sql
  * @param mixed $select
  * @return void Throws an error and does nothing
@@ -1495,7 +1507,8 @@ function execute_sql_arr($sqlarr, $continue=true, $feedback=true) {
     error('execute_sql_arr() removed');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_records_list() instead
+ * @see moodle_database::get_records_list()
  * @param mixed $table
  * @param mixed $field
  * @param mixed $values
@@ -1509,7 +1522,8 @@ function get_records_list($table, $field='', $values='', $sort='', $fields='*', 
     error('get_records_list() removed');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_recordset_list() instead
+ * @see moodle_database::get_recordset_list()
  * @param mixed $table
  * @param mixed $field
  * @param mixed $values
@@ -1523,7 +1537,8 @@ function get_recordset_list($table, $field='', $values='', $sort='', $fields='*'
     error('get_recordset_list() removed');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_records_menu() instead
+ * @see moodle_database::get_records_menu()
  * @param mixed $table
  * @param mixed $field
  * @param mixed $value
@@ -1537,7 +1552,8 @@ function get_records_menu($table, $field='', $value='', $sort='', $fields='*', $
     error('get_records_menu() removed');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_records_select_menu() instead
+ * @see moodle_database::get_records_select_menu()
  * @param mixed $table
  * @param mixed $select
  * @param mixed $sort
@@ -1550,7 +1566,8 @@ function get_records_select_menu($table, $select='', $sort='', $fields='*', $lim
     error('get_records_select_menu() removed');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_records_sql_menu() instead
+ * @see moodle_database::get_records_sql_menu()
  * @param mixed $sql
  * @param mixed $limitfrom
  * @param mixed $limitnum
@@ -1587,7 +1604,8 @@ function records_to_menu($records, $field1, $field2) {
     error('records_to_menu() removed');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->set_field_select() instead
+ * @see moodle_database::set_field_select()
  * @param mixed $table
  * @param mixed $newfield
  * @param mixed $newvalue
@@ -1599,7 +1617,8 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
     error('set_field_select() removed');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_fieldset_select() instead
+ * @see moodle_database::get_fieldset_select()
  * @param mixed $table
  * @param mixed $return
  * @param mixed $select
@@ -1609,7 +1628,8 @@ function get_fieldset_select($table, $return, $select) {
     error('get_fieldset_select() removed');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_fieldset_sql() instead
+ * @see moodle_database::get_fieldset_sql()
  * @param mixed $sql
  * @return void Throws an error and does nothing
  */
@@ -1617,7 +1637,8 @@ function get_fieldset_sql($sql) {
     error('get_fieldset_sql() removed');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->sql_like() instead
+ * @see moodle_database::sql_like()
  * @return void Throws an error and does nothing
  */
 function sql_ilike() {
@@ -1776,7 +1797,8 @@ function rollback_sql() {
     error('rollback_sql() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->insert_record() instead
+ * @see moodle_database::insert_record()
  * @param mixed $table
  * @param mixed $dataobject
  * @param mixed $returnid
@@ -1787,7 +1809,8 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     error('insert_record() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->update_record() instead
+ * @see moodle_database::update_record()
  * @param mixed $table
  * @param mixed $dataobject
  * @return void Throws an error and does nothing
@@ -1796,7 +1819,8 @@ function update_record($table, $dataobject) {
     error('update_record() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_records() instead
+ * @see moodle_database::get_records()
  * @param mixed $table
  * @param mixed $field
  * @param mixed $value
@@ -1811,7 +1835,8 @@ function get_records($table, $field='', $value='', $sort='', $fields='*', $limit
     error('get_records() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_record() instead
+ * @see moodle_database::get_record()
  * @param mixed $table
  * @param mixed $field1
  * @param mixed $value1
@@ -1826,7 +1851,8 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
     error('get_record() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->set_field() instead
+ * @see moodle_database::set_field()
  * @param mixed $table
  * @param mixed $newfield
  * @param mixed $newvalue
@@ -1842,7 +1868,8 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
     error('set_field() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->count_records() instead
+ * @see moodle_database::count_records()
  * @param mixed $table
  * @param mixed $field1
  * @param mixed $value1
@@ -1856,7 +1883,8 @@ function count_records($table, $field1='', $value1='', $field2='', $value2='', $
     error('count_records() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->record_exists() instead
+ * @see moodle_database::record_exists()
  * @param mixed $table
  * @param mixed $field1
  * @param mixed $value1
@@ -1870,7 +1898,8 @@ function record_exists($table, $field1='', $value1='', $field2='', $value2='', $
     error('record_exists() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->delete_records() instead
+ * @see moodle_database::delete_records()
  * @param mixed $table
  * @param mixed $field1
  * @param mixed $value1
@@ -1884,7 +1913,8 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
     error('delete_records() not available anymore');
 }
 /**
- * @deprecated
+ * @deprecated use $DB->get_field() instead
+ * @see moodle_database::get_field()
  * @param mixed $table
  * @param mixed $return
  * @param mixed $field1
