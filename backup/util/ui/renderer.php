@@ -161,13 +161,13 @@ class core_backup_renderer extends plugin_renderer_base {
      * Displays a course selector for restore
      *
      * @param moodle_url $nextstageurl
-     * @param stdClass $details
+     * @param bool $wholecourse true if we are restoring whole course (as with backup::TYPE_1COURSE), false otherwise
      * @param restore_category_search $categories
      * @param restore_course_search $courses
      * @param int $currentcourse
      * @return string
      */
-    public function course_selector(moodle_url $nextstageurl, $details, restore_category_search $categories = null, restore_course_search $courses=null, $currentcourse = null) {
+    public function course_selector(moodle_url $nextstageurl, $wholecourse = true, restore_category_search $categories = null, restore_course_search $courses=null, $currentcourse = null) {
         global $CFG;
         require_once($CFG->dirroot.'/course/lib.php');
 
@@ -181,7 +181,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $hasrestoreoption = false;
 
         $html  = html_writer::start_tag('div', array('class'=>'backup-course-selector backup-restore'));
-        if ($details->type == backup::TYPE_1COURSE && !empty($categories) && ($categories->get_count() > 0 || $categories->get_search())) {
+        if ($wholecourse && !empty($categories) && ($categories->get_count() > 0 || $categories->get_search())) {
             // New course
             $hasrestoreoption = true;
             $html .= $form;
@@ -194,7 +194,7 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= html_writer::end_tag('form');
         }
 
-        if ($details->type == backup::TYPE_1COURSE && !empty($currentcourse)) {
+        if ($wholecourse && !empty($currentcourse)) {
             // Current course
             $hasrestoreoption = true;
             $html .= $form;
@@ -214,7 +214,7 @@ class core_backup_renderer extends plugin_renderer_base {
             $html .= $form;
             $html .= html_writer::start_tag('div', array('class'=>'bcs-existing-course backup-section'));
             $html .= $this->output->heading(get_string('restoretoexistingcourse', 'backup'), 2, array('class'=>'header'));
-            if ($details->type == backup::TYPE_1COURSE) {
+            if ($wholecourse) {
                 $html .= $this->backup_detail_input(get_string('restoretoexistingcourseadding', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_ADDING, array('checked'=>'checked'));
                 $html .= $this->backup_detail_input(get_string('restoretoexistingcoursedeleting', 'backup'), 'radio', 'target', backup::TARGET_EXISTING_DELETING);
                 $html .= $this->backup_detail_pair(get_string('selectacourse', 'backup'), $this->render($courses));
