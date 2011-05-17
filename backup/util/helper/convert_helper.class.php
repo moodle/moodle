@@ -124,7 +124,7 @@ abstract class convert_helper {
         }
 
         // get the supported conversion paths from all available converters
-        $converters   = convert_factory::available_converters();
+        $converters   = self::available_converters();
         $descriptions = array();
         foreach ($converters as $name) {
             $classname = "{$name}_converter";
