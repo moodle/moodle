@@ -108,17 +108,29 @@ abstract class base_ui_stage {
     final public function get_uniqueid() {
         return $this->ui->get_uniqueid();
     }
+
     /**
      * Displays the stage.
      *
      * By default this involves instantiating the form for the stage and the calling
-     * it to display. Remember this is a moodleform instance so it will print
-     * rather than return.
+     * it to display.
+     *
+     * @return string HTML code to display
      */
     public function display() {
+
         $form = $this->initialise_stage_form();
+        // a nasty hack follows to work around the sad fact that moodle quickforms
+        // do not allow to actually return the HTML content, just to echo it
+        flush();
+        ob_start();
         $form->display();
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        return $output;
     }
+
     /**
      * Processes the stage.
      *
