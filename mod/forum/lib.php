@@ -1134,6 +1134,7 @@ function forum_user_outline($course, $user, $mod, $forum) {
 
         //datesubmitted == time created. dategraded == time modified or time overridden
         //if grade was last modified by the user themselves use date graded. Otherwise use date submitted
+        //TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704
         if ($grade->usermodified == $user->id || empty($grade->datesubmitted)) {
             $result->time = $grade->dategraded;
         } else {
