@@ -25,7 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-require_once($CFG->dirroot . '/question/type/calculated/backup/moodle2/restore_qtype_calculated_plugin.class.php');
+require_once($CFG->dirroot .
+        '/question/type/calculated/backup/moodle2/restore_qtype_calculated_plugin.class.php');
 
 /**
  * restore plugin class that provides the necessary information

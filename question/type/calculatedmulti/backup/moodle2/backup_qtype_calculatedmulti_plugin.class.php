@@ -24,7 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/type/calculated/backup/moodle2/backup_qtype_calculated_plugin.class.php');
+require_once($CFG->dirroot .
+        '/question/type/calculated/backup/moodle2/backup_qtype_calculated_plugin.class.php');
 
 
 /**
@@ -33,4 +34,5 @@ require_once($CFG->dirroot . '/question/type/calculated/backup/moodle2/backup_qt
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_qtype_calculatedmulti_plugin extends backup_qtype_calculated_plugin {}
+class backup_qtype_calculatedmulti_plugin extends backup_qtype_calculated_plugin {
+}
