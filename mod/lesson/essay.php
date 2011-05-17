@@ -46,7 +46,7 @@ if ($mode !== 'display') {
 }
 $PAGE->set_url($url);
 
-$attempt = new stdClass();	
+$attempt = new stdClass();
 $user = new stdClass();
 $attemptid = optional_param('attemptid', 0, PARAM_INT);
 
