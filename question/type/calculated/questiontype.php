@@ -1414,9 +1414,11 @@ class qtype_calculated extends question_type {
     }
 
     public function tolerance_types() {
-        return array('1' => get_string('relative', 'qtype_numerical'),
+        return array(
+            '1' => get_string('relative', 'qtype_numerical'),
             '2' => get_string('nominal', 'qtype_numerical'),
-            '3' => get_string('geometric', 'qtype_numerical'));
+            '3' => get_string('geometric', 'qtype_numerical')
+        );
     }
 
     public function dataset_options($form, $name, $mandatory = true,
