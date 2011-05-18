@@ -103,7 +103,7 @@ class qtype_calculated_dataset_loader {
     protected $questionid;
 
     /** @var int the id of the question we are helping. */
-    protected $setsavailable = null;
+    protected $itemsavailable = null;
 
     /**
      * Constructor
@@ -113,33 +113,39 @@ class qtype_calculated_dataset_loader {
         $this->questionid = $questionid;
     }
 
-    public function get_number_of_datasets() {
+    /**
+     * Get the number of items (different values) in each dataset used by this
+     * question. This is the minimum number of items in any dataset used by this
+     * question.
+     * @return int the number of items available.
+     */
+    public function get_number_of_items() {
         global $DB;
 
-        if (is_null($this->setsavailable)) {
-            $this->setsavailable = $DB->get_field_sql('
+        if (is_null($this->itemsavailable)) {
+            $this->itemsavailable = $DB->get_field_sql('
                     SELECT MIN(qdd.itemcount)
                       FROM {question_dataset_definitions} qdd
                       JOIN {question_datasets} qd ON qdd.id = qd.datasetdefinition
                      WHERE qd.question = ?
-                    ', array($question->id), MUST_EXIST);
+                    ', array($this->questionid), MUST_EXIST);
         }
 
-        return $this->setsavailable;
+        return $this->itemsavailable;
     }
 
     /**
-     * Load a particular data set.
-     * @param int $setnumber which set of values to load.
-     *      0 <= $setnumber < {@link get_number_of_datasets()}.
+     * Load a particular set of values for each dataset used by this question.
+     * @param int $itemnumber which set of values to load.
+     *      0 < $itemnumber <= {@link get_number_of_items()}.
      * @return qtype_calculated_variable_substituter with the correct variable
      *      -> value substitutions set up.
      */
-    public function load_dataset($setnumber) {
-        if ($setnumber <= 0 || $setnumber > $this->get_number_of_datasets()) {
+    public function load_values($itemnumber) {
+        if ($itemnumber <= 0 || $itemnumber > $this->get_number_of_items()) {
             $a = new stdClass();
-            $a->id = $question->id;
-            $a->item = $datasetitem;
+            $a->id = $this->questionid;
+            $a->item = $itemnumber;
             throw new moodle_exception('cannotgetdsfordependent', 'question', '', $a);
         }
 
@@ -150,7 +156,7 @@ class qtype_calculated_dataset_loader {
                   JOIN {question_datasets} qd ON qdd.id = qd.datasetdefinition
                  WHERE qd.question = ?
                    AND qdi.itemnumber = ?
-                ', array($question->id, $setnumber));
+                ', array($this->questionid, $itemnumber));
 
         return new qtype_calculated_variable_substituter($values);
     }
@@ -222,8 +228,12 @@ class qtype_calculated_variable_substituter {
      * @return float the computed result.
      */
     public function calculate($expression) {
-        eval('$str = ' . $this->substitute_values($expression) . ';');
-        return $str;
+        $exp = $this->substitute_values($expression);
+        // This validation trick from http://php.net/manual/en/function.eval.php
+        if (!@eval('return true; $result = ' . $exp . ';')) {
+            throw new moodle_exception('illegalformulasyntax', 'qtype_calculated', '', $expression);
+        }
+        return eval('return ' . $exp . ';');
     }
 
     /**

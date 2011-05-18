@@ -36,12 +36,12 @@ require_once($CFG->dirroot . '/question/type/calculated/question.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_calculated_variable_substituter_test extends UnitTestCase {
-    public function test_simple_equation() {
+    public function test_simple_expression() {
         $vs = new qtype_calculated_variable_substituter(array('a' => 1, 'b' => 2));
         $this->assertEqual(3, $vs->calculate('{a} + {b}'));
     }
 
-    public function test_simple_equation_negatives() {
+    public function test_simple_expression_negatives() {
         $vs = new qtype_calculated_variable_substituter(array('a' => -1, 'b' => -2));
         $this->assertEqual(1, $vs->calculate('{a}-{b}'));
     }
@@ -50,4 +50,11 @@ class qtype_calculated_variable_substituter_test extends UnitTestCase {
         $this->expectException();
         $vs = new qtype_calculated_variable_substituter(array('a' => 'frog', 'b' => -2));
     }
+
+    public function test_invalid_expression() {
+        $this->expectException();
+        $vs = new qtype_calculated_variable_substituter(array('a' => 1, 'b' => 2));
+        $vs->calculate('{a} + {b}?');
+    }
+
 }
