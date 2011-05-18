@@ -49,6 +49,7 @@ abstract class moodle1_handlers_factory {
             new moodle1_info_handler($converter),
             new moodle1_course_header_handler($converter),
             new moodle1_course_outline_handler($converter),
+            new moodle1_roles_definition_handler($converter),
         );
 
         $handlers = array_merge($handlers, self::get_plugin_handlers('mod', $converter));
@@ -699,6 +700,52 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
     public function on_course_sections_end() {
         $this->converter->set_stash('sectionidslist', $this->sectionids);
         unset($this->sectionids);
+    }
+}
+
+
+/**
+ * Handles the conversion of the defined roles
+ */
+class moodle1_roles_definition_handler extends moodle1_xml_handler {
+
+    /**
+     * Where the roles are defined in the source moodle.xml
+     */
+    public function get_paths() {
+        return array(
+            new convert_path('roles', '/MOODLE_BACKUP/ROLES'),
+            new convert_path(
+                'roles_role', '/MOODLE_BACKUP/ROLES/ROLE',
+                array(
+                    'newfields' => array(
+                        'description'   => '',
+                        'sortorder'     => 0,
+                        'archetype'     => ''
+                    )
+                )
+            )
+        );
+    }
+
+    public function process_roles() {
+    }
+
+    public function on_roles_start() {
+        $this->open_xml_writer('roles.xml');
+        $this->xmlwriter->begin_tag('roles_definition');
+    }
+
+    public function process_roles_role($data) {
+        if (!isset($data['nameincourse'])) {
+            $data['nameincourse'] = null;
+        }
+        $this->write_xml('role', $data, array('role/id'));
+    }
+
+    public function on_roles_end() {
+        $this->xmlwriter->end_tag('roles_definition');
+        $this->close_xml_writer();
     }
 }
 
