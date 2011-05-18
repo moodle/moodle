@@ -153,7 +153,7 @@ abstract class moodle1_xml_handler extends moodle1_handler {
             if (!check_dir_exists($directory)) {
                 throw new convert_exception('unable_create_target_directory', $directory);
             }
-            $this->xmlwriter = new xml_writer(new file_xml_output($fullpath));
+            $this->xmlwriter = new xml_writer(new file_xml_output($fullpath), new moodle1_xml_transformer());
             $this->xmlwriter->start();
         }
     }

@@ -32,6 +32,7 @@ require_once($CFG->dirroot . '/backup/util/xml/parser/processors/grouped_parser_
 require_once($CFG->dirroot . '/backup/util/dbops/backup_dbops.class.php');
 require_once($CFG->dirroot . '/backup/util/dbops/backup_controller_dbops.class.php');
 require_once($CFG->dirroot . '/backup/util/dbops/restore_dbops.class.php');
+require_once($CFG->dirroot . '/backup/util/xml/contenttransformer/xml_contenttransformer.class.php');
 require_once(dirname(__FILE__) . '/handlerlib.php');
 
 /**
@@ -469,7 +470,7 @@ class moodle1_convert_empty_storage_exception extends moodle1_convert_exception 
 
 
 /**
- * XML parser processor
+ * XML parser processor used for processing parsed moodle.xml
  */
 class moodle1_parser_processor extends grouped_parser_processor {
 
@@ -562,6 +563,60 @@ class moodle1_parser_processor extends grouped_parser_processor {
      */
     protected function notify_path_end($path) {
         $this->converter->path_end_reached($path);
+    }
+}
+
+
+/**
+ * XML transformer that modifies the content of the files being written during the conversion
+ *
+ * @see backup_xml_transformer
+ */
+class moodle1_xml_transformer extends xml_contenttransformer {
+
+    /**
+     * Modify the content before it is writter to a file
+     *
+     * @param string|mixed $content
+     */
+    public function process($content) {
+
+        // the content should be a string. If array or object is given, try our best recursively
+        // but inform the developer
+        if (is_array($content)) {
+            debugging('Moodle1 XML transformer should not process arrays but plain content always', DEBUG_DEVELOPER);
+            foreach($content as $key => $plaincontent) {
+                $content[$key] = $this->process($plaincontent);
+            }
+            return $content;
+
+        } else if (is_object($content)) {
+            debugging('Moodle1 XML transformer should not process objects but plain content always', DEBUG_DEVELOPER);
+            foreach((array)$content as $key => $plaincontent) {
+                $content[$key] = $this->process($plaincontent);
+            }
+            return (object)$content;
+        }
+
+        // try to deal with some trivial cases first
+        if (is_null($content)) {
+            return '$@NULL@$';
+
+        } else if ($content === '') {
+            return '';
+
+        } else if (is_numeric($content)) {
+            return $content;
+
+        } else if (strlen($content) < 32) {
+            return $content;
+        }
+
+        // todo will we need this?
+        //$content = $this->process_filephp_links($content); // Replace all calls to file.php by $@FILEPHP@$ in a normalised way
+        //$content = $this->encode_absolute_links($content); // Pass the content against all the found encoders
+
+        return $content;
     }
 }
 
