@@ -141,7 +141,7 @@ abstract class moodle1_xml_handler extends moodle1_handler {
      * @param string $filename XML file name to write into
      * @return void
      */
-    public function open_xml_writer($filename) {
+    protected function open_xml_writer($filename) {
 
         if (!is_null($this->xmlfilename) and $filename !== $this->xmlfilename) {
             throw new convert_exception('xml_writer_already_opened_for_other_file', $this->xmlfilename);
@@ -167,13 +167,27 @@ abstract class moodle1_xml_handler extends moodle1_handler {
      *
      * @return void
      */
-    public function close_xml_writer() {
+    protected function close_xml_writer() {
         if ($this->xmlwriter instanceof xml_writer) {
             $this->xmlwriter->stop();
         }
         unset($this->xmlwriter);
         $this->xmlwriter = null;
         $this->xmlfilename = null;
+    }
+
+    /**
+     * Checks if the XML writer has been opened by {@link self::open_xml_writer()}
+     *
+     * @return bool
+     */
+    protected function has_xml_writer() {
+
+        if ($this->xmlwriter instanceof xml_writer) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -184,7 +198,11 @@ abstract class moodle1_xml_handler extends moodle1_handler {
      * @param array $attribs list of additional fields written as attributes instead of nested elements (all 'id' are there automatically)
      * @param string $parent used internally during the recursion, do not set yourself
      */
-    public function write_xml($element, array $data, array $attribs = array(), $parent = '/') {
+    protected function write_xml($element, array $data, array $attribs = array(), $parent = '/') {
+
+        if (!$this->has_xml_writer()) {
+            throw new moodle1_convert_exception('write_xml_without_writer');
+        }
 
         $mypath    = $parent . $element;
         $myattribs = array();
