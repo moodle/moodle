@@ -193,7 +193,8 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage {
 
         } else if ($format !== backup::FORMAT_MOODLE) {
             // non-standard format to be converted
-            return $renderer->backup_details_nonstandard($format, $nextstageurl);
+            $details = array('format' => $format, 'type' => backup::TYPE_1COURSE); // todo type to be returned by a converter
+            return $renderer->backup_details_nonstandard($nextstageurl, $details);
 
         } else {
             // standard MBZ backup, let us get information from it and display

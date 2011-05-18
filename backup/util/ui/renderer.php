@@ -160,22 +160,22 @@ class core_backup_renderer extends plugin_renderer_base {
     /**
      * Displays the general information about a backup file with non-standard format
      *
-     * @param string $format the name of the format
      * @param moodle_url $nextstageurl URL to send user to
-     * @param array $details not supported yet
+     * @param array $details basic info about the file (format, type)
      * @return string HTML code to display
      */
-    public function backup_details_nonstandard($format, $nextstageurl, array $details = array()) {
-
-        $formatname = get_string('backupformat'.$format, 'backup');
+    public function backup_details_nonstandard($nextstageurl, array $details) {
 
         $html  = html_writer::start_tag('div', array('class' => 'backup-restore nonstandardformat'));
         $html .= html_writer::start_tag('div', array('class' => 'backup-section'));
         $html .= $this->output->heading(get_string('backupdetails', 'backup'), 2, 'header');
+        $html .= $this->output->box(get_string('backupdetailsnonstandardinfo', 'backup'), 'noticebox');
         $html .= $this->backup_detail_pair(
             get_string('backupformat', 'backup'),
-            get_string('backupdetailsnonstandardinfo', 'backup', get_string('backupformat'.$format, 'backup'))
-        );
+            get_string('backupformat'.$details['format'], 'backup'));
+        $html .= $this->backup_detail_pair(
+            get_string('backuptype', 'backup'),
+            get_string('backuptype'.$details['type'], 'backup'));
         $html .= html_writer::end_tag('div');
         $html .= $this->output->single_button($nextstageurl, get_string('continue'), 'post');
         $html .= html_writer::end_tag('div');
