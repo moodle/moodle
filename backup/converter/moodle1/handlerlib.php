@@ -50,6 +50,7 @@ abstract class moodle1_handlers_factory {
             new moodle1_course_header_handler($converter),
             new moodle1_course_outline_handler($converter),
             new moodle1_roles_definition_handler($converter),
+            new moodle1_question_categories_handler($converter),
         );
 
         $handlers = array_merge($handlers, self::get_plugin_handlers('mod', $converter));
@@ -406,6 +407,14 @@ class moodle1_root_handler extends moodle1_xml_handler {
         $this->xmlwriter->end_tag('moodle_backup');
 
         $this->close_xml_writer();
+
+        // make sure that questions.xml has been generated as it is required
+        // by the restore process
+        if (!file_exists($this->converter->get_workdir_path().'/'.'questions.xml')) {
+            $this->open_xml_writer('questions.xml');
+            $this->write_xml('question_categories', array());
+            $this->close_xml_writer();
+        }
     }
 }
 
@@ -746,6 +755,23 @@ class moodle1_roles_definition_handler extends moodle1_xml_handler {
     public function on_roles_end() {
         $this->xmlwriter->end_tag('roles_definition');
         $this->close_xml_writer();
+    }
+}
+
+
+/**
+ * Handles the conversion of the defined roles
+ */
+class moodle1_question_categories_handler extends moodle1_xml_handler {
+
+    /**
+     * Where the roles are defined in the source moodle.xml
+     */
+    public function get_paths() {
+        return array(new convert_path('question_categories', '/MOODLE_BACKUP/QUESTION_CATEGORIES'));
+    }
+
+    public function process_question_categories() {
     }
 }
 
