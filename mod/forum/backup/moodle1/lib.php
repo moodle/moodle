@@ -46,7 +46,20 @@ class moodle1_mod_forum_handler extends moodle1_mod_handler {
      */
     public function get_paths() {
         return array(
-            new convert_path('forum', '/MOODLE_BACKUP/COURSE/MODULES/MOD/FORUM'),
+            new convert_path('forum', '/MOODLE_BACKUP/COURSE/MODULES/MOD/FORUM',
+                array(
+                    'renamefields' => array(
+                        'format' => 'messageformat',
+                    ),
+                    'newfields' => array(
+                        'completiondiscussions' => 0,
+                        'completionreplies' => 0,
+                        'completionpost' => 0,
+                        'maxattachments' => 1,
+                        'introformat' => 0,
+                    ),
+                )
+            ),
         );
     }
 
@@ -54,5 +67,34 @@ class moodle1_mod_forum_handler extends moodle1_mod_handler {
      * Converts /MOODLE_BACKUP/COURSE/MODULES/MOD/FORUM data
      */
     public function process_forum($data) {
+        // get the course module id and context id
+        $instanceid = $data['id'];
+        $moduleid   = $this->get_moduleid($instanceid);
+        $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
+
+        // we now have all information needed to start writing into the file
+        $this->open_xml_writer("activities/forum_{$moduleid}/forum.xml");
+        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $moduleid,
+            'modulename' => 'forum', 'contextid' => $contextid));
+        $this->xmlwriter->begin_tag('forum', array('id' => $instanceid));
+
+        unset($data['id']); // we already write it as attribute, do not repeat it as child element
+        foreach ($data as $field => $value) {
+            $this->xmlwriter->full_tag($field, $value);
+        }
+
+        $this->xmlwriter->begin_tag('discussions');
     }
+
+    /**
+     * This is executed when we reach the closing </MOD> tag of our 'forum' path
+     */
+    public function on_forum_end() {
+        $this->xmlwriter->end_tag('discussions');
+        $this->xmlwriter->end_tag('forum');
+        $this->xmlwriter->end_tag('activity');
+        $this->close_xml_writer();
+    }
+
+    //conversion of discussion, posts etc will be implemented in a future version of Moodle
 }
