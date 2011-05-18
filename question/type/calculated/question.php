@@ -37,23 +37,24 @@ require_once($CFG->dirroot . '/question/type/numerical/question.php');
  */
 class qtype_calculated_question extends qtype_numerical_question {
     /** @var qtype_calculated_dataset_loader helper for loading the dataset. */
-    protected $datasetloader;
+    public $datasetloader;
     /** @var qtype_calculated_variable_substituter stores the dataset we are using. */
-    protected $vs;
+    public $vs;
 
     public function start_attempt(question_attempt_step $step) {
-        $maxnumber = $this->datasetloader->get_number_of_datasets();
+        $maxnumber = $this->datasetloader->get_number_of_items();
         $setnumber = rand(1, $maxnumber);
         // TODO implement the $synchronizecalculated bit from create_session_and_responses.
 
-        $this->vs = $this->datasetloader->load_dataset($setnumber);
+        $this->vs = new qtype_calculated_variable_substituter(
+                $this->datasetloader->get_values($setnumber),
+                get_string('decsep', 'langconfig'));
+        $this->calculate_all_expressions();
 
         $step->set_qt_var('_dataset', $setnumber);
         foreach ($this->vs->get_values() as $name => $value) {
             $step->set_qt_var('_var_' . $name, $value);
         }
-
-        $this->calculate_all_expressions();
 
         parent::start_attempt($step);
     }
@@ -65,8 +66,9 @@ class qtype_calculated_question extends qtype_numerical_question {
                 $values[substr($name, 5)] = $value;
             }
         }
-        $this->vs = new qtype_calculated_variable_substituter($values);
 
+        $this->vs = new qtype_calculated_variable_substituter(
+                $values, get_string('decsep', 'langconfig'));
         $this->calculate_all_expressions();
 
         parent::apply_attempt_state($step);
@@ -135,21 +137,12 @@ class qtype_calculated_dataset_loader {
     }
 
     /**
-     * Load a particular set of values for each dataset used by this question.
+     * Actually query the database for the values.
      * @param int $itemnumber which set of values to load.
-     *      0 < $itemnumber <= {@link get_number_of_items()}.
-     * @return qtype_calculated_variable_substituter with the correct variable
-     *      -> value substitutions set up.
+     * @return array name => value;
      */
-    public function load_values($itemnumber) {
-        if ($itemnumber <= 0 || $itemnumber > $this->get_number_of_items()) {
-            $a = new stdClass();
-            $a->id = $this->questionid;
-            $a->item = $itemnumber;
-            throw new moodle_exception('cannotgetdsfordependent', 'question', '', $a);
-        }
-
-        $values = $DB->get_records_sql('
+    protected function load_values($itemnumber) {
+        return $DB->get_records_sql('
                 SELECT qdd.name, qdi.value
                   FROM {question_dataset_items} qdi
                   JOIN {question_dataset_definitions} qdd ON qdd.id = qdi.definition
@@ -157,8 +150,23 @@ class qtype_calculated_dataset_loader {
                  WHERE qd.question = ?
                    AND qdi.itemnumber = ?
                 ', array($this->questionid, $itemnumber));
+    }
 
-        return new qtype_calculated_variable_substituter($values);
+    /**
+     * Load a particular set of values for each dataset used by this question.
+     * @param int $itemnumber which set of values to load.
+     *      0 < $itemnumber <= {@link get_number_of_items()}.
+     * @return array name => value.
+     */
+    public function get_values($itemnumber) {
+        if ($itemnumber <= 0 || $itemnumber > $this->get_number_of_items()) {
+            $a = new stdClass();
+            $a->id = $this->questionid;
+            $a->item = $itemnumber;
+            throw new moodle_exception('cannotgetdsfordependent', 'question', '', $a);
+        }
+
+        return $this->load_values($itemnumber);
     }
 }
 
@@ -177,6 +185,9 @@ class qtype_calculated_variable_substituter {
     /** @var array variable name => value */
     protected $values;
 
+    /** @var string character to use for the decimal point in displayed numbers. */
+    protected $decimalpoint;
+
     /** @var array variable names wrapped in {...}. Used by {@link substitute_values()}. */
     protected $search;
 
@@ -184,14 +195,21 @@ class qtype_calculated_variable_substituter {
      * @var array variable values, with negative numbers wrapped in (...).
      * Used by {@link substitute_values()}.
      */
-    protected $replace;
+    protected $safevalue;
+
+    /**
+     * @var array variable values, with negative numbers wrapped in (...).
+     * Used by {@link substitute_values()}.
+     */
+    protected $prettyvalue;
 
     /**
      * Constructor
      * @param array $values variable name => value.
      */
-    public function __construct(array $values) {
+    public function __construct(array $values, $decimalpoint) {
         $this->values = $values;
+        $this->decimalpoint = $decimalpoint;
 
         // Prepare an array for {@link substitute_values()}.
         $this->search = array();
@@ -205,12 +223,17 @@ class qtype_calculated_variable_substituter {
             }
 
             $this->search[] = '{' . $name . '}';
-            if ($value < 0) {
-                $this->replace[] = '(' . $value . ')';
-            } else {
-                $this->replace[] = $value;
-            }
+            $this->safevalue[] = '(' . $value . ')';
+            $this->prettyvalue[] = $this->format_float($value);
         }
+    }
+
+    /**
+     * Display a float properly formatted with a certain number of decimal places.
+     * @param $x
+     */
+    public function format_float($x) {
+        return str_replace('.', $this->decimalpoint, $x);
     }
 
     /**
@@ -218,7 +241,7 @@ class qtype_calculated_variable_substituter {
      * @return array name => value. 
      */
     public function get_values() {
-        return clone($this->values);
+        return $this->values;
     }
 
     /**
@@ -228,28 +251,58 @@ class qtype_calculated_variable_substituter {
      * @return float the computed result.
      */
     public function calculate($expression) {
-        $exp = $this->substitute_values($expression);
-        // This validation trick from http://php.net/manual/en/function.eval.php
-        if (!@eval('return true; $result = ' . $exp . ';')) {
-            throw new moodle_exception('illegalformulasyntax', 'qtype_calculated', '', $expression);
-        }
-        return eval('return ' . $exp . ';');
+        return $this->calculate_raw($this->substitute_values_for_eval($expression));
     }
 
     /**
-     * Substitute variable placehodlers like {a} with their value.
+     * Evaluate an expression after the variable values have been substituted.
+     * @param string $expression the expression. A PHP expression with placeholders
+     *      like {a} for where the variables need to go.
+     * @return float the computed result.
+     */
+    protected function calculate_raw($expression) {
+        // This validation trick from http://php.net/manual/en/function.eval.php
+        if (!@eval('return true; $result = ' . $expression . ';')) {
+            throw new moodle_exception('illegalformulasyntax', 'qtype_calculated', '', $expression);
+        }
+        return eval('return ' . $expression . ';');
+    }
+
+    /**
+     * Substitute variable placehodlers like {a} with their value wrapped in ().
      * @param string $expression the expression. A PHP expression with placeholders
      *      like {a} for where the variables need to go.
      * @return string the expression with each placeholder replaced by the
      *      corresponding value.
      */
-    protected function substitute_values($expression) {
-        return str_replace($this->search, $this->replace, $expression);
+    protected function substitute_values_for_eval($expression) {
+        return str_replace($this->search, $this->safevalue, $expression);
     }
 
+    /**
+     * Substitute variable placehodlers like {a} with their value without wrapping
+     * the value in anything.
+     * @param string $text some content with placeholders
+     *      like {a} for where the variables need to go.
+     * @return string the expression with each placeholder replaced by the
+     *      corresponding value.
+     */
+    protected function substitute_values_pretty($text) {
+        return str_replace($this->search, $this->prettyvalue, $text);
+    }
+
+    /**
+     * Replace any embedded variables (like {a}) or formulae (like {={a} + {b}})
+     * in some text with the corresponding values.
+     * @param string $text the text to process.
+     * @return string the text with values substituted.
+     */
     public function replace_expressions_in_text($text) {
-        // TODO
-        return $text;
+        $vs = $this; // Can't see to use $this in a PHP closure.
+        $text = preg_replace_callback('~\{=([^{}]*(?:\{[^{}]+}[^{}]*)*)}~', function ($matches) use ($vs) {
+            return $vs->format_float($vs->calculate($matches[1]));
+        }, $text);
+        return $this->substitute_values_pretty($text);
     }
 
     /**

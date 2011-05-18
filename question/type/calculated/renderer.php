@@ -26,6 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/numerical/renderer.php');
+
 
 /**
  * Generates the output for calculated questions.
