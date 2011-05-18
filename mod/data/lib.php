@@ -1424,7 +1424,7 @@ function data_rating_validate($params) {
         throw new rating_exception('invalidnum');
     } else if ($info->scale < 0) {
         //its a custom scale
-        $scalerecord = $DB->get_record('scale', array('id' => -$options->scaleid));
+        $scalerecord = $DB->get_record('scale', array('id' => -$params['scaleid']));
         if ($scalerecord) {
             $scalearray = explode(',', $scalerecord->scale);
             if ($params['rating'] > count($scalearray)) {
