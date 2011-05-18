@@ -346,7 +346,7 @@ class qtype_numerical extends question_type {
                 $questiondata->options->unitsleft);
     }
 
-    protected function initialise_numerical_answers(question_definition $question, $questiondata) {
+    public function initialise_numerical_answers(question_definition $question, $questiondata) {
         $question->answers = array();
         if (empty($questiondata->options->answers)) {
             return;
@@ -357,7 +357,7 @@ class qtype_numerical extends question_type {
         }
     }
 
-    protected function make_answer_processor($units, $unitsleft) {
+    public function make_answer_processor($units, $unitsleft) {
         if (empty($units)) {
             return new qtype_numerical_answer_processor(array());
         }

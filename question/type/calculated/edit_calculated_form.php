@@ -26,6 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/numerical/edit_numerical_form.php');
+
 
 /**
  * Calculated question type editing form definition.
@@ -33,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2007 Jamie Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_edit_form extends question_edit_form {
+class qtype_calculated_edit_form extends qtype_numerical_edit_form {
     /**
      * Handle to the question type for this question.
      *
@@ -50,7 +52,6 @@ class qtype_calculated_edit_form extends question_edit_form {
             $formeditable = true) {
         global $CFG, $DB;
         $this->question = $question;
-        $this->qtypeobj = $QTYPES[$this->question->qtype];
         if ('1' == optional_param('reload', '', PARAM_INT)) {
             $this->reload = true;
         } else {
@@ -101,7 +102,7 @@ class qtype_calculated_edit_form extends question_edit_form {
 
         $answerlengthformats = array(
             '1' => get_string('decimalformat', 'qtype_numerical'),
-            '2' => get_string('significantfiguresformat', 'quiz')
+            '2' => get_string('significantfiguresformat', 'qtype_calculated')
         );
         $addrepeated[] = $mform->createElement('select', 'correctanswerformat',
                 get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
@@ -115,8 +116,8 @@ class qtype_calculated_edit_form extends question_edit_form {
      *
      * @param MoodleQuickForm $mform the form being built.
      */
-    protected function definition_inner(&$mform) {
-        $this->qtypeobj = $QTYPES[$this->qtype()];
+    protected function definition_inner($mform) {
+        $this->qtypeobj = question_bank::get_qtype($this->qtype());
         $label = get_string('sharedwildcards', 'qtype_calculated');
         $mform->addElement('hidden', 'initialcategory', 1);
         $mform->addElement('hidden', 'reload', 1);
@@ -152,8 +153,8 @@ class qtype_calculated_edit_form extends question_edit_form {
 
         $repeated = array();
 
-        $QTYPES['numerical']->add_units_options($mform, $this);
-        $QTYPES['numerical']->add_units_elements($mform, $this);
+        $this->add_unit_options($mform, $this);
+        $this->add_unit_fields($mform, $this);
 
         //hidden elements
         $mform->addElement('hidden', 'synchronize', '');
@@ -163,8 +164,6 @@ class qtype_calculated_edit_form extends question_edit_form {
     }
 
     public function data_preprocessing($question) {
-        global $QTYPES;
-
         $default_values = array();
         if (isset($question->options)) {
             $answers = $question->options->answers;
@@ -194,8 +193,6 @@ class qtype_calculated_edit_form extends question_edit_form {
                 }
             }
             $default_values['synchronize'] = $question->options->synchronize;
-            // set unit data, prepare files in instruction area
-            $QTYPES['numerical']->set_numerical_unit_data($this, $question, $default_values);
         }
         if (isset($question->options->single)) {
             $default_values['single'] =  $question->options->single;
@@ -225,6 +222,9 @@ class qtype_calculated_edit_form extends question_edit_form {
         $this->_form->_elements[$this->_form->_elementIndex['listcategory']]->_text = $html2;
         $question = (object)((array)$question + $default_values);
 
+        $question = $this->data_preprocessing_units($question);
+        $question = $this->data_preprocessing_unit_options($question);
+
         return $question;
     }
 
@@ -234,7 +234,6 @@ class qtype_calculated_edit_form extends question_edit_form {
 
     public function validation($data, $files) {
 
-        $errors = parent::validation($data, $files);
         // verifying for errors in {=...} in question text;
         $qtext = "";
         $qtextremaining = $data['questiontext']['text'];
@@ -255,57 +254,46 @@ class qtype_calculated_edit_form extends question_edit_form {
                 }
             }
         }
+
+        $errors = parent::validation($data, $files);
+
+        // Check that the answers use datasets.
         $answers = $data['answer'];
-        $answercount = 0;
-        $maxgrade = false;
-        $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']['text']);
         $mandatorydatasets = array();
         foreach ($answers as $key => $answer) {
             $mandatorydatasets += $this->qtypeobj->find_dataset_names($answer);
         }
-        if (count($mandatorydatasets)== 0) {
+        if (empty($mandatorydatasets)) {
             foreach ($answers as $key => $answer) {
                 $errors['answer['.$key.']'] =
                         get_string('atleastonewildcard', 'qtype_datasetdependent');
             }
         }
-        // regular calculated
+
+        // Validate the answer format.
         foreach ($answers as $key => $answer) {
-            // check no of choices
-            // the * for everykind of answer not actually implemented
             $trimmedanswer = trim($answer);
-            if ($trimmedanswer != '' || $answercount == 0) {
-                $eqerror = qtype_calculated_find_formula_errors($trimmedanswer);
-                if (false !== $eqerror) {
-                    $errors['answer['.$key.']'] = $eqerror;
-                }
-            }
-            if ($trimmedanswer != '') {
-                if ('2' == $data['correctanswerformat'][$key]
-                        && '0' == $data['correctanswerlength'][$key]) {
+            if (trim($answer)) {
+                if ($data['correctanswerformat'][$key] == 2 &&
+                        $data['correctanswerlength'][$key] == '0') {
                     $errors['correctanswerlength['.$key.']'] =
                             get_string('zerosignificantfiguresnotallowed', 'qtype_calculated');
                 }
-                if (!is_numeric($data['tolerance'][$key])) {
-                    $errors['tolerance['.$key.']'] =
-                            get_string('mustbenumeric', 'qtype_calculated');
-                }
-                if ($data['fraction'][$key] == 1) {
-                    $maxgrade = true;
-                }
-
-                $answercount++;
             }
         }
 
-        $QTYPES['numerical']->validate_numerical_options($data, $errors);
-        if ($answercount == 0) {
-            $errors['answer[0]'] = get_string('atleastoneanswer', 'qtype_calculated');
-        }
-        if ($maxgrade == false) {
-            $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
-        }
-
         return $errors;
+    }
+
+    function is_valid_answer($answer, $data) {
+        return !qtype_calculated_find_formula_errors($answer);
+    }
+
+    function valid_answer_message($answer) {
+        if (!$answer) {
+            return get_string('mustenteraformulaorstar', 'qtype_numerical');
+        } else {
+            return qtype_calculated_find_formula_errors($answer);
+        }
     }
 }

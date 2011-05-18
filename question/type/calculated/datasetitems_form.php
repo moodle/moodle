@@ -70,7 +70,7 @@ class question_dataset_dependent_items_form extends moodleform {
         global $SESSION, $CFG, $DB;
         $this->regenerate = $regenerate;
         $this->question = $question;
-        $this->qtypeobj =& $QTYPES[$this->question->qtype];
+        $this->qtypeobj = question_bank::get_qtype($this->question->qtype);
         // Validate the question category.
         if (!$category = $DB->get_record('question_categories',
                 array('id' => $question->category))) {
@@ -192,7 +192,7 @@ class question_dataset_dependent_items_form extends moodleform {
 
                 $answerlengthformats = array(
                     '1' => get_string('decimalformat', 'qtype_numerical'),
-                    '2' => get_string('significantfiguresformat', 'quiz')
+                    '2' => get_string('significantfiguresformat', 'qtype_calculated')
                 );
                 $mform->addElement('select', 'correctanswerformat['.$key.']',
                         get_string('correctanswershowsformat', 'qtype_calculated'),

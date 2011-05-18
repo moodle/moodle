@@ -61,7 +61,7 @@ class qtype_calculated_question extends qtype_numerical_question {
 
     public function apply_attempt_state(question_attempt_step $step) {
         $values = array();
-        foreach ($step->get_qt_datavalues() as $name => $value) {
+        foreach ($step->get_qt_data() as $name => $value) {
             if (substr($name, 0, 5) === '_var_') {
                 $values[substr($name, 5)] = $value;
             }
@@ -81,7 +81,6 @@ class qtype_calculated_question extends qtype_numerical_question {
     protected function calculate_all_expressions() {
         $this->questiontext = $this->vs->replace_expressions_in_text($this->questiontext);
         $this->generalfeedback = $this->vs->replace_expressions_in_text($this->generalfeedback);
-        // TODO etc.
 
         foreach ($this->answers as $ans) {
             if ($ans->answer && $ans->answer !== '*') {
@@ -142,7 +141,9 @@ class qtype_calculated_dataset_loader {
      * @return array name => value;
      */
     protected function load_values($itemnumber) {
-        return $DB->get_records_sql('
+        global $DB;
+
+        return $DB->get_records_sql_menu('
                 SELECT qdd.name, qdi.value
                   FROM {question_dataset_items} qdi
                   JOIN {question_dataset_definitions} qdd ON qdd.id = qdi.definition

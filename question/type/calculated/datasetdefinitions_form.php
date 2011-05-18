@@ -56,7 +56,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
     public function __construct($submiturl, $question) {
         global $DB;
         $this->question = $question;
-        $this->qtypeobj = $QTYPES[$this->question->qtype];
+        $this->qtypeobj = question_bank::get_qtype($this->question->qtype);
         // Validate the question category.
         if (!$category = $DB->get_record('question_categories',
                 array('id' => $question->category))) {
