@@ -18,9 +18,10 @@
 /**
  * Unit tests for the numerical question definition class.
  *
- * @package qtype_numerical
- * @copyright 2008 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    qtype
+ * @subpackage numerical
+ * @copyright  2008 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -28,7 +29,9 @@ require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 
 
 /**
- * @copyright 2009 The Open University
+ * Unit tests for the numerical question definition class.
+ *
+ * @copyright 2008 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_numerical_question_test extends UnitTestCase {
@@ -152,7 +155,7 @@ class qtype_numerical_question_test extends UnitTestCase {
     public function test_summarise_response() {
         $num = test_question_maker::make_question('numerical');
         $this->assertEqual('3.1', $num->summarise_response(array('answer' => '3.1')));
-            }
+    }
 
     public function test_summarise_response_unit() {
         $num = test_question_maker::make_question('numerical', 'unit');

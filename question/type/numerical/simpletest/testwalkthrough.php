@@ -178,7 +178,7 @@ class qtype_numerical_walkthrough_test extends qbehaviour_walkthrough_test_base 
     // Todo. Test validation if you try to type a unit into a question that does
     // not expect one.
 
-    public function test_deferredfeedback_multichoice_unit() {
+    public function test_deferredfeedback_unit() {
 
         // Create a gapselect question.
         $q = test_question_maker::make_question('numerical', 'unit');

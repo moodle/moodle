@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Test helpers for the drag-and-drop words into sentences question type.
+ * Test helpers for the numerical question type.
  *
  * @package    qtype
  * @subpackage numerical
@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Test helper class for the drag-and-drop words into sentences question type.
+ * Test helper class for the numerical question type.
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/type/shortanswer/truefalsetype.php');
+require_once($CFG->dirroot . '/question/type//truefalse/questiontype.php');
 
 
 /**

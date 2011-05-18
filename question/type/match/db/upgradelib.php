@@ -164,7 +164,7 @@ class qtype_match_qe2_attempt_updater extends question_qtype_attempt_updater {
         $data['_choiceorder'] = implode(',', $this->choiceorder);
     }
 
-    public function supply_missing_first_step_data($data) {
+    public function supply_missing_first_step_data(&$data) {
         throw new coding_exception('qtype_match_updater::supply_missing_first_step_data ' .
                 'not tested');
         $data['_stemorder'] = array_keys($this->stems);
