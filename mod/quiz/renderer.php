@@ -477,10 +477,9 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 $flag = html_writer::empty_tag('img', array('src' => $this->pix_url('i/flagged'),
                         'alt' => get_string('flagged', 'question'), 'class' => 'questionflag'));
             }
-            $row = array(html_writer::start_tag('a',
-                    array('href' => $attemptobj->attempt_url($slot))).
-                    $attemptobj->get_question_number($slot).$flag.html_writer::end_tag('a'),
-                    $displayoptions->correctness);
+            $row = array(html_writer::link($attemptobj->attempt_url($slot),
+                    $attemptobj->get_question_number($slot) . $flag),
+                    $attemptobj->get_question_status($slot, $displayoptions->correctness));
             if ($markscolumn) {
                 $row[] = $attemptobj->get_question_mark($slot);
             }
