@@ -187,6 +187,9 @@ class qtype_calculatedmulti extends qtype_calculated {
         if (!empty($result->notice)) {
             return $result;
         }
+
+        $this->save_hints($question, true);
+
         return true;
     }
 

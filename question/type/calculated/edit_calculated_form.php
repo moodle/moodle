@@ -155,8 +155,9 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
 
         $this->add_unit_options($mform, $this);
         $this->add_unit_fields($mform, $this);
+        $this->add_interactive_settings();
 
-        //hidden elements
+        // Hidden elements
         $mform->addElement('hidden', 'synchronize', '');
         $mform->setType('synchronize', PARAM_INT);
         $mform->addElement('hidden', 'wizard', 'datasetdefinitions');
@@ -222,6 +223,7 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
         $this->_form->_elements[$this->_form->_elementIndex['listcategory']]->_text = $html2;
         $question = (object)((array)$question + $default_values);
 
+        $question = $this->data_preprocessing_hints($question);
         $question = $this->data_preprocessing_units($question);
         $question = $this->data_preprocessing_unit_options($question);
 

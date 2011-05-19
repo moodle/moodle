@@ -337,6 +337,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
 
         $this->add_unit_options($mform, $this);
         $this->add_unit_fields($mform, $this);
+        $this->add_interactive_settings();
 
         $label = "<div class='mdl-align'></div><div class='mdl-align'>" .
                 get_string('wildcardrole', 'qtype_calculatedsimple') . "</div>";

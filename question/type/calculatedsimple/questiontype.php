@@ -240,6 +240,9 @@ class qtype_calculatedsimple extends qtype_calculated {
         if (!empty($result->notice)) {
             return $result;
         }
+
+        $this->save_hints($question);
+
         return true;
     }
 

@@ -85,6 +85,9 @@ class qtype_calculated extends question_type {
             $this->get_virtual_qtype()->get_numerical_options($question);
         }
 
+        $question->hints = $DB->get_records('question_hints',
+                array('questionid' => $question->id), 'id ASC');
+
         if (isset($question->export_process)&&$question->export_process) {
             $question->options->datasets = $this->get_datasets_for_export($question);
         }
@@ -269,6 +272,8 @@ class qtype_calculated extends question_type {
         if (isset($result->error)) {
             return $result;
         }
+
+        $this->save_hints($question);
 
         if (isset($question->import_process)&&$question->import_process) {
             $this->import_datasets($question);

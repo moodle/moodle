@@ -166,16 +166,11 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
             $mform->setType('multiplier'."[$i]", PARAM_NUMBER);
         }
 
-        $mform->setType('addunits', 'hidden');
-        $mform->addElement('header', 'overallfeedbackhdr',
-                get_string('overallfeedback', 'qtype_multichoice'));
+        $this->add_combined_feedback_fields(true);
+        $mform->disabledIf('shownumcorrect', 'single', 'eq', 1);
 
-        foreach (array('correctfeedback', 'partiallycorrectfeedback',
-                'incorrectfeedback') as $feedbackname) {
-            $mform->addElement('editor', $feedbackname,
-                    get_string($feedbackname, 'qtype_multichoice'), null, $this->editoroptions);
-            $mform->setType($feedbackname, PARAM_RAW);
-        }
+        $this->add_interactive_settings(true, true);
+
         //hidden elements
         $mform->addElement('hidden', 'synchronize', '');
         $mform->setType('synchronize', PARAM_INT);
