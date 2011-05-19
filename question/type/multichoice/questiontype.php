@@ -252,6 +252,7 @@ class qtype_multichoice extends question_type {
 
         parent::delete_files($questionid, $contextid);
         $this->delete_files_in_answers($questionid, $contextid, true);
+
         $fs->delete_area_files($contextid,
                 'qtype_multichoice', 'correctfeedback', $questionid);
         $fs->delete_area_files($contextid,

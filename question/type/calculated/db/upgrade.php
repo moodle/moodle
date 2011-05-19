@@ -208,6 +208,25 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2010020801, 'qtype', 'calculated');
     }
 
+    // Add new shownumcorrect field. If this is true, then when the user gets a
+    // multiple-response question partially correct, tell them how many choices
+    // they got correct alongside the feedback.
+    if ($oldversion < 2011051900) {
+
+        // Define field shownumcorrect to be added to question_multichoice
+        $table = new xmldb_table('question_calculated_options');
+        $field = new xmldb_field('shownumcorrect', XMLDB_TYPE_INTEGER, '2', null,
+                XMLDB_NOTNULL, null, '0', 'answernumbering');
+
+        // Launch add field shownumcorrect
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // multichoice savepoint reached
+        upgrade_plugin_savepoint(true, 2011051900, 'qtype', 'calculated');
+    }
+
     return true;
 }
 

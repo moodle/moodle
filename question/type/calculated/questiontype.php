@@ -343,6 +343,8 @@ class qtype_calculated extends question_type {
                 $question, $questiondata);
         foreach ($questiondata->options->answers as $a) {
             $question->answers[$a->id]->tolerancetype = $a->tolerancetype;
+            $question->answers[$a->id]->correctanswerlength = $a->correctanswerlength;
+            $question->answers[$a->id]->correctanswerformat = $a->correctanswerformat;
         }
 
         $question->unitdisplay = $questiondata->options->showunits;
@@ -769,12 +771,6 @@ class qtype_calculated extends question_type {
         }
         return $unit;
 
-    }
-
-    public function create_virtual_qtype() {
-        global $CFG;
-        require_once("$CFG->dirroot/question/type/numerical/questiontype.php");
-        return new question_numerical_qtype();
     }
 
     public function supports_dataset_item_generation() {

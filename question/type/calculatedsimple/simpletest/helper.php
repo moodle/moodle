@@ -41,9 +41,8 @@ class qtype_calculatedsimple_test_helper extends question_test_helper {
     }
 
     /**
-     * Makes a calculated question with correct ansewer 3.14, and various incorrect
-     * answers with different feedback.
-     * @return qtype_calculated_question
+     * Makes a simple calculated question about summing two numbers.
+     * @return qtype_calculatedsimple_question
      */
     public function make_calculatedsimple_question_sum() {
         question_bank::load_question_definition_classes('calculatedsimple');
@@ -52,11 +51,17 @@ class qtype_calculatedsimple_test_helper extends question_test_helper {
         $q->name = 'Simple sum';
         $q->questiontext = 'What is {a} + {b}?';
         $q->generalfeedback = 'Generalfeedback: {={a} + {b}} is the right answer.';
+
         $q->answers = array(
             13 => new qtype_numerical_answer(13, '{a} + {b}', 1.0, 'Very good.', FORMAT_HTML, 0),
             14 => new qtype_numerical_answer(14, '{a} - {b}', 0.0, 'Add. not subtract!.', FORMAT_HTML, 0),
             17 => new qtype_numerical_answer(17, '*', 0.0, 'Completely wrong.', FORMAT_HTML, 0),
         );
+        foreach ($q->answers as $answer) {
+            $answer->correctanswerlength = 2;
+            $answer->correctanswerformat = 1;
+        }
+
         $q->qtype = question_bank::get_qtype('calculated');
         $q->unitdisplay = qtype_numerical::UNITNONE;
         $q->unitgradingtype = 0;

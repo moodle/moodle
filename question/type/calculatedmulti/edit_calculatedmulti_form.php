@@ -43,11 +43,11 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
     public $questiondisplay;
     public $initialname = '';
     public $reload = false;
+
     public function __construct($submiturl, $question, $category,
             $contexts, $formeditable = true) {
-        global $SESSION, $CFG, $DB;
         $this->question = $question;
-        $this->qtypeobj = $QTYPES[$this->question->qtype];
+        $this->qtypeobj = question_bank::get_qtype('calculatedmulti');
         if (1 == optional_param('reload', '', PARAM_INT)) {
             $this->reload = true;
         } else {
@@ -105,13 +105,7 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         return $repeated;
     }
 
-    /**
-     * Add question-type specific form fields.
-     *
-     * @param MoodleQuickForm $mform the form being built.
-     */
     protected function definition_inner($mform) {
-        $this->qtypeobj = $QTYPES[$this->qtype()];
 
         $label = get_string('sharedwildcards', 'qtype_calculated');
         $mform->addElement('hidden', 'initialcategory', 1);
@@ -148,14 +142,9 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         $mform->addHelpButton('shuffleanswers', 'shuffleanswers', 'qtype_multichoice');
         $mform->setDefault('shuffleanswers', 1);
 
-        $numberingoptions = $QTYPES['multichoice']->get_numbering_styles();
-        $menu = array();
-        foreach ($numberingoptions as $numberingoption) {
-            $menu[$numberingoption] = get_string(
-                    'answernumbering' . $numberingoption, 'qtype_multichoice');
-        }
+        $numberingoptions = question_bank::get_qtype('multichoice')->get_numbering_styles();
         $mform->addElement('select', 'answernumbering',
-                get_string('answernumbering', 'qtype_multichoice'), $menu);
+                get_string('answernumbering', 'qtype_multichoice'), $numberingoptions);
         $mform->setDefault('answernumbering', 'abc');
 
         $creategrades = get_grade_options();
@@ -301,10 +290,6 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         return $question;
     }
 
-    public function qtype() {
-        return 'calculatedmulti';
-    }
-
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
@@ -430,5 +415,9 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
 
         }
         return $errors;
+    }
+
+    public function qtype() {
+        return 'calculatedmulti';
     }
 }

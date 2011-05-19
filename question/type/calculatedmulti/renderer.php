@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Calculated question renderer class.
+ * Calculated multiple-choice question renderer class.
  *
  * @package    qtype
- * @subpackage calculated
+ * @subpackage calculatedmulti
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,14 +26,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/type/numerical/renderer.php');
+require_once($CFG->dirroot . '/question/type/multichoice/renderer.php');
 
 
 /**
- * Generates the output for calculated questions.
+ * Generates the output for calculated multiple-choice questions.
  *
- * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_renderer extends qtype_numerical_renderer {
+class qtype_calculatedmulti_renderer extends qtype_numerical_renderer {
 }

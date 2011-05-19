@@ -1,8 +1,8 @@
-.que.calculated .answer {
+.que.calculatedsimple .answer {
     padding: 0.3em;
     width: auto;
     display: inline;
 }
-.que.calculated .answer input {
+.que.calculatedsimple .answer input {
     width: 30%;
 }

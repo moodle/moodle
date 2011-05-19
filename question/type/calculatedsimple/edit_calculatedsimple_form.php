@@ -70,7 +70,6 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
     public $formdata = array();
 
     public function __construct($submiturl, $question, $category, $contexts, $formeditable = true) {
-        global $SESSION, $CFG, $DB;
         $this->regenerate = true;
         $this->question = $question;
 

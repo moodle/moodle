@@ -26,6 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/multichoice/questiontype.php');
+require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
+
 
 /**
  * The calculated multiple-choice question type.
@@ -37,7 +40,6 @@ class qtype_calculatedmulti extends qtype_calculated {
 
     // Used by the function custom_generator_tools:
     public $calcgenerateidhasbeenadded = false;
-    public $virtualqtype = false;
 
     public function requires_qtypes() {
         return array('calculated', 'multichoice');
@@ -100,13 +102,6 @@ class qtype_calculatedmulti extends qtype_calculated {
             $oldoptions = array();
         }
 
-        // Save the units.
-        $virtualqtype = $this->get_virtual_qtype($question);
-        if (isset($result->error)) {
-            return $result;
-        } else {
-            $units = &$result->units;
-        }
         // Insert all the new answers
         if (isset($question->answer) && !isset($question->answers)) {
             $question->answers = $question->answer;
@@ -195,108 +190,36 @@ class qtype_calculatedmulti extends qtype_calculated {
         return true;
     }
 
-    public function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
-        // Find out how many datasets are available
-        global $CFG, $DB, $OUTPUT;
-        $maxnumber = (int)$DB->get_field_sql(
-            "SELECT MIN(a.itemcount)
-               FROM {question_dataset_definitions} a, {question_datasets} b
-              WHERE b.question = ? AND a.id = b.datasetdefinition", array($question->id));
-        if (!$maxnumber) {
-            print_error('cannotgetdsforquestion', 'question', '', $question->id);
-        }
-        $sql = "SELECT i.*
-                  FROM {question_datasets} d, {question_dataset_definitions} i
-                 WHERE d.question = ? AND d.datasetdefinition = i.id AND i.category != 0";
-        if (!$question->options->synchronize || !$records = $DB->get_records_sql($sql,
-                array($question->id))) {
-            $synchronize_calculated  =  false;
+    protected function make_question_instance($questiondata) {
+        question_bank::load_question_definition_classes($this->name());
+        if ($questiondata->options->single) {
+            $class = 'qtype_calculatedmulti_single_question';
         } else {
-            // i.e records is true so test coherence
-            $coherence = true;
-            $a = new stdClass();
-            $a->qid = $question->id;
-            $a->qcat = $question->category;
-            foreach ($records as $def) {
-                if ($def->category != $question->category) {
-                    $a->name = $def->name;
-                    $a->sharedcat = $def->category;
-                    $coherence = false;
-                    break;
-                }
-            }
-            if (!$coherence) {
-                echo $OUTPUT->notification(
-                        get_string('nocoherencequestionsdatyasetcategory', 'qtype_calculated', $a));
-            }
-
-            $synchronize_calculated  = true;
+            $class = 'qtype_calculatedmulti_multi_question';
         }
+        return new $class();
+    }
 
-        // Choose a random dataset
-        // maxnumber sould not be breater than 100
-        if ($maxnumber > qtype_calculated::MAX_DATASET_ITEMS) {
-            $maxnumber = qtype_calculated::MAX_DATASET_ITEMS;
-        }
-        if ($synchronize_calculated === false) {
-            $state->options->datasetitem = rand(1, $maxnumber);
+    protected function initialise_question_instance(question_definition $question, $questiondata) {
+        question_type::initialise_question_instance($question, $questiondata);
+
+        $question->shuffleanswers = $questiondata->options->shuffleanswers;
+        $question->answernumbering = $questiondata->options->answernumbering;
+        if (!empty($questiondata->options->layout)) {
+            $question->layout = $questiondata->options->layout;
         } else {
-            $state->options->datasetitem =
-                    intval($maxnumber * substr($attempt->timestart, -2) /100);
-            if ($state->options->datasetitem < 1) {
-                $state->options->datasetitem =1;
-            } else if ($state->options->datasetitem > $maxnumber) {
-                $state->options->datasetitem = $maxnumber;
-            }
-
-        };
-        $state->options->dataset =
-            $this->pick_question_dataset($question, $state->options->datasetitem);
-        // create an array of answerids ??? why so complicated ???
-        $answerids = array_values(array_map(create_function('$val',
-            'return $val->id;'), $question->options->answers));
-        // Shuffle the answers if required
-        if (!empty($cmoptions->shuffleanswers) and !empty($question->options->shuffleanswers)) {
-            $answerids = swapshuffle($answerids);
+            $question->layout = qtype_multichoice_single_question::LAYOUT_VERTICAL;
         }
-        $state->options->order = $answerids;
-        // Create empty responses
-        if ($question->options->single) {
-            $state->responses = array('' => '');
-        } else {
-            $state->responses = array();
+
+        $this->initialise_combined_feedback($question, $questiondata, true);
+        $this->initialise_question_answers($question, $questiondata);
+
+        foreach ($questiondata->options->answers as $a) {
+            $question->answers[$a->id]->correctanswerlength = $a->correctanswerlength;
+            $question->answers[$a->id]->correctanswerformat = $a->correctanswerformat;
         }
-        return true;
-    }
 
-    public function save_session_and_responses(&$question, &$state) {
-        global $DB;
-        $responses = 'dataset'.$state->options->datasetitem.'-';
-        $responses .= implode(',', $state->options->order) . ':';
-        $responses .= implode(',', $state->responses);
-
-        // Set the legacy answer field
-        $DB->set_field('question_states', 'answer', $responses, array('id'=> $state->id));
-        return true;
-    }
-
-    public function get_default_numerical_unit($question, $virtualqtype) {
-        $unit = '';
-        return $unit;
-    }
-
-    public function grade_responses(&$question, &$state, $cmoptions) {
-        // Forward the grading to the virtual qtype
-        // We modify the question to look like a multichoice question
-        // for grading nothing to do
-        $virtualqtype = $this->get_virtual_qtype($question);
-        return $virtualqtype->grade_responses($question, $state, $cmoptions);
-    }
-
-    public function create_virtual_qtype() {
-        global $CFG;
-        require_once("$CFG->dirroot/question/type/multichoice/questiontype.php");
-        return new question_multichoice_qtype();
+        $question->datasetloader = new qtype_calculated_dataset_loader($questiondata->id);
     }
 
     public function comment_header($question) {
@@ -325,8 +248,6 @@ class qtype_calculatedmulti extends qtype_calculated {
         $comment->answers = array();
 
         $answers = fullclone($answers);
-        $strmin = get_string('min');
-        $strmax = get_string('max');
         $errors = '';
         $delimiter = ': ';
         foreach ($answers as $key => $answer) {
@@ -355,62 +276,8 @@ class qtype_calculatedmulti extends qtype_calculated {
         return fullclone($comment);
     }
 
-    public function get_correct_responses1(&$question, &$state) {
-        $virtualqtype = $this->get_vir(al_qtype($question));
-
-        return $virtualqtype->get_correct_responses($question, $state);
-    }
-
     public function get_virtual_qtype() {
-        $this->virtualqtype = $QTYPES['multichoice'];
-        return $this->virtualqtype;
-    }
-
-    /**
-     * Runs all the code required to set up and save an essay question for testing purposes.
-     * Alternate DB table prefix may be used to facilitate data deletion.
-     */
-    public function generate_test($name, $courseid = null) {
-        global $DB;
-        list($form, $question) = parent::generate_test($name, $courseid);
-        $form->feedback = 1;
-        $form->multiplier = array(1, 1);
-        $form->shuffleanswers = 1;
-        $form->noanswers = 1;
-        $form->qtype ='calculatedmulti';
-        $question->qtype ='calculatedmulti';
-        $form->answers = array('{a} + {b}');
-        $form->fraction = array(1);
-        $form->tolerance = array(0.01);
-        $form->tolerancetype = array(1);
-        $form->correctanswerlength = array(2);
-        $form->correctanswerformat = array(1);
-        $form->questiontext = "What is {a} + {b}?";
-
-        if ($courseid) {
-            $course = $DB->get_record('course', array('id'=> $courseid));
-        }
-
-        $new_question = $this->save_question($question, $form);
-
-        $dataset_form = new stdClass();
-        $dataset_form->nextpageparam['forceregeneration']= 1;
-        $dataset_form->calcmin = array(1 => 1.0, 2 => 1.0);
-        $dataset_form->calcmax = array(1 => 10.0, 2 => 10.0);
-        $dataset_form->calclength = array(1 => 1, 2 => 1);
-        $dataset_form->number = array(1 => 5.4, 2 => 4.9);
-        $dataset_form->itemid = array(1 => '', 2 => '');
-        $dataset_form->calcdistribution = array(1 => 'uniform', 2 => 'uniform');
-        $dataset_form->definition = array(1 => "1-0-a", 2 => "1-0-b");
-        $dataset_form->nextpageparam = array('forceregeneration' => false);
-        $dataset_form->addbutton = 1;
-        $dataset_form->selectadd = 1;
-        $dataset_form->courseid = $courseid;
-        $dataset_form->cmid = 0;
-        $dataset_form->id = $new_question->id;
-        $this->save_dataset_items($new_question, $dataset_form);
-
-        return $new_question;
+        return question_bank::get_qtype('multichoice');
     }
 
     public function move_files($questionid, $oldcontextid, $newcontextid) {
@@ -432,44 +299,12 @@ class qtype_calculatedmulti extends qtype_calculated {
 
         parent::delete_files($questionid, $contextid);
         $this->delete_files_in_answers($questionid, $contextid, true);
+
         $fs->delete_area_files($contextid, 'qtype_calculatedmulti',
                 'correctfeedback', $questionid);
         $fs->delete_area_files($contextid, 'qtype_calculatedmulti',
                 'partiallycorrectfeedback', $questionid);
         $fs->delete_area_files($contextid, 'qtype_calculatedmulti',
                 'incorrectfeedback', $questionid);
-    }
-
-    public function check_file_access($question, $state, $options, $contextid, $component,
-            $filearea, $args) {
-        $itemid = reset($args);
-
-        if (empty($question->maxgrade)) {
-            $question->maxgrade = $question->defaultgrade;
-        }
-
-        if (in_array($filearea, array('correctfeedback', 'partiallycorrectfeedback',
-                'incorrectfeedback'))) {
-            $result = $options->feedback && ($itemid == $question->id);
-            if (!$result) {
-                return false;
-            }
-            if ($state->raw_grade >= $question->maxgrade/1.01) {
-                $feedbacktype = 'correctfeedback';
-            } else if ($state->raw_grade > 0) {
-                $feedbacktype = 'partiallycorrectfeedback';
-            } else {
-                $feedbacktype = 'incorrectfeedback';
-            }
-            if ($feedbacktype != $filearea) {
-                return false;
-            }
-            return true;
-        } else if ($component == 'question' && $filearea == 'answerfeedback') {
-            return $options->feedback && array_key_exists($itemid, $question->options->answers);
-        } else {
-            return parent::check_file_access($question, $state, $options, $contextid, $component,
-                    $filearea, $args);
-        }
     }
 }

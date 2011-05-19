@@ -19,7 +19,7 @@
  *
  * @package    qtype
  * @subpackage calculated
- * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,34 +32,94 @@ require_once($CFG->dirroot . '/question/type/numerical/question.php');
 /**
  * Represents a calculated question.
  *
- * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_question extends qtype_numerical_question {
+class qtype_calculated_question extends qtype_numerical_question
+        implements qtype_calculated_question_with_expressions {
     /** @var qtype_calculated_dataset_loader helper for loading the dataset. */
     public $datasetloader;
     /** @var qtype_calculated_variable_substituter stores the dataset we are using. */
     public $vs;
 
     public function start_attempt(question_attempt_step $step) {
-        $maxnumber = $this->datasetloader->get_number_of_items();
-        $setnumber = rand(1, $maxnumber);
-        // TODO implement the $synchronizecalculated bit from create_session_and_responses.
-
-        $this->vs = new qtype_calculated_variable_substituter(
-                $this->datasetloader->get_values($setnumber),
-                get_string('decsep', 'langconfig'));
-        $this->calculate_all_expressions();
-
-        $step->set_qt_var('_dataset', $setnumber);
-        foreach ($this->vs->get_values() as $name => $value) {
-            $step->set_qt_var('_var_' . $name, $value);
-        }
-
+        qtype_calculated_question_helper::start_attempt($this, $step);
         parent::start_attempt($step);
     }
 
     public function apply_attempt_state(question_attempt_step $step) {
+        qtype_calculated_question_helper::apply_attempt_state($this, $step);
+        parent::apply_attempt_state($step);
+    }
+
+    public function calculate_all_expressions() {
+        $this->questiontext = $this->vs->replace_expressions_in_text($this->questiontext);
+        $this->generalfeedback = $this->vs->replace_expressions_in_text($this->generalfeedback);
+
+        foreach ($this->answers as $ans) {
+            if ($ans->answer && $ans->answer !== '*') {
+                $ans->answer = $this->vs->calculate($ans->answer,
+                        $ans->correctanswerlength, $ans->correctanswerformat);
+            }
+            $ans->feedback = $this->vs->replace_expressions_in_text($ans->feedback,
+                        $ans->correctanswerlength, $ans->correctanswerformat);
+        }
+    }
+}
+
+
+/**
+ * This interface defines the method that a quetsion type must implement if it
+ * is to work with {@link qtype_calculated_question_helper}.
+ *
+ * As well as this method, the class that implements this interface must have
+ * fields 
+ * public $datasetloader; // of type qtype_calculated_dataset_loader
+ * public $vs; // of type qtype_calculated_variable_substituter
+ *
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+interface qtype_calculated_question_with_expressions {
+    /**
+     * Replace all the expression in the question definition with the values
+     * computed from the selected dataset by calling $this->vs->calculate() and
+     * $this->vs->replace_expressions_in_text() on the parts of the question
+     * that require it.
+     */
+    public function calculate_all_expressions();
+}
+
+
+/**
+ * Helper class for questions that use datasets. Works with the interface
+ * {@link qtype_calculated_question_with_expressions} and the class
+ * {@link qtype_calculated_dataset_loader} to set up the value of each variable
+ * in start_attempt, and restore that in apply_attempt_state.
+ *
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+abstract class qtype_calculated_question_helper {
+    public static function start_attempt(
+            qtype_calculated_question_with_expressions $question, question_attempt_step $step) {
+        $maxnumber = $question->datasetloader->get_number_of_items();
+        $setnumber = rand(1, $maxnumber);
+        // TODO implement the $synchronizecalculated bit from create_session_and_responses.
+
+        $question->vs = new qtype_calculated_variable_substituter(
+                $question->datasetloader->get_values($setnumber),
+                get_string('decsep', 'langconfig'));
+        $question->calculate_all_expressions();
+
+        $step->set_qt_var('_dataset', $setnumber);
+        foreach ($question->vs->get_values() as $name => $value) {
+            $step->set_qt_var('_var_' . $name, $value);
+        }
+    }
+
+    public static function apply_attempt_state(
+            qtype_calculated_question_with_expressions $question, question_attempt_step $step) {
         $values = array();
         foreach ($step->get_qt_data() as $name => $value) {
             if (substr($name, 0, 5) === '_var_') {
@@ -67,27 +127,9 @@ class qtype_calculated_question extends qtype_numerical_question {
             }
         }
 
-        $this->vs = new qtype_calculated_variable_substituter(
+        $question->vs = new qtype_calculated_variable_substituter(
                 $values, get_string('decsep', 'langconfig'));
-        $this->calculate_all_expressions();
-
-        parent::apply_attempt_state($step);
-    }
-
-    /**
-     * Replace all the expression in the question definition with the values
-     * computed from the selected dataset.
-     */
-    protected function calculate_all_expressions() {
-        $this->questiontext = $this->vs->replace_expressions_in_text($this->questiontext);
-        $this->generalfeedback = $this->vs->replace_expressions_in_text($this->generalfeedback);
-
-        foreach ($this->answers as $ans) {
-            if ($ans->answer && $ans->answer !== '*') {
-                $ans->answer = $this->vs->calculate($ans->answer);
-            }
-            $ans->feedback = $this->vs->replace_expressions_in_text($ans->feedback);
-        }
+        $question->calculate_all_expressions();
     }
 }
 
@@ -233,7 +275,17 @@ class qtype_calculated_variable_substituter {
      * Display a float properly formatted with a certain number of decimal places.
      * @param $x
      */
-    public function format_float($x) {
+    public function format_float($x, $length = null, $format = null) {
+        if (!is_null($format) && !is_null($format)) {
+            if ($format == 1) {
+                // Decimal places.
+                $x = sprintf('%.' . $length . 'F', $x);
+            } else if ($format == 1) {
+                // Significant figures.
+                $x = sprintf('%.' . $length . 'g', $x);
+                $x = str_replace(',', '.', $x);
+            }
+        }
         return str_replace('.', $this->decimalpoint, $x);
     }
 
@@ -298,11 +350,12 @@ class qtype_calculated_variable_substituter {
      * @param string $text the text to process.
      * @return string the text with values substituted.
      */
-    public function replace_expressions_in_text($text) {
+    public function replace_expressions_in_text($text, $length = null, $format = null) {
         $vs = $this; // Can't see to use $this in a PHP closure.
-        $text = preg_replace_callback('~\{=([^{}]*(?:\{[^{}]+}[^{}]*)*)}~', function ($matches) use ($vs) {
-            return $vs->format_float($vs->calculate($matches[1]));
-        }, $text);
+        $text = preg_replace_callback('~\{=([^{}]*(?:\{[^{}]+}[^{}]*)*)}~',
+                function ($matches) use ($vs, $format, $length) {
+                    return $vs->format_float($vs->calculate($matches[1]), $length, $format);
+                }, $text);
         return $this->substitute_values_pretty($text);
     }
 
