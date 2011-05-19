@@ -283,6 +283,29 @@ class qtype_calculatedmulti extends qtype_calculated {
         return question_bank::get_qtype('multichoice');
     }
 
+    public function get_possible_responses($questiondata) {
+        if ($questiondata->options->single) {
+            $responses = array();
+
+            foreach ($questiondata->options->answers as $aid => $answer) {
+                $responses[$aid] = new question_possible_response($answer->answer,
+                        $answer->fraction);
+            }
+
+            $responses[null] = question_possible_response::no_response();
+            return array($questiondata->id => $responses);
+        } else {
+            $parts = array();
+
+            foreach ($questiondata->options->answers as $aid => $answer) {
+                $parts[$aid] = array($aid =>
+                        new question_possible_response($answer->answer, $answer->fraction));
+            }
+
+            return $parts;
+        }
+    }
+
     public function move_files($questionid, $oldcontextid, $newcontextid) {
         $fs = get_file_storage();
 

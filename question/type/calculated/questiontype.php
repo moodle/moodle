@@ -768,16 +768,6 @@ class qtype_calculated extends question_type {
         parent::delete_question($questionid, $contextid);
     }
 
-    public function get_default_numerical_unit($question, $virtualqtype) {
-        if ($unit = $virtualqtype->get_default_numerical_unit($question)) {
-            $unit = $unit->unit;
-        } else {
-            $unit = '';
-        }
-        return $unit;
-
-    }
-
     public function supports_dataset_item_generation() {
         // Calcualted support generation of randomly distributed number data
         return true;
@@ -1880,7 +1870,33 @@ class qtype_calculated extends question_type {
         return question_bank::get_qtype('numerical');
     }
 
-    function move_files($questionid, $oldcontextid, $newcontextid) {
+    public function get_possible_responses($questiondata) {
+        $responses = array();
+
+        $virtualqtype = $this->get_virtual_qtype();
+        $unit = $virtualqtype->get_default_numerical_unit($questiondata);
+
+        foreach ($questiondata->options->answers as $aid => $answer) {
+            $responseclass = $answer->answer;
+
+            if ($responseclass != '*') {
+                $responseclass = $virtualqtype->add_unit($questiondata, $responseclass, $unit);
+
+                $ans = new qtype_numerical_answer($answer->id, $answer->answer, $answer->fraction,
+                        $answer->feedback, $answer->feedbackformat, $answer->tolerance);
+                list($min, $max) = $ans->get_tolerance_interval();
+                $responseclass .= " ($min..$max)";
+            }
+
+            $responses[$aid] = new question_possible_response($responseclass,
+                    $answer->fraction);
+        }
+        $responses[null] = question_possible_response::no_response();
+
+        return array($questiondata->id => $responses);
+    }
+
+    public function move_files($questionid, $oldcontextid, $newcontextid) {
         $fs = get_file_storage();
 
         parent::move_files($questionid, $oldcontextid, $newcontextid);
