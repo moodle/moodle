@@ -479,7 +479,7 @@ function local_qeupgradehelper_generate_unit_test($questionsessionid, $namesuffi
 
     $attempt->needsupgradetonewqe = 1;
 
-    echo "<pre>
+    echo '<textarea readonly="readonly" rows="80" cols="120" >' . "
     public function test_{$question->qtype}_{$quiz->preferredbehaviour}_{$namesuffix}() {
 ";
     local_qeupgradehelper_display_convert_attempt_input($quiz, $attempt,
@@ -528,7 +528,7 @@ function local_qeupgradehelper_generate_unit_test($questionsessionid, $namesuffi
 
         $this->assertEqual($expectedqa, $qa);
     }
-</pre>';
+</textarea>';
 }
 
 function local_qeupgradehelper_format_var($name, $var) {
