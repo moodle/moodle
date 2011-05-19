@@ -1185,7 +1185,9 @@ abstract class quiz_nav_panel_base {
         return '';
     }
 
-    public function render_end_bits(mod_quiz_renderer $output) {
+    abstract public function render_end_bits(mod_quiz_renderer $output);
+
+    protected function render_restart_preview_link($output) {
         if (!$this->attemptobj->is_own_preview()) {
             return '';
         }
@@ -1225,7 +1227,8 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
     public function render_end_bits(mod_quiz_renderer $output) {
         return html_writer::link($this->attemptobj->summary_url(),
                 get_string('endtest', 'quiz'), array('id' => 'endtestlink')) .
-                $output->countdown_timer();
+                $output->countdown_timer() .
+                $this->render_restart_preview_link($output);
     }
 }
 
@@ -1254,6 +1257,7 @@ class quiz_review_nav_panel extends quiz_nav_panel_base {
             }
         }
         $html .= $output->finish_review_link($this->attemptobj->view_url());
+        $html .= $this->render_restart_preview_link($output);
         return $html;
     }
 }
