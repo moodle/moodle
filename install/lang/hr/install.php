@@ -31,7 +31,7 @@
 $string['admindirname'] = 'Admin mapa';
 $string['availablelangs'] = 'Popis dostupnih jezika';
 $string['chooselanguagehead'] = 'Odaberite jezik';
-$string['chooselanguagesub'] = 'Molimo odaberite jezik instalacije. Ovaj jezik će biti korišten kao zadani jezik sustava, a kasnije to možete lagano promijeniti.';
+$string['chooselanguagesub'] = 'Molimo odaberite jezik instalacije. Ovaj jezik će biti korišten kao zadani jezik sustava, a kasnije to možete jednostavno promijeniti.';
 $string['clialreadyinstalled'] = 'Datoteka config.php već postoji. Upotrijebite naredbu admin/cli/upgrade.php ako želite nadograditi svoj sustav.';
 $string['cliinstallheader'] = 'Moodle {$a} program za instalaciju iz naredbenog retka';
 $string['databasehost'] = 'Poslužitelj baze podataka (HOST)';
@@ -79,7 +79,7 @@ $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Prikazana vam je ova stranica jer ste uspješno instalirali i pokrenuli <strong>{$a->packname} {$a->packversion}</strong> paket na vašem poslužitelju. Čestitamo!';
 $string['welcomep30'] = 'Ova inačica <strong>{$a->installername}</strong> uključuje aplikacije za stvaranje okruženja u kojem će <strong>Moodle</strong> uspješno funkcionirati, konkretno:';
 $string['welcomep40'] = 'Ovaj paket obuhvaća i <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'Korištenje svih aplikacija u ovom paketu je uređeno licencama pod kojima su izdane. Cijeli  <strong>{$a->installername}</strong> paket je rješenje <a href="http://www.opensource.org/docs/definition_plain.html">otvorenog koda</a> distribuirano pod <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> licencom.';
+$string['welcomep50'] = 'Korištenje svih aplikacija u ovom paketu je uređeno licencama pod kojima su izdane. Cijeli  <strong>{$a->installername}</strong> paket je rješenje <a href="http://www.opensource.org/docs/definition_plain.html">otvorenog k&#244;da</a> distribuirano pod <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> licencom.';
 $string['welcomep60'] = 'Sljedeće stranice će vas voditi kroz postupak instalacije i podešavanja <em>Moodle</em> na poslužitelju. Možete prihvatiti zadane postavke ili promijeniti iste sukladno vašim potrebama.';
 $string['welcomep70'] = 'Kliknite na "Next" gumb kako bi započeli <strong>Moodle</strong> instalaciju.';
 $string['wwwroot'] = 'Web adresa';

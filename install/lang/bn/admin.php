@@ -30,13 +30,13 @@
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = 'Грешка, неисправна вредност "{$a->value}" за "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Неисправна вреднос, молим покушајте поново';
-$string['clitypevalue'] = 'откуцај вредност';
-$string['clitypevaluedefault'] = 'откуцај вредност, притисни Ентер да бисте употребили подразумевану вредност ({$a})';
-$string['cliunknowoption'] = 'Непрепознате опције:
-{$a}
-Молимо искористите опцију за помоћ.';
-$string['cliyesnoprompt'] = 'унеси y (значи да) или n (значи не)';
-$string['environmentrequireinstall'] = 'мора бити инсталиран и омогућен';
-$string['environmentrequireversion'] = 'неопходна верзија је {$a->needed} а Ви тренутно користите верзију {$a->current}';
+$string['cliincorrectvalueerror'] = 'ত্রুটি, "{$a->option}"-র জন্য "{$a->value}" ভুল মান ';
+$string['cliincorrectvalueretry'] = 'ভুল মান, অনুগ্রহ করে আবার চেষ্টা করুন';
+$string['clitypevalue'] = 'ধরনের মান';
+$string['clitypevaluedefault'] = 'ধরনের মান, পূর্বনির্ধারিত মান ({$a}) ব্যবহার করতে এন্টার (Enter) চাপুন';
+$string['cliunknowoption'] = 'অচেনা অপশন:
+  {$a}
+অনুগ্রহ করে --সহায়তা অপশন ব্যবহার করুন।';
+$string['cliyesnoprompt'] = 'y (মানে হ্যাঁ) বা n (মানে না) টাইপ করুন';
+$string['environmentrequireinstall'] = 'অবশ্যই ইনস্টল ও সক্রিয় করতে হবে';
+$string['environmentrequireversion'] = '{$a->needed} সংস্করণ আবশ্যক এবং আপনি {$a->current} চালাচ্ছেন';

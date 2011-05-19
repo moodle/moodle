@@ -28,15 +28,4 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['clianswerno'] = 'n';
-$string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = 'Грешка, неисправна вредност "{$a->value}" за "{$a->option}"';
-$string['cliincorrectvalueretry'] = 'Неисправна вреднос, молим покушајте поново';
-$string['clitypevalue'] = 'откуцај вредност';
-$string['clitypevaluedefault'] = 'откуцај вредност, притисни Ентер да бисте употребили подразумевану вредност ({$a})';
-$string['cliunknowoption'] = 'Непрепознате опције:
-{$a}
-Молимо искористите опцију за помоћ.';
-$string['cliyesnoprompt'] = 'унеси y (значи да) или n (значи не)';
-$string['environmentrequireinstall'] = 'мора бити инсталиран и омогућен';
-$string['environmentrequireversion'] = 'неопходна верзија је {$a->needed} а Ви тренутно користите верзију {$a->current}';
+$string['language'] = 'Cànan';

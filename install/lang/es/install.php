@@ -70,15 +70,16 @@ $string['pathsroparentdataroot'] = 'El directorio padre ({$a->parent}) no tiene 
 $string['pathssubadmindir'] = 'Muy pocos servidores web usan /admin como un URL especial para acceder a un
 panel de control o algo similar. Lamentablemente, esto entra en conflicto con la ubicación estándar para las páginas de administración de Moodle. Usted puede solucionar este problema, renombrando el directorio admin en su instalación Moodle, poniendo un nuevo nombre aquí. Por ejemplo: <em> moodleadmin </em>. Esto solucionará los enlaces de administración en instalación Moodle.';
 $string['pathssubdataroot'] = 'Usted necesita un lugar donde Moodle puede guardar los archivos subidos. Este directorio debe ser leíble Y ESCRIBIBLE por el usuario del servidor web (por lo general \'nobody\', \'apache\' o \'www-data\'), pero este lugar no debe ser accesible directamente a través de la web. El instalador tratará crearlo si no existe.';
-$string['pathssubdirroot'] = 'Ruta completa del directorio de instalación de Moodle. Cambielo sólo si es necesario el uso de enlaces simbólicos.';
+$string['pathssubdirroot'] = 'Ruta completa del directorio de instalación de Moodle.';
 $string['pathssubwwwroot'] = 'Dirección web completa donde Moodle será accesado. No es posible acceder a Moodle utilizando múltiples direcciones. Si su sitio tiene varias direcciones públicas debe configurar redirecciones permanentes en todos ellas, excepto en ésta. Si su sitio web es accesible tanto desde una intranet y la Internet, utilice la dirección pública aquí y configure su DNS para que los usuarios de su intranet puedan utilizar la dirección pública también.';
 $string['pathsunsecuredataroot'] = 'La ubicación de dataroot no es segura';
 $string['pathswrongadmindir'] = 'El directorio admin no existe';
 $string['phpextension'] = 'Extensión PHP {$a}';
 $string['phpversion'] = 'Versión PHP';
-$string['phpversionhelp'] = '<p>Moodle requiere una versión de PHP 4.1.0 o superior.</p>
-<p>Su versión es {$a}</p>
-<p>Debe actualizar PHP o acudir a otro servidor con una versión más reciente de PHP</p>';
+$string['phpversionhelp'] = '<p>Moodle requiere al menos una versión de PHP 4.3.0 o 5.1.0 ((5.0.x tiene una serie de problemas conocidos).</p>
+<p>En este momento está ejecutando la versión {$a}</p>
+<p>¡Debe actualizar PHP o trasladarse a otro servidor con una versión más reciente de PHP!<br /> 
+(En caso de 5.0.x podría también revertir a la versión 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Si está viendo esta página es porque ha podido ejecutar el paquete <strong>{$a->packname} {$a->packversion}</strong> en su ordenador. !Enhorabuena!';
 $string['welcomep30'] = 'Esta versión de <strong>{$a->installername}</strong> incluye las 

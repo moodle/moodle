@@ -28,5 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['clianswerno'] = 'n';
-$string['cliansweryes'] = 'y';
+$string['clianswerno'] = 'm';
+$string['cliansweryes'] = 'h';
+$string['cliincorrectvalueretry'] = 'Qiime khalad ah, fadla mar kale isky day';
+$string['clitypevalue'] = 'nooc qiime';

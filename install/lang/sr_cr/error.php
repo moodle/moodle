@@ -29,18 +29,18 @@
  */
 
 $string['cannotcreatelangdir'] = 'Није могуће креирање директоријума језика';
-$string['cannotcreatetempdir'] = 'Није могуће креирање привременог директоријума.';
+$string['cannotcreatetempdir'] = 'Није могуће креирање привременог директоријума';
 $string['cannotdownloadcomponents'] = 'Није могуће преузети компоненте.';
-$string['cannotdownloadzipfile'] = 'Није могуће преузимање архиве.';
+$string['cannotdownloadzipfile'] = 'Није могуће преузимање архиве';
 $string['cannotfindcomponent'] = 'Није могуће пронаћи компоненту.';
 $string['cannotsavemd5file'] = 'Није могуће сачувати md5 датотеку.';
 $string['cannotsavezipfile'] = 'Није могуће сачувти ZIP архиву.';
 $string['cannotunzipfile'] = 'Није могуће распаковати ZIP датотеку.';
-$string['componentisuptodate'] = 'Компонента је доступна у својој најновијој верзији.';
-$string['downloadedfilecheckfailed'] = 'Није успела провера преузете датотеке.';
+$string['componentisuptodate'] = 'Компонента је доступна у својој најновијој верзији';
+$string['downloadedfilecheckfailed'] = 'Није успела провера преузете датотеке';
 $string['invalidmd5'] = 'Неисправна md5 датотека';
 $string['missingrequiredfield'] = 'Недостаје неко обавезно поље';
 $string['remotedownloaderror'] = 'Преузимање компоненте на Ваш сервер није успело. Проверите подешавања прокси серевера. PHP cURL екстензија се препоручује.<br /><br />Морате да преузмете <a href="{$a->url}">{$a->url}</a> датотеку ручно, копирате је у директоријум "{$a->dest}" на свом сереверу тамо је распакујете.';
-$string['wrongdestpath'] = 'Погрешна одредишна путања.';
-$string['wrongsourcebase'] = 'Погрешан изворни URL базе.';
-$string['wrongzipfilename'] = 'Погрешан назив архиве.';
+$string['wrongdestpath'] = 'Погрешна одредишна путања';
+$string['wrongsourcebase'] = 'Погрешна база изворног URL-a';
+$string['wrongzipfilename'] = 'Погрешан назив ZIP архиве';
