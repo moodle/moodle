@@ -266,7 +266,11 @@ class moodle1_converter extends base_converter {
         if (is_null($this->pathlock)) {
             $rawdatatags  = $data['tags'];
             $data['tags'] = $element->apply_recipes($data['tags']);
-            $returned     = $object->$method($data['tags'], $rawdatatags);
+
+            // if the processing method exists, give it a chance to modify data
+            if (method_exists($object, $method)) {
+                $returned = $object->$method($data['tags'], $rawdatatags);
+            }
         }
 
         // if the dispatched method returned SKIP_ALL_CHILDREN, remember the current path
@@ -306,7 +310,7 @@ class moodle1_converter extends base_converter {
 
         $element = $this->pathelements[$path];
         $pobject = $element->get_processing_object();
-        $method  = 'on_' . $element->get_name() . '_start';
+        $method  = $element->get_start_method();
 
         if (method_exists($pobject, $method)) {
             $pobject->$method();
@@ -342,8 +346,8 @@ class moodle1_converter extends base_converter {
 
         $element = $this->pathelements[$path];
         $pobject = $element->get_processing_object();
+        $method  = $element->get_end_method();
         $data    = $element->get_data();
-        $method  = 'on_' . $element->get_name() . '_end';
 
         if (method_exists($pobject, $method)) {
             $pobject->$method($data['tags']);
@@ -644,6 +648,12 @@ class convert_path {
     /** @var string the name of the processing method */
     protected $pmethod = null;
 
+    /** @var string the name of the path start event handler */
+    protected $smethod = null;
+
+    /** @var string the name of the path end event handler */
+    protected $emethod = null;
+
     /** @var mixed last data read for this element or returned data by processing method */
     protected $data = null;
 
@@ -672,8 +682,10 @@ class convert_path {
         $this->path     = $path;
         $this->grouped  = $grouped;
 
-        // set the default processing method name
+        // set the default method names
         $this->set_processing_method('process_' . $name);
+        $this->set_start_method('on_'.$name.'_start');
+        $this->set_end_method('on_'.$name.'_end');
 
         if (isset($recipe['dropfields']) and is_array($recipe['dropfields'])) {
             $this->set_dropped_fields($recipe['dropfields']);
@@ -703,6 +715,24 @@ class convert_path {
      */
     public function set_processing_method($pmethod) {
         $this->pmethod = $pmethod;
+    }
+
+    /**
+     * Sets the name of the path start event listener
+     *
+     * @param string $smethod
+     */
+    public function set_start_method($smethod) {
+        $this->smethod = $smethod;
+    }
+
+    /**
+     * Sets the name of the path end event listener
+     *
+     * @param string $emethod
+     */
+    public function set_end_method($emethod) {
+        $this->emethod = $emethod;
     }
 
     /**
@@ -816,6 +846,20 @@ class convert_path {
     }
 
     /**
+     * @return string the name of the path start event listener
+     */
+    public function get_start_method() {
+        return $this->smethod;
+    }
+
+    /**
+     * @return string the name of the path end event listener
+     */
+    public function get_end_method() {
+        return $this->emethod;
+    }
+
+    /**
      * @return mixed the element data
      */
     public function get_data() {
@@ -852,7 +896,9 @@ class convert_path {
     /**
      * Makes sure that the given object is a valid processing object
      *
-     * The processing object must be an object providing the element's processing method.
+     * The processing object must be an object providing at least element's processing method
+     * or path-reached-end event listener or path-reached-start listener method.
+     *
      * Note it may look as if we used exceptions for code flow control here. That's not the case
      * as we actually validate the code, not the user data. And the code is supposed to be
      * correct.
@@ -863,10 +909,12 @@ class convert_path {
      */
     protected function validate_pobject($pobject) {
         if (!is_object($pobject)) {
-            throw new convert_path_exception('convert_path_no_object', $pobject);
+            throw new convert_path_exception('convert_path_no_object', get_class($pobject));
         }
-        if (!method_exists($pobject, $this->get_processing_method())) {
-            throw new convert_path_exception('convert_path_missingmethod', $this->get_processing_method());
+        if (!method_exists($pobject, $this->get_processing_method()) and
+            !method_exists($pobject, $this->get_end_method()) and
+            !method_exists($pobject, $this->get_start_method())) {
+            throw new convert_path_exception('convert_path_missing_method', get_class($pobject));
         }
     }
 }
