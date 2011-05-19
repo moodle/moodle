@@ -185,20 +185,20 @@ class quiz_report_statistics_table extends flexible_table {
             return $name;
         }
 
-        $extraurlparam = '';
+        $url = null;
         if ($question->_stats->subquestion) {
-            $extraurlparam = 'qid=' . $question->id;
+            $url = new moodle_url($this->baseurl, array('qid' => $question->id));
         } else if ($question->_stats->slot && $question->qtype != 'random') {
-            $extraurlparam = 'slot=' . $question->_stats->slot;
+            $url = new moodle_url($this->baseurl, array('slot' => $question->_stats->slot));
         }
 
-        if ($extraurlparam) {
-            $name = '<a title="' . get_string('detailedanalysis', 'quiz_statistics') .
-                    '" href="' . $this->baseurl . $extraurlparam . '">' . $name . '</a>';
+        if ($url) {
+            $name = html_writer::link($url, $name,
+                    array('title' => get_string('detailedanalysis', 'quiz_statistics')));
         }
 
         if ($this->is_dubious_question($question)) {
-            $name = '<div class="dubious">' . $name . '</div>';
+            $name = html_writer::tag('div', $name, array('class' => 'dubious'));
         }
 
         return $name;
