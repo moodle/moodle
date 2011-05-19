@@ -172,16 +172,6 @@ class question_engine_attempt_upgrader {
         }
         $this->logger->set_current_attempt_id(null);
 
-        if (empty($qas)) {
-            $this->logger->log_assumption("All the question attempts for
-                    attempt {$attempt->id} at quiz {$attempt->quiz} were missing.
-                    Deleting this attempt", $attempt->id);
-            // Somehow, all the question attempt data for this quiz attempt
-            // was lost. (This seems to have happened on labspace.)
-            // Delete the corresponding quiz attempt.
-            return $this->delete_quiz_attempt($attempt->uniqueid);
-        }
-
         $questionorder = array();
         foreach (explode(',', $quiz->questions) as $questionid) {
             if ($questionid == 0) {
@@ -220,6 +210,7 @@ class question_engine_attempt_upgrader {
 
             if (!array_key_exists($questionid, $qas)) {
                 $missing[] = $questionid;
+                $layout[$questionkeys[$questionid]] = $questionid;
                 continue;
             }
 
