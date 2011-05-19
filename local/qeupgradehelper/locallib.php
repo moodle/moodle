@@ -344,7 +344,8 @@ function local_qeupgradehelper_get_resettable_quiz($quizid) {
                 SUM(CASE WHEN quiza.needsupgradetonewqe = 0 AND
                     oldtimemodified.time IS NOT NULL THEN 1 ELSE 0 END) AS convertedattempts,
                 SUM(CASE WHEN quiza.needsupgradetonewqe = 0 AND
-                    oldtimemodified.time >= newtimemodified.time THEN 1 ELSE 0 END) AS resettableattempts
+                    newtimemodified.time IS NULL OR oldtimemodified.time >= newtimemodified.time
+                            THEN 1 ELSE 0 END) AS resettableattempts
 
             FROM {quiz_attempts} quiza
             JOIN {quiz} quiz ON quiz.id = quiza.quiz

@@ -85,7 +85,7 @@ class local_qeupgradehelper_attempt_upgrader extends question_engine_attempt_upg
 
                 WHERE quiza.preview = 0
                   AND quiza.needsupgradetonewqe = 0
-                  AND oldtimemodified.time >= newtimemodified.time
+                  AND (newtimemodified.time IS NULL OR oldtimemodified.time >= newtimemodified.time)
                   AND quiza.quiz = :quizid", array('quizid' => $quiz->id));
     }
 
@@ -123,6 +123,9 @@ class local_qeupgradehelper_attempt_upgrader extends question_engine_attempt_upg
         foreach ($slotlayout as $slot) {
             if (array_key_exists($slot, $slottoquestionid)) {
                 $oldlayout[] = $slottoquestionid[$slot];
+            } else if (in_array($slot, $questionids)) {
+                // OK there was probably a problem during the original upgrade.
+                $oldlayout[] = $slot;
             } else {
                 $ok = false;
                 break;
