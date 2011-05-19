@@ -26,6 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(dirname(dirname(__FILE__)) . '/message/lib.php');
+
 /**
  * Called when a message provider wants to send a message.
  * This functions checks the user's processor configuration to send the given type of message,
@@ -107,25 +109,55 @@ function message_send($eventdata) {
 
     $savemessage->timecreated = time();
 
-    // Find out what processors are defined currently
-    // When a user doesn't have settings none gets return, if he doesn't want contact "" gets returned
-    $preferencename = 'message_provider_'.$eventdata->component.'_'.$eventdata->name.'_'.$userstate;
+    // Fetch enabled processors
+    $processors = get_message_processors(true);
+    // Fetch default (site) preferences
+    $defaultpreferences = get_message_output_default_preferences();
 
-    $processor = get_user_preferences($preferencename, null, $eventdata->userto->id);
-    if ($processor == NULL) { //this user never had a preference, save default
-        if (!message_set_default_message_preferences($eventdata->userto)) {
-            print_error('cannotsavemessageprefs', 'message');
-        }
-        $processor = get_user_preferences($preferencename, NULL, $eventdata->userto->id);
-        if (empty($processor)) {
+    // Preset variables
+    $processorlist = array();
+    $preferencebase = $eventdata->component.'_'.$eventdata->name;
+    // Fill in the array of processors to be used based on default and user preferences
+    foreach ($processors as $processor) {
+        // First find out permissions
+        $defaultpreference = $processor->name.'_provider_'.$preferencebase.'_permitted';
+        if (array_key_exists($defaultpreference, $defaultpreferences)) {
+            $permitted = $defaultpreferences->{$defaultpreference};
+        } else {
             //MDL-25114 They supplied an $eventdata->component $eventdata->name combination which doesn't
-            //exist in the message_provider table
+            //exist in the message_provider table (thus there is no default settings for them)
             $preferrormsg = get_string('couldnotfindpreference', 'message', $preferencename);
             throw new coding_exception($preferrormsg,'blah');
         }
+
+        // Find out if user has configured this output
+        $is_user_configured = $processor->object->is_user_configured($eventdata->userto);
+
+        // DEBUG: noify if we are forcing unconfigured output
+        if ($permitted == 'forced' && !$is_user_configured) {
+            debugging('Attempt to force message delivery to user who has "'.$processor->name.'" output unconfigured', DEBUG_NORMAL);
+        }
+
+        // Populate the list of processors we will be using
+        if ($permitted == 'forced' && $is_user_configured) {
+            // We force messages for this processor, so use this processor unconditionally if user has configured it
+            $processorlist[] = $processor->name;
+        } else if ($permitted == 'permitted' && $is_user_configured) {
+            // User settings are permitted, see if user set any, othervice use site default ones
+            $userpreferencename = 'message_provider_'.$preferencebase.'_'.$userstate;
+            if ($userpreference = get_user_preferences($userpreferencename, null, $eventdata->userto->id)) {
+                if (in_array($processor->name, explode(',', $userpreference))) {
+                    $processorlist[] = $processor->name;
+                }
+            } else if (array_key_exists($userpreferencename, $defaultpreferences)) {
+                if (in_array($processor->name, explode(',', $defaultpreferences->{$userpreferencename}))) {
+                    $processorlist[] = $processor->name;
+                }
+            }
+        }
     }
 
-    if ($processor=='none' && $savemessage->notification) {
+    if (empty($processorlist) && $savemessage->notification) {
         //if they have deselected all processors and its a notification mark it read. The user doesnt want to be bothered
         $savemessage->timeread = time();
         $messageid = $DB->insert_record('message_read', $savemessage);
@@ -135,29 +167,14 @@ function message_send($eventdata) {
         $eventdata->savedmessageid = $savemessage->id;
 
         // Try to deliver the message to each processor
-        if ($processor!='none') {
-            $processorlist = explode(',', $processor);
+        if (!empty($processorlist)) {
             foreach ($processorlist as $procname) {
-                $processorfile = $CFG->dirroot. '/message/output/'.$procname.'/message_output_'.$procname.'.php';
-
-                if (is_readable($processorfile)) {
-                    include_once($processorfile);  // defines $module with version etc
-                    $processclass = 'message_output_' . $procname;
-
-                    if (class_exists($processclass)) {
-                        $pclass = new $processclass();
-
-                        if (!$pclass->send_message($eventdata)) {
-                            debugging('Error calling message processor '.$procname);
-                            $messageid = false;
-                        }
-                    }
-                } else {
-                    debugging('Error finding message processor '.$procname);
+                if (!$processors[$procname]->object->send_message($eventdata)) {
+                    debugging('Error calling message processor '.$procname);
                     $messageid = false;
                 }
             }
-            
+
             //if messaging is disabled and they previously had forum notifications handled by the popup processor
             //or any processor that puts a row in message_working then the notification will remain forever
             //unread. To prevent this mark the message read if messaging is disabled
