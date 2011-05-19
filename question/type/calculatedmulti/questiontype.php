@@ -280,54 +280,6 @@ class qtype_calculatedmulti extends qtype_calculated {
         return true;
     }
 
-    public function create_runtime_question($question, $form) {
-        $question = parent::create_runtime_question($question, $form);
-        $question->options->answers = array();
-        foreach ($form->answers as $key => $answer) {
-            $a->answer              = trim($form->answer[$key]);
-            $a->fraction              = $form->fraction[$key];//new
-            $a->tolerance           = $form->tolerance[$key];
-            $a->tolerancetype       = $form->tolerancetype[$key];
-            $a->correctanswerlength = $form->correctanswerlength[$key];
-            $a->correctanswerformat = $form->correctanswerformat[$key];
-            $question->options->answers[] = clone($a);
-        }
-
-        return $question;
-    }
-
-    public function convert_answers(&$question, &$state) {
-        foreach ($question->options->answers as $key => $answer) {
-            $answer->answer = $this->substitute_variables(
-                    $answer->answer, $state->options->dataset);
-            //evaluate the equations i.e {=5+4)
-            $qtext = '';
-            $qtextremaining = $answer->answer;
-            while (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
-
-                $qtextsplits = explode($regs1[0], $qtextremaining, 2);
-                $qtext = $qtext.$qtextsplits[0];
-                $qtextremaining = $qtextsplits[1];
-                if (empty($regs1[1])) {
-                    $str = '';
-                } else {
-                    if ($formulaerrors = qtype_calculated_find_formula_errors($regs1[1])) {
-                        $str=$formulaerrors;
-                    } else {
-                        eval('$str = '.$regs1[1].';');
-                        $texteval= qtype_calculated_calculate_answer(
-                            $str, $state->options->dataset, $answer->tolerance,
-                            $answer->tolerancetype, $answer->correctanswerlength,
-                            $answer->correctanswerformat, '');
-                        $str = $texteval->answer;
-                    }
-                }
-                $qtext = $qtext.$str;
-            }
-            $answer->answer = $qtext.$qtextremaining;;
-        }
-    }
-
     public function get_default_numerical_unit($question, $virtualqtype) {
         $unit = '';
         return $unit;
@@ -339,30 +291,6 @@ class qtype_calculatedmulti extends qtype_calculated {
         // for grading nothing to do
         $virtualqtype = $this->get_virtual_qtype($question);
         return $virtualqtype->grade_responses($question, $state, $cmoptions);
-    }
-
-    // ULPGC ecastro
-    public function get_actual_response(&$question, &$state) {
-        // Substitute variables in questiontext before giving the data to the
-        // virtual type
-        $virtualqtype = $this->get_virtual_qtype($question);
-        $unit = '';
-
-        // We modify the question to look like a multichoice question
-        $numericalquestion = clone($question);
-        $this->convert_answers ($numericalquestion, $state);
-        $this->convert_questiontext ($numericalquestion, $state);
-        $responses = $virtualqtype->get_all_responses($numericalquestion, $state);
-        $response = reset($responses->responses);
-        $correct = $response->answer.' : ';
-
-        $responses = $virtualqtype->get_actual_response($numericalquestion, $state);
-
-        foreach ($responses as $key => $response) {
-            $responses[$key] = $correct . $response;
-        }
-
-        return $responses;
     }
 
     public function create_virtual_qtype() {

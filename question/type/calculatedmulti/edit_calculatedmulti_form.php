@@ -340,7 +340,7 @@ class qtype_calculatedmulti_edit_form extends question_edit_form {
         if (count($mandatorydatasets) == 0) {
             foreach ($answers as $key => $answer) {
                 $errors['answer['.$key.']'] =
-                        get_string('atleastonewildcard', 'qtype_datasetdependent');
+                        get_string('atleastonewildcard', 'qtype_calculated');
             }
         }
         if ($data['multichoice'] == 1) {

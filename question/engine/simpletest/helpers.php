@@ -121,6 +121,8 @@ class test_question_maker {
      * @return question_test_helper the test helper class.
      */
     public static function get_test_helper($qtype) {
+        global $CFG;
+
         if (array_key_exists($qtype, self::$testhelpers)) {
             return self::$testhelpers[$qtype];
         }

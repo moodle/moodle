@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains overall tests of calculated questions.
+ * This file contains overall tests of simple calculated questions.
  *
  * @package    qtype
- * @subpackage calculated
+ * @subpackage calculatedsimple
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,16 +30,16 @@ require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 
 
 /**
- * Unit tests for the calculated question type.
+ * Unit tests for the simple calculated question type.
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class qtype_calculatedsimple_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_interactive() {
 
         // Create a gapselect question.
-        $q = test_question_maker::make_question('calculated');
+        $q = test_question_maker::make_question('calculatedsimple');
         $q->hints = array(
             new question_hint(1, 'This is the first hint.', FORMAT_HTML),
             new question_hint(2, 'This is the second hint.', FORMAT_HTML),

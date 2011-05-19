@@ -266,7 +266,7 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
         if (empty($mandatorydatasets)) {
             foreach ($answers as $key => $answer) {
                 $errors['answer['.$key.']'] =
-                        get_string('atleastonewildcard', 'qtype_datasetdependent');
+                        get_string('atleastonewildcard', 'qtype_calculated');
             }
         }
 

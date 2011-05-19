@@ -1879,54 +1879,6 @@ class qtype_calculated extends question_type {
         return question_bank::get_qtype('numerical');
     }
 
-    /**
-     * Runs all the code required to set up and save an essay question for testing purposes.
-     * Alternate DB table prefix may be used to facilitate data deletion.
-     */
-    public function generate_test($name, $courseid = null) {
-        global $DB;
-        list($form, $question) = parent::generate_test($name, $courseid);
-        $form->feedback = 1;
-        $form->multiplier = array(1, 1);
-        $form->shuffleanswers = 1;
-        $form->noanswers = 1;
-        $form->qtype = 'calculated';
-        $question->qtype = 'calculated';
-        $form->answers = array('{a} + {b}');
-        $form->fraction = array(1);
-        $form->tolerance = array(0.01);
-        $form->tolerancetype = array(1);
-        $form->correctanswerlength = array(2);
-        $form->correctanswerformat = array(1);
-        $form->questiontext = "What is {a} + {b}?";
-
-        if ($courseid) {
-            $course = $DB->get_record('course', array('id' => $courseid));
-        }
-
-        $newquestion = $this->save_question($question, $form);
-
-        $datasetform = new stdClass();
-        $datasetform->nextpageparam['forceregeneration']= 1;
-        $datasetform->calcmin = array(1 => 1.0, 2 => 1.0);
-        $datasetform->calcmax = array(1 => 10.0, 2 => 10.0);
-        $datasetform->calclength = array(1 => 1, 2 => 1);
-        $datasetform->number = array(1 => 5.4 , 2 => 4.9);
-        $datasetform->itemid = array(1 => '' , 2 => '');
-        $datasetform->calcdistribution = array(1 => 'uniform', 2 => 'uniform');
-        $datasetform->definition = array(1 => "1-0-a",
-            2 => "1-0-b");
-        $datasetform->nextpageparam = array('forceregeneration' => false);
-        $datasetform->addbutton = 1;
-        $datasetform->selectadd = 1;
-        $datasetform->courseid = $courseid;
-        $datasetform->cmid = 0;
-        $datasetform->id = $newquestion->id;
-        $this->save_dataset_items($newquestion, $datasetform);
-
-        return $newquestion;
-    }
-
     function move_files($questionid, $oldcontextid, $newcontextid) {
         $fs = get_file_storage();
 

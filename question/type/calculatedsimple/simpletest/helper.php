@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Test helpers for the calculated question type.
+ * Test helpers for the simple calculated question type.
  *
  * @package    qtype
- * @subpackage calculated
+ * @subpackage calculatedsimple
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,16 +26,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/type/calculated/question.php');
+require_once($CFG->dirroot . '/question/type/calculated/simpletest/helper.php');
 
 
 /**
- * Test helper class for the calculated question type.
+ * Test helper class for the simple calculated question type.
  *
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_test_helper extends question_test_helper {
+class qtype_calculatedsimple_test_helper extends question_test_helper {
     public function get_test_questions() {
         return array('sum');
     }
@@ -45,9 +45,9 @@ class qtype_calculated_test_helper extends question_test_helper {
      * answers with different feedback.
      * @return qtype_calculated_question
      */
-    public function make_calculated_question_sum() {
-        question_bank::load_question_definition_classes('calculated');
-        $q = new qtype_calculated_question();
+    public function make_calculatedsimple_question_sum() {
+        question_bank::load_question_definition_classes('calculatedsimple');
+        $q = new qtype_calculatedsimple_question();
         test_question_maker::initialise_a_question($q);
         $q->name = 'Simple sum';
         $q->questiontext = 'What is {a} + {b}?';
@@ -69,30 +69,5 @@ class qtype_calculated_test_helper extends question_test_helper {
         ));
 
         return $q;
-    }
-}
-
-
-/**
- * Test implementation of {@link qtype_calculated_dataset_loader}. Gets the values
- * from an array passed to the constructor, rather than querying the database.
- *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class qtype_calculated_test_dataset_loader extends qtype_calculated_dataset_loader{
-    protected $valuesets;
-
-    public function __construct($questionid, array $valuesets) {
-        parent::__construct($questionid);
-        $this->valuesets = $valuesets;
-    }
-
-    public function get_number_of_items() {
-        return count($this->valuesets);
-    }
-
-    public function load_values($itemnumber) {
-        return $this->valuesets[$itemnumber - 1];
     }
 }

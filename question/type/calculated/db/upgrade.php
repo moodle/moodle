@@ -38,8 +38,8 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
 
     // MDL-16505.
     if ($oldversion < 2008091700 ) { //New version in version.php
-        if (get_config('qtype_datasetdependent', 'version')) {
-            unset_config('version', 'qtype_datasetdependent');
+        if (get_config('qtype_calculated', 'version')) {
+            unset_config('version', 'qtype_calculated');
         }
         upgrade_plugin_savepoint(true, 2008091700, 'qtype', 'calculated');
     }

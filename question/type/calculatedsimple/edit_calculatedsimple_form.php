@@ -26,6 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/calculated/edit_calculated_form.php');
+
 
 /**
  * Editing form for the calculated simplequestion type.
@@ -33,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2007 Jamie Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculatedsimple_edit_form extends question_edit_form {
+class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
     /**
      * Handle to the question type for this question.
      *
@@ -72,7 +74,7 @@ class qtype_calculatedsimple_edit_form extends question_edit_form {
         $this->regenerate = true;
         $this->question = $question;
 
-        $this->qtypeobj = $QTYPES[$this->question->qtype];
+        $this->qtypeobj = question_bank::get_qtype($this->question->qtype);
         // get the dataset definitions for this question
         // coming here everytime even when using a NoSubmitButton
         // so this will only set the values to the actual question database content
@@ -303,7 +305,7 @@ class qtype_calculatedsimple_edit_form extends question_edit_form {
 
         $answerlengthformats = array(
             '1' => get_string('decimalformat', 'qtype_numerical'),
-            '2' => get_string('significantfiguresformat', 'qtype_numerical')
+            '2' => get_string('significantfiguresformat', 'qtype_calculated')
         );
         $addrepeated[] = $mform->createElement('select', 'correctanswerformat',
                 get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
@@ -319,7 +321,6 @@ class qtype_calculatedsimple_edit_form extends question_edit_form {
      * @param MoodleQuickForm $mform the form being built.
      */
     protected function definition_inner($mform) {
-        $this->qtypeobj = $QTYPES[$this->qtype()];
         $strquestionlabel = $this->qtypeobj->comment_header($this->nonemptyanswer);
         $label = get_string("sharedwildcards", "qtype_calculated");
         $mform->addElement('hidden', 'synchronize', 0);
@@ -335,9 +336,9 @@ class qtype_calculatedsimple_edit_form extends question_edit_form {
         $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculated', '{no}'),
             $creategrades->gradeoptions, 1, 1);
 
-        $QTYPES['numerical']->add_units_options($mform, $this);
+        $this->add_unit_options($mform, $this);
+        $this->add_unit_fields($mform, $this);
 
-        $QTYPES['numerical']->add_units_elements($mform, $this);
         $label = "<div class='mdl-align'></div><div class='mdl-align'>" .
                 get_string('wildcardrole', 'qtype_calculatedsimple') . "</div>";
         $mform->addElement('html', "<div class='mdl-align'>&nbsp;</div>");
@@ -638,14 +639,15 @@ class qtype_calculatedsimple_edit_form extends question_edit_form {
             }
         }
         $default_values['synchronize'] = 0;
-        $QTYPES['numerical']->set_numerical_unit_data($this, $question, $default_values);
-        $key = 0;
 
         $formdata = array();
         $fromform = new stdClass();
         //this should be done before the elements are created and stored as $this->formdata;
         //fill out all data sets and also the fields for the next item to add.
         $question = (object)((array)$question + $default_values+$this->formdata);
+
+        $question = $this->data_preprocessing_units($question);
+        $question = $this->data_preprocessing_unit_options($question);
 
         return $question;
     }
@@ -656,109 +658,6 @@ class qtype_calculatedsimple_edit_form extends question_edit_form {
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        //verifying for errors in {=...} in question text;
-        $qtext = "";
-        $qtextremaining = $data['questiontext']['text'];
-        $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']['text']);
-        foreach ($possibledatasets as $name => $value) {
-            $qtextremaining = str_replace('{'.$name.'}', '1', $qtextremaining);
-        }
-        while (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
-            $qtextsplits = explode($regs1[0], $qtextremaining, 2);
-            $qtext = $qtext . $qtextsplits[0];
-            $qtextremaining = $qtextsplits[1];
-            if (!empty($regs1[1]) && $formulaerrors =
-                    qtype_calculated_find_formula_errors($regs1[1])) {
-                if (!isset($errors['questiontext'])) {
-                    $errors['questiontext'] = $formulaerrors.':'.$regs1[1];
-                } else {
-                    $errors['questiontext'] .= '<br/>'.$formulaerrors.':'.$regs1[1];
-                }
-            }
-        }
-        $answers = $data['answer'];
-        $answercount = 0;
-        $maxgrade = false;
-        $possibledatasets = $this->qtypeobj->find_dataset_names(
-                $data['questiontext']['text']);
-        $mandatorydatasets = array();
-        foreach ($answers as $key => $answer) {
-            $mandatorydatasets += $this->qtypeobj->find_dataset_names($answer);
-        }
-        if (count($mandatorydatasets) == 0) {
-            foreach ($answers as $key => $answer) {
-                $errors['answer['.$key.']'] =
-                        get_string('atleastonewildcard', 'qtype_calculated');
-            }
-        }
-        foreach ($answers as $key => $answer) {
-            //check no of choices
-            // the * for everykind of answer not actually implemented
-            $trimmedanswer = trim($answer);
-            if ($trimmedanswer != '' || $answercount == 0) {
-                $eqerror = qtype_calculated_find_formula_errors($trimmedanswer);
-                if (false !== $eqerror) {
-                    $errors['answer['.$key.']'] = $eqerror;
-                }
-            }
-            if ($trimmedanswer != '') {
-                if ('2' == $data['correctanswerformat'][$key]
-                        && '0' == $data['correctanswerlength'][$key]) {
-                    $errors['correctanswerlength['.$key.']'] =
-                            get_string('zerosignificantfiguresnotallowed', 'qtype_calculated');
-                }
-                if (!is_numeric($data['tolerance'][$key])) {
-                    $errors['tolerance['.$key.']'] =
-                            get_string('mustbenumeric', 'qtype_calculated');
-                }
-                if ($data['fraction'][$key] == 1) {
-                    $maxgrade = true;
-                }
-
-                $answercount++;
-            }
-
-            //TODO how should grade checking work here??
-        }
-        $QTYPES['numerical']->validate_numerical_options($data, $errors);
-        $units  = $data['unit'];
-        if (count($units)) {
-            foreach ($units as $key => $unit) {
-                if (is_numeric($unit)) {
-                    $errors['unit['.$key.']'] =
-                            get_string('mustnotbenumeric', 'qtype_calculated');
-                }
-                $trimmedunit = trim($unit);
-                $trimmedmultiplier = trim($data['multiplier'][$key]);
-                if (!empty($trimmedunit)) {
-                    if (empty($trimmedmultiplier)) {
-                        $errors['multiplier['.$key.']'] =
-                                get_string('youmustenteramultiplierhere', 'qtype_calculated');
-                    }
-                    if (!is_numeric($trimmedmultiplier)) {
-                        $errors['multiplier['.$key.']'] =
-                                get_string('mustbenumeric', 'qtype_calculated');
-                    }
-
-                }
-            }
-        }
-        if ($answercount == 0) {
-            $errors['answer[0]'] = get_string('atleastoneanswer', 'qtype_calculated');
-        }
-        if ($maxgrade == false) {
-            $errors['fraction[0]'] = get_string('fractionsnomax', 'question');
-        }
-        if (isset($data['savechanges']) && ($this->noofitems==0)) {
-            $errors['warning'] = get_string('warning', 'mnet');
-        }
-        if ($this->outsidelimit) {
-            $errors['outsidelimits'] =
-                    get_string('oneanswertrueansweroutsidelimits', 'qtype_calculated');
-        }
-        if ($this->noofitems == 0) {
-            $errors['warning'] = get_string('warning', 'mnet');
-        }
 
         return $errors;
     }
