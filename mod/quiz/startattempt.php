@@ -145,7 +145,7 @@ if (!($quiz->attemptonlast && $lastattempt)) {
     }
 
     // Start all the quetsions.
-    $quba->start_all_questions();
+    $quba->start_all_questions(time(), null);
 
     // Update attempt layout.
     $newlayout = array();

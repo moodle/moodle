@@ -352,6 +352,8 @@ class qtype_calculated extends question_type {
             $question->answers[$a->id]->correctanswerformat = $a->correctanswerformat;
         }
 
+        $question->synchronised = $questiondata->options->synchronize;
+
         $question->unitdisplay = $questiondata->options->showunits;
         $question->unitgradingtype = $questiondata->options->unitgradingtype;
         $question->unitpenalty = $questiondata->options->unitpenalty;
@@ -360,67 +362,6 @@ class qtype_calculated extends question_type {
                 $questiondata->options->units, $questiondata->options->unitsleft);
 
         $question->datasetloader = new qtype_calculated_dataset_loader($questiondata->id);
-    }
-
-    public function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
-        // Find out how many datasets are available
-        global $CFG, $DB, $OUTPUT;
-        if (!$maxnumber = (int)$DB->get_field_sql(
-            "SELECT MIN(a.itemcount)
-               FROM {question_dataset_definitions} a, {question_datasets} b
-              WHERE b.question = ? AND a.id = b.datasetdefinition", array($question->id))) {
-            print_error('cannotgetdsforquestion', 'question', '', $question->id);
-        }
-
-        $sql = "SELECT i.*
-                  FROM {question_datasets} d, {question_dataset_definitions} i
-                 WHERE d.question = ? AND d.datasetdefinition = i.id AND i.category != 0";
-
-        if (!$question->options->synchronize ||
-                !$records = $DB->get_records_sql($sql, array($question->id))) {
-            $synchronizecalculated = false;
-        } else {
-            // i.e records is true so test coherence
-            $coherence = true;
-            $a = new stdClass();
-            $a->qid = $question->id;
-            $a->qcat = $question->category;
-            foreach ($records as $def) {
-                if ($def->category != $question->category) {
-                    $a->name = $def->name;
-                    $a->sharedcat = $def->category;
-                    $coherence = false;
-                    break;
-                }
-            }
-            if (!$coherence) {
-                echo $OUTPUT->notification(get_string(
-                        'nocoherencequestionsdatyasetcategory', 'qtype_calculated', $a));
-            }
-            $synchronizecalculated = true;
-        }
-
-        // Choose a random dataset
-        // maxnumber sould not be breater than 100
-        if ($maxnumber > self::MAX_DATASET_ITEMS) {
-            $maxnumber = self::MAX_DATASET_ITEMS;
-        }
-        if ($synchronizecalculated === false) {
-            $state->options->datasetitem = rand(1, $maxnumber);
-        } else {
-            $state->options->datasetitem =
-                    intval($maxnumber * substr($attempt->timestart, -2) /100);
-            if ($state->options->datasetitem < 1) {
-                $state->options->datasetitem = 1;
-            } else if ($state->options->datasetitem > $maxnumber) {
-                $state->options->datasetitem = $maxnumber;
-            }
-
-        };
-        $state->options->dataset =
-            $this->pick_question_dataset($question, $state->options->datasetitem);
-        $virtualqtype = $this->get_virtual_qtype();
-        return $virtualqtype->create_session_and_responses($question, $state, $cmoptions, $attempt);
     }
 
     public function validate_form($form) {
@@ -920,8 +861,6 @@ class qtype_calculated extends question_type {
 
     public function save_dataset_items($question, $fromform) {
         global $CFG, $DB;
-        // max datasets = 100 items
-        $max100 = self::MAX_DATASET_ITEMS;
         $synchronize = false;
         if (isset($fromform->nextpageparam['forceregeneration'])) {
             $regenerate = $fromform->nextpageparam['forceregeneration'];
@@ -997,8 +936,8 @@ class qtype_calculated extends question_type {
         if (isset($fromform->addbutton) && $fromform->selectadd > 0 &&
                 $maxnumber < self::MAX_DATASET_ITEMS) {
             $numbertoadd = $fromform->selectadd;
-            if ($max100 - $maxnumber < $numbertoadd) {
-                $numbertoadd = $max100 - $maxnumber;
+            if (self::MAX_DATASET_ITEMS - $maxnumber < $numbertoadd) {
+                $numbertoadd = self::MAX_DATASET_ITEMS - $maxnumber;
             }
             //add the other items.
             // Generate a new dataset item (or reuse an old one)

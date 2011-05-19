@@ -419,8 +419,10 @@ class question_usage_by_activity {
 
     /**
      * Start the attempt at all questions that has been added to this usage.
+     * @param int $timestamp optional, the timstamp to record for this action. Defaults to now.
+     * @param int $userid optional, the user to attribute this action to. Defaults to the current user.
      */
-    public function start_all_questions() {
+    public function start_all_questions($timestamp = null, $userid = null) {
         foreach ($this->questionattempts as $qa) {
             $qa->start($this->preferredbehaviour);
             $this->observer->notify_attempt_modified($qa);

@@ -37,10 +37,18 @@ require_once($CFG->dirroot . '/question/type/numerical/question.php');
  */
 class qtype_calculated_question extends qtype_numerical_question
         implements qtype_calculated_question_with_expressions {
+
     /** @var qtype_calculated_dataset_loader helper for loading the dataset. */
     public $datasetloader;
+
     /** @var qtype_calculated_variable_substituter stores the dataset we are using. */
     public $vs;
+
+    /**
+     * @var bool wheter the dataset item to use should be chose based on attempt
+     * start time, rather than randomly.
+     */
+    public $synchronised;
 
     public function start_attempt(question_attempt_step $step) {
         qtype_calculated_question_helper::start_attempt($this, $step);
@@ -103,9 +111,16 @@ interface qtype_calculated_question_with_expressions {
 abstract class qtype_calculated_question_helper {
     public static function start_attempt(
             qtype_calculated_question_with_expressions $question, question_attempt_step $step) {
+
         $maxnumber = $question->datasetloader->get_number_of_items();
-        $setnumber = rand(1, $maxnumber);
-        // TODO implement the $synchronizecalculated bit from create_session_and_responses.
+
+        if (!empty($question->synchronised) &&
+                $question->datasetloader->datasets_are_synchronised($question->category)) {
+
+            $setnumber = ($step->get_timecreated() % $maxnumber) + 1;
+        } else {
+            $setnumber = rand(1, $maxnumber);
+        }
 
         $question->vs = new qtype_calculated_variable_substituter(
                 $question->datasetloader->get_values($setnumber),
@@ -210,6 +225,22 @@ class qtype_calculated_dataset_loader {
         }
 
         return $this->load_values($itemnumber);
+    }
+
+    public function datasets_are_synchronised($category) {
+        global $DB;
+        // We need to ensure that there are synchronised datasets, and that they
+        // all use the right category.
+        $categories = $DB->get_record_sql('
+                SELECT MAX(qdd.category) AS max,
+                       MIN(qdd.category) AS min
+                  FROM {question_dataset_definitions} qdd
+                  JOIN {question_datasets} qd ON qdd.id = qd.datasetdefinition
+                 WHERE qd.question = ?
+                   AND qdd.category <> 0
+            ', array($this->questionid));
+
+        return $categories && $categories->max == $category && $categories->min == $category;
     }
 }
 

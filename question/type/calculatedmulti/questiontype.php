@@ -214,6 +214,8 @@ class qtype_calculatedmulti extends qtype_calculated {
             $question->layout = qtype_multichoice_single_question::LAYOUT_VERTICAL;
         }
 
+        $question->synchronised = $questiondata->options->synchronize;
+
         $this->initialise_combined_feedback($question, $questiondata, true);
         $this->initialise_question_answers($question, $questiondata);
 

@@ -38,11 +38,18 @@ require_once($CFG->dirroot . '/question/type/calculated/question.php');
  */
 class qtype_calculatedmulti_single_question extends qtype_multichoice_single_question
         implements qtype_calculated_question_with_expressions {
+
     /** @var qtype_calculated_dataset_loader helper for loading the dataset. */
     public $datasetloader;
 
     /** @var qtype_calculated_variable_substituter stores the dataset we are using. */
     public $vs;
+
+    /**
+     * @var bool wheter the dataset item to use should be chose based on attempt
+     * start time, rather than randomly.
+     */
+    public $synchronised;
 
     public function start_attempt(question_attempt_step $step) {
         qtype_calculated_question_helper::start_attempt($this, $step);
@@ -68,11 +75,18 @@ class qtype_calculatedmulti_single_question extends qtype_multichoice_single_que
  */
 class qtype_calculatedmulti_multi_question extends qtype_multichoice_multi_question
         implements qtype_calculated_question_with_expressions {
+
     /** @var qtype_calculated_dataset_loader helper for loading the dataset. */
     public $datasetloader;
 
     /** @var qtype_calculated_variable_substituter stores the dataset we are using. */
     public $vs;
+
+    /**
+     * @var bool wheter the dataset item to use should be chose based on attempt
+     * start time, rather than randomly.
+     */
+    public $synchronised;
 
     public function start_attempt(question_attempt_step $step) {
         qtype_calculated_question_helper::start_attempt($this, $step);

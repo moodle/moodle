@@ -46,7 +46,7 @@ abstract class question_definition {
     /** @var integer question category id. */
     public $category;
 
-    /** @var integer question category id. */
+    /** @var integer question context id. */
     public $contextid;
 
     /** @var integer parent question id. */
