@@ -242,6 +242,35 @@ abstract class moodle1_xml_handler extends moodle1_handler {
 
         $this->xmlwriter->end_tag($element);
     }
+
+    /**
+     * Makes sure that a new XML file exists, or creates it itself
+     *
+     * This is here so we can check that all XML files that the restore process relies on have
+     * been created by an executed handler. If the file is not found, this method can create it
+     * using the given $rootelement as an empty root container in the file.
+     *
+     * @param string $filename relative file name like 'course/course.xml'
+     * @param string|bool $rootelement root element to use, false to not create the file
+     * @param array $content content of the root element
+     * @return bool true is the file existed, false if it did not
+     */
+    protected function make_sure_xml_exists($filename, $rootelement = false, $content = array()) {
+
+        $existed = file_exists($this->converter->get_workdir_path().'/'.$filename);
+
+        if ($existed) {
+            return true;
+        }
+
+        if ($rootelement !== false) {
+            $this->open_xml_writer($filename);
+            $this->write_xml($rootelement, $content);
+            $this->close_xml_writer();
+        }
+
+        return false;
+    }
 }
 
 
@@ -252,15 +281,6 @@ class moodle1_root_handler extends moodle1_xml_handler {
 
     public function get_paths() {
         return array(new convert_path('root_element', '/MOODLE_BACKUP'));
-    }
-
-    public function process_root_element($data) {
-    }
-
-    /**
-     * This is executed at the very start of the moodle.xml parsing
-     */
-    public function on_root_element_start() {
     }
 
     /**
@@ -426,14 +446,23 @@ class moodle1_root_handler extends moodle1_xml_handler {
 
         $this->close_xml_writer();
 
-        // make sure that questions.xml has been generated as it is required
-        // by the restore process
-        if (!file_exists($this->converter->get_workdir_path().'/'.'questions.xml')) {
-            $this->open_xml_writer('questions.xml');
-            $this->write_xml('question_categories', array());
-            $this->close_xml_writer();
-        }
+        // make sure that the files required by the restore process have been generated.
+        // missing file may happen if the watched tag is not present in moodle.xml (for example
+        // QUESTION_CATEGORIES is optional in moodle.xml but questions.xml must exist in
+        // moodle2 format) or the handler has not been implemented yet.
+        // apparently this must be called after the handler had a chance to create the file.
+        $this->make_sure_xml_exists('questions.xml', 'question_categories');
+        $this->make_sure_xml_exists('files.xml', 'files');
+        $this->make_sure_xml_exists('groups.xml', 'groups');
+        $this->make_sure_xml_exists('scales.xml', 'scales_definition');
+        $this->make_sure_xml_exists('outcomes.xml', 'outcomes_definition');
+        $this->make_sure_xml_exists('users.xml', 'users');
+        $this->make_sure_xml_exists('course/roles.xml', 'roles',
+            array('role_assignments' => array(), 'role_overrides' => array()));
+        $this->make_sure_xml_exists('course/enrolments.xml', 'enrolments',
+            array('enrols' => array()));
     }
+
 }
 
 
@@ -467,14 +496,12 @@ class moodle1_info_handler extends moodle1_handler {
         $this->converter->set_stash('backup_info', $data);
     }
 
-    public function process_info_details() {
-    }
-
     /**
      * Initializes the in-memory cache for the current mod
      */
     public function process_info_details_mod($data) {
         $this->currentmod = $data;
+        $this->currentmod['instances'] = array();
     }
 
     /**
@@ -616,6 +643,9 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
     /** @var array current section data */
     protected $currentsection;
 
+    /** @var string current directory name for all files */
+    protected $currentdir;
+
     /**
      * This handler is interested in course sections and course modules within them
      */
@@ -655,11 +685,10 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
                         'type' => 'modulename',
                     ),
                 )
-            )
+            ),
+            // todo new convert_path('course_module_roles_overrides', '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD/ROLES_OVERRIDES'),
+            // todo new convert_path('course_module_roles_assignments', '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD/ROLES_ASSIGNMENTS'),
         );
-    }
-
-    public function process_course_sections() {
     }
 
     public function process_course_section($data) {
@@ -703,11 +732,21 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
         // can later obtain information about the course module.
         $this->converter->set_stash('cminfo_'.$data['modulename'], $data, $raw['INSTANCE']);
 
+        // populate the current module's dir
+        $this->currentdir = 'activities/'.$data['modulename'].'_'.$data['id'];
+
         // write the module.xml file
-        $this->open_xml_writer('activities/'.$data['modulename'].'_'.$data['id'].'/module.xml');
+        $this->open_xml_writer($this->currentdir.'/module.xml');
         $this->write_xml('module', $data, array('/module/version'));
         $this->close_xml_writer();
+
+        $this->make_sure_xml_exists($this->currentdir.'/roles.xml', 'roles'); // @todo
+        $this->make_sure_xml_exists($this->currentdir.'/grades.xml', 'activity_gradebook'); // @todo
     }
+
+    public function process_course_module_roles_overrides() {
+    }
+
 
     /**
      * Writes sections/section_xxx/section.xml file and stashes it, too
@@ -755,30 +794,43 @@ class moodle1_roles_definition_handler extends moodle1_xml_handler {
         );
     }
 
-    public function process_roles() {
-    }
-
-    public function on_roles_start() {
-        $this->open_xml_writer('roles.xml');
-        $this->xmlwriter->begin_tag('roles_definition');
-    }
-
+    /**
+     * If there are any roles defined in moodle.xml, convert them to roles.xml
+     */
     public function process_roles_role($data) {
+
+        if (!$this->has_xml_writer()) {
+            $this->open_xml_writer('roles.xml');
+            $this->xmlwriter->begin_tag('roles_definition');
+        }
         if (!isset($data['nameincourse'])) {
             $data['nameincourse'] = null;
         }
         $this->write_xml('role', $data, array('role/id'));
     }
 
+    /**
+     * Finishes writing roles.xml
+     */
     public function on_roles_end() {
-        $this->xmlwriter->end_tag('roles_definition');
+
+        if (!$this->has_xml_writer()) {
+            // no roles defined in moodle.xml so {link self::process_roles_role()}
+            // was never executed
+            $this->open_xml_writer('roles.xml');
+            $this->write_xml('roles_definition', array());
+
+        } else {
+            // some roles were dumped into the file, let us close their wrapper now
+            $this->xmlwriter->end_tag('roles_definition');
+        }
         $this->close_xml_writer();
     }
 }
 
 
 /**
- * Handles the conversion of the defined roles
+ * Handles the conversion of question categories
  */
 class moodle1_question_categories_handler extends moodle1_xml_handler {
 
@@ -790,6 +842,7 @@ class moodle1_question_categories_handler extends moodle1_xml_handler {
     }
 
     public function process_question_categories() {
+        // @todo
     }
 }
 
