@@ -515,8 +515,15 @@ class moodle1_info_handler extends moodle1_handler {
      * Stashes the backup info for later processing by {@link moodle1_root_handler}
      */
     public function on_info_details_mod_end($data) {
-        $this->converter->set_stash('modinfo_'.$this->currentmod['name'], $this->currentmod);
-        $this->modnames[] = $this->currentmod['name'];
+        global $CFG;
+
+        // keep only such modules that seem to have the support for moodle1 implemented
+        $modname = $this->currentmod['name'];
+        if (file_exists($CFG->dirroot.'/mod/'.$modname.'/backup/moodle1/lib.php')) {
+            $this->converter->set_stash('modinfo_'.$modname, $this->currentmod);
+            $this->modnames[] = $modname;
+        }
+
         $this->currentmod = array();
     }
 
