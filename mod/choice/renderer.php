@@ -40,7 +40,7 @@ class mod_choice_renderer extends plugin_renderer_base {
             $layoutclass = 'vertical';
         }
         $target = new moodle_url('/mod/choice/view.php');
-        $attributes = array('method'=>'POST', 'target'=>$target, 'class'=> $layoutclass);
+        $attributes = array('method'=>'POST', 'action'=>$target, 'class'=> $layoutclass);
 
         $html = html_writer::start_tag('form', $attributes);
         $html .= html_writer::start_tag('ul', array('class'=>'choices' ));
