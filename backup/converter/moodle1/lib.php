@@ -521,34 +521,18 @@ class moodle1_parser_processor extends grouped_parser_processor {
     }
 
     /**
-     * Provide NULL and legacy file.php uses decoding
+     * Provides NULL decoding
+     *
+     * Note that we do not decode $@FILEPHP@$ and friends here as we are going to write them
+     * back immediately into another XML file.
      */
     public function process_cdata($cdata) {
-        global $CFG;
 
-        if ($cdata === '$@NULL@$') {  // Some cases we know we can skip complete processing
+        if ($cdata === '$@NULL@$') {
             return null;
-        } else if ($cdata === '') {
-            return '';
-        } else if (is_numeric($cdata)) {
-            return $cdata;
-        } else if (strlen($cdata) < 32) { // Impossible to have one link in 32cc
-            return $cdata;                // (http://10.0.0.1/file.php/1/1.jpg, http://10.0.0.1/mod/url/view.php?id=)
-        } else if (strpos($cdata, '$@FILEPHP@$') === false) { // No $@FILEPHP@$, nothing to convert
-            return $cdata;
         }
-        // Decode file.php calls
-        $search = array ("$@FILEPHP@$");
-        $replace = array(get_file_url($this->courseid));
-        $result = str_replace($search, $replace, $cdata);
-        // Now $@SLASH@$ and $@FORCEDOWNLOAD@$ MDL-18799
-        $search = array('$@SLASH@$', '$@FORCEDOWNLOAD@$');
-        if ($CFG->slasharguments) {
-            $replace = array('/', '?forcedownload=1');
-        } else {
-            $replace = array('%2F', '&amp;forcedownload=1');
-        }
-        return str_replace($search, $replace, $result);
+
+        return $cdata;
     }
 
     /**
@@ -557,6 +541,8 @@ class moodle1_parser_processor extends grouped_parser_processor {
      * ones being 100% part of subplugins stuff. Useful
      * for allowing development without having all the
      * possible restore subplugins defined
+     *
+     * @todo review why is this here (it is a relict)
      */
     protected function postprocess_chunk($data) {
 
@@ -649,10 +635,6 @@ class moodle1_xml_transformer extends xml_contenttransformer {
         } else if (strlen($content) < 32) {
             return $content;
         }
-
-        // todo will we need this?
-        //$content = $this->process_filephp_links($content); // Replace all calls to file.php by $@FILEPHP@$ in a normalised way
-        //$content = $this->encode_absolute_links($content); // Pass the content against all the found encoders
 
         return $content;
     }
