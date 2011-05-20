@@ -127,16 +127,14 @@ class comment {
      */
     protected $totalcommentcount = null;
     /**
-     * By default a user must have the generic comment capabilities plus any capabilities the
-     * component being commented on requires.
-     * When set to true only the component capabilities are checked, the system capabilities are
-     * ignored.
-     * This can be toggled by the component defining a callback in its lib.php e.g.
-     *    function forum_comment_allow_anonymous_access(comment $comment) {}
-     * Note: On the front page this defaults to true.
+     * When set to true any user to the system is able to view comments.
+     *
+     * This can be set to true by a plugin by implementing a allow_anonymous_access callback.
+     * By default it is false except on the front page.
+     *
      * @var bool
      */
-    protected $ignoresystempermissions = false;
+    protected $allowanonymousaccess = false;
 
     /**#@+
      * static variable will be used by non-js comments UI
