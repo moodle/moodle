@@ -95,7 +95,8 @@ class qtype_numerical_answer_processor_test extends UnitTestCase {
 
     public function test_apply_units() {
         $ap = new qtype_numerical_answer_processor(
-                array('m/s' => 1, 'c' => 3.3356409519815E-9, 'mph' => 2.2369362920544), false, '.', ',');
+                array('m/s' => 1, 'c' => 3.3356409519815E-9,
+                        'mph' => 2.2369362920544), false, '.', ',');
 
         $this->verify_value_and_unit(3e8, 'm/s', $ap, '3x10^8 m/s');
         $this->verify_value_and_unit(3e8, '', $ap, '3x10^8');
@@ -108,7 +109,8 @@ class qtype_numerical_answer_processor_test extends UnitTestCase {
 
     public function test_apply_units_separate_unit() {
         $ap = new qtype_numerical_answer_processor(
-                array('m/s' => 1, 'c' => 3.3356409519815E-9, 'mph' => 2.2369362920544), false, '.', ',');
+                array('m/s' => 1, 'c' => 3.3356409519815E-9,
+                        'mph' => 2.2369362920544), false, '.', ',');
 
         $this->verify_value_and_unit(3e8, 'm/s', $ap, '3x10^8', 'm/s');
         $this->verify_value_and_unit(3e8, '', $ap, '3x10^8', '');

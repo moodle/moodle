@@ -337,9 +337,9 @@ class qtype_essay_attempt_upgrader_test extends question_attempt_upgrader_test_b
             'generalfeedbackformat' => '1',
             'timecreated' => '0',
             'timemodified' => '0',
-            'createdby' => NULL,
-            'modifiedby' => NULL,
-            'unlimited' => NULL,
+            'createdby' => null,
+            'modifiedby' => null,
+            'unlimited' => null,
             'maxmark' => '0',
             'options' => (object) array(
                 'answers' => array(
@@ -516,9 +516,9 @@ class qtype_essay_attempt_upgrader_test extends question_attempt_upgrader_test_b
             'generalfeedbackformat' => '1',
             'timecreated' => '0',
             'timemodified' => '0',
-            'createdby' => NULL,
-            'modifiedby' => NULL,
-            'unlimited' => NULL,
+            'createdby' => null,
+            'modifiedby' => null,
+            'unlimited' => null,
             'maxmark' => '0',
             'options' => (object) array(
                 'answers' => array(

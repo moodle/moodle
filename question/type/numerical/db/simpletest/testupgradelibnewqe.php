@@ -135,9 +135,9 @@ class qtype_numerical_attempt_upgrader_test extends question_attempt_upgrader_te
             'generalfeedbackformat' => '1',
             'timecreated' => '0',
             'timemodified' => '0',
-            'createdby' => NULL,
-            'modifiedby' => NULL,
-            'unlimited' => NULL,
+            'createdby' => null,
+            'modifiedby' => null,
+            'unlimited' => null,
             'maxmark' => '1',
             'options' => (object) array(
                 'answers' => array(

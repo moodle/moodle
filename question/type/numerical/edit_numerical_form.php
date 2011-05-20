@@ -243,7 +243,7 @@ class qtype_numerical_edit_form extends question_edit_form {
      * @param array $errors the errors array to add to.
      * @return array the updated errors array.
      */
-    function validate_answers($data, $errors) {
+    protected function validate_answers($data, $errors) {
         // Check the answers.
         $answercount = 0;
         $maxgrade = false;
@@ -282,14 +282,14 @@ class qtype_numerical_edit_form extends question_edit_form {
      * @param array $data the submitted data.
      * @return bool whether this is a valid answer.
      */
-    function is_valid_answer($answer, $data) {
+    protected function is_valid_answer($answer, $data) {
         return $answer == '*' || is_numeric($answer);
     }
 
     /**
      * @return string erre describing what an answer should be.
      */
-    function valid_answer_message($answer) {
+    protected function valid_answer_message($answer) {
         return get_string('answermustbenumberorstar', 'qtype_numerical');
     }
 
@@ -299,7 +299,7 @@ class qtype_numerical_edit_form extends question_edit_form {
      * @param array $errors the errors array to add to.
      * @return array the updated errors array.
      */
-    function validate_numerical_options($data, $errors) {
+    protected function validate_numerical_options($data, $errors) {
         if ($data['unitrole'] != qtype_numerical::UNITNONE && trim($data['unit'][0]) == '') {
             $errors['unit[0]'] = get_string('unitonerequired', 'qtype_numerical');
         }

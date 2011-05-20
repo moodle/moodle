@@ -427,7 +427,7 @@ class question_category_object {
         }
 
         // Update the category record.
-        $cat = NULL;
+        $cat = null;
         $cat->id = $updateid;
         $cat->name = $newname;
         $cat->info = $newinfo;

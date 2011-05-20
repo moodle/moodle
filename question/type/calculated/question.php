@@ -81,7 +81,7 @@ class qtype_calculated_question extends qtype_numerical_question
  * is to work with {@link qtype_calculated_question_helper}.
  *
  * As well as this method, the class that implements this interface must have
- * fields 
+ * fields
  * public $datasetloader; // of type qtype_calculated_dataset_loader
  * public $vs; // of type qtype_calculated_variable_substituter
  *
@@ -322,7 +322,7 @@ class qtype_calculated_variable_substituter {
 
     /**
      * Return an array of the variables and their values.
-     * @return array name => value. 
+     * @return array name => value.
      */
     public function get_values() {
         return $this->values;
@@ -404,13 +404,13 @@ class qtype_calculated_variable_substituter {
         while (preg_match('~\\{[[:alpha:]][^>} <{"\']*\\}~', $formula, $regs)) {
             $formula = str_replace($regs[0], '1', $formula);
         }
-    
+
         // Strip away empty space and lowercase it
         $formula = strtolower(str_replace(' ', '', $formula));
-    
+
         $safeoperatorchar = '-+/*%>:^\~<?=&|!'; /* */
         $operatorornumber = "[$safeoperatorchar.0-9eE]";
-    
+
         while (preg_match("~(^|[$safeoperatorchar,(])([a-z0-9_]*)" .
                 "\\(($operatorornumber+(,$operatorornumber+((,$operatorornumber+)+)?)?)?\\)~",
             $formula, $regs)) {
@@ -421,14 +421,14 @@ class qtype_calculated_variable_substituter {
                         return get_string('illegalformulasyntax', 'qtype_calculated', $regs[0]);
                     }
                     break;
-    
+
                     // Zero argument functions
                 case 'pi':
                     if ($regs[3]) {
                         return get_string('functiontakesnoargs', 'qtype_calculated', $regs[2]);
                     }
                     break;
-    
+
                     // Single argument functions (the most common case)
                 case 'abs': case 'acos': case 'acosh': case 'asin': case 'asinh':
                 case 'atan': case 'atanh': case 'bindec': case 'ceil': case 'cos':
@@ -441,32 +441,33 @@ class qtype_calculated_variable_substituter {
                         return get_string('functiontakesonearg', 'qtype_calculated', $regs[2]);
                     }
                     break;
-    
+
                     // Functions that take one or two arguments
                 case 'log': case 'round':
                     if (!empty($regs[5]) || empty($regs[3])) {
-                        return get_string('functiontakesoneortwoargs', 'qtype_calculated', $regs[2]);
+                        return get_string('functiontakesoneortwoargs', 'qtype_calculated',
+                                $regs[2]);
                     }
                     break;
-    
+
                     // Functions that must have two arguments
                 case 'atan2': case 'fmod': case 'pow':
                     if (!empty($regs[5]) || empty($regs[4])) {
                         return get_string('functiontakestwoargs', 'qtype_calculated', $regs[2]);
                     }
                     break;
-    
+
                     // Functions that take two or more arguments
                 case 'min': case 'max':
                     if (empty($regs[4])) {
                         return get_string('functiontakesatleasttwo', 'qtype_calculated', $regs[2]);
                     }
                     break;
-    
+
                 default:
                     return get_string('unsupportedformulafunction', 'qtype_calculated', $regs[2]);
             }
-    
+
             // Exchange the function call with '1' and then chack for
             // another function call...
             if ($regs[1]) {
@@ -477,7 +478,7 @@ class qtype_calculated_variable_substituter {
                 $formula = preg_replace("~^$regs[2]\\([^)]*\\)~", '1', $formula);
             }
         }
-    
+
         if (preg_match("~[^$safeoperatorchar.0-9eE]+~", $formula, $regs)) {
             return get_string('illegalformulasyntax', 'qtype_calculated', $regs[0]);
         } else {

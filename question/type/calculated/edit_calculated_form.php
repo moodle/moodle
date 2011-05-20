@@ -287,11 +287,11 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
         return $errors;
     }
 
-    function is_valid_answer($answer, $data) {
+    protected function is_valid_answer($answer, $data) {
         return !qtype_calculated_find_formula_errors($answer);
     }
 
-    function valid_answer_message($answer) {
+    protected function valid_answer_message($answer) {
         if (!$answer) {
             return get_string('mustenteraformulaorstar', 'qtype_numerical');
         } else {

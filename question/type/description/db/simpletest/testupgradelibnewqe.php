@@ -103,9 +103,9 @@ class qtype_description_attempt_upgrader_test extends question_attempt_upgrader_
             'generalfeedbackformat' => '1',
             'timecreated' => '0',
             'timemodified' => '0',
-            'createdby' => NULL,
-            'modifiedby' => NULL,
-            'unlimited' => NULL,
+            'createdby' => null,
+            'modifiedby' => null,
+            'unlimited' => null,
             'maxmark' => '1',
         );
         $qsession = (object) array(
@@ -248,9 +248,9 @@ class qtype_description_attempt_upgrader_test extends question_attempt_upgrader_
             'generalfeedbackformat' => '1',
             'timecreated' => '0',
             'timemodified' => '0',
-            'createdby' => NULL,
-            'modifiedby' => NULL,
-            'unlimited' => NULL,
+            'createdby' => null,
+            'modifiedby' => null,
+            'unlimited' => null,
             'maxmark' => '0',
         );
         $qsession = (object) array(
@@ -396,9 +396,9 @@ class qtype_description_attempt_upgrader_test extends question_attempt_upgrader_
             'generalfeedbackformat' => '1',
             'timecreated' => '0',
             'timemodified' => '0',
-            'createdby' => NULL,
-            'modifiedby' => NULL,
-            'unlimited' => NULL,
+            'createdby' => null,
+            'modifiedby' => null,
+            'unlimited' => null,
             'maxmark' => '0',
         );
         $qsession = (object) array(

@@ -49,10 +49,6 @@ class qtype_numerical_question extends question_graded_automatically {
     /** @var qtype_numerical_answer_processor */
     public $ap;
 
-    public function __construct() {
-        parent::__construct();
-    }
-
     public function get_expected_data() {
         $expected = array('answer' => PARAM_RAW_TRIMMED);
         if ($this->unitdisplay == qtype_numerical::UNITSELECT) {
@@ -244,7 +240,7 @@ class qtype_numerical_question extends question_graded_automatically {
                 $this->apply_unit_penalty($ans->fraction, $unit)));
     }
 
-    function check_file_access($question, $state, $options, $contextid, $component,
+    public function check_file_access($question, $state, $options, $contextid, $component,
             $filearea, $args) {
         if ($component == 'question' && $filearea == 'answerfeedback') {
             $currentanswer = $qa->get_last_qt_var('answer');
@@ -256,7 +252,8 @@ class qtype_numerical_question extends question_graded_automatically {
             return $this->check_hint_file_access($qa, $options, $args);
 
         } else {
-            return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
+            return parent::check_file_access($qa, $options, $component, $filearea,
+                    $args, $forcedownload);
         }
     }
 }

@@ -51,11 +51,16 @@ class qtype_numerical_test_helper extends question_test_helper {
         $num->questiontext = 'What is pi to two d.p.?';
         $num->generalfeedback = 'Generalfeedback: 3.14 is the right answer.';
         $num->answers = array(
-            13 => new qtype_numerical_answer(13, '3.14', 1.0, 'Very good.', FORMAT_HTML, 0),
-            14 => new qtype_numerical_answer(14, '3.142', 0.0, 'Too accurate.', FORMAT_HTML, 0.005),
-            15 => new qtype_numerical_answer(15, '3.1', 0.0, 'Not accurate enough.', FORMAT_HTML, 0.05),
-            16 => new qtype_numerical_answer(16, '3', 0.0, 'Not accurate enough.', FORMAT_HTML, 0.5),
-            17 => new qtype_numerical_answer(17, '*', 0.0, 'Completely wrong.', FORMAT_HTML, 0),
+            13 => new qtype_numerical_answer(13, '3.14',  1.0, 'Very good.',
+                    FORMAT_HTML, 0),
+            14 => new qtype_numerical_answer(14, '3.142', 0.0, 'Too accurate.',
+                    FORMAT_HTML, 0.005),
+            15 => new qtype_numerical_answer(15, '3.1',   0.0, 'Not accurate enough.',
+                    FORMAT_HTML, 0.05),
+            16 => new qtype_numerical_answer(16, '3',     0.0, 'Not accurate enough.',
+                    FORMAT_HTML, 0.5),
+            17 => new qtype_numerical_answer(17, '*',     0.0, 'Completely wrong.',
+                    FORMAT_HTML, 0),
         );
         $num->qtype = question_bank::get_qtype('numerical');
         $num->unitdisplay = qtype_numerical::UNITOPTIONAL;

@@ -27,8 +27,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-//require_once($CFG->dirroot . '/question/type/numerical/question.php');
-
 
 /**
  * The numerical question type class.
@@ -130,7 +128,7 @@ class qtype_numerical extends question_type {
             if ($defaultunit = $this->get_default_numerical_unit($question)) {
                 $question->options->showunits = self::UNITINPUT;
             } else {
-                $question->options->showunits = self::UNITNONE ;
+                $question->options->showunits = self::UNITNONE;
             }
             $question->options->unitsleft = 0;
 
@@ -248,12 +246,13 @@ class qtype_numerical extends question_type {
      * as old question.
      *
      */
-    function save_unit_options($question) {
+    public function save_unit_options($question) {
         global $DB;
         $result = new stdClass();
 
-        $update = true ;
-        $options = $DB->get_record('question_numerical_options', array('question' => $question->id));
+        $update = true;
+        $options = $DB->get_record('question_numerical_options',
+                array('question' => $question->id));
         if (!$options) {
             $options = new stdClass();
             $options->question = $question->id;
@@ -264,7 +263,7 @@ class qtype_numerical extends question_type {
             $options->unitpenalty = $question->unitpenalty;
         } else {
             // Either an old question or a close question type.
-            $options->unitpenalty = 1 ;
+            $options->unitpenalty = 1;
         }
 
         $options->unitgradingtype = 0;
@@ -370,209 +369,13 @@ class qtype_numerical extends question_type {
         return new qtype_numerical_answer_processor($cleanedunits, $unitsleft);
     }
 
-    function delete_question($questionid, $contextid) {
+    public function delete_question($questionid, $contextid) {
         global $DB;
         $DB->delete_records('question_numerical', array('question' => $questionid));
         $DB->delete_records('question_numerical_options', array('question' => $questionid));
         $DB->delete_records('question_numerical_units', array('question' => $questionid));
 
         parent::delete_question($questionid, $contextid);
-    }
-
-    /**
-    * This function has been reinserted in numerical/questiontype.php to simplify
-    * the separate rendering of number and unit
-    */
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
-        global $CFG, $OUTPUT;
-
-        $context = $this->get_context_by_category_id($question->category);
-        $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
-        $formatoptions = new stdClass();
-        $formatoptions->noclean = true;
-        $formatoptions->para = false;
-        $nameprefix = $question->name_prefix;
-        /// Print question text and media
-
-        $questiontext = format_text($question->questiontext,
-                $question->questiontextformat, $formatoptions, $cmoptions->course);
-
-        /// Print input controls
-        // as the entry is controlled the question type here is numerical
-        // In all cases there is a text input for the number
-        // If $question->options->showunits == NUMERICALQUESTIONUNITTEXTDISPLAY
-        // there is an additional text input for the unit
-        // If $question->options->showunits == NUMERICALQUESTIONUNITMULTICHOICEDISPLAY"
-        // radio elements display the defined unit
-        // The code allows the input number elememt to be displayed
-        // before i.e. at left or after at rigth of the unit variants.
-        $nameanswer = "name=\"".$question->name_prefix."answer\"";
-        $nameunit   = "name=\"".$question->name_prefix."unit\"";
-        // put old answer data in $state->responses['answer'] and $state->responses['unit']
-        if (isset($state->responses['']) && $state->responses[''] != '' && !isset($state->responses['answer'])) {
-              $this->split_old_answer($state->responses[''], $question->options->units, $state->responses['answer'] ,$state->responses['unit'] );
-        }
-        // prepare the values of the input elements to be dispalyed answer i.e. number  and unit
-        if (isset($state->responses['answer']) && $state->responses['answer']!='') {
-            $valueanswer = ' value="'.s($state->responses['answer']).'" ';
-        } else {
-            $valueanswer = ' value="" ';
-        }
-        if (isset($state->responses['unit']) && $state->responses['unit']!='') {
-            $valueunit = ' value="'.s($state->responses['unit']).'" ';
-        } else {
-            $valueunit = ' value="" ';
-            if ($question->options->showunits == NUMERICALQUESTIONUNITTEXTDISPLAY ) {
-              $valueunit = ' value="'.s($question->options->units[0]->unit).'" ';
-            }
-        }
-
-        $feedback = '';
-        $class = '';
-        $classunit = '' ;
-        $classunitvalue = '' ;
-        $feedbackimg = '';
-        $feedbackimgunit = '' ;
-        $answerasterisk = false ;
-        $response = '' ;
-        $valid_numerical_unit = false ;
-        $valid_numerical_unit_index = -1 ;
-        $unit_in_numerical_answer = false ;
-        $rawgrade = 0 ;
-        if ($options->feedback) {
-            $class = question_get_feedback_class(0);
-            $classunit = question_get_feedback_class(0);
-            $feedbackimg = question_get_feedback_image(0);
-            $feedbackimgunit = question_get_feedback_image(0);
-            $classunitvalue = 0 ;
-            $valid_numerical_unit_index = -1 ;
-            // if there is unit in answer and unitgradingtype = 0
-            // the grade is 0
-            //this is OK for the first answer with a good response
-            // having to test for * so response as long as not empty
-           // $response = $this->extract_numerical_response($state->responses['answer']);
-            // test for a greater than 0 grade
-            foreach($question->options->answers as $answer) {
-                if ($this->test_response($question, $state, $answer)) {
-                    // Answer was correct or partially correct.
-                    if ( $answer->answer === '*') {
-                        $answerasterisk = true ;
-                    }
-                    // in all cases
-                    $class = question_get_feedback_class($answer->fraction);
-                    $feedbackimg = question_get_feedback_image($answer->fraction);
-                    if ($question->options->unitgradingtype == 0 || ($question->options->unitgradingtype == 0 && $answer->answer === '*')) {
-                        // if * then unit has the $answer->fraction value
-                        // if $question->options->unitgradingtype == 0 everything has been checked
-                        // if $question->options->showunits == NUMERICALQUESTIONUNITTEXTINPUTDISPLAY
-                        // then number - unit combination has been used to test response
-                        // so the unit should have same color
-                        $classunit = question_get_feedback_class($answer->fraction);
-                        $feedbackimgunit = question_get_feedback_image($answer->fraction);
-                        $rawgrade = $answer->fraction ;
-
-
-                    }else {
-                        /* so we need to apply unit grading i.e. to check if the number-unit combination
-                        * was the rigth one
-                        * on NUMERICALQUESTIONUNITTEXTINPUTDISPLAY we need only to ckeck if applyunit will test OK
-                        * with the $state->responses['unit'] value which cannot be empty
-                        * if $state->responses['unit']
-                        * if apply-unit is true with a specific unit as long as the unit as been written either in the
-                        * we need the numerical response and test it with the available units
-                        * if the unit used is good then it should be set OK
-                        * however the unit could have been put in the number element in this case
-                        * the unit penalty should be apllied.
-                        * testing apply_unit with no units will get us a false response if there is any text in it
-                        * testing apply_unit with a given unit will get a good value if the number is good with this unit
-                        * apply unit will return the numerical if
-                        * we need to know which conditions let to a good numerical value that were done in the
-                        */
-                        $valid_numerical_unit = false ;
-                        $rawgrade = $answer->fraction ;
-                        $valid_numerical_unit_index = -1 ;
-                        $invalid_unit_in_numerical_answer = false ;
-                        if ( $answerasterisk ) {
-                            $classunit = question_get_feedback_class($answer->fraction);
-                            $feedbackimgunit = question_get_feedback_image($answer->fraction);
-                            $valid_numerical_unit = true ;//everything is true with *
-                        } else {
-                          //  if( isset($state->responses['unit']) && $state->responses['unit'] != '' ) {// unit should be written in the unit input or checked in multichoice
-                            // we need to see if something was written in the answer field that was not in the number
-                            // although we cannot actually detect units put before the number which will cause bad numerical.
-                            // use extract response
-                            $response = $this->extract_numerical_response($state->responses['answer']);
-                            if(isset($response->unit ) && $response->unit != '') {
-                                $unit_in_numerical_answer = true ;
-                            }else {
-                                $unit_in_numerical_answer = false ;
-                            }
-
-                            // the we let the testing to the two cases either
-                            // NUMERICALQUESTIONUNITTEXTINPUTDISPLAY or
-                            // NUMERICALQUESTIONUNITMULTICHOICEDISPLAY
-                            if( !isset($state->responses['unit']) || $state->responses['unit'] == '' ) {
-                                // unit should be written in the unit input or checked in multichoice
-                                $valid_numerical_unit = false ;
-                                $classunit = question_get_feedback_class(0);
-                                $feedbackimgunit = question_get_feedback_image(0);
-                                $empty_unit = true ;
-                            } else {
-                               // echo"<p> some unit answer <pre>";print_r($answer) ;echo"</pre></p>";
-                               // echo"<p> some unit answer <pre>";print_r($answer) ;echo"</pre></p>";
-                                $empty_unit = false ;
-                                $valid_numerical_unit = false ;
-
-                                foreach ($question->options->units as $key => $unit) {
-                                    if ($unit->unit == $state->responses['unit']) {
-                                    //    $response = $this->apply_unit($state->responses['answer'].$unit->unit, array($question->options->units[$key])) ;
-                                //       echo "<p> avant false valid_numerical_unit_index $valid_numerical_unit_index  ".$state->responses['answer']."</p>";
-                                        $invalid_unit_found = 0 ;
-                                        if ($response->number !== false) {
-                                //echo "<p> avanr get valid_numerical_unit_index $valid_numerical_unit_index  </p>";
-                                       //     $this->get_tolerance_interval($answer);
-                                       $testresponse = $response->number /$unit->multiplier ;
-                                            if($answer->min <= $testresponse && $testresponse <= $answer->max) {
-                                //echo "<p> apres min max  valid_numerical_unit_index $valid_numerical_unit_index  </p>";
-                                                $classunit = question_get_feedback_class($answer->fraction) ; //question_get_feedback_class(1);
-                                                $feedbackimgunit = question_get_feedback_image($rawgrade);
-                                                $valid_numerical_unit = true ;
-                                                $valid_numerical_unit_index = $key ;
-                                                break ;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if ($answer->feedback) {
-                        $answer->feedback = quiz_rewrite_question_urls($answer->feedback, 'pluginfile.php', $context->id, 'question', 'answerfeedback', array($state->attempt, $state->question), $answer->id);
-                        $feedback = format_text($answer->feedback, $answer->feedbackformat, $formatoptions, $cmoptions->course);
-                    }
-
-                    break;
-                }
-            }
-    }
-        $state->options->raw_unitpenalty = 0 ;
-        $raw_unitpenalty = 0 ;
-        if( $question->options->showunits == NUMERICALQUESTIONUNITNODISPLAY ||
-                $question->options->showunits == NUMERICALQUESTIONUNITTEXTDISPLAY ) {
-                    $classunitvalue = 1 ;
-        }
-
-        if(! $answerasterisk  && $question->options->unitgradingtype != 0 && (! $valid_numerical_unit || $unit_in_numerical_answer)) {
-            if($question->options->unitgradingtype == 1) {
-                $raw_unitpenalty = $question->options->unitpenalty * $rawgrade ;
-            }else {
-                $raw_unitpenalty = $question->options->unitpenalty ;
-            }
-            $state->options->raw_unitpenalty = $raw_unitpenalty ;
-        }
-
-        /// Removed correct answer, to be displayed later MDL-7496
-        include("$CFG->dirroot/question/type/numerical/display.html");
     }
 
     public function get_random_guess_score($questiondata) {
@@ -641,13 +444,13 @@ class qtype_numerical extends question_type {
      * @return float               The rawresponse with the unit taken into
      *                             account as a float.
      */
-    function apply_unit($rawresponse, $units, $unitsleft) {
+    public function apply_unit($rawresponse, $units, $unitsleft) {
         $ap = $this->make_answer_processor($units, $unitsleft);
         list($value, $unit) = $ap->apply_units($rawresponse);
         return $value;
     }
 
-    function move_files($questionid, $oldcontextid, $newcontextid) {
+    public function move_files($questionid, $oldcontextid, $newcontextid) {
         $fs = get_file_storage();
 
         parent::move_files($questionid, $oldcontextid, $newcontextid);
@@ -681,7 +484,8 @@ class qtype_numerical_answer_processor {
 
     protected $regex = null;
 
-    public function __construct($units, $unitsbefore = false, $decsep = null, $thousandssep = null) {
+    public function __construct($units, $unitsbefore = false, $decsep = null,
+            $thousandssep = null) {
         if (is_null($decsep)) {
             $decsep = get_string('decsep', 'langconfig');
         }

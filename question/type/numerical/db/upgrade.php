@@ -36,25 +36,32 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-//===== 1.9.0 upgrade line ======//
+    //===== 1.9.0 upgrade line ======//
     if ($oldversion < 2009100100 ) { //New version in version.php
 
-    /// Define table question_numerical_options to be created
+        // Define table question_numerical_options to be created
         $table = new xmldb_table('question_numerical_options');
 
-    /// Adding fields to table question_numerical_options
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('question', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('instructions', XMLDB_TYPE_TEXT, 'small', null, null, null, null);
-        $table->add_field('showunits', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('unitsleft', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('unitgradingtype', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
-        $table->add_field('unitpenalty', XMLDB_TYPE_NUMBER, '12, 7', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0.1');
+        // Adding fields to table question_numerical_options
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('question', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, null, '0');
+        $table->add_field('instructions', XMLDB_TYPE_TEXT, 'small', null,
+                null, null, null);
+        $table->add_field('showunits', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, null, '0');
+        $table->add_field('unitsleft', XMLDB_TYPE_INTEGER, '4', null,
+                XMLDB_NOTNULL, null, '0');
+        $table->add_field('unitgradingtype', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, null, '0');
+        $table->add_field('unitpenalty', XMLDB_TYPE_NUMBER, '12, 7', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, null, '0.1');
 
-    /// Adding keys to table question_numerical_options
+        // Adding keys to table question_numerical_options
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('question', XMLDB_KEY_FOREIGN, array('question'), 'question', array('id'));
-    /// Conditionally launch create table for question_calculated_options
+        // Conditionally launch create table for question_calculated_options
         if (!$dbman->table_exists($table)) {
             // $dbman->create_table doesnt return a result, we just have to trust it
             $dbman->create_table($table);
@@ -66,7 +73,8 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
 
         // Define field instructionsformat to be added to question_numerical_options
         $table = new xmldb_table('question_numerical_options');
-        $field = new xmldb_field('instructionsformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'instructions');
+        $field = new xmldb_field('instructionsformat', XMLDB_TYPE_INTEGER, '2', null,
+                XMLDB_NOTNULL, null, '0', 'instructions');
 
         // Conditionally launch add field instructionsformat
         if (!$dbman->field_exists($table, $field)) {
@@ -81,7 +89,8 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
                 FROM {question_numerical_options} qno
                 JOIN {question} q ON qno.question = q.id');
         foreach ($rs as $record) {
-            if ($CFG->texteditors !== 'textarea' && $record->oldquestiontextformat == FORMAT_MOODLE) {
+            if ($CFG->texteditors !== 'textarea' &&
+                    $record->oldquestiontextformat == FORMAT_MOODLE) {
                 $record->instructions = text_to_html($record->questiontext, false, false, true);
                 $record->instructionsformat = FORMAT_HTML;
             } else {
@@ -159,7 +168,8 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
                 }
 
                 $oldfiles = $fs->get_area_files($numericaloptions->contextid,
-                        'qtype_numerical', 'instruction', $numericaloptions->questionid, 'id', false);
+                        'qtype_numerical', 'instruction', $numericaloptions->questionid,
+                        'id', false);
                 foreach ($oldfiles as $oldfile) {
                     $filerecord = new stdClass();
                     $filerecord->component = 'question';
@@ -265,6 +275,7 @@ function qtype_numerical_convert_to_html($text, $oldformat) {
             return text_to_html($text, null, $options['para'], $options['newlines']);
 
         default:
-            throw new coding_exception('Unexpected text format when upgrading numerical questions.');
+            throw new coding_exception(
+                    'Unexpected text format when upgrading numerical questions.');
     }
 }

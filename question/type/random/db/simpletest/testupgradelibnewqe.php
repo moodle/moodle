@@ -670,7 +670,7 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             'timecreated' => '1262959197',
             'timemodified' => '0',
             'createdby' => '123783',
-            'modifiedby' => NULL,
+            'modifiedby' => null,
             'unlimited' => '0',
             'options' => (object) array(
                 'answers' => array(
@@ -726,13 +726,13 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
                 44315 => (object) array(
                         'questionid' => '83248',
                         'hint' => 'See Unit 2, Subsection 2.3.',
-                        'rest' => NULL,
+                        'rest' => null,
                         'id' => 44315,
                 ),
                 44316 => (object) array(
                         'questionid' => '83248',
                         'hint' => '<p> Find the measurement on the horizontal axis, draw a line vertically up to meet the conversion line and read off the corresponding value on the vertical axis. </p><p>See Unit 2, Subsection 2.3. </p>',
-                        'rest' => NULL,
+                        'rest' => null,
                         'id' => 44316,
                 ),
             ),

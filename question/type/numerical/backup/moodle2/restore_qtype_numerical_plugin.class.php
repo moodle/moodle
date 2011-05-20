@@ -78,10 +78,6 @@ class restore_qtype_numerical_plugin extends restore_qtype_plugin {
             $data->answer = $this->get_mappingid('question_answer', $data->answer);
             // Insert record
             $newitemid = $DB->insert_record('question_numerical', $data);
-            // Create mapping (not needed, no files nor childs nor states here)
-            //$this->set_mapping('question_numerical', $oldid, $newitemid);
-        } else {
-            // Nothing to remap if the question already existed
         }
     }
 }

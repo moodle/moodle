@@ -36,9 +36,9 @@ defined('MOODLE_INTERNAL') || die();
 class qformat_default {
 
     public $displayerrors = true;
-    public $category = NULL;
+    public $category = null;
     public $questions = array();
-    public $course = NULL;
+    public $course = null;
     public $filename = '';
     public $realfilename = '';
     public $matchgrades = 'error';
@@ -602,7 +602,7 @@ class qformat_default {
         $formatnotimplemented = get_string('formatnotimplemented', 'question');
         echo "<p>$formatnotimplemented</p>";
 
-        return NULL;
+        return null;
     }
 
     /**
@@ -834,7 +834,7 @@ class qformat_default {
         // if not overidden, then this is an error.
         $formatnotimplemented = get_string('formatnotimplemented', 'question');
         echo "<p>$formatnotimplemented</p>";
-        return NULL;
+        return null;
     }
 
     /**

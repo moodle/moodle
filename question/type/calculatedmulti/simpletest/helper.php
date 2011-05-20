@@ -54,7 +54,8 @@ class qtype_calculatedmulti_test_helper extends question_test_helper {
         $q->generalfeedback = 'Generalfeedback: {={a} + {b}} is the right answer.';
         $q->answers = array(
             13 => new qtype_numerical_answer(13, '{a} + {b}', 1.0, 'Very good.', FORMAT_HTML, 0),
-            14 => new qtype_numerical_answer(14, '{a} - {b}', 0.0, 'Add. not subtract!.', FORMAT_HTML, 0),
+            14 => new qtype_numerical_answer(14, '{a} - {b}', 0.0, 'Add. not subtract!.',
+                    FORMAT_HTML, 0),
             17 => new qtype_numerical_answer(17, '*', 0.0, 'Completely wrong.', FORMAT_HTML, 0),
         );
         $q->qtype = question_bank::get_qtype('calculated');
@@ -69,30 +70,5 @@ class qtype_calculatedmulti_test_helper extends question_test_helper {
         ));
 
         return $q;
-    }
-}
-
-
-/**
- * Test implementation of {@link qtype_calculated_dataset_loader}. Gets the values
- * from an array passed to the constructor, rather than querying the database.
- *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class qtype_calculated_test_dataset_loader extends qtype_calculated_dataset_loader{
-    protected $valuesets;
-
-    public function __construct($questionid, array $valuesets) {
-        parent::__construct($questionid);
-        $this->valuesets = $valuesets;
-    }
-
-    public function get_number_of_items() {
-        return count($this->valuesets);
-    }
-
-    public function load_values($itemnumber) {
-        return $this->valuesets[$itemnumber - 1];
     }
 }

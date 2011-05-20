@@ -1653,7 +1653,7 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $requirec
     $contextlist = join($contextlistarr, ' ,');
     if (!empty($pagevars['cat'])){
         $catparts = explode(',', $pagevars['cat']);
-        if (!$catparts[0] || (FALSE !== array_search($catparts[1], $contextlistarr)) ||
+        if (!$catparts[0] || (false !== array_search($catparts[1], $contextlistarr)) ||
                 !$DB->count_records_select("question_categories", "id = ? AND contextid = ?", array($catparts[0], $catparts[1]))) {
             print_error('invalidcategory', 'question');
         }

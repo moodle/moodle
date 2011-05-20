@@ -548,6 +548,7 @@ function local_qeupgradehelper_format_var($name, $var) {
     $out = preg_replace('/\n   (?! )/',       "\n            ", $out);
     $out = preg_replace('/\n  (?! )/',        "\n            ", $out);
     $out = preg_replace('/\n(?! )/',          "\n        ", $out);
+    $out = preg_replace('/\bNULL\b/', 'null', $out);
     return "        $name = $out;\n";
 }
 
