@@ -307,7 +307,7 @@ function message_get_providers_from_file($component) {
 
 /**
  * Remove all message providers
- * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ * @param $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
  */
 function message_uninstall($component) {
     global $DB;

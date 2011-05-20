@@ -107,6 +107,7 @@ defined('MOODLE_INTERNAL') || die();
 /// Add libraries
 require_once($CFG->libdir.'/ddllib.php');
 require_once($CFG->libdir.'/xmlize.php');
+require_once($CFG->libdir.'/messagelib.php');
 
 define('INSECURE_DATAROOT_WARNING', 1);
 define('INSECURE_DATAROOT_ERROR', 2);
@@ -259,6 +260,9 @@ function uninstall_plugin($type, $name) {
 
     // delete the module configuration records
     unset_all_config_for_plugin($pluginname);
+
+    // delete message provider
+    message_uninstall($component);
 
     // delete the plugin tables
     $xmldbfilepath = $plugindirectory . '/db/install.xml';
