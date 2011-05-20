@@ -49,10 +49,10 @@ class moodle1_converter extends base_converter {
     /** @var array of {@link convert_path} to process */
     protected $pathelements = array();
 
-    /** @var string the current module being processed */
+    /** @var string the current module being processed - used to expand the MOD paths */
     protected $currentmod = '';
 
-    /** @var string the current block being processed */
+    /** @var string the current block being processed - used to expand the BLOCK paths */
     protected $currentblock = '';
 
     /** @var string path currently locking processing of children */
