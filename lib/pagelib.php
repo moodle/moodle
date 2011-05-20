@@ -1333,7 +1333,7 @@ class moodle_page {
                         $this->_legacythemeinuse = true;
                     }
 
-                    return get_selected_theme_for_device_type($CFG->themes);
+                    return get_selected_theme_for_device_type();
             }
         }
     }

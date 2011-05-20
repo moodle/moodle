@@ -7677,7 +7677,7 @@ function get_device_type_list($inc_user_types = true) {
  * @param string $device_type
  * @return string $theme or boolean false
  */
-function get_selected_theme_for_device_type($themes, $device_type = null) {
+function get_selected_theme_for_device_type($device_type = null) {
     global $CFG;
 
     if (empty($device_type)) {
@@ -7689,7 +7689,7 @@ function get_selected_theme_for_device_type($themes, $device_type = null) {
         }
     }
 
-    $themes = json_decode($themes);
+    $themes = json_decode($CFG->themes);
 
     if (!empty($themes)) {
         foreach ($themes as $theme) {

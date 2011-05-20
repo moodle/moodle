@@ -107,7 +107,7 @@ if ($CFG->enabledevicedetection && empty($device)) {
         $row = array();
         $row[] = $device;
 
-        $themename = get_selected_theme_for_device_type($CFG->themes, $device);
+        $themename = get_selected_theme_for_device_type($device);
 
         if (!$themename && $device == 'default') {
             $themename = theme_config::DEFAULT_THEME;
@@ -173,7 +173,7 @@ foreach ($themes as $themename => $themedir) {
     $rowclasses = array();
 
     // Set up bools whether this theme is chosen either main or legacy
-    $ischosentheme = ($themename == get_selected_theme_for_device_type($CFG->themes, $device));
+    $ischosentheme = ($themename == get_selected_theme_for_device_type($device));
 
     if ($ischosentheme) {
         // Is the chosen main theme
