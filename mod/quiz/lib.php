@@ -1519,7 +1519,7 @@ function quiz_extend_navigation($quiznode, $course, $module, $cm) {
                 null, null, new pix_icon('i/info', ''));
     }
 
-    if (has_capability('mod/quiz:viewreports', $context)) {
+    if (has_any_capability(array('mod/quiz:viewreports', 'mod/quiz:grade'), $context)) {
         require_once($CFG->dirroot.'/mod/quiz/report/reportlib.php');
         $reportlist = quiz_report_list($context);
 
