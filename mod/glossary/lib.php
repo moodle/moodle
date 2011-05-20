@@ -243,7 +243,16 @@ function glossary_user_outline($course, $user, $mod, $glossary) {
     } else if ($grade) {
         $result = new stdClass();
         $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
-        $result->time = $grade->dategraded;
+
+        //datesubmitted == time created. dategraded == time modified or time overridden
+        //if grade was last modified by the user themselves use date graded. Otherwise use date submitted
+        //TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704
+        if ($grade->usermodified == $user->id || empty($grade->datesubmitted)) {
+            $result->time = $grade->dategraded;
+        } else {
+            $result->time = $grade->datesubmitted;
+        }
+
         return $result;
     }
     return NULL;
@@ -484,11 +493,14 @@ function glossary_rating_permissions($options) {
 function glossary_rating_validate($params) {
     global $DB, $USER;
 
-    if (!array_key_exists('itemid', $params) || !array_key_exists('context', $params) || !array_key_exists('rateduserid', $params)) {
+    if (!array_key_exists('itemid', $params)
+            || !array_key_exists('context', $params)
+            || !array_key_exists('rateduserid', $params)
+            || !array_key_exists('scaleid', $params)) {
         throw new rating_exception('missingparameter');
     }
 
-    $glossarysql = "SELECT g.id as gid, e.userid as userid, e.approved, e.timecreated, g.assesstimestart, g.assesstimefinish
+    $glossarysql = "SELECT g.id as gid, g.scale, e.userid as userid, e.approved, e.timecreated, g.assesstimestart, g.assesstimefinish
                       FROM {glossary_entries} e
                       JOIN {glossary} g ON e.glossaryid = g.id
                      WHERE e.id = :itemid";
@@ -498,14 +510,38 @@ function glossary_rating_validate($params) {
         throw new rating_exception('invaliditemid');
     }
 
+    if ($info->scale != $params['scaleid']) {
+        //the scale being submitted doesnt match the one in the database
+        throw new rating_exception('invalidscaleid');
+    }
+
     if ($info->userid == $USER->id) {
         //user is attempting to rate their own glossary entry
         throw new rating_exception('nopermissiontorate');
     }
 
-    if ($params['rateduserid'] != $info->userid) {
+    if ($info->userid != $params['rateduserid']) {
         //supplied user ID doesnt match the user ID from the database
         throw new rating_exception('invaliduserid');
+    }
+
+    //check that the submitted rating is valid for the scale
+    if ($params['rating'] < 0) {
+        throw new rating_exception('invalidnum');
+    } else if ($info->scale < 0) {
+        //its a custom scale
+        $scalerecord = $DB->get_record('scale', array('id' => -$params['scaleid']));
+        if ($scalerecord) {
+            $scalearray = explode(',', $scalerecord->scale);
+            if ($params['rating'] > count($scalearray)) {
+                throw new rating_exception('invalidnum');
+            }
+        } else {
+            throw new rating_exception('invalidscaleid');
+        }
+    } else if ($params['rating'] > $info->scale) {
+        //if its numeric and submitted rating is above maximum
+        throw new rating_exception('invalidnum');
     }
 
     if (!$info->approved) {

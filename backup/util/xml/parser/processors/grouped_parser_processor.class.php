@@ -71,16 +71,6 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
     }
 
     /**
-     * Notify start of path if selected and not under grouped
-     */
-    public function before_path($path) {
-        if ($this->path_is_selected($path) && !$this->grouped_parent_exists($path)) {
-            parent::before_path($path);
-        }
-    }
-
-
-    /**
      * Dispatch grouped chunks safely once their end tag happens.
      * Also notify end of path if selected and not under grouped
      */
@@ -110,6 +100,7 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
         $path = $data['path'];
         // If the chunk is a grouped one, simply put it into currentdata
         if ($this->path_is_grouped($path)) {
+            $this->notify_path_start($path);
             $this->currentdata[$path] = $data;
 
         // If the chunk is child of grouped one, add it to currentdata
@@ -119,6 +110,7 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
 
         // No grouped nor child of grouped, dispatch it
         } else {
+            $this->notify_path_start($path);
             $this->dispatch_chunk($data);
         }
     }

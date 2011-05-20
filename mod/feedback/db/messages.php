@@ -27,6 +27,9 @@ $messageproviders = array (
 
 /// Submitting a feedback
     'submission' => array (
+    ),
+/// Message to nonrespondents
+    'message' => array (
     )
 
 );
