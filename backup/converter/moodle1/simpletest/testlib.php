@@ -108,6 +108,18 @@ class moodle1_converter_test extends UnitTestCase {
         $this->assertIdentical('Hello', $converter->get_stash('tempinfo', 1));
         $this->assertIdentical('World', $converter->get_stash('tempinfo', 2));
 
+        // test get_stash_itemids()
+        $ids = $converter->get_stash_itemids('course_fileref');
+        $this->assertIsA($ids, 'array');
+        $this->assertTrue(empty($ids));
+
+        $converter->set_stash('course_fileref', null, 34);
+        $converter->set_stash('course_fileref', null, 52);
+        $ids = $converter->get_stash_itemids('course_fileref');
+        $this->assertEqual(2, count($ids));
+        $this->assertTrue(in_array(34, $ids));
+        $this->assertTrue(in_array(52, $ids));
+
         $converter->drop_stash_storage();
     }
 

@@ -411,6 +411,23 @@ class moodle1_converter extends base_converter {
     }
 
     /**
+     * Returns the list of stashed $itemids in the given stash
+     *
+     * @param string $stashname
+     * @return array
+     */
+    public function get_stash_itemids($stashname) {
+        global $DB;
+
+        $search = array(
+            'backupid' => $this->get_id(),
+            'itemname' => $stashname
+        );
+
+        return array_keys($DB->get_records('backup_ids_temp', $search, '', 'itemid'));
+    }
+
+    /**
      * Generates an artificial context id
      *
      * Moodle 1.9 backups do not contain any context information. But we need them
