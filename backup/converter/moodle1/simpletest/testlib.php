@@ -154,6 +154,18 @@ class moodle1_converter_test extends UnitTestCase {
         $converter->drop_stash_storage();
     }
 
+    public function test_get_nextid() {
+        $converter = convert_factory::get_converter('moodle1', $this->tempdir);
+
+        $id1 = $converter->get_nextid();
+        $id2 = $converter->get_nextid();
+        $id3 = $converter->get_nextid();
+
+        $this->assertTrue(0 < $id1);
+        $this->assertTrue($id1 < $id2);
+        $this->assertTrue($id2 < $id3);
+    }
+
     public function test_convert_run_convert() {
         $converter = convert_factory::get_converter('moodle1', $this->tempdir);
         $converter->convert();

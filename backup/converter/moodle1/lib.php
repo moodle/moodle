@@ -456,6 +456,16 @@ class moodle1_converter extends base_converter {
     }
 
     /**
+     * Simple autoincrement generator
+     *
+     * @return int the next number in a row of numbers
+     */
+    public function get_nextid() {
+        static $autoincrement = 0;
+        return ++$autoincrement;
+    }
+
+    /**
      * @see parent::description()
      */
     public static function description() {
