@@ -44,7 +44,7 @@ $string['noquestions'] = 'The Cloze(multianswer) question "<strong>{$a}</strong>
 $string['qtypenotrecognized'] = 'questiontype {$a} not recognized';
 $string['questionnadded'] = 'Question added';
 $string['questiondefinition'] = 'Question definition';
-$string['questiondeleted'] = 'Question deleted' ;
+$string['questiondeleted'] = 'Question deleted';
 $string['questioninquiz'] = '
 
 <ul>
@@ -61,5 +61,5 @@ $string['questiontypechanged'] = 'Question type changed';
 $string['questiontypechangedcomment'] = 'At least one question type has been changed.<br \>Did you add, delete or move a question?<br \>Look ahead.';
 $string['questionusedinquiz'] = 'This question is used in {$a->nb_of_quiz} quiz(s), total attempt(s) : {$a->nb_of_attempts} ';
 $string['unknownquestiontypeofsubquestion'] = 'Unknown question type: {$a->type} of question part # {$a->sub}';
-$string['warningquestionmodified'] = '<b>WARNING</b>' ;
+$string['warningquestionmodified'] = '<b>WARNING</b>';
 $string['youshouldnot'] = '<b>YOU SHOULD NOT</b>';

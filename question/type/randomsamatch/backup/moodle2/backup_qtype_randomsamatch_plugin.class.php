@@ -55,9 +55,8 @@ class backup_qtype_randomsamatch_plugin extends backup_qtype_plugin {
         $pluginwrapper->add_child($randomsamatch);
 
         // set source to populate the data
-        $randomsamatch->set_source_table('question_randomsamatch', array('question' => backup::VAR_PARENTID));
-
-        // don't need to annotate ids nor files
+        $randomsamatch->set_source_table('question_randomsamatch',
+                array('question' => backup::VAR_PARENTID));
 
         return $plugin;
     }

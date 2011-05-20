@@ -33,19 +33,15 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2007 Jamie Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class question_edit_randomsamatch_form extends question_edit_form {
-    /**
-     * Add question-type specific form fields.
-     *
-     * @param MoodleQuickForm $mform the form being built.
-     */
-    protected function definition_inner(&$mform) {
+class qtype_randomsamatch_edit_form extends question_edit_form {
+    protected function definition_inner($mform) {
         $questionstoselect = array();
-        for ($i=2; $i<=QUESTION_NUMANS; $i++){
+        for ($i = 2; $i <= qtype_randomsamatch::MAX_SUBQUESTIONS; $i++) {
             $questionstoselect[$i] = $i;
         }
 
-        $mform->addElement('select', 'choose', get_string("randomsamatchnumber", "quiz"), $questionstoselect);
+        $mform->addElement('select', 'choose',
+                get_string('randomsamatchnumber', 'quiz'), $questionstoselect);
         $mform->setType('feedback', PARAM_RAW);
 
         $mform->addElement('hidden', 'fraction', 0);
@@ -54,11 +50,11 @@ class question_edit_randomsamatch_form extends question_edit_form {
 
     protected function data_preprocessing($question) {
         if (empty($question->name)) {
-            $question->name = get_string("randomsamatch", "quiz");
+            $question->name = get_string('randomsamatch', 'quiz');
         }
 
         if (empty($question->questiontext)) {
-            $question->questiontext = get_string("randomsamatchintro", "quiz");
+            $question->questiontext = get_string('randomsamatchintro', 'quiz');
         }
         return $question;
     }
@@ -67,22 +63,22 @@ class question_edit_randomsamatch_form extends question_edit_form {
         return 'randomsamatch';
     }
 
-    function validation($data, $files) {
-        global $QTYPES, $DB;
+    public function validation($data, $files) {
+        global $DB;
         $errors = parent::validation($data, $files);
         if (isset($data->categorymoveto)) {
             list($category) = explode(',', $data['categorymoveto']);
         } else {
             list($category) = explode(',', $data['category']);
         }
-        $saquestions = $QTYPES['randomsamatch']->get_sa_candidates($category);
+        $saquestions = question_bank::get_qtype('randomsamatch')->get_sa_candidates($category);
         $numberavailable = count($saquestions);
-        if ($saquestions === false){
+        if ($saquestions === false) {
             $a = new stdClass();
             $a->catname = $DB->get_field('question_categories', 'name', array('id' => $category));
             $errors['choose'] = get_string('nosaincategory', 'qtype_randomsamatch', $a);
 
-        } elseif ($numberavailable < $data['choose']){
+        } else if ($numberavailable < $data['choose']) {
             $a = new stdClass();
             $a->catname = $DB->get_field('question_categories', 'name', array('id' => $category));
             $a->nosaquestions = $numberavailable;

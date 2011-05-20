@@ -59,7 +59,8 @@ class backup_qtype_multianswer_plugin extends backup_qtype_plugin {
         $pluginwrapper->add_child($multianswer);
 
         // set source to populate the data
-        $multianswer->set_source_table('question_multianswer', array('question' => backup::VAR_PARENTID));
+        $multianswer->set_source_table('question_multianswer',
+                array('question' => backup::VAR_PARENTID));
 
         // don't need to annotate ids nor files
 

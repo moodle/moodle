@@ -38,7 +38,6 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
      * Returns the paths to be handled by the plugin at question level
      */
     protected function define_question_plugin_structure() {
-
         $paths = array();
 
         // This qtype uses question_answers, add them
@@ -46,9 +45,8 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
 
         // Add own qtype stuff
         $elename = 'multianswer';
-        $elepath = $this->get_pathfor('/multianswer'); // we used get_recommended_name() so this works
+        $elepath = $this->get_pathfor('/multianswer');
         $paths[] = new restore_path_element($elename, $elepath);
-
 
         return $paths; // And we return the interesting paths
     }
@@ -67,7 +65,8 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
         $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
 
-        // If the question has been created by restore, we need to create its question_multianswer too
+        // If the question has been created by restore, we need to create its
+        // question_multianswer too
         if ($questioncreated) {
             // Adjust some columns
             $data->question = $newquestionid;
@@ -79,8 +78,6 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
             $newitemid = $DB->insert_record('question_multianswer', $data);
             // Create mapping (need it for after_execute recode of sequence)
             $this->set_mapping('question_multianswer', $oldid, $newitemid);
-        } else {
-            // Nothing to remap if the question already existed
         }
     }
 
@@ -97,18 +94,21 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
         global $DB;
         // Now that all the questions have been restored, let's process
         // the created question_multianswer sequences (list of question ids)
-        $rs = $DB->get_recordset_sql("SELECT qma.id, qma.sequence
-                                        FROM {question_multianswer} qma
-                                        JOIN {backup_ids_temp} bi ON bi.newitemid = qma.question
-                                       WHERE bi.backupid = ?
-                                         AND bi.itemname = 'question_created'", array($this->get_restoreid()));
+        $rs = $DB->get_recordset_sql("
+                SELECT qma.id, qma.sequence
+                  FROM {question_multianswer} qma
+                  JOIN {backup_ids_temp} bi ON bi.newitemid = qma.question
+                 WHERE bi.backupid = ?
+                   AND bi.itemname = 'question_created'",
+                array($this->get_restoreid()));
         foreach ($rs as $rec) {
             $sequencearr = explode(',', $rec->sequence);
             foreach ($sequencearr as $key => $question) {
                 $sequencearr[$key] = $this->get_mappingid('question', $question);
             }
             $sequence = implode(',', $sequencearr);
-            $DB->set_field('question_multianswer', 'sequence', $sequence, array('id' => $rec->id));
+            $DB->set_field('question_multianswer', 'sequence', $sequence,
+                    array('id' => $rec->id));
         }
         $rs->close();
     }
@@ -127,7 +127,8 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
         $answer = $state->answer;
         $resultarr = array();
         // Get sequence of questions
-        $sequence = $DB->get_field('question_multianswer', 'sequence', array('question' => $state->question));
+        $sequence = $DB->get_field('question_multianswer', 'sequence',
+                array('question' => $state->question));
         $sequencearr = explode(',', $sequence);
         // Let's process each pair
         foreach (explode(',', $answer) as $pair) {

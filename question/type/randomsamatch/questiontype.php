@@ -36,27 +36,21 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_randomsamatch_qtype extends qtype_match {
-/// Extends 'match' as there are quite a few simularities...
+class qtype_randomsamatch extends question_type {
+    const MAX_SUBQUESTIONS = 10;
 
-    function name() {
-        return 'randomsamatch';
+    public function requires_qtypes() {
+        return array('shortanswer', 'match');
     }
 
-    function requires_qtypes() {
-        return array('shortanswer');
-    }
-
-    function is_usable_by_random() {
+    public function is_usable_by_random() {
         return false;
     }
 
-    function get_question_options(&$question) {
-        global $DB, $OUTPUT;
-        if (!$question->options = $DB->get_record('question_randomsamatch', array('question' => $question->id))) {
-            echo $OUTPUT->notification('Error: Missing question options for random short answer question '.$question->id.'!');
-            return false;
-        }
+    public function get_question_options($question) {
+        global $DB;
+        $question->options = $DB->get_record('question_randomsamatch',
+                array('question' => $question->id), '*', MUST_EXIST);
 
         // This could be included as a flag in the database. It's already
         // supported by the code.
@@ -66,7 +60,7 @@ class question_randomsamatch_qtype extends qtype_match {
 
     }
 
-    function save_question_options($question) {
+    public function save_question_options($question) {
         global $DB;
         $options->question = $question->id;
         $options->choose = $question->choose;
@@ -76,23 +70,24 @@ class question_randomsamatch_qtype extends qtype_match {
             return $result;
         }
 
-        if ($existing = $DB->get_record("question_randomsamatch", array("question" => $options->question))) {
+        if ($existing = $DB->get_record('question_randomsamatch',
+                array('question' => $options->question))) {
             $options->id = $existing->id;
-            $DB->update_record("question_randomsamatch", $options);
+            $DB->update_record('question_randomsamatch', $options);
         } else {
-            $DB->insert_record("question_randomsamatch", $options);
+            $DB->insert_record('question_randomsamatch', $options);
         }
         return true;
     }
 
-    function delete_question($questionid, $contextid) {
+    public function delete_question($questionid, $contextid) {
         global $DB;
         $DB->delete_records('question_randomsamatch', array('question' => $questionid));
 
         parent::delete_question($questionid, $contextid);
     }
 
-    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
+    public function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         // Choose a random shortanswer question from the category:
         // We need to make sure that no question is used more than once in the
         // quiz. Therfore the following need to be excluded:
@@ -190,7 +185,7 @@ class question_randomsamatch_qtype extends qtype_match {
             foreach ($responses as $response) {
                 $wqid = $response[0];
                 $state->responses[$wqid] = $response[1];
-                if (!isset($wrappedquestions[$wqid])){
+                if (!isset($wrappedquestions[$wqid])) {
                     if (!$wrappedquestions[$wqid] = $DB->get_record('question', array('id' => $wqid))) {
                         echo $OUTPUT->notification("Couldn't get question (id=$wqid)!");
                         return false;
@@ -231,23 +226,11 @@ class question_randomsamatch_qtype extends qtype_match {
         return true;
     }
 
-    function extract_response($rawresponse, $nameprefix) {
-    /// Simple implementation that does not check with the database
-    /// and thus - does not bother to check whether there has been
-    /// any changes to the question options.
-        $response = array();
-        $rawitems = explode(',', $rawresponse->answer);
-        foreach ($rawitems as $rawitem) {
-            $splits = explode('-', $rawitem, 2);
-            $response[$nameprefix.$splits[0]] = $splits[1];
-        }
-        return $response;
-    }
-
-    function get_sa_candidates($categorylist, $questionsinuse = 0) {
+    public function get_sa_candidates($categorylist, $questionsinuse = 0) {
         global $DB;
         list ($usql, $params) = $DB->get_in_or_equal($categorylist);
-        list ($ques_usql, $ques_params) = $DB->get_in_or_equal(explode(',', $questionsinuse), SQL_PARAMS_QM, null, false);
+        list ($ques_usql, $ques_params) = $DB->get_in_or_equal(explode(',', $questionsinuse),
+                SQL_PARAMS_QM, null, false);
         $params = array_merge($params, $ques_params);
         return $DB->get_records_select('question',
          "qtype = 'shortanswer' " .
@@ -256,80 +239,6 @@ class question_randomsamatch_qtype extends qtype_match {
          "AND hidden = '0'" .
          "AND id $ques_usql", $params);
     }
-    function get_all_responses($question, $state) {
-        $answers = array();
-        if (is_array($question->options->subquestions)) {
-            foreach ($question->options->subquestions as $aid => $answer) {
-                if ($answer->questiontext) {
-                    foreach($answer->options->answers as $ans ){
-                       $answer->answertext = $ans->answer ;
-                    }
-                    $r = new stdClass();
-                    $r->answer = $answer->questiontext . ": " . $answer->answertext;
-                    $r->credit = 1;
-                    $answers[$aid] = $r;
-                }
-            }
-        }
-        $result = new stdClass();
-        $result->id = $question->id;
-        $result->responses = $answers;
-        return $result;
-    }
-    /**
-     * The difference between this method an get_all_responses is that this
-     * method is not passed a state object. It is the possible answers to a
-     * question no matter what the state.
-     * This method is not called for random questions.
-     * @return array of possible answers.
-     */
-    function get_possible_responses(&$question) {
-        global $QTYPES;
-        static $answers = array();
-        if (!isset($answers[$question->id])){
-            if ($question->options->subcats) {
-                // recurse into subcategories
-                $categorylist = question_categorylist($question->category);
-            } else {
-                $categorylist = array($question->category);
-            }
-
-            $question->options->subquestions = $this->get_sa_candidates($categorylist);
-            foreach ($question->options->subquestions as $key => $wrappedquestion) {
-                if (!$QTYPES[$wrappedquestion->qtype]
-                 ->get_question_options($wrappedquestion)) {
-                    return false;
-                }
-
-                // Now we overwrite the $question->options->answers field to only
-                // *one* (the first) correct answer. This loop can be deleted to
-                // take all answers into account (i.e. put them all into the
-                // drop-down menu.
-                $foundcorrect = false;
-                foreach ($wrappedquestion->options->answers as $answer) {
-                    if ($foundcorrect || $answer->fraction != 1.0) {
-                        unset($wrappedquestion->options->answers[$answer->id]);
-                    } else if (!$foundcorrect) {
-                        $foundcorrect = true;
-                    }
-                }
-            }
-            $answers[$question->id] = array();
-            if (is_array($question->options->subquestions)) {
-                foreach ($question->options->subquestions as $subqid => $answer) {
-                    if ($answer->questiontext) {
-                        $ans = array_shift($answer->options->answers);
-                        $answer->answertext = $ans->answer ;
-                        $r = new stdClass();
-                        $r->answer = $answer->questiontext . ": " . $answer->answertext;
-                        $r->credit = 1;
-                        $answers[$question->id][$subqid] = array($ans->id => $r);
-                    }
-                }
-            }
-        }
-        return $answers[$question->id];
-    }
 
     /**
      * @param object $question
@@ -337,7 +246,7 @@ class question_randomsamatch_qtype extends qtype_match {
      * guess by a student might give or an empty string which means will not
      * calculate.
      */
-    function get_random_guess_score($question) {
+    public function get_random_guess_score($question) {
         return 1/$question->options->choose;
     }
 }
