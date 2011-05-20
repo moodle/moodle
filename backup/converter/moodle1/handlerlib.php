@@ -59,7 +59,7 @@ abstract class moodle1_handlers_factory {
         // make sure that all handlers have expected class
         foreach ($handlers as $handler) {
             if (!$handler instanceof moodle1_handler) {
-                throw new convert_exception('wrong_handler_class', get_class($handler));
+                throw new moodle1_convert_exception('wrong_handler_class', get_class($handler));
             }
         }
 
@@ -74,7 +74,7 @@ abstract class moodle1_handlers_factory {
      * @todo ask mod's subplugins
      * @param string $type the plugin type
      * @param moodle1_converter $converter the converter requesting the handler
-     * @throws convert_exception
+     * @throws moodle1_convert_exception
      * @return array of {@link moodle1_handler} instances
      */
     protected static function get_plugin_handlers($type, moodle1_converter $converter) {
@@ -91,7 +91,7 @@ abstract class moodle1_handlers_factory {
             require_once($handlerfile);
 
             if (!class_exists($handlerclass)) {
-                throw new convert_exception('missing_handler_class', $handlerclass);
+                throw new moodle1_convert_exception('missing_handler_class', $handlerclass);
             }
             $handlers[] = new $handlerclass($converter, $type, $name);
         }
@@ -144,7 +144,7 @@ abstract class moodle1_xml_handler extends moodle1_handler {
     protected function open_xml_writer($filename) {
 
         if (!is_null($this->xmlfilename) and $filename !== $this->xmlfilename) {
-            throw new convert_exception('xml_writer_already_opened_for_other_file', $this->xmlfilename);
+            throw new moodle1_convert_exception('xml_writer_already_opened_for_other_file', $this->xmlfilename);
         }
 
         if (!$this->xmlwriter instanceof xml_writer) {
@@ -153,7 +153,7 @@ abstract class moodle1_xml_handler extends moodle1_handler {
             $directory = pathinfo($fullpath, PATHINFO_DIRNAME);
 
             if (!check_dir_exists($directory)) {
-                throw new convert_exception('unable_create_target_directory', $directory);
+                throw new moodle1_convert_exception('unable_create_target_directory', $directory);
             }
             $this->xmlwriter = new xml_writer(new file_xml_output($fullpath), new moodle1_xml_transformer());
             $this->xmlwriter->start();
