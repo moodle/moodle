@@ -195,7 +195,7 @@ abstract class moodle1_xml_handler extends moodle1_handler {
      *
      * @param string $element the name of the root element of the tree
      * @param array $data the associative array of data to write
-     * @param array $attribs list of additional fields written as attributes instead of nested elements (all 'id' are there automatically)
+     * @param array $attribs list of additional fields written as attributes instead of nested elements
      * @param string $parent used internally during the recursion, do not set yourself
      */
     protected function write_xml($element, array $data, array $attribs = array(), $parent = '/') {
@@ -210,7 +210,7 @@ abstract class moodle1_xml_handler extends moodle1_handler {
         // detect properties that should be rendered as element's attributes instead of children
         foreach ($data as $name => $value) {
             if (!is_array($value)) {
-                if ($name === 'id' or in_array($mypath . '/' . $name, $attribs)) {
+                if (in_array($mypath . '/' . $name, $attribs)) {
                     $myattribs[$name] = $value;
                     unset($data[$name]);
                 }
