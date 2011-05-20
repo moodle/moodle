@@ -232,7 +232,10 @@ function message_update_providers($component='moodle') {
             $provider->component  = $component;
             $provider->capability = $fileprovider['capability'];
 
+            $transaction = $DB->start_delegated_transaction();
             $DB->insert_record('message_providers', $provider);
+            message_set_default_message_preference($component, $messagename, $fileprovider);
+            $transaction->allow_commit();
         }
     }
 
@@ -241,6 +244,58 @@ function message_update_providers($component='moodle') {
     }
 
     return true;
+}
+
+/**
+ * Setting default messaging preference for particular message provider
+ * @param  string $component   The name of component (e.g. moodle, mod_forum, etc.)
+ * @param  string $messagename The name of message provider
+ * @param  array  $fileprovider The value of $messagename key in the array defined in plugin messages.php
+ * @return bool
+ */
+function message_set_default_message_preference($component, $messagename, $fileprovider) {
+    global $DB;
+
+    // Fetch message processors
+    $processors = get_message_processors();
+
+    // load default messaging preferences
+    $defaultpreferences = get_message_output_default_preferences();
+
+    // Setting site default preferences
+    $componentproviderbase = $component.'_'.$messagename;
+    $loggedinpref = array();
+    $loggedoffpref = array();
+    foreach ($processors as $processor) {
+        $preferencename = $processor->name.'_provider_'.$componentproviderbase.'_permitted';
+        if (!array_key_exists($preferencename, $defaultpreferences)) {
+            // determine plugin default settings
+            $plugindefault = 0;
+            if (isset($fileprovider['defaults'][$processor->name])) {
+                $plugindefault = $fileprovider['defaults'][$processor->name];
+            }
+            // get string values of the settings
+            list($permitted, $loggedin, $loggedoff) = translate_message_default_setting($plugindefault, $processor->name);
+            // store default preferences for current processor
+            set_config($preferencename, $permitted, 'message');
+            // save loggedin/loggedoff settings
+            if ($loggedin) {
+                $loggedinpref[] = $processor->name;
+            }
+            if ($loggedoff) {
+                $loggedoffpref[] = $processor->name;
+            }
+        }
+    }
+    // store loggedin/loggedoff preferences
+    if (!empty($loggedinpref)) {
+        $preferencename = 'message_provider_'.$componentproviderbase.'_loggedin';
+        set_config($preferencename, join(',', $loggedinpref), 'message');
+    }
+    if (!empty($loggedoffpref)) {
+        $preferencename = 'message_provider_'.$componentproviderbase.'_loggedoff';
+        set_config($preferencename, join(',', $loggedoffpref), 'message');
+    }
 }
 
 /**
@@ -300,6 +355,9 @@ function message_get_providers_from_file($component) {
         if (empty($messageprovider['capability'])) {
             $messageproviders[$name]['capability'] = NULL;
         }
+        if (empty($messageprovider['defaults'])) {
+            $messageproviders[$name]['defaults'] = array();
+        }
     }
 
     return $messageproviders;
@@ -311,53 +369,12 @@ function message_get_providers_from_file($component) {
  */
 function message_uninstall($component) {
     global $DB;
-    return $DB->delete_records('message_providers', array('component' => $component));
-}
 
-/**
- * Set default message preferences.
- * @param $user - User to set message preferences
- */
-function message_set_default_message_preferences($user) {
-    global $DB;
+    $transaction = $DB->start_delegated_transaction();
+    $DB->delete_records('message_providers', array('component' => $component));
+    $DB->delete_records_select('config_plugins', "plugin = 'message' AND ".$DB->sql_like('name', '?', false), array("%_provider_{$component}_%"));
+    $DB->delete_records_select('user_preferences', $DB->sql_like('name', '?', false), array("message_provider_{$component}_%"));
+    $transaction->allow_commit();
 
-    //check for the pre 2.0 disable email setting
-    $useemail = empty($user->emailstop);
-
-    //look for the pre-2.0 preference if it exists
-    $oldpreference = get_user_preferences('message_showmessagewindow', -1, $user->id);
-    //if they elected to see popups or the preference didnt exist
-    $usepopups = (intval($oldpreference)==1 || intval($oldpreference)==-1);
-
-    $defaultonlineprocessor = 'none';
-    $defaultofflineprocessor = 'none';
-    
-    if ($useemail) {
-        $defaultonlineprocessor = 'email';
-        $defaultofflineprocessor = 'email';
-    } else if ($usepopups) {
-        $defaultonlineprocessor = 'popup';
-        $defaultofflineprocessor = 'popup';
-    }
-
-    $offlineprocessortouse = $onlineprocessortouse = null;
-
-    $providers = $DB->get_records('message_providers');
-    $preferences = array();
-
-    foreach ($providers as $providerid => $provider) {
-
-        //force some specific defaults for IMs
-        if ($provider->name=='instantmessage' && $usepopups && $useemail) {
-            $onlineprocessortouse = 'popup';
-            $offlineprocessortouse = 'email,popup';
-        } else {
-            $onlineprocessortouse = $defaultonlineprocessor;
-            $offlineprocessortouse = $defaultofflineprocessor;
-        }
-        
-        $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedin'] = $onlineprocessortouse;
-        $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_loggedoff'] = $offlineprocessortouse;
-    }
-    return set_user_preferences($preferences, $user->id);
+    return true;
 }

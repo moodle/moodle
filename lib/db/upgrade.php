@@ -6122,6 +6122,11 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
+
+        // Populate default messaging settings
+        upgrade_populate_default_messaging_prefs();
+
+        upgrade_main_savepoint(true, 2011052500.01);
     }
 
     return true;

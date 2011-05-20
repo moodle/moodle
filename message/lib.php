@@ -54,6 +54,25 @@ define('MESSAGE_CONTACTS_PER_PAGE',10);
 define('MESSAGE_MAX_COURSE_NAME_LENGTH', 30);
 
 /**
+ * Define contants for messaging default settings population. For unambiguity of
+ * plugin developer intentions we use 4-bit value (LSB numbering):
+ * bit 0 - whether to send message when user is loggedin (MESSAGE_DEFAULT_LOGGEDIN)
+ * bit 1 - whether to send message when user is loggedoff (MESSAGE_DEFAULT_LOGGEDOFF)
+ * bit 2..3 - messaging permission (MESSAGE_DISALLOWED|MESSAGE_PERMITTED|MESSAGE_FORCED)
+ *
+ * MESSAGE_PERMITTED_MASK contains the mask we use to distinguish permission setting
+ */
+
+define('MESSAGE_DEFAULT_LOGGEDIN', 0x01); // 0001
+define('MESSAGE_DEFAULT_LOGGEDOFF', 0x02); // 0010
+
+define('MESSAGE_DISALLOWED', 0x04); // 0100
+define('MESSAGE_PERMITTED', 0x08); // 1000
+define('MESSAGE_FORCED', 0x0c); // 1100
+
+define('MESSAGE_PERMITTED_MASK', 0x0c); // 1100
+
+/**
  * Set default value for default outputs permitted setting
  */
 define('MESSAGE_DEFAULT_PERMITTED', 'permitted');
@@ -2230,4 +2249,54 @@ function get_message_output_default_preferences() {
         $preferences = (object) array();
     }
     return $preferences;
+}
+
+/**
+ * Translate message default settings from binary value to the array of string
+ * representing the settings to be stored. Also validate the provided value and
+ * use default if it is malformed.
+ * @param  int    $plugindefault Default setting suggested by plugin
+ * @param  string $processorname The name of processor
+ * @return array  $settings array of strings in the order: $permitted, $loggedin, $loggedoff.
+ */
+function translate_message_default_setting($plugindefault, $processorname) {
+    // Preset translation arrays
+    $permittedvalues = array(
+        0x04 => 'disallowed',
+        0x08 => 'permitted',
+        0x0c => 'forced',
+    );
+
+    $loggedinstatusvalues = array(
+        0x00 => null, // use null if loggedin/loggedoff is not defined
+        0x01 => 'loggedin',
+        0x02 => 'loggedoff',
+    );
+
+    // define the default setting
+    if ($processorname == 'email') {
+        $default = MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF;
+    } else {
+        $default = MESSAGE_PERMITTED;
+    }
+
+    // Validate the value. It should not exceed the maximum size
+    if (!is_int($plugindefault) || ($plugindefault > 0x0f)) {
+        notify(get_string('errortranslatingdefault', 'message'));
+        $plugindefault = $default;
+    }
+    // Use plugin default setting of 'permitted' is 0
+    if (!($plugindefault & MESSAGE_PERMITTED_MASK)) {
+        $plugindefault = $default;
+    }
+
+    $permitted = $permittedvalues[$plugindefault & MESSAGE_PERMITTED_MASK];
+    $loggedin = $loggedoff = 0x00;
+
+    if (($plugindefault & MESSAGE_PERMITTED_MASK) == MESSAGE_PERMITTED) {
+        $loggedin = $loggedinstatusvalues[$plugindefault & ~MESSAGE_PERMITTED_MASK & MESSAGE_DEFAULT_LOGGEDIN];
+        $loggedoff = $loggedinstatusvalues[$plugindefault & ~MESSAGE_PERMITTED_MASK & MESSAGE_DEFAULT_LOGGEDOFF];
+    }
+
+    return array($permitted, $loggedin, $loggedoff);
 }

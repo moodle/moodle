@@ -98,7 +98,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
 
 /// Set all the preferences for all the message providers
     $providers = message_get_my_providers();
-    foreach ( $providers as $provider) {
+    foreach ($providers as $provider) {
         $componentproviderbase = $provider->component.'_'.$provider->name;
         foreach (array('loggedin', 'loggedoff') as $state) {
             $linepref = '';

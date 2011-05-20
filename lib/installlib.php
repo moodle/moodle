@@ -574,7 +574,6 @@ function install_cli_database(array $options, $interactive) {
     $admins = get_admins();
     $admin = reset($admins);
     session_set_user($admin);
-    message_set_default_message_preferences($admin);
 
     // apply all default settings, do it twice to fill all defaults - some settings depend on other setting
     admin_apply_default_settings(NULL, true);
