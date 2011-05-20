@@ -323,7 +323,7 @@ class moodle1_root_handler extends moodle1_xml_handler {
         $this->xmlwriter->full_tag('original_course_shortname', $originalcourseinfo['original_course_shortname']);
         $this->xmlwriter->full_tag('original_course_startdate', $originalcourseinfo['original_course_startdate']);
         $this->xmlwriter->full_tag('original_course_contextid', $originalcourseinfo['original_course_contextid']);
-        $this->xmlwriter->full_tag('original_system_contextid', $this->converter->get_contextid(CONTEXT_SYSTEM, 0));
+        $this->xmlwriter->full_tag('original_system_contextid', $this->converter->get_contextid(CONTEXT_SYSTEM));
 
         // moodle_backup/information/details
         $this->xmlwriter->begin_tag('details');
@@ -617,7 +617,7 @@ class moodle1_course_header_handler extends moodle1_xml_handler {
 
     public function on_course_header_end() {
 
-        $contextid = $this->converter->get_contextid(CONTEXT_COURSE, $this->course['id']);
+        $contextid = $this->converter->get_contextid(CONTEXT_COURSE);
 
         // stash the information needed by other handlers
         $info = array(

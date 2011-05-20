@@ -434,15 +434,21 @@ class moodle1_converter extends base_converter {
      * in Moodle 2.x format so here we generate fictive context id for every given
      * context level + instance combo.
      *
+     * CONTEXT_SYSTEM and CONTEXT_COURSE ignore the $instance as they represent a
+     * single system or the course being restored.
+     *
      * @see get_context_instance()
      * @param int $level the context level, like CONTEXT_COURSE or CONTEXT_MODULE
      * @param int $instance the instance id, for example $course->id for courses or $cm->id for activity modules
      * @return int the context id
      */
-    public function get_contextid($level, $instance) {
-        static $autoincrement = 0;
+    public function get_contextid($level, $instance = 0) {
 
         $stashname = 'context' . $level;
+
+        if ($level == CONTEXT_SYSTEM or $level == CONTEXT_COURSE) {
+            $instance = 0;
+        }
 
         try {
             // try the previously stashed id
@@ -450,8 +456,9 @@ class moodle1_converter extends base_converter {
 
         } catch (moodle1_convert_empty_storage_exception $e) {
             // this context level + instance is required for the first time
-            $this->set_stash($stashname, ++$autoincrement, $instance);
-            return $autoincrement;
+            $newid = $this->get_nextid();
+            $this->set_stash($stashname, $newid, $instance);
+            return $newid;
         }
     }
 

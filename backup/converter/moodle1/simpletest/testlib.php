@@ -138,8 +138,8 @@ class moodle1_converter_test extends UnitTestCase {
         $converter->create_stash_storage();
 
         // ids are generated on the first call
-        $id1 = $converter->get_contextid(CONTEXT_COURSE, 10);
-        $id2 = $converter->get_contextid(CONTEXT_COURSE, 11);
+        $id1 = $converter->get_contextid(CONTEXT_BLOCK, 10);
+        $id2 = $converter->get_contextid(CONTEXT_BLOCK, 11);
         $id3 = $converter->get_contextid(CONTEXT_MODULE, 10);
 
         $this->assertNotEqual($id1, $id2);
@@ -147,9 +147,25 @@ class moodle1_converter_test extends UnitTestCase {
         $this->assertNotEqual($id2, $id3);
 
         // and then re-used if called with the same params
-        $this->assertEqual($id1, $converter->get_contextid(CONTEXT_COURSE, 10));
-        $this->assertEqual($id2, $converter->get_contextid(CONTEXT_COURSE, 11));
+        $this->assertEqual($id1, $converter->get_contextid(CONTEXT_BLOCK, 10));
+        $this->assertEqual($id2, $converter->get_contextid(CONTEXT_BLOCK, 11));
         $this->assertEqual($id3, $converter->get_contextid(CONTEXT_MODULE, 10));
+
+        // for system and course level, the instance is irrelevant
+        // as we need only one system and one course
+        $id1 = $converter->get_contextid(CONTEXT_COURSE);
+        $id2 = $converter->get_contextid(CONTEXT_COURSE, 10);
+        $id3 = $converter->get_contextid(CONTEXT_COURSE, 14);
+
+        $this->assertEqual($id1, $id2);
+        $this->assertEqual($id1, $id3);
+
+        $id1 = $converter->get_contextid(CONTEXT_SYSTEM);
+        $id2 = $converter->get_contextid(CONTEXT_SYSTEM, 11);
+        $id3 = $converter->get_contextid(CONTEXT_SYSTEM, 15);
+
+        $this->assertEqual($id1, $id2);
+        $this->assertEqual($id1, $id3);
 
         $converter->drop_stash_storage();
     }
