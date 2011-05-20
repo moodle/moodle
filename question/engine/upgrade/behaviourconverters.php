@@ -47,12 +47,14 @@ abstract class question_behaviour_attempt_updater {
     protected $qtypeupdater;
     /** @var question_engine_assumption_logger */
     protected $logger;
+    /** @var question_engine_attempt_upgrader */
+    protected $qeupdater;
 
     /**
      * @var object this is the data for the upgraded questions attempt that
      * we are building.
      */
-    protected $qa;
+    public $qa;
 
     /** @var object the quiz settings. */
     protected $quiz;
@@ -73,13 +75,14 @@ abstract class question_behaviour_attempt_updater {
     /** @var object pointer to the state that has already finished this attempt. */
     protected $finishstate;
 
-    public function __construct($quiz, $attempt, $question, $qsession, $qstates, $logger) {
+    public function __construct($quiz, $attempt, $question, $qsession, $qstates, $logger, $qeupdater) {
         $this->quiz = $quiz;
         $this->attempt = $attempt;
         $this->question = $question;
         $this->qsession = $qsession;
         $this->qstates = $qstates;
         $this->logger = $logger;
+        $this->qeupdater = $qeupdater;
     }
 
     public function discard() {
@@ -93,6 +96,7 @@ abstract class question_behaviour_attempt_updater {
         $this->qtypeupdater->discard();
         $this->qtypeupdater = null;
         $this->logger = null;
+        $this->qeupdater = null;
     }
 
     protected abstract function behaviour_name();
@@ -128,11 +132,11 @@ abstract class question_behaviour_attempt_updater {
         $qa = new stdClass();
         $qa->questionid = $this->question->id;
         $qa->behaviour = $this->behaviour_name();
+        $qa->questionsummary = $this->qtypeupdater->question_summary($this->question);
+        $qa->rightanswer = $this->qtypeupdater->right_answer($this->question);
         $qa->maxmark = $this->question->maxmark;
         $qa->minfraction = 0;
         $qa->flagged = 0;
-        $qa->questionsummary = $this->qtypeupdater->question_summary($this->question);
-        $qa->rightanswer = $this->qtypeupdater->right_answer($this->question);
         $qa->responsesummary = '';
         $qa->timemodified = 0;
         $qa->steps = array();
@@ -271,7 +275,7 @@ abstract class question_behaviour_attempt_updater {
                     is missing important code (the class {$class})
                     required to run the upgrade to the new question engine.");
         }
-        return new $class($this, $this->question, $this->logger);
+        return new $class($this, $this->question, $this->logger, $this->qeupdater);
     }
 
     public function to_text($html) {
@@ -438,6 +442,7 @@ class qbehaviour_adaptive_converter extends question_behaviour_attempt_updater {
     }
 
     protected function finish_up() {
+        parent::finish_up();
         if ($this->finishstate || !$this->attempt->timefinish) {
             return;
         }

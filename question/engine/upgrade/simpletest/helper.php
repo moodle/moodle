@@ -88,6 +88,20 @@ class test_question_engine_upgrade_question_loader extends question_engine_upgra
 
         return null;
     }
+
+    public function put_dataset_in_cache($questionid, $selecteditem, $dataset) {
+        $this->datasetcache[$questionid][$selecteditem] = $dataset;
+    }
+
+    public function load_dataset($questionid, $selecteditem) {
+        global $DB;
+
+        if (isset($this->datasetcache[$questionid][$selecteditem])) {
+            return $this->datasetcache[$questionid][$selecteditem];
+        }
+
+        throw new coding_exception('Test dataset not loaded.');
+    }
 }
 
 

@@ -274,6 +274,10 @@ class question_engine_attempt_upgrader {
         return $this->questionloader->get_question($questionid, $quizid);
     }
 
+    public function load_dataset($questionid, $selecteditem) {
+        return $this->questionloader->load_dataset($questionid, $selecteditem);
+    }
+
     public function get_next_question_session($attempt, moodle_recordset $questionsessionsrs) {
         if (!$questionsessionsrs->valid()) {
             return false;
@@ -335,7 +339,7 @@ class question_engine_attempt_upgrader {
         $converterclass = $this->get_converter_class_name($question, $quiz, 'missing');
 
         $qbehaviourupdater = new $converterclass($quiz, $attempt, $question,
-                null, null, $this->logger);
+                null, null, $this->logger, $this);
         $qa = $qbehaviourupdater->supply_missing_qa();
         $qbehaviourupdater->discard();
         return $qa;
@@ -352,7 +356,7 @@ class question_engine_attempt_upgrader {
         $converterclass = $this->get_converter_class_name($question, $quiz, $qsession->id);
 
         $qbehaviourupdater = new $converterclass($quiz, $attempt, $question, $qsession,
-                $qstates, $this->logger);
+                $qstates, $this->logger, $this);
         $qa = $qbehaviourupdater->get_converted_qa();
         $qbehaviourupdater->discard();
         return $qa;
@@ -400,6 +404,7 @@ class question_engine_attempt_upgrader {
  */
 class question_engine_upgrade_question_loader {
     private $cache = array();
+    private $datasetcache = array();
 
     public function __construct($logger) {
         $this->logger = $logger;
@@ -464,6 +469,24 @@ class question_engine_upgrade_question_loader {
         $this->cache[$questionid] = $question;
         return $this->cache[$questionid];
     }
+
+    public function load_dataset($questionid, $selecteditem) {
+        global $DB;
+
+        if (isset($this->datasetcache[$questionid][$selecteditem])) {
+            return $this->datasetcache[$questionid][$selecteditem];
+        }
+
+        $this->datasetcache[$questionid][$selecteditem] = $DB->get_records_sql_menu('
+                SELECT qdd.name, qdi.value
+                  FROM {question_dataset_items} qdi
+                  JOIN {question_dataset_definitions} qdd ON qdd.id = qdi.definition
+                  JOIN {question_datasets} qd ON qdd.id = qd.datasetdefinition
+                 WHERE qd.question = ?
+                   AND qdi.itemnumber = ?
+                ', array($questionid, $selecteditem));
+        return $this->datasetcache[$questionid][$selecteditem];
+    }
 }
 
 
@@ -481,11 +504,14 @@ abstract class question_qtype_attempt_updater {
     protected $updater;
     /** @var question_engine_assumption_logger */
     protected $logger;
+    /** @var question_engine_attempt_upgrader */
+    protected $qeupdater;
 
-    public function __construct($updater, $question, $logger) {
+    public function __construct($updater, $question, $logger, $qeupdater) {
         $this->updater = $updater;
         $this->question = $question;
         $this->logger = $logger;
+        $this->qeupdater = $qeupdater;
     }
 
     public function discard() {
@@ -493,6 +519,7 @@ abstract class question_qtype_attempt_updater {
         $this->updater = null;
         $this->question = null;
         $this->logger = null;
+        $this->qeupdater = null;
     }
 
     protected function to_text($html) {
