@@ -39,10 +39,18 @@ class moodle1_converter_test extends UnitTestCase {
         global $CFG;
 
         $this->tempdir = convert_helper::generate_id('simpletest');
-        check_dir_exists("$CFG->dataroot/temp/backup/$this->tempdir");
+        check_dir_exists("$CFG->dataroot/temp/backup/$this->tempdir/course_files/sub1");
         copy(
             "$CFG->dirroot/backup/converter/moodle1/simpletest/files/moodle.xml",
             "$CFG->dataroot/temp/backup/$this->tempdir/moodle.xml"
+        );
+        copy(
+            "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
+            "$CFG->dataroot/temp/backup/$this->tempdir/course_files/file1.gif"
+        );
+        copy(
+            "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
+            "$CFG->dataroot/temp/backup/$this->tempdir/course_files/sub1/file2.gif"
         );
     }
 
