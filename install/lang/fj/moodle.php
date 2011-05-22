@@ -28,4 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['language'] = 'vosa';
 $string['next'] = 'tarava';
+$string['previous'] = 'lesu';
+$string['reload'] = 'ucuna tale';
