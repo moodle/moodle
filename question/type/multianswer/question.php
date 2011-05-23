@@ -68,7 +68,30 @@ class qtype_multianswer_question extends question_graded_automatically {
         }
     }
 
-    // TODO get_question_summary ???
+    public function get_question_summary() {
+        $summary = $this->html_to_text($this->questiontext, $this->questiontextformat);
+        foreach ($this->subquestions as $i => $subq) {
+            switch ($subq->qtype->name()) {
+                case 'multichoice':
+                    $choices = array();
+                    $dummyqa = new question_attempt($subq, $this->contextid);
+                    foreach ($subq->get_order($dummyqa) as $ansid) {
+                        $choices[] = $this->html_to_text($subq->answers[$ansid]->answer,
+                                $subq->answers[$ansid]->answerformat);
+                    }
+                    $answerbit = '{' . implode('; ', $choices) . '}';
+                    break;
+                case 'numerical':
+                case 'shortanswer':
+                    $answerbit = '_____';
+                    break;
+                default:
+                    $answerbit = '{ERR unknown sub-question type}';
+            }
+            $summary = str_replace('{#' . $i . '}', $answerbit, $summary);
+        }
+        return $summary;
+    }
 
     public function get_min_fraction() {
         $fractionsum = 0;
@@ -95,7 +118,7 @@ class qtype_multianswer_question extends question_graded_automatically {
         $right = array();
         foreach ($this->subquestions as $i => $subq) {
             $substep = $this->get_substep(null, $i);
-            foreach ($subq->get_expected_data() as $name => $type) {
+            foreach ($subq->get_correct_response() as $name => $type) {
                 $right[$substep->add_prefix($name)] = $type;
             }
         }

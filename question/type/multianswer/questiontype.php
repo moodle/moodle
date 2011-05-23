@@ -188,6 +188,7 @@ class qtype_multianswer extends question_type {
         foreach ($questiondata->options->questions as $key => $subqdata) {
             $subqdata->contextid = $questiondata->contextid;
             $question->subquestions[$key] = question_bank::make_question($subqdata);
+            $question->subquestions[$key]->maxmark = $subqdata->defaultmark;
         }
     }
 
@@ -502,7 +503,7 @@ class qtype_multianswer extends question_type {
         $fractionsum = 0;
         $fractionmax = 0;
         foreach ($questiondata->options->questions as $key => $subqdata) {
-            $fractionmax += $subqdata->maxmark;
+            $fractionmax += $subqdata->defaultmark;
             $fractionsum += question_bank::get_qtype(
                     $subqdata->qtype)->get_random_guess_score($subqdata);
         }

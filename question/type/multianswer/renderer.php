@@ -32,14 +32,13 @@
  * the task of display their input elements and status 
  * feedback, grade, correct answer(s)
  *
- * @copyright © 2009 The Open University
+ * @copyright 2010 Pierre Pichet
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
  class qtype_multianswer_renderer extends qtype_renderer {
 
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
-
         $question = $qa->get_question();
 
         $result = '';
@@ -84,7 +83,7 @@
 
 
     public function correct_response(question_attempt $qa) {
-        return '' ;
+        return '';
     }
 
 }
@@ -94,7 +93,7 @@
  * Subclass for generating the bits of output specific to shortanswer
  * subquestions.
  *
- * @copyright © 2009 The Open University
+ * @copyright 2009 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
  require_once($CFG->dirroot . '/question/type/shortanswer/renderer.php');

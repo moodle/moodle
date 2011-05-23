@@ -43,7 +43,7 @@ require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 class qtype_multichoice_walkthrough_test extends qbehaviour_walkthrough_test_base {
     public function test_deferredfeedback_feedback_multichoice_single() {
 
-        // Create a true-false question with correct answer true.
+        // Create a multichoice, single question.
         $mc = test_question_maker::make_a_multichoice_single_question();
         $mc->shuffleanswers = false;
         $mc->answers[14]->fraction = 0.1; // Make one of the choices partially right.
@@ -76,7 +76,7 @@ class qtype_multichoice_walkthrough_test extends qbehaviour_walkthrough_test_bas
     }
 
     public function test_deferredfeedback_feedback_multichoice_multi() {
-        // Create a true-false question with correct answer true.
+        // Create a multichoice, multi question.
         $mc = test_question_maker::make_a_multichoice_multi_question();
         $mc->shuffleanswers = false;
 
