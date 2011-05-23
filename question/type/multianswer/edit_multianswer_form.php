@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2007 Jamie Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class question_edit_multianswer_form extends question_edit_form {
+class qtype_multianswer_edit_form extends question_edit_form {
 
     //  $questiondisplay will contain the qtype_multianswer_extract_question from
     // the questiontext
@@ -83,8 +83,8 @@ class question_edit_multianswer_form extends question_edit_form {
         $mform->addElement('hidden', 'reload', 1);
         $mform->setType('reload', PARAM_INT);
 
-        // Remove meaningless defaultgrade field.
-        $mform->removeElement('defaultgrade');
+        // Remove meaningless defaultmark field.
+        $mform->removeElement('defaultmark');
         $this->confirm = optional_param('confirm', '0', PARAM_RAW);
 
         // display the questions from questiontext;
@@ -145,9 +145,9 @@ class question_edit_multianswer_form extends question_edit_form {
             $mform->addElement('html', '<div class=" clearfix">');
             for ($sub = 1; $sub <= $countsubquestions; $sub++) {
 
-                $this->editas[$sub] =  'unknown type';
+                $this->editas[$sub] = 'unknown type';
                 if (isset($this->questiondisplay->options->questions[$sub]->qtype)) {
-                    $this->editas[$sub] =  $this->questiondisplay->options->questions[$sub]->qtype;
+                    $this->editas[$sub] = $this->questiondisplay->options->questions[$sub]->qtype;
                 } else if (optional_param('sub_'.$sub."_".'qtype', '', PARAM_RAW) != '') {
                     $this->editas[$sub] = optional_param('sub_'.$sub."_".'qtype', '', PARAM_RAW);
                 }
@@ -175,14 +175,14 @@ class question_edit_multianswer_form extends question_edit_form {
                             $this->questiondisplay->options->questions[$sub]->questiontext['text']);
                 }
 
-                $mform->addElement('static', 'sub_'.$sub."_".'defaultgrade',
-                        get_string('defaultgrade', 'question'));
-                $mform->setDefault('sub_'.$sub."_".'defaultgrade',
-                        $this->questiondisplay->options->questions[$sub]->defaultgrade);
+                $mform->addElement('static', 'sub_'.$sub."_".'defaultmark',
+                        get_string('defaultmark', 'question'));
+                $mform->setDefault('sub_'.$sub."_".'defaultmark',
+                        $this->questiondisplay->options->questions[$sub]->defaultmark);
 
                 if ($this->questiondisplay->options->questions[$sub]->qtype == 'shortanswer') {
                     $mform->addElement('static', 'sub_'.$sub."_".'usecase',
-                            get_string('casesensitive', 'question'));
+                            get_string('casesensitive', 'qtype_shortanswer'));
                 }
 
                 if ($this->questiondisplay->options->questions[$sub]->qtype == 'multichoice') {
@@ -198,7 +198,7 @@ class question_edit_multianswer_form extends question_edit_form {
                     if ($this->questiondisplay->options->questions[$sub]->qtype == 'numerical' &&
                             $key == 0) {
                         $mform->addElement('static', 'sub_'.$sub."_".'tolerance['.$key.']',
-                                get_string('acceptederror', 'quiz'));
+                                get_string('acceptederror', 'qtype_numerical'));
                     }
 
                     $mform->addElement('static', 'sub_'.$sub."_".'fraction['.$key.']',
@@ -270,7 +270,7 @@ class question_edit_multianswer_form extends question_edit_form {
                     // The old way of restoring the definitions is kept to gradually
                     // update all multianswer questions
                     if (empty($wrapped->questiontext)) {
-                        $parsableanswerdef = '{' . $wrapped->defaultgrade . ':';
+                        $parsableanswerdef = '{' . $wrapped->defaultmark . ':';
                         switch ($wrapped->qtype) {
                             case 'multichoice':
                                 $parsableanswerdef .= 'MULTICHOICE:';

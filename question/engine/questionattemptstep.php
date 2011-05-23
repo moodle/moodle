@@ -458,3 +458,161 @@ class question_null_step {
         return null;
     }
 }
+
+
+/**
+ * This is an adapter class that wraps a {@link question_attempt_step} and
+ * modifies the get/set_*_data methods so that they operate only on the parts
+ * that belong to a particular subquestion, as indicated by an extra prefix.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_attempt_step_subquestion_adapter extends question_attempt_step {
+    /** @var question_attempt_step the step we are wrapping. */
+    protected $realstep;
+    /** @var string the exta prefix on fields we work with. */
+    protected $extraprefix;
+
+    /**
+     * Constructor.
+     * @param question_attempt_step $realqas the step to wrap. (Can be null if you
+     *      just want to call add/remove.prefix.)
+     * @param unknown_type $extraprefix the extra prefix that is used for date fields.
+     */
+    public function __construct($realqas, $extraprefix) {
+        $this->realqas = $realqas;
+        $this->extraprefix = $extraprefix;
+    }
+
+    /**
+     * Add the extra prefix to a field name.
+     * @param string $field the plain field name.
+     * @return string the field name with the extra bit of prefix added.
+     */
+    public function add_prefix($field) {
+        if (substr($field, 0, 2) === '!_') {
+            return '-_' . $this->extraprefix . substr($field, 2);
+        } else if (substr($field, 0, 1) === '-') {
+            return '-' . $this->extraprefix . substr($field, 1);
+        } else if (substr($field, 0, 1) === '_') {
+            return '_' . $this->extraprefix . substr($field, 1);
+        } else {
+            return $this->extraprefix . $field;
+        }
+    }
+
+    /**
+     * Remove the extra prefix from a field name if it is present.
+     * @param string $field the extended field name.
+     * @return string the field name with the extra bit of prefix removed, or
+     * null if the extre prefix was not present.
+     */
+    public function remove_prefix($field) {
+        if (preg_match('~^(-?_?)' . preg_quote($this->extraprefix) . '(.*)$~', $field, $matches)) {
+            return $matches[1] . $matches[2];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Filter some data to keep only those entries where the key contains
+     * extraprefix, and remove the extra prefix from the reutrned arrary. 
+     * @param array $data some of the data stored in this step.
+     * @return array the data with the keys ajusted using {@link remove_prefix()}.
+     */
+    public function filter_array($data) {
+        $result = array();
+        foreach ($data as $fullname => $value) {
+            if ($name = $this->remove_prefix($fullname)) {
+                $result[$name] = $value;
+            }
+        }
+        return $result;
+    }
+
+    public function get_state() {
+        return $this->realqas->get_state();
+    }
+
+    public function set_state($state) {
+        throw new coding_exception('Cannot modify a question_attempt_step_subquestion_adapter.');
+    }
+
+    public function get_fraction() {
+        return $this->realqas->get_fraction();
+    }
+
+    public function set_fraction($fraction) {
+        throw new coding_exception('Cannot modify a question_attempt_step_subquestion_adapter.');
+    }
+
+    public function get_user_id() {
+        return $this->realqas->get_user_id;
+    }
+
+    public function get_timecreated() {
+        return $this->realqas->get_timecreated();
+    }
+
+    public function has_qt_var($name) {
+        return $this->realqas->has_qt_var($this->add_prefix($name));
+    }
+
+    public function get_qt_var($name) {
+        return $this->realqas->get_qt_var($this->add_prefix($name));
+    }
+
+    public function set_qt_var($name, $value) {
+        return $this->realqas->set_qt_var($this->add_prefix($name), $value);
+    }
+
+    public function get_qt_data() {
+        return $this->filter_array($this->realqas->get_qt_data());
+    }
+
+    public function has_behaviour_var($name) {
+        return $this->realqas->has_im_var($this->add_prefix($name));
+    }
+
+    public function get_behaviour_var($name) {
+        return $this->realqas->get_im_var($this->add_prefix($name));
+    }
+
+    public function set_behaviour_var($name, $value) {
+        return $this->realqas->set_im_var($this->add_prefix($name), $value);
+    }
+
+    public function get_behaviour_data() {
+        return $this->filter_array($this->realqas->get_behaviour_data());
+    }
+
+    public function get_submitted_data() {
+        return $this->filter_array($this->realqas->get_submitted_data());
+    }
+
+    public function get_all_data() {
+        return $this->filter_array($this->realqas->get_all_data());
+    }
+
+    public function get_qt_files($name, $contextid) {
+        throw new coding_exception('No attempt has yet been made to implement files support in ' .
+                'question_attempt_step_subquestion_adapter.');
+    }
+
+    public function prepare_response_files_draft_itemid($name, $contextid) {
+        throw new coding_exception('No attempt has yet been made to implement files support in ' .
+                'question_attempt_step_subquestion_adapter.');
+    }
+
+    public function prepare_response_files_draft_itemid_with_text($name, $contextid, $text) {
+        throw new coding_exception('No attempt has yet been made to implement files support in ' .
+                'question_attempt_step_subquestion_adapter.');
+    }
+
+    public function rewrite_response_pluginfile_urls($text, $contextid, $name, $extras) {
+        throw new coding_exception('No attempt has yet been made to implement files support in ' .
+                'question_attempt_step_subquestion_adapter.');
+    }
+}
