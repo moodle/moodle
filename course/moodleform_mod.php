@@ -351,7 +351,7 @@ abstract class moodleform_mod extends moodleform {
 
         if ($this->_features->rating) {
             require_once($CFG->dirroot.'/rating/lib.php');
-            $rm = new rating_manager();;
+            $rm = new rating_manager();
 
             $mform->addElement('header', 'modstandardratings', get_string('ratings', 'rating'));
 
