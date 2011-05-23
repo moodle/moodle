@@ -7,6 +7,14 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
+    // font size reference
+    $name = 'theme_formal_white/fontsizereference';
+    $title = get_string('fontsizereference','theme_formal_white');
+    $description = get_string('fontsizereferencedesc', 'theme_formal_white');
+    $default = '13';
+    $choices = array(11=>'11px', 12=>'12px', 13=>'13px', 14=>'14px', 15=>'15px', 16=>'16px');
+    $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
+    $settings->add($setting);
 
     // moodle 1.* like setting
     $name = 'theme_formal_white/noframe';
@@ -16,34 +24,7 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configcheckbox($name, $title, $description, $default);
     $settings->add($setting);
 
-    // page header background colour setting
-    $name = 'theme_formal_white/headerbgc';
-    $title = get_string('headerbgc','theme_formal_white');
-    $description = get_string('headerbgcdesc', 'theme_formal_white');
-    $default = '#E3DFD4';
-    $previewconfig = array('selector'=>'#page-header', 'style'=>'backgroundColor');
-    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-    $settings->add($setting);
-
-    // Block background colour setting
-    $name = 'theme_formal_white/blockcontentbgc';
-    $title = get_string('blockcontentbgc','theme_formal_white');
-    $description = get_string('blockcontentbgcdesc', 'theme_formal_white');
-    $default = '#F6F6F6';
-    $previewconfig = array('selector'=>'.block .content', 'style'=>'backgroundColor');
-    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-    $settings->add($setting);
-
-    // Block cloumns colour setting
-    $name = 'theme_formal_white/blockcolumnbgc';
-    $title = get_string('blockcolumnbgc','theme_formal_white');
-    $description = get_string('blockcolumnbgcdesc', 'theme_formal_white');
-    $default = '#E3DFD4';
-    $previewconfig = array('selector'=>'#page-content, #page-content #region-pre, #page-content #region-post-box', 'style'=>'backgroundColor');
-    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
-    $settings->add($setting);
-
-    // display logo or heading
+    // Display logo or heading
     $name = 'theme_formal_white/displaylogo';
     $title = get_string('displaylogo','theme_formal_white');
     $description = get_string('displaylogodesc', 'theme_formal_white');
@@ -58,6 +39,42 @@ if ($ADMIN->fulltree) {
     $description = get_string('logodesc', 'theme_formal_white');
     $default = '';
     $setting = new admin_setting_configtext($name, $title, $description, $default, PARAM_URL);
+    $settings->add($setting);
+
+    // page header background colour setting
+    $name = 'theme_formal_white/headerbgc';
+    $title = get_string('headerbgc','theme_formal_white');
+    $description = get_string('headerbgcdesc', 'theme_formal_white');
+    $default = '#E3DFD4';
+    $previewconfig = array('selector'=>'#page-header', 'style'=>'backgroundColor');
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $settings->add($setting);
+
+    // Block content background colour setting
+    $name = 'theme_formal_white/blockcontentbgc';
+    $title = get_string('blockcontentbgc','theme_formal_white');
+    $description = get_string('blockcontentbgcdesc', 'theme_formal_white');
+    $default = '#F6F6F6';
+    $previewconfig = array('selector'=>'.block .content', 'style'=>'backgroundColor');
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $settings->add($setting);
+
+    // Left column colour setting
+    $name = 'theme_formal_white/lblockcolumnbgc';
+    $title = get_string('lblockcolumnbgc','theme_formal_white');
+    $description = get_string('lblockcolumnbgcdesc', 'theme_formal_white');
+    $default = '#E3DFD4';
+    $previewconfig = array('selector'=>'#page-content, #page-content #region-pre, #page-content #region-post-box', 'style'=>'backgroundColor');
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
+    $settings->add($setting);
+
+    // Right column colour setting
+    $name = 'theme_formal_white/rblockcolumnbgc';
+    $title = get_string('rblockcolumnbgc','theme_formal_white');
+    $description = get_string('rblockcolumnbgcdesc', 'theme_formal_white');
+    $default = '';
+    $previewconfig = array('selector'=>'#page-content #region-post-box, #page-content #region-post', 'style'=>'backgroundColor');
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, $previewconfig);
     $settings->add($setting);
 
     // Block region width

@@ -48,7 +48,7 @@
     /* -moz-border-radius:0px 0px 0px 6px;    /* Firefox */
     /* -webkit-border-radius:0px 0px 0px 6px; /* Safari, Chrome */
     /* border-radius:0px 0px 0px 6px;         /* CSS3 */
-    background-color:[[setting:blockcolumnbgc]]; /* colore della colonna di sinistra */
+    background-color:[[setting:lblockcolumnbgc]]; /* colore della colonna di sinistra */
     float:none;
 }
 #page-content #region-main-box {
@@ -61,7 +61,7 @@
     /* -moz-border-radius:0px 0px 6px 0px;    /* Firefox */
     /* -webkit-border-radius:0px 0px 6px 0px; /* Safari, Chrome */
     /* border-radius:0px 0px 6px 0px;         /* CSS3 */
-    background-color:[[setting:blockcolumnbgc]]; /* colore del fondo della parte occupata dai contenuti della colonna centrale e della colonna dx */
+    background-color:[[setting:rblockcolumnbgc]]; /* colore della colonna di destra */
 }
 #page-content #region-main {
     margin-left:[[setting:doubleblockcolumnwidth]];/*2*[[setting:blockcolumnwidth]]*/
@@ -70,7 +70,7 @@
 #page-content #region-pre {
     left:[[setting:blockcolumnwidth]]; /*400-[[setting:blockcolumnwidth]]*/
     width:[[setting:blockcolumnwidth]];
-    background-color:[[setting:blockcolumnbgc]]; /* colore della colonna di sx */
+    background-color:[[setting:lblockcolumnbgc]]; /* colore della colonna di sx */
 }
 #page-content #region-post {
     width:[[setting:blockcolumnwidth]];
@@ -78,7 +78,7 @@
     /* -moz-border-radius:0px 0px 6px 0px;    /* Firefox */
     /* -webkit-border-radius:0px 0px 6px 0px; /* Safari, Chrome */
     /* border-radius:0px 0px 6px 0px;         /* CSS3 */
-    background-color:[[setting:blockcolumnbgc]]; /* colore del fondo della parte occupata dai contenuti della colonna centrale e della colonna dx */
+    background-color:[[setting:rblockcolumnbgc]]; /* colore del fondo della parte occupata dai contenuti della colonna centrale e della colonna dx */
 }
 #page-content .region-content {
     padding:0.6em 8px 0.1em 8px; /* definisco lo spazio sopra e sotto ai blocchi */

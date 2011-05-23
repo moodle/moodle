@@ -11,9 +11,17 @@ defined('MOODLE_INTERNAL') || die();
  */
 function formal_white_user_settings($css, $theme) {
 
+    // Set the font reference size
+    if (empty($theme->settings->fontsizereference)) {
+        $fontsizereference = '13'; // default
+    } else {
+        $fontsizereference = $theme->settings->fontsizereference;
+    }
+    $css = formal_white_set_fontsizereference($css, $fontsizereference);
+
     // Set the page header background color
     if (empty($theme->settings->headerbgc)) {
-        $headerbgc = '#E3DFD4'; // default (o forse è meglio #FEF9F6?)
+        $headerbgc = '#E3DFD4'; // default 
     } else {
         $headerbgc = $theme->settings->headerbgc;
     }
@@ -21,35 +29,43 @@ function formal_white_user_settings($css, $theme) {
 
     // Set the block content background color
     if (empty($theme->settings->blockcontentbgc)) {
-        $blockcontentbgc = '#F6F6F6'; // default (o forse è meglio #FEF9F6?)
+        $blockcontentbgc = '#F6F6F6'; // default
     } else {
         $blockcontentbgc = $theme->settings->blockcontentbgc;
     }
     $css = formal_white_set_blockcontentbgc($css, $blockcontentbgc);
 
-    // Set the block column background color
-    if (empty($theme->settings->blockcolumnbgc)) {
-        $blockcolumnbgc = '#E3DFD4'; // default
+    // Set the left block column background color
+    if (empty($theme->settings->lblockcolumnbgc)) {
+        $lblockcolumnbgc = '#E3DFD4'; // default
     } else {
-        $blockcolumnbgc = $theme->settings->blockcolumnbgc;
+        $lblockcolumnbgc = $theme->settings->lblockcolumnbgc;
     }
-    $css = formal_white_set_blockcolumnbgc($css, $blockcolumnbgc);
+    $css = formal_white_set_lblockcolumnbgc($css, $lblockcolumnbgc);
 
-    // Set the logo image
-    if (!empty($theme->settings->logo)) {
-        $logo = $theme->settings->logo;
+    // Set the right block column background color
+    if (empty($theme->settings->rblockcolumnbgc)) {
+        $rblockcolumnbgc = $lblockcolumnbgc; // default
     } else {
-        $logo = null;
+        $rblockcolumnbgc = $theme->settings->rblockcolumnbgc;
     }
-    $css = formal_white_set_logo($css, $logo);
+    $css = formal_white_set_rblockcolumnbgc($css, $rblockcolumnbgc);
 
-    // set the width of the two blocks colums
+    // set the width of the two blocks columns
     if (!empty($theme->settings->blockcolumnwidth)) {
         $blockcolumnwidth = $theme->settings->blockcolumnwidth;
     } else {
         $blockcolumnwidth = '200'; // default
     }
     $css = formal_white_set_blockcolumnwidth($css, $blockcolumnwidth);
+
+    // set the customcss
+    if (!empty($theme->settings->customcss)) {
+        $customcss = $theme->settings->customcss;
+    } else {
+        $customcss = null;
+    }
+    $css = formal_white_set_customcss($css, $customcss);
 
     // Return the CSS
     return $css;
@@ -61,6 +77,12 @@ function formal_white_user_settings($css, $theme) {
  * Sets the link color variable in CSS
  *
  */
+function formal_white_set_fontsizereference($css, $fontsizereference) {
+    $tag = '[[setting:fontsizereference]]';
+    $css = str_replace($tag, $fontsizereference.'px', $css);
+    return $css;
+}
+
 function formal_white_set_headerbgc($css, $headerbgc) {
     $tag = '[[setting:headerbgc]]';
     $css = str_replace($tag, $headerbgc, $css);
@@ -73,20 +95,15 @@ function formal_white_set_blockcontentbgc($css, $blockcontentbgc) {
     return $css;
 }
 
-function formal_white_set_blockcolumnbgc($css, $blockcolumnbgc) {
-    $tag = '[[setting:blockcolumnbgc]]';
-    $css = str_replace($tag, $blockcolumnbgc, $css);
+function formal_white_set_lblockcolumnbgc($css, $lblockcolumnbgc) {
+    $tag = '[[setting:lblockcolumnbgc]]';
+    $css = str_replace($tag, $lblockcolumnbgc, $css);
     return $css;
 }
 
-function formal_white_set_logo($css, $logo) {
-    global $OUTPUT;
-
-    $tag = '[[setting:logo]]';
-    if (is_null($logo)) {
-         $logo = $OUTPUT->pix_url('logo', 'theme');
-     }
-    $css = str_replace($tag, $logo, $css);
+function formal_white_set_rblockcolumnbgc($css, $rblockcolumnbgc) {
+    $tag = '[[setting:rblockcolumnbgc]]';
+    $css = str_replace($tag, $rblockcolumnbgc, $css);
     return $css;
 }
 
@@ -102,3 +119,10 @@ function formal_white_set_blockcolumnwidth($css, $blockcolumnwidth) {
 
     return $css;
 }
+
+function formal_white_set_customcss($css, $customcss) {
+    $tag = '[[setting:customcss]]';
+    $css = str_replace($tag, $customcss, $css);
+    return $css;
+}
+
