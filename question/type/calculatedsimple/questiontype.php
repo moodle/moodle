@@ -38,7 +38,6 @@ require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
 class qtype_calculatedsimple extends qtype_calculated {
 
     // Used by the function custom_generator_tools:
-    public $calcgenerateidhasbeenadded = false;
     public $wizard_pages_number = 1;
 
     public function save_question_options($question) {

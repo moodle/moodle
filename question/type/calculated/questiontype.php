@@ -38,14 +38,6 @@ require_once($CFG->dirroot . '/question/type/numerical/question.php');
 class qtype_calculated extends question_type {
     const MAX_DATASET_ITEMS = 100;
 
-    public $fileoptionsa = array(
-        'subdirs' => false,
-        'maxfiles' => -1,
-        'maxbytes' => 0,
-    );
-
-    // Used by the function custom_generator_tools:
-    public $calcgenerateidhasbeenadded = false;
     public $wizardpagesnumber = 3;
 
     public function requires_qtypes() {

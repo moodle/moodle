@@ -38,9 +38,6 @@ require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
  */
 class qtype_calculatedmulti extends qtype_calculated {
 
-    // Used by the function custom_generator_tools:
-    public $calcgenerateidhasbeenadded = false;
-
     public function requires_qtypes() {
         return array('calculated', 'multichoice');
     }
