@@ -23,9 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['blockcolumnbgc'] = 'Blocks columns background colour';
-$string['blockcolumnbgcdesc'] = 'This sets the blocks columns background colour for the theme.';
-$string['blockcolumnwidth'] = 'Blocks colum width';
+$string['blockcolumnwidth'] = 'Blocks column width';
 $string['blockcolumnwidthdesc'] = 'This sets the blocks column width for the theme. <strong>Using widths lower than 200px, the calendar block is not supposed to fit.</strong>';
 $string['blockcontentbgc'] = 'Blocks content background colour';
 $string['blockcontentbgcdesc'] = 'This sets the blocks content background colour for the theme.';
@@ -63,18 +61,22 @@ $string['customcss'] = 'Custom CSS';
 $string['customcssdesc'] = 'Any CSS you enter here will be added to every page allowing your to easily customise this theme.';
 $string['displaylogo'] = 'Pages header content';
 $string['displaylogodesc'] = 'Choose whether display moodle logo or page heading text in the header.';
+$string['fontsizereference'] = 'Font size reference';
+$string['fontsizereferencedesc'] = 'This allows you to set the default font size for this theme. It is not recommended to set this higher than 13px as it is known to cause display problems with certain blocks.';
 $string['footnote'] = 'Footnote';
 $string['footnotedesc'] = 'The content from this textarea will be displayed in the footer of every page.';
 $string['headerbgc'] = 'Header background colour';
 $string['headerbgcdesc'] = 'This sets the blocks header background colour for the theme.';
 $string['heading'] = 'Display page heading';
+$string['lblockcolumnbgc'] = 'Left column background colour';
+$string['lblockcolumnbgcdesc'] = 'This sets the left column background colour for the theme.';
 $string['logo'] = 'logo';
 $string['logodesc'] = 'Change the logo of this theme by entering the URL to a new one (i.e., http://www.somesite/animage.png). As a reference, the default logo is 300px wide by 80px high. A transparent .png will work best.<br />The chosen logo will be shown in each page of the site without any distinction between front page and other pages.';
 $string['moodlelogo'] = 'Display moodle logo';
 $string['noframe'] = 'Formal white 1.9 look';
 $string['noframedesc'] = 'Select this option to require your moodle page to look like moodle 1.*, alias, without the surrounding frame.';
 $string['pluginname'] = 'Formal white';
+$string['rblockcolumnbgc'] = 'Right column background colour';
+$string['rblockcolumnbgcdesc'] = 'This sets the right column background colour for the theme. If you leave this empty the left column background color will be used.';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
-$string['regionwidth'] = 'Column width';
-$string['regionwidthdesc'] = 'This sets the width of the two block regions that form the left and right columns.';

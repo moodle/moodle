@@ -1,39 +1,128 @@
-/*#custommenu .yui3-menu ul {background-image:url([[pix:theme|custommenubg]]);background-repeat:repeat-x;background-color:#e1e1df;}*/
-#custommenu .yui3-menu {background-image:url([[pix:theme|custommenubg]]);background-repeat:repeat-x;background-color:#e1e1df;}
-
-.yui3-skin-sam .yui3-menu-content,
-.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-content,
-.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label,.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-content{
-    border:0px none;
-}
-
-/*.yui3-menu ul{
-    background:url([[pix:theme|sprite]]) repeat-x 0 0;
-}*/
-
-.yui3-menu ul li ul{
-    background:#fff;
-}
-
-.yui3-menu ul li{
-    border-right:1px solid #ccc;
-}
-
-.yui3-menu ul li ul li{
-    border-right:none;
-    /*border-bottom:1px dashed #ccc;*/
-    padding:3px;
-}
-
 div.yui3-menu-content {
     border:none !important;
 }
 
-ul.first-of-type li a {
-    border-top:none !important;
-    border-bottom:none !important;
+/**************************************************************************************************/
+
+#custommenu .yui3-menu {
+    background-image:url([[pix:theme|custommenubg]]);
+    background-repeat:repeat-x;
+    background-color:#e1e1df;
 }
 
-ul.first-of-type li a:hover {
-    color:#003466;
+/*YUI Reset */
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-content{
+    background-position: -10000px -10000px;
+}
+
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label{
+    background-position: -10000px -10000px;
+}
+
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label-active,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label-menuvisible{
+    background-position: -10000px -10000px;
+}
+
+.yui3-skin-sam #page .yui3-menu-label,
+.yui3-skin-sam #page .yui3-menu .yui3-menu .yui3-menu-label {
+    background-position: right center;
+}
+
+.yui3-skin-sam #page .yui3-menubuttonnav .yui3-menu-label em {
+    background-position: right center;
+}
+
+.yui3-skin-sam #page .yui3-splitbuttonnav .yui3-menu-label .yui3-menu-toggle {
+    background-position: 3px center;
+}
+
+.yui3-skin-sam #page .yui3-splitbuttonnav .yui3-menu-label-menuvisible .yui3-menu-toggle {
+    background-position: 0% 50%;
+}
+
+.yui3-skin-sam #page .yui3-menu-label,
+.yui3-skin-sam #page .yui3-menuitem-content  {
+    color: #35251B;
+    font-weight: 400;
+}
+
+.custom_menu_submenu .yui3-menu-label,
+.custom_menu_submenu .yui3-menuitem-content {
+    color: #35251B !important;
+}
+
+.yui3-skin-sam #page .yui3-menu-label.yui3-menu-label-active,
+.yui3-skin-sam #page .yui3-menuitem-active .yui3-menuitem-content {
+    color: #DA5013;
+}
+
+.yui3-skin-sam #page .yui3-menu-content,
+.yui3-skin-sam #page .yui3-menu-content,
+.yui3-skin-sam #page .yui3-menu .yui3-menu .yui3-menu-content,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menu-label,
+.yui3-skin-sam #page .yui3-menu-horizontal .yui3-menuitem-content  {
+    border: none;
+}
+
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label,
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-content {
+    border-color:#808080;
+    border-style:solid;
+    border-width:0px 0;
+}
+
+#page .custom_menu_submenu {
+    border: 2px solid #DA5013 !important;
+    background: #fff;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    -webkit-box-shadow: 0px 1px 3px #ccc;
+    -moz-box-shadow: 0px 1px 3px #ccc;
+    box-shadow: 0px 1px 3px #ccc;
+}
+
+/* riga della voce di menu */
+.yui3-skin-sam .yui3-menu-content,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-content {
+    border: 1px solid #808080;
+    font-size: 100%;
+    line-height: 1.5;
+    padding:3px 0;
+}
+
+.yui3-menu ul li ul li,
+.yui3-skin-sam .yui3-menu-content,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-content {
+    background-color:#E9E9E9;
+}
+
+/* cancellazione della bordatura superiore alla lista delle voci di menu */
+.yui3-skin-sam .yui3-menu .yui3-menu {
+	border-top:none;
+	padding-left:-1px;
+	border-right:1px #CCC solid;
+	border-bottom:1px #CCC solid;
+	border-left:1px #CCC solid;
+}
+
+/* color of selected item in FF */
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-menuvisible,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-active,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {
+    background-color:#FFF;
+}
+
+/* separatore vertical fra i nomi dei menu */
+.yui3-skin-sam .yui3-menu-content ul.first-of-type li{
+    border-right:1px solid #ccc;
+}
+
+/* inibizione del bordo destro nelle voci di menu */
+.yui3-skin-sam .yui3-menu-content ul.first-of-type li.yui3-menuitem {
+    border-right:none;
+    /*background-color:#E9E9E9;*/
 }

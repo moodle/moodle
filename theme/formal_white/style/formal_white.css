@@ -7,34 +7,36 @@ html, body {
     margin:0;
     padding:0;
     background-color:#EFEFEF;
-    font-size:13px;
+    font-size:[[setting:fontsizereference]];
 }
 
-a:link {text-decoration:none;}
-a:visited {text-decoration:none;}
-a:hover {text-decoration:underline;}
+a:link {text-decoration:none;color:black;}
+a:visited {text-decoration:none;color:black;}
+a:hover {text-decoration:underline;color:black;}
 
-h1 {font-size:1.4em;font-weight:bold;}
-h2 {font-size:1.3em;}
-h3 {font-size:1.2em;}
+h1 {font-size:140%;font-weight:bold;}
+h2 {font-size:130%;}
+h3 {font-size:120%;}
 h4 {font-weight:bold;}
 
-h2.main, h3.main, h4.main {
-    margin:0;
-    padding:0;
-    text-align: center;
-}
+h2.main, h3.main, h4.main {margin:0;padding:0;text-align: center;}
 
-#headerlogo {margin:0.3em;float:left;top:1em;z-index:1;}
-h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:2em;z-index:1;}
+#headerlogo {margin:0.3em;float:left;top:1em;}
+h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:200%;}
 
 /* headermenu */
-.headermenu {float:right;top:1em;z-index:2;}
+#page-header{line-height:0;}
+/*#headerlogo img {margin:7px;}*/
+.headermenu {position:relative;line-height:1.7em;font-size:90%;margin:0.3em 0.3em 0 0;right:0.3em;margin-bottom:0.3em;}
 
-#dock {background-color:#E3DFD4;border-right:1px #000 dashed;}
+#dock {background-color:[[setting:blockcontentbgc]];border-right:1px #000 dashed;}
+#dock .dockeditem_container {margin-top: 10px;}
+#dock #dockeditempanel .dockeditempanel_hd {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;text-align:left;height:1.8em;background-color:#E3DFD4;}
+#dock #dockeditempanel .dockeditempanel_hd h2 {display:block;padding-left:0.3em;margin-top:0;text-align:left;}
+#dock #dockeditempanel .dockeditempanel_hd .commands {position:absolute;right:0.3em;top:0.25em;}
 
 /* navbar */
-.navbar {width:auto;padding-top:0.35em;padding-bottom:0.15em;background-image:url([[pix:theme|bg_bread]]);}
+.navbar {width:auto;padding-top:0.35em;padding-bottom:0.15em;background-image:url([[pix:theme|bg_bread]]);background-color:#AB9D80;}
 .navbar li span {color:#E3DFD4;}
 .navbar li a:link, .navbar li a:visited {color:white;}
 
@@ -42,11 +44,40 @@ h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:2em;z-index:1;}
 .navbutton {padding-right:0.5em;}
 .navbutton table td {padding:0;}
 
+/*.block_navigation .block_tree li.type_category.contains_branch>p span {
+	padding-left: 20px;
+	background-image: url([[pix:theme|folderopen]]);
+	background-repeat: no-repeat;
+	background-position: 0 -1px;
+}
+.block_navigation .block_tree li.type_category.contains_branch.collapsed>p span {
+	padding-left: 20px;
+	background-image: url([[pix:theme|folderclose]]);
+	background-repeat: no-repeat;
+	background-position: 0 -1px;
+}*/
+
+.block_settings .block_tree .tree_item a:link,
+.block_settings .block_tree .tree_item a:visited,
+.block_settings .block_tree .tree_item a:active,
+.block_navigation .block_tree .tree_item a:link,
+.block_navigation .block_tree .tree_item a:visited,
+.block_navigation .block_tree .tree_item a:active {
+    color:#000;
+}
+
 /* breadcrumb */
 .breadcrumb {margin-left:0.8em;}
 
 /* generalbox */
 .generalbox {border-color:#E3DFD4;}
+
+/* generalbox */
+#page-admin-setting-manageauths .generalbox {border:none;}
+
+/* generalbox */
+#page-enrol-instances .generalbox {border:none;}
+#page-enrol-instances .select.menujump {margin-left:0.5em;}
 
 /* tables */
 .editcourse th,
@@ -78,23 +109,31 @@ table.groupmanagementtable,
 table.groupmanagementtable tr,
 table.groupmanagementtable td {border-width:0px;}
 table.groupmanagementtable td#buttonscell {vertical-align:middle;text-align:center;}
-table#defineroletable tr.rolecapheading {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;}
+table#defineroletable tr.rolecapheading {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;background-color:#E3DFD4;}
 /*table#defineroletable tr.rolecap {border-top:1px #F30 dashed;}*/
 tr.rolecap {border-top:1px #F30 dashed;}
 tr.rolecapheading + tr.rolecap {border-top:none;}
 
- /* course categories */
+/* course categories */
 #page-admin-course-index .editcourse td div.singleselect {text-align:left;}
 
- /* course */
-ul.topics .section span.commands {margin-left:2em;} /* distanza dei comandi dagli elementi del corso */
+/* course */
+/* ul.topics .section span.commands {float:right;} /* distanza dei comandi dagli elementi del corso */
+ul.topics .section span.commands {position:absolute;right:1em;}
 
 .mform fieldset {border:1px #DDD solid;}
+.mform .fitem .fitemtitle {width:25%;}
+.mform .fitem .fitemtitle label {padding-right:5px;}
+.mform .fitem .felement {margin-left:26%;width:73%;}
+/*.mform .fitem fieldset.felement {padding-left:0}*/
+.mform .fitem .fitemtitle .helplink img {margin-right:-5px;}
+.mform .fsubmit {text-align:left}
+table td.cell p {margin:0;}
 
 /* block */
 .block {border:1px #C6BDA8 solid;margin-bottom:0.5em;}
 .block .header h2 {margin:0;padding-left:0.3em;}
-.block .header .title {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;clear:both;line-height:2em;}
+.block .header .title {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;clear:both;line-height:2em;background-color:#E3DFD4;}
 .block .header .title .commands {padding-left:0.3em;text-align:right;}
 .block .content {background-color:[[setting:blockcontentbgc]];}
 
@@ -105,6 +144,9 @@ ul.topics .section span.commands {margin-left:2em;} /* distanza dei comandi dagl
 .pagelayout-report #page-header {float:left;}
 .pagelayout-report #page-content {overflow:hidden;}
 
+/* notice */
+#notice div.buttons {margin-bottom:0;}
+
 /* page-footer */
 #page-footer {text-align:center;width:100%;padding:0;}
 .noframefooter {background-color:#FFF;clear: both;float: left;width:100%;}
@@ -112,5 +154,12 @@ ul.topics .section span.commands {margin-left:2em;} /* distanza dei comandi dagl
 #page-footer .logininfo {padding:0.3em 0 0.7em 0;}
 #page-footer .moodledocs {text-align:center;background-color:#EFEFEF;padding:0.7em 0 0.8em 0;}
 
+/* js help messages */
+#helppopupbox .helpheading {margin-top:1em;}
+
+/* pre, code, tt */
+pre, code, tt {
+    font: 1em/1.3 monospace;
+}
 /** Custom CSS **/
 [[setting:customcss]]

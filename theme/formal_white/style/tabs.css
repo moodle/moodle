@@ -30,6 +30,11 @@
     width: 100%;
     bottom: -4px;
 }
+.tabtree .tabrow0 li a:link,
+.tabtree .tabrow0 li a:visited,
+.tabtree .tabrow0 li a:active {
+    color:#000;
+}
 .tabtree .tabrow0 li.here a {
     position:relative;
     z-index:102;
@@ -39,7 +44,7 @@
     padding-left:14px;
     padding-top:10px;
     background-repeat:no-repeat;
-    padding-bottom:3px;
+    padding-bottom:4px; /*to remove the border-bottom*/
     margin-bottom:-1px;
 
     background-color:transparent;
@@ -54,7 +59,7 @@
     background-position:100% 0%;
     padding-right:14px;
     padding-top:10px;
-    padding-bottom:3px;
+    padding-bottom:4px; /*to remove the border-bottom*/
 }
 .tabtree .tabrow0 li a:hover span {
     background-image:url([[pix:theme|tab/right_hover]]);
@@ -81,6 +86,12 @@
 .tabtree .tabrow1 li a span,
 .tabtree .tabrow1 li a:hover span {
     background-image:none !important;
+    padding: 0 0.3em;
+    text-decoration:none;
+}
+
+.tabtree .tabrow1 li a:hover {
+    font-weight:bold;
 }
 
 .groupmanagementtable {

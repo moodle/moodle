@@ -6,14 +6,14 @@
 
 /* la quadrettatura del calendario */
 .path-calendar .calendartable th,
-.path-calendar .calendartable td {border:1px [[setting:blockcolumnbgc]] solid;}
+.path-calendar .calendartable td {border:1px [[setting:lblockcolumnbgc]] solid;}
 
 /* il rilievo del giorno corrente nel minicalendar */
 /*.path-calendar .calendartable td.today {border:2px #444444 solid;}*/
 .path-calendar .minicalendar td.today {border:2px #444444 solid;}
 
 /* il bordo del generico evento nella lista a centro pagina */
-.path-calendar .maincalendar .eventlist .event {border: 1px [[setting:blockcolumnbgc]] solid;}
+.path-calendar .maincalendar .eventlist .event {border: 1px [[setting:lblockcolumnbgc]] solid;}
 
 /* se c'è una duration... nel minicalendar */
 .path-calendar .minicalendar .calendar_event_user,
@@ -37,7 +37,7 @@
 
 /* la quadrettatura del calendario */
 .calendartable th,
-.calendartable td {border:1px [[setting:blockcolumnbgc]] solid;}
+.calendartable td {border:1px [[setting:lblockcolumnbgc]] solid;}
 
 /* il rilievo del giorno corrente nel calendario del blocco */
 .calendartable .today {border:2px #444444 solid;}

@@ -1,6 +1,6 @@
 /** Course formats **/
 .course-content .section li.activity {margin:7px 0;}
-.course-content .header {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px #C6BDA8 solid;}
+.course-content .header {background-image:url([[pix:theme|gradient_h]]);background-repeat:repeat-x;border-top:1px #C6BDA8 solid;background-color:#E3DFD4;}
 .course-content h2.header {padding-left:1em;}
 .course-content ul.weeks li.section {border:1px solid #DDD;}
 .course-content ul.weeks li.section .content {background-color:#FAFAFA;padding:5px 10px;}
@@ -10,25 +10,25 @@
 
 /** Course **/
 .coursebox {border:1px solid #DDD;border-color:#DDDDDD;}
-.coursebox .info {margin:5px;font-size:1em;}
+.coursebox .info {margin:5px;font-size:100%;}
 .coursebox .info .name {margin:3px 0;}
-.coursebox .info .teachers {margin:0 1em;font-size:0.9em;}
-.coursebox .cost {font-size:0.9em;padding-top:20px;}
-.coursebox .summary {margin:5px;font-size:0.9em;}
+.coursebox .info .teachers {margin:0 1em;font-size:90%;}
+.coursebox .cost {font-size:90%;padding-top:20px;}
+.coursebox .summary {margin:5px;font-size:90%;}
 
-#page-course-recent h2.main {font-size:1.1em;}
-#page-course-recent .user {font-size:0.75em;}
-#page-course-recent .grade {font-style:italic;font-size:0.9em;}
-#page-course-recent .forum-recent .reply .title {font-style:italic;font-size:0.9em;}
-#page-course-recent .forum-recent .discussion .title {font-weight:bold;font-style:italic;font-size:0.9em;}
+#page-course-recent h2.main {font-size:110%;}
+#page-course-recent .user {font-size:75%;}
+#page-course-recent .grade {font-style:italic;font-size:90%;}
+#page-course-recent .forum-recent .reply .title {font-style:italic;font-size:90%;}
+#page-course-recent .forum-recent .discussion .title {font-weight:bold;font-style:italic;font-size:90%;}
 
-.path-course-view .availabilityinfo {font-size:0.85em;color:#aaa;}
+.path-course-view .availabilityinfo {font-size:85%;color:#aaa;}
 .path-course-view .availabilityinfo strong {font-weight:normal;color:black;}
 .path-course-view .dimmed_text img {opacity:0.3;filter:alpha(opacity='30');}
-.path-course-view .section {font-size:0.95em;line-height:1.2em;}
+.path-course-view .section {line-height:1.2em;}
 .path-course-view .section .activity {padding:0.2em 0;}
 .path-course-view .section .activity a {line-height:1em;}
-.path-course-view .section .weekdates {margin:0;font-weight:normal;font-size:1em;}
+.path-course-view .section .weekdates {margin:0;font-weight:normal;font-size:100%;}
 .path-course-view .section .groupinglabel {color:#666666;}
 .path-course-view .section .left {font-weight:bold;}
 
@@ -64,10 +64,10 @@
 
 #page-admin-report .plugin,
 #page-course-report .plugin,
-#page-course-import .plugin {margin-bottom:20px;margin-left:10%;margin-right:10%;border:1px solid #cecece;background-color:#fdfdfd;}
+#page-course-import .plugin {margin-bottom:20px;margin-left:10%;margin-right:10%;border:1px solid #cecece;background-color:[[setting:blockcontentbgc]];}
 
 .path-course-view .unread {background:#9EBEFF;}
-.path-course-view .completionprogress {font-size:0.80em; padding:8px 26px 5px 5px;}
+.path-course-view .completionprogress {font-size:80%; padding:8px 26px 5px 5px;}
 
 #page-course-category .courseboxes,
 #page-course-index .courseboxes {padding:20px;}

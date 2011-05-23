@@ -168,7 +168,7 @@ if ($hasfooter) {
                     </div>
                     <div id="footerframeleft">
                         <div id="footerframeright">
-                    <!-- the content to show -->
+                            <!-- the content to show -->
                             <div id="footerwrapper">
                                 <?php echo $PAGE->theme->settings->footnote; ?>
                             </div> <!-- end of footerwrapper -->
@@ -180,7 +180,7 @@ if ($hasfooter) {
                 </div>
             </div> <!-- </footerframebottom></footerframetop> -->
         <?php }
-        //manco di una div da chiudere
+        //one more div is waiting to be closed
 
     } else { ?>
 
@@ -196,7 +196,7 @@ if ($hasfooter) {
 
                 </div> <!-- end of page-footer_noframe-content -->
             <?php }
-        //manco di una div da chiudere
+        //one more div is waiting to be closed
     } ?>
             <div class="moodledocsleft">
             <?php
@@ -209,7 +209,7 @@ if ($hasfooter) {
                 <?php echo page_doc_link(get_string('moodledocslink')); ?>
             </div>
         </div> <!-- end of page-footer or page-footer_noframe -->
-<?php   //ho chiuso la div di cui mancavo prima
+<?php   //the waiting div has been closed
 }
     echo $OUTPUT->standard_end_of_body_html(); ?>
 </body>

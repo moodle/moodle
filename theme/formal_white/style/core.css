@@ -14,12 +14,13 @@
 
 .headingblock {
     border-bottom: 1px solid #ddd;
-    font-size: 1.3em;
+    font-size:130%;
     color: #333;
 }
 
 #notice {
     text-align: center;
+    padding:1em;
 }
 
 .noticebox,
@@ -36,6 +37,9 @@
     margin: 1em 0;
 }
 
+label {
+    margin-right: 0.3em;
+}
 .navbutton .singlebutton {
     margin: 0;
 }
@@ -76,7 +80,13 @@ input[type="password"],
 textarea {
     width: auto;
     padding: 2px 0 2px 0;
-    margin: 5px 0 5px 0;
+    margin: 0.3em;
+}
+
+.navbutton input[type="text"] {
+    width: auto;
+    padding: 0;
+    margin: 0 0.3em 0 0;
 }
 
 input[type="checkbox"],
@@ -127,11 +137,11 @@ input[type="radio"] {
 
 .loginbox .forgetpass {
     margin: 1em 0 0;
-    font-size: 0.95em;
+    font-size:95%;
 }
 
 .loginbox.twocolumns {
-    width: 90%;
+    width:90%;
     margin-left: 5%;
 }
 
@@ -306,7 +316,7 @@ padding: 0
 .blog_entry .audience {
     color: #444;
     margin: 0 0 0.5em;
-    font-size: 0.9em;
+    font-size:90%;
 }
 
 .blog_entry .tags {
@@ -415,12 +425,12 @@ padding: 0
 }
 
 .form-label .form-shortname {
-    font-size: 0.8em;
+    font-size:80%;
     color: #777;
 }
 
 .form-description {
-    font-size: 0.95em;
+    font-size:95%;
     color: #444;
 }
 
@@ -512,7 +522,7 @@ padding: 0
 /**
  * Enrol   - TODO: tidy up styles here
  */
-.userenrolment {font-size:90%;border:1px solid #E3DFD4;}
+.userenrolment {font-size:100%;border:1px solid #E3DFD4;}
 .userenrolment tr.r0 {background-color:#F9F9F9;}
 .userenrolment tr.r1 {background-color:#F3F3F3;}
 .userenrolment td {border:1px solid #E9E9E9;border-top-color:#F6F6F6;border-right-color:#EEE;border-left-color:#F3F3F3;}
@@ -520,15 +530,15 @@ padding: 0
 .userenrolment td.c4 {border-right-color:#E3DFD4;}
 .userenrolment .col_userdetails {padding:3px;min-width:35%;}
 .userenrolment .col_role .roles {position:relative;}
-.userenrolment .col_role .role {line-height:10px;font-size:10px;}
+.userenrolment .col_role .role {line-height:10px;font-size:70%;}
 .userenrolment .col_role .role a img {height:8px;}
 .userenrolment .col_role .addrole {background-color:#DDD;border:1px outset #EEE;-moz-border-radius:5px;}
 .userenrolment .col_group {max-width:300px;}
-.userenrolment .col_group .group {line-height:10px;font-size:10px;}
+.userenrolment .col_group .group {line-height:10px;font-size:70%;}
 .userenrolment .col_group .group a img {height:8px;}
 .userenrolment .col_group .addgroup {background-color:#DDD;border:1px outset #EEE;-moz-border-radius:5px;}
 .userenrolment .col_enrol {max-width:300px;}
-.userenrolment .col_enrol .enrolment {border:1px outset #E6E6E6;background-color:#EEE;line-height:10px;font-size:10px;-moz-border-radius:5px;}
+.userenrolment .col_enrol .enrolment {border:1px outset #E6E6E6;background-color:#EEE;line-height:10px;font-size:70%;-moz-border-radius:5px;}
 .path-enrol .enrolusersbutton,
 .path-enrol .enrolcohortbutton {float:left;}
 .path-enrol .enrolusersbutton.instance1,
@@ -541,3 +551,6 @@ padding: 0
  * Redirect
  */
 .pagelayout-redirect #content {text-align:center;margin-top:10%;margin-bottom:10%;}
+
+/* plugin compattable */
+.plugincompattable {font-size:90%;}
