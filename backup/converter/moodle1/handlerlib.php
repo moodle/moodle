@@ -1094,18 +1094,30 @@ abstract class moodle1_plugin_handler extends moodle1_xml_handler {
 abstract class moodle1_mod_handler extends moodle1_plugin_handler {
 
     /**
-     * Returns course module id for the given instance id
+     * Returns the name of the module, eg. 'forum'
      *
-     * The mapping from instance id to course module id has been stashed by
+     * @return string
+     */
+    public function get_modname() {
+        return $this->pluginname;
+    }
+
+    /**
+     * Returns course module information for the given instance id
+     *
+     * The information for this instance id has been stashed by
      * {@link moodle1_course_outline_handler::process_course_module()}
      *
      * @param int $instance the module instance id
+     * @param string $modname the module type, defaults to $this->pluginname
      * @return int
      */
-    protected function get_moduleid($instance) {
+    protected function get_cminfo($instance, $modname = null) {
 
-        $stashed = $this->converter->get_stash('cminfo_'.$this->pluginname, $instance);
-        return $stashed['id'];
+        if (is_null($modname)) {
+            $modname = $this->pluginname;
+        }
+        return $this->converter->get_stash('cminfo_'.$modname, $instance);
     }
 }
 

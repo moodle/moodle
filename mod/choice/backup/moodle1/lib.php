@@ -73,7 +73,8 @@ class moodle1_mod_choice_handler extends moodle1_mod_handler {
 
         // get the course module id and context id
         $instanceid = $data['id'];
-        $moduleid   = $this->get_moduleid($instanceid);
+        $cminfo     = $this->get_cminfo($instanceid);
+        $moduleid   = $cminfo['id'];
         $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
 
         // we now have all information needed to start writing into the file
