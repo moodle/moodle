@@ -103,20 +103,22 @@ echo $OUTPUT->doctype() ?>
         </div>
     </div>
 
-<!-- START OF FOOTER -->
-<?php if ($hasfooter) { ?>
-<div id="page-footer" class="clearfix">
+    <!-- START OF FOOTER -->
+    <?php if ($hasfooter) { ?>
+    <div id="page-footer" class="clearfix">
 
-    <div class="footer-left">
-        <a href="http://moodle.org" title="Moodle">Afterburner Powered by
-        <img src="<?php echo $OUTPUT->pix_url('footer/moodle-logo','theme')?>" alt="Moodle logo" /></a>
+        <div class="footer-left">
+            <a href="http://moodle.org" title="Moodle">
+                <img src="<?php echo $OUTPUT->pix_url('footer/moodle-logo','theme')?>" alt="Moodle logo" />
+            </a>
+        </div>
+
+        <div class="footer-right">
+            <?php echo $OUTPUT->login_info();?>
+        </div>
+
+        <?php echo $OUTPUT->standard_footer_html(); ?>
     </div>
-
-    <div class="footer-right">
-        <?php echo $OUTPUT->login_info();?>
-    </div>
-
-</div>
     <?php } ?>
     <div class="clearfix"></div>
 </div>
