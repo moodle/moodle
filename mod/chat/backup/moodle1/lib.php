@@ -65,7 +65,8 @@ class moodle1_mod_chat_handler extends moodle1_mod_handler {
     public function process_chat($data) {
         // get the course module id and context id
         $instanceid = $data['id'];
-        $moduleid   = $this->get_moduleid($instanceid);
+        $cminfo     = $this->get_cminfo($instanceid);
+        $moduleid   = $cminfo['id'];
         $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
 
         // we now have all information needed to start writing into the file
@@ -87,13 +88,13 @@ class moodle1_mod_chat_handler extends moodle1_mod_handler {
     public function process_chat_messages($data) {
         //@todo process user data
         //$this->write_xml('message', $data, array('/message/id'));
-        //@todo populate chat_messages_current table?
     }
 
     /**
      * This is executed when we reach the closing </MOD> tag of our 'chat' path
      */
     public function on_chat_end() {
+        // close chat.xml
         $this->xmlwriter->end_tag('chat');
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
