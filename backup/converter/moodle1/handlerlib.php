@@ -859,9 +859,6 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
     /** @var array current section data */
     protected $currentsection;
 
-    /** @var string current directory name for all files */
-    protected $currentdir;
-
     /**
      * This handler is interested in course sections and course modules within them
      */
@@ -902,6 +899,7 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
                     ),
                 )
             ),
+            new convert_path('course_modules', '/MOODLE_BACKUP/COURSE/MODULES'),
             // todo new convert_path('course_module_roles_overrides', '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD/ROLES_OVERRIDES'),
             // todo new convert_path('course_module_roles_assignments', '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD/ROLES_ASSIGNMENTS'),
         );
@@ -945,24 +943,10 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
 
         // stash the course module info in stashes like 'cminfo_forum' with
         // itemid set to the instance id. this is needed so that module handlers
-        // can later obtain information about the course module.
+        // can later obtain information about the course module and dump it into
+        // the module.xml file
         $this->converter->set_stash('cminfo_'.$data['modulename'], $data, $raw['INSTANCE']);
-
-        // populate the current module's dir
-        $this->currentdir = 'activities/'.$data['modulename'].'_'.$data['id'];
-
-        // write the module.xml file
-        $this->open_xml_writer($this->currentdir.'/module.xml');
-        $this->write_xml('module', $data, array('/module/id', '/module/version'));
-        $this->close_xml_writer();
-
-        $this->make_sure_xml_exists($this->currentdir.'/roles.xml', 'roles'); // @todo
-        $this->make_sure_xml_exists($this->currentdir.'/grades.xml', 'activity_gradebook'); // @todo
     }
-
-    public function process_course_module_roles_overrides() {
-    }
-
 
     /**
      * Writes sections/section_xxx/section.xml file and stashes it, too
@@ -982,6 +966,30 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
     public function on_course_sections_end() {
         $this->converter->set_stash('sectionidslist', $this->sectionids);
         unset($this->sectionids);
+    }
+
+    /**
+     * Writes the information collected by mod handlers
+     */
+    public function on_course_modules_end() {
+
+        foreach ($this->converter->get_stash('modnameslist') as $modname) {
+            $modinfo = $this->converter->get_stash('modinfo_'.$modname);
+            foreach ($modinfo['instances'] as $modinstanceid => $modinstance) {
+                $cminfo    = $this->converter->get_stash('cminfo_'.$modname, $modinstanceid);
+                $directory = 'activities/'.$modname.'_'.$cminfo['id'];
+
+                // write module.xml
+                $this->open_xml_writer($directory.'/module.xml');
+                $this->write_xml('module', $cminfo, array('/module/id', '/module/version'));
+                $this->close_xml_writer();
+
+                // todo: write proper grades.xml and roles.xml, for now we just make
+                // sure that those files are present
+                $this->make_sure_xml_exists($directory.'/roles.xml', 'roles');
+                $this->make_sure_xml_exists($directory.'/grades.xml', 'activity_gradebook');
+            }
+        }
     }
 }
 
