@@ -404,7 +404,7 @@ class moodle1_converter extends base_converter {
         $record = restore_dbops::get_backup_ids_record($this->get_id(), $stashname, $itemid);
 
         if (empty($record)) {
-            throw new moodle1_convert_empty_storage_exception('required_not_stashed_data');
+            throw new moodle1_convert_empty_storage_exception('required_not_stashed_data', array($stashname, $itemid));
         } else {
             return $record->info;
         }
