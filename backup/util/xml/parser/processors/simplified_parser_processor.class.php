@@ -174,12 +174,12 @@ abstract class simplified_parser_processor extends progressive_parser_processor 
      */
     public function after_path($path) {
         $toprocess = false;
-        // If the path being closed matches (same or parent) the last path in the stack
+        // If the path being closed matches (same or parent) the first path in the stack
         // we process pending startend notifications until one matching end is found
         if ($element = reset($this->startendinfo)) {
             $elepath = $element['path'];
             $eleaction = $element['action'];
-            if ($eleaction = 'end' && strpos($elepath, $path) === 0) {
+            if (strpos($elepath, $path) === 0) {
                 $toprocess = true;
             }
 
