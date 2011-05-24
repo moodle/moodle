@@ -558,6 +558,12 @@ function install_cli_database(array $options, $interactive) {
     // install all plugins types, local, etc.
     upgrade_noncore(true);
 
+    // ensure message preferences for the core message providers are set
+    $fileproviders = message_get_providers_from_file('moodle');
+    foreach ($fileproviders as $messagename => $fileprovider) {
+        message_set_default_message_preference('moodle', $messagename, $fileprovider);
+    }
+
     // set up admin user password
     $DB->set_field('user', 'password', hash_internal_user_password($options['adminpass']), array('username' => 'admin'));
 

@@ -320,6 +320,12 @@ if (moodle_needs_upgrading()) {
 // If this is the first install, indicate that this site is fully configured
 // except the admin password
 if (during_initial_install()) {
+    // ensure message preferences for the core message providers are set
+    $fileproviders = message_get_providers_from_file('moodle');
+    foreach ($fileproviders as $messagename => $fileprovider) {
+        message_set_default_message_preference('moodle', $messagename, $fileprovider);
+    }
+
     set_config('rolesactive', 1); // after this, during_initial_install will return false.
     set_config('adminsetuppending', 1);
     // we need this redirect to setup proper session
