@@ -286,7 +286,8 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
             $choice = $this->choices[$group][$choiceno];
             $parts[$place] = new question_classified_response(
                     $choiceno, html_to_text($choice->text, 0, false),
-                    $this->get_right_choice_for($place) == $response[$fieldname]);
+                    ($this->get_right_choice_for($place) == $response[$fieldname])
+                            / count($this->places));
         }
         return $parts;
     }

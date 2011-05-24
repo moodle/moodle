@@ -299,7 +299,8 @@ abstract class qtype_gapselect_base extends question_type {
             foreach ($question->choices[$group] as $i => $choice) {
                 $choices[$i] = new question_possible_response(
                         html_to_text($choice->text, 0, false),
-                        $question->rightchoices[$place] == $i);
+                        ($question->rightchoices[$place] == $i)
+                                / count($question->places));
             }
             $choices[null] = question_possible_response::no_response();
 
