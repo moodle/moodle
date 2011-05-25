@@ -68,7 +68,8 @@ class moodle1_mod_label_handler extends moodle1_mod_handler {
     public function process_label($data) {
         // get the course module id and context id
         $instanceid = $data['id'];
-        $moduleid   = $this->get_moduleid($instanceid);
+        $cminfo     = $this->get_cminfo($instanceid);
+        $moduleid   = $cminfo['id'];
         $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
 
         // we now have all information needed to start writing into the file
@@ -87,6 +88,7 @@ class moodle1_mod_label_handler extends moodle1_mod_handler {
      * This is executed when we reach the closing </MOD> tag of our 'label' path
      */
     public function on_label_end() {
+        // close label.xml
         $this->xmlwriter->end_tag('label');
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
