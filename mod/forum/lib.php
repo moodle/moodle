@@ -3544,7 +3544,7 @@ function forum_rating_validate($params) {
     }
 
     // upper limit
-    if ($info->scale < 0) {
+    if ($forum->scale < 0) {
         //its a custom scale
         $scalerecord = $DB->get_record('scale', array('id' => -$forum->scale));
         if ($scalerecord) {
