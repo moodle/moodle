@@ -1062,7 +1062,7 @@ abstract class enrol_plugin {
                 if (!is_null($status)) {
                     $ue->status   = $status;
                 }
-                $ue->modifier     = $USER->id;
+                $ue->modifierid   = $USER->id;
                 $ue->timemodified = time();
                 $DB->update_record('user_enrolments', $ue);
             }
@@ -1073,7 +1073,7 @@ abstract class enrol_plugin {
             $ue->userid       = $userid;
             $ue->timestart    = $timestart;
             $ue->timeend      = $timeend;
-            $ue->modifier     = $USER->id;
+            $ue->modifierid   = $USER->id;
             $ue->timecreated  = time();
             $ue->timemodified = $ue->timecreated;
             $ue->id = $DB->insert_record('user_enrolments', $ue);
