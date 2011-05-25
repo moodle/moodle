@@ -51,7 +51,7 @@ class qtype_calculatedmulti_single_question extends qtype_multichoice_single_que
      */
     public $synchronised;
 
-    public function start_attempt(question_attempt_step $step) {
+    public function start_attempt(question_attempt_step $step, $variant) {
         qtype_calculated_question_helper::start_attempt($this, $step);
         parent::start_attempt($step);
     }
@@ -88,9 +88,9 @@ class qtype_calculatedmulti_multi_question extends qtype_multichoice_multi_quest
      */
     public $synchronised;
 
-    public function start_attempt(question_attempt_step $step) {
+    public function start_attempt(question_attempt_step $step, $variant) {
         qtype_calculated_question_helper::start_attempt($this, $step);
-        parent::start_attempt($step);
+        parent::start_attempt($step, $variant);
     }
 
     public function apply_attempt_state(question_attempt_step $step) {

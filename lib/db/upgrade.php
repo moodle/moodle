@@ -6414,6 +6414,21 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2011051212);
     }
 
+    if ($oldversion < 2011051213) {
+        // Define field variant to be added to question_attempts
+        $table = new xmldb_table('question_attempts');
+        $field = new xmldb_field('variant', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
+                XMLDB_NOTNULL, null, 1, 'questionid');
+
+        // Launch add field component
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011051213);
+    }
+
     return true;
 }
 

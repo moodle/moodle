@@ -84,6 +84,7 @@ class question_engine_data_mapper {
         $record->slot = $qa->get_slot();
         $record->behaviour = $qa->get_behaviour_name();
         $record->questionid = $qa->get_question()->id;
+        $record->variant = $qa->get_variant();
         $record->maxmark = $qa->get_max_mark();
         $record->minfraction = $qa->get_min_fraction();
         $record->flagged = $qa->is_flagged();
@@ -180,6 +181,7 @@ SELECT
     qa.slot,
     qa.behaviour,
     qa.questionid,
+    qa.variant,
     qa.maxmark,
     qa.minfraction,
     qa.flagged,
@@ -236,6 +238,7 @@ SELECT
     qa.slot,
     qa.behaviour,
     qa.questionid,
+    qa.variant,
     qa.maxmark,
     qa.minfraction,
     qa.flagged,
@@ -291,6 +294,7 @@ SELECT
     qa.slot,
     qa.behaviour,
     qa.questionid,
+    qa.variant,
     qa.maxmark,
     qa.minfraction,
     qa.flagged,
@@ -549,6 +553,7 @@ SELECT
     qa.slot,
     qa.behaviour,
     qa.questionid,
+    qa.variant,
     qa.maxmark,
     qa.minfraction,
     qa.flagged,
@@ -819,6 +824,7 @@ ORDER BY
                     {$alias}qa.slot,
                     {$alias}qa.behaviour,
                     {$alias}qa.questionid,
+                    {$alias}qa.variant,
                     {$alias}qa.maxmark,
                     {$alias}qa.minfraction,
                     {$alias}qa.flagged,

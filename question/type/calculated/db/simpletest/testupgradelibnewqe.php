@@ -200,6 +200,7 @@ class qtype_calculated_attempt_upgrader_test extends question_attempt_upgrader_t
         $expectedqa = (object) array(
             'behaviour' => 'adaptive',
             'questionid' => 18,
+            'variant' => 1,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -422,6 +423,7 @@ Remember to type a unit.',
         $expectedqa = (object) array(
             'behaviour' => 'adaptive',
             'questionid' => 18,
+            'variant' => 1,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -651,6 +653,7 @@ Remember to type a unit.',
         $expectedqa = (object) array(
             'behaviour' => 'adaptive',
             'questionid' => 18,
+            'variant' => 1,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,

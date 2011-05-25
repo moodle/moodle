@@ -53,7 +53,7 @@ class qbehaviour_missing extends question_behaviour {
         return '';
     }
 
-    public function init_first_step(question_attempt_step $step) {
+    public function init_first_step(question_attempt_step $step, $variant) {
         throw new coding_exception('The behaviour used for this question is not available. ' .
                 'No processing is possible.');
     }

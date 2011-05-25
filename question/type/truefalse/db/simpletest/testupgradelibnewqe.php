@@ -189,6 +189,7 @@ class qtype_truefalse_attempt_upgrader_test extends question_attempt_upgrader_te
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 3865,
+            'variant' => 1,
             'maxmark' => 5,
             'minfraction' => 0,
             'flagged' => 0,
@@ -375,6 +376,7 @@ class qtype_truefalse_attempt_upgrader_test extends question_attempt_upgrader_te
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 9062,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -543,6 +545,7 @@ class qtype_truefalse_attempt_upgrader_test extends question_attempt_upgrader_te
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 111,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,

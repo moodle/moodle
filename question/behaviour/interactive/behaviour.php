@@ -138,8 +138,8 @@ class qbehaviour_interactive extends question_behaviour_with_save {
         }
     }
 
-    public function init_first_step(question_attempt_step $step) {
-        parent::init_first_step($step);
+    public function init_first_step(question_attempt_step $step, $variant) {
+        parent::init_first_step($step, $variant);
         $step->set_behaviour_var('_triesleft', count($this->question->hints) + 1);
     }
 

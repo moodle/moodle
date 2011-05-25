@@ -131,6 +131,7 @@ abstract class question_behaviour_attempt_updater {
 
         $qa = new stdClass();
         $qa->questionid = $this->question->id;
+        $qa->variant = 1;
         $qa->behaviour = $this->behaviour_name();
         $qa->questionsummary = $this->qtypeupdater->question_summary($this->question);
         $qa->rightanswer = $this->qtypeupdater->right_answer($this->question);

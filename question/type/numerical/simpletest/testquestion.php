@@ -174,7 +174,7 @@ class qtype_numerical_question_test extends UnitTestCase {
 
     public function test_classify_response() {
         $num = test_question_maker::make_question('numerical');
-        $num->start_attempt(new question_attempt_step());
+        $num->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEqual(array(
                 new question_classified_response(15, '3.1', 0.0)),
@@ -192,7 +192,7 @@ class qtype_numerical_question_test extends UnitTestCase {
 
     public function test_classify_response_unit() {
         $num = test_question_maker::make_question('numerical', 'unit');
-        $num->start_attempt(new question_attempt_step());
+        $num->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEqual(array(
                 new question_classified_response(13, '1.25', 0.5)),
@@ -219,7 +219,7 @@ class qtype_numerical_question_test extends UnitTestCase {
 
     public function test_classify_response_currency() {
         $num = test_question_maker::make_question('numerical', 'currency');
-        $num->start_attempt(new question_attempt_step());
+        $num->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEqual(array(
                 new question_classified_response(14, '$100', 0)),

@@ -235,6 +235,7 @@ class qtype_multichoice_attempt_upgrader_test extends question_attempt_upgrader_
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 2,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -410,6 +411,7 @@ class qtype_multichoice_attempt_upgrader_test extends question_attempt_upgrader_
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 72,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -604,6 +606,7 @@ class qtype_multichoice_attempt_upgrader_test extends question_attempt_upgrader_
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 218,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -826,6 +829,7 @@ class qtype_multichoice_attempt_upgrader_test extends question_attempt_upgrader_
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 2855,
+            'variant' => 1,
             'maxmark' => 5,
             'minfraction' => 0,
             'flagged' => 0,
@@ -983,6 +987,7 @@ class qtype_multichoice_attempt_upgrader_test extends question_attempt_upgrader_
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 72,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -1176,6 +1181,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 179,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -1413,6 +1419,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 26132,
+            'variant' => 1,
             'maxmark' => 0,
             'minfraction' => 0,
             'flagged' => 0,
@@ -1644,6 +1651,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 60137,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -1872,6 +1880,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 163,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -2084,6 +2093,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 89040,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -2298,6 +2308,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 3863,
+            'variant' => 1,
             'maxmark' => 5,
             'minfraction' => 0,
             'flagged' => 0,
@@ -2506,6 +2517,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 247,
+            'variant' => 1,
             'maxmark' => 0,
             'minfraction' => 0,
             'flagged' => 0,
@@ -2716,6 +2728,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 242,
+            'variant' => 1,
             'maxmark' => 0,
             'minfraction' => 0,
             'flagged' => 0,

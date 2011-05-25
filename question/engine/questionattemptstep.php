@@ -101,6 +101,10 @@ class question_attempt_step {
      */
     public function __construct($data = array(), $timecreated = null, $userid = null) {
         global $USER;
+        
+        if (!is_array($data)) {
+            echo format_backtrace(debug_backtrace());
+        }
         $this->state = question_state::$unprocessed;
         $this->data = $data;
         if (is_null($timecreated)) {

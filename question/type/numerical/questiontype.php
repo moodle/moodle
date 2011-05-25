@@ -27,6 +27,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/numerical/question.php');
+
 
 /**
  * The numerical question type class.

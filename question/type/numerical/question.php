@@ -57,7 +57,7 @@ class qtype_numerical_question extends question_graded_automatically {
         return $expected;
     }
 
-    public function start_attempt(question_attempt_step $step) {
+    public function start_attempt(question_attempt_step $step, $variant) {
         $step->set_qt_var('_separators',
                 $this->ap->get_point() . '$' . $this->ap->get_separator());
     }

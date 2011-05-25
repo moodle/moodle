@@ -503,6 +503,7 @@ function local_qeupgradehelper_generate_unit_test($questionsessionid, $namesuffi
     echo "
             'behaviour' => '{$quiz->preferredbehaviour}',
             'questionid' => {$question->id},
+            'variant' => 1,
             'maxmark' => {$question->maxmark},
             'minfraction' => 0,
             'flagged' => 0,

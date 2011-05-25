@@ -56,7 +56,7 @@ class qtype_match_question extends question_graded_automatically_with_countback 
     /** @var array shuffled choice indexes. */
     protected $choiceorder;
 
-    public function start_attempt(question_attempt_step $step) {
+    public function start_attempt(question_attempt_step $step, $variant) {
         $this->stemorder = array_keys($this->stems);
         if ($this->shufflestems) {
             shuffle($this->stemorder);

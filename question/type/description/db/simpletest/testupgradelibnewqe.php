@@ -153,6 +153,7 @@ class qtype_description_attempt_upgrader_test extends question_attempt_upgrader_
         $expectedqa = (object) array(
             'behaviour' => 'informationitem',
             'questionid' => 4940,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -298,6 +299,7 @@ class qtype_description_attempt_upgrader_test extends question_attempt_upgrader_
         $expectedqa = (object) array(
             'behaviour' => 'informationitem',
             'questionid' => 8492,
+            'variant' => 1,
             'maxmark' => 0,
             'minfraction' => 0,
             'flagged' => 0,
@@ -433,6 +435,7 @@ class qtype_description_attempt_upgrader_test extends question_attempt_upgrader_
         $expectedqa = (object) array(
             'behaviour' => 'informationitem',
             'questionid' => 8719,
+            'variant' => 1,
             'maxmark' => 0,
             'minfraction' => 0,
             'flagged' => 0,

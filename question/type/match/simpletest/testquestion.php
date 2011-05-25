@@ -39,7 +39,7 @@ class qtype_match_question_test extends UnitTestCase {
 
     public function test_get_expected_data() {
         $question = test_question_maker::make_a_matching_question();
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEqual(array('sub0' => PARAM_INT, 'sub1' => PARAM_INT,
                 'sub2' => PARAM_INT, 'sub3' => PARAM_INT), $question->get_expected_data());
@@ -47,7 +47,7 @@ class qtype_match_question_test extends UnitTestCase {
 
     public function test_is_complete_response() {
         $question = test_question_maker::make_a_matching_question();
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertFalse($question->is_complete_response(array()));
         $this->assertFalse($question->is_complete_response(
@@ -59,7 +59,7 @@ class qtype_match_question_test extends UnitTestCase {
 
     public function test_is_gradable_response() {
         $question = test_question_maker::make_a_matching_question();
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertFalse($question->is_gradable_response(array()));
         $this->assertFalse($question->is_gradable_response(
@@ -73,7 +73,7 @@ class qtype_match_question_test extends UnitTestCase {
 
     public function test_is_same_response() {
         $question = test_question_maker::make_a_matching_question();
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
 
         $this->assertTrue($question->is_same_response(
                 array(),
@@ -99,7 +99,7 @@ class qtype_match_question_test extends UnitTestCase {
     public function test_grading() {
         $question = test_question_maker::make_a_matching_question();
         $question->shufflestems = false;
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
 
         $choiceorder = $question->get_choice_order();
         $orderforchoice = array_combine(array_values($choiceorder), array_keys($choiceorder));
@@ -119,7 +119,7 @@ class qtype_match_question_test extends UnitTestCase {
     public function test_get_correct_response() {
         $question = test_question_maker::make_a_matching_question();
         $question->shufflestems = false;
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
 
         $choiceorder = $question->get_choice_order();
         $orderforchoice = array_combine(array_values($choiceorder), array_keys($choiceorder));
@@ -131,7 +131,7 @@ class qtype_match_question_test extends UnitTestCase {
 
     public function test_get_question_summary() {
         $match = test_question_maker::make_a_matching_question();
-        $match->start_attempt(new question_attempt_step());
+        $match->start_attempt(new question_attempt_step(), 1);
         $qsummary = $match->get_question_summary();
         $this->assertPattern('/' . preg_quote($match->questiontext) . '/', $qsummary);
         foreach ($match->stems as $stem) {
@@ -145,7 +145,7 @@ class qtype_match_question_test extends UnitTestCase {
     public function test_summarise_response() {
         $match = test_question_maker::make_a_matching_question();
         $match->shufflestems = false;
-        $match->start_attempt(new question_attempt_step());
+        $match->start_attempt(new question_attempt_step(), 1);
 
         $summary = $match->summarise_response(array('sub0' => 2, 'sub1' => 1));
 
@@ -155,7 +155,7 @@ class qtype_match_question_test extends UnitTestCase {
     public function test_classify_response() {
         $match = test_question_maker::make_a_matching_question();
         $match->shufflestems = false;
-        $match->start_attempt(new question_attempt_step());
+        $match->start_attempt(new question_attempt_step(), 1);
 
         $choiceorder = $match->get_choice_order();
         $orderforchoice = array_combine(array_values($choiceorder), array_keys($choiceorder));

@@ -55,7 +55,7 @@ class qtype_calculatedmulti_question_test extends UnitTestCase {
 
     public function test_grading() {
         $question = test_question_maker::make_question('calculated');
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
 
         $this->assertEqual(array(0, question_state::$gradedwrong),
@@ -66,7 +66,7 @@ class qtype_calculatedmulti_question_test extends UnitTestCase {
 
     public function test_get_correct_response() {
         $question = test_question_maker::make_question('calculated');
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
 
         $this->assertEqual(array('answer' => $values['a'] + $values['b']),
@@ -75,7 +75,7 @@ class qtype_calculatedmulti_question_test extends UnitTestCase {
 
     public function test_get_question_summary() {
         $question = test_question_maker::make_question('calculated');
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
 
         $qsummary = $question->get_question_summary();
@@ -84,7 +84,7 @@ class qtype_calculatedmulti_question_test extends UnitTestCase {
 
     public function test_summarise_response() {
         $question = test_question_maker::make_question('calculated');
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
 
         $this->assertEqual('3.1', $question->summarise_response(array('answer' => '3.1')));
@@ -92,7 +92,7 @@ class qtype_calculatedmulti_question_test extends UnitTestCase {
 
     public function test_classify_response() {
         $question = test_question_maker::make_question('calculated');
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
 
         $this->assertEqual(array(

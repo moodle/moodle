@@ -65,9 +65,9 @@ class qtype_multianswer_question extends question_graded_automatically {
         return new question_attempt_step_subquestion_adapter($step, 'sub' . $i . '_');
     }
 
-    public function start_attempt(question_attempt_step $step) {
+    public function start_attempt(question_attempt_step $step, $variant) {
         foreach ($this->subquestions as $i => $subq) {
-            $subq->start_attempt($this->get_substep($step, $i));
+            $subq->start_attempt($this->get_substep($step, $i), $variant);
         }
     }
 

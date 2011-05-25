@@ -228,6 +228,7 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 34999,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -468,6 +469,7 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 98355,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -745,6 +747,7 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 83248,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -941,6 +944,7 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 14,
+            'variant' => 1,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,

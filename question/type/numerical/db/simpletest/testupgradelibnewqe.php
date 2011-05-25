@@ -225,6 +225,7 @@ class qtype_numerical_attempt_upgrader_test extends question_attempt_upgrader_te
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 4165,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -421,6 +422,7 @@ class qtype_numerical_attempt_upgrader_test extends question_attempt_upgrader_te
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 15,
+            'variant' => 1,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,

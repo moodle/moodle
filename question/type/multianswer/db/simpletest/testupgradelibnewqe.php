@@ -201,6 +201,7 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
         $expectedqa = (object) array(
             'behaviour' => 'adaptivenopenalty',
             'questionid' => 28,
+            'variant' => 1,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -392,6 +393,7 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
         $expectedqa = (object) array(
             'behaviour' => 'adaptivenopenalty',
             'questionid' => 28,
+            'variant' => 1,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -598,6 +600,7 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
         $expectedqa = (object) array(
             'behaviour' => 'adaptivenopenalty',
             'questionid' => 28,
+            'variant' => 1,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -1266,6 +1269,7 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
         $expectedqa = (object) array(
             'behaviour' => 'adaptivenopenalty',
             'questionid' => 19,
+            'variant' => 1,
             'maxmark' => 13.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -1939,6 +1943,7 @@ b) What grade would you give it? _____',
         $expectedqa = (object) array(
             'behaviour' => 'adaptivenopenalty',
             'questionid' => 19,
+            'variant' => 1,
             'maxmark' => 13.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -2632,6 +2637,7 @@ b) What grade would you give it? _____',
         $expectedqa = (object) array(
             'behaviour' => 'adaptivenopenalty',
             'questionid' => 19,
+            'variant' => 1,
             'maxmark' => 13.0000000,
             'minfraction' => 0,
             'flagged' => 0,

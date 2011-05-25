@@ -50,9 +50,9 @@ class qtype_calculated_question extends qtype_numerical_question
      */
     public $synchronised;
 
-    public function start_attempt(question_attempt_step $step) {
+    public function start_attempt(question_attempt_step $step, $variant) {
         qtype_calculated_question_helper::start_attempt($this, $step);
-        parent::start_attempt($step);
+        parent::start_attempt($step, $variant);
     }
 
     public function apply_attempt_state(question_attempt_step $step) {

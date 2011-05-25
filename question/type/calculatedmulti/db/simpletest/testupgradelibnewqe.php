@@ -227,6 +227,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
         $expectedqa = (object) array(
             'behaviour' => 'adaptive',
             'questionid' => 17,
+            'variant' => 1,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -460,6 +461,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
         $expectedqa = (object) array(
             'behaviour' => 'adaptive',
             'questionid' => 17,
+            'variant' => 1,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -737,6 +739,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
         $expectedqa = (object) array(
             'behaviour' => 'adaptive',
             'questionid' => 17,
+            'variant' => 1,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,

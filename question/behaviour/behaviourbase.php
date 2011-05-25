@@ -334,9 +334,10 @@ abstract class question_behaviour {
      *
      * @param question_attempt_step $step the first step of the
      *      question_attempt being started.
+     * @param int $variant which variant of the question to use.
      */
-    public function init_first_step(question_attempt_step $step) {
-        $this->question->start_attempt($step);
+    public function init_first_step(question_attempt_step $step, $variant) {
+        $this->question->start_attempt($step, $variant);
     }
 
     /**

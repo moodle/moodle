@@ -54,7 +54,7 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
 
     protected $order = null;
 
-    public function start_attempt(question_attempt_step $step) {
+    public function start_attempt(question_attempt_step $step, $variant) {
         $this->order = array_keys($this->answers);
         if ($this->shuffleanswers) {
             shuffle($this->order);

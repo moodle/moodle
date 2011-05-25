@@ -408,23 +408,54 @@ class question_usage_by_activity {
     }
 
     /**
+     * Get the number of variants available for the question in this slot.
+     * @param int $slot the number used to identify this question within this usage.
+     * @return int the number of variants available.
+     */
+    public function get_num_variants($slot) {
+        return $this->get_question_attempt($slot)->get_question()->get_num_variants();
+    }
+
+    /**
+     * Get the variant of the question being used in a given slot.
+     * @param int $slot the number used to identify this question within this usage.
+     * @return int the variant of this question that is being used.
+     */
+    public function get_variant($slot) {
+        return $this->get_question_attempt($slot)->get_variant();
+    }
+
+    /**
      * Start the attempt at a question that has been added to this usage.
      * @param int $slot the number used to identify this question within this usage.
+     * @param int $variant which variant of the question to use. Must be between
+     *      1 and ->get_num_variants($slot) inclusive. If not give, a variant is
+     *      chosen at random.
      */
-    public function start_question($slot) {
+    public function start_question($slot, $variant = null) {
+        if (is_null($variant)) {
+            $variant = rand(1, $this->get_num_variants($slot));
+        }
+
         $qa = $this->get_question_attempt($slot);
-        $qa->start($this->preferredbehaviour);
+        $qa->start($this->preferredbehaviour, $variant);
         $this->observer->notify_attempt_modified($qa);
     }
 
     /**
      * Start the attempt at all questions that has been added to this usage.
+     * @param question_variant_selection_strategy how to pick which variant of each question to use.
      * @param int $timestamp optional, the timstamp to record for this action. Defaults to now.
      * @param int $userid optional, the user to attribute this action to. Defaults to the current user.
      */
-    public function start_all_questions($timestamp = null, $userid = null) {
+    public function start_all_questions(question_variant_selection_strategy $variantstrategy = null,
+            $timestamp = null, $userid = null) {
+        if (is_null($variantstrategy)) {
+            $variantstrategy = new question_variant_random_strategy();
+        }
+
         foreach ($this->questionattempts as $qa) {
-            $qa->start($this->preferredbehaviour);
+            $qa->start($this->preferredbehaviour, $qa->select_variant($variantstrategy));
             $this->observer->notify_attempt_modified($qa);
         }
     }

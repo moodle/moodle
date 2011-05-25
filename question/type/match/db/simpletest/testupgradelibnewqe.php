@@ -226,6 +226,7 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 695,
+            'variant' => 1,
             'maxmark' => 3,
             'minfraction' => 0,
             'flagged' => 0,
@@ -442,6 +443,7 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 738,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,
@@ -705,6 +707,7 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
         $expectedqa = (object) array(
             'behaviour' => 'deferredfeedback',
             'questionid' => 11135,
+            'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
             'flagged' => 0,

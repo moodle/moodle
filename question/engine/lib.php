@@ -760,3 +760,33 @@ abstract class question_utils {
                 self::$tens[$number / 10 % 10] . self::$units[$number % 10];
     }
 }
+
+
+/**
+ * The interface for strategies for controlling which variant of each question is used.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+interface question_variant_selection_strategy {
+    /**
+     * @param int $maxvariants the num
+     * @param string $seed data that can be used to controls how the variant is selected
+     *      in a semi-random way.
+     * @return int the variant to use, a number betweeb 1 and $maxvariants inclusive.
+     */
+    public function choose_variant($maxvariants, $seed);
+}
+
+
+/**
+ * A {@link question_variant_selection_strategy} that is completely random.
+ *
+ * @copyright  2010 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_variant_random_strategy implements question_variant_selection_strategy {
+    public function choose_variant($maxvariants, $seed) {
+        return rand(1, $maxvariants);
+    }
+}

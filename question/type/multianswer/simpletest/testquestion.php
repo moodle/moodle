@@ -65,7 +65,7 @@ class qtype_multianswer_question_test extends UnitTestCase {
 
     public function test_grading() {
         $question = test_question_maker::make_question('multianswer');
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
 
         $rightchoice = $question->subquestions[2]->get_correct_response();
 
@@ -81,7 +81,7 @@ class qtype_multianswer_question_test extends UnitTestCase {
 
     public function test_get_correct_response() {
         $question = test_question_maker::make_question('multianswer');
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
 
         $rightchoice = $question->subquestions[2]->get_correct_response();
 
@@ -95,7 +95,7 @@ class qtype_multianswer_question_test extends UnitTestCase {
         // Bit of a hack to make testing easier.
         $question->subquestions[2]->shuffleanswers = false;
 
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
 
         $qsummary = $question->get_question_summary();
         $this->assertEqual('Complete this opening line of verse: "The _____ and the ' .
@@ -104,7 +104,7 @@ class qtype_multianswer_question_test extends UnitTestCase {
 
     public function test_summarise_response() {
         $question = test_question_maker::make_question('multianswer');
-        $question->start_attempt(new question_attempt_step());
+        $question->start_attempt(new question_attempt_step(), 1);
 
         $rightchoice = $question->subquestions[2]->get_correct_response();
 

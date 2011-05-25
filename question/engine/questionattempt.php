@@ -84,6 +84,9 @@ class question_attempt {
     /** @var question_definition the question this is an attempt at. */
     protected $question;
 
+    /** @var int which variant of the question to use. */
+    protected $variant;
+
     /** @var number the maximum mark that can be scored at this question. */
     protected $maxmark;
 
@@ -160,6 +163,14 @@ class question_attempt {
     /** @return question_definition the question this is an attempt at. */
     public function get_question() {
         return $this->question;
+    }
+
+    /**
+     * Get the variant of the question being used in a given slot.
+     * @return int the variant number.
+     */
+    public function get_variant() {
+        return $this->variant;
     }
 
     /**
@@ -736,6 +747,16 @@ class question_attempt {
     }
 
     /**
+     * Use a strategy to pick a variant.
+     * @param question_variant_selection_strategy $variantstrategy a strategy.
+     * @return int the selected variant.
+     */
+    public function select_variant(question_variant_selection_strategy $variantstrategy) {
+        return $variantstrategy->choose_variant($this->get_question()->get_num_variants(),
+                $this->get_question()->get_variants_selection_seed());
+    }
+
+    /**
      * Start this question attempt.
      *
      * You should not call this method directly. Call
@@ -743,12 +764,17 @@ class question_attempt {
      *
      * @param string|question_behaviour $preferredbehaviour the name of the
      *      desired archetypal behaviour, or an actual model instance.
+     * @param int $variant the variant of the question to start. Between 1 and
+     *      $this->get_question()->get_num_variants() inclusive.
      * @param array $submitteddata optional, used when re-starting to keep the same initial state.
      * @param int $timestamp optional, the timstamp to record for this action. Defaults to now.
      * @param int $userid optional, the user to attribute this action to. Defaults to the current user.
      */
-    public function start($preferredbehaviour, $submitteddata = array(), $timestamp = null, $userid = null) {
+    public function start($preferredbehaviour, $variant, $submitteddata = array(),
+            $timestamp = null, $userid = null) {
+
         // Initialise the behaviour.
+        $this->variant = $variant;
         if (is_string($preferredbehaviour)) {
             $this->behaviour =
                     $this->question->make_behaviour($this, $preferredbehaviour);
@@ -766,7 +792,7 @@ class question_attempt {
         if ($submitteddata) {
             $this->question->apply_attempt_state($firststep);
         } else {
-            $this->behaviour->init_first_step($firststep);
+            $this->behaviour->init_first_step($firststep, $variant);
         }
         $this->add_step($firststep);
 
@@ -786,7 +812,7 @@ class question_attempt {
      *      defines the starting point.
      */
     public function start_based_on(question_attempt $oldqa) {
-        $this->start($oldqa->behaviour, $oldqa->get_resume_data());
+        $this->start($oldqa->behaviour, $oldqa->get_variant(), $oldqa->get_resume_data());
     }
 
     /**
@@ -1013,7 +1039,7 @@ class question_attempt {
         foreach ($oldqa->get_step_iterator() as $step) {
             if ($first) {
                 $first = false;
-                $this->start($oldqa->behaviour, $step->get_all_data(),
+                $this->start($oldqa->behaviour, $oldqa->get_variant(), $step->get_all_data(),
                         $step->get_timecreated(), $step->get_user_id());
             } else {
                 $this->process_action($step->get_submitted_data(),
@@ -1109,6 +1135,7 @@ class question_attempt {
                 null, $record->maxmark + 0);
         $qa->set_database_id($record->questionattemptid);
         $qa->set_number_in_usage($record->slot);
+        $qa->variant = $record->variant + 0;
         $qa->minfraction = $record->minfraction + 0;
         $qa->set_flagged($record->flagged);
         $qa->questionsummary = $record->questionsummary;
@@ -1194,7 +1221,7 @@ class question_attempt_with_restricted_history extends question_attempt {
     public function process_action($submitteddata, $timestamp = null, $userid = null) {
         coding_exception('Cannot modify a question_attempt_with_restricted_history.');
     }
-    public function start($preferredbehaviour, $submitteddata = array(), $timestamp = null, $userid = null) {
+    public function start($preferredbehaviour, $variant, $submitteddata = array(), $timestamp = null, $userid = null) {
         coding_exception('Cannot modify a question_attempt_with_restricted_history.');
     }
 

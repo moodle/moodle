@@ -157,8 +157,10 @@ abstract class question_definition {
      *
      * @param question_attempt_step The first step of the {@link question_attempt}
      *      being started. Can be used to store state.
+     * @param int $varant which variant of this question to start. Will be between
+     *      1 and {@link get_num_variants()} inclusive.
      */
-    public function start_attempt(question_attempt_step $step) {
+    public function start_attempt(question_attempt_step $step, $variant) {
     }
 
     /**
@@ -188,6 +190,21 @@ abstract class question_definition {
      */
     public function get_question_summary() {
         return $this->html_to_text($this->questiontext, $this->questiontextformat);
+    }
+
+    /**
+     * @return int the number of vaiants that this question has.
+     */
+    public function get_num_variants() {
+        return 1;
+    }
+
+    /**
+     * @return string that can be used to seed the pseudo-random selection of a
+     *      variant.
+     */
+    public function get_variants_selection_seed() {
+        return $this->stamp;
     }
 
     /**
