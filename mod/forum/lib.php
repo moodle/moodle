@@ -3537,9 +3537,14 @@ function forum_rating_validate($params) {
     }
     
     //check that the submitted rating is valid for the scale
-    if ($params['rating'] < 0) {
+
+    // lower limit
+    if ($params['rating'] < 0  && $params['rating'] != RATING_UNSET_RATING) {
         throw new rating_exception('invalidnum');
-    } else if ($forum->scale < 0) {
+    }
+
+    // upper limit
+    if ($info->scale < 0) {
         //its a custom scale
         $scalerecord = $DB->get_record('scale', array('id' => -$forum->scale));
         if ($scalerecord) {
