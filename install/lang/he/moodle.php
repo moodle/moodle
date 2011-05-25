@@ -28,7 +28,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['language'] = 'חבילת שפה';
+$string['language'] = 'שפה';
 $string['next'] = 'הלאה';
 $string['previous'] = 'קודם';
 $string['reload'] = 'טען מחדש';

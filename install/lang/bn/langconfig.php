@@ -28,5 +28,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['parentlanguage'] = '';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'বাংলা';
