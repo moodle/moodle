@@ -1,3 +1,7 @@
-.que.multianswer .submit {
+.que.multianswer .feedbackspan {
+    display: block;
+    background: #fff3bf;
+    padding: 0.5em;
     margin-top: 1em;
+    box-shadow: 0.5em 0.5em 1em #000000;
 }

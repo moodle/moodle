@@ -45,6 +45,18 @@ class qtype_multianswer_question extends question_graded_automatically {
     public $subquestions = array();
 
     /**
+     * @var array place number => insex in the $subquestions array. Places are
+     * numbered from 1.
+     */
+    public $places;
+
+    /**
+     * @var array of strings, one longer than $places, which is achieved by
+     * indexing from 0. The bits of question text that go between the subquestions.
+     */
+    public $textfragments;
+
+    /**
      * Get a question_attempt_step_subquestion_adapter
      * @param question_attempt_step $step the step to adapt.
      * @param int $i the subquestion index.
