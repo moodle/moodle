@@ -571,10 +571,10 @@ class rating_manager {
                        $aggregatestr(r.rating) AS aggrrating, COUNT(r.rating) AS numratings,
                        ur.id, ur.userid, ur.scaleid, ur.rating AS usersrating
                   FROM {rating} r
-             LEFT JOIN {rating} ur ON ur.contextid = r.contextid AND 
-                                      ur.itemid = r.itemid AND 
-                                      ur.component = r.component AND 
-                                      ur.ratingarea = r.ratingarea AND 
+             LEFT JOIN {rating} ur ON ur.contextid = r.contextid AND
+                                      ur.itemid = r.itemid AND
+                                      ur.component = r.component AND
+                                      ur.ratingarea = r.ratingarea AND
                                       ur.userid = :userid
                  WHERE r.contextid = :contextid AND
                        r.itemid {$itemidtest} AND

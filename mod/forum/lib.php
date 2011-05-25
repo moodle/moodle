@@ -3523,7 +3523,7 @@ function forum_rating_validate($params) {
     if ($context->id != $params['context']->id) {
         throw new rating_exception('invalidcontext');
     }
-    
+
     if ($forum->scale != $params['scaleid']) {
         //the scale being submitted doesnt match the one in the database
         throw new rating_exception('invalidscaleid');
@@ -3535,7 +3535,7 @@ function forum_rating_validate($params) {
             throw new rating_exception('notavailable');
         }
     }
-    
+
     //check that the submitted rating is valid for the scale
 
     // lower limit

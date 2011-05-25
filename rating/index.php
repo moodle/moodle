@@ -88,7 +88,7 @@ if (!$ratings) {
     if ($popup) {
         $sorturl->param('popup', $popup);
     }
-    
+
     $table = new html_table;
     $table->cellpadding = 3;
     $table->cellspacing = 3;

@@ -527,7 +527,7 @@ function glossary_rating_validate($params) {
         //item doesn't exist
         throw new rating_exception('invaliditemid');
     }
-        
+
     if ($info->scale != $params['scaleid']) {
         //the scale being submitted doesnt match the one in the database
         throw new rating_exception('invalidscaleid');
