@@ -112,7 +112,7 @@ class qtype_shortanswer_renderer extends qtype_renderer {
     public function correct_response(question_attempt $qa) {
         $question = $qa->get_question();
 
-        $answer = reset($question->get_answers());
+        $answer = $question->get_matching_answer($question->get_correct_response());
         if (!$answer) {
             return '';
         }
