@@ -49,11 +49,11 @@ class moodle1_converter extends base_converter {
     /** @var array of {@link convert_path} to process */
     protected $pathelements = array();
 
-    /** @var string the current module being processed - used to expand the MOD paths */
-    protected $currentmod = '';
+    /** @var null|string the current module being processed - used to expand the MOD paths */
+    protected $currentmod = null;
 
-    /** @var string the current block being processed - used to expand the BLOCK paths */
-    protected $currentblock = '';
+    /** @var null|string the current block being processed - used to expand the BLOCK paths */
+    protected $currentblock = null;
 
     /** @var string path currently locking processing of children */
     protected $pathlock;
@@ -296,13 +296,40 @@ class moodle1_converter extends base_converter {
     /**
      * Executes operations required at the start of a watched path
      *
-     * Note that this is called before the MOD and BLOCK paths are expanded
-     * so the current plugin is not known yet. Also note that this is
-     * triggered before the previous path is actually dispatched.
+     * For MOD and BLOCK paths, this is supported only for the sub-paths, not the root
+     * module/block element. For the illustration:
+     *
+     * You CAN'T attach on_xxx_start() listener to a path like
+     * /MOODLE_BACKUP/COURSE/MODULES/MOD/WORKSHOP because the <MOD> must
+     * be processed first in {@link self::process_chunk()} where $this->currentmod
+     * is set.
+     *
+     * You CAN attach some on_xxx_start() listener to a path like
+     * /MOODLE_BACKUP/COURSE/MODULES/MOD/WORKSHOP/SUBMISSIONS because it is
+     * a sub-path under <MOD> and we have $this->currentmod already set when the
+     * <SUBMISSIONS> is reached.
      *
      * @param string $path in the original file
      */
     public function path_start_reached($path) {
+
+        if ($path === '/MOODLE_BACKUP/COURSE/MODULES/MOD') {
+            $this->currentmod = null;
+            $forbidden = true;
+
+        } else if (strpos($path, '/MOODLE_BACKUP/COURSE/MODULES/MOD') === 0) {
+            // expand the MOD paths so that they contain the module name
+            $path = str_replace('/MOODLE_BACKUP/COURSE/MODULES/MOD', '/MOODLE_BACKUP/COURSE/MODULES/MOD/' . $this->currentmod, $path);
+        }
+
+        if ($path === '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK') {
+            $this->currentmod = null;
+            $forbidden = true;
+
+        } else if (strpos($path, '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK') === 0) {
+            // expand the BLOCK paths so that they contain the module name
+            $path = str_replace('/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK', '/MOODLE_BACKUP/COURSE/BLOCKS/BLOCK/' . $this->currentmod, $path);
+        }
 
         if (empty($this->pathelements[$path])) {
             return;
@@ -313,7 +340,13 @@ class moodle1_converter extends base_converter {
         $method  = $element->get_start_method();
 
         if (method_exists($pobject, $method)) {
-            $pobject->$method();
+            if (empty($forbidden)) {
+                $pobject->$method();
+
+            } else {
+                // this path is not supported because we do not know the module/block yet
+                throw new coding_exception('Attaching the on-start event listener to the root MOD or BLOCK element is forbidden.');
+            }
         }
     }
 
