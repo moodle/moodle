@@ -92,7 +92,8 @@ class qtype_multianswer extends question_type {
                 array('question' => $question->id))) {
             $oldwrappedquestions = array();
         } else {
-            $oldwrappedquestions = $DB->get_records_list('question', 'id', explode(',', $oldwrappedids), 'id ASC');
+            $oldwrappedquestions = $DB->get_records_list('question', 'id',
+                    explode(',', $oldwrappedids), 'id ASC');
         }
 
         $sequence = array();
@@ -100,7 +101,8 @@ class qtype_multianswer extends question_type {
             if (!empty($wrapped)) {
                 // if we still have some old wrapped question ids, reuse the next of them
 
-                if (is_array($oldwrappedquestions) && $oldwrappedquestion = array_shift($oldwrappedquestions)) {
+                if (is_array($oldwrappedquestions) &&
+                        $oldwrappedquestion = array_shift($oldwrappedquestions)) {
                     $wrapped->id = $oldwrappedquestion->id;
                     if ($oldwrappedquestion->qtype != $wrapped->qtype) {
                         switch ($oldwrappedquestion->qtype) {
@@ -152,7 +154,8 @@ class qtype_multianswer extends question_type {
             $multianswer = new stdClass();
             $multianswer->question = $question->id;
             $multianswer->sequence = implode(',', $sequence);
-            if ($oldid = $DB->get_field('question_multianswer', 'id', array('question' => $question->id))) {
+            if ($oldid = $DB->get_field('question_multianswer', 'id',
+                    array('question' => $question->id))) {
                 $multianswer->id = $oldid;
                 $DB->update_record('question_multianswer', $multianswer);
             } else {
@@ -248,7 +251,8 @@ define('NUMERICAL_ABS_ERROR_MARGIN', 6);
 
 // Remaining ANSWER regexes
 define('ANSWER_TYPE_DEF_REGEX',
-       '(NUMERICAL|NM)|(MULTICHOICE|MC)|(MULTICHOICE_V|MCV)|(MULTICHOICE_H|MCH)|(SHORTANSWER|SA|MW)|(SHORTANSWER_C|SAC|MWC)');
+        '(NUMERICAL|NM)|(MULTICHOICE|MC)|(MULTICHOICE_V|MCV)|(MULTICHOICE_H|MCH)|' .
+                '(SHORTANSWER|SA|MW)|(SHORTANSWER_C|SAC|MWC)');
 define('ANSWER_START_REGEX',
        '\{([0-9]*):(' . ANSWER_TYPE_DEF_REGEX . '):');
 

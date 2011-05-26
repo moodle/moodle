@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -69,14 +68,12 @@ class qtype_multianswer_question extends question_graded_automatically {
     public function start_attempt(question_attempt_step $step) {
         foreach ($this->subquestions as $i => $subq) {
             $subq->start_attempt($this->get_substep($step, $i));
-            
         }
     }
 
     public function apply_attempt_state(question_attempt_step $step) {
         foreach ($this->subquestions as $i => $subq) {
             $subq->apply_attempt_state($this->get_substep($step, $i));
-            
         }
     }
 

@@ -90,9 +90,12 @@ class qtype_multianswer_test_helper extends question_test_helper {
         $mc->layout = 1;
 
         $mc->answers = array(
-            13 => new question_answer(13, 'Bow-wow', 0, 'You seem to have a dog obsessions!', FORMAT_HTML),
-            14 => new question_answer(14, 'Wiggly worm', 0, 'Now you are just being rediculous!', FORMAT_HTML),
-            15 => new question_answer(15, 'Pussy-cat', 1, 'Well done!', FORMAT_HTML),
+            13 => new question_answer(13, 'Bow-wow', 0,
+                    'You seem to have a dog obsessions!', FORMAT_HTML),
+            14 => new question_answer(14, 'Wiggly worm', 0,
+                    'Now you are just being rediculous!', FORMAT_HTML),
+            15 => new question_answer(15, 'Pussy-cat', 1,
+                    'Well done!', FORMAT_HTML),
         );
         $mc->qtype = question_bank::get_qtype('multichoice');
         $mc->maxmark = 1;
