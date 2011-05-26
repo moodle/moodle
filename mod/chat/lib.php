@@ -430,7 +430,8 @@ function chat_cron () {
  * Returns the users with data in one chat
  * (users with records in chat_messages, students)
  *
- * @global object
+ * @todo: deprecated - to be deleted in 2.2
+ *
  * @param int $chatid
  * @param int $groupid
  * @return array

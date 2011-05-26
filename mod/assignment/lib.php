@@ -2772,6 +2772,8 @@ function assignment_grade_item_delete($assignment) {
 /**
  * Returns the users with data in one assignment (students and teachers)
  *
+ * @todo: deprecated - to be deleted in 2.2
+ *
  * @param $assignmentid int
  * @return array of user objects
  */

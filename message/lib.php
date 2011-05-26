@@ -1966,6 +1966,8 @@ function message_post_message($userfrom, $userto, $message, $format) {
  * Returns a list of all user ids who have used messaging in the site
  * This was the simple way to code the SQL ... is it going to blow up
  * on large datasets?
+ *
+ * @todo: deprecated - to be deleted in 2.2
  */
 function message_get_participants() {
     global $CFG, $DB;

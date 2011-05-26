@@ -394,13 +394,13 @@ if ($allentries) {
     echo $paging;
     echo '</div>';
 
-
     //load ratings
     require_once($CFG->dirroot.'/rating/lib.php');
-    if ($glossary->assessed!=RATING_AGGREGATE_NONE) {
-        $ratingoptions = new stdclass();
+    if ($glossary->assessed != RATING_AGGREGATE_NONE) {
+        $ratingoptions = new stdClass;
         $ratingoptions->context = $context;
         $ratingoptions->component = 'mod_glossary';
+        $ratingoptions->ratingarea = 'entry';
         $ratingoptions->items = $allentries;
         $ratingoptions->aggregate = $glossary->assessed;//the aggregation method
         $ratingoptions->scaleid = $glossary->scale;

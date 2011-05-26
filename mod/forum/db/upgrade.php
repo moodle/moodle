@@ -315,6 +315,28 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010091900, 'forum');
     }
 
+    if ($oldversion < 2011052300) {
+        // rating.component and rating.ratingarea have now been added as mandatory fields.
+        // Presently you can only rate forum posts so component = 'mod_forum' and ratingarea = 'post'
+        // for all ratings with a forum context.
+        // We want to update all ratings that belong to a forum context and don't already have a
+        // component set.
+        // This could take a while reset upgrade timeout to 5 min
+        upgrade_set_timeout(60 * 20);
+        $sql = "UPDATE {rating}
+                SET component = 'mod_forum', ratingarea = 'post'
+                WHERE contextid IN (
+                    SELECT ctx.id
+                      FROM {context} ctx
+                      JOIN {course_modules} cm ON cm.id = ctx.instanceid
+                      JOIN {modules} m ON m.id = cm.module
+                     WHERE ctx.contextlevel = 70 AND
+                           m.name = 'forum'
+                ) AND component = 'unknown'";
+        $DB->execute($sql);
+
+        upgrade_mod_savepoint(true, 2011052300, 'forum');
+    }
 
     return true;
 }

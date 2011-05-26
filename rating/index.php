@@ -27,11 +27,13 @@
 require_once("../config.php");
 require_once("lib.php");
 
-$contextid   = required_param('contextid', PARAM_INT);
-$itemid   = required_param('itemid', PARAM_INT);
-$scaleid   = required_param('scaleid', PARAM_INT);
-$sort = optional_param('sort', '', PARAM_ALPHA);
-$popup = optional_param('popup', 0, PARAM_INT);//==1 if in a popup window?
+$contextid  = required_param('contextid', PARAM_INT);
+$component  = required_param('component', PARAM_ALPHAEXT);
+$ratingarea = optional_param('ratingarea', null, PARAM_ALPHANUMEXT);
+$itemid     = required_param('itemid', PARAM_INT);
+$scaleid    = required_param('scaleid', PARAM_INT);
+$sort       = optional_param('sort', '', PARAM_ALPHA);
+$popup      = optional_param('popup', 0, PARAM_INT); //==1 if in a popup window?
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
@@ -69,8 +71,10 @@ $strtime    = get_string('time');
 $PAGE->set_title(get_string('allratingsforitem','rating'));
 echo $OUTPUT->header();
 
-$ratingoptions = new stdclass();
+$ratingoptions = new stdClass;
 $ratingoptions->context = $context;
+$ratingoptions->component = $component;
+$ratingoptions->ratingarea = $ratingarea;
 $ratingoptions->itemid = $itemid;
 $ratingoptions->sort = $sqlsort;
 
@@ -80,17 +84,23 @@ if (!$ratings) {
     $msg = get_string('noratings','rating');
     echo html_writer::tag('div', $msg, array('class'=>'mdl-align'));
 } else {
-    $sortargs = "contextid=$contextid&amp;itemid=$itemid&amp;scaleid=$scaleid";
-    if($popup) {
-        $sortargs.="&amp;popup=$popup";
+    $sorturl  = new moodle_url('/index.php', array('contextid' => $contextid, 'itemid' => $itemid, 'scaleid' => $scaleid));
+    if ($popup) {
+        $sorturl->param('popup', $popup);
     }
-    echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" style=\"width:100%\">";
-    echo "<tr>";
-    echo "<th class=\"header\" scope=\"col\">&nbsp;</th>";
-    echo "<th class=\"header\" scope=\"col\"><a href=\"index.php?$sortargs&amp;sort=firstname\">$strname</a></th>";
-    echo "<th class=\"header\" scope=\"col\" style=\"width:100%\"><a href=\"index.php?$sortargs&amp;sort=rating\">$strrating</a></th>";
-    echo "<th class=\"header\" scope=\"col\"><a href=\"index.php?$sortargs&amp;sort=time\">$strtime</a></th>";
-    echo "</tr>";
+
+    $table = new html_table;
+    $table->cellpadding = 3;
+    $table->cellspacing = 3;
+    $table->attributes['class'] = 'generalbox ratingtable';
+    $table->head = array(
+        '',
+        html_writer::link(new moodle_url($sorturl, array('sort' => 'firstname')), $strname),
+        html_writer::link(new moodle_url($sorturl, array('sort' => 'rating')), $strrating),
+        html_writer::link(new moodle_url($sorturl, array('sort' => 'time')), $strtime)
+    );
+    $table->colclasses = array('', 'firstname', 'rating', 'time');
+    $table->data = array();
 
     //if the scale was changed after ratings were submitted some ratings may have a value above the current maximum
     $maxrating = count($scalemenu) - 1;
@@ -100,28 +110,23 @@ if (!$ratings) {
         //but we don't
         $rating->id = $rating->userid;
 
-        echo '<tr class="ratingitemheader">';
-        echo "<td>";
-        if($course && $course->id) {
-            echo $OUTPUT->user_picture($rating, array('courseid'=>$course->id));
+        $row = new html_table_row();
+        $row->attributes['class'] = 'ratingitemheader';
+        if ($course && $course->id) {
+            $row->cells[] = $OUTPUT->user_picture($rating, array('courseid' => $course->id));
         } else {
-            echo $OUTPUT->user_picture($rating);
+            $row->cells[] = $OUTPUT->user_picture($rating);
         }
-        echo '</td><td>'.fullname($rating).'</td>';
-        
-        //if they've switched to rating out of 5 but there were ratings submitted out of 10 for example
-        //Not doing this within $rm->get_all_ratings_for_item to allow access to the raw data
+        $row->cells[] = fullname($rating);
         if ($rating->rating > $maxrating) {
             $rating->rating = $maxrating;
         }
-        echo '<td style="white-space:nowrap" align="center" class="rating">'.$scalemenu[$rating->rating]."</td>";
-        echo '<td style="white-space:nowrap" align="center" class="time">'.userdate($rating->timemodified)."</td>";
-        echo "</tr>\n";
+        $row->cells[] = $scalemenu[$rating->rating];
+        $row->cells[] = userdate($rating->timemodified);
+        $table->data[] = $row;
     }
-    echo "</table>";
-    echo "<br />";
+    echo html_writer::table($table);
 }
-
 if ($popup) {
     echo $OUTPUT->close_window_button();
 }
