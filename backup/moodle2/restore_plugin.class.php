@@ -81,6 +81,23 @@ abstract class restore_plugin {
     }
 
     /**
+     * after_restore dispatcher for any restore_plugin class
+     *
+     * This method will dispatch execution to the corresponding
+     * after_restore_xxx() method when available, with xxx
+     * being the connection point of the instance, so plugin
+     * classes with multiple connection points will support
+     * multiple after_restore methods, one for each connection point
+     */
+    public function launch_after_restore_methods() {
+        // Check if the after_restore method exists and launch it
+        $afterrestore = 'after_restore_' . basename($this->connectionpoint->get_path());
+        if (method_exists($this, $afterrestore)) {
+            $this->$afterrestore();
+        }
+    }
+
+    /**
      * Returns one array with all the decode contents
      * to be processed by the links decoder
      *
