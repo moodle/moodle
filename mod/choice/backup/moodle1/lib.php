@@ -61,6 +61,7 @@ class moodle1_mod_choice_handler extends moodle1_mod_handler {
                     ),
                 )
             ),
+            new convert_path('choice_options', '/MOODLE_BACKUP/COURSE/MODULES/MOD/CHOICE/OPTIONS'),
             new convert_path('choice_option', '/MOODLE_BACKUP/COURSE/MODULES/MOD/CHOICE/OPTIONS/OPTION'),
         );
     }
@@ -87,7 +88,12 @@ class moodle1_mod_choice_handler extends moodle1_mod_handler {
         foreach ($data as $field => $value) {
             $this->xmlwriter->full_tag($field, $value);
         }
+    }
 
+    /**
+     * This is executed when the parser reaches the <OPTIONS> opening element
+     */
+    public function on_choice_options_start() {
         $this->xmlwriter->begin_tag('options');
     }
 
@@ -100,11 +106,17 @@ class moodle1_mod_choice_handler extends moodle1_mod_handler {
     }
 
     /**
+     * This is executed when the parser reaches the closing </OPTIONS> element
+     */
+    public function on_choice_options_end() {
+        $this->xmlwriter->end_tag('options');
+    }
+
+    /**
      * This is executed when we reach the closing </MOD> tag of our 'choice' path
      */
     public function on_choice_end() {
-
-        $this->xmlwriter->end_tag('options');
+        // finalize choice.xml
         $this->xmlwriter->end_tag('choice');
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
