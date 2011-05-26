@@ -246,9 +246,9 @@ class core_question_renderer extends plugin_renderer_base {
             $id = 'id="' . $id . '" ';
         }
         if ($flagged) {
-            $img = 'flagged.png';
+            $img = 'flagged';
         } else {
-            $img = 'unflagged.png';
+            $img = 'unflagged';
         }
         return '<img ' . $id . 'src="' . $this->pix_url('/i/' . $img) .
                 '" alt="' . get_string('flagthisquestion', 'question') . '" />';
