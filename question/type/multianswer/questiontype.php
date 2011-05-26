@@ -318,6 +318,7 @@ function qtype_multianswer_extract_question($text) {
         } else if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE])) {
             $wrapped->qtype = 'multichoice';
             $wrapped->single = 1;
+            $wrapped->shuffleanswers = 1;
             $wrapped->answernumbering = 0;
             $wrapped->correctfeedback['text'] = '';
             $wrapped->correctfeedback['format'] = '1';
@@ -332,6 +333,7 @@ function qtype_multianswer_extract_question($text) {
         } else if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_REGULAR])) {
             $wrapped->qtype = 'multichoice';
             $wrapped->single = 1;
+            $wrapped->shuffleanswers = 0;
             $wrapped->answernumbering = 0;
             $wrapped->correctfeedback['text'] = '';
             $wrapped->correctfeedback['format'] = '1';
@@ -346,6 +348,7 @@ function qtype_multianswer_extract_question($text) {
         } else if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_HORIZONTAL])) {
             $wrapped->qtype = 'multichoice';
             $wrapped->single = 1;
+            $wrapped->shuffleanswers = 0;
             $wrapped->answernumbering = 0;
             $wrapped->correctfeedback['text'] = '';
             $wrapped->correctfeedback['format'] = '1';
@@ -368,7 +371,6 @@ function qtype_multianswer_extract_question($text) {
         $wrapped->answer   = array();
         $wrapped->fraction = array();
         $wrapped->feedback = array();
-        $wrapped->shuffleanswers = 1;
         $wrapped->questiontext['text'] = $answerregs[0];
         $wrapped->questiontext['format'] = 0;
         $wrapped->questiontext['itemid'] = '';

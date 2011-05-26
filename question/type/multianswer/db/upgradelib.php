@@ -37,55 +37,77 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_multianswer_qe2_attempt_updater extends question_qtype_attempt_updater {
-    // TODO
-    public function right_answer() {
-        foreach ($this->question->options->answers as $ans) {
-            if ($ans->fraction > 0.999) {
-                return $ans->answer;
+
+    public function question_summary() {
+        $summary = $this->to_text($this->question->questiontext);
+        foreach ($this->question->options->questions as $i => $subq) {
+            switch ($subq->qtype) {
+                case 'multichoice':
+                    $choices = array();
+                    foreach ($subq->options->answers as $ans) {
+                        $choices[] = $this->to_text($ans->answer);
+                    }
+                    $answerbit = '{' . implode('; ', $choices) . '}';
+                    break;
+                case 'numerical':
+                case 'shortanswer':
+                    $answerbit = '_____';
+                    break;
+                default:
+                    $answerbit = '{ERR unknown sub-question type}';
             }
+            $summary = str_replace('{#' . $i . '}', $answerbit, $summary);
         }
+        return $summary;
     }
 
-//    public function restore_session_and_responses(&$question, &$state) {
-//        $responses = explode(',', $state->responses['']);
-//        $state->responses = array();
-//        foreach ($responses as $response) {
-//            $tmp = explode("-", $response);
-//            // restore encoded characters
-//            $state->responses[$tmp[0]] = str_replace(array("&#0044;", "&#0045;"),
-//                    array(",", "-"), $tmp[1]);
-//        }
-//        return true;
-//    }
-//
-//    public function save_session_and_responses(&$question, &$state) {
-//        global $DB;
-//        $responses = $state->responses;
-//        // encode - (hyphen) and , (comma) to &#0045; because they are used as
-//        // delimiters
-//        array_walk($responses, create_function('&$val, $key',
-//                '$val = str_replace(array(",", "-"), array("&#0044;", "&#0045;"), $val);
-//                $val = "$key-$val";'));
-//        $responses = implode(',', $responses);
-//
-//        // Set the legacy answer field
-//        $DB->set_field('question_states', 'answer', $responses, array('id' => $state->id));
-//        return true;
-//    }
+    public function right_answer() {
+        $right = array();
+
+        foreach ($this->question->options->questions as $i => $subq) {
+            foreach ($subq->options->answers as $ans) {
+                if ($ans->fraction > 0.999) {
+                    $right[$i] = $ans->answer;
+                    break;
+                }
+            }
+        }
+
+        return $this->display_response($right);
+    }
+
+    public function explode_answer($answer) {
+        $response = array();
+
+        foreach (explode(',', $answer) as $part) {
+            list($index, $partanswer) = explode('-', $part, 2);
+            $response[$index] = str_replace(
+                    array(",", "-"), array('&#0044;', '&#0045;'), $partanswer);
+        }
+
+        return $response;
+    }
+
+    public function display_response($response) {
+        $summary = array();
+        foreach ($this->question->options->questions as $i => $subq) {
+            $a = new stdClass();
+            $a->i = $i;
+            $a->response = $this->to_text($response[$i]);
+            $summary[] = get_string('subqresponse', 'qtype_multianswer', $a);
+        }
+
+        return implode('; ', $summary);
+    }
 
     public function response_summary($state) {
-        if (is_numeric($state->answer)) {
-            if (array_key_exists($state->answer, $this->question->options->answers)) {
-                return $this->question->options->answers[$state->answer]->answer;
-            } else {
-                $this->logger->log_assumption("Dealing with a place where the
-                        student selected a choice that was later deleted for
-                        true/false question {$this->question->id}");
-                return null;
+        $response = $this->explode_answer($state->answer);
+        foreach ($this->question->options->questions as $i => $subq) {
+            if ($response[$i] && $subq->qtype == 'multichoice') {
+                $response[$i] = $subq->options->answers[$response[$i]];
             }
-        } else {
-            return null;
         }
+        return $this->display_response($response);
     }
 
     public function was_answered($state) {
@@ -99,8 +121,38 @@ class qtype_multianswer_qe2_attempt_updater extends question_qtype_attempt_updat
     }
 
     public function set_data_elements_for_step($state, &$data) {
-        if (is_numeric($state->answer)) {
-            $data['answer'] = (int) ($state->answer == $this->question->options->trueanswer);
+        $response = $this->explode_answer($state->answer);
+        foreach ($this->question->options->questions as $i => $subq) {
+            if (empty($response[$i])) {
+                continue;
+            }
+
+            switch ($subq->qtype) {
+                case 'multichoice':
+                    $choices = array();
+                    foreach ($subq->options->answers as $ans) {
+                        $choices[] = $this->to_text($ans->answer);
+                    }
+                    $answerbit = '{' . implode('; ', $choices) . '}';
+                    break;
+                case 'numerical':
+                case 'shortanswer':
+                    $data[$this->add_prefix('answer', $i)] = $response[$i];
+                    break;
+            }
+        }
+    }
+
+    public function add_prefix($field, $i) {
+        $prefix = 'sub' . $i . '_';
+        if (substr($field, 0, 2) === '!_') {
+            return '-_' . $prefix . substr($field, 2);
+        } else if (substr($field, 0, 1) === '-') {
+            return '-' . $prefix . substr($field, 1);
+        } else if (substr($field, 0, 1) === '_') {
+            return '_' . $prefix . substr($field, 1);
+        } else {
+            return $prefix . $field;
         }
     }
 }
