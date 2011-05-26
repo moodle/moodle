@@ -44,46 +44,42 @@ class message_output_jabber extends message_output {
     function send_message($eventdata){
         global $CFG;
 
-        if ($this->is_system_configured() && $this->is_user_configured($eventdata->userto)) {
-            if (!empty($CFG->noemailever)) {
-                // hidden setting for development sites, set in config.php if needed
-                debugging('$CFG->noemailever active, no jabber message sent.', DEBUG_MINIMAL);
-                return true;
-            }
-
-            //hold onto jabber id preference because /admin/cron.php sends a lot of messages at once
-            static $jabberaddresses = array();
-
-            if (!array_key_exists($eventdata->userto->id, $jabberaddresses)) {
-                $jabberaddresses[$eventdata->userto->id] = get_user_preferences('message_processor_jabber_jabberid', null, $eventdata->userto->id);
-            }
-            $jabberaddress = $jabberaddresses[$eventdata->userto->id];
-
-            //calling s() on smallmessage causes Jabber to display things like &lt; Jabber != a browser
-            $jabbermessage = fullname($eventdata->userfrom).': '.$eventdata->smallmessage;
-
-            if (!empty($eventdata->contexturl)) {
-                $jabbermessage .= "\n".get_string('view').': '.$eventdata->contexturl;
-            }
-
-            $jabbermessage .= "\n(".get_string('noreply','message').')';
-
-            $conn = new XMPPHP_XMPP($CFG->jabberhost,$CFG->jabberport,$CFG->jabberusername,$CFG->jabberpassword,'moodle',$CFG->jabberserver);
-
-            try {
-                //$conn->useEncryption(false);
-                $conn->connect();
-                $conn->processUntil('session_start');
-                $conn->presence();
-                $conn->message($jabberaddress, $jabbermessage);
-                $conn->disconnect();
-            } catch(XMPPHP_Exception $e) {
-                debugging($e->getMessage());
-                return false;
-            }
+        if (!empty($CFG->noemailever)) {
+            // hidden setting for development sites, set in config.php if needed
+            debugging('$CFG->noemailever active, no jabber message sent.', DEBUG_MINIMAL);
+            return true;
         }
 
-        //note that we're reporting success if message was sent or if Jabber simply isnt configured
+        //hold onto jabber id preference because /admin/cron.php sends a lot of messages at once
+        static $jabberaddresses = array();
+
+        if (!array_key_exists($eventdata->userto->id, $jabberaddresses)) {
+            $jabberaddresses[$eventdata->userto->id] = get_user_preferences('message_processor_jabber_jabberid', null, $eventdata->userto->id);
+        }
+        $jabberaddress = $jabberaddresses[$eventdata->userto->id];
+
+        //calling s() on smallmessage causes Jabber to display things like &lt; Jabber != a browser
+        $jabbermessage = fullname($eventdata->userfrom).': '.$eventdata->smallmessage;
+
+        if (!empty($eventdata->contexturl)) {
+            $jabbermessage .= "\n".get_string('view').': '.$eventdata->contexturl;
+        }
+
+        $jabbermessage .= "\n(".get_string('noreply','message').')';
+
+        $conn = new XMPPHP_XMPP($CFG->jabberhost,$CFG->jabberport,$CFG->jabberusername,$CFG->jabberpassword,'moodle',$CFG->jabberserver);
+
+        try {
+            //$conn->useEncryption(false);
+            $conn->connect();
+            $conn->processUntil('session_start');
+            $conn->presence();
+            $conn->message($jabberaddress, $jabbermessage);
+            $conn->disconnect();
+        } catch(XMPPHP_Exception $e) {
+            debugging($e->getMessage());
+            return false;
+        }
         return true;
     }
 
