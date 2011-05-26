@@ -1280,11 +1280,7 @@ class moodle_page {
             }
         }
 
-        if (!empty($USER->themeswitch) || !empty($SESSION->themeswitch)) {
-            $device_type = 'default';
-        } else {
-            $device_type = get_device_type();
-        }
+        $device_type = get_device_type();
 
         //set up of the new themes variable hasn't happened so use the old theme support.
         if (empty($CFG->themes)) {

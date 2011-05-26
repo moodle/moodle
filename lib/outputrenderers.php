@@ -2606,16 +2606,17 @@ EOD;
 
         global $USER, $PAGE;
 
-        $switched = get_user_switched_theme();
         $type = get_device_type();
 
         $this->switchlinkdisplayed = true;
 
-        if (is_null($switched)) {
+        if ($type == 'default') {
             return '';
-        } else if (!$switched && $type == 'default') {
-            return '';
-        } else if ($switched) {
+        }
+
+        $switched = get_user_switched_theme();
+
+        if ($switched) {
             $link_text = get_string('switchdevicerecommended');
         } else {
             $link_text = get_string('switchdevicedefault');

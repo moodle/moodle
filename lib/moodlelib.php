@@ -7683,9 +7683,12 @@ function get_selected_theme_for_device_type($device_type = null) {
     if (empty($device_type)) {
         $device_type = get_device_type();
 
-        //If a non-default device type is being used, and the user has switched theme, change $device_type to default.
-        if (get_user_switched_theme($device_type)) {
-            $device_type = 'default';
+        //check if the user has switched theme, change $device_type to default.
+
+        $switched = get_user_switched_theme($device_type);
+
+        if ($switched) {
+            $device_type = $switched;
         }
     }
 
@@ -7717,7 +7720,7 @@ function get_selected_theme_for_device_type($device_type = null) {
 
 
 /**
- * Returns true or false if the user has switched theme to default for a device type
+ * Returns device type or false if the user has switched theme to default for a device type
  * @param string $device_type
  */
 function get_user_switched_theme($device_type = null) {
@@ -7743,8 +7746,8 @@ function get_user_switched_theme($device_type = null) {
     }
 
     foreach ($switchthemes as $switch) {
-        if ($switch->device == $device_type && !empty($switch->switched)) {
-            return true;
+        if ($switch->device == $device_type && !empty($switch->switched_device)) {
+            return $switch->switched_device;
         }
     }
 
@@ -7767,7 +7770,7 @@ function switch_theme($device_type = null) {
 
         foreach ($current_prefs as $current) {
             if ($current['device'] == $device_type) {
-                $switched = $current['switched'];
+                $switched_device = $current['switched_device'];
                 array_splice($current_prefs, $i, 1);
                 break;
             }
@@ -7778,15 +7781,23 @@ function switch_theme($device_type = null) {
         $current_prefs = array();
     }
 
-    if (!empty($switched)) {
-        $switched = 0;
+    if (!empty($switched_device)) {
+        $switched_device = false;
     } else {
-        $switched = 1;
+        $pref = optional_param('switchdevice', '', PARAM_TEXT);
+
+        if (!empty($pref)) {
+            $switched_device = $pref;
+        } else if ($device_type == 'default') {
+            $switched_device = 'mobile';
+        } else {
+            $switched_device = 'default';
+        }
     }
 
     $device_pref = array();
     $device_pref['device'] = $device_type;
-    $device_pref['switched'] = $switched;
+    $device_pref['switched_device'] = $switched_device;
 
     $current_prefs[] = $device_pref;
 
