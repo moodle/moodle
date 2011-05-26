@@ -118,7 +118,7 @@ class qtype_multianswer_question extends question_graded_automatically {
             $substep = $this->get_substep(null, $i);
             foreach ($subq->get_expected_data() as $name => $type) {
                 if ($subq->qtype->name() == 'multichoice' &&
-                        $subq->layout = qtype_multichoice_base::LAYOUT_DROPDOWN) {
+                        $subq->layout == qtype_multichoice_base::LAYOUT_DROPDOWN) {
                     // Hack or MC inline does not work.
                     $expected[$substep->add_prefix($name)] = PARAM_RAW;
                 } else {

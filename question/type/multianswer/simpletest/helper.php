@@ -87,7 +87,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
 
         $mc->shuffleanswers = 1;
         $mc->answernumbering = 'none';
-        $mc->layout = 1;
+        $mc->layout = qtype_multichoice_base::LAYOUT_DROPDOWN;
 
         $mc->answers = array(
             13 => new question_answer(13, 'Bow-wow', 0,
