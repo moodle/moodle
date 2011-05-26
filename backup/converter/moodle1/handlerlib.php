@@ -1084,8 +1084,8 @@ abstract class moodle1_plugin_handler extends moodle1_xml_handler {
 
     /**
      * @param moodle1_converter $converter the converter that requires us
-     * @param string plugintype
-     * @param string pluginname
+     * @param string $plugintype
+     * @param string $pluginname
      */
     public function __construct(moodle1_converter $converter, $plugintype, $pluginname) {
 
@@ -1135,4 +1135,36 @@ abstract class moodle1_mod_handler extends moodle1_plugin_handler {
  */
 abstract class moodle1_block_handler extends moodle1_plugin_handler {
 
+}
+
+
+/**
+ * Base class for the activity modules' subplugins
+ */
+abstract class moodle1_submod_handler extends moodle1_plugin_handler {
+
+    /** @var moodle1_mod_handler */
+    protected $parenthandler;
+
+    /**
+     * @param moodle1_mod_handler $parenthandler the handler of a module we are subplugin of
+     * @param string $subplugintype the type of the subplugin
+     * @param string $subpluginname the name of the subplugin
+     */
+    public function __construct(moodle1_mod_handler $parenthandler, $subplugintype, $subpluginname) {
+        $this->parenthandler = $parenthandler;
+        parent::__construct($parenthandler->converter, $subplugintype, $subpluginname);
+    }
+
+    /**
+     * Activity module subplugins can't declare any paths to handle
+     *
+     * The paths must be registered by the parent module and then re-dispatched to the
+     * relevant subplugins for eventual processing.
+     *
+     * @return array empty array
+     */
+    final public function get_paths() {
+        return array();
+    }
 }
