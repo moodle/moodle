@@ -104,7 +104,7 @@ class qtype_multianswer_qe2_attempt_updater extends question_qtype_attempt_updat
         $response = $this->explode_answer($state->answer);
         foreach ($this->question->options->questions as $i => $subq) {
             if ($response[$i] && $subq->qtype == 'multichoice') {
-                $response[$i] = $subq->options->answers[$response[$i]];
+                $response[$i] = $subq->options->answers[$response[$i]]->answer;
             }
         }
         return $this->display_response($response);
@@ -115,6 +115,17 @@ class qtype_multianswer_qe2_attempt_updater extends question_qtype_attempt_updat
     }
 
     public function set_first_step_data_elements($state, &$data) {
+        foreach ($this->question->options->questions as $i => $subq) {
+            switch ($subq->qtype) {
+                case 'multichoice':
+                    $data[$this->add_prefix('_order', $i)] =
+                            implode(',', array_keys($subq->options->answers));
+                    break;
+                case 'numerical':
+                    $data[$this->add_prefix('_separators', $i)] = '.$,';
+                    break;
+            }
+        }
     }
 
     public function supply_missing_first_step_data(&$data) {
@@ -130,8 +141,12 @@ class qtype_multianswer_qe2_attempt_updater extends question_qtype_attempt_updat
             switch ($subq->qtype) {
                 case 'multichoice':
                     $choices = array();
+                    $order = 0;
                     foreach ($subq->options->answers as $ans) {
-                        $choices[] = $this->to_text($ans->answer);
+                        if ($ans->id == $response[$i]) {
+                            $data[$this->add_prefix('answer', $i)] = $order;
+                        }
+                        $order++;
                     }
                     $answerbit = '{' . implode('; ', $choices) . '}';
                     break;
