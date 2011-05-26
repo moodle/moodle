@@ -347,10 +347,11 @@ class plugin_manager {
             ),
 
             'theme' => array(
-                'anomaly', 'arialist', 'base', 'binarius', 'boxxie', 'brick',
-                'canvas', 'formal_white', 'formfactor', 'fusion',
-                'leatherbound', 'magazine', 'nimble', 'nonzero', 'overlay',
-                'serenity', 'sky_high', 'splash', 'standard', 'standardold'
+                'afterburner', 'anomaly', 'arialist', 'base', 'binarius',
+                'boxxie', 'brick', 'canvas', 'formal_white', 'formfactor',
+                'fusion', 'leatherbound', 'magazine', 'nimble', 'nonzero',
+                'overlay', 'serenity', 'sky_high', 'splash', 'standard',
+                'standardold'
             ),
 
             'webservice' => array(
