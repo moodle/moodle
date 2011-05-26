@@ -652,43 +652,45 @@ class progressive_parser_test extends UnitTestCase {
     function helper_check_notifications_order_integrity($notifications) {
         $numerrors = 0;
         $notifpile = array('pilebase' => 'start');
-        $lastpile = 'start:pilebase';
+        $lastnotif = 'start:pilebase';
         foreach ($notifications as $notif) {
-            $lastpilelevel = strlen(preg_replace('/[^\/]/', '', $lastpile));
-            $lastpiletype  = preg_replace('/:.*/', '', $lastpile);
-            $lastpilepath  = preg_replace('/.*:/', '', $lastpile);
 
-            $notiflevel = strlen(preg_replace('/[^\/]/', '', $notif));
+            $lastpiletype = end($notifpile);
+            $lastpilepath = key($notifpile);
+            $lastpilelevel = strlen(preg_replace('/[^\/]/', '', $lastpilepath));
+
+            $lastnotiftype  = preg_replace('/:.*/', '', $lastnotif);
+            $lastnotifpath  = preg_replace('/.*:/', '', $lastnotif);
+            $lastnotiflevel = strlen(preg_replace('/[^\/]/', '', $lastnotifpath));
+
             $notiftype  = preg_replace('/:.*/', '', $notif);
             $notifpath  = preg_replace('/.*:/', '', $notif);
+            $notiflevel = strlen(preg_replace('/[^\/]/', '', $notifpath));
 
             switch ($notiftype) {
                 case 'process':
-                    if ($lastpilepath != $notifpath or $lastpiletype != 'start') {
-                        $numerrors++; // Only start for same path is allowed before process
+                    if ($lastnotifpath != $notifpath or $lastnotiftype != 'start') {
+                        $numerrors++; // Only start for same path from last notification is allowed before process
                     }
                     $notifpile[$notifpath] = 'process'; // Update the status in the pile
                     break;
                 case 'end':
                     if ($lastpilepath != $notifpath or ($lastpiletype != 'process' and $lastpiletype != 'start')) {
-                        $numerrors++; // Only process for same path is allowed before end
+                        $numerrors++; // Only process and start for same path from last pile is allowed before end
                     }
                     unset($notifpile[$notifpath]); // Delete from the pile
                     break;
                 case 'start':
                     if (array_key_exists($notifpath, $notifpile) or $notiflevel <= $lastpilelevel) {
-                        $numerrors++; // If same path exists or the level is < than the last one
+                        $numerrors++; // Only non existing in pile and with level > last pile is allowed on start
                     }
                     $notifpile[$notifpath] = 'start'; // Add to the pile
                     break;
                 default:
                     $numerrors++; // Incorrect type of notification => error
             }
-            // Update lastpile
-            end($notifpile);
-            $path = key($notifpile);
-            $type = $notifpile[$path];
-            $lastpile = $type. ':' . $path;
+            // Update lastnotif
+            $lastnotif = $notif;
         }
         return $numerrors;
     }

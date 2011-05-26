@@ -745,8 +745,8 @@ function quiz_get_grading_options() {
 /**
  * Returns an array of users who have data in a given quiz
  *
- * @global stdClass
- * @global object
+ * @todo: deprecated - to be deleted in 2.2
+ *
  * @param int $quizid
  * @return array
  */

@@ -419,6 +419,10 @@ class backup_course_structure_step extends backup_structure_step {
         // save course data (in case of user theme, legacy theme, etc)
         $this->add_plugin_structure('theme', $course, true);
 
+        // attach course report plugin structure to $course element; multiple
+        // course reports can save course data if required
+        $this->add_plugin_structure('coursereport', $course, true);
+
         // attach plagiarism plugin structure to $course element, only one allowed
         $this->add_plugin_structure('plagiarism', $course, false);
 

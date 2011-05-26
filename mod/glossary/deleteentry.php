@@ -104,8 +104,10 @@ if ($confirm and confirm_sesskey()) { // the operation was confirmed.
 
         //delete glossary entry ratings
         require_once($CFG->dirroot.'/rating/lib.php');
-        $delopt = new stdclass();
+        $delopt = new stdClass;
         $delopt->contextid = $context->id;
+        $delopt->component = 'mod_glossary';
+        $delopt->ratingarea = 'entry';
         $delopt->itemid = $entry->id;
         $rm = new rating_manager();
         $rm->delete_ratings($delopt);

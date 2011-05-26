@@ -780,3 +780,8 @@ sup {vertical-align: super;}
 .dir-rtl .o2k7Skin *, 
 .dir-rtl .o2k7Skin .mceText,
 .dir-rtl .o2k7Skin .mceListBox .mceText {text-align:right;}
+
+.path-rating .ratingtable {width:100%;margin-bottom:1em;}
+.path-rating .ratingtable th.rating {width:100%;}
+.path-rating .ratingtable td.rating,
+.path-rating .ratingtable td.time {white-space:nowrap; text-align:center;}

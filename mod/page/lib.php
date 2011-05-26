@@ -231,6 +231,8 @@ function page_user_complete($course, $user, $mod, $page) {
 /**
  * Returns the users with data in one page
  *
+ * @todo: deprecated - to be deleted in 2.2
+ *
  * @param int $pageid
  * @return bool false
  */

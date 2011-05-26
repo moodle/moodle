@@ -63,7 +63,7 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
         $ratings = new backup_nested_element('ratings');
 
         $rating = new backup_nested_element('rating', array('id'), array(
-            'scaleid', 'value', 'userid', 'timecreated', 'timemodified'));
+            'component', 'ratingarea', 'scaleid', 'value', 'userid', 'timecreated', 'timemodified'));
 
         $subscriptions = new backup_nested_element('subscriptions');
 
@@ -125,8 +125,10 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
 
             $track->set_source_table('forum_track_prefs', array('forumid' => backup::VAR_PARENTID));
 
-            $rating->set_source_table('rating', array('contextid' => backup::VAR_CONTEXTID,
-                                                      'itemid'    => backup::VAR_PARENTID));
+            $rating->set_source_table('rating', array('contextid'  => backup::VAR_CONTEXTID,
+                                                      'component'  => 'mod_forum',
+                                                      'ratingarea' => 'post',
+                                                      'itemid'     => backup::VAR_PARENTID));
             $rating->set_source_alias('rating', 'value');
         }
 

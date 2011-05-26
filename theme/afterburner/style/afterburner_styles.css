@@ -1,0 +1,436 @@
+/*
+General Styles
+-----------------------*/
+body {
+    margin: 0;
+    padding: 0;
+    color:#4b4b4b;
+}
+h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {
+    font-family: Helvetica,Arial,sans-serif;
+}
+a:link,
+a:visited {
+    color: #007EBA;
+    text-decoration: none;
+}
+a:hover, a:active {
+    color: #c30;
+    text-decoration: none;
+}
+hr {
+    border-bottom:1px dotted gray;
+    border-top:0px;
+}
+h2.headingblock {
+    border-bottom: 1px solid #ddd;
+    font-size: 1.4em;
+    font-weight: bold;
+}
+/*
+Page
+-----------------------*/
+#page {
+    font-size: 90%;
+    font-family: Helvetica,Arial,sans-serif
+}
+#page-content {
+    border-bottom: 1px solid #ddd;
+}
+/*
+Header and Logo
+---------------------------*/
+#page-header {
+    height: 100px;
+    width: 100%;
+    background: #fff;
+}
+#logo {
+    background: url([[pix:theme|images/light3]]) no-repeat 0 -272px;
+    width: 288px;
+    height: 58px;
+    display: block;
+    margin: 20px 15px;
+    float: left;
+}
+.headermenu,
+.langmenu {
+    float:right;
+    clear: right;
+    font-size:1em;
+    margin:0px;
+    text-align:right;
+    position: relative;
+    top: 10px;
+}
+.headermenu {
+    right: 10px;
+}
+/*
+Page Footer
+-----------------------*/
+#page-footer {
+    background: #fff url([[pix:theme|core/h2grad]]) repeat-x left top;
+    height: auto;
+    clear:both;
+    float:left;
+    width:98%;
+    margin: 0;
+    padding: 1%;
+    color: #4b4b4b;
+    border-top:1px solid #fff;
+    line-height: 2em;
+    font-size: 1em;
+}
+#page-footer a:link,
+#page-footer a:visited  {
+    color: #aaa;
+    text-decoration:none;
+}
+#page-footer a:hover,
+#page-footer a:active {
+    color: #c30;
+    text-decoration:none;
+}
+#page-footer .footer-left {
+    float: left;
+    text-align: left;
+    color: #999;
+}
+#page-footer .footer-right {
+    float: right;
+    text-align: right;
+}
+/*
+Navbar & Breadcrumb
+-----------------------*/
+.navbar {
+    background: url([[pix:theme|images/light3]]) 0 -68px repeat-x;
+    margin:0;
+    padding:5px 10px 4px;
+    color:#777;
+    border-top: 1px solid #d9d9d9;
+    border-bottom: 1px solid #e6e6e6;
+}
+.breadcrumb {
+    float:left;
+    color: #616161;
+}
+.navbutton {
+    text-align:right;
+    float: right;
+    margin-top: 5px;
+    margin-right: 5px;
+}
+.navbutton .singlebutton input {
+    border-width:1px;
+    border-style:outset;
+    border-color:#787878;
+    font-size: 85%;
+    cursor: pointer;
+}
+.breadcrumb ul {
+    margin-top: 5px;
+    margin-left: 10px;
+    text-indent:0;
+    list-style:none;
+}
+.breadcrumb li,
+.navbutton div,
+.navbutton form {
+    display:inline;
+}
+.logininfo
+.breadcrumb {
+    font-size: 1.5em;
+}
+.breadcrumb a,
+.breadcrumb a:link,
+.breadcrumb a:visited {
+    color: #337F8C;
+    text-decoration: none;
+}
+.breadcrumb a:hover,
+.breadcrumb a:active { color: #787878;}
+.jsenabled .course_category_tree .controls {
+    visibility:visible;
+    float: right;
+}
+.category_label {
+    padding-left: 20px;
+}
+/*
+Collapse All - Expand All
+-------------------------*/
+div.controls .expandall,
+div.controls .collapseall {
+    font-size: .8em;
+    color: #008db0;
+    margin: 2px;
+    padding: 0;
+    float: right;
+    clear: both;
+    text-transform: capitalize;
+    font-variant: small-caps;
+    border-bottom: 1px solid #008db0;
+}
+.redirectmessage,
+.continuebutton {
+    text-align: center;
+    font-size: 14pt;
+    color: #444;
+    padding-bottom: 10px;
+}
+/*
+General Box
+-----------------------*/
+.generalbox {
+    border:0 none;
+}
+/*
+Font Size
+-----------------------*/
+table {
+    font-size: 85%;
+}
+/*
+Button
+-----------------------*/
+select, input, button {
+    background-color: #34637f;
+    color: #fff;
+}
+#loginbtn, input, button, select { cursor: pointer;}
+input#username, input#password,
+input[type="text"], input[type="password"], textarea {
+    background-color: white;
+    border: 2px inset threedface;
+    color: #4b4b4b;
+    width: auto;
+    cursor: default;
+}
+/*
+Coursebox Info & Summary
+------------------------*/
+.coursebox h3
+.coursebox .info,
+.coursebox .summary {
+    text-align: left;
+    width: 100%;
+    height: auto;
+}
+.coursebox .info {
+    float: left;
+}
+.coursebox .summary {
+    float: right;
+}
+.coursebox .summary p { margin: 5px 0 0;}
+.coursebox .info h3.name {
+    padding: 0;
+    margin: 5px 0 0;
+}
+/*
+Course Section Topic & Weekly
+-----------------------------*/
+.course-content ul.topics li.section,
+.course-content ul.weeks li.section {
+    border: 1px solid #DDDDDD;
+    list-style: none outside none;
+    margin: 5px 0 0;
+    padding: 0;
+}
+.course-content ul.topics li.section {
+  padding-top: 1em;
+}
+.path-course-view .headingblock {
+    display: none; /* hides topic items title or weekly itens title */
+    margin-bottom: 9px;
+}
+/*
+Login (Front Page)
+-----------------------*/
+.block_login
+{
+    margin: 0;
+    padding: 0;
+}
+.block_login .footer
+{
+    text-align: right;
+    clear: both
+}
+.block_login .loginform .c1 {
+    margin: 0.3em 15px;
+    text-align: left;
+}
+/* Theme Selector
+----------------------------*/
+#page-admin-theme-index .generalbox {
+    border: none;
+}
+.theme_screenshot {
+    float: left;
+    width: 300px;
+}
+.theme_screenshot img {
+    width: 275px;
+}
+.theme_screenshot h2 {
+    font-size: 2em;
+}
+.theme_screenshot h3 {
+    font-size: 0.9em;
+    margin: 1em 0 0;
+}
+.theme_screenshot p {
+    font-size: 0.9em;
+    margin: 0 0 1em;
+}
+.theme_description {
+    margin-left: 300px;
+}
+.theme_description h2 {
+    padding-top: 0.5em;
+}
+/*
+Tabs
+-----------------------*/
+.tabtree ul {
+    text-align:center;
+}
+.tabtree .tabrow0 {
+    width:100%;margin:1em 0px;
+}
+.tabtree .tabrow0 li {
+    margin-right:-4px;
+}
+.tabtree .tabrow0 li.here {
+    font-weight: bold;
+}
+.tabtree .tabrow0 li.here a {
+    position:relative;z-index:102;
+}
+.tabtree .tabrow0 li a {
+    background-image:url([[pix:theme|tab/left]]);
+    padding-left:14px;
+    padding-top:10px;
+    background-repeat:no-repeat;
+    padding-bottom:3px;
+    margin-bottom:-1px;
+}
+.tabtree .tabrow0 li a:hover {
+    background-image:url([[pix:theme|tab/left_hover]]);
+}
+.tabtree .tabrow0 li a span {
+    background-image:url([[pix:theme|tab/right]]);
+    background-repeat:no-repeat;
+    background-position:100% 0%;
+    padding-right:14px;
+    padding-top:10px;
+    padding-bottom:3px;
+}
+.tabtree .tabrow0 li a:hover span {
+    background-image:url([[pix:theme|tab/right_hover]]);
+}
+.tabtree .tabrow0 ul,
+.tabtree .tabrow0 div {
+    font-weight: normal;
+    background-image:url([[pix:theme|tab/tabrow1]]);
+    background-position:0% 50%;
+    border-top: 1px dotted #eee;
+    padding:0.25em 0px;
+    margin:0px;
+}
+.tabtree .tabrow0 li.here .empty {
+    display:block;
+    height:1px;
+    overflow:hidden;
+    padding:0px;
+    position:absolute;
+    width:100%;
+    bottom:-4px;
+}
+.tabtree .tabrow1 li a,
+.tabtree .tabrow1 li a:hover,
+.tabtree .tabrow1 li a span,
+.tabtree .tabrow1 li a:hover span {
+    background-image:none !important;
+}
+.tabtree a.nolink,
+.tabtree .here ul a.nolink,
+.tabtree a.nolink:hover,
+.tabtree .here ul a.nolink:hover {
+    color: #888;
+    text-decoration: none;
+}
+.tabtree .here a.nolink,
+.tabtree .here ul .here a.nolink,
+.tabtree .here a.nolink:hover,
+.tabtree .here ul .here a.nolink:hover {
+    color: black;text-decoration: none;
+}
+/*
+tab styles for ie6 & ie7
+-----------------------*/
+.ie7 .tabtree .tabrow0 li {
+    margin-left: 0;
+}
+.ie7 .tabtree .tabrow0 li.first {
+    margin-right: -4px;
+}
+.ie7 .tabtree .tabrow0 li.onerow {
+    margin-right: 0;
+}
+.ie7 .tabtree .tabrow0 a {
+    display: inline-block;
+    padding: 8px 0 0.35em 13px;
+    line-height: 1.5em;
+}
+.ie7 .tabtree .tabrow0 a span {
+    padding: 10px 1em 10px 0;
+}
+.ie7 .tabtree .tabrow0 div {
+    top: 2.6em;padding: 0.2em 0;
+}
+.ie7 .tabtree .tabrow0 div.empty {
+    margin-right: 0;
+}
+.ie7.mod-quiz div.tabtree a span img.iconsmall {
+    margin: 0;
+    vertical-align: baseline;
+    position: relative;
+    top: 2px;
+}
+.ie6 .tabtree {
+    height: 100%;
+}
+.ie6 .tabtree .tabrow0 {
+    padding-top: 10px;
+}
+.ie6 .tabtree .tabrow0 li {
+    margin-left: 0;
+}
+.ie6 .tabtree .tabrow0 li.first {
+    margin-left: -4px;
+    margin-right: -4px;
+}
+.ie6 .tabtree .tabrow0 li.last a {
+    margin-right: 0;
+}
+.ie6 .tabtree .tabrow0 li.onerow {
+    margin-right: 0;
+}
+.ie6 .tabtree .tabrow0 a {
+    padding: 0 0 0 13px;
+}
+.ie6 .tabtree .tabrow0 a span {
+    padding: 12px 1em 4px 0;
+}
+.ie6 .tabtree .tabrow0 div {
+    top: 3.5em;
+    padding: 0.2em 0;
+}
+.yui-skin-sam .yui-panel-container {
+    z-index: 999999!important;
+}
