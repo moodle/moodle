@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
 class qtype_multianswer_question_test extends UnitTestCase {
     public function test_get_expected_data() {
         $question = test_question_maker::make_question('multianswer');
-        $this->assertEqual(array('sub1_answer' => PARAM_RAW_TRIMMED, 'sub2_answer' => PARAM_INT),
+        $this->assertEqual(array('sub1_answer' => PARAM_RAW_TRIMMED, 'sub2_answer' => PARAM_RAW),
                 $question->get_expected_data());
     }
 

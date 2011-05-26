@@ -67,6 +67,7 @@ class qtype_multianswer_renderer extends qtype_renderer {
 
     public function subquestion(question_attempt $qa,
             question_display_options $options, $index, question_graded_automatically $subq) {
+
         $subtype = $subq->qtype->name();
         if ($subtype == 'numerical' || $subtype == 'shortanswer') {
             $subrenderer = 'textfield';
@@ -98,17 +99,81 @@ class qtype_multianswer_renderer extends qtype_renderer {
  * @copyright 2011 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_multianswer_textfield_renderer extends qtype_renderer {
+abstract class qtype_multianswer_subq_renderer_base extends qtype_renderer {
+
+    abstract public function subquestion(question_attempt $qa,
+            question_display_options $options, $index,
+            question_graded_automatically $subq);
+
+    /**
+     * Render the feedback pop-up contents.
+     * 
+     * @param question_graded_automatically $subq the subquestion.
+     * @param float $fraction the mark the student got. null if this subq was not answered.
+     * @param string $feedbacktext the feedback text, already processed with format_text etc.
+     * @param string $rightanswer the right answer, already processed with format_text etc.
+     * @param question_display_options $options the display options.
+     * @return string the HTML for the feedback popup.
+     */
+    protected function feedback_popup(question_graded_automatically $subq,
+            $fraction, $feedbacktext, $rightanswer, question_display_options $options) {
+
+        if (!$options->feedback) {
+            return '';
+        }
+
+        $feedback = array();
+        if ($options->correctness) {
+            if (is_null($fraction)) {
+                $state = question_state::$gaveup;
+            } else {
+                $state = question_state::graded_state_for_fraction($fraction);
+            }
+            $feedback[] = $state->default_string(true);
+        }
+
+        if ($options->rightanswer) {
+            $feedback[] = get_string('correctansweris', 'qtype_shortanswer', $rightanswer);
+        }
+
+        $subfraction = '';
+        if ($options->marks >= question_display_options::MARK_AND_MAX && $subq->maxmark > 0) {
+            $a = new stdClass();
+            $a->mark = format_float($fraction * $subq->maxmark, $options->markdp);
+            $a->max =  format_float($subq->maxmark, $options->markdp);
+            $feedback[] = get_string('markoutofmax', 'question', $a);
+        }
+
+        return html_writer::tag('span', implode('<br />', $feedback),
+                array('class' => 'feedbackspan accesshide'));
+    }
+}
+
+
+/**
+ * Subclass for generating the bits of output specific to shortanswer
+ * subquestions.
+ *
+ * @copyright 2011 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_renderer_base {
 
     public function subquestion(question_attempt $qa, question_display_options $options,
             $index, question_graded_automatically $subq) {
 
         $fieldprefix = 'sub' . $index . '_';
         $fieldname = $fieldprefix . 'answer';
+
         $response = $qa->get_last_qt_var($fieldname);
-        $matchinganswer = $subq->get_matching_answer(array('answer' => $response));
+        if ($subq->qtype->name() == 'shortanswer') {
+            $matchinganswer = $subq->get_matching_answer(array('answer' => $response));
+        } else {
+            $matchinganswer = $subq->get_matching_answer($response);
+        }
+
         if (!$matchinganswer) {
-            $matchinganswer = new question_answer(0, '', 0, '', FORMAT_HTML);
+            $matchinganswer = new question_answer(0, '', null, '', FORMAT_HTML);
         }
 
         // Work out a good input field size.
@@ -132,45 +197,20 @@ class qtype_multianswer_textfield_renderer extends qtype_renderer {
 
         $feedbackimg = '';
         if ($options->correctness) {
-            if ($matchinganswer) {
-                $fraction = $matchinganswer->fraction;
-            } else {
-                $fraction = 0;
-            }
-            $inputattributes['class'] = $this->feedback_class($fraction);
-            $feedbackimg = $this->feedback_image($fraction);
+            $inputattributes['class'] = $this->feedback_class($matchinganswer->fraction);
+            $feedbackimg = $this->feedback_image($matchinganswer->fraction);
         }
 
-        $feedbackpopup = '';
-        if ($options->feedback) {
-            $feedback = array();
-            if ($options->correctness) {
-                if ($matchinganswer) {
-                    $state = question_state::graded_state_for_fraction($matchinganswer->fraction);
-                } else {
-                    $state = question_state::$gaveup;
-                }
-                $feedback[] = $state->default_string(true);
-            }
-
-            if ($options->rightanswer) {
-                $correct = $subq->get_matching_answer($subq->get_correct_response());
-                $feedback[] = get_string('correctansweris', 'qtype_shortanswer',
-                        s($correct->answer));
-            }
-
-            $subfraction = '';
-            if ($options->marks >= question_display_options::MARK_AND_MAX && $subq->maxmark > 0) {
-                $a = new stdClass();
-                $a->mark = format_float($matchinganswer->fraction * $subq->maxmark,
-                        $options->markdp);
-                $a->max =  format_float($subq->maxmark, $options->markdp);
-                $feedback[] = get_string('markoutofmax', 'question', $a);
-            }
-
-            $feedbackpopup = html_writer::tag('span', implode('<br />', $feedback),
-                    array('class' => 'feedbackspan accesshide'));
+        if ($subq->qtype->name() == 'shortanswer') {
+            $correctanswer = $subq->get_matching_answer($subq->get_correct_response());
+        } else {
+            $correctanswer = $subq->get_correct_answer();
         }
+
+        $feedbackpopup = $this->feedback_popup($subq, $matchinganswer->fraction,
+                $subq->format_text($matchinganswer->feedback, $matchinganswer->feedbackformat,
+                        $qa, 'question', 'answerfeedback', $matchinganswer->id),
+                s($correctanswer->answer), $options);
 
         $output = '';
         $output .= html_writer::start_tag('label', array('class' => 'subq'));
@@ -180,6 +220,196 @@ class qtype_multianswer_textfield_renderer extends qtype_renderer {
         $output .= html_writer::end_tag('label');
 
         return $output;
+    }
+}
+
+
+/**
+ * Render an embedded multiple-choice question that is displayed as a select menu.
+ *
+ * @copyright  2010 Pierre Pichet
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class qtype_multianswer_multichoice_inline_renderer
+        extends qtype_multianswer_subq_renderer_base {
+
+    public function subquestion(question_attempt $qa, question_display_options $options,
+            $index, question_graded_automatically $subq) {
+
+        $fieldprefix = 'sub' . $index . '_';
+        $fieldname = $fieldprefix . 'answer';
+
+        $response = $qa->get_last_qt_var($fieldname);
+        $choices = array();
+        $matchinganswer = new question_answer(0, '', null, '', FORMAT_HTML);
+        $rightanswer = null;
+        foreach ($subq->get_order($qa) as $value => $ansid) {
+            $ans = $subq->answers[$ansid];
+            $choices[$value] = $subq->format_text($ans->answer, $ans->answerformat,
+                    $qa, 'question', 'answer', $ansid);
+            if ($subq->is_choice_selected($response, $value)) {
+                $matchinganswer = $ans;
+            }
+        }
+
+        $inputattributes = array(
+            'id' => $qa->get_qt_field_name($fieldname),
+        );
+        if ($options->readonly) {
+            $inputattributes['disabled'] = 'disabled';
+        }
+
+        $feedbackimg = '';
+        if ($options->correctness) {
+            $inputattributes['class'] = $this->feedback_class($matchinganswer->fraction);
+            $feedbackimg = $this->feedback_image($matchinganswer->fraction);
+        }
+
+        $select = html_writer::select($choices, $qa->get_qt_field_name($fieldname),
+                $response, array('' => ''), $inputattributes);
+
+        $order = $subq->get_order($qa);
+        $rightanswer = $subq->answers[$order[reset($subq->get_correct_response())]];
+        $feedbackpopup = $this->feedback_popup($subq, $matchinganswer->fraction,
+                $subq->format_text($matchinganswer->feedback, $matchinganswer->feedbackformat,
+                        $qa, 'question', 'answerfeedback', $matchinganswer->id),
+                $subq->format_text($rightanswer->answer, $rightanswer->answerformat,
+                        $qa, 'question', 'answer', $rightanswer->id), $options);
+
+        $output = '';
+        $output .= html_writer::start_tag('label', array('class' => 'subq'));
+        $output .= $select;
+        $output .= $feedbackimg;
+        $output .= $feedbackpopup;
+        $output .= html_writer::end_tag('label');
+
+        return $output;
+    }
+
+    public function formulation_and_controls(question_attempt $qa,
+        question_display_options $options) {
+        $questiontot = $qa->get_question();
+        $subquestion = $questiontot->subquestions[$qa->subquestionindex];
+        $answers = $subquestion->answers;
+        $correctanswers = $subquestion->get_correct_response();
+        foreach ($correctanswers as $key => $value) {
+            $correct = $value;
+        }
+        $order = $subquestion->get_order($qa);
+        $response = $this->get_response($qa);
+        $currentanswer = $response;
+        $answername = $subquestion->fieldid.'answer';
+        $inputname = $qa->get_qt_field_name($answername);
+        $inputattributes = array(
+            'type' => $this->get_input_type(),
+            'name' => $inputname,
+        );
+
+        if ($options->readonly) {
+            $inputattributes['disabled'] = 'disabled';
+            $readonly = 'disabled ="disabled"';
+        }
+        $choices = array();
+        $popup = '';
+        $feedback = '';
+        $answer = '';
+        $classes = 'control';
+        $feedbackimage = '';
+        $fraction = 0;
+        $chosen = 0;
+
+        foreach ($order as $value => $ansid) {
+            $mcanswer = $subquestion->answers[$ansid];
+            $choices[$value] = strip_tags($mcanswer->answer);
+            $selected = '';
+            $isselected = false;
+            if ( $response != '') {
+                 $isselected = $this->is_choice_selected($response, $value);
+            }
+            if ($isselected) {
+                 $chosen = $value;
+                 $answer = $mcanswer;
+                 $fraction = $mcanswer->fraction;
+                 $selected = ' selected="selected"';
+            }
+        }
+        if ($options->feedback) {
+            if ($answer) {
+                $classes .= ' ' . question_get_feedback_class($fraction);
+                $feedbackimage = question_get_feedback_image($answer->fraction);
+                if ($answer->feedback) {
+                    $feedback .= $subquestion->format_text($answer->feedback);
+                }
+            } else {
+                $classes .= ' ' .  question_get_feedback_class(0);
+                $feedbackimage = question_get_feedback_image(0);
+            }
+        }
+        // determine popup
+        // answer feedback (specific)i.e if options->feedback already set
+        // subquestion status correctness or Finished validator if correctness
+        // Correct response
+        // marks
+        $strfeedbackwrapped  = 'Response Status';
+        if ($options->feedback) {
+            $feedback = get_string('feedback', 'quiz').":".$feedback."<br />";
+
+            if ($options->correctness) {
+                if (!$answer) {
+                    $state = $qa->get_state();
+                    $state = question_state::$invalid;
+                    $strfeedbackwrapped .= ":<font color=red >".$state->default_string()."</font>";
+                    $feedback =  "<font color=red >".get_string('singleanswer', 'quiz') ."</font><br />";
+                } else {
+                    $state = $qa->get_state();
+                    $state = question_state::graded_state_for_fraction($fraction);
+                    $strfeedbackwrapped .= ":".$state->default_string();
+                }
+            }
+
+            if ($options->correctresponse) {
+                $feedback .= $this->correct_response($qa)."<br />";
+            }
+            if ($options->marks) {
+                $subgrade= $fraction * $subquestion->defaultmark;
+                $feedback .= $questiontot->mark_summary($options, $subquestion->defaultmark , $subgrade);
+            }
+
+            $feedback .= '</div>';
+        }
+
+        if ($options->feedback) {
+            // need to  replace ' and " as they could break the popup string
+            // as the text comes from database, slashes have been removed
+            // addslashes will not work as it keeps the "
+            // HTML &#039; for ' does not work
+            $feedback = str_replace("'", "\'", $feedback);
+            $feedback = str_replace('"', "\'", $feedback);
+            $strfeedbackwrapped = str_replace("'", "\'", $strfeedbackwrapped);
+            $strfeedbackwrapped = str_replace('"', "\'", $strfeedbackwrapped);
+
+            $popup = " onmouseover=\"return overlib('$feedback', STICKY, MOUSEOFF, CAPTION, '$strfeedbackwrapped', FGCOLOR, '#FFFFFF');\" ".
+                                 " onmouseout=\"return nd();\" ";
+        }
+        $result = '';
+
+        $result .= "<span  $popup >";
+        $result .= html_writer::start_tag('span', array('class' => $classes), '');
+
+        $result .= choose_from_menu($choices, $inputname, $chosen,
+                            ' ', '', '', true, $options->readonly) . $feedbackimage;
+        $result .= html_writer::end_tag('span');
+        $result .= html_writer::end_tag('span');
+
+        return $result;
+    }
+
+    protected function format_choices($question) {
+        $choices = array();
+        foreach ($question->get_choice_order() as $key => $choiceid) {
+            $choices[$key] = strip_tags($question->format_text($question->choices[$choiceid]));
+        }
+        return $choices;
     }
 }
 
@@ -397,199 +627,4 @@ class qtype_multianswer_multichoice_single_renderer extends qtype_multianswer_mu
 
         return '';
     }
-}
-
-
-class qtype_multianswer_multichoice_single_inline_renderer extends qtype_multianswer_multichoice_single_renderer {
-    protected function get_input_type() {
-        return 'select';
-    }
-
-    public function formulation_and_controls(question_attempt $qa,
-        question_display_options $options) {
-        $questiontot = $qa->get_question();
-        $subquestion = $questiontot->subquestions[$qa->subquestionindex];
-        $answers = $subquestion->answers;
-        $correctanswers = $subquestion->get_correct_response();
-        foreach ($correctanswers as $key => $value) {
-            $correct = $value;
-        }
-        $order = $subquestion->get_order($qa);
-        $response = $this->get_response($qa);
-        $currentanswer = $response;
-        $answername = $subquestion->fieldid.'answer';
-        $inputname = $qa->get_qt_field_name($answername);
-        $inputattributes = array(
-            'type' => $this->get_input_type(),
-            'name' => $inputname,
-        );
-
-        if ($options->readonly) {
-            $inputattributes['disabled'] = 'disabled';
-            $readonly = 'disabled ="disabled"';
-        }
-        $choices = array();
-        $popup = '';
-        $feedback = '';
-        $answer = '';
-        $classes = 'control';
-        $feedbackimage = '';
-        $fraction = 0;
-        $chosen = 0;
-
-        foreach ($order as $value => $ansid) {
-            $mcanswer = $subquestion->answers[$ansid];
-            $choices[$value] = strip_tags($mcanswer->answer);
-            $selected = '';
-            $isselected = false;
-            if ( $response != '') {
-                 $isselected = $this->is_choice_selected($response, $value);
-            }
-            if ($isselected) {
-                 $chosen = $value;
-                 $answer = $mcanswer;
-                 $fraction = $mcanswer->fraction;
-                 $selected = ' selected="selected"';
-            }
-        }
-        if ($options->feedback) {
-            if ($answer) {
-                $classes .= ' ' . question_get_feedback_class($fraction);
-                $feedbackimage = question_get_feedback_image($answer->fraction);
-                if ($answer->feedback) {
-                    $feedback .= $subquestion->format_text($answer->feedback);
-                }
-            } else {
-                $classes .= ' ' .  question_get_feedback_class(0);
-                $feedbackimage = question_get_feedback_image(0);
-            }
-        }
-        // determine popup
-        // answer feedback (specific)i.e if options->feedback already set
-        // subquestion status correctness or Finished validator if correctness
-        // Correct response
-        // marks
-        $strfeedbackwrapped  = 'Response Status';
-        if ($options->feedback) {
-            $feedback = get_string('feedback', 'quiz').":".$feedback."<br />";
-
-            if ($options->correctness) {
-                if (!$answer) {
-                    $state = $qa->get_state();
-                    $state = question_state::$invalid;
-                    $strfeedbackwrapped .= ":<font color=red >".$state->default_string()."</font>";
-                    $feedback =  "<font color=red >".get_string('singleanswer', 'quiz') ."</font><br />";
-                } else {
-                    $state = $qa->get_state();
-                    $state = question_state::graded_state_for_fraction($fraction);
-                    $strfeedbackwrapped .= ":".$state->default_string();
-                }
-            }
-
-            if ($options->correctresponse) {
-                $feedback .= $this->correct_response($qa)."<br />";
-            }
-            if ($options->marks) {
-                $subgrade= $fraction * $subquestion->defaultmark;
-                $feedback .= $questiontot->mark_summary($options, $subquestion->defaultmark , $subgrade);
-            }
-
-            $feedback .= '</div>';
-        }
-
-        if ($options->feedback) {
-            // need to  replace ' and " as they could break the popup string
-            // as the text comes from database, slashes have been removed
-            // addslashes will not work as it keeps the "
-            // HTML &#039; for ' does not work
-            $feedback = str_replace("'", "\'", $feedback);
-            $feedback = str_replace('"', "\'", $feedback);
-            $strfeedbackwrapped = str_replace("'", "\'", $strfeedbackwrapped);
-            $strfeedbackwrapped = str_replace('"', "\'", $strfeedbackwrapped);
-
-            $popup = " onmouseover=\"return overlib('$feedback', STICKY, MOUSEOFF, CAPTION, '$strfeedbackwrapped', FGCOLOR, '#FFFFFF');\" ".
-                                 " onmouseout=\"return nd();\" ";
-        }
-        $result = '';
-
-        $result .= "<span  $popup >";
-        $result .= html_writer::start_tag('span', array('class' => $classes), '');
-
-        $result .= choose_from_menu($choices, $inputname, $chosen,
-                            ' ', '', '', true, $options->readonly) . $feedbackimage;
-        $result .= html_writer::end_tag('span');
-        $result .= html_writer::end_tag('span');
-
-        return $result;
-    }
-
-    protected function format_choices($question) {
-        $choices = array();
-        foreach ($question->get_choice_order() as $key => $choiceid) {
-            $choices[$key] = strip_tags($question->format_text($question->choices[$choiceid]));
-        }
-        return $choices;
-    }
-
-
-}
-class qtype_multianswer_multichoice_multi_renderer extends qtype_multianswer_multichoice_renderer_base {
-    protected function get_input_type() {
-        return 'checkbox';
-    }
-
-    protected function get_input_name(question_attempt $qa, $value) {
-        $questiontot = $qa->get_question();
-        $subquestion = $questiontot->subquestions[$qa->subquestionindex];
-        return $qa->get_qt_field_name($subquestion->fieldid.'choice'. $value);
-    }
-
-    protected function get_input_value($value) {
-        return 1;
-    }
-
-    protected function get_input_id(question_attempt $qa, $value) {
-        return $this->get_input_name($qa, $value);
-    }
-
-    protected function get_response(question_attempt $qa) {
-        $responses = $qa->get_last_qt_data();
-        $questiontot = $qa->get_question();
-        $subresponses =$questiontot->decode_subquestion_responses($responses);
-        if ( isset($subresponses[$qa->subquestionindex])) {
-             return $subresponses[$qa->subquestionindex];
-        } else {
-             return '';
-        }
-    }
-
-    protected function is_choice_selected($response, $value) {
-        return isset($response['choice'.$value]);
-    }
-
-    protected function is_right(question_answer $ans) {
-        return $ans->fraction > 0;
-    }
-
-    public function correct_response(question_attempt $qa) {
-        $questiontot = $qa->get_question();
-        $subquestion = $questiontot->subquestions[$qa->subquestionindex];
-
-        $right = array();
-        foreach ($subquestion->answers as $ans) {
-            if ($ans->fraction > 0) {
-                $right[] = $subquestion->format_text($ans->answer);
-            }
-        }
-
-        if (!empty($right)) {
-                return get_string('correctansweris', 'qtype_multichoice',
-                        implode(', ', $right));
-
-        }
-        return '';
-    }
-
-
-
 }

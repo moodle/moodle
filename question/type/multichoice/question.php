@@ -217,7 +217,7 @@ class qtype_multichoice_single_question extends qtype_multichoice_base {
     }
 
     public function is_choice_selected($response, $value) {
-        return $response == $value;
+        return (string) $response === (string) $value;
     }
 }
 

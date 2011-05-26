@@ -203,6 +203,9 @@ class qtype_multianswer extends question_type {
             $subqdata->contextid = $questiondata->contextid;
             $question->subquestions[$key] = question_bank::make_question($subqdata);
             $question->subquestions[$key]->maxmark = $subqdata->defaultmark;
+            if (isset($subqdata->options->layout)) {
+                $question->subquestions[$key]->layout = $subqdata->options->layout;
+            }
         }
     }
 
@@ -323,7 +326,7 @@ function qtype_multianswer_extract_question($text) {
             $wrapped->incorrectfeedback['text'] = '';
             $wrapped->incorrectfeedback['format'] = '1';
             $wrapped->incorrectfeedback['itemid'] = '';
-            $wrapped->layout = 0;
+            $wrapped->layout = qtype_multichoice_base::LAYOUT_DROPDOWN;
         } else if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_REGULAR])) {
             $wrapped->qtype = 'multichoice';
             $wrapped->single = 1;
@@ -337,7 +340,7 @@ function qtype_multianswer_extract_question($text) {
             $wrapped->incorrectfeedback['text'] = '';
             $wrapped->incorrectfeedback['format'] = '1';
             $wrapped->incorrectfeedback['itemid'] = '';
-            $wrapped->layout = 1;
+            $wrapped->layout = qtype_multichoice_base::LAYOUT_VERTICAL;
         } else if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_HORIZONTAL])) {
             $wrapped->qtype = 'multichoice';
             $wrapped->single = 1;
@@ -351,7 +354,7 @@ function qtype_multianswer_extract_question($text) {
             $wrapped->incorrectfeedback['text'] = '';
             $wrapped->incorrectfeedback['format'] = '1';
             $wrapped->incorrectfeedback['itemid'] = '';
-            $wrapped->layout = 2;
+            $wrapped->layout = qtype_multichoice_base::LAYOUT_HORIZONTAL;
         } else {
             print_error('unknownquestiontype', 'question', '', $answerregs[2]);
             return false;

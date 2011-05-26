@@ -56,7 +56,6 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             question_display_options $options) {
 
         $question = $qa->get_question();
-        $order = $question->get_order($qa);
         $response = $question->get_response($qa);
 
         $inputname = $qa->get_qt_field_name('answer');
@@ -73,7 +72,7 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
         $feedbackimg = array();
         $feedback = array();
         $classes = array();
-        foreach ($order as $value => $ansid) {
+        foreach ($question->get_order($qa) as $value => $ansid) {
             $ans = $question->answers[$ansid];
             $inputattributes['name'] = $this->get_input_name($qa, $value);
             $inputattributes['value'] = $this->get_input_value($value);
