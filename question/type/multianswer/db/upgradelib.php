@@ -82,7 +82,7 @@ class qtype_multianswer_qe2_attempt_updater extends question_qtype_attempt_updat
         foreach (explode(',', $answer) as $part) {
             list($index, $partanswer) = explode('-', $part, 2);
             $response[$index] = str_replace(
-                    array(",", "-"), array('&#0044;', '&#0045;'), $partanswer);
+                    array('&#0044;', '&#0045;'), array(",", "-"), $partanswer);
         }
 
         return $response;
