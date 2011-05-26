@@ -424,10 +424,10 @@ class qbehaviour_walkthrough_test_base extends UnitTestCase {
     }
 
     protected function start_attempt_at_question($question, $preferredbehaviour,
-            $maxmark = null) {
+            $maxmark = null, $variant = 1) {
         $this->quba->set_preferred_behaviour($preferredbehaviour);
         $this->slot = $this->quba->add_question($question, $maxmark);
-        $this->quba->start_all_questions();
+        $this->quba->start_question($this->slot, $variant);
     }
     protected function process_submission($data) {
         $this->quba->process_action($this->slot, $data);

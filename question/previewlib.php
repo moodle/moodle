@@ -46,14 +46,25 @@ class preview_options_form extends moodleform {
 
         $mform->addElement('header', 'optionsheader', get_string('changeoptions', 'question'));
 
-        $behaviours = question_engine::get_behaviour_options($this->_customdata->get_preferred_behaviour());
-        $mform->addElement('select', 'behaviour', get_string('howquestionsbehave', 'question'), $behaviours);
+        $behaviours = question_engine::get_behaviour_options(
+                $this->_customdata['quba']->get_preferred_behaviour());
+        $mform->addElement('select', 'behaviour',
+                get_string('howquestionsbehave', 'question'), $behaviours);
         $mform->addHelpButton('behaviour', 'howquestionsbehave', 'question');
 
-        $mform->addElement('text', 'maxmark', get_string('markedoutof', 'question'), array('size' => '5'));
+        $mform->addElement('text', 'maxmark', get_string('markedoutof', 'question'),
+                array('size' => '5'));
         $mform->setType('maxmark', PARAM_NUMBER);
 
-        $mform->addElement('select', 'correctness', get_string('whethercorrect', 'question'), $hiddenofvisible);
+        if ($this->_customdata['maxvariant'] > 1) {
+            $variants = range(1, $this->_customdata['maxvariant']);
+            $mform->addElement('select', 'variant', get_string('questionvariant', 'question'),
+                    array_combine($variants, $variants));
+        }
+        $mform->setType('maxmark', PARAM_INT);
+
+        $mform->addElement('select', 'correctness', get_string('whethercorrect', 'question'),
+                $hiddenofvisible);
 
         $marksoptions = array(
             question_display_options::HIDDEN => get_string('notshown', 'question'),
@@ -65,15 +76,20 @@ class preview_options_form extends moodleform {
         $mform->addElement('select', 'markdp', get_string('decimalplacesingrades', 'question'),
                 question_engine::get_dp_options());
 
-        $mform->addElement('select', 'feedback', get_string('specificfeedback', 'question'), $hiddenofvisible);
+        $mform->addElement('select', 'feedback',
+                get_string('specificfeedback', 'question'), $hiddenofvisible);
 
-        $mform->addElement('select', 'generalfeedback', get_string('generalfeedback', 'question'), $hiddenofvisible);
+        $mform->addElement('select', 'generalfeedback',
+                get_string('generalfeedback', 'question'), $hiddenofvisible);
 
-        $mform->addElement('select', 'rightanswer', get_string('rightanswer', 'question'), $hiddenofvisible);
+        $mform->addElement('select', 'rightanswer',
+                get_string('rightanswer', 'question'), $hiddenofvisible);
 
-        $mform->addElement('select', 'history', get_string('responsehistory', 'question'), $hiddenofvisible);
+        $mform->addElement('select', 'history',
+                get_string('responsehistory', 'question'), $hiddenofvisible);
 
-        $mform->addElement('submit', 'submit', get_string('restartwiththeseoptions', 'question'), $hiddenofvisible);
+        $mform->addElement('submit', 'submit',
+                get_string('restartwiththeseoptions', 'question'), $hiddenofvisible);
     }
 }
 
@@ -92,6 +108,9 @@ class question_preview_options extends question_display_options {
     /** @var number the maximum mark to use for this preview. */
     public $maxmark;
 
+    /** @var int the variant of the question to preview. */
+    public $variant;
+
     /** @var string prefix to append to field names to get user_preference names. */
     const OPTIONPREFIX = 'question_preview_options_';
 
@@ -102,6 +121,7 @@ class question_preview_options extends question_display_options {
         global $CFG;
         $this->behaviour = 'deferredfeedback';
         $this->maxmark = $question->defaultmark;
+        $this->variant = null;
         $this->correctness = self::VISIBLE;
         $this->marks = self::MARK_AND_MAX;
         $this->markdp = get_config('quiz', 'decimalpoints');
@@ -129,6 +149,7 @@ class question_preview_options extends question_display_options {
         return array(
             'behaviour' => PARAM_ALPHA,
             'maxmark' => PARAM_NUMBER,
+            'variant' => PARAM_INT,
             'correctness' => PARAM_BOOL,
             'marks' => PARAM_INT,
             'markdp' => PARAM_INT,
@@ -179,7 +200,7 @@ class question_preview_options extends question_display_options {
     public function get_query_string() {
         $querystring = array();
         foreach ($this->get_field_types() as $field => $notused) {
-            if ($field == 'behaviour' || $field == 'maxmark') {
+            if ($field == 'behaviour' || $field == 'maxmark' || is_null($this->$field)) {
                 continue;
             }
             $querystring[] = $field . '=' . $this->$field;
@@ -266,5 +287,6 @@ function restart_preview($previewid, $questionid, $displayoptions) {
         question_engine::delete_questions_usage_by_activity($previewid);
         $transaction->allow_commit();
     }
-    redirect(question_preview_url($questionid, $displayoptions->behaviour, $displayoptions->maxmark, $displayoptions));
+    redirect(question_preview_url($questionid, $displayoptions->behaviour,
+            $displayoptions->maxmark, $displayoptions, $displayoptions->variant));
 }

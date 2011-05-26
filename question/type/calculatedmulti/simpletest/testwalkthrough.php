@@ -44,8 +44,9 @@ class qtype_calculatedmulti_walkthrough_test extends qbehaviour_walkthrough_test
             new question_hint(1, 'This is the first hint.', FORMAT_HTML),
             new question_hint(2, 'This is the second hint.', FORMAT_HTML),
         );
-        $this->start_attempt_at_question($q, 'interactive', 3);
+        $this->start_attempt_at_question($q, 'interactive', 3, 2);
         $values = $q->vs->get_values();
+        $this->assertEqual($values, $q->datasetloader->load_values(2));
 
         // Check the initial state.
         $this->check_current_state(question_state::$todo);

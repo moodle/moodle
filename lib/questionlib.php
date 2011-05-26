@@ -699,20 +699,28 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
  * @param string $preferredbehaviour the behaviour to use for the preview.
  * @param float $maxmark the maximum to mark the question out of.
  * @param question_display_options $displayoptions the display options to use.
+ * @param int $variant the variant of the question to preview. If null, one will
+ *      be picked randomly.
  * @return string the URL.
  */
-function question_preview_url($questionid, $preferredbehaviour, $maxmark, $displayoptions) {
-    return new moodle_url('/question/preview.php', array(
-            'id'              => $questionid,
-            'behaviour'       => $preferredbehaviour,
-            'maxmark'         => $maxmark,
-            'correctness'     => $displayoptions->correctness,
-            'marks'           => $displayoptions->marks,
-            'markdp'          => $displayoptions->markdp,
-            'feedback'        => (bool) $displayoptions->feedback,
-            'generalfeedback' => (bool) $displayoptions->generalfeedback,
-            'rightanswer'     => (bool) $displayoptions->rightanswer,
-            'history'         => (bool) $displayoptions->history));
+function question_preview_url($questionid, $preferredbehaviour, $maxmark, $displayoptions,
+        $variant = null) {
+    $params = array(
+        'id'              => $questionid,
+        'behaviour'       => $preferredbehaviour,
+        'maxmark'         => $maxmark,
+        'correctness'     => $displayoptions->correctness,
+        'marks'           => $displayoptions->marks,
+        'markdp'          => $displayoptions->markdp,
+        'feedback'        => (bool) $displayoptions->feedback,
+        'generalfeedback' => (bool) $displayoptions->generalfeedback,
+        'rightanswer'     => (bool) $displayoptions->rightanswer,
+        'history'         => (bool) $displayoptions->history
+    );
+    if ($variant) {
+        $params['variant'] = $variant;
+    }
+    return new moodle_url('/question/preview.php', $params);
 }
 
 /**

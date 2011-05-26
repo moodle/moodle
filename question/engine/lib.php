@@ -765,7 +765,7 @@ abstract class question_utils {
 /**
  * The interface for strategies for controlling which variant of each question is used.
  *
- * @copyright  2010 The Open University
+ * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 interface question_variant_selection_strategy {
@@ -782,11 +782,57 @@ interface question_variant_selection_strategy {
 /**
  * A {@link question_variant_selection_strategy} that is completely random.
  *
- * @copyright  2010 The Open University
+ * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_variant_random_strategy implements question_variant_selection_strategy {
     public function choose_variant($maxvariants, $seed) {
         return rand(1, $maxvariants);
+    }
+}
+
+
+/**
+ * A {@link question_variant_selection_strategy} that is effectively random
+ * for the first attempt, and then after that cycles through the available
+ * variants so that the students will not get a repeated variant until they have
+ * seen them all.
+ *
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_variant_pseudorandom_no_repeats_strategy
+        implements question_variant_selection_strategy {
+
+    /** @var int the number of attempts this users has had, including the curent one. */
+    protected $attemptno;
+
+    /** @var int the user id the attempt belongs to. */
+    protected $userid;
+
+    /**
+     * Constructor.
+     * @param int $attemptno The attempt number.
+     * @param int $userid the user the attempt is for (defaults to $USER->id).
+     */
+    public function __construct($attemptno, $userid = null) {
+        $this->attemptno = $attemptno;
+        if (is_null($userid)) {
+            global $USER;
+            $this->userid = $USER->id;
+        } else {
+            $this->userid = $userid;
+        }
+    }
+
+    public function choose_variant($maxvariants, $seed) {
+        if ($maxvariants == 1) {
+            return 1;
+        }
+
+        $hash = sha1($seed . '|user' . $this->userid);
+        $randint = hexdec(substr($hash, 17, 7));
+
+        return ($randint + $this->attemptno) % $maxvariants + 1;
     }
 }

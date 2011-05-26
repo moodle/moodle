@@ -227,7 +227,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
         $expectedqa = (object) array(
             'behaviour' => 'adaptive',
             'questionid' => 17,
-            'variant' => 1,
+            'variant' => 3,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -242,7 +242,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
                     'fraction' => null,
                     'timecreated' => 1305830650,
                     'userid' => 4,
-                    'data' => array('-_try' => 1, '_dataset' => '3',
+                    'data' => array('-_try' => 1,
                             '_order' => '24,26,27,25', '_var_a' => '4.3', '_var_b' => '5.4'),
                 ),
                 1 => (object) array(
@@ -461,7 +461,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
         $expectedqa = (object) array(
             'behaviour' => 'adaptive',
             'questionid' => 17,
-            'variant' => 1,
+            'variant' => 8,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -476,7 +476,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
                     'fraction' => null,
                     'timecreated' => 1305830661,
                     'userid' => 4,
-                    'data' => array('-_try' => 1, '_dataset' => '8',
+                    'data' => array('-_try' => 1,
                             '_order' => '25,24,27,26', '_var_a' => '3.7', '_var_b' => '6.0'),
                 ),
                 1 => (object) array(
@@ -739,7 +739,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
         $expectedqa = (object) array(
             'behaviour' => 'adaptive',
             'questionid' => 17,
-            'variant' => 1,
+            'variant' => 7,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -754,7 +754,7 @@ class qtype_calculatedmulti_attempt_upgrader_test extends question_attempt_upgra
                     'fraction' => null,
                     'timecreated' => 1305830744,
                     'userid' => 3,
-                    'data' => array('-_try' => 1, '_dataset' => '7',
+                    'data' => array('-_try' => 1,
                             '_order' => '26,24,25,27', '_var_a' => '4.4', '_var_b' => '8.2'),
                 ),
                 1 => (object) array(

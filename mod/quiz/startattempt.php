@@ -144,8 +144,15 @@ if (!($quiz->attemptonlast && $lastattempt)) {
         $questionsinuse[] = $question->id;
     }
 
-    // Start all the quetsions.
-    $quba->start_all_questions(null, time(), null);
+    // Start all the questions.
+    if ($attempt->preview) {
+        $variantoffset = rand(1, 100);
+    } else {
+        $variantoffset = $attemptnumber;
+    }
+    $quba->start_all_questions(
+            new question_variant_pseudorandom_no_repeats_strategy($variantoffset),
+            time());
 
     // Update attempt layout.
     $newlayout = array();

@@ -191,7 +191,7 @@ class qtype_calculatedsimple_attempt_upgrader_test extends question_attempt_upgr
         $expectedqa = (object) array(
             'behaviour' => 'adaptive',
             'questionid' => 16,
-            'variant' => 1,
+            'variant' => 7,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -206,7 +206,7 @@ class qtype_calculatedsimple_attempt_upgrader_test extends question_attempt_upgr
                     'fraction' => null,
                     'timecreated' => 1305830650,
                     'userid' => 4,
-                    'data' => array('-_try' => 1, '_dataset' => '7', '_separators' => '.$,',
+                    'data' => array('-_try' => 1, '_separators' => '.$,',
                             '_var_a' => '3', '_var_b' => '6'),
                 ),
                 1 => (object) array(
@@ -401,7 +401,7 @@ class qtype_calculatedsimple_attempt_upgrader_test extends question_attempt_upgr
         $expectedqa = (object) array(
             'behaviour' => 'adaptive',
             'questionid' => 16,
-            'variant' => 1,
+            'variant' => 4,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -416,7 +416,7 @@ class qtype_calculatedsimple_attempt_upgrader_test extends question_attempt_upgr
                     'fraction' => null,
                     'timecreated' => 1305830661,
                     'userid' => 4,
-                    'data' => array('-_try' => 1, '_dataset' => '4', '_separators' => '.$,',
+                    'data' => array('-_try' => 1, '_separators' => '.$,',
                             '_var_a' => '6.4', '_var_b' => '9'),
                 ),
                 1 => (object) array(
@@ -603,7 +603,7 @@ class qtype_calculatedsimple_attempt_upgrader_test extends question_attempt_upgr
         $expectedqa = (object) array(
             'behaviour' => 'adaptive',
             'questionid' => 16,
-            'variant' => 1,
+            'variant' => 6,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
             'flagged' => 0,
@@ -618,7 +618,7 @@ class qtype_calculatedsimple_attempt_upgrader_test extends question_attempt_upgr
                     'fraction' => null,
                     'timecreated' => 1305830744,
                     'userid' => 3,
-                    'data' => array('-_try' => 1, '_dataset' => '6', '_separators' => '.$,',
+                    'data' => array('-_try' => 1, '_separators' => '.$,',
                             '_var_a' => '6.1', '_var_b' => '7'),
                 ),
                 1 => (object) array(

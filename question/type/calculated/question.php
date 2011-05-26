@@ -51,7 +51,7 @@ class qtype_calculated_question extends qtype_numerical_question
     public $synchronised;
 
     public function start_attempt(question_attempt_step $step, $variant) {
-        qtype_calculated_question_helper::start_attempt($this, $step);
+        qtype_calculated_question_helper::start_attempt($this, $step, $variant);
         parent::start_attempt($step, $variant);
     }
 
@@ -71,6 +71,19 @@ class qtype_calculated_question extends qtype_numerical_question
             }
             $ans->feedback = $this->vs->replace_expressions_in_text($ans->feedback,
                         $ans->correctanswerlength, $ans->correctanswerformat);
+        }
+    }
+
+    public function get_num_variants() {
+        return $this->datasetloader->get_number_of_items();
+    }
+
+    public function get_variants_selection_seed() {
+        if (!empty($this->synchronised) &&
+                $this->datasetloader->datasets_are_synchronised($question->category)) {
+            return 'category' . $this->category;
+        } else {
+            return parent::get_variants_selection_seed();
         }
     }
 }
@@ -110,24 +123,14 @@ interface qtype_calculated_question_with_expressions {
  */
 abstract class qtype_calculated_question_helper {
     public static function start_attempt(
-            qtype_calculated_question_with_expressions $question, question_attempt_step $step) {
-
-        $maxnumber = $question->datasetloader->get_number_of_items();
-
-        if (!empty($question->synchronised) &&
-                $question->datasetloader->datasets_are_synchronised($question->category)) {
-
-            $setnumber = ($step->get_timecreated() % $maxnumber) + 1;
-        } else {
-            $setnumber = rand(1, $maxnumber);
-        }
+            qtype_calculated_question_with_expressions $question,
+            question_attempt_step $step, $variant) {
 
         $question->vs = new qtype_calculated_variable_substituter(
-                $question->datasetloader->get_values($setnumber),
+                $question->datasetloader->get_values($variant),
                 get_string('decsep', 'langconfig'));
         $question->calculate_all_expressions();
 
-        $step->set_qt_var('_dataset', $setnumber);
         foreach ($question->vs->get_values() as $name => $value) {
             $step->set_qt_var('_var_' . $name, $value);
         }

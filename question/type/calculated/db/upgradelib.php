@@ -141,7 +141,6 @@ class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_update
                 $this->replace_expressions_in_text($this->question->questiontext));
         $this->updater->qa->rightanswer = $this->right_answer($this->question);
 
-        $data['_dataset'] = $this->selecteditem;
         foreach ($this->values as $name => $value) {
             $data['_var_' . $name] = $value;
         }
@@ -181,6 +180,7 @@ class qtype_calculated_qe2_attempt_updater extends question_qtype_attempt_update
 
     public function load_dataset($selecteditem) {
         $this->selecteditem = $selecteditem;
+        $this->updater->qa->variant = $selecteditem;
         $this->values = $this->qeupdater->load_dataset(
                 $this->question->id, $selecteditem);
 

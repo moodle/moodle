@@ -38,12 +38,14 @@ require_once(dirname(__FILE__) . '/previewlib.php');
 $id = required_param('id', PARAM_INT);
 $question = question_bank::load_question($id);
 require_login();
-$category = $DB->get_record('question_categories', array('id' => $question->category), '*', MUST_EXIST);
+$category = $DB->get_record('question_categories',
+        array('id' => $question->category), '*', MUST_EXIST);
 question_require_capability_on($question, 'use');
 $PAGE->set_pagelayout('popup');
 $PAGE->set_context(get_context_instance_by_id($category->contextid));
 
 // Get and validate display options.
+$maxvariant = $question->get_num_variants();
 $options = new question_preview_options($question);
 $options->load_user_defaults();
 $options->set_from_request();
@@ -57,7 +59,7 @@ if ($previewid) {
     }
     try {
         $quba = question_engine::load_questions_usage_by_activity($previewid);
-    } catch (Exception $e){
+    } catch (Exception $e) {
         print_error('submissionoutofsequencefriendlymessage', 'question',
                 question_preview_url($question->id, $options->behaviour,
                 $options->maxmark, $options), null, $e);
@@ -68,13 +70,21 @@ if ($previewid) {
         print_error('questionidmismatch', 'question');
     }
     $question = $usedquestion;
+    $options->variant = $quba->get_variant($slot);
 
 } else {
     $quba = question_engine::make_questions_usage_by_activity('core_question_preview',
             get_context_instance_by_id($category->contextid));
     $quba->set_preferred_behaviour($options->behaviour);
     $slot = $quba->add_question($question, $options->maxmark);
-    $quba->start_all_questions();
+
+    if ($options->variant) {
+        $options->variant = min($maxvariant, max(1, $options->variant));
+    } else {
+        $options->variant = rand(1, $maxvariant);
+    }
+
+    $quba->start_question($slot, $options->variant);
 
     $transaction = $DB->start_delegated_transaction();
     question_engine::save_questions_usage_by_activity($quba);
@@ -86,7 +96,8 @@ $options->behaviour = $quba->get_preferred_behaviour();
 $options->maxmark = $quba->get_question_max_mark($slot);
 
 // Create the settings form, and initialise the fields.
-$optionsform = new preview_options_form($CFG->wwwroot . '/question/preview.php?id=' . $question->id, $quba);
+$optionsform = new preview_options_form(new moodle_url('/question/preview.php',
+        array('id' => $question->id)), array('quba' => $quba, 'maxvariant' => $maxvariant));
 $optionsform->set_data($options);
 
 // Process change of settings, if that was requested.
@@ -117,7 +128,7 @@ if (data_submitted() && confirm_sesskey()) {
     } else if (optional_param('finish', null, PARAM_BOOL)) {
         try {
             $quba->process_all_actions();
-        } catch (question_out_of_sequence_exception $e){
+        } catch (question_out_of_sequence_exception $e) {
             print_error('submissionoutofsequencefriendlymessage', 'question', $actionurl);
         }
         $quba->finish_all_questions();
@@ -130,7 +141,7 @@ if (data_submitted() && confirm_sesskey()) {
     } else {
         try {
             $quba->process_all_actions();
-        } catch (question_out_of_sequence_exception $e){
+        } catch (question_out_of_sequence_exception $e) {
             print_error('submissionoutofsequencefriendlymessage', 'question', $actionurl);
         }
 
