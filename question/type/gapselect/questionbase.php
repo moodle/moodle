@@ -65,7 +65,7 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
     /** @var array shuffled choice indexes. */
     protected $choiceorder;
 
-    public function start_attempt(question_attempt_step $step) {
+    public function start_attempt(question_attempt_step $step, $variant) {
         foreach ($this->choices as $group => $choices) {
             $choiceorder = array_keys($choices);
             if ($this->shufflechoices) {
