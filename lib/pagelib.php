@@ -64,7 +64,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read object $course The current course that we are inside - a row from the
  *      course table. (Also available as $COURSE global.) If we are not inside
  *      an actual course, this will be the site course.
- * @property-read bool $devicetypeinuse Returns true if the legacy theme is being used.
+ * @property-read bool $devicetypeinuse name of the device type in use
  * @property-read string $docspath The path to the Moodle docs for this page.
  * @property-read string $focuscontrol The id of the HTML element to be focused when the page has loaded.
  * @property-read bool $headerprinted
