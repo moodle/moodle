@@ -20,7 +20,7 @@
 
 require('../config.php');
 
-$url = required_param('url', PARAM_TEXT);
+$url = required_param('url', PARAM_LOCALURL);
 
 switch_theme();
 
