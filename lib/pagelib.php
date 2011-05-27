@@ -1331,62 +1331,6 @@ class moodle_page {
 
 
     /**
-     * Work out the theme this page should use if an upgrade to the new theme selection has not taken place.
-     *
-     * @param array $themeorder
-     * @param string $mnetpeertheme
-     * @return string the name of the theme that should be used on this page.
-     */
-    protected function legacy_theme_support($themeorder, $mnetpeertheme) {
-        global $CFG;
-
-        $theme = '';
-
-        foreach ($themeorder as $themetype) {
-            switch ($themetype) {
-                case 'course':
-                    if (!empty($CFG->allowcoursethemes) and !empty($this->course->theme)) {
-                        return $this->course->theme;
-                    }
-
-                case 'category':
-                    if (!empty($CFG->allowcategorythemes)) {
-                        $categories = $this->categories;
-                        foreach ($categories as $category) {
-                            if (!empty($category->theme)) {
-                                return $category->theme;
-                            }
-                        }
-                    }
-
-                case 'session':
-                    if (!empty($SESSION->theme)) {
-                        return $SESSION->theme;
-                    }
-
-                case 'user':
-                    if (!empty($CFG->allowuserthemes) and !empty($USER->theme)) {
-                        if ($mnetpeertheme) {
-                            return $mnetpeertheme;
-                        } else {
-                            return $USER->theme;
-                        }
-                    }
-
-                case 'site':
-                    if ($mnetpeertheme) {
-                        return $mnetpeertheme;
-                    } else if(!empty($CFG->themelegacy) && $this->browser_is_outdated()) {
-                        $this->_legacythemeinuse = true;
-                        return $CFG->themelegacy;
-                    } else {
-                        return $CFG->theme;
-                    }
-            }
-        }
-    }
-
-    /**
      * Sets ->pagetype from the script name. For example, if the script that was
      * run is mod/quiz/view.php, ->pagetype will be set to 'mod-quiz-view'.
      * @param string $script the path to the script that should be used to
