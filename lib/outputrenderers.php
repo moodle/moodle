@@ -2511,7 +2511,7 @@ EOD;
             return '';
         }
 
-        global $USER, $PAGE;
+        global $USER;
 
         $type = get_device_type();
 
@@ -2530,7 +2530,7 @@ EOD;
         }
 
         $content = html_writer::start_tag('div', array('id'=>'theme_switch_link'));
-        $linkurl = new moodle_url('/theme/switch.php', array('url' => $PAGE->url));
+        $linkurl = new moodle_url('/theme/switch.php', array('url' => $this->page->url));
 
         $content .= html_writer::link($linkurl, $linktext);
         $content .= html_writer::end_tag('div');
