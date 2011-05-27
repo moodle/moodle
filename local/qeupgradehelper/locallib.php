@@ -328,7 +328,7 @@ class local_qeupgradehelper_pre_upgrade_quiz_list_restricted extends local_qeupg
 
     protected function out_of($restrictedtotal, $fulltotal) {
         $a = new stdClass();
-        $a->some = $restrictedtotal;
+        $a->some = $a->some = html_writer::tag('b', $restrictedtotal);
         $a->total = $fulltotal;
         return get_string('outof', 'local_qeupgradehelper', $a);
     }
@@ -338,10 +338,8 @@ class local_qeupgradehelper_pre_upgrade_quiz_list_restricted extends local_qeupg
             '',
             html_writer::tag('b', get_string('total')),
             '',
-            html_writer::tag('b', $this->out_of(
-                    $this->restrictedtotalquizas, $this->totalquizas),
-            html_writer::tag('b', $this->out_of(
-                    $this->restrictedtotalqas, $this->totalqas))),
+            $this->out_of($this->restrictedtotalquizas, $this->totalquizas),
+            $this->out_of($this->restrictedtotalqas, $this->totalqas),
         );
     }
 }
