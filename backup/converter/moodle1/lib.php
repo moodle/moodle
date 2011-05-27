@@ -506,6 +506,20 @@ class moodle1_converter extends base_converter {
     }
 
     /**
+     * Creates and returns new instance of the file manager
+     *
+     * @param int $contextid the default context id of the files being migrated
+     * @param string $component the default component name of the files being migrated
+     * @param string $filearea the default file area of the files being migrated
+     * @param int $itemid the default item id of the files being migrated
+     * @param int $userid initial user id of the files being migrated
+     * @return moodle1_file_manager
+     */
+    public function get_file_manager($contextid = null, $component = null, $filearea = null, $itemid = 0, $userid = null) {
+        return new moodle1_file_manager($this, $contextid, $component, $filearea, $itemid, $userid);
+    }
+
+    /**
      * @see parent::description()
      */
     public static function description() {
@@ -983,5 +997,263 @@ class convert_path_exception extends moodle_exception {
      */
     public function __construct($errorcode, $a = null, $debuginfo = null) {
         parent::__construct($errorcode, '', '', $a, $debuginfo);
+    }
+}
+
+
+/**
+ * The class responsible for files migration
+ *
+ * The files in Moodle 1.9 backup are stored in moddata, user_files, group_files,
+ * course_files and site_files folders.
+ */
+class moodle1_file_manager {
+
+    /** @var moodle1_converter instance we serve to */
+    public $converter;
+
+    /** @var int context id of the files being migrated */
+    public $contextid;
+
+    /** @var string component name of the files being migrated */
+    public $component;
+
+    /** @var string file area of the files being migrated */
+    public $filearea;
+
+    /** @var int item id of the files being migrated */
+    public $itemid = 0;
+
+    /** @var int user id */
+    public $userid;
+
+    /** @var textlib instance used during the migration */
+    protected $textlib;
+
+    /** @var array of file ids that were migrated by this instance */
+    protected $fileids = array();
+
+    /**
+     * Constructor optionally accepting some default values for the migrated files
+     *
+     * @param moodle1_converter $converter the converter instance we serve to
+     * @param int $contextid initial context id of the files being migrated
+     * @param string $component initial component name of the files being migrated
+     * @param string $filearea initial file area of the files being migrated
+     * @param int $itemid initial item id of the files being migrated
+     * @param int $userid initial user id of the files being migrated
+     */
+    public function __construct(moodle1_converter $converter, $contextid = null, $component = null, $filearea = null, $itemid = 0, $userid = null) {
+
+        $this->converter = $converter;
+        $this->contextid = $contextid;
+        $this->component = $component;
+        $this->filearea  = $filearea;
+        $this->itemid    = $itemid;
+        $this->userid    = $userid;
+        $this->textlib   = textlib_get_instance();
+    }
+
+    /**
+     * Migrates one given file stored on disk
+     *
+     * @param string $sourcefullpath the full path to the source local file
+     * @param string $filepath the file path of the migrated file, defaults to the root directory '/'
+     * @param string $filename the name of the migrated file, defaults to the same as the source file has
+     * @param int $timecreated override the timestamp of when the migrated file should appear as created
+     * @param int $timemodified override the timestamp of when the migrated file should appear as modified
+     * @return int id of the migrated file
+     */
+    public function migrate_file($sourcefullpath, $filepath = '/', $filename = null, $timecreated = null, $timemodified = null) {
+
+        if (!is_readable($sourcefullpath)) {
+            throw new moodle1_convert_exception('file_not_readable');
+        }
+
+        $filepath = clean_param($filepath, PARAM_PATH);
+
+        if ($this->textlib->strlen($filepath) > 255) {
+            throw new moodle1_convert_exception('file_path_longer_than_255_chars');
+        }
+
+        if (is_null($filename)) {
+            $filename = basename($sourcefullpath);
+        }
+
+        $filename = clean_param($filename, PARAM_FILE);
+
+        if ($filename === '') {
+            throw new moodle1_convert_exception('unsupported_chars_in_filename');
+        }
+
+        if (is_null($timecreated)) {
+            $timecreated = filectime($sourcefullpath);
+        }
+
+        if (is_null($timemodified)) {
+            $timemodified = filemtime($sourcefullpath);
+        }
+
+        $filerecord = $this->make_file_record(array(
+            'filepath'      => $filepath,
+            'filename'      => $filename,
+            'mimetype'      => mimeinfo('type', $sourcefullpath),
+            'timecreated'   => $timecreated,
+            'timemodified'  => $timemodified,
+        ));
+
+        list($filerecord['contenthash'], $filerecord['filesize'], $newfile) = $this->add_file_to_pool($sourcefullpath);
+        $this->stash_file($filerecord);
+
+        return $filerecord['id'];
+    }
+
+    /**
+     * Migrates all files in the given directory
+     *
+     * @param string $rootpath full path to the root directory containing the files (like course_files)
+     * @param string $relpath relative path used during the recursion - do not provide when calling this!
+     * @return array ids of the migrated files
+     */
+    public function migrate_directory($rootpath, $relpath='/') {
+
+        $fileids = array();
+
+        // make the fake file record for the directory itself
+        $filerecord = $this->make_file_record(array('filepath' => $relpath, 'filename' => '.'));
+        $this->stash_file($filerecord);
+        $fileids[] = $filerecord['id'];
+
+        $fullpath = $rootpath.$relpath;
+        $items    = new DirectoryIterator($fullpath);
+
+        foreach ($items as $item) {
+
+            if ($item->isDot()) {
+                continue;
+            }
+
+            if ($item->isLink()) {
+                throw new moodle1_convert_exception('unexpected_symlink');
+            }
+
+            if ($item->isFile()) {
+                $fileids[] = $this->migrate_file($item->getPathname(), $relpath, $item->getFilename(), $item->getCTime(), $item->getMTime());
+
+            } else {
+                $dirname = clean_param($item->getFilename(), PARAM_PATH);
+
+                if ($dirname === '') {
+                    throw new moodle1_convert_exception('unsupported_chars_in_filename');
+                }
+
+                // migrate subdirectories recursively
+                $fileids = array_merge($fileids, $this->migrate_directory($rootpath, $relpath.$item->getFilename().'/'));
+            }
+        }
+
+        return $fileids;
+    }
+
+    /**
+     * Returns the list of all file ids migrated by this instance so far
+     *
+     * @return array of int
+     */
+    public function get_fileids() {
+        return $this->fileids;
+    }
+
+    /// internal implementation details ////////////////////////////////////////
+
+    /**
+     * Prepares a fake record from the files table
+     *
+     * @param array $fileinfo explicit file data
+     * @return array
+     */
+    protected function make_file_record(array $fileinfo) {
+
+        $defaultrecord = array(
+            'contenthash'   => 'da39a3ee5e6b4b0d3255bfef95601890afd80709',  // sha1 of an empty file
+            'contextid'     => $this->contextid,
+            'component'     => $this->component,
+            'filearea'      => $this->filearea,
+            'itemid'        => $this->itemid,
+            'filepath'      => null,
+            'filename'      => null,
+            'filesize'      => 0,
+            'userid'        => $this->userid,
+            'mimetype'      => null,
+            'status'        => 0,
+            'timecreated'   => $now = time(),
+            'timemodified'  => $now,
+            'source'        => null,
+            'author'        => null,
+            'license'       => null,
+            'sortorder'     => 0,
+        );
+
+        if (!array_key_exists('id', $fileinfo)) {
+            $defaultrecord['id'] = $this->converter->get_nextid();
+        }
+
+        // override the default values with the explicit data provided and return
+        return array_merge($defaultrecord, $fileinfo);
+    }
+
+    /**
+     * Copies the given file to the pool directory
+     *
+     * Returns an array containing SHA1 hash of the file contents, the file size
+     * and a flag indicating whether the file was actually added to the pool or whether
+     * it was already there.
+     *
+     * @param string $pathname the full path to the file
+     * @return array with keys (string)contenthash, (int)filesize, (bool)newfile
+     */
+    protected function add_file_to_pool($pathname) {
+
+        if (!is_readable($pathname)) {
+            throw new moodle1_convert_exception('file_not_readable');
+        }
+
+        $contenthash = sha1_file($pathname);
+        $filesize    = filesize($pathname);
+        $hashpath    = $this->converter->get_workdir_path().'/files/'.substr($contenthash, 0, 2);
+        $hashfile    = "$hashpath/$contenthash";
+
+        if (file_exists($hashfile)) {
+            if (filesize($hashfile) !== $filesize) {
+                // congratulations! you have found two files with different size and the same
+                // content hash. or, something were wrong (which is more likely)
+                throw new moodle1_convert_exception('same_hash_different_size');
+            }
+            $newfile = false;
+
+        } else {
+            check_dir_exists($hashpath);
+            $newfile = true;
+
+            if (!copy($pathname, $hashfile)) {
+                throw new moodle1_convert_exception('unable_to_copy_file');
+            }
+
+            if (filesize($hashfile) !== $filesize) {
+                throw new moodle1_convert_exception('filesize_different_after_copy');
+            }
+        }
+
+        return array($contenthash, $filesize, $newfile);
+    }
+
+    /**
+     * Stashes the file record into 'files' stash and adds the record id to list of migrated files
+     *
+     * @param array $filerecord
+     */
+    protected function stash_file(array $filerecord) {
+        $this->converter->set_stash('files', $filerecord, $filerecord['id']);
+        $this->fileids[] = $filerecord['id'];
     }
 }

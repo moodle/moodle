@@ -284,6 +284,15 @@ class moodle1_root_handler extends moodle1_xml_handler {
     }
 
     /**
+     * Converts course_files and site_files
+     */
+    public function on_root_element_start() {
+        // convert course files
+        $fileshandler = new moodle1_files_handler($this->converter);
+        $fileshandler->process();
+    }
+
+    /**
      * This is executed at the end of the moodle.xml parsing
      */
     public function on_root_element_end() {
@@ -446,6 +455,15 @@ class moodle1_root_handler extends moodle1_xml_handler {
 
         $this->close_xml_writer();
 
+        // write files.xml
+        $this->open_xml_writer('files.xml');
+        $this->xmlwriter->begin_tag('files');
+        foreach ($this->converter->get_stash_itemids('files') as $fileid) {
+            $this->write_xml('file', $this->converter->get_stash('files', $fileid), array('/file/id'));
+        }
+        $this->xmlwriter->end_tag('files');
+        $this->close_xml_writer('files.xml');
+
         // make sure that the files required by the restore process have been generated.
         // missing file may happen if the watched tag is not present in moodle.xml (for example
         // QUESTION_CATEGORIES is optional in moodle.xml but questions.xml must exist in
@@ -465,27 +483,18 @@ class moodle1_root_handler extends moodle1_xml_handler {
 
 
 /**
- * The class responsible for course files migration
+ * The class responsible for course and site files migration
  *
- * The files in Moodle 1.9 backup are stored in moddata, user_files, group_files,
- * course_files and site_files folders.
+ * @todo migrate site_files
  */
 class moodle1_files_handler extends moodle1_xml_handler {
-
-    /** @var textlib */
-    protected $textlib;
 
     /**
      * Migrates course_files and site_files in the converter workdir
      */
     public function process() {
-        $this->textlib = textlib_get_instance();
-        $this->open_xml_writer('files.xml');
-        $this->xmlwriter->begin_tag('files');
         $this->migrate_course_files();
-        $this->migrate_site_files();
-        $this->xmlwriter->end_tag('files');
-        $this->close_xml_writer('files.xml');
+        // todo $this->migrate_site_files();
     }
 
     /**
@@ -493,166 +502,12 @@ class moodle1_files_handler extends moodle1_xml_handler {
      */
     protected function migrate_course_files() {
         $path = $this->converter->get_tempdir_path().'/course_files';
+        $ids  = array();
+        $fileman = $this->converter->get_file_manager($this->converter->get_contextid(CONTEXT_COURSE), 'course', 'legacy');
         if (file_exists($path)) {
-            $this->migrate_files($path);
+            $ids = $fileman->migrate_directory($path);
+            $this->converter->set_stash('course_files_ids', $ids);
         }
-    }
-
-    /**
-     * Migrates site_files in the converter workdir
-     */
-    protected function migrate_site_files() {
-        $path = $this->converter->get_tempdir_path().'/site_files';
-        if (file_exists($path)) {
-            $this->migrate_files($path);
-        }
-    }
-
-    /**
-     * Migrates files in the given directory
-     *
-     * @param string $rootpath full path to the root directory containing the files (like course_files)
-     * @param string $relpath relative path used during the recursion
-     */
-    protected function migrate_files($rootpath, $relpath='/') {
-
-        $coursecontextid = $this->converter->get_contextid(CONTEXT_COURSE);
-
-        // make the fake file record for the directory itself
-        $filerecord = array(
-            'id'            => $this->converter->get_nextid(),
-            'contenthash'   => 'da39a3ee5e6b4b0d3255bfef95601890afd80709',  // sha1 of an empty file
-            'contextid'     => $coursecontextid,
-            'component'     => 'course',
-            'filearea'      => 'legacy',
-            'itemid'        => 0,
-            'filepath'      => $relpath,
-            'filename'      => '.',
-            'filesize'      => 0,
-            'userid'        => null,
-            'mimetype'      => null,
-            'status'        => 0,
-            'timecreated'   => $now = time(),
-            'timemodified'  => $now,
-            'source'        => null,
-            'author'        => null,
-            'license'       => null,
-            'sortorder'     => 0,
-        );
-        $this->write_xml('file', $filerecord, array('file/id'));
-        $this->converter->set_stash('course_files', $filerecord, $filerecord['id']);
-
-        $fullpath = $rootpath.$relpath;
-        $items    = new DirectoryIterator($fullpath);
-
-        foreach ($items as $item) {
-
-            if ($item->isDot()) {
-                continue;
-            }
-
-            if ($item->isLink()) {
-                throw new moodle1_convert_exception('unexpected_symlink');
-            }
-
-            if ($item->isFile()) {
-                if (!$item->isReadable()) {
-                    throw new moodle1_convert_exception('file_not_readable');
-                }
-
-                $filepath = clean_param($relpath, PARAM_PATH);
-                $filename = clean_param($item->getFilename(), PARAM_FILE);
-
-                if ($filename === '') {
-                    throw new moodle1_convert_exception('unsupported_chars_in_filename');
-                }
-
-                if ($this->textlib->strlen($filepath) > 255) {
-                    throw new moodle1_convert_exception('file_path_longer_than_255_chars');
-                }
-
-                // make the fake file record
-                $filerecord = array(
-                    'id'            => $this->converter->get_nextid(),
-                    'contenthash'   => null, // will be set below
-                    'contextid'     => $coursecontextid,
-                    'component'     => 'course',
-                    'filearea'      => 'legacy',
-                    'itemid'        => 0,
-                    'filepath'      => $filepath,
-                    'filename'      => $filename,
-                    'filesize'      => null, // will be set below
-                    'userid'        => null,
-                    'mimetype'      => mimeinfo('type', $item->getPathname()),
-                    'status'        => 0,
-                    'timecreated'   => $item->getCTime(),
-                    'timemodified'  => $item->getMTime(),
-                    'source'        => null,
-                    'author'        => null,
-                    'license'       => null,
-                    'sortorder'     => 0,
-                );
-
-                list($filerecord['contenthash'], $filerecord['filesize'], $newfile) = $this->move_file_to_pool($item->getPathname());
-                $this->write_xml('file', $filerecord, array('file/id'));
-                $this->converter->set_stash('course_files', $filerecord, $filerecord['id']);
-
-                if (!$newfile) {
-                    unlink($item->getPathname());
-                }
-
-            } else {
-                $dirname = clean_param($item->getFilename(), PARAM_PATH);
-
-                if ($dirname === '') {
-                    throw new moodle1_convert_exception('unsupported_chars_in_filename');
-                }
-
-                // migrate subdirectories recursively
-                $this->migrate_files($rootpath, $relpath.$item->getFilename().'/');
-            }
-        }
-    }
-
-    /**
-     * Moves the given path to the file pool directory
-     *
-     * @param string $pathname
-     * @return array => (string)contenthash, (int)filesize, (bool)newfile
-     */
-    protected function move_file_to_pool($pathname) {
-
-        if (!is_readable($pathname)) {
-            throw new moodle1_convert_exception('file_not_readable');
-        }
-
-        $contenthash = sha1_file($pathname);
-        $filesize    = filesize($pathname);
-        $hashpath    = $this->converter->get_workdir_path().'/files/'.substr($contenthash, 0, 2);
-        $hashfile    = "$hashpath/$contenthash";
-
-        if (file_exists($hashfile)) {
-            if (filesize($hashfile) !== $filesize) {
-                // congratulations! you have found two files with different size and the same
-                // content hash. or, something were wrong (which is more likely)
-                throw new moodle1_convert_exception('same_has_different_size');
-            }
-            $newfile = false;
-
-        } else {
-            check_dir_exists($hashpath);
-            $newfile = true;
-
-            if (!rename($pathname, $hashfile)) {
-                throw new moodle1_convert_exception('unable_to_move_file');
-            }
-
-            if (filesize($hashfile) !== $filesize) {
-                throw new moodle1_convert_exception('filesize_different_after_move');
-            }
-        }
-
-        return array($contenthash, $filesize, $newfile);
     }
 }
 
@@ -827,19 +682,15 @@ class moodle1_course_header_handler extends moodle1_xml_handler {
         $this->write_xml('course', $this->course, array('/course/id', '/course/contextid'));
         $this->close_xml_writer();
 
-        // convert file - @todo move this to on_root_start()
-        $fileshandler = new moodle1_files_handler($this->converter);
-        $fileshandler->process();
-        unset($fileshandler);
-
         // generate course/inforef.xml
         $this->open_xml_writer('course/inforef.xml');
         $this->xmlwriter->begin_tag('inforef');
 
         $this->xmlwriter->begin_tag('fileref');
-        foreach ($this->converter->get_stash_itemids('course_files') as $fileid) {
+        foreach ($this->converter->get_stash('course_files_ids') as $fileid) {
             $this->write_xml('file', array('id' => $fileid));
         }
+        // todo site files
         $this->xmlwriter->end_tag('fileref');
 
         $this->xmlwriter->end_tag('inforef');
@@ -1092,6 +943,15 @@ abstract class moodle1_plugin_handler extends moodle1_xml_handler {
         parent::__construct($converter);
         $this->plugintype = $plugintype;
         $this->pluginname = $pluginname;
+    }
+
+    /**
+     * Returns the normalized name of the plugin, eg mod_workshop
+     *
+     * @return string
+     */
+    public function get_component_name() {
+        return $this->plugintype.'_'.$this->pluginname;
     }
 }
 
