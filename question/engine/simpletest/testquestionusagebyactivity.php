@@ -72,7 +72,7 @@ class question_usage_by_activity_test extends UnitTestCase {
         $context = get_context_instance(CONTEXT_SYSTEM);
         $quba = question_engine::make_questions_usage_by_activity('unit_test', $context);
         $quba->set_preferred_behaviour('deferredfeedback');
-        $tf = test_question_maker::make_a_truefalse_question();
+        $tf = test_question_maker::make_question('truefalse', 'true');
         $slot = $quba->add_question($tf);
 
         // Verify.
@@ -88,7 +88,7 @@ class question_usage_by_activity_test extends UnitTestCase {
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
                 get_context_instance(CONTEXT_SYSTEM));
         $quba->set_preferred_behaviour('deferredfeedback');
-        $tf = test_question_maker::make_a_truefalse_question();
+        $tf = test_question_maker::make_question('truefalse', 'true');
         $slot = $quba->add_question($tf);
 
         // Exercise SUT and verify.
@@ -100,7 +100,7 @@ class question_usage_by_activity_test extends UnitTestCase {
 
     public function test_extract_responses() {
         // Start a deferred feedback attempt with CBM and add the question to it.
-        $tf = test_question_maker::make_a_truefalse_question();
+        $tf = test_question_maker::make_question('truefalse', 'true');
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
                 get_context_instance(CONTEXT_SYSTEM));
         $quba->set_preferred_behaviour('deferredcbm');
@@ -126,7 +126,7 @@ class question_usage_by_activity_test extends UnitTestCase {
 
     public function test_access_out_of_sequence_throws_exception() {
         // Start a deferred feedback attempt with CBM and add the question to it.
-        $tf = test_question_maker::make_a_truefalse_question();
+        $tf = test_question_maker::make_question('truefalse', 'true');
         $quba = question_engine::make_questions_usage_by_activity('unit_test',
                 get_context_instance(CONTEXT_SYSTEM));
         $quba->set_preferred_behaviour('deferredcbm');

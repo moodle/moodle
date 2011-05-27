@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/engine/simpletest/helpers.php');
  */
 class qtype_truefalse_question_test extends UnitTestCase {
     public function test_is_complete_response() {
-        $question = test_question_maker::make_a_truefalse_question();
+        $question = test_question_maker::make_question('truefalse', 'true');
 
         $this->assertFalse($question->is_complete_response(array()));
         $this->assertTrue($question->is_complete_response(array('answer' => 0)));
@@ -45,7 +45,7 @@ class qtype_truefalse_question_test extends UnitTestCase {
     }
 
     public function test_is_gradable_response() {
-        $question = test_question_maker::make_a_truefalse_question();
+        $question = test_question_maker::make_question('truefalse', 'true');
 
         $this->assertFalse($question->is_gradable_response(array()));
         $this->assertTrue($question->is_gradable_response(array('answer' => 0)));
@@ -53,7 +53,7 @@ class qtype_truefalse_question_test extends UnitTestCase {
     }
 
     public function test_grading() {
-        $question = test_question_maker::make_a_truefalse_question();
+        $question = test_question_maker::make_question('truefalse', 'true');
 
         $this->assertEqual(array(0, question_state::$gradedwrong),
                 $question->grade_response(array('answer' => 0)));
@@ -62,7 +62,7 @@ class qtype_truefalse_question_test extends UnitTestCase {
     }
 
     public function test_get_correct_response() {
-        $question = test_question_maker::make_a_truefalse_question();
+        $question = test_question_maker::make_question('truefalse', 'true');
 
         // true
         $this->assertIdentical(array('answer' => 1),
@@ -75,13 +75,13 @@ class qtype_truefalse_question_test extends UnitTestCase {
     }
 
     public function test_get_question_summary() {
-        $tf = test_question_maker::make_a_truefalse_question();
+        $tf = test_question_maker::make_question('truefalse', 'true');
         $qsummary = $tf->get_question_summary();
         $this->assertEqual('The answer is true.', $qsummary);
     }
 
     public function test_summarise_response() {
-        $tf = test_question_maker::make_a_truefalse_question();
+        $tf = test_question_maker::make_question('truefalse', 'true');
 
         $this->assertEqual(get_string('false', 'qtype_truefalse'),
                 $tf->summarise_response(array('answer' => '0')));
@@ -91,7 +91,7 @@ class qtype_truefalse_question_test extends UnitTestCase {
     }
 
     public function test_classify_response() {
-        $tf = test_question_maker::make_a_truefalse_question();
+        $tf = test_question_maker::make_question('truefalse', 'true');
         $tf->start_attempt(new question_attempt_step(), 1);
 
         $this->assertEqual(array(

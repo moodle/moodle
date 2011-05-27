@@ -165,31 +165,6 @@ class test_question_maker {
     }
 
     /**
-     * Makes a truefalse question with correct answer true, defaultmark 1.
-     * @return qtype_truefalse_question
-     */
-    public static function make_a_truefalse_question() {
-        question_bank::load_question_definition_classes('truefalse');
-        $tf = new qtype_truefalse_question();
-        self::initialise_a_question($tf);
-        $tf->name = 'True/false question';
-        $tf->questiontext = 'The answer is true.';
-        $tf->generalfeedback = 'You should have selected true.';
-        $tf->penalty = 1;
-        $tf->qtype = question_bank::get_qtype('truefalse');
-
-        $tf->rightanswer = true;
-        $tf->truefeedback = 'This is the right answer.';
-        $tf->falsefeedback = 'This is the wrong answer.';
-        $tf->truefeedbackformat = FORMAT_HTML;
-        $tf->falsefeedbackformat = FORMAT_HTML;
-        $tf->trueanswerid = 13;
-        $tf->falseanswerid = 14;
-
-        return $tf;
-    }
-
-    /**
      * Makes a multichoice question with choices 'A', 'B' and 'C' shuffled. 'A'
      * is correct, defaultmark 1.
      * @return qtype_multichoice_single_question

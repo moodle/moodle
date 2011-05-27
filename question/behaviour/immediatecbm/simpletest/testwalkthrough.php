@@ -268,7 +268,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
     public function test_immediatecbm_cbm_truefalse_no_certainty_feedback_when_not_answered() {
 
         // Create a true-false question with correct answer true.
-        $tf = test_question_maker::make_a_truefalse_question();
+        $tf = test_question_maker::make_question('truefalse', 'true');
         $this->start_attempt_at_question($tf, 'deferredcbm', 2);
 
         // Verify.

@@ -108,7 +108,7 @@ class qbehaviour_manualgraded_walkthrough_test extends qbehaviour_walkthrough_te
     public function test_manual_graded_truefalse() {
 
         // Create a true-false question with correct answer true.
-        $tf = test_question_maker::make_a_truefalse_question();
+        $tf = test_question_maker::make_question('truefalse', 'true');
         $this->start_attempt_at_question($tf, 'manualgraded', 2);
 
         // Check the initial state.

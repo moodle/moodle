@@ -41,7 +41,7 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
     public function test_deferredfeedback_feedback_truefalse() {
 
         // Create a true-false question with correct answer true.
-        $tf = test_question_maker::make_a_truefalse_question();
+        $tf = test_question_maker::make_question('truefalse', 'true');
         $this->start_attempt_at_question($tf, 'deferredfeedback', 2);
 
         // Check the initial state.

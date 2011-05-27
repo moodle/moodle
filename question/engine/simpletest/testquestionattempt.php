@@ -277,7 +277,7 @@ class question_attempt_db_test extends data_loading_method_test_base {
             array(8, 1, 123, 1, 1, 'deferredfeedback', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 6, 5, 'mangrpartial', 0.5000000, 1256233790, 1, '-maxmark',  '2'),
         ));
 
-        $question = test_question_maker::make_a_truefalse_question();
+        $question = test_question_maker::make_question('truefalse', 'true');
         $question->id = -1;
 
         question_bank::start_unit_test();
