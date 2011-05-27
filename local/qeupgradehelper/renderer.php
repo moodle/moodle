@@ -86,8 +86,14 @@ class local_qeupgradehelper_renderer extends plugin_renderer_base {
 
         $table = new html_table();
         $table->head = $quizzes->get_col_headings();
+
+        $rowcount = 0;
         foreach ($quizzes->quizlist as $quizinfo) {
-            $table->data[] = $quizzes->get_row($quizinfo);
+            $table->data[$rowcount] = $quizzes->get_row($quizinfo);
+            if ($class = $quizzes->get_row_class($quizinfo)) {
+                $table->rowclasses[$rowcount] = $class;
+            }
+            $rowcount += 1;
         }
         $table->data[] = $quizzes->get_total_row();
         $output .= html_writer::table($table);

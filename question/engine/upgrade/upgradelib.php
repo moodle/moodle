@@ -79,10 +79,31 @@ class question_engine_attempt_upgrader {
     }
 
     protected function get_quiz_ids() {
-        global $DB;
-        // TODO, if local/qeupgradehelper/ is installed, and defines the right
-        // function, use that to get the lest of quizzes instead.
-        return $DB->get_records_menu('quiz', array(), '', 'id', 'id, 1');
+        global $CFG, $DB;
+
+        // Look to see if the admin has set things up to only upgrade certain attempts.
+        $partialupgradefile = $CFG->dirroot . '/local/qeupgradehelper/partialupgrade.php';
+        $partialupgradefunction = 'local_qeupgradehelper_get_quizzes_to_upgrade';
+        if (is_readable($partialupgradefile)) {
+            include_once($partialupgradefile);
+            if (function_exists($partialupgradefunction)) {
+                $quizids = $partialupgradefunction();
+
+                // Ignore any quiz ids that do not acually exist.
+                if (empty($quizids)) {
+                    return array();
+                }
+                list($test, $params) = $DB->get_in_or_equal($quizids);
+                return $DB->get_fieldset_sql("
+                        SELECT id
+                          FROM {quiz}
+                         WHERE id $test
+                      ORDER BY id", $params);
+            }
+        }
+
+        // Otherwise, upgrade all attempts.
+        return $DB->get_fieldset_sql('SELECT id FROM {quiz} ORDER BY id');
     }
 
     public function convert_all_quiz_attempts() {
@@ -97,7 +118,7 @@ class question_engine_attempt_upgrader {
         $outof = count($quizids);
         $this->logger = new question_engine_assumption_logger();
 
-        foreach ($quizids as $quizid => $notused) {
+        foreach ($quizids as $quizid) {
             $this->print_progress($done, $outof, $quizid);
 
             $quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);

@@ -184,6 +184,10 @@ abstract class local_qeupgradehelper_quiz_list {
         );
     }
 
+    public function get_row_class($quizinfo) {
+        return null;
+    }
+
     public function get_total_row() {
         return array(
             '',
@@ -263,7 +267,7 @@ class local_qeupgradehelper_resettable_quiz_list extends local_qeupgradehelper_q
 
 
 /**
- * A list of quizzes that still need to be upgraded after the main upgrade.
+ * A list of quizzes that will be upgraded during the main upgrade.
  *
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -275,6 +279,70 @@ class local_qeupgradehelper_pre_upgrade_quiz_list extends local_qeupgradehelper_
 
     protected function extra_where_clause() {
         return '';
+    }
+}
+
+
+/**
+ * A list of quizzes that will be upgraded during the main upgrade, when the
+ * partialupgrade.php script is being used.
+ *
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class local_qeupgradehelper_pre_upgrade_quiz_list_restricted extends local_qeupgradehelper_pre_upgrade_quiz_list {
+    protected $quizids;
+    protected $restrictedtotalquizas = 0;
+    protected $restrictedtotalqas = 0;
+
+    public function __construct($quizids) {
+        parent::__construct();
+        $this->quizids = $quizids;
+    }
+
+    public function get_row_class($quizinfo) {
+        if (!in_array($quizinfo->id, $this->quizids)) {
+            return 'dimmed';
+        } else {
+            return parent::get_row_class($quizinfo);
+        }
+    }
+
+    public function get_col_headings() {
+        $headings = parent::get_col_headings();
+        $headings[] = get_string('includedintheupgrade', 'local_qeupgradehelper');
+        return $headings;
+    }
+
+    public function get_row($quizinfo) {
+        $row = parent::get_row($quizinfo);
+        if (in_array($quizinfo->id, $this->quizids)) {
+            $this->restrictedtotalquizas += $quizinfo->attemptcount;
+            $this->restrictedtotalqas += $quizinfo->questionattempts;
+            $row[] = get_string('yes');
+        } else {
+            $row[] = get_string('no');
+        }
+        return $row;
+    }
+
+    protected function out_of($restrictedtotal, $fulltotal) {
+        $a = new stdClass();
+        $a->some = $restrictedtotal;
+        $a->total = $fulltotal;
+        return get_string('outof', 'local_qeupgradehelper', $a);
+    }
+
+    public function get_total_row() {
+        return array(
+            '',
+            html_writer::tag('b', get_string('total')),
+            '',
+            html_writer::tag('b', $this->out_of(
+                    $this->restrictedtotalquizas, $this->totalquizas),
+            html_writer::tag('b', $this->out_of(
+                    $this->restrictedtotalqas, $this->totalqas))),
+        );
     }
 }
 

@@ -33,20 +33,29 @@ require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 local_qeupgradehelper_require_not_upgraded();
 
-admin_externalpage_setup('qeupgradehelper', '', array(),
-        local_qeupgradehelper_url(''));
+admin_externalpage_setup('qeupgradehelper', '', array(), local_qeupgradehelper_url(''));
 $PAGE->navbar->add(get_string('listpreupgrade', 'local_qeupgradehelper'));
 
 $renderer = $PAGE->get_renderer('local_qeupgradehelper');
 
 $quizzes = new local_qeupgradehelper_pre_upgrade_quiz_list();
+
+// Look to see if the admin has set things up to only upgrade certain attempts.
+$partialupgradefile = $CFG->dirroot . '/local/qeupgradehelper/partialupgrade.php';
+$partialupgradefunction = 'local_qeupgradehelper_get_quizzes_to_upgrade';
+if (is_readable($partialupgradefile)) {
+    include_once($partialupgradefile);
+    if (function_exists($partialupgradefunction)) {
+        $quizzes = new local_qeupgradehelper_pre_upgrade_quiz_list_restricted(
+                $partialupgradefunction());
+    }
+}
+
 $numveryoldattemtps = local_qeupgradehelper_get_num_very_old_attempts();
 
 if ($quizzes->is_empty()) {
     echo $renderer->simple_message_page(get_string('noquizattempts', 'local_qeupgradehelper'));
 
 } else {
-    // TODO, once we have a way to limit which quizzes will be included in the upgrade,
-    // display that information too.
     echo $renderer->quiz_list_page($quizzes, $numveryoldattemtps);
 }
