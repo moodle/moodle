@@ -26,7 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/engine/compatibility.php');
 
 /**
  * Quiz statistics report cron code. Deletes cached data more than a certain age.
