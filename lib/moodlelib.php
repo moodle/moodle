@@ -7635,9 +7635,9 @@ function get_device_type() {
         return 'mobile';
     }
 
-    $tablet_regex = '/Tablet browser|iPad|iProd|GT-P1000|GT-I9000|SHW-M180S|SGH-T849|SCH-I800|Build\/ERE27|sholest/i';
+    $tabletregex = '/Tablet browser|iPad|iProd|GT-P1000|GT-I9000|SHW-M180S|SGH-T849|SCH-I800|Build\/ERE27|sholest/i';
 
-    if (preg_match($tablet_regex, $useragent)) {
+    if (preg_match($tabletregex, $useragent)) {
          return 'tablet';
     }
 
@@ -7651,15 +7651,15 @@ function get_device_type() {
 
 /**
  * Returns a list of the device types supporting by Moodle
- * @param boolean inc_user_types includes types specified using the devicedetectregex admin setting
+ * @param boolean incusertypes includes types specified using the devicedetectregex admin setting
  * @return array $types
  */
-function get_device_type_list($inc_user_types = true) {
+function get_device_type_list($incusertypes = true) {
     global $CFG;
 
     $types = array('default', 'legacy', 'mobile', 'tablet');
 
-    if ($inc_user_types && !empty($CFG->devicedetectregex)) {
+    if ($incusertypes && !empty($CFG->devicedetectregex)) {
         $regexes = json_decode($CFG->devicedetectregex);
 
         foreach ($regexes as $regex) {
@@ -7674,21 +7674,21 @@ function get_device_type_list($inc_user_types = true) {
 /**
  * Returns the theme selected for a particular device or false if none selected.
  * @param string $themes
- * @param string $device_type
+ * @param string $devicetype
  * @return string $theme or boolean false
  */
-function get_selected_theme_for_device_type($device_type = null) {
+function get_selected_theme_for_device_type($devicetype = null) {
     global $CFG;
 
-    if (empty($device_type)) {
-        $device_type = get_device_type();
+    if (empty($devicetype)) {
+        $devicetype = get_device_type();
 
-        //check if the user has switched theme, change $device_type to default.
+        //check if the user has switched theme, change $devicetype to default.
 
-        $switched = get_user_switched_theme($device_type);
+        $switched = get_user_switched_theme($devicetype);
 
         if ($switched) {
-            $device_type = $switched;
+            $devicetype = $switched;
         }
     }
 
@@ -7697,33 +7697,33 @@ function get_selected_theme_for_device_type($device_type = null) {
     if (!empty($themes)) {
         foreach ($themes as $theme) {
             if ($theme->device == $device_type) {
-                $selected_theme = $theme->themename;
+                $selectedtheme = $theme->themename;
             }
         }
     }
 
-    if (!isset($selected_theme)) {
+    if (!isset($selectedtheme)) {
         return false;
     }
 
     //prevent problems if a user installs themes
-    if (!is_dir($CFG->dirroot.'/theme/'.$selected_theme)) {
-        if ($device_type == 'default') {
+    if (!is_dir($CFG->dirroot.'/theme/'.$selectedtheme)) {
+        if ($devicetype == 'default') {
             return 'standard';
         } else {
             return false;
         }
     }
 
-    return $selected_theme;
+    return $selectedtheme;
 }
 
 
 /**
  * Returns device type or false if the user has switched theme to default for a device type
- * @param string $device_type
+ * @param string $devicetype
  */
-function get_user_switched_theme($device_type = null) {
+function get_user_switched_theme($devicetype = null) {
     global $CFG, $USER;
 
     if (empty($USER)) {
@@ -7734,8 +7734,8 @@ function get_user_switched_theme($device_type = null) {
         return null;
     }
 
-    if (empty($device_type)) {
-        $device_type = get_device_type();
+    if (empty($devicetype)) {
+        $devicetype = get_device_type();
     }
 
     $switchthemes = get_user_preferences('switchthemes');
@@ -7746,8 +7746,8 @@ function get_user_switched_theme($device_type = null) {
     }
 
     foreach ($switchthemes as $switch) {
-        if ($switch->device == $device_type && !empty($switch->switched_device)) {
-            return $switch->switched_device;
+        if ($switch->device == $devicetype && !empty($switch->switcheddevice)) {
+            return $switch->switcheddevice;
         }
     }
 
@@ -7755,53 +7755,53 @@ function get_user_switched_theme($device_type = null) {
 }
 
 
-function switch_theme($device_type = null) {
+function switch_theme($devicetype = null) {
     global $USER;
 
-    $current_prefs = get_user_preferences('switchthemes');
-    $current_prefs = json_decode($current_prefs, true);
+    $currentprefs = get_user_preferences('switchthemes');
+    $currentprefs = json_decode($currentprefs, true);
 
-    if (is_null($device_type)) {
-        $device_type = get_device_type();
+    if (is_null($devicetype)) {
+        $devicetype = get_device_type();
     }
 
-    if (!empty($current_prefs)) {
+    if (!empty($currentprefs)) {
         $i = 0;
 
-        foreach ($current_prefs as $current) {
-            if ($current['device'] == $device_type) {
-                $switched_device = $current['switched_device'];
-                array_splice($current_prefs, $i, 1);
+        foreach ($currentprefs as $current) {
+            if ($current['device'] == $devicetype) {
+                $switcheddevice = $current['switcheddevice'];
+                array_splice($currentprefs, $i, 1);
                 break;
             }
 
             $i++;
         }
     } else {
-        $current_prefs = array();
+        $currentprefs = array();
     }
 
-    if (!empty($switched_device)) {
-        $switched_device = false;
+    if (!empty($switcheddevice)) {
+        $switcheddevice = false;
     } else {
         $pref = optional_param('switchdevice', '', PARAM_TEXT);
 
         if (!empty($pref)) {
-            $switched_device = $pref;
-        } else if ($device_type == 'default') {
-            $switched_device = 'mobile';
+            $switcheddevice = $pref;
+        } else if ($devicetype == 'default') {
+            $switcheddevice = 'mobile';
         } else {
-            $switched_device = 'default';
+            $switcheddevice = 'default';
         }
     }
 
-    $device_pref = array();
-    $device_pref['device'] = $device_type;
-    $device_pref['switched_device'] = $switched_device;
+    $devicepref = array();
+    $devicepref['device'] = $devicetype;
+    $devicepref['switched_device'] = $switcheddevice;
 
-    $current_prefs[] = $device_pref;
+    $currentprefs[] = $devicepref;
 
-    set_user_preference('switchthemes', json_encode($current_prefs));
+    set_user_preference('switchthemes', json_encode($currentprefs));
 }
 
 

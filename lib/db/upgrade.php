@@ -6119,27 +6119,27 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         if (!empty($CFG->theme)) {
-            $theme_obj = new stdClass();
-            $theme_obj->device = 'default';
-            $theme_obj->themename = $CFG->theme;
+            $themeobj = new stdClass();
+            $themeobj->device = 'default';
+            $themeobj->themename = $CFG->theme;
 
-            $config_themes[] = $theme_obj;
+            $configthemes[] = $themeobj;
 
             unset_config('theme');
         }
 
         if (!empty($CFG->themelegacy)) {
-            $theme_obj = new stdClass();
-            $theme_obj->device = 'legacy';
-            $theme_obj->themename = $CFG->themelegacy;
+            $themeobj = new stdClass();
+            $themeobj->device = 'legacy';
+            $themeobj->themename = $CFG->themelegacy;
 
-            $config_themes[] = $theme_obj;
+            $configthemes[] = $themeobj;
 
             unset_config('themelegacy');
         }
 
-        if ($config_themes) {
-            set_config('themes', json_encode($config_themes));
+        if ($configthemes) {
+            set_config('themes', json_encode($configthemes));
         }
 
         set_config('enabledevicedetection', 1);

@@ -707,11 +707,11 @@ unset($urlthemename);
 
 // Ensure a valid theme is set.
 if (!isset($CFG->themes)) {
-    $theme_obj = new stdClass();
-    $theme_obj->device = 'default';
-    $theme = $theme_obj->themename = 'standard';
-    $current_prefs[] = $theme_obj;
-    $CFG->themes = json_encode($current_prefs);
+    $themeobj = new stdClass();
+    $themeobj->device = 'default';
+    $theme = $themeobj->themename = 'standard';
+    $currentprefs[] = $themeobj;
+    $CFG->themes = json_encode($currentprefs);
 }
 
 // Set language/locale of printed times.  If user has chosen a language that

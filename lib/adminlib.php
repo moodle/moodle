@@ -7377,12 +7377,12 @@ class admin_setting_devicedetectregex extends admin_setting {
         $out .= html_writer::start_tag('tbody');
 
         if (empty($data)) {
-            $loop_limit = 1;
+            $looplimit = 1;
         } else {
-            $loop_limit = (count($data)/2)+1;
+            $looplimit = (count($data)/2)+1;
         }
 
-        for ($i=0; $i<$loop_limit; $i++) {
+        for ($i=0; $i<$looplimit; $i++) {
             $out .= html_writer::start_tag('tr');
 
             $expressionname = 'expression'.$i;

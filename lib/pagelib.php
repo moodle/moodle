@@ -1280,7 +1280,7 @@ class moodle_page {
             }
         }
 
-        $device_type = get_device_type();
+        $devicetype = get_device_type();
 
         //set up of the new themes variable hasn't happened so use the old theme support.
         if (empty($CFG->themes)) {
@@ -1292,12 +1292,12 @@ class moodle_page {
         foreach ($themeorder as $themetype) {
             switch ($themetype) {
                 case 'course':
-                    if (!empty($CFG->allowcoursethemes) and !empty($this->_course->theme) and $device_type == 'default') {
+                    if (!empty($CFG->allowcoursethemes) and !empty($this->_course->theme) and $devicetype == 'default') {
                         return $this->_course->theme;
                     }
 
                 case 'category':
-                    if (!empty($CFG->allowcategorythemes) and $device_type == 'default') {
+                    if (!empty($CFG->allowcategorythemes) and $devicetype == 'default') {
                         $categories = $this->categories;
                         foreach ($categories as $category) {
                             if (!empty($category->theme)) {
@@ -1312,7 +1312,7 @@ class moodle_page {
                     }
 
                 case 'user':
-                    if (!empty($CFG->allowuserthemes) and !empty($USER->theme) && $device_type == 'default') {
+                    if (!empty($CFG->allowuserthemes) and !empty($USER->theme) && $devicetype == 'default') {
                         if ($mnetpeertheme) {
                             return $mnetpeertheme;
                         } else {
@@ -1325,7 +1325,7 @@ class moodle_page {
                         return $mnetpeertheme;
                     }
 
-                    if ($device_type == 'legacy') {
+                    if ($devicetype == 'legacy') {
                         $this->_legacythemeinuse = true;
                     }
 

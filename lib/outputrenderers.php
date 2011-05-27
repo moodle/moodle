@@ -2524,15 +2524,15 @@ EOD;
         $switched = get_user_switched_theme();
 
         if ($switched) {
-            $link_text = get_string('switchdevicerecommended');
+            $linktext = get_string('switchdevicerecommended');
         } else {
-            $link_text = get_string('switchdevicedefault');
+            $linktext = get_string('switchdevicedefault');
         }
 
         $content = html_writer::start_tag('div', array('id'=>'theme_switch_link'));
-        $link_url = new moodle_url('/theme/switch.php', array('url' => $PAGE->url));
+        $linkurl = new moodle_url('/theme/switch.php', array('url' => $PAGE->url));
 
-        $content .= html_writer::link($link_url, $link_text);
+        $content .= html_writer::link($linkurl, $linktext);
         $content .= html_writer::end_tag('div');
 
         return $content;

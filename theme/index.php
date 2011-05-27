@@ -39,17 +39,17 @@ if ($reset and confirm_sesskey()) {
     $heading = get_string('themesaved');
     $config = 'themes';
 
-    $config_themes = json_decode($CFG->themes);
+    $configthemes = json_decode($CFG->themes);
 
-    if (!is_array($config_themes)) {
-        $config_themes = array();
+    if (!is_array($configthemes)) {
+        $configthemes = array();
     }
 
     $i = 0;
 
-    foreach ($config_themes as $config_theme) {
-        if ($config_theme->device == $device) {
-            array_splice($config_themes, $i, 1);
+    foreach ($configthemes as $configtheme) {
+        if ($configtheme->device == $device) {
+            array_splice($configthemes, $i, 1);
             break;
         }
         $i++;
@@ -57,13 +57,13 @@ if ($reset and confirm_sesskey()) {
 
     $theme = theme_config::load($chosentheme);
 
-    $theme_obj = new stdClass();
-    $theme_obj->device = $device;
-    $theme_obj->themename = $theme->name;
+    $themeobj = new stdClass();
+    $themeobj->device = $device;
+    $themeobj->themename = $theme->name;
 
-    $config_themes[] = $theme_obj;
+    $configthemes[] = $themeobj;
 
-    set_config($config, json_encode($config_themes));
+    set_config($config, json_encode($configthemes));
 
     // Create a new page for the display of the themes readme.
     // This ensures that the readme page is shown using the new theme.
