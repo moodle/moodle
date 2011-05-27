@@ -128,7 +128,7 @@ class qtype_truefalse_renderer extends qtype_renderer {
         if ($response) {
             return $question->format_text($question->truefeedback, $question->truefeedbackformat,
                     $qa, 'question', 'answerfeedback', $question->trueanswerid);
-        } else {
+        } else if ($response !== '') {
             return $question->format_text($question->falsefeedback, $question->falsefeedbackformat,
                     $qa, 'question', 'answerfeedback', $question->falseanswerid);
         }
