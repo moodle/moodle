@@ -49,7 +49,6 @@ if (local_qeupgradehelper_is_upgraded()) {
     $detected = get_string('oldsitedetected', 'local_qeupgradehelper');
     $actions[] = local_qeupgradehelper_action::make('listpreupgrade');
     $actions[] = local_qeupgradehelper_action::make('extracttestcase');
-    $actions[] = local_qeupgradehelper_action::make('pretendupgrade');
     $actions[] = local_qeupgradehelper_action::make('cronsetup');
 }
 
