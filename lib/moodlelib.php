@@ -7688,7 +7688,7 @@ function get_selected_theme_for_device_type($devicetype = null) {
 
         //check if the user has switched theme, change $devicetype to default.
 
-        $switched = get_user_switched_theme($devicetype);
+        $switched = get_user_switched_device($devicetype);
 
         if ($switched) {
             $devicetype = $switched;
@@ -7709,8 +7709,8 @@ function get_selected_theme_for_device_type($devicetype = null) {
         return false;
     }
 
-    //prevent problems if a user installs themes
-    if (!is_dir($CFG->dirroot.'/theme/'.$selectedtheme)) {
+    //prevent problems if a theme is removed
+    if (!theme_config::find_theme_location($selectedtheme)) {
         if ($devicetype == 'default') {
             return 'standard';
         } else {
@@ -7726,7 +7726,7 @@ function get_selected_theme_for_device_type($devicetype = null) {
  * Returns device type or false if the user has switched theme to default for a device type
  * @param string $devicetype
  */
-function get_user_switched_theme($devicetype = null) {
+function get_user_switched_device($devicetype = null) {
     global $CFG, $USER;
 
     if (empty($USER)) {
@@ -7734,7 +7734,7 @@ function get_user_switched_theme($devicetype = null) {
     }
 
     if (empty($CFG->themes)) {
-        return null;
+        return false;
     }
 
     if (empty($devicetype)) {
