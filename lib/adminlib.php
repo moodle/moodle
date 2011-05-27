@@ -7319,10 +7319,9 @@ class admin_setting_devicedetectregex extends admin_setting {
     /**
     * Calls parent::__construct with specific args
     */
-    public function __construct() {
+    public function __construct($name, $visiblename, $description, $defaultsetting = '') {
         global $CFG;
-
-        parent::__construct('devicedetectregex', get_string('devicedetectregex', 'admin'), get_string('devicedetectregex_desc', 'admin'), '');
+        parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
 
     /**
