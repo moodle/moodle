@@ -7614,7 +7614,7 @@ function check_php_version($version='5.2.4') {
 function get_device_type() {
     global $CFG;
 
-    if (empty($CFG->enabledevicedetection)) {
+    if (empty($CFG->enabledevicedetection) || empty($_SERVER['HTTP_USER_AGENT'])) {
         return 'default';
     }
 
