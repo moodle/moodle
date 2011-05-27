@@ -213,7 +213,7 @@ class core_renderer extends renderer_base {
     /** @var string used by {@link redirect_message()} method to communicate with {@link header()}. */
     protected $metarefreshtag = '';
     /** @var set if the theme links function has been called **/
-    private $switchlinkdisplayed;
+    protected $switchlinkdisplayed;
 
     /**
      * Get the DOCTYPE declaration that should be used with this page. Designed to
