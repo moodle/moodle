@@ -58,11 +58,11 @@ function message_send($eventdata) {
 
     if (is_int($eventdata->userto)) {
         mtrace('message_send() userto is a user ID when it should be a user object');
-        $eventdata->userto = $DB->get_record('user', array('id' => $eventdata->useridto));
+        $eventdata->userto = $DB->get_record('user', array('id' => $eventdata->userto));
     }
     if (is_int($eventdata->userfrom)) {
         mtrace('message_send() userfrom is a user ID when it should be a user object');
-        $eventdata->userfrom = $DB->get_record('user', array('id' => $message->userfrom));
+        $eventdata->userfrom = $DB->get_record('user', array('id' => $eventdata->userfrom));
     }
 
     //after how long inactive should the user be considered logged off?
