@@ -153,7 +153,7 @@ if (!$course) {
     print_error('invalidcourseid', 'error');
 }
 
-$questionbank = new quiz_question_bank_view($contexts, $thispageurl, $course, $cm);
+$questionbank = new quiz_question_bank_view($contexts, $thispageurl, $course, $cm, $quiz);
 $questionbank->set_quiz_has_attempts($quizhasattempts);
 
 // Log this visit.

@@ -52,7 +52,8 @@ $options->set_from_request();
 $PAGE->set_url(question_preview_url($id, $options->behaviour, $options->maxmark, $options));
 
 // Get and validate exitsing preview, or start a new one.
-$previewid = optional_param('previewid', 0, PARAM_ALPHANUM);
+$previewid = optional_param('previewid', 0, PARAM_INT);
+
 if ($previewid) {
     if (!isset($SESSION->question_previews[$previewid])) {
         print_error('notyourpreview', 'question');
@@ -104,6 +105,9 @@ $optionsform->set_data($options);
 if ($newoptions = $optionsform->get_submitted_data()) {
     // Set user preferences
     $options->save_user_preview_options($newoptions);
+    if (!isset($newoptions->variant)) {
+        $newoptions->variant = $options->variant;
+    }
     restart_preview($previewid, $question->id, $newoptions);
 }
 
@@ -151,7 +155,7 @@ if (data_submitted() && confirm_sesskey()) {
 
         $scrollpos = optional_param('scrollpos', '', PARAM_RAW);
         if ($scrollpos !== '') {
-            $actionurl .= '&scrollpos=' . ((int) $scrollpos);
+            $actionurl->param('scrollpos', (int) $scrollpos);
         }
         redirect($actionurl);
     }
@@ -181,7 +185,7 @@ $PAGE->set_heading($title);
 echo $OUTPUT->header();
 
 // Start the question form.
-echo '<form method="post" action="' . s($actionurl) .
+echo '<form method="post" action="' . $actionurl .
         '" enctype="multipart/form-data" id="responseform">', "\n";
 echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />', "\n";
 echo '<input type="hidden" name="slots" value="' . $slot . '" />', "\n";

@@ -78,11 +78,6 @@ define("QUESTION_NUMANS_START", 3);
 define("QUESTION_NUMANS_ADD", 3);
 
 /**
- * The options used when popping up a question preview window in Javascript.
- */
-define('QUESTION_PREVIEW_POPUP_OPTIONS', 'scrollbars=yes,resizable=yes,width=800,height=600');
-
-/**
  * Move one question type in a list of question types. If you try to move one element
  * off of the end, nothing will change.
  *
@@ -703,24 +698,44 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
  *      be picked randomly.
  * @return string the URL.
  */
-function question_preview_url($questionid, $preferredbehaviour, $maxmark, $displayoptions,
-        $variant = null) {
-    $params = array(
-        'id'              => $questionid,
-        'behaviour'       => $preferredbehaviour,
-        'maxmark'         => $maxmark,
-        'correctness'     => $displayoptions->correctness,
-        'marks'           => $displayoptions->marks,
-        'markdp'          => $displayoptions->markdp,
-        'feedback'        => (bool) $displayoptions->feedback,
-        'generalfeedback' => (bool) $displayoptions->generalfeedback,
-        'rightanswer'     => (bool) $displayoptions->rightanswer,
-        'history'         => (bool) $displayoptions->history
-    );
+function question_preview_url($questionid, $preferredbehaviour = null,
+        $maxmark = null, $displayoptions = null, $variant = null) {
+
+    $params = array('id' => $questionid);
+
+    if (!is_null($preferredbehaviour)) {
+        $params['behaviour'] = $preferredbehaviour;
+    }
+
+    if (!is_null($maxmark)) {
+        $params['maxmark'] = $maxmark;
+    }
+
+    if (!is_null($displayoptions)) {
+        $params['correctness']     = $displayoptions->correctness;
+        $params['marks']           = $displayoptions->marks;
+        $params['markdp']          = $displayoptions->markdp;
+        $params['feedback']        = (bool) $displayoptions->feedback;
+        $params['generalfeedback'] = (bool) $displayoptions->generalfeedback;
+        $params['rightanswer']     = (bool) $displayoptions->rightanswer;
+        $params['history']         = (bool) $displayoptions->history;
+    }
+
     if ($variant) {
         $params['variant'] = $variant;
     }
+
     return new moodle_url('/question/preview.php', $params);
+}
+
+/**
+ * @return array that can be passed as $params to the {@link popup_action} constructor.
+ */
+function question_preview_popup_params() {
+    return array(
+        'height' => 600,
+        'width' => 800,
+    );
 }
 
 /**

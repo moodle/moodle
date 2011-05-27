@@ -666,9 +666,9 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
             // Build the icon.
             $image = $OUTPUT->pix_icon('t/preview', $this->strpreview);
 
-            $link = new moodle_url($this->qbank->preview_question_url($question->id));
-            parse_str(QUESTION_PREVIEW_POPUP_OPTIONS, $options);
-            $action = new popup_action('click', $link, 'questionpreview', $options);
+            $link = $this->qbank->preview_question_url($question);
+            $action = new popup_action('click', $link, 'questionpreview',
+                    question_preview_popup_params());
 
             echo $OUTPUT->action_link($link, $image, $action, array('title' => $this->strpreview));
         }
@@ -844,6 +844,13 @@ class question_bank_view {
     protected $loadsql;
     protected $sqlparams;
 
+    /**
+     * Constructor
+     * @param question_edit_contexts $contexts
+     * @param moodle_url $pageurl
+     * @param object $course course settings
+     * @param object $cm (optional) activity settings.
+     */
     public function __construct($contexts, $pageurl, $course, $cm = null) {
         global $CFG, $PAGE;
 
@@ -1144,9 +1151,8 @@ class question_bank_view {
         return $this->editquestionurl->out(true, array('id' => $questionid, 'movecontext' => 1));
     }
 
-    public function preview_question_url($questionid) {
-        global $CFG;
-        return $CFG->wwwroot . '/question/preview.php?id=' . $questionid . '&amp;courseid=' . $this->course->id;
+    public function preview_question_url($question) {
+        return question_preview_url($question->id);
     }
 
     /**

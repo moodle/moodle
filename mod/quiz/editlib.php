@@ -1079,6 +1079,21 @@ class question_bank_question_name_text_column extends question_bank_question_nam
  */
 class quiz_question_bank_view extends question_bank_view {
     protected $quizhasattempts = false;
+    /** @var object the quiz settings. */
+    protected $quiz = false;
+
+    /**
+     * Constructor
+     * @param question_edit_contexts $contexts
+     * @param moodle_url $pageurl
+     * @param object $course course settings
+     * @param object $cm activity settings.
+     * @param object $quiz quiz settings.
+     */
+    public function __construct($contexts, $pageurl, $course, $cm, $quiz) {
+        parent::__construct($contexts, $pageurl, $course, $cm);
+        $this->quiz = $quiz;
+    }
 
     protected function known_field_types() {
         $types = parent::known_field_types();
@@ -1105,9 +1120,8 @@ class quiz_question_bank_view extends question_bank_view {
         }
     }
 
-    public function preview_question_url($questionid) {
-        global $CFG;
-        return $CFG->wwwroot . '/question/preview.php?id=' . $questionid . $this->quizorcourseid;
+    public function preview_question_url($question) {
+        return quiz_question_preview_url($this->quiz, $question);
     }
 
     public function add_to_quiz_url($questionid) {

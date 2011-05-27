@@ -880,7 +880,27 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
 }
 
 /**
- * @param object $quiz the quiz
+ * @param object $quiz the quiz settings
+ * @param object $question the question
+ * @return moodle_url to preview this question with the options from this quiz.
+ */
+function quiz_question_preview_url($quiz, $question) {
+    // Get the appropriate display options.
+    $displayoptions = mod_quiz_display_options::make_from_quiz($quiz,
+            mod_quiz_display_options::DURING);
+
+    $maxmark = null;
+    if (isset($question->maxmark)) {
+        $maxmark = $question->maxmark;
+    }
+
+    // Work out the correcte preview URL.
+    return question_preview_url($question->id, $quiz->preferredbehaviour,
+            $maxmark, $displayoptions);
+}
+
+/**
+ * @param object $quiz the quiz settings
  * @param object $question the question
  * @param bool $label if true, show the preview question label after the icon
  * @return the HTML for a preview question icon.
@@ -891,13 +911,7 @@ function quiz_question_preview_button($quiz, $question, $label = false) {
         return '';
     }
 
-    // Get the appropriate display options.
-    $displayoptions = mod_quiz_display_options::make_from_quiz($quiz,
-            mod_quiz_display_options::DURING);
-
-    // Work out the correcte preview URL.
-    $url = question_preview_url($question->id, $quiz->preferredbehaviour,
-            $question->maxmark, $displayoptions);
+    $url = quiz_question_preview_url($quiz, $question);
 
     // Do we want a label?
     $strpreviewlabel = '';
@@ -909,8 +923,8 @@ function quiz_question_preview_button($quiz, $question, $label = false) {
     $strpreviewquestion = get_string('previewquestion', 'quiz');
     $image = $OUTPUT->pix_icon('t/preview', $strpreviewquestion);
 
-    parse_str(QUESTION_PREVIEW_POPUP_OPTIONS, $options);
-    $action = new popup_action('click', $url, 'questionpreview', $options);
+    $action = new popup_action('click', $url, 'questionpreview',
+            question_preview_popup_params());
 
     return $OUTPUT->action_link($url, $image, $action, array('title' => $strpreviewquestion));
 }

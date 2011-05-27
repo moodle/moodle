@@ -197,15 +197,15 @@ class question_preview_options extends question_display_options {
      * @return string URL fragment. Parameters needed in the URL when continuing
      * this preview.
      */
-    public function get_query_string() {
-        $querystring = array();
+    public function get_url_params() {
+        $params = array();
         foreach ($this->get_field_types() as $field => $notused) {
             if ($field == 'behaviour' || $field == 'maxmark' || is_null($this->$field)) {
                 continue;
             }
-            $querystring[] = $field . '=' . $this->$field;
+            $params[$field] = $this->$field;
         }
-        return implode('&', $querystring);
+        return $params;
     }
 }
 
@@ -268,9 +268,12 @@ function question_preview_question_pluginfile($course, $context, $component,
  */
 function question_preview_action_url($questionid, $qubaid,
         question_preview_options $options) {
-    global $CFG;
-    $url = $CFG->wwwroot . '/question/preview.php?id=' . $questionid . '&previewid=' . $qubaid;
-    return $url . '&' . $options->get_query_string();
+    $params = array(
+        'id' => $questionid,
+        'previewid' => $qubaid,
+    );
+    $params = array_merge($params, $options->get_url_params());
+    return new moodle_url('/question/preview.php', $params);
 }
 
 /**
