@@ -64,13 +64,13 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read object $course The current course that we are inside - a row from the
  *      course table. (Also available as $COURSE global.) If we are not inside
  *      an actual course, this will be the site course.
+ * @property-read bool $devicetypeinuse Returns true if the legacy theme is being used.
  * @property-read string $docspath The path to the Moodle docs for this page.
  * @property-read string $focuscontrol The id of the HTML element to be focused when the page has loaded.
  * @property-read bool $headerprinted
  * @property-read string $heading The main heading that should be displayed at the top of the <body>.
  * @property-read string $headingmenu The menu (or actions) to display in the heading
  * @property-read array $layout_options Returns arrays with options for layout file.
- * @property-read bool $legacythemeinuse Returns true if the legacy theme is being used.
  * @property-read navbar $navbar Returns the navbar object used to display the navbar
  * @property-read global_navigation $navigation Returns the global navigation structure
  * @property-read xml_container_stack $opencontainers Tracks XHTML tags on this page that have been opened but not closed.
@@ -217,10 +217,10 @@ class moodle_page {
     protected $_legacybrowsers = array('MSIE' => 6.0);
 
     /**
-     * Is set to true if the chosen legacy theme is in use. False by default.
-     * @var bool
+     * Is set to the name of the device type in use.
+     * @var string
      */
-    protected $_legacythemeinuse = false;
+    protected $_devicetypeinuse = 'default';
 
     protected $_https_login_required = false;
 
@@ -523,11 +523,11 @@ class moodle_page {
     }
 
     /**
-     * Please do not call this method directly, use the ->legacythemeinuse syntax. {@link __get()}.
+     * Please do not call this method directly, use the ->devicetypeinuse syntax. {@link __get()}.
      * @return bool
      */
-    protected function magic_get_legacythemeinuse() {
-        return ($this->_legacythemeinuse);
+    protected function magic_get_devicetypeinuse() {
+        return ($this->_devicetypeinuse);
     }
 
     /**
@@ -1320,9 +1320,7 @@ class moodle_page {
                         return $mnetpeertheme;
                     }
 
-                    if ($devicetype == 'legacy') {
-                        $this->_legacythemeinuse = true;
-                    }
+                    $this->_devicetypeinuse = $devicetype;
 
                     return get_selected_theme_for_device_type();
             }
@@ -1435,8 +1433,8 @@ class moodle_page {
             $this->add_body_class('drag');
         }
 
-        if ($this->_legacythemeinuse) {
-            $this->add_body_class('legacytheme');
+        if ($this->_devicetypeinuse != 'default') {
+            $this->add_body_class($this->_devicetypeinuse . 'theme');
         }
     }
 

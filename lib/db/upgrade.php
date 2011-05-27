@@ -6114,6 +6114,22 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
 
     //set enable theme detection to the new themes setting.
     if ($oldversion < 2011052500.00) {
+        if (!empty($CFG->themes)) {
+            $themes = json_decode($themes);
+
+            foreach ($themes as $theme) {
+                if ($theme->name == 'default') {
+                    $varname = 'theme';
+                } else {
+                    $varname = 'theme' . $theme->name;
+                }
+                
+                set_config($varname, $theme->themename);
+            }
+
+            unset_config('themes');
+        }
+
         set_config('enabledevicedetection', 1);
 
         upgrade_main_savepoint(true, 2011052500.00);
