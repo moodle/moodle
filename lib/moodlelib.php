@@ -7694,11 +7694,7 @@ function get_selected_theme_for_device_type($devicetype = null) {
         }
     }
 
-    if ($devicetype == 'default') {
-        $themevarname = 'theme';
-    } else {
-        $themevarname = 'theme' . $devicetype;
-    }
+    $themevarname = get_device_cfg_var_name($devicetype);
 
     if (empty($CFG->$themevarname)) {
         return false;
@@ -7714,6 +7710,19 @@ function get_selected_theme_for_device_type($devicetype = null) {
     }
 
     return $CFG->$themevarname;
+}
+
+
+/**
+ * Returns the name of the device type theme var in $CFG (because there is not a standard convention to allow backwards compatability
+ * @param string $devicetype
+ */
+function get_device_cfg_var_name($devicetype = null) {
+    if ($devicetype == 'default' || empty($devicetype)) {
+        return 'theme';
+    }
+
+    return 'theme' . $devicetype;
 }
 
 

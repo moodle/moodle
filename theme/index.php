@@ -38,11 +38,10 @@ if ($reset and confirm_sesskey()) {
     $chosentheme = $choose;
     $heading = get_string('themesaved');
  
-    $configthemes = json_decode($CFG->themes);
     $theme = theme_config::load($chosentheme);
-    $configthemes[$device] = $theme->name;
+    $themename = get_device_cfg_var_name($device);
 
-    set_config('themes', $configthemes);
+    set_config($themename, $theme->name);
 
     // Create a new page for the display of the themes readme.
     // This ensures that the readme page is shown using the new theme.
