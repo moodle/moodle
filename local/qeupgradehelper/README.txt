@@ -21,19 +21,17 @@ When installed in a Moodle 2.0 site:
 2. It can extract test-cases from the database. This can help you report bugs
 in the upgrade process to the developers.
 
-3. This plugin can also do a dry-run of the upgrade. (It loads the old data from
-the database, transform it to the new form, but not write the transformed data
-to the database.)
+3. You can set up cron to complete the conversion of quiz attempts, if you have
+configured a partial upgrade.
 
 
 If this plugin is present during upgrade:
 
-4. then only a subset of attempts are upgraded. (You can edit a function in
-this plugin to control which attempts are upgraded immediately.)
+4. then only a subset of attempts are upgraded. Read the instructions in the
+partialupgrade-example.php script.
 
 
-If this plugin is present in a Moodle 2.0 site after upgrade:
-
+If this plugin is present in a Moodle 2.1 site after upgrade:
 
 5. If not all attempts have been upgraded in a 2.1 site, then this plugin
 displays a list of how many quizzes still need to be upgraded
@@ -43,6 +41,8 @@ displays a list of how many quizzes still need to be upgraded
 7. or this plugin has a cron script that can be used to finish the upgrade
 automatically after the main upgrade has finished.
 
+8. It can also reset any attempts that were upgraded (provided they have not
+subsequently been modified) so you can re-upgrade them. This may allow you to
+recover from a buggy upgrade.
 
-(Note that none of the above acutally works yet. It is just a statement of
-intent. Lots of the code here is a partial implementation of the concepts.)
+9. Finally, you can still use the extract test-cases script to help report bugs.
