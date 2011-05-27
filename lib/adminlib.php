@@ -4924,7 +4924,7 @@ class admin_page_managemessageoutputs extends admin_externalpage {
      */
     public function __construct() {
         global $CFG;
-        parent::__construct('managemessageoutputs', get_string('managemessageoutputs', 'message'), "$CFG->wwwroot/$CFG->admin/message.php");
+        parent::__construct('managemessageoutputs', get_string('managemessageoutputs', 'message'), new moodle_url('/admin/message.php'));
     }
 
     /**
@@ -4980,7 +4980,7 @@ class admin_page_defaultmessageoutputs extends admin_page_managemessageoutputs {
      */
     public function __construct() {
         global $CFG;
-        admin_externalpage::__construct('defaultmessageoutputs', get_string('defaultmessageoutputs', 'message'), "$CFG->wwwroot/message/defaultoutputs.php");
+        admin_externalpage::__construct('defaultmessageoutputs', get_string('defaultmessageoutputs', 'message'), new moodle_url('/message/defaultoutputs.php'));
     }
 }
 
