@@ -339,6 +339,73 @@ class progressive_parser_test extends UnitTestCase {
         $this->assertEqual($errcount, 0); // No errors found, plz
     }
 
+    /**
+     * test how the simplified processor and the order of start/process/end events happens
+     * with one real fragment of one backup 1.9 file, where some problems
+     * were found by David, hence we honor him in the name of the test ;-)
+     */
+    function test_simplified_david_backup19_file_fragment() {
+        global $CFG;
+        // Instantiate progressive_parser
+        $pp =  new progressive_parser();
+        // Instantiate grouped_parser_processor
+        $pr = new mock_simplified_parser_processor();
+        // Add interesting paths
+        $pr->add_path('/MOODLE_BACKUP/COURSE');
+        $pr->add_path('/MOODLE_BACKUP/COURSE/SECTIONS/SECTION');
+        $pr->add_path('/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $pr->add_path('/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD/ROLES_OVERRIDES');
+        $this->assertTrue($pr instanceof progressive_parser_processor);
+        // Assign processor to parser
+        $pp->set_processor($pr);
+        // Set file from fixtures
+        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/simpletest/fixtures/test5.xml');
+        // Process the file
+        $pp->process();
+
+        // Get all the simplified chunks and perform various validations
+        $chunks = $pr->get_chunks();
+        $this->assertEqual(count($chunks), 3); // Only 3, because 7 (COURSE, ROLES_OVERRIDES and 5 MOD) are empty, aka no chunk
+
+        // Now check start notifications
+        $snotifs = $pr->get_start_notifications();
+        // Check we have received the correct number of notifications
+        $this->assertEqual(count($snotifs), 10); // Start tags are dispatched for empties (ROLES_OVERRIDES)
+        // Check first and last notifications
+        $this->assertEqual($snotifs[0], '/MOODLE_BACKUP/COURSE');
+        $this->assertEqual($snotifs[1], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION');
+        $this->assertEqual($snotifs[2], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEqual($snotifs[3], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD/ROLES_OVERRIDES');
+        $this->assertEqual($snotifs[7], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEqual($snotifs[8], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEqual($snotifs[9], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+
+        // Now check end notifications
+        $enotifs = $pr->get_end_notifications();
+        // Check we have received the correct number of notifications
+        $this->assertEqual(count($snotifs), 10); // End tags are dispatched for empties (ROLES_OVERRIDES)
+        // Check first, and last notifications
+        $this->assertEqual($enotifs[0], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD/ROLES_OVERRIDES');
+        $this->assertEqual($enotifs[1], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEqual($enotifs[2], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEqual($enotifs[3], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEqual($enotifs[7], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $this->assertEqual($enotifs[8], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION');
+        $this->assertEqual($enotifs[9], '/MOODLE_BACKUP/COURSE');
+
+        // Check start and end notifications are balanced
+        sort($snotifs);
+        sort($enotifs);
+        $this->assertEqual($snotifs, $enotifs);
+
+        // Now verify that the start/process/end order is correct
+        $allnotifs = $pr->get_all_notifications();
+        $this->assertEqual(count($allnotifs), count($snotifs) + count($enotifs) + count($chunks)); // The count
+        // Check integrity of the notifications
+        $errcount = $this->helper_check_notifications_order_integrity($allnotifs);
+        $this->assertEqual($errcount, 0); // No errors found, plz
+    }
+
     /*
      * test progressive_parser parsing results using grouped_parser_processor and test4.xml
      * (one simple glossary backup file example)
@@ -515,6 +582,64 @@ class progressive_parser_test extends UnitTestCase {
     }
 
     /**
+     * test how the grouped processor and the order of start/process/end events happens
+     * with one real fragment of one backup 1.9 file, where some problems
+     * were found by David, hence we honor him in the name of the test ;-)
+     */
+    function test_grouped_david_backup19_file_fragment() {
+        global $CFG;
+        // Instantiate progressive_parser
+        $pp =  new progressive_parser();
+        // Instantiate grouped_parser_processor
+        $pr = new mock_grouped_parser_processor();
+        // Add interesting paths
+        $pr->add_path('/MOODLE_BACKUP/COURSE');
+        $pr->add_path('/MOODLE_BACKUP/COURSE/SECTIONS/SECTION', true);
+        $pr->add_path('/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD');
+        $pr->add_path('/MOODLE_BACKUP/COURSE/SECTIONS/SECTION/MODS/MOD/ROLES_OVERRIDES');
+        $this->assertTrue($pr instanceof progressive_parser_processor);
+        // Assign processor to parser
+        $pp->set_processor($pr);
+        // Set file from fixtures
+        $pp->set_file($CFG->dirroot . '/backup/util/xml/parser/simpletest/fixtures/test5.xml');
+        // Process the file
+        $pp->process();
+
+        // Get all the simplified chunks and perform various validations
+        $chunks = $pr->get_chunks();
+        $this->assertEqual(count($chunks), 1); // Only 1, the SECTION one
+
+        // Now check start notifications
+        $snotifs = $pr->get_start_notifications();
+        // Check we have received the correct number of notifications
+        $this->assertEqual(count($snotifs), 2);
+        // Check first and last notifications
+        $this->assertEqual($snotifs[0], '/MOODLE_BACKUP/COURSE');
+        $this->assertEqual($snotifs[1], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION');
+
+        // Now check end notifications
+        $enotifs = $pr->get_end_notifications();
+        // Check we have received the correct number of notifications
+        $this->assertEqual(count($snotifs), 2); // End tags are dispatched for empties (ROLES_OVERRIDES)
+        // Check first, and last notifications
+        $this->assertEqual($enotifs[0], '/MOODLE_BACKUP/COURSE/SECTIONS/SECTION');
+        $this->assertEqual($enotifs[1], '/MOODLE_BACKUP/COURSE');
+
+        // Check start and end notifications are balanced
+        sort($snotifs);
+        sort($enotifs);
+        $this->assertEqual($snotifs, $enotifs);
+
+        // Now verify that the start/process/end order is correct
+        $allnotifs = $pr->get_all_notifications();
+        $this->assertEqual(count($allnotifs), count($snotifs) + count($enotifs) + count($chunks)); // The count
+        // Check integrity of the notifications
+        $errcount = $this->helper_check_notifications_order_integrity($allnotifs);
+        $this->assertEqual($errcount, 0); // No errors found, plz
+    }
+
+
+    /**
      * Helper function that given one array of ordered start/process/end notifications will
      * check it of integrity like:
      *    - process only happens if start is the previous notification
@@ -527,43 +652,45 @@ class progressive_parser_test extends UnitTestCase {
     function helper_check_notifications_order_integrity($notifications) {
         $numerrors = 0;
         $notifpile = array('pilebase' => 'start');
-        $lastpile = 'start:pilebase';
+        $lastnotif = 'start:pilebase';
         foreach ($notifications as $notif) {
-            $lastpilelevel = strlen(preg_replace('/[^\/]/', '', $lastpile));
-            $lastpiletype  = preg_replace('/:.*/', '', $lastpile);
-            $lastpilepath  = preg_replace('/.*:/', '', $lastpile);
 
-            $notiflevel = strlen(preg_replace('/[^\/]/', '', $notif));
+            $lastpiletype = end($notifpile);
+            $lastpilepath = key($notifpile);
+            $lastpilelevel = strlen(preg_replace('/[^\/]/', '', $lastpilepath));
+
+            $lastnotiftype  = preg_replace('/:.*/', '', $lastnotif);
+            $lastnotifpath  = preg_replace('/.*:/', '', $lastnotif);
+            $lastnotiflevel = strlen(preg_replace('/[^\/]/', '', $lastnotifpath));
+
             $notiftype  = preg_replace('/:.*/', '', $notif);
             $notifpath  = preg_replace('/.*:/', '', $notif);
+            $notiflevel = strlen(preg_replace('/[^\/]/', '', $notifpath));
 
             switch ($notiftype) {
                 case 'process':
-                    if ($lastpilepath != $notifpath or $lastpiletype != 'start') {
-                        $numerrors++; // Only start for same path is allowed before process
+                    if ($lastnotifpath != $notifpath or $lastnotiftype != 'start') {
+                        $numerrors++; // Only start for same path from last notification is allowed before process
                     }
                     $notifpile[$notifpath] = 'process'; // Update the status in the pile
                     break;
                 case 'end':
-                    if ($lastpilepath != $notifpath or $lastpiletype != 'process') {
-                        $numerrors++; // Only process for same path is allowed before end
+                    if ($lastpilepath != $notifpath or ($lastpiletype != 'process' and $lastpiletype != 'start')) {
+                        $numerrors++; // Only process and start for same path from last pile is allowed before end
                     }
                     unset($notifpile[$notifpath]); // Delete from the pile
                     break;
                 case 'start':
                     if (array_key_exists($notifpath, $notifpile) or $notiflevel <= $lastpilelevel) {
-                        $numerrors++; // If same path exists or the level is < than the last one
+                        $numerrors++; // Only non existing in pile and with level > last pile is allowed on start
                     }
                     $notifpile[$notifpath] = 'start'; // Add to the pile
                     break;
                 default:
                     $numerrors++; // Incorrect type of notification => error
             }
-            // Update lastpile
-            end($notifpile);
-            $path = key($notifpile);
-            $type = $notifpile[$path];
-            $lastpile = $type. ':' . $path;
+            // Update lastnotif
+            $lastnotif = $notif;
         }
         return $numerrors;
     }

@@ -69,7 +69,7 @@ class backup_data_activity_structure_step extends backup_activity_structure_step
         $ratings = new backup_nested_element('ratings');
 
         $rating = new backup_nested_element('rating', array('id'), array(
-            'scaleid', 'value', 'userid', 'timecreated', 'timemodified'));
+            'component', 'ratingarea', 'scaleid', 'value', 'userid', 'timecreated', 'timemodified'));
 
         // Build the tree
         $data->add_child($fields);
@@ -99,8 +99,10 @@ class backup_data_activity_structure_step extends backup_activity_structure_step
 
             $content->set_source_table('data_content', array('recordid' => backup::VAR_PARENTID));
 
-            $rating->set_source_table('rating', array('contextid' => backup::VAR_CONTEXTID,
-                                                      'itemid'    => backup::VAR_PARENTID));
+            $rating->set_source_table('rating', array('contextid'  => backup::VAR_CONTEXTID,
+                                                      'itemid'     => backup::VAR_PARENTID,
+                                                      'component'  => 'mod_data',
+                                                      'ratingarea' => 'entry'));
             $rating->set_source_alias('rating', 'value');
         }
 

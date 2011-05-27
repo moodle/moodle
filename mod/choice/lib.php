@@ -591,6 +591,8 @@ function choice_delete_instance($id) {
  * Returns the users with data in one choice
  * (users with records in choice_responses, students)
  *
+ * @todo: deprecated - to be deleted in 2.2
+ *
  * @param int $choiceid
  * @return array
  */

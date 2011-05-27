@@ -1,0 +1,148 @@
+/*
+Page Layout and Docking Module for Afterburner Moodle 2.0 Theme Set
+-----------------------------------------------------------------*/
+html {
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+}
+body {
+    margin: 0;
+    padding: 0;
+    background: #fff url([[pix:theme|core/bground]]) repeat-x fixed;
+}
+#page-wrapper {
+    width:90%;
+    margin: 0 auto;
+    background: transparent;
+    border: 1px solid #eee;
+}
+#page {
+    width: 100%;
+    margin: 0 auto;
+    padding:0;
+    background: transparent;
+}
+/*
+3 Column Page Layout
+-----------------------*/
+#page-content {
+    position:relative;    /* fixes IE7 overflow hidden bug stoping layout jumping out of place */
+    clear:both;
+    float:left;
+    width:100%;            /* width of whole page */
+    overflow:hidden;        /* This chops off any overhanging divs */
+    background: #d1e0e7;        /* Left column background colour */
+}
+#region-main-box {
+    float:left;
+    width:200%;
+    position:relative;
+    left:220px;
+    background: #fff;        /* Centre column background colour */
+}
+#region-post-box {
+    float:left;
+    width:100%;
+    position:relative;
+    left:50%;
+    margin-left: -440px;
+    background: #eee;        /* Right column background colour */
+}
+#region-main-wrap {
+    float:right;
+    width:50%;
+    position:relative;
+    right:100%;
+}
+#region-main-pad {
+    margin:0 10px 0 450px;
+    overflow:hidden;
+}
+#region-main {
+    width:100%;
+    overflow:hidden;
+}
+#region-pre {
+    float:left;
+    width:220px;
+    position:relative;
+    margin-left:-50%;
+    left:220px;
+    overflow:hidden;
+}
+#region-post {
+    float:left;
+    width:220px;
+    position:relative;
+    left:0px;
+    overflow:hidden;
+}
+#page-content #region-main-box .region-content {
+    margin: 0;
+    padding:0;
+}
+#page-site-index .headingblock {
+    margin-bottom:9px;
+    margin-left: 3px;
+}
+#page-footer {
+    clear:both;
+    float:left;
+    width: 100%;
+    height: 70px;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    border-top: 1px dotted #ccc;
+}
+/*
+Block Region Layout
+-----------------------*/
+#region-pre .block-region {
+    float: left;
+    width: 220px;
+    margin: 0;
+    padding: 0;
+}
+#region-post .block-region {
+    float: right;
+    width: 220px;
+    margin: 0;
+    padding: 0;
+}
+/*
+PLEASE DO NOT ALTER THESE SETTINGS UNLESS YOU KNOW WHAT YOU ARE DOING AS IT WILL BREAK PAGE LAYOUT
+------------------------------------------------------------------------------------------------*/
+/*
+SIDE-PRE-ONLY (Left Column + Middle Column)
+---------------------------*/
+.side-pre-only #region-main-box {width: 200%; left: 220px;}
+.side-pre-only #region-post-box {width: 100%; left: 50%; margin-left: -220px; background-color: #fff;}
+.side-pre-only #region-main-wrap {width: 50%; right: 100%;}
+.side-pre-only #region-main-pad {margin: 0px 10px 0px 230px;}
+.side-pre-only #region-main {width: 100%;}
+.side-pre-only #region-pre {width: 220px; left: 0px; margin-left:-50%;}
+.side-pre-only #region-post {width: 0px; left: 0px;}
+/*
+SIDE-POST-ONLY (Middle Column + Right Column)
+----------------------------*/
+.side-post-only #page-content { background-color: #fff;}
+.side-post-only #region-main-box {width: 200%; left: 220px;}
+.side-post-only #region-post-box {width: 100%; left: 50%; margin-left: -440px;}
+.side-post-only #region-main-wrap {width: 50%; right: 100%;}
+.side-post-only #region-main-pad {margin: 0px 10px 0px 230px;}
+.side-post-only #region-main {width: 100%;}
+.side-post-only #region-pre {width: 0px;left: 0px;}
+.side-post-only #region-post {width: 220px; left: 0px;}
+/*
+CONTENT ONLY - NO SIDE BLOCKS WHATSOEVER (Middle Column Only)
+--------------------------------------------------------*/
+.content-only #page-content { background-color: #fff;}
+.content-only #region-main-box {width: 200%; left: 0px;}
+.content-only #region-post-box {width: 100%; left: 50%; margin-left: 0px; background-color: #fff;}
+.content-only #region-main-wrap {width: 50%; right: 100%;}
+.content-only #region-main-pad {margin: 0px 10px 0px 10px;}
+.content-only #region-main {width: 100%}
+.content-only #region-pre { width:0;left:0;}
+.content-only #region-post { width: 0;left:0;}

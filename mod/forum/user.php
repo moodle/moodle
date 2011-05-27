@@ -118,7 +118,8 @@ if ($course->id == SITEID) {
 }
 
 // Get the posts.
-if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $perpage, $totalcount, $extrasql)) {
+$posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $perpage, $totalcount, $extrasql);
+if ($posts) {
 
     require_once($CFG->dirroot.'/rating/lib.php');
 
@@ -127,15 +128,14 @@ if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $pe
 
     $discussions = array();
     $forums      = array();
-    $cms         = array();
 
     //todo Rather than retrieving the ratings for each post individually it would be nice to do them in groups
     //however this requires creating arrays of posts with each array containing all of the posts from a particular forum,
     //retrieving the ratings then reassembling them all back into a single array sorted by post.modified (descending)
     $rm = new rating_manager();
-    $ratingoptions = new stdclass();
-    $ratingoptions->plugintype = 'mod';
-    $ratingoptions->pluginname = 'forum';
+    $ratingoptions = new stdClass;
+    $ratingoptions->component = 'mod_forum';
+    $ratingoptions->ratingarea = 'post';
 
     foreach ($posts as $post) {
 
@@ -149,66 +149,57 @@ if ($posts = forum_search_posts($searchterms, $searchcourse, $page*$perpage, $pe
         }
 
         if (!isset($forums[$discussion->forum])) {
-            if (! $forum = $DB->get_record('forum', array('id' => $discussion->forum))) {
-                print_error('invalidforumid', 'forum');
-            }
-            //hold onto forum cm and context for when we load ratings
-            if ($forumcm = get_coursemodule_from_instance('forum', $forum->id)) {
-                $forum->cm = $forumcm;
-                $forumcontext = get_context_instance(CONTEXT_MODULE, $forum->cm->id);
-                $forum->context = $forumcontext;
-            }
+            $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
+            $forum->cm = get_coursemodule_from_instance('forum', $forum->id, 0, false, MUST_EXIST);
+            $forum->context = get_context_instance(CONTEXT_MODULE, $forum->cm->id);
             $forums[$discussion->forum] = $forum;
         } else {
             $forum = $forums[$discussion->forum];
         }
 
-        //load ratings
-        if ($forum->assessed!=RATING_AGGREGATE_NONE) {
+        $forumurl = new moodle_url('/mod/forum/view.php', array('id' => $forum->cm->id));
+        $discussionurl = new moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
+
+        // load ratings
+        if ($forum->assessed != RATING_AGGREGATE_NONE) {
             $ratingoptions->context = $forum->context;
-            $ratingoptions->component = 'mod_forum';
             $ratingoptions->items = array($post);
             $ratingoptions->aggregate = $forum->assessed;//the aggregation method
             $ratingoptions->scaleid = $forum->scale;
             $ratingoptions->userid = $user->id;
-            if ($forum->type == 'single' or !$discussion->id) {
-                $ratingoptions->returnurl = "$CFG->wwwroot/mod/forum/view.php?id={$forum->cm->id}";
-            } else {
-                $ratingoptions->returnurl = "$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id";
-            }
             $ratingoptions->assesstimestart = $forum->assesstimestart;
             $ratingoptions->assesstimefinish = $forum->assesstimefinish;
+            if ($forum->type == 'single' or !$discussion->id) {
+                $ratingoptions->returnurl = $forumurl;
+            } else {
+                $ratingoptions->returnurl = $discussionurl;
+            }
 
             $updatedpost = $rm->get_ratings($ratingoptions);
             //updating the array this way because we're iterating over a collection and updating them one by one
             $posts[$updatedpost[0]->id] = $updatedpost[0];
         }
 
-        if (!isset($cms[$forum->id])) {
-            $cm = get_coursemodule_from_instance('forum', $forum->id, 0, false, MUST_EXIST);
-            $cms[$forum->id] = $cm;
-            unset($cm); // do not use cm directly, it would break caching
+        $fullsubjects = array();
+        if ($course->id == SITEID && has_capability('moodle/site:config', $syscontext)) {
+            $postcoursename = $DB->get_field('course', 'shortname', array('id'=>$forum->course));
+            $courseurl = new moodle_url('/course/view.php', array('id' => $forum->course));
+            $fullsubjects[] = html_writer::link($courseurl, $postcoursename);
         }
-
-        $fullsubject = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
+        $fullsubjects[] = html_writer::link($forumurl, format_string($forum->name, true));
         if ($forum->type != 'single') {
-            $fullsubject .= " -> <a href=\"discuss.php?d=$discussion->id\">".format_string($discussion->name,true)."</a>";
+            $fullsubjects[] .= html_writer::link($discussionurl, format_string($discussion->name, true));
             if ($post->parent != 0) {
-                $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">".format_string($post->subject,true)."</a>";
+                $parenturl = new moodle_url('/mod/forum/discuss.php', array('d' => $post->discussion, 'parent' => $post->id));
+                $fullsubjects[] .= html_writer::link($parenturl, format_string($post->subject, true));
             }
         }
 
-        if ($course->id == SITEID && has_capability('moodle/site:config', $syscontext)) {
-            $postcoursename = $DB->get_field('course', 'shortname', array('id'=>$forum->course));
-            $fullsubject = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$forum->course.'">'.$postcoursename.'</a> -> '. $fullsubject;
-        }
+        $post->subject = join(' -> ', $fullsubjects);
+        $discussionurl->set_anchor('p'.$post->id);
+        $fulllink = html_writer::link($discussionurl, get_string("postincontext", "forum"));
 
-        $post->subject = $fullsubject;
-
-        $fulllink = "<a href=\"discuss.php?d=$post->discussion#p$post->id\">".
-            get_string("postincontext", "forum")."</a>";
-
-        forum_print_post($post, $discussion, $forum, $cms[$forum->id], $course, false, false, false, $fulllink);
+        forum_print_post($post, $discussion, $forum, $forum->cm, $course, false, false, false, $fulllink);
         echo "<br />";
     }
 

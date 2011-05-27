@@ -271,7 +271,8 @@ function survey_print_recent_activity($course, $viewfullnames, $timestart) {
  * Returns the users with data in one survey
  * (users with records in survey_analysis and survey_answers, students)
  *
- * @global object
+ * @todo: deprecated - to be deleted in 2.2
+ *
  * @param int $surveyid
  * @return array
  */

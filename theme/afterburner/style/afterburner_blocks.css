@@ -1,0 +1,155 @@
+/*
+Block
+-----------------------*/
+.block {
+    border:0px dotted #ddd;
+    margin-bottom:1em;
+}
+.block .header .block_action {
+    float:right;
+    margin:0 4px;
+    vertical-align:top;
+}
+.block .header .block_action input {
+    margin-right:2px;
+}
+.block .content {
+    padding:10px;
+}
+.block.hidden .content {
+    display: none;
+}
+.block .content .userpicture {
+    width:16px;height:16px;
+    margin-right:4px;
+}
+.block .content .list li.listentry {
+    clear:both;
+}
+.block .content .list .c0 {
+    display:inline;
+}
+.block .content .list .c1 {
+    margin-left:5px;
+    display:inline;
+}
+.block .footer {
+    margin-bottom: 4px;
+}
+.block .blockannotation {
+    font-size:0.75em;
+    margin: -1em 0 1em;
+}
+.block.beingmoved {
+    border-width: 2px;
+    border-style: dashed;
+}
+.blockmovetarget {
+    display: block;
+    height: 1em;
+    margin-bottom: 1em;
+    border-width: 2px;
+    border-style: dashed;
+}
+.block-region .invisible {
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+}
+.block .block-hider-show,
+.block .block-hider-hide {
+    cursor:pointer;
+}
+.block .block-hider-show,
+.block.hidden .block-hider-hide {
+    display:none;
+}
+.block.hidden .block-hider-show {
+    display:inline;
+}
+.block-region {
+    float: left;
+    padding: 0;
+    font-size: 12px;
+}
+.block-region ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+.block-region li {
+    padding: 0 0 20px 0;
+}
+.block-region li ul {
+}
+.block-region li li {
+    margin: 0 20px 0 10px;
+    padding: 8px 0px;
+}
+.block .header {
+    border:none;
+    padding: 6px 0 4px;
+    width: 100%;
+}
+.block .header div.commands {
+    margin-left: 10px;
+}
+#region-pre .block .header {
+    background:url([[pix:theme|images/light3]]) 0 -136px repeat-x;
+    border-bottom:1px solid #c3d9e1;
+    color:#50646d;
+}
+#region-post .block .header {
+    background: url([[pix:theme|images/light3]]) 0 -204px repeat-x;
+    border-bottom:1px solid #ddd;
+    color:#777;
+}
+.block .header .title h2 {
+    font-size: 1em;
+    margin: 4px 0 4px 10px;
+    padding: 0;
+}
+.block .header .block_action {
+    float:right;
+    margin-right: 3px;
+    vertical-align:top;
+}
+.block .region-content {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.block .minicalendar {
+    margin:10px auto;
+    width:100%;
+}
+/** List block contents **/
+.block .list .c0 {
+    display:inline;
+}
+.block .list .c0 img.icon {
+    vertical-align: middle
+}
+.block .list .c1 {
+    margin-left:5px;display:inline;
+}
+/** Bugfixes Smallicon & Navicon **/
+.block_settings .block_tree li.item_with_icon > p img,
+.block_navigation .block_tree li.item_with_icon > p img {
+    left:0;
+    position:absolute;
+    top:0px !important;
+    vertical-align:middle;
+}
+.block_settings .block_tree li.item_with_icon p img.smallicon,
+.block_settings .block_tree li.item_with_icon p img.navicon,
+.block_navigation .block_tree li.item_with_icon p img.smallicon,
+.block_navigation .block_tree li.item_with_icon p img.navicon {
+    margin: 0;
+    padding: 0;
+    vertical-align:middle;
+}
+.block_navigation .block_tree .type_activity > .tree_item.branch img {
+    left:0px;
+    bottom: 0px;
+    position:absolute;
+}

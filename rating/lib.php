@@ -46,15 +46,22 @@ class rating implements renderable {
 
     /**
      * The context in which this rating exists
-     * @var context
+     * @var stdClass
      */
     public $context;
 
     /**
      * The component using ratings. For example "mod_forum"
-     * @var component
+     * @var string
      */
     public $component;
+
+    /**
+     * The rating area to associate this rating with.
+     * This allows a plugin to rate more than one thing by specifying different rating areas.
+     * @var string
+     */
+    public $ratingarea = null;
 
     /**
      * The id of the item (forum post, glossary item etc) being rated
@@ -81,78 +88,288 @@ class rating implements renderable {
     public $settings;
 
     /**
-    * Constructor.
-    * @param object $options {
-    *            context => context context to use for the rating [required]
-    *            component => component using ratings ie mod_forum [required]
-    *            itemid  => int the id of the associated item (forum post, glossary item etc) [required]
-    *            scaleid => int The scale in use when the rating was submitted [required]
-    *            userid  => int The id of the user who submitted the rating [required]
-    * }
-    */
+     * The Id of this rating within the rating table.
+     * This is only set if the rating already exists
+     * @var int
+     */
+    public $id = null;
+
+    /**
+     * The aggregate of the combined ratings for the associated item.
+     * This is only set if the rating already exists
+     *
+     * @var int
+     */
+    public $aggregate = null;
+
+    /**
+     * The total number of ratings for the associated item.
+     * This is only set if the rating already exists
+     *
+     * @var int
+     */
+    public $count = 0;
+
+    /**
+     * The rating the associated user gave the associated item
+     * This is only set if the rating already exists
+     *
+     * @var int
+     */
+    public $rating = null;
+
+    /**
+     * The time the associated item was created
+     *
+     * @var int
+     */
+    public $itemtimecreated = null;
+
+    /**
+     * The id of the user who submitted the rating
+     *
+     * @var int
+     */
+    public $itemuserid = null;
+
+    /**
+     * Constructor.
+     * @param object $options {
+     *            context => context context to use for the rating [required]
+     *            component => component using ratings ie mod_forum [required]
+     *            ratingarea => ratingarea to associate this rating with [required]
+     *            itemid  => int the id of the associated item (forum post, glossary item etc) [required]
+     *            scaleid => int The scale in use when the rating was submitted [required]
+     *            userid  => int The id of the user who submitted the rating [required]
+     *            settings => Settings for the rating object [optional]
+     *            id => The id of this rating (if the rating is from the db) [optional]
+     *            aggregate => The aggregate for the rating [optional]
+     *            count => The number of ratings [optional]
+     *            rating => The rating given by the user [optional]
+     * }
+     */
     public function __construct($options) {
-        $this->context = $options->context;
-        $this->component = $options->component;
-        $this->itemid = $options->itemid;
-        $this->scaleid = $options->scaleid;
-        $this->userid = $options->userid;
+        $this->context =    $options->context;
+        $this->component =  $options->component;
+        $this->ratingarea = $options->ratingarea;
+        $this->itemid =     $options->itemid;
+        $this->scaleid =    $options->scaleid;
+        $this->userid =     $options->userid;
+
+        if (isset($options->settings)) {
+            $this->settings = $options->settings;
+        }
+        if (isset($options->id)) {
+            $this->id = $options->id;
+        }
+        if (isset($options->aggregate)) {
+            $this->aggregate = $options->aggregate;
+        }
+        if (isset($options->count)) {
+            $this->count = $options->count;
+        }
+        if (isset($options->rating)) {
+            $this->rating = $options->rating;
+        }
     }
 
     /**
-    * Update this rating in the database
-    * @param int $rating the integer value of this rating
-    * @return void
-    */
+     * Update this rating in the database
+     * @param int $rating the integer value of this rating
+     * @return void
+     */
     public function update_rating($rating) {
         global $DB;
 
-        $data = new stdclass();
-        $table = 'rating';
+        $time = time();
+
+        $data = new stdClass;
+        $data->rating       = $rating;
+        $data->timemodified = $time;
 
         $item = new stdclass();
         $item->id = $this->itemid;
         $items = array($item);
 
-        $ratingoptions = new stdclass();
+        $ratingoptions = new stdClass;
         $ratingoptions->context = $this->context;
         $ratingoptions->component = $this->component;
+        $ratingoptions->ratingarea = $this->ratingarea;
         $ratingoptions->items = $items;
         $ratingoptions->aggregate = RATING_AGGREGATE_AVERAGE;//we dont actually care what aggregation method is applied
         $ratingoptions->scaleid = $this->scaleid;
         $ratingoptions->userid = $this->userid;
 
-        $rm = new rating_manager();
+        $rm = new rating_manager();;
         $items = $rm->get_ratings($ratingoptions);
-        if( empty($items) || empty($items[0]->rating) || empty($items[0]->rating->id) ) {
+        $firstitem = $items[0]->rating;
+
+        if (empty($firstitem->id)) {
+            // Insert a new rating
             $data->contextid    = $this->context->id;
+            $data->component    = $this->component;
+            $data->ratingarea   = $this->ratingarea;
             $data->rating       = $rating;
             $data->scaleid      = $this->scaleid;
             $data->userid       = $this->userid;
             $data->itemid       = $this->itemid;
-
-            $time = time();
-            $data->timecreated = $time;
+            $data->timecreated  = $time;
             $data->timemodified = $time;
-
-            $DB->insert_record($table, $data);
-        }
-        else {
-            $data->id       = $items[0]->rating->id;
-            $data->rating       = $rating;
-
-            $time = time();
-            $data->timemodified = $time;
-
-            $DB->update_record($table, $data);
+            $DB->insert_record('rating', $data);
+        } else {
+            // Update the rating
+            $data->id           = $firstitem->id;
+            $DB->update_record('rating', $data);
         }
     }
 
     /**
-    * Retreive the integer value of this rating
-    * @return int the integer value of this rating object
-    */
+     * Retreive the integer value of this rating
+     * @return int the integer value of this rating object
+     */
     public function get_rating() {
         return $this->rating;
+    }
+
+    /**
+     * Returns this ratings aggregate value as a string.
+     *
+     * @return string
+     */
+    public function get_aggregate_string() {
+
+        $aggregate = $this->aggregate;
+        $method = $this->settings->aggregationmethod;
+
+        // only display aggregate if aggregation method isn't COUNT
+        $aggregatestr = '';
+        if ($aggregate && $method != RATING_AGGREGATE_COUNT) {
+            if ($method != RATING_AGGREGATE_SUM && !$this->settings->scale->isnumeric) {
+                $aggregatestr .= $this->settings->scale->scaleitems[round($aggregate)]; //round aggregate as we're using it as an index
+            } else { // aggregation is SUM or the scale is numeric
+                $aggregatestr .= round($aggregate, 1);
+            }
+        }
+
+        return $aggregatestr;
+    }
+
+    /**
+     * Returns true if the user is able to rate this rating object
+     *
+     * @param int $userid Current user assumed if left empty
+     * @return bool
+     */
+    public function user_can_rate($userid = null) {
+        if (empty($userid)) {
+            global $USER;
+            $userid = $USER->id;
+        }
+        // You can't rate your item
+        if ($this->itemuserid == $userid) {
+            return false;
+        }
+        // You can't rate if you don't have the system cap
+        if (!$this->settings->permissions->rate) {
+            return false;
+        }
+        // You can't rate if you don't have the plugin cap
+        if (!$this->settings->pluginpermissions->rate) {
+            return false;
+        }
+
+        // You can't rate if the item was outside of the assessment times
+        $timestart = $this->settings->assesstimestart;
+        $timefinish = $this->settings->assesstimefinish;
+        $timecreated = $this->itemtimecreated;
+        if (!empty($timestart) && !empty($timefinish) && ($timecreated < $timestart || $timecreated > $timefinish)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns true if the user is able to view the aggregate for this rating object.
+     *
+     * @param int|null $userid If left empty the current user is assumed.
+     * @return bool
+     */
+    public function user_can_view_aggregate($userid = null) {
+        if (empty($userid)) {
+            global $USER;
+            $userid = $USER->id;
+        }
+
+        // if the item doesnt belong to anyone or its another user's items and they can see the aggregate on items they don't own
+        // Note that viewany doesnt mean you can see the aggregate or ratings of your own items
+        if ((empty($this->itemuserid) or $this->itemuserid != $userid) && $this->settings->permissions->viewany && $this->settings->pluginpermissions->viewany ) {
+            return true;
+        }
+
+        // if its the current user's item and they have permission to view the aggregate on their own items
+        if ($this->itemuserid == $userid && $this->settings->permissions->view && $this->settings->pluginpermissions->view) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns a URL to view all of the ratings for the item this rating is for.
+     *
+     * If this is a rating of a post then this URL will take the user to a page that shows all
+     * of the ratings for the post (this one included).
+     *
+     * @param bool $popup
+     * @return moodle_url
+     */
+    public function get_view_ratings_url($popup = false) {
+        $attributes = array(
+            'contextid'  => $this->context->id,
+            'component'  => $this->component,
+            'ratingarea' => $this->ratingarea,
+            'itemid'     => $this->itemid,
+            'scaleid'    => $this->settings->scale->id
+        );
+        if ($popup) {
+            $attributes['popup'] = 1;
+        }
+        return new moodle_url('/rating/index.php', $attributes);
+    }
+
+    /**
+     * Returns a URL that can be used to rate the associated item.
+     *
+     * @param int|null $rating The rating to give the item, if null then no rating
+     *                         param is added.
+     * @param moodle_url|string $returnurl The URL to return to.
+     * @return moodle_url
+     */
+    public function get_rate_url($rating = null, $returnurl = null) {
+        if (empty($returnurl)) {
+            if (!empty($this->settings->returnurl)) {
+                $returnurl = $this->settings->returnurl;
+            } else {
+                global $PAGE;
+                $returnurl = $PAGE->url;
+            }
+        }
+        $args = array(
+            'contextid'   => $this->context->id,
+            'component'   => $this->component,
+            'ratingarea'  => $this->ratingarea,
+            'itemid'      => $this->itemid,
+            'scaleid'     => $this->settings->scale->id,
+            'returnurl'   => $returnurl,
+            'rateduserid' => $this->itemuserid,
+            'aggregation' => $this->settings->aggregationmethod,
+            'sesskey'     => sesskey()
+        );
+        if (!empty($rating)) {
+            $args['rating'] = $rating;
+        }
+        $url = new moodle_url('/rating/rate.php', $args);
+        return $url;
     }
 
     /**
@@ -174,273 +391,365 @@ class rating implements renderable {
 class rating_manager {
 
     /**
-    * Delete one or more ratings. Specify either a rating id, an item id or just the context id.
-    * @param object $options {
-    *            contextid => int the context in which the ratings exist [required]
-    *            ratingid => int the id of an individual rating to delete [optional]
-    *            userid => int delete the ratings submitted by this user. May be used in conjuction with itemid [optional]
-    *            itemid => int delete all ratings attached to this item [optional]
-    * }
-    * @return void
-    */
+     * An array of calculated scale options to save us generating them for each request.
+     * @var array
+     */
+    protected $scales = array();
+
+    /**
+     * Gets set to true when the JavaScript that controls AJAX rating has been
+     * initialised (so that it only gets initialised once.
+     * @var int
+     */
+    protected $javascriptinitialised = false;
+
+    /**
+     * Delete one or more ratings. Specify either a rating id, an item id or just the context id.
+     *
+     * @global moodle_database $DB
+     * @param stdClass $options {
+     *            contextid => int the context in which the ratings exist [required]
+     *            ratingid => int the id of an individual rating to delete [optional]
+     *            userid => int delete the ratings submitted by this user. May be used in conjuction with itemid [optional]
+     *            itemid => int delete all ratings attached to this item [optional]
+     *            component => string The component to delete ratings from [optional]
+     *            ratingarea => string The ratingarea to delete ratings from [optional]
+     * }
+     * @return void
+     */
     public function delete_ratings($options) {
         global $DB;
 
-        if( !empty($options->ratingid) ) {
-            //delete a single rating
-            $DB->delete_records('rating', array('contextid'=>$options->contextid, 'id'=>$options->ratingid) );
+        if (empty($options->contextid)) {
+            throw new coding_exception('The context option is a required option when deleting ratings.');
         }
-        else if( !empty($options->itemid) && !empty($options->userid) ) {
-            //delete the rating for an item submitted by a particular user
-            $DB->delete_records('rating', array('contextid'=>$options->contextid, 'itemid'=>$options->itemid, 'userid'=>$options->userid) );
+
+        $conditions = array('contextid' => $options->contextid);
+        $possibleconditions = array(
+            'ratingid'   => 'id',
+            'userid'     => 'userid',
+            'itemid'     => 'itemid',
+            'component'  => 'component',
+            'ratingarea' => 'ratingarea'
+        );
+        foreach ($possibleconditions as $option => $field) {
+            if (isset($options->{$option})) {
+                $conditions[$field] = $options->{$option};
+            }
         }
-        else if( !empty($options->itemid) ) {
-            //delete all ratings for an item
-            $DB->delete_records('rating', array('contextid'=>$options->contextid, 'itemid'=>$options->itemid) );
-        }
-        else if( !empty($options->userid) ) {
-            //delete all ratings submitted by a user
-            $DB->delete_records('rating', array('contextid'=>$options->contextid, 'userid'=>$options->userid) );
-        }
-        else {
-            //delete all ratings for this context
-            $DB->delete_records('rating', array('contextid'=>$options->contextid) );
-        }
+        $DB->delete_records('rating', $conditions);
     }
 
     /**
-    * Returns an array of ratings for a given item (forum post, glossary entry etc)
-    * This returns all users ratings for a single item
-    * @param object $options {
-    *            context => context the context in which the ratings exists [required]
-    *            itemid  =>  int the id of the associated item (forum post, glossary item etc) [required]
-    *            sort    => string SQL sort by clause [optional]
-    * }
-    * @return array an array of ratings
-    */
+     * Returns an array of ratings for a given item (forum post, glossary entry etc)
+     * This returns all users ratings for a single item
+     * @param stdClass $options {
+     *            context => context the context in which the ratings exists [required]
+     *            component => component using ratings ie mod_forum [required]
+     *            ratingarea => ratingarea to associate this rating with [required]
+     *            itemid  =>  int the id of the associated item (forum post, glossary item etc) [required]
+     *            sort    => string SQL sort by clause [optional]
+     * }
+     * @return array an array of ratings
+     */
     public function get_all_ratings_for_item($options) {
         global $DB;
+
+        if (!isset($options->context)) {
+            throw new coding_exception('The context option is a required option when getting ratings for an item.');
+        }
+        if (!isset($options->itemid)) {
+            throw new coding_exception('The itemid option is a required option when getting ratings for an item.');
+        }
+        if (!isset($options->component)) {
+            throw new coding_exception('The component option is now a required option when getting ratings for an item.');
+        }
+        if (!isset($options->ratingarea)) {
+            throw new coding_exception('The ratingarea option is now a required option when getting ratings for an item.');
+        }
 
         $sortclause = '';
         if( !empty($options->sort) ) {
             $sortclause = "ORDER BY $options->sort";
         }
 
+        $params = array(
+            'contextid'  => $options->context->id,
+            'itemid'     => $options->itemid,
+            'component'  => $options->component,
+            'ratingarea' => $options->ratingarea,
+        );
         $userfields = user_picture::fields('u', null, 'userid');
-        $sql = "SELECT r.id, r.rating, r.itemid, r.userid, r.timemodified, $userfields
-                FROM {rating} r
-                LEFT JOIN {user} u ON r.userid = u.id
-                WHERE r.contextid = :contextid AND
-                      r.itemid  = :itemid
-                {$sortclause}";
-
-        $params['contextid'] = $options->context->id;
-        $params['itemid'] = $options->itemid;
+        $sql = "SELECT r.id, r.rating, r.itemid, r.userid, r.timemodified, r.component, r.ratingarea, $userfields
+                  FROM {rating} r
+             LEFT JOIN {user} u ON r.userid = u.id
+                 WHERE r.contextid = :contextid AND
+                       r.itemid  = :itemid AND
+                       r.component = :component AND
+                       r.ratingarea = :ratingarea
+                       {$sortclause}";
 
         return $DB->get_records_sql($sql, $params);
     }
 
     /**
-    * Adds rating objects to an array of items (forum posts, glossary entries etc)
-    * Rating objects are available at $item->rating
-    * @param object $options {
-    *            context => context the context in which the ratings exists [required]
-    *            component => the component name ie mod_forum [required]
-    *            items  => array an array of items such as forum posts or glossary items. They must have an 'id' member ie $items[0]->id[required]
-    *            aggregate    => int what aggregation method should be applied. RATING_AGGREGATE_AVERAGE, RATING_AGGREGATE_MAXIMUM etc [required]
-    *            scaleid => int the scale from which the user can select a rating [required]
-    *            userid => int the id of the current user [optional]
-    *            returnurl => string the url to return the user to after submitting a rating. Can be left null for ajax requests [optional]
-    *            assesstimestart => int only allow rating of items created after this timestamp [optional]
-    *            assesstimefinish => int only allow rating of items created before this timestamp [optional]
-    * @return array the array of items with their ratings attached at $items[0]->rating
-    */
+     * Adds rating objects to an array of items (forum posts, glossary entries etc)
+     * Rating objects are available at $item->rating
+     * @param stdClass $options {
+     *            context          => context the context in which the ratings exists [required]
+     *            component        => the component name ie mod_forum [required]
+     *            ratingarea       => the ratingarea we are interested in [required]
+     *            items            => array an array of items such as forum posts or glossary items. They must have an 'id' member ie $items[0]->id[required]
+     *            aggregate        => int what aggregation method should be applied. RATING_AGGREGATE_AVERAGE, RATING_AGGREGATE_MAXIMUM etc [required]
+     *            scaleid          => int the scale from which the user can select a rating [required]
+     *            userid           => int the id of the current user [optional]
+     *            returnurl        => string the url to return the user to after submitting a rating. Can be left null for ajax requests [optional]
+     *            assesstimestart  => int only allow rating of items created after this timestamp [optional]
+     *            assesstimefinish => int only allow rating of items created before this timestamp [optional]
+     * @return array the array of items with their ratings attached at $items[0]->rating
+     */
     public function get_ratings($options) {
-        global $DB, $USER, $PAGE, $CFG;
+        global $DB, $USER;
 
-        //are ratings enabled?
-        if ($options->aggregate==RATING_AGGREGATE_NONE) {
+        if (!isset($options->context)) {
+            throw new coding_exception('The context option is a required option when getting ratings.');
+        }
+
+        if (!isset($options->component)) {
+            throw new coding_exception('The component option is a required option when getting ratings.');
+        }
+
+        if (!isset($options->ratingarea)) {
+            throw new coding_exception('The ratingarea option is a required option when getting ratings.');
+        }
+
+        if (!isset($options->scaleid)) {
+            throw new coding_exception('The scaleid option is a required option when getting ratings.');
+        }
+
+        if (!isset($options->items)) {
+            throw new coding_exception('The items option is a required option when getting ratings.');
+        } else if (empty($options->items)) {
+            return array();
+        }
+
+        if (!isset($options->aggregate)) {
+            throw new coding_exception('The aggregate option is a required option when getting ratings.');
+        } else if ($options->aggregate == RATING_AGGREGATE_NONE) {
+            // Ratings arn't enabled.
             return $options->items;
         }
         $aggregatestr = $this->get_aggregation_method($options->aggregate);
 
-        if(empty($options->items)) {
-            return $options->items;
-        }
-
-        $userid = null;
+        // Default the userid to the current user if it is not set
         if (empty($options->userid)) {
             $userid = $USER->id;
         } else {
             $userid = $options->userid;
         }
 
-        //create an array of item ids
+        // Get the item table name, the item id field, and the item user field for the given rating item
+        // from the related component.
+        list($type, $name) = normalize_component($options->component);
+        $default = array(null, 'id', 'userid');
+        list($itemtablename, $itemidcol, $itemuseridcol) = plugin_callback($type, $name, 'rating', 'get_item_fields', array($options), $default);
+
+        // Create an array of item ids
         $itemids = array();
-        foreach($options->items as $item) {
-            $itemids[] = $item->id;
+        foreach ($options->items as $item) {
+            $itemids[] = $item->{$itemidcol};
         }
 
-        //get the items from the database
-        list($itemidtest, $params) = $DB->get_in_or_equal(
-                $itemids, SQL_PARAMS_NAMED, 'itemid0000');
-
-	//note: all the group bys arent really necessary but PostgreSQL complains
-	//about selecting a mixture of grouped and non-grouped columns
-        $sql = "SELECT r.itemid, ur.id, ur.userid, ur.scaleid,
-        $aggregatestr(r.rating) AS aggrrating,
-        COUNT(r.rating) AS numratings,
-        ur.rating AS usersrating
-    FROM {rating} r
-    LEFT JOIN {rating} ur ON ur.contextid = r.contextid AND
-            ur.itemid = r.itemid AND
-            ur.userid = :userid
-    WHERE
-        r.contextid = :contextid AND
-        r.itemid $itemidtest
-    GROUP BY r.itemid, ur.rating, ur.id, ur.userid, ur.scaleid
-    ORDER BY r.itemid";
-
-        $params['userid'] = $userid;
+        // get the items from the database
+        list($itemidtest, $params) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED);
         $params['contextid'] = $options->context->id;
+        $params['userid']    = $userid;
+        $params['component']    = $options->component;
+        $params['ratingarea'] = $options->ratingarea;
 
+        $sql = "SELECT r.itemid, r.component, r.ratingarea, r.contextid,
+                       $aggregatestr(r.rating) AS aggrrating, COUNT(r.rating) AS numratings,
+                       ur.id, ur.userid, ur.scaleid, ur.rating AS usersrating
+                  FROM {rating} r
+             LEFT JOIN {rating} ur ON ur.contextid = r.contextid AND
+                                      ur.itemid = r.itemid AND
+                                      ur.component = r.component AND
+                                      ur.ratingarea = r.ratingarea AND
+                                      ur.userid = :userid
+                 WHERE r.contextid = :contextid AND
+                       r.itemid {$itemidtest} AND
+                       r.component = :component AND
+                       r.ratingarea = :ratingarea
+              GROUP BY r.itemid, r.component, r.ratingarea, r.contextid, ur.id, ur.userid, ur.scaleid
+              ORDER BY r.itemid";
         $ratingsrecords = $DB->get_records_sql($sql, $params);
 
-        //now create the rating sub objects
-        $scaleobj = new stdClass();
-        $scalemax = null;
-
-        //we could look for a scale id on each item to allow each item to use a different scale
-        if($options->scaleid < 0 ) { //if its a scale (not numeric)
-            $scalerecord = $DB->get_record('scale', array('id' => -$options->scaleid));
-            if ($scalerecord) {
-                $scalearray = explode(',', $scalerecord->scale);
-
-                //is there a more efficient way to get the indexes to start at 1 instead of 0?
-                //this will go away when scales are refactored
-                $c = count($scalearray);
-                $n = null;
-                for($i=0; $i<$c; $i++) {
-                    $n = $i+1;
-                    $scaleobj->scaleitems["$n"] = $scalearray[$i];//treat index as a string to allow sorting without changing the value
-                }
-                krsort($scaleobj->scaleitems);//have the highest grade scale item appear first
-
-                $scaleobj->id = $options->scaleid;//dont use the one from the record or we "forget" that its negative
-                $scaleobj->name = $scalerecord->name;
-                $scaleobj->courseid = $scalerecord->courseid;
-
-                $scalemax = count($scaleobj->scaleitems);
-            }
-        }
-        else { //its numeric
-            $scaleobj->scaleitems = $options->scaleid;
-            $scaleobj->id = $options->scaleid;
-            $scaleobj->name = null;
-
-            $scalemax = $options->scaleid;
-        }
-
-        //should $settings and $settings->permissions be declared as proper classes?
-        $settings = new stdclass(); //settings that are common to all ratings objects in this context
-        $settings->component =$options->component;
-        $settings->scale = $scaleobj; //the scale to use now
-        $settings->aggregationmethod = $options->aggregate;
-        if( !empty($options->returnurl) ) {
-            $settings->returnurl = $options->returnurl;
-        }
-
-        $settings->assesstimestart = $settings->assesstimefinish = null;
-        if( !empty($options->assesstimestart) ) {
-            $settings->assesstimestart = $options->assesstimestart;
-        }
-        if( !empty($options->assesstimefinish) ) {
-            $settings->assesstimefinish = $options->assesstimefinish;
-        }
-
-        //check site capabilities
-        $settings->permissions = new stdclass();
-        $settings->permissions->view = has_capability('moodle/rating:view',$options->context);//can view the aggregate of ratings of their own items
-        $settings->permissions->viewany = has_capability('moodle/rating:viewany',$options->context);//can view the aggregate of ratings of other people's items
-        $settings->permissions->viewall = has_capability('moodle/rating:viewall',$options->context);//can view individual ratings
-        $settings->permissions->rate = has_capability('moodle/rating:rate',$options->context);//can submit ratings
-
-        //check module capabilities (mostly for backwards compatability with old modules that previously implemented their own ratings)
-        $pluginpermissionsarray = $this->get_plugin_permissions_array($options->context->id, $options->component);
-
-        $settings->pluginpermissions = new stdclass();
-        $settings->pluginpermissions->view = $pluginpermissionsarray['view'];
-        $settings->pluginpermissions->viewany = $pluginpermissionsarray['viewany'];
-        $settings->pluginpermissions->viewall = $pluginpermissionsarray['viewall'];
-        $settings->pluginpermissions->rate = $pluginpermissionsarray['rate'];
-
-        $rating = null;
-        $ratingoptions = new stdclass();
-        $ratingoptions->context = $options->context;//context is common to all ratings in the set
+        $ratingoptions = new stdClass;
+        $ratingoptions->context = $options->context;
         $ratingoptions->component = $options->component;
-        foreach($options->items as $item) {
-            $rating = null;
-            //match the item with its corresponding rating
-            foreach($ratingsrecords as $rec) {
-                if( $item->id==$rec->itemid ) {
-                    //Note: rec->scaleid = the id of scale at the time the rating was submitted
-                    //may be different from the current scale id
-                    $ratingoptions->itemid = $item->id;
-                    $ratingoptions->scaleid = $rec->scaleid;
-                    $ratingoptions->userid = $rec->userid;
-
-                    $rating = new rating($ratingoptions);
-                    $rating->id         = $rec->id;    //unset($rec->id);
-                    $rating->aggregate  = $rec->aggrrating; //unset($rec->aggrrating);
-                    $rating->count      = $rec->numratings; //unset($rec->numratings);
-                    $rating->rating     = $rec->usersrating; //unset($rec->usersrating);
-                    $rating->itemtimecreated = $this->get_item_time_created($item);
-
-                    break;
-                }
-            }
-            //if there are no ratings for this item
-            if( !$rating ) {
-                $ratingoptions->itemid = $item->id;
+        $ratingoptions->ratingarea = $options->ratingarea;
+        $ratingoptions->settings = $this->generate_rating_settings_object($options);
+        foreach ($options->items as $item) {
+            if (array_key_exists($item->{$itemidcol}, $ratingsrecords)) {
+                // Note: rec->scaleid = the id of scale at the time the rating was submitted
+                // may be different from the current scale id
+                $rec = $ratingsrecords[$item->{$itemidcol}];
+                $ratingoptions->itemid = $item->{$itemidcol};
+                $ratingoptions->scaleid = $rec->scaleid;
+                $ratingoptions->userid = $rec->userid;
+                $ratingoptions->id = $rec->id;
+                $ratingoptions->aggregate = min($rec->aggrrating, $ratingoptions->settings->scale->max);
+                $ratingoptions->count = $rec->numratings;
+                $ratingoptions->rating = min($rec->usersrating, $ratingoptions->settings->scale->max);
+            } else {
+                $ratingoptions->itemid = $item->{$itemidcol};
                 $ratingoptions->scaleid = null;
                 $ratingoptions->userid = null;
-
-                $rating = new rating($ratingoptions);
-                $rating->id         = null;
-                $rating->aggregate  = null;
-                $rating->count      = 0;
-                $rating->rating     = null;
-
-                $rating->itemid     = $item->id;
-                $rating->userid     = null;
-                $rating->scaleid     = null;
-                $rating->itemtimecreated = $this->get_item_time_created($item);
+                $ratingoptions->id = null;
+                $ratingoptions->aggregate = null;
+                $ratingoptions->count = 0;
+                $ratingoptions->rating =  null;
             }
 
-            if( !empty($item->userid) ) {
-                $rating->itemuserid = $item->userid;
-            } else {
-                $rating->itemuserid = null;
+            $rating = new rating($ratingoptions);
+            $rating->itemtimecreated = $this->get_item_time_created($item);
+            if (!empty($item->{$itemuseridcol})) {
+                $rating->itemuserid = $item->{$itemuseridcol};
             }
-            $rating->settings = $settings;
             $item->rating = $rating;
-
-            //Below is a nasty hack presumably here to handle scales being changed (out of 10 to out of 5 for example)
-            //
-            // it could throw off the grading if count and sum returned a grade higher than scale
-            // so to prevent it we review the results and ensure that grade does not exceed the scale, if it does we set grade = scale (i.e. full credit)
-            if ($rating->rating > $scalemax) {
-                $rating->rating = $scalemax;
-            }
-            if ($rating->aggregate > $scalemax) {
-                $rating->aggregate = $scalemax;
-            }
         }
 
         return $options->items;
     }
 
-    private function get_item_time_created($item) {
+    /**
+     * Generates a rating settings object based upon the options it is provided.
+     *
+     * @param stdClass $options {
+     *      context           => context the context in which the ratings exists [required]
+     *      component         => string The component the items belong to [required]
+     *      ratingarea        => string The ratingarea the items belong to [required]
+     *      aggregate         => int what aggregation method should be applied. RATING_AGGREGATE_AVERAGE, RATING_AGGREGATE_MAXIMUM etc [required]
+     *      scaleid           => int the scale from which the user can select a rating [required]
+     *      returnurl         => string the url to return the user to after submitting a rating. Can be left null for ajax requests [optional]
+     *      assesstimestart   => int only allow rating of items created after this timestamp [optional]
+     *      assesstimefinish  => int only allow rating of items created before this timestamp [optional]
+     *      plugintype        => string plugin type ie 'mod' Used to find the permissions callback [optional]
+     *      pluginname        => string plugin name ie 'forum' Used to find the permissions callback [optional]
+     * }
+     * @return stdClass
+     */
+    protected function generate_rating_settings_object($options) {
+
+        if (!isset($options->context)) {
+            throw new coding_exception('The context option is a required option when generating a rating settings object.');
+        }
+        if (!isset($options->component)) {
+            throw new coding_exception('The component option is now a required option when generating a rating settings object.');
+        }
+        if (!isset($options->ratingarea)) {
+            throw new coding_exception('The ratingarea option is now a required option when generating a rating settings object.');
+        }
+        if (!isset($options->aggregate)) {
+            throw new coding_exception('The aggregate option is now a required option when generating a rating settings object.');
+        }
+        if (!isset($options->scaleid)) {
+            throw new coding_exception('The scaleid option is now a required option when generating a rating settings object.');
+        }
+
+        // settings that are common to all ratings objects in this context
+        $settings = new stdClass;
+        $settings->scale             = $this->generate_rating_scale_object($options->scaleid); // the scale to use now
+        $settings->aggregationmethod = $options->aggregate;
+        $settings->assesstimestart   = null;
+        $settings->assesstimefinish  = null;
+
+        // Collect options into the settings object
+        if (!empty($options->assesstimestart)) {
+            $settings->assesstimestart = $options->assesstimestart;
+        }
+        if (!empty($options->assesstimefinish)) {
+            $settings->assesstimefinish = $options->assesstimefinish;
+        }
+        if (!empty($options->returnurl)) {
+            $settings->returnurl = $options->returnurl;
+        }
+
+        // check site capabilities
+        $settings->permissions = new stdClass;
+        $settings->permissions->view    = has_capability('moodle/rating:view', $options->context); // can view the aggregate of ratings of their own items
+        $settings->permissions->viewany = has_capability('moodle/rating:viewany', $options->context); // can view the aggregate of ratings of other people's items
+        $settings->permissions->viewall = has_capability('moodle/rating:viewall', $options->context); // can view individual ratings
+        $settings->permissions->rate    = has_capability('moodle/rating:rate', $options->context); // can submit ratings
+
+        // check module capabilities (mostly for backwards compatability with old modules that previously implemented their own ratings)
+        $pluginpermissionsarray = $this->get_plugin_permissions_array($options->context->id, $options->component, $options->ratingarea);
+        $settings->pluginpermissions = new stdClass;
+        $settings->pluginpermissions->view    = $pluginpermissionsarray['view'];
+        $settings->pluginpermissions->viewany = $pluginpermissionsarray['viewany'];
+        $settings->pluginpermissions->viewall = $pluginpermissionsarray['viewall'];
+        $settings->pluginpermissions->rate    = $pluginpermissionsarray['rate'];
+
+        return $settings;
+    }
+
+    /**
+     * Generates a scale object that can be returned
+     *
+     * @global moodle_database $DB
+     * @param type $scaleid
+     * @return stdClass
+     */
+    protected function generate_rating_scale_object($scaleid) {
+        global $DB;
+        if (!array_key_exists('s'.$scaleid, $this->scales)) {
+            $scale = new stdClass;
+            $scale->id = $scaleid;
+            $scale->name = null;
+            $scale->courseid = null;
+            $scale->scaleitems = array();
+            $scale->isnumeric = true;
+            $scale->max = $scaleid;
+
+            if ($scaleid < 0) {
+                // It is a proper scale (not numeric)
+                $scalerecord = $DB->get_record('scale', array('id' => abs($scaleid)));
+                if ($scalerecord) {
+                    // We need to generate an array with string keys starting at 1
+                    $scalearray = explode(',', $scalerecord->scale);
+                    $c = count($scalearray);
+                    for ($i = 0; $i < $c; $i++) {
+                        // treat index as a string to allow sorting without changing the value
+                        $scale->scaleitems[(string)($i + 1)] = $scalearray[$i];
+                    }
+                    krsort($scale->scaleitems); // have the highest grade scale item appear first
+                    $scale->isnumeric = false;
+                    $scale->name = $scalerecord->name;
+                    $scale->courseid = $scalerecord->courseid;
+                    $scale->max = count($scale->scaleitems);
+                }
+            } else {
+                //generate an array of values for numeric scales
+                for($i = 0; $i <= (int)$scaleid; $i++) {
+                    $scale->scaleitems[(string)$i] = $i;
+                }
+            }
+            $this->scales['s'.$scaleid] = $scale;
+        }
+        return $this->scales['s'.$scaleid];
+    }
+
+    /**
+     * Gets the time the given item was created
+     *
+     * TODO: Find a better solution for this, its not ideal to test for fields really we should be
+     * asking the component the item belongs to what field to look for or even the value we
+     * are looking for.
+     *
+     * @param stdClass $item
+     * @return mixed
+     */
+    protected function get_item_time_created($item) {
         if( !empty($item->created) ) {
             return $item->created;//the forum_posts table has created instead of timecreated
         }
@@ -453,25 +762,34 @@ class rating_manager {
     }
 
     /**
-    * Returns an array of grades calculated by aggregating item ratings.
-    * @param object $options {
-    *            userid => int the id of the user whose items have been rated. NOT the user who submitted the ratings. 0 to update all. [required]
-    *            aggregationmethod => int the aggregation method to apply when calculating grades ie RATING_AGGREGATE_AVERAGE [required]
-    *            scaleid => int the scale from which the user can select a rating. Used for bounds checking. [required]
-    *            itemtable => int the table containing the items [required]
-    *            itemtableusercolum => int the column of the user table containing the item owner's user id [required]
-    *
-    *            contextid => int the context in which the rated items exist [optional]
-    *
-    *            modulename => string the name of the module [optional]
-    *            moduleid => int the id of the module instance [optional]
-    *
-    * @return array the array of the user's grades
-    */
+     * Returns an array of grades calculated by aggregating item ratings.
+     * @param object $options {
+     *            userid => int the id of the user whose items have been rated. NOT the user who submitted the ratings. 0 to update all. [required]
+     *            aggregationmethod => int the aggregation method to apply when calculating grades ie RATING_AGGREGATE_AVERAGE [required]
+     *            scaleid => int the scale from which the user can select a rating. Used for bounds checking. [required]
+     *            itemtable => int the table containing the items [required]
+     *            itemtableusercolum => int the column of the user table containing the item owner's user id [required]
+     *            component => The component for the ratings [required]
+     *            ratingarea => The ratingarea for the ratings [required]
+     *
+     *            contextid => int the context in which the rated items exist [optional]
+     *
+     *            modulename => string the name of the module [optional]
+     *            moduleid => int the id of the module instance [optional]
+     *
+     * @return array the array of the user's grades
+     */
     public function get_user_grades($options) {
         global $DB;
 
         $contextid = null;
+
+        if (!isset($options->component)) {
+            throw new coding_exception('The component option is now a required option when getting user grades from ratings.');
+        }
+        if (!isset($options->ratingarea)) {
+            throw new coding_exception('The ratingarea option is now a required option when getting user grades from ratings.');
+        }
 
         //if the calling code doesn't supply a context id we'll have to figure it out
         if( !empty($options->contextid) ) {
@@ -489,24 +807,27 @@ class rating_manager {
             //going direct to the db for the context id seems wrong
             list($ctxselect, $ctxjoin) = context_instance_preload_sql('cm.id', CONTEXT_MODULE, 'ctx');
             $sql = "SELECT cm.* $ctxselect
-            FROM {course_modules} cm
-            LEFT JOIN {modules} mo ON mo.id = cm.module
-            LEFT JOIN {{$modulename}} m ON m.id = cm.instance $ctxjoin
-            WHERE mo.name=:modulename AND m.id=:moduleid";
+                      FROM {course_modules} cm
+                 LEFT JOIN {modules} mo ON mo.id = cm.module
+                 LEFT JOIN {{$modulename}} m ON m.id = cm.instance $ctxjoin
+                     WHERE mo.name=:modulename AND
+                           m.id=:moduleid";
             $contextrecord = $DB->get_record_sql($sql, array('modulename'=>$modulename, 'moduleid'=>$moduleid), '*', MUST_EXIST);
             $contextid = $contextrecord->ctxid;
         }
 
         $params = array();
-        $params['contextid']= $contextid;
-        $itemtable          = $options->itemtable;
-        $itemtableusercolumn= $options->itemtableusercolumn;
-        $scaleid            = $options->scaleid;
-        $aggregationstring = $this->get_aggregation_method($options->aggregationmethod);
+        $params['contextid']  = $contextid;
+        $params['component']  = $options->component;
+        $params['ratingarea'] = $options->ratingarea;
+        $itemtable            = $options->itemtable;
+        $itemtableusercolumn  = $options->itemtableusercolumn;
+        $scaleid              = $options->scaleid;
+        $aggregationstring    = $this->get_aggregation_method($options->aggregationmethod);
 
         //if userid is not 0 we only want the grade for a single user
         $singleuserwhere = '';
-        if ($options->userid!=0) {
+        if ($options->userid != 0) {
             $params['userid1'] = intval($options->userid);
             $singleuserwhere = "AND i.{$itemtableusercolumn} = :userid1";
         }
@@ -515,13 +836,14 @@ class rating_manager {
         //r.contextid will be null for users who haven't been rated yet
         //no longer including users who haven't been rated to reduce memory requirements
         $sql = "SELECT u.id as id, u.id AS userid, $aggregationstring(r.rating) AS rawgrade
-                FROM {user} u
-                LEFT JOIN {{$itemtable}} i ON u.id=i.{$itemtableusercolumn}
-                LEFT JOIN {rating} r ON r.itemid=i.id
-                WHERE r.contextid=:contextid
-                $singleuserwhere
-                GROUP BY u.id";
-
+                  FROM {user} u
+             LEFT JOIN {{$itemtable}} i ON u.id=i.{$itemtableusercolumn}
+             LEFT JOIN {rating} r ON r.itemid=i.id
+                 WHERE r.contextid = :contextid AND
+                       r.component = :component AND
+                       r.ratingarea = :ratingarea
+                       $singleuserwhere
+              GROUP BY u.id";
         $results = $DB->get_records_sql($sql, $params);
 
         if ($results) {
@@ -568,19 +890,19 @@ class rating_manager {
      * @return array
      */
     public function get_aggregate_types() {
-        return array (RATING_AGGREGATE_NONE  => get_string('aggregatenone', 'rating'),
-                      RATING_AGGREGATE_AVERAGE   => get_string('aggregateavg', 'rating'),
-                      RATING_AGGREGATE_COUNT => get_string('aggregatecount', 'rating'),
-                      RATING_AGGREGATE_MAXIMUM   => get_string('aggregatemax', 'rating'),
-                      RATING_AGGREGATE_MINIMUM   => get_string('aggregatemin', 'rating'),
-                      RATING_AGGREGATE_SUM   => get_string('aggregatesum', 'rating'));
+        return array (RATING_AGGREGATE_NONE     => get_string('aggregatenone', 'rating'),
+                      RATING_AGGREGATE_AVERAGE  => get_string('aggregateavg', 'rating'),
+                      RATING_AGGREGATE_COUNT    => get_string('aggregatecount', 'rating'),
+                      RATING_AGGREGATE_MAXIMUM  => get_string('aggregatemax', 'rating'),
+                      RATING_AGGREGATE_MINIMUM  => get_string('aggregatemin', 'rating'),
+                      RATING_AGGREGATE_SUM      => get_string('aggregatesum', 'rating'));
     }
 
     /**
-    * Converts an aggregation method constant into something that can be included in SQL
-    * @param int $aggregate An aggregation constant. For example, RATING_AGGREGATE_AVERAGE.
-    * @return string an SQL aggregation method
-    */
+     * Converts an aggregation method constant into something that can be included in SQL
+     * @param int $aggregate An aggregation constant. For example, RATING_AGGREGATE_AVERAGE.
+     * @return string an SQL aggregation method
+     */
     public function get_aggregation_method($aggregate) {
         $aggregatestr = null;
         switch($aggregate){
@@ -607,17 +929,18 @@ class rating_manager {
     }
 
     /**
-    * Looks for a callback like forum_rating_permissions() to retrieve permissions from the plugin whose items are being rated
-    * @param int $contextid The current context id
-    * @param string component the name of the component that is using ratings ie 'mod_forum'
-    * @return array rating related permissions
-    */
-    public function get_plugin_permissions_array($contextid, $component=null) {
+     * Looks for a callback like forum_rating_permissions() to retrieve permissions from the plugin whose items are being rated
+     * @param int $contextid The current context id
+     * @param string component the name of the component that is using ratings ie 'mod_forum'
+     * @param string ratingarea The area the rating is associated with
+     * @return array rating related permissions
+     */
+    public function get_plugin_permissions_array($contextid, $component, $ratingarea) {
         $pluginpermissionsarray = null;
         $defaultpluginpermissions = array('rate'=>false,'view'=>false,'viewany'=>false,'viewall'=>false);//deny by default
         if (!empty($component)) {
             list($type, $name) = normalize_component($component);
-            $pluginpermissionsarray = plugin_callback($type, $name, 'rating', 'permissions', array($contextid), $defaultpluginpermissions);
+            $pluginpermissionsarray = plugin_callback($type, $name, 'rating', 'permissions', array($contextid, $component, $ratingarea), $defaultpluginpermissions);
         } else {
             $pluginpermissionsarray = $defaultpluginpermissions;
         }
@@ -628,28 +951,100 @@ class rating_manager {
      * Validates a submitted rating
      * @param array $params submitted data
      *            context => object the context in which the rated items exists [required]
-     *            itemid => int the ID of the object being rated
+     *            component => The component the rating belongs to [required]
+     *            ratingarea => The ratingarea the rating is associated with [required]
+     *            itemid => int the ID of the object being rated [required]
      *            scaleid => int the scale from which the user can select a rating. Used for bounds checking. [required]
      *            rating => int the submitted rating
      *            rateduserid => int the id of the user whose items have been rated. NOT the user who submitted the ratings. 0 to update all. [required]
      *            aggregation => int the aggregation method to apply when calculating grades ie RATING_AGGREGATE_AVERAGE [optional]
      * @return boolean true if the rating is valid. False if callback wasnt found and will throw rating_exception if rating is invalid
      */
-    public function check_rating_is_valid($component, $params) {
-        list($plugintype, $pluginname) = normalize_component($component);
+    public function check_rating_is_valid($params) {
 
-        //this looks for a function like forum_rating_is_valid() in mod_forum lib.php
+        if (!isset($params['context'])) {
+            throw new coding_exception('The context option is a required option when checking rating validity.');
+        }
+        if (!isset($params['component'])) {
+            throw new coding_exception('The component option is now a required option when checking rating validity');
+        }
+        if (!isset($params['ratingarea'])) {
+            throw new coding_exception('The ratingarea option is now a required option when checking rating validity');
+        }
+        if (!isset($params['itemid'])) {
+            throw new coding_exception('The itemid option is now a required option when checking rating validity');
+        }
+        if (!isset($params['scaleid'])) {
+            throw new coding_exception('The scaleid option is now a required option when checking rating validity');
+        }
+        if (!isset($params['rateduserid'])) {
+            throw new coding_exception('The rateduserid option is now a required option when checking rating validity');
+        }
+
+        list($plugintype, $pluginname) = normalize_component($params['component']);
+
+        //this looks for a function like forum_rating_validate() in mod_forum lib.php
         //wrapping the params array in another array as call_user_func_array() expands arrays into multiple arguments
         $isvalid = plugin_callback($plugintype, $pluginname, 'rating', 'validate', array($params), null);
 
         //if null then the callback doesn't exist
         if ($isvalid === null) {
             $isvalid = false;
-            debugging('plugin rating_add() function not found');
+            debugging('rating validation callback not found for component '.  clean_param($component, PARAM_ALPHANUMEXT));
         }
-
         return $isvalid;
     }
+
+    /**
+     * Initialises JavaScript to enable AJAX ratings on the provided page
+     *
+     * @param moodle_page $page
+     * @return true
+     */
+    public function initialise_rating_javascript(moodle_page $page) {
+        global $CFG;
+
+        if ($this->javascriptinitialised) {
+            return true;
+        }
+
+        if (!empty($CFG->enableajax)) {
+            $page->requires->js_init_call('M.core_rating.init');
+        }
+
+        $this->javascriptinitialised = true;
+        return true;
+    }
+
+    /**
+     * Returns a string that describes the aggregation method that was provided.
+     *
+     * @param string $aggregationmethod
+     * @return string
+     */
+    public function get_aggregate_label($aggregationmethod) {
+        $aggregatelabel = '';
+        switch ($aggregationmethod) {
+            case RATING_AGGREGATE_AVERAGE :
+                $aggregatelabel .= get_string("aggregateavg", "rating");
+                break;
+            case RATING_AGGREGATE_COUNT :
+                $aggregatelabel .= get_string("aggregatecount", "rating");
+                break;
+            case RATING_AGGREGATE_MAXIMUM :
+                $aggregatelabel .= get_string("aggregatemax", "rating");
+                break;
+            case RATING_AGGREGATE_MINIMUM :
+                $aggregatelabel .= get_string("aggregatemin", "rating");
+                break;
+            case RATING_AGGREGATE_SUM :
+                $aggregatelabel .= get_string("aggregatesum", "rating");
+                break;
+        }
+        $aggregatelabel .= get_string('labelsep', 'langconfig');
+        return $aggregatelabel;
+    }
+
 }//end rating_manager class definition
 
 class rating_exception extends moodle_exception {

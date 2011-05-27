@@ -205,6 +205,8 @@ function folder_user_complete($course, $user, $mod, $folder) {
 /**
  * Returns the users with data in one folder
  *
+ * @todo: deprecated - to be deleted in 2.2
+ *
  * @param int $folderid
  * @return bool false
  */

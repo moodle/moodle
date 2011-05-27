@@ -1010,6 +1010,9 @@ class restore_course_structure_step extends restore_structure_step {
         // Apply for 'theme' plugins optional paths at course level
         $this->add_plugin_structure('theme', $course);
 
+        // Apply for 'course report' plugins optional paths at course level
+        $this->add_plugin_structure('coursereport', $course);
+
         // Apply for plagiarism plugins optional paths at course level
         $this->add_plugin_structure('plagiarism', $course);
 

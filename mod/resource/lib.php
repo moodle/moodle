@@ -210,6 +210,8 @@ function resource_user_complete($course, $user, $mod, $resource) {
 /**
  * Returns the users with data in one resource
  *
+ * @todo: deprecated - to be deleted in 2.2
+ *
  * @param int $resourceid
  * @return bool false
  */
