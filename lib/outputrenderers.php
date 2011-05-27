@@ -2521,7 +2521,7 @@ EOD;
             return '';
         }
 
-        $switched = get_user_switched_theme();
+        $switched = get_user_switched_device();
 
         if ($switched) {
             $linktext = get_string('switchdevicerecommended');
