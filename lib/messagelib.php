@@ -195,8 +195,9 @@ function message_send($eventdata) {
 
 /**
  * This code updates the message_providers table with the current set of providers
+ *
  * @param $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
- * @return boolean
+ * @return void
  */
 function message_update_providers($component='moodle') {
     global $DB;
@@ -242,16 +243,15 @@ function message_update_providers($component='moodle') {
     foreach ($dbproviders as $dbprovider) {  // Delete old ones
         $DB->delete_records('message_providers', array('id' => $dbprovider->id));
     }
-
-    return true;
 }
 
 /**
  * Setting default messaging preference for particular message provider
+ *
  * @param  string $component   The name of component (e.g. moodle, mod_forum, etc.)
  * @param  string $messagename The name of message provider
  * @param  array  $fileprovider The value of $messagename key in the array defined in plugin messages.php
- * @return bool
+ * @return void
  */
 function message_set_default_message_preference($component, $messagename, $fileprovider) {
     global $DB;
@@ -262,12 +262,14 @@ function message_set_default_message_preference($component, $messagename, $filep
     // load default messaging preferences
     $defaultpreferences = get_message_output_default_preferences();
 
-    // Setting site default preferences
+    // Setting default preference
     $componentproviderbase = $component.'_'.$messagename;
     $loggedinpref = array();
     $loggedoffpref = array();
+    // set 'permitted' preference first for each messaging processor
     foreach ($processors as $processor) {
         $preferencename = $processor->name.'_provider_'.$componentproviderbase.'_permitted';
+        // if we do not have this setting yet, set it
         if (!array_key_exists($preferencename, $defaultpreferences)) {
             // determine plugin default settings
             $plugindefault = 0;
@@ -287,7 +289,7 @@ function message_set_default_message_preference($component, $messagename, $filep
             }
         }
     }
-    // store loggedin/loggedoff preferences
+    // now set loggedin/loggedoff preferences
     if (!empty($loggedinpref)) {
         $preferencename = 'message_provider_'.$componentproviderbase.'_loggedin';
         set_config($preferencename, join(',', $loggedinpref), 'message');
@@ -300,6 +302,7 @@ function message_set_default_message_preference($component, $messagename, $filep
 
 /**
  * Returns the active providers for the current user, based on capability
+ *
  * @return array of message providers
  */
 function message_get_my_providers() {
@@ -323,6 +326,7 @@ function message_get_my_providers() {
 
 /**
  * Gets the message providers that are in the database for this component.
+ *
  * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
  * @return array of message providers
  *
@@ -337,6 +341,7 @@ function message_get_providers_from_db($component) {
 /**
  * Loads the messages definitions for the component (from file). If no
  * messages are defined for the component, we simply return an empty array.
+ *
  * @param $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
  * @return array of message providerss or empty array if not exists
  *
@@ -365,7 +370,9 @@ function message_get_providers_from_file($component) {
 
 /**
  * Remove all message providers
+ *
  * @param $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
+ * @return void
  */
 function message_uninstall($component) {
     global $DB;
@@ -375,6 +382,4 @@ function message_uninstall($component) {
     $DB->delete_records_select('config_plugins', "plugin = 'message' AND ".$DB->sql_like('name', '?', false), array("%_provider_{$component}_%"));
     $DB->delete_records_select('user_preferences', $DB->sql_like('name', '?', false), array("message_provider_{$component}_%"));
     $transaction->allow_commit();
-
-    return true;
 }
