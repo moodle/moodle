@@ -706,9 +706,8 @@ if (!empty($CFG->allowthemechangeonurl) and !empty($_GET['theme'])) {
 unset($urlthemename);
 
 // Ensure a valid theme is set.
-if (!isset($CFG->themes)) {
-    $theme = 'standard';
-    $CFG->themes = json_encode(array('default' => $theme));
+if (!isset($CFG->theme)) {
+    $CFG->theme = 'standardwhite';
 }
 
 // Set language/locale of printed times.  If user has chosen a language that
@@ -739,7 +738,7 @@ if (empty($CFG->lang)) {
 moodle_setlocale();
 
 if (!empty($CFG->debugvalidators) and !empty($CFG->guestloginbutton)) {
-    if (!empty($theme) and $theme == 'standard') {    // Temporary measure to help with XHTML validation
+    if ($CFG->theme == 'standard' or $CFG->theme == 'standardwhite') {    // Temporary measure to help with XHTML validation
         if (isset($_SERVER['HTTP_USER_AGENT']) and empty($USER->id)) {      // Allow W3CValidator in as user called w3cvalidator (or guest)
             if ((strpos($_SERVER['HTTP_USER_AGENT'], 'W3C_Validator') !== false) or
                 (strpos($_SERVER['HTTP_USER_AGENT'], 'Cynthia') !== false )) {
