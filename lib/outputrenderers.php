@@ -364,7 +364,7 @@ class core_renderer extends renderer_base {
         // but some of the content won't be known until later, so we return a placeholder
         // for now. This will be replaced with the real content in {@link footer()}.
         $output = self::PERFORMANCE_INFO_TOKEN;
-        if ($this->page->$this->_devicetypeinuse == 'legacy'){
+        if ($this->page->devicetypeinuse == 'legacy'){
             // The legacy theme is in use print the notification
             $output .= html_writer::tag('div', get_string('legacythemeinuse'), array('class'=>'legacythemeinuse'));
         }

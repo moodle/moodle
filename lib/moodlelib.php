@@ -7700,8 +7700,8 @@ function get_selected_theme_for_device_type($devicetype = null) {
         return false;
     }
 
-    //prevent problems if a theme is removed
-    if (!theme_config::find_theme_location($CFG->$themevarname)) {
+     //prevent problems if a user installs themes
+    if (!is_dir($CFG->dirroot.'/theme/'.$CFG->$themevarname)) {
         if ($devicetype == 'default') {
             return 'standard';
         } else {
