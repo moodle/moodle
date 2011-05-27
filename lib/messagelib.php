@@ -34,8 +34,8 @@ defined('MOODLE_INTERNAL') || die();
  * Required parameter $eventdata structure:
  *  component string component name. must exist in message_providers
  *  name string message type name. must exist in message_providers
- *  userfrom object the user sending the message
- *  userto object the message recipient
+ *  userfrom object|int the user sending the message
+ *  userto object|int the message recipient
  *  subject string the message subject
  *  fullmessage - the full message in a given format
  *  fullmessageformat  - the format if the full message (FORMAT_MOODLE, FORMAT_HTML, ..)
@@ -57,11 +57,9 @@ function message_send($eventdata) {
     $DB->transactions_forbidden();
 
     if (is_int($eventdata->userto)) {
-        mtrace('message_send() userto is a user ID when it should be a user object');
         $eventdata->userto = $DB->get_record('user', array('id' => $eventdata->userto));
     }
     if (is_int($eventdata->userfrom)) {
-        mtrace('message_send() userfrom is a user ID when it should be a user object');
         $eventdata->userfrom = $DB->get_record('user', array('id' => $eventdata->userfrom));
     }
 
