@@ -6112,28 +6112,8 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2011052300.02);
     }
 
-    //remove the old theme and themelegacy fields and add any stored settings to the new themes setting.
+    //set enable theme detection to the new themes setting.
     if ($oldversion < 2011052500.00) {
-        if (!empty($CFG->themes)) {
-            unset_config('themes');
-        }
-
-        if (!empty($CFG->theme)) {
-            $configthemes['default'] = $CFG->theme;
-
-            unset_config('theme');
-        }
-
-        if (!empty($CFG->themelegacy)) {
-            $configthemes['legacy'] = $CFG->themelegacy;
-
-            unset_config('themelegacy');
-        }
-
-        if ($configthemes) {
-            set_config('themes', json_encode($configthemes));
-        }
-
         set_config('enabledevicedetection', 1);
 
         upgrade_main_savepoint(true, 2011052500.00);

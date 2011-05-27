@@ -7694,16 +7694,18 @@ function get_selected_theme_for_device_type($devicetype = null) {
         }
     }
 
-    $themes = json_decode($CFG->themes);
-
-    if (!empty($themes[$device_type])) {
-        $selectedtheme = $themes[$device_type];
+    if ($devicetype == 'default') {
+        $themevarname = 'theme';
     } else {
+        $themevarname = 'theme' . $devicetype;
+    }
+
+    if (empty($CFG->$themevarname)) {
         return false;
     }
 
     //prevent problems if a theme is removed
-    if (!theme_config::find_theme_location($selectedtheme)) {
+    if (!theme_config::find_theme_location($CFG->$themevarname)) {
         if ($devicetype == 'default') {
             return 'standard';
         } else {
@@ -7711,7 +7713,7 @@ function get_selected_theme_for_device_type($devicetype = null) {
         }
     }
 
-    return $selectedtheme;
+    return $CFG->$themevarname;
 }
 
 

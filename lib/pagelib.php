@@ -1282,11 +1282,6 @@ class moodle_page {
 
         $devicetype = get_device_type();
 
-        //set up of the new themes variable hasn't happened so use the old theme support.
-        if (empty($CFG->themes)) {
-            return $this->legacy_theme_support($themeorder, $mnetpeertheme);
-        }
-
         $theme = '';
 
         foreach ($themeorder as $themetype) {
