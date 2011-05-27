@@ -22,6 +22,6 @@ require('../config.php');
 
 $url = required_param('url', PARAM_LOCALURL);
 
-switch_theme();
+switch_device();
 
 redirect($url);

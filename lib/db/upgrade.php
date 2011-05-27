@@ -6119,21 +6119,13 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         if (!empty($CFG->theme)) {
-            $themeobj = new stdClass();
-            $themeobj->device = 'default';
-            $themeobj->themename = $CFG->theme;
-
-            $configthemes[] = $themeobj;
+            $configthemes['default'] = $CFG->theme;
 
             unset_config('theme');
         }
 
         if (!empty($CFG->themelegacy)) {
-            $themeobj = new stdClass();
-            $themeobj->device = 'legacy';
-            $themeobj->themename = $CFG->themelegacy;
-
-            $configthemes[] = $themeobj;
+            $configthemes['legacy'] = $CFG->themelegacy;
 
             unset_config('themelegacy');
         }

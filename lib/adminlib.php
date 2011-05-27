@@ -7447,12 +7447,12 @@ class admin_setting_devicedetectregex extends admin_setting {
 
         $i = 0;
 
-        foreach ($regexes as $regex) {
+        foreach ($regexes as $value => $regex) {
             $expressionname  = 'expression'.$i;
             $valuename = 'value'.$i;
 
-            $form[$expressionname] = $regex->expression;
-            $form[$valuename] = $regex->value;
+            $form[$expressionname] = $regex;
+            $form[$valuename] = $value;
             $i++;
         }
 
@@ -7487,11 +7487,7 @@ class admin_setting_devicedetectregex extends admin_setting {
                 continue;
             }
 
-            $regex = new stdClass();
-            $regex->expression = $expression;
-            $regex->value = $value;
-
-            $regexes[] = $regex;
+            $regexes[$value] = $expression;
         }
 
         $regexes = json_encode($regexes);
