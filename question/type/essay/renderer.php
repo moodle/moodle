@@ -185,7 +185,7 @@ class qtype_essay_format_editor_renderer extends plugin_renderer_base {
 
     public function response_area_read_only($name, $qa, $step, $lines, $context) {
         return html_writer::tag('div', $this->prepare_response($name, $qa, $step, $context),
-                array('class' => $this->class_name() . ' qtype_essay_response'));
+                array('class' => $this->class_name() . ' qtype_essay_response readonly'));
     }
 
     public function response_area_input($name, $qa, $step, $lines, $context) {

@@ -10,8 +10,10 @@
     font-family: Andale Mono, Monaco, Courier New, DejaVu Sans Mono, monospace;
 }
 .que.essay .qtype_essay_response {
-    background-color: white;
     min-height: 3em;
+}
+.que.essay .qtype_essay_response.readonly {
+    background-color: white;
 }
 .que.essay div.qtype_essay_response textarea {
     width: 100%;
