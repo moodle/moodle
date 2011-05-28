@@ -194,6 +194,24 @@ class mathsslib_test extends UnitTestCase {
 
     }
 
+    public function test_scientific_notation() {
+        $formula = new calc_formula('=10e10');
+        $this->assertWithinMargin($formula->evaluate(), 1e11, 1e11*1e-15);
+
+        $formula = new calc_formula('=10e-10');
+        $this->assertWithinMargin($formula->evaluate(), 1e-9, 1e11*1e-15);
+
+        $formula = new calc_formula('=10e+10');
+        $this->assertWithinMargin($formula->evaluate(), 1e11, 1e11*1e-15);
+
+        $formula = new calc_formula('=10e10*5');
+        $this->assertWithinMargin($formula->evaluate(), 5e11, 1e11*1e-15);
+
+        $formula = new calc_formula('=10e10^2');
+        $this->assertWithinMargin($formula->evaluate(), 1e22, 1e22*1e-15);
+
+    }
+
 }
 
 
