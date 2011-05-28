@@ -1,7 +1,20 @@
 <?php
-
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+    die('Direct access to this script is forbidden.');///  It must be included from a Moodle page
 }
 
 require_once($CFG->libdir . '/mathslib.php');
@@ -19,7 +32,7 @@ class mathsslib_test extends UnitTestCase {
     /**
      * Tests the basic formula evaluation
      */
-    function test__basic() {
+    public function test__basic() {
         $formula = new calc_formula('=1+2');
         $res = $formula->evaluate();
         $this->assertEqual($res, 3, '3+1 is: %s');
@@ -28,8 +41,8 @@ class mathsslib_test extends UnitTestCase {
     /**
      * Tests the formula params
      */
-    function test__params() {
-        $formula = new calc_formula('=a+b+c', array('a'=>10,'b'=>20,'c'=>30));
+    public function test__params() {
+        $formula = new calc_formula('=a+b+c', array('a'=>10, 'b'=>20, 'c'=>30));
         $res = $formula->evaluate();
         $this->assertEqual($res, 60, '10+20+30 is: %s');
     }
@@ -37,11 +50,11 @@ class mathsslib_test extends UnitTestCase {
     /**
      * Tests the changed params
      */
-    function test__changing_params() {
-        $formula = new calc_formula('=a+b+c', array('a'=>10,'b'=>20,'c'=>30));
+    public function test__changing_params() {
+        $formula = new calc_formula('=a+b+c', array('a'=>10, 'b'=>20, 'c'=>30));
         $res = $formula->evaluate();
         $this->assertEqual($res, 60, '10+20+30 is: %s');
-        $formula->set_params(array('a'=>1,'b'=>2,'c'=>3));
+        $formula->set_params(array('a'=>1, 'b'=>2, 'c'=>3));
         $res = $formula->evaluate();
         $this->assertEqual($res, 6, 'changed params 1+2+3 is: %s');
     }
@@ -49,20 +62,20 @@ class mathsslib_test extends UnitTestCase {
     /**
      * Tests the spreadsheet emulation function in formula
      */
-    function test__calc_function() {
-        $formula = new calc_formula('=sum(a,b,c)', array('a'=>10,'b'=>20,'c'=>30));
+    public function test__calc_function() {
+        $formula = new calc_formula('=sum(a, b, c)', array('a'=>10, 'b'=>20, 'c'=>30));
         $res = $formula->evaluate();
-        $this->assertEqual($res, 60, 'sum(a,b,c) is: %s');
+        $this->assertEqual($res, 60, 'sum(a, b, c) is: %s');
     }
 
     /**
      * Tests the min and max functions
      */
-    function test__minmax_function() {
-        $formula = new calc_formula('=min(a,b,c)', array('a'=>10,'b'=>20,'c'=>30));
+    public function test__minmax_function() {
+        $formula = new calc_formula('=min(a, b, c)', array('a'=>10, 'b'=>20, 'c'=>30));
         $res = $formula->evaluate();
         $this->assertEqual($res, 10, 'minimum is: %s');
-        $formula = new calc_formula('=max(a,b,c)', array('a'=>10,'b'=>20,'c'=>30));
+        $formula = new calc_formula('=max(a, b, c)', array('a'=>10, 'b'=>20, 'c'=>30));
         $res = $formula->evaluate();
         $this->assertEqual($res, 30, 'maximum is: %s');
     }
@@ -70,8 +83,8 @@ class mathsslib_test extends UnitTestCase {
     /**
      * Tests special chars
      */
-    function test__specialchars() {
-        $formula = new calc_formula('=gi1 + gi2 + gi11', array('gi1'=>10,'gi2'=>20,'gi11'=>30));
+    public function test__specialchars() {
+        $formula = new calc_formula('=gi1 + gi2 + gi11', array('gi1'=>10, 'gi2'=>20, 'gi11'=>30));
         $res = $formula->evaluate();
         $this->assertEqual($res, 60, 'sum is: %s');
     }
@@ -79,49 +92,52 @@ class mathsslib_test extends UnitTestCase {
     /**
      * Tests some slightly more complex expressions
      */
-    function test__more_complex_expressions() {
+    public function test__more_complex_expressions() {
         $formula = new calc_formula('=pi() + a', array('a'=>10));
         $res = $formula->evaluate();
         $this->assertEqual($res, pi()+10);
         $formula = new calc_formula('=pi()^a', array('a'=>10));
         $res = $formula->evaluate();
-        $this->assertEqual($res, pow(pi(),10));
+        $this->assertEqual($res, pow(pi(), 10));
         $formula = new calc_formula('=-8*(5/2)^2*(1-sqrt(4))-8');
         $res = $formula->evaluate();
-        $this->assertEqual($res, -8*pow((5/2),2)*(1-sqrt(4))-8);
+        $this->assertEqual($res, -8*pow((5/2), 2)*(1-sqrt(4))-8);
     }
 
     /**
      * Tests some slightly more complex expressions
      */
-    function test__error_handling() {
-        if (debugging('', DEBUG_DEVELOPER)){
+    public function test__error_handling() {
+        if (debugging('', DEBUG_DEVELOPER)) {
             $this->expectError();
         }
         $formula = new calc_formula('=pi( + a', array('a'=>10));
         $res = $formula->evaluate();
         $this->assertEqual($res, false);
-        $this->assertEqual($formula->get_error(), get_string('unexpectedoperator', 'mathslib', '+'));
+        $this->assertEqual($formula->get_error(),
+                                        get_string('unexpectedoperator', 'mathslib', '+'));
 
-        if (debugging('', DEBUG_DEVELOPER)){
+        if (debugging('', DEBUG_DEVELOPER)) {
             $this->expectError();
         }
         $formula = new calc_formula('=pi(');
         $res = $formula->evaluate();
         $this->assertEqual($res, false);
-        $this->assertEqual($formula->get_error(), get_string('expectingaclosingbracket', 'mathslib'));
+        $this->assertEqual($formula->get_error(),
+                                        get_string('expectingaclosingbracket', 'mathslib'));
 
-        if (debugging('', DEBUG_DEVELOPER)){
+        if (debugging('', DEBUG_DEVELOPER)) {
             $this->expectError();
         }
         $formula = new calc_formula('=pi()^');
         $res = $formula->evaluate();
         $this->assertEqual($res, false);
-        $this->assertEqual($formula->get_error(), get_string('operatorlacksoperand', 'mathslib', '^'));
+        $this->assertEqual($formula->get_error(),
+                                        get_string('operatorlacksoperand', 'mathslib', '^'));
 
     }
 
-    function test_rounding_function() {
+    public function test_rounding_function() {
         $formula = new calc_formula('=round(2.5)');
         $this->assertEqual($formula->evaluate(), 3);
 
@@ -140,7 +156,6 @@ class mathsslib_test extends UnitTestCase {
         $formula = new calc_formula('=round(-2.5)');
         $this->assertEqual($formula->evaluate(), -3);
 
-
         $formula = new calc_formula('=ceil(2.5)');
         $this->assertEqual($formula->evaluate(), 3);
 
@@ -158,7 +173,6 @@ class mathsslib_test extends UnitTestCase {
 
         $formula = new calc_formula('=ceil(-2.5)');
         $this->assertEqual($formula->evaluate(), -2);
-
 
         $formula = new calc_formula('=floor(2.5)');
         $this->assertEqual($formula->evaluate(), 2);
