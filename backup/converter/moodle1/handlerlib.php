@@ -501,11 +501,10 @@ class moodle1_files_handler extends moodle1_xml_handler {
      * Migrates course_files in the converter workdir
      */
     protected function migrate_course_files() {
-        $path = $this->converter->get_tempdir_path().'/course_files';
         $ids  = array();
         $fileman = $this->converter->get_file_manager($this->converter->get_contextid(CONTEXT_COURSE), 'course', 'legacy');
-        if (file_exists($path)) {
-            $ids = $fileman->migrate_directory($path);
+        if (file_exists($this->converter->get_tempdir_path().'/course_files')) {
+            $ids = $fileman->migrate_directory('course_files');
             $this->converter->set_stash('course_files_ids', $ids);
         }
     }

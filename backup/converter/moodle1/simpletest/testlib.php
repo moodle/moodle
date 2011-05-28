@@ -40,6 +40,7 @@ class moodle1_converter_test extends UnitTestCase {
 
         $this->tempdir = convert_helper::generate_id('simpletest');
         check_dir_exists("$CFG->dataroot/temp/backup/$this->tempdir/course_files/sub1");
+        check_dir_exists("$CFG->dataroot/temp/backup/$this->tempdir/moddata/unittest/4/7");
         copy(
             "$CFG->dirroot/backup/converter/moodle1/simpletest/files/moodle.xml",
             "$CFG->dataroot/temp/backup/$this->tempdir/moodle.xml"
@@ -51,6 +52,18 @@ class moodle1_converter_test extends UnitTestCase {
         copy(
             "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
             "$CFG->dataroot/temp/backup/$this->tempdir/course_files/sub1/file2.gif"
+        );
+        copy(
+            "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
+            "$CFG->dataroot/temp/backup/$this->tempdir/moddata/unittest/4/file1.gif"
+        );
+        copy(
+            "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
+            "$CFG->dataroot/temp/backup/$this->tempdir/moddata/unittest/4/icon.gif"
+        );
+        copy(
+            "$CFG->dirroot/backup/converter/moodle1/simpletest/files/icon.gif",
+            "$CFG->dataroot/temp/backup/$this->tempdir/moddata/unittest/4/7/icon.gif"
         );
     }
 
@@ -180,6 +193,43 @@ class moodle1_converter_test extends UnitTestCase {
         $this->assertTrue(0 < $id1);
         $this->assertTrue($id1 < $id2);
         $this->assertTrue($id2 < $id3);
+    }
+
+    public function test_migrate_file() {
+        // set-up the file manager
+        $converter = convert_factory::get_converter('moodle1', $this->tempdir);
+        $converter->create_stash_storage();
+        $contextid = $converter->get_contextid(CONTEXT_MODULE, 32);
+        $fileman   = $converter->get_file_manager($contextid, 'mod_unittest', 'testarea');
+        // this fileman has not converted anything yet
+        $fileids = $fileman->get_fileids();
+        $this->assertIsA($fileids, 'array');
+        $this->assertEqual(0, count($fileids));
+        // migrate a single file
+        $fileman->itemid = 4;
+        $fileman->migrate_file('moddata/unittest/4/icon.gif');
+        $this->assertTrue(is_file($converter->get_workdir_path().'/files/4e/4ea114b0558f53e3af8dd9afc0e0810a95c2a724'));
+        // get the file id
+        $fileids = $fileman->get_fileids();
+        $this->assertIsA($fileids, 'array');
+        $this->assertEqual(1, count($fileids));
+        // migrate another single file into another file area
+        $fileman->filearea = 'anotherarea';
+        $fileman->itemid = 7;
+        $fileman->migrate_file('moddata/unittest/4/7/icon.gif', '/', 'renamed.gif');
+        // get the file records
+        $filerecordids = $converter->get_stash_itemids('files');
+        foreach ($filerecordids as $filerecordid) {
+            $filerecord = $converter->get_stash('files', $filerecordid);
+            $this->assertEqual('4ea114b0558f53e3af8dd9afc0e0810a95c2a724', $filerecord['contenthash']);
+            $this->assertEqual($contextid, $filerecord['contextid']);
+            $this->assertEqual('mod_unittest', $filerecord['component']);
+            if ($filerecord['filearea'] === 'testarea') {
+                $this->assertEqual(4, $filerecord['itemid']);
+                $this->assertEqual('icon.gif', $filerecord['filename']);
+            }
+        }
+        $converter->drop_stash_storage();
     }
 
     public function test_convert_run_convert() {

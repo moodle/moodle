@@ -1027,6 +1027,9 @@ class moodle1_file_manager {
     /** @var int user id */
     public $userid;
 
+    /** @var string the root of the converter temp directory */
+    protected $basepath;
+
     /** @var textlib instance used during the migration */
     protected $textlib;
 
@@ -1044,30 +1047,34 @@ class moodle1_file_manager {
      * @param int $userid initial user id of the files being migrated
      */
     public function __construct(moodle1_converter $converter, $contextid = null, $component = null, $filearea = null, $itemid = 0, $userid = null) {
-
+        // set the initial destination of the migrated files
         $this->converter = $converter;
         $this->contextid = $contextid;
         $this->component = $component;
         $this->filearea  = $filearea;
         $this->itemid    = $itemid;
         $this->userid    = $userid;
+        // set other useful bits
+        $this->basepath  = $converter->get_tempdir_path();
         $this->textlib   = textlib_get_instance();
     }
 
     /**
      * Migrates one given file stored on disk
      *
-     * @param string $sourcefullpath the full path to the source local file
+     * @param string $sourcepath the path to the source local file within the backup archive {@example 'moddata/foobar/file.ext'}
      * @param string $filepath the file path of the migrated file, defaults to the root directory '/'
      * @param string $filename the name of the migrated file, defaults to the same as the source file has
      * @param int $timecreated override the timestamp of when the migrated file should appear as created
      * @param int $timemodified override the timestamp of when the migrated file should appear as modified
      * @return int id of the migrated file
      */
-    public function migrate_file($sourcefullpath, $filepath = '/', $filename = null, $timecreated = null, $timemodified = null) {
+    public function migrate_file($sourcepath, $filepath = '/', $filename = null, $timecreated = null, $timemodified = null) {
+
+        $sourcefullpath = $this->basepath.'/'.$sourcepath;
 
         if (!is_readable($sourcefullpath)) {
-            throw new moodle1_convert_exception('file_not_readable');
+            throw new moodle1_convert_exception('file_not_readable', $sourcefullpath);
         }
 
         $filepath = clean_param($filepath, PARAM_PATH);
@@ -1111,7 +1118,7 @@ class moodle1_file_manager {
     /**
      * Migrates all files in the given directory
      *
-     * @param string $rootpath full path to the root directory containing the files (like course_files)
+     * @param string $rootpath path within the backup archive to the root directory containing the files {@example 'course_files'}
      * @param string $relpath relative path used during the recursion - do not provide when calling this!
      * @return array ids of the migrated files
      */
@@ -1124,8 +1131,7 @@ class moodle1_file_manager {
         $this->stash_file($filerecord);
         $fileids[] = $filerecord['id'];
 
-        $fullpath = $rootpath.$relpath;
-        $items    = new DirectoryIterator($fullpath);
+        $items = new DirectoryIterator($this->basepath.'/'.$rootpath.$relpath);
 
         foreach ($items as $item) {
 
@@ -1138,7 +1144,8 @@ class moodle1_file_manager {
             }
 
             if ($item->isFile()) {
-                $fileids[] = $this->migrate_file($item->getPathname(), $relpath, $item->getFilename(), $item->getCTime(), $item->getMTime());
+                $fileids[] = $this->migrate_file(substr($item->getPathname(), strlen($this->basepath.'/')),
+                    $relpath, $item->getFilename(), $item->getCTime(), $item->getMTime());
 
             } else {
                 $dirname = clean_param($item->getFilename(), PARAM_PATH);
