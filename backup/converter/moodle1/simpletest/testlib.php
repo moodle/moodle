@@ -205,6 +205,13 @@ class moodle1_converter_test extends UnitTestCase {
         $fileids = $fileman->get_fileids();
         $this->assertIsA($fileids, 'array');
         $this->assertEqual(0, count($fileids));
+        // try to migrate a non-existing directory
+        $returned = $fileman->migrate_directory('not/existing/directory');
+        $this->assertIsA($returned, 'array');
+        $this->assertEqual(0, count($returned));
+        $fileids = $fileman->get_fileids();
+        $this->assertIsA($fileids, 'array');
+        $this->assertEqual(0, count($fileids));
         // migrate a single file
         $fileman->itemid = 4;
         $fileman->migrate_file('moddata/unittest/4/icon.gif');

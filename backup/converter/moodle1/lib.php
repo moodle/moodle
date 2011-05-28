@@ -1120,9 +1120,13 @@ class moodle1_file_manager {
      *
      * @param string $rootpath path within the backup archive to the root directory containing the files {@example 'course_files'}
      * @param string $relpath relative path used during the recursion - do not provide when calling this!
-     * @return array ids of the migrated files
+     * @return array ids of the migrated files, empty array if the $rootpath not found
      */
     public function migrate_directory($rootpath, $relpath='/') {
+
+        if (!file_exists($this->basepath.'/'.$rootpath.$relpath)) {
+            return array();
+        }
 
         $fileids = array();
 
