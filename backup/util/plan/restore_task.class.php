@@ -100,6 +100,13 @@ abstract class restore_task extends base_task {
      * method if available
      */
     public function execute_after_restore() {
+        if ($this->executed) {
+            foreach ($this->steps as $step) {
+                if (method_exists($step, 'launch_after_restore_methods')) {
+                    $step->launch_after_restore_methods();
+                }
+            }
+        }
         if ($this->executed && method_exists($this, 'after_restore')) {
             $this->after_restore();
         }
