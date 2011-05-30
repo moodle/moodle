@@ -30,6 +30,10 @@ defined('MOODLE_INTERNAL') || die();
  * Scorm conversion handler
  */
 class moodle1_mod_scorm_handler extends moodle1_mod_handler {
+    /** @var array in-memory cache for the course module information  */
+    protected $currentcminfo = null;
+    /** @var moodle1_file_manager instance for the current scorm */
+    protected $fileman = null;
 
     /**
      * Declare the paths in moodle.xml we are able to convert
@@ -79,10 +83,10 @@ class moodle1_mod_scorm_handler extends moodle1_mod_handler {
     public function process_scorm($data) {
         global $CFG;
         // get the course module id and context id
-        $instanceid = $data['id'];
-        $cminfo     = $this->get_cminfo($instanceid);
-        $moduleid   = $cminfo['id'];
-        $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
+        $instanceid             = $data['id'];
+        $this->currentcminfo    = $this->get_cminfo($instanceid);
+        $moduleid               = $this->currentcminfo['id'];
+        $contextid              = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
 
         // conditionally migrate to html format in intro
         if ($CFG->texteditors !== 'textarea' && $data['introformat'] == FORMAT_MOODLE ) {
@@ -109,7 +113,6 @@ class moodle1_mod_scorm_handler extends moodle1_mod_handler {
                 $data['scormtype'] = 'localtype';
             }
         }
-        // @todo upgrade to new file storage? re: $data['reference'] file
 
         // we now have all information needed to start writing into the file
         $this->open_xml_writer("activities/scorm_{$moduleid}/scorm.xml");
@@ -122,7 +125,12 @@ class moodle1_mod_scorm_handler extends moodle1_mod_handler {
             $this->xmlwriter->full_tag($field, $value);
         }
         $this->xmlwriter->begin_tag('scoes');
+
+        // prepare file manager for migrating scorm package file.
+        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_scorm', 'package');
+        $this->fileman->migrate_file('course_files/'.$data['reference']);
     }
+
     /**
      * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/SCORM/SCOES/SCO
      * data available
@@ -135,9 +143,21 @@ class moodle1_mod_scorm_handler extends moodle1_mod_handler {
      * This is executed when we reach the closing </MOD> tag of our 'scorm' path
      */
     public function on_scorm_end() {
+        //close scorm.xml
         $this->xmlwriter->end_tag('scoes');
         $this->xmlwriter->end_tag('scorm');
         $this->xmlwriter->end_tag('activity');
+        $this->close_xml_writer();
+
+        // write inforef.xml for migrated scorm zip file.
+        $this->open_xml_writer("activities/scorm_{$this->currentcminfo['id']}/inforef.xml");
+        $this->xmlwriter->begin_tag('inforef');
+        $this->xmlwriter->begin_tag('fileref');
+        foreach ($this->fileman->get_fileids() as $fileid) {
+            $this->write_xml('file', array('id' => $fileid));
+        }
+        $this->xmlwriter->end_tag('fileref');
+        $this->xmlwriter->end_tag('inforef');
         $this->close_xml_writer();
     }
 }
