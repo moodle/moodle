@@ -1074,6 +1074,8 @@ function get_fast_modinfo(&$course, $userid=0) {
     if (count($cache) > MAX_MODINFO_CACHE_SIZE) {
         reset($cache);
         $key = key($cache);
+        unset($cache[$key]->instances);
+        unset($cache[$key]->cms);
         unset($cache[$key]);
     }
 
