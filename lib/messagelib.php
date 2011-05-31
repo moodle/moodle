@@ -197,7 +197,7 @@ function message_send($eventdata) {
  * This code updates the message_providers table with the current set of providers
  *
  * @param $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
- * @return void
+ * @return boolean
  */
 function message_update_providers($component='moodle') {
     global $DB;
@@ -243,6 +243,8 @@ function message_update_providers($component='moodle') {
     foreach ($dbproviders as $dbprovider) {  // Delete old ones
         $DB->delete_records('message_providers', array('id' => $dbprovider->id));
     }
+
+    return true;
 }
 
 /**
