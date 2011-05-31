@@ -211,7 +211,7 @@ function message_update_providers($component='moodle') {
     foreach ($fileproviders as $messagename => $fileprovider) {
 
         if (!empty($dbproviders[$messagename])) {   // Already exists in the database
-
+            // check if capability has changed
             if ($dbproviders[$messagename]->capability == $fileprovider['capability']) {  // Same, so ignore
                 // exact same message provider already present in db, ignore this entry
                 unset($dbproviders[$messagename]);
@@ -242,6 +242,8 @@ function message_update_providers($component='moodle') {
 
     foreach ($dbproviders as $dbprovider) {  // Delete old ones
         $DB->delete_records('message_providers', array('id' => $dbprovider->id));
+        $DB->delete_records_select('config_plugins', "plugin = 'message' AND ".$DB->sql_like('name', '?', false), array("%_provider_{$component}_{$dbprovider->name}_%"));
+        $DB->delete_records_select('user_preferences', $DB->sql_like('name', '?', false), array("message_provider_{$component}_{$dbprovider->name}_%"));
     }
 
     return true;
