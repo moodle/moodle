@@ -7317,8 +7317,13 @@ class admin_setting_configcolourpicker extends admin_setting {
 class admin_setting_devicedetectregex extends admin_setting {
 
     /**
-    * Calls parent::__construct with specific args
-    */
+     * Calls parent::__construct with specific args
+     *
+     * @param string $name
+     * @param string $visiblename
+     * @param string $description
+     * @param mixed $defaultsetting
+     */
     public function __construct($name, $visiblename, $description, $defaultsetting = '') {
         global $CFG;
         parent::__construct($name, $visiblename, $description, $defaultsetting);
@@ -7495,7 +7500,6 @@ class admin_setting_devicedetectregex extends admin_setting {
         return $regexes;
     }
 }
-
 
 /**
  * Multiselect for current modules

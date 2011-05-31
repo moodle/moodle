@@ -6112,13 +6112,6 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2011052300.02);
     }
 
-    //set enable theme detection to the new themes setting.
-    if ($oldversion < 2011052500.00) {
-        set_config('enabledevicedetection', 1);
-
-        upgrade_main_savepoint(true, 2011052500.00);
-    }
-
     return true;
 }
 

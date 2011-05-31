@@ -212,8 +212,6 @@ class core_renderer extends renderer_base {
     protected $contenttype;
     /** @var string used by {@link redirect_message()} method to communicate with {@link header()}. */
     protected $metarefreshtag = '';
-    /** @var set if the theme links function has been called **/
-    protected $switchlinkdisplayed;
 
     /**
      * Get the DOCTYPE declaration that should be used with this page. Designed to
@@ -364,11 +362,12 @@ class core_renderer extends renderer_base {
         // but some of the content won't be known until later, so we return a placeholder
         // for now. This will be replaced with the real content in {@link footer()}.
         $output = self::PERFORMANCE_INFO_TOKEN;
-        if ($this->page->devicetypeinuse == 'legacy'){
+        if ($this->page->devicetypeinuse == 'legacy') {
             // The legacy theme is in use print the notification
             $output .= html_writer::tag('div', get_string('legacythemeinuse'), array('class'=>'legacythemeinuse'));
         }
 
+        // Get links to switch device types (only shown for users not on a default device)
         $output .= $this->theme_switch_links();
 
         if (!empty($CFG->debugpageinfo)) {
@@ -2502,43 +2501,39 @@ EOD;
         return $content;
     }
 
-
-    /*
+    /**
      * Renders theme links for switching between default and other themes.
+     *
+     * @return string
      */
     protected function theme_switch_links() {
-        if ($this->switchlinkdisplayed) {
+
+        $actualdevice = get_device_type();
+        $currentdevice = $this->page->devicetypeinuse;
+        $switched = ($actualdevice != $currentdevice);
+
+        if (!$switched && $currentdevice == 'default' && $actualdevice == 'default') {
+            // The user is using the a default device and hasn't switched so don't shown the switch
+            // device links.
             return '';
         }
-
-        global $USER;
-
-        $type = get_device_type();
-
-        $this->switchlinkdisplayed = true;
-
-        if ($type == 'default') {
-            return '';
-        }
-
-        $switched = get_user_switched_device();
 
         if ($switched) {
             $linktext = get_string('switchdevicerecommended');
+            $devicetype = $actualdevice;
         } else {
             $linktext = get_string('switchdevicedefault');
+            $devicetype = 'default';
         }
+        $linkurl = new moodle_url('/theme/switchdevice.php', array('url' => $this->page->url, 'device' => $devicetype, 'sesskey' => sesskey()));
 
-        $content = html_writer::start_tag('div', array('id'=>'theme_switch_link'));
-        $linkurl = new moodle_url('/theme/switch.php', array('url' => $this->page->url));
-
+        $content  = html_writer::start_tag('div', array('id' => 'theme_switch_link'));
         $content .= html_writer::link($linkurl, $linktext);
         $content .= html_writer::end_tag('div');
 
         return $content;
     }
 }
-
 
 /// RENDERERS
 

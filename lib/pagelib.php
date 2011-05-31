@@ -64,7 +64,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read object $course The current course that we are inside - a row from the
  *      course table. (Also available as $COURSE global.) If we are not inside
  *      an actual course, this will be the site course.
- * @property-read bool $devicetypeinuse name of the device type in use
+ * @property-read string $devicetypeinuse The name of the device type in use
  * @property-read string $docspath The path to the Moodle docs for this page.
  * @property-read string $focuscontrol The id of the HTML element to be focused when the page has loaded.
  * @property-read bool $headerprinted
@@ -218,9 +218,11 @@ class moodle_page {
 
     /**
      * Is set to the name of the device type in use.
+     * This will we worked out when it is first used.
+     *
      * @var string
      */
-    protected $_devicetypeinuse = 'default';
+    protected $_devicetypeinuse = null;
 
     protected $_https_login_required = false;
 
@@ -524,10 +526,24 @@ class moodle_page {
 
     /**
      * Please do not call this method directly, use the ->devicetypeinuse syntax. {@link __get()}.
-     * @return bool
+     *
+     * @return string The device type being used.
      */
     protected function magic_get_devicetypeinuse() {
-        return ($this->_devicetypeinuse);
+        if (empty($this->_devicetypeinuse)) {
+            $this->_devicetypeinuse = get_user_device_type();
+        }
+        return $this->_devicetypeinuse;
+    }
+
+    /**
+     * Please do not call this method directly, use the ->legacythemeinuse syntax. {@link __get()}.
+     * @deprecated since 2.1
+     * @return bool
+     */
+    protected function magic_get_legacythemeinuse() {
+        debugging('$PAGE->legacythemeinuse is a deprecated property - please use $PAGE->devicetypeinuse and check if it is equal to legacy.', DEVELOPER_DEBUG);
+        return ($this->devicetypeinuse == 'legacy');
     }
 
     /**
@@ -1280,19 +1296,15 @@ class moodle_page {
             }
         }
 
-        $devicetype = get_device_type();
-
-        $theme = '';
-
         foreach ($themeorder as $themetype) {
             switch ($themetype) {
                 case 'course':
-                    if (!empty($CFG->allowcoursethemes) and !empty($this->_course->theme) and $devicetype == 'default') {
+                    if (!empty($CFG->allowcoursethemes) && !empty($this->_course->theme) && $this->devicetypeinuse == 'default') {
                         return $this->_course->theme;
                     }
 
                 case 'category':
-                    if (!empty($CFG->allowcategorythemes) and $devicetype == 'default') {
+                    if (!empty($CFG->allowcategorythemes) && $this->devicetypeinuse == 'default') {
                         $categories = $this->categories;
                         foreach ($categories as $category) {
                             if (!empty($category->theme)) {
@@ -1307,7 +1319,7 @@ class moodle_page {
                     }
 
                 case 'user':
-                    if (!empty($CFG->allowuserthemes) and !empty($USER->theme) && $devicetype == 'default') {
+                    if (!empty($CFG->allowuserthemes) && !empty($USER->theme) && $this->devicetypeinuse == 'default') {
                         if ($mnetpeertheme) {
                             return $mnetpeertheme;
                         } else {
@@ -1319,10 +1331,18 @@ class moodle_page {
                     if ($mnetpeertheme) {
                         return $mnetpeertheme;
                     }
-
-                    $this->_devicetypeinuse = $devicetype;
-
-                    return get_selected_theme_for_device_type();
+                    // First try for the device the user is using.
+                    $devicetheme = get_selected_theme_for_device_type($this->devicetypeinuse);
+                    if (!empty($devicetheme)) {
+                        return $devicetheme;
+                    }
+                    // Next try for the default device (as a fallback)
+                    $devicetheme = get_selected_theme_for_device_type('default');
+                    if (!empty($devicetheme)) {
+                        return $devicetheme;
+                    }
+                    // The default device theme isn't set up - use the overall default theme.
+                    return theme_config::DEFAULT_THEME;
             }
         }
     }
