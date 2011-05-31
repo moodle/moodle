@@ -7307,7 +7307,193 @@ class admin_setting_configcolourpicker extends admin_setting {
         $content .= html_writer::end_tag('div');
         return format_admin_setting($this, $this->visiblename, $content, $this->description, false, '', $this->get_defaultsetting(), $query);
     }
+}
 
+/**
+ * Administration interface for user specified regular expressions for device detection.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_devicedetectregex extends admin_setting {
+
+    /**
+    * Calls parent::__construct with specific args
+    */
+    public function __construct($name, $visiblename, $description, $defaultsetting = '') {
+        global $CFG;
+        parent::__construct($name, $visiblename, $description, $defaultsetting);
+    }
+
+    /**
+     * Return the current setting(s)
+     *
+     * @return array Current settings array
+     */
+    public function get_setting() {
+        global $CFG;
+
+        $config = $this->config_read($this->name);
+        if (is_null($config)) {
+            return null;
+        }
+
+        return $this->prepare_form_data($config);
+    }
+
+    /**
+     * Save selected settings
+     *
+     * @param array $data Array of settings to save
+     * @return bool
+     */
+    public function write_setting($data) {
+        if (empty($data)) {
+            $data = array();
+        }
+
+        if ($this->config_write($this->name, $this->process_form_data($data))) {
+            return ''; // success
+        } else {
+            return get_string('errorsetting', 'admin') . $this->visiblename . html_writer::empty_tag('br');
+        }
+    }
+
+    /**
+     * Return XHTML field(s) for regexes
+     *
+     * @param array $data Array of options to set in HTML
+     * @return string XHTML string for the fields and wrapping div(s)
+     */
+    public function output_html($data, $query='') {
+        global $OUTPUT;
+
+        $out  = html_writer::start_tag('table', array('border' => 1, 'class' => 'generaltable'));
+        $out .= html_writer::start_tag('thead');
+        $out .= html_writer::start_tag('tr');
+        $out .= html_writer::tag('th', get_string('devicedetectregexexpression', 'admin'));
+        $out .= html_writer::tag('th', get_string('devicedetectregexvalue', 'admin'));
+        $out .= html_writer::end_tag('tr');
+        $out .= html_writer::end_tag('thead');
+        $out .= html_writer::start_tag('tbody');
+
+        if (empty($data)) {
+            $looplimit = 1;
+        } else {
+            $looplimit = (count($data)/2)+1;
+        }
+
+        for ($i=0; $i<$looplimit; $i++) {
+            $out .= html_writer::start_tag('tr');
+
+            $expressionname = 'expression'.$i;
+
+            if (!empty($data[$expressionname])){
+                $expression = $data[$expressionname];
+            } else {
+                $expression = '';
+            }
+
+            $out .= html_writer::tag('td',
+                html_writer::empty_tag('input',
+                    array(
+                        'type'  => 'text',
+                        'class' => 'form-text',
+                        'name'  => $this->get_full_name().'[expression'.$i.']',
+                        'value' => $expression,
+                    )
+                ), array('class' => 'c'.$i)
+            );
+
+            $valuename = 'value'.$i;
+
+            if (!empty($data[$valuename])){
+                $value = $data[$valuename];
+            } else {
+                $value= '';
+            }
+
+            $out .= html_writer::tag('td',
+                html_writer::empty_tag('input',
+                    array(
+                        'type'  => 'text',
+                        'class' => 'form-text',
+                        'name'  => $this->get_full_name().'[value'.$i.']',
+                        'value' => $value,
+                    )
+                ), array('class' => 'c'.$i)
+            );
+
+            $out .= html_writer::end_tag('tr');
+        }
+
+        $out .= html_writer::end_tag('tbody');
+        $out .= html_writer::end_tag('table');
+
+        return format_admin_setting($this, $this->visiblename, $out, $this->description, false, '', null, $query);
+    }
+
+    /**
+     * Converts the string of regexes
+     *
+     * @see self::process_form_data()
+     * @param $regexes string of regexes
+     * @return array of form fields and their values
+     */
+    protected function prepare_form_data($regexes) {
+
+        $regexes = json_decode($regexes);
+
+        $form = array();
+
+        $i = 0;
+
+        foreach ($regexes as $value => $regex) {
+            $expressionname  = 'expression'.$i;
+            $valuename = 'value'.$i;
+
+            $form[$expressionname] = $regex;
+            $form[$valuename] = $value;
+            $i++;
+        }
+
+        return $form;
+    }
+
+    /**
+     * Converts the data from admin settings form into a string of regexes
+     *
+     * @see self::prepare_form_data()
+     * @param array $data array of admin form fields and values
+     * @return false|string of regexes
+     */
+    protected function process_form_data(array $form) {
+
+        $count = count($form); // number of form field values
+
+        if ($count % 2) {
+            // we must get five fields per expression
+            return false;
+        }
+
+        $regexes = array();
+        for ($i = 0; $i < $count / 2; $i++) {
+            $expressionname  = "expression".$i;
+            $valuename       = "value".$i;
+
+            $expression = trim($form['expression'.$i]);
+            $value      = trim($form['value'.$i]);
+
+            if (empty($expression)){
+                continue;
+            }
+
+            $regexes[$value] = $expression;
+        }
+
+        $regexes = json_encode($regexes);
+
+        return $regexes;
+    }
 }
 
 
