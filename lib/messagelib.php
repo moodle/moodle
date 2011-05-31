@@ -131,18 +131,18 @@ function message_send($eventdata) {
         }
 
         // Find out if user has configured this output
-        $is_user_configured = $processor->object->is_user_configured($eventdata->userto);
+        $userisconfigured = $processor->object->is_user_configured($eventdata->userto);
 
         // DEBUG: noify if we are forcing unconfigured output
-        if ($permitted == 'forced' && !$is_user_configured) {
+        if ($permitted == 'forced' && !$userisconfigured) {
             debugging('Attempt to force message delivery to user who has "'.$processor->name.'" output unconfigured', DEBUG_NORMAL);
         }
 
         // Populate the list of processors we will be using
-        if ($permitted == 'forced' && $is_user_configured) {
+        if ($permitted == 'forced' && $userisconfigured) {
             // We force messages for this processor, so use this processor unconditionally if user has configured it
             $processorlist[] = $processor->name;
-        } else if ($permitted == 'permitted' && $is_user_configured) {
+        } else if ($permitted == 'permitted' && $userisconfigured) {
             // User settings are permitted, see if user set any, othervice use site default ones
             $userpreferencename = 'message_provider_'.$preferencebase.'_'.$userstate;
             if ($userpreference = get_user_preferences($userpreferencename, null, $eventdata->userto->id)) {
