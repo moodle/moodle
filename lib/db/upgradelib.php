@@ -668,7 +668,7 @@ function upgrade_populate_default_messaging_prefs() {
         // (providers) and outputs (processors)
         foreach ($processors as $processor) {
             $preferencename = $processor->name.'_provider_'.$componentproviderbase.'_permitted';
-            if (!array_key_exists($preferencename, $defaultpreferences)) {
+            if (!isset($defaultpreferences->{$preferencename})) {
                 $setting->name = $preferencename;
                 $setting->value = 'permitted';
                 $DB->insert_record('config_plugins', $setting);
@@ -677,7 +677,7 @@ function upgrade_populate_default_messaging_prefs() {
         // for email output we also have to set MESSAGE_DEFAULT_OFFLINE + MESSAGE_DEFAULT_ONLINE
         foreach(array('loggedin', 'loggedoff') as $state) {
             $preferencename = 'message_provider_'.$componentproviderbase.'_'.$state;
-            if (!array_key_exists($preferencename, $defaultpreferences)) {
+            if (!isset($defaultpreferences->{$preferencename})) {
                 $setting->name = $preferencename;
                 $setting->value = 'email';
                 // except instant message where default for popup should be

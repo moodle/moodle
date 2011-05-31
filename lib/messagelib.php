@@ -121,7 +121,7 @@ function message_send($eventdata) {
     foreach ($processors as $processor) {
         // First find out permissions
         $defaultpreference = $processor->name.'_provider_'.$preferencebase.'_permitted';
-        if (array_key_exists($defaultpreference, $defaultpreferences)) {
+        if (isset($defaultpreferences->{$defaultpreference})) {
             $permitted = $defaultpreferences->{$defaultpreference};
         } else {
             //MDL-25114 They supplied an $eventdata->component $eventdata->name combination which doesn't
@@ -143,13 +143,13 @@ function message_send($eventdata) {
             // We force messages for this processor, so use this processor unconditionally if user has configured it
             $processorlist[] = $processor->name;
         } else if ($permitted == 'permitted' && $userisconfigured) {
-            // User settings are permitted, see if user set any, othervice use site default ones
+            // User settings are permitted, see if user set any, otherwise use site default ones
             $userpreferencename = 'message_provider_'.$preferencebase.'_'.$userstate;
             if ($userpreference = get_user_preferences($userpreferencename, null, $eventdata->userto->id)) {
                 if (in_array($processor->name, explode(',', $userpreference))) {
                     $processorlist[] = $processor->name;
                 }
-            } else if (array_key_exists($userpreferencename, $defaultpreferences)) {
+            } else if (isset($defaultpreferences->{$userpreferencename})) {
                 if (in_array($processor->name, explode(',', $defaultpreferences->{$userpreferencename}))) {
                     $processorlist[] = $processor->name;
                 }
@@ -270,7 +270,7 @@ function message_set_default_message_preference($component, $messagename, $filep
     foreach ($processors as $processor) {
         $preferencename = $processor->name.'_provider_'.$componentproviderbase.'_permitted';
         // if we do not have this setting yet, set it
-        if (!array_key_exists($preferencename, $defaultpreferences)) {
+        if (!isset($defaultpreferences->{$preferencename})) {
             // determine plugin default settings
             $plugindefault = 0;
             if (isset($fileprovider['defaults'][$processor->name])) {

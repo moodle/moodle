@@ -257,7 +257,7 @@ class core_message_renderer extends plugin_renderer_base {
                     // determine the default setting
                     $permitted = MESSAGE_DEFAULT_PERMITTED;
                     $defaultpreference = $processor->name.'_provider_'.$preferencebase.'_permitted';
-                    if (array_key_exists($defaultpreference, $defaultpreferences)) {
+                    if (isset($defaultpreferences->{$defaultpreference})) {
                         $permitted = $defaultpreferences->{$defaultpreference};
                     }
                     // If settings are disallowed, just display the message that
@@ -288,7 +288,7 @@ class core_message_renderer extends plugin_renderer_base {
                             } else {
                                 // User has not set this preference yet, using site default preferences set by admin
                                 $defaultpreference = 'message_provider_'.$preferencebase.'_'.$state;
-                                if (array_key_exists($defaultpreference, $defaultpreferences)) {
+                                if (isset($defaultpreferences->{$defaultpreference})) {
                                     $checked = (int)in_array($processor->name, explode(',', $defaultpreferences->{$defaultpreference}));
                                 }
                             }

@@ -2301,7 +2301,7 @@ function get_message_processors($ready = false) {
 function get_message_output_default_preferences() {
     $preferences = get_config('message');
     if (!$preferences) {
-        $preferences = (object) array();
+        $preferences = new stdClass();
     }
     return $preferences;
 }
