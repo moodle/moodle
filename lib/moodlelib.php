@@ -7067,12 +7067,10 @@ function get_plugin_types($fullpaths=true) {
     static $fullinfo = null;
 
     if (!$info) {
-        // BEWARE: message/output should always be the first as we need to have
-        // message outputs installed before installing every other plugin.
-        $info = array('message'       => 'message/output',
-                      'mod'           => 'mod',
+        $info = array('mod'           => 'mod',
                       'auth'          => 'auth',
                       'enrol'         => 'enrol',
+                      'message'       => 'message/output',
                       'block'         => 'blocks',
                       'filter'        => 'filter',
                       'editor'        => 'lib/editor',

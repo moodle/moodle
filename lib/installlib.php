@@ -558,11 +558,8 @@ function install_cli_database(array $options, $interactive) {
     // install all plugins types, local, etc.
     upgrade_noncore(true);
 
-    // ensure message preferences for the core message providers are set
-    $fileproviders = message_get_providers_from_file('moodle');
-    foreach ($fileproviders as $messagename => $fileprovider) {
-        message_set_default_message_preference('moodle', $messagename, $fileprovider);
-    }
+    // ensure default message preferences for message providers are set
+    install_populate_default_messaging_prefs();
 
     // set up admin user password
     $DB->set_field('user', 'password', hash_internal_user_password($options['adminpass']), array('username' => 'admin'));
@@ -593,4 +590,25 @@ function install_cli_database(array $options, $interactive) {
     if (isset($options['fullname']) and $options['fullname'] !== '') {
         $DB->set_field('course', 'fullname', $options['fullname'], array('format' => 'site'));
     }
+}
+
+/**
+ * Populate default messaging preferences after installation.
+ *
+ * @return void
+ */
+function install_populate_default_messaging_prefs() {
+    global $DB;
+
+    $providers = $DB->get_records_sql('SELECT DISTINCT component FROM {message_providers}');
+
+    $transaction = $DB->start_delegated_transaction();
+    foreach ($providers as $provider) {
+        // load message providers from files
+        $fileproviders = message_get_providers_from_file($provider->component);
+        foreach ($fileproviders as $messagename => $fileprovider) {
+            message_set_default_message_preference($provider->component, $messagename, $fileprovider);
+        }
+    }
+    $transaction->allow_commit();
 }

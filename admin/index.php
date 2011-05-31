@@ -43,6 +43,7 @@ define('NO_OUTPUT_BUFFERING', true);
 require('../config.php');
 require_once($CFG->libdir.'/adminlib.php');    // various admin-only functions
 require_once($CFG->libdir.'/upgradelib.php');  // general upgrade/install related functions
+require_once($CFG->libdir.'/installlib.php');  // general upgrade/install related functions
 
 $id             = optional_param('id', '', PARAM_TEXT);
 $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
@@ -320,11 +321,8 @@ if (moodle_needs_upgrading()) {
 // If this is the first install, indicate that this site is fully configured
 // except the admin password
 if (during_initial_install()) {
-    // ensure message preferences for the core message providers are set
-    $fileproviders = message_get_providers_from_file('moodle');
-    foreach ($fileproviders as $messagename => $fileprovider) {
-        message_set_default_message_preference('moodle', $messagename, $fileprovider);
-    }
+    // ensure default message preferences for message providers are set
+    install_populate_default_messaging_prefs();
 
     set_config('rolesactive', 1); // after this, during_initial_install will return false.
     set_config('adminsetuppending', 1);
