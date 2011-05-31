@@ -23,8 +23,8 @@
  * @package message
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
-require_once(dirname(dirname(__FILE__)) . '/message/lib.php');
+require_once(dirname(__FILE__) . '/../config.php');
+require_once($CFG->dirroot . '/message/lib.php');
 
 $userid = optional_param('id', $USER->id, PARAM_INT);    // user id
 $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
