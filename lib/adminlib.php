@@ -4940,7 +4940,6 @@ class admin_page_managemessageoutputs extends admin_externalpage {
         }
 
         $found = false;
-        require_once($CFG->dirroot.'/message/lib.php');
         if ($processors = get_message_processors()) {
             $textlib = textlib_get_instance();
             foreach ($processors as $processor) {
