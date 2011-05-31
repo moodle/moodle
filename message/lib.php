@@ -2353,11 +2353,11 @@ function translate_message_default_setting($plugindefault, $processorname) {
     }
 
     $permitted = $permittedvalues[$plugindefault & MESSAGE_PERMITTED_MASK];
-    $loggedin = $loggedoff = 0x00;
+    $loggedin = $loggedoff = null;
 
     if (($plugindefault & MESSAGE_PERMITTED_MASK) == MESSAGE_PERMITTED) {
-        $loggedin = $loggedinstatusvalues[$plugindefault & ~MESSAGE_PERMITTED_MASK & MESSAGE_DEFAULT_LOGGEDIN];
-        $loggedoff = $loggedinstatusvalues[$plugindefault & ~MESSAGE_PERMITTED_MASK & MESSAGE_DEFAULT_LOGGEDOFF];
+        $loggedin = $loggedinstatusvalues[$plugindefault & MESSAGE_DEFAULT_LOGGEDIN];
+        $loggedoff = $loggedinstatusvalues[$plugindefault & MESSAGE_DEFAULT_LOGGEDOFF];
     }
 
     return array($permitted, $loggedin, $loggedoff);
