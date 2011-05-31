@@ -68,6 +68,17 @@ class mathsslib_test extends UnitTestCase {
         $this->assertEqual($res, 60, 'sum(a, b, c) is: %s');
     }
 
+    public function test_other_functions() {
+        $formula = new calc_formula('=average(1,2,3)');
+        $this->assertEqual($formula->evaluate(), 2);
+
+        $formula = new calc_formula('=mod(10,3)');
+        $this->assertEqual($formula->evaluate(), 1);
+
+        $formula = new calc_formula('=power(2,3)');
+        $this->assertEqual($formula->evaluate(), 8);
+    }
+
     /**
      * Tests the min and max functions
      */
@@ -211,6 +222,8 @@ class mathsslib_test extends UnitTestCase {
         $this->assertWithinMargin($formula->evaluate(), 1e22, 1e22*1e-15);
 
     }
+
+
 
 }
 

@@ -383,8 +383,7 @@ class EvalMath {
                     for ($i = $count-1; $i >= 0; $i--) {
                         if (is_null($args[] = $stack->pop())) return $this->trigger(get_string('internalerror', 'mathslib'));
                     }
-                    $classname = 'EvalMathCalcEmul_'.$fnn;
-                    $res = call_user_func(array($classname, 'calculate'), $args);
+                    $res = call_user_func_array(array('EvalMathFuncs', $fnn), array_reverse($args));
                     if ($res === FALSE) {
                         return $this->trigger(get_string('internalerror', 'mathslib'));
                     }
@@ -473,16 +472,15 @@ class EvalMathStack {
 
 
 // spreadsheet functions emulation
-// watch out for reversed args!!
-class EvalMathCalcEmul_average {
+class EvalMathFuncs {
 
-    static function calculate($args) {
-        return (EvalMathCalcEmul_sum::calculate($args)/count($args));
+    static function average() {
+        $args = func_get_args();
+        return (call_user_func_array(array('self', 'sum'), $args) / count($args));
     }
-}
 
-class EvalMathCalcEmul_max  {
-    static function calculate($args) {
+    static function max() {
+        $args = func_get_args();
         $res = array_pop($args);
         foreach($args as $a) {
             if ($res < $a) {
@@ -491,10 +489,9 @@ class EvalMathCalcEmul_max  {
         }
         return $res;
     }
-}
 
-class EvalMathCalcEmul_min  {
-    static function calculate($args) {
+    static function min() {
+        $args = func_get_args();
         $res = array_pop($args);
         foreach($args as $a) {
             if ($res > $a) {
@@ -503,42 +500,32 @@ class EvalMathCalcEmul_min  {
         }
         return $res;
     }
-}
-class EvalMathCalcEmul_mod {
-    static function calculate($args) {
-        return $args[1] % $args[0];
+
+    static function mod($op1, $op2) {
+        return $op1 % $op2;
     }
-}
-class EvalMathCalcEmul_pi {
-    static function calculate($args) {
+
+    static function pi() {
         return pi();
     }
-}
-class EvalMathCalcEmul_power {
-    static function calculate($args) {
-        return $args[1]^$args[0];
-    }
-}
 
-class EvalMathCalcEmul_round {
-    static function calculate($args) {
-        if (count($args)==1) {
-            return round($args[0]);
-        } else {
-            return round($args[1], $args[0]);
-        }
+    static function power($op1, $op2) {
+        return pow($op1, $op2);
     }
-}
-class EvalMathCalcEmul_sum {
-    static function calculate($args) {
+
+    static function round($val, $precision = 0) {
+        return round($val, $precision);
+    }
+
+    static function sum() {
+        $args = func_get_args();
         $res = 0;
         foreach($args as $a) {
            $res += $a;
         }
         return $res;
     }
-}
-class EvalMathCalcEmul_randomised {
+
     protected static $randomseed = null;
 
     static function set_random_seed($randomseed) {
@@ -553,12 +540,7 @@ class EvalMathCalcEmul_randomised {
         }
     }
 
-}
-
-class EvalMathCalcEmul_rand_int extends EvalMathCalcEmul_randomised {
-    static function calculate($args){
-        $min = $args[1];
-        $max = $args[0];
+    static function rand_int($min, $max){
         if ($min >= $max) {
             return false; //error
         }
@@ -574,9 +556,8 @@ class EvalMathCalcEmul_rand_int extends EvalMathCalcEmul_randomised {
         } while (($min + $randomno) > $max);
         return $min + $randomno;
     }
-}
-class EvalMathCalcEmul_rand_float extends EvalMathCalcEmul_randomised {
-    static function calculate(){
+
+    static function rand_float(){
         $randomvalue = array_shift(unpack('v', md5(self::get_random_seed(), true)));
         return $randomvalue / 65536;
     }
