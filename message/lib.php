@@ -2286,8 +2286,14 @@ function get_message_processors($ready = false) {
         }
     }
     if ($ready) {
-        // Filter out enabled, available and system_configured processors only.
-        $processors = array_filter($processors, create_function('$a', 'return $a->enabled && $a->configured;'));
+        // Filter out enabled and system_configured processors
+        $readyprocessors = $processors;
+        foreach ($readyprocessors as $readyprocessor) {
+            if (!($readyprocessor->enabled && $readyprocessor->configured)) {
+                unset($readyprocessors[$readyprocessor->name]);
+            }
+        }
+        return $readyprocessors;
     }
 
     return $processors;
