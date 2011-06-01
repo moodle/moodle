@@ -239,6 +239,132 @@ class moodle1_converter_test extends UnitTestCase {
         $converter->drop_stash_storage();
     }
 
+    public function test_convert_path() {
+        $path = new convert_path('foo_bar', '/ROOT/THINGS/FOO/BAR');
+        $this->assertEqual('foo_bar', $path->get_name());
+        $this->assertEqual('/ROOT/THINGS/FOO/BAR', $path->get_path());
+        $this->assertEqual('process_foo_bar', $path->get_processing_method());
+        $this->assertEqual('on_foo_bar_start', $path->get_start_method());
+        $this->assertEqual('on_foo_bar_end', $path->get_end_method());
+    }
+
+    public function test_convert_path_implicit_recipes() {
+        $path = new convert_path('foo_bar', '/ROOT/THINGS/FOO/BAR');
+        $data = array(
+            'ID' => 76,
+            'ELOY' => 'stronk7',
+            'MARTIN' => 'moodler',
+            'EMPTY' => null,
+        );
+        // apply default recipes (converting keys to lowercase)
+        $data = $path->apply_recipes($data);
+        $this->assertEqual(4, count($data));
+        $this->assertEqual(76, $data['id']);
+        $this->assertEqual('stronk7', $data['eloy']);
+        $this->assertEqual('moodler', $data['martin']);
+        $this->assertIdentical(null, $data['empty']);
+    }
+
+    public function test_convert_path_explicit_recipes() {
+        $path = new convert_path(
+            'foo_bar', '/ROOT/THINGS/FOO/BAR',
+            array(
+                'newfields' => array(
+                    'david' => 'mudrd8mz',
+                    'petr'  => 'skodak',
+                ),
+                'renamefields' => array(
+                    'empty' => 'nothing',
+                ),
+                'dropfields' => array(
+                    'id'
+                ),
+            )
+        );
+        $data = array(
+            'ID' => 76,
+            'ELOY' => 'stronk7',
+            'MARTIN' => 'moodler',
+            'EMPTY' => null,
+        );
+        $data = $path->apply_recipes($data);
+
+        $this->assertEqual(5, count($data));
+        $this->assertFalse(array_key_exists('id', $data));
+        $this->assertEqual('stronk7', $data['eloy']);
+        $this->assertEqual('moodler', $data['martin']);
+        $this->assertEqual('mudrd8mz', $data['david']);
+        $this->assertEqual('skodak', $data['petr']);
+        $this->assertIdentical(null, $data['nothing']);
+    }
+
+    public function test_grouped_data_on_nongrouped_convert_path() {
+        // prepare some grouped data
+        $data = array(
+            'ID' => 77,
+            'NAME' => 'Pale lagers',
+            'BEERS' => array(
+                array(
+                    'BEER' => array(
+                        'ID' => 67,
+                        'NAME' => 'Pilsner Urquell',
+                    )
+                ),
+                array(
+                    'BEER' => array(
+                        'ID' => 34,
+                        'NAME' => 'Heineken',
+                    )
+                ),
+            )
+        );
+
+        // declare a non-grouped path
+        $path = new convert_path('beer_style', '/ROOT/BEER_STYLES/BEER_STYLE');
+
+        // an attempt to apply recipes throws exception because we do not expect grouped data
+        $this->expectException('convert_path_exception');
+        $data = $path->apply_recipes($data);
+    }
+
+    public function test_grouped_convert_path_with_recipes() {
+        // prepare some grouped data
+        $data = array(
+            'ID' => 77,
+            'NAME' => 'Pale lagers',
+            'BEERS' => array(
+                array(
+                    'BEER' => array(
+                        'ID' => 67,
+                        'NAME' => 'Pilsner Urquell',
+                    )
+                ),
+                array(
+                    'BEER' => array(
+                        'ID' => 34,
+                        'NAME' => 'Heineken',
+                    )
+                ),
+            )
+        );
+
+        // implict recipes work for grouped data if the path is declared as grouped
+        $path = new convert_path('beer_style', '/ROOT/BEER_STYLES/BEER_STYLE', array(), true);
+        $data = $path->apply_recipes($data);
+        $this->assertEqual('Heineken', $data['beers'][1]['beer']['name']);
+
+        // an attempt to provide explicit recipes on grouped elements throws exception
+        $this->expectException('convert_path_exception');
+        $path = new convert_path(
+            'beer_style', '/ROOT/BEER_STYLES/BEER_STYLE',
+            array(
+                'renamefields' => array(
+                    'name' => 'beername',   // note this is confusing recipe because the 'name' is used for both
+                                            // beer-style name ('Pale lagers') and beer name ('Pilsner Urquell')
+                )
+            ), true);
+    }
+
     public function test_convert_run_convert() {
         $converter = convert_factory::get_converter('moodle1', $this->tempdir);
         $converter->convert();

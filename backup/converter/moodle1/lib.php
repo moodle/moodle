@@ -750,6 +750,10 @@ class convert_path {
         $this->set_start_method('on_'.$name.'_start');
         $this->set_end_method('on_'.$name.'_end');
 
+        if ($grouped and !empty($recipe)) {
+            throw new convert_path_exception('recipes_not_supported_for_grouped_elements');
+        }
+
         if (isset($recipe['dropfields']) and is_array($recipe['dropfields'])) {
             $this->set_dropped_fields($recipe['dropfields']);
         }
@@ -851,6 +855,14 @@ class convert_path {
         foreach ($data as $name => $value) {
             // lower case rocks!
             $name = strtolower($name);
+
+            if (is_array($value)) {
+                if ($this->is_grouped()) {
+                    $value = $this->apply_recipes($value);
+                } else {
+                    throw new convert_path_exception('non_grouped_path_with_array_values');
+                }
+            }
 
             // drop legacy fields
             if (in_array($name, $this->dropfields)) {
