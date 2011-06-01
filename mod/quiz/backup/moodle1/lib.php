@@ -117,12 +117,7 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
         // quiz_question_instances.grade should be decimal(12,7) not null default 0
         // $data['grade'] and other precisions will be changed when inserted into db.
 
-        $this->xmlwriter->begin_tag('question_instance', array('id' => $data['id']));
-        unset($data['id']); // we already write it as attribute, do not repeat it as child element
-        foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
-        }
-        $this->xmlwriter->end_tag('question_instance');
+        $this->write_xml('question_instance', $data, array('/question_instance/id'));
     }
 
     public function on_quiz_feedbacks_start() {
@@ -143,12 +138,7 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
             $data['maxgrade'] = 0;
         }
 
-        $this->xmlwriter->begin_tag('feedback', array('id' => $data['id']));
-        unset($data['id']); // we already write it as attribute, do not repeat it as child element
-        foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
-        }
-        $this->xmlwriter->end_tag('feedback');
+        $this->write_xml('feedback', $data, array('/feedback/id'));
     }
 
     /**
