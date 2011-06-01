@@ -655,7 +655,7 @@ function upgrade_populate_default_messaging_prefs() {
 
     $providers = $DB->get_records('message_providers');
     $processors = $DB->get_records('message_processors');
-    $defaultpreferences = $DB->get_records_menu('config_plugins', array('plugin'=>'message'), '', 'name,value');
+    $defaultpreferences = (object)$DB->get_records_menu('config_plugins', array('plugin'=>'message'), '', 'name,value');
 
     $transaction = $DB->start_delegated_transaction();
 
