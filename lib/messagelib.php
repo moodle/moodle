@@ -250,18 +250,54 @@ function message_update_providers($component='moodle') {
 }
 
 /**
+ * This function populates default message preferences for all existing providers
+ * when the new message processor is added.
+ *
+ * @param string $processorname The name of message processor plugin (e.g. 'email', 'jabber')
+ * @return void
+ * @throws invalid_parameter_exception if $processorname does not exist
+ */
+function message_update_processors($processorname) {
+    global $DB;
+
+    // validate if our processor exists
+    $processor = $DB->get_records('message_processors', array('name' => $processorname));
+    if (empty($processor)) {
+        throw new invalid_parameter_exception();
+    }
+
+    $providers = $DB->get_records_sql('SELECT DISTINCT component FROM {message_providers}');
+
+    $transaction = $DB->start_delegated_transaction();
+    foreach ($providers as $provider) {
+        // load message providers from files
+        $fileproviders = message_get_providers_from_file($provider->component);
+        foreach ($fileproviders as $messagename => $fileprovider) {
+            message_set_default_message_preference($provider->component, $messagename, $fileprovider, $processorname);
+        }
+    }
+    $transaction->allow_commit();
+}
+
+/**
  * Setting default messaging preference for particular message provider
  *
  * @param  string $component   The name of component (e.g. moodle, mod_forum, etc.)
  * @param  string $messagename The name of message provider
  * @param  array  $fileprovider The value of $messagename key in the array defined in plugin messages.php
+ * @param  string $processorname The optinal name of message processor
  * @return void
  */
-function message_set_default_message_preference($component, $messagename, $fileprovider) {
+function message_set_default_message_preference($component, $messagename, $fileprovider, $processorname='') {
     global $DB;
 
     // Fetch message processors
-    $processors = get_message_processors();
+    $condition = null;
+    // If we need to process a particular processor, set the select condition
+    if (!empty($processorname)) {
+       $condition = array('name' => $processorname);
+    }
+    $processors = $DB->get_records('message_processors', $condition);
 
     // load default messaging preferences
     $defaultpreferences = get_message_output_default_preferences();
@@ -296,10 +332,22 @@ function message_set_default_message_preference($component, $messagename, $filep
     // now set loggedin/loggedoff preferences
     if (!empty($loggedinpref)) {
         $preferencename = 'message_provider_'.$componentproviderbase.'_loggedin';
+        if (isset($defaultpreferences->{$preferencename})) {
+            // We have the default preferences for this message provider, which
+            // likely means that we have been adding a new processor. Add defaults
+            // to exisitng preferences.
+            $loggedinpref = array_merge($loggedinpref, explode(',', $defaultpreferences->{$preferencename}));
+        }
         set_config($preferencename, join(',', $loggedinpref), 'message');
     }
     if (!empty($loggedoffpref)) {
         $preferencename = 'message_provider_'.$componentproviderbase.'_loggedoff';
+        if (isset($defaultpreferences->{$preferencename})) {
+            // We have the default preferences for this message provider, which
+            // likely means that we have been adding a new processor. Add defaults
+            // to exisitng preferences.
+            $loggedoffpref = array_merge($loggedoffpref, explode(',', $defaultpreferences->{$preferencename}));
+        }
         set_config($preferencename, join(',', $loggedoffpref), 'message');
     }
 }

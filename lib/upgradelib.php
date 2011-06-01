@@ -324,6 +324,9 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
                     external_update_descriptions($component);
                     events_update_definition($component);
                     message_update_providers($component);
+                    if ($type === 'message') {
+                        message_update_processors($plug);
+                    }
                     upgrade_plugin_mnet_functions($component);
                     $endcallback($component, true, $verbose);
                 }
@@ -357,6 +360,9 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
             external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
+            if ($type === 'message') {
+                message_update_processors($plug);
+            }
             upgrade_plugin_mnet_functions($component);
 
             purge_all_caches();
@@ -387,6 +393,9 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
             external_update_descriptions($component);
             events_update_definition($component);
             message_update_providers($component);
+            if ($type === 'message') {
+                message_update_processors($plug);
+            }
             upgrade_plugin_mnet_functions($component);
 
             purge_all_caches();
