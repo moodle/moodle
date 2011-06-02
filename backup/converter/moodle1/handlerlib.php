@@ -1309,6 +1309,57 @@ abstract class moodle1_qtype_handler extends moodle1_plugin_handler {
         $this->xmlwriter->end_tag('answers');
     }
 
+    /**
+     * Writes the grouped numerical_units structure
+     *
+     * @param array $numericalunits
+     */
+    protected function write_numerical_units(array $numericalunits) {
+
+        $this->xmlwriter->begin_tag('numerical_units');
+        foreach ($numericalunits as $elementname => $elements) {
+            foreach ($elements as $element) {
+                $element['id'] = $this->converter->get_nextid();
+                $this->write_xml('numerical_unit', $element, array('/numerical_unit/id'));
+            }
+        }
+        $this->xmlwriter->end_tag('numerical_units');
+    }
+
+    /**
+     * Writes the numerical_options structure
+     *
+     * This structure is not present in moodle.xml, we create a new artificial one here.
+     *
+     * @param array $numericaloptions
+     * @param int $oldquestiontextformat
+     */
+    protected function write_numerical_options($oldquestiontextformat) {
+        global $CFG;
+
+        // replay the upgrade step 2009100100 - new table
+        $options = array(
+            'numerical_option' => array(
+                'id'                 => $this->converter->get_nextid(),
+                'instructions'       => null,
+                'instructionsformat' => 0,
+                'showunits'          => 0,
+                'unitsleft'          => 0,
+                'unitgradingtype'    => 0,
+                'unitpenalty'        => 0.1
+            )
+        );
+
+        // replay the upgrade step 2009100101
+        if ($CFG->texteditors !== 'textarea' and $oldquestiontextformat == FORMAT_MOODLE) {
+            $options['numerical_option']['instructionsformat'] = FORMAT_HTML;
+        } else {
+            $options['numerical_option']['instructionsformat'] = $oldquestiontextformat;
+        }
+
+        $this->write_xml('numerical_options', $options, array('/numerical_options/numerical_option/id'));
+    }
+
     /// implementation details follow //////////////////////////////////////////
 
     public function __construct(moodle1_question_bank_handler $qbankhandler, $qtype) {
