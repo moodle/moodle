@@ -421,17 +421,34 @@ function message_get_providers_from_file($component) {
 }
 
 /**
- * Remove all message providers
+ * Remove all message providers for particular plugin and corresponding settings
  *
- * @param $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
+ * @param string $component - examples: 'moodle', 'mod_forum', 'block_quiz_results'
  * @return void
  */
-function message_uninstall($component) {
+function message_provider_uninstall($component) {
     global $DB;
 
     $transaction = $DB->start_delegated_transaction();
     $DB->delete_records('message_providers', array('component' => $component));
     $DB->delete_records_select('config_plugins', "plugin = 'message' AND ".$DB->sql_like('name', '?', false), array("%_provider_{$component}_%"));
     $DB->delete_records_select('user_preferences', $DB->sql_like('name', '?', false), array("message_provider_{$component}_%"));
+    $transaction->allow_commit();
+}
+
+/**
+ * Remove message processor
+ *
+ * @param string $name - examples: 'email', 'jabber'
+ * @return void
+ */
+function message_processor_uninstall($name) {
+    global $DB;
+
+    $transaction = $DB->start_delegated_transaction();
+    $DB->delete_records('message_processors', array('name' => $name));
+    // delete permission preferences only, we do not care about loggedin/loggedoff
+    // defaults, they will be removed on the next attempt to update the preferences
+    $DB->delete_records_select('config_plugins', "plugin = 'message' AND ".$DB->sql_like('name', '?', false), array("{$name}_provider_%"));
     $transaction->allow_commit();
 }
