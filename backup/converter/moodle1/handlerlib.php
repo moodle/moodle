@@ -50,7 +50,7 @@ abstract class moodle1_handlers_factory {
             new moodle1_course_header_handler($converter),
             new moodle1_course_outline_handler($converter),
             new moodle1_roles_definition_handler($converter),
-            new moodle1_question_categories_handler($converter),
+            new moodle1_question_bank_handler($converter),
         );
 
         $handlers = array_merge($handlers, self::get_plugin_handlers('mod', $converter));
@@ -331,8 +331,11 @@ class moodle1_root_handler extends moodle1_xml_handler {
         $this->xmlwriter->full_tag('original_course_fullname', $originalcourseinfo['original_course_fullname']);
         $this->xmlwriter->full_tag('original_course_shortname', $originalcourseinfo['original_course_shortname']);
         $this->xmlwriter->full_tag('original_course_startdate', $originalcourseinfo['original_course_startdate']);
-        $this->xmlwriter->full_tag('original_course_contextid', $originalcourseinfo['original_course_contextid']);
         $this->xmlwriter->full_tag('original_system_contextid', $this->converter->get_contextid(CONTEXT_SYSTEM));
+        // note that even though we have original_course_contextid available, we regenerate the
+        // original course contextid using our helper method to be sure that the data are consistent
+        // within the MBZ file
+        $this->xmlwriter->full_tag('original_course_contextid', $this->converter->get_contextid(CONTEXT_COURSE));
 
         // moodle_backup/information/details
         $this->xmlwriter->begin_tag('details');
@@ -463,6 +466,26 @@ class moodle1_root_handler extends moodle1_xml_handler {
         }
         $this->xmlwriter->end_tag('files');
         $this->close_xml_writer('files.xml');
+
+        // generate course/inforef.xml
+        $this->open_xml_writer('course/inforef.xml');
+        $this->xmlwriter->begin_tag('inforef');
+
+        $this->xmlwriter->begin_tag('fileref');
+        foreach ($this->converter->get_stash('course_files_ids') as $fileid) {
+            $this->write_xml('file', array('id' => $fileid));
+        }
+        // todo site files
+        $this->xmlwriter->end_tag('fileref');
+
+        $this->xmlwriter->begin_tag('question_categoryref');
+        foreach ($this->converter->get_stash_itemids('question_categories') as $questioncategoryid) {
+            $this->write_xml('question_category', array('id' => $questioncategoryid));
+        }
+        $this->xmlwriter->end_tag('question_categoryref');
+
+        $this->xmlwriter->end_tag('inforef');
+        $this->close_xml_writer();
 
         // make sure that the files required by the restore process have been generated.
         // missing file may happen if the watched tag is not present in moodle.xml (for example
@@ -681,20 +704,6 @@ class moodle1_course_header_handler extends moodle1_xml_handler {
         $this->open_xml_writer('course/course.xml');
         $this->write_xml('course', $this->course, array('/course/id', '/course/contextid'));
         $this->close_xml_writer();
-
-        // generate course/inforef.xml
-        $this->open_xml_writer('course/inforef.xml');
-        $this->xmlwriter->begin_tag('inforef');
-
-        $this->xmlwriter->begin_tag('fileref');
-        foreach ($this->converter->get_stash('course_files_ids') as $fileid) {
-            $this->write_xml('file', array('id' => $fileid));
-        }
-        // todo site files
-        $this->xmlwriter->end_tag('fileref');
-
-        $this->xmlwriter->end_tag('inforef');
-        $this->close_xml_writer();
     }
 }
 
@@ -905,25 +914,324 @@ class moodle1_roles_definition_handler extends moodle1_xml_handler {
 
 
 /**
- * Handles the conversion of question categories
+ * Handles the conversion of the question bank included in the moodle.xml file
  */
-class moodle1_question_categories_handler extends moodle1_xml_handler {
+class moodle1_question_bank_handler extends moodle1_xml_handler {
+
+    /** @var array the current question category being parsed */
+    protected $currentcategory = null;
+
+    /** @var array of the raw data for the current category */
+    protected $currentcategoryraw = null;
+
+    /** @var moodle1_file_manager instance used to convert question images */
+    protected $fileman = null;
+
+    /** @var bool are the currentcategory data already written (this is a work around MDL-27693) */
+    private $currentcategorywritten = false;
+
+    /** @var bool was the <questions> tag already written (work around MDL-27693) */
+    private $questionswrapperwritten = false;
 
     /**
-     * Where the roles are defined in the source moodle.xml
+     * Registers path that are not qtype-specific
      */
     public function get_paths() {
-        return array(new convert_path('question_categories', '/MOODLE_BACKUP/QUESTION_CATEGORIES'));
+
+        $paths = array(
+            new convert_path('question_categories', '/MOODLE_BACKUP/COURSE/QUESTION_CATEGORIES'),
+            new convert_path(
+                'question_category', '/MOODLE_BACKUP/COURSE/QUESTION_CATEGORIES/QUESTION_CATEGORY',
+                array(
+                    'newfields' => array(
+                        'infoformat' => 0
+                    )
+                )),
+            new convert_path('question_category_context', '/MOODLE_BACKUP/COURSE/QUESTION_CATEGORIES/QUESTION_CATEGORY/CONTEXT'),
+            new convert_path('questions', '/MOODLE_BACKUP/COURSE/QUESTION_CATEGORIES/QUESTION_CATEGORY/QUESTIONS'),
+            // the question element must be grouped so we can re-dispatch it to the qtype handler as a whole
+            new convert_path('question', '/MOODLE_BACKUP/COURSE/QUESTION_CATEGORIES/QUESTION_CATEGORY/QUESTIONS/QUESTION', array(), true),
+        );
+
+        // annotate all question subpaths required by the qtypes subplugins
+        $subpaths = array();
+        foreach ($this->get_qtype_handler('*') as $qtypehandler) {
+            foreach ($qtypehandler->get_question_subpaths() as $subpath) {
+                $subpaths[$subpath] = true;
+            }
+        }
+        foreach (array_keys($subpaths) as $subpath) {
+            $name = 'subquestion_'.strtolower(str_replace('/', '_', $subpath));
+            $path = '/MOODLE_BACKUP/COURSE/QUESTION_CATEGORIES/QUESTION_CATEGORY/QUESTIONS/QUESTION/'.$subpath;
+            $paths[] = new convert_path($name, $path);
+        }
+
+        return $paths;
     }
 
-    public function process_question_categories() {
-        // @todo
+    /**
+     * Starts writing questions.xml and prepares the file manager instance
+     */
+    public function on_question_categories_start() {
+        $this->open_xml_writer('questions.xml');
+        $this->xmlwriter->begin_tag('question_categories');
+        if (is_null($this->fileman)) {
+            $this->fileman = $this->converter->get_file_manager();
+        }
+    }
+
+    /**
+     * Initializes the current category cache
+     */
+    public function on_question_category_start() {
+        $this->currentcategory         = array();
+        $this->currentcategoryraw      = array();
+        $this->currentcategorywritten  = false;
+        $this->questionswrapperwritten = false;
+    }
+
+    /**
+     * Populates the current question category data
+     *
+     * Bacuse of the known subpath-in-the-middle problem (CONTEXT in this case), this is actually
+     * called twice for both halves of the data. We merge them here into the currentcategory array.
+     */
+    public function process_question_category($data, $raw) {
+        $this->currentcategory    = array_merge($this->currentcategory, $data);
+        $this->currentcategoryraw = array_merge($this->currentcategoryraw, $raw);
+    }
+
+    /**
+     * Inject the context related information into the current category
+     */
+    public function process_question_category_context($data) {
+        static $originalcourseid = null;
+
+        if (is_null($originalcourseid)) {
+            $originalcourseinfo = $this->converter->get_stash('original_course_info');
+            $originalcourseid   = $originalcourseinfo['original_course_id'];
+        }
+
+        switch ($data['level']) {
+        case 'module':
+            $this->currentcategory['contextid'] = $this->converter->get_contextid(CONTEXT_MODULE, $data['instance']);
+            $this->currentcategory['contextlevel'] = CONTEXT_MODULE;
+            $this->currentcategory['contextinstanceid'] = $data['instance'];
+            break;
+        case 'course':
+            $this->currentcategory['contextid'] = $this->converter->get_contextid(CONTEXT_COURSE);
+            $this->currentcategory['contextlevel'] = CONTEXT_COURSE;
+            $this->currentcategory['contextinstanceid'] = $originalcourseid;
+            break;
+        case 'coursecategory':
+            // this is a bit hacky. the source moodle.xml defines COURSECATEGORYLEVEL as a distance
+            // of the course category (1 = parent category, 2 = grand-parent category etc). We pretend
+            // that this level*10 is the id of that category and create an artifical contextid for it
+            $this->currentcategory['contextid'] = $this->converter->get_contextid(CONTEXT_COURSECAT, $data['coursecategorylevel'] * 10);
+            $this->currentcategory['contextlevel'] = CONTEXT_COURSECAT;
+            $this->currentcategory['contextinstanceid'] = $data['coursecategorylevel'] * 10;
+            break;
+        case 'system':
+            $this->currentcategory['contextid'] = $this->converter->get_contextid(CONTEXT_SYSTEM);
+            $this->currentcategory['contextlevel'] = CONTEXT_SYSTEM;
+            $this->currentcategory['contextinstanceid'] = 0;
+            break;
+        }
+    }
+
+    /**
+     * Writes the common <question> data and re-dispateches the whole grouped
+     * <QUESTION> data to the qtype for appending its qtype specific data processing
+     *
+     * @param array $data
+     * @param array $raw
+     * @return array
+     */
+    public function process_question(array $data, array $raw) {
+        global $CFG;
+
+        // firstly make sure that the category data and the <questions> wrapper are written
+        // note that because of MDL-27693 we can't use {@link self::process_question_category()}
+        // and {@link self::on_questions_start()} to do so
+
+        if (empty($this->currentcategorywritten)) {
+            $this->xmlwriter->begin_tag('question_category', array('id' => $this->currentcategory['id']));
+            foreach ($this->currentcategory as $name => $value) {
+                if ($name === 'id') {
+                    continue;
+                }
+                $this->xmlwriter->full_tag($name, $value);
+            }
+            $this->currentcategorywritten = true;
+        }
+
+        if (empty($this->questionswrapperwritten)) {
+            $this->xmlwriter->begin_tag('questions');
+            $this->questionswrapperwritten = true;
+        }
+
+        $qtype = $data['qtype'];
+
+        // replay the upgrade step 2008050700 {@see question_fix_random_question_parents()}
+        if ($qtype == 'random' and $data['parent'] <> $data['id']) {
+            $data['parent'] = $data['id'];
+        }
+
+        // replay the upgrade step 2010080900 and part of 2010080901
+        $data['generalfeedbackformat'] = $data['questiontextformat'];
+        $data['oldquestiontextformat'] = $data['questiontextformat'];
+
+        if ($CFG->texteditors !== 'textarea') {
+            $data['questiontext'] = text_to_html($data['questiontext'], false, false, true);
+            $data['questiontextformat'] = FORMAT_HTML;
+            $data['generalfeedback'] = text_to_html($data['generalfeedback'], false, false, true);
+            $data['generalfeedbackformat'] = FORMAT_HTML;
+        }
+
+        // replay the upgrade step 2010080901 - updating question image
+        if (!empty($data['image'])) {
+            $textlib = textlib_get_instance();
+            if ($textlib->substr($textlib->strtolower($data['image']), 0, 7) == 'http://') {
+                // it is a link, appending to existing question text
+                $data['questiontext'] .= ' <img src="' . $data['image'] . '" />';
+
+            } else {
+                // it is a file in course_files
+                $filename = basename($data['image']);
+                $filepath = dirname($data['image']);
+                if (empty($filepath) or $filepath == '.' or $filepath == '/') {
+                    $filepath = '/';
+                } else {
+                    // append /
+                    $filepath = '/'.trim($filepath, './@#$ ').'/';
+                }
+
+                if (file_exists($this->converter->get_tempdir_path().'/course_files'.$filepath.$filename)) {
+                    $this->fileman->contextid = $this->currentcategory['contextid'];
+                    $this->fileman->component = 'question';
+                    $this->fileman->filearea  = 'questiontext';
+                    $this->fileman->itemid    = $data['id'];
+                    $this->fileman->migrate_file('course_files'.$filepath.$filename, '/', $filename);
+                    // note this is slightly different from the upgrade code as we put the file into the
+                    // root folder here. this makes our life easier as we do not need to create all the
+                    // directories within the specified filearea/itemid
+                    $data['questiontext'] .= ' <img src="@@PLUGINFILE@@/' . $filename . '" />';
+
+                } else {
+                    debugging('Question id '.$data['id']. ' file not found: '.$filepath.$filename);
+                }
+            }
+        }
+        unset($data['image']);
+
+        // write the common question data
+        $this->xmlwriter->begin_tag('question', array('id' => $data['id']));
+        foreach (array(
+            'parent', 'name', 'questiontext', 'questiontextformat',
+            'generalfeedback', 'generalfeedbackformat', 'defaultgrade',
+            'penalty', 'qtype', 'length', 'stamp', 'version', 'hidden',
+            'timecreated', 'timemodified', 'createdby', 'modifiedby'
+        ) as $fieldname) {
+            if (!array_key_exists($fieldname, $data)) {
+                throw new moodle1_convert_exception('missing_common_question_field', $fieldname);
+            }
+            $this->xmlwriter->full_tag($fieldname, $data[$fieldname]);
+        }
+        // unless we know that the given qtype does not append any own structures,
+        // give the handler a chance to do so now
+        if (!in_array($qtype, array('description'))) {
+            $handler = $this->get_qtype_handler($qtype);
+            if ($handler === false) {
+                debugging('Question type '.$qtype.' converter not found.', DEBUG_DEVELOPER);
+
+            } else {
+                $this->xmlwriter->begin_tag('plugin_qtype_'.$qtype.'_question');
+                $handler->use_xml_writer($this->xmlwriter);
+                $data = array_merge($data, $handler->process_question($data, $raw));
+                $this->xmlwriter->end_tag('plugin_qtype_'.$qtype.'_question');
+            }
+        }
+
+        $this->xmlwriter->end_tag('question');
+
+        return $data;
+    }
+
+    /**
+     * Closes the questions wrapper
+     */
+    public function on_questions_end() {
+        $this->xmlwriter->end_tag('questions');
+    }
+
+    /**
+     * Closes the question_category and annotates the category id
+     * so that it can be dumped into course/inforef.xml
+     */
+    public function on_question_category_end() {
+        // make sure that the category data were written by {@link self::process_question()}
+        // if not, write it now. this may happen when the current category does not contain any
+        // questions so the subpaths is missing completely
+        if (empty($this->currentcategorywritten)) {
+            $this->write_xml('question_category', $this->currentcategory, array('/question_category/id'));
+        } else {
+            $this->xmlwriter->end_tag('question_category');
+        }
+        $this->converter->set_stash('question_categories', $this->currentcategory, $this->currentcategory['id']);
+    }
+
+    /**
+     * Stops writing questions.xml
+     */
+    public function on_question_categories_end() {
+        $this->xmlwriter->end_tag('question_categories');
+        $this->close_xml_writer();
+    }
+
+    /**
+     * Provides access to the qtype handlers
+     *
+     * Returns either list of all qtype handler instances (if passed '*') or a particular handler
+     * for the given qtype or false if the qtype is not supported.
+     *
+     * @throws moodle1_convert_exception
+     * @param string $qtype the name of the question type or '*' for returning all
+     * @return array|moodle1_qtype_handler|bool
+     */
+    protected function get_qtype_handler($qtype) {
+        static $qtypehandlers = null;
+
+        if (is_null($qtypehandlers)) {
+            // initialize the static list of qtype handler instances
+            $qtypehandlers = array();
+            foreach (get_plugin_list('qtype') as $qtypename => $qtypelocation) {
+                $filename = $qtypelocation.'/backup/moodle1/lib.php';
+                if (file_exists($filename)) {
+                    $classname = 'moodle1_qtype_'.$qtypename.'_handler';
+                    require_once($filename);
+                    if (!class_exists($classname)) {
+                        throw new moodle1_convert_exception('missing_handler_class', $classname);
+                    }
+                    $qtypehandlers[$qtypename] = new $classname($this, $qtypename);
+                }
+            }
+        }
+
+        if ($qtype === '*') {
+            return $qtypehandlers;
+
+        } else if (isset($qtypehandlers[$qtype])) {
+            return $qtypehandlers[$qtype];
+
+        } else {
+            return false;
+        }
     }
 }
 
 
 /**
- * Shared base class for activity modules and blocks handlers
+ * Shared base class for activity modules, blocks and qtype handlers
  */
 abstract class moodle1_plugin_handler extends moodle1_xml_handler {
 
@@ -952,6 +1260,75 @@ abstract class moodle1_plugin_handler extends moodle1_xml_handler {
      */
     public function get_component_name() {
         return $this->plugintype.'_'.$this->pluginname;
+    }
+}
+
+
+/**
+ * Base class for all question type handlers
+ */
+abstract class moodle1_qtype_handler extends moodle1_plugin_handler {
+
+    /** @var moodle1_question_bank_handler */
+    protected $qbankhandler;
+
+    /**
+     * Returns the list of paths within one <QUESTION> that this qtype needs to have included
+     * in the grouped question structure
+     *
+     * @return array of strings
+     */
+    public function get_question_subpaths() {
+        return array();
+    }
+
+    /**
+     * Gives the qtype handler a chance to write converted data into questions.xml
+     *
+     * @param array $data grouped question data
+     * @param array $raw grouped raw QUESTION data
+     * @return array converted data
+     */
+    public function process_question(array $data, array $raw) {
+        return $data;
+    }
+
+    /// implementation details follow //////////////////////////////////////////
+
+    public function __construct(moodle1_question_bank_handler $qbankhandler, $qtype) {
+
+        parent::__construct($qbankhandler->get_converter(), 'qtype', $qtype);
+        $this->qbankhandler = $qbankhandler;
+    }
+
+    /**
+     * @see self::get_question_subpaths()
+     */
+    final public function get_paths() {
+        throw new moodle1_convert_exception('qtype_handler_get_paths');
+    }
+
+    /**
+     * Question type handlers cannot open the xml_writer
+     */
+    final protected function open_xml_writer() {
+        throw new moodle1_convert_exception('opening_xml_writer_forbidden');
+    }
+
+    /**
+     * Question type handlers cannot close the xml_writer
+     */
+    final protected function close_xml_writer() {
+        throw new moodle1_convert_exception('opening_xml_writer_forbidden');
+    }
+
+    /**
+     * Provides a xml_writer instance to this qtype converter
+     *
+     * @param xml_writer $xmlwriter
+     */
+    public function use_xml_writer(xml_writer $xmlwriter) {
+        $this->xmlwriter = $xmlwriter;
     }
 }
 

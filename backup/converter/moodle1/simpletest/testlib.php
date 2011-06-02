@@ -365,6 +365,17 @@ class moodle1_converter_test extends UnitTestCase {
             ), true);
     }
 
+    public function test_question_bank_conversion() {
+        global $CFG;
+
+        copy(
+            "$CFG->dirroot/backup/converter/moodle1/simpletest/files/questions.xml",
+            "$CFG->dataroot/temp/backup/$this->tempdir/moodle.xml"
+        );
+        $converter = convert_factory::get_converter('moodle1', $this->tempdir);
+        $converter->convert();
+    }
+
     public function test_convert_run_convert() {
         $converter = convert_factory::get_converter('moodle1', $this->tempdir);
         $converter->convert();
