@@ -503,6 +503,7 @@ class moodle1_files_handler extends moodle1_xml_handler {
     protected function migrate_course_files() {
         $ids  = array();
         $fileman = $this->converter->get_file_manager($this->converter->get_contextid(CONTEXT_COURSE), 'course', 'legacy');
+        $this->converter->set_stash('course_files_ids', array());
         if (file_exists($this->converter->get_tempdir_path().'/course_files')) {
             $ids = $fileman->migrate_directory('course_files');
             $this->converter->set_stash('course_files_ids', $ids);
