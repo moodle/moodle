@@ -1147,14 +1147,12 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
             } else {
                 $this->xmlwriter->begin_tag('plugin_qtype_'.$qtype.'_question');
                 $handler->use_xml_writer($this->xmlwriter);
-                $data = array_merge($data, $handler->process_question($data, $raw));
+                $handler->process_question($data, $raw);
                 $this->xmlwriter->end_tag('plugin_qtype_'.$qtype.'_question');
             }
         }
 
         $this->xmlwriter->end_tag('question');
-
-        return $data;
     }
 
     /**
@@ -1287,10 +1285,8 @@ abstract class moodle1_qtype_handler extends moodle1_plugin_handler {
      *
      * @param array $data grouped question data
      * @param array $raw grouped raw QUESTION data
-     * @return array converted data
      */
     public function process_question(array $data, array $raw) {
-        return $data;
     }
 
     /// implementation details follow //////////////////////////////////////////
