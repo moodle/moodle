@@ -234,7 +234,7 @@ abstract class moodle1_xml_handler extends moodle1_handler {
         foreach ($data as $name => $value) {
             if (is_array($value)) {
                 // recursively call self
-                $this->write_xml($name, $value, $attribs, $mypath);
+                $this->write_xml($name, $value, $attribs, $mypath.'/');
             } else {
                 $this->xmlwriter->full_tag($name, $value);
             }
