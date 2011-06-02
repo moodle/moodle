@@ -1289,6 +1289,26 @@ abstract class moodle1_qtype_handler extends moodle1_plugin_handler {
     public function process_question(array $data, array $raw) {
     }
 
+    /**
+     * Converts the answers and writes them into the questions.xml
+     *
+     * The structure "answers" is used by several qtypes. It contains data from {question_answers} table.
+     *
+     * @param array $answers as parsed by the grouped parser in moodle.xml
+     * @param string $qtype containing the answers
+     */
+    protected function write_answers(array $answers, $qtype) {
+
+        $this->xmlwriter->begin_tag('answers');
+        foreach ($answers as $elementname => $elements) {
+            foreach ($elements as $element) {
+                $answer = $this->convert_answer($element, $qtype);
+                $this->write_xml('answer', $answer, array('/answer/id'));
+            }
+        }
+        $this->xmlwriter->end_tag('answers');
+    }
+
     /// implementation details follow //////////////////////////////////////////
 
     public function __construct(moodle1_question_bank_handler $qbankhandler, $qtype) {
@@ -1325,6 +1345,46 @@ abstract class moodle1_qtype_handler extends moodle1_plugin_handler {
      */
     public function use_xml_writer(xml_writer $xmlwriter) {
         $this->xmlwriter = $xmlwriter;
+    }
+
+    /**
+     * Converts <ANSWER> structure into the new <answer> one
+     *
+     * See question_backup_answers() in 1.9 and add_question_question_answers() in 2.0
+     *
+     * @param array $old the parsed answer array in moodle.xml
+     * @param string $qtype the question type the answer is part of
+     * @return array
+     */
+    private function convert_answer(array $old, $qtype) {
+        global $CFG;
+
+        $new                    = array();
+        $new['id']              = $old['id'];
+        $new['answertext']      = $old['answer_text'];
+        $new['answerformat']    = 0;   // upgrade step 2010080900
+        $new['fraction']        = $old['fraction'];
+        $new['feedback']        = $old['feedback'];
+        $new['feedbackformat']  = 0;   // upgrade step 2010080900
+
+        // replay upgrade step 2010080901
+        if ($qtype !== 'multichoice') {
+            $new['answerformat'] = FORMAT_PLAIN;
+        } else {
+            $new['answerformat'] = FORMAT_MOODLE;
+        }
+
+        if ($CFG->texteditors !== 'textarea') {
+            if ($qtype == 'essay') {
+                $new['feedback'] = text_to_html($new['feedback'], false, false, true);
+            }
+            $new['feedbackformat'] = FORMAT_HTML;
+
+        } else {
+            $new['feedbackformat'] = FORMAT_MOODLE;
+        }
+
+        return $new;
     }
 }
 
