@@ -2816,10 +2816,14 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
  */
 function get_docs_url($path) {
     global $CFG;
+    //derive branch from the first three letters of version.php's $release with the period taken out.($CFG->release isn't populated yet during upgrade)
+    include($CFG->dirroot.'/version.php');
+    preg_match('/^(.)\.(.)/', $release, $matches);
+    $branch = $matches[1].$matches[2];
     if (!empty($CFG->docroot)) {
-        return $CFG->docroot . '/' . current_language() . '/' . $path;
+        return $CFG->docroot . '/' . $branch . '/' . current_language() . '/' . $path;
     } else {
-        return 'http://docs.moodle.org/en/'.$path;
+        return 'http://docs.moodle.org/'. $branch . '/en/' . $path;
     }
 }
 
