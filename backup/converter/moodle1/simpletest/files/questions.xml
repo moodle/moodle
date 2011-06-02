@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <MOODLE_BACKUP>
   <INFO>
-    <NAME>backup-questions19-20110531-1129.zip</NAME>
+    <NAME>backup-questions19-20110602-1657.zip</NAME>
     <MOODLE_VERSION>2007101591.03</MOODLE_VERSION>
     <MOODLE_RELEASE>1.9.12+ (Build: 20110511)</MOODLE_RELEASE>
     <BACKUP_VERSION>2009111300</BACKUP_VERSION>
     <BACKUP_RELEASE>1.9.7</BACKUP_RELEASE>
-    <DATE>1306834140</DATE>
+    <DATE>1307026661</DATE>
     <ORIGINAL_WWWROOT>http://glum/~mudrd8mz/moodle19</ORIGINAL_WWWROOT>
     <ORIGINAL_SITE_IDENTIFIER_HASH>26f3fcb01f8a394b100261c626f94462</ORIGINAL_SITE_IDENTIFIER_HASH>
     <ZIP_METHOD>external</ZIP_METHOD>
     <DETAILS>
       <MOD>
         <NAME>forum</NAME>
-        <INCLUDED>true</INCLUDED>
+        <INCLUDED>false</INCLUDED>
         <USERINFO>false</USERINFO>
         <INSTANCES>
-          <INSTANCE>
-          <ID>5</ID>
-          <NAME>News forum</NAME>
-          <INCLUDED>true</INCLUDED>
-          <USERINFO>false</USERINFO>
-          </INSTANCE>
         </INSTANCES>
       </MOD>
       <MOD>
@@ -220,25 +214,6 @@
         <NUMBER>0</NUMBER>
         <SUMMARY>$@NULL@$</SUMMARY>
         <VISIBLE>1</VISIBLE>
-        <MODS>
-          <MOD>
-            <ID>15</ID>
-            <TYPE>forum</TYPE>
-            <INSTANCE>5</INSTANCE>
-            <ADDED>1306831000</ADDED>
-            <SCORE>0</SCORE>
-            <INDENT>0</INDENT>
-            <VISIBLE>1</VISIBLE>
-            <GROUPMODE>0</GROUPMODE>
-            <GROUPINGID>0</GROUPINGID>
-            <GROUPMEMBERSONLY>0</GROUPMEMBERSONLY>
-            <IDNUMBER>$@NULL@$</IDNUMBER>
-            <ROLES_OVERRIDES>
-            </ROLES_OVERRIDES>
-            <ROLES_ASSIGNMENTS>
-            </ROLES_ASSIGNMENTS>
-          </MOD>
-        </MODS>
       </SECTION>
       <SECTION>
         <ID>52</ID>
@@ -322,14 +297,14 @@
     </SECTIONS>
     <QUESTION_CATEGORIES>
       <QUESTION_CATEGORY>
-        <ID>59</ID>
-        <NAME>Course level sub-sub-category</NAME>
+        <ID>15</ID>
+        <NAME>Course level empty category</NAME>
         <INFO></INFO>
         <CONTEXT>
           <LEVEL>course</LEVEL>
         </CONTEXT>
-        <STAMP>glum+110531083817+9h2lta</STAMP>
-        <PARENT>9</PARENT>
+        <STAMP>glum+110602145600+5BeIMW</STAMP>
+        <PARENT>0</PARENT>
         <SORTORDER>999</SORTORDER>
       </QUESTION_CATEGORY>
       <QUESTION_CATEGORY>
@@ -561,7 +536,7 @@
             <ID>19</ID>
             <PARENT>0</PARENT>
             <NAME>Numerical</NAME>
-            <QUESTIONTEXT></QUESTIONTEXT>
+            <QUESTIONTEXT>Correct answer is 2 meters or 5 metres. Can be in centimetres, too.</QUESTIONTEXT>
             <QUESTIONTEXTFORMAT>1</QUESTIONTEXTFORMAT>
             <IMAGE></IMAGE>
             <GENERALFEEDBACK></GENERALFEEDBACK>
@@ -570,20 +545,50 @@
             <QTYPE>numerical</QTYPE>
             <LENGTH>1</LENGTH>
             <STAMP>glum+110531085745+IDs7qb</STAMP>
-            <VERSION>glum+110531085745+mzAavE</VERSION>
+            <VERSION>glum+110602145234+gfl7nu</VERSION>
             <HIDDEN>0</HIDDEN>
             <TIMECREATED>1306832265</TIMECREATED>
-            <TIMEMODIFIED>1306832265</TIMEMODIFIED>
+            <TIMEMODIFIED>1307026354</TIMEMODIFIED>
             <CREATEDBY>2</CREATEDBY>
             <MODIFIEDBY>2</MODIFIEDBY>
             <NUMERICAL>
               <ANSWER>22</ANSWER>
-              <TOLERANCE>2</TOLERANCE>
+              <TOLERANCE>0</TOLERANCE>
+              <NUMERICAL_UNITS>
+                <NUMERICAL_UNIT>
+                  <MULTIPLIER>1.00000000000000000000</MULTIPLIER>
+                  <UNIT>m</UNIT>
+                </NUMERICAL_UNIT>
+                <NUMERICAL_UNIT>
+                  <MULTIPLIER>100.00000000000000000000</MULTIPLIER>
+                  <UNIT>cm</UNIT>
+                </NUMERICAL_UNIT>
+              </NUMERICAL_UNITS>
+            </NUMERICAL>
+            <NUMERICAL>
+              <ANSWER>25</ANSWER>
+              <TOLERANCE>0</TOLERANCE>
+              <NUMERICAL_UNITS>
+                <NUMERICAL_UNIT>
+                  <MULTIPLIER>1.00000000000000000000</MULTIPLIER>
+                  <UNIT>m</UNIT>
+                </NUMERICAL_UNIT>
+                <NUMERICAL_UNIT>
+                  <MULTIPLIER>100.00000000000000000000</MULTIPLIER>
+                  <UNIT>cm</UNIT>
+                </NUMERICAL_UNIT>
+              </NUMERICAL_UNITS>
             </NUMERICAL>
             <ANSWERS>
               <ANSWER>
                 <ID>22</ID>
-                <ANSWER_TEXT>1989</ANSWER_TEXT>
+                <ANSWER_TEXT>2</ANSWER_TEXT>
+                <FRACTION>1</FRACTION>
+                <FEEDBACK></FEEDBACK>
+              </ANSWER>
+              <ANSWER>
+                <ID>25</ID>
+                <ANSWER_TEXT>5</ANSWER_TEXT>
                 <FRACTION>1</FRACTION>
                 <FEEDBACK></FEEDBACK>
               </ANSWER>
@@ -703,7 +708,7 @@
       <QUESTION_CATEGORY>
         <ID>4</ID>
         <NAME>System level category</NAME>
-        <INFO>The default category for questions shared in context 'System'.</INFO>
+        <INFO></INFO>
         <CONTEXT>
           <LEVEL>system</LEVEL>
         </CONTEXT>
@@ -926,14 +931,14 @@
       <QUESTION_CATEGORY>
         <ID>3</ID>
         <NAME>Course-category level category</NAME>
-        <INFO>The default category for questions shared in context 'Různé'.</INFO>
+        <INFO></INFO>
         <CONTEXT>
           <LEVEL>coursecategory</LEVEL>
           <COURSECATEGORYLEVEL>1</COURSECATEGORYLEVEL>
         </CONTEXT>
         <STAMP>glum+110503130242+iB54x2</STAMP>
         <PARENT>0</PARENT>
-        <SORTORDER>999</SORTORDER>
+        <SORTORDER>1</SORTORDER>
         <QUESTIONS>
           <QUESTION>
             <ID>9</ID>
@@ -1101,26 +1106,6 @@
       </GRADE_ITEMS>
     </GRADEBOOK>
     <MODULES>
-      <MOD>
-        <ID>5</ID>
-        <MODTYPE>forum</MODTYPE>
-        <TYPE>news</TYPE>
-        <NAME>News forum</NAME>
-        <INTRO>General news and announcements</INTRO>
-        <ASSESSED>0</ASSESSED>
-        <ASSESSTIMESTART>0</ASSESSTIMESTART>
-        <ASSESSTIMEFINISH>0</ASSESSTIMEFINISH>
-        <MAXBYTES>0</MAXBYTES>
-        <SCALE>0</SCALE>
-        <FORCESUBSCRIBE>1</FORCESUBSCRIBE>
-        <TRACKINGTYPE>1</TRACKINGTYPE>
-        <RSSTYPE>0</RSSTYPE>
-        <RSSARTICLES>0</RSSARTICLES>
-        <TIMEMODIFIED>1306831000</TIMEMODIFIED>
-        <WARNAFTER>0</WARNAFTER>
-        <BLOCKAFTER>0</BLOCKAFTER>
-        <BLOCKPERIOD>0</BLOCKPERIOD>
-      </MOD>
       <MOD>
         <ID>5</ID>
         <MODTYPE>quiz</MODTYPE>
