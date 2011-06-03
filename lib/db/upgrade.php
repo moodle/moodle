@@ -6062,6 +6062,57 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         upgrade_main_savepoint(true, 2011022100.01);
     }
 
+    if ($oldversion < 2011052300.00) {
+        $table = new xmldb_table('rating');
+
+        // Add the component field to the ratings table
+        upgrade_set_timeout(60 * 20);
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, 'unknown', 'contextid');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Add the ratingarea field to the ratings table
+        upgrade_set_timeout(60 * 20);
+        $field = new xmldb_field('ratingarea', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, 'unknown', 'component');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2011052300.00);
+    }
+
+    if ($oldversion < 2011052300.01) {
+
+        // Define index uniqueuserrating (unique) to be added to rating
+        $table = new xmldb_table('rating');
+        $index = new xmldb_index('uniqueuserrating', XMLDB_INDEX_NOTUNIQUE, array('component', 'ratingarea', 'contextid', 'itemid'));
+
+        // Conditionally launch add index uniqueuserrating
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011052300.01);
+    }
+
+    if ($oldversion < 2011052300.02) {
+
+        // Define index itemid (not unique) to be dropped form rating
+        $table = new xmldb_table('rating');
+        $index = new xmldb_index('itemid', XMLDB_INDEX_NOTUNIQUE, array('itemid'));
+
+        // Conditionally launch drop index itemid
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011052300.02);
+    }
+
+    // Question engine 2 changes (14) start here
     if ($oldversion < 2011051200) {
         // Changing the default of field penalty on table question to 0.3333333
         $table = new xmldb_table('question');
@@ -6428,6 +6479,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         // Main savepoint reached
         upgrade_main_savepoint(true, 2011051213);
     }
+    // Question engine 2 changes (14) end here
 
     return true;
 }

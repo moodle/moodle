@@ -673,6 +673,8 @@ function quiz_grade_item_delete($quiz) {
 /**
  * Returns an array of users who have data in a given quiz
  *
+ * @todo: deprecated - to be deleted in 2.2
+ *
  * @param int $quizid the quiz id.
  * @return array of userids.
  */
