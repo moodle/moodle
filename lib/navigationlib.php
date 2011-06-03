@@ -237,8 +237,8 @@ class navigation_node implements renderable {
     }
 
     /**
-     * Adds a navigation node as a child of this node.
-     *
+     * Creates a navigation node, ready to add it as a child using add_node
+     * function. (The created node needs to be added before you can use it.)
      * @param string $text
      * @param moodle_url|action_link $action
      * @param int $type
@@ -247,11 +247,8 @@ class navigation_node implements renderable {
      * @param pix_icon $icon
      * @return navigation_node
      */
-    public function add($text, $action=null, $type=self::TYPE_CUSTOM, $shorttext=null, $key=null, pix_icon $icon=null) {
-        // First convert the nodetype for this node to a branch as it will now have children
-        if ($this->nodetype !== self::NODETYPE_BRANCH) {
-            $this->nodetype = self::NODETYPE_BRANCH;
-        }
+    public static function create($text, $action=null, $type=self::TYPE_CUSTOM,
+            $shorttext=null, $key=null, pix_icon $icon=null) {
         // Properties array used when creating the new navigation node
         $itemarray = array(
             'text' => $text,
@@ -269,18 +266,58 @@ class navigation_node implements renderable {
         if ($icon!==null) {
             $itemarray['icon'] = $icon;
         }
-        // Default the key to the number of children if not provided
-        if ($key === null) {
-            $key = $this->children->count();
-        }
         // Set the key
         $itemarray['key'] = $key;
+        // Construct and return
+        return new navigation_node($itemarray);
+    }
+
+    /**
+     * Adds a navigation node as a child of this node.
+     *
+     * @param string $text
+     * @param moodle_url|action_link $action
+     * @param int $type
+     * @param string $shorttext
+     * @param string|int $key
+     * @param pix_icon $icon
+     * @return navigation_node
+     */
+    public function add($text, $action=null, $type=self::TYPE_CUSTOM, $shorttext=null, $key=null, pix_icon $icon=null) {
+        // Create child node
+        $childnode = self::create($text, $action, $type, $shorttext, $key, $icon);
+
+        // Add the child to end and return
+        return $this->add_node($childnode);
+    }
+
+    /**
+     * Adds a navigation node as a child of this one, given a $node object
+     * created using the create function.
+     * @param navigation_node $childnode Node to add
+     * @param int|string $key The key of a node to add this before. If not
+     *   specified, adds at end of list
+     * @return navigation_node The added node
+     */
+    public function add_node(navigation_node $childnode, $beforekey=null) {
+        // First convert the nodetype for this node to a branch as it will now have children
+        if ($this->nodetype !== self::NODETYPE_BRANCH) {
+            $this->nodetype = self::NODETYPE_BRANCH;
+        }
         // Set the parent to this node
-        $itemarray['parent'] = $this;
+        $childnode->parent = $this;
+
+        // Default the key to the number of children if not provided
+        if ($childnode->key === null) {
+            $childnode->key = $this->children->count();
+        }
+
         // Add the child using the navigation_node_collections add method
-        $node = $this->children->add(new navigation_node($itemarray));
-        // If the node is a category node or the user is logged in and its a course
-        // then mark this node as a branch (makes it expandable by AJAX)
+        $node = $this->children->add($childnode, $beforekey);
+
+        // If added node is a category node or the user is logged in and it's a course
+        // then mark added node as a branch (makes it expandable by AJAX)
+        $type = $childnode->type;
         if (($type==self::TYPE_CATEGORY) || (isloggedin() && $type==self::TYPE_COURSE)) {
             $node->nodetype = self::NODETYPE_BRANCH;
         }
@@ -288,7 +325,7 @@ class navigation_node implements renderable {
         if ($this->hidden) {
             $node->hidden = true;
         }
-        // Return the node (reference returned by $this->children->add()
+        // Return added node (reference returned by $this->children->add()
         return $node;
     }
 
@@ -647,13 +684,16 @@ class navigation_node_collection implements IteratorAggregate {
     /**
      * Adds a navigation node to the collection
      *
-     * @param navigation_node $node
-     * @return navigation_node
+     * @param navigation_node $node Node to add
+     * @param string $beforekey If specified, adds before a node with this key,
+     *   otherwise adds at end
+     * @return navigation_node Added node
      */
-    public function add(navigation_node $node) {
+    public function add(navigation_node $node, $beforekey=null) {
         global $CFG;
         $key = $node->key;
         $type = $node->type;
+
         // First check we have a 2nd dimension for this type
         if (!array_key_exists($type, $this->orderedcollection)) {
             $this->orderedcollection[$type] = array();
@@ -662,15 +702,50 @@ class navigation_node_collection implements IteratorAggregate {
         if ($CFG->debug && array_key_exists($key, $this->orderedcollection[$type])) {
             debugging('Navigation node intersect: Adding a node that already exists '.$key, DEBUG_DEVELOPER);
         }
-        // Add the node to the appropriate place in the ordered structure.
+
+        // Find the key to add before
+        $newindex = $this->count;
+        $last = true;
+        if ($beforekey !== null) {
+            foreach ($this->collection as $index => $othernode) {
+                if ($othernode->key === $beforekey) {
+                    $newindex = $index;
+                    $last = false;
+                    break;
+                }
+            }
+            if ($newindex === $this->count) {
+                $allkeys = '';
+                foreach ($this->collection as $othernode) {
+                    $allkeys .= ' ' . $othernode->key;
+                }
+                debugging('Navigation node add_before: Reference node not found ' . $beforekey .
+                        ', options: ' . $allkeys, DEBUG_DEVELOPER);
+            }
+        }
+
+        // Add the node to the appropriate place in the by-type structure (which
+        // is not ordered, despite the variable name)
         $this->orderedcollection[$type][$key] = $node;
+        if (!$last) {
+            // Update existing references in the ordered collection (which is the
+            // one that isn't called 'ordered') to shuffle them along if required
+            for ($oldindex = $this->count; $oldindex > $newindex; $oldindex--) {
+                $this->collection[$oldindex] = $this->collection[$oldindex - 1];
+            }
+        }
         // Add a reference to the node to the progressive collection.
-        $this->collection[$this->count] = &$this->orderedcollection[$type][$key];
+        $this->collection[$newindex] = &$this->orderedcollection[$type][$key];
         // Update the last property to a reference to this new node.
         $this->last = &$this->orderedcollection[$type][$key];
+
+        // Reorder the array by index if needed
+        if (!$last) {
+            ksort($this->collection);
+        }
         $this->count++;
         // Return the reference to the now added node
-        return $this->last;
+        return $node;
     }
 
     /**
@@ -1700,9 +1775,16 @@ class global_navigation extends navigation_node {
         }
 
         // Add a reports tab and then add reports the the user has permission to see.
-        $anyreport  = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
+        $anyreport      = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
 
-        $viewreports = ($anyreport || ($course->showreports && $iscurrentuser && $forceforcontext));
+        $outlinetreport = ($anyreport || has_capability('coursereport/outline:view', $coursecontext));
+        $logtodayreport = ($anyreport || has_capability('coursereport/log:viewtoday', $coursecontext));
+        $logreport      = ($anyreport || has_capability('coursereport/log:view', $coursecontext));
+        $statsreport    = ($anyreport || has_capability('coursereport/stats:view', $coursecontext));
+
+        $somereport     = $outlinetreport || $logtodayreport || $logreport || $statsreport;
+
+        $viewreports = ($anyreport || $somereport || ($course->showreports && $iscurrentuser && $forceforcontext));
         if ($viewreports) {
             $reporttab = $usernode->add(get_string('activityreports'));
             $reportargs = array('user'=>$user->id);
@@ -1711,21 +1793,21 @@ class global_navigation extends navigation_node {
             } else {
                 $reportargs['id'] = SITEID;
             }
-            if ($viewreports || has_capability('coursereport/outline:view', $coursecontext)) {
+            if ($viewreports || $outlinetreport) {
                 $reporttab->add(get_string('outlinereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'outline'))));
                 $reporttab->add(get_string('completereport'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'complete'))));
             }
 
-            if ($viewreports || has_capability('coursereport/log:viewtoday', $coursecontext)) {
+            if ($viewreports || $logtodayreport) {
                 $reporttab->add(get_string('todaylogs'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'todaylogs'))));
             }
 
-            if ($viewreports || has_capability('coursereport/log:view', $coursecontext)) {
+            if ($viewreports || $logreport ) {
                 $reporttab->add(get_string('alllogs'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'alllogs'))));
             }
 
             if (!empty($CFG->enablestats)) {
-                if ($viewreports || has_capability('coursereport/stats:view', $coursecontext)) {
+                if ($viewreports || $statsreport) {
                     $reporttab->add(get_string('stats'), new moodle_url('/course/user.php', array_merge($reportargs, array('mode'=>'stats'))));
                 }
             }

@@ -98,6 +98,28 @@ class navigation_node_test extends UnitTestCase {
         $this->assertReference($node3, $this->node->get($node3->key, $node3->type));
     }
 
+    public function test_add_before() {
+        global $CFG;
+        // Create 3 nodes
+        $node1 = navigation_node::create('test_add_1', null, navigation_node::TYPE_CUSTOM,
+                'test 1', 'testadd1');
+        $node2 = navigation_node::create('test_add_2', null, navigation_node::TYPE_CUSTOM,
+                'test 2', 'testadd2');
+        $node3 = navigation_node::create('test_add_3', null, navigation_node::TYPE_CUSTOM,
+                'test 3', 'testadd3');
+        // Add node 2, then node 1 before 2, then node 3 at end
+        $this->node->add_node($node2);
+        $this->node->add_node($node1, 'testadd2');
+        $this->node->add_node($node3);
+        // Check the last 3 nodes are in 1, 2, 3 order and have those indexes
+        foreach($this->node->children as $child) {
+            $keys[] = $child->key;
+        }
+        $this->assertEqual('testadd1', $keys[count($keys)-3]);
+        $this->assertEqual('testadd2', $keys[count($keys)-2]);
+        $this->assertEqual('testadd3', $keys[count($keys)-1]);
+    }
+
     public function test_add_class() {
         $node = $this->node->get('demo1');
         $this->assertIsA($node, 'navigation_node');
