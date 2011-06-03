@@ -52,7 +52,7 @@ abstract class base_converter {
     public function __construct($tempdir) {
 
         $this->tempdir  = $tempdir;
-        $this->id       = convert_helper::generate_id($this->workdir);
+        $this->id       = convert_helper::generate_id($tempdir);
         $this->workdir  = $tempdir . '_' . $this->get_name() . '_' . $this->id;
         $this->init();
     }
