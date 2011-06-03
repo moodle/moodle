@@ -43,6 +43,8 @@ class moodle1_qtype_essay_handler extends moodle1_qtype_handler {
      */
     public function process_question(array $data, array $raw) {
         // convert and write the answers
-        $this->write_answers($data['answers'], $this->pluginname);
+        if (isset($data['answers'])) {
+            $this->write_answers($data['answers'], $this->pluginname);
+        }
     }
 }

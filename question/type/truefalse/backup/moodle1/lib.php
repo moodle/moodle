@@ -45,7 +45,9 @@ class moodle1_qtype_truefalse_handler extends moodle1_qtype_handler {
     public function process_question(array $data, array $raw) {
 
         // convert and write the answers first
-        $this->write_answers($data['answers'], $this->pluginname);
+        if (isset($data['answers'])) {
+            $this->write_answers($data['answers'], $this->pluginname);
+        }
 
         // convert and write the truefalse extra fields
         foreach ($data['truefalse'] as $truefalse) {
