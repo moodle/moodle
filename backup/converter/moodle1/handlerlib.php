@@ -1372,6 +1372,32 @@ abstract class moodle1_qtype_handler extends moodle1_plugin_handler {
         return $options;
     }
 
+    /**
+     * Writes the dataset_definitions structure
+     *
+     * @param array $datasetdefinitions array of dataset_definition structures
+     */
+    protected function write_dataset_definitions(array $datasetdefinitions) {
+
+        $this->xmlwriter->begin_tag('dataset_definitions');
+        foreach ($datasetdefinitions as $datasetdefinition) {
+            $this->xmlwriter->begin_tag('dataset_definition', array('id' => $this->converter->get_nextid()));
+            foreach (array('category', 'name', 'type', 'options', 'itemcount') as $element) {
+                $this->xmlwriter->full_tag($element, $datasetdefinition[$element]);
+            }
+            $this->xmlwriter->begin_tag('dataset_items');
+            if (!empty($datasetdefinition['dataset_items']['dataset_item'])) {
+                foreach ($datasetdefinition['dataset_items']['dataset_item'] as $datasetitem) {
+                    $datasetitem['id'] = $this->converter->get_nextid();
+                    $this->write_xml('dataset_item', $datasetitem, array('/dataset_item/id'));
+                }
+            }
+            $this->xmlwriter->end_tag('dataset_items');
+            $this->xmlwriter->end_tag('dataset_definition');
+        }
+        $this->xmlwriter->end_tag('dataset_definitions');
+    }
+
     /// implementation details follow //////////////////////////////////////////
 
     public function __construct(moodle1_question_bank_handler $qbankhandler, $qtype) {
