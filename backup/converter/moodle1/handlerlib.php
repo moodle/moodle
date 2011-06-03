@@ -1141,7 +1141,7 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
         }
         // unless we know that the given qtype does not append any own structures,
         // give the handler a chance to do so now
-        if (!in_array($qtype, array('description'))) {
+        if (!in_array($qtype, array('description', 'random'))) {
             $handler = $this->get_qtype_handler($qtype);
             if ($handler === false) {
                 debugging('Question type '.$qtype.' converter not found.', DEBUG_DEVELOPER);
