@@ -39,7 +39,6 @@ require_once($CFG->dirroot . '/tag/lib.php');
 /**
  * Class page_wiki contains the common code between all pages
  *
- * @package mod-wiki
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class page_wiki {
@@ -77,7 +76,7 @@ abstract class page_wiki {
      * @var array The tabs set used in wiki module
      */
     protected $tabs = array('view' => 'view', 'edit' => 'edit', 'comments' => 'comments',
-                            'history' => 'history', 'map' => 'map');
+                            'history' => 'history', 'map' => 'map', 'files' => 'files');
     /**
      * @var array tabs options
      */
@@ -269,7 +268,6 @@ abstract class page_wiki {
 /**
  * View a wiki page
  *
- * @package mod-wiki
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_wiki_view extends page_wiki {
@@ -283,7 +281,7 @@ class page_wiki_view extends page_wiki {
 
         parent::print_header();
 
-        $this->wikioutput->wiki_print_subwiki_selector($PAGE->activityrecord, $this->subwiki, $this->page);
+        $this->wikioutput->wiki_print_subwiki_selector($PAGE->activityrecord, $this->subwiki, $this->page, 'view');
 
         if (!empty($this->page)) {
             echo $this->wikioutput->prettyview_link($this->page);
@@ -352,7 +350,6 @@ class page_wiki_view extends page_wiki {
 /**
  * Wiki page editing page
  *
- * @package mod-wiki
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_wiki_edit extends page_wiki {
@@ -541,16 +538,14 @@ class page_wiki_edit extends page_wiki {
             $data = file_prepare_standard_editor($data, 'newcontent', page_wiki_edit::$attachmentoptions, $this->modcontext, 'mod_wiki', 'attachments', $this->subwiki->id);
             break;
         default:
-            //$draftitemid = file_get_submitted_draft_itemid('attachments');
-            //file_prepare_draft_area($draftitemid, $this->modcontext->id, 'mod_wiki', 'attachments', $this->subwiki->id);
-            //$data->attachments = $draftitemid;
+            break;
             }
 
         if ($version->contentformat != 'html') {
-            $params['contextid'] = $this->modcontext->id;
-            $params['component'] = 'mod_wiki';
-            $params['filearea'] = 'attachments';
             $params['fileitemid'] = $this->subwiki->id;
+            $params['contextid']  = $this->modcontext->id;
+            $params['component']  = 'mod_wiki';
+            $params['filearea']   = 'attachments';
         }
 
         if (!empty($CFG->usetags)) {
@@ -560,16 +555,6 @@ class page_wiki_edit extends page_wiki {
         $form = new mod_wiki_edit_form($url, $params);
 
         if ($formdata = $form->get_data()) {
-            if ($format != 'html') {
-                $errors = $this->process_uploads($this->modcontext);
-                if (!empty($errors)) {
-                    $contenterror = "";
-                    foreach ($errors as $e) {
-                        $contenterror .= "<p>" . get_string('filenotuploadederror', 'wiki', $e->get_filename()) . "</p>";
-                    }
-                    print $OUTPUT->box($contenterror, 'errorbox');
-                }
-            }
             if (!empty($CFG->usetags)) {
                 $data->tags = $formdata->tags;
             }
@@ -583,21 +568,11 @@ class page_wiki_edit extends page_wiki {
         $form->display();
     }
 
-    protected function process_uploads($context) {
-        global $PAGE, $OUTPUT;
-
-        if ($this->upload) {
-            file_save_draft_area_files($this->attachments, $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
-            return null;
-            //return wiki_process_attachments($this->attachments, $this->deleteuploads, $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
-        }
-    }
 }
 
 /**
  * Class that models the behavior of wiki's view comments page
  *
- * @package mod-wiki
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_wiki_comments extends page_wiki {
@@ -715,7 +690,6 @@ class page_wiki_comments extends page_wiki {
 /**
  * Class that models the behavior of wiki's edit comment
  *
- * @package mod-wiki
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_wiki_editcomment extends page_wiki {
@@ -817,7 +791,6 @@ class page_wiki_editcomment extends page_wiki {
 /**
  * Wiki page search page
  *
- * @package mod-wiki
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_wiki_search extends page_wiki {
@@ -1939,10 +1912,10 @@ class page_wiki_save extends page_wiki_edit {
         $params = array('attachmentoptions' => page_wiki_edit::$attachmentoptions, 'format' => $this->format, 'version' => $this->versionnumber);
 
         if ($this->format != 'html') {
-            $params['contextid'] = $this->modcontext->id;
-            $params['component'] = 'mod_wiki';
-            $params['filearea'] = 'attachments';
             $params['fileitemid'] = $this->page->id;
+            $params['contextid']  = $context->id;
+            $params['component']  = 'mod_wiki';
+            $params['filearea']   = 'attachments';
         }
 
         $form = new mod_wiki_edit_form($url, $params);
@@ -1962,9 +1935,6 @@ class page_wiki_save extends page_wiki_edit {
         }
 
         if ($save && $data) {
-            if ($this->format != 'html') {
-                $errors = $this->process_uploads($this->modcontext);
-            }
             if (!empty($CFG->usetags)) {
                 tag_set('wiki_pages', $this->page->id, $data->tags);
             }

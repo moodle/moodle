@@ -443,7 +443,7 @@ function wiki_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
         return false;
     }
 
-    require_course_login($course, true, $cm);
+    require_login($course, true, $cm);
 
     require_once($CFG->dirroot . "/mod/wiki/locallib.php");
 
@@ -493,6 +493,7 @@ function wiki_extend_navigation(navigation_node $navref, $course, $module, $cm) 
 
     require_once($CFG->dirroot . '/mod/wiki/locallib.php');
 
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $url = $PAGE->url;
     $userid = 0;
     if ($module->wikimode == 'individual') {
@@ -519,25 +520,43 @@ function wiki_extend_navigation(navigation_node $navref, $course, $module, $cm) 
         $page = wiki_get_page_by_title($swid, $wiki->firstpagetitle);
         $pageid = $page->id;
     }
-    $link = new moodle_url('/mod/wiki/create.php', array('action' => 'new', 'swid' => $swid));
-    $node = $navref->add(get_string('newpage', 'wiki'), $link, navigation_node::TYPE_SETTING);
+
+    if (has_capability('mod/wiki:createpage', $context)) {
+        $link = new moodle_url('/mod/wiki/create.php', array('action' => 'new', 'swid' => $swid));
+        $node = $navref->add(get_string('newpage', 'wiki'), $link, navigation_node::TYPE_SETTING);
+    }
 
     if (is_numeric($pageid)) {
 
-        $link = new moodle_url('/mod/wiki/view.php', array('pageid' => $pageid));
-        $node = $navref->add(get_string('view', 'wiki'), $link, navigation_node::TYPE_SETTING);
+        if (has_capability('mod/wiki:viewpage', $context)) {
+            $link = new moodle_url('/mod/wiki/view.php', array('pageid' => $pageid));
+            $node = $navref->add(get_string('view', 'wiki'), $link, navigation_node::TYPE_SETTING);
+        }
 
-        $link = new moodle_url('/mod/wiki/edit.php', array('pageid' => $pageid));
-        $node = $navref->add(get_string('edit', 'wiki'), $link, navigation_node::TYPE_SETTING);
+        if (has_capability('mod/wiki:editpage', $context)) {
+            $link = new moodle_url('/mod/wiki/edit.php', array('pageid' => $pageid));
+            $node = $navref->add(get_string('edit', 'wiki'), $link, navigation_node::TYPE_SETTING);
+        }
 
-        $link = new moodle_url('/mod/wiki/comments.php', array('pageid' => $pageid));
-        $node = $navref->add(get_string('comments', 'wiki'), $link, navigation_node::TYPE_SETTING);
+        if (has_capability('mod/wiki:viewcomment', $context)) {
+            $link = new moodle_url('/mod/wiki/comments.php', array('pageid' => $pageid));
+            $node = $navref->add(get_string('comments', 'wiki'), $link, navigation_node::TYPE_SETTING);
+        }
 
-        $link = new moodle_url('/mod/wiki/history.php', array('pageid' => $pageid));
-        $node = $navref->add(get_string('history', 'wiki'), $link, navigation_node::TYPE_SETTING);
+        if (has_capability('mod/wiki:viewpage', $context)) {
+            $link = new moodle_url('/mod/wiki/history.php', array('pageid' => $pageid));
+            $node = $navref->add(get_string('history', 'wiki'), $link, navigation_node::TYPE_SETTING);
+        }
 
-        $link = new moodle_url('/mod/wiki/map.php', array('pageid' => $pageid));
-        $node = $navref->add(get_string('map', 'wiki'), $link, navigation_node::TYPE_SETTING);
+        if (has_capability('mod/wiki:viewpage', $context)) {
+            $link = new moodle_url('/mod/wiki/map.php', array('pageid' => $pageid));
+            $node = $navref->add(get_string('map', 'wiki'), $link, navigation_node::TYPE_SETTING);
+        }
+
+        if (has_capability('mod/wiki:viewpage', $context)) {
+            $link = new moodle_url('/mod/wiki/files.php', array('pageid' => $pageid));
+            $node = $navref->add(get_string('files', 'wiki'), $link, navigation_node::TYPE_SETTING);
+        }
     }
 }
 /**
