@@ -676,4 +676,3 @@ abstract class quiz_attempt_report_table extends table_sql {
         return $sortcolumns;
     }
 }
-

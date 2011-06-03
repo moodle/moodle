@@ -439,14 +439,14 @@ class qtype_multichoice_attempt_upgrader_test extends question_attempt_upgrader_
             'id' => '13',
             'course' => '1416',
             'name' => 'Self assessment',
-            'intro' => '<p>This quiz enables you to rate how much you have demonstrated certain skills in assignments. 
-        </p> 
-        <p>Each question is phrased so that you agree or disagree with a statement that describes your level of attainment, and is accompanied by a link to advice on recognising and practising the skill. 
-        </p> 
+            'intro' => '<p>This quiz enables you to rate how much you have demonstrated certain skills in assignments.
+        </p>
+        <p>Each question is phrased so that you agree or disagree with a statement that describes your level of attainment, and is accompanied by a link to advice on recognising and practising the skill.
+        </p>
         <p>The quiz is intended to form part of a dialogue on skills improvement between you and your tutor. Hence there is no "right" answer to it, and it is awarded no marks towards the course result.
         </p>
         <p>Any benefits to you depend on your being realistic about what you have demonstrated. Reserve the extreme ratings for when you think you have demonstrated mastery or complete incompetence!
-            <br /> 
+            <br />
         </p>',
             'introformat' => FORMAT_HTML,
             'questiondecimalpoints' => '-1',
@@ -698,7 +698,7 @@ class qtype_multichoice_attempt_upgrader_test extends question_attempt_upgrader_
             'stamp' => 'learn.open.ac.uk+061221143845+nohATp',
             'version' => 'learn.open.ac.uk+070131102906+bviJOZ',
             'hidden' => '0',
-            'generalfeedback' => 'The correct answers are b and c. 
+            'generalfeedback' => 'The correct answers are b and c.
         For further information about this question see Study Guide 7 SAQ 2.1(b and c)
         Misuse cases were discussed in SG4',
             'generalfeedbackformat' => '1',
@@ -2354,10 +2354,10 @@ public function test_multichoice_deferredfeedback_qsession140() {
             'name' => 'ICT self-assessment quiz',
             'intro' => '<p>Work through the ICT skills self-assessment quiz in order to assess your ability to use ICT for study on the Youth Justice Programme. Doing this will also help you to plan a short programme of learning.</p>
         <p>Use the questions to rate your ability in each area as either:</p>
-        <ul> 
-            <li>\'Well developed\'</li> 
-            <li>\'Not sure\', or</li> 
-            <li>\'Needs development\'.</li> 
+        <ul>
+            <li>\'Well developed\'</li>
+            <li>\'Not sure\', or</li>
+            <li>\'Needs development\'.</li>
         </ul>
         <p>Once you have done that, and seen the feedback associated with your answers, you will need to think about prioritising the skills that need development. You will also need to allocate some time in order to develop the skills you need to concentrate on. Within the feedback for each question are some subject-related links which you may find useful.</p>',
             'introformat' => FORMAT_HTML,
@@ -2563,10 +2563,10 @@ public function test_multichoice_deferredfeedback_qsession140() {
             'name' => 'ICT self-assessment quiz',
             'intro' => '<p>Work through the ICT skills self-assessment quiz in order to assess your ability to use ICT for study on the Youth Justice Programme. Doing this will also help you to plan a short programme of learning.</p>
         <p>Use the questions to rate your ability in each area as either:</p>
-        <ul> 
-            <li>\'Well developed\'</li> 
-            <li>\'Not sure\', or</li> 
-            <li>\'Needs development\'.</li> 
+        <ul>
+            <li>\'Well developed\'</li>
+            <li>\'Not sure\', or</li>
+            <li>\'Needs development\'.</li>
         </ul>
         <p>Once you have done that, and seen the feedback associated with your answers, you will need to think about prioritising the skills that need development. You will also need to allocate some time in order to develop the skills you need to concentrate on. Within the feedback for each question are some subject-related links which you may find useful.</p>',
             'introformat' => FORMAT_HTML,

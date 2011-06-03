@@ -78,4 +78,3 @@ $string['tograde'] = 'To grade';
 $string['total'] = 'Total';
 $string['unknownquestion'] = 'Unknown question';
 $string['updategrade'] = 'update grades';
-

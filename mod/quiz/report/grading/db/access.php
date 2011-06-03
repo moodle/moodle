@@ -48,4 +48,3 @@ $capabilities = array(
         'clonepermissionsfrom' =>  'mod/quiz:viewreports'
     )
 );
-

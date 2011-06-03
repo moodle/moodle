@@ -101,7 +101,7 @@ class question_attempt_step {
      */
     public function __construct($data = array(), $timecreated = null, $userid = null) {
         global $USER;
-        
+
         if (!is_array($data)) {
             echo format_backtrace(debug_backtrace());
         }
@@ -522,7 +522,7 @@ class question_attempt_step_subquestion_adapter extends question_attempt_step {
 
     /**
      * Filter some data to keep only those entries where the key contains
-     * extraprefix, and remove the extra prefix from the reutrned arrary. 
+     * extraprefix, and remove the extra prefix from the reutrned arrary.
      * @param array $data some of the data stored in this step.
      * @return array the data with the keys ajusted using {@link remove_prefix()}.
      */

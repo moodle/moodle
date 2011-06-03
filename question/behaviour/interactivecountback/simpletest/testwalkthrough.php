@@ -146,4 +146,3 @@ class qbehaviour_interactivecountback_walkthrough_test extends qbehaviour_walkth
                 new NoPatternExpectation('/class="control\b[^"]*\bpartiallycorrect"/'));
     }
 }
-

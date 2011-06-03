@@ -546,20 +546,20 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
             'stamp' => 'learn.open.ac.uk+071023110917+tqaM6z',
             'version' => 'learn.open.ac.uk+071023110917+Ia7Hpz',
             'hidden' => '0',
-            'generalfeedback' => '<ul> 
-            <li>Subject gateways provide links to sites that have been quality checked = True </li> 
+            'generalfeedback' => '<ul>
+            <li>Subject gateways provide links to sites that have been quality checked = True </li>
  </ul>
  <p>All links in a subject gateway have been added by a knowledgeable subject specialist and so have to be of a certain quality to be added to the collection.</p>
- <ul> 
-            <li>Subject gateways offer more variety than search engines = False </li> 
+ <ul>
+            <li>Subject gateways offer more variety than search engines = False </li>
  </ul>
  <p>Subject gateways will most likely provide fewer links than a search engine, but this is because they are selected with a particular subject area in mind </p>
- <ul> 
-            <li>Subject gateways index websites automatically = False </li> 
+ <ul>
+            <li>Subject gateways index websites automatically = False </li>
  </ul>
  <p>Subject gateways links are indexed by knowledgeable subject specialists rather than a machine. </p>
- <ul> 
-            <li>Subject gateways can provide a more direct route to websites containing academic content = True </li> 
+ <ul>
+            <li>Subject gateways can provide a more direct route to websites containing academic content = True </li>
  </ul>
  <p>All links in a subject gateway have been added by a knowledgeable subject specialist and so you can find academic content easier than using a web search engine.</p>',
             'generalfeedbackformat' => '1',

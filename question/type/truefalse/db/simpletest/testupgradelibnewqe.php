@@ -282,14 +282,14 @@ class qtype_truefalse_attempt_upgrader_test extends question_attempt_upgrader_te
             'name' => 'U04_NA_In viaggio_Q3',
             'questiontext' => '<p><img title="my market" height="336" alt="my market" hspace="0" src="http://learnacct.open.ac.uk/file.php/2828/Naples_My_market.jpg" /></p>
         <p>What can you buy in this shop? Is this list accurate?</p>
-        <p><br />Mark true or false (for the list as a whole).</p> 
- 
- 
-        <p><i>single tickets</i></p> 
-        <p><i>weekly season tickets</i></p> 
-        <p><i>monthly season tickets</i></p> 
-        <p><i>wine and grappa</i></p> 
-        <p><i>fruit and vegetables</i></p> 
+        <p><br />Mark true or false (for the list as a whole).</p>
+
+
+        <p><i>single tickets</i></p>
+        <p><i>weekly season tickets</i></p>
+        <p><i>monthly season tickets</i></p>
+        <p><i>wine and grappa</i></p>
+        <p><i>fruit and vegetables</i></p>
         <p><i>tobacco </i></p>',
             'questiontextformat' => '1',
             'defaultmark' => '1',

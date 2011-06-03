@@ -107,7 +107,7 @@ abstract class qtype_multianswer_subq_renderer_base extends qtype_renderer {
 
     /**
      * Render the feedback pop-up contents.
-     * 
+     *
      * @param question_graded_automatically $subq the subquestion.
      * @param float $fraction the mark the student got. null if this subq was not answered.
      * @param string $feedbacktext the feedback text, already processed with format_text etc.

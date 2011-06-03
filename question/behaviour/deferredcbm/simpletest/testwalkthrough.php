@@ -270,4 +270,3 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
                 new NoPatternExpectation('/class=\"im-feedback/'));
     }
 }
-

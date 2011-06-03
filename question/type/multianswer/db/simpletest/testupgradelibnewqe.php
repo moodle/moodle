@@ -1273,21 +1273,21 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
             'maxmark' => 13.0000000,
             'minfraction' => 0,
             'flagged' => 0,
-            'questionsummary' => 'This question consists of some text with an answer embedded right here {Wrong answer; Another wrong answer; Correct answer; Answer that gives half the credit} 
+            'questionsummary' => 'This question consists of some text with an answer embedded right here {Wrong answer; Another wrong answer; Correct answer; Answer that gives half the credit}
 
-and right after that you will have to deal with this short answer _____ 
+and right after that you will have to deal with this short answer _____
 
-and finally we have a floating point number _____. 
+and finally we have a floating point number _____.
 
-The multichoice question can also be shown in the vertical display of the standard moodle multiple choice. {1. Wrong answer; 2. Another wrong answer; 3. Correct answer; 4. Answer that gives half the credit} 
+The multichoice question can also be shown in the vertical display of the standard moodle multiple choice. {1. Wrong answer; 2. Another wrong answer; 3. Correct answer; 4. Answer that gives half the credit}
 
-Or in an horizontal display that is included here in a table {a. Wrong answer; b. Another wrong answer; c. Correct answer; d. Answer that gives half the credit} 
+Or in an horizontal display that is included here in a table {a. Wrong answer; b. Another wrong answer; c. Correct answer; d. Answer that gives half the credit}
 
-A shortanswer question where case must match. Write moodle in upper case letters _____ 
+A shortanswer question where case must match. Write moodle in upper case letters _____
 
-Note that addresses like www.moodle.org and smileys :-) all work as normal: 
+Note that addresses like www.moodle.org and smileys :-) all work as normal:
 
-a) How good is this? {Yes; No} 
+a) How good is this? {Yes; No}
 
 b) What grade would you give it? _____',
             'rightanswer' => 'part 1: Correct answer; part 2: Correct answer; part 3: 23.8; part 4: 3. Correct answer; part 5: c. Correct answer; part 6: MOODLE; part 7: Yes; part 8: 3',
@@ -1947,21 +1947,21 @@ b) What grade would you give it? _____',
             'maxmark' => 13.0000000,
             'minfraction' => 0,
             'flagged' => 0,
-            'questionsummary' => 'This question consists of some text with an answer embedded right here {Wrong answer; Another wrong answer; Correct answer; Answer that gives half the credit} 
+            'questionsummary' => 'This question consists of some text with an answer embedded right here {Wrong answer; Another wrong answer; Correct answer; Answer that gives half the credit}
 
-and right after that you will have to deal with this short answer _____ 
+and right after that you will have to deal with this short answer _____
 
-and finally we have a floating point number _____. 
+and finally we have a floating point number _____.
 
-The multichoice question can also be shown in the vertical display of the standard moodle multiple choice. {1. Wrong answer; 2. Another wrong answer; 3. Correct answer; 4. Answer that gives half the credit} 
+The multichoice question can also be shown in the vertical display of the standard moodle multiple choice. {1. Wrong answer; 2. Another wrong answer; 3. Correct answer; 4. Answer that gives half the credit}
 
-Or in an horizontal display that is included here in a table {a. Wrong answer; b. Another wrong answer; c. Correct answer; d. Answer that gives half the credit} 
+Or in an horizontal display that is included here in a table {a. Wrong answer; b. Another wrong answer; c. Correct answer; d. Answer that gives half the credit}
 
-A shortanswer question where case must match. Write moodle in upper case letters _____ 
+A shortanswer question where case must match. Write moodle in upper case letters _____
 
-Note that addresses like www.moodle.org and smileys :-) all work as normal: 
+Note that addresses like www.moodle.org and smileys :-) all work as normal:
 
-a) How good is this? {Yes; No} 
+a) How good is this? {Yes; No}
 
 b) What grade would you give it? _____',
             'rightanswer' => 'part 1: Correct answer; part 2: Correct answer; part 3: 23.8; part 4: 3. Correct answer; part 5: c. Correct answer; part 6: MOODLE; part 7: Yes; part 8: 3',
@@ -2641,21 +2641,21 @@ b) What grade would you give it? _____',
             'maxmark' => 13.0000000,
             'minfraction' => 0,
             'flagged' => 0,
-            'questionsummary' => 'This question consists of some text with an answer embedded right here {Wrong answer; Another wrong answer; Correct answer; Answer that gives half the credit} 
+            'questionsummary' => 'This question consists of some text with an answer embedded right here {Wrong answer; Another wrong answer; Correct answer; Answer that gives half the credit}
 
-and right after that you will have to deal with this short answer _____ 
+and right after that you will have to deal with this short answer _____
 
-and finally we have a floating point number _____. 
+and finally we have a floating point number _____.
 
-The multichoice question can also be shown in the vertical display of the standard moodle multiple choice. {1. Wrong answer; 2. Another wrong answer; 3. Correct answer; 4. Answer that gives half the credit} 
+The multichoice question can also be shown in the vertical display of the standard moodle multiple choice. {1. Wrong answer; 2. Another wrong answer; 3. Correct answer; 4. Answer that gives half the credit}
 
-Or in an horizontal display that is included here in a table {a. Wrong answer; b. Another wrong answer; c. Correct answer; d. Answer that gives half the credit} 
+Or in an horizontal display that is included here in a table {a. Wrong answer; b. Another wrong answer; c. Correct answer; d. Answer that gives half the credit}
 
-A shortanswer question where case must match. Write moodle in upper case letters _____ 
+A shortanswer question where case must match. Write moodle in upper case letters _____
 
-Note that addresses like www.moodle.org and smileys :-) all work as normal: 
+Note that addresses like www.moodle.org and smileys :-) all work as normal:
 
-a) How good is this? {Yes; No} 
+a) How good is this? {Yes; No}
 
 b) What grade would you give it? _____',
             'rightanswer' => 'part 1: Correct answer; part 2: Correct answer; part 3: 23.8; part 4: 3. Correct answer; part 5: c. Correct answer; part 6: MOODLE; part 7: Yes; part 8: 3',
