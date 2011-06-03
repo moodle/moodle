@@ -31,10 +31,16 @@ require_once($CFG->dirroot.'/lib/form/textarea.php');
 
 class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
 
+    private $files;
+
     function MoodleQuickForm_wikieditor($elementName = null, $elementLabel = null, $attributes = null) {
         if (isset($attributes['wiki_format'])) {
             $this->wikiformat = $attributes['wiki_format'];
             unset($attributes['wiki_format']);
+        }
+        if (isset($attributes['files'])) {
+            $this->files = $attributes['files'];
+            unset($attributes['files']);
         }
 
         parent::MoodleQuickForm_textarea($elementName, $elementLabel, $attributes);
@@ -71,7 +77,7 @@ class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
     }
 
     private function getButtons() {
-        global $PAGE, $CFG;
+        global $PAGE, $OUTPUT, $CFG;
 
         $editor = $this->wikiformat;
 
@@ -80,6 +86,9 @@ class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
 
         $tag = $this->getTokens($editor, 'italic');
         $wiki_editor['italic'] = array('ed_italic.gif', get_string('wikiitalictext', 'wiki'), $tag[0], $tag[1], get_string('wikiitalictext', 'wiki'));
+
+        $imagetag = $this->getTokens($editor, 'image');
+        $wiki_editor['image'] = array('ed_img.gif', get_string('wikiimage', 'wiki'), $imagetag[0], $imagetag[1], get_string('wikiimage', 'wiki'));
 
         $tag = $this->getTokens($editor, 'link');
         $wiki_editor['internal'] = array('ed_internal.gif', get_string('wikiinternalurl', 'wiki'), $tag[0], $tag[1], get_string('wikiinternalurl', 'wiki'));
@@ -90,9 +99,6 @@ class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
         $tag = $this->getTokens($editor, 'list');
         $wiki_editor['u_list'] = array('ed_ul.gif', get_string('wikiunorderedlist', 'wiki'), '\\n'.$tag[0], '', '');
         $wiki_editor['o_list'] = array('ed_ol.gif', get_string('wikiorderedlist', 'wiki'), '\\n'.$tag[1], '', '');
-
-        $tag = $this->getTokens($editor, 'image');
-        $wiki_editor['image'] = array('ed_img.gif', get_string('wikiimage', 'wiki'), $tag[0], $tag[1], get_string('wikiimage', 'wiki'));
 
         $tag = $this->getTokens($editor, 'header');
         $wiki_editor['h1'] = array('ed_h1.gif', get_string('wikiheader', 'wiki', 1), '\\n'.$tag.' ', ' '.$tag.'\\n', get_string('wikiheader', 'wiki', 1));
@@ -107,13 +113,23 @@ class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
 
         $PAGE->requires->js('/mod/wiki/editors/wiki/buttons.js');
 
-        $html = "";
+        $html = '<div class="wikieditor-toolbar">';
         foreach ($wiki_editor as $button) {
             $html .= "<a href=\"javascript:insertTags";
             $html .= "('".$button[2]."','".$button[3]."','".$button[4]."');\">";
-            $html .= "<img width=\"23\" height=\"22\" src=\"$CFG->wwwroot/mod/wiki/editors/wiki/images/$button[0]\" alt=\"".$button[1]."\" title=\"".$button[1]."\" />";
+            $html .= html_writer::empty_tag('img', array('alt' => $button[1], 'src' => $CFG->wwwroot . '/mod/wiki/editors/wiki/images/' . $button[0]));
             $html .= "</a>";
         }
+        $html .= "<select onchange=\"insertTags('{$imagetag[0]}', '{$imagetag[1]}', this.value)\">";
+        $html .= "<option value='" . s(get_string('wikiimage', 'wiki')) . "'>" . get_string('insertimage', 'wiki') . '</option>';
+        foreach ($this->files as $filename) {
+            $html .= "<option value='".s($filename)."'>";
+            $html .= $filename;
+            $html .= '</option>';
+        }
+        $html .= '</select>';
+        $html .= $OUTPUT->help_icon('insertimage', 'wiki');
+        $html .= '</div>';
 
         return $html;
     }
