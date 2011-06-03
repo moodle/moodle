@@ -50,16 +50,16 @@ class moodle1_qtype_numerical_handler extends moodle1_qtype_handler {
             $this->write_answers($data['answers'], $this->pluginname);
         }
 
-        // convert and write the numerical units
+        // convert and write the numerical units and numerical options
         if (isset($data['numerical'][0]['numerical_units'])) {
-            $numericalunits = $data['numerical'][0]['numerical_units'];
+            $numericalunits   = $data['numerical'][0]['numerical_units'];
+            $numericaloptions = $this->get_default_numerical_options($data['oldquestiontextformat']);
         } else {
-            $numericalunits = array();
+            $numericalunits   = array();
+            $numericaloptions = array();
         }
         $this->write_numerical_units($numericalunits);
-
-        // append new numerical_options structure
-        $this->write_numerical_options($data['oldquestiontextformat']);
+        $this->write_numerical_options($numericaloptions);
 
         // and finally numerical_records
         $this->xmlwriter->begin_tag('numerical_records');
