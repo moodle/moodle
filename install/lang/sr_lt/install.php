@@ -45,7 +45,7 @@ $string['environmentsub2'] = 'Svaka verzija Moodlea ima minimum zahteva po pitan
 Puna provera okruženja se vrši pre svake instalacije ili ažuriranja postojeće verzije. Ukoliko ne znate kako da instalirate novu verziju ili omogućite PHP ektenzije kontaktirajte Vašeg server administratora.';
 $string['errorsinenvironment'] = 'Provera okruženja nije prošla!';
 $string['installation'] = 'Instalacija';
-$string['langdownloaderror'] = 'Nažalost jezik "{$a}" nije instaliran. Proces instalacije biće nastavljen na engleskom jeziku.';
+$string['langdownloaderror'] = 'Nažalost, jezik "{$a}" se ne može preuzeti. Proces instalacije biće nastavljen na engleskom jeziku.';
 $string['memorylimithelp'] = '<p>PHP ograničenje memorije za vaš server je trenutno podešeno na {$a}.</p>
 
 <p>Ovo podešavanje može kasnije da prouzrokuje da Moodle ima problema sa memorijom, posebno ako imate mnogo aktiviranih modula i/ili mnogo korisnika.</p>
@@ -58,7 +58,7 @@ $string['memorylimithelp'] = '<p>PHP ograničenje memorije za vaš server je tre
 <p>Međutim, na nekim serverima to će sprečiti prikazivanje <b>svih</b> PHP stranica (biće vam prikazana poruka o grešci umesto svake stranice), pa ćete sa tih servera morati da uklonite .htaccess datoteku.</p></li>
 </ol>';
 $string['paths'] = 'Putanje';
-$string['pathserrcreatedataroot'] = 'Instalciona procedura ne može da kreira direktorijum baze podataka ({$a->dataroot})';
+$string['pathserrcreatedataroot'] = 'Instalaciona procedura ne može da kreira direktorijum baze podataka ({$a->dataroot}).';
 $string['pathshead'] = 'Potvrdi putanje';
 $string['pathsrodataroot'] = 'U direktorijum za podatke nije moguć upis';
 $string['pathsroparentdataroot'] = 'U nadređeni direktorijum ({$a->parent}) nije moguć upis.  Instalacioni program ne može da kreira direktorijum za podatke ({$a->dataroot}).';
