@@ -133,6 +133,12 @@ class moodle1_converter_test extends UnitTestCase {
         // repeated reading is allowed
         $this->assertIdentical('13', $converter->get_stash('tempinfo1'));
 
+        // storing empty array
+        $converter->set_stash('empty_array_stash', array());
+        $restored = $converter->get_stash('empty_array_stash');
+        //$this->assertIsA($restored, 'array'); // todo return null now, this needs MDL-27713 to be fixed, then uncomment
+        $this->assertTrue(empty($restored));
+
         // test stashes with itemid
         $converter->set_stash('tempinfo', 'Hello', 1);
         $converter->set_stash('tempinfo', 'World', 2);

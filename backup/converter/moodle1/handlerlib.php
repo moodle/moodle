@@ -472,8 +472,11 @@ class moodle1_root_handler extends moodle1_xml_handler {
         $this->xmlwriter->begin_tag('inforef');
 
         $this->xmlwriter->begin_tag('fileref');
-        foreach ($this->converter->get_stash('course_files_ids') as $fileid) {
-            $this->write_xml('file', array('id' => $fileid));
+        $fileids = $this->converter->get_stash('course_files_ids');
+        if (is_array($fileids)) {
+            foreach ($fileids as $fileid) {
+                $this->write_xml('file', array('id' => $fileid));
+            }
         }
         // todo site files
         $this->xmlwriter->end_tag('fileref');
