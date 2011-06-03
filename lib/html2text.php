@@ -169,6 +169,7 @@ class html2text
         '/&(bull|#149|#8226);/i',                // Bullet
         '/&(pound|#163);/i',                     // Pound sign
         '/&(euro|#8364);/i',                     // Euro sign
+        '/[ ]+([\n\t])/',                        // Trailing spaces before newline or tab
         '/[ ]{2,}/'                              // Runs of spaces, post-handling
     );
 
@@ -212,6 +213,7 @@ class html2text
         '*',
         '£',
         'EUR',                                  // Euro sign. € ?
+        '\\1',                                  // Trailing spaces before newline or tab
         ' '                                     // Runs of spaces, post-handling
     );
 
