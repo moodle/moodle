@@ -444,6 +444,21 @@ class moodle1_converter extends base_converter {
     }
 
     /**
+     * Returns the list of existing stashes
+     *
+     * @return array
+     */
+    public function get_stash_names() {
+        global $DB;
+
+        $search = array(
+            'backupid' => $this->get_id(),
+        );
+
+        return array_keys($DB->get_records('backup_ids_temp', $search, '', 'itemname'));
+    }
+
+    /**
      * Returns the list of stashed $itemids in the given stash
      *
      * @param string $stashname

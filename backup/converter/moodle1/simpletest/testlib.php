@@ -109,9 +109,19 @@ class moodle1_converter_test extends UnitTestCase {
         $converter = convert_factory::get_converter('moodle1', $this->tempdir);
         $converter->create_stash_storage();
 
+        // no implicit stashes
+        $stashes = $converter->get_stash_names();
+        $this->assertIsA($stashes, 'array');
+        $this->assertTrue(empty($stashes));
+
         // test stashes without itemid
         $converter->set_stash('tempinfo1', 12);
         $converter->set_stash('tempinfo2', array('a' => 2, 'b' => 3));
+        $stashes = $converter->get_stash_names();
+        $this->assertIsA($stashes, 'array');
+        $this->assertEqual(2, count($stashes));
+        $this->assertTrue(in_array('tempinfo1', $stashes));
+        $this->assertTrue(in_array('tempinfo2', $stashes));
         $this->assertIdentical(12, $converter->get_stash('tempinfo1'));
         $this->assertIdentical(array('a' => 2, 'b' => 3), $converter->get_stash('tempinfo2'));
 
