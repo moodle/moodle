@@ -58,6 +58,9 @@ class moodle1_converter extends base_converter {
     /** @var string path currently locking processing of children */
     protected $pathlock;
 
+    /** @var int used by the serial number {@link get_nextid()} */
+    private $nextid = 1;
+
     /**
      * Instructs the dispatcher to ignore all children below path processor returning it
      */
@@ -516,8 +519,7 @@ class moodle1_converter extends base_converter {
      * @return int the next number in a row of numbers
      */
     public function get_nextid() {
-        static $autoincrement = 0;
-        return ++$autoincrement;
+        return $this->nextid++;
     }
 
     /**

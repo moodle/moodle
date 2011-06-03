@@ -933,6 +933,9 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
     /** @var bool was the <questions> tag already written (work around MDL-27693) */
     private $questionswrapperwritten = false;
 
+    /** @var array holds the instances of qtype specific conversion handlers */
+    private $qtypehandlers = null;
+
     /**
      * Registers path that are not qtype-specific
      */
@@ -1005,12 +1008,6 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
      * Inject the context related information into the current category
      */
     public function process_question_category_context($data) {
-        static $originalcourseid = null;
-
-        if (is_null($originalcourseid)) {
-            $originalcourseinfo = $this->converter->get_stash('original_course_info');
-            $originalcourseid   = $originalcourseinfo['original_course_id'];
-        }
 
         switch ($data['level']) {
         case 'module':
@@ -1019,6 +1016,8 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
             $this->currentcategory['contextinstanceid'] = $data['instance'];
             break;
         case 'course':
+            $originalcourseinfo = $this->converter->get_stash('original_course_info');
+            $originalcourseid   = $originalcourseinfo['original_course_id'];
             $this->currentcategory['contextid'] = $this->converter->get_contextid(CONTEXT_COURSE);
             $this->currentcategory['contextlevel'] = CONTEXT_COURSE;
             $this->currentcategory['contextinstanceid'] = $originalcourseid;
@@ -1197,11 +1196,10 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
      * @return array|moodle1_qtype_handler|bool
      */
     protected function get_qtype_handler($qtype) {
-        static $qtypehandlers = null;
 
-        if (is_null($qtypehandlers)) {
+        if (is_null($this->qtypehandlers)) {
             // initialize the static list of qtype handler instances
-            $qtypehandlers = array();
+            $this->qtypehandlers = array();
             foreach (get_plugin_list('qtype') as $qtypename => $qtypelocation) {
                 $filename = $qtypelocation.'/backup/moodle1/lib.php';
                 if (file_exists($filename)) {
@@ -1210,16 +1208,16 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
                     if (!class_exists($classname)) {
                         throw new moodle1_convert_exception('missing_handler_class', $classname);
                     }
-                    $qtypehandlers[$qtypename] = new $classname($this, $qtypename);
+                    $this->qtypehandlers[$qtypename] = new $classname($this, $qtypename);
                 }
             }
         }
 
         if ($qtype === '*') {
-            return $qtypehandlers;
+            return $this->qtypehandlers;
 
-        } else if (isset($qtypehandlers[$qtype])) {
-            return $qtypehandlers[$qtype];
+        } else if (isset($this->qtypehandlers[$qtype])) {
+            return $this->qtypehandlers[$qtype];
 
         } else {
             return false;
