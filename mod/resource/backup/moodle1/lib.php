@@ -31,9 +31,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class moodle1_mod_resource_handler extends moodle1_mod_handler {
 
-    /** @var array in-memory cache for the course module information  */
-    protected $currentcminfo = null;
-
     /** @var moodle1_file_manager instance */
     protected $fileman = null;
 
@@ -88,47 +85,15 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
             $data['introformat'] = FORMAT_HTML;
         }
 
-        // if this is a file or URL resource we need to deal with the options
-        // before possibly branching out to the URL successor
-        if ($data['type'] == 'file') {
-            $options = array('printheading' => 0, 'printintro' => 1);
-            if ($data['options'] == 'frame') {
-                $data['display'] = RESOURCELIB_DISPLAY_FRAME;
-
-            } else if ($data['options'] == 'objectframe') {
-                $data['display'] = RESOURCELIB_DISPLAY_EMBED;
-
-            } else if ($data['options'] == 'forcedownload') {
-                $data['display'] = RESOURCELIB_DISPLAY_DOWNLOAD;
-
-            } else if ($data['popup']) {
-                $data['display'] = RESOURCELIB_DISPLAY_POPUP;
-                if ($data['popup']) {
-                    $rawoptions = explode(',', $data['popup']);
-                    foreach ($rawoptions as $rawoption) {
-                        list($name, $value) = explode('=', trim($rawoption), 2);
-                        if ($value > 0 and ($name == 'width' or $name == 'height')) {
-                            $options['popup'.$name] = $value;
-                            continue;
-                        }
-                    }
-                }
-
-            } else {
-                $data['display'] = RESOURCELIB_DISPLAY_AUTO;
-            }
-            $data['displayoptions'] = serialize($options);
-            unset($data['popup']);
-        }
-
-        // fix invalid NULL popup and options data in old mysql databases
-        if (!array_key_exists('popup', $data) || $data['popup'] === null) {
+        // fix invalid null popup and options data
+        if (!array_key_exists('popup', $data) or is_null($data['popup'])) {
             $data['popup'] = '';
         }
-        if (!array_key_exists ('options', $data) || $data['options'] === null) {
+        if (!array_key_exists ('options', $data) or is_null($data['options'])) {
             $data['options'] = '';
         }
 
+        // decide if the legacy resource should be handled by a successor module
         if ($successor = $this->get_successor($data['type'], $data['reference'])) {
             // the instance id will be kept
             $instanceid = $data['id'];
@@ -159,63 +124,98 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
             return $successor->process_legacy_resource($data, $raw);
         }
 
-        // only $data['type'] == "file" should get to here
+        // no successor is interested in this record, convert it to the new mod_resource (aka File module)
+
+        $resource = array();
+        $resource['id']              = $data['id'];
+        $resource['name']            = $data['name'];
+        $resource['intro']           = $data['intro'];
+        $resource['introformat']     = $data['introformat'];
+        $resource['tobemigrated']    = 0;
+        $resource['legacyfiles']     = RESOURCELIB_LEGACYFILES_ACTIVE;
+        $resource['legacyfileslast'] = null;
+        $resource['filterfiles']     = 0;
+        $resource['revision']        = 1;
+        $resource['timemodified']    = $data['timemodified'];
+
+        // populate display and displayoptions fields
+        $options = array('printheading' => 0, 'printintro' => 1);
+        if ($data['options'] == 'frame') {
+            $resource['display'] = RESOURCELIB_DISPLAY_FRAME;
+
+        } else if ($data['options'] == 'objectframe') {
+            $resource['display'] = RESOURCELIB_DISPLAY_EMBED;
+
+        } else if ($data['options'] == 'forcedownload') {
+            $resource['display'] = RESOURCELIB_DISPLAY_DOWNLOAD;
+
+        } else if ($data['popup']) {
+            $resource['display'] = RESOURCELIB_DISPLAY_POPUP;
+            $rawoptions = explode(',', $data['popup']);
+            foreach ($rawoptions as $rawoption) {
+                list($name, $value) = explode('=', trim($rawoption), 2);
+                if ($value > 0 and ($name == 'width' or $name == 'height')) {
+                    $options['popup'.$name] = $value;
+                    continue;
+                }
+            }
+
+        } else {
+            $resource['display'] = RESOURCELIB_DISPLAY_AUTO;
+        }
+        $resource['displayoptions'] = serialize($options);
 
         // get the course module id and context id
-        $instanceid             = $data['id'];
-        $this->currentcminfo    = $this->get_cminfo($instanceid);
-        $moduleid               = $this->currentcminfo['id'];
-        $contextid              = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
+        $instanceid     = $resource['id'];
+        $currentcminfo  = $this->get_cminfo($instanceid);
+        $moduleid       = $currentcminfo['id'];
+        $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
 
-        unset($data['type']);
-        unset($data['alltext']);
-        unset($data['popup']);
-        unset($data['options']);
+        // get a fresh new file manager for this instance
+        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_resource');
 
-        $data['tobemigrated'] = 0;
-        $data['mainfile'] = null;
-        $data['legacyfiles'] = 0;
-        $data['legacyfileslast'] = null;
-        $data['display'] = 0;
-        $data['displayoptions'] = null;
-        $data['filterfiles'] = 0;
-        $data['revision'] = 0;
-        unset($data['mainfile']);
+        // convert course files embedded into the intro
+        $files = moodle1_converter::find_referenced_files($resource['intro']);
+        if (!empty($files)) {
+            $this->fileman->filearea = 'intro';
+            $this->fileman->itemid = 0;
+            foreach ($files as $file) {
+                $this->fileman->migrate_file('course_files'.$file, dirname($file));
+            }
+            $resource['intro'] = moodle1_converter::rewrite_filephp_usage($resource['intro'], $files);
+        }
 
-        // we now have all information needed to start writing into the file
+        // convert the referenced file itself as a main file in the content area
+        $this->fileman->filearea = 'content';
+        $this->fileman->itemid = 0;
+        $this->fileman->migrate_file('course_files/'.$data['reference'], '/', null, 1);
+
+        // write resource.xml
         $this->open_xml_writer("activities/resource_{$moduleid}/resource.xml");
         $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $moduleid,
             'modulename' => 'resource', 'contextid' => $contextid));
-        $this->xmlwriter->begin_tag('resource', array('id' => $instanceid));
+        $this->write_xml('resource', $resource, array('/resource/id'));
+        $this->xmlwriter->end_tag('activity');
+        $this->close_xml_writer();
 
-        unset($data['id']); // we already write it as attribute, do not repeat it as child element
-        foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
+        // write inforef.xml
+        $this->open_xml_writer("activities/resource_{$currentcminfo['id']}/inforef.xml");
+        $this->xmlwriter->begin_tag('inforef');
+        $this->xmlwriter->begin_tag('fileref');
+        foreach ($this->fileman->get_fileids() as $fileid) {
+            $this->write_xml('file', array('id' => $fileid));
         }
-
-        // prepare file manager for migrating the resource file
-        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_resource', 'content');
-        $this->fileman->migrate_file('course_files/'.$data['reference']);
+        $this->xmlwriter->end_tag('fileref');
+        $this->xmlwriter->end_tag('inforef');
+        $this->close_xml_writer();
     }
 
+    /**
+     * Give succesors a chance to finish their job
+     */
     public function on_resource_end(array $data) {
         if ($successor = $this->get_successor($data['type'], $data['reference'])) {
             $successor->on_legacy_resource_end($data);
-        } else {
-            $this->xmlwriter->end_tag('resource');
-            $this->xmlwriter->end_tag('activity');
-            $this->close_xml_writer();
-
-            // write inforef.xml for migrated resource file.
-            $this->open_xml_writer("activities/resource_{$this->currentcminfo['id']}/inforef.xml");
-            $this->xmlwriter->begin_tag('inforef');
-            $this->xmlwriter->begin_tag('fileref');
-            foreach ($this->fileman->get_fileids() as $fileid) {
-                $this->write_xml('file', array('id' => $fileid));
-            }
-            $this->xmlwriter->end_tag('fileref');
-            $this->xmlwriter->end_tag('inforef');
-            $this->close_xml_writer();
         }
     }
 
