@@ -182,7 +182,12 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
         // convert the referenced file itself as a main file in the content area
         $this->fileman->filearea = 'content';
         $this->fileman->itemid   = 0;
-        $this->fileman->migrate_file('course_files/'.$data['reference'], '/', null, 1);
+        try {
+            $this->fileman->migrate_file('course_files/'.$data['reference'], '/', null, 1);
+        } catch (moodle1_convert_exception $e) {
+            // the file probably does not exist
+            // todo add to log
+        }
 
         // write resource.xml
         $this->open_xml_writer("activities/resource_{$moduleid}/resource.xml");

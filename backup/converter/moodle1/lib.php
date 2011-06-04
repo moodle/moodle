@@ -550,7 +550,12 @@ class moodle1_converter extends base_converter {
         $files = self::find_referenced_files($text);
         if (!empty($files)) {
             foreach ($files as $file) {
-                $fileman->migrate_file('course_files'.$file, dirname($file));
+                try {
+                    $fileman->migrate_file('course_files'.$file, dirname($file));
+                } catch (moodle1_convert_exception $e) {
+                    // file probably does not exist
+                    // todo add to the conversion log
+                }
             }
             $text = self::rewrite_filephp_usage($text, $files);
         }
