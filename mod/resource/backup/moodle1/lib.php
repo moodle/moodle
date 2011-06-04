@@ -175,19 +175,13 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
         $this->fileman = $this->converter->get_file_manager($contextid, 'mod_resource');
 
         // convert course files embedded into the intro
-        $files = moodle1_converter::find_referenced_files($resource['intro']);
-        if (!empty($files)) {
-            $this->fileman->filearea = 'intro';
-            $this->fileman->itemid = 0;
-            foreach ($files as $file) {
-                $this->fileman->migrate_file('course_files'.$file, dirname($file));
-            }
-            $resource['intro'] = moodle1_converter::rewrite_filephp_usage($resource['intro'], $files);
-        }
+        $this->fileman->filearea = 'intro';
+        $this->fileman->itemid   = 0;
+        $resource['intro'] = moodle1_converter::migrate_referenced_files($resource['intro'], $this->fileman);
 
         // convert the referenced file itself as a main file in the content area
         $this->fileman->filearea = 'content';
-        $this->fileman->itemid = 0;
+        $this->fileman->itemid   = 0;
         $this->fileman->migrate_file('course_files/'.$data['reference'], '/', null, 1);
 
         // write resource.xml

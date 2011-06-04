@@ -86,26 +86,14 @@ class moodle1_mod_page_handler extends moodle1_resource_successor_handler {
         $this->fileman = $this->converter->get_file_manager($contextid, 'mod_page');
 
         // convert course files embedded into the intro
-        $files = moodle1_converter::find_referenced_files($page['intro']);
-        if (!empty($files)) {
-            $this->fileman->filearea = 'intro';
-            $this->fileman->itemid = 0;
-            foreach ($files as $file) {
-                $this->fileman->migrate_file('course_files'.$file, dirname($file));
-            }
-            $page['intro'] = moodle1_converter::rewrite_filephp_usage($page['intro'], $files);
-        }
+        $this->fileman->filearea = 'intro';
+        $this->fileman->itemid   = 0;
+        $page['intro'] = moodle1_converter::migrate_referenced_files($page['intro'], $this->fileman);
 
         // convert course files embedded into the content
-        $files = moodle1_converter::find_referenced_files($page['content']);
-        if (!empty($files)) {
-            $this->fileman->filearea = 'content';
-            $this->fileman->itemid   = 0;
-            foreach ($files as $file) {
-                $this->fileman->migrate_file('course_files'.$file, dirname($file));
-            }
-            $page['content'] = moodle1_converter::rewrite_filephp_usage($page['content'], $files);
-        }
+        $this->fileman->filearea = 'content';
+        $this->fileman->itemid   = 0;
+        $page['content'] = moodle1_converter::migrate_referenced_files($page['content'], $this->fileman);
 
         // write page.xml
         $this->open_xml_writer("activities/page_{$moduleid}/page.xml");

@@ -58,15 +58,9 @@ class moodle1_mod_folder_handler extends moodle1_resource_successor_handler {
         $this->fileman = $this->converter->get_file_manager($contextid, 'mod_folder');
 
         // migrate the files embedded into the intro field
-        $files = moodle1_converter::find_referenced_files($folder['intro']);
-        if (!empty($files)) {
-            $this->fileman->filearea = 'intro';
-            $this->fileman->itemid   = 0;
-            foreach ($files as $file) {
-                $this->fileman->migrate_file('course_files'.$file, dirname($file));
-            }
-            $folder['intro'] = moodle1_converter::rewrite_filephp_usage($folder['intro'], $files);
-        }
+        $this->fileman->filearea = 'intro';
+        $this->fileman->itemid   = 0;
+        $folder['intro'] = moodle1_converter::migrate_referenced_files($folder['intro'], $this->fileman);
 
         // migrate the folder files
         $this->fileman->filearea = 'content';
