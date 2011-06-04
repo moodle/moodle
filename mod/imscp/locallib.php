@@ -78,6 +78,12 @@ function imscp_htmllize_item($item, $imscp, $cm) {
     return $result;
 }
 
+/**
+ * Parse an IMS content package's manifest file to determine its structure
+ * @param object $imscp
+ * @param object $context
+ * @return array
+ */
 function imscp_parse_structure($imscp, $context) {
     $fs = get_file_storage();
 
@@ -85,9 +91,17 @@ function imscp_parse_structure($imscp, $context) {
         return null;
     }
 
+    imscp_parse_manifestfile($manifestfile->get_content());
+}
 
+/**
+ * Parse the contents of a IMS package's manifest file
+ * @param string $manifestfilecontents the contents of the manifest file
+ * @return array
+ */
+function imscp_parse_manifestfile($manifestfilecontents) {
     $doc = new DOMDocument();
-    if (!$doc->loadXML($manifestfile->get_content(), LIBXML_NONET)) {
+    if (!$doc->loadXML($manifestfilecontents, LIBXML_NONET)) {
         return null;
     }
 
