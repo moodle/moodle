@@ -81,6 +81,12 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
         global $CFG;
         require_once("$CFG->libdir/resourcelib.php");
 
+        // replay the upgrade step 2009042001
+        if ($CFG->texteditors !== 'textarea') {
+            $data['intro']       = text_to_html($data['intro'], false, false, true);
+            $data['introformat'] = FORMAT_HTML;
+        }
+
         //if this is a file or URL resource we need to deal with the options
         //before possibly branching out to the URL successor
         if ($data['type'] == 'file') {

@@ -59,14 +59,6 @@ class moodle1_mod_imscp_handler extends moodle1_mod_handler {
         $moduleid            = $this->currentcminfo['id'];
         $contextid           = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
 
-        if ($CFG->texteditors !== 'textarea') {
-            $data['intro']       = text_to_html($data['intro'], false, false, true);
-            $data['introformat'] = FORMAT_HTML;
-        } else {
-            $data['intro']       = $data['intro'];
-            $data['introformat'] = FORMAT_MOODLE;
-        }
-
         $data['revision'] = 1;
         $data['keepold']  = 1;
 

@@ -57,12 +57,6 @@ class moodle1_mod_page_handler extends moodle1_mod_handler {
         $moduleid   = $cminfo['id'];
         $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
 
-        //we now only support html intros
-        if ($data['type'] == 'text') {
-            $data['intro']       = text_to_html($data['intro'], false, false, true);
-            $data['introformat'] = FORMAT_HTML;
-        }
-
         $data['contentformat'] = (int)$data['reference'];
         if ($data['contentformat'] < 0 || $data['contentformat'] > 4) {
             $data['contentformat'] = FORMAT_MOODLE;
