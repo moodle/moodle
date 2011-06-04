@@ -190,6 +190,9 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
             $DB->update_record('question', $updaterecord);
         }
         $rs->close();
+
+        // numerical savepoint reached
+        upgrade_plugin_savepoint(true, 2011042600, 'qtype', 'numerical');
     }
 
     if ($oldversion < 2011042601) {
@@ -223,7 +226,6 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
     return true;
 }
 
-
 /**
  * Convert the ->questiontext and ->instructions fields to have the same text format.
  * If they are already the same, do nothing. Otherwise, this method works by
@@ -252,6 +254,9 @@ function qtype_numerical_convert_text_format($numericaloptions) {
 
     return true;
 }
+
+// Add some helper functions that should be in upgradelib.php, but having there already
+// the question attempts updater classes prevents us to do so :-(
 
 /**
  * Convert some content to HTML.

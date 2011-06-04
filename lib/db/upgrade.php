@@ -6113,7 +6113,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
 
     // Question engine 2 changes (14) start here
-    if ($oldversion < 2011051200) {
+    if ($oldversion < 2011060300) {
         // Changing the default of field penalty on table question to 0.3333333
         $table = new xmldb_table('question');
         $field = new xmldb_field('penalty');
@@ -6124,10 +6124,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->change_field_default($table, $field);
 
         // quiz savepoint reached
-        upgrade_main_savepoint(true, 2011051200);
+        upgrade_main_savepoint(true, 2011060300);
     }
 
-    if ($oldversion < 2011051201) {
+    if ($oldversion < 2011060301) {
 
         // Rename field defaultgrade on table question to defaultmark
         $table = new xmldb_table('question');
@@ -6141,10 +6141,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // quiz savepoint reached
-        upgrade_main_savepoint(true, 2011051201);
+        upgrade_main_savepoint(true, 2011060301);
     }
 
-    if ($oldversion < 2011051202) {
+    if ($oldversion < 2011060302) {
 
         // Rename the question_attempts table to question_usages.
         $table = new xmldb_table('question_attempts');
@@ -6153,10 +6153,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // quiz savepoint reached
-        upgrade_main_savepoint(true, 2011051202);
+        upgrade_main_savepoint(true, 2011060302);
     }
 
-    if ($oldversion < 2011051203) {
+    if ($oldversion < 2011060303) {
 
         // Rename the modulename field to component ...
         $table = new xmldb_table('question_usages');
@@ -6215,10 +6215,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // quiz savepoint reached
-        upgrade_main_savepoint(true, 2011051203);
+        upgrade_main_savepoint(true, 2011060303);
     }
 
-    if ($oldversion < 2011051204) {
+    if ($oldversion < 2011060304) {
 
         // Define key contextid (foreign) to be added to question_usages
         $table = new xmldb_table('question_usages');
@@ -6229,10 +6229,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->add_key($table, $key);
 
         // quiz savepoint reached
-        upgrade_main_savepoint(true, 2011051204);
+        upgrade_main_savepoint(true, 2011060304);
     }
 
-    if ($oldversion < 2011051205) {
+    if ($oldversion < 2011060305) {
 
         // Changing precision of field component on table question_usages to (255)
         // This was missed during the upgrade from old versions.
@@ -6245,10 +6245,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         $dbman->change_field_precision($table, $field);
 
         // quiz savepoint reached
-        upgrade_main_savepoint(true, 2011051205);
+        upgrade_main_savepoint(true, 2011060305);
     }
 
-    if ($oldversion < 2011051206) {
+    if ($oldversion < 2011060306) {
 
         // Define table question_attempts to be created
         $table = new xmldb_table('question_attempts');
@@ -6296,10 +6296,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // quiz savepoint reached
-        upgrade_main_savepoint(true, 2011051206);
+        upgrade_main_savepoint(true, 2011060306);
     }
 
-    if ($oldversion < 2011051207) {
+    if ($oldversion < 2011060307) {
 
         // Define table question_attempt_steps to be created
         $table = new xmldb_table('question_attempt_steps');
@@ -6337,10 +6337,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // quiz savepoint reached
-        upgrade_main_savepoint(true, 2011051207);
+        upgrade_main_savepoint(true, 2011060307);
     }
 
-    if ($oldversion < 2011051208) {
+    if ($oldversion < 2011060308) {
 
         // Define table question_attempt_step_data to be created
         $table = new xmldb_table('question_attempt_step_data');
@@ -6370,10 +6370,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // quiz savepoint reached
-        upgrade_main_savepoint(true, 2011051208);
+        upgrade_main_savepoint(true, 2011060308);
     }
 
-    if ($oldversion < 2011051209) {
+    if ($oldversion < 2011060309) {
 
         // Define table question_hints to be created
         $table = new xmldb_table('question_hints');
@@ -6405,10 +6405,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // quiz savepoint reached
-        upgrade_main_savepoint(true, 2011051209);
+        upgrade_main_savepoint(true, 2011060309);
     }
 
-    if ($oldversion < 2011051210) {
+    if ($oldversion < 2011060310) {
 
         // In the past, question_answer fractions were stored with rather
         // sloppy rounding. Now update them to the new standard of 7 d.p.
@@ -6430,10 +6430,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // quiz savepoint reached
-        upgrade_main_savepoint(true, 2011051210);
+        upgrade_main_savepoint(true, 2011060310);
     }
 
-    if ($oldversion < 2011051211) {
+    if ($oldversion < 2011060311) {
 
         // In the past, question penalties were stored with rather
         // sloppy rounding. Now update them to the new standard of 7 d.p.
@@ -6447,10 +6447,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
                 'penalty', 1, 'penalty > 1');
 
         // quiz savepoint reached
-        upgrade_main_savepoint(true, 2011051211);
+        upgrade_main_savepoint(true, 2011060311);
     }
 
-    if ($oldversion < 2011051212) {
+    if ($oldversion < 2011060312) {
 
         // Define field hintformat to be added to question_hints table.
         $table = new xmldb_table('question_hints');
@@ -6462,10 +6462,10 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
             $dbman->add_field($table, $field);
         }
 
-        upgrade_main_savepoint(true, 2011051212);
+        upgrade_main_savepoint(true, 2011060312);
     }
 
-    if ($oldversion < 2011051213) {
+    if ($oldversion < 2011060313) {
         // Define field variant to be added to question_attempts
         $table = new xmldb_table('question_attempts');
         $field = new xmldb_field('variant', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
@@ -6477,7 +6477,7 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
         }
 
         // Main savepoint reached
-        upgrade_main_savepoint(true, 2011051213);
+        upgrade_main_savepoint(true, 2011060313);
     }
     // Question engine 2 changes (14) end here
 

@@ -70,14 +70,21 @@ function xmldb_qtype_essay_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2011031000, 'qtype', 'essay');
     }
 
-    if ($oldversion < 2011031000) {
+    if ($oldversion < 2011060300) {
         // Insert a row into the qtype_essay_options table for each existing essay question.
         $DB->execute("
                 INSERT INTO {qtype_essay_options} (questionid, responseformat,
                         responsefieldlines, attachments, graderinfo, graderinfoformat)
-                SELECT id, 'editor', 15, 0, '', " . FORMAT_MOODLE . "
-                FROM {question}
-                WHERE qtype = 'essay'");
+                SELECT q.id, 'editor', 15, 0, '', " . FORMAT_MOODLE . "
+                FROM {question} q
+                WHERE q.qtype = 'essay'
+                AND NOT EXISTS (
+                    SELECT 'x'
+                    FROM {qtype_essay_options} qeo
+                    WHERE qeo.questionid = q.id)");
+
+        // essay savepoint reached
+        upgrade_plugin_savepoint(true, 2011060300, 'qtype', 'essay');
     }
 
     return true;
