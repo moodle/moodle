@@ -472,6 +472,7 @@ class moodle1_root_handler extends moodle1_xml_handler {
         $this->xmlwriter->begin_tag('inforef');
 
         $this->xmlwriter->begin_tag('fileref');
+        // legacy course files
         $fileids = $this->converter->get_stash('course_files_ids');
         if (is_array($fileids)) {
             foreach ($fileids as $fileid) {
@@ -479,6 +480,13 @@ class moodle1_root_handler extends moodle1_xml_handler {
             }
         }
         // todo site files
+        // course summary files
+        $fileids = $this->converter->get_stash('course_summary_files_ids');
+        if (is_array($fileids)) {
+            foreach ($fileids as $fileid) {
+                $this->write_xml('file', array('id' => $fileid));
+            }
+        }
         $this->xmlwriter->end_tag('fileref');
 
         $this->xmlwriter->begin_tag('question_categoryref');
@@ -704,6 +712,12 @@ class moodle1_course_header_handler extends moodle1_xml_handler {
         $this->course['contextid'] = $contextid;
         $this->course['category'] = $this->category;
 
+        // migrate files embedded into the course summary and stash their ids
+        $fileman = $this->converter->get_file_manager($contextid, 'course', 'summary');
+        $this->course['summary'] = moodle1_converter::migrate_referenced_files($this->course['summary'], $fileman);
+        $this->converter->set_stash('course_summary_files_ids', $fileman->get_fileids());
+
+        // write course.xml
         $this->open_xml_writer('course/course.xml');
         $this->write_xml('course', $this->course, array('/course/id', '/course/contextid'));
         $this->close_xml_writer();
@@ -816,6 +830,26 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
      */
     public function on_course_section_end() {
 
+        // migrate files embedded into the section summary field
+        $contextid = $this->converter->get_contextid(CONTEXT_COURSE);
+        $fileman = $this->converter->get_file_manager($contextid, 'course', 'section', $this->currentsection['id']);
+        $this->currentsection['summary'] = moodle1_converter::migrate_referenced_files($this->currentsection['summary'], $fileman);
+
+        // write section's inforef.xml with the file references
+        $this->open_xml_writer('sections/section_' . $this->currentsection['id'] . '/inforef.xml');
+        $this->xmlwriter->begin_tag('inforef');
+        $this->xmlwriter->begin_tag('fileref');
+        $fileids = $fileman->get_fileids();
+        if (is_array($fileids)) {
+            foreach ($fileids as $fileid) {
+                $this->write_xml('file', array('id' => $fileid));
+            }
+        }
+        $this->xmlwriter->end_tag('fileref');
+        $this->xmlwriter->end_tag('inforef');
+        $this->close_xml_writer();
+
+        // stash the section info and write section.xml
         $this->converter->set_stash('sectioninfo', $this->currentsection, $this->currentsection['id']);
         $this->open_xml_writer('sections/section_' . $this->currentsection['id'] . '/section.xml');
         $this->write_xml('section', $this->currentsection);
