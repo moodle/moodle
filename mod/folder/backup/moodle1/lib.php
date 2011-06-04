@@ -30,8 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * Folder conversion handler. This resource handler is called by moodle1_mod_resource_handler
  */
 class moodle1_mod_folder_handler extends moodle1_resource_successor_handler {
-    /** @var array in-memory cache for the course module information  */
-    protected $currentcminfo = null;
+
     /** @var moodle1_file_manager instance */
     protected $fileman = null;
 
@@ -41,35 +40,49 @@ class moodle1_mod_folder_handler extends moodle1_resource_successor_handler {
      */
     public function process_legacy_resource($data) {
         // get the course module id and context id
-        $instanceid             = $data['id'];
-        $this->currentcminfo    = $this->get_cminfo($instanceid);
-        $moduleid               = $this->currentcminfo['id'];
-        $contextid              = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
+        $instanceid     = $data['id'];
+        $currentcminfo  = $this->get_cminfo($instanceid);
+        $moduleid       = $currentcminfo['id'];
+        $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
 
-        // we now have all information needed to start writing into the file
+        // convert legacy data into the new folder record
+        $folder                 = array();
+        $folder['id']           = $data['id'];
+        $folder['name']         = $data['name'];
+        $folder['intro']        = $data['intro'];
+        $folder['introformat']  = $data['introformat'];
+        $folder['revision']     = 1;
+        $folder['timemodified'] = $data['timemodified'];
+
+        // get a fresh new file manager for this instance
+        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_folder');
+
+        // migrate the files embedded into the intro field
+        $files = moodle1_converter::find_referenced_files($folder['intro']);
+        if (!empty($files)) {
+            $this->fileman->filearea = 'intro';
+            $this->fileman->itemid   = 0;
+            foreach ($files as $file) {
+                $this->fileman->migrate_file('course_files'.$file);
+            }
+            $folder['intro'] = moodle1_converter::rewrite_filephp_usage($folder['intro'], $files);
+        }
+
+        // migrate the folder files
+        $this->fileman->filearea = 'content';
+        $this->fileman->itemid   = 0;
+        $this->fileman->migrate_directory('course_files/'.$data['reference']);
+
+        // write folder.xml
         $this->open_xml_writer("activities/folder_{$moduleid}/folder.xml");
         $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $moduleid,
             'modulename' => 'folder', 'contextid' => $contextid));
-        $this->xmlwriter->begin_tag('folder', array('id' => $instanceid));
-
-        unset($data['id']); // we already write it as attribute, do not repeat it as child element
-        foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
-        }
-
-        // prepare file manager for migrating the folder
-        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_folder', 'content');
-        $this->fileman->migrate_directory('course_files/'.$data['reference']);
-    }
-
-    public function on_legacy_resource_end() {
-        // close folder.xml
-        $this->xmlwriter->end_tag('folder');
+        $this->write_xml('folder', $folder, array('/folder/id'));
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
 
-        // write inforef.xml for migrated folder
-        $this->open_xml_writer("activities/folder_{$this->currentcminfo['id']}/inforef.xml");
+        // write inforef.xml
+        $this->open_xml_writer("activities/folder_{$moduleid}/inforef.xml");
         $this->xmlwriter->begin_tag('inforef');
         $this->xmlwriter->begin_tag('fileref');
         foreach ($this->fileman->get_fileids() as $fileid) {
