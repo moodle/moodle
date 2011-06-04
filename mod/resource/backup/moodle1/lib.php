@@ -19,21 +19,25 @@
  * Provides support for the conversion of moodle1 backup to the moodle2 format
  *
  * @package    mod
- * @subpackage forum
- * @copyright  2011 Mark Nielsen <mark@moodlerooms.com>
+ * @subpackage resource
+ * @copyright  2011 Andrew Davis <andrew@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Forum conversion handler
+ * Resource conversion handler
  */
 class moodle1_mod_resource_handler extends moodle1_mod_handler {
     /** @var array in-memory cache for the course module information  */
     protected $currentcminfo = null;
+
     /** @var moodle1_file_manager instance */
     protected $fileman = null;
+
+    /** @var array of resource successors handlers */
+    private $successors = array();
 
     /**
      * Declare the paths in moodle.xml we are able to convert
@@ -69,6 +73,9 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
 
     /**
      * Converts /MOODLE_BACKUP/COURSE/MODULES/MOD/RESOURCE data
+     *
+     * This methods detects the resource type and eventually re-dispatches it to the
+     * corresponding resource successor (url, forum, page, imscp).
      */
     public function process_resource(array $data, array $raw) {
         global $CFG;
@@ -216,7 +223,6 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
      * @return null|moodle1_mod_handler the instance of the handler, or null if the type does not have a successor
      */
     protected function get_successor($type, $reference) {
-        static $successors = array();
 
         switch ($type) {
             case 'text':
@@ -245,9 +251,9 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
             return null;
         }
 
-        if (!isset($successors[$name])) {
+        if (!isset($this->successors[$name])) {
             $class = 'moodle1_mod_'.$name.'_handler';
-            $successors[$name] = new $class($this->converter, 'mod', $name);
+            $this->successors[$name] = new $class($this->converter, 'mod', $name);
 
             // add the successor into the modlist stash
             $modnames = $this->converter->get_stash('modnameslist');
@@ -262,6 +268,6 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
             $this->converter->set_stash('modinfo_'.$name, $modinfo);
         }
 
-        return $successors[$name];
+        return $this->successors[$name];
      }
 }
