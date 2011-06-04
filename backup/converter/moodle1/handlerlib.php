@@ -1538,7 +1538,7 @@ abstract class moodle1_resource_successor_handler extends moodle1_mod_handler {
      * @param array $data pre-cooked legacy resource data
      * @param array $raw raw legacy resource data
      */
-    public function process_resource(array $data, array $raw) {
+    public function process_legacy_resource(array $data, array $raw) {
     }
 
     /**
@@ -1546,7 +1546,7 @@ abstract class moodle1_resource_successor_handler extends moodle1_mod_handler {
      *
      * @param array $data the data returned by {@link self::process_resource} or just pre-cooked
      */
-    public function on_resource_end(array $data) {
+    public function on_legacy_resource_end(array $data) {
     }
 }
 

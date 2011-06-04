@@ -156,7 +156,7 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
             $this->converter->set_stash('cminfo_'.$cminfo['modulename'], $cminfo, $instanceid);
 
             // delegate the processing to the successor handler
-            return $successor->process_resource($data, $raw);
+            return $successor->process_legacy_resource($data, $raw);
         }
 
         // only $data['type'] == "file" should get to here
@@ -200,7 +200,7 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
 
     public function on_resource_end(array $data) {
         if ($successor = $this->get_successor($data['type'], $data['reference'])) {
-            $successor->on_resource_end($data);
+            $successor->on_legacy_resource_end($data);
         } else {
             $this->xmlwriter->end_tag('resource');
             $this->xmlwriter->end_tag('activity');

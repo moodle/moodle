@@ -29,22 +29,13 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * URL conversion handler. This resource handler is called by moodle1_mod_resource_handler
  */
-class moodle1_mod_url_handler extends moodle1_mod_handler {
-
-    /**
-     * Declare the paths in moodle.xml we are able to convert
-     *
-     * @return array of {@link convert_path} instances
-     */
-    public function get_paths() {
-        return array();
-    }
+class moodle1_mod_url_handler extends moodle1_resource_successor_handler {
 
     /**
      * Converts /MOODLE_BACKUP/COURSE/MODULES/MOD/RESOURCE data
      * Called by moodle1_mod_resource_handler::process_resource()
      */
-    public function process_resource($data) {
+    public function process_legacy_resource($data) {
         $data['externalurl'] = $data['reference'];
         unset($data['reference']);
 
@@ -66,7 +57,7 @@ class moodle1_mod_url_handler extends moodle1_mod_handler {
         }
     }
 
-    public function on_resource_end() {
+    public function on_legacy_resource_end() {
         $this->xmlwriter->end_tag('url');
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();

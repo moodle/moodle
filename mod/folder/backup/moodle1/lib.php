@@ -29,26 +29,17 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Folder conversion handler. This resource handler is called by moodle1_mod_resource_handler
  */
-class moodle1_mod_folder_handler extends moodle1_mod_handler {
+class moodle1_mod_folder_handler extends moodle1_resource_successor_handler {
     /** @var array in-memory cache for the course module information  */
     protected $currentcminfo = null;
     /** @var moodle1_file_manager instance */
     protected $fileman = null;
 
     /**
-     * Declare the paths in moodle.xml we are able to convert
-     *
-     * @return array of {@link convert_path} instances
-     */
-    public function get_paths() {
-        return array();
-    }
-
-    /**
      * Converts /MOODLE_BACKUP/COURSE/MODULES/MOD/RESOURCE data
      * Called by moodle1_mod_resource_handler::process_resource()
      */
-    public function process_resource($data) {
+    public function process_legacy_resource($data) {
         // get the course module id and context id
         $instanceid             = $data['id'];
         $this->currentcminfo    = $this->get_cminfo($instanceid);
@@ -71,7 +62,7 @@ class moodle1_mod_folder_handler extends moodle1_mod_handler {
         $this->fileman->migrate_directory('course_files/'.$data['reference']);
     }
 
-    public function on_resource_end() {
+    public function on_legacy_resource_end() {
         // close folder.xml
         $this->xmlwriter->end_tag('folder');
         $this->xmlwriter->end_tag('activity');

@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * imscp conversion handler. This resource handler is called by moodle1_mod_resource_handler
  */
-class moodle1_mod_imscp_handler extends moodle1_mod_handler {
+class moodle1_mod_imscp_handler extends moodle1_resource_successor_handler {
     /** @var array in-memory cache for the course module information for the current imscp  */
     protected $currentcminfo = null;
 
@@ -39,19 +39,10 @@ class moodle1_mod_imscp_handler extends moodle1_mod_handler {
     protected $fileman = null;
 
     /**
-     * Declare the paths in moodle.xml we are able to convert
-     *
-     * @return array of {@link convert_path} instances
-     */
-    public function get_paths() {
-        return array();
-    }
-
-    /**
      * Converts /MOODLE_BACKUP/COURSE/MODULES/MOD/RESOURCE data
      * Called by moodle1_mod_resource_handler::process_resource()
      */
-    public function process_resource($data) {
+    public function process_legacy_resource($data) {
         global $CFG;
 
         $instanceid          = $data['id'];
@@ -87,7 +78,7 @@ class moodle1_mod_imscp_handler extends moodle1_mod_handler {
         */
     }
 
-    public function on_resource_end() {
+    public function on_legacy_resource_end() {
         //close imscp.xml
         $this->xmlwriter->end_tag('imscp');
         $this->xmlwriter->end_tag('activity');
