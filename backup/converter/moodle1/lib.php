@@ -1113,13 +1113,14 @@ class moodle1_file_manager {
      * Migrates one given file stored on disk
      *
      * @param string $sourcepath the path to the source local file within the backup archive {@example 'moddata/foobar/file.ext'}
-     * @param string $filepath the file path of the migrated file, defaults to the root directory '/'
+     * @param string $filepath the file path of the migrated file, defaults to the root directory '/' {@example '/sub/dir/'}
      * @param string $filename the name of the migrated file, defaults to the same as the source file has
+     * @param int $sortorder the sortorder of the file (main files have sortorder set to 1)
      * @param int $timecreated override the timestamp of when the migrated file should appear as created
      * @param int $timemodified override the timestamp of when the migrated file should appear as modified
      * @return int id of the migrated file
      */
-    public function migrate_file($sourcepath, $filepath = '/', $filename = null, $timecreated = null, $timemodified = null) {
+    public function migrate_file($sourcepath, $filepath = '/', $filename = null, $sortorder = 0, $timecreated = null, $timemodified = null) {
 
         $sourcefullpath = $this->basepath.'/'.$sourcepath;
 
@@ -1127,6 +1128,13 @@ class moodle1_file_manager {
             throw new moodle1_convert_exception('file_not_readable', $sourcefullpath);
         }
 
+        // sanitize filepath
+        if (empty($filepath)) {
+            $filepath = '/';
+        }
+        if (substr($filepath, -1) !== '/') {
+            $filepath .= '/';
+        }
         $filepath = clean_param($filepath, PARAM_PATH);
 
         if ($this->textlib->strlen($filepath) > 255) {
@@ -1154,6 +1162,7 @@ class moodle1_file_manager {
         $filerecord = $this->make_file_record(array(
             'filepath'      => $filepath,
             'filename'      => $filename,
+            'sortorder'     => $sortorder,
             'mimetype'      => mimeinfo('type', $sourcefullpath),
             'timecreated'   => $timecreated,
             'timemodified'  => $timemodified,
@@ -1199,7 +1208,7 @@ class moodle1_file_manager {
 
             if ($item->isFile()) {
                 $fileids[] = $this->migrate_file(substr($item->getPathname(), strlen($this->basepath.'/')),
-                    $relpath, $item->getFilename(), $item->getCTime(), $item->getMTime());
+                    $relpath, $item->getFilename(), 0, $item->getCTime(), $item->getMTime());
 
             } else {
                 $dirname = clean_param($item->getFilename(), PARAM_PATH);

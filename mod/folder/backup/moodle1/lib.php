@@ -63,7 +63,7 @@ class moodle1_mod_folder_handler extends moodle1_resource_successor_handler {
             $this->fileman->filearea = 'intro';
             $this->fileman->itemid   = 0;
             foreach ($files as $file) {
-                $this->fileman->migrate_file('course_files'.$file);
+                $this->fileman->migrate_file('course_files'.$file, dirname($file));
             }
             $folder['intro'] = moodle1_converter::rewrite_filephp_usage($folder['intro'], $files);
         }

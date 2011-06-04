@@ -91,7 +91,7 @@ class moodle1_mod_page_handler extends moodle1_resource_successor_handler {
             $this->fileman->filearea = 'intro';
             $this->fileman->itemid = 0;
             foreach ($files as $file) {
-                $this->fileman->migrate_file('course_files'.$file);
+                $this->fileman->migrate_file('course_files'.$file, dirname($file));
             }
             $page['intro'] = moodle1_converter::rewrite_filephp_usage($page['intro'], $files);
         }
@@ -102,7 +102,7 @@ class moodle1_mod_page_handler extends moodle1_resource_successor_handler {
             $this->fileman->filearea = 'content';
             $this->fileman->itemid   = 0;
             foreach ($files as $file) {
-                $this->fileman->migrate_file('course_files'.$file);
+                $this->fileman->migrate_file('course_files'.$file, dirname($file));
             }
             $page['content'] = moodle1_converter::rewrite_filephp_usage($page['content'], $files);
         }
