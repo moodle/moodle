@@ -537,8 +537,31 @@ class moodle1_converter extends base_converter {
     }
 
     /**
+     * Migrates all course files referenced from the hypertext using the given filemanager
+     *
+     * This is typically used to convert images embedded into the intro fields.
+     *
+     * @param string $text hypertext containing $@FILEPHP@$ referenced
+     * @param moodle1_file_manager $fileman file manager to use for the file migration
+     * @return string the original $text with $@FILEPHP@$ references replaced with the new @@PLUGINFILE@@
+     */
+    public static function migrate_referenced_files($text, moodle1_file_manager $fileman) {
+
+        $files = self::find_referenced_files($text);
+        if (!empty($files)) {
+            foreach ($files as $file) {
+                $fileman->migrate_file('course_files'.$file, dirname($file));
+            }
+            $text = self::rewrite_filephp_usage($text, $files);
+        }
+
+        return $text;
+    }
+
+    /**
      * Detects all links to file.php encoded via $@FILEPHP@$ and returns the files to migrate
      *
+     * @see self::migrate_referenced_files()
      * @param string $text
      * @return array
      */
@@ -569,6 +592,7 @@ class moodle1_converter extends base_converter {
     /**
      * Given the list of migrated files, rewrites references to them from $@FILEPHP@$ form to the @@PLUGINFILE@@ one
      *
+     * @see self::migrate_referenced_files()
      * @param string $text
      * @param array $files
      * @return string
