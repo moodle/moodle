@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * Resource conversion handler
  */
 class moodle1_mod_resource_handler extends moodle1_mod_handler {
+
     /** @var array in-memory cache for the course module information  */
     protected $currentcminfo = null;
 
@@ -87,10 +88,10 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
             $data['introformat'] = FORMAT_HTML;
         }
 
-        //if this is a file or URL resource we need to deal with the options
-        //before possibly branching out to the URL successor
+        // if this is a file or URL resource we need to deal with the options
+        // before possibly branching out to the URL successor
         if ($data['type'] == 'file') {
-            $options = array('printheading'=>0, 'printintro'=>1);
+            $options = array('printheading' => 0, 'printintro' => 1);
             if ($data['options'] == 'frame') {
                 $data['display'] = RESOURCELIB_DISPLAY_FRAME;
 
@@ -121,7 +122,7 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
         }
 
         // fix invalid NULL popup and options data in old mysql databases
-        if (!array_key_exists ('popup', $data) || $data['popup'] === null) {
+        if (!array_key_exists('popup', $data) || $data['popup'] === null) {
             $data['popup'] = '';
         }
         if (!array_key_exists ('options', $data) || $data['options'] === null) {
@@ -158,7 +159,7 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
             return $successor->process_resource($data, $raw);
         }
 
-        //only $data['type'] == "file" should get to here
+        // only $data['type'] == "file" should get to here
 
         // get the course module id and context id
         $instanceid             = $data['id'];
