@@ -122,9 +122,14 @@ class moodle1_mod_imscp_handler extends moodle1_mod_handler {
     protected function parse_structure($data, $contextid) {
         global $CFG;
 
-        $temppath = $this->converter->get_tempdir_path();
-        $manifestfilecontents = file_get_contents($temppath.'/moddata/resource/'.$data['id'].'/imsmanifest.xml');
+        $manifestfile = $this->converter->get_tempdir_path().'/moddata/resource/'.$data['id'].'/imsmanifest.xml';
+        if (!file_exists($manifestfile)) {
+            // todo add to conversion log
+            return null;
+        }
+        $manifestfilecontents = file_get_contents($manifestfile);
         if (empty($manifestfilecontents)) {
+            // todo add to conversion log
             return null;
         }
 
