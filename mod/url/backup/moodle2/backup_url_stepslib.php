@@ -37,7 +37,7 @@ class backup_url_activity_structure_step extends backup_activity_structure_step 
 
         // Define each element separated
         $url = new backup_nested_element('url', array('id'), array(
-            'course','name', 'intro', 'introformat', 'externalurl',
+            'name', 'intro', 'introformat', 'externalurl',
             'display', 'displayoptions', 'parameters', 'timemodified'));
 
 
