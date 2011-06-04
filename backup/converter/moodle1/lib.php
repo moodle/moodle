@@ -1225,6 +1225,13 @@ class moodle1_file_manager {
         return $this->fileids;
     }
 
+    /**
+     * Explicitly clear the list of file ids migrated by this instance so far
+     */
+    public function reset_fileids() {
+        $this->fileids = array();
+    }
+
     /// internal implementation details ////////////////////////////////////////
 
     /**

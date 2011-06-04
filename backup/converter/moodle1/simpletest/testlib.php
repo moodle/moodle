@@ -252,6 +252,10 @@ class moodle1_converter_test extends UnitTestCase {
                 $this->assertEqual('icon.gif', $filerecord['filename']);
             }
         }
+        // explicitly clear the list of migrated files
+        $this->assertTrue(count($fileman->get_fileids()) > 0);
+        $fileman->reset_fileids();
+        $this->assertTrue(count($fileman->get_fileids()) == 0);
         $converter->drop_stash_storage();
     }
 
