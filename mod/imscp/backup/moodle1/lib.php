@@ -30,10 +30,6 @@ defined('MOODLE_INTERNAL') || die();
  * imscp conversion handler. This resource handler is called by moodle1_mod_resource_handler
  */
 class moodle1_mod_imscp_handler extends moodle1_resource_successor_handler {
-    /** @var array in-memory cache for the course module information for the current imscp  */
-    protected $currentcminfo = null;
-
-    //there are two file manager instances as we need to put files in two file areas
 
     /** @var moodle1_file_manager the file manager instance */
     protected $fileman = null;
@@ -43,49 +39,63 @@ class moodle1_mod_imscp_handler extends moodle1_resource_successor_handler {
      * Called by moodle1_mod_resource_handler::process_resource()
      */
     public function process_legacy_resource($data) {
-        global $CFG;
 
-        $instanceid          = $data['id'];
-        $this->currentcminfo = $this->get_cminfo($instanceid);
-        $moduleid            = $this->currentcminfo['id'];
-        $contextid           = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
+        $instanceid    = $data['id'];
+        $currentcminfo = $this->get_cminfo($instanceid);
+        $moduleid      = $currentcminfo['id'];
+        $contextid     = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
 
-        $data['revision'] = 1;
-        $data['keepold']  = 1;
+        // prepare the new imscp instance record
+        $imscp                  = array();
+        $imscp['id']            = $data['id'];
+        $imscp['name']          = $data['name'];
+        $imscp['intro']         = $data['intro'];
+        $imscp['introformat']   = $data['introformat'];
+        $imscp['revision']      = 1;
+        $imscp['keepold']       = 1;
+        $imscp['structure']     = null;
+        $imscp['timemodified']  = $data['timemodified'];
 
-        //Prepare to migrate the deployed (ie extracted) version of the content package
-        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_imscp', 'content', $data['revision']);
+        // prepare a fresh new file manager for this instance
+        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_imscp');
+
+        // convert course files embedded into the intro
+        $this->fileman->filearea = 'intro';
+        $this->fileman->itemid   = 0;
+        $imscp['intro'] = moodle1_converter::migrate_referenced_files($imscp['intro'], $this->fileman);
+
+        // migrate package backup file
+        if ($data['reference']) {
+            $packagename = basename($data['reference']);
+            $packagepath = $this->converter->get_tempdir_path().'/moddata/resource/'.$data['id'].'/'.$packagename;
+            if (file_exists($packagepath)) {
+                $this->fileman->filearea = 'backup';
+                $this->fileman->itemid   = 1;
+                $this->fileman->migrate_file('moddata/resource/'.$data['id'].'/'.$packagename);
+            } else {
+                // todo add to log
+            }
+        }
+
+        // migrate extracted package data
+        $this->fileman->filearea = 'content';
+        $this->fileman->itemid   = 1;
         $this->fileman->migrate_directory('moddata/resource/'.$data['id']);
 
         // parse manifest
-        $structure = $this->parse_structure($data, $contextid);
-        $data['structure'] = is_array($structure) ? serialize($structure) : null;
+        $structure = $this->parse_structure($this->converter->get_tempdir_path().'/moddata/resource/'.$data['id'].'/imsmanifest.xml');
+        $imscp['structure'] = is_array($structure) ? serialize($structure) : null;
 
-        // we now have all information needed to start writing into the module file
-
+        // write imscp.xml
         $this->open_xml_writer("activities/imscp_{$moduleid}/imscp.xml");
         $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $moduleid,
             'modulename' => 'imscp', 'contextid' => $contextid));
-        $this->xmlwriter->begin_tag('imscp', array('id' => $instanceid));
-
-        unset($data['id']); // we already write it as attribute, do not repeat it as child element
-        foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
-        }
-
-        /* We currently do not support undeployed IMS packages
-         * They need to be deployed (unzipped) to the mod data area then have the ims structure figured out
-        */
-    }
-
-    public function on_legacy_resource_end() {
-        //close imscp.xml
-        $this->xmlwriter->end_tag('imscp');
+        $this->write_xml('imscp', $imscp, array('/imscp/id'));
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
 
-        // write inforef.xml for migrated imscp files
-        $this->open_xml_writer("activities/imscp_{$this->currentcminfo['id']}/inforef.xml");
+        // write inforef.xml
+        $this->open_xml_writer("activities/imscp_{$moduleid}/inforef.xml");
         $this->xmlwriter->begin_tag('inforef');
         $this->xmlwriter->begin_tag('fileref');
         foreach ($this->fileman->get_fileids() as $fileid) {
@@ -100,17 +110,17 @@ class moodle1_mod_imscp_handler extends moodle1_resource_successor_handler {
 
     /**
      * Parse the IMS package structure for the $imscp->structure field
-     * @param array $data the array of ims package data
+     *
+     * @param string $manifestfilepath the full path to the manifest file to parse
      */
-    protected function parse_structure($data, $contextid) {
+    protected function parse_structure($manifestfilepath) {
         global $CFG;
 
-        $manifestfile = $this->converter->get_tempdir_path().'/moddata/resource/'.$data['id'].'/imsmanifest.xml';
-        if (!file_exists($manifestfile)) {
+        if (!file_exists($manifestfilepath)) {
             // todo add to conversion log
             return null;
         }
-        $manifestfilecontents = file_get_contents($manifestfile);
+        $manifestfilecontents = file_get_contents($manifestfilepath);
         if (empty($manifestfilecontents)) {
             // todo add to conversion log
             return null;
