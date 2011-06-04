@@ -537,6 +537,54 @@ class moodle1_converter extends base_converter {
     }
 
     /**
+     * Detects all links to file.php encoded via $@FILEPHP@$ and returns the files to migrate
+     *
+     * @param string $text
+     * @return array
+     */
+    public static function find_referenced_files($text) {
+
+        $files = array();
+
+        if (empty($text) or is_numeric($text)) {
+            return $files;
+        }
+
+        $matches = array();
+        $pattern = '|(["\'])(\$@FILEPHP@\$.+?)\1|';
+        $result = preg_match_all($pattern, $text, $matches);
+        if ($result === false) {
+            throw new moodle1_convert_exception('error_while_searching_for_referenced_files');
+        }
+        if ($result == 0) {
+            return $files;
+        }
+        foreach ($matches[2] as $match) {
+            $files[] = str_replace(array('$@FILEPHP@$', '$@SLASH@$', '$@FORCEDOWNLOAD@$'), array('', '/', ''), $match);
+        }
+
+        return array_unique($files);
+    }
+
+    /**
+     * Given the list of migrated files, rewrites references to them from $@FILEPHP@$ form to the @@PLUGINFILE@@ one
+     *
+     * @param string $text
+     * @param array $files
+     * @return string
+     */
+    public static function rewrite_filephp_usage($text, array $files) {
+
+        foreach ($files as $file) {
+            $fileref = '$@FILEPHP@$'.str_replace('/', '$@SLASH@$', $file);
+            $text    = str_replace($fileref.'$@FORCEDOWNLOAD@$', '@@PLUGINFILE@@'.$file.'?forcedownload=1', $text);
+            $text    = str_replace($fileref, '@@PLUGINFILE@@'.$file, $text);
+        }
+
+        return $text;
+    }
+
+    /**
      * @see parent::description()
      */
     public static function description() {
