@@ -38,7 +38,7 @@ class moodle1_mod_page_handler extends moodle1_resource_successor_handler {
      * Converts /MOODLE_BACKUP/COURSE/MODULES/MOD/RESOURCE data
      * Called by moodle1_mod_resource_handler::process_resource()
      */
-    public function process_legacy_resource($data) {
+    public function process_legacy_resource(array $data) {
 
         // get the course module id and context id
         $instanceid = $data['id'];
@@ -46,64 +46,72 @@ class moodle1_mod_page_handler extends moodle1_resource_successor_handler {
         $moduleid   = $cminfo['id'];
         $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
 
-        // just in case there is some rubbish
-        $data['contentformat'] = (int)$data['reference'];
-        if ($data['contentformat'] < 0 || $data['contentformat'] > 4) {
-            $data['contentformat'] = FORMAT_MOODLE;
+        // convert the legacy data onto the new page record
+        $page                       = array();
+        $page['id']                 = $data['id'];
+        $page['name']               = $data['name'];
+        $page['intro']              = $data['intro'];
+        $page['introformat']        = $data['introformat'];
+        $page['content']            = $data['alltext'];
+        $page['contentformat']      = (int)$data['reference'];
+
+        // this is unexpected but just in case (the same step applied during upgrade)
+        if ($page['contentformat'] < 0 or $page['contentformat'] > 4) {
+            $page['contentformat']  = FORMAT_MOODLE;
         }
 
-        // we can't use recipes in resource successors so add and rename fields manually
-        $data['content']         = $data['alltext'];
-        $data['revision']        = 1;
-        $data['timemodified']    = time();
-        $data['legacyfiles']     = RESOURCELIB_LEGACYFILES_ACTIVE;
-        $data['legacyfileslast'] = null;
-
-        // convert embedded course files
-        if (is_null($this->fileman)) {
-            $this->fileman = $this->converter->get_file_manager(null, 'mod_page', 'content');
-        }
-        $this->fileman->reset_fileids();
-        $files = moodle1_converter::find_referenced_files($data['content']);
-        if (!empty($files)) {
-            $this->fileman->contextid = $contextid;
-            $this->fileman->itemid = $instanceid;
-            foreach ($files as $file) {
-                $this->fileman->migrate_file('course_files'.$file);
-            }
-            $data['content'] = moodle1_converter::rewrite_filephp_usage($data['content'], $files);
-        }
+        $page['legacyfiles']        = RESOURCELIB_LEGACYFILES_ACTIVE;
+        $page['legacyfileslast']    = null;
+        $page['revision']           = 1;
+        $page['timemodified']       = $data['timemodified'];
 
         // populate display and displayoptions fields
         $options = array('printheading' => 0, 'printintro' => 0);
         if ($data['popup']) {
-            $data['display'] = RESOURCELIB_DISPLAY_POPUP;
-            if ($data['popup']) {
-                $rawoptions = explode(',', $data['popup']);
-                foreach ($rawoptions as $rawoption) {
-                    list($name, $value) = explode('=', trim($rawoption), 2);
-                    if ($value > 0 and ($name == 'width' or $name == 'height')) {
-                        $options['popup'.$name] = $value;
-                        continue;
-                    }
+            $page['display'] = RESOURCELIB_DISPLAY_POPUP;
+            $rawoptions = explode(',', $data['popup']);
+            foreach ($rawoptions as $rawoption) {
+                list($name, $value) = explode('=', trim($rawoption), 2);
+                if ($value > 0 and ($name == 'width' or $name == 'height')) {
+                    $options['popup'.$name] = $value;
+                    continue;
                 }
             }
         } else {
-            $data['display'] = RESOURCELIB_DISPLAY_OPEN;
+            $page['display'] = RESOURCELIB_DISPLAY_OPEN;
         }
-        $data['displayoptions'] = serialize($options);
+        $page['displayoptions'] = serialize($options);
 
-        unset($data['alltext']);
-        unset($data['type']);
-        unset($data['reference']);
-        unset($data['popup']);
-        unset($data['options']);
+        // get a fresh new file manager for this instance
+        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_page');
+
+        // convert course files embedded into the intro
+        $files = moodle1_converter::find_referenced_files($page['intro']);
+        if (!empty($files)) {
+            $this->fileman->filearea = 'intro';
+            $this->fileman->itemid = 0;
+            foreach ($files as $file) {
+                $this->fileman->migrate_file('course_files'.$file);
+            }
+            $page['intro'] = moodle1_converter::rewrite_filephp_usage($page['intro'], $files);
+        }
+
+        // convert course files embedded into the content
+        $files = moodle1_converter::find_referenced_files($page['content']);
+        if (!empty($files)) {
+            $this->fileman->filearea = 'content';
+            $this->fileman->itemid   = 0;
+            foreach ($files as $file) {
+                $this->fileman->migrate_file('course_files'.$file);
+            }
+            $page['content'] = moodle1_converter::rewrite_filephp_usage($page['content'], $files);
+        }
 
         // write page.xml
         $this->open_xml_writer("activities/page_{$moduleid}/page.xml");
         $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $moduleid,
             'modulename' => 'page', 'contextid' => $contextid));
-        $this->write_xml('page', $data, array('/page/id'));
+        $this->write_xml('page', $page, array('/page/id'));
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
 
