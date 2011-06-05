@@ -94,7 +94,7 @@ switch ($action) {
         die;
         break;
 
-    case 'delete':        
+    case 'delete':
         $token = $webservicemanager->get_created_by_user_ws_token($USER->id, $tokenid);
 
         //Delete the token
