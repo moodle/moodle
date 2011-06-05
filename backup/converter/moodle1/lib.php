@@ -288,11 +288,11 @@ class moodle1_converter extends base_converter {
 
         // if the method has returned any info, set element data to it
         } else if (!is_null($returned)) {
-            $element->set_data($returned);
+            $element->set_tags($returned);
 
         // use just the cooked parsed data otherwise
         } else {
-            $element->set_data($data);
+            $element->set_tags($data['tags']);
         }
     }
 
@@ -383,10 +383,10 @@ class moodle1_converter extends base_converter {
         $element = $this->pathelements[$path];
         $pobject = $element->get_processing_object();
         $method  = $element->get_end_method();
-        $data    = $element->get_data();
+        $tags    = $element->get_tags();
 
         if (method_exists($pobject, $method)) {
-            $pobject->$method($data['tags']);
+            $pobject->$method($tags);
         }
     }
 
@@ -785,7 +785,7 @@ class convert_path {
     protected $emethod = null;
 
     /** @var mixed last data read for this element or returned data by processing method */
-    protected $data = null;
+    protected $tags = null;
 
     /** @var array of deprecated fields that are dropped */
     protected $dropfields = array();
@@ -870,12 +870,12 @@ class convert_path {
     }
 
     /**
-     * Sets the element data
+     * Sets the element tags
      *
-     * @param mixed
+     * @param array $tags
      */
-    public function set_data($data) {
-        $this->data = $data;
+    public function set_tags($tags) {
+        $this->tags = $tags;
     }
 
     /**
@@ -1004,8 +1004,8 @@ class convert_path {
     /**
      * @return mixed the element data
      */
-    public function get_data() {
-        return $this->data;
+    public function get_tags() {
+        return $this->tags;
     }
 
 
