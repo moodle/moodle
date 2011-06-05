@@ -33,7 +33,7 @@ $userid = required_param('userid', PARAM_INT);
 admin_externalpage_setup('externalserviceusersettings');
 
 //define nav bar
-$PAGE->set_url('/' . $CFG->admin . '/webservice/service_user_settings.php', 
+$PAGE->set_url('/' . $CFG->admin . '/webservice/service_user_settings.php',
         array('id' => $serviceid, 'userid'  => $userid));
 $node = $PAGE->settingsnav->find('externalservices', navigation_node::TYPE_SETTING);
 if ($node) {
@@ -62,7 +62,7 @@ if ($usersettingsform->is_cancelled()) {
     $serviceuserinfo->id = $serviceuser->serviceuserid;
     $serviceuserinfo->iprestriction = $settingsformdata->iprestriction;
     $serviceuserinfo->validuntil = $settingsformdata->validuntil;
-    
+
     $webservicemanager->update_ws_authorised_user($serviceuserinfo);
 
     //TODO: assign capability

@@ -47,7 +47,7 @@ $error = optional_param('error', '', PARAM_ALPHANUM);
 admin_externalpage_setup('registrationindex');
 
 if (!empty($error) and $error == 'urlalreadyexist') {
-    throw new moodle_exception('urlalreadyregistered', 'hub', 
+    throw new moodle_exception('urlalreadyregistered', 'hub',
             $CFG->wwwroot . '/' . $CFG->admin . '/registration/index.php');
 }
 
@@ -85,7 +85,7 @@ if (!empty($registeredhub) and $registeredhub->token == $token) {
 
     echo $OUTPUT->footer();
 } else {
-    throw new moodle_exception('wrongtoken', 'hub', 
+    throw new moodle_exception('wrongtoken', 'hub',
             $CFG->wwwroot . '/' . $CFG->admin . '/registration/index.php');
 }
 
