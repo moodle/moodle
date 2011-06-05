@@ -26,5 +26,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $module->version  = 2011051250;
-$module->requires = 2011051212;
+$module->requires = 2011060313;
 $module->cron     = 0;

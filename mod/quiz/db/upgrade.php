@@ -541,6 +541,8 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010122304, 'quiz');
     }
 
+    //===== 2.1.0 upgrade line ======//
+
     // Complete any old upgrade from 1.5 that was never finished.
     if ($oldversion < 2011051199) {
         $table = new xmldb_table('question_states');
