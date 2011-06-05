@@ -30,10 +30,12 @@ defined('MOODLE_INTERNAL') || die();
  * Scorm conversion handler
  */
 class moodle1_mod_scorm_handler extends moodle1_mod_handler {
-    /** @var array in-memory cache for the course module information  */
-    protected $currentcminfo = null;
-    /** @var moodle1_file_manager instance for the current scorm */
+
+    /** @var moodle1_file_manager */
     protected $fileman = null;
+
+    /** @var int cmid */
+    protected $moduleid = null;
 
     /**
      * Declare the paths in moodle.xml we are able to convert
@@ -65,7 +67,6 @@ class moodle1_mod_scorm_handler extends moodle1_mod_handler {
                         'timeopen' => '0',
                         'timeclose' => '0',
                         'introformat' => '0',
-                        'launch' => null,
                     ),
                     'renamefields' => array(
                         'summary' => 'intro'
@@ -82,17 +83,26 @@ class moodle1_mod_scorm_handler extends moodle1_mod_handler {
      */
     public function process_scorm($data) {
         global $CFG;
+
         // get the course module id and context id
-        $instanceid             = $data['id'];
-        $this->currentcminfo    = $this->get_cminfo($instanceid);
-        $moduleid               = $this->currentcminfo['id'];
-        $contextid              = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
+        $instanceid     = $data['id'];
+        $currentcminfo  = $this->get_cminfo($instanceid);
+        $this->moduleid = $currentcminfo['id'];
+        $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
 
         // conditionally migrate to html format in intro
-        if ($CFG->texteditors !== 'textarea' && $data['introformat'] == FORMAT_MOODLE ) {
-            $data['intro'] = text_to_html($data['intro'], false, false, true);
+        if ($CFG->texteditors !== 'textarea') {
+            $data['intro']       = text_to_html($data['intro'], false, false, true);
             $data['introformat'] = FORMAT_HTML;
         }
+
+        // get a fresh new file manager for this instance
+        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_scorm');
+
+        // convert course files embedded into the intro
+        $this->fileman->filearea = 'intro';
+        $this->fileman->itemid   = 0;
+        $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
 
         // check 1.9 version where backup was created
         $backupinfo = $this->converter->get_stash('backup_info');
@@ -114,21 +124,26 @@ class moodle1_mod_scorm_handler extends moodle1_mod_handler {
             }
         }
 
-        // we now have all information needed to start writing into the file
-        $this->open_xml_writer("activities/scorm_{$moduleid}/scorm.xml");
-        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $moduleid,
+        // migrate scorm package file
+        $this->fileman->filearea = 'package';
+        $this->fileman->itemid   = 0;
+        $this->fileman->migrate_file('course_files/'.$data['reference']);
+
+        // start writing scorm.xml
+        $this->open_xml_writer("activities/scorm_{$this->moduleid}/scorm.xml");
+        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $this->moduleid,
             'modulename' => 'scorm', 'contextid' => $contextid));
         $this->xmlwriter->begin_tag('scorm', array('id' => $instanceid));
 
-        unset($data['id']); // we already write it as attribute, do not repeat it as child element
         foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
+            if ($field <> 'id') {
+                $this->xmlwriter->full_tag($field, $value);
+            }
         }
+
         $this->xmlwriter->begin_tag('scoes');
 
-        // prepare file manager for migrating scorm package file.
-        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_scorm', 'package');
-        $this->fileman->migrate_file('course_files/'.$data['reference']);
+        return $data;
     }
 
     /**
@@ -143,14 +158,14 @@ class moodle1_mod_scorm_handler extends moodle1_mod_handler {
      * This is executed when we reach the closing </MOD> tag of our 'scorm' path
      */
     public function on_scorm_end() {
-        //close scorm.xml
+        // close scorm.xml
         $this->xmlwriter->end_tag('scoes');
         $this->xmlwriter->end_tag('scorm');
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
 
-        // write inforef.xml for migrated scorm zip file.
-        $this->open_xml_writer("activities/scorm_{$this->currentcminfo['id']}/inforef.xml");
+        // write inforef.xml
+        $this->open_xml_writer("activities/scorm_{$this->moduleid}/inforef.xml");
         $this->xmlwriter->begin_tag('inforef');
         $this->xmlwriter->begin_tag('fileref');
         foreach ($this->fileman->get_fileids() as $fileid) {

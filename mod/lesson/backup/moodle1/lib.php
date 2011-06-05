@@ -31,6 +31,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 class moodle1_mod_lesson_handler extends moodle1_mod_handler {
 
+    /** @var moodle1_file_manager */
+    protected $fileman = null;
+
+    /** @var int cmid */
+    protected $moduleid = null;
+
     /**
      * Declare the paths in moodle.xml we are able to convert
      *
@@ -59,7 +65,6 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
                 array(
                     'newfields' => array(
                         'contentsformat' => FORMAT_MOODLE,
-                        'responseformat' => 0,
                     ),
                 )
             ),
@@ -68,6 +73,7 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
                 array(
                     'newfields' => array(
                         'answerformat' => 0,
+                        'responseformat' => 0,
                     ),
                     'renamefields' => array(
                         'answertext' => 'answer_text',
@@ -82,25 +88,43 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
      * data available
      */
     public function process_lesson($data) {
-        // get the course module id and context id
-        $instanceid = $data['id'];
-        $cminfo     = $this->get_cminfo($instanceid);
-        $moduleid   = $cminfo['id'];
-        $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
 
-        // we now have all information needed to start writing into the file
-        $this->open_xml_writer("activities/lesson_{$moduleid}/lesson.xml");
-        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $moduleid,
+        // get the course module id and context id
+        $instanceid     = $data['id'];
+        $cminfo         = $this->get_cminfo($instanceid);
+        $this->moduleid = $cminfo['id'];
+        $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
+
+        // get a fresh new file manager for this instance
+        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_lesson');
+
+        // migrate referenced local media files
+        if (!empty($data['mediafile']) and strpos($data['mediafile'], '://') === false) {
+            $this->fileman->filearea = 'mediafile';
+            $this->fileman->itemid   = 0;
+            try {
+                $this->fileman->migrate_file('course_files/'.$data['mediafile']);
+            } catch (moodle1_convert_exception $e) {
+                // the file probably does not exist
+                // todo add to log
+            }
+        }
+
+        // start writing lesson.xml
+        $this->open_xml_writer("activities/lesson_{$this->moduleid}/lesson.xml");
+        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $this->moduleid,
             'modulename' => 'lesson', 'contextid' => $contextid));
         $this->xmlwriter->begin_tag('lesson', array('id' => $instanceid));
 
-        unset($data['id']); // we already write it as attribute, do not repeat it as child element
-
         foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
+            if ($field <> 'id') {
+                $this->xmlwriter->full_tag($field, $value);
+            }
         }
 
         $this->xmlwriter->begin_tag('pages');
+
+        return $data;
     }
 
     /**
@@ -108,9 +132,19 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
      * data available
      */
     public function process_lesson_page($data) {
+        global $CFG;
+
+        // replay the upgrade step 2009120801
+        if ($CFG->texteditors !== 'textarea') {
+            $data['contents'] = text_to_html($data['contents'], false, false, true);
+            $data['contentsformat'] = FORMAT_HTML;
+        }
+
         $this->xmlwriter->begin_tag('page', array('id' => $data['pageid']));
         foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
+            if ($field <> 'id') {
+                $this->xmlwriter->full_tag($field, $value);
+            }
         }
 
         $this->xmlwriter->begin_tag('answers');
@@ -121,6 +155,18 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
      * data available
      */
     public function process_lesson_answer($data) {
+
+        // replay the upgrade step 2010072003
+        $flags = intval($data['flags']);
+        if ($flags & 1) {
+            $data['answer_text']  = text_to_html($data['answer_text'], false, false, true);
+            $data['answerformat'] = FORMAT_HTML;
+        }
+        if ($flags & 2) {
+            $data['response']       = text_to_html($data['response'], false, false, true);
+            $data['responseformat'] = FORMAT_HTML;
+        }
+
         $this->write_xml('answer', $data, array('/answer/id'));
     }
 
@@ -136,9 +182,21 @@ class moodle1_mod_lesson_handler extends moodle1_mod_handler {
      * This is executed when we reach the closing </MOD> tag of our 'lesson' path
      */
     public function on_lesson_end() {
+        // finish writing lesson.xml
         $this->xmlwriter->end_tag('pages');
         $this->xmlwriter->end_tag('lesson');
         $this->xmlwriter->end_tag('activity');
+        $this->close_xml_writer();
+
+        // write inforef.xml
+        $this->open_xml_writer("activities/lesson_{$this->moduleid}/inforef.xml");
+        $this->xmlwriter->begin_tag('inforef');
+        $this->xmlwriter->begin_tag('fileref');
+        foreach ($this->fileman->get_fileids() as $fileid) {
+            $this->write_xml('file', array('id' => $fileid));
+        }
+        $this->xmlwriter->end_tag('fileref');
+        $this->xmlwriter->end_tag('inforef');
         $this->close_xml_writer();
     }
 }

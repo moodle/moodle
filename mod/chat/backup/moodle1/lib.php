@@ -32,6 +32,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 class moodle1_mod_chat_handler extends moodle1_mod_handler {
 
+    /** @var moodle1_file_manager */
+    protected $fileman = null;
+
+    /** @var int cmid */
+    protected $moduleid = null;
+
     /**
      * Declare the paths in moodle.xml we are able to convert
      *
@@ -63,29 +69,50 @@ class moodle1_mod_chat_handler extends moodle1_mod_handler {
      * data available
      */
     public function process_chat($data) {
-        // get the course module id and context id
-        $instanceid = $data['id'];
-        $cminfo     = $this->get_cminfo($instanceid);
-        $moduleid   = $cminfo['id'];
-        $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
+        global $CFG;
 
-        // we now have all information needed to start writing into the file
-        $this->open_xml_writer("activities/chat_{$moduleid}/chat.xml");
-        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $moduleid,
+        // get the course module id and context id
+        $instanceid     = $data['id'];
+        $cminfo         = $this->get_cminfo($instanceid);
+        $this->moduleid = $cminfo['id'];
+        $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
+
+        // replay the upgrade step 2010050101
+        if ($CFG->texteditors !== 'textarea') {
+            $data['intro']       = text_to_html($data['intro'], false, false, true);
+            $data['introformat'] = FORMAT_HTML;
+        }
+
+        // get a fresh new file manager for this instance
+        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_chat');
+
+        // convert course files embedded into the intro
+        $this->fileman->filearea = 'intro';
+        $this->fileman->itemid   = 0;
+        $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
+
+        // start writing chat.xml
+        $this->open_xml_writer("activities/chat_{$this->moduleid}/chat.xml");
+        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $this->moduleid,
             'modulename' => 'chat', 'contextid' => $contextid));
         $this->xmlwriter->begin_tag('chat', array('id' => $instanceid));
 
-        unset($data['id']); // we already write it as attribute, do not repeat it as child element
         foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
+            if ($field <> 'id') {
+                $this->xmlwriter->full_tag($field, $value);
+            }
         }
+
+        $this->xmlwriter->begin_tag('messages');
+
+        return $data;
     }
 
     /**
-     * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/CHAT/MESSAGES
+     * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/CHAT/MESSAGES/MESSAGE
      * data available
      */
-    public function process_chat_messages($data) {
+    public function process_chat_message($data) {
         //@todo process user data
         //$this->write_xml('message', $data, array('/message/id'));
     }
@@ -95,8 +122,20 @@ class moodle1_mod_chat_handler extends moodle1_mod_handler {
      */
     public function on_chat_end() {
         // close chat.xml
+        $this->xmlwriter->end_tag('messages');
         $this->xmlwriter->end_tag('chat');
         $this->xmlwriter->end_tag('activity');
+        $this->close_xml_writer();
+
+        // write inforef.xml
+        $this->open_xml_writer("activities/chat_{$this->moduleid}/inforef.xml");
+        $this->xmlwriter->begin_tag('inforef');
+        $this->xmlwriter->begin_tag('fileref');
+        foreach ($this->fileman->get_fileids() as $fileid) {
+            $this->write_xml('file', array('id' => $fileid));
+        }
+        $this->xmlwriter->end_tag('fileref');
+        $this->xmlwriter->end_tag('inforef');
         $this->close_xml_writer();
     }
 }

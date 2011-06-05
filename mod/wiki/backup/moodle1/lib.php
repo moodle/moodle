@@ -31,8 +31,11 @@ defined('MOODLE_INTERNAL') || die();
  * Wiki conversion handler
  */
 class moodle1_mod_wiki_handler extends moodle1_mod_handler {
-    /** @var string initial content for creating first page from optional 1.9 wiki file*/
+
+    /** @var string initial content for creating first page from the optional 1.9 wiki file */
     protected $initialcontent;
+
+    /** @var string */
     protected $initialcontentfilename;
 
     /** @var bool initial content page already exists */
@@ -40,6 +43,12 @@ class moodle1_mod_wiki_handler extends moodle1_mod_handler {
 
     /** @var array a data element transfer buffer, can be used for transfer of data between xml path levels. */
     protected $databuf = array();
+
+    /** @var moodle1_file_manager */
+    protected $fileman = null;
+
+    /** @var int cmid */
+    protected $moduleid = null;
 
     /**
      * Declare the paths in moodle.xml we are able to convert
@@ -146,33 +155,43 @@ class moodle1_mod_wiki_handler extends moodle1_mod_handler {
             $data['name'] = 'Wiki';
         }
         // get the course module id and context id
-        $instanceid = $data['id'];
-        $cminfo     = $this->get_cminfo($instanceid);
-        $moduleid   = $cminfo['id'];
-        $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
+        $instanceid     = $data['id'];
+        $cminfo         = $this->get_cminfo($instanceid);
+        $this->moduleid = $cminfo['id'];
+        $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
+
+        // get a fresh new file manager for this instance
+        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_wiki');
+
+        // convert course files embedded into the intro
+        $this->fileman->filearea = 'intro';
+        $this->fileman->itemid   = 0;
+        $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
 
         // we now have all information needed to start writing into the file
-        $this->open_xml_writer("activities/wiki_{$moduleid}/wiki.xml");
-        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $moduleid,
+        $this->open_xml_writer("activities/wiki_{$this->moduleid}/wiki.xml");
+        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $this->moduleid,
             'modulename' => 'wiki', 'contextid' => $contextid));
         $this->xmlwriter->begin_tag('wiki', array('id' => $instanceid));
 
-        unset($data['id']); // we already write it as attribute, do not repeat it as child element
         foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
+            if ($field <> 'id') {
+                $this->xmlwriter->full_tag($field, $value);
+            }
         }
+
+        return $data;
     }
 
-    //process ENTRIES
     public function on_wiki_entries_start() {
         $this->xmlwriter->begin_tag('subwikis');
         $this->needinitpage = false; //backup has entries, so the initial_content file has been stored as a page in 1.9.
     }
+
     public function on_wiki_entries_end() {
         $this->xmlwriter->end_tag('subwikis');
     }
 
-    //process ENTRY
     public function process_wiki_entry($data) {
         $this->xmlwriter->begin_tag('subwiki', array('id' => $data['id']));
         unset($data['id']);
@@ -184,19 +203,19 @@ class moodle1_mod_wiki_handler extends moodle1_mod_handler {
             $this->xmlwriter->full_tag($field, $value);
         }
     }
+
     public function on_wiki_entry_end() {
         $this->xmlwriter->end_tag('subwiki');
     }
 
-    // process PAGES
     public function on_wiki_pages_start() {
         $this->xmlwriter->begin_tag('pages');
     }
+
     public function on_wiki_pages_end() {
         $this->xmlwriter->end_tag('pages');
     }
 
-    // process PAGE
     public function process_wiki_entry_page($data) {
         // assimilate data to create later in extra virtual path page/versions/version/
         $this->databuf['id'] = $this->converter->get_nextid();
@@ -207,14 +226,14 @@ class moodle1_mod_wiki_handler extends moodle1_mod_handler {
         $this->databuf['timecreated'] = $data['timecreated']; //do not unset, is reused
         $this->databuf['userid'] = $data['userid']; //do not unset, is reused
 
-        //process page data (user data and also the one that is from <initialcontent>
+        // process page data (user data and also the one that is from <initialcontent>
         $this->xmlwriter->begin_tag('page', array('id' => $data['id']));
         unset($data['id']); // we already write it as attribute, do not repeat it as child element
         foreach ($data as $field => $value) {
             $this->xmlwriter->full_tag($field, $value);
         }
 
-        //process page content as a version.
+        // process page content as a version.
         $this->xmlwriter->begin_tag('versions');
         $this->write_xml('version', $this->databuf, array('/version/id')); //version id from get_nextid()
         $this->xmlwriter->end_tag('versions');
@@ -228,7 +247,8 @@ class moodle1_mod_wiki_handler extends moodle1_mod_handler {
      */
     public function on_wiki_end() {
         global $USER;
-        //check if initial content needs to be created ( and if a page already there for it?)
+
+        //check if the initial content needs to be created (and if a page is already there for it)
         if ($this->initialcontentfilename && $this->needinitpage) {
             //contruct (synthetic - not for cooking) a full path for creating entries/entry/pages/page
             $data_entry = array(
@@ -253,18 +273,29 @@ class moodle1_mod_wiki_handler extends moodle1_mod_handler {
             );
             //create xml with constructed page data (from initial_content file).
             $this->on_wiki_entries_start();
-                $this->process_wiki_entry($data_entry);
-                    $this->on_wiki_pages_start();
-                        $this->process_wiki_entry_page($data_page);
-                        $this->on_wiki_entry_page_end();
-                    $this->on_wiki_pages_end();
-                $this->on_wiki_entry_end();
+            $this->process_wiki_entry($data_entry);
+            $this->on_wiki_pages_start();
+            $this->process_wiki_entry_page($data_page);
+            $this->on_wiki_entry_page_end();
+            $this->on_wiki_pages_end();
+            $this->on_wiki_entry_end();
             $this->on_wiki_entries_end();
         }
 
         //close wiki.xml
         $this->xmlwriter->end_tag('wiki');
         $this->xmlwriter->end_tag('activity');
+        $this->close_xml_writer();
+
+        // write inforef.xml
+        $this->open_xml_writer("activities/wiki_{$this->moduleid}/inforef.xml");
+        $this->xmlwriter->begin_tag('inforef');
+        $this->xmlwriter->begin_tag('fileref');
+        foreach ($this->fileman->get_fileids() as $fileid) {
+            $this->write_xml('file', array('id' => $fileid));
+        }
+        $this->xmlwriter->end_tag('fileref');
+        $this->xmlwriter->end_tag('inforef');
         $this->close_xml_writer();
     }
 }

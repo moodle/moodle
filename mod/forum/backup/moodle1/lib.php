@@ -31,6 +31,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 class moodle1_mod_forum_handler extends moodle1_mod_handler {
 
+    /** @var moodle1_file_manager */
+    protected $fileman = null;
+
+    /** @var int cmid */
+    protected $moduleid = null;
+
     /**
      * Declare the paths in moodle.xml we are able to convert
      *
@@ -68,34 +74,55 @@ class moodle1_mod_forum_handler extends moodle1_mod_handler {
      */
     public function process_forum($data) {
         // get the course module id and context id
-        $instanceid = $data['id'];
-        $cminfo     = $this->get_cminfo($instanceid);
-        $moduleid   = $cminfo['id'];
-        $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
+        $instanceid     = $data['id'];
+        $cminfo         = $this->get_cminfo($instanceid);
+        $this->moduleid = $cminfo['id'];
+        $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
 
-        // we now have all information needed to start writing into the file
-        $this->open_xml_writer("activities/forum_{$moduleid}/forum.xml");
-        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $moduleid,
+        // get a fresh new file manager for this instance
+        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_forum');
+
+        // convert course files embedded into the intro
+        $this->fileman->filearea = 'intro';
+        $this->fileman->itemid   = 0;
+        $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
+
+        // start writing forum.xml
+        $this->open_xml_writer("activities/forum_{$this->moduleid}/forum.xml");
+        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $this->moduleid,
             'modulename' => 'forum', 'contextid' => $contextid));
         $this->xmlwriter->begin_tag('forum', array('id' => $instanceid));
 
-        unset($data['id']); // we already write it as attribute, do not repeat it as child element
         foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
+            if ($field <> 'id') {
+                $this->xmlwriter->full_tag($field, $value);
+            }
         }
 
         $this->xmlwriter->begin_tag('discussions');
+
+        return $data;
     }
 
     /**
      * This is executed when we reach the closing </MOD> tag of our 'forum' path
      */
     public function on_forum_end() {
+        // finish writing forum.xml
         $this->xmlwriter->end_tag('discussions');
         $this->xmlwriter->end_tag('forum');
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
-    }
 
-    //conversion of discussion, posts etc will be implemented in a future version of Moodle
+        // write inforef.xml
+        $this->open_xml_writer("activities/forum_{$this->moduleid}/inforef.xml");
+        $this->xmlwriter->begin_tag('inforef');
+        $this->xmlwriter->begin_tag('fileref');
+        foreach ($this->fileman->get_fileids() as $fileid) {
+            $this->write_xml('file', array('id' => $fileid));
+        }
+        $this->xmlwriter->end_tag('fileref');
+        $this->xmlwriter->end_tag('inforef');
+        $this->close_xml_writer();
+    }
 }

@@ -32,6 +32,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 class moodle1_mod_quiz_handler extends moodle1_mod_handler {
 
+    /** @var moodle1_file_manager */
+    protected $fileman = null;
+
+    /** @var int cmid */
+    protected $moduleid = null;
+
     /**
      * Declare the paths in moodle.xml we are able to convert
      *
@@ -76,33 +82,51 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
      * data available
      */
     public function process_quiz($data) {
+        global $CFG;
 
-        //quiz: SET sumgrades=0 WHERE sumgrades IS NULL
+        // replay the upgrade step 2008081501
         if (is_null($data['sumgrades'])) {
             $data['sumgrades'] = 0;
             //@todo for user data: quiz_attempts SET sumgrades=0 WHERE sumgrades IS NULL
             //@todo for user data: quiz_grades.grade should be not be null , convert to default 0
         }
 
-        /// Convert 1.9 quiz.timelimit from minutes to seconds.
+        // replay the upgrade step 2009042000
+        if ($CFG->texteditors !== 'textarea') {
+            $data['intro']       = text_to_html($data['intro'], false, false, true);
+            $data['introformat'] = FORMAT_HTML;
+        }
+
+        // replay the upgrade step 2009031001
         $data['timelimit'] *= 60;
 
         // get the course module id and context id
-        $instanceid = $data['id'];
-        $cminfo     = $this->get_cminfo($instanceid);
-        $moduleid   = $cminfo['id'];
-        $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
+        $instanceid     = $data['id'];
+        $cminfo         = $this->get_cminfo($instanceid);
+        $this->moduleid = $cminfo['id'];
+        $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
 
-        // we now have all information needed to start writing into the file
-        $this->open_xml_writer("activities/quiz_{$moduleid}/quiz.xml");
-        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $moduleid,
+        // get a fresh new file manager for this instance
+        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_quiz');
+
+        // convert course files embedded into the intro
+        $this->fileman->filearea = 'intro';
+        $this->fileman->itemid   = 0;
+        $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
+
+        // start writing quiz.xml
+        $this->open_xml_writer("activities/quiz_{$this->moduleid}/quiz.xml");
+        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $this->moduleid,
             'modulename' => 'quiz', 'contextid' => $contextid));
         $this->xmlwriter->begin_tag('quiz', array('id' => $instanceid));
 
-        unset($data['id']); // we already write it as attribute, do not repeat it as child element
         foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
+            if ($field <> 'id') {
+                $this->xmlwriter->full_tag($field, $value);
+            }
         }
+
+        return $data;
     }
 
     public function on_quiz_question_instances_start() {
@@ -114,9 +138,6 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
     }
 
     public function process_quiz_question_instance($data) {
-        // quiz_question_instances.grade should be decimal(12,7) not null default 0
-        // $data['grade'] and other precisions will be changed when inserted into db.
-
         $this->write_xml('question_instance', $data, array('/question_instance/id'));
     }
 
@@ -129,11 +150,10 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
     }
 
     public function process_quiz_feedback($data) {
-        //quiz_feedback.mingrade not null! defaults 0
+        // replay the upgrade step 2010122302
         if (is_null($data['mingrade'])) {
             $data['mingrade'] = 0;
         }
-        //quiz_feedback.maxgrade not null! defaults 0
         if (is_null($data['maxgrade'])) {
             $data['maxgrade'] = 0;
         }
@@ -145,11 +165,24 @@ class moodle1_mod_quiz_handler extends moodle1_mod_handler {
      * This is executed when we reach the closing </MOD> tag of our 'quiz' path
      */
     public function on_quiz_end() {
-        // create 1 new <overrides> element (no data from 1.9)
+
+        // append empty <overrides> subpath element
         $this->write_xml('overrides', array());
 
+        // finish writing quiz.xml
         $this->xmlwriter->end_tag('quiz');
         $this->xmlwriter->end_tag('activity');
+        $this->close_xml_writer();
+
+        // write inforef.xml
+        $this->open_xml_writer("activities/quiz_{$this->moduleid}/inforef.xml");
+        $this->xmlwriter->begin_tag('inforef');
+        $this->xmlwriter->begin_tag('fileref');
+        foreach ($this->fileman->get_fileids() as $fileid) {
+            $this->write_xml('file', array('id' => $fileid));
+        }
+        $this->xmlwriter->end_tag('fileref');
+        $this->xmlwriter->end_tag('inforef');
         $this->close_xml_writer();
     }
 }

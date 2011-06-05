@@ -54,7 +54,7 @@ class moodle1_mod_label_handler extends moodle1_mod_handler {
                         'content' => 'intro'
                     ),
                     'newfields' => array(
-                        'introformat' => 0
+                        'introformat' => FORMAT_HTML
                     )
                 )
             )
@@ -72,25 +72,33 @@ class moodle1_mod_label_handler extends moodle1_mod_handler {
         $moduleid   = $cminfo['id'];
         $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
 
-        // we now have all information needed to start writing into the file
+        // get a fresh new file manager for this instance
+        $fileman = $this->converter->get_file_manager($contextid, 'mod_label');
+
+        // convert course files embedded into the intro
+        $fileman->filearea = 'intro';
+        $fileman->itemid   = 0;
+        $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $fileman);
+
+        // write inforef.xml
+        $this->open_xml_writer("activities/label_{$moduleid}/inforef.xml");
+        $this->xmlwriter->begin_tag('inforef');
+        $this->xmlwriter->begin_tag('fileref');
+        foreach ($fileman->get_fileids() as $fileid) {
+            $this->write_xml('file', array('id' => $fileid));
+        }
+        $this->xmlwriter->end_tag('fileref');
+        $this->xmlwriter->end_tag('inforef');
+        $this->close_xml_writer();
+
+        // write label.xml
         $this->open_xml_writer("activities/label_{$moduleid}/label.xml");
         $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $moduleid,
             'modulename' => 'label', 'contextid' => $contextid));
-        $this->xmlwriter->begin_tag('label', array('id' => $instanceid));
-
-        unset($data['id']); // we already write it as attribute, do not repeat it as child element
-        foreach ($data as $field => $value) {
-            $this->xmlwriter->full_tag($field, $value);
-        }
-    }
-
-    /**
-     * This is executed when we reach the closing </MOD> tag of our 'label' path
-     */
-    public function on_label_end() {
-        // close label.xml
-        $this->xmlwriter->end_tag('label');
+        $this->write_xml('label', $data, array('/label/id'));
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
+
+        return $data;
     }
 }

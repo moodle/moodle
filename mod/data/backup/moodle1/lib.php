@@ -32,6 +32,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 class moodle1_mod_data_handler extends moodle1_mod_handler {
 
+    /** @var moodle1_file_manager */
+    protected $fileman = null;
+
+    /** @var int cmid */
+    protected $moduleid = null;
+
     /**
      * Declare the paths in moodle.xml we are able to convert
      *
@@ -66,20 +72,38 @@ class moodle1_mod_data_handler extends moodle1_mod_handler {
      */
     public function process_data($data) {
         global $CFG;
+
         // get the course module id and context id
-        $instanceid = $data['id'];
-        $cminfo     = $this->get_cminfo($instanceid);
-        $moduleid   = $cminfo['id'];
-        $contextid  = $this->converter->get_contextid(CONTEXT_MODULE, $moduleid);
+        $instanceid     = $data['id'];
+        $cminfo         = $this->get_cminfo($instanceid);
+        $this->moduleid = $cminfo['id'];
+        $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
 
-        //upgrade data
+        // replay the upgrade step 2007101512
+        if (!array_key_exists('asearchtemplate', $data)) {
+            $data['asearchtemplate'] = null;
+        }
 
-        //Upgrade all the data->notification currently being NULL to 0
+        // replay the upgrade step 2007101513
         if (is_null($data['notification'])) {
             $data['notification'] = 0;
         }
 
-        //@todo: user data - upgrade content to new file storage
+        // conditionally migrate to html format in intro
+        if ($CFG->texteditors !== 'textarea') {
+            $data['intro'] = text_to_html($data['intro'], false, false, true);
+            $data['introformat'] = FORMAT_HTML;
+        }
+
+        // get a fresh new file manager for this instance
+        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_data');
+
+        // convert course files embedded into the intro
+        $this->fileman->filearea = 'intro';
+        $this->fileman->itemid   = 0;
+        $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
+
+        // @todo: user data - upgrade content to new file storage
 
         // add 'export' tag to list and single template.
         $pattern = '/\#\#delete\#\#(\s+)\#\#approve\#\#/';
@@ -87,34 +111,24 @@ class moodle1_mod_data_handler extends moodle1_mod_handler {
         $data['listtemplate'] = preg_replace($pattern, $replacement, $data['listtemplate']);
         $data['singletemplate'] = preg_replace($pattern, $replacement, $data['singletemplate']);
 
-        // conditionally migrate to html format in intro
-        if ($CFG->texteditors !== 'textarea' && $data['introformat'] == FORMAT_MOODLE ) {
-            $data['intro'] = text_to_html($data['intro'], false, false, true);
-            $data['introformat'] = FORMAT_HTML;
-        }
-
         //@todo: user data - move data comments to comments table
         //@todo: user data - move data ratings to ratings table
 
-        // we now have all information needed to start writing into the file
-        $this->open_xml_writer("activities/data_{$moduleid}/data.xml");
-        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $moduleid,
+        // start writing data.xml
+        $this->open_xml_writer("activities/data_{$this->moduleid}/data.xml");
+        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $this->moduleid,
             'modulename' => 'data', 'contextid' => $contextid));
         $this->xmlwriter->begin_tag('data', array('id' => $instanceid));
 
-        unset($data['id']); // we already write it as attribute, do not repeat it as child element
-        $addfield = true;
         foreach ($data as $field => $value) {
-            if ($field == 'asearchtemplate') {
-                //add field asearchtemplate (if doesn't exist already)
-                $addfield = false;
+            if ($field <> 'id') {
+                $this->xmlwriter->full_tag($field, $value);
             }
-            $this->xmlwriter->full_tag($field, $value);
         }
-        if ($addfield) {
-            $this->xmlwriter->full_tag('asearchtemplate', null);
-        }
+
         $this->xmlwriter->begin_tag('fields');
+
+        return $data;
     }
 
     /**
@@ -125,6 +139,7 @@ class moodle1_mod_data_handler extends moodle1_mod_handler {
         // process database fields
         $this->write_xml('field', $data, array('/field/id'));
     }
+
     /**
      * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/DATA/RECORDS/RECORD
      * data available
@@ -138,10 +153,21 @@ class moodle1_mod_data_handler extends moodle1_mod_handler {
      * This is executed when we reach the closing </MOD> tag of our 'data' path
      */
     public function on_data_end() {
-
+        // finish writing data.xml
         $this->xmlwriter->end_tag('fields');
         $this->xmlwriter->end_tag('data');
         $this->xmlwriter->end_tag('activity');
+        $this->close_xml_writer();
+
+        // write inforef.xml
+        $this->open_xml_writer("activities/data_{$this->moduleid}/inforef.xml");
+        $this->xmlwriter->begin_tag('inforef');
+        $this->xmlwriter->begin_tag('fileref');
+        foreach ($this->fileman->get_fileids() as $fileid) {
+            $this->write_xml('file', array('id' => $fileid));
+        }
+        $this->xmlwriter->end_tag('fileref');
+        $this->xmlwriter->end_tag('inforef');
         $this->close_xml_writer();
     }
 }
