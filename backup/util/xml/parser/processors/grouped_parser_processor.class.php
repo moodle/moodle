@@ -71,20 +71,23 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
     }
 
     /**
-     * Notify start of path if selected and not under grouped
+     * The parser fires this each time one path is going to be parsed
+     *
+     * @param string $path xml path which parsing has started
      */
     public function before_path($path) {
-        if ($this->path_is_selected($path) && !$this->grouped_parent_exists($path)) {
+        if (!$this->grouped_parent_exists($path)) {
             parent::before_path($path);
         }
     }
 
-
     /**
-     * Dispatch grouped chunks safely once their end tag happens.
-     * Also notify end of path if selected and not under grouped
+     * The parser fires this each time one path has been parsed
+     *
+     * @param string $path xml path which parsing has ended
      */
     public function after_path($path) {
+        // Have finished one grouped path, dispatch it
         if ($this->path_is_grouped($path)) {
             // Any accumulated information must be in
             // currentdata, properly built
@@ -95,7 +98,7 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
         }
         // Normal notification of path end
         // Only if path is selected and not child of grouped
-        if ($this->path_is_selected($path) && !$this->grouped_parent_exists($path)) {
+        if (!$this->grouped_parent_exists($path)) {
             parent::after_path($path);
         }
     }

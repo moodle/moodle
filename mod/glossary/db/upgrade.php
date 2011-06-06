@@ -326,6 +326,29 @@ function xmldb_glossary_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010111501, 'glossary');
     }
 
+    if ($oldversion < 2011052300) {
+        // rating.component and rating.ratingarea have now been added as mandatory fields.
+        // Presently you can only rate data entries so component = 'mod_glossary' and ratingarea = 'entry'
+        // for all ratings with a glossary context.
+        // We want to update all ratings that belong to a glossary context and don't already have a
+        // component set.
+        // This could take a while reset upgrade timeout to 5 min
+        upgrade_set_timeout(60 * 20);
+        $sql = "UPDATE {rating}
+                SET component = 'mod_glossary', ratingarea = 'entry'
+                WHERE contextid IN (
+                    SELECT ctx.id
+                      FROM {context} ctx
+                      JOIN {course_modules} cm ON cm.id = ctx.instanceid
+                      JOIN {modules} m ON m.id = cm.module
+                     WHERE ctx.contextlevel = 70 AND
+                           m.name = 'glossary'
+                ) AND component = 'unknown'";
+        $DB->execute($sql);
+
+        upgrade_mod_savepoint(true, 2011052300, 'glossary');
+    }
+
     return true;
 }
 

@@ -1,0 +1,167 @@
+/*
+Modules: Calendar
+-----------------------*/
+/** Calendar **/
+.calendartable {
+    width: 100%;
+    font-size: 85%;
+}
+.calendartable th,
+.calendartable td {
+    width:14%;
+    vertical-align:top;
+    text-align: center;
+    border-width:0px;
+}
+.path-calendar .calendar-controls .previous,
+.path-calendar .calendar-controls .next,
+.path-calendar .calendar-controls .current {
+    display: block;
+    float: left;
+    width: 12%;
+}
+.path-calendar .calendar-controls .previous {
+    text-align: left;
+}
+.path-calendar .calendar-controls .current {
+    text-align: center;
+    width: 76%;
+}
+.path-calendar .calendar-controls .next {
+    text-align: right;
+}
+.path-calendar {}
+.path-calendar .maincalendar {
+    vertical-align: top;padding:0;
+}
+.path-calendar .maincalendar .bottom {
+    text-align: center;padding:5px 0 0 0;
+}
+.path-calendar .maincalendar .heightcontainer {
+    height: 100%;position: relative;
+}
+.path-calendar .maincalendar .calendarmonth {
+    width:98%;margin:10px auto;
+}
+.path-calendar .maincalendar .calendarmonth ul {
+    margin:0;
+}
+.path-calendar .maincalendar .calendarmonth ul li {
+    list-style-type:none;margin-top: 4px;
+}
+.path-calendar .maincalendar .calendarmonth td {
+    height: 5em;
+}
+.path-calendar .maincalendar .calendar-controls .previous,
+.path-calendar .maincalendar .calendar-controls .next {
+    width: 30%;
+}
+.path-calendar .maincalendar .calendar-controls .current {
+    width: 39.95%;
+}
+.path-calendar .maincalendar .controls {
+    width:98%;margin:10px auto;
+}
+.path-calendar .maincalendar .eventlist .event {
+    width:100%;
+    margin-bottom:10px;
+    border-spacing:0px;
+    border-collapse:separate;
+    border-width:1px;
+    border-style:solid;
+}
+.path-calendar .maincalendar .eventlist .event .topic .name {
+    float:left;
+}
+.path-calendar .maincalendar .eventlist .event .topic .date {
+    float:right;
+}
+.path-calendar .maincalendar .eventlist .event .course {
+    float:left;
+    clear:left;
+}
+.path-calendar .maincalendar .eventlist .event .side {
+    width:32px;
+}
+.path-calendar .maincalendar .header {
+    overflow:hidden;
+}
+.path-calendar .maincalendar .header .buttons {
+    float: right;
+}
+.path-calendar .filters table {
+    border-collapse:separate;
+    border-spacing: 2px;width: 100%;
+}
+#page-calendar-export .indent {
+    padding-left: 20px;
+}
+.block .minicalendar {
+    width:100%;
+    margin:10px auto;
+}
+.block .minicalendar th,
+.block .minicalendar td {
+    padding:2px;font-size: 10px;
+}
+.block .minicalendar td.weekend {
+    color:#A00;
+}
+.block .calendar-controls .previous {
+    text-align: left;
+    display: block;
+    float: left;
+    width: 12%;
+}
+.block .calendar-controls .current {
+    float:left;
+    text-align: center;
+    display: block;
+    width:76%;
+}
+.block .calendar-controls .next {
+    text-align: right;
+    display: block;
+    float: left;
+    width: 12%;
+}
+.block .filters table {
+    border-collapse:separate;
+    border-spacing: 2px;
+    padding: 2px;width: 100%;
+}
+.block .content h3.eventskey {
+    margin-top:0.5em;
+    margin-bottom:0;
+    margin-left:0.5em;
+}
+/*
+Colors for Calendar Events
+-----------------------*/
+#calendar .event_global,
+.minicalendar .event_global,
+.block_calendar_month .event_global {
+    border-color:#def2ba !important;
+    background-color:#def2ba;
+}
+#calendar .event_course,
+.minicalendar .event_course,
+.block_calendar_month .event_course {
+    border-color:#c6dfeb !important;
+    background-color:#c6dfeb;
+}
+#calendar .event_group,
+.minicalendar .event_group,
+.block_calendar_month .event_group {
+    border-color:#feffc2 !important;
+    background-color:#feffc2;
+}
+#calendar .event_user,
+.minicalendar .event_user,
+.block_calendar_month .event_user {
+    border-color:#d9c6e2 !important;
+    background-color:#d9c6e2;
+}
+table.minicalendar tr td.weekend {
+    color: #f00;
+}

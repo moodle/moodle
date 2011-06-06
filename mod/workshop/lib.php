@@ -898,6 +898,8 @@ function workshop_cron () {
  * are not returned as the example submission is considered non-user
  * data for the purpose of workshop backup.
  *
+ * @todo: deprecated - to be deleted in 2.2
+ *
  * @param int $workshopid ID of an instance of this module
  * @return array of user ids, empty if there are no participants
  */

@@ -200,6 +200,8 @@ function message_get_blocked_users($user1=null, $user2=null) {
         $user2->isblocked = false;
     }
 
+    $blockedusers = array();
+
     $userfields = user_picture::fields('u', array('lastaccess'));
     $blockeduserssql = "SELECT $userfields, COUNT(m.id) AS messagecount
                           FROM {message_contacts} mc
@@ -210,18 +212,14 @@ function message_get_blocked_users($user1=null, $user2=null) {
                       ORDER BY u.firstname ASC";
     $rs =  $DB->get_recordset_sql($blockeduserssql, array('user1id1' => $user1->id, 'user1id2' => $user1->id));
 
-    $blockedusers = array();
-    if (!empty($rs)) {
-        foreach($rs as $rd) {
-            $blockedusers[] = $rd;
+    foreach($rs as $rd) {
+        $blockedusers[] = $rd;
 
-            if (!empty($user2) && $user2->id == $rd->id) {
-                $user2->isblocked = true;
-            }
+        if (!empty($user2) && $user2->id == $rd->id) {
+            $user2->isblocked = true;
         }
-        unset($rd);
-        $rs->close();
     }
+    $rs->close();
 
     return $blockedusers;
 }
@@ -1968,6 +1966,8 @@ function message_post_message($userfrom, $userto, $message, $format) {
  * Returns a list of all user ids who have used messaging in the site
  * This was the simple way to code the SQL ... is it going to blow up
  * on large datasets?
+ *
+ * @todo: deprecated - to be deleted in 2.2
  */
 function message_get_participants() {
     global $CFG, $DB;
@@ -2129,6 +2129,8 @@ function message_mark_messages_read($touserid, $fromuserid){
     foreach ($messages as $message) {
         message_mark_message_read($message, time());
     }
+
+    $messages->close();
 }
 
 /**

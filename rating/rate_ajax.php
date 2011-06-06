@@ -29,14 +29,15 @@
 define('AJAX_SCRIPT', true);
 
 require_once('../config.php');
-require_once('lib.php');
+require_once($CFG->dirroot.'/rating/lib.php');
 
-$contextid = required_param('contextid', PARAM_INT);
-$component = required_param('component', PARAM_ALPHAEXT);
-$itemid = required_param('itemid', PARAM_INT);
-$scaleid = required_param('scaleid', PARAM_INT);
-$userrating = required_param('rating', PARAM_INT);
-$rateduserid = required_param('rateduserid', PARAM_INT);//which user is being rated. Required to update their grade
+$contextid         = required_param('contextid', PARAM_INT);
+$component         = required_param('component', PARAM_ALPHAEXT);
+$ratingarea        = required_param('ratingarea', PARAM_ALPHANUMEXT);
+$itemid            = required_param('itemid', PARAM_INT);
+$scaleid           = required_param('scaleid', PARAM_INT);
+$userrating        = required_param('rating', PARAM_INT);
+$rateduserid       = required_param('rateduserid', PARAM_INT);//which user is being rated. Required to update their grade
 $aggregationmethod = optional_param('aggregation', RATING_AGGREGATE_NONE, PARAM_INT);//we're going to calculate the aggregate and return it to the client
 
 $result = new stdClass;
@@ -66,7 +67,7 @@ $rm = new rating_manager();
 
 //check the module rating permissions
 //doing this check here rather than within rating_manager::get_ratings() so we can return a json error response
-$pluginpermissionsarray = $rm->get_plugin_permissions_array($context->id, $component);
+$pluginpermissionsarray = $rm->get_plugin_permissions_array($context->id, $component, $ratingarea);
 
 if (!$pluginpermissionsarray['rate']) {
     $result->error = get_string('ratepermissiondenied', 'rating');
@@ -74,14 +75,16 @@ if (!$pluginpermissionsarray['rate']) {
     die();
 } else {
     $params = array(
-        'context' => $context,
-        'itemid' => $itemid,
-        'scaleid' => $scaleid,
-        'rating' => $userrating,
+        'context'     => $context,
+        'component'   => $component,
+        'ratingarea'  => $ratingarea,
+        'itemid'      => $itemid,
+        'scaleid'     => $scaleid,
+        'rating'      => $userrating,
         'rateduserid' => $rateduserid,
-        'aggregation' => $aggregationmethod);
-
-    if (!$rm->check_rating_is_valid($component, $params)) {
+        'aggregation' => $aggregationmethod
+    );
+    if (!$rm->check_rating_is_valid($params)) {
         $result->error = get_string('ratinginvalid', 'rating');
         echo json_encode($result);
         die();
@@ -89,8 +92,9 @@ if (!$pluginpermissionsarray['rate']) {
 }
 
 //rating options used to update the rating then retrieve the aggregate
-$ratingoptions = new stdClass();
+$ratingoptions = new stdClass;
 $ratingoptions->context = $context;
+$ratingoptions->ratingarea = $ratingarea;
 $ratingoptions->component = $component;
 $ratingoptions->itemid  = $itemid;
 $ratingoptions->scaleid = $scaleid;
@@ -100,56 +104,57 @@ if ($userrating != RATING_UNSET_RATING) {
     $rating = new rating($ratingoptions);
     $rating->update_rating($userrating);
 } else { //delete the rating if the user set to Rate...
-    $options = new stdClass();
+    $options = new stdClass;
     $options->contextid = $context->id;
     $options->component = $component;
+    $options->ratingarea = $ratingarea;
     $options->userid = $USER->id;
     $options->itemid = $itemid;
 
     $rm->delete_ratings($options);
 }
 
-//Future possible enhancement: add a setting to turn grade updating off for those who don't want them in gradebook
-//note that this would need to be done in both rate.php and rate_ajax.php
-    if ($context->contextlevel==CONTEXT_MODULE) {
-        //tell the module that its grades have changed
-        if ( $modinstance = $DB->get_record($cm->modname, array('id' => $cm->instance)) ) {
-            $modinstance->cmidnumber = $cm->id; //MDL-12961
-            $functionname = $cm->modname.'_update_grades';
-            require_once("../mod/{$cm->modname}/lib.php");
-            if(function_exists($functionname)) {
-                $functionname($modinstance, $rateduserid);
-            }
+// Future possible enhancement: add a setting to turn grade updating off for those who don't want them in gradebook
+// note that this would need to be done in both rate.php and rate_ajax.php
+if ($context->contextlevel == CONTEXT_MODULE) {
+    //tell the module that its grades have changed
+    $modinstance = $DB->get_record($cm->modname, array('id' => $cm->instance));
+    if ($modinstance) {
+        $modinstance->cmidnumber = $cm->id; //MDL-12961
+        $functionname = $cm->modname.'_update_grades';
+        require_once($CFG->dirroot."/mod/{$cm->modname}/lib.php");
+        if (function_exists($functionname)) {
+            $functionname($modinstance, $rateduserid);
         }
     }
+}
 
 //object to return to client as json
-$result = new stdClass;
 $result->success = true;
 
 //need to retrieve the updated item to get its new aggregate value
-$item = new stdclass();
+$item = new stdClass;
 $item->id = $itemid;
-$items = array($item);
 
 //most of $ratingoptions variables were previously set
-$ratingoptions->items = $items;
+$ratingoptions->items = array($item);
 $ratingoptions->aggregate = $aggregationmethod;
 
 $items = $rm->get_ratings($ratingoptions);
+$firstrating = $items[0]->rating;
 
 //for custom scales return text not the value
 //this scales weirdness will go away when scales are refactored
 $scalearray = null;
-$aggregatetoreturn = round($items[0]->rating->aggregate,1);
+$aggregatetoreturn = round($firstrating->aggregate, 1);
 
 // Output a dash if aggregation method == COUNT as the count is output next to the aggregate anyway
-if ($items[0]->rating->settings->aggregationmethod==RATING_AGGREGATE_COUNT or $items[0]->rating->count == 0) {
+if ($firstrating->settings->aggregationmethod == RATING_AGGREGATE_COUNT or $firstrating->count == 0) {
     $aggregatetoreturn = ' - ';
-} else if($items[0]->rating->settings->scale->id < 0) { //if its non-numeric scale
+} else if ($firstrating->settings->scale->id < 0) { //if its non-numeric scale
     //dont use the scale item if the aggregation method is sum as adding items from a custom scale makes no sense
-    if ($items[0]->rating->settings->aggregationmethod!= RATING_AGGREGATE_SUM) {
-        $scalerecord = $DB->get_record('scale', array('id' => -$items[0]->rating->settings->scale->id));
+    if ($firstrating->settings->aggregationmethod != RATING_AGGREGATE_SUM) {
+        $scalerecord = $DB->get_record('scale', array('id' => -$firstrating->settings->scale->id));
         if ($scalerecord) {
             $scalearray = explode(',', $scalerecord->scale);
             $aggregatetoreturn = $scalearray[$aggregatetoreturn-1];
@@ -158,17 +163,9 @@ if ($items[0]->rating->settings->aggregationmethod==RATING_AGGREGATE_COUNT or $i
 }
 
 //See if the user has permission to see the rating aggregate
-//we could do this check as "if $userid==$rateduserid" but going to the database to determine item owner id seems more secure
-//if we accept the item owner user id from the http request a user could alter the URL and erroneously get access to the rating aggregate
-
-//if its their own item and they have view permission
-if (($USER->id==$items[0]->rating->itemuserid && has_capability('moodle/rating:view',$context)
-        && (empty($pluginpermissionsarray) or $pluginpermissionsarray['view']))
-    //or if its not their item or if no user created the item (the hub did) and they have viewany permission
-    || (($USER->id!=$items[0]->rating->itemuserid or empty($items[0]->rating->itemuserid)) && has_capability('moodle/rating:viewany',$context)
-        && (empty($pluginpermissionsarray) or $pluginpermissionsarray['viewany']))) {
+if ($firstrating->user_can_view_aggregate()) {
     $result->aggregate = $aggregatetoreturn;
-    $result->count = $items[0]->rating->count;
+    $result->count = $firstrating->count;
     $result->itemid = $itemid;
 }
 

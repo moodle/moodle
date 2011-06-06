@@ -102,10 +102,6 @@
     $completion->set_module_viewed($cm);
 
 /// Print header.
-    /// Add ajax-related libs for ratings if required  MDL-20119
-    $PAGE->requires->yui2_lib('event');
-    $PAGE->requires->yui2_lib('connection');
-    $PAGE->requires->yui2_lib('json');
 
     $PAGE->set_title(format_string($forum->name));
     $PAGE->add_body_class('forumtype-'.$forum->type);

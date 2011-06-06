@@ -428,7 +428,7 @@ abstract class moodleform_mod extends moodleform {
 
         if (!empty($CFG->enableavailability)) {
             // Conditional availability
-            $mform->addElement('header', '', get_string('availabilityconditions', 'condition'));
+            $mform->addElement('header', 'availabilityconditionsheader', get_string('availabilityconditions', 'condition'));
             $mform->addElement('date_selector', 'availablefrom', get_string('availablefrom', 'condition'), array('optional'=>true));
             $mform->addHelpButton('availablefrom', 'availablefrom', 'condition');
             $mform->addElement('date_selector', 'availableuntil', get_string('availableuntil', 'condition'), array('optional'=>true));
@@ -522,7 +522,7 @@ abstract class moodleform_mod extends moodleform {
             $completion = new completion_info($COURSE);
         }
         if ($completion->is_enabled()) {
-            $mform->addElement('header', '', get_string('activitycompletion', 'completion'));
+            $mform->addElement('header', 'activitycompletionheader', get_string('activitycompletion', 'completion'));
 
             // Unlock button for if people have completed it (will
             // be removed in definition_after_data if they haven't)

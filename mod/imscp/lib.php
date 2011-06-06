@@ -249,6 +249,8 @@ function imscp_user_complete($course, $user, $mod, $imscp) {
 /**
  * Returns the users with data in one imscp
  *
+ * @todo: deprecated - to be deleted in 2.2
+ *
  * @param int $imscpid
  * @return bool false
  */

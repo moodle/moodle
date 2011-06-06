@@ -294,7 +294,16 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
         $grade = reset($grades->items[0]->grades);
         $result = new stdClass();
         $result->info = get_string('grade') . ': '. $grade->str_long_grade;
-        $result->time = $grade->dategraded;
+
+        //datesubmitted == time created. dategraded == time modified or time overridden
+        //if grade was last modified by the user themselves use date graded. Otherwise use date submitted
+        //TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704
+        if ($grade->usermodified == $user->id || empty($grade->datesubmitted)) {
+            $result->time = $grade->dategraded;
+        } else {
+            $result->time = $grade->datesubmitted;
+        }
+
         return $result;
     }
     return null;

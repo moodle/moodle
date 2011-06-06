@@ -1316,6 +1316,7 @@ abstract class role_allow_role_page {
         foreach ($rs as $allow) {
             $this->allowed[$allow->roleid][$allow->{$this->targetcolname}] = true;
         }
+        $rs->close();
     }
 
     /**
