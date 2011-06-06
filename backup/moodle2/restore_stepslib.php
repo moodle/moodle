@@ -2687,7 +2687,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
      * @param string $qtype e.g. multichoice.
      * @return restore_qtype_plugin instance.
      */
-    public function get_qtype_restorer($qtype) {
+    protected function get_qtype_restorer($qtype) {
         // Build one static cache to store {@link restore_qtype_plugin}
         // while we are needing them, just to save zillions of instantiations
         // or using static stuff that will break our nice API
