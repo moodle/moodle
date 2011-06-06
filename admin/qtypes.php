@@ -188,6 +188,7 @@ echo $OUTPUT->heading(get_string('manageqtypes', 'admin'));
 
 // Set up the table.
 $table = new flexible_table('qtypeadmintable');
+$table->define_baseurl(new moodle_url('/admin/qtypes.php'));
 $table->define_columns(array('questiontype', 'numquestions', 'version', 'requires',
         'availableto', 'delete', 'settings'));
 $table->define_headers(array(get_string('questiontype', 'admin'), get_string('numquestions', 'admin'),
