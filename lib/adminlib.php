@@ -4954,9 +4954,9 @@ class admin_page_manageqtypes extends admin_externalpage {
     }
 
     /**
-     * Search QTYPES for the specified string
+     * Search question types for the specified string
      *
-     * @param string $query The string to search for in QTYPES
+     * @param string $query The string to search for in question types
      * @return array
      */
     public function search($query) {
