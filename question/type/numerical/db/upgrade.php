@@ -91,7 +91,7 @@ function xmldb_qtype_numerical_upgrade($oldversion) {
         foreach ($rs as $record) {
             if ($CFG->texteditors !== 'textarea' &&
                     $record->oldquestiontextformat == FORMAT_MOODLE) {
-                $record->instructions = text_to_html($record->questiontext, false, false, true);
+                $record->instructions = text_to_html($record->instructions, false, false, true);
                 $record->instructionsformat = FORMAT_HTML;
             } else {
                 $record->instructionsformat = $record->oldquestiontextformat;
