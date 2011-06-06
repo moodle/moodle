@@ -36,11 +36,20 @@ function xmldb_quiz_statistics_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
+    // In Moodle 2.0, this table was incorrectly called quiz_report, which breaks
+    // the moodle coding guidelines. In 2.1 it was renamed to quiz_reports. This
+    // bit of code lets us handle all the various upgrade paths without problems.
+    if ($dbman->table_exists('quiz_reports')) {
+        $quizreportstablename = 'quiz_reports';
+    } else {
+        $quizreportstablename = 'quiz_report';
+    }
+
     //===== 1.9.0 upgrade line ======//
 
     if ($oldversion < 2008072401) {
         //register cron to run every 5 hours.
-        $DB->set_field('quiz_report', 'cron', HOURSECS*5, array('name'=>'statistics'));
+        $DB->set_field($quizreportstablename, 'cron', HOURSECS*5, array('name'=>'statistics'));
 
         // statistics savepoint reached
         upgrade_plugin_savepoint(true, 2008072401, 'quiz', 'statistics');
@@ -198,7 +207,7 @@ function xmldb_quiz_statistics_upgrade($oldversion) {
     }
 
     if ($oldversion < 2008112100) {
-        $DB->set_field('quiz_report', 'capability', 'quizreport/statistics:view',
+        $DB->set_field($quizreportstablename, 'capability', 'quizreport/statistics:view',
                 array('name'=>'statistics'));
 
         // statistics savepoint reached
@@ -364,13 +373,8 @@ function xmldb_quiz_statistics_upgrade($oldversion) {
     }
 
     if ($oldversion < 2011021500) {
-        if ($dbman->table_exists('quiz_reports')) {
-            $DB->set_field('quiz_reports', 'capability', 'quiz/statistics:view',
-                    array('name' => 'statistics'));
-        } else {
-            $DB->set_field('quiz_report', 'capability', 'quiz/statistics:view',
-                    array('name' => 'statistics'));
-        }
+        $DB->set_field($quizreportstablename, 'capability', 'quiz/statistics:view',
+                array('name' => 'statistics'));
 
         // statistics savepoint reached
         upgrade_plugin_savepoint(true, 2011021500, 'quiz', 'statistics');
