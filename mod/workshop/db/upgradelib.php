@@ -210,6 +210,14 @@ function workshop_upgrade_transform_instance(stdClass $old) {
         $new->strategy = 'rubric';
         break;
     }
+    if ($old->submissionstart < $old->submissionend) {
+        $new->submissionstart = $old->submissionstart;
+        $new->submissionend   = $old->submissionend;
+    }
+    if ($old->assessmentstart < $old->assessmentend) {
+        $new->assessmentstart = $old->assessmentstart;
+        $new->assessmentend   = $old->assessmentend;
+    }
 
     return $new;
 }
