@@ -271,7 +271,7 @@ class qtype_multichoice_attempt_upgrader_test extends question_attempt_upgrader_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multichoice_deferredfeedback_history0() {
@@ -431,7 +431,7 @@ class qtype_multichoice_attempt_upgrader_test extends question_attempt_upgrader_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multichoice_deferredfeedback_history60() {
@@ -634,7 +634,7 @@ class qtype_multichoice_attempt_upgrader_test extends question_attempt_upgrader_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multichoice_deferredfeedback_history6220() {
@@ -873,7 +873,7 @@ class qtype_multichoice_attempt_upgrader_test extends question_attempt_upgrader_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multichoice_deferredfeedback_missing() {
@@ -1007,7 +1007,7 @@ class qtype_multichoice_attempt_upgrader_test extends question_attempt_upgrader_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
 public function test_multichoice_deferredfeedback_qsession140() {
@@ -1209,7 +1209,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multichoice_deferredfeedback_qsession2018195() {
@@ -1455,7 +1455,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multichoice_deferredfeedback_qsession2653368() {
@@ -1679,7 +1679,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multichoice_deferredfeedback_qsession3131() {
@@ -1924,7 +1924,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multichoice_deferredfeedback_qsession4307870 () {
@@ -2129,7 +2129,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multichoice_deferredfeedback_qsession49446() {
@@ -2344,7 +2344,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multichoice_deferredfeedback_qsession591() {
@@ -2553,7 +2553,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multichoice_deferredfeedback_qsession594() {
@@ -2764,6 +2764,6 @@ public function test_multichoice_deferredfeedback_qsession140() {
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 }

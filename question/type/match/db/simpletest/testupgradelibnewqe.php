@@ -281,7 +281,7 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
             }
         }
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_match_deferredfeedback_history60() {
@@ -482,7 +482,7 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
             }
         }
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_match_deferredfeedback_history622220() {
@@ -782,6 +782,6 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
             }
         }
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 }

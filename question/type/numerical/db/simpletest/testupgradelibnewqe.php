@@ -261,7 +261,7 @@ class qtype_numerical_attempt_upgrader_test extends question_attempt_upgrader_te
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_numerical_deferredfeedback_required_units() {
@@ -458,6 +458,6 @@ class qtype_numerical_attempt_upgrader_test extends question_attempt_upgrader_te
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 }

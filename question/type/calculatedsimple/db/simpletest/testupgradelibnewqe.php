@@ -220,7 +220,7 @@ class qtype_calculatedsimple_attempt_upgrader_test extends question_attempt_upgr
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_calculatedsimple_adaptive_qsession98() {
@@ -446,7 +446,7 @@ class qtype_calculatedsimple_attempt_upgrader_test extends question_attempt_upgr
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_calculatedsimple_adaptive_qsession101() {
@@ -632,6 +632,6 @@ class qtype_calculatedsimple_attempt_upgrader_test extends question_attempt_upgr
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 }

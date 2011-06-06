@@ -593,7 +593,7 @@ function local_qeupgradehelper_generate_unit_test($questionsessionid, $namesuffi
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 </textarea>';
 }

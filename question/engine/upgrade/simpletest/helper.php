@@ -125,4 +125,33 @@ class question_attempt_upgrader_test_base extends UnitTestCase {
     public function tearDown() {
         $this->updater = null;
     }
+
+    /**
+     * Clear text, bringing independence of html2text results
+     *
+     * Some tests performing text comparisons of converted text are too much
+     * dependent of the behavior of the html2text library. This function is
+     * aimed to reduce such dependencies that should not affect the results
+     * of these question attempt upgrade tests.
+     */
+    protected function clear_html2text_dependencies($qa) {
+        // Cleaning all whitespace should be enough to ignore any html2text dependency
+        if (property_exists($qa, 'responsesummary')) {
+            $qa->responsesummary = preg_replace('/\s/', '', $qa->responsesummary);
+        }
+        if (property_exists($qa, 'questionsummary')) {
+            $qa->questionsummary = preg_replace('/\s/', '', $qa->questionsummary);
+        }
+    }
+
+    /**
+     * Compare two qas, ignoring inessential differences.
+     * @param object $expectedqa the expected qa.
+     * @param object $qa the actual qa.
+     */
+    protected function compare_qas($expectedqa, $qa) {
+        $this->clear_html2text_dependencies($expectedqa);
+        $this->clear_html2text_dependencies($qa);
+        $this->assertEqual($expectedqa, $qa);
+    }
 }

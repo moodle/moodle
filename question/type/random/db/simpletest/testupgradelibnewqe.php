@@ -264,7 +264,7 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_random_deferredfeedback_qsession4225582() {
@@ -513,7 +513,7 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_random_deferredfeedback_qsession3481928() {
@@ -783,7 +783,7 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_numerical_deferredfeedback_qsession55() {
@@ -980,6 +980,6 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 }

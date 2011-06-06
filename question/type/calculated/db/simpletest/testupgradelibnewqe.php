@@ -233,7 +233,7 @@ Remember to type a unit.',
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_calculated_adaptive_qsession100() {
@@ -475,7 +475,7 @@ Remember to type a unit.',
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_calculated_adaptive_qsession103() {
@@ -695,6 +695,6 @@ Remember to type a unit.',
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 }

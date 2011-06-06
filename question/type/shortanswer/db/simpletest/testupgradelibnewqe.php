@@ -245,7 +245,7 @@ class qtype_shortanswer_attempt_upgrader_test extends question_attempt_upgrader_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_shortanswer_deferredfeedback_history60() {
@@ -419,7 +419,7 @@ class qtype_shortanswer_attempt_upgrader_test extends question_attempt_upgrader_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_shortanswer_deferredfeedback_history3220() {
@@ -635,6 +635,6 @@ class qtype_shortanswer_attempt_upgrader_test extends question_attempt_upgrader_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 }

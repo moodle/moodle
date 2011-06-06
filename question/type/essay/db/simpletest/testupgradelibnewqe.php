@@ -269,7 +269,7 @@ class qtype_essay_attempt_upgrader_test extends question_attempt_upgrader_test_b
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_essay_deferredfeedback_history820() {
@@ -449,7 +449,7 @@ class qtype_essay_attempt_upgrader_test extends question_attempt_upgrader_test_b
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_essay_deferredfeedback_missing() {
@@ -561,6 +561,6 @@ class qtype_essay_attempt_upgrader_test extends question_attempt_upgrader_test_b
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 }

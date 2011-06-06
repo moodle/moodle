@@ -238,7 +238,7 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multianswer_adaptivenopenalty_qsession106() {
@@ -421,7 +421,7 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multianswer_adaptivenopenalty_qsession108() {
@@ -646,7 +646,7 @@ class qtype_multianswer_attempt_upgrader_test extends question_attempt_upgrader_
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multianswer_adaptivenopenalty_qsession105() {
@@ -1332,7 +1332,7 @@ b) What grade would you give it? _____',
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multianswer_adaptivenopenalty_qsession107() {
@@ -1990,7 +1990,7 @@ b) What grade would you give it? _____',
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 
     public function test_multianswer_adaptivenopenalty_qsession109() {
@@ -2724,6 +2724,6 @@ b) What grade would you give it? _____',
             ),
         );
 
-        $this->assertEqual($expectedqa, $qa);
+        $this->compare_qas($expectedqa, $qa);
     }
 }
