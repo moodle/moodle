@@ -186,7 +186,7 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
             $this->fileman->migrate_file('course_files/'.$data['reference'], '/', null, 1);
         } catch (moodle1_convert_exception $e) {
             // the file probably does not exist
-            // todo add to log
+            $this->log('error migrating the resource main file', backup::LOG_WARNING, 'course_files/'.$data['reference']);
         }
 
         // write resource.xml
@@ -258,6 +258,7 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
         }
 
         if (!isset($this->successors[$name])) {
+            $this->log('preparing resource successor handler', backup::LOG_DEBUG, $name);
             $class = 'moodle1_mod_'.$name.'_handler';
             $this->successors[$name] = new $class($this->converter, 'mod', $name);
 

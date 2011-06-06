@@ -35,26 +35,66 @@ require_once($CFG->dirroot . '/backup/util/includes/convert_includes.php');
  *
  * @throws convert_exception
  */
-abstract class base_converter {
+abstract class base_converter implements loggable {
 
     /** @var string unique identifier of this converter instance */
     protected $id;
+
     /** @var string the name of the directory containing the unpacked backup being converted */
     protected $tempdir;
+
     /** @var string the name of the directory where the backup is converted to */
     protected $workdir;
+
+    /** @var null|base_logger logger to use during the conversion */
+    protected $logger = null;
 
     /**
      * Constructor
      *
      * @param string $tempdir the relative path to the directory containing the unpacked backup to convert
+     * @param null|base_logger logger to use during the conversion
      */
-    public function __construct($tempdir) {
+    public function __construct($tempdir, $logger = null) {
 
         $this->tempdir  = $tempdir;
         $this->id       = convert_helper::generate_id($tempdir);
         $this->workdir  = $tempdir . '_' . $this->get_name() . '_' . $this->id;
+        $this->set_logger($logger);
+        $this->log('instantiating '.$this->get_name().' converter '.$this->get_id(), backup::LOG_DEBUG);
+        $this->log('conversion source directory', backup::LOG_DEBUG, $this->tempdir);
+        $this->log('conversion target directory', backup::LOG_DEBUG, $this->workdir);
         $this->init();
+    }
+
+    /**
+     * Sets the logger to use during the conversion
+     *
+     * @param null|base_logger $logger
+     */
+    public function set_logger($logger) {
+        if (is_null($logger) or ($logger instanceof base_logger)) {
+            $this->logger = $logger;
+        }
+    }
+
+    /**
+     * If the logger was set for the converter, log the message
+     *
+     * If the $display is enabled, the spaces in the $message text are removed
+     * and the text is used as a string identifier in the core_backup language file.
+     *
+     * @see backup_helper::log()
+     * @param string $message message text
+     * @param int $level message level {@example backup::LOG_WARNING}
+     * @param null|mixed $a additional information
+     * @param null|int $depth the message depth
+     * @param bool $display whether the message should be sent to the output, too
+     */
+    public function log($message, $level, $a = null, $depth = null, $display = false) {
+        if ($this->logger instanceof base_logger) {
+            backup_helper::log($message, $level, $a, $depth, $display, $this->logger);
+        }
     }
 
     /**
@@ -81,8 +121,13 @@ abstract class base_converter {
     public function convert() {
 
         try {
+            $this->log('creating the target directory', backup::LOG_DEBUG);
             $this->create_workdir();
+
+            $this->log('executing the conversion', backup::LOG_DEBUG);
             $this->execute();
+
+            $this->log('replacing the source directory with the converted version', backup::LOG_DEBUG);
             $this->replace_tempdir();
         } catch (Exception $e) {
         }
@@ -94,6 +139,24 @@ abstract class base_converter {
         if (isset($e) and ($e instanceof Exception)) {
             throw $e;
         }
+    }
+
+    /**
+     * @return string the full path to the working directory
+     */
+    public function get_workdir_path() {
+        global $CFG;
+
+        return "$CFG->dataroot/temp/backup/$this->workdir";
+    }
+
+    /**
+     * @return string the full path to the directory with the source backup
+     */
+    public function get_tempdir_path() {
+        global $CFG;
+
+        return "$CFG->dataroot/temp/backup/$this->tempdir";
     }
 
     /// public static methods //////////////////////////////////////////////////
@@ -140,24 +203,6 @@ abstract class base_converter {
             'to'    => null,
             'cost'  => null,
         );
-    }
-
-    /**
-     * @return string the full path to the working directory
-     */
-    public function get_workdir_path() {
-        global $CFG;
-
-        return "$CFG->dataroot/temp/backup/$this->workdir";
-    }
-
-    /**
-     * @return string the full path to the directory with the source backup
-     */
-    public function get_tempdir_path() {
-        global $CFG;
-
-        return "$CFG->dataroot/temp/backup/$this->tempdir";
     }
 
     /// end of public API //////////////////////////////////////////////////////

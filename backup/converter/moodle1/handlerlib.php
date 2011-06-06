@@ -103,7 +103,7 @@ abstract class moodle1_handlers_factory {
 /**
  * Base backup conversion handler
  */
-abstract class moodle1_handler {
+abstract class moodle1_handler implements loggable {
 
     /** @var moodle1_converter */
     protected $converter;
@@ -120,6 +120,19 @@ abstract class moodle1_handler {
      */
     public function get_converter() {
         return $this->converter;
+    }
+
+    /**
+     * Log a message using the converter's logging mechanism
+     *
+     * @param string $message message text
+     * @param int $level message level {@example backup::LOG_WARNING}
+     * @param null|mixed $a additional information
+     * @param null|int $depth the message depth
+     * @param bool $display whether the message should be sent to the output, too
+     */
+    public function log($message, $level, $a = null, $depth = null, $display = false) {
+        $this->converter->log($message, $level, $a, $depth, $display);
     }
 }
 
@@ -287,6 +300,7 @@ class moodle1_root_handler extends moodle1_xml_handler {
      * Converts course_files and site_files
      */
     public function on_root_element_start() {
+
         // convert course files
         $fileshandler = new moodle1_files_handler($this->converter);
         $fileshandler->process();
@@ -542,6 +556,7 @@ class moodle1_files_handler extends moodle1_xml_handler {
             $ids = $fileman->migrate_directory('course_files');
             $this->converter->set_stash('course_files_ids', $ids);
         }
+        $this->log('course files migrated', backup::LOG_INFO, count($ids));
     }
 }
 
@@ -602,6 +617,8 @@ class moodle1_info_handler extends moodle1_handler {
         if (file_exists($CFG->dirroot.'/mod/'.$modname.'/backup/moodle1/lib.php')) {
             $this->converter->set_stash('modinfo_'.$modname, $this->currentmod);
             $this->modnames[] = $modname;
+        } else {
+            $this->log('unsupported activity module', backup::LOG_WARNING, $modname);
         }
 
         $this->currentmod = array();
@@ -1154,7 +1171,7 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
                     $data['questiontext'] .= ' <img src="@@PLUGINFILE@@/' . $filename . '" />';
 
                 } else {
-                    debugging('Question id '.$data['id']. ' file not found: '.$filepath.$filename);
+                    $this->log('question file not found', backup::LOG_WARNING, array($data['id'], $filepath.$filename));
                 }
             }
         }
@@ -1178,7 +1195,7 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
         if (!in_array($qtype, array('description', 'random'))) {
             $handler = $this->get_qtype_handler($qtype);
             if ($handler === false) {
-                debugging('Question type '.$qtype.' converter not found.', DEBUG_DEVELOPER);
+                $this->log('question type converter not found', backup::LOG_ERROR, $qtype);
 
             } else {
                 $this->xmlwriter->begin_tag('plugin_qtype_'.$qtype.'_question');
@@ -1235,7 +1252,7 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
     protected function get_qtype_handler($qtype) {
 
         if (is_null($this->qtypehandlers)) {
-            // initialize the static list of qtype handler instances
+            // initialize the list of qtype handler instances
             $this->qtypehandlers = array();
             foreach (get_plugin_list('qtype') as $qtypename => $qtypelocation) {
                 $filename = $qtypelocation.'/backup/moodle1/lib.php';
@@ -1245,6 +1262,7 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
                     if (!class_exists($classname)) {
                         throw new moodle1_convert_exception('missing_handler_class', $classname);
                     }
+                    $this->log('registering handler', backup::LOG_DEBUG, $classname, 2);
                     $this->qtypehandlers[$qtypename] = new $classname($this, $qtypename);
                 }
             }

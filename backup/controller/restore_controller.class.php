@@ -387,12 +387,16 @@ class restore_controller extends backup implements loggable {
             throw new restore_controller_exception('cannot_convert_not_required_status');
         }
 
+        $this->log('backup format conversion required', backup::LOG_INFO);
+
         // Run conversion to the proper format
-        if (!convert_helper::to_moodle2_format($this->get_tempdir(), $this->format)) {
+        if (!convert_helper::to_moodle2_format($this->get_tempdir(), $this->format, $this->get_logger())) {
             // todo - unable to find the conversion path, what to do now?
             // throwing the exception as a temporary solution
             throw new restore_controller_exception('unable_to_find_conversion_path');
         }
+
+        $this->log('backup format conversion successful', backup::LOG_INFO);
 
         // If no exceptions were thrown, then we are in the proper format
         $this->format = backup::FORMAT_MOODLE;

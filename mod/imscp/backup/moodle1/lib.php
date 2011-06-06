@@ -73,7 +73,7 @@ class moodle1_mod_imscp_handler extends moodle1_resource_successor_handler {
                 $this->fileman->itemid   = 1;
                 $this->fileman->migrate_file('moddata/resource/'.$data['id'].'/'.$packagename);
             } else {
-                // todo add to log
+                $this->log('missing imscp package', backup::LOG_WARNING, 'moddata/resource/'.$data['id'].'/'.$packagename);
             }
         }
 
@@ -117,12 +117,12 @@ class moodle1_mod_imscp_handler extends moodle1_resource_successor_handler {
         global $CFG;
 
         if (!file_exists($manifestfilepath)) {
-            // todo add to conversion log
+            $this->log('missing imscp manifest file', backup::LOG_WARNING);
             return null;
         }
         $manifestfilecontents = file_get_contents($manifestfilepath);
         if (empty($manifestfilecontents)) {
-            // todo add to conversion log
+            $this->log('empty imscp manifest file', backup::LOG_WARNING);
             return null;
         }
 

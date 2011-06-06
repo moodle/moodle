@@ -67,6 +67,20 @@ class moodle1_converter extends base_converter {
     const SKIP_ALL_CHILDREN = -991399;
 
     /**
+     * Log a message
+     *
+     * @see parent::log()
+     * @param string $message message text
+     * @param int $level message level {@example backup::LOG_WARNING}
+     * @param null|mixed $a additional information
+     * @param null|int $depth the message depth
+     * @param bool $display whether the message should be sent to the output, too
+     */
+    public function log($message, $level, $a = null, $depth = null, $display = false) {
+        parent::log('(moodle1) '.$message, $level, $a, $depth, $display);
+    }
+
+    /**
      * Detects the Moodle 1.9 format of the backup directory
      *
      * @param string $tempdir the name of the backup directory
@@ -104,9 +118,13 @@ class moodle1_converter extends base_converter {
         // ask your mother first before going out playing with toys
         parent::init();
 
+        $this->log('initializing '.$this->get_name().' converter', backup::LOG_INFO);
+
         // good boy, prepare XML parser and processor
+        $this->log('setting xml parser', backup::LOG_DEBUG, null, 1);
         $this->xmlparser = new progressive_parser();
         $this->xmlparser->set_file($this->get_tempdir_path() . '/moodle.xml');
+        $this->log('setting xml processor', backup::LOG_DEBUG, null, 1);
         $this->xmlprocessor = new moodle1_parser_processor($this);
         $this->xmlparser->set_processor($this->xmlprocessor);
 
@@ -116,6 +134,7 @@ class moodle1_converter extends base_converter {
 
         // register the conversion handlers
         foreach (moodle1_handlers_factory::get_handlers($this) as $handler) {
+            $this->log('registering handler', backup::LOG_DEBUG, get_class($handler), 1);
             $this->register_handler($handler, $handler->get_paths());
         }
     }
@@ -124,8 +143,14 @@ class moodle1_converter extends base_converter {
      * Converts the contents of the tempdir into the target format in the workdir
      */
     protected function execute() {
+        $this->log('creating the stash storage', backup::LOG_DEBUG);
         $this->create_stash_storage();
+
+        $this->log('parsing moodle.xml starts', backup::LOG_DEBUG);
         $this->xmlparser->process();
+        $this->log('parsing moodle.xml done', backup::LOG_DEBUG);
+
+        $this->log('dropping the stash storage', backup::LOG_DEBUG);
         $this->drop_stash_storage();
     }
 
@@ -235,8 +260,7 @@ class moodle1_converter extends base_converter {
         if ($path !== $data['path']) {
             if (!array_key_exists($path, $this->pathelements)) {
                 // no handler registered for the transformed MOD or BLOCK path
-                // todo add this event to the convert log instead of debugging
-                //debugging('No handler registered for the path ' . $path);
+                $this->log('no handler attached', backup::LOG_WARNING, $path);
                 return;
 
             } else {
@@ -554,7 +578,7 @@ class moodle1_converter extends base_converter {
                     $fileman->migrate_file('course_files'.$file, dirname($file));
                 } catch (moodle1_convert_exception $e) {
                     // file probably does not exist
-                    // todo add to the conversion log
+                    $fileman->log('error migrating file', backup::LOG_WARNING, 'course_files'.$file);
                 }
             }
             $text = self::rewrite_filephp_usage($text, $files);
@@ -1086,7 +1110,7 @@ class convert_path_exception extends moodle_exception {
  * The files in Moodle 1.9 backup are stored in moddata, user_files, group_files,
  * course_files and site_files folders.
  */
-class moodle1_file_manager {
+class moodle1_file_manager implements loggable {
 
     /** @var moodle1_converter instance we serve to */
     public $converter;
@@ -1268,6 +1292,19 @@ class moodle1_file_manager {
      */
     public function reset_fileids() {
         $this->fileids = array();
+    }
+
+    /**
+     * Log a message using the converter's logging mechanism
+     *
+     * @param string $message message text
+     * @param int $level message level {@example backup::LOG_WARNING}
+     * @param null|mixed $a additional information
+     * @param null|int $depth the message depth
+     * @param bool $display whether the message should be sent to the output, too
+     */
+    public function log($message, $level, $a = null, $depth = null, $display = false) {
+        $this->converter->log($message, $level, $a, $depth, $display);
     }
 
     /// internal implementation details ////////////////////////////////////////

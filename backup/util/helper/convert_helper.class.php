@@ -114,10 +114,11 @@ abstract class convert_helper {
      *
      * @param string $tempdir The directory to convert
      * @param string $format The current format, if already detected
+     * @param base_logger|null if the conversion should be logged, use this logger
      * @throws convert_helper_exception
      * @return bool false if unable to find the conversion path, true otherwise
      */
-    public static function to_moodle2_format($tempdir, $format = null) {
+    public static function to_moodle2_format($tempdir, $format = null, $logger = null) {
 
         if (is_null($format)) {
             $format = backup_general_helper::detect_backup_format($tempdir);
@@ -131,6 +132,9 @@ abstract class convert_helper {
             if (!class_exists($classname)) {
                 throw new convert_helper_exception('class_not_loaded', $classname);
             }
+            if ($logger instanceof base_logger) {
+                backup_helper::log('available converter', backup::LOG_DEBUG, $classname, 1, false, $logger);
+            }
             $descriptions[$name] = call_user_func($classname .'::description');
         }
 
@@ -138,12 +142,22 @@ abstract class convert_helper {
         $path = self::choose_conversion_path($format, $descriptions);
 
         if (empty($path)) {
-            // unable to convert
+            if ($logger instanceof base_logger) {
+                backup_helper::log('unable to find the conversion path', backup::LOG_ERROR, null, 0, false, $logger);
+            }
             return false;
         }
 
+        if ($logger instanceof base_logger) {
+            backup_helper::log('conversion path established', backup::LOG_INFO,
+                implode(' => ', array_merge($path, array('moodle2'))), 0, false, $logger);
+        }
+
         foreach ($path as $name) {
-            $converter = convert_factory::get_converter($name, $tempdir);
+            if ($logger instanceof base_logger) {
+                backup_helper::log('running converter', backup::LOG_INFO, $name, 0, false, $logger);
+            }
+            $converter = convert_factory::get_converter($name, $tempdir, $logger);
             $converter->convert();
         }
 
