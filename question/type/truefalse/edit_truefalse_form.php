@@ -75,23 +75,19 @@ class qtype_truefalse_edit_form extends question_edit_form {
 
             $draftid = file_get_submitted_draft_itemid('trueanswer');
             $answerid = $question->options->trueanswer;
-            $text = $trueanswer->feedback;
 
             $question->feedbacktrue = array();
-            $question->feedbacktrue['text'] = $trueanswer->feedback;
             $question->feedbacktrue['format'] = $trueanswer->feedbackformat;
             $question->feedbacktrue['text'] = file_prepare_draft_area(
-                $draftid,       // draftid
-                $this->context->id,    // context
-                'question',     // component
-                'answerfeedback',        // filarea
-                !empty($answerid)?(int)$answerid:null, // itemid
-                $this->fileoptions,    // options
-                $text      // text
+                $draftid,             // draftid
+                $this->context->id,   // context
+                'question',           // component
+                'answerfeedback',     // filarea
+                !empty($answerid) ? (int) $answerid : null, // itemid
+                $this->fileoptions,   // options
+                $trueanswer->feedback // text
             );
             $question->feedbacktrue['itemid'] = $draftid;
-
-            return $question;
         }
 
         if (!empty($question->options->falseanswer)) {
@@ -99,19 +95,17 @@ class qtype_truefalse_edit_form extends question_edit_form {
 
             $draftid = file_get_submitted_draft_itemid('falseanswer');
             $answerid = $question->options->falseanswer;
-            $text = $falseanswer->feedback;
 
             $question->feedbackfalse = array();
-            $question->feedbackfalse['text'] = $falseanswer->feedback;
             $question->feedbackfalse['format'] = $falseanswer->feedbackformat;
             $question->feedbackfalse['text'] = file_prepare_draft_area(
-                $draftid,       // draftid
+                $draftid,              // draftid
                 $this->context->id,    // context
-                'question',     // component
-                'answerfeedback',        // filarea
-                !empty($answerid)?(int)$answerid:null, // itemid
+                'question',            // component
+                'answerfeedback',      // filarea
+                !empty($answerid) ? (int) $answerid : null, // itemid
                 $this->fileoptions,    // options
-                $text      // text
+                $falseanswer->feedback // text
             );
             $question->feedbackfalse['itemid'] = $draftid;
         }
