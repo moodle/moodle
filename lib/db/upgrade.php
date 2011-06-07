@@ -6481,6 +6481,39 @@ WHERE gradeitemid IS NOT NULL AND grademax IS NOT NULL");
     }
     // Question engine 2 changes (14) end here
 
+    if ($oldversion < 2011060500) {
+
+         // Define index uniqueuserrating (not unique) to be dropped form rating
+        $table = new xmldb_table('rating');
+        $index = new xmldb_index('uniqueuserrating', XMLDB_INDEX_NOTUNIQUE,
+                         array('component', 'ratingarea', 'contextid', 'itemid'));
+
+        // Drop dependent index before changing fields specs
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Changing the default of field component on table rating to drop it
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'contextid');
+
+        // Launch change of default for field component
+        $dbman->change_field_default($table, $field);
+
+        // Changing the default of field ratingarea on table rating to drop it
+        $field = new xmldb_field('ratingarea', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, 'component');
+
+        // Launch change of default for field ratingarea
+        $dbman->change_field_default($table, $field);
+
+        // Add dependent index back
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached
+        upgrade_main_savepoint(true, 2011060500);
+    }
+
     return true;
 }
 
