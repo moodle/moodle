@@ -688,7 +688,7 @@ ORDER BY
 
         $this->delete_response_files($context->id, "IN (
                 SELECT id
-                FROM question_attempt_step
+                FROM {question_attempt_steps}
                 WHERE questionattemptid $test)", $params);
 
         $this->db->delete_records_select('question_attempt_step_data', "attemptstepid IN (
