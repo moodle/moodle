@@ -88,7 +88,8 @@ class webservice_test extends UnitTestCase {
             'moodle_group_delete_groupmembers' => false,
             'moodle_group_create_groups' => false,
             'moodle_group_delete_groups' => false,
-            'moodle_enrol_manual_enrol_users' => false
+            'moodle_enrol_manual_enrol_users' => false,
+            'moodle_message_send_messages' => false
         );
 
         //performance testing: number of time the web service are run
@@ -1482,7 +1483,23 @@ class webservice_test extends UnitTestCase {
 
         //delete the category
         $DB->delete_records('course_categories', array('id' => $category->id));
+    }
 
+    function moodle_message_send_messages($client) {
+        global $DB;
+        $function = 'moodle_message_send_messages';
+        $message = array();
+        $message['text'] = 'this is a message with a link http://www.google.com';
+        $message['touserid'] = 2;  //replace by a existing user id
+        $message['clientmsgid'] = 'message_1';
+        $message2 = array();
+        $message2['text'] = 'this is a message with an image
+            http://moodle.org/pluginfile.php/51/mod_forum/post/713724/moodle2-logo.png';
+        $message2['touserid'] = 2;  //replace by a existing user id
+        $message2['clientmsgid'] = 'message_2';
+        $params = array('messages' => array($message, $message2));
+        $success = $client->call($function, $params);
+        $this->assertEqual(count($success), 2);
     }
 
 }

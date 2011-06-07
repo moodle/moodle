@@ -206,4 +206,15 @@ $functions = array(
         'capabilities'=> 'moodle/course:create,moodle/course:visibility',
     ),
 
+    // === message related functions ===
+
+    'moodle_message_send_messages' => array(
+        'classname'   => 'moodle_message_external',
+        'methodname'  => 'send_messages',
+        'classpath'   => 'message/externallib.php',
+        'description' => 'Send messages',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/site:sendmessage',
+    ),
+
 );

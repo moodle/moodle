@@ -112,6 +112,7 @@ $string['showmessagewindow'] = 'Popup window on new message';
 $string['strftimedaydatetime'] = '%A, %d %B %Y, %I:%M %p';
 $string['timenosee'] = 'Minutes since I was last seen online';
 $string['timesent'] = 'Time sent';
+$string['touserdoesntexist'] = 'You can not send a message to a user id ({$a}) that doesn\'t exist';
 $string['unblockcontact'] = 'Unblock contact';
 $string['unreadmessages'] = 'Unread messages ({$a})';
 $string['unreadnewmessages'] = 'New messages ({$a})';
