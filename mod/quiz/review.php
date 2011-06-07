@@ -175,14 +175,14 @@ if ($attempt->timefinish) {
     );
     $summarydata['timetaken'] = array(
         'title'   => get_string('timetaken', 'quiz'),
-        'content' => userdate($timetaken),
+        'content' => format_time($timetaken),
     );
 }
 
 if (!empty($overtime)) {
     $summarydata['overdue'] = array(
         'title'   => get_string('overdue', 'quiz'),
-        'content' => userdate($overtime),
+        'content' => format_time($overtime),
     );
 }
 
