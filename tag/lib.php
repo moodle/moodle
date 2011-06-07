@@ -250,6 +250,7 @@ function tag_get($field, $value, $returnfields='id, name, rawname') {
 /**
  * Get the array of db record of tags associated to a record (instances).  Use
  * tag_get_tags_csv to get the same information in a comma-separated string.
+ * This should really be called tag_get_tag_instances()
  *
  * @param string $record_type the record type for which we want to get the tags
  * @param int $record_id the record id for which we want to get the tags
@@ -277,7 +278,8 @@ function tag_get_tags($record_type, $record_id, $type=null, $userid=0) {
     }
 
     $sql = "SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
-              FROM {tag_instance} ti JOIN {tag} tg ON tg.id = ti.tagid
+              FROM {tag_instance} ti
+              JOIN {tag} tg ON tg.id = ti.tagid
               WHERE ti.itemtype = :recordtype AND ti.itemid = :recordid $u $sql_type
            ORDER BY ti.ordering ASC";
     $params['recordtype'] = $record_type;
@@ -849,15 +851,16 @@ function tag_compute_correlations($mincorrelation = 2) {
     $tagcorrelation->tagid = null;
     $tagcorrelation->correlatedtags = array();
 
-    // We store each correction id in this array so we can remove any correlations
+    // We store each correlation id in this array so we can remove any correlations
     // that no longer exist.
     $correlations = array();
 
     // Iterate each row of the result set and build them into tag correlations.
+    // We add all of a tag's correlations to $tagcorrelation->correlatedtags[]
+    // then save the $tagcorrelation object
     foreach ($rs as $row) {
         if ($row->tagid != $tagcorrelation->tagid) {
-            // The tag id has changed so its now time to process the tag
-            // correlation information we have.
+            // The tag id has changed so we have all of the correlations for this tag
             $tagcorrelationid = tag_process_computed_correlation($tagcorrelation);
             if ($tagcorrelationid) {
                 $correlations[] = $tagcorrelationid;
@@ -869,6 +872,7 @@ function tag_compute_correlations($mincorrelation = 2) {
             $tagcorrelation->tagid = $row->tagid;
             $tagcorrelation->correlatedtags = array();
         }
+        //Save the correlation on the tag correlation object
         $tagcorrelation->correlatedtags[] = $row->correlation;
     }
     // Update the current correlation after the last record.
@@ -882,8 +886,13 @@ function tag_compute_correlations($mincorrelation = 2) {
     $rs->close();
 
     // Remove any correlations that weren't just identified
-    list($sql, $params) = $DB->get_in_or_equal($correlations, SQL_PARAMS_NAMED, 'param0000', false);
-    $DB->delete_records_select('tag_correlation', 'id '.$sql, $params);
+    if (empty($correlations)) {
+        //there are no tag correlations
+        $DB->delete_records('tag_correlation');
+    } else {
+        list($sql, $params) = $DB->get_in_or_equal($correlations, SQL_PARAMS_NAMED, 'param0000', false);
+        $DB->delete_records_select('tag_correlation', 'id '.$sql, $params);
+    }
 }
 
 /**
@@ -904,9 +913,6 @@ function tag_process_computed_correlation(stdClass $tagcorrelation) {
         return false;
     }
 
-    // The row tagid doesn't match the current tag id which means we are onto
-    // the next tag. Before we switch over we need to either insert or update
-    // the correlation.
     $tagcorrelation->correlatedtags = join(',', $tagcorrelation->correlatedtags);
     if (!empty($tagcorrelation->id)) {
         // The tag correlation already exists so update it
@@ -997,8 +1003,9 @@ function tag_get_correlated($tag_id, $limitnum=null) {
     }
 
     // this is (and has to) return the same fields as the query in tag_get_tags
-    $sql = "SELECT DISTINCT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag
+    $sql = "SELECT DISTINCT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
               FROM {tag} tg
+        INNER JOIN {tag_instance} ti ON tg.id = ti.tagid
              WHERE tg.id IN ({$tag_correlation->correlatedtags})";
     $result = $DB->get_records_sql($sql);
     if (!$result) {
