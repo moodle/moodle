@@ -51,6 +51,7 @@ abstract class moodle1_handlers_factory {
             new moodle1_course_outline_handler($converter),
             new moodle1_roles_definition_handler($converter),
             new moodle1_question_bank_handler($converter),
+            new moodle1_scales_handler($converter),
         );
 
         $handlers = array_merge($handlers, self::get_plugin_handlers('mod', $converter));
@@ -316,7 +317,9 @@ class moodle1_root_handler extends moodle1_xml_handler {
         $backupinfo         = $this->converter->get_stash('backup_info');
         $originalcourseinfo = $this->converter->get_stash('original_course_info');
 
-        // start writing to the main XML file data
+        ////////////////////////////////////////////////////////////////////////
+        // write moodle_backup.xml
+        ////////////////////////////////////////////////////////////////////////
         $this->open_xml_writer('moodle_backup.xml');
 
         $this->xmlwriter->begin_tag('moodle_backup');
@@ -472,7 +475,9 @@ class moodle1_root_handler extends moodle1_xml_handler {
 
         $this->close_xml_writer();
 
+        ////////////////////////////////////////////////////////////////////////
         // write files.xml
+        ////////////////////////////////////////////////////////////////////////
         $this->open_xml_writer('files.xml');
         $this->xmlwriter->begin_tag('files');
         foreach ($this->converter->get_stash_itemids('files') as $fileid) {
@@ -481,7 +486,20 @@ class moodle1_root_handler extends moodle1_xml_handler {
         $this->xmlwriter->end_tag('files');
         $this->close_xml_writer('files.xml');
 
-        // generate course/inforef.xml
+        ////////////////////////////////////////////////////////////////////////
+        // write scales.xml
+        ////////////////////////////////////////////////////////////////////////
+        $this->open_xml_writer('scales.xml');
+        $this->xmlwriter->begin_tag('scales_definition');
+        foreach ($this->converter->get_stash_itemids('scales') as $scaleid) {
+            $this->write_xml('scale', $this->converter->get_stash('scales', $scaleid), array('/scale/id'));
+        }
+        $this->xmlwriter->end_tag('scales_definition');
+        $this->close_xml_writer('scales.xml');
+
+        ////////////////////////////////////////////////////////////////////////
+        // write course/inforef.xml
+        ////////////////////////////////////////////////////////////////////////
         $this->open_xml_writer('course/inforef.xml');
         $this->xmlwriter->begin_tag('inforef');
 
@@ -519,7 +537,6 @@ class moodle1_root_handler extends moodle1_xml_handler {
         // apparently this must be called after the handler had a chance to create the file.
         $this->make_sure_xml_exists('questions.xml', 'question_categories');
         $this->make_sure_xml_exists('groups.xml', 'groups');
-        $this->make_sure_xml_exists('scales.xml', 'scales_definition');
         $this->make_sure_xml_exists('outcomes.xml', 'outcomes_definition');
         $this->make_sure_xml_exists('users.xml', 'users');
         $this->make_sure_xml_exists('course/roles.xml', 'roles',
@@ -1277,6 +1294,68 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
         } else {
             return false;
         }
+    }
+}
+
+
+/**
+ * Handles the conversion of the scales included in the moodle.xml file
+ */
+class moodle1_scales_handler extends moodle1_handler {
+
+    /** @var moodle1_file_manager instance used to convert question images */
+    protected $fileman = null;
+
+    /**
+     * Registers path that are not qtype-specific
+     */
+    public function get_paths() {
+        return array(
+            new convert_path('scales', '/MOODLE_BACKUP/COURSE/SCALES'),
+            new convert_path(
+                'scale', '/MOODLE_BACKUP/COURSE/SCALES/SCALE',
+                array(
+                    'renamefields' => array(
+                        'scaletext' => 'scale',
+                    ),
+                    'addfields' => array(
+                        'descriptionformat' => 0,
+                    )
+                )
+            ),
+        );
+    }
+
+    /**
+     * Prepare the file manager for the files embedded in the scale description field
+     */
+    public function on_scales_start() {
+        $syscontextid  = $this->converter->get_contextid(CONTEXT_SYSTEM);
+        $this->fileman = $this->converter->get_file_manager($syscontextid, 'grade', 'scale');
+    }
+
+    /**
+     * This is executed every time we have one <SCALE> data available
+     *
+     * @param array $data
+     * @param array $raw
+     * @return array
+     */
+    public function process_scale(array $data, array $raw) {
+        global $CFG;
+
+        // replay upgrade step 2009110400
+        if ($CFG->texteditors !== 'textarea') {
+            $data['description'] = text_to_html($data['description'], false, false, true);
+            $data['descriptionformat'] = FORMAT_HTML;
+        }
+
+        // convert course files embedded into the scale description field
+        $this->fileman->itemid = $data['id'];
+        $data['description'] = moodle1_converter::migrate_referenced_files($data['description'], $this->fileman);
+
+        // stash the scale
+        $this->converter->set_stash('scales', $data, $data['id']);
     }
 }
 
