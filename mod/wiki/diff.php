@@ -66,7 +66,7 @@ if ($compare >= $comparewith) {
     print_error("A page version can only be compared with an older version.");
 }
 
-require_course_login($course->id, true, $cm);
+require_login($course->id, true, $cm);
 add_to_log($course->id, "wiki", "diff", "diff.php?id=$cm->id", "$wiki->id");
 
 $wikipage = new page_wiki_diff($wiki, $subwiki, $cm);

@@ -353,3 +353,9 @@ a.wiki_edit_section {
 .wiki-diff-container .wiki-diff-heading,
 .wiki-diff-container .no-overflow {padding:10px;border:1px solid #DDD;}
 .wiki-diff-container .wiki-diff-rightside .wiki_diffversion {text-align:right;}
+
+.wikieditor-toolbar img{
+    width: 22px;
+    height: 22px;
+    vertical-align: middle;
+}

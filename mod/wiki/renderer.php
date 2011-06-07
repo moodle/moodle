@@ -134,7 +134,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
         $newheading .= $this->output->container_end();
 
         $oldheading = html_writer::tag('div', $oldheading, array('class'=>'wiki-diff-heading header clearfix'));
-        $newheading = html_writer::tag('div', $newheading, array('class'=>'wiki-diff-heading header  clearfix'));
+        $newheading = html_writer::tag('div', $newheading, array('class'=>'wiki-diff-heading header clearfix'));
 
         $output  = '';
         $output .= html_writer::start_tag('div', array('class'=>'wiki-diff-container clearfix'));
@@ -238,16 +238,15 @@ class mod_wiki_renderer extends plugin_renderer_base {
         global $PAGE;
         return $this->output->box(format_module_intro('wiki', $this->page->activityrecord, $PAGE->cm->id), 'generalbox', 'intro');
     }
+
     public function tabs($page, $tabitems, $options) {
         global $CFG;
-        if (empty($page)) {
-            return null;
-        }
         $tabs = array();
         $baseurl = $CFG->wwwroot . '/mod/wiki/';
+        $context = get_context_instance(CONTEXT_MODULE, $this->page->cm->id);
 
         $pageid = null;
-        if (isset($page)) {
+        if (!empty($page)) {
             $pageid = $page->id;
         }
 
@@ -267,6 +266,18 @@ class mod_wiki_renderer extends plugin_renderer_base {
         }
 
         foreach ($tabitems as $tab) {
+            if ($tab == 'edit' && !has_capability('mod/wiki:editpage', $context)) {
+                continue;
+            }
+            if ($tab == 'comments' && !has_capability('mod/wiki:viewcomment', $context)) {
+                continue;
+            }
+            if ($tab == 'files' && !has_capability('mod/wiki:viewpage', $context)) {
+                continue;
+            }
+            if (($tab == 'view' || $tab == 'map' || $tab == 'history') && !has_capability('mod/wiki:viewpage', $context)) {
+                continue;
+            }
             $link = $baseurl . $tab . '.php?pageid=' . $pageid;
             if ($linked == $tab) {
                 $tabs[] = new tabobject($tab, $link, get_string($tab, 'wiki'), '', true);
@@ -287,9 +298,18 @@ class mod_wiki_renderer extends plugin_renderer_base {
         return $html;
     }
 
-    public function wiki_print_subwiki_selector($wiki, $subwiki, $page) {
+    public function wiki_print_subwiki_selector($wiki, $subwiki, $page, $pagetype = 'view') {
         global $CFG, $USER;
         require_once($CFG->dirroot . '/user/lib.php');
+        switch ($pagetype) {
+        case 'files':
+            $baseurl = new moodle_url('/mod/wiki/files.php');
+            break;
+        case 'view':
+        default:
+            $baseurl = new moodle_url('/mod/wiki/view.php');
+            break;
+        }
 
         $cm = get_coursemodule_from_instance('wiki', $wiki->id);
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -317,10 +337,13 @@ class mod_wiki_renderer extends plugin_renderer_base {
 
                     echo $this->output->container_start('wiki_right');
                     $params = array('wid' => $wiki->id, 'title' => $page->title);
-                    $url = new moodle_url('/mod/wiki/view.php', $params);
+                    if ($pagetype == 'files') {
+                        $params['pageid'] = $page->id;
+                    }
+                    $baseurl->params($params);
                     $name = 'uid';
                     $selected = $subwiki->userid;
-                    echo $this->output->single_select($url, $name, $options, $selected);
+                    echo $this->output->single_select($baseurl, $name, $options, $selected);
                     echo $this->output->container_end();
                 }
                 return;
@@ -332,10 +355,14 @@ class mod_wiki_renderer extends plugin_renderer_base {
             if ($wiki->wikimode == 'collaborative') {
                 // We need to print a select to choose a course group
 
-                $params = 'wid=' . $wiki->id . '&amp;title=' . urlencode($page->title);
+                $params = array('wid'=>$wiki->id, 'title'=>$page->title);
+                if ($pagetype == 'files') {
+                    $params['pageid'] = $page->id;
+                }
+                $baseurl->params($params);
 
                 echo $this->output->container_start('wiki_right');
-                groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/wiki/view.php?' . $params);
+                groups_print_activity_menu($cm, $baseurl->out());
                 echo $this->output->container_end();
                 return;
             } else if ($wiki->wikimode == 'individual') {
@@ -367,10 +394,13 @@ class mod_wiki_renderer extends plugin_renderer_base {
                 }
                 echo $this->output->container_start('wiki_right');
                 $params = array('wid' => $wiki->id, 'title' => $page->title);
-                $url = new moodle_url('/mod/wiki/view.php', $params);
+                if ($pagetype == 'files') {
+                    $params['pageid'] = $page->id;
+                }
+                $baseurl->params($params);
                 $name = 'groupanduser';
                 $selected = $subwiki->groupid . '-' . $subwiki->userid;
-                echo $this->output->single_select($url, $name, $options, $selected);
+                echo $this->output->single_select($baseurl, $name, $options, $selected);
                 echo $this->output->container_end();
 
                 return;
@@ -382,10 +412,14 @@ class mod_wiki_renderer extends plugin_renderer_base {
         CASE VISIBLEGROUPS:
             if ($wiki->wikimode == 'collaborative') {
                 // We need to print a select to choose a course group
-                $params = 'wid=' . $wiki->id . '&amp;title=' . urlencode($page->title);
+                $params = array('wid'=>$wiki->id, 'title'=>urlencode($page->title));
+                if ($pagetype == 'files') {
+                    $params['pageid'] = $page->id;
+                }
+                $baseurl->params($params);
 
                 echo $this->output->container_start('wiki_right');
-                groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/wiki/view.php?' . $params);
+                groups_print_activity_menu($cm, $baseurl->out());
                 echo $this->output->container_end();
                 return;
 
@@ -406,10 +440,13 @@ class mod_wiki_renderer extends plugin_renderer_base {
 
                 echo $this->output->container_start('wiki_right');
                 $params = array('wid' => $wiki->id, 'title' => $page->title);
-                $url = new moodle_url('/mod/wiki/view.php', $params);
+                if ($pagetype == 'files') {
+                    $params['pageid'] = $page->id;
+                }
+                $baseurl->params($params);
                 $name = 'groupanduser';
                 $selected = $subwiki->groupid . '-' . $subwiki->userid;
-                echo $this->output->single_select($url, $name, $options, $selected);
+                echo $this->output->single_select($baseurl, $name, $options, $selected);
                 echo $this->output->container_end();
 
                 return;
@@ -439,5 +476,61 @@ class mod_wiki_renderer extends plugin_renderer_base {
         $select = new single_select(new moodle_url('/mod/wiki/map.php', array('pageid' => $pageid)), 'option', $selectoptions, $currentselect);
         $select->label = get_string('mapmenu', 'wiki') . ': ';
         return $this->output->container($this->output->render($select), 'midpad');
+    }
+    public function wiki_files_tree($context, $subwiki) {
+        return $this->render(new wiki_files_tree($context, $subwiki));
+    }
+    public function render_wiki_files_tree(wiki_files_tree $tree) {
+        if (empty($tree->dir['subdirs']) && empty($tree->dir['files'])) {
+            $html = $this->output->box(get_string('nofilesavailable', 'repository'));
+        } else {
+            $htmlid = 'wiki_files_tree_'.uniqid();
+            $module = array('name'=>'mod_wiki', 'fullpath'=>'/mod/wiki/module.js');
+            $this->page->requires->js_init_call('M.mod_wiki.init_tree', array(false, $htmlid), false, $module);
+            $html = '<div id="'.$htmlid.'">';
+            $html .= $this->htmllize_tree($tree, $tree->dir);
+            $html .= '</div>';
+        }
+        return $html;
+    }
+
+    /**
+     * Internal function - creates htmls structure suitable for YUI tree.
+     */
+    protected function htmllize_tree($tree, $dir) {
+        global $CFG;
+        $yuiconfig = array();
+        $yuiconfig['type'] = 'html';
+
+        if (empty($dir['subdirs']) and empty($dir['files'])) {
+            return '';
+        }
+        $result = '<ul>';
+        foreach ($dir['subdirs'] as $subdir) {
+            $image = $this->output->pix_icon("f/folder", $subdir['dirname'], 'moodle', array('class'=>'icon'));
+            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.s($subdir['dirname']).'</div> '.$this->htmllize_tree($tree, $subdir).'</li>';
+        }
+        foreach ($dir['files'] as $file) {
+            $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/'.$tree->context->id.'/mod_wiki/attachments/' . $tree->subwiki->id . '/'. $file->get_filepath() . $file->get_filename(), true);
+            $filename = $file->get_filename();
+            $icon = mimeinfo("icon", $filename);
+            $image = $this->output->pix_icon("f/$icon", $filename, 'moodle', array('class'=>'icon'));
+            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.html_writer::link($url, $filename).'</div></li>';
+        }
+        $result .= '</ul>';
+
+        return $result;
+    }
+}
+
+class wiki_files_tree implements renderable {
+    public $context;
+    public $dir;
+    public $subwiki;
+    public function __construct($context, $subwiki) {
+        $fs = get_file_storage();
+        $this->context = $context;
+        $this->subwiki = $subwiki;
+        $this->dir = $fs->get_area_tree($context->id, 'mod_wiki', 'attachments', $subwiki->id);
     }
 }

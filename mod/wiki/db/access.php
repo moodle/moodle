@@ -38,7 +38,7 @@ $capabilities = array(
         )
     ),
 
-	'mod/wiki:createpage' => array(
+    'mod/wiki:createpage' => array(
 
         'riskbitmask' => RISK_SPAM,
 
@@ -79,6 +79,17 @@ $capabilities = array(
     ),
 
     'mod/wiki:managecomment' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    'mod/wiki:managefiles' => array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
