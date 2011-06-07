@@ -138,7 +138,7 @@ M.core_role.init_cap_table_filter = function(Y, tableid, contextid) {
                 lastheading = null;
 
             this.setFilterCookieValue(filtertext);
-            
+
             this.button.set('disabled', (filtertext == ''));
 
             this.table.all('tr').each(function(row){
