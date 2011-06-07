@@ -139,7 +139,7 @@ if ($hassiteconfig
         400 => '400',
         500 => '500');
     $temp->add(new admin_setting_configselect('backup/backup_auto_keep', get_string('keep'), get_string('backupkeephelp'), 1, $keepoptoins));
-   
+
 
     $temp->add(new admin_setting_heading('automatedsettings', get_string('automatedsettings','backup'), ''));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_users', get_string('users'), get_string('backupusershelp'), 1));
@@ -152,8 +152,8 @@ if ($hassiteconfig
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_userscompletion', get_string('generaluserscompletion','backup'), get_string('configgeneraluserscompletion','backup'), 1));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_logs', get_string('logs'), get_string('backuplogshelp'), 0));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_histories', get_string('generalhistories','backup'), get_string('configgeneralhistories','backup'), 0));
-    
-    
+
+
     //$temp->add(new admin_setting_configcheckbox('backup/backup_auto_messages', get_string('messages', 'message'), get_string('backupmessageshelp','message'), 0));
     //$temp->add(new admin_setting_configcheckbox('backup/backup_auto_blogs', get_string('blogs', 'blog'), get_string('backupblogshelp','blog'), 0));
 
